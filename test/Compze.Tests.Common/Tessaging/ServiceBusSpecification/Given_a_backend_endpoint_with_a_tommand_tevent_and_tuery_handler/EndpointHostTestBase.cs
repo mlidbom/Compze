@@ -6,7 +6,7 @@ using Compze.Typermedia.Hosting.Testing;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.LinqCE;
 using Compze.Abstractions.Hosting.Public;
-using Compze.Tessaging.Hosting;
+using Compze.ServiceBus.Hosting;
 using Compze.Typermedia.Client;
 using Compze.Tessaging.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
 using Compze.Tessaging.Teventive.TeventStore.Typermedia;

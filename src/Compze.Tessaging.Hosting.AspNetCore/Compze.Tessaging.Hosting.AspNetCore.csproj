@@ -59,6 +59,13 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Transport_AspNet)' != 'true'">
     <ProjectReference Include="..\Compze.Internals.Transport.AspNet\Compze.Internals.Transport.AspNet.csproj" />
   </ItemGroup>
+  <!-- Compze.ServiceBus — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_ServiceBus)' == 'true'">
+    <PackageReference Include="Compze.ServiceBus" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_ServiceBus)' != 'true'">
+    <ProjectReference Include="..\Compze.ServiceBus\Compze.ServiceBus.csproj" />
+  </ItemGroup>
   <!-- Compze.Tessaging — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging)' == 'true'">
     <PackageReference Include="Compze.Tessaging" Version="*-*" />

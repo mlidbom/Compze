@@ -5,7 +5,7 @@ using Compze.Abstractions.Hosting.Public;
 using Compze.Tessaging.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
 using Compze.Tessaging.Teventive.TeventStore.QueryModels.SelfGeneratingQueryModels;
 using Compze.DependencyInjection;
-using Compze.Tessaging.Hosting;
+using Compze.ServiceBus.Hosting;
 using Compze.Typermedia.Client;
 using Compze.Typermedia;
 

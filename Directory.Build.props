@@ -96,6 +96,8 @@
     <UsePackageReference_Compze_InterprocessObject_MemoryPack Condition="'$(UsePackageReference_Compze_InterprocessObject_MemoryPack)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.InterprocessObject.MemoryPack.csproj|'))">true</UsePackageReference_Compze_InterprocessObject_MemoryPack>
     <!-- Compze.Must -->
     <UsePackageReference_Compze_Must Condition="'$(UsePackageReference_Compze_Must)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Must.csproj|'))">true</UsePackageReference_Compze_Must>
+    <!-- Compze.ServiceBus -->
+    <UsePackageReference_Compze_ServiceBus Condition="'$(UsePackageReference_Compze_ServiceBus)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.ServiceBus.csproj|'))">true</UsePackageReference_Compze_ServiceBus>
     <!-- Compze.Tessaging -->
     <UsePackageReference_Compze_Tessaging Condition="'$(UsePackageReference_Compze_Tessaging)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Tessaging.csproj|'))">true</UsePackageReference_Compze_Tessaging>
     <!-- Compze.Tessaging.Abstractions -->

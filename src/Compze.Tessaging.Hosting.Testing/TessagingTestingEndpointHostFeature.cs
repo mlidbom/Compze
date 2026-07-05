@@ -1,8 +1,9 @@
+using Compze.ServiceBus.Hosting;
 using Compze.Abstractions.Hosting.Public;
 using Compze.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Wiring;
-using Compze.Tessaging.Implementation.Transport;
-using Compze.Tessaging.Implementation.Transport.Abstractions;
+using Compze.ServiceBus.Implementation.Transport;
+using Compze.ServiceBus.Implementation.Transport.Abstractions;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Threading;

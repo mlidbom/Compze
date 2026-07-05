@@ -59,6 +59,13 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_Must)' != 'true'">
     <ProjectReference Include="..\..\src\Compze.Must\Compze.Must.csproj" />
   </ItemGroup>
+  <!-- Compze.ServiceBus — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_ServiceBus)' == 'true'">
+    <PackageReference Include="Compze.ServiceBus" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_ServiceBus)' != 'true'">
+    <ProjectReference Include="..\..\src\Compze.ServiceBus\Compze.ServiceBus.csproj" />
+  </ItemGroup>
   <!-- Compze.Tessaging.Hosting.AspNetCore — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging_Hosting_AspNetCore)' == 'true'">
     <PackageReference Include="Compze.Tessaging.Hosting.AspNetCore" Version="*-*" />

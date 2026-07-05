@@ -61,6 +61,13 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_SystemCE)' != 'true'">
     <ProjectReference Include="..\..\..\..\src\Compze.Internals.SystemCE\Compze.Internals.SystemCE.csproj" />
   </ItemGroup>
+  <!-- Compze.ServiceBus — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_ServiceBus)' == 'true'">
+    <PackageReference Include="Compze.ServiceBus" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_ServiceBus)' != 'true'">
+    <ProjectReference Include="..\..\..\..\src\Compze.ServiceBus\Compze.ServiceBus.csproj" />
+  </ItemGroup>
   <!-- Compze.Tessaging — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging)' == 'true'">
     <PackageReference Include="Compze.Tessaging" Version="*-*" />

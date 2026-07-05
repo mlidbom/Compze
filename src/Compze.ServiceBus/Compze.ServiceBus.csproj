@@ -1,0 +1,111 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <Version>0.1.0-alpha.1</Version>
+    <!-- TODO: Remove once all public API members have XML documentation comments -->
+    <NoWarn>CS1591</NoWarn>
+    <Description>The Compze service bus: asynchronous, reliable, cross-endpoint delivery of tessages (inbox, outbox, tommand scheduler, router, transport), built on the in-process Compze.Tessaging core.</Description>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="9.0.9" />
+  </ItemGroup>
+  <!-- Compze.Core — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Core)' == 'true'">
+    <PackageReference Include="Compze.Core" Version="*-*" />
+  </ItemGroup>
+  <!-- Exclude _docs files from compilation but keep them visible.
+       This section is automatically maintained by DevScripts\C-Ensure-CsprojfilesExcludeCsFilesFromProjectsInSubfoldersAndDocsFolders.ps1 -->
+  <ItemGroup>
+    <Compile Remove="_docs\**\*.cs" />
+    <None Include="_docs\**\*.cs" />
+    <Content Include="_docs\**\*.md" />
+    <Compile Remove="Typermedia\_docs\**\*.cs" />
+    <None Include="Typermedia\_docs\**\*.cs" />
+    <Content Include="Typermedia\_docs\**\*.md" />
+  </ItemGroup>
+  <!-- Compze.Contracts — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Contracts)' == 'true'">
+    <PackageReference Include="Compze.Contracts" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Contracts)' != 'true'">
+    <ProjectReference Include="..\Compze.Contracts\Compze.Contracts.csproj" />
+  </ItemGroup>
+  <!-- Compze.DependencyInjection — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_DependencyInjection)' == 'true'">
+    <PackageReference Include="Compze.DependencyInjection" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_DependencyInjection)' != 'true'">
+    <ProjectReference Include="..\Compze.DependencyInjection\Compze.DependencyInjection.csproj" />
+  </ItemGroup>
+  <!-- Compze.Internals.Logging — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Logging)' == 'true'">
+    <PackageReference Include="Compze.Internals.Logging" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Logging)' != 'true'">
+    <ProjectReference Include="..\Compze.Internals.Logging\Compze.Internals.Logging.csproj" />
+  </ItemGroup>
+  <!-- Compze.Internals.Sql.Common — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Sql_Common)' == 'true'">
+    <PackageReference Include="Compze.Internals.Sql.Common" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Sql_Common)' != 'true'">
+    <ProjectReference Include="..\Compze.Internals.Sql.Common\Compze.Internals.Sql.Common.csproj" />
+  </ItemGroup>
+  <!-- Compze.Internals.SystemCE — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_SystemCE)' == 'true'">
+    <PackageReference Include="Compze.Internals.SystemCE" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_SystemCE)' != 'true'">
+    <ProjectReference Include="..\Compze.Internals.SystemCE\Compze.Internals.SystemCE.csproj" />
+  </ItemGroup>
+  <!-- Compze.Internals.Transport — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Transport)' == 'true'">
+    <PackageReference Include="Compze.Internals.Transport" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Transport)' != 'true'">
+    <ProjectReference Include="..\Compze.Internals.Transport\Compze.Internals.Transport.csproj" />
+  </ItemGroup>
+  <!-- Compze.Tessaging — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging)' == 'true'">
+    <PackageReference Include="Compze.Tessaging" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging)' != 'true'">
+    <ProjectReference Include="..\Compze.Tessaging\Compze.Tessaging.csproj" />
+  </ItemGroup>
+  <!-- Compze.Tessaging.Abstractions — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging_Abstractions)' == 'true'">
+    <PackageReference Include="Compze.Tessaging.Abstractions" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging_Abstractions)' != 'true'">
+    <ProjectReference Include="..\Compze.Tessaging.Abstractions\Compze.Tessaging.Abstractions.csproj" />
+  </ItemGroup>
+  <!-- Compze.Teventive — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Teventive)' == 'true'">
+    <PackageReference Include="Compze.Teventive" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Teventive)' != 'true'">
+    <ProjectReference Include="..\Compze.Teventive\Compze.Teventive.csproj" />
+  </ItemGroup>
+  <!-- Compze.Teventive.TeventStore.Abstractions — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Teventive_TeventStore_Abstractions)' == 'true'">
+    <PackageReference Include="Compze.Teventive.TeventStore.Abstractions" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Teventive_TeventStore_Abstractions)' != 'true'">
+    <ProjectReference Include="..\Compze.Teventive.TeventStore.Abstractions\Compze.Teventive.TeventStore.Abstractions.csproj" />
+  </ItemGroup>
+  <!-- Compze.Threading — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Threading)' == 'true'">
+    <PackageReference Include="Compze.Threading" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Threading)' != 'true'">
+    <ProjectReference Include="..\Compze.Threading\Compze.Threading.csproj" />
+  </ItemGroup>
+  <!-- Compze.Underscore — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Underscore)' == 'true'">
+    <PackageReference Include="Compze.Underscore" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Underscore)' != 'true'">
+    <ProjectReference Include="..\Compze.Underscore\Compze.Underscore.csproj" />
+  </ItemGroup>
+</Project>

@@ -40,6 +40,7 @@
       <Value>UsePackageReference_Compze_InterprocessObject = true</Value>
       <Value>UsePackageReference_Compze_InterprocessObject_MemoryPack = true</Value>
       <Value>UsePackageReference_Compze_Must = true</Value>
+      <Value>UsePackageReference_Compze_ServiceBus = true</Value>
       <Value>UsePackageReference_Compze_Tests_Infrastructure = true</Value>
       <Value>UsePackageReference_Compze_Teventive_TeventStore_Typermedia = true</Value>
       <Value>UsePackageReference_Compze_Threading = true</Value>

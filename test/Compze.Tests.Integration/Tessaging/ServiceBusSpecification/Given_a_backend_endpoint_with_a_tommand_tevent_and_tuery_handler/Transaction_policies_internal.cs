@@ -1,5 +1,5 @@
 using Compze.Abstractions.Tessaging.Validation;
-using Compze.Tessaging.Hosting;
+using Compze.ServiceBus.Hosting;
 using Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler;
 using Compze.Internals.SystemCE.TransactionsCE;
 using Compze.Tests.Infrastructure.XUnit;

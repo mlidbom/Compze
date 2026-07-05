@@ -21,7 +21,7 @@ public static class TessageHandlerRegistryRegistrar
                                      .CreatedBy((ITypeMap typeMap) => new TessageHandlerRegistry(typeMap)));
 }
 
-sealed class TessageHandlerRegistry(ITypeMap typeMap) : ITessageHandlerRegistrar, ITessageHandlerRegistry
+public sealed class TessageHandlerRegistry(ITypeMap typeMap) : ITessageHandlerRegistrar, ITessageHandlerRegistry
 {
    readonly ITypeMap _typeMap = typeMap;
    IReadOnlyDictionary<Type, Action<object, IScopeResolver>> _tommandHandlers = new Dictionary<Type, Action<object, IScopeResolver>>();
