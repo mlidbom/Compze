@@ -10,13 +10,6 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.9" />
   </ItemGroup>
-  <!-- Exclude _docs files from compilation but keep them visible.
-       This section is automatically maintained by DevScripts\C-Ensure-CsprojfilesExcludeCsFilesFromProjectsInSubfoldersAndDocsFolders.ps1 -->
-  <ItemGroup>
-    <Compile Remove="_docs\**\*.cs" />
-    <None Include="_docs\**\*.cs" />
-    <Content Include="_docs\**\*.md" />
-  </ItemGroup>
   <!-- Compze.Abstractions — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Abstractions)' == 'true'">
     <PackageReference Include="Compze.Abstractions" Version="*-*" />
@@ -79,5 +72,12 @@
   </ItemGroup>
   <ItemGroup Condition="'$(UsePackageReference_Compze_Unit)' != 'true'">
     <ProjectReference Include="..\Compze.Unit\Compze.Unit.csproj" />
+  </ItemGroup>
+  <!-- Exclude _docs files from compilation but keep them visible.
+       This section is automatically maintained by DevScripts\C-Ensure-CsprojfilesExcludeCsFilesFromProjectsInSubfoldersAndDocsFolders.ps1 -->
+  <ItemGroup>
+    <Compile Remove="_docs\**\*.cs" />
+    <None Include="_docs\**\*.cs" />
+    <Content Include="_docs\**\*.md" />
   </ItemGroup>
 </Project>
