@@ -66,19 +66,19 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_ServiceBus)' != 'true'">
     <ProjectReference Include="..\..\src\Compze.ServiceBus\Compze.ServiceBus.csproj" />
   </ItemGroup>
-  <!-- Compze.Tessaging.Hosting.AspNetCore — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging_Hosting_AspNetCore)' == 'true'">
-    <PackageReference Include="Compze.Tessaging.Hosting.AspNetCore" Version="*-*" />
+  <!-- Compze.ServiceBus.Hosting.AspNetCore — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_ServiceBus_Hosting_AspNetCore)' == 'true'">
+    <PackageReference Include="Compze.ServiceBus.Hosting.AspNetCore" Version="*-*" />
   </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging_Hosting_AspNetCore)' != 'true'">
-    <ProjectReference Include="..\..\src\Compze.Tessaging.Hosting.AspNetCore\Compze.Tessaging.Hosting.AspNetCore.csproj" />
+  <ItemGroup Condition="'$(UsePackageReference_Compze_ServiceBus_Hosting_AspNetCore)' != 'true'">
+    <ProjectReference Include="..\..\src\Compze.ServiceBus.Hosting.AspNetCore\Compze.ServiceBus.Hosting.AspNetCore.csproj" />
   </ItemGroup>
-  <!-- Compze.Tessaging.Hosting.Testing — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging_Hosting_Testing)' == 'true'">
-    <PackageReference Include="Compze.Tessaging.Hosting.Testing" Version="*-*" />
+  <!-- Compze.ServiceBus.Hosting.Testing — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_ServiceBus_Hosting_Testing)' == 'true'">
+    <PackageReference Include="Compze.ServiceBus.Hosting.Testing" Version="*-*" />
   </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging_Hosting_Testing)' != 'true'">
-    <ProjectReference Include="..\..\src\Compze.Tessaging.Hosting.Testing\Compze.Tessaging.Hosting.Testing.csproj" />
+  <ItemGroup Condition="'$(UsePackageReference_Compze_ServiceBus_Hosting_Testing)' != 'true'">
+    <ProjectReference Include="..\..\src\Compze.ServiceBus.Hosting.Testing\Compze.ServiceBus.Hosting.Testing.csproj" />
   </ItemGroup>
   <!-- Compze.Tests.Infrastructure — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Tests_Infrastructure)' == 'true'">

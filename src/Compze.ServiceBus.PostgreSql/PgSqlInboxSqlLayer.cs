@@ -1,0 +1,112 @@
+using Compze.Abstractions.Public;
+using Compze.Internals.Sql.Common;
+using Compze.Internals.Sql.Common.Abstractions;
+using Compze.Internals.Sql.PostgreSql;
+using Compze.Internals.Sql.PostgreSql.Private;
+using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
+using Compze.ServiceBus.Transport.SqlLayer;
+using Compze.TypeIdentifiers;
+using Compze.TypeIdentifiers.Interning;
+using TessageTable =  Compze.ServiceBus.Transport.SqlLayer.IServiceBusSqlLayer.InboxTessageDatabaseSchemaStrings;
+
+namespace Compze.ServiceBus.PostgreSql;
+
+partial class PgSqlInboxSqlLayer(IPgSqlConnectionPool connectionFactory, PgSqlSqlLayerSchemaManager schemaManager, ITypeIdInterner typeIdInterner) : IServiceBusSqlLayer.IInboxSqlLayer
+{
+   readonly IPgSqlConnectionPool _connectionFactory = connectionFactory;
+   readonly PgSqlSqlLayerSchemaManager _schemaManager = schemaManager;
+   readonly ITypeIdInterner _typeIdInterner = typeIdInterner;
+
+   public IServiceBusSqlLayer.SaveTessageResult SaveTessage(TessageId tessageId, TypeId typeId, string serializedTessage)
+   {
+      // Intern before opening a connection: interning may hit the database, and nesting a second connection
+      // inside a held one deadlocks the pool.
+      var internedTypeId = _typeIdInterner.GetOrInternId(typeId);
+      return _connectionFactory.UseCommand(
+         command =>
+         {
+            var affectedRows = command
+              .SetCommandText(
+                  $"""
+
+                   INSERT INTO {TessageTable.TableName} 
+                               ({TessageTable.TessageId},  {TessageTable.TypeId},  {TessageTable.Body}, {TessageTable.Status}) 
+                       VALUES (@{TessageTable.TessageId}, @{TessageTable.TypeId}, @{TessageTable.Body}, {(int)InboxTessageStatus.UnHandled})
+                   ON CONFLICT ({TessageTable.TessageId}) DO NOTHING;
+
+                   """)
+              .AddParameter(TessageTable.TessageId, tessageId.Value)
+              .AddParameter(TessageTable.TypeId, internedTypeId)
+               //performance: Like with the tevent store, keep all framework properties out of the JSON and put it into separate columns instead. For tevents. Reuse a pre-serialized instance from the persisting to the tevent store.
+              .AddMediumTextParameter(TessageTable.Body, serializedTessage)
+              .PrepareStatement()
+              .ExecuteNonQuery();
+
+            return affectedRows == 0
+               ? IServiceBusSqlLayer.SaveTessageResult.Duplicate
+               : IServiceBusSqlLayer.SaveTessageResult.NewTessage;
+         });
+   }
+
+   public int MarkAsSucceeded(TessageId tessageId)
+   {
+      return _connectionFactory.UseCommand(
+         command =>
+            command
+              .SetCommandText(
+                  $"""
+
+                   UPDATE {TessageTable.TableName} 
+                       SET {TessageTable.Status} = {(int)InboxTessageStatus.Succeeded}
+                   WHERE {TessageTable.TessageId} = @{TessageTable.TessageId}
+                       AND {TessageTable.Status} = {(int)InboxTessageStatus.UnHandled};
+
+                   """)
+              .AddParameter(TessageTable.TessageId, tessageId.Value)
+              .PrepareStatement()
+              .ExecuteNonQuery());
+   }
+
+   public int RecordException(TessageId tessageId, string exceptionStackTrace, string exceptionTessage, string exceptionType)
+   {
+      return _connectionFactory.UseCommand(
+         command => command
+                   .SetCommandText(
+                       $"""
+
+                        UPDATE {TessageTable.TableName} 
+                            SET {TessageTable.ExceptionCount} = {TessageTable.ExceptionCount} + 1,
+                                {TessageTable.ExceptionType} = @{TessageTable.ExceptionType},
+                                {TessageTable.ExceptionStackTrace} = @{TessageTable.ExceptionStackTrace},
+                                {TessageTable.ExceptionTessage} = @{TessageTable.ExceptionTessage}
+                                
+                        WHERE {TessageTable.TessageId} = @{TessageTable.TessageId};
+
+                        """)
+                   .AddParameter(TessageTable.TessageId, tessageId.Value)
+                   .AddMediumTextParameter(TessageTable.ExceptionStackTrace, exceptionStackTrace)
+                   .AddMediumTextParameter(TessageTable.ExceptionTessage, exceptionTessage)
+                   .AddVarcharParameter(TessageTable.ExceptionType, 500, exceptionType)
+                   .PrepareStatement()
+                   .ExecuteNonQuery());
+   }
+
+   public int MarkAsFailed(TessageId tessageId)
+   {
+      return _connectionFactory.UseCommand(
+         command => command
+                   .SetCommandText(
+                       $"""
+
+                        UPDATE {TessageTable.TableName} 
+                            SET {TessageTable.Status} = {(int)InboxTessageStatus.Failed}
+                        WHERE {TessageTable.TessageId} = @{TessageTable.TessageId}
+                            AND {TessageTable.Status} = {(int)InboxTessageStatus.UnHandled};
+                        """)
+                   .AddParameter(TessageTable.TessageId, tessageId.Value)
+                   .PrepareStatement()
+                   .ExecuteNonQuery());
+   }
+
+   public async Task InitAsync() => await _schemaManager.EnsureSchemaInitializedAsync().caf();
+}

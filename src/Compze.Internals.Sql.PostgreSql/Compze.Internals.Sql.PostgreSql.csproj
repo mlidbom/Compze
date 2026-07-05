@@ -13,7 +13,7 @@
   <ItemGroup>
     <InternalsVisibleTo Include="Compze.TypeIdentifiers.Interning.PostgreSql" />
     <InternalsVisibleTo Include="Compze.DocumentDb.PostgreSql" />
-    <InternalsVisibleTo Include="Compze.Tessaging.PostgreSql" />
+    <InternalsVisibleTo Include="Compze.ServiceBus.PostgreSql" />
     <InternalsVisibleTo Include="Compze.Teventive.TeventStore.PostgreSql" />
   </ItemGroup>
   <!-- Compze.Abstractions — flex reference -->

@@ -189,12 +189,12 @@
   </Folder>
   <Folder Name="/Compze.Tessaging/">
     <Project Path="src/Compze.Tessaging.Abstractions/Compze.Tessaging.Abstractions.csproj" />
-    <Project Path="src/Compze.Tessaging.Hosting.AspNetCore/Compze.Tessaging.Hosting.AspNetCore.csproj" />
-    <Project Path="src/Compze.Tessaging.Hosting.Testing/Compze.Tessaging.Hosting.Testing.csproj" />
-    <Project Path="src/Compze.Tessaging.MicrosoftSql/Compze.Tessaging.MicrosoftSql.csproj" />
-    <Project Path="src/Compze.Tessaging.MySql/Compze.Tessaging.MySql.csproj" />
-    <Project Path="src/Compze.Tessaging.PostgreSql/Compze.Tessaging.PostgreSql.csproj" />
-    <Project Path="src/Compze.Tessaging.Sqlite/Compze.Tessaging.Sqlite.csproj" />
+    <Project Path="src/Compze.ServiceBus.Hosting.AspNetCore/Compze.ServiceBus.Hosting.AspNetCore.csproj" />
+    <Project Path="src/Compze.ServiceBus.Hosting.Testing/Compze.ServiceBus.Hosting.Testing.csproj" />
+    <Project Path="src/Compze.ServiceBus.MicrosoftSql/Compze.ServiceBus.MicrosoftSql.csproj" />
+    <Project Path="src/Compze.ServiceBus.MySql/Compze.ServiceBus.MySql.csproj" />
+    <Project Path="src/Compze.ServiceBus.PostgreSql/Compze.ServiceBus.PostgreSql.csproj" />
+    <Project Path="src/Compze.ServiceBus.Sqlite/Compze.ServiceBus.Sqlite.csproj" />
     <Project Path="src/Compze.Tessaging/Compze.Tessaging.csproj" />
   </Folder>
   <Folder Name="/Compze.Typermedia/">

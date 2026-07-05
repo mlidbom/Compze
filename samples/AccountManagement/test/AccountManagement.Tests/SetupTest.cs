@@ -1,6 +1,6 @@
 using Compze.Hosting.Testing;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
-using Compze.Tessaging.Hosting.Testing;
+using Compze.ServiceBus.Hosting.Testing;
 using Compze.Typermedia.Client;
 using Compze.Typermedia.Hosting.Testing;
 using Compze.Tests.Infrastructure;

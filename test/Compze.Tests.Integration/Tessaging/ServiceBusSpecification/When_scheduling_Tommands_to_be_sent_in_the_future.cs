@@ -4,7 +4,7 @@ using Compze.Tessaging.Abstractions.Tessaging.Hosting.TessageHandling.Registrati
 using Compze.Abstractions.Time.Public;
 using Compze.Hosting.Testing;
 using Compze.ServiceBus.Hosting;
-using Compze.Tessaging.Hosting.Testing;
+using Compze.ServiceBus.Hosting.Testing;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Threading;

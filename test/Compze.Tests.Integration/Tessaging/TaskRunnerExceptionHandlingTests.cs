@@ -1,7 +1,7 @@
 using Compze.Abstractions.Hosting.Public;
 using Compze.DependencyInjection;
 using Compze.Hosting.Testing;
-using Compze.Tessaging.Hosting.Testing;
+using Compze.ServiceBus.Hosting.Testing;
 using Compze.ServiceBus.SystemCE.ThreadingCE;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;

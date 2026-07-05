@@ -13,7 +13,7 @@
   <ItemGroup>
     <InternalsVisibleTo Include="Compze.TypeIdentifiers.Interning.MicrosoftSql" />
     <InternalsVisibleTo Include="Compze.DocumentDb.MicrosoftSql" />
-    <InternalsVisibleTo Include="Compze.Tessaging.MicrosoftSql" />
+    <InternalsVisibleTo Include="Compze.ServiceBus.MicrosoftSql" />
     <InternalsVisibleTo Include="Compze.Teventive.TeventStore.MicrosoftSql" />
   </ItemGroup>
   <!-- Compze.Abstractions — flex reference -->

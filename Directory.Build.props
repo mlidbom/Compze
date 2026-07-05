@@ -98,22 +98,22 @@
     <UsePackageReference_Compze_Must Condition="'$(UsePackageReference_Compze_Must)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Must.csproj|'))">true</UsePackageReference_Compze_Must>
     <!-- Compze.ServiceBus -->
     <UsePackageReference_Compze_ServiceBus Condition="'$(UsePackageReference_Compze_ServiceBus)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.ServiceBus.csproj|'))">true</UsePackageReference_Compze_ServiceBus>
+    <!-- Compze.ServiceBus.Hosting.AspNetCore -->
+    <UsePackageReference_Compze_ServiceBus_Hosting_AspNetCore Condition="'$(UsePackageReference_Compze_ServiceBus_Hosting_AspNetCore)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.ServiceBus.Hosting.AspNetCore.csproj|'))">true</UsePackageReference_Compze_ServiceBus_Hosting_AspNetCore>
+    <!-- Compze.ServiceBus.Hosting.Testing -->
+    <UsePackageReference_Compze_ServiceBus_Hosting_Testing Condition="'$(UsePackageReference_Compze_ServiceBus_Hosting_Testing)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.ServiceBus.Hosting.Testing.csproj|'))">true</UsePackageReference_Compze_ServiceBus_Hosting_Testing>
+    <!-- Compze.ServiceBus.MicrosoftSql -->
+    <UsePackageReference_Compze_ServiceBus_MicrosoftSql Condition="'$(UsePackageReference_Compze_ServiceBus_MicrosoftSql)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.ServiceBus.MicrosoftSql.csproj|'))">true</UsePackageReference_Compze_ServiceBus_MicrosoftSql>
+    <!-- Compze.ServiceBus.MySql -->
+    <UsePackageReference_Compze_ServiceBus_MySql Condition="'$(UsePackageReference_Compze_ServiceBus_MySql)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.ServiceBus.MySql.csproj|'))">true</UsePackageReference_Compze_ServiceBus_MySql>
+    <!-- Compze.ServiceBus.PostgreSql -->
+    <UsePackageReference_Compze_ServiceBus_PostgreSql Condition="'$(UsePackageReference_Compze_ServiceBus_PostgreSql)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.ServiceBus.PostgreSql.csproj|'))">true</UsePackageReference_Compze_ServiceBus_PostgreSql>
+    <!-- Compze.ServiceBus.Sqlite -->
+    <UsePackageReference_Compze_ServiceBus_Sqlite Condition="'$(UsePackageReference_Compze_ServiceBus_Sqlite)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.ServiceBus.Sqlite.csproj|'))">true</UsePackageReference_Compze_ServiceBus_Sqlite>
     <!-- Compze.Tessaging -->
     <UsePackageReference_Compze_Tessaging Condition="'$(UsePackageReference_Compze_Tessaging)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Tessaging.csproj|'))">true</UsePackageReference_Compze_Tessaging>
     <!-- Compze.Tessaging.Abstractions -->
     <UsePackageReference_Compze_Tessaging_Abstractions Condition="'$(UsePackageReference_Compze_Tessaging_Abstractions)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Tessaging.Abstractions.csproj|'))">true</UsePackageReference_Compze_Tessaging_Abstractions>
-    <!-- Compze.Tessaging.Hosting.AspNetCore -->
-    <UsePackageReference_Compze_Tessaging_Hosting_AspNetCore Condition="'$(UsePackageReference_Compze_Tessaging_Hosting_AspNetCore)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Tessaging.Hosting.AspNetCore.csproj|'))">true</UsePackageReference_Compze_Tessaging_Hosting_AspNetCore>
-    <!-- Compze.Tessaging.Hosting.Testing -->
-    <UsePackageReference_Compze_Tessaging_Hosting_Testing Condition="'$(UsePackageReference_Compze_Tessaging_Hosting_Testing)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Tessaging.Hosting.Testing.csproj|'))">true</UsePackageReference_Compze_Tessaging_Hosting_Testing>
-    <!-- Compze.Tessaging.MicrosoftSql -->
-    <UsePackageReference_Compze_Tessaging_MicrosoftSql Condition="'$(UsePackageReference_Compze_Tessaging_MicrosoftSql)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Tessaging.MicrosoftSql.csproj|'))">true</UsePackageReference_Compze_Tessaging_MicrosoftSql>
-    <!-- Compze.Tessaging.MySql -->
-    <UsePackageReference_Compze_Tessaging_MySql Condition="'$(UsePackageReference_Compze_Tessaging_MySql)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Tessaging.MySql.csproj|'))">true</UsePackageReference_Compze_Tessaging_MySql>
-    <!-- Compze.Tessaging.PostgreSql -->
-    <UsePackageReference_Compze_Tessaging_PostgreSql Condition="'$(UsePackageReference_Compze_Tessaging_PostgreSql)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Tessaging.PostgreSql.csproj|'))">true</UsePackageReference_Compze_Tessaging_PostgreSql>
-    <!-- Compze.Tessaging.Sqlite -->
-    <UsePackageReference_Compze_Tessaging_Sqlite Condition="'$(UsePackageReference_Compze_Tessaging_Sqlite)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Tessaging.Sqlite.csproj|'))">true</UsePackageReference_Compze_Tessaging_Sqlite>
     <!-- Compze.Tests.Infrastructure -->
     <UsePackageReference_Compze_Tests_Infrastructure Condition="'$(UsePackageReference_Compze_Tests_Infrastructure)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Tests.Infrastructure.csproj|'))">true</UsePackageReference_Compze_Tests_Infrastructure>
     <!-- Compze.Teventive -->

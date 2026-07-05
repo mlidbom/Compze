@@ -1,7 +1,7 @@
 using Compze.DocumentDb.Wiring;
 using Compze.Abstractions.Wiring.Testing.Internal;
 using Compze.Hosting.Testing.Wiring;
-using Compze.Tessaging.Hosting.Testing.Wiring;
+using Compze.ServiceBus.Hosting.Testing.Wiring;
 using Compze.Tessaging.Implementation;
 using Compze.Tessaging.Implementation.TessageHandling.Dispatching;
 using Compze.Tessaging.Teventive.TeventStore.Wiring;

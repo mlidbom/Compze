@@ -5,7 +5,7 @@ using Compze.Abstractions.Tessaging.Public;
 using Compze.Tessaging.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
 using Compze.Tessaging.Teventive.TeventStore.Public;
 using Compze.Hosting.Testing;
-using Compze.Tessaging.Hosting.Testing;
+using Compze.ServiceBus.Hosting.Testing;
 using Compze.Typermedia.Hosting.Testing;
 using Compze.Tessaging.Teventive.TeventStore.Wiring;
 using Compze.Tests.Common;

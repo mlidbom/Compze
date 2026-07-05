@@ -7,7 +7,7 @@ using Compze.Abstractions.Wiring.Testing.Internal;
 using Compze.Hosting.Testing;
 using Compze.Internals.Testing;
 using Compze.Internals.Testing.Performance;
-using Compze.Tessaging.Hosting.Testing;
+using Compze.ServiceBus.Hosting.Testing;
 using Compze.Typermedia.Client;
 using Compze.Typermedia.Hosting.Testing;
 using Compze.Tests.Infrastructure;

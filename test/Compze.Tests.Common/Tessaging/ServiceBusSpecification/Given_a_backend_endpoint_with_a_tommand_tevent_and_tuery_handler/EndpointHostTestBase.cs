@@ -1,7 +1,7 @@
 using Compze.Hosting.Testing;
 using Compze.Hosting.Testing.Wiring;
 using Compze.Internals.Testing;
-using Compze.Tessaging.Hosting.Testing;
+using Compze.ServiceBus.Hosting.Testing;
 using Compze.Typermedia.Hosting.Testing;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.LinqCE;

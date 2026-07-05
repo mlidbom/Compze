@@ -4,7 +4,7 @@ using Compze.Hosting.Testing;
 using Compze.Hosting.Testing.Wiring;
 using Compze.Typermedia.Client;
 using Compze.Internals.Testing;
-using Compze.Tessaging.Hosting.Testing.Wiring;
+using Compze.ServiceBus.Hosting.Testing.Wiring;
 using Compze.Typermedia.Hosting.Testing;
 using Compze.Typermedia.Hosting.Testing.Wiring;
 using Compze.Underscore;

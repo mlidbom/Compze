@@ -2,7 +2,7 @@ using Compze.Abstractions.Hosting.Public;
 using Compze.Typermedia.Client;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Hosting.Testing;
-using Compze.Tessaging.Hosting.Testing;
+using Compze.ServiceBus.Hosting.Testing;
 using Compze.Typermedia.Hosting.Testing;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;

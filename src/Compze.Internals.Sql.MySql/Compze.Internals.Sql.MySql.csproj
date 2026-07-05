@@ -13,7 +13,7 @@
   <ItemGroup>
     <InternalsVisibleTo Include="Compze.TypeIdentifiers.Interning.MySql" />
     <InternalsVisibleTo Include="Compze.DocumentDb.MySql" />
-    <InternalsVisibleTo Include="Compze.Tessaging.MySql" />
+    <InternalsVisibleTo Include="Compze.ServiceBus.MySql" />
     <InternalsVisibleTo Include="Compze.Teventive.TeventStore.MySql" />
   </ItemGroup>
   <!-- Compze.Abstractions — flex reference -->

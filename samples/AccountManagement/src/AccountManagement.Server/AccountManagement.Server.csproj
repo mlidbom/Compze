@@ -68,19 +68,19 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_ServiceBus)' != 'true'">
     <ProjectReference Include="..\..\..\..\src\Compze.ServiceBus\Compze.ServiceBus.csproj" />
   </ItemGroup>
+  <!-- Compze.ServiceBus.Hosting.AspNetCore — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_ServiceBus_Hosting_AspNetCore)' == 'true'">
+    <PackageReference Include="Compze.ServiceBus.Hosting.AspNetCore" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_ServiceBus_Hosting_AspNetCore)' != 'true'">
+    <ProjectReference Include="..\..\..\..\src\Compze.ServiceBus.Hosting.AspNetCore\Compze.ServiceBus.Hosting.AspNetCore.csproj" />
+  </ItemGroup>
   <!-- Compze.Tessaging — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging)' == 'true'">
     <PackageReference Include="Compze.Tessaging" Version="*-*" />
   </ItemGroup>
   <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging)' != 'true'">
     <ProjectReference Include="..\..\..\..\src\Compze.Tessaging\Compze.Tessaging.csproj" />
-  </ItemGroup>
-  <!-- Compze.Tessaging.Hosting.AspNetCore — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging_Hosting_AspNetCore)' == 'true'">
-    <PackageReference Include="Compze.Tessaging.Hosting.AspNetCore" Version="*-*" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging_Hosting_AspNetCore)' != 'true'">
-    <ProjectReference Include="..\..\..\..\src\Compze.Tessaging.Hosting.AspNetCore\Compze.Tessaging.Hosting.AspNetCore.csproj" />
   </ItemGroup>
   <!-- Compze.Teventive — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Teventive)' == 'true'">
