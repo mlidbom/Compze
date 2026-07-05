@@ -1,7 +1,6 @@
 using Compze.Abstractions.Configuration.Internal;
 using Compze.Abstractions.Hosting.Public;
 using Compze.DependencyInjection;
-using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Transport;
 using Compze.Tessaging.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
 using Compze.Tessaging.Implementation;
@@ -64,6 +63,7 @@ public class TessagingEndpointFeature
               .Outbox()
               .Inbox()
               .TommandScheduler()
+              .InProcessTeventPublisher()
               .ServiceBusTeventStoreTeventPublisher()
               .ServiceBusSession();
 

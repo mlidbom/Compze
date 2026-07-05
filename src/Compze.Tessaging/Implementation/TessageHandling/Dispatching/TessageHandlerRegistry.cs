@@ -71,15 +71,6 @@ sealed class TessageHandlerRegistry(ITypeMap typeMap) : ITessageHandlerRegistrar
    //performance: Use static caching trick.
    public IReadOnlyList<Action<ITevent, IScopeResolver>> GetTeventHandlers(Type teventType) => _teventHandlers.Where(it => it.Key.IsAssignableFrom(teventType)).SelectMany(it => it.Value).ToList();
 
-   void ITessageHandlerRegistry.DispatchTevent(ITevent tevent, IScopeResolver scopeResolver)
-   {
-      var handlers = GetTeventHandlers(tevent.GetType());
-      foreach(var handler in handlers)
-      {
-         handler(tevent, scopeResolver);
-      }
-   }
-
    public ISet<TypeId> HandledRemoteTessageTypeIds()
    {
       var handledTypes = _tommandHandlers.Keys

@@ -40,6 +40,7 @@ public static class CombinedTestingContainers
                .DummyConfigurationParameterProvider()
                .TessageHandlerRegistry()
                .TypermediaHandlerRegistry()
+               .InProcessTeventPublisher()
                .InMemoryTeventStoreTeventPublisher();
       setup(builder.Registrar);
 

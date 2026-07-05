@@ -1,7 +1,6 @@
 using Compze.Abstractions.Tessaging.Validation;
 using Compze.Tessaging.Teventive.TeventStore.Internal;
 using Compze.Tessaging.Implementation.Abstractions;
-using Compze.Tessaging.Implementation.TessageHandling.Abstractions;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Teventive.Taggregates.Tevents.Public;
@@ -15,20 +14,21 @@ static class ServiceBusTeventStoreTeventPublisherRegistrar
       => registrar.Register(Implementation.ServiceBusTeventStoreTeventPublisher.RegisterWith);
 }
 
-[UsedImplicitly] class ServiceBusTeventStoreTeventPublisher(IOutbox outbox, ITessageHandlerRegistry handlerRegistry) : ITeventStoreTeventPublisher
+///<summary>The distributed <see cref="ITeventStoreTeventPublisher"/>: a taggregate's committed tevents are delivered both to this process's handlers (via <see cref="IInProcessTeventPublisher"/>) and, through the <see cref="IOutbox"/>, to subscribers on other endpoints.</summary>
+[UsedImplicitly] class ServiceBusTeventStoreTeventPublisher(IOutbox outbox, IInProcessTeventPublisher inProcessTeventPublisher) : ITeventStoreTeventPublisher
 {
    public static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(Singleton.For<ITeventStoreTeventPublisher>()
-                                     .CreatedBy((IOutbox outbox, ITessageHandlerRegistry tessageHandlerRegistry)
-                                                   => new ServiceBusTeventStoreTeventPublisher(outbox, tessageHandlerRegistry)));
+                                     .CreatedBy((IOutbox outbox, IInProcessTeventPublisher inProcessTeventPublisher)
+                                                   => new ServiceBusTeventStoreTeventPublisher(outbox, inProcessTeventPublisher)));
 
    readonly IOutbox _outbox = outbox;
-   readonly ITessageHandlerRegistry _handlerRegistry = handlerRegistry;
+   readonly IInProcessTeventPublisher _inProcessTeventPublisher = inProcessTeventPublisher;
 
    void ITeventStoreTeventPublisher.Publish(ITaggregateTevent tevent, IScopeResolver scopeResolver)
    {
       TessageInspector.AssertValidToSendRemote(tevent);
-      _handlerRegistry.DispatchTevent(tevent, scopeResolver);
+      _inProcessTeventPublisher.Publish(tevent, scopeResolver);
       _outbox.PublishTransactionally(tevent);
    }
 }

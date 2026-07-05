@@ -1,6 +1,4 @@
-using Compze.Abstractions.Tessaging.Validation;
 using Compze.Tessaging.Teventive.TeventStore.Internal;
-using Compze.Tessaging.Implementation.TessageHandling.Abstractions;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Teventive.Taggregates.Tevents.Public;
@@ -14,18 +12,16 @@ public static class InMemoryTeventStoreTeventPublisherRegistrar
       => registrar.Register(Implementation.InMemoryTeventStoreTeventPublisher.RegisterWith);
 }
 
-[UsedImplicitly] class InMemoryTeventStoreTeventPublisher(ITessageHandlerRegistry handlerRegistry) : ITeventStoreTeventPublisher
+///<summary>The no-bus <see cref="ITeventStoreTeventPublisher"/>: a taggregate's committed tevents are delivered only to this process's handlers, via <see cref="IInProcessTeventPublisher"/>.</summary>
+[UsedImplicitly] class InMemoryTeventStoreTeventPublisher(IInProcessTeventPublisher inProcessTeventPublisher) : ITeventStoreTeventPublisher
 {
    public static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(Singleton.For<ITeventStoreTeventPublisher>()
-                                     .CreatedBy((ITessageHandlerRegistry tessageHandlerRegistry)
-                                                   => new InMemoryTeventStoreTeventPublisher(tessageHandlerRegistry)));
+                                     .CreatedBy((IInProcessTeventPublisher inProcessTeventPublisher)
+                                                   => new InMemoryTeventStoreTeventPublisher(inProcessTeventPublisher)));
 
-   readonly ITessageHandlerRegistry _handlerRegistry = handlerRegistry;
+   readonly IInProcessTeventPublisher _inProcessTeventPublisher = inProcessTeventPublisher;
 
    void ITeventStoreTeventPublisher.Publish(ITaggregateTevent tevent, IScopeResolver scopeResolver)
-   {
-      TessageInspector.AssertValidToSendRemote(tevent);
-      _handlerRegistry.DispatchTevent(tevent, scopeResolver);
-   }
+      => _inProcessTeventPublisher.Publish(tevent, scopeResolver);
 }
