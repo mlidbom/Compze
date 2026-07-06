@@ -16,8 +16,7 @@ description: >-
 
 # At the end of a development task
 
-When you complete a development prompt and feel about ready to commit.
-
 * Stage all your changes in git.
 * Instruct a general subagent to run this skill on the code that is staged.
 
+NOTE: If the development task you just completed is itself a form of refactoring towards compliance with the code standards do NOT run the subagent.
