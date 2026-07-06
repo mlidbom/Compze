@@ -1,8 +1,12 @@
 # Changelog
 
-All notable changes to Compze.Tessaging.Teventive.TeventStore will be documented in this file.
+All notable changes to Compze.Teventive.TeventStore will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
+
+## 0.3.1-alpha
+
+- Updated to stay compatible with Compze.Teventive 0.3.1-alpha: registration goes through `ITeventSubscriber`, and the query model base classes accept an optional `TeventDispatcherConfig`.
 
 ## 0.3.0-alpha
 

@@ -2,7 +2,7 @@
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
-    <Version>0.3.0-alpha</Version>
+    <Version>0.3.1-alpha</Version>
     <!-- TODO: Remove once all public API members have XML documentation comments -->
     <NoWarn>CS1591</NoWarn>
     <Description>Abstractions and ports for the Compze Teventive event store: the store API, its SQL-layer, tevent-publisher and serializer ports, query-model generator and migration contracts.</Description>
