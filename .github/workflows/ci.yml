@@ -67,7 +67,7 @@ jobs:
       COMPOSABLE_MSSQL_DATABASE_POOL_MASTER_CONNECTIONSTRING: ${{ matrix.persistence == 'MsSql' && 'Data Source=localhost;Initial Catalog=master;User Id=sa;Password=Development!1;TrustServerCertificate=True;' || '' }}
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Build and Test
         uses: ./.github/actions/build-and-test
