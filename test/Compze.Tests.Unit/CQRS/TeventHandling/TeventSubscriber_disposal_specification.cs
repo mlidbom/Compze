@@ -147,7 +147,7 @@ public static class TeventSubscriber_disposal_specification
          _selfDisposingSubscriber = _dispatcher.Register().For<IUserTevent.IUserRegistered>(_ =>
          {
             _selfDisposingHandlerCalls++;
-            _selfDisposingSubscriber.Dispose();
+            _selfDisposingSubscriber?.Dispose();
          });
          _dispatcher.Register().For<IUserTevent.IUserRegistered>(_ => _otherHandlerCalls++);
       }
