@@ -34,7 +34,7 @@ public abstract class Tentity<TParent,
    TTentityId _id;
    public TTentityId Id => _id._assert().NotDefault();
 
-   protected Tentity(TParent taggregate) : base(taggregate, false)
+   protected Tentity(TParent taggregate, TeventDispatcherConfig? teventAppliersDispatcherConfig = null) : base(taggregate, false, teventAppliersDispatcherConfig)
    {
       RegisterTeventAppliers()
         .For<TTentityCreatedTevent>(e => _id = IdGetterSetter.GetId(e));

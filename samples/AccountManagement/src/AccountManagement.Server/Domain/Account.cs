@@ -4,6 +4,7 @@ using AccountManagement.Domain.Registration;
 using AccountManagement.Domain.Tevents;
 using CommunityToolkit.Diagnostics;
 using Compze.Internals.Logging;
+using Compze.Teventive;
 using Compze.Teventive.Taggregates.BaseClasses;
 using Compze.Typermedia;
 
@@ -20,15 +21,13 @@ class Account : Taggregate<Account, IAccountTevent, AccountTevent, IAccountTeven
 
    //No public constructors please. Taggregates are created through domain verbs.
    //Expose named factory methods that ensure the instance is valid instead. See register method below.
-   Account()
+   Account() : base(TeventDispatcherConfig.Default.IgnoreUnhandled<IAccountTevent.LoggedIn, IAccountTevent.LoginFailed>()) //Login tevents change no account state, so they have no appliers.
    {
       //Maintain correct state as tevents are raised or read from the store.
       //Use property updated tevents whenever possible. Changes to public state should be represented by property updated tevents.
       RegisterTeventAppliers()
         .For<IAccountTevent.PropertyUpdated.Email>(e => Email = e.Email)
-        .For<IAccountTevent.PropertyUpdated.Password>(e => Password = e.Password)
-        .IgnoreUnhandled<IAccountTevent.LoggedIn>()
-        .IgnoreUnhandled<IAccountTevent.LoginFailed>();
+        .For<IAccountTevent.PropertyUpdated.Password>(e => Password = e.Password);
    }
 
    //Ensure that the state of the instance is sane. If not throw an exception.

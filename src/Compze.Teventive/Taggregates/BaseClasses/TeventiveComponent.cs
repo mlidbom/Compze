@@ -19,7 +19,7 @@ public abstract class TeventiveComponent<TParent,
 {
     static TeventiveComponent() => TaggregateTypeValidator<TComponent, TComponentTeventImplementation, TComponentTevent>.AssertStaticStructureIsValid();
 
-    readonly IMutableTeventDispatcher<TComponentTevent> _teventAppliersTeventDispatcher = IMutableTeventDispatcher<TComponentTevent>.New();
+    readonly IMutableTeventDispatcher<TComponentTevent> _teventAppliersDispatcher;
 
     TParent _parent;
 
@@ -29,10 +29,11 @@ public abstract class TeventiveComponent<TParent,
     ITeventHandlerRegistrar<TComponentTevent> ITeventiveInternals<TComponentTevent, TComponentTeventImplementation>.RegisterTeventAppliersInternal() => RegisterTeventAppliers();
 #pragma warning restore CA1033 //These method should NOT clutter the public interface of this class they are unsafe.
 
-   void ApplyTevent(TComponentTevent tevent) => _teventAppliersTeventDispatcher.Dispatch(tevent);
+   void ApplyTevent(TComponentTevent tevent) => _teventAppliersDispatcher.Dispatch(tevent);
 
-    protected TeventiveComponent(TParent parent, bool registerTeventAppliers = true)
+    protected TeventiveComponent(TParent parent, bool registerTeventAppliers = true, TeventDispatcherConfig? teventAppliersDispatcherConfig = null)
     {
+        _teventAppliersDispatcher = IMutableTeventDispatcher<TComponentTevent>.New(teventAppliersDispatcherConfig);
         _parent = parent;
         if(registerTeventAppliers)
         {
@@ -60,7 +61,7 @@ public abstract class TeventiveComponent<TParent,
        where TEcComponentTeventImplementation : TComponentTeventImplementation, TEcComponentTevent
        where TEcComponent : Component<TEcComponent, TEcComponentTeventImplementation, TEcComponentTevent>;
 
-    protected ITeventHandlerRegistrar<TComponentTevent> RegisterTeventAppliers() => _teventAppliersTeventDispatcher.Register();
+    protected ITeventHandlerRegistrar<TComponentTevent> RegisterTeventAppliers() => _teventAppliersDispatcher.Register();
 
     public abstract class Entity<TEntity,
                                  TEntityId,

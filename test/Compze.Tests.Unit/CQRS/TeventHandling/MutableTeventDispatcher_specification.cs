@@ -13,7 +13,9 @@ public static class MutableTeventDispatcher_specification
 {
    public class Given_an_instance
    {
-      readonly IMutableTeventDispatcher<IUserTevent> _dispatcher = IMutableTeventDispatcher<IUserTevent>.New();
+      readonly IMutableTeventDispatcher<IUserTevent> _dispatcher;
+
+      protected Given_an_instance(TeventDispatcherConfig? dispatcherConfig = null) => _dispatcher = IMutableTeventDispatcher<IUserTevent>.New(dispatcherConfig);
 
       public class with_2_BeforeHandlers_2_AfterHandlers_and_1_handler_each_per_4_specific_tevent_type : Given_an_instance
       {
@@ -28,9 +30,9 @@ public static class MutableTeventDispatcher_specification
          int? AfterHandlers2CallOrder { get; set; }
 
          public with_2_BeforeHandlers_2_AfterHandlers_and_1_handler_each_per_4_specific_tevent_type()
+            : base(TeventDispatcherConfig.Default.IgnoreUnhandled<IUserTevent.IIgnoredUserTevent>())
          {
             _dispatcher.Register()
-                       .IgnoreUnhandled<IUserTevent.IIgnoredUserTevent>()
                        .BeforeHandlers(_ => BeforeHandlers1CallOrder = ++CallsMade)
                        .BeforeHandlers(_ => BeforeHandlers2CallOrder = ++CallsMade)
                        .AfterHandlers(_ => AfterHandlers1CallOrder = ++CallsMade)

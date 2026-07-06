@@ -20,7 +20,8 @@ public abstract partial class SelfGeneratingQueryModel<TQueryModel, TTaggregateT
          protected NestedComponent(TComponent parent) : base(parent.RegisterTeventAppliers(), registerTeventAppliers: true) {}
 
          protected NestedComponent(ITeventHandlerRegistrar<TNestedComponentTevent> appliersRegistrar,
-                                   bool registerTeventAppliers) : base(appliersRegistrar, registerTeventAppliers) {}
+                                   bool registerTeventAppliers,
+                                   TeventDispatcherConfig? teventAppliersDispatcherConfig = null) : base(appliersRegistrar, registerTeventAppliers, teventAppliersDispatcherConfig) {}
       }
    }
 }

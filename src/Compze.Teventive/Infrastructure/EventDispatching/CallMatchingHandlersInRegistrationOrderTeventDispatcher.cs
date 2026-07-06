@@ -17,12 +17,22 @@ partial class CallMatchingHandlersInRegistrationOrderTeventDispatcher<TTevent> :
    readonly List<RegisteredHandler> _handlers = [];
    readonly List<Action<object>> _runBeforeHandlers = [];
    readonly List<Action<object>> _runAfterHandlers = [];
-   readonly HashSet<Type> _ignoredTevents = [];
+   readonly bool _ignoreAllUnhandled;
+   readonly IReadOnlySet<Type> _ignoredTevents;
    int _totalHandlers;
    Dictionary<Type, Action<ITevent>[]> _typeToHandlerCache = new();
    int _cachedTotalHandlers;
    // ReSharper disable once StaticMemberInGenericType
    static readonly Action<ITevent>[] NullHandlerList = [];
+
+   internal CallMatchingHandlersInRegistrationOrderTeventDispatcher(TeventDispatcherConfig config)
+   {
+      _ignoreAllUnhandled = config.Options.HasFlag(TeventDispatcherOptions.IgnoreAllUnhandled);
+      _ignoredTevents = config.IgnoredUnhandled.SelectMany(TeventTypeAndItsWrapperTeventType).ToHashSet();
+   }
+
+   ///<summary>Dispatching wraps tevents in <see cref="IPublisherIdentifyingTevent{TTevent}"/> implementations, so ignoring a tevent type must also ignore its wrapped form.</summary>
+   static Type[] TeventTypeAndItsWrapperTeventType(Type teventType) => [teventType, typeof(IPublisherIdentifyingTevent<>).MakeGenericType(teventType)];
 
    public ITeventHandlerRegistrar<TTevent> Register() => new RegistrationBuilder(this);
 
@@ -57,20 +67,19 @@ partial class CallMatchingHandlersInRegistrationOrderTeventDispatcher<TTevent> :
       var result = new List<Action<ITevent>>();
       var hasFoundHandler = false;
 
-      // ReSharper disable once ForeachCanBePartlyConvertedToTueryUsingAnotherGetEnumerator
+      // ReSharper disable once ForeachCanBePartlyConvertedToQueryUsingAnotherGetEnumerator LINQ would enumerate through the interface instead of List's struct enumerator in this performance-sensitive path.
       foreach(var registeredHandler in _handlers)
       {
          var handler = registeredHandler.TryCreateHandlerFor(type);
-         if(handler != null)
-         {
-            if(!hasFoundHandler)
-            {
-               result.AddRange(_runBeforeHandlers);
-               hasFoundHandler = true;
-            }
+         if(handler == null) continue;
 
-            result.Add(handler);
+         if(!hasFoundHandler)
+         {
+            result.AddRange(_runBeforeHandlers);
+            hasFoundHandler = true;
          }
+
+         result.Add(handler);
       }
 
       if(hasFoundHandler)
@@ -78,7 +87,7 @@ partial class CallMatchingHandlersInRegistrationOrderTeventDispatcher<TTevent> :
          result.AddRange(_runAfterHandlers);
       } else
       {
-         if(validateHandlerExists && !_ignoredTevents.Any(ignoredTeventType => ignoredTeventType.IsAssignableFrom(type)))
+         if(validateHandlerExists && !MayGoUnhandled(type))
          {
             throw new TeventUnhandledException(GetType(), type);
          }
@@ -88,4 +97,6 @@ partial class CallMatchingHandlersInRegistrationOrderTeventDispatcher<TTevent> :
 
       return _typeToHandlerCache[type] = result.ToArray();
    }
+
+   bool MayGoUnhandled(Type teventType) => _ignoreAllUnhandled || _ignoredTevents.Any(ignoredTeventType => ignoredTeventType.IsAssignableFrom(teventType));
 }

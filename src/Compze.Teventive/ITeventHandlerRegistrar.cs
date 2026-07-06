@@ -22,9 +22,6 @@ public interface ITeventHandlerRegistrar<in TTevent>
 
    ITeventHandlerRegistrar<TTevent> BeforeHandlers<THandledTevent>(Action<THandledTevent> runBeforeHandlers) where THandledTevent : TTevent;
    ITeventHandlerRegistrar<TTevent> AfterHandlers<THandledTevent>(Action<THandledTevent> runAfterHandlers) where THandledTevent : TTevent;
-   ITeventHandlerRegistrar<TTevent> IgnoreUnhandled<TIgnored>() where TIgnored : TTevent;
-
-   ITeventHandlerRegistrar<TTevent> IgnoreAllUnhandled() => IgnoreUnhandled<TTevent>();
 }
 
 public static class TeventHandlerRegistrar

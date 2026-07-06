@@ -15,6 +15,7 @@ using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Abstractions.Public;
 using Compze.Must;
+using Compze.Teventive;
 using Compze.Teventive.Taggregates.BaseClasses;
 using Compze.Teventive.Taggregates.Tevents.Public;
 using Compze.Typermedia;
@@ -142,18 +143,14 @@ public class Experiment_with_unifying_tevents_and_tommands_test : UniversalTestB
          return registrar;
       }
 
-      UserRegistrarTaggregate()
-         => RegisterTeventAppliers()
-           .IgnoreUnhandled<IUserRegistrarTevent>();
+      UserRegistrarTaggregate() : base(TeventDispatcherConfig.IgnoreAllUnhandled) {} //This test taggregate maintains no state, so no tevent has an applier.
 
       internal static RegisterUserResult RegisterUser(IRemoteTypermediaNavigator navigator) => UserRegistrarTommand.RegisterUserTypermediaTommand.Create().PostOn(navigator);
    }
 
    public class UserTaggregate : Taggregate<UserTaggregate, IUserTevent, UserTevent, IUserTevent<IUserTevent>, UserTevent<UserTevent>>
    {
-      UserTaggregate()
-         => RegisterTeventAppliers()
-           .IgnoreUnhandled<IUserTevent>();
+      UserTaggregate() : base(TeventDispatcherConfig.IgnoreAllUnhandled) {} //This test taggregate maintains no state, so no tevent has an applier.
 
       internal static UserTaggregate Register(UserRegistrarTommand.RegisterUserTypermediaTommand typermediaTommand)
       {

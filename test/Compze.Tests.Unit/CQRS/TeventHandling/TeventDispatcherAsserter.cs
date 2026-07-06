@@ -25,7 +25,6 @@ static class TeventDispatcherAsserter
          where THandlerTevent : TDispatcherRootTevent
       {
          var callCount = 0;
-         _dispatcher.Register().IgnoreAllUnhandled();
          _dispatcher.Register().For((THandlerTevent _) => callCount++);
          _dispatcher.Dispatch(_tevent);
          callCount.Must().Be(1, "Tessage was not dispatched to handler.");
@@ -35,7 +34,6 @@ static class TeventDispatcherAsserter
          where THandlerTevent : ITevent
       {
          var callCount = 0;
-         _dispatcher.Register().IgnoreAllUnhandled();
          _dispatcher.Register().ForGenericTevent((THandlerTevent _) => callCount++);
          _dispatcher.Dispatch(_tevent);
          callCount.Must().Be(1, "Tessage was not dispatched to handler.");
@@ -45,7 +43,6 @@ static class TeventDispatcherAsserter
          where THandlerTevent : IPublisherIdentifyingTevent<TDispatcherRootTevent>
       {
          var callCount = 0;
-         _dispatcher.Register().IgnoreAllUnhandled();
          _dispatcher.Register().ForWrapped((THandlerTevent _) => callCount++);
          _dispatcher.Dispatch(_tevent);
          callCount.Must().Be(1, "Tessage was not dispatched to handler.");
@@ -55,7 +52,6 @@ static class TeventDispatcherAsserter
          where THandlerTevent : IPublisherIdentifyingTevent<ITevent>
       {
          var callCount = 0;
-         _dispatcher.Register().IgnoreAllUnhandled();
          _dispatcher.Register().ForWrappedGeneric((THandlerTevent _) => callCount++);
          _dispatcher.Dispatch(_tevent);
          callCount.Must().Be(1, "Tessage was not dispatched to handler.");
@@ -65,7 +61,6 @@ static class TeventDispatcherAsserter
          where THandlerTevent : IPublisherIdentifyingTevent<TDispatcherRootTevent>
       {
          var callCount = 0;
-         _dispatcher.Register().IgnoreAllUnhandled();
          _dispatcher.Register().ForWrapped((THandlerTevent _) => callCount++);
          _dispatcher.Dispatch(_tevent);
          callCount.Must().Be(0, "Tessage was dispatched to handler.");
@@ -82,7 +77,6 @@ static class TeventDispatcherAsserter
          where THandlerTevent : TDispatcherRootTevent
       {
          var callCount = 0;
-         _dispatcher.Register().IgnoreAllUnhandled();
          _dispatcher.Register().For((THandlerTevent _) => callCount++);
          _dispatcher.Dispatch(_tevent);
          callCount.Must().Be(1, "Tessage was not dispatched to handler.");
@@ -92,7 +86,6 @@ static class TeventDispatcherAsserter
          where THandlerTevent : ITevent
       {
          var callCount = 0;
-         _dispatcher.Register().IgnoreAllUnhandled();
          _dispatcher.Register().ForGenericTevent((THandlerTevent _) => callCount++);
          _dispatcher.Dispatch(_tevent);
          callCount.Must().Be(1, "Tessage was not dispatched to handler.");
@@ -102,7 +95,6 @@ static class TeventDispatcherAsserter
          where THandlerTevent : IPublisherIdentifyingTevent<TDispatcherRootTevent>
       {
          var callCount = 0;
-         _dispatcher.Register().IgnoreAllUnhandled();
          _dispatcher.Register().ForWrapped((THandlerTevent _) => callCount++);
          _dispatcher.Dispatch(_tevent);
          callCount.Must().Be(1, "Tessage was not dispatched to handler.");
@@ -112,7 +104,6 @@ static class TeventDispatcherAsserter
          where THandlerTevent : IPublisherIdentifyingTevent<ITevent>
       {
          var callCount = 0;
-         _dispatcher.Register().IgnoreAllUnhandled();
          _dispatcher.Register().ForWrappedGeneric((THandlerTevent _) => callCount++);
          _dispatcher.Dispatch(_tevent);
          callCount.Must().Be(1, "Tessage was not dispatched to handler.");
@@ -122,7 +113,6 @@ static class TeventDispatcherAsserter
          where THandlerTevent : IPublisherIdentifyingTevent<TDispatcherRootTevent>
       {
          var callCount = 0;
-         _dispatcher.Register().IgnoreAllUnhandled();
          _dispatcher.Register().ForWrapped((THandlerTevent _) => callCount++);
          _dispatcher.Dispatch(_tevent);
          callCount.Must().Be(0, "Tessage was dispatched to handler.");

@@ -27,11 +27,8 @@ public abstract class TeventiveRemovableEntity<TParent,
 {
     static TeventiveRemovableEntity() => TaggregateTypeValidator<TEntity, TEntityTeventImplementation, TEntityTevent>.AssertStaticStructureIsValid();
 
-    protected TeventiveRemovableEntity(TParent taggregate) : base(taggregate)
-    {
-        RegisterTeventAppliers()
-           .IgnoreUnhandled<TEntityRemovedTevent>();
-    }
+    protected TeventiveRemovableEntity(TParent taggregate)
+       : base(taggregate, TeventDispatcherConfig.Default.IgnoreUnhandled<TEntityRemovedTevent>()) {}
 
     public new static ICollectionManager CreateSelfManagingCollection(TParent parent)
         => new CollectionManager(parent);

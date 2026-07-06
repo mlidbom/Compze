@@ -27,23 +27,19 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
                                           .WithArgument(tevent.GetType())
                                           .Invoke(tevent);
 
-   //Yes null. Id should be assigned by an action, and it should be obvious that the taggregate in invalid until that happens. It's a bit ugly to declare Id as non-null, but a null value will never escape the property due to contract validation
-   protected Taggregate() : this(null!)
-   {
-   }
-
-   Taggregate(TaggregateId id) : base(id)
+   //Yes null id passed to base. Id should be assigned by an action, and it should be obvious that the taggregate in invalid until that happens. It's a bit ugly to declare Id as non-null, but a null value will never escape the property due to contract validation
+   protected Taggregate(TeventDispatcherConfig? teventAppliersDispatcherConfig = null) : base(null!)
    {
       Argument.Assert(typeof(TTaggregateTevent).IsInterface);
-      _teventHandlersDispatcher.Register().IgnoreUnhandled<TTaggregateTevent>();
+      _teventAppliersDispatcher = IMutableTeventDispatcher<TTaggregateTevent>.New(teventAppliersDispatcherConfig);
    }
 
    EntityId IEntity.Id => Id;
    public override TaggregateId Id => (TaggregateId)base.Id;
 
    readonly List<ITaggregateTevent> _unCommittedTevents = [];
-   readonly IMutableTeventDispatcher<TTaggregateTevent> _teventAppliersDispatcher = IMutableTeventDispatcher<TTaggregateTevent>.New();
-   readonly IMutableTeventDispatcher<TTaggregateTevent> _teventHandlersDispatcher = IMutableTeventDispatcher<TTaggregateTevent>.New();
+   readonly IMutableTeventDispatcher<TTaggregateTevent> _teventAppliersDispatcher;
+   readonly IMutableTeventDispatcher<TTaggregateTevent> _teventHandlersDispatcher = IMutableTeventDispatcher<TTaggregateTevent>.New(TeventDispatcherConfig.IgnoreAllUnhandled); //Registering tevent handlers is optional, unlike tevent appliers.
 
    int _reentrancyLevel;
    bool _applyingTevents;

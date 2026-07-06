@@ -56,13 +56,6 @@ partial class CallMatchingHandlersInRegistrationOrderTeventDispatcher<TTevent> w
       {
          //Urgent: fix this
          _owner._runAfterHandlers.Add(e => runAfterHandlers(((IPublisherIdentifyingTevent<TTevent>)e).Tevent));
-         return this;
-      }
-
-      RegistrationBuilder IgnoreUnhandled<T>() where T : ITevent
-      {
-         _owner._ignoredTevents.Add(typeof(T));                //Urgent: Remove?
-         _owner._ignoredTevents.Add(typeof(IPublisherIdentifyingTevent<T>)); //urgent: Is this correct?
          _owner._totalHandlers++;
          return this;
       }
@@ -70,7 +63,6 @@ partial class CallMatchingHandlersInRegistrationOrderTeventDispatcher<TTevent> w
       ITeventHandlerRegistrar<TTevent> ITeventHandlerRegistrar<TTevent>.ForGenericTevent<THandledTevent>(Action<THandledTevent> handler) => ForGenericTevent(handler);
       ITeventHandlerRegistrar<TTevent> ITeventHandlerRegistrar<TTevent>.BeforeHandlers<THandledTevent>(Action<THandledTevent> runBeforeHandlers) => BeforeHandlers(e => runBeforeHandlers((THandledTevent)e));
       ITeventHandlerRegistrar<TTevent> ITeventHandlerRegistrar<TTevent>.AfterHandlers<THandledTevent>(Action<THandledTevent> runAfterHandlers) => AfterHandlers(e => runAfterHandlers((THandledTevent)e));
-      ITeventHandlerRegistrar<TTevent> ITeventHandlerRegistrar<TTevent>.IgnoreUnhandled<THandledTevent>() => IgnoreUnhandled<THandledTevent>();
       ITeventHandlerRegistrar<TTevent> ITeventHandlerRegistrar<TTevent>.For<THandledTevent>(Action<THandledTevent> handler) => For(handler);
       ITeventHandlerRegistrar<TTevent> ITeventHandlerRegistrar<TTevent>.ForWrapped<TWrapperTevent>(Action<TWrapperTevent> handler) => ForWrapped(handler);
       ITeventHandlerRegistrar<TTevent> ITeventHandlerRegistrar<TTevent>.ForWrappedGeneric<TWrapperTevent>(Action<TWrapperTevent> handler) => ForWrappedGeneric(handler);

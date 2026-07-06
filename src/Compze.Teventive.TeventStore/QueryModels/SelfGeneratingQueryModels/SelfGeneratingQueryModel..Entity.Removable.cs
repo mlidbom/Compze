@@ -16,11 +16,7 @@ public abstract partial class SelfGeneratingQueryModel<TQueryModel, TTaggregateT
       where TEntity : Entity<TEntity, TEntityId, TEntityTevent, TEntityCreatedTevent, TEntityRemovedTevent, TTeventEntityIdGetter>
       where TTeventEntityIdGetter : IGetTaggregateEntityTeventEntityId<TEntityTevent, TEntityId>
    {
-      protected Entity(TQueryModel queryModel) : base(queryModel)
-      {
-         RegisterTeventAppliers()
-           .IgnoreUnhandled<TEntityRemovedTevent>();
-      }
+      protected Entity(TQueryModel queryModel) : base(queryModel, TeventDispatcherConfig.Default.IgnoreUnhandled<TEntityRemovedTevent>()) {}
 
       public new static CollectionManager CreateSelfManagingCollection(TQueryModel parent) => new(parent: parent, appliersRegistrar: parent.RegisterTeventAppliers());
 

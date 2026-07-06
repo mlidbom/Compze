@@ -8,7 +8,7 @@ namespace Compze.Tests.Unit.CQRS.TeventHandling;
 
 public class MutableTeventDispatcher_WrappedTeventsTests : UniversalTestBase
 {
-   readonly IMutableTeventDispatcher<IUserTevent> _dispatcher = IMutableTeventDispatcher<IUserTevent>.New();
+   readonly IMutableTeventDispatcher<IUserTevent> _dispatcher = IMutableTeventDispatcher<IUserTevent>.New(TeventDispatcherConfig.IgnoreAllUnhandled); //These specifications assert routing, not unhandled-tevent validation, so no tevent is required to have a matching handler.
 
    public class Publishing_UserCreatedTevent : MutableTeventDispatcher_WrappedTeventsTests
    {

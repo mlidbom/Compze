@@ -1,6 +1,7 @@
 using Compze.Abstractions.Public;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Tessaging.Teventive.TeventStore.Typermedia;
+using Compze.Teventive;
 using Compze.Teventive.Taggregates.BaseClasses;
 using Compze.Teventive.Taggregates.Tevents.Public;
 using Compze.Typermedia;
@@ -59,11 +60,7 @@ public class MyCreateTaggregateTommand : TessageTypes.Remotable.AtMostOnce.AtMos
 
 public class MyTaggregate : Taggregate<MyTaggregate, IMyTaggregateTevent, MyTaggregateTevent, IMyTaggregateTevent<IMyTaggregateTevent>, MyTaggregateTevent<MyTaggregateTevent>>
 {
-   MyTaggregate()
-   {
-      RegisterTeventAppliers()
-        .IgnoreUnhandled<IMyTaggregateTevent>();
-   }
+   MyTaggregate() : base(TeventDispatcherConfig.IgnoreAllUnhandled) {} //This test taggregate maintains no state, so no tevent has an applier.
 
    internal void Update() => Publish(new MyTaggregateTevent.Updated());
 

@@ -12,5 +12,6 @@ public interface IMutableTeventDispatcher<in TTevent> : ITeventDispatcher<TTeven
    ///<summary>Returns true if this dispatcher has any handlers that would handle the given tevent.</summary>
    bool Handles(TTevent tevent);
 
-   static IMutableTeventDispatcher<TTevent> New() => new CallMatchingHandlersInRegistrationOrderTeventDispatcher<TTevent>();
+   ///<summary>Creates a dispatcher configured by <paramref name="config"/>, or by <see cref="TeventDispatcherConfig.Default"/> when none are supplied.</summary>
+   static IMutableTeventDispatcher<TTevent> New(TeventDispatcherConfig? config = null) => new CallMatchingHandlersInRegistrationOrderTeventDispatcher<TTevent>(config ?? TeventDispatcherConfig.Default);
 }

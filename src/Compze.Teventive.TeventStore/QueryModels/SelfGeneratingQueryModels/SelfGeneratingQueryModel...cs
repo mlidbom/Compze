@@ -10,12 +10,16 @@ public partial class SelfGeneratingQueryModel<TQueryModel, TTaggregateTevent> : 
    where TQueryModel : SelfGeneratingQueryModel<TQueryModel, TTaggregateTevent>
    where TTaggregateTevent : class, ITaggregateTevent
 {
-   //Yes empty. Id should be assigned by an action, and it should be obvious that the taggregate in invalid until that happens
-   protected SelfGeneratingQueryModel() : base(null!) => Contract.Argument.Assert(typeof(TTaggregateTevent).IsInterface);
+   //Yes null id passed to base. Id should be assigned by an action, and it should be obvious that the taggregate in invalid until that happens
+   protected SelfGeneratingQueryModel(TeventDispatcherConfig? teventAppliersDispatcherConfig = null) : base(null!)
+   {
+      Contract.Argument.Assert(typeof(TTaggregateTevent).IsInterface);
+      _teventAppliersDispatcher = IMutableTeventDispatcher<TTaggregateTevent>.New(teventAppliersDispatcherConfig);
+   }
 
-   readonly IMutableTeventDispatcher<TTaggregateTevent> _teventDispatcher = IMutableTeventDispatcher<TTaggregateTevent>.New();
+   readonly IMutableTeventDispatcher<TTaggregateTevent> _teventAppliersDispatcher;
 
-   protected ITeventHandlerRegistrar<TTaggregateTevent> RegisterTeventAppliers() => _teventDispatcher.Register();
+   protected ITeventHandlerRegistrar<TTaggregateTevent> RegisterTeventAppliers() => _teventAppliersDispatcher.Register();
 
    public void ApplyTevent(TTaggregateTevent theTevent)
    {
@@ -27,10 +31,10 @@ public partial class SelfGeneratingQueryModel<TQueryModel, TTaggregateTevent> : 
       }
 
       Version = theTevent.TaggregateVersion;
-      _teventDispatcher.Dispatch(theTevent);
+      _teventAppliersDispatcher.Dispatch(theTevent);
    }
 
-   public bool HandlesTevent(TTaggregateTevent tevent) => _teventDispatcher.Handles(tevent);
+   public bool HandlesTevent(TTaggregateTevent tevent) => _teventAppliersDispatcher.Handles(tevent);
 
    public void LoadFromHistory(IEnumerable<ITaggregateTevent> history)
    {

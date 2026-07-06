@@ -11,9 +11,9 @@ public abstract partial class SelfGeneratingQueryModel<TQueryModel,  TTaggregate
       where TComponentTevent : class, TTaggregateTevent
       where TComponent : Component<TComponent, TComponentTevent>
    {
-      readonly IMutableTeventDispatcher<TComponentTevent> _teventAppliersTeventDispatcher = IMutableTeventDispatcher<TComponentTevent>.New();
+      readonly IMutableTeventDispatcher<TComponentTevent> _teventAppliersDispatcher;
 
-      void ApplyTevent(TComponentTevent tevent) => _teventAppliersTeventDispatcher.Dispatch(tevent);
+      void ApplyTevent(TComponentTevent tevent) => _teventAppliersDispatcher.Dispatch(tevent);
 
       protected Component(TQueryModel queryModel)
          : this(
@@ -21,8 +21,9 @@ public abstract partial class SelfGeneratingQueryModel<TQueryModel,  TTaggregate
             registerTeventAppliers: true)
       {}
 
-      protected Component(ITeventHandlerRegistrar<TComponentTevent> appliersRegistrar, bool registerTeventAppliers)
+      protected Component(ITeventHandlerRegistrar<TComponentTevent> appliersRegistrar, bool registerTeventAppliers, TeventDispatcherConfig? teventAppliersDispatcherConfig = null)
       {
+         _teventAppliersDispatcher = IMutableTeventDispatcher<TComponentTevent>.New(teventAppliersDispatcherConfig);
          if(registerTeventAppliers)
          {
             appliersRegistrar
@@ -30,6 +31,6 @@ public abstract partial class SelfGeneratingQueryModel<TQueryModel,  TTaggregate
          }
       }
 
-      protected ITeventHandlerRegistrar<TComponentTevent> RegisterTeventAppliers() => _teventAppliersTeventDispatcher.Register();
+      protected ITeventHandlerRegistrar<TComponentTevent> RegisterTeventAppliers() => _teventAppliersDispatcher.Register();
    }
 }
