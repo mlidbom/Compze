@@ -8,8 +8,8 @@ using Compze.Teventive.Taggregates.Tevents.Public;
 namespace Compze.Teventive.Infrastructure.EventDispatching;
 
 /// <summary>
-/// Calls all matching handlers in the order they were registered when an tevent is Dispatched.
-/// Handlers should be registered using the RegisterHandlers method in the constructor of the inheritor.
+/// Calls all matching handlers in the order they were registered when a tevent is Dispatched.<br/>
+/// Handlers are registered through the <see cref="ITeventSubscriber{TTevent}"/> that <see cref="Register"/> returns; disposing that subscriber removes every subscription made through it.
 /// </summary>
 partial class CallMatchingHandlersInRegistrationOrderTeventDispatcher<TTevent> : IMutableTeventDispatcher<TTevent>
    where TTevent : class, ITevent
@@ -19,9 +19,9 @@ partial class CallMatchingHandlersInRegistrationOrderTeventDispatcher<TTevent> :
    readonly List<Action<object>> _runAfterHandlers = [];
    readonly bool _ignoreAllUnhandled;
    readonly IReadOnlySet<Type> _ignoredTevents;
-   int _totalHandlers;
+   int _registrationVersion;
    Dictionary<Type, Action<ITevent>[]> _typeToHandlerCache = new();
-   int _cachedTotalHandlers;
+   int _cachedRegistrationVersion;
    // ReSharper disable once StaticMemberInGenericType
    static readonly Action<ITevent>[] NullHandlerList = [];
 
@@ -53,9 +53,9 @@ partial class CallMatchingHandlersInRegistrationOrderTeventDispatcher<TTevent> :
 
    Action<ITevent>[] GetHandlers(Type type, bool validateHandlerExists = true)
    {
-      if(_cachedTotalHandlers != _totalHandlers)
+      if(_cachedRegistrationVersion != _registrationVersion)
       {
-         _cachedTotalHandlers = _totalHandlers;
+         _cachedRegistrationVersion = _registrationVersion;
          _typeToHandlerCache = new Dictionary<Type, Action<ITevent>[]>();
       }
 

@@ -24,10 +24,10 @@ public abstract partial class SelfGeneratingQueryModel<TQueryModel, TTaggregateT
 
          protected QueryModelEntityCollection<TEntity, TEntityId> ManagedEntities { get; }
 
-         protected QueryModelEntityCollectionManager(TParent parent, ITeventSubscriber<TEntityTevent> appliersRegistrar)
+         protected QueryModelEntityCollectionManager(TParent parent, ITeventSubscriber<TEntityTevent> appliersSubscriber)
          {
             ManagedEntities = [];
-            appliersRegistrar
+            appliersSubscriber
               .For<TEntityCreatedTevent>(
                   e =>
                   {

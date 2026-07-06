@@ -19,9 +19,9 @@ public abstract partial class SelfGeneratingQueryModel<TQueryModel, TTaggregateT
       {
          protected NestedComponent(TComponent parent) : base(parent.RegisterTeventAppliers(), registerTeventAppliers: true) {}
 
-         protected NestedComponent(ITeventSubscriber<TNestedComponentTevent> appliersRegistrar,
+         protected NestedComponent(ITeventSubscriber<TNestedComponentTevent> appliersSubscriber,
                                    bool registerTeventAppliers,
-                                   TeventDispatcherConfig? teventAppliersDispatcherConfig = null) : base(appliersRegistrar, registerTeventAppliers, teventAppliersDispatcherConfig) {}
+                                   TeventDispatcherConfig? teventAppliersDispatcherConfig = null) : base(appliersSubscriber, registerTeventAppliers, teventAppliersDispatcherConfig) {}
       }
    }
 }

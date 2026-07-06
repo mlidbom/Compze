@@ -6,7 +6,8 @@ namespace Compze.Teventive;
 public interface IMutableTeventDispatcher<in TTevent> : ITeventDispatcher<TTevent>
    where TTevent : class, ITevent
 {
-   ///<summary>Registers an <see cref="ITeventSubscriber{TTevent}"/> on the <see cref="IMutableTeventDispatcher{TTevent}"/>. Dispose the <see cref="ITeventSubscriber{TTevent}"/> to remove its subscription.</summary>
+   ///<summary>Creates a new <see cref="ITeventSubscriber{TTevent}"/> through which handlers subscribe to this dispatcher's tevents.<br/>
+   /// Dispose the subscriber to remove every subscription made through it.</summary>
    ITeventSubscriber<TTevent> Register();
 
    ///<summary>Returns true if this dispatcher has any handlers that would handle the given tevent.</summary>

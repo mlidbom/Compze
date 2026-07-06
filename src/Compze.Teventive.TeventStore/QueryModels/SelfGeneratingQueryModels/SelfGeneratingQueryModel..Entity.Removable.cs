@@ -18,11 +18,11 @@ public abstract partial class SelfGeneratingQueryModel<TQueryModel, TTaggregateT
    {
       protected Entity(TQueryModel queryModel) : base(queryModel, TeventDispatcherConfig.Default.IgnoreUnhandled<TEntityRemovedTevent>()) {}
 
-      public new static CollectionManager CreateSelfManagingCollection(TQueryModel parent) => new(parent: parent, appliersRegistrar: parent.RegisterTeventAppliers());
+      public new static CollectionManager CreateSelfManagingCollection(TQueryModel parent) => new(parent: parent, appliersSubscriber: parent.RegisterTeventAppliers());
 
       public new class CollectionManager : QueryModelEntityCollectionManager<TQueryModel, TEntity, TEntityId, TEntityTevent, TEntityCreatedTevent, TEntityRemovedTevent, TTeventEntityIdGetter>
       {
-         internal CollectionManager(TQueryModel parent, ITeventSubscriber<TEntityTevent> appliersRegistrar) : base(parent, appliersRegistrar) {}
+         internal CollectionManager(TQueryModel parent, ITeventSubscriber<TEntityTevent> appliersSubscriber) : base(parent, appliersSubscriber) {}
       }
    }
 }

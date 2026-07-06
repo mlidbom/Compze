@@ -2,7 +2,10 @@ using Compze.Abstractions.Tessaging.Public;
 
 namespace Compze.Teventive;
 
-public interface ITeventSubscriber<in TTevent>
+///<summary>A party's subscribing presence on an <see cref="IMutableTeventDispatcher{TTevent}"/>, created by <see cref="IMutableTeventDispatcher{TTevent}.Register"/>.<br/>
+/// Each registration method adds one subscription: a handler the dispatcher calls for every dispatched tevent that matches the subscribed tevent type.<br/>
+/// Disposing the subscriber removes every subscription made through it; registering through a disposed subscriber throws.</summary>
+public interface ITeventSubscriber<in TTevent> : IDisposable
    where TTevent : class, ITevent
 {
    ///<summary>Registers a handler for any tevent that implements THandledTevent. All matching handlers will be called in the order they were registered.</summary>
@@ -24,8 +27,11 @@ public interface ITeventSubscriber<in TTevent>
    ITeventSubscriber<TTevent> AfterHandlers<THandledTevent>(Action<THandledTevent> runAfterHandlers) where THandledTevent : TTevent;
 }
 
-public static class TeventHandlerRegistrar
+public static class TeventSubscriberCE
 {
-   public static ITeventSubscriber<TTevent> BeforeHandlers<TTevent>(this ITeventSubscriber<TTevent> @this, Action<TTevent> handler) where TTevent : class, ITevent => @this.BeforeHandlers(handler);
-   public static ITeventSubscriber<TTevent> AfterHandlers<TTevent>(this ITeventSubscriber<TTevent> @this, Action<TTevent> handler) where TTevent : class, ITevent => @this.AfterHandlers(handler);
+   extension<TTevent>(ITeventSubscriber<TTevent> @this) where TTevent : class, ITevent
+   {
+      public ITeventSubscriber<TTevent> BeforeHandlers(Action<TTevent> handler) => @this.BeforeHandlers(handler);
+      public ITeventSubscriber<TTevent> AfterHandlers(Action<TTevent> handler) => @this.AfterHandlers(handler);
+   }
 }

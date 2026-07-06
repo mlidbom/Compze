@@ -17,16 +17,16 @@ public abstract partial class SelfGeneratingQueryModel<TQueryModel,  TTaggregate
 
       protected Component(TQueryModel queryModel)
          : this(
-            appliersRegistrar: queryModel.RegisterTeventAppliers(),
+            appliersSubscriber: queryModel.RegisterTeventAppliers(),
             registerTeventAppliers: true)
       {}
 
-      protected Component(ITeventSubscriber<TComponentTevent> appliersRegistrar, bool registerTeventAppliers, TeventDispatcherConfig? teventAppliersDispatcherConfig = null)
+      protected Component(ITeventSubscriber<TComponentTevent> appliersSubscriber, bool registerTeventAppliers, TeventDispatcherConfig? teventAppliersDispatcherConfig = null)
       {
          _teventAppliersDispatcher = IMutableTeventDispatcher<TComponentTevent>.New(teventAppliersDispatcherConfig);
          if(registerTeventAppliers)
          {
-            appliersRegistrar
+            appliersSubscriber
               .For<TComponentTevent>(ApplyTevent);
          }
       }

@@ -26,7 +26,7 @@ public abstract partial class SelfGeneratingQueryModel<TQueryModel, TTaggregateT
       protected Entity(TQueryModel queryModel, TeventDispatcherConfig? teventAppliersDispatcherConfig = null) : this(queryModel.RegisterTeventAppliers(), teventAppliersDispatcherConfig) {}
 
 #pragma warning disable CS8618 //Reviewed OK-ish: We guarantee that we never deliver out a null or default value from the public property.
-      Entity(ITeventSubscriber<TEntityTevent> appliersRegistrar, TeventDispatcherConfig? teventAppliersDispatcherConfig = null) : base(appliersRegistrar, registerTeventAppliers: false, teventAppliersDispatcherConfig)
+      Entity(ITeventSubscriber<TEntityTevent> appliersSubscriber, TeventDispatcherConfig? teventAppliersDispatcherConfig = null) : base(appliersSubscriber, registerTeventAppliers: false, teventAppliersDispatcherConfig)
 #pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
       {
          RegisterTeventAppliers()
@@ -37,7 +37,7 @@ public abstract partial class SelfGeneratingQueryModel<TQueryModel, TTaggregateT
 
       public class CollectionManager : QueryModelEntityCollectionManager<TQueryModel,TEntity, TEntityId, TEntityTevent, TEntityCreatedTevent, TTeventEntityIdGetter>
       {
-         internal CollectionManager(TQueryModel parent, ITeventSubscriber<TEntityTevent> appliersRegistrar) : base(parent, appliersRegistrar) {}
+         internal CollectionManager(TQueryModel parent, ITeventSubscriber<TEntityTevent> appliersSubscriber) : base(parent, appliersSubscriber) {}
       }
    }
 }
