@@ -34,7 +34,7 @@ partial class CallMatchingHandlersInRegistrationOrderTeventDispatcher<TTevent> :
    ///<summary>Dispatching wraps tevents in <see cref="IPublisherIdentifyingTevent{TTevent}"/> implementations, so ignoring a tevent type must also ignore its wrapped form.</summary>
    static Type[] TeventTypeAndItsWrapperTeventType(Type teventType) => [teventType, typeof(IPublisherIdentifyingTevent<>).MakeGenericType(teventType)];
 
-   public ITeventHandlerRegistrar<TTevent> Register() => new RegistrationBuilder(this);
+   public ITeventSubscriber<TTevent> Register() => new TeventSubscriber(this);
 
 
    //Urgent: Wrapping here seems arguable at best.

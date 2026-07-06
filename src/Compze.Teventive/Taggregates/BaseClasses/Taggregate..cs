@@ -85,10 +85,10 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
       return tevent;
    }
 
-   protected ITeventHandlerRegistrar<TTaggregateTevent> RegisterTeventAppliers() => _teventAppliersDispatcher.Register();
+   protected ITeventSubscriber<TTaggregateTevent> RegisterTeventAppliers() => _teventAppliersDispatcher.Register();
 
    // ReSharper disable once UnusedMember.Global todo: coverage
-   protected ITeventHandlerRegistrar<TTaggregateTevent> RegisterTeventHandlers() => _teventHandlersDispatcher.Register();
+   protected ITeventSubscriber<TTaggregateTevent> RegisterTeventHandlers() => _teventHandlersDispatcher.Register();
 
    void ApplyTevent(TTaggregateTevent theTevent)
    {
@@ -118,7 +118,7 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
 #pragma warning disable CA1033 //These method should NOT clutter the public interface of Taggregates.
    void ITeventiveInternals<TTaggregateTevent, TTaggregateTeventImplementation>.ApplyTeventInternal(TTaggregateTevent theTevent) => ApplyTevent(theTevent);
    void ITeventiveInternals<TTaggregateTevent, TTaggregateTeventImplementation>.PublishInternal(TTaggregateTeventImplementation theTevent) => Publish(theTevent);
-   ITeventHandlerRegistrar<TTaggregateTevent> ITeventiveInternals<TTaggregateTevent, TTaggregateTeventImplementation>.RegisterTeventAppliersInternal() => RegisterTeventAppliers();
+   ITeventSubscriber<TTaggregateTevent> ITeventiveInternals<TTaggregateTevent, TTaggregateTeventImplementation>.RegisterTeventAppliersInternal() => RegisterTeventAppliers();
 
    IObservable<ITaggregateTevent> ITaggregate.TeventStream => _teventStream;
    IObservable<TTaggregateTevent> ITaggregate<TTaggregateTevent>.TeventStream => _teventStream;

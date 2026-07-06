@@ -20,7 +20,7 @@ public abstract partial class SelfGeneratingQueryModel<TQueryModel, TTaggregateT
          where TEntity : Component<TEntity, TEntityTevent>
          where TTeventEntityIdGetter : IGetTaggregateEntityTeventEntityId<TEntityTevent, TEntityId>
       {
-         protected QueryModelEntityCollectionManager(TParent parent, ITeventHandlerRegistrar<TEntityTevent> appliersRegistrar) : base(parent, appliersRegistrar)
+         protected QueryModelEntityCollectionManager(TParent parent, ITeventSubscriber<TEntityTevent> appliersRegistrar) : base(parent, appliersRegistrar)
          {
             appliersRegistrar.For<TEntityRemovedTevent>(
                e =>

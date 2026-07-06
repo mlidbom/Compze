@@ -32,7 +32,7 @@ public abstract class SingleTaggregateQueryModelGenerator<TImplementer, TViewMod
    }
 
    ///<summary>Registers handlers for the incoming tevents. All matching handlers will be called in the order they were registered.</summary>
-   protected ITeventHandlerRegistrar<TTevent> RegisterHandlers() => _teventDispatcher.Register();
+   protected ITeventSubscriber<TTevent> RegisterHandlers() => _teventDispatcher.Register();
 
    public TViewModel? TryGenerate(EntityId id) => TryGenerate(id, int.MaxValue);
 

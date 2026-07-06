@@ -19,7 +19,7 @@ public partial class SelfGeneratingQueryModel<TQueryModel, TTaggregateTevent> : 
 
    readonly IMutableTeventDispatcher<TTaggregateTevent> _teventAppliersDispatcher;
 
-   protected ITeventHandlerRegistrar<TTaggregateTevent> RegisterTeventAppliers() => _teventAppliersDispatcher.Register();
+   protected ITeventSubscriber<TTaggregateTevent> RegisterTeventAppliers() => _teventAppliersDispatcher.Register();
 
    public void ApplyTevent(TTaggregateTevent theTevent)
    {

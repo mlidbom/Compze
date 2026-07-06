@@ -26,7 +26,7 @@ public abstract class TeventiveComponent<TParent,
 #pragma warning disable CA1033 //These method should NOT clutter the public interface of this class they are unsafe.
     void ITeventiveInternals<TComponentTevent, TComponentTeventImplementation>.ApplyTeventInternal(TComponentTevent tevent) => ApplyTevent(tevent);
     void ITeventiveInternals<TComponentTevent, TComponentTeventImplementation>.PublishInternal(TComponentTeventImplementation tevent) => Publish(tevent);
-    ITeventHandlerRegistrar<TComponentTevent> ITeventiveInternals<TComponentTevent, TComponentTeventImplementation>.RegisterTeventAppliersInternal() => RegisterTeventAppliers();
+    ITeventSubscriber<TComponentTevent> ITeventiveInternals<TComponentTevent, TComponentTeventImplementation>.RegisterTeventAppliersInternal() => RegisterTeventAppliers();
 #pragma warning restore CA1033 //These method should NOT clutter the public interface of this class they are unsafe.
 
    void ApplyTevent(TComponentTevent tevent) => _teventAppliersDispatcher.Dispatch(tevent);
@@ -61,7 +61,7 @@ public abstract class TeventiveComponent<TParent,
        where TEcComponentTeventImplementation : TComponentTeventImplementation, TEcComponentTevent
        where TEcComponent : Component<TEcComponent, TEcComponentTeventImplementation, TEcComponentTevent>;
 
-    protected ITeventHandlerRegistrar<TComponentTevent> RegisterTeventAppliers() => _teventAppliersDispatcher.Register();
+    protected ITeventSubscriber<TComponentTevent> RegisterTeventAppliers() => _teventAppliersDispatcher.Register();
 
     public abstract class Entity<TEntity,
                                  TEntityId,

@@ -22,7 +22,7 @@ public abstract partial class SelfGeneratingQueryModel<TQueryModel, TTaggregateT
       {
          protected RemovableNestedEntity(TComponent parent) : this(parent.RegisterTeventAppliers()) {}
 
-         RemovableNestedEntity(ITeventHandlerRegistrar<TEntityTevent> appliersRegistrar)
+         RemovableNestedEntity(ITeventSubscriber<TEntityTevent> appliersRegistrar)
             : base(appliersRegistrar, TeventDispatcherConfig.Default.IgnoreUnhandled<TEntityRemovedTevent>()) {}
 
          public new static ICollectionManager CreateSelfManagingCollection(TComponent parent) => new CollectionManager(parent: parent, appliersRegistrar: parent.RegisterTeventAppliers());
@@ -31,7 +31,7 @@ public abstract partial class SelfGeneratingQueryModel<TQueryModel, TTaggregateT
 
          new class CollectionManager : QueryModelEntityCollectionManager<TComponent, TEntity, TEntityId, TEntityTevent, TEntityCreatedTevent, TEntityRemovedTevent, TTeventEntityIdGetter>, ICollectionManager
          {
-            internal CollectionManager(TComponent parent, ITeventHandlerRegistrar<TEntityTevent> appliersRegistrar) : base(parent, appliersRegistrar) {}
+            internal CollectionManager(TComponent parent, ITeventSubscriber<TEntityTevent> appliersRegistrar) : base(parent, appliersRegistrar) {}
          }
       }
    }

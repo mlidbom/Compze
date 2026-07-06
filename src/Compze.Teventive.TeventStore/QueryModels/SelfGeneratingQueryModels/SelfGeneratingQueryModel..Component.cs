@@ -21,7 +21,7 @@ public abstract partial class SelfGeneratingQueryModel<TQueryModel,  TTaggregate
             registerTeventAppliers: true)
       {}
 
-      protected Component(ITeventHandlerRegistrar<TComponentTevent> appliersRegistrar, bool registerTeventAppliers, TeventDispatcherConfig? teventAppliersDispatcherConfig = null)
+      protected Component(ITeventSubscriber<TComponentTevent> appliersRegistrar, bool registerTeventAppliers, TeventDispatcherConfig? teventAppliersDispatcherConfig = null)
       {
          _teventAppliersDispatcher = IMutableTeventDispatcher<TComponentTevent>.New(teventAppliersDispatcherConfig);
          if(registerTeventAppliers)
@@ -31,6 +31,6 @@ public abstract partial class SelfGeneratingQueryModel<TQueryModel,  TTaggregate
          }
       }
 
-      protected ITeventHandlerRegistrar<TComponentTevent> RegisterTeventAppliers() => _teventAppliersDispatcher.Register();
+      protected ITeventSubscriber<TComponentTevent> RegisterTeventAppliers() => _teventAppliersDispatcher.Register();
    }
 }
