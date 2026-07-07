@@ -87,7 +87,6 @@ $($exclusionLines -join "`r`n")
         foreach ($folder in $docsFolders | Sort-Object) {
             $docsLines += "    <Compile Remove=`"$folder\**\*.cs`" />"
             $docsLines += "    <None Include=`"$folder\**\*.cs`" />"
-            $docsLines += "    <Content Include=`"$folder\**\*.md`" />"
         }
         
         $comment = @"

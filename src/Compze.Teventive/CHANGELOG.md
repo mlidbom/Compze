@@ -4,6 +4,10 @@ All notable changes to Compze.Teventive will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## 0.3.2-alpha
+
+- Fixed packaging: the `Taggregates\_docs` markdown files were packed into the NuGet package as contentFiles, so installing the package injected linked `Taggregates\_docs\*.md` items into consuming projects. They no longer ship in the package.
+
 ## 0.3.1-alpha
 
 - Dispatcher configuration is now immutable and supplied at creation: `IMutableTeventDispatcher.New` takes a `TeventDispatcherConfig` (option flags plus tevent types ignored when unhandled), replacing the mutating `IgnoreUnhandled`/`IgnoreAllUnhandled` registration methods.
