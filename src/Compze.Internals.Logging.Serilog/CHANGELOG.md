@@ -4,6 +4,11 @@ All notable changes to Compze.Internals.Logging.Serilog will be documented in th
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## 0.4.0-alpha
+
+### Changed
+- Version bumped in lockstep with `Compze.Internals.Logging` 0.4.0-alpha. `SerilogLogger` implements the two backend hooks the base `Logger` now requires — `CriticalInternal` (mapped to Serilog's `Fatal`) and `TraceInternal` (mapped to Serilog's `Verbose`) — so consuming applications MUST update this package and `Compze.Internals.Logging` together; a new core against this package at 0.3.2-alpha throws `TypeLoadException` at load because the old `SerilogLogger` lacks those implementations.
+
 ## 0.3.2-alpha
 
 - Version bumped in lockstep with `Compze.Internals.Logging` 0.3.2-alpha. No changes to the Serilog integration itself.
