@@ -14,12 +14,70 @@ public abstract class Logger : ILogger
 
    public abstract ILogger WithLogLevel(LogLevel level);
 
-   public bool IsEnabled(LogLevel level) => CurrentLevel >= level;
+   public bool IsEnabled(LogLevel level) => level >= CurrentLevel;
 
+   protected abstract void CriticalInternal(Exception? exception, string template, object?[]? values, string caller);
    protected abstract void ErrorInternal(Exception exception, string template, object?[]? values, string caller);
    protected abstract void WarningInternal(Exception? exception, string template, object?[]? values, string caller);
    protected abstract void InfoInternal(string template, object?[]? values, string caller);
    protected abstract void DebugInternal(string template, object?[]? values, string caller);
+   protected abstract void TraceInternal(string template, object?[]? values, string caller);
+
+   public Unit Critical(string message, [CallerMemberName] string caller = "")
+   {
+      if(IsEnabled(LogLevel.Critical) && !CompzeLogger.LoggingSuppressed)
+      {
+         CriticalInternal(exception: null, message, values: null, caller);
+      }
+      return unit;
+   }
+
+   public Unit Critical(string template, object?[] values, [CallerMemberName] string caller = "")
+   {
+      if(IsEnabled(LogLevel.Critical) && !CompzeLogger.LoggingSuppressed)
+      {
+         CriticalInternal(exception: null, template, values, caller);
+      }
+      return unit;
+   }
+
+   public Unit Critical([InterpolatedStringHandlerArgument("")] ref CriticalLogInterpolatedStringHandler handler, [CallerMemberName] string caller = "")
+   {
+      if(handler.Enabled)
+      {
+         var (template, values) = handler.Build();
+         CriticalInternal(exception: null, template, values, caller);
+      }
+      return unit;
+   }
+
+   public Unit Critical(Exception exception, string message, [CallerMemberName] string caller = "")
+   {
+      if(IsEnabled(LogLevel.Critical) && !CompzeLogger.LoggingSuppressed)
+      {
+         CriticalInternal(exception, message, values: null, caller);
+      }
+      return unit;
+   }
+
+   public Unit Critical(Exception exception, string template, object?[] values, [CallerMemberName] string caller = "")
+   {
+      if(IsEnabled(LogLevel.Critical) && !CompzeLogger.LoggingSuppressed)
+      {
+         CriticalInternal(exception, template, values, caller);
+      }
+      return unit;
+   }
+
+   public Unit Critical(Exception exception, [InterpolatedStringHandlerArgument("")] ref CriticalLogInterpolatedStringHandler handler, [CallerMemberName] string caller = "")
+   {
+      if(handler.Enabled)
+      {
+         var (template, values) = handler.Build();
+         CriticalInternal(exception, template, values, caller);
+      }
+      return unit;
+   }
 
    public Unit Error(Exception exception, string message, [CallerMemberName] string caller = "")
    {
@@ -157,6 +215,34 @@ public abstract class Logger : ILogger
       {
          var (template, values) = handler.Build();
          DebugInternal(template, values, caller);
+      }
+      return unit;
+   }
+
+   public Unit Trace(string message, [CallerMemberName] string caller = "")
+   {
+      if(IsEnabled(LogLevel.Trace) && !CompzeLogger.LoggingSuppressed)
+      {
+         TraceInternal(message, values: null, caller);
+      }
+      return unit;
+   }
+
+   public Unit Trace(string template, object?[] values, [CallerMemberName] string caller = "")
+   {
+      if(IsEnabled(LogLevel.Trace) && !CompzeLogger.LoggingSuppressed)
+      {
+         TraceInternal(template, values, caller);
+      }
+      return unit;
+   }
+
+   public Unit Trace([InterpolatedStringHandlerArgument("")] ref TraceLogInterpolatedStringHandler handler, [CallerMemberName] string caller = "")
+   {
+      if(handler.Enabled)
+      {
+         var (template, values) = handler.Build();
+         TraceInternal(template, values, caller);
       }
       return unit;
    }

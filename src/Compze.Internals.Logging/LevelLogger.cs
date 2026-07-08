@@ -21,6 +21,21 @@ abstract class LevelLogger(ILogger logger) : ILevelLogger
    public abstract Unit Log([InterpolatedStringHandlerArgument("")] ref LevelLogInterpolatedStringHandler handler, [CallerMemberName] string caller = "");
 }
 
+class TraceLogger(ILogger logger) : LevelLogger(logger)
+{
+   public override bool IsEnabled() => Logger.IsEnabled(LogLevel.Trace);
+   public override Unit Log(string message, [CallerMemberName] string caller = "") => Logger.Trace(message, caller);
+   public override Unit Log([InterpolatedStringHandlerArgument("")] ref LevelLogInterpolatedStringHandler handler, [CallerMemberName] string caller = "")
+   {
+      if(handler.Enabled)
+      {
+         var (template, values) = handler.Build();
+         Logger.Trace(template, values, caller);
+      }
+      return unit;
+   }
+}
+
 class DebugLogger(ILogger logger) : LevelLogger(logger)
 {
    public override bool IsEnabled() => Logger.IsEnabled(LogLevel.Debug);
@@ -66,9 +81,26 @@ class WarningLogger(ILogger logger) : LevelLogger(logger)
    }
 }
 
+class CriticalLogger(ILogger logger) : LevelLogger(logger)
+{
+   public override bool IsEnabled() => Logger.IsEnabled(LogLevel.Critical);
+   public override Unit Log(string message, [CallerMemberName] string caller = "") => Logger.Critical(message, caller);
+   public override Unit Log([InterpolatedStringHandlerArgument("")] ref LevelLogInterpolatedStringHandler handler, [CallerMemberName] string caller = "")
+   {
+      if(handler.Enabled)
+      {
+         var (template, values) = handler.Build();
+         Logger.Critical(template, values, caller);
+      }
+      return unit;
+   }
+}
+
 public static class LevelLoggerILoggerExtensions
 {
+   public static ILevelLogger Trace(this ILogger @this) => new TraceLogger(@this);
    public static ILevelLogger Debug(this ILogger @this) => new DebugLogger(@this);
    public static ILevelLogger Info(this ILogger @this) => new InfoLogger(@this);
    public static ILevelLogger Warning(this ILogger @this) => new WarningLogger(@this);
+   public static ILevelLogger Critical(this ILogger @this) => new CriticalLogger(@this);
 }

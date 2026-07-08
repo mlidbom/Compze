@@ -4,6 +4,15 @@ namespace Compze.Internals.Logging.Specifications;
 
 public class When_logging_via_an_ILevelLogger
 {
+   public class via_Trace : When_logging_via_an_ILevelLogger
+   {
+      readonly CapturingLogger _logger = new(LogLevel.Trace);
+      public via_Trace() { var x = 0; _logger.Trace().Log($"t {x}"); }
+
+      [XF] public void the_call_is_recorded_at_Trace_level() => _logger.Captured[0].Level.Must().Be(LogLevel.Trace);
+      [XF] public void the_template_is_structured() => _logger.Captured[0].Template.Must().NotBeNull().Be("t {x}");
+   }
+
    public class via_Debug : When_logging_via_an_ILevelLogger
    {
       readonly CapturingLogger _logger = new();
@@ -30,6 +39,15 @@ public class When_logging_via_an_ILevelLogger
 
       [XF] public void the_call_is_recorded_at_Warning_level() => _logger.Captured[0].Level.Must().Be(LogLevel.Warning);
       [XF] public void the_template_is_structured() => _logger.Captured[0].Template.Must().NotBeNull().Be("w {x}");
+   }
+
+   public class via_Critical : When_logging_via_an_ILevelLogger
+   {
+      readonly CapturingLogger _logger = new();
+      public via_Critical() { var x = 6; _logger.Critical().Log($"c {x}"); }
+
+      [XF] public void the_call_is_recorded_at_Critical_level() => _logger.Captured[0].Level.Must().Be(LogLevel.Critical);
+      [XF] public void the_template_is_structured() => _logger.Captured[0].Template.Must().NotBeNull().Be("c {x}");
    }
 
    public class when_the_level_is_not_enabled : When_logging_via_an_ILevelLogger

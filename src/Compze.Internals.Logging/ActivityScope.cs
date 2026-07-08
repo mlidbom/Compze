@@ -59,9 +59,11 @@ public interface IActivityScope : IDisposable
 
       static ILevelLogger LevelView(ILogger logger, LogLevel level) => level switch
       {
-         LogLevel.Warning => logger.Warning(),
-         LogLevel.Info    => logger.Info(),
-         _                => logger.Debug()
+         LogLevel.Critical => logger.Critical(),
+         LogLevel.Warning  => logger.Warning(),
+         LogLevel.Info     => logger.Info(),
+         LogLevel.Trace    => logger.Trace(),
+         _                 => logger.Debug()
       };
 
       public TimeSpan Elapsed => Stopwatch.GetElapsedTime(_startedTimestamp);

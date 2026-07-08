@@ -17,6 +17,11 @@ public class ConsoleLogger : Logger
    ///<summary>Renders the ambient <see cref="Activity.Current"/> as a " {Activity=Name}" suffix so the activity is visible in console output (Serilog renders it through the output template instead).</summary>
    static string ContextSuffix() => Activity.Current is {} activity ? $" {{Activity={activity.OperationName}}}" : "";
 
+   protected override void CriticalInternal(Exception? exception, string template, object?[]? values, string caller) =>
+      Console.WriteLine(exception == null
+                           ? $"{DateTime.Now:HH:mm:ss.fff} CRT {LogSourceFormatter.Format(_type.Name, caller)} ### {Render(template, values)}{ContextSuffix()}"
+                           : $"{DateTime.Now:HH:mm:ss.fff} CRT {LogSourceFormatter.Format(_type.Name, caller)} ### {Render(template, values)}{ContextSuffix()}, \n: Exception: {exception}");
+
    protected override void ErrorInternal(Exception exception, string template, object?[]? values, string caller) =>
       Console.WriteLine(ExceptionTessageBuilder.BuildExceptionLogTessage(exception, _type, caller, Render(template, values)) + ContextSuffix());
 
@@ -30,6 +35,9 @@ public class ConsoleLogger : Logger
 
    protected override void DebugInternal(string template, object?[]? values, string caller) =>
       Console.WriteLine($"{DateTime.Now:HH:mm:ss.fff} DBG {LogSourceFormatter.Format(_type.Name, caller)} ### {Render(template, values)}{ContextSuffix()}");
+
+   protected override void TraceInternal(string template, object?[]? values, string caller) =>
+      Console.WriteLine($"{DateTime.Now:HH:mm:ss.fff} TRC {LogSourceFormatter.Format(_type.Name, caller)} ### {Render(template, values)}{ContextSuffix()}");
 
    // Renders a Serilog-style template (with {Name} / {Name:format} / {Name,align} holes) by substituting positional values.
    // Values are bound to holes in left-to-right order, the same order the handler appended them.

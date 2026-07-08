@@ -13,10 +13,13 @@ class CapturingLogger : Logger
    public List<CapturedLogCall> Captured { get; } = [];
 
    public CapturingLogger() : base(LogLevel.Debug) {}
-   CapturingLogger(LogLevel level) : base(level) {}
+   public CapturingLogger(LogLevel level) : base(level) {}
 
    public override ILogger WithLogLevel(LogLevel level) => new CapturingLogger(level) { _shared = _shared ?? this };
    CapturingLogger? _shared;
+
+   protected override void CriticalInternal(Exception? exception, string template, object?[]? values, string caller)
+      => Add(LogLevel.Critical, template, values, caller, exception);
 
    protected override void ErrorInternal(Exception exception, string template, object?[]? values, string caller)
       => Add(LogLevel.Error, template, values, caller, exception);
@@ -29,6 +32,9 @@ class CapturingLogger : Logger
 
    protected override void DebugInternal(string template, object?[]? values, string caller)
       => Add(LogLevel.Debug, template, values, caller, exception: null);
+
+   protected override void TraceInternal(string template, object?[]? values, string caller)
+      => Add(LogLevel.Trace, template, values, caller, exception: null);
 
    void Add(LogLevel level, string template, object?[]? values, string caller, Exception? exception)
       => (_shared ?? this).Captured.Add(new(level, template, values, caller, exception, Activity.Current?.OperationName, Activity.Current?.Id));

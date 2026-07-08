@@ -8,6 +8,13 @@ public interface ILogger
    ILogger WithLogLevel(LogLevel level);
    bool IsEnabled(LogLevel level);
 
+   Unit Critical(string message, [CallerMemberName] string caller = "");
+   Unit Critical(string template, object?[] values, [CallerMemberName] string caller = "");
+   Unit Critical([InterpolatedStringHandlerArgument("")] ref CriticalLogInterpolatedStringHandler handler, [CallerMemberName] string caller = "");
+   Unit Critical(Exception exception, string message, [CallerMemberName] string caller = "");
+   Unit Critical(Exception exception, string template, object?[] values, [CallerMemberName] string caller = "");
+   Unit Critical(Exception exception, [InterpolatedStringHandlerArgument("")] ref CriticalLogInterpolatedStringHandler handler, [CallerMemberName] string caller = "");
+
    Unit Error(Exception exception, string message, [CallerMemberName] string caller = "");
    Unit Error(Exception exception, string template, object?[] values, [CallerMemberName] string caller = "");
    Unit Error(Exception exception, [InterpolatedStringHandlerArgument("")] ref ErrorLogInterpolatedStringHandler handler, [CallerMemberName] string caller = "");
@@ -26,4 +33,8 @@ public interface ILogger
    Unit Debug(string message, [CallerMemberName] string caller = "");
    Unit Debug(string template, object?[] values, [CallerMemberName] string caller = "");
    Unit Debug([InterpolatedStringHandlerArgument("")] ref DebugLogInterpolatedStringHandler handler, [CallerMemberName] string caller = "");
+
+   Unit Trace(string message, [CallerMemberName] string caller = "");
+   Unit Trace(string template, object?[] values, [CallerMemberName] string caller = "");
+   Unit Trace([InterpolatedStringHandlerArgument("")] ref TraceLogInterpolatedStringHandler handler, [CallerMemberName] string caller = "");
 }

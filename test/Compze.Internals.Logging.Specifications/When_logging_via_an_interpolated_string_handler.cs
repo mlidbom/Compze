@@ -78,6 +78,14 @@ public class When_logging_via_an_interpolated_string_handler
 
    public class for_each_log_level : When_logging_via_an_interpolated_string_handler
    {
+      public class via_Trace : for_each_log_level
+      {
+         readonly CapturingLogger _logger = new(LogLevel.Trace);
+         public via_Trace() { var x = 0; _logger.Trace($"t {x}"); }
+         [XF] public void the_captured_level_is_Trace() => _logger.Captured[0].Level.Must().Be(LogLevel.Trace);
+         [XF] public void the_template_is_structured() => _logger.Captured[0].Template.Must().NotBeNull().Be("t {x}");
+      }
+
       public class via_Debug : for_each_log_level
       {
          readonly CapturingLogger _logger = new();
@@ -119,6 +127,24 @@ public class When_logging_via_an_interpolated_string_handler
          [XF] public void the_captured_level_is_Error() => _logger.Captured[0].Level.Must().Be(LogLevel.Error);
          [XF] public void the_exception_is_carried_through() => _logger.Captured[0].Exception.Must().NotBeNull().ReferenceEqual(_exception);
          [XF] public void the_template_is_structured() => _logger.Captured[0].Template.Must().NotBeNull().Be("e {x}");
+      }
+
+      public class via_Critical : for_each_log_level
+      {
+         readonly CapturingLogger _logger = new();
+         public via_Critical() { var x = 6; _logger.Critical($"c {x}"); }
+         [XF] public void the_captured_level_is_Critical() => _logger.Captured[0].Level.Must().Be(LogLevel.Critical);
+         [XF] public void the_template_is_structured() => _logger.Captured[0].Template.Must().NotBeNull().Be("c {x}");
+      }
+
+      public class via_Critical_with_exception : for_each_log_level
+      {
+         readonly CapturingLogger _logger = new();
+         readonly Exception _exception = new InvalidOperationException("boom");
+         public via_Critical_with_exception() { var x = 7; _logger.Critical(_exception, $"c {x}"); }
+         [XF] public void the_captured_level_is_Critical() => _logger.Captured[0].Level.Must().Be(LogLevel.Critical);
+         [XF] public void the_exception_is_carried_through() => _logger.Captured[0].Exception.Must().NotBeNull().ReferenceEqual(_exception);
+         [XF] public void the_template_is_structured() => _logger.Captured[0].Template.Must().NotBeNull().Be("c {x}");
       }
    }
 }

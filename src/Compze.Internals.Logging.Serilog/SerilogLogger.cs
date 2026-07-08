@@ -29,6 +29,21 @@ public class SerilogLogger : Logger
                 : logger;
    }
 
+   // Compze's Critical is Serilog's Fatal — the two frameworks' names for the "wake a human" level differ, so we translate at this boundary.
+   protected override void CriticalInternal(Exception? exception, string template, object?[]? values, string caller)
+   {
+      var logger = CallerLogger(caller);
+      if(values == null)
+      {
+         if(exception == null) logger.Fatal(EscapeLiteral(template));
+         else logger.Fatal(exception, EscapeLiteral(template));
+      } else
+      {
+         if(exception == null) logger.Fatal(template, values);
+         else logger.Fatal(exception, template, values);
+      }
+   }
+
    protected override void ErrorInternal(Exception exception, string template, object?[]? values, string caller)
    {
       var logger = CallerLogger(caller);
@@ -67,6 +82,14 @@ public class SerilogLogger : Logger
       var logger = CallerLogger(caller);
       if(values == null) logger.Debug(EscapeLiteral(template));
       else logger.Debug(template, values);
+   }
+
+   // Compze's Trace is Serilog's Verbose — the two frameworks' names for the lowest, highest-volume level differ, so we translate at this boundary.
+   protected override void TraceInternal(string template, object?[]? values, string caller)
+   {
+      var logger = CallerLogger(caller);
+      if(values == null) logger.Verbose(EscapeLiteral(template));
+      else logger.Verbose(template, values);
    }
 
    // For plain (non-handler) messages we treat the string as a literal, not a Serilog template.

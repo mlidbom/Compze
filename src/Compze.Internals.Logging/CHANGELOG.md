@@ -4,6 +4,16 @@ All notable changes to Compze.Internals.Logging will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## 0.4.0-alpha
+
+### Added
+- A full logging surface for the two extreme levels, which previously existed only as threshold values with no way to emit at them: `ILogger.Trace` / `Critical` overloads, `TraceLogInterpolatedStringHandler` / `CriticalLogInterpolatedStringHandler`, `ILevelLogger` views (`logger.Trace()` / `logger.Critical()`), and rendering in both the `ConsoleLogger` (`TRC` / `CRT`) and `SerilogLogger` backends. `Trace` (below `Debug`) is for very-high-volume events that would otherwise drown `Debug`; `Critical` (above `Error`) is the "wake a human" tier. `Critical` mirrors `Warning` (with and without an exception); `Trace` mirrors `Debug`.
+
+### Changed
+- Renamed the two extreme `LogLevel` members to the `Microsoft.Extensions.Logging` vocabulary: `Verbose` → `Trace`, `Fatal` → `Critical`.
+- `LogLevel`'s numeric values now ascend with severity (`Trace` = 0 … `Critical` = 5), matching `Microsoft.Extensions.Logging.LogLevel` and syslog — previously they descended. A configured `LogLevel` is a *minimum severity* floor, so `IsEnabled` is now `level >= configuredLevel`. Behavior at every named level is unchanged; only code that compared raw `LogLevel` magnitudes would be affected, and there is none.
+- The `SerilogLogger` backend maps Compze's `Trace` to Serilog's `Verbose` and Compze's `Critical` to Serilog's `Fatal` (the frameworks name these two levels differently; the translation is confined to that backend).
+
 ## 0.3.2-alpha
 
 ### Changed
