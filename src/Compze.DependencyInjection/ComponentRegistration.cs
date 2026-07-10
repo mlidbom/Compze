@@ -1,4 +1,3 @@
-using System.Reflection;
 using Compze.Contracts;
 using Compze.DependencyInjection.Abstractions;
 
@@ -38,38 +37,21 @@ public abstract class ComponentRegistration
    internal abstract ComponentRegistration CreateCloneRegistration(IRootResolver currentRootResolver);
    internal abstract ComponentRegistration CreateChildRegistration(IRootResolver parentRootResolver);
 
-   bool _exposeServiceResolver;
+   readonly List<ComponentRegistration> _associatedRegistrations = [];
 
    /// <summary>
-   /// Opts this component in to deferred resolution: see <see cref="ComponentRegistration{TService}"/>'s <c>WithServiceResolver()</c>,
-   /// which is the fluent entry point. Once opted in, <see cref="ServiceResolverRegistrations"/> yields the resolver registrations.
+   /// Extra registrations added to the container alongside this one when it is built.<br/>
+   /// This is the general extension point behind fluent helpers such as <c>WithServiceResolver()</c>: a helper computes the
+   /// companion registrations it needs and attaches them through <see cref="ComponentRegistration{TService}"/>'s
+   /// <c>WithAssociatedRegistrations()</c>; the core needs no knowledge of what they are for.
    /// </summary>
-   private protected void ExposeServiceResolver() => _exposeServiceResolver = true;
+   /// <remarks>
+   /// One level only: these associated registrations are added to the container, but <em>their</em> own associated
+   /// registrations are not expanded.
+   /// </remarks>
+   internal IReadOnlyList<ComponentRegistration> AssociatedRegistrations => _associatedRegistrations;
 
-   /// <summary>
-   /// The additional registrations this component contributes to the container: one <see cref="IServiceResolver{TService}"/>
-   /// registration for <em>each</em> of its <see cref="ServiceTypes"/> when opted in through <c>WithServiceResolver()</c>, otherwise none.<br/>
-   /// Each resolver is registered at this component's own <see cref="Lifestyle"/>, so a dependency on it is subject to exactly the
-   /// same lifestyle validation as a direct dependency on the component.
-   /// </summary>
-   internal IEnumerable<ComponentRegistration> ServiceResolverRegistrations() =>
-      _exposeServiceResolver
-         ? ServiceTypes.Select(serviceType => CreateServiceResolverRegistration(serviceType, Lifestyle)).ToList()
-         : [];
-
-   static ComponentRegistration CreateServiceResolverRegistration(Type serviceType, Lifestyle lifestyle) =>
-      (ComponentRegistration)CreateTypedServiceResolverRegistrationDefinition
-         .MakeGenericMethod(serviceType)
-         .Invoke(obj: null, parameters: [lifestyle])!;
-
-   static readonly MethodInfo CreateTypedServiceResolverRegistrationDefinition =
-      typeof(ComponentRegistration).GetMethod(nameof(CreateTypedServiceResolverRegistration), BindingFlags.NonPublic | BindingFlags.Static)!;
-
-   static ComponentRegistration<IServiceResolver<TServiceType>> CreateTypedServiceResolverRegistration<TServiceType>(Lifestyle lifestyle) where TServiceType : class =>
-      new(lifestyle,
-          serviceTypes: [typeof(IServiceResolver<TServiceType>)],
-          InstantiationSpec.FromFactoryMethod(serviceResolver => new ServiceResolver<TServiceType>(serviceResolver), typeof(ServiceResolver<TServiceType>)),
-          dependencyTypes: []);
+   private protected void AddAssociatedRegistrations(IEnumerable<ComponentRegistration> registrations) => _associatedRegistrations.AddRange(registrations);
 }
 
 public class ComponentRegistration<TService> : ComponentRegistration where TService : class
@@ -86,17 +68,16 @@ public class ComponentRegistration<TService> : ComponentRegistration where TServ
    }
 
    /// <summary>
-   /// Also expose this component through an <see cref="IServiceResolver{TService}"/> for <em>each</em> of its <see cref="ComponentRegistration.ServiceTypes"/>,
-   /// so other components can depend on a deferred, typed resolver for it instead of the component itself — the supported way to
-   /// break a constructor-injection cycle.
+   /// Attaches extra registrations to be added to the container alongside this one when it is built — the general extension
+   /// point described on <see cref="ComponentRegistration.AssociatedRegistrations"/>. Returns this registration so it can be chained.
    /// </summary>
    /// <remarks>
-   /// Each resolver is registered at this component's own <see cref="ComponentRegistration.Lifestyle"/>. A dependency on a resolver
-   /// is therefore subject to exactly the same lifestyle validation as a direct dependency on the component would be.
+   /// This is what feature extensions such as <c>WithServiceResolver()</c> build on, and it is public so consumers of the library
+   /// can write their own such features without the core needing a dedicated method for each.
    /// </remarks>
-   public ComponentRegistration<TService> WithServiceResolver()
+   public ComponentRegistration<TService> WithAssociatedRegistrations(params ComponentRegistration[] registrations)
    {
-      ExposeServiceResolver();
+      AddAssociatedRegistrations(registrations);
       return this;
    }
 

@@ -54,6 +54,10 @@ as `For<IServiceB, IServiceB2>()` is resolvable through both `IServiceResolver<I
 `IServiceResolver<TService>` is subject to exactly the same lifestyle validation as a direct dependency: a
 `Singleton` still may not take an `IServiceResolver<TScoped>`.
 
+`WithServiceResolver()` is not a core special case — it is an ordinary extension built on
+`WithAssociatedRegistrations()`, the general mechanism by which a registration can carry extra registrations
+that are added to the container alongside it. Consumers can write their own such helpers the same way.
+
 ### Core abstractions
 
 - **`IDependencyInjectionContainer`** — Container lifecycle, registration, and `IServiceLocator` access

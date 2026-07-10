@@ -1,0 +1,43 @@
+using System.Reflection;
+using Compze.DependencyInjection.Abstractions;
+
+namespace Compze.DependencyInjection;
+
+/// <summary>
+/// Adds <see cref="WithServiceResolver{TService}"/> — the supported way to break a constructor-injection cycle.
+/// </summary>
+/// <remarks>
+/// Built entirely on the general associated-registrations extension point
+/// (<see cref="ComponentRegistration{TService}"/>'s <c>WithAssociatedRegistrations()</c>); the core registration types have no
+/// knowledge of service resolvers. It lives here as an ordinary extension precisely so it is not a special case baked into the core.
+/// </remarks>
+public static class ServiceResolverExtensions
+{
+   /// <summary>
+   /// Also expose this component through an <see cref="IServiceResolver{TService}"/> for <em>each</em> of its
+   /// <see cref="ComponentRegistration.ServiceTypes"/>, so other components can depend on a deferred, typed resolver for it
+   /// instead of the component itself — the supported way to break a constructor-injection cycle.
+   /// </summary>
+   /// <remarks>
+   /// Each resolver is registered at this component's own <see cref="ComponentRegistration.Lifestyle"/>, so a dependency on a
+   /// resolver is subject to exactly the same lifestyle validation as a direct dependency on the component would be.<br/>
+   /// The depending side must call <see cref="IServiceResolver{TService}.Resolve"/> AFTER construction, never during it — resolving
+   /// in the constructor re-forms the very cycle this breaks.
+   /// </remarks>
+   public static ComponentRegistration<TService> WithServiceResolver<TService>(this ComponentRegistration<TService> @this) where TService : class =>
+      @this.WithAssociatedRegistrations([..@this.ServiceTypes.Select(serviceType => CreateServiceResolverRegistration(serviceType, @this.Lifestyle))]);
+
+   static ComponentRegistration CreateServiceResolverRegistration(Type serviceType, Lifestyle lifestyle) =>
+      (ComponentRegistration)CreateTypedServiceResolverRegistrationDefinition
+         .MakeGenericMethod(serviceType)
+         .Invoke(obj: null, parameters: [lifestyle])!;
+
+   static readonly MethodInfo CreateTypedServiceResolverRegistrationDefinition =
+      typeof(ServiceResolverExtensions).GetMethod(nameof(CreateTypedServiceResolverRegistration), BindingFlags.NonPublic | BindingFlags.Static)!;
+
+   static ComponentRegistration<IServiceResolver<TServiceType>> CreateTypedServiceResolverRegistration<TServiceType>(Lifestyle lifestyle) where TServiceType : class =>
+      new(lifestyle,
+          serviceTypes: [typeof(IServiceResolver<TServiceType>)],
+          InstantiationSpec.FromFactoryMethod(serviceResolver => new ServiceResolver<TServiceType>(serviceResolver), typeof(ServiceResolver<TServiceType>)),
+          dependencyTypes: []);
+}

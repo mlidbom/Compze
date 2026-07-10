@@ -27,18 +27,18 @@ public abstract class ContainerBuilder : IContainerBuilder
       Contract.State.Assert(!_built, () => "Build() has already been called on this builder. A Container can only be built once.");
       _built = true;
       Options = options ?? ContainerOptions.Default;
-      AddServiceResolverRegistrations();
+      AddAssociatedRegistrations();
       AssertLifeStyleCombinationsAreValid();
       RegisterInContainer(_registeredComponents.ToArray());
       return BuildInternal();
    }
 
-   void AddServiceResolverRegistrations()
+   void AddAssociatedRegistrations()
    {
-      var serviceResolverRegistrations = _registeredComponents.SelectMany(it => it.ServiceResolverRegistrations()).ToArray();
-      if(serviceResolverRegistrations.Length == 0) return;
-      ValidateNoDuplicateRegistrations(serviceResolverRegistrations);
-      _registeredComponents.AddRange(serviceResolverRegistrations);
+      var associatedRegistrations = _registeredComponents.SelectMany(it => it.AssociatedRegistrations).ToArray();
+      if(associatedRegistrations.Length == 0) return;
+      ValidateNoDuplicateRegistrations(associatedRegistrations);
+      _registeredComponents.AddRange(associatedRegistrations);
    }
 
    protected ContainerOptions Options { get; set; } = ContainerOptions.Default;
