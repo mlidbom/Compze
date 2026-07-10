@@ -4,6 +4,17 @@ All notable changes to Compze.DependencyInjection will be documented in this fil
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## 0.4.0-alpha
+
+### Added
+
+- **`WithAssociatedRegistrations()` — a general registration extension point.** A registration can carry extra registrations that are added to the container alongside it (validated and lifestyle-checked like any other). Feature helpers build on this instead of being baked into the core as special cases, and consumers can write their own such helpers.
+- **`IServiceResolver<TService>` — the supported way to break a constructor-injection cycle.** Opt a component in with `.WithServiceResolver()` on its registration, then depend on `IServiceResolver<TService>` instead of the service itself; the depending side is constructed immediately holding only the resolver and obtains the real service later via `Resolve()`. A resolver is exposed for each service type the component is registered under. Each is registered at the target's own lifestyle, so a dependency on it is subject to exactly the same lifestyle validation as a direct dependency (a singleton still may not take an `IServiceResolver<TScoped>`). Implemented as an ordinary extension on top of `WithAssociatedRegistrations()`, not a core special case. Replaces the old cludge of injecting the whole `IServiceResolver`/`IRootResolver` and resolving by hand.
+
+### Fixed
+
+- **Autofac adapter: the resolver handed to singleton and transient factory methods is now valid for the created component's lifetime, not just the resolve operation** (it wraps the owning `ILifetimeScope` rather than the operation-scoped `IComponentContext`). Required for deferred `IServiceResolver<TService>` resolution, which stores the resolver and uses it after construction; the other adapters already behaved this way.
+
 ## 0.3.0-alpha
 
 ### Changed
@@ -29,8 +40,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 	- `Transient` — caller owns disposal, matches SimpleInjector's transient semantics.
 	- `TrackedTransient` — container disposes with the scope, matches Microsoft.Extensions.DependencyInjection's transient semantics.
 - Throws on resolving scoped services from the root (with opt-out for MS DI compliance).
-- **`WithAssociatedRegistrations()` — a general registration extension point.** A registration can carry extra registrations that are added to the container alongside it (validated and lifestyle-checked like any other). Feature helpers build on this instead of being baked into the core as special cases, and consumers can write their own such helpers.
-- **`IServiceResolver<TService>` — the supported way to break a constructor-injection cycle.** Opt a component in with `.WithServiceResolver()` on its registration, then depend on `IServiceResolver<TService>` instead of the service itself; the depending side is constructed immediately holding only the resolver and obtains the real service later via `Resolve()`. A resolver is exposed for each service type the component is registered under. Each is registered at the target's own lifestyle, so a dependency on it is subject to exactly the same lifestyle validation as a direct dependency (a singleton still may not take an `IServiceResolver<TScoped>`). Implemented as an ordinary extension on top of `WithAssociatedRegistrations()`, not a core special case. Replaces the old cludge of injecting the whole `IServiceResolver`/`IRootResolver` and resolving by hand.
 
 ### Removed
 
