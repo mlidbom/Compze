@@ -35,7 +35,7 @@ public sealed class AutofacContainerBuilder(IComponentRegistrar? registrar = nul
                                                                        .ExternallyOwned());
                } else
                {
-                  _containerBuilder.Register(componentContext => registration.InstantiationSpec.RunFactoryMethod(new ServiceResolver(componentContext.Resolve)))
+                  _containerBuilder.Register(componentContext => registration.InstantiationSpec.RunFactoryMethod(LifetimeStableResolver(componentContext)))
                                    .As(serviceTypes)
                                    .SingleInstance();
                }
@@ -60,7 +60,7 @@ public sealed class AutofacContainerBuilder(IComponentRegistrar? registrar = nul
                                 .InstancePerLifetimeScope();
                break;
             case Lifestyle.TrackedTransient:
-               _containerBuilder.Register(componentContext => registration.InstantiationSpec.RunFactoryMethod(new ServiceResolver(componentContext.Resolve)))
+               _containerBuilder.Register(componentContext => registration.InstantiationSpec.RunFactoryMethod(LifetimeStableResolver(componentContext)))
                                 .As(serviceTypes)
                                 .InstancePerDependency();
                break;
@@ -69,6 +69,12 @@ public sealed class AutofacContainerBuilder(IComponentRegistrar? registrar = nul
          }
       }
    }
+
+   // Wraps the Resolve of the owning ILifetimeScope, NOT of the IComponentContext. The context is only valid during the
+   // current resolve operation, but a component may hold onto its IServiceResolver and resolve through it later — e.g. an
+   // IServiceResolver<T> taken to break a circular dependency. The lifetime scope stays valid for the component's lifetime.
+   static ServiceResolver LifetimeStableResolver(IComponentContext componentContext) =>
+      new(componentContext.Resolve<ILifetimeScope>().Resolve);
 
    protected override DependencyInjectionContainer BuildInternal()
    {

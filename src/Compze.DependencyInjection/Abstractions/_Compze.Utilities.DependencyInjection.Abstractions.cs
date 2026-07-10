@@ -66,6 +66,29 @@ public interface IServiceResolver
 }
 
 ///<summary>
+/// A typed, resolver for a single service. Each call to <see cref="Resolve"/> resolves the current
+/// <typeparamref name="TService"/> from the same container and scope that created this resolver.
+///</summary>
+///<remarks>
+/// Commonly used to break a constructor-injection cycle.
+/// Have one side take an <see cref="IServiceResolver{TService}"/> of the other<br/>
+/// instead of the service itself.
+/// Enable it on the target's registration with <see cref="ComponentRegistration{T}.WithServiceResolver"/> <br/>
+/// then depend on <see cref="IServiceResolver{TService}"/> exactly as you would depend on <typeparamref name="TService"/> itself.
+///</remarks>
+///<remarks>
+/// Call <see cref="Resolve"/> AFTER construction — if you call it in the constructor you should just take a dependency directly on the resolved type instead.<br/>
+///</remarks>
+public interface IServiceResolver<out TService> where TService : class
+{
+   ///<summary>
+   /// Resolves the current <typeparamref name="TService"/>.<br/>
+   /// Call after construction, never during it — see <see cref="IServiceResolver{TService}"/>.
+   ///</summary>
+   TService Resolve();
+}
+
+///<summary>
 /// An <see cref="IServiceResolver"/> capable only of resolving services registered as <see cref="Lifestyle.Singleton"/> and <see cref="Lifestyle.TrackedTransient"/>.
 /// <see cref="Lifestyle.Scoped"/> services cannot be resolved from an instance.
 /// </summary>
