@@ -55,6 +55,21 @@ public class DuplicateRegistrationTests
    }
 
    [DependencyInjectionContainerMatrix]
+   public void Registering_same_service_twice_in_a_single_Register_call_throws_InvalidOperationException()
+   {
+      var builder = DependencyInjectionContainerFactory.CreateContainerBuilder();
+
+      builder.Invoking(it => it.Registrar.Register(
+                  Singleton.For<ITestService>().CreatedBy(() => new TestService()),
+                  Singleton.For<ITestService>().CreatedBy(() => new TestService())))
+               .Must()
+               .Throw<InvalidOperationException>()
+               .Which.Message.Must()
+               .Contain("ITestService")
+               .Contain("already registered");
+   }
+
+   [DependencyInjectionContainerMatrix]
    public void Registering_service_with_multiple_service_types_then_reregistering_one_throws_InvalidOperationException()
    {
       var builder = DependencyInjectionContainerFactory.CreateContainerBuilder();

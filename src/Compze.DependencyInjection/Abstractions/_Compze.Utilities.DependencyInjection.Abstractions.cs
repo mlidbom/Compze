@@ -66,7 +66,7 @@ public interface IServiceResolver
 }
 
 ///<summary>
-/// A typed, resolver for a single service. Each call to <see cref="Resolve"/> resolves the current
+/// A typed resolver for a single service. Each call to <see cref="Resolve"/> resolves the current
 /// <typeparamref name="TService"/> from the same container and scope that created this resolver.
 ///</summary>
 ///<remarks>

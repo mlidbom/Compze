@@ -4,12 +4,22 @@ All notable changes to Compze.DependencyInjection will be documented in this fil
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## 0.4.1-alpha
+
+### Changed
+
+- **`WithAssociatedRegistrations()` now expands recursively.** An associated registration may itself carry associated registrations — every registration reachable this way is added to the container exactly once. Previously only one level was expanded and deeper levels were silently dropped.
+
+### Fixed
+
+- **Duplicate service types within a single `Register()` call — or among associated registrations — were not detected.** Duplicate-registration validation only checked new registrations against those already registered, never the new batch against itself. Both now throw the same "already registered" `InvalidOperationException`.
+
 ## 0.4.0-alpha
 
 ### Added
 
 - **`WithAssociatedRegistrations()` — a general registration extension point.** A registration can carry extra registrations that are added to the container alongside it (validated and lifestyle-checked like any other). Feature helpers build on this instead of being baked into the core as special cases, and consumers can write their own such helpers.
-- **`IServiceResolver<TService>` — the supported way to break a constructor-injection cycle.** Opt a component in with `.WithServiceResolver()` on its registration, then depend on `IServiceResolver<TService>` instead of the service itself; the depending side is constructed immediately holding only the resolver and obtains the real service later via `Resolve()`. A resolver is exposed for each service type the component is registered under. Each is registered at the target's own lifestyle, so a dependency on it is subject to exactly the same lifestyle validation as a direct dependency (a singleton still may not take an `IServiceResolver<TScoped>`). Implemented as an ordinary extension on top of `WithAssociatedRegistrations()`, not a core special case. Replaces the old cludge of injecting the whole `IServiceResolver`/`IRootResolver` and resolving by hand.
+- **`IServiceResolver<TService>` — the supported way to break a constructor-injection cycle.** Opt a component in with `.WithServiceResolver()` on its registration, then depend on `IServiceResolver<TService>` instead of the service itself; the depending side is constructed immediately holding only the resolver and obtains the real service later via `Resolve()`. A resolver is exposed for each service type the component is registered under. Each is registered at the target's own lifestyle, so a dependency on it is subject to exactly the same lifestyle validation as a direct dependency (a singleton still may not take an `IServiceResolver<TScoped>`). Implemented as an ordinary extension on top of `WithAssociatedRegistrations()`, not a core special case. Replaces the old kludge of injecting the whole `IServiceResolver`/`IRootResolver` and resolving by hand.
 
 ### Fixed
 

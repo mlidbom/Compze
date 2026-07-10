@@ -46,8 +46,14 @@ public abstract class ComponentRegistration
    /// <c>WithAssociatedRegistrations()</c>; the core needs no knowledge of what they are for.
    /// </summary>
    /// <remarks>
-   /// One level only: these associated registrations are added to the container, but <em>their</em> own associated
-   /// registrations are not expanded.
+   /// Expanded recursively when the container is built: an associated registration may itself carry associated
+   /// registrations, and every registration reachable this way is added to the container exactly once.
+   /// </remarks>
+   /// <remarks>
+   /// <see cref="CreateCloneRegistration"/> and <see cref="CreateChildRegistration"/> deliberately do NOT copy this
+   /// association: cloning starts from a built container, whose registration list was already expanded at build time,<br/>
+   /// so the associated registrations are cloned as ordinary members of that list — copying the association too would
+   /// expand them a second time in the clone and fail duplicate-registration validation.
    /// </remarks>
    internal IReadOnlyList<ComponentRegistration> AssociatedRegistrations => _associatedRegistrations;
 

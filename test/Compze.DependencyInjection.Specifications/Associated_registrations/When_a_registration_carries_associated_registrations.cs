@@ -23,13 +23,31 @@ public class When_a_registration_carries_associated_registrations
    }
 
    [DependencyInjectionContainerMatrix]
+   public void the_associated_registrations_of_an_associated_registration_are_also_added()
+   {
+      var builder = DependencyInjectionContainerFactory.CreateContainerBuilder();
+      builder.Registrar.Register(
+         Singleton.For<IPrimaryService>()
+                  .CreatedBy(() => new PrimaryService())
+                  .WithAssociatedRegistrations(
+                      Singleton.For<IAssociatedService>()
+                               .CreatedBy(() => new AssociatedService())
+                               .WithAssociatedRegistrations(Singleton.For<INestedAssociatedService>().CreatedBy(() => new NestedAssociatedService())))
+      );
+
+      using var container = builder.Build();
+
+      container.Resolve<IAssociatedService>().Must().NotBeNull();
+      container.Resolve<INestedAssociatedService>().Must().NotBeNull();
+   }
+
+   [DependencyInjectionContainerMatrix]
    public void an_associated_registration_is_lifestyle_validated_like_any_other()
    {
       var builder = DependencyInjectionContainerFactory.CreateContainerBuilder();
 
       var exception = Invoking(() =>
       {
-         // ReSharper disable once AccessToDisposedClosure
          builder.Registrar.Register(
             Singleton.For<IPrimaryService>()
                      .CreatedBy((IAssociatedService associated) => new PrimaryServiceDependingOnAssociated(associated))
@@ -42,12 +60,39 @@ public class When_a_registration_carries_associated_registrations
       exception.Message.Must().Contain("Scoped");
    }
 
+   [DependencyInjectionContainerMatrix]
+   public void two_registrations_may_not_carry_associated_registrations_for_the_same_service_type()
+   {
+      var builder = DependencyInjectionContainerFactory.CreateContainerBuilder();
+      builder.Registrar.Register(
+         Singleton.For<IPrimaryService>()
+                  .CreatedBy(() => new PrimaryService())
+                  .WithAssociatedRegistrations(Singleton.For<IAssociatedService>().CreatedBy(() => new AssociatedService())),
+         Singleton.For<ISecondPrimaryService>()
+                  .CreatedBy(() => new SecondPrimaryService())
+                  .WithAssociatedRegistrations(Singleton.For<IAssociatedService>().CreatedBy(() => new AssociatedService()))
+      );
+
+      Invoking(() => builder.Build())
+         .Must()
+         .Throw<InvalidOperationException>()
+         .Which.Message.Must()
+         .Contain("IAssociatedService")
+         .Contain("already registered");
+   }
+
    interface IPrimaryService;
    class PrimaryService : IPrimaryService;
 #pragma warning disable CS9113 // Parameter is unread.
    class PrimaryServiceDependingOnAssociated(IAssociatedService _) : IPrimaryService;
 #pragma warning restore CS9113 // Parameter is unread.
 
+   interface ISecondPrimaryService;
+   class SecondPrimaryService : ISecondPrimaryService;
+
    interface IAssociatedService;
    class AssociatedService : IAssociatedService;
+
+   interface INestedAssociatedService;
+   class NestedAssociatedService : INestedAssociatedService;
 }

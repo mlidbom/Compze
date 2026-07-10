@@ -83,7 +83,6 @@ public class When_breaking_a_circular_dependency_with_a_service_resolver
 
       var exception = Invoking(() =>
       {
-         // ReSharper disable once AccessToDisposedClosure
          builder.Registrar.Register(
             Scoped.For<IServiceB>().CreatedBy(() => new ServiceB(null!)).WithServiceResolver(),
             Singleton.For<IServiceA>().CreatedBy((IServiceResolver<IServiceB> serviceBResolver) => new ServiceA(serviceBResolver))

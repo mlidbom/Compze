@@ -35,10 +35,29 @@ public abstract class ContainerBuilder : IContainerBuilder
 
    void AddAssociatedRegistrations()
    {
-      var associatedRegistrations = _registeredComponents.SelectMany(it => it.AssociatedRegistrations).ToArray();
+      var associatedRegistrations = CollectAssociatedRegistrationsRecursively();
       if(associatedRegistrations.Length == 0) return;
       ValidateNoDuplicateRegistrations(associatedRegistrations);
       _registeredComponents.AddRange(associatedRegistrations);
+      return;
+
+      ComponentRegistration[] CollectAssociatedRegistrationsRecursively()
+      {
+         var collected = new List<ComponentRegistration>();
+         var alreadyIncluded = _registeredComponents.ToHashSet();
+         var toExpand = new Queue<ComponentRegistration>(_registeredComponents);
+         while(toExpand.TryDequeue(out var registration))
+         {
+            foreach(var associated in registration.AssociatedRegistrations)
+            {
+               if(!alreadyIncluded.Add(associated)) continue;
+               collected.Add(associated);
+               toExpand.Enqueue(associated);
+            }
+         }
+
+         return [..collected];
+      }
    }
 
    protected ContainerOptions Options { get; set; } = ContainerOptions.Default;
@@ -60,11 +79,12 @@ public abstract class ContainerBuilder : IContainerBuilder
 
    void ValidateNoDuplicateRegistrations(ComponentRegistration[] newRegistrations)
    {
+      // Adding the new registrations' service types to the set as we check catches duplicates within the new batch itself, not just against what is already registered.
+      var registeredServiceTypes = _registeredComponents.SelectMany(it => it.ServiceTypes).ToHashSet();
       foreach(var serviceType in newRegistrations.SelectMany(it => it.ServiceTypes))
       {
-         _registeredComponents
-           .Where(it => it.ServiceTypes.Contains(serviceType))
-           .ForEach(_ => throw new InvalidOperationException($"Service type '{serviceType.FullName}' is already registered."));
+         if(!registeredServiceTypes.Add(serviceType))
+            throw new InvalidOperationException($"Service type '{serviceType.FullName}' is already registered.");
       }
    }
 
