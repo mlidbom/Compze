@@ -11,8 +11,8 @@ sealed class MySqlDbPoolSqlLayer : IDbPoolSqlLayer
 {
    public static IComponentRegistrar RegisterWith(IComponentRegistrar registrar) =>
       registrar.Register(Singleton.For<IDbPoolSqlLayer>()
-                                  .CreatedBy(() => new MySqlDbPoolSqlLayer())
-                                  .DelegateToParentServiceLocatorWhenCloning());
+                                  .DelegateToParentServiceLocatorWhenCloning()
+                                  .CreatedBy(() => new MySqlDbPoolSqlLayer()));
 
    readonly IMySqlConnectionPool _masterConnectionPool;
 

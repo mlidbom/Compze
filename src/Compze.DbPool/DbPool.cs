@@ -23,8 +23,8 @@ public class DbPool : StrictlyManagedResourceBase<DbPool>
 {
    internal static IComponentRegistrar RegisterWith(IComponentRegistrar registrar, TimeSpan reservationLength) =>
       registrar.Register(Singleton.For<DbPool>()
-                                  .CreatedBy((IDbPoolSqlLayer sqlLayer) => new DbPool(sqlLayer, reservationLength))
-                                  .DelegateToParentServiceLocatorWhenCloning());
+                                  .DelegateToParentServiceLocatorWhenCloning()
+                                  .CreatedBy((IDbPoolSqlLayer sqlLayer) => new DbPool(sqlLayer, reservationLength)));
 
    readonly IDbPoolSqlLayer _sqlLayer;
    readonly DbPoolMachineWideState _machineWideState;

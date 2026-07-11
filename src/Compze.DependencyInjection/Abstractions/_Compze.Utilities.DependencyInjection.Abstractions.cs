@@ -73,7 +73,7 @@ public interface IServiceResolver
 /// Commonly used to break a constructor-injection cycle.
 /// Have one side take an <see cref="IServiceResolver{TService}"/> of the other<br/>
 /// instead of the service itself.
-/// Enable it on the target's registration with <see cref="ServiceResolverExtensions.WithServiceResolver{TService}(ComponentRegistration{TService})"/> <br/>
+/// Enable it on the target's registration with <see cref="ServiceResolverExtensions.WithServiceResolver{TSpec}(TSpec)"/> <br/>
 /// then depend on <see cref="IServiceResolver{TService}"/> exactly as you would depend on <typeparamref name="TService"/> itself.
 ///</remarks>
 ///<remarks>

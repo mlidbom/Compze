@@ -40,7 +40,7 @@ public class Singleton_registrations
    {
       var sourceBuilder = DependencyInjectionContainerFactory.CreateContainerBuilder();
       sourceBuilder.Registrar.Register(
-         Singleton.For<ISingletonService>().CreatedBy(() => new SingletonService()).DelegateToParentServiceLocatorWhenCloning()
+         Singleton.For<ISingletonService>().DelegateToParentServiceLocatorWhenCloning().CreatedBy(() => new SingletonService())
       );
 
       using var source = sourceBuilder.Build();

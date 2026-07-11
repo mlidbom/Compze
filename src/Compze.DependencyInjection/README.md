@@ -26,6 +26,10 @@ Singleton.For<IConfiguration>()
     .Instance(myConfig);
 ```
 
+Every chain ends with its instantiation spec — `CreatedBy(...)` or `Instance(...)`. All modifiers
+(`AllowSingletonDependent()`, `WithServiceResolver()`, `WithAssociatedRegistrations()`, ...) come before it,
+and the terminal call returns a finished, immutable registration.
+
 ### Breaking a circular dependency
 
 When two components need each other, neither can be constructed first. Expose one side through an
@@ -38,8 +42,8 @@ Singleton.For<IServiceA>()
     .CreatedBy<ServiceA, IServiceResolver<IServiceB>>(serviceB => new ServiceA(serviceB));
 
 Singleton.For<IServiceB>()
-    .CreatedBy<ServiceB, IServiceA>(serviceA => new ServiceB(serviceA))
-    .WithServiceResolver();
+    .WithServiceResolver()
+    .CreatedBy<ServiceB, IServiceA>(serviceA => new ServiceB(serviceA));
 
 // class ServiceA(IServiceResolver<IServiceB> serviceB) : IServiceA
 // {
@@ -56,8 +60,9 @@ is subject to exactly the same lifestyle validation as a direct dependency: a `S
 an `IServiceResolver<TScoped>`.
 
 `WithServiceResolver()` is not a core special case — it is an ordinary extension built on
-`WithAssociatedRegistrations()`, the general mechanism by which a registration can carry extra registrations
-that are added to the container alongside it. Consumers can write their own such helpers the same way.
+`WithAssociatedRegistrations()`, the general mechanism by which a registration spec can attach extra
+registrations that are added to the container alongside it. Consumers can write their own such helpers the
+same way.
 
 ### Core abstractions
 

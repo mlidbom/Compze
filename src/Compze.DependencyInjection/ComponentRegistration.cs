@@ -20,7 +20,7 @@ public abstract class ComponentRegistration
                                   bool allowSingletonDependent = false,
                                   bool allowScopedDependent = false)
    {
-      serviceTypes = serviceTypes.ToList();
+      serviceTypes = [..serviceTypes];
 
       Contract.Argument.Assert(
          lifestyle == Lifestyle.Singleton || instantiationSpec.SingletonInstance == null,
@@ -29,7 +29,7 @@ public abstract class ComponentRegistration
       ServiceTypes = serviceTypes.ToHashSet();
       InstantiationSpec = instantiationSpec;
       Lifestyle = lifestyle;
-      DependencyTypes = dependencyTypes.ToList();
+      DependencyTypes = [..dependencyTypes];
       AllowSingletonDependent = allowSingletonDependent;
       AllowScopedDependent = allowScopedDependent;
    }
@@ -42,8 +42,9 @@ public abstract class ComponentRegistration
    /// <summary>
    /// Extra registrations added to the container alongside this one when it is built.<br/>
    /// This is the general extension point behind fluent helpers such as <c>WithServiceResolver()</c>: a helper computes the
-   /// companion registrations it needs and attaches them through <see cref="ComponentRegistration{TService}"/>'s
-   /// <c>WithAssociatedRegistrations()</c>; the core needs no knowledge of what they are for.
+   /// companion registrations it needs and attaches them through the registration spec's
+   /// (<see cref="ComponentRegistrationWithoutInstantiationSpec"/>) <c>WithAssociatedRegistrations()</c> modifiers; the spec's
+   /// terminal call transfers them onto the finished registration, and the core needs no knowledge of what they are for.
    /// </summary>
    /// <remarks>
    /// Expanded recursively when the container is built: an associated registration may itself carry associated
@@ -57,44 +58,20 @@ public abstract class ComponentRegistration
    /// </remarks>
    internal IReadOnlyList<ComponentRegistration> AssociatedRegistrations => _associatedRegistrations;
 
-   private protected void AddAssociatedRegistrations(IEnumerable<ComponentRegistration> registrations) => _associatedRegistrations.AddRange(registrations);
+   internal void AddAssociatedRegistrations(IEnumerable<ComponentRegistration> registrations) => _associatedRegistrations.AddRange(registrations);
 }
 
 public class ComponentRegistration<TService> : ComponentRegistration where TService : class
 {
-   bool ShouldDelegateToParentWhenCloning { get; set; }
-
-   public ComponentRegistration<TService> DelegateToParentServiceLocatorWhenCloning()
-   {
-      Contract.State.Assert(
-         Lifestyle == Lifestyle.Singleton,
-         () => "Only singletons can be delegated to parent container since disposal concern handling becomes very confused for any other lifestyle");
-      ShouldDelegateToParentWhenCloning = true;
-      return this;
-   }
-
-   /// <summary>
-   /// Attaches extra registrations to be added to the container alongside this one when it is built — the general extension
-   /// point described on <see cref="ComponentRegistration.AssociatedRegistrations"/>. Returns this registration so it can be chained.
-   /// </summary>
-   /// <remarks>
-   /// This is what feature extensions such as <c>WithServiceResolver()</c> build on, and it is public so consumers of the library
-   /// can write their own such features without the core needing a dedicated method for each.
-   /// </remarks>
-   public ComponentRegistration<TService> WithAssociatedRegistrations(params ComponentRegistration[] registrations)
-   {
-      AddAssociatedRegistrations(registrations);
-      return this;
-   }
+   readonly bool _shouldDelegateToParentWhenCloning;
 
    internal override ComponentRegistration CreateCloneRegistration(IRootResolver currentRootResolver)
    {
-      if(!ShouldDelegateToParentWhenCloning)
+      if(!_shouldDelegateToParentWhenCloning)
       {
          return new ComponentRegistration<TService>(Lifestyle, ServiceTypes, InstantiationSpec, DependencyTypes, AllowSingletonDependent, AllowScopedDependent);
       }
 
-      Contract.State.Assert(Lifestyle == Lifestyle.Singleton, () => "Only Singletons can delegate to parent container when cloning, because otherwise both containers would attempt to dispose the component");
       return new ComponentRegistration<TService>(////Instance registrations are not disposed.
          lifestyle: Lifestyle.Singleton,
          serviceTypes: ServiceTypes,
@@ -129,6 +106,13 @@ public class ComponentRegistration<TService> : ComponentRegistration where TServ
                                   InstantiationSpec instantiationSpec,
                                   IEnumerable<Type> dependencyTypes,
                                   bool allowSingletonDependent = false,
-                                  bool allowScopedDependent = false)
-      : base(lifestyle, serviceTypes, instantiationSpec, dependencyTypes, allowSingletonDependent, allowScopedDependent) {}
+                                  bool allowScopedDependent = false,
+                                  bool delegateToParentServiceLocatorWhenCloning = false)
+      : base(lifestyle, serviceTypes, instantiationSpec, dependencyTypes, allowSingletonDependent, allowScopedDependent)
+   {
+      Contract.Argument.Assert(
+         !delegateToParentServiceLocatorWhenCloning || lifestyle == Lifestyle.Singleton,
+         () => "Only singletons can be delegated to parent container since disposal concern handling becomes very confused for any other lifestyle");
+      _shouldDelegateToParentWhenCloning = delegateToParentServiceLocatorWhenCloning;
+   }
 }

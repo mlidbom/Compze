@@ -104,7 +104,7 @@ public class LifestyleValidationTests
       {
          // ReSharper disable once AccessToDisposedClosure
          builder.Registrar.Register(
-            TrackedTransient.For<ITransientService>().CreatedBy(() => new TransientService()).WithServiceResolver(),
+            TrackedTransient.For<ITransientService>().WithServiceResolver().CreatedBy(() => new TransientService()),
             Singleton.For<ISingletonService>().CreatedBy((IServiceResolver<ITransientService> transientResolver) => new SingletonServiceDependingOnTransientResolver(transientResolver))
          );
          _ = builder.Build();
@@ -120,7 +120,7 @@ public class LifestyleValidationTests
    {
       var builder = DependencyInjectionContainerFactory.CreateContainerBuilder();
       builder.Registrar.Register(
-         TrackedTransient.For<ITransientService>().AllowSingletonDependent().CreatedBy(() => new TransientService()).WithServiceResolver(),
+         TrackedTransient.For<ITransientService>().AllowSingletonDependent().WithServiceResolver().CreatedBy(() => new TransientService()),
          Singleton.For<ISingletonService>().CreatedBy((IServiceResolver<ITransientService> transientResolver) => new SingletonServiceDependingOnTransientResolver(transientResolver))
       );
 
@@ -133,7 +133,7 @@ public class LifestyleValidationTests
    {
       var builder = DependencyInjectionContainerFactory.CreateContainerBuilder();
       builder.Registrar.Register(
-         TrackedTransient.For<ITransientService>().AllowScopedDependent().CreatedBy(() => new TransientService()).WithServiceResolver(),
+         TrackedTransient.For<ITransientService>().AllowScopedDependent().WithServiceResolver().CreatedBy(() => new TransientService()),
          Scoped.For<IScopedService>().CreatedBy((IServiceResolver<ITransientService> transientResolver) => new ScopedServiceDependingOnTransientResolver(transientResolver))
       );
 

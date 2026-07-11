@@ -11,8 +11,8 @@ class SqliteMemoryDbPoolSqlLayer : IDbPoolSqlLayer
    readonly string _poolId = Guid.NewGuid().ToString();
    public static IComponentRegistrar RegisterWith(IComponentRegistrar registrar) =>
       registrar.Register(Singleton.For<IDbPoolSqlLayer>()
-                                  .CreatedBy(() => new SqliteMemoryDbPoolSqlLayer())
-                                  .DelegateToParentServiceLocatorWhenCloning());
+                                  .DelegateToParentServiceLocatorWhenCloning()
+                                  .CreatedBy(() => new SqliteMemoryDbPoolSqlLayer()));
 
    // Keep one connection open per database to prevent the in-memory database from disappearing when the last connection is closed
    readonly IThreadShared<IDictionary<string, SqliteConnection>> _keepInMemoryDatabaseAliveConnections =

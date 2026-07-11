@@ -13,7 +13,7 @@ public class When_breaking_a_circular_dependency_with_a_service_resolver
       var builder = DependencyInjectionContainerFactory.CreateContainerBuilder();
       builder.Registrar.Register(
          Singleton.For<IServiceA>().CreatedBy((IServiceResolver<IServiceB> serviceBResolver) => new ServiceA(serviceBResolver)),
-         Singleton.For<IServiceB>().CreatedBy((IServiceA serviceA) => new ServiceB(serviceA)).WithServiceResolver()
+         Singleton.For<IServiceB>().WithServiceResolver().CreatedBy((IServiceA serviceA) => new ServiceB(serviceA))
       );
 
       using var container = builder.Build();
@@ -30,7 +30,7 @@ public class When_breaking_a_circular_dependency_with_a_service_resolver
       var builder = DependencyInjectionContainerFactory.CreateContainerBuilder();
       builder.Registrar.Register(
          Singleton.For<IServiceA>().CreatedBy((IServiceResolver<IServiceB> serviceBResolver) => new ServiceA(serviceBResolver)),
-         Singleton.For<IServiceB>().CreatedBy((IServiceA serviceA) => new ServiceB(serviceA)).WithServiceResolver()
+         Singleton.For<IServiceB>().WithServiceResolver().CreatedBy((IServiceA serviceA) => new ServiceB(serviceA))
       );
 
       using var container = builder.Build();
@@ -45,7 +45,7 @@ public class When_breaking_a_circular_dependency_with_a_service_resolver
       var builder = DependencyInjectionContainerFactory.CreateContainerBuilder();
       builder.Registrar.Register(
          Scoped.For<IServiceA>().CreatedBy((IServiceResolver<IServiceB> serviceBResolver) => new ServiceA(serviceBResolver)),
-         Scoped.For<IServiceB>().CreatedBy((IServiceA serviceA) => new ServiceB(serviceA)).WithServiceResolver()
+         Scoped.For<IServiceB>().WithServiceResolver().CreatedBy((IServiceA serviceA) => new ServiceB(serviceA))
       );
 
       using var container = builder.Build();
@@ -63,7 +63,7 @@ public class When_breaking_a_circular_dependency_with_a_service_resolver
       var builder = DependencyInjectionContainerFactory.CreateContainerBuilder();
       builder.Registrar.Register(
          Scoped.For<IServiceA>().CreatedBy((IServiceResolver<IServiceB> serviceBResolver) => new ServiceA(serviceBResolver)),
-         Scoped.For<IServiceB>().CreatedBy((IServiceA serviceA) => new ServiceB(serviceA)).WithServiceResolver()
+         Scoped.For<IServiceB>().WithServiceResolver().CreatedBy((IServiceA serviceA) => new ServiceB(serviceA))
       );
 
       using var container = builder.Build();
@@ -84,7 +84,7 @@ public class When_breaking_a_circular_dependency_with_a_service_resolver
       var exception = Invoking(() =>
       {
          builder.Registrar.Register(
-            Scoped.For<IServiceB>().CreatedBy(() => new ServiceB(null!)).WithServiceResolver(),
+            Scoped.For<IServiceB>().WithServiceResolver().CreatedBy(() => new ServiceB(null!)),
             Singleton.For<IServiceA>().CreatedBy((IServiceResolver<IServiceB> serviceBResolver) => new ServiceA(serviceBResolver))
          );
          _ = builder.Build();
@@ -101,7 +101,7 @@ public class When_breaking_a_circular_dependency_with_a_service_resolver
       var builder = DependencyInjectionContainerFactory.CreateContainerBuilder();
       builder.Registrar.Register(
          Singleton.For<IServiceA>().CreatedBy((IServiceResolver<IServiceB> serviceBResolver) => new ServiceA(serviceBResolver)),
-         Singleton.For<IServiceB>().CreatedBy((IServiceA serviceA) => new ServiceB(serviceA)).WithServiceResolver()
+         Singleton.For<IServiceB>().WithServiceResolver().CreatedBy((IServiceA serviceA) => new ServiceB(serviceA))
       );
 
       using var source = builder.Build();
@@ -119,7 +119,7 @@ public class When_breaking_a_circular_dependency_with_a_service_resolver
    {
       var builder = DependencyInjectionContainerFactory.CreateContainerBuilder();
       builder.Registrar.Register(
-         Singleton.For<IFirstService, ISecondService>().CreatedBy(() => new ComponentServingTwoServiceTypes()).WithServiceResolver()
+         Singleton.For<IFirstService, ISecondService>().WithServiceResolver().CreatedBy(() => new ComponentServingTwoServiceTypes())
       );
 
       using var container = builder.Build();

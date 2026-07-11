@@ -10,8 +10,8 @@ public class Delegated_singletons
    {
       var sourceBuilder = DependencyInjectionContainerFactory.CreateContainerBuilder();
       sourceBuilder.Registrar.Register(
-         Singleton.For<ISingletonService>().CreatedBy(() => new SingletonService())
-                  .DelegateToParentServiceLocatorWhenCloning());
+         Singleton.For<ISingletonService>().DelegateToParentServiceLocatorWhenCloning()
+                  .CreatedBy(() => new SingletonService()));
 
       using var source = sourceBuilder.Build();
       using var clone = source.CreateCloneContainerBuilder().Build();
@@ -27,8 +27,8 @@ public class Delegated_singletons
    {
       var sourceBuilder = DependencyInjectionContainerFactory.CreateContainerBuilder();
       sourceBuilder.Registrar.Register(
-         Singleton.For<ISingletonService>().CreatedBy(() => new SingletonService())
-                  .DelegateToParentServiceLocatorWhenCloning());
+         Singleton.For<ISingletonService>().DelegateToParentServiceLocatorWhenCloning()
+                  .CreatedBy(() => new SingletonService()));
 
       using var source = sourceBuilder.Build();
       using var clone = source.CreateCloneContainerBuilder().Build();
@@ -41,8 +41,8 @@ public class Delegated_singletons
    {
       var sourceBuilder = DependencyInjectionContainerFactory.CreateContainerBuilder();
       sourceBuilder.Registrar.Register(
-         Singleton.For<IDelegatedDependency>().CreatedBy(() => new DelegatedDependency())
-                  .DelegateToParentServiceLocatorWhenCloning(),
+         Singleton.For<IDelegatedDependency>().DelegateToParentServiceLocatorWhenCloning()
+                  .CreatedBy(() => new DelegatedDependency()),
          Singleton.For<ISingletonService>()
                   .CreatedBy((IDelegatedDependency dep) => new SingletonWithDelegatedDep(dep)));
 

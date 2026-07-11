@@ -12,7 +12,7 @@ public static class PgSqlSqlLayerSchemaManagerRegistrar
          return registrar;
 
       return registrar.Register(Singleton.For<Private.PgSqlSqlLayerSchemaManager>()
-                                         .CreatedBy((IPgSqlConnectionPool connectionPool) => new Private.PgSqlSqlLayerSchemaManager(connectionPool, schemaCreationScripts))
-                                         .DelegateToParentServiceLocatorWhenCloning());
+                                         .DelegateToParentServiceLocatorWhenCloning()
+                                         .CreatedBy((IPgSqlConnectionPool connectionPool) => new Private.PgSqlSqlLayerSchemaManager(connectionPool, schemaCreationScripts)));
    }
 }

@@ -9,8 +9,8 @@ class MsSqlDbPoolSqlLayer : IDbPoolSqlLayer
 {
    public static IComponentRegistrar RegisterWith(IComponentRegistrar registrar) =>
       registrar.Register(Singleton.For<IDbPoolSqlLayer>()
-                                  .CreatedBy(() => new MsSqlDbPoolSqlLayer())
-                                  .DelegateToParentServiceLocatorWhenCloning());
+                                  .DelegateToParentServiceLocatorWhenCloning()
+                                  .CreatedBy(() => new MsSqlDbPoolSqlLayer()));
 
    readonly string _masterConnectionString;
    readonly IMsSqlConnectionPool _masterConnectionPool;

@@ -4,6 +4,12 @@ All notable changes to Compze.DependencyInjection will be documented in this fil
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## 0.5.0-alpha
+
+### Changed
+
+- **Polish the fluent registration API so that CreatedBy always comes last.** 
+
 ## 0.4.2-alpha
 
 ### Fixed

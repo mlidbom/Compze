@@ -12,7 +12,7 @@ public static class MsSqlSqlLayerSchemaManagerRegistrar
          return registrar;
 
       return registrar.Register(Singleton.For<Private.MsSqlSqlLayerSchemaManager>()
-                                         .CreatedBy((IMsSqlConnectionPool connectionPool) => new Private.MsSqlSqlLayerSchemaManager(connectionPool, schemaCreationScripts))
-                                         .DelegateToParentServiceLocatorWhenCloning());
+                                         .DelegateToParentServiceLocatorWhenCloning()
+                                         .CreatedBy((IMsSqlConnectionPool connectionPool) => new Private.MsSqlSqlLayerSchemaManager(connectionPool, schemaCreationScripts)));
    }
 }

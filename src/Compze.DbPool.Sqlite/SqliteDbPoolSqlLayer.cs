@@ -11,8 +11,8 @@ class SqliteDbPoolSqlLayer : IDbPoolSqlLayer
 {
    public static IComponentRegistrar RegisterWith(IComponentRegistrar registrar) =>
       registrar.Register(Singleton.For<IDbPoolSqlLayer>()
-                                  .CreatedBy(() => new SqliteDbPoolSqlLayer())
-                                  .DelegateToParentServiceLocatorWhenCloning());
+                                  .DelegateToParentServiceLocatorWhenCloning()
+                                  .CreatedBy(() => new SqliteDbPoolSqlLayer()));
 
    readonly DirectoryInfo _baseDirectory;
 

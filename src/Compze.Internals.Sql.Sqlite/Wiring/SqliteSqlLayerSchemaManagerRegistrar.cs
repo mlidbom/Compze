@@ -12,7 +12,7 @@ public static class SqliteSqlLayerSchemaManagerRegistrar
          return registrar;
 
       return registrar.Register(Singleton.For<Private.SqliteSqlLayerSchemaManager>()
-                                         .CreatedBy((ISqliteConnectionPool connectionPool) => new Private.SqliteSqlLayerSchemaManager(connectionPool, schemaCreationScripts))
-                                         .DelegateToParentServiceLocatorWhenCloning());
+                                         .DelegateToParentServiceLocatorWhenCloning()
+                                         .CreatedBy((ISqliteConnectionPool connectionPool) => new Private.SqliteSqlLayerSchemaManager(connectionPool, schemaCreationScripts)));
    }
 }

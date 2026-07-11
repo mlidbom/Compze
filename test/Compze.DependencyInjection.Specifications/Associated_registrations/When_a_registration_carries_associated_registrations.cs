@@ -12,8 +12,8 @@ public class When_a_registration_carries_associated_registrations
       var builder = DependencyInjectionContainerFactory.CreateContainerBuilder();
       builder.Registrar.Register(
          Singleton.For<IPrimaryService>()
-                  .CreatedBy(() => new PrimaryService())
                   .WithAssociatedRegistrations(Singleton.For<IAssociatedService>().CreatedBy(() => new AssociatedService()))
+                  .CreatedBy(() => new PrimaryService())
       );
 
       using var container = builder.Build();
@@ -28,11 +28,11 @@ public class When_a_registration_carries_associated_registrations
       var builder = DependencyInjectionContainerFactory.CreateContainerBuilder();
       builder.Registrar.Register(
          Singleton.For<IPrimaryService>()
-                  .CreatedBy(() => new PrimaryService())
                   .WithAssociatedRegistrations(
                       Singleton.For<IAssociatedService>()
-                               .CreatedBy(() => new AssociatedService())
-                               .WithAssociatedRegistrations(Singleton.For<INestedAssociatedService>().CreatedBy(() => new NestedAssociatedService())))
+                               .WithAssociatedRegistrations(Singleton.For<INestedAssociatedService>().CreatedBy(() => new NestedAssociatedService()))
+                               .CreatedBy(() => new AssociatedService()))
+                  .CreatedBy(() => new PrimaryService())
       );
 
       using var container = builder.Build();
@@ -50,8 +50,8 @@ public class When_a_registration_carries_associated_registrations
       {
          builder.Registrar.Register(
             Singleton.For<IPrimaryService>()
-                     .CreatedBy((IAssociatedService associated) => new PrimaryServiceDependingOnAssociated(associated))
                      .WithAssociatedRegistrations(Scoped.For<IAssociatedService>().CreatedBy(() => new AssociatedService()))
+                     .CreatedBy((IAssociatedService associated) => new PrimaryServiceDependingOnAssociated(associated))
          );
          _ = builder.Build();
       }).Must().Throw<InvalidLifeStyleCombinationException>().Which;
@@ -66,11 +66,11 @@ public class When_a_registration_carries_associated_registrations
       var builder = DependencyInjectionContainerFactory.CreateContainerBuilder();
       builder.Registrar.Register(
          Singleton.For<IPrimaryService>()
-                  .CreatedBy(() => new PrimaryService())
-                  .WithAssociatedRegistrations(Singleton.For<IAssociatedService>().CreatedBy(() => new AssociatedService())),
-         Singleton.For<ISecondPrimaryService>()
-                  .CreatedBy(() => new SecondPrimaryService())
                   .WithAssociatedRegistrations(Singleton.For<IAssociatedService>().CreatedBy(() => new AssociatedService()))
+                  .CreatedBy(() => new PrimaryService()),
+         Singleton.For<ISecondPrimaryService>()
+                  .WithAssociatedRegistrations(Singleton.For<IAssociatedService>().CreatedBy(() => new AssociatedService()))
+                  .CreatedBy(() => new SecondPrimaryService())
       );
 
       Invoking(() => builder.Build())

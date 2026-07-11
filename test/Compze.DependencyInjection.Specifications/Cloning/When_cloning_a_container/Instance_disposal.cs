@@ -10,8 +10,8 @@ public class Instance_disposal
    {
       var sourceBuilder = DependencyInjectionContainerFactory.CreateContainerBuilder();
       sourceBuilder.Registrar.Register(
-         Singleton.For<IDisposableTracking>().CreatedBy(() => new DisposableTracking())
-                  .DelegateToParentServiceLocatorWhenCloning());
+         Singleton.For<IDisposableTracking>().DelegateToParentServiceLocatorWhenCloning()
+                  .CreatedBy(() => new DisposableTracking()));
 
       using var source = sourceBuilder.Build();
       var instance = source.Resolve<IDisposableTracking>();
@@ -35,8 +35,8 @@ public class Instance_disposal
    {
       var sourceBuilder = DependencyInjectionContainerFactory.CreateContainerBuilder();
       sourceBuilder.Registrar.Register(
-         Singleton.For<IAsyncDisposableTracking>().CreatedBy(() => new AsyncDisposableTracking())
-                  .DelegateToParentServiceLocatorWhenCloning());
+         Singleton.For<IAsyncDisposableTracking>().DelegateToParentServiceLocatorWhenCloning()
+                  .CreatedBy(() => new AsyncDisposableTracking()));
 
       using var source = sourceBuilder.Build();
       var instance = source.Resolve<IAsyncDisposableTracking>();

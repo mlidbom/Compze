@@ -14,8 +14,8 @@ sealed class PgSqlDbPoolSqlLayer : IDbPoolSqlLayer
 {
    public static IComponentRegistrar RegisterWith(IComponentRegistrar registrar) =>
       registrar.Register(Singleton.For<IDbPoolSqlLayer>()
-                                  .CreatedBy(() => new PgSqlDbPoolSqlLayer())
-                                  .DelegateToParentServiceLocatorWhenCloning());
+                                  .DelegateToParentServiceLocatorWhenCloning()
+                                  .CreatedBy(() => new PgSqlDbPoolSqlLayer()));
 
    readonly IPgSqlConnectionPool _masterConnectionPool;
 
