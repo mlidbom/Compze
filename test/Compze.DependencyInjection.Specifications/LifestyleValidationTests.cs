@@ -1,3 +1,4 @@
+using Compze.DependencyInjection.Abstractions;
 using Compze.DependencyInjection.Specifications.Infrastructure;
 using Compze.Must;
 using static Compze.Must.MustActions;
@@ -95,6 +96,53 @@ public class LifestyleValidationTests
    }
 
    [DependencyInjectionContainerMatrix]
+   public void Should_throw_when_singleton_depends_on_a_service_resolver_of_a_transient()
+   {
+      var builder = DependencyInjectionContainerFactory.CreateContainerBuilder();
+
+      var exception = Invoking(() =>
+      {
+         // ReSharper disable once AccessToDisposedClosure
+         builder.Registrar.Register(
+            TrackedTransient.For<ITransientService>().CreatedBy(() => new TransientService()).WithServiceResolver(),
+            Singleton.For<ISingletonService>().CreatedBy((IServiceResolver<ITransientService> transientResolver) => new SingletonServiceDependingOnTransientResolver(transientResolver))
+         );
+         _ = builder.Build();
+      }).Must().Throw<InvalidLifeStyleCombinationException>().Which;
+
+      exception.Message.Must().Contain("Invalid lifestyle combination");
+      exception.Message.Must().Contain("Singleton");
+      exception.Message.Must().Contain("Transient");
+   }
+
+   [DependencyInjectionContainerMatrix]
+   public void Should_allow_singleton_depending_on_a_service_resolver_of_a_transient_with_AllowSingletonDependent()
+   {
+      var builder = DependencyInjectionContainerFactory.CreateContainerBuilder();
+      builder.Registrar.Register(
+         TrackedTransient.For<ITransientService>().AllowSingletonDependent().CreatedBy(() => new TransientService()).WithServiceResolver(),
+         Singleton.For<ISingletonService>().CreatedBy((IServiceResolver<ITransientService> transientResolver) => new SingletonServiceDependingOnTransientResolver(transientResolver))
+      );
+
+      using var container = builder.Build();
+      container.Resolve<ISingletonService>().Must().NotBeNull();
+   }
+
+   [DependencyInjectionContainerMatrix]
+   public void Should_allow_scoped_depending_on_a_service_resolver_of_a_transient_with_AllowScopedDependent()
+   {
+      var builder = DependencyInjectionContainerFactory.CreateContainerBuilder();
+      builder.Registrar.Register(
+         TrackedTransient.For<ITransientService>().AllowScopedDependent().CreatedBy(() => new TransientService()).WithServiceResolver(),
+         Scoped.For<IScopedService>().CreatedBy((IServiceResolver<ITransientService> transientResolver) => new ScopedServiceDependingOnTransientResolver(transientResolver))
+      );
+
+      using var container = builder.Build();
+      using var scope = container.BeginScope();
+      scope.Resolve<IScopedService>().Must().NotBeNull();
+   }
+
+   [DependencyInjectionContainerMatrix]
    public void Should_allow_transient_depending_on_scoped_service()
    {
       var builder = DependencyInjectionContainerFactory.CreateContainerBuilder();
@@ -122,6 +170,8 @@ public class LifestyleValidationTests
    class SingletonServiceDependingOnTransient(ITransientService _) : ISingletonService;
    class ScopedServiceDependingOnTransient(ITransientService _) : IScopedService;
    class TransientDependingOnScoped(IScopedService _) : ITransientService;
+   class SingletonServiceDependingOnTransientResolver(IServiceResolver<ITransientService> _) : ISingletonService;
+   class ScopedServiceDependingOnTransientResolver(IServiceResolver<ITransientService> _) : IScopedService;
 #pragma warning restore CS9113 // Parameter is unread.
 
 }

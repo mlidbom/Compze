@@ -4,6 +4,12 @@ All notable changes to Compze.DependencyInjection will be documented in this fil
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## 0.4.2-alpha
+
+### Fixed
+
+- **The `AllowSingletonDependent()`/`AllowScopedDependent()` opt-ins now travel to the `IServiceResolver<TService>` registrations that `WithServiceResolver()` adds.** Previously the resolver registrations were always created without the opt-ins, so a singleton could depend on an opted-in transient directly but was rejected when depending on its resolver instead.
+
 ## 0.4.1-alpha
 
 ### Changed
@@ -44,11 +50,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 ### Added
 
 - **Child container support.** Each child gets its own `IServiceProviderFactory` lifecycle — required for ASP.NET Core scenarios where the host's DI integration finalizes the container.
-- **Captive dependency validation.** Singleton→Transient and Scoped→Transient registrations are rejected by default.
+- **Captive dependency validation.** Singleton→TrackedTransient and Scoped→TrackedTransient dependencies are rejected by default.
 	- Opt-in via `.AllowSingletonDependent()` and `.AllowScopedDependent()` on transient registrations.
-- **TrackedTransient and Transient lifestyles** (formerly UntrackedTransient):
-	- `Transient` — caller owns disposal, matches SimpleInjector's transient semantics.
-	- `TrackedTransient` — container disposes with the scope, matches Microsoft.Extensions.DependencyInjection's transient semantics.
+- **TrackedTransient lifestyle** (formerly UntrackedTransient): every resolve returns a new instance; the container disposes it with the resolving scope, or with the container itself when resolved from the root — matching Microsoft.Extensions.DependencyInjection's transient semantics. (A caller-owns-disposal plain `Transient` lifestyle was considered but judged too complex to be worth implementing.)
 - Throws on resolving scoped services from the root (with opt-out for MS DI compliance).
 
 ### Removed

@@ -50,9 +50,10 @@ Singleton.For<IServiceB>()
 
 A resolver is exposed for **each** service type the component is registered under (so a component registered
 as `For<IServiceB, IServiceB2>()` is resolvable through both `IServiceResolver<IServiceB>` and
-`IServiceResolver<IServiceB2>`). Each is registered at the target's own `Lifestyle`, so a dependency on
-`IServiceResolver<TService>` is subject to exactly the same lifestyle validation as a direct dependency: a
-`Singleton` still may not take an `IServiceResolver<TScoped>`.
+`IServiceResolver<IServiceB2>`). Each is registered at the target's own `Lifestyle` and carries the target's
+`AllowSingletonDependent()`/`AllowScopedDependent()` opt-ins, so a dependency on `IServiceResolver<TService>`
+is subject to exactly the same lifestyle validation as a direct dependency: a `Singleton` still may not take
+an `IServiceResolver<TScoped>`.
 
 `WithServiceResolver()` is not a core special case — it is an ordinary extension built on
 `WithAssociatedRegistrations()`, the general mechanism by which a registration can carry extra registrations
@@ -60,24 +61,26 @@ that are added to the container alongside it. Consumers can write their own such
 
 ### Core abstractions
 
-- **`IDependencyInjectionContainer`** — Container lifecycle, registration, and `IServiceLocator` access
-- **`IServiceLocator`** — Resolve services by type, create scoped locators
 - **`IComponentRegistrar`** — Register components with lifestyle and factory methods
+- **`IContainerBuilder`** — Registrar plus `Build()`; the configure phase
+- **`IDependencyInjectionContainer`** — The built container: composes `IRootResolver`, `IScopeFactory`, and cloning
+- **`IRootResolver`** — Root-level resolution (singletons, transients)
+- **`IScopeFactory`** / **`IScope`** / **`IScopeResolver`** — Create scopes, own their lifetime, resolve within them
 - **`IServiceResolver<TService>`** — Typed, deferred resolver for a single service; the supported way to break a constructor-injection cycle
-- **`Lifestyle`** — `Singleton` or `Scoped`
+- **`Lifestyle`** — `Singleton`, `Scoped`, or `TrackedTransient`
 
 ### Safety features
 
-- **Lifestyle validation** — Prevents singletons from depending on scoped components
+- **Lifestyle validation** — Rejects captive dependencies at `Build()`: a `Singleton` may not depend on a `Scoped` component, and depending on a `TrackedTransient` from a `Singleton` or `Scoped` component requires the transient's explicit `AllowSingletonDependent()`/`AllowScopedDependent()` opt-in
 - **Duplicate detection** — Catches double-registered service types
 - **Container cloning** — Create isolated container copies for testing
 
 ### Transactional scope execution
 
 ```csharp
-serviceLocator.ExecuteInIsolatedScope(locator =>
+container.ExecuteTransactionInIsolatedScope(scopeResolver =>
 {
-    var repo = locator.Resolve<IUserRepository>();
+    var repo = scopeResolver.Resolve<IUserRepository>();
     repo.Save(user);
 }); // Scope disposed, transaction committed
 ```
@@ -93,7 +96,9 @@ dotnet add package Compze.DependencyInjection
 | Package | Description |
 |---------|-------------|
 | [Compze.DependencyInjection.Microsoft](https://www.nuget.org/packages/Compze.DependencyInjection.Microsoft) | Microsoft DI integration |
-| [Compze.DependencyInjection.SimpleInjector](https://www.nuget.org/packages/Compze.DependencyInjection.SimpleInjector) | SimpleInjector integration |
+| [Compze.DependencyInjection.Autofac](https://www.nuget.org/packages/Compze.DependencyInjection.Autofac) | Autofac integration |
+| [Compze.DependencyInjection.DryIoc](https://www.nuget.org/packages/Compze.DependencyInjection.DryIoc) | DryIoc integration |
+| [Compze.DependencyInjection.LightInject](https://www.nuget.org/packages/Compze.DependencyInjection.LightInject) | LightInject integration |
 | [Compze.Utilities](https://www.nuget.org/packages/Compze.Utilities) | Core utilities |
 
 ## License
