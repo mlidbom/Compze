@@ -26,13 +26,15 @@ public class MutableTeventDispatcher_WrappedTeventsTests : UniversalTestBase
 
       public class Does_not_dispatch_to_handler_for : Publishing_UserCreatedTevent
       {
+         [XF] public void IAdminUserTevent_() => AssertUserCreatedTevent().DoesNotDispatchTo<IAdminUserTevent>();
+         [XF] public void IAdminUserCreatedTevent_() => AssertUserCreatedTevent().DoesNotDispatchTo<IAdminUserCreatedTevent>();
          [XF] public void IUserWrapperTevent_of_IUserTevent() => AssertUserCreatedTevent().DoesNotDispatchToWrapped<IUserPublisherIdentifyingTevent<IUserTevent>>();
       }
    }
 
    public class Publishing_WrapperTevent_of_UserCreatedTevent : MutableTeventDispatcher_WrappedTeventsTests
    {
-      TeventDispatcherAsserter.WrappedRouteAssertion<IUserTevent> AssertUserCreatedTevent() => _dispatcher.Assert().WrappedTevent(new PublisherIdentifyingTevent<UserCreatedTevent>(new UserCreatedTevent()));
+      TeventDispatcherAsserter.RouteAssertion<IUserTevent> AssertUserCreatedTevent() => _dispatcher.Assert().WrappedTevent(new PublisherIdentifyingTevent<UserCreatedTevent>(new UserCreatedTevent()));
 
       public class Dispatches_to_handler_for : Publishing_WrapperTevent_of_UserCreatedTevent
       {
@@ -46,6 +48,7 @@ public class MutableTeventDispatcher_WrappedTeventsTests : UniversalTestBase
 
       public class Does_not_dispatch_to_handler_for : Publishing_WrapperTevent_of_UserCreatedTevent
       {
+         [XF] public void IAdminUserTevent_() => AssertUserCreatedTevent().DoesNotDispatchTo<IAdminUserTevent>();
          [XF] public void IUserWrapperTevent_of_IUserTevent() => AssertUserCreatedTevent().DoesNotDispatchToWrapped<IUserPublisherIdentifyingTevent<IUserTevent>>();
          [XF] public void IAdminUserWrapperTevent_of_IUserTevent() => AssertUserCreatedTevent().DoesNotDispatchToWrapped<IAdminUserPublisherIdentifyingTevent<IUserTevent>>();
       }
@@ -53,7 +56,7 @@ public class MutableTeventDispatcher_WrappedTeventsTests : UniversalTestBase
 
    public class Publishing_UserWrapperTevent_of_UserCreatedTevent : MutableTeventDispatcher_WrappedTeventsTests
    {
-      TeventDispatcherAsserter.WrappedRouteAssertion<IUserTevent> AssertUserWrapperTevent_of_UserCreatedTevent() => _dispatcher.Assert().WrappedTevent(new UserPublisherIdentifyingTevent<UserCreatedTevent>(new UserCreatedTevent()));
+      TeventDispatcherAsserter.RouteAssertion<IUserTevent> AssertUserWrapperTevent_of_UserCreatedTevent() => _dispatcher.Assert().WrappedTevent(new UserPublisherIdentifyingTevent<UserCreatedTevent>(new UserCreatedTevent()));
 
       public class Dispatches_to_handler_for : Publishing_UserWrapperTevent_of_UserCreatedTevent
       {
@@ -69,13 +72,14 @@ public class MutableTeventDispatcher_WrappedTeventsTests : UniversalTestBase
 
       public class Does_not_dispatch_to_handler_for : Publishing_UserWrapperTevent_of_UserCreatedTevent
       {
+         [XF] public void IAdminUserTevent_() => AssertUserWrapperTevent_of_UserCreatedTevent().DoesNotDispatchTo<IAdminUserTevent>();
          [XF] public void _IAdminUserWrapperTevent_of_IUserTevent() => AssertUserWrapperTevent_of_UserCreatedTevent().DoesNotDispatchToWrapped<IAdminUserPublisherIdentifyingTevent<IUserTevent>>();
       }
    }
 
    public class Publishing_AdminUserWrapperTevent_of_UserCreatedTevent : MutableTeventDispatcher_WrappedTeventsTests
    {
-      TeventDispatcherAsserter.WrappedRouteAssertion<IUserTevent> AssertAdminUserWrapperTevent_of_UserCreatedTevent() => _dispatcher.Assert().WrappedTevent(new AdminUserPublisherIdentifyingTevent<UserCreatedTevent>(new UserCreatedTevent()));
+      TeventDispatcherAsserter.RouteAssertion<IUserTevent> AssertAdminUserWrapperTevent_of_UserCreatedTevent() => _dispatcher.Assert().WrappedTevent(new AdminUserPublisherIdentifyingTevent<UserCreatedTevent>(new UserCreatedTevent()));
 
       public class Dispatches_to_handler_for : Publishing_AdminUserWrapperTevent_of_UserCreatedTevent
       {
@@ -88,13 +92,19 @@ public class MutableTeventDispatcher_WrappedTeventsTests : UniversalTestBase
          [XF] public void IUserWrapperTevent_of_IUserTevent() => AssertAdminUserWrapperTevent_of_UserCreatedTevent().DispatchesToWrapped<IUserPublisherIdentifyingTevent<IUserTevent>>();
          [XF] public void IUserWrapperTevent_of_IUserCreatedTevent() => AssertAdminUserWrapperTevent_of_UserCreatedTevent().DispatchesToWrapped<IUserPublisherIdentifyingTevent<IUserCreatedTevent>>();
          [XF] public void IAdminUserWrapperTevent_of_IUserTevent() => AssertAdminUserWrapperTevent_of_UserCreatedTevent().DispatchesToWrapped<IAdminUserPublisherIdentifyingTevent<IUserTevent>>();
-         [XF] public void IAdminUserWrapperTevent_of_IUserCreatedTevent() => AssertAdminUserWrapperTevent_of_UserCreatedTevent().DispatchesToWrapped<IUserPublisherIdentifyingTevent<IUserCreatedTevent>>();
+         [XF] public void IAdminUserWrapperTevent_of_IUserCreatedTevent() => AssertAdminUserWrapperTevent_of_UserCreatedTevent().DispatchesToWrapped<IAdminUserPublisherIdentifyingTevent<IUserCreatedTevent>>();
+      }
+
+      public class Does_not_dispatch_to_handler_for : Publishing_AdminUserWrapperTevent_of_UserCreatedTevent
+      {
+         [XF] public void IAdminUserTevent_() => AssertAdminUserWrapperTevent_of_UserCreatedTevent().DoesNotDispatchTo<IAdminUserTevent>();
+         [XF] public void IAdminUserCreatedTevent_() => AssertAdminUserWrapperTevent_of_UserCreatedTevent().DoesNotDispatchTo<IAdminUserCreatedTevent>();
       }
    }
 
    public class Publishing_AdminUserWrapperTevent_of_AdminUserCreatedTevent : MutableTeventDispatcher_WrappedTeventsTests
    {
-      TeventDispatcherAsserter.WrappedRouteAssertion<IUserTevent> AssertAdminUserWrapperTevent_of_AdminUserCreatedTevent() => _dispatcher.Assert().WrappedTevent(new AdminUserPublisherIdentifyingTevent<AdminUserCreatedTevent>(new AdminUserCreatedTevent()));
+      TeventDispatcherAsserter.RouteAssertion<IUserTevent> AssertAdminUserWrapperTevent_of_AdminUserCreatedTevent() => _dispatcher.Assert().WrappedTevent(new AdminUserPublisherIdentifyingTevent<AdminUserCreatedTevent>(new AdminUserCreatedTevent()));
 
       public class Dispatches_to_handler_for : Publishing_AdminUserWrapperTevent_of_AdminUserCreatedTevent
       {
@@ -109,9 +119,9 @@ public class MutableTeventDispatcher_WrappedTeventsTests : UniversalTestBase
          [XF] public void IUserWrapperTevent_of_IUserTevent() => AssertAdminUserWrapperTevent_of_AdminUserCreatedTevent().DispatchesToWrapped<IUserPublisherIdentifyingTevent<IUserTevent>>();
          [XF] public void IUserWrapperTevent_of_IUserCreatedTevent() => AssertAdminUserWrapperTevent_of_AdminUserCreatedTevent().DispatchesToWrapped<IUserPublisherIdentifyingTevent<IUserCreatedTevent>>();
          [XF] public void IAdminUserWrapperTevent_of_IUserTevent() => AssertAdminUserWrapperTevent_of_AdminUserCreatedTevent().DispatchesToWrapped<IAdminUserPublisherIdentifyingTevent<IUserTevent>>();
-         [XF] public void IAdminUserWrapperTevent_of_IUserCreatedTevent() => AssertAdminUserWrapperTevent_of_AdminUserCreatedTevent().DispatchesToWrapped<IUserPublisherIdentifyingTevent<IUserCreatedTevent>>();
+         [XF] public void IAdminUserWrapperTevent_of_IUserCreatedTevent() => AssertAdminUserWrapperTevent_of_AdminUserCreatedTevent().DispatchesToWrapped<IAdminUserPublisherIdentifyingTevent<IUserCreatedTevent>>();
          [XF] public void IAdminUserWrapperTevent_of_IAdminUserTevent() => AssertAdminUserWrapperTevent_of_AdminUserCreatedTevent().DispatchesToWrapped<IAdminUserPublisherIdentifyingTevent<IAdminUserTevent>>();
-         [XF] public void IAdminUserWrapperTevent_of_IAdminUserCreatedTevent() => AssertAdminUserWrapperTevent_of_AdminUserCreatedTevent().DispatchesToWrapped<IUserPublisherIdentifyingTevent<IAdminUserCreatedTevent>>();
+         [XF] public void IAdminUserWrapperTevent_of_IAdminUserCreatedTevent() => AssertAdminUserWrapperTevent_of_AdminUserCreatedTevent().DispatchesToWrapped<IAdminUserPublisherIdentifyingTevent<IAdminUserCreatedTevent>>();
       }
    }
 
