@@ -13,7 +13,7 @@ This package provides the messaging infrastructure that powers Compze's type-rou
 - **Command, query, and event handling** — Type-routed message dispatch for `ITommand`, `ITuery`, and `ITevent`
 - **Endpoint hosting** — `EndpointConfiguration` and `IEndpointHost` for composing messaging endpoints
 - **Message routing** — Automatic routing based on .NET type compatibility
-- **In-memory and distributed transport** — Pluggable transport layer supporting both in-process and remote messaging
+- **In-process and distributed modes** — `InProcessTessaging()` composes the synchronous in-process core into a plain container with no transports at all; `AddDistributedTessaging()` adds the full inbox/outbox pipeline through which endpoints converse
 - **Typermedia API support** — Type-based hypermedia-style API navigation
 
 ### Type-routed messaging example
