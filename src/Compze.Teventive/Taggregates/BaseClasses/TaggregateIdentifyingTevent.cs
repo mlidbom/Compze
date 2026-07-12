@@ -1,4 +1,3 @@
-using Compze.Internals.SystemCE.ReflectionCE;
 using Compze.Teventive.Taggregates.Tevents.Public;
 using Compze.Teventive.Tevents.Public;
 
@@ -11,9 +10,7 @@ public static class TaggregateIdentifyingTevent
    /// the same wrapping a <c>Taggregate</c> performs when publishing through its declared <c>WrapperTeventImplementation</c>.<br/>
    /// This is how a tevent migration author wraps a replacement tevent in the publisher's wrapper.</summary>
    public static ITaggregateIdentifyingTevent<ITaggregateTevent> WrapIn(Type wrapperTeventImplementation, ITaggregateTevent tevent) =>
-      (ITaggregateIdentifyingTevent<ITaggregateTevent>)Constructor.ForGenericType(wrapperTeventImplementation)
-                                                                  .WithArgument(tevent.GetType())
-                                                                  .Invoke(tevent);
+      (ITaggregateIdentifyingTevent<ITaggregateTevent>)PublisherIdentifyingTevent.WrapIn(wrapperTeventImplementation, tevent);
 }
 
 // ReSharper disable once ClassNeverInstantiated.Global

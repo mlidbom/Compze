@@ -49,14 +49,15 @@ Canonical statements of the model:
   recorded at `WrapperTeventImplementationGenerator.cs:41-43` (transmit inner-only so endpoints need no
   wrapper type information) is REJECTED: it adds complexity to dodge a problem `TypeId` already solves
   completely. Pre-`TypeId` thinking; going by the fully wrapped types everywhere is much simpler.
-- **D3 — reusable tomponents/tentities: DEFERRED. Re-scoped 2026-07-12: owned components/entities are
-  correct as-is, WITHOUT wrapping.** Wrapping adds discriminating information only when the same tevent type
-  has more than one possible publisher; an owned component's/entity's tevents slot into exactly one
-  taggregate's tevent hierarchy, so the inner type alone is already the complete publisher identity,
-  statically. The deferred work is reusable cross-taggregate tomponents/tentities, whose tevents are adopted
-  into each owner's hierarchy via owner-declared wrapper types — design direction recorded in the Deferred
-  section. Deferral stays safe: routing treats an adopting wrapper tevent as just another wrapper type when
-  it arrives.
+- **D3 — reusable tomponents/tentities: base classes and specs DONE (2026-07-12). Re-scoped the same day:
+  owned components/entities are correct as-is, WITHOUT wrapping.** Wrapping adds discriminating information
+  only when the same tevent type has more than one possible publisher; an owned component's/entity's tevents
+  slot into exactly one taggregate's tevent hierarchy, so the inner type alone is already the complete
+  publisher identity, statically. Reusable cross-taggregate tomponents/tentities — whose tevents are adopted
+  into each owner's hierarchy via owner-declared wrapper types — are implemented as `SharedTomponent`/
+  `SharedTentity`/`SharedTentityCollection`/`SharedTomponentSlot`; design record and remaining sub-items in
+  the Deferred section. As designed, routing/store/wire needed ZERO changes: an adopting wrapper tevent is
+  just another wrapper type when it arrives.
 - **D4 — two wrapping mechanisms, both compile-time types.** Taggregates wrap in their declared wrapper
   implementation types; a tevent published without a wrapper is auto-wrapped in
   `PublisherIdentifyingTevent<TTeventInterface>` closed over its runtime type. Special-casing wrapped vs.
@@ -148,9 +149,13 @@ unhandled-tevent ignore configuration is translated the same way subscriptions a
   taggregate's tevent hierarchy, so the inner type alone already identifies the publisher completely —
   a wrapper level would restate statically known information and cost more generic parameters (per D3 as
   re-scoped 2026-07-12).
-- Reusable (cross-taggregate) tomponents/tentities are the actual D3 work — explicitly unsupported today
-  (`src/Compze.Teventive/Taggregates/_docs/reusable-components.md:1-2,16`, "wrap one more time... More
-  soon. 2024-12-14"). Design direction recorded in the Deferred section.
+- Reusable (cross-taggregate) tomponents/tentities are the actual D3 work — DONE (2026-07-12):
+  `SharedTomponent`, `SharedTentity`, `SharedTentityCollection`, and `SharedTomponentSlot` in
+  `Compze.Teventive.Taggregates.BaseClasses`, specified end to end (wrapping, slot discrimination,
+  route-back, per-tentity routing, replay, subscription grains) in
+  `test/Compze.Tests.Unit/CQRS/Taggregates/SharedTomponents/`. The user-facing documentation
+  (`src/Compze.Teventive/Taggregates/_docs/reusable-components.md`, still "More soon. 2024-12-14") remains
+  to be rewritten to the as-built design.
 
 ### 5. The tevent store — DONE (2026-07-12, per D7)
 
@@ -351,12 +356,13 @@ guarantee-preserving auto-wrap item below.
 ## Deferred
 
 - **D3 — reusable tomponents/tentities** (re-scoped 2026-07-12: owned components/entities are correct
-  as-is — see the decision log and Status §4). Implement reusable cross-taggregate tomponents/tentities and
-  finish `reusable-components.md`. Design direction settled in the 2026-07-12 exploration; the core concept
-  is confirmed sound. `IPublisherIdentifyingTevent`'s own doc comment already names this use case
+  as-is — see the decision log and Status §4). Base classes (`SharedTomponent`, `SharedTentity`,
+  `SharedTentityCollection`, `SharedTomponentSlot`) and executable specifications DONE (2026-07-12);
+  the design below is implemented and verified except where an item is marked open.
+  `IPublisherIdentifyingTevent`'s own doc comment already named this use case
   (`_TessageTypes..Interfaces.cs:84-89`).
 
-  Settled direction:
+  Settled direction (as built):
   - **The adopting wrapper tevent** — the owner declares, per member slot, a wrapper type that adopts the
     reusable tomponent's tevents into the owner's tevent hierarchy; it is BOTH an owner-hierarchy tevent and
     a publisher-identifying wrapper:
@@ -385,30 +391,51 @@ guarantee-preserving auto-wrap item below.
     unwrap-on-apply in one place. The tomponent publishes its own raw tevents into a connection handed to
     it at construction and carries ZERO owner-related type parameters — that is what makes it reusable in
     arbitrary teventives; the generic weight lands on the owner's slot declaration, once per member.
-  - **Route-back is by adopting wrapper type** on the owner's applier dispatcher:
-    `.For<IShippingAddressTevent<IPostalAddressTevent>>(adopted => … apply adopted.Tevent)`. Per-slot
-    wrapper types are load-bearing, not ceremony: two same-typed tomponents (shipping vs. billing
-    `PostalAddress`) publish identical inner tevent types — only the wrapper type distinguishes them. The
-    machinery already exists (wrapper-typed subscriptions, this workstream).
+  - **Route-back is by adopting wrapper type** on the owner's applier dispatcher, subscribed in the
+    explicitly-wrapped shape:
+    `.ForWrapped<IPublisherIdentifyingTevent<TAdoptingWrapperTevent>>(ownerWrapped => … apply ownerWrapped.Tevent.Tevent)` —
+    by the time an adopted tevent reaches the owner's appliers it is wrapped once more in the owner's own
+    publisher wrapper, routing matches the outermost type only, and covariance carries the match through.
+    (An earlier note here claimed `For<IShippingAddressTevent<…>>` would work — it does not, and fails
+    LOUD: the adopting wrapper interface is itself an `IPublisherIdentifyingTevent<T>`, so the one
+    translation rule's identity branch treats it as an outermost wrapper type, and the dispatcher rejects
+    wrapper types in `For` subscriptions outright.) Per-slot wrapper types are load-bearing, not ceremony:
+    two same-typed tomponents (shipping vs. billing `PostalAddress`) publish identical inner tevent types —
+    only the wrapper type distinguishes them. Verified by spec.
   - **Routing keeps exactly ONE automatic translation/unwrap level** — the publisher wrapper, invariant 2
-    unchanged. `For<IShippingAddressTevent<…>>` already works (the adopting wrapper is itself an inner
-    tevent to the routing; the subscriber unwraps `.Tevent` by hand). A bare `For<PostalAddressChanged>`
-    will NOT match adopted publications, by decision: fully general any-depth matching is impossible with
-    static covariance (every nesting level appears in the type), so it would mean walking wrapper
-    structures at runtime — rejected; subscribe at the grain the static type structure expresses.
+    unchanged; deeper grains are expressed in the subscribed type and hand-unwrapped. Verified subscription
+    grains: `ForWrapped<IOrderTevent<IShippingAddressTevent<Changed>>>` (full publication path) and
+    `ForWrapped<IPublisherIdentifyingTevent<IShippingAddressTevent<Changed>>>` (the slot, regardless of
+    owner wrapper). A bare `For<PostalAddressChanged>` does NOT match adopted publications, by decision
+    (verified by spec): fully general any-depth matching is impossible with static covariance (every
+    nesting level appears in the type), so it would mean walking wrapper structures at runtime — rejected;
+    subscribe at the grain the static type structure expresses.
   - **Names**: eventually `TeventiveComponent` becomes `Tomponent` (the words are used far too often for
     the long form; `Tentity` already leads the way) — align the remaining `Teventive*` type and file names
     with it as part of this work.
 
-  Open when picked up:
-  - Reusable tentity collections: the `CollectionManager` analog — routing to the instance via the
-    tentity's own Id property read through the unwrap; what replaces the
-    `IGetSetTaggregateEntityTeventEntityId` stamping pattern.
+  Resolved during implementation (2026-07-12):
+  - Reusable tentity collections: `SharedTentityCollection` IS a `SharedTomponent` occupying one slot; it
+    routes each tevent to the instance whose `ISharedTentityTevent<TTentityId>.EntityId` it carries.
+    Nothing stamps ids: a shared tentity's tevents state their `EntityId` explicitly at creation and
+    `SharedTentity.Publish` asserts the tevent carries the publishing tentity's `Id` — no
+    `IGetSetTaggregateEntityTeventEntityId` analog needed.
   - Single-inheritance mechanics: the adopting wrapper implementation derives from the owner's tevent
-    implementation base, so it cannot also derive from a wrapper base class à la
-    `TaggregateIdentifyingTevent<T>` — decide where the wrapper mechanics (`.Tevent`,
-    close-the-open-generic-over-the-runtime-type construction) live; presumably generalize
-    `TaggregateIdentifyingTevent.WrapIn` so the translation keeps one home.
+    implementation base and implements `IPublisherIdentifyingTevent<T>` directly — a two-line class per
+    slot. The close-the-wrapper-over-the-runtime-type mechanism has one home:
+    `PublisherIdentifyingTevent.WrapIn` (`TaggregateIdentifyingTevent.WrapIn` delegates to it).
+
+  Still open:
+  - `reusable-components.md` (and the taggregate `_docs` generally) still describe this as future work —
+    rewrite to the as-built design.
+  - A store-level round-trip spec for adopted tevents. By design the store needs nothing new (the adopting
+    wrapper is the inner tevent the store stamps; the row `TypeId` is the full closed outer type), but no
+    executable specification pins persistence of a double-wrapped graph yet.
+  - Hosting a shared tomponent inside ANOTHER shared tomponent: the slot's owner seam is
+    `ITeventiveInternals<TOwnerTevent, TOwnerTeventImplementation>` — the `TaggregateTevent` world — so v1
+    hosts are taggregates and owned teventive components. Shared-in-shared nesting needs a second owner
+    seam for the slot (the design composes; only the seam is missing).
+  - Removable shared tentities (the `TeventiveRemovableEntity` analog).
   - `PublisherIdentifyingTevent.Wrapped` normalization passes through ANY `IPublisherIdentifyingTevent<ITevent>`;
     a bare adopting wrapper reaching the in-process bus without its taggregate wrapper would pass as "fully
     wrapped" — decide whether that is unreachable by construction or needs a guard.
