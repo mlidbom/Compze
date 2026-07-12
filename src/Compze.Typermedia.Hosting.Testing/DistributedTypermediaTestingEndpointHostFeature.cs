@@ -6,16 +6,16 @@ using Compze.Typermedia.Hosting.Testing.Wiring;
 namespace Compze.Typermedia.Hosting.Testing;
 
 ///<summary>
-/// Plugs Typermedia into a <see cref="TestingEndpointHost"/>. Every endpoint the host registers gets
-/// the Typermedia pipeline (via <see cref="EndpointBuilderTypermediaExtensions.AddTypermedia"/>) and the current
+/// Plugs distributed Typermedia into a <see cref="TestingEndpointHost"/>. Every endpoint the host registers gets
+/// the distributed Typermedia pipeline (via <see cref="EndpointBuilderDistributedTypermediaExtensions.AddDistributedTypermedia"/>) and the current
 /// test's Typermedia transport. Typermedia has no background work, so the feature takes no part in the host's
 /// dispose-time quiescence wait.
 ///</summary>
-public class TypermediaTestingEndpointHostFeature : ITestingEndpointHostFeature
+public class DistributedTypermediaTestingEndpointHostFeature : ITestingEndpointHostFeature
 {
    public void SetupEndpoint(IEndpointBuilder builder)
    {
       builder.Registrar.CurrentTestsTypermediaTransport();
-      builder.AddTypermedia();
+      builder.AddDistributedTypermedia();
    }
 }

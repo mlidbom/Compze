@@ -96,7 +96,6 @@ Tests that need to run against all configured pluggable component combinations u
 **Attribute variants:**
 - `[PCT]` — runs for all 4 component types (SqlLayer × DIContainer × Serializer × Transport)
 - `[PCTSerializer]` — only varies the Serializer component
-- `[PCTDIContainer]` — only varies the DIContainer component
 
 **DO NOT** write one test per pluggable component. `[PCT]` automatically tests ALL enabled combinations.
 

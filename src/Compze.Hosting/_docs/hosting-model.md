@@ -50,10 +50,13 @@ style can be developed, shipped, and — crucially — tested entirely on its ow
 declared in one visible place, its own setup; and a new capability can be added without touching the hosting
 machinery at all.
 
-The rule is applied twice, at two scales:
+The rule is applied three times, at three scales:
 
 1. **Per endpoint:** capabilities plug into an endpoint being built, as *endpoint features*.
-2. **Per testing host:** capabilities plug into the test host, as *testing host features*, so one neutral
+2. **Within each communication style:** the style's synchronous in-process core is itself a feature, and
+   distribution is a feature composed on top of it — so a style can be used entirely in-process, with no
+   transports and nothing to host.
+3. **Per testing host:** capabilities plug into the test host, as *testing host features*, so one neutral
    testing host serves Tessaging-only, Typermedia-only, and combined tests alike.
 
 The rest of this document walks the model top-down: the code layout that enforces the rule, then endpoints
@@ -67,7 +70,7 @@ The rule is enforced by the dependency directions between three layers:
 |---|---|---|
 | **Contracts** | `Compze.Abstractions` → `Compze.Abstractions.Hosting.Public` | No |
 | **Mechanism** | `Compze.Hosting` (production), `Compze.Hosting.Testing` (testing) | No |
-| **Features** | `Compze.Tessaging`/`Compze.Tessaging.Hosting.Testing`, `Compze.Typermedia.Client`/`Compze.Typermedia.Hosting.Testing` | Each knows only itself |
+| **Features** | `Compze.Tessaging`/`Compze.Tessaging.Hosting.Testing`, `Compze.Typermedia` + `Compze.Typermedia.Client`/`Compze.Typermedia.Hosting.Testing` | Each knows only itself |
 
 The contracts define what hosting *is*: `IEndpointHost`, `IEndpoint`, `IEndpointBuilder`,
 `IEndpointComponent`, plus the endpoint value types (`EndpointId`, `EndpointAddress`,
@@ -83,6 +86,8 @@ Declaring an endpoint looks like this, and is the same regardless of host:
 var host = EndpointHost.Production.Create(CreateContainerBuilder);
 var endpoint = host.RegisterEndpoint("AccountManagement", new EndpointId(Guid.Parse("...")), builder =>
 {
+   builder.AddDistributedTessaging();
+   builder.AddDistributedTypermedia();
    builder.TypeMapper.RegisterMyDomainTypeMappings();
    builder.RegisterTessagingHandlers.ForTevent((IAccountTevent tevent) => ...);
    builder.RegisterTypermediaHandlers.ForTuery((AccountTuery tuery) => ...);
@@ -97,9 +102,11 @@ endpoint needs no matter what it speaks: the type mapper (pre-mapped with the sh
 the discovery types), the endpoint's identity, the configuration provider, and the infrastructure-query
 executor that endpoint discovery runs on.
 
-Notice what the example already shows: the endpoint above speaks both Tessaging and Typermedia, not because
-any host or builder decided so, but because its own setup registered handlers with both. That is the design
-rule made concrete — which brings us to how that line of code works.
+Notice what the example already shows: the endpoint above converses with other endpoints in both styles, not
+because any host or builder decided so, but because its own setup declares `AddDistributedTessaging()` and
+`AddDistributedTypermedia()`. Registering handlers declares something smaller — that the endpoint
+*understands* those tessages in-process; conversing over the network is its own explicit declaration. That is
+the design rule made concrete — which brings us to how those lines of code work.
 
 ## How a capability plugs in: features
 
@@ -107,19 +114,39 @@ The builder does not know which capabilities exist. It offers one seam, and each
 as a **feature** behind it:
 
 - `GetOrAddFeature<TFeature>(createFeature)` — creates the feature once per endpoint and remembers it.
-  `AddTessaging()` and `AddTypermedia()` are one-line extension methods over this call, and
-  `RegisterTessagingHandlers` / `RegisterTypermediaHandlers` are extension properties that add the feature on
-  first touch and return its handler registrar — so registering a handler is all it takes to give an endpoint
-  a communication style.
+  `AddDistributedTessaging()`, `AddInProcessTessaging()`, `AddDistributedTypermedia()`, and
+  `AddInProcessTypermedia()` are one-line extension methods over this call, and
+  `RegisterTessagingHandlers` / `RegisterTypermediaHandlers` are extension properties that add the style's
+  in-process core on first touch and return its handler registrar.
 - Inside its constructor, a feature uses the rest of the builder surface to wire its whole vertical: it
   registers its services with `builder.Registrar`, maps its message types with `builder.TypeMapper`,
   schedules post-container-build work with `builder.OnContainerBuilt(...)` (e.g. registering discovery
   handlers with the resolved query executor), and adds its runtime lifecycle with `builder.AddComponent(...)`.
 
-`TessagingEndpointFeature` (in `Compze.Tessaging`) wires the inbox, outbox, tommand scheduler, router, and
-service bus session. `TypermediaEndpointFeature` (in `Compze.Typermedia.Client`) wires the handler registry
-and executor, the in-process navigator, the transport server, and discovery. A feature lives in its own
-capability's assembly, where the internal access it needs is natural — no `InternalsVisibleTo` back-doors.
+The design rule is applied a third time *inside* each communication style: the style's in-process core is
+itself a feature, and distribution is a feature composed on top of it (via `GetOrAddFeature`, so the core is
+wired once whether it arrives alone or under distribution).
+
+- **Tessaging splits three ways**, because an endpoint declares its tevent publication mode exactly once.
+  `TessageHandlingEndpointFeature` (in `Compze.Tessaging`) is the core every Tessaging endpoint shares: the
+  handler registry and the synchronous in-process tevent delivery (`IInProcessTeventPublisher`) — the leg
+  every tevent travels, whatever the endpoint speaks. It deliberately declares no publication mode, which is
+  what keeps `RegisterTessagingHandlers` order-independent of the mode declaration.
+  `InProcessTessagingEndpointFeature` (`AddInProcessTessaging()`) declares the endpoint in-process-only: the
+  handling core plus `InProcessOnlyTeventStoreTeventPublisher`, and nothing else — no transport, inbox,
+  outbox, or tommand scheduler. `DistributedTessagingEndpointFeature` (`AddDistributedTessaging()`) composes
+  the handling core and adds distribution: inbox, outbox, tommand scheduler, router, service bus session, and
+  `DistributedTeventStoreTeventPublisher`. The two modes are mutually exclusive — declaring both fails loudly
+  at setup time.
+- **Typermedia splits two ways**, because it has no mode-exclusive service: distributed Typermedia simply
+  contains in-process Typermedia. `InProcessTypermediaEndpointFeature` (in `Compze.Typermedia`,
+  `AddInProcessTypermedia()`) wires the handler registry and the `IInProcessTypermediaNavigator` through
+  which strictly local tueries and tommands execute synchronously, in the caller's transaction.
+  `DistributedTypermediaEndpointFeature` (in `Compze.Typermedia.Client`, `AddDistributedTypermedia()`)
+  composes it and adds the transport server, the handler executor that serves remote clients, and discovery.
+
+A feature lives in its own capability's assembly, where the internal access it needs is natural — no
+`InternalsVisibleTo` back-doors.
 
 ## How a capability runs: components and the lifecycle phases
 
@@ -131,9 +158,11 @@ The lifecycle has two phases — listening, then sending — and the ordering gu
 host starts, every endpoint's components finish `StartListeningAsync` before any component anywhere starts
 `StartSendingAsync`. That is the whole point of the split: nothing can send to an endpoint that is not yet
 ready to receive. Stopping runs in reverse. The sending-phase members are default no-ops because some
-components only listen: Typermedia's component starts and stops its transport server and never sends;
-Tessaging's component listens with its inbox and scheduler, then in the sending phase connects its router to
-every address in the `IEndpointRegistry` and starts its outbox.
+components only listen: `DistributedTypermediaEndpointComponent` starts and stops its transport server and
+never sends; `DistributedTessagingEndpointComponent` listens with its inbox and scheduler, then in the
+sending phase connects its router to every address in the `IEndpointRegistry` and starts its outbox. Only the
+distributed features add components at all — an endpoint declaring only in-process features has no runtime
+lifecycle, and the host starts it with nothing to drive.
 
 ## Addresses are extension properties
 
@@ -142,7 +171,53 @@ its own. Each communication style contributes an extension property reading its 
 `endpoint.TessagingAddress` (the inbox address, from `EndpointTessagingExtensions`) and
 `endpoint.TypermediaAddress` (the transport server's address, from `EndpointTypermediaExtensions`). Both are
 null until the endpoint is listening — there is nothing to connect to before that — and for endpoints without
-that style's pipeline.
+that style's distributed pipeline (an in-process endpoint has no address: there is nothing to connect to,
+ever).
+
+## In-process composition — when there is nothing to host
+
+Everything above assumes an endpoint that converses with other endpoints. But both communication styles have
+a purely synchronous core that is valuable entirely on its own, inside a single process: publishing tevents
+that restructure the internal flow of an application, and executing strictly local tueries and tommands
+through the `IInProcessTypermediaNavigator`. Everything in that core runs synchronously, on the calling
+thread, within the caller's transaction — so there are no transports to start, no discovery, no background
+work, and therefore *nothing to host*. In-process Compze is container wiring, not hosting.
+
+Each style is composed into a plain container by one registrar extension — the same wiring units its endpoint
+features are built from, so there is exactly one definition of what each style is:
+
+```csharp
+var builder = /* any Compze container builder */;
+builder.Registrar
+       .InProcessTessaging()    // handler registry, IInProcessTeventPublisher, InProcessOnlyTeventStoreTeventPublisher
+       .InProcessTypermedia();  // handler registry, IInProcessTypermediaNavigator
+var container = builder.Build();
+```
+
+Handlers are registered after the container is built, through the resolved `ITessageHandlerRegistrar` /
+`ITypermediaHandlerRegistrar` — and since application handler-registration code is written against those same
+registrar interfaces in every composition, the same registrations run unchanged under an in-process container,
+an in-process endpoint, or a distributed endpoint.
+
+Three things to know:
+
+- **"In-process" describes communication, not storage.** A real, persistent tevent store composes with
+  in-process Tessaging unchanged; a taggregate's committed tevents are simply delivered only to this
+  process's handlers.
+- **No type-id ceremony.** In-process dispatch routes by `System.Type`; type-id mappings exist for the wire
+  and for persistent-store serialization. The compositions supply a default type mapper when none is
+  registered; an application whose tevent store needs domain mappings registers its own first.
+- **Wanting guaranteed tommand delivery does not make an endpoint "in-process".** A Tessaging tommand's type
+  *is* its delivery contract — exactly-once, transactional, asynchronous — and stripping that synchronously
+  would lie about the type. The synchronous local ask already has a truthful home: Typermedia's strictly
+  local tommand. An application that wants the guarantees within a single process is a distributed endpoint
+  that happens to be alone in its host; Compze already routes self-sent tommands through the outbox for
+  exactly this reason.
+
+The same cores are also available to hosted endpoints as the `AddInProcessTessaging()` /
+`AddInProcessTypermedia()` features — for an endpoint that, say, speaks distributed Tessaging to the world
+while structuring its own request handling with strictly local Typermedia navigation, without paying for a
+transport server it never serves.
 
 ## Production hosting
 
@@ -161,8 +236,8 @@ up: `TestingEndpointHost` knows nothing of Tessaging or Typermedia either, and c
 *host* as `ITestingEndpointHostFeature`s:
 
 ```csharp
-using var host = TestingEndpointHost.Create(new TessagingTestingEndpointHostFeature(),
-                                            new TypermediaTestingEndpointHostFeature());
+using var host = TestingEndpointHost.Create(new DistributedTessagingTestingEndpointHostFeature(),
+                                            new DistributedTypermediaTestingEndpointHostFeature());
 ```
 
 Every endpoint the host registers gets, before the test's own setup runs, each feature's standard test
@@ -177,13 +252,14 @@ What the pieces do:
   assertion observed — a test cannot pass while silently dropping in-flight work
   (`DisposeAsyncWithoutWaitingForEndpointsToBeAtRest` opts out, for tests that deliberately leave work
   scheduled).
-- **`TessagingTestingEndpointHostFeature`** registers, per endpoint: a host-wide tessages-in-flight tracker
-  (this is what the dispose-time quiescence wait reads), an `IEndpointRegistry` listing the host's endpoints'
-  inbox addresses (so routers connect to every endpoint in the host), the Tessaging transport, the Tessaging
-  vertical's SQL persistence stack, and finally `AddTessaging()`. The pre-registrations matter:
-  `TessagingEndpointFeature` guards its tracker and registry defaults with `IsRegistered`, so the host's
-  versions win.
-- **`TypermediaTestingEndpointHostFeature`** registers the Typermedia transport and `AddTypermedia()`.
+- **`DistributedTessagingTestingEndpointHostFeature`** registers, per endpoint: a host-wide
+  tessages-in-flight tracker (this is what the dispose-time quiescence wait reads), an `IEndpointRegistry`
+  listing the host's endpoints' inbox addresses (so routers connect to every endpoint in the host), the
+  Tessaging transport, the Tessaging vertical's SQL persistence stack, and finally
+  `AddDistributedTessaging()`. The pre-registrations matter: `DistributedTessagingEndpointFeature` guards its
+  tracker and registry defaults with `IsRegistered`, so the host's versions win.
+- **`DistributedTypermediaTestingEndpointHostFeature`** registers the Typermedia transport and
+  `AddDistributedTypermedia()`.
 - **`TypermediaTestClient`** (in `Compze.Typermedia.Hosting.Testing`) is a remote client in its own container,
   connecting to an endpoint's `TypermediaAddress` over HTTP exactly as an external application would.
 
@@ -202,13 +278,16 @@ and an endpoint hosting both styles gets it once.
 
 The proof of the design rule is what it takes to add a third communication style:
 
-1. Define the pipeline's services and an `IEndpointComponent` for its runtime lifecycle.
-2. Write an endpoint feature: a class whose constructor wires everything through the `IEndpointBuilder`
-   surface, plus an `AddX()` extension method over `GetOrAddFeature` and (if it has handlers) a
-   `RegisterXHandlers` extension property.
+1. Define the style's in-process core — its handler registry and synchronous dispatch — and wrap it in an
+   endpoint feature behind `AddInProcessX()` and (if it has handlers) a `RegisterXHandlers` extension
+   property, plus a registrar extension composing the same wiring into a plain container.
+2. Define the distribution pipeline's services and an `IEndpointComponent` for its runtime lifecycle, and
+   wrap them in a feature that composes the in-process core via `GetOrAddFeature`, behind
+   `AddDistributedX()`.
 3. If the style has an address, expose it as an extension property on `IEndpoint` reading your component.
 4. For tests, write an `ITestingEndpointHostFeature` that registers the style's test transport and calls
-   `AddX()` for every endpoint — and, if the style has background work, hold the tracker for it and
-   implement the at-rest members.
+   `AddDistributedX()` for every endpoint — and, if the style has background work, hold the tracker for it
+   and implement the at-rest members. The in-process core needs no testing host feature: there is no
+   transport to wire and no background work to await.
 
 Nothing in `Compze.Abstractions`, `Compze.Hosting`, or `Compze.Hosting.Testing` needs to change.

@@ -27,7 +27,7 @@ public class Navigator_specification : UniversalTestBase
    {
       var tueryResults = new List<UserResource>();
 
-      _host = TestingEndpointHost.Create(new TessagingTestingEndpointHostFeature(), new TypermediaTestingEndpointHostFeature());
+      _host = TestingEndpointHost.Create(new DistributedTessagingTestingEndpointHostFeature(), new DistributedTypermediaTestingEndpointHostFeature());
 
       _endpoint = _host.RegisterEndpoint(
          "Backend",

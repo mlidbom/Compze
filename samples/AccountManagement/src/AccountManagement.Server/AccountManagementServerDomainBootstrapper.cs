@@ -6,6 +6,7 @@ using AccountManagement.UI.QueryModels;
 using Compze.Abstractions.Hosting.Public;
 using Compze.DocumentDb.Wiring;
 using Compze.Tessaging.Hosting;
+using Compze.Typermedia;
 using Compze.Typermedia.Client;
 using Compze.Tessaging.Teventive.TeventStore.Typermedia;
 
@@ -19,6 +20,8 @@ public static class AccountManagementServerDomainBootstrapper
                                    id: new EndpointId(Guid.Parse(input: "1A1BE9C8-C8F6-4E38-ABFB-F101E5EDB00D")),
                                    setup: builder =>
                                    {
+                                      builder.AddDistributedTessaging();
+                                      builder.AddDistributedTypermedia();
                                       RegisterTypeMappings(builder);
                                       RegisterDomainComponents(builder);
                                       RegisterHandlers(builder);
@@ -34,6 +37,8 @@ public static class AccountManagementServerDomainBootstrapper
                             id: new EndpointId(Guid.Parse(input: "B16250DE-4321-4FBD-A0CC-E42C7A1B0B34")),
                             setup: builder =>
                             {
+                               builder.AddDistributedTessaging();
+                               builder.AddDistributedTypermedia();
                                RegisterTypeMappings(builder);
 
                                builder.RegisterDocumentDb()

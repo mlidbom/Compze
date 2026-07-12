@@ -18,8 +18,8 @@ The testing counterpart of `Compze.Hosting`: a testing endpoint host that knows 
 ### Quick start
 
 ```csharp
-using var host = TestingEndpointHost.Create(new TessagingTestingEndpointHostFeature(),
-                                            new TypermediaTestingEndpointHostFeature());
+using var host = TestingEndpointHost.Create(new DistributedTessagingTestingEndpointHostFeature(),
+                                            new DistributedTypermediaTestingEndpointHostFeature());
 var endpoint = host.RegisterEndpoint("MyEndpoint", endpointId, builder =>
 {
    // Register handlers; both the Tessaging and Typermedia pipelines are already wired in.

@@ -18,7 +18,7 @@ public abstract class UserStoryTest : UniversalTestBase
 
    protected UserStoryTest()
    {
-      Host = TestingEndpointHost.Create(new TessagingTestingEndpointHostFeature(), new TypermediaTestingEndpointHostFeature());
+      Host = TestingEndpointHost.Create(new DistributedTessagingTestingEndpointHostFeature(), new DistributedTypermediaTestingEndpointHostFeature());
       _endpoint = AccountManagementServerDomainBootstrapper.RegisterWith(Host);
    }
 

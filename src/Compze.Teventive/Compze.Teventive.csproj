@@ -10,6 +10,12 @@
   <ItemGroup>
     <InternalsVisibleTo Include="Compze.Teventive.TeventStore" />
   </ItemGroup>
+  <!-- Exclude _docs files from compilation but keep them visible.
+       This section is automatically maintained by DevScripts\C-Ensure-CsprojfilesExcludeCsFilesFromProjectsInSubfoldersAndDocsFolders.ps1 -->
+  <ItemGroup>
+    <Compile Remove="Taggregates\_docs\**\*.cs" />
+    <None Include="Taggregates\_docs\**\*.cs" />
+  </ItemGroup>
   <!-- Compze.Abstractions — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Abstractions)' == 'true'">
     <PackageReference Include="Compze.Abstractions" Version="*-*" />
@@ -58,11 +64,5 @@
   </ItemGroup>
   <ItemGroup Condition="'$(UsePackageReference_Compze_TypeIdentifiers)' != 'true'">
     <ProjectReference Include="..\Compze.TypeIdentifiers\Compze.TypeIdentifiers.csproj" />
-  </ItemGroup>
-  <!-- Exclude _docs files from compilation but keep them visible.
-       This section is automatically maintained by DevScripts\C-Ensure-CsprojfilesExcludeCsFilesFromProjectsInSubfoldersAndDocsFolders.ps1 -->
-  <ItemGroup>
-    <Compile Remove="Taggregates\_docs\**\*.cs" />
-    <None Include="Taggregates\_docs\**\*.cs" />
   </ItemGroup>
 </Project>

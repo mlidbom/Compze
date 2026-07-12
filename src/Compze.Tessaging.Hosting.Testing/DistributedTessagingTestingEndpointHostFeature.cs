@@ -11,14 +11,14 @@ using Compze.Contracts;
 namespace Compze.Tessaging.Hosting.Testing;
 
 ///<summary>
-/// Plugs Tessaging into a <see cref="TestingEndpointHost"/>. Every endpoint the host registers gets
-/// the Tessaging pipeline (via <see cref="EndpointBuilderTessagingExtensions.AddTessaging"/>), the current test's
+/// Plugs distributed Tessaging into a <see cref="TestingEndpointHost"/>. Every endpoint the host registers gets
+/// the distributed Tessaging pipeline (via <see cref="EndpointBuilderTessagingExtensions.AddDistributedTessaging"/>), the current test's
 /// Tessaging transport and persistence, an <see cref="IEndpointRegistry"/> listing the host's tessaging inbox
 /// addresses (so routers connect to every endpoint in the host), and a host-wide
 /// <see cref="ITessagesInFlightTracker"/>. At dispose the host waits until no tessages are in flight and rethrows
 /// any exceptions tessage handling produced in the background.
 ///</summary>
-public class TessagingTestingEndpointHostFeature : ITestingEndpointHostFeature
+public class DistributedTessagingTestingEndpointHostFeature : ITestingEndpointHostFeature
 {
    static readonly WaitTimeout EndpointsAtRestTimeout = WaitTimeout.Seconds(10);
 
@@ -36,7 +36,7 @@ public class TessagingTestingEndpointHostFeature : ITestingEndpointHostFeature
              .CurrentTestsTessagingTransport()
              .CurrentTestsConfiguredSqlLayer(connectionStringName: builder.Configuration.Id.ToString());
 
-      builder.AddTessaging();
+      builder.AddDistributedTessaging();
    }
 
    public void AwaitEndpointsAtRest() => _tessagesInFlightTracker.AwaitNoTessagesInFlight(EndpointsAtRestTimeout);

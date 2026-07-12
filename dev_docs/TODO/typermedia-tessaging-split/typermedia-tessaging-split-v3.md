@@ -4,6 +4,13 @@ Supersedes v2 and `remaining-tessaging-to-typermedia-references.md` (whose coupl
 and `Compze.Tessaging.Abstractions` no longer reference Typermedia — that coupling was since relocated into
 `Compze.Hosting`).
 
+> **Names in this document predate the in-process/distributed split (2026-07-12).** Since then:
+> `TessagingEndpointFeature` → `DistributedTessagingEndpointFeature` (`AddTessaging()` → `AddDistributedTessaging()`),
+> `TypermediaEndpointFeature` → `DistributedTypermediaEndpointFeature` (`AddTypermedia()` → `AddDistributedTypermedia()`),
+> the components and testing host features gained the same `Distributed` prefix, and each style also has an in-process
+> core feature (`TessageHandlingEndpointFeature` + `InProcessTessagingEndpointFeature`; `InProcessTypermediaEndpointFeature`
+> in `Compze.Typermedia`). See `src/Compze.Hosting/_docs/hosting-model.md`.
+
 ## Verified current state (2026-06-10)
 
 ### Done — the paradigm code is disentangled
@@ -154,8 +161,9 @@ tests in the suite now create Tessaging-only hosts.
 
 ## Follow-ups (taste and naming, after the structure settles)
 
-- `TypermediaEndpointFeature` lives in `Compze.Typermedia.Client` because that package already mixes client and
-  endpoint concerns (discovery registration lives there). Consider a dedicated endpoint package or renaming Client.
+- `DistributedTypermediaEndpointFeature` lives in `Compze.Typermedia.Client` because that package already mixes client
+  and endpoint concerns (discovery registration lives there). The in-process core now lives in `Compze.Typermedia`;
+  still open: a dedicated endpoint package for the distributed feature, or renaming Client.
 - `IEndpointRegistry` is namespaced as neutral but is consumed only by Tessaging routing; decide its true owner.
 - `ServerEndpointBuilder` — "Server" claims a distinction (vs client endpoints?) that no longer exists.
 - Rename/split `Compze.Core` (content is Teventive/Tessaging domain plus DocumentDb glue, not a shared core);

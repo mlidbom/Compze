@@ -13,7 +13,6 @@ For full BDD rationale and examples, see [src/Compze.xUnitBDD/README.md](../../.
 | --- | --- |
 | `[PCT]` | Pluggable Component Theory — runs the test for every configured component combination (SqlLayer × DIContainer × Serializer × Transport). |
 | `[PCTSerializer]` | Varies only the Serializer component. |
-| `[PCTDIContainer]` | Varies only the DIContainer component. |
 | `[Performance]` | Marks performance tests. |
 | `[LongRunning]` | Marks long-running tests. |
 
@@ -22,6 +21,10 @@ For full BDD rationale and examples, see [src/Compze.xUnitBDD/README.md](../../.
 - **Never write one test per pluggable component.** Use `[PCT]` + `UniversalTestBase` — it automatically
   tests all enabled combinations.
 - Test methods take zero parameters; access the current combination via the static `TestEnv` class.
+- **Anything reading `TestEnv`'s pluggable components (`TestEnv.DIContainer`, `TestingEndpointHost.Create`,
+  `CreateTestingContainerBuilder`, …) MUST run under a `[PCT*]` attribute** — the components context exists
+  only inside matrix-driven test cases. An `[XF]`/`[Fact]` test touching them fails at the test-class
+  constructor with "No components provider found any components".
 
 ## Base Class
 
