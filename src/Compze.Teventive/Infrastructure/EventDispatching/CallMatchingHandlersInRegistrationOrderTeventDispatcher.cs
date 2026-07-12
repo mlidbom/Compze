@@ -1,6 +1,7 @@
 // ReSharper disable ForCanBeConvertedToForeach this file needs these optimizations...
 
 using Compze.Abstractions.Tessaging.Public;
+using Compze.Internals.SystemCE.ReflectionCE;
 using Compze.Teventive.Tevents.Public;
 
 // ReSharper disable StaticMemberInGenericType
@@ -15,8 +16,8 @@ partial class CallMatchingHandlersInRegistrationOrderTeventDispatcher<TTevent> :
    where TTevent : class, ITevent
 {
    readonly List<RegisteredHandler> _handlers = [];
-   readonly List<Action<object>> _runBeforeHandlers = [];
-   readonly List<Action<object>> _runAfterHandlers = [];
+   readonly List<RegisteredHandler> _runBeforeHandlers = [];
+   readonly List<RegisteredHandler> _runAfterHandlers = [];
    readonly bool _ignoreAllUnhandled;
    readonly IReadOnlySet<Type> _ignoredTevents;
    int _registrationVersion;
@@ -28,14 +29,15 @@ partial class CallMatchingHandlersInRegistrationOrderTeventDispatcher<TTevent> :
    internal CallMatchingHandlersInRegistrationOrderTeventDispatcher(TeventDispatcherConfig config)
    {
       _ignoreAllUnhandled = config.Options.HasFlag(TeventDispatcherOptions.IgnoreAllUnhandled);
-      _ignoredTevents = config.IgnoredUnhandled.SelectMany(TeventTypeAndItsWrapperTeventType).ToHashSet();
+      _ignoredTevents = config.IgnoredUnhandled.Select(WrapperTeventTypeFor).ToHashSet();
    }
 
-   ///<summary>Dispatching wraps tevents in <see cref="IPublisherIdentifyingTevent{TTevent}"/> implementations, so ignoring a tevent type must also ignore its wrapped form.</summary>
-   static Type[] TeventTypeAndItsWrapperTeventType(Type teventType) => [teventType, typeof(IPublisherIdentifyingTevent<>).MakeGenericType(teventType)];
+   ///<summary>Routing operates exclusively on wrapper types, so an inner tevent type in the ignore configuration is translated to its wrapper form:<br/>
+   /// ignoring a tevent type ignores every <see cref="IPublisherIdentifyingTevent{TTevent}"/> of it. A wrapper type in the configuration is used as it stands.</summary>
+   static Type WrapperTeventTypeFor(Type teventType) =>
+      teventType.Is<IPublisherIdentifyingTevent<ITevent>>() ? teventType : typeof(IPublisherIdentifyingTevent<>).MakeGenericType(teventType);
 
    public ITeventSubscriber<TTevent> Register() => new TeventSubscriber(this);
-
 
    public void Dispatch(TTevent evt) => Dispatch(PublisherIdentifyingTevent.WrapTevent(evt));
 
@@ -48,9 +50,9 @@ partial class CallMatchingHandlersInRegistrationOrderTeventDispatcher<TTevent> :
       }
    }
 
-   public bool Handles(TTevent tevent) => GetHandlers(tevent.GetType(), validateHandlerExists: false).Any();
+   public bool Handles(TTevent tevent) => GetHandlers(PublisherIdentifyingTevent.WrapperTypeFor(tevent.GetType()), validateHandlerExists: false).Any();
 
-   Action<ITevent>[] GetHandlers(Type type, bool validateHandlerExists = true)
+   Action<ITevent>[] GetHandlers(Type wrapperTeventType, bool validateHandlerExists = true)
    {
       if(_cachedRegistrationVersion != _registrationVersion)
       {
@@ -58,7 +60,7 @@ partial class CallMatchingHandlersInRegistrationOrderTeventDispatcher<TTevent> :
          _typeToHandlerCache = new Dictionary<Type, Action<ITevent>[]>();
       }
 
-      if(_typeToHandlerCache.TryGetValue(type, out var arrayResult))
+      if(_typeToHandlerCache.TryGetValue(wrapperTeventType, out var arrayResult))
       {
          return arrayResult;
       }
@@ -69,12 +71,12 @@ partial class CallMatchingHandlersInRegistrationOrderTeventDispatcher<TTevent> :
       // ReSharper disable once ForeachCanBePartlyConvertedToQueryUsingAnotherGetEnumerator LINQ would enumerate through the interface instead of List's struct enumerator in this performance-sensitive path.
       foreach(var registeredHandler in _handlers)
       {
-         var handler = registeredHandler.TryCreateHandlerFor(type);
+         var handler = registeredHandler.TryCreateHandlerFor(wrapperTeventType);
          if(handler == null) continue;
 
          if(!hasFoundHandler)
          {
-            result.AddRange(_runBeforeHandlers);
+            AddMatchingHandlersFrom(_runBeforeHandlers);
             hasFoundHandler = true;
          }
 
@@ -83,19 +85,28 @@ partial class CallMatchingHandlersInRegistrationOrderTeventDispatcher<TTevent> :
 
       if(hasFoundHandler)
       {
-         result.AddRange(_runAfterHandlers);
+         AddMatchingHandlersFrom(_runAfterHandlers);
       } else
       {
-         if(validateHandlerExists && !MayGoUnhandled(type))
+         if(validateHandlerExists && !MayGoUnhandled(wrapperTeventType))
          {
-            throw new TeventUnhandledException(GetType(), type);
+            throw new TeventUnhandledException(GetType(), wrapperTeventType);
          }
 
-         return _typeToHandlerCache[type] = NullHandlerList;
+         return _typeToHandlerCache[wrapperTeventType] = NullHandlerList;
       }
 
-      return _typeToHandlerCache[type] = result.ToArray();
+      return _typeToHandlerCache[wrapperTeventType] = result.ToArray();
+
+      void AddMatchingHandlersFrom(List<RegisteredHandler> beforeOrAfterHandlers)
+      {
+         foreach(var registeredHandler in beforeOrAfterHandlers)
+         {
+            var handler = registeredHandler.TryCreateHandlerFor(wrapperTeventType);
+            if(handler != null) result.Add(handler);
+         }
+      }
    }
 
-   bool MayGoUnhandled(Type teventType) => _ignoreAllUnhandled || _ignoredTevents.Any(ignoredTeventType => ignoredTeventType.IsAssignableFrom(teventType));
+   bool MayGoUnhandled(Type wrapperTeventType) => _ignoreAllUnhandled || _ignoredTevents.Any(ignoredTeventType => ignoredTeventType.IsAssignableFrom(wrapperTeventType));
 }

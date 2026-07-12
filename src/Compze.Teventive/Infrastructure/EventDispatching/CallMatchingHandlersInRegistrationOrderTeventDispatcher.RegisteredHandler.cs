@@ -1,45 +1,38 @@
-// ReSharper disable ForCanBeConvertedToForeach this file needs these optimizations...
-
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Internals.SystemCE.ReflectionCE;
-
-// ReSharper disable StaticMemberInGenericType
 
 namespace Compze.Teventive.Infrastructure.EventDispatching;
 
 partial class CallMatchingHandlersInRegistrationOrderTeventDispatcher<TTevent> where TTevent : class, ITevent
 {
+   ///<summary>A single subscription's routing rule. Routing operates exclusively on wrapper types: given the type of a dispatched<br/>
+   /// <see cref="IPublisherIdentifyingTevent{TTevent}"/>, an implementation either produces the action that delivers the tevent to its handler, or null when the subscription does not match.</summary>
    public abstract class RegisteredHandler
    {
-      internal abstract Action<ITevent>? TryCreateHandlerFor(Type teventType);
+      internal abstract Action<ITevent>? TryCreateHandlerFor(Type wrapperTeventType);
    }
 
+   ///<summary>A subscription to an inner tevent type: matches every wrapper of a tevent assignable to <typeparamref name="THandledTevent"/> —<br/>
+   /// by the wrapper interface's covariance that is exactly assignability to <see cref="IPublisherIdentifyingTevent{TTevent}"/> of <typeparamref name="THandledTevent"/> —<br/>
+   /// and unwraps at delivery: the handler receives the inner <see cref="IPublisherIdentifyingTevent{TTevent}.Tevent"/>.</summary>
    public class RegisteredHandler<THandledTevent>(Action<THandledTevent> handler) : RegisteredHandler where THandledTevent : ITevent
    {
-      //Since handler has specified no preference for wrapper type the most generic of all will do and any wrapped tevent containing a matching tevent should be dispatched to this handler.
       readonly Action<THandledTevent> _handler = handler;
 
-      internal override Action<ITevent>? TryCreateHandlerFor(Type teventType)
-      {
-         if(typeof(THandledTevent).IsAssignableFrom(teventType))
-         {
-            return tevent => _handler((THandledTevent)tevent);
-         } else if(teventType.Is<IPublisherIdentifyingTevent<THandledTevent>>())
-         {
-            return tevent => _handler(((IPublisherIdentifyingTevent<THandledTevent>)tevent).Tevent);
-         } else
-         {
-            return null;
-         }
-      }
+      internal override Action<ITevent>? TryCreateHandlerFor(Type wrapperTeventType) =>
+         wrapperTeventType.Is<IPublisherIdentifyingTevent<THandledTevent>>()
+            ? tevent => _handler(((IPublisherIdentifyingTevent<THandledTevent>)tevent).Tevent)
+            : null;
    }
 
+   ///<summary>A subscription to a wrapper tevent type — publisher-conscious: matches by assignability of the wrapper type itself,<br/>
+   /// so only tevents wrapped by a matching publisher qualify, and delivers the wrapper unopened.</summary>
    public class RegisteredWrappedHandler<THandledWrapperTevent>(Action<THandledWrapperTevent> handler) : RegisteredHandler where THandledWrapperTevent : IPublisherIdentifyingTevent<ITevent>
    {
       readonly Action<THandledWrapperTevent> _handler = handler;
 
-      internal override Action<ITevent>? TryCreateHandlerFor(Type teventType) =>
-         typeof(THandledWrapperTevent).IsAssignableFrom(teventType)
+      internal override Action<ITevent>? TryCreateHandlerFor(Type wrapperTeventType) =>
+         typeof(THandledWrapperTevent).IsAssignableFrom(wrapperTeventType)
             ? tevent => _handler((THandledWrapperTevent)tevent)
             : null;
    }

@@ -11,8 +11,8 @@ partial class CallMatchingHandlersInRegistrationOrderTeventDispatcher<TTevent> w
    {
       readonly CallMatchingHandlersInRegistrationOrderTeventDispatcher<TTevent> _owner = owner;
       readonly List<RegisteredHandler> _handlerSubscriptions = [];
-      readonly List<Action<object>> _beforeHandlersSubscriptions = [];
-      readonly List<Action<object>> _afterHandlersSubscriptions = [];
+      readonly List<RegisteredHandler> _beforeHandlersSubscriptions = [];
+      readonly List<RegisteredHandler> _afterHandlersSubscriptions = [];
       bool _isDisposed;
 
       ///<summary>Registers a handler for any tevent that implements THandledTevent. All matching handlers will be called in the order they were registered.</summary>
@@ -25,9 +25,8 @@ partial class CallMatchingHandlersInRegistrationOrderTeventDispatcher<TTevent> w
       TeventSubscriber ForGenericTevent<THandledTevent>(Action<THandledTevent> handler) where THandledTevent : ITevent
       {
          AssertNotDisposed();
-         TessageTypeInspector.AssertValidForSubscription(typeof(THandledTevent));
-         if(typeof(THandledTevent).Is<IPublisherIdentifyingTevent<ITevent>>()) throw new Exception($"Handlers of type {typeof(IPublisherIdentifyingTevent<>).Name} must be registered through the {nameof(ForWrapped)} method.");
-         AddHandlerSubscription(new RegisteredHandler<THandledTevent>(handler));
+         AssertValidInnerTeventSubscription<THandledTevent>();
+         AddSubscription(new RegisteredHandler<THandledTevent>(handler), _owner._handlers, _handlerSubscriptions);
          return this;
       }
 
@@ -37,29 +36,23 @@ partial class CallMatchingHandlersInRegistrationOrderTeventDispatcher<TTevent> w
       {
          AssertNotDisposed();
          TessageTypeInspector.AssertValidForSubscription(typeof(TWrapperTevent));
-         AddHandlerSubscription(new RegisteredWrappedHandler<TWrapperTevent>(handler));
+         AddSubscription(new RegisteredWrappedHandler<TWrapperTevent>(handler), _owner._handlers, _handlerSubscriptions);
          return this;
       }
 
-      TeventSubscriber BeforeHandlers(Action<TTevent> runBeforeHandlers)
+      TeventSubscriber BeforeHandlers<THandledTevent>(Action<THandledTevent> runBeforeHandlers) where THandledTevent : ITevent
       {
          AssertNotDisposed();
-         //Urgent: fix this. Use the registered handler classes above
-         Action<object> subscription = tevent => runBeforeHandlers(((IPublisherIdentifyingTevent<TTevent>)tevent).Tevent);
-         _owner._runBeforeHandlers.Add(subscription);
-         _beforeHandlersSubscriptions.Add(subscription);
-         _owner._registrationVersion++;
+         AssertValidInnerTeventSubscription<THandledTevent>();
+         AddSubscription(new RegisteredHandler<THandledTevent>(runBeforeHandlers), _owner._runBeforeHandlers, _beforeHandlersSubscriptions);
          return this;
       }
 
-      TeventSubscriber AfterHandlers(Action<TTevent> runAfterHandlers)
+      TeventSubscriber AfterHandlers<THandledTevent>(Action<THandledTevent> runAfterHandlers) where THandledTevent : ITevent
       {
          AssertNotDisposed();
-         //Urgent: fix this
-         Action<object> subscription = tevent => runAfterHandlers(((IPublisherIdentifyingTevent<TTevent>)tevent).Tevent);
-         _owner._runAfterHandlers.Add(subscription);
-         _afterHandlersSubscriptions.Add(subscription);
-         _owner._registrationVersion++;
+         AssertValidInnerTeventSubscription<THandledTevent>();
+         AddSubscription(new RegisteredHandler<THandledTevent>(runAfterHandlers), _owner._runAfterHandlers, _afterHandlersSubscriptions);
          return this;
       }
 
@@ -78,18 +71,24 @@ partial class CallMatchingHandlersInRegistrationOrderTeventDispatcher<TTevent> w
          _owner._registrationVersion++;
       }
 
-      void AddHandlerSubscription(RegisteredHandler subscription)
+      void AddSubscription(RegisteredHandler subscription, List<RegisteredHandler> dispatcherSubscriptions, List<RegisteredHandler> mySubscriptions)
       {
-         _owner._handlers.Add(subscription);
-         _handlerSubscriptions.Add(subscription);
+         dispatcherSubscriptions.Add(subscription);
+         mySubscriptions.Add(subscription);
          _owner._registrationVersion++;
+      }
+
+      static void AssertValidInnerTeventSubscription<THandledTevent>() where THandledTevent : ITevent
+      {
+         TessageTypeInspector.AssertValidForSubscription(typeof(THandledTevent));
+         if(typeof(THandledTevent).Is<IPublisherIdentifyingTevent<ITevent>>()) throw new Exception($"Handlers of type {typeof(IPublisherIdentifyingTevent<>).Name} must be registered through the {nameof(ForWrapped)} method.");
       }
 
       void AssertNotDisposed() => State.Assert(!_isDisposed, () => "This subscriber has been disposed: its subscriptions were removed from the dispatcher and no new ones can be registered through it.");
 
       ITeventSubscriber<TTevent> ITeventSubscriber<TTevent>.ForGenericTevent<THandledTevent>(Action<THandledTevent> handler) => ForGenericTevent(handler);
-      ITeventSubscriber<TTevent> ITeventSubscriber<TTevent>.BeforeHandlers<THandledTevent>(Action<THandledTevent> runBeforeHandlers) => BeforeHandlers(e => runBeforeHandlers((THandledTevent)e));
-      ITeventSubscriber<TTevent> ITeventSubscriber<TTevent>.AfterHandlers<THandledTevent>(Action<THandledTevent> runAfterHandlers) => AfterHandlers(e => runAfterHandlers((THandledTevent)e));
+      ITeventSubscriber<TTevent> ITeventSubscriber<TTevent>.BeforeHandlers<THandledTevent>(Action<THandledTevent> runBeforeHandlers) => BeforeHandlers(runBeforeHandlers);
+      ITeventSubscriber<TTevent> ITeventSubscriber<TTevent>.AfterHandlers<THandledTevent>(Action<THandledTevent> runAfterHandlers) => AfterHandlers(runAfterHandlers);
       ITeventSubscriber<TTevent> ITeventSubscriber<TTevent>.For<THandledTevent>(Action<THandledTevent> handler) => For(handler);
       ITeventSubscriber<TTevent> ITeventSubscriber<TTevent>.ForWrapped<TWrapperTevent>(Action<TWrapperTevent> handler) => ForWrapped(handler);
       ITeventSubscriber<TTevent> ITeventSubscriber<TTevent>.ForWrappedGeneric<TWrapperTevent>(Action<TWrapperTevent> handler) => ForWrappedGeneric(handler);

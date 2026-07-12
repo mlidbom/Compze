@@ -18,6 +18,9 @@ public static class PublisherIdentifyingTevent
    public static IPublisherIdentifyingTevent<TTevent> WrapTevent<TTevent>(TTevent tevent) where TTevent : class, ITevent =>
       (IPublisherIdentifyingTevent<TTevent>)ConstructorFor(tevent.GetType()).Invoke(tevent);
 
+   ///<summary>The wrapper type <see cref="WrapTevent{TTevent}"/> produces for a tevent of <paramref name="teventType"/>: <see cref="PublisherIdentifyingTevent{TTevent}"/> closed over it.</summary>
+   public static Type WrapperTypeFor(Type teventType) => typeof(PublisherIdentifyingTevent<>).MakeGenericType(teventType);
+
    static Func<ITevent, IPublisherIdentifyingTevent<ITevent>> ConstructorFor(Type teventType) =>
       Monitor.DoubleCheckedLocking(
          tryRead: () => _wrapperConstructors.GetValueOrDefault(teventType),
