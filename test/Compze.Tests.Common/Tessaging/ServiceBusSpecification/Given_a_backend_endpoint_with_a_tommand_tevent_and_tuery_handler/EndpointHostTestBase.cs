@@ -35,6 +35,7 @@ public abstract class EndpointHostTestBase : UniversalTestBase
    public IThreadGate MyCreateTaggregateTommandHandlerThreadGate { get; }
    public IThreadGate MyUpdateTaggregateTommandHandlerThreadGate { get; }
    public IThreadGate MyRemoteTaggregateTeventHandlerThreadGate { get; }
+   public IThreadGate MyRemotePublisherConsciousTeventHandlerThreadGate { get; }
    public IThreadGate MyLocalTaggregateTeventHandlerThreadGate { get; }
    public IThreadGate TeventHandlerThreadGate { get; }
    public IThreadGate TueryHandlerThreadGate { get; }
@@ -57,6 +58,7 @@ public abstract class EndpointHostTestBase : UniversalTestBase
          MyCreateTaggregateTommandHandlerThreadGate = IThreadGate.NewOpen(_timeout, nameof(MyCreateTaggregateTommandHandlerThreadGate)),
          MyUpdateTaggregateTommandHandlerThreadGate = IThreadGate.NewOpen(_timeout, nameof(MyUpdateTaggregateTommandHandlerThreadGate)),
          MyRemoteTaggregateTeventHandlerThreadGate = IThreadGate.NewOpen(_timeout, nameof(MyRemoteTaggregateTeventHandlerThreadGate)),
+         MyRemotePublisherConsciousTeventHandlerThreadGate = IThreadGate.NewOpen(_timeout, nameof(MyRemotePublisherConsciousTeventHandlerThreadGate)),
          MyLocalTaggregateTeventHandlerThreadGate = IThreadGate.NewOpen(_timeout, nameof(MyLocalTaggregateTeventHandlerThreadGate)),
          TeventHandlerThreadGate = IThreadGate.NewOpen(_timeout, nameof(TeventHandlerThreadGate)),
          TueryHandlerThreadGate = IThreadGate.NewOpen(_timeout, nameof(TueryHandlerThreadGate))
@@ -130,7 +132,10 @@ public abstract class EndpointHostTestBase : UniversalTestBase
                                              {
                                                 builder.TypeMapper.RegisterCommonTestTypeMappings();
 
-                                                builder.RegisterTessagingHandlers.ForTevent((IMyTaggregateTevent _) => MyRemoteTaggregateTeventHandlerThreadGate.AwaitPassThrough());
+                                                builder.RegisterTessagingHandlers
+                                                       .ForTevent((IMyTaggregateTevent _) => MyRemoteTaggregateTeventHandlerThreadGate.AwaitPassThrough())
+                                                       //Publisher-conscious subscription: subscribing to the taggregate's wrapper type receives the wrapped tevent as MyTaggregate published it.
+                                                       .ForTevent((IMyTaggregateTevent<IMyTaggregateTevent> _) => MyRemotePublisherConsciousTeventHandlerThreadGate.AwaitPassThrough());
                                              });
    }
 

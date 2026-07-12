@@ -14,6 +14,7 @@ class AssemblyTypeMapper : IAssemblyTypeMapper
          .Map<CQRS.TeventRefactoring.Migrations.TestTaggregateTevent>("e97aa97c-3761-404f-a8b4-6689e22c9aa3")
          .MapOpenGeneric(typeof(CQRS.TeventRefactoring.Migrations.TestTaggregateTevent<>), "992abea6-3186-4280-a6af-e8f36a7f259c")
          .MapOpenGeneric(typeof(Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler.MyTaggregateTevent<>), "3a905799-aff8-4d67-9946-9b9e4066b2f3")
+         .MapOpenGeneric(typeof(Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler.IMyTaggregateTevent<>), "8f928eba-b30c-4e85-8dd0-7b38db83baa3")
          .Map<CQRS.TeventRefactoring.Migrations.Tevents.E1>("e5e9e630-3b2c-4323-9bf2-a4d2270157aa")
          .Map<CQRS.TeventRefactoring.Migrations.Tevents.E2>("32eb31d6-e61a-41ae-8f4c-4ca275c056a6")
          .Map<CQRS.TeventRefactoring.Migrations.Tevents.E3>("fd649708-a138-4d22-abb2-15c3c38e1af4")

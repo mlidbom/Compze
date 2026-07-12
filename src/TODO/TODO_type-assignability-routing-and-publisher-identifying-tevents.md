@@ -188,21 +188,27 @@ unhandled-tevent ignore configuration is translated the same way subscriptions a
 - Standing perf note at the routing site remains: `//performance: Use static caching trick.` (the
   assignability walk rebuilds the handler list on every publish).
 
-### 7. The remote bus — sender-side assignability done; needs wrappers on the wire
+### 7. The remote bus — DONE except the D6 delivery guarantees (2026-07-12)
 
-- Sender-side routing IS assignability: `TessagingRouter.SubscriberConnectionsFor` matches
-  `route.TeventType.IsInstanceOfType(tevent)`
-  (`.../Transport/Client/Implementation/Universal/TessagingRouter.cs:127`). Covered by the endpoint tests
-  (`test/Compze.Tests.Common/.../EndpointHostTestBase.cs:133`).
-- Route advertisement is the exact registered handler types as `TypeId`s, filtered to `IRemotableTessage`
-  (`TessageHandlerRegistry.HandledRemoteTessageTypeIds`, `:74-86`). Under route-by-outer, endpoints
-  advertise the TRANSLATED wrapper subscription types.
-- The wire is exact-type + `ITypeMap` based (`TransportTessage.cs:54-58, 34-42`; `TypeMapper.GetId` throws
-  for unmapped types). Per invariant 6 the wire carries the fully wrapped tevent identified by the closed
-  generic wrapper type's `TypeId`; wiring that identity coverage up is part of the work.
-- Gating: only `IExactlyOnceTevent`/`IExactlyOnceTommand` ever get routes
-  (`TessagingRouter.RegisterRoutes`, `:96-102`), and advertisement covers all `IRemotableTessage` — the
-  advertise-vs-route mismatch. Resolved by the D6 work (see the Remote delivery guarantees work items).
+- The wire carries the fully wrapped tevent, identified by the closed wrapper type's `TypeId` (invariant 6):
+  the distributed publisher hands the outbox the wrapper, the outbox stores and transmits it (the wrapper IS
+  the `IExactlyOnceTevent` it stores - its `Id` is the wrapped tevent's, so exactly-once deduplication is
+  unchanged), and the receiving inbox deserializes the wrapper and routes it by its type.
+- Endpoints advertise tevent subscriptions in their translated wrapper form
+  (`TessageHandlerRegistry.HandledRemoteTessageTypeIds`); the sender matches wrapped tevents against the
+  advertised wrapper types by assignability. `AssertMappingsExistFor` on the translated advertisement
+  validates `TypeId` coverage for the wrapper types at endpoint start; the publish side fails loudly in
+  `TypeMapper.GetId` for an unmapped concrete wrapper.
+- Publisher-conscious subscription crosses endpoints: specified end to end in
+  `Publisher_conscious_subscription_tests` (a remote endpoint subscribing to
+  `IMyTaggregateTevent<IMyTaggregateTevent>` receives the wrapped tevent the taggregate published).
+- `IOutbox.PublishTransactionally`/`ITessagingRouter.SubscriberConnectionsFor` take
+  `IExactlyOncePublisherIdentifyingTevent<IExactlyOnceTevent>`, making an unwrapped hand-off - which no
+  wrapper-typed route would match - a compile error instead of a silent routing no-op.
+- Remaining gating (D6, the last increment): `TessagingRouter.RegisterRoutes` registers a tevent route only
+  when the advertised subscription guarantees exactly-once delivery (directly or through covariance:
+  `Is<IPublisherIdentifyingTevent<IExactlyOnceTevent>>`); tommand routes only for `IExactlyOnceTommand`.
+  Removing that gate and implementing the other delivery guarantees is the Remote delivery guarantees work.
 
 ### 8. Test coverage — dispatcher-level only
 
@@ -256,15 +262,17 @@ interface, file names match the types they declare (`ITaggregateIdentifyingTeven
       take author-supplied wrapped replacements; migrator selection stays on the inner tevent's interface
       hierarchy.
 
-### Remote transport
+### Remote transport — ALL DONE (2026-07-12)
 
-- [ ] Carry the fully wrapped tevent on the wire, identified by the closed generic wrapper type's `TypeId`.
-- [ ] Advertise the translated wrapper subscription types; sender-side routing already matches by
-      assignability (`TessagingRouter.cs:127`) and needs only the wrapper-typed routes.
-- [ ] Inbox: dispatch received tevents by outer type; verify exactly-once dedup through
-      `IExactlyOncePublisherIdentifyingTevent.Id` (the inner tevent's `Id`) once wrappers traverse it.
-- [ ] Extend `TessageTypeInspector` (or the type-map assertions) to validate `TypeId` coverage for the
-      wrapper types the store and wire now depend on.
+- [x] Carry the fully wrapped tevent on the wire, identified by the closed generic wrapper type's `TypeId`.
+- [x] Advertise the translated wrapper subscription types; sender-side routing matches wrapped tevents
+      against them by assignability. (An endpoint is one subscriber however many of its advertised
+      subscriptions match - `SubscriberConnectionsFor` dedups connections.)
+- [x] Inbox: dispatches received tevents by outer type (the wrapper arrives from the wire and passes
+      through the `PublisherIdentifyingTevent.Wrapped` normalization); exactly-once dedup verified through
+      the wrapper's `Id` (the wrapped tevent's `Id`) by the existing exactly-once guarantee tests.
+- [x] `TypeId` coverage for wrapper types is validated: `AssertMappingsExistFor` on the translated
+      advertisement at endpoint start, and `TypeMapper.GetId` failing loudly on the publish side.
 
 ### Remote delivery guarantees (D6)
 
@@ -282,6 +290,13 @@ interface, file names match the types they declare (`ITaggregateIdentifyingTeven
       subscriptions.
 - [ ] Standing open question, not blocking: should tevent subscribers additionally be able to choose a
       lighter delivery guarantee than the tevent type's own (`_TessageTypes..Interfaces.cs:78-79`)?
+- [ ] Guarantee-preserving auto-wrap: `PublisherIdentifyingTevent<TTevent>` implements only the root wrapper
+      interface, so auto-wrapping an `IExactlyOnceTevent` published without a wrapper produces a wrapper
+      with no delivery-guarantee interfaces — fine in-process, but such a wrapper cannot travel the
+      exactly-once wire. Nothing publishes bare tevents remotely today (taggregate tevents arrive wrapped;
+      the outbox signature now makes an unwrapped hand-off a compile error), but D6's "publish any tevent
+      remotely" needs auto-wrap to pick the most derived wrapper class matching the inner's guarantee
+      interfaces (e.g. an `ExactlyOncePublisherIdentifyingTevent<TTevent>` sibling).
 
 ### Tests
 

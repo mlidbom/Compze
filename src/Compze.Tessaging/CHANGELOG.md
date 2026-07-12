@@ -11,6 +11,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 - `ForTevent` now validates the subscribed type with the subscription rules (interfaces only) instead of the general message-type rules, matching the in-memory dispatcher.
 - The tevent-store publishers (`InProcessOnlyTeventStoreTeventPublisher`, `DistributedTeventStoreTeventPublisher`) receive the committed tevent in its wrapper and deliver it wrapped in-process; the distributed publisher hands the outbox the inner tevent until the wire carries wrappers.
 - Fixed: registering a second tevent handler whose subscription resolves to an already-registered routing key threw instead of appending the handler.
+- The wire carries the fully wrapped tevent: the outbox stores and transmits the wrapper under the closed wrapper type's `TypeId`, endpoints advertise tevent subscriptions in their translated wrapper form, and the router matches wrapped tevents against those advertised wrapper types. Publisher identity crosses endpoints with zero information loss - a remote endpoint can subscribe publisher-consciously (to `IMyTaggregateTevent<IMyTaggregateTevent>`) and receive the wrapped tevent exactly as the taggregate published it. Exactly-once deduplication is unchanged: the wrapper's `Id` is the wrapped tevent's.
+- `IOutbox.PublishTransactionally` and `ITessagingRouter.SubscriberConnectionsFor` take the wrapped tevent (`IExactlyOncePublisherIdentifyingTevent<IExactlyOnceTevent>`), so handing them an unwrapped tevent - which no wrapper-typed route would ever match - is a compile error instead of a silent routing no-op.
+- Fixed: an endpoint whose multiple subscriptions matched the same tevent was returned once per matching route by `SubscriberConnectionsFor`, so the outbox saved duplicate dispatching rows for it and delivery failed with a primary-key violation. An endpoint is one subscriber however many of its advertised subscriptions match.
 
 ## 0.3.1-alpha
 

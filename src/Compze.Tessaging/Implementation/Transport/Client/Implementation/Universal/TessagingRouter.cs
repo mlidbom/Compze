@@ -93,9 +93,14 @@ class TessagingRouter : ITessagingRouter, IDisposable
       {
          var tessageType = _typeMap.GetId(typeIdString).Type;
 
-         if(tessageType.Is<IExactlyOnceTevent>())
+         if(tessageType.Is<ITevent>())
          {
-            _teventSubscriberRoutes.Add((tessageType, connection));
+            //Only exactly-once delivery is implemented so far, so a route is registered only when the advertised subscription guarantees it.
+            //An advertised tevent subscription is a wrapper type; covariance answers whether every tevent it matches is exactly-once.
+            if(tessageType.Is<IExactlyOnceTevent>() || tessageType.Is<IPublisherIdentifyingTevent<IExactlyOnceTevent>>())
+            {
+               _teventSubscriberRoutes.Add((tessageType, connection));
+            }
          } else if(tessageType.Is<IExactlyOnceTommand>())
          {
             _tommandHandlerRoutes.Add(tessageType, connection);
@@ -116,18 +121,19 @@ class TessagingRouter : ITessagingRouter, IDisposable
                ? connection
                : throw new NoHandlerForTessageTypeException(tommand.GetType())));
 
-   public IReadOnlyList<ITessagingInboxConnection> SubscriberConnectionsFor(IExactlyOnceTevent tevent) =>
+   public IReadOnlyList<ITessagingInboxConnection> SubscriberConnectionsFor(IExactlyOncePublisherIdentifyingTevent<IExactlyOnceTevent> wrappedTevent) =>
       _monitor.Locked(() =>
       {
          AssertNotStopped();
-         var teventType = tevent.GetType();
-         if(!_teventSubscriberRouteCache.TryGetValue(teventType, out var cached))
+         var wrapperTeventType = wrappedTevent.GetType();
+         if(!_teventSubscriberRouteCache.TryGetValue(wrapperTeventType, out var cached))
          {
             cached = _teventSubscriberRoutes
-                    .Where(route => route.TeventType.IsInstanceOfType(tevent))
+                    .Where(route => route.TeventType.IsInstanceOfType(wrappedTevent))
                     .Select(route => route.Connection)
+                    .Distinct() //An endpoint is one subscriber however many of its advertised subscriptions match: it receives the tevent once and its own registry fans out to every matching handler.
                     .ToArray();
-            _teventSubscriberRouteCache[teventType] = cached;
+            _teventSubscriberRouteCache[wrapperTeventType] = cached;
          }
 
          return cached;

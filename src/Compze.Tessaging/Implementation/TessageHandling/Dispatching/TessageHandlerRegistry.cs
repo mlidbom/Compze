@@ -82,15 +82,22 @@ sealed class TessageHandlerRegistry(ITypeMap typeMap) : ITessageHandlerRegistrar
 
    public ISet<TypeId> HandledRemoteTessageTypeIds()
    {
+      //A tevent subscription is advertised in its translated form - the wrapper type matching every wrapping of the subscribed type - because that is the type remote routing matches wrapped tevents against.
+      var handledTeventTypes = _registeredTeventTypes
+                              .Where(IsRemotableNonInfrastructureTessage)
+                              .Select(PublisherIdentifyingTevent.WrapperTypeMatchingAllWrappingsOf);
+
       var handledTypes = _tommandHandlers.Keys
-                                         .Concat(_registeredTeventTypes)
-                                         .Where(tessageType => tessageType.Implements<IRemotableTessage>())
-                                         .Where(tessageType => !tessageType.Implements<TessageTypesInternal.ITessage>())
+                                         .Where(IsRemotableNonInfrastructureTessage)
+                                         .Concat(handledTeventTypes)
                                          .ToHashSet();
 
       _typeMap.AssertMappingsExistFor(handledTypes);
 
       return handledTypes.Select(_typeMap.GetId)
                          .ToHashSet();
+
+      static bool IsRemotableNonInfrastructureTessage(Type tessageType) =>
+         tessageType.Implements<IRemotableTessage>() && !tessageType.Implements<TessageTypesInternal.ITessage>();
    }
 }
