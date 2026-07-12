@@ -41,7 +41,7 @@ public static class CombinedTestingContainers
                .TessageHandlerRegistry()
                .TypermediaHandlerRegistry()
                .InProcessTeventPublisher()
-               .InMemoryTeventStoreTeventPublisher();
+               .InProcessOnlyTeventStoreTeventPublisher();
       setup(builder.Registrar);
 
       return builder.Build();

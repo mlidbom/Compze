@@ -64,7 +64,7 @@ public class TessagingEndpointFeature
               .Inbox()
               .TommandScheduler()
               .InProcessTeventPublisher()
-              .ServiceBusTeventStoreTeventPublisher()
+              .DistributedTeventStoreTeventPublisher()
               .ServiceBusSession();
 
       builder.OnContainerBuilt(resolver => TessageTypesInternal.RegisterInfrastructureQueryHandlers(
