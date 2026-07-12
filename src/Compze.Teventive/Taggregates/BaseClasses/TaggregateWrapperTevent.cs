@@ -1,4 +1,5 @@
 using Compze.Teventive.Taggregates.Tevents.Public;
+using Compze.Teventive.Tevents.Public;
 
 namespace Compze.Teventive.Taggregates.BaseClasses;
 

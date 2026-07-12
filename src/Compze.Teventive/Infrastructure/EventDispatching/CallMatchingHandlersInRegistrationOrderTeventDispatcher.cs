@@ -1,7 +1,7 @@
 // ReSharper disable ForCanBeConvertedToForeach this file needs these optimizations...
 
 using Compze.Abstractions.Tessaging.Public;
-using Compze.Teventive.Taggregates.Tevents.Public;
+using Compze.Teventive.Tevents.Public;
 
 // ReSharper disable StaticMemberInGenericType
 
@@ -37,8 +37,7 @@ partial class CallMatchingHandlersInRegistrationOrderTeventDispatcher<TTevent> :
    public ITeventSubscriber<TTevent> Register() => new TeventSubscriber(this);
 
 
-   //Urgent: Wrapping here seems arguable at best.
-   public void Dispatch(TTevent evt) => Dispatch((IPublisherIdentifyingTevent<TTevent>)PublisherTypeIdentifyingTevent.WrapTevent(evt));
+   public void Dispatch(TTevent evt) => Dispatch(PublisherIdentifyingTevent.WrapTevent(evt));
 
    public void Dispatch(IPublisherIdentifyingTevent<TTevent> wrapped)
    {
