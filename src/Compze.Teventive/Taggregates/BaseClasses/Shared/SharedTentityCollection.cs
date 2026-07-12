@@ -1,7 +1,7 @@
 using System.Collections;
 using Compze.Internals.SystemCE.ReflectionCE;
 
-namespace Compze.Teventive.Taggregates.BaseClasses;
+namespace Compze.Teventive.Taggregates.BaseClasses.Shared;
 
 ///<summary>An owner's collection of <see cref="SharedTentity{TTentity,TTentityId,TTentityTevent,TTentityCreatedTevent}"/> instances. The collection is itself<br/>
 /// a <see cref="SharedTomponent{TTomponentTevent}"/>: it occupies one <see cref="ISharedTomponentSlot{TTomponentTevent}"/> on the owner, so every tentity in it<br/>

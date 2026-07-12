@@ -4,7 +4,7 @@ using Compze.Contracts;
 using Compze.Teventive.Taggregates.Tevents.Public;
 using Compze.Teventive.Tevents.Public;
 
-namespace Compze.Teventive.Taggregates.BaseClasses;
+namespace Compze.Teventive.Taggregates.BaseClasses.Shared;
 
 ///<summary>A shared tomponent's connection to its owner - the only thing a <see cref="SharedTomponent{TTomponentTevent}"/> knows about the<br/>
 /// taggregate it is a member of. The owner creates one slot per shared-tomponent member and hands it to the tomponent at construction.</summary>

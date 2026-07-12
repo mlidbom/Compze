@@ -1,5 +1,6 @@
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Teventive.Taggregates.BaseClasses;
+using Compze.Teventive.Taggregates.BaseClasses.Shared;
 
 // ReSharper disable ClassNeverInstantiated.Global
 #pragma warning disable CA1812 // Avoid uninstantiated internal classes # used via reflection

@@ -1,7 +1,7 @@
 using Compze.Abstractions.Public;
 using Compze.Abstractions.Tessaging.Public;
 
-namespace Compze.Teventive.Taggregates.BaseClasses;
+namespace Compze.Teventive.Taggregates.BaseClasses.Shared;
 
 ///<summary>The infrastructure-facing side of a <see cref="SharedTomponent{TTomponentTevent}"/>: what its <see cref="ISharedTomponentSlot{TTomponentTevent}"/><br/>
 /// calls to route adopted tevents back into the tomponent, and what a <see cref="SharedTentity{TTentity,TTentityId,TTentityTevent,TTentityCreatedTevent}"/><br/>

@@ -3,7 +3,7 @@ using Compze.Abstractions.Tessaging.Public;
 using Compze.Contracts;
 using JetBrains.Annotations;
 
-namespace Compze.Teventive.Taggregates.BaseClasses;
+namespace Compze.Teventive.Taggregates.BaseClasses.Shared;
 
 ///<summary>The tevent contract of a <see cref="SharedTentity{TTentity,TTentityId,TTentityTevent,TTentityCreatedTevent}"/>: every tevent carries the<br/>
 /// <see cref="EntityId"/> of the tentity it belongs to, as ordinary domain data. That id is how a<br/>

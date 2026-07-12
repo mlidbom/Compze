@@ -2,6 +2,7 @@ using Compze.Abstractions.Public;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Teventive;
 using Compze.Teventive.Taggregates.BaseClasses;
+using Compze.Teventive.Taggregates.BaseClasses.Shared;
 using Compze.Teventive.Taggregates.Tevents.Public;
 
 // ReSharper disable ClassNeverInstantiated.Global
