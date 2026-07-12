@@ -18,7 +18,7 @@ namespace Compze.Tessaging.Hosting.Testing;
 /// <see cref="ITessagesInFlightTracker"/>. At dispose the host waits until no tessages are in flight and rethrows
 /// any exceptions tessage handling produced in the background.
 ///</summary>
-public class TessagingTestingEndpointHostFeature : ITestingEndpointHostFeature
+public class DistributedTessagingTestingEndpointHostFeature : ITestingEndpointHostFeature
 {
    static readonly WaitTimeout EndpointsAtRestTimeout = WaitTimeout.Seconds(10);
 

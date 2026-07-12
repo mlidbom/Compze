@@ -11,7 +11,7 @@ namespace Compze.Typermedia.Hosting.Testing;
 /// test's Typermedia transport. Typermedia has no background work, so the feature takes no part in the host's
 /// dispose-time quiescence wait.
 ///</summary>
-public class TypermediaTestingEndpointHostFeature : ITestingEndpointHostFeature
+public class DistributedTypermediaTestingEndpointHostFeature : ITestingEndpointHostFeature
 {
    public void SetupEndpoint(IEndpointBuilder builder)
    {

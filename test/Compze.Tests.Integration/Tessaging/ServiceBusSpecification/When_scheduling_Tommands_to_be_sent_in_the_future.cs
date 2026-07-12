@@ -21,7 +21,7 @@ public class When_scheduling_tommands_to_be_sent_in_the_future : UniversalTestBa
 
    public When_scheduling_tommands_to_be_sent_in_the_future()
    {
-      _host = TestingEndpointHost.Create(new TessagingTestingEndpointHostFeature());
+      _host = TestingEndpointHost.Create(new DistributedTessagingTestingEndpointHostFeature());
       _receivedTommandGate = IThreadGate.NewOpen(WaitTimeout.Seconds(1), "receivedTommand");
       _endpoint = _host.RegisterEndpoint(
          "endpoint",

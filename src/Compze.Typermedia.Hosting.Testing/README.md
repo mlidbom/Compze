@@ -10,14 +10,14 @@ Compze is a .NET framework for building expressive domains through **Teventive p
 
 Typermedia's plug-in for the testing endpoint host in `Compze.Hosting.Testing`, plus a remote test client:
 
-- **`TypermediaTestingEndpointHostFeature`** — wires the Typermedia pipeline and transport into every endpoint a `TestingEndpointHost` registers.
+- **`DistributedTypermediaTestingEndpointHostFeature`** — wires the distributed Typermedia pipeline and transport into every endpoint a `TestingEndpointHost` registers.
 - **`TypermediaTestClient`** — a remote Typermedia client running in its own container, connecting to an endpoint's typermedia address over HTTP exactly as an external client application would.
 - **Transport test wiring** — `CurrentTestsTypermediaTransport()` for endpoints, `CurrentTestsTypermediaClientTransport()` for clients.
 
 ### Quick start
 
 ```csharp
-using var host = TestingEndpointHost.Create(new TypermediaTestingEndpointHostFeature());
+using var host = TestingEndpointHost.Create(new DistributedTypermediaTestingEndpointHostFeature());
 var endpoint = host.RegisterEndpoint("MyEndpoint", endpointId, builder =>
 {
    builder.RegisterTypermediaHandlers.ForTuery((MyTuery tuery) => HandleTuery(tuery));

@@ -38,7 +38,7 @@ public class Experiment_with_unifying_tevents_and_tommands_test : UniversalTestB
 
    public Experiment_with_unifying_tevents_and_tommands_test()
    {
-      _host = TestingEndpointHost.Create(new TessagingTestingEndpointHostFeature(), new TypermediaTestingEndpointHostFeature());
+      _host = TestingEndpointHost.Create(new DistributedTessagingTestingEndpointHostFeature(), new DistributedTypermediaTestingEndpointHostFeature());
 
       _userManagementDomainEndpoint = _host.RegisterEndpoint(
          "UserManagement.Domain",

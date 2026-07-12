@@ -19,7 +19,7 @@ public abstract class PerformanceTestBase : UniversalTestBase
 
    protected PerformanceTestBase()
    {
-      Host = TestingEndpointHost.Create(new TypermediaTestingEndpointHostFeature());
+      Host = TestingEndpointHost.Create(new DistributedTypermediaTestingEndpointHostFeature());
       ServerEndpoint = Host.RegisterEndpoint(
          "Backend",
          new EndpointId(Guid.Parse("DDD0A67C-D2A2-4197-9AF8-38B6AEDF8FA7")),

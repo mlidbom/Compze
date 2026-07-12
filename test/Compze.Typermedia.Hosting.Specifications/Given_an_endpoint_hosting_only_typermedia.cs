@@ -22,7 +22,7 @@ public class Given_an_endpoint_hosting_only_typermedia : UniversalTestBase
 
    public Given_an_endpoint_hosting_only_typermedia()
    {
-      _host = TestingEndpointHost.Create(new TypermediaTestingEndpointHostFeature());
+      _host = TestingEndpointHost.Create(new DistributedTypermediaTestingEndpointHostFeature());
 
       _endpoint = _host.RegisterEndpoint(
          "TypermediaOnly",
