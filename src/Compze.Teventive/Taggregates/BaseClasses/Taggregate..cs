@@ -1,4 +1,5 @@
 using Compze.Abstractions.Public;
+using Compze.Abstractions.Tessaging.Public;
 using Compze.Abstractions.Time.Public;
 using Compze.Contracts;
 using Compze.Internals.SystemCE.ReactiveCE;
@@ -23,9 +24,7 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
    protected virtual Type WrapperTeventImplementation => typeof(TWrapperTeventImplementation);
 
    TWrapperTeventInterface WrapTevent(TTaggregateTevent tevent) =>
-      (TWrapperTeventInterface)Constructor.ForGenericType(WrapperTeventImplementation)
-                                          .WithArgument(tevent.GetType())
-                                          .Invoke(tevent);
+      (TWrapperTeventInterface)TaggregateIdentifyingTevent.WrapIn(WrapperTeventImplementation, tevent);
 
    //Yes null id passed to base. Id should be assigned by an action, and it should be obvious that the taggregate in invalid until that happens. It's a bit ugly to declare Id as non-null, but a null value will never escape the property due to contract validation
    protected Taggregate(TeventDispatcherConfig? teventAppliersDispatcherConfig = null) : base(null!)
@@ -69,7 +68,7 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
             ((IMutableTaggregateTevent)tevent).SetTaggregateIdInternal(Id);
          }
 #pragma warning restore CS0618 // Type or member is obsolete
-         ApplyTevent(tevent);
+         ApplyTevent(tevent, wrapped);
          _unCommittedTevents.Add(wrapped);
          _teventsPublishedDuringCurrentPublishCallIncludingReentrantCallsFromTeventHandlers.Add(wrapped);
          _teventHandlersDispatcher.Dispatch(wrapped);
@@ -90,7 +89,9 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
    // ReSharper disable once UnusedMember.Global todo: coverage
    protected ITeventSubscriber<TTaggregateTevent> RegisterTeventHandlers() => _teventHandlersDispatcher.Register();
 
-   void ApplyTevent(TTaggregateTevent theTevent)
+   void ApplyTevent(TTaggregateTevent theTevent) => ApplyTevent(theTevent, WrapTevent(theTevent));
+
+   void ApplyTevent(TTaggregateTevent theTevent, IPublisherIdentifyingTevent<TTaggregateTevent> wrapped)
    {
       using(ScopedChange.Enter(() => _applyingTevents = true, () => _applyingTevents = false))
       {
@@ -102,7 +103,7 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
          }
 
          Version = theTevent.TaggregateVersion;
-         _teventAppliersDispatcher.Dispatch(WrapTevent(theTevent));
+         _teventAppliersDispatcher.Dispatch(wrapped);
       }
    }
 
@@ -129,10 +130,11 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
       _unCommittedTevents.Clear();
    }
 
-   void ITaggregate.LoadFromHistory(IEnumerable<ITaggregateTevent> history)
+   void ITaggregate.LoadFromHistory(IEnumerable<ITaggregateIdentifyingTevent<ITaggregateTevent>> history)
    {
       State.Assert(Version == 0, () => $"You can only call {nameof(ITaggregate.LoadFromHistory)} on an empty Taggregate with {nameof(Version)} == 0");
-      history.ForEach(theTevent => ApplyTevent((TTaggregateTevent)theTevent));
+      //The stored wrapper is applied as it stands: after a migration has rewritten history the stored wrapper is the truth, not what this taggregate would wrap today.
+      history.ForEach(wrappedTevent => ApplyTevent((TTaggregateTevent)wrappedTevent.Tevent, (IPublisherIdentifyingTevent<TTaggregateTevent>)wrappedTevent));
       AssertInvariantsAreMetInternal();
    }
 #pragma warning restore CA1033

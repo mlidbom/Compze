@@ -1,6 +1,7 @@
 using Compze.Abstractions.Public;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Teventive;
+using Compze.Teventive.Taggregates.BaseClasses;
 using Compze.Teventive.Taggregates.Tevents.Public;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
@@ -24,14 +25,16 @@ public class NewtonSoftTeventStoreTeventSerializerTests : SerializerTest
       ((IMutableTaggregateTevent)teventWithOnlySubclassValues).SetUtcTimeStampInternal(DateTime.MinValue);
 #pragma warning restore CS0618 // Type or member is obsolete
 
-      var teventWithAllValuesJson = TeventSerializer.Serialize(teventWithAllValuesSet);
-      var teventWithOnlySubclassValuesJson = TeventSerializer.Serialize(teventWithOnlySubclassValues);
-      var roundTripped = (TestTevent)TeventSerializer.Deserialize(typeof(TestTevent), teventWithAllValuesJson);
+      var teventWithAllValuesJson = TeventSerializer.Serialize(new TaggregateIdentifyingTevent<TestTevent>(teventWithAllValuesSet));
+      var teventWithOnlySubclassValuesJson = TeventSerializer.Serialize(new TaggregateIdentifyingTevent<TestTevent>(teventWithOnlySubclassValues));
+      var roundTripped = (TestTevent)TeventSerializer.Deserialize(typeof(TaggregateIdentifyingTevent<TestTevent>), teventWithAllValuesJson).Tevent;
 
       teventWithAllValuesJson.Must().Be("""
                                         {
-                                          "Test1": "Test1",
-                                          "Test2": "Test2"
+                                          "Tevent": {
+                                            "Test1": "Test1",
+                                            "Test2": "Test2"
+                                          }
                                         }
                                         """);
       teventWithAllValuesJson.Must().Be(teventWithOnlySubclassValuesJson);

@@ -13,6 +13,7 @@ using Compze.Tessaging.Teventive.TeventStore.Public;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Must;
 using Compze.Teventive;
+using Compze.Teventive.Taggregates.BaseClasses;
 using Compze.Teventive.Taggregates.Tevents.Public;
 
 namespace Compze.Tests.Integration.CQRS;
@@ -36,6 +37,9 @@ public class TeventStoreTests : UniversalTestBase
 
    protected override void DisposeInternal() => _container.Dispose();
 
+   static IReadOnlyList<ITaggregateIdentifyingTevent<ITaggregateTevent>> Wrapped(IEnumerable<SomeTevent> tevents) =>
+      tevents.Select(ITaggregateIdentifyingTevent<ITaggregateTevent> (it) => new TaggregateIdentifyingTevent<SomeTevent>(it)).ToList();
+
    [PCT]
    public void StreamTeventsSinceReturnsWholeTeventLogWhenFromTeventIdIsNull() => _container.ExecuteInIsolatedScope(scope =>
    {
@@ -45,10 +49,10 @@ public class TeventStoreTests : UniversalTestBase
                          .ToList();
       TransactionScopeCe.Execute(() =>
       {
-         scope.TeventStore().SaveSingleTaggregateTevents(savedEvents);
+         scope.TeventStore().SaveSingleTaggregateTevents(Wrapped(savedEvents));
       });
 
-      scope.TeventStore().ListAllTeventsForTestingPurposesAbsolutelyNotUsableForARealTeventStoreOfAnySize().Cast<SomeTevent>()
+      scope.TeventStore().ListAllTeventsForTestingPurposesAbsolutelyNotUsableForARealTeventStoreOfAnySize().Tevents().Cast<SomeTevent>()
                  .ToList()
                  .Must()
                  .DeepEqual(savedEvents);
@@ -63,9 +67,10 @@ public class TeventStoreTests : UniversalTestBase
       var savedEvents = 1.Through(moreTeventsThanTheBatchSizeForStreamingTevents)
                          .Select(i => new SomeTevent(taggregateId, i)).ToList();
 
-      TransactionScopeCe.Execute(() => scope.TeventStore().SaveSingleTaggregateTevents(savedEvents));
+      TransactionScopeCe.Execute(() => scope.TeventStore().SaveSingleTaggregateTevents(Wrapped(savedEvents)));
 
       scope.TeventStore().ListAllTeventsForTestingPurposesAbsolutelyNotUsableForARealTeventStoreOfAnySize(batchSize: batchSize)
+                 .Tevents()
                  .Cast<SomeTevent>()
                  .ToList()
                  .Must()
@@ -85,7 +90,7 @@ public class TeventStoreTests : UniversalTestBase
                                                              .ToList();
                                                   });
 
-      TransactionScopeCe.Execute(() => taggregatesWithTevents.ForEach(it => scope.TeventStore().SaveSingleTaggregateTevents(it.Value)));
+      TransactionScopeCe.Execute(() => taggregatesWithTevents.ForEach(it => scope.TeventStore().SaveSingleTaggregateTevents(Wrapped(it.Value))));
       var toRemove = taggregatesWithTevents[2][0].TaggregateId;
       taggregatesWithTevents.Remove(2);
 
@@ -112,7 +117,7 @@ public class TeventStoreTests : UniversalTestBase
                                                              .ToList();
                                                   });
 
-      TransactionScopeCe.Execute(() => taggregatesWithTevents.ForEach(it => scope.TeventStore().SaveSingleTaggregateTevents(it.Value)));
+      TransactionScopeCe.Execute(() => taggregatesWithTevents.ForEach(it => scope.TeventStore().SaveSingleTaggregateTevents(Wrapped(it.Value))));
 
       var allTaggregateIds = scope.TeventStore().StreamTaggregateIdsInCreationOrder()
                                         .ToList();
@@ -134,7 +139,7 @@ public class TeventStoreTests : UniversalTestBase
                                                              .ToList();
                                                   });
 
-      TransactionScopeCe.Execute(() => taggregatesWithTevents.ForEach(it => scope.TeventStore().SaveSingleTaggregateTevents(it.Value)));
+      TransactionScopeCe.Execute(() => taggregatesWithTevents.ForEach(it => scope.TeventStore().SaveSingleTaggregateTevents(Wrapped(it.Value))));
       var allTaggregateIds = scope.TeventStore().StreamTaggregateIdsInCreationOrder<ISomeTevent>()
                                         .ToList();
 
@@ -154,7 +159,7 @@ public class TeventStoreTests : UniversalTestBase
 
       using(new TransactionScope())
       {
-         ((ITaggregate)user).Commit(wrappedTevents => teventStore.SaveSingleTaggregateTevents(wrappedTevents.Tevents().ToList()));
+         ((ITaggregate)user).Commit(teventStore.SaveSingleTaggregateTevents);
          teventStore.GetTaggregateHistory(user.Id);
          teventStore.GetTaggregateHistory(user.Id).Must().NotBeEmpty();
       }
@@ -176,7 +181,7 @@ public class TeventStoreTests : UniversalTestBase
 
          TransactionScopeCe.Execute(() =>
          {
-            ((ITaggregate)user).Commit(wrappedTevents => teventStore.SaveSingleTaggregateTevents(wrappedTevents.Tevents().ToList()));
+            ((ITaggregate)user).Commit(teventStore.SaveSingleTaggregateTevents);
             teventStore.GetTaggregateHistory(user.Id);
             teventStore.GetTaggregateHistory(user.Id).Must().NotBeEmpty();
          });

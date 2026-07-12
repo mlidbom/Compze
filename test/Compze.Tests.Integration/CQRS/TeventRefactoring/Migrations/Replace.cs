@@ -1,7 +1,6 @@
 using Compze.Tessaging.Teventive.TeventStore.Refactoring.Migrations.Public;
 using Compze.Tessaging.Teventive.TeventStore.Refactoring.Migrations;
 using Compze.Tests.Common.CQRS.TeventRefactoring.Migrations;
-using Compze.Internals.SystemCE.ReflectionCE;
 using Compze.Teventive.Taggregates.Tevents.Public;
 
 namespace Compze.Tests.Integration.CQRS.TeventRefactoring.Migrations;
@@ -21,11 +20,11 @@ class Replace<TTevent> : TeventMigration<ITestTaggregateTevent>
    {
       readonly IEnumerable<Type> _replaceWith = replaceWith;
 
-      public void MigrateTevent(ITaggregateTevent tevent, ITeventModifier modifier)
+      public void MigrateTevent(ITaggregateIdentifyingTevent<ITaggregateTevent> wrappedTevent, ITeventModifier modifier)
       {
-         if (tevent.GetType() == typeof(TTevent))
+         if (wrappedTevent.Tevent.GetType() == typeof(TTevent))
          {
-            modifier.Replace(_replaceWith.Select(Constructor.CreateInstance).Cast<TaggregateTevent>().ToArray());
+            modifier.Replace(_replaceWith.ToWrappedTevents());
          }
       }
    }

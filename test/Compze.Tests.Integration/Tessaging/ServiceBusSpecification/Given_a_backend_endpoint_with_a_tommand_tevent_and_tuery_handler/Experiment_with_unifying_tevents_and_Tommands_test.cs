@@ -165,9 +165,9 @@ public class Experiment_with_unifying_tevents_and_tommands_test : UniversalTestB
       public TaggregateId UserId { get; private set; } = userId;
    }
 
-   public class UserResource(IEnumerable<ITaggregateTevent> history)
+   public class UserResource(IEnumerable<ITaggregateIdentifyingTevent<ITaggregateTevent>> history)
    {
-      public IEnumerable<ITaggregateTevent> History { get; } = history;
+      public IEnumerable<ITaggregateIdentifyingTevent<ITaggregateTevent>> History { get; } = history;
    }
 
    public class RegisterUserResult(TaggregateId userId)

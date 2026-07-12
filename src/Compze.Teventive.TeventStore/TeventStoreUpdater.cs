@@ -5,7 +5,6 @@ using Compze.Internals.SystemCE.ReactiveCE;
 using Compze.Internals.SystemCE.ReflectionCE;
 using System.Diagnostics.CodeAnalysis;
 using Compze.Abstractions.Public;
-using Compze.Abstractions.Tessaging.Public;
 using Compze.Tessaging.Teventive.TeventStore.Internal;
 using Compze.Tessaging.Teventive.TeventStore.Public;
 using Compze.Tessaging.Teventive.TeventStore.Public.Exceptions;
@@ -88,7 +87,7 @@ class TeventStoreUpdater : ITeventStoreReader, ITeventStoreUpdater
       }
 
       var taggregate = CreateInstance<TTaggregate>();
-      taggregate.LoadFromHistory(history.Where(e => e.TaggregateVersion <= version));
+      taggregate.LoadFromHistory(history.Where(it => it.Tevent.TaggregateVersion <= version));
       return taggregate;
    }
 
@@ -109,8 +108,9 @@ class TeventStoreUpdater : ITeventStoreReader, ITeventStoreUpdater
             throw new AttemptToSaveEmptyTaggregateException(taggregate);
          }
 
-         _store.SaveSingleTaggregateTevents(wrappedTevents.Tevents().ToList());
+         _store.SaveSingleTaggregateTevents(wrappedTevents);
 
+         //Publishing still unwraps: the in-process bus routes on the inner tevent type until it learns the wrapper translation rule. That seam flips in the in-process bus increment.
          wrappedTevents.ForEach(wrapper => _teventStoreTeventPublisher.Publish(wrapper.Tevent, _scopeResolver));
       });
 
@@ -127,7 +127,7 @@ class TeventStoreUpdater : ITeventStoreReader, ITeventStoreUpdater
          throw new Exception($"Got tevent from taggregate that is not tracked! Id: {wrappedTevent.Tevent.TaggregateId}");
       }
 
-      _store.SaveSingleTaggregateTevents([wrappedTevent.Tevent]);
+      _store.SaveSingleTaggregateTevents([wrappedTevent]);
       _teventStoreTeventPublisher.Publish(wrappedTevent.Tevent, _scopeResolver);
    }
 
@@ -144,9 +144,9 @@ class TeventStoreUpdater : ITeventStoreReader, ITeventStoreUpdater
       _store.Dispose();
    }
 
-   public IReadOnlyList<ITaggregateTevent> GetHistory(TaggregateId taggregateId) => GetHistoryInternal(taggregateId, takeWriteLock: false);
+   public IReadOnlyList<ITaggregateIdentifyingTevent<ITaggregateTevent>> GetHistory(TaggregateId taggregateId) => GetHistoryInternal(taggregateId, takeWriteLock: false);
 
-   IReadOnlyList<ITaggregateTevent> GetHistoryInternal(TaggregateId taggregateId, bool takeWriteLock) =>
+   IReadOnlyList<ITaggregateIdentifyingTevent<ITaggregateTevent>> GetHistoryInternal(TaggregateId taggregateId, bool takeWriteLock) =>
       takeWriteLock
          ? _store.GetTaggregateHistoryForUpdate(taggregateId)
          : _store.GetTaggregateHistory(taggregateId);

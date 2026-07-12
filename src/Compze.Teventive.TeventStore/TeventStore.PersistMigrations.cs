@@ -51,7 +51,7 @@ public partial class TeventStore
 
                   var inMemoryMigratedHistory = SingleTaggregateInstanceTeventStreamMutator.MutateCompleteTaggregateHistory(
                      _migrationFactories,
-                     original.Select(it => it.Tevent).ToArray(),
+                     original.Select(it => it.WrappedTevent).ToArray(),
                      newTevents =>
                      {
                         //Make sure we don't try to insert into an occupied InsertedVersion
@@ -61,10 +61,10 @@ public partial class TeventStore
                         });
 
                         refactorings.Add(newTevents
-                                        .Select(it => new TeventDataRow(tevent: it.NewTevent.ToTaggregateTeventData(),
+                                        .Select(it => new TeventDataRow(tevent: it.NewWrappedTevent.Tevent.ToTaggregateTeventData(),
                                                                           it.StorageInformation,
-                                                                          _typeMap.GetId(it.NewTevent.GetType()),
-                                                                          teventAsJson: _serializer.Serialize(it.NewTevent)))
+                                                                          _typeMap.GetId(it.NewWrappedTevent.GetType()),
+                                                                          teventAsJson: _serializer.Serialize(it.NewWrappedTevent)))
                                         .ToList());
 
                         updatedTaggregates = updatedTaggregatesBeforeMigrationOfThisTaggregate + 1;
@@ -125,34 +125,34 @@ public partial class TeventStore
 
    }
 
-   void FixManualVersions(TaggregateTeventWithRefactoringInformation[] originalHistory, TaggregateTevent[] newHistory, IReadOnlyList<List<TeventDataRow>> refactorings)
+   void FixManualVersions(TaggregateTeventWithRefactoringInformation[] originalHistory, ITaggregateIdentifyingTevent<ITaggregateTevent>[] newHistory, IReadOnlyList<List<TeventDataRow>> refactorings)
    {
       var versionUpdates = new List<VersionSpecification>();
-      var replacedOrRemoved = originalHistory.Where(it => newHistory.None(tevent => tevent.Id == it.Tevent.Id)).ToList();
-      versionUpdates.AddRange(replacedOrRemoved.Select(it => new VersionSpecification(it.Tevent.Id, -it.StorageInformation.EffectiveVersion)));
+      var replacedOrRemoved = originalHistory.Where(it => newHistory.None(wrappedTevent => wrappedTevent.Tevent.Id == it.WrappedTevent.Tevent.Id)).ToList();
+      versionUpdates.AddRange(replacedOrRemoved.Select(it => new VersionSpecification(it.WrappedTevent.Tevent.Id, -it.StorageInformation.EffectiveVersion)));
 
-      var replacedOrRemoved2 = refactorings.SelectMany(it =>it).Where(it => newHistory.None(tevent => tevent.Id == it.TeventId));
+      var replacedOrRemoved2 = refactorings.SelectMany(it =>it).Where(it => newHistory.None(wrappedTevent => wrappedTevent.Tevent.Id == it.TeventId));
       versionUpdates.AddRange(replacedOrRemoved2.Select(it => new VersionSpecification(it.TeventId, -it.StorageInformation.EffectiveVersion)));
 
       //Performance: Filter out rows where the new value equals the old value. We don't want to go updating every tevent in every refactored taggregate if only a few, or none, have actually changed.
-      versionUpdates.AddRange(newHistory.Select((it , index) => new VersionSpecification(it.Id, index + 1)));
+      versionUpdates.AddRange(newHistory.Select((it , index) => new VersionSpecification(it.Tevent.Id, index + 1)));
 
       _sqlLayer.UpdateEffectiveVersions(versionUpdates);
    }
 
-   void AssertHistoriesAreIdentical(TaggregateTevent[] inMemoryMigratedHistory, IReadOnlyList<ITaggregateTevent> loadedTaggregateHistory)
+   void AssertHistoriesAreIdentical(ITaggregateIdentifyingTevent<ITaggregateTevent>[] inMemoryMigratedHistory, IReadOnlyList<ITaggregateIdentifyingTevent<ITaggregateTevent>> loadedTaggregateHistory)
    {
       Contract.Argument.Assert(inMemoryMigratedHistory.Length == loadedTaggregateHistory.Count);
       for(var index = 0; index < inMemoryMigratedHistory.Length; ++index)
       {
          var inMemory = inMemoryMigratedHistory[index];
          var loaded = loadedTaggregateHistory[index];
-         inMemory._assert(it => it.TaggregateId == loaded.TaggregateId)
-                 ._assert(it => it.Id == loaded.Id)
-                 ._assert(it => it.TaggregateVersion == loaded.TaggregateVersion)
-                 ._assert(it => it.UtcTimeStamp == loaded.UtcTimeStamp)
+         inMemory._assert(it => it.Tevent.TaggregateId == loaded.Tevent.TaggregateId)
+                 ._assert(it => it.Tevent.Id == loaded.Tevent.Id)
+                 ._assert(it => it.Tevent.TaggregateVersion == loaded.Tevent.TaggregateVersion)
+                 ._assert(it => it.Tevent.UtcTimeStamp == loaded.Tevent.UtcTimeStamp)
                  ._assert(it => it.GetType() == loaded.GetType())
-                 ._assert(it => _serializer.Serialize(it) == _serializer.Serialize((TaggregateTevent)loaded));
+                 ._assert(it => _serializer.Serialize(it) == _serializer.Serialize(loaded));
       }
    }
 

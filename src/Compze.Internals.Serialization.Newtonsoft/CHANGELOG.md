@@ -4,6 +4,10 @@ All notable changes to Compze.Internals.Serialization.Newtonsoft will be documen
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## Unreleased
+
+- The tevent store serializer serializes the whole wrapped tevent - the `ITaggregateIdentifyingTevent<TTeventInterface>` wrapper with its inner tevent inside - as one object graph. The inner tevent's column-backed `TaggregateTevent` properties are still excluded from the json.
+
 ## 0.2.0-alpha
 
 Refactoring.

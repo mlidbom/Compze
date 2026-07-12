@@ -1,5 +1,4 @@
 using Compze.Abstractions.Public;
-using Compze.Abstractions.Tessaging.Public;
 using Compze.Tests.Unit.CQRS.Taggregates.CompositeTaggregates.GuidId.Domain;
 using Compze.Tests.Unit.CQRS.Taggregates.CompositeTaggregates.GuidId.Domain.Tevents;
 using Compze.Tests.Unit.CQRS.Taggregates.CompositeTaggregates.GuidId.QueryModels;
@@ -31,8 +30,8 @@ public static partial class Composite_taggregate_specification
          _taggregate = new CompositeTaggregate("root", _taggregateId);
          _queryModel = new RootQueryModel();
          ITaggregate<ICompositeTaggregateTevent> taggregate = _taggregate;
-         taggregate.TeventStream.Subscribe(wrappedTevent => _queryModel.ApplyTevent(wrappedTevent.Tevent));
-         taggregate.Commit(wrappedTevents => _queryModel.LoadFromHistory(wrappedTevents.Tevents()));
+         taggregate.TeventStream.Subscribe(_queryModel.ApplyTevent);
+         taggregate.Commit(_queryModel.LoadFromHistory);
       }
 
       [XF] public void Taggregate_name_is_root() => _taggregate.Name.Must().Be("root");

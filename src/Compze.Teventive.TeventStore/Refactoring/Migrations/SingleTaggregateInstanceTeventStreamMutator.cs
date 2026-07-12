@@ -4,6 +4,7 @@ using Compze.Tessaging.Teventive.TeventStore.Refactoring.Migrations.Public;
 using Compze.Contracts;
 using Compze.Internals.SystemCE.LinqCE;
 using Compze.Teventive;
+using Compze.Teventive.Taggregates.BaseClasses;
 using Compze.Teventive.Taggregates.Tevents.Public;
 
 // ReSharper disable ForCanBeConvertedToForeach
@@ -23,43 +24,43 @@ class SingleTaggregateInstanceTeventStreamMutator : ISingleTaggregateInstanceTev
 
    int _taggregateVersion = 1;
 
-   public static ISingleTaggregateInstanceTeventStreamMutator Create(ITaggregateTevent creationTevent, IReadOnlyList<ITeventMigration> teventMigrations, Action<IReadOnlyList<TeventModifier.RefactoredTevent>>? teventsAddedCallback = null)
+   public static ISingleTaggregateInstanceTeventStreamMutator Create(ITaggregateIdentifyingTevent<ITaggregateTevent> creationTevent, IReadOnlyList<ITeventMigration> teventMigrations, Action<IReadOnlyList<TeventModifier.RefactoredTevent>>? teventsAddedCallback = null)
       => new SingleTaggregateInstanceTeventStreamMutator(creationTevent, teventMigrations, teventsAddedCallback);
 
    SingleTaggregateInstanceTeventStreamMutator
-      (ITaggregateTevent creationTevent, IEnumerable<ITeventMigration> teventMigrations, Action<IReadOnlyList<TeventModifier.RefactoredTevent>>? teventsAddedCallback)
+      (ITaggregateIdentifyingTevent<ITaggregateTevent> creationTevent, IEnumerable<ITeventMigration> teventMigrations, Action<IReadOnlyList<TeventModifier.RefactoredTevent>>? teventsAddedCallback)
    {
       _teventModifier = new TeventModifier(teventsAddedCallback ?? (_ => { }));
-      _taggregateId = creationTevent.TaggregateId;
+      _taggregateId = creationTevent.Tevent.TaggregateId;
       _teventMigrators = teventMigrations
-                       .Where(migration => migration.MigratedTaggregateTeventHierarchyRootInterface.IsInstanceOfType(creationTevent))
+                       .Where(migration => migration.MigratedTaggregateTeventHierarchyRootInterface.IsInstanceOfType(creationTevent.Tevent))
                        .Select(migration => migration.CreateSingleTaggregateInstanceHandlingMigrator())
                        .ToArray();
    }
 
-   static IEnumerable<TaggregateTevent> SingleTeventSequence(TaggregateTevent tevent) { yield return tevent; }
-   public IEnumerable<TaggregateTevent> Mutate(TaggregateTevent tevent)
+   static IEnumerable<ITaggregateIdentifyingTevent<ITaggregateTevent>> SingleTeventSequence(ITaggregateIdentifyingTevent<ITaggregateTevent> wrappedTevent) { yield return wrappedTevent; }
+   public IEnumerable<ITaggregateIdentifyingTevent<ITaggregateTevent>> Mutate(ITaggregateIdentifyingTevent<ITaggregateTevent> wrappedTevent)
    {
-      Contract.Argument.Assert(_taggregateId == tevent.TaggregateId);
+      Contract.Argument.Assert(_taggregateId == wrappedTevent.Tevent.TaggregateId);
       if (_teventMigrators.Length == 0)
       {
-         return SingleTeventSequence(tevent);
+         return SingleTeventSequence(wrappedTevent);
       }
 
 #pragma warning disable CS0618 // Type or member is obsolete
-      ((IMutableTaggregateTevent)tevent).SetTaggregateVersionInternal(_taggregateVersion);
+      ((IMutableTaggregateTevent)wrappedTevent.Tevent).SetTaggregateVersionInternal(_taggregateVersion);
 #pragma warning restore CS0618 // Type or member is obsolete
-      _teventModifier.Reset(tevent);
+      _teventModifier.Reset(wrappedTevent);
 
       for(var index = 0; index < _teventMigrators.Length; index++)
       {
-         if (_teventModifier.Tevents == null)
+         if (_teventModifier.WrappedTevents == null)
          {
-            _teventMigrators[index].MigrateTevent(tevent, _teventModifier);
+            _teventMigrators[index].MigrateTevent(wrappedTevent, _teventModifier);
          }
          else
          {
-            var node = _teventModifier.Tevents.First;
+            var node = _teventModifier.WrappedTevents.First;
             while (node != null)
             {
                _teventModifier.MoveTo(node);
@@ -74,56 +75,57 @@ class SingleTaggregateInstanceTeventStreamMutator : ISingleTaggregateInstanceTev
       return newHistory;
    }
 
-   public IEnumerable<TaggregateTevent> EndOfTaggregate()
+   public IEnumerable<ITaggregateIdentifyingTevent<ITaggregateTevent>> EndOfTaggregate()
    {
-      return EnumerableCE.Create(new EndOfTaggregateHistoryTeventPlaceHolder(_taggregateId, _taggregateVersion))
+      ITaggregateIdentifyingTevent<ITaggregateTevent> endOfHistoryPlaceHolder = new TaggregateIdentifyingTevent<EndOfTaggregateHistoryTeventPlaceHolder>(new EndOfTaggregateHistoryTeventPlaceHolder(_taggregateId, _taggregateVersion));
+      return EnumerableCE.Create(endOfHistoryPlaceHolder)
                          .SelectMany(Mutate)
-                         .Where(tevent => tevent.GetType() != typeof(EndOfTaggregateHistoryTeventPlaceHolder));
+                         .Where(wrappedTevent => wrappedTevent.Tevent.GetType() != typeof(EndOfTaggregateHistoryTeventPlaceHolder));
    }
 
-   public static TaggregateTevent[] MutateCompleteTaggregateHistory
+   public static ITaggregateIdentifyingTevent<ITaggregateTevent>[] MutateCompleteTaggregateHistory
    (IReadOnlyList<ITeventMigration> teventMigrations,
-    TaggregateTevent[] tevents,
+    ITaggregateIdentifyingTevent<ITaggregateTevent>[] wrappedTevents,
     Action<IReadOnlyList<TeventModifier.RefactoredTevent>>? teventsAddedCallback = null)
    {
       if (teventMigrations.None())
       {
-         return tevents;
+         return wrappedTevents;
       }
 
-      if(tevents.None())
+      if(wrappedTevents.None())
       {
-         return Enumerable.Empty<TaggregateTevent>().ToArray();
+         return Enumerable.Empty<ITaggregateIdentifyingTevent<ITaggregateTevent>>().ToArray();
       }
 
-      var mutator = Create(tevents.First(), teventMigrations, teventsAddedCallback);
+      var mutator = Create(wrappedTevents.First(), teventMigrations, teventsAddedCallback);
 
-      var result = tevents
+      var result = wrappedTevents
                   .SelectMany(mutator.Mutate)
                   .Concat(mutator.EndOfTaggregate())
                   .ToArray();
 
       AssertMigrationsAreIdempotent(teventMigrations, result);
-      TaggregateHistoryValidator.ValidateHistory(result.First().TaggregateId, result);
+      TaggregateHistoryValidator.ValidateHistory(result.First().Tevent.TaggregateId, result);
 
       return result;
    }
 
-   public static void AssertMigrationsAreIdempotent(IReadOnlyList<ITeventMigration> teventMigrations, TaggregateTevent[] tevents)
+   public static void AssertMigrationsAreIdempotent(IReadOnlyList<ITeventMigration> teventMigrations, ITaggregateIdentifyingTevent<ITaggregateTevent>[] wrappedTevents)
    {
-      var creationTevent = tevents.First();
+      var creationTevent = wrappedTevents.First();
 
       var migrators = teventMigrations
-                     .Where(migration => migration.MigratedTaggregateTeventHierarchyRootInterface.IsInstanceOfType(creationTevent))
+                     .Where(migration => migration.MigratedTaggregateTeventHierarchyRootInterface.IsInstanceOfType(creationTevent.Tevent))
                      .Select(migration => migration.CreateSingleTaggregateInstanceHandlingMigrator())
                      .ToArray();
 
-      for(var teventIndex = 0; teventIndex < tevents.Length; teventIndex++)
+      for(var teventIndex = 0; teventIndex < wrappedTevents.Length; teventIndex++)
       {
-         var tevent = tevents[teventIndex];
+         var wrappedTevent = wrappedTevents[teventIndex];
          for(var migratorIndex = 0; migratorIndex < migrators.Length; migratorIndex++)
          {
-            migrators[migratorIndex].MigrateTevent(tevent, AssertMigrationsAreIdempotentTeventModifier.Instance);
+            migrators[migratorIndex].MigrateTevent(wrappedTevent, AssertMigrationsAreIdempotentTeventModifier.Instance);
          }
       }
    }

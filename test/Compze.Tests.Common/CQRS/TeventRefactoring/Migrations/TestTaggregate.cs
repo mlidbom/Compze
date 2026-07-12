@@ -71,8 +71,12 @@ namespace Compze.Tests.Common.CQRS.TeventRefactoring.Migrations
       public IReadOnlyList<ITaggregateTevent> History => _history;
    }
 
-   static class TeventSequenceGenerator
+   public static class TeventSequenceGenerator
    {
       public static TestTaggregateTevent[] ToTevents(this IEnumerable<Type> types) => types.Select(Constructor.CreateInstance).Cast<TestTaggregateTevent>().ToArray();
+
+      ///<summary>Instantiates each tevent type and wraps it in <see cref="TestTaggregateTevent{T}"/> - the wrapped form a tevent migration hands to <c>ITeventModifier</c>.</summary>
+      public static ITaggregateIdentifyingTevent<ITaggregateTevent>[] ToWrappedTevents(this IEnumerable<Type> types) =>
+         types.ToTevents().Select(tevent => TaggregateIdentifyingTevent.WrapIn(typeof(TestTaggregateTevent<>), tevent)).ToArray();
    }
 }

@@ -1,7 +1,6 @@
 // ReSharper disable ForCanBeConvertedToForeach this file needs these optimizations...
 
 using Compze.Abstractions.Tessaging.Public;
-using Compze.Internals.SystemCE.ReflectionCE;
 using Compze.Teventive.Tevents.Public;
 
 // ReSharper disable StaticMemberInGenericType
@@ -29,13 +28,9 @@ partial class CallMatchingHandlersInRegistrationOrderTeventDispatcher<TTevent> :
    internal CallMatchingHandlersInRegistrationOrderTeventDispatcher(TeventDispatcherConfig config)
    {
       _ignoreAllUnhandled = config.Options.HasFlag(TeventDispatcherOptions.IgnoreAllUnhandled);
-      _ignoredTevents = config.IgnoredUnhandled.Select(WrapperTeventTypeFor).ToHashSet();
+      //Routing operates exclusively on wrapper types, so an inner tevent type in the ignore configuration is translated: ignoring a tevent type ignores every wrapping of it.
+      _ignoredTevents = config.IgnoredUnhandled.Select(PublisherIdentifyingTevent.WrapperTypeMatchingAllWrappingsOf).ToHashSet();
    }
-
-   ///<summary>Routing operates exclusively on wrapper types, so an inner tevent type in the ignore configuration is translated to its wrapper form:<br/>
-   /// ignoring a tevent type ignores every <see cref="IPublisherIdentifyingTevent{TTevent}"/> of it. A wrapper type in the configuration is used as it stands.</summary>
-   static Type WrapperTeventTypeFor(Type teventType) =>
-      teventType.Is<IPublisherIdentifyingTevent<ITevent>>() ? teventType : typeof(IPublisherIdentifyingTevent<>).MakeGenericType(teventType);
 
    public ITeventSubscriber<TTevent> Register() => new TeventSubscriber(this);
 

@@ -12,6 +12,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 - `IMutableTeventDispatcher.Handles` now answers for the same type key `Dispatch` uses, so wrapper-typed (`ForWrapped`) subscriptions are counted; previously it keyed on the raw tevent type and under-reported them.
 - `BeforeHandlers`/`AfterHandlers` subscriptions now validate their subscription type like every other subscription and match per-type: a before/after handler typed narrower than the dispatched tevent filters instead of throwing `InvalidCastException`.
 - Renamed `Taggregate.WrapEvent` -> `WrapTevent` and `Taggregate.WrapperTEventImplementation` -> `WrapperTeventImplementation`; file names `ITaggregateTypeIdentifyingTevent.cs` -> `ITaggregateIdentifyingTevent.cs` and `TaggregateWrapperTevent.cs` -> `TaggregateIdentifyingTevent.cs` now match the types they declare.
+- `ITaggregate` now hands wrapped tevents out of every surface: `Commit` and `TeventStream` deliver exactly the wrapped instances publishing created, and `LoadFromHistory` takes the persisted wrapped tevents and applies the stored wrapper - after a migration has rewritten history, the stored wrapper is the truth, not what the taggregate would wrap today. `ITaggregate<TTevent>.TeventStream` gains precision: `IObservable<ITaggregateIdentifyingTevent<TTevent>>`.
+- Extracted the taggregate's wrapping mechanism into `TaggregateIdentifyingTevent.WrapIn(wrapperTeventImplementation, tevent)` so a tevent migration author can wrap a replacement tevent in the publisher's wrapper.
+- The routing model's one translation rule has one home: `PublisherIdentifyingTevent.WrapperTypeMatchingAllWrappingsOf` - subscribing to, filtering by, or ignoring an inner tevent type means matching every `IPublisherIdentifyingTevent<TTevent>` of it.
+- `PublisherIdentifyingTevent<>`, `TaggregateIdentifyingTevent<>`, and `ITaggregateIdentifyingTevent<>` have type-identifier mappings, so closed wrapper types can be persisted and transmitted by `TypeId`.
 
 ## 0.3.2-alpha
 

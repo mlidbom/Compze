@@ -18,7 +18,7 @@ using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE;
 using Compze.Internals.SystemCE.LinqCE;
 using Compze.Contracts;
-using Compze.Teventive.Taggregates.Tevents.Public;
+using Compze.Teventive;
 
 namespace Compze.Tests.Performance.Internals.CQRS.TeventRefactoring.Migrations;
 
@@ -41,12 +41,11 @@ public class TeventMigrationPerformanceTest : TeventMigrationTestBase
 
       _taggregate = UtcTimeSource.Test.FrozenAtUtcNow()
                                      .Run(() => TestTaggregate.FromTevents(new TaggregateId(), historyTypes));
-      var history = _taggregate.History.Cast<TaggregateTevent>().ToList();
 
       _currentMigrations = Enumerable.Empty<ITeventMigration>().ToList();
       _container = CreateContainerForTeventStoreType(migrationsFactory: () => _currentMigrations);
 
-      _container.ExecuteTransactionInIsolatedScope(scope => scope.TeventStore().SaveSingleTaggregateTevents(history));
+      _container.ExecuteTransactionInIsolatedScope(scope => ((ITaggregate)_taggregate).Commit(scope.TeventStore().SaveSingleTaggregateTevents));
    }
 
    protected override async Task DisposeAsyncInternal()

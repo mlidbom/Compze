@@ -2,6 +2,7 @@ using System.Linq.Expressions;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Contracts;
 using Compze.Internals.SystemCE.CollectionsCE.GenericCE;
+using Compze.Internals.SystemCE.ReflectionCE;
 using Compze.Threading;
 
 namespace Compze.Teventive.Tevents.Public;
@@ -20,6 +21,12 @@ public static class PublisherIdentifyingTevent
 
    ///<summary>The wrapper type <see cref="WrapTevent{TTevent}"/> produces for a tevent of <paramref name="teventType"/>: <see cref="PublisherIdentifyingTevent{TTevent}"/> closed over it.</summary>
    public static Type WrapperTypeFor(Type teventType) => typeof(PublisherIdentifyingTevent<>).MakeGenericType(teventType);
+
+   ///<summary>The wrapper type every wrapping of <paramref name="teventType"/> is assignable to: <see cref="IPublisherIdentifyingTevent{TTevent}"/> closed over it.<br/>
+   /// This is the one translation rule of the routing model: subscribing to, filtering by, or ignoring an inner tevent type means matching every<br/>
+   /// <see cref="IPublisherIdentifyingTevent{TTevent}"/> of it. A type that is already a wrapper type passes through unchanged.</summary>
+   public static Type WrapperTypeMatchingAllWrappingsOf(Type teventType) =>
+      teventType.Is<IPublisherIdentifyingTevent<ITevent>>() ? teventType : typeof(IPublisherIdentifyingTevent<>).MakeGenericType(teventType);
 
    static Func<ITevent, IPublisherIdentifyingTevent<ITevent>> ConstructorFor(Type teventType) =>
       Monitor.DoubleCheckedLocking(

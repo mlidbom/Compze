@@ -82,31 +82,31 @@ public class TeventCache : IDisposable, ITeventCache
       internal static readonly Entry Empty = new();
       Entry()
       {
-         Tevents = [];
+         WrappedTevents = [];
          MaxSeenInsertedVersion = 0;
       }
 
-      internal IReadOnlyList<TaggregateTevent> Tevents { get; private set; }
+      internal IReadOnlyList<ITaggregateIdentifyingTevent<ITaggregateTevent>> WrappedTevents { get; private set; }
       internal int MaxSeenInsertedVersion { get; private set; }
       int InsertedVersionToTaggregateVersionOffset { get; }
 
-      internal Entry(IReadOnlyList<TaggregateTevent> tevents, int maxSeenInsertedVersion)
+      internal Entry(IReadOnlyList<ITaggregateIdentifyingTevent<ITaggregateTevent>> wrappedTevents, int maxSeenInsertedVersion)
       {
-         Tevents = tevents;
+         WrappedTevents = wrappedTevents;
          MaxSeenInsertedVersion = maxSeenInsertedVersion;
-         InsertedVersionToTaggregateVersionOffset = MaxSeenInsertedVersion - tevents[^1].TaggregateVersion;
+         InsertedVersionToTaggregateVersionOffset = MaxSeenInsertedVersion - wrappedTevents[^1].Tevent.TaggregateVersion;
       }
 
-      internal TeventInsertionSpecification CreateInsertionSpecificationForNewTevent(ITaggregateTevent tevent)
+      internal TeventInsertionSpecification CreateInsertionSpecificationForNewTevent(ITaggregateIdentifyingTevent<ITaggregateTevent> wrappedTevent)
       {
          if(InsertedVersionToTaggregateVersionOffset > 0)
          {
-            return new TeventInsertionSpecification(tevent: tevent.ToTaggregateTeventData(),
-                                                   insertedVersion: tevent.TaggregateVersion + InsertedVersionToTaggregateVersionOffset,
-                                                   effectiveVersion:tevent.TaggregateVersion);
+            return new TeventInsertionSpecification(tevent: wrappedTevent.Tevent.ToTaggregateTeventData(),
+                                                   insertedVersion: wrappedTevent.Tevent.TaggregateVersion + InsertedVersionToTaggregateVersionOffset,
+                                                   effectiveVersion:wrappedTevent.Tevent.TaggregateVersion);
          } else
          {
-            return new TeventInsertionSpecification(tevent:tevent.ToTaggregateTeventData());
+            return new TeventInsertionSpecification(tevent:wrappedTevent.Tevent.ToTaggregateTeventData());
          }
       }
    }

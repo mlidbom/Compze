@@ -24,6 +24,7 @@ class AssemblyTypeMapper : IAssemblyTypeMapper
          .Map<IAccountTevent>("8aea46ad-968d-4e38-8c2d-3736de0c70b3")
          .Map<IAccountTevent.UserChangedEmail>("aeaf8613-14af-4c5b-acad-0d07570b1677")
          .Map<IAccountTevent.UserChangedPassword>("648b86c0-49d5-4987-b7a8-6581f9aedc4d")
-         .Map<IAccountTevent.UserRegistered>("ca41c0b1-56f7-4a21-914c-af0729de29ba");
+         .Map<IAccountTevent.UserRegistered>("ca41c0b1-56f7-4a21-914c-af0729de29ba")
+         .MapOpenGeneric(typeof(AccountTevent<>), "b183821a-89a7-44d8-a04a-498513336eb9");
    }
 }

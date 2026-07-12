@@ -69,6 +69,15 @@ Canonical statements of the model:
   proposed and REJECTED — that harmonizes on the wrong side. The advertised set (every registered remotable
   handler type) is the correct side; the mismatch is resolved by the D6 work itself, when the router honors
   everything advertised.
+- **D7 — the store speaks wrapped through everything, not just at the persistence edge (2026-07-12).** A
+  wrapper-at-the-persistence-edge variant (read APIs and the migration API keep dealing in inner tevents,
+  wrapping/unwrapping at the row boundary) was proposed and REJECTED, for two reasons. Migrations: they must
+  be able to stream the whole store acting on any tevent with the FULL tevent information in hand — under
+  the edge variant publisher identity would be invisible and unrewritable in the one subsystem whose purpose
+  is rewriting history, and the store would silently rewrap migration output "in the stream's wrapper" —
+  reconstruction-from-context, which invariant 6 bans. Public interfaces: they return the real data as it
+  is; an unwrapping view is a one-line projection (`Tevents()`), not an API's return type. A half-way seam
+  in production code costs more over time than the one-time test migration.
 - **The subscription API keeps its split — it is type safety, not accident.** `For`/`ForWrapped` only
   compile when the subscribed type is statically known to belong to the dispatcher's tevent hierarchy
   (`THandledTevent : TTevent` / `TWrapperTevent : IPublisherIdentifyingTevent<TTevent>`);
@@ -107,16 +116,20 @@ unhandled-tevent ignore configuration is translated the same way subscriptions a
 `WrapperTeventImplementationGenerator` is DELETED per D4. Exhaustively unit tested
 (`MutableTeventDispatcher_WrappedTeventsTests.cs`), full suite green.
 
-### 3. Taggregate publishing — DONE for aggregates and inheritance
+### 3. Taggregate publishing — DONE (2026-07-12)
 
-- `Taggregate.Publish` and `Taggregate.ApplyTevent` wrap every tevent in the aggregate's declared wrapper
-  type before dispatching (`src/Compze.Teventive/Taggregates/BaseClasses/Taggregate..cs:25-28, 53, 105`).
+- `Taggregate.Publish` wraps every tevent in the aggregate's declared wrapper type before dispatching, and
+  the wrapped instance flows through every surface: `_unCommittedTevents`, `Commit`, and `TeventStream` all
+  carry the wrapped tevent (`ITaggregate<TTevent>.TeventStream` is now
+  `IObservable<ITaggregateIdentifyingTevent<TTevent>>`). `LoadFromHistory` takes the persisted wrapped
+  tevents and applies the STORED wrapper — after a migration has rewritten history, the stored wrapper is
+  the truth, not what the taggregate would wrap today.
 - Aggregate inheritance is supported: subclasses override `WrapperTeventImplementation` so each level of the
   hierarchy stamps its own publisher identity (see
   `test/Compze.Tests.Unit/CQRS/Taggregates/InheritingTaggregate/AnimalTaggregate.cs:13,29,42`).
-- BUT: `ITaggregate.Commit` hands the store the RAW inner tevents (`Taggregate..cs:126-130`) — publisher
-  identity currently dies at the aggregate boundary. Under D1 the wrapped form must survive commit and flow
-  onward.
+- The wrapping mechanism has one home: `TaggregateIdentifyingTevent.WrapIn(wrapperTeventImplementation,
+  tevent)` — the same call the taggregate uses when publishing and a migration author uses when wrapping a
+  replacement tevent.
 
 ### 4. Teventive components and entities — not wrapping (DEFERRED, D3)
 
@@ -129,22 +142,31 @@ unhandled-tevent ignore configuration is translated the same way subscriptions a
   soon. 2024-12-14").
 - Deferral is safe: when component wrapping arrives it is just another wrapper type to the routing.
 
-### 5. The tevent store — must persist and publish the fully wrapped tevent
+### 5. The tevent store — DONE (2026-07-12, per D7)
 
-- Today the store persists, loads, migrates, and republishes ONLY the inner tevent. Contracts are typed to
-  `TaggregateTevent` (`src/Compze.Teventive.TeventStore.Abstractions/Internal/ITeventStoreSerializer.cs:7-9`);
-  the save path casts to `TaggregateTevent` and type-identifies by the inner tevent's runtime type
-  (`src/Compze.Teventive.TeventStore/TeventStore.cs:163`); onward publication after commit is raw
-  (`src/Compze.Teventive.TeventStore/TeventStoreUpdater.cs:113,130`). Wrappers never reach it.
-- Target per invariant 6: the store deals in the real, fully wrapped tevent type — persisted under the
-  `TypeId` of the closed generic wrapper type, loaded and republished with full wrapper typing intact. No
-  reconstruction of wrapper types from the taggregate type.
-- Storage type identity is already the interned-integer `TypeId` via `ITypeIdInterner` + `ITypeMap`; the
-  work is pointing it at the wrapped type instead of the inner type.
-- Tevent migrations operate entirely on inner tevents and select migrators by interface assignability
-  (`.../Refactoring/Migrations/SingleTaggregateInstanceTeventStreamMutator.cs:35`). How migrations interact
-  with stored wrapper typing must be settled as part of the store work (e.g. migrate the inner tevent inside
-  its wrapper).
+- The store's currency is the wrapped tevent, everywhere: `ITeventStore`, `ITeventStoreReader.GetHistory`,
+  `ITeventStoreSerializer`, `TeventCache`, `TaggregateHistoryValidator`, and the query model feeds all deal
+  in `ITaggregateIdentifyingTevent<ITaggregateTevent>`. A row stores the closed wrapper type's `TypeId` and
+  the serialized WRAPPER object graph (wrappers close over the concrete inner type, so the graph
+  deserializes with no polymorphic-type metadata); hydration deserializes the wrapper and stamps the inner
+  tevent's column-backed properties as before. Zero information loss, no reconstruction from context.
+- The migration pipeline speaks wrapped tevents end to end: `MigrateTevent` receives the full persisted
+  wrapped tevent; `ITeventModifier.Replace`/`InsertBefore` take complete wrapped replacements supplied by
+  the migration author; migrator selection still inspects the inner creation tevent; the
+  `EndOfTaggregateHistoryTeventPlaceHolder` is wrapped like every other tevent in the pipeline. The
+  perf-optimized structure of `TeventModifier`/`SingleTaggregateInstanceTeventStreamMutator` is untouched —
+  element types only.
+- `StreamTaggregateIdsInCreationOrder`'s filter goes through the routing model's one translation rule, now
+  in its one shared home: `PublisherIdentifyingTevent.WrapperTypeMatchingAllWrappingsOf` (also used by the
+  dispatcher's ignore-configuration translation).
+- Wrapper types have `TypeId` mappings: `PublisherIdentifyingTevent<>`, `TaggregateIdentifyingTevent<>`,
+  `ITaggregateIdentifyingTevent<>` (Compze.Teventive), and the wrapper interfaces
+  `IPublisherIdentifyingTevent<>`/`IRemotablePublisherIdentifyingTevent<>`/`IExactlyOncePublisherIdentifyingTevent<>`
+  (Compze.Abstractions) — the interfaces surface in `$type` references when wrapped histories travel inside
+  serialized resources.
+- Remaining seam, by design until the in-process bus increment: `TeventStoreUpdater` unwraps at the
+  `ITeventStoreTeventPublisher` seam because the bus still routes on inner tevent types
+  (`TeventStoreUpdater.cs`, one `.Tevent` wide).
 
 ### 6. The in-process bus — assignability done; needs wrapping + route-by-outer
 
@@ -210,19 +232,20 @@ interface, file names match the types they declare (`ITaggregateIdentifyingTeven
 
 ### In-process bus (Compze.Tessaging)
 
-- [ ] Wrapped publication end to end: `ITaggregate.Commit` → `TeventStoreUpdater` →
-      `ITeventStoreTeventPublisher` / `InProcessTeventPublisher` / `DistributedTeventStoreTeventPublisher`
-      carry the wrapped tevent.
+- [ ] Wrapped publication end to end: the wrapped tevent now flows `ITaggregate.Commit` →
+      `TeventStoreUpdater` (DONE 2026-07-12); the remaining seam is
+      `ITeventStoreTeventPublisher` / `InProcessTeventPublisher` / `DistributedTeventStoreTeventPublisher`,
+      where the updater still unwraps because the bus routes on inner tevent types.
 - [ ] `TessageHandlerRegistry`: translate `ForTevent<T>` inner subscriptions to root-wrapper subscriptions,
       route by outer type, unwrap at delivery; support wrapper-typed (publisher-conscious) subscription.
 
-### Tevent store
+### Tevent store — ALL DONE (2026-07-12)
 
-- [ ] Persist, load, and republish the fully wrapped tevent, type-identified by the closed generic wrapper
-      type's `TypeId` (invariant 6). Retype the store contracts accordingly (today hard-typed to
-      `TaggregateTevent`).
-- [ ] Settle how migrations address the inner tevent inside its stored wrapper; keep migrator selection on
-      the inner tevent's interface hierarchy.
+- [x] Persist, load, and republish the fully wrapped tevent, type-identified by the closed generic wrapper
+      type's `TypeId` (invariant 6). Store contracts retyped to `ITaggregateIdentifyingTevent<ITaggregateTevent>`.
+- [x] Migrations address the full wrapped tevent (D7): `MigrateTevent` receives it, `Replace`/`InsertBefore`
+      take author-supplied wrapped replacements; migrator selection stays on the inner tevent's interface
+      hierarchy.
 
 ### Remote transport
 

@@ -6,7 +6,8 @@ namespace Compze.Tessaging.Teventive.TeventStore.Public;
 
 public interface ITeventStoreReader
 {
-   IReadOnlyList<ITaggregateTevent> GetHistory(TaggregateId taggregateId);
+   ///<summary>The taggregate's persisted history: its wrapped tevents exactly as published and stored, publisher identity included.</summary>
+   IReadOnlyList<ITaggregateIdentifyingTevent<ITaggregateTevent>> GetHistory(TaggregateId taggregateId);
    /// <summary>
    /// Loads a specific version of the taggregate.
    /// This instance is NOT tracked for changes.

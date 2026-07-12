@@ -1,5 +1,6 @@
 using Compze.Tessaging.Teventive.TeventStore.Public;
 using Compze.Tessaging.Teventive.TeventStore.Refactoring.Migrations.Public;
+using Compze.Abstractions.Tessaging.Public;
 using Compze.Abstractions.Time.Public;
 using Compze.Hosting.Testing;
 using Compze.Hosting.Testing.Wiring;
@@ -57,7 +58,7 @@ public abstract class TeventMigrationTestBase : UniversalTestBase
       {
          using var scope = container.BeginScope(); //Why is this needed? It fails without it but I do not understand why...
          var teventStore = scope.Resolve<ITeventStore>();
-         teventsInStoreAtStart = teventStore.ListAllTeventsForTestingPurposesAbsolutelyNotUsableForARealTeventStoreOfAnySize();
+         teventsInStoreAtStart = teventStore.ListAllTeventsForTestingPurposesAbsolutelyNotUsableForARealTeventStoreOfAnySize().Tevents().ToList();
       }
 
       Log.Info($"\n########Running Scenario {indexOfScenarioInBatch}");
@@ -100,6 +101,7 @@ public abstract class TeventMigrationTestBase : UniversalTestBase
          Log.Info("  Streaming all tevents in store");
          var streamedTevents = container.ExecuteTransactionInIsolatedScope(scope => scope.TeventStore()
                                                                                                     .ListAllTeventsForTestingPurposesAbsolutelyNotUsableForARealTeventStoreOfAnySize()
+                                                                                                    .Tevents()
                                                                                                     .ToList());
 
          AssertStreamsAreIdenticalExceptForEventIds(expectedCompleteTeventStoreStream, streamedTevents, "Streaming all tevents in store");
@@ -133,6 +135,7 @@ public abstract class TeventMigrationTestBase : UniversalTestBase
          Log.Info("Streaming all tevents in store");
          streamedTevents = container.ExecuteTransactionInIsolatedScope(scope => scope.TeventStore()
                                                                                                 .ListAllTeventsForTestingPurposesAbsolutelyNotUsableForARealTeventStoreOfAnySize()
+                                                                                                .Tevents()
                                                                                                 .ToList());
          AssertStreamsAreIdenticalExceptForEventIds(expectedCompleteTeventStoreStream, streamedTevents, "Streaming all tevents in store");
 
@@ -147,6 +150,7 @@ public abstract class TeventMigrationTestBase : UniversalTestBase
          Log.Info("Streaming all tevents in store");
          streamedTevents = container.ExecuteTransactionInIsolatedScope(scope => scope.TeventStore()
                                                                                                 .ListAllTeventsForTestingPurposesAbsolutelyNotUsableForARealTeventStoreOfAnySize()
+                                                                                                .Tevents()
                                                                                                 .ToList());
          AssertStreamsAreIdenticalExceptForEventIds(expectedCompleteTeventStoreStream, streamedTevents, "Streaming all tevents in store");
 
@@ -161,6 +165,7 @@ public abstract class TeventMigrationTestBase : UniversalTestBase
          Log.Info("Streaming all tevents in store");
          streamedTevents = clonedContainer2.ExecuteTransactionInIsolatedScope(scope => scope.TeventStore()
                                                                                                               .ListAllTeventsForTestingPurposesAbsolutelyNotUsableForARealTeventStoreOfAnySize()
+                                                                                                              .Tevents()
                                                                                                               .ToList());
          AssertStreamsAreIdenticalExceptForEventIds(expectedCompleteTeventStoreStream, streamedTevents, "Streaming all tevents in store");
       });

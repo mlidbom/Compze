@@ -8,6 +8,7 @@ using Compze.Abstractions.Tessaging.Public;
 using Compze.Tessaging.Teventive.TeventStore.QueryModels.SelfGeneratingQueryModels;
 using Compze.Tessaging.Teventive.TeventStore.Typermedia;
 using Compze.Teventive;
+using Compze.Teventive.Taggregates.Tevents.Public;
 using Compze.Typermedia;
 using Compze.Typermedia.HandlerRegistration;
 
@@ -18,7 +19,7 @@ class AccountQueryModel : SelfGeneratingQueryModel<AccountQueryModel, IAccountTe
    public Password Password { get; private set; } = null!; //Nullable status guaranteed by AssertInvariantsAreMet
    public Email Email { get; private set; } = null!;       //Nullable status guaranteed by AssertInvariantsAreMet
 
-   AccountQueryModel(IEnumerable<IAccountTevent> tevents) : base(TeventDispatcherConfig.Default.IgnoreUnhandled<IAccountTevent.LoginAttempted>()) //Login tevents change no account state, so they have no appliers.
+   AccountQueryModel(IEnumerable<ITaggregateIdentifyingTevent<IAccountTevent>> tevents) : base(TeventDispatcherConfig.Default.IgnoreUnhandled<IAccountTevent.LoginAttempted>()) //Login tevents change no account state, so they have no appliers.
    {
       RegisterTeventAppliers()
         .For<IAccountTevent.PropertyUpdated.Email>(tevent => Email = tevent.Email)

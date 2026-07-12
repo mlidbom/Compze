@@ -3,17 +3,20 @@ using Compze.Teventive.Taggregates.Tevents.Public;
 
 namespace Compze.Tessaging.Teventive.TeventStore.Public;
 
+///<summary>Persists and loads taggregate histories. The store's currency is the wrapped tevent - every tevent exactly as its taggregate published it,<br/>
+/// inside its publisher's <see cref="ITaggregateIdentifyingTevent{TTeventInterface}"/> wrapper - persisted under the wrapper type's identity with zero information loss.</summary>
 public interface ITeventStore : IDisposable
 {
-   IReadOnlyList<ITaggregateTevent> GetTaggregateHistoryForUpdate(TaggregateId id);
-   IReadOnlyList<ITaggregateTevent> GetTaggregateHistory(TaggregateId id);
-   void SaveSingleTaggregateTevents(IReadOnlyList<ITaggregateTevent> tevents);
+   IReadOnlyList<ITaggregateIdentifyingTevent<ITaggregateTevent>> GetTaggregateHistoryForUpdate(TaggregateId id);
+   IReadOnlyList<ITaggregateIdentifyingTevent<ITaggregateTevent>> GetTaggregateHistory(TaggregateId id);
+   void SaveSingleTaggregateTevents(IReadOnlyList<ITaggregateIdentifyingTevent<ITaggregateTevent>> wrappedTevents);
    //todo: Utilize C# 8 asynchronous streams.
-   void StreamTevents(int batchSize, Action<IReadOnlyList<ITaggregateTevent>> handleTevents);
+   void StreamTevents(int batchSize, Action<IReadOnlyList<ITaggregateIdentifyingTevent<ITaggregateTevent>>> handleTevents);
    void DeleteTaggregate(TaggregateId taggregateId);
    void PersistMigrations();
 
-   ///<summary>The passed <paramref name="teventType"/> filters the taggregate Ids so that only ids of taggregates that are created by an tevent that inherits from <paramref name="teventType"/> are returned.</summary>
+   ///<summary>The passed <paramref name="teventType"/> filters the taggregate Ids so that only ids of taggregates that are created by a tevent compatible with <paramref name="teventType"/> are returned.<br/>
+   /// An inner tevent type matches every wrapping of it; a wrapper type matches as it stands.</summary>
    IEnumerable<TaggregateId> StreamTaggregateIdsInCreationOrder(Type? teventType = null);
 }
 
@@ -24,10 +27,10 @@ public static class TeventStoreExtensions
 
 public static class TeventStoreTestingExtensions
 {
-   public static IReadOnlyList<ITaggregateTevent> ListAllTeventsForTestingPurposesAbsolutelyNotUsableForARealTeventStoreOfAnySize(this ITeventStore @this, int batchSize = 10000)
+   public static IReadOnlyList<ITaggregateIdentifyingTevent<ITaggregateTevent>> ListAllTeventsForTestingPurposesAbsolutelyNotUsableForARealTeventStoreOfAnySize(this ITeventStore @this, int batchSize = 10000)
    {
-      var tevents = new List<ITaggregateTevent>();
-      @this.StreamTevents(batchSize, tevents.AddRange);
-      return tevents;
+      var wrappedTevents = new List<ITaggregateIdentifyingTevent<ITaggregateTevent>>();
+      @this.StreamTevents(batchSize, wrappedTevents.AddRange);
+      return wrappedTevents;
    }
 }

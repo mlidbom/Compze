@@ -17,16 +17,16 @@ abstract class CompleteTeventStoreStreamMutator
    {
       readonly Dictionary<TaggregateId, int> _taggregateVersions = new();
 
-      public IEnumerable<TaggregateTevent> Mutate(IEnumerable<TaggregateTevent> teventStream)
+      public IEnumerable<ITaggregateIdentifyingTevent<ITaggregateTevent>> Mutate(IEnumerable<ITaggregateIdentifyingTevent<ITaggregateTevent>> teventStream)
       {
-         foreach(var tevent in teventStream)
+         foreach(var wrappedTevent in teventStream)
          {
-            var version = _taggregateVersions.GetOrAddDefault(tevent.TaggregateId) + 1;
-            _taggregateVersions[tevent.TaggregateId] = version;
+            var version = _taggregateVersions.GetOrAddDefault(wrappedTevent.Tevent.TaggregateId) + 1;
+            _taggregateVersions[wrappedTevent.Tevent.TaggregateId] = version;
 #pragma warning disable CS0618 // Type or member is obsolete
-            ((IMutableTaggregateTevent)tevent).SetTaggregateVersionInternal(version);
+            ((IMutableTaggregateTevent)wrappedTevent.Tevent).SetTaggregateVersionInternal(version);
 #pragma warning restore CS0618 // Type or member is obsolete
-            yield return tevent;
+            yield return wrappedTevent;
          }
       }
    }
@@ -36,14 +36,14 @@ abstract class CompleteTeventStoreStreamMutator
       readonly IReadOnlyList<ITeventMigration> _teventMigrationFactories = teventMigrationFactories;
       readonly Dictionary<TaggregateId, ISingleTaggregateInstanceTeventStreamMutator> _taggregateMutatorsCache = new();
 
-      public IEnumerable<TaggregateTevent> Mutate(IEnumerable<TaggregateTevent> teventStream)
+      public IEnumerable<ITaggregateIdentifyingTevent<ITaggregateTevent>> Mutate(IEnumerable<ITaggregateIdentifyingTevent<ITaggregateTevent>> teventStream)
       {
-         foreach(var tevent in teventStream)
+         foreach(var wrappedTevent in teventStream)
          {
             var mutatedTevents = _taggregateMutatorsCache.GetOrAdd(
-               tevent.TaggregateId,
-               () => SingleTaggregateInstanceTeventStreamMutator.Create(tevent, _teventMigrationFactories)
-            ).Mutate(tevent);
+               wrappedTevent.Tevent.TaggregateId,
+               () => SingleTaggregateInstanceTeventStreamMutator.Create(wrappedTevent, _teventMigrationFactories)
+            ).Mutate(wrappedTevent);
 
             foreach(var mutatedTevent in mutatedTevents)
             {

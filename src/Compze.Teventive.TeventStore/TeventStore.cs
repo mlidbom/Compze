@@ -1,4 +1,6 @@
 using Compze.Abstractions.Public;
+using Compze.Abstractions.Tessaging.Public;
+using Compze.Teventive.Tevents.Public;
 using Compze.TypeIdentifiers;
 using Compze.Tessaging.Teventive.TeventStore.Internal;
 using Compze.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Abstractions;
@@ -50,11 +52,11 @@ namespace Compze.Tessaging.Teventive.TeventStore;
       _sqlLayer = sqlLayer;
    }
 
-   public IReadOnlyList<ITaggregateTevent> GetTaggregateHistoryForUpdate(TaggregateId id) => GetTaggregateHistoryInternal(taggregateId: id, takeWriteLock: true);
+   public IReadOnlyList<ITaggregateIdentifyingTevent<ITaggregateTevent>> GetTaggregateHistoryForUpdate(TaggregateId id) => GetTaggregateHistoryInternal(taggregateId: id, takeWriteLock: true);
 
-   public IReadOnlyList<ITaggregateTevent> GetTaggregateHistory(TaggregateId id) => GetTaggregateHistoryInternal(id, takeWriteLock: false);
+   public IReadOnlyList<ITaggregateIdentifyingTevent<ITaggregateTevent>> GetTaggregateHistory(TaggregateId id) => GetTaggregateHistoryInternal(id, takeWriteLock: false);
 
-   IReadOnlyList<ITaggregateTevent> GetTaggregateHistoryInternal(TaggregateId taggregateId, bool takeWriteLock)
+   IReadOnlyList<ITaggregateIdentifyingTevent<ITaggregateTevent>> GetTaggregateHistoryInternal(TaggregateId taggregateId, bool takeWriteLock)
    {
       _usageGuard.EnsureAccessValid();
       _sqlLayer.SetupSchemaIfDatabaseUnInitialized();
@@ -65,7 +67,7 @@ namespace Compze.Tessaging.Teventive.TeventStore;
 
       if(newHistoryFromSqlLayer.Length == 0)
       {
-         return cachedTaggregateHistory.Tevents;
+         return cachedTaggregateHistory.WrappedTevents;
       }
 
       var newerMigratedTeventsExist = newHistoryFromSqlLayer.Where(IsRefactoringTevent).Any();
@@ -80,15 +82,15 @@ namespace Compze.Tessaging.Teventive.TeventStore;
          return GetTaggregateHistoryInternal(taggregateId, takeWriteLock);
       }
 
-      var newTeventsFromSqlLayer = newHistoryFromSqlLayer.Select(it => it.Tevent).ToArray();
-      if(cachedTaggregateHistory.Tevents.Count == 0)
+      var newTeventsFromSqlLayer = newHistoryFromSqlLayer.Select(it => it.WrappedTevent).ToArray();
+      if(cachedTaggregateHistory.WrappedTevents.Count == 0)
       {
          TaggregateHistoryValidator.ValidateHistory(taggregateId, newTeventsFromSqlLayer);
       }
 
-      var newTaggregateHistory = cachedTaggregateHistory.Tevents.Count == 0
+      var newTaggregateHistory = cachedTaggregateHistory.WrappedTevents.Count == 0
                                    ? SingleTaggregateInstanceTeventStreamMutator.MutateCompleteTaggregateHistory(_migrationFactories, newTeventsFromSqlLayer)
-                                   : cachedTaggregateHistory.Tevents.Concat(newTeventsFromSqlLayer)
+                                   : cachedTaggregateHistory.WrappedTevents.Concat(newTeventsFromSqlLayer)
                                                            .ToArray();
 
       if(cachedMigratedHistoryExists)
@@ -98,21 +100,21 @@ namespace Compze.Tessaging.Teventive.TeventStore;
 
       var maxSeenInsertedVersion = newHistoryFromSqlLayer.Max(tevent => tevent.StorageInformation.InsertedVersion);
       TaggregateHistoryValidator.ValidateHistory(taggregateId, newTaggregateHistory);
-      _cache.Store(taggregateId, new TeventCache.Entry(tevents: newTaggregateHistory, maxSeenInsertedVersion: maxSeenInsertedVersion));
+      _cache.Store(taggregateId, new TeventCache.Entry(wrappedTevents: newTaggregateHistory, maxSeenInsertedVersion: maxSeenInsertedVersion));
 
       return newTaggregateHistory;
    }
 
-   TaggregateTevent HydrateTevent(TeventDataRow teventDataRowRow)
+   ITaggregateIdentifyingTevent<ITaggregateTevent> HydrateTevent(TeventDataRow teventDataRowRow)
    {
-      var tevent = (TaggregateTevent)_serializer.Deserialize(teventType: teventDataRowRow.TeventType.Type, json: teventDataRowRow.TeventJson);
+      var wrappedTevent = _serializer.Deserialize(wrapperTeventType: teventDataRowRow.TeventType.Type, json: teventDataRowRow.TeventJson);
 #pragma warning disable CS0618 // Type or member is obsolete
-      ((IMutableTaggregateTevent)tevent).SetTaggregateIdInternal(teventDataRowRow.TaggregateId);
-      ((IMutableTaggregateTevent)tevent).SetTaggregateVersionInternal(teventDataRowRow.TaggregateVersion);
-      ((IMutableTaggregateTevent)tevent).SetTessageIdInternal(teventDataRowRow.TeventId);
-      ((IMutableTaggregateTevent)tevent).SetUtcTimeStampInternal(teventDataRowRow.UtcTimeStamp);
+      ((IMutableTaggregateTevent)wrappedTevent.Tevent).SetTaggregateIdInternal(teventDataRowRow.TaggregateId);
+      ((IMutableTaggregateTevent)wrappedTevent.Tevent).SetTaggregateVersionInternal(teventDataRowRow.TaggregateVersion);
+      ((IMutableTaggregateTevent)wrappedTevent.Tevent).SetTessageIdInternal(teventDataRowRow.TeventId);
+      ((IMutableTaggregateTevent)wrappedTevent.Tevent).SetUtcTimeStampInternal(teventDataRowRow.UtcTimeStamp);
 #pragma warning restore CS0618 // Type or member is obsolete
-      return tevent;
+      return wrappedTevent;
    }
 
    TaggregateTeventWithRefactoringInformation[] GetTaggregateTeventsFromSqlLayer(TaggregateId taggregateId, bool takeWriteLock, int startAfterInsertedVersion = 0)
@@ -124,13 +126,13 @@ namespace Compze.Tessaging.Teventive.TeventStore;
 
    static bool IsRefactoringTevent(TaggregateTeventWithRefactoringInformation tevent) => tevent.StorageInformation.RefactoringInformation != null;
 
-   IEnumerable<ITaggregateTevent> StreamTevents(int batchSize)
+   IEnumerable<ITaggregateIdentifyingTevent<ITaggregateTevent>> StreamTevents(int batchSize)
    {
       var streamMutator = CompleteTeventStoreStreamMutator.Create(_migrationFactories);
       return streamMutator.Mutate(_sqlLayer.StreamTevents(batchSize).Select(HydrateTevent));
    }
 
-   public void StreamTevents(int batchSize, Action<IReadOnlyList<ITaggregateTevent>> handleTevents)
+   public void StreamTevents(int batchSize, Action<IReadOnlyList<ITaggregateIdentifyingTevent<ITaggregateTevent>>> handleTevents)
    {
       _usageGuard.EnsureAccessValid();
       _sqlLayer.SetupSchemaIfDatabaseUnInitialized();
@@ -144,31 +146,30 @@ namespace Compze.Tessaging.Teventive.TeventStore;
       }
    }
 
-   public void SaveSingleTaggregateTevents(IReadOnlyList<ITaggregateTevent> tevents)
+   public void SaveSingleTaggregateTevents(IReadOnlyList<ITaggregateIdentifyingTevent<ITaggregateTevent>> wrappedTevents)
    {
       _usageGuard.EnsureAccessValid();
       _sqlLayer.SetupSchemaIfDatabaseUnInitialized();
 
-      var taggregateId = tevents[0].TaggregateId;
+      var taggregateId = wrappedTevents[0].Tevent.TaggregateId;
 
-      if(tevents.Any(it => it.TaggregateId != taggregateId))
+      if(wrappedTevents.Any(it => it.Tevent.TaggregateId != taggregateId))
       {
          throw new ArgumentException("Got tevents from multiple Taggregates. This is not supported.");
       }
 
       var cacheEntry = _cache.Get(taggregateId);
-      var specifications = tevents.Select(tevent => cacheEntry.CreateInsertionSpecificationForNewTevent(tevent)).ToArray();
+      var specifications = wrappedTevents.Select(wrappedTevent => cacheEntry.CreateInsertionSpecificationForNewTevent(wrappedTevent)).ToArray();
 
-      var teventRows = tevents
-                     .Select(tevent => new TeventDataRow(specification: cacheEntry.CreateInsertionSpecificationForNewTevent(tevent), _typeMap.GetId(tevent.GetType()), teventAsJson: _serializer.Serialize((TaggregateTevent)tevent)))
+      var teventRows = wrappedTevents
+                     .Select(wrappedTevent => new TeventDataRow(specification: cacheEntry.CreateInsertionSpecificationForNewTevent(wrappedTevent), _typeMap.GetId(wrappedTevent.GetType()), teventAsJson: _serializer.Serialize(wrappedTevent)))
                      .ToList();
 
       teventRows.ForEach(it => it.StorageInformation.EffectiveVersion = it.TaggregateVersion);
       _sqlLayer.InsertSingleTaggregateTevents(teventRows);
 
       var completeTaggregateHistory = cacheEntry
-                                    .Tevents.Concat(tevents)
-                                    .Cast<TaggregateTevent>()
+                                    .WrappedTevents.Concat(wrappedTevents)
                                     .ToArray();
       SingleTaggregateInstanceTeventStreamMutator.AssertMigrationsAreIdempotent(_migrationFactories, completeTaggregateHistory);
       TaggregateHistoryValidator.ValidateHistory(taggregateId, completeTaggregateHistory);
@@ -188,18 +189,20 @@ namespace Compze.Tessaging.Teventive.TeventStore;
 
    public IEnumerable<TaggregateId> StreamTaggregateIdsInCreationOrder(Type? teventType = null)
    {
-      Argument.Assert(teventType == null || teventType.IsInterface && typeof(ITaggregateTevent).IsAssignableFrom(teventType));
+      Argument.Assert(teventType == null || teventType.IsInterface && (typeof(ITaggregateTevent).IsAssignableFrom(teventType) || typeof(IPublisherIdentifyingTevent<ITaggregateTevent>).IsAssignableFrom(teventType)));
       _usageGuard.EnsureAccessValid();
 
       _sqlLayer.SetupSchemaIfDatabaseUnInitialized();
+      //The rows store wrapper types, so an inner tevent type filter is translated: it matches every wrapping of that tevent type.
+      var wrapperTypeToMatch = teventType == null ? null : PublisherIdentifyingTevent.WrapperTypeMatchingAllWrappingsOf(teventType);
       return _sqlLayer.ListTaggregateIdsInCreationOrder()
-                              .Where(it => teventType == null || teventType.IsAssignableFrom(it.TypeId.Type))
+                              .Where(it => wrapperTypeToMatch == null || wrapperTypeToMatch.IsAssignableFrom(it.TypeId.Type))
                               .Select(it => it.TaggregateId);
    }
 
-   public class TaggregateTeventWithRefactoringInformation(TaggregateTevent tevent, TaggregateTeventStorageInformation storageInformation)
+   public class TaggregateTeventWithRefactoringInformation(ITaggregateIdentifyingTevent<ITaggregateTevent> wrappedTevent, TaggregateTeventStorageInformation storageInformation)
    {
-      internal TaggregateTevent Tevent { get; } = tevent;
+      internal ITaggregateIdentifyingTevent<ITaggregateTevent> WrappedTevent { get; } = wrappedTevent;
       internal TaggregateTeventStorageInformation StorageInformation { get; } = storageInformation;
    }
 

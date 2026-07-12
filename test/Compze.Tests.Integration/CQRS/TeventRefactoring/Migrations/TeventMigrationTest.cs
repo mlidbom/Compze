@@ -1,4 +1,5 @@
 using Compze.Abstractions.Public;
+using Compze.Abstractions.Tessaging.Public;
 using Compze.Tessaging.Teventive.TeventStore.Public;
 using Compze.Tessaging.Teventive.TeventStore.Refactoring.Migrations.Public;
 using Compze.Abstractions.Time.Public;
@@ -431,12 +432,12 @@ public class TeventMigrationTest : TeventMigrationTestBase
             var expected = TestTaggregate.FromTevents(id, EnumerableCE.OfTypes<Ec1, E5, E2>()).History;
             AssertStreamsAreIdenticalExceptForEventIds(expected: expected, migratedHistory: taggregate.History, descriptionOfHistory: "migrated history");
 
-            var completeTeventHistory = container.ExecuteInIsolatedScope(scope => scope.TeventStore().ListAllTeventsForTestingPurposesAbsolutelyNotUsableForARealTeventStoreOfAnySize()).Cast<TaggregateTevent>().ToList();
+            var completeTeventHistory = container.ExecuteInIsolatedScope(scope => scope.TeventStore().ListAllTeventsForTestingPurposesAbsolutelyNotUsableForARealTeventStoreOfAnySize()).Tevents().ToList();
             AssertStreamsAreIdenticalExceptForEventIds(expected: expected, migratedHistory: completeTeventHistory, descriptionOfHistory: "streamed persisted history");
 
             toDispose.Add(container = container.CloneAndBuild());
 
-            completeTeventHistory = container.ExecuteInIsolatedScope(scope => scope.TeventStore().ListAllTeventsForTestingPurposesAbsolutelyNotUsableForARealTeventStoreOfAnySize()).Cast<TaggregateTevent>().ToList();
+            completeTeventHistory = container.ExecuteInIsolatedScope(scope => scope.TeventStore().ListAllTeventsForTestingPurposesAbsolutelyNotUsableForARealTeventStoreOfAnySize()).Tevents().ToList();
             AssertStreamsAreIdenticalExceptForEventIds(expected: expected, migratedHistory: completeTeventHistory, descriptionOfHistory: "streamed persisted history");
          });
       }
@@ -576,8 +577,8 @@ public class TeventMigrationTest : TeventMigrationTestBase
 
       otherProcessContainer.ExecuteTransactionInIsolatedScope(scope => scope.TeventStoreUpdater().Get<TestTaggregate>(id).Publish(new E3()));
 
-      var firstProcessHistory = container.ExecuteTransactionInIsolatedScope(scope => scope.TeventStore().GetTaggregateHistory(id));
-      var secondProcessHistory = otherProcessContainer.ExecuteTransactionInIsolatedScope(scope => scope.TeventStore().GetTaggregateHistory(id));
+      var firstProcessHistory = container.ExecuteTransactionInIsolatedScope(scope => scope.TeventStore().GetTaggregateHistory(id).Tevents().ToList());
+      var secondProcessHistory = otherProcessContainer.ExecuteTransactionInIsolatedScope(scope => scope.TeventStore().GetTaggregateHistory(id).Tevents().ToList());
 
       TeventStorageTestHelper.StripSteventhDecimalPointFromSecondFractionOnUtcUpdateTime(firstProcessHistory);
       TeventStorageTestHelper.StripSteventhDecimalPointFromSecondFractionOnUtcUpdateTime(secondProcessHistory);

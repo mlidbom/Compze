@@ -1,7 +1,6 @@
 using Compze.Tessaging.Teventive.TeventStore.Refactoring.Migrations.Public;
 using Compze.Tessaging.Teventive.TeventStore.Refactoring.Migrations;
 using Compze.Internals.SystemCE.LinqCE;
-using Compze.Internals.SystemCE.ReflectionCE;
 using Compze.Teventive.Taggregates.Tevents.Public;
 
 namespace Compze.Tests.Common.CQRS.TeventRefactoring.Migrations;
@@ -23,14 +22,14 @@ public class After<TTevent> : TeventMigration<ITestTaggregateTevent>
       readonly IEnumerable<Type> _insert = insert;
       Type? _lastSeenTeventType;
 
-      public void MigrateTevent(ITaggregateTevent tevent, ITeventModifier modifier)
+      public void MigrateTevent(ITaggregateIdentifyingTevent<ITaggregateTevent> wrappedTevent, ITeventModifier modifier)
       {
-         if (_lastSeenTeventType == typeof(TTevent) && tevent.GetType() != _insert.First())
+         if (_lastSeenTeventType == typeof(TTevent) && wrappedTevent.Tevent.GetType() != _insert.First())
          {
-            modifier.InsertBefore(_insert.Select(Constructor.CreateInstance).Cast<TaggregateTevent>().ToArray());
+            modifier.InsertBefore(_insert.ToWrappedTevents());
          }
 
-         _lastSeenTeventType = tevent.GetType();
+         _lastSeenTeventType = wrappedTevent.Tevent.GetType();
       }
 
    }

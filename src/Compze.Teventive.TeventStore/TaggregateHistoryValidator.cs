@@ -8,12 +8,12 @@ namespace Compze.Tessaging.Teventive.TeventStore;
 
 static class TaggregateHistoryValidator
 {
-   public static void ValidateHistory(TaggregateId taggregateId, IReadOnlyList<ITaggregateTevent> history)
+   public static void ValidateHistory(TaggregateId taggregateId, IReadOnlyList<ITaggregateIdentifyingTevent<ITaggregateTevent>> history)
    {
       var version = 1;
-      foreach(var taggregateTevent in history)
+      foreach(var wrappedTevent in history)
       {
-         if(taggregateTevent.TaggregateVersion != version++)
+         if(wrappedTevent.Tevent.TaggregateVersion != version++)
          {
             throw new InvalidHistoryException(taggregateId);
          }

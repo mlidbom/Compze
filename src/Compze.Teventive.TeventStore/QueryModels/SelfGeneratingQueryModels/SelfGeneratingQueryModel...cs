@@ -1,8 +1,10 @@
 using Compze.Abstractions.Public;
+using Compze.Abstractions.Tessaging.Public;
 using Compze.Contracts;
 using Compze.Internals.SystemCE.LinqCE;
 using Compze.Teventive;
 using Compze.Teventive.Taggregates.Tevents.Public;
+using Compze.Teventive.Tevents.Public;
 
 namespace Compze.Tessaging.Teventive.TeventStore.QueryModels.SelfGeneratingQueryModels;
 
@@ -21,25 +23,29 @@ public partial class SelfGeneratingQueryModel<TQueryModel, TTaggregateTevent> : 
 
    protected ITeventSubscriber<TTaggregateTevent> RegisterTeventAppliers() => _teventAppliersDispatcher.Register();
 
-   public void ApplyTevent(TTaggregateTevent theTevent)
+   ///<summary>Applies a tevent that arrives without a publisher-identifying wrapper - such as one delivered to an inner-typed bus subscription - by wrapping it<br/>
+   /// in a <see cref="PublisherIdentifyingTevent{TTevent}"/> closed over its runtime type, mirroring <see cref="ITeventDispatcher{TTevent}.Dispatch(TTevent)"/>.</summary>
+   public void ApplyTevent(TTaggregateTevent tevent) => ApplyTevent(PublisherIdentifyingTevent.WrapTevent(tevent));
+
+   public void ApplyTevent(IPublisherIdentifyingTevent<TTaggregateTevent> wrappedTevent)
    {
-      if(theTevent is ITaggregateCreatedTevent)
+      if(wrappedTevent.Tevent is ITaggregateCreatedTevent)
       {
 #pragma warning disable CS0618 // Type or member is obsolete
-         Id = theTevent.TaggregateId;
+         Id = wrappedTevent.Tevent.TaggregateId;
 #pragma warning restore CS0618 // Type or member is obsolete
       }
 
-      Version = theTevent.TaggregateVersion;
-      _teventAppliersDispatcher.Dispatch(theTevent);
+      Version = wrappedTevent.Tevent.TaggregateVersion;
+      _teventAppliersDispatcher.Dispatch(wrappedTevent);
    }
 
    public bool HandlesTevent(TTaggregateTevent tevent) => _teventAppliersDispatcher.Handles(tevent);
 
-   public void LoadFromHistory(IEnumerable<ITaggregateTevent> history)
+   public void LoadFromHistory(IEnumerable<ITaggregateIdentifyingTevent<ITaggregateTevent>> history)
    {
       Contract.State.Assert(Version == 0);
-      history.ForEach(theTevent => ApplyTevent((TTaggregateTevent)theTevent));
+      history.ForEach(wrappedTevent => ApplyTevent((IPublisherIdentifyingTevent<TTaggregateTevent>)wrappedTevent));
       AssertInvariantsAreMet();
    }
 
