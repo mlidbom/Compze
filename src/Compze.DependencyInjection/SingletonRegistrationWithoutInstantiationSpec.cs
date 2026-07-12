@@ -1,10 +1,11 @@
+using Compze.Contracts;
 using Compze.DependencyInjection.Abstractions;
 
 namespace Compze.DependencyInjection;
 
 public class SingletonRegistrationWithoutInstantiationSpec<TService> : ComponentRegistrationWithoutInstantiationSpec<TService> where TService : class
 {
-   internal SingletonRegistrationWithoutInstantiationSpec(IEnumerable<Type> serviceTypes) : base(Lifestyle.Singleton, serviceTypes) {}
+   internal SingletonRegistrationWithoutInstantiationSpec(IEnumerable<Type> serviceTypes, bool isComponentSetMember = false) : base(Lifestyle.Singleton, serviceTypes, isComponentSetMember) {}
 
    /// <summary>
    /// When the container this component is registered in is cloned, the clone resolves this component from the source container
@@ -14,8 +15,14 @@ public class SingletonRegistrationWithoutInstantiationSpec<TService> : Component
    /// Only available for singletons: for any other lifestyle, sharing instances across containers would leave disposal ownership
    /// hopelessly confused, which is why this method lives on the singleton spec alone.
    /// </remarks>
+   /// <remarks>
+   /// Not available for a component set member (<c>ForSet(...)</c>): its service type is never singularly resolvable, so there is
+   /// no single instance to fetch from the source container.
+   /// </remarks>
    public SingletonRegistrationWithoutInstantiationSpec<TService> DelegateToParentServiceLocatorWhenCloning()
    {
+      Contract.Argument.Assert(!IsComponentSetMember,
+         () => $"{nameof(DelegateToParentServiceLocatorWhenCloning)} is not supported for a component set member — its service type cannot be singularly resolved from the parent.");
       ShouldDelegateToParentWhenCloning = true;
       return this;
    }

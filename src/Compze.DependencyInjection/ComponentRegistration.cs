@@ -8,6 +8,18 @@ public abstract class ComponentRegistration
    public IReadOnlySet<Type> ServiceTypes { get; }
    public InstantiationSpec InstantiationSpec { get; }
    public Lifestyle Lifestyle { get; }
+
+   /// <summary>
+   /// Whether this registration joins a <see cref="IServiceResolverCE.ResolveSet{TComponent}(Abstractions.IServiceResolver)"/>-only
+   /// component set (created via <c>ForSet(...)</c>) rather than being singularly resolvable via <c>Resolve&lt;T&gt;()</c>.
+   /// </summary>
+   /// <remarks>
+   /// A service type is exclusively one or the other, container-wide: <see cref="ContainerBuilder"/> rejects a service type that
+   /// is already registered the other way. Multiple set-member registrations may freely share the same service type — that
+   /// multiplicity is the entire point of a component set — but a singular service type may never be registered twice.
+   /// </remarks>
+   public bool IsComponentSetMember { get; }
+
    internal IReadOnlyList<Type> DependencyTypes { get; }
    internal bool AllowSingletonDependent { get; }
    internal bool AllowScopedDependent { get; }
@@ -17,6 +29,7 @@ public abstract class ComponentRegistration
                                   IEnumerable<Type> serviceTypes,
                                   InstantiationSpec instantiationSpec,
                                   IEnumerable<Type> dependencyTypes,
+                                  bool isComponentSetMember,
                                   bool allowSingletonDependent = false,
                                   bool allowScopedDependent = false)
    {
@@ -29,6 +42,7 @@ public abstract class ComponentRegistration
       ServiceTypes = serviceTypes.ToHashSet();
       InstantiationSpec = instantiationSpec;
       Lifestyle = lifestyle;
+      IsComponentSetMember = isComponentSetMember;
       DependencyTypes = [..dependencyTypes];
       AllowSingletonDependent = allowSingletonDependent;
       AllowScopedDependent = allowScopedDependent;
@@ -69,7 +83,7 @@ public class ComponentRegistration<TService> : ComponentRegistration where TServ
    {
       if(!_shouldDelegateToParentWhenCloning)
       {
-         return new ComponentRegistration<TService>(Lifestyle, ServiceTypes, InstantiationSpec, DependencyTypes, AllowSingletonDependent, AllowScopedDependent);
+         return new ComponentRegistration<TService>(Lifestyle, ServiceTypes, InstantiationSpec, DependencyTypes, IsComponentSetMember, AllowSingletonDependent, AllowScopedDependent);
       }
 
       return new ComponentRegistration<TService>(////Instance registrations are not disposed.
@@ -77,6 +91,7 @@ public class ComponentRegistration<TService> : ComponentRegistration where TServ
          serviceTypes: ServiceTypes,
          instantiationSpec: InstantiationSpec.FromInstance(currentRootResolver.Resolve<TService>()),
          dependencyTypes: DependencyTypes,
+         isComponentSetMember: IsComponentSetMember,
          allowSingletonDependent: AllowSingletonDependent,
          allowScopedDependent: AllowScopedDependent
       );
@@ -92,23 +107,25 @@ public class ComponentRegistration<TService> : ComponentRegistration where TServ
             serviceTypes: ServiceTypes,
             instantiationSpec: InstantiationSpec.FromInstance(parentRootResolver.Resolve<TService>()),
             dependencyTypes: DependencyTypes,
+            isComponentSetMember: IsComponentSetMember,
             allowSingletonDependent: AllowSingletonDependent,
             allowScopedDependent: AllowScopedDependent
          );
       }
 
       // Scoped and transient registrations are copied — fresh instances in child scopes.
-      return new ComponentRegistration<TService>(Lifestyle, ServiceTypes, InstantiationSpec, DependencyTypes, AllowSingletonDependent, AllowScopedDependent);
+      return new ComponentRegistration<TService>(Lifestyle, ServiceTypes, InstantiationSpec, DependencyTypes, IsComponentSetMember, AllowSingletonDependent, AllowScopedDependent);
    }
 
    internal ComponentRegistration(Lifestyle lifestyle,
                                   IEnumerable<Type> serviceTypes,
                                   InstantiationSpec instantiationSpec,
                                   IEnumerable<Type> dependencyTypes,
+                                  bool isComponentSetMember,
                                   bool allowSingletonDependent = false,
                                   bool allowScopedDependent = false,
                                   bool delegateToParentServiceLocatorWhenCloning = false)
-      : base(lifestyle, serviceTypes, instantiationSpec, dependencyTypes, allowSingletonDependent, allowScopedDependent)
+      : base(lifestyle, serviceTypes, instantiationSpec, dependencyTypes, isComponentSetMember, allowSingletonDependent, allowScopedDependent)
    {
       Contract.Argument.Assert(
          !delegateToParentServiceLocatorWhenCloning || lifestyle == Lifestyle.Singleton,

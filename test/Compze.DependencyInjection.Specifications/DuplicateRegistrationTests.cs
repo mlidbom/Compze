@@ -85,4 +85,45 @@ public class DuplicateRegistrationTests
                .Contain("ITestService")
                .Contain("already registered");
    }
+
+   [DependencyInjectionContainerMatrix]
+   public void Registering_a_component_set_member_for_an_already_singularly_registered_service_type_throws_InvalidOperationException()
+   {
+      var builder = DependencyInjectionContainerFactory.CreateContainerBuilder();
+
+      builder.Registrar.Register(Singleton.For<ITestService>().CreatedBy(() => new TestService()));
+
+      builder.Invoking(it => it.Registrar.Register(Singleton.ForSet<ITestService>().CreatedBy(() => new TestService())))
+               .Must()
+               .Throw<InvalidOperationException>()
+               .Which.Message.Must()
+               .Contain("ITestService")
+               .Contain("already registered");
+   }
+
+   [DependencyInjectionContainerMatrix]
+   public void Registering_a_singular_service_for_an_already_registered_component_set_type_throws_InvalidOperationException()
+   {
+      var builder = DependencyInjectionContainerFactory.CreateContainerBuilder();
+
+      builder.Registrar.Register(Singleton.ForSet<ITestService>().CreatedBy(() => new TestService()));
+
+      builder.Invoking(it => it.Registrar.Register(Singleton.For<ITestService>().CreatedBy(() => new TestService())))
+               .Must()
+               .Throw<InvalidOperationException>()
+               .Which.Message.Must()
+               .Contain("ITestService")
+               .Contain("already registered");
+   }
+
+   [DependencyInjectionContainerMatrix]
+   public void Registering_two_component_set_members_for_the_same_component_set_type_does_not_throw()
+   {
+      var builder = DependencyInjectionContainerFactory.CreateContainerBuilder();
+
+      // An uncaught exception here fails the test — this is the assertion that registering two set members sharing a
+      // component set's service type is allowed, unlike the singular case exercised by the tests above.
+      builder.Registrar.Register(Singleton.ForSet<ITestService>().CreatedBy(() => new TestService()));
+      builder.Registrar.Register(Singleton.ForSet<ITestService>().CreatedBy(() => new TestService()));
+   }
 }

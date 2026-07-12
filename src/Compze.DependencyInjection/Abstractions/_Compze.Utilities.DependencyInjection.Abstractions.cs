@@ -63,6 +63,17 @@ public interface IDependencyInjectionContainer : IDisposable, IAsyncDisposable
 public interface IServiceResolver
 {
    object Resolve(Type serviceType);
+
+   ///<summary>
+   /// Resolves every component registered as a member of the <paramref name="serviceType"/> component set — see
+   /// <c>ForSet(...)</c> in <c>Compze.DependencyInjection.Singleton</c>/<c>Scoped</c>/<c>TrackedTransient</c>.
+   /// Returns an empty sequence if no component set member is registered for <paramref name="serviceType"/>.
+   ///</summary>
+   /// <remarks>
+   /// Registrations are handed to the underlying container in the order they were received — Compze does not reorder them —
+   /// but the order they come back out in is whatever the underlying container's own collection resolution produces.
+   /// </remarks>
+   IEnumerable<object> ResolveSet(Type serviceType);
 }
 
 ///<summary>

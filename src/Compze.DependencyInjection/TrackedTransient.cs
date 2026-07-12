@@ -15,4 +15,16 @@ public static class TrackedTransient
    public static TransientRegistrationWithoutInstantiationSpec<TService1> For<TService1, TService2>() where TService1 : class => For<TService1>(EnumerableCE.OfTypes<TService2>());
    public static TransientRegistrationWithoutInstantiationSpec<TService> For<TService>() where TService : class => For<TService>([]);
    static TransientRegistrationWithoutInstantiationSpec<TService> For<TService>(IEnumerable<Type> additionalServices) where TService : class => new(Lifestyle.TrackedTransient, additionalServices);
+
+   /// <summary>
+   /// Registers this component as a member of the <typeparamref name="TService"/> component set instead of a singularly
+   /// resolvable service: many components may each call <c>ForSet&lt;TService&gt;()</c>, and every one of them is returned
+   /// together by <see cref="IServiceResolverCE.ResolveSet{TComponent}(Abstractions.IServiceResolver)"/>.
+   /// </summary>
+   /// <remarks>
+   /// <typeparamref name="TService"/> becomes exclusively a component-set type: it can never also be registered as a singular
+   /// service (via <see cref="For{TService}()"/>), on this or any other registration in the container, and it can only be resolved
+   /// through <c>ResolveSet&lt;TService&gt;()</c> — never through <c>Resolve&lt;TService&gt;()</c>.
+   /// </remarks>
+   public static TransientRegistrationWithoutInstantiationSpec<TService> ForSet<TService>() where TService : class => new(Lifestyle.TrackedTransient, [], isComponentSetMember: true);
 }

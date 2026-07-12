@@ -27,17 +27,27 @@ public sealed class LightInjectContainerBuilder(IComponentRegistrar? registrar =
          ? (ILifetime)new PerContainerLifetime()
          : new PerScopeLifetime();
 
+      // Guards a component-factory-injected or scope-level IServiceResolver against resolving through the wrong one of
+      // Resolve/ResolveSet — see DependencyInjectionContainer.Resolve/ResolveSet for the equivalent root-level guard.
+      var componentSetServiceTypes = registrations.Where(it => it.IsComponentSetMember).SelectMany(it => it.ServiceTypes).ToHashSet();
+      var singularServiceTypes = registrations.Where(it => !it.IsComponentSetMember).SelectMany(it => it.ServiceTypes).ToHashSet();
+      var memberNamesByServiceType = LightInjectComponentSetNaming.ComputeMemberNamesByServiceType(registrations);
+
       _container.Register<ScopeResolver>(
-         factory => new ScopeResolver(factory.GetInstance),
+         factory => new ScopeResolver(
+            serviceType => ComponentSetExclusivityGuard.Resolve(serviceType, componentSetServiceTypes, factory.GetInstance),
+            serviceType => ComponentSetExclusivityGuard.ResolveSet(serviceType, singularServiceTypes, resolvedServiceType => ResolveComponentSetMembers(factory, memberNamesByServiceType, resolvedServiceType))),
          scopedLifetime);
       _container.Register<IScopeResolver>(
          factory => factory.GetInstance<ScopeResolver>(),
          scopedLifetime);
 
-      foreach(var registration in registrations)
+      for(var index = 0; index < registrations.Length; index++)
       {
+         var registration = registrations[index];
          var serviceTypes = registration.ServiceTypes.ToArray();
          var firstServiceType = serviceTypes.First();
+         var serviceName = registration.IsComponentSetMember ? LightInjectComponentSetNaming.NameFor(index) : string.Empty;
 
          switch(registration.Lifestyle)
          {
@@ -45,11 +55,12 @@ public sealed class LightInjectContainerBuilder(IComponentRegistrar? registrar =
                if(registration.InstantiationSpec.SingletonInstance is {} instance)
                {
                   foreach(var serviceType in serviceTypes)
-                     _container.RegisterInstance(serviceType, instance);
+                     _container.RegisterInstance(serviceType, instance, serviceName);
                } else
                {
                   RegisterFactory(firstServiceType,
-                     factory => registration.InstantiationSpec.RunFactoryMethod(new ServiceResolver(factory.GetInstance)),
+                     factory => registration.InstantiationSpec.RunFactoryMethod(GuardedServiceResolver(factory, componentSetServiceTypes, singularServiceTypes, memberNamesByServiceType)),
+                     serviceName,
                      new PerContainerLifetime());
 
                   RegisterForwardingTypes(serviceTypes, firstServiceType, new PerContainerLifetime());
@@ -59,6 +70,7 @@ public sealed class LightInjectContainerBuilder(IComponentRegistrar? registrar =
             case Lifestyle.Scoped:
                RegisterFactory(firstServiceType,
                   factory => registration.InstantiationSpec.RunFactoryMethod(factory.GetInstance<ScopeResolver>()),
+                  serviceName,
                   scopedLifetime);
 
                RegisterForwardingTypes(serviceTypes, firstServiceType, scopedLifetime);
@@ -67,10 +79,11 @@ public sealed class LightInjectContainerBuilder(IComponentRegistrar? registrar =
                RegisterFactory(firstServiceType,
                   factory =>
                   {
-                     var inst = registration.InstantiationSpec.RunFactoryMethod(new ServiceResolver(factory.GetInstance));
+                     var inst = registration.InstantiationSpec.RunFactoryMethod(GuardedServiceResolver(factory, componentSetServiceTypes, singularServiceTypes, memberNamesByServiceType));
                      CurrentTrackedTransientTracker.Value?.Track(inst);
                      return inst;
-                  });
+                  },
+                  serviceName);
 
                RegisterForwardingTypes(serviceTypes, firstServiceType);
                break;
@@ -80,18 +93,34 @@ public sealed class LightInjectContainerBuilder(IComponentRegistrar? registrar =
       }
    }
 
-   void RegisterFactory(Type serviceType, Func<IServiceFactory, object> factory, ILifetime? lifetime = null) =>
+   static ServiceResolver GuardedServiceResolver(IServiceFactory factory,
+                                                 IReadOnlySet<Type> componentSetServiceTypes,
+                                                 IReadOnlySet<Type> singularServiceTypes,
+                                                 IReadOnlyDictionary<Type, IReadOnlyList<string>> memberNamesByServiceType) =>
+      new(serviceType => ComponentSetExclusivityGuard.Resolve(serviceType, componentSetServiceTypes, factory.GetInstance),
+          serviceType => ComponentSetExclusivityGuard.ResolveSet(serviceType, singularServiceTypes, resolvedServiceType => ResolveComponentSetMembers(factory, memberNamesByServiceType, resolvedServiceType)));
+
+   internal static IEnumerable<object> ResolveComponentSetMembers(IServiceFactory factory, IReadOnlyDictionary<Type, IReadOnlyList<string>> memberNamesByServiceType, Type serviceType) =>
+      memberNamesByServiceType.TryGetValue(serviceType, out var names) ? names.Select(name => factory.GetInstance(serviceType, name)) : [];
+
+   // Each registration — singular or component set member alike — gets its own LightInject service name (empty for singular,
+   // matching pre-existing behavior; an index-derived name for a set member, resolved back via ResolveComponentSetMembers
+   // rather than GetAllInstances — see LightInjectComponentSetNaming for why).
+   void RegisterFactory(Type serviceType, Func<IServiceFactory, object> factory, string serviceName = "", ILifetime? lifetime = null) =>
       _container.Register(new ServiceRegistration
       {
          ServiceType = serviceType,
+         ServiceName = serviceName,
          FactoryExpression = CreateTypedFactory(serviceType, factory),
          Lifetime = lifetime
       });
 
    void RegisterForwardingTypes(Type[] serviceTypes, Type firstServiceType, ILifetime? lifetime = null)
    {
+      // Component set members register under exactly one service type (ForSet<TService>() takes a single type), so this loop
+      // never runs for them — the forwarding it sets up is only meaningful for a singular multi-service-type registration.
       foreach(var serviceType in serviceTypes.Skip(1))
-         RegisterFactory(serviceType, factory => factory.GetInstance(firstServiceType), lifetime);
+         RegisterFactory(serviceType, factory => factory.GetInstance(firstServiceType), lifetime: lifetime);
    }
 
    static readonly MethodInfo CreateTypedFactoryHelperMethod =

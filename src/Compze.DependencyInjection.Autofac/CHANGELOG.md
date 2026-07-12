@@ -4,6 +4,12 @@ All notable changes to Compze.DependencyInjection.Autofac will be documented in 
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## 0.5.0-alpha
+
+### Added
+
+- **Native support for component sets**, added to [Compze.DependencyInjection](https://www.nuget.org/packages/Compze.DependencyInjection/) 0.6.0-alpha: a `ForSet<TService>()` registration is added as an additional Autofac component under its service type via `.As(...)`, resolved back via `IEnumerable<T>` — no adapter-specific workaround was needed, Autofac already supports multiple registrations sharing a service type natively.
+
 ## 0.4.0-alpha
 
 ### Fixed

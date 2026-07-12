@@ -29,6 +29,7 @@ public abstract class ContainerBuilder : IContainerBuilder
       Options = options ?? ContainerOptions.Default;
       AddAssociatedRegistrations();
       AssertLifeStyleCombinationsAreValid();
+      AssertNoSingularDependenciesOnComponentSetTypes();
       RegisterInContainer(_registeredComponents.ToArray());
       return BuildInternal();
    }
@@ -79,12 +80,30 @@ public abstract class ContainerBuilder : IContainerBuilder
 
    void ValidateNoDuplicateRegistrations(ComponentRegistration[] newRegistrations)
    {
-      // Adding the new registrations' service types to the set as we check catches duplicates within the new batch itself, not just against what is already registered.
-      var registeredServiceTypes = _registeredComponents.SelectMany(it => it.ServiceTypes).ToHashSet();
-      foreach(var serviceType in newRegistrations.SelectMany(it => it.ServiceTypes))
+      // Adding the new registrations' service types to the sets as we check catches duplicates within the new batch itself, not just against what is already registered.
+      var singularServiceTypes = _registeredComponents.Where(it => !it.IsComponentSetMember).SelectMany(it => it.ServiceTypes).ToHashSet();
+      var componentSetServiceTypes = _registeredComponents.Where(it => it.IsComponentSetMember).SelectMany(it => it.ServiceTypes).ToHashSet();
+
+      foreach(var registration in newRegistrations)
       {
-         if(!registeredServiceTypes.Add(serviceType))
-            throw new InvalidOperationException($"Service type '{serviceType.FullName}' is already registered.");
+         foreach(var serviceType in registration.ServiceTypes)
+         {
+            if(registration.IsComponentSetMember)
+            {
+               if(singularServiceTypes.Contains(serviceType))
+                  throw new InvalidOperationException($"Service type '{serviceType.FullName}' is already registered as a singular service and cannot also be registered as a component set member.");
+
+               // Multiple registrations sharing a component set's service type is the entire point of a component set — no duplicate check here.
+               componentSetServiceTypes.Add(serviceType);
+            } else
+            {
+               if(componentSetServiceTypes.Contains(serviceType))
+                  throw new InvalidOperationException($"Service type '{serviceType.FullName}' is already registered as a component set member and cannot also be registered as a singular service.");
+
+               if(!singularServiceTypes.Add(serviceType))
+                  throw new InvalidOperationException($"Service type '{serviceType.FullName}' is already registered.");
+            }
+         }
       }
    }
 
@@ -99,6 +118,22 @@ public abstract class ContainerBuilder : IContainerBuilder
               .ForEach(invalidDependency => throw new InvalidLifeStyleCombinationException(consumer, invalidDependency, dependencyType));
          }
       });
+
+   /// <summary>
+   /// A <c>CreatedBy(...)</c> constructor dependency is always resolved singularly (see the generated overloads in
+   /// <see cref="ComponentRegistrationExtensions"/>), so depending on a component set's service type there could never mean what
+   /// it looks like — it would silently bind to whichever set member the container happens to resolve first, not the whole set.
+   /// </summary>
+   void AssertNoSingularDependenciesOnComponentSetTypes()
+   {
+      var componentSetServiceTypes = _registeredComponents.Where(it => it.IsComponentSetMember).SelectMany(it => it.ServiceTypes).ToHashSet();
+      _registeredComponents.ForEach(consumer =>
+         consumer.DependencyTypes
+                 .Where(componentSetServiceTypes.Contains)
+                 .ForEach(dependencyType => throw new InvalidOperationException(
+                    $"{consumer.InstantiationSpec.FactoryMethodReturnType.FullName} depends on '{dependencyType.FullName}' via CreatedBy(...), "
+                    + $"but '{dependencyType.FullName}' is registered as a component set member — inject ResolveSet<{dependencyType.Name}>() instead of a singular constructor dependency.")));
+   }
 
    static bool IsInvalidLifestyleCombination(ComponentRegistration consumer, ComponentRegistration dependency)
    {

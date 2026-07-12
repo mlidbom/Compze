@@ -12,7 +12,17 @@ public sealed class MicrosoftContainerBuilder(IComponentRegistrar? registrar = n
 
    protected override void RegisterInContainer(ComponentRegistration[] registrations)
    {
-      _services.AddScoped<ScopeResolver>(serviceProvider => new ScopeResolver(serviceProvider.GetRequiredService));
+      // Guards a component-factory-injected or scope-level IServiceResolver against resolving through the wrong one of
+      // Resolve/ResolveSet — see DependencyInjectionContainer.Resolve/ResolveSet for the equivalent root-level guard.
+      var componentSetServiceTypes = registrations.Where(it => it.IsComponentSetMember).SelectMany(it => it.ServiceTypes).ToHashSet();
+      var singularServiceTypes = registrations.Where(it => !it.IsComponentSetMember).SelectMany(it => it.ServiceTypes).ToHashSet();
+      ServiceResolver GuardedServiceResolver(IServiceProvider serviceProvider) =>
+         new(serviceType => ComponentSetExclusivityGuard.Resolve(serviceType, componentSetServiceTypes, serviceProvider.GetRequiredService),
+             serviceType => ComponentSetExclusivityGuard.ResolveSet(serviceType, singularServiceTypes, resolvedServiceType => serviceProvider.GetServices(resolvedServiceType).Cast<object>()));
+
+      _services.AddScoped<ScopeResolver>(serviceProvider => new ScopeResolver(
+         serviceType => ComponentSetExclusivityGuard.Resolve(serviceType, componentSetServiceTypes, serviceProvider.GetRequiredService),
+         serviceType => ComponentSetExclusivityGuard.ResolveSet(serviceType, singularServiceTypes, resolvedServiceType => serviceProvider.GetServices(resolvedServiceType).Cast<object>())));
       _services.AddScoped<IScopeResolver>(serviceProvider => serviceProvider.GetRequiredService<ScopeResolver>());
 
       foreach(var registration in registrations)
@@ -29,7 +39,7 @@ public sealed class MicrosoftContainerBuilder(IComponentRegistrar? registrar = n
                } else
                {
                   _services.Add(new ServiceDescriptor(firstServiceType,
-                                                      serviceProvider => registration.InstantiationSpec.RunFactoryMethod(new ServiceResolver(serviceProvider.GetRequiredService)),
+                                                      serviceProvider => registration.InstantiationSpec.RunFactoryMethod(GuardedServiceResolver(serviceProvider)),
                                                       lifetime));
                }
 
@@ -41,13 +51,15 @@ public sealed class MicrosoftContainerBuilder(IComponentRegistrar? registrar = n
                break;
             case Lifestyle.TrackedTransient:
                _services.Add(new ServiceDescriptor(firstServiceType,
-                                                   serviceProvider => registration.InstantiationSpec.RunFactoryMethod(new ServiceResolver(serviceProvider.GetRequiredService)),
+                                                   serviceProvider => registration.InstantiationSpec.RunFactoryMethod(GuardedServiceResolver(serviceProvider)),
                                                    lifetime));
                break;
             default:
                throw new ArgumentOutOfRangeException(nameof(registration.Lifestyle), registration.Lifestyle, $"Unsupported lifestyle: {registration.Lifestyle}");
          }
 
+         // Component set members register under exactly one service type (ForSet<TService>() takes a single type), so this loop
+         // never runs for them — the forwarding it sets up is only meaningful for a singular multi-service-type registration.
          foreach(var serviceType in registration.ServiceTypes.Skip(1))
          {
             _services.Add(new ServiceDescriptor(serviceType, serviceProvider => serviceProvider.GetService(firstServiceType)!, lifetime));

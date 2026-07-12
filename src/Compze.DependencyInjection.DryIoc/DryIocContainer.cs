@@ -18,10 +18,16 @@ public sealed class DryIocContainer : DependencyInjectionContainer, IRootResolve
 
    public override DryIocContainerBuilder CreateChildContainerBuilder() => (DryIocContainerBuilder)base.CreateChildContainerBuilder();
 
-   public object Resolve(Type serviceType)
+   protected override object ResolveCore(Type serviceType)
    {
       Contract.State.NotDisposed(_isDisposed, this);
       return _container.Resolve(serviceType);
+   }
+
+   protected override IEnumerable<object> ResolveSetCore(Type serviceType)
+   {
+      Contract.State.NotDisposed(_isDisposed, this);
+      return (IEnumerable<object>)_container.Resolve(typeof(IEnumerable<>).MakeGenericType(serviceType));
    }
 
    public IScope BeginScope()

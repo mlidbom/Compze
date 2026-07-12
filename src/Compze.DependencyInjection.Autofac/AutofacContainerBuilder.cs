@@ -12,10 +12,17 @@ public sealed class AutofacContainerBuilder(IComponentRegistrar? registrar = nul
 
    protected override void RegisterInContainer(ComponentRegistration[] registrations)
    {
+      // Guards a component-factory-injected or scope-level IServiceResolver against resolving through the wrong one of
+      // Resolve/ResolveSet — see DependencyInjectionContainer.Resolve/ResolveSet for the equivalent root-level guard.
+      var componentSetServiceTypes = registrations.Where(it => it.IsComponentSetMember).SelectMany(it => it.ServiceTypes).ToHashSet();
+      var singularServiceTypes = registrations.Where(it => !it.IsComponentSetMember).SelectMany(it => it.ServiceTypes).ToHashSet();
+
       _containerBuilder.Register(componentContext =>
       {
          var scope = componentContext.Resolve<ILifetimeScope>();
-         return new ScopeResolver(scope.Resolve);
+         return new ScopeResolver(
+            serviceType => ComponentSetExclusivityGuard.Resolve(serviceType, componentSetServiceTypes, scope.Resolve),
+            serviceType => ComponentSetExclusivityGuard.ResolveSet(serviceType, singularServiceTypes, resolvedServiceType => ResolveAll(scope, resolvedServiceType)));
       }).InstancePerLifetimeScope();
       _containerBuilder.Register(componentContext => (IScopeResolver)componentContext.Resolve<ScopeResolver>())
                        .As<IScopeResolver>()
@@ -35,7 +42,7 @@ public sealed class AutofacContainerBuilder(IComponentRegistrar? registrar = nul
                                                                        .ExternallyOwned());
                } else
                {
-                  _containerBuilder.Register(componentContext => registration.InstantiationSpec.RunFactoryMethod(LifetimeStableResolver(componentContext)))
+                  _containerBuilder.Register(componentContext => registration.InstantiationSpec.RunFactoryMethod(LifetimeStableResolver(componentContext, componentSetServiceTypes, singularServiceTypes)))
                                    .As(serviceTypes)
                                    .SingleInstance();
                }
@@ -60,7 +67,7 @@ public sealed class AutofacContainerBuilder(IComponentRegistrar? registrar = nul
                                 .InstancePerLifetimeScope();
                break;
             case Lifestyle.TrackedTransient:
-               _containerBuilder.Register(componentContext => registration.InstantiationSpec.RunFactoryMethod(LifetimeStableResolver(componentContext)))
+               _containerBuilder.Register(componentContext => registration.InstantiationSpec.RunFactoryMethod(LifetimeStableResolver(componentContext, componentSetServiceTypes, singularServiceTypes)))
                                 .As(serviceTypes)
                                 .InstancePerDependency();
                break;
@@ -73,8 +80,16 @@ public sealed class AutofacContainerBuilder(IComponentRegistrar? registrar = nul
    // Wraps the Resolve of the owning ILifetimeScope, NOT of the IComponentContext. The context is only valid during the
    // current resolve operation, but a component may hold onto its IServiceResolver and resolve through it later — e.g. an
    // IServiceResolver<T> taken to break a circular dependency. The lifetime scope stays valid for the component's lifetime.
-   static ServiceResolver LifetimeStableResolver(IComponentContext componentContext) =>
-      new(componentContext.Resolve<ILifetimeScope>().Resolve);
+   static ServiceResolver LifetimeStableResolver(IComponentContext componentContext, IReadOnlySet<Type> componentSetServiceTypes, IReadOnlySet<Type> singularServiceTypes)
+   {
+      var scope = componentContext.Resolve<ILifetimeScope>();
+      return new ServiceResolver(
+         serviceType => ComponentSetExclusivityGuard.Resolve(serviceType, componentSetServiceTypes, scope.Resolve),
+         serviceType => ComponentSetExclusivityGuard.ResolveSet(serviceType, singularServiceTypes, resolvedServiceType => ResolveAll(scope, resolvedServiceType)));
+   }
+
+   static IEnumerable<object> ResolveAll(IComponentContext componentContext, Type serviceType) =>
+      (IEnumerable<object>)componentContext.Resolve(typeof(IEnumerable<>).MakeGenericType(serviceType));
 
    protected override DependencyInjectionContainer BuildInternal()
    {

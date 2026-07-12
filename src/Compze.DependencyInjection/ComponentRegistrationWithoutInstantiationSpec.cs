@@ -18,6 +18,7 @@ public abstract class ComponentRegistrationWithoutInstantiationSpec
 {
    internal Lifestyle Lifestyle { get; }
    internal IReadOnlyList<Type> ServiceTypes { get; }
+   internal bool IsComponentSetMember { get; }
    internal bool SingletonDependentAllowed { get; private protected set; }
    internal bool ScopedDependentAllowed { get; private protected set; }
    internal bool ShouldDelegateToParentWhenCloning { get; private protected set; }
@@ -25,10 +26,11 @@ public abstract class ComponentRegistrationWithoutInstantiationSpec
    readonly List<ComponentRegistration> _associatedRegistrations = [];
    readonly List<Func<ComponentRegistration, IEnumerable<ComponentRegistration>>> _createAssociatedRegistrationsWhenBuilt = [];
 
-   private protected ComponentRegistrationWithoutInstantiationSpec(Lifestyle lifestyle, IEnumerable<Type> serviceTypes)
+   private protected ComponentRegistrationWithoutInstantiationSpec(Lifestyle lifestyle, IEnumerable<Type> serviceTypes, bool isComponentSetMember)
    {
       Lifestyle = lifestyle;
       ServiceTypes = [..serviceTypes];
+      IsComponentSetMember = isComponentSetMember;
    }
 
    internal void AddAssociatedRegistrations(IEnumerable<ComponentRegistration> registrations) => _associatedRegistrations.AddRange(registrations);
@@ -48,8 +50,8 @@ public abstract class ComponentRegistrationWithoutInstantiationSpec
 /// </summary>
 public class ComponentRegistrationWithoutInstantiationSpec<TService> : ComponentRegistrationWithoutInstantiationSpec where TService : class
 {
-   internal ComponentRegistrationWithoutInstantiationSpec(Lifestyle lifestyle, IEnumerable<Type> serviceTypes)
-      : base(lifestyle, serviceTypes.Concat([typeof(TService)])) {}
+   internal ComponentRegistrationWithoutInstantiationSpec(Lifestyle lifestyle, IEnumerable<Type> serviceTypes, bool isComponentSetMember = false)
+      : base(lifestyle, serviceTypes.Concat([typeof(TService)]), isComponentSetMember) {}
 
    internal ComponentRegistration<TService> CreatedBy<TImplementation>(Func<IServiceResolver, TImplementation> factoryMethod, IEnumerable<Type> dependencyTypes)
       where TImplementation : TService
@@ -65,6 +67,7 @@ public class ComponentRegistrationWithoutInstantiationSpec<TService> : Component
                                                              ServiceTypes,
                                                              instantiationSpec,
                                                              dependencyTypes,
+                                                             IsComponentSetMember,
                                                              SingletonDependentAllowed,
                                                              ScopedDependentAllowed,
                                                              ShouldDelegateToParentWhenCloning);

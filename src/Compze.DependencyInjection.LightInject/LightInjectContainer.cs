@@ -10,17 +10,21 @@ public sealed class LightInjectContainer : DependencyInjectionContainer, IRootRe
 {
    readonly ServiceContainer _container;
    readonly DisposableTracker _rootTransientTracker = new();
+   readonly IReadOnlyDictionary<Type, IReadOnlyList<string>> _memberNamesByServiceType;
    bool _isDisposed;
 
    internal LightInjectContainer(ServiceContainer container, IReadOnlyList<ComponentRegistration> registrations, IComponentRegistrar sourceRegistrar)
-      : base(registrations, sourceRegistrar) =>
+      : base(registrations, sourceRegistrar)
+   {
       _container = container;
+      _memberNamesByServiceType = LightInjectComponentSetNaming.ComputeMemberNamesByServiceType(registrations);
+   }
 
    public override LightInjectContainerBuilder CreateCloneContainerBuilder() => (LightInjectContainerBuilder)base.CreateCloneContainerBuilder();
 
    public override LightInjectContainerBuilder CreateChildContainerBuilder() => (LightInjectContainerBuilder)base.CreateChildContainerBuilder();
 
-   public object Resolve(Type serviceType)
+   protected override object ResolveCore(Type serviceType)
    {
       Contract.State.NotDisposed(_isDisposed, this);
       LightInjectContainerBuilder.CurrentTrackedTransientTracker.Value = _rootTransientTracker;
@@ -34,13 +38,30 @@ public sealed class LightInjectContainer : DependencyInjectionContainer, IRootRe
       }
    }
 
+   protected override IEnumerable<object> ResolveSetCore(Type serviceType)
+   {
+      Contract.State.NotDisposed(_isDisposed, this);
+      LightInjectContainerBuilder.CurrentTrackedTransientTracker.Value = _rootTransientTracker;
+      try
+      {
+         // Materialized eagerly, not returned lazily: construction of any TrackedTransient member must happen while the
+         // tracker is still set, so it gets registered for disposal — a deferred enumeration after this method returns
+         // would run with the tracker already cleared below.
+         return LightInjectContainerBuilder.ResolveComponentSetMembers(_container, _memberNamesByServiceType, serviceType).ToArray();
+      }
+      finally
+      {
+         LightInjectContainerBuilder.CurrentTrackedTransientTracker.Value = null;
+      }
+   }
+
    public IScope BeginScope()
    {
       Contract.State.NotDisposed(_isDisposed, this);
 
       var scope = _container.BeginScope();
       var scopeTracker = new DisposableTracker();
-      var scopeResolver = new LightInjectScopeResolver(scope, scopeTracker);
+      var scopeResolver = new LightInjectScopeResolver(scope, scopeTracker, _memberNamesByServiceType);
       return new CompzeScope(scopeResolver, scope, scopeTracker);
    }
 
@@ -68,10 +89,11 @@ public sealed class LightInjectContainer : DependencyInjectionContainer, IRootRe
 
    protected override ContainerBuilder CreateConcreteBuilder(IComponentRegistrar registrar) => new LightInjectContainerBuilder(registrar);
 
-   sealed class LightInjectScopeResolver(LightInjectScope scope, DisposableTracker tracker) : IScopeResolver
+   sealed class LightInjectScopeResolver(LightInjectScope scope, DisposableTracker tracker, IReadOnlyDictionary<Type, IReadOnlyList<string>> memberNamesByServiceType) : IScopeResolver
    {
       readonly LightInjectScope _scope = scope;
       readonly DisposableTracker _tracker = tracker;
+      readonly IReadOnlyDictionary<Type, IReadOnlyList<string>> _memberNamesByServiceType = memberNamesByServiceType;
 
       public object Resolve(Type serviceType)
       {
@@ -79,6 +101,20 @@ public sealed class LightInjectContainer : DependencyInjectionContainer, IRootRe
          try
          {
             return _scope.GetInstance(serviceType);
+         }
+         finally
+         {
+            LightInjectContainerBuilder.CurrentTrackedTransientTracker.Value = null;
+         }
+      }
+
+      public IEnumerable<object> ResolveSet(Type serviceType)
+      {
+         LightInjectContainerBuilder.CurrentTrackedTransientTracker.Value = _tracker;
+         try
+         {
+            // Materialized eagerly — see the equivalent note on LightInjectContainer.ResolveSetCore.
+            return LightInjectContainerBuilder.ResolveComponentSetMembers(_scope, _memberNamesByServiceType, serviceType).ToArray();
          }
          finally
          {

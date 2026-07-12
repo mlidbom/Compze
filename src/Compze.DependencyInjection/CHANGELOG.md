@@ -4,6 +4,17 @@ All notable changes to Compze.DependencyInjection will be documented in this fil
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## 0.6.0-alpha
+
+### Added
+
+- **Component sets — `ForSet<TService>()` and `ResolveSet<TComponent>()`.** A component can register as a member of a component set instead of a singular service: `Singleton.ForSet<TService>()` (and the `Scoped`/`TrackedTransient` equivalents) joins many registrations under one contract type, all returned together by `ResolveSet<TComponent>()` on `IServiceResolver`/`IScopeResolver`/`IRootResolver`/`IDependencyInjectionContainer`/`IScope`. A service type is exclusively singular or a component-set type, container-wide — `ContainerBuilder` rejects a type registered as both, in either order, while multiple set-member registrations sharing a type is the entire point and is unrestricted. A component that needs to be both independently resolvable and a set member gets there by composing two registrations (a normal one plus a set registration whose `CreatedBy(...)` depends on the first) — not by relaxing the exclusivity rule.
+- **`CreatedBy(...)` constructor dependencies on a component-set type are now rejected at `Build()`.** Such a dependency is always resolved singularly, which would silently bind to whichever set member the container resolves first rather than the whole set — this is now a clear `Build()`-time error instead of a runtime surprise.
+
+### Note
+
+- **`ResolveSet<TComponent>()` makes no promise about result order.** Registrations are handed to the underlying container in the order they were received, but what order they come back out in during collection resolution is up to that container — this varies across the supported containers and is not part of Compze's contract.
+
 ## 0.5.0-alpha
 
 ### Changed

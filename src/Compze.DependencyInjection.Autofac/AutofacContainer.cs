@@ -16,7 +16,10 @@ public sealed class AutofacContainer : DependencyInjectionContainer, IRootResolv
 
    public override AutofacContainerBuilder CreateChildContainerBuilder() => (AutofacContainerBuilder)base.CreateChildContainerBuilder();
 
-   public object Resolve(Type serviceType) => _container.Resolve(serviceType);
+   protected override object ResolveCore(Type serviceType) => _container.Resolve(serviceType);
+
+   protected override IEnumerable<object> ResolveSetCore(Type serviceType) =>
+      (IEnumerable<object>)_container.Resolve(typeof(IEnumerable<>).MakeGenericType(serviceType));
 
    public IScope BeginScope()
    {

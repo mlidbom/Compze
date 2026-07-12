@@ -18,12 +18,19 @@ public sealed class DryIocContainerBuilder(IComponentRegistrar? registrar = null
    {
       var scopedReuse = Options.AllowScopedResolutionFromRoot ? Reuse.ScopedOrSingleton : Reuse.Scoped;
 
+      // Guards a component-factory-injected or scope-level IServiceResolver against resolving through the wrong one of
+      // Resolve/ResolveSet — see DependencyInjectionContainer.Resolve/ResolveSet for the equivalent root-level guard.
+      var componentSetServiceTypes = registrations.Where(it => it.IsComponentSetMember).SelectMany(it => it.ServiceTypes).ToHashSet();
+      var singularServiceTypes = registrations.Where(it => !it.IsComponentSetMember).SelectMany(it => it.ServiceTypes).ToHashSet();
+
       _container.RegisterDelegate<DisposableTracker>(
          _ => new DisposableTracker(),
          Reuse.ScopedOrSingleton,
          ifAlreadyRegistered: IfAlreadyRegistered.Replace);
       _container.RegisterDelegate<ScopeResolver>(
-         resolver => new ScopeResolver(serviceType => resolver.Resolve(serviceType)),
+         resolver => new ScopeResolver(
+            serviceType => ComponentSetExclusivityGuard.Resolve(serviceType, componentSetServiceTypes, resolver.Resolve),
+            serviceType => ComponentSetExclusivityGuard.ResolveSet(serviceType, singularServiceTypes, resolvedServiceType => ResolveAll(resolver, resolvedServiceType))),
          scopedReuse,
          ifAlreadyRegistered: IfAlreadyRegistered.Replace);
       _container.RegisterDelegate<IScopeResolver>(
@@ -35,6 +42,7 @@ public sealed class DryIocContainerBuilder(IComponentRegistrar? registrar = null
       {
          var serviceTypes = registration.ServiceTypes.ToArray();
          var firstServiceType = serviceTypes.First();
+         var ifAlreadyRegistered = registration.IsComponentSetMember ? IfAlreadyRegistered.AppendNotKeyed : IfAlreadyRegistered.Throw;
 
          switch(registration.Lifestyle)
          {
@@ -42,14 +50,14 @@ public sealed class DryIocContainerBuilder(IComponentRegistrar? registrar = null
                if(registration.InstantiationSpec.SingletonInstance is {} instance)
                {
                   serviceTypes.ForEach(serviceType => _container.RegisterInstance(serviceType, instance,
-                     ifAlreadyRegistered: IfAlreadyRegistered.Throw,
+                     ifAlreadyRegistered: ifAlreadyRegistered,
                      setup: Setup.With(preventDisposal: true)));
                } else
                {
                   _container.RegisterDelegate(firstServiceType,
-                     resolver => registration.InstantiationSpec.RunFactoryMethod(new ServiceResolver(resolver.Resolve)),
+                     resolver => registration.InstantiationSpec.RunFactoryMethod(GuardedServiceResolver(resolver, componentSetServiceTypes, singularServiceTypes)),
                      Reuse.Singleton,
-                     ifAlreadyRegistered: IfAlreadyRegistered.Throw);
+                     ifAlreadyRegistered: ifAlreadyRegistered);
 
                   RegisterForwardingTypes(serviceTypes, firstServiceType, Reuse.Singleton);
                }
@@ -59,7 +67,7 @@ public sealed class DryIocContainerBuilder(IComponentRegistrar? registrar = null
                _container.RegisterDelegate(firstServiceType,
                   resolver => registration.InstantiationSpec.RunFactoryMethod(resolver.Resolve<ScopeResolver>()),
                   scopedReuse,
-                  ifAlreadyRegistered: IfAlreadyRegistered.Throw);
+                  ifAlreadyRegistered: ifAlreadyRegistered);
 
                RegisterForwardingTypes(serviceTypes, firstServiceType, scopedReuse);
                break;
@@ -67,12 +75,12 @@ public sealed class DryIocContainerBuilder(IComponentRegistrar? registrar = null
                _container.RegisterDelegate(firstServiceType,
                   resolver =>
                   {
-                     var trackedInstance = registration.InstantiationSpec.RunFactoryMethod(new ServiceResolver(resolver.Resolve));
+                     var trackedInstance = registration.InstantiationSpec.RunFactoryMethod(GuardedServiceResolver(resolver, componentSetServiceTypes, singularServiceTypes));
                      resolver.Resolve<DisposableTracker>().Track(trackedInstance);
                      return trackedInstance;
                   },
                   Reuse.Transient,
-                  ifAlreadyRegistered: IfAlreadyRegistered.Throw);
+                  ifAlreadyRegistered: ifAlreadyRegistered);
 
                RegisterForwardingTypes(serviceTypes, firstServiceType, Reuse.Transient);
                break;
@@ -82,8 +90,17 @@ public sealed class DryIocContainerBuilder(IComponentRegistrar? registrar = null
       }
    }
 
+   static ServiceResolver GuardedServiceResolver(IResolverContext resolver, IReadOnlySet<Type> componentSetServiceTypes, IReadOnlySet<Type> singularServiceTypes) =>
+      new(serviceType => ComponentSetExclusivityGuard.Resolve(serviceType, componentSetServiceTypes, resolver.Resolve),
+          serviceType => ComponentSetExclusivityGuard.ResolveSet(serviceType, singularServiceTypes, resolvedServiceType => ResolveAll(resolver, resolvedServiceType)));
+
+   static IEnumerable<object> ResolveAll(IResolverContext resolver, Type serviceType) =>
+      (IEnumerable<object>)resolver.Resolve(typeof(IEnumerable<>).MakeGenericType(serviceType));
+
    void RegisterForwardingTypes(Type[] serviceTypes, Type firstServiceType, IReuse reuse)
    {
+      // Component set members register under exactly one service type (ForSet<TService>() takes a single type), so this loop
+      // never runs for them — the forwarding it sets up is only meaningful for a singular multi-service-type registration.
       foreach(var serviceType in serviceTypes.Skip(1))
       {
          _container.RegisterDelegate(serviceType,

@@ -4,7 +4,7 @@ namespace Compze.DependencyInjection;
 
 public class TransientRegistrationWithoutInstantiationSpec<TService> : ComponentRegistrationWithoutInstantiationSpec<TService> where TService : class
 {
-   internal TransientRegistrationWithoutInstantiationSpec(Lifestyle lifestyle, IEnumerable<Type> serviceTypes) : base(lifestyle, serviceTypes) {}
+   internal TransientRegistrationWithoutInstantiationSpec(Lifestyle lifestyle, IEnumerable<Type> serviceTypes, bool isComponentSetMember = false) : base(lifestyle, serviceTypes, isComponentSetMember) {}
 
    /// <summary>
    /// Opts this transient in to being captured by a <see cref="Lifestyle.Singleton"/> consumer. By default that combination is

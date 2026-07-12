@@ -1,4 +1,5 @@
 using System.Reflection;
+using Compze.Contracts;
 using Compze.DependencyInjection.Abstractions;
 
 namespace Compze.DependencyInjection;
@@ -29,8 +30,16 @@ public static class ServiceResolverExtensions
       /// The depending side must call <see cref="IServiceResolver{TService}.Resolve"/> AFTER construction, never during it — resolving
       /// in the constructor re-forms the very cycle this breaks.
       /// </remarks>
-      public TSpec WithServiceResolver() =>
-         @this.WithAssociatedRegistrations(builtRegistration => builtRegistration.ServiceTypes.Select(serviceType => CreateServiceResolverRegistration(serviceType, builtRegistration)));
+      /// <remarks>
+      /// Not available for a component set member (<c>ForSet(...)</c>): with many implementations sharing one service type, "the"
+      /// resolver for that type has no single meaning.
+      /// </remarks>
+      public TSpec WithServiceResolver()
+      {
+         Contract.Argument.Assert(!@this.IsComponentSetMember,
+            () => $"{nameof(WithServiceResolver)} is not supported for a component set member — its service type has no single instance for the resolver to defer to.");
+         return @this.WithAssociatedRegistrations(builtRegistration => builtRegistration.ServiceTypes.Select(serviceType => CreateServiceResolverRegistration(serviceType, builtRegistration)));
+      }
    }
 
    static ComponentRegistration CreateServiceResolverRegistration(Type serviceType, ComponentRegistration targetRegistration) =>
@@ -46,6 +55,7 @@ public static class ServiceResolverExtensions
           serviceTypes: [typeof(IServiceResolver<TServiceType>)],
           InstantiationSpec.FromFactoryMethod(serviceResolver => new ServiceResolver<TServiceType>(serviceResolver), typeof(ServiceResolver<TServiceType>)),
           dependencyTypes: [],
+          isComponentSetMember: false,
           allowSingletonDependent: targetRegistration.AllowSingletonDependent,
           allowScopedDependent: targetRegistration.AllowScopedDependent);
 }
