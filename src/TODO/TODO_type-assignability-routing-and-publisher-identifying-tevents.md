@@ -100,8 +100,9 @@ Canonical statements of the model:
   (`src/Compze.Abstractions/Tessaging/Validation/TessageTypeInspector.cs:99-116`). It also restricts tevent
   subscription to interfaces (`:25-36`). Both rules are unit tested
   (`test/Compze.Tests.Unit/Tessaging/TessageTypeInspectorTests.cs`).
-- Gap: nothing yet validates `TypeId` coverage for the closed generic wrapper types that invariant 6 sends
-  through the store and the wire.
+- `TypeId` coverage for the closed generic wrapper types is validated (2026-07-12): the translated
+  advertisement is asserted resolvable at endpoint start (`AssertMappingsExistFor`), and both the store's
+  save path and the outbox fail loudly in `TypeMapper.GetId` for an unmapped concrete wrapper type.
 
 ### 2. The in-memory tevent dispatcher — DONE (2026-07-12)
 
@@ -210,12 +211,17 @@ unhandled-tevent ignore configuration is translated the same way subscriptions a
   `Is<IPublisherIdentifyingTevent<IExactlyOnceTevent>>`); tommand routes only for `IExactlyOnceTommand`.
   Removing that gate and implementing the other delivery guarantees is the Remote delivery guarantees work.
 
-### 8. Test coverage — dispatcher-level only
+### 8. Test coverage — DONE for everything in scope (2026-07-12)
 
-- Covered: the full wrapper-routing matrix on a bare `IMutableTeventDispatcher`
-  (`MutableTeventDispatcher_WrappedTeventsTests.cs`), in-process bus base-interface routing, remote endpoint
-  base-interface routing, store round-trip of inner tevents.
-- Missing: everything end-to-end. See the Tests work items.
+- The full wrapper-routing matrix on a bare `IMutableTeventDispatcher`
+  (`MutableTeventDispatcher_WrappedTeventsTests.cs`); publisher identification through a real inheriting
+  taggregate hierarchy including publisher-conscious and publisher-indifferent subscribers
+  (`Given_a_cat_taggregate_inheriting_from_an_animal_taggregate`); subscription-level transparency and
+  publisher-conscious subscription at the in-process bus
+  (`Given_a_container_composed_with_InProcessTessaging`); the wrapped store round-trip including migrations
+  (the store and migration suites); and publisher-conscious subscription across endpoints
+  (`Publisher_conscious_subscription_tests`), with exactly-once dedup of wrapped tevents covered by the
+  existing guarantee tests.
 
 ### 9. Ubiquitous-language drift from the rename — RESOLVED (2026-07-12)
 
@@ -274,7 +280,15 @@ interface, file names match the types they declare (`ITaggregateIdentifyingTeven
 - [x] `TypeId` coverage for wrapper types is validated: `AssertMappingsExistFor` on the translated
       advertisement at endpoint start, and `TypeMapper.GetId` failing loudly on the publish side.
 
-### Remote delivery guarantees (D6)
+### Remote delivery guarantees (D6) — DEFERRED (2026-07-12, after the wire increment)
+
+Deferred by decision once the wrapped-currency work proper was complete: the exactly-once path carries
+wrapped tevents end to end; widening WHICH tevents can travel remotely (and under which guarantees) is a
+separate feature. The open design questions when this resumes: the delivery-kind taxonomy and its
+ubiquitous-language names for remotable-but-not-exactly-once tevents; the wrapper interface constraints
+(`IRemotablePublisherIdentifyingTevent<out T>`/`IExactlyOncePublisherIdentifyingTevent<out T>` both require
+`T : IExactlyOnceTevent`, which contradicts "any tevent publishable remotely"); and the
+guarantee-preserving auto-wrap item below.
 
 - [ ] Investigate first: determine how typermedia remote routing consumes the advertisement today (e.g.
       whether `IAtMostOnceTypermediaTommand` handler types flow through `HandledRemoteTessageTypeIds` and
@@ -300,14 +314,18 @@ interface, file names match the types they declare (`ITaggregateIdentifyingTeven
 
 ### Tests
 
-- [ ] End-to-end publisher identification through a real `Taggregate` (inheritance hierarchy), including
-      wrapper-typed subscribers and Before/After handlers.
-- [ ] The subscription-level-transparency invariant (4) tested at every surface: dispatcher, in-process bus,
-      store publication, remote endpoint.
-- [ ] Make `Given_a_cat_taggregate_inheriting_from_an_animal_taggregate` assert the publisher-identifying
-      routing it exists for
-      (`test/Compze.Tests.Unit/CQRS/Taggregates/InheritingTaggregate/...cs:5` — self-flagged
-      `//todo: is this supposed to actually test anything?`).
+- [x] End-to-end publisher identification through a real `Taggregate` (inheritance hierarchy), including
+      publisher-conscious (wrapper-typed) and publisher-indifferent subscribers
+      (`Given_a_cat_taggregate_inheriting_from_an_animal_taggregate`, rewritten 2026-07-12 — it caught the
+      `GenericTypeConstructor` shared-cache bug that wrapped a dog's tevents in the cat's wrapper).
+      Before/After handler routing is specified at the dispatcher level
+      (`MutableTeventDispatcher_WrappedTeventsTests`).
+- [x] The subscription-level-transparency invariant (4) tested at every surface: dispatcher
+      (`MutableTeventDispatcher_WrappedTeventsTests`), in-process bus and store publication
+      (`Given_a_container_composed_with_InProcessTessaging`), remote endpoint (inner-typed and
+      publisher-conscious remote subscriptions both receiving in the endpoint suites).
+- [x] Make `Given_a_cat_taggregate_inheriting_from_an_animal_taggregate` assert the publisher-identifying
+      routing it exists for. DONE 2026-07-12.
 - [x] Fix the misnamed wrapped-dispatch tests (turned out to be three, not two — `IAdminUser...`-named tests
       asserting `IUserPublisherIdentifyingTevent<...>`). DONE 2026-07-12.
 - [x] Negative (`DoesNotDispatch`) coverage for the plain `For` subscription kind, including the sharpest

@@ -70,10 +70,12 @@ class AnimalTevent : TaggregateTevent, IAnimalTevent
 }
 
 interface ICatTevent : IAnimalTevent;
-class CatTevent<T>(T tevent) : AnimalTevent<T>(tevent) where T : IAnimalTevent;
+interface ICatTevent<out T> : IAnimalTevent<T> where T : IAnimalTevent;
+class CatTevent<T>(T tevent) : AnimalTevent<T>(tevent), ICatTevent<T> where T : IAnimalTevent;
 class CatTevent : AnimalTevent, ICatTevent;
 interface IDogTevent : IAnimalTevent;
-class DogTevent<T>(T tevent) : AnimalTevent<T>(tevent) where T : IAnimalTevent;
+interface IDogTevent<out T> : IAnimalTevent<T> where T : IAnimalTevent;
+class DogTevent<T>(T tevent) : AnimalTevent<T>(tevent), IDogTevent<T> where T : IAnimalTevent;
 class DogTevent : AnimalTevent, IDogTevent;
 
 

@@ -26,10 +26,11 @@ public static partial class Constructor
    {
       readonly Type _genericType = genericType;
 
-      static readonly ConcurrentDictionary<Type, Func<object, object>> ArgumentTypeConstructorCache = new();
+      //Per instance, NOT static: each instance compiles constructors for its own generic type, so a shared cache keyed only by argument type would hand one generic type's constructor to another.
+      readonly ConcurrentDictionary<Type, Func<object, object>> _argumentTypeConstructorCache = new();
 
       public Func<object, object> WithArgument(Type argumentType) =>
-         ArgumentTypeConstructorCache.GetOrAdd(argumentType,
+         _argumentTypeConstructorCache.GetOrAdd(argumentType,
                         _ => Compile.ForGenericType(_genericType).WithArgument(argumentType)
          );
    }
