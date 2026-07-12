@@ -159,7 +159,7 @@ namespace Compze.Tessaging.Teventive.TeventStore;
       }
 
       var cacheEntry = _cache.Get(taggregateId);
-      var specifications = wrappedTevents.Select(wrappedTevent => cacheEntry.CreateInsertionSpecificationForNewTevent(wrappedTevent)).ToArray();
+      var specifications = wrappedTevents.Select(cacheEntry.CreateInsertionSpecificationForNewTevent).ToArray();
 
       var teventRows = wrappedTevents
                      .Select(wrappedTevent => new TeventDataRow(specification: cacheEntry.CreateInsertionSpecificationForNewTevent(wrappedTevent), _typeMap.GetId(wrappedTevent.GetType()), teventAsJson: _serializer.Serialize(wrappedTevent)))
