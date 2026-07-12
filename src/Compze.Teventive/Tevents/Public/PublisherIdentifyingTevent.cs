@@ -27,6 +27,7 @@ public static class PublisherIdentifyingTevent
          field: ref _wrapperConstructors,
          createUpdatedFieldValue: () => _wrapperConstructors.AddToCopy(teventType, CreateConstructorFor(teventType)));
 
+   //todo: use our Compze.Internals.SystemCE.ReflectionCE.Constructor
    static Func<ITevent, IPublisherIdentifyingTevent<ITevent>> CreateConstructorFor(Type teventType)
    {
       var wrapperImplementationType = typeof(PublisherIdentifyingTevent<>).MakeGenericType(teventType);
