@@ -36,7 +36,7 @@ public sealed class SharedTomponentSlot<TOwnerTevent, TOwnerTeventImplementation
    readonly Type _adoptingWrapperTeventImplementation;
    ISharedTomponentInternals<TTomponentTevent>? _tomponent;
 
-   ///<param name="owner">The taggregate or teventive component this slot is a member of.</param>
+   ///<param name="owner">The taggregate or tomponent this slot is a member of.</param>
    ///<param name="adoptingWrapperTeventImplementation">The implementation class of <typeparamref name="TAdoptingWrapperTevent"/>. Its generic type<br/>
    /// definition is closed over each published tevent's runtime type, exactly like a taggregate's declared wrapper implementation.</param>
    public SharedTomponentSlot(ITeventiveInternals<TOwnerTevent, TOwnerTeventImplementation> owner, Type adoptingWrapperTeventImplementation)
