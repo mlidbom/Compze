@@ -10,8 +10,8 @@ using Compze.Tessaging.SystemCE.ThreadingCE;
 
 namespace Compze.Tessaging.Hosting;
 
-///<summary>The Tessaging pipeline's runtime lifecycle within an endpoint: inbox and scheduler listen, the router connects to all endpoints, the outbox sends.</summary>
-sealed class TessagingEndpointComponent : IEndpointComponent, IAsyncDisposable
+///<summary>The distributed Tessaging pipeline's runtime lifecycle within an endpoint: inbox and scheduler listen, the router connects to all endpoints, the outbox sends.</summary>
+sealed class DistributedTessagingEndpointComponent : IEndpointComponent, IAsyncDisposable
 {
    readonly TommandScheduler _tommandScheduler;
    readonly IInbox _inbox;
@@ -22,7 +22,7 @@ sealed class TessagingEndpointComponent : IEndpointComponent, IAsyncDisposable
 
    bool _isListening;
 
-   internal TessagingEndpointComponent(IRootResolver resolver)
+   internal DistributedTessagingEndpointComponent(IRootResolver resolver)
    {
       _tommandScheduler = resolver.Resolve<TommandScheduler>();
       _inbox = resolver.Resolve<IInbox>();
