@@ -25,10 +25,11 @@ static class DistributedTeventStoreTeventPublisherRegistrar
    readonly IOutbox _outbox = outbox;
    readonly IInProcessTeventPublisher _inProcessTeventPublisher = inProcessTeventPublisher;
 
-   void ITeventStoreTeventPublisher.Publish(ITaggregateTevent tevent, IScopeResolver scopeResolver)
+   void ITeventStoreTeventPublisher.Publish(ITaggregateIdentifyingTevent<ITaggregateTevent> wrappedTevent, IScopeResolver scopeResolver)
    {
-      TessageInspector.AssertValidToSendRemote(tevent);
-      _inProcessTeventPublisher.Publish(tevent, scopeResolver);
-      _outbox.PublishTransactionally(tevent);
+      TessageInspector.AssertValidToSendRemote(wrappedTevent.Tevent);
+      _inProcessTeventPublisher.Publish(wrappedTevent, scopeResolver);
+      //The outbox still sends the inner tevent: the wire carries inner tevents until the remote-transport increment puts the wrapper itself on the wire.
+      _outbox.PublishTransactionally(wrappedTevent.Tevent);
    }
 }

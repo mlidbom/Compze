@@ -110,8 +110,7 @@ class TeventStoreUpdater : ITeventStoreReader, ITeventStoreUpdater
 
          _store.SaveSingleTaggregateTevents(wrappedTevents);
 
-         //Publishing still unwraps: the in-process bus routes on the inner tevent type until it learns the wrapper translation rule. That seam flips in the in-process bus increment.
-         wrappedTevents.ForEach(wrapper => _teventStoreTeventPublisher.Publish(wrapper.Tevent, _scopeResolver));
+         wrappedTevents.ForEach(wrappedTevent => _teventStoreTeventPublisher.Publish(wrappedTevent, _scopeResolver));
       });
 
       _idMap.Add(taggregate.Id, taggregate);
@@ -128,7 +127,7 @@ class TeventStoreUpdater : ITeventStoreReader, ITeventStoreUpdater
       }
 
       _store.SaveSingleTaggregateTevents([wrappedTevent]);
-      _teventStoreTeventPublisher.Publish(wrappedTevent.Tevent, _scopeResolver);
+      _teventStoreTeventPublisher.Publish(wrappedTevent, _scopeResolver);
    }
 
    public void Delete(TaggregateId taggregateId)

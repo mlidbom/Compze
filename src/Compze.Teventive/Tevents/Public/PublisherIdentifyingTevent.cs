@@ -19,6 +19,10 @@ public static class PublisherIdentifyingTevent
    public static IPublisherIdentifyingTevent<TTevent> WrapTevent<TTevent>(TTevent tevent) where TTevent : class, ITevent =>
       (IPublisherIdentifyingTevent<TTevent>)ConstructorFor(tevent.GetType()).Invoke(tevent);
 
+   ///<summary>The tevent in its wrapped form: an already-wrapped tevent passes through as it stands; anything else is wrapped by <see cref="WrapTevent{TTevent}"/>.<br/>
+   /// Every tevent is wrapped before routing - a boundary that receives a tevent that may or may not already be wrapped normalizes here.</summary>
+   public static IPublisherIdentifyingTevent<ITevent> Wrapped(ITevent tevent) => tevent as IPublisherIdentifyingTevent<ITevent> ?? WrapTevent(tevent);
+
    ///<summary>The wrapper type <see cref="WrapTevent{TTevent}"/> produces for a tevent of <paramref name="teventType"/>: <see cref="PublisherIdentifyingTevent{TTevent}"/> closed over it.</summary>
    public static Type WrapperTypeFor(Type teventType) => typeof(PublisherIdentifyingTevent<>).MakeGenericType(teventType);
 

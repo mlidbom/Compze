@@ -3,6 +3,7 @@ using Compze.Abstractions.Tessaging.Validation;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Tessaging.Implementation.TessageHandling.Abstractions;
+using Compze.Teventive.Tevents.Public;
 
 namespace Compze.Tessaging.Implementation.TessageHandling.Dispatching;
 
@@ -20,9 +21,11 @@ sealed class InProcessTeventPublisher(ITessageHandlerRegistry handlerRegistry) :
    public void Publish(ITevent tevent, IScopeResolver scopeResolver)
    {
       TessageValidator.AssertValidToExecuteLocally(tevent);
-      foreach(var handler in _handlerRegistry.GetTeventHandlers(tevent.GetType()))
+      //Every tevent is wrapped before routing: a tevent published without a publisher-identifying wrapper is wrapped here, and routing operates on the wrapper's type.
+      var wrappedTevent = PublisherIdentifyingTevent.Wrapped(tevent);
+      foreach(var handler in _handlerRegistry.GetTeventHandlers(wrappedTevent.GetType()))
       {
-         handler(tevent, scopeResolver);
+         handler(wrappedTevent, scopeResolver);
       }
    }
 }

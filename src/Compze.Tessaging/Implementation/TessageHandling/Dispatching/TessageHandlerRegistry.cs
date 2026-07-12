@@ -9,6 +9,7 @@ using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.CollectionsCE.GenericCE;
 using Compze.Internals.SystemCE.ReflectionCE;
+using Compze.Teventive.Tevents.Public;
 using Compze.Threading;
 
 namespace Compze.Tessaging.Implementation.TessageHandling.Dispatching;
@@ -32,12 +33,20 @@ sealed class TessageHandlerRegistry(ITypeMap typeMap) : ITessageHandlerRegistrar
 
    ITessageHandlerRegistrar ITessageHandlerRegistrar.ForTevent<TTevent>(Action<TTevent, IScopeResolver> handler) => _monitor.Locked(() =>
    {
-      TessageInspector.AssertValid<TTevent>();
-      _teventHandlers.TryGetValue(typeof(TTevent), out var currentTeventSubscribers);
+      TessageInspector.AssertValidForSubscription<TTevent>();
+
+      //Routing operates exclusively on wrapper types: a subscription to an inner tevent type is keyed under the wrapper type matching every wrapping of it
+      //and unwrapped at delivery; a subscription to a wrapper type is keyed as it stands and receives the wrapper - publisher-conscious subscription.
+      var routingKey = PublisherIdentifyingTevent.WrapperTypeMatchingAllWrappingsOf(typeof(TTevent));
+      Action<ITevent, IScopeResolver> deliver = typeof(TTevent).Is<IPublisherIdentifyingTevent<ITevent>>()
+                                                   ? (wrappedTevent, kernel) => handler((TTevent)wrappedTevent, kernel)
+                                                   : (wrappedTevent, kernel) => handler((TTevent)((IPublisherIdentifyingTevent<ITevent>)wrappedTevent).Tevent, kernel);
+
+      _teventHandlers.TryGetValue(routingKey, out var currentTeventSubscribers);
       currentTeventSubscribers ??= new List<Action<ITevent, IScopeResolver>>();
 
-      IReadOnlyList<Action<ITevent, IScopeResolver>> value = [..currentTeventSubscribers, (tevent, kernel) => handler((TTevent)tevent, kernel)];
-      Interlocked.Exchange(ref _teventHandlers, _teventHandlers.AddToCopy(typeof(TTevent), value));
+      IReadOnlyList<Action<ITevent, IScopeResolver>> value = [..currentTeventSubscribers, deliver];
+      Interlocked.Exchange(ref _teventHandlers, _teventHandlers.SetInCopy(routingKey, value));
       Interlocked.Exchange(ref _registeredTeventTypes, _registeredTeventTypes.AddToCopy(typeof(TTevent)));
       return this;
    });
@@ -69,7 +78,7 @@ sealed class TessageHandlerRegistry(ITypeMap typeMap) : ITessageHandlerRegistrar
    public Action<ITommand, IScopeResolver> GetTommandHandler(Type tommandType) => _tommandHandlers[tommandType];
 
    //performance: Use static caching trick.
-   public IReadOnlyList<Action<ITevent, IScopeResolver>> GetTeventHandlers(Type teventType) => _teventHandlers.Where(it => it.Key.IsAssignableFrom(teventType)).SelectMany(it => it.Value).ToList();
+   public IReadOnlyList<Action<ITevent, IScopeResolver>> GetTeventHandlers(Type wrapperTeventType) => _teventHandlers.Where(it => it.Key.IsAssignableFrom(wrapperTeventType)).SelectMany(it => it.Value).ToList();
 
    public ISet<TypeId> HandledRemoteTessageTypeIds()
    {

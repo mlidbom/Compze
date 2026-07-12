@@ -8,6 +8,7 @@ using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Logging;
 using Compze.Internals.SystemCE.TransactionsCE;
+using Compze.Teventive.Tevents.Public;
 
 namespace Compze.Tessaging.Implementation.TessageHandling.Inbox;
 
@@ -124,8 +125,10 @@ public partial class Inbox
                {
                   TransportTessageType.ExactlyOnceTevent => (tessage, kernel) =>
                   {
-                     var teventHandlers = _tessagingHandlerRegistry.GetTeventHandlers(tessage.GetType());
-                     teventHandlers.ForEach(handler => handler((IExactlyOnceTevent)tessage, kernel));
+                     //The wire still carries the inner tevent, so a received tevent is wrapped here before routing. The remote-transport increment puts the wrapper itself on the wire.
+                     var wrappedTevent = PublisherIdentifyingTevent.Wrapped((IExactlyOnceTevent)tessage);
+                     var teventHandlers = _tessagingHandlerRegistry.GetTeventHandlers(wrappedTevent.GetType());
+                     teventHandlers.ForEach(handler => handler(wrappedTevent, kernel));
                      return null;
                   },
                   TransportTessageType.ExactlyOnceTommand => (tessage, kernel) =>

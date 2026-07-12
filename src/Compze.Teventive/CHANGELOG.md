@@ -15,6 +15,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 - `ITaggregate` now hands wrapped tevents out of every surface: `Commit` and `TeventStream` deliver exactly the wrapped instances publishing created, and `LoadFromHistory` takes the persisted wrapped tevents and applies the stored wrapper - after a migration has rewritten history, the stored wrapper is the truth, not what the taggregate would wrap today. `ITaggregate<TTevent>.TeventStream` gains precision: `IObservable<ITaggregateIdentifyingTevent<TTevent>>`.
 - Extracted the taggregate's wrapping mechanism into `TaggregateIdentifyingTevent.WrapIn(wrapperTeventImplementation, tevent)` so a tevent migration author can wrap a replacement tevent in the publisher's wrapper.
 - The routing model's one translation rule has one home: `PublisherIdentifyingTevent.WrapperTypeMatchingAllWrappingsOf` - subscribing to, filtering by, or ignoring an inner tevent type means matching every `IPublisherIdentifyingTevent<TTevent>` of it.
+- Added `PublisherIdentifyingTevent.Wrapped`: the normalization a boundary uses when it receives a tevent that may or may not already be wrapped - an already-wrapped tevent passes through, anything else is auto-wrapped.
 - `PublisherIdentifyingTevent<>`, `TaggregateIdentifyingTevent<>`, and `ITaggregateIdentifyingTevent<>` have type-identifier mappings, so closed wrapper types can be persisted and transmitted by `TypeId`.
 
 ## 0.3.2-alpha

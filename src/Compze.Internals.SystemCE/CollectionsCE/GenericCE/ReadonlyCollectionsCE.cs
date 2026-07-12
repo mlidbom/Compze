@@ -10,6 +10,9 @@ public static class ReadonlyCollectionsCE
 
    public static Dictionary<TKey, TValue> AddToCopy<TKey, TValue>(this IReadOnlyDictionary<TKey, TValue> @this, TKey key, TValue value) where TKey : notnull => new(@this) { { key, value } };
 
+   ///<summary>Like <see cref="AddToCopy{TKey,TValue}(IReadOnlyDictionary{TKey,TValue},TKey,TValue)"/> but overwrites: the copy holds <paramref name="value"/> under <paramref name="key"/> whether or not the key was already present.</summary>
+   public static Dictionary<TKey, TValue> SetInCopy<TKey, TValue>(this IReadOnlyDictionary<TKey, TValue> @this, TKey key, TValue value) where TKey : notnull => new(@this) { [key] = value };
+
    public static Dictionary<TKey, TValue> AddRangeToCopy<TKey, TValue>(this IReadOnlyDictionary<TKey, TValue> @this, IEnumerable<KeyValuePair<TKey, TValue>> range) where TKey : notnull =>
       new Dictionary<TKey, TValue>(@this)._mutate(me => me.AddRange(range));
 

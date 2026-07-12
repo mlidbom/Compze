@@ -4,6 +4,10 @@ All notable changes to Compze.Internals.SystemCE will be documented in this file
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## Unreleased
+
+- Added `SetInCopy` to the read-only-dictionary copy helpers: like `AddToCopy` but overwrites when the key is already present.
+
 ## 0.2.1-internal
 
 - Refactoring.

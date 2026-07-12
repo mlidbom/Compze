@@ -164,20 +164,29 @@ unhandled-tevent ignore configuration is translated the same way subscriptions a
   `IPublisherIdentifyingTevent<>`/`IRemotablePublisherIdentifyingTevent<>`/`IExactlyOncePublisherIdentifyingTevent<>`
   (Compze.Abstractions) — the interfaces surface in `$type` references when wrapped histories travel inside
   serialized resources.
-- Remaining seam, by design until the in-process bus increment: `TeventStoreUpdater` unwraps at the
-  `ITeventStoreTeventPublisher` seam because the bus still routes on inner tevent types
-  (`TeventStoreUpdater.cs`, one `.Tevent` wide).
+- The `ITeventStoreTeventPublisher` seam is flipped (2026-07-12): `TeventStoreUpdater` publishes the wrapped
+  tevent, and publisher identity survives from `Publish` in the taggregate through storage and onward
+  publication. The one remaining unwrap, by design until the remote-transport increment: the distributed
+  publisher hands the OUTBOX the inner tevent, because the wire still carries inner tevents.
 
-### 6. The in-process bus — assignability done; needs wrapping + route-by-outer
+### 6. The in-process bus — DONE (2026-07-12)
 
-- `TessageHandlerRegistry.GetTeventHandlers` routes by a pure assignability walk:
-  `_teventHandlers.Where(it => it.Key.IsAssignableFrom(teventType))`
-  (`src/Compze.Tessaging/Implementation/TessageHandling/Dispatching/TessageHandlerRegistry.cs:72`).
-  Verified by test (`test/Compze.Tests.Integration/InProcess/Given_a_container_composed_with_InProcessTessaging.cs:44-57`).
-- No wrapper awareness: the bus never wraps, never unwraps, has no subscription translation, and no
-  wrapper-typed (publisher-conscious) subscription. All to be added per invariants 1-5.
-- Standing perf note at the routing site: `TessageHandlerRegistry.cs:71` — `//performance: Use static
-  caching trick.` (the walk rebuilds the handler list on every publish).
+- The bus implements the decided model: `ForTevent<TTevent>` keys an inner tevent type subscription under
+  the translated wrapper type (via `PublisherIdentifyingTevent.WrapperTypeMatchingAllWrappingsOf`) and
+  unwraps at delivery; a subscription to a wrapper type is keyed as it stands and receives the wrapper —
+  publisher-conscious subscription. Registration validates with the subscription rules
+  (`AssertValidForSubscription`, interfaces only), matching the in-memory dispatcher.
+- Every delivery site normalizes per invariant 1 through `PublisherIdentifyingTevent.Wrapped`:
+  `InProcessTeventPublisher.Publish` wraps a tevent published without a wrapper, and the inbox wraps tevents
+  received from the wire (which carries inner tevents until the remote-transport increment).
+- The tevent-store publishers receive and deliver the committed tevent in its wrapper; the distributed
+  publisher hands the outbox the inner tevent — the wire seam, resolved by the remote-transport increment.
+- Specified at the bus surface: inner-typed and wrapper-typed subscribers receive the same tevent (invariant
+  4), the wrapper subscriber gets the wrapper itself, and an unwrapped publish reaches wrapper-typed
+  subscribers through the auto-created wrapper
+  (`test/Compze.Tests.Integration/InProcess/Given_a_container_composed_with_InProcessTessaging.cs`).
+- Standing perf note at the routing site remains: `//performance: Use static caching trick.` (the
+  assignability walk rebuilds the handler list on every publish).
 
 ### 7. The remote bus — sender-side assignability done; needs wrappers on the wire
 
@@ -230,13 +239,13 @@ interface, file names match the types they declare (`ITaggregateIdentifyingTeven
 - [x] Replace `//Urgent: Wrapping here seems arguable at best.` with a statement of invariant 1
       (documented on `ITeventDispatcher`'s `Dispatch` overloads).
 
-### In-process bus (Compze.Tessaging)
+### In-process bus (Compze.Tessaging) — ALL DONE (2026-07-12)
 
-- [ ] Wrapped publication end to end: the wrapped tevent now flows `ITaggregate.Commit` →
-      `TeventStoreUpdater` (DONE 2026-07-12); the remaining seam is
-      `ITeventStoreTeventPublisher` / `InProcessTeventPublisher` / `DistributedTeventStoreTeventPublisher`,
-      where the updater still unwraps because the bus routes on inner tevent types.
-- [ ] `TessageHandlerRegistry`: translate `ForTevent<T>` inner subscriptions to root-wrapper subscriptions,
+- [x] Wrapped publication end to end: `ITaggregate.Commit` → `TeventStoreUpdater` →
+      `ITeventStoreTeventPublisher` / `InProcessTeventPublisher` / `DistributedTeventStoreTeventPublisher`
+      carry the wrapped tevent. (The distributed publisher hands the outbox the inner tevent until the
+      remote-transport increment puts the wrapper on the wire.)
+- [x] `TessageHandlerRegistry`: translate `ForTevent<T>` inner subscriptions to root-wrapper subscriptions,
       route by outer type, unwrap at delivery; support wrapper-typed (publisher-conscious) subscription.
 
 ### Tevent store — ALL DONE (2026-07-12)

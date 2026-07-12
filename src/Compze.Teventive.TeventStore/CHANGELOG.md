@@ -11,7 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 - `SelfGeneratingQueryModel` mirrors `ITeventDispatcher`'s two dispatch forms: `ApplyTevent(TTaggregateTevent)` auto-wraps a tevent arriving without a wrapper (such as one delivered to an inner-typed bus subscription), and `ApplyTevent(IPublisherIdentifyingTevent<TTaggregateTevent>)` applies an already-wrapped tevent; `LoadFromHistory` takes the persisted wrapped tevents.
 - `SingleTaggregateQueryModelGenerator` feeds its dispatcher the wrapped history; `TeventStoreApi.Tueries.GetHistory<TTevent>` returns `IEnumerable<ITaggregateIdentifyingTevent<TTevent>>`.
 - `ITeventStore.StreamTaggregateIdsInCreationOrder`'s tevent-type filter is translated by the routing model's one translation rule: an inner tevent type matches every wrapping of it; a wrapper type matches as it stands.
-- `TeventStoreUpdater` still unwraps at the `ITeventStoreTeventPublisher` seam: the in-process bus routes on inner tevent types until it learns the wrapper translation rule.
+- `TeventStoreUpdater` publishes the wrapped tevent through `ITeventStoreTeventPublisher`: publisher identity survives from `Publish` in the taggregate through storage and onward publication.
 
 ## 0.3.1-alpha
 
