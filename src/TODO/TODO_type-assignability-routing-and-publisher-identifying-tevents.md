@@ -94,31 +94,24 @@ Canonical statements of the model:
 - Gap: nothing yet validates `TypeId` coverage for the closed generic wrapper types that invariant 6 sends
   through the store and the wire.
 
-### 2. The in-memory tevent dispatcher — closest to the target; needs the route-by-outer rework
+### 2. The in-memory tevent dispatcher — DONE (2026-07-12)
 
-`CallMatchingHandlersInRegistrationOrderTeventDispatcher` already delivers the observable behavior of
-invariants 1, 3, 4 and 5 at dispatcher level, exhaustively unit tested
-(`MutableTeventDispatcher_WrappedTeventsTests.cs`). But its mechanism differs from the decided model:
-
-- Instead of translating inner subscriptions (invariant 2), `RegisteredHandler<THandledTevent>` dual-matches:
-  raw assignability OR `IPublisherIdentifyingTevent<THandledTevent>` + unwrap
-  (`...TeventDispatcher.RegisteredHandler.cs:22-34`). Under route-by-outer this collapses to a single
-  wrapper-type match with unwrap-at-delivery for inner-typed handlers.
-- `Handles(TTevent)` keys off the RAW type (`...TeventDispatcher.cs:52`) while `Dispatch` keys off the
-  WRAPPED type, so `Handles` under-reports subscribers registered via `ForWrapped`. Keying everything on the
-  outer type resolves this by construction.
-- `BeforeHandlers`/`AfterHandlers` hard-cast-and-unwrap instead of going through the `RegisteredHandler`
-  classes — `...TeventDispatcher.TeventSubscriber.cs:47` and `:58`, both flagged `//Urgent: fix this`.
-- `Dispatch(TTevent)` force-wraps via `PublisherTypeIdentifyingTevent.WrapTevent`, which goes through the
-  reflection-emit generator (`...TeventDispatcher.cs:40-41`). Wrapping there is correct by D4; the mechanism
-  must change to `PublisherIdentifyingTevent<TTeventInterface>` and the `//Urgent` comment becomes a
-  statement of invariant 1.
+`CallMatchingHandlersInRegistrationOrderTeventDispatcher` implements the decided model: a subscription to an
+inner tevent type IS a subscription to `IPublisherIdentifyingTevent<T>` (`RegisteredHandler<THandledTevent>`),
+routing matches on wrapper types only, unwrapping happens only at delivery to inner-typed handlers, `Handles`
+keys on the same wrapper type `Dispatch` uses (so `ForWrapped` subscriptions are counted), the
+unhandled-tevent ignore configuration is translated the same way subscriptions are, and
+`BeforeHandlers`/`AfterHandlers` are `RegisteredHandler` subscriptions like every other (the two
+`//Urgent: fix this` sites are gone). Auto-wrapping goes through the hand-written
+`PublisherIdentifyingTevent<TTevent>` closed over the tevent's runtime type; the reflection-emit
+`WrapperTeventImplementationGenerator` is DELETED per D4. Exhaustively unit tested
+(`MutableTeventDispatcher_WrappedTeventsTests.cs`), full suite green.
 
 ### 3. Taggregate publishing — DONE for aggregates and inheritance
 
 - `Taggregate.Publish` and `Taggregate.ApplyTevent` wrap every tevent in the aggregate's declared wrapper
   type before dispatching (`src/Compze.Teventive/Taggregates/BaseClasses/Taggregate..cs:25-28, 53, 105`).
-- Aggregate inheritance is supported: subclasses override `WrapperTEventImplementation` so each level of the
+- Aggregate inheritance is supported: subclasses override `WrapperTeventImplementation` so each level of the
   hierarchy stamps its own publisher identity (see
   `test/Compze.Tests.Unit/CQRS/Taggregates/InheritingTaggregate/AnimalTaggregate.cs:13,29,42`).
 - BUT: `ITaggregate.Commit` hands the store the RAW inner tevents (`Taggregate..cs:126-130`) — publisher
@@ -187,37 +180,33 @@ invariants 1, 3, 4 and 5 at dispatcher level, exhaustively unit tested
   base-interface routing, store round-trip of inner tevents.
 - Missing: everything end-to-end. See the Tests work items.
 
-### 9. Ubiquitous-language drift from the rename
+### 9. Ubiquitous-language drift from the rename — RESOLVED (2026-07-12)
 
-The concept was renamed `IWrapperTevent` → `IPublisherTypeIdentifyingTevent` → `IPublisherIdentifyingTevent`,
-but not every artifact speaks the current name:
-
-- Static helper class `PublisherTypeIdentifyingTevent` and its file
-  `src/Compze.Teventive/Taggregates/Tevents/Public/_TessageTypes.Classes.PublisherTypeIdentifyingTevent.cs`
-  retain the intermediate name.
-- `src/Compze.Teventive/Taggregates/_docs/definition.md` still uses `IWrapperEvent`.
-- Interface file name `ITaggregateTypeIdentifyingTevent.cs` vs. the interface it declares,
-  `ITaggregateIdentifyingTevent<T>`.
-- Test vocabulary (`...WrapperTevent...` method names in `MutableTeventDispatcher_WrappedTeventsTests.cs`)
-  and the `TeventDispatcherAsserter`'s `...Wrapped...` method family predate the current name.
+The concept was renamed `IWrapperTevent` → `IPublisherTypeIdentifyingTevent` → `IPublisherIdentifyingTevent`;
+every artifact now speaks the current name. The `PublisherTypeIdentifyingTevent` static helper is deleted
+(auto-wrap goes through `PublisherIdentifyingTevent.WrapTevent`), `definition.md` names the real wrapper
+interface, file names match the types they declare (`ITaggregateIdentifyingTevent.cs`,
+`TaggregateIdentifyingTevent.cs`), `Taggregate.WrapEvent`/`WrapperTEventImplementation` became
+`WrapTevent`/`WrapperTeventImplementation`, and the dispatcher specs' type vocabulary is current. (The
+`For`/`ForWrapped` API family and the asserter methods mirroring it keep their names by decision.)
 
 ## Work items
 
-### Dispatcher (Compze.Teventive)
+### Dispatcher (Compze.Teventive) — ALL DONE (2026-07-12)
 
-- [ ] Rework registration to the route-by-outer model: translate inner-type subscriptions to
+- [x] Rework registration to the route-by-outer model: translate inner-type subscriptions to
       `IPublisherIdentifyingTevent<T>`, match on wrapper types only, unwrap at delivery for inner-typed
       handlers. Replaces `RegisteredHandler`'s dual-match; `Handles` then keys on the outer type and the
       `ForWrapped` under-reporting disappears. The `For`/`ForWrapped` + `ForGenericTevent`/`ForWrappedGeneric`
       API surface stays as-is (type safety + escape hatches).
-- [ ] Auto-wrap through `PublisherIdentifyingTevent<TTeventInterface>` closed over the tevent's runtime
+- [x] Auto-wrap through `PublisherIdentifyingTevent<TTevent>` closed over the tevent's runtime
       type; then DELETE `WrapperTeventImplementationGenerator` (a temporary hack — no runtime-generated
-      tevent types may ever be sent or persisted), its `:41-43` inner-only comment, and the unused "for
-      reference" type parameters (`:10`) along with it.
-- [ ] Route `BeforeHandlers`/`AfterHandlers` through the registered-handler mechanism (the two
-      `//Urgent: fix this` sites, `...TeventDispatcher.TeventSubscriber.cs:47,58`).
-- [ ] Replace `//Urgent: Wrapping here seems arguable at best.` (`...TeventDispatcher.cs:40`) with a
-      statement of invariant 1.
+      tevent types may ever be sent or persisted), its inner-only comment, and the unused "for
+      reference" type parameters along with it.
+- [x] Route `BeforeHandlers`/`AfterHandlers` through the registered-handler mechanism (the two
+      `//Urgent: fix this` sites).
+- [x] Replace `//Urgent: Wrapping here seems arguable at best.` with a statement of invariant 1
+      (documented on `ITeventDispatcher`'s `Dispatch` overloads).
 
 ### In-process bus (Compze.Tessaging)
 
@@ -272,15 +261,17 @@ but not every artifact speaks the current name:
       routing it exists for
       (`test/Compze.Tests.Unit/CQRS/Taggregates/InheritingTaggregate/...cs:5` — self-flagged
       `//todo: is this supposed to actually test anything?`).
-- [ ] Fix the two misnamed wrapped-dispatch tests (`MutableTeventDispatcher_WrappedTeventsTests.cs:91,114` —
-      named `IAdminUserWrapperTevent_...` but asserting `IUserPublisherIdentifyingTevent<...>`).
-- [ ] Negative (`DoesNotDispatch`) coverage for the plain `For`/`ForGenericTevent` subscription kinds.
+- [x] Fix the misnamed wrapped-dispatch tests (turned out to be three, not two — `IAdminUser...`-named tests
+      asserting `IUserPublisherIdentifyingTevent<...>`). DONE 2026-07-12.
+- [x] Negative (`DoesNotDispatch`) coverage for the plain `For` subscription kind, including the sharpest
+      case: an admin-publisher wrapper around a non-admin tevent does NOT reach `IAdminUserTevent`
+      subscribers. DONE 2026-07-12.
 
-### Renames / ubiquitous language
+### Renames / ubiquitous language — DONE (2026-07-12)
 
-- [ ] Finish the rename everywhere (see Status §9): `PublisherTypeIdentifyingTevent` static class + file
+- [x] Finish the rename everywhere (see Status §9): `PublisherTypeIdentifyingTevent` static class + file
       name, `definition.md`'s `IWrapperEvent`, `ITaggregateTypeIdentifyingTevent.cs` file name, and the
-      `Wrapper` vocabulary in the dispatcher tests/asserter — every artifact speaks
+      `Wrapper` type vocabulary in the dispatcher tests — every artifact speaks
       `IPublisherIdentifyingTevent`.
 
 ## Deferred
