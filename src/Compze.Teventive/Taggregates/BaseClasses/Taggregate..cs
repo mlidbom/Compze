@@ -20,10 +20,10 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
 {
    static Taggregate() => TaggregateTypeValidator<TTaggregate, TTaggregateTeventImplementation, TTaggregateTevent>.AssertStaticStructureIsValid();
 
-   protected virtual Type WrapperTEventImplementation => typeof(TWrapperTeventImplementation);
+   protected virtual Type WrapperTeventImplementation => typeof(TWrapperTeventImplementation);
 
-   TWrapperTeventInterface WrapEvent(TTaggregateTevent tevent) =>
-      (TWrapperTeventInterface)Constructor.ForGenericType(WrapperTEventImplementation)
+   TWrapperTeventInterface WrapTevent(TTaggregateTevent tevent) =>
+      (TWrapperTeventInterface)Constructor.ForGenericType(WrapperTeventImplementation)
                                           .WithArgument(tevent.GetType())
                                           .Invoke(tevent);
 
@@ -50,7 +50,7 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
    {
       State.Assert(!_applyingTevents, () => "You cannot raise tevents from within tevent appliers");
 
-      var wrapped = WrapEvent(tevent);
+      var wrapped = WrapTevent(tevent);
 
       using(ScopedChange.Enter(() => _reentrancyLevel++, () => _reentrancyLevel--))
       {
@@ -102,7 +102,7 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
          }
 
          Version = theTevent.TaggregateVersion;
-         _teventAppliersDispatcher.Dispatch(WrapEvent(theTevent));
+         _teventAppliersDispatcher.Dispatch(WrapTevent(theTevent));
       }
    }
 

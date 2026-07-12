@@ -10,7 +10,7 @@ namespace Compze.Tests.Unit.CQRS.Taggregates.InheritingTaggregate;
 
 class AnimalTaggregate : Taggregate<AnimalTaggregate, IAnimalTevent, AnimalTevent, IAnimalTevent<IAnimalTevent>, AnimalTevent<AnimalTevent>>
 {
-   protected override Type WrapperTEventImplementation => typeof(AnimalTevent<AnimalTevent>);
+   protected override Type WrapperTeventImplementation => typeof(AnimalTevent<AnimalTevent>);
 
    protected AnimalTaggregate()
    {
@@ -26,7 +26,7 @@ class AnimalTaggregate : Taggregate<AnimalTaggregate, IAnimalTevent, AnimalTeven
 class CatTaggregate : AnimalTaggregate
 {
    CatTaggregate(){}
-   protected override Type WrapperTEventImplementation => typeof(CatTevent<CatTevent>);
+   protected override Type WrapperTeventImplementation => typeof(CatTevent<CatTevent>);
 
    public static CatTaggregate RegisterBirth()
    {
@@ -39,7 +39,7 @@ class CatTaggregate : AnimalTaggregate
 class DogTaggregate : AnimalTaggregate
 {
    DogTaggregate(){}
-   protected override Type WrapperTEventImplementation => typeof(DogTevent<DogTevent>);
+   protected override Type WrapperTeventImplementation => typeof(DogTevent<DogTevent>);
 
    public static DogTaggregate RegisterBirth()
    {

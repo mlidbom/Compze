@@ -19,7 +19,7 @@ interface ICatTevent : IAnimalTevent;
 interface IDogTevent : IAnimalTevent;
 #endregion
 #region noises1wrapped
-interface IAnimalTevent<out T> : ITaggregateWrapperTevent<T> where T : IAnimalTevent;
+interface IAnimalTevent<out T> : ITaggregateIdentifyingTevent<T> where T : IAnimalTevent;
 interface ICatTevent<out T> : IAnimalTevent<T> where T : IAnimalTevent;
 interface IDogTevent<out T> : IAnimalTevent<T> where T : IAnimalTevent;
 #endregion

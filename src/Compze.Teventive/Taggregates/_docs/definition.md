@@ -18,8 +18,8 @@ The type of an event is the means through which events are routed to subscribers
 To illustrate: Given that the method `void HandleEvent(IEventType anEvent)` is registered as an event handler, then every single event that can be assigned to a variable of type IEventType will be delivered to `HandleEvent`
 
 ##### This type compatibility includes support for generic covariance
-Interface inheritance is not enough to a model realistic domains effectively. To support inheritance of event based aggregates, and reusable event based components, semantic events leverage generic covariance. 
+Interface inheritance is not enough to model realistic domains effectively. To support inheritance of event based aggregates, and reusable event based components, semantic events leverage generic covariance. The covariant wrapper interface is `IPublisherIdentifyingTevent<out TTevent>`: a wrapper whose own type identifies the event's publisher while its type parameter carries the wrapped event's full type.
 
-For example: given the interface  `IWrapperEvent<out T>` this handler: `void HandleEvent(IWrapperEvent<IEvent> anEvent)` would be called whenever any type of `IWrapperEvent<T>` was published. `IWrapperEvent<IUserEvent>`, `IWrapperEvent<IAnimalEvent>` and so on.
+For example: this handler: `void HandleTevent(IPublisherIdentifyingTevent<IEvent> tevent)` would be called whenever any type of `IPublisherIdentifyingTevent<T>` was published. `IPublisherIdentifyingTevent<IUserEvent>`, `IPublisherIdentifyingTevent<IAnimalEvent>` and so on.
 
-Likewise, given the interface `IInheritingWrapperEvent<out T> : IWrapperEvent<T>;` when any `IInheritingWrapperEvent<T>` was published, the above handler would also be called.
+Likewise, given a publisher-specific wrapper interface `IAnimalTevent<out T> : IPublisherIdentifyingTevent<T>;` when any `IAnimalTevent<T>` was published, the above handler would also be called.
