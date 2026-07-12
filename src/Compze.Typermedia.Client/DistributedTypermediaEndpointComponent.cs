@@ -5,8 +5,8 @@ using Compze.Typermedia.Hosting;
 
 namespace Compze.Typermedia.Client;
 
-///<summary>The Typermedia pipeline's runtime lifecycle within an endpoint: its transport server listens; nothing participates in the sending phase.</summary>
-sealed class TypermediaEndpointComponent(ITypermediaTransportServer transportServer) : IEndpointComponent
+///<summary>The distributed Typermedia pipeline's runtime lifecycle within an endpoint: its transport server listens; nothing participates in the sending phase.</summary>
+sealed class DistributedTypermediaEndpointComponent(ITypermediaTransportServer transportServer) : IEndpointComponent
 {
    readonly ITypermediaTransportServer _transportServer = transportServer;
 

@@ -6,6 +6,7 @@ using AccountManagement.UI.QueryModels;
 using Compze.Abstractions.Hosting.Public;
 using Compze.DocumentDb.Wiring;
 using Compze.Tessaging.Hosting;
+using Compze.Typermedia;
 using Compze.Typermedia.Client;
 using Compze.Tessaging.Teventive.TeventStore.Typermedia;
 
@@ -20,6 +21,7 @@ public static class AccountManagementServerDomainBootstrapper
                                    setup: builder =>
                                    {
                                       builder.AddDistributedTessaging();
+                                      builder.AddDistributedTypermedia();
                                       RegisterTypeMappings(builder);
                                       RegisterDomainComponents(builder);
                                       RegisterHandlers(builder);
@@ -36,6 +38,7 @@ public static class AccountManagementServerDomainBootstrapper
                             setup: builder =>
                             {
                                builder.AddDistributedTessaging();
+                               builder.AddDistributedTypermedia();
                                RegisterTypeMappings(builder);
 
                                builder.RegisterDocumentDb()
