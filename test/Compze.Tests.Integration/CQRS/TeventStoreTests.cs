@@ -1,4 +1,5 @@
 using Compze.Abstractions.Public;
+using Compze.Abstractions.Tessaging.Public;
 using Compze.Hosting.Testing;
 using Compze.Internals.Testing;
 using Compze.Tests.Common;
@@ -153,7 +154,7 @@ public class TeventStoreTests : UniversalTestBase
 
       using(new TransactionScope())
       {
-         ((ITaggregate)user).Commit(teventStore.SaveSingleTaggregateTevents);
+         ((ITaggregate)user).Commit(wrappedTevents => teventStore.SaveSingleTaggregateTevents(wrappedTevents.Tevents().ToList()));
          teventStore.GetTaggregateHistory(user.Id);
          teventStore.GetTaggregateHistory(user.Id).Must().NotBeEmpty();
       }
@@ -175,7 +176,7 @@ public class TeventStoreTests : UniversalTestBase
 
          TransactionScopeCe.Execute(() =>
          {
-            ((ITaggregate)user).Commit(teventStore.SaveSingleTaggregateTevents);
+            ((ITaggregate)user).Commit(wrappedTevents => teventStore.SaveSingleTaggregateTevents(wrappedTevents.Tevents().ToList()));
             teventStore.GetTaggregateHistory(user.Id);
             teventStore.GetTaggregateHistory(user.Id).Must().NotBeEmpty();
          });

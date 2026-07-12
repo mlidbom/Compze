@@ -55,9 +55,9 @@ public class TaggregateTests : UniversalTestBase
       {
          var taggregate = new CascadingTeventsTaggregate();
          var receivedTevents = new List<ITaggregateTevent>();
-         using(((ITaggregate)taggregate).TeventStream.Subscribe(tevent =>
+         using(((ITaggregate)taggregate).TeventStream.Subscribe(wrappedTevent =>
                {
-                  receivedTevents.Add(tevent);
+                  receivedTevents.Add(wrappedTevent.Tevent);
                   taggregate.TriggeringTeventApplied.Must()
                             .BeTrue();
                   taggregate.TriggeredTeventApplied.Must()

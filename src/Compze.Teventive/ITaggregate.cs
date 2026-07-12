@@ -9,12 +9,15 @@ public interface ITaggregate : ITentity
    new TaggregateId Id { get; }
    int Version { get; }
 
-   void Commit(Action<IReadOnlyList<ITaggregateTevent>> commitTevents);
+   ///<summary>Hands the not-yet-persisted tevents to <paramref name="commitTevents"/> and forgets them: exactly the wrapped tevents publishing created,<br/>
+   /// each inside its publisher's <see cref="ITaggregateIdentifyingTevent{TTeventInterface}"/> wrapper, so no publisher identity is lost on the way to the store.</summary>
+   void Commit(Action<IReadOnlyList<ITaggregateIdentifyingTevent<ITaggregateTevent>>> commitTevents);
    void LoadFromHistory(IEnumerable<ITaggregateTevent> history);
-   IObservable<ITaggregateTevent> TeventStream { get; }
+   ///<summary>Every tevent this taggregate publishes, as published: inside its publisher's <see cref="ITaggregateIdentifyingTevent{TTeventInterface}"/> wrapper.</summary>
+   IObservable<ITaggregateIdentifyingTevent<ITaggregateTevent>> TeventStream { get; }
 }
 
 public interface ITaggregate<out TTevent> : ITaggregate where TTevent : ITaggregateTevent
 {
-   new IObservable<TTevent> TeventStream { get; }
+   new IObservable<ITaggregateIdentifyingTevent<TTevent>> TeventStream { get; }
 }

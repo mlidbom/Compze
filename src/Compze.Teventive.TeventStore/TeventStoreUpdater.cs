@@ -5,6 +5,7 @@ using Compze.Internals.SystemCE.ReactiveCE;
 using Compze.Internals.SystemCE.ReflectionCE;
 using System.Diagnostics.CodeAnalysis;
 using Compze.Abstractions.Public;
+using Compze.Abstractions.Tessaging.Public;
 using Compze.Tessaging.Teventive.TeventStore.Internal;
 using Compze.Tessaging.Teventive.TeventStore.Public;
 using Compze.Tessaging.Teventive.TeventStore.Public.Exceptions;
@@ -96,21 +97,21 @@ class TeventStoreUpdater : ITeventStoreReader, ITeventStoreUpdater
       _taggregateTypeValidator.AssertIsValid<TTaggregate>();
       _usageGuard.EnsureAccessValid();
 
-      taggregate.Commit(tevents =>
+      taggregate.Commit(wrappedTevents =>
       {
-         if(taggregate.Version > 0 && tevents.None() || tevents.Any() && tevents.Min(e => e.TaggregateVersion) > 1)
+         if(taggregate.Version > 0 && wrappedTevents.None() || wrappedTevents.Any() && wrappedTevents.Min(it => it.Tevent.TaggregateVersion) > 1)
          {
-            throw new AttemptToSaveAlreadyPersistedAggregateException(taggregate);
+            throw new AttemptToSaveAlreadyPersistedTaggregateException(taggregate);
          }
 
-         if(taggregate.Version == 0 && tevents.None())
+         if(taggregate.Version == 0 && wrappedTevents.None())
          {
-            throw new AttemptToSaveEmptyAggregateException(taggregate);
+            throw new AttemptToSaveEmptyTaggregateException(taggregate);
          }
 
-         _store.SaveSingleTaggregateTevents(tevents);
+         _store.SaveSingleTaggregateTevents(wrappedTevents.Tevents().ToList());
 
-         tevents.ForEach(tevent => _teventStoreTeventPublisher.Publish(tevent, _scopeResolver));
+         wrappedTevents.ForEach(wrapper => _teventStoreTeventPublisher.Publish(wrapper.Tevent, _scopeResolver));
       });
 
       _idMap.Add(taggregate.Id, taggregate);
@@ -118,16 +119,16 @@ class TeventStoreUpdater : ITeventStoreReader, ITeventStoreUpdater
       _disposableResources.Add(taggregate.TeventStream.Subscribe(OnTaggregateTevent));
    }
 
-   void OnTaggregateTevent(ITaggregateTevent tevent)
+   void OnTaggregateTevent(ITaggregateIdentifyingTevent<ITaggregateTevent> wrappedTevent)
    {
       _usageGuard.EnsureAccessValid();
-      if(!_idMap.ContainsKey(tevent.TaggregateId))
+      if(!_idMap.ContainsKey(wrappedTevent.Tevent.TaggregateId))
       {
-         throw new Exception($"Got tevent from taggregate that is not tracked! Id: {tevent.TaggregateId}");
+         throw new Exception($"Got tevent from taggregate that is not tracked! Id: {wrappedTevent.Tevent.TaggregateId}");
       }
 
-      _store.SaveSingleTaggregateTevents([tevent]);
-      _teventStoreTeventPublisher.Publish(tevent, _scopeResolver);
+      _store.SaveSingleTaggregateTevents([wrappedTevent.Tevent]);
+      _teventStoreTeventPublisher.Publish(wrappedTevent.Tevent, _scopeResolver);
    }
 
    public void Delete(TaggregateId taggregateId)

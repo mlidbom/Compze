@@ -37,14 +37,14 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
    EntityId IEntity.Id => Id;
    public override TaggregateId Id => (TaggregateId)base.Id;
 
-   readonly List<ITaggregateTevent> _unCommittedTevents = [];
+   readonly List<ITaggregateIdentifyingTevent<TTaggregateTevent>> _unCommittedTevents = [];
    readonly IMutableTeventDispatcher<TTaggregateTevent> _teventAppliersDispatcher;
    readonly IMutableTeventDispatcher<TTaggregateTevent> _teventHandlersDispatcher = IMutableTeventDispatcher<TTaggregateTevent>.New(TeventDispatcherConfig.IgnoreAllUnhandled); //Registering tevent handlers is optional, unlike tevent appliers.
 
    int _reentrancyLevel;
    bool _applyingTevents;
 
-   readonly List<TTaggregateTeventImplementation> _teventsPublishedDuringCurrentPublishCallIncludingReentrantCallsFromTeventHandlers = [];
+   readonly List<TWrapperTeventInterface> _teventsPublishedDuringCurrentPublishCallIncludingReentrantCallsFromTeventHandlers = [];
 
    protected TTevent Publish<TTevent>(TTevent tevent) where TTevent : TTaggregateTeventImplementation
    {
@@ -70,8 +70,8 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
          }
 #pragma warning restore CS0618 // Type or member is obsolete
          ApplyTevent(tevent);
-         _unCommittedTevents.Add(tevent);
-         _teventsPublishedDuringCurrentPublishCallIncludingReentrantCallsFromTeventHandlers.Add(tevent);
+         _unCommittedTevents.Add(wrapped);
+         _teventsPublishedDuringCurrentPublishCallIncludingReentrantCallsFromTeventHandlers.Add(wrapped);
          _teventHandlersDispatcher.Dispatch(wrapped);
       }
 
@@ -114,16 +114,16 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
 
    protected virtual void AssertInvariantsAreMet() {}
 
-   readonly SimpleObservable<TTaggregateTeventImplementation> _teventStream = new();
+   readonly SimpleObservable<ITaggregateIdentifyingTevent<TTaggregateTevent>> _teventStream = new();
 #pragma warning disable CA1033 //These method should NOT clutter the public interface of Taggregates.
    void ITeventiveInternals<TTaggregateTevent, TTaggregateTeventImplementation>.ApplyTeventInternal(TTaggregateTevent theTevent) => ApplyTevent(theTevent);
    void ITeventiveInternals<TTaggregateTevent, TTaggregateTeventImplementation>.PublishInternal(TTaggregateTeventImplementation theTevent) => Publish(theTevent);
    ITeventSubscriber<TTaggregateTevent> ITeventiveInternals<TTaggregateTevent, TTaggregateTeventImplementation>.RegisterTeventAppliersInternal() => RegisterTeventAppliers();
 
-   IObservable<ITaggregateTevent> ITaggregate.TeventStream => _teventStream;
-   IObservable<TTaggregateTevent> ITaggregate<TTaggregateTevent>.TeventStream => _teventStream;
+   IObservable<ITaggregateIdentifyingTevent<ITaggregateTevent>> ITaggregate.TeventStream => _teventStream;
+   IObservable<ITaggregateIdentifyingTevent<TTaggregateTevent>> ITaggregate<TTaggregateTevent>.TeventStream => _teventStream;
 
-   void ITaggregate.Commit(Action<IReadOnlyList<ITaggregateTevent>> commitTevents)
+   void ITaggregate.Commit(Action<IReadOnlyList<ITaggregateIdentifyingTevent<ITaggregateTevent>>> commitTevents)
    {
       commitTevents(_unCommittedTevents);
       _unCommittedTevents.Clear();
