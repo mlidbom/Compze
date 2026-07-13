@@ -26,6 +26,9 @@ class TessagingConnection(
 {
    public EndpointInformation EndpointInformation { get; private set; } = null!;
 
+   ///<summary>The address this connection delivers to — the endpoint's location when the connection was made; the endpoint's identity is <see cref="EndpointInformation"/>'s id.</summary>
+   internal EndpointAddress RemoteAddress => _remoteAddress;
+
    readonly ITessagesInFlightTracker _tessagesInFlightTracker = tessagesInFlightTracker;
    readonly EndpointAddress _remoteAddress = remoteAddress;
    readonly ITypeMap _typeMap = typeMap;

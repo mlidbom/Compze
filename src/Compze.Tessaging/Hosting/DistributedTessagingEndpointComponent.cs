@@ -51,10 +51,10 @@ sealed class DistributedTessagingEndpointComponent : IEndpointComponent, IAsyncD
 
    public async Task StartSendingAsync()
    {
-      //Tessaging connects to all endpoints including ourselves. Scheduled tommands need to dispatch over the remote protocol to get the delivery guarantees...
-      var serverAddresses = _endpointRegistry.ServerEndpointAddresses.ToHashSet();
-      serverAddresses.Add(_inbox.Address);
-      await Task.WhenAll(serverAddresses.Select(address => _tessagingRouter.ConnectAsync(address))).caf();
+      //The router converges on the registry's membership - including ourselves: scheduled tommands dispatch over the remote
+      //protocol for the delivery guarantees - and keeps reconciling, so endpoints in other processes that appear, disappear,
+      //or restart at a new address are connected, dropped, or re-connected as the registry changes.
+      await _tessagingRouter.StartMaintainingConnectionsAsync(_endpointRegistry, _inbox.Address).caf();
       await _outbox.StartAsync().caf();
    }
 
