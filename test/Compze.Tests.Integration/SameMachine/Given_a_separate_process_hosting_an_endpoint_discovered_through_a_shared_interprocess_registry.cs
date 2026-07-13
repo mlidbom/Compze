@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using Compze.Abstractions.Hosting.Public;
 using Compze.Abstractions.Wiring.Testing.Internal;
+using Compze.Contracts;
 using Compze.DependencyInjection;
 using Compze.Hosting.SameMachine;
 using Compze.Hosting.Testing;
@@ -14,6 +15,7 @@ using Compze.Tests.SameMachine.EndpointHostProcess;
 using Compze.Threading;
 using Compze.Threading.Testing;
 using Compze.xUnitMatrix;
+using NCrunch.Framework;
 
 // ReSharper disable InconsistentNaming for testing
 #pragma warning disable IDE1006 //Reviewed OK: Test Naming Styles
@@ -26,7 +28,7 @@ namespace Compze.Tests.Integration.SameMachine;
 public class Given_a_separate_process_hosting_an_endpoint_discovered_through_a_shared_interprocess_registry : UniversalTestBase
 {
    //The endpoint host process speaks named pipes; the conversation only makes sense when the specification's endpoint does too.
-   bool RunsOnTheNamedPipesTransport => TestEnv.Transport == Transport.NamedPipes;
+   static bool RunsOnTheNamedPipesTransport => TestEnv.Transport == Transport.NamedPipes;
 
    readonly DirectoryInfo _workDirectory = null!;
    readonly InterprocessEndpointRegistry _registry = null!;
@@ -41,14 +43,10 @@ public class Given_a_separate_process_hosting_an_endpoint_discovered_through_a_s
 
       _workDirectory = new DirectoryInfo(Path.Combine(Path.GetTempPath(), "Compze", "Tests", "MultiProcess", Guid.NewGuid().ToString()));
       _workDirectory.Create();
-      var registryName = "EndpointRegistry";
+      const string registryName = "EndpointRegistry";
       _registry = InterprocessEndpointRegistry.OpenOrCreateSessionLocal(registryName, _workDirectory);
 
-      //The process must run from ITS OWN build output - launched from this test project's output its deps.json demands
-      //assembly versions this project's output does not carry. The sibling output directory is this one with the project
-      //name swapped, which stays correct across configurations and target frameworks.
-      var endpointHostProcessDll = Path.Combine(AppContext.BaseDirectory.Replace("Compze.Tests.Integration", "Compze.Tests.SameMachine.EndpointHostProcess"),
-                                                "Compze.Tests.SameMachine.EndpointHostProcess.dll");
+      var endpointHostProcessDll = EndpointHostProcessDll();
       _endpointHostProcess = Process.Start(new ProcessStartInfo("dotnet", $"\"{endpointHostProcessDll}\" {registryName} \"{_workDirectory.FullName}\" {Environment.ProcessId}")
                                            {
                                               UseShellExecute = false,
@@ -69,6 +67,30 @@ public class Given_a_separate_process_hosting_an_endpoint_discovered_through_a_s
             builder.AddDistributedTessaging().AnnounceAddressTo(_registry);
             builder.RegisterTessagingHandlers.ForTommand<TommandSentBackToTheSpecificationProcess>(_ => _replyTommandGate.AwaitPassThrough());
          });
+   }
+
+   ///<summary>Locates <c>Compze.Tests.SameMachine.EndpointHostProcess.dll</c> in that project's OWN build output — launched from this test<br/>
+   /// project's output its deps.json demands assembly versions this project's output does not carry.<br/>
+   /// In a normal build the projects share one output tree, so the sibling output directory is this one with the project name swapped, which<br/>
+   /// stays correct across configurations and target frameworks. Under NCrunch every project builds into its own isolated workspace — no<br/>
+   /// sibling exists — but the endpoint host assembly is loaded into this process from that workspace's output, which the settings in its<br/>
+   /// <c>.v3.ncrunchproject</c> file make runnable, so the loaded assembly's location is the dll to launch.</summary>
+   static string EndpointHostProcessDll()
+   {
+      if(NCrunchEnvironment.NCrunchIsResident())
+      {
+         var workspaceDll = typeof(TommandSentToTheEndpointHostProcess).Assembly.Location;
+         var dependenciesAreMaterializedAlongsideIt = File.Exists(Path.Combine(Path.GetDirectoryName(workspaceDll)._assert().NotNull(), "Compze.Tessaging.dll"));
+         return dependenciesAreMaterializedAlongsideIt
+                   ? workspaceDll
+                   : throw new FileNotFoundException($"The endpoint host process's NCrunch workspace output '{workspaceDll}' is missing its dependencies, so it cannot run standalone. Its .v3.ncrunchproject file must set CopyReferencedAssembliesToWorkspace to True.");
+      }
+
+      var siblingOutputDll = Path.Combine(AppContext.BaseDirectory.Replace("Compze.Tests.Integration", "Compze.Tests.SameMachine.EndpointHostProcess", StringComparison.Ordinal),
+                                          "Compze.Tests.SameMachine.EndpointHostProcess.dll");
+      return File.Exists(siblingOutputDll)
+                ? siblingOutputDll
+                : throw new FileNotFoundException($"The endpoint host process build output was not found at '{siblingOutputDll}'. Building the solution produces it.");
    }
 
    protected override async Task InitializeAsyncInternal()
@@ -107,7 +129,7 @@ public class Given_a_separate_process_hosting_an_endpoint_discovered_through_a_s
       }
    }
 
-   [Skip<Transport>([Transport.AspNetCore], "The AspNetCoreh transport is currently not supported")]
+   [Skip<Transport>([Transport.AspNetCore], "The endpoint host process speaks named pipes; the conversation only makes sense when the specification's endpoint does too")]
    [PCT] public void a_tommand_sent_to_the_process_is_handled_there_and_its_reply_tommand_comes_back()
    {
       //Until this process's reconciliation loop has discovered the endpoint host process - which is still starting up -

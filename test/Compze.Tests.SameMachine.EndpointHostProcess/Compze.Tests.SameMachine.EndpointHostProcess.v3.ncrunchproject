@@ -1,0 +1,10 @@
+<ProjectConfiguration>
+  <Settings>
+    <!-- The multi-process specifications launch this project's build output as a standalone process. NCrunch workspace output
+         is not runnable by default: referenced assemblies are not copied alongside it, and coverage instrumentation makes the
+         assembly depend on the NCrunch runtime. These settings make the workspace output a normal runnable output. NCrunch
+         cannot track coverage inside a spawned process anyway, so disabling instrumentation loses nothing. -->
+    <CopyReferencedAssembliesToWorkspace>True</CopyReferencedAssembliesToWorkspace>
+    <InstrumentOutputAssembly>False</InstrumentOutputAssembly>
+  </Settings>
+</ProjectConfiguration>
