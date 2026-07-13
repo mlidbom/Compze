@@ -1,3 +1,4 @@
+using Compze.Abstractions.Configuration.Internal;
 using Compze.Abstractions.Hosting.Public;
 using Compze.TypeIdentifiers;
 using Compze.Hosting.Configuration;
@@ -61,8 +62,11 @@ class ServerEndpointBuilder : IEndpointBuilder
       _typeMapper.MapTypesFromAssemblyContaining<EndpointAddress>();          // Compze.Abstractions — the shared message-type hierarchy and hosting contracts
       _typeMapper.MapTypesFromAssemblyContaining<EndpointInformationQuery>(); // Compze.Internals.Transport — endpoint discovery infrastructure
 
-      Registrar.JSonAppConfigFileConfigurationParameterProvider()
-               .Register(Singleton.For<ITypeMapper>().Instance(_typeMapper),
+      //Guarded: a composition that supplies its own configuration source registers its IConfigurationParameterProvider in the endpoint setup; appsettings.json is only the default.
+      if(!Registrar.IsRegistered<IConfigurationParameterProvider>())
+         Registrar.JSonAppConfigFileConfigurationParameterProvider();
+
+      Registrar.Register(Singleton.For<ITypeMapper>().Instance(_typeMapper),
                          Singleton.For<ITypeMap>().Instance(_typeMapper),
                          Singleton.For<EndpointId>().Instance(Configuration.Id),
                          Singleton.For<EndpointConfiguration>().Instance(Configuration));

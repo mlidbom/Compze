@@ -16,6 +16,11 @@
     </PackageReference>
     <PackageReference Include="xunit.v3" Version="3.1.0" />
   </ItemGroup>
+  <ItemGroup>
+    <!-- Not a flex reference: the endpoint host process is unpackable test infrastructure, referenced so the multi-process
+         specifications can locate its built executable and share its tessage types. -->
+    <ProjectReference Include="..\Compze.Tests.SameMachine.EndpointHostProcess\Compze.Tests.SameMachine.EndpointHostProcess.csproj" />
+  </ItemGroup>
   <!-- Compze.Contracts — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Contracts)' == 'true'">
     <PackageReference Include="Compze.Contracts" Version="*-*" />

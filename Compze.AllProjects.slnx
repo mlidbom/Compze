@@ -215,6 +215,7 @@
     <Project Path="test/Compze.Tests.Infrastructure/Compze.Tests.Infrastructure.csproj" />
     <Project Path="test/Compze.Tests.Integration/Compze.Tests.Integration.csproj" />
     <Project Path="test/Compze.Tests.Performance.Internals/Compze.Tests.Performance.Internals.csproj" />
+    <Project Path="test/Compze.Tests.SameMachine.EndpointHostProcess/Compze.Tests.SameMachine.EndpointHostProcess.csproj" />
     <Project Path="test/Compze.Tests.ScratchPad/Compze.Tests.ScratchPad.csproj" />
     <Project Path="test/Compze.Tests.Unit/Compze.Tests.Unit.csproj" />
   </Folder>
