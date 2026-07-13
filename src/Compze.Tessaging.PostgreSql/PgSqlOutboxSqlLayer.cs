@@ -129,7 +129,7 @@ partial class PgSqlOutboxSqlLayer(IPgSqlConnectionPool connectionFactory, PgSqlS
                     INNER JOIN {DispatchingTable.TableName} d ON m.{TessageTable.TessageId} = d.{DispatchingTable.TessageId}
                     WHERE d.{DispatchingTable.IsReceived} = false
                       AND d.{DispatchingTable.EndpointId} = @endpointId
-                    ORDER BY d.{DispatchingTable.RetryCount}, d.{DispatchingTable.LastAttemptTime} NULLS FIRST;
+                    ORDER BY m.{TessageTable.GeneratedId}; -- Send order: recovery re-establishes in-order delivery, oldest undelivered first.
 
                     """)
                .AddParameter("endpointId", endpointId.Value)

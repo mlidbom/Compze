@@ -319,8 +319,9 @@ carries no guarantee interfaces, so there is nothing to mis-constrain and no wra
 the standing "should subscribers choose a lighter guarantee?" question (`_TessageTypes..Interfaces.cs:78-79`)
 is answered by the binary opt-down; and `IAtMostOnceTessage` has its reason to exist (transient send + `Id` +
 receiver dedup — the UI double-click case), answering the `//Todo` at `_TessageTypes..Interfaces.cs:66`.
-The related outbox-ordering bug is tracked separately:
-`src/TODO/TODO_bug-outbox-delivery-ordering-lost-on-recovery.md`.
+The related outbox-ordering bug (recovery reloaded the backlog in retry-metadata order instead of send order)
+is FIXED (2026-07-13): `GetUndeliveredTessagesForEndpoint` orders by the outbox tessage table's monotonic
+`GeneratedId` in every SQL backend.
 
 - [ ] Investigate first: determine how typermedia remote routing consumes the advertisement today (e.g.
       whether `IAtMostOnceTypermediaTommand` handler types flow through `HandledRemoteTessageTypeIds` and

@@ -67,13 +67,9 @@ class TessagingConnection(
       _sendLoopThread = _taskRunner.RunOnNamedThread($"DeliveryManager-{EndpointInformation.Id.Value:N}", SendLoop, ThreadPriority.BelowNormal);
    }
 
-   //todo:bug The in-order delivery guarantee is LOST here on restart. The send loop preserves order while
-   //running (single-threaded, head-of-line FIFO), but recovery re-enqueues the backlog in whatever order
-   //GetUndeliveredTessagesForEndpoint returns it — and every backend orders it by RetryCount/LastAttemptTime
-   //(retry metadata), NOT by original send order. A tessage stuck retrying at the head of a live queue
-   //therefore comes back LAST after a restart, inverting the order. The outbox has inherited inbox-style
-   //retry-ordering; an outbox must recover in send order. Needs a stable monotonic per-destination send-order
-   //key. See src/TODO/TODO_bug-outbox-delivery-ordering-lost-on-recovery.md.
+   //In-order delivery survives recovery: GetUndeliveredTessagesForEndpoint returns the backlog in send order
+   //(the outbox tessage table's monotonic GeneratedId), so re-enqueueing it re-establishes head-of-line on the
+   //oldest undelivered tessage - the same order the send loop preserves while running.
    void LoadUndeliveredTessages()
    {
       var undelivered = _tessageStorage.GetUndeliveredTessagesForEndpoint(EndpointInformation.Id);

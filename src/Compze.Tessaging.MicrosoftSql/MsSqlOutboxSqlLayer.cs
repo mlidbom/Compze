@@ -124,7 +124,7 @@ partial class MsSqlOutboxSqlLayer(IMsSqlConnectionPool connectionFactory, MsSqlS
                     INNER JOIN {DispatchingTable.TableName} d ON m.{TessageTable.TessageId} = d.{DispatchingTable.TessageId}
                     WHERE d.{DispatchingTable.IsReceived} = 0
                       AND d.{DispatchingTable.EndpointId} = @endpointId
-                    ORDER BY d.{DispatchingTable.RetryCount}, d.{DispatchingTable.LastAttemptTime}
+                    ORDER BY m.{TessageTable.GeneratedId} -- Send order: recovery re-establishes in-order delivery, oldest undelivered first.
 
                     """)
                .AddParameter("endpointId", endpointId.Value);
