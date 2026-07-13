@@ -50,6 +50,7 @@ public interface IStrictlyLocalTessage;
 public interface IInternalInfrastructureTessage;
 //todo: Should the commented out type below exist?
 //public interface IStrictlyLocalTevent : ITevent, IStrictlyLocalTessage;
+//todo: should this inherit IMustBeSentTransactionally?
 public interface IStrictlyLocalTommand : ITommand, IMustBeSentTransactionally, IStrictlyLocalTessage;
 public interface IStrictlyLocalTommand<out TResult> : ITommand<TResult>, IStrictlyLocalTommand;
 public interface IStrictlyLocalTuery<TTuery, out TResult> : ITuery<TResult>, IStrictlyLocalTessage where TTuery : IStrictlyLocalTuery<TTuery, TResult>;

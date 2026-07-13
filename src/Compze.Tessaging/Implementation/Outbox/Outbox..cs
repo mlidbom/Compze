@@ -40,21 +40,21 @@ partial class Outbox : IOutbox
       _tessagingRouter = tessagingRouter;
    }
 
-   public void PublishTransactionally(IExactlyOnceTevent exactlyOnceTevent)
+   public void PublishTransactionally(IExactlyOncePublisherIdentifyingTevent<IExactlyOnceTevent> wrappedTevent)
    {
       State.NotNull(Transaction.Current);
-      this.Log().Debug($"Publishing tevent {exactlyOnceTevent.Id} ({exactlyOnceTevent.GetType().Name})");
-      var connections = _tessagingRouter.SubscriberConnectionsFor(exactlyOnceTevent)
+      this.Log().Debug($"Publishing tevent {wrappedTevent.Id} ({wrappedTevent.GetType().Name})");
+      var connections = _tessagingRouter.SubscriberConnectionsFor(wrappedTevent)
                                         .Where(connection => connection.EndpointInformation.Id != _configuration.Id)
                                         .ToArray(); //We dispatch tevents to ourselves synchronously so don't go doing it again here.
 
       var teventHandlerEndpointIds = connections.Select(connection => connection.EndpointInformation.Id).ToArray();
-      _storage.SaveTessage(exactlyOnceTevent, teventHandlerEndpointIds);
+      _storage.SaveTessage(wrappedTevent, teventHandlerEndpointIds);
 
       Transaction.Current.OnCommittedSuccessfully(() => connections.ForEach(connection =>
       {
-         this.Log().Debug($"OnCommittedSuccessfully: Delivering tevent {exactlyOnceTevent.Id} to endpoint {connection.EndpointInformation.Id}");
-         connection.EnqueueForDelivery(exactlyOnceTevent);
+         this.Log().Debug($"OnCommittedSuccessfully: Delivering tevent {wrappedTevent.Id} to endpoint {connection.EndpointInformation.Id}");
+         connection.EnqueueForDelivery(wrappedTevent);
       }));
    }
 

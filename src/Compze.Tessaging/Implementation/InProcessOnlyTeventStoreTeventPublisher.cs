@@ -22,6 +22,6 @@ public static class InProcessOnlyTeventStoreTeventPublisherRegistrar
 
    readonly IInProcessTeventPublisher _inProcessTeventPublisher = inProcessTeventPublisher;
 
-   void ITeventStoreTeventPublisher.Publish(ITaggregateTevent tevent, IScopeResolver scopeResolver)
-      => _inProcessTeventPublisher.Publish(tevent, scopeResolver);
+   void ITeventStoreTeventPublisher.Publish(ITaggregateIdentifyingTevent<ITaggregateTevent> wrappedTevent, IScopeResolver scopeResolver)
+      => _inProcessTeventPublisher.Publish(wrappedTevent, scopeResolver);
 }

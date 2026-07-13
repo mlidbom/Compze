@@ -19,6 +19,19 @@ public static class PublisherIdentifyingTevent
    public static IPublisherIdentifyingTevent<TTevent> WrapTevent<TTevent>(TTevent tevent) where TTevent : class, ITevent =>
       (IPublisherIdentifyingTevent<TTevent>)ConstructorFor(tevent.GetType()).Invoke(tevent);
 
+   ///<summary>The tevent in its wrapped form: an already-wrapped tevent passes through as it stands; anything else is wrapped by <see cref="WrapTevent{TTevent}"/>.<br/>
+   /// Every tevent is wrapped before routing - a boundary that receives a tevent that may or may not already be wrapped normalizes here.</summary>
+   public static IPublisherIdentifyingTevent<ITevent> Wrapped(ITevent tevent) => tevent as IPublisherIdentifyingTevent<ITevent> ?? WrapTevent(tevent);
+
+   ///<summary>Wraps <paramref name="tevent"/> in <paramref name="wrapperTeventImplementation"/>'s generic type definition closed over the tevent's runtime type,<br/>
+   /// so that the wrapper is assignable to the wrapper interface of every tevent type the wrapped tevent itself is assignable to.<br/>
+   /// This is the one home of publisher-declared wrapping: a taggregate wrapping in its declared wrapper implementation and a shared tomponent's slot<br/>
+   /// wrapping in its adopting wrapper tevent both close their wrapper type here.</summary>
+   public static IPublisherIdentifyingTevent<ITevent> WrapIn(Type wrapperTeventImplementation, ITevent tevent) =>
+      (IPublisherIdentifyingTevent<ITevent>)Constructor.ForGenericType(wrapperTeventImplementation)
+                                                       .WithArgument(tevent.GetType())
+                                                       .Invoke(tevent);
+
    ///<summary>The wrapper type <see cref="WrapTevent{TTevent}"/> produces for a tevent of <paramref name="teventType"/>: <see cref="PublisherIdentifyingTevent{TTevent}"/> closed over it.</summary>
    public static Type WrapperTypeFor(Type teventType) => typeof(PublisherIdentifyingTevent<>).MakeGenericType(teventType);
 

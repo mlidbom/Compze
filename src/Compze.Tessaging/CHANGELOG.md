@@ -4,6 +4,17 @@ All notable changes to Compze.Tessaging will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## Unreleased
+
+- The in-process bus routes exclusively by wrapper type: `ForTevent<TTevent>` keys an inner tevent type subscription under `IPublisherIdentifyingTevent<TTevent>` and unwraps at delivery, while a subscription to a wrapper type receives the wrapper itself - publisher-conscious subscription (subscribe to `IManagerTevent<IEmployeeTevent>` and receive only the employee tevents a manager published). Subscribing to a tevent type and subscribing to its wrapper receive exactly the same tevents.
+- `IInProcessTeventPublisher.Publish` wraps a tevent published without a publisher-identifying wrapper before routing, and the inbox wraps tevents received from the wire the same way (the wire still carries inner tevents until the remote-transport increment).
+- `ForTevent` now validates the subscribed type with the subscription rules (interfaces only) instead of the general message-type rules, matching the in-memory dispatcher.
+- The tevent-store publishers (`InProcessOnlyTeventStoreTeventPublisher`, `DistributedTeventStoreTeventPublisher`) receive the committed tevent in its wrapper and deliver it wrapped in-process; the distributed publisher hands the outbox the inner tevent until the wire carries wrappers.
+- Fixed: registering a second tevent handler whose subscription resolves to an already-registered routing key threw instead of appending the handler.
+- The wire carries the fully wrapped tevent: the outbox stores and transmits the wrapper under the closed wrapper type's `TypeId`, endpoints advertise tevent subscriptions in their translated wrapper form, and the router matches wrapped tevents against those advertised wrapper types. Publisher identity crosses endpoints with zero information loss - a remote endpoint can subscribe publisher-consciously (to `IMyTaggregateTevent<IMyTaggregateTevent>`) and receive the wrapped tevent exactly as the taggregate published it. Exactly-once deduplication is unchanged: the wrapper's `Id` is the wrapped tevent's.
+- `IOutbox.PublishTransactionally` and `ITessagingRouter.SubscriberConnectionsFor` take the wrapped tevent (`IExactlyOncePublisherIdentifyingTevent<IExactlyOnceTevent>`), so handing them an unwrapped tevent - which no wrapper-typed route would ever match - is a compile error instead of a silent routing no-op.
+- Fixed: an endpoint whose multiple subscriptions matched the same tevent was returned once per matching route by `SubscriberConnectionsFor`, so the outbox saved duplicate dispatching rows for it and delivery failed with a primary-key violation. An endpoint is one subscriber however many of its advertised subscriptions match.
+
 ## 0.3.1-alpha
 
 - Fixed packaging: the `_docs` markdown files were packed into the NuGet package as contentFiles, so installing the package injected linked `_docs\*.md` items into consuming projects. They no longer ship in the package.

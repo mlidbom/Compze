@@ -49,8 +49,15 @@ Canonical statements of the model:
   recorded at `WrapperTeventImplementationGenerator.cs:41-43` (transmit inner-only so endpoints need no
   wrapper type information) is REJECTED: it adds complexity to dodge a problem `TypeId` already solves
   completely. Pre-`TypeId` thinking; going by the fully wrapped types everywhere is much simpler.
-- **D3 — component/entity publisher identity: DEFERRED.** Does not change what the other layers need;
-  routing treats a component wrapper as just another wrapper type when it arrives.
+- **D3 — reusable tomponents/tentities: base classes and specs DONE (2026-07-12). Re-scoped the same day:
+  owned components/entities are correct as-is, WITHOUT wrapping.** Wrapping adds discriminating information
+  only when the same tevent type has more than one possible publisher; an owned component's/entity's tevents
+  slot into exactly one taggregate's tevent hierarchy, so the inner type alone is already the complete
+  publisher identity, statically. Reusable cross-taggregate tomponents/tentities — whose tevents are adopted
+  into each owner's hierarchy via owner-declared wrapper types — are implemented as `SharedTomponent`/
+  `SharedTentity`/`SharedTentityCollection`/`SharedTomponentSlot`; design record and remaining sub-items in
+  the Deferred section. As designed, routing/store/wire needed ZERO changes: an adopting wrapper tevent is
+  just another wrapper type when it arrives.
 - **D4 — two wrapping mechanisms, both compile-time types.** Taggregates wrap in their declared wrapper
   implementation types; a tevent published without a wrapper is auto-wrapped in
   `PublisherIdentifyingTevent<TTeventInterface>` closed over its runtime type. Special-casing wrapped vs.
@@ -100,8 +107,9 @@ Canonical statements of the model:
   (`src/Compze.Abstractions/Tessaging/Validation/TessageTypeInspector.cs:99-116`). It also restricts tevent
   subscription to interfaces (`:25-36`). Both rules are unit tested
   (`test/Compze.Tests.Unit/Tessaging/TessageTypeInspectorTests.cs`).
-- Gap: nothing yet validates `TypeId` coverage for the closed generic wrapper types that invariant 6 sends
-  through the store and the wire.
+- `TypeId` coverage for the closed generic wrapper types is validated (2026-07-12): the translated
+  advertisement is asserted resolvable at endpoint start (`AssertMappingsExistFor`), and both the store's
+  save path and the outbox fail loudly in `TypeMapper.GetId` for an unmapped concrete wrapper type.
 
 ### 2. The in-memory tevent dispatcher — DONE (2026-07-12)
 
@@ -131,16 +139,23 @@ unhandled-tevent ignore configuration is translated the same way subscriptions a
   tevent)` — the same call the taggregate uses when publishing and a migration author uses when wrapping a
   replacement tevent.
 
-### 4. Teventive components and entities — not wrapping (DEFERRED, D3)
+### 4. Owned teventive components and entities — correct as-is, no wrapping (D3, re-scoped)
 
 - `TeventiveComponent` has no wrapper type parameters
-  (`src/Compze.Teventive/Taggregates/BaseClasses/TeventiveComponent.cs:6-18`); `TeventiveEntity` likewise.
-  A component's `ApplyTevent` dispatches the raw inner tevent (`TeventiveComponent.cs:32`) and `Publish`
-  forwards raw to the parent (`:48`), so a component tevent carries at most the ROOT taggregate's identity.
-- Reusable (cross-aggregate) components are explicitly unsupported —
-  `src/Compze.Teventive/Taggregates/_docs/reusable-components.md:1-2,16` ("wrap one more time... More
-  soon. 2024-12-14").
-- Deferral is safe: when component wrapping arrives it is just another wrapper type to the routing.
+  (`src/Compze.Teventive/Taggregates/BaseClasses/TeventiveComponent.cs:6-18`); `Tentity` likewise. A
+  component's `ApplyTevent` dispatches the raw inner tevent (`TeventiveComponent.cs:32`) and `Publish`
+  forwards raw to the parent (`:48`), so the tevent is wrapped once, at the root, in the taggregate's own
+  wrapper. That is the CORRECT design, not a gap: an owned component's tevent types belong to exactly one
+  taggregate's tevent hierarchy, so the inner type alone already identifies the publisher completely —
+  a wrapper level would restate statically known information and cost more generic parameters (per D3 as
+  re-scoped 2026-07-12).
+- Reusable (cross-taggregate) tomponents/tentities are the actual D3 work — DONE (2026-07-12):
+  `SharedTomponent`, `SharedTentity`, `SharedTentityCollection`, and `SharedTomponentSlot` in
+  `Compze.Teventive.Taggregates.BaseClasses`, specified end to end (wrapping, slot discrimination,
+  route-back, per-tentity routing, replay, subscription grains) in
+  `test/Compze.Tests.Unit/CQRS/Taggregates/SharedTomponents/`. The user-facing documentation
+  (`src/Compze.Teventive/Taggregates/_docs/reusable-components.md`, still "More soon. 2024-12-14") remains
+  to be rewritten to the as-built design.
 
 ### 5. The tevent store — DONE (2026-07-12, per D7)
 
@@ -164,43 +179,63 @@ unhandled-tevent ignore configuration is translated the same way subscriptions a
   `IPublisherIdentifyingTevent<>`/`IRemotablePublisherIdentifyingTevent<>`/`IExactlyOncePublisherIdentifyingTevent<>`
   (Compze.Abstractions) — the interfaces surface in `$type` references when wrapped histories travel inside
   serialized resources.
-- Remaining seam, by design until the in-process bus increment: `TeventStoreUpdater` unwraps at the
-  `ITeventStoreTeventPublisher` seam because the bus still routes on inner tevent types
-  (`TeventStoreUpdater.cs`, one `.Tevent` wide).
+- The `ITeventStoreTeventPublisher` seam is flipped (2026-07-12): `TeventStoreUpdater` publishes the wrapped
+  tevent, and publisher identity survives from `Publish` in the taggregate through storage and onward
+  publication. The one remaining unwrap, by design until the remote-transport increment: the distributed
+  publisher hands the OUTBOX the inner tevent, because the wire still carries inner tevents.
 
-### 6. The in-process bus — assignability done; needs wrapping + route-by-outer
+### 6. The in-process bus — DONE (2026-07-12)
 
-- `TessageHandlerRegistry.GetTeventHandlers` routes by a pure assignability walk:
-  `_teventHandlers.Where(it => it.Key.IsAssignableFrom(teventType))`
-  (`src/Compze.Tessaging/Implementation/TessageHandling/Dispatching/TessageHandlerRegistry.cs:72`).
-  Verified by test (`test/Compze.Tests.Integration/InProcess/Given_a_container_composed_with_InProcessTessaging.cs:44-57`).
-- No wrapper awareness: the bus never wraps, never unwraps, has no subscription translation, and no
-  wrapper-typed (publisher-conscious) subscription. All to be added per invariants 1-5.
-- Standing perf note at the routing site: `TessageHandlerRegistry.cs:71` — `//performance: Use static
-  caching trick.` (the walk rebuilds the handler list on every publish).
+- The bus implements the decided model: `ForTevent<TTevent>` keys an inner tevent type subscription under
+  the translated wrapper type (via `PublisherIdentifyingTevent.WrapperTypeMatchingAllWrappingsOf`) and
+  unwraps at delivery; a subscription to a wrapper type is keyed as it stands and receives the wrapper —
+  publisher-conscious subscription. Registration validates with the subscription rules
+  (`AssertValidForSubscription`, interfaces only), matching the in-memory dispatcher.
+- Every delivery site normalizes per invariant 1 through `PublisherIdentifyingTevent.Wrapped`:
+  `InProcessTeventPublisher.Publish` wraps a tevent published without a wrapper, and the inbox wraps tevents
+  received from the wire (which carries inner tevents until the remote-transport increment).
+- The tevent-store publishers receive and deliver the committed tevent in its wrapper; the distributed
+  publisher hands the outbox the inner tevent — the wire seam, resolved by the remote-transport increment.
+- Specified at the bus surface: inner-typed and wrapper-typed subscribers receive the same tevent (invariant
+  4), the wrapper subscriber gets the wrapper itself, and an unwrapped publish reaches wrapper-typed
+  subscribers through the auto-created wrapper
+  (`test/Compze.Tests.Integration/InProcess/Given_a_container_composed_with_InProcessTessaging.cs`).
+- Standing perf note at the routing site remains: `//performance: Use static caching trick.` (the
+  assignability walk rebuilds the handler list on every publish).
 
-### 7. The remote bus — sender-side assignability done; needs wrappers on the wire
+### 7. The remote bus — DONE except the D6 delivery guarantees (2026-07-12)
 
-- Sender-side routing IS assignability: `TessagingRouter.SubscriberConnectionsFor` matches
-  `route.TeventType.IsInstanceOfType(tevent)`
-  (`.../Transport/Client/Implementation/Universal/TessagingRouter.cs:127`). Covered by the endpoint tests
-  (`test/Compze.Tests.Common/.../EndpointHostTestBase.cs:133`).
-- Route advertisement is the exact registered handler types as `TypeId`s, filtered to `IRemotableTessage`
-  (`TessageHandlerRegistry.HandledRemoteTessageTypeIds`, `:74-86`). Under route-by-outer, endpoints
-  advertise the TRANSLATED wrapper subscription types.
-- The wire is exact-type + `ITypeMap` based (`TransportTessage.cs:54-58, 34-42`; `TypeMapper.GetId` throws
-  for unmapped types). Per invariant 6 the wire carries the fully wrapped tevent identified by the closed
-  generic wrapper type's `TypeId`; wiring that identity coverage up is part of the work.
-- Gating: only `IExactlyOnceTevent`/`IExactlyOnceTommand` ever get routes
-  (`TessagingRouter.RegisterRoutes`, `:96-102`), and advertisement covers all `IRemotableTessage` — the
-  advertise-vs-route mismatch. Resolved by the D6 work (see the Remote delivery guarantees work items).
+- The wire carries the fully wrapped tevent, identified by the closed wrapper type's `TypeId` (invariant 6):
+  the distributed publisher hands the outbox the wrapper, the outbox stores and transmits it (the wrapper IS
+  the `IExactlyOnceTevent` it stores - its `Id` is the wrapped tevent's, so exactly-once deduplication is
+  unchanged), and the receiving inbox deserializes the wrapper and routes it by its type.
+- Endpoints advertise tevent subscriptions in their translated wrapper form
+  (`TessageHandlerRegistry.HandledRemoteTessageTypeIds`); the sender matches wrapped tevents against the
+  advertised wrapper types by assignability. `AssertMappingsExistFor` on the translated advertisement
+  validates `TypeId` coverage for the wrapper types at endpoint start; the publish side fails loudly in
+  `TypeMapper.GetId` for an unmapped concrete wrapper.
+- Publisher-conscious subscription crosses endpoints: specified end to end in
+  `Publisher_conscious_subscription_tests` (a remote endpoint subscribing to
+  `IMyTaggregateTevent<IMyTaggregateTevent>` receives the wrapped tevent the taggregate published).
+- `IOutbox.PublishTransactionally`/`ITessagingRouter.SubscriberConnectionsFor` take
+  `IExactlyOncePublisherIdentifyingTevent<IExactlyOnceTevent>`, making an unwrapped hand-off - which no
+  wrapper-typed route would match - a compile error instead of a silent routing no-op.
+- Remaining gating (D6, the last increment): `TessagingRouter.RegisterRoutes` registers a tevent route only
+  when the advertised subscription guarantees exactly-once delivery (directly or through covariance:
+  `Is<IPublisherIdentifyingTevent<IExactlyOnceTevent>>`); tommand routes only for `IExactlyOnceTommand`.
+  Removing that gate and implementing the other delivery guarantees is the Remote delivery guarantees work.
 
-### 8. Test coverage — dispatcher-level only
+### 8. Test coverage — DONE for everything in scope (2026-07-12)
 
-- Covered: the full wrapper-routing matrix on a bare `IMutableTeventDispatcher`
-  (`MutableTeventDispatcher_WrappedTeventsTests.cs`), in-process bus base-interface routing, remote endpoint
-  base-interface routing, store round-trip of inner tevents.
-- Missing: everything end-to-end. See the Tests work items.
+- The full wrapper-routing matrix on a bare `IMutableTeventDispatcher`
+  (`MutableTeventDispatcher_WrappedTeventsTests.cs`); publisher identification through a real inheriting
+  taggregate hierarchy including publisher-conscious and publisher-indifferent subscribers
+  (`Given_a_cat_taggregate_inheriting_from_an_animal_taggregate`); subscription-level transparency and
+  publisher-conscious subscription at the in-process bus
+  (`Given_a_container_composed_with_InProcessTessaging`); the wrapped store round-trip including migrations
+  (the store and migration suites); and publisher-conscious subscription across endpoints
+  (`Publisher_conscious_subscription_tests`), with exactly-once dedup of wrapped tevents covered by the
+  existing guarantee tests.
 
 ### 9. Ubiquitous-language drift from the rename — RESOLVED (2026-07-12)
 
@@ -230,13 +265,13 @@ interface, file names match the types they declare (`ITaggregateIdentifyingTeven
 - [x] Replace `//Urgent: Wrapping here seems arguable at best.` with a statement of invariant 1
       (documented on `ITeventDispatcher`'s `Dispatch` overloads).
 
-### In-process bus (Compze.Tessaging)
+### In-process bus (Compze.Tessaging) — ALL DONE (2026-07-12)
 
-- [ ] Wrapped publication end to end: the wrapped tevent now flows `ITaggregate.Commit` →
-      `TeventStoreUpdater` (DONE 2026-07-12); the remaining seam is
-      `ITeventStoreTeventPublisher` / `InProcessTeventPublisher` / `DistributedTeventStoreTeventPublisher`,
-      where the updater still unwraps because the bus routes on inner tevent types.
-- [ ] `TessageHandlerRegistry`: translate `ForTevent<T>` inner subscriptions to root-wrapper subscriptions,
+- [x] Wrapped publication end to end: `ITaggregate.Commit` → `TeventStoreUpdater` →
+      `ITeventStoreTeventPublisher` / `InProcessTeventPublisher` / `DistributedTeventStoreTeventPublisher`
+      carry the wrapped tevent. (The distributed publisher hands the outbox the inner tevent until the
+      remote-transport increment puts the wrapper on the wire.)
+- [x] `TessageHandlerRegistry`: translate `ForTevent<T>` inner subscriptions to root-wrapper subscriptions,
       route by outer type, unwrap at delivery; support wrapper-typed (publisher-conscious) subscription.
 
 ### Tevent store — ALL DONE (2026-07-12)
@@ -247,17 +282,106 @@ interface, file names match the types they declare (`ITaggregateIdentifyingTeven
       take author-supplied wrapped replacements; migrator selection stays on the inner tevent's interface
       hierarchy.
 
-### Remote transport
+### Remote transport — ALL DONE (2026-07-12)
 
-- [ ] Carry the fully wrapped tevent on the wire, identified by the closed generic wrapper type's `TypeId`.
-- [ ] Advertise the translated wrapper subscription types; sender-side routing already matches by
-      assignability (`TessagingRouter.cs:127`) and needs only the wrapper-typed routes.
-- [ ] Inbox: dispatch received tevents by outer type; verify exactly-once dedup through
-      `IExactlyOncePublisherIdentifyingTevent.Id` (the inner tevent's `Id`) once wrappers traverse it.
-- [ ] Extend `TessageTypeInspector` (or the type-map assertions) to validate `TypeId` coverage for the
-      wrapper types the store and wire now depend on.
+- [x] Carry the fully wrapped tevent on the wire, identified by the closed generic wrapper type's `TypeId`.
+- [x] Advertise the translated wrapper subscription types; sender-side routing matches wrapped tevents
+      against them by assignability. (An endpoint is one subscriber however many of its advertised
+      subscriptions match - `SubscriberConnectionsFor` dedups connections.)
+- [x] Inbox: dispatches received tevents by outer type (the wrapper arrives from the wire and passes
+      through the `PublisherIdentifyingTevent.Wrapped` normalization); exactly-once dedup verified through
+      the wrapper's `Id` (the wrapped tevent's `Id`) by the existing exactly-once guarantee tests.
+- [x] `TypeId` coverage for wrapper types is validated: `AssertMappingsExistFor` on the translated
+      advertisement at endpoint start, and `TypeMapper.GetId` failing loudly on the publish side.
 
-### Remote delivery guarantees (D6)
+### Remote delivery guarantees (D6) — DEFERRED (2026-07-12, after the wire increment)
+
+Deferred by decision once the wrapped-currency work proper was complete: the exactly-once path carries
+wrapped tevents end to end; widening WHICH tevents can travel remotely (and under which guarantees) is a
+separate feature. **The publishing/subscribing API and delivery semantics for this feature were designed
+2026-07-13 — see "Decided design" immediately below.** Still open after that: whether the
+remotable-but-not-exactly-once tevent *tier* gets a dedicated marker/name in the type hierarchy (the delivery
+*mechanism* vocabulary — transient delivery, the transaction-ignoring escape hatches — is settled below); the
+wrapper interface constraints (`IRemotablePublisherIdentifyingTevent<out T>`/
+`IExactlyOncePublisherIdentifyingTevent<out T>` both require `T : IExactlyOnceTevent`, which contradicts "any
+tevent publishable remotely"); and the guarantee-preserving auto-wrap item below.
+
+#### Decided design — publishing and subscribing API (2026-07-13)
+
+Recorded from the design conversation that also surfaced the outbox-ordering bug
+(`src/TODO/TODO_bug-outbox-delivery-ordering-lost-on-recovery.md` — a correctness fix that stands independent
+of this feature). The organizing principle: **remotability and delivery-guarantee are orthogonal axes**
+(`_TessageTypes..Interfaces.cs`) — `IRemotableTevent` says only "may cross a boundary" and carries no
+transactional requirement; the guarantees are separate markers (`IMustBeSentTransactionally`,
+`IMustBeHandledTransactionally`) and tiers (`IAtMostOnceTessage`, `IExactlyOnceTessage`) layered on top. The
+delivery guarantee is resolved per (tevent, subscriber) edge, and **the tevent's own type is the contract** —
+neither publisher nor subscriber picks the guarantee; they can only opt fully out for observation.
+
+**Publishing.** One public interface, `ITeventPublisher.Publish(ITevent)` — tevent-only (the 1:N fan-out;
+tommands stay with `IServiceBusSession.Send`, tueries with the navigator). It routes each tevent by the
+guarantee interfaces the tevent's type declares, as a single fan-out point:
+
+- always → in-process synchronous delivery (`IInProcessTeventPublisher`), inline in the caller's transaction;
+- `IExactlyOnceTevent` → also the `IOutbox` (durable, on-commit, exactly-once);
+- `IRemotableTevent` but not `IExactlyOnceTevent` → also the transient transport (best-effort, on-commit);
+- not `IRemotableTevent` → local only.
+
+It honors the ambient transaction: the durable and transient remote legs deliver on commit (never leak a
+tevent for a rolled-back transaction); in-process runs inline. It auto-wraps per invariant 1.
+
+- **The tevent store becomes a client of `ITeventPublisher`**, forwarding each committed tevent — not the
+  owner of publishing. `ITeventStoreTeventPublisher` collapses into `ITeventPublisher`;
+  `IInProcessTeventPublisher` / `IOutbox` / the transient transport become internal delivery legs, not public
+  surfaces. This resolves "the code assumes only taggregates publish events" — anything can publish now.
+- **The mutually-exclusive publisher-mode split dissolves.** `InProcessOnlyTeventStoreTeventPublisher` vs
+  `DistributedTeventStoreTeventPublisher` (an endpoint-wide choice) becomes per-tevent routing: an endpoint
+  has one `ITeventPublisher`; which legs it has is wiring. A tevent whose guarantee needs a leg the endpoint
+  did not wire (an `IExactlyOnceTevent` on a transient-only endpoint) is a **loud wiring/publish error**,
+  never a silent downgrade.
+- **Exactly-once is decoupled from the store.** It requires only an ambient transaction (assert it) + the
+  outbox; the store is the commonest client, not a prerequisite. Any code may publish an `IExactlyOnceTevent`
+  within a transaction — the outbox row joins that transaction.
+
+**Transaction-ignoring escape hatch (publish).** `ITransactionIgnoringTeventPublisher.Publish(ITevent)`
+publishes immediately and unconditionally, ignoring the ambient transaction (emits even if the surrounding
+transaction rolls back). For tracing/monitoring infrastructure only. It guards loudly (an `Assert.Argument`,
+because C# cannot express "an `ITevent` provably not `IMustBeSentTransactionally`") against any tevent
+implementing **`IMustBeSentTransactionally`**: immediate-unconditional delivery structurally cannot back a
+durable send. `IMustBeSentTransactionally` is the correct marker — the publisher is a send-side concept, so
+`IMustBeHandledTransactionally` is not its business. (For tevents this currently forbids exactly the same
+tevents as forbidding `IAtMostOnceTessage` would, since `IExactlyOnceTevent` is the only transactional tevent
+tier; the two diverge only if an at-most-once tevent tier is added, and `IMustBeSentTransactionally` is then
+still correct — an at-most-once tevent may be sent best-effort, carrying its `Id`, because at-most-once
+constrains only handling, not sending.)
+
+**Subscribing.** Default registration (`RegisterTeventHandlers` / `ForTevent<T>`) delivers each tevent with
+the full guarantee its type declares; the subscriber does not choose the guarantee. Exactly-once tevents
+arrive through the inbox (transactional handling, dedup, retry); transient tevents arrive by direct dispatch.
+The escape hatch `RegisterTransactionIgnoringTeventHandlers()` opts a handler fully out: direct invocation,
+outside any transaction, no guarantee (may run even when the transactional handler set rolls back) — the
+mirror of the publish escape hatch, for the same clients, under the same `TransactionIgnoring` name.
+
+- **This binary is complete, not a simplification.** The only reason to want *less* than the declared
+  guarantee is to shed cost; any intermediate tier (e.g. dedup-without-durability) still needs the inbox's
+  store to dedup and so saves nothing. "The type's declared guarantee" and "free transaction-ignoring
+  observation" span the entire cost/guarantee frontier. This resolves the standing "should subscribers choose
+  a lighter guarantee?" question (`_TessageTypes..Interfaces.cs:78-79`): yes, but only the binary opt-out, not
+  a menu of levels.
+- **Wiring rules (loud failure, mirroring the publish side):** a transaction-ignoring subscription to an
+  `IExactlyOnceTevent` is allowed on any endpoint (direct dispatch needs no inbox); a default (transactional)
+  subscription to an `IExactlyOnceTevent` on an endpoint with no inbox wired fails at setup.
+
+**Symmetry — the escape hatch is one concept on both ends** ("emit/observe regardless of transactional
+fate", same tracing/monitoring clients, same `TransactionIgnoring` name):
+
+| | Default | Transaction-ignoring escape hatch |
+|---|---|---|
+| **Publish** | `ITeventPublisher` — honors transaction, routes per tevent type | `ITransactionIgnoringTeventPublisher` — emit even if my transaction rolls back |
+| **Subscribe** | `RegisterTeventHandlers` — transactional, gets the type's guarantee | `RegisterTransactionIgnoringTeventHandlers` — observe even if the processing transaction rolls back |
+
+The receiving-endpoint stance is unchanged and absolute: **failing to *receive* a tevent (persist it to the
+inbox when its guarantee requires it) is a fatal bug — the system goes down.** Failing to *handle* one is a
+separate matter, out of scope here.
 
 - [ ] Investigate first: determine how typermedia remote routing consumes the advertisement today (e.g.
       whether `IAtMostOnceTypermediaTommand` handler types flow through `HandledRemoteTessageTypeIds` and
@@ -267,23 +391,41 @@ interface, file names match the types they declare (`ITaggregateIdentifyingTeven
       beyond exactly-once.
 - [ ] Implement the delivery path for remotable tevents that are not `IExactlyOnceTevent`: sent without the
       outbox's transactional persistence, dispatched on arrival without the inbox's persist/dedup — the
-      guarantees each tevent's interfaces declare, no more and no less.
+      guarantees each tevent's interfaces declare, no more and no less. Per the Decided design: this is the
+      transient transport + direct receive dispatch behind `ITeventPublisher`'s routing (best-effort,
+      on-commit), plus the `ITransactionIgnoringTeventPublisher` / `RegisterTransactionIgnoringTeventHandlers`
+      escape hatches (immediate, out-of-transaction). Single-in-flight per destination for now — no
+      pipelining (decided 2026-07-13), so ordering holds without sequence numbers while connected.
 - [ ] Once the router honors the full advertised set, assert loudly that every advertised
       non-infrastructure type gets a route, so a future regression fails instead of silently dropping
       subscriptions.
-- [ ] Standing open question, not blocking: should tevent subscribers additionally be able to choose a
-      lighter delivery guarantee than the tevent type's own (`_TessageTypes..Interfaces.cs:78-79`)?
+- [x] RESOLVED (2026-07-13): should tevent subscribers be able to choose a lighter delivery guarantee than
+      the tevent type's own (`_TessageTypes..Interfaces.cs:78-79`)? Yes, but only as a **binary** opt-out —
+      the default is the type's declared guarantee; `RegisterTransactionIgnoringTeventHandlers()` opts fully
+      out for observation. No menu of intermediate levels (an intermediate tier saves no cost — it still
+      needs the inbox store to dedup). See the Decided design above.
+- [ ] Guarantee-preserving auto-wrap: `PublisherIdentifyingTevent<TTevent>` implements only the root wrapper
+      interface, so auto-wrapping an `IExactlyOnceTevent` published without a wrapper produces a wrapper
+      with no delivery-guarantee interfaces — fine in-process, but such a wrapper cannot travel the
+      exactly-once wire. Nothing publishes bare tevents remotely today (taggregate tevents arrive wrapped;
+      the outbox signature now makes an unwrapped hand-off a compile error), but D6's "publish any tevent
+      remotely" needs auto-wrap to pick the most derived wrapper class matching the inner's guarantee
+      interfaces (e.g. an `ExactlyOncePublisherIdentifyingTevent<TTevent>` sibling).
 
 ### Tests
 
-- [ ] End-to-end publisher identification through a real `Taggregate` (inheritance hierarchy), including
-      wrapper-typed subscribers and Before/After handlers.
-- [ ] The subscription-level-transparency invariant (4) tested at every surface: dispatcher, in-process bus,
-      store publication, remote endpoint.
-- [ ] Make `Given_a_cat_taggregate_inheriting_from_an_animal_taggregate` assert the publisher-identifying
-      routing it exists for
-      (`test/Compze.Tests.Unit/CQRS/Taggregates/InheritingTaggregate/...cs:5` — self-flagged
-      `//todo: is this supposed to actually test anything?`).
+- [x] End-to-end publisher identification through a real `Taggregate` (inheritance hierarchy), including
+      publisher-conscious (wrapper-typed) and publisher-indifferent subscribers
+      (`Given_a_cat_taggregate_inheriting_from_an_animal_taggregate`, rewritten 2026-07-12 — it caught the
+      `GenericTypeConstructor` shared-cache bug that wrapped a dog's tevents in the cat's wrapper).
+      Before/After handler routing is specified at the dispatcher level
+      (`MutableTeventDispatcher_WrappedTeventsTests`).
+- [x] The subscription-level-transparency invariant (4) tested at every surface: dispatcher
+      (`MutableTeventDispatcher_WrappedTeventsTests`), in-process bus and store publication
+      (`Given_a_container_composed_with_InProcessTessaging`), remote endpoint (inner-typed and
+      publisher-conscious remote subscriptions both receiving in the endpoint suites).
+- [x] Make `Given_a_cat_taggregate_inheriting_from_an_animal_taggregate` assert the publisher-identifying
+      routing it exists for. DONE 2026-07-12.
 - [x] Fix the misnamed wrapped-dispatch tests (turned out to be three, not two — `IAdminUser...`-named tests
       asserting `IUserPublisherIdentifyingTevent<...>`). DONE 2026-07-12.
 - [x] Negative (`DoesNotDispatch`) coverage for the plain `For` subscription kind, including the sharpest
@@ -299,9 +441,93 @@ interface, file names match the types they declare (`ITaggregateIdentifyingTeven
 
 ## Deferred
 
-- **D3 — component/entity publisher identity.** Give `TeventiveComponent`/`TeventiveEntity` their own
-  publisher-identifying wrapping; then implement reusable cross-aggregate components and finish
-  `reusable-components.md`. Until then component tevents carry only the root taggregate's identity.
+- **D3 — reusable tomponents/tentities** (re-scoped 2026-07-12: owned components/entities are correct
+  as-is — see the decision log and Status §4). Base classes (`SharedTomponent`, `SharedTentity`,
+  `SharedTentityCollection`, `SharedTomponentSlot`) and executable specifications DONE (2026-07-12);
+  the design below is implemented and verified except where an item is marked open.
+  `IPublisherIdentifyingTevent`'s own doc comment already named this use case
+  (`_TessageTypes..Interfaces.cs:84-89`).
+
+  Settled direction (as built):
+  - **The adopting wrapper tevent** — the owner declares, per member slot, a wrapper type that adopts the
+    reusable tomponent's tevents into the owner's tevent hierarchy; it is BOTH an owner-hierarchy tevent and
+    a publisher-identifying wrapper:
+    `interface IShippingAddressTevent<out T> : IOrderTevent, IPublisherIdentifyingTevent<T> where T : IPostalAddressTevent`.
+    What exits the taggregate is double-wrapped — `OrderTevent<ShippingAddressTevent<PostalAddressChanged>>`,
+    an `IOrderTevent<IOrderTevent>` — so the root wrapping machinery, routing, store, and wire need NOTHING
+    new: just another closed wrapper type with a `TypeId`, and that closed type IS the full publication
+    path, statically. Nesting composes by recursion (a reusable tomponent inside a reusable tomponent
+    declares its own slots, each adoption re-rooting into the next hierarchy up).
+  - **A reusable tevent is just an `ITevent` — nothing more.** No `TaggregateId`/`TaggregateVersion`
+    (taggregate-ness is exactly what adoption confers), no timestamp (no gain, plenty of potential
+    confusion), and no `TessageId` — `ITevent` requires none (`Id` first appears at `IAtMostOnceTessage`),
+    `IPublisherIdentifyingTevent<out TTevent>` constrains its inner to bare `ITevent`, and an identity of
+    its own would conflict with the one the adopting wrapper always mints. The adopting wrapper's
+    implementation class derives from the owner's tevent implementation base, so `TaggregateTevent` supplies
+    the bookkeeping (`TessageId`, `TaggregateId`, version, `UtcTimeStamp`) and the store's stamp-the-inner
+    hydration works unchanged — the adopting wrapper IS the inner from the publisher wrapper's perspective.
+    (The `IExactlyOncePublisherIdentifyingTevent.Id => Tevent.Id` forwarding default does not apply here:
+    that family wraps inners that already carry identity; the adopting wrapper wraps identity-free inners.)
+  - **A reusable tentity's identity is domain data**: one of its tevents' own properties, orthogonal to
+    `TessageId`. Optionally formalized by its tevents inheriting an Id-bearing root interface — that only
+    enables compile-time-safe convenience wiring; it is not required by the pattern.
+  - **The owner-side slot wraps, not the tomponent.** Slot identity ("Order's SHIPPING address") is the
+    owner's knowledge — the tomponent cannot truthfully stamp an identity it doesn't have. And the
+    route-back registration must live owner-side anyway, so the slot holds wrap-on-publish and
+    unwrap-on-apply in one place. The tomponent publishes its own raw tevents into a connection handed to
+    it at construction and carries ZERO owner-related type parameters — that is what makes it reusable in
+    arbitrary teventives; the generic weight lands on the owner's slot declaration, once per member.
+  - **Route-back is by adopting wrapper type** on the owner's applier dispatcher, subscribed in the
+    explicitly-wrapped shape:
+    `.ForWrapped<IPublisherIdentifyingTevent<TAdoptingWrapperTevent>>(ownerWrapped => … apply ownerWrapped.Tevent.Tevent)` —
+    by the time an adopted tevent reaches the owner's appliers it is wrapped once more in the owner's own
+    publisher wrapper, routing matches the outermost type only, and covariance carries the match through.
+    (An earlier note here claimed `For<IShippingAddressTevent<…>>` would work — it does not, and fails
+    LOUD: the adopting wrapper interface is itself an `IPublisherIdentifyingTevent<T>`, so the one
+    translation rule's identity branch treats it as an outermost wrapper type, and the dispatcher rejects
+    wrapper types in `For` subscriptions outright.) Per-slot wrapper types are load-bearing, not ceremony:
+    two same-typed tomponents (shipping vs. billing `PostalAddress`) publish identical inner tevent types —
+    only the wrapper type distinguishes them. Verified by spec.
+  - **Routing keeps exactly ONE automatic translation/unwrap level** — the publisher wrapper, invariant 2
+    unchanged; deeper grains are expressed in the subscribed type and hand-unwrapped. Verified subscription
+    grains: `ForWrapped<IOrderTevent<IShippingAddressTevent<Changed>>>` (full publication path) and
+    `ForWrapped<IPublisherIdentifyingTevent<IShippingAddressTevent<Changed>>>` (the slot, regardless of
+    owner wrapper). A bare `For<PostalAddressChanged>` does NOT match adopted publications, by decision
+    (verified by spec): fully general any-depth matching is impossible with static covariance (every
+    nesting level appears in the type), so it would mean walking wrapper structures at runtime — rejected;
+    subscribe at the grain the static type structure expresses.
+  - **Names**: eventually `TeventiveComponent` becomes `Tomponent` (the words are used far too often for
+    the long form; `Tentity` already leads the way) — align the remaining `Teventive*` type and file names
+    with it as part of this work.
+
+  Resolved during implementation (2026-07-12):
+  - Reusable tentity collections: `SharedTentityCollection` IS a `SharedTomponent` occupying one slot; it
+    routes each tevent to the instance whose `ISharedTentityTevent<TTentityId>.EntityId` it carries.
+    Nothing stamps ids: a shared tentity's tevents state their `EntityId` explicitly at creation and
+    `SharedTentity.Publish` asserts the tevent carries the publishing tentity's `Id` — no
+    `IGetSetTaggregateEntityTeventEntityId` analog needed.
+  - Single-inheritance mechanics: the adopting wrapper implementation derives from the owner's tevent
+    implementation base and implements `IPublisherIdentifyingTevent<T>` directly — a two-line class per
+    slot. The close-the-wrapper-over-the-runtime-type mechanism has one home:
+    `PublisherIdentifyingTevent.WrapIn` (`TaggregateIdentifyingTevent.WrapIn` delegates to it).
+
+  Still open:
+  - `reusable-components.md` (and the taggregate `_docs` generally) still describe this as future work —
+    rewrite to the as-built design.
+  - A store-level round-trip spec for adopted tevents. By design the store needs nothing new (the adopting
+    wrapper is the inner tevent the store stamps; the row `TypeId` is the full closed outer type), but no
+    executable specification pins persistence of a double-wrapped graph yet.
+  - Hosting a shared tomponent inside ANOTHER shared tomponent: the slot's owner seam is
+    `ITeventiveInternals<TOwnerTevent, TOwnerTeventImplementation>` — the `TaggregateTevent` world — so v1
+    hosts are taggregates and owned teventive components. Shared-in-shared nesting needs a second owner
+    seam for the slot (the design composes; only the seam is missing).
+  - Removable shared tentities (the `TeventiveRemovableEntity` analog).
+  - `PublisherIdentifyingTevent.Wrapped` normalization passes through ANY `IPublisherIdentifyingTevent<ITevent>`;
+    a bare adopting wrapper reaching the in-process bus without its taggregate wrapper would pass as "fully
+    wrapped" — decide whether that is unreachable by construction or needs a guard.
+  - Whether the "adopted anywhere, any owner" subscription grain deserves a covariant common root interface
+    for adopting wrappers (giving subscriptions the shape `IPublisherIdentifyingTevent<IAdopted…<Changed>>`)
+    or stays out of the model.
 
 ## Related but out of scope here
 

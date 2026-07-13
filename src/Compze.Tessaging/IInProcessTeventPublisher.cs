@@ -17,10 +17,14 @@ namespace Compze.Tessaging;
 ///<remarks>
 /// The event-store publishers delegate their local delivery here; a distributed endpoint additionally enqueues
 /// the tevent on its outbox for remote subscribers. Subscription is by .NET type compatibility, so a handler
-/// subscribed to a base tevent type receives every compatible derived tevent.
+/// subscribed to a base tevent type receives every compatible derived tevent. Every tevent is wrapped in its
+/// publisher's <see cref="IPublisherIdentifyingTevent{TTevent}"/> before routing: a subscriber to an inner tevent
+/// type receives the tevent unwrapped, and a subscriber to a wrapper type receives the wrapper itself -
+/// publisher-conscious subscription.
 ///</remarks>
 public interface IInProcessTeventPublisher
 {
-   ///<summary>Synchronously invokes every in-process handler subscribed to <paramref name="tevent"/>'s type, resolving handler dependencies from <paramref name="scopeResolver"/>, within the current transaction.</summary>
+   ///<summary>Synchronously invokes every in-process handler subscribed to <paramref name="tevent"/>'s type, resolving handler dependencies from <paramref name="scopeResolver"/>, within the current transaction.<br/>
+   /// A <paramref name="tevent"/> published without a publisher-identifying wrapper is wrapped before routing.</summary>
    void Publish(ITevent tevent, IScopeResolver scopeResolver);
 }
