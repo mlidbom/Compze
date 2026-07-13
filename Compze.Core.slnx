@@ -13,15 +13,29 @@
   <Folder Name="/Compze.Abstractions/Specifications/">
     <Project Path="test/Compze.Abstractions.Specifications/Compze.Abstractions.Specifications.csproj" />
   </Folder>
+  <Folder Name="/Compze.Tessaging/Hosting-Transport/">
+    <Project Path="src/Compze.Tessaging.Hosting.AspNetCore/Compze.Tessaging.Hosting.AspNetCore.csproj" />
+    <Project Path="src/Compze.Tessaging.Hosting.Testing/Compze.Tessaging.Hosting.Testing.csproj" />
+  </Folder>
+  <Folder Name="/Compze.Tessaging/Hosting-Transport/SqlLayers/">
+    <Project Path="src/Compze.Tessaging.MicrosoftSql/Compze.Tessaging.MicrosoftSql.csproj" />
+    <Project Path="src/Compze.Tessaging.MySql/Compze.Tessaging.MySql.csproj" />
+    <Project Path="src/Compze.Tessaging.PostgreSql/Compze.Tessaging.PostgreSql.csproj" />
+    <Project Path="src/Compze.Tessaging.Sqlite/Compze.Tessaging.Sqlite.csproj" />
+  </Folder>
   <Folder Name="/Compze.Teventive/">
+    <Project Path="src/Compze.Teventive/Compze.Teventive.csproj" />
+  </Folder>
+  <Folder Name="/Compze.Teventive/TeventStore/">
     <Project Path="src/Compze.Teventive.TeventStore.Abstractions/Compze.Teventive.TeventStore.Abstractions.csproj" />
+    <Project Path="src/Compze.Teventive.TeventStore.Typermedia/Compze.Teventive.TeventStore.Typermedia.csproj" />
+    <Project Path="src/Compze.Teventive.TeventStore/Compze.Teventive.TeventStore.csproj" />
+  </Folder>
+  <Folder Name="/Compze.Teventive/TeventStore/SqlLayers/">
     <Project Path="src/Compze.Teventive.TeventStore.MicrosoftSql/Compze.Teventive.TeventStore.MicrosoftSql.csproj" />
     <Project Path="src/Compze.Teventive.TeventStore.MySql/Compze.Teventive.TeventStore.MySql.csproj" />
     <Project Path="src/Compze.Teventive.TeventStore.PostgreSql/Compze.Teventive.TeventStore.PostgreSql.csproj" />
     <Project Path="src/Compze.Teventive.TeventStore.Sqlite/Compze.Teventive.TeventStore.Sqlite.csproj" />
-    <Project Path="src/Compze.Teventive.TeventStore.Typermedia/Compze.Teventive.TeventStore.Typermedia.csproj" />
-    <Project Path="src/Compze.Teventive.TeventStore/Compze.Teventive.TeventStore.csproj" />
-    <Project Path="src/Compze.Teventive/Compze.Teventive.csproj" />
   </Folder>
   <Folder Name="/Compze.TypeIdentifiers/">
     <Project Path="src/Compze.TypeIdentifiers.Interning.MicrosoftSql/Compze.TypeIdentifiers.Interning.MicrosoftSql.csproj" />
@@ -67,6 +81,12 @@
     <Project Path="src/SolutionStructure/Solution.TestConfig.csproj" />
     <Project Path="src/SolutionStructure/Solution.TODO.csproj" />
   </Folder>
+  <Folder Name="/Compze.DocumentDb/SqlLayers/">
+    <Project Path="src/Compze.DocumentDb.MicrosoftSql/Compze.DocumentDb.MicrosoftSql.csproj" />
+    <Project Path="src/Compze.DocumentDb.MySql/Compze.DocumentDb.MySql.csproj" />
+    <Project Path="src/Compze.DocumentDb.PostgreSql/Compze.DocumentDb.PostgreSql.csproj" />
+    <Project Path="src/Compze.DocumentDb.Sqlite/Compze.DocumentDb.Sqlite.csproj" />
+  </Folder>
   <Folder Name="/Compze.Hosting/">
     <Project Path="src/Compze.Hosting.Testing/Compze.Hosting.Testing.csproj" />
     <Project Path="src/Compze.Hosting/Compze.Hosting.csproj" />
@@ -106,20 +126,16 @@
   </Folder>
   <Folder Name="/Compze.Tessaging/">
     <Project Path="src/Compze.Tessaging.Abstractions/Compze.Tessaging.Abstractions.csproj" />
-    <Project Path="src/Compze.Tessaging.Hosting.AspNetCore/Compze.Tessaging.Hosting.AspNetCore.csproj" />
-    <Project Path="src/Compze.Tessaging.Hosting.Testing/Compze.Tessaging.Hosting.Testing.csproj" />
-    <Project Path="src/Compze.Tessaging.MicrosoftSql/Compze.Tessaging.MicrosoftSql.csproj" />
-    <Project Path="src/Compze.Tessaging.MySql/Compze.Tessaging.MySql.csproj" />
-    <Project Path="src/Compze.Tessaging.PostgreSql/Compze.Tessaging.PostgreSql.csproj" />
-    <Project Path="src/Compze.Tessaging.Sqlite/Compze.Tessaging.Sqlite.csproj" />
     <Project Path="src/Compze.Tessaging/Compze.Tessaging.csproj" />
   </Folder>
   <Folder Name="/Compze.Typermedia/">
     <Project Path="src/Compze.Typermedia.Client/Compze.Typermedia.Client.csproj" />
+    <Project Path="src/Compze.Typermedia/Compze.Typermedia.csproj" />
+  </Folder>
+  <Folder Name="/Compze.Typermedia/Hosting-Transport/">
     <Project Path="src/Compze.Typermedia.Hosting.AspNetCore/Compze.Typermedia.Hosting.AspNetCore.csproj" />
     <Project Path="src/Compze.Typermedia.Hosting.Testing/Compze.Typermedia.Hosting.Testing.csproj" />
     <Project Path="src/Compze.Typermedia.Hosting/Compze.Typermedia.Hosting.csproj" />
-    <Project Path="src/Compze.Typermedia/Compze.Typermedia.csproj" />
   </Folder>
   <Folder Name="/Compze.Typermedia/Specifications/">
     <Project Path="test/Compze.Typermedia.Client.Specifications/Compze.Typermedia.Client.Specifications.csproj" />
@@ -137,10 +153,6 @@
     <Project Path="test/Compze.Tests.Unit/Compze.Tests.Unit.csproj" />
   </Folder>
   <Folder Name="/Compze.DocumentDb/">
-    <Project Path="src/Compze.DocumentDb.MicrosoftSql/Compze.DocumentDb.MicrosoftSql.csproj" />
-    <Project Path="src/Compze.DocumentDb.MySql/Compze.DocumentDb.MySql.csproj" />
-    <Project Path="src/Compze.DocumentDb.PostgreSql/Compze.DocumentDb.PostgreSql.csproj" />
-    <Project Path="src/Compze.DocumentDb.Sqlite/Compze.DocumentDb.Sqlite.csproj" />
     <Project Path="src/Compze.DocumentDb/Compze.DocumentDb.csproj" />
   </Folder>
   <Project Path="DevScripts/Scripts.csproj" />
