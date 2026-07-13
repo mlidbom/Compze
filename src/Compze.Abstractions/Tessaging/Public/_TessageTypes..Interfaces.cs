@@ -94,15 +94,3 @@ public interface IPublisherIdentifyingTevent<out TTevent> : ITevent
 {
    TTevent Tevent { get; }
 }
-
-public interface IRemotablePublisherIdentifyingTevent<out TTeventInterface> : IPublisherIdentifyingTevent<TTeventInterface>, IRemotableTevent
-   where TTeventInterface : IExactlyOnceTevent;
-
-
-public interface IExactlyOncePublisherIdentifyingTevent<out TTeventInterface> : IRemotablePublisherIdentifyingTevent<TTeventInterface>, IExactlyOnceTevent
-   where TTeventInterface : IExactlyOnceTevent
-{
-#pragma warning disable CA1033 //Explicit interface implementation is the only way I know of to add a default implementation here.
-   TessageId IAtMostOnceTessage.Id => Tevent.Id;
-#pragma warning restore CA1033 //Explicit interface implementation is the only way I know of to add a default implementation here.
-}

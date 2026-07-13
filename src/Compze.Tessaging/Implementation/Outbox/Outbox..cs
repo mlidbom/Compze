@@ -40,21 +40,22 @@ partial class Outbox : IOutbox
       _tessagingRouter = tessagingRouter;
    }
 
-   public void PublishTransactionally(IExactlyOncePublisherIdentifyingTevent<IExactlyOnceTevent> wrappedTevent)
+   public void PublishTransactionally(IPublisherIdentifyingTevent<IExactlyOnceTevent> wrappedTevent)
    {
       State.NotNull(Transaction.Current);
-      this.Log().Debug($"Publishing tevent {wrappedTevent.Id} ({wrappedTevent.GetType().Name})");
+      var dedupId = wrappedTevent.Tevent.Id;
+      this.Log().Debug($"Publishing tevent {dedupId} ({wrappedTevent.GetType().Name})");
       var connections = _tessagingRouter.SubscriberConnectionsFor(wrappedTevent)
                                         .Where(connection => connection.EndpointInformation.Id != _configuration.Id)
                                         .ToArray(); //We dispatch tevents to ourselves synchronously so don't go doing it again here.
 
       var teventHandlerEndpointIds = connections.Select(connection => connection.EndpointInformation.Id).ToArray();
-      _storage.SaveTessage(wrappedTevent, teventHandlerEndpointIds);
+      _storage.SaveTessage(wrappedTevent, dedupId, teventHandlerEndpointIds);
 
       Transaction.Current.OnCommittedSuccessfully(() => connections.ForEach(connection =>
       {
-         this.Log().Debug($"OnCommittedSuccessfully: Delivering tevent {wrappedTevent.Id} to endpoint {connection.EndpointInformation.Id}");
-         connection.EnqueueForDelivery(wrappedTevent);
+         this.Log().Debug($"OnCommittedSuccessfully: Delivering tevent {dedupId} to endpoint {connection.EndpointInformation.Id}");
+         connection.EnqueueForDelivery(wrappedTevent, dedupId);
       }));
    }
 
@@ -64,12 +65,12 @@ partial class Outbox : IOutbox
       this.Log().Debug($"Sending tommand {exactlyOnceTommand.Id} ({exactlyOnceTommand.GetType().Name})");
       var connection = _tessagingRouter.ConnectionToHandlerFor(exactlyOnceTommand);
 
-      _storage.SaveTessage(exactlyOnceTommand, connection.EndpointInformation.Id);
+      _storage.SaveTessage(exactlyOnceTommand, exactlyOnceTommand.Id, connection.EndpointInformation.Id);
 
       Transaction.Current.OnCommittedSuccessfully(() =>
       {
          this.Log().Debug($"OnCommittedSuccessfully: Delivering tommand {exactlyOnceTommand.Id} to endpoint {connection.EndpointInformation.Id}");
-         connection.EnqueueForDelivery(exactlyOnceTommand);
+         connection.EnqueueForDelivery(exactlyOnceTommand, exactlyOnceTommand.Id);
       });
    }
 

@@ -10,7 +10,7 @@ partial class Outbox
 {
    public interface ITessageStorage
    {
-      void SaveTessage(IExactlyOnceTessage tessage, params EndpointId[] receiverEndpointIds);
+      void SaveTessage(ITessage tessage, TessageId dedupId, params EndpointId[] receiverEndpointIds);
       void MarkAsReceived(TessageId tessageId, EndpointId receiverId);
       void RecordDeliveryFailure(TessageId tessageId, EndpointId receiverId, Exception? exception);
       IReadOnlyList<IServiceBusSqlLayer.UndeliveredTessage> GetUndeliveredTessagesForEndpoint(EndpointId endpointId);

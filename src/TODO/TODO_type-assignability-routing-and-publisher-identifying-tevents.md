@@ -97,11 +97,17 @@ Canonical statements of the model:
 
 ### 1. Message-type hierarchy and validation — DONE, with gaps
 
-- The full wrapper hierarchy exists: `IPublisherIdentifyingTevent<out TTevent>`,
-  `IRemotablePublisherIdentifyingTevent<...>`, `IExactlyOncePublisherIdentifyingTevent<...>` (whose
-  deduplication `Id` defaults to the inner tevent's `Id` — `_TessageTypes..Interfaces.cs:105`), and the
-  taggregate specialization `ITaggregateIdentifyingTevent<out T>`
-  (`src/Compze.Teventive/Taggregates/Tevents/Public/ITaggregateTypeIdentifyingTevent.cs:6-9`).
+- The wrapper interface is `IPublisherIdentifyingTevent<out TTevent>` alone (simplified 2026-07-13), plus the
+  taggregate specialization `ITaggregateIdentifyingTevent<out T> : IPublisherIdentifyingTevent<T>`
+  (`src/Compze.Teventive/Taggregates/Tevents/Public/ITaggregateIdentifyingTevent.cs`). The wrapper carries
+  only publisher identity, never delivery-guarantee markers: a tevent's guarantee lives on the tevent, and
+  every consumer that needs it reads it from the inner by covariance
+  (`IPublisherIdentifyingTevent<IExactlyOnceTevent>`). The earlier
+  `IRemotablePublisherIdentifyingTevent<...>`/`IExactlyOncePublisherIdentifyingTevent<...>` tiers — which
+  re-declared the inner's guarantee interfaces onto the wrapper and forwarded its `Id`, and whose
+  `where T : IExactlyOnceTevent` constraint made a remotable-but-not-exactly-once wrapper inexpressible — are
+  removed; the dedup `Id` is carried as transport-envelope data, extracted once at the outbox entry (where
+  the tevent-vs-tommand type is statically known), so the same delivery/storage path serves both.
 - `TessageTypeInspector` enforces that any type implementing `IPublisherIdentifyingTevent<>` is generic with
   a covariant (`out`) type parameter — precisely what keeps assignability routing sound
   (`src/Compze.Abstractions/Tessaging/Validation/TessageTypeInspector.cs:99-116`). It also restricts tevent
@@ -175,10 +181,9 @@ unhandled-tevent ignore configuration is translated the same way subscriptions a
   in its one shared home: `PublisherIdentifyingTevent.WrapperTypeMatchingAllWrappingsOf` (also used by the
   dispatcher's ignore-configuration translation).
 - Wrapper types have `TypeId` mappings: `PublisherIdentifyingTevent<>`, `TaggregateIdentifyingTevent<>`,
-  `ITaggregateIdentifyingTevent<>` (Compze.Teventive), and the wrapper interfaces
-  `IPublisherIdentifyingTevent<>`/`IRemotablePublisherIdentifyingTevent<>`/`IExactlyOncePublisherIdentifyingTevent<>`
-  (Compze.Abstractions) — the interfaces surface in `$type` references when wrapped histories travel inside
-  serialized resources.
+  `ITaggregateIdentifyingTevent<>` (Compze.Teventive), and the wrapper interface
+  `IPublisherIdentifyingTevent<>` (Compze.Abstractions) — the interface surfaces in `$type` references when
+  wrapped histories travel inside serialized resources.
 - The `ITeventStoreTeventPublisher` seam is flipped (2026-07-12): `TeventStoreUpdater` publishes the wrapped
   tevent, and publisher identity survives from `Publish` in the taggregate through storage and onward
   publication. The one remaining unwrap, by design until the remote-transport increment: the distributed
@@ -218,8 +223,9 @@ unhandled-tevent ignore configuration is translated the same way subscriptions a
   `Publisher_conscious_subscription_tests` (a remote endpoint subscribing to
   `IMyTaggregateTevent<IMyTaggregateTevent>` receives the wrapped tevent the taggregate published).
 - `IOutbox.PublishTransactionally`/`ITessagingRouter.SubscriberConnectionsFor` take
-  `IExactlyOncePublisherIdentifyingTevent<IExactlyOnceTevent>`, making an unwrapped hand-off - which no
-  wrapper-typed route would match - a compile error instead of a silent routing no-op.
+  `IPublisherIdentifyingTevent<IExactlyOnceTevent>` (covariance makes the wrapped tevent statically
+  exactly-once), making an unwrapped hand-off - which no wrapper-typed route would match - a compile error
+  instead of a silent routing no-op.
 - Remaining gating (D6, the last increment): `TessagingRouter.RegisterRoutes` registers a tevent route only
   when the advertised subscription guarantees exactly-once delivery (directly or through covariance:
   `Is<IPublisherIdentifyingTevent<IExactlyOnceTevent>>`); tommand routes only for `IExactlyOnceTommand`.
@@ -301,10 +307,11 @@ wrapped tevents end to end; widening WHICH tevents can travel remotely (and unde
 separate feature. **The publishing/subscribing API and delivery semantics for this feature were designed
 2026-07-13 — see "Decided design" immediately below.** Still open after that: whether the
 remotable-but-not-exactly-once tevent *tier* gets a dedicated marker/name in the type hierarchy (the delivery
-*mechanism* vocabulary — transient delivery, the transaction-ignoring escape hatches — is settled below); the
-wrapper interface constraints (`IRemotablePublisherIdentifyingTevent<out T>`/
-`IExactlyOncePublisherIdentifyingTevent<out T>` both require `T : IExactlyOnceTevent`, which contradicts "any
-tevent publishable remotely"); and the guarantee-preserving auto-wrap item below.
+*mechanism* vocabulary — transient delivery, the transaction-ignoring escape hatches — is settled below).
+(The wrapper-interface-constraint blocker and the guarantee-preserving auto-wrap item are both RESOLVED as of
+2026-07-13 by the wrapper simplification: the wrapper no longer carries guarantee interfaces at all, so there
+is nothing to mis-constrain and no most-derived wrapper class to auto-wrap into — `PublisherIdentifyingTevent<T>`
+closed over the inner is the whole story, and guarantee is read from the inner by covariance.)
 
 #### Decided design — publishing and subscribing API (2026-07-13)
 
@@ -404,13 +411,11 @@ separate matter, out of scope here.
       the default is the type's declared guarantee; `RegisterTransactionIgnoringTeventHandlers()` opts fully
       out for observation. No menu of intermediate levels (an intermediate tier saves no cost — it still
       needs the inbox store to dedup). See the Decided design above.
-- [ ] Guarantee-preserving auto-wrap: `PublisherIdentifyingTevent<TTevent>` implements only the root wrapper
-      interface, so auto-wrapping an `IExactlyOnceTevent` published without a wrapper produces a wrapper
-      with no delivery-guarantee interfaces — fine in-process, but such a wrapper cannot travel the
-      exactly-once wire. Nothing publishes bare tevents remotely today (taggregate tevents arrive wrapped;
-      the outbox signature now makes an unwrapped hand-off a compile error), but D6's "publish any tevent
-      remotely" needs auto-wrap to pick the most derived wrapper class matching the inner's guarantee
-      interfaces (e.g. an `ExactlyOncePublisherIdentifyingTevent<TTevent>` sibling).
+- [x] Guarantee-preserving auto-wrap — DISSOLVED (2026-07-13). The wrapper no longer carries
+      delivery-guarantee interfaces, so `PublisherIdentifyingTevent<TTevent>` closed over the inner IS the
+      correct wrapper for every guarantee tier; the outbox/router/store read the guarantee from the inner by
+      covariance (`IPublisherIdentifyingTevent<IExactlyOnceTevent>`), and the wire carries that same wrapper.
+      There is no most-derived wrapper class to select.
 
 ### Tests
 
@@ -466,8 +471,9 @@ separate matter, out of scope here.
     implementation class derives from the owner's tevent implementation base, so `TaggregateTevent` supplies
     the bookkeeping (`TessageId`, `TaggregateId`, version, `UtcTimeStamp`) and the store's stamp-the-inner
     hydration works unchanged — the adopting wrapper IS the inner from the publisher wrapper's perspective.
-    (The `IExactlyOncePublisherIdentifyingTevent.Id => Tevent.Id` forwarding default does not apply here:
-    that family wraps inners that already carry identity; the adopting wrapper wraps identity-free inners.)
+    (A reusable tevent needs no `Id` of its own: the adopting wrapper wraps an identity-free inner, and the
+    dedup identity for the persisted/transmitted path comes from the owning taggregate's tevent, carried as
+    transport-envelope data.)
   - **A reusable tentity's identity is domain data**: one of its tevents' own properties, orthogonal to
     `TessageId`. Optionally formalized by its tevents inheriting an Id-bearing root interface — that only
     enables compile-time-safe convenience wiring; it is not required by the pattern.

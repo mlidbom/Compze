@@ -25,7 +25,12 @@ public static class TransportTessage
          {
             _tessage = (ITessage)_serializer.DeserializeTessage(_tessageType, Body);
 
-            State.Assert(_tessage is not IExactlyOnceTessage actualTessage || TessageId == actualTessage.Id);
+            State.Assert(_tessage switch
+                         {
+                            IPublisherIdentifyingTevent<IExactlyOnceTevent> wrapper => TessageId == wrapper.Tevent.Id,
+                            IAtMostOnceTessage atMostOnce => TessageId == atMostOnce.Id,
+                            _ => true
+                         });
          }
 
          return _tessage;
@@ -44,24 +49,24 @@ public static class TransportTessage
 
    public class OutGoing
    {
-      internal IRemotableTessage Tessage { get; }
+      internal ITessage Tessage { get; }
       internal readonly TessageId TessageId;
 
       internal readonly TypeId Type;
       internal readonly string Body;
       internal readonly TransportTessageType TessageTypeEnum;
 
-      internal static OutGoing Create(IRemotableTessage tessage, ITypeMap typeMap, IRemotableTessageSerializer serializer)
+      internal static OutGoing Create(ITessage tessage, TessageId dedupId, ITypeMap typeMap, IRemotableTessageSerializer serializer)
       {
          var body = serializer.SerializeTessage(tessage);
-         return new OutGoing(typeMap.GetId(tessage.GetType()), tessage.GetType(), body, tessage);
+         return new OutGoing(typeMap.GetId(tessage.GetType()), tessage.GetType(), body, tessage, dedupId);
       }
 
-      OutGoing(TypeId typeId, Type type, string body, IRemotableTessage tessage)
+      OutGoing(TypeId typeId, Type type, string body, ITessage tessage, TessageId tessageId)
       {
          Tessage = tessage;
          Type = typeId;
-         TessageId = (tessage as IAtMostOnceTessage)?.Id ?? new TessageId();
+         TessageId = tessageId;
          Body = body;
          TessageTypeEnum = type.TransportTessageType();
       }

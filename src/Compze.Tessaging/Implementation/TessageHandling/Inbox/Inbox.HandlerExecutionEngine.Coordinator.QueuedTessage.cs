@@ -43,7 +43,6 @@ public partial class Inbox
                {
                   this.Log().Debug($"Handler executing {TransportTessage.TessageTypeEnum} tessage {TessageId}");
                   var tessage = TransportTessage.DeserializeTessageAndCacheForNextCall();
-                  tessage._assert(it => it is IAtMostOnceTessage);
                   ExecuteTransactionalTessage(tessage);
                }
 #pragma warning disable CA1031 // Catch all exception types to ensure _taskCompletionSource is always resolved
@@ -125,8 +124,8 @@ public partial class Inbox
                {
                   TransportTessageType.ExactlyOnceTevent => (tessage, kernel) =>
                   {
-                     //The wire still carries the inner tevent, so a received tevent is wrapped here before routing. The remote-transport increment puts the wrapper itself on the wire.
-                     var wrappedTevent = PublisherIdentifyingTevent.Wrapped((IExactlyOnceTevent)tessage);
+                     //The whole wrapped tevent travels the wire, so a received tevent arrives already wrapped; Wrapped normalizes and passes it through unchanged.
+                     var wrappedTevent = PublisherIdentifyingTevent.Wrapped((ITevent)tessage);
                      var teventHandlers = _tessagingHandlerRegistry.GetTeventHandlers(wrappedTevent.GetType());
                      teventHandlers.ForEach(handler => handler(wrappedTevent, kernel));
                      return null;

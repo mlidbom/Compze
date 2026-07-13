@@ -1,4 +1,5 @@
 using Compze.TypeIdentifiers;
+using Compze.Abstractions.Public;
 using Compze.Abstractions.Serialization.Internal;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Abstractions.Hosting.Public;
@@ -35,10 +36,7 @@ class TessagingConnection(
    readonly ITaskRunner _taskRunner = taskRunner;
    readonly IBackgroundExceptionReporter _exceptionReporter = exceptionReporter;
 
-   record PendingDelivery(TransportTessage.OutGoing TransportTessage)
-   {
-      public IExactlyOnceTessage Tessage => (IExactlyOnceTessage)TransportTessage.Tessage;
-   }
+   record PendingDelivery(TransportTessage.OutGoing TransportTessage);
    readonly IThreadShared<Queue<PendingDelivery>> _queue = IThreadShared.New(new Queue<PendingDelivery>());
    readonly AutoResetEvent _signal = new(false);
    readonly CancellationTokenSource _cancellationSource = new();
@@ -52,9 +50,9 @@ class TessagingConnection(
    }
 
    // Delivery management — enqueue for the send loop to process
-   public void EnqueueForDelivery(IExactlyOnceTessage tessage)
+   public void EnqueueForDelivery(ITessage tessage, TessageId dedupId)
    {
-      var transportTessage = TransportTessage.OutGoing.Create(tessage, _typeMap, _serializer);
+      var transportTessage = TransportTessage.OutGoing.Create(tessage, dedupId, _typeMap, _serializer);
       _tessagesInFlightTracker.SendingTessageOnTransport(transportTessage, EndpointInformation.Id);
 
       _queue.Locked(queue => queue.Enqueue(new PendingDelivery(transportTessage)));
@@ -85,8 +83,8 @@ class TessagingConnection(
       foreach(var undeliveredTessage in undelivered)
       {
          var tessageType = undeliveredTessage.TypeId.Type;
-         var tessage = (IExactlyOnceTessage)_serializer.DeserializeTessage(tessageType, undeliveredTessage.SerializedTessage);
-         EnqueueForDelivery(tessage);
+         var tessage = (ITessage)_serializer.DeserializeTessage(tessageType, undeliveredTessage.SerializedTessage);
+         EnqueueForDelivery(tessage, undeliveredTessage.TessageId);
       }
    }
 
@@ -142,16 +140,16 @@ class TessagingConnection(
       {
          _transportMessagePoster.PostAsync(pending.TransportTessage, _remoteAddress).GetAwaiter().GetResult();
 
-         this.Log().Debug($"Delivered tessage {pending.Tessage.Id} to endpoint {EndpointInformation.Id}");
-         _exceptionReporter.RunSwallowingAndReportingAnyExceptions(() => _tessageStorage.MarkAsReceived(pending.Tessage.Id, EndpointInformation.Id));
+         this.Log().Debug($"Delivered tessage {pending.TransportTessage.TessageId} to endpoint {EndpointInformation.Id}");
+         _exceptionReporter.RunSwallowingAndReportingAnyExceptions(() => _tessageStorage.MarkAsReceived(pending.TransportTessage.TessageId, EndpointInformation.Id));
          return true;
       }
 #pragma warning disable CA1031 // Background thread — must catch all to keep the send loop running
       catch(Exception exception)
       {
 #pragma warning restore CA1031
-         this.Log().Warning(exception, $"Delivery failed for tessage {pending.Tessage.Id} to endpoint {EndpointInformation.Id}");
-         _exceptionReporter.RunSwallowingAndReportingAnyExceptions(() => _tessageStorage.RecordDeliveryFailure(pending.Tessage.Id, EndpointInformation.Id, exception));
+         this.Log().Warning(exception, $"Delivery failed for tessage {pending.TransportTessage.TessageId} to endpoint {EndpointInformation.Id}");
+         _exceptionReporter.RunSwallowingAndReportingAnyExceptions(() => _tessageStorage.RecordDeliveryFailure(pending.TransportTessage.TessageId, EndpointInformation.Id, exception));
          return false;
       }
    }

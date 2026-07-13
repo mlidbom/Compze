@@ -27,7 +27,7 @@ static class DistributedTeventStoreTeventPublisherRegistrar
 
    void ITeventStoreTeventPublisher.Publish(ITaggregateIdentifyingTevent<ITaggregateTevent> wrappedTevent, IScopeResolver scopeResolver)
    {
-      TessageInspector.AssertValidToSendRemote(wrappedTevent);
+      TessageInspector.AssertValidToSendRemote(wrappedTevent.Tevent);
       _inProcessTeventPublisher.Publish(wrappedTevent, scopeResolver);
       _outbox.PublishTransactionally(wrappedTevent);
    }
