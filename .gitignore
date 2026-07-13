@@ -55,3 +55,4 @@ repomix*.xml
 *.trx
 **/.idea/claudeCodeTabState.xml
 /.claude/scheduled_tasks.lock
+**_NCrunchResults/
