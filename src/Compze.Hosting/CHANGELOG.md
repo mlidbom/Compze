@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## Unreleased
 
-- `InterprocessEndpointRegistry` (`Compze.Hosting.SameMachine`): a same-machine `IEndpointRegistry` backed by an `IInterprocessObject` — endpoints publish the address they listen on, every process opening the same registry name and directory sees them, with no configuration and no server. Each entry records its `PublishingProcess` (process id + start time, because the OS recycles ids), so a crashed process's stale addresses are never routed to and are pruned on the next registration.
+- `InterprocessEndpointRegistry` (`Compze.Hosting.SameMachine`): a same-machine `IEndpointRegistry` and `IEndpointAddressAnnouncer` backed by an `IInterprocessObject` — endpoints announce the address they listen on, every process opening the same registry name and directory sees them, with no configuration and no server. Each entry records its `AnnouncingProcess` (process id + start time, because the OS recycles ids), so a crashed process's stale addresses are never routed to and are pruned on the next announcement.
 
 ## 0.1.1-alpha
 

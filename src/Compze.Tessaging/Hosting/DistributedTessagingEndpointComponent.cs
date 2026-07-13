@@ -10,7 +10,9 @@ using Compze.Tessaging.SystemCE.ThreadingCE;
 
 namespace Compze.Tessaging.Hosting;
 
-///<summary>The distributed Tessaging pipeline's runtime lifecycle within an endpoint: inbox and scheduler listen, the router connects to all endpoints, the outbox sends.</summary>
+///<summary>The distributed Tessaging pipeline's runtime lifecycle within an endpoint: inbox and scheduler listen, the endpoint's<br/>
+/// listening address is announced to every registered <see cref="IEndpointAddressAnnouncer"/>, the router connects to all endpoints,<br/>
+/// the outbox sends.</summary>
 sealed class DistributedTessagingEndpointComponent : IEndpointComponent, IAsyncDisposable
 {
    readonly TommandScheduler _tommandScheduler;
@@ -19,10 +21,12 @@ sealed class DistributedTessagingEndpointComponent : IEndpointComponent, IAsyncD
    readonly ITessagingRouter _tessagingRouter;
    readonly IEndpointRegistry _endpointRegistry;
    readonly IBackgroundExceptionReporter _backgroundExceptionReporter;
+   readonly EndpointConfiguration _configuration;
+   readonly IReadOnlyList<IEndpointAddressAnnouncer> _addressAnnouncers;
 
    bool _isListening;
 
-   internal DistributedTessagingEndpointComponent(IRootResolver resolver)
+   internal DistributedTessagingEndpointComponent(IRootResolver resolver, IReadOnlyList<IEndpointAddressAnnouncer> addressAnnouncers)
    {
       _tommandScheduler = resolver.Resolve<TommandScheduler>();
       _inbox = resolver.Resolve<IInbox>();
@@ -30,6 +34,8 @@ sealed class DistributedTessagingEndpointComponent : IEndpointComponent, IAsyncD
       _tessagingRouter = resolver.Resolve<ITessagingRouter>();
       _endpointRegistry = resolver.Resolve<IEndpointRegistry>();
       _backgroundExceptionReporter = resolver.Resolve<IBackgroundExceptionReporter>();
+      _configuration = resolver.Resolve<EndpointConfiguration>();
+      _addressAnnouncers = addressAnnouncers;
    }
 
    ///<summary>The address where the inbox listens; null until listening.</summary>
@@ -39,6 +45,8 @@ sealed class DistributedTessagingEndpointComponent : IEndpointComponent, IAsyncD
    {
       await Task.WhenAll(_inbox.StartAsync(), _tommandScheduler.StartAsync()).caf();
       _isListening = true;
+      //Announcing is the final act of starting to listen, so an announced address is always one that is actually listening.
+      _addressAnnouncers.ForEach(announcer => announcer.AnnounceEndpointAddress(_configuration.Id, _inbox.Address));
    }
 
    public async Task StartSendingAsync()
@@ -58,6 +66,8 @@ sealed class DistributedTessagingEndpointComponent : IEndpointComponent, IAsyncD
 
    public async Task StopListeningAsync()
    {
+      //Retracting is the first act of stopping to listen: stop advertising the address before going deaf on it.
+      _addressAnnouncers.ForEach(announcer => announcer.RetractEndpointAddress(_configuration.Id));
       _isListening = false;
       await _inbox.StopAsync().caf();
       _tessagingRouter.Stop();

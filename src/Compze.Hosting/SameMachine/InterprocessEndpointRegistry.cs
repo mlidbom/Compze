@@ -4,13 +4,14 @@ using Compze.InterprocessObject;
 
 namespace Compze.Hosting.SameMachine;
 
-///<summary>The same-machine <see cref="IEndpointRegistry"/>: endpoints publish the address they listen on, and every process on the<br/>
-/// machine that opens the registry — same name, same directory — sees it. Backed by an <see cref="IInterprocessObject{T}"/>, so<br/>
-/// registrations are immediately visible across processes with no server or configuration, and survive process restarts.</summary>
+///<summary>The same-machine <see cref="IEndpointRegistry"/> and <see cref="IEndpointAddressAnnouncer"/>: endpoints announce the<br/>
+/// address they listen on, and every process on the machine that opens the registry — same name, same directory — sees it. Backed by<br/>
+/// an <see cref="IInterprocessObject{T}"/>, so announcements are immediately visible across processes with no server or configuration,<br/>
+/// and survive process restarts.</summary>
 ///<remarks>The backing file outlives crashed processes by design, and a crashed process's addresses must never be routed to — so every<br/>
-/// entry records its <see cref="PublishingProcess"/>, addresses whose publishing process is no longer running are invisible to readers,<br/>
-/// and each registration prunes them from the file.</remarks>
-public class InterprocessEndpointRegistry : IEndpointRegistry, IDisposable
+/// entry records its <see cref="AnnouncingProcess"/>, addresses whose announcing process is no longer running are invisible to readers,<br/>
+/// and each announcement prunes them from the file.</remarks>
+public class InterprocessEndpointRegistry : IEndpointRegistry, IEndpointAddressAnnouncer, IDisposable
 {
    const int MaxRegistryBytes = 64 * 1024;
    readonly IInterprocessObject<RegistryState> _sharedState;
@@ -28,24 +29,27 @@ public class InterprocessEndpointRegistry : IEndpointRegistry, IDisposable
                                                   MaxRegistryBytes,
                                                   directory);
 
-   ///<summary>The addresses of every registered endpoint whose publishing process is still running.</summary>
+   ///<summary>The addresses of every announced endpoint whose announcing process is still running.</summary>
    public IEnumerable<EndpointAddress> ServerEndpointAddresses =>
       _sharedState.Read(state => state.Entries
-                                      .Where(entry => entry.PublishingProcess.IsStillRunning)
+                                      .Where(entry => entry.AnnouncingProcess.IsStillRunning)
                                       .Select(entry => new EndpointAddress(new Uri(entry.AddressUri)))
                                       .ToList());
 
-   ///<summary>Publishes <paramref name="address"/> as where the endpoint listens, replacing any address the endpoint published before.<br/>
-   /// Also prunes every entry whose publishing process has exited — registration is the registry's self-cleaning moment.</summary>
-   public void RegisterEndpointAddress(EndpointId endpointId, EndpointAddress address, PublishingProcess publishingProcess) =>
+   ///<summary>Announces <paramref name="address"/> as where the endpoint listens, on behalf of this process.</summary>
+   public void AnnounceEndpointAddress(EndpointId endpointId, EndpointAddress address) => AnnounceEndpointAddress(endpointId, address, AnnouncingProcess.Current);
+
+   ///<summary>Announces <paramref name="address"/> as where the endpoint listens, replacing any address the endpoint announced before.<br/>
+   /// Also prunes every entry whose announcing process has exited — announcement is the registry's self-cleaning moment.</summary>
+   public void AnnounceEndpointAddress(EndpointId endpointId, EndpointAddress address, AnnouncingProcess announcingProcess) =>
       _sharedState.Update(state =>
       {
-         state.Entries.RemoveAll(entry => entry.EndpointId == endpointId.Value || !entry.PublishingProcess.IsStillRunning);
-         state.Entries.Add(new RegistryState.Entry(endpointId.Value, address.Uri.AbsoluteUri, publishingProcess.ProcessId, publishingProcess.StartTimeTicks));
+         state.Entries.RemoveAll(entry => entry.EndpointId == endpointId.Value || !entry.AnnouncingProcess.IsStillRunning);
+         state.Entries.Add(new RegistryState.Entry(endpointId.Value, address.Uri.AbsoluteUri, announcingProcess.ProcessId, announcingProcess.StartTimeTicks));
       });
 
-   ///<summary>Removes the endpoint's published address — what an endpoint does when it stops listening.</summary>
-   public void UnregisterEndpointAddress(EndpointId endpointId) =>
+   ///<summary>Retracts the endpoint's announced address — what an endpoint does when it stops listening.</summary>
+   public void RetractEndpointAddress(EndpointId endpointId) =>
       _sharedState.Update(state => state.Entries.RemoveAll(entry => entry.EndpointId == endpointId.Value));
 
    ///<summary>Deletes the backing file from disk, destroying the registry for every process sharing it.</summary>
@@ -57,11 +61,11 @@ public class InterprocessEndpointRegistry : IEndpointRegistry, IDisposable
    {
       internal List<Entry> Entries { get; } = [];
 
-      internal class Entry(Guid endpointId, string addressUri, int publishingProcessId, long publishingProcessStartTimeTicks)
+      internal class Entry(Guid endpointId, string addressUri, int announcingProcessId, long announcingProcessStartTimeTicks)
       {
          internal Guid EndpointId { get; } = endpointId;
          internal string AddressUri { get; } = addressUri;
-         internal PublishingProcess PublishingProcess { get; } = new(publishingProcessId, publishingProcessStartTimeTicks);
+         internal AnnouncingProcess AnnouncingProcess { get; } = new(announcingProcessId, announcingProcessStartTimeTicks);
       }
 
       internal class Serializer : IInterprocessObjectSerializer<RegistryState>
@@ -75,8 +79,8 @@ public class InterprocessEndpointRegistry : IEndpointRegistry, IDisposable
             {
                writer.Write(entry.EndpointId.ToByteArray());
                writer.Write(entry.AddressUri);
-               writer.Write(entry.PublishingProcess.ProcessId);
-               writer.Write(entry.PublishingProcess.StartTimeTicks);
+               writer.Write(entry.AnnouncingProcess.ProcessId);
+               writer.Write(entry.AnnouncingProcess.StartTimeTicks);
             }
 
             writer.Flush();
@@ -93,8 +97,8 @@ public class InterprocessEndpointRegistry : IEndpointRegistry, IDisposable
             {
                state.Entries.Add(new Entry(endpointId: new Guid(reader.ReadBytes(16)),
                                            addressUri: reader.ReadString(),
-                                           publishingProcessId: reader.ReadInt32(),
-                                           publishingProcessStartTimeTicks: reader.ReadInt64()));
+                                           announcingProcessId: reader.ReadInt32(),
+                                           announcingProcessStartTimeTicks: reader.ReadInt64()));
             }
 
             return state;
