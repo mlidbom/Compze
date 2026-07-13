@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Globalization;
+using System.Runtime.Loader;
 using Compze.Abstractions.Configuration.Internal;
 using Compze.Abstractions.Hosting.Public;
 using Compze.Abstractions.Tessaging.Public;
@@ -28,6 +29,8 @@ public static class Program
 {
    public static async Task<int> Main(string[] args)
    {
+      MakeNCrunchInstrumentedDependenciesLoadable();
+
       var registryName = args[0];
       var workDirectory = new DirectoryInfo(args[1]); //Holds the registry's backing file and this process's sqlite database files.
       var specificationProcessId = int.Parse(args[2], CultureInfo.InvariantCulture);
@@ -69,6 +72,25 @@ public static class Program
       }
 
       return 0;
+   }
+
+   ///<summary>The name of the environment variable through which the specification that launches this process passes the directory<br/>
+   /// holding the NCrunch runtime assemblies — its own base directory. Set only when the specification runs under NCrunch.</summary>
+   public const string NCrunchRuntimeAssemblyDirectoryVariableName = "COMPZE_NCRUNCH_RUNTIME_ASSEMBLY_DIRECTORY";
+
+   ///<summary>NCrunch coverage-instruments the assemblies it builds, making their code call into NCrunch runtime assemblies — which are<br/>
+   /// not part of this process's dependency closure, so the first instrumented dependency to execute would die failing to load them.<br/>
+   /// The specification that launches this process passes the directory holding those assemblies through<br/>
+   /// <see cref="NCrunchRuntimeAssemblyDirectoryVariableName"/>; outside NCrunch the variable is absent and this method installs nothing.</summary>
+   static void MakeNCrunchInstrumentedDependenciesLoadable()
+   {
+      var nCrunchRuntimeAssemblyDirectory = Environment.GetEnvironmentVariable(NCrunchRuntimeAssemblyDirectoryVariableName);
+      if(nCrunchRuntimeAssemblyDirectory == null) return;
+      AssemblyLoadContext.Default.Resolving += (loadContext, assemblyName) =>
+      {
+         var candidate = Path.Combine(nCrunchRuntimeAssemblyDirectory, assemblyName.Name + ".dll");
+         return File.Exists(candidate) ? loadContext.LoadFromAssemblyPath(candidate) : null;
+      };
    }
 
    ///<summary>Serves every requested connection string as a sqlite database file named after it in this process's work directory —<br/>

@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Text;
 using Compze.Abstractions.Hosting.Public;
 using Compze.Abstractions.Wiring.Testing.Internal;
 using Compze.Contracts;
@@ -16,6 +17,8 @@ using Compze.Threading;
 using Compze.Threading.Testing;
 using Compze.xUnitMatrix;
 using NCrunch.Framework;
+//The unqualified name Program silently resolves to the entry point xUnit v3 generates into THIS test assembly, not to the endpoint host process's class.
+using EndpointHostProcessProgram = Compze.Tests.SameMachine.EndpointHostProcess.Program;
 
 // ReSharper disable InconsistentNaming for testing
 #pragma warning disable IDE1006 //Reviewed OK: Test Naming Styles
@@ -36,6 +39,8 @@ public class Given_a_separate_process_hosting_an_endpoint_discovered_through_a_s
    readonly ITestingEndpointHost _specificationHost = null!;
    readonly IEndpoint _specificationEndpoint = null!;
    readonly IThreadGate _replyTommandGate = IThreadGate.NewOpen(WaitTimeout.Seconds(1), "replyTommand");
+   readonly CapturedConsoleStream _endpointHostProcessStandardOutput = new();
+   readonly CapturedConsoleStream _endpointHostProcessStandardError = new();
 
    public Given_a_separate_process_hosting_an_endpoint_discovered_through_a_shared_interprocess_registry()
    {
@@ -47,11 +52,22 @@ public class Given_a_separate_process_hosting_an_endpoint_discovered_through_a_s
       _registry = InterprocessEndpointRegistry.OpenOrCreateSessionLocal(registryName, _workDirectory);
 
       var endpointHostProcessDll = EndpointHostProcessDll();
-      _endpointHostProcess = Process.Start(new ProcessStartInfo("dotnet", $"\"{endpointHostProcessDll}\" {registryName} \"{_workDirectory.FullName}\" {Environment.ProcessId}")
-                                           {
-                                              UseShellExecute = false,
-                                              CreateNoWindow = true
-                                           })!;
+      var endpointHostProcessStartInfo = new ProcessStartInfo("dotnet", $"\"{endpointHostProcessDll}\" {registryName} \"{_workDirectory.FullName}\" {Environment.ProcessId}")
+                                         {
+                                            UseShellExecute = false,
+                                            CreateNoWindow = true,
+                                            RedirectStandardOutput = true,
+                                            RedirectStandardError = true
+                                         };
+      //Under NCrunch the endpoint host process's dependencies are coverage-instrumented and call into NCrunch runtime assemblies that
+      //live in this test process's base directory but not in the endpoint host process's dependency closure. The endpoint host process
+      //resolves them from the directory this variable names - see Program.MakeNCrunchInstrumentedDependenciesLoadable in its project.
+      if(NCrunchEnvironment.NCrunchIsResident()) endpointHostProcessStartInfo.Environment[EndpointHostProcessProgram.NCrunchRuntimeAssemblyDirectoryVariableName] = AppContext.BaseDirectory;
+      _endpointHostProcess = Process.Start(endpointHostProcessStartInfo)!;
+      _endpointHostProcess.OutputDataReceived += (_, line) => _endpointHostProcessStandardOutput.Append(line.Data);
+      _endpointHostProcess.ErrorDataReceived += (_, line) => _endpointHostProcessStandardError.Append(line.Data);
+      _endpointHostProcess.BeginOutputReadLine();
+      _endpointHostProcess.BeginErrorReadLine();
 
       _specificationHost = TestingEndpointHost.Create();
       _specificationEndpoint = _specificationHost.RegisterEndpoint(
@@ -142,14 +158,62 @@ public class Given_a_separate_process_hosting_an_endpoint_discovered_through_a_s
             _specificationEndpoint.ExecuteServerRequestInTransaction(session => session.Send(new TommandSentToTheEndpointHostProcess()));
             break;
          }
-#pragma warning disable CA1031 //Retrying until discovery completes; past the deadline the filter is false and the real exception propagates.
+#pragma warning disable CA1031 //Retrying until discovery completes; past the deadline the exception propagates wrapped with the endpoint host process's console output.
          catch(Exception) when(DateTime.UtcNow < retryDeadline)
+         {
+            ThrowDescribingTheFailureIfTheEndpointHostProcessHasExited();
+            Thread.Sleep(100);
+         }
+         catch(Exception stillUndiscoveredAtTheRetryDeadline)
 #pragma warning restore CA1031
          {
-            Thread.Sleep(100);
+            throw new InvalidOperationException($"The endpoint host process was not discovered within the retry deadline.{Environment.NewLine}{EndpointHostProcessConsoleOutput}", stillUndiscoveredAtTheRetryDeadline);
          }
       }
 
-      _replyTommandGate.AwaitPassedThroughCountEqualTo(1, WaitTimeout.Seconds(30));
+      try
+      {
+         _replyTommandGate.AwaitPassedThroughCountEqualTo(1, WaitTimeout.Seconds(30));
+      }
+      catch(Exception)
+      {
+         ThrowDescribingTheFailureIfTheEndpointHostProcessHasExited();
+         throw;
+      }
+   }
+
+   ///<summary>The endpoint host process has no test runner to speak through, so a failure inside it is otherwise invisible: it just never<br/>
+   /// announces itself, and the conversation fails as though no handler existed. Every conversation failure therefore first checks whether<br/>
+   /// the process died and, when it did, reports its exit code and console output.</summary>
+   void ThrowDescribingTheFailureIfTheEndpointHostProcessHasExited()
+   {
+      if(!_endpointHostProcess.HasExited) return;
+      throw new InvalidOperationException($"The endpoint host process exited prematurely with exit code {_endpointHostProcess.ExitCode}.{Environment.NewLine}{EndpointHostProcessConsoleOutput}");
+   }
+
+   string EndpointHostProcessConsoleOutput => $"""
+      --- endpoint host process standard output ---
+      {_endpointHostProcessStandardOutput}
+      --- endpoint host process standard error ---
+      {_endpointHostProcessStandardError}
+      """;
+
+   ///<summary>One console stream of the endpoint host process, captured as it is written so that a failure can report what the process said.</summary>
+   class CapturedConsoleStream
+   {
+      readonly StringBuilder _capturedText = new();
+
+      ///<summary>The final <see cref="Process.OutputDataReceived"/>/<see cref="Process.ErrorDataReceived"/> event carries null as the<br/>
+      /// end-of-stream marker; everything else is one output line.</summary>
+      internal void Append(string? line)
+      {
+         if(line is null) return;
+         lock(_capturedText) _capturedText.AppendLine(line);
+      }
+
+      public override string ToString()
+      {
+         lock(_capturedText) return _capturedText.ToString();
+      }
    }
 }
