@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## Unreleased
 
+- Named-pipe Tessaging transport: `NamedPipeTessagingTransport()` registers the inbox transport server and the transport client over the same-machine named-pipe transport — cross-process Tessaging with no ASP.NET Core anywhere in the process. The inbox server also answers infrastructure queries, so discovery bootstraps through the inbox address exactly as with HTTP.
+- `IInbox` is registered `WithServiceResolver()`: the named-pipe inbox transport server delivers received tessages to the inbox while the inbox owns and starts the server — the constructor cycle is broken by depending on a deferred `IServiceResolver<IInbox>`.
 - The in-process bus routes exclusively by wrapper type: `ForTevent<TTevent>` keys an inner tevent type subscription under `IPublisherIdentifyingTevent<TTevent>` and unwraps at delivery, while a subscription to a wrapper type receives the wrapper itself - publisher-conscious subscription (subscribe to `IManagerTevent<IEmployeeTevent>` and receive only the employee tevents a manager published). Subscribing to a tevent type and subscribing to its wrapper receive exactly the same tevents.
 - `IInProcessTeventPublisher.Publish` wraps a tevent published without a publisher-identifying wrapper before routing, and the inbox wraps tevents received from the wire the same way (the wire still carries inner tevents until the remote-transport increment).
 - `ForTevent` now validates the subscribed type with the subscription rules (interfaces only) instead of the general message-type rules, matching the in-memory dispatcher.
