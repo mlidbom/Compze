@@ -98,13 +98,6 @@
   <Folder Name="/Compze.Internals/">
     <Project Path="src/Compze.Internals.Testing/Compze.Internals.Testing.csproj" />
   </Folder>
-  <Folder Name="/Compze.Internals/Compze.Internals.Logging/">
-    <Project Path="src/Compze.Internals.Logging.Serilog/Compze.Internals.Logging.Serilog.csproj" />
-    <Project Path="src/Compze.Internals.Logging/Compze.Internals.Logging.csproj" />
-  </Folder>
-  <Folder Name="/Compze.Internals/Compze.Internals.Logging/Specifications/">
-    <Project Path="test/Compze.Internals.Logging.Specifications/Compze.Internals.Logging.Specifications.csproj" />
-  </Folder>
   <Folder Name="/Compze.Internals/Compze.Internals.Serialization/">
     <Project Path="src/Compze.Internals.Serialization.Newtonsoft/Compze.Internals.Serialization.Newtonsoft.csproj" />
   </Folder>
