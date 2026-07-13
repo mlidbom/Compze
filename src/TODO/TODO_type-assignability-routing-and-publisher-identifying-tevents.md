@@ -304,91 +304,23 @@ interface, file names match the types they declare (`ITaggregateIdentifyingTeven
 
 Deferred by decision once the wrapped-currency work proper was complete: the exactly-once path carries
 wrapped tevents end to end; widening WHICH tevents can travel remotely (and under which guarantees) is a
-separate feature. **The publishing/subscribing API and delivery semantics for this feature were designed
-2026-07-13 — see "Decided design" immediately below.** Still open after that: whether the
-remotable-but-not-exactly-once tevent *tier* gets a dedicated marker/name in the type hierarchy (the delivery
-*mechanism* vocabulary — transient delivery, the transaction-ignoring escape hatches — is settled below).
-(The wrapper-interface-constraint blocker and the guarantee-preserving auto-wrap item are both RESOLVED as of
-2026-07-13 by the wrapper simplification: the wrapper no longer carries guarantee interfaces at all, so there
-is nothing to mis-constrain and no most-derived wrapper class to auto-wrap into — `PublisherIdentifyingTevent<T>`
-closed over the inner is the whole story, and guarantee is read from the inner by covariance.)
+separate feature.
 
-#### Decided design — publishing and subscribing API (2026-07-13)
-
-Recorded from the design conversation that also surfaced the outbox-ordering bug
-(`src/TODO/TODO_bug-outbox-delivery-ordering-lost-on-recovery.md` — a correctness fix that stands independent
-of this feature). The organizing principle: **remotability and delivery-guarantee are orthogonal axes**
-(`_TessageTypes..Interfaces.cs`) — `IRemotableTevent` says only "may cross a boundary" and carries no
-transactional requirement; the guarantees are separate markers (`IMustBeSentTransactionally`,
-`IMustBeHandledTransactionally`) and tiers (`IAtMostOnceTessage`, `IExactlyOnceTessage`) layered on top. The
-delivery guarantee is resolved per (tevent, subscriber) edge, and **the tevent's own type is the contract** —
-neither publisher nor subscriber picks the guarantee; they can only opt fully out for observation.
-
-**Publishing.** One public interface, `ITeventPublisher.Publish(ITevent)` — tevent-only (the 1:N fan-out;
-tommands stay with `IServiceBusSession.Send`, tueries with the navigator). It routes each tevent by the
-guarantee interfaces the tevent's type declares, as a single fan-out point:
-
-- always → in-process synchronous delivery (`IInProcessTeventPublisher`), inline in the caller's transaction;
-- `IExactlyOnceTevent` → also the `IOutbox` (durable, on-commit, exactly-once);
-- `IRemotableTevent` but not `IExactlyOnceTevent` → also the transient transport (best-effort, on-commit);
-- not `IRemotableTevent` → local only.
-
-It honors the ambient transaction: the durable and transient remote legs deliver on commit (never leak a
-tevent for a rolled-back transaction); in-process runs inline. It auto-wraps per invariant 1.
-
-- **The tevent store becomes a client of `ITeventPublisher`**, forwarding each committed tevent — not the
-  owner of publishing. `ITeventStoreTeventPublisher` collapses into `ITeventPublisher`;
-  `IInProcessTeventPublisher` / `IOutbox` / the transient transport become internal delivery legs, not public
-  surfaces. This resolves "the code assumes only taggregates publish events" — anything can publish now.
-- **The mutually-exclusive publisher-mode split dissolves.** `InProcessOnlyTeventStoreTeventPublisher` vs
-  `DistributedTeventStoreTeventPublisher` (an endpoint-wide choice) becomes per-tevent routing: an endpoint
-  has one `ITeventPublisher`; which legs it has is wiring. A tevent whose guarantee needs a leg the endpoint
-  did not wire (an `IExactlyOnceTevent` on a transient-only endpoint) is a **loud wiring/publish error**,
-  never a silent downgrade.
-- **Exactly-once is decoupled from the store.** It requires only an ambient transaction (assert it) + the
-  outbox; the store is the commonest client, not a prerequisite. Any code may publish an `IExactlyOnceTevent`
-  within a transaction — the outbox row joins that transaction.
-
-**Transaction-ignoring escape hatch (publish).** `ITransactionIgnoringTeventPublisher.Publish(ITevent)`
-publishes immediately and unconditionally, ignoring the ambient transaction (emits even if the surrounding
-transaction rolls back). For tracing/monitoring infrastructure only. It guards loudly (an `Assert.Argument`,
-because C# cannot express "an `ITevent` provably not `IMustBeSentTransactionally`") against any tevent
-implementing **`IMustBeSentTransactionally`**: immediate-unconditional delivery structurally cannot back a
-durable send. `IMustBeSentTransactionally` is the correct marker — the publisher is a send-side concept, so
-`IMustBeHandledTransactionally` is not its business. (For tevents this currently forbids exactly the same
-tevents as forbidding `IAtMostOnceTessage` would, since `IExactlyOnceTevent` is the only transactional tevent
-tier; the two diverge only if an at-most-once tevent tier is added, and `IMustBeSentTransactionally` is then
-still correct — an at-most-once tevent may be sent best-effort, carrying its `Id`, because at-most-once
-constrains only handling, not sending.)
-
-**Subscribing.** Default registration (`RegisterTeventHandlers` / `ForTevent<T>`) delivers each tevent with
-the full guarantee its type declares; the subscriber does not choose the guarantee. Exactly-once tevents
-arrive through the inbox (transactional handling, dedup, retry); transient tevents arrive by direct dispatch.
-The escape hatch `RegisterTransactionIgnoringTeventHandlers()` opts a handler fully out: direct invocation,
-outside any transaction, no guarantee (may run even when the transactional handler set rolls back) — the
-mirror of the publish escape hatch, for the same clients, under the same `TransactionIgnoring` name.
-
-- **This binary is complete, not a simplification.** The only reason to want *less* than the declared
-  guarantee is to shed cost; any intermediate tier (e.g. dedup-without-durability) still needs the inbox's
-  store to dedup and so saves nothing. "The type's declared guarantee" and "free transaction-ignoring
-  observation" span the entire cost/guarantee frontier. This resolves the standing "should subscribers choose
-  a lighter guarantee?" question (`_TessageTypes..Interfaces.cs:78-79`): yes, but only the binary opt-out, not
-  a menu of levels.
-- **Wiring rules (loud failure, mirroring the publish side):** a transaction-ignoring subscription to an
-  `IExactlyOnceTevent` is allowed on any endpoint (direct dispatch needs no inbox); a default (transactional)
-  subscription to an `IExactlyOnceTevent` on an endpoint with no inbox wired fails at setup.
-
-**Symmetry — the escape hatch is one concept on both ends** ("emit/observe regardless of transactional
-fate", same tracing/monitoring clients, same `TransactionIgnoring` name):
-
-| | Default | Transaction-ignoring escape hatch |
-|---|---|---|
-| **Publish** | `ITeventPublisher` — honors transaction, routes per tevent type | `ITransactionIgnoringTeventPublisher` — emit even if my transaction rolls back |
-| **Subscribe** | `RegisterTeventHandlers` — transactional, gets the type's guarantee | `RegisterTransactionIgnoringTeventHandlers` — observe even if the processing transaction rolls back |
-
-The receiving-endpoint stance is unchanged and absolute: **failing to *receive* a tevent (persist it to the
-inbox when its guarantee requires it) is a fatal bug — the system goes down.** Failing to *handle* one is a
-separate matter, out of scope here.
+**The design for this feature is settled and lives in its own document:**
+[`src/Compze.Tessaging/_docs/tevent-delivery-model.md`](../Compze.Tessaging/_docs/tevent-delivery-model.md) —
+the delivery ladder (participation / exactly-once / transient / observation), `ITeventPublisher` and the
+`ITransactionIgnoringTeventPublisher` escape hatch, subscription semantics with the binary observation
+opt-down, the observation contract, ordering, and the wiring rules. Designed 2026-07-13; that document is the
+single home — this file keeps only the work items. Resolved along the way: the
+remotable-but-not-exactly-once tier needs no new marker (`IRemotableTevent` IS the tier — a mechanism name in
+a tessage type would re-entangle the axes); the wrapper-interface-constraint blocker and the
+guarantee-preserving auto-wrap item both dissolved with the 2026-07-13 wrapper simplification (the wrapper
+carries no guarantee interfaces, so there is nothing to mis-constrain and no wrapper class to select);
+the standing "should subscribers choose a lighter guarantee?" question (`_TessageTypes..Interfaces.cs:78-79`)
+is answered by the binary opt-down; and `IAtMostOnceTessage` has its reason to exist (transient send + `Id` +
+receiver dedup — the UI double-click case), answering the `//Todo` at `_TessageTypes..Interfaces.cs:66`.
+The related outbox-ordering bug is tracked separately:
+`src/TODO/TODO_bug-outbox-delivery-ordering-lost-on-recovery.md`.
 
 - [ ] Investigate first: determine how typermedia remote routing consumes the advertisement today (e.g.
       whether `IAtMostOnceTypermediaTommand` handler types flow through `HandledRemoteTessageTypeIds` and
@@ -398,8 +330,8 @@ separate matter, out of scope here.
       beyond exactly-once.
 - [ ] Implement the delivery path for remotable tevents that are not `IExactlyOnceTevent`: sent without the
       outbox's transactional persistence, dispatched on arrival without the inbox's persist/dedup — the
-      guarantees each tevent's interfaces declare, no more and no less. Per the Decided design: this is the
-      transient transport + direct receive dispatch behind `ITeventPublisher`'s routing (best-effort,
+      guarantees each tevent's interfaces declare, no more and no less. Per the delivery-model document: this
+      is the transient transport + direct receive dispatch behind `ITeventPublisher`'s routing (best-effort,
       on-commit), plus the `ITransactionIgnoringTeventPublisher` / `RegisterTransactionIgnoringTeventHandlers`
       escape hatches (immediate, out-of-transaction). Single-in-flight per destination for now — no
       pipelining (decided 2026-07-13), so ordering holds without sequence numbers while connected.
@@ -410,7 +342,7 @@ separate matter, out of scope here.
       the tevent type's own (`_TessageTypes..Interfaces.cs:78-79`)? Yes, but only as a **binary** opt-out —
       the default is the type's declared guarantee; `RegisterTransactionIgnoringTeventHandlers()` opts fully
       out for observation. No menu of intermediate levels (an intermediate tier saves no cost — it still
-      needs the inbox store to dedup). See the Decided design above.
+      needs the inbox store to dedup). See `src/Compze.Tessaging/_docs/tevent-delivery-model.md`.
 - [x] Guarantee-preserving auto-wrap — DISSOLVED (2026-07-13). The wrapper no longer carries
       delivery-guarantee interfaces, so `PublisherIdentifyingTevent<TTevent>` closed over the inner IS the
       correct wrapper for every guarantee tier; the outbox/router/store read the guarantee from the inner by

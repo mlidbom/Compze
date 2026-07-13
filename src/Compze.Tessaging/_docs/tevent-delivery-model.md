@@ -1,0 +1,274 @@
+# The Compze tevent delivery model
+
+This document takes a developer who is new to Compze from zero to understanding how tevents are delivered —
+what delivery guarantees exist, where each guarantee comes from, how publishing and subscribing work, and
+what happens when a tevent crosses a process boundary. It is the companion to
+[the hosting model](../../Compze.Hosting/_docs/hosting-model.md), which explains what an endpoint *is*; this
+document explains how tevents travel between the code that publishes them and the handlers that receive them.
+
+Parts of this model are built and parts are decided-but-pending; the honest inventory is in
+[Implementation status](#implementation-status) at the end. Everything before that describes the *model* —
+the design the code is converging on, decided 2026-07-13.
+
+## The big picture
+
+### Tevents, briefly
+
+A tevent is a type-routed event: subscribers subscribe to a tevent *type*, and receive every published
+tevent whose runtime type is assignable to it — `IUserImported : IUserRegistered : IUserEvent` means an
+`IUserEvent` subscriber hears about imports and registrations without either publisher or subscriber knowing
+the other exists. Publishing is 1:N fan-out to unknown subscribers. (Tommands are the 1:1 opposite — one
+sender, exactly one handler — and follow different rules; see [Tommands are different](#tommands-are-different).)
+
+### The two orthogonal axes
+
+Two independent questions decide how a tevent travels:
+
+- **Remotability** — may this tevent leave the process at all?
+- **Delivery guarantee** — what promise does its delivery make?
+
+These are orthogonal by design. `IRemotableTevent` says only "may cross an endpoint boundary" and promises
+nothing about how; the guarantees are separate markers (`IMustBeSentTransactionally`,
+`IMustBeHandledTransactionally`) and tiers (`IAtMostOnceTessage`, `IExactlyOnceTessage`) layered on top.
+Conflating the axes — assuming "crosses a boundary" implies "durable and transactional" — was the historical
+mistake this model corrects.
+
+### The one design rule
+
+Everything below follows from a single rule:
+
+> **A tevent's type states its delivery contract. The endpoint's wiring supplies the delivery legs. A
+> subscription may only opt down — and only all the way.**
+
+Unpacked:
+
+- **The type is the contract.** Neither the publisher nor the subscriber picks a tevent's guarantee; the
+  tevent's own interfaces declare it, and every delivery edge honors it. Publishing an `IExactlyOnceTevent`
+  *means* exactly-once delivery to its default subscribers — there is no parameter that weakens it.
+- **Wiring supplies the legs, and missing legs fail loud.** Which delivery mechanisms an endpoint has
+  (outbox, inbox, transient transport) is composition. A tevent whose contract needs a leg the endpoint did
+  not wire is a loud setup/publish error — never a silent downgrade. Silently degrading a durability
+  guarantee is data loss dressed as success.
+- **Subscriptions opt down binarily or not at all.** A subscription either takes the tevent's full declared
+  guarantee (the default) or opts all the way out to *observation* (the escape hatch, below). There is no
+  menu of intermediate levels — deliberately: the only reason to want less than the declared guarantee is to
+  shed cost, and any intermediate tier (say, dedup-without-durability) still needs the inbox's store to
+  dedup, so it saves nothing. Full guarantee and free observation span the entire cost/guarantee frontier.
+
+## The delivery ladder
+
+Every (tevent, subscriber) edge lands on one of four rungs. Each rung is the one above it minus exactly one
+property:
+
+| Rung | What it is | Loses vs. the rung above |
+|---|---|---|
+| **Participation** | In-process, synchronous, in the *publisher's* transaction. A handler failure aborts the publish itself. | — (the strongest thing there is) |
+| **Exactly-once** | Durable (outbox → inbox), handler in its *own* transaction, deduped, retried until handled. | Participation in the publisher's transaction |
+| **Transient** | Best-effort across the wire, handler in its *own* transaction. No store, no dedup, no retry. | Guaranteed arrival |
+| **Observation** | Direct invocation, no transaction, no guarantees. | Transactional handling |
+
+Which rung an edge lands on:
+
+- **Participation** is automatic for every local subscriber — it is what in-process delivery *is*.
+- **Exactly-once vs. transient** is decided by the tevent's type: `IExactlyOnceTevent` travels the durable
+  pipeline; a remotable tevent that is not exactly-once travels transiently. The subscriber does not choose.
+- **Observation** is the one subscription-side choice: the escape hatch drops any subscriber to this rung,
+  whatever the tevent's type.
+
+Note that **transient still means transactional handlers**. A projection updating from a transient tevent
+wants its *own* writes to be atomic; that is handler correctness, not a delivery guarantee, and the two must
+not be conflated. Transient delivery drops guaranteed *arrival*; the handler still executes in its own scope
+and transaction (the same shape as Typermedia's handler execution, which also pairs no-delivery-guarantees
+with transactional handler execution). Only observation runs without a transaction.
+
+## The tevent type hierarchy: contracts, not mechanisms
+
+Defined in `Compze.Abstractions` (`_TessageTypes..Interfaces.cs`):
+
+- **`ITevent`** — a type-routed event. By itself: participation only; never leaves the process.
+- **`IRemotableTevent : ITevent`** — may cross endpoint boundaries; promises nothing further. **This is the
+  transient tier.** There is deliberately no `ITransientTevent` marker: "transient" names the delivery
+  *mechanism*, and putting a mechanism's name into a tessage type would re-entangle the two axes the model
+  keeps apart. A plain `IRemotableTevent` and "delivered transiently" are the same statement made once.
+- **`IExactlyOnceTevent : IRemotableTevent, IExactlyOnceTessage`** — guaranteed arrival: sent
+  transactionally through the outbox, handled transactionally through the inbox, deduped by its
+  `IAtMostOnceTessage` `Id`, retried until handled.
+- The markers underneath: `IMustBeSentTransactionally` (the send joins a transaction — requires the outbox),
+  `IMustBeHandledTransactionally` (dedup/handling is atomic with the handler's effects — requires the
+  inbox), and `IAtMostOnceTessage` (carries the `TessageId` infrastructure dedups on). At-most-once
+  constrains only *handling*: an `IAtMostOnceTessage` may be *sent* best-effort, carrying its `Id`, and the
+  receiver's dedup still guarantees ≤1 handling — the UI double-click case.
+
+### The publisher-identifying wrapper carries identity, nothing else
+
+Every tevent is wrapped in `IPublisherIdentifyingTevent<out TTevent>` before routing (routing matches on the
+wrapper type; covariance makes a wrapper assignable to the wrapper-of every type its inner is assignable
+to — see the routing model in `src/TODO/TODO_type-assignability-routing-and-publisher-identifying-tevents.md`).
+The wrapper carries **only publisher identity**. It declares no delivery-guarantee interfaces of its own:
+
+- The guarantee is read off the *inner* tevent through covariance — a wrapper whose inner is exactly-once is
+  an `IPublisherIdentifyingTevent<IExactlyOnceTevent>`, and that is what the outbox and router demand.
+- The dedup identity is the inner tevent's `Id`, extracted once where the type is statically known (the
+  outbox entry) and carried as transport-envelope data from there on.
+
+One concept, one home: the tevent owns its guarantee, the wrapper owns publisher identity, the envelope owns
+the dedup key. (An earlier design mirrored the inner's guarantee interfaces onto parallel wrapper tiers;
+the mirror could silently diverge and its constraints made a transient wrapper inexpressible. Removed
+2026-07-13.)
+
+## Publishing
+
+### `ITeventPublisher` — the one way to publish
+
+```csharp
+public interface ITeventPublisher
+{
+   void Publish(ITevent tevent);
+}
+```
+
+One public interface, tevent-only. It routes each tevent by the guarantee interfaces the tevent's type
+declares, as the single fan-out point:
+
+- always → in-process synchronous delivery, inline in the caller's transaction (participation);
+- `IExactlyOnceTevent` → also the outbox (durable, delivered on commit);
+- `IRemotableTevent` but not `IExactlyOnceTevent` → also the transient transport (best-effort, delivered on
+  commit);
+- not `IRemotableTevent` → local only.
+
+It honors the ambient transaction: both remote legs deliver on commit, so a rolled-back transaction never
+leaks a tevent — for the transient leg that is "sent-on-commit without durability", not "sent
+transactionally". It auto-wraps a tevent published without a publisher-identifying wrapper.
+
+What this shape buys:
+
+- **Anything can publish.** The tevent store is `ITeventPublisher`'s most common *client* — forwarding each
+  committed taggregate tevent — not the owner of publishing. A service raising a transient monitoring
+  signal, code with no taggregate in sight: same one interface.
+- **Exactly-once is decoupled from the tevent store.** It requires only an ambient transaction (asserted)
+  plus the outbox — the outbox row joins whatever transaction is present. Committing domain state and the
+  tevent atomically is what the store *uses* this for, not what publishing *is*.
+- **No publication mode.** Whether a tevent crosses the wire, and under which guarantee, is a property of
+  the tevent's type — not an endpoint-wide mode declared once. An endpoint has one `ITeventPublisher`;
+  which legs stand behind it is wiring, and a tevent needing an unwired leg fails loud.
+
+### `ITransactionIgnoringTeventPublisher` — the publish escape hatch
+
+For tracing/monitoring infrastructure that must emit *now*, regardless of the surrounding transaction's
+fate: publishes immediately and unconditionally — no on-commit deferral, emits even if the caller's
+transaction rolls back. A separate interface rather than a second method, deliberately: depending on it
+makes "this code emits out-of-band" visible in a constructor signature, and keeps the dangerous path off the
+common surface.
+
+It rejects any tevent implementing `IMustBeSentTransactionally` (asserted loudly — C# cannot express "an
+`ITevent` provably not X" as a constraint): immediate-unconditional delivery structurally cannot back a
+transactional send. That marker, not `IAtMostOnceTessage`, is the correct guard — the publisher is a
+send-side concept, and at-most-once constrains only handling.
+
+## Subscribing
+
+### Default: the tevent's declared guarantee
+
+Registering a handler (`ForTevent<TTevent>(...)`) says only "this endpoint understands these tevents". The
+delivery guarantee comes from each arriving tevent's type — the subscriber never picks it:
+
+- a local publish → participation (synchronous, publisher's transaction);
+- an arriving `IExactlyOnceTevent` → through the inbox: persisted, deduped, handled in its own transaction,
+  retried until handled;
+- an arriving transient tevent → direct dispatch in the handler's own scope and own transaction — atomic
+  handler writes, but no dedup and no retry.
+
+### `RegisterTransactionIgnoringTeventHandlers` — observation
+
+The one subscription-side choice: opt a handler all the way down to observation. Same clients and same word
+as the publish escape hatch, because it is the same concept on the other end — "emit/observe regardless of
+transactional fate":
+
+| | Default | Transaction-ignoring escape hatch |
+|---|---|---|
+| **Publish** | `ITeventPublisher` — honors the transaction, routes per tevent type | `ITransactionIgnoringTeventPublisher` — emit even if my transaction rolls back |
+| **Subscribe** | `RegisterTeventHandlers` — the tevent type's full guarantee | `RegisterTransactionIgnoringTeventHandlers` — observe even if the processing transaction rolls back |
+
+The observation contract, stated honestly — this is the fine print a subscriber accepts by using the escape
+hatch, and it is why the escape hatch is for infrastructure, never domain logic:
+
+- **Fires once, immediately, at registration of the tevent** — for an exactly-once arrival that is the
+  moment the inbox registers it (after dedup, before transactional processing); for a transient arrival, on
+  arrival; for a local publish, at publish time, outside the publisher's transaction.
+- **At most once, never duplicates.** The exactly-once path dispatches observers only on first registration,
+  so the inbox's dedup shields observers too; the transient path delivers at most once by nature.
+- **May observe doomed tevents.** The transactional processing of an observed tevent may subsequently fail;
+  a locally observed tevent's publishing transaction may roll back. The observer has already run.
+- **Ordering relative to transactional handlers is unspecified.** Observation is dispatched immediately;
+  the transactional handlers run when the inbox schedules them. Races are possible.
+- **A throwing observer is reported, never retried** — surfaced through the background-exception reporter,
+  not swallowed, not redelivered.
+
+### Wiring rules — loud failure, one direction
+
+- A subscription demanding *more* than the endpoint can deliver fails at setup: a default subscription to an
+  `IExactlyOnceTevent` on an endpoint with no inbox wired is an error.
+- Observation is allowed anywhere — direct dispatch needs no machinery.
+- The reverse never fails: an endpoint with the full durable pipeline delivers a transient tevent
+  transiently. Capability above the contract is simply unused.
+
+## Ordering
+
+> **Tevents sent to a given endpoint are delivered in the order they were sent. We never reorder what we
+> send.**
+
+The mechanism is structural, not bookkeeping: one tessage in flight per destination — a single-threaded send
+loop that does not look at message N+1 until N is delivered and acknowledged. No sequence numbers are needed
+while both processes stay up. Pipelining (multiple in flight) is deliberately not implemented: it is only
+worth its complexity for high-latency links, and same-machine delivery is fast sequentially.
+
+Per rung:
+
+- **Exactly-once: order must also survive a sender restart.** Recovery must re-establish head-of-line on the
+  oldest undelivered tessage. (The current recovery violates this — it reloads the backlog ordered by retry
+  metadata; known bug, `src/TODO/TODO_bug-outbox-delivery-ordering-lost-on-recovery.md`.)
+- **Transient: in order within a connected session.** On disconnect or persistent delivery failure, the
+  remaining queued stream for that subscriber is dropped *whole* and the subscriber resumes from live after
+  reconnecting. The unit of loss is the stream, never the message: a gap is one clean "you were
+  disconnected" boundary, never a silent mid-stream skip that would deliver 54 after dropping 53.
+- **Receive side: failing to *receive* is fatal.** An endpoint that cannot register an arriving guaranteed
+  tevent in its inbox has a fatal bug — the system goes down rather than lose the tevent. Failing to
+  *handle* (handler exceptions, retries exhausted) is a separate concern with its own policy.
+
+## Tommands are different
+
+Tommands are 1:1 — one sender, exactly one handler — and there the type dictates *everything*, with no
+subscription-side election at all: an `IExactlyOnceTommand`'s type is its delivery contract (exactly-once,
+transactional, asynchronous), sent through `IServiceBusSession.Send` / `ScheduleSend`, and an endpoint even
+routes tommands to *itself* through the outbox so the guarantee holds. The synchronous local ask has its own
+truthful home in Typermedia's strictly-local tommand — see
+[the hosting model](../../Compze.Hosting/_docs/hosting-model.md). The subscription-side opt-down and the
+transient tier described in this document are tevent concepts: they exist because tevent publishing is
+decoupled 1:N fan-out, where the publisher must not decide the durability needs of subscribers it does not
+know.
+
+## Implementation status
+
+As of 2026-07-13:
+
+**Built and verified:**
+
+- The exactly-once vertical end to end: outbox, inbox, router, tommand scheduler, per-destination
+  single-in-flight ordered delivery, dedup on the envelope `TessageId`.
+- In-process participation delivery, including the publisher-identifying wrapping and type-assignability
+  routing.
+- The pure `IPublisherIdentifyingTevent<out TTevent>` wrapper with guarantee-via-covariance and the
+  envelope-carried dedup identity.
+
+**Decided, not yet built** (work items live in the D6 section of
+`src/TODO/TODO_type-assignability-routing-and-publisher-identifying-tevents.md`):
+
+- `ITeventPublisher` / `ITransactionIgnoringTeventPublisher` and the dissolution of the endpoint-wide
+  publication-mode split (`InProcessOnlyTeventStoreTeventPublisher` / `DistributedTeventStoreTeventPublisher`
+  still exist; the hosting model documents that current state).
+- The transient transport leg and the direct receive dispatch, and the removal of the router's
+  exactly-once-only routing gate.
+- `RegisterTransactionIgnoringTeventHandlers` and the observation dispatch.
+- Cross-process endpoint discovery for production/same-machine scenarios (`AppConfigEndpointRegistry` is a
+  stub; endpoints currently discover each other only within one testing host).
+- The exactly-once recovery-ordering fix (the bug referenced above).
