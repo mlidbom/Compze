@@ -4,17 +4,16 @@ using Compze.Abstractions.Wiring.Testing.Internal;
 using Compze.DependencyInjection;
 using Compze.Hosting.SameMachine;
 using Compze.Hosting.Testing;
-using Compze.Hosting.Testing.Wiring;
+using Compze.Internals.Testing;
 using Compze.Tessaging.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
 using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Hosting.Testing.Wiring;
-using Compze.Internals.Testing;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Tests.SameMachine.EndpointHostProcess;
 using Compze.Threading;
 using Compze.Threading.Testing;
-using Xunit;
+using Compze.xUnitMatrix;
 
 // ReSharper disable InconsistentNaming for testing
 #pragma warning disable IDE1006 //Reviewed OK: Test Naming Styles
@@ -51,10 +50,10 @@ public class Given_a_separate_process_hosting_an_endpoint_discovered_through_a_s
       var endpointHostProcessDll = Path.Combine(AppContext.BaseDirectory.Replace("Compze.Tests.Integration", "Compze.Tests.SameMachine.EndpointHostProcess"),
                                                 "Compze.Tests.SameMachine.EndpointHostProcess.dll");
       _endpointHostProcess = Process.Start(new ProcessStartInfo("dotnet", $"\"{endpointHostProcessDll}\" {registryName} \"{_workDirectory.FullName}\" {Environment.ProcessId}")
-      {
-         UseShellExecute = false,
-         CreateNoWindow = true
-      })!;
+                                           {
+                                              UseShellExecute = false,
+                                              CreateNoWindow = true
+                                           })!;
 
       _specificationHost = TestingEndpointHost.Create();
       _specificationEndpoint = _specificationHost.RegisterEndpoint(
@@ -108,10 +107,9 @@ public class Given_a_separate_process_hosting_an_endpoint_discovered_through_a_s
       }
    }
 
+   [Skip<Transport>([Transport.AspNetCore], "The AspNetCoreh transport is currently not supported")]
    [PCT] public void a_tommand_sent_to_the_process_is_handled_there_and_its_reply_tommand_comes_back()
    {
-      Assert.SkipUnless(RunsOnTheNamedPipesTransport, "The endpoint host process speaks named pipes; this conversation exists only on the NamedPipes transport.");
-
       //Until this process's reconciliation loop has discovered the endpoint host process - which is still starting up -
       //the handler is unknown and sending fails loud. The retry loop rides that loudness until discovery completes.
       var retryDeadline = DateTime.UtcNow + TimeSpan.FromSeconds(30);
