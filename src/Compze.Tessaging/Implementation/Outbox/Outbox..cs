@@ -46,7 +46,7 @@ partial class Outbox : IOutbox
    {
       State.NotNull(Transaction.Current);
       var dedupId = wrappedTevent.Tevent.Id;
-      this.Log().Debug($"Publishing tevent {dedupId} ({wrappedTevent.GetType().Name})");
+      this.Log().Debug($"Will publish if transaction tevent if transactions succeeds: {dedupId} ({wrappedTevent.GetType().Name})");
       var connections = _tessagingRouter.SubscriberConnectionsFor(wrappedTevent)
                                         .Where(connection => connection.EndpointInformation.Id != _configuration.Id)
                                         .ToArray(); //We dispatch tevents to ourselves synchronously so don't go doing it again here.
@@ -64,7 +64,7 @@ partial class Outbox : IOutbox
    public void SendTransactionally(IExactlyOnceTommand exactlyOnceTommand)
    {
       State.NotNull(Transaction.Current);
-      this.Log().Debug($"Sending tommand {exactlyOnceTommand.Id} ({exactlyOnceTommand.GetType().Name})");
+      this.Log().Debug($"Will send tommand if transactions succeeds: {exactlyOnceTommand.Id} ({exactlyOnceTommand.GetType().Name})");
       var connection = _tessagingRouter.ConnectionToHandlerFor(exactlyOnceTommand);
 
       _storage.SaveTessage(exactlyOnceTommand, exactlyOnceTommand.Id, connection.EndpointInformation.Id);
