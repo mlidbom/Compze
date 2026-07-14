@@ -9,10 +9,10 @@ using Compze.DependencyInjection.Microsoft;
 using Compze.Hosting;
 using Compze.Hosting.SameMachine;
 using Compze.Internals.Serialization.Newtonsoft.Wiring;
+using Compze.Internals.Transport.NamedPipes;
 using Compze.Tessaging.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
 using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Sqlite.Wiring;
-using Compze.Tessaging.Transport.NamedPipes;
 using Compze.TypeIdentifiers.Interning.Sqlite.Wiring;
 
 namespace Compze.Tests.SameMachine.EndpointHostProcess;
@@ -46,7 +46,7 @@ public static class Program
                builder.Registrar
                       .Register(Singleton.For<IConfigurationParameterProvider>().CreatedBy(() => new SqliteDatabasePerConnectionStringNameConfigurationParameterProvider(workDirectory)))
                       .NewtonsoftTessagingSerializer()
-                      .NamedPipeTessagingTransport()
+                      .NamedPipeEndpointTransport()
                       .SqliteEndpointPersistence("EndpointHostProcess")
                       .SqliteTessagingSqlLayer();
 

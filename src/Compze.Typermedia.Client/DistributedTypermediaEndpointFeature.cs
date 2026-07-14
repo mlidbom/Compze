@@ -16,9 +16,10 @@ namespace Compze.Typermedia.Client;
 /// endpoint's typermedia handlers are registered (<see cref="RegisterHandlers"/>).
 ///
 /// Serving is done by the endpoint's one transport server (<see cref="EndpointTransportServerFeature"/>,
-/// which it composes): Typermedia contributes its request handling to that server rather than running a
-/// server of its own. The endpoint's address is exposed as the <c>TypermediaAddress</c> extension property
-/// (<see cref="EndpointTypermediaExtensions"/>).
+/// which it composes): the feature registers Typermedia's request-handling contribution
+/// (<see cref="TypermediaTransportServerRegistrar.TypermediaTransportServer"/>) itself — protocol-free, so the
+/// composing layer declares only the endpoint's transport protocol. The endpoint's address is exposed as the
+/// <c>TypermediaAddress</c> extension property (<see cref="EndpointTypermediaExtensions"/>).
 ///</summary>
 public class DistributedTypermediaEndpointFeature
 {
@@ -43,6 +44,7 @@ public class DistributedTypermediaEndpointFeature
       _transportServer = EndpointTransportServerFeature.GetOrAddTo(builder);
 
       TypermediaHandlerExecutor.RegisterWith(builder.Registrar);
+      builder.Registrar.TypermediaTransportServer();
 
       builder.OnContainerBuilt(resolver => TypermediaEndpointDiscoveryQueryRegistration.RegisterQueryHandlers(
                                   new EndpointDiscoveryQueryRegistrarWithDependencyInjectionSupport(resolver.Resolve<EndpointDiscoveryQueryExecutor>())));

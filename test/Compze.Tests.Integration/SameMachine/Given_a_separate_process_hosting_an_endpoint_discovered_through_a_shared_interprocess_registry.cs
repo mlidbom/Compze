@@ -5,6 +5,7 @@ using Compze.Abstractions.Wiring.Testing.Internal;
 using Compze.Contracts;
 using Compze.Hosting.SameMachine;
 using Compze.Hosting.Testing;
+using Compze.Hosting.Testing.Wiring;
 using Compze.Internals.Testing;
 using Compze.Tessaging.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
 using Compze.Tessaging.Hosting;
@@ -76,7 +77,7 @@ public class Given_a_separate_process_hosting_an_endpoint_discovered_through_a_s
          {
             builder.TypeMapper.MapTypesFromAssemblyContaining<TommandSentToTheEndpointHostProcess>();
             builder.Registrar
-                   .CurrentTestsTessagingTransport()
+                   .CurrentTestsEndpointTransport()
                    .CurrentTestsConfiguredSqlLayer(connectionStringName: builder.Configuration.Id.ToString());
             builder.AddDistributedTessaging().ParticipateIn(_registry);
             builder.RegisterTessagingHandlers.ForTommand<TommandSentBackToTheSpecificationProcess>(_ => _replyTommandGate.AwaitPassThrough());

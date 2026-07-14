@@ -10,6 +10,17 @@ using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 
 namespace Compze.Typermedia.Client;
 
+public static class TypermediaTransportRegistrar
+{
+   ///<summary>Registers the client side of the Typermedia transport (<see cref="TypermediaTransport"/>) plus the<br/>
+   /// endpoint-discovery query transport it discovers endpoints through — both run on the endpoint transport client<br/>
+   /// (<see cref="IEndpointTransportClient"/>) that the endpoint's protocol declaration (or a client-only composition's<br/>
+   /// transport-client registration) supplies.</summary>
+   public static IComponentRegistrar TypermediaTransport(this IComponentRegistrar registrar)
+      => registrar.EndpointDiscoveryQueryTransportIfNotRegistered()
+                  .Register(Client.TypermediaTransport.RegisterWith);
+}
+
 ///<summary>The client side of the Typermedia transport: executes tueries and tommands against a remote endpoint through the<br/>
 /// endpoint transport client (<see cref="IEndpointTransportClient"/>) — one implementation for every protocol, since the<br/>
 /// protocol difference lives entirely in the transport client.</summary>

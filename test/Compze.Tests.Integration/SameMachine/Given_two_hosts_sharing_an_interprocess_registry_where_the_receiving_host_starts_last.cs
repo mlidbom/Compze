@@ -2,6 +2,7 @@ using Compze.Abstractions.Hosting.Public;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Hosting.SameMachine;
 using Compze.Hosting.Testing;
+using Compze.Hosting.Testing.Wiring;
 using Compze.Tessaging.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
 using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Hosting.Testing.Wiring;
@@ -51,7 +52,7 @@ public class Given_two_hosts_sharing_an_interprocess_registry_where_the_receivin
    {
       builder.TypeMapper.RegisterIntegrationTestTypeMappings();
       builder.Registrar
-             .CurrentTestsTessagingTransport()
+             .CurrentTestsEndpointTransport()
              .CurrentTestsConfiguredSqlLayer(connectionStringName: builder.Configuration.Id.ToString());
       builder.AddDistributedTessaging().ParticipateIn(_registry);
    }

@@ -6,9 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## Unreleased
 
-- Typermedia no longer runs a transport server of its own: `NamedPipeTypermediaTransportServer()` now contributes Typermedia's request handling to the endpoint's one named-pipe transport server, and `DistributedTypermediaEndpointFeature` composes the shared `EndpointTransportServerFeature` — an endpoint speaking both styles serves both on one address. The feature gains `AnnounceAddressTo(...)`, delegating to the shared feature.
-- Named-pipe Typermedia transport: `NamedPipeTypermediaTransport()` (client) and `NamedPipeTypermediaTransportServer()` (server) implement the Typermedia transport over the same-machine named-pipe transport — no ASP.NET Core anywhere in the process.
-- Typermedia's transport is protocol-free: one `TypermediaTransport` client and one `TypermediaRequestHandlers` server contribution (`TypermediaTransportServer()`), both over the endpoint transport — the per-protocol variants and the `Compze.Typermedia.Hosting.AspNetCore` controller assembly are gone. The protocol-named registrars now only pick the protocol plumbing around them.
+- Typermedia no longer runs a transport server of its own: it contributes its request handling to the endpoint's one transport server, and `DistributedTypermediaEndpointFeature` composes the shared `EndpointTransportServerFeature` — an endpoint speaking both styles serves both on one address. The feature gains `AnnounceAddressTo(...)`, delegating to the shared feature.
+- Typermedia's transport is protocol-free: one `TypermediaTransport` client (registered by `TypermediaTransport()`) and one `TypermediaRequestHandlers` server contribution, both over the endpoint transport — the per-protocol variants and the `Compze.Typermedia.Hosting.AspNetCore` controller assembly are gone. `DistributedTypermediaEndpointFeature` registers its request handling itself; the composing layer declares only the endpoint's transport protocol (`NamedPipeEndpointTransport()` / `AspNetCoreEndpointTransport()`), so Typermedia works cross-process with no ASP.NET Core anywhere in the process when the endpoint speaks named pipes.
 
 ## 0.1.0-alpha
 

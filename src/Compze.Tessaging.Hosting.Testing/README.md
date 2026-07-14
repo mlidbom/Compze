@@ -11,8 +11,7 @@ Compze is a .NET framework for building expressive domains through **Teventive p
 Tessaging's plug-in for the testing endpoint host in `Compze.Hosting.Testing`:
 
 - **`DistributedTessagingTestingEndpointHostFeature`** — wires the distributed Tessaging pipeline, transport, and persistence into every endpoint a `TestingEndpointHost` registers, tracks tessages in flight host-wide, and makes the host wait until everything is at rest before disposing — so tests cannot silently drop in-flight work.
-- **Transport test wiring** — `CurrentTestsTessagingTransport()` registers the ASP.NET Core Tessaging transport for the current test configuration.
-- **Persistence test wiring** — `CurrentTestsConfiguredSqlLayer()` registers the Tessaging vertical's storage stack (type-id interner, document db, tessaging inbox/outbox, tevent store) against the SQL backend the current test runs against.
+- **Persistence test wiring** — `CurrentTestsConfiguredSqlLayer()` registers the Tessaging vertical's storage stack (type-id interner, document db, tessaging inbox/outbox, tevent store) against the SQL backend the current test runs against. (The endpoint's transport protocol comes from `CurrentTestsEndpointTransport()` in `Compze.Hosting.Testing` — Tessaging registers nothing protocol-specific.)
 
 ### Quick start
 

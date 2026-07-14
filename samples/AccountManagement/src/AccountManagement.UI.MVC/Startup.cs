@@ -24,7 +24,7 @@ public class Startup
       //This demo host runs on the testing wiring: each endpoint gets the Tessaging and Typermedia transports and the full SQL persistence stack against a throwaway pooled database.
       _host = EndpointHost.Production.Create(() => TestEnv.DIContainer.CreateTestingContainerBuilder()
                                                           ._mutate(it => it.Registrar
-                                                                           .CurrentTestsTessagingTransport()
+                                                                           .CurrentTestsEndpointTransport()
                                                                            .CurrentTestsTypermediaTransport()
                                                                            .CurrentTestsConfiguredSqlLayer(connectionStringName: Guid.NewGuid().ToString())));
       _endpoint = AccountManagementServerDomainBootstrapper.RegisterWith(_host);

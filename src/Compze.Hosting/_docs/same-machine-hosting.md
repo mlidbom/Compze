@@ -67,7 +67,7 @@ Linux/macOS the same API rides Unix domain sockets.
   server, and the server itself answers endpoint-discovery queries — every
   endpoint serves discovery no matter what it speaks. One server means one address per endpoint, which is
   what lets the registry map an endpoint to a single address. (The ASP.NET Core transport has the same shape:
-  one Kestrel server per endpoint, each style contributing its controllers.)
+  one Kestrel server per endpoint, serving the very same contributed request handlers.)
 - **Framing**: length-prefixed UTF-8 strings; each connection is a lockstep request/response conversation.
 - **Concurrency**: a fixed pool of listener loops (`max(2 × processor count, 8)`), each serving its accepted
   connection to completion before accepting the next. The pool bounds concurrent handler executions, and a
@@ -77,11 +77,13 @@ Linux/macOS the same API rides Unix domain sockets.
   as the HTTP transport's controllers behave.
 
 Choosing the transport is composition, per the hosting model's design rule — nothing in the hosting machinery
-knows which transport an endpoint speaks. An endpoint setup registers `NamedPipeTessagingTransport()` and/or
-`NamedPipeTypermediaTransport()` + `NamedPipeTypermediaTransportServer()` where it would have registered the
-HTTP equivalents; each transport registration brings the shared endpoint-discovery query transport along
-itself. In tests the choice is the `Transport` axis of the pluggable-component matrix: the same
-specifications run over ASP.NET Core and over named pipes.
+knows which transport an endpoint speaks. An endpoint setup declares its protocol exactly once:
+`NamedPipeEndpointTransport()` where it would have declared `AspNetCoreEndpointTransport()` — registering the
+endpoint transport client, the endpoint-discovery query transport that runs on it, and the endpoint's one
+transport server. The communication styles register nothing protocol-specific: each feature registers its own
+request-handler contribution and client, and both work over whichever protocol the endpoint declared. In
+tests the choice is the `Transport` axis of the pluggable-component matrix: the same specifications run over
+ASP.NET Core and over named pipes.
 
 ## Discovery: announcing into the interprocess registry
 
@@ -168,7 +170,7 @@ host.RegisterEndpoint("BackgroundWorker", new EndpointId(Guid.Parse("...")), bui
 
    builder.Registrar
           .NewtonsoftTessagingSerializer()
-          .NamedPipeTessagingTransport()
+          .NamedPipeEndpointTransport()
           .SqliteEndpointPersistence("BackgroundWorker")
           .SqliteTessagingSqlLayer();
 

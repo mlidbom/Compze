@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 - The request envelope and request-handler contribution are protocol-neutral: `TransportRequest`, `TransportRequestKind`, `ITransportRequestHandlerContribution` — carried by named pipes as framed messages and by HTTP as route + headers + body.
 - One client for every conversation: `IEndpointTransportClient` sends a `TransportRequest` to a remote endpoint's transport server, with one named-pipe and one HTTP implementation (the HTTP one owns the kind-to-route table). The per-protocol endpoint-discovery query transports collapse onto it — `EndpointDiscoveryQueryTransport` is one implementation for every protocol.
 - `TransportRequestHandlerMap`: everything the endpoint's transport server serves — every communication style's contributed request handlers plus endpoint discovery — dispatched identically by the named-pipe and ASP.NET Core servers.
+- Protocol declarations: `NamedPipeEndpointTransport()` (here) and `AspNetCoreEndpointTransport()` (in the AspNet package) declare an endpoint's transport protocol in one call — endpoint transport client, endpoint-discovery query transport, and the endpoint's one transport server. The communication styles register nothing protocol-specific.
 
 ## 0.1.0-alpha
 

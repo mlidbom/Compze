@@ -14,6 +14,8 @@ using Compze.Tessaging.Implementation.Transport.Abstractions;
 using Compze.Tessaging.Implementation.Transport.Client.Implementation;
 using Compze.Tessaging.Implementation.Transport.Client.Routing;
 using Compze.Tessaging.SystemCE.ThreadingCE;
+using Compze.Tessaging.Transport;
+using Compze.Internals.Transport.NamedPipes;
 
 namespace Compze.Tessaging.Hosting;
 
@@ -29,8 +31,11 @@ namespace Compze.Tessaging.Hosting;
 /// endpoint's tessaging handlers are registered (<see cref="RegisterHandlers"/>).
 ///
 /// Serving is done by the endpoint's one transport server (<see cref="EndpointTransportServerFeature"/>,
-/// which it composes): Tessaging contributes its request handling to that server rather than running a
-/// server of its own.
+/// which it composes): the feature registers Tessaging's request-handling contribution
+/// (<see cref="TessagingTransportServerRegistrar.TessagingTransportServer"/>) and the client that posts tessages
+/// (<see cref="TransportMessagePosterRegistrar.TessagingTransportMessagePoster"/>) itself — both protocol-free, so the
+/// composing layer declares only the endpoint's transport protocol
+/// (e.g. <see cref="NamedPipeEndpointTransportRegistrar.NamedPipeEndpointTransport"/>).
 ///
 /// How the endpoint finds other endpoints and is found by them is declared on the feature itself:
 /// <see cref="DiscoverEndpointsThrough"/> (the read side), <see cref="AnnounceAddressTo"/> (the write side), or
@@ -96,6 +101,8 @@ public class DistributedTessagingEndpointFeature
       register.BackgroundExceptionReporter()
               .TaskRunner()
               .TessagingTransport()
+              .TessagingTransportMessagePoster()
+              .TessagingTransportServer()
               .Outbox()
               .Inbox()
               .TommandScheduler()

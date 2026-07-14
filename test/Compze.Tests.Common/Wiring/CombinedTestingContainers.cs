@@ -24,7 +24,7 @@ public static class CombinedTestingContainers
 
    ///<summary>Registers everything a combined Tessaging+Typermedia test endpoint needs of the current test's pluggable components: both transports and the full SQL persistence stack.</summary>
    public static IComponentRegistrar CurrentTestsPluggableComponents(this IComponentRegistrar register, string connectionStringName) =>
-      register.CurrentTestsTessagingTransport()
+      register.CurrentTestsEndpointTransport()
               .CurrentTestsTypermediaTransport()
               .CurrentTestsConfiguredSqlLayer(connectionStringName);
 

@@ -1,5 +1,6 @@
 using Compze.Abstractions.Hosting.Public;
 using Compze.Hosting.Testing;
+using Compze.Hosting.Testing.Wiring;
 using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Tessaging.Implementation.Transport;
 using Compze.Tessaging.Implementation.Transport.Abstractions;
@@ -32,7 +33,7 @@ public class DistributedTessagingTestingEndpointHostFeature : ITestingEndpointHo
       //Endpoints need a consistent connection string or things go belly up when creating a new host with a new container.
       builder.Registrar
              .Register(Singleton.For<ITessagesInFlightTracker>().Instance(_tessagesInFlightTracker))
-             .CurrentTestsTessagingTransport()
+             .CurrentTestsEndpointTransport()
              .CurrentTestsConfiguredSqlLayer(connectionStringName: builder.Configuration.Id.ToString());
 
       builder.AddDistributedTessaging()
