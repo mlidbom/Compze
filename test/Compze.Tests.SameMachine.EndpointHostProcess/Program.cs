@@ -49,8 +49,8 @@ public static class Program
                                                                         .SqliteEndpointDatabase("EndpointHostProcess"));
                endpointFoundation
                  .AddDistributedTessaging(tessaging => tessaging.NewtonsoftSerializer())
-                 .RegisterHandlers( register => register.ForTommand<TommandSentToTheEndpointHostProcess, IServiceBusSession>((_, serviceBusSession) => serviceBusSession.Send(new TommandSentBackToTheSpecificationProcess())))
-                 .ParticipateIn(registry);
+                 .ParticipateIn(registry)
+                 .RegisterHandlers(register => register.ForTommand<TommandSentToTheEndpointHostProcess, IServiceBusSession>((_, serviceBusSession) => serviceBusSession.Send(new TommandSentBackToTheSpecificationProcess())));
             });
 
          await host.StartAsync();
