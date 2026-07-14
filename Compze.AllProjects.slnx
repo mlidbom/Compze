@@ -52,14 +52,16 @@
     <Project Path="test/Compze.Contracts.Specifications/Compze.Contracts.Specifications.csproj" />
   </Folder>
   <Folder Name="/Utilities/Compze.DbPool/">
-    <Project Path="src/Compze.DbPool.MicrosoftSql/Compze.DbPool.MicrosoftSql.csproj" />
-    <Project Path="src/Compze.DbPool.MySql/Compze.DbPool.MySql.csproj" />
-    <Project Path="src/Compze.DbPool.PostgreSql/Compze.DbPool.PostgreSql.csproj" />
-    <Project Path="src/Compze.DbPool.Sqlite/Compze.DbPool.Sqlite.csproj" />
     <Project Path="src/Compze.DbPool/Compze.DbPool.csproj" />
   </Folder>
   <Folder Name="/Utilities/Compze.DbPool/Specifications/">
     <Project Path="test/Compze.DbPool.Tests/Compze.DbPool.Tests.csproj" />
+  </Folder>
+  <Folder Name="/Utilities/Compze.DbPool/SqlLayer/">
+    <Project Path="src/Compze.DbPool.MicrosoftSql/Compze.DbPool.MicrosoftSql.csproj" />
+    <Project Path="src/Compze.DbPool.MySql/Compze.DbPool.MySql.csproj" />
+    <Project Path="src/Compze.DbPool.PostgreSql/Compze.DbPool.PostgreSql.csproj" />
+    <Project Path="src/Compze.DbPool.Sqlite/Compze.DbPool.Sqlite.csproj" />
   </Folder>
   <Folder Name="/Utilities/Compze.InterprocessObject/">
     <Project Path="src/Compze.InterprocessObject.MemoryPack/Compze.InterprocessObject.MemoryPack.csproj" />
@@ -100,18 +102,18 @@
   <Folder Name="/Utilities/Compze.xUnit/">
     <Project Path="src/Compze.xUnit/Compze.xUnit.csproj" />
   </Folder>
-  <Folder Name="/Utilities/Compze.xUnitBDD/">
+  <Folder Name="/Utilities/Compze.xUnit/Compze.xUnitBDD/">
     <Project Path="src/Compze.xUnitBDD/Compze.xUnitBDD.csproj" />
   </Folder>
-  <Folder Name="/Utilities/Compze.xUnitBDD/Specifications/">
+  <Folder Name="/Utilities/Compze.xUnit/Compze.xUnitBDD/Specifications/">
     <Project Path="test/Compze.xUnitBDD.Tests/Compze.xUnitBDD.Tests.csproj">
       <BuildType Solution="docs|*" Project="Release" />
     </Project>
   </Folder>
-  <Folder Name="/Utilities/Compze.xUnitMatrix/">
+  <Folder Name="/Utilities/Compze.xUnit/Compze.xUnitMatrix/">
     <Project Path="src/Compze.xUnitMatrix/Compze.xUnitMatrix.csproj" />
   </Folder>
-  <Folder Name="/Utilities/Compze.xUnitMatrix/Specifications/">
+  <Folder Name="/Utilities/Compze.xUnit/Compze.xUnitMatrix/Specifications/">
     <Project Path="test/Compze.xUnitMatrix.Tests/Compze.xUnitMatrix.Tests.csproj" />
   </Folder>
   <Folder Name="/_Samples/" />
