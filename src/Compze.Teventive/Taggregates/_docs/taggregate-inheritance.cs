@@ -37,7 +37,7 @@ class Examples
 
    public void Listeners()
    {
-      TessageHandlerRegistrarWithDependencyInjectionSupport registrar = ((TessageHandlerRegistrarWithDependencyInjectionSupport)null!).NotNull();
+      ITessageHandlerRegistrar registrar = ((ITessageHandlerRegistrar)null!).NotNull();
 
       #region doglistener
       registrar

@@ -57,8 +57,4 @@ public class Transient_tevent_delivery_tests : EndpointHostTestBase
                                               .Must()
                                               .Be(false, "a transient tevent is delivered on commit, so a rolled-back transaction must never leak it");
    }
-
-   void PublishTransientTeventOnTheBackendInATransaction(int sequenceNumber) =>
-      BackendEndPoint.ServiceLocator.Resolve<IScopeFactory>().ExecuteTransactionInIsolatedScope(scope =>
-         scope.Resolve<ITeventPublisher>().Publish(new MyTransientTevent { SequenceNumber = sequenceNumber }));
 }

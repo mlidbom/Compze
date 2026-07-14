@@ -4,6 +4,7 @@ using Compze.Contracts;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Tessaging.Implementation.Abstractions;
+using Compze.Tessaging.Implementation.TessageHandling.Dispatching;
 using Compze.Teventive.Tevents.Public;
 using JetBrains.Annotations;
 
@@ -26,17 +27,19 @@ static class TeventPublisherRegistrar
 {
    public static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(Scoped.For<ITeventPublisher>()
-                                  .CreatedBy((IInProcessTeventPublisher inProcessTeventPublisher, IComponentSet<IExactlyOnceTeventDeliveryLeg> exactlyOnceDeliveryLegs, IComponentSet<ITransientTeventDeliveryLeg> transientDeliveryLegs, IScopeResolver scopeResolver)
-                                                => new TeventPublisher(inProcessTeventPublisher, exactlyOnceDeliveryLegs, transientDeliveryLegs, scopeResolver)));
+                                  .CreatedBy((IInProcessTeventPublisher inProcessTeventPublisher, TeventObservationDispatcher teventObservationDispatcher, IComponentSet<IExactlyOnceTeventDeliveryLeg> exactlyOnceDeliveryLegs, IComponentSet<ITransientTeventDeliveryLeg> transientDeliveryLegs, IScopeResolver scopeResolver)
+                                                => new TeventPublisher(inProcessTeventPublisher, teventObservationDispatcher, exactlyOnceDeliveryLegs, transientDeliveryLegs, scopeResolver)));
 
    readonly IInProcessTeventPublisher _inProcessTeventPublisher;
+   readonly TeventObservationDispatcher _teventObservationDispatcher;
    readonly IExactlyOnceTeventDeliveryLeg? _exactlyOnceDeliveryLeg;
    readonly ITransientTeventDeliveryLeg? _transientDeliveryLeg;
    readonly IScopeResolver _scopeResolver;
 
-   TeventPublisher(IInProcessTeventPublisher inProcessTeventPublisher, IEnumerable<IExactlyOnceTeventDeliveryLeg> exactlyOnceDeliveryLegs, IEnumerable<ITransientTeventDeliveryLeg> transientDeliveryLegs, IScopeResolver scopeResolver)
+   TeventPublisher(IInProcessTeventPublisher inProcessTeventPublisher, TeventObservationDispatcher teventObservationDispatcher, IEnumerable<IExactlyOnceTeventDeliveryLeg> exactlyOnceDeliveryLegs, IEnumerable<ITransientTeventDeliveryLeg> transientDeliveryLegs, IScopeResolver scopeResolver)
    {
       _inProcessTeventPublisher = inProcessTeventPublisher;
+      _teventObservationDispatcher = teventObservationDispatcher;
       _exactlyOnceDeliveryLeg = exactlyOnceDeliveryLegs.SingleOrDefault();
       _transientDeliveryLeg = transientDeliveryLegs.SingleOrDefault();
       _scopeResolver = scopeResolver;
@@ -47,6 +50,8 @@ static class TeventPublisherRegistrar
       var wrappedTevent = PublisherIdentifyingTevent.Wrapped(tevent);
       var remoteDelivery = RemoteDeliveryFor(wrappedTevent);
       _inProcessTeventPublisher.Publish(wrappedTevent, _scopeResolver);
+      //Observation fires at publish time, outside the publisher's transaction - the observers of a locally published tevent hear it even if that transaction later rolls back.
+      _teventObservationDispatcher.Dispatch(wrappedTevent);
       remoteDelivery?.Invoke();
    }
 

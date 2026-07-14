@@ -5,6 +5,7 @@ using Compze.Tessaging.Abstractions.Tessaging.Hosting.TessageHandling.Registrati
 using Compze.Tessaging.Implementation;
 using Compze.Tessaging.Implementation.TessageHandling.Abstractions;
 using Compze.Tessaging.Implementation.TessageHandling.Dispatching;
+using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.Teventive.Taggregates.Tevents.Public;
 
 namespace Compze.Tessaging.Hosting;
@@ -29,17 +30,26 @@ namespace Compze.Tessaging.Hosting;
 ///</remarks>
 public class InProcessTessagingEndpointFeature
 {
-   public TessageHandlerRegistrarWithDependencyInjectionSupport RegisterHandlers { get; }
+   public ITessageHandlerRegistrar RegisterHandlers { get; }
+
+   ///<summary>Registers transaction-ignoring tevent handlers — observation, the subscription-side escape hatch: the handler fires<br/>
+   /// once, immediately, when the tevent is published locally or arrives from another endpoint, outside any transaction and with no<br/>
+   /// delivery guarantees (see <c>src/Compze.Tessaging/_docs/tevent-delivery-model.md</c>).</summary>
+   public ITransactionIgnoringTeventHandlerRegistrar RegisterTransactionIgnoringTeventHandlers { get; }
 
    internal InProcessTessagingEndpointFeature(IEndpointBuilder builder)
    {
       builder.TypeMapper.MapTypesFromAssemblyContaining<ITaggregateTevent>(); // Compze.Core — the Teventive type hierarchy
 
       var handlerRegistry = new TessageHandlerRegistry(builder.TypeMap);
-      RegisterHandlers = new TessageHandlerRegistrarWithDependencyInjectionSupport(handlerRegistry);
+      RegisterHandlers = handlerRegistry;
+      RegisterTransactionIgnoringTeventHandlers = handlerRegistry;
 
-      builder.Registrar.Register(Singleton.For<ITessageHandlerRegistry, ITessageHandlerRegistrar>().Instance(handlerRegistry))
+      builder.Registrar.Register(Singleton.For<ITessageHandlerRegistry, ITessageHandlerRegistrar, ITransactionIgnoringTeventHandlerRegistrar>().Instance(handlerRegistry))
+                       .BackgroundExceptionReporter()
                        .InProcessTeventPublisher()
-                       .TeventPublisher();
+                       .TeventObservationDispatcher()
+                       .TeventPublisher()
+                       .TransactionIgnoringTeventPublisher();
    }
 }

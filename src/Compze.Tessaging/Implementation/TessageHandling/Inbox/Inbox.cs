@@ -1,5 +1,6 @@
 using Compze.Abstractions.Hosting.Public;
 using Compze.Tessaging.Implementation.TessageHandling.Abstractions;
+using Compze.Tessaging.Implementation.TessageHandling.Dispatching;
 using Compze.Tessaging.Implementation.Transport.Abstractions;
 using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.DependencyInjection;
@@ -29,18 +30,21 @@ static class InboxRegistrar
                   .CreatedBy((ITessagesInFlightTracker globalStateTracker, ITessageHandlerRegistry tessagingHandlerRegistry, IScopeFactory scopeFactory, ITessageStorage storage, ITaskRunner taskRunner, EndpointConfiguration configuration)
                                 => new HandlerExecutionEngine(globalStateTracker, tessagingHandlerRegistry, scopeFactory, storage, taskRunner, configuration.Id)),
          Singleton.For<IInbox>()
-                  .CreatedBy((HandlerExecutionEngine handlerExecutionEngine, ITessageStorage tessageStorage)
-                                => new Inbox(handlerExecutionEngine, tessageStorage))
+                  .CreatedBy((HandlerExecutionEngine handlerExecutionEngine, ITessageStorage tessageStorage, TeventObservationDispatcher teventObservationDispatcher)
+                                => new Inbox(handlerExecutionEngine, tessageStorage, teventObservationDispatcher))
       );
 
    readonly HandlerExecutionEngine _handlerExecutionEngine;
 
    readonly ITessageStorage _storage;
 
-   public Inbox(HandlerExecutionEngine handlerExecutionEngine, ITessageStorage tessageStorage)
+   readonly TeventObservationDispatcher _teventObservationDispatcher;
+
+   internal Inbox(HandlerExecutionEngine handlerExecutionEngine, ITessageStorage tessageStorage, TeventObservationDispatcher teventObservationDispatcher)
    {
       _handlerExecutionEngine = handlerExecutionEngine;
       _storage = tessageStorage;
+      _teventObservationDispatcher = teventObservationDispatcher;
    }
 
    public async Task StartAsync()
@@ -58,9 +62,14 @@ static class InboxRegistrar
 
       if(saveResult == IServiceBusSqlLayer.SaveTessageResult.Duplicate)
       {
+         //The dedup shields observers too: observation is dispatched only on a tessage's first registration, never for a redelivery.
          this.Log().Debug($"Skipping duplicate tessage {tessage.TessageId}");
          return Task.CompletedTask;
       }
+
+      //Observation fires at registration: after dedup, before the transactional processing the engine schedules.
+      if(tessage.TessageTypeEnum == TransportTessageType.ExactlyOnceTevent)
+         _teventObservationDispatcher.Dispatch(tessage);
 
       _handlerExecutionEngine.Enqueue(tessage);
       return Task.CompletedTask;

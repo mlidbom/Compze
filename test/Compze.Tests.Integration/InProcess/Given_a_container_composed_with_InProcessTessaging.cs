@@ -1,6 +1,8 @@
-﻿using Compze.Abstractions.Tessaging.Public;
+﻿using System.Transactions;
+using Compze.Abstractions.Tessaging.Public;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
+using Compze.Internals.SystemCE.TransactionsCE.Testing;
 using Compze.Hosting.Testing;
 using Compze.Hosting.Testing.Wiring;
 using Compze.Internals.Testing;
@@ -12,6 +14,7 @@ using Compze.Tests.Infrastructure;
 using Compze.Teventive.Taggregates.BaseClasses;
 using Compze.Teventive.Taggregates.Tevents.Public;
 using Compze.Tests.Infrastructure.XUnit;
+using static Compze.Must.MustActions;
 
 // ReSharper disable InconsistentNaming for testing
 #pragma warning disable IDE1006 //Reviewed OK: Test Naming Styles
@@ -25,6 +28,7 @@ public class Given_a_container_composed_with_InProcessTessaging : UniversalTestB
 {
    protected IDependencyInjectionContainer Container { get; }
    protected ITessageHandlerRegistrar HandlerRegistrar { get; }
+   protected ITransactionIgnoringTeventHandlerRegistrar TransactionIgnoringTeventHandlerRegistrar { get; }
 
    public Given_a_container_composed_with_InProcessTessaging()
    {
@@ -32,6 +36,7 @@ public class Given_a_container_composed_with_InProcessTessaging : UniversalTestB
       builder.Registrar.InProcessTessaging();
       Container = builder.Build();
       HandlerRegistrar = Container.RootResolver.Resolve<ITessageHandlerRegistrar>();
+      TransactionIgnoringTeventHandlerRegistrar = Container.RootResolver.Resolve<ITransactionIgnoringTeventHandlerRegistrar>();
    }
 
    protected override async Task DisposeAsyncInternal() => await Container.DisposeAsync();
@@ -80,5 +85,56 @@ public class Given_a_container_composed_with_InProcessTessaging : UniversalTestB
 
       [PCT] public void the_subscriber_to_the_inner_tevent_type_receives_the_inner_tevent() => _receivedBySubscriberToTheInnerTeventType.Single().Must().ReferenceEqual(_publishedWrappedTevent.Tevent);
       [PCT] public void the_subscriber_to_the_wrapper_type_receives_the_wrapper_itself() => _receivedBySubscriberToTheWrapperType.Single().Must().ReferenceEqual(_publishedWrappedTevent);
+   }
+
+   public class after_publishing_a_tevent_inside_a_transaction_that_rolls_back : Given_a_container_composed_with_InProcessTessaging
+   {
+      readonly List<IMyGreetingRequestedTevent> _receivedBySubscriber = [];
+      readonly List<IMyGreetingRequestedTevent> _observedByTransactionIgnoringSubscriber = [];
+      readonly MySpecialGreetingRequestedTevent _publishedTevent = new();
+
+      public after_publishing_a_tevent_inside_a_transaction_that_rolls_back()
+      {
+         HandlerRegistrar.ForTevent<IMyGreetingRequestedTevent>((tevent, _) => _receivedBySubscriber.Add(tevent));
+         TransactionIgnoringTeventHandlerRegistrar.ForTevent<IMyGreetingRequestedTevent>((tevent, _) => _observedByTransactionIgnoringSubscriber.Add(tevent));
+
+         Invoking(() => Container.ScopeFactory.ExecuteTransactionInIsolatedScope(scope =>
+                       {
+                          Transaction.Current!.FailOnPrepare();
+                          scope.Resolve<ITeventPublisher>().Publish(_publishedTevent);
+                       }))
+                      .Must().Throw<TransactionAbortedException>();
+      }
+
+      [PCT] public void the_subscriber_received_the_tevent_inside_the_doomed_transaction() => _receivedBySubscriber.Single().Must().ReferenceEqual(_publishedTevent);
+      [PCT] public void the_transaction_ignoring_subscriber_observed_the_tevent_despite_the_rollback() => _observedByTransactionIgnoringSubscriber.Single().Must().ReferenceEqual(_publishedTevent);
+   }
+
+   public class after_publishing_a_tevent_when_the_first_of_two_transaction_ignoring_subscribers_throws : Given_a_container_composed_with_InProcessTessaging
+   {
+      readonly List<IMyGreetingRequestedTevent> _receivedBySubscriber = [];
+      readonly List<IMyGreetingRequestedTevent> _observedBySecondTransactionIgnoringSubscriber = [];
+      readonly MySpecialGreetingRequestedTevent _publishedTevent = new();
+
+      public after_publishing_a_tevent_when_the_first_of_two_transaction_ignoring_subscribers_throws()
+      {
+         HandlerRegistrar.ForTevent<IMyGreetingRequestedTevent>((tevent, _) => _receivedBySubscriber.Add(tevent));
+         TransactionIgnoringTeventHandlerRegistrar.ForTevent<IMyGreetingRequestedTevent>((_, _) => throw new Exception("thrown by the first transaction-ignoring subscriber"));
+         TransactionIgnoringTeventHandlerRegistrar.ForTevent<IMyGreetingRequestedTevent>((tevent, _) => _observedBySecondTransactionIgnoringSubscriber.Add(tevent));
+
+         Container.ScopeFactory.ExecuteInIsolatedScope(scope => scope.Resolve<ITeventPublisher>().Publish(_publishedTevent));
+      }
+
+      [PCT] public void the_publish_completes_and_the_subscriber_receives_the_tevent() => _receivedBySubscriber.Single().Must().ReferenceEqual(_publishedTevent);
+      [PCT] public void the_second_transaction_ignoring_subscriber_still_observes_the_tevent() => _observedBySecondTransactionIgnoringSubscriber.Single().Must().ReferenceEqual(_publishedTevent);
+   }
+
+   public class the_transaction_ignoring_tevent_publisher : Given_a_container_composed_with_InProcessTessaging
+   {
+      [PCT] public void rejects_a_tevent_whose_type_demands_a_transactional_send() =>
+         Container.ScopeFactory.ExecuteInIsolatedScope(scope =>
+            Invoking(() => scope.Resolve<ITransactionIgnoringTeventPublisher>().Publish(new MyTaggregateTevent()))
+                          .Must().Throw<Exception>()
+                          .Which.Message.Must().Contain(nameof(IMustBeSentTransactionally)));
    }
 }

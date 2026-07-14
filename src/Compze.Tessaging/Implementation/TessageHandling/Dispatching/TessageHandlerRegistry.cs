@@ -18,38 +18,53 @@ namespace Compze.Tessaging.Implementation.TessageHandling.Dispatching;
 public static class TessageHandlerRegistryRegistrar
 {
    public static IComponentRegistrar TessageHandlerRegistry(this IComponentRegistrar registrar)
-      => registrar.Register(Singleton.For<ITessageHandlerRegistrar, ITessageHandlerRegistry, TessageHandlerRegistry>()
+      => registrar.Register(Singleton.For<ITessageHandlerRegistrar, ITransactionIgnoringTeventHandlerRegistrar, ITessageHandlerRegistry, TessageHandlerRegistry>()
                                      .CreatedBy((ITypeMap typeMap) => new TessageHandlerRegistry(typeMap)));
 }
 
-sealed class TessageHandlerRegistry(ITypeMap typeMap) : ITessageHandlerRegistrar, ITessageHandlerRegistry
+sealed class TessageHandlerRegistry(ITypeMap typeMap) : ITessageHandlerRegistrar, ITransactionIgnoringTeventHandlerRegistrar, ITessageHandlerRegistry
 {
    readonly ITypeMap _typeMap = typeMap;
    IReadOnlyDictionary<Type, Action<object, IScopeResolver>> _tommandHandlers = new Dictionary<Type, Action<object, IScopeResolver>>();
    IReadOnlyDictionary<Type, IReadOnlyList<Action<ITevent, IScopeResolver>>> _teventHandlers = new Dictionary<Type, IReadOnlyList<Action<ITevent, IScopeResolver>>>();
+   IReadOnlyDictionary<Type, IReadOnlyList<Action<ITevent, IScopeResolver>>> _transactionIgnoringTeventHandlers = new Dictionary<Type, IReadOnlyList<Action<ITevent, IScopeResolver>>>();
    IReadOnlyList<Type> _registeredTeventTypes = new List<Type>();
 
    readonly IMonitor _monitor = IMonitor.New();
 
-   ITessageHandlerRegistrar ITessageHandlerRegistrar.ForTevent<TTevent>(Action<TTevent, IScopeResolver> handler) => _monitor.Locked(() =>
+   ITessageHandlerRegistrar ITessageHandlerRegistrar.ForTevent<TTevent>(Action<TTevent, IScopeResolver> handler)
+   {
+      _monitor.Locked(() => AppendTeventSubscription(ref _teventHandlers, handler));
+      return this;
+   }
+
+   ITransactionIgnoringTeventHandlerRegistrar ITransactionIgnoringTeventHandlerRegistrar.ForTevent<TTevent>(Action<TTevent, IScopeResolver> handler)
+   {
+      _monitor.Locked(() => AppendTeventSubscription(ref _transactionIgnoringTeventHandlers, handler));
+      return this;
+   }
+
+   ///<summary>The one registration translation, shared by the transactional and the transaction-ignoring (observation) subscription<br/>
+   /// kinds. Routing operates exclusively on wrapper types: a subscription to an inner tevent type is keyed under the wrapper type<br/>
+   /// matching every wrapping of it and unwrapped at delivery; a subscription to a wrapper type is keyed as it stands and receives<br/>
+   /// the wrapper — publisher-conscious subscription. Every subscribed type also joins the advertised set<br/>
+   /// (<see cref="HandledRemoteTessageTypeIds"/>): an observation-only subscription must still pull the tevent across the wire.</summary>
+   void AppendTeventSubscription<TTevent>(ref IReadOnlyDictionary<Type, IReadOnlyList<Action<ITevent, IScopeResolver>>> subscriptions, Action<TTevent, IScopeResolver> handler) where TTevent : ITevent
    {
       TessageInspector.AssertValidForSubscription<TTevent>();
 
-      //Routing operates exclusively on wrapper types: a subscription to an inner tevent type is keyed under the wrapper type matching every wrapping of it
-      //and unwrapped at delivery; a subscription to a wrapper type is keyed as it stands and receives the wrapper - publisher-conscious subscription.
       var routingKey = PublisherIdentifyingTevent.WrapperTypeMatchingAllWrappingsOf(typeof(TTevent));
       Action<ITevent, IScopeResolver> deliver = typeof(TTevent).Is<IPublisherTevent<ITevent>>()
                                                    ? (wrappedTevent, kernel) => handler((TTevent)wrappedTevent, kernel)
                                                    : (wrappedTevent, kernel) => handler((TTevent)((IPublisherTevent<ITevent>)wrappedTevent).Tevent, kernel);
 
-      _teventHandlers.TryGetValue(routingKey, out var currentTeventSubscribers);
-      currentTeventSubscribers ??= new List<Action<ITevent, IScopeResolver>>();
+      subscriptions.TryGetValue(routingKey, out var currentSubscribers);
+      currentSubscribers ??= new List<Action<ITevent, IScopeResolver>>();
 
-      IReadOnlyList<Action<ITevent, IScopeResolver>> value = [..currentTeventSubscribers, deliver];
-      Interlocked.Exchange(ref _teventHandlers, _teventHandlers.SetInCopy(routingKey, value));
+      IReadOnlyList<Action<ITevent, IScopeResolver>> value = [..currentSubscribers, deliver];
+      Interlocked.Exchange(ref subscriptions, subscriptions.SetInCopy(routingKey, value));
       Interlocked.Exchange(ref _registeredTeventTypes, _registeredTeventTypes.AddToCopy(typeof(TTevent)));
-      return this;
-   });
+   }
 
    ITessageHandlerRegistrar ITessageHandlerRegistrar.ForTommand<TTommand>(Action<TTommand, IScopeResolver> handler) => _monitor.Locked(() =>
    {
@@ -60,17 +75,14 @@ sealed class TessageHandlerRegistry(ITypeMap typeMap) : ITessageHandlerRegistrar
          throw new Exception($"{typeof(TTommand)} expects a result. You must register a method that returns a result.");
       }
 
-      void Value(object tommand, IScopeResolver kernel) => handler((TTommand)tommand, kernel);
-      Interlocked.Exchange(ref _tommandHandlers, _tommandHandlers.AddToCopy(typeof(TTommand), Value));
+      Interlocked.Exchange(ref _tommandHandlers, _tommandHandlers.AddToCopy(typeof(TTommand), Deliver));
       return this;
+
+      void Deliver(object tommand, IScopeResolver kernel) => handler((TTommand)tommand, kernel);
    });
 
-   Action<object, IScopeResolver> ITessageHandlerRegistry.GetTommandHandler(ITommand tessage)
-   {
-      if(TryGetTommandHandler(tessage, out var handler)) return handler;
-
-      throw new NoHandlerException(tessage.GetType());
-   }
+   Action<object, IScopeResolver> ITessageHandlerRegistry.GetTommandHandler(ITommand tessage) =>
+      TryGetTommandHandler(tessage, out var handler) ? handler : throw new NoHandlerException(tessage.GetType());
 
    bool TryGetTommandHandler(ITommand tessage, [NotNullWhen(true)]out Action<object, IScopeResolver>? handler) =>
       _tommandHandlers.TryGetValue(tessage.GetType(), out handler);
@@ -78,7 +90,9 @@ sealed class TessageHandlerRegistry(ITypeMap typeMap) : ITessageHandlerRegistrar
    public Action<ITommand, IScopeResolver> GetTommandHandler(Type tommandType) => _tommandHandlers[tommandType];
 
    //performance: Use static caching trick.
-   public IReadOnlyList<Action<ITevent, IScopeResolver>> GetTeventHandlers(Type wrapperTeventType) => _teventHandlers.Where(it => it.Key.IsAssignableFrom(wrapperTeventType)).SelectMany(it => it.Value).ToList();
+   public IReadOnlyList<Action<ITevent, IScopeResolver>> GetTeventHandlers(Type wrapperTeventType) => [.._teventHandlers.Where(it => it.Key.IsAssignableFrom(wrapperTeventType)).SelectMany(it => it.Value)];
+
+   public IReadOnlyList<Action<ITevent, IScopeResolver>> GetTransactionIgnoringTeventHandlers(Type wrapperTeventType) => [.._transactionIgnoringTeventHandlers.Where(it => it.Key.IsAssignableFrom(wrapperTeventType)).SelectMany(it => it.Value)];
 
    public ISet<TypeId> HandledRemoteTessageTypeIds()
    {

@@ -187,7 +187,7 @@ transactional fate":
 | | Default | Transaction-ignoring escape hatch |
 |---|---|---|
 | **Publish** | `ITeventPublisher` — honors the transaction, routes per tevent type | `ITransactionIgnoringTeventPublisher` — emit even if my transaction rolls back |
-| **Subscribe** | `RegisterTeventHandlers` — the tevent type's full guarantee | `RegisterTransactionIgnoringTeventHandlers` — observe even if the processing transaction rolls back |
+| **Subscribe** | `RegisterTessagingHandlers` — the tevent type's full guarantee | `RegisterTransactionIgnoringTeventHandlers` — observe even if the processing transaction rolls back |
 
 The observation contract, stated honestly — this is the fine print a subscriber accepts by using the escape
 hatch, and it is why the escape hatch is for infrastructure, never domain logic:
@@ -253,7 +253,7 @@ know.
 
 ## Implementation status
 
-As of 2026-07-14:
+As of 2026-07-15:
 
 **Built and verified:**
 
@@ -289,12 +289,25 @@ As of 2026-07-14:
   remote delivery but not the leg a tevent's contract demands fails the publish naming the missing leg
   (zero wired legs remains the deliberately local composition, where participation serves every subscriber
   that exists).
+- The transaction-ignoring escape hatches (2026-07-15). Subscribe side:
+  `RegisterTransactionIgnoringTeventHandlers` (an endpoint-builder property, backed by
+  `ITransactionIgnoringTeventHandlerRegistrar` — a separate registrar, so opting out of every guarantee is
+  visible and off the common surface) registers observation handlers, dispatched by the observation
+  dispatcher at every point a tevent is first registered: a local publish (at publish time), an
+  exactly-once arrival (at inbox registration, after dedup — so the dedup shields observers — before
+  transactional processing), a transient arrival (on arrival). Observers run in a fresh scope with any
+  ambient transaction suppressed; a throwing observer is reported through the background-exception
+  reporter, never retried, and never stops the remaining observers or the triggering publish/arrival. An
+  observation subscription joins the endpoint's advertisement like any other — an observer-only endpoint
+  still pulls the tevent across the wire. Publish side: `ITransactionIgnoringTeventPublisher` is the
+  ordinary publisher with the ambient transaction suppressed — under suppression every honor-the-transaction
+  behavior degenerates into exactly the escape hatch's contract (participation detached, observation fires,
+  the transient leg sends right away) — and it rejects any tevent implementing `IMustBeSentTransactionally`,
+  loudly.
 
 **Decided, not yet built** (work items live in the D6 section of
 `src/TODO/TODO_type-assignability-routing-and-publisher-identifying-tevents.md`):
 
-- `ITransactionIgnoringTeventPublisher` (the publish escape hatch),
-  `RegisterTransactionIgnoringTeventHandlers`, and the observation dispatch.
 - The setup-time wiring rule (a default subscription demanding more than the endpoint can deliver fails at
   setup) and the loud assert that every advertised non-infrastructure type gets a route.
 - The guarantee-free Tessaging composition on the database-less endpoint foundation — no outbox, no inbox,

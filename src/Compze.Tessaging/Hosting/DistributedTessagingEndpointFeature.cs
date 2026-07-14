@@ -55,9 +55,9 @@ namespace Compze.Tessaging.Hosting;
 ///</summary>
 public class DistributedTessagingEndpointFeature
 {
-   readonly TessageHandlerRegistrarWithDependencyInjectionSupport _handlerRegistrar;
+   readonly ITessageHandlerRegistrar _handlerRegistrar;
 
-   public DistributedTessagingEndpointFeature RegisterHandlers(Action<TessageHandlerRegistrarWithDependencyInjectionSupport> registrar)
+   public DistributedTessagingEndpointFeature RegisterHandlers(Action<ITessageHandlerRegistrar> registrar)
    {
       registrar(_handlerRegistrar);
       return this;
@@ -107,8 +107,8 @@ public class DistributedTessagingEndpointFeature
          register.Register(Singleton.For<ITessagesInFlightTracker>().CreatedBy(() => new NullOpTessagesInFlightTracker()));
       }
 
-      register.BackgroundExceptionReporter()
-              .TaskRunner()
+      //The background-exception reporter arrives with the in-process core the feature composes above.
+      register.TaskRunner()
               .TessagingTransport()
               .TransientTeventDelivery()
               .TessagingTransportMessagePoster()

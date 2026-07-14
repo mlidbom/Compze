@@ -344,8 +344,14 @@ is FIXED (2026-07-13): `GetUndeliveredTessagesForEndpoint` orders by the outbox 
       reported through the background-exception reporter). Single-in-flight per destination, acknowledgement
       after handling, so ordering holds end to end without sequence numbers while connected. Specified end
       to end in `Transient_tevent_delivery_tests`.
-- [ ] The `ITransactionIgnoringTeventPublisher` / `RegisterTransactionIgnoringTeventHandlers` escape hatches
-      (immediate, out-of-transaction) and the observation dispatch.
+- [x] The `ITransactionIgnoringTeventPublisher` / `RegisterTransactionIgnoringTeventHandlers` escape hatches
+      (immediate, out-of-transaction) and the observation dispatch — DONE (2026-07-15). The observation
+      dispatcher fires at every first registration of a tevent (local publish / inbox registration after
+      dedup / transient arrival), in a fresh scope with the ambient transaction suppressed; a throwing
+      observer is reported through the background-exception reporter, never retried. The publish escape
+      hatch is the ordinary publisher under transaction suppression, rejecting `IMustBeSentTransactionally`
+      tevents loudly. Specified in `Tevent_observation_tests`, `Transaction_ignoring_tevent_publisher_tests`,
+      and the in-process container specs.
 - [ ] Once the router honors the full advertised set, assert loudly that every advertised
       non-infrastructure type gets a route, so a future regression fails instead of silently dropping
       subscriptions. (The tevent side is honored as of 2026-07-14; tommand routes remain exactly-once-only,

@@ -47,7 +47,7 @@ namespace Website.paradigms.semantic_tevents
       {
          public void IllustrateTeventListening()
          {
-            TessageHandlerRegistrarWithDependencyInjectionSupport registrar = ((TessageHandlerRegistrarWithDependencyInjectionSupport)null!).NotNull();
+            ITessageHandlerRegistrar registrar = ((ITessageHandlerRegistrar)null!).NotNull();
 
             #region EmailPropertyUpdatedListener
             registrar

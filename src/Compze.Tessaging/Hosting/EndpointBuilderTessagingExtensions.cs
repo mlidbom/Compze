@@ -33,7 +33,18 @@ public static class EndpointBuilderTessagingExtensions
       /// reachable from other endpoints only when the endpoint also speaks distributed Tessaging
       /// (<see cref="AddDistributedTessaging"/>).
       ///</summary>
-      public TessageHandlerRegistrarWithDependencyInjectionSupport RegisterTessagingHandlers => @this.AddInProcessTessaging().RegisterHandlers;
+      public ITessageHandlerRegistrar RegisterTessagingHandlers => @this.AddInProcessTessaging().RegisterHandlers;
+
+      ///<summary>
+      /// Registers transaction-ignoring tevent handlers — observation, the one subscription-side opt-down
+      /// (see <c>src/Compze.Tessaging/_docs/tevent-delivery-model.md</c>) — adding in-process Tessaging
+      /// (<see cref="AddInProcessTessaging"/>) to the endpoint if it is not already added. Such a handler
+      /// fires once, immediately, when a matching tevent is published locally or arrives from another
+      /// endpoint: outside any transaction, undeterred by the fate of the transaction the tevent was
+      /// published or is processed in, with no retry — a throwing handler is reported through the
+      /// background-exception reporter and that delivery is over.
+      ///</summary>
+      public ITransactionIgnoringTeventHandlerRegistrar RegisterTransactionIgnoringTeventHandlers => @this.AddInProcessTessaging().RegisterTransactionIgnoringTeventHandlers;
    }
 }
 

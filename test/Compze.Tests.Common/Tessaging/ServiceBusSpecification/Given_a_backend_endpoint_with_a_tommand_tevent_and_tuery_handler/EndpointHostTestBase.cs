@@ -1,4 +1,6 @@
 using System.Collections.Concurrent;
+using Compze.Abstractions.Tessaging.Public;
+using Compze.DependencyInjection;
 using Compze.Hosting.Testing;
 using Compze.Hosting.Testing.Wiring;
 using Compze.Internals.Testing;
@@ -40,6 +42,9 @@ public abstract class EndpointHostTestBase : UniversalTestBase
    public IThreadGate MyLocalTaggregateTeventHandlerThreadGate { get; }
    public IThreadGate MyTransientTeventLocalHandlerThreadGate { get; }
    public IThreadGate MyTransientTeventRemoteHandlerThreadGate { get; }
+   public IThreadGate MyTaggregateTeventBackendObserverThreadGate { get; }
+   public IThreadGate MyTaggregateTeventRemoteObserverThreadGate { get; }
+   public IThreadGate MyTransientTeventRemoteObserverThreadGate { get; }
    public IThreadGate TeventHandlerThreadGate { get; }
    public IThreadGate TueryHandlerThreadGate { get; }
 
@@ -68,6 +73,9 @@ public abstract class EndpointHostTestBase : UniversalTestBase
          MyLocalTaggregateTeventHandlerThreadGate = IThreadGate.NewOpen(_timeout, nameof(MyLocalTaggregateTeventHandlerThreadGate)),
          MyTransientTeventLocalHandlerThreadGate = IThreadGate.NewOpen(_timeout, nameof(MyTransientTeventLocalHandlerThreadGate)),
          MyTransientTeventRemoteHandlerThreadGate = IThreadGate.NewOpen(_timeout, nameof(MyTransientTeventRemoteHandlerThreadGate)),
+         MyTaggregateTeventBackendObserverThreadGate = IThreadGate.NewOpen(_timeout, nameof(MyTaggregateTeventBackendObserverThreadGate)),
+         MyTaggregateTeventRemoteObserverThreadGate = IThreadGate.NewOpen(_timeout, nameof(MyTaggregateTeventRemoteObserverThreadGate)),
+         MyTransientTeventRemoteObserverThreadGate = IThreadGate.NewOpen(_timeout, nameof(MyTransientTeventRemoteObserverThreadGate)),
          TeventHandlerThreadGate = IThreadGate.NewOpen(_timeout, nameof(TeventHandlerThreadGate)),
          TueryHandlerThreadGate = IThreadGate.NewOpen(_timeout, nameof(TueryHandlerThreadGate))
       ];
@@ -112,6 +120,10 @@ public abstract class EndpointHostTestBase : UniversalTestBase
                    .ForTevent((IMyTaggregateTevent _) => MyLocalTaggregateTeventHandlerThreadGate.AwaitPassThrough())
                    .ForTevent((IMyTransientTevent _) => MyTransientTeventLocalHandlerThreadGate.AwaitPassThrough());
 
+            //Observation - the transaction-ignoring subscription kind: fires at publish time for the Backend's own locally published tevents.
+            builder.RegisterTransactionIgnoringTeventHandlers
+                   .ForTevent((IMyTaggregateTevent _) => MyTaggregateTeventBackendObserverThreadGate.AwaitPassThrough());
+
             builder.RegisterTypermediaHandlers
                    .ForTommand((MyCreateTaggregateTommand tommand, IInProcessTypermediaNavigator navigator) =>
                     {
@@ -150,6 +162,11 @@ public abstract class EndpointHostTestBase : UniversalTestBase
                                                            RemotelyReceivedTransientTevents.Enqueue(tevent);
                                                            MyTransientTeventRemoteHandlerThreadGate.AwaitPassThrough();
                                                         });
+
+                                                //Observation - the transaction-ignoring subscription kind: fires on arrival, before and outside the transactional handling above.
+                                                builder.RegisterTransactionIgnoringTeventHandlers
+                                                       .ForTevent((IMyTaggregateTevent _) => MyTaggregateTeventRemoteObserverThreadGate.AwaitPassThrough())
+                                                       .ForTevent((IMyTransientTevent _) => MyTransientTeventRemoteObserverThreadGate.AwaitPassThrough());
                                              });
    }
 
@@ -163,4 +180,8 @@ public abstract class EndpointHostTestBase : UniversalTestBase
    protected void CloseGates() => AllGates.ForEach(gate => gate.Close());
 
    protected void OpenGates() => AllGates.ForEach(gate => gate.Open());
+
+   protected void PublishTransientTeventOnTheBackendInATransaction(int sequenceNumber) =>
+      BackendEndPoint.ServiceLocator.Resolve<IScopeFactory>().ExecuteTransactionInIsolatedScope(scope =>
+         scope.Resolve<ITeventPublisher>().Publish(new MyTransientTevent { SequenceNumber = sequenceNumber }));
 }

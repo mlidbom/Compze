@@ -3,6 +3,7 @@ using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Tessaging.Implementation;
 using Compze.Tessaging.Implementation.TessageHandling.Dispatching;
+using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.Teventive.Taggregates.Tevents.Public;
 using Compze.TypeIdentifiers;
 
@@ -35,8 +36,11 @@ public static class InProcessTessagingRegistrar
       if(!@this.IsRegistered<ITypeMap>()) RegisterDefaultTypeMapper();
 
       return @this.TessageHandlerRegistry()
+                  .BackgroundExceptionReporter()
                   .InProcessTeventPublisher()
-                  .TeventPublisher();
+                  .TeventObservationDispatcher()
+                  .TeventPublisher()
+                  .TransactionIgnoringTeventPublisher();
 
       void RegisterDefaultTypeMapper()
       {

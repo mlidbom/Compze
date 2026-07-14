@@ -24,7 +24,7 @@ namespace Website.paradigms.semantic_tevents
 
          public void IllustrateTeventListening()
          {
-            TessageHandlerRegistrarWithDependencyInjectionSupport registrar = ((TessageHandlerRegistrarWithDependencyInjectionSupport)null!).NotNull();
+            ITessageHandlerRegistrar registrar = ((ITessageHandlerRegistrar)null!).NotNull();
 
             #region Unhelpful
             registrar.ForTevent<IName>(nameTevent => WriteLine("Uhmm... What is happening here?"));

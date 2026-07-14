@@ -19,18 +19,20 @@ class TransientTeventDirectDispatcher
 {
    public static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(Singleton.For<TransientTeventDirectDispatcher>()
-                                     .CreatedBy((ITessageHandlerRegistry handlerRegistry, IScopeFactory scopeFactory, ITessagesInFlightTracker tessagesInFlightTracker, IBackgroundExceptionReporter exceptionReporter, EndpointConfiguration configuration)
-                                                   => new TransientTeventDirectDispatcher(handlerRegistry, scopeFactory, tessagesInFlightTracker, exceptionReporter, configuration.Id)));
+                                     .CreatedBy((ITessageHandlerRegistry handlerRegistry, TeventObservationDispatcher teventObservationDispatcher, IScopeFactory scopeFactory, ITessagesInFlightTracker tessagesInFlightTracker, IBackgroundExceptionReporter exceptionReporter, EndpointConfiguration configuration)
+                                                   => new TransientTeventDirectDispatcher(handlerRegistry, teventObservationDispatcher, scopeFactory, tessagesInFlightTracker, exceptionReporter, configuration.Id)));
 
    readonly ITessageHandlerRegistry _handlerRegistry;
+   readonly TeventObservationDispatcher _teventObservationDispatcher;
    readonly IScopeFactory _scopeFactory;
    readonly ITessagesInFlightTracker _tessagesInFlightTracker;
    readonly IBackgroundExceptionReporter _exceptionReporter;
    readonly EndpointId _endpointId;
 
-   TransientTeventDirectDispatcher(ITessageHandlerRegistry handlerRegistry, IScopeFactory scopeFactory, ITessagesInFlightTracker tessagesInFlightTracker, IBackgroundExceptionReporter exceptionReporter, EndpointId endpointId)
+   TransientTeventDirectDispatcher(ITessageHandlerRegistry handlerRegistry, TeventObservationDispatcher teventObservationDispatcher, IScopeFactory scopeFactory, ITessagesInFlightTracker tessagesInFlightTracker, IBackgroundExceptionReporter exceptionReporter, EndpointId endpointId)
    {
       _handlerRegistry = handlerRegistry;
+      _teventObservationDispatcher = teventObservationDispatcher;
       _scopeFactory = scopeFactory;
       _tessagesInFlightTracker = tessagesInFlightTracker;
       _exceptionReporter = exceptionReporter;
@@ -44,6 +46,8 @@ class TransientTeventDirectDispatcher
       {
          //The whole wrapped tevent travels the wire, so a received tevent arrives already wrapped; Wrapped normalizes and passes it through unchanged.
          var wrappedTevent = PublisherIdentifyingTevent.Wrapped((ITevent)transportTessage.DeserializeTessageAndCacheForNextCall());
+         //Observation fires on arrival, before and outside the transactional handling below.
+         _teventObservationDispatcher.Dispatch(wrappedTevent);
          using var scope = _scopeFactory.BeginScope();
          TransactionScopeCe.Execute(() =>
          {
