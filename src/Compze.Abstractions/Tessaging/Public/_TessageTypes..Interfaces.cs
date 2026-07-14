@@ -63,11 +63,7 @@ public interface IRemotableTuery<out TResult> : ITuery<TResult>, IRemotableTessa
 //Clients that are not .NET types need to send the query to the closest .NET endpoint before that will bounce the result back.
 public interface IRemotableCreateMyOwnResultTuery<out TResult> : IRemotableTuery<TResult>, ICreateMyOwnResultTuery<TResult>;
 
-///<summary>A tessage that is guaranteed not to be delivered more than once. The <see cref="Id"/> is used by infrastructure to maintain this guarantee.
-/// The <see cref="Id"/> must be maintained when binding a tommand to a UI or the guarantee will be lost.</summary>
-///<remarks>At-most-once constrains only handling: the tessage may be sent best-effort, carrying its <see cref="Id"/>, and the receiver's<br/>
-/// dedup still guarantees no second handling — the UI double-click case, and this tier's reason to exist. Its place in the delivery<br/>
-/// model is specified in <c>src/Compze.Tessaging/_docs/tevent-delivery-model.md</c> (decided 2026-07-13).</remarks>
+///<summary>A tessage that is handled exactly once. Guaranteed by infrastructure through deduplication, and transactions.</summary>
 public interface IAtMostOnceTessage : IRemotableTessage, IMustBeHandledTransactionally
 {
    ///<summary>Used by the infrastructure to guarantee that the same tessage is never delivered more than once. Must be generated when the tessage is created and then NEVER modified. Must be maintained when binding a tommand in a UI etc.</summary>
@@ -77,7 +73,7 @@ public interface IAtMostOnceTessage : IRemotableTessage, IMustBeHandledTransacti
 public interface IAtMostOnceTypermediaTommand : IAtMostOnceTessage, IRemotableTommand, ITypermediaTessage;
 public interface IAtMostOnceTommand<out TResult> : IAtMostOnceTypermediaTommand, IRemotableTommand<TResult>;
 
-///<summary>A tessage that is handled exactly once. Guaranteed by infrastructure through deduplication, retries, and transactions.</summary>
+///<summary>A tessage that is handled no more than once. Guaranteed by infrastructure through deduplication, retries, and transactions.</summary>
 public interface IExactlyOnceTessage : IMustBeSentAndHandledTransactionally, IAtMostOnceTessage;
 
 public interface IExactlyOnceTevent : IRemotableTevent, IExactlyOnceTessage;
