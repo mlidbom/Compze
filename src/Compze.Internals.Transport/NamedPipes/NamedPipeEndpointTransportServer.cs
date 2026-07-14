@@ -18,7 +18,7 @@ public static class NamedPipeEndpointTransportServerRegistrar
          ? registrar
          : registrar.Register(
             Singleton.For<IEndpointTransportServer>()
-                     .CreatedBy((IComponentSet<INamedPipeRequestHandlerContribution> contributions, EndpointDiscoveryQueryExecutor endpointDiscoveryQueryExecutor, ITypeMap typeMap)
+                     .CreatedBy((IComponentSet<ITransportRequestHandlerContribution> contributions, EndpointDiscoveryQueryExecutor endpointDiscoveryQueryExecutor, ITypeMap typeMap)
                                    => new NamedPipeEndpointTransportServer(contributions, endpointDiscoveryQueryExecutor, typeMap)));
 }
 
@@ -29,13 +29,13 @@ class NamedPipeEndpointTransportServer : IEndpointTransportServer
 {
    readonly NamedPipeTransportServer _server;
 
-   internal NamedPipeEndpointTransportServer(IEnumerable<INamedPipeRequestHandlerContribution> contributions,
+   internal NamedPipeEndpointTransportServer(IEnumerable<ITransportRequestHandlerContribution> contributions,
                                              EndpointDiscoveryQueryExecutor endpointDiscoveryQueryExecutor,
                                              ITypeMap typeMap)
    {
-      var handlers = new Dictionary<NamedPipeTransportRequestKind, Func<NamedPipeTransportRequest, Task<string>>>
+      var handlers = new Dictionary<TransportRequestKind, Func<TransportRequest, Task<string>>>
       {
-         [NamedPipeTransportRequestKind.EndpointDiscoveryQuery] = NamedPipeEndpointDiscoveryQueryHandler.CreateFor(endpointDiscoveryQueryExecutor, typeMap)
+         [TransportRequestKind.EndpointDiscoveryQuery] = NamedPipeEndpointDiscoveryQueryHandler.CreateFor(endpointDiscoveryQueryExecutor, typeMap)
       };
 
       foreach(var contribution in contributions)

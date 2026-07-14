@@ -4,7 +4,7 @@ using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 
 namespace Compze.Internals.Transport.NamedPipes;
 
-///<summary>The client side of the named-pipe transport: sends one <see cref="NamedPipeTransportRequest"/> to the<br/>
+///<summary>The client side of the named-pipe transport: sends one <see cref="TransportRequest"/> to the<br/>
 /// <see cref="NamedPipeTransportServer"/> at an <see cref="EndpointAddress"/> and returns the response payload —<br/>
 /// the same-machine, no-web-stack counterpart of posting to an HTTP transport route.</summary>
 ///<remarks>Each send opens its own connection — cheap for a local pipe, and with the callers' sequential send disciplines it<br/>
@@ -15,7 +15,7 @@ public static class NamedPipeTransportClient
 
    ///<summary>Sends <paramref name="request"/> to the server at <paramref name="address"/> and returns the response payload.<br/>
    /// A handler exception on the server side surfaces here as a <see cref="MessageDispatchingFailedException"/> carrying the server-side exception's type and detail.</summary>
-   public static async Task<string> SendAsync(NamedPipeTransportRequest request, EndpointAddress address, CancellationToken cancellationToken = default)
+   public static async Task<string> SendAsync(TransportRequest request, EndpointAddress address, CancellationToken cancellationToken = default)
    {
       var pipeName = NamedPipeAddress.PipeNameFrom(address);
 #pragma warning disable CA2000 //It IS disposed: the await using on the next line owns it; the analyzer just cannot see through the caf() wrapper.

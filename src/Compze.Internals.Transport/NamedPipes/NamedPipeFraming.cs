@@ -5,7 +5,7 @@ using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 
 namespace Compze.Internals.Transport.NamedPipes;
 
-///<summary>The named-pipe transport's wire format: how a <see cref="NamedPipeTransportRequest"/> and its response are written to<br/>
+///<summary>The named-pipe transport's wire format: how a <see cref="TransportRequest"/> and its response are written to<br/>
 /// and read from the pipe's byte stream. One request frame is answered by exactly one response frame, in lockstep.</summary>
 ///<remarks>Framing is explicit because a pipe is a byte stream (message-mode pipes are Windows-only; on Unix .NET pipes run over<br/>
 /// domain sockets): each frame is a fixed sequence of fields, strings as little-endian int32 UTF-8 byte length + bytes.</remarks>
@@ -14,7 +14,7 @@ static class NamedPipeFraming
    const byte SuccessStatus = 1;
    const byte ErrorStatus = 2;
 
-   internal static async Task WriteRequestAsync(Stream pipe, NamedPipeTransportRequest request, CancellationToken cancellationToken)
+   internal static async Task WriteRequestAsync(Stream pipe, TransportRequest request, CancellationToken cancellationToken)
    {
       await WriteByteAsync(pipe, (byte)request.Kind, cancellationToken).caf();
       await WriteStringAsync(pipe, request.TessageId.ToString(), cancellationToken).caf();
@@ -24,13 +24,13 @@ static class NamedPipeFraming
    }
 
    ///<summary>Reads the next request frame. Throws <see cref="EndOfStreamException"/> if the client closed the pipe — before the first byte that is the normal end of a connection.</summary>
-   internal static async Task<NamedPipeTransportRequest> ReadRequestAsync(Stream pipe, CancellationToken cancellationToken)
+   internal static async Task<TransportRequest> ReadRequestAsync(Stream pipe, CancellationToken cancellationToken)
    {
-      var kind = (NamedPipeTransportRequestKind)await ReadByteAsync(pipe, cancellationToken).caf();
+      var kind = (TransportRequestKind)await ReadByteAsync(pipe, cancellationToken).caf();
       var tessageId = new TessageId(Guid.Parse(await ReadStringAsync(pipe, cancellationToken).caf()));
       var payloadTypeIdString = await ReadStringAsync(pipe, cancellationToken).caf();
       var body = await ReadStringAsync(pipe, cancellationToken).caf();
-      return new NamedPipeTransportRequest(kind, tessageId, payloadTypeIdString, body);
+      return new TransportRequest(kind, tessageId, payloadTypeIdString, body);
    }
 
    internal static async Task WriteSuccessResponseAsync(Stream pipe, string payload, CancellationToken cancellationToken)

@@ -4,6 +4,7 @@ using Compze.Tessaging.Implementation.Transport.Abstractions;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
+using Compze.Internals.Transport;
 
 namespace Compze.Tessaging.Implementation.Transport.Client.Implementation.NamedPipes;
 
@@ -16,15 +17,15 @@ class NamedPipeTransportMessagePoster : ITransportMessagePoster
       => registrar.Register(Singleton.For<ITransportMessagePoster>()
                                      .CreatedBy(() => new NamedPipeTransportMessagePoster()));
 
-   static NamedPipeTransportRequestKind RequestKindFor(TransportTessage.OutGoing tessage) =>
+   static TransportRequestKind RequestKindFor(TransportTessage.OutGoing tessage) =>
       tessage.TessageTypeEnum switch
       {
-         TransportTessageType.ExactlyOnceTevent => NamedPipeTransportRequestKind.ExactlyOnceTevent,
-         TransportTessageType.ExactlyOnceTommand => NamedPipeTransportRequestKind.ExactlyOnceTommand,
+         TransportTessageType.ExactlyOnceTevent => TransportRequestKind.ExactlyOnceTevent,
+         TransportTessageType.ExactlyOnceTommand => TransportRequestKind.ExactlyOnceTommand,
          _ => throw new ArgumentOutOfRangeException()
       };
 
    public async Task PostAsync(TransportTessage.OutGoing tessage, EndpointAddress endPointAddress) =>
-      await NamedPipeTransportClient.SendAsync(new NamedPipeTransportRequest(RequestKindFor(tessage), tessage.TessageId, tessage.Type.CanonicalString, tessage.Body),
+      await NamedPipeTransportClient.SendAsync(new TransportRequest(RequestKindFor(tessage), tessage.TessageId, tessage.Type.CanonicalString, tessage.Body),
                                                endPointAddress).caf();
 }

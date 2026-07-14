@@ -1,14 +1,14 @@
 using Compze.Abstractions.Public;
 
-namespace Compze.Internals.Transport.NamedPipes;
+namespace Compze.Internals.Transport;
 
-///<summary>One request sent over the named-pipe transport: the transport-level envelope<br/>
-/// (<see cref="Kind"/>, <see cref="TessageId"/>, <see cref="PayloadTypeIdString"/>) plus the serialized tessage <see cref="Body"/> —<br/>
-/// the same information the HTTP transport carries in its route, headers and request body.</summary>
-public class NamedPipeTransportRequest
+///<summary>One request sent to an endpoint's transport server (<see cref="IEndpointTransportServer"/>): the transport-level envelope<br/>
+/// (<see cref="Kind"/>, <see cref="TessageId"/>, <see cref="PayloadTypeIdString"/>) plus the serialized tessage <see cref="Body"/>.<br/>
+/// The named pipes carry it as a framed message; HTTP carries the same information in its route, headers and request body.</summary>
+public class TransportRequest
 {
    ///<summary>Which kind of conversation this request opens; the server dispatches to the handler registered for it.</summary>
-   public NamedPipeTransportRequestKind Kind { get; }
+   public TransportRequestKind Kind { get; }
 
    ///<summary>The envelope identity infrastructure dedups on, when the kind participates in deduplication (the exactly-once kinds and typermedia tommands).<br/>
    /// Kinds that carry no dedup identity (tueries, endpoint-discovery queries) send a fresh id, which the receiver ignores.</summary>
@@ -20,7 +20,7 @@ public class NamedPipeTransportRequest
    ///<summary>The serialized tessage.</summary>
    public string Body { get; }
 
-   public NamedPipeTransportRequest(NamedPipeTransportRequestKind kind, TessageId tessageId, string payloadTypeIdString, string body)
+   public TransportRequest(TransportRequestKind kind, TessageId tessageId, string payloadTypeIdString, string body)
    {
       Kind = kind;
       TessageId = tessageId;

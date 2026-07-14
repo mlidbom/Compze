@@ -31,7 +31,7 @@ class NamedPipeEndpointDiscoveryQueryTransportImplementation : IEndpointDiscover
 
    public async Task<TResult> GetAsync<TResult>(IQuery<TResult> query, EndpointAddress address)
    {
-      var request = new NamedPipeTransportRequest(NamedPipeTransportRequestKind.EndpointDiscoveryQuery,
+      var request = new TransportRequest(TransportRequestKind.EndpointDiscoveryQuery,
                                                   new TessageId(),
                                                   _typeMap.GetId(query.GetType()).CanonicalString,
                                                   EndpointDiscoverySerializer.SerializeQuery(query));

@@ -1,8 +1,8 @@
-namespace Compze.Internals.Transport.NamedPipes;
+namespace Compze.Internals.Transport;
 
-///<summary>Which kind of conversation a <see cref="NamedPipeTransportRequest"/> opens — the named-pipe transport's<br/>
-/// equivalent of the HTTP transport's per-kind routes. The receiving server dispatches to the handler registered for the kind.</summary>
-public enum NamedPipeTransportRequestKind
+///<summary>Which kind of conversation a <see cref="TransportRequest"/> opens — carried by the named pipes as the request's kind field,<br/>
+/// and by HTTP as the per-kind route. The receiving server dispatches to the handler registered for the kind.</summary>
+public enum TransportRequestKind
 {
    ///<summary>An exactly-once tevent for the receiving endpoint's inbox. The response is an empty-payload acknowledgement written after the inbox has registered the tevent.</summary>
    ExactlyOnceTevent = 1,

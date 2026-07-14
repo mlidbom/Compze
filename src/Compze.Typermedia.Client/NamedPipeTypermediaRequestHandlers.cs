@@ -4,6 +4,7 @@ using Compze.Abstractions.Tessaging.Public;
 using Compze.Internals.Transport.NamedPipes;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
+using Compze.Internals.Transport;
 using Compze.Typermedia.Hosting;
 
 namespace Compze.Typermedia.Client;
@@ -20,26 +21,26 @@ public static class NamedPipeTypermediaTransportServerRegistrar
 
 ///<summary>Typermedia's contribution to the endpoint's named-pipe transport server: serves remote clients' tueries and tommands<br/>
 /// through the <see cref="TypermediaHandlerExecutor"/> — everything the ASP.NET Core typermedia controller does, with no web stack.</summary>
-class NamedPipeTypermediaRequestHandlers : INamedPipeRequestHandlerContribution
+class NamedPipeTypermediaRequestHandlers : ITransportRequestHandlerContribution
 {
    public static void RegisterWith(IComponentRegistrar registrar) =>
       registrar.Register(
-         Singleton.ForSet<INamedPipeRequestHandlerContribution>()
+         Singleton.ForSet<ITransportRequestHandlerContribution>()
                   .CreatedBy((TypermediaHandlerExecutor executor, ITypermediaSerializer serializer, ITypeMap typeMap)
                                 => new NamedPipeTypermediaRequestHandlers(executor, serializer, typeMap)));
 
-   public IReadOnlyDictionary<NamedPipeTransportRequestKind, Func<NamedPipeTransportRequest, Task<string>>> RequestHandlers { get; }
+   public IReadOnlyDictionary<TransportRequestKind, Func<TransportRequest, Task<string>>> RequestHandlers { get; }
 
    NamedPipeTypermediaRequestHandlers(TypermediaHandlerExecutor executor, ITypermediaSerializer serializer, ITypeMap typeMap)
    {
-      ITypermediaTessage DeserializeTessage(NamedPipeTransportRequest request) =>
+      ITypermediaTessage DeserializeTessage(TransportRequest request) =>
          serializer.DeserializeTessage(typeMap.GetId(request.PayloadTypeIdString).Type, request.Body);
 
-      RequestHandlers = new Dictionary<NamedPipeTransportRequestKind, Func<NamedPipeTransportRequest, Task<string>>>
+      RequestHandlers = new Dictionary<TransportRequestKind, Func<TransportRequest, Task<string>>>
       {
-         [NamedPipeTransportRequestKind.TypermediaTuery] = request => Task.FromResult(serializer.SerializeResult(executor.ExecuteTuery(DeserializeTessage(request)))),
-         [NamedPipeTransportRequestKind.TypermediaTommandWithResult] = request => Task.FromResult(serializer.SerializeResult(executor.ExecuteTommandWithResult(DeserializeTessage(request)))),
-         [NamedPipeTransportRequestKind.TypermediaVoidTommand] = request =>
+         [TransportRequestKind.TypermediaTuery] = request => Task.FromResult(serializer.SerializeResult(executor.ExecuteTuery(DeserializeTessage(request)))),
+         [TransportRequestKind.TypermediaTommandWithResult] = request => Task.FromResult(serializer.SerializeResult(executor.ExecuteTommandWithResult(DeserializeTessage(request)))),
+         [TransportRequestKind.TypermediaVoidTommand] = request =>
          {
             executor.ExecuteVoidTommand((IAtMostOnceTypermediaTommand)DeserializeTessage(request));
             return Task.FromResult("");

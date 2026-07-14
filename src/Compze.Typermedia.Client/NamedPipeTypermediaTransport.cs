@@ -7,6 +7,7 @@ using Compze.Internals.Transport.NamedPipes;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
+using Compze.Internals.Transport;
 
 namespace Compze.Typermedia.Client;
 
@@ -39,17 +40,17 @@ class NamedPipeTypermediaTransport : ITypermediaTransport
    }
 
    public async Task<TResult> GetAsync<TResult>(IRemotableTuery<TResult> tuery, EndpointAddress address)
-      => _serializer.DeserializeResult<TResult>(await SendAsync(NamedPipeTransportRequestKind.TypermediaTuery, tuery, address).caf());
+      => _serializer.DeserializeResult<TResult>(await SendAsync(TransportRequestKind.TypermediaTuery, tuery, address).caf());
 
    public async Task<TResult> PostAsync<TResult>(IAtMostOnceTommand<TResult> command, EndpointAddress address)
-      => _serializer.DeserializeResult<TResult>(await SendAsync(NamedPipeTransportRequestKind.TypermediaTommandWithResult, command, address).caf());
+      => _serializer.DeserializeResult<TResult>(await SendAsync(TransportRequestKind.TypermediaTommandWithResult, command, address).caf());
 
    public async Task PostAsync(IAtMostOnceTypermediaTommand command, EndpointAddress address)
-      => await SendAsync(NamedPipeTransportRequestKind.TypermediaVoidTommand, command, address).caf();
+      => await SendAsync(TransportRequestKind.TypermediaVoidTommand, command, address).caf();
 
-   async Task<string> SendAsync(NamedPipeTransportRequestKind kind, ITypermediaTessage tessage, EndpointAddress address)
+   async Task<string> SendAsync(TransportRequestKind kind, ITypermediaTessage tessage, EndpointAddress address)
    {
-      var request = new NamedPipeTransportRequest(kind,
+      var request = new TransportRequest(kind,
                                                   (tessage as IAtMostOnceTessage)?.Id ?? new TessageId(),
                                                   _typeMap.GetId(tessage.GetType()).CanonicalString,
                                                   _serializer.SerializeTessage(tessage));
