@@ -4,13 +4,21 @@ using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 
 namespace Compze.Internals.Transport;
 
+///<summary>Where the endpoint's transport server is listening; null until it listens. The narrow view<br/>
+/// <see cref="EndpointTransportServerFeature"/> holds of its running <see cref="EndpointTransportServerComponent"/>: the feature<br/>
+/// reads the address, while the component's lifetime — including disposal — belongs to the endpoint that runs it.</summary>
+interface IListeningAddressSource
+{
+   EndpointAddress? ListeningAddress { get; }
+}
+
 ///<summary>The runtime lifecycle of the endpoint's one transport server (see <see cref="EndpointTransportServerFeature"/>):<br/>
 /// the server listens through the listening phase, and the endpoint's address is announced to every declared<br/>
 /// <see cref="IEndpointAddressAnnouncer"/> as the first act of the sending phase — the host starts every endpoint's listening<br/>
 /// before any sending, so an announced address is always one whose whole endpoint is actually listening and fully ready.<br/>
 /// Stopping runs in reverse: the announcement is retracted as the first act of the host's stopping (the stop-sending phase),<br/>
 /// so the address stops being advertised before anything goes deaf.</summary>
-sealed class EndpointTransportServerComponent : IEndpointComponent, IAsyncDisposable
+sealed class EndpointTransportServerComponent : IEndpointComponent, IListeningAddressSource, IAsyncDisposable
 {
    readonly IEndpointTransportServer _server;
    readonly IReadOnlyList<IEndpointAddressAnnouncer> _addressAnnouncers;
@@ -26,7 +34,7 @@ sealed class EndpointTransportServerComponent : IEndpointComponent, IAsyncDispos
    }
 
    ///<summary>The address where the endpoint's transport server listens; null until listening.</summary>
-   internal EndpointAddress? Address => _isListening ? _server.Address : null;
+   public EndpointAddress? ListeningAddress => _isListening ? _server.Address : null;
 
    public async Task StartListeningAsync()
    {

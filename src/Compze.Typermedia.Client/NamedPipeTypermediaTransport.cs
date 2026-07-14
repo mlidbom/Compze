@@ -18,7 +18,8 @@ public static class NamedPipeTypermediaTransportRegistrar
 }
 
 ///<summary>The named-pipe implementation of <see cref="ITypermediaTransport"/>: executes tueries and tommands against the<br/>
-/// <see cref="NamedPipeTypermediaTransportServer"/> at an endpoint's typermedia address, with no web stack.</summary>
+/// endpoint's named-pipe transport server (whose Typermedia request handling <see cref="NamedPipeTypermediaRequestHandlers"/><br/>
+/// contributes) at the endpoint's typermedia address, with no web stack.</summary>
 class NamedPipeTypermediaTransport : ITypermediaTransport
 {
    public static void RegisterWith(IComponentRegistrar registrar)

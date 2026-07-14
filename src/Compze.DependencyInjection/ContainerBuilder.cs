@@ -1,3 +1,4 @@
+using System.Reflection;
 using Compze.Contracts;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.LinqCE;
@@ -28,6 +29,7 @@ public abstract class ContainerBuilder : IContainerBuilder
       _built = true;
       Options = options ?? ContainerOptions.Default;
       AddAssociatedRegistrations();
+      AddComponentSetRegistrations();
       AssertLifeStyleCombinationsAreValid();
       AssertNoSingularDependenciesOnComponentSetTypes();
       RegisterInContainer(_registeredComponents.ToArray());
@@ -38,6 +40,7 @@ public abstract class ContainerBuilder : IContainerBuilder
    {
       var associatedRegistrations = CollectAssociatedRegistrationsRecursively();
       if(associatedRegistrations.Length == 0) return;
+      AssertNoHandWrittenComponentSetInjectionRegistrations(associatedRegistrations);
       ValidateNoDuplicateRegistrations(associatedRegistrations);
       _registeredComponents.AddRange(associatedRegistrations);
       return;
@@ -68,6 +71,7 @@ public abstract class ContainerBuilder : IContainerBuilder
    internal void Register(params ComponentRegistration[] registrations)
    {
       Contract.State.Assert(!_built, () => "Cannot register components after the container has been built.");
+      AssertNoHandWrittenComponentSetInjectionRegistrations(registrations);
       ValidateNoDuplicateRegistrations(registrations);
       _registeredComponents.AddRange(registrations);
    }
@@ -132,8 +136,65 @@ public abstract class ContainerBuilder : IContainerBuilder
                  .Where(componentSetServiceTypes.Contains)
                  .ForEach(dependencyType => throw new InvalidOperationException(
                     $"{consumer.InstantiationSpec.FactoryMethodReturnType.FullName} depends on '{dependencyType.FullName}' via CreatedBy(...), "
-                    + $"but '{dependencyType.FullName}' is registered as a component set member — inject ResolveSet<{dependencyType.Name}>() instead of a singular constructor dependency.")));
+                    + $"but '{dependencyType.FullName}' is registered as a component set member — depend on IComponentSet<{dependencyType.Name}> to receive the whole set.")));
    }
+
+   /// <summary>
+   /// Synthesizes the singular <see cref="IComponentSet{TService}"/> registration for each component-set service type, so
+   /// components can take the whole set as an ordinary <c>CreatedBy(...)</c> constructor dependency. The set's lifestyle follows
+   /// its members' — <see cref="Lifestyle.Singleton"/> when every member is a singleton, <see cref="Lifestyle.Scoped"/>
+   /// otherwise — so lifestyle validation guards a dependency on the set exactly as it would a dependency on the members.
+   /// </summary>
+   /// <remarks>
+   /// Skips a set whose <see cref="IComponentSet{TService}"/> is already among the registrations: a clone or child container
+   /// builder receives the source container's synthesized registration — delegated or copied like any other of its lifestyle —
+   /// and must not synthesize a duplicate.
+   /// </remarks>
+   void AddComponentSetRegistrations()
+   {
+      var alreadyProvidedSetInjectionTypes = _registeredComponents.SelectMany(it => it.ServiceTypes).Where(IsComponentSetInjectionType).ToHashSet();
+
+      _registeredComponents.Where(it => it.IsComponentSetMember)
+                           .GroupBy(it => it.ServiceTypes.Single())
+                           .Where(setMembers => !alreadyProvidedSetInjectionTypes.Contains(typeof(IComponentSet<>).MakeGenericType(setMembers.Key)))
+                           .Select(setMembers => CreateComponentSetRegistration(
+                                      setMembers.Key,
+                                      setMembers.All(member => member.Lifestyle == Lifestyle.Singleton) ? Lifestyle.Singleton : Lifestyle.Scoped))
+                           .ToList()
+                           .ForEach(_registeredComponents.Add);
+   }
+
+   /// <summary>
+   /// <see cref="IComponentSet{TService}"/> registrations are the container's own vocabulary: a hand-written one would silently
+   /// decouple what <c>CreatedBy(...)</c> consumers receive from the set's actual <c>ForSet(...)</c> members. Only the
+   /// container-synthesized registrations — recognizable by their internal <see cref="ComponentSet{TService}"/> implementation
+   /// type, which nothing else can construct — may provide the type; a clone or child container builder re-registering its
+   /// source's synthesized registration passes for exactly that reason.
+   /// </summary>
+   static void AssertNoHandWrittenComponentSetInjectionRegistrations(ComponentRegistration[] registrations) =>
+      registrations.Where(registration => !IsContainerSynthesizedComponentSetRegistration(registration))
+                   .SelectMany(registration => registration.ServiceTypes)
+                   .Where(IsComponentSetInjectionType)
+                   .ForEach(serviceType => throw new InvalidOperationException(
+                      $"'{serviceType.FullName}' cannot be registered: the container synthesizes the IComponentSet registration from the set's ForSet(...) members — register members and depend on IComponentSet<{serviceType.GenericTypeArguments[0].Name}>."));
+
+   static bool IsComponentSetInjectionType(Type serviceType) => serviceType.IsGenericType && serviceType.GetGenericTypeDefinition() == typeof(IComponentSet<>);
+
+   static bool IsContainerSynthesizedComponentSetRegistration(ComponentRegistration registration) =>
+      registration.InstantiationSpec.FactoryMethodReturnType is { IsGenericType: true } implementationType && implementationType.GetGenericTypeDefinition() == typeof(ComponentSet<>);
+
+   static ComponentRegistration CreateComponentSetRegistration(Type serviceType, Lifestyle lifestyle) =>
+      (ComponentRegistration)CreateTypedComponentSetRegistrationDefinition.MakeGenericMethod(serviceType).Invoke(obj: null, parameters: [lifestyle])!;
+
+   static readonly MethodInfo CreateTypedComponentSetRegistrationDefinition =
+      typeof(ContainerBuilder).GetMethod(nameof(CreateTypedComponentSetRegistration), BindingFlags.NonPublic | BindingFlags.Static)!;
+
+   static ComponentRegistration<IComponentSet<TService>> CreateTypedComponentSetRegistration<TService>(Lifestyle lifestyle) where TService : class =>
+      new(lifestyle,
+          serviceTypes: [typeof(IComponentSet<TService>)],
+          InstantiationSpec.FromFactoryMethod(serviceResolver => new ComponentSet<TService>(serviceResolver), typeof(ComponentSet<TService>)),
+          dependencyTypes: [],
+          isComponentSetMember: false);
 
    static bool IsInvalidLifestyleCombination(ComponentRegistration consumer, ComponentRegistration dependency)
    {

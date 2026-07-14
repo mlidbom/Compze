@@ -14,15 +14,21 @@ namespace Compze.Internals.Transport;
 public class EndpointTransportServerFeature
 {
    readonly List<IEndpointAddressAnnouncer> _addressAnnouncers = [];
-   EndpointTransportServerComponent? _component;
+   //Typed as the address view, not the component: the feature reads where the server listens; the component's lifetime — including disposal — belongs to the endpoint that runs it.
+   IListeningAddressSource? _component;
 
    ///<summary>Composes the feature into <paramref name="builder"/>'s endpoint, creating it if no other communication style already did.</summary>
    public static EndpointTransportServerFeature GetOrAddTo(IEndpointBuilder builder) => builder.GetOrAddFeature(it => new EndpointTransportServerFeature(it));
 
    EndpointTransportServerFeature(IEndpointBuilder builder) =>
-      builder.AddComponent(resolver => _component = new EndpointTransportServerComponent(resolver.Resolve<IEndpointTransportServerFactory>().CreateServer(resolver),
-                                                                                         _addressAnnouncers,
-                                                                                         resolver.Resolve<EndpointConfiguration>()));
+      builder.AddComponent(resolver =>
+      {
+         var component = new EndpointTransportServerComponent(resolver.Resolve<IEndpointTransportServerFactory>().CreateServer(resolver),
+                                                              _addressAnnouncers,
+                                                              resolver.Resolve<EndpointConfiguration>());
+         _component = component;
+         return component;
+      });
 
    ///<summary>Declares that the endpoint announces where it listens to <paramref name="announcer"/>. The announcement is made once<br/>
    /// every endpoint in the host has finished starting to listen — the host's sending phase — so an announced address is always one<br/>
@@ -31,5 +37,5 @@ public class EndpointTransportServerFeature
    public void AnnounceAddressTo(IEndpointAddressAnnouncer announcer) => _addressAnnouncers.Add(announcer);
 
    ///<summary>The address where the endpoint's transport server listens; null until it is listening.</summary>
-   public EndpointAddress? ListeningAddress => _component?.Address;
+   public EndpointAddress? ListeningAddress => _component?.ListeningAddress;
 }

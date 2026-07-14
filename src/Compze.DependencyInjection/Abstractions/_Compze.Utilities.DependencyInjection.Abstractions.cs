@@ -100,6 +100,23 @@ public interface IServiceResolver<out TService> where TService : class
 }
 
 ///<summary>
+/// Every member of the <typeparamref name="TService"/> component set (<c>ForSet(...)</c>), as an ordinary constructor<br/>
+/// dependency: a component that takes an <see cref="IComponentSet{TService}"/> through <c>CreatedBy(...)</c> receives the whole<br/>
+/// set — the injectable counterpart of calling <see cref="IServiceResolver.ResolveSet"/> on a resolver.
+///</summary>
+///<remarks>
+/// Never registered by user code: the container synthesizes the one <see cref="IComponentSet{TService}"/> registration per<br/>
+/// component-set service type when it is built, from the set's <c>ForSet(...)</c> members. Its lifestyle follows the members' —<br/>
+/// <see cref="Lifestyle.Singleton"/> when every member is a singleton, <see cref="Lifestyle.Scoped"/> otherwise — so a dependency<br/>
+/// on the set is subject to exactly the same lifestyle validation as a direct dependency on the members would be.
+///</remarks>
+///<remarks>
+/// The set holds no instances of its own: members resolve on enumeration, from the same container and scope that created the<br/>
+/// set — the same thin-typed-view philosophy as <see cref="IServiceResolver{TService}"/>.
+///</remarks>
+public interface IComponentSet<out TService> : IEnumerable<TService> where TService : class;
+
+///<summary>
 /// An <see cref="IServiceResolver"/> capable only of resolving services registered as <see cref="Lifestyle.Singleton"/> and <see cref="Lifestyle.TrackedTransient"/>.
 /// <see cref="Lifestyle.Scoped"/> services cannot be resolved from an instance.
 /// </summary>

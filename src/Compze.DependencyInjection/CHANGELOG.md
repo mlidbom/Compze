@@ -4,6 +4,12 @@ All notable changes to Compze.DependencyInjection will be documented in this fil
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## Unreleased
+
+### Added
+
+- **`IComponentSet<TService>` — component sets as ordinary constructor dependencies.** The injectable counterpart of `ResolveSet`: a component takes `IComponentSet<TService>` through `CreatedBy(...)` and receives the whole set. The container synthesizes the one `IComponentSet<TService>` registration per set service type at `Build()`; its lifestyle follows the members' (Singleton when every member is, Scoped otherwise), so lifestyle validation guards a set dependency exactly like a member dependency; members resolve on enumeration, staying transparent to scope — the `IServiceResolver<TService>` thin-view philosophy. Hand-written `IComponentSet` registrations are rejected (the type is container vocabulary; clone and child containers pass because their registrations carry the container's own `ComponentSet<TService>` implementation), and the raw-member-dependency `Build()` error now recommends `IComponentSet<T>`.
+
 ## 0.6.0-alpha
 
 ### Added
