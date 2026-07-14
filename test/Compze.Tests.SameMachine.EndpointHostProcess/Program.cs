@@ -11,7 +11,6 @@ using Compze.Hosting.SameMachine;
 using Compze.Internals.Serialization.Newtonsoft.Wiring;
 using Compze.Internals.Transport.NamedPipes;
 using Compze.Tessaging.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
-using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Sqlite.Wiring;
 using Compze.TypeIdentifiers.Interning.Sqlite.Wiring;
 
@@ -43,15 +42,15 @@ public static class Program
             {
                builder.TypeMapper.MapTypesFromAssemblyContaining<TommandSentToTheEndpointHostProcess>();
 
-               builder.Registrar.Register(Singleton.For<IConfigurationParameterProvider>().CreatedBy(() => new SqliteDatabasePerConnectionStringNameConfigurationParameterProvider(workDirectory)));
+               builder.Registrar.Register(Singleton.For<IConfigurationParameterProvider>()
+                                                   .CreatedBy(() => new SqliteDatabasePerConnectionStringNameConfigurationParameterProvider(workDirectory)));
 
-               builder.ComposeEndpoint(it => it.NamedPipeEndpointTransport()
-                                               .SqliteEndpointDatabase("EndpointHostProcess"))
-                      .AddDistributedTessaging(tessaging => tessaging.NewtonsoftSerializer())
-                      .ParticipateIn(registry);
-
-               builder.RegisterTessagingHandlers.ForTommand<TommandSentToTheEndpointHostProcess, IServiceBusSession>(
-                  (_, serviceBusSession) => serviceBusSession.Send(new TommandSentBackToTheSpecificationProcess()));
+               var endpointFoundation = builder.ComposeEndpoint(it => it.NamedPipeEndpointTransport()
+                                                                        .SqliteEndpointDatabase("EndpointHostProcess"));
+               endpointFoundation
+                 .AddDistributedTessaging(tessaging => tessaging.NewtonsoftSerializer())
+                 .RegisterHandlers( register => register.ForTommand<TommandSentToTheEndpointHostProcess, IServiceBusSession>((_, serviceBusSession) => serviceBusSession.Send(new TommandSentBackToTheSpecificationProcess())))
+                 .ParticipateIn(registry);
             });
 
          await host.StartAsync();

@@ -30,7 +30,7 @@ namespace Compze.Tessaging.Hosting;
 /// <see cref="EndpointBuilderTessagingExtensions.AddDistributedTessaging"/> /
 /// <see cref="IEndpointBuilder.GetOrAddFeature{TFeature}"/>: this is how distributed Tessaging plugs into a
 /// hosting mechanism that knows nothing of it, and the feature instance is the handle through which the
-/// endpoint's tessaging handlers are registered (<see cref="RegisterHandlers"/>).
+/// endpoint's tessaging handlers are registered (<see cref="_handlerRegistrar"/>).
 ///
 /// Serving is done by the endpoint's one transport server (<see cref="EndpointTransportServerFeature"/>,
 /// which it composes): the feature registers Tessaging's request-handling contribution
@@ -54,7 +54,13 @@ namespace Compze.Tessaging.Hosting;
 ///</remarks>
 public class DistributedTessagingEndpointFeature
 {
-   public TessageHandlerRegistrarWithDependencyInjectionSupport RegisterHandlers { get; }
+   readonly TessageHandlerRegistrarWithDependencyInjectionSupport _handlerRegistrar;
+
+   public DistributedTessagingEndpointFeature RegisterHandlers(Action<TessageHandlerRegistrarWithDependencyInjectionSupport> registrar)
+   {
+      registrar(_handlerRegistrar);
+      return this;
+   }
 
    readonly EndpointTransportServerFeature _transportServer;
    IEndpointRegistry? _endpointRegistry;
@@ -93,7 +99,7 @@ public class DistributedTessagingEndpointFeature
       register.AssertNoTeventPublicationModeIsDeclared();
       AssertTheEndpointsFoundationIsDeclared(register);
 
-      RegisterHandlers = builder.AddTessageHandling().RegisterHandlers;
+      _handlerRegistrar = builder.AddTessageHandling().RegisterHandlers;
       _transportServer = EndpointTransportServerFeature.GetOrAddTo(builder);
 
       if(!register.IsRegistered<ITessagesInFlightTracker>())
