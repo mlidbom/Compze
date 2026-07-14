@@ -64,9 +64,11 @@ public interface IRemotableTuery<out TResult> : ITuery<TResult>, IRemotableTessa
 //Clients that are not .NET types need to send the query to the closest .NET endpoint before that will bounce the result back.
 public interface IRemotableCreateMyOwnResultTuery<out TResult> : IRemotableTuery<TResult>, ICreateMyOwnResultTuery<TResult>;
 
-//Todo: Is helping with clicking twice in UIs really core logic worth spending time before 1.0 on or should AtMostOnce simply be removed for now?
 ///<summary>A tessage that is guaranteed not to be delivered more than once. The <see cref="Id"/> is used by infrastructure to maintain this guarantee.
 /// The <see cref="Id"/> must be maintained when binding a tommand to a UI or the guarantee will be lost.</summary>
+///<remarks>At-most-once constrains only handling: the tessage may be sent best-effort, carrying its <see cref="Id"/>, and the receiver's<br/>
+/// dedup still guarantees no second handling — the UI double-click case, and this tier's reason to exist. Its place in the delivery<br/>
+/// model is specified in <c>src/Compze.Tessaging/_docs/tevent-delivery-model.md</c> (decided 2026-07-13).</remarks>
 public interface IAtMostOnceTessage : IRemotableTessage, IMustBeHandledTransactionally
 {
    ///<summary>Used by the infrastructure to guarantee that the same tessage is never delivered more than once. Must be generated when the tessage is created and then NEVER modified. Must be maintained when binding a tommand in a UI etc.</summary>
@@ -76,8 +78,12 @@ public interface IAtMostOnceTypermediaTommand : IAtMostOnceTessage, IRemotableTo
 public interface IAtMostOnceTommand<out TResult> : IAtMostOnceTypermediaTommand, IRemotableTommand<TResult>;
 
 
-//Todo: IRequireTransactionalReceiver seems too restrictive. Surely things such as maintaining in-memory caches, monitoring/debugging tooling etc should be allowed to listen transiently to tevents without the full exactly once delivery overhead?
-//For tommands it makes sense that the tessage-type dictates such things, but for tevents it seems like the subscriber should get to choose their preferred way of listening and level of delivery guarantee.
+///<summary>The durable delivery tier — the strongest remotable guarantee: sent transactionally (the outbox), handled transactionally<br/>
+/// and deduped (the inbox), retried until handled.</summary>
+///<remarks>The full delivery model is specified in <c>src/Compze.Tessaging/_docs/tevent-delivery-model.md</c> (decided 2026-07-13),<br/>
+/// including the tiers below this one: a plain <see cref="IRemotableTevent"/> is the transient tier (best-effort, no store, no dedup,<br/>
+/// no retry — deliberately no marker of its own), and a subscriber's one opt-down is all the way to observation. Listening to tevents<br/>
+/// without the exactly-once overhead — the in-memory cache, the monitoring tool — lives there, not in a weakening of this tier.</remarks>
 public interface IExactlyOnceTessage : IMustBeSentAndHandledTransactionally, IAtMostOnceTessage;
 public interface IExactlyOnceTevent : IRemotableTevent, IExactlyOnceTessage;
 public interface IExactlyOnceTommand : IRemotableTommand, IExactlyOnceTessage;
