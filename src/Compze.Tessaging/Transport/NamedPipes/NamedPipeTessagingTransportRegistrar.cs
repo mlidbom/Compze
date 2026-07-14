@@ -19,6 +19,6 @@ public static class NamedPipeTessagingTransportRegistrar
       registrar.NamedPipeEndpointTransportClientIfNotRegistered()
                .EndpointDiscoveryQueryTransportIfNotRegistered()
                .NamedPipeEndpointTransportServerIfNotRegistered()
-               .Register(TransportMessagePoster.RegisterWith,
-                         NamedPipeTessagingRequestHandlers.RegisterWith);
+               .TessagingTransportMessagePoster()
+               .TessagingTransportServer();
 }

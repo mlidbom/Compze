@@ -7,7 +7,6 @@
     <Project Path="src/Compze.Internals.Sql.Sqlite/Compze.Internals.Sql.Sqlite.csproj" />
   </Folder>
   <Folder Name="/Compze.Tessaging/">
-    <Project Path="src/Compze.Tessaging.Hosting.AspNetCore/Compze.Tessaging.Hosting.AspNetCore.csproj" />
     <Project Path="src/Compze.Tessaging.Hosting.Testing/Compze.Tessaging.Hosting.Testing.csproj" />
     <Project Path="src/Compze.Teventive/Compze.Teventive.csproj" />
     <Project Path="src/Compze.Teventive.TeventStore.Abstractions/Compze.Teventive.TeventStore.Abstractions.csproj" />

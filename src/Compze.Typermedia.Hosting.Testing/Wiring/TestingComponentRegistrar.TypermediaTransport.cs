@@ -4,8 +4,8 @@ using Compze.Hosting.Testing;
 using Compze.Hosting.Testing.Wiring;
 using Compze.Internals.SystemCE;
 using Compze.Internals.Testing;
+using Compze.Internals.Transport.AspNet;
 using Compze.Typermedia.Client;
-using Compze.Typermedia.Hosting.AspNetCore.Wiring;
 
 namespace Compze.Typermedia.Hosting.Testing.Wiring;
 
@@ -16,7 +16,8 @@ public static class TestingComponentRegistrarTypermediaTransport
       TestEnv.Transport switch
       {
          Transport.AspNetCore => register.HttpTypermediaTransport()
-                                         .AspNetCoreTypermediaTransportServer(),
+                                         .AspNetCoreEndpointTransportServerIfNotRegistered()
+                                         .TypermediaTransportServer(),
          Transport.NamedPipes => register.NamedPipeTypermediaTransport()
                                          .NamedPipeTypermediaTransportServer(),
          _ => throw new ArgumentOutOfRangeException()

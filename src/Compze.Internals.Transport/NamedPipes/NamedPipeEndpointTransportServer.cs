@@ -1,7 +1,4 @@
-using Compze.TypeIdentifiers;
 using Compze.Abstractions.Hosting.Public;
-using Compze.Abstractions.Serialization.Internal;
-using Compze.Contracts;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
@@ -10,45 +7,27 @@ namespace Compze.Internals.Transport.NamedPipes;
 
 public static class NamedPipeEndpointTransportServerRegistrar
 {
-   ///<summary>Registers the named-pipe implementation of the endpoint's one transport server (<see cref="IEndpointTransportServer"/>),<br/>
-   /// unless a transport already registered one — guarded so that every communication style's named-pipe transport registration can<br/>
-   /// demand the server without conflicting when an endpoint hosts several styles.</summary>
+   ///<summary>Registers the named-pipe implementation of the endpoint's one transport server (<see cref="IEndpointTransportServer"/>)<br/>
+   /// together with the endpoint's <see cref="TransportRequestHandlerMap"/> it serves, unless a transport already registered one —<br/>
+   /// guarded so that every communication style's named-pipe transport registration can demand the server without conflicting when<br/>
+   /// an endpoint hosts several styles.</summary>
    public static IComponentRegistrar NamedPipeEndpointTransportServerIfNotRegistered(this IComponentRegistrar registrar) =>
       registrar.IsRegistered<IEndpointTransportServer>()
          ? registrar
-         : registrar.Register(
-            Singleton.For<IEndpointTransportServer>()
-                     .CreatedBy((IComponentSet<ITransportRequestHandlerContribution> contributions, EndpointDiscoveryQueryExecutor endpointDiscoveryQueryExecutor, ITypeMap typeMap)
-                                   => new NamedPipeEndpointTransportServer(contributions, endpointDiscoveryQueryExecutor, typeMap)));
+         : registrar.Register(TransportRequestHandlerMap.RegisterWith)
+                    .Register(
+                       Singleton.For<IEndpointTransportServer>()
+                                .CreatedBy((TransportRequestHandlerMap handlerMap) => new NamedPipeEndpointTransportServer(handlerMap)));
 }
 
 ///<summary>The named-pipe implementation of <see cref="IEndpointTransportServer"/>: one <see cref="NamedPipeTransportServer"/> serving<br/>
-/// the union of every communication style's contributed request handlers, plus endpoint-discovery queries —<br/>
-/// which every endpoint answers no matter what it speaks, so the server registers that handler itself.</summary>
+/// the endpoint's <see cref="TransportRequestHandlerMap"/> — every communication style's contributed request handlers plus<br/>
+/// endpoint discovery.</summary>
 class NamedPipeEndpointTransportServer : IEndpointTransportServer
 {
    readonly NamedPipeTransportServer _server;
 
-   internal NamedPipeEndpointTransportServer(IEnumerable<ITransportRequestHandlerContribution> contributions,
-                                             EndpointDiscoveryQueryExecutor endpointDiscoveryQueryExecutor,
-                                             ITypeMap typeMap)
-   {
-      var handlers = new Dictionary<TransportRequestKind, Func<TransportRequest, Task<string>>>
-      {
-         [TransportRequestKind.EndpointDiscoveryQuery] = NamedPipeEndpointDiscoveryQueryHandler.CreateFor(endpointDiscoveryQueryExecutor, typeMap)
-      };
-
-      foreach(var contribution in contributions)
-      {
-         foreach(var (requestKind, handler) in contribution.RequestHandlers)
-         {
-            State.Assert(!handlers.ContainsKey(requestKind), () => $"Two contributions both claim to handle {requestKind} — every request kind has exactly one handler.");
-            handlers.Add(requestKind, handler);
-         }
-      }
-
-      _server = new NamedPipeTransportServer(handlers);
-   }
+   internal NamedPipeEndpointTransportServer(TransportRequestHandlerMap handlerMap) => _server = new NamedPipeTransportServer(handlerMap.HandleAsync);
 
    public EndpointAddress Address => _server.Address;
 

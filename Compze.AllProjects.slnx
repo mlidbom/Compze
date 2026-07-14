@@ -14,7 +14,6 @@
     <Project Path="test/Compze.Abstractions.Specifications/Compze.Abstractions.Specifications.csproj" />
   </Folder>
   <Folder Name="/Compze.Tessaging/Hosting-Transport/">
-    <Project Path="src/Compze.Tessaging.Hosting.AspNetCore/Compze.Tessaging.Hosting.AspNetCore.csproj" />
     <Project Path="src/Compze.Tessaging.Hosting.Testing/Compze.Tessaging.Hosting.Testing.csproj" />
   </Folder>
   <Folder Name="/Compze.Tessaging/Hosting-Transport/SqlLayers/">
@@ -227,7 +226,6 @@
   </Folder>
   <Folder Name="/Compze.Typermedia/">
     <Project Path="src/Compze.Typermedia.Client/Compze.Typermedia.Client.csproj" />
-    <Project Path="src/Compze.Typermedia.Hosting.AspNetCore/Compze.Typermedia.Hosting.AspNetCore.csproj" />
     <Project Path="src/Compze.Typermedia.Hosting.Testing/Compze.Typermedia.Hosting.Testing.csproj" />
     <Project Path="src/Compze.Typermedia.Hosting/Compze.Typermedia.Hosting.csproj" />
     <Project Path="src/Compze.Typermedia/Compze.Typermedia.csproj" />

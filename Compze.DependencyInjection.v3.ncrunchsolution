@@ -40,7 +40,6 @@
       <Value>UsePackageReference_Compze_Must = true</Value>
       <Value>UsePackageReference_Compze_Tessaging = true</Value>
       <Value>UsePackageReference_Compze_Tessaging_Abstractions = true</Value>
-      <Value>UsePackageReference_Compze_Tessaging_Hosting_AspNetCore = true</Value>
       <Value>UsePackageReference_Compze_Tessaging_Hosting_Testing = true</Value>
       <Value>UsePackageReference_Compze_Tessaging_MicrosoftSql = true</Value>
       <Value>UsePackageReference_Compze_Tessaging_MySql = true</Value>
@@ -67,7 +66,6 @@
       <Value>UsePackageReference_Compze_Typermedia = true</Value>
       <Value>UsePackageReference_Compze_Typermedia_Client = true</Value>
       <Value>UsePackageReference_Compze_Typermedia_Hosting = true</Value>
-      <Value>UsePackageReference_Compze_Typermedia_Hosting_AspNetCore = true</Value>
       <Value>UsePackageReference_Compze_Typermedia_Hosting_Testing = true</Value>
       <Value>UsePackageReference_Compze_Underscore = true</Value>
       <Value>UsePackageReference_Compze_Unit = true</Value>

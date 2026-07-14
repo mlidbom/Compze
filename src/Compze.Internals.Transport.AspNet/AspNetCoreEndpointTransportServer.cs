@@ -19,36 +19,30 @@ namespace Compze.Internals.Transport.AspNet;
 public static class AspNetCoreEndpointTransportServerRegistrar
 {
    ///<summary>Registers the ASP.NET Core implementation of the endpoint's one transport server (<see cref="IEndpointTransportServer"/>)<br/>
-   /// together with the <see cref="EndpointDiscoveryQueryController"/> it hosts, unless a transport already registered one — guarded so<br/>
-   /// that every communication style's ASP.NET Core transport registration can demand the server without conflicting when an endpoint<br/>
-   /// hosts several styles.</summary>
+   /// together with the endpoint's <see cref="TransportRequestHandlerMap"/> and the <see cref="TransportRequestController"/> serving it,<br/>
+   /// unless a transport already registered one — guarded so that every communication style's ASP.NET Core transport registration can<br/>
+   /// demand the server without conflicting when an endpoint hosts several styles.</summary>
    public static IComponentRegistrar AspNetCoreEndpointTransportServerIfNotRegistered(this IComponentRegistrar registrar) =>
       registrar.IsRegistered<IEndpointTransportServer>()
          ? registrar
-         : registrar.Register(EndpointDiscoveryQueryController.RegisterWith)
+         : registrar.Register(TransportRequestHandlerMap.RegisterWith)
+                    .Register(TransportRequestController.RegisterWith)
                     .Register(
                        Singleton.For<IEndpointTransportServer>()
-                                .CreatedBy((IChildContainerHostIntegration hostIntegration, IComponentSet<AspNetCoreControllerContribution> controllerContributions)
-                                              => new AspNetCoreEndpointTransportServer(hostIntegration, controllerContributions)));
+                                .CreatedBy((IChildContainerHostIntegration hostIntegration) => new AspNetCoreEndpointTransportServer(hostIntegration)));
 }
 
 ///<summary>The ASP.NET Core implementation of <see cref="IEndpointTransportServer"/>: one Kestrel <see cref="WebApplication"/> hosting<br/>
-/// every communication style's contributed controllers, plus the <see cref="EndpointDiscoveryQueryController"/> answering the<br/>
-/// endpoint-discovery queries — which every endpoint serves no matter what it speaks, so the server hosts<br/>
-/// that controller itself.</summary>
+/// the <see cref="TransportRequestController"/>, which serves the endpoint's <see cref="TransportRequestHandlerMap"/> — every<br/>
+/// communication style's contributed request handlers plus endpoint discovery.</summary>
 ///<remarks>Controllers are activated through the endpoint's own container (<see cref="IChildContainerHostIntegration"/> +<br/>
 /// <see cref="ServiceBasedControllerActivator"/>), so they resolve the endpoint's services exactly as any other component does.</remarks>
 class AspNetCoreEndpointTransportServer : IEndpointTransportServer
 {
    readonly IChildContainerHostIntegration _hostIntegration;
-   readonly IEnumerable<AspNetCoreControllerContribution> _controllerContributions;
    WebApplication? _webApplication;
 
-   internal AspNetCoreEndpointTransportServer(IChildContainerHostIntegration hostIntegration, IEnumerable<AspNetCoreControllerContribution> controllerContributions)
-   {
-      _hostIntegration = hostIntegration;
-      _controllerContributions = controllerContributions;
-   }
+   internal AspNetCoreEndpointTransportServer(IChildContainerHostIntegration hostIntegration) => _hostIntegration = hostIntegration;
 
    public EndpointAddress Address => new(new Uri(_webApplication._assert().NotNull().Urls.First()));
 
@@ -74,9 +68,7 @@ class AspNetCoreEndpointTransportServer : IEndpointTransportServer
 
       builder.Services.AddControllers().ConfigureApplicationPartManager(it =>
       {
-         it.ApplicationParts.Add(new AssemblyPart(typeof(EndpointDiscoveryQueryController).Assembly));
-         foreach(var contribution in _controllerContributions)
-            it.ApplicationParts.Add(new AssemblyPart(contribution.ControllerAssembly));
+         it.ApplicationParts.Add(new AssemblyPart(typeof(TransportRequestController).Assembly));
          it.FeatureProviders.Add(new InternalControllerFeatureProvider());
       });
 
@@ -84,7 +76,6 @@ class AspNetCoreEndpointTransportServer : IEndpointTransportServer
       builder.WebHost.UseUrls("http://127.0.0.1:0");
 
       builder.Services.AddHttpClient();
-      builder.Services.AddControllers();
 
       builder.Services.AddSingleton<IControllerActivator, ServiceBasedControllerActivator>();
 

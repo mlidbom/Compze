@@ -43,7 +43,6 @@
       <Value>UsePackageReference_Compze_Must = true</Value>
       <Value>UsePackageReference_Compze_Tessaging = true</Value>
       <Value>UsePackageReference_Compze_Tessaging_Abstractions = true</Value>
-      <Value>UsePackageReference_Compze_Tessaging_Hosting_AspNetCore = true</Value>
       <Value>UsePackageReference_Compze_Tessaging_Hosting_Testing = true</Value>
       <Value>UsePackageReference_Compze_Tessaging_MicrosoftSql = true</Value>
       <Value>UsePackageReference_Compze_Tessaging_MySql = true</Value>

@@ -1,8 +1,11 @@
-using Compze.Tessaging.Hosting.AspNetCore.Wiring;
-using Compze.Tessaging.Transport.NamedPipes;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Hosting.Testing;
 using Compze.Internals.Testing;
+using Compze.Internals.Transport;
+using Compze.Internals.Transport.AspNet;
+using Compze.Tessaging.Implementation.Transport.Client.Implementation;
+using Compze.Tessaging.Transport;
+using Compze.Tessaging.Transport.NamedPipes;
 
 namespace Compze.Tessaging.Hosting.Testing.Wiring;
 
@@ -15,7 +18,11 @@ public static class TestingComponentRegistrarTessagingTransport
    public static IComponentRegistrar CurrentTestsTessagingTransport(this IComponentRegistrar register) =>
       TestEnv.Transport switch
       {
-         Transport.AspNetCore => register.AspNetCoreTessagingTransport(),
+         Transport.AspNetCore => register.HttpEndpointTransportClientIfNotRegistered()
+                                         .EndpointDiscoveryQueryTransportIfNotRegistered()
+                                         .AspNetCoreEndpointTransportServerIfNotRegistered()
+                                         .TessagingTransportMessagePoster()
+                                         .TessagingTransportServer(),
          Transport.NamedPipes => register.NamedPipeTessagingTransport(),
          _ => throw new ArgumentOutOfRangeException()
       };

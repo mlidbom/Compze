@@ -8,9 +8,9 @@ using Compze.Threading;
 namespace Compze.Internals.Transport.NamedPipes;
 
 ///<summary>The server side of the named-pipe transport: listens on a freshly named pipe, reads<br/>
-/// <see cref="TransportRequest"/>s, dispatches each to the handler registered for its<br/>
-/// <see cref="TransportRequestKind"/>, and answers with the handler's payload — or, if the handler threw, with an<br/>
-/// error response the client rethrows. The same-machine, no-web-stack counterpart of a transport's ASP.NET Core server.</summary>
+/// <see cref="TransportRequest"/>s, dispatches each through the dispatch function it is given, and answers with the<br/>
+/// handler's payload — or, if the handler threw, with an error response the client rethrows. The same-machine, no-web-stack<br/>
+/// counterpart of the endpoint transport's ASP.NET Core server.</summary>
 ///<remarks>A handler returns the serialized response payload; transport-level concerns (framing, connection lifecycle,<br/>
 /// routing exceptions back to the client) all live here, so handlers contain only "deserialize, execute, serialize".</remarks>
 ///<remarks>Connections are served by a fixed pool of listener loops, each serving its accepted connection to completion before<br/>
@@ -20,14 +20,14 @@ public sealed class NamedPipeTransportServer : IAsyncDisposable
 {
    static readonly int ParallelListenerCount = Math.Max(Environment.ProcessorCount * 2, 8);
 
-   readonly IReadOnlyDictionary<TransportRequestKind, Func<TransportRequest, Task<string>>> _handlers;
+   readonly Func<TransportRequest, Task<string>> _dispatchRequest;
    readonly string _pipeName = NamedPipeAddress.NewUniquePipeName();
    readonly CancellationTokenSource _cancellationSource = new();
    readonly IMonitor _monitor = IMonitor.New();
    readonly HashSet<NamedPipeServerStream> _openStreams = [];
    Task[]? _listenerLoops;
 
-   public NamedPipeTransportServer(IReadOnlyDictionary<TransportRequestKind, Func<TransportRequest, Task<string>>> handlers) => _handlers = handlers;
+   public NamedPipeTransportServer(Func<TransportRequest, Task<string>> dispatchRequest) => _dispatchRequest = dispatchRequest;
 
    ///<summary>The address clients connect to; fixed at construction, listening starts at <see cref="StartAsync"/>.</summary>
    public EndpointAddress Address => NamedPipeAddress.CreateLocalAddressForPipe(_pipeName);
@@ -117,7 +117,7 @@ public sealed class NamedPipeTransportServer : IAsyncDisposable
             string responsePayload;
             try
             {
-               responsePayload = await _handlers[request.Kind](request).caf();
+               responsePayload = await _dispatchRequest(request).caf();
             }
 #pragma warning disable CA1031 //We catch all exceptions here to route them back to the client, exactly as the HTTP transport's controllers do.
             catch(Exception exception)

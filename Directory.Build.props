@@ -100,8 +100,6 @@
     <UsePackageReference_Compze_Tessaging Condition="'$(UsePackageReference_Compze_Tessaging)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Tessaging.csproj|'))">true</UsePackageReference_Compze_Tessaging>
     <!-- Compze.Tessaging.Abstractions -->
     <UsePackageReference_Compze_Tessaging_Abstractions Condition="'$(UsePackageReference_Compze_Tessaging_Abstractions)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Tessaging.Abstractions.csproj|'))">true</UsePackageReference_Compze_Tessaging_Abstractions>
-    <!-- Compze.Tessaging.Hosting.AspNetCore -->
-    <UsePackageReference_Compze_Tessaging_Hosting_AspNetCore Condition="'$(UsePackageReference_Compze_Tessaging_Hosting_AspNetCore)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Tessaging.Hosting.AspNetCore.csproj|'))">true</UsePackageReference_Compze_Tessaging_Hosting_AspNetCore>
     <!-- Compze.Tessaging.Hosting.Testing -->
     <UsePackageReference_Compze_Tessaging_Hosting_Testing Condition="'$(UsePackageReference_Compze_Tessaging_Hosting_Testing)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Tessaging.Hosting.Testing.csproj|'))">true</UsePackageReference_Compze_Tessaging_Hosting_Testing>
     <!-- Compze.Tessaging.MicrosoftSql -->
@@ -154,8 +152,6 @@
     <UsePackageReference_Compze_Typermedia_Client Condition="'$(UsePackageReference_Compze_Typermedia_Client)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Typermedia.Client.csproj|'))">true</UsePackageReference_Compze_Typermedia_Client>
     <!-- Compze.Typermedia.Hosting -->
     <UsePackageReference_Compze_Typermedia_Hosting Condition="'$(UsePackageReference_Compze_Typermedia_Hosting)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Typermedia.Hosting.csproj|'))">true</UsePackageReference_Compze_Typermedia_Hosting>
-    <!-- Compze.Typermedia.Hosting.AspNetCore -->
-    <UsePackageReference_Compze_Typermedia_Hosting_AspNetCore Condition="'$(UsePackageReference_Compze_Typermedia_Hosting_AspNetCore)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Typermedia.Hosting.AspNetCore.csproj|'))">true</UsePackageReference_Compze_Typermedia_Hosting_AspNetCore>
     <!-- Compze.Typermedia.Hosting.Testing -->
     <UsePackageReference_Compze_Typermedia_Hosting_Testing Condition="'$(UsePackageReference_Compze_Typermedia_Hosting_Testing)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Typermedia.Hosting.Testing.csproj|'))">true</UsePackageReference_Compze_Typermedia_Hosting_Testing>
     <!-- Compze.Underscore -->
