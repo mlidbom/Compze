@@ -77,7 +77,8 @@ public class DistributedTessagingEndpointFeature
    /// the composition a same-machine application suite uses, where every process both finds the others and is found by them.<br/>
    /// Declare the two sides separately instead when a deployment is asymmetric.</summary>
    public DistributedTessagingEndpointFeature ParticipateIn<TRegistry>(TRegistry registry) where TRegistry : IEndpointRegistry, IEndpointAddressAnnouncer
-      => DiscoverEndpointsThrough(registry).AnnounceAddressTo(registry);
+      => DiscoverEndpointsThrough(registry)
+        .AnnounceAddressTo(registry);
 
    internal DistributedTessagingEndpointFeature(IEndpointBuilder builder)
    {
