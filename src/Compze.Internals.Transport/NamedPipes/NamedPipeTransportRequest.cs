@@ -11,7 +11,7 @@ public class NamedPipeTransportRequest
    public NamedPipeTransportRequestKind Kind { get; }
 
    ///<summary>The envelope identity infrastructure dedups on, when the kind participates in deduplication (the exactly-once kinds and typermedia tommands).<br/>
-   /// Kinds that carry no dedup identity (tueries, infrastructure queries) send a fresh id, which the receiver ignores.</summary>
+   /// Kinds that carry no dedup identity (tueries, endpoint-discovery queries) send a fresh id, which the receiver ignores.</summary>
    public TessageId TessageId { get; }
 
    ///<summary>The canonical string of the payload type's type id (<c>TypeId.CanonicalString</c>); the receiver resolves it to the .NET type to deserialize <see cref="Body"/> as.</summary>

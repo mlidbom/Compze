@@ -38,7 +38,10 @@ public class SerializerTest : UniversalTestBase
    static IComponentRegistrar RegisterSerializer(IComponentRegistrar register, Serializer serializer) =>
       serializer switch
       {
-         Serializer.Newtonsoft => register.NewtonsoftSerializers(),
+         Serializer.Newtonsoft => register.NewtonsoftTessagingSerializer()
+                                          .NewtonsoftTypermediaSerializer()
+                                          .NewtonsoftDocumentDbSerializer()
+                                          .NewtonsoftTeventStoreSerializer(),
          _ => throw new ArgumentOutOfRangeException(nameof(serializer))
       };
 

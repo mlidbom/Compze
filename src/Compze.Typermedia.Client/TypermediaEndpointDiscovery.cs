@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using Compze.TypeIdentifiers;
 using Compze.Abstractions.Hosting.Public;
 using Compze.Abstractions.Tessaging.Public;
@@ -8,34 +9,29 @@ namespace Compze.Typermedia.Client;
 
 class TypermediaEndpointInformationQuery : IQuery<TypermediaEndpointInformation>;
 
-// ReSharper disable once MemberCanBeInternal — Serialized across assemblies via Newtonsoft reflection
+///<summary>Typermedia's answer to endpoint discovery: who the endpoint is and which typermedia tessage types it serves —<br/>
+/// a plain wire shape serialized by the fixed <see cref="EndpointDiscoverySerializer"/> format.</summary>
 public class TypermediaEndpointInformation
 {
-   [Obsolete("Called by serializer", error: true)]
-   // ReSharper disable MemberCanBeInternal — Called by serializer via reflection
-#pragma warning disable CS8618
-   // ReSharper disable once UnusedMember.Global
-   public TypermediaEndpointInformation() {}
-#pragma warning restore CS8618
-   // ReSharper restore MemberCanBeInternal
-
    internal TypermediaEndpointInformation(IEnumerable<TypeId> handledTypermediaTypeIds, EndpointConfiguration configuration)
+      : this(configuration.Name, configuration.Id, handledTypermediaTypeIds.Select(id => id.CanonicalString).ToHashSet()) {}
+
+   [JsonConstructor]
+   public TypermediaEndpointInformation(string name, EndpointId id, HashSet<string> handledTypermediaTypes)
    {
-      Id = configuration.Id;
-      Name = configuration.Name;
-      HandledTypermediaTypes = handledTypermediaTypeIds.Select(id => id.CanonicalString).ToHashSet();
+      Name = name;
+      Id = id;
+      HandledTypermediaTypes = handledTypermediaTypes;
    }
 
-   // ReSharper disable MemberCanBeInternal — Serialized across assemblies via Newtonsoft reflection
-   public string Name { get; private set; }
-   public EndpointId Id { get; private set; }
-   public HashSet<string> HandledTypermediaTypes { get; private set; }
-   // ReSharper restore MemberCanBeInternal
+   public string Name { get; }
+   public EndpointId Id { get; }
+   public HashSet<string> HandledTypermediaTypes { get; }
 }
 
-public static class TypermediaInfrastructureQueryRegistration
+public static class TypermediaEndpointDiscoveryQueryRegistration
 {
-   public static void RegisterQueryHandlers(InfrastructureQueryRegistrarWithDependencyInjectionSupport registrar) =>
+   public static void RegisterQueryHandlers(EndpointDiscoveryQueryRegistrarWithDependencyInjectionSupport registrar) =>
       registrar.ForQuery((TypermediaEndpointInformationQuery _, ITypermediaHandlerRegistry typermediaRegistry, EndpointConfiguration configuration) =>
                             new TypermediaEndpointInformation(typermediaRegistry.HandledRemoteTypermediaTypeIds(), configuration));
 }

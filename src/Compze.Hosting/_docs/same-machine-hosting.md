@@ -64,7 +64,7 @@ Linux/macOS the same API rides Unix domain sockets.
 - **The shape**: the endpoint runs **one transport server** (`NamedPipeEndpointTransportServer`, on this
   transport) — listening on one freshly named pipe, dispatching each request to the handler registered for
   its request kind. Each communication style the endpoint speaks *contributes* its request handlers to that
-  server, and the server itself answers the infrastructure queries endpoint discovery runs on — every
+  server, and the server itself answers endpoint-discovery queries — every
   endpoint serves discovery no matter what it speaks. One server means one address per endpoint, which is
   what lets the registry map an endpoint to a single address. (The ASP.NET Core transport has the same shape:
   one Kestrel server per endpoint, each style contributing its controllers.)
@@ -79,9 +79,9 @@ Linux/macOS the same API rides Unix domain sockets.
 Choosing the transport is composition, per the hosting model's design rule — nothing in the hosting machinery
 knows which transport an endpoint speaks. An endpoint setup registers `NamedPipeTessagingTransport()` and/or
 `NamedPipeTypermediaTransport()` + `NamedPipeTypermediaTransportServer()` where it would have registered the
-HTTP equivalents; each transport registration brings the shared infrastructure-query transport that endpoint
-discovery runs on along itself. In tests the choice is the `Transport` axis of the pluggable-component matrix:
-the same specifications run over ASP.NET Core and over named pipes.
+HTTP equivalents; each transport registration brings the shared endpoint-discovery query transport along
+itself. In tests the choice is the `Transport` axis of the pluggable-component matrix: the same
+specifications run over ASP.NET Core and over named pipes.
 
 ## Discovery: announcing into the interprocess registry
 
@@ -125,7 +125,7 @@ then keep converging, one pass per second. Each pass compares the connected addr
 current addresses:
 
 - **An endpoint appears** → connect. The new connection learns the remote endpoint's identity and its handled
-  tessage types through the infrastructure query, and tommand and tevent routes are registered for it.
+  tessage types through the endpoint-discovery query, and tommand and tevent routes are registered for it.
 - **An endpoint's address leaves the registry** (it stopped and retracted, or crashed and was pruned by
   liveness) → the connection is dropped. Undelivered exactly-once tessages for it stay in the outbox's
   storage — exactly-once means they wait for the endpoint's return.
@@ -167,7 +167,7 @@ host.RegisterEndpoint("BackgroundWorker", new EndpointId(Guid.Parse("...")), bui
    builder.TypeMapper.MapTypesFromAssemblyContaining<MyTommand>();
 
    builder.Registrar
-          .NewtonsoftSerializers()
+          .NewtonsoftTessagingSerializer()
           .NamedPipeTessagingTransport()
           .SqliteEndpointPersistence("BackgroundWorker")
           .SqliteTessagingSqlLayer();

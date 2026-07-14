@@ -1,5 +1,4 @@
 using Compze.TypeIdentifiers;
-using Compze.Abstractions.Serialization.Internal;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Abstractions.Hosting.Public;
 using Compze.DependencyInjection;
@@ -8,40 +7,38 @@ using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 
 namespace Compze.Internals.Transport;
 
-public static class HttpInfrastructureQueryTransportRegistrar
+public static class HttpEndpointDiscoveryQueryTransportRegistrar
 {
-   ///<summary>Registers the HTTP implementation of the infrastructure-query transport that endpoint discovery runs on — the<br/>
-   /// counterpart of <see cref="NamedPipes.NamedPipeInfrastructureQueryTransportRegistrar.NamedPipeInfrastructureQueryTransportIfNotRegistered"/> —<br/>
+   ///<summary>Registers the HTTP implementation of the endpoint-discovery query transport — the<br/>
+   /// counterpart of <see cref="NamedPipes.NamedPipeEndpointDiscoveryQueryTransportRegistrar.NamedPipeEndpointDiscoveryQueryTransportIfNotRegistered"/> —<br/>
    /// and the <see cref="IHttpClientFactoryCE"/> it posts through. Guarded so that every HTTP transport registration demands it<br/>
    /// itself — a composing layer never registers it.</summary>
-   public static IComponentRegistrar HttpInfrastructureQueryTransportIfNotRegistered(this IComponentRegistrar registrar)
-      => registrar.IsRegistered<IInfrastructureQueryTransport>()
+   public static IComponentRegistrar HttpEndpointDiscoveryQueryTransportIfNotRegistered(this IComponentRegistrar registrar)
+      => registrar.IsRegistered<IEndpointDiscoveryQueryTransport>()
             ? registrar
             : registrar.HttpClientFactoryCEIfNotRegistered()
-                       .Register(HttpInfrastructureQueryTransportImplementation.RegisterWith);
+                       .Register(HttpEndpointDiscoveryQueryTransportImplementation.RegisterWith);
 }
 
-class HttpInfrastructureQueryTransportImplementation : IInfrastructureQueryTransport
+class HttpEndpointDiscoveryQueryTransportImplementation : IEndpointDiscoveryQueryTransport
 {
    public static void RegisterWith(IComponentRegistrar registrar)
-      => registrar.Register(Singleton.For<IInfrastructureQueryTransport>()
-                                     .CreatedBy((IHttpClientFactoryCE factory, IRemotableTessageSerializer serializer, ITypeMap typeMap) => new HttpInfrastructureQueryTransportImplementation(factory, serializer, typeMap)));
+      => registrar.Register(Singleton.For<IEndpointDiscoveryQueryTransport>()
+                                     .CreatedBy((IHttpClientFactoryCE factory, ITypeMap typeMap) => new HttpEndpointDiscoveryQueryTransportImplementation(factory, typeMap)));
 
    readonly IHttpClientFactoryCE _httpClientFactory;
-   readonly IRemotableTessageSerializer _serializer;
    readonly ITypeMap _typeMap;
 
-   HttpInfrastructureQueryTransportImplementation(IHttpClientFactoryCE httpClientFactory, IRemotableTessageSerializer serializer, ITypeMap typeMap)
+   HttpEndpointDiscoveryQueryTransportImplementation(IHttpClientFactoryCE httpClientFactory, ITypeMap typeMap)
    {
       _httpClientFactory = httpClientFactory;
-      _serializer = serializer;
       _typeMap = typeMap;
    }
 
    public async Task<TResult> GetAsync<TResult>(IQuery<TResult> query, EndpointAddress address)
    {
-      var requestUri = new Uri(address.Uri, HttpConstants.Routes.Infrastructure.Query);
-      var body = _serializer.SerializeTessage(query);
+      var requestUri = new Uri(address.Uri, HttpConstants.Routes.EndpointDiscovery.Query);
+      var body = EndpointDiscoverySerializer.SerializeQuery(query);
       var typeId = _typeMap.GetId(query.GetType());
 
       using var httpClient = _httpClientFactory.CreateClient();
@@ -66,6 +63,6 @@ class HttpInfrastructureQueryTransportImplementation : IInfrastructureQueryTrans
       }
 
       var resultJson = await response.Content.ReadAsStringAsync().caf();
-      return _serializer.DeserializeResponse<TResult>(resultJson);
+      return EndpointDiscoverySerializer.DeserializeResult<TResult>(resultJson);
    }
 }

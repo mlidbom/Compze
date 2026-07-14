@@ -18,7 +18,7 @@ public static class TessageTypesInternal
    internal interface ITessage : IInternalInfrastructureTessage;
 #pragma warning restore CA1040
 
-   internal static void RegisterInfrastructureQueryHandlers(InfrastructureQueryRegistrarWithDependencyInjectionSupport registrar, IEndpointRegistry endpointRegistry)
+   internal static void RegisterEndpointDiscoveryQueryHandlers(EndpointDiscoveryQueryRegistrarWithDependencyInjectionSupport registrar, IEndpointRegistry endpointRegistry)
    {
       registrar.ForQuery((EndpointInformationQuery _, ITessageHandlerRegistry tessagingRegistry, EndpointConfiguration configuration) =>
                             new EndpointInformation(tessagingRegistry.HandledRemoteTessageTypeIds(), configuration));

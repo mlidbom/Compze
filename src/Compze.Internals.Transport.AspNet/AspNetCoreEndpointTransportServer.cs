@@ -19,13 +19,13 @@ namespace Compze.Internals.Transport.AspNet;
 public static class AspNetCoreEndpointTransportServerRegistrar
 {
    ///<summary>Registers the ASP.NET Core implementation of the endpoint's one transport server (<see cref="IEndpointTransportServer"/>)<br/>
-   /// together with the <see cref="InfrastructureQueryController"/> it hosts, unless a transport already registered one — guarded so<br/>
+   /// together with the <see cref="EndpointDiscoveryQueryController"/> it hosts, unless a transport already registered one — guarded so<br/>
    /// that every communication style's ASP.NET Core transport registration can demand the server without conflicting when an endpoint<br/>
    /// hosts several styles.</summary>
    public static IComponentRegistrar AspNetCoreEndpointTransportServerIfNotRegistered(this IComponentRegistrar registrar) =>
       registrar.IsRegistered<IEndpointTransportServer>()
          ? registrar
-         : registrar.Register(InfrastructureQueryController.RegisterWith)
+         : registrar.Register(EndpointDiscoveryQueryController.RegisterWith)
                     .Register(
                        Singleton.For<IEndpointTransportServer>()
                                 .CreatedBy((IChildContainerHostIntegration hostIntegration, IComponentSet<AspNetCoreControllerContribution> controllerContributions)
@@ -33,8 +33,8 @@ public static class AspNetCoreEndpointTransportServerRegistrar
 }
 
 ///<summary>The ASP.NET Core implementation of <see cref="IEndpointTransportServer"/>: one Kestrel <see cref="WebApplication"/> hosting<br/>
-/// every communication style's contributed controllers, plus the <see cref="InfrastructureQueryController"/> answering the<br/>
-/// infrastructure queries endpoint discovery runs on — which every endpoint serves no matter what it speaks, so the server hosts<br/>
+/// every communication style's contributed controllers, plus the <see cref="EndpointDiscoveryQueryController"/> answering the<br/>
+/// endpoint-discovery queries — which every endpoint serves no matter what it speaks, so the server hosts<br/>
 /// that controller itself.</summary>
 ///<remarks>Controllers are activated through the endpoint's own container (<see cref="IChildContainerHostIntegration"/> +<br/>
 /// <see cref="ServiceBasedControllerActivator"/>), so they resolve the endpoint's services exactly as any other component does.</remarks>
@@ -74,7 +74,7 @@ class AspNetCoreEndpointTransportServer : IEndpointTransportServer
 
       builder.Services.AddControllers().ConfigureApplicationPartManager(it =>
       {
-         it.ApplicationParts.Add(new AssemblyPart(typeof(InfrastructureQueryController).Assembly));
+         it.ApplicationParts.Add(new AssemblyPart(typeof(EndpointDiscoveryQueryController).Assembly));
          foreach(var contribution in _controllerContributions)
             it.ApplicationParts.Add(new AssemblyPart(contribution.ControllerAssembly));
          it.FeatureProviders.Add(new InternalControllerFeatureProvider());

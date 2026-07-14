@@ -4,18 +4,18 @@ using Compze.DependencyInjection.Abstractions;
 
 namespace Compze.Internals.Transport;
 
-public class InfrastructureQueryRegistrarWithDependencyInjectionSupport(InfrastructureQueryExecutor executor)
+public class EndpointDiscoveryQueryRegistrarWithDependencyInjectionSupport(EndpointDiscoveryQueryExecutor executor)
 {
-   readonly InfrastructureQueryExecutor _executor = executor;
+   readonly EndpointDiscoveryQueryExecutor _executor = executor;
 
-   public InfrastructureQueryRegistrarWithDependencyInjectionSupport ForQuery<TQuery, TResult>(
+   public EndpointDiscoveryQueryRegistrarWithDependencyInjectionSupport ForQuery<TQuery, TResult>(
       Func<TQuery, TResult> handler) where TQuery : IQuery<TResult>
    {
       _executor.RegisterQueryHandler<TQuery, TResult>((query, _) => handler(query));
       return this;
    }
 
-   public InfrastructureQueryRegistrarWithDependencyInjectionSupport ForQuery<TQuery, TDependency1, TResult>(
+   public EndpointDiscoveryQueryRegistrarWithDependencyInjectionSupport ForQuery<TQuery, TDependency1, TResult>(
       Func<TQuery, TDependency1, TResult> handler) where TQuery : IQuery<TResult>
                                                    where TDependency1 : class
    {
@@ -23,7 +23,7 @@ public class InfrastructureQueryRegistrarWithDependencyInjectionSupport(Infrastr
       return this;
    }
 
-   public InfrastructureQueryRegistrarWithDependencyInjectionSupport ForQuery<TQuery, TDependency1, TDependency2, TResult>(
+   public EndpointDiscoveryQueryRegistrarWithDependencyInjectionSupport ForQuery<TQuery, TDependency1, TDependency2, TResult>(
       Func<TQuery, TDependency1, TDependency2, TResult> handler) where TQuery : IQuery<TResult>
                                                                  where TDependency1 : class
                                                                  where TDependency2 : class
@@ -32,7 +32,7 @@ public class InfrastructureQueryRegistrarWithDependencyInjectionSupport(Infrastr
       return this;
    }
 
-   public InfrastructureQueryRegistrarWithDependencyInjectionSupport ForQuery<TQuery, TDependency1, TDependency2, TDependency3, TDependency4, TResult>(
+   public EndpointDiscoveryQueryRegistrarWithDependencyInjectionSupport ForQuery<TQuery, TDependency1, TDependency2, TDependency3, TDependency4, TResult>(
       Func<TQuery, TDependency1, TDependency2, TDependency3, TDependency4, TResult> handler) where TQuery : IQuery<TResult>
                                                                                               where TDependency1 : class
                                                                                               where TDependency2 : class

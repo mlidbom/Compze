@@ -1,6 +1,5 @@
 using Compze.Contracts;
 using Compze.TypeIdentifiers;
-using Compze.Abstractions.Serialization.Internal;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Logging;
@@ -12,30 +11,26 @@ namespace Compze.Internals.Transport.AspNet;
 
 #pragma warning disable CA1031
 
-public class InfrastructureQueryController : Controller
+public class EndpointDiscoveryQueryController : Controller
 {
-   readonly IRemotableTessageSerializer _serializer;
    readonly ITypeMap _typeMap;
-   readonly InfrastructureQueryExecutor _executor;
+   readonly EndpointDiscoveryQueryExecutor _executor;
 
    public static void RegisterWith(IComponentRegistrar registrar) =>
       registrar.Register(
-         Scoped.For<InfrastructureQueryController>()
-               .CreatedBy((IRemotableTessageSerializer serializer,
-                           ITypeMap typeMap,
-                           InfrastructureQueryExecutor executor)
-                             => new InfrastructureQueryController(serializer, typeMap, executor)));
+         Scoped.For<EndpointDiscoveryQueryController>()
+               .CreatedBy((ITypeMap typeMap,
+                           EndpointDiscoveryQueryExecutor executor)
+                             => new EndpointDiscoveryQueryController(typeMap, executor)));
 
-   InfrastructureQueryController(IRemotableTessageSerializer serializer,
-                                 ITypeMap typeMap,
-                                 InfrastructureQueryExecutor executor)
+   EndpointDiscoveryQueryController(ITypeMap typeMap,
+                                 EndpointDiscoveryQueryExecutor executor)
    {
-      _serializer = serializer;
       _typeMap = typeMap;
       _executor = executor;
    }
 
-   [HttpPost(HttpConstants.Routes.Infrastructure.Query)]
+   [HttpPost(HttpConstants.Routes.EndpointDiscovery.Query)]
    public async Task<IActionResult> Query()
    {
       var typeIdStr = Request.Headers[HttpConstants.Headers.PayLoadTypeId][0]._assert().NotNull();
@@ -44,17 +39,17 @@ public class InfrastructureQueryController : Controller
       using var reader = new StreamReader(HttpContext.Request.Body);
       var json = await reader.ReadToEndAsync().caf();
 
-      var query = _serializer.DeserializeTessage(queryType, json);
+      var query = EndpointDiscoverySerializer.DeserializeQuery(queryType, json);
 
       try
       {
          var result = await RunOutsideScope(() => _executor.ExecuteQuery(query)).caf();
-         var resultJson = _serializer.SerializeResponse(result);
+         var resultJson = EndpointDiscoverySerializer.SerializeResult(result);
          return Ok(resultJson);
       }
       catch(Exception exception)
       {
-         this.Log().Warning(exception, "Exception handling infrastructure query");
+         this.Log().Warning(exception, "Exception handling endpoint-discovery query");
          return Problem(statusCode: StatusCodes.Status500InternalServerError, type: exception.GetType().FullName, detail: exception.ToString());
       }
    }

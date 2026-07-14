@@ -20,7 +20,11 @@ public static class TestingComponentRegistrarSerializer
       switch(TestEnv.Serializer)
       {
          case Serializer.Newtonsoft:
-            return @this.NewtonsoftSerializers();
+            //The testing host may host endpoints speaking anything, so it registers every feature's serializer; each feature resolves only its own.
+            return @this.NewtonsoftTessagingSerializer()
+                        .NewtonsoftTypermediaSerializer()
+                        .NewtonsoftDocumentDbSerializer()
+                        .NewtonsoftTeventStoreSerializer();
          default:
             throw new ArgumentOutOfRangeException();
       }

@@ -16,12 +16,12 @@ class NamedPipeTessagingRequestHandlers : INamedPipeRequestHandlerContribution
    public static void RegisterWith(IComponentRegistrar registrar) =>
       registrar.Register(
          Singleton.ForSet<INamedPipeRequestHandlerContribution>()
-                  .CreatedBy((IInbox inbox, IRemotableTessageSerializer serializer, ITypeMap typeMap)
+                  .CreatedBy((IInbox inbox, ITessagingSerializer serializer, ITypeMap typeMap)
                                 => new NamedPipeTessagingRequestHandlers(inbox, serializer, typeMap)));
 
    public IReadOnlyDictionary<NamedPipeTransportRequestKind, Func<NamedPipeTransportRequest, Task<string>>> RequestHandlers { get; }
 
-   NamedPipeTessagingRequestHandlers(IInbox inbox, IRemotableTessageSerializer serializer, ITypeMap typeMap)
+   NamedPipeTessagingRequestHandlers(IInbox inbox, ITessagingSerializer serializer, ITypeMap typeMap)
    {
       async Task<string> ReceiveIntoInbox(NamedPipeTransportRequest request)
       {

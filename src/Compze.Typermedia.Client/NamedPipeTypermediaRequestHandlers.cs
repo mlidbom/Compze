@@ -25,20 +25,20 @@ class NamedPipeTypermediaRequestHandlers : INamedPipeRequestHandlerContribution
    public static void RegisterWith(IComponentRegistrar registrar) =>
       registrar.Register(
          Singleton.ForSet<INamedPipeRequestHandlerContribution>()
-                  .CreatedBy((TypermediaHandlerExecutor executor, IRemotableTessageSerializer serializer, ITypeMap typeMap)
+                  .CreatedBy((TypermediaHandlerExecutor executor, ITypermediaSerializer serializer, ITypeMap typeMap)
                                 => new NamedPipeTypermediaRequestHandlers(executor, serializer, typeMap)));
 
    public IReadOnlyDictionary<NamedPipeTransportRequestKind, Func<NamedPipeTransportRequest, Task<string>>> RequestHandlers { get; }
 
-   NamedPipeTypermediaRequestHandlers(TypermediaHandlerExecutor executor, IRemotableTessageSerializer serializer, ITypeMap typeMap)
+   NamedPipeTypermediaRequestHandlers(TypermediaHandlerExecutor executor, ITypermediaSerializer serializer, ITypeMap typeMap)
    {
-      ITessage DeserializeTessage(NamedPipeTransportRequest request) =>
-         (ITessage)serializer.DeserializeTessage(typeMap.GetId(request.PayloadTypeIdString).Type, request.Body);
+      ITypermediaTessage DeserializeTessage(NamedPipeTransportRequest request) =>
+         serializer.DeserializeTessage(typeMap.GetId(request.PayloadTypeIdString).Type, request.Body);
 
       RequestHandlers = new Dictionary<NamedPipeTransportRequestKind, Func<NamedPipeTransportRequest, Task<string>>>
       {
-         [NamedPipeTransportRequestKind.TypermediaTuery] = request => Task.FromResult(serializer.SerializeResponse(executor.ExecuteTuery(DeserializeTessage(request)))),
-         [NamedPipeTransportRequestKind.TypermediaTommandWithResult] = request => Task.FromResult(serializer.SerializeResponse(executor.ExecuteTommandWithResult(DeserializeTessage(request)))),
+         [NamedPipeTransportRequestKind.TypermediaTuery] = request => Task.FromResult(serializer.SerializeResult(executor.ExecuteTuery(DeserializeTessage(request)))),
+         [NamedPipeTransportRequestKind.TypermediaTommandWithResult] = request => Task.FromResult(serializer.SerializeResult(executor.ExecuteTommandWithResult(DeserializeTessage(request)))),
          [NamedPipeTransportRequestKind.TypermediaVoidTommand] = request =>
          {
             executor.ExecuteVoidTommand((IAtMostOnceTypermediaTommand)DeserializeTessage(request));

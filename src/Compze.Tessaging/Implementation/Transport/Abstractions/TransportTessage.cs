@@ -11,7 +11,7 @@ public static class TransportTessage
    public class InComing
    {
       internal readonly TessageId TessageId;
-      readonly IRemotableTessageSerializer _serializer;
+      readonly ITessagingSerializer _serializer;
       internal readonly string Body;
       internal readonly TypeId TessageTypeId;
       readonly Type _tessageType;
@@ -23,7 +23,7 @@ public static class TransportTessage
       {
          if(_tessage == null)
          {
-            _tessage = (ITessage)_serializer.DeserializeTessage(_tessageType, Body);
+            _tessage = _serializer.DeserializeTessage(_tessageType, Body);
 
             State.Assert(_tessage switch
                          {
@@ -36,7 +36,7 @@ public static class TransportTessage
          return _tessage;
       }
 
-      public InComing(string body, string persistedTypeString, TessageId tessageId, ITypeMap typeMap, IRemotableTessageSerializer serializer)
+      public InComing(string body, string persistedTypeString, TessageId tessageId, ITypeMap typeMap, ITessagingSerializer serializer)
       {
          _serializer = serializer;
          Body = body;
@@ -56,7 +56,7 @@ public static class TransportTessage
       internal readonly string Body;
       internal readonly TransportTessageType TessageTypeEnum;
 
-      internal static OutGoing Create(ITessage tessage, TessageId dedupId, ITypeMap typeMap, IRemotableTessageSerializer serializer)
+      internal static OutGoing Create(ITessage tessage, TessageId dedupId, ITypeMap typeMap, ITessagingSerializer serializer)
       {
          var body = serializer.SerializeTessage(tessage);
          return new OutGoing(typeMap.GetId(tessage.GetType()), tessage.GetType(), body, tessage, dedupId);

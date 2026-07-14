@@ -16,19 +16,19 @@ namespace Compze.Typermedia.Hosting.AspNetCore;
 
 public class TypermediaController : Controller
 {
-   readonly IRemotableTessageSerializer _serializer;
+   readonly ITypermediaSerializer _serializer;
    readonly ITypeMap _typeMap;
    readonly TypermediaHandlerExecutor _executor;
 
    public static void RegisterWith(IComponentRegistrar registrar) =>
       registrar.Register(
          Scoped.For<TypermediaController>()
-               .CreatedBy((IRemotableTessageSerializer serializer,
+               .CreatedBy((ITypermediaSerializer serializer,
                            ITypeMap typeMap,
                            TypermediaHandlerExecutor executor)
                              => new TypermediaController(serializer, typeMap, executor)));
 
-   TypermediaController(IRemotableTessageSerializer serializer,
+   TypermediaController(ITypermediaSerializer serializer,
                  ITypeMap typeMap,
                  TypermediaHandlerExecutor executor)
    {
@@ -45,7 +45,7 @@ public class TypermediaController : Controller
       try
       {
          var tueryResponse = await Task.Run(() => _executor.ExecuteTuery(tessage)).caf();
-         var tueryResponseJson = _serializer.SerializeResponse(tueryResponse);
+         var tueryResponseJson = _serializer.SerializeResult(tueryResponse);
          return Ok(tueryResponseJson);
       }
       catch(Exception exception)
@@ -63,7 +63,7 @@ public class TypermediaController : Controller
       try
       {
          var tommandResponse = await Task.Run(() => _executor.ExecuteTommandWithResult(tessage)).caf();
-         var tommandResponseJson = _serializer.SerializeResponse(tommandResponse);
+         var tommandResponseJson = _serializer.SerializeResult(tommandResponse);
          return Ok(tommandResponseJson);
       }
       catch(Exception exception)
@@ -90,7 +90,7 @@ public class TypermediaController : Controller
       }
    }
 
-   async Task<ITessage> DeserializeTessageFromRequest()
+   async Task<ITypermediaTessage> DeserializeTessageFromRequest()
    {
       var typeIdStr = Request.Headers[HttpConstants.Headers.PayLoadTypeId][0]._assert().NotNull();
       var tessageType = _typeMap.GetId(typeIdStr).Type;
@@ -98,7 +98,7 @@ public class TypermediaController : Controller
       using var reader = new StreamReader(HttpContext.Request.Body);
       var json = await reader.ReadToEndAsync().caf();
 
-      return (ITessage)_serializer.DeserializeTessage(tessageType, json);
+      return _serializer.DeserializeTessage(tessageType, json);
    }
 
 }

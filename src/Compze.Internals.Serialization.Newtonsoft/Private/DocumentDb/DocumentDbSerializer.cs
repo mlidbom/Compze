@@ -5,15 +5,9 @@ using Compze.DependencyInjection.Abstractions;
 
 namespace Compze.Internals.Serialization.Newtonsoft.Private.DocumentDb;
 
-static class NewtonsoftDocumentDbSerializerRegistrar
-{
-   public static IComponentRegistrar NewtonsoftDocumentDbSerializer(this IComponentRegistrar registrar) =>
-      DocumentDb.NewtonsoftDocumentDbSerializer.RegisterWith(registrar);
-}
-
 class NewtonsoftDocumentDbSerializer : RenamingSupportingJsonSerializer, IDocumentDbSerializer
 {
-   public static IComponentRegistrar RegisterWith(IComponentRegistrar registrar)
+   internal static IComponentRegistrar RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(Singleton.For<IDocumentDbSerializer>()
                                      .CreatedBy((ITypeMap typeMap) => new NewtonsoftDocumentDbSerializer(typeMap)));
 

@@ -44,8 +44,8 @@ public class DistributedTypermediaEndpointFeature
 
       TypermediaHandlerExecutor.RegisterWith(builder.Registrar);
 
-      builder.OnContainerBuilt(resolver => TypermediaInfrastructureQueryRegistration.RegisterQueryHandlers(
-                                  new InfrastructureQueryRegistrarWithDependencyInjectionSupport(resolver.Resolve<InfrastructureQueryExecutor>())));
+      builder.OnContainerBuilt(resolver => TypermediaEndpointDiscoveryQueryRegistration.RegisterQueryHandlers(
+                                  new EndpointDiscoveryQueryRegistrarWithDependencyInjectionSupport(resolver.Resolve<EndpointDiscoveryQueryExecutor>())));
 
       builder.AddComponent(_ => new DistributedTypermediaEndpointComponent(_transportServer));
    }

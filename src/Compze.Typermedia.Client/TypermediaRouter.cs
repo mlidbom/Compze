@@ -23,19 +23,19 @@ class TypermediaRouter : ITypermediaRouter, IDisposable
    public static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(
             Singleton.For<ITypermediaRouter, ITypermediaRouting>().CreatedBy(
-               (ITypeMap typeMap, ITypermediaTransport transport, IInfrastructureQueryTransport infrastructureQueryTransport)
-                  => new TypermediaRouter(typeMap, transport, infrastructureQueryTransport)));
+               (ITypeMap typeMap, ITypermediaTransport transport, IEndpointDiscoveryQueryTransport endpointDiscoveryQueryTransport)
+                  => new TypermediaRouter(typeMap, transport, endpointDiscoveryQueryTransport)));
 
-   TypermediaRouter(ITypeMap typeMap, ITypermediaTransport transport, IInfrastructureQueryTransport infrastructureQueryTransport)
+   TypermediaRouter(ITypeMap typeMap, ITypermediaTransport transport, IEndpointDiscoveryQueryTransport endpointDiscoveryQueryTransport)
    {
       _typeMap = typeMap;
       _transport = transport;
-      _infrastructureQueryTransport = infrastructureQueryTransport;
+      _endpointDiscoveryQueryTransport = endpointDiscoveryQueryTransport;
    }
 
    readonly ITypeMap _typeMap;
    readonly ITypermediaTransport _transport;
-   readonly IInfrastructureQueryTransport _infrastructureQueryTransport;
+   readonly IEndpointDiscoveryQueryTransport _endpointDiscoveryQueryTransport;
    readonly IMonitor _monitor = IMonitor.New();
 
    bool _running;
@@ -46,7 +46,7 @@ class TypermediaRouter : ITypermediaRouter, IDisposable
    public async Task ConnectAsync(EndpointAddress endpointAddress)
    {
       AssertRunning();
-      var endpointInformation = await _infrastructureQueryTransport.GetAsync(new TypermediaEndpointInformationQuery(), endpointAddress).caf();
+      var endpointInformation = await _endpointDiscoveryQueryTransport.GetAsync(new TypermediaEndpointInformationQuery(), endpointAddress).caf();
       var connection = new TypermediaConnection(endpointAddress, endpointInformation);
 
       using(_monitor.TakeLock())

@@ -7,12 +7,6 @@ using Newtonsoft.Json;
 
 namespace Compze.Internals.Serialization.Newtonsoft.Private.TeventStore;
 
-static class NewtonsoftTeventStoreSerializerRegistrar
-{
-   public static IComponentRegistrar NewtonsoftTeventStoreSerializer(this IComponentRegistrar registrar) =>
-      TeventStore.NewtonsoftTeventStoreSerializer.RegisterWith(registrar);
-}
-
 public class NewtonsoftTeventStoreSerializer : ITeventStoreSerializer
 {
    public static readonly JsonSerializerSettings JsonSettings = RenamingAndNonPublicMembersSupportingJsonSettings.TeventStore;

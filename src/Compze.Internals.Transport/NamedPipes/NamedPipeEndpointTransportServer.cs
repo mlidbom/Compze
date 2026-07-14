@@ -18,25 +18,24 @@ public static class NamedPipeEndpointTransportServerRegistrar
          ? registrar
          : registrar.Register(
             Singleton.For<IEndpointTransportServer>()
-                     .CreatedBy((IComponentSet<INamedPipeRequestHandlerContribution> contributions, InfrastructureQueryExecutor infrastructureQueryExecutor, IRemotableTessageSerializer serializer, ITypeMap typeMap)
-                                   => new NamedPipeEndpointTransportServer(contributions, infrastructureQueryExecutor, serializer, typeMap)));
+                     .CreatedBy((IComponentSet<INamedPipeRequestHandlerContribution> contributions, EndpointDiscoveryQueryExecutor endpointDiscoveryQueryExecutor, ITypeMap typeMap)
+                                   => new NamedPipeEndpointTransportServer(contributions, endpointDiscoveryQueryExecutor, typeMap)));
 }
 
 ///<summary>The named-pipe implementation of <see cref="IEndpointTransportServer"/>: one <see cref="NamedPipeTransportServer"/> serving<br/>
-/// the union of every communication style's contributed request handlers, plus the infrastructure queries endpoint discovery runs on —<br/>
+/// the union of every communication style's contributed request handlers, plus endpoint-discovery queries —<br/>
 /// which every endpoint answers no matter what it speaks, so the server registers that handler itself.</summary>
 class NamedPipeEndpointTransportServer : IEndpointTransportServer
 {
    readonly NamedPipeTransportServer _server;
 
    internal NamedPipeEndpointTransportServer(IEnumerable<INamedPipeRequestHandlerContribution> contributions,
-                                             InfrastructureQueryExecutor infrastructureQueryExecutor,
-                                             IRemotableTessageSerializer serializer,
+                                             EndpointDiscoveryQueryExecutor endpointDiscoveryQueryExecutor,
                                              ITypeMap typeMap)
    {
       var handlers = new Dictionary<NamedPipeTransportRequestKind, Func<NamedPipeTransportRequest, Task<string>>>
       {
-         [NamedPipeTransportRequestKind.InfrastructureQuery] = NamedPipeInfrastructureQueryHandler.CreateFor(infrastructureQueryExecutor, serializer, typeMap)
+         [NamedPipeTransportRequestKind.EndpointDiscoveryQuery] = NamedPipeEndpointDiscoveryQueryHandler.CreateFor(endpointDiscoveryQueryExecutor, typeMap)
       };
 
       foreach(var contribution in contributions)

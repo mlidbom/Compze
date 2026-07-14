@@ -12,11 +12,11 @@ namespace Compze.Typermedia.Client;
 
 public static class NamedPipeTypermediaTransportRegistrar
 {
-   ///<summary>Registers the named-pipe implementation of the Typermedia client transport, plus the named-pipe infrastructure-query<br/>
-   /// transport that endpoint discovery runs on (shared with every other named-pipe communication style, so registered only if<br/>
+   ///<summary>Registers the named-pipe implementation of the Typermedia client transport, plus the named-pipe endpoint-discovery query<br/>
+   /// transport (shared with every other named-pipe communication style, so registered only if<br/>
    /// nothing else did yet) — the same-machine counterpart of <see cref="HttpTypermediaTransportRegistrar.HttpTypermediaTransport"/>.</summary>
    public static IComponentRegistrar NamedPipeTypermediaTransport(this IComponentRegistrar registrar)
-      => registrar.NamedPipeInfrastructureQueryTransportIfNotRegistered()
+      => registrar.NamedPipeEndpointDiscoveryQueryTransportIfNotRegistered()
                   .Register(Client.NamedPipeTypermediaTransport.RegisterWith);
 }
 
@@ -27,27 +27,27 @@ class NamedPipeTypermediaTransport : ITypermediaTransport
 {
    public static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(Singleton.For<ITypermediaTransport>()
-                                     .CreatedBy((IRemotableTessageSerializer serializer, ITypeMap typeMap) => new NamedPipeTypermediaTransport(serializer, typeMap)));
+                                     .CreatedBy((ITypermediaSerializer serializer, ITypeMap typeMap) => new NamedPipeTypermediaTransport(serializer, typeMap)));
 
-   readonly IRemotableTessageSerializer _serializer;
+   readonly ITypermediaSerializer _serializer;
    readonly ITypeMap _typeMap;
 
-   NamedPipeTypermediaTransport(IRemotableTessageSerializer serializer, ITypeMap typeMap)
+   NamedPipeTypermediaTransport(ITypermediaSerializer serializer, ITypeMap typeMap)
    {
       _serializer = serializer;
       _typeMap = typeMap;
    }
 
    public async Task<TResult> GetAsync<TResult>(IRemotableTuery<TResult> tuery, EndpointAddress address)
-      => _serializer.DeserializeResponse<TResult>(await SendAsync(NamedPipeTransportRequestKind.TypermediaTuery, tuery, address).caf());
+      => _serializer.DeserializeResult<TResult>(await SendAsync(NamedPipeTransportRequestKind.TypermediaTuery, tuery, address).caf());
 
    public async Task<TResult> PostAsync<TResult>(IAtMostOnceTommand<TResult> command, EndpointAddress address)
-      => _serializer.DeserializeResponse<TResult>(await SendAsync(NamedPipeTransportRequestKind.TypermediaTommandWithResult, command, address).caf());
+      => _serializer.DeserializeResult<TResult>(await SendAsync(NamedPipeTransportRequestKind.TypermediaTommandWithResult, command, address).caf());
 
    public async Task PostAsync(IAtMostOnceTypermediaTommand command, EndpointAddress address)
       => await SendAsync(NamedPipeTransportRequestKind.TypermediaVoidTommand, command, address).caf();
 
-   async Task<string> SendAsync(NamedPipeTransportRequestKind kind, IRemotableTessage tessage, EndpointAddress address)
+   async Task<string> SendAsync(NamedPipeTransportRequestKind kind, ITypermediaTessage tessage, EndpointAddress address)
    {
       var request = new NamedPipeTransportRequest(kind,
                                                   (tessage as IAtMostOnceTessage)?.Id ?? new TessageId(),

@@ -21,6 +21,8 @@ static class RenamingAndNonPublicMembersSupportingJsonSettings
 
    public static readonly JsonSerializerSettings Tessaging = Default;
 
+   public static readonly JsonSerializerSettings Typermedia = Default;
+
    public static readonly JsonSerializerSettings TeventStore =
       new(Default)
       {

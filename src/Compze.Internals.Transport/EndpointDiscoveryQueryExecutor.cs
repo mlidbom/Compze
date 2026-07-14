@@ -7,13 +7,13 @@ using Compze.Threading;
 
 namespace Compze.Internals.Transport;
 
-public class InfrastructureQueryExecutor
+public class EndpointDiscoveryQueryExecutor
 {
    readonly IScopeFactory _scopeFactory;
    IReadOnlyDictionary<Type, Func<object, IScopeResolver, object>> _queryHandlers = new Dictionary<Type, Func<object, IScopeResolver, object>>();
    readonly IMonitor _monitor = IMonitor.New();
 
-   InfrastructureQueryExecutor(IScopeFactory scopeFactory) => _scopeFactory = scopeFactory;
+   EndpointDiscoveryQueryExecutor(IScopeFactory scopeFactory) => _scopeFactory = scopeFactory;
 
    public void RegisterQueryHandler<TQuery, TResult>(Func<TQuery, IScopeResolver, TResult> handler) where TQuery : IQuery<TResult> => _monitor.Locked(() =>
    {
@@ -23,11 +23,11 @@ public class InfrastructureQueryExecutor
 
    public object ExecuteQuery(IMessage query)
    {
-      this.Log().Debug($"Executing infrastructure query {query.GetType().Name}");
+      this.Log().Debug($"Executing endpoint-discovery query {query.GetType().Name}");
       return _scopeFactory.ExecuteInIsolatedScope(scopeResolver =>
       {
          if(!_queryHandlers.TryGetValue(query.GetType(), out var handler))
-            throw new InvalidOperationException($"No infrastructure query handler registered for {query.GetType().FullName}");
+            throw new InvalidOperationException($"No endpoint-discovery query handler registered for {query.GetType().FullName}");
 
          return handler(query, scopeResolver);
       });
@@ -35,7 +35,7 @@ public class InfrastructureQueryExecutor
 
    public static void RegisterWith(IComponentRegistrar registrar) =>
       registrar.Register(
-         Singleton.For<InfrastructureQueryExecutor>()
+         Singleton.For<EndpointDiscoveryQueryExecutor>()
                   .CreatedBy((IScopeFactory scopeFactory)
-                                => new InfrastructureQueryExecutor(scopeFactory)));
+                                => new EndpointDiscoveryQueryExecutor(scopeFactory)));
 }

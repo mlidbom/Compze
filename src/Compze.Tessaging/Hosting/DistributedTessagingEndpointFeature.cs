@@ -102,8 +102,8 @@ public class DistributedTessagingEndpointFeature
               .DistributedTeventStoreTeventPublisher()
               .ServiceBusSession();
 
-      builder.OnContainerBuilt(resolver => TessageTypesInternal.RegisterInfrastructureQueryHandlers(
-                                  new InfrastructureQueryRegistrarWithDependencyInjectionSupport(resolver.Resolve<InfrastructureQueryExecutor>()),
+      builder.OnContainerBuilt(resolver => TessageTypesInternal.RegisterEndpointDiscoveryQueryHandlers(
+                                  new EndpointDiscoveryQueryRegistrarWithDependencyInjectionSupport(resolver.Resolve<EndpointDiscoveryQueryExecutor>()),
                                   EndpointRegistry(resolver)));
 
       builder.AddComponent(resolver => new DistributedTessagingEndpointComponent(resolver, _transportServer, EndpointRegistry(resolver)));

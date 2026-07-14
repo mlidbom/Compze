@@ -27,17 +27,17 @@ class TessagingRouter : ITessagingRouter, IDisposable
 {
    public static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(Singleton.For<ITessagingRouter>().CreatedBy(
-            (ITessagesInFlightTracker tessagesInFlightTracker, ITypeMap typeMap, IRemotableTessageSerializer serializer, ITransportMessagePoster transportMessagePoster, IInfrastructureQueryTransport infrastructureQueryTransport, Outbox.Outbox.ITessageStorage tessageStorage, ITaskRunner taskRunner, IBackgroundExceptionReporter exceptionReporter)
-               => new TessagingRouter(tessagesInFlightTracker, typeMap, serializer, transportMessagePoster, infrastructureQueryTransport, tessageStorage, taskRunner, exceptionReporter)));
+            (ITessagesInFlightTracker tessagesInFlightTracker, ITypeMap typeMap, ITessagingSerializer serializer, ITransportMessagePoster transportMessagePoster, IEndpointDiscoveryQueryTransport endpointDiscoveryQueryTransport, Outbox.Outbox.ITessageStorage tessageStorage, ITaskRunner taskRunner, IBackgroundExceptionReporter exceptionReporter)
+               => new TessagingRouter(tessagesInFlightTracker, typeMap, serializer, transportMessagePoster, endpointDiscoveryQueryTransport, tessageStorage, taskRunner, exceptionReporter)));
 
    static readonly TimeSpan ReconcileInterval = TimeSpan.FromSeconds(1);
 
    readonly IMonitor _monitor = IMonitor.New();
    readonly ITessagesInFlightTracker _tessagesInFlightTracker;
    readonly ITypeMap _typeMap;
-   readonly IRemotableTessageSerializer _serializer;
+   readonly ITessagingSerializer _serializer;
    readonly ITransportMessagePoster _transportMessagePoster;
-   readonly IInfrastructureQueryTransport _infrastructureQueryTransport;
+   readonly IEndpointDiscoveryQueryTransport _endpointDiscoveryQueryTransport;
    readonly Outbox.Outbox.ITessageStorage _tessageStorage;
    readonly ITaskRunner _taskRunner;
    readonly IBackgroundExceptionReporter _exceptionReporter;
@@ -56,13 +56,13 @@ class TessagingRouter : ITessagingRouter, IDisposable
    readonly List<(Type TeventType, TessagingConnection Connection)> _teventSubscriberRoutes = [];
    readonly Dictionary<Type, IReadOnlyList<TessagingConnection>> _teventSubscriberRouteCache = new();
 
-   TessagingRouter(ITessagesInFlightTracker tessagesInFlightTracker, ITypeMap typeMap, IRemotableTessageSerializer serializer, ITransportMessagePoster transportMessagePoster, IInfrastructureQueryTransport infrastructureQueryTransport, Outbox.Outbox.ITessageStorage tessageStorage, ITaskRunner taskRunner, IBackgroundExceptionReporter exceptionReporter)
+   TessagingRouter(ITessagesInFlightTracker tessagesInFlightTracker, ITypeMap typeMap, ITessagingSerializer serializer, ITransportMessagePoster transportMessagePoster, IEndpointDiscoveryQueryTransport endpointDiscoveryQueryTransport, Outbox.Outbox.ITessageStorage tessageStorage, ITaskRunner taskRunner, IBackgroundExceptionReporter exceptionReporter)
    {
       _tessagesInFlightTracker = tessagesInFlightTracker;
       _typeMap = typeMap;
       _serializer = serializer;
       _transportMessagePoster = transportMessagePoster;
-      _infrastructureQueryTransport = infrastructureQueryTransport;
+      _endpointDiscoveryQueryTransport = endpointDiscoveryQueryTransport;
       _tessageStorage = tessageStorage;
       _taskRunner = taskRunner;
       _exceptionReporter = exceptionReporter;
@@ -149,7 +149,7 @@ class TessagingRouter : ITessagingRouter, IDisposable
    async Task ConnectAsync(EndpointAddress remoteEndpointAddress)
    {
 #pragma warning disable CA2000//We are passing this disposable into a collection that we track disposal for
-      var connection = new TessagingConnection(_tessagesInFlightTracker, remoteEndpointAddress, _typeMap, _serializer, _transportMessagePoster, _infrastructureQueryTransport, _tessageStorage, _taskRunner, _exceptionReporter);
+      var connection = new TessagingConnection(_tessagesInFlightTracker, remoteEndpointAddress, _typeMap, _serializer, _transportMessagePoster, _endpointDiscoveryQueryTransport, _tessageStorage, _taskRunner, _exceptionReporter);
 #pragma warning restore CA2000
 
       await connection.InitAsync().caf();

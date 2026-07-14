@@ -10,9 +10,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Compze.Tessaging.Hosting.AspNetCore.Private;
 
-public abstract class ControllerBase(IRemotableTessageSerializer serializer, ITypeMap typeMap, IInbox inbox) : Controller
+public abstract class ControllerBase(ITessagingSerializer serializer, ITypeMap typeMap, IInbox inbox) : Controller
 {
-   readonly IRemotableTessageSerializer _serializer = serializer;
+   readonly ITessagingSerializer _serializer = serializer;
    readonly ITypeMap _typeMap = typeMap;
    protected IInbox Inbox { get; } = inbox;
 

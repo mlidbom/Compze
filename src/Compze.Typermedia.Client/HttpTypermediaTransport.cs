@@ -12,12 +12,12 @@ namespace Compze.Typermedia.Client;
 
 public static class HttpTypermediaTransportRegistrar
 {
-   ///<summary>Registers the HTTP implementation of the Typermedia client transport, plus the HTTP infrastructure-query transport<br/>
-   /// that endpoint discovery runs on and the <see cref="IHttpClientFactoryCE"/> both post through (shared with every other HTTP<br/>
+   ///<summary>Registers the HTTP implementation of the Typermedia client transport, plus the HTTP endpoint-discovery query transport<br/>
+   /// and the <see cref="IHttpClientFactoryCE"/> both post through (shared with every other HTTP<br/>
    /// communication style, so registered only if nothing else did yet).</summary>
    public static IComponentRegistrar HttpTypermediaTransport(this IComponentRegistrar registrar)
       => registrar.HttpClientFactoryCEIfNotRegistered()
-                  .HttpInfrastructureQueryTransportIfNotRegistered()
+                  .HttpEndpointDiscoveryQueryTransportIfNotRegistered()
                   .Register(Client.HttpTypermediaTransport.RegisterWith);
 }
 
@@ -25,13 +25,13 @@ class HttpTypermediaTransport : ITypermediaTransport
 {
    public static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(Singleton.For<ITypermediaTransport>()
-                                     .CreatedBy((IHttpClientFactoryCE factory, IRemotableTessageSerializer serializer, ITypeMap typeMap) => new HttpTypermediaTransport(factory, serializer, typeMap)));
+                                     .CreatedBy((IHttpClientFactoryCE factory, ITypermediaSerializer serializer, ITypeMap typeMap) => new HttpTypermediaTransport(factory, serializer, typeMap)));
 
    readonly IHttpClientFactoryCE _httpClientFactory;
-   readonly IRemotableTessageSerializer _serializer;
+   readonly ITypermediaSerializer _serializer;
    readonly ITypeMap _typeMap;
 
-   HttpTypermediaTransport(IHttpClientFactoryCE httpClientFactory, IRemotableTessageSerializer serializer, ITypeMap typeMap)
+   HttpTypermediaTransport(IHttpClientFactoryCE httpClientFactory, ITypermediaSerializer serializer, ITypeMap typeMap)
    {
       _httpClientFactory = httpClientFactory;
       _serializer = serializer;
@@ -47,17 +47,17 @@ class HttpTypermediaTransport : ITypermediaTransport
    public async Task PostAsync(IAtMostOnceTypermediaTommand command, EndpointAddress address)
       => await PostInternalNoResult(command, address, HttpConstants.Routes.Typermedia.TommandNoResult).caf();
 
-   async Task<TResult> PostInternalWithResult<TResult>(IRemotableTessage tessage, EndpointAddress address, string route)
+   async Task<TResult> PostInternalWithResult<TResult>(ITypermediaTessage tessage, EndpointAddress address, string route)
    {
       var response = await PostToEndpoint(tessage, address, route).caf();
       var resultJson = await response.Content.ReadAsStringAsync().caf();
-      return _serializer.DeserializeResponse<TResult>(resultJson);
+      return _serializer.DeserializeResult<TResult>(resultJson);
    }
 
-   async Task PostInternalNoResult(IRemotableTessage tessage, EndpointAddress address, string route)
+   async Task PostInternalNoResult(ITypermediaTessage tessage, EndpointAddress address, string route)
       => await PostToEndpoint(tessage, address, route).caf();
 
-   async Task<HttpResponseMessage> PostToEndpoint(IRemotableTessage tessage, EndpointAddress address, string route)
+   async Task<HttpResponseMessage> PostToEndpoint(ITypermediaTessage tessage, EndpointAddress address, string route)
    {
       var requestUri = new Uri(address.Uri, route);
       var body = _serializer.SerializeTessage(tessage);

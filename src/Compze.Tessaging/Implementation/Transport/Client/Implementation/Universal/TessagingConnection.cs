@@ -17,9 +17,9 @@ class TessagingConnection(
    ITessagesInFlightTracker tessagesInFlightTracker,
    EndpointAddress remoteAddress,
    ITypeMap typeMap,
-   IRemotableTessageSerializer serializer,
+   ITessagingSerializer serializer,
    ITransportMessagePoster transportMessagePoster,
-   IInfrastructureQueryTransport infrastructureQueryTransport,
+   IEndpointDiscoveryQueryTransport endpointDiscoveryQueryTransport,
    Outbox.Outbox.ITessageStorage tessageStorage,
    ITaskRunner taskRunner,
    IBackgroundExceptionReporter exceptionReporter) : ITessagingInboxConnection, IDisposable
@@ -32,9 +32,9 @@ class TessagingConnection(
    readonly ITessagesInFlightTracker _tessagesInFlightTracker = tessagesInFlightTracker;
    readonly EndpointAddress _remoteAddress = remoteAddress;
    readonly ITypeMap _typeMap = typeMap;
-   readonly IRemotableTessageSerializer _serializer = serializer;
+   readonly ITessagingSerializer _serializer = serializer;
    readonly ITransportMessagePoster _transportMessagePoster = transportMessagePoster;
-   readonly IInfrastructureQueryTransport _infrastructureQueryTransport = infrastructureQueryTransport;
+   readonly IEndpointDiscoveryQueryTransport _endpointDiscoveryQueryTransport = endpointDiscoveryQueryTransport;
    readonly Outbox.Outbox.ITessageStorage _tessageStorage = tessageStorage;
    readonly ITaskRunner _taskRunner = taskRunner;
    readonly IBackgroundExceptionReporter _exceptionReporter = exceptionReporter;
@@ -49,7 +49,7 @@ class TessagingConnection(
 
    public async Task InitAsync()
    {
-      EndpointInformation = await _infrastructureQueryTransport.GetAsync(new EndpointInformationQuery(), _remoteAddress).caf();
+      EndpointInformation = await _endpointDiscoveryQueryTransport.GetAsync(new EndpointInformationQuery(), _remoteAddress).caf();
    }
 
    // Delivery management — enqueue for the send loop to process
@@ -82,7 +82,7 @@ class TessagingConnection(
       foreach(var undeliveredTessage in undelivered)
       {
          var tessageType = undeliveredTessage.TypeId.Type;
-         var tessage = (ITessage)_serializer.DeserializeTessage(tessageType, undeliveredTessage.SerializedTessage);
+         var tessage = _serializer.DeserializeTessage(tessageType, undeliveredTessage.SerializedTessage);
          EnqueueForDelivery(tessage, undeliveredTessage.TessageId);
       }
    }

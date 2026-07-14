@@ -1,47 +1,39 @@
+using System.Text.Json.Serialization;
 using Compze.TypeIdentifiers;
 using Compze.Abstractions.Hosting.Public;
 using Compze.Abstractions.Tessaging.Public;
 
 namespace Compze.Internals.Transport;
 
+///<summary>The endpoint-discovery query "who are you, and which remotable tessage types do you handle?" — what a connecting<br/>
+/// endpoint's router asks to learn the identity behind an address and build its tommand and tevent routes.</summary>
 public class EndpointInformationQuery : IQuery<EndpointInformation>;
 
-// ReSharper disable once MemberCanBeInternal — Serialized across assemblies via Newtonsoft reflection
 public class EndpointInformation
 {
-   [Obsolete("Called by serializer", error: true)]
-   // ReSharper disable MemberCanBeInternal — Called by serializer via reflection
-#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
-   // ReSharper disable once UnusedMember.Global
-   public EndpointInformation() {}
-#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
-   // ReSharper restore MemberCanBeInternal
-
    public EndpointInformation(IEnumerable<TypeId> handledRemoteTessageTypeIds, EndpointConfiguration configuration)
+      : this(configuration.Name, configuration.Id, [..handledRemoteTessageTypeIds.Select(id => id.CanonicalString)]) {}
+
+   [JsonConstructor]
+   public EndpointInformation(string name, EndpointId id, HashSet<string> handledTessageTypes)
    {
-      Id = configuration.Id;
-      Name = configuration.Name;
-      HandledTessageTypes = handledRemoteTessageTypeIds.Select(id => id.CanonicalString).ToHashSet();
+      Name = name;
+      Id = id;
+      HandledTessageTypes = handledTessageTypes;
    }
 
-   // ReSharper disable MemberCanBeInternal — Serialized across assemblies via Newtonsoft reflection
-   public string Name { get; private set; }
-   public EndpointId Id { get; private set; }
-   public HashSet<string> HandledTessageTypes { get; private set; }
-   // ReSharper restore MemberCanBeInternal
+   public string Name { get; }
+   public EndpointId Id { get; }
+   public HashSet<string> HandledTessageTypes { get; }
 }
 
+///<summary>The endpoint-discovery query "whose addresses do you know?" — lets an endpoint that can reach one member of the<br/>
+/// network learn the whole membership from it.</summary>
 public class NetworkTopologyQuery : IQuery<NetworkTopology>;
 
 public class NetworkTopology
 {
-   [Obsolete("Called by serializer", error: true)]
-#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
-   // ReSharper disable once UnusedMember.Global
-   public NetworkTopology() {}
-#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
+   public NetworkTopology(IEnumerable<EndpointAddress> endpointAddresses) => EndpointAddresses = [..endpointAddresses];
 
-   public NetworkTopology(IEnumerable<EndpointAddress> endpointAddresses) => EndpointAddresses = endpointAddresses.ToList();
-
-   public IReadOnlyList<EndpointAddress> EndpointAddresses { get; private set; }
+   public IReadOnlyList<EndpointAddress> EndpointAddresses { get; }
 }

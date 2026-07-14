@@ -99,8 +99,8 @@ host.Start();
 which everything the endpoint will be is stated before its container is built. When the callback returns, the
 mechanism builds the container and assembles the endpoint. The builder itself contributes only what every
 endpoint needs no matter what it speaks: the type mapper (pre-mapped with the shared message hierarchy and
-the discovery types), the endpoint's identity, the configuration provider, and the infrastructure-query
-executor that endpoint discovery runs on.
+the discovery types), the endpoint's identity, the configuration provider, and the endpoint-discovery query
+executor through which the endpoint answers discovery.
 
 Notice what the example already shows: the endpoint above converses with other endpoints in both styles, not
 because any host or builder decided so, but because its own setup declares `AddDistributedTessaging()` and
@@ -149,7 +149,7 @@ wired once whether it arrives alone or under distribution).
   `GetOrAddFeature` pattern one level down — and *contribute their request handling to it* (request-kind
   handlers on the named-pipe transport, controllers on the ASP.NET Core transport) rather than each running a
   server of its own. One server means one address per endpoint, which is what lets an endpoint registry map
-  an `EndpointId` to a single address; the server itself answers the infrastructure queries endpoint
+  an `EndpointId` to a single address; the server itself answers the endpoint-discovery queries endpoint
   discovery runs on, which every endpoint serves no matter what it speaks. Which transport implements the
   server is composition: each transport registers its `IEndpointTransportServer` implementation guarded, so
   every style's transport registration can demand a server and the first wins.
@@ -296,12 +296,11 @@ production registrars run unmodified against throwaway pooled databases, across 
 container, and serializer in the current test's `PluggableComponents` configuration.
 
 The transport itself is an axis of that same matrix (`TestEnv.Transport`): the same specifications run over
-HTTP (ASP.NET Core) and over named pipes (see [same-machine hosting](same-machine-hosting.md)). The transport
-infrastructure every endpoint needs no matter what it speaks — the client side of the infrastructure-query
-transport that endpoint discovery runs on, plus whatever the current transport's client machinery requires —
-belongs to no single communication style, so both communication styles demand it through the guarded
-`CurrentTestsInfrastructureTransportIfNotRegistered()`: whichever registers first wins, and an endpoint
-hosting both styles gets it once.
+HTTP (ASP.NET Core) and over named pipes (see [same-machine hosting](same-machine-hosting.md)). The
+endpoint-discovery query transport every endpoint needs no matter what it speaks belongs to no single
+communication style, so every communication style's transport registration demands it itself through the
+guarded `…EndpointDiscoveryQueryTransportIfNotRegistered()` registrars: whichever registers first wins, and
+an endpoint hosting both styles gets it once.
 
 ## Adding a new communication style
 

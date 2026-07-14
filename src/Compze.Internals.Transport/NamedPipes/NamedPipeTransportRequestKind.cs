@@ -14,6 +14,6 @@ public enum NamedPipeTransportRequestKind
    TypermediaTommandWithResult = 4,
    ///<summary>A typermedia tommand with no result. The response is an empty-payload acknowledgement.</summary>
    TypermediaVoidTommand = 5,
-   ///<summary>An infrastructure query (endpoint discovery et al. — see <see cref="InfrastructureQueryExecutor"/>). The response payload is the serialized query result.</summary>
-   InfrastructureQuery = 6
+   ///<summary>An endpoint-discovery query (see <see cref="EndpointDiscoveryQueryExecutor"/>). The response payload is the serialized query result.</summary>
+   EndpointDiscoveryQuery = 6
 }

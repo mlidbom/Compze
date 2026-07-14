@@ -4,8 +4,8 @@ namespace Compze.Internals.Transport.NamedPipes;
 /// (<see cref="NamedPipeEndpointTransportServer"/>): which <see cref="NamedPipeTransportRequestKind"/>s the style serves, and how.<br/>
 /// Registered as a component set member (<c>Singleton.ForSet</c>) by the style's named-pipe transport registration; the server<br/>
 /// resolves the whole set and serves the union.</summary>
-///<remarks><see cref="NamedPipeTransportRequestKind.InfrastructureQuery"/> is never contributed — the server itself answers<br/>
-/// infrastructure queries, because every endpoint serves discovery no matter what it speaks.</remarks>
+///<remarks><see cref="NamedPipeTransportRequestKind.EndpointDiscoveryQuery"/> is never contributed — the server itself answers<br/>
+/// endpoint-discovery queries, because every endpoint serves discovery no matter what it speaks.</remarks>
 public interface INamedPipeRequestHandlerContribution
 {
    ///<summary>The handler for each request kind this communication style serves.</summary>

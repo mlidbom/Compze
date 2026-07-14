@@ -9,8 +9,8 @@ public static class AspNetCoreTypermediaTransportServerRegistrar
    ///<summary>
    /// Registers the ASP.NET Core server side of the Typermedia transport: the <see cref="TypermediaController"/> that
    /// receives tueries and tommands over HTTP, contributed to the endpoint's one ASP.NET Core transport server
-   /// (registering the server itself if no other communication style already did). Requires the shared transport
-   /// infrastructure (the serializer and the infrastructure-query plumbing) to be registered by the composing layer.
+   /// (registering the server itself if no other communication style already did). Requires the Typermedia
+   /// serializer (<c>ITypermediaSerializer</c>) to be registered by the composing layer.
    ///</summary>
    public static IComponentRegistrar AspNetCoreTypermediaTransportServer(this IComponentRegistrar registrar) =>
       registrar.AspNetCoreEndpointTransportServerIfNotRegistered()

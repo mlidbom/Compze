@@ -12,12 +12,12 @@ using Microsoft.AspNetCore.Mvc;
 namespace Compze.Tessaging.Hosting.AspNetCore.Private;
 #pragma warning disable CA1031 //We catch all exceptions here to route them back to the client.
 
-class TessagingController(IRemotableTessageSerializer serializer, ITypeMap typeMap, IInbox inbox)
+class TessagingController(ITessagingSerializer serializer, ITypeMap typeMap, IInbox inbox)
    : ControllerBase(serializer, typeMap, inbox)
 {
    internal static void RegisterWith(IComponentRegistrar registrar) =>
       registrar.Register(Scoped.For<TessagingController>()
-                               .CreatedBy((IRemotableTessageSerializer serializer,
+                               .CreatedBy((ITessagingSerializer serializer,
                                            ITypeMap typeMap,
                                            IInbox inbox)
                                              => new TessagingController(serializer, typeMap, inbox)));
