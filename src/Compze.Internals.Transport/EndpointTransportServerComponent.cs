@@ -60,5 +60,5 @@ sealed class EndpointTransportServerComponent : IEndpointComponent, IListeningAd
       await _server.StopAsync().caf();
    }
 
-   public async ValueTask DisposeAsync() => await _server.DisposeAsync().caf();
+   public async ValueTask DisposeAsync() => await _server.DisposeAsync().caf(); //The container the server is registered in also disposes it; server disposal is idempotent, and disposing what we hold keeps ownership legible.
 }

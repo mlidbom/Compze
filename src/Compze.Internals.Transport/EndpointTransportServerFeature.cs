@@ -23,7 +23,7 @@ public class EndpointTransportServerFeature
    EndpointTransportServerFeature(IEndpointBuilder builder) =>
       builder.AddComponent(resolver =>
       {
-         var component = new EndpointTransportServerComponent(resolver.Resolve<IEndpointTransportServerFactory>().CreateServer(resolver),
+         var component = new EndpointTransportServerComponent(resolver.Resolve<IEndpointTransportServer>(),
                                                               _addressAnnouncers,
                                                               resolver.Resolve<EndpointConfiguration>());
          _component = component;

@@ -22,21 +22,12 @@ public static class AspNetCoreEndpointTransportServerRegistrar
    /// unless a transport already registered one — guarded so that every communication style's ASP.NET Core transport registration can<br/>
    /// demand the server without conflicting when an endpoint hosts several styles.</summary>
    public static IComponentRegistrar AspNetCoreEndpointTransportServerIfNotRegistered(this IComponentRegistrar registrar) =>
-      registrar.IsRegistered<IEndpointTransportServerFactory>()
+      registrar.IsRegistered<IEndpointTransportServer>()
          ? registrar
-         : registrar.Register(Singleton.For<IEndpointTransportServerFactory>().CreatedBy((IChildContainerHostIntegration hostIntegration) => new AspNetCoreEndpointTransportServerFactory(hostIntegration)));
-}
-
-///<summary>Creates the <see cref="AspNetCoreEndpointTransportServer"/> for an endpoint, assembling the communication styles'<br/>
-/// <see cref="AspNetCoreControllerContribution"/>s from the endpoint's container.</summary>
-class AspNetCoreEndpointTransportServerFactory : IEndpointTransportServerFactory
-{
-   readonly IChildContainerHostIntegration _hostIntegration;
-
-   internal AspNetCoreEndpointTransportServerFactory(IChildContainerHostIntegration hostIntegration) => _hostIntegration = hostIntegration;
-
-   public IEndpointTransportServer CreateServer(IRootResolver endpointResolver) =>
-      new AspNetCoreEndpointTransportServer(_hostIntegration, endpointResolver.ResolveSet<AspNetCoreControllerContribution>().ToList());
+         : registrar.Register(
+            Singleton.For<IEndpointTransportServer>()
+                     .CreatedBy((IChildContainerHostIntegration hostIntegration, IComponentSet<AspNetCoreControllerContribution> controllerContributions)
+                                   => new AspNetCoreEndpointTransportServer(hostIntegration, controllerContributions)));
 }
 
 ///<summary>The ASP.NET Core implementation of <see cref="IEndpointTransportServer"/>: one Kestrel <see cref="WebApplication"/> hosting<br/>
@@ -48,10 +39,10 @@ class AspNetCoreEndpointTransportServerFactory : IEndpointTransportServerFactory
 class AspNetCoreEndpointTransportServer : IEndpointTransportServer
 {
    readonly IChildContainerHostIntegration _hostIntegration;
-   readonly IReadOnlyList<AspNetCoreControllerContribution> _controllerContributions;
+   readonly IEnumerable<AspNetCoreControllerContribution> _controllerContributions;
    WebApplication? _webApplication;
 
-   internal AspNetCoreEndpointTransportServer(IChildContainerHostIntegration hostIntegration, IReadOnlyList<AspNetCoreControllerContribution> controllerContributions)
+   internal AspNetCoreEndpointTransportServer(IChildContainerHostIntegration hostIntegration, IEnumerable<AspNetCoreControllerContribution> controllerContributions)
    {
       _hostIntegration = hostIntegration;
       _controllerContributions = controllerContributions;

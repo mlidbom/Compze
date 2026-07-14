@@ -151,8 +151,8 @@ wired once whether it arrives alone or under distribution).
   server of its own. One server means one address per endpoint, which is what lets an endpoint registry map
   an `EndpointId` to a single address; the server itself answers the infrastructure queries endpoint
   discovery runs on, which every endpoint serves no matter what it speaks. Which transport implements the
-  server is composition: each transport registers its `IEndpointTransportServerFactory` guarded, so every
-  style's transport registration can demand a server and the first wins.
+  server is composition: each transport registers its `IEndpointTransportServer` implementation guarded, so
+  every style's transport registration can demand a server and the first wins.
 
 A feature lives in its own capability's assembly, where the internal access it needs is natural — no
 `InternalsVisibleTo` back-doors.

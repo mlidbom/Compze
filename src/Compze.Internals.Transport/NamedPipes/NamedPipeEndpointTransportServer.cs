@@ -14,20 +14,12 @@ public static class NamedPipeEndpointTransportServerRegistrar
    /// unless a transport already registered one — guarded so that every communication style's named-pipe transport registration can<br/>
    /// demand the server without conflicting when an endpoint hosts several styles.</summary>
    public static IComponentRegistrar NamedPipeEndpointTransportServerIfNotRegistered(this IComponentRegistrar registrar) =>
-      registrar.IsRegistered<IEndpointTransportServerFactory>()
+      registrar.IsRegistered<IEndpointTransportServer>()
          ? registrar
-         : registrar.Register(Singleton.For<IEndpointTransportServerFactory>().CreatedBy(() => new NamedPipeEndpointTransportServerFactory()));
-}
-
-///<summary>Creates the <see cref="NamedPipeEndpointTransportServer"/> for an endpoint, assembling the communication styles'<br/>
-/// <see cref="INamedPipeRequestHandlerContribution"/>s from the endpoint's container.</summary>
-class NamedPipeEndpointTransportServerFactory : IEndpointTransportServerFactory
-{
-   public IEndpointTransportServer CreateServer(IRootResolver endpointResolver) =>
-      new NamedPipeEndpointTransportServer(endpointResolver.ResolveSet<INamedPipeRequestHandlerContribution>(),
-                                           endpointResolver.Resolve<InfrastructureQueryExecutor>(),
-                                           endpointResolver.Resolve<IRemotableTessageSerializer>(),
-                                           endpointResolver.Resolve<ITypeMap>());
+         : registrar.Register(
+            Singleton.For<IEndpointTransportServer>()
+                     .CreatedBy((IComponentSet<INamedPipeRequestHandlerContribution> contributions, InfrastructureQueryExecutor infrastructureQueryExecutor, IRemotableTessageSerializer serializer, ITypeMap typeMap)
+                                   => new NamedPipeEndpointTransportServer(contributions, infrastructureQueryExecutor, serializer, typeMap)));
 }
 
 ///<summary>The named-pipe implementation of <see cref="IEndpointTransportServer"/>: one <see cref="NamedPipeTransportServer"/> serving<br/>
