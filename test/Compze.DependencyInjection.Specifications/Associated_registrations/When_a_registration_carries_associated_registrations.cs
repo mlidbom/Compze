@@ -1,5 +1,6 @@
 using Compze.DependencyInjection.Specifications.Infrastructure;
 using Compze.Must;
+using Compze.Must.Assertions;
 using static Compze.Must.MustActions;
 
 namespace Compze.DependencyInjection.Specifications.Associated_registrations;

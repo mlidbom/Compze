@@ -1,3 +1,3 @@
-namespace Compze.Tessaging.Teventive.TeventStore.Refactoring.Migrations.Public;
+namespace Compze.Teventive.TeventStore.Abstractions.Refactoring.Migrations.Public;
 
 public class NonIdempotentMigrationDetectedException : Exception;

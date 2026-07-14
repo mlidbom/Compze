@@ -1,5 +1,6 @@
 using Compze.Internals.SystemCE;
 using Compze.Must;
+using Compze.Must.Assertions;
 using Compze.Tests.Infrastructure;
 using Compze.Threading.Exceptions;
 using Compze.Threading.ResourceAccess;

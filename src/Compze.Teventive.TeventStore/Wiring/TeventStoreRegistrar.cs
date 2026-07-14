@@ -1,9 +1,9 @@
-using Compze.Tessaging.Teventive.TeventStore.Refactoring.Migrations.Public;
 using Compze.Contracts;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Teventive.Internal.Implementation;
+using Compze.Teventive.TeventStore.Abstractions.Refactoring.Migrations.Public;
 
-namespace Compze.Tessaging.Teventive.TeventStore.Wiring;
+namespace Compze.Teventive.TeventStore.Wiring;
 
 public static class TeventStoreRegistrar
 {

@@ -1,6 +1,6 @@
-using Tevent = Compze.Tessaging.Teventive.TeventStore.Internal.SqlLayer.TeventTableSchemaStrings;
+using Tevent = Compze.Teventive.TeventStore.Abstractions.Internal.SqlLayer.TeventTableSchemaStrings;
 
-namespace Compze.Tessaging.Teventive.TeventStore.Sqlite;
+namespace Compze.Teventive.TeventStore.Sqlite;
 
 partial class SqliteTeventStoreSqlLayer
 {

@@ -1,6 +1,7 @@
 using Compze.Abstractions.Public;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Must;
+using Compze.Must.Assertions;
 using Compze.xUnitBDD;
 
 // ReSharper disable InconsistentNaming for testing

@@ -10,6 +10,7 @@ using Compze.Tests.Infrastructure.XUnit;
 using Compze.Threading;
 using Compze.Threading.Testing;
 using Compze.Must;
+using Compze.Must.Assertions;
 
 namespace Compze.Tests.Integration.Tessaging.ServiceBusSpecification;
 

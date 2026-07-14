@@ -1,6 +1,6 @@
 using Compze.Teventive.Taggregates.Tevents.Public;
 
-namespace Compze.Tessaging.Teventive.TeventStore.Internal;
+namespace Compze.Teventive.TeventStore.Abstractions.Internal;
 
 public interface ITeventStoreSerializer
 {

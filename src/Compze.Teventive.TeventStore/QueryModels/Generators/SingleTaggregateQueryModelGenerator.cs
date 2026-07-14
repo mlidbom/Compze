@@ -1,15 +1,14 @@
 using Compze.Abstractions.Public;
 using Compze.Abstractions.Tessaging.Public;
-using Compze.Tessaging.Teventive.TeventStore.Public;
-using Compze.Tessaging.Teventive.TeventStore.QueryModels;
-using Compze.Tessaging.Teventive.TeventStore.QueryModels.Generators.Public;
 using Compze.Internals.SystemCE.LinqCE;
 using Compze.Internals.SystemCE.ReflectionCE;
-using Compze.Teventive;
 using Compze.Teventive.Taggregates.Tevents.Public;
+using Compze.Teventive.TeventStore.Abstractions.Public;
+using Compze.Teventive.TeventStore.Abstractions.QueryModels;
+using Compze.Teventive.TeventStore.Abstractions.QueryModels.Generators.Public;
 using JetBrains.Annotations;
 
-namespace Compze.Tessaging.Teventive.TeventStore.QueryModels.Generators;
+namespace Compze.Teventive.TeventStore.QueryModels.Generators;
 
 [UsedImplicitly(ImplicitUseKindFlags.InstantiatedWithFixedConstructorSignature)]
 public abstract class SingleTaggregateQueryModelGenerator<TImplementer, TViewModel, TTevent, TSession>

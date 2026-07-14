@@ -9,12 +9,13 @@ using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.TransactionsCE;
 using System.Transactions;
-using Compze.Tessaging.Teventive.TeventStore.Public;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Must;
+using Compze.Must.Assertions;
 using Compze.Teventive;
 using Compze.Teventive.Taggregates.BaseClasses;
 using Compze.Teventive.Taggregates.Tevents.Public;
+using Compze.Teventive.TeventStore.Abstractions.Public;
 
 namespace Compze.Tests.Integration.CQRS;
 

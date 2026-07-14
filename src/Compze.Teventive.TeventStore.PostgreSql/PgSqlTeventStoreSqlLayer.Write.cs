@@ -1,16 +1,16 @@
 using Compze.Abstractions.Public;
-using Compze.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Abstractions;
+using Compze.Contracts;
 using Compze.Internals.Sql.Common;
 using Compze.Internals.Sql.PostgreSql;
 using Compze.Internals.Sql.PostgreSql.Private;
-using Compze.Contracts;
 using Compze.Internals.SystemCE;
+using Compze.Teventive.TeventStore.Abstractions.Internal.SqlLayer.Abstractions;
 using Npgsql;
 using NpgsqlTypes;
-using ReadOrder = Compze.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Abstractions.ReadOrder;
-using Tevent = Compze.Tessaging.Teventive.TeventStore.Internal.SqlLayer.TeventTableSchemaStrings;
+using ReadOrder = Compze.Teventive.TeventStore.Abstractions.Internal.SqlLayer.Abstractions.ReadOrder;
+using Tevent = Compze.Teventive.TeventStore.Abstractions.Internal.SqlLayer.TeventTableSchemaStrings;
 
-namespace Compze.Tessaging.Teventive.TeventStore.PostgreSql;
+namespace Compze.Teventive.TeventStore.PostgreSql;
 
 //Performance: explore PgSql alternatives to commented out MSSql hints throughout the sql layer.
 partial class PgSqlTeventStoreSqlLayer

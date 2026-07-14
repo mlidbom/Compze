@@ -3,7 +3,7 @@ using Compze.Internals.Sql.PostgreSql;
 using JetBrains.Annotations;
 using Npgsql;
 
-namespace Compze.Tessaging.Teventive.TeventStore.PostgreSql;
+namespace Compze.Teventive.TeventStore.PostgreSql;
 
 class PgSqlTeventStoreConnectionManager(IPgSqlConnectionPool sqlConnectionPool)
 {

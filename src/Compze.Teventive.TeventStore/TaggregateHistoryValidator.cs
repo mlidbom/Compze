@@ -1,10 +1,10 @@
 using Compze.Abstractions.Public;
-using Compze.Tessaging.Teventive.TeventStore.Public.Exceptions;
 using Compze.Teventive.Taggregates.Tevents.Public;
+using Compze.Teventive.TeventStore.Abstractions.Public.Exceptions;
 
 // ReSharper disable LoopCanBeConvertedToTuery
 
-namespace Compze.Tessaging.Teventive.TeventStore;
+namespace Compze.Teventive.TeventStore;
 
 static class TaggregateHistoryValidator
 {

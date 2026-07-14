@@ -1,5 +1,6 @@
 using Compze.Abstractions.Public;
 using Compze.Must;
+using Compze.Must.Assertions;
 using Compze.xUnitBDD;
 // ReSharper disable SuspiciousTypeConversion.Global
 // ReSharper disable InconsistentNaming

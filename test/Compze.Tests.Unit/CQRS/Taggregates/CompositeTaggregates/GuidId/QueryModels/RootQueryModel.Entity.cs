@@ -1,5 +1,5 @@
-using Compze.Tessaging.Teventive.TeventStore.QueryModels.SelfGeneratingQueryModels;
 using Compze.Tests.Unit.CQRS.Taggregates.CompositeTaggregates.GuidId.Domain.Tevents;
+using Compze.Teventive.TeventStore.QueryModels.SelfGeneratingQueryModels;
 using JetBrains.Annotations;
 
 namespace Compze.Tests.Unit.CQRS.Taggregates.CompositeTaggregates.GuidId.QueryModels;

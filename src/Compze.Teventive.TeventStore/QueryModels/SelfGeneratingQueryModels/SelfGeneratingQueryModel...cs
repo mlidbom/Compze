@@ -2,11 +2,10 @@ using Compze.Abstractions.Public;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Contracts;
 using Compze.Internals.SystemCE.LinqCE;
-using Compze.Teventive;
 using Compze.Teventive.Taggregates.Tevents.Public;
 using Compze.Teventive.Tevents.Public;
 
-namespace Compze.Tessaging.Teventive.TeventStore.QueryModels.SelfGeneratingQueryModels;
+namespace Compze.Teventive.TeventStore.QueryModels.SelfGeneratingQueryModels;
 
 public partial class SelfGeneratingQueryModel<TQueryModel, TTaggregateTevent> : VersionedEntity<TQueryModel>
    where TQueryModel : SelfGeneratingQueryModel<TQueryModel, TTaggregateTevent>

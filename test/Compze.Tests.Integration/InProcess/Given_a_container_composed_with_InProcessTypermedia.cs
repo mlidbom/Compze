@@ -4,6 +4,7 @@ using Compze.Hosting.Testing;
 using Compze.Hosting.Testing.Wiring;
 using Compze.Internals.Testing;
 using Compze.Must;
+using Compze.Must.Assertions;
 using Compze.Tests.Infrastructure;
 using Compze.Typermedia;
 using Compze.Typermedia.HandlerRegistration;

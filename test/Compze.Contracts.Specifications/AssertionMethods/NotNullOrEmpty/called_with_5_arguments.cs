@@ -1,4 +1,5 @@
 using Compze.Must;
+using Compze.Must.Assertions;
 using Compze.xUnitBDD;
 
 namespace Compze.Contracts.Specifications.AssertionMethods.NotNullOrEmpty;

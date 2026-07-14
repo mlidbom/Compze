@@ -5,10 +5,10 @@ using AccountManagement.Domain.Passwords;
 using CommunityToolkit.Diagnostics;
 using Compze.Abstractions.Public;
 using Compze.Abstractions.Tessaging.Public;
-using Compze.Tessaging.Teventive.TeventStore.QueryModels.SelfGeneratingQueryModels;
-using Compze.Tessaging.Teventive.TeventStore.Typermedia;
 using Compze.Teventive;
 using Compze.Teventive.Taggregates.Tevents.Public;
+using Compze.Teventive.TeventStore.QueryModels.SelfGeneratingQueryModels;
+using Compze.Teventive.TeventStore.Typermedia;
 using Compze.Typermedia;
 using Compze.Typermedia.HandlerRegistration;
 

@@ -1,11 +1,11 @@
 using System.Diagnostics.CodeAnalysis;
-using Compze.DocumentDb.Infrastructure;
 using Compze.Abstractions.Public;
-using Compze.Tessaging.Teventive.TeventStore.QueryModels.Generators.Public;
-using Compze.Internals.SystemCE.UsageGuards;
 using Compze.Contracts;
+using Compze.DocumentDb.Infrastructure;
+using Compze.Internals.SystemCE.UsageGuards;
+using Compze.Teventive.TeventStore.Abstractions.QueryModels.Generators.Public;
 
-namespace Compze.Tessaging.Teventive.TeventStore.QueryModels.Generators;
+namespace Compze.Teventive.TeventStore.QueryModels.Generators;
 
 // ReSharper disable once ClassWithVirtualMembersNeverInherited.Global
 public class QueryModelGeneratingQueryModelReader : IVersioningQueryModelReader

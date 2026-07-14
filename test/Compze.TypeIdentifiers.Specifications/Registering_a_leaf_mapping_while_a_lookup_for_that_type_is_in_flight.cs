@@ -1,5 +1,6 @@
 using System.Reflection;
 using Compze.Must;
+using Compze.Must.Assertions;
 using Compze.Threading;
 using Compze.Threading.Testing;
 using Compze.xUnitBDD;

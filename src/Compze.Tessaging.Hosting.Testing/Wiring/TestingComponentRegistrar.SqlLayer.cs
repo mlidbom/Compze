@@ -13,14 +13,14 @@ using Compze.Tessaging.MicrosoftSql.Wiring;
 using Compze.Tessaging.MySql.Wiring;
 using Compze.Tessaging.PostgreSql.Wiring;
 using Compze.Tessaging.Sqlite.Wiring;
-using Compze.Tessaging.Teventive.TeventStore.MicrosoftSql.Wiring;
-using Compze.Tessaging.Teventive.TeventStore.MySql.Wiring;
-using Compze.Tessaging.Teventive.TeventStore.PostgreSql.Wiring;
-using Compze.Tessaging.Teventive.TeventStore.Sqlite.Wiring;
 using Compze.TypeIdentifiers.Interning.Sqlite.Wiring;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE;
 using Compze.Internals.Testing;
+using Compze.Teventive.TeventStore.MicrosoftSql.Wiring;
+using Compze.Teventive.TeventStore.MySql.Wiring;
+using Compze.Teventive.TeventStore.PostgreSql.Wiring;
+using Compze.Teventive.TeventStore.Sqlite.Wiring;
 
 namespace Compze.Tessaging.Hosting.Testing.Wiring;
 

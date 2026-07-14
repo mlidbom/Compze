@@ -1,6 +1,6 @@
 using Compze.Abstractions.Public;
 
-namespace Compze.Tessaging.Teventive.TeventStore.QueryModels.Generators.Public;
+namespace Compze.Teventive.TeventStore.Abstractions.QueryModels.Generators.Public;
 
 public interface IQueryModelReader
 {

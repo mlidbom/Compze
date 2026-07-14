@@ -1,5 +1,7 @@
 // ReSharper disable InconsistentNaming
 
+using Compze.Must.Assertions;
+
 namespace Compze.Internals.Logging.Specifications;
 
 // Tests redirect Console.Out (global state) so they must run sequentially.

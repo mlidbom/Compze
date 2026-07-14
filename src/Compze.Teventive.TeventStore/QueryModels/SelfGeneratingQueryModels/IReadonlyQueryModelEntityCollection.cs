@@ -1,6 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 
-namespace Compze.Tessaging.Teventive.TeventStore.QueryModels.SelfGeneratingQueryModels;
+namespace Compze.Teventive.TeventStore.QueryModels.SelfGeneratingQueryModels;
 
 public interface IReadonlyQueryModelEntityCollection<TEntity, in TEntityId> : IEnumerable<TEntity> where TEntity : class
 {

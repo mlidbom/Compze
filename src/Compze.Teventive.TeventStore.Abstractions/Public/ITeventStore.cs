@@ -1,7 +1,7 @@
 using Compze.Abstractions.Public;
 using Compze.Teventive.Taggregates.Tevents.Public;
 
-namespace Compze.Tessaging.Teventive.TeventStore.Public;
+namespace Compze.Teventive.TeventStore.Abstractions.Public;
 
 ///<summary>Persists and loads taggregate histories. The store's currency is the wrapped tevent - every tevent exactly as its taggregate published it,<br/>
 /// inside its publisher's <see cref="ITaggregateTevent{TTeventInterface}"/> wrapper - persisted under the wrapper type's identity with zero information loss.</summary>

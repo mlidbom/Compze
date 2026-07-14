@@ -1,4 +1,5 @@
 using Compze.Abstractions.Public;
+using Compze.Must.Assertions;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Teventive;
 using Compze.Teventive.Taggregates.BaseClasses;

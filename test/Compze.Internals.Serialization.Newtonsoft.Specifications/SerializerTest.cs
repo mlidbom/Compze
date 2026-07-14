@@ -1,13 +1,13 @@
 using Compze.Abstractions.Public;
 using Compze.Abstractions.Serialization.Internal;
 using Compze.Abstractions.Wiring.Testing.Internal;
-using Compze.Tessaging.Teventive.TeventStore.Internal;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Serialization.Newtonsoft.Wiring;
 using Compze.Hosting.Testing.Wiring;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
+using Compze.Teventive.TeventStore.Abstractions.Internal;
 using Compze.TypeIdentifiers;
 
 namespace Compze.Internals.Serialization.Newtonsoft.Specifications;

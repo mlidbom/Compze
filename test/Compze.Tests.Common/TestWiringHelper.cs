@@ -1,7 +1,7 @@
 using Compze.DocumentDb.Public;
-using Compze.Tessaging.Teventive.TeventStore.Public;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
+using Compze.Teventive.TeventStore.Abstractions.Public;
 
 namespace Compze.Tests.Common;
 

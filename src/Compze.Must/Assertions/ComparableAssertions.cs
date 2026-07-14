@@ -2,7 +2,7 @@ using System.Runtime.CompilerServices;
 
 // ReSharper disable InconsistentNaming
 
-namespace Compze.Must;
+namespace Compze.Must.Assertions;
 
 /// <summary>Assertions over <see cref="IComparable{T}"/> values.</summary>
 public static class ComparableAssertions

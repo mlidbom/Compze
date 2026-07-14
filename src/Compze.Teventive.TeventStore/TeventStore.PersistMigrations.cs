@@ -1,14 +1,14 @@
 using System.Transactions;
 using Compze.Abstractions.Public;
-using Compze.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Abstractions;
-using Compze.Tessaging.Teventive.TeventStore.Refactoring.Migrations;
 using Compze.Contracts;
 using Compze.Internals.SystemCE;
 using Compze.Internals.SystemCE.LinqCE;
 using Compze.Teventive.Taggregates.Tevents.Public;
-using ReadOrder = Compze.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Abstractions.ReadOrder;
+using Compze.Teventive.TeventStore.Abstractions.Internal.SqlLayer.Abstractions;
+using Compze.Teventive.TeventStore.Refactoring.Migrations;
+using ReadOrder = Compze.Teventive.TeventStore.Abstractions.Internal.SqlLayer.Abstractions.ReadOrder;
 
-namespace Compze.Tessaging.Teventive.TeventStore;
+namespace Compze.Teventive.TeventStore;
 
 public partial class TeventStore
 {

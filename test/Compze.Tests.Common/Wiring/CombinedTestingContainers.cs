@@ -3,13 +3,13 @@ using Compze.Abstractions.Wiring.Testing.Internal;
 using Compze.Hosting.Testing.Wiring;
 using Compze.Tessaging;
 using Compze.Tessaging.Hosting.Testing.Wiring;
-using Compze.Tessaging.Teventive.TeventStore.Wiring;
 using Compze.Typermedia.HandlerRegistration;
 using Compze.Typermedia.Hosting.Testing.Wiring;
 using Compze.TypeIdentifiers;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Underscore;
 using Compze.Internals.Logging;
+using Compze.Teventive.TeventStore.Wiring;
 using JetBrains.Annotations;
 
 namespace Compze.Tests.Common.Wiring;

@@ -1,5 +1,7 @@
 // ReSharper disable InconsistentNaming
 
+using Compze.Must.Assertions;
+
 namespace Compze.Internals.Logging.Specifications;
 
 public class When_logging_at_a_level_that_is_not_enabled

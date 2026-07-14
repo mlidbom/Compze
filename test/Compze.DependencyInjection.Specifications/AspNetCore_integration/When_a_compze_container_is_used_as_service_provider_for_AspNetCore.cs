@@ -2,6 +2,7 @@ using System.Net;
 using Compze.DependencyInjection.Abstractions;
 using Compze.DependencyInjection.Specifications.Infrastructure;
 using Compze.Must;
+using Compze.Must.Assertions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;

@@ -1,6 +1,6 @@
 using System.Runtime.CompilerServices;
 
-namespace Compze.Must;
+namespace Compze.Must.Assertions;
 // ReSharper disable InconsistentNaming
 /// <summary>DateTime proximity assertion: equality within a tolerance.</summary>
 public static class DateTimeAssertions

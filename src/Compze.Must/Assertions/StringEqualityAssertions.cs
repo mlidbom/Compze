@@ -1,6 +1,6 @@
 using System.Runtime.CompilerServices;
 
-namespace Compze.Must;
+namespace Compze.Must.Assertions;
 // ReSharper disable InconsistentNaming
 /// <summary>String equality assertion.</summary>
 public static class StringEqualityAssertions

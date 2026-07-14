@@ -1,7 +1,8 @@
 using Compze.Tests.Infrastructure;
 using Compze.Must;
+using Compze.Must.Assertions;
 using Compze.xUnitBDD;
-using ReadOrder = Compze.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Abstractions.ReadOrder;
+using ReadOrder = Compze.Teventive.TeventStore.Abstractions.Internal.SqlLayer.Abstractions.ReadOrder;
 using static Compze.Must.MustActions;
 
 namespace Compze.Tests.Unit.Sql.TeventStore;

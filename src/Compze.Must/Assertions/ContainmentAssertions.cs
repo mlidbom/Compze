@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 
 // ReSharper disable InconsistentNaming
 
-namespace Compze.Must;
+namespace Compze.Must.Assertions;
 
 /// <summary>Assertions that a collection contains an item.</summary>
 public static class ContainmentAssertions

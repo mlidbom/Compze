@@ -5,6 +5,7 @@ using Compze.Tests.Infrastructure;
 using Compze.Internals.SystemCE;
 using Compze.Internals.SystemCE.ReflectionCE;
 using Compze.Must;
+using Compze.Must.Assertions;
 using Compze.xUnitBDD;
 using JetBrains.Annotations;
 

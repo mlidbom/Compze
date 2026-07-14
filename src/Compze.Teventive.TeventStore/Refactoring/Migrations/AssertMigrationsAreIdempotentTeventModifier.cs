@@ -1,8 +1,8 @@
-using Compze.Tessaging.Teventive.TeventStore.Refactoring.Migrations.Public;
 using Compze.Internals.SystemCE;
 using Compze.Teventive.Taggregates.Tevents.Public;
+using Compze.Teventive.TeventStore.Abstractions.Refactoring.Migrations.Public;
 
-namespace Compze.Tessaging.Teventive.TeventStore.Refactoring.Migrations;
+namespace Compze.Teventive.TeventStore.Refactoring.Migrations;
 
 class AssertMigrationsAreIdempotentTeventModifier : ITeventModifier, IStaticInstancePropertySingleton<ITeventModifier>
 {

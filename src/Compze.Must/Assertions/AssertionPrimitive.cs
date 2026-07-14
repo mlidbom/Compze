@@ -2,7 +2,7 @@ using System.Runtime.CompilerServices;
 
 // ReSharper disable InconsistentNaming
 
-namespace Compze.Must;
+namespace Compze.Must.Assertions;
 
 /// <summary>The primitive every built-in assertion is built on, and the extension point for authoring your own: <see cref="RunAssertion{T}"/>.</summary>
 public static class AssertionPrimitive

@@ -1,24 +1,23 @@
 using Compze.Abstractions.Public;
 using Compze.Abstractions.Tessaging.Public;
-using Compze.Teventive.Tevents.Public;
-using Compze.TypeIdentifiers;
-using Compze.Tessaging.Teventive.TeventStore.Internal;
-using Compze.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Abstractions;
-using Compze.Tessaging.Teventive.TeventStore.Public;
-using Compze.Tessaging.Teventive.TeventStore.Refactoring.Migrations.Public;
-using Compze.Tessaging.Teventive.TeventStore.Refactoring.Migrations;
+using Compze.Contracts;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Logging;
 using Compze.Internals.SystemCE.LinqCE;
 using Compze.Internals.SystemCE.UsageGuards;
-using JetBrains.Annotations;
-using Compze.Contracts;
-using Compze.Teventive;
 using Compze.Teventive.Taggregates.Tevents.Public;
+using Compze.Teventive.Tevents.Public;
+using Compze.Teventive.TeventStore.Abstractions.Internal;
+using Compze.Teventive.TeventStore.Abstractions.Internal.SqlLayer.Abstractions;
+using Compze.Teventive.TeventStore.Abstractions.Public;
+using Compze.Teventive.TeventStore.Abstractions.Refactoring.Migrations.Public;
+using Compze.Teventive.TeventStore.Refactoring.Migrations;
+using Compze.TypeIdentifiers;
+using JetBrains.Annotations;
 using static Compze.Contracts.Contract;
 
-namespace Compze.Tessaging.Teventive.TeventStore;
+namespace Compze.Teventive.TeventStore;
 
 #pragma warning disable CA1724 // Type name intentionally matches namespace concept
 [UsedImplicitly] partial class TeventStore : ITeventStore

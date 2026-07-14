@@ -1,6 +1,6 @@
 using Compze.Teventive.Taggregates.Tevents.Public;
 
-namespace Compze.Tessaging.Teventive.TeventStore.Refactoring.Migrations.Internal;
+namespace Compze.Teventive.TeventStore.Abstractions.Refactoring.Migrations.Internal;
 
 public interface ICompleteTeventStreamMutator
 {

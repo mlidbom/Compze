@@ -10,6 +10,7 @@ using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Internals.SystemCE.UsageGuards;
 using Compze.Must;
+using Compze.Must.Assertions;
 using static Compze.Must.MustActions;
 
 // ReSharper disable AccessToDisposedClosure

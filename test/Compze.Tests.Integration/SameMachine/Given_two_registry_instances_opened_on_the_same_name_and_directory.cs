@@ -1,6 +1,7 @@
 using Compze.Abstractions.Hosting.Public;
 using Compze.Hosting.SameMachine;
 using Compze.Must;
+using Compze.Must.Assertions;
 using Compze.Tests.Infrastructure;
 using Compze.xUnitBDD;
 

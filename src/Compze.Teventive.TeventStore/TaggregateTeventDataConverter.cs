@@ -1,7 +1,7 @@
-using Compze.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Abstractions;
 using Compze.Teventive.Taggregates.Tevents.Public;
+using Compze.Teventive.TeventStore.Abstractions.Internal.SqlLayer.Abstractions;
 
-namespace Compze.Tessaging.Teventive.TeventStore;
+namespace Compze.Teventive.TeventStore;
 
 static class TaggregateTeventDataConverter
 {

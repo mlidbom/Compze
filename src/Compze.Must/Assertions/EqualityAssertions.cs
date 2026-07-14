@@ -4,7 +4,7 @@ using Compze.Internals.SystemCE.ReflectionCE;
 using Compze.Must.Serialization;
 using Newtonsoft.Json;
 
-namespace Compze.Must;
+namespace Compze.Must.Assertions;
 
 // ReSharper disable InconsistentNaming
 /// <summary>Value-equality assertions, checked consistently across every comparison mechanism the type supports.</summary>

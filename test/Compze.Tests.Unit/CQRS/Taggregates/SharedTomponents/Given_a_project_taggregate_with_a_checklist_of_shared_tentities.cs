@@ -1,4 +1,5 @@
 using Compze.Must;
+using Compze.Must.Assertions;
 using Compze.Teventive;
 using Compze.Teventive.Taggregates.BaseClasses;
 using Compze.Teventive.Taggregates.BaseClasses.Shared;

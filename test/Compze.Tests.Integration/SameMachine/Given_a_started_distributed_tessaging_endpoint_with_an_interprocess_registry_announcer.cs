@@ -2,6 +2,7 @@ using Compze.Abstractions.Hosting.Public;
 using Compze.Hosting.SameMachine;
 using Compze.Hosting.Testing;
 using Compze.Must;
+using Compze.Must.Assertions;
 using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tests.Infrastructure;

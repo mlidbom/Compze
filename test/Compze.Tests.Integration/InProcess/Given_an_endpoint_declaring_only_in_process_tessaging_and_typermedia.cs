@@ -5,6 +5,7 @@ using Compze.DependencyInjection.Abstractions;
 using Compze.Hosting.Testing;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Must;
+using Compze.Must.Assertions;
 using Compze.Tessaging.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
 using Compze.Tessaging.Hosting;
 using Compze.Tests.Infrastructure;

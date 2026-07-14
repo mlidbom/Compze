@@ -1,14 +1,14 @@
-using Compze.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Abstractions;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Sql.MicrosoftSql;
 using Compze.Internals.Sql.MicrosoftSql.Private;
 using Compze.Internals.Sql.MicrosoftSql.Wiring;
+using Compze.Teventive.TeventStore.Abstractions.Internal.SqlLayer.Abstractions;
 using Compze.TypeIdentifiers.Interning;
 using Compze.TypeIdentifiers.Interning.MicrosoftSql.Wiring;
-using Layer = Compze.Tessaging.Teventive.TeventStore.MicrosoftSql.MsSqlTeventStoreSqlLayer;
+using Layer = Compze.Teventive.TeventStore.MicrosoftSql.MsSqlTeventStoreSqlLayer;
 
-namespace Compze.Tessaging.Teventive.TeventStore.MicrosoftSql.Wiring;
+namespace Compze.Teventive.TeventStore.MicrosoftSql.Wiring;
 
 public static class MsSqlTeventStoreRegistrar
 {

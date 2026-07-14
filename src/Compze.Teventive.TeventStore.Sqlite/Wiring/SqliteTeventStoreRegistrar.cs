@@ -1,13 +1,13 @@
-using Compze.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Abstractions;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Sql.Sqlite;
 using Compze.Internals.Sql.Sqlite.Private;
 using Compze.Internals.Sql.Sqlite.Wiring;
+using Compze.Teventive.TeventStore.Abstractions.Internal.SqlLayer.Abstractions;
 using Compze.TypeIdentifiers.Interning;
-using Layer = Compze.Tessaging.Teventive.TeventStore.Sqlite.SqliteTeventStoreSqlLayer;
+using Layer = Compze.Teventive.TeventStore.Sqlite.SqliteTeventStoreSqlLayer;
 
-namespace Compze.Tessaging.Teventive.TeventStore.Sqlite.Wiring;
+namespace Compze.Teventive.TeventStore.Sqlite.Wiring;
 
 public static class SqliteTeventStoreRegistrar
 {

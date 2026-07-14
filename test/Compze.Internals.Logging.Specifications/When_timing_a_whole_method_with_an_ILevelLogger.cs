@@ -1,5 +1,7 @@
 // ReSharper disable InconsistentNaming
 
+using Compze.Must.Assertions;
+
 namespace Compze.Internals.Logging.Specifications;
 
 public class When_timing_a_whole_method_with_an_ILevelLogger

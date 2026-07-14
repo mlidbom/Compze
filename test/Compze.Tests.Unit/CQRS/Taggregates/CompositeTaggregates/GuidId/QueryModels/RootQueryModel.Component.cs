@@ -1,5 +1,6 @@
-using Compze.Tessaging.Teventive.TeventStore.QueryModels.SelfGeneratingQueryModels;
 using Compze.Tests.Unit.CQRS.Taggregates.CompositeTaggregates.GuidId.Domain.Tevents;
+using Compze.Teventive.TeventStore.QueryModels.SelfGeneratingQueryModels;
+
 // ReSharper disable RedundantNameQualifier
 
 namespace Compze.Tests.Unit.CQRS.Taggregates.CompositeTaggregates.GuidId.QueryModels;

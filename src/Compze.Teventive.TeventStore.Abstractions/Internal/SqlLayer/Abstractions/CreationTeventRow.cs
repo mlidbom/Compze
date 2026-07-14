@@ -1,7 +1,7 @@
 using Compze.Abstractions.Public;
 using Compze.TypeIdentifiers;
 
-namespace Compze.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Abstractions;
+namespace Compze.Teventive.TeventStore.Abstractions.Internal.SqlLayer.Abstractions;
 
 public class CreationTeventRow(TaggregateId taggregateId, TypeId typeId)
 {

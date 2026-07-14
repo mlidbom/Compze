@@ -1,13 +1,12 @@
 using Compze.Abstractions.Public;
-using Compze.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Abstractions;
 using Compze.Internals.Sql.Common;
-using Compze.Internals.Sql.Common.Abstractions;
 using Compze.Internals.Sql.MySql.Private;
+using Compze.Teventive.TeventStore.Abstractions.Internal.SqlLayer.Abstractions;
 using Compze.TypeIdentifiers.Interning;
 using MySql.Data.MySqlClient;
-using Tevent = Compze.Tessaging.Teventive.TeventStore.Internal.SqlLayer.TeventTableSchemaStrings;
+using Tevent = Compze.Teventive.TeventStore.Abstractions.Internal.SqlLayer.TeventTableSchemaStrings;
 
-namespace Compze.Tessaging.Teventive.TeventStore.MySql;
+namespace Compze.Teventive.TeventStore.MySql;
 
 partial class MySqlTeventStoreSqlLayer(MySqlTeventStoreConnectionManager connectionManager, MySqlSqlLayerSchemaManager schemaManager, ITypeIdInterner typeIdInterner) : ITeventStoreSqlLayer
 {

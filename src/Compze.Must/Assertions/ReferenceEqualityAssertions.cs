@@ -1,6 +1,6 @@
 using System.Runtime.CompilerServices;
 
-namespace Compze.Must;
+namespace Compze.Must.Assertions;
 // ReSharper disable InconsistentNaming
 /// <summary>Reference-identity assertions.</summary>
 public static class ReferenceEqualityAssertions

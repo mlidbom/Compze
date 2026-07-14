@@ -3,7 +3,7 @@ using Compze.Internals.Sql.MySql;
 using JetBrains.Annotations;
 using MySql.Data.MySqlClient;
 
-namespace Compze.Tessaging.Teventive.TeventStore.MySql;
+namespace Compze.Teventive.TeventStore.MySql;
 
 class MySqlTeventStoreConnectionManager(IMySqlConnectionPool sqlConnectionPool)
 {

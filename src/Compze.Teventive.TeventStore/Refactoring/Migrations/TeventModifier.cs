@@ -1,14 +1,13 @@
-using Compze.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Abstractions;
-using Compze.Tessaging.Teventive.TeventStore.Refactoring.Migrations.Public;
 using Compze.Contracts;
 using Compze.Internals.SystemCE.CollectionsCE.GenericCE;
 using Compze.Internals.SystemCE.LinqCE;
-using Compze.Teventive;
 using Compze.Teventive.Taggregates.Tevents.Public;
+using Compze.Teventive.TeventStore.Abstractions.Internal.SqlLayer.Abstractions;
+using Compze.Teventive.TeventStore.Abstractions.Refactoring.Migrations.Public;
 
 #pragma warning disable CS0618 // Type or member is obsolete
 
-namespace Compze.Tessaging.Teventive.TeventStore.Refactoring.Migrations;
+namespace Compze.Teventive.TeventStore.Refactoring.Migrations;
 
 //Yes this class has quite a bit of code that looks overly complex. Like it could be simplified a lot.
 //What you are seeing is likely optimizations. Please do not change this class for reasons of readability unless you do thorough performance testing and verify that no performance is lost.

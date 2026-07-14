@@ -2,7 +2,7 @@ using System.Runtime.CompilerServices;
 
 // ReSharper disable InconsistentNaming
 
-namespace Compze.Must;
+namespace Compze.Must.Assertions;
 
 /// <summary>The universal predicate assertion: <see cref="Satisfy{T}(IAssertionContext{T}, System.Func{T, bool}, System.Func{T, string}, string)"/> checks any predicate and, on failure, renders the predicate expression together with the serialized state of the value.</summary>
 public static class SatisfyAssertions

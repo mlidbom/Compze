@@ -1,4 +1,5 @@
 using Compze.Abstractions.Public;
+using Compze.Must.Assertions;
 using Compze.Tests.Infrastructure.XUnit;
 
 // ReSharper disable UnusedMember.Global

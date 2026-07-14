@@ -1,9 +1,9 @@
 using Compze.Abstractions.Public;
 using Compze.Abstractions.Tessaging.Public;
-using Compze.Tessaging.Teventive.TeventStore.Typermedia;
 using Compze.Teventive;
 using Compze.Teventive.Taggregates.BaseClasses;
 using Compze.Teventive.Taggregates.Tevents.Public;
+using Compze.Teventive.TeventStore.Typermedia;
 using Compze.Typermedia;
 
 // ReSharper disable ClassNeverInstantiated.Global

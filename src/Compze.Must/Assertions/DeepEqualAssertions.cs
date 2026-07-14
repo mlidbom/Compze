@@ -5,7 +5,7 @@ using Compze.Must.Serialization;
 using Newtonsoft.Json;
 
 // ReSharper disable InconsistentNaming
-namespace Compze.Must;
+namespace Compze.Must.Assertions;
 
 /// <summary>Configures a deep-equality comparison (<see cref="DeepEqualAssertions"/>): which members to exclude and whether to ignore declared types.</summary>
 public class DeepEqualConfig<TValue>

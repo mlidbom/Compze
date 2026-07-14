@@ -1,6 +1,6 @@
 using Compze.Abstractions.Public;
 
-namespace Compze.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Abstractions;
+namespace Compze.Teventive.TeventStore.Abstractions.Internal.SqlLayer.Abstractions;
 
 public class TaggregateTeventRefactoringInformation(TessageId targetTevent, TaggregateTeventRefactoringType refactoringType)
 {

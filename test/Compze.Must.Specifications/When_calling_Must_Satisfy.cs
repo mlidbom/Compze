@@ -4,6 +4,8 @@
 
 // ReSharper disable InconsistentNaming
 
+using Compze.Must.Assertions;
+
 namespace Compze.Must.Specifications;
 
 public class When_calling_Must_Satisfy : UniversalTestBase

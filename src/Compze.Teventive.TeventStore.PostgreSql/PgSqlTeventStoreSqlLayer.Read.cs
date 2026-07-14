@@ -1,15 +1,14 @@
 using System.Transactions;
 using Compze.Abstractions.Public;
-using Compze.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Abstractions;
 using Compze.Internals.Sql.Common;
-using Compze.Internals.Sql.Common.Abstractions;
 using Compze.Internals.Sql.PostgreSql.Private;
+using Compze.Teventive.TeventStore.Abstractions.Internal.SqlLayer.Abstractions;
 using Compze.TypeIdentifiers.Interning;
 using Npgsql;
 using NpgsqlTypes;
-using Tevent = Compze.Tessaging.Teventive.TeventStore.Internal.SqlLayer.TeventTableSchemaStrings;
+using Tevent = Compze.Teventive.TeventStore.Abstractions.Internal.SqlLayer.TeventTableSchemaStrings;
 
-namespace Compze.Tessaging.Teventive.TeventStore.PostgreSql;
+namespace Compze.Teventive.TeventStore.PostgreSql;
 
 partial class PgSqlTeventStoreSqlLayer(PgSqlTeventStoreConnectionManager connectionManager, PgSqlSqlLayerSchemaManager schemaManager, ITypeIdInterner typeIdInterner) : ITeventStoreSqlLayer
 {

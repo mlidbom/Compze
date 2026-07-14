@@ -1,3 +1,5 @@
+using Compze.Must.Assertions;
+
 #pragma warning disable CA1861 //we want the collections inline
 
 namespace Compze.Internals.SystemCE.Tests.LinqCE;

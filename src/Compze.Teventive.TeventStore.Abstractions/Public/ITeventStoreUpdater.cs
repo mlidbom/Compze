@@ -1,8 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using Compze.Abstractions.Public;
-using Compze.Teventive;
 
-namespace Compze.Tessaging.Teventive.TeventStore.Public;
+namespace Compze.Teventive.TeventStore.Abstractions.Public;
 
 public interface ITeventStoreUpdater : IDisposable
 {

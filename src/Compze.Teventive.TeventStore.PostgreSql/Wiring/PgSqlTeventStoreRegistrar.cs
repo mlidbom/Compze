@@ -1,14 +1,14 @@
-using Compze.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Abstractions;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Sql.PostgreSql;
 using Compze.Internals.Sql.PostgreSql.Private;
 using Compze.Internals.Sql.PostgreSql.Wiring;
+using Compze.Teventive.TeventStore.Abstractions.Internal.SqlLayer.Abstractions;
 using Compze.TypeIdentifiers.Interning;
 using Compze.TypeIdentifiers.Interning.PostgreSql.Wiring;
-using Layer = Compze.Tessaging.Teventive.TeventStore.PostgreSql.PgSqlTeventStoreSqlLayer;
+using Layer = Compze.Teventive.TeventStore.PostgreSql.PgSqlTeventStoreSqlLayer;
 
-namespace Compze.Tessaging.Teventive.TeventStore.PostgreSql.Wiring;
+namespace Compze.Teventive.TeventStore.PostgreSql.Wiring;
 
 public static class PgSqlTeventStoreRegistrar
 {

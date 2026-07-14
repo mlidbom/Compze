@@ -1,13 +1,12 @@
 using Compze.Abstractions.Public;
-using Compze.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Abstractions;
 using Compze.Internals.Sql.Common;
-using Compze.Internals.Sql.Common.Abstractions;
 using Compze.Internals.Sql.Sqlite.Private;
+using Compze.Teventive.TeventStore.Abstractions.Internal.SqlLayer.Abstractions;
 using Compze.TypeIdentifiers.Interning;
 using Microsoft.Data.Sqlite;
-using Tevent = Compze.Tessaging.Teventive.TeventStore.Internal.SqlLayer.TeventTableSchemaStrings;
+using Tevent = Compze.Teventive.TeventStore.Abstractions.Internal.SqlLayer.TeventTableSchemaStrings;
 
-namespace Compze.Tessaging.Teventive.TeventStore.Sqlite;
+namespace Compze.Teventive.TeventStore.Sqlite;
 
 partial class SqliteTeventStoreSqlLayer(SqliteTeventStoreConnectionManager connectionManager, SqliteSqlLayerSchemaManager schemaManager, ITypeIdInterner typeIdInterner) : ITeventStoreSqlLayer
 {

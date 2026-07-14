@@ -1,14 +1,14 @@
-using Compze.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Abstractions;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Sql.MySql;
 using Compze.Internals.Sql.MySql.Private;
 using Compze.Internals.Sql.MySql.Wiring;
+using Compze.Teventive.TeventStore.Abstractions.Internal.SqlLayer.Abstractions;
 using Compze.TypeIdentifiers.Interning;
 using Compze.TypeIdentifiers.Interning.MySql.Wiring;
-using Layer = Compze.Tessaging.Teventive.TeventStore.MySql.MySqlTeventStoreSqlLayer;
+using Layer = Compze.Teventive.TeventStore.MySql.MySqlTeventStoreSqlLayer;
 
-namespace Compze.Tessaging.Teventive.TeventStore.MySql.Wiring;
+namespace Compze.Teventive.TeventStore.MySql.Wiring;
 
 public static class MySqlTeventStoreRegistrar
 {

@@ -1,8 +1,7 @@
 using Compze.Abstractions.Public;
-using Compze.Teventive;
 using Compze.Teventive.Taggregates.Tevents.Public;
 
-namespace Compze.Tessaging.Teventive.TeventStore.Public;
+namespace Compze.Teventive.TeventStore.Abstractions.Public;
 
 public interface ITeventStoreReader
 {

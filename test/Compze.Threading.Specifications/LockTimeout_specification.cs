@@ -1,4 +1,5 @@
 using Compze.Must;
+using Compze.Must.Assertions;
 using Compze.Tests.Infrastructure;
 using Compze.xUnitBDD;
 using static Compze.Must.MustActions;

@@ -6,9 +6,9 @@ using AccountManagement.UI.QueryModels;
 using Compze.Abstractions.Hosting.Public;
 using Compze.DocumentDb.Wiring;
 using Compze.Tessaging.Hosting;
+using Compze.Teventive.TeventStore.Typermedia;
 using Compze.Typermedia;
 using Compze.Typermedia.Client;
-using Compze.Tessaging.Teventive.TeventStore.Typermedia;
 
 namespace AccountManagement;
 

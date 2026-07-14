@@ -3,7 +3,7 @@ using Compze.Internals.Sql.Sqlite;
 using JetBrains.Annotations;
 using Microsoft.Data.Sqlite;
 
-namespace Compze.Tessaging.Teventive.TeventStore.Sqlite;
+namespace Compze.Teventive.TeventStore.Sqlite;
 
 class SqliteTeventStoreConnectionManager(ISqliteConnectionPool sqlConnectionPool)
 {

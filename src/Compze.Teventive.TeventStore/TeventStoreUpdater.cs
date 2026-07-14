@@ -1,21 +1,20 @@
+using System.Diagnostics.CodeAnalysis;
+using Compze.Abstractions.Public;
+using Compze.Abstractions.Tessaging.Public;
+using Compze.Contracts;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.LinqCE;
 using Compze.Internals.SystemCE.ReactiveCE;
 using Compze.Internals.SystemCE.ReflectionCE;
-using System.Diagnostics.CodeAnalysis;
-using Compze.Abstractions.Public;
-using Compze.Abstractions.Tessaging.Public;
-using Compze.Tessaging.Teventive.TeventStore.Public;
-using Compze.Tessaging.Teventive.TeventStore.Public.Exceptions;
 using Compze.Internals.SystemCE.UsageGuards;
-using Compze.Contracts;
-using Compze.Teventive;
 using Compze.Teventive.Internal;
 using Compze.Teventive.Taggregates.Tevents.Public;
+using Compze.Teventive.TeventStore.Abstractions.Public;
+using Compze.Teventive.TeventStore.Abstractions.Public.Exceptions;
 using static Compze.Contracts.Contract;
 
-namespace Compze.Tessaging.Teventive.TeventStore;
+namespace Compze.Teventive.TeventStore;
 
 class TeventStoreUpdater : ITeventStoreReader, ITeventStoreUpdater
 {

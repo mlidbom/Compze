@@ -11,6 +11,7 @@ using Compze.Internals.Testing;
 using Compze.Internals.Transport.AspNet;
 using Compze.Internals.Transport.NamedPipes;
 using Compze.Must;
+using Compze.Must.Assertions;
 using Compze.Tessaging.Hosting;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;

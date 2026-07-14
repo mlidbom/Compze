@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Compze.Tessaging.Teventive.TeventStore.QueryModels.SelfGeneratingQueryModels;
+namespace Compze.Teventive.TeventStore.QueryModels.SelfGeneratingQueryModels;
 
 public class QueryModelEntityCollection<TEntity, TEntityId> : IReadonlyQueryModelEntityCollection<TEntity, TEntityId> where TEntity : class where TEntityId : notnull
 {

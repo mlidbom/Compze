@@ -1,7 +1,6 @@
-using Compze.Teventive;
 using Compze.Teventive.Taggregates.Tevents.Public;
 
-namespace Compze.Tessaging.Teventive.TeventStore.QueryModels.SelfGeneratingQueryModels;
+namespace Compze.Teventive.TeventStore.QueryModels.SelfGeneratingQueryModels;
 
 public abstract partial class SelfGeneratingQueryModel<TQueryModel, TTaggregateTevent>
    where TQueryModel : SelfGeneratingQueryModel<TQueryModel, TTaggregateTevent>

@@ -1,11 +1,10 @@
 using Compze.Abstractions.Public;
-using Compze.Tessaging.Teventive.TeventStore.Refactoring.Migrations.Internal;
-using Compze.Tessaging.Teventive.TeventStore.Refactoring.Migrations.Public;
 using Compze.Internals.SystemCE.CollectionsCE.GenericCE;
-using Compze.Teventive;
 using Compze.Teventive.Taggregates.Tevents.Public;
+using Compze.Teventive.TeventStore.Abstractions.Refactoring.Migrations.Internal;
+using Compze.Teventive.TeventStore.Abstractions.Refactoring.Migrations.Public;
 
-namespace Compze.Tessaging.Teventive.TeventStore.Refactoring.Migrations;
+namespace Compze.Teventive.TeventStore.Refactoring.Migrations;
 
 abstract class CompleteTeventStoreStreamMutator
 {

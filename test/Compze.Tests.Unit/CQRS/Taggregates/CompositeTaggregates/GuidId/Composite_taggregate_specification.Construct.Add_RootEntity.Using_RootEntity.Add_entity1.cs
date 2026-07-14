@@ -1,6 +1,7 @@
 using Compze.Tests.Unit.CQRS.Taggregates.CompositeTaggregates.GuidId.Domain;
 using Compze.Tests.Unit.CQRS.Taggregates.CompositeTaggregates.GuidId.QueryModels;
 using Compze.Must;
+using Compze.Must.Assertions;
 using Compze.xUnitBDD;
 
 namespace Compze.Tests.Unit.CQRS.Taggregates.CompositeTaggregates.GuidId;

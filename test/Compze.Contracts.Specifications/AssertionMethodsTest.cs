@@ -1,4 +1,5 @@
 using Compze.Must;
+using Compze.Must.Assertions;
 using static Compze.Must.MustActions;
 
 namespace Compze.Contracts.Specifications;

@@ -1,10 +1,9 @@
 using Compze.Abstractions.Public;
-using Compze.Teventive;
 using Compze.Teventive.Taggregates.Tevents.Public;
 
 // ReSharper disable MemberCanBeMadeStatic.Global we want composable fluent APIs. No statics please.
 
-namespace Compze.Tessaging.Teventive.TeventStore.Typermedia;
+namespace Compze.Teventive.TeventStore.Typermedia;
 
 public partial class TeventStoreApi
 {

@@ -1,6 +1,6 @@
 using Compze.Abstractions.Public;
 
-namespace Compze.Tessaging.Teventive.TeventStore.QueryModels;
+namespace Compze.Teventive.TeventStore.Abstractions.QueryModels;
 
 public interface ISingleTaggregateQueryModel : IEntity<Guid>
 {

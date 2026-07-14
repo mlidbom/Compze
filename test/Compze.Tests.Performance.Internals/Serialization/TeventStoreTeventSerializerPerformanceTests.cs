@@ -1,5 +1,4 @@
 using Compze.Abstractions.Public;
-using Compze.Tessaging.Teventive.TeventStore.Internal;
 using Compze.DependencyInjection;
 using Compze.Internals.Serialization.Newtonsoft.Private.TeventStore;
 using Compze.Hosting.Testing;
@@ -12,6 +11,7 @@ using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE;
 using Compze.Internals.SystemCE.LinqCE;
 using Compze.Teventive.Taggregates.BaseClasses;
+using Compze.Teventive.TeventStore.Abstractions.Internal;
 using Newtonsoft.Json;
 
 namespace Compze.Tests.Performance.Internals.Serialization;

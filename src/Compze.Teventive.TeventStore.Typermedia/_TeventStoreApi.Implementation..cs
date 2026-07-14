@@ -1,13 +1,12 @@
 using Compze.Abstractions.Public;
 using Compze.Abstractions.Tessaging.Public;
-using Compze.Tessaging.Teventive.TeventStore.Public;
-using Compze.Teventive;
 using Compze.Teventive.Taggregates.Tevents.Public;
+using Compze.Teventive.TeventStore.Abstractions.Public;
 using Compze.Typermedia.HandlerRegistration;
 
 // ReSharper disable MemberCanBePrivate.Global they are public so that serializers work
 
-namespace Compze.Tessaging.Teventive.TeventStore.Typermedia;
+namespace Compze.Teventive.TeventStore.Typermedia;
 
 public partial class TeventStoreApi
 {

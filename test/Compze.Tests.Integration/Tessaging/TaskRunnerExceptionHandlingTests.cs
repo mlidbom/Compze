@@ -10,6 +10,7 @@ using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Threading;
 using Compze.Threading.Testing;
 using Compze.Must;
+using Compze.Must.Assertions;
 using static Compze.Must.MustActions;
 
 namespace Compze.Tests.Integration.Tessaging;

@@ -1,4 +1,4 @@
-namespace Compze.Must;
+namespace Compze.Must.Assertions;
 
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 /// <summary>Details of a failing assertion, passed to the custom failure-message builder (the <c>messageOverride</c> argument of <see cref="AssertionPrimitive"/>'s RunAssertion).</summary>

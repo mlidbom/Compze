@@ -1,7 +1,7 @@
 using Compze.Abstractions.Public;
-using Compze.Tessaging.Teventive.TeventStore.Public;
 using Compze.Teventive.Taggregates.BaseClasses;
 using Compze.Teventive.Taggregates.Tevents.Public;
+using Compze.Teventive.TeventStore.Abstractions.Public;
 using JetBrains.Annotations;
 
 namespace Compze.Tests.Integration.CQRS;

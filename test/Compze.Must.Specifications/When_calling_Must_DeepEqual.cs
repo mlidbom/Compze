@@ -4,6 +4,8 @@
 
 // ReSharper disable InconsistentNaming
 
+using Compze.Must.Assertions;
+
 #pragma warning disable CA1711 // ending name on Exception
 
 namespace Compze.Must.Specifications;

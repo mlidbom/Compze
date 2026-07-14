@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Numerics;
 using Compze.Contracts;
 
-namespace Compze.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Abstractions;
+namespace Compze.Teventive.TeventStore.Abstractions.Internal.SqlLayer.Abstractions;
 
 public readonly struct ReadOrder : IComparable<ReadOrder>, IEquatable<ReadOrder>
 {

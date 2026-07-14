@@ -1,8 +1,8 @@
-using Compze.Tessaging.Teventive.TeventStore.Refactoring.Migrations.Public;
 using Compze.Contracts;
 using Compze.Teventive.Taggregates.Tevents.Public;
+using Compze.Teventive.TeventStore.Abstractions.Refactoring.Migrations.Public;
 
-namespace Compze.Tessaging.Teventive.TeventStore.Refactoring.Migrations;
+namespace Compze.Teventive.TeventStore.Refactoring.Migrations;
 
 public abstract class TeventMigration<TMigratedTaggregateTeventHierarchyRootInterface> : ITeventMigration
    where TMigratedTaggregateTeventHierarchyRootInterface : ITaggregateTevent

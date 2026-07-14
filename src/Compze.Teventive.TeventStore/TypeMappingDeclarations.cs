@@ -1,8 +1,9 @@
+using Compze.Teventive.TeventStore;
 using Compze.TypeIdentifiers;
 
-[assembly: AssemblyTypeMapper(typeof(Compze.Tessaging.Teventive.TeventStore.AssemblyTypeMapper))]
+[assembly: AssemblyTypeMapper(typeof(AssemblyTypeMapper))]
 
-namespace Compze.Tessaging.Teventive.TeventStore;
+namespace Compze.Teventive.TeventStore;
 
 #pragma warning disable CA1812 // Instantiated via reflection through the [assembly: AssemblyTypeMapper(typeof(...))] attribute.
 class AssemblyTypeMapper : IAssemblyTypeMapper

@@ -1,15 +1,15 @@
 using Compze.Abstractions.Public;
-using Compze.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Abstractions;
+using Compze.Contracts;
 using Compze.Internals.Sql.Common;
 using Compze.Internals.Sql.MySql;
 using Compze.Internals.Sql.MySql.Private;
-using Compze.Contracts;
 using Compze.Internals.SystemCE;
+using Compze.Teventive.TeventStore.Abstractions.Internal.SqlLayer.Abstractions;
 using MySql.Data.MySqlClient;
-using ReadOrder = Compze.Tessaging.Teventive.TeventStore.Internal.SqlLayer.Abstractions.ReadOrder;
-using Tevent = Compze.Tessaging.Teventive.TeventStore.Internal.SqlLayer.TeventTableSchemaStrings;
+using ReadOrder = Compze.Teventive.TeventStore.Abstractions.Internal.SqlLayer.Abstractions.ReadOrder;
+using Tevent = Compze.Teventive.TeventStore.Abstractions.Internal.SqlLayer.TeventTableSchemaStrings;
 
-namespace Compze.Tessaging.Teventive.TeventStore.MySql;
+namespace Compze.Teventive.TeventStore.MySql;
 
 //Performance: explore MySql alternatives to commented out MSSql hints throughout the sql layer.
 partial class MySqlTeventStoreSqlLayer

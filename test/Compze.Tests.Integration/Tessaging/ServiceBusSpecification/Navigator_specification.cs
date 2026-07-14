@@ -9,6 +9,7 @@ using Compze.Tests.Infrastructure.XUnit;
 using Compze.Abstractions.Public;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Must;
+using Compze.Must.Assertions;
 using Compze.Typermedia;
 using Compze.Typermedia.HandlerRegistration;
 

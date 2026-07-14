@@ -1,5 +1,5 @@
 using Compze.Abstractions.Public;
-using Compze.Tessaging.Teventive.TeventStore.Refactoring.Migrations.Public;
+using Compze.Teventive.TeventStore.Abstractions.Refactoring.Migrations.Public;
 
 namespace Compze.Tests.Integration.CQRS.TeventRefactoring.Migrations;
 

@@ -1,11 +1,10 @@
 using Compze.Abstractions.Hosting.Public;
-using Compze.Tessaging.Teventive.TeventStore.Wiring;
-using Compze.Teventive;
 using Compze.Teventive.Taggregates.Tevents.Public;
+using Compze.Teventive.TeventStore.Wiring;
 using Compze.Typermedia;
 using Compze.Typermedia.HandlerRegistration;
 
-namespace Compze.Tessaging.Teventive.TeventStore.Typermedia;
+namespace Compze.Teventive.TeventStore.Typermedia;
 
 public static class TeventStoreTypermediaRegistrar
 {

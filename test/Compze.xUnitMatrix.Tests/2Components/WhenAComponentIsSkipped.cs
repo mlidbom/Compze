@@ -1,3 +1,5 @@
+using Compze.Must.Assertions;
+
 namespace Compze.xUnitMatrix.Tests._2Components;
 
 public class WhenAComponentIsSkipped
