@@ -32,11 +32,11 @@ public class DistributedTessagingTestingEndpointHostFeature : ITestingEndpointHo
       //Endpoints need a consistent connection string or things go belly up when creating a new host with a new container.
       builder.Registrar
              .Register(Singleton.For<ITessagesInFlightTracker>().Instance(_tessagesInFlightTracker))
-             .Register(Singleton.For<IEndpointRegistry>().Instance(new TestingHostEndpointRegistry(() => _host._assert().NotNull().Endpoints)))
              .CurrentTestsTessagingTransport()
              .CurrentTestsConfiguredSqlLayer(connectionStringName: builder.Configuration.Id.ToString());
 
-      builder.AddDistributedTessaging();
+      builder.AddDistributedTessaging()
+             .DiscoverEndpointsThrough(new TestingHostEndpointRegistry(() => _host._assert().NotNull().Endpoints));
    }
 
    public void AwaitEndpointsAtRest() => _tessagesInFlightTracker.AwaitNoTessagesInFlight(EndpointsAtRestTimeout);

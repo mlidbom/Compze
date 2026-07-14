@@ -25,13 +25,13 @@ sealed class DistributedTessagingEndpointComponent : IEndpointComponent, IAsyncD
    readonly IBackgroundExceptionReporter _backgroundExceptionReporter;
    readonly EndpointTransportServerFeature _transportServer;
 
-   internal DistributedTessagingEndpointComponent(IRootResolver resolver, EndpointTransportServerFeature transportServer)
+   internal DistributedTessagingEndpointComponent(IRootResolver resolver, EndpointTransportServerFeature transportServer, IEndpointRegistry endpointRegistry)
    {
       _tommandScheduler = resolver.Resolve<TommandScheduler>();
       _inbox = resolver.Resolve<IInbox>();
       _outbox = resolver.Resolve<IOutbox>();
       _tessagingRouter = resolver.Resolve<ITessagingRouter>();
-      _endpointRegistry = resolver.Resolve<IEndpointRegistry>();
+      _endpointRegistry = endpointRegistry;
       _backgroundExceptionReporter = resolver.Resolve<IBackgroundExceptionReporter>();
       _transportServer = transportServer;
    }

@@ -167,14 +167,13 @@ host.RegisterEndpoint("BackgroundWorker", new EndpointId(Guid.Parse("...")), bui
    builder.TypeMapper.MapTypesFromAssemblyContaining<MyTommand>();
 
    builder.Registrar
-          .Register(Singleton.For<IEndpointRegistry>().Instance(registry))         // the read side: whom to connect to
           .NewtonsoftSerializers()
           .NamedPipeTessagingTransport()
           .SqliteConnectionPool("BackgroundWorker")
           .SqliteTypeIdInterner("BackgroundWorker.TypeIdInterner")
           .SqliteTessagingSqlLayer();
 
-   builder.AddDistributedTessaging().AnnounceAddressTo(registry);                  // the write side: where we listen
+   builder.AddDistributedTessaging().ParticipateIn(registry);   // discover the others through it AND announce ourselves to it
 
    builder.RegisterTessagingHandlers.ForTommand<MyTommand>(tommand => ...);
 });
@@ -182,9 +181,9 @@ host.RegisterEndpoint("BackgroundWorker", new EndpointId(Guid.Parse("...")), bui
 await host.StartAsync();
 ```
 
-The registry appears twice because it has two faces, and the composition states each where it belongs: the
-`IEndpointRegistry` registration is the *read* side the router reconciles against; `AnnounceAddressTo` is the
-*write* side the endpoint's lifecycle drives. No address, port, or connection string appears anywhere — the
+`ParticipateIn` declares the registry's two faces at once: `DiscoverEndpointsThrough`, the *read* side the
+router reconciles against, and `AnnounceAddressTo`, the *write* side the endpoint's lifecycle drives — declare
+the sides separately when a deployment is asymmetric. No address, port, or connection string appears anywhere — the
 pipe names are generated, the announcements distribute them, and the connection strings resolve to sqlite
 files in the process's data directory. No schema setup appears either: each sql-layer feature contributes its
 own schema-creation SQL as part of registering itself, and all of it runs as one batch before the database's

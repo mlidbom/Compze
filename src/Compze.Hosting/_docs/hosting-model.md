@@ -242,11 +242,13 @@ transport server it never serves.
 `EndpointHost.Production.Create(containerFactory)` — the factory produces a fresh container builder per
 endpoint. Endpoints read configuration through `IConfigurationParameterProvider`: an endpoint setup that
 registers its own provider wins; `AppSettingsJsonConfigurationParameterProvider` reading `appsettings.json`
-is only the default. The same pattern governs how endpoints find each other: the default `IEndpointRegistry`
-(`AppConfigEndpointRegistry`) reads other endpoints' addresses from configuration, and a setup that registers
-another registry wins. For processes on one machine that registry is the `InterprocessEndpointRegistry` —
-endpoints announce their freshly generated addresses and discover each other with zero configuration; the
-whole story lives in [same-machine hosting](same-machine-hosting.md).
+is only the default. How endpoints find each other is a declaration on the distributed-Tessaging feature:
+`AddDistributedTessaging().DiscoverEndpointsThrough(registry)` — an endpoint declaring no registry falls back
+to reading other endpoints' addresses from configuration (`AppConfigEndpointRegistry`). For processes on one
+machine the registry is the `InterprocessEndpointRegistry`, which is also the announcer, so an endpoint
+declares both sides at once with `ParticipateIn(registry)` — endpoints announce their freshly generated
+addresses and discover each other with zero configuration; the whole story lives in
+[same-machine hosting](same-machine-hosting.md).
 
 ## Testing hosting
 
@@ -275,11 +277,12 @@ What the pieces do:
   (`DisposeAsyncWithoutWaitingForEndpointsToBeAtRest` opts out, for tests that deliberately leave work
   scheduled).
 - **`DistributedTessagingTestingEndpointHostFeature`** registers, per endpoint: a host-wide
-  tessages-in-flight tracker (this is what the dispose-time quiescence wait reads), an `IEndpointRegistry`
-  listing the host's endpoints' inbox addresses (so routers connect to every endpoint in the host), the
-  Tessaging transport, the Tessaging vertical's SQL persistence stack, and finally
-  `AddDistributedTessaging()`. The pre-registrations matter: `DistributedTessagingEndpointFeature` guards its
-  tracker and registry defaults with `IsRegistered`, so the host's versions win.
+  tessages-in-flight tracker (this is what the dispose-time quiescence wait reads), the Tessaging transport,
+  the Tessaging vertical's SQL persistence stack, and finally `AddDistributedTessaging()` declaring
+  `DiscoverEndpointsThrough` an `IEndpointRegistry` listing the host's endpoints' addresses (so routers
+  connect to every endpoint in the host). The tracker pre-registration matters:
+  `DistributedTessagingEndpointFeature` guards its tracker default with `IsRegistered`, so the host's
+  version wins.
 - **`DistributedTypermediaTestingEndpointHostFeature`** registers the Typermedia transport and
   `AddDistributedTypermedia()`.
 - **`TypermediaTestClient`** (in `Compze.Typermedia.Hosting.Testing`) is a remote client in its own container,

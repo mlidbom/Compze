@@ -3,7 +3,6 @@ using System.Text;
 using Compze.Abstractions.Hosting.Public;
 using Compze.Abstractions.Wiring.Testing.Internal;
 using Compze.Contracts;
-using Compze.DependencyInjection;
 using Compze.Hosting.SameMachine;
 using Compze.Hosting.Testing;
 using Compze.Internals.Testing;
@@ -77,10 +76,9 @@ public class Given_a_separate_process_hosting_an_endpoint_discovered_through_a_s
          {
             builder.TypeMapper.MapTypesFromAssemblyContaining<TommandSentToTheEndpointHostProcess>();
             builder.Registrar
-                   .Register(Singleton.For<IEndpointRegistry>().Instance(_registry))
                    .CurrentTestsTessagingTransport()
                    .CurrentTestsConfiguredSqlLayer(connectionStringName: builder.Configuration.Id.ToString());
-            builder.AddDistributedTessaging().AnnounceAddressTo(_registry);
+            builder.AddDistributedTessaging().ParticipateIn(_registry);
             builder.RegisterTessagingHandlers.ForTommand<TommandSentBackToTheSpecificationProcess>(_ => _replyTommandGate.AwaitPassThrough());
          });
    }

@@ -1,6 +1,8 @@
 using Compze.Abstractions.Configuration.Internal;
 using Compze.Abstractions.Hosting.Public;
+using Compze.Contracts;
 using Compze.DependencyInjection;
+using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Transport;
 using Compze.Tessaging.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
 using Compze.Tessaging.Implementation;
@@ -30,10 +32,12 @@ namespace Compze.Tessaging.Hosting;
 /// which it composes): Tessaging contributes its request handling to that server rather than running a
 /// server of its own.
 ///
-/// Two registrations are guarded with <c>IsRegistered</c> so a hosting layer can pre-register its own before
-/// the feature is added: the in-flight tracker (a testing host supplies a real one to await quiescence; the
-/// default does nothing) and the <see cref="IEndpointRegistry"/> (a testing host lists its own endpoints; the
-/// default reads application configuration). The runtime lifecycle lives in
+/// How the endpoint finds other endpoints and is found by them is declared on the feature itself:
+/// <see cref="DiscoverEndpointsThrough"/> (the read side), <see cref="AnnounceAddressTo"/> (the write side), or
+/// <see cref="ParticipateIn{TRegistry}"/> (both at once, for a registry that has both faces — a same-machine
+/// suite's interprocess registry). One registration is guarded with <c>IsRegistered</c> so a hosting layer can
+/// pre-register its own before the feature is added: the in-flight tracker (a testing host supplies a real one
+/// to await quiescence; the default does nothing). The runtime lifecycle lives in
 /// <see cref="DistributedTessagingEndpointComponent"/>, and the endpoint's address is exposed as the
 /// <c>TessagingAddress</c> extension property (<see cref="EndpointTessagingExtensions"/>).
 ///</summary>
@@ -46,6 +50,7 @@ public class DistributedTessagingEndpointFeature
    public TessageHandlerRegistrarWithDependencyInjectionSupport RegisterHandlers { get; }
 
    readonly EndpointTransportServerFeature _transportServer;
+   IEndpointRegistry? _endpointRegistry;
 
    ///<summary>Declares that the endpoint announces where it listens to <paramref name="announcer"/> — see<br/>
    /// <see cref="EndpointTransportServerFeature.AnnounceAddressTo"/>, to which this delegates: the announced address is the<br/>
@@ -55,6 +60,24 @@ public class DistributedTessagingEndpointFeature
       _transportServer.AnnounceAddressTo(announcer);
       return this;
    }
+
+   ///<summary>Declares the registry through which this endpoint discovers the endpoints it converses with — the read side of discovery,<br/>
+   /// whose write side is <see cref="AnnounceAddressTo"/>. The endpoint's router keeps reconciling its connections against the<br/>
+   /// registry's membership. Declaring none means other endpoints' addresses come from application configuration<br/>
+   /// (<see cref="AppConfigEndpointRegistry"/>).</summary>
+   public DistributedTessagingEndpointFeature DiscoverEndpointsThrough(IEndpointRegistry registry)
+   {
+      State.Assert(_endpointRegistry is null, () => $"The endpoint already declared the registry it discovers endpoints through — an endpoint discovers through exactly one {nameof(IEndpointRegistry)}.");
+      _endpointRegistry = registry;
+      return this;
+   }
+
+   ///<summary>Declares that the endpoint participates in <paramref name="registry"/>: it discovers the other endpoints through it<br/>
+   /// (<see cref="DiscoverEndpointsThrough"/>) AND announces its own listening address to it (<see cref="AnnounceAddressTo"/>) —<br/>
+   /// the composition a same-machine application suite uses, where every process both finds the others and is found by them.<br/>
+   /// Declare the two sides separately instead when a deployment is asymmetric.</summary>
+   public DistributedTessagingEndpointFeature ParticipateIn<TRegistry>(TRegistry registry) where TRegistry : IEndpointRegistry, IEndpointAddressAnnouncer
+      => DiscoverEndpointsThrough(registry).AnnounceAddressTo(registry);
 
    internal DistributedTessagingEndpointFeature(IEndpointBuilder builder)
    {
@@ -69,11 +92,6 @@ public class DistributedTessagingEndpointFeature
          register.Register(Singleton.For<ITessagesInFlightTracker>().CreatedBy(() => new NullOpTessagesInFlightTracker()));
       }
 
-      if(!register.IsRegistered<IEndpointRegistry>())
-      {
-         register.Register(Singleton.For<IEndpointRegistry>().CreatedBy((IConfigurationParameterProvider configurationParameterProvider) => new AppConfigEndpointRegistry(configurationParameterProvider)));
-      }
-
       register.BackgroundExceptionReporter()
               .TaskRunner()
               .TessagingTransport()
@@ -84,8 +102,14 @@ public class DistributedTessagingEndpointFeature
               .ServiceBusSession();
 
       builder.OnContainerBuilt(resolver => TessageTypesInternal.RegisterInfrastructureQueryHandlers(
-                                  new InfrastructureQueryRegistrarWithDependencyInjectionSupport(resolver.Resolve<InfrastructureQueryExecutor>())));
+                                  new InfrastructureQueryRegistrarWithDependencyInjectionSupport(resolver.Resolve<InfrastructureQueryExecutor>()),
+                                  EndpointRegistry(resolver)));
 
-      builder.AddComponent(resolver => new DistributedTessagingEndpointComponent(resolver, _transportServer));
+      builder.AddComponent(resolver => new DistributedTessagingEndpointComponent(resolver, _transportServer, EndpointRegistry(resolver)));
    }
+
+   ///<summary>The registry the endpoint declared through <see cref="DiscoverEndpointsThrough"/>, or — when it declared none — the<br/>
+   /// fallback that reads other endpoints' addresses from application configuration.</summary>
+   IEndpointRegistry EndpointRegistry(IRootResolver resolver) =>
+      _endpointRegistry ??= new AppConfigEndpointRegistry(resolver.Resolve<IConfigurationParameterProvider>());
 }

@@ -1,9 +1,7 @@
 using Compze.Abstractions.Hosting.Public;
 using Compze.Abstractions.Tessaging.Public;
-using Compze.DependencyInjection;
 using Compze.Hosting.SameMachine;
 using Compze.Hosting.Testing;
-using Compze.Hosting.Testing.Wiring;
 using Compze.Tessaging.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
 using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Hosting.Testing.Wiring;
@@ -53,10 +51,9 @@ public class Given_two_hosts_sharing_an_interprocess_registry_where_the_receivin
    {
       builder.TypeMapper.RegisterIntegrationTestTypeMappings();
       builder.Registrar
-             .Register(Singleton.For<IEndpointRegistry>().Instance(_registry))
              .CurrentTestsTessagingTransport()
              .CurrentTestsConfiguredSqlLayer(connectionStringName: builder.Configuration.Id.ToString());
-      builder.AddDistributedTessaging().AnnounceAddressTo(_registry);
+      builder.AddDistributedTessaging().ParticipateIn(_registry);
    }
 
    protected override async Task InitializeAsyncInternal()

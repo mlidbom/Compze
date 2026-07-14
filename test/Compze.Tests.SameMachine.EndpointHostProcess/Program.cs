@@ -14,7 +14,6 @@ using Compze.Tessaging.Abstractions.Tessaging.Hosting.TessageHandling.Registrati
 using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Sqlite.Wiring;
 using Compze.Tessaging.Transport.NamedPipes;
-using Compze.TypeIdentifiers;
 using Compze.TypeIdentifiers.Interning.Sqlite.Wiring;
 
 namespace Compze.Tests.SameMachine.EndpointHostProcess;
@@ -47,14 +46,13 @@ public static class Program
 
                builder.Registrar
                       .Register(Singleton.For<IConfigurationParameterProvider>().CreatedBy(() => new SqliteDatabasePerConnectionStringNameConfigurationParameterProvider(workDirectory)))
-                      .Register(Singleton.For<IEndpointRegistry>().Instance(registry))
                       .NewtonsoftSerializers()
                       .NamedPipeTessagingTransport()
                       .SqliteConnectionPool("EndpointHostProcess")
                       .SqliteTypeIdInterner("EndpointHostProcess.TypeIdInterner")
                       .SqliteTessagingSqlLayer();
 
-               builder.AddDistributedTessaging().AnnounceAddressTo(registry);
+               builder.AddDistributedTessaging().ParticipateIn(registry);
 
                builder.RegisterTessagingHandlers.ForTommand<TommandSentToTheEndpointHostProcess, IServiceBusSession>(
                   (_, serviceBusSession) => serviceBusSession.Send(new TommandSentBackToTheSpecificationProcess()));
