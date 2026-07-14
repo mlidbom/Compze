@@ -4,10 +4,11 @@ using Compze.Threading;
 
 namespace Compze.Internals.Sql.MicrosoftSql.Private;
 
-// Creates every configured feature backend's schema in a single suppressed-transaction batch on first touch.
-// The scripts are supplied by the composition that knows which backends are present, so the plumbing never
-// references a feature backend. Creating all tables together up front (before any business transaction takes a
-// lock) is what keeps schema creation off the hot path of a write/read-locked transaction.
+///<summary>Runs the supplied schema-creation scripts against its database as a single suppressed-transaction batch — exactly once, on first touch.</summary>
+///<remarks>For the endpoint's database the scripts arrive as <see cref="MsSqlSchemaContribution"/>s, each feature backend's registration<br/>
+/// contributing its own — so neither this plumbing nor any composing layer references or enumerates the feature backends.<br/>
+/// Creating all tables together up front (before any business transaction takes a lock) is what keeps schema creation off the<br/>
+/// hot path of a write/read-locked transaction.</remarks>
 class MsSqlSqlLayerSchemaManager
 {
    readonly IMsSqlConnectionPool _connectionPool;

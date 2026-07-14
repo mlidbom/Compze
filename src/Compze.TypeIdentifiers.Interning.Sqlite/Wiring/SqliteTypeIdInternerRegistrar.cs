@@ -8,8 +8,6 @@ namespace Compze.TypeIdentifiers.Interning.Sqlite.Wiring;
 
 public static class SqliteTypeIdInternerRegistrar
 {
-   public static string SchemaCreationSql => SqliteTypeIdInternerPersistence.SchemaCreationSql;
-
    /// <summary>
    /// Wires the SQLite type-id interner against its own database, reached through
    /// <paramref name="internerConnectionStringName"/>. On SQLite the interner always uses a database separate from

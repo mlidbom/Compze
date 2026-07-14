@@ -172,7 +172,6 @@ host.RegisterEndpoint("BackgroundWorker", new EndpointId(Guid.Parse("...")), bui
           .NamedPipeInfrastructureQueryTransport()
           .NamedPipeTessagingTransport()
           .SqliteConnectionPool("BackgroundWorker")
-          .SqliteSqlLayerSchemaManager([SqliteTessagingRegistrar.SchemaCreationSql])
           .SqliteTypeIdInterner("BackgroundWorker.TypeIdInterner")
           .SqliteTessagingSqlLayer();
 
@@ -188,7 +187,9 @@ The registry appears twice because it has two faces, and the composition states 
 `IEndpointRegistry` registration is the *read* side the router reconciles against; `AnnounceAddressTo` is the
 *write* side the endpoint's lifecycle drives. No address, port, or connection string appears anywhere — the
 pipe names are generated, the announcements distribute them, and the connection strings resolve to sqlite
-files in the process's data directory.
+files in the process's data directory. No schema setup appears either: each sql-layer feature contributes its
+own schema-creation SQL as part of registering itself, and all of it runs as one batch before the database's
+first use.
 
 ## Proven across real process boundaries
 

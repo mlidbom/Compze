@@ -3,6 +3,7 @@ using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Sql.Sqlite;
 using Compze.Internals.Sql.Sqlite.Private;
+using Compze.Internals.Sql.Sqlite.Wiring;
 using Compze.TypeIdentifiers.Interning;
 using Layer = Compze.Tessaging.Teventive.TeventStore.Sqlite.SqliteTeventStoreSqlLayer;
 
@@ -10,10 +11,9 @@ namespace Compze.Tessaging.Teventive.TeventStore.Sqlite.Wiring;
 
 public static class SqliteTeventStoreRegistrar
 {
-   public static string SchemaCreationSql => Layer.SchemaCreationSql;
-
    public static IComponentRegistrar SqliteTeventStoreSqlLayer(this IComponentRegistrar registrar) =>
-      registrar.Register(
+      registrar.SqliteSchemaContribution(Layer.SchemaCreationSql)
+               .Register(
          Singleton.For<SqliteTeventStoreConnectionManager>()
                   .CreatedBy((ISqliteConnectionPool sqlConnectionProvider) => new SqliteTeventStoreConnectionManager(sqlConnectionProvider)),
          Singleton.For<ITeventStoreSqlLayer>()

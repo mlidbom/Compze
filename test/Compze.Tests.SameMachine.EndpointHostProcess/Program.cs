@@ -53,7 +53,6 @@ public static class Program
                       .NamedPipeInfrastructureQueryTransport()
                       .NamedPipeTessagingTransport()
                       .SqliteConnectionPool("EndpointHostProcess")
-                      .SqliteSqlLayerSchemaManager([SqliteTessagingRegistrar.SchemaCreationSql])
                       .SqliteTypeIdInterner("EndpointHostProcess.TypeIdInterner")
                       .SqliteTessagingSqlLayer();
 

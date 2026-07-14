@@ -44,35 +44,30 @@ public static class TestingComponentRegistrarSqlLayer
       {
          case SqlLayer.MsSql:
             return @this.MsSqlConnectionPool(connectionStringName)
-                        .MsSqlSqlLayerSchemaManager([MsSqlTypeIdInternerRegistrar.SchemaCreationSql, MsSqlDocumentDbRegistrar.SchemaCreationSql, MsSqlTessagingRegistrar.SchemaCreationSql, MsSqlTeventStoreRegistrar.SchemaCreationSql])
                         .MsSqlTypeIdInterner()
                         .MsSqlDocumentDbSqlLayer()
                         .MsSqlTessagingSqlLayer()
                         .MsSqlTeventStoreSqlLayer();
          case SqlLayer.MySql:
             return @this.MySqlConnectionPool(connectionStringName)
-                        .MySqlSqlLayerSchemaManager([MySqlTypeIdInternerRegistrar.SchemaCreationSql, MySqlDocumentDbRegistrar.SchemaCreationSql, MySqlTessagingRegistrar.SchemaCreationSql, MySqlTeventStoreRegistrar.SchemaCreationSql])
                         .MySqlTypeIdInterner()
                         .MySqlDocumentDbSqlLayer()
                         .MySqlTessagingSqlLayer()
                         .MySqlTeventStoreSqlLayer();
          case SqlLayer.PgSql:
             return @this.PgSqlConnectionPoolIfNotAlreadyRegistered(connectionStringName)
-                        .PgSqlSqlLayerSchemaManager([PgSqlTypeIdInternerRegistrar.SchemaCreationSql, PgSqlDocumentDbRegistrar.SchemaCreationSql, PgSqlTessagingRegistrar.SchemaCreationSql, PgSqlTeventStoreRegistrar.SchemaCreationSql])
                         .PgSqlTypeIdInterner()
                         .PgSqlDocumentDbSqlLayer()
                         .PgSqlTessagingSqlLayer()
                         .PgSqlTeventStoreSqlLayer();
          case SqlLayer.Sqlite:
             return @this.SqliteConnectionPool(connectionStringName)
-                        .SqliteSqlLayerSchemaManager([SqliteDocumentDbRegistrar.SchemaCreationSql, SqliteTessagingRegistrar.SchemaCreationSql, SqliteTeventStoreRegistrar.SchemaCreationSql])
                         .SqliteTypeIdInterner($"{connectionStringName}.TypeIdInterner")
                         .SqliteDocumentDbSqlLayer()
                         .SqliteTessagingSqlLayer()
                         .SqliteTeventStoreSqlLayer();
          case SqlLayer.SqliteMemory:
             return @this.SqliteMemoryConnectionPool(connectionStringName)
-                        .SqliteSqlLayerSchemaManager([SqliteDocumentDbRegistrar.SchemaCreationSql, SqliteTessagingRegistrar.SchemaCreationSql, SqliteTeventStoreRegistrar.SchemaCreationSql])
                         .SqliteTypeIdInterner($"{connectionStringName}.TypeIdInterner")
                         .SqliteDocumentDbSqlLayer()
                         .SqliteTessagingSqlLayer()
