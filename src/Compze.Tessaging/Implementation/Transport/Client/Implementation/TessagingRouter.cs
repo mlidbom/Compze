@@ -15,7 +15,7 @@ using Compze.Internals.SystemCE.ReflectionCE;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Threading;
 
-namespace Compze.Tessaging.Implementation.Transport.Client.Implementation.Universal;
+namespace Compze.Tessaging.Implementation.Transport.Client.Implementation;
 
 static class TessagingTransportRegistrar
 {

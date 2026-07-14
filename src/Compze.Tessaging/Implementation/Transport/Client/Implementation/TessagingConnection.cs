@@ -11,7 +11,7 @@ using Compze.Internals.Logging;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Threading.ResourceAccess;
 
-namespace Compze.Tessaging.Implementation.Transport.Client.Implementation.Universal;
+namespace Compze.Tessaging.Implementation.Transport.Client.Implementation;
 
 class TessagingConnection(
    ITessagesInFlightTracker tessagesInFlightTracker,
