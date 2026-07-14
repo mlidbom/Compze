@@ -1,19 +1,16 @@
 using Compze.Abstractions.Hosting.Public;
 using Compze.DependencyInjection.Abstractions;
-using Compze.Internals.Sql.MicrosoftSql;
-using Compze.Internals.Sql.MicrosoftSql.Wiring;
 
-namespace Compze.TypeIdentifiers.Interning.MicrosoftSql.Wiring;
+namespace Compze.Internals.Sql.MicrosoftSql.Wiring;
 
 public static class MsSqlEndpointDatabaseRegistrar
 {
    ///<summary>Declares the endpoint's database: the SQL Server database reached through <paramref name="connectionStringName"/> —<br/>
-   /// the connection pool every sql-layer feature the endpoint adds stores its data through — plus the type-id interner, which on<br/>
-   /// SQL Server lives in that same database. Each sql-layer feature contributes its own schema, created before the database's<br/>
-   /// first use — this one declaration is all the persistence wiring an endpoint needs before adding its sql-layer features.</summary>
+   /// the connection pool every sql-layer feature the endpoint adds stores its data through. Each sql-layer feature contributes<br/>
+   /// its own schema, created before the database's first use, and demands the type-id interner it shares with the others itself —<br/>
+   /// this one declaration is all the persistence wiring an endpoint needs before adding its sql-layer features.</summary>
    public static IComponentRegistrar MsSqlEndpointDatabase(this IComponentRegistrar registrar, string connectionStringName) =>
-      registrar.MsSqlConnectionPool(connectionStringName)
-               .MsSqlTypeIdInterner();
+      registrar.MsSqlConnectionPool(connectionStringName);
 
    extension(EndpointFoundation @this)
    {

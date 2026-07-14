@@ -36,4 +36,11 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_TypeIdentifiers_Interning)' != 'true'">
     <ProjectReference Include="..\Compze.TypeIdentifiers.Interning\Compze.TypeIdentifiers.Interning.csproj" />
   </ItemGroup>
+  <!-- Compze.TypeIdentifiers.Interning.PostgreSql — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_TypeIdentifiers_Interning_PostgreSql)' == 'true'">
+    <PackageReference Include="Compze.TypeIdentifiers.Interning.PostgreSql" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_TypeIdentifiers_Interning_PostgreSql)' != 'true'">
+    <ProjectReference Include="..\Compze.TypeIdentifiers.Interning.PostgreSql\Compze.TypeIdentifiers.Interning.PostgreSql.csproj" />
+  </ItemGroup>
 </Project>

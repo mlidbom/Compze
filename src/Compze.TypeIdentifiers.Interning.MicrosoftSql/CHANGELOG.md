@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## Unreleased
 
-- `MsSqlEndpointPersistence` is renamed `MsSqlEndpointDatabase` — it declares the endpoint's database (connection pool + type-id interner), not any feature's persistence — and gains the composition form on `ComposeEndpoint`'s foundation, returning `EndpointFoundation<MsSqlEndpointDatabase>`.
+- `MsSqlEndpointPersistence` is gone. The endpoint-database declaration (`MsSqlEndpointDatabase`) lives in `Compze.Internals.Sql.MicrosoftSql`, and this package is purely the interner again — the sql-layer features demand `MsSqlTypeIdInterner()` themselves, so interner wiring vanishes from composing layers.
 
 ## 0.1.0-alpha
 

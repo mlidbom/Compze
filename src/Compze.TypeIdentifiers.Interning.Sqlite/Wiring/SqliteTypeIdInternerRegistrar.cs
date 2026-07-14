@@ -8,6 +8,13 @@ namespace Compze.TypeIdentifiers.Interning.Sqlite.Wiring;
 
 public static class SqliteTypeIdInternerRegistrar
 {
+   ///<summary>Wires the SQLite type-id interner for the endpoint's declared database (<paramref name="endpointDatabase"/>): the<br/>
+   /// interner's own database is named "«endpoint-database-name».TypeIdInterner" — this is where that naming convention lives.<br/>
+   /// The sqlite feature pairings call this with the foundation's declaration; use the name-taking overload directly to share<br/>
+   /// one interner database between endpoints.</summary>
+   public static IComponentRegistrar SqliteTypeIdInterner(this IComponentRegistrar registrar, SqliteEndpointDatabase endpointDatabase) =>
+      registrar.SqliteTypeIdInterner($"{endpointDatabase.ConnectionStringName}.TypeIdInterner");
+
    /// <summary>
    /// Wires the SQLite type-id interner against its own database, reached through
    /// <paramref name="internerConnectionStringName"/>. On SQLite the interner always uses a database separate from

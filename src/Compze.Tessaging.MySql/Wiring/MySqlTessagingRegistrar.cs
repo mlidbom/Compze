@@ -7,6 +7,7 @@ using Compze.Internals.Sql.MySql.Wiring;
 using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Transport.SqlLayer;
 using Compze.TypeIdentifiers.Interning;
+using Compze.TypeIdentifiers.Interning.MySql.Wiring;
 
 namespace Compze.Tessaging.MySql.Wiring;
 
@@ -27,7 +28,8 @@ public static class MySqlTessagingRegistrar
    }
 
    public static IComponentRegistrar MySqlTessagingSqlLayer(this IComponentRegistrar registrar) =>
-      registrar.MySqlSchemaContribution(MySqlInboxSqlLayer.SchemaCreationSql)
+      registrar.MySqlTypeIdInterner()
+               .MySqlSchemaContribution(MySqlInboxSqlLayer.SchemaCreationSql)
                .MySqlSchemaContribution(MySqlOutboxSqlLayer.SchemaCreationSql)
                .Register(
          Singleton.For<IServiceBusSqlLayer.IOutboxSqlLayer>()

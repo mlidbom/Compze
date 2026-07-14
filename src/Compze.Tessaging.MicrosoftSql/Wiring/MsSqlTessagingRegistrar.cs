@@ -7,6 +7,7 @@ using Compze.Internals.Sql.MicrosoftSql.Wiring;
 using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Transport.SqlLayer;
 using Compze.TypeIdentifiers.Interning;
+using Compze.TypeIdentifiers.Interning.MicrosoftSql.Wiring;
 
 namespace Compze.Tessaging.MicrosoftSql.Wiring;
 
@@ -27,7 +28,8 @@ public static class MsSqlTessagingRegistrar
    }
 
    public static IComponentRegistrar MsSqlTessagingSqlLayer(this IComponentRegistrar registrar) =>
-      registrar.MsSqlSchemaContribution(MsSqlInboxSqlLayer.SchemaCreationSql)
+      registrar.MsSqlTypeIdInterner()
+               .MsSqlSchemaContribution(MsSqlInboxSqlLayer.SchemaCreationSql)
                .MsSqlSchemaContribution(MsSqlOutboxSqlLayer.SchemaCreationSql)
                .Register(
          Singleton.For<IServiceBusSqlLayer.IOutboxSqlLayer>()

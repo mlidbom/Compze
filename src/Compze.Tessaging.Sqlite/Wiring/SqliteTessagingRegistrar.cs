@@ -7,6 +7,7 @@ using Compze.Internals.Sql.Sqlite.Wiring;
 using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Transport.SqlLayer;
 using Compze.TypeIdentifiers.Interning;
+using Compze.TypeIdentifiers.Interning.Sqlite.Wiring;
 
 namespace Compze.Tessaging.Sqlite.Wiring;
 
@@ -15,12 +16,14 @@ public static class SqliteTessagingRegistrar
    extension(EndpointFoundation<SqliteEndpointDatabase> @this)
    {
       ///<summary>Adds distributed Tessaging to an endpoint whose database is sqlite: registers Tessaging's inbox/outbox sql layers<br/>
-      /// (<see cref="SqliteTessagingSqlLayer"/>) in the endpoint's database, runs <paramref name="compose"/> to fill the feature's<br/>
-      /// slots (e.g. the serializer), and adds the feature. The compiler routes this pairing through the foundation's type —<br/>
-      /// Tessaging-on-sqlite exists only for an endpoint whose foundation declares a sqlite database.</summary>
+      /// (<see cref="SqliteTessagingSqlLayer"/>) in the endpoint's database — plus the sqlite type-id interner the sql layers<br/>
+      /// share, derived from the foundation's declaration — runs <paramref name="compose"/> to fill the feature's slots (e.g. the<br/>
+      /// serializer), and adds the feature. The compiler routes this pairing through the foundation's type — Tessaging-on-sqlite<br/>
+      /// exists only for an endpoint whose foundation declares a sqlite database.</summary>
       public DistributedTessagingEndpointFeature AddDistributedTessaging(Action<DistributedTessagingComposition> compose)
       {
-         @this.Builder.Registrar.SqliteTessagingSqlLayer();
+         @this.Builder.Registrar.SqliteTypeIdInterner(@this.Database)
+                                .SqliteTessagingSqlLayer();
          compose(new DistributedTessagingComposition(@this.Builder.Registrar));
          return @this.Builder.AddDistributedTessaging();
       }

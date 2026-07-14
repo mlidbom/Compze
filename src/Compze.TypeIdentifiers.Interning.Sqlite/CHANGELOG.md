@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## Unreleased
 
-- `SqliteEndpointPersistence` is renamed `SqliteEndpointDatabase` — it declares the endpoint's database (connection pool + type-id interner), not any feature's persistence — and gains the composition form on `ComposeEndpoint`'s foundation, returning `EndpointFoundation<SqliteEndpointDatabase>`.
+- `SqliteEndpointPersistence` is gone. The endpoint-database declaration (`SqliteEndpointDatabase`) lives in `Compze.Internals.Sql.Sqlite`, and this package is purely the interner again. New: `SqliteTypeIdInterner(SqliteEndpointDatabase)` derives the interner's own database name ("«endpoint-database-name».TypeIdInterner") from the endpoint's declaration — the one home of that naming convention; the sqlite feature pairings call it with the foundation's declaration.
 
 ## 0.1.0-alpha
 

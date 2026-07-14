@@ -11,8 +11,8 @@ using Compze.Hosting.SameMachine;
 using Compze.Internals.Serialization.Newtonsoft.Wiring;
 using Compze.Internals.Transport.NamedPipes;
 using Compze.Tessaging.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
+using Compze.Internals.Sql.Sqlite.Wiring;
 using Compze.Tessaging.Sqlite.Wiring;
-using Compze.TypeIdentifiers.Interning.Sqlite.Wiring;
 
 namespace Compze.Tests.SameMachine.EndpointHostProcess;
 

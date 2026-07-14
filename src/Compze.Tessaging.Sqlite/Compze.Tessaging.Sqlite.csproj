@@ -36,4 +36,11 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_TypeIdentifiers_Interning)' != 'true'">
     <ProjectReference Include="..\Compze.TypeIdentifiers.Interning\Compze.TypeIdentifiers.Interning.csproj" />
   </ItemGroup>
+  <!-- Compze.TypeIdentifiers.Interning.Sqlite — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_TypeIdentifiers_Interning_Sqlite)' == 'true'">
+    <PackageReference Include="Compze.TypeIdentifiers.Interning.Sqlite" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_TypeIdentifiers_Interning_Sqlite)' != 'true'">
+    <ProjectReference Include="..\Compze.TypeIdentifiers.Interning.Sqlite\Compze.TypeIdentifiers.Interning.Sqlite.csproj" />
+  </ItemGroup>
 </Project>

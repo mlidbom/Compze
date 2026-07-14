@@ -32,4 +32,11 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_TypeIdentifiers_Interning)' != 'true'">
     <ProjectReference Include="..\Compze.TypeIdentifiers.Interning\Compze.TypeIdentifiers.Interning.csproj" />
   </ItemGroup>
+  <!-- Compze.TypeIdentifiers.Interning.MySql — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_TypeIdentifiers_Interning_MySql)' == 'true'">
+    <PackageReference Include="Compze.TypeIdentifiers.Interning.MySql" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_TypeIdentifiers_Interning_MySql)' != 'true'">
+    <ProjectReference Include="..\Compze.TypeIdentifiers.Interning.MySql\Compze.TypeIdentifiers.Interning.MySql.csproj" />
+  </ItemGroup>
 </Project>

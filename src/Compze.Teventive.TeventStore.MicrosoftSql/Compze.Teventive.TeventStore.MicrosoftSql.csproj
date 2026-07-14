@@ -32,4 +32,11 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_TypeIdentifiers_Interning)' != 'true'">
     <ProjectReference Include="..\Compze.TypeIdentifiers.Interning\Compze.TypeIdentifiers.Interning.csproj" />
   </ItemGroup>
+  <!-- Compze.TypeIdentifiers.Interning.MicrosoftSql — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_TypeIdentifiers_Interning_MicrosoftSql)' == 'true'">
+    <PackageReference Include="Compze.TypeIdentifiers.Interning.MicrosoftSql" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_TypeIdentifiers_Interning_MicrosoftSql)' != 'true'">
+    <ProjectReference Include="..\Compze.TypeIdentifiers.Interning.MicrosoftSql\Compze.TypeIdentifiers.Interning.MicrosoftSql.csproj" />
+  </ItemGroup>
 </Project>

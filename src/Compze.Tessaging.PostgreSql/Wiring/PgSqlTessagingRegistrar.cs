@@ -7,6 +7,7 @@ using Compze.Internals.Sql.PostgreSql.Wiring;
 using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Transport.SqlLayer;
 using Compze.TypeIdentifiers.Interning;
+using Compze.TypeIdentifiers.Interning.PostgreSql.Wiring;
 
 namespace Compze.Tessaging.PostgreSql.Wiring;
 
@@ -27,7 +28,8 @@ public static class PgSqlTessagingRegistrar
    }
 
    public static IComponentRegistrar PgSqlTessagingSqlLayer(this IComponentRegistrar registrar) =>
-      registrar.PgSqlSchemaContribution(PgSqlInboxSqlLayer.SchemaCreationSql)
+      registrar.PgSqlTypeIdInterner()
+               .PgSqlSchemaContribution(PgSqlInboxSqlLayer.SchemaCreationSql)
                .PgSqlSchemaContribution(PgSqlOutboxSqlLayer.SchemaCreationSql)
                .Register(
          Singleton.For<IServiceBusSqlLayer.IOutboxSqlLayer>()

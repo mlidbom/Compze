@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## Unreleased
 
-- `MsSqlEndpointDatabase`: the declaration that an endpoint's database is SQL Server, carried by `EndpointFoundation<MsSqlEndpointDatabase>` so the features added on the foundation bind their SQL Server sql layers through the compiler.
+- `MsSqlEndpointDatabase`: the declaration that an endpoint's database is SQL Server, carried by `EndpointFoundation<MsSqlEndpointDatabase>` so the features added on the foundation bind their SQL Server sql layers through the compiler. The declaration itself lives here too — `MsSqlEndpointDatabase(connectionStringName)` and its `ComposeEndpoint` composition form register the endpoint's connection pool; the sql-layer features wire their shared infrastructure (the type-id interner) themselves.
 
 ## 0.2.1-alpha
 

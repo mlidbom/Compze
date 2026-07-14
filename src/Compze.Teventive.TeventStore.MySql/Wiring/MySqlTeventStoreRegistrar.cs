@@ -5,6 +5,7 @@ using Compze.Internals.Sql.MySql;
 using Compze.Internals.Sql.MySql.Private;
 using Compze.Internals.Sql.MySql.Wiring;
 using Compze.TypeIdentifiers.Interning;
+using Compze.TypeIdentifiers.Interning.MySql.Wiring;
 using Layer = Compze.Tessaging.Teventive.TeventStore.MySql.MySqlTeventStoreSqlLayer;
 
 namespace Compze.Tessaging.Teventive.TeventStore.MySql.Wiring;
@@ -12,7 +13,8 @@ namespace Compze.Tessaging.Teventive.TeventStore.MySql.Wiring;
 public static class MySqlTeventStoreRegistrar
 {
    public static IComponentRegistrar MySqlTeventStoreSqlLayer(this IComponentRegistrar registrar) =>
-      registrar.MySqlSchemaContribution(Layer.SchemaCreationSql)
+      registrar.MySqlTypeIdInterner()
+               .MySqlSchemaContribution(Layer.SchemaCreationSql)
                .Register(
          Singleton.For<MySqlTeventStoreConnectionManager>()
                   .CreatedBy((IMySqlConnectionPool sqlConnectionProvider) => new MySqlTeventStoreConnectionManager(sqlConnectionProvider)),

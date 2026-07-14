@@ -1,4 +1,7 @@
 using Compze.Abstractions.Wiring.Testing.Internal;
+using Compze.Internals.Sql.MicrosoftSql.Wiring;
+using Compze.Internals.Sql.MySql.Wiring;
+using Compze.Internals.Sql.PostgreSql.Wiring;
 using Compze.Internals.Sql.Sqlite.Wiring;
 using Compze.DocumentDb.MicrosoftSql.Wiring;
 using Compze.DocumentDb.MySql.Wiring;
@@ -14,9 +17,6 @@ using Compze.Tessaging.Teventive.TeventStore.MicrosoftSql.Wiring;
 using Compze.Tessaging.Teventive.TeventStore.MySql.Wiring;
 using Compze.Tessaging.Teventive.TeventStore.PostgreSql.Wiring;
 using Compze.Tessaging.Teventive.TeventStore.Sqlite.Wiring;
-using Compze.TypeIdentifiers.Interning.MicrosoftSql.Wiring;
-using Compze.TypeIdentifiers.Interning.MySql.Wiring;
-using Compze.TypeIdentifiers.Interning.PostgreSql.Wiring;
 using Compze.TypeIdentifiers.Interning.Sqlite.Wiring;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE;
@@ -35,38 +35,31 @@ public static class TestingComponentRegistrarSqlLayer
       register.CastTo<TestingComponentRegistrar>()
               .CurrentTestsConfiguredSqlLayer(connectionStringName);
 
-   static IComponentRegistrar CurrentTestsConfiguredSqlLayer(this TestingComponentRegistrar @this, string connectionStringName)
-   {
-      switch(TestEnv.SqlLayer)
+   static IComponentRegistrar CurrentTestsConfiguredSqlLayer(this TestingComponentRegistrar @this, string connectionStringName) =>
+      TestEnv.SqlLayer switch
       {
-         case SqlLayer.MsSql:
-            return @this.MsSqlEndpointDatabase(connectionStringName)
-                        .MsSqlDocumentDbSqlLayer()
-                        .MsSqlTessagingSqlLayer()
-                        .MsSqlTeventStoreSqlLayer();
-         case SqlLayer.MySql:
-            return @this.MySqlEndpointDatabase(connectionStringName)
-                        .MySqlDocumentDbSqlLayer()
-                        .MySqlTessagingSqlLayer()
-                        .MySqlTeventStoreSqlLayer();
-         case SqlLayer.PgSql:
-            return @this.PgSqlEndpointDatabase(connectionStringName)
-                        .PgSqlDocumentDbSqlLayer()
-                        .PgSqlTessagingSqlLayer()
-                        .PgSqlTeventStoreSqlLayer();
-         case SqlLayer.Sqlite:
-            return @this.SqliteEndpointDatabase(connectionStringName)
-                        .SqliteDocumentDbSqlLayer()
-                        .SqliteTessagingSqlLayer()
-                        .SqliteTeventStoreSqlLayer();
-         case SqlLayer.SqliteMemory:
-            return @this.SqliteMemoryConnectionPool(connectionStringName)
-                        .SqliteTypeIdInterner($"{connectionStringName}.TypeIdInterner")
-                        .SqliteDocumentDbSqlLayer()
-                        .SqliteTessagingSqlLayer()
-                        .SqliteTeventStoreSqlLayer();
-         default:
-            throw new ArgumentOutOfRangeException();
-      }
-   }
+         SqlLayer.MsSql => @this.MsSqlEndpointDatabase(connectionStringName)
+                                .MsSqlDocumentDbSqlLayer()
+                                .MsSqlTessagingSqlLayer()
+                                .MsSqlTeventStoreSqlLayer(),
+         SqlLayer.MySql => @this.MySqlEndpointDatabase(connectionStringName)
+                                .MySqlDocumentDbSqlLayer()
+                                .MySqlTessagingSqlLayer()
+                                .MySqlTeventStoreSqlLayer(),
+         SqlLayer.PgSql => @this.PgSqlEndpointDatabase(connectionStringName)
+                                .PgSqlDocumentDbSqlLayer()
+                                .PgSqlTessagingSqlLayer()
+                                .PgSqlTeventStoreSqlLayer(),
+         SqlLayer.Sqlite => @this.SqliteEndpointDatabase(connectionStringName)
+                                 .SqliteTypeIdInterner($"{connectionStringName}.TypeIdInterner")
+                                 .SqliteDocumentDbSqlLayer()
+                                 .SqliteTessagingSqlLayer()
+                                 .SqliteTeventStoreSqlLayer(),
+         SqlLayer.SqliteMemory => @this.SqliteMemoryConnectionPool(connectionStringName)
+                                       .SqliteTypeIdInterner($"{connectionStringName}.TypeIdInterner")
+                                       .SqliteDocumentDbSqlLayer()
+                                       .SqliteTessagingSqlLayer()
+                                       .SqliteTeventStoreSqlLayer(),
+         _ => throw new ArgumentOutOfRangeException()
+      };
 }
