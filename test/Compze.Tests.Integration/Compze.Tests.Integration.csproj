@@ -16,6 +16,11 @@
     </PackageReference>
     <PackageReference Include="xunit.v3" Version="3.1.0" />
   </ItemGroup>
+  <ItemGroup>
+    <!-- Not a flex reference: the endpoint host process is unpackable test infrastructure, referenced so the multi-process
+         specifications can locate its built executable and share its tessage types. -->
+    <ProjectReference Include="..\Compze.Tests.SameMachine.EndpointHostProcess\Compze.Tests.SameMachine.EndpointHostProcess.csproj" />
+  </ItemGroup>
   <!-- Compze.Contracts — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Contracts)' == 'true'">
     <PackageReference Include="Compze.Contracts" Version="*-*" />
@@ -127,5 +132,12 @@
   </ItemGroup>
   <ItemGroup Condition="'$(UsePackageReference_Compze_Underscore)' != 'true'">
     <ProjectReference Include="..\..\src\Compze.Underscore\Compze.Underscore.csproj" />
+  </ItemGroup>
+  <!-- Compze.xUnitBDD — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_xUnitBDD)' == 'true'">
+    <PackageReference Include="Compze.xUnitBDD" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_xUnitBDD)' != 'true'">
+    <ProjectReference Include="..\..\src\Compze.xUnitBDD\Compze.xUnitBDD.csproj" />
   </ItemGroup>
 </Project>

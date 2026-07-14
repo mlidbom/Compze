@@ -70,10 +70,42 @@ public abstract class DependencyInjectionContainer : IDependencyInjectionContain
       IRootResolver parentRootResolver = (IRootResolver)this;
       var childBuilder = CreateConcreteBuilder(_sourceRegistrar.Clone());
 
-      _registrations
-        .ForEach(action: registration => childBuilder.Registrar.Register(registration.CreateChildRegistration(parentRootResolver)));
+      _registrations.Where(it => !it.IsComponentSetMember)
+                    .ForEach(registration => childBuilder.Registrar.Register(registration.CreateChildRegistration(parentRootResolver)));
+
+      _registrations.Where(it => it.IsComponentSetMember)
+                    .GroupBy(it => it.ServiceTypes.Single())
+                    .ForEach(RegisterComponentSetInChild);
 
       return childBuilder;
+
+      void RegisterComponentSetInChild(IGrouping<Type, ComponentRegistration> setMembers)
+      {
+         if(setMembers.All(it => it.Lifestyle != Lifestyle.Singleton))
+         {
+            // Non-singleton set members follow the same child semantics as their singular counterparts: the registration is copied and the child creates fresh instances.
+            setMembers.ForEach(member => childBuilder.Registrar.Register(member.CreateChildRegistration(parentRootResolver)));
+            return;
+         }
+
+         if(setMembers.Any(it => it.Lifestyle != Lifestyle.Singleton))
+            throw new InvalidOperationException(
+               $"Component set '{setMembers.Key.FullName}' mixes {Lifestyle.Singleton} members with other lifestyles. "
+             + "A child container fetches the parent's singleton set members through ResolveSet, which would also instantiate the set's non-singleton members from the root scope, "
+             + "so such a set cannot cross into a child container. Register the set's members with a single lifestyle.");
+
+         // Singleton set members delegate to the parent like every other singleton — same instances, not disposed by the child.
+         // Singular resolution is forbidden for a component set's service type, so the parent's whole set is resolved once and
+         // handed out one instance per member registration. Which instance lands on which member registration is unobservable —
+         // the child's set contains exactly the parent's instances either way.
+         var parentInstances = ResolveSet(setMembers.Key).ToList();
+         var memberRegistrations = setMembers.ToList();
+         Contract.State.Assert(parentInstances.Count == memberRegistrations.Count,
+            () => $"Component set '{setMembers.Key.FullName}' resolved {parentInstances.Count} instances for its {memberRegistrations.Count} member registrations.");
+
+         memberRegistrations.Zip(parentInstances)
+                            .ForEach(pair => childBuilder.Registrar.Register(pair.First.CreateChildRegistrationDelegatingToParentInstance(pair.Second)));
+      }
    }
 
    protected abstract ContainerBuilder CreateConcreteBuilder(IComponentRegistrar registrar);

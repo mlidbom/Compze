@@ -41,6 +41,17 @@ public class DistributedTessagingEndpointFeature
 {
    public TessageHandlerRegistrarWithDependencyInjectionSupport RegisterHandlers { get; }
 
+   readonly List<IEndpointAddressAnnouncer> _addressAnnouncers = [];
+
+   ///<summary>Declares that the endpoint announces where its inbox listens to <paramref name="announcer"/> — the final act of starting<br/>
+   /// to listen, retracted as the first act of stopping, so an announced address is always one that is actually listening.<br/>
+   /// An endpoint announces to every announcer declared; declaring none means the endpoint is found some other way (a static registry, configuration).</summary>
+   public DistributedTessagingEndpointFeature AnnounceAddressTo(IEndpointAddressAnnouncer announcer)
+   {
+      _addressAnnouncers.Add(announcer);
+      return this;
+   }
+
    internal DistributedTessagingEndpointFeature(IEndpointBuilder builder)
    {
       var register = builder.Registrar;
@@ -70,6 +81,6 @@ public class DistributedTessagingEndpointFeature
       builder.OnContainerBuilt(resolver => TessageTypesInternal.RegisterInfrastructureQueryHandlers(
                                   new InfrastructureQueryRegistrarWithDependencyInjectionSupport(resolver.Resolve<InfrastructureQueryExecutor>())));
 
-      builder.AddComponent(resolver => new DistributedTessagingEndpointComponent(resolver));
+      builder.AddComponent(resolver => new DistributedTessagingEndpointComponent(resolver, _addressAnnouncers));
    }
 }

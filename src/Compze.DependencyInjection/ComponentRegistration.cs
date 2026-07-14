@@ -51,6 +51,19 @@ public abstract class ComponentRegistration
    internal abstract ComponentRegistration CreateCloneRegistration(IRootResolver currentRootResolver);
    internal abstract ComponentRegistration CreateChildRegistration(IRootResolver parentRootResolver);
 
+   /// <summary>
+   /// The child-container registration for a singleton component set member: it wraps <paramref name="parentInstance"/> —
+   /// same instance as the parent's, not disposed by the child — just like <see cref="CreateChildRegistration"/> does for a
+   /// singular singleton.
+   /// </summary>
+   /// <remarks>
+   /// A separate method because a set member cannot fetch its own instance the way a singular singleton can: singular
+   /// resolution is forbidden for a component set's service type, so
+   /// <see cref="DependencyInjectionContainer.CreateChildContainerBuilder"/> resolves the parent's whole set once and hands
+   /// each member registration one instance from it through this method.
+   /// </remarks>
+   internal abstract ComponentRegistration CreateChildRegistrationDelegatingToParentInstance(object parentInstance);
+
    readonly List<ComponentRegistration> _associatedRegistrations = [];
 
    /// <summary>
@@ -101,6 +114,9 @@ public class ComponentRegistration<TService> : ComponentRegistration where TServ
    {
       if(Lifestyle == Lifestyle.Singleton)
       {
+         Contract.State.Assert(!IsComponentSetMember,
+            () => $"A singleton component set member cannot resolve its parent instance singularly — the child container creation must hand it one via {nameof(CreateChildRegistrationDelegatingToParentInstance)}.");
+
          // Child containers delegate ALL singletons to the parent — same instance, not disposed by child.
          return new ComponentRegistration<TService>(
             lifestyle: Lifestyle.Singleton,
@@ -115,6 +131,22 @@ public class ComponentRegistration<TService> : ComponentRegistration where TServ
 
       // Scoped and transient registrations are copied — fresh instances in child scopes.
       return new ComponentRegistration<TService>(Lifestyle, ServiceTypes, InstantiationSpec, DependencyTypes, IsComponentSetMember, AllowSingletonDependent, AllowScopedDependent);
+   }
+
+   internal override ComponentRegistration CreateChildRegistrationDelegatingToParentInstance(object parentInstance)
+   {
+      Contract.State.Assert(Lifestyle == Lifestyle.Singleton,
+         () => $"Only singletons delegate to a parent container instance — {nameof(CreateChildRegistration)} copies the other lifestyles into the child.");
+
+      return new ComponentRegistration<TService>(
+         lifestyle: Lifestyle.Singleton,
+         serviceTypes: ServiceTypes,
+         instantiationSpec: InstantiationSpec.FromInstance((TService)parentInstance),
+         dependencyTypes: DependencyTypes,
+         isComponentSetMember: IsComponentSetMember,
+         allowSingletonDependent: AllowSingletonDependent,
+         allowScopedDependent: AllowScopedDependent
+      );
    }
 
    internal ComponentRegistration(Lifestyle lifestyle,

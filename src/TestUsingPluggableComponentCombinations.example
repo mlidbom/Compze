@@ -8,6 +8,7 @@
 #MySql:Microsoft:Newtonsoft:AspNetCore
 #Sqlite:Microsoft:Newtonsoft:AspNetCore
 SqliteMemory:Microsoft:Newtonsoft:AspNetCore
+SqliteMemory:Microsoft:Newtonsoft:NamedPipes
 
 #MsSql:Autofac:Newtonsoft:AspNetCore
 #PgSql:Autofac:Newtonsoft:AspNetCore

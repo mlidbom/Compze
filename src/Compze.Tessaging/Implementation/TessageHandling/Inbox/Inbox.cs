@@ -29,7 +29,10 @@ static class InboxRegistrar
          Singleton.For<HandlerExecutionEngine>()
                   .CreatedBy((ITessagesInFlightTracker globalStateTracker, ITessageHandlerRegistry tessagingHandlerRegistry, IScopeFactory scopeFactory, ITessageStorage storage, ITaskRunner taskRunner, EndpointConfiguration configuration)
                                 => new HandlerExecutionEngine(globalStateTracker, tessagingHandlerRegistry, scopeFactory, storage, taskRunner, configuration.Id)),
+         //WithServiceResolver: the named-pipe inbox transport server delivers received tessages to the inbox, but the inbox owns and
+         //starts the transport server - a constructor cycle the server breaks by depending on a deferred IServiceResolver<IInbox>.
          Singleton.For<IInbox>()
+                  .WithServiceResolver()
                   .CreatedBy((HandlerExecutionEngine handlerExecutionEngine, ITessageStorage tessageStorage, IInboxTransportServer transportServer)
                                 => new Inbox(handlerExecutionEngine, tessageStorage, transportServer))
       );

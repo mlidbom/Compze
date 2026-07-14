@@ -1,0 +1,59 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+    <!-- An executable the multi-process specifications spawn, not a test assembly - the test runner must not try to execute it. -->
+    <IsTestProject>false</IsTestProject>
+  </PropertyGroup>
+  <!-- Compze.DependencyInjection.Microsoft — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_DependencyInjection_Microsoft)' == 'true'">
+    <PackageReference Include="Compze.DependencyInjection.Microsoft" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_DependencyInjection_Microsoft)' != 'true'">
+    <ProjectReference Include="..\..\src\Compze.DependencyInjection.Microsoft\Compze.DependencyInjection.Microsoft.csproj" />
+  </ItemGroup>
+  <!-- Compze.Hosting — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Hosting)' == 'true'">
+    <PackageReference Include="Compze.Hosting" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Hosting)' != 'true'">
+    <ProjectReference Include="..\..\src\Compze.Hosting\Compze.Hosting.csproj" />
+  </ItemGroup>
+  <!-- Compze.Internals.Serialization.Newtonsoft — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Serialization_Newtonsoft)' == 'true'">
+    <PackageReference Include="Compze.Internals.Serialization.Newtonsoft" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Serialization_Newtonsoft)' != 'true'">
+    <ProjectReference Include="..\..\src\Compze.Internals.Serialization.Newtonsoft\Compze.Internals.Serialization.Newtonsoft.csproj" />
+  </ItemGroup>
+  <!-- Compze.Internals.Sql.Sqlite — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Sql_Sqlite)' == 'true'">
+    <PackageReference Include="Compze.Internals.Sql.Sqlite" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Sql_Sqlite)' != 'true'">
+    <ProjectReference Include="..\..\src\Compze.Internals.Sql.Sqlite\Compze.Internals.Sql.Sqlite.csproj" />
+  </ItemGroup>
+  <!-- Compze.Tessaging — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging)' == 'true'">
+    <PackageReference Include="Compze.Tessaging" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging)' != 'true'">
+    <ProjectReference Include="..\..\src\Compze.Tessaging\Compze.Tessaging.csproj" />
+  </ItemGroup>
+  <!-- Compze.Tessaging.Sqlite — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging_Sqlite)' == 'true'">
+    <PackageReference Include="Compze.Tessaging.Sqlite" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging_Sqlite)' != 'true'">
+    <ProjectReference Include="..\..\src\Compze.Tessaging.Sqlite\Compze.Tessaging.Sqlite.csproj" />
+  </ItemGroup>
+  <!-- Compze.TypeIdentifiers.Interning.Sqlite — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_TypeIdentifiers_Interning_Sqlite)' == 'true'">
+    <PackageReference Include="Compze.TypeIdentifiers.Interning.Sqlite" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_TypeIdentifiers_Interning_Sqlite)' != 'true'">
+    <ProjectReference Include="..\..\src\Compze.TypeIdentifiers.Interning.Sqlite\Compze.TypeIdentifiers.Interning.Sqlite.csproj" />
+  </ItemGroup>
+</Project>

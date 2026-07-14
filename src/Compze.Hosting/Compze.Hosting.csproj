@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
@@ -57,6 +57,13 @@
   </ItemGroup>
   <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Transport)' != 'true'">
     <ProjectReference Include="..\Compze.Internals.Transport\Compze.Internals.Transport.csproj" />
+  </ItemGroup>
+  <!-- Compze.InterprocessObject — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_InterprocessObject)' == 'true'">
+    <PackageReference Include="Compze.InterprocessObject" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_InterprocessObject)' != 'true'">
+    <ProjectReference Include="..\Compze.InterprocessObject\Compze.InterprocessObject.csproj" />
   </ItemGroup>
   <!-- Compze.Threading — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Threading)' == 'true'">

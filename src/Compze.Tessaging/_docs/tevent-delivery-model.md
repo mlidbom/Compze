@@ -224,9 +224,9 @@ worth its complexity for high-latency links, and same-machine delivery is fast s
 
 Per rung:
 
-- **Exactly-once: order must also survive a sender restart.** Recovery must re-establish head-of-line on the
-  oldest undelivered tessage. (The current recovery violates this — it reloads the backlog ordered by retry
-  metadata; known bug, `src/TODO/TODO_bug-outbox-delivery-ordering-lost-on-recovery.md`.)
+- **Exactly-once: order also survives a sender restart.** Recovery reloads the undelivered backlog in send
+  order — the outbox tessage table's monotonic `GeneratedId` — re-establishing head-of-line on the oldest
+  undelivered tessage.
 - **Transient: in order within a connected session.** On disconnect or persistent delivery failure, the
   remaining queued stream for that subscriber is dropped *whole* and the subscriber resumes from live after
   reconnecting. The unit of loss is the stream, never the message: a gap is one clean "you were
