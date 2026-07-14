@@ -7,9 +7,9 @@ static class TessageTypeTranslator
 {
    public static TransportTessageType TransportTessageType(this Type tessageType)
    {
-      if(tessageType.Is<IPublisherIdentifyingTevent<IExactlyOnceTevent>>())
+      if(tessageType.Is<IPublisherTevent<IExactlyOnceTevent>>())
          return Abstractions.TransportTessageType.ExactlyOnceTevent;
-      if(tessageType.Is<IPublisherIdentifyingTevent<IRemotableTevent>>()) //After the exactly-once check: an exactly-once wrapper matches this too, so order encodes "transient is remotable minus exactly-once".
+      if(tessageType.Is<IPublisherTevent<IRemotableTevent>>()) //After the exactly-once check: an exactly-once wrapper matches this too, so order encodes "transient is remotable minus exactly-once".
          return Abstractions.TransportTessageType.TransientTevent;
       if(tessageType.Is<IExactlyOnceTommand>())
          return Abstractions.TransportTessageType.ExactlyOnceTommand;

@@ -33,7 +33,7 @@ public class TeventStoreTeventSerializerPerformanceTests : UniversalTestBase
 
    [PCT] public void Should_roundtrip_simple_tevent_1000_times_in_50_milliseconds()
    {
-      var wrappedTevent = new TaggregateIdentifyingTevent<TestTevent>(new TestTevent(
+      var wrappedTevent = new TaggregateTevent<TestTevent>(new TestTevent(
          test1: "Test1",
          test2: "Test2",
          taggregateId: new TaggregateId(),
@@ -41,13 +41,13 @@ public class TeventStoreTeventSerializerPerformanceTests : UniversalTestBase
          utcTimeStamp: DateTime.UtcNow + 1.Minutes()));
 
       //Warmup
-      _teventSerializer.Deserialize(typeof(TaggregateIdentifyingTevent<TestTevent>), _teventSerializer.Serialize(wrappedTevent));
+      _teventSerializer.Deserialize(typeof(TaggregateTevent<TestTevent>), _teventSerializer.Serialize(wrappedTevent));
 
       TimeAsserter.Execute(
          () =>
          {
             var teventJson = _teventSerializer.Serialize(wrappedTevent);
-            _teventSerializer.Deserialize(typeof(TaggregateIdentifyingTevent<TestTevent>), teventJson);
+            _teventSerializer.Deserialize(typeof(TaggregateTevent<TestTevent>), teventJson);
          },
          iterations: 1000,
          maxTotal: 50.Milliseconds()
@@ -59,7 +59,7 @@ public class TeventStoreTeventSerializerPerformanceTests : UniversalTestBase
       const int iterations = 1000;
       const double allowedSlowdown = 1.8;
 
-      var wrappedTevents = 1.Through(iterations).Select(_ => new TaggregateIdentifyingTevent<TestTevent>(new TestTevent(
+      var wrappedTevents = 1.Through(iterations).Select(_ => new TaggregateTevent<TestTevent>(new TestTevent(
                                                     test1: "Test1",
                                                     test2: "Test2",
                                                     taggregateId: new TaggregateId(),
@@ -69,14 +69,14 @@ public class TeventStoreTeventSerializerPerformanceTests : UniversalTestBase
       var settings = NewtonsoftTeventStoreSerializer.JsonSettings;
 
       //Warmup
-      _teventSerializer.Deserialize(typeof(TaggregateIdentifyingTevent<TestTevent>), _teventSerializer.Serialize(wrappedTevents.First()));
-      JsonConvert.DeserializeObject<TaggregateIdentifyingTevent<TestTevent>>(JsonConvert.SerializeObject(wrappedTevents.First(), settings), settings);
+      _teventSerializer.Deserialize(typeof(TaggregateTevent<TestTevent>), _teventSerializer.Serialize(wrappedTevents.First()));
+      JsonConvert.DeserializeObject<TaggregateTevent<TestTevent>>(JsonConvert.SerializeObject(wrappedTevents.First(), settings), settings);
 
       var defaultSerializerPerformanceNumbers = StopwatchCE.TimeExecution(() =>
       {
          var teventJson = wrappedTevents.Select(it => JsonConvert.SerializeObject(it, settings))
                                  .ToList();
-         teventJson.ForEach(it => JsonConvert.DeserializeObject<TaggregateIdentifyingTevent<TestTevent>>(it, settings));
+         teventJson.ForEach(it => JsonConvert.DeserializeObject<TaggregateTevent<TestTevent>>(it, settings));
       });
 
       var allowedTime = defaultSerializerPerformanceNumbers.MultiplyBy(allowedSlowdown).EnvMultiply(unoptimized: 1.2);
@@ -85,7 +85,7 @@ public class TeventStoreTeventSerializerPerformanceTests : UniversalTestBase
                            {
                               var teventJson = wrappedTevents.Select(_teventSerializer.Serialize)
                                                       .ToList();
-                              teventJson.ForEach(it => _teventSerializer.Deserialize(typeof(TaggregateIdentifyingTevent<TestTevent>), it));
+                              teventJson.ForEach(it => _teventSerializer.Deserialize(typeof(TaggregateTevent<TestTevent>), it));
                            },
                            maxTotal: allowedTime);
    }

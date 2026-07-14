@@ -27,7 +27,7 @@ public partial class TeventStoreApi
          internal static void RegisterHandler(TypermediaHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTuery((TaggregateLink<TTaggregate> tuery, ITeventStoreUpdater updater) => updater.Get<TTaggregate>(tuery.Id));
       }
 
-      public class GetTaggregateHistory<TTevent> : TessageTypes.StrictlyLocal.Tueries.StrictlyLocalTuery<GetTaggregateHistory<TTevent>, IEnumerable<ITaggregateIdentifyingTevent<TTevent>>> where TTevent : ITaggregateTevent
+      public class GetTaggregateHistory<TTevent> : TessageTypes.StrictlyLocal.Tueries.StrictlyLocalTuery<GetTaggregateHistory<TTevent>, IEnumerable<ITaggregateTevent<TTevent>>> where TTevent : ITaggregateTevent
       {
          [Obsolete("for serializer", error: true)]
          // ReSharper disable once UnusedMember.Global
@@ -36,7 +36,7 @@ public partial class TeventStoreApi
          internal GetTaggregateHistory(TaggregateId id) => Id = id;
          public TaggregateId Id { get; private set; }
 
-         internal static void RegisterHandler(TypermediaHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTuery((GetTaggregateHistory<TTevent> tuery, ITeventStoreReader reader) => reader.GetHistory(tuery.Id).Cast<ITaggregateIdentifyingTevent<TTevent>>());
+         internal static void RegisterHandler(TypermediaHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTuery((GetTaggregateHistory<TTevent> tuery, ITeventStoreReader reader) => reader.GetHistory(tuery.Id).Cast<ITaggregateTevent<TTevent>>());
       }
 
       public class GetReadonlyCopyOfTaggregate<TTaggregate> : TessageTypes.StrictlyLocal.Tueries.StrictlyLocalTuery<GetReadonlyCopyOfTaggregate<TTaggregate>, TTaggregate> where TTaggregate : class, ITaggregate

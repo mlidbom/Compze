@@ -7,8 +7,8 @@ using static Compze.Must.MustActions;
 
 namespace Compze.Tests.Unit.Tessaging;
 
-interface INonGenericPublisherIdentifyingTevent : IPublisherIdentifyingTevent<ITevent>;
-interface INonCovariantParameterPublisherIdentifyingTevent : IPublisherIdentifyingTevent<ITevent>;
+interface INonGenericPublisherTevent : IPublisherTevent<ITevent>;
+interface INonCovariantParameterPublisherTevent : IPublisherTevent<ITevent>;
 
 public class TessageTypeInspector_throws_TessageTypeDesignViolationException_if_ : UniversalTestBase
 {
@@ -19,9 +19,9 @@ public class TessageTypeInspector_throws_TessageTypeDesignViolationException_if_
    {
       public class Type_implements_Wrapper_tevent_interface_but_ : Inspecting_type_for_subscription_
       {
-         [XF] public void Is_not_generic() => AssertInvalidForSubscription<INonGenericPublisherIdentifyingTevent>();
+         [XF] public void Is_not_generic() => AssertInvalidForSubscription<INonGenericPublisherTevent>();
 
-         [XF] public void Does_not_have_a_covariant_type_parameter() => AssertInvalidForSubscription<INonCovariantParameterPublisherIdentifyingTevent>();
+         [XF] public void Does_not_have_a_covariant_type_parameter() => AssertInvalidForSubscription<INonCovariantParameterPublisherTevent>();
       }
    }
 
@@ -29,9 +29,9 @@ public class TessageTypeInspector_throws_TessageTypeDesignViolationException_if_
    {
       public class Type_implements_Wrapper_tevent_interface_but_ : Inspecting_type_for_sending_and_
       {
-         [XF] public void Is_not_generic() => AssertInvalidForSubscription<INonGenericPublisherIdentifyingTevent>();
+         [XF] public void Is_not_generic() => AssertInvalidForSubscription<INonGenericPublisherTevent>();
 
-         [XF] public void Does_not_have_a_covariant_type_parameter() => AssertInvalidForSubscription<INonCovariantParameterPublisherIdentifyingTevent>();
+         [XF] public void Does_not_have_a_covariant_type_parameter() => AssertInvalidForSubscription<INonCovariantParameterPublisherTevent>();
       }
 
       interface INotTessage;

@@ -220,7 +220,7 @@ class TessagingRouter : ITessagingRouter, IDisposable
          {
             //An advertised tevent subscription is a wrapper type; covariance answers whether the tevents it matches may travel remotely at all.
             //Which delivery leg a matching tevent travels is not routing's concern - the published tevent's own type decides that (see ITeventPublisher).
-            if(tessageType.Is<IPublisherIdentifyingTevent<IRemotableTevent>>())
+            if(tessageType.Is<IPublisherTevent<IRemotableTevent>>())
             {
                _teventSubscriberRoutes.Add((tessageType, connection));
             }
@@ -244,7 +244,7 @@ class TessagingRouter : ITessagingRouter, IDisposable
                ? connection
                : throw new NoHandlerForTessageTypeException(tommand.GetType())));
 
-   public IReadOnlyList<ITessagingInboxConnection> SubscriberConnectionsFor(IPublisherIdentifyingTevent<IRemotableTevent> wrappedTevent) =>
+   public IReadOnlyList<ITessagingInboxConnection> SubscriberConnectionsFor(IPublisherTevent<IRemotableTevent> wrappedTevent) =>
       _monitor.Locked(() =>
       {
          AssertNotStopped();

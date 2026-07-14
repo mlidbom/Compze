@@ -73,7 +73,7 @@ public class TaggregateTests : UniversalTestBase
       });
    }
 
-   class CascadingTeventsTaggregate : Taggregate<CascadingTeventsTaggregate, ITaggregateTevent, TaggregateTevent, ITaggregateIdentifyingTevent<ITaggregateTevent>, TaggregateIdentifyingTevent<TaggregateTevent>>
+   class CascadingTeventsTaggregate : Taggregate<CascadingTeventsTaggregate, ITaggregateTevent, TaggregateTevent, ITaggregateTevent<ITaggregateTevent>, TaggregateTevent<TaggregateTevent>>
    {
       public CascadingTeventsTaggregate()
       {

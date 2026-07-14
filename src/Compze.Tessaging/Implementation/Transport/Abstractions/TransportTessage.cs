@@ -27,7 +27,7 @@ public static class TransportTessage
 
             State.Assert(_tessage switch
                          {
-                            IPublisherIdentifyingTevent<IExactlyOnceTevent> wrapper => TessageId == wrapper.Tevent.Id,
+                            IPublisherTevent<IExactlyOnceTevent> wrapper => TessageId == wrapper.Tevent.Id,
                             IAtMostOnceTessage atMostOnce => TessageId == atMostOnce.Id,
                             _ => true
                          });

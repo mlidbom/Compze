@@ -17,7 +17,7 @@ interface IProjectTevent : ITaggregateTevent
 #pragma warning restore CA1715
 }
 
-interface IProjectTevent<out T> : ITaggregateIdentifyingTevent<T> where T : IProjectTevent;
+interface IProjectTevent<out T> : ITaggregateTevent<T> where T : IProjectTevent;
 
 class ProjectTevent : TaggregateTevent, IProjectTevent
 {
@@ -27,12 +27,12 @@ class ProjectTevent : TaggregateTevent, IProjectTevent
    internal class Created(TaggregateId taggregateId) : ProjectTevent(taggregateId), IProjectTevent.Created;
 }
 
-class ProjectTevent<T>(T tevent) : TaggregateIdentifyingTevent<T>(tevent), IProjectTevent<T> where T : IProjectTevent;
+class ProjectTevent<T>(T tevent) : TaggregateTevent<T>(tevent), IProjectTevent<T> where T : IProjectTevent;
 
 ///<summary>The adopting wrapper tevent of the project's checklist slot: an <see cref="IProjectTevent"/> that adopts an<br/>
 /// <see cref="IChecklistItemTevent"/> into the project's tevent hierarchy. The whole checklist - every <see cref="ChecklistItem"/> in it -<br/>
 /// publishes through this one wrapper type; individual items are told apart by the <see cref="ISharedTentityTevent{TTentityId}.EntityId"/> their tevents carry.</summary>
-interface IChecklistTevent<out T> : IProjectTevent, IPublisherIdentifyingTevent<T> where T : IChecklistItemTevent;
+interface IChecklistTevent<out T> : IProjectTevent, IPublisherTevent<T> where T : IChecklistItemTevent;
 
 class ChecklistTevent<T>(T tevent) : ProjectTevent, IChecklistTevent<T> where T : IChecklistItemTevent
 {
@@ -60,7 +60,7 @@ class ProjectTaggregate : Taggregate<ProjectTaggregate, IProjectTevent, ProjectT
       return project;
    }
 
-   public static ProjectTaggregate LoadFromHistory(IEnumerable<ITaggregateIdentifyingTevent<ITaggregateTevent>> history)
+   public static ProjectTaggregate LoadFromHistory(IEnumerable<ITaggregateTevent<ITaggregateTevent>> history)
    {
       var project = new ProjectTaggregate();
       ((ITaggregate)project).LoadFromHistory(history);

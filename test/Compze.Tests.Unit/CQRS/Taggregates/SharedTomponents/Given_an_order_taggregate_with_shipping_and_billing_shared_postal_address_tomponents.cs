@@ -18,8 +18,8 @@ public class Given_an_order_taggregate_with_shipping_and_billing_shared_postal_a
 
    public class after_the_shipping_address_street_changes : Given_an_order_taggregate_with_shipping_and_billing_shared_postal_address_tomponents
    {
-      readonly List<ITaggregateIdentifyingTevent<ITaggregateTevent>> _committedTevents = [];
-      readonly ITaggregateIdentifyingTevent<ITaggregateTevent> _committedShippingChangeTevent;
+      readonly List<ITaggregateTevent<ITaggregateTevent>> _committedTevents = [];
+      readonly ITaggregateTevent<ITaggregateTevent> _committedShippingChangeTevent;
 
       public after_the_shipping_address_street_changes()
       {
@@ -48,7 +48,7 @@ public class Given_an_order_taggregate_with_shipping_and_billing_shared_postal_a
             var dispatcher = IMutableTeventDispatcher<ITevent>.New();
             dispatcher.Register()
                       .ForWrapped<IOrderTevent<IShippingAddressTevent<IPostalAddressTevent.Changed>>>(wrapped => _receivedByFullPublicationPathSubscriber.Add(wrapped.Tevent.Tevent))
-                      .ForWrapped<IPublisherIdentifyingTevent<IShippingAddressTevent<IPostalAddressTevent.Changed>>>(wrapped => _receivedByShippingSlotSubscriber.Add(wrapped.Tevent.Tevent))
+                      .ForWrapped<IPublisherTevent<IShippingAddressTevent<IPostalAddressTevent.Changed>>>(wrapped => _receivedByShippingSlotSubscriber.Add(wrapped.Tevent.Tevent))
                       .For<IPostalAddressTevent.Changed>(_receivedByBareInnerTeventSubscriber.Add);
 
             dispatcher.Dispatch(_committedShippingChangeTevent);

@@ -26,7 +26,7 @@ namespace Compze.Tests.Unit.CQRS.Taggregates;
 
 public class PublicSettersAndFieldsAreDisallowedTests : UniversalTestBase
 {
-   interface IRootTevent<out T> : ITaggregateIdentifyingTevent<T> where T : IRootTevent;
+   interface IRootTevent<out T> : ITaggregateTevent<T> where T : IRootTevent;
    public interface IRootTevent : ITaggregateTevent
    {
       string Public1 { get; set; }
@@ -52,7 +52,7 @@ public class PublicSettersAndFieldsAreDisallowedTests : UniversalTestBase
       }
    }
 
-   class RootTevent<T>(T tevent) : TaggregateIdentifyingTevent<T>(tevent), IRootTevent<T> where T : IRootTevent;
+   class RootTevent<T>(T tevent) : TaggregateTevent<T>(tevent), IRootTevent<T> where T : IRootTevent;
 
    abstract class RootTevent : TaggregateTevent, IRootTevent
    {

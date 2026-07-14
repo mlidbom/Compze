@@ -16,8 +16,8 @@ public class Given_a_cat_taggregate_inheriting_from_an_animal_taggregate
 {
    public class after_a_cat_and_a_dog_register_their_births : Given_a_cat_taggregate_inheriting_from_an_animal_taggregate
    {
-      readonly ITaggregateIdentifyingTevent<ITaggregateTevent> _catsWrappedBirthTevent;
-      readonly ITaggregateIdentifyingTevent<ITaggregateTevent> _dogsWrappedBirthTevent;
+      readonly ITaggregateTevent<ITaggregateTevent> _catsWrappedBirthTevent;
+      readonly ITaggregateTevent<ITaggregateTevent> _dogsWrappedBirthTevent;
 
       public after_a_cat_and_a_dog_register_their_births()
       {
@@ -31,9 +31,9 @@ public class Given_a_cat_taggregate_inheriting_from_an_animal_taggregate
       [XF] public void the_dogs_wrapper_does_not_identify_a_cat_publisher() => (_dogsWrappedBirthTevent is ICatTevent<IAnimalTevent.Born>).Must().BeFalse();
       [XF] public void both_wrappers_identify_an_animal_publisher() => (_catsWrappedBirthTevent is IAnimalTevent<IAnimalTevent.Born> && _dogsWrappedBirthTevent is IAnimalTevent<IAnimalTevent.Born>).Must().BeTrue();
 
-      static ITaggregateIdentifyingTevent<ITaggregateTevent> SingleCommittedTeventOf(ITaggregate taggregate)
+      static ITaggregateTevent<ITaggregateTevent> SingleCommittedTeventOf(ITaggregate taggregate)
       {
-         ITaggregateIdentifyingTevent<ITaggregateTevent>? committedWrappedTevent = null;
+         ITaggregateTevent<ITaggregateTevent>? committedWrappedTevent = null;
          taggregate.Commit(wrappedTevents => committedWrappedTevent = wrappedTevents.Single());
          return committedWrappedTevent!;
       }
@@ -52,8 +52,8 @@ public class Given_a_cat_taggregate_inheriting_from_an_animal_taggregate
                       .ForWrapped<IAnimalTevent<IAnimalTevent.Born>>(wrappedTevent => _receivedBySubscriberToAnimalWrappedBirths.Add(wrappedTevent.Tevent))
                       .For<IAnimalTevent.Born>(tevent => _receivedBySubscriberToTheInnerBirthTevent.Add(tevent));
 
-            dispatcher.Dispatch((IPublisherIdentifyingTevent<IAnimalTevent>)_catsWrappedBirthTevent);
-            dispatcher.Dispatch((IPublisherIdentifyingTevent<IAnimalTevent>)_dogsWrappedBirthTevent);
+            dispatcher.Dispatch((IPublisherTevent<IAnimalTevent>)_catsWrappedBirthTevent);
+            dispatcher.Dispatch((IPublisherTevent<IAnimalTevent>)_dogsWrappedBirthTevent);
          }
 
          [XF] public void the_subscriber_to_cat_wrapped_births_receives_only_the_cats_birth() => _receivedBySubscriberToCatWrappedBirths.Single().Must().ReferenceEqual(_catsWrappedBirthTevent.Tevent);

@@ -9,7 +9,7 @@ using Compze.Teventive.Taggregates.Tevents.Public;
 // ReSharper disable InconsistentNaming
 namespace Compze.Tests.Unit.CQRS.Taggregates.CompositeTaggregates.IntegerId.Domain;
 
-interface IRootTevent<out T> : ITaggregateIdentifyingTevent<T> where T : IRootTevent;
+interface IRootTevent<out T> : ITaggregateTevent<T> where T : IRootTevent;
 interface IRootTevent : ITaggregateTevent
 {
    interface Created : IRootTevent, ITaggregateCreatedTevent, PropertyUpdated.Name;

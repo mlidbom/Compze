@@ -51,7 +51,7 @@ public class Given_a_project_taggregate_with_a_checklist_of_shared_tentities
 
          [XF] public void the_committed_tevent_is_the_projects_wrapping_of_the_checklists_adoption_of_the_completion()
          {
-            ITaggregateIdentifyingTevent<ITaggregateTevent>? lastCommittedTevent = null;
+            ITaggregateTevent<ITaggregateTevent>? lastCommittedTevent = null;
             ((ITaggregate)_project).Commit(committedTevents => lastCommittedTevent = committedTevents[^1]);
             (lastCommittedTevent is IProjectTevent<IChecklistTevent<IChecklistItemTevent.Completed>>).Must().BeTrue();
          }
@@ -62,7 +62,7 @@ public class Given_a_project_taggregate_with_a_checklist_of_shared_tentities
 
             public and_a_new_project_instance_is_loaded_from_the_committed_history()
             {
-               List<ITaggregateIdentifyingTevent<ITaggregateTevent>> history = [];
+               List<ITaggregateTevent<ITaggregateTevent>> history = [];
                ((ITaggregate)_project).Commit(history.AddRange);
                _reloadedProject = ProjectTaggregate.LoadFromHistory(history);
             }

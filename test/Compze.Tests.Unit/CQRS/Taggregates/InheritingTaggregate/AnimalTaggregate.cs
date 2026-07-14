@@ -50,7 +50,7 @@ class DogTaggregate : AnimalTaggregate
 }
 
 
-interface IAnimalTevent<out T> : ITaggregateIdentifyingTevent<T> where T : IAnimalTevent;
+interface IAnimalTevent<out T> : ITaggregateTevent<T> where T : IAnimalTevent;
 
 interface IAnimalTevent : ITaggregateTevent
 {
@@ -59,7 +59,7 @@ interface IAnimalTevent : ITaggregateTevent
 #pragma warning restore CA1715
 }
 
-class AnimalTevent<T>(T tevent) : TaggregateIdentifyingTevent<T>(tevent), IAnimalTevent<T> where T : IAnimalTevent;
+class AnimalTevent<T>(T tevent) : TaggregateTevent<T>(tevent), IAnimalTevent<T> where T : IAnimalTevent;
 
 class AnimalTevent : TaggregateTevent, IAnimalTevent
 {

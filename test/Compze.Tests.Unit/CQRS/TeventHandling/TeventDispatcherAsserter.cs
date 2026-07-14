@@ -11,7 +11,7 @@ static class TeventDispatcherAsserter
    {
       readonly IMutableTeventDispatcher<TDispatcherRootTevent> _dispatcher = dispatcher;
 
-      public RouteAssertion<TDispatcherRootTevent> WrappedTevent<TPublishedTevent>(TPublishedTevent tevent) where TPublishedTevent : IPublisherIdentifyingTevent<TDispatcherRootTevent> =>
+      public RouteAssertion<TDispatcherRootTevent> WrappedTevent<TPublishedTevent>(TPublishedTevent tevent) where TPublishedTevent : IPublisherTevent<TDispatcherRootTevent> =>
          new(_dispatcher, () => _dispatcher.Dispatch(tevent));
 
       public RouteAssertion<TDispatcherRootTevent> Tevent<TPublishedTevent>(TPublishedTevent tevent) where TPublishedTevent : TDispatcherRootTevent =>
@@ -52,7 +52,7 @@ static class TeventDispatcherAsserter
       }
 
       public void DispatchesToWrapped<THandlerTevent>()
-         where THandlerTevent : IPublisherIdentifyingTevent<TDispatcherRootTevent>
+         where THandlerTevent : IPublisherTevent<TDispatcherRootTevent>
       {
          var callCount = 0;
          _dispatcher.Register().ForWrapped((THandlerTevent _) => callCount++);
@@ -61,7 +61,7 @@ static class TeventDispatcherAsserter
       }
 
       public void DispatchesToWrappedGeneric<THandlerTevent>()
-         where THandlerTevent : IPublisherIdentifyingTevent<ITevent>
+         where THandlerTevent : IPublisherTevent<ITevent>
       {
          var callCount = 0;
          _dispatcher.Register().ForWrappedGeneric((THandlerTevent _) => callCount++);
@@ -70,7 +70,7 @@ static class TeventDispatcherAsserter
       }
 
       public void DoesNotDispatchToWrapped<THandlerTevent>()
-         where THandlerTevent : IPublisherIdentifyingTevent<TDispatcherRootTevent>
+         where THandlerTevent : IPublisherTevent<TDispatcherRootTevent>
       {
          var callCount = 0;
          _dispatcher.Register().ForWrapped((THandlerTevent _) => callCount++);

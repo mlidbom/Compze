@@ -25,9 +25,9 @@ public class NewtonSoftTeventStoreTeventSerializerTests : SerializerTest
       ((IMutableTaggregateTevent)teventWithOnlySubclassValues).SetUtcTimeStampInternal(DateTime.MinValue);
 #pragma warning restore CS0618 // Type or member is obsolete
 
-      var teventWithAllValuesJson = TeventSerializer.Serialize(new TaggregateIdentifyingTevent<TestTevent>(teventWithAllValuesSet));
-      var teventWithOnlySubclassValuesJson = TeventSerializer.Serialize(new TaggregateIdentifyingTevent<TestTevent>(teventWithOnlySubclassValues));
-      var roundTripped = (TestTevent)TeventSerializer.Deserialize(typeof(TaggregateIdentifyingTevent<TestTevent>), teventWithAllValuesJson).Tevent;
+      var teventWithAllValuesJson = TeventSerializer.Serialize(new TaggregateTevent<TestTevent>(teventWithAllValuesSet));
+      var teventWithOnlySubclassValuesJson = TeventSerializer.Serialize(new TaggregateTevent<TestTevent>(teventWithOnlySubclassValues));
+      var roundTripped = (TestTevent)TeventSerializer.Deserialize(typeof(TaggregateTevent<TestTevent>), teventWithAllValuesJson).Tevent;
 
       teventWithAllValuesJson.Must().Be("""
                                         {

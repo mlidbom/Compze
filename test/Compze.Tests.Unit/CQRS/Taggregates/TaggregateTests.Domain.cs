@@ -35,11 +35,11 @@ class User : Taggregate<User,IUserTevent, UserTevent, IUserTevent<IUserTevent>, 
    public void ChangeEmail(string email) => Publish(new UserChangedEmail(email));
 }
 
-interface IUserTevent<out T> : ITaggregateIdentifyingTevent<T> where T : IUserTevent;
+interface IUserTevent<out T> : ITaggregateTevent<T> where T : IUserTevent;
 interface IUserTevent : ITaggregateTevent;
 
 // ReSharper disable once ClassNeverInstantiated.Global
-class UserTevent<T>(T tevent) : TaggregateIdentifyingTevent<T>(tevent), IUserTevent<T> where T : IUserTevent;
+class UserTevent<T>(T tevent) : TaggregateTevent<T>(tevent), IUserTevent<T> where T : IUserTevent;
 abstract class UserTevent : TaggregateTevent, IUserTevent
 {
    protected UserTevent() {}

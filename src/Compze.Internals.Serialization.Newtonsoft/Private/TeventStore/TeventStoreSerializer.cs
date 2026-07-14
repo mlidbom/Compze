@@ -20,7 +20,7 @@ public class NewtonsoftTeventStoreSerializer : ITeventStoreSerializer
 
    NewtonsoftTeventStoreSerializer(ITypeMap typeMap) => _serializer = new RenamingSupportingJsonSerializer(JsonSettings, typeMap);
 
-   public string Serialize(ITaggregateIdentifyingTevent<ITaggregateTevent> wrappedTevent) => _serializer.Serialize(wrappedTevent);
-   public ITaggregateIdentifyingTevent<ITaggregateTevent> Deserialize(Type wrapperTeventType, string json) => (ITaggregateIdentifyingTevent<ITaggregateTevent>)_serializer.Deserialize(wrapperTeventType, json);
+   public string Serialize(ITaggregateTevent<ITaggregateTevent> wrappedTevent) => _serializer.Serialize(wrappedTevent);
+   public ITaggregateTevent<ITaggregateTevent> Deserialize(Type wrapperTeventType, string json) => (ITaggregateTevent<ITaggregateTevent>)_serializer.Deserialize(wrapperTeventType, json);
 }
 

@@ -36,7 +36,7 @@ partial class CallMatchingHandlersInRegistrationOrderTeventDispatcher<TTevent> :
 
    public void Dispatch(TTevent evt) => Dispatch(PublisherIdentifyingTevent.WrapTevent(evt));
 
-   public void Dispatch(IPublisherIdentifyingTevent<TTevent> wrapped)
+   public void Dispatch(IPublisherTevent<TTevent> wrapped)
    {
       var handlers = GetHandlers(wrapped.GetType());
       for(var i = 0; i < handlers.Length; i++)

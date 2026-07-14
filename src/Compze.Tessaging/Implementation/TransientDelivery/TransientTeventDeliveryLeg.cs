@@ -37,7 +37,7 @@ class TransientTeventDeliveryLeg : ITransientTeventDeliveryLeg
       _configuration = configuration;
    }
 
-   public void PublishBestEffort(IPublisherIdentifyingTevent<IRemotableTevent> wrappedTevent)
+   public void PublishBestEffort(IPublisherTevent<IRemotableTevent> wrappedTevent)
    {
       var connections = _tessagingRouter.SubscriberConnectionsFor(wrappedTevent)
                                         .Where(connection => connection.EndpointInformation.Id != _configuration.Id)

@@ -94,13 +94,13 @@ public class Experiment_with_unifying_tevents_and_tommands_test : UniversalTestB
       user.History.Count().Must().Be(1);
    }
 
-   public interface IUserTevent<out T> : ITaggregateIdentifyingTevent<T> where T : IUserTevent;
+   public interface IUserTevent<out T> : ITaggregateTevent<T> where T : IUserTevent;
    public interface IUserTevent : ITaggregateTevent
    {
       public interface UserRegistered : IUserTevent, ITaggregateCreatedTevent;
    }
 
-   public class UserTevent<T>(T tevent) : TaggregateIdentifyingTevent<T>(tevent), IUserTevent<T> where T : IUserTevent;
+   public class UserTevent<T>(T tevent) : TaggregateTevent<T>(tevent), IUserTevent<T> where T : IUserTevent;
    public class UserTevent : TaggregateTevent, IUserTevent
    {
       UserTevent(TaggregateId taggregateId) : base(taggregateId) {}
@@ -120,10 +120,10 @@ public class Experiment_with_unifying_tevents_and_tommands_test : UniversalTestB
       }
    }
 
-   public interface IUserRegistrarTevent<out T> : ITaggregateIdentifyingTevent<T> where T : IUserRegistrarTevent;
+   public interface IUserRegistrarTevent<out T> : ITaggregateTevent<T> where T : IUserRegistrarTevent;
    public interface IUserRegistrarTevent : ITaggregateTevent;
 
-   public class UserRegistrarTevent<T>(T tevent) : TaggregateIdentifyingTevent<T>(tevent), IUserRegistrarTevent<T> where T : IUserRegistrarTevent;
+   public class UserRegistrarTevent<T>(T tevent) : TaggregateTevent<T>(tevent), IUserRegistrarTevent<T> where T : IUserRegistrarTevent;
 
    public class UserRegistrarTevent : TaggregateTevent, IUserRegistrarTevent
    {
@@ -165,9 +165,9 @@ public class Experiment_with_unifying_tevents_and_tommands_test : UniversalTestB
       public TaggregateId UserId { get; private set; } = userId;
    }
 
-   public class UserResource(IEnumerable<ITaggregateIdentifyingTevent<ITaggregateTevent>> history)
+   public class UserResource(IEnumerable<ITaggregateTevent<ITaggregateTevent>> history)
    {
-      public IEnumerable<ITaggregateIdentifyingTevent<ITaggregateTevent>> History { get; } = history;
+      public IEnumerable<ITaggregateTevent<ITaggregateTevent>> History { get; } = history;
    }
 
    public class RegisterUserResult(TaggregateId userId)

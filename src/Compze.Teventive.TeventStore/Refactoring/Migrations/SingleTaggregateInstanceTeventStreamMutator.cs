@@ -24,11 +24,11 @@ class SingleTaggregateInstanceTeventStreamMutator : ISingleTaggregateInstanceTev
 
    int _taggregateVersion = 1;
 
-   public static ISingleTaggregateInstanceTeventStreamMutator Create(ITaggregateIdentifyingTevent<ITaggregateTevent> creationTevent, IReadOnlyList<ITeventMigration> teventMigrations, Action<IReadOnlyList<TeventModifier.RefactoredTevent>>? teventsAddedCallback = null)
+   public static ISingleTaggregateInstanceTeventStreamMutator Create(ITaggregateTevent<ITaggregateTevent> creationTevent, IReadOnlyList<ITeventMigration> teventMigrations, Action<IReadOnlyList<TeventModifier.RefactoredTevent>>? teventsAddedCallback = null)
       => new SingleTaggregateInstanceTeventStreamMutator(creationTevent, teventMigrations, teventsAddedCallback);
 
    SingleTaggregateInstanceTeventStreamMutator
-      (ITaggregateIdentifyingTevent<ITaggregateTevent> creationTevent, IEnumerable<ITeventMigration> teventMigrations, Action<IReadOnlyList<TeventModifier.RefactoredTevent>>? teventsAddedCallback)
+      (ITaggregateTevent<ITaggregateTevent> creationTevent, IEnumerable<ITeventMigration> teventMigrations, Action<IReadOnlyList<TeventModifier.RefactoredTevent>>? teventsAddedCallback)
    {
       _teventModifier = new TeventModifier(teventsAddedCallback ?? (_ => { }));
       _taggregateId = creationTevent.Tevent.TaggregateId;
@@ -38,8 +38,8 @@ class SingleTaggregateInstanceTeventStreamMutator : ISingleTaggregateInstanceTev
                        .ToArray();
    }
 
-   static IEnumerable<ITaggregateIdentifyingTevent<ITaggregateTevent>> SingleTeventSequence(ITaggregateIdentifyingTevent<ITaggregateTevent> wrappedTevent) { yield return wrappedTevent; }
-   public IEnumerable<ITaggregateIdentifyingTevent<ITaggregateTevent>> Mutate(ITaggregateIdentifyingTevent<ITaggregateTevent> wrappedTevent)
+   static IEnumerable<ITaggregateTevent<ITaggregateTevent>> SingleTeventSequence(ITaggregateTevent<ITaggregateTevent> wrappedTevent) { yield return wrappedTevent; }
+   public IEnumerable<ITaggregateTevent<ITaggregateTevent>> Mutate(ITaggregateTevent<ITaggregateTevent> wrappedTevent)
    {
       Contract.Argument.Assert(_taggregateId == wrappedTevent.Tevent.TaggregateId);
       if (_teventMigrators.Length == 0)
@@ -75,17 +75,17 @@ class SingleTaggregateInstanceTeventStreamMutator : ISingleTaggregateInstanceTev
       return newHistory;
    }
 
-   public IEnumerable<ITaggregateIdentifyingTevent<ITaggregateTevent>> EndOfTaggregate()
+   public IEnumerable<ITaggregateTevent<ITaggregateTevent>> EndOfTaggregate()
    {
-      ITaggregateIdentifyingTevent<ITaggregateTevent> endOfHistoryPlaceHolder = new TaggregateIdentifyingTevent<EndOfTaggregateHistoryTeventPlaceHolder>(new EndOfTaggregateHistoryTeventPlaceHolder(_taggregateId, _taggregateVersion));
+      ITaggregateTevent<ITaggregateTevent> endOfHistoryPlaceHolder = new TaggregateTevent<EndOfTaggregateHistoryTeventPlaceHolder>(new EndOfTaggregateHistoryTeventPlaceHolder(_taggregateId, _taggregateVersion));
       return EnumerableCE.Create(endOfHistoryPlaceHolder)
                          .SelectMany(Mutate)
                          .Where(wrappedTevent => wrappedTevent.Tevent.GetType() != typeof(EndOfTaggregateHistoryTeventPlaceHolder));
    }
 
-   public static ITaggregateIdentifyingTevent<ITaggregateTevent>[] MutateCompleteTaggregateHistory
+   public static ITaggregateTevent<ITaggregateTevent>[] MutateCompleteTaggregateHistory
    (IReadOnlyList<ITeventMigration> teventMigrations,
-    ITaggregateIdentifyingTevent<ITaggregateTevent>[] wrappedTevents,
+    ITaggregateTevent<ITaggregateTevent>[] wrappedTevents,
     Action<IReadOnlyList<TeventModifier.RefactoredTevent>>? teventsAddedCallback = null)
    {
       if (teventMigrations.None())
@@ -95,7 +95,7 @@ class SingleTaggregateInstanceTeventStreamMutator : ISingleTaggregateInstanceTev
 
       if(wrappedTevents.None())
       {
-         return Enumerable.Empty<ITaggregateIdentifyingTevent<ITaggregateTevent>>().ToArray();
+         return Enumerable.Empty<ITaggregateTevent<ITaggregateTevent>>().ToArray();
       }
 
       var mutator = Create(wrappedTevents.First(), teventMigrations, teventsAddedCallback);
@@ -111,7 +111,7 @@ class SingleTaggregateInstanceTeventStreamMutator : ISingleTaggregateInstanceTev
       return result;
    }
 
-   public static void AssertMigrationsAreIdempotent(IReadOnlyList<ITeventMigration> teventMigrations, ITaggregateIdentifyingTevent<ITaggregateTevent>[] wrappedTevents)
+   public static void AssertMigrationsAreIdempotent(IReadOnlyList<ITeventMigration> teventMigrations, ITaggregateTevent<ITaggregateTevent>[] wrappedTevents)
    {
       var creationTevent = wrappedTevents.First();
 

@@ -17,7 +17,7 @@ abstract class CompleteTeventStoreStreamMutator
    {
       readonly Dictionary<TaggregateId, int> _taggregateVersions = new();
 
-      public IEnumerable<ITaggregateIdentifyingTevent<ITaggregateTevent>> Mutate(IEnumerable<ITaggregateIdentifyingTevent<ITaggregateTevent>> teventStream)
+      public IEnumerable<ITaggregateTevent<ITaggregateTevent>> Mutate(IEnumerable<ITaggregateTevent<ITaggregateTevent>> teventStream)
       {
          foreach(var wrappedTevent in teventStream)
          {
@@ -36,7 +36,7 @@ abstract class CompleteTeventStoreStreamMutator
       readonly IReadOnlyList<ITeventMigration> _teventMigrationFactories = teventMigrationFactories;
       readonly Dictionary<TaggregateId, ISingleTaggregateInstanceTeventStreamMutator> _taggregateMutatorsCache = new();
 
-      public IEnumerable<ITaggregateIdentifyingTevent<ITaggregateTevent>> Mutate(IEnumerable<ITaggregateIdentifyingTevent<ITaggregateTevent>> teventStream)
+      public IEnumerable<ITaggregateTevent<ITaggregateTevent>> Mutate(IEnumerable<ITaggregateTevent<ITaggregateTevent>> teventStream)
       {
          foreach(var wrappedTevent in teventStream)
          {

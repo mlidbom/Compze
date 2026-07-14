@@ -24,10 +24,10 @@ public partial class SelfGeneratingQueryModel<TQueryModel, TTaggregateTevent> : 
    protected ITeventSubscriber<TTaggregateTevent> RegisterTeventAppliers() => _teventAppliersDispatcher.Register();
 
    ///<summary>Applies a tevent that arrives without a publisher-identifying wrapper - such as one delivered to an inner-typed bus subscription - by wrapping it<br/>
-   /// in a <see cref="PublisherIdentifyingTevent{TTevent}"/> closed over its runtime type, mirroring <see cref="ITeventDispatcher{TTevent}.Dispatch(TTevent)"/>.</summary>
+   /// in a <see cref="PublisherTevent{TTevent}"/> closed over its runtime type, mirroring <see cref="ITeventDispatcher{TTevent}.Dispatch(TTevent)"/>.</summary>
    public void ApplyTevent(TTaggregateTevent tevent) => ApplyTevent(PublisherIdentifyingTevent.WrapTevent(tevent));
 
-   public void ApplyTevent(IPublisherIdentifyingTevent<TTaggregateTevent> wrappedTevent)
+   public void ApplyTevent(IPublisherTevent<TTaggregateTevent> wrappedTevent)
    {
       if(wrappedTevent.Tevent is ITaggregateCreatedTevent)
       {
@@ -42,10 +42,10 @@ public partial class SelfGeneratingQueryModel<TQueryModel, TTaggregateTevent> : 
 
    public bool HandlesTevent(TTaggregateTevent tevent) => _teventAppliersDispatcher.Handles(tevent);
 
-   public void LoadFromHistory(IEnumerable<ITaggregateIdentifyingTevent<ITaggregateTevent>> history)
+   public void LoadFromHistory(IEnumerable<ITaggregateTevent<ITaggregateTevent>> history)
    {
       Contract.State.Assert(Version == 0);
-      history.ForEach(wrappedTevent => ApplyTevent((IPublisherIdentifyingTevent<TTaggregateTevent>)wrappedTevent));
+      history.ForEach(wrappedTevent => ApplyTevent((IPublisherTevent<TTaggregateTevent>)wrappedTevent));
       AssertInvariantsAreMet();
    }
 

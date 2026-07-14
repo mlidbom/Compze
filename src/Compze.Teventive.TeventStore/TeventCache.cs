@@ -86,18 +86,18 @@ public class TeventCache : IDisposable, ITeventCache
          MaxSeenInsertedVersion = 0;
       }
 
-      internal IReadOnlyList<ITaggregateIdentifyingTevent<ITaggregateTevent>> WrappedTevents { get; private set; }
+      internal IReadOnlyList<ITaggregateTevent<ITaggregateTevent>> WrappedTevents { get; private set; }
       internal int MaxSeenInsertedVersion { get; private set; }
       int InsertedVersionToTaggregateVersionOffset { get; }
 
-      internal Entry(IReadOnlyList<ITaggregateIdentifyingTevent<ITaggregateTevent>> wrappedTevents, int maxSeenInsertedVersion)
+      internal Entry(IReadOnlyList<ITaggregateTevent<ITaggregateTevent>> wrappedTevents, int maxSeenInsertedVersion)
       {
          WrappedTevents = wrappedTevents;
          MaxSeenInsertedVersion = maxSeenInsertedVersion;
          InsertedVersionToTaggregateVersionOffset = MaxSeenInsertedVersion - wrappedTevents[^1].Tevent.TaggregateVersion;
       }
 
-      internal TeventInsertionSpecification CreateInsertionSpecificationForNewTevent(ITaggregateIdentifyingTevent<ITaggregateTevent> wrappedTevent)
+      internal TeventInsertionSpecification CreateInsertionSpecificationForNewTevent(ITaggregateTevent<ITaggregateTevent> wrappedTevent)
       {
          if(InsertedVersionToTaggregateVersionOffset > 0)
          {

@@ -38,9 +38,9 @@ sealed class TessageHandlerRegistry(ITypeMap typeMap) : ITessageHandlerRegistrar
       //Routing operates exclusively on wrapper types: a subscription to an inner tevent type is keyed under the wrapper type matching every wrapping of it
       //and unwrapped at delivery; a subscription to a wrapper type is keyed as it stands and receives the wrapper - publisher-conscious subscription.
       var routingKey = PublisherIdentifyingTevent.WrapperTypeMatchingAllWrappingsOf(typeof(TTevent));
-      Action<ITevent, IScopeResolver> deliver = typeof(TTevent).Is<IPublisherIdentifyingTevent<ITevent>>()
+      Action<ITevent, IScopeResolver> deliver = typeof(TTevent).Is<IPublisherTevent<ITevent>>()
                                                    ? (wrappedTevent, kernel) => handler((TTevent)wrappedTevent, kernel)
-                                                   : (wrappedTevent, kernel) => handler((TTevent)((IPublisherIdentifyingTevent<ITevent>)wrappedTevent).Tevent, kernel);
+                                                   : (wrappedTevent, kernel) => handler((TTevent)((IPublisherTevent<ITevent>)wrappedTevent).Tevent, kernel);
 
       _teventHandlers.TryGetValue(routingKey, out var currentTeventSubscribers);
       currentTeventSubscribers ??= new List<Action<ITevent, IScopeResolver>>();

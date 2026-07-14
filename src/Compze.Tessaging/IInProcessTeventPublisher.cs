@@ -18,7 +18,7 @@ namespace Compze.Tessaging;
 /// here, and additionally routes the tevent through the remote delivery legs its type demands. Subscription
 /// is by .NET type compatibility, so a handler subscribed to a base tevent type receives every compatible
 /// derived tevent. Every tevent is wrapped in its publisher's
-/// <see cref="IPublisherIdentifyingTevent{TTevent}"/> before routing: a subscriber to an inner tevent
+/// <see cref="IPublisherTevent{TTevent}"/> before routing: a subscriber to an inner tevent
 /// type receives the tevent unwrapped, and a subscriber to a wrapper type receives the wrapper itself -
 /// publisher-conscious subscription.
 ///</remarks>

@@ -85,7 +85,7 @@ public class MyTaggregate : Taggregate<MyTaggregate, IMyTaggregateTevent, MyTagg
    }
 }
 
-public interface IMyTaggregateTevent<out T> : ITaggregateIdentifyingTevent<T> where T : IMyTaggregateTevent;
+public interface IMyTaggregateTevent<out T> : ITaggregateTevent<T> where T : IMyTaggregateTevent;
 
 public interface IMyTaggregateTevent : ITaggregateTevent
 {
@@ -93,7 +93,7 @@ public interface IMyTaggregateTevent : ITaggregateTevent
    public interface Updated : IMyTaggregateTevent;
 }
 
-public class MyTaggregateTevent<T>(T tevent) : TaggregateIdentifyingTevent<T>(tevent), IMyTaggregateTevent<T> where T : IMyTaggregateTevent;
+public class MyTaggregateTevent<T>(T tevent) : TaggregateTevent<T>(tevent), IMyTaggregateTevent<T> where T : IMyTaggregateTevent;
 
 public class MyTaggregateTevent : TaggregateTevent, IMyTaggregateTevent
 {

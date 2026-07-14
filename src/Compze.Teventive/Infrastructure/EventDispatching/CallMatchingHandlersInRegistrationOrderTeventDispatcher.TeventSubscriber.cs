@@ -30,9 +30,9 @@ partial class CallMatchingHandlersInRegistrationOrderTeventDispatcher<TTevent> w
          return this;
       }
 
-      TeventSubscriber ForWrapped<TWrapperTevent>(Action<TWrapperTevent> handler) where TWrapperTevent : IPublisherIdentifyingTevent<TTevent> => ForWrappedGeneric(handler);
+      TeventSubscriber ForWrapped<TWrapperTevent>(Action<TWrapperTevent> handler) where TWrapperTevent : IPublisherTevent<TTevent> => ForWrappedGeneric(handler);
 
-      TeventSubscriber ForWrappedGeneric<TWrapperTevent>(Action<TWrapperTevent> handler) where TWrapperTevent : IPublisherIdentifyingTevent<ITevent>
+      TeventSubscriber ForWrappedGeneric<TWrapperTevent>(Action<TWrapperTevent> handler) where TWrapperTevent : IPublisherTevent<ITevent>
       {
          AssertNotDisposed();
          TessageTypeInspector.AssertValidForSubscription(typeof(TWrapperTevent));
@@ -81,7 +81,7 @@ partial class CallMatchingHandlersInRegistrationOrderTeventDispatcher<TTevent> w
       static void AssertValidInnerTeventSubscription<THandledTevent>() where THandledTevent : ITevent
       {
          TessageTypeInspector.AssertValidForSubscription(typeof(THandledTevent));
-         if(typeof(THandledTevent).Is<IPublisherIdentifyingTevent<ITevent>>()) throw new Exception($"Handlers of type {typeof(IPublisherIdentifyingTevent<>).Name} must be registered through the {nameof(ForWrapped)} method.");
+         if(typeof(THandledTevent).Is<IPublisherTevent<ITevent>>()) throw new Exception($"Handlers of type {typeof(IPublisherTevent<>).Name} must be registered through the {nameof(ForWrapped)} method.");
       }
 
       void AssertNotDisposed() => State.Assert(!_isDisposed, () => "This subscriber has been disposed: its subscriptions were removed from the dispatcher and no new ones can be registered through it.");

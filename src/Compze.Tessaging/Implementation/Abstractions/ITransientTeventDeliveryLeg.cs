@@ -14,5 +14,5 @@ interface ITransientTeventDeliveryLeg
    /// identity crosses endpoints with zero information loss. Honors the ambient transaction: with one present the tevent is handed to<br/>
    /// the subscribers' connections on commit — sent-on-commit without durability, so a rolled-back transaction never leaks a tevent —<br/>
    /// and with none present it is handed over immediately (the transient tier, unlike exactly-once, demands no transaction).</summary>
-   void PublishBestEffort(IPublisherIdentifyingTevent<IRemotableTevent> wrappedTevent);
+   void PublishBestEffort(IPublisherTevent<IRemotableTevent> wrappedTevent);
 }

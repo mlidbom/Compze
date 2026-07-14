@@ -1,3 +1,4 @@
+using Compze.Abstractions.Tessaging.Public;
 using Compze.Teventive.Taggregates.Tevents.Public;
 
 namespace Compze.Tessaging.Teventive.TeventStore.Refactoring.Migrations.Public;
@@ -27,9 +28,9 @@ public interface ISingleTaggregateInstanceHandlingTeventMigrator
 {
    ///<summary>
    /// <para>Inspect one wrapped tevent and if required mutate the tevent stream by calling methods on the modifier.</para>
-   /// <para>The full persisted tevent is in hand: the <see cref="ITaggregateIdentifyingTevent{TTeventInterface}"/> wrapper identifying the publisher, with the inner tevent in its <see cref="Compze.Abstractions.Tessaging.Public.IPublisherIdentifyingTevent{TTevent}.Tevent"/>.</para>
+   /// <para>The full persisted tevent is in hand: the <see cref="ITaggregateTevent{TTeventInterface}"/> wrapper identifying the publisher, with the inner tevent in its <see cref="IPublisherTevent{TTevent}.Tevent"/>.</para>
    /// <para>Called once for each tevent in the taggregate's history. </para>
    /// <para>Then it is called once with an instance wrapping <c>EndOfTaggregateHistoryTeventPlaceHolder</c>. </para>
    /// </summary>
-   void MigrateTevent(ITaggregateIdentifyingTevent<ITaggregateTevent> wrappedTevent, ITeventModifier modifier);
+   void MigrateTevent(ITaggregateTevent<ITaggregateTevent> wrappedTevent, ITeventModifier modifier);
 }

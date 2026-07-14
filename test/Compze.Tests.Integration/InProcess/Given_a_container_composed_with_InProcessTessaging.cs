@@ -38,7 +38,7 @@ public class Given_a_container_composed_with_InProcessTessaging : UniversalTestB
    public class after_publishing_an_unwrapped_tevent_through_the_tevent_publisher : Given_a_container_composed_with_InProcessTessaging
    {
       readonly List<IMyGreetingRequestedTevent> _receivedBySubscriberToTheTeventsBaseInterface = [];
-      readonly List<IPublisherIdentifyingTevent<IMyGreetingRequestedTevent>> _receivedBySubscriberToTheWrapperOfTheTeventsBaseInterface = [];
+      readonly List<IPublisherTevent<IMyGreetingRequestedTevent>> _receivedBySubscriberToTheWrapperOfTheTeventsBaseInterface = [];
       readonly List<IMyUnrelatedTevent> _receivedBySubscriberToAnUnrelatedTeventInterface = [];
       readonly MySpecialGreetingRequestedTevent _publishedTevent = new();
       readonly int _publishingThreadId;
@@ -51,7 +51,7 @@ public class Given_a_container_composed_with_InProcessTessaging : UniversalTestB
             _receivedBySubscriberToTheTeventsBaseInterface.Add(tevent);
             _handlingThreadId = Environment.CurrentManagedThreadId;
          });
-         HandlerRegistrar.ForTevent<IPublisherIdentifyingTevent<IMyGreetingRequestedTevent>>((wrappedTevent, _) => _receivedBySubscriberToTheWrapperOfTheTeventsBaseInterface.Add(wrappedTevent));
+         HandlerRegistrar.ForTevent<IPublisherTevent<IMyGreetingRequestedTevent>>((wrappedTevent, _) => _receivedBySubscriberToTheWrapperOfTheTeventsBaseInterface.Add(wrappedTevent));
          HandlerRegistrar.ForTevent<IMyUnrelatedTevent>((tevent, _) => _receivedBySubscriberToAnUnrelatedTeventInterface.Add(tevent));
 
          _publishingThreadId = Environment.CurrentManagedThreadId;
@@ -67,13 +67,13 @@ public class Given_a_container_composed_with_InProcessTessaging : UniversalTestB
    public class after_publishing_a_wrapped_taggregate_tevent_through_the_tevent_publisher : Given_a_container_composed_with_InProcessTessaging
    {
       readonly List<ITaggregateTevent> _receivedBySubscriberToTheInnerTeventType = [];
-      readonly List<ITaggregateIdentifyingTevent<ITaggregateTevent>> _receivedBySubscriberToTheWrapperType = [];
-      readonly TaggregateIdentifyingTevent<MyTaggregateTevent> _publishedWrappedTevent = new(new MyTaggregateTevent());
+      readonly List<ITaggregateTevent<ITaggregateTevent>> _receivedBySubscriberToTheWrapperType = [];
+      readonly TaggregateTevent<MyTaggregateTevent> _publishedWrappedTevent = new(new MyTaggregateTevent());
 
       public after_publishing_a_wrapped_taggregate_tevent_through_the_tevent_publisher()
       {
          HandlerRegistrar.ForTevent<ITaggregateTevent>((tevent, _) => _receivedBySubscriberToTheInnerTeventType.Add(tevent));
-         HandlerRegistrar.ForTevent<ITaggregateIdentifyingTevent<ITaggregateTevent>>((wrappedTevent, _) => _receivedBySubscriberToTheWrapperType.Add(wrappedTevent));
+         HandlerRegistrar.ForTevent<ITaggregateTevent<ITaggregateTevent>>((wrappedTevent, _) => _receivedBySubscriberToTheWrapperType.Add(wrappedTevent));
          Container.ScopeFactory.ExecuteTransactionInIsolatedScope(scope => scope.Resolve<ITeventPublisher>().Publish(_publishedWrappedTevent));
       }
 

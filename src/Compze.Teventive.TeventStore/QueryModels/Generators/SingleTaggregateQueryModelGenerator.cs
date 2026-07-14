@@ -40,7 +40,7 @@ public abstract class SingleTaggregateQueryModelGenerator<TImplementer, TViewMod
    public TViewModel? TryGenerate(EntityId id, int version)
    {
       //todo: this conversion is iffy
-      var history = _session.GetHistory(new TaggregateId(id.Value)).Take(version).Cast<IPublisherIdentifyingTevent<TTevent>>().ToList();
+      var history = _session.GetHistory(new TaggregateId(id.Value)).Take(version).Cast<IPublisherTevent<TTevent>>().ToList();
       if (history.None())
       {
          return null;

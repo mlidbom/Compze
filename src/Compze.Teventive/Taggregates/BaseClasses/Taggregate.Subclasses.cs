@@ -5,7 +5,7 @@ namespace Compze.Teventive.Taggregates.BaseClasses;
 
 public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeventImplementation, TWrapperTeventInterface, TWrapperTeventImplementation>
     where TWrapperTeventImplementation : TWrapperTeventInterface
-    where TWrapperTeventInterface : ITaggregateIdentifyingTevent<TTaggregateTevent>
+    where TWrapperTeventInterface : ITaggregateTevent<TTaggregateTevent>
     where TTaggregate : Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeventImplementation, TWrapperTeventInterface, TWrapperTeventImplementation>
     where TTaggregateTevent : class, ITaggregateTevent
     where TTaggregateTeventImplementation : TaggregateTevent, TTaggregateTevent

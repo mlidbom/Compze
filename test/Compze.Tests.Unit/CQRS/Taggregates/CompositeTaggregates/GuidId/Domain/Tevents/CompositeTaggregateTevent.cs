@@ -12,7 +12,7 @@ using JetBrains.Annotations;
 
 namespace Compze.Tests.Unit.CQRS.Taggregates.CompositeTaggregates.GuidId.Domain.Tevents;
 
-class CompositeTaggregateTevent<T>(T tevent) : TaggregateIdentifyingTevent<T>(tevent), ICompositeTaggregateTevent<T> where T : ICompositeTaggregateTevent;
+class CompositeTaggregateTevent<T>(T tevent) : TaggregateTevent<T>(tevent), ICompositeTaggregateTevent<T> where T : ICompositeTaggregateTevent;
 
 abstract class CompositeTaggregateTevent : TaggregateTevent, ICompositeTaggregateTevent
 {

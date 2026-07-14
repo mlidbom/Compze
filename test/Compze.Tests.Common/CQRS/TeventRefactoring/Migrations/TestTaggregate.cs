@@ -10,10 +10,10 @@ using Compze.Teventive.Taggregates.Tevents.Public;
 
 namespace Compze.Tests.Common.CQRS.TeventRefactoring.Migrations
 {
-   public interface ITestTaggregateTevent<out T> : ITaggregateIdentifyingTevent<T> where T : ITestTaggregateTevent;
+   public interface ITestTaggregateTevent<out T> : ITaggregateTevent<T> where T : ITestTaggregateTevent;
    public interface ITestTaggregateTevent : ITaggregateTevent;
 
-   public class TestTaggregateTevent<T>(T tevent) : TaggregateIdentifyingTevent<T>(tevent), ITestTaggregateTevent<T> where T : ITestTaggregateTevent;
+   public class TestTaggregateTevent<T>(T tevent) : TaggregateTevent<T>(tevent), ITestTaggregateTevent<T> where T : ITestTaggregateTevent;
 
    public abstract class TestTaggregateTevent : TaggregateTevent, ITestTaggregateTevent;
 
@@ -76,7 +76,7 @@ namespace Compze.Tests.Common.CQRS.TeventRefactoring.Migrations
       public static TestTaggregateTevent[] ToTevents(this IEnumerable<Type> types) => types.Select(Constructor.CreateInstance).Cast<TestTaggregateTevent>().ToArray();
 
       ///<summary>Instantiates each tevent type and wraps it in <see cref="TestTaggregateTevent{T}"/> - the wrapped form a tevent migration hands to <c>ITeventModifier</c>.</summary>
-      public static ITaggregateIdentifyingTevent<ITaggregateTevent>[] ToWrappedTevents(this IEnumerable<Type> types) =>
+      public static ITaggregateTevent<ITaggregateTevent>[] ToWrappedTevents(this IEnumerable<Type> types) =>
          types.ToTevents().Select(tevent => TaggregateIdentifyingTevent.WrapIn(typeof(TestTaggregateTevent<>), tevent)).ToArray();
    }
 }

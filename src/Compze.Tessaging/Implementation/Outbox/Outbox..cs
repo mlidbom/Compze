@@ -42,7 +42,7 @@ partial class Outbox : IOutbox
       _tessagingRouter = tessagingRouter;
    }
 
-   public void PublishTransactionally(IPublisherIdentifyingTevent<IExactlyOnceTevent> wrappedTevent)
+   public void PublishTransactionally(IPublisherTevent<IExactlyOnceTevent> wrappedTevent)
    {
       State.NotNull(Transaction.Current);
       var dedupId = wrappedTevent.Tevent.Id;

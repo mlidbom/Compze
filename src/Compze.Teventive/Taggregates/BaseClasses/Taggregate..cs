@@ -14,7 +14,7 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
    ITaggregate<TTaggregateTevent>,
    ITeventiveInternals<TTaggregateTevent, TTaggregateTeventImplementation>
    where TWrapperTeventImplementation : TWrapperTeventInterface
-   where TWrapperTeventInterface : ITaggregateIdentifyingTevent<TTaggregateTevent>
+   where TWrapperTeventInterface : ITaggregateTevent<TTaggregateTevent>
    where TTaggregate : Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeventImplementation, TWrapperTeventInterface, TWrapperTeventImplementation>
    where TTaggregateTevent : class, ITaggregateTevent
    where TTaggregateTeventImplementation : TaggregateTevent, TTaggregateTevent
@@ -36,7 +36,7 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
    EntityId IEntity.Id => Id;
    public override TaggregateId Id => (TaggregateId)base.Id;
 
-   readonly List<ITaggregateIdentifyingTevent<TTaggregateTevent>> _unCommittedTevents = [];
+   readonly List<ITaggregateTevent<TTaggregateTevent>> _unCommittedTevents = [];
    readonly IMutableTeventDispatcher<TTaggregateTevent> _teventAppliersDispatcher;
    readonly IMutableTeventDispatcher<TTaggregateTevent> _teventHandlersDispatcher = IMutableTeventDispatcher<TTaggregateTevent>.New(TeventDispatcherConfig.IgnoreAllUnhandled); //Registering tevent handlers is optional, unlike tevent appliers.
 
@@ -91,7 +91,7 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
 
    void ApplyTevent(TTaggregateTevent theTevent) => ApplyTevent(theTevent, WrapTevent(theTevent));
 
-   void ApplyTevent(TTaggregateTevent theTevent, IPublisherIdentifyingTevent<TTaggregateTevent> wrapped)
+   void ApplyTevent(TTaggregateTevent theTevent, IPublisherTevent<TTaggregateTevent> wrapped)
    {
       using(ScopedChange.Enter(() => _applyingTevents = true, () => _applyingTevents = false))
       {
@@ -115,26 +115,26 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
 
    protected virtual void AssertInvariantsAreMet() {}
 
-   readonly SimpleObservable<ITaggregateIdentifyingTevent<TTaggregateTevent>> _teventStream = new();
+   readonly SimpleObservable<ITaggregateTevent<TTaggregateTevent>> _teventStream = new();
 #pragma warning disable CA1033 //These method should NOT clutter the public interface of Taggregates.
    void ITeventiveInternals<TTaggregateTevent, TTaggregateTeventImplementation>.ApplyTeventInternal(TTaggregateTevent theTevent) => ApplyTevent(theTevent);
    void ITeventiveInternals<TTaggregateTevent, TTaggregateTeventImplementation>.PublishInternal(TTaggregateTeventImplementation theTevent) => Publish(theTevent);
    ITeventSubscriber<TTaggregateTevent> ITeventiveInternals<TTaggregateTevent, TTaggregateTeventImplementation>.RegisterTeventAppliersInternal() => RegisterTeventAppliers();
 
-   IObservable<ITaggregateIdentifyingTevent<ITaggregateTevent>> ITaggregate.TeventStream => _teventStream;
-   IObservable<ITaggregateIdentifyingTevent<TTaggregateTevent>> ITaggregate<TTaggregateTevent>.TeventStream => _teventStream;
+   IObservable<ITaggregateTevent<ITaggregateTevent>> ITaggregate.TeventStream => _teventStream;
+   IObservable<ITaggregateTevent<TTaggregateTevent>> ITaggregate<TTaggregateTevent>.TeventStream => _teventStream;
 
-   void ITaggregate.Commit(Action<IReadOnlyList<ITaggregateIdentifyingTevent<ITaggregateTevent>>> commitTevents)
+   void ITaggregate.Commit(Action<IReadOnlyList<ITaggregateTevent<ITaggregateTevent>>> commitTevents)
    {
       commitTevents(_unCommittedTevents);
       _unCommittedTevents.Clear();
    }
 
-   void ITaggregate.LoadFromHistory(IEnumerable<ITaggregateIdentifyingTevent<ITaggregateTevent>> history)
+   void ITaggregate.LoadFromHistory(IEnumerable<ITaggregateTevent<ITaggregateTevent>> history)
    {
       State.Assert(Version == 0, () => $"You can only call {nameof(ITaggregate.LoadFromHistory)} on an empty Taggregate with {nameof(Version)} == 0");
       //The stored wrapper is applied as it stands: after a migration has rewritten history the stored wrapper is the truth, not what this taggregate would wrap today.
-      history.ForEach(wrappedTevent => ApplyTevent((TTaggregateTevent)wrappedTevent.Tevent, (IPublisherIdentifyingTevent<TTaggregateTevent>)wrappedTevent));
+      history.ForEach(wrappedTevent => ApplyTevent((TTaggregateTevent)wrappedTevent.Tevent, (IPublisherTevent<TTaggregateTevent>)wrappedTevent));
       AssertInvariantsAreMetInternal();
    }
 #pragma warning restore CA1033

@@ -17,7 +17,7 @@ interface IOrderTevent : ITaggregateTevent
 #pragma warning restore CA1715
 }
 
-interface IOrderTevent<out T> : ITaggregateIdentifyingTevent<T> where T : IOrderTevent;
+interface IOrderTevent<out T> : ITaggregateTevent<T> where T : IOrderTevent;
 
 class OrderTevent : TaggregateTevent, IOrderTevent
 {
@@ -27,18 +27,18 @@ class OrderTevent : TaggregateTevent, IOrderTevent
    internal class Created(TaggregateId taggregateId) : OrderTevent(taggregateId), IOrderTevent.Created;
 }
 
-class OrderTevent<T>(T tevent) : TaggregateIdentifyingTevent<T>(tevent), IOrderTevent<T> where T : IOrderTevent;
+class OrderTevent<T>(T tevent) : TaggregateTevent<T>(tevent), IOrderTevent<T> where T : IOrderTevent;
 
 ///<summary>The adopting wrapper tevent of the order's SHIPPING address slot: an <see cref="IOrderTevent"/> that adopts an<br/>
 /// <see cref="IPostalAddressTevent"/> into the order's tevent hierarchy and identifies WHICH postal-address member published it.</summary>
-interface IShippingAddressTevent<out T> : IOrderTevent, IPublisherIdentifyingTevent<T> where T : IPostalAddressTevent;
+interface IShippingAddressTevent<out T> : IOrderTevent, IPublisherTevent<T> where T : IPostalAddressTevent;
 
 class ShippingAddressTevent<T>(T tevent) : OrderTevent, IShippingAddressTevent<T> where T : IPostalAddressTevent
 {
    public T Tevent { get; } = tevent;
 }
 
-interface IBillingAddressTevent<out T> : IOrderTevent, IPublisherIdentifyingTevent<T> where T : IPostalAddressTevent;
+interface IBillingAddressTevent<out T> : IOrderTevent, IPublisherTevent<T> where T : IPostalAddressTevent;
 
 class BillingAddressTevent<T>(T tevent) : OrderTevent, IBillingAddressTevent<T> where T : IPostalAddressTevent
 {
@@ -66,7 +66,7 @@ class OrderTaggregate : Taggregate<OrderTaggregate, IOrderTevent, OrderTevent, I
       return order;
    }
 
-   public static OrderTaggregate LoadFromHistory(IEnumerable<ITaggregateIdentifyingTevent<ITaggregateTevent>> history)
+   public static OrderTaggregate LoadFromHistory(IEnumerable<ITaggregateTevent<ITaggregateTevent>> history)
    {
       var order = new OrderTaggregate();
       ((ITaggregate)order).LoadFromHistory(history);

@@ -100,17 +100,17 @@ public partial class TessageTypeInspector
    {
       internal override void AssertFulfilledBy(Type type)
       {
-         if(type.Is<IPublisherIdentifyingTevent<ITevent>>())
+         if(type.Is<IPublisherTevent<ITevent>>())
          {
             var allInterfaces = type.GetInterfaces().ToList();
             if(type.IsInterface) allInterfaces.Add(type);
 
-            var wrapperInterfacesImplemented = allInterfaces.Where(@interface => @interface.Is<IPublisherIdentifyingTevent<ITevent>>()).ToArray();
+            var wrapperInterfacesImplemented = allInterfaces.Where(@interface => @interface.Is<IPublisherTevent<ITevent>>()).ToArray();
             var nonGeneric = wrapperInterfacesImplemented.FirstOrDefault(@interface => !@interface.IsGenericType);
-            if(nonGeneric != null) throw new TessageTypeDesignViolationException($"{nonGeneric.GetFullNameCompilable()} implements {typeof(IPublisherIdentifyingTevent<>).GetFullNameCompilable()} but is not generic. This means that routing based on the covariance of the wrapping type is impossible and thus semantic routing breaks down.");
+            if(nonGeneric != null) throw new TessageTypeDesignViolationException($"{nonGeneric.GetFullNameCompilable()} implements {typeof(IPublisherTevent<>).GetFullNameCompilable()} but is not generic. This means that routing based on the covariance of the wrapping type is impossible and thus semantic routing breaks down.");
 
             var typeParameterIsNotOut = wrapperInterfacesImplemented.FirstOrDefault(@interface => !@interface.GetGenericTypeDefinition().GetGenericArguments()[0].GenericParameterAttributes.HasFlag(GenericParameterAttributes.Covariant));
-            if(typeParameterIsNotOut != null) throw new TessageTypeDesignViolationException($"{typeParameterIsNotOut.GetFullNameCompilable()} implements {typeof(IPublisherIdentifyingTevent<>).GetFullNameCompilable()} but does not declare the type parameter as covariant(out). If the type parameter is not covariant routing to derived types does not work because they are not assignable to the base interface type");
+            if(typeParameterIsNotOut != null) throw new TessageTypeDesignViolationException($"{typeParameterIsNotOut.GetFullNameCompilable()} implements {typeof(IPublisherTevent<>).GetFullNameCompilable()} but does not declare the type parameter as covariant(out). If the type parameter is not covariant routing to derived types does not work because they are not assignable to the base interface type");
          }
       }
    }

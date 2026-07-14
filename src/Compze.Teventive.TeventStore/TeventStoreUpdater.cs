@@ -116,7 +116,7 @@ class TeventStoreUpdater : ITeventStoreReader, ITeventStoreUpdater
       _disposableResources.Add(taggregate.TeventStream.Subscribe(OnTaggregateTevent));
    }
 
-   void OnTaggregateTevent(ITaggregateIdentifyingTevent<ITaggregateTevent> wrappedTevent)
+   void OnTaggregateTevent(ITaggregateTevent<ITaggregateTevent> wrappedTevent)
    {
       _usageGuard.EnsureAccessValid();
       if(!_idMap.ContainsKey(wrappedTevent.Tevent.TaggregateId))
@@ -141,9 +141,9 @@ class TeventStoreUpdater : ITeventStoreReader, ITeventStoreUpdater
       _store.Dispose();
    }
 
-   public IReadOnlyList<ITaggregateIdentifyingTevent<ITaggregateTevent>> GetHistory(TaggregateId taggregateId) => GetHistoryInternal(taggregateId, takeWriteLock: false);
+   public IReadOnlyList<ITaggregateTevent<ITaggregateTevent>> GetHistory(TaggregateId taggregateId) => GetHistoryInternal(taggregateId, takeWriteLock: false);
 
-   IReadOnlyList<ITaggregateIdentifyingTevent<ITaggregateTevent>> GetHistoryInternal(TaggregateId taggregateId, bool takeWriteLock) =>
+   IReadOnlyList<ITaggregateTevent<ITaggregateTevent>> GetHistoryInternal(TaggregateId taggregateId, bool takeWriteLock) =>
       takeWriteLock
          ? _store.GetTaggregateHistoryForUpdate(taggregateId)
          : _store.GetTaggregateHistory(taggregateId);

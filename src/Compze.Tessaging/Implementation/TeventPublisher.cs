@@ -53,16 +53,16 @@ static class TeventPublisherRegistrar
    ///<summary>The remote delivery the tevent's declared contract selects — resolved and validated before participation dispatches,<br/>
    /// so an invalid or unroutable publish fails before any handler runs. Null when the tevent travels by participation alone:<br/>
    /// its type declares no remotability, or the endpoint wires no remote delivery at all.</summary>
-   Action? RemoteDeliveryFor(IPublisherIdentifyingTevent<ITevent> wrappedTevent)
+   Action? RemoteDeliveryFor(IPublisherTevent<ITevent> wrappedTevent)
    {
       switch(wrappedTevent)
       {
-         case IPublisherIdentifyingTevent<IExactlyOnceTevent> exactlyOnceTevent:
+         case IPublisherTevent<IExactlyOnceTevent> exactlyOnceTevent:
             if(_exactlyOnceDeliveryLeg is not {} exactlyOnceDeliveryLeg)
                return NoRemoteDeliveryOnThisDeliberatelyInProcessEndpoint(exactlyOnceTevent.Tevent, unwiredLeg: "the exactly-once delivery leg (the outbox, wired by distributed Tessaging with persistence)");
             TessageInspector.AssertValidToSendRemote(exactlyOnceTevent.Tevent);
             return () => exactlyOnceDeliveryLeg.PublishTransactionally(exactlyOnceTevent);
-         case IPublisherIdentifyingTevent<IRemotableTevent> transientTevent:
+         case IPublisherTevent<IRemotableTevent> transientTevent:
             if(_transientDeliveryLeg is not {} transientDeliveryLeg)
                return NoRemoteDeliveryOnThisDeliberatelyInProcessEndpoint(transientTevent.Tevent, unwiredLeg: "the transient delivery leg (wired by distributed Tessaging)");
             TessageInspector.AssertValidToSendRemote(transientTevent.Tevent);

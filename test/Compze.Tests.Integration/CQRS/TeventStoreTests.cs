@@ -37,8 +37,8 @@ public class TeventStoreTests : UniversalTestBase
 
    protected override void DisposeInternal() => _container.Dispose();
 
-   static IReadOnlyList<ITaggregateIdentifyingTevent<ITaggregateTevent>> Wrapped(IEnumerable<SomeTevent> tevents) =>
-      tevents.Select(ITaggregateIdentifyingTevent<ITaggregateTevent> (it) => new TaggregateIdentifyingTevent<SomeTevent>(it)).ToList();
+   static IReadOnlyList<ITaggregateTevent<ITaggregateTevent>> Wrapped(IEnumerable<SomeTevent> tevents) =>
+      tevents.Select(ITaggregateTevent<ITaggregateTevent> (it) => new TaggregateTevent<SomeTevent>(it)).ToList();
 
    [PCT]
    public void StreamTeventsSinceReturnsWholeTeventLogWhenFromTeventIdIsNull() => _container.ExecuteInIsolatedScope(scope =>

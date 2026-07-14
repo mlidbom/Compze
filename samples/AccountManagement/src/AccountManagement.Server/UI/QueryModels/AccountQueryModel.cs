@@ -19,7 +19,7 @@ class AccountQueryModel : SelfGeneratingQueryModel<AccountQueryModel, IAccountTe
    public Password Password { get; private set; } = null!; //Nullable status guaranteed by AssertInvariantsAreMet
    public Email Email { get; private set; } = null!;       //Nullable status guaranteed by AssertInvariantsAreMet
 
-   AccountQueryModel(IEnumerable<ITaggregateIdentifyingTevent<IAccountTevent>> tevents) : base(TeventDispatcherConfig.Default.IgnoreUnhandled<IAccountTevent.LoginAttempted>()) //Login tevents change no account state, so they have no appliers.
+   AccountQueryModel(IEnumerable<ITaggregateTevent<IAccountTevent>> tevents) : base(TeventDispatcherConfig.Default.IgnoreUnhandled<IAccountTevent.LoginAttempted>()) //Login tevents change no account state, so they have no appliers.
    {
       RegisterTeventAppliers()
         .For<IAccountTevent.PropertyUpdated.Email>(tevent => Email = tevent.Email)
