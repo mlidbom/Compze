@@ -159,8 +159,11 @@ host starts, every endpoint's components finish `StartListeningAsync` before any
 `StartSendingAsync`. That is the whole point of the split: nothing can send to an endpoint that is not yet
 ready to receive. Stopping runs in reverse. The sending-phase members are default no-ops because some
 components only listen: `DistributedTypermediaEndpointComponent` starts and stops its transport server and
-never sends; `DistributedTessagingEndpointComponent` listens with its inbox and scheduler, then in the
-sending phase connects its router to every address in the `IEndpointRegistry` and starts its outbox. Only the
+never sends; `DistributedTessagingEndpointComponent` listens with its inbox and scheduler — announcing its
+address to every declared `IEndpointAddressAnnouncer` as the final act of listening — then in the sending
+phase sets its router reconciling against the `IEndpointRegistry`'s membership (continuously, so endpoints
+that appear, disappear, or restart at a new address are followed — see
+[same-machine hosting](same-machine-hosting.md)) and starts its outbox. Only the
 distributed features add components at all — an endpoint declaring only in-process features has no runtime
 lifecycle, and the host starts it with nothing to drive.
 
@@ -222,9 +225,13 @@ transport server it never serves.
 ## Production hosting
 
 `EndpointHost.Production.Create(containerFactory)` — the factory produces a fresh container builder per
-endpoint. Endpoints read configuration through `IConfigurationParameterProvider`
-(`AppSettingsJsonConfigurationParameterProvider` from `appsettings.json` is registered by default) and fall
-back to `AppConfigEndpointRegistry` for the addresses of other endpoints.
+endpoint. Endpoints read configuration through `IConfigurationParameterProvider`: an endpoint setup that
+registers its own provider wins; `AppSettingsJsonConfigurationParameterProvider` reading `appsettings.json`
+is only the default. The same pattern governs how endpoints find each other: the default `IEndpointRegistry`
+(`AppConfigEndpointRegistry`) reads other endpoints' addresses from configuration, and a setup that registers
+another registry wins. For processes on one machine that registry is the `InterprocessEndpointRegistry` —
+endpoints announce their freshly generated addresses and discover each other with zero configuration; the
+whole story lives in [same-machine hosting](same-machine-hosting.md).
 
 ## Testing hosting
 
@@ -261,7 +268,8 @@ What the pieces do:
 - **`DistributedTypermediaTestingEndpointHostFeature`** registers the Typermedia transport and
   `AddDistributedTypermedia()`.
 - **`TypermediaTestClient`** (in `Compze.Typermedia.Hosting.Testing`) is a remote client in its own container,
-  connecting to an endpoint's `TypermediaAddress` over HTTP exactly as an external application would.
+  connecting to an endpoint's `TypermediaAddress` over the current test's transport exactly as an external
+  application would.
 
 Test containers are built through `TestEnv.DIContainer.CreateTestingContainerBuilder()`, whose registrar is a
 `TestingComponentRegistrar`: when production wiring like `MsSqlConnectionPool(name)` asks it for a testing
@@ -269,10 +277,13 @@ override, it supplies one that resolves connection strings through the test data
 production registrars run unmodified against throwaway pooled databases, across every SQL backend, DI
 container, and serializer in the current test's `PluggableComponents` configuration.
 
-The shared HTTP plumbing (the `IHttpClientFactoryCE` and the infrastructure-query transport and controller
-that endpoint discovery runs on) belongs to no single communication style, so both transports demand it
-through the guarded `CurrentTestsInfrastructureTransportIfNotRegistered()` — whichever registers first wins,
-and an endpoint hosting both styles gets it once.
+The transport itself is an axis of that same matrix (`TestEnv.Transport`): the same specifications run over
+HTTP (ASP.NET Core) and over named pipes (see [same-machine hosting](same-machine-hosting.md)). The transport
+infrastructure every endpoint needs no matter what it speaks — the client side of the infrastructure-query
+transport that endpoint discovery runs on, plus whatever the current transport's client machinery requires —
+belongs to no single communication style, so both communication styles demand it through the guarded
+`CurrentTestsInfrastructureTransportIfNotRegistered()`: whichever registers first wins, and an endpoint
+hosting both styles gets it once.
 
 ## Adding a new communication style
 

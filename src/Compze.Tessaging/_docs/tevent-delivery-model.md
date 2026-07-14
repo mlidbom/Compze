@@ -249,16 +249,21 @@ know.
 
 ## Implementation status
 
-As of 2026-07-13:
+As of 2026-07-14:
 
 **Built and verified:**
 
 - The exactly-once vertical end to end: outbox, inbox, router, tommand scheduler, per-destination
-  single-in-flight ordered delivery, dedup on the envelope `TessageId`.
+  single-in-flight ordered delivery, dedup on the envelope `TessageId` — including recovery reloading a
+  restarted sender's undelivered backlog in send order.
 - In-process participation delivery, including the publisher-identifying wrapping and type-assignability
   routing.
 - The pure `IPublisherIdentifyingTevent<out TTevent>` wrapper with guarantee-via-covariance and the
   envelope-carried dedup identity.
+- Cross-process endpoint discovery and dynamic topology: endpoints announce their addresses into the
+  same-machine `InterprocessEndpointRegistry`, the router continuously reconciles its connections with the
+  registry's membership, and the story is proven across real OS processes over the named-pipe transport —
+  see [same-machine hosting](../../Compze.Hosting/_docs/same-machine-hosting.md).
 
 **Decided, not yet built** (work items live in the D6 section of
 `src/TODO/TODO_type-assignability-routing-and-publisher-identifying-tevents.md`):
@@ -269,6 +274,3 @@ As of 2026-07-13:
 - The transient transport leg and the direct receive dispatch, and the removal of the router's
   exactly-once-only routing gate.
 - `RegisterTransactionIgnoringTeventHandlers` and the observation dispatch.
-- Cross-process endpoint discovery for production/same-machine scenarios (`AppConfigEndpointRegistry` is a
-  stub; endpoints currently discover each other only within one testing host).
-- The exactly-once recovery-ordering fix (the bug referenced above).
