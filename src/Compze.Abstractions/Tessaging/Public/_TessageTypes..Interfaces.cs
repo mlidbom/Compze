@@ -77,12 +77,7 @@ public interface IAtMostOnceTessage : IRemotableTessage, IMustBeHandledTransacti
 public interface IAtMostOnceTypermediaTommand : IAtMostOnceTessage, IRemotableTommand, ITypermediaTessage;
 public interface IAtMostOnceTommand<out TResult> : IAtMostOnceTypermediaTommand, IRemotableTommand<TResult>;
 
-///<summary>The durable delivery tier — the strongest remotable guarantee: sent transactionally (the outbox), handled transactionally<br/>
-/// and deduped (the inbox), retried until handled.</summary>
-///<remarks>The full delivery model is specified in <c>src/Compze.Tessaging/_docs/tevent-delivery-model.md</c> (decided 2026-07-13),<br/>
-/// including the tiers below this one: a plain <see cref="IRemotableTevent"/> is the transient tier (best-effort, no store, no dedup,<br/>
-/// no retry — deliberately no marker of its own), and a subscriber's one opt-down is all the way to observation. Listening to tevents<br/>
-/// without the exactly-once overhead — the in-memory cache, the monitoring tool — lives there, not in a weakening of this tier.</remarks>
+///<summary>A tessage that is handled exactly once. Guaranteed by infrastructure through deduplication, retries, and transactions.</summary>
 public interface IExactlyOnceTessage : IMustBeSentAndHandledTransactionally, IAtMostOnceTessage;
 
 public interface IExactlyOnceTevent : IRemotableTevent, IExactlyOnceTessage;
