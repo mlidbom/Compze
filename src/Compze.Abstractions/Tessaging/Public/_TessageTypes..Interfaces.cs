@@ -89,7 +89,8 @@ public interface IExactlyOnceTevent : IRemotableTevent, IExactlyOnceTessage;
 public interface IExactlyOnceTommand : IRemotableTommand, IExactlyOnceTessage;
 
 ///<summary>
-/// When a raw tevent of the same type is published by more than one publisher* they cannot be distinguished from each other by type
+/// Distinguishes tevents from each other by who published them.
+/// These are needed because when a raw tevent of the same type is published by more than one publisher* they cannot be distinguished from each other by type
 /// and thus cannot be subscribed to precisely.
 ///
 /// To fix this, different publishers should wrap the tevents in another tevent that identifies the publisher by its type.
@@ -106,7 +107,6 @@ public interface IExactlyOnceTommand : IRemotableTommand, IExactlyOnceTessage;
 /// 
 /// The built-in taggregate and teventive base classes already do this automatically.
 /// 
-///
 /// * For example, when teventives inherit, or compose, each other.
 /// </summary>
 public interface IPublisherTevent<out TTevent> : ITevent
