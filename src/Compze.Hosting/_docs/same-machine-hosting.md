@@ -169,8 +169,7 @@ host.RegisterEndpoint("BackgroundWorker", new EndpointId(Guid.Parse("...")), bui
    builder.Registrar
           .NewtonsoftSerializers()
           .NamedPipeTessagingTransport()
-          .SqliteConnectionPool("BackgroundWorker")
-          .SqliteTypeIdInterner("BackgroundWorker.TypeIdInterner")
+          .SqliteEndpointPersistence("BackgroundWorker")
           .SqliteTessagingSqlLayer();
 
    builder.AddDistributedTessaging().ParticipateIn(registry);   // discover the others through it AND announce ourselves to it

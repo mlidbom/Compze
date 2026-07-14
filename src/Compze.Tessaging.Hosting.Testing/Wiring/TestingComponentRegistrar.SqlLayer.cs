@@ -1,7 +1,4 @@
 using Compze.Abstractions.Wiring.Testing.Internal;
-using Compze.Internals.Sql.MicrosoftSql.Wiring;
-using Compze.Internals.Sql.MySql.Wiring;
-using Compze.Internals.Sql.PostgreSql.Wiring;
 using Compze.Internals.Sql.Sqlite.Wiring;
 using Compze.DocumentDb.MicrosoftSql.Wiring;
 using Compze.DocumentDb.MySql.Wiring;
@@ -43,26 +40,22 @@ public static class TestingComponentRegistrarSqlLayer
       switch(TestEnv.SqlLayer)
       {
          case SqlLayer.MsSql:
-            return @this.MsSqlConnectionPool(connectionStringName)
-                        .MsSqlTypeIdInterner()
+            return @this.MsSqlEndpointPersistence(connectionStringName)
                         .MsSqlDocumentDbSqlLayer()
                         .MsSqlTessagingSqlLayer()
                         .MsSqlTeventStoreSqlLayer();
          case SqlLayer.MySql:
-            return @this.MySqlConnectionPool(connectionStringName)
-                        .MySqlTypeIdInterner()
+            return @this.MySqlEndpointPersistence(connectionStringName)
                         .MySqlDocumentDbSqlLayer()
                         .MySqlTessagingSqlLayer()
                         .MySqlTeventStoreSqlLayer();
          case SqlLayer.PgSql:
-            return @this.PgSqlConnectionPoolIfNotAlreadyRegistered(connectionStringName)
-                        .PgSqlTypeIdInterner()
+            return @this.PgSqlEndpointPersistence(connectionStringName)
                         .PgSqlDocumentDbSqlLayer()
                         .PgSqlTessagingSqlLayer()
                         .PgSqlTeventStoreSqlLayer();
          case SqlLayer.Sqlite:
-            return @this.SqliteConnectionPool(connectionStringName)
-                        .SqliteTypeIdInterner($"{connectionStringName}.TypeIdInterner")
+            return @this.SqliteEndpointPersistence(connectionStringName)
                         .SqliteDocumentDbSqlLayer()
                         .SqliteTessagingSqlLayer()
                         .SqliteTeventStoreSqlLayer();
