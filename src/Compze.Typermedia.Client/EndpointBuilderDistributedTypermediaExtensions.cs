@@ -15,6 +15,21 @@ public static class EndpointBuilderDistributedTypermediaExtensions
    }
 }
 
+public static class EndpointFoundationDistributedTypermediaExtensions
+{
+   extension(EndpointFoundation @this)
+   {
+      ///<summary>Adds distributed Typermedia to a composed endpoint (<see cref="EndpointFoundation"/>): runs <paramref name="compose"/><br/>
+      /// to fill the feature's slots (e.g. the serializer), then adds the feature. Typermedia persists nothing, so unlike distributed<br/>
+      /// Tessaging it needs no database on the foundation.</summary>
+      public DistributedTypermediaEndpointFeature AddDistributedTypermedia(Action<DistributedTypermediaComposition> compose)
+      {
+         compose(new DistributedTypermediaComposition(@this.Builder.Registrar));
+         return @this.Builder.AddDistributedTypermedia();
+      }
+   }
+}
+
 public static class EndpointTypermediaExtensions
 {
    extension(IEndpoint @this)

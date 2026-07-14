@@ -1,4 +1,6 @@
+using Compze.Abstractions.Hosting.Public;
 using Compze.DependencyInjection.Abstractions;
+using Compze.Internals.Sql.Sqlite;
 using Compze.Internals.Sql.Sqlite.Wiring;
 
 namespace Compze.TypeIdentifiers.Interning.Sqlite.Wiring;
@@ -19,4 +21,17 @@ public static class SqliteEndpointDatabaseRegistrar
    public static IComponentRegistrar SqliteEndpointDatabase(this IComponentRegistrar registrar, string connectionStringName, string internerConnectionStringName) =>
       registrar.SqliteConnectionPool(connectionStringName)
                .SqliteTypeIdInterner(internerConnectionStringName);
+
+   extension(EndpointFoundation @this)
+   {
+      ///<summary>Declares that the endpoint's database is sqlite — see <see cref="SqliteEndpointDatabase(IComponentRegistrar, string)"/>,<br/>
+      /// to which this delegates. Returns the foundation typed by the declaration (<see cref="EndpointFoundation{TEndpointDatabase}"/>),<br/>
+      /// so the features added on it bind their sqlite sql layers through the compiler (e.g. <c>AddDistributedTessaging(...)</c> on a<br/>
+      /// sqlite foundation registers Tessaging's sqlite sql layers).</summary>
+      public EndpointFoundation<SqliteEndpointDatabase> SqliteEndpointDatabase(string connectionStringName)
+      {
+         @this.Builder.Registrar.SqliteEndpointDatabase(connectionStringName);
+         return new EndpointFoundation<SqliteEndpointDatabase>(@this.Builder, new SqliteEndpointDatabase(connectionStringName));
+      }
+   }
 }

@@ -86,14 +86,24 @@ Declaring an endpoint looks like this, and is the same regardless of host:
 var host = EndpointHost.Production.Create(CreateContainerBuilder);
 var endpoint = host.RegisterEndpoint("AccountManagement", new EndpointId(Guid.Parse("...")), builder =>
 {
-   builder.AddDistributedTessaging();
-   builder.AddDistributedTypermedia();
    builder.TypeMapper.RegisterMyDomainTypeMappings();
+
+   var foundation = builder.ComposeEndpoint(it => it.AspNetCoreEndpointTransport()
+                                                    .SqliteEndpointDatabase("AccountManagement"));
+   foundation.AddDistributedTessaging(tessaging => tessaging.NewtonsoftSerializer());
+   foundation.AddDistributedTypermedia(typermedia => typermedia.NewtonsoftSerializer());
+
    builder.RegisterTessagingHandlers.ForTevent((IAccountTevent tevent) => ...);
    builder.RegisterTypermediaHandlers.ForTuery((AccountTuery tuery) => ...);
 });
 host.Start();
 ```
+
+`ComposeEndpoint` declares the endpoint's *foundation* — its transport protocol and, when it persists, its
+database — exactly once; the features are added on top of it. The foundation's type carries the database
+engine, so adding distributed Tessaging on a sqlite foundation registers Tessaging's sqlite sql layers: the
+pairing is routed by the compiler, and a foundation the feature needs but the setup never declared fails at
+setup time with an error naming the missing declaration.
 
 `RegisterEndpoint`'s callback receives the endpoint's `IEndpointBuilder` — the declaration surface through
 which everything the endpoint will be is stated before its container is built. When the callback returns, the
@@ -277,8 +287,8 @@ What the pieces do:
   (`DisposeAsyncWithoutWaitingForEndpointsToBeAtRest` opts out, for tests that deliberately leave work
   scheduled).
 - **`DistributedTessagingTestingEndpointHostFeature`** registers, per endpoint: a host-wide
-  tessages-in-flight tracker (this is what the dispose-time quiescence wait reads), the Tessaging transport,
-  the Tessaging vertical's SQL persistence stack, and finally `AddDistributedTessaging()` declaring
+  tessages-in-flight tracker (this is what the dispose-time quiescence wait reads), the endpoint transport of
+  the current test's protocol, the Tessaging vertical's SQL persistence stack, and finally `AddDistributedTessaging()` declaring
   `DiscoverEndpointsThrough` an `IEndpointRegistry` listing the host's endpoints' addresses (so routers
   connect to every endpoint in the host). The tracker pre-registration matters:
   `DistributedTessagingEndpointFeature` guards its tracker default with `IsRegistered`, so the host's

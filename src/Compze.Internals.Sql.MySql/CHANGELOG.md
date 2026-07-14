@@ -4,6 +4,10 @@ All notable changes to Compze.Internals.Sql.MySql will be documented in this fil
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## Unreleased
+
+- `MySqlEndpointDatabase`: the declaration that an endpoint's database is MySQL, carried by `EndpointFoundation<MySqlEndpointDatabase>` so the features added on the foundation bind their MySQL sql layers through the compiler.
+
 ## 0.2.1-alpha
 
 - README update.

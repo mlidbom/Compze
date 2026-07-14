@@ -1,4 +1,5 @@
 using Compze.Abstractions.Configuration.Internal;
+using Compze.Abstractions.Serialization.Internal;
 using Compze.Abstractions.Hosting.Public;
 using Compze.Contracts;
 using Compze.DependencyInjection;
@@ -14,6 +15,7 @@ using Compze.Tessaging.Implementation.Transport.Abstractions;
 using Compze.Tessaging.Implementation.Transport.Client.Implementation;
 using Compze.Tessaging.Implementation.Transport.Client.Routing;
 using Compze.Tessaging.SystemCE.ThreadingCE;
+using Compze.Tessaging.Transport.SqlLayer;
 using Compze.Tessaging.Transport;
 using Compze.Internals.Transport.NamedPipes;
 
@@ -35,7 +37,7 @@ namespace Compze.Tessaging.Hosting;
 /// (<see cref="TessagingTransportServerRegistrar.TessagingTransportServer"/>) and the client that posts tessages
 /// (<see cref="TransportMessagePosterRegistrar.TessagingTransportMessagePoster"/>) itself — both protocol-free, so the
 /// composing layer declares only the endpoint's transport protocol
-/// (e.g. <see cref="NamedPipeEndpointTransportRegistrar.NamedPipeEndpointTransport"/>).
+/// (e.g. <see cref="NamedPipeEndpointTransportRegistrar.NamedPipeEndpointTransport(IComponentRegistrar)"/>).
 ///
 /// How the endpoint finds other endpoints and is found by them is declared on the feature itself:
 /// <see cref="DiscoverEndpointsThrough"/> (the read side), <see cref="AnnounceAddressTo"/> (the write side), or
@@ -89,6 +91,7 @@ public class DistributedTessagingEndpointFeature
    {
       var register = builder.Registrar;
       register.AssertNoTeventPublicationModeIsDeclared();
+      AssertTheEndpointsFoundationIsDeclared(register);
 
       RegisterHandlers = builder.AddTessageHandling().RegisterHandlers;
       _transportServer = EndpointTransportServerFeature.GetOrAddTo(builder);
@@ -120,4 +123,17 @@ public class DistributedTessagingEndpointFeature
    /// fallback that reads other endpoints' addresses from application configuration.</summary>
    IEndpointRegistry EndpointRegistry(IRootResolver resolver) =>
       _endpointRegistry ??= new AppConfigEndpointRegistry(resolver.Resolve<IConfigurationParameterProvider>());
+
+   ///<summary>Distributed Tessaging builds on declarations the feature cannot make itself: the endpoint's transport protocol, its<br/>
+   /// persistence, and the Tessaging serializer. Each missing one fails here, when the feature is added, with an error naming the<br/>
+   /// declaration — instead of surfacing later as a dependency-resolution failure deep inside the container.</summary>
+   static void AssertTheEndpointsFoundationIsDeclared(IComponentRegistrar register)
+   {
+      State.Assert(register.IsRegistered<IEndpointTransportServer>(),
+                   () => "The endpoint declares no transport protocol. Declare it before adding distributed Tessaging — e.g. ComposeEndpoint(it => it.NamedPipeEndpointTransport()...) — or register NamedPipeEndpointTransport()/AspNetCoreEndpointTransport().");
+      State.Assert(register.IsRegistered<IServiceBusSqlLayer.IInboxSqlLayer>() && register.IsRegistered<IServiceBusSqlLayer.IOutboxSqlLayer>(),
+                   () => "The endpoint declares no Tessaging persistence. Add the feature on a foundation whose database is declared — e.g. ComposeEndpoint(it => ...SqliteEndpointDatabase(...)).AddDistributedTessaging(...) — or register Tessaging's sql layers (e.g. SqliteTessagingSqlLayer()) before adding it.");
+      State.Assert(register.IsRegistered<ITessagingSerializer>(),
+                   () => "The endpoint declares no Tessaging serializer. Fill the serializer slot when adding the feature — e.g. AddDistributedTessaging(tessaging => tessaging.NewtonsoftSerializer()) — or register one (e.g. NewtonsoftTessagingSerializer()) before adding it.");
+   }
 }

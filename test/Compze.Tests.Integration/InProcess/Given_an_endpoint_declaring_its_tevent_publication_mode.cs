@@ -1,9 +1,11 @@
 ﻿using Compze.Abstractions.Hosting.Public;
 using Compze.Hosting.Testing;
+using Compze.Hosting.Testing.Wiring;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Must;
 using Compze.Tessaging.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
 using Compze.Tessaging.Hosting;
+using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
 using static Compze.Must.MustActions;
@@ -38,6 +40,7 @@ public class Given_an_endpoint_declaring_its_tevent_publication_mode : Universal
    [PCT] public void declaring_distributed_then_in_process_tessaging_fails_stating_a_tevent_publication_mode_is_already_declared() =>
       Invoking(() => RegisterEndpointWith("DistributedThenInProcess", builder =>
               {
+                 DeclareTheEndpointsFoundation(builder);
                  builder.AddDistributedTessaging();
                  builder.AddInProcessTessaging();
               }))
@@ -53,6 +56,7 @@ public class Given_an_endpoint_declaring_its_tevent_publication_mode : Universal
    [PCT] public void registering_tessaging_handlers_before_declaring_distributed_tessaging_succeeds() =>
       RegisterEndpointWith("HandlersThenDistributed", builder =>
       {
+         DeclareTheEndpointsFoundation(builder);
          builder.RegisterTessagingHandlers.ForTevent((IMyGreetingRequestedTevent _) => {});
          builder.AddDistributedTessaging();
       }).Must().NotBeNull();
@@ -67,7 +71,15 @@ public class Given_an_endpoint_declaring_its_tevent_publication_mode : Universal
    [PCT] public void declaring_distributed_tessaging_twice_is_idempotent() =>
       RegisterEndpointWith("DistributedTwice", builder =>
       {
+         DeclareTheEndpointsFoundation(builder);
          builder.AddDistributedTessaging();
          builder.AddDistributedTessaging();
       }).Must().NotBeNull();
+
+   ///<summary>Distributed Tessaging asserts that the endpoint's foundation — transport protocol, persistence, serializer — is<br/>
+   /// declared before the feature is added. These specifications are about the tevent publication mode, so they declare the<br/>
+   /// current test's foundation without exercising it. (The serializer comes from the testing host's root container.)</summary>
+   static void DeclareTheEndpointsFoundation(IEndpointBuilder builder) =>
+      builder.Registrar.CurrentTestsEndpointTransport()
+                       .CurrentTestsConfiguredSqlLayer(connectionStringName: builder.Configuration.Id.ToString());
 }

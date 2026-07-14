@@ -1,3 +1,4 @@
+using Compze.Abstractions.Hosting.Public;
 using Compze.DependencyInjection.Abstractions;
 
 namespace Compze.Internals.Transport.AspNet;
@@ -12,4 +13,16 @@ public static class AspNetCoreEndpointTransportRegistrar
       => registrar.HttpEndpointTransportClientIfNotRegistered()
                   .EndpointDiscoveryQueryTransportIfNotRegistered()
                   .AspNetCoreEndpointTransportServerIfNotRegistered();
+
+   extension(EndpointComposer @this)
+   {
+      ///<summary>Declares the endpoint's transport protocol: HTTP served by ASP.NET Core — see<br/>
+      /// <see cref="AspNetCoreEndpointTransport(IComponentRegistrar)"/>, to which this delegates. Returns the endpoint's foundation<br/>
+      /// (<see cref="EndpointFoundation"/>), on which the database is declared and the distributed features are added.</summary>
+      public EndpointFoundation AspNetCoreEndpointTransport()
+      {
+         @this.Builder.Registrar.AspNetCoreEndpointTransport();
+         return new EndpointFoundation(@this.Builder);
+      }
+   }
 }

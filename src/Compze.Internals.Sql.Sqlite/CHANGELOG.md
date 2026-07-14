@@ -4,6 +4,10 @@ All notable changes to Compze.Internals.Sql.Sqlite will be documented in this fi
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## Unreleased
+
+- `SqliteEndpointDatabase`: the declaration that an endpoint's database is sqlite, carried by `EndpointFoundation<SqliteEndpointDatabase>` so the features added on the foundation bind their sqlite sql layers through the compiler.
+
 ## 0.2.1-alpha
 
 - README update.

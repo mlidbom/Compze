@@ -1,3 +1,4 @@
+using Compze.Abstractions.Hosting.Public;
 using Compze.DependencyInjection.Abstractions;
 
 namespace Compze.Internals.Transport.NamedPipes;
@@ -12,4 +13,16 @@ public static class NamedPipeEndpointTransportRegistrar
       => registrar.NamedPipeEndpointTransportClientIfNotRegistered()
                   .EndpointDiscoveryQueryTransportIfNotRegistered()
                   .NamedPipeEndpointTransportServerIfNotRegistered();
+
+   extension(EndpointComposer @this)
+   {
+      ///<summary>Declares the endpoint's transport protocol: named pipes — see <see cref="NamedPipeEndpointTransport(IComponentRegistrar)"/>,<br/>
+      /// to which this delegates. Returns the endpoint's foundation (<see cref="EndpointFoundation"/>), on which the database is<br/>
+      /// declared and the distributed features are added.</summary>
+      public EndpointFoundation NamedPipeEndpointTransport()
+      {
+         @this.Builder.Registrar.NamedPipeEndpointTransport();
+         return new EndpointFoundation(@this.Builder);
+      }
+   }
 }

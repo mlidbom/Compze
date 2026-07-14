@@ -168,19 +168,20 @@ host.RegisterEndpoint("BackgroundWorker", new EndpointId(Guid.Parse("...")), bui
 {
    builder.TypeMapper.MapTypesFromAssemblyContaining<MyTommand>();
 
-   builder.Registrar
-          .NewtonsoftTessagingSerializer()
-          .NamedPipeEndpointTransport()
-          .SqliteEndpointDatabase("BackgroundWorker")
-          .SqliteTessagingSqlLayer();
-
-   builder.AddDistributedTessaging().ParticipateIn(registry);   // discover the others through it AND announce ourselves to it
+   builder.ComposeEndpoint(it => it.NamedPipeEndpointTransport()
+                                   .SqliteEndpointDatabase("BackgroundWorker"))
+          .AddDistributedTessaging(tessaging => tessaging.NewtonsoftSerializer())
+          .ParticipateIn(registry);   // discover the others through it AND announce ourselves to it
 
    builder.RegisterTessagingHandlers.ForTommand<MyTommand>(tommand => ...);
 });
 
 await host.StartAsync();
 ```
+
+`ComposeEndpoint` declares the endpoint's foundation exactly once — the transport protocol and the database —
+and the features are added on top of it: `AddDistributedTessaging` on a sqlite foundation registers Tessaging's
+sqlite inbox/outbox sql layers, with the pairing routed by the compiler through the foundation's type.
 
 `ParticipateIn` declares the registry's two faces at once: `DiscoverEndpointsThrough`, the *read* side the
 router reconciles against, and `AnnounceAddressTo`, the *write* side the endpoint's lifecycle drives — declare

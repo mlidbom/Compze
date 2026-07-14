@@ -1,8 +1,10 @@
+using Compze.Abstractions.Hosting.Public;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Sql.PostgreSql;
 using Compze.Internals.Sql.PostgreSql.Private;
 using Compze.Internals.Sql.PostgreSql.Wiring;
+using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Transport.SqlLayer;
 using Compze.TypeIdentifiers.Interning;
 
@@ -10,6 +12,20 @@ namespace Compze.Tessaging.PostgreSql.Wiring;
 
 public static class PgSqlTessagingRegistrar
 {
+   extension(EndpointFoundation<PgSqlEndpointDatabase> @this)
+   {
+      ///<summary>Adds distributed Tessaging to an endpoint whose database is PostgreSQL: registers Tessaging's inbox/outbox sql layers<br/>
+      /// (<see cref="PgSqlTessagingSqlLayer"/>) in the endpoint's database, runs <paramref name="compose"/> to fill the feature's<br/>
+      /// slots (e.g. the serializer), and adds the feature. The compiler routes this pairing through the foundation's type —<br/>
+      /// Tessaging-on-PostgreSQL exists only for an endpoint whose foundation declares a PostgreSQL database.</summary>
+      public DistributedTessagingEndpointFeature AddDistributedTessaging(Action<DistributedTessagingComposition> compose)
+      {
+         @this.Builder.Registrar.PgSqlTessagingSqlLayer();
+         compose(new DistributedTessagingComposition(@this.Builder.Registrar));
+         return @this.Builder.AddDistributedTessaging();
+      }
+   }
+
    public static IComponentRegistrar PgSqlTessagingSqlLayer(this IComponentRegistrar registrar) =>
       registrar.PgSqlSchemaContribution(PgSqlInboxSqlLayer.SchemaCreationSql)
                .PgSqlSchemaContribution(PgSqlOutboxSqlLayer.SchemaCreationSql)

@@ -7,7 +7,7 @@ namespace Compze.Typermedia.Hosting.Testing;
 
 ///<summary>
 /// Plugs distributed Typermedia into a <see cref="TestingEndpointHost"/>. Every endpoint the host registers gets
-/// the distributed Typermedia pipeline (via <see cref="EndpointBuilderDistributedTypermediaExtensions.AddDistributedTypermedia"/>) and the current
+/// the distributed Typermedia pipeline (via <see cref="EndpointBuilderDistributedTypermediaExtensions.AddDistributedTypermedia(IEndpointBuilder)"/>) and the current
 /// test's Typermedia transport. Typermedia has no background work, so the feature takes no part in the host's
 /// dispose-time quiescence wait.
 ///</summary>

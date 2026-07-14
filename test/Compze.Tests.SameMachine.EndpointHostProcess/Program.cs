@@ -43,14 +43,12 @@ public static class Program
             {
                builder.TypeMapper.MapTypesFromAssemblyContaining<TommandSentToTheEndpointHostProcess>();
 
-               builder.Registrar
-                      .Register(Singleton.For<IConfigurationParameterProvider>().CreatedBy(() => new SqliteDatabasePerConnectionStringNameConfigurationParameterProvider(workDirectory)))
-                      .NewtonsoftTessagingSerializer()
-                      .NamedPipeEndpointTransport()
-                      .SqliteEndpointDatabase("EndpointHostProcess")
-                      .SqliteTessagingSqlLayer();
+               builder.Registrar.Register(Singleton.For<IConfigurationParameterProvider>().CreatedBy(() => new SqliteDatabasePerConnectionStringNameConfigurationParameterProvider(workDirectory)));
 
-               builder.AddDistributedTessaging().ParticipateIn(registry);
+               builder.ComposeEndpoint(it => it.NamedPipeEndpointTransport()
+                                               .SqliteEndpointDatabase("EndpointHostProcess"))
+                      .AddDistributedTessaging(tessaging => tessaging.NewtonsoftSerializer())
+                      .ParticipateIn(registry);
 
                builder.RegisterTessagingHandlers.ForTommand<TommandSentToTheEndpointHostProcess, IServiceBusSession>(
                   (_, serviceBusSession) => serviceBusSession.Send(new TommandSentBackToTheSpecificationProcess()));

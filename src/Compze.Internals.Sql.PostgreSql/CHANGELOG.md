@@ -4,6 +4,10 @@ All notable changes to Compze.Internals.Sql.PostgreSql will be documented in thi
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## Unreleased
+
+- `PgSqlEndpointDatabase`: the declaration that an endpoint's database is PostgreSQL, carried by `EndpointFoundation<PgSqlEndpointDatabase>` so the features added on the foundation bind their PostgreSQL sql layers through the compiler.
+
 ## 0.2.1-alpha
 
 - README update.
