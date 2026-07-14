@@ -40,22 +40,22 @@ public static class TestingComponentRegistrarSqlLayer
       switch(TestEnv.SqlLayer)
       {
          case SqlLayer.MsSql:
-            return @this.MsSqlEndpointPersistence(connectionStringName)
+            return @this.MsSqlEndpointDatabase(connectionStringName)
                         .MsSqlDocumentDbSqlLayer()
                         .MsSqlTessagingSqlLayer()
                         .MsSqlTeventStoreSqlLayer();
          case SqlLayer.MySql:
-            return @this.MySqlEndpointPersistence(connectionStringName)
+            return @this.MySqlEndpointDatabase(connectionStringName)
                         .MySqlDocumentDbSqlLayer()
                         .MySqlTessagingSqlLayer()
                         .MySqlTeventStoreSqlLayer();
          case SqlLayer.PgSql:
-            return @this.PgSqlEndpointPersistence(connectionStringName)
+            return @this.PgSqlEndpointDatabase(connectionStringName)
                         .PgSqlDocumentDbSqlLayer()
                         .PgSqlTessagingSqlLayer()
                         .PgSqlTeventStoreSqlLayer();
          case SqlLayer.Sqlite:
-            return @this.SqliteEndpointPersistence(connectionStringName)
+            return @this.SqliteEndpointDatabase(connectionStringName)
                         .SqliteDocumentDbSqlLayer()
                         .SqliteTessagingSqlLayer()
                         .SqliteTeventStoreSqlLayer();

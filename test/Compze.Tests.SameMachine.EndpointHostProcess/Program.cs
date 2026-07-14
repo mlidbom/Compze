@@ -47,7 +47,7 @@ public static class Program
                       .Register(Singleton.For<IConfigurationParameterProvider>().CreatedBy(() => new SqliteDatabasePerConnectionStringNameConfigurationParameterProvider(workDirectory)))
                       .NewtonsoftTessagingSerializer()
                       .NamedPipeEndpointTransport()
-                      .SqliteEndpointPersistence("EndpointHostProcess")
+                      .SqliteEndpointDatabase("EndpointHostProcess")
                       .SqliteTessagingSqlLayer();
 
                builder.AddDistributedTessaging().ParticipateIn(registry);
