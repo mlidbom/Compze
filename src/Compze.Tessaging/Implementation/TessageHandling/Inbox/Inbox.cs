@@ -6,7 +6,6 @@ using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Logging;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
-using Compze.Tessaging.Transport.Internal;
 using Compze.Tessaging.Transport.SqlLayer;
 using JetBrains.Annotations;
 
@@ -29,35 +28,27 @@ static class InboxRegistrar
          Singleton.For<HandlerExecutionEngine>()
                   .CreatedBy((ITessagesInFlightTracker globalStateTracker, ITessageHandlerRegistry tessagingHandlerRegistry, IScopeFactory scopeFactory, ITessageStorage storage, ITaskRunner taskRunner, EndpointConfiguration configuration)
                                 => new HandlerExecutionEngine(globalStateTracker, tessagingHandlerRegistry, scopeFactory, storage, taskRunner, configuration.Id)),
-         //WithServiceResolver: the named-pipe inbox transport server delivers received tessages to the inbox, but the inbox owns and
-         //starts the transport server - a constructor cycle the server breaks by depending on a deferred IServiceResolver<IInbox>.
          Singleton.For<IInbox>()
-                  .WithServiceResolver()
-                  .CreatedBy((HandlerExecutionEngine handlerExecutionEngine, ITessageStorage tessageStorage, IInboxTransportServer transportServer)
-                                => new Inbox(handlerExecutionEngine, tessageStorage, transportServer))
+                  .CreatedBy((HandlerExecutionEngine handlerExecutionEngine, ITessageStorage tessageStorage)
+                                => new Inbox(handlerExecutionEngine, tessageStorage))
       );
 
    readonly HandlerExecutionEngine _handlerExecutionEngine;
 
    readonly ITessageStorage _storage;
-   readonly IInboxTransportServer _transportServer;
 
-   public Inbox(HandlerExecutionEngine handlerExecutionEngine, ITessageStorage tessageStorage, IInboxTransportServer transportServer)
+   public Inbox(HandlerExecutionEngine handlerExecutionEngine, ITessageStorage tessageStorage)
    {
       _handlerExecutionEngine = handlerExecutionEngine;
       _storage = tessageStorage;
-      _transportServer = transportServer;
    }
-
-   public EndpointAddress Address => new(uri: _transportServer.Address);
 
    public async Task StartAsync()
    {
       this.Log().Info("Starting");
       _handlerExecutionEngine.Start();
-      var storageStartTask = _storage.StartAsync();
-      await Task.WhenAll(storageStartTask, _transportServer.StartAsync()).caf();
-      this.Log().Info($"Started at {Address}");
+      await _storage.StartAsync().caf();
+      this.Log().Info("Started");
    }
 
    public Task ReceiveAsync(TransportTessage.InComing tessage)
@@ -75,17 +66,10 @@ static class InboxRegistrar
       return Task.CompletedTask;
    }
 
-   public async Task StopAsync()
-   {
-      this.Log().Info("Stopping");
-      await _transportServer.StopAsync().caf();
-   }
-
-   public async ValueTask DisposeAsync()
+   public ValueTask DisposeAsync()
    {
       this.Log().Debug("Disposing");
       _handlerExecutionEngine.Stop();
-      await StopAsync().caf();
-      await _transportServer.DisposeAsync().caf();
+      return ValueTask.CompletedTask;
    }
 }

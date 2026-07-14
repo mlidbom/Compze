@@ -1,30 +1,22 @@
 using Compze.Abstractions.Hosting.Public;
-using Compze.Internals.Logging;
-using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
-using Compze.Typermedia.Hosting;
+using Compze.Internals.Transport;
 
 namespace Compze.Typermedia.Client;
 
-///<summary>The distributed Typermedia pipeline's runtime lifecycle within an endpoint: its transport server listens; nothing participates in the sending phase.</summary>
-sealed class DistributedTypermediaEndpointComponent(ITypermediaTransportServer transportServer) : IEndpointComponent
+///<summary>Distributed Typermedia's runtime presence within an endpoint. The serving itself is done by the endpoint's one<br/>
+/// transport server (<see cref="EndpointTransportServerFeature"/>'s component), to which Typermedia contributes its request<br/>
+/// handling — so this component drives nothing; it is how the endpoint surface shows that distributed Typermedia is listening,<br/>
+/// and where the <c>TypermediaAddress</c> extension property reads the endpoint's address.</summary>
+sealed class DistributedTypermediaEndpointComponent : IEndpointComponent
 {
-   readonly ITypermediaTransportServer _transportServer = transportServer;
+   readonly EndpointTransportServerFeature _transportServer;
 
-   bool _isListening;
+   internal DistributedTypermediaEndpointComponent(EndpointTransportServerFeature transportServer) => _transportServer = transportServer;
 
-   ///<summary>The address where the typermedia transport server listens; null until listening.</summary>
-   internal EndpointAddress? Address => _isListening ? new EndpointAddress(_transportServer.Address) : null;
+   ///<summary>The endpoint's one listening address (see <see cref="EndpointTransportServerFeature.ListeningAddress"/>); null until the endpoint's transport server is listening.</summary>
+   internal EndpointAddress? Address => _transportServer.ListeningAddress;
 
-   public async Task StartListeningAsync()
-   {
-      await _transportServer.StartAsync().caf();
-      _isListening = true;
-      this.Log().Info($"Typermedia listening at {Address}");
-   }
+   public Task StartListeningAsync() => Task.CompletedTask;
 
-   public async Task StopListeningAsync()
-   {
-      _isListening = false;
-      await _transportServer.StopAsync().caf();
-   }
+   public Task StopListeningAsync() => Task.CompletedTask;
 }

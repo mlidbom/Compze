@@ -143,7 +143,16 @@ wired once whether it arrives alone or under distribution).
   `AddInProcessTypermedia()`) wires the handler registry and the `IInProcessTypermediaNavigator` through
   which strictly local tueries and tommands execute synchronously, in the caller's transaction.
   `DistributedTypermediaEndpointFeature` (in `Compze.Typermedia.Client`, `AddDistributedTypermedia()`)
-  composes it and adds the transport server, the handler executor that serves remote clients, and discovery.
+  composes it and adds the handler executor that serves remote clients, and discovery.
+- **Serving is shared.** An endpoint runs **one transport server**, whatever it speaks: both distributed
+  features compose `EndpointTransportServerFeature` (in `Compze.Internals.Transport`) — the same
+  `GetOrAddFeature` pattern one level down — and *contribute their request handling to it* (request-kind
+  handlers on the named-pipe transport, controllers on the ASP.NET Core transport) rather than each running a
+  server of its own. One server means one address per endpoint, which is what lets an endpoint registry map
+  an `EndpointId` to a single address; the server itself answers the infrastructure queries endpoint
+  discovery runs on, which every endpoint serves no matter what it speaks. Which transport implements the
+  server is composition: each transport registers its `IEndpointTransportServerFactory` guarded, so every
+  style's transport registration can demand a server and the first wins.
 
 A feature lives in its own capability's assembly, where the internal access it needs is natural — no
 `InternalsVisibleTo` back-doors.
@@ -158,24 +167,30 @@ The lifecycle has two phases — listening, then sending — and the ordering gu
 host starts, every endpoint's components finish `StartListeningAsync` before any component anywhere starts
 `StartSendingAsync`. That is the whole point of the split: nothing can send to an endpoint that is not yet
 ready to receive. Stopping runs in reverse. The sending-phase members are default no-ops because some
-components only listen: `DistributedTypermediaEndpointComponent` starts and stops its transport server and
-never sends; `DistributedTessagingEndpointComponent` listens with its inbox and scheduler — announcing its
-address to every declared `IEndpointAddressAnnouncer` as the final act of listening — then in the sending
-phase sets its router reconciling against the `IEndpointRegistry`'s membership (continuously, so endpoints
-that appear, disappear, or restart at a new address are followed — see
-[same-machine hosting](same-machine-hosting.md)) and starts its outbox. Only the
+components only listen. The components in play: `EndpointTransportServerFeature`'s component runs the
+endpoint's one transport server through the listening phase, and announces the endpoint's address to every
+declared `IEndpointAddressAnnouncer` as the first act of the sending phase — the host-wide ordering makes
+that the moment every listener everywhere is ready, so an announced address is always one whose whole
+endpoint can actually serve (retraction is the mirror image: the first act of the host's stopping).
+`DistributedTessagingEndpointComponent` listens with its inbox and scheduler, then in the sending phase sets
+its router reconciling against the `IEndpointRegistry`'s membership (continuously, so endpoints that appear,
+disappear, or restart at a new address are followed — see
+[same-machine hosting](same-machine-hosting.md)) and starts its outbox.
+`DistributedTypermediaEndpointComponent` drives nothing — the shared server serves its requests — and exists
+as the endpoint surface's evidence that distributed Typermedia is listening. Only the
 distributed features add components at all — an endpoint declaring only in-process features has no runtime
 lifecycle, and the host starts it with nothing to drive.
 
 ## Addresses are extension properties
 
-`IEndpoint` has no address members, because "the endpoint's address" is not one concept — each transport has
-its own. Each communication style contributes an extension property reading its own component:
-`endpoint.TessagingAddress` (the inbox address, from `EndpointTessagingExtensions`) and
-`endpoint.TypermediaAddress` (the transport server's address, from `EndpointTypermediaExtensions`). Both are
-null until the endpoint is listening — there is nothing to connect to before that — and for endpoints without
-that style's distributed pipeline (an in-process endpoint has no address: there is nothing to connect to,
-ever).
+`IEndpoint` has no address members, because the hosting machinery does not know which communication styles an
+endpoint speaks — per-style *presence* is each style's own concern. Each communication style contributes an
+extension property reading its own component: `endpoint.TessagingAddress` (from `EndpointTessagingExtensions`)
+and `endpoint.TypermediaAddress` (from `EndpointTypermediaExtensions`). The *value* behind both is the same —
+the endpoint's one transport-server address — but each property is null for endpoints without that style's
+distributed pipeline, so a property answers "can I converse with this endpoint in this style, and where".
+Both are also null until the endpoint is listening — there is nothing to connect to before that (an
+in-process endpoint has no address: there is nothing to connect to, ever).
 
 ## In-process composition — when there is nothing to host
 

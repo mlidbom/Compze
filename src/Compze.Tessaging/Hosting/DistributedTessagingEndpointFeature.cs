@@ -26,11 +26,15 @@ namespace Compze.Tessaging.Hosting;
 /// hosting mechanism that knows nothing of it, and the feature instance is the handle through which the
 /// endpoint's tessaging handlers are registered (<see cref="RegisterHandlers"/>).
 ///
+/// Serving is done by the endpoint's one transport server (<see cref="EndpointTransportServerFeature"/>,
+/// which it composes): Tessaging contributes its request handling to that server rather than running a
+/// server of its own.
+///
 /// Two registrations are guarded with <c>IsRegistered</c> so a hosting layer can pre-register its own before
 /// the feature is added: the in-flight tracker (a testing host supplies a real one to await quiescence; the
 /// default does nothing) and the <see cref="IEndpointRegistry"/> (a testing host lists its own endpoints; the
 /// default reads application configuration). The runtime lifecycle lives in
-/// <see cref="DistributedTessagingEndpointComponent"/>, and the endpoint's inbox address is exposed as the
+/// <see cref="DistributedTessagingEndpointComponent"/>, and the endpoint's address is exposed as the
 /// <c>TessagingAddress</c> extension property (<see cref="EndpointTessagingExtensions"/>).
 ///</summary>
 ///<remarks>
@@ -41,14 +45,14 @@ public class DistributedTessagingEndpointFeature
 {
    public TessageHandlerRegistrarWithDependencyInjectionSupport RegisterHandlers { get; }
 
-   readonly List<IEndpointAddressAnnouncer> _addressAnnouncers = [];
+   readonly EndpointTransportServerFeature _transportServer;
 
-   ///<summary>Declares that the endpoint announces where its inbox listens to <paramref name="announcer"/> — the final act of starting<br/>
-   /// to listen, retracted as the first act of stopping, so an announced address is always one that is actually listening.<br/>
-   /// An endpoint announces to every announcer declared; declaring none means the endpoint is found some other way (a static registry, configuration).</summary>
+   ///<summary>Declares that the endpoint announces where it listens to <paramref name="announcer"/> — see<br/>
+   /// <see cref="EndpointTransportServerFeature.AnnounceAddressTo"/>, to which this delegates: the announced address is the<br/>
+   /// endpoint's one transport-server address, serving every distributed capability the endpoint speaks.</summary>
    public DistributedTessagingEndpointFeature AnnounceAddressTo(IEndpointAddressAnnouncer announcer)
    {
-      _addressAnnouncers.Add(announcer);
+      _transportServer.AnnounceAddressTo(announcer);
       return this;
    }
 
@@ -58,6 +62,7 @@ public class DistributedTessagingEndpointFeature
       register.AssertNoTeventPublicationModeIsDeclared();
 
       RegisterHandlers = builder.AddTessageHandling().RegisterHandlers;
+      _transportServer = EndpointTransportServerFeature.GetOrAddTo(builder);
 
       if(!register.IsRegistered<ITessagesInFlightTracker>())
       {
@@ -81,6 +86,6 @@ public class DistributedTessagingEndpointFeature
       builder.OnContainerBuilt(resolver => TessageTypesInternal.RegisterInfrastructureQueryHandlers(
                                   new InfrastructureQueryRegistrarWithDependencyInjectionSupport(resolver.Resolve<InfrastructureQueryExecutor>())));
 
-      builder.AddComponent(resolver => new DistributedTessagingEndpointComponent(resolver, _addressAnnouncers));
+      builder.AddComponent(resolver => new DistributedTessagingEndpointComponent(resolver, _transportServer));
    }
 }

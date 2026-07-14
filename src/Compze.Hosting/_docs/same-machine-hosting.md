@@ -31,9 +31,10 @@ Unpacked:
 
 - **A fresh address per start.** No address is worth writing down — not in a configuration file, not in
   another endpoint's setup. Whoever needs the address reads it from the registry at the moment of use.
-- **Announced means listening.** Announcing is the final act of starting to listen and retracting the first
-  act of stopping, so an announced address is always one that is actually listening — and addresses announced
-  by a process that crashed are invisible, because the registry checks announcer liveness.
+- **Announced means listening.** The endpoint announces once every endpoint in its host has finished starting
+  to listen, and retracts as the first act of the host's stopping — so an announced address is always one that
+  is actually listening and fully ready — and addresses announced by a process that crashed are invisible,
+  because the registry checks announcer liveness.
 - **Senders converge; nothing is wired once.** Connections are not established at startup and assumed
   thereafter — they are *reconciled* against the registry's current membership, continuously. Endpoints that
   appear, disappear, or restart at a new address are connected, dropped, or re-connected as the registry
@@ -60,10 +61,13 @@ Linux/macOS the same API rides Unix domain sockets.
 - **Addressing** (`NamedPipeAddress`): `compze.pipe://localhost/<pipe-name>`. A pipe name is generated fresh
   per server start (`NewUniquePipeName`) — the same-machine analog of the HTTP transport's dynamically
   allocated ports, and the "fresh address per start" the design rule demands.
-- **The shape**: like the HTTP transport, each distributed feature runs its own transport server
-  (`NamedPipeTransportServer`) — listening on its own freshly named pipe, dispatching each request to the
-  handler registered for its request kind, and answering the infrastructure queries endpoint discovery runs
-  on itself (where the HTTP transport needs a separate controller).
+- **The shape**: the endpoint runs **one transport server** (`NamedPipeEndpointTransportServer`, on this
+  transport) — listening on one freshly named pipe, dispatching each request to the handler registered for
+  its request kind. Each communication style the endpoint speaks *contributes* its request handlers to that
+  server, and the server itself answers the infrastructure queries endpoint discovery runs on — every
+  endpoint serves discovery no matter what it speaks. One server means one address per endpoint, which is
+  what lets the registry map an endpoint to a single address. (The ASP.NET Core transport has the same shape:
+  one Kestrel server per endpoint, each style contributing its controllers.)
 - **Framing**: length-prefixed UTF-8 strings; each connection is a lockstep request/response conversation.
 - **Concurrency**: a fixed pool of listener loops (`max(2 × processor count, 8)`), each serving its accepted
   connection to completion before accepting the next. The pool bounds concurrent handler executions, and a
@@ -101,8 +105,10 @@ builder.AddDistributedTessaging().AnnounceAddressTo(registry);
 ```
 
 Declaring none — a testing host with a static registry, a configuration-file deployment — means nothing is
-announced. The endpoint's transport component announces as the final act of starting to listen and retracts
-as the first act of stopping, so an announced address is always one that is actually listening.
+announced. The announced address is the endpoint's one transport-server address, serving every distributed
+capability the endpoint speaks. The announcement is made once every endpoint in the host has finished
+starting to listen — the host's sending phase — and retracted as the first act of the host's stopping, so an
+announced address is always one that is actually listening and fully ready.
 
 **Crashed processes announce nothing — structurally.** The backing file outlives crashed processes by design
 (that is how announcements survive restarts), so a crash cannot retract. Instead, every entry records its
@@ -202,6 +208,8 @@ As of 2026-07-14:
 
 - The named-pipe transport for both communication styles, run against the full specification suite as a leg
   of the transport matrix.
+- One transport server — one address — per endpoint, on both transports: every distributed capability the
+  endpoint speaks is served through it, and it is the address that gets announced.
 - The `InterprocessEndpointRegistry` with announce/retract and crashed-process liveness.
 - The Tessaging router's continuous reconciliation — appear, disappear, and restart-at-a-new-address,
   including the backlog following a restarted endpoint.
@@ -210,9 +218,10 @@ As of 2026-07-14:
 
 **Pending:**
 
-- **Typermedia dynamic-topology parity.** The named-pipe transport serves Typermedia, but Typermedia clients
-  connect to an address obtained once; nothing on the Typermedia side yet reconciles against a live registry
-  the way the Tessaging router does.
+- **Typermedia dynamic-topology parity.** The endpoint's one announced address serves Typermedia too, so
+  discovery has everything it needs — but the Typermedia *client side* does not yet consume a registry:
+  `TypermediaRouter` is connected to explicitly known addresses, adds routes only, and never reconciles
+  against a live registry the way the Tessaging router does.
 - **The transient tevent leg** (see
   [the tevent delivery model](../../Compze.Tessaging/_docs/tevent-delivery-model.md)) — once built it rides
   this same transport and topology; same-machine suites are its natural habitat.

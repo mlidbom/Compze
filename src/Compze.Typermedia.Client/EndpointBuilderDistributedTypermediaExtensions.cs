@@ -19,7 +19,8 @@ public static class EndpointTypermediaExtensions
 {
    extension(IEndpoint @this)
    {
-      ///<summary>The address where this endpoint's typermedia transport server listens. Null until the endpoint is listening, and for endpoints without the distributed Typermedia pipeline.</summary>
+      ///<summary>The address where this endpoint listens for Typermedia — the endpoint's one transport-server address, which serves every<br/>
+      /// distributed capability the endpoint speaks. Null until the endpoint is listening, and for endpoints without the distributed Typermedia pipeline.</summary>
       public EndpointAddress? TypermediaAddress => @this.Components.OfType<DistributedTypermediaEndpointComponent>().SingleOrDefault()?.Address;
    }
 }

@@ -1,7 +1,9 @@
 using Compze.Abstractions.Hosting.Public;
+using Compze.Contracts;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
+using Compze.Internals.Transport;
 using Compze.Tessaging.Implementation;
 using Compze.Tessaging.Implementation.Abstractions;
 using Compze.Tessaging.Implementation.TessageHandling.Abstractions;
@@ -10,9 +12,9 @@ using Compze.Tessaging.SystemCE.ThreadingCE;
 
 namespace Compze.Tessaging.Hosting;
 
-///<summary>The distributed Tessaging pipeline's runtime lifecycle within an endpoint: inbox and scheduler listen, the endpoint's<br/>
-/// listening address is announced to every registered <see cref="IEndpointAddressAnnouncer"/>, the router connects to all endpoints,<br/>
-/// the outbox sends.</summary>
+///<summary>The distributed Tessaging pipeline's runtime lifecycle within an endpoint: inbox and scheduler listen (the endpoint's<br/>
+/// one transport server — which serves Tessaging's arriving tessages and announces the endpoint's address — runs its own lifecycle in<br/>
+/// <see cref="Compze.Internals.Transport.EndpointTransportServerFeature"/>'s component), the router connects to all endpoints, the outbox sends.</summary>
 sealed class DistributedTessagingEndpointComponent : IEndpointComponent, IAsyncDisposable
 {
    readonly TommandScheduler _tommandScheduler;
@@ -21,12 +23,9 @@ sealed class DistributedTessagingEndpointComponent : IEndpointComponent, IAsyncD
    readonly ITessagingRouter _tessagingRouter;
    readonly IEndpointRegistry _endpointRegistry;
    readonly IBackgroundExceptionReporter _backgroundExceptionReporter;
-   readonly EndpointConfiguration _configuration;
-   readonly IReadOnlyList<IEndpointAddressAnnouncer> _addressAnnouncers;
+   readonly EndpointTransportServerFeature _transportServer;
 
-   bool _isListening;
-
-   internal DistributedTessagingEndpointComponent(IRootResolver resolver, IReadOnlyList<IEndpointAddressAnnouncer> addressAnnouncers)
+   internal DistributedTessagingEndpointComponent(IRootResolver resolver, EndpointTransportServerFeature transportServer)
    {
       _tommandScheduler = resolver.Resolve<TommandScheduler>();
       _inbox = resolver.Resolve<IInbox>();
@@ -34,27 +33,21 @@ sealed class DistributedTessagingEndpointComponent : IEndpointComponent, IAsyncD
       _tessagingRouter = resolver.Resolve<ITessagingRouter>();
       _endpointRegistry = resolver.Resolve<IEndpointRegistry>();
       _backgroundExceptionReporter = resolver.Resolve<IBackgroundExceptionReporter>();
-      _configuration = resolver.Resolve<EndpointConfiguration>();
-      _addressAnnouncers = addressAnnouncers;
+      _transportServer = transportServer;
    }
 
-   ///<summary>The address where the inbox listens; null until listening.</summary>
-   internal EndpointAddress? Address => _isListening ? _inbox.Address : null;
+   ///<summary>The endpoint's one listening address (see <see cref="EndpointTransportServerFeature.ListeningAddress"/>); null until the endpoint's transport server is listening.</summary>
+   internal EndpointAddress? Address => _transportServer.ListeningAddress;
 
-   public async Task StartListeningAsync()
-   {
-      await Task.WhenAll(_inbox.StartAsync(), _tommandScheduler.StartAsync()).caf();
-      _isListening = true;
-      //Announcing is the final act of starting to listen, so an announced address is always one that is actually listening.
-      _addressAnnouncers.ForEach(announcer => announcer.AnnounceEndpointAddress(_configuration.Id, _inbox.Address));
-   }
+   public async Task StartListeningAsync() => await Task.WhenAll(_inbox.StartAsync(), _tommandScheduler.StartAsync()).caf();
 
    public async Task StartSendingAsync()
    {
       //The router converges on the registry's membership - including ourselves: scheduled tommands dispatch over the remote
       //protocol for the delivery guarantees - and keeps reconciling, so endpoints in other processes that appear, disappear,
       //or restart at a new address are connected, dropped, or re-connected as the registry changes.
-      await _tessagingRouter.StartMaintainingConnectionsAsync(_endpointRegistry, _inbox.Address).caf();
+      //The endpoint's transport server started in the listening phase, which the host completes everywhere before any sending starts, so its address exists here.
+      await _tessagingRouter.StartMaintainingConnectionsAsync(_endpointRegistry, _transportServer.ListeningAddress._assert().NotNull()).caf();
       await _outbox.StartAsync().caf();
    }
 
@@ -64,13 +57,10 @@ sealed class DistributedTessagingEndpointComponent : IEndpointComponent, IAsyncD
       await _outbox.StopAsync().caf();
    }
 
-   public async Task StopListeningAsync()
+   public Task StopListeningAsync()
    {
-      //Retracting is the first act of stopping to listen: stop advertising the address before going deaf on it.
-      _addressAnnouncers.ForEach(announcer => announcer.RetractEndpointAddress(_configuration.Id));
-      _isListening = false;
-      await _inbox.StopAsync().caf();
       _tessagingRouter.Stop();
+      return Task.CompletedTask;
    }
 
    public ValueTask DisposeAsync()

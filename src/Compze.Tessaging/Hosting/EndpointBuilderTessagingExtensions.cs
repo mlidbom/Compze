@@ -46,7 +46,8 @@ public static class EndpointTessagingExtensions
 {
    extension(IEndpoint @this)
    {
-      ///<summary>The address where this endpoint's tessaging inbox listens. Null until the endpoint is listening, and for endpoints without the distributed Tessaging pipeline.</summary>
+      ///<summary>The address where this endpoint listens for Tessaging — the endpoint's one transport-server address, which serves every<br/>
+      /// distributed capability the endpoint speaks. Null until the endpoint is listening, and for endpoints without the distributed Tessaging pipeline.</summary>
       public EndpointAddress? TessagingAddress => @this.Components.OfType<DistributedTessagingEndpointComponent>().SingleOrDefault()?.Address;
    }
 }
