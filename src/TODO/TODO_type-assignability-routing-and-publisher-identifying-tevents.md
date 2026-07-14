@@ -323,9 +323,13 @@ The related outbox-ordering bug (recovery reloaded the backlog in retry-metadata
 is FIXED (2026-07-13): `GetUndeliveredTessagesForEndpoint` orders by the outbox tessage table's monotonic
 `GeneratedId` in every SQL backend.
 
-- [ ] Investigate first: determine how typermedia remote routing consumes the advertisement today (e.g.
-      whether `IAtMostOnceTypermediaTommand` handler types flow through `HandledRemoteTessageTypeIds` and
-      where they route), so removing the gate does not break the typermedia paths.
+- [x] Investigate first — RESOLVED (2026-07-14): typermedia remote routing never touches the Tessaging
+      advertisement. It has its own discovery query (`TypermediaEndpointInformationQuery` →
+      `HandledTypermediaTypes`, from `TypermediaHandlerRegistry.HandledRemoteTypermediaTypeIds`) and its own
+      router, which routes `IAtMostOnceTypermediaTommand` and `IRemotableTuery` and skips exactly-once types.
+      Two disjoint channels, so removing the Tessaging router's gate cannot break the typermedia paths — and
+      only the TEVENT branch of `TessagingRouter.RegisterRoutes` widens (tommands stay exactly-once; the
+      transient tier is a tevent concept).
 - [ ] Remove the exactly-once-only routing gate: `TessagingRouter.RegisterRoutes` builds routes for every
       advertised remotable type; `TransportTessageType`/`TessageTypeTranslator` learn the delivery kinds
       beyond exactly-once.

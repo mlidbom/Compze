@@ -264,13 +264,20 @@ As of 2026-07-14:
   same-machine `InterprocessEndpointRegistry`, the router continuously reconciles its connections with the
   registry's membership, and the story is proven across real OS processes over the named-pipe transport —
   see [same-machine hosting](../../Compze.Hosting/_docs/same-machine-hosting.md).
+- `ITeventPublisher` — the one public way to publish, routing each tevent by its declared contract
+  (participation always; an `IExactlyOnceTevent` also through the exactly-once delivery leg when the
+  composition wires one) — and the dissolution of the endpoint-wide publication-mode split (2026-07-14): the
+  in-process Tessaging core registers the publisher, wiring the outbox is what wires the exactly-once leg,
+  the tevent store forwards committed tevents through `ITeventPublisher` like any other client, and the mode
+  publishers and their mutual exclusion are gone. With only the exactly-once leg existing so far, an
+  unwired-leg publish cannot yet arise (zero remote legs is the deliberately local composition, where
+  participation serves every subscriber that exists); the loud unwired-leg failure becomes real together with
+  the transient leg.
 
 **Decided, not yet built** (work items live in the D6 section of
 `src/TODO/TODO_type-assignability-routing-and-publisher-identifying-tevents.md`):
 
-- `ITeventPublisher` / `ITransactionIgnoringTeventPublisher` and the dissolution of the endpoint-wide
-  publication-mode split (`InProcessOnlyTeventStoreTeventPublisher` / `DistributedTeventStoreTeventPublisher`
-  still exist; the hosting model documents that current state).
 - The transient transport leg and the direct receive dispatch, and the removal of the router's
   exactly-once-only routing gate.
-- `RegisterTransactionIgnoringTeventHandlers` and the observation dispatch.
+- `ITransactionIgnoringTeventPublisher` (the publish escape hatch),
+  `RegisterTransactionIgnoringTeventHandlers`, and the observation dispatch.

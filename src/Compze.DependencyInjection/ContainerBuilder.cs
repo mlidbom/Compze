@@ -144,6 +144,10 @@ public abstract class ContainerBuilder : IContainerBuilder
    /// components can take the whole set as an ordinary <c>CreatedBy(...)</c> constructor dependency. The set's lifestyle follows
    /// its members' — <see cref="Lifestyle.Singleton"/> when every member is a singleton, <see cref="Lifestyle.Scoped"/>
    /// otherwise — so lifestyle validation guards a dependency on the set exactly as it would a dependency on the members.
+   /// A set nothing contributed to is still a set — the empty one: a <c>CreatedBy(...)</c> dependency on an
+   /// <see cref="IComponentSet{TService}"/> with no <c>ForSet(...)</c> members receives the empty set (synthesized as a
+   /// singleton — with no members there is nothing whose lifestyle could vary), because zero contributions is a legitimate
+   /// state for a contribution seam, not a wiring error.
    /// </summary>
    /// <remarks>
    /// Skips a set whose <see cref="IComponentSet{TService}"/> is already among the registrations: a clone or child container
@@ -160,6 +164,15 @@ public abstract class ContainerBuilder : IContainerBuilder
                            .Select(setMembers => CreateComponentSetRegistration(
                                       setMembers.Key,
                                       setMembers.All(member => member.Lifestyle == Lifestyle.Singleton) ? Lifestyle.Singleton : Lifestyle.Scoped))
+                           .ToList()
+                           .ForEach(_registeredComponents.Add);
+
+      var providedSetInjectionTypes = _registeredComponents.SelectMany(it => it.ServiceTypes).Where(IsComponentSetInjectionType).ToHashSet();
+      _registeredComponents.SelectMany(it => it.DependencyTypes)
+                           .Where(IsComponentSetInjectionType)
+                           .Distinct()
+                           .Where(dependedOnSetInjectionType => !providedSetInjectionTypes.Contains(dependedOnSetInjectionType))
+                           .Select(dependedOnSetInjectionType => CreateComponentSetRegistration(dependedOnSetInjectionType.GenericTypeArguments[0], Lifestyle.Singleton))
                            .ToList()
                            .ForEach(_registeredComponents.Add);
    }

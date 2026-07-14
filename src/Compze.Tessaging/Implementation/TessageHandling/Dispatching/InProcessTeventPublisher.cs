@@ -7,7 +7,7 @@ using Compze.Teventive.Tevents.Public;
 
 namespace Compze.Tessaging.Implementation.TessageHandling.Dispatching;
 
-public static class InProcessTeventPublisherRegistrar
+static class InProcessTeventPublisherRegistrar
 {
    public static IComponentRegistrar InProcessTeventPublisher(this IComponentRegistrar registrar)
       => registrar.Register(Singleton.For<IInProcessTeventPublisher>()

@@ -1,23 +1,31 @@
 using Compze.Abstractions.Hosting.Public;
+using Compze.Abstractions.Tessaging.Public;
+using Compze.DependencyInjection;
 using Compze.Tessaging.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
 using Compze.Tessaging.Implementation;
+using Compze.Tessaging.Implementation.TessageHandling.Abstractions;
+using Compze.Tessaging.Implementation.TessageHandling.Dispatching;
+using Compze.Teventive.Taggregates.Tevents.Public;
 
 namespace Compze.Tessaging.Hosting;
 
 ///<summary>
-/// Declares the endpoint's Tessaging in-process-only: tevents are delivered synchronously, on the publishing
-/// thread, within the publisher's transaction, to this process's handlers — and nowhere else. Composes
-/// tessage handling (<see cref="TessageHandlingEndpointFeature"/>) with the in-process-only tevent
-/// publication mode (<see cref="InProcessOnlyTeventStoreTeventPublisher"/>); wires no transport, inbox,
-/// outbox, or tommand scheduler, so the endpoint has no Tessaging runtime lifecycle at all. Created
-/// idempotently through <see cref="EndpointBuilderTessagingExtensions.AddInProcessTessaging"/> /
-/// <see cref="IEndpointBuilder.GetOrAddFeature{TFeature}"/>.
+/// Wires in-process Tessaging into an endpoint — the style's synchronous core, which distribution composes
+/// and extends: the handler registry, the synchronous in-process tevent delivery every tevent travels
+/// (<see cref="IInProcessTeventPublisher"/>), and the endpoint's one <see cref="ITeventPublisher"/>, which
+/// routes each published tevent by the delivery contract its type declares. With nothing but this feature the
+/// endpoint wires no remote delivery legs, so tevents are delivered synchronously, on the publishing thread,
+/// within the publisher's transaction, to this process's handlers. Created idempotently through
+/// <see cref="EndpointBuilderTessagingExtensions.AddInProcessTessaging"/> /
+/// <see cref="IEndpointBuilder.GetOrAddFeature{TFeature}"/>, and the feature instance is the handle through
+/// which the endpoint's tessaging handlers are registered (<see cref="RegisterHandlers"/>).
 ///</summary>
 ///<remarks>
-/// Mutually exclusive with <see cref="DistributedTessagingEndpointFeature"/>: an endpoint declares exactly
-/// one tevent publication mode, and declaring both fails loudly at setup time. An endpoint that wants
-/// guaranteed, transactional tommand delivery within a single process is not an in-process endpoint — it is a
-/// distributed endpoint that happens to be alone in its host.
+/// Whether a tevent crosses the wire is not an endpoint-wide mode but a property of each tevent's type,
+/// honored by the delivery legs the composition wires (<c>src/Compze.Tessaging/_docs/tevent-delivery-model.md</c>) —
+/// <see cref="DistributedTessagingEndpointFeature"/> composes this feature and wires the durable leg. That is
+/// what keeps handler registration (<see cref="RegisterHandlers"/>) order-independent of every other
+/// Tessaging declaration.
 ///</remarks>
 public class InProcessTessagingEndpointFeature
 {
@@ -25,8 +33,13 @@ public class InProcessTessagingEndpointFeature
 
    internal InProcessTessagingEndpointFeature(IEndpointBuilder builder)
    {
-      builder.Registrar.AssertNoTeventPublicationModeIsDeclared()
-                       .InProcessOnlyTeventStoreTeventPublisher();
-      RegisterHandlers = builder.AddTessageHandling().RegisterHandlers;
+      builder.TypeMapper.MapTypesFromAssemblyContaining<ITaggregateTevent>(); // Compze.Core — the Teventive type hierarchy
+
+      var handlerRegistry = new TessageHandlerRegistry(builder.TypeMap);
+      RegisterHandlers = new TessageHandlerRegistrarWithDependencyInjectionSupport(handlerRegistry);
+
+      builder.Registrar.Register(Singleton.For<ITessageHandlerRegistry, ITessageHandlerRegistrar>().Instance(handlerRegistry))
+                       .InProcessTeventPublisher()
+                       .TeventPublisher();
    }
 }

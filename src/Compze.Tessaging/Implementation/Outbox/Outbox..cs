@@ -26,6 +26,8 @@ partial class Outbox : IOutbox
       registrar.Register(Singleton.For<IOutbox>()
                                   .CreatedBy((EndpointConfiguration configuration, ITessagingRouter tessagingRouter, ITessageStorage tessageStorage)
                                                 => new Outbox(tessagingRouter, tessageStorage, configuration)));
+      //Wiring the outbox is what wires the endpoint's exactly-once tevent delivery: the outbox joins the delivery-leg set the ITeventPublisher routes through.
+      registrar.Register(Singleton.ForSet<IExactlyOnceTeventDeliveryLeg>().CreatedBy((IOutbox outbox) => outbox));
       registrar.Register(TessageStorage.RegisterWith);
    }
 

@@ -137,17 +137,20 @@ The design rule is applied a third time *inside* each communication style: the s
 itself a feature, and distribution is a feature composed on top of it (via `GetOrAddFeature`, so the core is
 wired once whether it arrives alone or under distribution).
 
-- **Tessaging splits three ways**, because an endpoint declares its tevent publication mode exactly once.
-  `TessageHandlingEndpointFeature` (in `Compze.Tessaging`) is the core every Tessaging endpoint shares: the
-  handler registry and the synchronous in-process tevent delivery (`IInProcessTeventPublisher`) — the leg
-  every tevent travels, whatever the endpoint speaks. It deliberately declares no publication mode, which is
-  what keeps `RegisterTessagingHandlers` order-independent of the mode declaration.
-  `InProcessTessagingEndpointFeature` (`AddInProcessTessaging()`) declares the endpoint in-process-only: the
-  handling core plus `InProcessOnlyTeventStoreTeventPublisher`, and nothing else — no transport, inbox,
-  outbox, or tommand scheduler. `DistributedTessagingEndpointFeature` (`AddDistributedTessaging()`) composes
-  the handling core and adds distribution: inbox, outbox, tommand scheduler, router, service bus session, and
-  `DistributedTeventStoreTeventPublisher`. The two modes are mutually exclusive — declaring both fails loudly
-  at setup time.
+- **Tessaging splits two ways**: distributed Tessaging simply contains in-process Tessaging.
+  `InProcessTessagingEndpointFeature` (in `Compze.Tessaging`, `AddInProcessTessaging()`) is the style's
+  synchronous core: the handler registry, the synchronous in-process tevent delivery every tevent travels,
+  and the endpoint's one `ITeventPublisher` — the one way to publish a tevent, routing each by the delivery
+  contract its type declares (see
+  [the tevent delivery model](../../Compze.Tessaging/_docs/tevent-delivery-model.md)). With nothing but this
+  feature the endpoint wires no remote delivery legs — no transport, inbox, outbox, or tommand scheduler —
+  so tevents are delivered synchronously to this process's handlers, in the publisher's transaction.
+  `DistributedTessagingEndpointFeature` (`AddDistributedTessaging()`) composes it and adds distribution:
+  inbox, outbox, tommand scheduler, router, and service bus session — and wiring the outbox is what wires the
+  durable tevent delivery leg the publisher routes every `IExactlyOnceTevent` through. Whether a tevent
+  crosses the wire is a property of the tevent's type, honored by the legs the composition wires — not an
+  endpoint-wide mode — which is also what keeps `RegisterTessagingHandlers` order-independent of every other
+  Tessaging declaration.
 - **Typermedia splits two ways**, because it has no mode-exclusive service: distributed Typermedia simply
   contains in-process Typermedia. `InProcessTypermediaEndpointFeature` (in `Compze.Typermedia`,
   `AddInProcessTypermedia()`) wires the handler registry and the `IInProcessTypermediaNavigator` through
@@ -157,7 +160,7 @@ wired once whether it arrives alone or under distribution).
 - **Serving is shared.** An endpoint runs **one transport server**, whatever it speaks: both distributed
   features compose `EndpointTransportServerFeature` (in `Compze.Internals.Transport`) — the same
   `GetOrAddFeature` pattern one level down — and *contribute their request handling to it* (request-kind
-  handlers on the named-pipe transport, controllers on the ASP.NET Core transport) rather than each running a
+  handlers, served identically by the named-pipe and ASP.NET Core transports) rather than each running a
   server of its own. One server means one address per endpoint, which is what lets an endpoint registry map
   an `EndpointId` to a single address; the server itself answers the endpoint-discovery queries endpoint
   discovery runs on, which every endpoint serves no matter what it speaks. Which transport implements the
@@ -217,7 +220,7 @@ features are built from, so there is exactly one definition of what each style i
 ```csharp
 var builder = /* any Compze container builder */;
 builder.Registrar
-       .InProcessTessaging()    // handler registry, IInProcessTeventPublisher, InProcessOnlyTeventStoreTeventPublisher
+       .InProcessTessaging()    // handler registry, synchronous in-process tevent delivery, ITeventPublisher (no remote legs)
        .InProcessTypermedia();  // handler registry, IInProcessTypermediaNavigator
 var container = builder.Build();
 ```

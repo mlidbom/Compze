@@ -37,6 +37,18 @@ public class When_injecting_a_component_set
    }
 
    [DependencyInjectionContainerMatrix]
+   public void a_CreatedBy_dependency_on_a_set_with_no_registered_members_receives_the_empty_set()
+   {
+      var builder = DependencyInjectionContainerFactory.CreateContainerBuilder();
+      builder.Registrar.Register(
+         Singleton.For<PluginConsumer>().CreatedBy((IComponentSet<IPlugin> plugins) => new PluginConsumer(plugins)));
+
+      using var container = builder.Build();
+
+      container.Resolve<PluginConsumer>().Plugins.Must().BeEmpty();
+   }
+
+   [DependencyInjectionContainerMatrix]
    public void a_scoped_consumer_of_a_scoped_member_set_receives_its_own_scopes_instances()
    {
       var builder = DependencyInjectionContainerFactory.CreateContainerBuilder();
@@ -88,7 +100,7 @@ public class When_injecting_a_component_set
       var builder = DependencyInjectionContainerFactory.CreateContainerBuilder();
       builder.Registrar.Register(
          Singleton.ForSet<IPlugin>().CreatedBy(() => new PluginA()),
-         Singleton.For<object>().CreatedBy((IPlugin plugin) => new object()));
+         Singleton.For<object>().CreatedBy((IPlugin _) => new object()));
 
       builder.Invoking(it => it.Build())
              .Must()

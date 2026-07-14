@@ -1,4 +1,5 @@
 using Compze.Abstractions.Hosting.Public;
+using Compze.Abstractions.Tessaging.Public;
 using Compze.Tessaging.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
 
 namespace Compze.Tessaging.Hosting;
@@ -8,37 +9,31 @@ public static class EndpointBuilderTessagingExtensions
    extension(IEndpointBuilder @this)
    {
       ///<summary>
-      /// Adds tessage handling to the endpoint being built (idempotent) and returns its feature: the handler
-      /// registry and synchronous in-process tevent delivery — the leg every tevent travels, whatever the
-      /// endpoint speaks.<br/>
-      /// Declares no tevent publication mode: an endpoint whose taggregates publish through a tevent store
-      /// also declares <see cref="AddInProcessTessaging"/> or <see cref="AddDistributedTessaging"/>.
-      ///</summary>
-      public TessageHandlingEndpointFeature AddTessageHandling() => @this.GetOrAddFeature(builder => new TessageHandlingEndpointFeature(builder));
-
-      ///<summary>
-      /// Declares the endpoint's Tessaging in-process-only (idempotent) and returns the feature: tevents are
-      /// delivered synchronously, on the publishing thread, within the publisher's transaction, to this
-      /// process's handlers — and nowhere else. Wires no transport, inbox, outbox, or tommand scheduler.<br/>
-      /// Mutually exclusive with <see cref="AddDistributedTessaging"/>.
+      /// Adds in-process Tessaging to the endpoint being built (idempotent) and returns its feature — the
+      /// style's synchronous core, which distribution composes and extends: the handler registry, the
+      /// synchronous in-process tevent delivery every tevent travels, and the endpoint's one
+      /// <see cref="ITeventPublisher"/>. With nothing but this feature the
+      /// endpoint wires no transport, inbox, outbox, or tommand scheduler, so tevents are delivered
+      /// synchronously, on the publishing thread, within the publisher's transaction, to this process's
+      /// handlers.
       ///</summary>
       public InProcessTessagingEndpointFeature AddInProcessTessaging() => @this.GetOrAddFeature(builder => new InProcessTessagingEndpointFeature(builder));
 
       ///<summary>
       /// Adds the distributed Tessaging pipeline to the endpoint being built (idempotent) and returns its
-      /// feature: everything tessage handling has, plus the inbox, outbox, tommand scheduler, router and
-      /// service bus session through which the endpoint converses with other endpoints.<br/>
-      /// Mutually exclusive with <see cref="AddInProcessTessaging"/>.
+      /// feature: everything in-process Tessaging has (<see cref="AddInProcessTessaging"/>, which it
+      /// composes), plus the inbox, outbox, tommand scheduler, router and service bus session through which
+      /// the endpoint converses with other endpoints.
       ///</summary>
       public DistributedTessagingEndpointFeature AddDistributedTessaging() => @this.GetOrAddFeature(builder => new DistributedTessagingEndpointFeature(builder));
 
       ///<summary>
-      /// Registers tessaging handlers, adding tessage handling (<see cref="AddTessageHandling"/>) to the
-      /// endpoint if it is not already added. Handlers receive tevents published in-process; they are
+      /// Registers tessaging handlers, adding in-process Tessaging (<see cref="AddInProcessTessaging"/>) to
+      /// the endpoint if it is not already added. Handlers receive tevents published in-process; they are
       /// reachable from other endpoints only when the endpoint also speaks distributed Tessaging
       /// (<see cref="AddDistributedTessaging"/>).
       ///</summary>
-      public TessageHandlerRegistrarWithDependencyInjectionSupport RegisterTessagingHandlers => @this.AddTessageHandling().RegisterHandlers;
+      public TessageHandlerRegistrarWithDependencyInjectionSupport RegisterTessagingHandlers => @this.AddInProcessTessaging().RegisterHandlers;
    }
 }
 

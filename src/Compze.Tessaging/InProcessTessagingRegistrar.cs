@@ -17,8 +17,10 @@ public static class InProcessTessagingRegistrar
 {
    ///<summary>
    /// Wires in-process Tessaging into the container being built: the handler registry, the synchronous
-   /// in-process tevent delivery (<see cref="IInProcessTeventPublisher"/>), and the in-process-only tevent
-   /// publication mode (a taggregate's committed tevents are delivered only to this process's handlers).<br/>
+   /// in-process tevent delivery every tevent travels, and the container's one
+   /// <see cref="Compze.Abstractions.Tessaging.Public.ITeventPublisher"/>. The composition wires no remote
+   /// delivery legs, so every published tevent — a taggregate's committed tevents included — is delivered
+   /// synchronously to this process's handlers, within the publisher's transaction.<br/>
    /// Register handlers after the container is built, through the resolved
    /// <see cref="Compze.Tessaging.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public.ITessageHandlerRegistrar"/>.
    ///</summary>
@@ -30,12 +32,11 @@ public static class InProcessTessagingRegistrar
    ///</remarks>
    public static IComponentRegistrar InProcessTessaging(this IComponentRegistrar @this)
    {
-      @this.AssertNoTeventPublicationModeIsDeclared();
       if(!@this.IsRegistered<ITypeMap>()) RegisterDefaultTypeMapper();
 
       return @this.TessageHandlerRegistry()
                   .InProcessTeventPublisher()
-                  .InProcessOnlyTeventStoreTeventPublisher();
+                  .TeventPublisher();
 
       void RegisterDefaultTypeMapper()
       {

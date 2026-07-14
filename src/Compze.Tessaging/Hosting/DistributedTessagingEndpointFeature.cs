@@ -23,10 +23,12 @@ namespace Compze.Tessaging.Hosting;
 
 ///<summary>
 /// Wires the distributed Tessaging pipeline — inbox, outbox, tommand scheduler, router, service bus
-/// session — into an endpoint: everything tessage handling has
-/// (<see cref="TessageHandlingEndpointFeature"/>, which it composes), plus the machinery through which the
-/// endpoint converses with other endpoints and the distributed tevent publication mode
-/// (<see cref="DistributedTeventStoreTeventPublisher"/>). Created idempotently through
+/// session — into an endpoint: everything in-process Tessaging has
+/// (<see cref="InProcessTessagingEndpointFeature"/>, which it composes), plus the machinery through which the
+/// endpoint converses with other endpoints. Wiring the outbox is what wires the endpoint's durable tevent
+/// delivery leg, through which the endpoint's <see cref="Compze.Abstractions.Tessaging.Public.ITeventPublisher"/>
+/// routes every published <see cref="Compze.Abstractions.Tessaging.Public.IExactlyOnceTevent"/> to its remote
+/// subscribers. Created idempotently through
 /// <see cref="EndpointBuilderTessagingExtensions.AddDistributedTessaging"/> /
 /// <see cref="IEndpointBuilder.GetOrAddFeature{TFeature}"/>: this is how distributed Tessaging plugs into a
 /// hosting mechanism that knows nothing of it, and the feature instance is the handle through which the
@@ -48,10 +50,6 @@ namespace Compze.Tessaging.Hosting;
 /// <see cref="DistributedTessagingEndpointComponent"/>, and the endpoint's address is exposed as the
 /// <c>TessagingAddress</c> extension property (<see cref="EndpointTessagingExtensions"/>).
 ///</summary>
-///<remarks>
-/// Mutually exclusive with <see cref="InProcessTessagingEndpointFeature"/>: an endpoint declares exactly one
-/// tevent publication mode, and declaring both fails loudly at setup time.
-///</remarks>
 public class DistributedTessagingEndpointFeature
 {
    readonly TessageHandlerRegistrarWithDependencyInjectionSupport _handlerRegistrar;
@@ -96,10 +94,9 @@ public class DistributedTessagingEndpointFeature
    internal DistributedTessagingEndpointFeature(IEndpointBuilder builder)
    {
       var register = builder.Registrar;
-      register.AssertNoTeventPublicationModeIsDeclared();
       AssertTheEndpointsFoundationIsDeclared(register);
 
-      _handlerRegistrar = builder.AddTessageHandling().RegisterHandlers;
+      _handlerRegistrar = builder.AddInProcessTessaging().RegisterHandlers;
       _transportServer = EndpointTransportServerFeature.GetOrAddTo(builder);
 
       if(!register.IsRegistered<ITessagesInFlightTracker>())
@@ -115,7 +112,6 @@ public class DistributedTessagingEndpointFeature
               .Outbox()
               .Inbox()
               .TommandScheduler()
-              .DistributedTeventStoreTeventPublisher()
               .ServiceBusSession();
 
       builder.OnContainerBuilt(resolver => TessageTypesInternal.RegisterEndpointDiscoveryQueryHandlers(

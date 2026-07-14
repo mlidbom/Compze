@@ -1,9 +1,8 @@
 using Compze.DocumentDb.Wiring;
 using Compze.Abstractions.Wiring.Testing.Internal;
 using Compze.Hosting.Testing.Wiring;
+using Compze.Tessaging;
 using Compze.Tessaging.Hosting.Testing.Wiring;
-using Compze.Tessaging.Implementation;
-using Compze.Tessaging.Implementation.TessageHandling.Dispatching;
 using Compze.Tessaging.Teventive.TeventStore.Wiring;
 using Compze.Typermedia.HandlerRegistration;
 using Compze.Typermedia.Hosting.Testing.Wiring;
@@ -38,10 +37,8 @@ public static class CombinedTestingContainers
       builder.Registrar
                .TypeIdentifierMapper(registerDomainTypeMappings)
                .DummyConfigurationParameterProvider()
-               .TessageHandlerRegistry()
-               .TypermediaHandlerRegistry()
-               .InProcessTeventPublisher()
-               .InProcessOnlyTeventStoreTeventPublisher();
+               .InProcessTessaging()
+               .TypermediaHandlerRegistry();
       setup(builder.Registrar);
 
       return builder.Build();

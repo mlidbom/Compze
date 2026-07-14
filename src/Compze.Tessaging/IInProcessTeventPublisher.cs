@@ -11,18 +11,18 @@ namespace Compze.Tessaging;
 ///</summary>
 ///<remarks>
 /// It is independent of the teventive event store: any <see cref="ITevent"/> may be published, not only the
-/// <see cref="ITaggregateTevent"/>s a taggregate commits. This is the seam that lets tevents restructure the
-/// internal flow of a single process with no messaging infrastructure at all.
+/// <see cref="ITaggregateTevent"/>s a taggregate commits.
 ///</remarks>
 ///<remarks>
-/// The event-store publishers delegate their local delivery here; a distributed endpoint additionally enqueues
-/// the tevent on its outbox for remote subscribers. Subscription is by .NET type compatibility, so a handler
-/// subscribed to a base tevent type receives every compatible derived tevent. Every tevent is wrapped in its
-/// publisher's <see cref="IPublisherIdentifyingTevent{TTevent}"/> before routing: a subscriber to an inner tevent
+/// The <see cref="ITeventPublisher"/> — the one public way to publish — delegates its in-process delivery
+/// here, and additionally routes the tevent through the remote delivery legs its type demands. Subscription
+/// is by .NET type compatibility, so a handler subscribed to a base tevent type receives every compatible
+/// derived tevent. Every tevent is wrapped in its publisher's
+/// <see cref="IPublisherIdentifyingTevent{TTevent}"/> before routing: a subscriber to an inner tevent
 /// type receives the tevent unwrapped, and a subscriber to a wrapper type receives the wrapper itself -
 /// publisher-conscious subscription.
 ///</remarks>
-public interface IInProcessTeventPublisher
+interface IInProcessTeventPublisher
 {
    ///<summary>Synchronously invokes every in-process handler subscribed to <paramref name="tevent"/>'s type, resolving handler dependencies from <paramref name="scopeResolver"/>, within the current transaction.<br/>
    /// A <paramref name="tevent"/> published without a publisher-identifying wrapper is wrapped before routing.</summary>
