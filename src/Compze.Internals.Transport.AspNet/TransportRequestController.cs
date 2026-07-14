@@ -32,6 +32,9 @@ class TransportRequestController : Controller
    [HttpPost(HttpConstants.Routes.Tessaging.Tommand)]
    public Task<IActionResult> ExactlyOnceTommand() => DispatchAsync(TransportRequestKind.ExactlyOnceTommand);
 
+   [HttpPost(HttpConstants.Routes.Tessaging.TransientTevent)]
+   public Task<IActionResult> TransientTevent() => DispatchAsync(TransportRequestKind.TransientTevent);
+
    [HttpPost(HttpConstants.Routes.Typermedia.Tuery)]
    public Task<IActionResult> TypermediaTuery() => DispatchAsync(TransportRequestKind.TypermediaTuery);
 

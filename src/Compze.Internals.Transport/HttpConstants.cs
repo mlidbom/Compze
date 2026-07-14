@@ -21,6 +21,7 @@ public static class HttpConstants
       {
          public const string Tevent = "internal/tessaging/tevent";
          public const string Tommand = "internal/tessaging/tommand";
+         public const string TransientTevent = "internal/tessaging/transient-tevent";
       }
    }
 

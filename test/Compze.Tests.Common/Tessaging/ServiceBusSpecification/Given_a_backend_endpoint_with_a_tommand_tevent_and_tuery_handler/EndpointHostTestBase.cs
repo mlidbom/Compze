@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using Compze.Hosting.Testing;
 using Compze.Hosting.Testing.Wiring;
 using Compze.Internals.Testing;
@@ -37,8 +38,13 @@ public abstract class EndpointHostTestBase : UniversalTestBase
    public IThreadGate MyRemoteTaggregateTeventHandlerThreadGate { get; }
    public IThreadGate MyRemotePublisherConsciousTeventHandlerThreadGate { get; }
    public IThreadGate MyLocalTaggregateTeventHandlerThreadGate { get; }
+   public IThreadGate MyTransientTeventLocalHandlerThreadGate { get; }
+   public IThreadGate MyTransientTeventRemoteHandlerThreadGate { get; }
    public IThreadGate TeventHandlerThreadGate { get; }
    public IThreadGate TueryHandlerThreadGate { get; }
+
+   ///<summary>Every <see cref="IMyTransientTevent"/> the Remote endpoint's handler has received, in handling order — transient delivery promises in-order arrival within a connected session.</summary>
+   protected ConcurrentQueue<IMyTransientTevent> RemotelyReceivedTransientTevents { get; } = new();
 
    IReadOnlyList<IThreadGate> AllGates  { get; }
 
@@ -60,6 +66,8 @@ public abstract class EndpointHostTestBase : UniversalTestBase
          MyRemoteTaggregateTeventHandlerThreadGate = IThreadGate.NewOpen(_timeout, nameof(MyRemoteTaggregateTeventHandlerThreadGate)),
          MyRemotePublisherConsciousTeventHandlerThreadGate = IThreadGate.NewOpen(_timeout, nameof(MyRemotePublisherConsciousTeventHandlerThreadGate)),
          MyLocalTaggregateTeventHandlerThreadGate = IThreadGate.NewOpen(_timeout, nameof(MyLocalTaggregateTeventHandlerThreadGate)),
+         MyTransientTeventLocalHandlerThreadGate = IThreadGate.NewOpen(_timeout, nameof(MyTransientTeventLocalHandlerThreadGate)),
+         MyTransientTeventRemoteHandlerThreadGate = IThreadGate.NewOpen(_timeout, nameof(MyTransientTeventRemoteHandlerThreadGate)),
          TeventHandlerThreadGate = IThreadGate.NewOpen(_timeout, nameof(TeventHandlerThreadGate)),
          TueryHandlerThreadGate = IThreadGate.NewOpen(_timeout, nameof(TueryHandlerThreadGate))
       ];
@@ -101,7 +109,8 @@ public abstract class EndpointHostTestBase : UniversalTestBase
             builder.RegisterTessagingHandlers
                    .ForTommand((MyExactlyOnceTommand _) => MyExactlyOnceTommandHandlerThreadGate.AwaitPassThrough())
                    .ForTevent((IMyExactlyOnceTevent _) => TeventHandlerThreadGate.AwaitPassThrough())
-                   .ForTevent((IMyTaggregateTevent _) => MyLocalTaggregateTeventHandlerThreadGate.AwaitPassThrough());
+                   .ForTevent((IMyTaggregateTevent _) => MyLocalTaggregateTeventHandlerThreadGate.AwaitPassThrough())
+                   .ForTevent((IMyTransientTevent _) => MyTransientTeventLocalHandlerThreadGate.AwaitPassThrough());
 
             builder.RegisterTypermediaHandlers
                    .ForTommand((MyCreateTaggregateTommand tommand, IInProcessTypermediaNavigator navigator) =>
@@ -135,7 +144,12 @@ public abstract class EndpointHostTestBase : UniversalTestBase
                                                 builder.RegisterTessagingHandlers
                                                        .ForTevent((IMyTaggregateTevent _) => MyRemoteTaggregateTeventHandlerThreadGate.AwaitPassThrough())
                                                        //Publisher-conscious subscription: subscribing to the taggregate's wrapper type receives the wrapped tevent as MyTaggregate published it.
-                                                       .ForTevent((IMyTaggregateTevent<IMyTaggregateTevent> _) => MyRemotePublisherConsciousTeventHandlerThreadGate.AwaitPassThrough());
+                                                       .ForTevent((IMyTaggregateTevent<IMyTaggregateTevent> _) => MyRemotePublisherConsciousTeventHandlerThreadGate.AwaitPassThrough())
+                                                       .ForTevent((IMyTransientTevent tevent) =>
+                                                        {
+                                                           RemotelyReceivedTransientTevents.Enqueue(tevent);
+                                                           MyTransientTeventRemoteHandlerThreadGate.AwaitPassThrough();
+                                                        });
                                              });
    }
 

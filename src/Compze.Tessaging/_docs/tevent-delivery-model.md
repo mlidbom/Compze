@@ -227,10 +227,14 @@ Per rung:
 - **Exactly-once: order also survives a sender restart.** Recovery reloads the undelivered backlog in send
   order — the outbox tessage table's monotonic `GeneratedId` — re-establishing head-of-line on the oldest
   undelivered tessage.
-- **Transient: in order within a connected session.** On disconnect or persistent delivery failure, the
-  remaining queued stream for that subscriber is dropped *whole* and the subscriber resumes from live after
-  reconnecting. The unit of loss is the stream, never the message: a gap is one clean "you were
-  disconnected" boundary, never a silent mid-stream skip that would deliver 54 after dropping 53.
+- **Transient: in order within a connected session.** On disconnect or delivery failure, the remaining
+  queued stream for that subscriber is dropped *whole* — the failed tevent and everything queued behind
+  it — and the subscriber resumes from live: tevents published afterwards form a new stream, attempted
+  normally. The unit of loss is the stream, never the message: a gap is one clean "you were disconnected"
+  boundary, never a silent mid-stream skip that would deliver 54 after dropping 53. Any delivery failure
+  triggers the drop — best-effort promises nothing that would justify retry machinery for a blip, and while
+  an endpoint stays unreachable each new attempt fails and drops whatever queued since, which is exactly
+  what best-effort means.
 - **Receive side: failing to *receive* is fatal.** An endpoint that cannot register an arriving guaranteed
   tevent in its inbox has a fatal bug — the system goes down rather than lose the tevent. Failing to
   *handle* (handler exceptions, retries exhausted) is a separate concern with its own policy.
@@ -269,15 +273,29 @@ As of 2026-07-14:
   composition wires one) — and the dissolution of the endpoint-wide publication-mode split (2026-07-14): the
   in-process Tessaging core registers the publisher, wiring the outbox is what wires the exactly-once leg,
   the tevent store forwards committed tevents through `ITeventPublisher` like any other client, and the mode
-  publishers and their mutual exclusion are gone. With only the exactly-once leg existing so far, an
-  unwired-leg publish cannot yet arise (zero remote legs is the deliberately local composition, where
-  participation serves every subscriber that exists); the loud unwired-leg failure becomes real together with
-  the transient leg.
+  publishers and their mutual exclusion are gone.
+- The transient tier end to end (2026-07-14). The router routes every advertised remotable tevent
+  subscription — the exactly-once-only gate is gone; matching stays pure wrapper-type assignability, and
+  which leg a matched tevent travels is decided by the published tevent's own type, never by routing.
+  `ITeventPublisher` routes a remotable-but-not-exactly-once tevent through the endpoint's transient
+  delivery leg (`ITransientTeventDeliveryLeg`, wired by distributed Tessaging) — on commit when a
+  transaction is present, immediately otherwise. Each subscriber connection carries an in-memory transient
+  stream (`TransportRequestKind.TransientTevent` on the wire) delivering in order with the
+  drop-stream-whole failure policy above, and the receiving endpoint dispatches an arriving transient
+  tevent directly to its handlers in their own scope and own transaction — no inbox, no dedup, no retry; a
+  failed handling is reported through the background-exception reporter and the tevent is gone. The
+  acknowledgement is written after the handlers execute, so single-in-flight keeps handling in send order.
+  And with a second leg existing, the loud unwired-leg publish failure is real: an endpoint wiring any
+  remote delivery but not the leg a tevent's contract demands fails the publish naming the missing leg
+  (zero wired legs remains the deliberately local composition, where participation serves every subscriber
+  that exists).
 
 **Decided, not yet built** (work items live in the D6 section of
 `src/TODO/TODO_type-assignability-routing-and-publisher-identifying-tevents.md`):
 
-- The transient transport leg and the direct receive dispatch, and the removal of the router's
-  exactly-once-only routing gate.
 - `ITransactionIgnoringTeventPublisher` (the publish escape hatch),
   `RegisterTransactionIgnoringTeventHandlers`, and the observation dispatch.
+- The setup-time wiring rule (a default subscription demanding more than the endpoint can deliver fails at
+  setup) and the loud assert that every advertised non-infrastructure type gets a route.
+- The guarantee-free Tessaging composition on the database-less endpoint foundation — no outbox, no inbox,
+  no SQL: the transient tier and participation only.

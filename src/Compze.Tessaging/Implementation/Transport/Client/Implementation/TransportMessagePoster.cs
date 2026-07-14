@@ -38,6 +38,7 @@ class TransportMessagePoster : ITransportMessagePoster
       {
          TransportTessageType.ExactlyOnceTevent => TransportRequestKind.ExactlyOnceTevent,
          TransportTessageType.ExactlyOnceTommand => TransportRequestKind.ExactlyOnceTommand,
+         TransportTessageType.TransientTevent => TransportRequestKind.TransientTevent,
          _ => throw new ArgumentOutOfRangeException()
       };
 }

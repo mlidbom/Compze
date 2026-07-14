@@ -35,6 +35,8 @@ class AssemblyTypeMapper : IAssemblyTypeMapper
          .Map<Sql.DocumentDb.User>("d40010d2-912a-4496-b7c8-2b1cec7297d2")
          .Map<Sql.DocumentDb.UserSet>("A4F4E620-1889-4C0C-90F1-772B16C65075")
          .Map<Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler.IMyExactlyOnceTevent>("91db1fa3-d379-4485-9904-0e8a7a21566f")
+         .Map<Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler.IMyTransientTevent>("a0497b9f-4809-4410-a216-a387469a9eb6")
+         .Map<Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler.MyTransientTevent>("fb494e66-b567-4801-86d1-9109c63f6ab3")
          .Map<Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler.IMyTaggregateTevent>("919c31dd-596e-4b80-a5fd-13af2319ee16")
          .Map<Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler.IMyTaggregateTevent.Created>("7b4dbf40-39c6-4403-b622-482e98c73601")
          .Map<Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler.IMyTaggregateTevent.Updated>("2a04991f-0cd9-4bc8-b9a4-30ed5e8f66e4")

@@ -16,6 +16,8 @@ interface ITessagingRouter
     void StartDelivery();
     void StopDelivery();
     ITessagingInboxConnection ConnectionToHandlerFor(IRemotableTommand tommand);
-    ///<summary>The connections to every endpoint whose advertised tevent subscriptions match <paramref name="wrappedTevent"/>. Advertised subscriptions are wrapper types, so matching is against the wrapper.</summary>
-    IReadOnlyList<ITessagingInboxConnection> SubscriberConnectionsFor(IPublisherIdentifyingTevent<IExactlyOnceTevent> wrappedTevent);
+    ///<summary>The connections to every endpoint whose advertised tevent subscriptions match <paramref name="wrappedTevent"/>. Advertised subscriptions are wrapper<br/>
+    /// types, so matching is against the wrapper — pure type assignability. Which delivery leg the tevent travels to a matched subscriber is not routing's concern:<br/>
+    /// the published tevent's own type decides that (see <see cref="Compze.Abstractions.Tessaging.Public.ITeventPublisher"/>).</summary>
+    IReadOnlyList<ITessagingInboxConnection> SubscriberConnectionsFor(IPublisherIdentifyingTevent<IRemotableTevent> wrappedTevent);
 }

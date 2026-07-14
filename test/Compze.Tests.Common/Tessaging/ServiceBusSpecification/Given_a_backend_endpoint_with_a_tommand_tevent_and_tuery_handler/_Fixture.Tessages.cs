@@ -32,6 +32,19 @@ class MyExactlyOnceTevent : TaggregateTevent, IMyExactlyOnceTevent;
 interface IMyExactlyOnceTevent : ITaggregateTevent;
 public class MyExactlyOnceTommand : TessageTypes.Remotable.ExactlyOnce.Tommand;
 
+///<summary>A transient tevent: plain <see cref="IRemotableTevent"/> IS the transient delivery tier — best-effort across the wire,<br/>
+/// no store, no dedup, no retry (see <c>src/Compze.Tessaging/_docs/tevent-delivery-model.md</c>).</summary>
+public interface IMyTransientTevent : IRemotableTevent
+{
+   ///<summary>Which publish this was, in publish order — lets specifications assert that transient tevents arrive in the order they were published.</summary>
+   int SequenceNumber { get; }
+}
+
+public class MyTransientTevent : IMyTransientTevent
+{
+   public int SequenceNumber { get; set; }
+}
+
 class MyUpdateTaggregateTommand : TessageTypes.Remotable.AtMostOnce.AtMostOnceTypermediaTommand
 {
    [Obsolete("Used by serializer", error: true)]

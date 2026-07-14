@@ -223,6 +223,8 @@ As of 2026-07-14:
   discovery has everything it needs — but the Typermedia *client side* does not yet consume a registry:
   `TypermediaRouter` is connected to explicitly known addresses, adds routes only, and never reconciles
   against a live registry the way the Tessaging router does.
-- **The transient tevent leg** (see
-  [the tevent delivery model](../../Compze.Tessaging/_docs/tevent-delivery-model.md)) — once built it rides
-  this same transport and topology; same-machine suites are its natural habitat.
+- **A no-SQL same-machine suite.** The transient tevent leg is built (2026-07-14, see
+  [the tevent delivery model](../../Compze.Tessaging/_docs/tevent-delivery-model.md)) and rides this same
+  transport and topology — but composing a guarantee-free Tessaging endpoint on the database-less
+  foundation (no outbox, no inbox, no SQL) is still pending, and same-machine suites are its natural
+  habitat.

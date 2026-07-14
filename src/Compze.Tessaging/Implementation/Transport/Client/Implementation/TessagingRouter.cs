@@ -115,8 +115,8 @@ class TessagingRouter : ITessagingRouter, IDisposable
       {
          if(_stopped) return;
          var connectedAddresses = _connections.Values.Select(connection => connection.RemoteAddress).ToHashSet();
-         addressesToConnect = desiredAddresses.Where(address => !connectedAddresses.Contains(address)).ToList();
-         connectionsToDrop = _connections.Values.Where(connection => !desiredAddresses.Contains(connection.RemoteAddress)).ToList();
+         addressesToConnect = [..desiredAddresses.Where(address => !connectedAddresses.Contains(address))];
+         connectionsToDrop = [.._connections.Values.Where(connection => !desiredAddresses.Contains(connection.RemoteAddress))];
       });
 
       //An endpoint whose address left the registry is gone (stopped, or crashed and pruned by liveness). Its undelivered
@@ -218,9 +218,9 @@ class TessagingRouter : ITessagingRouter, IDisposable
 
          if(tessageType.Is<ITevent>())
          {
-            //Only exactly-once delivery is implemented so far, so a route is registered only when the advertised subscription guarantees it.
-            //An advertised tevent subscription is a wrapper type; covariance answers whether every tevent it matches is exactly-once.
-            if(tessageType.Is<IPublisherIdentifyingTevent<IExactlyOnceTevent>>())
+            //An advertised tevent subscription is a wrapper type; covariance answers whether the tevents it matches may travel remotely at all.
+            //Which delivery leg a matching tevent travels is not routing's concern - the published tevent's own type decides that (see ITeventPublisher).
+            if(tessageType.Is<IPublisherIdentifyingTevent<IRemotableTevent>>())
             {
                _teventSubscriberRoutes.Add((tessageType, connection));
             }
@@ -244,21 +244,18 @@ class TessagingRouter : ITessagingRouter, IDisposable
                ? connection
                : throw new NoHandlerForTessageTypeException(tommand.GetType())));
 
-   public IReadOnlyList<ITessagingInboxConnection> SubscriberConnectionsFor(IPublisherIdentifyingTevent<IExactlyOnceTevent> wrappedTevent) =>
+   public IReadOnlyList<ITessagingInboxConnection> SubscriberConnectionsFor(IPublisherIdentifyingTevent<IRemotableTevent> wrappedTevent) =>
       _monitor.Locked(() =>
       {
          AssertNotStopped();
          var wrapperTeventType = wrappedTevent.GetType();
-         if(!_teventSubscriberRouteCache.TryGetValue(wrapperTeventType, out var cached))
-         {
-            cached = _teventSubscriberRoutes
+         if(_teventSubscriberRouteCache.TryGetValue(wrapperTeventType, out var cached)) return cached;
+
+         cached = [.._teventSubscriberRoutes
                     .Where(route => route.TeventType.IsInstanceOfType(wrappedTevent))
                     .Select(route => route.Connection)
-                    .Distinct() //An endpoint is one subscriber however many of its advertised subscriptions match: it receives the tevent once and its own registry fans out to every matching handler.
-                    .ToArray();
-            _teventSubscriberRouteCache[wrapperTeventType] = cached;
-         }
-
+                    .Distinct()]; //An endpoint is one subscriber however many of its advertised subscriptions match: it receives the tevent once and its own registry fans out to every matching handler.
+         _teventSubscriberRouteCache[wrapperTeventType] = cached;
          return cached;
       });
 

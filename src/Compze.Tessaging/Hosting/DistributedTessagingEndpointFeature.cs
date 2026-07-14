@@ -10,6 +10,7 @@ using Compze.Tessaging.Implementation;
 using Compze.Tessaging.Implementation.Abstractions;
 using Compze.Tessaging.Implementation.Outbox;
 using Compze.Tessaging.Implementation.TessageHandling.Inbox;
+using Compze.Tessaging.Implementation.TransientDelivery;
 using Compze.Tessaging.Implementation.Transport;
 using Compze.Tessaging.Implementation.Transport.Abstractions;
 using Compze.Tessaging.Implementation.Transport.Client.Implementation;
@@ -28,7 +29,9 @@ namespace Compze.Tessaging.Hosting;
 /// endpoint converses with other endpoints. Wiring the outbox is what wires the endpoint's durable tevent
 /// delivery leg, through which the endpoint's <see cref="Compze.Abstractions.Tessaging.Public.ITeventPublisher"/>
 /// routes every published <see cref="Compze.Abstractions.Tessaging.Public.IExactlyOnceTevent"/> to its remote
-/// subscribers. Created idempotently through
+/// subscribers; the transient delivery leg the feature also wires carries every published
+/// <see cref="Compze.Abstractions.Tessaging.Public.IRemotableTevent"/> whose type declares no exactly-once
+/// guarantee to them best-effort. Created idempotently through
 /// <see cref="EndpointBuilderTessagingExtensions.AddDistributedTessaging"/> /
 /// <see cref="IEndpointBuilder.GetOrAddFeature{TFeature}"/>: this is how distributed Tessaging plugs into a
 /// hosting mechanism that knows nothing of it, and the feature instance is the handle through which the
@@ -107,6 +110,7 @@ public class DistributedTessagingEndpointFeature
       register.BackgroundExceptionReporter()
               .TaskRunner()
               .TessagingTransport()
+              .TransientTeventDelivery()
               .TessagingTransportMessagePoster()
               .TessagingTransportServer()
               .Outbox()

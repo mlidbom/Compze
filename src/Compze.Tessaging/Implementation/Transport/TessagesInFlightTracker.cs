@@ -34,6 +34,9 @@ public class TessagesInFlightTracker : ITessagesInFlightTracker
    public void DoneWith(TransportTessage.InComing tessage, EndpointId handlingEndpointId, Exception? exception) =>
       _implementation.Update(it => it.DoneWith(tessage, handlingEndpointId, exception));
 
+   public void DroppedBeforeDelivery(TransportTessage.OutGoing transportTessage, EndpointId remoteEndpointId) =>
+      _implementation.Update(it => it.DroppedBeforeDelivery(transportTessage, remoteEndpointId));
+
    public class InFlightTessage
    {
       public required TessageId TessageId { get; init; }
@@ -48,7 +51,7 @@ public class TessagesInFlightTracker : ITessagesInFlightTracker
 
       readonly List<Exception> _busExceptions = [];
 
-      internal IReadOnlyList<Exception> GetExceptions() => _busExceptions.ToList();
+      internal IReadOnlyList<Exception> GetExceptions() => [.._busExceptions];
 
       internal void SendingTessageOnTransport(TransportTessage.OutGoing transportTessage, EndpointId remoteEndpointId)
       {
@@ -76,10 +79,13 @@ public class TessagesInFlightTracker : ITessagesInFlightTracker
          inFlightTessage.EndpointDeliveryStatus[handlingEndpointId] = true;
       }
 
+      internal void DroppedBeforeDelivery(TransportTessage.OutGoing transportTessage, EndpointId remoteEndpointId) =>
+         _trackedTessages[transportTessage.TessageId].EndpointDeliveryStatus.Remove(remoteEndpointId);
+
       internal bool NoTessagesInFlight() => _trackedTessages.Values.SelectMany(it => it.EndpointDeliveryStatus.Values).All(delivered => delivered);
 
       internal IReadOnlyList<InFlightTessage> GetUndeliveredTessages() =>
-         _trackedTessages.Values.Where(t => t.EndpointDeliveryStatus.Values.Any(delivered => !delivered)).ToList();
+         [.._trackedTessages.Values.Where(it => it.EndpointDeliveryStatus.Values.Any(delivered => !delivered))];
    }
 }
 
@@ -89,4 +95,5 @@ class NullOpTessagesInFlightTracker : ITessagesInFlightTracker
    public void SendingTessageOnTransport(TransportTessage.OutGoing transportTessage, EndpointId remoteEndpointId) {}
    public void AwaitNoTessagesInFlight(WaitTimeout? timeoutOverride) {}
    public void DoneWith(TransportTessage.InComing tessage, EndpointId handlingEndpointId, Exception? exception) {}
+   public void DroppedBeforeDelivery(TransportTessage.OutGoing transportTessage, EndpointId remoteEndpointId) {}
 }

@@ -59,6 +59,7 @@ class HttpEndpointTransportClient : IEndpointTransportClient
       {
          TransportRequestKind.ExactlyOnceTevent => HttpConstants.Routes.Tessaging.Tevent,
          TransportRequestKind.ExactlyOnceTommand => HttpConstants.Routes.Tessaging.Tommand,
+         TransportRequestKind.TransientTevent => HttpConstants.Routes.Tessaging.TransientTevent,
          TransportRequestKind.TypermediaTuery => HttpConstants.Routes.Typermedia.Tuery,
          TransportRequestKind.TypermediaTommandWithResult => HttpConstants.Routes.Typermedia.TommandWithResult,
          TransportRequestKind.TypermediaVoidTommand => HttpConstants.Routes.Typermedia.TommandNoResult,

@@ -226,10 +226,11 @@ unhandled-tevent ignore configuration is translated the same way subscriptions a
   `IPublisherIdentifyingTevent<IExactlyOnceTevent>` (covariance makes the wrapped tevent statically
   exactly-once), making an unwrapped hand-off - which no wrapper-typed route would match - a compile error
   instead of a silent routing no-op.
-- Remaining gating (D6, the last increment): `TessagingRouter.RegisterRoutes` registers a tevent route only
-  when the advertised subscription guarantees exactly-once delivery (directly or through covariance:
-  `Is<IPublisherIdentifyingTevent<IExactlyOnceTevent>>`); tommand routes only for `IExactlyOnceTommand`.
-  Removing that gate and implementing the other delivery guarantees is the Remote delivery guarantees work.
+- The exactly-once-only tevent routing gate is REMOVED (2026-07-14): `TessagingRouter.RegisterRoutes`
+  registers a route for every advertised remotable tevent subscription
+  (`Is<IPublisherIdentifyingTevent<IRemotableTevent>>`), and the transient delivery path is built — see the
+  D6 work items below. Tommand routes remain `IExactlyOnceTommand`-only (the transient tier is a tevent
+  concept; the synchronous ask lives in Typermedia).
 
 ### 8. Test coverage — DONE for everything in scope (2026-07-12)
 
@@ -330,19 +331,25 @@ is FIXED (2026-07-13): `GetUndeliveredTessagesForEndpoint` orders by the outbox 
       Two disjoint channels, so removing the Tessaging router's gate cannot break the typermedia paths — and
       only the TEVENT branch of `TessagingRouter.RegisterRoutes` widens (tommands stay exactly-once; the
       transient tier is a tevent concept).
-- [ ] Remove the exactly-once-only routing gate: `TessagingRouter.RegisterRoutes` builds routes for every
-      advertised remotable type; `TransportTessageType`/`TessageTypeTranslator` learn the delivery kinds
-      beyond exactly-once.
-- [ ] Implement the delivery path for remotable tevents that are not `IExactlyOnceTevent`: sent without the
-      outbox's transactional persistence, dispatched on arrival without the inbox's persist/dedup — the
-      guarantees each tevent's interfaces declare, no more and no less. Per the delivery-model document: this
-      is the transient transport + direct receive dispatch behind `ITeventPublisher`'s routing (best-effort,
-      on-commit), plus the `ITransactionIgnoringTeventPublisher` / `RegisterTransactionIgnoringTeventHandlers`
-      escape hatches (immediate, out-of-transaction). Single-in-flight per destination for now — no
-      pipelining (decided 2026-07-13), so ordering holds without sequence numbers while connected.
+- [x] Remove the exactly-once-only routing gate — DONE (2026-07-14): `TessagingRouter.RegisterRoutes` builds
+      a route for every advertised remotable tevent subscription
+      (`Is<IPublisherIdentifyingTevent<IRemotableTevent>>`); `TransportTessageType`/`TessageTypeTranslator`/
+      `TransportRequestKind` learned the transient-tevent kind. Which leg a matched tevent travels is the
+      published tevent's own type's decision, never routing's.
+- [x] The transient delivery path — DONE (2026-07-14): a remotable-but-not-exactly-once tevent is sent
+      without the outbox's transactional persistence (`ITransientTeventDeliveryLeg`, honoring the ambient
+      transaction: on commit with one present, immediately otherwise; per-connection in-memory stream with
+      drop-stream-whole on delivery failure) and dispatched on arrival without the inbox's persist/dedup
+      (`TransientTeventDirectDispatcher`: own scope, own transaction, no retry — a failed handling is
+      reported through the background-exception reporter). Single-in-flight per destination, acknowledgement
+      after handling, so ordering holds end to end without sequence numbers while connected. Specified end
+      to end in `Transient_tevent_delivery_tests`.
+- [ ] The `ITransactionIgnoringTeventPublisher` / `RegisterTransactionIgnoringTeventHandlers` escape hatches
+      (immediate, out-of-transaction) and the observation dispatch.
 - [ ] Once the router honors the full advertised set, assert loudly that every advertised
       non-infrastructure type gets a route, so a future regression fails instead of silently dropping
-      subscriptions.
+      subscriptions. (The tevent side is honored as of 2026-07-14; tommand routes remain exactly-once-only,
+      so the assert still needs the tommand story settled first.)
 - [x] RESOLVED (2026-07-13): should tevent subscribers be able to choose a lighter delivery guarantee than
       the tevent type's own (`_TessageTypes..Interfaces.cs:78-79`)? Yes, but only as a **binary** opt-out —
       the default is the type's declared guarantee; `RegisterTransactionIgnoringTeventHandlers()` opts fully

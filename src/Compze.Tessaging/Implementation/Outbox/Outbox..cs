@@ -57,7 +57,7 @@ partial class Outbox : IOutbox
       Transaction.Current.OnCommittedSuccessfully(() => connections.ForEach(connection =>
       {
          this.Log().Debug($"OnCommittedSuccessfully: Delivering tevent {dedupId} to endpoint {connection.EndpointInformation.Id}");
-         connection.EnqueueForDelivery(wrappedTevent, dedupId);
+         connection.EnqueueForExactlyOnceDelivery(wrappedTevent, dedupId);
       }));
    }
 
@@ -72,7 +72,7 @@ partial class Outbox : IOutbox
       Transaction.Current.OnCommittedSuccessfully(() =>
       {
          this.Log().Debug($"OnCommittedSuccessfully: Delivering tommand {exactlyOnceTommand.Id} to endpoint {connection.EndpointInformation.Id}");
-         connection.EnqueueForDelivery(exactlyOnceTommand, exactlyOnceTommand.Id);
+         connection.EnqueueForExactlyOnceDelivery(exactlyOnceTommand, exactlyOnceTommand.Id);
       });
    }
 
