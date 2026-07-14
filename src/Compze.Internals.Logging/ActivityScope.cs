@@ -47,6 +47,7 @@ public interface IActivityScope : IDisposable
          _startedTimestamp = startedTimestamp;
       }
 
+      // ReSharper disable once MemberHidesStaticFromOuterClass
       internal static IActivityScope Start(ILogger logger, string activityName, LogLevel level)
       {
 #pragma warning disable CA2000 // The Activity is owned by the returned IActivityScope, which disposes it (restoring the previous Activity.Current) when the scope is disposed.

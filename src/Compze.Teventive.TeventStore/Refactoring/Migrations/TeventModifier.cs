@@ -75,7 +75,7 @@ public class TeventModifier(Action<IReadOnlyList<TeventModifier.RefactoredTevent
          (e, index) =>
          {
 #pragma warning disable CS0618 // Type or member is obsolete
-             ((IMutableTaggregateTevent)e.NewWrappedTevent.Tevent).SetTaggregateVersionInternal(_inspectedWrappedTevent!.Tevent.TaggregateVersion + index);
+             ((IMutableTaggregateTevent)e.NewWrappedTevent.Tevent).SetTaggregateVersionInternal(_inspectedWrappedTevent!.Tevent!.TaggregateVersion + index);
 
              e.StorageInformation.RefactoringInformation = TaggregateTeventRefactoringInformation.Replaces(_inspectedWrappedTevent.Tevent.Id);
             e.StorageInformation.EffectiveVersion = _inspectedWrappedTevent.Tevent.TaggregateVersion + index;

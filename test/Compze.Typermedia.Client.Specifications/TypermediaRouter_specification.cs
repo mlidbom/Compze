@@ -46,6 +46,7 @@ public class Given_a_started_typermedia_router_with_no_connected_endpoints : Uni
    [PCT] public void posting_a_tommand_throws_NoHandlerForTypermediaTypeException() =>
       Invoking(() => _navigator.Post(SomeTommand.Create())).Must().Throw<NoHandlerForTypermediaTypeException>();
 
+   // ReSharper disable once ClassNeverInstantiated.Local
    class SomeTueryResult;
    class SomeTuery : TessageTypes.Remotable.NonTransactional.Tueries.Tuery<SomeTueryResult>;
 

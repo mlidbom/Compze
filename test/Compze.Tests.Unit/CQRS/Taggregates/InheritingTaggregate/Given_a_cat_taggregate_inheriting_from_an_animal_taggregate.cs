@@ -5,6 +5,7 @@ using Compze.Teventive;
 using Compze.Teventive.Taggregates.Tevents.Public;
 using Compze.xUnitBDD;
 
+// ReSharper disable SuspiciousTypeConversion.Global
 // ReSharper disable InconsistentNaming for testing
 #pragma warning disable IDE1006 //Reviewed OK: Test Naming Styles
 

@@ -52,7 +52,7 @@ public class NavigationSpecification_specification
    {
       RememberNumberTommand() {}
       public static RememberNumberTommand Create(int number) => new() { Id = new TessageId(), Number = number };
-      public int Number { get; set; }
+      public int Number { get; private init; }
    }
 
    ///<summary>Stands in for the remote side: answers the spec's tueries and remembers the tommands posted to it.</summary>

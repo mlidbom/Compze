@@ -31,6 +31,7 @@ public interface ICompzeSqliteConnection : IPoolableConnection, ICompzeDbConnect
       SqliteConnection Connection { get; }
       SqliteTransaction? _transaction;
       readonly VolatileLambdaTransactionParticipant _transactionParticipant;
+      // ReSharper disable once PrivateFieldCanBeConvertedToLocalVariable
 #pragma warning disable CA2213 // Shared, per-database, process-lifetime semaphore owned by the static registry above — never disposed by an individual connection.
       readonly SemaphoreSlim _writeGate;
 #pragma warning restore CA2213
