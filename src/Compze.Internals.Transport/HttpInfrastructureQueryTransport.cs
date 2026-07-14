@@ -10,8 +10,15 @@ namespace Compze.Internals.Transport;
 
 public static class HttpInfrastructureQueryTransportRegistrar
 {
-   public static IComponentRegistrar HttpInfrastructureQueryTransport(this IComponentRegistrar registrar)
-      => registrar.Register(HttpInfrastructureQueryTransportImplementation.RegisterWith);
+   ///<summary>Registers the HTTP implementation of the infrastructure-query transport that endpoint discovery runs on — the<br/>
+   /// counterpart of <see cref="NamedPipes.NamedPipeInfrastructureQueryTransportRegistrar.NamedPipeInfrastructureQueryTransportIfNotRegistered"/> —<br/>
+   /// and the <see cref="IHttpClientFactoryCE"/> it posts through. Guarded so that every HTTP transport registration demands it<br/>
+   /// itself — a composing layer never registers it.</summary>
+   public static IComponentRegistrar HttpInfrastructureQueryTransportIfNotRegistered(this IComponentRegistrar registrar)
+      => registrar.IsRegistered<IInfrastructureQueryTransport>()
+            ? registrar
+            : registrar.HttpClientFactoryCEIfNotRegistered()
+                       .Register(HttpInfrastructureQueryTransportImplementation.RegisterWith);
 }
 
 class HttpInfrastructureQueryTransportImplementation : IInfrastructureQueryTransport

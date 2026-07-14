@@ -10,7 +10,6 @@ using Compze.Hosting;
 using Compze.Hosting.SameMachine;
 using Compze.Internals.Serialization.Newtonsoft.Wiring;
 using Compze.Internals.Sql.Sqlite.Wiring;
-using Compze.Internals.Transport.NamedPipes;
 using Compze.Tessaging.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
 using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Sqlite.Wiring;
@@ -50,7 +49,6 @@ public static class Program
                       .Register(Singleton.For<IConfigurationParameterProvider>().CreatedBy(() => new SqliteDatabasePerConnectionStringNameConfigurationParameterProvider(workDirectory)))
                       .Register(Singleton.For<IEndpointRegistry>().Instance(registry))
                       .NewtonsoftSerializers()
-                      .NamedPipeInfrastructureQueryTransport()
                       .NamedPipeTessagingTransport()
                       .SqliteConnectionPool("EndpointHostProcess")
                       .SqliteTypeIdInterner("EndpointHostProcess.TypeIdInterner")

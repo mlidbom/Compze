@@ -4,8 +4,6 @@ using Compze.Hosting.Testing;
 using Compze.Hosting.Testing.Wiring;
 using Compze.Internals.SystemCE;
 using Compze.Internals.Testing;
-using Compze.Internals.Transport;
-using Compze.Internals.Transport.NamedPipes;
 using Compze.Typermedia.Client;
 using Compze.Typermedia.Hosting.AspNetCore.Wiring;
 
@@ -13,15 +11,13 @@ namespace Compze.Typermedia.Hosting.Testing.Wiring;
 
 public static class TestingComponentRegistrarTypermediaTransport
 {
-   ///<summary>Registers the current test's <see cref="Transport"/> implementation of the Typermedia transport for an endpoint — the transport server plus the client transport — and the shared infrastructure transport if nothing else registered it yet.</summary>
+   ///<summary>Registers the current test's <see cref="Transport"/> implementation of the Typermedia transport for an endpoint — the transport server plus the client transport.</summary>
    public static IComponentRegistrar CurrentTestsTypermediaTransport(this IComponentRegistrar register) =>
       TestEnv.Transport switch
       {
-         Transport.AspNetCore => register.CurrentTestsInfrastructureTransportIfNotRegistered()
-                                         .HttpTypermediaTransport()
+         Transport.AspNetCore => register.HttpTypermediaTransport()
                                          .AspNetCoreTypermediaTransportServer(),
-         Transport.NamedPipes => register.CurrentTestsInfrastructureTransportIfNotRegistered()
-                                         .NamedPipeTypermediaTransport()
+         Transport.NamedPipes => register.NamedPipeTypermediaTransport()
                                          .NamedPipeTypermediaTransportServer(),
          _ => throw new ArgumentOutOfRangeException()
       };
@@ -31,12 +27,9 @@ public static class TestingComponentRegistrarTypermediaTransport
       TestEnv.Transport switch
       {
          Transport.AspNetCore => register.CastTo<TestingComponentRegistrar>()
-                                         .HttpClientFactoryCE()
-                                         .HttpTypermediaTransport()
-                                         .HttpInfrastructureQueryTransport(),
+                                         .HttpTypermediaTransport(),
          Transport.NamedPipes => register.CastTo<TestingComponentRegistrar>()
-                                         .NamedPipeTypermediaTransport()
-                                         .NamedPipeInfrastructureQueryTransport(),
+                                         .NamedPipeTypermediaTransport(),
          _ => throw new ArgumentOutOfRangeException()
       };
 }

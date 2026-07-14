@@ -18,16 +18,18 @@ namespace Compze.Internals.Transport.AspNet;
 
 public static class AspNetCoreEndpointTransportServerRegistrar
 {
-   ///<summary>Registers the ASP.NET Core implementation of the endpoint's one transport server (<see cref="IEndpointTransportServer"/>),<br/>
-   /// unless a transport already registered one — guarded so that every communication style's ASP.NET Core transport registration can<br/>
-   /// demand the server without conflicting when an endpoint hosts several styles.</summary>
+   ///<summary>Registers the ASP.NET Core implementation of the endpoint's one transport server (<see cref="IEndpointTransportServer"/>)<br/>
+   /// together with the <see cref="InfrastructureQueryController"/> it hosts, unless a transport already registered one — guarded so<br/>
+   /// that every communication style's ASP.NET Core transport registration can demand the server without conflicting when an endpoint<br/>
+   /// hosts several styles.</summary>
    public static IComponentRegistrar AspNetCoreEndpointTransportServerIfNotRegistered(this IComponentRegistrar registrar) =>
       registrar.IsRegistered<IEndpointTransportServer>()
          ? registrar
-         : registrar.Register(
-            Singleton.For<IEndpointTransportServer>()
-                     .CreatedBy((IChildContainerHostIntegration hostIntegration, IComponentSet<AspNetCoreControllerContribution> controllerContributions)
-                                   => new AspNetCoreEndpointTransportServer(hostIntegration, controllerContributions)));
+         : registrar.Register(InfrastructureQueryController.RegisterWith)
+                    .Register(
+                       Singleton.For<IEndpointTransportServer>()
+                                .CreatedBy((IChildContainerHostIntegration hostIntegration, IComponentSet<AspNetCoreControllerContribution> controllerContributions)
+                                              => new AspNetCoreEndpointTransportServer(hostIntegration, controllerContributions)));
 }
 
 ///<summary>The ASP.NET Core implementation of <see cref="IEndpointTransportServer"/>: one Kestrel <see cref="WebApplication"/> hosting<br/>

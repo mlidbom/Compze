@@ -11,9 +11,13 @@ namespace Compze.Internals.Transport.NamedPipes;
 
 public static class NamedPipeInfrastructureQueryTransportRegistrar
 {
-   ///<summary>Registers the named-pipe implementation of the infrastructure-query transport that endpoint discovery runs on — the same-machine counterpart of <see cref="HttpInfrastructureQueryTransportRegistrar.HttpInfrastructureQueryTransport"/>.</summary>
-   public static IComponentRegistrar NamedPipeInfrastructureQueryTransport(this IComponentRegistrar registrar)
-      => registrar.Register(NamedPipeInfrastructureQueryTransportImplementation.RegisterWith);
+   ///<summary>Registers the named-pipe implementation of the infrastructure-query transport that endpoint discovery runs on — the<br/>
+   /// same-machine counterpart of <see cref="HttpInfrastructureQueryTransportRegistrar.HttpInfrastructureQueryTransportIfNotRegistered"/>.<br/>
+   /// Guarded so that every named-pipe transport registration demands it itself — a composing layer never registers it.</summary>
+   public static IComponentRegistrar NamedPipeInfrastructureQueryTransportIfNotRegistered(this IComponentRegistrar registrar)
+      => registrar.IsRegistered<IInfrastructureQueryTransport>()
+            ? registrar
+            : registrar.Register(NamedPipeInfrastructureQueryTransportImplementation.RegisterWith);
 }
 
 class NamedPipeInfrastructureQueryTransportImplementation : IInfrastructureQueryTransport

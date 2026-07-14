@@ -9,8 +9,11 @@ namespace Compze.Tessaging.Implementation.Transport.Client.Implementation.Http;
 
 public static class HttpApiTransportClientRegistrar
 {
+   ///<summary>Registers the HTTP client that posts tessages, plus the <see cref="IHttpClientFactoryCE"/> it posts through<br/>
+   /// (shared with every other HTTP communication style, so registered only if nothing else did yet).</summary>
    public static IComponentRegistrar HttpApiTransportClient(this IComponentRegistrar registrar)
-      => registrar.Register(HttpTransportMessagePoster.RegisterWith);
+      => registrar.HttpClientFactoryCEIfNotRegistered()
+                  .Register(HttpTransportMessagePoster.RegisterWith);
 }
 
 class HttpTransportMessagePoster : ITransportMessagePoster

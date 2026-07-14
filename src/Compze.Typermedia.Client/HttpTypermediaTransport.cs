@@ -12,8 +12,13 @@ namespace Compze.Typermedia.Client;
 
 public static class HttpTypermediaTransportRegistrar
 {
+   ///<summary>Registers the HTTP implementation of the Typermedia client transport, plus the HTTP infrastructure-query transport<br/>
+   /// that endpoint discovery runs on and the <see cref="IHttpClientFactoryCE"/> both post through (shared with every other HTTP<br/>
+   /// communication style, so registered only if nothing else did yet).</summary>
    public static IComponentRegistrar HttpTypermediaTransport(this IComponentRegistrar registrar)
-      => registrar.Register(Client.HttpTypermediaTransport.RegisterWith);
+      => registrar.HttpClientFactoryCEIfNotRegistered()
+                  .HttpInfrastructureQueryTransportIfNotRegistered()
+                  .Register(Client.HttpTypermediaTransport.RegisterWith);
 }
 
 class HttpTypermediaTransport : ITypermediaTransport

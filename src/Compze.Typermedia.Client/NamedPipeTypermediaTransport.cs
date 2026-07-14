@@ -12,9 +12,12 @@ namespace Compze.Typermedia.Client;
 
 public static class NamedPipeTypermediaTransportRegistrar
 {
-   ///<summary>Registers the named-pipe implementation of the Typermedia client transport — the same-machine counterpart of <see cref="HttpTypermediaTransportRegistrar.HttpTypermediaTransport"/>.</summary>
+   ///<summary>Registers the named-pipe implementation of the Typermedia client transport, plus the named-pipe infrastructure-query<br/>
+   /// transport that endpoint discovery runs on (shared with every other named-pipe communication style, so registered only if<br/>
+   /// nothing else did yet) — the same-machine counterpart of <see cref="HttpTypermediaTransportRegistrar.HttpTypermediaTransport"/>.</summary>
    public static IComponentRegistrar NamedPipeTypermediaTransport(this IComponentRegistrar registrar)
-      => registrar.Register(Client.NamedPipeTypermediaTransport.RegisterWith);
+      => registrar.NamedPipeInfrastructureQueryTransportIfNotRegistered()
+                  .Register(Client.NamedPipeTypermediaTransport.RegisterWith);
 }
 
 ///<summary>The named-pipe implementation of <see cref="ITypermediaTransport"/>: executes tueries and tommands against the<br/>

@@ -77,11 +77,11 @@ Linux/macOS the same API rides Unix domain sockets.
   as the HTTP transport's controllers behave.
 
 Choosing the transport is composition, per the hosting model's design rule — nothing in the hosting machinery
-knows which transport an endpoint speaks. An endpoint setup registers
-`NamedPipeInfrastructureQueryTransport()` plus `NamedPipeTessagingTransport()` and/or
+knows which transport an endpoint speaks. An endpoint setup registers `NamedPipeTessagingTransport()` and/or
 `NamedPipeTypermediaTransport()` + `NamedPipeTypermediaTransportServer()` where it would have registered the
-HTTP equivalents. In tests the choice is the `Transport` axis of the pluggable-component matrix: the same
-specifications run over ASP.NET Core and over named pipes.
+HTTP equivalents; each transport registration brings the shared infrastructure-query transport that endpoint
+discovery runs on along itself. In tests the choice is the `Transport` axis of the pluggable-component matrix:
+the same specifications run over ASP.NET Core and over named pipes.
 
 ## Discovery: announcing into the interprocess registry
 
@@ -169,7 +169,6 @@ host.RegisterEndpoint("BackgroundWorker", new EndpointId(Guid.Parse("...")), bui
    builder.Registrar
           .Register(Singleton.For<IEndpointRegistry>().Instance(registry))         // the read side: whom to connect to
           .NewtonsoftSerializers()
-          .NamedPipeInfrastructureQueryTransport()
           .NamedPipeTessagingTransport()
           .SqliteConnectionPool("BackgroundWorker")
           .SqliteTypeIdInterner("BackgroundWorker.TypeIdInterner")
