@@ -63,7 +63,7 @@ public interface IRemotableTuery<out TResult> : ITuery<TResult>, IRemotableTessa
 //Clients that are not .NET types need to send the query to the closest .NET endpoint before that will bounce the result back.
 public interface IRemotableCreateMyOwnResultTuery<out TResult> : IRemotableTuery<TResult>, ICreateMyOwnResultTuery<TResult>;
 
-///<summary>A tessage that is handled exactly once. Guaranteed by infrastructure through deduplication, and transactions.</summary>
+///<summary>A tessage that is handled no more than once. Guaranteed by infrastructure through deduplication, and transactions.</summary>
 public interface IAtMostOnceTessage : IRemotableTessage, IMustBeHandledTransactionally
 {
    ///<summary>Used by the infrastructure to guarantee that the same tessage is never delivered more than once. Must be generated when the tessage is created and then NEVER modified. Must be maintained when binding a tommand in a UI etc.</summary>
@@ -73,7 +73,7 @@ public interface IAtMostOnceTessage : IRemotableTessage, IMustBeHandledTransacti
 public interface IAtMostOnceTypermediaTommand : IAtMostOnceTessage, IRemotableTommand, ITypermediaTessage;
 public interface IAtMostOnceTommand<out TResult> : IAtMostOnceTypermediaTommand, IRemotableTommand<TResult>;
 
-///<summary>A tessage that is handled no more than once. Guaranteed by infrastructure through deduplication, retries, and transactions.</summary>
+///<summary>A tessage that is handled exactly once. Guaranteed by infrastructure through deduplication, retries, and transactions.</summary>
 public interface IExactlyOnceTessage : IMustBeSentAndHandledTransactionally, IAtMostOnceTessage;
 
 public interface IExactlyOnceTevent : IRemotableTevent, IExactlyOnceTessage;
