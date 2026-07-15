@@ -10,7 +10,7 @@ public static class TaggregateIdentifyingTevent
    /// the same wrapping a <c>Taggregate</c> performs when publishing through its declared <c>WrapperTeventImplementation</c>.<br/>
    /// This is how a tevent migration author wraps a replacement tevent in the publisher's wrapper.</summary>
    public static ITaggregateTevent<ITaggregateTevent> WrapIn(Type wrapperTeventImplementation, ITaggregateTevent tevent) =>
-      (ITaggregateTevent<ITaggregateTevent>)PublisherIdentifyingTevent.WrapIn(wrapperTeventImplementation, tevent);
+      (ITaggregateTevent<ITaggregateTevent>)PublisherTevent.WrapIn(wrapperTeventImplementation, tevent);
 }
 
 // ReSharper disable once ClassNeverInstantiated.Global

@@ -29,12 +29,12 @@ partial class CallMatchingHandlersInRegistrationOrderTeventDispatcher<TTevent> :
    {
       _ignoreAllUnhandled = config.Options.HasFlag(TeventDispatcherOptions.IgnoreAllUnhandled);
       //Routing operates exclusively on wrapper types, so an inner tevent type in the ignore configuration is translated: ignoring a tevent type ignores every wrapping of it.
-      _ignoredTevents = config.IgnoredUnhandled.Select(PublisherIdentifyingTevent.WrapperTypeMatchingAllWrappingsOf).ToHashSet();
+      _ignoredTevents = config.IgnoredUnhandled.Select(PublisherTevent.WrapperTypeMatchingAllWrappingsOf).ToHashSet();
    }
 
    public ITeventSubscriber<TTevent> Register() => new TeventSubscriber(this);
 
-   public void Dispatch(TTevent evt) => Dispatch(PublisherIdentifyingTevent.WrapTevent(evt));
+   public void Dispatch(TTevent evt) => Dispatch(PublisherTevent.WrapTevent(evt));
 
    public void Dispatch(IPublisherTevent<TTevent> wrapped)
    {
@@ -45,7 +45,7 @@ partial class CallMatchingHandlersInRegistrationOrderTeventDispatcher<TTevent> :
       }
    }
 
-   public bool Handles(TTevent tevent) => GetHandlers(PublisherIdentifyingTevent.WrapperTypeFor(tevent.GetType()), validateHandlerExists: false).Any();
+   public bool Handles(TTevent tevent) => GetHandlers(PublisherTevent.WrapperTypeFor(tevent.GetType()), validateHandlerExists: false).Any();
 
    Action<ITevent>[] GetHandlers(Type wrapperTeventType, bool validateHandlerExists = true)
    {

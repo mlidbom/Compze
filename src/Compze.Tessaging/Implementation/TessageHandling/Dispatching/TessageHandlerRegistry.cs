@@ -54,7 +54,7 @@ sealed class TessageHandlerRegistry(ITypeMap typeMap) : ITessageHandlerRegistrar
    {
       TessageInspector.AssertValidForSubscription<TTevent>();
 
-      var routingKey = PublisherIdentifyingTevent.WrapperTypeMatchingAllWrappingsOf(typeof(TTevent));
+      var routingKey = PublisherTevent.WrapperTypeMatchingAllWrappingsOf(typeof(TTevent));
       Action<ITevent, IScopeResolver> deliver = typeof(TTevent).Is<IPublisherTevent<ITevent>>()
                                                    ? (wrappedTevent, kernel) => handler((TTevent)wrappedTevent, kernel)
                                                    : (wrappedTevent, kernel) => handler((TTevent)((IPublisherTevent<ITevent>)wrappedTevent).Tevent, kernel);
@@ -102,7 +102,7 @@ sealed class TessageHandlerRegistry(ITypeMap typeMap) : ITessageHandlerRegistrar
       //subscription to a type outside it is a purely local subscription, truthfully absent from the advertisement.
       var handledTeventTypes = _registeredTeventTypes
                               .Where(subscribedType => !subscribedType.Implements<TessageTypesInternal.ITessage>())
-                              .Select(PublisherIdentifyingTevent.WrapperTypeMatchingAllWrappingsOf)
+                              .Select(PublisherTevent.WrapperTypeMatchingAllWrappingsOf)
                               .Where(wrapperType => wrapperType.Is<IPublisherTevent<IRemotableTevent>>());
 
       var handledTommandTypes = _tommandHandlers.Keys
@@ -132,7 +132,7 @@ sealed class TessageHandlerRegistry(ITypeMap typeMap) : ITessageHandlerRegistrar
    {
       //Both subscription kinds count: an observation subscription joins the advertisement too, and observing a remote exactly-once tevent still requires receiving it exactly-once.
       var teventTypes = _registeredTeventTypes
-                       .Where(subscribedType => PublisherIdentifyingTevent.WrapperTypeMatchingAllWrappingsOf(subscribedType).Is<IPublisherTevent<IExactlyOnceTevent>>());
+                       .Where(subscribedType => PublisherTevent.WrapperTypeMatchingAllWrappingsOf(subscribedType).Is<IPublisherTevent<IExactlyOnceTevent>>());
 
       var tommandTypes = _tommandHandlers.Keys.Where(tommandType => tommandType.Is<IExactlyOnceTommand>());
 

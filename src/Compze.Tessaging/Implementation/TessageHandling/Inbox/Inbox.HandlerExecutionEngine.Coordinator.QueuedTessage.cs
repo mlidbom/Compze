@@ -125,7 +125,7 @@ public partial class Inbox
                   TransportTessageType.ExactlyOnceTevent => (tessage, kernel) =>
                   {
                      //The whole wrapped tevent travels the wire, so a received tevent arrives already wrapped; Wrapped normalizes and passes it through unchanged.
-                     var wrappedTevent = PublisherIdentifyingTevent.Wrapped((ITevent)tessage);
+                     var wrappedTevent = PublisherTevent.Wrapped((ITevent)tessage);
                      var teventHandlers = _tessagingHandlerRegistry.GetTeventHandlers(wrappedTevent.GetType());
                      teventHandlers.ForEach(handler => handler(wrappedTevent, kernel));
                      return null;

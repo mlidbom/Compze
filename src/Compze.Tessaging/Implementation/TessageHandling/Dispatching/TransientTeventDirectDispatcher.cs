@@ -45,7 +45,7 @@ class TransientTeventDirectDispatcher
       try
       {
          //The whole wrapped tevent travels the wire, so a received tevent arrives already wrapped; Wrapped normalizes and passes it through unchanged.
-         var wrappedTevent = PublisherIdentifyingTevent.Wrapped((ITevent)transportTessage.DeserializeTessageAndCacheForNextCall());
+         var wrappedTevent = PublisherTevent.Wrapped((ITevent)transportTessage.DeserializeTessageAndCacheForNextCall());
          //Observation fires on arrival, before and outside the transactional handling below.
          _teventObservationDispatcher.Dispatch(wrappedTevent);
          using var scope = _scopeFactory.BeginScope();

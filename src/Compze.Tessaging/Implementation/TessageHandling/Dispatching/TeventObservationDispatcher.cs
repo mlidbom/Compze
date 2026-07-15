@@ -72,6 +72,6 @@ class TeventObservationDispatcher
    public void Dispatch(TransportTessage.InComing transportTessage)
    {
       if(_handlerRegistry.GetTransactionIgnoringTeventHandlers(transportTessage.TessageTypeId.Type).Count == 0) return;
-      Dispatch(PublisherIdentifyingTevent.Wrapped((ITevent)transportTessage.DeserializeTessageAndCacheForNextCall()));
+      Dispatch(PublisherTevent.Wrapped((ITevent)transportTessage.DeserializeTessageAndCacheForNextCall()));
    }
 }

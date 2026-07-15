@@ -193,7 +193,7 @@ namespace Compze.Teventive.TeventStore;
 
       _sqlLayer.SetupSchemaIfDatabaseUnInitialized();
       //The rows store wrapper types, so an inner tevent type filter is translated: it matches every wrapping of that tevent type.
-      var wrapperTypeToMatch = teventType == null ? null : PublisherIdentifyingTevent.WrapperTypeMatchingAllWrappingsOf(teventType);
+      var wrapperTypeToMatch = teventType == null ? null : PublisherTevent.WrapperTypeMatchingAllWrappingsOf(teventType);
       return _sqlLayer.ListTaggregateIdsInCreationOrder()
                               .Where(it => wrapperTypeToMatch == null || wrapperTypeToMatch.IsAssignableFrom(it.TypeId.Type))
                               .Select(it => it.TaggregateId);

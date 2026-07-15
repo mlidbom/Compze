@@ -52,7 +52,7 @@ public sealed class SharedTomponentSlot<TOwnerTevent, TOwnerTeventImplementation
 
 #pragma warning disable CS0618 // This is just the type of infrastructure code the member is for
    void ISharedTomponentSlot<TTomponentTevent>.PublishInternal(TTomponentTevent tevent) =>
-      _owner.PublishInternal((TOwnerTeventImplementation)PublisherIdentifyingTevent.WrapIn(_adoptingWrapperTeventImplementation, tevent));
+      _owner.PublishInternal((TOwnerTeventImplementation)PublisherTevent.WrapIn(_adoptingWrapperTeventImplementation, tevent));
 #pragma warning restore CS0618
 
    void ISharedTomponentSlot<TTomponentTevent>.AttachTomponentInternal(ISharedTomponentInternals<TTomponentTevent> tomponent)

@@ -24,7 +24,7 @@ public partial class SelfGeneratingQueryModel<TQueryModel, TTaggregateTevent> : 
 
    ///<summary>Applies a tevent that arrives without a publisher-identifying wrapper - such as one delivered to an inner-typed bus subscription - by wrapping it<br/>
    /// in a <see cref="PublisherTevent{TTevent}"/> closed over its runtime type, mirroring <see cref="ITeventDispatcher{TTevent}.Dispatch(TTevent)"/>.</summary>
-   public void ApplyTevent(TTaggregateTevent tevent) => ApplyTevent(PublisherIdentifyingTevent.WrapTevent(tevent));
+   public void ApplyTevent(TTaggregateTevent tevent) => ApplyTevent(PublisherTevent.WrapTevent(tevent));
 
    public void ApplyTevent(IPublisherTevent<TTaggregateTevent> wrappedTevent)
    {

@@ -47,7 +47,7 @@ static class TeventPublisherRegistrar
 
    public void Publish(ITevent tevent)
    {
-      var wrappedTevent = PublisherIdentifyingTevent.Wrapped(tevent);
+      var wrappedTevent = PublisherTevent.Wrapped(tevent);
       var remoteDelivery = RemoteDeliveryFor(wrappedTevent);
       _inProcessTeventPublisher.Publish(wrappedTevent, _scopeResolver);
       //Observation fires at publish time, outside the publisher's transaction - the observers of a locally published tevent hear it even if that transaction later rolls back.

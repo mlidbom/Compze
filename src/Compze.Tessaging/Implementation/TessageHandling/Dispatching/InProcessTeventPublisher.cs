@@ -22,7 +22,7 @@ sealed class InProcessTeventPublisher(ITessageHandlerRegistry handlerRegistry) :
    {
       TessageValidator.AssertValidToExecuteLocally(tevent);
       //Every tevent is wrapped before routing: a tevent published without a publisher-identifying wrapper is wrapped here, and routing operates on the wrapper's type.
-      var wrappedTevent = PublisherIdentifyingTevent.Wrapped(tevent);
+      var wrappedTevent = PublisherTevent.Wrapped(tevent);
       foreach(var handler in _handlerRegistry.GetTeventHandlers(wrappedTevent.GetType()))
       {
          handler(wrappedTevent, scopeResolver);

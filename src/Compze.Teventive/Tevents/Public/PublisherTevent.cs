@@ -9,7 +9,7 @@ namespace Compze.Teventive.Tevents.Public;
 
 ///<summary>Wraps tevents that are published without a publisher-identifying wrapper: every tevent is wrapped before routing,<br/>
 /// and a tevent dispatched unwrapped is wrapped by <see cref="WrapTevent{TTevent}"/> in a <see cref="PublisherTevent{TTevent}"/> closed over its runtime type.</summary>
-public static class PublisherIdentifyingTevent
+public static class PublisherTevent
 {
    static IReadOnlyDictionary<Type, Func<ITevent, IPublisherTevent<ITevent>>> _wrapperConstructors = new Dictionary<Type, Func<ITevent, IPublisherTevent<ITevent>>>();
    static readonly IMonitor Monitor = IMonitor.New();
@@ -61,7 +61,7 @@ public static class PublisherIdentifyingTevent
 
 ///<summary>The root implementation of <see cref="IPublisherTevent{TTevent}"/>: a wrapper that carries the wrapped tevent's full type information<br/>
 /// but identifies no publisher beyond it. Publisher-specific wrappers implement more derived wrapper interfaces; this is what a tevent is wrapped in when<br/>
-/// its publisher declares none, via <see cref="PublisherIdentifyingTevent.WrapTevent{TTevent}"/>.</summary>
+/// its publisher declares none, via <see cref="PublisherTevent.WrapTevent{TTevent}"/>.</summary>
 public class PublisherTevent<TTevent>(TTevent tevent) : IPublisherTevent<TTevent>
    where TTevent : ITevent
 {
