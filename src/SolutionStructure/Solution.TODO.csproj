@@ -5,5 +5,6 @@
    <ItemGroup>
       <None Include="../**/TODO/*.md" Exclude="$(BuildOutputExcludes)" KeepDuplicates="false" />
       <None Include="../**/*TODO*.md" Exclude="$(BuildOutputExcludes)" KeepDuplicates="false" />
+      <None Include="../**/dev_docs/*.md" Exclude="$(BuildOutputExcludes)" KeepDuplicates="false" />
    </ItemGroup>
 </Project>
