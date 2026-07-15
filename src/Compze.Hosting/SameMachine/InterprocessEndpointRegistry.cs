@@ -1,5 +1,6 @@
 using System.Text;
 using Compze.Abstractions.Hosting.Public;
+using Compze.Internals.SystemCE.DiagnosticsCE;
 using Compze.InterprocessObject;
 using Compze.Threading;
 
@@ -12,8 +13,8 @@ namespace Compze.Hosting.SameMachine;
 /// <see cref="AwaitPossibleMembershipChange"/> — in any process sharing the registry — wakes and reconciles at signal latency<br/>
 /// (tens of milliseconds at most) when an endpoint announces or retracts, instead of waiting out its periodic pass.</summary>
 ///<remarks>The backing file outlives crashed processes by design, and a crashed process's addresses must never be routed to — so every<br/>
-/// entry records its <see cref="AnnouncingProcess"/>, addresses whose announcing process is no longer running are invisible to readers,<br/>
-/// and each announcement prunes them from the file.</remarks>
+/// entry records the <see cref="ProcessIdentity"/> of its announcing process, addresses whose announcing process is no longer running are<br/>
+/// invisible to readers, and each announcement prunes them from the file.</remarks>
 public class InterprocessEndpointRegistry : IEndpointRegistryAndAnnouncer, IDisposable
 {
    const int MaxRegistryBytes = 64 * 1024;
@@ -55,18 +56,18 @@ public class InterprocessEndpointRegistry : IEndpointRegistryAndAnnouncer, IDisp
 
    ///<summary>The address uris of every announced endpoint whose announcing process is still running — the registry's membership as readers see it.</summary>
    static HashSet<string> LiveAddressUris(RegistryState state) =>
-      [..state.Entries.Where(entry => entry.AnnouncingProcess.IsStillRunning).Select(entry => entry.AddressUri)];
+      [..state.Entries.Where(entry => entry.AnnouncingProcess.IsCurrentlyRunning).Select(entry => entry.AddressUri)];
 
    ///<summary>Announces <paramref name="address"/> as where the endpoint listens, on behalf of this process.</summary>
-   public void AnnounceEndpointAddress(EndpointId endpointId, EndpointAddress address) => AnnounceEndpointAddress(endpointId, address, AnnouncingProcess.Current);
+   public void AnnounceEndpointAddress(EndpointId endpointId, EndpointAddress address) => AnnounceEndpointAddress(endpointId, address, ProcessIdentity.OfCurrentProcess);
 
    ///<summary>Announces <paramref name="address"/> as where the endpoint listens, replacing any address the endpoint announced before.<br/>
    /// Also prunes every entry whose announcing process has exited — announcement is the registry's self-cleaning moment.</summary>
-   public void AnnounceEndpointAddress(EndpointId endpointId, EndpointAddress address, AnnouncingProcess announcingProcess) =>
+   public void AnnounceEndpointAddress(EndpointId endpointId, EndpointAddress address, ProcessIdentity announcingProcess) =>
       _sharedState.Update(state =>
       {
-         state.Entries.RemoveAll(entry => entry.EndpointId == endpointId.Value || !entry.AnnouncingProcess.IsStillRunning);
-         state.Entries.Add(new RegistryState.Entry(endpointId.Value, address.Uri.AbsoluteUri, announcingProcess.Identity.ProcessId, announcingProcess.Identity.StartTime.Ticks));
+         state.Entries.RemoveAll(entry => entry.EndpointId == endpointId.Value || !entry.AnnouncingProcess.IsCurrentlyRunning);
+         state.Entries.Add(new RegistryState.Entry(endpointId.Value, address.Uri.AbsoluteUri, announcingProcess));
       });
 
    ///<summary>Retracts the endpoint's announced address — what an endpoint does when it stops listening.</summary>
@@ -82,11 +83,11 @@ public class InterprocessEndpointRegistry : IEndpointRegistryAndAnnouncer, IDisp
    {
       internal List<Entry> Entries { get; } = [];
 
-      internal class Entry(Guid endpointId, string addressUri, int announcingProcessId, long announcingProcessStartTimeTicks)
+      internal class Entry(Guid endpointId, string addressUri, ProcessIdentity announcingProcess)
       {
          internal Guid EndpointId { get; } = endpointId;
          internal string AddressUri { get; } = addressUri;
-         internal AnnouncingProcess AnnouncingProcess { get; } = new(announcingProcessId, announcingProcessStartTimeTicks);
+         internal ProcessIdentity AnnouncingProcess { get; } = announcingProcess;
       }
 
       internal class Serializer : IInterprocessObjectSerializer<RegistryState>
@@ -100,8 +101,8 @@ public class InterprocessEndpointRegistry : IEndpointRegistryAndAnnouncer, IDisp
             {
                writer.Write(entry.EndpointId.ToByteArray());
                writer.Write(entry.AddressUri);
-               writer.Write(entry.AnnouncingProcess.Identity.ProcessId);
-               writer.Write(entry.AnnouncingProcess.Identity.StartTime.Ticks);
+               writer.Write(entry.AnnouncingProcess.ProcessId);
+               writer.Write(entry.AnnouncingProcess.StartTime.Ticks);
             }
 
             writer.Flush();
@@ -118,8 +119,7 @@ public class InterprocessEndpointRegistry : IEndpointRegistryAndAnnouncer, IDisp
             {
                state.Entries.Add(new Entry(endpointId: new Guid(reader.ReadBytes(16)),
                                            addressUri: reader.ReadString(),
-                                           announcingProcessId: reader.ReadInt32(),
-                                           announcingProcessStartTimeTicks: reader.ReadInt64()));
+                                           announcingProcess: new ProcessIdentity(reader.ReadInt32(), new DateTime(reader.ReadInt64(), DateTimeKind.Utc))));
             }
 
             return state;

@@ -34,7 +34,7 @@ public class Given_two_registry_instances_opened_on_the_same_name_and_directory 
    public class after_the_announcing_instance_announces_an_endpoint_address : Given_two_registry_instances_opened_on_the_same_name_and_directory
    {
       public after_the_announcing_instance_announces_an_endpoint_address() =>
-         _registryInTheAnnouncingRole.AnnounceEndpointAddress(_endpointId, _address, AnnouncingProcess.Current);
+         _registryInTheAnnouncingRole.AnnounceEndpointAddress(_endpointId, _address, ProcessIdentity.OfCurrentProcess);
 
       [XF] public void the_reading_instance_lists_the_address() => _registryInTheReadingRole.ServerEndpointAddresses.Must().Contain(_address);
       [XF] public void the_announcing_instance_lists_the_address() => _registryInTheAnnouncingRole.ServerEndpointAddresses.Must().Contain(_address);
@@ -57,7 +57,7 @@ public class Given_two_registry_instances_opened_on_the_same_name_and_directory 
          readonly EndpointAddress _replacementAddress = new(new Uri("compze.pipe://localhost/Compze.registry-spec-replacement"));
 
          public and_then_announces_a_new_address_for_the_same_endpoint() =>
-            _registryInTheAnnouncingRole.AnnounceEndpointAddress(_endpointId, _replacementAddress, AnnouncingProcess.Current);
+            _registryInTheAnnouncingRole.AnnounceEndpointAddress(_endpointId, _replacementAddress, ProcessIdentity.OfCurrentProcess);
 
          [XF] public void only_the_new_address_is_listed() => _registryInTheReadingRole.ServerEndpointAddresses.Single().Must().Be(_replacementAddress);
       }
@@ -65,9 +65,9 @@ public class Given_two_registry_instances_opened_on_the_same_name_and_directory 
 
    public class after_an_address_is_announced_whose_announcing_process_is_no_longer_running : Given_two_registry_instances_opened_on_the_same_name_and_directory
    {
-      //A process id equal to ours but started a minute earlier identifies a process that has exited and whose id the OS has since reused — the reuse case the start-time disambiguator exists for. The minute is well beyond the reader-skew tolerance that lets two processes agree they are looking at the same live process.
+      //A process with our id but started a minute earlier identifies a process that has exited and whose id the OS has since reused — the reuse case the start-time disambiguator exists for. The minute is well beyond the reader-skew tolerance that lets two readers agree they see the same live process.
       public after_an_address_is_announced_whose_announcing_process_is_no_longer_running() =>
-         _registryInTheAnnouncingRole.AnnounceEndpointAddress(_endpointId, _address, new AnnouncingProcess(new ProcessIdentity(Environment.ProcessId, AnnouncingProcess.Current.Identity.StartTime - TimeSpan.FromMinutes(1))));
+         _registryInTheAnnouncingRole.AnnounceEndpointAddress(_endpointId, _address, new ProcessIdentity(Environment.ProcessId, ProcessIdentity.OfCurrentProcess.StartTime - TimeSpan.FromMinutes(1)));
 
       [XF] public void the_address_is_not_listed() => _registryInTheReadingRole.ServerEndpointAddresses.Must().BeEmpty();
 
@@ -77,7 +77,7 @@ public class Given_two_registry_instances_opened_on_the_same_name_and_directory 
          readonly EndpointAddress _liveAddress = new(new Uri("compze.pipe://localhost/Compze.registry-spec-live"));
 
          public and_a_live_address_is_announced_afterwards() =>
-            _registryInTheAnnouncingRole.AnnounceEndpointAddress(_liveEndpointId, _liveAddress, AnnouncingProcess.Current);
+            _registryInTheAnnouncingRole.AnnounceEndpointAddress(_liveEndpointId, _liveAddress, ProcessIdentity.OfCurrentProcess);
 
          [XF] public void only_the_live_address_is_listed() => _registryInTheReadingRole.ServerEndpointAddresses.Single().Must().Be(_liveAddress);
       }

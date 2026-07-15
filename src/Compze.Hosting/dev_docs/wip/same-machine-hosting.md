@@ -115,8 +115,8 @@ in the mirror phase before any sending stops, so an announced address is always 
 listening, and a router's first look at the registry sees every endpoint its host announced.
 
 **Crashed processes announce nothing — structurally.** The backing file outlives crashed processes by design
-(that is how announcements survive restarts), so a crash cannot retract. Instead, every entry records its
-`AnnouncingProcess`, whose `ProcessIdentity` is the process id *plus the process's start time*, because the OS
+(that is how announcements survive restarts), so a crash cannot retract. Instead, every entry records the
+`ProcessIdentity` of its announcing process — the process id *plus the process's start time*, because the OS
 recycles process ids and only the pair identifies a process uniquely. `ProcessIdentity` compares start times
 with a tolerance rather than for exact equality: `Process.StartTime` is not read-stable across processes on
 every OS (on Unix each reader reconstructs it from its own coarse `now - uptime` boot-time sample), so exact
