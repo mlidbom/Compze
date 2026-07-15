@@ -89,7 +89,11 @@ public partial interface IInterprocessObject
 
       public void Delete() => _file.Delete();
 
-      public void Dispose() => Mutex.Dispose();
+      public void Dispose()
+      {
+         _file.Dispose(); //Releases this instance's mapping of the backing file; the file itself stays, shared with every other instance, until Delete.
+         Mutex.Dispose();
+      }
 
       void Save(TObject instance)
       {

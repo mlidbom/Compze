@@ -1,4 +1,5 @@
 using Compze.Abstractions.Hosting.Public;
+using Compze.Hosting.SameMachine;
 using Compze.Hosting.Testing.Wiring;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.LinqCE;
@@ -24,11 +25,21 @@ public class TestingEndpointHost : EndpointHost, ITestingEndpointHost
    readonly IReadOnlyList<ITestingEndpointHostFeature> _features;
    readonly IDependencyInjectionContainer _rootContainer;
    readonly bool _ownsRootContainer;
+   readonly DirectoryInfo _endpointRegistryDirectory;
+   readonly InterprocessEndpointRegistry _endpointRegistry;
+
+   public IEndpointRegistryAndAnnouncer EndpointRegistry => _endpointRegistry;
 
    TestingEndpointHost(IDependencyInjectionContainer rootContainer, bool ownsRootContainer, IReadOnlyList<ITestingEndpointHostFeature> features) : base(rootContainer.CreateCloneContainerBuilder)
    {
       _rootContainer = rootContainer;
       _ownsRootContainer = ownsRootContainer;
+
+      //The host's endpoints participate in a real interprocess registry - the same announce/discover pipeline a production
+      //same-machine suite runs - private to this host through its unique directory, and deleted with the host.
+      _endpointRegistryDirectory = new DirectoryInfo(Path.Combine(Path.GetTempPath(), "Compze", "Tests", "TestingHostEndpointRegistries", Guid.NewGuid().ToString("N")))._mutate(it => it.Create());
+      _endpointRegistry = InterprocessEndpointRegistry.OpenOrCreateSessionLocal("EndpointRegistry", _endpointRegistryDirectory);
+
       _features = features;
       _features.ForEach(feature => feature.OnAddedToHost(this));
    }
@@ -106,6 +117,17 @@ public class TestingEndpointHost : EndpointHost, ITestingEndpointHost
          {
             unobservedExceptions.Add(e);
          }
+      }
+
+      try
+      {
+         //After the endpoints are disposed: their retracting phase writes to the registry.
+         _endpointRegistry.Dispose();
+         _endpointRegistryDirectory.Delete(recursive: true);
+      }
+      catch(Exception e)
+      {
+         unobservedExceptions.Add(e);
       }
 
       if(unobservedExceptions.Any())

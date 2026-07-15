@@ -35,7 +35,7 @@ public class EndpointTransportServerFeature
    /// sending — so an announced address is always one that is actually listening, and a router's first look at a registry sees every<br/>
    /// endpoint the host announced; it is retracted in the mirror phase, before any sending stops, so the address stops being advertised<br/>
    /// before anything goes deaf. An endpoint announces to every announcer declared; declaring none means the endpoint is found some<br/>
-   /// other way (a static registry, configuration).</summary>
+   /// other way (a fixed address list) or only serves.</summary>
    public void AnnounceAddressTo(IEndpointAddressAnnouncer announcer) => _addressAnnouncers.Add(announcer);
 
    ///<summary>The address where the endpoint's transport server listens; null until it is listening.</summary>

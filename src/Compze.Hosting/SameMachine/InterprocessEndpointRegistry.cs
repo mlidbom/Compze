@@ -14,7 +14,7 @@ namespace Compze.Hosting.SameMachine;
 ///<remarks>The backing file outlives crashed processes by design, and a crashed process's addresses must never be routed to — so every<br/>
 /// entry records its <see cref="AnnouncingProcess"/>, addresses whose announcing process is no longer running are invisible to readers,<br/>
 /// and each announcement prunes them from the file.</remarks>
-public class InterprocessEndpointRegistry : IEndpointRegistry, IEndpointAddressAnnouncer, IDisposable
+public class InterprocessEndpointRegistry : IEndpointRegistryAndAnnouncer, IDisposable
 {
    const int MaxRegistryBytes = 64 * 1024;
    readonly IInterprocessObject<RegistryState> _sharedState;

@@ -107,7 +107,7 @@ An endpoint declares who it announces to on its transport feature:
 builder.AddExactlyOnceTessaging().AnnounceAddressTo(registry);
 ```
 
-Declaring none — a testing host with a static registry, a configuration-file deployment — means nothing is
+Declaring none — a deployment whose endpoints are found through a fixed address list — means nothing is
 announced. The announced address is the endpoint's one transport-server address, serving every distributed
 capability the endpoint speaks. The announcement is made in the host's announcing phase — after every
 endpoint in the host has finished starting to listen and before any endpoint starts sending — and retracted
@@ -162,8 +162,9 @@ A dynamic topology implies contracts callers must know:
   fails loud, and rides the same retry-until-discovered synchronization.
 
 Reconciliation is not same-machine-specific: the routers converge on whatever `IEndpointRegistry` they are
-given. Against the testing host's static registry they converge once and stay; the interprocess registry is
-what makes membership *live*.
+given — a fixed address list converges once and stays; the interprocess registry is what makes membership
+*live*. The testing host runs every test's endpoints on a real interprocess registry of its own
+(`ITestingEndpointHost.EndpointRegistry`), so every test exercises this same announce/discover pipeline.
 
 ## The whole composition
 

@@ -4,7 +4,7 @@ using Compze.Internals.SystemCE.IOCE;
 
 namespace Compze.InterprocessObject;
 
-class MemoryMappedBinaryFile : IBinaryFile, IDisposable
+class MemoryMappedBinaryFile : IBinaryFile
 {
    const int HeaderSize = sizeof(int);
 

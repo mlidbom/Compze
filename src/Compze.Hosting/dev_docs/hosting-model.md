@@ -302,20 +302,23 @@ Typermedia-only, or combined host is just `Create` with the matching features.
 What the pieces do:
 
 - **`TestingEndpointHost`** builds all endpoints from clones of one root container, so they share the test
-  database pool and serializers, and gives every endpoint the shared transport infrastructure. On dispose it
+  database pool and serializers, and gives every endpoint the shared transport infrastructure. It owns a real
+  `InterprocessEndpointRegistry` of its own (`ITestingEndpointHost.EndpointRegistry`, in a per-host temp
+  directory deleted with the host), which the features have every endpoint participate in — so every test
+  runs the production announce/discover pipeline, not a test-only registry. On dispose it
   asks each feature to wait until its background work is at rest and rethrows background exceptions no
   assertion observed — a test cannot pass while silently dropping in-flight work
   (`DisposeAsyncWithoutWaitingForEndpointsToBeAtRest` opts out, for tests that deliberately leave work
   scheduled).
 - **`ExactlyOnceTessagingTestingEndpointHostFeature`** registers, per endpoint: a host-wide
   tessages-in-flight tracker (this is what the dispose-time quiescence wait reads), the endpoint transport of
-  the current test's protocol, the Tessaging vertical's SQL persistence stack, and finally `AddExactlyOnceTessaging()` declaring
-  `DiscoverEndpointsThrough` an `IEndpointRegistry` listing the host's endpoints' addresses (so routers
-  connect to every endpoint in the host). The tracker pre-registration matters:
+  the current test's protocol, the Tessaging vertical's SQL persistence stack, and finally
+  `AddExactlyOnceTessaging()` declaring `ParticipateIn` the host's endpoint registry (so routers connect to
+  every endpoint in the host). The tracker pre-registration matters:
   the transport-speaking Tessaging core guards its tracker default with `IsRegistered`, so the host's
   version wins.
 - **`DistributedTypermediaTestingEndpointHostFeature`** registers the Typermedia transport and
-  `AddDistributedTypermedia()`.
+  `AddDistributedTypermedia()` declaring `ParticipateIn` the host's endpoint registry.
 - **`TypermediaTestClient`** (in `Compze.Typermedia.Hosting.Testing`) is a remote client in its own container,
   connecting to an endpoint's `TypermediaAddress` over the current test's transport exactly as an external
   application would.

@@ -10,6 +10,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 - **`TryAwait(condition, cancellationToken, timeout)`** (via `IAwaitableShared<T>`) — blocks until the condition returns true for the shared object or the timeout expires; the condition re-reads fresh state on each cross-process change signal, so a waiter in any process observes another process's `Update` at signal latency without polling the object itself.
 
+### Fixed
+
+- **`Dispose` releases the backing file's memory mapping.** It only disposed the mutex, so the `.mmf` file stayed locked by the process until finalization — deleting the containing directory after disposing the object failed. The file itself still outlives disposal (shared with every other instance) until `Delete`.
+
 ## 0.6.0-alpha
 
 ### Added
