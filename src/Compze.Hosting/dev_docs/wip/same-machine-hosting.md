@@ -125,9 +125,15 @@ self-cleaning moment. A crashed process's addresses are never routed to and neve
 
 Neither communication style's sending phase connects its router to a fixed address list and assumes it
 thereafter. Each sets its router *reconciling* — the `TessagingRouter` and, when the endpoint declared the
-registry it discovers through, the `TypermediaRouter` alike: converge on the registry's membership now,
-then keep converging, one pass per second. Each pass compares the connected addresses with the registry's
-current addresses:
+registry it discovers through, the `TypermediaRouter` alike: converge on the registry's membership now, then
+keep converging. Between passes a router waits on the registry's change signal
+(`IEndpointRegistry.AwaitPossibleMembershipChange`): the interprocess registry raises its backing
+interprocess object's cross-process signal on every announcement and retraction, so a topology change wakes
+every waiting router on the machine and propagates at signal latency — tens of milliseconds at most — rather
+than at a polling interval. The wait also times out once a second, because two things no signal can carry
+still need a periodic pass: a crashed process's addresses disappearing (a crash signals nothing — the
+liveness filter just stops listing them), and retrying connections that failed. Each pass compares the
+connected addresses with the registry's current addresses:
 
 - **An endpoint appears** → connect. The new connection learns the remote endpoint's identity and its handled
   tessage types through the endpoint-discovery query — each style asks its own question over the same

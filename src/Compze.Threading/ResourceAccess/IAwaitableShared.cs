@@ -33,6 +33,9 @@ public interface IAwaitableShared
 
       public bool TryUpdateWhen(Func<TShared, bool> condition, Action<TShared> update, CancellationToken cancellationToken = default, WaitTimeout? timeout = null) =>
          CriticalSection.TryUpdateWhen(() => condition(_shared), () => update(_shared), cancellationToken, waitTimeout: timeout);
+
+      public bool TryAwait(Func<TShared, bool> condition, CancellationToken cancellationToken = default, WaitTimeout? timeout = null) =>
+         CriticalSection.TryAwait(() => condition(_shared), cancellationToken, waitTimeout: timeout);
    }
 }
 
@@ -67,5 +70,9 @@ public interface IAwaitableShared<out TShared>
 
    ///<summary>Blocks until <paramref name="condition"/> returns true for the shared object, then acquires an update lock and executes <paramref name="update"/>. Returns false if the wait times out, else true.</summary>
    bool TryUpdateWhen(Func<TShared, bool> condition, Action<TShared> update, CancellationToken cancellationToken = default, WaitTimeout? timeout = null);
+
+   ///<summary>Blocks until <paramref name="condition"/> returns true for the shared object or <paramref name="timeout"/> expires. Returns false if the wait times out, else true.<br/>
+   /// The pure wait: unlike <see cref="TryUpdateWhen"/> nothing is written when the condition passes, so waiters observing the shared object never wake each other.</summary>
+   bool TryAwait(Func<TShared, bool> condition, CancellationToken cancellationToken = default, WaitTimeout? timeout = null);
 #pragma warning restore CA1068
 }

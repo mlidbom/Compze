@@ -4,6 +4,12 @@ All notable changes to Compze.InterprocessObject will be documented in this file
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## Unreleased
+
+### Added
+
+- **`TryAwait(condition, cancellationToken, timeout)`** (via `IAwaitableShared<T>`) — blocks until the condition returns true for the shared object or the timeout expires; the condition re-reads fresh state on each cross-process change signal, so a waiter in any process observes another process's `Update` at signal latency without polling the object itself.
+
 ## 0.6.0-alpha
 
 ### Added

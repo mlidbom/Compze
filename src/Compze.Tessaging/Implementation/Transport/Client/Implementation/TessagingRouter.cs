@@ -30,7 +30,10 @@ class TessagingRouter : ITessagingRouter, IDisposable
             (ITessagesInFlightTracker tessagesInFlightTracker, ITypeMap typeMap, ITessagingSerializer serializer, ITransportMessagePoster transportMessagePoster, IEndpointDiscoveryQueryTransport endpointDiscoveryQueryTransport, IComponentSet<TessagingConnection.ExactlyOnceDeliveryStream.Factory> exactlyOnceStreamFactory, ITaskRunner taskRunner, IBackgroundExceptionReporter exceptionReporter)
                => new TessagingRouter(tessagesInFlightTracker, typeMap, serializer, transportMessagePoster, endpointDiscoveryQueryTransport, exactlyOnceStreamFactory, taskRunner, exceptionReporter)));
 
-   static readonly TimeSpan ReconcileInterval = TimeSpan.FromSeconds(1);
+   ///<summary>How long a reconciliation pass waits for a registry change signal before running anyway. The signal makes announced<br/>
+   /// and retracted endpoints propagate at signal latency; this periodic pass exists for what no signal can carry — a crashed<br/>
+   /// process's addresses disappearing (a crash signals nothing) and retrying connections that failed.</summary>
+   static readonly TimeSpan ReconcileLivenessInterval = TimeSpan.FromSeconds(1);
 
    readonly IMonitor _monitor = IMonitor.New();
    readonly ITessagesInFlightTracker _tessagesInFlightTracker;
@@ -69,30 +72,28 @@ class TessagingRouter : ITessagingRouter, IDisposable
       _exceptionReporter = exceptionReporter;
    }
 
-   public async Task StartMaintainingConnectionsAsync(IEndpointRegistry endpointRegistry, EndpointAddress ownInboxAddress)
+   public async Task StartMaintainingConnectionsAsync(IEndpointRegistry? endpointRegistry, EndpointAddress ownInboxAddress)
    {
       _endpointRegistry = endpointRegistry;
       _ownInboxAddress = ownInboxAddress;
       await ReconcileConnectionsAsync().caf();
-      _reconcileLoop = Task.Run(ReconcileLoopAsync);
+      //With no registry declared the membership is the self-connection alone and never changes, so there is nothing to keep reconciling.
+      if(endpointRegistry is not null)
+         _reconcileLoop = Task.Factory.StartNew(ReconcileLoop, CancellationToken.None, TaskCreationOptions.LongRunning, TaskScheduler.Default);
    }
 
-   async Task ReconcileLoopAsync()
+   ///<summary>Runs on its own thread (the registry wait blocks it): waits until the registry signals that membership may have<br/>
+   /// changed — or <see cref="ReconcileLivenessInterval"/> elapses, covering what no signal carries — then reconciles.</summary>
+   void ReconcileLoop()
    {
       while(!_reconcileLoopCancellation.IsCancellationRequested)
       {
-         try
-         {
-            await Task.Delay(ReconcileInterval, _reconcileLoopCancellation.Token).caf();
-         }
-         catch(OperationCanceledException) //Stopping: the canceled delay is the shutdown signal itself.
-         {
-            return;
-         }
+         _endpointRegistry!.AwaitPossibleMembershipChange(ReconcileLivenessInterval, _reconcileLoopCancellation.Token);
+         if(_reconcileLoopCancellation.IsCancellationRequested) return;
 
          try
          {
-            await ReconcileConnectionsAsync().caf();
+            ReconcileConnectionsAsync().WaitUnwrappingException();
          }
 #pragma warning disable CA1031 //A reconciliation pass must never kill the loop; an unexpected failure is reported and surfaces the way every background exception does.
          catch(Exception exception)
@@ -103,11 +104,13 @@ class TessagingRouter : ITessagingRouter, IDisposable
       }
    }
 
-   ///<summary>One reconciliation pass: connections converge on the registry's current membership (plus our own inbox — scheduled<br/>
-   /// tommands dispatch to ourselves over the remote protocol for the delivery guarantees).</summary>
+   ///<summary>One reconciliation pass: connections converge on the registry's current membership, plus our own inbox always — an<br/>
+   /// exactly-once tommand routes to whichever endpoint advertises its type, the sender itself included, so a tommand an endpoint<br/>
+   /// sends that its own handlers serve rides the outbox → own-inbox pipeline with the same delivery semantics as any other<br/>
+   /// tommand. Our own address needs no discovery, so the self-connection exists even when no registry is declared.</summary>
    async Task ReconcileConnectionsAsync()
    {
-      var desiredAddresses = _endpointRegistry!.ServerEndpointAddresses.ToHashSet();
+      var desiredAddresses = (_endpointRegistry?.ServerEndpointAddresses ?? []).ToHashSet();
       desiredAddresses.Add(_ownInboxAddress!);
 
       List<EndpointAddress> addressesToConnect = [];

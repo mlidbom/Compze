@@ -37,7 +37,10 @@ class TypermediaRouter : ITypermediaRouter, IDisposable
       _endpointDiscoveryQueryTransport = endpointDiscoveryQueryTransport;
    }
 
-   static readonly TimeSpan ReconcileInterval = TimeSpan.FromSeconds(1);
+   ///<summary>How long a reconciliation pass waits for a registry change signal before running anyway. The signal makes announced<br/>
+   /// and retracted endpoints propagate at signal latency; this periodic pass exists for what no signal can carry — a crashed<br/>
+   /// process's addresses disappearing (a crash signals nothing) and retrying connections that failed.</summary>
+   static readonly TimeSpan ReconcileLivenessInterval = TimeSpan.FromSeconds(1);
 
    readonly ITypeMap _typeMap;
    readonly ITypermediaTransport _transport;
@@ -74,25 +77,21 @@ class TypermediaRouter : ITypermediaRouter, IDisposable
       AssertRunning();
       _endpointRegistry = endpointRegistry;
       await ReconcileConnectionsAsync().caf();
-      _reconcileLoop = Task.Run(ReconcileLoopAsync);
+      _reconcileLoop = Task.Factory.StartNew(ReconcileLoop, CancellationToken.None, TaskCreationOptions.LongRunning, TaskScheduler.Default);
    }
 
-   async Task ReconcileLoopAsync()
+   ///<summary>Runs on its own thread (the registry wait blocks it): waits until the registry signals that membership may have<br/>
+   /// changed — or <see cref="ReconcileLivenessInterval"/> elapses, covering what no signal carries — then reconciles.</summary>
+   void ReconcileLoop()
    {
       while(!_reconcileLoopCancellation.IsCancellationRequested)
       {
-         try
-         {
-            await Task.Delay(ReconcileInterval, _reconcileLoopCancellation.Token).caf();
-         }
-         catch(OperationCanceledException) //Stopping: the canceled delay is the shutdown signal itself.
-         {
-            return;
-         }
+         _endpointRegistry!.AwaitPossibleMembershipChange(ReconcileLivenessInterval, _reconcileLoopCancellation.Token);
+         if(_reconcileLoopCancellation.IsCancellationRequested) return;
 
          try
          {
-            await ReconcileConnectionsAsync().caf();
+            ReconcileConnectionsAsync().WaitUnwrappingException();
          }
 #pragma warning disable CA1031 //A reconciliation pass must never kill the loop; an unexpected failure is logged and the next pass retries.
          catch(Exception exception)

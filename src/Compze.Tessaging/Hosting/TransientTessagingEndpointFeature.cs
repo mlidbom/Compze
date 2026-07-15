@@ -1,4 +1,3 @@
-using Compze.Abstractions.Configuration.Internal;
 using Compze.Abstractions.Serialization.Internal;
 using Compze.Abstractions.Hosting.Public;
 using Compze.Contracts;
@@ -11,7 +10,6 @@ using Compze.Tessaging.Implementation.TransientDelivery;
 using Compze.Tessaging.Implementation.Transport;
 using Compze.Tessaging.Implementation.Transport.Abstractions;
 using Compze.Tessaging.Implementation.Transport.Client.Implementation;
-using Compze.Tessaging.Implementation.Transport.Client.Routing;
 using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.Tessaging.Transport;
 using Compze.Internals.Transport.NamedPipes;
@@ -83,8 +81,9 @@ public class TransientTessagingEndpointFeature
 
    ///<summary>Declares the registry through which this endpoint discovers the endpoints it converses with — the read side of discovery,<br/>
    /// whose write side is <see cref="AnnounceAddressTo"/>. The endpoint's router keeps reconciling its connections against the<br/>
-   /// registry's membership. Declaring none means other endpoints' addresses come from application configuration<br/>
-   /// (<see cref="AppConfigEndpointRegistry"/>).</summary>
+   /// registry's membership. Declaring none means the endpoint discovers nothing: it serves whatever reaches it, converses<br/>
+   /// in-process, and self-sends (its router maintains the connection to its own inbox, which needs no discovery) — but it<br/>
+   /// connects to no other endpoint.</summary>
    public TransientTessagingEndpointFeature DiscoverEndpointsThrough(IEndpointRegistry registry)
    {
       State.Assert(_endpointRegistry is null, () => $"The endpoint already declared the registry it discovers endpoints through — an endpoint discovers through exactly one {nameof(IEndpointRegistry)}.");
@@ -135,13 +134,8 @@ public class TransientTessagingEndpointFeature
             new EndpointDiscoveryQueryRegistrarWithDependencyInjectionSupport(resolver.Resolve<EndpointDiscoveryQueryExecutor>()));
       });
 
-      builder.AddComponent(resolver => new TransientTessagingEndpointComponent(resolver, _transportServer, EndpointRegistry(resolver)));
+      builder.AddComponent(resolver => new TransientTessagingEndpointComponent(resolver, _transportServer, _endpointRegistry));
    }
-
-   ///<summary>The registry the endpoint declared through <see cref="DiscoverEndpointsThrough"/>, or — when it declared none — the<br/>
-   /// fallback that reads other endpoints' addresses from application configuration.</summary>
-   IEndpointRegistry EndpointRegistry(IRootResolver resolver) =>
-      _endpointRegistry ??= new AppConfigEndpointRegistry(resolver.Resolve<IConfigurationParameterProvider>());
 
    ///<summary>The setup-time wiring rule (see <c>dev_docs/tevent-delivery-model.md</c>): a subscription demanding more than the<br/>
    /// endpoint can deliver fails at setup. On an endpoint whose composition wires no exactly-once machinery — no<br/>

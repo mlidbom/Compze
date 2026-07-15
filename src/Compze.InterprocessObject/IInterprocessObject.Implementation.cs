@@ -9,7 +9,6 @@ public partial interface IInterprocessObject
    private sealed class Implementation<TObject> : IInterprocessObject<TObject> where TObject : class
    {
       readonly IBinaryFile _file;
-      readonly IAwaitableMutex _mutex;
       readonly IInterprocessObjectSerializer<TObject> _serializer;
       readonly Func<TObject> _createDefault;
       readonly CorruptionAction _corruptionAction;
@@ -20,11 +19,11 @@ public partial interface IInterprocessObject
          _createDefault = createDefault;
          _corruptionAction = corruptionAction;
          var fileName = PathCE.ReplaceInvalidCharactersWith(name, '_');
-         _mutex = isGlobal
+         Mutex = isGlobal
             ? IAwaitableMutex.Global(fileName, directory, lockTimeout, waitTimeout, signalPollingPolicy)
             : IAwaitableMutex.Local(fileName, directory, lockTimeout, waitTimeout, signalPollingPolicy);
 
-         _file = _mutex.Update(() =>
+         _file = Mutex.Update(() =>
          {
             var file = new MemoryMappedBinaryFile(directory.File(fileName + ".mmf"), maxBytes);
             if(file.ReadAllBytes().Length == 0)
@@ -33,12 +32,12 @@ public partial interface IInterprocessObject
          });
       }
 
-      public IAwaitableCriticalSection CriticalSection => _mutex;
-      public IAwaitableMutex Mutex => _mutex;
+      public IAwaitableCriticalSection CriticalSection => Mutex;
+      public IAwaitableMutex Mutex { get; }
 
       public TResult Read<TResult>(Func<TObject, TResult> read, CancellationToken cancellationToken = default, LockTimeout? timeout = null)
       {
-         using(_mutex.TakeReadLock(cancellationToken, timeout))
+         using(Mutex.TakeReadLock(cancellationToken, timeout))
          {
             return read(Load());
          }
@@ -47,7 +46,7 @@ public partial interface IInterprocessObject
       public TResult ReadWhen<TResult>(Func<TObject, bool> condition, Func<TObject, TResult> read, CancellationToken cancellationToken = default, WaitTimeout? timeout = null)
       {
          TObject? loaded = null;
-         using(_mutex.TakeReadLockWhen(() => condition(loaded = Load()), cancellationToken, waitTimeout: timeout))
+         using(Mutex.TakeReadLockWhen(() => condition(loaded = Load()), cancellationToken, waitTimeout: timeout))
          {
             return read(loaded!);
          }
@@ -55,7 +54,7 @@ public partial interface IInterprocessObject
 
       public TResult Update<TResult>(Func<TObject, TResult> update, CancellationToken cancellationToken = default, LockTimeout? timeout = null)
       {
-         using(_mutex.TakeUpdateLock(cancellationToken, timeout))
+         using(Mutex.TakeUpdateLock(cancellationToken, timeout))
          {
             var instance = Load();
             var result = update(instance);
@@ -67,7 +66,7 @@ public partial interface IInterprocessObject
       public TResult UpdateWhen<TResult>(Func<TObject, bool> condition, Func<TObject, TResult> update, CancellationToken cancellationToken = default, WaitTimeout? timeout = null)
       {
          TObject? loaded = null;
-         using(_mutex.TakeUpdateLockWhen(() => condition(loaded = Load()), cancellationToken, waitTimeout: timeout))
+         using(Mutex.TakeUpdateLockWhen(() => condition(loaded = Load()), cancellationToken, waitTimeout: timeout))
          {
             var result = update(loaded!);
             Save(loaded!);
@@ -78,16 +77,19 @@ public partial interface IInterprocessObject
       public bool TryUpdateWhen(Func<TObject, bool> condition, Action<TObject> update, CancellationToken cancellationToken = default, WaitTimeout? timeout = null)
       {
          TObject? loaded = null;
-         using var updateLock = _mutex.TryTakeUpdateLockWhen(() => condition(loaded = Load()), cancellationToken, waitTimeout: timeout);
+         using var updateLock = Mutex.TryTakeUpdateLockWhen(() => condition(loaded = Load()), cancellationToken, waitTimeout: timeout);
          if(updateLock == null) return false;
          update(loaded!);
          Save(loaded!);
          return true;
       }
 
+      public bool TryAwait(Func<TObject, bool> condition, CancellationToken cancellationToken = default, WaitTimeout? timeout = null) =>
+         Mutex.TryAwait(() => condition(Load()), cancellationToken, waitTimeout: timeout);
+
       public void Delete() => _file.Delete();
 
-      public void Dispose() => _mutex.Dispose();
+      public void Dispose() => Mutex.Dispose();
 
       void Save(TObject instance)
       {

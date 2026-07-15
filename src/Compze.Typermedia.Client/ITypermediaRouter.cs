@@ -13,8 +13,10 @@ public interface ITypermediaRouter : ITypermediaRouting
     ///<summary>Connects to every endpoint the registry currently lists and keeps reconciling the connections with the registry's<br/>
     /// membership until the router stops: an endpoint that appears is connected and its typermedia routes registered, one whose<br/>
     /// address disappears is disconnected and its routes dropped, and one that reappears at a new address — addresses are<br/>
-    /// per-instance, identity is the <see cref="EndpointId"/> — has its connection replaced. The first reconciliation completes<br/>
-    /// before this method returns, so startup sees the registry's current membership connected.</summary>
+    /// per-instance, identity is the <see cref="EndpointId"/> — has its connection replaced. Reconciliation waits on the<br/>
+    /// registry's change signal (<see cref="IEndpointRegistry.AwaitPossibleMembershipChange"/>), so membership changes propagate<br/>
+    /// at signal latency. The first reconciliation completes before this method returns, so startup sees the registry's current<br/>
+    /// membership connected.</summary>
     Task StartMaintainingConnectionsAsync(IEndpointRegistry endpointRegistry);
 
     void Start();

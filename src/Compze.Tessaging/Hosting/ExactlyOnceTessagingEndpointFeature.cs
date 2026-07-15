@@ -7,7 +7,6 @@ using Compze.Tessaging.Abstractions.Tessaging.Hosting.TessageHandling.Registrati
 using Compze.Tessaging.Implementation;
 using Compze.Tessaging.Implementation.Outbox;
 using Compze.Tessaging.Implementation.TessageHandling.Inbox;
-using Compze.Tessaging.Implementation.Transport.Client.Routing;
 using Compze.Tessaging.Transport.SqlLayer;
 using Compze.Tessaging.Transport;
 
@@ -56,8 +55,9 @@ public class ExactlyOnceTessagingEndpointFeature
 
    ///<summary>Declares the registry through which this endpoint discovers the endpoints it converses with — the read side of discovery,<br/>
    /// whose write side is <see cref="AnnounceAddressTo"/>. The endpoint's router keeps reconciling its connections against the<br/>
-   /// registry's membership. Declaring none means other endpoints' addresses come from application configuration<br/>
-   /// (<see cref="AppConfigEndpointRegistry"/>).</summary>
+   /// registry's membership. Declaring none means the endpoint discovers nothing: it serves whatever reaches it, converses<br/>
+   /// in-process, and self-sends (its router maintains the connection to its own inbox, which needs no discovery) — but it<br/>
+   /// connects to no other endpoint.</summary>
    public ExactlyOnceTessagingEndpointFeature DiscoverEndpointsThrough(IEndpointRegistry registry)
    {
       _transientTessagingCore.DiscoverEndpointsThrough(registry);

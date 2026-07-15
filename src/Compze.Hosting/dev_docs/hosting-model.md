@@ -271,10 +271,11 @@ transport server it never serves.
 endpoint. Endpoints read configuration through `IConfigurationParameterProvider`: an endpoint setup that
 registers its own provider wins; `AppSettingsJsonConfigurationParameterProvider` reading `appsettings.json`
 is only the default. How endpoints find each other is a declaration on each transport-speaking feature:
-`AddTransientTessaging().DiscoverEndpointsThrough(registry)`, which `AddExactlyOnceTessaging()` delegates to —
-an endpoint declaring no registry falls back to reading other endpoints' addresses from configuration
-(`AppConfigEndpointRegistry`) — and `AddDistributedTypermedia().DiscoverEndpointsThrough(registry)`, where
-declaring no registry means the endpoint only serves. For processes on one
+`AddTransientTessaging().DiscoverEndpointsThrough(registry)`, which `AddExactlyOnceTessaging()` delegates to,
+and `AddDistributedTypermedia().DiscoverEndpointsThrough(registry)`. Declaring no registry means the endpoint
+discovers nothing and only serves that style — with one Tessaging-specific nuance: its router still maintains
+the connection to its own inbox (an address that needs no discovery), so an exactly-once tommand the endpoint
+sends that its own handlers serve still routes normally. For processes on one
 machine the registry is the `InterprocessEndpointRegistry`, which is also the announcer, so an endpoint
 declares both sides at once with `ParticipateIn(registry)` — endpoints announce their freshly generated
 addresses and discover each other with zero configuration; the whole story lives in
