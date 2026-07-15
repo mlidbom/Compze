@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## Unreleased
 
+- The transport server's component announces the endpoint's address in the host's dedicated announcing phase (after every endpoint's listening, before any endpoint's sending) and retracts in the mirror phase — announce/retract no longer piggyback on the sending phase, so a router's first look at a registry sees every endpoint its host announced.
 - A request kind no contribution handles fails loud naming the gap: the endpoint's transport server refuses it with an error saying the endpoint's composition does not wire the capability that serves the kind, and listing the kinds it does serve — a peer's request must fail on the sender, never be silently dropped. (Reachable e.g. when an exactly-once tessage arrives at an endpoint composing only guarantee-free transient Tessaging.)
 - `TransportRequestKind.TransientTevent`: the wire kind for a transient tevent — a remotable tevent whose type declares no exactly-once guarantee — dispatched directly to the receiving endpoint's handlers with no inbox (see `src/Compze.Tessaging/dev_docs/tevent-delivery-model.md`). The acknowledgement is written after the handlers have executed. Named pipes carry the new kind as-is; the HTTP client and the ASP.NET Core controller gained its route (`internal/tessaging/transient-tevent`).
 - The protocol declarations compose: `NamedPipeEndpointTransport()` on `ComposeEndpoint`'s composer returns the endpoint's `EndpointFoundation`.

@@ -14,9 +14,10 @@ interface IListeningAddressSource
 
 ///<summary>The runtime lifecycle of the endpoint's one transport server (see <see cref="EndpointTransportServerFeature"/>):<br/>
 /// the server listens through the listening phase, and the endpoint's address is announced to every declared<br/>
-/// <see cref="IEndpointAddressAnnouncer"/> as the first act of the sending phase — the host starts every endpoint's listening<br/>
-/// before any sending, so an announced address is always one whose whole endpoint is actually listening and fully ready.<br/>
-/// Stopping runs in reverse: the announcement is retracted as the first act of the host's stopping (the stop-sending phase),<br/>
+/// <see cref="IEndpointAddressAnnouncer"/> in the announcing phase — which the host runs after every endpoint's listening<br/>
+/// and before any endpoint's sending, so an announced address is always one whose whole endpoint is actually listening,<br/>
+/// and a router taking its first look at a registry when sending starts sees every endpoint the host announced.<br/>
+/// Stopping runs in reverse: the announcement is retracted in the retracting phase, before any sending stops,<br/>
 /// so the address stops being advertised before anything goes deaf.</summary>
 sealed class EndpointTransportServerComponent : IEndpointComponent, IListeningAddressSource, IAsyncDisposable
 {
@@ -42,13 +43,13 @@ sealed class EndpointTransportServerComponent : IEndpointComponent, IListeningAd
       _isListening = true;
    }
 
-   public Task StartSendingAsync()
+   public Task AnnounceAddressAsync()
    {
       _addressAnnouncers.ForEach(announcer => announcer.AnnounceEndpointAddress(_configuration.Id, _server.Address));
       return Task.CompletedTask;
    }
 
-   public Task StopSendingAsync()
+   public Task RetractAddressAsync()
    {
       _addressAnnouncers.ForEach(announcer => announcer.RetractEndpointAddress(_configuration.Id));
       return Task.CompletedTask;

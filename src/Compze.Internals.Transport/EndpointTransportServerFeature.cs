@@ -30,10 +30,12 @@ public class EndpointTransportServerFeature
          return component;
       });
 
-   ///<summary>Declares that the endpoint announces where it listens to <paramref name="announcer"/>. The announcement is made once<br/>
-   /// every endpoint in the host has finished starting to listen — the host's sending phase — so an announced address is always one<br/>
-   /// that is actually listening and fully ready; it is retracted as the first act of the host's stopping, before anything goes deaf.<br/>
-   /// An endpoint announces to every announcer declared; declaring none means the endpoint is found some other way (a static registry, configuration).</summary>
+   ///<summary>Declares that the endpoint announces where it listens to <paramref name="announcer"/>. The announcement is made in the<br/>
+   /// host's announcing phase — after every endpoint in the host has finished starting to listen and before any endpoint starts<br/>
+   /// sending — so an announced address is always one that is actually listening, and a router's first look at a registry sees every<br/>
+   /// endpoint the host announced; it is retracted in the mirror phase, before any sending stops, so the address stops being advertised<br/>
+   /// before anything goes deaf. An endpoint announces to every announcer declared; declaring none means the endpoint is found some<br/>
+   /// other way (a static registry, configuration).</summary>
    public void AnnounceAddressTo(IEndpointAddressAnnouncer announcer) => _addressAnnouncers.Add(announcer);
 
    ///<summary>The address where the endpoint's transport server listens; null until it is listening.</summary>

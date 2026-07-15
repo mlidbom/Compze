@@ -9,9 +9,10 @@ namespace Compze.Hosting;
 ///<summary>
 /// The <see cref="IEndpointHost"/> mechanism. It builds each endpoint from a fresh container (via the factory
 /// it was created with) and a <see cref="ServerEndpointBuilder"/>, and guarantees the host-wide phase
-/// ordering — every endpoint's listening components start before any endpoint's sending components (see
-/// <see cref="IEndpointComponent"/> for why). What an endpoint can actually do is decided by the features its
-/// setup callback adds; the host never knows.
+/// ordering — every endpoint's listening components start before any endpoint announces its address, and every
+/// address is announced before any endpoint's sending components start (see <see cref="IEndpointComponent"/>
+/// for why). What an endpoint can actually do is decided by the features its setup callback adds; the host
+/// never knows.
 ///
 /// Production hosts are created via <see cref="Production.Create"/>; tests use
 /// <c>TestingEndpointHost.Create</c> (Compze.Hosting.Testing), which subclasses this mechanism.
@@ -50,6 +51,7 @@ public class EndpointHost : IEndpointHost
          this.Log().Info($"Starting with {Endpoints.Count} endpoint(s)");
 
          await Task.WhenAll(Endpoints.Select(endpointToStart => endpointToStart.StartListeningComponentsAsync())).WithAggregateExceptions().caf();
+         await Task.WhenAll(Endpoints.Select(endpointToStart => endpointToStart.AnnounceAddressComponentsAsync())).WithAggregateExceptions().caf();
          await Task.WhenAll(Endpoints.Select(endpointToStart => endpointToStart.StartSendingComponentsAsync())).WithAggregateExceptions().caf();
          _isStarted = true;
    }
@@ -66,6 +68,7 @@ public class EndpointHost : IEndpointHost
          if(_isStarted)
          {
             _isStarted = false;
+            await Task.WhenAll(Endpoints.Select(endpoint => endpoint.RetractAddressComponentsAsync())).WithAggregateExceptions().caf();
             await Task.WhenAll(Endpoints.Select(endpoint => endpoint.StopSendingComponentsAsync())).WithAggregateExceptions().caf();
             await Task.WhenAll(Endpoints.Select(endpoint => endpoint.StopListeningComponentsAsync())).WithAggregateExceptions().caf();
          }

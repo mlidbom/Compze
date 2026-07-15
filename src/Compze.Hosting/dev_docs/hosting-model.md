@@ -184,15 +184,18 @@ A feature describes what an endpoint *has*; an `IEndpointComponent` (added via `
 actually *runs* — the capability's runtime lifecycle. Components are created when the endpoint starts
 listening; the container is built by then, so the factory can resolve whatever it needs.
 
-The lifecycle has two phases — listening, then sending — and the ordering guarantee is **host-wide**: when a
-host starts, every endpoint's components finish `StartListeningAsync` before any component anywhere starts
+The lifecycle has three phases — listening, then announcing, then sending — and the ordering guarantee is
+**host-wide**: when a host starts, every endpoint's components finish `StartListeningAsync` before any
+component anywhere runs `AnnounceAddressAsync`, and every announcement lands before any component starts
 `StartSendingAsync`. That is the whole point of the split: nothing can send to an endpoint that is not yet
-ready to receive. Stopping runs in reverse. The sending-phase members are default no-ops because some
-components only listen. The components in play: `EndpointTransportServerFeature`'s component runs the
-endpoint's one transport server through the listening phase, and announces the endpoint's address to every
-declared `IEndpointAddressAnnouncer` as the first act of the sending phase — the host-wide ordering makes
-that the moment every listener everywhere is ready, so an announced address is always one whose whole
-endpoint can actually serve (retraction is the mirror image: the first act of the host's stopping).
+ready to receive, an announced address is always one whose whole endpoint is already listening, and a
+sending-phase component that reads announcements — a router taking its first look at an endpoint registry —
+sees every endpoint the host announced, never a partial membership decided by start-up racing. Stopping runs
+in reverse: addresses are retracted (`RetractAddressAsync`) before any sending stops, and sending stops
+before listening. All but the listening-phase members are default no-ops because most components neither
+announce nor initiate sending. The components in play: `EndpointTransportServerFeature`'s component runs the
+endpoint's one transport server through the listening phase and announces the endpoint's address to every
+declared `IEndpointAddressAnnouncer` in the announcing phase.
 `TransientTessagingEndpointComponent` — the transport-speaking Tessaging core's lifecycle — sets its router
 reconciling against the `IEndpointRegistry`'s membership in the sending phase (continuously, so endpoints
 that appear, disappear, or restart at a new address are followed — see

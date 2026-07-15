@@ -16,25 +16,25 @@ class Endpoint : IEndpoint
 {
    readonly EndpointConfiguration _configuration;
    readonly IDependencyInjectionContainer _container;
-   readonly IRootResolver _rootResolver;
    readonly IReadOnlyList<Func<IRootResolver, IEndpointComponent>> _componentFactories;
 
    public Endpoint(IDependencyInjectionContainer container, EndpointConfiguration configuration, IReadOnlyList<Func<IRootResolver, IEndpointComponent>> componentFactories)
    {
       Argument.NotNull(container).NotNull(configuration);
       _container = container;
-      _rootResolver = container.RootResolver;
+      ServiceLocator = container.RootResolver;
       _configuration = configuration;
       _componentFactories = componentFactories;
    }
 
    public EndpointId Id => _configuration.Id;
-   public IRootResolver ServiceLocator => _rootResolver;
+   public IRootResolver ServiceLocator { get; }
 
    public IReadOnlyList<IEndpointComponent> Components { get; private set; } = [];
 
    public bool IsRunning => _isListening && _isSending;
    bool _isListening;
+   bool _hasAnnounced;
    bool _isSending;
 
    public async Task StartListeningComponentsAsync()
@@ -43,8 +43,16 @@ class Endpoint : IEndpoint
       this.Log().Info($"Endpoint '{_configuration.Name}' ({Id}) starting listening components");
       _isListening = true;
 
-      Components = _componentFactories.Select(createComponent => createComponent(_rootResolver)).ToList();
+      Components = [.._componentFactories.Select(createComponent => createComponent(ServiceLocator))];
       await Task.WhenAll(Components.Select(component => component.StartListeningAsync())).caf();
+   }
+
+   public async Task AnnounceAddressComponentsAsync()
+   {
+      State.Assert(_isListening && !_hasAnnounced);
+      this.Log().Info($"Endpoint '{_configuration.Name}' ({Id}) announcing address");
+      _hasAnnounced = true;
+      await Task.WhenAll(Components.Select(component => component.AnnounceAddressAsync())).caf();
    }
 
    public async Task StartSendingComponentsAsync()
@@ -63,6 +71,14 @@ class Endpoint : IEndpoint
       await Task.WhenAll(Components.Select(component => component.StopSendingAsync())).caf();
    }
 
+   public async Task RetractAddressComponentsAsync()
+   {
+      if(!_hasAnnounced) return;
+      this.Log().Info($"Endpoint '{_configuration.Name}' ({Id}) retracting address");
+      _hasAnnounced = false;
+      await Task.WhenAll(Components.Select(component => component.RetractAddressAsync())).caf();
+   }
+
    public async Task StopListeningComponentsAsync()
    {
       if(!_isListening) return;
@@ -74,6 +90,7 @@ class Endpoint : IEndpoint
    public async ValueTask DisposeAsync()
    {
       this.Log().Debug($"Endpoint '{_configuration.Name}' ({Id}) disposing");
+      await RetractAddressComponentsAsync().caf();
       await StopSendingComponentsAsync().caf();
       await StopListeningComponentsAsync().caf();
       await _container.DisposeAsync().caf();

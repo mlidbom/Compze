@@ -29,7 +29,9 @@ public interface IEndpoint : IAsyncDisposable
    bool IsRunning { get; }
 
    Task StartListeningComponentsAsync();
+   Task AnnounceAddressComponentsAsync();
    Task StartSendingComponentsAsync();
-   Task StopListeningComponentsAsync();
    Task StopSendingComponentsAsync();
+   Task RetractAddressComponentsAsync();
+   Task StopListeningComponentsAsync();
 }
