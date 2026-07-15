@@ -3,9 +3,6 @@ using Compze.Internals.SystemCE.LinqCE;
 
 namespace Compze.DependencyInjection.Abstractions;
 
-//todo: rather than passing an untyped IRunMode around and using it to make decisions.
-// Subtypes of IComponentRegistrar should be making the decisions, and tests should supply a different IComponentRegistrar than production code.
-// The test version of the registrar would know about TestEnv, none of the production code should need any testing references or DbPool references etc.
 public interface IComponentRegistrar
 {
    IComponentRegistrar Register(params ComponentRegistration[] registrations);

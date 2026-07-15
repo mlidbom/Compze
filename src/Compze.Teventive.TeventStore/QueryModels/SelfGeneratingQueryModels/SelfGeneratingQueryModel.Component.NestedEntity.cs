@@ -35,7 +35,7 @@ public abstract partial class SelfGeneratingQueryModel<TQueryModel, TTaggregateT
          TEntityId _id;
          public TEntityId Id => _id._assert().NotDefault();
 
-         public static CollectionManager CreateSelfManagingCollection(TComponent parent) //todo:tests
+         public static CollectionManager CreateSelfManagingCollection(TComponent parent)
             => new(parent: parent, appliersSubscriber: parent.RegisterTeventAppliers());
 
          public class CollectionManager : QueryModelEntityCollectionManager<TComponent, TEntity, TEntityId, TEntityTevent, TEntityCreatedTevent, TTeventEntityIdGetter>

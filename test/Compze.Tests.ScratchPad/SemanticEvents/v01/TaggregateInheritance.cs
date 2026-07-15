@@ -6,7 +6,6 @@ using Compze.Teventive.Taggregates.Tevents.Public;
 
 namespace Compze.Tests.ScratchPad.SemanticEvents.v01;
 
-//todo: Try implementing inheritable taggregate and see how it goes.
 //When persisting tevent we would only persist the wrapped part. Thus changing from unwrapped-uninheritable to inheritable does not break storage.
 interface IInheritableTaggregateTevent<out TInheritorTevent> where TInheritorTevent : ITaggregateTevent
 {

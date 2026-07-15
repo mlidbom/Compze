@@ -3,6 +3,8 @@
   <component name="UserContentModel">
     <attachedFolders />
     <explicitIncludes />
-    <explicitExcludes />
+    <explicitExcludes>
+      <Path>samples/AccountManagement/src/AccountManagement.UI.MVC/wwwroot/lib</Path>
+    </explicitExcludes>
   </component>
 </project>

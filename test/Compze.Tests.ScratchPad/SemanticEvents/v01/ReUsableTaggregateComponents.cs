@@ -6,7 +6,6 @@ using Compze.Teventive.Taggregates.Tevents.Public;
 
 namespace Compze.Tests.ScratchPad.SemanticEvents.v01;
 
-//todo: Implement the ability to use this pattern in the taggregate root and ensure that routing on the bus also work correctly.
 interface ITaggregate1Tevent : ITaggregateTevent{}
 
 interface ITaggregate1ComponentTevent<out TComponentTevent> : ITaggregateTevent{}

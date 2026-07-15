@@ -3,7 +3,6 @@ using Compze.Internals.SystemCE.LinqCE;
 // ReSharper disable All
 #pragma warning disable //Reviewed OK: This is API experimental code that is never ever used.
 
-//todo: Remove this draft API code after looking through it for ideas that are still useful
 namespace Compze.Tests.ScratchPad.APIDraft._01;
 
 class APIDraft01
