@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ### Added
 
+- **`IAwaitableCriticalSection.TryReadWhen(condition, func, out result, …)` and `IAwaitableShared<TShared>.TryReadWhen(condition, read, out result, …)`** — the read counterpart of `TryUpdateWhen`. Blocks until the condition holds or the timeout expires; on success runs the read within the read lock still held from evaluating the condition, returns its value via `out`, and returns `true`; on timeout returns `false` without reading. Unlike `TryAwait`, which releases the lock before returning, it keeps the lock held across the read, so an expensive read can be gated on a cheaply-evaluated condition.
 - **`IAwaitableShared<TShared>.TryAwait(condition, cancellationToken, timeout)`** — the pure condition wait: blocks until the condition returns true for the shared object or the timeout expires, returning whether it did. Unlike `TryUpdateWhen` nothing is written when the condition passes, so waiters observing the shared object never wake each other.
 
 ## 0.7.0-alpha

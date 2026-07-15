@@ -308,4 +308,39 @@ public class IAwaitableCriticalSection_specification : UniversalTestBase
          criticalSection.TryAwait(() => false).Must().BeFalse();
       }
    }
+
+   public class TryReadWhen : IAwaitableCriticalSection_specification
+   {
+      [IAwaitableCriticalSectionMatrix] public void Returns_true_and_the_value_when_condition_is_immediately_true()
+      {
+         var criticalSection = _factory.Create();
+         criticalSection.TryReadWhen(() => true, () => 42, out var result).Must().BeTrue();
+         result.Must().Be(42);
+      }
+
+      [IAwaitableCriticalSectionMatrix] public void Returns_true_and_the_value_when_condition_becomes_true_within_timeout()
+      {
+         var criticalSection = _factory.Create();
+         var conditionMet = false;
+         var readCompleted = IThreadGate.NewOpen(WaitTimeout.Seconds(5), "readCompleted");
+
+         _runner.Run(() =>
+         {
+            criticalSection.TryReadWhen(() => conditionMet, () => 99, out var value).Must().BeTrue();
+            value.Must().Be(99);
+            readCompleted.AwaitPassThrough();
+         });
+
+         readCompleted.TryAwaitPassedThroughCountEqualTo(1, WaitTimeout.Milliseconds(100)).Must().BeFalse();
+         criticalSection.Update(() => conditionMet = true);
+         readCompleted.AwaitPassedThroughCountEqualTo(1);
+      }
+
+      [IAwaitableCriticalSectionMatrix] public void Returns_false_and_default_when_condition_never_becomes_true_within_timeout()
+      {
+         var criticalSection = _factory.Create(WaitTimeout.Milliseconds(100));
+         criticalSection.TryReadWhen(() => false, () => 42, out var result).Must().BeFalse();
+         result.Must().Be(0);
+      }
+   }
 }

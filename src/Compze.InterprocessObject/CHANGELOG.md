@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ### Added
 
+- **`TryReadWhen(condition, read, out result, …)`** (via `IAwaitableShared<T>`) — the read counterpart of `TryUpdateWhen`. Blocks until the condition holds or the timeout expires; on success runs `read` on the shared object within the still-held read lock, returns its value via `out`, and returns `true`; on timeout returns `false` without reading. Unlike `TryAwait` it keeps the lock across the read, so an expensive read (a full deserialize of the memory-mapped state) can be gated on a cheaply-evaluated condition.
 - **`TryAwait(condition, cancellationToken, timeout)`** (via `IAwaitableShared<T>`) — blocks until the condition returns true for the shared object or the timeout expires; the condition re-reads fresh state on each cross-process change signal, so a waiter in any process observes another process's `Update` at signal latency without polling the object itself.
 
 ### Fixed

@@ -62,7 +62,7 @@ All factories use real user-facing factory methods (`IThreadShared.New()`, `IPro
 | `IShared<T>` | `IShared_specification` | `[ISharedMatrix]` | Locked (Func/Action), mutual exclusion, CriticalSection property |
 | `IThreadShared<T>` | `IThreadShared_specification` | `[XF]` | Monitor property |
 | `IProcessShared<T>` | `IProcessShared_specification` | `[XF]` Global/Local | Mutex property (IsGlobal, Name, LockTimeout) — scope-specific assertions |
-| `IAwaitableShared<T>` | `IAwaitableShared_specification` | `[IAwaitableSharedMatrix]` | Read, Update, mutual exclusion, ReadWhen, UpdateWhen, TryUpdateWhen, Await, CriticalSection property |
+| `IAwaitableShared<T>` | `IAwaitableShared_specification` | `[IAwaitableSharedMatrix]` | Read, Update, mutual exclusion, ReadWhen, TryReadWhen, UpdateWhen, TryUpdateWhen, Await, CriticalSection property |
 | `IAwaitableThreadShared<T>` | `IAwaitableThreadShared_specification` | `[XF]` | Monitor property |
 | `IAwaitableThreadShared<T>` | `ContentionCount_specification` | `[XF]` | Monitor contention tracking via shared wrapper |
 | `IAwaitableProcessShared<T>` | `IAwaitableProcessShared_specification` | `[IAwaitableProcessSharedMatrix]` | Mutex property (IsGlobal, Name, LockTimeout, WaitTimeout), IDisposable |
