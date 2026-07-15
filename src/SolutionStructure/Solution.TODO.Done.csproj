@@ -3,6 +3,7 @@
    <Import Project="solutionstructure.minimal-build-involvement.props" />
 
    <ItemGroup>
-      <None Include="../../**/dev_docs/**/*.md" Exclude="$(BuildOutputExcludes);**/TODO/**;**/done/**" KeepDuplicates="false" />
+      <None Include="../../**/done/**/*.md" Exclude="$(BuildOutputExcludes);" KeepDuplicates="false" />
+      
    </ItemGroup>
 </Project>
