@@ -1,9 +1,5 @@
-using System.Linq.Expressions;
 using Compze.Abstractions.Tessaging.Public;
-using Compze.Contracts;
-using Compze.Internals.SystemCE.CollectionsCE.GenericCE;
 using Compze.Internals.SystemCE.ReflectionCE;
-using Compze.Threading;
 
 namespace Compze.Teventive.Tevents.Public;
 
@@ -11,13 +7,12 @@ namespace Compze.Teventive.Tevents.Public;
 /// and a tevent dispatched unwrapped is wrapped by <see cref="WrapTevent{TTevent}"/> in a <see cref="PublisherTevent{TTevent}"/> closed over its runtime type.</summary>
 public static class PublisherTevent
 {
-   static IReadOnlyDictionary<Type, Func<ITevent, IPublisherTevent<ITevent>>> _wrapperConstructors = new Dictionary<Type, Func<ITevent, IPublisherTevent<ITevent>>>();
-   static readonly IMonitor Monitor = IMonitor.New();
-
    ///<summary>Wraps <paramref name="tevent"/> in a <see cref="PublisherTevent{TTevent}"/> closed over its runtime type,<br/>
    /// so that the wrapper is assignable to <see cref="IPublisherTevent{TTevent}"/> of every tevent type the wrapped tevent itself is assignable to.</summary>
    public static IPublisherTevent<TTevent> WrapTevent<TTevent>(TTevent tevent) where TTevent : class, ITevent =>
-      (IPublisherTevent<TTevent>)ConstructorFor(tevent.GetType()).Invoke(tevent);
+      (IPublisherTevent<TTevent>)Constructor.ForGenericType(typeof(PublisherTevent<>))
+                                            .WithArgument(tevent.GetType())
+                                            .Invoke(tevent);
 
    ///<summary>The tevent in its wrapped form: an already-wrapped tevent passes through as it stands; anything else is wrapped by <see cref="WrapTevent{TTevent}"/>.<br/>
    /// Every tevent is wrapped before routing - a boundary that receives a tevent that may or may not already be wrapped normalizes here.</summary>
@@ -29,8 +24,8 @@ public static class PublisherTevent
    /// wrapping in its adopting wrapper tevent both close their wrapper type here.</summary>
    public static IPublisherTevent<ITevent> WrapIn(Type wrapperTeventImplementation, ITevent tevent) =>
       (IPublisherTevent<ITevent>)Constructor.ForGenericType(wrapperTeventImplementation)
-                                                       .WithArgument(tevent.GetType())
-                                                       .Invoke(tevent);
+                                            .WithArgument(tevent.GetType())
+                                            .Invoke(tevent);
 
    ///<summary>The wrapper type <see cref="WrapTevent{TTevent}"/> produces for a tevent of <paramref name="teventType"/>: <see cref="PublisherTevent{TTevent}"/> closed over it.</summary>
    public static Type WrapperTypeFor(Type teventType) => typeof(PublisherTevent<>).MakeGenericType(teventType);
@@ -40,23 +35,6 @@ public static class PublisherTevent
    /// <see cref="IPublisherTevent{TTevent}"/> of it. A type that is already a wrapper type passes through unchanged.</summary>
    public static Type WrapperTypeMatchingAllWrappingsOf(Type teventType) =>
       teventType.Is<IPublisherTevent<ITevent>>() ? teventType : typeof(IPublisherTevent<>).MakeGenericType(teventType);
-
-   static Func<ITevent, IPublisherTevent<ITevent>> ConstructorFor(Type teventType) =>
-      Monitor.DoubleCheckedLocking(
-         tryRead: () => _wrapperConstructors.GetValueOrDefault(teventType),
-         field: ref _wrapperConstructors,
-         createUpdatedFieldValue: () => _wrapperConstructors.AddToCopy(teventType, CreateConstructorFor(teventType)));
-
-   //todo: use our Compze.Internals.SystemCE.ReflectionCE.Constructor
-   static Func<ITevent, IPublisherTevent<ITevent>> CreateConstructorFor(Type teventType)
-   {
-      var wrapperImplementationType = typeof(PublisherTevent<>).MakeGenericType(teventType);
-      var constructor = wrapperImplementationType.GetConstructor([teventType])._assert().NotNull();
-
-      var teventParameter = Expression.Parameter(typeof(ITevent), "tevent");
-      var constructorCall = Expression.New(constructor, Expression.Convert(teventParameter, teventType));
-      return Expression.Lambda<Func<ITevent, IPublisherTevent<ITevent>>>(constructorCall, teventParameter).Compile();
-   }
 }
 
 ///<summary>The root implementation of <see cref="IPublisherTevent{TTevent}"/>: a wrapper that carries the wrapped tevent's full type information<br/>
