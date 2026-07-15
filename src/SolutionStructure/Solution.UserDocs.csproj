@@ -1,0 +1,8 @@
+<!-- ReSharper disable MarkupAttributeTypo -->
+<Project Sdk="Microsoft.NET.Sdk">
+   <Import Project="solutionstructure.minimal-build-involvement.props" />
+
+   <ItemGroup>
+      <None Include="../../**/_docs/**" KeepDuplicates="false" />
+   </ItemGroup>
+</Project>
