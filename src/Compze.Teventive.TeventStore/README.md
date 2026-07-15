@@ -1,6 +1,6 @@
-# Compze.Tessaging.Teventive.TeventStore
+# Compze.Teventive.TeventStore
 
-Event store implementation for [Compze](https://github.com/mlidbom/Compze) event sourcing.
+The tevent store: event-sourcing persistence for [Compze](https://github.com/mlidbom/Compze) taggregates.
 
 ## What is Compze?
 
@@ -8,39 +8,39 @@ Compze is a .NET framework for building expressive domains through **Teventive p
 
 ## What's in this package?
 
-This package provides the event store that powers Compze's teventive (type-routed event) programming model:
+This package provides the tevent store that powers Compze's teventive (type-routed event) programming model:
 
-- **Event persistence** — `TeventStore` for storing and retrieving aggregate event streams
-- **Aggregate updates** — `TeventStoreUpdater` for transactional aggregate modifications
-- **Event caching** — `ITeventCache` for in-memory event stream caching
-- **Query model generation** — Self-generating query models that automatically stay in sync with event streams
-- **Event migration** — Support for event schema evolution and migration
-- **Aggregate history validation** — Built-in validation of aggregate event stream consistency
+- **Tevent persistence** — `TeventStore` for storing and retrieving taggregate tevent streams
+- **Taggregate updates** — `TeventStoreUpdater` for transactional taggregate modifications
+- **Tevent caching** — `ITeventCache` for in-memory tevent stream caching
+- **Query model generation** — Self-generating query models that automatically stay in sync with tevent streams
+- **Tevent migration** — Support for tevent schema evolution and migration
+- **Taggregate history validation** — Built-in validation of taggregate tevent stream consistency
 
 ### Teventive programming
 
-Events use the .NET type system to declare their meaning:
+Tevents use the .NET type system to declare their meaning:
 
 ```csharp
-interface IUserEvent : IAggregateEvent;
-interface IUserRegistered : IUserEvent, IAggregateCreatedEvent;
+interface IUserTevent : ITaggregateTevent;
+interface IUserRegistered : IUserTevent, ITaggregateCreatedTevent;
 interface IUserImported : IUserRegistered;
 ```
 
-The event store routes and stores these events based on type compatibility, enabling expressive domain modeling without manual routing.
+The tevent store routes and stores these tevents based on type compatibility, enabling expressive domain modeling without manual routing.
 
 ## Installation
 
 ```shell
-dotnet add package Compze.Tessaging.Teventive.TeventStore
+dotnet add package Compze.Teventive.TeventStore
 ```
 
 ## Related packages
 
 | Package | Description |
 |---------|-------------|
+| [Compze.Teventive](https://www.nuget.org/packages/Compze.Teventive) | The Teventive programming model: taggregates, tevents and tevent dispatching |
 | [Compze.Tessaging](https://www.nuget.org/packages/Compze.Tessaging) | Messaging infrastructure |
-| [Compze.Core](https://www.nuget.org/packages/Compze.Core) | Core abstractions and event store interfaces |
 | [Compze.Tessaging.Hosting.Testing](https://www.nuget.org/packages/Compze.Tessaging.Hosting.Testing) | Testing support |
 
 ## License

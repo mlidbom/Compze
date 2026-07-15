@@ -1,6 +1,6 @@
 using System.Collections.Generic;
-using Compze.Tessaging.Hosting.Abstractions;
-using Compze.Tessaging.Teventive.TeventStore.Abstractions;
+using Compze.Tessaging.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
+using Compze.Teventive.Taggregates.Tevents.Public;
 using Compze.Internals.SystemCE;
 using static System.Console;
 // ReSharper disable NotAccessedVariable
@@ -19,7 +19,7 @@ interface ICatTevent : IAnimalTevent;
 interface IDogTevent : IAnimalTevent;
 #endregion
 #region noises1wrapped
-interface IAnimalTevent<out T> : ITaggregateIdentifyingTevent<T> where T : IAnimalTevent;
+interface IAnimalTevent<out T> : ITaggregateTevent<T> where T : IAnimalTevent;
 interface ICatTevent<out T> : IAnimalTevent<T> where T : IAnimalTevent;
 interface IDogTevent<out T> : IAnimalTevent<T> where T : IAnimalTevent;
 #endregion

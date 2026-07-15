@@ -10,21 +10,19 @@ Compze is a .NET framework for building expressive domains through **Teventive p
 
 This package provides the messaging infrastructure that powers Compze's type-routed communication:
 
-- **Command, query, and event handling** — Type-routed message dispatch for `ITommand`, `ITuery`, and `ITevent`
-- **Endpoint hosting** — `EndpointConfiguration` and `IEndpointHost` for composing messaging endpoints
+- **Tommand, tuery, and tevent handling** — Type-routed message dispatch for `ITommand`, `ITuery`, and `ITevent`
 - **Message routing** — Automatic routing based on .NET type compatibility
 - **Three compositions, each containing the one below** — `InProcessTessaging()` composes the synchronous in-process core into a plain container with no transports at all; `AddTransientTessaging()` adds guarantee-free conversation across endpoints with nothing persisted anywhere; `AddExactlyOnceTessaging()` adds the full inbox/outbox pipeline through which endpoints converse with delivery guarantees
-- **Typermedia API support** — Type-based hypermedia-style API navigation
 
 ### Type-routed messaging example
 
 ```csharp
 registrar
-  .ForEvent<IUserEvent>(e => Console.WriteLine("User event"))
-  .ForEvent<IUserRegistered>(e => Console.WriteLine("User registered"));
+  .ForTevent<IUserTevent>(userTevent => Console.WriteLine("User tevent"))
+  .ForTevent<IUserRegistered>(userRegistered => Console.WriteLine("User registered"));
 ```
 
-When `IUserRegistered` (which implements `IUserEvent`) is published, **both handlers** are called — no manual routing needed.
+When an `IUserRegistered` tevent (which implements `IUserTevent`) is published, **both handlers** are called — no manual routing needed.
 
 ## Installation
 
@@ -36,9 +34,8 @@ dotnet add package Compze.Tessaging
 
 | Package | Description |
 |---------|-------------|
-| [Compze.Core](https://www.nuget.org/packages/Compze.Core) | Core abstractions |
-| [Compze.Tessaging.Teventive.TeventStore](https://www.nuget.org/packages/Compze.Tessaging.Teventive.TeventStore) | Event store implementation |
-| [Compze.Tessaging.Hosting.AspNetCore](https://www.nuget.org/packages/Compze.Tessaging.Hosting.AspNetCore) | ASP.NET Core hosting |
+| [Compze.Abstractions](https://www.nuget.org/packages/Compze.Abstractions) | Shared abstractions |
+| [Compze.Teventive.TeventStore](https://www.nuget.org/packages/Compze.Teventive.TeventStore) | The tevent store implementation |
 | [Compze.Tessaging.Hosting.Testing](https://www.nuget.org/packages/Compze.Tessaging.Hosting.Testing) | Testing support |
 
 ## License

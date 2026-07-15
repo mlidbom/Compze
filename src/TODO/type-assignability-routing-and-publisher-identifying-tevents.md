@@ -36,7 +36,7 @@ Publisher identification — the decided invariants:
 Canonical statements of the model:
 
 - `src/Compze.Abstractions/Tessaging/Public/_TessageTypes..Interfaces.cs:84-95` (the interface's doc comment)
-- `src/Compze.Teventive/Taggregates/_docs/` — `definition.md`, `introduction.md`, `aggregate-inheritance.md`,
+- `src/Compze.Teventive/Taggregates/_docs/` — `definition.md`, `introduction.md`, `taggregate-inheritance.md`,
   `reusable-components.md`
 - Executable specification of the dispatcher-level routing semantics:
   `test/Compze.Tests.Unit/CQRS/TeventHandling/MutableTeventDispatcher_WrappedTeventsTests.cs`

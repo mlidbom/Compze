@@ -2,12 +2,12 @@
   href: definition.md
 - name: Introduction
   href: introduction.md
-- name: Property updated events
-  href: property-updated-events.md
-- name: Event naming
-  href: event-naming.md
-- name: Aggregate inheritance
-  href: aggregate-inheritance.md
+- name: Property updated tevents
+  href: property-updated-tevents.md
+- name: Tevent naming
+  href: tevent-naming.md
+- name: Taggregate inheritance
+  href: taggregate-inheritance.md
 - name: Reusable components and entities
   href: reusable-components.md
   

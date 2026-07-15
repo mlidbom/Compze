@@ -1,6 +1,6 @@
 using System;
-using Compze.Tessaging.Hosting.Abstractions;
-using Compze.Tessaging.Teventive.TeventStore.Abstractions;
+using Compze.Tessaging.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
+using Compze.Teventive.Taggregates.Tevents.Public;
 using Compze.Internals.SystemCE;
 using static System.Console;
 

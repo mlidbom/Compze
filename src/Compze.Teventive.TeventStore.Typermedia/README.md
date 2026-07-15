@@ -1,4 +1,4 @@
-# Compze.Tessaging.Teventive.TeventStore.Typermedia
+# Compze.Teventive.TeventStore.Typermedia
 
 Typermedia API bridge for the Compze event store — exposes event store operations as Typermedia tueries and tommands.
 
@@ -6,7 +6,7 @@ Typermedia API bridge for the Compze event store — exposes event store operati
 
 | Package | Description |
 |---------|-------------|
-| [Compze.Tessaging.Teventive.TeventStore](https://www.nuget.org/packages/Compze.Tessaging.Teventive.TeventStore) | Event store implementation |
+| [Compze.Teventive.TeventStore](https://www.nuget.org/packages/Compze.Teventive.TeventStore) | The tevent store implementation |
 | [Compze.Typermedia](https://www.nuget.org/packages/Compze.Typermedia) | Typermedia API infrastructure |
 | [Compze.Hosting](https://www.nuget.org/packages/Compze.Hosting) | Endpoint hosting |
 
