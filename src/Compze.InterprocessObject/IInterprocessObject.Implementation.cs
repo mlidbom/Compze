@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Compze.Internals.SystemCE.IOCE;
 using Compze.Threading;
 using Compze.Threading.Interprocess;
@@ -72,6 +73,20 @@ public partial interface IInterprocessObject
             Save(loaded!);
             return result;
          }
+      }
+
+      public bool TryReadWhen<TResult>(Func<TObject, bool> condition, Func<TObject, TResult> read, [MaybeNullWhen(false)] out TResult result, CancellationToken cancellationToken = default, WaitTimeout? timeout = null)
+      {
+         TObject? loaded = null;
+         using var readLock = Mutex.TryTakeReadLockWhen(() => condition(loaded = Load()), cancellationToken, waitTimeout: timeout);
+         if(readLock == null)
+         {
+            result = default;
+            return false;
+         }
+
+         result = read(loaded!);
+         return true;
       }
 
       public bool TryUpdateWhen(Func<TObject, bool> condition, Action<TObject> update, CancellationToken cancellationToken = default, WaitTimeout? timeout = null)

@@ -130,6 +130,9 @@ public class IAwaitableShared_specification : UniversalTestBase
 
       [IAwaitableSharedMatrix] public void while_Update_Action_holds_the_lock() =>
          AssertAccessMethodExcludesAllOtherAccess((shared, gate) => shared.Update(_ => gate.AwaitPassThrough()));
+
+      [IAwaitableSharedMatrix] public void while_TryReadWhen_holds_the_lock() =>
+         AssertAccessMethodExcludesAllOtherAccess((shared, gate) => shared.TryReadWhen(_ => true, _ => gate.AwaitPassThrough(), out _));
    }
 
    public class ReadWhen : IAwaitableShared_specification
@@ -161,6 +164,40 @@ public class IAwaitableShared_specification : UniversalTestBase
          var shared = _factory.Create(new SharedTestValue(), waitTimeout: WaitTimeout.Milliseconds(100));
          Invoking(() => shared.ReadWhen(_ => false, v => v.Value))
            .Must().Throw<AwaitingConditionTimeoutException>();
+      }
+   }
+
+   public class TryReadWhen : IAwaitableShared_specification
+   {
+      [IAwaitableSharedMatrix] public void returns_true_and_the_value_when_condition_is_immediately_true()
+      {
+         var shared = _factory.Create(new SharedTestValue { Value = 42 });
+         shared.TryReadWhen(_ => true, v => v.Value, out var result).Must().BeTrue();
+         result.Must().Be(42);
+      }
+
+      [IAwaitableSharedMatrix] public void returns_true_and_the_value_when_condition_becomes_true_within_timeout()
+      {
+         var shared = _factory.Create(new SharedTestValue(), LockTimeout.Seconds(30), WaitTimeout.Seconds(30));
+         var readCompleted = IThreadGate.NewOpen(WaitTimeout.Seconds(10), "readCompleted");
+
+         _runner.Run(() =>
+         {
+            shared.TryReadWhen(v => v.Items.Count > 0, v => v.Items[0], out var value).Must().BeTrue();
+            value.Must().Be(99);
+            readCompleted.AwaitPassThrough();
+         });
+
+         readCompleted.TryAwaitPassedThroughCountEqualTo(1, WaitTimeout.Milliseconds(100)).Must().BeFalse();
+         shared.Update(v => v.Items.Add(99));
+         readCompleted.AwaitPassedThroughCountEqualTo(1);
+      }
+
+      [IAwaitableSharedMatrix] public void returns_false_and_default_when_condition_never_becomes_true_within_timeout()
+      {
+         var shared = _factory.Create(new SharedTestValue(), waitTimeout: WaitTimeout.Milliseconds(100));
+         shared.TryReadWhen(_ => false, v => v.Value, out var result).Must().BeFalse();
+         result.Must().Be(0);
       }
    }
 

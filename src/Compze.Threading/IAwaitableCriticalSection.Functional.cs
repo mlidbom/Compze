@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Compze.SystemCE;
 
 namespace Compze.Threading;
@@ -15,6 +16,23 @@ public partial interface IAwaitableCriticalSection
    TReturn ReadWhen<TReturn>(Func<bool> condition, Func<TReturn> func, CancellationToken cancellationToken = default, WaitTimeout? waitTimeout = null, LockTimeout? lockTimeout = null)
    {
       using(TakeReadLockWhen(condition, cancellationToken, waitTimeout: waitTimeout, lockTimeout: lockTimeout)) return func();
+   }
+
+   ///<summary>Blocks until <paramref name="condition"/> returns true or <paramref name="waitTimeout"/> expires.<br/>
+   /// If it became true, executes <paramref name="func"/> - within the same read lock held while evaluating <paramref name="condition"/>, with <paramref name="condition"/> guaranteed still true - assigns its return value to <paramref name="result"/>, and returns true.<br/>
+   /// If <paramref name="waitTimeout"/> expired, sets <paramref name="result"/> to its default and returns false without executing <paramref name="func"/>.<br/>
+   /// The read counterpart of <see cref="TryUpdateWhen"/>. Unlike <see cref="TryAwait"/>, which releases the read lock before returning, this holds it across <paramref name="func"/> so the read observes the exact state that satisfied <paramref name="condition"/> - use it to gate an expensive <paramref name="func"/> on a cheaply-evaluated <paramref name="condition"/>.</summary>
+   bool TryReadWhen<TReturn>(Func<bool> condition, Func<TReturn> func, [MaybeNullWhen(false)] out TReturn result, CancellationToken cancellationToken = default, WaitTimeout? waitTimeout = null, LockTimeout? lockTimeout = null)
+   {
+      using var readLock = TryTakeReadLockWhen(condition, cancellationToken, waitTimeout, lockTimeout);
+      if(readLock == null)
+      {
+         result = default;
+         return false;
+      }
+
+      result = func();
+      return true;
    }
 
    ///<summary>Executes <paramref name="action"/> within an update lock, notifying all waiting threads that there are updates.</summary>

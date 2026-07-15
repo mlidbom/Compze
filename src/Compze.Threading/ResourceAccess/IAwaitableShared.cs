@@ -1,5 +1,6 @@
 // ReSharper disable ConvertToPrimaryConstructor
 
+using System.Diagnostics.CodeAnalysis;
 using Compze.SystemCE;
 
 namespace Compze.Threading.ResourceAccess;
@@ -30,6 +31,9 @@ public interface IAwaitableShared
 
       public TResult UpdateWhen<TResult>(Func<TShared, bool> condition, Func<TShared, TResult> update, CancellationToken cancellationToken = default, WaitTimeout? timeout = null) =>
          CriticalSection.UpdateWhen(() => condition(_shared), () => update(_shared), cancellationToken, waitTimeout: timeout);
+
+      public bool TryReadWhen<TResult>(Func<TShared, bool> condition, Func<TShared, TResult> read, [MaybeNullWhen(false)] out TResult result, CancellationToken cancellationToken = default, WaitTimeout? timeout = null) =>
+         CriticalSection.TryReadWhen(() => condition(_shared), () => read(_shared), out result, cancellationToken, waitTimeout: timeout);
 
       public bool TryUpdateWhen(Func<TShared, bool> condition, Action<TShared> update, CancellationToken cancellationToken = default, WaitTimeout? timeout = null) =>
          CriticalSection.TryUpdateWhen(() => condition(_shared), () => update(_shared), cancellationToken, waitTimeout: timeout);
@@ -67,6 +71,12 @@ public interface IAwaitableShared<out TShared>
 
    ///<summary>Blocks until <paramref name="condition"/> returns true for the shared object or <paramref name="timeout"/> expires.</summary>
    Unit Await(Func<TShared, bool> condition, CancellationToken cancellationToken = default, WaitTimeout? timeout = null) => ReadWhen(condition, _ => unit, cancellationToken, timeout);
+
+   ///<summary>Blocks until <paramref name="condition"/> returns true for the shared object or <paramref name="timeout"/> expires.<br/>
+   /// If it became true, executes <paramref name="read"/> on the shared object within the read lock held while <paramref name="condition"/> was evaluated - with <paramref name="condition"/> guaranteed still true - assigns its return value to <paramref name="result"/>, and returns true.<br/>
+   /// If <paramref name="timeout"/> expired, sets <paramref name="result"/> to its default and returns false without executing <paramref name="read"/>.<br/>
+   /// The read counterpart of <see cref="TryUpdateWhen"/>. Unlike <see cref="TryAwait"/>, which releases the lock before returning, it holds the lock across <paramref name="read"/> so the read observes the exact state that satisfied <paramref name="condition"/> - use it to gate an expensive <paramref name="read"/> on a cheaply-evaluated <paramref name="condition"/>.</summary>
+   bool TryReadWhen<TResult>(Func<TShared, bool> condition, Func<TShared, TResult> read, [MaybeNullWhen(false)] out TResult result, CancellationToken cancellationToken = default, WaitTimeout? timeout = null);
 
    ///<summary>Blocks until <paramref name="condition"/> returns true for the shared object, then acquires an update lock and executes <paramref name="update"/>. Returns false if the wait times out, else true.</summary>
    bool TryUpdateWhen(Func<TShared, bool> condition, Action<TShared> update, CancellationToken cancellationToken = default, WaitTimeout? timeout = null);
