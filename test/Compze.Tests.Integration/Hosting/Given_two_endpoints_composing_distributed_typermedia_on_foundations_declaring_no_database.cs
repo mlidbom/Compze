@@ -10,7 +10,7 @@ using Compze.Internals.Serialization.Newtonsoft.Wiring;
 using Compze.Internals.Testing;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Must;
-using Compze.Must.Assertions;
+
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Typermedia;

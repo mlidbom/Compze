@@ -1,4 +1,4 @@
-namespace Compze.Must.Assertions;
+namespace Compze.Must;
 // ReSharper disable InconsistentNaming
 /// <summary>Assertions about the runtime type of the value.</summary>
 public static class TypeAssertions

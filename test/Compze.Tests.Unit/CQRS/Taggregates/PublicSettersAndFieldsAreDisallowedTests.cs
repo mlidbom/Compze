@@ -1,6 +1,6 @@
 using Compze.Tests.Infrastructure;
 using Compze.Must;
-using Compze.Must.Assertions;
+
 using Compze.Teventive.Internal.Implementation;
 using Compze.Teventive.Taggregates.BaseClasses;
 using Compze.Teventive.Taggregates.Tevents.Public;

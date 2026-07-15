@@ -4,6 +4,10 @@ All notable changes to Compze.Must will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## 0.4.0-alpha
+
+- Move extension methods back to `Compze.Must` namespace.
+
 ## 0.3.0-alpha
 
 - The assertion classes moved from the `Compze.Must` namespace to `Compze.Must.Assertions` — the namespace now matches the folder they always lived in. Consumers add `using Compze.Must.Assertions;` beside `using Compze.Must;`.

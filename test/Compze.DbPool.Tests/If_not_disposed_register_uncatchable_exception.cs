@@ -2,7 +2,7 @@ using Compze.DbPool.SystemCE;
 using Compze.DependencyInjection;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Must;
-using Compze.Must.Assertions;
+
 using Compze.SystemCE;
 using Xunit;
 using static Compze.Must.MustActions;

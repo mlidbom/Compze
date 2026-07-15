@@ -1,6 +1,6 @@
 // ReSharper disable InconsistentNaming
 
-namespace Compze.Must.Assertions;
+namespace Compze.Must;
 
 /// <summary>Null assertions.</summary>
 public static class NullabilityAssertions

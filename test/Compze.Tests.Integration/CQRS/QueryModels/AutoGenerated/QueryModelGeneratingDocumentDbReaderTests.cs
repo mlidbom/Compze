@@ -5,7 +5,7 @@ using Compze.Hosting.Testing;
 using Compze.Internals.SystemCE.TransactionsCE;
 using Compze.Internals.Testing;
 using Compze.Must;
-using Compze.Must.Assertions;
+
 using Compze.Tests.Common.Wiring;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;

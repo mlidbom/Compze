@@ -2,7 +2,7 @@ using System.Runtime.CompilerServices;
 
 // ReSharper disable InconsistentNaming
 
-namespace Compze.Must.Assertions;
+namespace Compze.Must;
 
 /// <summary>String content assertions (ordinal comparison).</summary>
 public static class StringAssertions

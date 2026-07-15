@@ -1,7 +1,7 @@
 using Compze.DependencyInjection.Abstractions;
 using Compze.DependencyInjection.Autofac;
 using Compze.Must;
-using Compze.Must.Assertions;
+
 using Compze.xUnitBDD;
 
 namespace Compze.DependencyInjection.Specifications;

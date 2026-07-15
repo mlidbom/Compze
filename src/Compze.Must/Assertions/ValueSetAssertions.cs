@@ -5,7 +5,7 @@ using System.Runtime.CompilerServices;
 #pragma warning disable IDE0200
 // ReSharper disable InconsistentNaming
 
-namespace Compze.Must.Assertions;
+namespace Compze.Must;
 
 /// <summary>Assertions that a value is among a set of allowed values.</summary>
 public static class ValueSetAssertions

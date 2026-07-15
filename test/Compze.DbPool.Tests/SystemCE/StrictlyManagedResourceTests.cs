@@ -1,7 +1,7 @@
 using Compze.DbPool.SystemCE;
 using Compze.Tests.Infrastructure;
 using Compze.Must;
-using Compze.Must.Assertions;
+
 using Compze.SystemCE;
 using Compze.xUnitBDD;
 using JetBrains.Annotations;

@@ -1,6 +1,6 @@
 using System.Reflection;
 using Compze.Must;
-using Compze.Must.Assertions;
+
 using Compze.xUnitBDD;
 
 // ReSharper disable InconsistentNaming

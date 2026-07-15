@@ -1,7 +1,7 @@
 using Compze.Internals.SystemCE;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Must;
-using Compze.Must.Assertions;
+
 using Compze.Tests.Infrastructure;
 using Compze.Threading.Exceptions;
 using Compze.Threading.Specifications.ICriticalSection_.Infrastructure;

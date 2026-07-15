@@ -1,6 +1,6 @@
 using Compze.Internals.SystemCE;
 using Compze.Must;
-using Compze.Must.Assertions;
+
 using Compze.Tests.Infrastructure;
 using Compze.Threading.ResourceAccess;
 using Compze.Threading.Specifications.IAwaitableCriticalSection_.Infrastructure;

@@ -1,6 +1,6 @@
 using Compze.DependencyInjection.Specifications.Infrastructure;
 using Compze.Must;
-using Compze.Must.Assertions;
+
 
 // ReSharper disable InconsistentNaming
 

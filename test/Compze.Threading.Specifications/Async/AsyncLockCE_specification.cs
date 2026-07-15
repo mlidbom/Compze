@@ -5,7 +5,7 @@ using Compze.Threading.Testing;
 using Compze.Internals.SystemCE.ThreadingCE.Async;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Must;
-using Compze.Must.Assertions;
+
 using Compze.Threading.Specifications.TestInfrastructure;
 using Compze.xUnitBDD;
 using Xunit;

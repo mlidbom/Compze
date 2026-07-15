@@ -1,7 +1,7 @@
 using AccountManagement.Domain;
 using Compze.Tests.Infrastructure;
 using Compze.Must;
-using Compze.Must.Assertions;
+
 using Compze.xUnitBDD;
 
 namespace AccountManagement.Tests.Unit.Emails;

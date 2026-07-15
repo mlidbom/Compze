@@ -1,7 +1,7 @@
 using Compze.Internals.SystemCE;
 using Compze.Threading.Testing;
 using Compze.Must;
-using Compze.Must.Assertions;
+
 using Compze.xUnitBDD;
 using Xunit;
 
