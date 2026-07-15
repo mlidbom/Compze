@@ -19,7 +19,7 @@ jobs:
         persistence: [SqliteMemory, Sqlite, PgSql, MySql, MsSql]
         di: [Microsoft, Autofac, DryIoc, LightInject]
         serializer: [Newtonsoft]
-        transport: [AspNetCore]
+        transport: [AspNetCore, NamedPipes]
 
     name: "Test (${{ matrix.persistence }}:${{ matrix.di }}:${{ matrix.serializer }}:${{ matrix.transport }})"
 
