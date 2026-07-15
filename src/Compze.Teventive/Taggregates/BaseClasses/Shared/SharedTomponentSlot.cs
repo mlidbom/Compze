@@ -20,7 +20,7 @@ public interface ISharedTomponentSlot<TTomponentTevent>
 /// and when it replays history.</summary>
 ///<remarks>The adopting wrapper tevent is what makes a shared tomponent's tevents part of the owner's tevent hierarchy: an owner-declared wrapper<br/>
 /// type that is BOTH an owner tevent and an <see cref="IPublisherTevent{TTevent}"/> of the tomponent's tevents, e.g.<br/>
-/// <c>interface IShippingAddressTevent&lt;out T&gt; : IOrderTevent, IPublisherIdentifyingTevent&lt;T&gt; where T : IPostalAddressTevent</c>.<br/>
+/// <c>interface IShippingAddressTevent&lt;out T&gt; : IOrderTevent, IPublisherTevent&lt;T&gt; where T : IPostalAddressTevent</c>.<br/>
 /// Each member gets its own adopting wrapper type - that type is what distinguishes two same-typed tomponents (a shipping and a billing address)<br/>
 /// for routing back and for subscribers, and it is why <typeparamref name="TAdoptingWrapperTevent"/> exists per slot.</remarks>
 ///<remarks>Route-back subscribes to <see cref="IPublisherTevent{TTevent}"/> of <typeparamref name="TAdoptingWrapperTevent"/>: by the time an<br/>

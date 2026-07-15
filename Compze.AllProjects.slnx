@@ -129,12 +129,10 @@
   </Folder>
   <Folder Name="/_Solution Items/">
     <File Path="README.md" />
-    <File Path="Writing_documentation.md" />
     <File Path=".editorconfig" />
     <File Path="test/test-common-appsettings.json" />
     <File Path="src/TestUsingPluggableComponentCombinations" />
     <File Path="src/TestUsingPluggableComponentCombinations.example" />
-    <File Path="src/TODO_must_assertion_improvements.md" />
   </Folder>
   <Folder Name="/_Solution Items/Tests/">
     <File Path="test/test-common-appsettings.json" />
