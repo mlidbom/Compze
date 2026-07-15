@@ -23,6 +23,6 @@ public interface ITessageHandlerRegistry
     ///<summary>The registered handler tessage types whose type declares the exactly-once delivery contract — the types an endpoint<br/>
     /// may only advertise when its composition wires the exactly-once machinery (the inbox that persists, dedups, and retries).<br/>
     /// Observation subscriptions count too: observing a remote exactly-once tevent still requires receiving it exactly-once.<br/>
-    /// See <c>src/Compze.Tessaging/_docs/tevent-delivery-model.md</c>.</summary>
+    /// See <c>src/Compze.Tessaging/dev_docs/tevent-delivery-model.md</c>.</summary>
     IReadOnlyList<Type> RegisteredTypesDemandingExactlyOnceDelivery();
 }

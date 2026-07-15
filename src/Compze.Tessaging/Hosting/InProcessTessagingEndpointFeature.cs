@@ -23,9 +23,9 @@ namespace Compze.Tessaging.Hosting;
 ///</summary>
 ///<remarks>
 /// Whether a tevent crosses the wire is not an endpoint-wide mode but a property of each tevent's type,
-/// honored by the delivery legs the composition wires (<c>src/Compze.Tessaging/_docs/tevent-delivery-model.md</c>) —
+/// honored by the delivery legs the composition wires (<c>src/Compze.Tessaging/dev_docs/tevent-delivery-model.md</c>) —
 /// <see cref="TransientTessagingEndpointFeature"/> composes this feature and wires the transient leg, and
-/// <see cref="DistributedTessagingEndpointFeature"/> composes that core and wires the durable leg. That is
+/// <see cref="ExactlyOnceTessagingEndpointFeature"/> composes that core and wires the durable leg. That is
 /// what keeps handler registration (<see cref="RegisterHandlers"/>) order-independent of every other
 /// Tessaging declaration.
 ///</remarks>
@@ -35,7 +35,7 @@ public class InProcessTessagingEndpointFeature
 
    ///<summary>Registers transaction-ignoring tevent handlers — observation, the subscription-side escape hatch: the handler fires<br/>
    /// once, immediately, when the tevent is published locally or arrives from another endpoint, outside any transaction and with no<br/>
-   /// delivery guarantees (see <c>src/Compze.Tessaging/_docs/tevent-delivery-model.md</c>).</summary>
+   /// delivery guarantees (see <c>src/Compze.Tessaging/dev_docs/tevent-delivery-model.md</c>).</summary>
    public ITransactionIgnoringTeventHandlerRegistrar RegisterTransactionIgnoringTeventHandlers { get; }
 
    internal InProcessTessagingEndpointFeature(IEndpointBuilder builder)

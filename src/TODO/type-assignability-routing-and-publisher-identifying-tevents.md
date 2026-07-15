@@ -308,7 +308,7 @@ wrapped tevents end to end; widening WHICH tevents can travel remotely (and unde
 separate feature.
 
 **The design for this feature is settled and lives in its own document:**
-[`src/Compze.Tessaging/_docs/tevent-delivery-model.md`](../Compze.Tessaging/_docs/tevent-delivery-model.md) —
+[`src/Compze.Tessaging/dev_docs/tevent-delivery-model.md`](../Compze.Tessaging/dev_docs/tevent-delivery-model.md) —
 the delivery ladder (participation / exactly-once / transient / observation), `ITeventPublisher` and the
 `ITransactionIgnoringTeventPublisher` escape hatch, subscription semantics with the binary observation
 opt-down, the observation contract, ordering, and the wiring rules. Designed 2026-07-13; that document is the
@@ -361,13 +361,13 @@ is FIXED (2026-07-13): `GetUndeliveredTessagesForEndpoint` orders by the outbox 
       (the transient tier is a tevent concept; the synchronous ask lives in Typermedia), so a remotable
       non-exactly-once tommand handler fails loud instead of advertising a dead type. Alongside it the
       setup-time wiring rule and the guarantee-free `AddTransientTessaging` composition on the database-less
-      foundation are built — see `src/Compze.Tessaging/_docs/tevent-delivery-model.md`; the D6 feature is
+      foundation are built — see `src/Compze.Tessaging/dev_docs/tevent-delivery-model.md`; the D6 feature is
       now fully implemented.
 - [x] RESOLVED (2026-07-13): should tevent subscribers be able to choose a lighter delivery guarantee than
       the tevent type's own (`_TessageTypes..Interfaces.cs:78-79`)? Yes, but only as a **binary** opt-out —
       the default is the type's declared guarantee; `RegisterTransactionIgnoringTeventHandlers()` opts fully
       out for observation. No menu of intermediate levels (an intermediate tier saves no cost — it still
-      needs the inbox store to dedup). See `src/Compze.Tessaging/_docs/tevent-delivery-model.md`.
+      needs the inbox store to dedup). See `src/Compze.Tessaging/dev_docs/tevent-delivery-model.md`.
 - [x] Guarantee-preserving auto-wrap — DISSOLVED (2026-07-13). The wrapper no longer carries
       delivery-guarantee interfaces, so `PublisherIdentifyingTevent<TTevent>` closed over the inner IS the
       correct wrapper for every guarantee tier; the outbox/router/store read the guarantee from the inner by

@@ -4,7 +4,7 @@ using Compze.DependencyInjection.Abstractions;
 namespace Compze.Tessaging.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
 
 ///<summary>Registers transaction-ignoring tevent handlers — observation, the one subscription-side opt-down from a tevent type's<br/>
-/// declared delivery guarantee (see <c>src/Compze.Tessaging/_docs/tevent-delivery-model.md</c>). A handler registered here fires<br/>
+/// declared delivery guarantee (see <c>src/Compze.Tessaging/dev_docs/tevent-delivery-model.md</c>). A handler registered here fires<br/>
 /// once, immediately, when a matching tevent is registered: at publish time for a local publish, on arrival for a tevent from<br/>
 /// another endpoint — always outside any transaction, in its own scope, undeterred by the fate of the transaction the tevent was<br/>
 /// published or is processed in.</summary>

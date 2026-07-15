@@ -13,7 +13,7 @@ namespace Compze.Tessaging.Implementation.TessageHandling.Dispatching;
 
 ///<summary>The receiving half of the transient delivery leg — the direct-dispatch counterpart of the inbox: an arriving transient<br/>
 /// tevent is dispatched to this endpoint's subscribed handlers right here, in its own scope and its own transaction, with no store,<br/>
-/// no dedup and no retry (see <c>src/Compze.Tessaging/_docs/tevent-delivery-model.md</c>). Handlers execute before the transport<br/>
+/// no dedup and no retry (see <c>src/Compze.Tessaging/dev_docs/tevent-delivery-model.md</c>). Handlers execute before the transport<br/>
 /// acknowledgement is written, so one-tessage-in-flight-per-destination keeps handling in send order.</summary>
 class TransientTeventDirectDispatcher
 {

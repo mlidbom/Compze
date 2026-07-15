@@ -10,7 +10,7 @@ using static Compze.Must.MustActions;
 
 namespace Compze.Tests.Integration.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler;
 
-///<summary>The publish escape hatch (see <c>src/Compze.Tessaging/_docs/tevent-delivery-model.md</c>):<br/>
+///<summary>The publish escape hatch (see <c>src/Compze.Tessaging/dev_docs/tevent-delivery-model.md</c>):<br/>
 /// <see cref="ITransactionIgnoringTeventPublisher"/> publishes immediately and unconditionally — no on-commit deferral, so the<br/>
 /// tevent is emitted even if the caller's transaction rolls back.</summary>
 public class Transaction_ignoring_tevent_publisher_tests : EndpointHostTestBase

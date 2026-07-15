@@ -7,7 +7,7 @@ namespace Compze.Tessaging.Implementation.Transport.Client.Implementation;
 partial class TessagingConnection
 {
    ///<summary>The connection's transient delivery stream: in-memory, best-effort, delivering in order while deliveries succeed —<br/>
-   /// no store, no dedup, no retry (see <c>src/Compze.Tessaging/_docs/tevent-delivery-model.md</c>). Every connection carries this<br/>
+   /// no store, no dedup, no retry (see <c>src/Compze.Tessaging/dev_docs/tevent-delivery-model.md</c>). Every connection carries this<br/>
    /// stream: it needs no machinery beyond the connection itself.</summary>
    class TransientDeliveryStream : IDisposable
    {

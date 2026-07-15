@@ -20,15 +20,15 @@ namespace Compze.Tests.SameMachine.EndpointHostProcess;
 ///<summary>A standalone process hosting one Tessaging endpoint over named pipes, discovered through an<br/>
 /// <see cref="InterprocessEndpointRegistry"/> — the counterpart process the multi-process specifications converse with. Which<br/>
 /// Tessaging the endpoint speaks is the launching specification's choice, passed as the composition argument:<br/>
-/// <see cref="DistributedTessagingComposition"/> handles <see cref="TommandSentToTheEndpointHostProcess"/> by sending<br/>
+/// <see cref="ExactlyOnceTessagingComposition"/> handles <see cref="TommandSentToTheEndpointHostProcess"/> by sending<br/>
 /// <see cref="TommandSentBackToTheSpecificationProcess"/> — proving discovery, exactly-once delivery, and reply across real process<br/>
 /// boundaries with no web stack and no database server; <see cref="TransientTessagingComposition"/> handles<br/>
 /// <see cref="ITransientTeventPublishedByTheSpecificationProcess"/> by publishing<br/>
 /// <see cref="TransientTeventPublishedByTheEndpointHostProcess"/> — the same conversation guarantee-free, with no database anywhere.</summary>
 public static class Program
 {
-   ///<summary>The composition argument selecting the full distributed Tessaging pipeline on a sqlite database — the exactly-once tommand conversation.</summary>
-   public const string DistributedTessagingComposition = "DistributedTessaging";
+   ///<summary>The composition argument selecting the full exactly-once Tessaging pipeline on a sqlite database — the exactly-once tommand conversation.</summary>
+   public const string ExactlyOnceTessagingComposition = "ExactlyOnceTessaging";
 
    ///<summary>The composition argument selecting guarantee-free transient Tessaging on a database-less foundation — the transient tevent conversation.</summary>
    public const string TransientTessagingComposition = "TransientTessaging";
@@ -38,7 +38,7 @@ public static class Program
       MakeNCrunchInstrumentedDependenciesLoadable();
 
       var registryName = args[0];
-      var workDirectory = new DirectoryInfo(args[1]); //Holds the registry's backing file and, for the distributed composition, this process's sqlite database files.
+      var workDirectory = new DirectoryInfo(args[1]); //Holds the registry's backing file and, for the exactly-once composition, this process's sqlite database files.
       var specificationProcessId = int.Parse(args[2], CultureInfo.InvariantCulture);
       var composition = args[3];
 
@@ -55,14 +55,14 @@ public static class Program
 
                switch(composition)
                {
-                  case DistributedTessagingComposition:
-                     ComposeDistributedTessagingOnASqliteDatabase(builder, registry, workDirectory);
+                  case ExactlyOnceTessagingComposition:
+                     ComposeExactlyOnceTessagingOnASqliteDatabase(builder, registry, workDirectory);
                      break;
                   case TransientTessagingComposition:
                      ComposeTransientTessagingWithNoDatabase(builder, registry);
                      break;
                   default:
-                     throw new ArgumentOutOfRangeException(nameof(args), composition, $"Unknown composition argument. Pass {DistributedTessagingComposition} or {TransientTessagingComposition}.");
+                     throw new ArgumentOutOfRangeException(nameof(args), composition, $"Unknown composition argument. Pass {ExactlyOnceTessagingComposition} or {TransientTessagingComposition}.");
                }
             });
 
@@ -77,14 +77,14 @@ public static class Program
       return 0;
    }
 
-   static void ComposeDistributedTessagingOnASqliteDatabase(IEndpointBuilder builder, InterprocessEndpointRegistry registry, DirectoryInfo workDirectory)
+   static void ComposeExactlyOnceTessagingOnASqliteDatabase(IEndpointBuilder builder, InterprocessEndpointRegistry registry, DirectoryInfo workDirectory)
    {
       builder.Registrar.Register(Singleton.For<IConfigurationParameterProvider>()
                                           .CreatedBy(() => new SqliteDatabasePerConnectionStringNameConfigurationParameterProvider(workDirectory)));
 
       builder.ComposeEndpoint(it => it.NamedPipeEndpointTransport()
                                       .SqliteEndpointDatabase("EndpointHostProcess"))
-             .AddDistributedTessaging(tessaging => tessaging.NewtonsoftSerializer())
+             .AddExactlyOnceTessaging(tessaging => tessaging.NewtonsoftSerializer())
              .ParticipateIn(registry)
              .RegisterHandlers(register => register.ForTommand<TommandSentToTheEndpointHostProcess, IServiceBusSession>((_, serviceBusSession) => serviceBusSession.Send(new TommandSentBackToTheSpecificationProcess())));
    }

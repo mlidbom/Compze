@@ -13,13 +13,13 @@ namespace Compze.Tessaging.Hosting;
 /// load their recovery backlogs from it. (The endpoint's one transport server runs its own lifecycle in<br/>
 /// <see cref="Compze.Internals.Transport.EndpointTransportServerFeature"/>'s component; the router's connection and delivery<br/>
 /// lifecycle belongs to the transport-speaking core's <see cref="TransientTessagingEndpointComponent"/>.)</summary>
-sealed class DistributedTessagingEndpointComponent : IEndpointComponent, IAsyncDisposable
+sealed class ExactlyOnceTessagingEndpointComponent : IEndpointComponent, IAsyncDisposable
 {
    readonly TommandScheduler _tommandScheduler;
    readonly IInbox _inbox;
    readonly IOutbox _outbox;
 
-   internal DistributedTessagingEndpointComponent(IRootResolver resolver)
+   internal ExactlyOnceTessagingEndpointComponent(IRootResolver resolver)
    {
       _tommandScheduler = resolver.Resolve<TommandScheduler>();
       _inbox = resolver.Resolve<IInbox>();

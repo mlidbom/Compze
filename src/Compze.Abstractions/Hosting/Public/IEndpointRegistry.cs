@@ -4,7 +4,7 @@ namespace Compze.Abstractions.Hosting.Public;
 ///<summary>
 /// Knows the addresses of the server endpoints a sending endpoint should connect to — the read side of endpoint
 /// discovery, whose write side is <see cref="IEndpointAddressAnnouncer"/>. An endpoint declares the registry it
-/// discovers through on its distributed-Tessaging feature (<c>AddDistributedTessaging().DiscoverEndpointsThrough(...)</c>,
+/// discovers through on its transport-speaking Tessaging feature (<c>AddTransientTessaging().DiscoverEndpointsThrough(...)</c> — or through <c>AddExactlyOnceTessaging()</c>, which delegates —
 /// or <c>ParticipateIn(...)</c> for a registry that is also the announcer it announces to): the testing host declares
 /// one listing its own endpoints' addresses, a same-machine suite declares the shared interprocess registry, and an
 /// endpoint declaring none falls back to reading addresses from application configuration.

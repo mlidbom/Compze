@@ -19,7 +19,7 @@ static class TransientTeventDeliveryRegistrar
 
 ///<summary>The <see cref="ITransientTeventDeliveryLeg"/>: hands a published transient tevent to the connection of every remote<br/>
 /// subscriber the router matches, where each connection's in-memory transient stream delivers it best-effort and in order — no<br/>
-/// store, no dedup, no retry (see <c>src/Compze.Tessaging/_docs/tevent-delivery-model.md</c>).</summary>
+/// store, no dedup, no retry (see <c>src/Compze.Tessaging/dev_docs/tevent-delivery-model.md</c>).</summary>
 class TransientTeventDeliveryLeg : ITransientTeventDeliveryLeg
 {
    internal static void RegisterWith(IComponentRegistrar registrar)

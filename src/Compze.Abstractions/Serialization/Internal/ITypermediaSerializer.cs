@@ -4,7 +4,7 @@ namespace Compze.Abstractions.Serialization.Internal;
 
 ///<summary>The Typermedia feature's own serializer: the format of the Typermedia conversation — the tueries and tommands<br/>
 /// (<see cref="ITypermediaTessage"/>) a client sends, and the results the serving endpoint returns.</summary>
-///<remarks>Each conversation protocol serializes independently: distributed Tessaging through <see cref="ITessagingSerializer"/>, and<br/>
+///<remarks>Each conversation protocol serializes independently: Tessaging through <see cref="ITessagingSerializer"/>, and<br/>
 /// endpoint discovery through its fixed framework-internal format. What must agree is the sender's and receiver's serializer per<br/>
 /// protocol, across processes — not the protocols' serializers with each other.</remarks>
 public interface ITypermediaSerializer

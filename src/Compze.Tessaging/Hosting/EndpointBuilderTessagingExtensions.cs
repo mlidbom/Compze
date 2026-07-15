@@ -30,24 +30,24 @@ public static class EndpointBuilderTessagingExtensions
       public TransientTessagingEndpointFeature AddTransientTessaging() => @this.GetOrAddFeature(builder => new TransientTessagingEndpointFeature(builder));
 
       ///<summary>
-      /// Adds the full distributed Tessaging pipeline to the endpoint being built (idempotent) and returns its
+      /// Adds the full exactly-once Tessaging pipeline to the endpoint being built (idempotent) and returns its
       /// feature: everything transient Tessaging has (<see cref="AddTransientTessaging"/>, which it
       /// composes), plus the inbox, outbox, tommand scheduler and service bus session through which
       /// the endpoint converses with delivery guarantees.
       ///</summary>
-      public DistributedTessagingEndpointFeature AddDistributedTessaging() => @this.GetOrAddFeature(builder => new DistributedTessagingEndpointFeature(builder));
+      public ExactlyOnceTessagingEndpointFeature AddExactlyOnceTessaging() => @this.GetOrAddFeature(builder => new ExactlyOnceTessagingEndpointFeature(builder));
 
       ///<summary>
       /// Registers tessaging handlers, adding in-process Tessaging (<see cref="AddInProcessTessaging"/>) to
       /// the endpoint if it is not already added. Handlers receive tevents published in-process; they are
       /// reachable from other endpoints only when the endpoint also speaks Tessaging across the wire
-      /// (<see cref="AddTransientTessaging"/> / <see cref="AddDistributedTessaging"/>).
+      /// (<see cref="AddTransientTessaging"/> / <see cref="EndpointBuilderTessagingExtensions.AddExactlyOnceTessaging"/>).
       ///</summary>
       public ITessageHandlerRegistrar RegisterTessagingHandlers => @this.AddInProcessTessaging().RegisterHandlers;
 
       ///<summary>
       /// Registers transaction-ignoring tevent handlers — observation, the one subscription-side opt-down
-      /// (see <c>src/Compze.Tessaging/_docs/tevent-delivery-model.md</c>) — adding in-process Tessaging
+      /// (see <c>src/Compze.Tessaging/dev_docs/tevent-delivery-model.md</c>) — adding in-process Tessaging
       /// (<see cref="AddInProcessTessaging"/>) to the endpoint if it is not already added. Such a handler
       /// fires once, immediately, when a matching tevent is published locally or arrives from another
       /// endpoint: outside any transaction, undeterred by the fate of the transaction the tevent was
@@ -64,7 +64,7 @@ public static class EndpointFoundationTransientTessagingExtensions
    {
       ///<summary>Adds guarantee-free distributed Tessaging to a composed endpoint (<see cref="EndpointFoundation"/>): runs<br/>
       /// <paramref name="compose"/> to fill the feature's slots (e.g. the serializer), then adds the feature. Transient Tessaging<br/>
-      /// persists nothing, so unlike distributed Tessaging it needs no database on the foundation — this is the Tessaging an<br/>
+      /// persists nothing, so unlike exactly-once Tessaging it needs no database on the foundation — this is the Tessaging an<br/>
       /// endpoint whose foundation declares no database speaks.</summary>
       public TransientTessagingEndpointFeature AddTransientTessaging(Action<TransientTessagingComposition> compose)
       {

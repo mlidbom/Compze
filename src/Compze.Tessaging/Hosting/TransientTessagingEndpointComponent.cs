@@ -12,7 +12,7 @@ namespace Compze.Tessaging.Hosting;
 ///<summary>The transport-speaking Tessaging core's runtime lifecycle within an endpoint: the router connects to all endpoints and<br/>
 /// runs the connections' delivery streams. (The endpoint's one transport server — which serves arriving tessages and announces the<br/>
 /// endpoint's address — runs its own lifecycle in <see cref="EndpointTransportServerFeature"/>'s component; the exactly-once<br/>
-/// pipeline, when composed, runs its own in <see cref="DistributedTessagingEndpointComponent"/>.)</summary>
+/// pipeline, when composed, runs its own in <see cref="ExactlyOnceTessagingEndpointComponent"/>.)</summary>
 sealed class TransientTessagingEndpointComponent : IEndpointComponent, IAsyncDisposable
 {
    readonly ITessagingRouter _tessagingRouter;

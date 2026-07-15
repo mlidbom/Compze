@@ -15,17 +15,17 @@ public static class SqliteTessagingRegistrar
 {
    extension(EndpointFoundation<SqliteEndpointDatabase> @this)
    {
-      ///<summary>Adds distributed Tessaging to an endpoint whose database is sqlite: registers Tessaging's inbox/outbox sql layers<br/>
+      ///<summary>Adds exactly-once Tessaging to an endpoint whose database is sqlite: registers Tessaging's inbox/outbox sql layers<br/>
       /// (<see cref="SqliteTessagingSqlLayer"/>) in the endpoint's database — plus the sqlite type-id interner the sql layers<br/>
       /// share, derived from the foundation's declaration — runs <paramref name="compose"/> to fill the feature's slots (e.g. the<br/>
       /// serializer), and adds the feature. The compiler routes this pairing through the foundation's type — Tessaging-on-sqlite<br/>
       /// exists only for an endpoint whose foundation declares a sqlite database.</summary>
-      public DistributedTessagingEndpointFeature AddDistributedTessaging(Action<DistributedTessagingComposition> compose)
+      public ExactlyOnceTessagingEndpointFeature AddExactlyOnceTessaging(Action<ExactlyOnceTessagingComposition> compose)
       {
          @this.Builder.Registrar.SqliteTypeIdInterner(@this.Database)
                                 .SqliteTessagingSqlLayer();
-         compose(new DistributedTessagingComposition(@this.Builder.Registrar));
-         return @this.Builder.AddDistributedTessaging();
+         compose(new ExactlyOnceTessagingComposition(@this.Builder.Registrar));
+         return @this.Builder.AddExactlyOnceTessaging();
       }
    }
 

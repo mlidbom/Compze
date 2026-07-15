@@ -16,7 +16,7 @@ static class TeventObservationDispatcherRegistrar
 }
 
 ///<summary>Dispatches a tevent to the endpoint's transaction-ignoring tevent handlers — observation, the bottom rung of the<br/>
-/// delivery ladder (see <c>src/Compze.Tessaging/_docs/tevent-delivery-model.md</c>): direct invocation, once, immediately, in a<br/>
+/// delivery ladder (see <c>src/Compze.Tessaging/dev_docs/tevent-delivery-model.md</c>): direct invocation, once, immediately, in a<br/>
 /// fresh scope with any ambient transaction suppressed. Invoked at every point a tevent is first registered — a local publish, an<br/>
 /// exactly-once tevent's inbox registration, a transient tevent's arrival.</summary>
 ///<remarks>The fresh scope keeps an observer's resolutions out of the triggering transaction: were observers handed the publisher's<br/>

@@ -20,7 +20,7 @@ public static class AccountManagementServerDomainBootstrapper
                                    id: new EndpointId(Guid.Parse(input: "1A1BE9C8-C8F6-4E38-ABFB-F101E5EDB00D")),
                                    setup: builder =>
                                    {
-                                      builder.AddDistributedTessaging();
+                                      builder.AddExactlyOnceTessaging();
                                       builder.AddDistributedTypermedia();
                                       RegisterTypeMappings(builder);
                                       RegisterDomainComponents(builder);
@@ -37,7 +37,7 @@ public static class AccountManagementServerDomainBootstrapper
                             id: new EndpointId(Guid.Parse(input: "B16250DE-4321-4FBD-A0CC-E42C7A1B0B34")),
                             setup: builder =>
                             {
-                               builder.AddDistributedTessaging();
+                               builder.AddExactlyOnceTessaging();
                                builder.AddDistributedTypermedia();
                                RegisterTypeMappings(builder);
 

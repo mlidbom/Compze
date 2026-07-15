@@ -90,7 +90,7 @@ var endpoint = host.RegisterEndpoint("AccountManagement", new EndpointId(Guid.Pa
 
    var foundation = builder.ComposeEndpoint(it => it.AspNetCoreEndpointTransport()
                                                     .SqliteEndpointDatabase("AccountManagement"));
-   foundation.AddDistributedTessaging(tessaging => tessaging.NewtonsoftSerializer());
+   foundation.AddExactlyOnceTessaging(tessaging => tessaging.NewtonsoftSerializer());
    foundation.AddDistributedTypermedia(typermedia => typermedia.NewtonsoftSerializer());
 
    builder.RegisterTessagingHandlers.ForTevent((IAccountTevent tevent) => ...);
@@ -101,7 +101,7 @@ host.Start();
 
 `ComposeEndpoint` declares the endpoint's *foundation* — its transport protocol and, when it persists, its
 database — exactly once; the features are added on top of it. The foundation's type carries the database
-engine, so adding distributed Tessaging on a sqlite foundation registers Tessaging's sqlite sql layers: the
+engine, so adding exactly-once Tessaging on a sqlite foundation registers Tessaging's sqlite sql layers: the
 pairing is routed by the compiler, and a foundation the feature needs but the setup never declared fails at
 setup time with an error naming the missing declaration.
 
@@ -113,7 +113,7 @@ the discovery types), the endpoint's identity, the configuration provider, and t
 executor through which the endpoint answers discovery.
 
 Notice what the example already shows: the endpoint above converses with other endpoints in both styles, not
-because any host or builder decided so, but because its own setup declares `AddDistributedTessaging()` and
+because any host or builder decided so, but because its own setup declares `AddExactlyOnceTessaging()` and
 `AddDistributedTypermedia()`. Registering handlers declares something smaller — that the endpoint
 *understands* those tessages in-process; conversing over the network is its own explicit declaration. That is
 the design rule made concrete — which brings us to how those lines of code work.
@@ -124,7 +124,7 @@ The builder does not know which capabilities exist. It offers one seam, and each
 as a **feature** behind it:
 
 - `GetOrAddFeature<TFeature>(createFeature)` — creates the feature once per endpoint and remembers it.
-  `AddDistributedTessaging()`, `AddInProcessTessaging()`, `AddDistributedTypermedia()`, and
+  `AddExactlyOnceTessaging()`, `AddTransientTessaging()`, `AddInProcessTessaging()`, `AddDistributedTypermedia()`, and
   `AddInProcessTypermedia()` are one-line extension methods over this call, and
   `RegisterTessagingHandlers` / `RegisterTypermediaHandlers` are extension properties that add the style's
   in-process core on first touch and return its handler registrar.
@@ -142,14 +142,14 @@ wired once whether it arrives alone or under distribution).
   synchronous core: the handler registry, the synchronous in-process tevent delivery every tevent travels,
   and the endpoint's one `ITeventPublisher` — the one way to publish a tevent, routing each by the delivery
   contract its type declares (see
-  [the tevent delivery model](../../Compze.Tessaging/_docs/tevent-delivery-model.md)). With nothing but this
+  [the tevent delivery model](../../Compze.Tessaging/dev_docs/tevent-delivery-model.md)). With nothing but this
   feature the endpoint wires no remote delivery legs — no transport, inbox, outbox, or tommand scheduler —
   so tevents are delivered synchronously to this process's handlers, in the publisher's transaction.
   `TransientTessagingEndpointFeature` (`AddTransientTessaging()`) composes it into the transport-speaking
   core: the transport server, the router that connects to the other endpoints, and the transient tevent
   delivery leg — guarantee-free Tessaging, persisting nothing, so it composes on the database-less
   foundation; everything exactly-once fails loud at setup or publish.
-  `DistributedTessagingEndpointFeature` (`AddDistributedTessaging()`) composes that core and adds the
+  `ExactlyOnceTessagingEndpointFeature` (`AddExactlyOnceTessaging()`) composes that core and adds the
   exactly-once vertical: inbox, outbox, tommand scheduler, and service bus session — and wiring the outbox is
   what wires the durable tevent delivery leg the publisher routes every `IExactlyOnceTevent` through, and
   what grants the router's connections their durable exactly-once delivery streams. Whether a tevent
@@ -190,14 +190,17 @@ endpoint's one transport server through the listening phase, and announces the e
 declared `IEndpointAddressAnnouncer` as the first act of the sending phase — the host-wide ordering makes
 that the moment every listener everywhere is ready, so an announced address is always one whose whole
 endpoint can actually serve (retraction is the mirror image: the first act of the host's stopping).
-`DistributedTessagingEndpointComponent` listens with its inbox and scheduler, then in the sending phase sets
-its router reconciling against the `IEndpointRegistry`'s membership (continuously, so endpoints that appear,
-disappear, or restart at a new address are followed — see
-[same-machine hosting](same-machine-hosting.md)) and starts its outbox.
+`TransientTessagingEndpointComponent` — the transport-speaking Tessaging core's lifecycle — sets its router
+reconciling against the `IEndpointRegistry`'s membership in the sending phase (continuously, so endpoints
+that appear, disappear, or restart at a new address are followed — see
+[same-machine hosting](same-machine-hosting.md)) and starts the connections' delivery streams.
+`ExactlyOnceTessagingEndpointComponent` listens with its inbox and scheduler and initializes the outbox's
+durable storage — all in the listening phase, so that when sending starts anywhere, every connection's
+exactly-once stream finds the storage ready to load its recovery backlog from.
 `DistributedTypermediaEndpointComponent` drives nothing — the shared server serves its requests — and exists
 as the endpoint surface's evidence that distributed Typermedia is listening. Only the
-distributed features add components at all — an endpoint declaring only in-process features has no runtime
-lifecycle, and the host starts it with nothing to drive.
+transport-speaking features add components at all — an endpoint declaring only in-process features has no
+runtime lifecycle, and the host starts it with nothing to drive.
 
 ## Addresses are extension properties
 
@@ -251,7 +254,7 @@ Three things to know:
   exactly this reason.
 
 The same cores are also available to hosted endpoints as the `AddInProcessTessaging()` /
-`AddInProcessTypermedia()` features — for an endpoint that, say, speaks distributed Tessaging to the world
+`AddInProcessTypermedia()` features — for an endpoint that, say, speaks exactly-once Tessaging to the world
 while structuring its own request handling with strictly local Typermedia navigation, without paying for a
 transport server it never serves.
 
@@ -260,8 +263,8 @@ transport server it never serves.
 `EndpointHost.Production.Create(containerFactory)` — the factory produces a fresh container builder per
 endpoint. Endpoints read configuration through `IConfigurationParameterProvider`: an endpoint setup that
 registers its own provider wins; `AppSettingsJsonConfigurationParameterProvider` reading `appsettings.json`
-is only the default. How endpoints find each other is a declaration on the distributed-Tessaging feature:
-`AddDistributedTessaging().DiscoverEndpointsThrough(registry)` — an endpoint declaring no registry falls back
+is only the default. How endpoints find each other is a declaration on the transport-speaking Tessaging core:
+`AddTransientTessaging().DiscoverEndpointsThrough(registry)`, which `AddExactlyOnceTessaging()` delegates to — an endpoint declaring no registry falls back
 to reading other endpoints' addresses from configuration (`AppConfigEndpointRegistry`). For processes on one
 machine the registry is the `InterprocessEndpointRegistry`, which is also the announcer, so an endpoint
 declares both sides at once with `ParticipateIn(registry)` — endpoints announce their freshly generated
@@ -278,7 +281,7 @@ up: `TestingEndpointHost` knows nothing of Tessaging or Typermedia either, and c
 *host* as `ITestingEndpointHostFeature`s:
 
 ```csharp
-using var host = TestingEndpointHost.Create(new DistributedTessagingTestingEndpointHostFeature(),
+using var host = TestingEndpointHost.Create(new ExactlyOnceTessagingTestingEndpointHostFeature(),
                                             new DistributedTypermediaTestingEndpointHostFeature());
 ```
 
@@ -294,12 +297,12 @@ What the pieces do:
   assertion observed — a test cannot pass while silently dropping in-flight work
   (`DisposeAsyncWithoutWaitingForEndpointsToBeAtRest` opts out, for tests that deliberately leave work
   scheduled).
-- **`DistributedTessagingTestingEndpointHostFeature`** registers, per endpoint: a host-wide
+- **`ExactlyOnceTessagingTestingEndpointHostFeature`** registers, per endpoint: a host-wide
   tessages-in-flight tracker (this is what the dispose-time quiescence wait reads), the endpoint transport of
-  the current test's protocol, the Tessaging vertical's SQL persistence stack, and finally `AddDistributedTessaging()` declaring
+  the current test's protocol, the Tessaging vertical's SQL persistence stack, and finally `AddExactlyOnceTessaging()` declaring
   `DiscoverEndpointsThrough` an `IEndpointRegistry` listing the host's endpoints' addresses (so routers
   connect to every endpoint in the host). The tracker pre-registration matters:
-  `DistributedTessagingEndpointFeature` guards its tracker default with `IsRegistered`, so the host's
+  the transport-speaking Tessaging core guards its tracker default with `IsRegistered`, so the host's
   version wins.
 - **`DistributedTypermediaTestingEndpointHostFeature`** registers the Typermedia transport and
   `AddDistributedTypermedia()`.

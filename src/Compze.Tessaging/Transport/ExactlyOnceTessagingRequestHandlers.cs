@@ -19,7 +19,7 @@ public static class ExactlyOnceTessagingRequestHandlersRegistrar
 
 ///<summary>The exactly-once pipeline's contribution to the endpoint's transport server, served identically over named pipes and<br/>
 /// HTTP: receives arriving exactly-once tevents and tommands into the endpoint's <see cref="IInbox"/>, where they are persisted,<br/>
-/// deduped, and handled transactionally. Wired by distributed Tessaging alongside the inbox itself; an endpoint without the<br/>
+/// deduped, and handled transactionally. Wired by exactly-once Tessaging alongside the inbox itself; an endpoint without the<br/>
 /// exactly-once pipeline serves these request kinds with no handler at all, failing an arriving exactly-once tessage loud.</summary>
 class ExactlyOnceTessagingRequestHandlers : ITransportRequestHandlerContribution
 {

@@ -12,7 +12,7 @@ namespace Compze.Abstractions.Hosting.Public;
 ///</summary>
 public interface IEndpointHost : IAsyncDisposable
 {
-    ///<summary>Declares an endpoint. The <paramref name="setup"/> callback receives the endpoint's <see cref="IEndpointBuilder"/>: add capabilities (such as <c>AddDistributedTessaging()</c> / <c>AddDistributedTypermedia()</c>), register handlers, and register the endpoint's own components.</summary>
+    ///<summary>Declares an endpoint. The <paramref name="setup"/> callback receives the endpoint's <see cref="IEndpointBuilder"/>: add capabilities (such as <c>AddExactlyOnceTessaging()</c> / <c>AddDistributedTypermedia()</c>), register handlers, and register the endpoint's own components.</summary>
     IEndpoint RegisterEndpoint(string name, EndpointId id, Action<IEndpointBuilder> setup);
 
     ///<summary>The endpoints registered with this host so far, in registration order.</summary>

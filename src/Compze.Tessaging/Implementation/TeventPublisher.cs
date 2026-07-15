@@ -64,12 +64,12 @@ static class TeventPublisherRegistrar
       {
          case IPublisherTevent<IExactlyOnceTevent> exactlyOnceTevent:
             if(_exactlyOnceDeliveryLeg is not {} exactlyOnceDeliveryLeg)
-               return NoRemoteDeliveryOnThisDeliberatelyInProcessEndpoint(exactlyOnceTevent.Tevent, unwiredLeg: "the exactly-once delivery leg (the outbox, wired by distributed Tessaging with persistence)");
+               return NoRemoteDeliveryOnThisDeliberatelyInProcessEndpoint(exactlyOnceTevent.Tevent, unwiredLeg: "the exactly-once delivery leg (the outbox, wired by exactly-once Tessaging on a database-backed foundation)");
             TessageInspector.AssertValidToSendRemote(exactlyOnceTevent.Tevent);
             return () => exactlyOnceDeliveryLeg.PublishTransactionally(exactlyOnceTevent);
          case IPublisherTevent<IRemotableTevent> transientTevent:
             if(_transientDeliveryLeg is not {} transientDeliveryLeg)
-               return NoRemoteDeliveryOnThisDeliberatelyInProcessEndpoint(transientTevent.Tevent, unwiredLeg: "the transient delivery leg (wired by transient and distributed Tessaging alike)");
+               return NoRemoteDeliveryOnThisDeliberatelyInProcessEndpoint(transientTevent.Tevent, unwiredLeg: "the transient delivery leg (wired by transient and exactly-once Tessaging alike)");
             TessageInspector.AssertValidToSendRemote(transientTevent.Tevent);
             return () => transientDeliveryLeg.PublishBestEffort(transientTevent);
          default:

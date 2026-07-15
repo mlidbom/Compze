@@ -14,7 +14,7 @@ using Compze.Tessaging.Transport;
 namespace Compze.Tessaging.Hosting;
 
 ///<summary>
-/// Wires the full distributed Tessaging pipeline — inbox, outbox, tommand scheduler, service bus session —
+/// Wires the full exactly-once Tessaging pipeline — inbox, outbox, tommand scheduler, service bus session —
 /// into an endpoint: everything the transport-speaking transient core has
 /// (<see cref="TransientTessagingEndpointFeature"/>, which it composes — the transport server, the router, and
 /// the transient tevent delivery leg — itself composing <see cref="InProcessTessagingEndpointFeature"/>), plus
@@ -23,8 +23,8 @@ namespace Compze.Tessaging.Hosting;
 /// every published <see cref="Compze.Abstractions.Tessaging.Public.IExactlyOnceTevent"/> to its remote
 /// subscribers — and what grants each of the router's connections its durable, restart-surviving exactly-once
 /// delivery stream. Created idempotently through
-/// <see cref="EndpointBuilderTessagingExtensions.AddDistributedTessaging"/> /
-/// <see cref="IEndpointBuilder.GetOrAddFeature{TFeature}"/>: this is how distributed Tessaging plugs into a
+/// <see cref="EndpointBuilderTessagingExtensions.AddExactlyOnceTessaging"/> /
+/// <see cref="IEndpointBuilder.GetOrAddFeature{TFeature}"/>: this is how exactly-once Tessaging plugs into a
 /// hosting mechanism that knows nothing of it, and the feature instance is the handle through which the
 /// endpoint's tessaging handlers are registered (<see cref="RegisterHandlers"/>).
 ///
@@ -33,13 +33,13 @@ namespace Compze.Tessaging.Hosting;
 /// exactly-once tevents and tommands are received into the inbox. Discovery — how the endpoint finds other
 /// endpoints and is found by them — is the composed core's concern, reached through the delegating
 /// <see cref="DiscoverEndpointsThrough"/>, <see cref="AnnounceAddressTo"/>, and <see cref="ParticipateIn{TRegistry}"/>.
-/// The exactly-once pipeline's runtime lifecycle lives in <see cref="DistributedTessagingEndpointComponent"/>.
+/// The exactly-once pipeline's runtime lifecycle lives in <see cref="ExactlyOnceTessagingEndpointComponent"/>.
 ///</summary>
-public class DistributedTessagingEndpointFeature
+public class ExactlyOnceTessagingEndpointFeature
 {
    readonly TransientTessagingEndpointFeature _transientTessagingCore;
 
-   public DistributedTessagingEndpointFeature RegisterHandlers(Action<ITessageHandlerRegistrar> registrar)
+   public ExactlyOnceTessagingEndpointFeature RegisterHandlers(Action<ITessageHandlerRegistrar> registrar)
    {
       _transientTessagingCore.RegisterHandlers(registrar);
       return this;
@@ -48,7 +48,7 @@ public class DistributedTessagingEndpointFeature
    ///<summary>Declares that the endpoint announces where it listens to <paramref name="announcer"/> — see<br/>
    /// <see cref="EndpointTransportServerFeature.AnnounceAddressTo"/>, to which this delegates: the announced address is the<br/>
    /// endpoint's one transport-server address, serving every distributed capability the endpoint speaks.</summary>
-   public DistributedTessagingEndpointFeature AnnounceAddressTo(IEndpointAddressAnnouncer announcer)
+   public ExactlyOnceTessagingEndpointFeature AnnounceAddressTo(IEndpointAddressAnnouncer announcer)
    {
       _transientTessagingCore.AnnounceAddressTo(announcer);
       return this;
@@ -58,7 +58,7 @@ public class DistributedTessagingEndpointFeature
    /// whose write side is <see cref="AnnounceAddressTo"/>. The endpoint's router keeps reconciling its connections against the<br/>
    /// registry's membership. Declaring none means other endpoints' addresses come from application configuration<br/>
    /// (<see cref="AppConfigEndpointRegistry"/>).</summary>
-   public DistributedTessagingEndpointFeature DiscoverEndpointsThrough(IEndpointRegistry registry)
+   public ExactlyOnceTessagingEndpointFeature DiscoverEndpointsThrough(IEndpointRegistry registry)
    {
       _transientTessagingCore.DiscoverEndpointsThrough(registry);
       return this;
@@ -68,11 +68,11 @@ public class DistributedTessagingEndpointFeature
    /// (<see cref="DiscoverEndpointsThrough"/>) AND announces its own listening address to it (<see cref="AnnounceAddressTo"/>) —<br/>
    /// the composition a same-machine application suite uses, where every process both finds the others and is found by them.<br/>
    /// Declare the two sides separately instead when a deployment is asymmetric.</summary>
-   public DistributedTessagingEndpointFeature ParticipateIn<TRegistry>(TRegistry registry) where TRegistry : IEndpointRegistry, IEndpointAddressAnnouncer
+   public ExactlyOnceTessagingEndpointFeature ParticipateIn<TRegistry>(TRegistry registry) where TRegistry : IEndpointRegistry, IEndpointAddressAnnouncer
       => DiscoverEndpointsThrough(registry)
         .AnnounceAddressTo(registry);
 
-   internal DistributedTessagingEndpointFeature(IEndpointBuilder builder)
+   internal ExactlyOnceTessagingEndpointFeature(IEndpointBuilder builder)
    {
       var register = builder.Registrar;
       AssertTheEndpointsFoundationIsDeclared(register);
@@ -85,19 +85,19 @@ public class DistributedTessagingEndpointFeature
               .ServiceBusSession()
               .ExactlyOnceTessagingRequestHandlers();
 
-      builder.AddComponent(resolver => new DistributedTessagingEndpointComponent(resolver));
+      builder.AddComponent(resolver => new ExactlyOnceTessagingEndpointComponent(resolver));
    }
 
-   ///<summary>Distributed Tessaging builds on declarations the feature cannot make itself: the endpoint's transport protocol, its<br/>
+   ///<summary>Exactly-once Tessaging builds on declarations the feature cannot make itself: the endpoint's transport protocol, its<br/>
    /// persistence, and the Tessaging serializer. Each missing one fails here, when the feature is added, with an error naming the<br/>
    /// declaration — instead of surfacing later as a dependency-resolution failure deep inside the container.</summary>
    static void AssertTheEndpointsFoundationIsDeclared(IComponentRegistrar register)
    {
       State.Assert(register.IsRegistered<IEndpointTransportServer>(),
-                   () => "The endpoint declares no transport protocol. Declare it before adding distributed Tessaging — e.g. ComposeEndpoint(it => it.NamedPipeEndpointTransport()...) — or register NamedPipeEndpointTransport()/AspNetCoreEndpointTransport().");
+                   () => "The endpoint declares no transport protocol. Declare it before adding exactly-once Tessaging — e.g. ComposeEndpoint(it => it.NamedPipeEndpointTransport()...) — or register NamedPipeEndpointTransport()/AspNetCoreEndpointTransport().");
       State.Assert(register.IsRegistered<IServiceBusSqlLayer.IInboxSqlLayer>() && register.IsRegistered<IServiceBusSqlLayer.IOutboxSqlLayer>(),
-                   () => "The endpoint declares no Tessaging persistence. Add the feature on a foundation whose database is declared — e.g. ComposeEndpoint(it => ...SqliteEndpointDatabase(...)).AddDistributedTessaging(...) — or register Tessaging's sql layers (e.g. SqliteTessagingSqlLayer()) before adding it. An endpoint that deliberately persists nothing speaks guarantee-free Tessaging instead: AddTransientTessaging(...).");
+                   () => "The endpoint declares no Tessaging persistence. Add the feature on a foundation whose database is declared — e.g. ComposeEndpoint(it => ...SqliteEndpointDatabase(...)).AddExactlyOnceTessaging(...) — or register Tessaging's sql layers (e.g. SqliteTessagingSqlLayer()) before adding it. An endpoint that deliberately persists nothing speaks guarantee-free Tessaging instead: AddTransientTessaging(...).");
       State.Assert(register.IsRegistered<ITessagingSerializer>(),
-                   () => "The endpoint declares no Tessaging serializer. Fill the serializer slot when adding the feature — e.g. AddDistributedTessaging(tessaging => tessaging.NewtonsoftSerializer()) — or register one (e.g. NewtonsoftTessagingSerializer()) before adding it.");
+                   () => "The endpoint declares no Tessaging serializer. Fill the serializer slot when adding the feature — e.g. AddExactlyOnceTessaging(tessaging => tessaging.NewtonsoftSerializer()) — or register one (e.g. NewtonsoftTessagingSerializer()) before adding it.");
    }
 }

@@ -15,7 +15,7 @@ namespace Compze.Tests.Integration.SameMachine;
 
 ///<summary>The endpoint announces where it listens once every endpoint in the host has finished starting to listen, and retracts the<br/>
 /// announcement as the first act of the host's stopping — so the registry only ever lists addresses that are actually listening and fully ready.</summary>
-public class Given_a_started_distributed_tessaging_endpoint_with_an_interprocess_registry_announcer : UniversalTestBase
+public class Given_a_started_exactly_once_tessaging_endpoint_with_an_interprocess_registry_announcer : UniversalTestBase
 {
    static DirectoryInfo TestDirectory => new DirectoryInfo(Path.Combine(Path.GetTempPath(), "Compze", "Tests", "EndpointRegistry"))._mutate(it => it.Create());
 
@@ -24,13 +24,13 @@ public class Given_a_started_distributed_tessaging_endpoint_with_an_interprocess
    readonly IEndpoint _endpoint;
    bool _hostDisposed;
 
-   public Given_a_started_distributed_tessaging_endpoint_with_an_interprocess_registry_announcer()
+   public Given_a_started_exactly_once_tessaging_endpoint_with_an_interprocess_registry_announcer()
    {
       _registry = InterprocessEndpointRegistry.OpenOrCreateSessionLocal(Guid.NewGuid().ToString(), TestDirectory);
-      _host = TestingEndpointHost.Create(new DistributedTessagingTestingEndpointHostFeature());
+      _host = TestingEndpointHost.Create(new ExactlyOnceTessagingTestingEndpointHostFeature());
       _endpoint = _host.RegisterEndpoint("AnnouncingEndpoint",
                                          new EndpointId(Guid.NewGuid()),
-                                         builder => builder.AddDistributedTessaging().AnnounceAddressTo(_registry));
+                                         builder => builder.AddExactlyOnceTessaging().AnnounceAddressTo(_registry));
    }
 
    protected override async Task InitializeAsyncInternal() => await _host.StartAsync();

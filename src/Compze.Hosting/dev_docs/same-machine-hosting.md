@@ -4,7 +4,7 @@ This document takes a developer who is new to Compze from zero to understanding 
 machine form one application — how their endpoints find each other with zero configuration and converse with
 no web stack and no database server. It is the companion to [the hosting model](hosting-model.md), which
 explains what an endpoint and a host *are*, and to
-[the tevent delivery model](../../Compze.Tessaging/_docs/tevent-delivery-model.md), which explains the
+[the tevent delivery model](../../Compze.Tessaging/dev_docs/tevent-delivery-model.md), which explains the
 guarantees that hold once the conversation flows. This document explains how the conversation reaches across
 process boundaries on one machine.
 
@@ -103,7 +103,7 @@ the same registry; unrelated applications use their own.
 An endpoint declares who it announces to on its transport feature:
 
 ```csharp
-builder.AddDistributedTessaging().AnnounceAddressTo(registry);
+builder.AddExactlyOnceTessaging().AnnounceAddressTo(registry);
 ```
 
 Declaring none — a testing host with a static registry, a configuration-file deployment — means nothing is
@@ -121,8 +121,8 @@ self-cleaning moment. A crashed process's addresses are never routed to and neve
 
 ## Dynamic topology: the router reconciles
 
-The distributed Tessaging component's sending phase does not connect the router to a fixed address list and
-assume it thereafter. It sets the `TessagingRouter` *reconciling*: converge on the registry's membership now,
+The transport-speaking Tessaging component's sending phase does not connect the router to a fixed address
+list and assume it thereafter. It sets the `TessagingRouter` *reconciling*: converge on the registry's membership now,
 then keep converging, one pass per second. Each pass compares the connected addresses with the registry's
 current addresses:
 
@@ -134,7 +134,7 @@ current addresses:
 - **An endpoint returns at a new address** — addresses are per-instance; identity is the `EndpointId` — → the
   old connection is replaced by the new one, and the endpoint's undelivered backlog loads into the new
   connection in send order (see the ordering guarantee in
-  [the tevent delivery model](../../Compze.Tessaging/_docs/tevent-delivery-model.md#ordering)). The backlog
+  [the tevent delivery model](../../Compze.Tessaging/dev_docs/tevent-delivery-model.md#ordering)). The backlog
   follows the endpoint.
 - **A listed address does not answer** → topology churn, not a bug: the process may still be starting, or may
   have crashed a moment before the liveness filter would prune it. The failure is logged and the address
@@ -170,7 +170,7 @@ host.RegisterEndpoint("BackgroundWorker", new EndpointId(Guid.Parse("...")), bui
 
    builder.ComposeEndpoint(it => it.NamedPipeEndpointTransport()
                                    .SqliteEndpointDatabase("BackgroundWorker"))
-          .AddDistributedTessaging(tessaging => tessaging.NewtonsoftSerializer())
+          .AddExactlyOnceTessaging(tessaging => tessaging.NewtonsoftSerializer())
           .ParticipateIn(registry);   // discover the others through it AND announce ourselves to it
 
    builder.RegisterTessagingHandlers.ForTommand<MyTommand>(tommand => ...);
@@ -180,7 +180,7 @@ await host.StartAsync();
 ```
 
 `ComposeEndpoint` declares the endpoint's foundation exactly once — the transport protocol and the database —
-and the features are added on top of it: `AddDistributedTessaging` on a sqlite foundation registers Tessaging's
+and the features are added on top of it: `AddExactlyOnceTessaging` on a sqlite foundation registers Tessaging's
 sqlite inbox/outbox sql layers, with the pairing routed by the compiler through the foundation's type.
 
 `ParticipateIn` declares the registry's two faces at once: `DiscoverEndpointsThrough`, the *read* side the
@@ -219,7 +219,7 @@ As of 2026-07-14:
 - The no-SQL same-machine suite (2026-07-15): the endpoint host process hosting guarantee-free transient
   Tessaging (`AddTransientTessaging`) on the database-less foundation, and a transient tevent conversation
   crossing real process boundaries in both directions with no database anywhere in either process — see
-  [the tevent delivery model](../../Compze.Tessaging/_docs/tevent-delivery-model.md).
+  [the tevent delivery model](../../Compze.Tessaging/dev_docs/tevent-delivery-model.md).
 
 **Pending:**
 

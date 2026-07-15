@@ -86,7 +86,7 @@ public class Given_an_endpoint_whose_foundation_declares_no_database : Universal
       user.Name.Must().Be("first-user");
    }
 
-   [PCT] public async Task adding_distributed_tessaging_fails_loud_naming_the_missing_persistence_declaration()
+   [PCT] public async Task adding_exactly_once_tessaging_fails_loud_naming_the_missing_persistence_declaration()
    {
       await using var host = EndpointHost.Production.Create(() => TestEnv.DIContainer.CreateTestingContainerBuilder());
       Invoking(() => host.RegisterEndpoint("TessagingWithoutADatabase",
@@ -95,7 +95,7 @@ public class Given_an_endpoint_whose_foundation_declares_no_database : Universal
                                            {
                                               builder.TypeMapper.RegisterIntegrationTestTypeMappings();
                                               ComposeTheFoundationWithoutADatabase(builder);
-                                              builder.AddDistributedTessaging();
+                                              builder.AddExactlyOnceTessaging();
                                            }))
          .Must().Throw<Exception>().Which.Message.Must().Contain("The endpoint declares no Tessaging persistence");
    }

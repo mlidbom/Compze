@@ -231,7 +231,7 @@ class TessagingRouter : ITessagingRouter, IDisposable
          } else
          {
             State.Assert(tessageType.Is<IExactlyOnceTommand>(),
-                         () => $"Endpoint {connection.EndpointInformation.Id} advertises the tessage type {tessageType.FullName}, which no route can serve: Tessaging routes tommands exactly-once only ({nameof(IExactlyOnceTommand)} — see src/Compze.Tessaging/_docs/tevent-delivery-model.md). Every advertised type must get a route — a subscription must never be silently dropped.");
+                         () => $"Endpoint {connection.EndpointInformation.Id} advertises the tessage type {tessageType.FullName}, which no route can serve: Tessaging routes tommands exactly-once only ({nameof(IExactlyOnceTommand)} — see src/Compze.Tessaging/dev_docs/tevent-delivery-model.md). Every advertised type must get a route — a subscription must never be silently dropped.");
             _tommandHandlerRoutes.Add(tessageType, connection);
          }
       }

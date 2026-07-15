@@ -5,7 +5,7 @@ namespace Compze.Internals.Serialization.Newtonsoft.Wiring;
 
 public static class NewtonsoftTessagingSerializerRegistrar
 {
-   ///<summary>Registers the Newtonsoft implementation of the distributed Tessaging pipeline's serializer<br/>
+   ///<summary>Registers the Newtonsoft implementation of the Tessaging pipeline's serializer<br/>
    /// (<see cref="ITessagingSerializer"/>).</summary>
    public static IComponentRegistrar NewtonsoftTessagingSerializer(this IComponentRegistrar registrar) =>
       registrar.Register(Private.Tessaging.NewtonsoftTessagingSerializer.RegisterWith);
@@ -13,7 +13,7 @@ public static class NewtonsoftTessagingSerializerRegistrar
    extension<TComposition>(TComposition @this) where TComposition : ITessagingSerializerSlot
    {
       ///<summary>Fills a feature composition's Tessaging-serializer slot (<see cref="ITessagingSerializerSlot"/>) with the Newtonsoft<br/>
-      /// implementation — e.g. <c>AddDistributedTessaging(tessaging => tessaging.NewtonsoftSerializer())</c>; see<br/>
+      /// implementation — e.g. <c>AddExactlyOnceTessaging(tessaging => tessaging.NewtonsoftSerializer())</c>; see<br/>
       /// <see cref="NewtonsoftTessagingSerializer"/>, to which this delegates.</summary>
       public TComposition NewtonsoftSerializer()
       {

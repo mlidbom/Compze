@@ -2,7 +2,7 @@ namespace Compze.Abstractions.Tessaging.Public;
 
 ///<summary>The one way to publish a tevent. Anything can publish — a taggregate's tevent store forwarding its committed tevents<br/>
 /// is just this interface's most common client — and the publisher routes each tevent by the delivery contract its type declares<br/>
-/// (see <c>src/Compze.Tessaging/_docs/tevent-delivery-model.md</c>):<br/>
+/// (see <c>src/Compze.Tessaging/dev_docs/tevent-delivery-model.md</c>):<br/>
 /// every tevent is delivered synchronously to this process's subscribed handlers, on the publishing thread, within the caller's<br/>
 /// transaction — the participation rung, the strongest delivery there is — and immediately to this process's transaction-ignoring<br/>
 /// handlers (observation, outside that transaction);<br/>

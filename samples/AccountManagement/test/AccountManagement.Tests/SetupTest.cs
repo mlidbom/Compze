@@ -12,7 +12,7 @@ public class SetupTest : UniversalTestBase
 {
    [PCT] public async Task TestSetup()
    {
-      var host = TestingEndpointHost.Create(new DistributedTessagingTestingEndpointHostFeature(), new DistributedTypermediaTestingEndpointHostFeature());
+      var host = TestingEndpointHost.Create(new ExactlyOnceTessagingTestingEndpointHostFeature(), new DistributedTypermediaTestingEndpointHostFeature());
       var endpoint = AccountManagementServerDomainBootstrapper.RegisterWith(host);
       await host.StartAsync().caf();
       await using var client = await TypermediaTestClient.ConnectTo(endpoint.TypermediaAddress!, mapper => mapper.RegisterAccountManagementTypeMappings()).caf();

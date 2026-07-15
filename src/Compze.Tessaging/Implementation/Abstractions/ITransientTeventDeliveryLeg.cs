@@ -3,9 +3,9 @@ using Compze.Abstractions.Tessaging.Public;
 namespace Compze.Tessaging.Implementation.Abstractions;
 
 ///<summary>The transient remote delivery leg for tevents: best-effort, in-order delivery to subscribers on other endpoints — no<br/>
-/// store, no dedup, no retry (see <c>src/Compze.Tessaging/_docs/tevent-delivery-model.md</c>). Wiring supplies the delivery legs —<br/>
+/// store, no dedup, no retry (see <c>src/Compze.Tessaging/dev_docs/tevent-delivery-model.md</c>). Wiring supplies the delivery legs —<br/>
 /// this one is wired by the transport-speaking Tessaging core every transport-speaking composition shares (transient Tessaging is<br/>
-/// that core alone; distributed Tessaging composes it and adds the durable sibling <see cref="IExactlyOnceTeventDeliveryLeg"/>) —<br/>
+/// that core alone; exactly-once Tessaging composes it and adds the durable sibling <see cref="IExactlyOnceTeventDeliveryLeg"/>) —<br/>
 /// and the <see cref="ITeventPublisher"/> routes every published <see cref="IRemotableTevent"/> whose type declares no exactly-once<br/>
 /// guarantee through it. An endpoint that wires no remote delivery is a deliberately in-process composition: its tevents are<br/>
 /// delivered by participation alone.</summary>

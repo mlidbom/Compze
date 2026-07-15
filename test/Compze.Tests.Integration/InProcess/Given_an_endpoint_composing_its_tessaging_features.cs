@@ -16,11 +16,11 @@ using Compze.Tests.Infrastructure.XUnit;
 namespace Compze.Tests.Integration.InProcess;
 
 ///<summary>
-/// An endpoint composes its Tessaging from the in-process core that distribution extends: every feature
-/// declaration is idempotent, distributed Tessaging contains in-process Tessaging so declaring both composes
-/// in either order, and registering tessaging handlers is order-independent of every feature declaration.
-/// Whether a tevent crosses the wire is a property of the tevent's type, honored by the delivery legs the
-/// composition wires — not an endpoint-wide mode.
+/// An endpoint composes its Tessaging from the in-process core the transport-speaking layers extend: every
+/// feature declaration is idempotent, exactly-once Tessaging contains transient Tessaging contains in-process
+/// Tessaging so declaring several composes in either order, and registering tessaging handlers is
+/// order-independent of every feature declaration. Whether a tevent crosses the wire is a property of the
+/// tevent's type, honored by the delivery legs the composition wires — not an endpoint-wide mode.
 ///</summary>
 public class Given_an_endpoint_composing_its_tessaging_features : UniversalTestBase
 {
@@ -31,19 +31,19 @@ public class Given_an_endpoint_composing_its_tessaging_features : UniversalTestB
    IEndpoint RegisterEndpointWith(string name, Action<IEndpointBuilder> setup) =>
       _host.RegisterEndpoint(name, new EndpointId(Guid.NewGuid()), setup);
 
-   [PCT] public void declaring_in_process_then_distributed_tessaging_composes_since_distribution_contains_the_in_process_core() =>
-      RegisterEndpointWith("InProcessThenDistributed", builder =>
+   [PCT] public void declaring_in_process_then_exactly_once_tessaging_composes_since_exactly_once_tessaging_contains_the_in_process_core() =>
+      RegisterEndpointWith("InProcessThenExactlyOnce", builder =>
       {
          DeclareTheEndpointsFoundation(builder);
          builder.AddInProcessTessaging();
-         builder.AddDistributedTessaging();
+         builder.AddExactlyOnceTessaging();
       }).Must().NotBeNull();
 
-   [PCT] public void declaring_distributed_then_in_process_tessaging_composes_since_distribution_contains_the_in_process_core() =>
-      RegisterEndpointWith("DistributedThenInProcess", builder =>
+   [PCT] public void declaring_exactly_once_then_in_process_tessaging_composes_since_exactly_once_tessaging_contains_the_in_process_core() =>
+      RegisterEndpointWith("ExactlyOnceThenInProcess", builder =>
       {
          DeclareTheEndpointsFoundation(builder);
-         builder.AddDistributedTessaging();
+         builder.AddExactlyOnceTessaging();
          builder.AddInProcessTessaging();
       }).Must().NotBeNull();
 
@@ -54,12 +54,12 @@ public class Given_an_endpoint_composing_its_tessaging_features : UniversalTestB
          builder.AddInProcessTessaging();
       }).Must().NotBeNull();
 
-   [PCT] public void registering_tessaging_handlers_before_declaring_distributed_tessaging_succeeds() =>
-      RegisterEndpointWith("HandlersThenDistributed", builder =>
+   [PCT] public void registering_tessaging_handlers_before_declaring_exactly_once_tessaging_succeeds() =>
+      RegisterEndpointWith("HandlersThenExactlyOnce", builder =>
       {
          DeclareTheEndpointsFoundation(builder);
          builder.RegisterTessagingHandlers.ForTevent((IMyGreetingRequestedTevent _) => {});
-         builder.AddDistributedTessaging();
+         builder.AddExactlyOnceTessaging();
       }).Must().NotBeNull();
 
    [PCT] public void declaring_in_process_tessaging_twice_is_idempotent() =>
@@ -69,15 +69,15 @@ public class Given_an_endpoint_composing_its_tessaging_features : UniversalTestB
          builder.AddInProcessTessaging();
       }).Must().NotBeNull();
 
-   [PCT] public void declaring_distributed_tessaging_twice_is_idempotent() =>
-      RegisterEndpointWith("DistributedTwice", builder =>
+   [PCT] public void declaring_exactly_once_tessaging_twice_is_idempotent() =>
+      RegisterEndpointWith("ExactlyOnceTwice", builder =>
       {
          DeclareTheEndpointsFoundation(builder);
-         builder.AddDistributedTessaging();
-         builder.AddDistributedTessaging();
+         builder.AddExactlyOnceTessaging();
+         builder.AddExactlyOnceTessaging();
       }).Must().NotBeNull();
 
-   ///<summary>Distributed Tessaging asserts that the endpoint's foundation — transport protocol, persistence, serializer — is<br/>
+   ///<summary>Exactly-once Tessaging asserts that the endpoint's foundation — transport protocol, persistence, serializer — is<br/>
    /// declared before the feature is added. These specifications are about composing the Tessaging features, so they declare the<br/>
    /// current test's foundation without exercising it. (The serializer comes from the testing host's root container.)</summary>
    static void DeclareTheEndpointsFoundation(IEndpointBuilder builder) =>

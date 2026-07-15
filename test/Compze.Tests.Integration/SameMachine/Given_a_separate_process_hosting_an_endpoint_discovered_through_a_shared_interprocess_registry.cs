@@ -45,7 +45,7 @@ public class Given_a_separate_process_hosting_an_endpoint_discovered_through_a_s
       const string registryName = "EndpointRegistry";
       _registry = InterprocessEndpointRegistry.OpenOrCreateSessionLocal(registryName, _workDirectory);
 
-      _endpointHostProcess = EndpointHostProcessHandle.Start(registryName, _workDirectory, EndpointHostProcessProgram.DistributedTessagingComposition);
+      _endpointHostProcess = EndpointHostProcessHandle.Start(registryName, _workDirectory, EndpointHostProcessProgram.ExactlyOnceTessagingComposition);
 
       _specificationHost = TestingEndpointHost.Create();
       _specificationEndpoint = _specificationHost.RegisterEndpoint(
@@ -57,7 +57,7 @@ public class Given_a_separate_process_hosting_an_endpoint_discovered_through_a_s
             builder.Registrar
                    .CurrentTestsEndpointTransport()
                    .CurrentTestsConfiguredSqlLayer(connectionStringName: builder.Configuration.Id.ToString());
-            builder.AddDistributedTessaging().ParticipateIn(_registry);
+            builder.AddExactlyOnceTessaging().ParticipateIn(_registry);
             builder.RegisterTessagingHandlers.ForTommand<TommandSentBackToTheSpecificationProcess>(_ => _replyTommandGate.AwaitPassThrough());
          });
    }

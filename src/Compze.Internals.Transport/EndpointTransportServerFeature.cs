@@ -10,7 +10,7 @@ namespace Compze.Internals.Transport;
 /// this feature's component runs — one server, one address, per endpoint.</summary>
 ///<remarks>Also the home of address announcement, because announcing belongs to the thing that owns the address and its listening<br/>
 /// lifecycle: the endpoint announces to every <see cref="IEndpointAddressAnnouncer"/> declared through <see cref="AnnounceAddressTo"/><br/>
-/// (reached fluently through the style features' delegating methods, e.g. <c>AddDistributedTessaging().AnnounceAddressTo(...)</c>).</remarks>
+/// (reached fluently through the style features' delegating methods, e.g. <c>AddExactlyOnceTessaging().AnnounceAddressTo(...)</c>).</remarks>
 public class EndpointTransportServerFeature
 {
    readonly List<IEndpointAddressAnnouncer> _addressAnnouncers = [];

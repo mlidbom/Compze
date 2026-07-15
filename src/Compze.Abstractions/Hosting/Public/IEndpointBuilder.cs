@@ -9,7 +9,7 @@ namespace Compze.Abstractions.Hosting.Public;
 ///
 /// The builder does not know which capabilities exist. Each capability — such as the Tessaging or Typermedia
 /// pipeline — wires itself in as a <em>feature</em> through <see cref="GetOrAddFeature{TFeature}"/>, packaged
-/// behind an extension method such as <c>AddDistributedTessaging()</c> or <c>AddDistributedTypermedia()</c>. A feature registers its
+/// behind an extension method such as <c>AddExactlyOnceTessaging()</c> or <c>AddDistributedTypermedia()</c>. A feature registers its
 /// services with <see cref="Registrar"/>, maps its message types with <see cref="TypeMapper"/>, schedules
 /// post-container-build work with <see cref="OnContainerBuilt"/>, and adds its runtime lifecycle via
 /// <see cref="AddComponent"/>. This is the seam that keeps the hosting mechanism free of knowledge of what

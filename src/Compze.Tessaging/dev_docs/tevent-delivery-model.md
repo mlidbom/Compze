@@ -285,7 +285,7 @@ As of 2026-07-15:
   subscription — the exactly-once-only gate is gone; matching stays pure wrapper-type assignability, and
   which leg a matched tevent travels is decided by the published tevent's own type, never by routing.
   `ITeventPublisher` routes a remotable-but-not-exactly-once tevent through the endpoint's transient
-  delivery leg (`ITransientTeventDeliveryLeg`, wired by distributed Tessaging) — on commit when a
+  delivery leg (`ITransientTeventDeliveryLeg`, wired by every transport-speaking Tessaging composition) — on commit when a
   transaction is present, immediately otherwise. Each subscriber connection carries an in-memory transient
   stream (`TransportRequestKind.TransientTevent` on the wire) delivering in order with the
   drop-stream-whole failure policy above, and the receiving endpoint dispatches an arriving transient

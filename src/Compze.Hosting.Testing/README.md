@@ -18,7 +18,7 @@ The testing counterpart of `Compze.Hosting`: a testing endpoint host that knows 
 ### Quick start
 
 ```csharp
-using var host = TestingEndpointHost.Create(new DistributedTessagingTestingEndpointHostFeature(),
+using var host = TestingEndpointHost.Create(new ExactlyOnceTessagingTestingEndpointHostFeature(),
                                             new DistributedTypermediaTestingEndpointHostFeature());
 var endpoint = host.RegisterEndpoint("MyEndpoint", endpointId, builder =>
 {

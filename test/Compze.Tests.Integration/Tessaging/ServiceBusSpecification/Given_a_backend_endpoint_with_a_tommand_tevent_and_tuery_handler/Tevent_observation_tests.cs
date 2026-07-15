@@ -7,7 +7,7 @@ using static Compze.Must.MustActions;
 
 namespace Compze.Tests.Integration.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler;
 
-///<summary>Observation — the transaction-ignoring subscription kind (see <c>src/Compze.Tessaging/_docs/tevent-delivery-model.md</c>):<br/>
+///<summary>Observation — the transaction-ignoring subscription kind (see <c>src/Compze.Tessaging/dev_docs/tevent-delivery-model.md</c>):<br/>
 /// a handler registered through <c>RegisterTransactionIgnoringTeventHandlers</c> fires once, immediately, when the tevent is<br/>
 /// registered — at publish time locally, on arrival remotely — outside any transaction and undeterred by its fate.</summary>
 public class Tevent_observation_tests : EndpointHostTestBase

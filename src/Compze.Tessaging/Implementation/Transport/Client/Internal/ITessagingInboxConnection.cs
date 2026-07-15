@@ -6,7 +6,7 @@ namespace Compze.Tessaging.Implementation.Transport.Client.Internal;
 
 ///<summary>A connection through which tessages are delivered to one remote endpoint's transport server. It carries one ordered<br/>
 /// stream per delivery tier the endpoint wires: the in-memory transient stream always, the exactly-once stream when the outbox<br/>
-/// is wired — see <c>src/Compze.Tessaging/_docs/tevent-delivery-model.md</c>.</summary>
+/// is wired — see <c>src/Compze.Tessaging/dev_docs/tevent-delivery-model.md</c>.</summary>
 interface ITessagingInboxConnection
 {
     EndpointInformation EndpointInformation { get; }

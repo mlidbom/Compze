@@ -11,7 +11,7 @@ partial class TessagingConnection
    /// The loop does not look at the next tessage until the current one is delivered and acknowledged, retrying a failed delivery<br/>
    /// with backoff until the subscriber acknowledges it; the storage bookkeeping (delivered / failed) and the recovery at start —<br/>
    /// reloading the endpoint's undelivered backlog in send order — are what make the guarantee and the ordering survive restarts<br/>
-   /// (see <c>src/Compze.Tessaging/_docs/tevent-delivery-model.md</c>). A connection carries this stream exactly when the endpoint<br/>
+   /// (see <c>src/Compze.Tessaging/dev_docs/tevent-delivery-model.md</c>). A connection carries this stream exactly when the endpoint<br/>
    /// wires the outbox, whose registration grants the router the storage.</summary>
    internal class ExactlyOnceDeliveryStream : IDisposable
    {

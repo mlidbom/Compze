@@ -21,12 +21,12 @@ namespace Compze.Tessaging.Hosting;
 
 ///<summary>
 /// Wires guarantee-free distributed Tessaging into an endpoint — the transport-speaking Tessaging core, which
-/// the full distributed pipeline (<see cref="DistributedTessagingEndpointFeature"/>) composes and extends:
+/// the full exactly-once pipeline (<see cref="ExactlyOnceTessagingEndpointFeature"/>) composes and extends:
 /// everything in-process Tessaging has (<see cref="InProcessTessagingEndpointFeature"/>, which it composes),
 /// plus the endpoint's one transport server, the router that connects to the other endpoints, and the
 /// transient tevent delivery leg. An endpoint with only this feature converses in transient tevents — a
 /// published <see cref="Compze.Abstractions.Tessaging.Public.IRemotableTevent"/> crosses the wire best-effort,
-/// with no outbox, no inbox, and no database anywhere (see <c>_docs/tevent-delivery-model.md</c>) — so it
+/// with no outbox, no inbox, and no database anywhere (see <c>dev_docs/tevent-delivery-model.md</c>) — so it
 /// composes on the database-less <see cref="EndpointFoundation"/>. Everything exactly-once is exactly what it
 /// cannot speak: registering a handler for a tessage type that demands the exactly-once contract fails at
 /// setup, and publishing an exactly-once tevent fails naming the missing delivery leg. Created idempotently
@@ -53,10 +53,20 @@ namespace Compze.Tessaging.Hosting;
 public class TransientTessagingEndpointFeature
 {
    readonly ITessageHandlerRegistrar _handlerRegistrar;
+   readonly ITransactionIgnoringTeventHandlerRegistrar _transactionIgnoringTeventHandlerRegistrar;
 
    public TransientTessagingEndpointFeature RegisterHandlers(Action<ITessageHandlerRegistrar> registrar)
    {
       registrar(_handlerRegistrar);
+      return this;
+   }
+
+   ///<summary>Registers transaction-ignoring tevent handlers — observation, the one subscription-side opt-down<br/>
+   /// (see <c>src/Compze.Tessaging/dev_docs/tevent-delivery-model.md</c>): the handler fires once, immediately, when a matching<br/>
+   /// tevent is published locally or arrives from another endpoint, outside any transaction and with no delivery guarantees.</summary>
+   public TransientTessagingEndpointFeature RegisterTransactionIgnoringTeventHandlers(Action<ITransactionIgnoringTeventHandlerRegistrar> registrar)
+   {
+      registrar(_transactionIgnoringTeventHandlerRegistrar);
       return this;
    }
 
@@ -96,7 +106,9 @@ public class TransientTessagingEndpointFeature
       var register = builder.Registrar;
       AssertTheEndpointsFoundationIsDeclared(register);
 
-      _handlerRegistrar = builder.AddInProcessTessaging().RegisterHandlers;
+      var inProcessTessaging = builder.AddInProcessTessaging();
+      _handlerRegistrar = inProcessTessaging.RegisterHandlers;
+      _transactionIgnoringTeventHandlerRegistrar = inProcessTessaging.RegisterTransactionIgnoringTeventHandlers;
       _transportServer = EndpointTransportServerFeature.GetOrAddTo(builder);
 
       if(!register.IsRegistered<ITessagesInFlightTracker>())
@@ -131,7 +143,7 @@ public class TransientTessagingEndpointFeature
    IEndpointRegistry EndpointRegistry(IRootResolver resolver) =>
       _endpointRegistry ??= new AppConfigEndpointRegistry(resolver.Resolve<IConfigurationParameterProvider>());
 
-   ///<summary>The setup-time wiring rule (see <c>_docs/tevent-delivery-model.md</c>): a subscription demanding more than the<br/>
+   ///<summary>The setup-time wiring rule (see <c>dev_docs/tevent-delivery-model.md</c>): a subscription demanding more than the<br/>
    /// endpoint can deliver fails at setup. On an endpoint whose composition wires no exactly-once machinery — no<br/>
    /// <see cref="IInbox"/> to persist, dedup, and retry — a registered handler for a tessage type that declares the exactly-once<br/>
    /// contract could never be honored: advertising it would pull exactly-once traffic the endpoint must refuse, stalling every<br/>
@@ -142,7 +154,7 @@ public class TransientTessagingEndpointFeature
 
       var typesDemandingExactlyOnceDelivery = handlerRegistry.RegisteredTypesDemandingExactlyOnceDelivery();
       State.Assert(typesDemandingExactlyOnceDelivery.Count == 0,
-                   () => $"This endpoint wires no exactly-once delivery machinery — transient Tessaging has no inbox to persist, dedup, and retry with — but handlers are registered for tessage types whose declared contract demands it: {string.Join(", ", typesDemandingExactlyOnceDelivery.Select(it => it.FullName))}. A subscription takes the tessage type's full declared guarantee (observation included: observing a remote exactly-once tevent still requires receiving it exactly-once), and an endpoint that cannot honor a guarantee must not advertise for it. Compose distributed Tessaging on a database-backed foundation instead, or handle tessage types that declare no exactly-once contract.");
+                   () => $"This endpoint wires no exactly-once delivery machinery — transient Tessaging has no inbox to persist, dedup, and retry with — but handlers are registered for tessage types whose declared contract demands it: {string.Join(", ", typesDemandingExactlyOnceDelivery.Select(it => it.FullName))}. A subscription takes the tessage type's full declared guarantee (observation included: observing a remote exactly-once tevent still requires receiving it exactly-once), and an endpoint that cannot honor a guarantee must not advertise for it. Compose exactly-once Tessaging on a database-backed foundation instead, or handle tessage types that declare no exactly-once contract.");
    }
 
    ///<summary>Transient Tessaging builds on declarations the feature cannot make itself: the endpoint's transport protocol and the<br/>

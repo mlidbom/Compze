@@ -54,7 +54,7 @@ public class Given_two_hosts_sharing_an_interprocess_registry_where_the_receivin
       builder.Registrar
              .CurrentTestsEndpointTransport()
              .CurrentTestsConfiguredSqlLayer(connectionStringName: builder.Configuration.Id.ToString());
-      builder.AddDistributedTessaging().ParticipateIn(_registry);
+      builder.AddExactlyOnceTessaging().ParticipateIn(_registry);
    }
 
    protected override async Task InitializeAsyncInternal()

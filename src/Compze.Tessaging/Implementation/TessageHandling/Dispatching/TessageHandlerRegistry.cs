@@ -109,7 +109,7 @@ sealed class TessageHandlerRegistry(ITypeMap typeMap) : ITessageHandlerRegistrar
                                                 .Where(IsRemotableNonInfrastructureTessage)
                                                 .ToArray();
 
-      //Tessaging routes tommands exactly-once only (the transient tier is a tevent concept - see src/Compze.Tessaging/_docs/tevent-delivery-model.md), so any other
+      //Tessaging routes tommands exactly-once only (the transient tier is a tevent concept - see src/Compze.Tessaging/dev_docs/tevent-delivery-model.md), so any other
       //remotable tommand handler would advertise a type no route can serve: a silently unreachable handler. Every advertised type must get a route - fail loud instead.
       var unroutableTommandTypes = handledTommandTypes.Where(tommandType => !tommandType.Is<IExactlyOnceTommand>()).ToArray();
       State.Assert(unroutableTommandTypes.Length == 0,

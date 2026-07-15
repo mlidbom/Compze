@@ -110,7 +110,7 @@ public class Given_two_endpoints_composing_transient_tessaging_on_foundations_de
                                            new EndpointId(Guid.NewGuid()),
                                            builder => builder.ComposeFoundationWithCurrentTestsTransportAndNoDatabase()
                                                              .AddTransientTessaging(tessaging => tessaging.NewtonsoftSerializer())
-                                                             .RegisterHandlers(register => register.ForTevent((ITeventDeclaringTheExactlyOnceContract _) => {}))))
+                                                             .RegisterTransactionIgnoringTeventHandlers(register => register.ForTevent((ITeventDeclaringTheExactlyOnceContract _) => {}))))
         .Must().Throw<Exception>().Which.Message.Must().Contain("wires no exactly-once delivery machinery");
    }
 

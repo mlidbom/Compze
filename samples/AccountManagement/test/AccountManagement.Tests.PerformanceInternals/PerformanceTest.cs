@@ -31,7 +31,7 @@ public class PerformanceTest : UniversalTestBase
 
    protected override async Task InitializeAsyncInternal()
    {
-      _host = TestingEndpointHost.Create(new DistributedTessagingTestingEndpointHostFeature(), new DistributedTypermediaTestingEndpointHostFeature());
+      _host = TestingEndpointHost.Create(new ExactlyOnceTessagingTestingEndpointHostFeature(), new DistributedTypermediaTestingEndpointHostFeature());
       var endpoint = AccountManagementServerDomainBootstrapper.RegisterWith(_host);
       await _host.StartAsync().caf();
       _client = await TypermediaTestClient.ConnectTo(endpoint.TypermediaAddress!, mapper => mapper.RegisterAccountManagementTypeMappings()).caf();
