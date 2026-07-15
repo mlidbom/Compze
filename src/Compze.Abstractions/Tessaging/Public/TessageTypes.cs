@@ -40,7 +40,7 @@ public static class TessageTypes
             public TessageId Id { get; protected set; } = new();
          }
 
-         public class AtMostOnceTypermediaTommand<TResult> : AtMostOnceTypermediaTommand, IAtMostOnceTommand<TResult>
+         public class AtMostOnceTypermediaTommand<TResult> : AtMostOnceTypermediaTommand, IAtMostOnceTypermediaTommand<TResult>
          {
             protected AtMostOnceTypermediaTommand() {}
          }

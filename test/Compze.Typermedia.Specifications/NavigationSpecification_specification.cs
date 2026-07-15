@@ -68,8 +68,8 @@ public class NavigationSpecification_specification
 
       public void Post(IAtMostOnceTypermediaTommand tommand) => PostedTommands.Add(tommand);
 
-      public Task<TResult> PostAsync<TResult>(IAtMostOnceTommand<TResult> typermediaTommand) => Task.FromResult(Post(typermediaTommand));
-      public TResult Post<TResult>(IAtMostOnceTommand<TResult> typermediaTommand) => throw new NotSupportedException($"No spec posts {typermediaTommand.GetType().Name}");
+      public Task<TResult> PostAsync<TResult>(IAtMostOnceTypermediaTommand<TResult> typermediaTommand) => Task.FromResult(Post(typermediaTommand));
+      public TResult Post<TResult>(IAtMostOnceTypermediaTommand<TResult> typermediaTommand) => throw new NotSupportedException($"No spec posts {typermediaTommand.GetType().Name}");
 
       public Task<TResult> GetAsync<TResult>(IRemotableTuery<TResult> tuery) => Task.FromResult(Get(tuery));
 

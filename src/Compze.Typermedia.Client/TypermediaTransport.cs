@@ -44,7 +44,7 @@ class TypermediaTransport : ITypermediaTransport
    public async Task<TResult> GetAsync<TResult>(IRemotableTuery<TResult> tuery, EndpointAddress address)
       => _serializer.DeserializeResult<TResult>(await SendAsync(TransportRequestKind.TypermediaTuery, tuery, address).caf());
 
-   public async Task<TResult> PostAsync<TResult>(IAtMostOnceTommand<TResult> command, EndpointAddress address)
+   public async Task<TResult> PostAsync<TResult>(IAtMostOnceTypermediaTommand<TResult> command, EndpointAddress address)
       => _serializer.DeserializeResult<TResult>(await SendAsync(TransportRequestKind.TypermediaTommandWithResult, command, address).caf());
 
    public async Task PostAsync(IAtMostOnceTypermediaTommand command, EndpointAddress address)

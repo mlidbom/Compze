@@ -26,9 +26,12 @@ public interface IMustBeSentAndHandledTransactionally : IMustBeSentTransactional
 public interface ICannotBeSentRemotelyFromWithinTransaction : ITessage;
 
 //Typermedia
+//todo: should the version without a type parameter remain? Could ITyperMediaTessage<object> replace what it does today?
 public interface ITypermediaTessage : ICannotBeSentRemotelyFromWithinTransaction;
 public interface ITyperMediaTessage<out TResult> : ITypermediaTessage;
 public interface ITommand<out TResult> : ITommand, ITyperMediaTessage<TResult>;
+
+//todo: should the version without a type parameter remain? Could ITuery<object> replace what it does today?
 public interface ITuery : ITypermediaTessage {};
 public interface ITuery<out TResult> : ITuery, ITyperMediaTessage<TResult>;
 
@@ -67,13 +70,15 @@ public interface ITessageWithIdentity : ITessage
    TessageId Id { get; }
 }
 
+///<summary>A tessage that is handled at least once. Guaranteed by infrastructure through retries.</summary>
 public interface IAtLeastOnceTessage : ITessageWithIdentity, IRemotableTessage {}
 
 ///<summary>A tessage that is handled no more than once. Guaranteed by infrastructure through deduplication, and transactions.</summary>
 public interface IAtMostOnceTessage : ITessageWithIdentity, IRemotableTessage, IMustBeHandledTransactionally {}
 
+//todo: should the version without a type parameter remain?
 public interface IAtMostOnceTypermediaTommand : IAtMostOnceTessage, IRemotableTommand, ITypermediaTessage;
-public interface IAtMostOnceTommand<out TResult> : IAtMostOnceTypermediaTommand, IRemotableTommand<TResult>;
+public interface IAtMostOnceTypermediaTommand<out TResult> : IAtMostOnceTypermediaTommand, IRemotableTommand<TResult>;
 
 ///<summary>A tessage that is handled exactly once. Guaranteed by infrastructure through deduplication, retries, and transactions.</summary>
 public interface IExactlyOnceTessage : IMustBeSentAndHandledTransactionally, IAtMostOnceTessage, IAtLeastOnceTessage;

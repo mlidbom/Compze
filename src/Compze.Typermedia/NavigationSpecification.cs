@@ -8,7 +8,7 @@ public abstract class NavigationSpecification
    internal static NavigationSpecification Post(IAtMostOnceTypermediaTommand tommand) => new VoidTommand(tommand);
 
    public static NavigationSpecification<TResult> Get<TResult>(IRemotableTuery<TResult> tuery) => NavigationSpecification<TResult>.Get(tuery);
-   internal static NavigationSpecification<TResult> Post<TResult>(IAtMostOnceTommand<TResult> typermediaTommand) => NavigationSpecification<TResult>.Post(typermediaTommand);
+   internal static NavigationSpecification<TResult> Post<TResult>(IAtMostOnceTypermediaTommand<TResult> typermediaTommand) => NavigationSpecification<TResult>.Post(typermediaTommand);
 
    public void NavigateOn(IRemoteTypermediaNavigator busSession) => NavigateOnAsync(busSession).WaitUnwrappingException();
    protected abstract Task NavigateOnAsync(IRemoteTypermediaNavigator busSession);
@@ -30,10 +30,10 @@ public abstract class NavigationSpecification<TResult>
 
    public NavigationSpecification Post(Func<TResult, IAtMostOnceTypermediaTommand> next) => new PostVoidTommand<TResult>(this, next);
    public NavigationSpecification<TNext> Get<TNext>(Func<TResult, IRemotableTuery<TNext>> next) => new NavigationSpecification<TNext>.ContinuationTuery<TResult>(this, next);
-   public NavigationSpecification<TNext> Post<TNext>(Func<TResult, IAtMostOnceTommand<TNext>> next) => new NavigationSpecification<TNext>.PostTommand<TResult>(this, next);
+   public NavigationSpecification<TNext> Post<TNext>(Func<TResult, IAtMostOnceTypermediaTommand<TNext>> next) => new NavigationSpecification<TNext>.PostTommand<TResult>(this, next);
 
    internal static NavigationSpecification<TResult> Get(IRemotableTuery<TResult> tuery) => new StartTuery(tuery);
-   internal static NavigationSpecification<TResult> Post(IAtMostOnceTommand<TResult> typermediaTommand) => new StartTommand(typermediaTommand);
+   internal static NavigationSpecification<TResult> Post(IAtMostOnceTypermediaTommand<TResult> typermediaTommand) => new StartTommand(typermediaTommand);
 
    class SelectTuery<TPrevious> : NavigationSpecification<TResult>
    {
@@ -64,9 +64,9 @@ public abstract class NavigationSpecification<TResult>
 
    class StartTommand : NavigationSpecification<TResult>
    {
-      readonly IAtMostOnceTommand<TResult> _start;
+      readonly IAtMostOnceTypermediaTommand<TResult> _start;
 
-      internal StartTommand(IAtMostOnceTommand<TResult> start) => _start = start;
+      internal StartTommand(IAtMostOnceTypermediaTommand<TResult> start) => _start = start;
 
       internal override async Task<TResult> NavigateOnAsync(IRemoteTypermediaNavigator busSession) => await busSession.PostAsync(_start).caf();
    }
@@ -93,8 +93,8 @@ public abstract class NavigationSpecification<TResult>
    class PostTommand<TPrevious> : NavigationSpecification<TResult>
    {
       readonly NavigationSpecification<TPrevious> _previous;
-      readonly Func<TPrevious, IAtMostOnceTommand<TResult>> _next;
-      internal PostTommand(NavigationSpecification<TPrevious> previous, Func<TPrevious, IAtMostOnceTommand<TResult>> next)
+      readonly Func<TPrevious, IAtMostOnceTypermediaTommand<TResult>> _next;
+      internal PostTommand(NavigationSpecification<TPrevious> previous, Func<TPrevious, IAtMostOnceTypermediaTommand<TResult>> next)
       {
          _previous = previous;
          _next = next;

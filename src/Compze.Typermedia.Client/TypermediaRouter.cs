@@ -100,7 +100,7 @@ class TypermediaRouter : ITypermediaRouter, IDisposable
       await _transport.PostAsync(tommand, connection.Address).caf();
    }
 
-   public async Task<TTommandResult> PostAsync<TTommandResult>(IAtMostOnceTommand<TTommandResult> typermediaTommand)
+   public async Task<TTommandResult> PostAsync<TTommandResult>(IAtMostOnceTypermediaTommand<TTommandResult> typermediaTommand)
    {
       AssertRunning();
       var connection = ConnectionToHandlerFor(typermediaTommand);

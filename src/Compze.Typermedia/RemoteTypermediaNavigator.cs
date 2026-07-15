@@ -37,9 +37,9 @@ public static class RemoteTypermediaNavigatorRegistrar
       return _typermediaRouting.PostAsync(tommand);
    }
 
-   public TResult Post<TResult>(IAtMostOnceTommand<TResult> typermediaTommand) => PostAsync(typermediaTommand).ResultUnwrappingException();
+   public TResult Post<TResult>(IAtMostOnceTypermediaTommand<TResult> typermediaTommand) => PostAsync(typermediaTommand).ResultUnwrappingException();
 
-   public Task<TResult> PostAsync<TResult>(IAtMostOnceTommand<TResult> typermediaTommand)
+   public Task<TResult> PostAsync<TResult>(IAtMostOnceTypermediaTommand<TResult> typermediaTommand)
    {
       TessageValidator.AssertValidToSendRemote(typermediaTommand);
       return _typermediaRouting.PostAsync(typermediaTommand);
