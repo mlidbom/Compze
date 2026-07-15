@@ -1,16 +1,70 @@
+# Push CI: on every push to any branch, build and run the full pluggable-component matrix (the build-and-test job).
+#
+# Two independent de-duplication mechanisms keep interweaving branches from re-verifying the same work:
+#   * concurrency (below), keyed on the branch ref, supersedes an in-flight run when the SAME branch is pushed again.
+#   * the check-duplicate-commit job, keyed on the commit SHA, skips this run entirely when the SAME commit has already
+#     triggered CI under another branch — the common case when several branches share a head commit and are pushed in
+#     quick succession.
+#
+# Only the push trigger is used, deliberately: a pull_request trigger would double-verify every same-repo PR (once for
+# the push event, once for the PR event) and — because github.sha on a PR event is the ephemeral merge commit, not the
+# PR head — the SHA probe below cannot dedupe that pair. Every branch is already covered by push. Re-add pull_request
+# only if CI must run on fork PRs (a fork's push fires in the fork, not here).
+
 name: CI
 
 on:
   push:
-    # branches: [ develop, main, master ]
-  pull_request:
+    branches: ['**']
   workflow_dispatch:
+
+# Same-branch axis: a newer push to the same branch supersedes an in-flight run — saves a full 40-cell matrix run, each
+# cell of which spins up Postgres/MySQL/MSSQL service containers. The cross-branch axis (same commit, different branch)
+# is handled by the check-duplicate-commit job below.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
 
 permissions:
   contents: read
 
 jobs:
+  # Skip this whole run when the same commit has already triggered CI under another branch. Interweaving branches often
+  # share a head commit and get pushed in quick succession, which would otherwise verify the identical tree once per
+  # branch. GitHub's concurrency feature cannot express this: its only modes are cancel-the-old-run or queue-the-new-one,
+  # never drop-the-duplicate — so we probe the Actions run history for an EARLIER run of this workflow at this exact SHA.
+  #
+  # run_id is monotonic, so among all runs for one commit only the lowest-id (earliest-triggered) run finds no earlier
+  # run and proceeds; every later run finds it and skips. The tie-break direction is deliberately safe: the only race is
+  # an earlier run not yet visible in the API (a few seconds after trigger), which can cause an extra run but can NEVER
+  # skip every run of a commit.
+  #
+  # This skips on TRIGGER, not on success: a failed or flaky first run is not auto-retried by a sibling branch's push
+  # (the duplicates have already skipped). Re-run it manually, or push a new commit, to re-verify.
+  check-duplicate-commit:
+    name: Check for an earlier CI run of this commit
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+    outputs:
+      already_triggered: ${{ steps.probe.outputs.already_triggered }}
+    steps:
+      - id: probe
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          earlier=$(gh api \
+            "/repos/${{ github.repository }}/actions/runs?head_sha=${{ github.sha }}&per_page=100" \
+            --jq "[.workflow_runs[] | select(.name == \"${{ github.workflow }}\" and .id < ${{ github.run_id }})] | length")
+          if [ "$earlier" -gt 0 ]; then
+            echo "already_triggered=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "already_triggered=false" >> "$GITHUB_OUTPUT"
+          fi
+
   build-and-test:
+    needs: check-duplicate-commit
+    if: needs.check-duplicate-commit.outputs.already_triggered != 'true'
     runs-on: ubuntu-latest
 
     strategy:
