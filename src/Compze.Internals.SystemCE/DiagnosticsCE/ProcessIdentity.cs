@@ -15,14 +15,8 @@ namespace Compze.Internals.SystemCE.DiagnosticsCE;
 /// process's own <c>now - uptime</c> sample taken on a coarse clock and cached per process. Two processes reading the<br/>
 /// same target's start time therefore get values that differ by their sampling skew — enough to break exact equality,<br/>
 /// which is exactly what <see cref="StartTimeReaderSkewTolerance"/> absorbs.</remarks>
-public sealed class ProcessIdentity
+public sealed class ProcessIdentity : IEquatable<ProcessIdentity>
 {
-   ///<summary>How far apart two readings of the same process's <see cref="Process.StartTime"/> — taken by two different<br/>
-   /// processes — may fall and still be treated as the same process. Comfortably above the observed cross-reader skew on<br/>
-   /// every supported OS, yet far below any interval in which the OS could recycle a process id AND the new owner could<br/>
-   /// start within this window of the original's start time, so it never conflates two genuinely different processes.</summary>
-   static readonly TimeSpan StartTimeReaderSkewTolerance = TimeSpan.FromSeconds(1);
-
    ///<summary>The identity of the process this code is running in — what a process identifying itself passes.</summary>
    public static ProcessIdentity OfCurrentProcess
    {
@@ -44,14 +38,8 @@ public sealed class ProcessIdentity
       StartTime = startTime.ToUniversalTimeSafely();
    }
 
-   ///<summary>True while the process this identifies is still running: a process with its id exists, and that process's<br/>
-   /// start time is close enough to this one's to be the same process rather than a recycled-id namesake. False once it<br/>
-   /// has exited — even if the OS has since given its id to a different, later-started process.</summary>
-   public bool IsCurrentlyRunning => ProcessCurrentlyHavingMyId() is {} currentHolderOfMyId && StartedCloseEnoughToBe(currentHolderOfMyId);
-
-   ///<summary>Whether <paramref name="other"/>'s start time is within <see cref="StartTimeReaderSkewTolerance"/> of this one's —<br/>
-   /// the tolerant stand-in for exact start-time equality, which is not read-stable across processes on every OS.</summary>
-   bool StartedCloseEnoughToBe(ProcessIdentity other) => (StartTime - other.StartTime).Duration() <= StartTimeReaderSkewTolerance;
+   ///<summary>True if the process this identifies is still running.</summary>
+   public bool IsCurrentlyRunning => ProcessCurrentlyHavingMyId() == this;
 
    ///<summary>The identity of whatever process currently holds this identity's id, or <c>null</c> if no process does.<br/>
    /// Probing and catching is the mechanism: the OS offers no "is the process that started at time T with id X alive" query.</summary>
@@ -60,15 +48,26 @@ public sealed class ProcessIdentity
       try
       {
          using var process = Process.GetProcessById(ProcessId);
-         return new ProcessIdentity(process.Id, process.StartTime);
+         return process.Identity;
       }
       catch(ArgumentException) //Process.GetProcessById throws this if and only if no process with the id is running — the id's owner has exited.
       {
          return null;
       }
-      catch(InvalidOperationException) //The process exited between GetProcessById above and reading its StartTime.
-      {
-         return null;
-      }
    }
+
+   ///<summary>How far apart two readings of the same process's <see cref="Process.StartTime"/> — taken by two different<br/>
+   /// processes — may fall and still be treated as the same process. Comfortably above the observed cross-reader skew on<br/>
+   /// every supported OS, yet far below any interval in which the OS could recycle a process id AND the new owner could<br/>
+   /// start within this window of the original's start time, so it never conflates two genuinely different processes.</summary>
+   static readonly TimeSpan StartTimeReaderSkewTolerance = TimeSpan.FromSeconds(1);
+
+   public bool Equals(ProcessIdentity? other) => other != null
+                                              && other.ProcessId == ProcessId
+                                              && (StartTime - other.StartTime).Duration() <= StartTimeReaderSkewTolerance;
+
+   public override bool Equals(object? obj) => Equals(obj as ProcessIdentity);
+   public override int GetHashCode() => ProcessId.GetHashCode();
+   public static bool operator ==(ProcessIdentity? left, ProcessIdentity? right) => Equals(left, right);
+   public static bool operator !=(ProcessIdentity? left, ProcessIdentity? right) => !Equals(left, right);
 }
