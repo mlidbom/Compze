@@ -4,7 +4,7 @@ All notable changes to Compze.Tessaging.PostgreSql will be documented in this fi
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
-## Unreleased
+## 0.2.0-alpha
 
 - `PgSqlTessagingSqlLayer()` demands the PostgreSQL type-id interner itself (`PgSqlTypeIdInterner()`) — interner wiring vanishes from composing layers.
 - `AddExactlyOnceTessaging(compose)` on `EndpointFoundation<PgSqlEndpointDatabase>`: adds exactly-once Tessaging to an endpoint whose database is PostgreSQL, registering Tessaging's PostgreSQL inbox/outbox sql layers — the engine pairing is routed by the compiler through the foundation's type.

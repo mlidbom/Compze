@@ -4,7 +4,7 @@ All notable changes to Compze.Internals.Transport.AspNet will be documented in t
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
-## Unreleased
+## 0.2.0-alpha
 
 - `TransportRequestController` serves the transient-tevent route (`internal/tessaging/transient-tevent`, `TransportRequestKind.TransientTevent`) alongside the existing kinds.
 - The protocol declaration composes: `AspNetCoreEndpointTransport()` on `ComposeEndpoint`'s composer returns the endpoint's `EndpointFoundation`.

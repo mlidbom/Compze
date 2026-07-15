@@ -4,7 +4,7 @@ All notable changes to Compze.Internals.Transport will be documented in this fil
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
-## Unreleased
+## 0.2.0-alpha
 
 - The discovery payload types are gone from this assembly: `EndpointInformationQuery`/`EndpointInformation` were Tessaging's discovery payload under a style-neutral name and moved to Compze.Tessaging as `TessagingEndpointInformationQuery`/`TessagingEndpointInformation`; the unused `NetworkTopologyQuery`/`NetworkTopology` are deleted. This assembly keeps only the style-neutral discovery mechanism (executor, registrar, transport, fixed wire format) — each communication style defines its own discovery query in its own assembly, exactly as Typermedia already did.
 - The transport server's component announces the endpoint's address in the host's dedicated announcing phase (after every endpoint's listening, before any endpoint's sending) and retracts in the mirror phase — announce/retract no longer piggyback on the sending phase, so a router's first look at a registry sees every endpoint its host announced.

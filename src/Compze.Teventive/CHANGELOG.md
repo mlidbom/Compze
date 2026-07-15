@@ -4,7 +4,7 @@ All notable changes to Compze.Teventive will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
-## Unreleased
+## 0.4.0-alpha
 
 - Added shared tomponents and tentities: `SharedTomponent`, `SharedTentity`, `SharedTentityCollection`, and `SharedTomponentSlot` - reusable teventive components and entities that any taggregate can own, rather than being nested in one specific taggregate's tevent hierarchy. A shared teventive's tevents are bare `ITevent`s rooted in its own hierarchy; the owner declares, per member slot, an adopting wrapper tevent (an owner tevent that is also an `IPublisherIdentifyingTevent<T>` of the shared teventive's tevents), and the slot wraps every published tevent in it and routes adopted tevents back to the shared teventive's appliers - during live publishing and history replay alike. Two same-typed members (a shipping and a billing address) are told apart by their slots' adopting wrapper types; individual tentities in a collection by the `ISharedTentityTevent<TTentityId>.EntityId` their tevents carry.
 - The close-the-wrapper-type-over-the-runtime-tevent-type mechanism has one home: `PublisherIdentifyingTevent.WrapIn` - taggregates wrapping in their declared wrapper implementations and shared-tomponent slots wrapping in their adopting wrapper tevents both close their wrapper type there. `TaggregateIdentifyingTevent.WrapIn` now delegates to it.

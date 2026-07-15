@@ -4,7 +4,7 @@ All notable changes to Compze.Tessaging will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
-## Unreleased
+## 0.4.0-alpha
 
 - The router's reconciliation is signal-driven: between passes it waits on the registry's change signal (`IEndpointRegistry.AwaitPossibleMembershipChange`), so an endpoint announcing or retracting propagates at signal latency instead of at the old once-per-second poll. The periodic pass remains (once a second) for what no signal can carry: a crashed process's addresses disappearing, and retrying connections that failed.
 - Declaring no discovery registry means the endpoint discovers nothing — it serves whatever reaches it, converses in-process, and self-sends, but connects to no other endpoint. The configuration fallback (`AppConfigEndpointRegistry`) is deleted: it was a never-implemented placeholder whose `NotSupportedException` crashed any no-registry endpoint at start.

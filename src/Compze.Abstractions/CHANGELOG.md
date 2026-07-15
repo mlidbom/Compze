@@ -4,7 +4,7 @@ All notable changes to Compze.Abstractions will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
-## Unreleased
+## 0.2.0-alpha
 
 - `IEndpointRegistryAndAnnouncer` — a registry with both faces of endpoint discovery: the `IEndpointRegistry` read side and the `IEndpointAddressAnnouncer` write side — what an endpoint participates in (`ParticipateIn(...)`). `ITestingEndpointHost.EndpointRegistry` exposes the testing host's own such registry, which every endpoint in the host participates in.
 - `IEndpointRegistry.AwaitPossibleMembershipChange(timeout, cancellationToken)`: how a router waits between reconciliation passes. A registry that can observe its own changes wakes its waiters at signal latency, so topology changes propagate nearly instantly; the default implementation waits out the timeout — right for a registry whose membership never changes on its own initiative. The timeout is not merely a fallback: no signal can announce a crashed process, and a failed connection needs a retry no membership change will trigger, so the periodic pass it drives must exist regardless.

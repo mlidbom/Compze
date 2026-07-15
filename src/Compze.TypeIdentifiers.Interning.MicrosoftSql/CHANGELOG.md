@@ -4,7 +4,7 @@ All notable changes to Compze.TypeIdentifiers.Interning.MicrosoftSql will be doc
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
-## Unreleased
+## 0.2.0-alpha
 
 - `MsSqlEndpointPersistence` is gone. The endpoint-database declaration (`MsSqlEndpointDatabase`) lives in `Compze.Internals.Sql.MicrosoftSql`, and this package is purely the interner again — the sql-layer features demand `MsSqlTypeIdInterner()` themselves, so interner wiring vanishes from composing layers.
 

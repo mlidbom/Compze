@@ -4,7 +4,7 @@ All notable changes to Compze.Internals.Serialization.Newtonsoft will be documen
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
-## Unreleased
+## 0.3.0-alpha
 
 - `NewtonsoftSerializer()`: fills a feature composition's Tessaging- or Typermedia-serializer slot — e.g. `AddExactlyOnceTessaging(tessaging => tessaging.NewtonsoftSerializer())`.
 - The tevent store serializer serializes the whole wrapped tevent - the `ITaggregateIdentifyingTevent<TTeventInterface>` wrapper with its inner tevent inside - as one object graph. The inner tevent's column-backed `TaggregateTevent` properties are still excluded from the json.

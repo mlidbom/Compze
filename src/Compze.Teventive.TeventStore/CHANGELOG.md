@@ -4,8 +4,9 @@ All notable changes to Compze.Teventive.TeventStore will be documented in this f
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
-## Unreleased
+## 0.4.0-alpha
 
+- The namespaces caught up with the package rename: `Compze.Tessaging.Teventive.TeventStore.*` is now `Compze.Teventive.TeventStore.*` — the namespaces this package's name has promised all along.
 - The store's currency is now the wrapped tevent: every tevent is persisted exactly as its taggregate published it, inside its publisher's `ITaggregateIdentifyingTevent<TTeventInterface>` wrapper. A row stores the closed wrapper type's `TypeId` and the serialized wrapper object graph, so publisher identity survives storage with zero information loss; hydration deserializes the wrapper and stamps the inner tevent's column-backed properties as before.
 - The migration pipeline speaks wrapped tevents end to end: `SingleTaggregateInstanceTeventStreamMutator`, `TeventModifier` (`RefactoredTevent.NewTevent` -> `NewWrappedTevent`, internal stream `Tevents` -> `WrappedTevents`), and `CompleteTeventStoreStreamMutator` all carry `ITaggregateIdentifyingTevent<ITaggregateTevent>`; the `EndOfTaggregateHistoryTeventPlaceHolder` is wrapped like every other tevent in the stream. Migration matching still inspects the inner creation tevent.
 - `SelfGeneratingQueryModel` mirrors `ITeventDispatcher`'s two dispatch forms: `ApplyTevent(TTaggregateTevent)` auto-wraps a tevent arriving without a wrapper (such as one delivered to an inner-typed bus subscription), and `ApplyTevent(IPublisherIdentifyingTevent<TTaggregateTevent>)` applies an already-wrapped tevent; `LoadFromHistory` takes the persisted wrapped tevents.

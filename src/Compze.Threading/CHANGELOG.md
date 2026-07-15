@@ -4,7 +4,7 @@ All notable changes to Compze.Threading will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
-## Unreleased
+## 0.8.0-alpha
 
 ### Added
 
