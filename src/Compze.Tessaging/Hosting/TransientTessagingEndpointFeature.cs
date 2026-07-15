@@ -6,7 +6,6 @@ using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Transport;
 using Compze.Tessaging.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
-using Compze.Tessaging.Implementation.Abstractions;
 using Compze.Tessaging.Implementation.TessageHandling.Abstractions;
 using Compze.Tessaging.Implementation.TransientDelivery;
 using Compze.Tessaging.Implementation.Transport;
@@ -106,6 +105,8 @@ public class TransientTessagingEndpointFeature
       var register = builder.Registrar;
       AssertTheEndpointsFoundationIsDeclared(register);
 
+      builder.TypeMapper.MapTypesFromAssemblyContaining<TessagingEndpointInformationQuery>(); // Compze.Tessaging — the tessaging discovery types
+
       var inProcessTessaging = builder.AddInProcessTessaging();
       _handlerRegistrar = inProcessTessaging.RegisterHandlers;
       _transactionIgnoringTeventHandlerRegistrar = inProcessTessaging.RegisterTransactionIgnoringTeventHandlers;
@@ -130,9 +131,8 @@ public class TransientTessagingEndpointFeature
          //Advertisement soundness fails at endpoint setup, not when the first peer queries: it asserts that every advertised type has a TypeId mapping and gets a route on the peers' routers.
          handlerRegistry.HandledRemoteTessageTypeIds();
 
-         TessageTypesInternal.RegisterEndpointDiscoveryQueryHandlers(
-            new EndpointDiscoveryQueryRegistrarWithDependencyInjectionSupport(resolver.Resolve<EndpointDiscoveryQueryExecutor>()),
-            EndpointRegistry(resolver));
+         TessagingEndpointDiscoveryQueryRegistration.RegisterQueryHandlers(
+            new EndpointDiscoveryQueryRegistrarWithDependencyInjectionSupport(resolver.Resolve<EndpointDiscoveryQueryExecutor>()));
       });
 
       builder.AddComponent(resolver => new TransientTessagingEndpointComponent(resolver, _transportServer, EndpointRegistry(resolver)));

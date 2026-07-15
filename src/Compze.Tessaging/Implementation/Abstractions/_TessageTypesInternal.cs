@@ -1,13 +1,4 @@
-// ReSharper disable RedundantNameQualifier
-// ReSharper disable UnusedTypeParameter
-// ReSharper disable MemberHidesStaticFromOuterClass
-
-using Compze.Abstractions.Hosting.Public;
 using Compze.Abstractions.Tessaging.Public;
-using Compze.Tessaging.Implementation.TessageHandling.Abstractions;
-using Compze.Internals.Transport;
-
-// ReSharper disable UnusedAutoPropertyAccessor.Global
 
 namespace Compze.Tessaging.Implementation.Abstractions;
 
@@ -17,12 +8,4 @@ public static class TessageTypesInternal
 #pragma warning disable CA1040 // Marker interface used for type-routing
    internal interface ITessage : IInternalInfrastructureTessage;
 #pragma warning restore CA1040
-
-   internal static void RegisterEndpointDiscoveryQueryHandlers(EndpointDiscoveryQueryRegistrarWithDependencyInjectionSupport registrar, IEndpointRegistry endpointRegistry)
-   {
-      registrar.ForQuery((EndpointInformationQuery _, ITessageHandlerRegistry tessagingRegistry, EndpointConfiguration configuration) =>
-                            new EndpointInformation(tessagingRegistry.HandledRemoteTessageTypeIds(), configuration));
-
-      registrar.ForQuery((NetworkTopologyQuery _) => new NetworkTopology(endpointRegistry.ServerEndpointAddresses));
-   }
 }

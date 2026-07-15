@@ -48,7 +48,7 @@ partial class TessagingConnection
 
                try
                {
-                  _connection._transportMessagePoster.PostAsync(pending, _connection._remoteAddress).GetAwaiter().GetResult();
+                  _connection._transportMessagePoster.PostAsync(pending, _connection.RemoteAddress).GetAwaiter().GetResult();
                   this.Log().Debug($"Delivered transient tessage {pending.TessageId} to endpoint {_connection.EndpointInformation.Id}");
                }
 #pragma warning disable CA1031 // Background thread, and the drop-stream-whole policy below IS the transient tier's handling of every delivery failure.

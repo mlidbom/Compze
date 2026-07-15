@@ -59,8 +59,7 @@ class ServerEndpointBuilder : IEndpointBuilder
 
    void SetupContainer()
    {
-      _typeMapper.MapTypesFromAssemblyContaining<EndpointAddress>();          // Compze.Abstractions — the shared message-type hierarchy and hosting contracts
-      _typeMapper.MapTypesFromAssemblyContaining<EndpointInformationQuery>(); // Compze.Internals.Transport — endpoint discovery infrastructure
+      _typeMapper.MapTypesFromAssemblyContaining<EndpointAddress>(); // Compze.Abstractions — the shared message-type hierarchy and hosting contracts
 
       //Guarded: a composition that supplies its own configuration source registers its IConfigurationParameterProvider in the endpoint setup; appsettings.json is only the default.
       if(!Registrar.IsRegistered<IConfigurationParameterProvider>())

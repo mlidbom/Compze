@@ -111,7 +111,7 @@ partial class TessagingConnection
       {
          try
          {
-            _connection._transportMessagePoster.PostAsync(pending, _connection._remoteAddress).GetAwaiter().GetResult();
+            _connection._transportMessagePoster.PostAsync(pending, _connection.RemoteAddress).GetAwaiter().GetResult();
 
             this.Log().Debug($"Delivered tessage {pending.TessageId} to endpoint {_connection.EndpointInformation.Id}");
             _connection._exceptionReporter.RunSwallowingAndReportingAnyExceptions(() => _tessageStorage.MarkAsReceived(pending.TessageId, _connection.EndpointInformation.Id));

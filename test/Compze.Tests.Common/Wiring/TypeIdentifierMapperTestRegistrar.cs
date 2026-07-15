@@ -1,5 +1,5 @@
 using Compze.Abstractions.Tessaging.Public;
-using Compze.Internals.Transport;
+using Compze.Tessaging.Implementation.Transport;
 using Compze.TypeIdentifiers;
 using Compze.Typermedia.Client;
 using Compze.DependencyInjection;
@@ -21,7 +21,7 @@ public static class TypeIdentifierMapperTestRegistrar
       var mapper = new TypeMapper();
       mapper.MapTypesFromAssemblyContaining<IExactlyOnceTevent>();            // Compze.Abstractions
       mapper.MapTypesFromAssemblyContaining<ITaggregateTevent>();             // Compze.Core
-      mapper.MapTypesFromAssemblyContaining<EndpointInformationQuery>();      // Compze.Internals.Transport
+      mapper.MapTypesFromAssemblyContaining<TessagingEndpointInformation>();  // Compze.Tessaging — the tessaging discovery types
       mapper.MapTypesFromAssemblyContaining<TypermediaEndpointInformation>(); // Compze.Typermedia.Client
       registerDomainTypeMappings(mapper);
       return @this.Register(Singleton.For<ITypeMapper>().Instance(mapper))

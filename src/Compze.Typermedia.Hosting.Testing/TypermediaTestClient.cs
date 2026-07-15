@@ -9,7 +9,6 @@ using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Internals.Testing;
-using Compze.Internals.Transport;
 
 namespace Compze.Typermedia.Hosting.Testing;
 
@@ -70,7 +69,6 @@ public static class TypermediaClientTypeIdentifierMapperRegistrar
    {
       var mapper = new TypeMapper();
       mapper.MapTypesFromAssemblyContaining<EndpointAddress>();               // Compze.Abstractions — the shared message-type hierarchy
-      mapper.MapTypesFromAssemblyContaining<EndpointInformationQuery>();      // Compze.Internals.Transport — endpoint discovery infrastructure
       mapper.MapTypesFromAssemblyContaining<TypermediaEndpointInformation>(); // Compze.Typermedia.Client — the typermedia discovery types
       registerDomainTypeMappings(mapper);
       return @this.Register(Singleton.For<ITypeMapper>().Instance(mapper))

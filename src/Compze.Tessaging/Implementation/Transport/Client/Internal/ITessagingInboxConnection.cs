@@ -1,6 +1,5 @@
 using Compze.Abstractions.Public;
 using Compze.Abstractions.Tessaging.Public;
-using Compze.Internals.Transport;
 
 namespace Compze.Tessaging.Implementation.Transport.Client.Internal;
 
@@ -9,7 +8,7 @@ namespace Compze.Tessaging.Implementation.Transport.Client.Internal;
 /// is wired — see <c>src/Compze.Tessaging/dev_docs/tevent-delivery-model.md</c>.</summary>
 interface ITessagingInboxConnection
 {
-    EndpointInformation EndpointInformation { get; }
+    TessagingEndpointInformation EndpointInformation { get; }
 
     ///<summary>Queues <paramref name="tessage"/> on the connection's exactly-once stream: backed by the outbox's storage,<br/>
     /// head-of-line retried until delivered and acknowledged, the backlog surviving restarts in send order. Only the outbox<br/>

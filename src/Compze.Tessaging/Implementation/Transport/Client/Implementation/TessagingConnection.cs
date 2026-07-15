@@ -15,13 +15,12 @@ namespace Compze.Tessaging.Implementation.Transport.Client.Implementation;
 
 partial class TessagingConnection : ITessagingInboxConnection, IDisposable
 {
-   public EndpointInformation EndpointInformation { get; private set; } = null!;
+   public TessagingEndpointInformation EndpointInformation { get; private set; } = null!;
 
    ///<summary>The address this connection delivers to — the endpoint's location when the connection was made; the endpoint's identity is <see cref="EndpointInformation"/>'s id.</summary>
-   internal EndpointAddress RemoteAddress => _remoteAddress;
+   internal EndpointAddress RemoteAddress { get; }
 
    readonly ITessagesInFlightTracker _tessagesInFlightTracker;
-   readonly EndpointAddress _remoteAddress;
    readonly ITypeMap _typeMap;
    readonly ITessagingSerializer _serializer;
    readonly ITransportMessagePoster _transportMessagePoster;
@@ -45,7 +44,7 @@ partial class TessagingConnection : ITessagingInboxConnection, IDisposable
                                 IBackgroundExceptionReporter exceptionReporter)
    {
       _tessagesInFlightTracker = tessagesInFlightTracker;
-      _remoteAddress = remoteAddress;
+      RemoteAddress = remoteAddress;
       _typeMap = typeMap;
       _serializer = serializer;
       _transportMessagePoster = transportMessagePoster;
@@ -61,7 +60,7 @@ partial class TessagingConnection : ITessagingInboxConnection, IDisposable
    }
 
    public async Task InitAsync() =>
-      EndpointInformation = await _endpointDiscoveryQueryTransport.GetAsync(new EndpointInformationQuery(), _remoteAddress).caf();
+      EndpointInformation = await _endpointDiscoveryQueryTransport.GetAsync(new TessagingEndpointInformationQuery(), RemoteAddress).caf();
 
    public void EnqueueForExactlyOnceDelivery(ITessage tessage, TessageId dedupId)
    {
