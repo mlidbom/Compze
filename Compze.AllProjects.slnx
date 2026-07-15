@@ -146,10 +146,10 @@
   </Folder>
   <Folder Name="/~Solution Structure/">
     <Project Path="src/msbuild/Solution.Build.csproj" />
+    <Project Path="src/SolutionStructure/Solution.DevDocs.csproj" />
     <Project Path="src/SolutionStructure/Solution.EditorConfigs.csproj" />
     <Project Path="src/SolutionStructure/Solution.README.csproj" />
     <Project Path="src/SolutionStructure/Solution.TestConfig.csproj" />
-    <Project Path="src/SolutionStructure/Solution.TODO.csproj" />
   </Folder>
   <Folder Name="/Compze.DependencyInjection/">
     <Project Path="src/Compze.DependencyInjection.Extensions.Hosting/Compze.DependencyInjection.Extensions.Hosting.csproj" />
