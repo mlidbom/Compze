@@ -69,7 +69,7 @@ static class TeventPublisherRegistrar
             return () => exactlyOnceDeliveryLeg.PublishTransactionally(exactlyOnceTevent);
          case IPublisherTevent<IRemotableTevent> transientTevent:
             if(_transientDeliveryLeg is not {} transientDeliveryLeg)
-               return NoRemoteDeliveryOnThisDeliberatelyInProcessEndpoint(transientTevent.Tevent, unwiredLeg: "the transient delivery leg (wired by distributed Tessaging)");
+               return NoRemoteDeliveryOnThisDeliberatelyInProcessEndpoint(transientTevent.Tevent, unwiredLeg: "the transient delivery leg (wired by transient and distributed Tessaging alike)");
             TessageInspector.AssertValidToSendRemote(transientTevent.Tevent);
             return () => transientDeliveryLeg.PublishBestEffort(transientTevent);
          default:

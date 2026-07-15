@@ -40,8 +40,15 @@ public sealed class TransportRequestHandlerMap
    }
 
    ///<summary>Dispatches <paramref name="request"/> to the handler registered for its <see cref="TransportRequest.Kind"/> and<br/>
-   /// returns the handler's response payload.</summary>
-   public async Task<string> HandleAsync(TransportRequest request) => await _handlers[request.Kind](request).caf();
+   /// returns the handler's response payload. A kind no contribution handles fails loud, naming the gap: it means a peer sent this<br/>
+   /// endpoint a request its composition does not wire the capability to serve — the request must fail on the sender, never be<br/>
+   /// silently dropped here.</summary>
+   public async Task<string> HandleAsync(TransportRequest request)
+   {
+      if(!_handlers.TryGetValue(request.Kind, out var handler))
+         throw new InvalidOperationException($"This endpoint's transport server has no handler for {request.Kind} requests: the endpoint's composition does not wire the capability that serves them. The kinds it serves: {string.Join(", ", _handlers.Keys)}.");
+      return await handler(request).caf();
+   }
 
    ///<summary>The server side of endpoint-discovery queries: deserializes the query from the fixed discovery format<br/>
    /// (<see cref="EndpointDiscoverySerializer"/>), executes it, and serializes the result back.</summary>

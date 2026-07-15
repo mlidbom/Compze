@@ -352,10 +352,17 @@ is FIXED (2026-07-13): `GetUndeliveredTessagesForEndpoint` orders by the outbox 
       hatch is the ordinary publisher under transaction suppression, rejecting `IMustBeSentTransactionally`
       tevents loudly. Specified in `Tevent_observation_tests`, `Transaction_ignoring_tevent_publisher_tests`,
       and the in-process container specs.
-- [ ] Once the router honors the full advertised set, assert loudly that every advertised
+- [x] Once the router honors the full advertised set, assert loudly that every advertised
       non-infrastructure type gets a route, so a future regression fails instead of silently dropping
-      subscriptions. (The tevent side is honored as of 2026-07-14; tommand routes remain exactly-once-only,
-      so the assert still needs the tommand story settled first.)
+      subscriptions — DONE (2026-07-15), on both ends: `TessageHandlerRegistry.HandledRemoteTessageTypeIds`
+      asserts the advertised set's soundness at the advertising endpoint's setup (where a violation fails
+      loudest), and `TessagingRouter.RegisterRoutes` asserts route-by-route that every advertised type lands
+      a route. The tommand story is settled by the same assert: Tessaging routes tommands exactly-once only
+      (the transient tier is a tevent concept; the synchronous ask lives in Typermedia), so a remotable
+      non-exactly-once tommand handler fails loud instead of advertising a dead type. Alongside it the
+      setup-time wiring rule and the guarantee-free `AddTransientTessaging` composition on the database-less
+      foundation are built — see `src/Compze.Tessaging/_docs/tevent-delivery-model.md`; the D6 feature is
+      now fully implemented.
 - [x] RESOLVED (2026-07-13): should tevent subscribers be able to choose a lighter delivery guarantee than
       the tevent type's own (`_TessageTypes..Interfaces.cs:78-79`)? Yes, but only as a **binary** opt-out —
       the default is the type's declared guarantee; `RegisterTransactionIgnoringTeventHandlers()` opts fully

@@ -27,8 +27,8 @@ class TessagingRouter : ITessagingRouter, IDisposable
 {
    public static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(Singleton.For<ITessagingRouter>().CreatedBy(
-            (ITessagesInFlightTracker tessagesInFlightTracker, ITypeMap typeMap, ITessagingSerializer serializer, ITransportMessagePoster transportMessagePoster, IEndpointDiscoveryQueryTransport endpointDiscoveryQueryTransport, Outbox.Outbox.ITessageStorage tessageStorage, ITaskRunner taskRunner, IBackgroundExceptionReporter exceptionReporter)
-               => new TessagingRouter(tessagesInFlightTracker, typeMap, serializer, transportMessagePoster, endpointDiscoveryQueryTransport, tessageStorage, taskRunner, exceptionReporter)));
+            (ITessagesInFlightTracker tessagesInFlightTracker, ITypeMap typeMap, ITessagingSerializer serializer, ITransportMessagePoster transportMessagePoster, IEndpointDiscoveryQueryTransport endpointDiscoveryQueryTransport, IComponentSet<TessagingConnection.ExactlyOnceDeliveryStream.Factory> exactlyOnceStreamFactory, ITaskRunner taskRunner, IBackgroundExceptionReporter exceptionReporter)
+               => new TessagingRouter(tessagesInFlightTracker, typeMap, serializer, transportMessagePoster, endpointDiscoveryQueryTransport, exactlyOnceStreamFactory, taskRunner, exceptionReporter)));
 
    static readonly TimeSpan ReconcileInterval = TimeSpan.FromSeconds(1);
 
@@ -38,7 +38,8 @@ class TessagingRouter : ITessagingRouter, IDisposable
    readonly ITessagingSerializer _serializer;
    readonly ITransportMessagePoster _transportMessagePoster;
    readonly IEndpointDiscoveryQueryTransport _endpointDiscoveryQueryTransport;
-   readonly Outbox.Outbox.ITessageStorage _tessageStorage;
+   //Null when the endpoint wires no outbox — the guarantee-free transient composition: its connections then carry no exactly-once delivery stream.
+   readonly TessagingConnection.ExactlyOnceDeliveryStream.Factory? _exactlyOnceStreamFactory;
    readonly ITaskRunner _taskRunner;
    readonly IBackgroundExceptionReporter _exceptionReporter;
 
@@ -56,14 +57,14 @@ class TessagingRouter : ITessagingRouter, IDisposable
    readonly List<(Type TeventType, TessagingConnection Connection)> _teventSubscriberRoutes = [];
    readonly Dictionary<Type, IReadOnlyList<TessagingConnection>> _teventSubscriberRouteCache = new();
 
-   TessagingRouter(ITessagesInFlightTracker tessagesInFlightTracker, ITypeMap typeMap, ITessagingSerializer serializer, ITransportMessagePoster transportMessagePoster, IEndpointDiscoveryQueryTransport endpointDiscoveryQueryTransport, Outbox.Outbox.ITessageStorage tessageStorage, ITaskRunner taskRunner, IBackgroundExceptionReporter exceptionReporter)
+   TessagingRouter(ITessagesInFlightTracker tessagesInFlightTracker, ITypeMap typeMap, ITessagingSerializer serializer, ITransportMessagePoster transportMessagePoster, IEndpointDiscoveryQueryTransport endpointDiscoveryQueryTransport, IEnumerable<TessagingConnection.ExactlyOnceDeliveryStream.Factory> exactlyOnceStreamFactory, ITaskRunner taskRunner, IBackgroundExceptionReporter exceptionReporter)
    {
       _tessagesInFlightTracker = tessagesInFlightTracker;
       _typeMap = typeMap;
       _serializer = serializer;
       _transportMessagePoster = transportMessagePoster;
       _endpointDiscoveryQueryTransport = endpointDiscoveryQueryTransport;
-      _tessageStorage = tessageStorage;
+      _exactlyOnceStreamFactory = exactlyOnceStreamFactory.SingleOrDefault();
       _taskRunner = taskRunner;
       _exceptionReporter = exceptionReporter;
    }
@@ -149,7 +150,7 @@ class TessagingRouter : ITessagingRouter, IDisposable
    async Task ConnectAsync(EndpointAddress remoteEndpointAddress)
    {
 #pragma warning disable CA2000//We are passing this disposable into a collection that we track disposal for
-      var connection = new TessagingConnection(_tessagesInFlightTracker, remoteEndpointAddress, _typeMap, _serializer, _transportMessagePoster, _endpointDiscoveryQueryTransport, _tessageStorage, _taskRunner, _exceptionReporter);
+      var connection = new TessagingConnection(_tessagesInFlightTracker, remoteEndpointAddress, _typeMap, _serializer, _transportMessagePoster, _endpointDiscoveryQueryTransport, _exactlyOnceStreamFactory, _taskRunner, _exceptionReporter);
 #pragma warning restore CA2000
 
       await connection.InitAsync().caf();
@@ -210,6 +211,10 @@ class TessagingRouter : ITessagingRouter, IDisposable
          RegisterRoutes(connection, connection.EndpointInformation.HandledTessageTypes);
    }
 
+   ///<summary>Builds a route for <em>every</em> type <paramref name="connection"/>'s endpoint advertises — an advertised type no<br/>
+   /// route serves would be a silently dead subscription, so anything unroutable is asserted against instead of skipped.<br/>
+   /// <see cref="TessageHandling.Abstractions.ITessageHandlerRegistry.HandledRemoteTessageTypeIds"/> asserts the same soundness on<br/>
+   /// the advertising endpoint at its start, where a violation fails loudest.</summary>
    void RegisterRoutes(TessagingConnection connection, ISet<string> handledTypeIdStrings)
    {
       foreach(var typeIdString in handledTypeIdStrings)
@@ -220,12 +225,13 @@ class TessagingRouter : ITessagingRouter, IDisposable
          {
             //An advertised tevent subscription is a wrapper type; covariance answers whether the tevents it matches may travel remotely at all.
             //Which delivery leg a matching tevent travels is not routing's concern - the published tevent's own type decides that (see ITeventPublisher).
-            if(tessageType.Is<IPublisherTevent<IRemotableTevent>>())
-            {
-               _teventSubscriberRoutes.Add((tessageType, connection));
-            }
-         } else if(tessageType.Is<IExactlyOnceTommand>())
+            State.Assert(tessageType.Is<IPublisherTevent<IRemotableTevent>>(),
+                         () => $"Endpoint {connection.EndpointInformation.Id} advertises the tevent subscription {tessageType.FullName}, which no route can serve: an advertised tevent subscription is the wrapper type matching every wrapping of a remotable tevent type ({nameof(IPublisherTevent<>)}<{nameof(IRemotableTevent)}>). Every advertised type must get a route — a subscription must never be silently dropped.");
+            _teventSubscriberRoutes.Add((tessageType, connection));
+         } else
          {
+            State.Assert(tessageType.Is<IExactlyOnceTommand>(),
+                         () => $"Endpoint {connection.EndpointInformation.Id} advertises the tessage type {tessageType.FullName}, which no route can serve: Tessaging routes tommands exactly-once only ({nameof(IExactlyOnceTommand)} — see src/Compze.Tessaging/_docs/tevent-delivery-model.md). Every advertised type must get a route — a subscription must never be silently dropped.");
             _tommandHandlerRoutes.Add(tessageType, connection);
          }
       }

@@ -1,77 +1,56 @@
-using Compze.Abstractions.Configuration.Internal;
 using Compze.Abstractions.Serialization.Internal;
 using Compze.Abstractions.Hosting.Public;
 using Compze.Contracts;
-using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Transport;
 using Compze.Tessaging.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
 using Compze.Tessaging.Implementation;
-using Compze.Tessaging.Implementation.Abstractions;
 using Compze.Tessaging.Implementation.Outbox;
 using Compze.Tessaging.Implementation.TessageHandling.Inbox;
-using Compze.Tessaging.Implementation.TransientDelivery;
-using Compze.Tessaging.Implementation.Transport;
-using Compze.Tessaging.Implementation.Transport.Abstractions;
-using Compze.Tessaging.Implementation.Transport.Client.Implementation;
 using Compze.Tessaging.Implementation.Transport.Client.Routing;
-using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.Tessaging.Transport.SqlLayer;
 using Compze.Tessaging.Transport;
-using Compze.Internals.Transport.NamedPipes;
 
 namespace Compze.Tessaging.Hosting;
 
 ///<summary>
-/// Wires the distributed Tessaging pipeline — inbox, outbox, tommand scheduler, router, service bus
-/// session — into an endpoint: everything in-process Tessaging has
-/// (<see cref="InProcessTessagingEndpointFeature"/>, which it composes), plus the machinery through which the
-/// endpoint converses with other endpoints. Wiring the outbox is what wires the endpoint's durable tevent
-/// delivery leg, through which the endpoint's <see cref="Compze.Abstractions.Tessaging.Public.ITeventPublisher"/>
-/// routes every published <see cref="Compze.Abstractions.Tessaging.Public.IExactlyOnceTevent"/> to its remote
-/// subscribers; the transient delivery leg the feature also wires carries every published
-/// <see cref="Compze.Abstractions.Tessaging.Public.IRemotableTevent"/> whose type declares no exactly-once
-/// guarantee to them best-effort. Created idempotently through
+/// Wires the full distributed Tessaging pipeline — inbox, outbox, tommand scheduler, service bus session —
+/// into an endpoint: everything the transport-speaking transient core has
+/// (<see cref="TransientTessagingEndpointFeature"/>, which it composes — the transport server, the router, and
+/// the transient tevent delivery leg — itself composing <see cref="InProcessTessagingEndpointFeature"/>), plus
+/// the exactly-once vertical. Wiring the outbox is what wires the endpoint's durable tevent delivery leg,
+/// through which the endpoint's <see cref="Compze.Abstractions.Tessaging.Public.ITeventPublisher"/> routes
+/// every published <see cref="Compze.Abstractions.Tessaging.Public.IExactlyOnceTevent"/> to its remote
+/// subscribers — and what grants each of the router's connections its durable, restart-surviving exactly-once
+/// delivery stream. Created idempotently through
 /// <see cref="EndpointBuilderTessagingExtensions.AddDistributedTessaging"/> /
 /// <see cref="IEndpointBuilder.GetOrAddFeature{TFeature}"/>: this is how distributed Tessaging plugs into a
 /// hosting mechanism that knows nothing of it, and the feature instance is the handle through which the
-/// endpoint's tessaging handlers are registered (<see cref="_handlerRegistrar"/>).
+/// endpoint's tessaging handlers are registered (<see cref="RegisterHandlers"/>).
 ///
-/// Serving is done by the endpoint's one transport server (<see cref="EndpointTransportServerFeature"/>,
-/// which it composes): the feature registers Tessaging's request-handling contribution
-/// (<see cref="TessagingTransportServerRegistrar.TessagingTransportServer"/>) and the client that posts tessages
-/// (<see cref="TransportMessagePosterRegistrar.TessagingTransportMessagePoster"/>) itself — both protocol-free, so the
-/// composing layer declares only the endpoint's transport protocol
-/// (e.g. <see cref="NamedPipeEndpointTransportRegistrar.NamedPipeEndpointTransport(IComponentRegistrar)"/>).
-///
-/// How the endpoint finds other endpoints and is found by them is declared on the feature itself:
-/// <see cref="DiscoverEndpointsThrough"/> (the read side), <see cref="AnnounceAddressTo"/> (the write side), or
-/// <see cref="ParticipateIn{TRegistry}"/> (both at once, for a registry that has both faces — a same-machine
-/// suite's interprocess registry). One registration is guarded with <c>IsRegistered</c> so a hosting layer can
-/// pre-register its own before the feature is added: the in-flight tracker (a testing host supplies a real one
-/// to await quiescence; the default does nothing). The runtime lifecycle lives in
-/// <see cref="DistributedTessagingEndpointComponent"/>, and the endpoint's address is exposed as the
-/// <c>TessagingAddress</c> extension property (<see cref="EndpointTessagingExtensions"/>).
+/// The feature registers the exactly-once request handling served by the endpoint's one transport server
+/// (<see cref="ExactlyOnceTessagingRequestHandlersRegistrar.ExactlyOnceTessagingRequestHandlers"/>) — arriving
+/// exactly-once tevents and tommands are received into the inbox. Discovery — how the endpoint finds other
+/// endpoints and is found by them — is the composed core's concern, reached through the delegating
+/// <see cref="DiscoverEndpointsThrough"/>, <see cref="AnnounceAddressTo"/>, and <see cref="ParticipateIn{TRegistry}"/>.
+/// The exactly-once pipeline's runtime lifecycle lives in <see cref="DistributedTessagingEndpointComponent"/>.
 ///</summary>
 public class DistributedTessagingEndpointFeature
 {
-   readonly ITessageHandlerRegistrar _handlerRegistrar;
+   readonly TransientTessagingEndpointFeature _transientTessagingCore;
 
    public DistributedTessagingEndpointFeature RegisterHandlers(Action<ITessageHandlerRegistrar> registrar)
    {
-      registrar(_handlerRegistrar);
+      _transientTessagingCore.RegisterHandlers(registrar);
       return this;
    }
-
-   readonly EndpointTransportServerFeature _transportServer;
-   IEndpointRegistry? _endpointRegistry;
 
    ///<summary>Declares that the endpoint announces where it listens to <paramref name="announcer"/> — see<br/>
    /// <see cref="EndpointTransportServerFeature.AnnounceAddressTo"/>, to which this delegates: the announced address is the<br/>
    /// endpoint's one transport-server address, serving every distributed capability the endpoint speaks.</summary>
    public DistributedTessagingEndpointFeature AnnounceAddressTo(IEndpointAddressAnnouncer announcer)
    {
-      _transportServer.AnnounceAddressTo(announcer);
+      _transientTessagingCore.AnnounceAddressTo(announcer);
       return this;
    }
 
@@ -81,8 +60,7 @@ public class DistributedTessagingEndpointFeature
    /// (<see cref="AppConfigEndpointRegistry"/>).</summary>
    public DistributedTessagingEndpointFeature DiscoverEndpointsThrough(IEndpointRegistry registry)
    {
-      State.Assert(_endpointRegistry is null, () => $"The endpoint already declared the registry it discovers endpoints through — an endpoint discovers through exactly one {nameof(IEndpointRegistry)}.");
-      _endpointRegistry = registry;
+      _transientTessagingCore.DiscoverEndpointsThrough(registry);
       return this;
    }
 
@@ -99,36 +77,16 @@ public class DistributedTessagingEndpointFeature
       var register = builder.Registrar;
       AssertTheEndpointsFoundationIsDeclared(register);
 
-      _handlerRegistrar = builder.AddInProcessTessaging().RegisterHandlers;
-      _transportServer = EndpointTransportServerFeature.GetOrAddTo(builder);
+      _transientTessagingCore = builder.AddTransientTessaging();
 
-      if(!register.IsRegistered<ITessagesInFlightTracker>())
-      {
-         register.Register(Singleton.For<ITessagesInFlightTracker>().CreatedBy(() => new NullOpTessagesInFlightTracker()));
-      }
-
-      //The background-exception reporter arrives with the in-process core the feature composes above.
-      register.TaskRunner()
-              .TessagingTransport()
-              .TransientTeventDelivery()
-              .TessagingTransportMessagePoster()
-              .TessagingTransportServer()
-              .Outbox()
+      register.Outbox()
               .Inbox()
               .TommandScheduler()
-              .ServiceBusSession();
+              .ServiceBusSession()
+              .ExactlyOnceTessagingRequestHandlers();
 
-      builder.OnContainerBuilt(resolver => TessageTypesInternal.RegisterEndpointDiscoveryQueryHandlers(
-                                  new EndpointDiscoveryQueryRegistrarWithDependencyInjectionSupport(resolver.Resolve<EndpointDiscoveryQueryExecutor>()),
-                                  EndpointRegistry(resolver)));
-
-      builder.AddComponent(resolver => new DistributedTessagingEndpointComponent(resolver, _transportServer, EndpointRegistry(resolver)));
+      builder.AddComponent(resolver => new DistributedTessagingEndpointComponent(resolver));
    }
-
-   ///<summary>The registry the endpoint declared through <see cref="DiscoverEndpointsThrough"/>, or — when it declared none — the<br/>
-   /// fallback that reads other endpoints' addresses from application configuration.</summary>
-   IEndpointRegistry EndpointRegistry(IRootResolver resolver) =>
-      _endpointRegistry ??= new AppConfigEndpointRegistry(resolver.Resolve<IConfigurationParameterProvider>());
 
    ///<summary>Distributed Tessaging builds on declarations the feature cannot make itself: the endpoint's transport protocol, its<br/>
    /// persistence, and the Tessaging serializer. Each missing one fails here, when the feature is added, with an error naming the<br/>
@@ -138,7 +96,7 @@ public class DistributedTessagingEndpointFeature
       State.Assert(register.IsRegistered<IEndpointTransportServer>(),
                    () => "The endpoint declares no transport protocol. Declare it before adding distributed Tessaging — e.g. ComposeEndpoint(it => it.NamedPipeEndpointTransport()...) — or register NamedPipeEndpointTransport()/AspNetCoreEndpointTransport().");
       State.Assert(register.IsRegistered<IServiceBusSqlLayer.IInboxSqlLayer>() && register.IsRegistered<IServiceBusSqlLayer.IOutboxSqlLayer>(),
-                   () => "The endpoint declares no Tessaging persistence. Add the feature on a foundation whose database is declared — e.g. ComposeEndpoint(it => ...SqliteEndpointDatabase(...)).AddDistributedTessaging(...) — or register Tessaging's sql layers (e.g. SqliteTessagingSqlLayer()) before adding it.");
+                   () => "The endpoint declares no Tessaging persistence. Add the feature on a foundation whose database is declared — e.g. ComposeEndpoint(it => ...SqliteEndpointDatabase(...)).AddDistributedTessaging(...) — or register Tessaging's sql layers (e.g. SqliteTessagingSqlLayer()) before adding it. An endpoint that deliberately persists nothing speaks guarantee-free Tessaging instead: AddTransientTessaging(...).");
       State.Assert(register.IsRegistered<ITessagingSerializer>(),
                    () => "The endpoint declares no Tessaging serializer. Fill the serializer slot when adding the feature — e.g. AddDistributedTessaging(tessaging => tessaging.NewtonsoftSerializer()) — or register one (e.g. NewtonsoftTessagingSerializer()) before adding it.");
    }

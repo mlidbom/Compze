@@ -24,7 +24,8 @@ namespace Compze.Tessaging.Hosting;
 ///<remarks>
 /// Whether a tevent crosses the wire is not an endpoint-wide mode but a property of each tevent's type,
 /// honored by the delivery legs the composition wires (<c>src/Compze.Tessaging/_docs/tevent-delivery-model.md</c>) —
-/// <see cref="DistributedTessagingEndpointFeature"/> composes this feature and wires the durable leg. That is
+/// <see cref="TransientTessagingEndpointFeature"/> composes this feature and wires the transient leg, and
+/// <see cref="DistributedTessagingEndpointFeature"/> composes that core and wires the durable leg. That is
 /// what keeps handler registration (<see cref="RegisterHandlers"/>) order-independent of every other
 /// Tessaging declaration.
 ///</remarks>

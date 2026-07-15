@@ -206,11 +206,18 @@ hatch, and it is why the escape hatch is for infrastructure, never domain logic:
 
 ### Wiring rules — loud failure, one direction
 
-- A subscription demanding *more* than the endpoint can deliver fails at setup: a default subscription to an
-  `IExactlyOnceTevent` on an endpoint with no inbox wired is an error.
-- Observation is allowed anywhere — direct dispatch needs no machinery.
+- A subscription demanding *more* than the endpoint can deliver fails at setup: a subscription to an
+  `IExactlyOnceTevent` — either kind — or an `IExactlyOnceTommand` handler on an endpoint with no inbox wired
+  is an error. Observation is no exception, even though its dispatch needs no machinery: an observation
+  subscription joins the advertisement, and observing a remote exactly-once tevent still requires *receiving*
+  it exactly-once — the dedup shield the observation contract promises IS the inbox's. An endpoint that
+  cannot honor a guarantee must not advertise for it.
 - The reverse never fails: an endpoint with the full durable pipeline delivers a transient tevent
   transiently. Capability above the contract is simply unused.
+- The dynamic remainder fails loud at receive: a *wide* subscription (say, to a plain `ITevent` interface)
+  can match a remote publisher's exactly-once tevent no setup-time rule could see. Arriving exactly-once
+  traffic on an endpoint without the inbox is refused — the request fails on the sender and the tessage stays
+  safely undelivered in the sender's outbox — never silently downgraded.
 
 ## Ordering
 
@@ -289,6 +296,29 @@ As of 2026-07-15:
   remote delivery but not the leg a tevent's contract demands fails the publish naming the missing leg
   (zero wired legs remains the deliberately local composition, where participation serves every subscriber
   that exists).
+- The guarantee-free Tessaging composition on the database-less endpoint foundation (2026-07-15):
+  `AddTransientTessaging(tessaging => tessaging.NewtonsoftSerializer())` — the transport-speaking Tessaging
+  core, which the full distributed pipeline composes and extends. It wires the transport server, the router,
+  and the transient delivery leg on the plain (database-less) `EndpointFoundation`: no outbox, no inbox, no
+  SQL anywhere — the transient tier and participation are all the delivery there is. A connection carries one
+  delivery stream per tier the endpoint wires (the in-memory transient stream always; the durable
+  exactly-once stream exactly when the outbox's wiring grants the router its storage-backed stream factory),
+  and the router's delivery lifecycle belongs to this core — the outbox's lifecycle is its storage. Proven
+  across real OS processes with no database in either process
+  (`Given_a_separate_process_hosting_a_transient_tessaging_endpoint_discovered_through_a_shared_interprocess_registry`).
+- The setup-time wiring rule and the every-advertised-type-gets-a-route assert (2026-07-15). On an endpoint
+  whose composition wires no exactly-once machinery, registering a handler for a tessage type that declares
+  the exactly-once contract fails at setup, naming the types — observation subscriptions included, because an
+  observation subscription joins the advertisement and observing a remote exactly-once tevent still requires
+  receiving it exactly-once; advertising a subscription the endpoint cannot honor would pull exactly-once
+  traffic it must refuse, stalling every sender's in-order delivery to it. And the advertisement asserts its
+  own soundness at endpoint setup: every advertised type must be one the peers' routers can serve (tevent
+  subscriptions as wrapper-of-remotable types; tommands exactly-once only — anything else fails loud instead
+  of becoming a silently dead subscription), with the routers asserting the same contract again route by
+  route. An arriving exactly-once tessage on an endpoint without the inbox is refused loud — the transport
+  server serves no handler for the request kind — so the tessage stays undelivered on the sender, never
+  silently downgraded; this is reachable through a wide subscription (say, to a plain `ITevent` interface)
+  that a remote publisher's exactly-once tevent happens to match, which no setup-time rule can see.
 - The transaction-ignoring escape hatches (2026-07-15). Subscribe side:
   `RegisterTransactionIgnoringTeventHandlers` (an endpoint-builder property, backed by
   `ITransactionIgnoringTeventHandlerRegistrar` — a separate registrar, so opting out of every guarantee is
@@ -305,10 +335,9 @@ As of 2026-07-15:
   the transient leg sends right away) — and it rejects any tevent implementing `IMustBeSentTransactionally`,
   loudly.
 
-**Decided, not yet built** (work items live in the D6 section of
-`src/TODO/TODO_type-assignability-routing-and-publisher-identifying-tevents.md`):
-
-- The setup-time wiring rule (a default subscription demanding more than the endpoint can deliver fails at
-  setup) and the loud assert that every advertised non-infrastructure type gets a route.
-- The guarantee-free Tessaging composition on the database-less endpoint foundation — no outbox, no inbox,
-  no SQL: the transient tier and participation only.
+Everything this document describes is built. One refinement the guarantee-free composition forced on the
+wiring rules as first written: "Observation is allowed anywhere — direct dispatch needs no machinery" holds
+for every tevent an endpoint can actually encounter, but a *statically exactly-once* observation subscription
+on an endpoint without the exactly-once machinery is rejected at setup like the default kind — it would join
+the advertisement and pull exactly-once traffic the endpoint must refuse, and the dedup shield the observation
+contract promises rides the inbox it does not have.

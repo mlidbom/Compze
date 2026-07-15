@@ -3,6 +3,7 @@ using Compze.TypeIdentifiers;
 using Compze.Tessaging.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Abstractions.Tessaging.Validation;
+using Compze.Contracts;
 using Compze.Tessaging.Implementation.TessageHandling.Abstractions;
 using Compze.Tessaging.Implementation.Abstractions;
 using Compze.DependencyInjection;
@@ -96,15 +97,27 @@ sealed class TessageHandlerRegistry(ITypeMap typeMap) : ITessageHandlerRegistrar
 
    public ISet<TypeId> HandledRemoteTessageTypeIds()
    {
-      //A tevent subscription is advertised in its translated form - the wrapper type matching every wrapping of the subscribed type - because that is the type remote routing matches wrapped tevents against.
+      //A tevent subscription is advertised in its translated form - the wrapper type matching every wrapping of the subscribed type - because that is the type remote
+      //routing matches wrapped tevents against. Advertised = routable: the filter is the exact shape the routers build tevent routes from (wrapper-of-remotable), so a
+      //subscription to a type outside it is a purely local subscription, truthfully absent from the advertisement.
       var handledTeventTypes = _registeredTeventTypes
-                              .Where(IsRemotableNonInfrastructureTessage)
-                              .Select(PublisherIdentifyingTevent.WrapperTypeMatchingAllWrappingsOf);
+                              .Where(subscribedType => !subscribedType.Implements<TessageTypesInternal.ITessage>())
+                              .Select(PublisherIdentifyingTevent.WrapperTypeMatchingAllWrappingsOf)
+                              .Where(wrapperType => wrapperType.Is<IPublisherTevent<IRemotableTevent>>());
 
-      var handledTypes = _tommandHandlers.Keys
-                                         .Where(IsRemotableNonInfrastructureTessage)
-                                         .Concat(handledTeventTypes)
-                                         .ToHashSet();
+      var handledTommandTypes = _tommandHandlers.Keys
+                                                .Where(IsRemotableNonInfrastructureTessage)
+                                                .ToArray();
+
+      //Tessaging routes tommands exactly-once only (the transient tier is a tevent concept - see src/Compze.Tessaging/_docs/tevent-delivery-model.md), so any other
+      //remotable tommand handler would advertise a type no route can serve: a silently unreachable handler. Every advertised type must get a route - fail loud instead.
+      var unroutableTommandTypes = handledTommandTypes.Where(tommandType => !tommandType.Is<IExactlyOnceTommand>()).ToArray();
+      State.Assert(unroutableTommandTypes.Length == 0,
+                   () => $"These registered remotable tommand handler types would be advertised, but no route can ever serve them - Tessaging routes tommands exactly-once only ({nameof(IExactlyOnceTommand)}): {string.Join(", ", unroutableTommandTypes.Select(it => it.FullName))}.");
+
+      var handledTypes = handledTommandTypes
+                        .Concat(handledTeventTypes)
+                        .ToHashSet();
 
       _typeMap.AssertMappingsExistFor(handledTypes);
 
@@ -113,5 +126,16 @@ sealed class TessageHandlerRegistry(ITypeMap typeMap) : ITessageHandlerRegistrar
 
       static bool IsRemotableNonInfrastructureTessage(Type tessageType) =>
          tessageType.Implements<IRemotableTessage>() && !tessageType.Implements<TessageTypesInternal.ITessage>();
+   }
+
+   public IReadOnlyList<Type> RegisteredTypesDemandingExactlyOnceDelivery()
+   {
+      //Both subscription kinds count: an observation subscription joins the advertisement too, and observing a remote exactly-once tevent still requires receiving it exactly-once.
+      var teventTypes = _registeredTeventTypes
+                       .Where(subscribedType => PublisherIdentifyingTevent.WrapperTypeMatchingAllWrappingsOf(subscribedType).Is<IPublisherTevent<IExactlyOnceTevent>>());
+
+      var tommandTypes = _tommandHandlers.Keys.Where(tommandType => tommandType.Is<IExactlyOnceTommand>());
+
+      return [..tommandTypes.Concat(teventTypes)];
    }
 }

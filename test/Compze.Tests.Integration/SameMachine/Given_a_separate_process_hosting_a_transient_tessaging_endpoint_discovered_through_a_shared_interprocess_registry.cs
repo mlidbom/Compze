@@ -1,17 +1,17 @@
 using Compze.Abstractions.Hosting.Public;
+using Compze.Abstractions.Tessaging.Public;
 using Compze.Abstractions.Wiring.Testing.Internal;
+using Compze.DependencyInjection;
+using Compze.DependencyInjection.Abstractions;
 using Compze.Hosting.SameMachine;
 using Compze.Hosting.Testing;
 using Compze.Hosting.Testing.Wiring;
 using Compze.Internals.Testing;
 using Compze.Tessaging.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
 using Compze.Tessaging.Hosting;
-using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Tests.SameMachine.EndpointHostProcess;
-using Compze.Threading;
-using Compze.Threading.Testing;
 using Compze.xUnitMatrix;
 //The unqualified name Program silently resolves to the entry point xUnit v3 generates into THIS test assembly, not to the endpoint host process's class.
 using EndpointHostProcessProgram = Compze.Tests.SameMachine.EndpointHostProcess.Program;
@@ -21,10 +21,11 @@ using EndpointHostProcessProgram = Compze.Tests.SameMachine.EndpointHostProcess.
 
 namespace Compze.Tests.Integration.SameMachine;
 
-///<summary>The same-machine story end to end, across REAL process boundaries: a separate OS process hosts an endpoint over named<br/>
-/// pipes, both processes discover each other through a shared <see cref="InterprocessEndpointRegistry"/>, and an exactly-once<br/>
-/// tommand conversation crosses in both directions — no web stack, no database server, no configuration.</summary>
-public class Given_a_separate_process_hosting_an_endpoint_discovered_through_a_shared_interprocess_registry : UniversalTestBase
+///<summary>The guarantee-free same-machine story end to end, across REAL process boundaries: a separate OS process hosts a<br/>
+/// transient-Tessaging endpoint over named pipes, both processes discover each other through a shared<br/>
+/// <see cref="InterprocessEndpointRegistry"/>, and a transient tevent conversation crosses in both directions — no web stack, no<br/>
+/// configuration, and no database anywhere in either process: nothing is persisted, so nothing can be lost that was promised kept.</summary>
+public class Given_a_separate_process_hosting_a_transient_tessaging_endpoint_discovered_through_a_shared_interprocess_registry : UniversalTestBase
 {
    //The endpoint host process speaks named pipes; the conversation only makes sense when the specification's endpoint does too.
    static bool RunsOnTheNamedPipesTransport => TestEnv.Transport == Transport.NamedPipes;
@@ -34,9 +35,9 @@ public class Given_a_separate_process_hosting_an_endpoint_discovered_through_a_s
    readonly EndpointHostProcessHandle _endpointHostProcess = null!;
    readonly ITestingEndpointHost _specificationHost = null!;
    readonly IEndpoint _specificationEndpoint = null!;
-   readonly IThreadGate _replyTommandGate = IThreadGate.NewOpen(WaitTimeout.Seconds(1), "replyTommand");
+   readonly ManualResetEventSlim _replyTeventReceived = new();
 
-   public Given_a_separate_process_hosting_an_endpoint_discovered_through_a_shared_interprocess_registry()
+   public Given_a_separate_process_hosting_a_transient_tessaging_endpoint_discovered_through_a_shared_interprocess_registry()
    {
       if(!RunsOnTheNamedPipesTransport) return;
 
@@ -45,7 +46,7 @@ public class Given_a_separate_process_hosting_an_endpoint_discovered_through_a_s
       const string registryName = "EndpointRegistry";
       _registry = InterprocessEndpointRegistry.OpenOrCreateSessionLocal(registryName, _workDirectory);
 
-      _endpointHostProcess = EndpointHostProcessHandle.Start(registryName, _workDirectory, EndpointHostProcessProgram.DistributedTessagingComposition);
+      _endpointHostProcess = EndpointHostProcessHandle.Start(registryName, _workDirectory, EndpointHostProcessProgram.TransientTessagingComposition);
 
       _specificationHost = TestingEndpointHost.Create();
       _specificationEndpoint = _specificationHost.RegisterEndpoint(
@@ -54,11 +55,9 @@ public class Given_a_separate_process_hosting_an_endpoint_discovered_through_a_s
          builder =>
          {
             builder.TypeMapper.MapTypesFromAssemblyContaining<TommandSentToTheEndpointHostProcess>();
-            builder.Registrar
-                   .CurrentTestsEndpointTransport()
-                   .CurrentTestsConfiguredSqlLayer(connectionStringName: builder.Configuration.Id.ToString());
-            builder.AddDistributedTessaging().ParticipateIn(_registry);
-            builder.RegisterTessagingHandlers.ForTommand<TommandSentBackToTheSpecificationProcess>(_ => _replyTommandGate.AwaitPassThrough());
+            builder.Registrar.CurrentTestsEndpointTransport();
+            builder.AddTransientTessaging().ParticipateIn(_registry);
+            builder.RegisterTessagingHandlers.ForTevent((ITransientTeventPublishedByTheEndpointHostProcess _) => _replyTeventReceived.Set());
          });
    }
 
@@ -97,39 +96,22 @@ public class Given_a_separate_process_hosting_an_endpoint_discovered_through_a_s
    }
 
    [Skip<Transport>([Transport.AspNetCore], "The endpoint host process speaks named pipes; the conversation only makes sense when the specification's endpoint does too")]
-   [PCT] public void a_tommand_sent_to_the_process_is_handled_there_and_its_reply_tommand_comes_back()
+   [PCT] public void a_transient_tevent_published_here_is_handled_there_and_its_reply_tevent_comes_back()
    {
-      //Until this process's reconciliation loop has discovered the endpoint host process - which is still starting up -
-      //the handler is unknown and sending fails loud. The retry loop rides that loudness until discovery completes.
+      //Best-effort has no failure to ride: until the reconciliation loops of both processes have discovered each other, a
+      //published transient tevent matches no subscriber connection and simply vanishes - exactly what the transient tier
+      //promises. So the specification keeps publishing, once per interval, until a reply tevent proves a full round trip crossed.
       var retryDeadline = DateTime.UtcNow + TimeSpan.FromSeconds(30);
-      while(true)
+      do
       {
-         try
-         {
-            _specificationEndpoint.ExecuteServerRequestInTransaction(session => session.Send(new TommandSentToTheEndpointHostProcess()));
-            break;
-         }
-#pragma warning disable CA1031 //Retrying until discovery completes; past the deadline the exception propagates wrapped with the endpoint host process's console output.
-         catch(Exception) when(DateTime.UtcNow < retryDeadline)
+         if(DateTime.UtcNow > retryDeadline)
          {
             _endpointHostProcess.ThrowDescribingTheFailureIfTheProcessHasExited();
-            Thread.Sleep(100);
+            throw new InvalidOperationException($"No transient tevent round trip completed within the retry deadline.{Environment.NewLine}{_endpointHostProcess.ConsoleOutput}");
          }
-         catch(Exception stillUndiscoveredAtTheRetryDeadline)
-#pragma warning restore CA1031
-         {
-            throw new InvalidOperationException($"The endpoint host process was not discovered within the retry deadline.{Environment.NewLine}{_endpointHostProcess.ConsoleOutput}", stillUndiscoveredAtTheRetryDeadline);
-         }
-      }
 
-      try
-      {
-         _replyTommandGate.AwaitPassedThroughCountEqualTo(1, WaitTimeout.Seconds(30));
-      }
-      catch(Exception)
-      {
-         _endpointHostProcess.ThrowDescribingTheFailureIfTheProcessHasExited();
-         throw;
-      }
+         _specificationEndpoint.ServiceLocator.Resolve<IScopeFactory>().ExecuteTransactionInIsolatedScope(scope =>
+            scope.Resolve<ITeventPublisher>().Publish(new TransientTeventPublishedByTheSpecificationProcess()));
+      } while(!_replyTeventReceived.Wait(TimeSpan.FromMilliseconds(500)));
    }
 }

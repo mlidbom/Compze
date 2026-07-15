@@ -4,14 +4,16 @@ using Compze.Internals.Transport;
 
 namespace Compze.Tessaging.Implementation.Transport.Client.Internal;
 
-///<summary>A connection through which tessages are delivered to one remote endpoint's transport server. It carries two ordered<br/>
-/// streams, one per delivery guarantee — see <c>src/Compze.Tessaging/_docs/tevent-delivery-model.md</c>.</summary>
+///<summary>A connection through which tessages are delivered to one remote endpoint's transport server. It carries one ordered<br/>
+/// stream per delivery tier the endpoint wires: the in-memory transient stream always, the exactly-once stream when the outbox<br/>
+/// is wired — see <c>src/Compze.Tessaging/_docs/tevent-delivery-model.md</c>.</summary>
 interface ITessagingInboxConnection
 {
     EndpointInformation EndpointInformation { get; }
 
     ///<summary>Queues <paramref name="tessage"/> on the connection's exactly-once stream: backed by the outbox's storage,<br/>
-    /// head-of-line retried until delivered and acknowledged, the backlog surviving restarts in send order.<br/>
+    /// head-of-line retried until delivered and acknowledged, the backlog surviving restarts in send order. Only the outbox<br/>
+    /// sends exactly-once, so on an endpoint without one — whose connections carry no exactly-once stream — nothing calls this.<br/>
     /// <paramref name="dedupId"/> is the envelope identity the receiving endpoint's inbox dedups on — the tessage's own <see cref="IAtMostOnceTessage.Id"/>.</summary>
     void EnqueueForExactlyOnceDelivery(ITessage tessage, TessageId dedupId);
 

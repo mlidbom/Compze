@@ -137,7 +137,7 @@ The design rule is applied a third time *inside* each communication style: the s
 itself a feature, and distribution is a feature composed on top of it (via `GetOrAddFeature`, so the core is
 wired once whether it arrives alone or under distribution).
 
-- **Tessaging splits two ways**: distributed Tessaging simply contains in-process Tessaging.
+- **Tessaging splits three ways**, each layer containing the one below it.
   `InProcessTessagingEndpointFeature` (in `Compze.Tessaging`, `AddInProcessTessaging()`) is the style's
   synchronous core: the handler registry, the synchronous in-process tevent delivery every tevent travels,
   and the endpoint's one `ITeventPublisher` — the one way to publish a tevent, routing each by the delivery
@@ -145,9 +145,14 @@ wired once whether it arrives alone or under distribution).
   [the tevent delivery model](../../Compze.Tessaging/_docs/tevent-delivery-model.md)). With nothing but this
   feature the endpoint wires no remote delivery legs — no transport, inbox, outbox, or tommand scheduler —
   so tevents are delivered synchronously to this process's handlers, in the publisher's transaction.
-  `DistributedTessagingEndpointFeature` (`AddDistributedTessaging()`) composes it and adds distribution:
-  inbox, outbox, tommand scheduler, router, and service bus session — and wiring the outbox is what wires the
-  durable tevent delivery leg the publisher routes every `IExactlyOnceTevent` through. Whether a tevent
+  `TransientTessagingEndpointFeature` (`AddTransientTessaging()`) composes it into the transport-speaking
+  core: the transport server, the router that connects to the other endpoints, and the transient tevent
+  delivery leg — guarantee-free Tessaging, persisting nothing, so it composes on the database-less
+  foundation; everything exactly-once fails loud at setup or publish.
+  `DistributedTessagingEndpointFeature` (`AddDistributedTessaging()`) composes that core and adds the
+  exactly-once vertical: inbox, outbox, tommand scheduler, and service bus session — and wiring the outbox is
+  what wires the durable tevent delivery leg the publisher routes every `IExactlyOnceTevent` through, and
+  what grants the router's connections their durable exactly-once delivery streams. Whether a tevent
   crosses the wire is a property of the tevent's type, honored by the legs the composition wires — not an
   endpoint-wide mode — which is also what keeps `RegisterTessagingHandlers` order-independent of every other
   Tessaging declaration.
@@ -157,8 +162,8 @@ wired once whether it arrives alone or under distribution).
   which strictly local tueries and tommands execute synchronously, in the caller's transaction.
   `DistributedTypermediaEndpointFeature` (in `Compze.Typermedia.Client`, `AddDistributedTypermedia()`)
   composes it and adds the handler executor that serves remote clients, and discovery.
-- **Serving is shared.** An endpoint runs **one transport server**, whatever it speaks: both distributed
-  features compose `EndpointTransportServerFeature` (in `Compze.Internals.Transport`) — the same
+- **Serving is shared.** An endpoint runs **one transport server**, whatever it speaks: every
+  transport-speaking feature composes `EndpointTransportServerFeature` (in `Compze.Internals.Transport`) — the same
   `GetOrAddFeature` pattern one level down — and *contribute their request handling to it* (request-kind
   handlers, served identically by the named-pipe and ASP.NET Core transports) rather than each running a
   server of its own. One server means one address per endpoint, which is what lets an endpoint registry map

@@ -20,18 +20,28 @@ public static class EndpointBuilderTessagingExtensions
       public InProcessTessagingEndpointFeature AddInProcessTessaging() => @this.GetOrAddFeature(builder => new InProcessTessagingEndpointFeature(builder));
 
       ///<summary>
-      /// Adds the distributed Tessaging pipeline to the endpoint being built (idempotent) and returns its
-      /// feature: everything in-process Tessaging has (<see cref="AddInProcessTessaging"/>, which it
-      /// composes), plus the inbox, outbox, tommand scheduler, router and service bus session through which
-      /// the endpoint converses with other endpoints.
+      /// Adds guarantee-free distributed Tessaging to the endpoint being built (idempotent) and returns its
+      /// feature — the transport-speaking core, which the full distributed pipeline composes and extends:
+      /// everything in-process Tessaging has, plus the transport server, the router, and the transient tevent
+      /// delivery leg. Such an endpoint converses in transient tevents — best-effort across the wire, with no
+      /// outbox, no inbox, and no database anywhere — so it composes on the database-less foundation;
+      /// everything exactly-once fails loud at setup or publish.
+      ///</summary>
+      public TransientTessagingEndpointFeature AddTransientTessaging() => @this.GetOrAddFeature(builder => new TransientTessagingEndpointFeature(builder));
+
+      ///<summary>
+      /// Adds the full distributed Tessaging pipeline to the endpoint being built (idempotent) and returns its
+      /// feature: everything transient Tessaging has (<see cref="AddTransientTessaging"/>, which it
+      /// composes), plus the inbox, outbox, tommand scheduler and service bus session through which
+      /// the endpoint converses with delivery guarantees.
       ///</summary>
       public DistributedTessagingEndpointFeature AddDistributedTessaging() => @this.GetOrAddFeature(builder => new DistributedTessagingEndpointFeature(builder));
 
       ///<summary>
       /// Registers tessaging handlers, adding in-process Tessaging (<see cref="AddInProcessTessaging"/>) to
       /// the endpoint if it is not already added. Handlers receive tevents published in-process; they are
-      /// reachable from other endpoints only when the endpoint also speaks distributed Tessaging
-      /// (<see cref="AddDistributedTessaging"/>).
+      /// reachable from other endpoints only when the endpoint also speaks Tessaging across the wire
+      /// (<see cref="AddTransientTessaging"/> / <see cref="AddDistributedTessaging"/>).
       ///</summary>
       public ITessageHandlerRegistrar RegisterTessagingHandlers => @this.AddInProcessTessaging().RegisterHandlers;
 
@@ -48,12 +58,28 @@ public static class EndpointBuilderTessagingExtensions
    }
 }
 
+public static class EndpointFoundationTransientTessagingExtensions
+{
+   extension(EndpointFoundation @this)
+   {
+      ///<summary>Adds guarantee-free distributed Tessaging to a composed endpoint (<see cref="EndpointFoundation"/>): runs<br/>
+      /// <paramref name="compose"/> to fill the feature's slots (e.g. the serializer), then adds the feature. Transient Tessaging<br/>
+      /// persists nothing, so unlike distributed Tessaging it needs no database on the foundation — this is the Tessaging an<br/>
+      /// endpoint whose foundation declares no database speaks.</summary>
+      public TransientTessagingEndpointFeature AddTransientTessaging(Action<TransientTessagingComposition> compose)
+      {
+         compose(new TransientTessagingComposition(@this.Builder.Registrar));
+         return @this.Builder.AddTransientTessaging();
+      }
+   }
+}
+
 public static class EndpointTessagingExtensions
 {
    extension(IEndpoint @this)
    {
       ///<summary>The address where this endpoint listens for Tessaging — the endpoint's one transport-server address, which serves every<br/>
-      /// distributed capability the endpoint speaks. Null until the endpoint is listening, and for endpoints without the distributed Tessaging pipeline.</summary>
-      public EndpointAddress? TessagingAddress => @this.Components.OfType<DistributedTessagingEndpointComponent>().SingleOrDefault()?.Address;
+      /// distributed capability the endpoint speaks. Null until the endpoint is listening, and for endpoints without transport-speaking Tessaging.</summary>
+      public EndpointAddress? TessagingAddress => @this.Components.OfType<TransientTessagingEndpointComponent>().SingleOrDefault()?.Address;
    }
 }

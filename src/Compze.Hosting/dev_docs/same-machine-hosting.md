@@ -214,8 +214,12 @@ As of 2026-07-14:
 - The `InterprocessEndpointRegistry` with announce/retract and crashed-process liveness.
 - The Tessaging router's continuous reconciliation — appear, disappear, and restart-at-a-new-address,
   including the backlog following a restarted endpoint.
-- The multi-process specification and its endpoint host process — also the first production-hosting
+- The multi-process specifications and their endpoint host process — also the first production-hosting
   composition exercised end to end.
+- The no-SQL same-machine suite (2026-07-15): the endpoint host process hosting guarantee-free transient
+  Tessaging (`AddTransientTessaging`) on the database-less foundation, and a transient tevent conversation
+  crossing real process boundaries in both directions with no database anywhere in either process — see
+  [the tevent delivery model](../../Compze.Tessaging/_docs/tevent-delivery-model.md).
 
 **Pending:**
 
@@ -223,8 +227,3 @@ As of 2026-07-14:
   discovery has everything it needs — but the Typermedia *client side* does not yet consume a registry:
   `TypermediaRouter` is connected to explicitly known addresses, adds routes only, and never reconciles
   against a live registry the way the Tessaging router does.
-- **A no-SQL same-machine suite.** The transient tevent leg is built (2026-07-14, see
-  [the tevent delivery model](../../Compze.Tessaging/_docs/tevent-delivery-model.md)) and rides this same
-  transport and topology — but composing a guarantee-free Tessaging endpoint on the database-less
-  foundation (no outbox, no inbox, no SQL) is still pending, and same-machine suites are its natural
-  habitat.
