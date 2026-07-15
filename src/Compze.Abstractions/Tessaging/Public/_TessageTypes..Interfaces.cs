@@ -16,7 +16,7 @@ public interface ITevent : ITessage;
 ///<summary>A type routed message that instructs the receiver to do something.</summary>
 public interface ITommand : ITessage;
 
-//todo: Should the commented out type below exist?
+//todo:review: Should the commented out type below exist?
 //public interface IFireAndForgetTommand : ITommand;
 
 //Transactional behavior marker interfaces
@@ -26,12 +26,12 @@ public interface IMustBeSentAndHandledTransactionally : IMustBeSentTransactional
 public interface ICannotBeSentRemotelyFromWithinTransaction : ITessage;
 
 //Typermedia
-//todo: should the version without a type parameter remain? Could ITyperMediaTessage<object> replace what it does today?
+//todo:review: should the version without a type parameter remain? Could ITyperMediaTessage<object> replace what it does today?
 public interface ITypermediaTessage : ICannotBeSentRemotelyFromWithinTransaction;
 public interface ITyperMediaTessage<out TResult> : ITypermediaTessage;
 public interface ITommand<out TResult> : ITommand, ITyperMediaTessage<TResult>;
 
-//todo: should the version without a type parameter remain? Could ITuery<object> replace what it does today?
+//todo:review: should the version without a type parameter remain? Could ITuery<object> replace what it does today?
 public interface ITuery : ITypermediaTessage {};
 public interface ITuery<out TResult> : ITuery, ITyperMediaTessage<TResult>;
 
@@ -49,9 +49,9 @@ public interface IStrictlyLocalTessage;
 ///<summary>Marker interface for infrastructure-internal tessages that should be excluded from remote route advertisement.</summary>
 public interface IInternalInfrastructureTessage;
 
-//todo: Should the commented out type below exist?
+//todo:review: Should the commented out type below exist?
 //public interface IStrictlyLocalTevent : ITevent, IStrictlyLocalTessage;
-//todo: should this inherit IMustBeSentTransactionally?
+//todo:review: should this inherit IMustBeSentTransactionally?
 public interface IStrictlyLocalTommand : ITommand, IMustBeSentTransactionally, IStrictlyLocalTessage;
 public interface IStrictlyLocalTommand<out TResult> : ITommand<TResult>, IStrictlyLocalTommand;
 public interface IStrictlyLocalTuery<TTuery, out TResult> : ITuery<TResult>, IStrictlyLocalTessage where TTuery : IStrictlyLocalTuery<TTuery, TResult>;
@@ -76,7 +76,7 @@ public interface IAtLeastOnceTessage : ITessageWithIdentity, IRemotableTessage {
 ///<summary>A tessage that is handled no more than once. Guaranteed by infrastructure through deduplication, and transactions.</summary>
 public interface IAtMostOnceTessage : ITessageWithIdentity, IRemotableTessage, IMustBeHandledTransactionally {}
 
-//todo: should the version without a type parameter remain?
+//todo:review: should the version without a type parameter remain?
 public interface IAtMostOnceTypermediaTommand : IAtMostOnceTessage, IRemotableTommand, ITypermediaTessage;
 public interface IAtMostOnceTypermediaTommand<out TResult> : IAtMostOnceTypermediaTommand, IRemotableTommand<TResult>;
 

@@ -3,7 +3,6 @@ using Compze.Abstractions.Tessaging.Public;
 using Compze.Abstractions.Time.Public;
 using Compze.Contracts;
 using Compze.Internals.SystemCE.ReactiveCE;
-using Compze.Internals.SystemCE.ReflectionCE;
 using Compze.Teventive.Internal.Implementation;
 using Compze.Teventive.Taggregates.Tevents.Public;
 
@@ -86,7 +85,6 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
 
    protected ITeventSubscriber<TTaggregateTevent> RegisterTeventAppliers() => _teventAppliersDispatcher.Register();
 
-   // ReSharper disable once UnusedMember.Global todo: coverage
    protected ITeventSubscriber<TTaggregateTevent> RegisterTeventHandlers() => _teventHandlersDispatcher.Register();
 
    void ApplyTevent(TTaggregateTevent theTevent) => ApplyTevent(theTevent, WrapTevent(theTevent));

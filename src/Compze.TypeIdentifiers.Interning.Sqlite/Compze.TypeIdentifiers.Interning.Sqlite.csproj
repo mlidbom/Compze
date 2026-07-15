@@ -3,7 +3,7 @@
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <Version>0.1.0-alpha</Version>
-    <!-- TODO: Remove once all public API members have XML documentation comments -->
+    <!-- TODO:docs: Remove once all public API members have XML documentation comments -->
     <NoWarn>CS1591</NoWarn>
     <Description>SQLite backend for Compze type-id interning: a SQLite ITypeIdInternerPersistence implementation for Compze.TypeIdentifiers.Interning.</Description>
     <PackageTags>type-identity;interning;persistence;sqlite</PackageTags>

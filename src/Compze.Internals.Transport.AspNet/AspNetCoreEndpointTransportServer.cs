@@ -61,9 +61,9 @@ class AspNetCoreEndpointTransportServer : IEndpointTransportServer
    async Task<WebApplication> StartServerAsync()
    {
       var builder = WebApplication.CreateBuilder();
-      //todo: hardcoding the log level should be changed
+      //todo:urgent: hardcoding the log level should be changed
       builder.Logging.SetMinimumLevel(LogLevel.Warning);
-      //todo: hardcoding logging to a local Seq should be changed.
+      //todo:urgent: hardcoding logging to a local Seq should be changed.
       builder.Services.AddLogging(loggingBuilder => loggingBuilder.AddSeq(serverUrl: "http://192.168.0.11:5341"));
 
       builder.Services.AddControllers().ConfigureApplicationPartManager(it =>

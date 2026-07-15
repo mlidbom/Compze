@@ -21,7 +21,6 @@ public partial class TeventStoreApi
       public GetReadonlyCopyOfTaggregateVersion<TTaggregate> GetReadOnlyCopyOfVersion<TTaggregate>(TaggregateId id, int version) where TTaggregate : class, ITaggregate =>
          new(id, version);
 
-      //Todo: should be aggregateId
       public GetTaggregateHistory<TTevent> GetHistory<TTevent>(TaggregateId id) where TTevent : ITaggregateTevent =>
          new(id);
    }

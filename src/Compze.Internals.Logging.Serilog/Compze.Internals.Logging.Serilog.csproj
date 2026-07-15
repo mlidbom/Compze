@@ -3,7 +3,7 @@
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <Version>0.4.0-alpha</Version>
-    <!-- TODO: Remove once all public API members have XML documentation comments -->
+    <!-- TODO:docs: Remove once all public API members have XML documentation comments -->
     <NoWarn>CS1591</NoWarn>
     <Description>Serilog logging integration for the Compze framework.</Description>
   </PropertyGroup>

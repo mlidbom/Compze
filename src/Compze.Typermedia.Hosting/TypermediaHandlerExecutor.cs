@@ -57,7 +57,7 @@ public class TypermediaHandlerExecutor(IScopeFactory scopeFactory, ITypermediaHa
          {
             return action();
          }
-         //Todo: Should we have some sort of retryable exception test here perhaps? And/or a backoff delay? Rather than hammering away instantly regardless of the error?
+         //Todo:review: Should we have some sort of retryable exception test here perhaps? And/or a backoff delay? Rather than hammering away instantly regardless of the error?
          catch(Exception ex) when(--remainingAttempts > 0)
          {
             this.Log().Warning(ex, "Command execution failed. Retrying.");

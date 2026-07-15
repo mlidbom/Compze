@@ -18,7 +18,7 @@ public partial class AccountResource
 
    public AccountId Id { get; private set; }
 
-   //Todo: this conversion smells
+   //Todo:review: this conversion smells
    public AccountResource(IAccountResourceData account)
    {
       Id = account.Id;

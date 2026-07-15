@@ -6,5 +6,5 @@ public class TeventDuplicateKeyException(Exception sqlException) : Exception("""
                                                                             """,
                                                                             sqlException)
 {
-   //Todo: Oracle exceptions has property: IsRecoverable. Research what this means and if there is something equivalent for the other providers and how this could be useful to us.
+   //Todo:review: Oracle exceptions has property: IsRecoverable. Research what this means and if there is something equivalent for the other providers and how this could be useful to us.
 }

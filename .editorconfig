@@ -41,7 +41,7 @@ dotnet_diagnostic.IDE0046.severity = none # Not using the ternary operator in ev
 dotnet_diagnostic.IDE0007.severity = none #I like var, but not using it is valid in many cases. It's not a warning level offence.
 dotnet_diagnostic.IDE0011.severity = none # Sometimes braces are not needed for simple if statements. This is not a warning level thing to us.
 
-dotnet_diagnostic.CA1859.severity = none #CA1859: Use concrete types when possible for improved performance || We want the proper types, not whatever achives an utterly useless nano optimization at the cost of exposing something that should NOT be exposed.
+dotnet_diagnostic.CA1859.severity = none #CA1859 Use concrete types when possible for improved performance || We want the proper types, not whatever achives an utterly useless nano optimization at the cost of exposing something that should NOT be exposed.
 dotnet_diagnostic.CA1860.severity = none #Prefer comparing Count to 0 over using Any() || Well we think Any() is more readable and shorter and unless a profiler tells us we have an issue with this nano optimization we don't care. (And that will never happen).
 dotnet_diagnostic.CA1805.severity = none #We do sometimes initialize members to their default values. It makes it clear that we have not forgotten, that this is the indended value.
 
@@ -49,7 +49,7 @@ dotnet_diagnostic.CA1805.severity = none #We do sometimes initialize members to 
 #Not sure about this one, marker interfaces can be quite useful, but I guess they are exceptions....
 #dotnet_diagnostic.CA1040.severity = none #Avoid empty interfaces
 
-#Todo: review these below and add comments on why they are there if they should stay
+#Todo review these below and add comments on why they are there if they should stay
 dotnet_diagnostic.CA1032.severity = none #Implement standard exception constructors
 dotnet_diagnostic.CA1034.severity = none #Do not nest type AggregateLink. Alternatively, change its accessibility so that it is not externally visible.
 dotnet_diagnostic.CA1000.severity = none #Do not declare static members on generic types
@@ -58,10 +58,10 @@ dotnet_diagnostic.CA1716.severity = none #rename X so that it no longer conflict
 dotnet_diagnostic.CA1822.severity = none #Member 'Commands' does not access instance data and can be marked as static
 dotnet_diagnostic.CA1303.severity = none #Method ...  passes a literal string as parameter 'message' of a call to 'Exception.Exception(string message)'. Retrieve from a resource table instead:
 dotnet_diagnostic.CA2208.severity = none #Call the ArgumentOutOfRangeException constructor that contains a message and/or paramName parameter.
-dotnet_diagnostic.IDE1006.severity = none # IDE1006: Naming Styles
-dotnet_diagnostic.CA2100.severity = none # CA2100: Review SQL queries for security vulnerabilities
-dotnet_diagnostic.CA1801.severity = none # CA1801: Review unused parameters
-dotnet_diagnostic.CA1810.severity = none # CA1810: Initialize reference type static fields inline
+dotnet_diagnostic.IDE1006.severity = none # IDE1006 Naming Styles
+dotnet_diagnostic.CA2100.severity = none # CA2100 Review SQL queries for security vulnerabilities
+dotnet_diagnostic.CA1801.severity = none # CA1801 Review unused parameters
+dotnet_diagnostic.CA1810.severity = none # CA1810 Initialize reference type static fields inline
 
 
 #Theoretically, maybe, valid, but not worth the effort.

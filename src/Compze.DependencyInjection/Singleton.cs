@@ -1,6 +1,5 @@
 using Compze.Internals.SystemCE.LinqCE;
-//todo: test coverage and remove the suppression
-// ReSharper disable UnusedMember.Global
+// ReSharper disable UnusedMember.Global todo: test coverage and remove the suppression
 namespace Compze.DependencyInjection;
 
 public static class Singleton

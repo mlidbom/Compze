@@ -56,7 +56,6 @@ public abstract class Tentity<TParent,
 
    public interface ICollectionManager : IEntityCollectionManager<TTentity, TTentityId, TTentityTevent, TTentityTeventImplementation, TTentityCreatedTevent>;
 
-   // ReSharper disable once UnusedMember.Global todo: write tests.
    public static ICollectionManager CreateSelfManagingCollection(TParent parent) => new CollectionManager(parent);
 
    internal class CollectionManager : ICollectionManager

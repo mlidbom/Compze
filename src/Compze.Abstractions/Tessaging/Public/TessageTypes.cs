@@ -34,7 +34,7 @@ public static class TessageTypes
    {
       public static class AtMostOnce
       {
-         //Todo: How can we prevent UI's from just defaulting to using a constructor that creates a new guid?
+         //Todo:review: How can we prevent UI's from just defaulting to using a constructor that creates a new guid?
          public class AtMostOnceTypermediaTommand : IAtMostOnceTypermediaTommand
          {
             public TessageId Id { get; protected set; } = new();
