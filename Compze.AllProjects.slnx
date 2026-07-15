@@ -152,6 +152,7 @@
     <Project Path="src/SolutionStructure/Solution.Markdown.csproj" />
     <Project Path="src/SolutionStructure/Solution.TestConfig.csproj" />
     <Project Path="src/SolutionStructure/Solution.TODO.Current.csproj" />
+	<Project Path="src/SolutionStructure/Solution.TODO.WIP.csproj" />
     <Project Path="src/SolutionStructure/Solution.TODO.Done.csproj" />
   </Folder>
   <Folder Name="/Compze.DependencyInjection/">
