@@ -7,7 +7,7 @@ using Compze.Typermedia.HandlerRegistration;
 
 namespace Compze.Typermedia.Client;
 
-class TypermediaEndpointInformationQuery : IQuery<TypermediaEndpointInformation>;
+class TypermediaEndpointInformationQuery : ITuery<TypermediaEndpointInformation>;
 
 ///<summary>Typermedia's answer to endpoint discovery: who the endpoint is and which typermedia tessage types it serves —<br/>
 /// a plain wire shape serialized by the fixed <see cref="EndpointDiscoverySerializer"/> format.</summary>

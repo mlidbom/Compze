@@ -10,6 +10,6 @@ namespace Compze.Tessaging.Implementation.Abstractions;
 interface IExactlyOnceTeventDeliveryLeg
 {
    ///<summary>Publishes the wrapped tevent to every remote subscriber - the whole wrapper travels the wire, so publisher identity crosses endpoints with zero information loss.<br/>
-   /// The wrapper carries only publisher identity, not delivery-guarantee markers; the dedup identity is the wrapped tevent's own <see cref="IAtMostOnceTessage.Id"/>, read from <see cref="IPublisherTevent{TTevent}.Tevent"/>.</summary>
+   /// The wrapper carries only publisher identity, not delivery-guarantee markers; the dedup identity is the wrapped tevent's own <see cref="ITessageWithIdentity.Id"/>, read from <see cref="IPublisherTevent{TTevent}.Tevent"/>.</summary>
    void PublishTransactionally(IPublisherTevent<IExactlyOnceTevent> wrappedTevent);
 }

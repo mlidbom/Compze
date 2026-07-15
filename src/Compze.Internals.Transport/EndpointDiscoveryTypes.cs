@@ -7,7 +7,7 @@ namespace Compze.Internals.Transport;
 
 ///<summary>The endpoint-discovery query "who are you, and which remotable tessage types do you handle?" — what a connecting<br/>
 /// endpoint's router asks to learn the identity behind an address and build its tommand and tevent routes.</summary>
-public class EndpointInformationQuery : IQuery<EndpointInformation>;
+public class EndpointInformationQuery : ITuery<EndpointInformation>;
 
 public class EndpointInformation
 {
@@ -29,7 +29,7 @@ public class EndpointInformation
 
 ///<summary>The endpoint-discovery query "whose addresses do you know?" — lets an endpoint that can reach one member of the<br/>
 /// network learn the whole membership from it.</summary>
-public class NetworkTopologyQuery : IQuery<NetworkTopology>;
+public class NetworkTopologyQuery : ITuery<NetworkTopology>;
 
 public class NetworkTopology
 {

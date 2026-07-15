@@ -15,13 +15,13 @@ public class EndpointDiscoveryQueryExecutor
 
    EndpointDiscoveryQueryExecutor(IScopeFactory scopeFactory) => _scopeFactory = scopeFactory;
 
-   public void RegisterQueryHandler<TQuery, TResult>(Func<TQuery, IScopeResolver, TResult> handler) where TQuery : IQuery<TResult> => _monitor.Locked(() =>
+   public void RegisterQueryHandler<TQuery, TResult>(Func<TQuery, IScopeResolver, TResult> handler) where TQuery : ITuery<TResult> => _monitor.Locked(() =>
    {
       object Value(object query, IScopeResolver scopeResolver) => handler((TQuery)query, scopeResolver)!;
       Interlocked.Exchange(ref _queryHandlers, _queryHandlers.AddToCopy(typeof(TQuery), Value));
    });
 
-   public object ExecuteQuery(IMessage query)
+   public object ExecuteQuery(ITuery query)
    {
       this.Log().Debug($"Executing endpoint-discovery query {query.GetType().Name}");
       return _scopeFactory.ExecuteInIsolatedScope(scopeResolver =>

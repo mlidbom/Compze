@@ -9,14 +9,14 @@ public class EndpointDiscoveryQueryRegistrarWithDependencyInjectionSupport(Endpo
    readonly EndpointDiscoveryQueryExecutor _executor = executor;
 
    public EndpointDiscoveryQueryRegistrarWithDependencyInjectionSupport ForQuery<TQuery, TResult>(
-      Func<TQuery, TResult> handler) where TQuery : IQuery<TResult>
+      Func<TQuery, TResult> handler) where TQuery : ITuery<TResult>
    {
       _executor.RegisterQueryHandler<TQuery, TResult>((query, _) => handler(query));
       return this;
    }
 
    public EndpointDiscoveryQueryRegistrarWithDependencyInjectionSupport ForQuery<TQuery, TDependency1, TResult>(
-      Func<TQuery, TDependency1, TResult> handler) where TQuery : IQuery<TResult>
+      Func<TQuery, TDependency1, TResult> handler) where TQuery : TessageTypes.Remotable.NonTransactional.Tueries.Tuery<TResult>
                                                    where TDependency1 : class
    {
       _executor.RegisterQueryHandler<TQuery, TResult>((query, scopeResolver) => handler(query, scopeResolver.Resolve<TDependency1>()));
@@ -24,7 +24,7 @@ public class EndpointDiscoveryQueryRegistrarWithDependencyInjectionSupport(Endpo
    }
 
    public EndpointDiscoveryQueryRegistrarWithDependencyInjectionSupport ForQuery<TQuery, TDependency1, TDependency2, TResult>(
-      Func<TQuery, TDependency1, TDependency2, TResult> handler) where TQuery : IQuery<TResult>
+      Func<TQuery, TDependency1, TDependency2, TResult> handler) where TQuery : ITuery<TResult>
                                                                  where TDependency1 : class
                                                                  where TDependency2 : class
    {
@@ -33,7 +33,7 @@ public class EndpointDiscoveryQueryRegistrarWithDependencyInjectionSupport(Endpo
    }
 
    public EndpointDiscoveryQueryRegistrarWithDependencyInjectionSupport ForQuery<TQuery, TDependency1, TDependency2, TDependency3, TDependency4, TResult>(
-      Func<TQuery, TDependency1, TDependency2, TDependency3, TDependency4, TResult> handler) where TQuery : IQuery<TResult>
+      Func<TQuery, TDependency1, TDependency2, TDependency3, TDependency4, TResult> handler) where TQuery : ITuery<TResult>
                                                                                               where TDependency1 : class
                                                                                               where TDependency2 : class
                                                                                               where TDependency3 : class

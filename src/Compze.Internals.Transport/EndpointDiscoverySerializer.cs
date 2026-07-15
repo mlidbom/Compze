@@ -19,8 +19,8 @@ public static class EndpointDiscoverySerializer
       Converters = { new EndpointIdJsonConverter(), new EndpointAddressJsonConverter() }
    };
 
-   public static string SerializeQuery(IMessage query) => JsonSerializer.Serialize(query, query.GetType(), WireFormat);
-   public static IMessage DeserializeQuery(Type queryType, string json) => (IMessage)JsonSerializer.Deserialize(json, queryType, WireFormat)!;
+   public static string SerializeQuery(ITessage query) => JsonSerializer.Serialize(query, query.GetType(), WireFormat);
+   public static ITuery DeserializeQuery(Type queryType, string json) => (ITuery)JsonSerializer.Deserialize(json, queryType, WireFormat)!;
 
    public static string SerializeResult(object result) => JsonSerializer.Serialize(result, result.GetType(), WireFormat);
    public static TResult DeserializeResult<TResult>(string json) => JsonSerializer.Deserialize<TResult>(json, WireFormat)!;

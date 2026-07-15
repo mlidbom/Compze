@@ -7,17 +7,14 @@ using Compze.Abstractions.Public;
 
 namespace Compze.Abstractions.Tessaging.Public;
 
-//Ordinary plain old messages, not necessarily type routed
-public interface IMessage;
-public interface IEvent : IMessage;
-public interface ICommand : IMessage;
-public interface ICommand<out TResult> : ICommand;
-public interface IQuery<out TResult> : IMessage;
+///<summary>A message routed by type</summary>
+public interface ITessage;
 
-//From here on down everything is Tessages. Type routed messages.
-public interface ITessage : IMessage;
-public interface ITevent : ITessage, IEvent;
-public interface ITommand : ITessage, ICommand;
+///<summary>A type routed message that informs that something happened.</summary>
+public interface ITevent : ITessage;
+
+///<summary>A type routed message that instructs the receiver to do something.</summary>
+public interface ITommand : ITessage;
 
 //todo: Should the commented out type below exist?
 //public interface IFireAndForgetTommand : ITommand;
@@ -31,8 +28,9 @@ public interface ICannotBeSentRemotelyFromWithinTransaction : ITessage;
 //Typermedia
 public interface ITypermediaTessage : ICannotBeSentRemotelyFromWithinTransaction;
 public interface ITyperMediaTessage<out TResult> : ITypermediaTessage;
-public interface ITommand<out TResult> : ITommand, ICommand<TResult>, ITyperMediaTessage<TResult>;
-public interface ITuery<out TResult> : IQuery<TResult>, ITyperMediaTessage<TResult>;
+public interface ITommand<out TResult> : ITommand, ITyperMediaTessage<TResult>;
+public interface ITuery : ITypermediaTessage {};
+public interface ITuery<out TResult> : ITuery, ITyperMediaTessage<TResult>;
 
 ///<summary>Many resources in a hypermedia API do not actually need access to backend data. The data in the tuery is sufficient to create the result. For such tueries implement this interface. That way no network roundtrip is required to perform the tuery.</summary>
 public interface ICreateMyOwnResultTuery<out TResult> : ITuery<TResult>
@@ -63,18 +61,22 @@ public interface IRemotableTuery<out TResult> : ITuery<TResult>, IRemotableTessa
 //Clients that are not .NET types need to send the query to the closest .NET endpoint before that will bounce the result back.
 public interface IRemotableCreateMyOwnResultTuery<out TResult> : IRemotableTuery<TResult>, ICreateMyOwnResultTuery<TResult>;
 
-///<summary>A tessage that is handled no more than once. Guaranteed by infrastructure through deduplication, and transactions.</summary>
-public interface IAtMostOnceTessage : IRemotableTessage, IMustBeHandledTransactionally
+public interface ITessageWithIdentity : ITessage
 {
-   ///<summary>Used by the infrastructure to guarantee that the same tessage is never delivered more than once. Must be generated when the tessage is created and then NEVER modified. Must be maintained when binding a tommand in a UI etc.</summary>
+   ///<summary>Uniquely identifies exactly one <see cref="ITessageWithIdentity"/> Must be generated when the tessage is created and then never modified. Used by the infrastructure to implement delivery guarantees such as at-[most|least] once.</summary>
    TessageId Id { get; }
 }
+
+public interface IAtLeastOnceTessage : ITessageWithIdentity, IRemotableTessage {}
+
+///<summary>A tessage that is handled no more than once. Guaranteed by infrastructure through deduplication, and transactions.</summary>
+public interface IAtMostOnceTessage : ITessageWithIdentity, IRemotableTessage, IMustBeHandledTransactionally {}
 
 public interface IAtMostOnceTypermediaTommand : IAtMostOnceTessage, IRemotableTommand, ITypermediaTessage;
 public interface IAtMostOnceTommand<out TResult> : IAtMostOnceTypermediaTommand, IRemotableTommand<TResult>;
 
 ///<summary>A tessage that is handled exactly once. Guaranteed by infrastructure through deduplication, retries, and transactions.</summary>
-public interface IExactlyOnceTessage : IMustBeSentAndHandledTransactionally, IAtMostOnceTessage;
+public interface IExactlyOnceTessage : IMustBeSentAndHandledTransactionally, IAtMostOnceTessage, IAtLeastOnceTessage;
 
 public interface IExactlyOnceTevent : IRemotableTevent, IExactlyOnceTessage;
 public interface IExactlyOnceTommand : IRemotableTommand, IExactlyOnceTessage;

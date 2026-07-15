@@ -34,7 +34,7 @@ class EndpointDiscoveryQueryTransport : IEndpointDiscoveryQueryTransport
       _typeMap = typeMap;
    }
 
-   public async Task<TResult> GetAsync<TResult>(IQuery<TResult> query, EndpointAddress address)
+   public async Task<TResult> GetAsync<TResult>(ITuery<TResult> query, EndpointAddress address)
    {
       var request = new TransportRequest(TransportRequestKind.EndpointDiscoveryQuery,
                                          new TessageId(),

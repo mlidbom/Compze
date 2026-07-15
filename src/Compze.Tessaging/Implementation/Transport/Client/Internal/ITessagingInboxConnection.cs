@@ -14,7 +14,7 @@ interface ITessagingInboxConnection
     ///<summary>Queues <paramref name="tessage"/> on the connection's exactly-once stream: backed by the outbox's storage,<br/>
     /// head-of-line retried until delivered and acknowledged, the backlog surviving restarts in send order. Only the outbox<br/>
     /// sends exactly-once, so on an endpoint without one — whose connections carry no exactly-once stream — nothing calls this.<br/>
-    /// <paramref name="dedupId"/> is the envelope identity the receiving endpoint's inbox dedups on — the tessage's own <see cref="IAtMostOnceTessage.Id"/>.</summary>
+    /// <paramref name="dedupId"/> is the envelope identity the receiving endpoint's inbox dedups on — the tessage's own <see cref="ITessageWithIdentity.Id"/>.</summary>
     void EnqueueForExactlyOnceDelivery(ITessage tessage, TessageId dedupId);
 
     ///<summary>Queues <paramref name="tessage"/> on the connection's transient stream: in-memory, best-effort, delivered in order<br/>
