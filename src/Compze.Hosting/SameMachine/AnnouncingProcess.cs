@@ -1,51 +1,26 @@
-using System.Diagnostics;
+using Compze.Internals.SystemCE.DiagnosticsCE;
 
 namespace Compze.Hosting.SameMachine;
 
-///<summary>Identifies the OS process that announced an endpoint address into an <see cref="InterprocessEndpointRegistry"/>:<br/>
-/// the process id plus the process's start time, because the OS recycles process ids — only the pair identifies a process uniquely.<br/>
-/// The registry uses it to recognize addresses whose announcing process has exited, so a crashed process's stale addresses are never routed to.</summary>
+///<summary>The OS process that announced an endpoint address into an <see cref="InterprocessEndpointRegistry"/>.<br/>
+/// The registry records it so that a crashed announcer's stale addresses are recognized as dead and never routed to.</summary>
+///<remarks>Recognizing a process across process boundaries — and telling whether it is still running — is a<br/>
+/// <see cref="ProcessIdentity"/> concern. This type is the hosting-domain name for "the process that announced",<br/>
+/// wrapping the <see cref="Identity"/> that does that work.</remarks>
 public class AnnouncingProcess
 {
    ///<summary>The process this code runs in — what a process announcing its own endpoints' addresses passes.</summary>
-   public static AnnouncingProcess Current
-   {
-      get
-      {
-         using var currentProcess = Process.GetCurrentProcess();
-         return new AnnouncingProcess(currentProcess.Id, currentProcess.StartTime.ToUniversalTime().Ticks);
-      }
-   }
+   public static AnnouncingProcess Current => new(ProcessIdentity.OfCurrentProcess);
 
-   public int ProcessId { get; }
+   ///<summary>Identifies the announcing process across process boundaries and answers whether it is still running.</summary>
+   public ProcessIdentity Identity { get; }
 
-   ///<summary>The identified process's start time as UTC ticks — the disambiguator that detects process id reuse.</summary>
-   public long StartTimeTicks { get; }
+   public AnnouncingProcess(ProcessIdentity identity) => Identity = identity;
 
+   ///<summary>Reconstructs an announcing process from its serialized <paramref name="processId"/> and UTC-tick <paramref name="startTimeTicks"/>.</summary>
    public AnnouncingProcess(int processId, long startTimeTicks)
-   {
-      ProcessId = processId;
-      StartTimeTicks = startTimeTicks;
-   }
+      : this(new ProcessIdentity(processId, new DateTime(startTimeTicks, DateTimeKind.Utc))) { }
 
-   ///<summary>True while the identified process is still running.</summary>
-   public bool IsStillRunning
-   {
-      get
-      {
-         try
-         {
-            using var process = Process.GetProcessById(ProcessId);
-            return process.StartTime.ToUniversalTime().Ticks == StartTimeTicks;
-         }
-         catch(ArgumentException) //Thrown if and only if no process with the id is running — the id's owner has exited. The OS offers no "is the process with id X that started at T alive" query; probing and catching IS the mechanism.
-         {
-            return false;
-         }
-         catch(InvalidOperationException) //The process exited between the probe above and reading its start time.
-         {
-            return false;
-         }
-      }
-   }
+   ///<summary>True while the process that announced is still running — the liveness filter that hides a crashed announcer's addresses.</summary>
+   public bool IsStillRunning => Identity.IsCurrentlyRunning;
 }

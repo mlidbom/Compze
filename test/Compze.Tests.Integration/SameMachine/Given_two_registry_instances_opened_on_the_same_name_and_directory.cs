@@ -1,5 +1,6 @@
 using Compze.Abstractions.Hosting.Public;
 using Compze.Hosting.SameMachine;
+using Compze.Internals.SystemCE.DiagnosticsCE;
 using Compze.Must;
 using Compze.Must.Assertions;
 using Compze.Tests.Infrastructure;
@@ -64,9 +65,9 @@ public class Given_two_registry_instances_opened_on_the_same_name_and_directory 
 
    public class after_an_address_is_announced_whose_announcing_process_is_no_longer_running : Given_two_registry_instances_opened_on_the_same_name_and_directory
    {
-      //A process id equal to ours but with a different start time identifies a process that has exited and whose id the OS has since reused — the reuse case the start-time disambiguator exists for.
+      //A process id equal to ours but started a minute earlier identifies a process that has exited and whose id the OS has since reused — the reuse case the start-time disambiguator exists for. The minute is well beyond the reader-skew tolerance that lets two processes agree they are looking at the same live process.
       public after_an_address_is_announced_whose_announcing_process_is_no_longer_running() =>
-         _registryInTheAnnouncingRole.AnnounceEndpointAddress(_endpointId, _address, new AnnouncingProcess(Environment.ProcessId, AnnouncingProcess.Current.StartTimeTicks - 1));
+         _registryInTheAnnouncingRole.AnnounceEndpointAddress(_endpointId, _address, new AnnouncingProcess(new ProcessIdentity(Environment.ProcessId, AnnouncingProcess.Current.Identity.StartTime - TimeSpan.FromMinutes(1))));
 
       [XF] public void the_address_is_not_listed() => _registryInTheReadingRole.ServerEndpointAddresses.Must().BeEmpty();
 

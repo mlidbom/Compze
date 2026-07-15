@@ -116,8 +116,12 @@ listening, and a router's first look at the registry sees every endpoint its hos
 
 **Crashed processes announce nothing — structurally.** The backing file outlives crashed processes by design
 (that is how announcements survive restarts), so a crash cannot retract. Instead, every entry records its
-`AnnouncingProcess` — the process id *plus the process's start time*, because the OS recycles process ids and
-only the pair identifies a process uniquely. Addresses whose announcing process is no longer running are
+`AnnouncingProcess`, whose `ProcessIdentity` is the process id *plus the process's start time*, because the OS
+recycles process ids and only the pair identifies a process uniquely. `ProcessIdentity` compares start times
+with a tolerance rather than for exact equality: `Process.StartTime` is not read-stable across processes on
+every OS (on Unix each reader reconstructs it from its own coarse `now - uptime` boot-time sample), so exact
+tick-equality would wrongly declare a live announcer dead when a *different* process reads its entry — which is
+exactly what breaks same-machine discovery on Linux. Addresses whose announcing process is no longer running are
 invisible to readers, and every announcement prunes them from the file — announcement is the registry's
 self-cleaning moment. A crashed process's addresses are never routed to and never accumulate.
 

@@ -66,7 +66,7 @@ public class InterprocessEndpointRegistry : IEndpointRegistryAndAnnouncer, IDisp
       _sharedState.Update(state =>
       {
          state.Entries.RemoveAll(entry => entry.EndpointId == endpointId.Value || !entry.AnnouncingProcess.IsStillRunning);
-         state.Entries.Add(new RegistryState.Entry(endpointId.Value, address.Uri.AbsoluteUri, announcingProcess.ProcessId, announcingProcess.StartTimeTicks));
+         state.Entries.Add(new RegistryState.Entry(endpointId.Value, address.Uri.AbsoluteUri, announcingProcess.Identity.ProcessId, announcingProcess.Identity.StartTime.Ticks));
       });
 
    ///<summary>Retracts the endpoint's announced address — what an endpoint does when it stops listening.</summary>
@@ -100,8 +100,8 @@ public class InterprocessEndpointRegistry : IEndpointRegistryAndAnnouncer, IDisp
             {
                writer.Write(entry.EndpointId.ToByteArray());
                writer.Write(entry.AddressUri);
-               writer.Write(entry.AnnouncingProcess.ProcessId);
-               writer.Write(entry.AnnouncingProcess.StartTimeTicks);
+               writer.Write(entry.AnnouncingProcess.Identity.ProcessId);
+               writer.Write(entry.AnnouncingProcess.Identity.StartTime.Ticks);
             }
 
             writer.Flush();
