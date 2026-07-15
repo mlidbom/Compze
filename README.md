@@ -26,37 +26,37 @@ Leveraging .NET type compatibility enables an event modeling paradigm which:
 Tevents, type routed events, use the type system to declare their meaning in detail and unambiguously:
 
 ```csharp
-//IAggregateEvent and IAggregateCreatedEvent are framework provided
-interface IUserEvent : IAggregateEvent;
-interface IUserRegistered : IUserEvent, IAggregateCreatedEvent;
+//ITaggregateTevent and ITaggregateCreatedTevent are framework provided
+interface IUserTevent : ITaggregateTevent;
+interface IUserRegistered : IUserTevent, ITaggregateCreatedTevent;
 interface IUserImported : IUserRegistered;
 ```
 
-Events are routed by **type compatibility**
+Tevents are routed by **type compatibility**
 
 ```csharp
 registrar
-  .ForEvent<IUserEvent>(userEvent => 
-      Console.WriteLine($"User: {userEvent.AggregateId} something happened"))
-  .ForEvent<IUserRegistered>(userRegistered => 
-      Console.WriteLine($"User: {userRegistered.AggregateId} registered"))
-  .ForEvent<IUserImported>(userImported => 
-      Console.WriteLine($"User: {userImported.AggregateId} imported"));
+  .ForTevent<IUserTevent>(userTevent => 
+      Console.WriteLine($"User: {userTevent.TaggregateId} something happened"))
+  .ForTevent<IUserRegistered>(userRegistered => 
+      Console.WriteLine($"User: {userRegistered.TaggregateId} registered"))
+  .ForTevent<IUserImported>(userImported => 
+      Console.WriteLine($"User: {userImported.TaggregateId} imported"));
 ```
 
-When an `IUserImported` event is published, **all three handlers** are called, in registration order, since `IUserImported` is type-compatible with all registered handlers.
+When an `IUserImported` tevent is published, **all three handlers** are called, in registration order, since `IUserImported` is type-compatible with all registered handlers.
 
 #### Property Updates Without the Pain
 
 Unify property-updated events and semantic domain events:
 
 ```csharp
-interface IUserEmailPropertyUpdated : IUserEvent
+interface IUserEmailPropertyUpdated : IUserTevent
 {
    Email Email { get; }
 }
 
-interface IUserRegistered : IUserEmailPropertyUpdated, IAggregateCreatedEvent;
+interface IUserRegistered : IUserEmailPropertyUpdated, ITaggregateCreatedTevent;
 interface IUserChangedEmail : IUserEmailPropertyUpdated;
 ```
 

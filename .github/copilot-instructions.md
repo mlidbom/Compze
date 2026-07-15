@@ -100,9 +100,9 @@ Tests that need to run against all configured pluggable component combinations u
 **DO NOT** write one test per pluggable component. `[PCT]` automatically tests ALL enabled combinations.
 
 ## Teventive Programming
-- Events use interface inheritance for type-based routing
-- Example: `IUserImported : IUserRegistered : IUserEvent : IAggregateEvent`
-- Subscribers receive events they're compatible with through type hierarchy
+- Tevents (type-routed events) use interface inheritance for type-based routing
+- Example: `IUserImported : IUserRegistered : IUserTevent : ITaggregateTevent`
+- Subscribers receive every tevent compatible with their subscribed type through the type hierarchy
 
 ## Documentation Co-Location
 - Documentation lives in `_docs/` folders next to the code it documents

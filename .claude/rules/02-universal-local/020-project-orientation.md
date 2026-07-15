@@ -9,10 +9,10 @@
 
 A .NET framework for building expressive domains through:
 
-- **Teventive programming**: Type-routed events (also called "Semantic Events") that leverage .NET type
-  compatibility for elegant event modeling. Events use interface inheritance for type-based routing —
-  e.g. `IUserImported : IUserRegistered : IUserEvent : IAggregateEvent` — and subscribers receive every
-  event compatible with their subscribed type through the type hierarchy.
+- **Teventive programming**: Type-routed events — tevents, also called "Semantic Events" — that leverage
+  .NET type compatibility for elegant event modeling. Tevents use interface inheritance for type-based
+  routing — e.g. `IUserImported : IUserRegistered : IUserTevent : ITaggregateTevent` — and subscribers
+  receive every tevent compatible with their subscribed type through the type hierarchy.
 - **Typermedia APIs**: Type-based message routing that extends hypermedia principles with .NET types.
 
 ## Tech stack
