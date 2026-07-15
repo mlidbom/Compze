@@ -1,8 +1,8 @@
-using System.Collections.Generic;
 using Compze.Tessaging.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
 using Compze.Teventive.Taggregates.Tevents.Public;
-using Compze.Internals.SystemCE;
 using static System.Console;
+
+#pragma warning disable // Documentation example code: deliberately illustrative fragments (empty marker interfaces, never-instantiated examples), not production code.
 // ReSharper disable NotAccessedVariable
 // ReSharper disable RedundantAssignment
 
@@ -29,7 +29,7 @@ class Examples
    public void Enumerables()
    {
       #region enumerable-type-compatibility
-      IEnumerable<object> objects = [new object(), new object()];
+      IEnumerable<object> objects = [new(), new()];
       IEnumerable<string> strings = ["1", "2"];
       objects = strings;
       #endregion
@@ -37,7 +37,7 @@ class Examples
 
    public void Listeners()
    {
-      ITessageHandlerRegistrar registrar = ((ITessageHandlerRegistrar)null!).NotNull();
+      ITessageHandlerRegistrar registrar = null!;
 
       #region doglistener
       registrar

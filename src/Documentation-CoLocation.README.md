@@ -1,93 +1,76 @@
 # Documentation Co-Location Pattern
 
 ## Overview
-Documentation markdown files and example code are co-located with the production source code they document, following the namespace hierarchy. This eliminates parallel hierarchies and makes documentation trivially discoverable.
+Documentation markdown files and example code are co-located with the production source code they document. This eliminates parallel hierarchies and makes documentation trivially discoverable.
+
+There are two co-located documentation conventions, split by audience:
+
+- **`_docs/`** — public documentation, published as part of the website.
+- **`dev_docs/`** — internal documentation supporting development: design narratives, investigation notes, TODO plans. Never published to the website.
+
+Never mix the two: `dev_docs` content must not become part of the website, and website content does not belong in `dev_docs`. (The `Solution.UserDocs` and `Solution.DevDocs` projects in `src/SolutionStructure` surface each set in the solution explorer.)
 
 ## File Organization
 
 ```
-src/Compze/Tessaging/Abstractions/
-├── IServiceBusSession.cs          ← Production code
-├── MessageTypes.cs                ← Production code  
-└── _docs/                         ← Documentation folder
-    ├── basics.md                  ← Documentation markdown
-    └── MessageHandling.cs         ← Example code for docs (NOT compiled into production)
+src/Compze.Tessaging/
+├── Compze.Tessaging.csproj
+├── ...production code...
+├── _docs/                          ← Public documentation (published on the website)
+│   ├── introduction.md             ← Documentation markdown
+│   ├── toc.yml                     ← DocFX table of contents for this folder
+│   └── TessageHandling.cs          ← Example code for the docs (compiled ONLY into the Website project)
+└── dev_docs/                       ← Internal development documentation (never published)
+    └── tevent-delivery-model.md
 ```
-
-## Naming Convention
-
-**Documentation Folder:** `_docs/`
 
 Files in `_docs/` folders:
 - Contain markdown documentation and code examples
 - Code examples are referenced via DocFX `[!code-csharp[](file.cs#region)]` includes
-- Use the SAME namespace as the production code in the parent folder
+- Use the SAME namespace as the production code where practical
 - Are visible and editable in production projects (appear in Solution Explorer)
 - Participate in refactoring (rename a class and it updates in `_docs/` files too)
 - Are NOT compiled into production assemblies
-- ARE compiled into the Website project for DocFX processing
+- ARE compiled into the Website project — so the compiler catches documentation rot when the API changes
 
 ## Technical Implementation
 
-### Part 1: Production Projects (via `Directory.Build.props`)
+### Part 1: Production projects exclude `_docs` code from compilation
+
+Each documented project excludes its example code from compilation while keeping it visible:
 
 ```xml
-<PropertyGroup>
-  <EnablePackageValidation>true</EnablePackageValidation>
-  <!-- Exclude _docs folders from default compile items -->
-  <DefaultItemExcludes>$(DefaultItemExcludes);**\_docs\**</DefaultItemExcludes>
-</PropertyGroup>
-
+<!-- Exclude _docs files from compilation but keep them visible. -->
 <ItemGroup>
-  <!-- Include _docs content as None items so they're visible in Solution Explorer and participate in refactoring -->
-  <None Include="**\_docs\**" />
+  <Compile Remove="_docs\**\*.cs" />
+  <None Include="_docs\**\*.cs" />
 </ItemGroup>
 ```
 
-This configuration:
-- **Excludes** all files in `_docs/` folders from SDK's automatic compilation via `DefaultItemExcludes`
-- **Includes** them as `None` items so they remain visible in Solution Explorer
-- Applies to ALL projects in the solution automatically
+### Part 2: The Website project compiles every example
 
-**Note:** We use `DefaultItemExcludes` instead of `<Compile Remove>` because the SDK's default `**/*.cs` glob happens after `Directory.Build.props` is imported. `DefaultItemExcludes` prevents the SDK from including these files in the first place.
-
-### Part 2: Website Project
+`src/Websites/Website/Website.csproj` links in and compiles every co-located example across the framework, so a rename or API change that breaks an example breaks the build instead of silently rotting:
 
 ```xml
-<!-- Include all _docs folder contents from the Compze source tree for compilation in the Website project -->
-<ItemGroup>
-  <Compile Include="..\..\Compze\**\_docs\*.cs" LinkBase="CompzeDocsExamples" />
-</ItemGroup>
+<Compile Include="..\..\Compze.*\**\_docs\*.cs" LinkBase="CompzeDocsExamples" />
 ```
 
-This configuration:
-- **Links** all `.cs` files from `_docs/` folders into the Website project
-- **Compiles** them into the Website assembly (required for DocFX code includes)
-- Makes them available for DocFX markdown processing
+The Website project carries flex references (see the FlexRef documentation) to the projects whose types the examples use.
 
-## Benefits
+### Part 3: DocFX reads `_docs` through directory junctions
 
-1. **Zero Navigation Overhead**
-   - Documentation is exactly where the code is
-   - No need to "go find the docs"
+DocFX only processes content located under the folder containing `docfx.json`. `src/Websites/Website/Ensure-CoLocatedDocsJunctions.ps1` therefore creates one git-ignored directory junction per documented project — `Compze\Teventive` → `..\..\Compze.Teventive`, and so on. It runs automatically before every docfx build (npm pre-hooks in `package.json` and `buildAndPublish.ps1`) and is safe to run by hand after giving a new project a `_docs` folder.
 
-2. **Namespace Alignment**  
-   - Docs use real production namespaces
-   - No artificial `Website.docs.*` namespaces
+`docfx.json` (and `docfx-site-only.json`) pull the co-located docs in through the junctions — and ONLY `_docs`; `dev_docs` never enters the content set:
 
-3. **Automatic Refactoring**
-   - Rename a type → it updates in example code automatically
-   - Move a file → documentation moves with it
+```json
+{
+  "files": [ "Compze/**/_docs/**/*.{md,yml}" ],
+  "exclude": [ "Compze/**/bin/**", "Compze/**/obj/**" ]
+}
+```
 
-4. **Single Source of Truth**
-   - One namespace hierarchy
-   - One folder structure  
-   - One place to look
-
-5. **Easier Maintenance**
-   - Change code and docs in the same commit
-   - Same PR review for related changes
-   - No sync issues between "code" and "docs" hierarchies
+Site links address the junction paths, e.g. `~/Compze/Teventive/Taggregates/_docs/definition.md`.
 
 ## File Template
 
@@ -95,7 +78,8 @@ This configuration:
 
 ```csharp
 // ReSharper disable All
-#pragma warning disable
+
+#pragma warning disable // Documentation example code: deliberately illustrative fragments, not production code.
 
 namespace Compze.Tessaging.Abstractions;
 
@@ -112,7 +96,7 @@ class MyFeatureExamples
    }
    #endregion
 
-   #region advanced_example  
+   #region advanced_example
    void AdvancedUsage()
    {
       // More complex example
@@ -139,71 +123,49 @@ And for advanced usage:
 
 Note: Since the markdown file is in the same `_docs/` folder as the code file, you can reference it with just the filename.
 
-## DocFX Configuration
+## Benefits
 
-Ensure `docfx.json` includes both markdown and source directories:
+1. **Zero Navigation Overhead**
+   - Documentation is exactly where the code is
+   - No need to "go find the docs"
 
-```json
-{
-  "metadata": [
-    {
-      "src": [
-        {
-          "files": [ "**/*.csproj" ],
-          "src": "../../src/Compze"
-        }
-      ]
-    }
-  ],
-  "build": {
-    "content": [
-      {
-        "files": [ "**/*.md", "**/*.yml" ],
-        "src": "../../src/Compze"
-      }
-    ]
-  }
-}
-```
+2. **Namespace Alignment**
+   - Docs use real production namespaces
+   - No artificial `Website.docs.*` namespaces
 
-## Migration from Website/docs
+3. **Automatic Refactoring**
+   - Rename a type → it updates in example code automatically
+   - Move a file → documentation moves with it
 
-When moving existing documentation from `Website/docs/` to production folders:
+4. **Single Source of Truth**
+   - One namespace hierarchy
+   - One folder structure
+   - One place to look
 
-1. **Create `_docs/` folder** in the corresponding namespace folder
-2. **Move markdown files** into the `_docs/` folder
-3. **Move .cs example files** into the `_docs/` folder (remove any `.Docs` suffix)
-4. **Update namespaces** in `.cs` files to match production code (not `Website.docs.*`)
-5. **Update DocFX table of contents** to reference new locations
-6. **Test DocFX build** to ensure code includes still work
-
-Example:
-```
-FROM: Website/docs/tessaging/basics.md
-      Website/docs/tessaging/Basics.cs (namespace Website.docs.tessaging)
-  TO: src/Compze/Tessaging/Abstractions/_docs/basics.md
-      src/Compze/Tessaging/Abstractions/_docs/Basics.cs (namespace Compze.Tessaging.Abstractions)
-```
+5. **Easier Maintenance**
+   - Change code and docs in the same commit
+   - Same PR review for related changes
+   - The compiler fails the build when an example rots, instead of the site silently rendering nothing
 
 ## Best Practices
 
 1. **Use `#region` tags** in `_docs/*.cs` files to create named snippets for DocFX includes
-2. **Disable warnings** at the file top with `#pragma warning disable` since these aren't "real" code
+2. **Disable warnings** at the file top with `#pragma warning disable` (with its rationale on the same line) since these are deliberately illustrative fragments, not production code
 3. **Document the purpose** with XML comments explaining these are documentation examples
 4. **Keep examples simple** and focused on illustrating one concept
 5. **Use real types** from production code where possible to leverage refactoring
-6. **Group related documentation** - put multiple related `.md` and `.cs` files in the same `_docs/` folder
+6. **Group related documentation** — put multiple related `.md` and `.cs` files in the same `_docs/` folder
+7. **Speak the ubiquitous language** — pages, example files, and regions carry the same names the code does (a page about tevents is `tevent-naming.md`, never `event-naming.md`)
 
 ## Verification
 
 To verify the setup works:
 
 ```powershell
-# Production project should NOT compile _docs files
-dotnet build src/Compze/Tessaging/Abstractions/Compze.Tessaging.Abstractions.csproj
+# Production projects do NOT compile _docs example files; the Website project DOES — and fails on rotted examples:
+dotnet build Compze.AllProjects.slnx
 
-# Website project SHOULD compile them
-dotnet build src/Websites/Website/Website.csproj -v:n | Select-String "_docs"
+# The website builds and every DocFX include and link resolves (0 warnings expected):
+cd src/Websites/Website
+npm run build-site-only   # or: docfx build docfx-site-only.json
 ```
-
-The Website build output should show `_docs\*.cs` files being compiled into the Website assembly.

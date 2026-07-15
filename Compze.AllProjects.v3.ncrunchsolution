@@ -1,9 +1,6 @@
 <SolutionConfiguration>
   <Settings>
     <AllowParallelTestExecution>True</AllowParallelTestExecution>
-    <CustomBuildProperties>
-      <Value>UsePackageReference_Compze_Utilities = true</Value>
-    </CustomBuildProperties>
     <HotSpotsExclusionList />
     <HotSpotsLineExclusionList />
     <PipelineOptimisationPriority>Throughput</PipelineOptimisationPriority>

@@ -1,12 +1,12 @@
 ﻿<div>
 
-#### [Teventive](~/Compze/Tessaging/Teventive/_docs/definition.md)
+#### [Teventive](~/Compze/Teventive/Taggregates/_docs/definition.md)
 Leveraging .NET type compatibility, teventive programming enables an event modeling paradigm which
 * Gives an unprecedented ability to understand domains in terms of how the events that can occur relate to each other.
 * Eliminates all need for manual event routing and type checking.
 * Dramatically reduces the number of event subscriptions needed.
 * Enables modeling inheritance and composition of event based [aggregates](~/docs/prerequisite-terms.md#aggregate) with elegant precision.
-* [Unifies](~/Compze/Tessaging/Teventive/_docs/property-updated-events.md) fine-grained property-updated style events and coarse-grained domain events.
+* [Unifies](~/Compze/Teventive/Taggregates/_docs/property-updated-tevents.md) fine-grained property-updated style events and coarse-grained domain events.
 * Enables subscribing to precisely the event you need, while being guaranteed that when new events are added, inheriting the current event, you will receive those too without needing to change anything in your subscriber code.
 
 In spite of this, to this day, countless event driven applications are shock full of code that leverages none of these possibilities. Resulting in what can only be described as maintenance nightmares.

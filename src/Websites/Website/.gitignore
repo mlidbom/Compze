@@ -1,4 +1,4 @@
-# Ignore the junction/symlink to source tree
+# The per-project junctions Ensure-CoLocatedDocsJunctions.ps1 creates to bring co-located _docs into DocFX's content cone
 Compze/
 
 # DocFX build output

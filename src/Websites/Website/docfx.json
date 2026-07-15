@@ -4,12 +4,11 @@
     {
       "src": [
         {
-          "src": "../src/framework",
+          "src": "../..",
           "files": [
-            "**/Compze.csproj"
+            "Compze.*/Compze.*.csproj"
           ],
           "exclude": [
-            "**/*tests*.csproj",
             "**/nCrunchTemp_*.csproj"
           ]
         }
@@ -27,9 +26,17 @@
         "exclude": [
           "_site/**",
           "node_modules/**",
+          "Compze/**",
+          "README.md"
+        ]
+      },
+      {
+        "files": [
+          "Compze/**/_docs/**/*.{md,yml}"
+        ],
+        "exclude": [
           "Compze/**/bin/**",
-          "Compze/**/obj/**",
-          "Compze/**/*.cs"
+          "Compze/**/obj/**"
         ]
       }
     ],

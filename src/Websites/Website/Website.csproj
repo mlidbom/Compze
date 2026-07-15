@@ -1,49 +1,78 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
-    <PropertyGroup>
-        <TargetFramework>net10.0</TargetFramework>
-        <Nullable>enable</Nullable>
-        <IsPackable>false</IsPackable>
-        <WarnOnPackingNonPackableProject>false</WarnOnPackingNonPackableProject>
-    </PropertyGroup>
-    <ItemGroup>
-        <Compile Remove="_site\**" />
-        <Compile Remove="api\**" />
-    </ItemGroup>
-    <ItemGroup>
-        <EmbeddedResource Remove="_site\**" />
-        <EmbeddedResource Remove="api\**" />
-    </ItemGroup>
-    <ItemGroup>
-        <Content Remove="_site\**" />
-        <Content Remove="api\**" />
-    </ItemGroup>
-    <ItemGroup>
-        <None Remove="_site\**" />
-        <None Remove="api\**" />
-    </ItemGroup>
-    <ItemGroup>
-        <_ContentIncludedByDefault Remove="_site\api\toc.json" />
-        <_ContentIncludedByDefault Remove="_site\docs\toc.json" />
-        <_ContentIncludedByDefault Remove="_site\index.json" />
-        <_ContentIncludedByDefault Remove="_site\manifest.json" />
-        <_ContentIncludedByDefault Remove="_site\toc.json" />
-    </ItemGroup>
-    <ItemGroup>
-        <Watch Include="_site/**/*.*" />
-        <Watch Include="**/*.cs" />
-    </ItemGroup>
-
-    <!-- Hide everything from Compze junction except _docs folders -->
-    <ItemGroup>
-        <!-- Remove ALL items from Compze -->
-        <Compile Remove="Compze\**" />
-        <Content Remove="Compze\**" />
-        <None Remove="Compze\**" />
-        
-        <!-- Include ONLY _docs content -->
-        <Compile Include="Compze\**\_docs\*.cs" />
-        <Content Include="Compze\**\_docs\*.md" />
-        <Content Include="Compze\**\_docs\*.yml" />
-        <None Include="Compze\**\_docs\**" Exclude="Compze\**\_docs\*.cs;Compze\**\_docs\*.md;Compze\**\_docs\*.yml" />
-    </ItemGroup>
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+    <WarnOnPackingNonPackableProject>false</WarnOnPackingNonPackableProject>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="_site\**" />
+    <Compile Remove="api\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Remove="_site\**" />
+    <EmbeddedResource Remove="api\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Remove="_site\**" />
+    <Content Remove="api\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="_site\**" />
+    <None Remove="api\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="_site\api\toc.json" />
+    <_ContentIncludedByDefault Remove="_site\docs\toc.json" />
+    <_ContentIncludedByDefault Remove="_site\index.json" />
+    <_ContentIncludedByDefault Remove="_site\manifest.json" />
+    <_ContentIncludedByDefault Remove="_site\toc.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <Watch Include="_site/**/*.*" />
+    <Watch Include="**/*.cs" />
+  </ItemGroup>
+  <!-- The Compze folder holds the junctions Ensure-CoLocatedDocsJunctions.ps1 creates for DocFX (see
+         src/Documentation-CoLocation.README.md). Hide everything they expose from MSBuild: without this the
+         SDK's default globs would compile the junctioned projects' entire production source into this assembly. -->
+  <ItemGroup>
+    <Compile Remove="Compze\**" />
+    <Content Remove="Compze\**" />
+    <None Remove="Compze\**" />
+  </ItemGroup>
+  <!-- Compile every co-located _docs example file in the framework so the compiler catches documentation rot.
+         The production projects exclude _docs from compilation (see src/Documentation-CoLocation.README.md);
+         this project is the one place the examples compile. Reaches through the real relative paths, not the
+         junctions, so plain dotnet builds need no junction setup. -->
+  <ItemGroup>
+    <Compile Include="..\..\Compze.*\**\_docs\*.cs" LinkBase="CompzeDocsExamples" />
+  </ItemGroup>
+  <!-- Compze.Abstractions — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Abstractions)' == 'true'">
+    <PackageReference Include="Compze.Abstractions" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Abstractions)' != 'true'">
+    <ProjectReference Include="..\..\Compze.Abstractions\Compze.Abstractions.csproj" />
+  </ItemGroup>
+  <!-- Compze.Internals.SystemCE — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_SystemCE)' == 'true'">
+    <PackageReference Include="Compze.Internals.SystemCE" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_SystemCE)' != 'true'">
+    <ProjectReference Include="..\..\Compze.Internals.SystemCE\Compze.Internals.SystemCE.csproj" />
+  </ItemGroup>
+  <!-- Compze.Tessaging.Abstractions — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging_Abstractions)' == 'true'">
+    <PackageReference Include="Compze.Tessaging.Abstractions" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging_Abstractions)' != 'true'">
+    <ProjectReference Include="..\..\Compze.Tessaging.Abstractions\Compze.Tessaging.Abstractions.csproj" />
+  </ItemGroup>
+  <!-- Compze.Teventive — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Teventive)' == 'true'">
+    <PackageReference Include="Compze.Teventive" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Teventive)' != 'true'">
+    <ProjectReference Include="..\..\Compze.Teventive\Compze.Teventive.csproj" />
+  </ItemGroup>
 </Project>

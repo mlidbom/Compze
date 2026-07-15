@@ -1,8 +1,9 @@
 using Compze.Tessaging.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
 using Compze.Teventive.Taggregates.Tevents.Public;
-using Compze.Internals.SystemCE;
 using static System.Console;
 using Tessaging_ITevent = Compze.Abstractions.Tessaging.Public.ITevent;
+
+#pragma warning disable // Documentation example code: deliberately illustrative fragments (empty marker interfaces, never-instantiated examples), not production code.
 
 // ReSharper disable UnusedParameter.Local
 // ReSharper disable ArrangeTypeMemberModifiers
@@ -24,7 +25,7 @@ namespace Website.paradigms.semantic_tevents
 
          public void IllustrateTeventListening()
          {
-            ITessageHandlerRegistrar registrar = ((ITessageHandlerRegistrar)null!).NotNull();
+            ITessageHandlerRegistrar registrar = null!;
 
             #region Unhelpful
             registrar.ForTevent<IName>(nameTevent => WriteLine("Uhmm... What is happening here?"));

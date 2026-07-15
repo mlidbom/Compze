@@ -9,7 +9,18 @@
         "exclude": [
           "_site/**",
           "api/**",
-          "node_modules/**"
+          "node_modules/**",
+          "Compze/**",
+          "README.md"
+        ]
+      },
+      {
+        "files": [
+          "Compze/**/_docs/**/*.{md,yml}"
+        ],
+        "exclude": [
+          "Compze/**/bin/**",
+          "Compze/**/obj/**"
         ]
       }
     ],

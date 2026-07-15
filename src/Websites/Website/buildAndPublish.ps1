@@ -1,5 +1,7 @@
 Push-Location $PSScriptRoot #knowing which folder we are in is good :)
 
+& "$PSScriptRoot\Ensure-CoLocatedDocsJunctions.ps1"
+
 dotnet tool update -g docfx
 
 $buildFolder = "$PSScriptRoot\_site"

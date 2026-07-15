@@ -1,8 +1,8 @@
-using System;
 using Compze.Tessaging.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
 using Compze.Teventive.Taggregates.Tevents.Public;
-using Compze.Internals.SystemCE;
 using static System.Console;
+
+#pragma warning disable // Documentation example code: deliberately illustrative fragments (empty marker interfaces, never-instantiated examples), not production code.
 
 namespace Website.paradigms.semantic_tevents
 {
@@ -40,7 +40,7 @@ namespace Website.paradigms.semantic_tevents
       {
          public void IllustrateTeventListening()
          {
-            ITessageHandlerRegistrar registrar = ((ITessageHandlerRegistrar)null!).NotNull();
+            ITessageHandlerRegistrar registrar = null!;
 
             #region UserTeventRegistration
             registrar

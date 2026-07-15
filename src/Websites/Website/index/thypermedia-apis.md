@@ -1,6 +1,6 @@
 ﻿<div>
 
-#### [Typermedia APIs](~/Compze/Tessaging/Typermedia/_docs/introduction.md)
+#### [Typermedia APIs](~/Compze/Typermedia/_docs/introduction.md)
 The most popular API in the world is a Browsable API (REST to be exact). You are using it right now. It's called the world wide web. Can you imagine trying to use it without links and forms? Imagine reading this page and instead of a link you are presented with: 4375.
 
 That is actually how we build most APIs today. Why?
