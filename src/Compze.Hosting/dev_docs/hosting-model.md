@@ -161,7 +161,10 @@ wired once whether it arrives alone or under distribution).
   `AddInProcessTypermedia()`) wires the handler registry and the `IInProcessTypermediaNavigator` through
   which strictly local tueries and tommands execute synchronously, in the caller's transaction.
   `DistributedTypermediaEndpointFeature` (in `Compze.Typermedia.Client`, `AddDistributedTypermedia()`)
-  composes it and adds the handler executor that serves remote clients, and discovery.
+  composes it and adds the handler executor that serves remote clients, discovery, and the client side
+  through which the endpoint itself navigates other endpoints' typermedia — the `IRemoteTypermediaNavigator`,
+  routed by the endpoint's `TypermediaRouter` against the registry the endpoint declares it discovers
+  through; declaring no registry means the endpoint only serves.
 - **Serving is shared.** An endpoint runs **one transport server**, whatever it speaks: every
   transport-speaking feature composes `EndpointTransportServerFeature` (in `Compze.Internals.Transport`) — the same
   `GetOrAddFeature` pattern one level down — and *contribute their request handling to it* (request-kind
@@ -193,12 +196,13 @@ endpoint can actually serve (retraction is the mirror image: the first act of th
 `TransientTessagingEndpointComponent` — the transport-speaking Tessaging core's lifecycle — sets its router
 reconciling against the `IEndpointRegistry`'s membership in the sending phase (continuously, so endpoints
 that appear, disappear, or restart at a new address are followed — see
-[same-machine hosting](same-machine-hosting.md)) and starts the connections' delivery streams.
+[same-machine hosting](wip/same-machine-hosting.md)) and starts the connections' delivery streams.
 `ExactlyOnceTessagingEndpointComponent` listens with its inbox and scheduler and initializes the outbox's
 durable storage — all in the listening phase, so that when sending starts anywhere, every connection's
 exactly-once stream finds the storage ready to load its recovery backlog from.
-`DistributedTypermediaEndpointComponent` drives nothing — the shared server serves its requests — and exists
-as the endpoint surface's evidence that distributed Typermedia is listening. Only the
+`DistributedTypermediaEndpointComponent` mirrors the shape on the Typermedia side: the shared server serves
+its requests, and when the endpoint declared the registry it discovers through, the sending phase sets the
+typermedia router reconciling the same way. Only the
 transport-speaking features add components at all — an endpoint declaring only in-process features has no
 runtime lifecycle, and the host starts it with nothing to drive.
 
@@ -263,13 +267,15 @@ transport server it never serves.
 `EndpointHost.Production.Create(containerFactory)` — the factory produces a fresh container builder per
 endpoint. Endpoints read configuration through `IConfigurationParameterProvider`: an endpoint setup that
 registers its own provider wins; `AppSettingsJsonConfigurationParameterProvider` reading `appsettings.json`
-is only the default. How endpoints find each other is a declaration on the transport-speaking Tessaging core:
-`AddTransientTessaging().DiscoverEndpointsThrough(registry)`, which `AddExactlyOnceTessaging()` delegates to — an endpoint declaring no registry falls back
-to reading other endpoints' addresses from configuration (`AppConfigEndpointRegistry`). For processes on one
+is only the default. How endpoints find each other is a declaration on each transport-speaking feature:
+`AddTransientTessaging().DiscoverEndpointsThrough(registry)`, which `AddExactlyOnceTessaging()` delegates to —
+an endpoint declaring no registry falls back to reading other endpoints' addresses from configuration
+(`AppConfigEndpointRegistry`) — and `AddDistributedTypermedia().DiscoverEndpointsThrough(registry)`, where
+declaring no registry means the endpoint only serves. For processes on one
 machine the registry is the `InterprocessEndpointRegistry`, which is also the announcer, so an endpoint
 declares both sides at once with `ParticipateIn(registry)` — endpoints announce their freshly generated
 addresses and discover each other with zero configuration; the whole story lives in
-[same-machine hosting](same-machine-hosting.md).
+[same-machine hosting](wip/same-machine-hosting.md).
 
 ## Testing hosting
 
@@ -317,7 +323,7 @@ production registrars run unmodified against throwaway pooled databases, across 
 container, and serializer in the current test's `PluggableComponents` configuration.
 
 The transport itself is an axis of that same matrix (`TestEnv.Transport`): the same specifications run over
-HTTP (ASP.NET Core) and over named pipes (see [same-machine hosting](same-machine-hosting.md)). The
+HTTP (ASP.NET Core) and over named pipes (see [same-machine hosting](wip/same-machine-hosting.md)). The
 endpoint-discovery query transport every endpoint needs no matter what it speaks belongs to no single
 communication style, so every communication style's transport registration demands it itself through the
 guarded `…EndpointDiscoveryQueryTransportIfNotRegistered()` registrars: whichever registers first wins, and

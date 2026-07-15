@@ -60,6 +60,9 @@ class AssemblyTypeMapper : IAssemblyTypeMapper
          .Map<Tessaging.ServiceBusSpecification.Navigator_specification.UserApiStartPageTuery>("c270b8eb-b4e1-4bd8-b0de-dae0e2eb14ce")
          .Map<Tessaging.ServiceBusSpecification.Navigator_specification.UserRegisteredConfirmationResource>("4ac96e70-aff6-45d4-9240-c1f556e7bb47")
          .Map<SameMachine.Given_two_hosts_sharing_an_interprocess_registry_where_the_receiving_host_starts_last.TommandDiscoveredThroughReconciliation>("f0a1c9e4-6a4b-4a37-9b39-4dd23a2b81c7")
+         .Map<Hosting.Given_two_endpoints_composing_distributed_typermedia_on_foundations_declaring_no_database.GetTheAnswerTuery>("e94d17b6-3a82-4c05-bd61-f72a08c95e34")
+         .Map<Hosting.Given_two_endpoints_composing_distributed_typermedia_on_foundations_declaring_no_database.RegisterGreetingTypermediaTommand>("516f8ea2-d90c-47b3-a1e8-b64d20c7f9a8")
+         .Map<Hosting.Given_two_endpoints_composing_distributed_typermedia_on_foundations_declaring_no_database.GreetingRegisteredConfirmationResource>("07a3c5d8-fb21-4e96-8c04-9d15e7b62af3")
          .Map<Hosting.Given_an_endpoint_whose_foundation_declares_no_database.GetUserTuery>("337c7aba-a875-4271-9fcd-b511349d8886")
          .Map<Hosting.Given_an_endpoint_whose_foundation_declares_no_database.RegisterUserTypermediaTommand>("62561306-d74a-4c6a-ae0a-cd3e9ce9ddee")
          .Map<Hosting.Given_an_endpoint_whose_foundation_declares_no_database.UserRegisteredConfirmationResource>("06eac6b0-3623-4061-a057-87e893547812");

@@ -12,26 +12,30 @@ using Compze.Internals.Serialization.Newtonsoft.Wiring;
 using Compze.Internals.Transport.NamedPipes;
 using Compze.Tessaging.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
 using Compze.Tessaging.Hosting;
+using Compze.Typermedia.Client;
+using Compze.Typermedia.HandlerRegistration;
 using Compze.Internals.Sql.Sqlite.Wiring;
 using Compze.Tessaging.Sqlite.Wiring;
 
 namespace Compze.Tests.SameMachine.EndpointHostProcess;
 
-///<summary>A standalone process hosting one Tessaging endpoint over named pipes, discovered through an<br/>
-/// <see cref="InterprocessEndpointRegistry"/> — the counterpart process the multi-process specifications converse with. Which<br/>
-/// Tessaging the endpoint speaks is the launching specification's choice, passed as the composition argument:<br/>
+///<summary>A standalone process hosting one endpoint over named pipes, discovered through an<br/>
+/// <see cref="InterprocessEndpointRegistry"/> — the counterpart process the multi-process specifications converse with. What<br/>
+/// the endpoint speaks is the launching specification's choice, passed as the composition argument:<br/>
 /// <see cref="ExactlyOnceTessagingComposition"/> handles <see cref="TommandSentToTheEndpointHostProcess"/> by sending<br/>
 /// <see cref="TommandSentBackToTheSpecificationProcess"/> — proving discovery, exactly-once delivery, and reply across real process<br/>
-/// boundaries with no web stack and no database server; <see cref="TransientTessagingComposition"/> handles<br/>
+/// boundaries with no web stack and no database server; <see cref="DatabaselessComposition"/> handles<br/>
 /// <see cref="ITransientTeventPublishedByTheSpecificationProcess"/> by publishing<br/>
-/// <see cref="TransientTeventPublishedByTheEndpointHostProcess"/> — the same conversation guarantee-free, with no database anywhere.</summary>
+/// <see cref="TransientTeventPublishedByTheEndpointHostProcess"/> and answers <see cref="TueryAskedByTheSpecificationProcess"/> —<br/>
+/// the guarantee-free conversation in both communication styles, with no database anywhere.</summary>
 public static class Program
 {
    ///<summary>The composition argument selecting the full exactly-once Tessaging pipeline on a sqlite database — the exactly-once tommand conversation.</summary>
    public const string ExactlyOnceTessagingComposition = "ExactlyOnceTessaging";
 
-   ///<summary>The composition argument selecting guarantee-free transient Tessaging on a database-less foundation — the transient tevent conversation.</summary>
-   public const string TransientTessagingComposition = "TransientTessaging";
+   ///<summary>The composition argument selecting the database-less endpoint: guarantee-free transient Tessaging plus distributed<br/>
+   /// Typermedia — the transient tevent conversation and the tuery conversation, with nothing persisted anywhere.</summary>
+   public const string DatabaselessComposition = "Databaseless";
 
    public static async Task<int> Main(string[] args)
    {
@@ -58,11 +62,11 @@ public static class Program
                   case ExactlyOnceTessagingComposition:
                      ComposeExactlyOnceTessagingOnASqliteDatabase(builder, registry, workDirectory);
                      break;
-                  case TransientTessagingComposition:
-                     ComposeTransientTessagingWithNoDatabase(builder, registry);
+                  case DatabaselessComposition:
+                     ComposeTransientTessagingAndTypermediaWithNoDatabase(builder, registry);
                      break;
                   default:
-                     throw new ArgumentOutOfRangeException(nameof(args), composition, $"Unknown composition argument. Pass {ExactlyOnceTessagingComposition} or {TransientTessagingComposition}.");
+                     throw new ArgumentOutOfRangeException(nameof(args), composition, $"Unknown composition argument. Pass {ExactlyOnceTessagingComposition} or {DatabaselessComposition}.");
                }
             });
 
@@ -89,14 +93,21 @@ public static class Program
              .RegisterHandlers(register => register.ForTommand<TommandSentToTheEndpointHostProcess, IServiceBusSession>((_, serviceBusSession) => serviceBusSession.Send(new TommandSentBackToTheSpecificationProcess())));
    }
 
-   ///<summary>The guarantee-free composition: no database declaration, no configuration, nothing persisted anywhere in this<br/>
-   /// process — the transient tier and participation are all the delivery there is.</summary>
-   static void ComposeTransientTessagingWithNoDatabase(IEndpointBuilder builder, InterprocessEndpointRegistry registry) =>
-      builder.ComposeEndpoint(it => it.NamedPipeEndpointTransport())
-             .AddTransientTessaging(tessaging => tessaging.NewtonsoftSerializer())
-             .ParticipateIn(registry)
-             .RegisterHandlers(register => register.ForTevent((ITransientTeventPublishedByTheSpecificationProcess _, ITeventPublisher teventPublisher) =>
-                                                                 teventPublisher.Publish(new TransientTeventPublishedByTheEndpointHostProcess())));
+   ///<summary>The database-less composition: no database declaration, no configuration, nothing persisted anywhere in this<br/>
+   /// process — guarantee-free transient Tessaging (the transient tier and participation are all the tevent delivery there is)<br/>
+   /// plus distributed Typermedia serving tueries.</summary>
+   static void ComposeTransientTessagingAndTypermediaWithNoDatabase(IEndpointBuilder builder, InterprocessEndpointRegistry registry)
+   {
+      var foundation = builder.ComposeEndpoint(it => it.NamedPipeEndpointTransport());
+
+      foundation.AddTransientTessaging(tessaging => tessaging.NewtonsoftSerializer())
+                .ParticipateIn(registry)
+                .RegisterHandlers(register => register.ForTevent((ITransientTeventPublishedByTheSpecificationProcess _, ITeventPublisher teventPublisher) =>
+                                                                    teventPublisher.Publish(new TransientTeventPublishedByTheEndpointHostProcess())));
+
+      foundation.AddDistributedTypermedia(typermedia => typermedia.NewtonsoftSerializer())
+                .RegisterHandlers.ForTuery((TueryAskedByTheSpecificationProcess _) => new AnswerToTheTueryAskedByTheSpecificationProcess(answeredBy: "EndpointHostProcess"));
+   }
 
    ///<summary>The name of the environment variable through which the specification that launches this process passes the directory<br/>
    /// holding the NCrunch runtime assemblies — its own base directory. Set only when the specification runs under NCrunch.</summary>

@@ -119,37 +119,42 @@ only the pair identifies a process uniquely. Addresses whose announcing process 
 invisible to readers, and every announcement prunes them from the file — announcement is the registry's
 self-cleaning moment. A crashed process's addresses are never routed to and never accumulate.
 
-## Dynamic topology: the router reconciles
+## Dynamic topology: the routers reconcile
 
-The transport-speaking Tessaging component's sending phase does not connect the router to a fixed address
-list and assume it thereafter. It sets the `TessagingRouter` *reconciling*: converge on the registry's membership now,
+Neither communication style's sending phase connects its router to a fixed address list and assumes it
+thereafter. Each sets its router *reconciling* — the `TessagingRouter` and, when the endpoint declared the
+registry it discovers through, the `TypermediaRouter` alike: converge on the registry's membership now,
 then keep converging, one pass per second. Each pass compares the connected addresses with the registry's
 current addresses:
 
 - **An endpoint appears** → connect. The new connection learns the remote endpoint's identity and its handled
-  tessage types through the endpoint-discovery query, and tommand and tevent routes are registered for it.
+  tessage types through the endpoint-discovery query — each style asks its own question over the same
+  address — and the style's routes are registered for it: tommand and tevent routes on the Tessaging router,
+  typermedia tommand and tuery routes on the Typermedia router.
 - **An endpoint's address leaves the registry** (it stopped and retracted, or crashed and was pruned by
-  liveness) → the connection is dropped. Undelivered exactly-once tessages for it stay in the outbox's
-  storage — exactly-once means they wait for the endpoint's return.
+  liveness) → the connection is dropped and its routes with it. Undelivered exactly-once tessages for it stay
+  in the outbox's storage — exactly-once means they wait for the endpoint's return.
 - **An endpoint returns at a new address** — addresses are per-instance; identity is the `EndpointId` — → the
-  old connection is replaced by the new one, and the endpoint's undelivered backlog loads into the new
-  connection in send order (see the ordering guarantee in
-  [the tevent delivery model](../../Compze.Tessaging/dev_docs/tevent-delivery-model.md#ordering)). The backlog
-  follows the endpoint.
+  old connection is replaced by the new one. On the Tessaging side the endpoint's undelivered backlog loads
+  into the new connection in send order (see the ordering guarantee in
+  [the tevent delivery model](../../Compze.Tessaging/dev_docs/tevent-delivery-model.md#ordering)) — the backlog
+  follows the endpoint; on the Typermedia side the routes simply point at the new address.
 - **A listed address does not answer** → topology churn, not a bug: the process may still be starting, or may
   have crashed a moment before the liveness filter would prune it. The failure is logged and the address
   retried on the next pass.
 
-A dynamic topology implies two contracts callers must know:
+A dynamic topology implies contracts callers must know:
 
 - **Subscribers join from now on.** A tevent published before an endpoint was discovered is not retroactively
   delivered to it — exactly like a subscriber that did not exist yet.
 - **A tommand with no discovered handler fails loud at send.** Tommands are 1:1; sending one nobody handles
   is an error, never a silent drop. A sender that knows the handler is starting up rides that loudness as its
-  synchronization: retry until discovery completes (the multi-process specification below does exactly this).
+  synchronization: retry until discovery completes (the multi-process specifications below do exactly this).
+- **Typermedia navigation fails the same way**: executing a tuery or tommand no discovered endpoint handles
+  fails loud, and rides the same retry-until-discovered synchronization.
 
-Reconciliation is not same-machine-specific: the router converges on whatever `IEndpointRegistry` it is
-given. Against the testing host's static registry it converges once and stays; the interprocess registry is
+Reconciliation is not same-machine-specific: the routers converge on whatever `IEndpointRegistry` they are
+given. Against the testing host's static registry they converge once and stay; the interprocess registry is
 what makes membership *live*.
 
 ## The whole composition
@@ -203,7 +208,7 @@ fail-loud-then-retry synchronization described above, exercised for real.
 
 ## Implementation status
 
-As of 2026-07-14:
+As of 2026-07-15, everything this document describes is built and verified:
 
 **Built and verified:**
 
@@ -220,10 +225,11 @@ As of 2026-07-14:
   Tessaging (`AddTransientTessaging`) on the database-less foundation, and a transient tevent conversation
   crossing real process boundaries in both directions with no database anywhere in either process — see
   [the tevent delivery model](../../Compze.Tessaging/dev_docs/tevent-delivery-model.md).
-
-**Pending:**
-
-- **Typermedia dynamic-topology parity.** The endpoint's one announced address serves Typermedia too, so
-  discovery has everything it needs — but the Typermedia *client side* does not yet consume a registry:
-  `TypermediaRouter` is connected to explicitly known addresses, adds routes only, and never reconciles
-  against a live registry the way the Tessaging router does.
+- Typermedia dynamic-topology parity (2026-07-15): an endpoint that declares the registry it discovers
+  through on its distributed-Typermedia feature (`DiscoverEndpointsThrough`/`ParticipateIn`) has its
+  `TypermediaRouter` reconciling exactly as the Tessaging router does, and navigates other endpoints'
+  typermedia through its own `IRemoteTypermediaNavigator` — proven across real OS processes with no database
+  in either process: the specification's endpoint discovers the endpoint host process through the shared
+  registry and its tuery is answered there. An endpoint that declares no registry only serves; navigating
+  from it fails loud naming the missing declaration (an external client connects to an explicitly known
+  address instead).

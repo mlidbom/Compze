@@ -25,7 +25,6 @@ public class Startup
       _host = EndpointHost.Production.Create(() => TestEnv.DIContainer.CreateTestingContainerBuilder()
                                                           ._mutate(it => it.Registrar
                                                                            .CurrentTestsEndpointTransport()
-                                                                           .CurrentTestsTypermediaTransport()
                                                                            .CurrentTestsConfiguredSqlLayer(connectionStringName: Guid.NewGuid().ToString())));
       _endpoint = AccountManagementServerDomainBootstrapper.RegisterWith(_host);
    }

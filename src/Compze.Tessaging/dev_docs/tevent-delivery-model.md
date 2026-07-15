@@ -3,7 +3,7 @@
 This document takes a developer who is new to Compze from zero to understanding how tevents are delivered —
 what delivery guarantees exist, where each guarantee comes from, how publishing and subscribing work, and
 what happens when a tevent crosses a process boundary. It is the companion to
-[the hosting model](../../Compze.Hosting/_docs/hosting-model.md), which explains what an endpoint *is*; this
+[the hosting model](../../Compze.Hosting/dev_docs/hosting-model.md), which explains what an endpoint *is*; this
 document explains how tevents travel between the code that publishes them and the handlers that receive them.
 
 Parts of this model are built and parts are decided-but-pending; the honest inventory is in
@@ -253,7 +253,7 @@ subscription-side election at all: an `IExactlyOnceTommand`'s type is its delive
 transactional, asynchronous), sent through `IServiceBusSession.Send`, and an endpoint even
 routes tommands to *itself* through the outbox so the guarantee holds. The synchronous local ask has its own
 truthful home in Typermedia's strictly-local tommand — see
-[the hosting model](../../Compze.Hosting/_docs/hosting-model.md). The subscription-side opt-down and the
+[the hosting model](../../Compze.Hosting/dev_docs/hosting-model.md). The subscription-side opt-down and the
 transient tier described in this document are tevent concepts: they exist because tevent publishing is
 decoupled 1:N fan-out, where the publisher must not decide the durability needs of subscribers it does not
 know.
@@ -274,7 +274,7 @@ As of 2026-07-15:
 - Cross-process endpoint discovery and dynamic topology: endpoints announce their addresses into the
   same-machine `InterprocessEndpointRegistry`, the router continuously reconciles its connections with the
   registry's membership, and the story is proven across real OS processes over the named-pipe transport —
-  see [same-machine hosting](../../Compze.Hosting/_docs/same-machine-hosting.md).
+  see [same-machine hosting](../../Compze.Hosting/dev_docs/wip/same-machine-hosting.md).
 - `ITeventPublisher` — the one public way to publish, routing each tevent by its declared contract
   (participation always; an `IExactlyOnceTevent` also through the exactly-once delivery leg when the
   composition wires one) — and the dissolution of the endpoint-wide publication-mode split (2026-07-14): the

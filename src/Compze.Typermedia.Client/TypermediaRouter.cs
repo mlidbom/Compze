@@ -2,11 +2,11 @@ using Compze.TypeIdentifiers;
 using Compze.Abstractions.Hosting.Public;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Contracts;
+using Compze.Internals.Logging;
 using Compze.Internals.SystemCE.ReflectionCE;
 using Compze.Internals.Transport;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
-using Compze.Internals.SystemCE.CollectionsCE.GenericCE;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Threading;
 
@@ -18,6 +18,10 @@ public static class TypermediaRouterRegistrar
       => registrar.Register(Client.TypermediaRouter.RegisterWith);
 }
 
+///<summary>Routes typermedia tessages to the endpoints that handle their types, over connections it maintains one of two ways:<br/>
+/// an external client connects explicitly to the one address it knows (<see cref="ConnectAsync"/>), while an endpoint discovering<br/>
+/// other endpoints dynamically has the router reconcile its connections against an <see cref="IEndpointRegistry"/>'s live<br/>
+/// membership (<see cref="StartMaintainingConnectionsAsync"/>) — the same dynamic topology the Tessaging router runs on.</summary>
 class TypermediaRouter : ITypermediaRouter, IDisposable
 {
    public static void RegisterWith(IComponentRegistrar registrar)
@@ -33,13 +37,20 @@ class TypermediaRouter : ITypermediaRouter, IDisposable
       _endpointDiscoveryQueryTransport = endpointDiscoveryQueryTransport;
    }
 
+   static readonly TimeSpan ReconcileInterval = TimeSpan.FromSeconds(1);
+
    readonly ITypeMap _typeMap;
    readonly ITypermediaTransport _transport;
    readonly IEndpointDiscoveryQueryTransport _endpointDiscoveryQueryTransport;
    readonly IMonitor _monitor = IMonitor.New();
 
+   readonly CancellationTokenSource _reconcileLoopCancellation = new();
+   Task? _reconcileLoop;
+   IEndpointRegistry? _endpointRegistry;
+
    bool _running;
-   IReadOnlyDictionary<EndpointId, TypermediaConnection> _connections = new Dictionary<EndpointId, TypermediaConnection>();
+   readonly Dictionary<EndpointId, TypermediaConnection> _connections = new();
+   //Copy-on-write: the route tables are replaced whole under the monitor and read lock-free on the routing hot path.
    IReadOnlyDictionary<Type, TypermediaConnection> _tommandHandlerRoutes = new Dictionary<Type, TypermediaConnection>();
    IReadOnlyDictionary<Type, TypermediaConnection> _tueryHandlerRoutes = new Dictionary<Type, TypermediaConnection>();
 
@@ -49,38 +60,112 @@ class TypermediaRouter : ITypermediaRouter, IDisposable
       var endpointInformation = await _endpointDiscoveryQueryTransport.GetAsync(new TypermediaEndpointInformationQuery(), endpointAddress).caf();
       var connection = new TypermediaConnection(endpointAddress, endpointInformation);
 
-      using(_monitor.TakeLock())
+      _monitor.Locked(() =>
       {
-         Interlocked.Exchange(ref _connections, _connections.AddToCopy(connection.EndpointInformation.Id, connection));
+         var endpointId = connection.EndpointInformation.Id;
+         //The endpoint restarted at a new address (addresses are per-instance; identity is the EndpointId): replace the connection, and the rebuild below re-derives its routes.
+         _connections[endpointId] = connection;
+         RebuildRouteTables();
+      });
+   }
 
-         //urgent: we can't have routes be discovered at startup based on the assumption that all endpoints are up...
-         RegisterRoutes(connection, connection.EndpointInformation.HandledTypermediaTypes);
+   public async Task StartMaintainingConnectionsAsync(IEndpointRegistry endpointRegistry)
+   {
+      AssertRunning();
+      _endpointRegistry = endpointRegistry;
+      await ReconcileConnectionsAsync().caf();
+      _reconcileLoop = Task.Run(ReconcileLoopAsync);
+   }
+
+   async Task ReconcileLoopAsync()
+   {
+      while(!_reconcileLoopCancellation.IsCancellationRequested)
+      {
+         try
+         {
+            await Task.Delay(ReconcileInterval, _reconcileLoopCancellation.Token).caf();
+         }
+         catch(OperationCanceledException) //Stopping: the canceled delay is the shutdown signal itself.
+         {
+            return;
+         }
+
+         try
+         {
+            await ReconcileConnectionsAsync().caf();
+         }
+#pragma warning disable CA1031 //A reconciliation pass must never kill the loop; an unexpected failure is logged and the next pass retries.
+         catch(Exception exception)
+#pragma warning restore CA1031
+         {
+            this.Log().Error(exception, "A typermedia connection reconciliation pass failed; the next pass retries.");
+         }
       }
    }
 
-   void RegisterRoutes(TypermediaConnection connection, ISet<string> handledTypeIdStrings)
+   ///<summary>One reconciliation pass: connections converge on the registry's current membership.</summary>
+   async Task ReconcileConnectionsAsync()
+   {
+      var desiredAddresses = _endpointRegistry!.ServerEndpointAddresses.ToHashSet();
+
+      List<EndpointAddress> addressesToConnect = [];
+      _monitor.Locked(() =>
+      {
+         if(!_running) return;
+         var connectedAddresses = _connections.Values.Select(connection => connection.Address).ToHashSet();
+         addressesToConnect = [..desiredAddresses.Where(address => !connectedAddresses.Contains(address))];
+
+         //An endpoint whose address left the registry is gone (stopped, or crashed and pruned by liveness): its routes must not
+         //survive - a typermedia tessage sent to a departed endpoint must fail loud as unhandled, not target a dead address.
+         var departedConnections = _connections.Values.Where(connection => !desiredAddresses.Contains(connection.Address)).ToArray();
+         if(departedConnections.Length == 0) return;
+
+         foreach(var departedConnection in departedConnections)
+            _connections.Remove(departedConnection.EndpointInformation.Id);
+         RebuildRouteTables();
+      });
+
+      foreach(var address in addressesToConnect)
+      {
+         try
+         {
+            await ConnectAsync(address).caf();
+         }
+#pragma warning disable CA1031 //A listed address may have just crashed (the liveness filter has not pruned it yet) or not be reachable yet - topology churn, not a bug. The next pass retries; a persistent failure keeps being logged.
+         catch(Exception exception)
+#pragma warning restore CA1031
+         {
+            this.Log().Warning(exception, $"Connecting to registered endpoint address {address.Uri} failed; will retry on the next reconciliation pass.");
+         }
+      }
+   }
+
+   ///<summary>Re-derives the route tables from the current connections — membership changed, so routes derived from a dropped or<br/>
+   /// replaced connection must not survive. Must be called under the monitor.</summary>
+   void RebuildRouteTables()
    {
       var tommandHandlerRoutes = new Dictionary<Type, TypermediaConnection>();
       var tueryHandlerRoutes = new Dictionary<Type, TypermediaConnection>();
-      foreach(var typeIdString in handledTypeIdStrings)
-      {
-         var tessageType = _typeMap.GetId(typeIdString).Type;
 
-         if(tessageType.Is<IAtMostOnceTypermediaTommand>())
+      foreach(var connection in _connections.Values)
+      {
+         foreach(var typeIdString in connection.EndpointInformation.HandledTypermediaTypes)
          {
-            tommandHandlerRoutes.Add(tessageType, connection);
-         } else if(tessageType.Is<IRemotableTuery<object>>())
-         {
-            tueryHandlerRoutes.Add(tessageType, connection);
+            var tessageType = _typeMap.GetId(typeIdString).Type;
+
+            if(tessageType.Is<IAtMostOnceTypermediaTommand>())
+            {
+               tommandHandlerRoutes.Add(tessageType, connection);
+            } else if(tessageType.Is<IRemotableTuery<object>>())
+            {
+               tueryHandlerRoutes.Add(tessageType, connection);
+            }
+            //Exactly-once types are the Tessaging router's to route.
          }
-         //Silently skip exactly-once types — those are handled by TessagingRouter
       }
 
-      if(tommandHandlerRoutes.Count > 0)
-         Interlocked.Exchange(ref _tommandHandlerRoutes, _tommandHandlerRoutes.AddRangeToCopy(tommandHandlerRoutes));
-
-      if(tueryHandlerRoutes.Count > 0)
-         Interlocked.Exchange(ref _tueryHandlerRoutes, _tueryHandlerRoutes.AddRangeToCopy(tueryHandlerRoutes));
+      Interlocked.Exchange(ref _tommandHandlerRoutes, tommandHandlerRoutes);
+      Interlocked.Exchange(ref _tueryHandlerRoutes, tueryHandlerRoutes);
    }
 
    TypermediaConnection ConnectionToHandlerFor(IAtMostOnceTypermediaTommand tommand) =>
@@ -120,21 +205,26 @@ class TypermediaRouter : ITypermediaRouter, IDisposable
    public void Stop() => AssertRunning().__(() =>
    {
       _running = false;
+      _reconcileLoopCancellation.Cancel();
    });
 
    bool _disposed;
 
    public void Dispose()
    {
-      if(!_disposed)
+      if(_disposed) return;
+
+      _disposed = true;
+      if(_running)
       {
-         _disposed = true;
-         if(_running)
-         {
-            Stop();
-         }
+         Stop();
       }
+
+      _reconcileLoopCancellation.Cancel();
+      //Awaited outside the monitor: a reconciliation pass in flight takes the monitor to finish, so waiting for the loop while holding it would deadlock.
+      _reconcileLoop?.WaitUnwrappingException();
+      _reconcileLoopCancellation.Dispose();
    }
 
-   Unit AssertRunning() => State.Assert(_running, () => "not running").__(unit);
+   Unit AssertRunning() => State.Assert(_running, () => $"The typermedia router is not running. An endpoint's router runs only when the endpoint declares the registry it discovers other endpoints through — DiscoverEndpointsThrough/ParticipateIn on its distributed-Typermedia feature; an external client composition starts it explicitly ({nameof(Start)} + {nameof(ConnectAsync)}).").__(unit);
 }

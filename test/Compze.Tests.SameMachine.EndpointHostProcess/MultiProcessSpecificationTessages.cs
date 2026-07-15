@@ -26,6 +26,17 @@ public interface ITransientTeventPublishedByTheEndpointHostProcess : IRemotableT
 
 public class TransientTeventPublishedByTheEndpointHostProcess : ITransientTeventPublishedByTheEndpointHostProcess;
 
+///<summary>The tuery the specification process executes against the endpoint host process — the typermedia leg of the<br/>
+/// database-less multi-process conversation: the answering endpoint is found through the shared registry, never by a configured address.</summary>
+public class TueryAskedByTheSpecificationProcess : TessageTypes.Remotable.NonTransactional.Tueries.Tuery<AnswerToTheTueryAskedByTheSpecificationProcess>;
+
+///<summary>The endpoint host process's answer to <see cref="TueryAskedByTheSpecificationProcess"/> — proof the tuery crossed the<br/>
+/// process boundary and was answered there.</summary>
+public class AnswerToTheTueryAskedByTheSpecificationProcess(string answeredBy)
+{
+   public string AnsweredBy { get; private set; } = answeredBy;
+}
+
 ///<summary>Maps this assembly's tessage types. Both sides of the multi-process conversation register these — the specification's endpoint<br/>
 /// and the endpoint host process — via <c>MapTypesFromAssemblyContaining</c>.</summary>
 #pragma warning disable CA1812 // Instantiated via reflection through the [assembly: AssemblyTypeMapper(typeof(...))] attribute.
@@ -37,5 +48,6 @@ class AssemblyTypeMapper : IAssemblyTypeMapper
          .Map<ITransientTeventPublishedByTheSpecificationProcess>("9e4f6c1d-2a8b-4b53-8f6a-71d90c24e5b7")
          .Map<TransientTeventPublishedByTheSpecificationProcess>("d17b3e58-4c96-4f02-9d3b-8a65f1c40e29")
          .Map<ITransientTeventPublishedByTheEndpointHostProcess>("4b82d9f6-7e15-4a6c-b0d8-3c59e21a7f84")
-         .Map<TransientTeventPublishedByTheEndpointHostProcess>("f3a61c07-95d4-4e38-a2b7-60c8d51e94f3");
+         .Map<TransientTeventPublishedByTheEndpointHostProcess>("f3a61c07-95d4-4e38-a2b7-60c8d51e94f3")
+         .Map<TueryAskedByTheSpecificationProcess>("8c5e02d9-46b7-4f1a-9e83-27d1b60c48f5");
 }

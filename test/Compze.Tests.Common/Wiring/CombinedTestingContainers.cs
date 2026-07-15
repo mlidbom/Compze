@@ -21,10 +21,10 @@ public static class CombinedTestingContainers
    public static IComponentRegistrar CurrentTestsPluggableComponents(this IComponentRegistrar register) =>
       register.CurrentTestsPluggableComponents(Guid.NewGuid().ToString());
 
-   ///<summary>Registers everything a combined Tessaging+Typermedia test endpoint needs of the current test's pluggable components: both transports and the full SQL persistence stack.</summary>
+   ///<summary>Registers everything a combined Tessaging+Typermedia test endpoint needs of the current test's pluggable components: the endpoint transport and the full SQL persistence stack.<br/>
+   /// (Each communication style's feature registers its own transport client and request handling on top of the endpoint transport.)</summary>
    public static IComponentRegistrar CurrentTestsPluggableComponents(this IComponentRegistrar register, string connectionStringName) =>
       register.CurrentTestsEndpointTransport()
-              .CurrentTestsTypermediaTransport()
               .CurrentTestsConfiguredSqlLayer(connectionStringName);
 
    public static IContainerBuilder CreateWithCurrentTestsPluggableComponents(this DIContainer @this) =>

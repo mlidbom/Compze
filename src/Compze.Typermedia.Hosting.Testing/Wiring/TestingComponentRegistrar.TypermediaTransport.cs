@@ -12,13 +12,8 @@ namespace Compze.Typermedia.Hosting.Testing.Wiring;
 
 public static class TestingComponentRegistrarTypermediaTransport
 {
-   ///<summary>Registers the Typermedia transport client for an endpoint, plus the endpoint transport of the current test's<br/>
-   /// <see cref="Transport"/> it runs on. The server-side request handling is registered by the distributed Typermedia feature itself.</summary>
-   public static IComponentRegistrar CurrentTestsTypermediaTransport(this IComponentRegistrar register) =>
-      register.CurrentTestsEndpointTransport()
-              .TypermediaTransport();
-
-   ///<summary>Registers only the client side of the Typermedia transport, for the current test's <see cref="Transport"/> — for a test client that connects to endpoints without hosting one.</summary>
+   ///<summary>Registers only the client side of the Typermedia transport, for the current test's <see cref="Transport"/> — for a test client that connects to endpoints without hosting one.<br/>
+   /// (An endpoint needs no such registration: the distributed Typermedia feature registers its own client side, on the endpoint transport the protocol declaration supplies.)</summary>
    public static IComponentRegistrar CurrentTestsTypermediaClientTransport(this IComponentRegistrar register) =>
       TestEnv.Transport switch
       {
