@@ -8,6 +8,11 @@
 #MySql:Microsoft:Newtonsoft:AspNetCore
 #Sqlite:Microsoft:Newtonsoft:AspNetCore
 SqliteMemory:Microsoft:Newtonsoft:AspNetCore
+
+#MsSql:Microsoft:Newtonsoft:NamedPipes
+#PgSql:Microsoft:Newtonsoft:NamedPipes
+#MySql:Microsoft:Newtonsoft:NamedPipes
+#Sqlite:Microsoft:Newtonsoft:NamedPipes
 SqliteMemory:Microsoft:Newtonsoft:NamedPipes
 
 #MsSql:Autofac:Newtonsoft:AspNetCore
@@ -16,14 +21,32 @@ SqliteMemory:Microsoft:Newtonsoft:NamedPipes
 #Sqlite:Autofac:Newtonsoft:AspNetCore
 #SqliteMemory:Autofac:Newtonsoft:AspNetCore
 
+#MsSql:Autofac:Newtonsoft:NamedPipes
+#PgSql:Autofac:Newtonsoft:NamedPipes
+#MySql:Autofac:Newtonsoft:NamedPipes
+#Sqlite:Autofac:Newtonsoft:NamedPipes
+#SqliteMemory:Autofac:Newtonsoft:NamedPipes
+
 #MsSql:DryIoc:Newtonsoft:AspNetCore
 #PgSql:DryIoc:Newtonsoft:AspNetCore
 #MySql:DryIoc:Newtonsoft:AspNetCore
 #Sqlite:DryIoc:Newtonsoft:AspNetCore
 #SqliteMemory:DryIoc:Newtonsoft:AspNetCore
 
+#MsSql:DryIoc:Newtonsoft:NamedPipes
+#PgSql:DryIoc:Newtonsoft:NamedPipes
+#MySql:DryIoc:Newtonsoft:NamedPipes
+#Sqlite:DryIoc:Newtonsoft:NamedPipes
+#SqliteMemory:DryIoc:Newtonsoft:NamedPipes
+
 #MsSql:LightInject:Newtonsoft:AspNetCore
 #PgSql:LightInject:Newtonsoft:AspNetCore
 #MySql:LightInject:Newtonsoft:AspNetCore
 #Sqlite:LightInject:Newtonsoft:AspNetCore
 #SqliteMemory:LightInject:Newtonsoft:AspNetCore
+
+#MsSql:LightInject:Newtonsoft:NamedPipes
+#PgSql:LightInject:Newtonsoft:NamedPipes
+#MySql:LightInject:Newtonsoft:NamedPipes
+#Sqlite:LightInject:Newtonsoft:NamedPipes
+#SqliteMemory:LightInject:Newtonsoft:NamedPipes
