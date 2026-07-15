@@ -3,7 +3,6 @@ using Compze.DependencyInjection.Abstractions;
 using JetBrains.Annotations;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Abstractions.Tessaging.Validation;
-using Compze.Tessaging.Implementation;
 using Compze.Tessaging.Implementation.Abstractions;
 using Compze.Internals.SystemCE.UsageGuards;
 
@@ -19,17 +18,15 @@ static class ServiceBusSessionRegistrar
 {
    public static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(Scoped.For<IServiceBusSession>()
-                                  .CreatedBy((IOutbox outbox, TommandScheduler tommandScheduler)
-                                                => new ServiceBusSession(outbox, tommandScheduler)));
+                                  .CreatedBy((IOutbox outbox)
+                                                => new ServiceBusSession(outbox)));
 
    readonly IOutbox _transport;
-   readonly TommandScheduler _tommandScheduler;
    readonly IUsageGuard _contextGuard;
 
-   public ServiceBusSession(IOutbox transport, TommandScheduler tommandScheduler)
+   public ServiceBusSession(IOutbox transport)
    {
       _transport = transport;
-      _tommandScheduler = tommandScheduler;
       _contextGuard = new CombinationUsageGuard(new SingleTransactionUsageGuard(this));
    }
 
@@ -37,12 +34,6 @@ static class ServiceBusSessionRegistrar
    {
       RunAssertions(tommand);
       _transport.SendTransactionally(tommand);
-   }
-
-   public void ScheduleSend(DateTime sendAt, IExactlyOnceTommand tommand)
-   {
-      RunAssertions(tommand);
-      _tommandScheduler.Schedule(sendAt, tommand);
    }
 
    void RunAssertions(IExactlyOnceTommand tommand)

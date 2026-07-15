@@ -81,7 +81,6 @@ public class ExactlyOnceTessagingEndpointFeature
 
       register.Outbox()
               .Inbox()
-              .TommandScheduler()
               .ServiceBusSession()
               .ExactlyOnceTessagingRequestHandlers();
 
