@@ -28,10 +28,9 @@ public class Transient_tevent_delivery_tests : EndpointHostTestBase
       MyTransientTeventLocalHandlerThreadGate.AwaitPassedThroughCountEqualTo(1);
    }
 
-   [PCT] public void Transient_tevent_published_outside_any_transaction_reaches_the_remote_subscribers_handler()
+   [PCT] public void Transient_tevent_published_through_the_independent_publisher_reaches_the_remote_subscribers_handler()
    {
-      BackendEndPoint.ServiceLocator.Resolve<IScopeFactory>().ExecuteInIsolatedScope(scope =>
-         scope.Resolve<IUnitOfWorkTeventPublisher>().Publish(new MyTransientTevent { SequenceNumber = 1 }));
+      BackendEndPoint.ServiceLocator.Resolve<IIndependentTeventPublisher>().Publish(new MyTransientTevent { SequenceNumber = 1 });
 
       MyTransientTeventRemoteHandlerThreadGate.AwaitPassedThroughCountEqualTo(1);
    }

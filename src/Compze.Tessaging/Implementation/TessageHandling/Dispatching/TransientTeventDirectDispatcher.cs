@@ -6,13 +6,12 @@ using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Logging;
-using Compze.Internals.SystemCE.TransactionsCE;
 using Compze.Teventive.Tevents.Public;
 
 namespace Compze.Tessaging.Implementation.TessageHandling.Dispatching;
 
 ///<summary>The receiving half of the transient delivery leg — the direct-dispatch counterpart of the inbox: an arriving transient<br/>
-/// tevent is dispatched to this endpoint's subscribed handlers right here, in its own scope and its own transaction, with no store,<br/>
+/// tevent is dispatched to this endpoint's subscribed handlers right here, in its own unit of work, with no store,<br/>
 /// no dedup and no retry (see <c>src/Compze.Tessaging/dev_docs/tevent-delivery-model.md</c>). Handlers execute before the transport<br/>
 /// acknowledgement is written, so one-tessage-in-flight-per-destination keeps handling in send order.</summary>
 class TransientTeventDirectDispatcher
@@ -48,11 +47,10 @@ class TransientTeventDirectDispatcher
          var wrappedTevent = PublisherTevent.Wrapped((ITevent)transportTessage.DeserializeTessageAndCacheForNextCall());
          //Observation fires on arrival, before and outside the transactional handling below.
          _teventObservationDispatcher.Dispatch(wrappedTevent);
-         using var scope = _scopeFactory.BeginScope();
-         TransactionScopeCe.Execute(() =>
+         _scopeFactory.ExecuteUnitOfWork(unitOfWork =>
          {
             foreach(var handler in _handlerRegistry.GetTeventHandlers(wrappedTevent.GetType()))
-               handler(wrappedTevent, scope.Resolver);
+               handler(wrappedTevent, unitOfWork);
          });
       }
 #pragma warning disable CA1031 //The transient tier has no store to retry from: a failed handling is reported and the tevent is gone - never bounced to the sender, whose delivery already succeeded and who has nothing durable to redeliver from.

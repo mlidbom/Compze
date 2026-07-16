@@ -61,7 +61,7 @@ public class Given_a_container_composed_with_InProcessTessaging : UniversalTestB
          HandlerRegistrar.ForTevent<IMyUnrelatedTevent>((tevent, _) => _receivedBySubscriberToAnUnrelatedTeventInterface.Add(tevent));
 
          _publishingThreadId = Environment.CurrentManagedThreadId;
-         Container.ScopeFactory.ExecuteInIsolatedScope(scope => scope.Resolve<IUnitOfWorkTeventPublisher>().Publish(_publishedTevent));
+         Container.ScopeFactory.ExecuteUnitOfWork(unitOfWork => unitOfWork.Resolve<IUnitOfWorkTeventPublisher>().Publish(_publishedTevent));
       }
 
       [PCT] public void the_subscriber_to_a_base_interface_of_the_published_tevents_type_receives_the_published_tevent() => _receivedBySubscriberToTheTeventsBaseInterface.Single().Must().ReferenceEqual(_publishedTevent);
@@ -122,7 +122,7 @@ public class Given_a_container_composed_with_InProcessTessaging : UniversalTestB
          TransactionIgnoringTeventHandlerRegistrar.ForTevent<IMyGreetingRequestedTevent>((_, _) => throw new Exception("thrown by the first transaction-ignoring subscriber"));
          TransactionIgnoringTeventHandlerRegistrar.ForTevent<IMyGreetingRequestedTevent>((tevent, _) => _observedBySecondTransactionIgnoringSubscriber.Add(tevent));
 
-         Container.ScopeFactory.ExecuteInIsolatedScope(scope => scope.Resolve<IUnitOfWorkTeventPublisher>().Publish(_publishedTevent));
+         Container.ScopeFactory.ExecuteUnitOfWork(unitOfWork => unitOfWork.Resolve<IUnitOfWorkTeventPublisher>().Publish(_publishedTevent));
       }
 
       [PCT] public void the_publish_completes_and_the_subscriber_receives_the_tevent() => _receivedBySubscriber.Single().Must().ReferenceEqual(_publishedTevent);
@@ -153,5 +153,14 @@ public class Given_a_container_composed_with_InProcessTessaging : UniversalTestB
                  })
                 .Must().Throw<Exception>()
                 .Which.Message.Must().Contain("ambient transaction");
+   }
+
+   public class the_unit_of_work_tevent_publisher : Given_a_container_composed_with_InProcessTessaging
+   {
+      [PCT] public void throws_when_publishing_outside_an_ambient_transaction() =>
+         Container.ScopeFactory.ExecuteInIsolatedScope(scope =>
+            Invoking(() => scope.Resolve<IUnitOfWorkTeventPublisher>().Publish(new MySpecialGreetingRequestedTevent()))
+                          .Must().Throw<Exception>()
+                          .Which.Message.Must().Contain("ambient transaction"));
    }
 }

@@ -35,16 +35,19 @@ express which:
 - **Tommand handlers** receive `IUnitOfWorkResolver`: every path that executes one runs it inside a unit of
   work (`IMustBeHandledTransactionally` rides on the tommand tiers). Misregistration is a compile error.
 - **Tuery handlers** receive `IScopeResolver`: their execution is a scope, not a unit of work.
-- **Tevent handlers** receive `IScopeResolver`, deliberately: the same `ForTevent` registration serves both
-  the transactional pipelines *and* the transaction-ignoring escape hatch, whose documented contract is
-  delivery detached from any transaction — a unit-of-work claim would lie.
+- **Tevent participation handlers** receive `IUnitOfWorkResolver` too: every delivery path runs them inside
+  a unit of work — the publisher's own for a local publish (asserted: `IUnitOfWorkTeventPublisher` throws
+  with no ambient transaction), the inbox processing's own for an exactly-once arrival, the direct
+  dispatch's own for a transient arrival. Observation handlers, delivered detached from any transaction by
+  contract, have their own registrar and keep `IScopeResolver`.
 
 The container can never grant the typing — a scope is not necessarily a unit of work, and `IUnitOfWorkResolver`
 is never registered nor resolvable. Only the code that pairs scope with transaction can grant it:
 `ExecuteUnitOfWork` for the unit of work it begins, or `UnitOfWorkResolver.From(scopeResolver)`, which
-asserts the ambient transaction exists and only then wraps. `From`'s two callers are the seams where a
+asserts the ambient transaction exists and only then wraps. `From`'s callers are the seams where a
 caller-provided scope is proven transactional: the local typermedia navigator (an `IStrictlyLocalTommand` is
-`IMustBeSentTransactionally`, asserted before dispatch) and the inbox's handler execution task.
+`IMustBeSentTransactionally`, asserted before dispatch), the inbox's handler execution task, and the
+unit-of-work tevent publisher, which asserts its ambient transaction before routing any delivery leg.
 
 ## The front-door duality: `UnitOfWork*` / `Independent*`
 

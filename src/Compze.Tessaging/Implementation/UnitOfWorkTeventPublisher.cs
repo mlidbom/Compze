@@ -1,3 +1,4 @@
+using System.Transactions;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Abstractions.Tessaging.Validation;
 using Compze.Contracts;
@@ -47,9 +48,12 @@ static class UnitOfWorkTeventPublisherRegistrar
 
    public void Publish(ITevent tevent)
    {
+      State.Assert(Transaction.Current != null,
+                   () => $"{nameof(IUnitOfWorkTeventPublisher)} publishes within the caller's unit of work, and there is no ambient transaction — no unit of work to publish within. Run the caller through ExecuteUnitOfWork, or publish through {nameof(IIndependentTeventPublisher)}, which runs each publish as its own unit of work.");
+      var unitOfWork = UnitOfWorkResolver.From(_scopeResolver);
       var wrappedTevent = PublisherTevent.Wrapped(tevent);
       var remoteDelivery = RemoteDeliveryFor(wrappedTevent);
-      _inProcessTeventPublisher.Publish(wrappedTevent, _scopeResolver);
+      _inProcessTeventPublisher.Publish(wrappedTevent, unitOfWork);
       //Observation fires at publish time, outside the publisher's transaction - the observers of a locally published tevent hear it even if that transaction later rolls back.
       _teventObservationDispatcher.Dispatch(wrappedTevent);
       remoteDelivery?.Invoke();

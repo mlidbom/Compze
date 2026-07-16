@@ -24,7 +24,7 @@ namespace Compze.Tessaging;
 ///</remarks>
 interface IInProcessTeventPublisher
 {
-   ///<summary>Synchronously invokes every in-process handler subscribed to <paramref name="tevent"/>'s type, resolving handler dependencies from <paramref name="scopeResolver"/>, within the current transaction.<br/>
+   ///<summary>Synchronously invokes every in-process handler subscribed to <paramref name="tevent"/>'s type, resolving handler dependencies from <paramref name="unitOfWork"/> — the caller's unit of work, whose transaction the handlers run within.<br/>
    /// A <paramref name="tevent"/> published without a publisher-identifying wrapper is wrapped before routing.</summary>
-   void Publish(ITevent tevent, IScopeResolver scopeResolver);
+   void Publish(ITevent tevent, IUnitOfWorkResolver unitOfWork);
 }

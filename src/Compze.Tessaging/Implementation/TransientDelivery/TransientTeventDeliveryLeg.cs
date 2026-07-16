@@ -2,6 +2,7 @@ using System.Transactions;
 using Compze.Abstractions.Public;
 using Compze.Abstractions.Hosting.Public;
 using Compze.Abstractions.Tessaging.Public;
+using Compze.Contracts;
 using Compze.Tessaging.Implementation.Abstractions;
 using Compze.Tessaging.Implementation.Transport.Client.Internal;
 using Compze.DependencyInjection;
@@ -49,10 +50,8 @@ class TransientTeventDeliveryLeg : ITransientTeventDeliveryLeg
       var envelopeId = new TessageId();
       this.Log().Debug($"Publishing transient tevent {envelopeId} ({wrappedTevent.GetType().Name}) to {connections.Length} subscriber endpoint(s)");
 
-      if(Transaction.Current is {} transaction)
-         transaction.OnCommittedSuccessfully(EnqueueOnEverySubscribersConnection);
-      else
-         EnqueueOnEverySubscribersConnection();
+      //The publisher asserts the ambient transaction before routing any delivery leg, so a transient tevent is always published from within a unit of work: remote delivery happens on commit, never immediately.
+      Transaction.Current._assert().NotNull().OnCommittedSuccessfully(EnqueueOnEverySubscribersConnection);
       return;
 
       void EnqueueOnEverySubscribersConnection()

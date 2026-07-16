@@ -19,14 +19,14 @@ sealed class InProcessTeventPublisher(ITessageHandlerRegistry handlerRegistry) :
 {
    readonly ITessageHandlerRegistry _handlerRegistry = handlerRegistry;
 
-   public void Publish(ITevent tevent, IScopeResolver scopeResolver)
+   public void Publish(ITevent tevent, IUnitOfWorkResolver unitOfWork)
    {
       TessageValidator.AssertValidToExecuteLocally(tevent);
       //Every tevent is wrapped before routing: a tevent published without a publisher-identifying wrapper is wrapped here, and routing operates on the wrapper's type.
       var wrappedTevent = PublisherTevent.Wrapped(tevent);
       foreach(var handler in _handlerRegistry.GetTeventHandlers(wrappedTevent.GetType()))
       {
-         handler(wrappedTevent, scopeResolver);
+         handler(wrappedTevent, unitOfWork);
       }
    }
 }

@@ -27,13 +27,13 @@ sealed class TessageHandlerRegistry(ITypeMap typeMap) : ITessageHandlerRegistrar
 {
    readonly ITypeMap _typeMap = typeMap;
    IReadOnlyDictionary<Type, Action<object, IUnitOfWorkResolver>> _tommandHandlers = new Dictionary<Type, Action<object, IUnitOfWorkResolver>>();
-   IReadOnlyDictionary<Type, IReadOnlyList<Action<ITevent, IScopeResolver>>> _teventHandlers = new Dictionary<Type, IReadOnlyList<Action<ITevent, IScopeResolver>>>();
+   IReadOnlyDictionary<Type, IReadOnlyList<Action<ITevent, IUnitOfWorkResolver>>> _teventHandlers = new Dictionary<Type, IReadOnlyList<Action<ITevent, IUnitOfWorkResolver>>>();
    IReadOnlyDictionary<Type, IReadOnlyList<Action<ITevent, IScopeResolver>>> _transactionIgnoringTeventHandlers = new Dictionary<Type, IReadOnlyList<Action<ITevent, IScopeResolver>>>();
    IReadOnlyList<Type> _registeredTeventTypes = new List<Type>();
 
    readonly IMonitor _monitor = IMonitor.New();
 
-   ITessageHandlerRegistrar ITessageHandlerRegistrar.ForTevent<TTevent>(Action<TTevent, IScopeResolver> handler)
+   ITessageHandlerRegistrar ITessageHandlerRegistrar.ForTevent<TTevent>(Action<TTevent, IUnitOfWorkResolver> handler)
    {
       _monitor.Locked(() => AppendTeventSubscription(ref _teventHandlers, handler));
       return this;
@@ -46,23 +46,25 @@ sealed class TessageHandlerRegistry(ITypeMap typeMap) : ITessageHandlerRegistrar
    }
 
    ///<summary>The one registration translation, shared by the transactional and the transaction-ignoring (observation) subscription<br/>
-   /// kinds. Routing operates exclusively on wrapper types: a subscription to an inner tevent type is keyed under the wrapper type<br/>
-   /// matching every wrapping of it and unwrapped at delivery; a subscription to a wrapper type is keyed as it stands and receives<br/>
-   /// the wrapper — publisher-conscious subscription. Every subscribed type also joins the advertised set<br/>
-   /// (<see cref="HandledRemoteTessageTypeIds"/>): an observation-only subscription must still pull the tevent across the wire.</summary>
-   void AppendTeventSubscription<TTevent>(ref IReadOnlyDictionary<Type, IReadOnlyList<Action<ITevent, IScopeResolver>>> subscriptions, Action<TTevent, IScopeResolver> handler) where TTevent : ITevent
+   /// kinds — generic over the resolver each kind hands its handlers (<see cref="IUnitOfWorkResolver"/> for participation,<br/>
+   /// <see cref="IScopeResolver"/> for observation). Routing operates exclusively on wrapper types: a subscription to an inner<br/>
+   /// tevent type is keyed under the wrapper type matching every wrapping of it and unwrapped at delivery; a subscription to a<br/>
+   /// wrapper type is keyed as it stands and receives the wrapper — publisher-conscious subscription. Every subscribed type also<br/>
+   /// joins the advertised set (<see cref="HandledRemoteTessageTypeIds"/>): an observation-only subscription must still pull the<br/>
+   /// tevent across the wire.</summary>
+   void AppendTeventSubscription<TTevent, TResolver>(ref IReadOnlyDictionary<Type, IReadOnlyList<Action<ITevent, TResolver>>> subscriptions, Action<TTevent, TResolver> handler) where TTevent : ITevent
    {
       TessageInspector.AssertValidForSubscription<TTevent>();
 
       var routingKey = PublisherTevent.WrapperTypeMatchingAllWrappingsOf(typeof(TTevent));
-      Action<ITevent, IScopeResolver> deliver = typeof(TTevent).Is<IPublisherTevent<ITevent>>()
-                                                   ? (wrappedTevent, kernel) => handler((TTevent)wrappedTevent, kernel)
-                                                   : (wrappedTevent, kernel) => handler((TTevent)((IPublisherTevent<ITevent>)wrappedTevent).Tevent, kernel);
+      Action<ITevent, TResolver> deliver = typeof(TTevent).Is<IPublisherTevent<ITevent>>()
+                                              ? (wrappedTevent, kernel) => handler((TTevent)wrappedTevent, kernel)
+                                              : (wrappedTevent, kernel) => handler((TTevent)((IPublisherTevent<ITevent>)wrappedTevent).Tevent, kernel);
 
       subscriptions.TryGetValue(routingKey, out var currentSubscribers);
-      currentSubscribers ??= new List<Action<ITevent, IScopeResolver>>();
+      currentSubscribers ??= new List<Action<ITevent, TResolver>>();
 
-      IReadOnlyList<Action<ITevent, IScopeResolver>> value = [..currentSubscribers, deliver];
+      IReadOnlyList<Action<ITevent, TResolver>> value = [..currentSubscribers, deliver];
       Interlocked.Exchange(ref subscriptions, subscriptions.SetInCopy(routingKey, value));
       Interlocked.Exchange(ref _registeredTeventTypes, _registeredTeventTypes.AddToCopy(typeof(TTevent)));
    }
@@ -91,7 +93,7 @@ sealed class TessageHandlerRegistry(ITypeMap typeMap) : ITessageHandlerRegistrar
    public Action<ITommand, IUnitOfWorkResolver> GetTommandHandler(Type tommandType) => _tommandHandlers[tommandType];
 
    //performance: Use static caching trick.
-   public IReadOnlyList<Action<ITevent, IScopeResolver>> GetTeventHandlers(Type wrapperTeventType) => [.._teventHandlers.Where(it => it.Key.IsAssignableFrom(wrapperTeventType)).SelectMany(it => it.Value)];
+   public IReadOnlyList<Action<ITevent, IUnitOfWorkResolver>> GetTeventHandlers(Type wrapperTeventType) => [.._teventHandlers.Where(it => it.Key.IsAssignableFrom(wrapperTeventType)).SelectMany(it => it.Value)];
 
    public IReadOnlyList<Action<ITevent, IScopeResolver>> GetTransactionIgnoringTeventHandlers(Type wrapperTeventType) => [.._transactionIgnoringTeventHandlers.Where(it => it.Key.IsAssignableFrom(wrapperTeventType)).SelectMany(it => it.Value)];
 

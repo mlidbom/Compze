@@ -145,9 +145,11 @@ tevent's type declares:
   commit);
 - not `IRemotableTevent` → local only.
 
-It honors the ambient transaction: both remote legs deliver on commit, so a rolled-back transaction never
-leaks a tevent — for the transient leg that is "sent-on-commit without durability", not "sent
-transactionally". It auto-wraps a tevent published without a publisher-identifying wrapper.
+It requires and honors the ambient transaction. Required: publishing with none present throws — there is no
+unit of work to publish within, and the independent publisher is the door for such callers. Honored: both
+remote legs deliver on commit, so a rolled-back transaction never leaks a tevent — for the transient leg
+that is "sent-on-commit without durability", not "sent transactionally". It auto-wraps a tevent published
+without a publisher-identifying wrapper.
 
 What this shape buys:
 
@@ -201,8 +203,8 @@ delivery guarantee comes from each arriving tevent's type — the subscriber nev
 - a local publish → participation (synchronous, publisher's transaction);
 - an arriving `IExactlyOnceTevent` → through the inbox: persisted, deduped, handled in its own transaction,
   retried until handled;
-- an arriving transient tevent → direct dispatch in the handler's own scope and own transaction — atomic
-  handler writes, but no dedup and no retry.
+- an arriving transient tevent → direct dispatch in a unit of work of its own — atomic handler writes, but
+  no dedup and no retry.
 
 ### `RegisterTransactionIgnoringTeventHandlers` — observation
 
@@ -308,10 +310,11 @@ As of 2026-07-15:
   which leg a matched tevent travels is decided by the published tevent's own type, never by routing.
   `IUnitOfWorkTeventPublisher` routes a remotable-but-not-exactly-once tevent through the endpoint's transient
   delivery leg (`ITransientTeventDeliveryLeg`, wired by every transport-speaking Tessaging composition) — on commit when a
-  transaction is present, immediately otherwise. Each subscriber connection carries an in-memory transient
-  stream (`TransportRequestKind.TransientTevent` on the wire) delivering in order with the
-  drop-stream-whole failure policy above, and the receiving endpoint dispatches an arriving transient
-  tevent directly to its handlers in their own scope and own transaction — no inbox, no dedup, no retry; a
+  transaction is present, immediately otherwise (the no-transaction branch is gone since 2026-07-16: the
+  publisher asserts its ambient transaction, so transient delivery is always on-commit). Each subscriber
+  connection carries an in-memory transient stream (`TransportRequestKind.TransientTevent` on the wire)
+  delivering in order with the drop-stream-whole failure policy above, and the receiving endpoint dispatches
+  an arriving transient tevent directly to its handlers in a unit of work of its own — no inbox, no dedup, no retry; a
   failed handling is reported through the background-exception reporter and the tevent is gone. The
   acknowledgement is written after the handlers execute, so single-in-flight keeps handling in send order.
   And with a second leg existing, the loud unwired-leg publish failure is real: an endpoint wiring any

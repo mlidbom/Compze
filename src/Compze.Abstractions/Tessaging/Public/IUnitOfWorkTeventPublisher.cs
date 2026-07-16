@@ -13,8 +13,10 @@ namespace Compze.Abstractions.Tessaging.Public;
 /// endpoint's outbox, on commit — and a remotable tevent whose type declares no exactly-once guarantee the transient leg —<br/>
 /// best-effort, on commit — when the endpoint's composition wires them. An endpoint that wires no remote delivery is a<br/>
 /// deliberately in-process composition: every subscriber is local and already served by participation.</summary>
-///<remarks>The ambient transaction is honored: remote delivery happens only on commit, so a rolled-back transaction never leaks<br/>
-/// a tevent — and participation's synchronous handlers run inside that same transaction, so their effects roll back with it.<br/>
+///<remarks>The ambient transaction is required and honored: publishing with none present throws — there is no unit of work to<br/>
+/// publish within, and <see cref="IIndependentTeventPublisher"/> is the door for such callers. Remote delivery happens only on<br/>
+/// commit, so a rolled-back transaction never leaks a tevent — and participation's synchronous handlers run inside that same<br/>
+/// transaction, so their effects roll back with it.<br/>
 /// Only observation runs outside it, deliberately. A tevent published without a publisher-identifying wrapper<br/>
 /// (<see cref="IPublisherTevent{TTevent}"/>) is wrapped before routing.</remarks>
 public interface IUnitOfWorkTeventPublisher

@@ -4,8 +4,8 @@ using Compze.DependencyInjection;
 namespace Compze.Tessaging.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
 
 ///<summary>Convenience overloads for <see cref="ITessageHandlerRegistrar"/>: register a handler whose extra lambda parameters are<br/>
-/// resolved from the handling scope, or one that needs no resolutions at all — instead of taking the <c>IScopeResolver</c> and<br/>
-/// resolving by hand.</summary>
+/// resolved from the handling unit of work, or one that needs no resolutions at all — instead of taking the<br/>
+/// <c>IUnitOfWorkResolver</c> and resolving by hand.</summary>
 public static class TessageHandlerRegistrarCE
 {
    extension(ITessageHandlerRegistrar @this)
