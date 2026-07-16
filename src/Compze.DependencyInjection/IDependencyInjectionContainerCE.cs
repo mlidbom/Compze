@@ -20,19 +20,16 @@ public static class IDependencyInjectionContainerCE
       public IScope BeginScope() =>
          @this.ScopeFactory.BeginScope();
 
-      public TResult ExecuteTransactionInIsolatedScope<TResult>([InstantHandle] Func<IScopeResolver, TResult> function) =>
-         @this.ScopeFactory.ExecuteTransactionInIsolatedScope(function);
+      public TResult ExecuteUnitOfWork<TResult>([InstantHandle] Func<IUnitOfWorkResolver, TResult> function) =>
+         @this.ScopeFactory.ExecuteUnitOfWork(function);
 
-      public void ExecuteTransactionInIsolatedScope([InstantHandle] Action<IScopeResolver> action) =>
-         @this.ScopeFactory.ExecuteTransactionInIsolatedScope(action);
+      public void ExecuteUnitOfWork([InstantHandle] Action<IUnitOfWorkResolver> action) =>
+         @this.ScopeFactory.ExecuteUnitOfWork(action);
 
       public TResult ExecuteInIsolatedScope<TResult>([InstantHandle] Func<IScopeResolver, TResult> function) =>
          @this.ScopeFactory.ExecuteInIsolatedScope(function);
 
       public void ExecuteInIsolatedScope([InstantHandle] Action<IScopeResolver> action) =>
          @this.ScopeFactory.ExecuteInIsolatedScope(action);
-
-      public Task ExecuteInIsolatedScopeAsync([InstantHandle] Func<IScopeResolver, Task> action) =>
-         @this.ScopeFactory.ExecuteInIsolatedScopeAsync(action);
    }
 }

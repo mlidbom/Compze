@@ -136,7 +136,7 @@ public class Given_two_endpoints_composing_transient_tessaging_on_foundations_de
    }
 
    void PublishOnThePublisherEndpointInATransaction(ITevent tevent) =>
-      _publisherEndpoint.ServiceLocator.Resolve<IScopeFactory>().ExecuteTransactionInIsolatedScope(scope =>
+      _publisherEndpoint.ServiceLocator.Resolve<IScopeFactory>().ExecuteUnitOfWork(scope =>
                                                                                                       scope.Resolve<ITeventPublisher>().Publish(tevent));
 
    ///<summary>Knows the Tessaging address of every endpoint in the host, so each endpoint's router connects to all of them — the<br/>

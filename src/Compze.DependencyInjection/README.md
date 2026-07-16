@@ -83,7 +83,7 @@ same way.
 ### Transactional scope execution
 
 ```csharp
-container.ExecuteTransactionInIsolatedScope(scopeResolver =>
+container.ExecuteUnitOfWork(scopeResolver =>
 {
     var repo = scopeResolver.Resolve<IUserRepository>();
     repo.Save(user);

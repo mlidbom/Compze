@@ -667,7 +667,7 @@ public class DocumentDbTests : DocumentDbTestsBase
         var user2 = new User(userid2);
         var dog = new Dog { Id = new EntityId(Guid.Parse("00000000-0000-0000-0000-000000000010")) };
 
-        Container.ExecuteTransactionInIsolatedScope(scope =>
+        Container.ExecuteUnitOfWork(scope =>
         {
             var updater = scope.DocumentDbUpdater();
             updater.Save(user1);
@@ -728,7 +728,7 @@ public class DocumentDbTests : DocumentDbTestsBase
     async Task InsertUsersInOtherDocumentDb(Guid userId)
     {
         await using var clonedContainer = Container.CloneAndBuild();
-        clonedContainer.ExecuteTransactionInIsolatedScope(scope => scope.DocumentDbUpdater()
+        clonedContainer.ExecuteUnitOfWork(scope => scope.DocumentDbUpdater()
                                                                                        .Save(new User(userId)));
     }
 

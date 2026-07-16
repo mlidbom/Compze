@@ -44,7 +44,7 @@ public class TeventMigrationPerformanceTest : TeventMigrationTestBase
       _currentMigrations = Enumerable.Empty<ITeventMigration>().ToList();
       _container = CreateContainerForTeventStoreType(migrationsFactory: () => _currentMigrations);
 
-      _container.ExecuteTransactionInIsolatedScope(scope => ((ITaggregate)_taggregate).Commit(scope.TeventStore().SaveSingleTaggregateTevents));
+      _container.ExecuteUnitOfWork(scope => ((ITaggregate)_taggregate).Commit(scope.TeventStore().SaveSingleTaggregateTevents));
    }
 
    protected override async Task DisposeAsyncInternal()
@@ -82,7 +82,7 @@ public class TeventMigrationPerformanceTest : TeventMigrationTestBase
 
       return;
 
-      void LoadWithClonedContainer(IDependencyInjectionContainer container) => container.ExecuteTransactionInIsolatedScope(scope => scope.TeventStoreUpdater()
+      void LoadWithClonedContainer(IDependencyInjectionContainer container) => container.ExecuteUnitOfWork(scope => scope.TeventStoreUpdater()
                                                                                                                    .Get<TestTaggregate>(_taggregate.Id));
    }
 

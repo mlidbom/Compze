@@ -1,4 +1,4 @@
-﻿using System.Transactions;
+using System.Transactions;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
@@ -80,7 +80,7 @@ public class Given_a_container_composed_with_InProcessTessaging : UniversalTestB
       {
          HandlerRegistrar.ForTevent<ITaggregateTevent>((tevent, _) => _receivedBySubscriberToTheInnerTeventType.Add(tevent));
          HandlerRegistrar.ForTevent<ITaggregateTevent<ITaggregateTevent>>((wrappedTevent, _) => _receivedBySubscriberToTheWrapperType.Add(wrappedTevent));
-         Container.ScopeFactory.ExecuteTransactionInIsolatedScope(scope => scope.Resolve<ITeventPublisher>().Publish(_publishedWrappedTevent));
+         Container.ScopeFactory.ExecuteUnitOfWork(scope => scope.Resolve<ITeventPublisher>().Publish(_publishedWrappedTevent));
       }
 
       [PCT] public void the_subscriber_to_the_inner_tevent_type_receives_the_inner_tevent() => _receivedBySubscriberToTheInnerTeventType.Single().Must().ReferenceEqual(_publishedWrappedTevent.Tevent);
@@ -98,7 +98,7 @@ public class Given_a_container_composed_with_InProcessTessaging : UniversalTestB
          HandlerRegistrar.ForTevent<IMyGreetingRequestedTevent>((tevent, _) => _receivedBySubscriber.Add(tevent));
          TransactionIgnoringTeventHandlerRegistrar.ForTevent<IMyGreetingRequestedTevent>((tevent, _) => _observedByTransactionIgnoringSubscriber.Add(tevent));
 
-         Invoking(() => Container.ScopeFactory.ExecuteTransactionInIsolatedScope(scope =>
+         Invoking(() => Container.ScopeFactory.ExecuteUnitOfWork(scope =>
                        {
                           Transaction.Current!.FailOnPrepare();
                           scope.Resolve<ITeventPublisher>().Publish(_publishedTevent);

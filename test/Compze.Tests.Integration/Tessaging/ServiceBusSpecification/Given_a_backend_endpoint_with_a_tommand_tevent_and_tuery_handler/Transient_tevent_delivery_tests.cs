@@ -46,7 +46,7 @@ public class Transient_tevent_delivery_tests : EndpointHostTestBase
 
    [PCT] public void Transient_tevent_published_in_a_transaction_that_rolls_back_never_reaches_the_remote_subscriber()
    {
-      Invoking(() => BackendEndPoint.ServiceLocator.Resolve<IScopeFactory>().ExecuteTransactionInIsolatedScope(scope =>
+      Invoking(() => BackendEndPoint.ServiceLocator.Resolve<IScopeFactory>().ExecuteUnitOfWork(scope =>
                     {
                        Transaction.Current!.FailOnPrepare();
                        scope.Resolve<ITeventPublisher>().Publish(new MyTransientTevent { SequenceNumber = 1 });

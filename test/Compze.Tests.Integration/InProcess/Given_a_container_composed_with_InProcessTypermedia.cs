@@ -1,4 +1,4 @@
-﻿using Compze.DependencyInjection;
+using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Hosting.Testing;
 using Compze.Hosting.Testing.Wiring;
@@ -47,7 +47,7 @@ public class Given_a_container_composed_with_InProcessTypermedia : UniversalTest
 
       [PCT] public void executing_the_tommand_through_the_in_process_navigator_within_a_transaction_invokes_the_handler()
       {
-         Container.ScopeFactory.ExecuteTransactionInIsolatedScope(scope => scope.Resolve<IInProcessTypermediaNavigator>().Execute(new MyStrictlyLocalRegisterGreeterTommand { Name = "Greta" }));
+         Container.ScopeFactory.ExecuteUnitOfWork(scope => scope.Resolve<IInProcessTypermediaNavigator>().Execute(new MyStrictlyLocalRegisterGreeterTommand { Name = "Greta" }));
          _registeredGreeters.Single().Must().Be("Greta");
       }
 

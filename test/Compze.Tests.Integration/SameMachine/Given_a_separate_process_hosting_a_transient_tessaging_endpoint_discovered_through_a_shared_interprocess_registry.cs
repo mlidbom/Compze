@@ -110,7 +110,7 @@ public class Given_a_separate_process_hosting_a_transient_tessaging_endpoint_dis
             throw new InvalidOperationException($"No transient tevent round trip completed within the retry deadline.{Environment.NewLine}{_endpointHostProcess.ConsoleOutput}");
          }
 
-         _specificationEndpoint.ServiceLocator.Resolve<IScopeFactory>().ExecuteTransactionInIsolatedScope(scope =>
+         _specificationEndpoint.ServiceLocator.Resolve<IScopeFactory>().ExecuteUnitOfWork(scope =>
             scope.Resolve<ITeventPublisher>().Publish(new TransientTeventPublishedByTheSpecificationProcess()));
       } while(!_replyTeventReceived.Wait(TimeSpan.FromMilliseconds(500)));
    }

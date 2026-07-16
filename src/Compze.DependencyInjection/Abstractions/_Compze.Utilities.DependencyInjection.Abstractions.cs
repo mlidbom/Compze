@@ -128,6 +128,24 @@ public interface IRootResolver : IServiceResolver;
 public interface IScopeResolver : IServiceResolver;
 
 ///<summary>
+/// The resolver of a unit of work: an <see cref="IScopeResolver"/> whose <see cref="IScope"/> is paired with an ambient<br/>
+/// transaction — one scope and one transaction, begun and completed together, so everything executed through it either<br/>
+/// commits as a whole or rolls back as a whole.
+///</summary>
+///<remarks>
+/// Most framework code does not accept any old scope — it requires running in a unit of work. This interface states that<br/>
+/// requirement in the signature: code handed an <see cref="IUnitOfWorkResolver"/> knows it runs inside one, while code handed<br/>
+/// a plain <see cref="IScopeResolver"/> knows only that a scope exists. The two are different execution contexts: a tuery<br/>
+/// execution, for example, is deliberately a scope with no transaction — it changes nothing, so it is not a unit of work.
+///</remarks>
+///<remarks>
+/// Never registered in, and never resolvable from, the container: whether a scope is a unit of work is decided by the code<br/>
+/// that begins the scope, not by the container, so only that code can grant this typing — through<br/>
+/// <c>ExecuteUnitOfWork</c>, or through <c>UnitOfWorkResolver.From</c> where an ambient transaction is asserted to exist.
+///</remarks>
+public interface IUnitOfWorkResolver : IScopeResolver;
+
+///<summary>
 /// <para>>When resolved through <see cref="Resolver"/>> all services registered as <see cref="Lifestyle.Scoped"/> will resolve as the same exact instance, separate from the instance returned by any other <see cref="IScopeResolver"/></para>
 /// <para>Dispose will dispose All <see cref="Lifestyle.Scoped"/> or <see cref="Lifestyle.TrackedTransient"/> services resolved through <see cref="Resolver"/></para>
 ///

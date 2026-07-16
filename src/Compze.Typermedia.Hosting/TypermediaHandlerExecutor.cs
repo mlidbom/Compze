@@ -24,7 +24,7 @@ public class TypermediaHandlerExecutor(IScopeFactory scopeFactory, ITypermediaHa
    public object ExecuteTommandWithResult(ITessage tommand)
    {
       this.Log().Debug($"Executing tommand with result {tommand.GetType().Name}");
-      return ExecuteWithRetry(() => _scopeFactory.ExecuteTransactionInIsolatedScope(scopeResolver =>
+      return ExecuteWithRetry(() => _scopeFactory.ExecuteUnitOfWork(scopeResolver =>
       {
          var handler = _handlerRegistry.GetTommandHandlerWithReturnValue(tommand.GetType());
          return handler((IAtMostOnceTypermediaTommand)tommand, scopeResolver);
@@ -36,7 +36,7 @@ public class TypermediaHandlerExecutor(IScopeFactory scopeFactory, ITypermediaHa
       this.Log().Debug($"Executing void tommand {tommand.GetType().Name}");
       ExecuteWithRetry<object?>(() =>
       {
-         _scopeFactory.ExecuteTransactionInIsolatedScope(scopeResolver =>
+         _scopeFactory.ExecuteUnitOfWork(scopeResolver =>
          {
             var handler = _handlerRegistry.GetVoidTommandHandler(tommand);
             handler(tommand, scopeResolver);

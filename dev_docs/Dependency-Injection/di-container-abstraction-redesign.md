@@ -140,7 +140,7 @@ Both legacy interfaces have been deleted. The single `DependencyInjectionContain
 - `TestClient`: takes `IDependencyInjectionContainer` instead of `IServiceLocator`
 - `DependencyInjectionContainerFactory`: returns `IContainerBuilder` (named `CreateContainerBuilder`)
 - `TestingEndpointHost.Create()`: accepts `IContainerBuilder` (builds it) or `IDependencyInjectionContainer` (uses it directly for restart scenarios)
-- Convenience extensions on `IDependencyInjectionContainer`: `Resolve<T>()`, `BeginScope()`, `ExecuteInIsolatedScope(...)`, `ExecuteTransactionInIsolatedScope(...)`
+- Convenience extensions on `IDependencyInjectionContainer`: `Resolve<T>()`, `BeginScope()`, `ExecuteInIsolatedScope(...)`, `ExecuteUnitOfWork(...)`
 
 ### Phase 5: Child container builder (complete)
 - `CreateChildContainerBuilder()` added to `IDependencyInjectionContainer`

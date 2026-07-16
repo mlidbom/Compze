@@ -28,7 +28,7 @@ public class VolatileTransactionParticipant_specification : DocumentDbTestsBase
          Exception? caughtException = null;
          try
          {
-            Container.ExecuteTransactionInIsolatedScope(scope =>
+            Container.ExecuteUnitOfWork(scope =>
             {
                scope.DocumentDbUpdater().Save(user.Id, user);
                failingParticipant.EnsureEnlistedInAnyAmbientTransaction();
@@ -59,7 +59,7 @@ public class VolatileTransactionParticipant_specification : DocumentDbTestsBase
          Exception? caughtException = null;
          try
          {
-            Container.ExecuteTransactionInIsolatedScope(scope =>
+            Container.ExecuteUnitOfWork(scope =>
             {
                scope.DocumentDbUpdater().Save(user.Id, user);
                Transaction.Current!.OnCommittedSuccessfully(
@@ -85,7 +85,7 @@ public class VolatileTransactionParticipant_specification : DocumentDbTestsBase
 
          try
          {
-            Container.ExecuteTransactionInIsolatedScope(scope =>
+            Container.ExecuteUnitOfWork(scope =>
             {
                scope.DocumentDbUpdater().Save(user.Id, user);
                Transaction.Current!.OnCommittedSuccessfully(
