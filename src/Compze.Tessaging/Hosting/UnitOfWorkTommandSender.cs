@@ -17,7 +17,7 @@ static class UnitOfWorkTommandSenderRegistrar
 [UsedImplicitly] class UnitOfWorkTommandSender : IUnitOfWorkTommandSender
 {
    public static void RegisterWith(IComponentRegistrar registrar)
-      => registrar.Register(UnitOfWork.For<IUnitOfWorkTommandSender>()
+      => registrar.Register(UnitOfWorkParticipant.For<IUnitOfWorkTommandSender>()
                                       .CreatedBy((IOutbox outbox)
                                                     => new UnitOfWorkTommandSender(outbox)));
 

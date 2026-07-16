@@ -34,7 +34,7 @@ public class When_resolving_a_unit_of_work_component
    {
       var builder = DependencyInjectionContainerFactory.CreateContainerBuilder();
       builder.Registrar.Register(
-         UnitOfWork.For<IMyUnitOfWorkBoundService>().CreatedBy(() => new MyUnitOfWorkBoundService()),
+         UnitOfWorkParticipant.For<IMyUnitOfWorkBoundService>().CreatedBy(() => new MyUnitOfWorkBoundService()),
          Singleton.For<IMySingletonService>().CreatedBy((IMyUnitOfWorkBoundService unitOfWorkBound) => new SingletonDependingOnUnitOfWorkBound(unitOfWorkBound)));
 
       Invoking(() => builder.Build())
@@ -45,7 +45,7 @@ public class When_resolving_a_unit_of_work_component
    static IDependencyInjectionContainer CreateContainerWithUnitOfWorkComponent()
    {
       var builder = DependencyInjectionContainerFactory.CreateContainerBuilder();
-      builder.Registrar.Register(UnitOfWork.For<IMyUnitOfWorkBoundService>().CreatedBy(() => new MyUnitOfWorkBoundService()));
+      builder.Registrar.Register(UnitOfWorkParticipant.For<IMyUnitOfWorkBoundService>().CreatedBy(() => new MyUnitOfWorkBoundService()));
       return builder.Build();
    }
 

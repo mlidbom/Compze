@@ -28,7 +28,7 @@ static class UnitOfWorkTeventPublisherRegistrar
 {
    public static void RegisterWith(IComponentRegistrar registrar)
       //WithServiceResolver: TeventStoreUpdater's one instance serves the reader face too, which constructs in plain read scopes — it defers to the publisher through the resolver, at publish time.
-      => registrar.Register(UnitOfWork.For<IUnitOfWorkTeventPublisher>()
+      => registrar.Register(UnitOfWorkParticipant.For<IUnitOfWorkTeventPublisher>()
                                       .WithServiceResolver()
                                       .CreatedBy((IInProcessTeventPublisher inProcessTeventPublisher, TeventObservationDispatcher teventObservationDispatcher, IComponentSet<IExactlyOnceTeventDeliveryLeg> exactlyOnceDeliveryLegs, IComponentSet<ITransientTeventDeliveryLeg> transientDeliveryLegs, IScopeResolver scopeResolver)
                                                     => new UnitOfWorkTeventPublisher(inProcessTeventPublisher, teventObservationDispatcher, exactlyOnceDeliveryLegs, transientDeliveryLegs, scopeResolver)));

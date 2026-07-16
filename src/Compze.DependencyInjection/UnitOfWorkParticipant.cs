@@ -9,7 +9,7 @@ namespace Compze.DependencyInjection;
 /// <see cref="Scoped"/>'s: one instance serving several service types usually pairs an updating face with a reading face, and<br/>
 /// a reading face must resolve in plain read scopes, where a unit-of-work component cannot even be constructed<br/>
 /// (see <c>src/Compze.DependencyInjection/dev_docs/unit-of-work-model.md</c>).</remarks>
-public static class UnitOfWork
+public static class UnitOfWorkParticipant
 {
    public static ComponentRegistrationWithoutInstantiationSpec<TService> For<TService>() where TService : class => new(Lifestyle.UnitOfWork, []);
 }
