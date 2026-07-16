@@ -185,41 +185,4 @@ public class Given_a_met_distributed_tessaging_subscriber_that_goes_down : Unive
       }
    }
 
-   ///<summary>Serves the live hosts' Tessaging addresses to the publisher's router — the discovery a production suite gets from a<br/>
-   /// shared registry — and counts the router's reads, so the specification can await the reconciliation pass that acts on a<br/>
-   /// membership change instead of sleeping and hoping.</summary>
-   class AddressesOfTheLiveHosts : IEndpointRegistry
-   {
-      readonly IMonitor _monitor = IMonitor.New();
-      readonly List<IEndpointHost> _liveHosts = [];
-      long _reads;
-
-      internal void Add(IEndpointHost host) => _monitor.Locked(() => _liveHosts.Add(host));
-      internal void Remove(IEndpointHost host) => _monitor.Locked(() => _liveHosts.Remove(host));
-
-      public IEnumerable<EndpointAddress> ServerEndpointAddresses => _monitor.Locked(() =>
-      {
-         _reads++;
-         return (IReadOnlyList<EndpointAddress>)
-         [
-            .._liveHosts.SelectMany(host => host.Endpoints)
-                        .Where(endpoint => endpoint.TessagingAddress is not null)
-                        .Select(endpoint => endpoint.TessagingAddress!)
-         ];
-      });
-
-      ///<summary>Returns once two <see cref="ServerEndpointAddresses"/> reads have completed after the call: the first read may<br/>
-      /// belong to a reconciliation pass that was already mid-flight on the old membership, but the second belongs to a pass that<br/>
-      /// started afterwards — so by then a full pass has acted on the current membership.</summary>
-      internal void AwaitTwoReadsCompletingAfterNow()
-      {
-         var readsAtCall = _monitor.Locked(() => _reads);
-         var deadline = DateTime.UtcNow + TimeSpan.FromSeconds(30);
-         while(_monitor.Locked(() => _reads) < readsAtCall + 2)
-         {
-            if(DateTime.UtcNow > deadline) throw new TimeoutException("The publisher's router stopped reading the registry.");
-            Thread.Sleep(20);
-         }
-      }
-   }
 }

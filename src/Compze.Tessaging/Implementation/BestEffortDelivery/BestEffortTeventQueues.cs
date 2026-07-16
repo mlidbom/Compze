@@ -1,4 +1,5 @@
 using Compze.Abstractions.Hosting.Public;
+using Compze.Contracts;
 using Compze.Tessaging.Implementation.Peers;
 using Compze.Tessaging.Implementation.Transport;
 using Compze.Tessaging.Implementation.Transport.Abstractions;
@@ -29,12 +30,16 @@ partial class BestEffortTeventQueues : IDisposable
    readonly IMonitor _monitor = IMonitor.New();
    readonly Dictionary<EndpointId, PeerQueue> _queues = new();
 
-   internal BestEffortTeventQueues(IReadOnlyList<EndpointId> requiredPeers, ITypeMap typeMap, ITessagesInFlightTracker tessagesInFlightTracker)
+   internal BestEffortTeventQueues(IReadOnlyList<EndpointId> requiredPeers, IReadOnlyList<EndpointId> peersNotQueuedFor, ITypeMap typeMap, ITessagesInFlightTracker tessagesInFlightTracker)
    {
+      State.Assert(!requiredPeers.Intersect(peersNotQueuedFor).Any(),
+                   () => $"A peer cannot be both required and not-queued-for: requiring a peer means holding everything for it until it is met, declining to queue means keeping nothing for it while it is away. Declared as both: {string.Join(", ", requiredPeers.Intersect(peersNotQueuedFor))}.");
       _typeMap = typeMap;
       _tessagesInFlightTracker = tessagesInFlightTracker;
       foreach(var requiredPeer in requiredPeers.Distinct())
          _queues.Add(requiredPeer, new PeerQueue(requiredPeer, awaitingFirstContact: true));
+      foreach(var peerNotQueuedFor in peersNotQueuedFor.Distinct())
+         _queues.Add(peerNotQueuedFor, new PeerQueue(peerNotQueuedFor, awaitingFirstContact: false, queueingDeclined: true));
    }
 
    ///<summary>The queue holding what this endpoint owes <paramref name="peer"/> — created on first use and living until the<br/>

@@ -104,21 +104,4 @@ public class Given_a_distributed_tessaging_endpoint_requiring_a_peer_it_has_neve
    void PublishOnThePublisherEndpointInATransaction(int sequenceNumber) =>
       _publisherEndpoint.ServiceLocator.Resolve<IScopeFactory>().ExecuteUnitOfWork(unitOfWork =>
          unitOfWork.Resolve<IUnitOfWorkTeventPublisher>().Publish(new MyBestEffortTevent { SequenceNumber = sequenceNumber }));
-
-   ///<summary>Serves the live hosts' Tessaging addresses to the publisher's router — the discovery a production suite gets from a shared registry.</summary>
-   class AddressesOfTheLiveHosts : IEndpointRegistry
-   {
-      readonly IMonitor _monitor = IMonitor.New();
-      readonly List<IEndpointHost> _liveHosts = [];
-
-      internal void Add(IEndpointHost host) => _monitor.Locked(() => _liveHosts.Add(host));
-
-      public IEnumerable<EndpointAddress> ServerEndpointAddresses => _monitor.Locked(() =>
-         (IReadOnlyList<EndpointAddress>)
-         [
-            .._liveHosts.SelectMany(host => host.Endpoints)
-                        .Where(endpoint => endpoint.TessagingAddress is not null)
-                        .Select(endpoint => endpoint.TessagingAddress!)
-         ]);
-   }
 }

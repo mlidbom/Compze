@@ -56,6 +56,9 @@ partial class TessagingConnection
       {
          this.Log().Info($"Started best-effort delivery loop for endpoint {_connection.EndpointInformation.Id}");
 
+         //Attached while this loop drains: what makes a not-queued-for peer's tevents deliverable at all - its queue declines
+         //tessages whenever no stream is draining it.
+         _peerQueue.AttachDrainingStream();
          try
          {
             while(!_connection._cancellationSource.IsCancellationRequested)
@@ -75,17 +78,38 @@ partial class TessagingConnection
                   _connection._transportMessagePoster.PostAsync(pending, _connection.RemoteAddress).GetAwaiter().GetResult();
                   this.Log().Debug($"Delivered best-effort tessage {pending.TessageId} to endpoint {_connection.EndpointInformation.Id}");
                }
-#pragma warning disable CA1031 // Background thread, and pausing the stream below IS the best-effort tier's handling of every delivery failure.
+#pragma warning disable CA1031 // Background thread, and the failure policies below ARE the best-effort tier's handling of every delivery failure.
                catch(Exception exception)
                {
 #pragma warning restore CA1031
-                  DropTheInFlightTessageAndPauseUntilThePeerAnswersAProbe(inFlightAtFailure: pending, exception);
+                  if(_peerQueue.QueueingDeclined)
+                     DropTheQueuedStreamWholeForTheNotQueuedForPeer(failedTessage: pending, exception);
+                  else
+                     DropTheInFlightTessageAndPauseUntilThePeerAnswersAProbe(inFlightAtFailure: pending, exception);
                }
             }
          }
          catch(ObjectDisposedException) {} // Expected during shutdown
+         finally
+         {
+            _peerQueue.DetachDrainingStream();
+         }
 
          this.Log().Info($"Stopped best-effort delivery loop for endpoint {_connection.EndpointInformation.Id}");
+      }
+
+      ///<summary>The failure policy of a peer the composition declared not-queued-for (<c>DoNotQueueTeventsFor</c>): the failed<br/>
+      /// tessage and everything queued behind it are dropped together, so the subscriber's gap is one clean boundary — never a<br/>
+      /// silent mid-stream skip — and the loop keeps attempting whatever is published afterwards. No pause, no probe: the<br/>
+      /// composition declared it does not care whether this peer is up.</summary>
+      void DropTheQueuedStreamWholeForTheNotQueuedForPeer(TransportTessage.OutGoing failedTessage, Exception exception)
+      {
+         var droppedBehindFailed = _peerQueue.DequeueAll();
+         this.Log().Warning(exception, $"Best-effort delivery to not-queued-for endpoint {_connection.EndpointInformation.Id} failed: dropping the queued stream whole - the failed tessage {failedTessage.TessageId} plus {droppedBehindFailed.Count} tessage(s) queued behind it. The subscriber resumes from tessages published after this point.");
+
+         _connection._tessagesInFlightTracker.DroppedBeforeDelivery(failedTessage, _connection.EndpointInformation.Id);
+         foreach(var dropped in droppedBehindFailed)
+            _connection._tessagesInFlightTracker.DroppedBeforeDelivery(dropped, _connection.EndpointInformation.Id);
       }
 
       ///<summary>Pause-stream-whole: the failed tessage was in flight at the failure moment — the one intrinsically ambiguous<br/>

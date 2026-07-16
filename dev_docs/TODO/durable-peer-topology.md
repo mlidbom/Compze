@@ -246,5 +246,22 @@ patience, then fail loud naming the unserved type).
    "transient entity" keep the word — different concepts that were never this tier.
 5. **Distributed tier**: `RequiredPeers` (by `EndpointId`), queue-while-down with pause-stream-whole,
    queue-before-first-contact, the 10,000 bound with loud overflow, per-peer opt-down.
+   **DONE 2026-07-16**, in four committed steps:
+   - *Peer memory everywhere*: the peer registry moved into the distributed core; durability follows the
+     foundation (`DurablePeerRegistry` with Tessaging persistence declared, `ProcessLifetimePeerRegistry`
+     on a database-less endpoint — peers met this process, remembered while it lives).
+   - *Queue-while-down + pause-stream-whole*: per-peer in-memory queues (`BestEffortTeventQueues`) owned by
+     the best-effort delivery wiring, outliving connections — the exactly-once shape mirrored (queue =
+     storage-analogue, connection stream = pump). Fan-out targets remembered subscribers; a delivery failure
+     drops only the in-flight tessage (loudly; dequeue-before-post pins never-resend) and draining resumes
+     when the peer answers a tessage-free probe (the endpoint-information query) or reconnects. Specified in
+     `Given_a_met_distributed_tessaging_subscriber_that_goes_down` (verified discriminating).
+   - *The bound*: 10,000/peer, reservation-based inside the caller's transaction so the overflowing publish
+     fails loud naming peer and bound (`BestEffortTeventQueueOverflowException`); rollback releases.
+   - *`RequirePeers` + queue-before-first-contact*: held-until-first-contact per required peer, matching
+     subset delivered in order on arrival (`Given_a_distributed_tessaging_endpoint_requiring_a_peer_it_has_never_met`);
+     the multi-process spec's 30-second retry loop dissolved into one publish. *Per-peer opt-down*:
+     `DoNotQueueTeventsFor` — delivered only while connected, drop-stream-whole on failure, mutually
+     exclusive with requiring (`Given_a_met_distributed_tessaging_subscriber_the_publisher_does_not_queue_tevents_for`).
 6. **Shrink + decommission surfaces.**
 7. **Typermedia parity** (before the next release).

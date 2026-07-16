@@ -73,6 +73,7 @@ public class DistributedTessagingEndpointFeature
    readonly EndpointTransportServerFeature _transportServer;
    readonly EndpointId _endpointId;
    readonly List<EndpointId> _requiredPeers = [];
+   readonly List<EndpointId> _peersNotQueuedFor = [];
    IEndpointRegistry? _endpointRegistry;
 
    ///<summary>Declares that the endpoint announces where it listens to <paramref name="announcer"/> — see<br/>
@@ -113,7 +114,22 @@ public class DistributedTessagingEndpointFeature
    public DistributedTessagingEndpointFeature RequirePeers(params EndpointId[] requiredPeers)
    {
       State.Assert(!requiredPeers.Contains(_endpointId), () => "An endpoint cannot require itself: a peer is another endpoint, and tevents to the endpoint's own handlers are delivered in-process.");
+      State.Assert(!requiredPeers.Intersect(_peersNotQueuedFor).Any(), () => "A peer cannot be both required and not-queued-for: requiring a peer means holding everything for it until it is met, declining to queue means keeping nothing for it while it is away.");
       _requiredPeers.AddRange(requiredPeers);
+      return this;
+   }
+
+   ///<summary>Declares peers this endpoint deliberately keeps nothing for — the per-peer opt-down from queue-while-down<br/>
+   /// (see <c>dev_docs/TODO/durable-peer-topology.md</c>). Ephemerality is a property of the relationship, not of the endpoint:<br/>
+   /// an application that requires its billing peer may genuinely not care whether the statistics collector is up. A tevent for<br/>
+   /// a not-queued-for peer is delivered only while the peer is connected: published while it is down, the tevent is dropped,<br/>
+   /// and a delivery failure drops the peer's queued stream whole — the subscriber resumes from tevents published after its<br/>
+   /// return. Every peer not declared here gets queue-while-down. Declare before the host starts, like every composition declaration.</summary>
+   public DistributedTessagingEndpointFeature DoNotQueueTeventsFor(params EndpointId[] peers)
+   {
+      State.Assert(!peers.Contains(_endpointId), () => "An endpoint cannot decline queueing for itself: a peer is another endpoint, and tevents to the endpoint's own handlers are delivered in-process.");
+      State.Assert(!peers.Intersect(_requiredPeers).Any(), () => "A peer cannot be both required and not-queued-for: requiring a peer means holding everything for it until it is met, declining to queue means keeping nothing for it while it is away.");
+      _peersNotQueuedFor.AddRange(peers);
       return this;
    }
 
@@ -139,7 +155,7 @@ public class DistributedTessagingEndpointFeature
       register.TaskRunner()
               .PeerRegistry()
               .TessagingTransport()
-              .BestEffortTeventDelivery(_requiredPeers) //Captured by reference: the composition's RequirePeers declarations fill it before the container builds.
+              .BestEffortTeventDelivery(_requiredPeers, _peersNotQueuedFor) //Captured by reference: the composition's RequirePeers/DoNotQueueTeventsFor declarations fill them before the container builds.
               .TessagingTransportMessagePoster()
               .BestEffortTessagingRequestHandlers();
 

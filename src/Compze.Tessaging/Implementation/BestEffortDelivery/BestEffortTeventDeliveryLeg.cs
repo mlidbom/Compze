@@ -18,11 +18,12 @@ namespace Compze.Tessaging.Implementation.BestEffortDelivery;
 
 static class BestEffortTeventDeliveryRegistrar
 {
-   ///<summary><paramref name="requiredPeers"/> is captured by reference and read when the container builds — after the<br/>
-   /// composition's <c>RequirePeers</c> declarations, which the distributed Tessaging feature collects into it.</summary>
-   public static IComponentRegistrar BestEffortTeventDelivery(this IComponentRegistrar registrar, IReadOnlyList<EndpointId> requiredPeers)
+   ///<summary><paramref name="requiredPeers"/> and <paramref name="peersNotQueuedFor"/> are captured by reference and read when<br/>
+   /// the container builds — after the composition's <c>RequirePeers</c>/<c>DoNotQueueTeventsFor</c> declarations, which the<br/>
+   /// distributed Tessaging feature collects into them.</summary>
+   public static IComponentRegistrar BestEffortTeventDelivery(this IComponentRegistrar registrar, IReadOnlyList<EndpointId> requiredPeers, IReadOnlyList<EndpointId> peersNotQueuedFor)
       => registrar.Register(Singleton.For<BestEffortTeventQueues>()
-                                     .CreatedBy((ITypeMap typeMap, ITessagesInFlightTracker tessagesInFlightTracker) => new BestEffortTeventQueues(requiredPeers, typeMap, tessagesInFlightTracker)))
+                                     .CreatedBy((ITypeMap typeMap, ITessagesInFlightTracker tessagesInFlightTracker) => new BestEffortTeventQueues(requiredPeers, peersNotQueuedFor, typeMap, tessagesInFlightTracker)))
                   //The stream factory grants the router's connections their best-effort delivery streams, each draining its peer's queue - the same wiring idiom as the exactly-once stream factory the outbox registers.
                   .Register(Singleton.For<TessagingConnection.BestEffortDeliveryStream.Factory>()
                                      .CreatedBy((BestEffortTeventQueues queues) => new TessagingConnection.BestEffortDeliveryStream.Factory(queues)))
@@ -95,7 +96,9 @@ class BestEffortTeventDeliveryLeg : IBestEffortTeventDeliveryLeg
          foreach(var subscriber in subscribers)
          {
             _tessagesInFlightTracker.SendingTessageOnTransport(transportTessage, subscriber.Id);
-            subscriber.Queue.Enqueue(transportTessage);
+            //A not-queued-for peer's queue declines the tessage while no stream is draining it: published while such a peer is down, the tevent is simply gone - the declared opt-down.
+            if(!subscriber.Queue.Enqueue(transportTessage))
+               _tessagesInFlightTracker.DroppedBeforeDelivery(transportTessage, subscriber.Id);
          }
       }
    }

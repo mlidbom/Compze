@@ -271,7 +271,11 @@ Per rung:
   duplicate it, and nothing on this tier is ever re-sent — while everything queued behind it stays queued in
   order, resuming when the peer answers a tessage-free probe or reconnects. There is never a silent
   mid-stream skip that would deliver 54 after dropping 53: the tier's loss surface is exactly that single
-  in-flight tevent, a publisher crash (memory is memory), and queue overflow.
+  in-flight tevent, a publisher crash (memory is memory), and queue overflow (10,000 tevents per peer; the
+  overflowing publish fails loud, naming the peer and the bound). The per-peer opt-down is
+  `DoNotQueueTeventsFor` on the distributed Tessaging feature: a peer the composition declares it keeps
+  nothing for is delivered to only while connected — ephemerality is a property of the relationship, and
+  every peer not declared gets queue-while-down.
 - **Receive side: failing to *receive* is fatal.** An endpoint that cannot register an arriving guaranteed
   tevent in its inbox has a fatal bug — the system goes down rather than lose the tevent. Failing to
   *handle* (handler exceptions, retries exhausted) is a separate concern with its own policy.

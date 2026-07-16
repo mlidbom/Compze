@@ -21,15 +21,28 @@ partial class BestEffortTeventQueues
       readonly Queue<TransportTessage.OutGoing> _queue = new();
       int _reservedSlots;
       bool _awaitingFirstContact;
+      bool _drainingStreamAttached;
       readonly AutoResetEvent _enqueued = new(false);
 
-      internal PeerQueue(EndpointId peerId, bool awaitingFirstContact)
+      internal PeerQueue(EndpointId peerId, bool awaitingFirstContact, bool queueingDeclined = false)
       {
          PeerId = peerId;
          _awaitingFirstContact = awaitingFirstContact;
+         QueueingDeclined = queueingDeclined;
       }
 
       internal EndpointId PeerId { get; }
+
+      ///<summary>Whether the composition declared this peer not-queued-for (<c>DoNotQueueTeventsFor</c>): tevents are delivered<br/>
+      /// to it only while a connection's stream is draining the queue — published while the peer is down they are dropped, and a<br/>
+      /// delivery failure drops its queued stream whole instead of pausing.</summary>
+      internal bool QueueingDeclined { get; }
+
+      ///<summary>The peer's connection's best-effort delivery stream declares that it is draining this queue — what makes a<br/>
+      /// not-queued-for peer's tevents deliverable at all. Balanced by <see cref="DetachDrainingStream"/> when the stream stops.</summary>
+      internal void AttachDrainingStream() => _monitor.Locked(() => _drainingStreamAttached = true);
+
+      internal void DetachDrainingStream() => _monitor.Locked(() => _drainingStreamAttached = false);
 
       ///<summary>Whether this is a required peer's queue still awaiting its first advertisement: everything published is held<br/>
       /// for it, since which tevents it subscribes to is unknown until first contact resolves the held tevents<br/>
@@ -89,17 +102,32 @@ partial class BestEffortTeventQueues
          _reservedSlots--;
       });
 
-      ///<summary>Appends <paramref name="transportTessage"/>, converting the reservation its publish took inside the now-committed transaction.</summary>
-      internal void Enqueue(TransportTessage.OutGoing transportTessage)
+      ///<summary>Appends <paramref name="transportTessage"/>, converting the reservation its publish took inside the<br/>
+      /// now-committed transaction — unless the peer is declared not-queued-for and no stream is draining: then the tessage is<br/>
+      /// declined (the reservation still converts) and the caller reports the drop; a not-queued-for peer's tevents exist only<br/>
+      /// while it is there to receive them.</summary>
+      internal bool Enqueue(TransportTessage.OutGoing transportTessage)
       {
-         _monitor.Locked(() =>
+         var enqueued = _monitor.Locked(() =>
          {
             State.Assert(_reservedSlots > 0, () => "Every enqueue converts a reservation its publish took; enqueueing with none reserved is a bookkeeping bug.");
             _reservedSlots--;
+            if(QueueingDeclined && !_drainingStreamAttached) return false;
             _queue.Enqueue(transportTessage);
+            return true;
          });
-         _enqueued.Set();
+         if(enqueued) _enqueued.Set();
+         return enqueued;
       }
+
+      ///<summary>Empties the queue, returning what was queued — the drop-stream-whole failure policy of a not-queued-for peer:<br/>
+      /// its failed tessage and everything queued behind it are dropped together, so the subscriber's gap is one clean boundary.</summary>
+      internal IReadOnlyList<TransportTessage.OutGoing> DequeueAll() => _monitor.Locked(() =>
+      {
+         IReadOnlyList<TransportTessage.OutGoing> queued = [.._queue];
+         _queue.Clear();
+         return queued;
+      });
 
       ///<summary>The oldest queued tessage, removed from the queue — or null when the queue is empty. Removed before the send is<br/>
       /// attempted, deliberately: nothing on the best-effort tier is ever re-sent (there is no receiver dedup to make a re-send<br/>
