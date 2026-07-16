@@ -2,7 +2,7 @@
 name: refactor-to-code-standards
 description: >-
   A skill for refactoring code into alignment with our code standards.
-  Use whenever finishing any code change or when the user explicitly instructs you to.
+  Use whenever finishing any significant code change, that is not itself a refactoring towards the code standards.
   This skill provides the concrete diffs required to know what the code standards mean in practice instead of in vague theory.
 ---
 
@@ -16,8 +16,5 @@ description: >-
 
 # At the end of a development task
 
-When you complete a development prompt and feel about ready to commit.
-
 * Stage all your changes in git.
 * Instruct a general subagent to run this skill on the code that is staged.
-

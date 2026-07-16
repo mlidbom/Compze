@@ -1,0 +1,1 @@
+# Always use the locking primitives in Compze.Threading. IMonitor, IAwaitableMonitor, IMutex etc. NEVER raw lock, Monitor, Mutex etc.   

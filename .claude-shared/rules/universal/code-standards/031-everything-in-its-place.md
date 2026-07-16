@@ -30,5 +30,17 @@ If this makes no sense outside of the current method, make it a local method.
 ## Local methods
 place local methods last in the method declaring them.
 
+## File per type
+As the general rule, create one file for each type, so that types are easy to browse and find in the filesystem.
+For nested typed, use partial types and OuterType.NestedType.cs as the file names. 
+
+## Small cohesive namespaces.
+Should split up a namespace into multiple whenever you can find clear categories/groups of types in the namespace.
+
+Strongly consider splitting it if there are more files in the namespace than fit in a humans limited short term memory. More than 10 is a strong signal indeed. There is probably some conceptual line between the types. Find it and split the namespace.
+
+Don't force it. If there truly are no reasonably clear separate categories to be found, accept it. 
+
 ## Reuse is not the goal
 The goal is maintainable easy to read code, not DRY. Split as soon as that goal is furthered by splitting.
+This goes for every category above.
