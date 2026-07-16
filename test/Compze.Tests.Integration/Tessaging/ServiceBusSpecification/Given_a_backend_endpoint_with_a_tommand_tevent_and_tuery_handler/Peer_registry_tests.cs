@@ -15,7 +15,7 @@ public class Peer_registry_tests : EndpointHostTestBase
 {
    [PCT] public void After_start_the_backend_remembers_the_remote_endpoint_as_a_peer_whose_advertisement_matches_what_the_remote_advertises()
    {
-      var rememberedPeer = BackendEndPoint.ServiceLocator.ResolveSet<IPeerRegistry>().Single().Peers
+      var rememberedPeer = BackendEndPoint.ServiceLocator.Resolve<IPeerRegistry>().Peers
                                           .Single(peer => peer.Id.Equals(RemoteEndpointId));
 
       rememberedPeer.HandledTessageTypes.SetEquals(RemoteEndpointAdvertisedTypes).Must().BeTrue();

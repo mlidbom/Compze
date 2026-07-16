@@ -27,8 +27,8 @@ partial class Outbox : IOutbox
    internal static void RegisterWith(IComponentRegistrar registrar)
    {
       registrar.Register(Singleton.For<IOutbox>()
-                                  .CreatedBy((ITessagingRouter tessagingRouter, ITessageStorage tessageStorage, IComponentSet<IPeerRegistry> peerRegistry)
-                                                => new Outbox(tessagingRouter, tessageStorage, peerRegistry.Single())));
+                                  .CreatedBy((ITessagingRouter tessagingRouter, ITessageStorage tessageStorage, IPeerRegistry peerRegistry)
+                                                => new Outbox(tessagingRouter, tessageStorage, peerRegistry)));
       //Wiring the outbox is what wires the endpoint's exactly-once tevent delivery: the outbox joins the delivery-leg set the IUnitOfWorkTeventPublisher routes through...
       registrar.Register(Singleton.ForSet<IExactlyOnceTeventDeliveryLeg>().CreatedBy((IOutbox outbox) => outbox));
       //...and what grants the router's connections their exactly-once delivery streams, backed by the outbox's storage: on an endpoint without the outbox this set is empty and connections carry no such stream (see TessagingConnection).

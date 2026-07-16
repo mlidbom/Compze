@@ -1,32 +1,31 @@
 using Compze.Abstractions.Hosting.Public;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Tessaging.Implementation.Transport;
-using Compze.Tessaging.Transport.SqlLayer;
 
 namespace Compze.Tessaging.Implementation.Peers;
 
-///<summary>The endpoint's durable memory of its peers — the endpoints it works with: each peer's identity and its last-known<br/>
-/// advertisement (which remotable tessage types it handles and subscribes to). Written on every advertisement fetch and loaded<br/>
-/// at endpoint start, it survives restarts on both sides: a peer is remembered until explicitly decommissioned — absence<br/>
-/// (a crash, a clean stop) is never forgetting (see <c>dev_docs/TODO/durable-peer-topology.md</c>).</summary>
-///<remarks>Why it exists: without it, exactly-once tevent fan-out was decided by the live connections at publish time, so a<br/>
-/// subscriber that was down when a tevent was published — a routine rolling restart sufficed — silently never received it.<br/>
-/// Durable peer memory is what lets membership stop depending on liveness.</remarks>
-///<remarks>Registered only by compositions with durable storage (exactly-once Tessaging), as an<br/>
-/// <see cref="Compze.DependencyInjection.Abstractions.IComponentSet{TService}"/> contribution: the router records every fetched<br/>
-/// advertisement through the set, which is empty on endpoints without durable storage.</remarks>
+///<summary>The endpoint's memory of its peers — the endpoints it works with: each peer's identity and its last-known<br/>
+/// advertisement (which remotable tessage types it handles and subscribes to). Written on every advertisement fetch, it is<br/>
+/// what lets delivery membership stop depending on liveness: a peer is remembered while down — absence (a crash, a clean stop)<br/>
+/// is never forgetting (see <c>dev_docs/TODO/durable-peer-topology.md</c>).</summary>
+///<remarks>Why it exists: without it, remote tevent fan-out was decided by the live connections at publish time, so a<br/>
+/// subscriber that was down when a tevent was published — a routine rolling restart sufficed — silently never received it.</remarks>
+///<remarks>Every transport-speaking endpoint registers exactly one, through the distributed Tessaging core. Durability follows<br/>
+/// the foundation: with Tessaging persistence declared, peer memory lives in the endpoint's database and survives restarts<br/>
+/// (<see cref="DurablePeerRegistry"/>, where a peer is remembered until explicitly decommissioned); on a database-less endpoint<br/>
+/// it lives in memory for the life of the process (<see cref="ProcessLifetimePeerRegistry"/>).</remarks>
 public interface IPeerRegistry
 {
    ///<summary>Records <paramref name="advertisement"/> as the advertising peer's current one, replacing what was stored —<br/>
    /// creating the peer on first contact.</summary>
    void RecordAdvertisement(TessagingEndpointInformation advertisement);
 
-   ///<summary>Every remembered peer, with its last-known advertisement. Served from memory: the registry mirrors its durable<br/>
-   /// storage, loaded at start and updated on every <see cref="RecordAdvertisement"/>.</summary>
-   IReadOnlyList<IServiceBusSqlLayer.PersistedPeer> Peers { get; }
+   ///<summary>Every remembered peer, with its last-known advertisement. Served from memory: the registry mirrors its backing<br/>
+   /// store, loaded at start and updated on every <see cref="RecordAdvertisement"/>.</summary>
+   IReadOnlyList<RememberedPeer> Peers { get; }
 
    ///<summary>The <see cref="EndpointId"/> of every remembered peer whose last-known advertisement subscribes to<br/>
-   /// <paramref name="wrappedTevent"/> — exactly-once tevent fan-out's membership: decided by remembered advertisement, never<br/>
+   /// <paramref name="wrappedTevent"/> — remote tevent fan-out's membership: decided by remembered advertisement, never<br/>
    /// by liveness, so a subscribing peer that is down at publish time is still fanned out to and receives the tevent on its<br/>
    /// return.</summary>
    ///<remarks>Subscriptions match by the same advertised-wrapper-type assignability the router's routes apply<br/>
@@ -43,7 +42,7 @@ public interface IPeerRegistry
    /// a peer is another endpoint — covered by the router's always-live self-connection.</summary>
    IReadOnlyList<EndpointId> HandlerIdsFor(IExactlyOnceTommand tommand);
 
-   ///<summary>Initializes the registry's storage and loads the remembered peers into memory. Runs in the endpoint's listening<br/>
-   /// phase, before any endpoint in the host starts sending.</summary>
+   ///<summary>Initializes the registry's backing store, if any, and loads the remembered peers into memory. Runs in the<br/>
+   /// endpoint's listening phase, before any endpoint in the host starts sending.</summary>
    Task StartAsync();
 }

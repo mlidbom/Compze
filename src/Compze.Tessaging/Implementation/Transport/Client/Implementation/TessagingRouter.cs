@@ -27,7 +27,7 @@ class TessagingRouter : ITessagingRouter, IDisposable
 {
    public static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(Singleton.For<ITessagingRouter>().CreatedBy(
-            (ITessagesInFlightTracker tessagesInFlightTracker, ITypeMap typeMap, ITessagingSerializer serializer, ITransportMessagePoster transportMessagePoster, IEndpointDiscoveryQueryTransport endpointDiscoveryQueryTransport, IComponentSet<TessagingConnection.ExactlyOnceDeliveryStream.Factory> exactlyOnceStreamFactory, IComponentSet<IPeerRegistry> peerRegistry, EndpointConfiguration configuration, ITaskRunner taskRunner, IBackgroundExceptionReporter exceptionReporter)
+            (ITessagesInFlightTracker tessagesInFlightTracker, ITypeMap typeMap, ITessagingSerializer serializer, ITransportMessagePoster transportMessagePoster, IEndpointDiscoveryQueryTransport endpointDiscoveryQueryTransport, IComponentSet<TessagingConnection.ExactlyOnceDeliveryStream.Factory> exactlyOnceStreamFactory, IPeerRegistry peerRegistry, EndpointConfiguration configuration, ITaskRunner taskRunner, IBackgroundExceptionReporter exceptionReporter)
                => new TessagingRouter(tessagesInFlightTracker, typeMap, serializer, transportMessagePoster, endpointDiscoveryQueryTransport, exactlyOnceStreamFactory, peerRegistry, configuration, taskRunner, exceptionReporter)));
 
    ///<summary>How long a reconciliation pass waits for a registry change signal before running anyway. The signal makes announced<br/>
@@ -43,8 +43,7 @@ class TessagingRouter : ITessagingRouter, IDisposable
    readonly IEndpointDiscoveryQueryTransport _endpointDiscoveryQueryTransport;
    //Null when the endpoint wires no outbox — the guarantee-free distributed composition: its connections then carry no exactly-once delivery stream.
    readonly TessagingConnection.ExactlyOnceDeliveryStream.Factory? _exactlyOnceStreamFactory;
-   //Null when the endpoint wires no durable peer memory (see IPeerRegistry) — today that is every composition without exactly-once Tessaging.
-   readonly IPeerRegistry? _peerRegistry;
+   readonly IPeerRegistry _peerRegistry;
    readonly EndpointConfiguration _configuration;
    readonly ITaskRunner _taskRunner;
    readonly IBackgroundExceptionReporter _exceptionReporter;
@@ -63,7 +62,7 @@ class TessagingRouter : ITessagingRouter, IDisposable
    readonly List<(Type TeventType, TessagingConnection Connection)> _teventSubscriberRoutes = [];
    readonly Dictionary<Type, IReadOnlyList<TessagingConnection>> _teventSubscriberRouteCache = new();
 
-   TessagingRouter(ITessagesInFlightTracker tessagesInFlightTracker, ITypeMap typeMap, ITessagingSerializer serializer, ITransportMessagePoster transportMessagePoster, IEndpointDiscoveryQueryTransport endpointDiscoveryQueryTransport, IEnumerable<TessagingConnection.ExactlyOnceDeliveryStream.Factory> exactlyOnceStreamFactory, IEnumerable<IPeerRegistry> peerRegistry, EndpointConfiguration configuration, ITaskRunner taskRunner, IBackgroundExceptionReporter exceptionReporter)
+   TessagingRouter(ITessagesInFlightTracker tessagesInFlightTracker, ITypeMap typeMap, ITessagingSerializer serializer, ITransportMessagePoster transportMessagePoster, IEndpointDiscoveryQueryTransport endpointDiscoveryQueryTransport, IEnumerable<TessagingConnection.ExactlyOnceDeliveryStream.Factory> exactlyOnceStreamFactory, IPeerRegistry peerRegistry, EndpointConfiguration configuration, ITaskRunner taskRunner, IBackgroundExceptionReporter exceptionReporter)
    {
       _tessagesInFlightTracker = tessagesInFlightTracker;
       _typeMap = typeMap;
@@ -71,7 +70,7 @@ class TessagingRouter : ITessagingRouter, IDisposable
       _transportMessagePoster = transportMessagePoster;
       _endpointDiscoveryQueryTransport = endpointDiscoveryQueryTransport;
       _exactlyOnceStreamFactory = exactlyOnceStreamFactory.SingleOrDefault();
-      _peerRegistry = peerRegistry.SingleOrDefault();
+      _peerRegistry = peerRegistry;
       _configuration = configuration;
       _taskRunner = taskRunner;
       _exceptionReporter = exceptionReporter;
@@ -165,7 +164,7 @@ class TessagingRouter : ITessagingRouter, IDisposable
 
       //Peer memory is recorded on every advertisement fetch: first contact creates the peer, a re-fetch replaces its stored
       //advertisement (see dev_docs/TODO/durable-peer-topology.md). The endpoint itself is not a peer - a peer is another endpoint.
-      if(_peerRegistry != null && connection.EndpointInformation.Id != _configuration.Id)
+      if(connection.EndpointInformation.Id != _configuration.Id)
       {
          try
          {

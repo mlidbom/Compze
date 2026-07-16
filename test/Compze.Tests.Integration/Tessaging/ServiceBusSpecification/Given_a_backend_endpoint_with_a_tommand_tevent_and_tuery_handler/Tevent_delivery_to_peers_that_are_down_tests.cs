@@ -31,5 +31,5 @@ public class Tevent_delivery_to_peers_that_are_down_tests : EndpointHostTestBase
       MyRemoteTaggregateTeventHandlerThreadGate.AwaitPassedThroughCountEqualTo(1, WaitTimeout.Seconds(15));
    }
 
-   IPeerRegistry BackendPeerRegistry => BackendEndPoint.ServiceLocator.ResolveSet<IPeerRegistry>().Single();
+   IPeerRegistry BackendPeerRegistry => BackendEndPoint.ServiceLocator.Resolve<IPeerRegistry>();
 }

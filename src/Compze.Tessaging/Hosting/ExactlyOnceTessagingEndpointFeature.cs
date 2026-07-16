@@ -14,14 +14,16 @@ using Compze.Tessaging.Transport;
 namespace Compze.Tessaging.Hosting;
 
 ///<summary>
-/// Wires the full exactly-once Tessaging pipeline — inbox, outbox, the durable peer registry
-/// (<see cref="Compze.Tessaging.Implementation.Peers.IPeerRegistry"/>), and the tommand senders
+/// Wires the full exactly-once Tessaging pipeline — inbox, outbox, and the tommand senders
 /// (<see cref="Compze.Abstractions.Tessaging.Public.IUnitOfWorkTommandSender"/> /
 /// <see cref="Compze.Abstractions.Tessaging.Public.IIndependentTommandSender"/>) —
 /// into an endpoint: everything the transport-speaking distributed core has
-/// (<see cref="DistributedTessagingEndpointFeature"/>, which it composes — the transport server, the router, and
-/// the best-effort tevent delivery leg — itself composing <see cref="InProcessTessagingEndpointFeature"/>), plus
-/// the exactly-once vertical. Wiring the outbox is what wires the endpoint's durable tevent delivery leg,
+/// (<see cref="DistributedTessagingEndpointFeature"/>, which it composes — the transport server, the router,
+/// the peer registry, and the best-effort tevent delivery leg — itself composing
+/// <see cref="InProcessTessagingEndpointFeature"/>), plus the exactly-once vertical. The peer registry the
+/// composed core registers is durable here (<see cref="Compze.Tessaging.Implementation.Peers.IPeerRegistry"/>):
+/// this feature's foundation declares Tessaging persistence, so peer memory lives in the endpoint's database
+/// and survives restarts. Wiring the outbox is what wires the endpoint's durable tevent delivery leg,
 /// through which the endpoint's <see cref="Compze.Abstractions.Tessaging.Public.IUnitOfWorkTeventPublisher"/> routes
 /// every published <see cref="Compze.Abstractions.Tessaging.Public.IExactlyOnceTevent"/> to its remote
 /// subscribers — and what grants each of the router's connections its durable, restart-surviving exactly-once
@@ -85,7 +87,6 @@ public class ExactlyOnceTessagingEndpointFeature
 
       register.Outbox()
               .Inbox()
-              .PeerRegistry()
               .UnitOfWorkTommandSender()
               .IndependentTommandSender()
               .ExactlyOnceTessagingRequestHandlers();

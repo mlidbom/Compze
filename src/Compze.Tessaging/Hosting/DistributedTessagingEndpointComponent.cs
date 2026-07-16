@@ -4,18 +4,21 @@ using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Internals.Transport;
+using Compze.Tessaging.Implementation.Peers;
 using Compze.Tessaging.Implementation.Transport.Client.Internal;
 using Compze.Tessaging.SystemCE.ThreadingCE;
 
 namespace Compze.Tessaging.Hosting;
 
-///<summary>The transport-speaking Tessaging core's runtime lifecycle within an endpoint: the router connects to all endpoints and<br/>
-/// runs the connections' delivery streams. (The endpoint's one transport server — which serves arriving tessages and announces the<br/>
-/// endpoint's address — runs its own lifecycle in <see cref="EndpointTransportServerFeature"/>'s component; the exactly-once<br/>
-/// pipeline, when composed, runs its own in <see cref="ExactlyOnceTessagingEndpointComponent"/>.)</summary>
+///<summary>The transport-speaking Tessaging core's runtime lifecycle within an endpoint: the peer registry loads the endpoint's<br/>
+/// remembered peers in the listening phase, then the router connects to all endpoints and runs the connections' delivery<br/>
+/// streams. (The endpoint's one transport server — which serves arriving tessages and announces the endpoint's address — runs its<br/>
+/// own lifecycle in <see cref="EndpointTransportServerFeature"/>'s component; the exactly-once pipeline, when composed, runs its<br/>
+/// own in <see cref="ExactlyOnceTessagingEndpointComponent"/>.)</summary>
 sealed class DistributedTessagingEndpointComponent : IEndpointComponent, IAsyncDisposable
 {
    readonly ITessagingRouter _tessagingRouter;
+   readonly IPeerRegistry _peerRegistry;
    //Null when the endpoint declares no discovery registry: it serves, converses in-process, and self-sends, but connects to no other endpoint.
    readonly IEndpointRegistry? _endpointRegistry;
    readonly IBackgroundExceptionReporter _backgroundExceptionReporter;
@@ -24,6 +27,7 @@ sealed class DistributedTessagingEndpointComponent : IEndpointComponent, IAsyncD
    internal DistributedTessagingEndpointComponent(IRootResolver resolver, EndpointTransportServerFeature transportServer, IEndpointRegistry? endpointRegistry)
    {
       _tessagingRouter = resolver.Resolve<ITessagingRouter>();
+      _peerRegistry = resolver.Resolve<IPeerRegistry>();
       _endpointRegistry = endpointRegistry;
       _backgroundExceptionReporter = resolver.Resolve<IBackgroundExceptionReporter>();
       _transportServer = transportServer;
@@ -32,7 +36,7 @@ sealed class DistributedTessagingEndpointComponent : IEndpointComponent, IAsyncD
    ///<summary>The endpoint's one listening address (see <see cref="EndpointTransportServerFeature.ListeningAddress"/>); null until the endpoint's transport server is listening.</summary>
    internal EndpointAddress? Address => _transportServer.ListeningAddress;
 
-   public Task StartListeningAsync() => Task.CompletedTask;
+   public Task StartListeningAsync() => _peerRegistry.StartAsync();
 
    public async Task StartSendingAsync()
    {

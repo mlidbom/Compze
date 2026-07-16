@@ -5,6 +5,7 @@ using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Transport;
 using Compze.Tessaging.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
+using Compze.Tessaging.Implementation.Peers;
 using Compze.Tessaging.Implementation.TessageHandling.Abstractions;
 using Compze.Tessaging.Implementation.BestEffortDelivery;
 using Compze.Tessaging.Implementation.Transport;
@@ -20,7 +21,9 @@ namespace Compze.Tessaging.Hosting;
 /// Wires guarantee-free distributed Tessaging into an endpoint — the transport-speaking Tessaging core, which
 /// the full exactly-once pipeline (<see cref="ExactlyOnceTessagingEndpointFeature"/>) composes and extends:
 /// everything in-process Tessaging has (<see cref="InProcessTessagingEndpointFeature"/>, which it composes),
-/// plus the endpoint's one transport server, the router that connects to the other endpoints, and the
+/// plus the endpoint's one transport server, the router that connects to the other endpoints, the peer
+/// registry — the endpoint's memory of the peers it works with (<see cref="IPeerRegistry"/>, durable when the
+/// foundation declares Tessaging persistence, process-lifetime otherwise) — and the
 /// best-effort tevent delivery leg. An endpoint with only this feature converses in best-effort tevents — a
 /// published <see cref="Compze.Abstractions.Tessaging.Public.IRemotableTevent"/> crosses the wire best-effort,
 /// with no outbox, no inbox, and no database anywhere (see <c>dev_docs/tevent-delivery-model.md</c>) — so it
@@ -118,6 +121,7 @@ public class DistributedTessagingEndpointFeature
 
       //The background-exception reporter arrives with the in-process core the feature composes above.
       register.TaskRunner()
+              .PeerRegistry()
               .TessagingTransport()
               .BestEffortTeventDelivery()
               .TessagingTransportMessagePoster()
