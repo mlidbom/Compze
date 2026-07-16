@@ -17,7 +17,7 @@ namespace Compze.Tests.Integration.InProcess;
 
 ///<summary>
 /// An endpoint composes its Tessaging from the in-process core the transport-speaking layers extend: every
-/// feature declaration is idempotent, exactly-once Tessaging contains transient Tessaging contains in-process
+/// feature declaration is idempotent, exactly-once Tessaging contains distributed Tessaging contains in-process
 /// Tessaging so declaring several composes in either order, and registering tessaging handlers is
 /// order-independent of every feature declaration. Whether a tevent crosses the wire is a property of the
 /// tevent's type, honored by the delivery legs the composition wires — not an endpoint-wide mode.

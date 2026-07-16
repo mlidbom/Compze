@@ -124,7 +124,7 @@ The builder does not know which capabilities exist. It offers one seam, and each
 as a **feature** behind it:
 
 - `GetOrAddFeature<TFeature>(createFeature)` — creates the feature once per endpoint and remembers it.
-  `AddExactlyOnceTessaging()`, `AddTransientTessaging()`, `AddInProcessTessaging()`, `AddDistributedTypermedia()`, and
+  `AddExactlyOnceTessaging()`, `AddDistributedTessaging()`, `AddInProcessTessaging()`, `AddDistributedTypermedia()`, and
   `AddInProcessTypermedia()` are one-line extension methods over this call, and
   `RegisterTessagingHandlers` / `RegisterTypermediaHandlers` are extension properties that add the style's
   in-process core on first touch and return its handler registrar.
@@ -146,8 +146,8 @@ wired once whether it arrives alone or under distribution).
   [the tevent delivery model](../../Compze.Tessaging/dev_docs/tevent-delivery-model.md)). With nothing but this
   feature the endpoint wires no remote delivery legs — no transport, inbox, or outbox —
   so tevents are delivered synchronously to this process's handlers, in the publisher's transaction.
-  `TransientTessagingEndpointFeature` (`AddTransientTessaging()`) composes it into the transport-speaking
-  core: the transport server, the router that connects to the other endpoints, and the transient tevent
+  `DistributedTessagingEndpointFeature` (`AddDistributedTessaging()`) composes it into the transport-speaking
+  core: the transport server, the router that connects to the other endpoints, and the best-effort tevent
   delivery leg — guarantee-free Tessaging, persisting nothing, so it composes on the database-less
   foundation; everything exactly-once fails loud at setup or publish.
   `ExactlyOnceTessagingEndpointFeature` (`AddExactlyOnceTessaging()`) composes that core and adds the
@@ -197,7 +197,7 @@ before listening. All but the listening-phase members are default no-ops because
 announce nor initiate sending. The components in play: `EndpointTransportServerFeature`'s component runs the
 endpoint's one transport server through the listening phase and announces the endpoint's address to every
 declared `IEndpointAddressAnnouncer` in the announcing phase.
-`TransientTessagingEndpointComponent` — the transport-speaking Tessaging core's lifecycle — sets its router
+`DistributedTessagingEndpointComponent` — the transport-speaking Tessaging core's lifecycle — sets its router
 reconciling against the `IEndpointRegistry`'s membership in the sending phase (continuously, so endpoints
 that appear, disappear, or restart at a new address are followed — see
 [same-machine hosting](wip/same-machine-hosting.md)) and starts the connections' delivery streams.
@@ -272,7 +272,7 @@ transport server it never serves.
 endpoint. Endpoints read configuration through `IConfigurationParameterProvider`: an endpoint setup that
 registers its own provider wins; `AppSettingsJsonConfigurationParameterProvider` reading `appsettings.json`
 is only the default. How endpoints find each other is a declaration on each transport-speaking feature:
-`AddTransientTessaging().DiscoverEndpointsThrough(registry)`, which `AddExactlyOnceTessaging()` delegates to,
+`AddDistributedTessaging().DiscoverEndpointsThrough(registry)`, which `AddExactlyOnceTessaging()` delegates to,
 and `AddDistributedTypermedia().DiscoverEndpointsThrough(registry)`. Declaring no registry means the endpoint
 discovers nothing and only serves that style — with one Tessaging-specific nuance: its router still maintains
 the connection to its own inbox (an address that needs no discovery), so an exactly-once tommand the endpoint

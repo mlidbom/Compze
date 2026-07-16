@@ -18,9 +18,9 @@ namespace Compze.Tessaging.Hosting;
 /// (<see cref="Compze.Tessaging.Implementation.Peers.IPeerRegistry"/>), and the tommand senders
 /// (<see cref="Compze.Abstractions.Tessaging.Public.IUnitOfWorkTommandSender"/> /
 /// <see cref="Compze.Abstractions.Tessaging.Public.IIndependentTommandSender"/>) —
-/// into an endpoint: everything the transport-speaking transient core has
-/// (<see cref="TransientTessagingEndpointFeature"/>, which it composes — the transport server, the router, and
-/// the transient tevent delivery leg — itself composing <see cref="InProcessTessagingEndpointFeature"/>), plus
+/// into an endpoint: everything the transport-speaking distributed core has
+/// (<see cref="DistributedTessagingEndpointFeature"/>, which it composes — the transport server, the router, and
+/// the best-effort tevent delivery leg — itself composing <see cref="InProcessTessagingEndpointFeature"/>), plus
 /// the exactly-once vertical. Wiring the outbox is what wires the endpoint's durable tevent delivery leg,
 /// through which the endpoint's <see cref="Compze.Abstractions.Tessaging.Public.IUnitOfWorkTeventPublisher"/> routes
 /// every published <see cref="Compze.Abstractions.Tessaging.Public.IExactlyOnceTevent"/> to its remote
@@ -40,11 +40,11 @@ namespace Compze.Tessaging.Hosting;
 ///</summary>
 public class ExactlyOnceTessagingEndpointFeature
 {
-   readonly TransientTessagingEndpointFeature _transientTessagingCore;
+   readonly DistributedTessagingEndpointFeature _distributedTessagingCore;
 
    public ExactlyOnceTessagingEndpointFeature RegisterHandlers(Action<ITessageHandlerRegistrar> registrar)
    {
-      _transientTessagingCore.RegisterHandlers(registrar);
+      _distributedTessagingCore.RegisterHandlers(registrar);
       return this;
    }
 
@@ -53,7 +53,7 @@ public class ExactlyOnceTessagingEndpointFeature
    /// endpoint's one transport-server address, serving every distributed capability the endpoint speaks.</summary>
    public ExactlyOnceTessagingEndpointFeature AnnounceAddressTo(IEndpointAddressAnnouncer announcer)
    {
-      _transientTessagingCore.AnnounceAddressTo(announcer);
+      _distributedTessagingCore.AnnounceAddressTo(announcer);
       return this;
    }
 
@@ -64,7 +64,7 @@ public class ExactlyOnceTessagingEndpointFeature
    /// connects to no other endpoint.</summary>
    public ExactlyOnceTessagingEndpointFeature DiscoverEndpointsThrough(IEndpointRegistry registry)
    {
-      _transientTessagingCore.DiscoverEndpointsThrough(registry);
+      _distributedTessagingCore.DiscoverEndpointsThrough(registry);
       return this;
    }
 
@@ -81,7 +81,7 @@ public class ExactlyOnceTessagingEndpointFeature
       var register = builder.Registrar;
       AssertTheEndpointsFoundationIsDeclared(register);
 
-      _transientTessagingCore = builder.AddTransientTessaging();
+      _distributedTessagingCore = builder.AddDistributedTessaging();
 
       register.Outbox()
               .Inbox()
@@ -101,7 +101,7 @@ public class ExactlyOnceTessagingEndpointFeature
       State.Assert(register.IsRegistered<IEndpointTransportServer>(),
                    () => "The endpoint declares no transport protocol. Declare it before adding exactly-once Tessaging — e.g. ComposeEndpoint(it => it.NamedPipeEndpointTransport()...) — or register NamedPipeEndpointTransport()/AspNetCoreEndpointTransport().");
       State.Assert(register.IsRegistered<IServiceBusSqlLayer.IInboxSqlLayer>() && register.IsRegistered<IServiceBusSqlLayer.IOutboxSqlLayer>() && register.IsRegistered<IServiceBusSqlLayer.IPeerRegistrySqlLayer>(),
-                   () => "The endpoint declares no Tessaging persistence. Add the feature on a foundation whose database is declared — e.g. ComposeEndpoint(it => ...SqliteEndpointDatabase(...)).AddExactlyOnceTessaging(...) — or register Tessaging's sql layers (e.g. SqliteTessagingSqlLayer()) before adding it. An endpoint that deliberately persists nothing speaks guarantee-free Tessaging instead: AddTransientTessaging(...).");
+                   () => "The endpoint declares no Tessaging persistence. Add the feature on a foundation whose database is declared — e.g. ComposeEndpoint(it => ...SqliteEndpointDatabase(...)).AddExactlyOnceTessaging(...) — or register Tessaging's sql layers (e.g. SqliteTessagingSqlLayer()) before adding it. An endpoint that deliberately persists nothing speaks guarantee-free Tessaging instead: AddDistributedTessaging(...).");
       State.Assert(register.IsRegistered<ITessagingSerializer>(),
                    () => "The endpoint declares no Tessaging serializer. Fill the serializer slot when adding the feature — e.g. AddExactlyOnceTessaging(tessaging => tessaging.NewtonsoftSerializer()) — or register one (e.g. NewtonsoftTessagingSerializer()) before adding it.");
    }

@@ -8,7 +8,7 @@ public interface ITessageHandlerRegistrar
 {
     ///<summary>Registers a handler for tevents compatible with <typeparamref name="TTevent"/>. The handler receives the<br/>
     /// <see cref="IUnitOfWorkResolver"/> of the unit of work delivering the tevent: a local publish delivers inside the<br/>
-    /// publisher's unit of work, an exactly-once arrival inside the inbox processing's own, and a transient arrival inside the<br/>
+    /// publisher's unit of work, an exactly-once arrival inside the inbox processing's own, and a best-effort arrival inside the<br/>
     /// direct dispatch's own. A handler registered here never runs outside one — delivery detached from any transaction is<br/>
     /// observation, the separate subscription kind (<see cref="ITransactionIgnoringTeventHandlerRegistrar"/>).</summary>
     ITessageHandlerRegistrar ForTevent<TTevent>(Action<TTevent, IUnitOfWorkResolver> handler) where TTevent : ITevent;

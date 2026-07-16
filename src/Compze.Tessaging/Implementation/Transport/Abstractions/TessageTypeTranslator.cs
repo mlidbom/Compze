@@ -9,8 +9,8 @@ static class TessageTypeTranslator
    {
       if(tessageType.Is<IPublisherTevent<IExactlyOnceTevent>>())
          return Abstractions.TransportTessageType.ExactlyOnceTevent;
-      if(tessageType.Is<IPublisherTevent<IRemotableTevent>>()) //After the exactly-once check: an exactly-once wrapper matches this too, so order encodes "transient is remotable minus exactly-once".
-         return Abstractions.TransportTessageType.TransientTevent;
+      if(tessageType.Is<IPublisherTevent<IRemotableTevent>>()) //After the exactly-once check: an exactly-once wrapper matches this too, so order encodes "best-effort is remotable minus exactly-once".
+         return Abstractions.TransportTessageType.BestEffortTevent;
       if(tessageType.Is<IExactlyOnceTommand>())
          return Abstractions.TransportTessageType.ExactlyOnceTommand;
       throw new ArgumentOutOfRangeException();

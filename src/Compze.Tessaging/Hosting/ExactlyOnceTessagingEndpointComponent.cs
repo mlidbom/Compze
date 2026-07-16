@@ -13,7 +13,7 @@ namespace Compze.Tessaging.Hosting;
 /// load their recovery backlogs from it — and the peer registry loads the endpoint's remembered peers. (The endpoint's one<br/>
 /// transport server runs its own lifecycle in <see cref="Compze.Internals.Transport.EndpointTransportServerFeature"/>'s component;<br/>
 /// the router's connection and delivery lifecycle belongs to the transport-speaking core's<br/>
-/// <see cref="TransientTessagingEndpointComponent"/>.)</summary>
+/// <see cref="DistributedTessagingEndpointComponent"/>.)</summary>
 sealed class ExactlyOnceTessagingEndpointComponent : IEndpointComponent
 {
    readonly IInbox _inbox;

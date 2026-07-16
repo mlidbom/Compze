@@ -12,7 +12,7 @@ public interface ITessageHandlerRegistry
 
     ///<summary>The participation tevent handlers whose subscriptions match <paramref name="wrapperTeventType"/>. Every dispatch<br/>
     /// site invokes them inside a unit of work — the publisher's own for a local publish, the inbox processing's own for an<br/>
-    /// exactly-once arrival, the direct dispatch's own for a transient arrival.</summary>
+    /// exactly-once arrival, the direct dispatch's own for a best-effort arrival.</summary>
     IReadOnlyList<Action<ITevent, IUnitOfWorkResolver>> GetTeventHandlers(Type wrapperTeventType);
 
     ///<summary>The transaction-ignoring tevent handlers — observation, the escape-hatch subscription kind — whose subscriptions match<br/>

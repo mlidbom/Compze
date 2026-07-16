@@ -56,16 +56,16 @@ public abstract class EndpointHostTestBase : UniversalTestBase
    public IThreadGate MyRemoteTaggregateTeventHandlerThreadGate { get; }
    public IThreadGate MyRemotePublisherConsciousTeventHandlerThreadGate { get; }
    public IThreadGate MyLocalTaggregateTeventHandlerThreadGate { get; }
-   public IThreadGate MyTransientTeventLocalHandlerThreadGate { get; }
-   public IThreadGate MyTransientTeventRemoteHandlerThreadGate { get; }
+   public IThreadGate MyBestEffortTeventLocalHandlerThreadGate { get; }
+   public IThreadGate MyBestEffortTeventRemoteHandlerThreadGate { get; }
    public IThreadGate MyTaggregateTeventBackendObserverThreadGate { get; }
    public IThreadGate MyTaggregateTeventRemoteObserverThreadGate { get; }
-   public IThreadGate MyTransientTeventRemoteObserverThreadGate { get; }
+   public IThreadGate MyBestEffortTeventRemoteObserverThreadGate { get; }
    public IThreadGate TeventHandlerThreadGate { get; }
    public IThreadGate TueryHandlerThreadGate { get; }
 
-   ///<summary>Every <see cref="IMyTransientTevent"/> the Remote endpoint's handler has received, in handling order — transient delivery promises in-order arrival within a connected session.</summary>
-   protected ConcurrentQueue<IMyTransientTevent> RemotelyReceivedTransientTevents { get; } = new();
+   ///<summary>Every <see cref="IMyBestEffortTevent"/> the Remote endpoint's handler has received, in handling order — best-effort delivery promises in-order arrival within a connected session.</summary>
+   protected ConcurrentQueue<IMyBestEffortTevent> RemotelyReceivedBestEffortTevents { get; } = new();
 
    IReadOnlyList<IThreadGate> AllGates  { get; }
 
@@ -89,11 +89,11 @@ public abstract class EndpointHostTestBase : UniversalTestBase
          MyRemoteTaggregateTeventHandlerThreadGate = IThreadGate.NewOpen(_timeout, nameof(MyRemoteTaggregateTeventHandlerThreadGate)),
          MyRemotePublisherConsciousTeventHandlerThreadGate = IThreadGate.NewOpen(_timeout, nameof(MyRemotePublisherConsciousTeventHandlerThreadGate)),
          MyLocalTaggregateTeventHandlerThreadGate = IThreadGate.NewOpen(_timeout, nameof(MyLocalTaggregateTeventHandlerThreadGate)),
-         MyTransientTeventLocalHandlerThreadGate = IThreadGate.NewOpen(_timeout, nameof(MyTransientTeventLocalHandlerThreadGate)),
-         MyTransientTeventRemoteHandlerThreadGate = IThreadGate.NewOpen(_timeout, nameof(MyTransientTeventRemoteHandlerThreadGate)),
+         MyBestEffortTeventLocalHandlerThreadGate = IThreadGate.NewOpen(_timeout, nameof(MyBestEffortTeventLocalHandlerThreadGate)),
+         MyBestEffortTeventRemoteHandlerThreadGate = IThreadGate.NewOpen(_timeout, nameof(MyBestEffortTeventRemoteHandlerThreadGate)),
          MyTaggregateTeventBackendObserverThreadGate = IThreadGate.NewOpen(_timeout, nameof(MyTaggregateTeventBackendObserverThreadGate)),
          MyTaggregateTeventRemoteObserverThreadGate = IThreadGate.NewOpen(_timeout, nameof(MyTaggregateTeventRemoteObserverThreadGate)),
-         MyTransientTeventRemoteObserverThreadGate = IThreadGate.NewOpen(_timeout, nameof(MyTransientTeventRemoteObserverThreadGate)),
+         MyBestEffortTeventRemoteObserverThreadGate = IThreadGate.NewOpen(_timeout, nameof(MyBestEffortTeventRemoteObserverThreadGate)),
          TeventHandlerThreadGate = IThreadGate.NewOpen(_timeout, nameof(TeventHandlerThreadGate)),
          TueryHandlerThreadGate = IThreadGate.NewOpen(_timeout, nameof(TueryHandlerThreadGate))
       ];
@@ -136,7 +136,7 @@ public abstract class EndpointHostTestBase : UniversalTestBase
                    .ForTommand((MyExactlyOnceTommand _) => MyExactlyOnceTommandHandlerThreadGate.AwaitPassThrough())
                    .ForTevent((IMyExactlyOnceTevent _) => TeventHandlerThreadGate.AwaitPassThrough())
                    .ForTevent((IMyTaggregateTevent _) => MyLocalTaggregateTeventHandlerThreadGate.AwaitPassThrough())
-                   .ForTevent((IMyTransientTevent _) => MyTransientTeventLocalHandlerThreadGate.AwaitPassThrough());
+                   .ForTevent((IMyBestEffortTevent _) => MyBestEffortTeventLocalHandlerThreadGate.AwaitPassThrough());
 
             //Observation - the transaction-ignoring subscription kind: fires at publish time for the Backend's own locally published tevents.
             builder.RegisterTransactionIgnoringTeventHandlers
@@ -178,16 +178,16 @@ public abstract class EndpointHostTestBase : UniversalTestBase
                                                        .ForTevent((IMyTaggregateTevent _) => MyRemoteTaggregateTeventHandlerThreadGate.AwaitPassThrough())
                                                        //Publisher-conscious subscription: subscribing to the taggregate's wrapper type receives the wrapped tevent as MyTaggregate published it.
                                                        .ForTevent((IMyTaggregateTevent<IMyTaggregateTevent> _) => MyRemotePublisherConsciousTeventHandlerThreadGate.AwaitPassThrough())
-                                                       .ForTevent((IMyTransientTevent tevent) =>
+                                                       .ForTevent((IMyBestEffortTevent tevent) =>
                                                         {
-                                                           RemotelyReceivedTransientTevents.Enqueue(tevent);
-                                                           MyTransientTeventRemoteHandlerThreadGate.AwaitPassThrough();
+                                                           RemotelyReceivedBestEffortTevents.Enqueue(tevent);
+                                                           MyBestEffortTeventRemoteHandlerThreadGate.AwaitPassThrough();
                                                         });
 
                                                 //Observation - the transaction-ignoring subscription kind: fires on arrival, before and outside the transactional handling above.
                                                 builder.RegisterTransactionIgnoringTeventHandlers
                                                        .ForTevent((IMyTaggregateTevent _) => MyTaggregateTeventRemoteObserverThreadGate.AwaitPassThrough())
-                                                       .ForTevent((IMyTransientTevent _) => MyTransientTeventRemoteObserverThreadGate.AwaitPassThrough());
+                                                       .ForTevent((IMyBestEffortTevent _) => MyBestEffortTeventRemoteObserverThreadGate.AwaitPassThrough());
                                              });
 
    protected async Task StartHostAsync()
@@ -236,7 +236,7 @@ public abstract class EndpointHostTestBase : UniversalTestBase
 
    protected void OpenGates() => AllGates.ForEach(gate => gate.Open());
 
-   protected void PublishTransientTeventOnTheBackendInATransaction(int sequenceNumber) =>
+   protected void PublishBestEffortTeventOnTheBackendInATransaction(int sequenceNumber) =>
       BackendEndPoint.ServiceLocator.Resolve<IScopeFactory>().ExecuteUnitOfWork(unitOfWork =>
-         unitOfWork.Resolve<IUnitOfWorkTeventPublisher>().Publish(new MyTransientTevent { SequenceNumber = sequenceNumber }));
+         unitOfWork.Resolve<IUnitOfWorkTeventPublisher>().Publish(new MyBestEffortTevent { SequenceNumber = sequenceNumber }));
 }

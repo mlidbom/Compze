@@ -158,7 +158,7 @@ The one way a peer leaves the registry; an administrative act, never an inferenc
 - Across processes, distributed: `RequiredPeers` + queue-before-first-contact make startup deterministic —
   nothing a required peer should see is lost to the discovery race, and nothing needs probing.
 - The consuming application's hand-rolled "probes", and this repo's own 30-second retry loop in
-  `Given_a_separate_process_hosting_a_transient_tessaging_endpoint_discovered_through_a_shared_interprocess_registry`,
+  `Given_a_separate_process_hosting_a_distributed_tessaging_endpoint_discovered_through_a_shared_interprocess_registry`,
   both dissolve.
 
 ## Relation to the readiness/waiting-sends effort
@@ -234,6 +234,15 @@ patience, then fail loud naming the unserved type).
    endpoint; loud multiple-remembered-handlers failure; loud never-known failure).
 4. **The rename**: transient → distributed (composition) / best-effort (delivery rung + leg), everywhere —
    code, specs, docs, ubiquitous language.
+   **DONE 2026-07-16**: composition surface `AddDistributedTessaging` (`DistributedTessagingComposition`,
+   `DistributedTessagingEndpointFeature`, `DistributedTessagingEndpointComponent`); delivery rung/leg
+   `IBestEffortTeventDeliveryLeg`/`BestEffortTeventDeliveryLeg` (namespace `Implementation.BestEffortDelivery`),
+   `BestEffortTeventDirectDispatcher`, `BestEffortTessagingRequestHandlers`, the connection's
+   `BestEffortDeliveryStream`, `EnqueueForBestEffortDelivery`; wire surface `TransportRequestKind.BestEffortTevent`,
+   `TransportTessageType.BestEffortTevent`, HTTP route `internal/tessaging/best-effort-tevent`; specs and
+   fixtures renamed to match (`Best_effort_tevent_delivery_tests`, `IMyBestEffortTevent`, ...); every doc,
+   changelog, and comment swept. The DI lifestyle `Transient`, SQL "transient error" vocabulary, and ORM
+   "transient entity" keep the word — different concepts that were never this tier.
 5. **Distributed tier**: `RequiredPeers` (by `EndpointId`), queue-while-down with pause-stream-whole,
    queue-before-first-contact, the 10,000 bound with loud overflow, per-peer opt-down.
 6. **Shrink + decommission surfaces.**

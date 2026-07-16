@@ -22,10 +22,10 @@ using EndpointHostProcessProgram = Compze.Tests.SameMachine.EndpointHostProcess.
 namespace Compze.Tests.Integration.SameMachine;
 
 ///<summary>The guarantee-free same-machine story end to end, across REAL process boundaries: a separate OS process hosts a<br/>
-/// transient-Tessaging endpoint over named pipes, both processes discover each other through a shared<br/>
-/// <see cref="InterprocessEndpointRegistry"/>, and a transient tevent conversation crosses in both directions — no web stack, no<br/>
+/// distributed-Tessaging endpoint over named pipes, both processes discover each other through a shared<br/>
+/// <see cref="InterprocessEndpointRegistry"/>, and a best-effort tevent conversation crosses in both directions — no web stack, no<br/>
 /// configuration, and no database anywhere in either process: nothing is persisted, so nothing can be lost that was promised kept.</summary>
-public class Given_a_separate_process_hosting_a_transient_tessaging_endpoint_discovered_through_a_shared_interprocess_registry : UniversalTestBase
+public class Given_a_separate_process_hosting_a_distributed_tessaging_endpoint_discovered_through_a_shared_interprocess_registry : UniversalTestBase
 {
    //The endpoint host process speaks named pipes; the conversation only makes sense when the specification's endpoint does too.
    static bool RunsOnTheNamedPipesTransport => TestEnv.Transport == Transport.NamedPipes;
@@ -37,7 +37,7 @@ public class Given_a_separate_process_hosting_a_transient_tessaging_endpoint_dis
    readonly IEndpoint _specificationEndpoint = null!;
    readonly ManualResetEventSlim _replyTeventReceived = new();
 
-   public Given_a_separate_process_hosting_a_transient_tessaging_endpoint_discovered_through_a_shared_interprocess_registry()
+   public Given_a_separate_process_hosting_a_distributed_tessaging_endpoint_discovered_through_a_shared_interprocess_registry()
    {
       if(!RunsOnTheNamedPipesTransport) return;
 
@@ -56,8 +56,8 @@ public class Given_a_separate_process_hosting_a_transient_tessaging_endpoint_dis
          {
             builder.TypeMapper.MapTypesFromAssemblyContaining<TommandSentToTheEndpointHostProcess>();
             builder.Registrar.CurrentTestsEndpointTransport();
-            builder.AddTransientTessaging().ParticipateIn(_registry);
-            builder.RegisterTessagingHandlers.ForTevent((ITransientTeventPublishedByTheEndpointHostProcess _) => _replyTeventReceived.Set());
+            builder.AddDistributedTessaging().ParticipateIn(_registry);
+            builder.RegisterTessagingHandlers.ForTevent((IBestEffortTeventPublishedByTheEndpointHostProcess _) => _replyTeventReceived.Set());
          });
    }
 
@@ -96,10 +96,10 @@ public class Given_a_separate_process_hosting_a_transient_tessaging_endpoint_dis
    }
 
    [Skip<Transport>([Transport.AspNetCore], "The endpoint host process speaks named pipes; the conversation only makes sense when the specification's endpoint does too")]
-   [PCT] public void a_transient_tevent_published_here_is_handled_there_and_its_reply_tevent_comes_back()
+   [PCT] public void a_best_effort_tevent_published_here_is_handled_there_and_its_reply_tevent_comes_back()
    {
       //Best-effort has no failure to ride: until the reconciliation loops of both processes have discovered each other, a
-      //published transient tevent matches no subscriber connection and simply vanishes - exactly what the transient tier
+      //published best-effort tevent matches no subscriber connection and simply vanishes - exactly what the best-effort tier
       //promises. So the specification keeps publishing, once per interval, until a reply tevent proves a full round trip crossed.
       var retryDeadline = DateTime.UtcNow + TimeSpan.FromSeconds(30);
       do
@@ -107,11 +107,11 @@ public class Given_a_separate_process_hosting_a_transient_tessaging_endpoint_dis
          if(DateTime.UtcNow > retryDeadline)
          {
             _endpointHostProcess.ThrowDescribingTheFailureIfTheProcessHasExited();
-            throw new InvalidOperationException($"No transient tevent round trip completed within the retry deadline.{Environment.NewLine}{_endpointHostProcess.ConsoleOutput}");
+            throw new InvalidOperationException($"No best-effort tevent round trip completed within the retry deadline.{Environment.NewLine}{_endpointHostProcess.ConsoleOutput}");
          }
 
          _specificationEndpoint.ServiceLocator.Resolve<IScopeFactory>().ExecuteUnitOfWork(unitOfWork =>
-            unitOfWork.Resolve<IUnitOfWorkTeventPublisher>().Publish(new TransientTeventPublishedByTheSpecificationProcess()));
+            unitOfWork.Resolve<IUnitOfWorkTeventPublisher>().Publish(new BestEffortTeventPublishedByTheSpecificationProcess()));
       } while(!_replyTeventReceived.Wait(TimeSpan.FromMilliseconds(500)));
    }
 }

@@ -234,8 +234,8 @@ As of 2026-07-15, everything this document describes is built and verified:
   including the backlog following a restarted endpoint.
 - The multi-process specifications and their endpoint host process — also the first production-hosting
   composition exercised end to end.
-- The no-SQL same-machine suite (2026-07-15): the endpoint host process hosting guarantee-free transient
-  Tessaging (`AddTransientTessaging`) on the database-less foundation, and a transient tevent conversation
+- The no-SQL same-machine suite (2026-07-15): the endpoint host process hosting guarantee-free distributed
+  Tessaging (`AddDistributedTessaging`) on the database-less foundation, and a best-effort tevent conversation
   crossing real process boundaries in both directions with no database anywhere in either process — see
   [the tevent delivery model](../../Compze.Tessaging/dev_docs/tevent-delivery-model.md).
 - Typermedia dynamic-topology parity (2026-07-15): an endpoint that declares the registry it discovers

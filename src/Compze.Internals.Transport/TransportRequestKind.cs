@@ -16,8 +16,8 @@ public enum TransportRequestKind
    TypermediaVoidTommand = 5,
    ///<summary>An endpoint-discovery query (see <see cref="EndpointDiscoveryQueryExecutor"/>). The response payload is the serialized query result.</summary>
    EndpointDiscoveryQuery = 6,
-   ///<summary>A transient tevent — a remotable tevent whose type declares no exactly-once guarantee — dispatched directly to the receiving<br/>
+   ///<summary>A best-effort tevent — a remotable tevent whose type declares no exactly-once guarantee — dispatched directly to the receiving<br/>
    /// endpoint's handlers: no inbox, no dedup, no retry. The response is an empty-payload acknowledgement written after the handlers have<br/>
    /// executed, so one-tessage-in-flight-per-destination keeps handling in send order.</summary>
-   TransientTevent = 7
+   BestEffortTevent = 7
 }

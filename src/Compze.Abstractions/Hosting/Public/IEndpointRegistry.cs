@@ -5,7 +5,7 @@ namespace Compze.Abstractions.Hosting.Public;
 /// Knows the addresses of the server endpoints a sending endpoint should connect to — the read side of endpoint
 /// discovery, whose write side is <see cref="IEndpointAddressAnnouncer"/>. An endpoint declares the registry it
 /// discovers through on a distributed communication style's feature (<c>DiscoverEndpointsThrough(...)</c> on
-/// transient Tessaging — or through <c>AddExactlyOnceTessaging()</c>, which delegates — and on distributed
+/// distributed Tessaging — or through <c>AddExactlyOnceTessaging()</c>, which delegates — and on distributed
 /// Typermedia; or <c>ParticipateIn(...)</c> for an <see cref="IEndpointRegistryAndAnnouncer"/>): a same-machine
 /// suite participates in the shared interprocess registry, and the testing host runs every test's endpoints on
 /// one of its own. Declaring none means the endpoint only serves that style — nothing is discovered, so its

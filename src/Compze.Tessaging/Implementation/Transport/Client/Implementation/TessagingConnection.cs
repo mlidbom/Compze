@@ -29,7 +29,7 @@ partial class TessagingConnection : ITessagingInboxConnection, IDisposable
    readonly IBackgroundExceptionReporter _exceptionReporter;
 
    readonly ExactlyOnceDeliveryStream? _exactlyOnceStream;
-   readonly TransientDeliveryStream _transientStream;
+   readonly BestEffortDeliveryStream _bestEffortStream;
    readonly CancellationTokenSource _cancellationSource = new();
    bool _deliveryRunning;
 
@@ -52,10 +52,10 @@ partial class TessagingConnection : ITessagingInboxConnection, IDisposable
       _taskRunner = taskRunner;
       _exceptionReporter = exceptionReporter;
 
-      //Which delivery streams a connection carries mirrors which delivery machinery the endpoint wires: the in-memory transient
+      //Which delivery streams a connection carries mirrors which delivery machinery the endpoint wires: the in-memory best-effort
       //stream is intrinsic to every connection, while the exactly-once stream exists exactly when the outbox's wiring granted the
       //router the factory carrying the storage that backs it.
-      _transientStream = new TransientDeliveryStream(this);
+      _bestEffortStream = new BestEffortDeliveryStream(this);
       _exactlyOnceStream = exactlyOnceStreamFactory?.CreateFor(this);
    }
 
@@ -71,18 +71,18 @@ partial class TessagingConnection : ITessagingInboxConnection, IDisposable
       _exactlyOnceStream!.Enqueue(transportTessage);
    }
 
-   public void EnqueueForTransientDelivery(ITessage tessage, TessageId envelopeId)
+   public void EnqueueForBestEffortDelivery(ITessage tessage, TessageId envelopeId)
    {
       var transportTessage = TransportTessage.OutGoing.Create(tessage, envelopeId, _typeMap, _serializer);
       _tessagesInFlightTracker.SendingTessageOnTransport(transportTessage, EndpointInformation.Id);
-      _transientStream.Enqueue(transportTessage);
+      _bestEffortStream.Enqueue(transportTessage);
    }
 
    public void StartDelivery()
    {
       _deliveryRunning = true;
       _exactlyOnceStream?.Start();
-      _transientStream.Start();
+      _bestEffortStream.Start();
    }
 
    public void StopDelivery()
@@ -93,7 +93,7 @@ partial class TessagingConnection : ITessagingInboxConnection, IDisposable
       this.Log().Info($"Stopping delivery to endpoint {EndpointInformation.Id}...");
       _cancellationSource.Cancel();
       _exactlyOnceStream?.AwaitSendLoopTermination();
-      _transientStream.AwaitSendLoopTermination();
+      _bestEffortStream.AwaitSendLoopTermination();
    }
 
    public void Dispose()
@@ -101,6 +101,6 @@ partial class TessagingConnection : ITessagingInboxConnection, IDisposable
       StopDelivery();
       _cancellationSource.Dispose();
       _exactlyOnceStream?.Dispose();
-      _transientStream.Dispose();
+      _bestEffortStream.Dispose();
    }
 }

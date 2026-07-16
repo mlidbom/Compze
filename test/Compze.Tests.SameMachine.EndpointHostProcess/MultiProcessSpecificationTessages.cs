@@ -3,7 +3,7 @@ using Compze.TypeIdentifiers;
 
 [assembly: AssemblyTypeMapper(typeof(Compze.Tests.SameMachine.EndpointHostProcess.AssemblyTypeMapper))]
 
-#pragma warning disable CA1040 //The transient tevents are empty marker interfaces by design: their type IS the routed contract.
+#pragma warning disable CA1040 //The best-effort tevents are empty marker interfaces by design: their type IS the routed contract.
 
 namespace Compze.Tests.SameMachine.EndpointHostProcess;
 
@@ -14,17 +14,17 @@ public class TommandSentToTheEndpointHostProcess : TessageTypes.Remotable.Exactl
 /// <see cref="TommandSentToTheEndpointHostProcess"/> — the child→parent leg, proving the child discovered the parent through the registry.</summary>
 public class TommandSentBackToTheSpecificationProcess : TessageTypes.Remotable.ExactlyOnce.Tommand;
 
-///<summary>The transient tevent the specification process publishes — the parent→child leg of the guarantee-free multi-process<br/>
+///<summary>The best-effort tevent the specification process publishes — the parent→child leg of the guarantee-free multi-process<br/>
 /// conversation: a plain <see cref="IRemotableTevent"/>, crossing the wire best-effort with no database in either process.</summary>
-public interface ITransientTeventPublishedByTheSpecificationProcess : IRemotableTevent;
+public interface IBestEffortTeventPublishedByTheSpecificationProcess : IRemotableTevent;
 
-public class TransientTeventPublishedByTheSpecificationProcess : ITransientTeventPublishedByTheSpecificationProcess;
+public class BestEffortTeventPublishedByTheSpecificationProcess : IBestEffortTeventPublishedByTheSpecificationProcess;
 
-///<summary>The transient tevent the endpoint host process publishes when it handles<br/>
-/// <see cref="ITransientTeventPublishedByTheSpecificationProcess"/> — the child→parent leg, proving the child discovered the parent through the registry.</summary>
-public interface ITransientTeventPublishedByTheEndpointHostProcess : IRemotableTevent;
+///<summary>The best-effort tevent the endpoint host process publishes when it handles<br/>
+/// <see cref="IBestEffortTeventPublishedByTheSpecificationProcess"/> — the child→parent leg, proving the child discovered the parent through the registry.</summary>
+public interface IBestEffortTeventPublishedByTheEndpointHostProcess : IRemotableTevent;
 
-public class TransientTeventPublishedByTheEndpointHostProcess : ITransientTeventPublishedByTheEndpointHostProcess;
+public class BestEffortTeventPublishedByTheEndpointHostProcess : IBestEffortTeventPublishedByTheEndpointHostProcess;
 
 ///<summary>The tuery the specification process executes against the endpoint host process — the typermedia leg of the<br/>
 /// database-less multi-process conversation: the answering endpoint is found through the shared registry, never by a configured address.</summary>
@@ -45,9 +45,9 @@ class AssemblyTypeMapper : IAssemblyTypeMapper
    public void Map(IAssemblyTypeMappingRegistrar map) =>
       map.Map<TommandSentToTheEndpointHostProcess>("6f6a2f4e-90a2-40ec-a9c9-3f5b9d0d13c8")
          .Map<TommandSentBackToTheSpecificationProcess>("2c19b90b-93cd-4a0a-a4bd-4a19a11c7d29")
-         .Map<ITransientTeventPublishedByTheSpecificationProcess>("9e4f6c1d-2a8b-4b53-8f6a-71d90c24e5b7")
-         .Map<TransientTeventPublishedByTheSpecificationProcess>("d17b3e58-4c96-4f02-9d3b-8a65f1c40e29")
-         .Map<ITransientTeventPublishedByTheEndpointHostProcess>("4b82d9f6-7e15-4a6c-b0d8-3c59e21a7f84")
-         .Map<TransientTeventPublishedByTheEndpointHostProcess>("f3a61c07-95d4-4e38-a2b7-60c8d51e94f3")
+         .Map<IBestEffortTeventPublishedByTheSpecificationProcess>("9e4f6c1d-2a8b-4b53-8f6a-71d90c24e5b7")
+         .Map<BestEffortTeventPublishedByTheSpecificationProcess>("d17b3e58-4c96-4f02-9d3b-8a65f1c40e29")
+         .Map<IBestEffortTeventPublishedByTheEndpointHostProcess>("4b82d9f6-7e15-4a6c-b0d8-3c59e21a7f84")
+         .Map<BestEffortTeventPublishedByTheEndpointHostProcess>("f3a61c07-95d4-4e38-a2b7-60c8d51e94f3")
          .Map<TueryAskedByTheSpecificationProcess>("8c5e02d9-46b7-4f1a-9e83-27d1b60c48f5");
 }

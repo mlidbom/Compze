@@ -10,7 +10,7 @@ namespace Compze.Abstractions.Tessaging.Public;
 /// transaction — the participation rung, the strongest delivery there is — and immediately to this process's transaction-ignoring<br/>
 /// handlers (observation, outside that transaction);<br/>
 /// an <see cref="IExactlyOnceTevent"/> additionally travels the durable delivery leg to its remote subscribers — through the<br/>
-/// endpoint's outbox, on commit — and a remotable tevent whose type declares no exactly-once guarantee the transient leg —<br/>
+/// endpoint's outbox, on commit — and a remotable tevent whose type declares no exactly-once guarantee the best-effort leg —<br/>
 /// best-effort, on commit — when the endpoint's composition wires them. An endpoint that wires no remote delivery is a<br/>
 /// deliberately in-process composition: every subscriber is local and already served by participation.</summary>
 ///<remarks>The ambient transaction is required and honored: publishing with none present throws — there is no unit of work to<br/>

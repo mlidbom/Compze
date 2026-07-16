@@ -21,28 +21,28 @@ static class UnitOfWorkTeventPublisherRegistrar
 /// Participation — synchronous delivery to this process's handlers via <see cref="IInProcessTeventPublisher"/>, within the<br/>
 /// caller's transaction — is the leg every tevent travels; an <see cref="IExactlyOnceTevent"/> additionally travels the endpoint's<br/>
 /// <see cref="IExactlyOnceTeventDeliveryLeg"/>, and a remotable tevent whose type declares no exactly-once guarantee the endpoint's<br/>
-/// <see cref="ITransientTeventDeliveryLeg"/>, when the composition wires them. Zero wired legs is the deliberately in-process<br/>
+/// <see cref="IBestEffortTeventDeliveryLeg"/>, when the composition wires them. Zero wired legs is the deliberately in-process<br/>
 /// composition, where participation already serves every subscriber that can exist; a remote-capable endpoint missing the leg a<br/>
 /// tevent's contract demands is a loud publish error — never a silent downgrade.</summary>
 [UsedImplicitly] class UnitOfWorkTeventPublisher : IUnitOfWorkTeventPublisher
 {
    public static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(Scoped.For<IUnitOfWorkTeventPublisher>()
-                                  .CreatedBy((IInProcessTeventPublisher inProcessTeventPublisher, TeventObservationDispatcher teventObservationDispatcher, IComponentSet<IExactlyOnceTeventDeliveryLeg> exactlyOnceDeliveryLegs, IComponentSet<ITransientTeventDeliveryLeg> transientDeliveryLegs, IScopeResolver scopeResolver)
-                                                => new UnitOfWorkTeventPublisher(inProcessTeventPublisher, teventObservationDispatcher, exactlyOnceDeliveryLegs, transientDeliveryLegs, scopeResolver)));
+                                  .CreatedBy((IInProcessTeventPublisher inProcessTeventPublisher, TeventObservationDispatcher teventObservationDispatcher, IComponentSet<IExactlyOnceTeventDeliveryLeg> exactlyOnceDeliveryLegs, IComponentSet<IBestEffortTeventDeliveryLeg> bestEffortDeliveryLegs, IScopeResolver scopeResolver)
+                                                => new UnitOfWorkTeventPublisher(inProcessTeventPublisher, teventObservationDispatcher, exactlyOnceDeliveryLegs, bestEffortDeliveryLegs, scopeResolver)));
 
    readonly IInProcessTeventPublisher _inProcessTeventPublisher;
    readonly TeventObservationDispatcher _teventObservationDispatcher;
    readonly IExactlyOnceTeventDeliveryLeg? _exactlyOnceDeliveryLeg;
-   readonly ITransientTeventDeliveryLeg? _transientDeliveryLeg;
+   readonly IBestEffortTeventDeliveryLeg? _bestEffortDeliveryLeg;
    readonly IScopeResolver _scopeResolver;
 
-   UnitOfWorkTeventPublisher(IInProcessTeventPublisher inProcessTeventPublisher, TeventObservationDispatcher teventObservationDispatcher, IEnumerable<IExactlyOnceTeventDeliveryLeg> exactlyOnceDeliveryLegs, IEnumerable<ITransientTeventDeliveryLeg> transientDeliveryLegs, IScopeResolver scopeResolver)
+   UnitOfWorkTeventPublisher(IInProcessTeventPublisher inProcessTeventPublisher, TeventObservationDispatcher teventObservationDispatcher, IEnumerable<IExactlyOnceTeventDeliveryLeg> exactlyOnceDeliveryLegs, IEnumerable<IBestEffortTeventDeliveryLeg> bestEffortDeliveryLegs, IScopeResolver scopeResolver)
    {
       _inProcessTeventPublisher = inProcessTeventPublisher;
       _teventObservationDispatcher = teventObservationDispatcher;
       _exactlyOnceDeliveryLeg = exactlyOnceDeliveryLegs.SingleOrDefault();
-      _transientDeliveryLeg = transientDeliveryLegs.SingleOrDefault();
+      _bestEffortDeliveryLeg = bestEffortDeliveryLegs.SingleOrDefault();
       _scopeResolver = scopeResolver;
    }
 
@@ -71,11 +71,11 @@ static class UnitOfWorkTeventPublisherRegistrar
                return NoRemoteDeliveryOnThisDeliberatelyInProcessEndpoint(exactlyOnceTevent.Tevent, unwiredLeg: "the exactly-once delivery leg (the outbox, wired by exactly-once Tessaging on a database-backed foundation)");
             TessageInspector.AssertValidToSendRemote(exactlyOnceTevent.Tevent);
             return () => exactlyOnceDeliveryLeg.PublishTransactionally(exactlyOnceTevent);
-         case IPublisherTevent<IRemotableTevent> transientTevent:
-            if(_transientDeliveryLeg is not {} transientDeliveryLeg)
-               return NoRemoteDeliveryOnThisDeliberatelyInProcessEndpoint(transientTevent.Tevent, unwiredLeg: "the transient delivery leg (wired by transient and exactly-once Tessaging alike)");
-            TessageInspector.AssertValidToSendRemote(transientTevent.Tevent);
-            return () => transientDeliveryLeg.PublishBestEffort(transientTevent);
+         case IPublisherTevent<IRemotableTevent> bestEffortTevent:
+            if(_bestEffortDeliveryLeg is not {} bestEffortDeliveryLeg)
+               return NoRemoteDeliveryOnThisDeliberatelyInProcessEndpoint(bestEffortTevent.Tevent, unwiredLeg: "the best-effort delivery leg (wired by distributed and exactly-once Tessaging alike)");
+            TessageInspector.AssertValidToSendRemote(bestEffortTevent.Tevent);
+            return () => bestEffortDeliveryLeg.PublishBestEffort(bestEffortTevent);
          default:
             return null; //The tevent's type declares no remotability: participation is all the delivery there is.
       }
@@ -87,7 +87,7 @@ static class UnitOfWorkTeventPublisherRegistrar
    /// publish error: silently degrading a delivery guarantee is data loss dressed as success.</summary>
    Action? NoRemoteDeliveryOnThisDeliberatelyInProcessEndpoint(ITevent tevent, string unwiredLeg)
    {
-      State.Assert(_exactlyOnceDeliveryLeg == null && _transientDeliveryLeg == null,
+      State.Assert(_exactlyOnceDeliveryLeg == null && _bestEffortDeliveryLeg == null,
                    () => $"Publishing {tevent.GetType().FullName} demands {unwiredLeg}, which this endpoint does not wire — even though it wires other remote tevent delivery, so its subscribers may be remote. A tevent whose contract needs a delivery leg the endpoint did not wire is a publish error, never a silent downgrade: wire the missing leg, or publish a tevent whose type does not demand it.");
       return null;
    }

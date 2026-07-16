@@ -40,15 +40,15 @@ public class MyExactlyOnceTommandHandledByTheRemoteEndpoint : TessageTypes.Remot
 /// whichever endpoint advertises its type, and nothing advertises this one.</summary>
 public class MyUnhandledExactlyOnceTommand : TessageTypes.Remotable.ExactlyOnce.Tommand;
 
-///<summary>A transient tevent: plain <see cref="IRemotableTevent"/> IS the transient delivery tier — best-effort across the wire,<br/>
+///<summary>A best-effort tevent: plain <see cref="IRemotableTevent"/> IS the best-effort delivery tier — best-effort across the wire,<br/>
 /// no store, no dedup, no retry (see <c>src/Compze.Tessaging/dev_docs/tevent-delivery-model.md</c>).</summary>
-public interface IMyTransientTevent : IRemotableTevent
+public interface IMyBestEffortTevent : IRemotableTevent
 {
-   ///<summary>Which publish this was, in publish order — lets specifications assert that transient tevents arrive in the order they were published.</summary>
+   ///<summary>Which publish this was, in publish order — lets specifications assert that best-effort tevents arrive in the order they were published.</summary>
    int SequenceNumber { get; }
 }
 
-public class MyTransientTevent : IMyTransientTevent
+public class MyBestEffortTevent : IMyBestEffortTevent
 {
    public int SequenceNumber { get; set; }
 }

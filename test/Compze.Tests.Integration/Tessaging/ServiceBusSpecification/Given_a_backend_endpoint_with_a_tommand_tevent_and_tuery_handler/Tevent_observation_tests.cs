@@ -40,10 +40,10 @@ public class Tevent_observation_tests : EndpointHostTestBase
       MyRemoteTaggregateTeventHandlerThreadGate.Passed.Must().Be(0);
    }
 
-   [PCT] public void Observer_on_a_remote_endpoint_fires_when_a_transient_tevent_arrives()
+   [PCT] public void Observer_on_a_remote_endpoint_fires_when_a_best_effort_tevent_arrives()
    {
-      PublishTransientTeventOnTheBackendInATransaction(sequenceNumber: 1);
+      PublishBestEffortTeventOnTheBackendInATransaction(sequenceNumber: 1);
 
-      MyTransientTeventRemoteObserverThreadGate.AwaitPassedThroughCountEqualTo(1);
+      MyBestEffortTeventRemoteObserverThreadGate.AwaitPassedThroughCountEqualTo(1);
    }
 }

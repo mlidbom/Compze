@@ -13,7 +13,7 @@ namespace Compze.Tessaging.Hosting;
 /// runs the connections' delivery streams. (The endpoint's one transport server — which serves arriving tessages and announces the<br/>
 /// endpoint's address — runs its own lifecycle in <see cref="EndpointTransportServerFeature"/>'s component; the exactly-once<br/>
 /// pipeline, when composed, runs its own in <see cref="ExactlyOnceTessagingEndpointComponent"/>.)</summary>
-sealed class TransientTessagingEndpointComponent : IEndpointComponent, IAsyncDisposable
+sealed class DistributedTessagingEndpointComponent : IEndpointComponent, IAsyncDisposable
 {
    readonly ITessagingRouter _tessagingRouter;
    //Null when the endpoint declares no discovery registry: it serves, converses in-process, and self-sends, but connects to no other endpoint.
@@ -21,7 +21,7 @@ sealed class TransientTessagingEndpointComponent : IEndpointComponent, IAsyncDis
    readonly IBackgroundExceptionReporter _backgroundExceptionReporter;
    readonly EndpointTransportServerFeature _transportServer;
 
-   internal TransientTessagingEndpointComponent(IRootResolver resolver, EndpointTransportServerFeature transportServer, IEndpointRegistry? endpointRegistry)
+   internal DistributedTessagingEndpointComponent(IRootResolver resolver, EndpointTransportServerFeature transportServer, IEndpointRegistry? endpointRegistry)
    {
       _tessagingRouter = resolver.Resolve<ITessagingRouter>();
       _endpointRegistry = endpointRegistry;

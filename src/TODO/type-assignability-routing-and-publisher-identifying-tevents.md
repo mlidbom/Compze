@@ -228,8 +228,8 @@ unhandled-tevent ignore configuration is translated the same way subscriptions a
   instead of a silent routing no-op.
 - The exactly-once-only tevent routing gate is REMOVED (2026-07-14): `TessagingRouter.RegisterRoutes`
   registers a route for every advertised remotable tevent subscription
-  (`Is<IPublisherIdentifyingTevent<IRemotableTevent>>`), and the transient delivery path is built — see the
-  D6 work items below. Tommand routes remain `IExactlyOnceTommand`-only (the transient tier is a tevent
+  (`Is<IPublisherIdentifyingTevent<IRemotableTevent>>`), and the best-effort delivery path is built — see the
+  D6 work items below. Tommand routes remain `IExactlyOnceTommand`-only (the best-effort tier is a tevent
   concept; the synchronous ask lives in Typermedia).
 
 ### 8. Test coverage — DONE for everything in scope (2026-07-12)
@@ -309,7 +309,7 @@ separate feature.
 
 **The design for this feature is settled and lives in its own document:**
 [`src/Compze.Tessaging/dev_docs/tevent-delivery-model.md`](../Compze.Tessaging/dev_docs/tevent-delivery-model.md) —
-the delivery ladder (participation / exactly-once / transient / observation), `IUnitOfWorkTeventPublisher`,
+the delivery ladder (participation / exactly-once / best-effort / observation), `IUnitOfWorkTeventPublisher`,
 subscription semantics with the binary observation opt-down, the observation contract, ordering, and the
 wiring rules. Designed 2026-07-13; that document is the
 single home — this file keeps only the work items. Resolved along the way: the
@@ -318,7 +318,7 @@ a tessage type would re-entangle the axes); the wrapper-interface-constraint blo
 guarantee-preserving auto-wrap item both dissolved with the 2026-07-13 wrapper simplification (the wrapper
 carries no guarantee interfaces, so there is nothing to mis-constrain and no wrapper class to select);
 the standing "should subscribers choose a lighter guarantee?" question (`_TessageTypes..Interfaces.cs:78-79`)
-is answered by the binary opt-down; and `IAtMostOnceTessage` has its reason to exist (transient send + `Id` +
+is answered by the binary opt-down; and `IAtMostOnceTessage` has its reason to exist (best-effort send + `Id` +
 receiver dedup — the UI double-click case), answering the `//Todo` at `_TessageTypes..Interfaces.cs:66`.
 The related outbox-ordering bug (recovery reloaded the backlog in retry-metadata order instead of send order)
 is FIXED (2026-07-13): `GetUndeliveredTessagesForEndpoint` orders by the outbox tessage table's monotonic
@@ -330,24 +330,24 @@ is FIXED (2026-07-13): `GetUndeliveredTessagesForEndpoint` orders by the outbox 
       router, which routes `IAtMostOnceTypermediaTommand` and `IRemotableTuery` and skips exactly-once types.
       Two disjoint channels, so removing the Tessaging router's gate cannot break the typermedia paths — and
       only the TEVENT branch of `TessagingRouter.RegisterRoutes` widens (tommands stay exactly-once; the
-      transient tier is a tevent concept).
+      best-effort tier is a tevent concept).
 - [x] Remove the exactly-once-only routing gate — DONE (2026-07-14): `TessagingRouter.RegisterRoutes` builds
       a route for every advertised remotable tevent subscription
       (`Is<IPublisherIdentifyingTevent<IRemotableTevent>>`); `TransportTessageType`/`TessageTypeTranslator`/
-      `TransportRequestKind` learned the transient-tevent kind. Which leg a matched tevent travels is the
+      `TransportRequestKind` learned the best-effort-tevent kind. Which leg a matched tevent travels is the
       published tevent's own type's decision, never routing's.
-- [x] The transient delivery path — DONE (2026-07-14): a remotable-but-not-exactly-once tevent is sent
-      without the outbox's transactional persistence (`ITransientTeventDeliveryLeg`, honoring the ambient
+- [x] The best-effort delivery path — DONE (2026-07-14): a remotable-but-not-exactly-once tevent is sent
+      without the outbox's transactional persistence (`IBestEffortTeventDeliveryLeg`, honoring the ambient
       transaction: on commit with one present, immediately otherwise; per-connection in-memory stream with
       drop-stream-whole on delivery failure) and dispatched on arrival without the inbox's persist/dedup
-      (`TransientTeventDirectDispatcher`: own scope, own transaction, no retry — a failed handling is
+      (`BestEffortTeventDirectDispatcher`: own scope, own transaction, no retry — a failed handling is
       reported through the background-exception reporter). Single-in-flight per destination, acknowledgement
       after handling, so ordering holds end to end without sequence numbers while connected. Specified end
-      to end in `Transient_tevent_delivery_tests`.
+      to end in `Best_effort_tevent_delivery_tests`.
 - [x] The `ITransactionIgnoringTeventPublisher` / `RegisterTransactionIgnoringTeventHandlers` escape hatches
       (immediate, out-of-transaction) and the observation dispatch — DONE (2026-07-15). The observation
       dispatcher fires at every first registration of a tevent (local publish / inbox registration after
-      dedup / transient arrival), in a fresh scope with the ambient transaction suppressed; a throwing
+      dedup / best-effort arrival), in a fresh scope with the ambient transaction suppressed; a throwing
       observer is reported through the background-exception reporter, never retried. Specified in
       `Tevent_observation_tests` and the in-process container specs. The publish-side escape hatch built
       alongside it (`ITransactionIgnoringTeventPublisher`, the ordinary publisher under transaction
@@ -359,9 +359,9 @@ is FIXED (2026-07-13): `GetUndeliveredTessagesForEndpoint` orders by the outbox 
       asserts the advertised set's soundness at the advertising endpoint's setup (where a violation fails
       loudest), and `TessagingRouter.RegisterRoutes` asserts route-by-route that every advertised type lands
       a route. The tommand story is settled by the same assert: Tessaging routes tommands exactly-once only
-      (the transient tier is a tevent concept; the synchronous ask lives in Typermedia), so a remotable
+      (the best-effort tier is a tevent concept; the synchronous ask lives in Typermedia), so a remotable
       non-exactly-once tommand handler fails loud instead of advertising a dead type. Alongside it the
-      setup-time wiring rule and the guarantee-free `AddTransientTessaging` composition on the database-less
+      setup-time wiring rule and the guarantee-free `AddDistributedTessaging` composition on the database-less
       foundation are built — see `src/Compze.Tessaging/dev_docs/tevent-delivery-model.md`; the D6 feature is
       now fully implemented.
 - [x] RESOLVED (2026-07-13): should tevent subscribers be able to choose a lighter delivery guarantee than

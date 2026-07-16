@@ -6,7 +6,7 @@ using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Transport;
 using Compze.Tessaging.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
 using Compze.Tessaging.Implementation.TessageHandling.Abstractions;
-using Compze.Tessaging.Implementation.TransientDelivery;
+using Compze.Tessaging.Implementation.BestEffortDelivery;
 using Compze.Tessaging.Implementation.Transport;
 using Compze.Tessaging.Implementation.Transport.Abstractions;
 using Compze.Tessaging.Implementation.Transport.Client.Implementation;
@@ -21,19 +21,19 @@ namespace Compze.Tessaging.Hosting;
 /// the full exactly-once pipeline (<see cref="ExactlyOnceTessagingEndpointFeature"/>) composes and extends:
 /// everything in-process Tessaging has (<see cref="InProcessTessagingEndpointFeature"/>, which it composes),
 /// plus the endpoint's one transport server, the router that connects to the other endpoints, and the
-/// transient tevent delivery leg. An endpoint with only this feature converses in transient tevents — a
+/// best-effort tevent delivery leg. An endpoint with only this feature converses in best-effort tevents — a
 /// published <see cref="Compze.Abstractions.Tessaging.Public.IRemotableTevent"/> crosses the wire best-effort,
 /// with no outbox, no inbox, and no database anywhere (see <c>dev_docs/tevent-delivery-model.md</c>) — so it
 /// composes on the database-less <see cref="EndpointFoundation"/>. Everything exactly-once is exactly what it
 /// cannot speak: registering a handler for a tessage type that demands the exactly-once contract fails at
 /// setup, and publishing an exactly-once tevent fails naming the missing delivery leg. Created idempotently
-/// through <see cref="EndpointBuilderTessagingExtensions.AddTransientTessaging"/> /
+/// through <see cref="EndpointBuilderTessagingExtensions.AddDistributedTessaging"/> /
 /// <see cref="IEndpointBuilder.GetOrAddFeature{TFeature}"/>, and the feature instance is the handle through
 /// which the endpoint's tessaging handlers are registered (<see cref="RegisterHandlers"/>).
 ///
 /// Serving is done by the endpoint's one transport server (<see cref="EndpointTransportServerFeature"/>,
-/// which it composes): the feature registers the transient tier's request-handling contribution
-/// (<see cref="TransientTessagingRequestHandlersRegistrar.TransientTessagingRequestHandlers"/>) and the client
+/// which it composes): the feature registers the best-effort tier's request-handling contribution
+/// (<see cref="BestEffortTessagingRequestHandlersRegistrar.BestEffortTessagingRequestHandlers"/>) and the client
 /// that posts tessages (<see cref="TransportMessagePosterRegistrar.TessagingTransportMessagePoster"/>) itself —
 /// both protocol-free, so the composing layer declares only the endpoint's transport protocol
 /// (e.g. <see cref="NamedPipeEndpointTransportRegistrar.NamedPipeEndpointTransport(IComponentRegistrar)"/>).
@@ -44,15 +44,15 @@ namespace Compze.Tessaging.Hosting;
 /// suite's interprocess registry). One registration is guarded with <c>IsRegistered</c> so a hosting layer can
 /// pre-register its own before the feature is added: the in-flight tracker (a testing host supplies a real one
 /// to await quiescence; the default does nothing). The runtime lifecycle lives in
-/// <see cref="TransientTessagingEndpointComponent"/>, and the endpoint's address is exposed as the
+/// <see cref="DistributedTessagingEndpointComponent"/>, and the endpoint's address is exposed as the
 /// <c>TessagingAddress</c> extension property (<see cref="EndpointTessagingExtensions"/>).
 ///</summary>
-public class TransientTessagingEndpointFeature
+public class DistributedTessagingEndpointFeature
 {
    readonly ITessageHandlerRegistrar _handlerRegistrar;
    readonly ITransactionIgnoringTeventHandlerRegistrar _transactionIgnoringTeventHandlerRegistrar;
 
-   public TransientTessagingEndpointFeature RegisterHandlers(Action<ITessageHandlerRegistrar> registrar)
+   public DistributedTessagingEndpointFeature RegisterHandlers(Action<ITessageHandlerRegistrar> registrar)
    {
       registrar(_handlerRegistrar);
       return this;
@@ -61,7 +61,7 @@ public class TransientTessagingEndpointFeature
    ///<summary>Registers transaction-ignoring tevent handlers — observation, the one subscription-side opt-down<br/>
    /// (see <c>src/Compze.Tessaging/dev_docs/tevent-delivery-model.md</c>): the handler fires once, immediately, when a matching<br/>
    /// tevent is published locally or arrives from another endpoint, outside any transaction and with no delivery guarantees.</summary>
-   public TransientTessagingEndpointFeature RegisterTransactionIgnoringTeventHandlers(Action<ITransactionIgnoringTeventHandlerRegistrar> registrar)
+   public DistributedTessagingEndpointFeature RegisterTransactionIgnoringTeventHandlers(Action<ITransactionIgnoringTeventHandlerRegistrar> registrar)
    {
       registrar(_transactionIgnoringTeventHandlerRegistrar);
       return this;
@@ -73,7 +73,7 @@ public class TransientTessagingEndpointFeature
    ///<summary>Declares that the endpoint announces where it listens to <paramref name="announcer"/> — see<br/>
    /// <see cref="EndpointTransportServerFeature.AnnounceAddressTo"/>, to which this delegates: the announced address is the<br/>
    /// endpoint's one transport-server address, serving every distributed capability the endpoint speaks.</summary>
-   public TransientTessagingEndpointFeature AnnounceAddressTo(IEndpointAddressAnnouncer announcer)
+   public DistributedTessagingEndpointFeature AnnounceAddressTo(IEndpointAddressAnnouncer announcer)
    {
       _transportServer.AnnounceAddressTo(announcer);
       return this;
@@ -84,7 +84,7 @@ public class TransientTessagingEndpointFeature
    /// registry's membership. Declaring none means the endpoint discovers nothing: it serves whatever reaches it, converses<br/>
    /// in-process, and self-sends (its router maintains the connection to its own inbox, which needs no discovery) — but it<br/>
    /// connects to no other endpoint.</summary>
-   public TransientTessagingEndpointFeature DiscoverEndpointsThrough(IEndpointRegistry registry)
+   public DistributedTessagingEndpointFeature DiscoverEndpointsThrough(IEndpointRegistry registry)
    {
       State.Assert(_endpointRegistry is null, () => $"The endpoint already declared the registry it discovers endpoints through — an endpoint discovers through exactly one {nameof(IEndpointRegistry)}.");
       _endpointRegistry = registry;
@@ -95,11 +95,11 @@ public class TransientTessagingEndpointFeature
    /// (<see cref="DiscoverEndpointsThrough"/>) AND announces its own listening address to it (<see cref="AnnounceAddressTo"/>) —<br/>
    /// the composition a same-machine application suite uses, where every process both finds the others and is found by them.<br/>
    /// Declare the two sides separately instead when a deployment is asymmetric.</summary>
-   public TransientTessagingEndpointFeature ParticipateIn<TRegistry>(TRegistry registry) where TRegistry : IEndpointRegistry, IEndpointAddressAnnouncer
+   public DistributedTessagingEndpointFeature ParticipateIn<TRegistry>(TRegistry registry) where TRegistry : IEndpointRegistry, IEndpointAddressAnnouncer
       => DiscoverEndpointsThrough(registry)
         .AnnounceAddressTo(registry);
 
-   internal TransientTessagingEndpointFeature(IEndpointBuilder builder)
+   internal DistributedTessagingEndpointFeature(IEndpointBuilder builder)
    {
       var register = builder.Registrar;
       AssertTheEndpointsFoundationIsDeclared(register);
@@ -119,9 +119,9 @@ public class TransientTessagingEndpointFeature
       //The background-exception reporter arrives with the in-process core the feature composes above.
       register.TaskRunner()
               .TessagingTransport()
-              .TransientTeventDelivery()
+              .BestEffortTeventDelivery()
               .TessagingTransportMessagePoster()
-              .TransientTessagingRequestHandlers();
+              .BestEffortTessagingRequestHandlers();
 
       builder.OnContainerBuilt(resolver =>
       {
@@ -134,7 +134,7 @@ public class TransientTessagingEndpointFeature
             new EndpointDiscoveryQueryRegistrarWithDependencyInjectionSupport(resolver.Resolve<EndpointDiscoveryQueryExecutor>()));
       });
 
-      builder.AddComponent(resolver => new TransientTessagingEndpointComponent(resolver, _transportServer, _endpointRegistry));
+      builder.AddComponent(resolver => new DistributedTessagingEndpointComponent(resolver, _transportServer, _endpointRegistry));
    }
 
    ///<summary>The setup-time wiring rule (see <c>dev_docs/tevent-delivery-model.md</c>): a subscription demanding more than the<br/>
@@ -148,18 +148,18 @@ public class TransientTessagingEndpointFeature
 
       var typesDemandingExactlyOnceDelivery = handlerRegistry.RegisteredTypesDemandingExactlyOnceDelivery();
       State.Assert(typesDemandingExactlyOnceDelivery.Count == 0,
-                   () => $"This endpoint wires no exactly-once delivery machinery — transient Tessaging has no inbox to persist, dedup, and retry with — but handlers are registered for tessage types whose declared contract demands it: {string.Join(", ", typesDemandingExactlyOnceDelivery.Select(it => it.FullName))}. A subscription takes the tessage type's full declared guarantee (observation included: observing a remote exactly-once tevent still requires receiving it exactly-once), and an endpoint that cannot honor a guarantee must not advertise for it. Compose exactly-once Tessaging on a database-backed foundation instead, or handle tessage types that declare no exactly-once contract.");
+                   () => $"This endpoint wires no exactly-once delivery machinery — distributed Tessaging has no inbox to persist, dedup, and retry with — but handlers are registered for tessage types whose declared contract demands it: {string.Join(", ", typesDemandingExactlyOnceDelivery.Select(it => it.FullName))}. A subscription takes the tessage type's full declared guarantee (observation included: observing a remote exactly-once tevent still requires receiving it exactly-once), and an endpoint that cannot honor a guarantee must not advertise for it. Compose exactly-once Tessaging on a database-backed foundation instead, or handle tessage types that declare no exactly-once contract.");
    }
 
-   ///<summary>Transient Tessaging builds on declarations the feature cannot make itself: the endpoint's transport protocol and the<br/>
+   ///<summary>Distributed Tessaging builds on declarations the feature cannot make itself: the endpoint's transport protocol and the<br/>
    /// Tessaging serializer — deliberately no persistence: the guarantee-free composition is the one that needs no database. Each<br/>
    /// missing declaration fails here, when the feature is added, with an error naming it — instead of surfacing later as a<br/>
    /// dependency-resolution failure deep inside the container.</summary>
    static void AssertTheEndpointsFoundationIsDeclared(IComponentRegistrar register)
    {
       State.Assert(register.IsRegistered<IEndpointTransportServer>(),
-                   () => "The endpoint declares no transport protocol. Declare it before adding transient Tessaging — e.g. ComposeEndpoint(it => it.NamedPipeEndpointTransport()...) — or register NamedPipeEndpointTransport()/AspNetCoreEndpointTransport().");
+                   () => "The endpoint declares no transport protocol. Declare it before adding distributed Tessaging — e.g. ComposeEndpoint(it => it.NamedPipeEndpointTransport()...) — or register NamedPipeEndpointTransport()/AspNetCoreEndpointTransport().");
       State.Assert(register.IsRegistered<ITessagingSerializer>(),
-                   () => "The endpoint declares no Tessaging serializer. Fill the serializer slot when adding the feature — e.g. AddTransientTessaging(tessaging => tessaging.NewtonsoftSerializer()) — or register one (e.g. NewtonsoftTessagingSerializer()) before adding it.");
+                   () => "The endpoint declares no Tessaging serializer. Fill the serializer slot when adding the feature — e.g. AddDistributedTessaging(tessaging => tessaging.NewtonsoftSerializer()) — or register one (e.g. NewtonsoftTessagingSerializer()) before adding it.");
    }
 }

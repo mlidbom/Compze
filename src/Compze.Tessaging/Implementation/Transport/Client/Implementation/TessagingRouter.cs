@@ -41,7 +41,7 @@ class TessagingRouter : ITessagingRouter, IDisposable
    readonly ITessagingSerializer _serializer;
    readonly ITransportMessagePoster _transportMessagePoster;
    readonly IEndpointDiscoveryQueryTransport _endpointDiscoveryQueryTransport;
-   //Null when the endpoint wires no outbox — the guarantee-free transient composition: its connections then carry no exactly-once delivery stream.
+   //Null when the endpoint wires no outbox — the guarantee-free distributed composition: its connections then carry no exactly-once delivery stream.
    readonly TessagingConnection.ExactlyOnceDeliveryStream.Factory? _exactlyOnceStreamFactory;
    //Null when the endpoint wires no durable peer memory (see IPeerRegistry) — today that is every composition without exactly-once Tessaging.
    readonly IPeerRegistry? _peerRegistry;

@@ -121,8 +121,8 @@ partial class Outbox : IOutbox
 
    bool _running = false;
 
-   //The router's delivery lifecycle is not the outbox's to drive: it belongs to the transient Tessaging core's component
-   //(TransientTessagingEndpointComponent), which starts delivery only after every endpoint's listening phase — by which time
+   //The router's delivery lifecycle is not the outbox's to drive: it belongs to the distributed Tessaging core's component
+   //(DistributedTessagingEndpointComponent), which starts delivery only after every endpoint's listening phase — by which time
    //this storage is initialized, so each connection's exactly-once stream can load its recovery backlog.
    public async Task StartAsync()
    {

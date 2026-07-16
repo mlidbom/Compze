@@ -15,7 +15,7 @@ public interface IIndependentTeventPublisher
 {
    ///<summary>Publishes <paramref name="tevent"/> as its own unit of work, routed per the delivery contract its type declares —<br/>
    /// see <see cref="IUnitOfWorkTeventPublisher.Publish"/>. The unit of work commits when the call returns: an<br/>
-   /// <see cref="IExactlyOnceTevent"/> is then durably on its way, a transient remotable tevent has been handed to the wire,<br/>
+   /// <see cref="IExactlyOnceTevent"/> is then durably on its way, a best-effort remotable tevent has been handed to the wire,<br/>
    /// and this process's subscribed handlers have already run.</summary>
    void Publish(ITevent tevent);
 }
