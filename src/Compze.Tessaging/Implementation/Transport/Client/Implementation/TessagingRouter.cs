@@ -27,8 +27,8 @@ class TessagingRouter : ITessagingRouter, IDisposable
 {
    public static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(Singleton.For<ITessagingRouter>().CreatedBy(
-            (ITessagesInFlightTracker tessagesInFlightTracker, ITypeMap typeMap, ITessagingSerializer serializer, ITransportMessagePoster transportMessagePoster, IEndpointDiscoveryQueryTransport endpointDiscoveryQueryTransport, IComponentSet<TessagingConnection.ExactlyOnceDeliveryStream.Factory> exactlyOnceStreamFactory, IPeerRegistry peerRegistry, EndpointConfiguration configuration, ITaskRunner taskRunner, IBackgroundExceptionReporter exceptionReporter)
-               => new TessagingRouter(tessagesInFlightTracker, typeMap, serializer, transportMessagePoster, endpointDiscoveryQueryTransport, exactlyOnceStreamFactory, peerRegistry, configuration, taskRunner, exceptionReporter)));
+            (ITessagesInFlightTracker tessagesInFlightTracker, ITypeMap typeMap, ITessagingSerializer serializer, ITransportMessagePoster transportMessagePoster, IEndpointDiscoveryQueryTransport endpointDiscoveryQueryTransport, TessagingConnection.BestEffortDeliveryStream.Factory bestEffortStreamFactory, IComponentSet<TessagingConnection.ExactlyOnceDeliveryStream.Factory> exactlyOnceStreamFactory, IPeerRegistry peerRegistry, EndpointConfiguration configuration, ITaskRunner taskRunner, IBackgroundExceptionReporter exceptionReporter)
+               => new TessagingRouter(tessagesInFlightTracker, typeMap, serializer, transportMessagePoster, endpointDiscoveryQueryTransport, bestEffortStreamFactory, exactlyOnceStreamFactory, peerRegistry, configuration, taskRunner, exceptionReporter)));
 
    ///<summary>How long a reconciliation pass waits for a registry change signal before running anyway. The signal makes announced<br/>
    /// and retracted endpoints propagate at signal latency; this periodic pass exists for what no signal can carry — a crashed<br/>
@@ -41,6 +41,7 @@ class TessagingRouter : ITessagingRouter, IDisposable
    readonly ITessagingSerializer _serializer;
    readonly ITransportMessagePoster _transportMessagePoster;
    readonly IEndpointDiscoveryQueryTransport _endpointDiscoveryQueryTransport;
+   readonly TessagingConnection.BestEffortDeliveryStream.Factory _bestEffortStreamFactory;
    //Null when the endpoint wires no outbox — the guarantee-free distributed composition: its connections then carry no exactly-once delivery stream.
    readonly TessagingConnection.ExactlyOnceDeliveryStream.Factory? _exactlyOnceStreamFactory;
    readonly IPeerRegistry _peerRegistry;
@@ -62,13 +63,14 @@ class TessagingRouter : ITessagingRouter, IDisposable
    readonly List<(Type TeventType, TessagingConnection Connection)> _teventSubscriberRoutes = [];
    readonly Dictionary<Type, IReadOnlyList<TessagingConnection>> _teventSubscriberRouteCache = new();
 
-   TessagingRouter(ITessagesInFlightTracker tessagesInFlightTracker, ITypeMap typeMap, ITessagingSerializer serializer, ITransportMessagePoster transportMessagePoster, IEndpointDiscoveryQueryTransport endpointDiscoveryQueryTransport, IEnumerable<TessagingConnection.ExactlyOnceDeliveryStream.Factory> exactlyOnceStreamFactory, IPeerRegistry peerRegistry, EndpointConfiguration configuration, ITaskRunner taskRunner, IBackgroundExceptionReporter exceptionReporter)
+   TessagingRouter(ITessagesInFlightTracker tessagesInFlightTracker, ITypeMap typeMap, ITessagingSerializer serializer, ITransportMessagePoster transportMessagePoster, IEndpointDiscoveryQueryTransport endpointDiscoveryQueryTransport, TessagingConnection.BestEffortDeliveryStream.Factory bestEffortStreamFactory, IEnumerable<TessagingConnection.ExactlyOnceDeliveryStream.Factory> exactlyOnceStreamFactory, IPeerRegistry peerRegistry, EndpointConfiguration configuration, ITaskRunner taskRunner, IBackgroundExceptionReporter exceptionReporter)
    {
       _tessagesInFlightTracker = tessagesInFlightTracker;
       _typeMap = typeMap;
       _serializer = serializer;
       _transportMessagePoster = transportMessagePoster;
       _endpointDiscoveryQueryTransport = endpointDiscoveryQueryTransport;
+      _bestEffortStreamFactory = bestEffortStreamFactory;
       _exactlyOnceStreamFactory = exactlyOnceStreamFactory.SingleOrDefault();
       _peerRegistry = peerRegistry;
       _configuration = configuration;
@@ -157,7 +159,7 @@ class TessagingRouter : ITessagingRouter, IDisposable
    async Task ConnectAsync(EndpointAddress remoteEndpointAddress)
    {
 #pragma warning disable CA2000//We are passing this disposable into a collection that we track disposal for
-      var connection = new TessagingConnection(_tessagesInFlightTracker, remoteEndpointAddress, _typeMap, _serializer, _transportMessagePoster, _endpointDiscoveryQueryTransport, _exactlyOnceStreamFactory, _taskRunner, _exceptionReporter);
+      var connection = new TessagingConnection(_tessagesInFlightTracker, remoteEndpointAddress, _typeMap, _serializer, _transportMessagePoster, _endpointDiscoveryQueryTransport, _bestEffortStreamFactory, _exactlyOnceStreamFactory, _taskRunner, _exceptionReporter);
 #pragma warning restore CA2000
 
       await connection.InitAsync().caf();

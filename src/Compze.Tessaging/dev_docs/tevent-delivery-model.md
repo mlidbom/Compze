@@ -263,14 +263,15 @@ Per rung:
 - **Exactly-once: order also survives a sender restart.** Recovery reloads the undelivered backlog in send
   order — the outbox tessage table's monotonic `GeneratedId` — re-establishing head-of-line on the oldest
   undelivered tessage.
-- **Best-effort: in order within a connected session.** On disconnect or delivery failure, the remaining
-  queued stream for that subscriber is dropped *whole* — the failed tevent and everything queued behind
-  it — and the subscriber resumes from live: tevents published afterwards form a new stream, attempted
-  normally. The unit of loss is the stream, never the message: a gap is one clean "you were disconnected"
-  boundary, never a silent mid-stream skip that would deliver 54 after dropping 53. Any delivery failure
-  triggers the drop — best-effort promises nothing that would justify retry machinery for a blip, and while
-  an endpoint stays unreachable each new attempt fails and drops whatever queued since, which is exactly
-  what best-effort means.
+- **Best-effort: in order, across the subscriber's downtime.** Every remembered subscriber has an in-memory
+  queue on the publisher that outlives connections: tevents published while the subscriber is down accumulate
+  in publish order and its next connection drains them on its return — queue-while-down (see
+  `dev_docs/TODO/durable-peer-topology.md` at the repo root). A delivery failure *pauses* the stream whole:
+  the one tevent in flight at the failure is dropped, loudly — without receiver dedup a re-send could
+  duplicate it, and nothing on this tier is ever re-sent — while everything queued behind it stays queued in
+  order, resuming when the peer answers a tessage-free probe or reconnects. There is never a silent
+  mid-stream skip that would deliver 54 after dropping 53: the tier's loss surface is exactly that single
+  in-flight tevent, a publisher crash (memory is memory), and queue overflow.
 - **Receive side: failing to *receive* is fatal.** An endpoint that cannot register an arriving guaranteed
   tevent in its inbox has a fatal bug — the system goes down rather than lose the tevent. Failing to
   *handle* (handler exceptions, retries exhausted) is a separate concern with its own policy.
@@ -322,9 +323,11 @@ As of 2026-07-15:
   `IUnitOfWorkTeventPublisher` routes a remotable-but-not-exactly-once tevent through the endpoint's best-effort
   delivery leg (`IBestEffortTeventDeliveryLeg`, wired by every transport-speaking Tessaging composition) — on commit when a
   transaction is present, immediately otherwise (the no-transaction branch is gone since 2026-07-16: the
-  publisher asserts its ambient transaction, so best-effort delivery is always on-commit). Each subscriber
-  connection carries an in-memory best-effort stream (`TransportRequestKind.BestEffortTevent` on the wire)
-  delivering in order with the drop-stream-whole failure policy above, and the receiving endpoint dispatches
+  publisher asserts its ambient transaction, so best-effort delivery is always on-commit). Each remembered
+  subscriber has an in-memory queue that outlives connections, drained in publish order by the live
+  connection's best-effort stream (`TransportRequestKind.BestEffortTevent` on the wire) with the
+  queue-while-down and pause-stream-whole semantics above (2026-07-16, replacing the original
+  drop-stream-whole policy), and the receiving endpoint dispatches
   an arriving best-effort tevent directly to its handlers in a unit of work of its own — no inbox, no dedup, no retry; a
   failed handling is reported through the background-exception reporter and the tevent is gone. The
   acknowledgement is written after the handlers execute, so single-in-flight keeps handling in send order.

@@ -39,6 +39,7 @@ partial class TessagingConnection : ITessagingInboxConnection, IDisposable
                                 ITessagingSerializer serializer,
                                 ITransportMessagePoster transportMessagePoster,
                                 IEndpointDiscoveryQueryTransport endpointDiscoveryQueryTransport,
+                                BestEffortDeliveryStream.Factory bestEffortStreamFactory,
                                 ExactlyOnceDeliveryStream.Factory? exactlyOnceStreamFactory,
                                 ITaskRunner taskRunner,
                                 IBackgroundExceptionReporter exceptionReporter)
@@ -52,10 +53,10 @@ partial class TessagingConnection : ITessagingInboxConnection, IDisposable
       _taskRunner = taskRunner;
       _exceptionReporter = exceptionReporter;
 
-      //Which delivery streams a connection carries mirrors which delivery machinery the endpoint wires: the in-memory best-effort
-      //stream is intrinsic to every connection, while the exactly-once stream exists exactly when the outbox's wiring granted the
-      //router the factory carrying the storage that backs it.
-      _bestEffortStream = new BestEffortDeliveryStream(this);
+      //Which delivery streams a connection carries mirrors which delivery machinery the endpoint wires: the best-effort stream -
+      //draining the peer's queue in the endpoint's best-effort delivery wiring - is intrinsic to every connection, while the
+      //exactly-once stream exists exactly when the outbox's wiring granted the router the factory carrying the storage that backs it.
+      _bestEffortStream = bestEffortStreamFactory.CreateFor(this);
       _exactlyOnceStream = exactlyOnceStreamFactory?.CreateFor(this);
    }
 
@@ -69,13 +70,6 @@ partial class TessagingConnection : ITessagingInboxConnection, IDisposable
       var transportTessage = TransportTessage.OutGoing.Create(tessage, dedupId, _typeMap, _serializer);
       _tessagesInFlightTracker.SendingTessageOnTransport(transportTessage, EndpointInformation.Id);
       _exactlyOnceStream!.Enqueue(transportTessage);
-   }
-
-   public void EnqueueForBestEffortDelivery(ITessage tessage, TessageId envelopeId)
-   {
-      var transportTessage = TransportTessage.OutGoing.Create(tessage, envelopeId, _typeMap, _serializer);
-      _tessagesInFlightTracker.SendingTessageOnTransport(transportTessage, EndpointInformation.Id);
-      _bestEffortStream.Enqueue(transportTessage);
    }
 
    public void StartDelivery()
@@ -101,6 +95,5 @@ partial class TessagingConnection : ITessagingInboxConnection, IDisposable
       StopDelivery();
       _cancellationSource.Dispose();
       _exactlyOnceStream?.Dispose();
-      _bestEffortStream.Dispose();
    }
 }
