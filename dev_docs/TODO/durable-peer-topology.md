@@ -197,6 +197,10 @@ patience, then fail loud naming the unserved type).
 
 1. **Exactly-once peer registry**: persisted subscriptions + persisted routes in the Tessaging SQL layer
    (all backends), upserted from every advertisement fetch, loaded at endpoint start. No behavior change.
+   **DONE 2026-07-16**: `IPeerRegistry`/`PeerRegistry` (Compze.Tessaging, `Implementation\Peers`),
+   `IServiceBusSqlLayer.IPeerRegistrySqlLayer` + `PersistedPeer` + the `Peers`/`PeerHandledTessageTypes`
+   tables in all four backends, recorded by the router on every advertisement fetch (self excluded),
+   loaded in the listening phase, specified in `Peer_registry_tests`.
 2. **Fan-out reads the registry** — the data-loss fix — plus the rolling-restart/downtime specs.
 3. **Tommand route-at-delivery**: unbound outbox rows, bind-per-attempt, known-but-down and
    handler-replacement specs.

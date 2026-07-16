@@ -31,9 +31,12 @@ public static class MySqlTessagingRegistrar
       registrar.MySqlTypeIdInterner()
                .MySqlSchemaContribution(MySqlInboxSqlLayer.SchemaCreationSql)
                .MySqlSchemaContribution(MySqlOutboxSqlLayer.SchemaCreationSql)
+               .MySqlSchemaContribution(MySqlPeerRegistrySqlLayer.SchemaCreationSql)
                .Register(
          Singleton.For<IServiceBusSqlLayer.IOutboxSqlLayer>()
                   .CreatedBy((IMySqlConnectionPool endpointSqlConnection, MySqlSqlLayerSchemaManager schemaManager, ITypeIdInterner typeIdInterner) => new MySqlOutboxSqlLayer(endpointSqlConnection, schemaManager, typeIdInterner)),
          Singleton.For<IServiceBusSqlLayer.IInboxSqlLayer>()
-                  .CreatedBy((IMySqlConnectionPool endpointSqlConnection, MySqlSqlLayerSchemaManager schemaManager, ITypeIdInterner typeIdInterner) => new MySqlInboxSqlLayer(endpointSqlConnection, schemaManager, typeIdInterner)));
+                  .CreatedBy((IMySqlConnectionPool endpointSqlConnection, MySqlSqlLayerSchemaManager schemaManager, ITypeIdInterner typeIdInterner) => new MySqlInboxSqlLayer(endpointSqlConnection, schemaManager, typeIdInterner)),
+         Singleton.For<IServiceBusSqlLayer.IPeerRegistrySqlLayer>()
+                  .CreatedBy((IMySqlConnectionPool endpointSqlConnection, MySqlSqlLayerSchemaManager schemaManager) => new MySqlPeerRegistrySqlLayer(endpointSqlConnection, schemaManager)));
 }

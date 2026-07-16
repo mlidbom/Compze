@@ -15,7 +15,7 @@ public sealed class UnitOfWorkId : IEquatable<UnitOfWorkId>
 
    public bool Equals(UnitOfWorkId? other) => other is not null && _value == other._value;
    public override bool Equals(object? obj) => obj is UnitOfWorkId other && Equals(other);
-   public override int GetHashCode() => _value.GetHashCode();
+   public override int GetHashCode() => _value.GetHashCode(StringComparison.Ordinal);
    public override string ToString() => _value;
 
    public static bool operator ==(UnitOfWorkId? left, UnitOfWorkId? right) => Equals(left, right);

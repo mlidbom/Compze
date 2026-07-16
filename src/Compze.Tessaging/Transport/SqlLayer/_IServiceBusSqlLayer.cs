@@ -37,6 +37,30 @@ public interface IServiceBusSqlLayer
       Task InitAsync();
    }
 
+   ///<summary>The peer registry's persistence: the endpoint's durable memory of its peers and their last-known advertisements<br/>
+   /// (see <see cref="Implementation.Peers.IPeerRegistry"/> and <c>dev_docs/TODO/durable-peer-topology.md</c>).</summary>
+   public interface IPeerRegistrySqlLayer
+   {
+      ///<summary>Replaces <paramref name="peerId"/>'s stored advertisement wholesale — creating the peer on first contact.<br/>
+      /// The caller runs it inside its own transaction, so a reader never sees a half-replaced advertisement.</summary>
+      void SaveAdvertisement(EndpointId peerId, IReadOnlySet<string> handledTessageTypes);
+
+      ///<summary>Every remembered peer, with its stored advertisement.</summary>
+      IReadOnlyList<PersistedPeer> GetPeers();
+
+      Task InitAsync();
+   }
+
+   ///<summary>One remembered peer as persisted: its identity and its last-known advertisement.</summary>
+   public class PersistedPeer(EndpointId id, IReadOnlySet<string> handledTessageTypes)
+   {
+      public EndpointId Id { get; } = id;
+
+      ///<summary>The canonical type-id strings of the remotable tessage types the peer advertised — the same strings its<br/>
+      /// <see cref="Implementation.Transport.TessagingEndpointInformation.HandledTessageTypes"/> carries on the wire.</summary>
+      public IReadOnlySet<string> HandledTessageTypes { get; } = handledTessageTypes;
+   }
+
    public class OutboxTessageWithReceivers(string serializedTessage, TypeId typeId, TessageId tessageId, IEnumerable<EndpointId> receiverEndpointIds)
    {
       public string SerializedTessage { get; } = serializedTessage;
@@ -90,5 +114,20 @@ public interface IServiceBusSqlLayer
       public const string RetryCount = nameof(RetryCount);
       public const string LastAttemptTime = nameof(LastAttemptTime);
       public const string FailureReason = nameof(FailureReason);
+   }
+
+   public static class PeersDatabaseSchemaStrings
+   {
+      public const string TableName = "Peers";
+
+      public const string EndpointId = nameof(EndpointId);
+   }
+
+   public static class PeerHandledTessageTypesDatabaseSchemaStrings
+   {
+      public const string TableName = "PeerHandledTessageTypes";
+
+      public const string EndpointId = nameof(EndpointId);
+      public const string HandledTessageType = nameof(HandledTessageType);
    }
 }
