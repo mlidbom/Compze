@@ -203,6 +203,11 @@ class TessagingRouter : ITessagingRouter, IDisposable
             RegisterRoutes(connection, connection.EndpointInformation.HandledTessageTypes);
          }
 
+         //Load-bearing: registering the routes and loading the connection's recovery backlog (StartDelivery) happen under
+         //one hold of this monitor, which route lookups also take. The outbox's commit-time lookups rely on exactly this: a
+         //lookup that sees the connection can safely enqueue on it, and a row whose lookup missed the connection committed
+         //before the backlog query ran - OnCommittedSuccessfully runs after commit - so the backlog is what delivers it.
+         //Move the backlog load out of the monitor and tessages start silently slipping between the two.
          if(_deliveryStarted) connection.StartDelivery();
       });
    }

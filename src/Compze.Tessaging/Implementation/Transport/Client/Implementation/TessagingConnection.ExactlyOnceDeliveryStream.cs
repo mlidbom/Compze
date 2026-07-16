@@ -57,11 +57,10 @@ partial class TessagingConnection
 
       //In-order delivery survives recovery: GetUndeliveredTessagesForEndpoint returns the backlog in send order
       //(the outbox tessage table's monotonic GeneratedId), so re-enqueueing it re-establishes head-of-line on the
-      //oldest undelivered tessage - the same order the send loop preserves while running. The advertisement rides
-      //along so the backlog includes the unbound tommands this connection's endpoint currently handles (route-at-delivery).
+      //oldest undelivered tessage - the same order the send loop preserves while running.
       void LoadUndeliveredTessages()
       {
-         var undelivered = _tessageStorage.GetUndeliveredTessagesForEndpoint(_connection.EndpointInformation.Id, _connection.EndpointInformation.HandledTessageTypes);
+         var undelivered = _tessageStorage.GetUndeliveredTessagesForEndpoint(_connection.EndpointInformation.Id);
          if(undelivered.Count == 0) return;
 
          this.Log().Info($"Loading {undelivered.Count} undelivered tessage(s) for recovery to endpoint {_connection.EndpointInformation.Id}");

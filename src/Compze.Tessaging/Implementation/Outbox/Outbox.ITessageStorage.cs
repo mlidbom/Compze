@@ -14,10 +14,8 @@ partial class Outbox
       void MarkAsReceived(TessageId tessageId, EndpointId receiverId);
       void RecordDeliveryFailure(TessageId tessageId, EndpointId receiverId, Exception? exception);
 
-      ///<summary>The endpoint's recovery backlog, in send order: everything bound to it plus every unbound tommand whose type<br/>
-      /// its advertisement — <paramref name="advertisedHandledTessageTypes"/>, the canonical type strings off the wire —<br/>
-      /// handles (route-at-delivery; see <see cref="IServiceBusSqlLayer.IOutboxSqlLayer.GetUndeliveredTessagesForEndpoint"/>).</summary>
-      IReadOnlyList<IServiceBusSqlLayer.UndeliveredTessage> GetUndeliveredTessagesForEndpoint(EndpointId endpointId, IReadOnlySet<string> advertisedHandledTessageTypes);
+      ///<summary>The endpoint's recovery backlog: every tessage bound to it and not yet received, in send order.</summary>
+      IReadOnlyList<IServiceBusSqlLayer.UndeliveredTessage> GetUndeliveredTessagesForEndpoint(EndpointId endpointId);
 
       Task StartAsync();
    }

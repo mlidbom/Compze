@@ -6,7 +6,6 @@ using Compze.Abstractions.Tessaging.Public;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Logging;
-using Compze.Internals.SystemCE.ReflectionCE;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tessaging.Transport.SqlLayer;
 
@@ -63,15 +62,8 @@ partial class Outbox
          _sqlLayer.RecordDeliveryFailure(tessageId, receiverId, failureReason);
       }
 
-      public IReadOnlyList<IServiceBusSqlLayer.UndeliveredTessage> GetUndeliveredTessagesForEndpoint(EndpointId endpointId, IReadOnlySet<string> advertisedHandledTessageTypes)
-      {
-         //The advertisement partitions the way routing partitions it: tevent subscriptions are the ITevent wrapper types,
-         //everything else is a tommand type - the types whose unbound rows this endpoint's connection should carry.
-         var handledTommandTypes = advertisedHandledTessageTypes.Select(_typeMap.GetId)
-                                                                .Where(typeId => !typeId.Type.Is<ITevent>())
-                                                                .ToList();
-         return _sqlLayer.GetUndeliveredTessagesForEndpoint(endpointId, handledTommandTypes);
-      }
+      public IReadOnlyList<IServiceBusSqlLayer.UndeliveredTessage> GetUndeliveredTessagesForEndpoint(EndpointId endpointId) =>
+         _sqlLayer.GetUndeliveredTessagesForEndpoint(endpointId);
 
       public async Task StartAsync() => await _sqlLayer.InitAsync().caf();
    }

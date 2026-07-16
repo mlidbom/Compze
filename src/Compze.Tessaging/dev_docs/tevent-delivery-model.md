@@ -280,12 +280,13 @@ Per rung:
 Tommands are 1:1 — one sender, exactly one handler — and there the type dictates *everything*, with no
 subscription-side election at all: an `IExactlyOnceTommand`'s type is its delivery contract (exactly-once,
 transactional, asynchronous), sent through `IUnitOfWorkTommandSender.Send`, and an endpoint even
-routes tommands to *itself* through the outbox so the guarantee holds. A tommand names no recipient — it
-means "the handler of its type, whoever that is" — so the outbox persists it unbound and it routes at
-delivery time to whichever endpoint advertises its type (route-at-delivery,
-`dev_docs/TODO/durable-peer-topology.md` at the repo root): sending requires only that some known route
-serves the type, a known-but-down handler receives on its return, and a blue/green successor advertising the
-type receives its predecessor's in-flight tommands. The synchronous local ask has its own
+routes tommands to *itself* through the outbox so the guarantee holds. A tommand binds to its one specific
+receiver at send time — the live handler when one is connected, otherwise the sole remembered peer whose
+advertisement handles the type (`dev_docs/TODO/durable-peer-topology.md` at the repo root) — so a
+known-but-down handler receives the tommand on its return without the send exploding, while every tessage
+between a sender and a receiver rides that pair's single ordered, receiver-deduped delivery stream:
+exactly-once in-order holds by construction. An in-flight tommand therefore never delivers to a blue/green
+successor — it waits for its own endpoint — while new sends bind to the live successor. The synchronous local ask has its own
 truthful home in Typermedia's strictly-local tommand — see
 [the hosting model](../../Compze.Hosting/dev_docs/hosting-model.md). The subscription-side opt-down and the
 transient tier described in this document are tevent concepts: they exist because tevent publishing is

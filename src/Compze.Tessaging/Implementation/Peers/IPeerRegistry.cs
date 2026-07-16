@@ -35,12 +35,13 @@ public interface IPeerRegistry
    /// never the reverse.</remarks>
    IReadOnlyList<EndpointId> SubscriberIdsFor(IPublisherTevent<IRemotableTevent> wrappedTevent);
 
-   ///<summary>Whether any remembered peer's last-known advertisement handles <paramref name="tommand"/>'s type. This is<br/>
-   /// send-time validation under route-at-delivery (see <c>dev_docs/TODO/durable-peer-topology.md</c>): a tommand persists<br/>
-   /// unbound and routes when delivery happens, so the send needs only some remembered route to exist. The one route this<br/>
-   /// registry cannot answer for is the endpoint's own handlers — a peer is another endpoint — which the caller covers<br/>
-   /// through the router's always-live self-connection.</summary>
-   bool SomePeerHandles(IExactlyOnceTommand tommand);
+   ///<summary>The <see cref="EndpointId"/> of every remembered peer whose last-known advertisement handles<br/>
+   /// <paramref name="tommand"/>'s type — matched exactly, the way the router's tommand routes match. A tommand binds to its<br/>
+   /// one specific receiver at send time, and when no handler is live this list is where the receiver comes from: exactly one<br/>
+   /// entry is the known-but-down handler; none means nothing known serves the type; more than one is a handler replacement<br/>
+   /// whose retired peer was never decommissioned. The one handler this registry cannot answer for is the endpoint itself —<br/>
+   /// a peer is another endpoint — covered by the router's always-live self-connection.</summary>
+   IReadOnlyList<EndpointId> HandlerIdsFor(IExactlyOnceTommand tommand);
 
    ///<summary>Initializes the registry's storage and loads the remembered peers into memory. Runs in the endpoint's listening<br/>
    /// phase, before any endpoint in the host starts sending.</summary>

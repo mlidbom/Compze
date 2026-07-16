@@ -1,4 +1,5 @@
 using System.Transactions;
+using Compze.Abstractions.Hosting.Public;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Tessaging.Implementation.Abstractions;
 using Compze.Tessaging.Implementation.Peers;
@@ -58,18 +59,21 @@ partial class Outbox : IOutbox
       var subscriberIds = _peerRegistry.SubscriberIdsFor(wrappedTevent);
       _storage.SaveTessage(wrappedTevent, dedupId, [..subscriberIds]);
 
-      //Delivery starts now only toward the listed peers' live connections. Intersecting keeps enqueue ⊆ persist even while an
-      //advertisement update is mid-connect (the registry is written before routes are built from it — see TessagingRouter.ConnectAsync),
-      //and a peer persisted here but not enqueued is exactly what the backlog load covers when its connection's delivery starts.
-      var connectionsToEnqueueOn = _tessagingRouter.SubscriberConnectionsFor(wrappedTevent)
-                                                   .Where(connection => subscriberIds.Contains(connection.EndpointInformation.Id))
-                                                   .ToArray();
-
-      Transaction.Current.OnCommittedSuccessfully(() => connectionsToEnqueueOn.ForEach(connection =>
+      Transaction.Current.OnCommittedSuccessfully(() =>
       {
-         this.Log().Debug($"OnCommittedSuccessfully: Delivering tevent {dedupId} to endpoint {connection.EndpointInformation.Id}");
-         connection.EnqueueForExactlyOnceDelivery(wrappedTevent, dedupId);
-      }));
+         //Delivery starts now toward the listed peers' live connections, looked up at commit rather than at publish: a
+         //subscriber connection that appeared in between loaded its recovery backlog before this row committed, so only a
+         //commit-time lookup sees it. Intersecting keeps enqueue ⊆ persist (the registry is written before routes are built
+         //from an advertisement — see TessagingRouter.ConnectAsync); a listed peer with no live connection here is exactly
+         //what the backlog load covers when its next connection's delivery starts.
+         _tessagingRouter.SubscriberConnectionsFor(wrappedTevent)
+                         .Where(connection => subscriberIds.Contains(connection.EndpointInformation.Id))
+                         .ForEach(connection =>
+                          {
+                             this.Log().Debug($"OnCommittedSuccessfully: Delivering tevent {dedupId} to endpoint {connection.EndpointInformation.Id}");
+                             connection.EnqueueForExactlyOnceDelivery(wrappedTevent, dedupId);
+                          });
+      });
    }
 
    public void SendTransactionally(IExactlyOnceTommand exactlyOnceTommand)
@@ -77,25 +81,42 @@ partial class Outbox : IOutbox
       State.NotNull(Transaction.Current);
       this.Log().Debug($"Will send tommand if transaction succeeds: {exactlyOnceTommand.Id} ({exactlyOnceTommand.GetType().Name})");
 
-      //Send-time validation only: some route must be known to serve the type - a remembered peer's advertisement, or a live
-      //connection, which adds exactly the endpoint's own handlers (a connected peer is always also remembered; ourselves never).
-      if(!_peerRegistry.SomePeerHandles(exactlyOnceTommand) && _tessagingRouter.LiveConnectionToHandlerFor(exactlyOnceTommand) == null)
-         throw new NoHandlerForTessageTypeException(exactlyOnceTommand.GetType());
-
-      //A tommand names no recipient - it means "the handler of its type, whoever that is" - so the row persists unbound and the
-      //route resolves per delivery attempt (route-at-delivery, see dev_docs/TODO/durable-peer-topology.md): a known-but-down
-      //handler receives on its return, and a successor advertising the type receives its predecessor's in-flight tommands.
-      _storage.SaveTessage(exactlyOnceTommand, exactlyOnceTommand.Id);
+      //The tommand binds to its one specific receiver here, at send: every tessage between a sender and a receiver rides that
+      //pair's single ordered, receiver-deduped delivery stream, which is what makes exactly-once in-order hold by construction.
+      //(Routing at delivery time was tried and retracted: re-delivery could reach an endpoint whose inbox never saw the
+      //tommand, breaking exactly-once across handler replacement - see dev_docs/TODO/durable-peer-topology.md.)
+      var receiverId = ResolveReceiver(exactlyOnceTommand);
+      _storage.SaveTessage(exactlyOnceTommand, exactlyOnceTommand.Id, receiverId);
 
       Transaction.Current.OnCommittedSuccessfully(() =>
       {
-         //This attempt's binding: the route as it stands at commit. With no live handler the row simply waits - the backlog
-         //load carries it into the handler('s successor's) delivery stream when that connection's delivery starts.
+         //Looked up at commit rather than at send: a connection that appeared in between loaded its recovery backlog before
+         //this row committed, so only a commit-time lookup sees it. The row is bound: it must enter no other endpoint's
+         //stream, so a live handler that is not the bound receiver leaves the row waiting for its endpoint's return.
          var liveConnection = _tessagingRouter.LiveConnectionToHandlerFor(exactlyOnceTommand);
-         if(liveConnection == null) return;
-         this.Log().Debug($"OnCommittedSuccessfully: Delivering tommand {exactlyOnceTommand.Id} to endpoint {liveConnection.EndpointInformation.Id}");
+         if(liveConnection == null || !liveConnection.EndpointInformation.Id.Equals(receiverId)) return;
+         this.Log().Debug($"OnCommittedSuccessfully: Delivering tommand {exactlyOnceTommand.Id} to endpoint {receiverId}");
          liveConnection.EnqueueForExactlyOnceDelivery(exactlyOnceTommand, exactlyOnceTommand.Id);
       });
+   }
+
+   ///<summary>The one endpoint this send binds to: the live handler when one is connected — current by definition, and the only<br/>
+   /// route that can name the endpoint itself, which the registry never lists — otherwise the sole remembered peer whose<br/>
+   /// advertisement handles the type. No remembered handler fails loud (<see cref="NoHandlerForTessageTypeException"/>); more<br/>
+   /// than one — a handler replacement whose retired peer was never decommissioned, with none of them up — fails loud too<br/>
+   /// (<see cref="MultipleHandlersForTessageTypeException"/>), because binding to the wrong one would strand the tommand.</summary>
+   EndpointId ResolveReceiver(IExactlyOnceTommand exactlyOnceTommand)
+   {
+      var liveConnection = _tessagingRouter.LiveConnectionToHandlerFor(exactlyOnceTommand);
+      if(liveConnection != null) return liveConnection.EndpointInformation.Id;
+
+      var rememberedHandlerIds = _peerRegistry.HandlerIdsFor(exactlyOnceTommand);
+      return rememberedHandlerIds.Count switch
+      {
+         0 => throw new NoHandlerForTessageTypeException(exactlyOnceTommand.GetType()),
+         1 => rememberedHandlerIds[0],
+         _ => throw new MultipleHandlersForTessageTypeException(exactlyOnceTommand.GetType(), rememberedHandlerIds)
+      };
    }
 
    bool _running = false;

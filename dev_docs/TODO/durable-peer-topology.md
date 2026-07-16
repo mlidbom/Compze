@@ -80,14 +80,23 @@ lower guarantee is opt-in, never a default.**
    connections decide only *when* delivery happens. The read happens inside the publish's transaction
    against the same database, so fan-out membership commits or rolls back with the tevent. This closes the
    rolling-restart data-loss hole; the delivery/recovery machinery downstream already handles the rest.
-2. ⚖ **Tommands route at delivery time, not send time** (alternative B, settled). The outbox persists the
-   tommand **unbound** — no endpoint id; a tommand semantically names no recipient, it means "the handler
-   of T, whoever that is", and binding at send time froze an accident of timing into durable state.
-   Send-time validates only that the type is served by some persisted route (else the loud failure);
-   the delivery side resolves the route per attempt, so a known-but-down handler receives the tommand on
-   return, and a *replaced* handler (blue/green: new deployment, new `EndpointId` advertising the same
-   tommand types) receives in-flight tommands sent to its predecessor. Per-destination send order is
-   preserved by binding in `GeneratedId` order.
+2. ⚖ **Tommands bind to their one specific receiver at send time** — the live handler when one is
+   connected, otherwise the sole remembered peer whose advertisement handles the type — so a
+   known-but-down handler receives the tommand on its return and the send never explodes on downtime.
+   No remembered handler fails the send loud (`NoHandlerForTessageTypeException`); several remembered
+   handlers with none live — a replacement whose retired peer was never decommissioned — fails loud too,
+   naming the peers (`MultipleHandlersForTessageTypeException`), because binding to the wrong one would
+   strand the tommand.
+   *(⚖ Retraction 2026-07-16: route-at-delivery — persist unbound, bind per delivery attempt; settled
+   earlier as "alternative B" — was implemented and retracted the same day. It **breaks exactly-once
+   across handler replacement**: receiver dedup is per endpoint, and `MarkAsReceived` runs after the
+   transport post, so a tommand delivered-but-not-yet-marked could be re-delivered to a successor whose
+   inbox never saw it — handled twice. It also rested per-pair ordering on incidental lock-scope
+   atomicity instead of on the pair's single bound stream, and split one peer conversation across
+   endpoints — tommands following the type while tevents follow the peer. Binding to the specific known
+   receiver keeps every tessage in its pair's single ordered, receiver-deduped stream: **exactly-once
+   in-order holds by construction**. In-flight tommands therefore do NOT follow a successor; stranding is
+   resolved explicitly on the decommission surface.)*
 
 ### Distributed: queue while down — best-effort means best
 
@@ -124,9 +133,9 @@ lower guarantee is opt-in, never a default.**
   - **Tevents**: the subscriber renounced interest — the undelivered tevents lost their audience by that
     audience's own choice. Dropped, **with loud reporting** (count and types), never silently.
   - **Tommands**: someone commanded an action that now has no handler — almost certainly a deployment
-    error. Route-at-delivery partly self-heals it: a successor advertising the type receives the tommand.
-    A tommand whose type nobody serves anymore is stranded loudly and resolved by explicit discard or a
-    successor's arrival.
+    error. A tommand is bound to its receiver, so a successor does not automatically receive it: a
+    stranded tommand is reported loudly and resolved explicitly — discarded or reassigned — on the
+    decommission surface.
 - **Absence is not a lifecycle event.** Crash, liveness pruning, clean stop with retraction: none of them
   touch peer knowledge. They affect connections and delivery timing only.
 
@@ -175,8 +184,9 @@ patience, then fail loud naming the unserved type).
   storage recovery — pinned explicitly).
 - **Exactly-once tommand to a known-but-down handler**: send succeeds inside the caller's unit of work;
   delivery happens on the handler endpoint's return.
-- **Exactly-once tommand survives handler replacement**: handler endpoint retires; a successor with a new
-  `EndpointId` advertises the same tommand type; in-flight tommands deliver to the successor.
+- **A bound tommand never enters another endpoint's stream**: handler endpoint retires; a successor with a
+  new `EndpointId` advertises the same tommand type; in-flight tommands wait for their bound endpoint —
+  never delivering to the successor — while new sends bind to the live successor.
 - **First contact is the boundary** (exactly-once): a subscriber the publisher has never seen receives
   nothing published before its first discovery — deliberate semantics, pinned.
 - **Advertisement shrink**: subscriber returns advertising fewer types; persisted subscriptions prune;
@@ -208,16 +218,20 @@ patience, then fail loud naming the unserved type).
    persisted-but-not-enqueued peer is covered by the backlog load when its connection's delivery starts.
    Specified in `Tevent_delivery_to_peers_that_are_down_tests` (subscriber down at publish receives on
    return, across host rebuilds; verified to fail against the previous fan-out).
-3. **Tommand route-at-delivery**: unbound outbox rows, bind-per-attempt, known-but-down and
+3. **Tommand receiver binding**: sends bound to the known receiver, known-but-down and
    handler-replacement specs.
-   **DONE 2026-07-16**: `Outbox.SendTransactionally` persists the tommand with no dispatching row and
-   validates only that a remembered peer or the endpoint itself (the router's always-live self-connection)
-   serves the type — else `NoHandlerForTessageTypeException`, now with a message worth reading. Each
-   connection's recovery backlog adds the unbound tommands whose types its endpoint's advertisement handles
-   (one query, ordered by `GeneratedId`, so send order holds across tevents and tommands); the delivery
-   that succeeds writes the tommand's one dispatching row, recording who actually received it. Specified in
-   `Tommand_route_at_delivery_tests` (known-but-down, blue/green successor, loud never-known failure; all
-   verified to fail against the previous send-time routing).
+   **DONE 2026-07-16** (route-at-delivery was built first, then retracted the same day — see the ⚖
+   retraction above): `Outbox.SendTransactionally` binds the tommand to its one receiver at send — the
+   live handler when connected (the only route that can name the endpoint itself), else the sole
+   remembered handler peer (`IPeerRegistry.HandlerIdsFor`); none fails loud
+   (`NoHandlerForTessageTypeException`, with a message worth reading), several with none live fails loud
+   (`MultipleHandlersForTessageTypeException`). Live connections are looked up at commit, not at
+   publish/send, for tevents and tommands alike — a connection appearing in between loaded its backlog
+   before the row committed — and the route-registration+backlog-load atomicity this rests on is now
+   pinned by a load-bearing comment in `TessagingRouter.ConnectAsync`. Specified in
+   `Tommand_receiver_binding_tests` (known-but-down delivery on return; bound tommand never delivers to a
+   successor while new sends follow the live successor and the waiting tommand reaches its returned
+   endpoint; loud multiple-remembered-handlers failure; loud never-known failure).
 4. **The rename**: transient → distributed (composition) / best-effort (delivery rung + leg), everywhere —
    code, specs, docs, ubiquitous language.
 5. **Distributed tier**: `RequiredPeers` (by `EndpointId`), queue-while-down with pause-stream-whole,

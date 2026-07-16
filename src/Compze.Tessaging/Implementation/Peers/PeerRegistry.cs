@@ -56,7 +56,8 @@ static class PeerRegistryRegistrar
    public IReadOnlyList<EndpointId> SubscriberIdsFor(IPublisherTevent<IRemotableTevent> wrappedTevent) =>
       _monitor.Locked(() => (IReadOnlyList<EndpointId>)[.._peers.Values.Where(peer => peer.SubscribesTo(wrappedTevent)).Select(peer => peer.Persisted.Id)]);
 
-   public bool SomePeerHandles(IExactlyOnceTommand tommand) => _monitor.Locked(() => _peers.Values.Any(peer => peer.Handles(tommand)));
+   public IReadOnlyList<EndpointId> HandlerIdsFor(IExactlyOnceTommand tommand) =>
+      _monitor.Locked(() => (IReadOnlyList<EndpointId>)[.._peers.Values.Where(peer => peer.Handles(tommand)).Select(peer => peer.Persisted.Id)]);
 
    ///<summary>One remembered peer with its advertised type strings resolved to types once, when the peer is remembered, so<br/>
    /// <see cref="SubscribesTo"/> and <see cref="Handles"/> are pure type checks on every publish and send. The advertisement<br/>
