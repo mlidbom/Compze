@@ -11,6 +11,11 @@ namespace Compze.Tessaging.Implementation.BestEffortDelivery;
 /// promises nothing across a crash of this process — that is the exactly-once tier's job.</summary>
 partial class BestEffortTeventQueues : IDisposable
 {
+   ///<summary>The bound on each peer's queue — generous: a lot of tevents, little memory on current hardware. A publish that<br/>
+   /// would exceed it fails loud (<see cref="BestEffortTeventQueueOverflowException"/>): backpressure loses nothing, while<br/>
+   /// silently shedding queued tevents does (see <c>dev_docs/TODO/durable-peer-topology.md</c>).</summary>
+   internal const int MaximumQueuedTeventsPerPeer = 10_000;
+
    readonly IMonitor _monitor = IMonitor.New();
    readonly Dictionary<EndpointId, PeerQueue> _queues = new();
 
@@ -19,7 +24,7 @@ partial class BestEffortTeventQueues : IDisposable
    internal PeerQueue For(EndpointId peer) => _monitor.Locked(() =>
    {
       if(!_queues.TryGetValue(peer, out var queue))
-         _queues.Add(peer, queue = new PeerQueue());
+         _queues.Add(peer, queue = new PeerQueue(peer));
       return queue;
    });
 

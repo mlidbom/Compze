@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using System.Transactions;
 using Compze.Abstractions.Hosting.Public;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.DependencyInjection;
@@ -8,16 +9,19 @@ using Compze.Hosting.Testing;
 using Compze.Hosting.Testing.Wiring;
 using Compze.Internals.Serialization.Newtonsoft.Wiring;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
+using Compze.Internals.SystemCE.TransactionsCE.Testing;
 using Compze.Internals.Testing;
 using Compze.Must;
 using Compze.Tessaging.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
 using Compze.Tessaging.Hosting;
+using Compze.Tessaging.Implementation.BestEffortDelivery;
 using Compze.Tessaging.Implementation.Peers;
 using Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Threading;
 using Compze.Threading.Testing;
+using static Compze.Must.MustActions;
 
 // ReSharper disable InconsistentNaming for testing
 #pragma warning disable IDE1006 //Reviewed OK: Test Naming Styles
@@ -97,15 +101,7 @@ public class Given_a_met_distributed_tessaging_subscriber_that_goes_down : Unive
 
    [PCT] public async Task tevents_published_while_the_subscriber_is_down_are_delivered_in_order_when_it_returns()
    {
-      AwaitThePublisherRememberingTheSubscriber();
-      PublishOnThePublisherEndpointInATransaction(sequenceNumber: 1);
-      _subscriberTeventHandlerGate.AwaitPassedThroughCountEqualTo(1);
-
-      //Down: the subscriber leaves the registry while still serving, so the publisher's router drops the connection cleanly -
-      //no delivery can be in flight at a failure moment - and only then does the subscriber's host go away.
-      _registry.Remove(_subscriberHost);
-      _registry.AwaitTwoReadsCompletingAfterNow(); //Two reads guarantee one full reconciliation pass ran against the shrunk membership: the connection is dropped.
-      await _subscriberHost.DisposeAsync();
+      await MeetTheSubscriberDeliveringTeventOneThenTakeItDownAsync();
 
       2.Through(4).ForEach(PublishOnThePublisherEndpointInATransaction);
 
@@ -116,6 +112,61 @@ public class Given_a_met_distributed_tessaging_subscriber_that_goes_down : Unive
 
       _subscriberTeventHandlerGate.AwaitPassedThroughCountEqualTo(4);
       _teventsHandledOnTheSubscriber.Select(it => it.SequenceNumber).SequenceEqual(1.Through(4)).Must().BeTrue();
+   }
+
+   [PCT] public async Task the_publish_that_would_exceed_10_000_queued_tevents_for_the_down_subscriber_fails_loud_naming_the_peer_and_the_bound()
+   {
+      await MeetTheSubscriberDeliveringTeventOneThenTakeItDownAsync();
+
+      _publisherEndpoint.ServiceLocator.Resolve<IScopeFactory>().ExecuteUnitOfWork(unitOfWork =>
+      {
+         var publisher = unitOfWork.Resolve<IUnitOfWorkTeventPublisher>();
+         //Slots are reserved at publish, inside the transaction, so the bound is hit before anything commits: these
+         //10,000 publishes fill the subscriber's queue bound exactly...
+         2.Through(10_001).ForEach(sequenceNumber => publisher.Publish(new MyBestEffortTevent { SequenceNumber = sequenceNumber }));
+
+         //...and the publish that would exceed it fails loud - backpressure naming the peer and the bound, never silent shedding.
+         var message = Invoking(() => publisher.Publish(new MyBestEffortTevent { SequenceNumber = 10_002 }))
+                      .Must().Throw<BestEffortTeventQueueOverflowException>()
+                      .Which.Message;
+         message.Must().Contain(SubscriberEndpointId.ToString());
+         message.Must().Contain("10000");
+      });
+   }
+
+   [PCT] public async Task a_unit_of_work_that_rolls_back_releases_the_queue_slots_its_publishes_reserved()
+   {
+      await MeetTheSubscriberDeliveringTeventOneThenTakeItDownAsync();
+
+      //A unit of work reserving the subscriber's entire queue bound rolls back...
+      Invoking(() => _publisherEndpoint.ServiceLocator.Resolve<IScopeFactory>().ExecuteUnitOfWork(unitOfWork =>
+                    {
+                       Transaction.Current!.FailOnPrepare();
+                       var publisher = unitOfWork.Resolve<IUnitOfWorkTeventPublisher>();
+                       2.Through(10_001).ForEach(sequenceNumber => publisher.Publish(new MyBestEffortTevent { SequenceNumber = sequenceNumber }));
+                    }))
+                   .Must().Throw<TransactionAbortedException>();
+
+      //...and its reservations die with it: a fresh unit of work can fill the whole bound again.
+      _publisherEndpoint.ServiceLocator.Resolve<IScopeFactory>().ExecuteUnitOfWork(unitOfWork =>
+      {
+         var publisher = unitOfWork.Resolve<IUnitOfWorkTeventPublisher>();
+         2.Through(10_001).ForEach(sequenceNumber => publisher.Publish(new MyBestEffortTevent { SequenceNumber = sequenceNumber }));
+      });
+   }
+
+   ///<summary>The shared given: the publisher meets the subscriber (proven by tevent 1 arriving), then the subscriber goes<br/>
+   /// down — it leaves the registry while still serving, so the publisher's router drops the connection cleanly and no delivery<br/>
+   /// can be in flight at a failure moment; only then does the subscriber's host go away.</summary>
+   async Task MeetTheSubscriberDeliveringTeventOneThenTakeItDownAsync()
+   {
+      AwaitThePublisherRememberingTheSubscriber();
+      PublishOnThePublisherEndpointInATransaction(sequenceNumber: 1);
+      _subscriberTeventHandlerGate.AwaitPassedThroughCountEqualTo(1);
+
+      _registry.Remove(_subscriberHost);
+      _registry.AwaitTwoReadsCompletingAfterNow(); //Two reads guarantee one full reconciliation pass ran against the shrunk membership: the connection is dropped.
+      await _subscriberHost.DisposeAsync();
    }
 
    void PublishOnThePublisherEndpointInATransaction(int sequenceNumber) =>

@@ -1,4 +1,5 @@
 using System.Transactions;
+using Compze.Abstractions.Hosting.Public;
 using Compze.Abstractions.Public;
 using Compze.Abstractions.Serialization.Internal;
 using Compze.Abstractions.Tessaging.Public;
@@ -68,17 +69,44 @@ class BestEffortTeventDeliveryLeg : IBestEffortTeventDeliveryLeg
       var transportTessage = TransportTessage.OutGoing.Create(wrappedTevent, envelopeId, _typeMap, _serializer);
       this.Log().Debug($"Publishing best-effort tevent {envelopeId} ({wrappedTevent.GetType().Name}) to {subscriberIds.Count} subscriber peer(s)");
 
+      //Queue slots are reserved here, at publish, inside the caller's transaction, so a full queue fails the publish loud
+      //(BestEffortTeventQueueOverflowException) - backpressure, never post-commit shedding. Commit converts the reservations
+      //into queued tevents; a transaction completing any other way releases them.
+      var subscribers = ReserveASlotOnEverySubscribersQueue(subscriberIds);
+
       //The publisher asserts the ambient transaction before routing any delivery leg, so a best-effort tevent is always published from within a unit of work: remote delivery happens on commit, never immediately.
-      Transaction.Current._assert().NotNull().OnCommittedSuccessfully(EnqueueOnEverySubscribersQueue);
+      var transaction = Transaction.Current._assert().NotNull();
+      transaction.OnCommittedSuccessfully(EnqueueOnEverySubscribersQueue);
+      transaction.OnCompletedWithoutCommitting(() => subscribers.ForEach(subscriber => subscriber.Queue.ReleaseReservation()));
       return;
 
       void EnqueueOnEverySubscribersQueue()
       {
+         foreach(var subscriber in subscribers)
+         {
+            _tessagesInFlightTracker.SendingTessageOnTransport(transportTessage, subscriber.Id);
+            subscriber.Queue.Enqueue(transportTessage);
+         }
+      }
+   }
+
+   List<(EndpointId Id, BestEffortTeventQueues.PeerQueue Queue)> ReserveASlotOnEverySubscribersQueue(IReadOnlyList<EndpointId> subscriberIds)
+   {
+      var reserved = new List<(EndpointId Id, BestEffortTeventQueues.PeerQueue Queue)>(subscriberIds.Count);
+      try
+      {
          foreach(var subscriberId in subscriberIds)
          {
-            _tessagesInFlightTracker.SendingTessageOnTransport(transportTessage, subscriberId);
-            _queues.For(subscriberId).Enqueue(transportTessage);
+            var queue = _queues.For(subscriberId);
+            queue.ReserveSlot();
+            reserved.Add((subscriberId, queue));
          }
+         return reserved;
+      }
+      catch //Resource cleanup, not handling: the failing publish must not leak the reservations it already took from the other subscribers' queues.
+      {
+         reserved.ForEach(subscriber => subscriber.Queue.ReleaseReservation());
+         throw;
       }
    }
 }

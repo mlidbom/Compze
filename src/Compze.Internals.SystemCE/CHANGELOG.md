@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## 0.3.0-internal
 
+- `Transaction.OnCompletedWithoutCommitting(action)` (`TransactionsCE`): runs the action when the transaction completes any way but a successful commit — the mirror of `OnCommittedSuccessfully`, so registering with both covers every outcome exactly once. What lets a reservation taken inside a transaction be released exactly when the transaction fails to commit (Compze.Tessaging's best-effort queue bound). `TransactionCE` also converted to the extension-block syntax.
 - `ProcessIdentity` (`DiagnosticsCE`): identifies a specific OS process well enough that any process on the machine can ask whether it is still running — the process id plus its start time (the disambiguator that detects process id reuse), with cross-OS-tolerant start-time equality (on Unix a process's start time is reconstructed from a per-reader boot-time estimate, so exact tick equality is a Windows-only luxury). What the same-machine endpoint registry records for each announcing process.
 - `IBinaryFile` is `IDisposable`: a binary file abstraction whose implementation holds an OS handle must be disposable — disposing an `IInterprocessObject` now releases its backing file's memory mapping through this.
 - Added `SetInCopy` to the read-only-dictionary copy helpers: like `AddToCopy` but overwrites when the key is already present.
