@@ -176,18 +176,20 @@ Before this door existed, every outside-the-pipeline caller hand-built the unit 
 primitives — `ExecuteInIsolatedScope(scope => scope.Resolve<ITeventPublisher>().Publish(fact))` — forcing
 application code to speak container language to say one domain verb.
 
-### `ITransactionIgnoringTeventPublisher` — the publish escape hatch
+### No publish-side escape hatch, deliberately
 
-For tracing/monitoring infrastructure that must emit *now*, regardless of the surrounding transaction's
-fate: publishes immediately and unconditionally — no on-commit deferral, emits even if the caller's
-transaction rolls back. A separate interface rather than a second method, deliberately: depending on it
-makes "this code emits out-of-band" visible in a constructor signature, and keeps the dangerous path off the
-common surface.
+There is no "publish ignoring my transaction" door. One existed briefly
+(`ITransactionIgnoringTeventPublisher`, the ordinary publisher under ambient-transaction suppression); it
+was deleted 2026-07-16: nothing ever consumed it — its imagined client, tracing/monitoring infrastructure
+that must emit *now* regardless of the surrounding transaction's fate, never materialized — and with no
+consumer to arbitrate, its correct semantics were contested (deliver in the caller's scope under suppression
+vs. as its own unit of work; whether an `IMustBeSentTransactionally` tevent may pass at all). Keeping the
+type would have implied a settled abstraction that did not exist.
 
-It rejects any tevent implementing `IMustBeSentTransactionally` (asserted loudly — C# cannot express "an
-`ITevent` provably not X" as a constraint): immediate-unconditional delivery structurally cannot back a
-transactional send. That marker, not `IAtMostOnceTessage`, is the correct guard — the publisher is a
-send-side concept, and at-most-once constrains only handling.
+A caller that genuinely needs the behavior composes it explicitly — suppress the ambient transaction and
+publish through `IIndependentTeventPublisher`, whose no-ambient-transaction assert passes under
+suppression — stating "this publish deliberately escapes my transaction's fate" at the call site. If a real
+need materializes, its requirements design the abstraction.
 
 ## Subscribing
 
@@ -204,14 +206,10 @@ delivery guarantee comes from each arriving tevent's type — the subscriber nev
 
 ### `RegisterTransactionIgnoringTeventHandlers` — observation
 
-The one subscription-side choice: opt a handler all the way down to observation. Same clients and same word
-as the publish escape hatch, because it is the same concept on the other end — "emit/observe regardless of
-transactional fate":
-
-| | Default | Transaction-ignoring escape hatch |
-|---|---|---|
-| **Publish** | `IUnitOfWorkTeventPublisher` — honors the transaction, routes per tevent type | `ITransactionIgnoringTeventPublisher` — emit even if my transaction rolls back |
-| **Subscribe** | `RegisterTessagingHandlers` — the tevent type's full guarantee | `RegisterTransactionIgnoringTeventHandlers` — observe even if the processing transaction rolls back |
+The one subscription-side choice: opt a handler all the way down to observation — "observe regardless of
+transactional fate". Where the default registration delivers under the arriving tevent type's full
+guarantee, `RegisterTransactionIgnoringTeventHandlers` observes even if the transaction the tevent was
+published or is processed in rolls back.
 
 The observation contract, stated honestly — this is the fine print a subscriber accepts by using the escape
 hatch, and it is why the escape hatch is for infrastructure, never domain logic:
@@ -343,7 +341,7 @@ As of 2026-07-15:
   server serves no handler for the request kind — so the tessage stays undelivered on the sender, never
   silently downgraded; this is reachable through a wide subscription (say, to a plain `ITevent` interface)
   that a remote publisher's exactly-once tevent happens to match, which no setup-time rule can see.
-- The transaction-ignoring escape hatches (2026-07-15). Subscribe side:
+- The transaction-ignoring subscription escape hatch (2026-07-15).
   `RegisterTransactionIgnoringTeventHandlers` (an endpoint-builder property, backed by
   `ITransactionIgnoringTeventHandlerRegistrar` — a separate registrar, so opting out of every guarantee is
   visible and off the common surface) registers observation handlers, dispatched by the observation
@@ -353,11 +351,10 @@ As of 2026-07-15:
   ambient transaction suppressed; a throwing observer is reported through the background-exception
   reporter, never retried, and never stops the remaining observers or the triggering publish/arrival. An
   observation subscription joins the endpoint's advertisement like any other — an observer-only endpoint
-  still pulls the tevent across the wire. Publish side: `ITransactionIgnoringTeventPublisher` is the
-  ordinary publisher with the ambient transaction suppressed — under suppression every honor-the-transaction
-  behavior degenerates into exactly the escape hatch's contract (participation detached, observation fires,
-  the transient leg sends right away) — and it rejects any tevent implementing `IMustBeSentTransactionally`,
-  loudly.
+  still pulls the tevent across the wire. A publish-side counterpart (`ITransactionIgnoringTeventPublisher`,
+  the ordinary publisher under ambient-transaction suppression) was built alongside it and deleted
+  2026-07-16: nothing ever consumed it, and with no consumer to arbitrate its contested semantics, the type
+  claimed a settled abstraction that did not exist — see "No publish-side escape hatch" above.
 
 Everything this document describes is built. One refinement the guarantee-free composition forced on the
 wiring rules as first written: "Observation is allowed anywhere — direct dispatch needs no machinery" holds

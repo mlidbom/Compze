@@ -51,7 +51,6 @@ public class InProcessTessagingEndpointFeature
                        .InProcessTeventPublisher()
                        .TeventObservationDispatcher()
                        .UnitOfWorkTeventPublisher()
-                       .IndependentTeventPublisher()
-                       .TransactionIgnoringTeventPublisher();
+                       .IndependentTeventPublisher();
    }
 }

@@ -154,13 +154,4 @@ public class Given_a_container_composed_with_InProcessTessaging : UniversalTestB
                 .Must().Throw<Exception>()
                 .Which.Message.Must().Contain("ambient transaction");
    }
-
-   public class the_transaction_ignoring_tevent_publisher : Given_a_container_composed_with_InProcessTessaging
-   {
-      [PCT] public void rejects_a_tevent_whose_type_demands_a_transactional_send() =>
-         Container.ScopeFactory.ExecuteInIsolatedScope(scope =>
-            Invoking(() => scope.Resolve<IUnitOfWorkIgnoringTeventPublisher>().Publish(new MyTaggregateTevent()))
-                          .Must().Throw<Exception>()
-                          .Which.Message.Must().Contain(nameof(IMustBeSentTransactionally)));
-   }
 }

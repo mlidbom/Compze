@@ -309,9 +309,9 @@ separate feature.
 
 **The design for this feature is settled and lives in its own document:**
 [`src/Compze.Tessaging/dev_docs/tevent-delivery-model.md`](../Compze.Tessaging/dev_docs/tevent-delivery-model.md) —
-the delivery ladder (participation / exactly-once / transient / observation), `IUnitOfWorkTeventPublisher` and the
-`ITransactionIgnoringTeventPublisher` escape hatch, subscription semantics with the binary observation
-opt-down, the observation contract, ordering, and the wiring rules. Designed 2026-07-13; that document is the
+the delivery ladder (participation / exactly-once / transient / observation), `IUnitOfWorkTeventPublisher`,
+subscription semantics with the binary observation opt-down, the observation contract, ordering, and the
+wiring rules. Designed 2026-07-13; that document is the
 single home — this file keeps only the work items. Resolved along the way: the
 remotable-but-not-exactly-once tier needs no new marker (`IRemotableTevent` IS the tier — a mechanism name in
 a tessage type would re-entangle the axes); the wrapper-interface-constraint blocker and the
@@ -348,10 +348,11 @@ is FIXED (2026-07-13): `GetUndeliveredTessagesForEndpoint` orders by the outbox 
       (immediate, out-of-transaction) and the observation dispatch — DONE (2026-07-15). The observation
       dispatcher fires at every first registration of a tevent (local publish / inbox registration after
       dedup / transient arrival), in a fresh scope with the ambient transaction suppressed; a throwing
-      observer is reported through the background-exception reporter, never retried. The publish escape
-      hatch is the ordinary publisher under transaction suppression, rejecting `IMustBeSentTransactionally`
-      tevents loudly. Specified in `Tevent_observation_tests`, `Transaction_ignoring_tevent_publisher_tests`,
-      and the in-process container specs.
+      observer is reported through the background-exception reporter, never retried. Specified in
+      `Tevent_observation_tests` and the in-process container specs. The publish-side escape hatch built
+      alongside it (`ITransactionIgnoringTeventPublisher`, the ordinary publisher under transaction
+      suppression) was DELETED (2026-07-16): nothing ever consumed it, and its semantics were contested with
+      no consumer to arbitrate — see "No publish-side escape hatch" in the delivery-model doc.
 - [x] Once the router honors the full advertised set, assert loudly that every advertised
       non-infrastructure type gets a route, so a future regression fails instead of silently dropping
       subscriptions — DONE (2026-07-15), on both ends: `TessageHandlerRegistry.HandledRemoteTessageTypeIds`

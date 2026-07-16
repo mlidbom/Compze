@@ -17,7 +17,7 @@ Every piece of work the framework runs falls into exactly one of three context k
 |---|---|---|
 | **Unit of work** | fresh scope + transaction (`ExecuteUnitOfWork`) | tommand handlers, exactly-once inbox processing, transient tevent dispatch, every independent door's mutating verb |
 | **Isolated scope** | fresh scope, no transaction of its own (`ExecuteInIsolatedScope`); an ambient transaction, if the caller has one, is left as-is so reads join its consistency | tuery handlers, discovery queries |
-| **Detached** | fresh scope + ambient transaction actively **suppressed** | observation handlers, the transaction-ignoring publisher |
+| **Detached** | fresh scope + ambient transaction actively **suppressed** | observation handlers |
 
 A tuery execution is deliberately **not** a unit of work: it changes nothing, so there is nothing to commit
 or roll back. (On SQLite this is also load-bearing: any transaction that touches a SQLite connection takes
@@ -92,9 +92,5 @@ tracking exists or is planned; a considered AsyncLocal design was dropped in its
 
 - **Reifying a `UnitOfWork` object** (completion-hook surface on `IUnitOfWorkResolver`, migrating the
   per-component usage guards into the unit of work's own lifecycle) — sketch first; the guards work.
-- **A unit-of-work flavor of `ITransactionIgnoringTeventPublisher`** — the honor/ignore distinction exists at
-  root too (a thread can carry an ambient transaction without a scope), but nothing needs it yet. Its name
-  under the new scheme is also an open question: it lives in a unit of work and deliberately detaches from
-  the unit of work's transaction, so neither prefix fits.
 - **A type-level name for the isolated-scope (read) context**, if something ever needs to say it in a
   signature.

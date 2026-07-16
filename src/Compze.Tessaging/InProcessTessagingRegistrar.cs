@@ -40,8 +40,7 @@ public static class InProcessTessagingRegistrar
                   .InProcessTeventPublisher()
                   .TeventObservationDispatcher()
                   .UnitOfWorkTeventPublisher()
-                  .IndependentTeventPublisher()
-                  .TransactionIgnoringTeventPublisher();
+                  .IndependentTeventPublisher();
 
       void RegisterDefaultTypeMapper()
       {
