@@ -157,10 +157,24 @@ public class Given_a_container_composed_with_InProcessTessaging : UniversalTestB
 
    public class the_unit_of_work_tevent_publisher : Given_a_container_composed_with_InProcessTessaging
    {
-      [PCT] public void throws_when_publishing_outside_an_ambient_transaction() =>
+      ///<summary>ToString() rather than Message in the assertion: some backend containers (Autofac) wrap the instantiation's<br/>
+      /// exception in their own resolution exception, putting the assert's message on the inner exception.</summary>
+      [PCT] public void cannot_be_resolved_outside_an_ambient_transaction() =>
          Container.ScopeFactory.ExecuteInIsolatedScope(scope =>
-            Invoking(() => scope.Resolve<IUnitOfWorkTeventPublisher>().Publish(new MySpecialGreetingRequestedTevent()))
+            Invoking(() => scope.Resolve<IUnitOfWorkTeventPublisher>())
                           .Must().Throw<Exception>()
-                          .Which.Message.Must().Contain("ambient transaction"));
+                          .Which.ToString().Must().Contain("ambient transaction"));
+
+      ///<summary>The Lifestyle.UnitOfWork assert fires at instantiation, so it cannot prove the instance never outlives its<br/>
+      /// transaction — the publisher's own publish-time assert is the deep defense this specifies.</summary>
+      [PCT] public void publishing_through_an_instance_resolved_in_a_transaction_that_has_since_completed_throws() =>
+         Container.ScopeFactory.ExecuteInIsolatedScope(scope =>
+         {
+            IUnitOfWorkTeventPublisher publisher;
+            using(new TransactionScope()) publisher = scope.Resolve<IUnitOfWorkTeventPublisher>();
+            Invoking(() => publisher.Publish(new MySpecialGreetingRequestedTevent()))
+                          .Must().Throw<Exception>()
+                          .Which.Message.Must().Contain("ambient transaction");
+         });
    }
 }

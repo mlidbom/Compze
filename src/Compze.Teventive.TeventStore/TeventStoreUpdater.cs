@@ -18,7 +18,9 @@ namespace Compze.Teventive.TeventStore;
 
 class TeventStoreUpdater : ITeventStoreReader, ITeventStoreUpdater
 {
-   readonly IUnitOfWorkTeventPublisher _teventPublisher;
+   //Deferred rather than the publisher itself: this one instance serves the reader face (ITeventStoreReader) too, which constructs in plain read scopes,
+   //where the Lifestyle.UnitOfWork publisher cannot even be resolved. Only the updater face publishes, always inside its transaction, so it resolves at publish time.
+   readonly IServiceResolver<IUnitOfWorkTeventPublisher> _teventPublisherResolver;
    readonly ITeventStore _store;
    readonly ITaggregateTypeValidator _taggregateTypeValidator;
    readonly IDictionary<TaggregateId, ITaggregate> _idMap = new Dictionary<TaggregateId, ITaggregate>();
@@ -28,15 +30,15 @@ class TeventStoreUpdater : ITeventStoreReader, ITeventStoreUpdater
    public static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(
          Scoped.For<ITeventStoreUpdater, ITeventStoreReader>()
-               .CreatedBy((IUnitOfWorkTeventPublisher teventPublisher, ITeventStore teventStore, ITaggregateTypeValidator taggregateTypeValidator) =>
-                             new TeventStoreUpdater(teventPublisher, teventStore, taggregateTypeValidator)));
+               .CreatedBy((IServiceResolver<IUnitOfWorkTeventPublisher> teventPublisherResolver, ITeventStore teventStore, ITaggregateTypeValidator taggregateTypeValidator) =>
+                             new TeventStoreUpdater(teventPublisherResolver, teventStore, taggregateTypeValidator)));
 
-   TeventStoreUpdater(IUnitOfWorkTeventPublisher teventPublisher, ITeventStore store, ITaggregateTypeValidator taggregateTypeValidator)
+   TeventStoreUpdater(IServiceResolver<IUnitOfWorkTeventPublisher> teventPublisherResolver, ITeventStore store, ITaggregateTypeValidator taggregateTypeValidator)
    {
-      Argument.NotNull(teventPublisher).NotNull(store);
+      Argument.NotNull(teventPublisherResolver).NotNull(store);
 
       _usageGuard = new CombinationUsageGuard(new SingleThreadUseGuard(this), new SingleTransactionUsageGuard(this));
-      _teventPublisher = teventPublisher;
+      _teventPublisherResolver = teventPublisherResolver;
       _store = store;
       _taggregateTypeValidator = taggregateTypeValidator;
    }
@@ -107,7 +109,8 @@ class TeventStoreUpdater : ITeventStoreReader, ITeventStoreUpdater
 
          _store.SaveSingleTaggregateTevents(wrappedTevents);
 
-         wrappedTevents.ForEach(wrappedTevent => _teventPublisher.Publish(wrappedTevent));
+         var teventPublisher = _teventPublisherResolver.Resolve();
+         wrappedTevents.ForEach(wrappedTevent => teventPublisher.Publish(wrappedTevent));
       });
 
       _idMap.Add(taggregate.Id, taggregate);
@@ -124,7 +127,7 @@ class TeventStoreUpdater : ITeventStoreReader, ITeventStoreUpdater
       }
 
       _store.SaveSingleTaggregateTevents([wrappedTevent]);
-      _teventPublisher.Publish(wrappedTevent);
+      _teventPublisherResolver.Resolve().Publish(wrappedTevent);
    }
 
    public void Delete(TaggregateId taggregateId)

@@ -25,9 +25,12 @@ public class Transaction_policies_internal : EndpointHostTestBase
       Invoking(() => TransactionScopeCe.Execute(() => Navigator.Post(MyAtMostOnceTypermediaTommandWithResult.Create())))
         .Must().Throw<TessageValidator.TransactionPolicyViolationException>();
 
-   [PCT] public void Sending_an_ExactlyOnceTommand_through_the_unit_of_work_tommand_sender_in_a_scope_without_a_transaction_throws_TransactionPolicyViolationException() =>
-      Invoking(() => RemoteEndpoint.ServiceLocator.Resolve<IScopeFactory>().ExecuteInIsolatedScope(scope => scope.Resolve<IUnitOfWorkTommandSender>().Send(new MyExactlyOnceTommand())))
-        .Must().Throw<TessageValidator.TransactionPolicyViolationException>();
+   ///<summary>ToString() rather than Message in the assertion: some backend containers (Autofac) wrap the instantiation's<br/>
+   /// exception in their own resolution exception, putting the assert's message on the inner exception.</summary>
+   [PCT] public void Resolving_the_unit_of_work_tommand_sender_in_a_scope_without_a_transaction_throws() =>
+      Invoking(() => RemoteEndpoint.ServiceLocator.Resolve<IScopeFactory>().ExecuteInIsolatedScope(scope => scope.Resolve<IUnitOfWorkTommandSender>()))
+        .Must().Throw<Exception>()
+        .Which.ToString().Must().Contain("ambient transaction");
 
    [PCT] public void Sending_an_ExactlyOnceTommand_through_the_independent_tommand_sender_from_within_an_ambient_transaction_throws() =>
       Invoking(() => TransactionScopeCe.Execute(() => RemoteEndpoint.ServiceLocator.Resolve<IIndependentTommandSender>().Send(new MyExactlyOnceTommand())))
