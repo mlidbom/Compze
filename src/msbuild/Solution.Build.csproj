@@ -3,6 +3,7 @@
    <Import Project="../SolutionStructure/solutionstructure.minimal-build-involvement.props" />
 
    <ItemGroup>
+      <None Include="../../**/*.slnx" Exclude="$(BuildOutputExcludes)" KeepDuplicates="false" />
       <None Include="../**/*.props" Exclude="$(BuildOutputExcludes)" KeepDuplicates="false" />
       <None Include="../**/*.targets" Exclude="$(BuildOutputExcludes)" KeepDuplicates="false" />
 
