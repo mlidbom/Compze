@@ -12,7 +12,7 @@ namespace AccountManagement.UI;
 static class AccountUIAdapter
 {
    public static void Login(TypermediaHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTommandWithResult(
-      (AccountResource.Tommand.LogIn logIn, IInProcessTypermediaNavigator navigator) =>
+      (AccountResource.Tommand.LogIn logIn, IUnitOfWorkLocalTypermediaNavigator navigator) =>
       {
          var email = Email.Parse(logIn.Email);
 
@@ -31,15 +31,15 @@ static class AccountUIAdapter
       });
 
    internal static void ChangePassword(TypermediaHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTommand(
-      (AccountResource.Tommand.ChangePassword tommand, IInProcessTypermediaNavigator navigator) =>
+      (AccountResource.Tommand.ChangePassword tommand, IUnitOfWorkLocalTypermediaNavigator navigator) =>
          navigator.Execute(InternalApi.Tueries.GetForUpdate(tommand.AccountId)).ChangePassword(tommand.OldPassword, new Password(tommand.NewPassword)));
 
    internal static void ChangeEmail(TypermediaHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTommand(
-      (AccountResource.Tommand.ChangeEmail tommand, IInProcessTypermediaNavigator navigator) =>
+      (AccountResource.Tommand.ChangeEmail tommand, IUnitOfWorkLocalTypermediaNavigator navigator) =>
          navigator.Execute(InternalApi.Tueries.GetForUpdate(tommand.AccountId)).ChangeEmail(Email.Parse(tommand.Email)));
 
    internal static void Register(TypermediaHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTommandWithResult(
-      (AccountResource.Tommand.Register tommand, IInProcessTypermediaNavigator bus) =>
+      (AccountResource.Tommand.Register tommand, IUnitOfWorkLocalTypermediaNavigator bus) =>
       {
          var (status, account) = Account.Register(tommand.AccountId, Email.Parse(tommand.Email), new Password(tommand.Password), bus);
          return status switch
@@ -51,6 +51,6 @@ static class AccountUIAdapter
       });
 
    internal static void GetById(TypermediaHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTuery(
-      (TessageTypes.Remotable.NonTransactional.Tueries.TaggregateLink<AccountResource> accountTuery, IInProcessTypermediaNavigator navigator)
+      (TessageTypes.Remotable.NonTransactional.Tueries.TaggregateLink<AccountResource> accountTuery, IUnitOfWorkLocalTypermediaNavigator navigator)
          => new AccountResource(navigator.Execute(InternalApi.AccountQueryModel.Tueries.Get(accountTuery.TaggregateId))));
 }

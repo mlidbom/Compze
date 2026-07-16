@@ -14,7 +14,7 @@ public static class InProcessTypermediaRegistrar
 {
    ///<summary>
    /// Wires in-process Typermedia into the container being built: the handler registry and the
-   /// <see cref="IInProcessTypermediaNavigator"/> through which strictly local tueries and tommands execute
+   /// <see cref="IUnitOfWorkLocalTypermediaNavigator"/> through which strictly local tueries and tommands execute
    /// synchronously, on the calling thread, within the caller's transaction.<br/>
    /// Register handlers after the container is built, through the resolved
    /// <see cref="ITypermediaHandlerRegistrar"/>.
@@ -29,7 +29,8 @@ public static class InProcessTypermediaRegistrar
       if(!@this.IsRegistered<ITypeMap>()) RegisterEmptyDefaultTypeMapper();
 
       return @this.TypermediaHandlerRegistry()
-                  .InProcessTypermediaNavigator();
+                  .UnitOfWorkLocalTypermediaNavigator()
+                  .IndependentLocalTypermediaNavigator();
 
       void RegisterEmptyDefaultTypeMapper()
       {

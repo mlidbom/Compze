@@ -11,19 +11,13 @@ public static class RemoteTypermediaNavigatorRegistrar
 {
    public static IComponentRegistrar RemoteTypermediaNavigator(this IComponentRegistrar registrar)
       => registrar.Register(Typermedia.RemoteTypermediaNavigator.RegisterWith);
-
-   public static IComponentRegistrar SingletonRemoteTypermediaNavigator(this IComponentRegistrar registrar)
-      => registrar.Register(Typermedia.RemoteTypermediaNavigator.RegisterSingletonWith);
 }
 
 //Todo: Build a pipeline to handle things like tommand validation, caching layers etc. Don't explicitly check for rules and optimization here with duplication across the class.
 [UsedImplicitly] class RemoteTypermediaNavigator(ITypermediaRouting typermediaRouting) : IRemoteTypermediaNavigator
 {
+   //Singleton, deliberately: remote navigation has no unit-of-work relationship to be scoped to - a typermedia tessage cannot be sent remotely from within a transaction, and routing is a singleton - so there is nothing a scope would give it.
    public static void RegisterWith(IComponentRegistrar registrar)
-      => registrar.Register(Scoped.For<IRemoteTypermediaNavigator>()
-                                  .CreatedBy((ITypermediaRouting typermediaRouting) => new RemoteTypermediaNavigator(typermediaRouting)));
-
-   internal static void RegisterSingletonWith(IComponentRegistrar registrar)
       => registrar.Register(Singleton.For<IRemoteTypermediaNavigator>()
                                      .CreatedBy((ITypermediaRouting typermediaRouting) => new RemoteTypermediaNavigator(typermediaRouting)));
 

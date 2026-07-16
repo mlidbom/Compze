@@ -31,7 +31,7 @@ public class Given_a_started_typermedia_router_with_no_connected_endpoints : Uni
              .CurrentTestsTypermediaClientTransport()
              .TypermediaClientTypeIdentifierMapper(_ => {})
              .TypermediaRouter()
-             .SingletonRemoteTypermediaNavigator();
+             .RemoteTypermediaNavigator();
 
       _container = builder.Build();
       _container.Resolve<ITypermediaRouter>().Start();

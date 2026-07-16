@@ -42,7 +42,7 @@ public class TypermediaTestClient : IAsyncDisposable
              .JSonAppConfigFileConfigurationParameterProvider()
              .TypermediaClientTypeIdentifierMapper(registerDomainTypeMappings)
              .TypermediaRouter()
-             .SingletonRemoteTypermediaNavigator();
+             .RemoteTypermediaNavigator();
 
       var client = new TypermediaTestClient(builder.Build());
       client._typermediaRouter.Start();
