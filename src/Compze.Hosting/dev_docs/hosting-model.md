@@ -159,7 +159,7 @@ wired once whether it arrives alone or under distribution).
   Tessaging declaration.
 - **Typermedia splits two ways**, because it has no mode-exclusive service: distributed Typermedia simply
   contains in-process Typermedia. `InProcessTypermediaEndpointFeature` (in `Compze.Typermedia`,
-  `AddInProcessTypermedia()`) wires the handler registry and the `IUnitOfWorkLocalTypermediaNavigator` through
+  `AddInProcessTypermedia()`) wires the handler registry and the `ISessionLocalTypermediaNavigator` through
   which strictly local tueries and tommands execute synchronously, in the caller's transaction.
   `DistributedTypermediaEndpointFeature` (in `Compze.Typermedia.Client`, `AddDistributedTypermedia()`)
   composes it and adds the handler executor that serves remote clients, discovery, and the client side
@@ -226,7 +226,7 @@ in-process endpoint has no address: there is nothing to connect to, ever).
 Everything above assumes an endpoint that converses with other endpoints. But both communication styles have
 a purely synchronous core that is valuable entirely on its own, inside a single process: publishing tevents
 that restructure the internal flow of an application, and executing strictly local tueries and tommands
-through the `IUnitOfWorkLocalTypermediaNavigator`. Everything in that core runs synchronously, on the calling
+through the `ISessionLocalTypermediaNavigator`. Everything in that core runs synchronously, on the calling
 thread, within the caller's transaction — so there are no transports to start, no discovery, no background
 work, and therefore *nothing to host*. In-process Compze is container wiring, not hosting.
 
@@ -237,7 +237,7 @@ features are built from, so there is exactly one definition of what each style i
 var builder = /* any Compze container builder */;
 builder.Registrar
        .InProcessTessaging()    // handler registry, synchronous in-process tevent delivery, IUnitOfWorkTeventPublisher (no remote legs)
-       .InProcessTypermedia();  // handler registry, IUnitOfWorkLocalTypermediaNavigator
+       .InProcessTypermedia();  // handler registry, ISessionLocalTypermediaNavigator
 var container = builder.Build();
 ```
 

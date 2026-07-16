@@ -39,7 +39,7 @@ static class AccountStatistics
    }
 
    static void MaintainStatisticsWhenRelevantTeventsAreReceived(ITessageHandlerRegistrar registrar) => registrar.ForTevent(
-      (IAccountTevent tevent, IUnitOfWorkLocalTypermediaNavigator navigator, StatisticsSingletonInitializer initializer) =>
+      (IAccountTevent tevent, ISessionLocalTypermediaNavigator navigator, StatisticsSingletonInitializer initializer) =>
       {
          initializer.EnsureInitialized(navigator);
 
@@ -61,7 +61,7 @@ static class AccountStatistics
       readonly Lock _lock = new();
       bool _isInitialized;
       readonly DocumentDbApi _documentDbApi = new();
-      public void EnsureInitialized(IUnitOfWorkLocalTypermediaNavigator navigator)
+      public void EnsureInitialized(ISessionLocalTypermediaNavigator navigator)
       {
          lock(_lock)
          {

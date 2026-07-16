@@ -79,17 +79,23 @@ it:
 Context requirements stay where they were: asserted at use, and stated in signatures by
 `IUnitOfWorkResolver`.
 
-## The front-door duality: `UnitOfWork*` / `Independent*`
+## The front-door duality: `UnitOfWork*`/`Session*` / `Independent*`
 
-Application-facing operations come in two flavors, named by the caller's relationship to the unit of work —
-the same duality `IRootResolver`/`IScopeResolver` expresses at the container level:
+Application-facing operations come in two flavors, named by the caller's relationship to the execution
+context — the same duality `IRootResolver`/`IScopeResolver` expresses at the container level:
 
-| Within the caller's unit of work (Scoped) | As its own unit of work (Singleton, root-resolvable) |
+| Within the caller's context (Scoped) | As its own context (Singleton, root-resolvable) |
 |---|---|
 | `IUnitOfWorkTeventPublisher` | `IIndependentTeventPublisher` |
-| `IUnitOfWorkTommandSender` (formerly `IServiceBusSession` — never a session: no conversational state) | `IIndependentTommandSender` |
-| `IUnitOfWorkLocalTypermediaNavigator` (formerly `IInProcessTypermediaNavigator`) | `IIndependentLocalTypermediaNavigator` (tommands = own unit of work; tueries = own isolated scope) |
-| — | `IRemoteTypermediaNavigator`: independent by *nature* — remote typermedia sends are forbidden inside a transaction, so there is no unit-of-work flavor to pair with, and no qualifier |
+| `IUnitOfWorkTommandSender` (formerly `IServiceBusSession` — a misnomer twice over: no conversational state, and its requirement is the unit of work, not merely the session) | `IIndependentTommandSender` |
+| `ISessionLocalTypermediaNavigator` (formerly `IInProcessTypermediaNavigator`) | `IIndependentLocalTypermediaNavigator` (tommands = own unit of work; tueries = own isolated scope) |
+| — | `IRemoteTypermediaNavigator`: independent by *nature* — remote typermedia sends are forbidden inside a transaction, so there is no within-the-caller's-context flavor to pair with, and no qualifier |
+
+The left column's prefix is the weakest context the component's whole surface requires. The publisher and
+the sender require the caller's **unit of work** — every use demands the ambient transaction. The navigator
+requires only the caller's **session** (its scope) — a tuery needs nothing more, and only a tommand
+execution additionally demands that the scope be paired with the ambient transaction. Naming the navigator
+`UnitOfWork*` would over-claim for tueries; naming the sender `Session*` would under-claim for everything.
 
 The independent doors exist because the unit-of-work flavors are scoped, so code outside any scope cannot
 resolve them — it used to hand-build the context from container primitives

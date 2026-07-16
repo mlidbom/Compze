@@ -2,11 +2,13 @@ using Compze.Abstractions.Tessaging.Public;
 
 namespace Compze.Typermedia;
 
-///<summary>Navigates the local typermedia API — the API this endpoint itself serves — within the caller's unit of work:<br/>
-/// handlers execute synchronously, resolving their dependencies from the caller's scope and taking part in the caller's<br/>
-/// ambient transaction. Code outside any unit of work navigates through <see cref="IIndependentLocalTypermediaNavigator"/>,<br/>
-/// the independent counterpart. The remote sibling, <see cref="IRemoteTypermediaNavigator"/>, browses other endpoints' APIs.</summary>
-public interface IUnitOfWorkLocalTypermediaNavigator
+///<summary>Navigates the local typermedia API — the API this endpoint itself serves — within the caller's session: the<br/>
+/// navigator lives in the caller's scope, and handlers execute synchronously, resolving their dependencies from that scope.<br/>
+/// A tuery needs only the scope; a tommand executes within the caller's unit of work — its ambient transaction, whose<br/>
+/// presence is asserted, decides the handler's effects' fate. Code outside any scope navigates through<br/>
+/// <see cref="IIndependentLocalTypermediaNavigator"/>, the independent counterpart. The remote sibling,<br/>
+/// <see cref="IRemoteTypermediaNavigator"/>, browses other endpoints' APIs.</summary>
+public interface ISessionLocalTypermediaNavigator
 {
    ///<summary>Synchronously executes the local handler for <paramref name="tuery"/> in the caller's scope. A tuery demands no<br/>
    /// transaction — it changes nothing — but inside the caller's transaction its reads join that transaction's consistency,<br/>

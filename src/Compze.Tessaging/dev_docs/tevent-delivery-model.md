@@ -124,7 +124,7 @@ paired with one ambient transaction, begun and completed together (see
 unit-of-work publisher, which joins it; code outside any publishes through the independent publisher, which
 gives each publish its own. The same duality repeats across the front doors:
 `IUnitOfWorkTommandSender`/`IIndependentTommandSender` for sending tommands, and
-`IUnitOfWorkLocalTypermediaNavigator`/`IIndependentLocalTypermediaNavigator` for navigating the local
+`ISessionLocalTypermediaNavigator`/`IIndependentLocalTypermediaNavigator` for navigating the local
 typermedia API.
 
 ### `IUnitOfWorkTeventPublisher` — publish within the caller's unit of work

@@ -44,17 +44,17 @@ public class Given_a_container_composed_with_InProcessTypermedia : UniversalTest
       }
 
       [PCT] public void executing_the_tuery_through_the_unit_of_work_local_typermedia_navigator_returns_the_handlers_result() =>
-         Container.ScopeFactory.ExecuteInIsolatedScope(scope => scope.Resolve<IUnitOfWorkLocalTypermediaNavigator>().Execute(new MyStrictlyLocalGreetingTuery { Name = "World" }).Message.Must().Be("Hello World!"));
+         Container.ScopeFactory.ExecuteInIsolatedScope(scope => scope.Resolve<ISessionLocalTypermediaNavigator>().Execute(new MyStrictlyLocalGreetingTuery { Name = "World" }).Message.Must().Be("Hello World!"));
 
       [PCT] public void executing_the_tommand_through_the_unit_of_work_local_typermedia_navigator_within_a_unit_of_work_invokes_the_handler()
       {
-         Container.ScopeFactory.ExecuteUnitOfWork(unitOfWork => unitOfWork.Resolve<IUnitOfWorkLocalTypermediaNavigator>().Execute(new MyStrictlyLocalRegisterGreeterTommand { Name = "Greta" }));
+         Container.ScopeFactory.ExecuteUnitOfWork(unitOfWork => unitOfWork.Resolve<ISessionLocalTypermediaNavigator>().Execute(new MyStrictlyLocalRegisterGreeterTommand { Name = "Greta" }));
          _registeredGreeters.Single().Must().Be("Greta");
       }
 
       [PCT] public void executing_the_tommand_without_a_transaction_fails_stating_the_transaction_policy() =>
          Container.ScopeFactory.ExecuteInIsolatedScope(scope =>
-            Invoking(() => scope.Resolve<IUnitOfWorkLocalTypermediaNavigator>().Execute(new MyStrictlyLocalRegisterGreeterTommand { Name = "Greta" }))
+            Invoking(() => scope.Resolve<ISessionLocalTypermediaNavigator>().Execute(new MyStrictlyLocalRegisterGreeterTommand { Name = "Greta" }))
                .Must().Throw<Exception>().Which.Message.Must().Contain("but there is no transaction"));
 
       [PCT] public void executing_the_tuery_through_the_independent_local_typermedia_navigator_resolved_from_the_root_returns_the_handlers_result() =>

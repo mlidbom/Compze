@@ -198,8 +198,8 @@ Every component involved in delivering a message from caller to handler and back
 - Fast path: `ICreateMyOwnResultTuery<T>` returns instantly without hitting transport
 
 ### In-Process Typermedia Navigator [T]
-- **Interface**: `IUnitOfWorkLocalTypermediaNavigator` — `src/Compze.Typermedia/IUnitOfWorkLocalTypermediaNavigator.cs`
-- **Impl**: `UnitOfWorkLocalTypermediaNavigator` — `src/Compze.Typermedia/UnitOfWorkLocalTypermediaNavigator.cs`
+- **Interface**: `ISessionLocalTypermediaNavigator` — `src/Compze.Typermedia/ISessionLocalTypermediaNavigator.cs`
+- **Impl**: `SessionLocalTypermediaNavigator` — `src/Compze.Typermedia/SessionLocalTypermediaNavigator.cs`
 - Goes directly to `ITypermediaHandlerRegistry` (tueries, commands with results, void commands) — no router, no transport, no inbox, no serialization
 - Must be called within an existing transaction scope (`SingleTransactionUsageGuard`)
 - Registered as Scoped
@@ -553,13 +553,13 @@ This distinction is critical for discovery: `EndpointInformationQuery` and `Netw
 
 ### Moved to correct projects (recently completed)
 - `IRemoteTypermediaNavigator`, `RemoteTypermediaNavigator` → `Compze.Typermedia` (was in `Compze.Tessaging`)
-- `IUnitOfWorkLocalTypermediaNavigator`, `UnitOfWorkLocalTypermediaNavigator` → `Compze.Typermedia` (was in `Compze.Tessaging`)
+- `ISessionLocalTypermediaNavigator`, `SessionLocalTypermediaNavigator` → `Compze.Typermedia` (was in `Compze.Tessaging`)
 - `ITypermediaHandlerRegistrar`, `ITypermediaHandlerRegistry`, `TypermediaHandlerRegistry`, `TypermediaHandlerRegistrarWithDependencyInjectionSupport` → `Compze.Typermedia` (was in `Compze.Tessaging`/`Compze.Tessaging.Abstractions`)
 - `TessageTypeInspector`, `TommandValidator`, `TessageValidator` → `Compze.Abstractions` (shared validation, no cross-dependency)
 - `ITypermediaRouting` created in `Compze.Typermedia` — narrow routing interface (`PostAsync`/`GetAsync`). `ITypermediaRouter` extends it, adding lifecycle methods. `RemoteTypermediaNavigator` depends only on `ITypermediaRouting`.
 - `IInternalInfrastructureTessage` marker added in `Compze.Abstractions` — lets `TypermediaHandlerRegistry` filter infrastructure types without depending on tessaging internals
 - Void command support added to `ITypermediaHandlerRegistrar`/`TypermediaHandlerRegistry`
-- `UnitOfWorkLocalTypermediaNavigator` dispatches void commands through typermedia registry (no longer needs `ITessageHandlerRegistry`)
+- `SessionLocalTypermediaNavigator` dispatches void commands through typermedia registry (no longer needs `ITessageHandlerRegistry`)
 - Dispatching rules disentangled: removed `TueriesExecuteAfterAllTommandsAndTeventsAreDone` rule entirely. Remaining rule (`TommandsAndTeventHandlersDoNotRunInParallelWithEachOtherInTheSameEndpoint`) now only serializes ExactlyOnce tessaging messages — typermedia commands and queries bypass it. `IExecutingTessagesSnapshot` no longer tracks AtMostOnce commands.
 - `TypermediaHandlerExecutor` created in `Compze.Typermedia.Hosting` — gives Typermedia its own handler execution path, bypassing Inbox/HandlerExecutionEngine
 - Void Typermedia commands (`IAtMostOnceTypermediaTommand`) moved from `RegisterTessagingHandlers` to `RegisterTypermediaHandlers` (test fixtures + AccountManagement sample). `HandledRemoteTypermediaTypeIds()` updated to include void command handlers.
