@@ -7,6 +7,7 @@ using Compze.Teventive.Tevents.Public;
 
 namespace Compze.Tessaging.Implementation.TessageHandling.Dispatching;
 
+//todo:review: Consider the InProcess vs StrictlyLocal naming. Is this one or two things? Is either is really clear and good naming?
 static class InProcessTeventPublisherRegistrar
 {
    public static IComponentRegistrar InProcessTeventPublisher(this IComponentRegistrar registrar)
