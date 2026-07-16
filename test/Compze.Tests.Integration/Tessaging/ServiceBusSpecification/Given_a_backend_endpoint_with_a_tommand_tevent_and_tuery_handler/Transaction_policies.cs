@@ -1,3 +1,6 @@
+using Compze.Abstractions.Tessaging.Public;
+using Compze.DependencyInjection;
+using Compze.DependencyInjection.Abstractions;
 using System.Transactions;
 using Compze.Contracts;
 using Compze.Tessaging.Hosting;
@@ -12,7 +15,7 @@ public class Transaction_policies : EndpointHostTestBase
 {
    [PCT] public void Tommand_handler_runs_in_transaction_with_isolation_level_ReadCommitted()
    {
-      RemoteEndpoint.ExecuteServerRequestInTransaction(session => session.Send(new MyExactlyOnceTommand()));
+      RemoteEndpoint.ServiceLocator.Resolve<IIndependentTommandSender>().Send(new MyExactlyOnceTommand());
 
       var transaction = MyExactlyOnceTommandHandlerThreadGate.AwaitPassedThroughCountEqualTo(1)
                                                              .PassedThrough.Single().Transaction;

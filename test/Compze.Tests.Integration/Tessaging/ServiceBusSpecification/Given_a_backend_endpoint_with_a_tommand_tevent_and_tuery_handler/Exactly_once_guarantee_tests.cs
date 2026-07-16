@@ -1,3 +1,6 @@
+using Compze.Abstractions.Tessaging.Public;
+using Compze.DependencyInjection;
+using Compze.DependencyInjection.Abstractions;
 using System.Transactions;
 using Compze.Tessaging.Hosting;
 using Compze.Internals.Transport;
@@ -15,7 +18,7 @@ public class Exactly_once_guarantee_tests : EndpointHostTestBase
 {
    [PCT] public void ExactlyOnceTommand_handler_executes_exactly_once()
    {
-      RemoteEndpoint.ExecuteServerRequestInTransaction(session => session.Send(new MyExactlyOnceTommand()));
+      RemoteEndpoint.ServiceLocator.Resolve<IIndependentTommandSender>().Send(new MyExactlyOnceTommand());
 
       MyExactlyOnceTommandHandlerThreadGate.AwaitPassedThroughCountEqualTo(1);
       MyExactlyOnceTommandHandlerThreadGate.TryAwaitPassedThroughCountEqualTo(2, WaitTimeout.Seconds(2))
@@ -37,7 +40,7 @@ public class Exactly_once_guarantee_tests : EndpointHostTestBase
    {
       MyExactlyOnceTommandHandlerThreadGate.Close();
 
-      RemoteEndpoint.ExecuteServerRequestInTransaction(session => session.Send(new MyExactlyOnceTommand()));
+      RemoteEndpoint.ServiceLocator.Resolve<IIndependentTommandSender>().Send(new MyExactlyOnceTommand());
 
       MyExactlyOnceTommandHandlerThreadGate.AwaitQueueLengthEqualTo(1);
 
@@ -53,10 +56,10 @@ public class Exactly_once_guarantee_tests : EndpointHostTestBase
 
    [PCT] public void If_transaction_fails_after_successfully_Sending_ExactlyOnceTommand_tommand_never_reaches_tommand_handler()
    {
-      Invoking(() => RemoteEndpoint.ExecuteServerRequestInTransaction(session =>
+      Invoking(() => RemoteEndpoint.ServiceLocator.Resolve<IScopeFactory>().ExecuteUnitOfWork(unitOfWork =>
                     {
                        Transaction.Current!.FailOnPrepare();
-                       session.Send(new MyExactlyOnceTommand());
+                       unitOfWork.Resolve<IUnitOfWorkTommandSender>().Send(new MyExactlyOnceTommand());
                     }))
                    .Must().Throw<TransactionAbortedException>();
 

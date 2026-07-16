@@ -1,3 +1,5 @@
+using Compze.DependencyInjection;
+using Compze.DependencyInjection.Abstractions;
 using Compze.Abstractions.Hosting.Public;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Hosting;
@@ -64,7 +66,7 @@ public class Given_an_exactly_once_tessaging_endpoint_declaring_no_discovery_reg
 
    [PCT] public void a_tommand_the_endpoint_sends_that_its_own_handler_serves_is_delivered_through_its_own_inbox()
    {
-      _endpoint.ExecuteServerRequestInTransaction(session => session.Send(new TommandTheEndpointSendsItself()));
+      _endpoint.ServiceLocator.Resolve<IIndependentTommandSender>().Send(new TommandTheEndpointSendsItself());
 
       _selfSentTommandHandlerGate.AwaitPassedThroughCountEqualTo(1);
    }

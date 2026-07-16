@@ -1,3 +1,6 @@
+using Compze.Abstractions.Tessaging.Public;
+using Compze.DependencyInjection;
+using Compze.DependencyInjection.Abstractions;
 using Compze.Abstractions.Hosting.Public;
 using Compze.Abstractions.Wiring.Testing.Internal;
 using Compze.Hosting.SameMachine;
@@ -106,7 +109,7 @@ public class Given_a_separate_process_hosting_an_endpoint_discovered_through_a_s
       {
          try
          {
-            _specificationEndpoint.ExecuteServerRequestInTransaction(session => session.Send(new TommandSentToTheEndpointHostProcess()));
+            _specificationEndpoint.ServiceLocator.Resolve<IIndependentTommandSender>().Send(new TommandSentToTheEndpointHostProcess());
             break;
          }
 #pragma warning disable CA1031 //Retrying until discovery completes; past the deadline the exception propagates wrapped with the endpoint host process's console output.

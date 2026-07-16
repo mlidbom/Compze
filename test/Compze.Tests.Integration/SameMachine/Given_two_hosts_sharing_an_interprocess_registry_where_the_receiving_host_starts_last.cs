@@ -1,3 +1,5 @@
+using Compze.DependencyInjection;
+using Compze.DependencyInjection.Abstractions;
 using Compze.Abstractions.Hosting.Public;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Hosting.SameMachine;
@@ -80,7 +82,7 @@ public class Given_two_hosts_sharing_an_interprocess_registry_where_the_receivin
       {
          try
          {
-            _senderEndpoint.ExecuteServerRequestInTransaction(session => session.Send(new TommandDiscoveredThroughReconciliation()));
+            _senderEndpoint.ServiceLocator.Resolve<IIndependentTommandSender>().Send(new TommandDiscoveredThroughReconciliation());
             break;
          }
 #pragma warning disable CA1031 //Retrying until the reconciliation loop discovers the receiver; past the deadline the filter is false and the real exception propagates.
