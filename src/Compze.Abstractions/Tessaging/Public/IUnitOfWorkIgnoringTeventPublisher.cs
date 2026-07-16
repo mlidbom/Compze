@@ -8,7 +8,7 @@ namespace Compze.Abstractions.Tessaging.Public;
 /// "this code emits out-of-band" visible in a constructor signature, and keeps the dangerous path off the common surface.<br/>
 /// It rejects any tevent implementing <see cref="IMustBeSentTransactionally"/> (an <see cref="IExactlyOnceTevent"/>, most<br/>
 /// commonly): immediate, unconditional delivery structurally cannot back a transactional send.</remarks>
-public interface ITransactionIgnoringTeventPublisher
+public interface IUnitOfWorkIgnoringTeventPublisher
 {
    ///<summary>Publishes <paramref name="tevent"/> immediately and unconditionally, with the ambient transaction suppressed:<br/>
    /// synchronously to this process's subscribed handlers and observers — detached from the caller's transaction, so their effects<br/>

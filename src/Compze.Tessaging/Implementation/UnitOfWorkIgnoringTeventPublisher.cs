@@ -10,22 +10,22 @@ namespace Compze.Tessaging.Implementation;
 static class TransactionIgnoringTeventPublisherRegistrar
 {
    public static IComponentRegistrar TransactionIgnoringTeventPublisher(this IComponentRegistrar registrar)
-      => registrar.Register(Implementation.TransactionIgnoringTeventPublisher.RegisterWith);
+      => registrar.Register(Implementation.UnitOfWorkIgnoringTeventPublisher.RegisterWith);
 }
 
-///<summary>The <see cref="ITransactionIgnoringTeventPublisher"/>: the <see cref="IUnitOfWorkTeventPublisher"/> with the ambient transaction<br/>
+///<summary>The <see cref="IUnitOfWorkIgnoringTeventPublisher"/>: the <see cref="IUnitOfWorkTeventPublisher"/> with the ambient transaction<br/>
 /// suppressed. Under suppression the ordinary publisher's honor-the-transaction behavior degenerates on every leg into exactly the<br/>
 /// escape hatch's contract — participation dispatches detached from the caller's transaction, observation fires, and the transient<br/>
 /// leg sees no transaction to defer to, so it hands the tevent to the subscribers' connections right away.</summary>
-[UsedImplicitly] class TransactionIgnoringTeventPublisher : ITransactionIgnoringTeventPublisher
+[UsedImplicitly] class UnitOfWorkIgnoringTeventPublisher : IUnitOfWorkIgnoringTeventPublisher
 {
    public static void RegisterWith(IComponentRegistrar registrar)
-      => registrar.Register(Scoped.For<ITransactionIgnoringTeventPublisher>()
-                                  .CreatedBy((IUnitOfWorkTeventPublisher teventPublisher) => new TransactionIgnoringTeventPublisher(teventPublisher)));
+      => registrar.Register(Scoped.For<IUnitOfWorkIgnoringTeventPublisher>()
+                                  .CreatedBy((IUnitOfWorkTeventPublisher teventPublisher) => new UnitOfWorkIgnoringTeventPublisher(teventPublisher)));
 
    readonly IUnitOfWorkTeventPublisher _teventPublisher;
 
-   TransactionIgnoringTeventPublisher(IUnitOfWorkTeventPublisher teventPublisher) => _teventPublisher = teventPublisher;
+   UnitOfWorkIgnoringTeventPublisher(IUnitOfWorkTeventPublisher teventPublisher) => _teventPublisher = teventPublisher;
 
    public void Publish(ITevent tevent)
    {

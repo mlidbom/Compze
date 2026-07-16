@@ -15,7 +15,7 @@ namespace Compze.Abstractions.Tessaging.Public;
 /// deliberately in-process composition: every subscriber is local and already served by participation.</summary>
 ///<remarks>The ambient transaction is honored: remote delivery happens only on commit, so a rolled-back transaction never leaks<br/>
 /// a tevent — and participation's synchronous handlers run inside that same transaction, so their effects roll back with it.<br/>
-/// Only observation runs outside it, deliberately (<see cref="ITransactionIgnoringTeventPublisher"/> is the publish-side<br/>
+/// Only observation runs outside it, deliberately (<see cref="IUnitOfWorkIgnoringTeventPublisher"/> is the publish-side<br/>
 /// counterpart). A tevent published without a publisher-identifying wrapper (<see cref="IPublisherTevent{TTevent}"/>) is wrapped<br/>
 /// before routing.</remarks>
 public interface IUnitOfWorkTeventPublisher
