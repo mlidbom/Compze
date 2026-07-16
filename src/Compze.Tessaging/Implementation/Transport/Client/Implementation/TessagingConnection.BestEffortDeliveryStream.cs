@@ -43,6 +43,10 @@ partial class TessagingConnection
       {
          //Resolved here rather than at construction: the peer's identity arrives with the connection's InitAsync.
          _peerQueue = _queues.For(_connection.EndpointInformation.Id);
+         //A required peer met for the first time has its held tevents resolved against its just-learned subscriptions before
+         //draining starts. The router recorded the advertisement in the peer registry before this runs (ConnectAsync), which
+         //is the ordering the delivery leg's queues-before-registry read relies on.
+         _queues.RecordFirstContact(_connection.EndpointInformation);
          _sendLoopThread = _connection._taskRunner.RunOnNamedThread($"BestEffortDelivery-{_connection.EndpointInformation.Id.Value:N}", SendLoop, ThreadPriority.BelowNormal);
       }
 

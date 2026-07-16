@@ -1,3 +1,4 @@
+using Compze.Abstractions.Hosting.Public;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.TypeIdentifiers;
 
@@ -6,6 +7,19 @@ using Compze.TypeIdentifiers;
 #pragma warning disable CA1040 //The best-effort tevents are empty marker interfaces by design: their type IS the routed contract.
 
 namespace Compze.Tests.SameMachine.EndpointHostProcess;
+
+///<summary>The two parties of the multi-process conversation, by identity: fixed <see cref="EndpointId"/>s known to both<br/>
+/// processes, so each can require the other (<c>RequirePeers</c>) — what makes the guarantee-free conversation deterministic:<br/>
+/// a tevent published before the peers have discovered each other is held for the required peer and delivered on first contact,<br/>
+/// instead of vanishing into the discovery race.</summary>
+public static class MultiProcessConversationEndpoints
+{
+   ///<summary>The endpoint the endpoint host process hosts.</summary>
+   public static readonly EndpointId EndpointHostProcessEndpointId = new(Guid.Parse("70b8f9be-6a66-4f8d-bd55-0c05dbcbb2c0"));
+
+   ///<summary>The endpoint the specification process registers to converse with the endpoint host process.</summary>
+   public static readonly EndpointId SpecificationProcessEndpointId = new(Guid.Parse("3e9d47b2-6c81-4f5a-a920-8d47c1e6b053"));
+}
 
 ///<summary>The tommand the specification process sends to the endpoint host process — the parent→child leg of the multi-process conversation.</summary>
 public class TommandSentToTheEndpointHostProcess : TessageTypes.Remotable.ExactlyOnce.Tommand;

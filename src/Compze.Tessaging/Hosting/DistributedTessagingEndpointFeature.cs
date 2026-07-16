@@ -71,6 +71,8 @@ public class DistributedTessagingEndpointFeature
    }
 
    readonly EndpointTransportServerFeature _transportServer;
+   readonly EndpointId _endpointId;
+   readonly List<EndpointId> _requiredPeers = [];
    IEndpointRegistry? _endpointRegistry;
 
    ///<summary>Declares that the endpoint announces where it listens to <paramref name="announcer"/> — see<br/>
@@ -102,10 +104,24 @@ public class DistributedTessagingEndpointFeature
       => DiscoverEndpointsThrough(registry)
         .AnnounceAddressTo(registry);
 
+   ///<summary>Declares peers this endpoint requires — peers it works with whose <see cref="EndpointId"/> the composition knows.<br/>
+   /// The declaration is the durable peer memory a database-less endpoint cannot keep anywhere else: it survives restarts by<br/>
+   /// being code. Every tevent published before a required peer's first advertisement is held for it — in order, within the<br/>
+   /// queue bound — and the subset matching its subscriptions delivers when it is first met, so startup ordering stops<br/>
+   /// mattering: nothing a required peer should see is lost to the discovery race<br/>
+   /// (see <c>dev_docs/TODO/durable-peer-topology.md</c>). Declare before the host starts, like every composition declaration.</summary>
+   public DistributedTessagingEndpointFeature RequirePeers(params EndpointId[] requiredPeers)
+   {
+      State.Assert(!requiredPeers.Contains(_endpointId), () => "An endpoint cannot require itself: a peer is another endpoint, and tevents to the endpoint's own handlers are delivered in-process.");
+      _requiredPeers.AddRange(requiredPeers);
+      return this;
+   }
+
    internal DistributedTessagingEndpointFeature(IEndpointBuilder builder)
    {
       var register = builder.Registrar;
       AssertTheEndpointsFoundationIsDeclared(register);
+      _endpointId = builder.Configuration.Id;
 
       builder.TypeMapper.MapTypesFromAssemblyContaining<TessagingEndpointInformationQuery>(); // Compze.Tessaging — the tessaging discovery types
 
@@ -123,7 +139,7 @@ public class DistributedTessagingEndpointFeature
       register.TaskRunner()
               .PeerRegistry()
               .TessagingTransport()
-              .BestEffortTeventDelivery()
+              .BestEffortTeventDelivery(_requiredPeers) //Captured by reference: the composition's RequirePeers declarations fill it before the container builds.
               .TessagingTransportMessagePoster()
               .BestEffortTessagingRequestHandlers();
 

@@ -52,7 +52,7 @@ public static class Program
       {
          host.RegisterEndpoint(
             "EndpointHostProcess",
-            new EndpointId(Guid.Parse("70b8f9be-6a66-4f8d-bd55-0c05dbcbb2c0")),
+            MultiProcessConversationEndpoints.EndpointHostProcessEndpointId,
             builder =>
             {
                builder.TypeMapper.MapTypesFromAssemblyContaining<TommandSentToTheEndpointHostProcess>();
@@ -102,6 +102,10 @@ public static class Program
 
       foundation.AddDistributedTessaging(tessaging => tessaging.NewtonsoftSerializer())
                 .ParticipateIn(registry)
+                //Requiring the specification's endpoint makes the reply leg deterministic: the reply is published while handling
+                //the specification's tevent, which can happen before this process's own reconciliation has met the specification's
+                //endpoint - held for the required peer, it delivers on first contact instead of vanishing into the discovery race.
+                .RequirePeers(MultiProcessConversationEndpoints.SpecificationProcessEndpointId)
                 .RegisterHandlers(register => register.ForTevent((IBestEffortTeventPublishedByTheSpecificationProcess _, IUnitOfWorkTeventPublisher teventPublisher) =>
                                                                     teventPublisher.Publish(new BestEffortTeventPublishedByTheEndpointHostProcess())));
 

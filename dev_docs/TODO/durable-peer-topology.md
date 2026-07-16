@@ -159,7 +159,8 @@ The one way a peer leaves the registry; an administrative act, never an inferenc
   nothing a required peer should see is lost to the discovery race, and nothing needs probing.
 - The consuming application's hand-rolled "probes", and this repo's own 30-second retry loop in
   `Given_a_separate_process_hosting_a_distributed_tessaging_endpoint_discovered_through_a_shared_interprocess_registry`,
-  both dissolve.
+  both dissolve. *(The retry loop is gone as of increment 5: one publish before discovery, both directions
+  held for the required peers and delivered on first contact.)*
 
 ## Relation to the readiness/waiting-sends effort
 

@@ -51,12 +51,17 @@ public class Given_a_separate_process_hosting_a_distributed_tessaging_endpoint_d
       _specificationHost = TestingEndpointHost.Create();
       _specificationEndpoint = _specificationHost.RegisterEndpoint(
          "SpecificationEndpoint",
-         new EndpointId(Guid.NewGuid()),
+         MultiProcessConversationEndpoints.SpecificationProcessEndpointId,
          builder =>
          {
             builder.TypeMapper.MapTypesFromAssemblyContaining<TommandSentToTheEndpointHostProcess>();
             builder.Registrar.CurrentTestsEndpointTransport();
-            builder.AddDistributedTessaging().ParticipateIn(_registry);
+            builder.AddDistributedTessaging()
+                   .ParticipateIn(_registry)
+                   //Requiring the endpoint host process's endpoint makes the outbound leg deterministic: the tevent published
+                   //below, before either process has discovered the other, is held for the required peer and delivered on first
+                   //contact instead of vanishing into the discovery race.
+                   .RequirePeers(MultiProcessConversationEndpoints.EndpointHostProcessEndpointId);
             builder.RegisterTessagingHandlers.ForTevent((IBestEffortTeventPublishedByTheEndpointHostProcess _) => _replyTeventReceived.Set());
          });
    }
@@ -96,22 +101,18 @@ public class Given_a_separate_process_hosting_a_distributed_tessaging_endpoint_d
    }
 
    [Skip<Transport>([Transport.AspNetCore], "The endpoint host process speaks named pipes; the conversation only makes sense when the specification's endpoint does too")]
-   [PCT] public void a_best_effort_tevent_published_here_is_handled_there_and_its_reply_tevent_comes_back()
+   [PCT] public void a_best_effort_tevent_published_here_before_discovery_is_handled_there_and_its_reply_tevent_comes_back()
    {
-      //Best-effort has no failure to ride: until the reconciliation loops of both processes have discovered each other, a
-      //published best-effort tevent matches no subscriber connection and simply vanishes - exactly what the best-effort tier
-      //promises. So the specification keeps publishing, once per interval, until a reply tevent proves a full round trip crossed.
-      var retryDeadline = DateTime.UtcNow + TimeSpan.FromSeconds(30);
-      do
-      {
-         if(DateTime.UtcNow > retryDeadline)
-         {
-            _endpointHostProcess.ThrowDescribingTheFailureIfTheProcessHasExited();
-            throw new InvalidOperationException($"No best-effort tevent round trip completed within the retry deadline.{Environment.NewLine}{_endpointHostProcess.ConsoleOutput}");
-         }
+      //ONE publish, before either process has discovered the other, and no retrying: each process requires the other's endpoint,
+      //so the tevent is held for the endpoint host process until first contact, and its reply is held for this endpoint the same
+      //way - queue-before-first-contact makes the startup race a non-event (see dev_docs/TODO/durable-peer-topology.md).
+      _specificationEndpoint.ServiceLocator.Resolve<IScopeFactory>().ExecuteUnitOfWork(unitOfWork =>
+         unitOfWork.Resolve<IUnitOfWorkTeventPublisher>().Publish(new BestEffortTeventPublishedByTheSpecificationProcess()));
 
-         _specificationEndpoint.ServiceLocator.Resolve<IScopeFactory>().ExecuteUnitOfWork(unitOfWork =>
-            unitOfWork.Resolve<IUnitOfWorkTeventPublisher>().Publish(new BestEffortTeventPublishedByTheSpecificationProcess()));
-      } while(!_replyTeventReceived.Wait(TimeSpan.FromMilliseconds(500)));
+      if(!_replyTeventReceived.Wait(TimeSpan.FromSeconds(30)))
+      {
+         _endpointHostProcess.ThrowDescribingTheFailureIfTheProcessHasExited();
+         throw new InvalidOperationException($"No best-effort tevent round trip completed within the deadline.{Environment.NewLine}{_endpointHostProcess.ConsoleOutput}");
+      }
    }
 }

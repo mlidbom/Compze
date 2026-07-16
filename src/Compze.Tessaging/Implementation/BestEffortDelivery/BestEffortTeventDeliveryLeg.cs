@@ -18,8 +18,11 @@ namespace Compze.Tessaging.Implementation.BestEffortDelivery;
 
 static class BestEffortTeventDeliveryRegistrar
 {
-   public static IComponentRegistrar BestEffortTeventDelivery(this IComponentRegistrar registrar)
-      => registrar.Register(Singleton.For<BestEffortTeventQueues>().CreatedBy(() => new BestEffortTeventQueues()))
+   ///<summary><paramref name="requiredPeers"/> is captured by reference and read when the container builds — after the<br/>
+   /// composition's <c>RequirePeers</c> declarations, which the distributed Tessaging feature collects into it.</summary>
+   public static IComponentRegistrar BestEffortTeventDelivery(this IComponentRegistrar registrar, IReadOnlyList<EndpointId> requiredPeers)
+      => registrar.Register(Singleton.For<BestEffortTeventQueues>()
+                                     .CreatedBy((ITypeMap typeMap, ITessagesInFlightTracker tessagesInFlightTracker) => new BestEffortTeventQueues(requiredPeers, typeMap, tessagesInFlightTracker)))
                   //The stream factory grants the router's connections their best-effort delivery streams, each draining its peer's queue - the same wiring idiom as the exactly-once stream factory the outbox registers.
                   .Register(Singleton.For<TessagingConnection.BestEffortDeliveryStream.Factory>()
                                      .CreatedBy((BestEffortTeventQueues queues) => new TessagingConnection.BestEffortDeliveryStream.Factory(queues)))
@@ -59,7 +62,14 @@ class BestEffortTeventDeliveryLeg : IBestEffortTeventDeliveryLeg
       //Fan-out membership is the peer registry's remembered subscribers, never the live connections: a subscribing peer that is
       //down at publish time still gets the tevent queued, and its next connection's stream drains the queue on its return.
       //(A peer is another endpoint, so the registry never lists us: tevents to ourselves dispatch synchronously in-process.)
-      var subscriberIds = _peerRegistry.SubscriberIdsFor(wrappedTevent);
+      //A required peer not yet met additionally gets everything - its subscriptions are unknown until its first advertisement,
+      //which resolves what was held for it. Read from the queues BEFORE the registry, deliberately: first contact records the
+      //advertisement in the registry before the held tevents flush, so this read order can never miss a peer mid-transition -
+      //the reverse order could see it in neither.
+      var peersAwaitingFirstContact = _queues.PeersAwaitingFirstContact;
+      IReadOnlyList<EndpointId> subscriberIds = peersAwaitingFirstContact.Count == 0
+                                                   ? _peerRegistry.SubscriberIdsFor(wrappedTevent)
+                                                   : [..peersAwaitingFirstContact.Union(_peerRegistry.SubscriberIdsFor(wrappedTevent))];
       if(subscriberIds.Count == 0) return;
 
       //One envelope identity per publish, shared by every subscriber's delivery: it carries no dedup meaning on this leg
