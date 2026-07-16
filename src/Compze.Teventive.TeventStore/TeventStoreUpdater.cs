@@ -27,6 +27,7 @@ class TeventStoreUpdater : ITeventStoreReader, ITeventStoreUpdater
    readonly IUsageGuard _usageGuard;
    readonly List<IDisposable> _disposableResources = [];
 
+   //todo:review: Should the updater face get Lifestyle.UnitOfWork? Blocked by this one instance also serving ITeventStoreReader, which resolves in plain read scopes — it would first require splitting session identity from the reader face. Same question for DocumentDbSession. See the Lifestyle.UnitOfWork section of src/Compze.DependencyInjection/dev_docs/unit-of-work-model.md.
    public static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(
          Scoped.For<ITeventStoreUpdater, ITeventStoreReader>()

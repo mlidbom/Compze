@@ -14,6 +14,7 @@ namespace Compze.Tessaging.Abstractions.Tessaging.Hosting.TessageHandling.Regist
 /// is reported through the background-exception reporter, never retried. A separate registrar from<br/>
 /// <see cref="ITessageHandlerRegistrar"/>, deliberately: registering here is a visible opt-out of every delivery guarantee, kept<br/>
 /// off the common surface.</remarks>
+//todo:review: The "TransactionIgnoring" name predates the unit-of-work vocabulary (UnitOfWork*/Independent* doors, IUnitOfWorkResolver). Reconsider the whole family's naming — this registrar, RegisterTransactionIgnoringTeventHandlers, GetTransactionIgnoringTeventHandlers — e.g. around "observation", the delivery model's own word for this rung.
 public interface ITransactionIgnoringTeventHandlerRegistrar
 {
    ITransactionIgnoringTeventHandlerRegistrar ForTevent<TTevent>(Action<TTevent, IScopeResolver> handler) where TTevent : ITevent;
