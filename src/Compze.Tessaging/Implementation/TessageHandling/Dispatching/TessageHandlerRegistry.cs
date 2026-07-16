@@ -26,7 +26,7 @@ public static class TessageHandlerRegistryRegistrar
 sealed class TessageHandlerRegistry(ITypeMap typeMap) : ITessageHandlerRegistrar, ITransactionIgnoringTeventHandlerRegistrar, ITessageHandlerRegistry
 {
    readonly ITypeMap _typeMap = typeMap;
-   IReadOnlyDictionary<Type, Action<object, IScopeResolver>> _tommandHandlers = new Dictionary<Type, Action<object, IScopeResolver>>();
+   IReadOnlyDictionary<Type, Action<object, IUnitOfWorkResolver>> _tommandHandlers = new Dictionary<Type, Action<object, IUnitOfWorkResolver>>();
    IReadOnlyDictionary<Type, IReadOnlyList<Action<ITevent, IScopeResolver>>> _teventHandlers = new Dictionary<Type, IReadOnlyList<Action<ITevent, IScopeResolver>>>();
    IReadOnlyDictionary<Type, IReadOnlyList<Action<ITevent, IScopeResolver>>> _transactionIgnoringTeventHandlers = new Dictionary<Type, IReadOnlyList<Action<ITevent, IScopeResolver>>>();
    IReadOnlyList<Type> _registeredTeventTypes = new List<Type>();
@@ -67,7 +67,7 @@ sealed class TessageHandlerRegistry(ITypeMap typeMap) : ITessageHandlerRegistrar
       Interlocked.Exchange(ref _registeredTeventTypes, _registeredTeventTypes.AddToCopy(typeof(TTevent)));
    }
 
-   ITessageHandlerRegistrar ITessageHandlerRegistrar.ForTommand<TTommand>(Action<TTommand, IScopeResolver> handler) => _monitor.Locked(() =>
+   ITessageHandlerRegistrar ITessageHandlerRegistrar.ForTommand<TTommand>(Action<TTommand, IUnitOfWorkResolver> handler) => _monitor.Locked(() =>
    {
       TessageInspector.AssertValid<TTommand>();
 
@@ -79,16 +79,16 @@ sealed class TessageHandlerRegistry(ITypeMap typeMap) : ITessageHandlerRegistrar
       Interlocked.Exchange(ref _tommandHandlers, _tommandHandlers.AddToCopy(typeof(TTommand), Deliver));
       return this;
 
-      void Deliver(object tommand, IScopeResolver kernel) => handler((TTommand)tommand, kernel);
+      void Deliver(object tommand, IUnitOfWorkResolver unitOfWork) => handler((TTommand)tommand, unitOfWork);
    });
 
-   Action<object, IScopeResolver> ITessageHandlerRegistry.GetTommandHandler(ITommand tessage) =>
+   Action<object, IUnitOfWorkResolver> ITessageHandlerRegistry.GetTommandHandler(ITommand tessage) =>
       TryGetTommandHandler(tessage, out var handler) ? handler : throw new NoHandlerException(tessage.GetType());
 
-   bool TryGetTommandHandler(ITommand tessage, [NotNullWhen(true)]out Action<object, IScopeResolver>? handler) =>
+   bool TryGetTommandHandler(ITommand tessage, [NotNullWhen(true)]out Action<object, IUnitOfWorkResolver>? handler) =>
       _tommandHandlers.TryGetValue(tessage.GetType(), out handler);
 
-   public Action<ITommand, IScopeResolver> GetTommandHandler(Type tommandType) => _tommandHandlers[tommandType];
+   public Action<ITommand, IUnitOfWorkResolver> GetTommandHandler(Type tommandType) => _tommandHandlers[tommandType];
 
    //performance: Use static caching trick.
    public IReadOnlyList<Action<ITevent, IScopeResolver>> GetTeventHandlers(Type wrapperTeventType) => [.._teventHandlers.Where(it => it.Key.IsAssignableFrom(wrapperTeventType)).SelectMany(it => it.Value)];

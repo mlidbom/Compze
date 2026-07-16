@@ -18,7 +18,8 @@ class UnitOfWorkLocalTypermediaNavigator(ITypermediaHandlerRegistry typermediaHa
       CommonAssertion(tommand);
 
       var tommandHandler = _typermediaHandlerRegistry.GetTommandHandler(tommand);
-      return tommandHandler.Invoke(tommand, _scopeResolver);
+      //CommonAssertion has asserted the caller's ambient transaction (an IStrictlyLocalTommand must be sent transactionally), so the caller's scope IS a unit of work - From certifies exactly that.
+      return tommandHandler.Invoke(tommand, UnitOfWorkResolver.From(_scopeResolver));
    }
 
    public void Execute(IStrictlyLocalTommand tommand)
@@ -26,7 +27,7 @@ class UnitOfWorkLocalTypermediaNavigator(ITypermediaHandlerRegistry typermediaHa
       CommonAssertion(tommand);
 
       var tommandHandler = _typermediaHandlerRegistry.GetVoidTommandHandler(tommand);
-      tommandHandler.Invoke(tommand, _scopeResolver);
+      tommandHandler.Invoke(tommand, UnitOfWorkResolver.From(_scopeResolver));
    }
 
    public TResult Execute<TTuery, TResult>(IStrictlyLocalTuery<TTuery, TResult> tuery) where TTuery : IStrictlyLocalTuery<TTuery, TResult>

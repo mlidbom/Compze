@@ -12,25 +12,25 @@ namespace Compze.Typermedia.HandlerRegistration;
 public sealed class TypermediaHandlerRegistry(ITypeMap typeMap) : ITypermediaHandlerRegistrar, ITypermediaHandlerRegistry
 {
    readonly ITypeMap _typeMap = typeMap;
-   IReadOnlyDictionary<Type, HandlerWithResultRegistration> _tueryHandlers = new Dictionary<Type, HandlerWithResultRegistration>();
-   IReadOnlyDictionary<Type, HandlerWithResultRegistration> _tommandHandlersReturningResults = new Dictionary<Type, HandlerWithResultRegistration>();
-   IReadOnlyDictionary<Type, Action<object, IScopeResolver>> _voidTommandHandlers = new Dictionary<Type, Action<object, IScopeResolver>>();
+   IReadOnlyDictionary<Type, TueryHandlerRegistration> _tueryHandlers = new Dictionary<Type, TueryHandlerRegistration>();
+   IReadOnlyDictionary<Type, TommandHandlerWithResultRegistration> _tommandHandlersReturningResults = new Dictionary<Type, TommandHandlerWithResultRegistration>();
+   IReadOnlyDictionary<Type, Action<object, IUnitOfWorkResolver>> _voidTommandHandlers = new Dictionary<Type, Action<object, IUnitOfWorkResolver>>();
 
    readonly IMonitor _monitor = IMonitor.New();
 
-   ITypermediaHandlerRegistrar ITypermediaHandlerRegistrar.ForTommand<TTommand>(Action<TTommand, IScopeResolver> handler) => _monitor.Locked(() =>
+   ITypermediaHandlerRegistrar ITypermediaHandlerRegistrar.ForTommand<TTommand>(Action<TTommand, IUnitOfWorkResolver> handler) => _monitor.Locked(() =>
    {
       TessageTypeInspector.AssertValid(typeof(TTommand));
 
-      Interlocked.Exchange(ref _voidTommandHandlers, _voidTommandHandlers.AddToCopy(typeof(TTommand), (tommand, kernel) => handler((TTommand)tommand, kernel)));
+      Interlocked.Exchange(ref _voidTommandHandlers, _voidTommandHandlers.AddToCopy(typeof(TTommand), (tommand, unitOfWork) => handler((TTommand)tommand, unitOfWork)));
       return this;
    });
 
-   ITypermediaHandlerRegistrar ITypermediaHandlerRegistrar.ForTommand<TTommand, TResult>(Func<TTommand, IScopeResolver, TResult> handler) => _monitor.Locked(() =>
+   ITypermediaHandlerRegistrar ITypermediaHandlerRegistrar.ForTommand<TTommand, TResult>(Func<TTommand, IUnitOfWorkResolver, TResult> handler) => _monitor.Locked(() =>
    {
       TessageTypeInspector.AssertValid(typeof(TTommand));
 
-      Interlocked.Exchange(ref _tommandHandlersReturningResults, _tommandHandlersReturningResults.AddToCopy(typeof(TTommand), new TommandHandlerWithResultRegistration<TTommand, TResult>(handler)));
+      Interlocked.Exchange(ref _tommandHandlersReturningResults, _tommandHandlersReturningResults.AddToCopy(typeof(TTommand), new TommandHandlerWithResultRegistration(typeof(TResult), (tommand, unitOfWork) => handler((TTommand)tommand, unitOfWork)!)));
       return this;
    });
 
@@ -38,21 +38,21 @@ public sealed class TypermediaHandlerRegistry(ITypeMap typeMap) : ITypermediaHan
    {
       TessageTypeInspector.AssertValid(typeof(TTuery));
 
-      Interlocked.Exchange(ref _tueryHandlers, _tueryHandlers.AddToCopy(typeof(TTuery), new TueryHandlerRegistration<TTuery, TResult>(handler)));
+      Interlocked.Exchange(ref _tueryHandlers, _tueryHandlers.AddToCopy(typeof(TTuery), new TueryHandlerRegistration((tuery, scope) => handler((TTuery)tuery, scope)!)));
       return this;
    });
 
-   public Action<ITommand, IScopeResolver> GetVoidTommandHandler(ITommand tommand)
+   public Action<ITommand, IUnitOfWorkResolver> GetVoidTommandHandler(ITommand tommand)
    {
       if(_voidTommandHandlers.TryGetValue(tommand.GetType(), out var handler))
       {
-         return (actualTommand, kernel) => handler(actualTommand, kernel);
+         return (actualTommand, unitOfWork) => handler(actualTommand, unitOfWork);
       }
 
       throw new NoHandlerException(tommand.GetType());
    }
 
-   public Func<ITommand, IScopeResolver, object> GetTommandHandlerWithReturnValue(Type tommandType) => _tommandHandlersReturningResults[tommandType].HandlerMethod;
+   public Func<ITommand, IUnitOfWorkResolver, object> GetTommandHandlerWithReturnValue(Type tommandType) => _tommandHandlersReturningResults[tommandType].HandlerMethod;
 
    public Func<ITuery<object>, IScopeResolver, object> GetTueryHandler(Type tueryType) => _tueryHandlers[tueryType].HandlerMethod;
 
@@ -60,17 +60,17 @@ public sealed class TypermediaHandlerRegistry(ITypeMap typeMap) : ITypermediaHan
    {
       if(_tueryHandlers.TryGetValue(tuery.GetType(), out var handler))
       {
-         return (actualTuery, kernel) => (TResult)handler.HandlerMethod(actualTuery, kernel);
+         return (actualTuery, scope) => (TResult)handler.HandlerMethod(actualTuery, scope);
       }
 
       throw new NoHandlerException(tuery.GetType());
    }
 
-   public Func<ITommand<TResult>, IScopeResolver, TResult> GetTommandHandler<TResult>(ITommand<TResult> tommand)
+   public Func<ITommand<TResult>, IUnitOfWorkResolver, TResult> GetTommandHandler<TResult>(ITommand<TResult> tommand)
    {
       if(_tommandHandlersReturningResults.TryGetValue(tommand.GetType(), out var handler))
       {
-         return (actualTommand, kernel) => (TResult)handler.HandlerMethod(actualTommand, kernel);
+         return (actualTommand, unitOfWork) => (TResult)handler.HandlerMethod(actualTommand, unitOfWork);
       }
 
       throw new NoHandlerException(tommand.GetType());
@@ -99,15 +99,15 @@ public sealed class TypermediaHandlerRegistry(ITypeMap typeMap) : ITypermediaHan
                          .ToHashSet();
    }
 
-   abstract class HandlerWithResultRegistration(Type returnValueType, Func<object, IScopeResolver, object> handlerMethod)
+   //Separately-typed registrations, deliberately: a tommand handler runs in the unit of work its execution is, while a tuery handler runs in a plain scope - the resolver types state which.
+   class TommandHandlerWithResultRegistration(Type returnValueType, Func<object, IUnitOfWorkResolver, object> handlerMethod)
    {
       internal Type ReturnValueType { get; } = returnValueType;
-      internal Func<object, IScopeResolver, object> HandlerMethod { get; } = handlerMethod;
+      internal Func<object, IUnitOfWorkResolver, object> HandlerMethod { get; } = handlerMethod;
    }
 
-   class TommandHandlerWithResultRegistration<TTommand, TResult>(Func<TTommand, IScopeResolver, TResult> handlerMethod) : HandlerWithResultRegistration(typeof(TResult),
-                                                                                                                                                               (tommand, kernel) => handlerMethod((TTommand)tommand, kernel)!);
-
-   class TueryHandlerRegistration<TTuery, TResult>(Func<TTuery, IScopeResolver, TResult> handlerMethod) : HandlerWithResultRegistration(typeof(TResult),
-                                                                                                                                               (tuery, kernel) => handlerMethod((TTuery)tuery, kernel)!);
+   class TueryHandlerRegistration(Func<object, IScopeResolver, object> handlerMethod)
+   {
+      internal Func<object, IScopeResolver, object> HandlerMethod { get; } = handlerMethod;
+   }
 }

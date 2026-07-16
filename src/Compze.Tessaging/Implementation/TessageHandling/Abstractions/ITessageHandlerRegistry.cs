@@ -6,9 +6,9 @@ namespace Compze.Tessaging.Implementation.TessageHandling.Abstractions;
 
 public interface ITessageHandlerRegistry
 {
-    Action<object, IScopeResolver> GetTommandHandler(ITommand tessage);
+    Action<object, IUnitOfWorkResolver> GetTommandHandler(ITommand tessage);
 
-    Action<ITommand, IScopeResolver> GetTommandHandler(Type tommandType);
+    Action<ITommand, IUnitOfWorkResolver> GetTommandHandler(Type tommandType);
     IReadOnlyList<Action<ITevent, IScopeResolver>> GetTeventHandlers(Type wrapperTeventType);
 
     ///<summary>The transaction-ignoring tevent handlers — observation, the escape-hatch subscription kind — whose subscriptions match<br/>

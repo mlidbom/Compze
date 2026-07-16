@@ -24,7 +24,7 @@ public partial class Inbox
             readonly TaskCompletionSource<object?> _taskCompletionSource = new(TaskCreationOptions.RunContinuationsAsynchronously);
             internal readonly TransportTessage.InComing TransportTessage;
             readonly Coordinator _coordinator;
-            readonly Func<object, IScopeResolver, object?> _tessageTask;
+            readonly Func<object, IUnitOfWorkResolver, object?> _tessageTask;
             readonly ITaskRunner _taskRunner;
             readonly ITessageStorage _tessageStorage;
             readonly IScopeFactory _scopeFactory;
@@ -67,7 +67,7 @@ public partial class Inbox
                      using var scope = _scopeFactory.BeginScope();
                      result = TransactionScopeCe.Execute(() =>
                      {
-                        var innerResult = _tessageTask(tessage, scope.Resolver);
+                        var innerResult = _tessageTask(tessage, UnitOfWorkResolver.From(scope.Resolver));
                         _tessageStorage.MarkAsSucceeded(TransportTessage);
                         return innerResult;
                      });
@@ -119,7 +119,7 @@ public partial class Inbox
             }
 
             //Refactor: Switching should not be necessary. See also inbox.
-            Func<object, IScopeResolver, object?> CreateTessageTask() =>
+            Func<object, IUnitOfWorkResolver, object?> CreateTessageTask() =>
                TransportTessage.TessageTypeEnum switch
                {
                   TransportTessageType.ExactlyOnceTevent => (tessage, kernel) =>
