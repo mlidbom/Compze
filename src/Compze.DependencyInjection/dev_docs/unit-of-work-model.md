@@ -57,31 +57,27 @@ caller-provided scope is proven transactional: the local typermedia navigator (a
 `IMustBeSentTransactionally`, asserted before dispatch), the inbox's handler execution task, and the
 unit-of-work tevent publisher, which asserts its ambient transaction before routing any delivery leg.
 
-## `Lifestyle.UnitOfWork` — the requirement, enforced at resolution
+## No unit-of-work lifestyle, deliberately
 
-`Lifestyle.UnitOfWork` (`UnitOfWork.For<TService>()`) is a `Scoped` component that additionally requires an
-ambient transaction: resolving it with none present throws. The backend containers never see the
-lifestyle — the shared registration layer (`ComponentRegistration.CreateBackendRegistration`) hands them a
-`Scoped` registration whose instantiation asserts the ambient transaction first — so no backend adapter
-knows units of work exist.
+A lifestyle for components requiring an ambient transaction (`UnitOfWorkParticipant.For<TService>()`:
+`Scoped` plus a resolution-time transaction assert, normalized away before the backend containers so they
+never saw it) was built 2026-07-16 and deleted the same day — building it was the experiment that disproved
+it:
 
-`IUnitOfWorkTeventPublisher` and `IUnitOfWorkTommandSender` are registered with it: their every use demands
-a transaction, so a resolution outside one is already a bug, and it now fails at the resolve instead of at
-first use. The lifestyle is deliberately single-service (no multi-service `For` overloads), because one
-instance serving several service types usually pairs an updating face with a reading face — and that is
-exactly why the session-style components keep `Scoped`: `TeventStoreUpdater` serves `ITeventStoreReader`,
-and `DocumentDbSession` serves `IDocumentDbReader`/`IDocumentDbBulkReader`, from the same instance, and
-reads run in plain scopes. `IUnitOfWorkLocalTypermediaNavigator` also stays `Scoped`: it executes tueries
-from read scopes. Giving the updater faces the lifestyle would first require splitting session identity
-from the reader faces — a modeling question deliberately left open.
+- Only two components could wear it — `IUnitOfWorkTeventPublisher` and `IUnitOfWorkTommandSender` — and
+  both already fail loud at first use through stronger guards (the publisher's publish-time assert, the
+  sender's `SingleTransactionUsageGuard` plus the validator), which the lifestyle could never replace: it
+  proves a component is *born* inside a unit of work, not that it never outlives one.
+- Its applicability is intrinsically narrow, because construction context ≠ use context across most of the
+  framework: the local typermedia navigator executes tueries from read scopes, `TeventStoreUpdater` and
+  `DocumentDbSession` serve reader faces from the same instance — and `TeventStoreUpdater` needed a
+  deferred-resolver contortion purely to coexist with the lifestyle.
+- The price was public API concept load — an enum member, a builder, and subtle semantics
+  (instantiation-time only, presence-not-pairing, a `WithServiceResolver` special case) — for a few
+  microseconds of earlier failure on two internal registrations.
 
-The assert fires at instantiation — the first resolution in each scope — so it proves the component is born
-inside a unit of work, not that it never outlives its transaction: the per-component usage guards
-(`SingleTransactionUsageGuard`) remain the deep defense. A component whose *construction* must survive read
-scopes while only its *use* demands the transaction defers instead: `TeventStoreUpdater` takes
-`IServiceResolver<IUnitOfWorkTeventPublisher>` (the publisher registers `WithServiceResolver()`, whose
-deferred resolver is `Scoped` — the transaction requirement bites at `Resolve()`, the deferral point) and
-resolves at publish time, always inside its transaction.
+Context requirements stay where they were: asserted at use, and stated in signatures by
+`IUnitOfWorkResolver`.
 
 ## The front-door duality: `UnitOfWork*` / `Independent*`
 
@@ -130,7 +126,6 @@ tracking exists or is planned; a considered AsyncLocal design was dropped in its
 - **A `UnitOfWork` object beyond the resolver** — probably never. Everything reification was to buy landed
   on `IUnitOfWorkResolver` itself: identity (`Id`) and completion hooks (`OnCommittedSuccessfully` /
   `OnCompleted`), both over the captured transaction. What remains unreified — migrating the per-component
-  usage guards into a unit-of-work lifecycle — stays unplanned: the guards work, and `Lifestyle.UnitOfWork`
-  already fails a wrong-context resolution at the resolve.
+  usage guards into a unit-of-work lifecycle — stays unplanned: the guards work.
 - **A type-level name for the isolated-scope (read) context**, if something ever needs to say it in a
   signature.

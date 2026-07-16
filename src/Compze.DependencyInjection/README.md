@@ -73,7 +73,7 @@ same way.
 - **`IScopeFactory`** / **`IScope`** / **`IScopeResolver`** — Create scopes, own their lifetime, resolve within them
 - **`IUnitOfWorkResolver`** — An `IScopeResolver` whose scope is paired with an ambient transaction: a unit of work. Never container-resolvable — only `ExecuteUnitOfWork` (or `UnitOfWorkResolver.From`, which asserts the transaction) grants the typing. Also the unit of work's handle: `Id` (a value-equal `UnitOfWorkId`) plus the completion hooks `OnCommittedSuccessfully`/`OnCompleted`
 - **`IServiceResolver<TService>`** — Typed, deferred resolver for a single service; the supported way to break a constructor-injection cycle
-- **`Lifestyle`** — `Singleton`, `Scoped`, `UnitOfWork` (a `Scoped` component that additionally requires an ambient transaction — resolving it outside one throws), or `TrackedTransient`
+- **`Lifestyle`** — `Singleton`, `Scoped`, or `TrackedTransient`
 
 ### Safety features
 

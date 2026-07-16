@@ -51,8 +51,7 @@ public static class ServiceResolverExtensions
       typeof(ServiceResolverExtensions).GetMethod(nameof(CreateTypedServiceResolverRegistration), BindingFlags.NonPublic | BindingFlags.Static)!;
 
    static ComponentRegistration<IServiceResolver<TServiceType>> CreateTypedServiceResolverRegistration<TServiceType>(ComponentRegistration targetRegistration) where TServiceType : class =>
-      //A UnitOfWork target's resolver registers as Scoped: the resolver IS the deferral seam, so the ambient-transaction requirement bites at Resolve() — when the target instantiates — never when the resolver itself is constructed.
-      new(targetRegistration.Lifestyle == Lifestyle.UnitOfWork ? Lifestyle.Scoped : targetRegistration.Lifestyle,
+      new(targetRegistration.Lifestyle,
           serviceTypes: [typeof(IServiceResolver<TServiceType>)],
           InstantiationSpec.FromFactoryMethod(serviceResolver => new ServiceResolver<TServiceType>(serviceResolver), typeof(ServiceResolver<TServiceType>)),
           dependencyTypes: [],

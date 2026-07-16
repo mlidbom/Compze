@@ -191,19 +191,6 @@ public enum Lifestyle
    Scoped,
 
    ///<summary>
-   /// A <see cref="Scoped"/> component that additionally requires an ambient transaction: it participates in the enclosing<br/>
-   /// unit of work — one scope paired with one ambient transaction (see <see cref="IUnitOfWorkResolver"/>) — so resolving it<br/>
-   /// with no ambient transaction present throws.
-   /// </summary>
-   ///<remarks>
-   /// The backend containers never see this lifestyle: the shared registration layer hands them a <see cref="Scoped"/><br/>
-   /// registration whose instantiation asserts the ambient transaction first. The assert fires at instantiation — the first<br/>
-   /// resolution in each scope — so it proves the component is born inside a unit of work, not that it never outlives its<br/>
-   /// transaction; component-level usage guards remain the deep defense.
-   ///</remarks>
-   UnitOfWork,
-
-   ///<summary>
    /// Every call to <see cref="IServiceResolver.Resolve"/> will return a new unique instance of the service for a service registered as <see cref="TrackedTransient"/>.
    ///<para>If resolved within a scope, the instance will be disposed when the scope is disposed.</para>
    ///<para>If resolved outside a scope, the instance will be disposed when the container is disposed.</para>

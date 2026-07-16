@@ -51,13 +51,6 @@ public abstract class ComponentRegistration
    internal abstract ComponentRegistration CreateCloneRegistration(IRootResolver currentRootResolver);
    internal abstract ComponentRegistration CreateChildRegistration(IRootResolver parentRootResolver);
 
-   ///<summary>The registration to hand the backend container. The backends never see <see cref="Abstractions.Lifestyle.UnitOfWork"/>:<br/>
-   /// such a registration is handed over as <see cref="Abstractions.Lifestyle.Scoped"/> with the ambient-transaction requirement<br/>
-   /// moved into its instantiation (<see cref="InstantiationSpec.RequiringAmbientTransaction"/>); every other registration is<br/>
-   /// handed over as it stands. The builder's own registration list keeps the original, so clones and child containers inherit<br/>
-   /// the true lifestyle.</summary>
-   internal abstract ComponentRegistration CreateBackendRegistration();
-
    /// <summary>
    /// The child-container registration for a singleton component set member: it wraps <paramref name="parentInstance"/> —
    /// same instance as the parent's, not disposed by the child — just like <see cref="CreateChildRegistration"/> does for a
@@ -139,18 +132,6 @@ public class ComponentRegistration<TService> : ComponentRegistration where TServ
       // Scoped and transient registrations are copied — fresh instances in child scopes.
       return new ComponentRegistration<TService>(Lifestyle, ServiceTypes, InstantiationSpec, DependencyTypes, IsComponentSetMember, AllowSingletonDependent, AllowScopedDependent);
    }
-
-   internal override ComponentRegistration CreateBackendRegistration() =>
-      Lifestyle != Lifestyle.UnitOfWork
-         ? this
-         : new ComponentRegistration<TService>(
-            lifestyle: Lifestyle.Scoped,
-            serviceTypes: ServiceTypes,
-            instantiationSpec: InstantiationSpec.RequiringAmbientTransaction(),
-            dependencyTypes: DependencyTypes,
-            isComponentSetMember: IsComponentSetMember,
-            allowSingletonDependent: AllowSingletonDependent,
-            allowScopedDependent: AllowScopedDependent);
 
    internal override ComponentRegistration CreateChildRegistrationDelegatingToParentInstance(object parentInstance)
    {

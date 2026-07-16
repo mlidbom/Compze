@@ -32,7 +32,7 @@ public abstract class ContainerBuilder : IContainerBuilder
       AddComponentSetRegistrations();
       AssertLifeStyleCombinationsAreValid();
       AssertNoSingularDependenciesOnComponentSetTypes();
-      RegisterInContainer(_registeredComponents.Select(it => it.CreateBackendRegistration()).ToArray());
+      RegisterInContainer(_registeredComponents.ToArray());
       return BuildInternal();
    }
 
@@ -214,13 +214,12 @@ public abstract class ContainerBuilder : IContainerBuilder
       if(consumer.Lifestyle == Lifestyle.Singleton)
          return dependency.Lifestyle switch
          {
-            Lifestyle.Singleton  => false,
-            Lifestyle.Scoped     => true,
-            Lifestyle.UnitOfWork => true,
-            _                    => !dependency.AllowSingletonDependent
+            Lifestyle.Singleton => false,
+            Lifestyle.Scoped    => true,
+            _                   => !dependency.AllowSingletonDependent
          };
 
-      if(consumer.Lifestyle is Lifestyle.Scoped or Lifestyle.UnitOfWork)
+      if(consumer.Lifestyle == Lifestyle.Scoped)
          return dependency.Lifestyle is Lifestyle.TrackedTransient
              && !dependency.AllowScopedDependent;
 
