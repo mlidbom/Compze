@@ -1,4 +1,3 @@
-using Compze.Abstractions.Hosting.Public;
 using Compze.DependencyInjection;
 using Compze.Must;
 using Compze.Tessaging.Implementation.Peers;
@@ -29,8 +28,6 @@ public class Peer_registry_tests : EndpointHostTestBase
 
       persistedPeer.HandledTessageTypes.SetEquals(RemoteEndpointAdvertisedTypes).Must().BeTrue();
    }
-
-   EndpointId RemoteEndpointId => RemoteEndpoint.ServiceLocator.Resolve<EndpointConfiguration>().Id;
 
    HashSet<string> RemoteEndpointAdvertisedTypes =>
       [..RemoteEndpoint.ServiceLocator.Resolve<ITessageHandlerRegistry>().HandledRemoteTessageTypeIds().Select(typeId => typeId.CanonicalString)];

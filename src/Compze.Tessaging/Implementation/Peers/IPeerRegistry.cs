@@ -1,3 +1,5 @@
+using Compze.Abstractions.Hosting.Public;
+using Compze.Abstractions.Tessaging.Public;
 using Compze.Tessaging.Implementation.Transport;
 using Compze.Tessaging.Transport.SqlLayer;
 
@@ -22,6 +24,16 @@ public interface IPeerRegistry
    ///<summary>Every remembered peer, with its last-known advertisement. Served from memory: the registry mirrors its durable<br/>
    /// storage, loaded at start and updated on every <see cref="RecordAdvertisement"/>.</summary>
    IReadOnlyList<IServiceBusSqlLayer.PersistedPeer> Peers { get; }
+
+   ///<summary>The <see cref="EndpointId"/> of every remembered peer whose last-known advertisement subscribes to<br/>
+   /// <paramref name="wrappedTevent"/> — exactly-once tevent fan-out's membership: decided by remembered advertisement, never<br/>
+   /// by liveness, so a subscribing peer that is down at publish time is still fanned out to and receives the tevent on its<br/>
+   /// return.</summary>
+   ///<remarks>Subscriptions match by the same advertised-wrapper-type assignability the router's routes apply<br/>
+   /// (<see cref="Transport.Client.Internal.ITessagingRouter.SubscriberConnectionsFor"/>), and the router records every<br/>
+   /// advertisement before it builds routes from it — so a live subscriber's connection always belongs to a listed peer,<br/>
+   /// never the reverse.</remarks>
+   IReadOnlyList<EndpointId> SubscriberIdsFor(IPublisherTevent<IRemotableTevent> wrappedTevent);
 
    ///<summary>Initializes the registry's storage and loads the remembered peers into memory. Runs in the endpoint's listening<br/>
    /// phase, before any endpoint in the host starts sending.</summary>

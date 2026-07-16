@@ -202,6 +202,12 @@ patience, then fail loud naming the unserved type).
    tables in all four backends, recorded by the router on every advertisement fetch (self excluded),
    loaded in the listening phase, specified in `Peer_registry_tests`.
 2. **Fan-out reads the registry** — the data-loss fix — plus the rolling-restart/downtime specs.
+   **DONE 2026-07-16**: `Outbox.PublishTransactionally` persists to `IPeerRegistry.SubscriberIdsFor` (remembered
+   peers matched by the same wrapper-type assignability the router's routes use) and enqueues on the
+   intersection with the live subscriber connections — enqueue ⊆ persist by construction, and a
+   persisted-but-not-enqueued peer is covered by the backlog load when its connection's delivery starts.
+   Specified in `Tevent_delivery_to_peers_that_are_down_tests` (subscriber down at publish receives on
+   return, across host rebuilds; verified to fail against the previous fan-out).
 3. **Tommand route-at-delivery**: unbound outbox rows, bind-per-attempt, known-but-down and
    handler-replacement specs.
 4. **The rename**: transient → distributed (composition) / best-effort (delivery rung + leg), everywhere —

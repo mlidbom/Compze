@@ -1,7 +1,7 @@
 using System.Transactions;
-using Compze.Abstractions.Hosting.Public;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Tessaging.Implementation.Abstractions;
+using Compze.Tessaging.Implementation.Peers;
 using Compze.Tessaging.Implementation.Transport.Client.Implementation;
 using Compze.Tessaging.Implementation.Transport.Client.Internal;
 using Compze.Contracts;
@@ -25,8 +25,8 @@ partial class Outbox : IOutbox
    internal static void RegisterWith(IComponentRegistrar registrar)
    {
       registrar.Register(Singleton.For<IOutbox>()
-                                  .CreatedBy((EndpointConfiguration configuration, ITessagingRouter tessagingRouter, ITessageStorage tessageStorage)
-                                                => new Outbox(tessagingRouter, tessageStorage, configuration)));
+                                  .CreatedBy((ITessagingRouter tessagingRouter, ITessageStorage tessageStorage, IComponentSet<IPeerRegistry> peerRegistry)
+                                                => new Outbox(tessagingRouter, tessageStorage, peerRegistry.Single())));
       //Wiring the outbox is what wires the endpoint's exactly-once tevent delivery: the outbox joins the delivery-leg set the IUnitOfWorkTeventPublisher routes through...
       registrar.Register(Singleton.ForSet<IExactlyOnceTeventDeliveryLeg>().CreatedBy((IOutbox outbox) => outbox));
       //...and what grants the router's connections their exactly-once delivery streams, backed by the outbox's storage: on an endpoint without the outbox this set is empty and connections carry no such stream (see TessagingConnection).
@@ -35,13 +35,13 @@ partial class Outbox : IOutbox
    }
 
    readonly ITessageStorage _storage;
-   readonly EndpointConfiguration _configuration;
+   readonly IPeerRegistry _peerRegistry;
    readonly ITessagingRouter _tessagingRouter;
 
-   Outbox(ITessagingRouter tessagingRouter, ITessageStorage tessageStorage, EndpointConfiguration configuration)
+   Outbox(ITessagingRouter tessagingRouter, ITessageStorage tessageStorage, IPeerRegistry peerRegistry)
    {
       _storage = tessageStorage;
-      _configuration = configuration;
+      _peerRegistry = peerRegistry;
       _tessagingRouter = tessagingRouter;
    }
 
@@ -49,15 +49,22 @@ partial class Outbox : IOutbox
    {
       State.NotNull(Transaction.Current);
       var dedupId = wrappedTevent.Tevent.Id;
-      this.Log().Debug($"Will publish if transaction tevent if transactions succeeds: {dedupId} ({wrappedTevent.GetType().Name})");
-      var connections = _tessagingRouter.SubscriberConnectionsFor(wrappedTevent)
-                                        .Where(connection => connection.EndpointInformation.Id != _configuration.Id)
-                                        .ToArray(); //We dispatch tevents to ourselves synchronously so don't go doing it again here.
+      this.Log().Debug($"Will publish tevent if transaction succeeds: {dedupId} ({wrappedTevent.GetType().Name})");
 
-      var teventHandlerEndpointIds = connections.Select(connection => connection.EndpointInformation.Id).ToArray();
-      _storage.SaveTessage(wrappedTevent, dedupId, teventHandlerEndpointIds);
+      //Fan-out membership is the peer registry's remembered subscribers, never the live connections: a subscribing peer that is
+      //down at publish time still gets its receiver row, and the recovery backlog its next connection loads delivers the tevent
+      //on its return. (A peer is another endpoint, so the registry never lists us: tevents to ourselves dispatch synchronously in-process.)
+      var subscriberIds = _peerRegistry.SubscriberIdsFor(wrappedTevent);
+      _storage.SaveTessage(wrappedTevent, dedupId, [..subscriberIds]);
 
-      Transaction.Current.OnCommittedSuccessfully(() => connections.ForEach(connection =>
+      //Delivery starts now only toward the listed peers' live connections. Intersecting keeps enqueue ⊆ persist even while an
+      //advertisement update is mid-connect (the registry is written before routes are built from it — see TessagingRouter.ConnectAsync),
+      //and a peer persisted here but not enqueued is exactly what the backlog load covers when its connection's delivery starts.
+      var connectionsToEnqueueOn = _tessagingRouter.SubscriberConnectionsFor(wrappedTevent)
+                                                   .Where(connection => subscriberIds.Contains(connection.EndpointInformation.Id))
+                                                   .ToArray();
+
+      Transaction.Current.OnCommittedSuccessfully(() => connectionsToEnqueueOn.ForEach(connection =>
       {
          this.Log().Debug($"OnCommittedSuccessfully: Delivering tevent {dedupId} to endpoint {connection.EndpointInformation.Id}");
          connection.EnqueueForExactlyOnceDelivery(wrappedTevent, dedupId);

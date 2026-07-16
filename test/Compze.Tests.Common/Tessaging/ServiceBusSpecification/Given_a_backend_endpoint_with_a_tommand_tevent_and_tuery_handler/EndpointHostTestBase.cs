@@ -33,6 +33,14 @@ namespace Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_
 public abstract class EndpointHostTestBase : UniversalTestBase
 {
    static readonly WaitTimeout _timeout = WaitTimeout.Seconds(30);
+
+   ///<summary>The Backend endpoint's identity. Fixed, not generated: an endpoint keeps its identity — and thereby its pooled<br/>
+   /// database — across host rebuilds, which is what lets specs script an endpoint's restart.</summary>
+   protected static readonly EndpointId BackendEndpointId = new(Guid.Parse("DDD0A67C-D2A2-4197-9AF8-38B6AEDF8FA6"));
+
+   ///<summary>The Remote endpoint's identity. Fixed for the same reason as <see cref="BackendEndpointId"/>.</summary>
+   protected static readonly EndpointId RemoteEndpointId = new(Guid.Parse("E72924D3-5279-44B5-B20D-D682E537672B"));
+
    protected ITestingEndpointHost Host { get; private set; } = null!;
    public IThreadGate MyExactlyOnceTommandHandlerThreadGate { get; }
    public IThreadGate TommandHandlerWithResultThreadGate { get; }
@@ -100,14 +108,14 @@ public abstract class EndpointHostTestBase : UniversalTestBase
       TestEnv.DIContainer.CreateTestingContainerBuilder()
              ._mutate(it => it.Registrar.CurrentTestsDbPoolIfNotCloneContainer());
 
-   void InitializeHost()
+   void CreateHostAndRegisterBackendEndpoint()
    {
       _rootContainer ??= CreateRootBuilder().Build();
       Host = TestingEndpointHost.Create(_rootContainer, new ExactlyOnceTessagingTestingEndpointHostFeature(), new DistributedTypermediaTestingEndpointHostFeature());
 
       BackendEndPoint = Host.RegisterEndpoint(
          "Backend",
-         new EndpointId(Guid.Parse("DDD0A67C-D2A2-4197-9AF8-38B6AEDF8FA6")),
+         BackendEndpointId,
          builder =>
          {
             builder.TypeMapper.RegisterCommonTestTypeMappings();
@@ -147,9 +155,11 @@ public abstract class EndpointHostTestBase : UniversalTestBase
                        return new MyTommandResult();
                     });
          });
+   }
 
+   void RegisterRemoteEndpoint() =>
       RemoteEndpoint = Host.RegisterEndpoint("Remote",
-                                             new EndpointId(Guid.Parse("E72924D3-5279-44B5-B20D-D682E537672B")),
+                                             RemoteEndpointId,
                                              builder =>
                                              {
                                                 builder.TypeMapper.RegisterCommonTestTypeMappings();
@@ -169,11 +179,26 @@ public abstract class EndpointHostTestBase : UniversalTestBase
                                                        .ForTevent((IMyTaggregateTevent _) => MyTaggregateTeventRemoteObserverThreadGate.AwaitPassThrough())
                                                        .ForTevent((IMyTransientTevent _) => MyTransientTeventRemoteObserverThreadGate.AwaitPassThrough());
                                              });
-   }
 
    protected async Task StartHostAsync()
    {
-      InitializeHost();
+      CreateHostAndRegisterBackendEndpoint();
+      RegisterRemoteEndpoint();
+      await StartHostAndConnectClientAsync();
+   }
+
+   ///<summary>Starts a host containing only the Backend endpoint — the Remote endpoint is down. An endpoint keeps its identity<br/>
+   /// and database across host rebuilds (see <see cref="BackendEndpointId"/>), so pairing this with <see cref="StartHostAsync"/><br/>
+   /// scripts the Remote endpoint's downtime: rebuild the host without it, later rebuild it back in.</summary>
+   protected async Task StartHostWithOnlyTheBackendEndpointAsync()
+   {
+      CreateHostAndRegisterBackendEndpoint();
+      RemoteEndpoint = null!; //There is no Remote endpoint in this host: touching it must fail loudly, not answer from the previous host's disposed instance.
+      await StartHostAndConnectClientAsync();
+   }
+
+   async Task StartHostAndConnectClientAsync()
+   {
       await Host.StartAsync();
       Client = await TypermediaTestClient.ConnectTo(BackendEndPoint.TypermediaAddress!, mapper => mapper.RegisterCommonTestTypeMappings());
    }

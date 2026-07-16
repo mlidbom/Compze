@@ -75,6 +75,11 @@ Which rung an edge lands on:
 - **Observation** is the one subscription-side choice: the escape hatch drops any subscriber to this rung,
   whatever the tevent's type.
 
+**Exactly-once membership is remembered, not live**: an exactly-once tevent's receivers are the peers whose
+remembered advertisement subscribes to it (the peer registry — `dev_docs/TODO/durable-peer-topology.md` at
+the repo root), never the connections that happen to be live at publish time. A subscribing peer that is
+down when the tevent is published receives it on its return.
+
 Note that **transient still means transactional handlers**. A projection updating from a transient tevent
 wants its *own* writes to be atomic; that is handler correctness, not a delivery guarantee, and the two must
 not be conflated. Transient delivery drops guaranteed *arrival*; the handler still executes in its own scope
