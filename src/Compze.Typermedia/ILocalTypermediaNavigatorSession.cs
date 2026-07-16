@@ -8,7 +8,7 @@ namespace Compze.Typermedia;
 /// presence is asserted, decides the handler's effects' fate. Code outside any scope navigates through<br/>
 /// <see cref="IIndependentLocalTypermediaNavigator"/>, the independent counterpart. The remote sibling,<br/>
 /// <see cref="IRemoteTypermediaNavigator"/>, browses other endpoints' APIs.</summary>
-public interface ISessionLocalTypermediaNavigator
+public interface ILocalTypermediaNavigatorSession
 {
    ///<summary>Synchronously executes the local handler for <paramref name="tuery"/> in the caller's scope. A tuery demands no<br/>
    /// transaction — it changes nothing — but inside the caller's transaction its reads join that transaction's consistency,<br/>

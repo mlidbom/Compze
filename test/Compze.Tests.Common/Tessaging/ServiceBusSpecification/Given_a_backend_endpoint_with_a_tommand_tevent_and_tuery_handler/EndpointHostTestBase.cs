@@ -126,12 +126,12 @@ public abstract class EndpointHostTestBase : UniversalTestBase
                    .ForTevent((IMyTaggregateTevent _) => MyTaggregateTeventBackendObserverThreadGate.AwaitPassThrough());
 
             builder.RegisterTypermediaHandlers
-                   .ForTommand((MyCreateTaggregateTommand tommand, ISessionLocalTypermediaNavigator navigator) =>
+                   .ForTommand((MyCreateTaggregateTommand tommand, ILocalTypermediaNavigatorSession navigator) =>
                     {
                        MyCreateTaggregateTommandHandlerThreadGate.AwaitPassThrough();
                        MyTaggregate.Create(tommand.TaggregateId, navigator);
                     })
-                   .ForTommand((MyUpdateTaggregateTommand tommand, ISessionLocalTypermediaNavigator navigator) =>
+                   .ForTommand((MyUpdateTaggregateTommand tommand, ILocalTypermediaNavigatorSession navigator) =>
                     {
                        MyUpdateTaggregateTommandHandlerThreadGate.AwaitPassThrough();
                        navigator.Execute(new TeventStoreApi().Tueries.GetForUpdate<MyTaggregate>(tommand.TaggregateId)).Update();

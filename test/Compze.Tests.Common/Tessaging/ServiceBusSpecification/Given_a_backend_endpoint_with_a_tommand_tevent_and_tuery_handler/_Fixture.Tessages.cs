@@ -77,7 +77,7 @@ public class MyTaggregate : Taggregate<MyTaggregate, IMyTaggregateTevent, MyTagg
 
    internal void Update() => Publish(new MyTaggregateTevent.Updated());
 
-   internal static void Create(TaggregateId id, ISessionLocalTypermediaNavigator bus)
+   internal static void Create(TaggregateId id, ILocalTypermediaNavigatorSession bus)
    {
       var created = new MyTaggregate();
       created.Publish(new MyTaggregateTevent.Created(id));

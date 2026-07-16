@@ -6,7 +6,7 @@ namespace Compze.Typermedia;
 
 ///<summary>
 /// Wires in-process Typermedia into an endpoint: the handler registry and the
-/// <see cref="ISessionLocalTypermediaNavigator"/> through which strictly local tueries and tommands execute
+/// <see cref="ILocalTypermediaNavigatorSession"/> through which strictly local tueries and tommands execute
 /// synchronously, on the calling thread, in the caller's session — a tommand within the caller's transaction.
 /// Wires no transport server and no
 /// discovery, so the endpoint has no Typermedia runtime lifecycle at all. Created idempotently through
@@ -29,7 +29,7 @@ public class InProcessTypermediaEndpointFeature
       RegisterHandlers = new TypermediaHandlerRegistrarWithDependencyInjectionSupport(handlerRegistry);
 
       builder.Registrar.Register(Singleton.For<ITypermediaHandlerRegistry, ITypermediaHandlerRegistrar>().Instance(handlerRegistry))
-                       .SessionLocalTypermediaNavigator()
+                       .LocalTypermediaNavigatorSession()
                        .IndependentLocalTypermediaNavigator();
    }
 }

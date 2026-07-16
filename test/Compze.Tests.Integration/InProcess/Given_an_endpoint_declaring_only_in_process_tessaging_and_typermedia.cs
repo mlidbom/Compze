@@ -1,4 +1,4 @@
-using Compze.Abstractions.Hosting.Public;
+﻿using Compze.Abstractions.Hosting.Public;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
@@ -58,7 +58,7 @@ public class Given_an_endpoint_declaring_only_in_process_tessaging_and_typermedi
 
    [PCT] public void a_strictly_local_tuery_executes_through_the_endpoints_in_process_navigator() =>
       _endpoint.ServiceLocator.Resolve<IScopeFactory>().ExecuteInIsolatedScope(scope =>
-         scope.Resolve<ISessionLocalTypermediaNavigator>().Execute(new MyStrictlyLocalGreetingTuery { Name = "World" }).Message.Must().Be("Hello World!"));
+         scope.Resolve<ILocalTypermediaNavigatorSession>().Execute(new MyStrictlyLocalGreetingTuery { Name = "World" }).Message.Must().Be("Hello World!"));
 
    [PCT] public void a_tevent_published_in_process_reaches_the_endpoints_subscriber()
    {

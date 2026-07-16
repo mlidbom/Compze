@@ -44,7 +44,7 @@ public class Local_Tuery_performance_tests : PerformanceTestBase
       void RunRequest() =>
          ServerEndpoint.ServiceLocator.Resolve<IScopeFactory>().ExecuteInIsolatedScope(scope =>
          {
-            var navigator = scope.Resolve<ISessionLocalTypermediaNavigator>();
+            var navigator = scope.Resolve<ILocalTypermediaNavigatorSession>();
             for(var i = 0; i < tueriesPerRequest; i++)
             {
                navigator.Execute(new MyLocalStrictlyLocalTuery());

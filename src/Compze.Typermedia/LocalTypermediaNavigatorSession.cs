@@ -7,7 +7,7 @@ using Compze.DependencyInjection.Abstractions;
 
 namespace Compze.Typermedia;
 
-class SessionLocalTypermediaNavigator(ITypermediaHandlerRegistry typermediaHandlerRegistry, IScopeResolver scopeResolver) : ISessionLocalTypermediaNavigator
+class LocalTypermediaNavigatorSession(ITypermediaHandlerRegistry typermediaHandlerRegistry, IScopeResolver scopeResolver) : ILocalTypermediaNavigatorSession
 {
    readonly ITypermediaHandlerRegistry _typermediaHandlerRegistry = typermediaHandlerRegistry;
    readonly IScopeResolver _scopeResolver = scopeResolver;

@@ -6,8 +6,8 @@ namespace Compze.Typermedia;
 
 public static class SessionLocalTypermediaNavigatorRegistrar
 {
-   public static IComponentRegistrar SessionLocalTypermediaNavigator(this IComponentRegistrar registrar)
-      => registrar.Register(Scoped.For<ISessionLocalTypermediaNavigator>()
+   public static IComponentRegistrar LocalTypermediaNavigatorSession(this IComponentRegistrar registrar)
+      => registrar.Register(Scoped.For<ILocalTypermediaNavigatorSession>()
                                   .CreatedBy((ITypermediaHandlerRegistry typermediaHandlerRegistry, IScopeResolver scopeResolver)
-                                                => new SessionLocalTypermediaNavigator(typermediaHandlerRegistry, scopeResolver)));
+                                                => new LocalTypermediaNavigatorSession(typermediaHandlerRegistry, scopeResolver)));
 }
