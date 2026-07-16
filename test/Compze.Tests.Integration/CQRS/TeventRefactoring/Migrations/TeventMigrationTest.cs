@@ -271,10 +271,10 @@ public class TeventMigrationTest : TeventMigrationTestBase
             var taggregate = TestTaggregate.FromTevents(id, EnumerableCE.OfTypes<Ec1, E1, E2, E3, E4>());
             var initialHistory = taggregate.History;
 
-            var firstSavedHistory = container.ExecuteUnitOfWork(scope =>
+            var firstSavedHistory = container.ExecuteUnitOfWork(unitOfWork =>
             {
-               scope.TeventStoreUpdater().Save(taggregate);
-               return scope.TeventStoreUpdater().Get<TestTaggregate>(id).History;
+               unitOfWork.TeventStoreUpdater().Save(taggregate);
+               return unitOfWork.TeventStoreUpdater().Get<TestTaggregate>(id).History;
             });
 
             AssertStreamsAreIdenticalExceptForEventIds(initialHistory, firstSavedHistory, "first saved history");
@@ -282,7 +282,7 @@ public class TeventMigrationTest : TeventMigrationTestBase
             migrations = [Replace<E1>.With<E5>()];
             ClearCache(container);
 
-            var migratedHistory = container.ExecuteUnitOfWork(scope => scope.TeventStoreUpdater().Get<TestTaggregate>(id).History);
+            var migratedHistory = container.ExecuteUnitOfWork(unitOfWork => unitOfWork.TeventStoreUpdater().Get<TestTaggregate>(id).History);
             var expectedAfterReplacingE1WithE5 =
                TestTaggregate.FromTevents(id, EnumerableCE.OfTypes<Ec1, E5, E2, E3, E4>()).History;
             AssertStreamsAreIdenticalExceptForEventIds(expected: expectedAfterReplacingE1WithE5, migratedHistory: migratedHistory, descriptionOfHistory: "migrated history");
@@ -295,14 +295,14 @@ public class TeventMigrationTest : TeventMigrationTestBase
 
             AssertStreamsAreIdenticalExceptForEventIds(expected: expectedAfterReplacingE1WithE5, migratedHistory: historyAfterPersistingButBeforeReload, descriptionOfHistory: "migrated, persisted");
 
-            var historyAfterPersistingAndReloading = container.ExecuteUnitOfWork(scope => scope.TeventStoreUpdater().Get<TestTaggregate>(id).History);
+            var historyAfterPersistingAndReloading = container.ExecuteUnitOfWork(unitOfWork => unitOfWork.TeventStoreUpdater().Get<TestTaggregate>(id).History);
             AssertStreamsAreIdenticalExceptForEventIds(expected: expectedAfterReplacingE1WithE5, migratedHistory: historyAfterPersistingAndReloading, descriptionOfHistory: "migrated, persisted, reloaded");
 
             migrations = [Replace<E2>.With<E6>()];
 
             toDispose.Add(container = container.CloneAndBuild());
 
-            migratedHistory = container.ExecuteUnitOfWork(scope => scope.TeventStoreUpdater().Get<TestTaggregate>(id).History);
+            migratedHistory = container.ExecuteUnitOfWork(unitOfWork => unitOfWork.TeventStoreUpdater().Get<TestTaggregate>(id).History);
             var expectedAfterReplacingE2WithE6 = TestTaggregate.FromTevents(id, EnumerableCE.OfTypes<Ec1, E5, E6, E3, E4>()).History;
             AssertStreamsAreIdenticalExceptForEventIds(expected: expectedAfterReplacingE2WithE6, migratedHistory: migratedHistory, descriptionOfHistory: "migrated history");
 
@@ -313,7 +313,7 @@ public class TeventMigrationTest : TeventMigrationTestBase
             });
 
             AssertStreamsAreIdenticalExceptForEventIds(expected: expectedAfterReplacingE2WithE6, migratedHistory: historyAfterPersistingButBeforeReload, descriptionOfHistory: "migrated, persisted");
-            historyAfterPersistingAndReloading = container.ExecuteUnitOfWork(scope => scope.TeventStoreUpdater().Get<TestTaggregate>(id).History);
+            historyAfterPersistingAndReloading = container.ExecuteUnitOfWork(unitOfWork => unitOfWork.TeventStoreUpdater().Get<TestTaggregate>(id).History);
             AssertStreamsAreIdenticalExceptForEventIds(expected: expectedAfterReplacingE2WithE6, migratedHistory: historyAfterPersistingAndReloading, descriptionOfHistory: "migrated, persisted, reloaded");
          });
       }
@@ -342,10 +342,10 @@ public class TeventMigrationTest : TeventMigrationTestBase
             var taggregate = TestTaggregate.FromTevents(id, EnumerableCE.OfTypes<Ec1, E1, E2, E3, E4>());
             var initialHistory = taggregate.History;
 
-            var firstSavedHistory = container.ExecuteUnitOfWork(scope =>
+            var firstSavedHistory = container.ExecuteUnitOfWork(unitOfWork =>
             {
-               scope.TeventStoreUpdater().Save(taggregate);
-               return scope.TeventStoreUpdater().Get<TestTaggregate>(id).History;
+               unitOfWork.TeventStoreUpdater().Save(taggregate);
+               return unitOfWork.TeventStoreUpdater().Get<TestTaggregate>(id).History;
             });
 
             AssertStreamsAreIdenticalExceptForEventIds(initialHistory, firstSavedHistory, "first saved history");
@@ -353,7 +353,7 @@ public class TeventMigrationTest : TeventMigrationTestBase
             migrations = [Replace<E1>.With<E5>()];
             ClearCache(container);
 
-            var migratedHistory = container.ExecuteUnitOfWork(scope => scope.TeventStoreUpdater().Get<TestTaggregate>(id).History);
+            var migratedHistory = container.ExecuteUnitOfWork(unitOfWork => unitOfWork.TeventStoreUpdater().Get<TestTaggregate>(id).History);
             var expectedAfterReplacingE1WithE5 =
                TestTaggregate.FromTevents(id, EnumerableCE.OfTypes<Ec1, E5, E2, E3, E4>()).History;
             AssertStreamsAreIdenticalExceptForEventIds(expected: expectedAfterReplacingE1WithE5, migratedHistory: migratedHistory, descriptionOfHistory: "migrated history");
@@ -366,15 +366,15 @@ public class TeventMigrationTest : TeventMigrationTestBase
 
             AssertStreamsAreIdenticalExceptForEventIds(expected: expectedAfterReplacingE1WithE5, migratedHistory: historyAfterPersistingButBeforeReload, descriptionOfHistory: "migrated, persisted");
 
-            var historyAfterPersistingAndReloading = container.ExecuteUnitOfWork(scope => scope.TeventStoreUpdater().Get<TestTaggregate>(id).History);
+            var historyAfterPersistingAndReloading = container.ExecuteUnitOfWork(unitOfWork => unitOfWork.TeventStoreUpdater().Get<TestTaggregate>(id).History);
             AssertStreamsAreIdenticalExceptForEventIds(expected: expectedAfterReplacingE1WithE5, migratedHistory: historyAfterPersistingAndReloading, descriptionOfHistory: "migrated, persisted, reloaded");
 
-            container.ExecuteUnitOfWork(scope => scope.TeventStoreUpdater().Get<TestTaggregate>(id).Publish(new E6(), new E7()));
+            container.ExecuteUnitOfWork(unitOfWork => unitOfWork.TeventStoreUpdater().Get<TestTaggregate>(id).Publish(new E6(), new E7()));
 
             migrations = [Replace<E2>.With<E6>()];
             toDispose.Add(container = container.CloneAndBuild());
 
-            migratedHistory = container.ExecuteUnitOfWork(scope => scope.TeventStoreUpdater().Get<TestTaggregate>(id).History);
+            migratedHistory = container.ExecuteUnitOfWork(unitOfWork => unitOfWork.TeventStoreUpdater().Get<TestTaggregate>(id).History);
             var expectedAfterReplacingE2WithE6 = TestTaggregate.FromTevents(id, EnumerableCE.OfTypes<Ec1, E5, E6, E3, E4, E6, E7>()).History;
             AssertStreamsAreIdenticalExceptForEventIds(expected: expectedAfterReplacingE2WithE6, migratedHistory: migratedHistory, descriptionOfHistory: "migrated history");
 
@@ -385,12 +385,12 @@ public class TeventMigrationTest : TeventMigrationTestBase
             });
 
             AssertStreamsAreIdenticalExceptForEventIds(expected: expectedAfterReplacingE2WithE6, migratedHistory: historyAfterPersistingButBeforeReload, descriptionOfHistory: "migrated, persisted");
-            historyAfterPersistingAndReloading = container.ExecuteUnitOfWork(scope => scope.TeventStoreUpdater().Get<TestTaggregate>(id).History);
+            historyAfterPersistingAndReloading = container.ExecuteUnitOfWork(unitOfWork => unitOfWork.TeventStoreUpdater().Get<TestTaggregate>(id).History);
             AssertStreamsAreIdenticalExceptForEventIds(expected: expectedAfterReplacingE2WithE6, migratedHistory: historyAfterPersistingAndReloading, descriptionOfHistory: "migrated, persisted, reloaded");
 
             migrations = Enumerable.Empty<ITeventMigration>().ToList();
-            container.ExecuteUnitOfWork(scope => scope.TeventStoreUpdater().Get<TestTaggregate>(id).Publish(new E8(), new E9()));
-            historyAfterPersistingAndReloading = container.ExecuteUnitOfWork(scope => scope.TeventStoreUpdater().Get<TestTaggregate>(id).History);
+            container.ExecuteUnitOfWork(unitOfWork => unitOfWork.TeventStoreUpdater().Get<TestTaggregate>(id).Publish(new E8(), new E9()));
+            historyAfterPersistingAndReloading = container.ExecuteUnitOfWork(unitOfWork => unitOfWork.TeventStoreUpdater().Get<TestTaggregate>(id).History);
             var expectedAfterReplacingE2WithE6AndRaisingE8E9 = TestTaggregate.FromTevents(id, EnumerableCE.OfTypes<Ec1, E5, E6, E3, E4, E6, E7, E8, E9>()).History;
             AssertStreamsAreIdenticalExceptForEventIds(expected: expectedAfterReplacingE2WithE6AndRaisingE8E9, migratedHistory: historyAfterPersistingAndReloading, descriptionOfHistory: "migrated, persisted, reloaded");
          });
@@ -418,7 +418,7 @@ public class TeventMigrationTest : TeventMigrationTestBase
          {
             var initialTaggregate = TestTaggregate.FromTevents(id, EnumerableCE.OfTypes<Ec1, E1>());
 
-            container.ExecuteUnitOfWork(scope => scope.TeventStoreUpdater().Save(initialTaggregate));
+            container.ExecuteUnitOfWork(unitOfWork => unitOfWork.TeventStoreUpdater().Save(initialTaggregate));
 
             migrations = [Replace<E1>.With<E5>()];
 
@@ -426,9 +426,9 @@ public class TeventMigrationTest : TeventMigrationTestBase
 
             migrations = EnumerableCE.Create<ITeventMigration>().ToList();
 
-            container.ExecuteUnitOfWork(scope => scope.TeventStoreUpdater().Get<TestTaggregate>(id).Publish(new E2()));
+            container.ExecuteUnitOfWork(unitOfWork => unitOfWork.TeventStoreUpdater().Get<TestTaggregate>(id).Publish(new E2()));
 
-            var taggregate = container.ExecuteUnitOfWork(scope => scope.TeventStoreUpdater().Get<TestTaggregate>(id));
+            var taggregate = container.ExecuteUnitOfWork(unitOfWork => unitOfWork.TeventStoreUpdater().Get<TestTaggregate>(id));
 
             var expected = TestTaggregate.FromTevents(id, EnumerableCE.OfTypes<Ec1, E5, E2>()).History;
             AssertStreamsAreIdenticalExceptForEventIds(expected: expected, migratedHistory: taggregate.History, descriptionOfHistory: "migrated history");
@@ -467,22 +467,22 @@ public class TeventMigrationTest : TeventMigrationTestBase
             var expectedHistoryAfterFirstMigration = TestTaggregate.FromTevents(id, EnumerableCE.OfTypes<Ec1, E2, E1>()).History;
             var expectedHistoryAfterSecondMigration = TestTaggregate.FromTevents(id, EnumerableCE.OfTypes<Ec1, E2, E3, E1>()).History;
 
-            container.ExecuteUnitOfWork(scope => scope.TeventStoreUpdater().Save(initialTaggregate));
+            container.ExecuteUnitOfWork(unitOfWork => unitOfWork.TeventStoreUpdater().Save(initialTaggregate));
             migrations = firstMigration;
             ClearCache(container);
-            var historyWithFirstMigrationUnPersisted = container.ExecuteUnitOfWork(scope => scope.TeventStoreUpdater().Get<TestTaggregate>(id).History);
+            var historyWithFirstMigrationUnPersisted = container.ExecuteUnitOfWork(unitOfWork => unitOfWork.TeventStoreUpdater().Get<TestTaggregate>(id).History);
 
             container.ExecuteInIsolatedScope(scope => scope.TeventStore().PersistMigrations());
-            var historyAfterPersistingFirstMigration = container.ExecuteUnitOfWork(scope => scope.TeventStoreUpdater().Get<TestTaggregate>(id).History);
+            var historyAfterPersistingFirstMigration = container.ExecuteUnitOfWork(unitOfWork => unitOfWork.TeventStoreUpdater().Get<TestTaggregate>(id).History);
             AssertStreamsAreIdenticalExceptForEventIds(expectedHistoryAfterFirstMigration, historyWithFirstMigrationUnPersisted, nameof(historyWithFirstMigrationUnPersisted));
             AssertStreamsAreIdenticalExceptForEventIds(expectedHistoryAfterFirstMigration, historyAfterPersistingFirstMigration, nameof(historyAfterPersistingFirstMigration));
 
             migrations = secondMigration;
             toDispose.Add(container = container.CloneAndBuild());
-            var historyWithSecondMigrationUnPersisted = container.ExecuteUnitOfWork(scope => scope.TeventStoreUpdater().Get<TestTaggregate>(id).History);
+            var historyWithSecondMigrationUnPersisted = container.ExecuteUnitOfWork(unitOfWork => unitOfWork.TeventStoreUpdater().Get<TestTaggregate>(id).History);
 
             container.ExecuteInIsolatedScope(scope => scope.TeventStore().PersistMigrations());
-            var historyAfterPersistingSecondMigration = container.ExecuteUnitOfWork(scope => scope.TeventStoreUpdater().Get<TestTaggregate>(id).History);
+            var historyAfterPersistingSecondMigration = container.ExecuteUnitOfWork(unitOfWork => unitOfWork.TeventStoreUpdater().Get<TestTaggregate>(id).History);
             AssertStreamsAreIdenticalExceptForEventIds(expectedHistoryAfterSecondMigration, historyWithSecondMigrationUnPersisted, nameof(historyWithSecondMigrationUnPersisted));
             AssertStreamsAreIdenticalExceptForEventIds(expectedHistoryAfterSecondMigration, historyAfterPersistingSecondMigration, nameof(historyAfterPersistingSecondMigration));
          });
@@ -512,22 +512,22 @@ public class TeventMigrationTest : TeventMigrationTestBase
             var expectedHistoryAfterFirstMigration = TestTaggregate.FromTevents(id, EnumerableCE.OfTypes<Ec1, E1, E2>()).History;
             var expectedHistoryAfterSecondMigration = TestTaggregate.FromTevents(id, EnumerableCE.OfTypes<Ec1, E1, E3, E2>()).History;
 
-            container.ExecuteUnitOfWork(scope => scope.TeventStoreUpdater().Save(initialTaggregate));
+            container.ExecuteUnitOfWork(unitOfWork => unitOfWork.TeventStoreUpdater().Save(initialTaggregate));
             migrations = firstMigration;
             ClearCache(container);
-            var historyWithFirstMigrationUnPersisted = container.ExecuteUnitOfWork(scope => scope.TeventStoreUpdater().Get<TestTaggregate>(id).History);
+            var historyWithFirstMigrationUnPersisted = container.ExecuteUnitOfWork(unitOfWork => unitOfWork.TeventStoreUpdater().Get<TestTaggregate>(id).History);
 
             container.ExecuteInIsolatedScope(scope => scope.TeventStore().PersistMigrations());
-            var historyAfterPersistingFirstMigration = container.ExecuteUnitOfWork(scope => scope.TeventStoreUpdater().Get<TestTaggregate>(id).History);
+            var historyAfterPersistingFirstMigration = container.ExecuteUnitOfWork(unitOfWork => unitOfWork.TeventStoreUpdater().Get<TestTaggregate>(id).History);
             AssertStreamsAreIdenticalExceptForEventIds(expectedHistoryAfterFirstMigration, historyWithFirstMigrationUnPersisted, nameof(historyWithFirstMigrationUnPersisted));
             AssertStreamsAreIdenticalExceptForEventIds(expectedHistoryAfterFirstMigration, historyAfterPersistingFirstMigration, nameof(historyAfterPersistingFirstMigration));
 
             migrations = secondMigration;
             toDispose.Add(container = container.CloneAndBuild());
-            var historyWithSecondMigrationUnPersisted = container.ExecuteUnitOfWork(scope => scope.TeventStoreUpdater().Get<TestTaggregate>(id).History);
+            var historyWithSecondMigrationUnPersisted = container.ExecuteUnitOfWork(unitOfWork => unitOfWork.TeventStoreUpdater().Get<TestTaggregate>(id).History);
 
             container.ExecuteInIsolatedScope(scope => scope.TeventStore().PersistMigrations());
-            var historyAfterPersistingSecondMigration = container.ExecuteUnitOfWork(scope => scope.TeventStoreUpdater().Get<TestTaggregate>(id).History);
+            var historyAfterPersistingSecondMigration = container.ExecuteUnitOfWork(unitOfWork => unitOfWork.TeventStoreUpdater().Get<TestTaggregate>(id).History);
             AssertStreamsAreIdenticalExceptForEventIds(expectedHistoryAfterSecondMigration, historyWithSecondMigrationUnPersisted, nameof(historyWithSecondMigrationUnPersisted));
             AssertStreamsAreIdenticalExceptForEventIds(expectedHistoryAfterSecondMigration, historyAfterPersistingSecondMigration, nameof(historyAfterPersistingSecondMigration));
          });
@@ -567,19 +567,19 @@ public class TeventMigrationTest : TeventMigrationTestBase
          id,
          EnumerableCE.OfTypes<Ec1, E1, E2, E3, E4>());
 
-      otherProcessContainer.ExecuteUnitOfWork(scope => scope.TeventStoreUpdater().Save(taggregate));
+      otherProcessContainer.ExecuteUnitOfWork(unitOfWork => unitOfWork.TeventStoreUpdater().Save(taggregate));
       migrations = actualMigrations;
-      otherProcessContainer.ExecuteUnitOfWork(scope => scope.TeventStoreUpdater().Get<TestTaggregate>(id));
+      otherProcessContainer.ExecuteUnitOfWork(unitOfWork => unitOfWork.TeventStoreUpdater().Get<TestTaggregate>(id));
 
-      var test = container.ExecuteUnitOfWork(scope => scope.TeventStore().GetTaggregateHistory(id));
+      var test = container.ExecuteUnitOfWork(unitOfWork => unitOfWork.TeventStore().GetTaggregateHistory(id));
       test.Count.Must().BeGreaterThan(0);
 
       container.ExecuteInIsolatedScope(scope => scope.TeventStore().PersistMigrations());
 
-      otherProcessContainer.ExecuteUnitOfWork(scope => scope.TeventStoreUpdater().Get<TestTaggregate>(id).Publish(new E3()));
+      otherProcessContainer.ExecuteUnitOfWork(unitOfWork => unitOfWork.TeventStoreUpdater().Get<TestTaggregate>(id).Publish(new E3()));
 
-      var firstProcessHistory = container.ExecuteUnitOfWork(scope => scope.TeventStore().GetTaggregateHistory(id).Tevents().ToList());
-      var secondProcessHistory = otherProcessContainer.ExecuteUnitOfWork(scope => scope.TeventStore().GetTaggregateHistory(id).Tevents().ToList());
+      var firstProcessHistory = container.ExecuteUnitOfWork(unitOfWork => unitOfWork.TeventStore().GetTaggregateHistory(id).Tevents().ToList());
+      var secondProcessHistory = otherProcessContainer.ExecuteUnitOfWork(unitOfWork => unitOfWork.TeventStore().GetTaggregateHistory(id).Tevents().ToList());
 
       TeventStorageTestHelper.StripSteventhDecimalPointFromSecondFractionOnUtcUpdateTime(firstProcessHistory);
       TeventStorageTestHelper.StripSteventhDecimalPointFromSecondFractionOnUtcUpdateTime(secondProcessHistory);

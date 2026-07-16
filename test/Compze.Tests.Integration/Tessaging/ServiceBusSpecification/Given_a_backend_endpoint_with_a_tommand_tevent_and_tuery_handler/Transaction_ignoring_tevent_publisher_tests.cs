@@ -30,10 +30,10 @@ public class Transaction_ignoring_tevent_publisher_tests : EndpointHostTestBase
    }
 
    void PublishTransientTeventThroughTheTransactionIgnoringPublisherInATransactionThatRollsBack() =>
-      Invoking(() => BackendEndPoint.ServiceLocator.Resolve<IScopeFactory>().ExecuteUnitOfWork(scope =>
+      Invoking(() => BackendEndPoint.ServiceLocator.Resolve<IScopeFactory>().ExecuteUnitOfWork(unitOfWork =>
                     {
                        Transaction.Current!.FailOnPrepare();
-                       scope.Resolve<ITransactionIgnoringTeventPublisher>().Publish(new MyTransientTevent { SequenceNumber = 1 });
+                       unitOfWork.Resolve<ITransactionIgnoringTeventPublisher>().Publish(new MyTransientTevent { SequenceNumber = 1 });
                     }))
                    .Must().Throw<TransactionAbortedException>();
 }

@@ -18,7 +18,7 @@ public abstract class DocumentDbTestsBase : UniversalTestBase
 
 
    protected void UseInTransactionalScope([InstantHandle] Action<IDocumentDbReader, IDocumentDbUpdater> useSession) =>
-      Container.ExecuteUnitOfWork(scope => useSession(scope.DocumentDbReader(), scope.DocumentDbUpdater()));
+      Container.ExecuteUnitOfWork(unitOfWork => useSession(unitOfWork.DocumentDbReader(), unitOfWork.DocumentDbUpdater()));
 
    protected void UseInScope([InstantHandle] Action<IDocumentDbReader> useSession) => Container.ExecuteInIsolatedScope(scope => useSession(scope.DocumentDbReader()));
 }

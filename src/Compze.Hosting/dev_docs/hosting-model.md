@@ -140,7 +140,8 @@ wired once whether it arrives alone or under distribution).
 - **Tessaging splits three ways**, each layer containing the one below it.
   `InProcessTessagingEndpointFeature` (in `Compze.Tessaging`, `AddInProcessTessaging()`) is the style's
   synchronous core: the handler registry, the synchronous in-process tevent delivery every tevent travels,
-  and the endpoint's one `IUnitOfWorkTeventPublisher` — the one way to publish a tevent, routing each by the delivery
+  and the endpoint's `IUnitOfWorkTeventPublisher` (plus its independent counterpart, `IIndependentTeventPublisher`,
+  for code outside any unit of work) — routing each published tevent by the delivery
   contract its type declares (see
   [the tevent delivery model](../../Compze.Tessaging/dev_docs/tevent-delivery-model.md)). With nothing but this
   feature the endpoint wires no remote delivery legs — no transport, inbox, outbox, or tommand scheduler —

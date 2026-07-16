@@ -24,10 +24,10 @@ public class TypermediaHandlerExecutor(IScopeFactory scopeFactory, ITypermediaHa
    public object ExecuteTommandWithResult(ITessage tommand)
    {
       this.Log().Debug($"Executing tommand with result {tommand.GetType().Name}");
-      return ExecuteWithRetry(() => _scopeFactory.ExecuteUnitOfWork(scopeResolver =>
+      return ExecuteWithRetry(() => _scopeFactory.ExecuteUnitOfWork(unitOfWork =>
       {
          var handler = _handlerRegistry.GetTommandHandlerWithReturnValue(tommand.GetType());
-         return handler((IAtMostOnceTypermediaTommand)tommand, scopeResolver);
+         return handler((IAtMostOnceTypermediaTommand)tommand, unitOfWork);
       }));
    }
 
@@ -36,10 +36,10 @@ public class TypermediaHandlerExecutor(IScopeFactory scopeFactory, ITypermediaHa
       this.Log().Debug($"Executing void tommand {tommand.GetType().Name}");
       ExecuteWithRetry<object?>(() =>
       {
-         _scopeFactory.ExecuteUnitOfWork(scopeResolver =>
+         _scopeFactory.ExecuteUnitOfWork(unitOfWork =>
          {
             var handler = _handlerRegistry.GetVoidTommandHandler(tommand);
-            handler(tommand, scopeResolver);
+            handler(tommand, unitOfWork);
          });
          return null;
       });

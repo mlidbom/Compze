@@ -83,24 +83,24 @@ public abstract class TeventMigrationTestBase : UniversalTestBase
 
       await UtcTimeSource.Test.FrozenAtUtc(UtcTimeSource.UtcNow + 1.Hours()).RunAsync(async () =>
       {
-         container.ExecuteUnitOfWork(scope => scope.TeventStoreUpdater()
+         container.ExecuteUnitOfWork(unitOfWork => unitOfWork.TeventStoreUpdater()
                                                                               .Save(initialTaggregate));
          startingMigrations.ForEach(migrations.Add);
          ClearCache(container);
 
-         var migratedHistory = container.ExecuteUnitOfWork(scope => scope.TeventStoreUpdater()
+         var migratedHistory = container.ExecuteUnitOfWork(unitOfWork => unitOfWork.TeventStoreUpdater()
                                                                                                     .Get<TestTaggregate>(initialTaggregate.Id))
                                              .History;
 
          AssertStreamsAreIdenticalExceptForEventIds(expected, migratedHistory, "Loaded un-cached taggregate");
 
-         var migratedCachedHistory = container.ExecuteUnitOfWork(scope => scope.TeventStoreUpdater()
+         var migratedCachedHistory = container.ExecuteUnitOfWork(unitOfWork => unitOfWork.TeventStoreUpdater()
                                                                                                           .Get<TestTaggregate>(initialTaggregate.Id))
                                                    .History;
          AssertStreamsAreIdenticalExceptForEventIds(expected, migratedCachedHistory, "Loaded cached taggregate");
 
          Log.Info("  Streaming all tevents in store");
-         var streamedTevents = container.ExecuteUnitOfWork(scope => scope.TeventStore()
+         var streamedTevents = container.ExecuteUnitOfWork(unitOfWork => unitOfWork.TeventStore()
                                                                                                     .ListAllTeventsForTestingPurposesAbsolutelyNotUsableForARealTeventStoreOfAnySize()
                                                                                                     .Tevents()
                                                                                                     .ToList());
@@ -111,7 +111,7 @@ public abstract class TeventMigrationTestBase : UniversalTestBase
          var clonedContainer = container.CloneAndBuild();
          await using(clonedContainer)
          {
-            migratedHistory = clonedContainer.ExecuteUnitOfWork(scope => scope.TeventStoreUpdater()
+            migratedHistory = clonedContainer.ExecuteUnitOfWork(unitOfWork => unitOfWork.TeventStoreUpdater()
                                                                                                                .Get<TestTaggregate>(initialTaggregate.Id))
                                                   .History;
             AssertStreamsAreIdenticalExceptForEventIds(expected, migratedHistory, "Loaded taggregate");
@@ -121,12 +121,12 @@ public abstract class TeventMigrationTestBase : UniversalTestBase
             persistScope.Resolver.TeventStore()
                         .PersistMigrations();
 
-            migratedHistory = container.ExecuteUnitOfWork(scope => scope.TeventStoreUpdater()
+            migratedHistory = container.ExecuteUnitOfWork(unitOfWork => unitOfWork.TeventStoreUpdater()
                                                                                                    .Get<TestTaggregate>(initialTaggregate.Id))
                                             .History;
             AssertStreamsAreIdenticalExceptForEventIds(expected, migratedHistory, "Loaded taggregate");
 
-            migratedHistory = clonedContainer.ExecuteUnitOfWork(scope => scope.TeventStoreUpdater()
+            migratedHistory = clonedContainer.ExecuteUnitOfWork(unitOfWork => unitOfWork.TeventStoreUpdater()
                                                                                                                .Get<TestTaggregate>(initialTaggregate.Id))
                                                   .History;
          }
@@ -134,7 +134,7 @@ public abstract class TeventMigrationTestBase : UniversalTestBase
          AssertStreamsAreIdenticalExceptForEventIds(expected, migratedHistory, "Loaded taggregate");
 
          Log.Info("Streaming all tevents in store");
-         streamedTevents = container.ExecuteUnitOfWork(scope => scope.TeventStore()
+         streamedTevents = container.ExecuteUnitOfWork(unitOfWork => unitOfWork.TeventStore()
                                                                                                 .ListAllTeventsForTestingPurposesAbsolutelyNotUsableForARealTeventStoreOfAnySize()
                                                                                                 .Tevents()
                                                                                                 .ToList());
@@ -143,13 +143,13 @@ public abstract class TeventMigrationTestBase : UniversalTestBase
          Log.Info("  Disable all migrations so that none are used when reading from the tevent stores");
          migrations.Clear();
 
-         migratedHistory = container.ExecuteUnitOfWork(scope => scope.TeventStoreUpdater()
+         migratedHistory = container.ExecuteUnitOfWork(unitOfWork => unitOfWork.TeventStoreUpdater()
                                                                                                 .Get<TestTaggregate>(initialTaggregate.Id))
                                          .History;
          AssertStreamsAreIdenticalExceptForEventIds(expected, migratedHistory, "loaded taggregate");
 
          Log.Info("Streaming all tevents in store");
-         streamedTevents = container.ExecuteUnitOfWork(scope => scope.TeventStore()
+         streamedTevents = container.ExecuteUnitOfWork(unitOfWork => unitOfWork.TeventStore()
                                                                                                 .ListAllTeventsForTestingPurposesAbsolutelyNotUsableForARealTeventStoreOfAnySize()
                                                                                                 .Tevents()
                                                                                                 .ToList());
@@ -158,13 +158,13 @@ public abstract class TeventMigrationTestBase : UniversalTestBase
          Log.Info("Cloning service locator / starting new instance of application");
          var clonedContainer2 = container.CloneAndBuild();
          await using var container2 = clonedContainer2;
-         migratedHistory = clonedContainer2.ExecuteUnitOfWork(scope => scope.TeventStoreUpdater()
+         migratedHistory = clonedContainer2.ExecuteUnitOfWork(unitOfWork => unitOfWork.TeventStoreUpdater()
                                                                                                               .Get<TestTaggregate>(initialTaggregate.Id))
                                                 .History;
          AssertStreamsAreIdenticalExceptForEventIds(expected, migratedHistory, "Loaded taggregate");
 
          Log.Info("Streaming all tevents in store");
-         streamedTevents = clonedContainer2.ExecuteUnitOfWork(scope => scope.TeventStore()
+         streamedTevents = clonedContainer2.ExecuteUnitOfWork(unitOfWork => unitOfWork.TeventStore()
                                                                                                               .ListAllTeventsForTestingPurposesAbsolutelyNotUsableForARealTeventStoreOfAnySize()
                                                                                                               .Tevents()
                                                                                                               .ToList());

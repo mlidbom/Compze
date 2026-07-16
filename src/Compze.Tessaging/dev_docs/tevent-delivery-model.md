@@ -118,7 +118,16 @@ the mirror could silently diverge and its constraints made a transient wrapper i
 
 ## Publishing
 
-### `IUnitOfWorkTeventPublisher` — the one way to publish
+There are two ways to publish, distinguished by the caller's relationship to a **unit of work** — one scope
+paired with one ambient transaction, begun and completed together (see
+`src/Compze.DependencyInjection/dev_docs/unit-of-work-model.md`). Code inside one publishes through the
+unit-of-work publisher, which joins it; code outside any publishes through the independent publisher, which
+gives each publish its own. The same duality repeats across the front doors:
+`IUnitOfWorkTommandSender`/`IIndependentTommandSender` for sending tommands, and
+`IUnitOfWorkLocalTypermediaNavigator`/`IIndependentLocalTypermediaNavigator` for navigating the local
+typermedia API.
+
+### `IUnitOfWorkTeventPublisher` — publish within the caller's unit of work
 
 ```csharp
 public interface IUnitOfWorkTeventPublisher
@@ -127,8 +136,8 @@ public interface IUnitOfWorkTeventPublisher
 }
 ```
 
-One public interface, tevent-only. It routes each tevent by the guarantee interfaces the tevent's type
-declares, as the single fan-out point:
+Tevent-only, scoped, and the single fan-out point: it routes each tevent by the guarantee interfaces the
+tevent's type declares:
 
 - always → in-process synchronous delivery, inline in the caller's transaction (participation);
 - `IExactlyOnceTevent` → also the outbox (durable, delivered on commit);
@@ -151,6 +160,21 @@ What this shape buys:
 - **No publication mode.** Whether a tevent crosses the wire, and under which guarantee, is a property of
   the tevent's type — not an endpoint-wide mode declared once. An endpoint has one `IUnitOfWorkTeventPublisher`;
   which legs stand behind it is wiring, and a tevent needing an unwired leg fails loud.
+
+### `IIndependentTeventPublisher` — publish as your own unit of work
+
+The independent counterpart, for code that runs outside any unit of work — application code with no ambient
+scope or transaction. A root-resolvable singleton, so a plain application class takes it as an ordinary
+constructor dependency; each `Publish` runs as its own unit of work (`ExecuteUnitOfWork` around the
+unit-of-work publisher), committed when the call returns.
+
+Independence is asserted, not assumed — safety lives in asserts, not names: called from within an ambient
+transaction it throws, because `TransactionScopeOption.Required` would silently *join* that transaction and
+the publish would not stand alone. Inside a unit of work, publish through `IUnitOfWorkTeventPublisher`.
+
+Before this door existed, every outside-the-pipeline caller hand-built the unit of work from container
+primitives — `ExecuteInIsolatedScope(scope => scope.Resolve<ITeventPublisher>().Publish(fact))` — forcing
+application code to speak container language to say one domain verb.
 
 ### `ITransactionIgnoringTeventPublisher` — the publish escape hatch
 

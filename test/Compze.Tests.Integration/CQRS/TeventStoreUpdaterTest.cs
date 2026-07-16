@@ -60,10 +60,10 @@ public class TeventStoreUpdaterTest : UniversalTestBase
    protected override async Task DisposeAsyncInternal() => await _container.DisposeAsync().AsTask();
 
    protected void UseInTransactionalScope([InstantHandle] Action<ITeventStoreUpdater> useSession)
-      => _container.ExecuteUnitOfWork(scope => useSession(scope.TeventStoreUpdater()));
+      => _container.ExecuteUnitOfWork(unitOfWork => useSession(unitOfWork.TeventStoreUpdater()));
 
    protected TResult UseInTransactionalScope<TResult>([InstantHandle] Func<ITeventStoreUpdater, TResult> useSession)
-      => _container.ExecuteUnitOfWork(scope => useSession(scope.TeventStoreUpdater()));
+      => _container.ExecuteUnitOfWork(unitOfWork => useSession(unitOfWork.TeventStoreUpdater()));
 
    public void UseInScope([InstantHandle] Action<ITeventStoreUpdater> useSession)
       => _container.ExecuteInIsolatedScope(scope => useSession(scope.TeventStoreUpdater()));
@@ -213,9 +213,9 @@ public class TeventStoreUpdaterTest : UniversalTestBase
 
       UseInTransactionalScope(session => session.Save(user));
 
-      _container.ExecuteUnitOfWork(scope =>
+      _container.ExecuteUnitOfWork(unitOfWork =>
       {
-         var loadedUser = scope.TeventStoreReader().GetReadonlyCopyOfVersion<User>(user.Id, 1);
+         var loadedUser = unitOfWork.TeventStoreReader().GetReadonlyCopyOfVersion<User>(user.Id, 1);
          loadedUser.ChangeEmail("NewEmail");
       });
 
@@ -468,14 +468,14 @@ public class TeventStoreUpdaterTest : UniversalTestBase
          _teventSpy.DispatchedTessages.Count().Must().Be(18);
       });
 
-      _container.ExecuteUnitOfWork(scope =>
+      _container.ExecuteUnitOfWork(unitOfWork =>
       {
          _teventSpy.DispatchedTessages.Count().Must().Be(18);
 
          var dispatchedTevents = _teventSpy.DispatchedTessages.OfType<ITaggregateTevent>().ToList();
          dispatchedTevents.Select(e => e.Id).Distinct().Count().Must().Be(18);
 
-         var allPersistedTevents = scope.TeventStore().ListAllTeventsForTestingPurposesAbsolutelyNotUsableForARealTeventStoreOfAnySize().Tevents().ToList();
+         var allPersistedTevents = unitOfWork.TeventStore().ListAllTeventsForTestingPurposesAbsolutelyNotUsableForARealTeventStoreOfAnySize().Tevents().ToList();
          TeventStorageTestHelper.StripSteventhDecimalPointFromSecondFractionOnUtcUpdateTime(dispatchedTevents);
          TeventStorageTestHelper.StripSteventhDecimalPointFromSecondFractionOnUtcUpdateTime(allPersistedTevents);
 
@@ -498,10 +498,10 @@ public class TeventStoreUpdaterTest : UniversalTestBase
       {
          var clonedContainer = _container.CloneAndBuild();
          await using var container = clonedContainer;
-         return clonedContainer.ExecuteUnitOfWork(scope =>
+         return clonedContainer.ExecuteUnitOfWork(unitOfWork =>
          {
             // ReSharper disable once AccessToDisposedClosure
-            var session = scope.TeventStoreUpdater();
+            var session = unitOfWork.TeventStoreUpdater();
             var another = User.Register(session,
                                         "email@email.se",
                                         "password",

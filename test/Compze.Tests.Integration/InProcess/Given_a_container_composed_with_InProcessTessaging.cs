@@ -80,7 +80,7 @@ public class Given_a_container_composed_with_InProcessTessaging : UniversalTestB
       {
          HandlerRegistrar.ForTevent<ITaggregateTevent>((tevent, _) => _receivedBySubscriberToTheInnerTeventType.Add(tevent));
          HandlerRegistrar.ForTevent<ITaggregateTevent<ITaggregateTevent>>((wrappedTevent, _) => _receivedBySubscriberToTheWrapperType.Add(wrappedTevent));
-         Container.ScopeFactory.ExecuteUnitOfWork(scope => scope.Resolve<IUnitOfWorkTeventPublisher>().Publish(_publishedWrappedTevent));
+         Container.ScopeFactory.ExecuteUnitOfWork(unitOfWork => unitOfWork.Resolve<IUnitOfWorkTeventPublisher>().Publish(_publishedWrappedTevent));
       }
 
       [PCT] public void the_subscriber_to_the_inner_tevent_type_receives_the_inner_tevent() => _receivedBySubscriberToTheInnerTeventType.Single().Must().ReferenceEqual(_publishedWrappedTevent.Tevent);
@@ -98,10 +98,10 @@ public class Given_a_container_composed_with_InProcessTessaging : UniversalTestB
          HandlerRegistrar.ForTevent<IMyGreetingRequestedTevent>((tevent, _) => _receivedBySubscriber.Add(tevent));
          TransactionIgnoringTeventHandlerRegistrar.ForTevent<IMyGreetingRequestedTevent>((tevent, _) => _observedByTransactionIgnoringSubscriber.Add(tevent));
 
-         Invoking(() => Container.ScopeFactory.ExecuteUnitOfWork(scope =>
+         Invoking(() => Container.ScopeFactory.ExecuteUnitOfWork(unitOfWork =>
                        {
                           Transaction.Current!.FailOnPrepare();
-                          scope.Resolve<IUnitOfWorkTeventPublisher>().Publish(_publishedTevent);
+                          unitOfWork.Resolve<IUnitOfWorkTeventPublisher>().Publish(_publishedTevent);
                        }))
                       .Must().Throw<TransactionAbortedException>();
       }

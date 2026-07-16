@@ -182,6 +182,6 @@ public abstract class EndpointHostTestBase : UniversalTestBase
    protected void OpenGates() => AllGates.ForEach(gate => gate.Open());
 
    protected void PublishTransientTeventOnTheBackendInATransaction(int sequenceNumber) =>
-      BackendEndPoint.ServiceLocator.Resolve<IScopeFactory>().ExecuteUnitOfWork(scope =>
-         scope.Resolve<IUnitOfWorkTeventPublisher>().Publish(new MyTransientTevent { SequenceNumber = sequenceNumber }));
+      BackendEndPoint.ServiceLocator.Resolve<IScopeFactory>().ExecuteUnitOfWork(unitOfWork =>
+         unitOfWork.Resolve<IUnitOfWorkTeventPublisher>().Publish(new MyTransientTevent { SequenceNumber = sequenceNumber }));
 }

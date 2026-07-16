@@ -71,6 +71,7 @@ same way.
 - **`IDependencyInjectionContainer`** — The built container: composes `IRootResolver`, `IScopeFactory`, and cloning
 - **`IRootResolver`** — Root-level resolution (singletons, transients)
 - **`IScopeFactory`** / **`IScope`** / **`IScopeResolver`** — Create scopes, own their lifetime, resolve within them
+- **`IUnitOfWorkResolver`** — An `IScopeResolver` whose scope is paired with an ambient transaction: a unit of work. Never container-resolvable — only `ExecuteUnitOfWork` (or `UnitOfWorkResolver.From`, which asserts the transaction) grants the typing
 - **`IServiceResolver<TService>`** — Typed, deferred resolver for a single service; the supported way to break a constructor-injection cycle
 - **`Lifestyle`** — `Singleton`, `Scoped`, or `TrackedTransient`
 
@@ -80,14 +81,19 @@ same way.
 - **Duplicate detection** — Catches double-registered service types
 - **Container cloning** — Create isolated container copies for testing
 
-### Transactional scope execution
+### Executing a unit of work
+
+One scope and one transaction, begun and completed together — the work commits or rolls back as a whole:
 
 ```csharp
-container.ExecuteUnitOfWork(scopeResolver =>
+container.ExecuteUnitOfWork(unitOfWork =>
 {
-    var repo = scopeResolver.Resolve<IUserRepository>();
+    var repo = unitOfWork.Resolve<IUserRepository>();
     repo.Save(user);
 }); // Scope disposed, transaction committed
+
+// The deliberately-not-a-unit-of-work sibling, for work that changes nothing (a query, say):
+container.ExecuteInIsolatedScope(scope => scope.Resolve<IUserReader>().Find(userId));
 ```
 
 ## Installation
