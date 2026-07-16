@@ -61,10 +61,25 @@ The `Version="*-*"` wildcard resolves to the highest pre-release version availab
 ```xml
 <FlexRef>
   <AutoDiscover />
+  <ExcludeDirectory Path="src/Websites/Website/Compze" />
 </FlexRef>
 ```
 
 `<AutoDiscover />` scans all `.csproj` files to find packable projects.
+
+`<ExcludeDirectory Path="…" />` points scanning away from a directory subtree (path relative to the repo
+root; multiple allowed). **We need it because of the docs-website junctions.**
+`src/Websites/Website/Ensure-CoLocatedDocsJunctions.ps1` creates a git-ignored directory junction per
+documented project under `src/Websites/Website/Compze/` (e.g. `Compze/Teventive` → `../../Compze.Teventive`)
+so DocFX can read co-located `_docs`. Those junctions resolve **back into `src/`**, so without the exclusion
+`flexref sync` discovers every junctioned project a second time (same file, two paths) and:
+- injects a bogus second `ProjectReference` (to the `…\Website\Compze\…` path) into every consumer, and
+- rewrites the real project's own references with junction-relative `..\..\..\..\` paths — the "corrupts
+  every csproj" symptom.
+
+Excluding the junction root fixes both while leaving genuine symlinks/junctions elsewhere scannable. This is
+the supported fix (FlexRef ≥ the version that adds `<ExcludeDirectory>`); do **not** hand-author flex blocks
+to work around it.
 
 ## Syncing After Changes
 

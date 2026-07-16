@@ -1,4 +1,9 @@
 <FlexRef>
   <AutoDiscover />
   <!-- Alternatively, list packages explicitly instead of using AutoDiscover:-->
+  <!-- The docs website junctions each documented project in under src/Websites/Website/Compze (see
+       src/Websites/Website/Ensure-CoLocatedDocsJunctions.ps1). Those junctions resolve back into src/, so
+       without this exclusion project discovery would find every junctioned project a second time and
+       corrupt its references. Genuine symbolic links / junctions elsewhere stay fully scannable. -->
+  <ExcludeDirectory Path="src/Websites/Website/Compze" />
 </FlexRef>
