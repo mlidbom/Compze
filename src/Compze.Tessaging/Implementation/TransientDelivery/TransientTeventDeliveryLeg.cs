@@ -23,7 +23,7 @@ static class TransientTeventDeliveryRegistrar
 class TransientTeventDeliveryLeg : ITransientTeventDeliveryLeg
 {
    internal static void RegisterWith(IComponentRegistrar registrar)
-      //Wiring the leg into the delivery-leg set is what makes the endpoint's ITeventPublisher route transient tevents across the wire.
+      //Wiring the leg into the delivery-leg set is what makes the endpoint's IUnitOfWorkTeventPublisher route transient tevents across the wire.
       => registrar.Register(Singleton.ForSet<ITransientTeventDeliveryLeg>()
                                      .CreatedBy((ITessagingRouter tessagingRouter, EndpointConfiguration configuration)
                                                    => new TransientTeventDeliveryLeg(tessagingRouter, configuration)));
@@ -41,7 +41,7 @@ class TransientTeventDeliveryLeg : ITransientTeventDeliveryLeg
    {
       var connections = _tessagingRouter.SubscriberConnectionsFor(wrappedTevent)
                                         .Where(connection => connection.EndpointInformation.Id != _configuration.Id)
-                                        .ToArray(); //Participation already delivered the tevent to this endpoint's own handlers - see TeventPublisher.
+                                        .ToArray(); //Participation already delivered the tevent to this endpoint's own handlers - see UnitOfWorkTeventPublisher.
       if(connections.Length == 0) return;
 
       //One envelope identity per publish, shared by every subscriber's delivery: it carries no dedup meaning on this leg

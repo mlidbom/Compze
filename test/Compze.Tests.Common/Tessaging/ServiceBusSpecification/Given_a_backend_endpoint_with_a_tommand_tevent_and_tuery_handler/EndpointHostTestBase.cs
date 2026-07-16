@@ -183,5 +183,5 @@ public abstract class EndpointHostTestBase : UniversalTestBase
 
    protected void PublishTransientTeventOnTheBackendInATransaction(int sequenceNumber) =>
       BackendEndPoint.ServiceLocator.Resolve<IScopeFactory>().ExecuteUnitOfWork(scope =>
-         scope.Resolve<ITeventPublisher>().Publish(new MyTransientTevent { SequenceNumber = sequenceNumber }));
+         scope.Resolve<IUnitOfWorkTeventPublisher>().Publish(new MyTransientTevent { SequenceNumber = sequenceNumber }));
 }

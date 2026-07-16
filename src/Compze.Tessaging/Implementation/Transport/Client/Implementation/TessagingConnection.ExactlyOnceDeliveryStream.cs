@@ -18,7 +18,7 @@ partial class TessagingConnection
       ///<summary>Creates the <see cref="ExactlyOnceDeliveryStream"/> each connection carries. Registered as a component-set member<br/>
       /// by the outbox's wiring, which owns the storage backing every stream: the set's emptiness is what tells the router that the<br/>
       /// endpoint wires no exactly-once delivery, so its connections carry no such stream — the same wiring-supplies-the-legs idiom<br/>
-      /// as the <c>IExactlyOnceTeventDeliveryLeg</c> set the <c>ITeventPublisher</c> routes through.</summary>
+      /// as the <c>IExactlyOnceTeventDeliveryLeg</c> set the <c>IUnitOfWorkTeventPublisher</c> routes through.</summary>
       internal class Factory
       {
          readonly Outbox.Outbox.ITessageStorage _tessageStorage;

@@ -22,7 +22,7 @@ using static Compze.Must.MustActions;
 namespace Compze.Tests.Integration.InProcess;
 
 ///<summary>In-process Tessaging composed into a plain container — no endpoint, no host, no transport: the handler registry, the<br/>
-/// synchronous in-process tevent delivery, and the container's one <see cref="ITeventPublisher"/>. The composition wires no remote<br/>
+/// synchronous in-process tevent delivery, and the container's one <see cref="IUnitOfWorkTeventPublisher"/>. The composition wires no remote<br/>
 /// delivery legs, so every published tevent is delivered to this process's handlers only.</summary>
 public class Given_a_container_composed_with_InProcessTessaging : UniversalTestBase
 {
@@ -41,7 +41,7 @@ public class Given_a_container_composed_with_InProcessTessaging : UniversalTestB
 
    protected override async Task DisposeAsyncInternal() => await Container.DisposeAsync();
 
-   public class after_publishing_an_unwrapped_tevent_through_the_tevent_publisher : Given_a_container_composed_with_InProcessTessaging
+   public class after_publishing_an_unwrapped_tevent_through_the_unit_of_work_tevent_publisher : Given_a_container_composed_with_InProcessTessaging
    {
       readonly List<IMyGreetingRequestedTevent> _receivedBySubscriberToTheTeventsBaseInterface = [];
       readonly List<IPublisherTevent<IMyGreetingRequestedTevent>> _receivedBySubscriberToTheWrapperOfTheTeventsBaseInterface = [];
@@ -50,7 +50,7 @@ public class Given_a_container_composed_with_InProcessTessaging : UniversalTestB
       readonly int _publishingThreadId;
       int _handlingThreadId;
 
-      public after_publishing_an_unwrapped_tevent_through_the_tevent_publisher()
+      public after_publishing_an_unwrapped_tevent_through_the_unit_of_work_tevent_publisher()
       {
          HandlerRegistrar.ForTevent<IMyGreetingRequestedTevent>((tevent, _) =>
          {
@@ -61,7 +61,7 @@ public class Given_a_container_composed_with_InProcessTessaging : UniversalTestB
          HandlerRegistrar.ForTevent<IMyUnrelatedTevent>((tevent, _) => _receivedBySubscriberToAnUnrelatedTeventInterface.Add(tevent));
 
          _publishingThreadId = Environment.CurrentManagedThreadId;
-         Container.ScopeFactory.ExecuteInIsolatedScope(scope => scope.Resolve<ITeventPublisher>().Publish(_publishedTevent));
+         Container.ScopeFactory.ExecuteInIsolatedScope(scope => scope.Resolve<IUnitOfWorkTeventPublisher>().Publish(_publishedTevent));
       }
 
       [PCT] public void the_subscriber_to_a_base_interface_of_the_published_tevents_type_receives_the_published_tevent() => _receivedBySubscriberToTheTeventsBaseInterface.Single().Must().ReferenceEqual(_publishedTevent);
@@ -70,17 +70,17 @@ public class Given_a_container_composed_with_InProcessTessaging : UniversalTestB
       [PCT] public void the_subscriber_to_an_unrelated_tevent_interface_receives_nothing() => _receivedBySubscriberToAnUnrelatedTeventInterface.Must().BeEmpty();
    }
 
-   public class after_publishing_a_wrapped_taggregate_tevent_through_the_tevent_publisher : Given_a_container_composed_with_InProcessTessaging
+   public class after_publishing_a_wrapped_taggregate_tevent_through_the_unit_of_work_tevent_publisher : Given_a_container_composed_with_InProcessTessaging
    {
       readonly List<ITaggregateTevent> _receivedBySubscriberToTheInnerTeventType = [];
       readonly List<ITaggregateTevent<ITaggregateTevent>> _receivedBySubscriberToTheWrapperType = [];
       readonly TaggregateTevent<MyTaggregateTevent> _publishedWrappedTevent = new(new MyTaggregateTevent());
 
-      public after_publishing_a_wrapped_taggregate_tevent_through_the_tevent_publisher()
+      public after_publishing_a_wrapped_taggregate_tevent_through_the_unit_of_work_tevent_publisher()
       {
          HandlerRegistrar.ForTevent<ITaggregateTevent>((tevent, _) => _receivedBySubscriberToTheInnerTeventType.Add(tevent));
          HandlerRegistrar.ForTevent<ITaggregateTevent<ITaggregateTevent>>((wrappedTevent, _) => _receivedBySubscriberToTheWrapperType.Add(wrappedTevent));
-         Container.ScopeFactory.ExecuteUnitOfWork(scope => scope.Resolve<ITeventPublisher>().Publish(_publishedWrappedTevent));
+         Container.ScopeFactory.ExecuteUnitOfWork(scope => scope.Resolve<IUnitOfWorkTeventPublisher>().Publish(_publishedWrappedTevent));
       }
 
       [PCT] public void the_subscriber_to_the_inner_tevent_type_receives_the_inner_tevent() => _receivedBySubscriberToTheInnerTeventType.Single().Must().ReferenceEqual(_publishedWrappedTevent.Tevent);
@@ -101,7 +101,7 @@ public class Given_a_container_composed_with_InProcessTessaging : UniversalTestB
          Invoking(() => Container.ScopeFactory.ExecuteUnitOfWork(scope =>
                        {
                           Transaction.Current!.FailOnPrepare();
-                          scope.Resolve<ITeventPublisher>().Publish(_publishedTevent);
+                          scope.Resolve<IUnitOfWorkTeventPublisher>().Publish(_publishedTevent);
                        }))
                       .Must().Throw<TransactionAbortedException>();
       }
@@ -122,11 +122,37 @@ public class Given_a_container_composed_with_InProcessTessaging : UniversalTestB
          TransactionIgnoringTeventHandlerRegistrar.ForTevent<IMyGreetingRequestedTevent>((_, _) => throw new Exception("thrown by the first transaction-ignoring subscriber"));
          TransactionIgnoringTeventHandlerRegistrar.ForTevent<IMyGreetingRequestedTevent>((tevent, _) => _observedBySecondTransactionIgnoringSubscriber.Add(tevent));
 
-         Container.ScopeFactory.ExecuteInIsolatedScope(scope => scope.Resolve<ITeventPublisher>().Publish(_publishedTevent));
+         Container.ScopeFactory.ExecuteInIsolatedScope(scope => scope.Resolve<IUnitOfWorkTeventPublisher>().Publish(_publishedTevent));
       }
 
       [PCT] public void the_publish_completes_and_the_subscriber_receives_the_tevent() => _receivedBySubscriber.Single().Must().ReferenceEqual(_publishedTevent);
       [PCT] public void the_second_transaction_ignoring_subscriber_still_observes_the_tevent() => _observedBySecondTransactionIgnoringSubscriber.Single().Must().ReferenceEqual(_publishedTevent);
+   }
+
+   public class after_publishing_a_tevent_through_the_independent_tevent_publisher_resolved_from_the_root : Given_a_container_composed_with_InProcessTessaging
+   {
+      readonly List<IMyGreetingRequestedTevent> _receivedBySubscriber = [];
+      readonly MySpecialGreetingRequestedTevent _publishedTevent = new();
+
+      public after_publishing_a_tevent_through_the_independent_tevent_publisher_resolved_from_the_root()
+      {
+         HandlerRegistrar.ForTevent<IMyGreetingRequestedTevent>((tevent, _) => _receivedBySubscriber.Add(tevent));
+         Container.RootResolver.Resolve<IIndependentTeventPublisher>().Publish(_publishedTevent);
+      }
+
+      [PCT] public void the_subscriber_receives_the_published_tevent() => _receivedBySubscriber.Single().Must().ReferenceEqual(_publishedTevent);
+   }
+
+   public class the_independent_tevent_publisher : Given_a_container_composed_with_InProcessTessaging
+   {
+      [PCT] public void throws_when_called_from_within_an_ambient_transaction() =>
+         Invoking(() =>
+                 {
+                    using var transactionScope = new TransactionScope();
+                    Container.RootResolver.Resolve<IIndependentTeventPublisher>().Publish(new MySpecialGreetingRequestedTevent());
+                 })
+                .Must().Throw<Exception>()
+                .Which.Message.Must().Contain("ambient transaction");
    }
 
    public class the_transaction_ignoring_tevent_publisher : Given_a_container_composed_with_InProcessTessaging

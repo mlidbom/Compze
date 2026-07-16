@@ -13,7 +13,7 @@ namespace Compze.Tessaging.Hosting;
 ///<summary>
 /// Wires in-process Tessaging into an endpoint — the style's synchronous core, which distribution composes
 /// and extends: the handler registry, the synchronous in-process tevent delivery every tevent travels
-/// (<see cref="IInProcessTeventPublisher"/>), and the endpoint's one <see cref="ITeventPublisher"/>, which
+/// (<see cref="IInProcessTeventPublisher"/>), and the endpoint's one <see cref="IUnitOfWorkTeventPublisher"/>, which
 /// routes each published tevent by the delivery contract its type declares. With nothing but this feature the
 /// endpoint wires no remote delivery legs, so tevents are delivered synchronously, on the publishing thread,
 /// within the publisher's transaction, to this process's handlers. Created idempotently through
@@ -50,7 +50,8 @@ public class InProcessTessagingEndpointFeature
                        .BackgroundExceptionReporter()
                        .InProcessTeventPublisher()
                        .TeventObservationDispatcher()
-                       .TeventPublisher()
+                       .UnitOfWorkTeventPublisher()
+                       .IndependentTeventPublisher()
                        .TransactionIgnoringTeventPublisher();
    }
 }

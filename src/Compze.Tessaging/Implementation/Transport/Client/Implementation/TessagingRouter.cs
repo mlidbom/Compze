@@ -227,7 +227,7 @@ class TessagingRouter : ITessagingRouter, IDisposable
          if(tessageType.Is<ITevent>())
          {
             //An advertised tevent subscription is a wrapper type; covariance answers whether the tevents it matches may travel remotely at all.
-            //Which delivery leg a matching tevent travels is not routing's concern - the published tevent's own type decides that (see ITeventPublisher).
+            //Which delivery leg a matching tevent travels is not routing's concern - the published tevent's own type decides that (see IUnitOfWorkTeventPublisher).
             State.Assert(tessageType.Is<IPublisherTevent<IRemotableTevent>>(),
                          () => $"Endpoint {connection.EndpointInformation.Id} advertises the tevent subscription {tessageType.FullName}, which no route can serve: an advertised tevent subscription is the wrapper type matching every wrapping of a remotable tevent type ({nameof(IPublisherTevent<>)}<{nameof(IRemotableTevent)}>). Every advertised type must get a route — a subscription must never be silently dropped.");
             _teventSubscriberRoutes.Add((tessageType, connection));

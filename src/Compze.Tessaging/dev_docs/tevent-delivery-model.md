@@ -118,10 +118,10 @@ the mirror could silently diverge and its constraints made a transient wrapper i
 
 ## Publishing
 
-### `ITeventPublisher` — the one way to publish
+### `IUnitOfWorkTeventPublisher` — the one way to publish
 
 ```csharp
-public interface ITeventPublisher
+public interface IUnitOfWorkTeventPublisher
 {
    void Publish(ITevent tevent);
 }
@@ -142,14 +142,14 @@ transactionally". It auto-wraps a tevent published without a publisher-identifyi
 
 What this shape buys:
 
-- **Anything can publish.** The tevent store is `ITeventPublisher`'s most common *client* — forwarding each
+- **Anything can publish.** The tevent store is `IUnitOfWorkTeventPublisher`'s most common *client* — forwarding each
   committed taggregate tevent — not the owner of publishing. A service raising a transient monitoring
   signal, code with no taggregate in sight: same one interface.
 - **Exactly-once is decoupled from the tevent store.** It requires only an ambient transaction (asserted)
   plus the outbox — the outbox row joins whatever transaction is present. Committing domain state and the
   tevent atomically is what the store *uses* this for, not what publishing *is*.
 - **No publication mode.** Whether a tevent crosses the wire, and under which guarantee, is a property of
-  the tevent's type — not an endpoint-wide mode declared once. An endpoint has one `ITeventPublisher`;
+  the tevent's type — not an endpoint-wide mode declared once. An endpoint has one `IUnitOfWorkTeventPublisher`;
   which legs stand behind it is wiring, and a tevent needing an unwired leg fails loud.
 
 ### `ITransactionIgnoringTeventPublisher` — the publish escape hatch
@@ -186,7 +186,7 @@ transactional fate":
 
 | | Default | Transaction-ignoring escape hatch |
 |---|---|---|
-| **Publish** | `ITeventPublisher` — honors the transaction, routes per tevent type | `ITransactionIgnoringTeventPublisher` — emit even if my transaction rolls back |
+| **Publish** | `IUnitOfWorkTeventPublisher` — honors the transaction, routes per tevent type | `ITransactionIgnoringTeventPublisher` — emit even if my transaction rolls back |
 | **Subscribe** | `RegisterTessagingHandlers` — the tevent type's full guarantee | `RegisterTransactionIgnoringTeventHandlers` — observe even if the processing transaction rolls back |
 
 The observation contract, stated honestly — this is the fine print a subscriber accepts by using the escape
@@ -275,16 +275,16 @@ As of 2026-07-15:
   same-machine `InterprocessEndpointRegistry`, the router continuously reconciles its connections with the
   registry's membership, and the story is proven across real OS processes over the named-pipe transport —
   see [same-machine hosting](../../Compze.Hosting/dev_docs/wip/same-machine-hosting.md).
-- `ITeventPublisher` — the one public way to publish, routing each tevent by its declared contract
+- `IUnitOfWorkTeventPublisher` — the one public way to publish, routing each tevent by its declared contract
   (participation always; an `IExactlyOnceTevent` also through the exactly-once delivery leg when the
   composition wires one) — and the dissolution of the endpoint-wide publication-mode split (2026-07-14): the
   in-process Tessaging core registers the publisher, wiring the outbox is what wires the exactly-once leg,
-  the tevent store forwards committed tevents through `ITeventPublisher` like any other client, and the mode
+  the tevent store forwards committed tevents through `IUnitOfWorkTeventPublisher` like any other client, and the mode
   publishers and their mutual exclusion are gone.
 - The transient tier end to end (2026-07-14). The router routes every advertised remotable tevent
   subscription — the exactly-once-only gate is gone; matching stays pure wrapper-type assignability, and
   which leg a matched tevent travels is decided by the published tevent's own type, never by routing.
-  `ITeventPublisher` routes a remotable-but-not-exactly-once tevent through the endpoint's transient
+  `IUnitOfWorkTeventPublisher` routes a remotable-but-not-exactly-once tevent through the endpoint's transient
   delivery leg (`ITransientTeventDeliveryLeg`, wired by every transport-speaking Tessaging composition) — on commit when a
   transaction is present, immediately otherwise. Each subscriber connection carries an in-memory transient
   stream (`TransportRequestKind.TransientTevent` on the wire) delivering in order with the

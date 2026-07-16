@@ -10,25 +10,25 @@ using JetBrains.Annotations;
 
 namespace Compze.Tessaging.Implementation;
 
-static class TeventPublisherRegistrar
+static class UnitOfWorkTeventPublisherRegistrar
 {
-   public static IComponentRegistrar TeventPublisher(this IComponentRegistrar registrar)
-      => registrar.Register(Implementation.TeventPublisher.RegisterWith);
+   public static IComponentRegistrar UnitOfWorkTeventPublisher(this IComponentRegistrar registrar)
+      => registrar.Register(Implementation.UnitOfWorkTeventPublisher.RegisterWith);
 }
 
-///<summary>The <see cref="ITeventPublisher"/>: routes each published tevent by the delivery contract its type declares.<br/>
+///<summary>The <see cref="IUnitOfWorkTeventPublisher"/>: routes each published tevent by the delivery contract its type declares.<br/>
 /// Participation — synchronous delivery to this process's handlers via <see cref="IInProcessTeventPublisher"/>, within the<br/>
 /// caller's transaction — is the leg every tevent travels; an <see cref="IExactlyOnceTevent"/> additionally travels the endpoint's<br/>
 /// <see cref="IExactlyOnceTeventDeliveryLeg"/>, and a remotable tevent whose type declares no exactly-once guarantee the endpoint's<br/>
 /// <see cref="ITransientTeventDeliveryLeg"/>, when the composition wires them. Zero wired legs is the deliberately in-process<br/>
 /// composition, where participation already serves every subscriber that can exist; a remote-capable endpoint missing the leg a<br/>
 /// tevent's contract demands is a loud publish error — never a silent downgrade.</summary>
-[UsedImplicitly] class TeventPublisher : ITeventPublisher
+[UsedImplicitly] class UnitOfWorkTeventPublisher : IUnitOfWorkTeventPublisher
 {
    public static void RegisterWith(IComponentRegistrar registrar)
-      => registrar.Register(Scoped.For<ITeventPublisher>()
+      => registrar.Register(Scoped.For<IUnitOfWorkTeventPublisher>()
                                   .CreatedBy((IInProcessTeventPublisher inProcessTeventPublisher, TeventObservationDispatcher teventObservationDispatcher, IComponentSet<IExactlyOnceTeventDeliveryLeg> exactlyOnceDeliveryLegs, IComponentSet<ITransientTeventDeliveryLeg> transientDeliveryLegs, IScopeResolver scopeResolver)
-                                                => new TeventPublisher(inProcessTeventPublisher, teventObservationDispatcher, exactlyOnceDeliveryLegs, transientDeliveryLegs, scopeResolver)));
+                                                => new UnitOfWorkTeventPublisher(inProcessTeventPublisher, teventObservationDispatcher, exactlyOnceDeliveryLegs, transientDeliveryLegs, scopeResolver)));
 
    readonly IInProcessTeventPublisher _inProcessTeventPublisher;
    readonly TeventObservationDispatcher _teventObservationDispatcher;
@@ -36,7 +36,7 @@ static class TeventPublisherRegistrar
    readonly ITransientTeventDeliveryLeg? _transientDeliveryLeg;
    readonly IScopeResolver _scopeResolver;
 
-   TeventPublisher(IInProcessTeventPublisher inProcessTeventPublisher, TeventObservationDispatcher teventObservationDispatcher, IEnumerable<IExactlyOnceTeventDeliveryLeg> exactlyOnceDeliveryLegs, IEnumerable<ITransientTeventDeliveryLeg> transientDeliveryLegs, IScopeResolver scopeResolver)
+   UnitOfWorkTeventPublisher(IInProcessTeventPublisher inProcessTeventPublisher, TeventObservationDispatcher teventObservationDispatcher, IEnumerable<IExactlyOnceTeventDeliveryLeg> exactlyOnceDeliveryLegs, IEnumerable<ITransientTeventDeliveryLeg> transientDeliveryLegs, IScopeResolver scopeResolver)
    {
       _inProcessTeventPublisher = inProcessTeventPublisher;
       _teventObservationDispatcher = teventObservationDispatcher;

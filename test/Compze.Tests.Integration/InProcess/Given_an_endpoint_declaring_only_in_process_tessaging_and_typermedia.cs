@@ -1,4 +1,4 @@
-﻿using Compze.Abstractions.Hosting.Public;
+using Compze.Abstractions.Hosting.Public;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
@@ -63,7 +63,7 @@ public class Given_an_endpoint_declaring_only_in_process_tessaging_and_typermedi
    [PCT] public void a_tevent_published_in_process_reaches_the_endpoints_subscriber()
    {
       _endpoint.ServiceLocator.Resolve<IScopeFactory>().ExecuteInIsolatedScope(scope =>
-         scope.Resolve<ITeventPublisher>().Publish(new MySpecialGreetingRequestedTevent()));
+         scope.Resolve<IUnitOfWorkTeventPublisher>().Publish(new MySpecialGreetingRequestedTevent()));
       _receivedTevents.Must().HaveCount(1);
    }
 }

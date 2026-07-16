@@ -309,7 +309,7 @@ separate feature.
 
 **The design for this feature is settled and lives in its own document:**
 [`src/Compze.Tessaging/dev_docs/tevent-delivery-model.md`](../Compze.Tessaging/dev_docs/tevent-delivery-model.md) —
-the delivery ladder (participation / exactly-once / transient / observation), `ITeventPublisher` and the
+the delivery ladder (participation / exactly-once / transient / observation), `IUnitOfWorkTeventPublisher` and the
 `ITransactionIgnoringTeventPublisher` escape hatch, subscription semantics with the binary observation
 opt-down, the observation contract, ordering, and the wiring rules. Designed 2026-07-13; that document is the
 single home — this file keeps only the work items. Resolved along the way: the

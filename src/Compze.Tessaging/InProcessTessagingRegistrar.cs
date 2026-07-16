@@ -19,7 +19,7 @@ public static class InProcessTessagingRegistrar
    ///<summary>
    /// Wires in-process Tessaging into the container being built: the handler registry, the synchronous
    /// in-process tevent delivery every tevent travels, and the container's one
-   /// <see cref="Compze.Abstractions.Tessaging.Public.ITeventPublisher"/>. The composition wires no remote
+   /// <see cref="Compze.Abstractions.Tessaging.Public.IUnitOfWorkTeventPublisher"/>. The composition wires no remote
    /// delivery legs, so every published tevent — a taggregate's committed tevents included — is delivered
    /// synchronously to this process's handlers, within the publisher's transaction.<br/>
    /// Register handlers after the container is built, through the resolved
@@ -39,7 +39,8 @@ public static class InProcessTessagingRegistrar
                   .BackgroundExceptionReporter()
                   .InProcessTeventPublisher()
                   .TeventObservationDispatcher()
-                  .TeventPublisher()
+                  .UnitOfWorkTeventPublisher()
+                  .IndependentTeventPublisher()
                   .TransactionIgnoringTeventPublisher();
 
       void RegisterDefaultTypeMapper()

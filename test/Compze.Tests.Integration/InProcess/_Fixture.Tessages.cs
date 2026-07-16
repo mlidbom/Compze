@@ -31,7 +31,7 @@ public class MyStrictlyLocalRegisterGreeterTommand : TessageTypes.StrictlyLocal.
    public string Name { get; set; } = "";
 }
 
-///<summary>A hand-built <see cref="ITaggregateTevent"/>, for publishing through the <see cref="ITeventPublisher"/> without a taggregate or tevent store in the composition.</summary>
+///<summary>A hand-built <see cref="ITaggregateTevent"/>, for publishing through the <see cref="IUnitOfWorkTeventPublisher"/> without a taggregate or tevent store in the composition.</summary>
 class MyTaggregateTevent : ITaggregateTevent
 {
    public TessageId Id { get; } = new();

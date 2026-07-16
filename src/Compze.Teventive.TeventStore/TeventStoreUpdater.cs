@@ -18,7 +18,7 @@ namespace Compze.Teventive.TeventStore;
 
 class TeventStoreUpdater : ITeventStoreReader, ITeventStoreUpdater
 {
-   readonly ITeventPublisher _teventPublisher;
+   readonly IUnitOfWorkTeventPublisher _teventPublisher;
    readonly ITeventStore _store;
    readonly ITaggregateTypeValidator _taggregateTypeValidator;
    readonly IDictionary<TaggregateId, ITaggregate> _idMap = new Dictionary<TaggregateId, ITaggregate>();
@@ -28,10 +28,10 @@ class TeventStoreUpdater : ITeventStoreReader, ITeventStoreUpdater
    public static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(
          Scoped.For<ITeventStoreUpdater, ITeventStoreReader>()
-               .CreatedBy((ITeventPublisher teventPublisher, ITeventStore teventStore, ITaggregateTypeValidator taggregateTypeValidator) =>
+               .CreatedBy((IUnitOfWorkTeventPublisher teventPublisher, ITeventStore teventStore, ITaggregateTypeValidator taggregateTypeValidator) =>
                              new TeventStoreUpdater(teventPublisher, teventStore, taggregateTypeValidator)));
 
-   TeventStoreUpdater(ITeventPublisher teventPublisher, ITeventStore store, ITaggregateTypeValidator taggregateTypeValidator)
+   TeventStoreUpdater(IUnitOfWorkTeventPublisher teventPublisher, ITeventStore store, ITaggregateTypeValidator taggregateTypeValidator)
    {
       Argument.NotNull(teventPublisher).NotNull(store);
 

@@ -140,7 +140,7 @@ wired once whether it arrives alone or under distribution).
 - **Tessaging splits three ways**, each layer containing the one below it.
   `InProcessTessagingEndpointFeature` (in `Compze.Tessaging`, `AddInProcessTessaging()`) is the style's
   synchronous core: the handler registry, the synchronous in-process tevent delivery every tevent travels,
-  and the endpoint's one `ITeventPublisher` — the one way to publish a tevent, routing each by the delivery
+  and the endpoint's one `IUnitOfWorkTeventPublisher` — the one way to publish a tevent, routing each by the delivery
   contract its type declares (see
   [the tevent delivery model](../../Compze.Tessaging/dev_docs/tevent-delivery-model.md)). With nothing but this
   feature the endpoint wires no remote delivery legs — no transport, inbox, outbox, or tommand scheduler —
@@ -235,7 +235,7 @@ features are built from, so there is exactly one definition of what each style i
 ```csharp
 var builder = /* any Compze container builder */;
 builder.Registrar
-       .InProcessTessaging()    // handler registry, synchronous in-process tevent delivery, ITeventPublisher (no remote legs)
+       .InProcessTessaging()    // handler registry, synchronous in-process tevent delivery, IUnitOfWorkTeventPublisher (no remote legs)
        .InProcessTypermedia();  // handler registry, IInProcessTypermediaNavigator
 var container = builder.Build();
 ```

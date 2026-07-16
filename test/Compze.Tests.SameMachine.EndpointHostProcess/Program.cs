@@ -102,7 +102,7 @@ public static class Program
 
       foundation.AddTransientTessaging(tessaging => tessaging.NewtonsoftSerializer())
                 .ParticipateIn(registry)
-                .RegisterHandlers(register => register.ForTevent((ITransientTeventPublishedByTheSpecificationProcess _, ITeventPublisher teventPublisher) =>
+                .RegisterHandlers(register => register.ForTevent((ITransientTeventPublishedByTheSpecificationProcess _, IUnitOfWorkTeventPublisher teventPublisher) =>
                                                                     teventPublisher.Publish(new TransientTeventPublishedByTheEndpointHostProcess())));
 
       foundation.AddDistributedTypermedia(typermedia => typermedia.NewtonsoftSerializer())

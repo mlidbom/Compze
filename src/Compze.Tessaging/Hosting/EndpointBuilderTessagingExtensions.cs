@@ -12,7 +12,7 @@ public static class EndpointBuilderTessagingExtensions
       /// Adds in-process Tessaging to the endpoint being built (idempotent) and returns its feature — the
       /// style's synchronous core, which distribution composes and extends: the handler registry, the
       /// synchronous in-process tevent delivery every tevent travels, and the endpoint's one
-      /// <see cref="ITeventPublisher"/>. With nothing but this feature the
+      /// <see cref="IUnitOfWorkTeventPublisher"/>. With nothing but this feature the
       /// endpoint wires no transport, inbox, outbox, or tommand scheduler, so tevents are delivered
       /// synchronously, on the publishing thread, within the publisher's transaction, to this process's
       /// handlers.

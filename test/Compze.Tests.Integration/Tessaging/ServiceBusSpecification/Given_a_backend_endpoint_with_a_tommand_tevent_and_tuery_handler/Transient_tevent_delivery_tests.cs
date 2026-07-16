@@ -31,7 +31,7 @@ public class Transient_tevent_delivery_tests : EndpointHostTestBase
    [PCT] public void Transient_tevent_published_outside_any_transaction_reaches_the_remote_subscribers_handler()
    {
       BackendEndPoint.ServiceLocator.Resolve<IScopeFactory>().ExecuteInIsolatedScope(scope =>
-         scope.Resolve<ITeventPublisher>().Publish(new MyTransientTevent { SequenceNumber = 1 }));
+         scope.Resolve<IUnitOfWorkTeventPublisher>().Publish(new MyTransientTevent { SequenceNumber = 1 }));
 
       MyTransientTeventRemoteHandlerThreadGate.AwaitPassedThroughCountEqualTo(1);
    }
@@ -49,7 +49,7 @@ public class Transient_tevent_delivery_tests : EndpointHostTestBase
       Invoking(() => BackendEndPoint.ServiceLocator.Resolve<IScopeFactory>().ExecuteUnitOfWork(scope =>
                     {
                        Transaction.Current!.FailOnPrepare();
-                       scope.Resolve<ITeventPublisher>().Publish(new MyTransientTevent { SequenceNumber = 1 });
+                       scope.Resolve<IUnitOfWorkTeventPublisher>().Publish(new MyTransientTevent { SequenceNumber = 1 });
                     }))
                    .Must().Throw<TransactionAbortedException>();
 

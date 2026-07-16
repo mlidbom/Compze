@@ -1,7 +1,10 @@
 namespace Compze.Abstractions.Tessaging.Public;
 
-///<summary>The one way to publish a tevent. Anything can publish — a taggregate's tevent store forwarding its committed tevents<br/>
-/// is just this interface's most common client — and the publisher routes each tevent by the delivery contract its type declares<br/>
+///<summary>Publishes tevents within the caller's unit of work: the publisher is scoped, participation delivers through the<br/>
+/// caller's scope, and the caller's ambient transaction decides when remote delivery happens. Anything running inside a unit of<br/>
+/// work can publish — a taggregate's tevent store forwarding its committed tevents is just this interface's most common client —<br/>
+/// while code outside any unit of work publishes through <see cref="IIndependentTeventPublisher"/>, the independent counterpart<br/>
+/// that gives each publish its own. The publisher routes each tevent by the delivery contract its type declares<br/>
 /// (see <c>src/Compze.Tessaging/dev_docs/tevent-delivery-model.md</c>):<br/>
 /// every tevent is delivered synchronously to this process's subscribed handlers, on the publishing thread, within the caller's<br/>
 /// transaction — the participation rung, the strongest delivery there is — and immediately to this process's transaction-ignoring<br/>
@@ -15,7 +18,7 @@ namespace Compze.Abstractions.Tessaging.Public;
 /// Only observation runs outside it, deliberately (<see cref="ITransactionIgnoringTeventPublisher"/> is the publish-side<br/>
 /// counterpart). A tevent published without a publisher-identifying wrapper (<see cref="IPublisherTevent{TTevent}"/>) is wrapped<br/>
 /// before routing.</remarks>
-public interface ITeventPublisher
+public interface IUnitOfWorkTeventPublisher
 {
    ///<summary>Publishes <paramref name="tevent"/> per the delivery contract its type declares: synchronously to this process's<br/>
    /// subscribed handlers within the caller's transaction (plus its observers, outside it), and — on an endpoint whose composition<br/>

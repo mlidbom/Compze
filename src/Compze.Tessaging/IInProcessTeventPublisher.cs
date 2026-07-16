@@ -14,7 +14,7 @@ namespace Compze.Tessaging;
 /// <see cref="ITaggregateTevent"/>s a taggregate commits.
 ///</remarks>
 ///<remarks>
-/// The <see cref="ITeventPublisher"/> — the one public way to publish — delegates its in-process delivery
+/// The <see cref="IUnitOfWorkTeventPublisher"/> — the one public way to publish — delegates its in-process delivery
 /// here, and additionally routes the tevent through the remote delivery legs its type demands. Subscription
 /// is by .NET type compatibility, so a handler subscribed to a base tevent type receives every compatible
 /// derived tevent. Every tevent is wrapped in its publisher's

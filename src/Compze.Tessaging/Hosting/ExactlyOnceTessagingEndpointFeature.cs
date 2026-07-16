@@ -18,7 +18,7 @@ namespace Compze.Tessaging.Hosting;
 /// (<see cref="TransientTessagingEndpointFeature"/>, which it composes — the transport server, the router, and
 /// the transient tevent delivery leg — itself composing <see cref="InProcessTessagingEndpointFeature"/>), plus
 /// the exactly-once vertical. Wiring the outbox is what wires the endpoint's durable tevent delivery leg,
-/// through which the endpoint's <see cref="Compze.Abstractions.Tessaging.Public.ITeventPublisher"/> routes
+/// through which the endpoint's <see cref="Compze.Abstractions.Tessaging.Public.IUnitOfWorkTeventPublisher"/> routes
 /// every published <see cref="Compze.Abstractions.Tessaging.Public.IExactlyOnceTevent"/> to its remote
 /// subscribers — and what grants each of the router's connections its durable, restart-surviving exactly-once
 /// delivery stream. Created idempotently through

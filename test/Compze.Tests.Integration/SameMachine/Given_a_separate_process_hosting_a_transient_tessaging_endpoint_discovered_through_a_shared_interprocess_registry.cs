@@ -111,7 +111,7 @@ public class Given_a_separate_process_hosting_a_transient_tessaging_endpoint_dis
          }
 
          _specificationEndpoint.ServiceLocator.Resolve<IScopeFactory>().ExecuteUnitOfWork(scope =>
-            scope.Resolve<ITeventPublisher>().Publish(new TransientTeventPublishedByTheSpecificationProcess()));
+            scope.Resolve<IUnitOfWorkTeventPublisher>().Publish(new TransientTeventPublishedByTheSpecificationProcess()));
       } while(!_replyTeventReceived.Wait(TimeSpan.FromMilliseconds(500)));
    }
 }
