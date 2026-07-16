@@ -210,6 +210,14 @@ patience, then fail loud naming the unserved type).
    return, across host rebuilds; verified to fail against the previous fan-out).
 3. **Tommand route-at-delivery**: unbound outbox rows, bind-per-attempt, known-but-down and
    handler-replacement specs.
+   **DONE 2026-07-16**: `Outbox.SendTransactionally` persists the tommand with no dispatching row and
+   validates only that a remembered peer or the endpoint itself (the router's always-live self-connection)
+   serves the type — else `NoHandlerForTessageTypeException`, now with a message worth reading. Each
+   connection's recovery backlog adds the unbound tommands whose types its endpoint's advertisement handles
+   (one query, ordered by `GeneratedId`, so send order holds across tevents and tommands); the delivery
+   that succeeds writes the tommand's one dispatching row, recording who actually received it. Specified in
+   `Tommand_route_at_delivery_tests` (known-but-down, blue/green successor, loud never-known failure; all
+   verified to fail against the previous send-time routing).
 4. **The rename**: transient → distributed (composition) / best-effort (delivery rung + leg), everywhere —
    code, specs, docs, ubiquitous language.
 5. **Distributed tier**: `RequiredPeers` (by `EndpointId`), queue-while-down with pause-stream-whole,

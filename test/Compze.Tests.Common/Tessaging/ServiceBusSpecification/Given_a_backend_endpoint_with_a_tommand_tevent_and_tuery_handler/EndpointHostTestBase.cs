@@ -41,8 +41,15 @@ public abstract class EndpointHostTestBase : UniversalTestBase
    ///<summary>The Remote endpoint's identity. Fixed for the same reason as <see cref="BackendEndpointId"/>.</summary>
    protected static readonly EndpointId RemoteEndpointId = new(Guid.Parse("E72924D3-5279-44B5-B20D-D682E537672B"));
 
+   ///<summary>The identity of the successor to the Remote endpoint (see<br/>
+   /// <see cref="StartHostWithTheBackendEndpointAndASuccessorToTheRemoteEndpointAsync"/>) — deliberately a NEW identity:<br/>
+   /// a blue/green replacement is a different endpoint that advertises the same tommand type, never the old identity reused.</summary>
+   protected static readonly EndpointId RemoteSuccessorEndpointId = new(Guid.Parse("46ECC3A4-5657-4A0A-9C78-9FEEA5A1010D"));
+
    protected ITestingEndpointHost Host { get; private set; } = null!;
    public IThreadGate MyExactlyOnceTommandHandlerThreadGate { get; }
+   public IThreadGate MyExactlyOnceTommandHandledByTheRemoteEndpointHandlerThreadGate { get; }
+   public IThreadGate RemoteSuccessorTommandHandlerThreadGate { get; }
    public IThreadGate TommandHandlerWithResultThreadGate { get; }
    public IThreadGate MyCreateTaggregateTommandHandlerThreadGate { get; }
    public IThreadGate MyUpdateTaggregateTommandHandlerThreadGate { get; }
@@ -74,6 +81,8 @@ public abstract class EndpointHostTestBase : UniversalTestBase
       AllGates =
       [
          MyExactlyOnceTommandHandlerThreadGate = IThreadGate.NewOpen(_timeout, nameof(MyExactlyOnceTommandHandlerThreadGate)),
+         MyExactlyOnceTommandHandledByTheRemoteEndpointHandlerThreadGate = IThreadGate.NewOpen(_timeout, nameof(MyExactlyOnceTommandHandledByTheRemoteEndpointHandlerThreadGate)),
+         RemoteSuccessorTommandHandlerThreadGate = IThreadGate.NewOpen(_timeout, nameof(RemoteSuccessorTommandHandlerThreadGate)),
          TommandHandlerWithResultThreadGate = IThreadGate.NewOpen(_timeout, nameof(TommandHandlerWithResultThreadGate)),
          MyCreateTaggregateTommandHandlerThreadGate = IThreadGate.NewOpen(_timeout, nameof(MyCreateTaggregateTommandHandlerThreadGate)),
          MyUpdateTaggregateTommandHandlerThreadGate = IThreadGate.NewOpen(_timeout, nameof(MyUpdateTaggregateTommandHandlerThreadGate)),
@@ -165,6 +174,7 @@ public abstract class EndpointHostTestBase : UniversalTestBase
                                                 builder.TypeMapper.RegisterCommonTestTypeMappings();
 
                                                 builder.RegisterTessagingHandlers
+                                                       .ForTommand((MyExactlyOnceTommandHandledByTheRemoteEndpoint _) => MyExactlyOnceTommandHandledByTheRemoteEndpointHandlerThreadGate.AwaitPassThrough())
                                                        .ForTevent((IMyTaggregateTevent _) => MyRemoteTaggregateTeventHandlerThreadGate.AwaitPassThrough())
                                                        //Publisher-conscious subscription: subscribing to the taggregate's wrapper type receives the wrapped tevent as MyTaggregate published it.
                                                        .ForTevent((IMyTaggregateTevent<IMyTaggregateTevent> _) => MyRemotePublisherConsciousTeventHandlerThreadGate.AwaitPassThrough())
@@ -194,6 +204,25 @@ public abstract class EndpointHostTestBase : UniversalTestBase
    {
       CreateHostAndRegisterBackendEndpoint();
       RemoteEndpoint = null!; //There is no Remote endpoint in this host: touching it must fail loudly, not answer from the previous host's disposed instance.
+      await StartHostAndConnectClientAsync();
+   }
+
+   ///<summary>Starts a host containing the Backend endpoint and a successor to the Remote endpoint: a NEW endpoint identity<br/>
+   /// (<see cref="RemoteSuccessorEndpointId"/>) whose advertisement handles <see cref="MyExactlyOnceTommandHandledByTheRemoteEndpoint"/> —<br/>
+   /// the blue/green replacement shape: the predecessor retired, and a different endpoint advertises the same tommand type.</summary>
+   protected async Task StartHostWithTheBackendEndpointAndASuccessorToTheRemoteEndpointAsync()
+   {
+      CreateHostAndRegisterBackendEndpoint();
+      RemoteEndpoint = null!; //There is no Remote endpoint in this host either: the successor replaces it under its own, new identity.
+      Host.RegisterEndpoint("RemoteSuccessor",
+                            RemoteSuccessorEndpointId,
+                            builder =>
+                            {
+                               builder.TypeMapper.RegisterCommonTestTypeMappings();
+
+                               builder.RegisterTessagingHandlers
+                                      .ForTommand((MyExactlyOnceTommandHandledByTheRemoteEndpoint _) => RemoteSuccessorTommandHandlerThreadGate.AwaitPassThrough());
+                            });
       await StartHostAndConnectClientAsync();
    }
 

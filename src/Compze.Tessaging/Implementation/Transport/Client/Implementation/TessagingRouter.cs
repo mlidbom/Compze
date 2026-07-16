@@ -4,7 +4,6 @@ using Compze.Abstractions.Hosting.Public;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Internals.Transport;
 using Compze.Tessaging.Implementation.Peers;
-using Compze.Tessaging.Implementation.TessageHandling.Dispatching;
 using Compze.Tessaging.Implementation.Transport.Abstractions;
 using Compze.Tessaging.Implementation.Transport.Client.Internal;
 using Compze.Tessaging.SystemCE.ThreadingCE;
@@ -268,12 +267,9 @@ class TessagingRouter : ITessagingRouter, IDisposable
 
    ContractAsserter AssertNotStopped() => State.Assert(!_stopped, () => "router is stopped");
 
-   public ITessagingInboxConnection ConnectionToHandlerFor(IRemotableTommand tommand) =>
+   public ITessagingInboxConnection? LiveConnectionToHandlerFor(IRemotableTommand tommand) =>
       _monitor.Locked(() =>
-         AssertNotStopped().__(() =>
-            _tommandHandlerRoutes.TryGetValue(tommand.GetType(), out var connection)
-               ? connection
-               : throw new NoHandlerForTessageTypeException(tommand.GetType())));
+         AssertNotStopped().__(() => _tommandHandlerRoutes.GetValueOrDefault(tommand.GetType())));
 
    public IReadOnlyList<ITessagingInboxConnection> SubscriberConnectionsFor(IPublisherTevent<IRemotableTevent> wrappedTevent) =>
       _monitor.Locked(() =>

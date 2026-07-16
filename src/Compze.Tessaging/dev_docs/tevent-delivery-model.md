@@ -280,7 +280,12 @@ Per rung:
 Tommands are 1:1 — one sender, exactly one handler — and there the type dictates *everything*, with no
 subscription-side election at all: an `IExactlyOnceTommand`'s type is its delivery contract (exactly-once,
 transactional, asynchronous), sent through `IUnitOfWorkTommandSender.Send`, and an endpoint even
-routes tommands to *itself* through the outbox so the guarantee holds. The synchronous local ask has its own
+routes tommands to *itself* through the outbox so the guarantee holds. A tommand names no recipient — it
+means "the handler of its type, whoever that is" — so the outbox persists it unbound and it routes at
+delivery time to whichever endpoint advertises its type (route-at-delivery,
+`dev_docs/TODO/durable-peer-topology.md` at the repo root): sending requires only that some known route
+serves the type, a known-but-down handler receives on its return, and a blue/green successor advertising the
+type receives its predecessor's in-flight tommands. The synchronous local ask has its own
 truthful home in Typermedia's strictly-local tommand — see
 [the hosting model](../../Compze.Hosting/dev_docs/hosting-model.md). The subscription-side opt-down and the
 transient tier described in this document are tevent concepts: they exist because tevent publishing is
@@ -293,7 +298,7 @@ As of 2026-07-15:
 
 **Built and verified:**
 
-- The exactly-once vertical end to end: outbox, inbox, router, tommand scheduler, per-destination
+- The exactly-once vertical end to end: outbox, inbox, router, per-destination
   single-in-flight ordered delivery, dedup on the envelope `TessageId` — including recovery reloading a
   restarted sender's undelivered backlog in send order.
 - In-process participation delivery, including the publisher-identifying wrapping and type-assignability

@@ -1,13 +1,13 @@
 using Compze.Abstractions.Public;
 using Compze.Abstractions.Hosting.Public;
 using Compze.Internals.Sql.Common;
-using Compze.Internals.Sql.Common.Abstractions;
 using Compze.Internals.Sql.PostgreSql;
 using Compze.Internals.Sql.PostgreSql.Private;
 using Compze.Internals.SystemCE.LinqCE;
 using NpgsqlTypes;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tessaging.Transport.SqlLayer;
+using Compze.TypeIdentifiers;
 using Compze.TypeIdentifiers.Interning;
 using DispatchingTable = Compze.Tessaging.Transport.SqlLayer.IServiceBusSqlLayer.OutboxTessageDispatchingTableSchemaStrings;
 using TessageTable = Compze.Tessaging.Transport.SqlLayer.IServiceBusSqlLayer.OutboxTessagesDatabaseSchemaStrings;
@@ -59,6 +59,9 @@ partial class PgSqlOutboxSqlLayer(IPgSqlConnectionPool connectionFactory, PgSqlS
          });
    }
 
+   //A tevent's receiver row was bound at publish; a tommand has none until here - the delivery that succeeds binds it
+   //(route-at-delivery), recording who actually received it. Insert-the-row-if-missing then flip-if-unreceived keeps the
+   //affected-rows contract uniform across both kinds: > 0 means newly marked, 0 means it was already marked.
    public IServiceBusSqlLayer.MarkAsReceivedResult MarkAsReceived(TessageId tessageId, EndpointId endpointId)
    {
       var affectedRows = _connectionFactory.UseCommand(
@@ -66,7 +69,12 @@ partial class PgSqlOutboxSqlLayer(IPgSqlConnectionPool connectionFactory, PgSqlS
                    .SetCommandText(
                        $"""
 
-                        UPDATE {DispatchingTable.TableName} 
+                        INSERT INTO {DispatchingTable.TableName}
+                                    ({DispatchingTable.TessageId},  {DispatchingTable.EndpointId},  {DispatchingTable.IsReceived})
+                            VALUES (@{DispatchingTable.TessageId}, @{DispatchingTable.EndpointId}, false)
+                        ON CONFLICT ({DispatchingTable.TessageId}, {DispatchingTable.EndpointId}) DO NOTHING;
+
+                        UPDATE {DispatchingTable.TableName}
                             SET {DispatchingTable.IsReceived} = true
                         WHERE {DispatchingTable.TessageId} = @{DispatchingTable.TessageId}
                             AND {DispatchingTable.EndpointId} = @{DispatchingTable.EndpointId}
@@ -78,7 +86,7 @@ partial class PgSqlOutboxSqlLayer(IPgSqlConnectionPool connectionFactory, PgSqlS
                    .PrepareStatement()
                    .ExecuteNonQuery());
 
-      return affectedRows == 1
+      return affectedRows > 0
                 ? IServiceBusSqlLayer.MarkAsReceivedResult.Initial
                 : IServiceBusSqlLayer.MarkAsReceivedResult.WasAlreadyMarked;
    }
@@ -106,14 +114,18 @@ partial class PgSqlOutboxSqlLayer(IPgSqlConnectionPool connectionFactory, PgSqlS
                    .ExecuteNonQuery());
    }
 
-   public IReadOnlyList<IServiceBusSqlLayer.UndeliveredTessage> GetUndeliveredTessagesForEndpoint(EndpointId endpointId)
+   public IReadOnlyList<IServiceBusSqlLayer.UndeliveredTessage> GetUndeliveredTessagesForEndpoint(EndpointId endpointId, IReadOnlyCollection<TypeId> handledTommandTypes)
    {
+      // Intern before opening a connection: interning may hit the database, and nesting a second connection
+      // inside a held one deadlocks the pool.
+      var internedTommandTypeIds = handledTommandTypes.Select(_typeIdInterner.GetOrInternId).ToList();
+
       // The TypeId column holds an interned int. Resolve it to the canonical type string AFTER the reader has
       // closed — resolving during the read could open a second connection on a cache miss while the reader is held.
       var raw = _connectionFactory.UseCommand(
          command =>
          {
-            var rows = new List<(TessageId TessageId, int TypeId, string Body, EndpointId Endpoint, int RetryCount, DateTime? LastAttempt)>();
+            var rows = new List<(TessageId TessageId, int TypeId, string Body)>();
 
             command
                .SetCommandText(
@@ -121,41 +133,45 @@ partial class PgSqlOutboxSqlLayer(IPgSqlConnectionPool connectionFactory, PgSqlS
 
                     SELECT m.{TessageTable.TessageId},
                            m.{TessageTable.TypeId},
-                           m.{TessageTable.SerializedTessage},
-                           d.{DispatchingTable.EndpointId},
-                           d.{DispatchingTable.RetryCount},
-                           d.{DispatchingTable.LastAttemptTime}
+                           m.{TessageTable.SerializedTessage}
                     FROM {TessageTable.TableName} m
-                    INNER JOIN {DispatchingTable.TableName} d ON m.{TessageTable.TessageId} = d.{DispatchingTable.TessageId}
-                    WHERE d.{DispatchingTable.IsReceived} = false
-                      AND d.{DispatchingTable.EndpointId} = @endpointId
+                    LEFT JOIN {DispatchingTable.TableName} d ON m.{TessageTable.TessageId} = d.{DispatchingTable.TessageId}
+                    WHERE {UndeliveredForEndpointCondition(internedTommandTypeIds)}
                     ORDER BY m.{TessageTable.GeneratedId}; -- Send order: recovery re-establishes in-order delivery, oldest undelivered first.
 
                     """)
-               .AddParameter("endpointId", endpointId.Value)
-               .PrepareStatement();
+               .AddParameter("endpointId", endpointId.Value);
+
+            internedTommandTypeIds.ForEach((internedTypeId, index) => command.AddParameter($"HandledTommandType_{index}", internedTypeId));
+            command.PrepareStatement(); //The advertised tommand-type count per endpoint is stable, so the variations stay few enough for preparing to pay off.
 
             using var reader = command.ExecuteReader();
             while(reader.Read())
             {
                rows.Add((new TessageId(reader.GetGuid(0)),
                          reader.GetInt32(1),
-                         reader.GetString(2),
-                         new EndpointId(reader.GetGuid(3)),
-                         reader.GetInt32(4),
-                         reader.IsDBNull(5) ? null : reader.GetDateTime(5)));
+                         reader.GetString(2)));
             }
 
             return rows;
          });
 
-      return raw.Select(row => new IServiceBusSqlLayer.UndeliveredTessage(
-                           tessageId: row.TessageId,
-                           typeId: _typeIdInterner.GetTypeId(row.TypeId),
-                           serializedTessage: row.Body,
-                           targetEndpointId: row.Endpoint,
-                           retryCount: row.RetryCount,
-                           lastAttemptTime: row.LastAttempt)).ToList();
+      return [..raw.Select(row => new IServiceBusSqlLayer.UndeliveredTessage(
+                              tessageId: row.TessageId,
+                              typeId: _typeIdInterner.GetTypeId(row.TypeId),
+                              serializedTessage: row.Body))];
+   }
+
+   //Two kinds of undelivered work ride one query so a single ORDER BY GeneratedId preserves send order across them: rows
+   //bound to this endpoint and not yet received, and unbound tommands - no dispatching row at all until the delivery that
+   //succeeds binds one - whose type the endpoint's advertisement handles (route-at-delivery).
+   static string UndeliveredForEndpointCondition(IReadOnlyList<int> internedTommandTypeIds)
+   {
+      const string boundToThisEndpoint = $"(d.{DispatchingTable.EndpointId} = @endpointId AND d.{DispatchingTable.IsReceived} = false)";
+      if(internedTommandTypeIds.Count == 0) return boundToThisEndpoint;
+
+      var handledTommandTypeParameters = string.Join(", ", internedTommandTypeIds.Select((_, index) => $"@HandledTommandType_{index}"));
+      return $"{boundToThisEndpoint} OR (d.{DispatchingTable.TessageId} IS NULL AND m.{TessageTable.TypeId} IN ({handledTommandTypeParameters}))";
    }
 
    public async Task InitAsync() => await _schemaManager.EnsureSchemaInitializedAsync().caf();

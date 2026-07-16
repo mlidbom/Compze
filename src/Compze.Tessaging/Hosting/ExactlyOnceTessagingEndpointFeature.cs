@@ -14,7 +14,10 @@ using Compze.Tessaging.Transport;
 namespace Compze.Tessaging.Hosting;
 
 ///<summary>
-/// Wires the full exactly-once Tessaging pipeline — inbox, outbox, tommand scheduler, service bus session —
+/// Wires the full exactly-once Tessaging pipeline — inbox, outbox, the durable peer registry
+/// (<see cref="Compze.Tessaging.Implementation.Peers.IPeerRegistry"/>), and the tommand senders
+/// (<see cref="Compze.Abstractions.Tessaging.Public.IUnitOfWorkTommandSender"/> /
+/// <see cref="Compze.Abstractions.Tessaging.Public.IIndependentTommandSender"/>) —
 /// into an endpoint: everything the transport-speaking transient core has
 /// (<see cref="TransientTessagingEndpointFeature"/>, which it composes — the transport server, the router, and
 /// the transient tevent delivery leg — itself composing <see cref="InProcessTessagingEndpointFeature"/>), plus

@@ -56,26 +56,33 @@ static class PeerRegistryRegistrar
    public IReadOnlyList<EndpointId> SubscriberIdsFor(IPublisherTevent<IRemotableTevent> wrappedTevent) =>
       _monitor.Locked(() => (IReadOnlyList<EndpointId>)[.._peers.Values.Where(peer => peer.SubscribesTo(wrappedTevent)).Select(peer => peer.Persisted.Id)]);
 
-   ///<summary>One remembered peer with its advertised tevent subscriptions resolved from canonical type strings to the wrapper<br/>
-   /// types they name — resolved once, when the peer is remembered, so <see cref="SubscribesTo"/> is a pure assignability check<br/>
-   /// on every publish.</summary>
+   public bool SomePeerHandles(IExactlyOnceTommand tommand) => _monitor.Locked(() => _peers.Values.Any(peer => peer.Handles(tommand)));
+
+   ///<summary>One remembered peer with its advertised type strings resolved to types once, when the peer is remembered, so<br/>
+   /// <see cref="SubscribesTo"/> and <see cref="Handles"/> are pure type checks on every publish and send. The advertisement<br/>
+   /// partitions the way the router's route registration partitions it: tevent subscriptions are wrapper types matched by<br/>
+   /// assignability, everything else is a tommand type matched exactly — so the registry and the routes always agree.</summary>
    class RememberedPeer
    {
       internal IServiceBusSqlLayer.PersistedPeer Persisted { get; }
       readonly IReadOnlyList<Type> _teventSubscriptions;
+      readonly HashSet<Type> _handledTommandTypes;
 
       internal RememberedPeer(IServiceBusSqlLayer.PersistedPeer persisted, ITypeMap typeMap)
       {
          Persisted = persisted;
-         _teventSubscriptions = [..persisted.HandledTessageTypes
-                                            .Select(typeIdString => typeMap.GetId(typeIdString).Type)
-                                            .Where(tessageType => tessageType.Is<ITevent>())];
+         var advertisedTypes = persisted.HandledTessageTypes.Select(typeIdString => typeMap.GetId(typeIdString).Type).ToList();
+         _teventSubscriptions = [..advertisedTypes.Where(advertisedType => advertisedType.Is<ITevent>())];
+         _handledTommandTypes = [..advertisedTypes.Where(advertisedType => !advertisedType.Is<ITevent>())];
       }
 
       ///<summary>Whether this peer's last-known advertisement subscribes to <paramref name="wrappedTevent"/> — the same<br/>
-      /// advertised-wrapper-type assignability test the router's routes apply, so the registry and the routes always agree on<br/>
-      /// who subscribes to what.</summary>
+      /// advertised-wrapper-type assignability test the router's routes apply.</summary>
       internal bool SubscribesTo(IPublisherTevent<IRemotableTevent> wrappedTevent)
          => _teventSubscriptions.Any(subscription => subscription.IsInstanceOfType(wrappedTevent));
+
+      ///<summary>Whether this peer's last-known advertisement handles <paramref name="tommand"/>'s type — the same exact-type<br/>
+      /// match the router's tommand routes apply.</summary>
+      internal bool Handles(IExactlyOnceTommand tommand) => _handledTommandTypes.Contains(tommand.GetType());
    }
 }

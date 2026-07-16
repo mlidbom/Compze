@@ -13,7 +13,7 @@ public static class EndpointBuilderTessagingExtensions
       /// style's synchronous core, which distribution composes and extends: the handler registry, the
       /// synchronous in-process tevent delivery every tevent travels, and the endpoint's one
       /// <see cref="IUnitOfWorkTeventPublisher"/>. With nothing but this feature the
-      /// endpoint wires no transport, inbox, outbox, or tommand scheduler, so tevents are delivered
+      /// endpoint wires no transport, inbox, or outbox, so tevents are delivered
       /// synchronously, on the publishing thread, within the publisher's transaction, to this process's
       /// handlers.
       ///</summary>
@@ -32,8 +32,8 @@ public static class EndpointBuilderTessagingExtensions
       ///<summary>
       /// Adds the full exactly-once Tessaging pipeline to the endpoint being built (idempotent) and returns its
       /// feature: everything transient Tessaging has (<see cref="AddTransientTessaging"/>, which it
-      /// composes), plus the inbox, outbox, tommand scheduler and service bus session through which
-      /// the endpoint converses with delivery guarantees.
+      /// composes), plus the exactly-once vertical — inbox, outbox, the durable peer registry, and the
+      /// tommand senders — through which the endpoint converses with delivery guarantees.
       ///</summary>
       public ExactlyOnceTessagingEndpointFeature AddExactlyOnceTessaging() => @this.GetOrAddFeature(builder => new ExactlyOnceTessagingEndpointFeature(builder));
 

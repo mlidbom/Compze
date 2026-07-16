@@ -9,10 +9,26 @@ public interface IServiceBusSqlLayer
 
    public interface IOutboxSqlLayer
    {
+      ///<summary>Persists the tessage with one dispatching row per receiver. A tevent's receivers are bound here, at publish;<br/>
+      /// a tommand saves with none — unbound, because it routes at delivery time — and its one dispatching row is written by<br/>
+      /// the delivery that succeeds (<see cref="MarkAsReceived"/>), recording who actually received it.</summary>
       void SaveTessage(OutboxTessageWithReceivers tessageWithReceivers);
+
+      ///<summary>Records that <paramref name="endpointId"/> acknowledged the tessage: flips its dispatching row to received,<br/>
+      /// creating the row first when none exists — a tommand has no row until the delivery that succeeds binds it here.</summary>
       MarkAsReceivedResult MarkAsReceived(TessageId tessageId, EndpointId endpointId);
+
+      ///<summary>Bookkeeping on a failed delivery attempt: retry count, attempt time, and reason on the receiver's dispatching<br/>
+      /// row. A no-op for an unbound tommand — its row does not exist yet — where the failure lives in the delivery log only.</summary>
       void RecordDeliveryFailure(TessageId tessageId, EndpointId endpointId, string failureReason);
-      IReadOnlyList<UndeliveredTessage> GetUndeliveredTessagesForEndpoint(EndpointId endpointId);
+
+      ///<summary>The endpoint's recovery backlog, in send order (the outbox tessage table's monotonic <c>GeneratedId</c>):<br/>
+      /// every tessage bound to <paramref name="endpointId"/> and not yet received, plus every unbound tommand — no dispatching<br/>
+      /// row at all — whose type is among <paramref name="handledTommandTypes"/>, the tommand types the endpoint's current<br/>
+      /// advertisement handles (route-at-delivery: a tommand binds to whichever endpoint advertises its type when delivery<br/>
+      /// happens; see <c>dev_docs/TODO/durable-peer-topology.md</c>).</summary>
+      IReadOnlyList<UndeliveredTessage> GetUndeliveredTessagesForEndpoint(EndpointId endpointId, IReadOnlyCollection<TypeId> handledTommandTypes);
+
       Task InitAsync();
    }
 
@@ -67,17 +83,16 @@ public interface IServiceBusSqlLayer
       public string SerializedTessage { get; } = serializedTessage;
       public TypeId TypeId { get; } = typeId;
       public TessageId TessageId { get; } = tessageId;
-      public IEnumerable<EndpointId> ReceiverEndpointIds { get; } = receiverEndpointIds.ToList();
+      public IEnumerable<EndpointId> ReceiverEndpointIds { get; } = [..receiverEndpointIds];
    }
 
-   public class UndeliveredTessage(TessageId tessageId, TypeId typeId, string serializedTessage, EndpointId targetEndpointId, int retryCount, DateTime? lastAttemptTime)
+   ///<summary>One tessage the outbox still owes delivery of, as loaded into a connection's recovery backlog: exactly what<br/>
+   /// re-enqueueing needs — identity for dedup, type for deserialization, and the serialized body.</summary>
+   public class UndeliveredTessage(TessageId tessageId, TypeId typeId, string serializedTessage)
    {
       public TessageId TessageId { get; } = tessageId;
       public TypeId TypeId { get; } = typeId;
       public string SerializedTessage { get; } = serializedTessage;
-      public EndpointId TargetEndpointId { get; } = targetEndpointId;
-      public int RetryCount { get; } = retryCount;
-      public DateTime? LastAttemptTime { get; } = lastAttemptTime;
    }
 
    public static class InboxTessageDatabaseSchemaStrings

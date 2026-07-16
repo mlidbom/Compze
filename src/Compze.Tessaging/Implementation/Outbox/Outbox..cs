@@ -2,6 +2,7 @@ using System.Transactions;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Tessaging.Implementation.Abstractions;
 using Compze.Tessaging.Implementation.Peers;
+using Compze.Tessaging.Implementation.TessageHandling.Dispatching;
 using Compze.Tessaging.Implementation.Transport.Client.Implementation;
 using Compze.Tessaging.Implementation.Transport.Client.Internal;
 using Compze.Contracts;
@@ -74,15 +75,26 @@ partial class Outbox : IOutbox
    public void SendTransactionally(IExactlyOnceTommand exactlyOnceTommand)
    {
       State.NotNull(Transaction.Current);
-      this.Log().Debug($"Will send tommand if transactions succeeds: {exactlyOnceTommand.Id} ({exactlyOnceTommand.GetType().Name})");
-      var connection = _tessagingRouter.ConnectionToHandlerFor(exactlyOnceTommand);
+      this.Log().Debug($"Will send tommand if transaction succeeds: {exactlyOnceTommand.Id} ({exactlyOnceTommand.GetType().Name})");
 
-      _storage.SaveTessage(exactlyOnceTommand, exactlyOnceTommand.Id, connection.EndpointInformation.Id);
+      //Send-time validation only: some route must be known to serve the type - a remembered peer's advertisement, or a live
+      //connection, which adds exactly the endpoint's own handlers (a connected peer is always also remembered; ourselves never).
+      if(!_peerRegistry.SomePeerHandles(exactlyOnceTommand) && _tessagingRouter.LiveConnectionToHandlerFor(exactlyOnceTommand) == null)
+         throw new NoHandlerForTessageTypeException(exactlyOnceTommand.GetType());
+
+      //A tommand names no recipient - it means "the handler of its type, whoever that is" - so the row persists unbound and the
+      //route resolves per delivery attempt (route-at-delivery, see dev_docs/TODO/durable-peer-topology.md): a known-but-down
+      //handler receives on its return, and a successor advertising the type receives its predecessor's in-flight tommands.
+      _storage.SaveTessage(exactlyOnceTommand, exactlyOnceTommand.Id);
 
       Transaction.Current.OnCommittedSuccessfully(() =>
       {
-         this.Log().Debug($"OnCommittedSuccessfully: Delivering tommand {exactlyOnceTommand.Id} to endpoint {connection.EndpointInformation.Id}");
-         connection.EnqueueForExactlyOnceDelivery(exactlyOnceTommand, exactlyOnceTommand.Id);
+         //This attempt's binding: the route as it stands at commit. With no live handler the row simply waits - the backlog
+         //load carries it into the handler('s successor's) delivery stream when that connection's delivery starts.
+         var liveConnection = _tessagingRouter.LiveConnectionToHandlerFor(exactlyOnceTommand);
+         if(liveConnection == null) return;
+         this.Log().Debug($"OnCommittedSuccessfully: Delivering tommand {exactlyOnceTommand.Id} to endpoint {liveConnection.EndpointInformation.Id}");
+         liveConnection.EnqueueForExactlyOnceDelivery(exactlyOnceTommand, exactlyOnceTommand.Id);
       });
    }
 

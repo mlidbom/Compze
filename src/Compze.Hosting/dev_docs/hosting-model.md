@@ -144,14 +144,14 @@ wired once whether it arrives alone or under distribution).
   for code outside any unit of work) — routing each published tevent by the delivery
   contract its type declares (see
   [the tevent delivery model](../../Compze.Tessaging/dev_docs/tevent-delivery-model.md)). With nothing but this
-  feature the endpoint wires no remote delivery legs — no transport, inbox, outbox, or tommand scheduler —
+  feature the endpoint wires no remote delivery legs — no transport, inbox, or outbox —
   so tevents are delivered synchronously to this process's handlers, in the publisher's transaction.
   `TransientTessagingEndpointFeature` (`AddTransientTessaging()`) composes it into the transport-speaking
   core: the transport server, the router that connects to the other endpoints, and the transient tevent
   delivery leg — guarantee-free Tessaging, persisting nothing, so it composes on the database-less
   foundation; everything exactly-once fails loud at setup or publish.
   `ExactlyOnceTessagingEndpointFeature` (`AddExactlyOnceTessaging()`) composes that core and adds the
-  exactly-once vertical: inbox, outbox, tommand scheduler, and service bus session — and wiring the outbox is
+  exactly-once vertical: inbox, outbox, the durable peer registry, and the tommand senders — and wiring the outbox is
   what wires the durable tevent delivery leg the publisher routes every `IExactlyOnceTevent` through, and
   what grants the router's connections their durable exactly-once delivery streams. Whether a tevent
   crosses the wire is a property of the tevent's type, honored by the legs the composition wires — not an

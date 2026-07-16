@@ -19,7 +19,11 @@ interface ITessagingRouter
     void Stop();
     void StartDelivery();
     void StopDelivery();
-    ITessagingInboxConnection ConnectionToHandlerFor(IRemotableTommand tommand);
+    ///<summary>The live connection to the endpoint whose current advertisement handles <paramref name="tommand"/>'s type —<br/>
+    /// null when no connected endpoint does. Deliberately liveness-only: whether the type is served at all is the peer<br/>
+    /// registry's question, because a tommand routes at delivery time, not send time — it binds to whichever endpoint<br/>
+    /// advertises its type when delivery happens (route-at-delivery, see <c>dev_docs/TODO/durable-peer-topology.md</c>).</summary>
+    ITessagingInboxConnection? LiveConnectionToHandlerFor(IRemotableTommand tommand);
     ///<summary>The connections to every endpoint whose advertised tevent subscriptions match <paramref name="wrappedTevent"/>. Advertised subscriptions are wrapper<br/>
     /// types, so matching is against the wrapper — pure type assignability. Which delivery leg the tevent travels to a matched subscriber is not routing's concern:<br/>
     /// the published tevent's own type decides that (see <see cref="Compze.Abstractions.Tessaging.Public.IUnitOfWorkTeventPublisher"/>).</summary>

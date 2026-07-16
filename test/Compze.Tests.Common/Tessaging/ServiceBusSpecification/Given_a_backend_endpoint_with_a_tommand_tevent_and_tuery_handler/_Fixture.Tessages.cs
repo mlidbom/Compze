@@ -32,6 +32,14 @@ class MyExactlyOnceTevent : TaggregateTevent, IMyExactlyOnceTevent;
 interface IMyExactlyOnceTevent : ITaggregateTevent;
 public class MyExactlyOnceTommand : TessageTypes.Remotable.ExactlyOnce.Tommand;
 
+///<summary>An exactly-once tommand whose handler lives on the Remote endpoint (<see cref="MyExactlyOnceTommand"/>'s lives on the<br/>
+/// Backend), so specifications can send from the Backend toward a handler endpoint that may be down or replaced.</summary>
+public class MyExactlyOnceTommandHandledByTheRemoteEndpoint : TessageTypes.Remotable.ExactlyOnce.Tommand;
+
+///<summary>An exactly-once tommand no endpoint registers a handler for: sending it must fail loud — a tommand routes to<br/>
+/// whichever endpoint advertises its type, and nothing advertises this one.</summary>
+public class MyUnhandledExactlyOnceTommand : TessageTypes.Remotable.ExactlyOnce.Tommand;
+
 ///<summary>A transient tevent: plain <see cref="IRemotableTevent"/> IS the transient delivery tier — best-effort across the wire,<br/>
 /// no store, no dedup, no retry (see <c>src/Compze.Tessaging/dev_docs/tevent-delivery-model.md</c>).</summary>
 public interface IMyTransientTevent : IRemotableTevent

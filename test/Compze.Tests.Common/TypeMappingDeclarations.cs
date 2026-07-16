@@ -44,6 +44,8 @@ class AssemblyTypeMapper : IAssemblyTypeMapper
          .Map<Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler.MyCreateTaggregateTommand>("cb7ce885-5300-4e63-8b72-c86ab6b61655")
          .Map<Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler.MyExactlyOnceTevent>("4f37723d-f981-4aff-9a8c-e0c3ee53b568")
          .Map<Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler.MyExactlyOnceTommand>("c0233a55-955f-4ec9-b0dc-376f1c8b1f9a")
+         .Map<Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler.MyExactlyOnceTommandHandledByTheRemoteEndpoint>("13d2b39c-8ec5-4646-bb69-0fa3685f0612")
+         .Map<Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler.MyUnhandledExactlyOnceTommand>("2a6e5bba-1bfb-4461-b96e-0ffd4c86c8df")
          .Map<Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler.MyTaggregate>("9a19bd04-7d1e-4846-a4a3-909b889a3d44")
          .Map<Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler.MyTaggregateTevent>("39c8432a-4481-4552-9d91-d28810e64155")
          .Map<Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler.MyTaggregateTevent.Created>("69068b48-4efd-4e3f-9f84-17c3f7881ef0")
