@@ -143,7 +143,22 @@ public interface IScopeResolver : IServiceResolver;
 /// that begins the scope, not by the container, so only that code can grant this typing — through<br/>
 /// <c>ExecuteUnitOfWork</c>, or through <c>UnitOfWorkResolver.From</c> where an ambient transaction is asserted to exist.
 ///</remarks>
-public interface IUnitOfWorkResolver : IScopeResolver;
+public interface IUnitOfWorkResolver : IScopeResolver
+{
+   ///<summary>The identity of this unit of work: value-equal exactly when it identifies the same unit of work, for keying<br/>
+   /// logs, caches, and idempotence checks on "which unit of work did this".</summary>
+   UnitOfWorkId Id { get; }
+
+   ///<summary>Registers <paramref name="action"/> to run once, after this unit of work has committed successfully — the<br/>
+   /// send-on-commit pattern: work that must happen only if the unit of work's effects became real. Never runs when the unit<br/>
+   /// of work rolls back. Runs after commit, so it cannot join the committed transaction — anything it does is its own,<br/>
+   /// separate work.</summary>
+   void OnCommittedSuccessfully(Action action);
+
+   ///<summary>Registers <paramref name="action"/> to run when this unit of work completes, however it ends — committed or<br/>
+   /// rolled back: the cleanup pattern, for releasing whatever was held for the unit of work's duration.</summary>
+   void OnCompleted(Action action);
+}
 
 ///<summary>
 /// <para>>When resolved through <see cref="Resolver"/>> all services registered as <see cref="Lifestyle.Scoped"/> will resolve as the same exact instance, separate from the instance returned by any other <see cref="IScopeResolver"/></para>

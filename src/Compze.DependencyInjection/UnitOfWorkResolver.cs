@@ -1,6 +1,7 @@
 using System.Transactions;
 using Compze.Contracts;
 using Compze.DependencyInjection.Abstractions;
+using Compze.Internals.SystemCE.TransactionsCE;
 using static Compze.Contracts.Contract;
 
 namespace Compze.DependencyInjection;
@@ -15,6 +16,12 @@ namespace Compze.DependencyInjection;
 /// then wraps the resolver. Created by <c>ExecuteUnitOfWork</c> for the unit of work it begins, and by framework code that has<br/>
 /// already asserted a transactional context around a caller-provided scope.
 ///</remarks>
+///<remarks>
+/// The transaction is captured at creation, and <see cref="Id"/>, <see cref="OnCommittedSuccessfully"/>, and<br/>
+/// <see cref="OnCompleted"/> operate on the captured transaction — never on <see cref="Transaction.Current"/> — so they bind<br/>
+/// to the unit of work this resolver certifies even when the ambient transaction has drifted, as in a continuation the<br/>
+/// ambient context did not flow into.
+///</remarks>
 public class UnitOfWorkResolver : IUnitOfWorkResolver
 {
    ///<summary>Grants unit-of-work typing to <paramref name="scopeResolver"/>. Asserts that an ambient transaction is present —<br/>
@@ -23,12 +30,22 @@ public class UnitOfWorkResolver : IUnitOfWorkResolver
    {
       State.Assert(Transaction.Current != null,
                    () => $"A unit of work is a scope paired with an ambient transaction, and there is no ambient transaction. Run the work through ExecuteUnitOfWork, which begins scope and transaction together — or, if this context deliberately has no transaction, accept an {nameof(IScopeResolver)} instead of claiming a unit of work.");
-      return new UnitOfWorkResolver(scopeResolver);
+      return new UnitOfWorkResolver(scopeResolver, Transaction.Current);
    }
 
    readonly IScopeResolver _scopeResolver;
+   readonly Transaction _transaction;
 
-   UnitOfWorkResolver(IScopeResolver scopeResolver) => _scopeResolver = scopeResolver;
+   UnitOfWorkResolver(IScopeResolver scopeResolver, Transaction transaction)
+   {
+      _scopeResolver = scopeResolver;
+      _transaction = transaction;
+      Id = new UnitOfWorkId(transaction);
+   }
+
+   public UnitOfWorkId Id { get; }
+   public void OnCommittedSuccessfully(Action action) => _transaction.OnCommittedSuccessfully(action);
+   public void OnCompleted(Action action) => _transaction.OnCompleted(action);
 
    public object Resolve(Type serviceType) => _scopeResolver.Resolve(serviceType);
    public IEnumerable<object> ResolveSet(Type serviceType) => _scopeResolver.ResolveSet(serviceType);

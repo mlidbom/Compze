@@ -41,6 +41,14 @@ express which:
   dispatch's own for a transient arrival. Observation handlers, delivered detached from any transaction by
   contract, have their own registrar and keep `IScopeResolver`.
 
+Beyond resolution, the resolver is the unit of work's handle: `Id` (a `UnitOfWorkId`, backed by the
+transaction's `LocalIdentifier` — value-equal exactly when it identifies the same unit of work) and the
+completion hooks `OnCommittedSuccessfully(action)` / `OnCompleted(action)`, thin veneers over the
+`TransactionCompleted`-based callbacks the framework already trusted internally (the outbox's
+send-on-commit, the connection cleanup). All three operate on the transaction **captured when the resolver
+was created**, never on `Transaction.Current`, so they bind to the unit of work the resolver certifies even
+where the ambient transaction has drifted.
+
 The container can never grant the typing — a scope is not necessarily a unit of work, and `IUnitOfWorkResolver`
 is never registered nor resolvable. Only the code that pairs scope with transaction can grant it:
 `ExecuteUnitOfWork` for the unit of work it begins, or `UnitOfWorkResolver.From(scopeResolver)`, which
@@ -107,7 +115,7 @@ tracking exists or is planned; a considered AsyncLocal design was dropped in its
 
 - **Completion callbacks** are `TransactionCompleted`-based (`TransactionCE.OnCommittedSuccessfully` /
   `OnCompleted`) — the outbox's send-on-commit and the transaction-affinity connection cleanup already work
-  this way.
+  this way, and `IUnitOfWorkResolver`'s hooks surface the same callbacks on the unit of work's own handle.
 - **`VolatileTransactionParticipant` stays.** Two participants genuinely need full
   `IEnlistmentNotification` semantics and no callback API can replace them: the SQLite connection, which *is*
   a resource manager (`OnEnlist` takes the write gate and begins the real DB transaction), and DocumentDb's
@@ -119,7 +127,10 @@ tracking exists or is planned; a considered AsyncLocal design was dropped in its
 
 ## Deferred, deliberately
 
-- **Reifying a `UnitOfWork` object** (completion-hook surface on `IUnitOfWorkResolver`, migrating the
-  per-component usage guards into the unit of work's own lifecycle) — sketch first; the guards work.
+- **A `UnitOfWork` object beyond the resolver** — probably never. Everything reification was to buy landed
+  on `IUnitOfWorkResolver` itself: identity (`Id`) and completion hooks (`OnCommittedSuccessfully` /
+  `OnCompleted`), both over the captured transaction. What remains unreified — migrating the per-component
+  usage guards into a unit-of-work lifecycle — stays unplanned: the guards work, and `Lifestyle.UnitOfWork`
+  already fails a wrong-context resolution at the resolve.
 - **A type-level name for the isolated-scope (read) context**, if something ever needs to say it in a
   signature.
