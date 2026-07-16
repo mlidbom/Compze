@@ -40,7 +40,7 @@ public class Navigator_specification : UniversalTestBase
             builder.RegisterTypermediaHandlers
                    .ForTuery((GetUserTuery tuery) => tueryResults.Single(result => result.Name == tuery.Name))
                    .ForTuery((UserApiStartPageTuery _) => new UserApiStartPage())
-                   .ForTommandWithResult((RegisterUserTypermediaTommand typermediaTommand, IServiceBusSession _) =>
+                   .ForTommandWithResult((RegisterUserTypermediaTommand typermediaTommand, IUnitOfWorkTommandSender _) =>
                     {
                        tueryResults.Add(new UserResource(typermediaTommand.Name));
                        return new UserRegisteredConfirmationResource(typermediaTommand.Name);

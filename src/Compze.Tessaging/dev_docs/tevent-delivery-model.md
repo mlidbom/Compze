@@ -250,7 +250,7 @@ Per rung:
 
 Tommands are 1:1 — one sender, exactly one handler — and there the type dictates *everything*, with no
 subscription-side election at all: an `IExactlyOnceTommand`'s type is its delivery contract (exactly-once,
-transactional, asynchronous), sent through `IServiceBusSession.Send`, and an endpoint even
+transactional, asynchronous), sent through `IUnitOfWorkTommandSender.Send`, and an endpoint even
 routes tommands to *itself* through the outbox so the guarantee holds. The synchronous local ask has its own
 truthful home in Typermedia's strictly-local tommand — see
 [the hosting model](../../Compze.Hosting/dev_docs/hosting-model.md). The subscription-side opt-down and the

@@ -8,23 +8,23 @@ using Compze.Internals.SystemCE.UsageGuards;
 
 namespace Compze.Tessaging.Hosting;
 
-static class ServiceBusSessionRegistrar
+static class UnitOfWorkTommandSenderRegistrar
 {
-   public static IComponentRegistrar ServiceBusSession(this IComponentRegistrar registrar)
-      => registrar.Register(Hosting.ServiceBusSession.RegisterWith);
+   public static IComponentRegistrar UnitOfWorkTommandSender(this IComponentRegistrar registrar)
+      => registrar.Register(Hosting.UnitOfWorkTommandSender.RegisterWith);
 }
 
-[UsedImplicitly] class ServiceBusSession : IServiceBusSession
+[UsedImplicitly] class UnitOfWorkTommandSender : IUnitOfWorkTommandSender
 {
    public static void RegisterWith(IComponentRegistrar registrar)
-      => registrar.Register(Scoped.For<IServiceBusSession>()
+      => registrar.Register(Scoped.For<IUnitOfWorkTommandSender>()
                                   .CreatedBy((IOutbox outbox)
-                                                => new ServiceBusSession(outbox)));
+                                                => new UnitOfWorkTommandSender(outbox)));
 
    readonly IOutbox _transport;
    readonly IUsageGuard _contextGuard;
 
-   public ServiceBusSession(IOutbox transport)
+   public UnitOfWorkTommandSender(IOutbox transport)
    {
       _transport = transport;
       _contextGuard = new CombinationUsageGuard(new SingleTransactionUsageGuard(this));

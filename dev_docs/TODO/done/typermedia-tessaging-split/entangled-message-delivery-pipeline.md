@@ -205,8 +205,8 @@ Every component involved in delivering a message from caller to handler and back
 - Registered as Scoped
 
 ### Service Bus Session [S]
-- **Interface**: `IServiceBusSession` — `src/Compze.Abstractions/Tessaging/Public/IServiceBusSession.cs`
-- **Impl**: `ServiceBusSession` — `src/Compze.Tessaging/Hosting/ServiceBusSession.cs`
+- **Interface**: `IUnitOfWorkTommandSender` — `src/Compze.Abstractions/Tessaging/Public/IUnitOfWorkTommandSender.cs`
+- **Impl**: `UnitOfWorkTommandSender` — `src/Compze.Tessaging/Hosting/UnitOfWorkTommandSender.cs`
 - `Send(cmd)` → validates → `IOutbox.SendTransactionally(cmd)`
 - `ScheduleSend(datetime, cmd)` → `TommandScheduler.Schedule(datetime, cmd)`
 
@@ -465,7 +465,7 @@ Every component involved in delivering a message from caller to handler and back
 
 ### Server Endpoint Builder [BOTH]
 - `ServerEndpointBuilder` — `src/Compze.Tessaging/Hosting/ServerEndpointBuilder.cs`
-- `Build()` registers in DI: `TessagingTransport` (TessagingRouter), `Inbox`, `Outbox`, `ServiceBusSession`, `InProcessHypermediaNavigator`, `TommandScheduler`, internal tessage type handlers
+- `Build()` registers in DI: `TessagingTransport` (TessagingRouter), `Inbox`, `Outbox`, `UnitOfWorkTommandSender`, `InProcessHypermediaNavigator`, `TommandScheduler`, internal tessage type handlers
 - Note: `ITypermediaRouter`/`ITypermediaRouting` and `IRemoteTypermediaNavigator` are NOT registered here — they are client-side only
 
 ### Endpoint [BOTH]
@@ -542,7 +542,7 @@ This distinction is critical for discovery: `EndpointInformationQuery` and `Netw
 - Routers: `TypermediaRouter` [T] vs `TessagingRouter` [S]
 - Connections: `TypermediaConnection` [T] vs `TessagingConnection` [S]
 - ASP.NET controllers: `TypermediaController` [T] vs `TessagingController` [S]
-- Entry points: `IRemoteTypermediaNavigator` [T] vs `IServiceBusSession` [S]
+- Entry points: `IRemoteTypermediaNavigator` [T] vs `IUnitOfWorkTommandSender` [S]
 - Handler execution: `TypermediaHandlerExecutor` [T] vs `Inbox`/`HandlerExecutionEngine` [S]
 - Outbox / command scheduler [S] — no typermedia involvement
 - Handler registrars: `ITypermediaHandlerRegistrar` [T] vs `ITessageHandlerRegistrar` [S]

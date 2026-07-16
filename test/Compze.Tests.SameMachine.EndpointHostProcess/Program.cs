@@ -90,7 +90,7 @@ public static class Program
                                       .SqliteEndpointDatabase("EndpointHostProcess"))
              .AddExactlyOnceTessaging(tessaging => tessaging.NewtonsoftSerializer())
              .ParticipateIn(registry)
-             .RegisterHandlers(register => register.ForTommand<TommandSentToTheEndpointHostProcess, IServiceBusSession>((_, serviceBusSession) => serviceBusSession.Send(new TommandSentBackToTheSpecificationProcess())));
+             .RegisterHandlers(register => register.ForTommand<TommandSentToTheEndpointHostProcess, IUnitOfWorkTommandSender>((_, unitOfWorkTommandSender) => unitOfWorkTommandSender.Send(new TommandSentBackToTheSpecificationProcess())));
    }
 
    ///<summary>The database-less composition: no database declaration, no configuration, nothing persisted anywhere in this<br/>

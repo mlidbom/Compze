@@ -81,7 +81,8 @@ public class ExactlyOnceTessagingEndpointFeature
 
       register.Outbox()
               .Inbox()
-              .ServiceBusSession()
+              .UnitOfWorkTommandSender()
+              .IndependentTommandSender()
               .ExactlyOnceTessagingRequestHandlers();
 
       builder.AddComponent(resolver => new ExactlyOnceTessagingEndpointComponent(resolver));
