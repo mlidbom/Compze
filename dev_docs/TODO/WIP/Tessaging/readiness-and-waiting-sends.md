@@ -145,9 +145,10 @@ exactly these two consumers.
 
 Whether to collapse that — one distributed-endpoint substrate owning identity, discovery, one
 advertisement, one router, peers and their lifecycle, readiness and waiting, with the styles as handler
-kinds plus delivery semantics on top — is evaluated in its own document before anything here is built:
-building readiness and waiting into the duplication and migrating them later would be the backwards order.
-The former question "advertisement unification" dissolves into this one.
+kinds plus delivery semantics on top — is evaluated in
+[style-substrate-and-hosting-evaluation.md](style-substrate-and-hosting-evaluation.md) before anything here
+is built: building readiness and waiting into the duplication and migrating them later would be the
+backwards order. The former question "advertisement unification" dissolves into this one.
 
 ## Relation to durable-peer-topology.md
 
