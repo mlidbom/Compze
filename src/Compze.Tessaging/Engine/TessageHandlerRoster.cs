@@ -21,7 +21,6 @@ namespace Compze.Tessaging.Engine;
 public class TessageHandlerRoster
 {
    readonly IReadOnlyDictionary<Type, IReadOnlyList<Func<ITevent, IUnitOfWorkResolver, Task>>> _teventHandlers;
-   readonly IReadOnlyDictionary<Type, IReadOnlyList<Action<ITevent, IScopeResolver>>> _teventObservers;
    readonly IReadOnlyDictionary<Type, Func<ITommand, IUnitOfWorkResolver, Task>> _voidTommandHandlers;
    readonly IReadOnlyDictionary<Type, TommandHandlerWithResult> _tommandHandlersWithResults;
    readonly IReadOnlyDictionary<Type, Func<ITuery, IScopeResolver, Task<object>>> _tueryHandlers;
@@ -32,7 +31,7 @@ public class TessageHandlerRoster
    readonly Lazy<ISet<TypeId>> _handledRemoteTypermediaTypeIds;
 
    internal TessageHandlerRoster(IReadOnlyDictionary<Type, IReadOnlyList<Func<ITevent, IUnitOfWorkResolver, Task>>> teventHandlers,
-                                 IReadOnlyDictionary<Type, IReadOnlyList<Action<ITevent, IScopeResolver>>> teventObservers,
+                                 IReadOnlyList<TeventObserverRegistration> teventObservers,
                                  IReadOnlyDictionary<Type, Func<ITommand, IUnitOfWorkResolver, Task>> voidTommandHandlers,
                                  IReadOnlyDictionary<Type, TommandHandlerWithResult> tommandHandlersWithResults,
                                  IReadOnlyDictionary<Type, Func<ITuery, IScopeResolver, Task<object>>> tueryHandlers,
@@ -40,7 +39,7 @@ public class TessageHandlerRoster
                                  ITypeMap typeMap)
    {
       _teventHandlers = teventHandlers;
-      _teventObservers = teventObservers;
+      TeventObserverRegistrations = teventObservers;
       _voidTommandHandlers = voidTommandHandlers;
       _tommandHandlersWithResults = tommandHandlersWithResults;
       _tueryHandlers = tueryHandlers;
@@ -59,10 +58,10 @@ public class TessageHandlerRoster
    public IReadOnlyList<Func<ITevent, IUnitOfWorkResolver, Task>> GetTeventHandlers(Type wrapperTeventType) =>
       [.._teventHandlers.Where(it => it.Key.IsAssignableFrom(wrapperTeventType)).SelectMany(it => it.Value)];
 
-   ///<summary>The tevent observers whose subscriptions match <paramref name="wrapperTeventType"/> — observation, the deliberately<br/>
-   /// transaction-ignoring watch surface. Dispatched by the engine's executor outside any transaction, never by the transactional pipelines.</summary>
-   public IReadOnlyList<Action<ITevent, IScopeResolver>> GetTeventObservers(Type wrapperTeventType) =>
-      [.._teventObservers.Where(it => it.Key.IsAssignableFrom(wrapperTeventType)).SelectMany(it => it.Value)];
+   ///<summary>Every declared tevent observer with its subscribed wrapper type — observation, the deliberately<br/>
+   /// transaction-ignoring watch surface. The engine's <see cref="TeventObservationDispatcher"/> builds its per-observer FIFO<br/>
+   /// dispatch queues from these; the transactional pipelines never touch them.</summary>
+   internal IReadOnlyList<TeventObserverRegistration> TeventObserverRegistrations { get; }
 
    ///<summary>The one handler for the tommand type <paramref name="tommandType"/>, whose type declares no result.</summary>
    public Func<ITommand, IUnitOfWorkResolver, Task> GetVoidTommandHandler(Type tommandType) =>

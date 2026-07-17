@@ -28,7 +28,7 @@ public class TessagesInFlightTracker : ITessagesInFlightTracker
       }
       catch(AwaitingConditionTimeoutException e)
       {
-         throw _implementation.Read(it => new AwaitNoTessagesInFlightTimeoutException(innerException: e, undeliveredTessages: it.GetUndeliveredTessages()));
+         throw _implementation.Read(it => new AwaitNoTessagesInFlightTimeoutException(innerException: e, undeliveredTessages: it.GetUndeliveredTessages(), pendingObservations: it.GetPendingObservations()));
       }
    }
 
@@ -37,6 +37,10 @@ public class TessagesInFlightTracker : ITessagesInFlightTracker
 
    public void DroppedBeforeDelivery(TransportTessage.OutGoing transportTessage, EndpointId remoteEndpointId) =>
       _implementation.Update(it => it.DroppedBeforeDelivery(transportTessage, remoteEndpointId));
+
+   public void TeventObservationQueued(Type wrapperTeventType) => _implementation.Update(it => it.TeventObservationQueued(wrapperTeventType));
+
+   public void TeventObservationDispatched(Type wrapperTeventType) => _implementation.Update(it => it.TeventObservationDispatched(wrapperTeventType));
 
    public class InFlightTessage
    {
@@ -49,6 +53,8 @@ public class TessagesInFlightTracker : ITessagesInFlightTracker
    class NonThreadSafeImplementation
    {
       readonly Dictionary<TessageId, InFlightTessage> _trackedTessages = [];
+
+      readonly Dictionary<Type, int> _pendingObservationsByWrapperTeventType = [];
 
       readonly List<Exception> _busExceptions = [];
 
@@ -83,10 +89,26 @@ public class TessagesInFlightTracker : ITessagesInFlightTracker
       internal void DroppedBeforeDelivery(TransportTessage.OutGoing transportTessage, EndpointId remoteEndpointId) =>
          _trackedTessages[transportTessage.TessageId].EndpointDeliveryStatus.Remove(remoteEndpointId);
 
-      internal bool NoTessagesInFlight() => _trackedTessages.Values.SelectMany(it => it.EndpointDeliveryStatus.Values).All(delivered => delivered);
+      internal void TeventObservationQueued(Type wrapperTeventType) =>
+         _pendingObservationsByWrapperTeventType[wrapperTeventType] = _pendingObservationsByWrapperTeventType.GetValueOrDefault(wrapperTeventType) + 1;
+
+      internal void TeventObservationDispatched(Type wrapperTeventType)
+      {
+         var remaining = _pendingObservationsByWrapperTeventType[wrapperTeventType] - 1;
+         if(remaining == 0)
+            _pendingObservationsByWrapperTeventType.Remove(wrapperTeventType);
+         else
+            _pendingObservationsByWrapperTeventType[wrapperTeventType] = remaining;
+      }
+
+      internal bool NoTessagesInFlight() => _pendingObservationsByWrapperTeventType.Count == 0
+                                         && _trackedTessages.Values.SelectMany(it => it.EndpointDeliveryStatus.Values).All(delivered => delivered);
 
       internal IReadOnlyList<InFlightTessage> GetUndeliveredTessages() =>
          [.._trackedTessages.Values.Where(it => it.EndpointDeliveryStatus.Values.Any(delivered => !delivered))];
+
+      internal IReadOnlyDictionary<string, int> GetPendingObservations() =>
+         _pendingObservationsByWrapperTeventType.ToDictionary(it => it.Key.FullName ?? it.Key.Name, it => it.Value);
    }
 }
 
@@ -97,4 +119,6 @@ class NullOpTessagesInFlightTracker : ITessagesInFlightTracker
    public void AwaitNoTessagesInFlight(WaitTimeout? timeoutOverride) {}
    public void DoneWith(TransportTessage.InComing tessage, EndpointId handlingEndpointId, Exception? exception) {}
    public void DroppedBeforeDelivery(TransportTessage.OutGoing transportTessage, EndpointId remoteEndpointId) {}
+   public void TeventObservationQueued(Type wrapperTeventType) {}
+   public void TeventObservationDispatched(Type wrapperTeventType) {}
 }

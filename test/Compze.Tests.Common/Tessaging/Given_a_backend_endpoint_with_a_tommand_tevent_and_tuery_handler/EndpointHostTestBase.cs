@@ -170,7 +170,8 @@ public abstract class EndpointHostTestBase : UniversalTestBase
                           return new MyTommandResult();
                        }));
 
-            //Observation - the transaction-ignoring subscription kind: fires at publish time for the Backend's own locally published tevents.
+            //Observation - the transaction-ignoring subscription kind: the Backend's own locally published tevents are queued for
+            //this observer when their publishing unit of work commits, and dispatched off-thread.
             endpoint.ObserveTevents(observe => observe
                       .ForTevent((IMyTaggregateTevent _) => MyTaggregateTeventBackendObserverThreadGate.AwaitPassThrough()));
          });
@@ -211,7 +212,8 @@ public abstract class EndpointHostTestBase : UniversalTestBase
                                                               MyBestEffortTeventRemoteHandlerThreadGate.AwaitPassThrough();
                                                            }));
 
-                                                //Observation - the transaction-ignoring subscription kind: fires on arrival, before and outside the transactional handling above.
+                                                //Observation - the transaction-ignoring subscription kind: an arriving tevent is queued for these observers on
+                                                //arrival (it is already a committed fact on its publisher), before and outside the transactional handling above.
                                                 endpoint.ObserveTevents(observe => observe
                                                           .ForTevent((IMyTaggregateTevent _) => MyTaggregateTeventRemoteObserverThreadGate.AwaitPassThrough())
                                                           .ForTevent((IMyBestEffortTevent _) => MyBestEffortTeventRemoteObserverThreadGate.AwaitPassThrough()));

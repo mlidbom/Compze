@@ -4,10 +4,10 @@ using Compze.Threading.Exceptions;
 
 namespace Compze.Tessaging.Implementation;
 
-class AwaitNoTessagesInFlightTimeoutException(AwaitingConditionTimeoutException innerException, IReadOnlyList<TessagesInFlightTracker.InFlightTessage> undeliveredTessages)
-   : Exception(FormatMessage(undeliveredTessages), innerException)
+class AwaitNoTessagesInFlightTimeoutException(AwaitingConditionTimeoutException innerException, IReadOnlyList<TessagesInFlightTracker.InFlightTessage> undeliveredTessages, IReadOnlyDictionary<string, int> pendingObservations)
+   : Exception(FormatMessage(undeliveredTessages, pendingObservations), innerException)
 {
-   static string FormatMessage(IReadOnlyList<TessagesInFlightTracker.InFlightTessage> undeliveredTessages)
+   static string FormatMessage(IReadOnlyList<TessagesInFlightTracker.InFlightTessage> undeliveredTessages, IReadOnlyDictionary<string, int> pendingObservations)
    {
       var sb = new StringBuilder();
       sb.AppendLine("AwaitNoTessagesInFlight timed out.");
@@ -30,6 +30,19 @@ class AwaitNoTessagesInFlightTimeoutException(AwaitingConditionTimeoutException 
                         Body:
                         {tessage.Body}
                         """);
+      }
+
+      if(pendingObservations.Count > 0)
+      {
+         sb.AppendLine(CultureInfo.InvariantCulture,
+                       $"""
+
+                        ========== PENDING TEVENT OBSERVATIONS ({pendingObservations.Values.Sum()}) ==========
+                        """);
+         foreach(var pendingObservation in pendingObservations)
+         {
+            sb.AppendLine(CultureInfo.InvariantCulture, $"{pendingObservation.Key}: {pendingObservation.Value} queued but not yet dispatched");
+         }
       }
 
       return sb.ToString();

@@ -9,9 +9,11 @@ namespace Compze.Tessaging.Engine;
 /// its own verb (<see cref="LocalTessagingEngineBuilder.ObserveTevents"/>) so the distinct semantics are visible at the<br/>
 /// declaration site: an observer watches, never participates. Handed to the callback and existing only inside it, exactly like<br/>
 /// <see cref="TessageHandlerRegistrar"/>.</summary>
-///<remarks>An observer receives a plain <see cref="IScopeResolver"/>, never a unit of work: observation runs outside any<br/>
-/// transaction, undeterred by the fate of the execution that published the tevent, and a throwing observer is reported through<br/>
-/// the background-exception reporter, never retried.</remarks>
+///<remarks>An observer observes committed facts only — a tevent published within an execution is queued for its observers at<br/>
+/// commit, and an arriving tevent was committed by its publisher — and runs off-thread in per-observer FIFO order (the<br/>
+/// engine's <see cref="TeventObservationDispatcher"/>). It receives a plain <see cref="IScopeResolver"/>, never a unit of<br/>
+/// work: its invocation is a fresh scope with no transaction. A throwing observer is reported through the<br/>
+/// background-exception reporter, never retried.</remarks>
 public sealed class TeventObservationRegistrar
 {
    readonly TessageHandlerRegistrations _registrations;

@@ -25,7 +25,7 @@ public sealed partial class TessageHandlerRegistrations
 
    //Tevent subscriptions are keyed by the wrapper routing key their subscribed type translates to - see AddTeventHandler.
    readonly Dictionary<Type, List<Func<ITevent, IUnitOfWorkResolver, Task>>> _teventHandlers = new();
-   readonly Dictionary<Type, List<Action<ITevent, IScopeResolver>>> _teventObservers = new();
+   readonly List<TeventObserverRegistration> _teventObservers = [];
    readonly Dictionary<Type, Func<ITommand, IUnitOfWorkResolver, Task>> _voidTommandHandlers = new();
    readonly Dictionary<Type, TessageHandlerRoster.TommandHandlerWithResult> _tommandHandlersWithResults = new();
    readonly Dictionary<Type, Func<ITuery, IScopeResolver, Task<object>>> _tueryHandlers = new();
@@ -50,10 +50,10 @@ public sealed partial class TessageHandlerRegistrations
    });
 
    ///<summary>Registers an observer for tevents compatible with <typeparamref name="TTevent"/> — observation, the deliberately<br/>
-   /// transaction-ignoring watch surface, dispatched by the engine's executor outside any transaction, never by the transactional<br/>
-   /// pipelines. The same registration translation as <see cref="AddTeventHandler{TTevent}"/> applies, and the subscribed type<br/>
-   /// joins the advertised set exactly as a participation subscription does: an observation-only subscription must still pull the<br/>
-   /// tevent across the wire.</summary>
+   /// transaction-ignoring watch surface: committed facts only, dispatched off-thread by the engine's<br/>
+   /// <see cref="TeventObservationDispatcher"/>, never by the transactional pipelines. The same registration translation as<br/>
+   /// <see cref="AddTeventHandler{TTevent}"/> applies, and the subscribed type joins the advertised set exactly as a<br/>
+   /// participation subscription does: an observation-only subscription must still pull the tevent across the wire.</summary>
    internal void AddTeventObserver<TTevent>(Action<TTevent, IScopeResolver> observer) where TTevent : ITevent => _monitor.Locked(() =>
    {
       AssertRosterIsNotYetBuilt();
@@ -63,7 +63,7 @@ public sealed partial class TessageHandlerRegistrations
                                                    ? (wrappedTevent, scope) => observer((TTevent)wrappedTevent, scope)
                                                    : (wrappedTevent, scope) => observer((TTevent)((IPublisherTevent<ITevent>)wrappedTevent).Tevent, scope);
 
-      _teventObservers.GetOrAdd(PublisherTevent.WrapperTypeMatchingAllWrappingsOf(typeof(TTevent)), () => []).Add(deliver);
+      _teventObservers.Add(new TeventObserverRegistration(PublisherTevent.WrapperTypeMatchingAllWrappingsOf(typeof(TTevent)), deliver));
       _subscribedTeventTypes.Add(typeof(TTevent));
    });
 
@@ -112,7 +112,7 @@ public sealed partial class TessageHandlerRegistrations
    {
       _rosterIsBuilt = true;
       return new TessageHandlerRoster(teventHandlers: _teventHandlers.ToDictionary(it => it.Key, IReadOnlyList<Func<ITevent, IUnitOfWorkResolver, Task>> (it) => [..it.Value]),
-                                      teventObservers: _teventObservers.ToDictionary(it => it.Key, IReadOnlyList<Action<ITevent, IScopeResolver>> (it) => [..it.Value]),
+                                      teventObservers: [.._teventObservers],
                                       voidTommandHandlers: new Dictionary<Type, Func<ITommand, IUnitOfWorkResolver, Task>>(_voidTommandHandlers),
                                       tommandHandlersWithResults: new Dictionary<Type, TessageHandlerRoster.TommandHandlerWithResult>(_tommandHandlersWithResults),
                                       tueryHandlers: new Dictionary<Type, Func<ITuery, IScopeResolver, Task<object>>>(_tueryHandlers),

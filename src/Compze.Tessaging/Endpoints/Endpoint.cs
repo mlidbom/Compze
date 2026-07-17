@@ -5,6 +5,7 @@ using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Logging;
 using Compze.Internals.SystemCE.LinqCE;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
+using Compze.Tessaging.Engine;
 using Compze.Tessaging.Internals.Transport;
 using Compze.Tessaging.Implementation.Peers;
 using Compze.Tessaging.Implementation.Transport.Client.Internal;
@@ -35,6 +36,7 @@ public abstract class Endpoint : IEndpoint
    readonly ITessagingRouter _router;
    readonly IPeerRegistry _peerRegistry;
    readonly IBackgroundExceptionReporter _backgroundExceptionReporter;
+   readonly TeventObservationDispatcher _observationDispatcher;
 
    bool _isListening;
    bool _hasAnnounced;
@@ -54,6 +56,7 @@ public abstract class Endpoint : IEndpoint
       _router = ServiceLocator.Resolve<ITessagingRouter>();
       _peerRegistry = ServiceLocator.Resolve<IPeerRegistry>();
       _backgroundExceptionReporter = ServiceLocator.Resolve<IBackgroundExceptionReporter>();
+      _observationDispatcher = ServiceLocator.Resolve<TeventObservationDispatcher>();
    }
 
    ///<summary>The endpoint's stable identity: addresses are per-instance and change across restarts; the <see cref="EndpointId"/> never does.</summary>
@@ -141,6 +144,11 @@ public abstract class Endpoint : IEndpoint
       await RetractAddressAsync().caf();
       await StopSendingAsync().caf();
       await StopListeningAsync().caf();
+      //Drain the observation queues while the container still serves the observers their scopes: once container disposal
+      //begins, scope creation is refused, so a drain left to the container's own singleton teardown could no longer run the
+      //observers. Nothing enqueues new observation work after listening stopped - except observers themselves, which the
+      //drain's passes cover.
+      _observationDispatcher.Dispose();
       await _container.DisposeAsync().caf();
       //The container also disposes the server it holds; server disposal is idempotent, and disposing what we hold keeps ownership legible.
       await _transportServer.DisposeAsync().caf();

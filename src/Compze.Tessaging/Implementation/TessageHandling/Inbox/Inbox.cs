@@ -33,21 +33,21 @@ static class InboxRegistrar
                   .CreatedBy((ITessagesInFlightTracker globalStateTracker, TessageHandlerExecutor executor, IScopeFactory scopeFactory, ITessageStorage storage, ITaskRunner taskRunner, EndpointConfiguration configuration)
                                 => new HandlerExecutionEngine(globalStateTracker, executor, scopeFactory, storage, taskRunner, configuration.Id)),
          Singleton.For<IInbox>()
-                  .CreatedBy((HandlerExecutionEngine handlerExecutionEngine, ITessageStorage tessageStorage, TessageHandlerExecutor executor)
-                                => new Inbox(handlerExecutionEngine, tessageStorage, executor))
+                  .CreatedBy((HandlerExecutionEngine handlerExecutionEngine, ITessageStorage tessageStorage, TeventObservationDispatcher observationDispatcher)
+                                => new Inbox(handlerExecutionEngine, tessageStorage, observationDispatcher))
       );
 
    readonly HandlerExecutionEngine _handlerExecutionEngine;
 
    readonly ITessageStorage _storage;
 
-   readonly TessageHandlerExecutor _executor;
+   readonly TeventObservationDispatcher _observationDispatcher;
 
-   internal Inbox(HandlerExecutionEngine handlerExecutionEngine, ITessageStorage tessageStorage, TessageHandlerExecutor executor)
+   internal Inbox(HandlerExecutionEngine handlerExecutionEngine, ITessageStorage tessageStorage, TeventObservationDispatcher observationDispatcher)
    {
       _handlerExecutionEngine = handlerExecutionEngine;
       _storage = tessageStorage;
-      _executor = executor;
+      _observationDispatcher = observationDispatcher;
    }
 
    public async Task StartAsync()
@@ -70,10 +70,12 @@ static class InboxRegistrar
          return Task.CompletedTask;
       }
 
-      //Observation fires at registration: after dedup, before the transactional processing the engine schedules. Deserialization-frugal:
-      //the wrapper type on the envelope answers whether observers match, so an arriving tevent nothing observes is never deserialized here.
-      if(tessage.TessageTypeEnum == TransportTessageType.ExactlyOnceTevent && _executor.AnyTeventObserversFor(tessage.TessageTypeId.Type))
-         _executor.ExecuteTeventObservers(PublisherTevent.Wrapped((ITevent)tessage.DeserializeTessageAndCacheForNextCall()));
+      //Observation queues at registration: after dedup - so the dedup shields observers from redeliveries - and before the
+      //transactional processing the engine schedules. The arriving tevent is already a committed fact on its publisher, so
+      //committed-facts-only holds by construction; dispatch is off-thread, per-observer FIFO. Deserialization-frugal: the wrapper
+      //type on the envelope answers whether observers match, so an arriving tevent nothing observes is never deserialized here.
+      if(tessage.TessageTypeEnum == TransportTessageType.ExactlyOnceTevent && _observationDispatcher.AnyTeventObserversFor(tessage.TessageTypeId.Type))
+         _observationDispatcher.QueueForObservers(PublisherTevent.Wrapped((ITevent)tessage.DeserializeTessageAndCacheForNextCall()));
 
       _handlerExecutionEngine.Enqueue(tessage);
       return Task.CompletedTask;

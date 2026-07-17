@@ -2,8 +2,6 @@ using Compze.Abstractions.Tessaging.Public;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
-using Compze.Internals.SystemCE.TransactionsCE;
-using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.Teventive.Tevents.Public;
 
 namespace Compze.Tessaging.Engine;
@@ -19,20 +17,17 @@ namespace Compze.Tessaging.Engine;
 /// (<c>InOwnUnitOfWork</c>/<c>InIsolatedScope</c>). The handler-invoking forms are async — handlers are async-capable from<br/>
 /// birth — while the own-context forms are synchronous for now because the unit-of-work envelope<br/>
 /// (<c>ExecuteUnitOfWork</c>) is: they bridge inside, and go async with the doors when synchrony-follows-the-type reaches the<br/>
-/// surfaces. Tevent observation is the deliberately transaction-ignoring watch surface; its current semantics — dispatched<br/>
-/// inline at publish/arrival, undeterred by the triggering transaction's fate — are carried over unchanged until the<br/>
-/// observation redesign (committed facts, off-thread).</remarks>
+/// surfaces. Tevent observation is not executed here: it is the deliberately transaction-ignoring watch surface, dispatched<br/>
+/// off-thread by the engine's <see cref="TeventObservationDispatcher"/>.</remarks>
 public class TessageHandlerExecutor
 {
    readonly TessageHandlerRoster _roster;
    readonly IScopeFactory _scopeFactory;
-   readonly IBackgroundExceptionReporter _backgroundExceptionReporter;
 
-   internal TessageHandlerExecutor(TessageHandlerRoster roster, IScopeFactory scopeFactory, IBackgroundExceptionReporter backgroundExceptionReporter)
+   internal TessageHandlerExecutor(TessageHandlerRoster roster, IScopeFactory scopeFactory)
    {
       _roster = roster;
       _scopeFactory = scopeFactory;
-      _backgroundExceptionReporter = backgroundExceptionReporter;
    }
 
    ///<summary>Executes every participation handler whose subscription matches <paramref name="wrappedTevent"/>, within<br/>
@@ -48,44 +43,6 @@ public class TessageHandlerExecutor
    /// the best-effort arrival form, where no caller context exists to join.</summary>
    public void ExecuteTeventHandlersInOwnUnitOfWork(IPublisherTevent<ITevent> wrappedTevent) =>
       _scopeFactory.ExecuteUnitOfWork(unitOfWork => ExecuteTeventHandlers(wrappedTevent, unitOfWork).GetAwaiter().GetResult());
-
-   ///<summary>Dispatches <paramref name="wrappedTevent"/> to every matching observer: direct invocation, once, immediately, in a<br/>
-   /// fresh scope with any ambient transaction suppressed. Invoked at every point a tevent is first registered — a local publish,<br/>
-   /// an exactly-once tevent's inbox registration, a best-effort tevent's arrival.</summary>
-   ///<remarks>The fresh scope keeps an observer's resolutions out of the triggering transaction: were observers handed the<br/>
-   /// publisher's scope, a scoped database session they resolve could be enlisted in the very transaction observation exists to<br/>
-   /// be undeterred by. A throwing observer is reported through the <see cref="IBackgroundExceptionReporter"/>, never retried —<br/>
-   /// and never aborts the remaining observers or the publish/arrival that triggered the dispatch.</remarks>
-   public void ExecuteTeventObservers(IPublisherTevent<ITevent> wrappedTevent)
-   {
-      var observers = _roster.GetTeventObservers(wrappedTevent.GetType());
-      if(observers.Count == 0) return;
-
-      //Outside any ambient transaction: observation is the rung that trades transactional coupling away — a locally published
-      //tevent's observers hear it even if the publisher's transaction later rolls back, so they must not enlist in it.
-      TransactionScopeCe.SuppressAmbient(() =>
-      {
-         using var scope = _scopeFactory.BeginScope();
-         foreach(var observer in observers)
-         {
-            try
-            {
-               observer(wrappedTevent, scope.Resolver);
-            }
-#pragma warning disable CA1031 //A throwing observer is reported, never retried - and must not abort the remaining observers or the publish/arrival that triggered the dispatch.
-            catch(Exception exception)
-#pragma warning restore CA1031
-            {
-               _backgroundExceptionReporter.ReportException(exception);
-            }
-         }
-      });
-   }
-
-   ///<summary>Whether any observer's subscription matches <paramref name="wrapperTeventType"/> — the deserialization-frugal<br/>
-   /// question an arrival site asks from the envelope's type alone, so an arriving tessage nothing observes is never deserialized<br/>
-   /// for observation's sake.</summary>
-   public bool AnyTeventObserversFor(Type wrapperTeventType) => _roster.GetTeventObservers(wrapperTeventType).Count > 0;
 
    ///<summary>Executes the single handler for <paramref name="tommand"/> — a tommand whose type declares no result — within<br/>
    /// <paramref name="unitOfWork"/>: the caller's session for a strictly-local send, the inbox processing's own unit of work for<br/>

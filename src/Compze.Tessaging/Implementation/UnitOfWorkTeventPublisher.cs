@@ -29,17 +29,19 @@ static class UnitOfWorkTeventPublisherRegistrar
 {
    public static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(Scoped.For<IUnitOfWorkTeventPublisher>()
-                                  .CreatedBy((TessageHandlerExecutor executor, IComponentSet<IExactlyOnceTeventDeliveryLeg> exactlyOnceDeliveryLegs, IComponentSet<IBestEffortTeventDeliveryLeg> bestEffortDeliveryLegs, IScopeResolver scopeResolver)
-                                                => new UnitOfWorkTeventPublisher(executor, exactlyOnceDeliveryLegs, bestEffortDeliveryLegs, scopeResolver)));
+                                  .CreatedBy((TessageHandlerExecutor executor, TeventObservationDispatcher observationDispatcher, IComponentSet<IExactlyOnceTeventDeliveryLeg> exactlyOnceDeliveryLegs, IComponentSet<IBestEffortTeventDeliveryLeg> bestEffortDeliveryLegs, IScopeResolver scopeResolver)
+                                                => new UnitOfWorkTeventPublisher(executor, observationDispatcher, exactlyOnceDeliveryLegs, bestEffortDeliveryLegs, scopeResolver)));
 
    readonly TessageHandlerExecutor _executor;
+   readonly TeventObservationDispatcher _observationDispatcher;
    readonly IExactlyOnceTeventDeliveryLeg? _exactlyOnceDeliveryLeg;
    readonly IBestEffortTeventDeliveryLeg? _bestEffortDeliveryLeg;
    readonly IScopeResolver _scopeResolver;
 
-   UnitOfWorkTeventPublisher(TessageHandlerExecutor executor, IEnumerable<IExactlyOnceTeventDeliveryLeg> exactlyOnceDeliveryLegs, IEnumerable<IBestEffortTeventDeliveryLeg> bestEffortDeliveryLegs, IScopeResolver scopeResolver)
+   UnitOfWorkTeventPublisher(TessageHandlerExecutor executor, TeventObservationDispatcher observationDispatcher, IEnumerable<IExactlyOnceTeventDeliveryLeg> exactlyOnceDeliveryLegs, IEnumerable<IBestEffortTeventDeliveryLeg> bestEffortDeliveryLegs, IScopeResolver scopeResolver)
    {
       _executor = executor;
+      _observationDispatcher = observationDispatcher;
       _exactlyOnceDeliveryLeg = exactlyOnceDeliveryLegs.SingleOrDefault();
       _bestEffortDeliveryLeg = bestEffortDeliveryLegs.SingleOrDefault();
       _scopeResolver = scopeResolver;
@@ -54,9 +56,11 @@ static class UnitOfWorkTeventPublisherRegistrar
       var wrappedTevent = PublisherTevent.Wrapped(tevent);
       var remoteDelivery = RemoteDeliveryFor(wrappedTevent);
       TessageInspector.AssertValidToExecuteLocally(wrappedTevent);
+      //Observation observes committed facts only: the tevent is queued for its observers when this unit of work commits - a
+      //rolled-back publish is never observed - and dispatched off-thread. The hook registers before participation runs, so a
+      //tevent a participation handler publishes in response queues after this one: observers see cause before consequence.
+      unitOfWork.OnCommittedSuccessfully(() => _observationDispatcher.QueueForObservers(wrappedTevent));
       _executor.ExecuteTeventHandlers(wrappedTevent, unitOfWork).GetAwaiter().GetResult();
-      //Observation fires at publish time, outside the publisher's transaction - the observers of a locally published tevent hear it even if that transaction later rolls back.
-      _executor.ExecuteTeventObservers(wrappedTevent);
       remoteDelivery?.Invoke();
    }
 

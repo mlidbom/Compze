@@ -3,6 +3,7 @@ using Compze.Contracts;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Tessaging.Implementation;
+using Compze.Tessaging.Implementation.Abstractions;
 using Compze.Tessaging.Typermedia;
 using Compze.Teventive.Taggregates.Tevents.Public;
 using Compze.TypeIdentifiers;
@@ -32,6 +33,9 @@ public static class LocalTessagingEngineRegistrar
       compose(engineBuilder);
 
       RegisterTypeMapping(@this, engineBuilder);
+      //A plain container has no testing host to await its at-rest, so the engine's observation bookkeeping reports to the null
+      //device. (An endpoint composition declares the tracker its testing host hands it instead.)
+      @this.Register(Singleton.For<ITessagesInFlightTracker>().Instance(new NullOpTessagesInFlightTracker()));
       @this.RegisterLocalTessagingEngineCore(engineBuilder.HandlerRegistrations);
       return @this.UnitOfWorkTeventPublisher()
                   .IndependentTeventPublisher()

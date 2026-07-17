@@ -15,6 +15,8 @@ using Compze.Tests.Integration.InProcess;
 using Compze.Teventive.Taggregates.BaseClasses;
 using Compze.Teventive.Taggregates.Tevents.Public;
 using Compze.Tests.Infrastructure.XUnit;
+using Compze.Threading;
+using Compze.Threading.Testing;
 using static Compze.Must.MustActions;
 
 // ReSharper disable InconsistentNaming for testing
@@ -132,13 +134,69 @@ public partial class Given_a_container_composing_a_LocalTessagingEngine : Univer
       }
 
       [PCT] public void the_subscriber_received_the_tevent_inside_the_doomed_transaction() => _receivedBySubscriber.Single().Must().ReferenceEqual(_publishedTevent);
-      [PCT] public void the_observer_observed_the_tevent_despite_the_rollback() => _observedByObserver.Single().Must().ReferenceEqual(_publishedTevent);
+      //Deterministic without any waiting: a tevent is queued for its observers only when its publishing unit of work commits, and this one never did.
+      [PCT] public void the_observer_observed_nothing_because_observers_observe_committed_facts_only() => _observedByObserver.Must().BeEmpty();
+   }
+
+   public class after_publishing_a_tevent_that_an_observer_observes : Given_a_container_composing_a_LocalTessagingEngine
+   {
+      readonly List<IMyGreetingRequestedTevent> _observedTevents = [];
+      readonly IThreadGate _observerGate = IThreadGate.NewOpen(WaitTimeout.Seconds(10), nameof(_observerGate));
+      readonly MySpecialGreetingRequestedTevent _publishedTevent = new();
+      readonly int _publishingThreadId;
+      int _observingThreadId;
+
+      public after_publishing_a_tevent_that_an_observer_observes()
+      {
+         ComposeContainerWithEngine(engine => engine
+            .ObserveTevents(observe => observe.ForTevent((IMyGreetingRequestedTevent tevent) =>
+             {
+                _observedTevents.Add(tevent);
+                _observingThreadId = Environment.CurrentManagedThreadId;
+                _observerGate.AwaitPassThrough();
+             })));
+
+         _publishingThreadId = Environment.CurrentManagedThreadId;
+         Container.ScopeFactory.ExecuteUnitOfWork(unitOfWork => unitOfWork.Resolve<IUnitOfWorkTeventPublisher>().Publish(_publishedTevent));
+         _observerGate.AwaitPassedThroughCountEqualTo(1);
+      }
+
+      [PCT] public void the_observer_observes_the_committed_tevent() => _observedTevents.Single().Must().ReferenceEqual(_publishedTevent);
+      [PCT] public void the_observer_runs_off_the_publishing_thread() => _observingThreadId.Must().NotBe(_publishingThreadId);
+   }
+
+   public class after_publishing_five_numbered_tevents_in_five_consecutive_units_of_work : Given_a_container_composing_a_LocalTessagingEngine
+   {
+      readonly List<int> _observedSequenceNumbers = [];
+      readonly IThreadGate _observerGate = IThreadGate.NewOpen(WaitTimeout.Seconds(10), nameof(_observerGate));
+
+      public after_publishing_five_numbered_tevents_in_five_consecutive_units_of_work()
+      {
+         ComposeContainerWithEngine(engine => engine
+            .ObserveTevents(observe => observe.ForTevent((IMyNumberedTevent tevent) =>
+             {
+                _observedSequenceNumbers.Add(tevent.SequenceNumber);
+                _observerGate.AwaitPassThrough();
+             })));
+
+         for(var sequenceNumber = 1; sequenceNumber <= 5; sequenceNumber++)
+         {
+            var publishedTevent = new MyNumberedTevent(sequenceNumber);
+            Container.ScopeFactory.ExecuteUnitOfWork(unitOfWork => unitOfWork.Resolve<IUnitOfWorkTeventPublisher>().Publish(publishedTevent));
+         }
+
+         _observerGate.AwaitPassedThroughCountEqualTo(5);
+      }
+
+      [PCT] public void the_observer_observes_them_in_publish_order_because_observation_dispatch_is_per_observer_FIFO() =>
+         _observedSequenceNumbers.Must().SequenceEqual([1, 2, 3, 4, 5]);
    }
 
    public class after_publishing_a_tevent_when_the_first_of_two_observers_throws : Given_a_container_composing_a_LocalTessagingEngine
    {
       readonly List<IMyGreetingRequestedTevent> _receivedBySubscriber = [];
       readonly List<IMyGreetingRequestedTevent> _observedBySecondObserver = [];
+      readonly IThreadGate _secondObserverGate = IThreadGate.NewOpen(WaitTimeout.Seconds(10), nameof(_secondObserverGate));
       readonly MySpecialGreetingRequestedTevent _publishedTevent = new();
 
       public after_publishing_a_tevent_when_the_first_of_two_observers_throws()
@@ -147,9 +205,14 @@ public partial class Given_a_container_composing_a_LocalTessagingEngine : Univer
             .RegisterTessageHandlers(handle => handle.ForTevent((IMyGreetingRequestedTevent tevent) => _receivedBySubscriber.Add(tevent)))
             .ObserveTevents(observe => observe
                .ForTevent((IMyGreetingRequestedTevent _) => throw new Exception("thrown by the first observer"))
-               .ForTevent((IMyGreetingRequestedTevent tevent) => _observedBySecondObserver.Add(tevent))));
+               .ForTevent((IMyGreetingRequestedTevent tevent) =>
+                {
+                   _observedBySecondObserver.Add(tevent);
+                   _secondObserverGate.AwaitPassThrough();
+                })));
 
          Container.ScopeFactory.ExecuteUnitOfWork(unitOfWork => unitOfWork.Resolve<IUnitOfWorkTeventPublisher>().Publish(_publishedTevent));
+         _secondObserverGate.AwaitPassedThroughCountEqualTo(1);
       }
 
       [PCT] public void the_publish_completes_and_the_subscriber_receives_the_tevent() => _receivedBySubscriber.Single().Must().ReferenceEqual(_publishedTevent);

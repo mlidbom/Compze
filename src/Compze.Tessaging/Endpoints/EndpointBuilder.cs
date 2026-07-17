@@ -225,8 +225,7 @@ public abstract class EndpointBuilder
 
       //The transport-speaking substrate: one router, peer memory and its administration, the best-effort tevent delivery leg
       //(the RequirePeers/DoNotQueueTeventsFor declarations are captured by the lists), and the tier's request handling.
-      Registrar.TaskRunner()
-               .PeerRegistry()
+      Registrar.PeerRegistry()
                .PeerAdministration()
                .TessagingTransport()
                .BestEffortTeventDelivery(_requiredPeers, _peersNotQueuedFor)
