@@ -16,9 +16,9 @@ namespace Compze.Tests.Integration.Tessaging.Given_a_backend_endpoint_with_a_tom
 
 public class Exactly_once_guarantee_tests : EndpointHostTestBase
 {
-   [PCT] public void ExactlyOnceTommand_handler_executes_exactly_once()
+   [PCT] public async Task ExactlyOnceTommand_handler_executes_exactly_once()
    {
-      RemoteEndpoint.ServiceLocator.Resolve<IIndependentTommandSender>().Send(new MyExactlyOnceTommand());
+      await RemoteEndpoint.ServiceLocator.Resolve<IIndependentTommandSender>().SendAsync(new MyExactlyOnceTommand());
 
       MyExactlyOnceTommandHandlerThreadGate.AwaitPassedThroughCountEqualTo(1);
       MyExactlyOnceTommandHandlerThreadGate.TryAwaitPassedThroughCountEqualTo(2, WaitTimeout.Seconds(2))
@@ -36,11 +36,11 @@ public class Exactly_once_guarantee_tests : EndpointHostTestBase
                                              .Be(false, "remote tevent handler should execute exactly once");
    }
 
-   [PCT] public void ExactlyOnceTommand_handler_executes_exactly_once_even_when_handler_is_slow()
+   [PCT] public async Task ExactlyOnceTommand_handler_executes_exactly_once_even_when_handler_is_slow()
    {
       MyExactlyOnceTommandHandlerThreadGate.Close();
 
-      RemoteEndpoint.ServiceLocator.Resolve<IIndependentTommandSender>().Send(new MyExactlyOnceTommand());
+      await RemoteEndpoint.ServiceLocator.Resolve<IIndependentTommandSender>().SendAsync(new MyExactlyOnceTommand());
 
       MyExactlyOnceTommandHandlerThreadGate.AwaitQueueLengthEqualTo(1);
 
@@ -54,14 +54,14 @@ public class Exactly_once_guarantee_tests : EndpointHostTestBase
                               .Be(false, "handler should execute exactly once even when slow");
    }
 
-   [PCT] public void If_transaction_fails_after_successfully_Sending_ExactlyOnceTommand_tommand_never_reaches_tommand_handler()
+   [PCT] public async Task If_transaction_fails_after_successfully_Sending_ExactlyOnceTommand_tommand_never_reaches_tommand_handler()
    {
-      Invoking(() => RemoteEndpoint.ServiceLocator.Resolve<IScopeFactory>().ExecuteUnitOfWork(unitOfWork =>
+      await InvokingAsync(async () => await RemoteEndpoint.ServiceLocator.Resolve<IScopeFactory>().ExecuteUnitOfWorkAsync(async unitOfWork =>
                     {
                        Transaction.Current!.FailOnPrepare();
-                       unitOfWork.Resolve<IUnitOfWorkTommandSender>().Send(new MyExactlyOnceTommand());
+                       await unitOfWork.Resolve<IUnitOfWorkTommandSender>().SendAsync(new MyExactlyOnceTommand());
                     }))
-                   .Must().Throw<TransactionAbortedException>();
+                   .Must().ThrowAsync<TransactionAbortedException>();
 
       MyExactlyOnceTommandHandlerThreadGate.TryAwaitPassedThroughCountEqualTo(1, WaitTimeout.Seconds(1))
                               .Must()

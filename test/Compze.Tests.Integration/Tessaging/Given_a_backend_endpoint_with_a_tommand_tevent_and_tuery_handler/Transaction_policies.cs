@@ -13,9 +13,9 @@ namespace Compze.Tests.Integration.Tessaging.Given_a_backend_endpoint_with_a_tom
 
 public class Transaction_policies : EndpointHostTestBase
 {
-   [PCT] public void Tommand_handler_runs_in_transaction_with_isolation_level_ReadCommitted()
+   [PCT] public async Task Tommand_handler_runs_in_transaction_with_isolation_level_ReadCommitted()
    {
-      RemoteEndpoint.ServiceLocator.Resolve<IIndependentTommandSender>().Send(new MyExactlyOnceTommand());
+      await RemoteEndpoint.ServiceLocator.Resolve<IIndependentTommandSender>().SendAsync(new MyExactlyOnceTommand());
 
       var transaction = MyExactlyOnceTommandHandlerThreadGate.AwaitPassedThroughCountEqualTo(1)
                                                              .PassedThrough.Single().Transaction;

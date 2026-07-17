@@ -3,6 +3,7 @@ using Compze.Abstractions.Tessaging.Public;
 using Compze.Contracts;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
+using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using JetBrains.Annotations;
 
 namespace Compze.Tessaging.Implementation;
@@ -28,8 +29,18 @@ static class IndependentTeventPublisherRegistrar
 
    public void Publish(ITevent tevent)
    {
-      State.Assert(Transaction.Current == null,
-                   () => $"{nameof(IIndependentTeventPublisher)} was called from within an ambient transaction — inside a unit of work. An independent publish runs as its own unit of work; called here it would silently join the caller's transaction instead of standing alone. Publish through {nameof(IUnitOfWorkTeventPublisher)}, which deliberately joins the caller's unit of work.");
+      AssertStandsOutsideAnyAmbientTransaction();
+      //The sync/async split (an exactly-once tevent is refused with a message pointing at PublishAsync) is enforced by the inner door.
       _scopeFactory.ExecuteUnitOfWork(unitOfWork => unitOfWork.Resolve<IUnitOfWorkTeventPublisher>().Publish(tevent));
    }
+
+   public async Task PublishAsync(ITevent tevent)
+   {
+      AssertStandsOutsideAnyAmbientTransaction();
+      await _scopeFactory.ExecuteUnitOfWorkAsync(async unitOfWork => await unitOfWork.Resolve<IUnitOfWorkTeventPublisher>().PublishAsync(tevent).caf()).caf();
+   }
+
+   static void AssertStandsOutsideAnyAmbientTransaction() =>
+      State.Assert(Transaction.Current == null,
+                   () => $"{nameof(IIndependentTeventPublisher)} was called from within an ambient transaction — inside a unit of work. An independent publish runs as its own unit of work; called here it would silently join the caller's transaction instead of standing alone. Publish through {nameof(IUnitOfWorkTeventPublisher)}, which deliberately joins the caller's unit of work.");
 }

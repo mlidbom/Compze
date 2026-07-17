@@ -106,7 +106,8 @@ public partial class Given_a_container_composing_a_LocalTessagingEngine : Univer
                 return Task.CompletedTask;
              })));
 
-         Container.ScopeFactory.ExecuteUnitOfWork(unitOfWork => unitOfWork.Resolve<IUnitOfWorkTeventPublisher>().Publish(_publishedWrappedTevent));
+         //Taggregate tevents are exactly-once kinds, so they publish through the async door - bridged here because a specification context's act is its constructor.
+         Container.ScopeFactory.ExecuteUnitOfWorkAsync(async unitOfWork => await unitOfWork.Resolve<IUnitOfWorkTeventPublisher>().PublishAsync(_publishedWrappedTevent)).GetAwaiter().GetResult();
       }
 
       [PCT] public void the_subscriber_to_the_inner_tevent_type_receives_the_inner_tevent() => _receivedBySubscriberToTheInnerTeventType.Single().Must().ReferenceEqual(_publishedWrappedTevent.Tevent);

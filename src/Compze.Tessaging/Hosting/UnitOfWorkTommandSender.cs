@@ -1,5 +1,6 @@
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
+using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using JetBrains.Annotations;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Abstractions.Tessaging.Validation;
@@ -42,7 +43,7 @@ static class UnitOfWorkTommandSenderRegistrar
       _contextGuard = new CombinationUsageGuard(new SingleTransactionUsageGuard(this));
    }
 
-   public void Send(IExactlyOnceTommand tommand)
+   public async Task SendAsync(IExactlyOnceTommand tommand)
    {
       _contextGuard.EnsureAccessValid();
       //The consistency law: in-boundary is immediate and transactional. Because the roster is fixed per endpoint instance,
@@ -50,12 +51,12 @@ static class UnitOfWorkTommandSenderRegistrar
       if(_roster.HandlesTommand(tommand.GetType()))
       {
          TessageInspector.AssertValidToExecuteLocally(tommand);
-         _executor.ExecuteTommandHandler(tommand, UnitOfWorkResolver.From(_scopeResolver)).GetAwaiter().GetResult();
+         await _executor.ExecuteTommandHandler(tommand, UnitOfWorkResolver.From(_scopeResolver)).caf();
       }
       else
       {
          TessageInspector.AssertValidToSendRemote(tommand);
-         _outbox.SendTransactionally(tommand);
+         await _outbox.SendTransactionallyAsync(tommand).caf();
       }
    }
 }

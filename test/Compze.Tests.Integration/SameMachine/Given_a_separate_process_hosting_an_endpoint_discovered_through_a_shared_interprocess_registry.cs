@@ -106,7 +106,7 @@ public class Given_a_separate_process_hosting_an_endpoint_discovered_through_a_s
    }
 
    [Skip<Transport>([Transport.AspNetCore], "The endpoint host process speaks named pipes; the conversation only makes sense when the specification's endpoint does too")]
-   [PCT] public void a_tommand_sent_to_the_process_is_handled_there_and_its_reply_tommand_comes_back()
+   [PCT] public async Task a_tommand_sent_to_the_process_is_handled_there_and_its_reply_tommand_comes_back()
    {
       //Until this process's reconciliation loop has discovered the endpoint host process - which is still starting up -
       //the handler is unknown and sending fails loud. The retry loop rides that loudness until discovery completes.
@@ -115,14 +115,14 @@ public class Given_a_separate_process_hosting_an_endpoint_discovered_through_a_s
       {
          try
          {
-            _specificationEndpoint.ServiceLocator.Resolve<IIndependentTommandSender>().Send(new TommandSentToTheEndpointHostProcess());
+            await _specificationEndpoint.ServiceLocator.Resolve<IIndependentTommandSender>().SendAsync(new TommandSentToTheEndpointHostProcess());
             break;
          }
 #pragma warning disable CA1031 //Retrying until discovery completes; past the deadline the exception propagates wrapped with the endpoint host process's console output.
          catch(Exception) when(DateTime.UtcNow < retryDeadline)
          {
             _endpointHostProcess.ThrowDescribingTheFailureIfTheProcessHasExited();
-            Thread.Sleep(100);
+            await Task.Delay(100);
          }
          catch(Exception stillUndiscoveredAtTheRetryDeadline)
 #pragma warning restore CA1031

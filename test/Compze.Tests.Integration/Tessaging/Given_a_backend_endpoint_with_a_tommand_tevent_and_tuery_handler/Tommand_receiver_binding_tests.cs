@@ -24,7 +24,7 @@ public class Tommand_receiver_binding_tests : EndpointHostTestBase
       await StartHostWithOnlyTheBackendEndpointAsync();
 
       //The send succeeds inside the caller's unit of work, bound to the remembered Remote endpoint.
-      BackendEndPoint.ServiceLocator.Resolve<IIndependentTommandSender>().Send(new MyExactlyOnceTommandHandledByTheRemoteEndpoint());
+      await BackendEndPoint.ServiceLocator.Resolve<IIndependentTommandSender>().SendAsync(new MyExactlyOnceTommandHandledByTheRemoteEndpoint());
 
       await Host.DisposeAsyncWithoutWaitingForEndpointsToBeAtRest(); //The tommand is undelivered: awaiting rest would wait for the handler's return.
       await StartHostAsync();
@@ -38,7 +38,7 @@ public class Tommand_receiver_binding_tests : EndpointHostTestBase
       await StartHostWithOnlyTheBackendEndpointAsync();
 
       //Bound to the remembered Remote endpoint - the pair's stream is where its exactly-once in-order guarantee lives.
-      BackendEndPoint.ServiceLocator.Resolve<IIndependentTommandSender>().Send(new MyExactlyOnceTommandHandledByTheRemoteEndpoint());
+      await BackendEndPoint.ServiceLocator.Resolve<IIndependentTommandSender>().SendAsync(new MyExactlyOnceTommandHandledByTheRemoteEndpoint());
 
       //A successor - a NEW endpoint identity advertising the same tommand type - arrives while the Remote endpoint is still down.
       await Host.DisposeAsyncWithoutWaitingForEndpointsToBeAtRest();
@@ -48,7 +48,7 @@ public class Tommand_receiver_binding_tests : EndpointHostTestBase
       RemoteSuccessorTommandHandlerThreadGate.TryAwaitPassedThroughCountEqualTo(1, WaitTimeout.Seconds(2)).Must().BeFalse();
 
       //...while a NEW tommand binds to the live handler - the successor - and is delivered to it...
-      BackendEndPoint.ServiceLocator.Resolve<IIndependentTommandSender>().Send(new MyExactlyOnceTommandHandledByTheRemoteEndpoint());
+      await BackendEndPoint.ServiceLocator.Resolve<IIndependentTommandSender>().SendAsync(new MyExactlyOnceTommandHandledByTheRemoteEndpoint());
       RemoteSuccessorTommandHandlerThreadGate.AwaitPassedThroughCountEqualTo(1, WaitTimeout.Seconds(15));
 
       //...and the waiting tommand still reaches its own endpoint when it returns.
@@ -67,17 +67,17 @@ public class Tommand_receiver_binding_tests : EndpointHostTestBase
       await Host.DisposeAsync();
       await StartHostWithOnlyTheBackendEndpointAsync();
 
-      var message = Invoking(() => BackendEndPoint.ServiceLocator.Resolve<IIndependentTommandSender>().Send(new MyExactlyOnceTommandHandledByTheRemoteEndpoint()))
-                   .Must().Throw<Exception>().Which.Message;
+      var message = (await InvokingAsync(async () => await BackendEndPoint.ServiceLocator.Resolve<IIndependentTommandSender>().SendAsync(new MyExactlyOnceTommandHandledByTheRemoteEndpoint()))
+                   .Must().ThrowAsync<Exception>()).Which.Message;
 
       message.Must().Contain(nameof(MyExactlyOnceTommandHandledByTheRemoteEndpoint));
       message.Must().Contain("More than one remembered peer");
    }
 
-   [PCT] public void Sending_a_tommand_whose_type_neither_a_remembered_peer_nor_the_endpoint_itself_handles_fails_loudly_naming_the_type()
+   [PCT] public async Task Sending_a_tommand_whose_type_neither_a_remembered_peer_nor_the_endpoint_itself_handles_fails_loudly_naming_the_type()
    {
-      var message = Invoking(() => BackendEndPoint.ServiceLocator.Resolve<IIndependentTommandSender>().Send(new MyUnhandledExactlyOnceTommand()))
-                   .Must().Throw<Exception>().Which.Message;
+      var message = (await InvokingAsync(async () => await BackendEndPoint.ServiceLocator.Resolve<IIndependentTommandSender>().SendAsync(new MyUnhandledExactlyOnceTommand()))
+                   .Must().ThrowAsync<Exception>()).Which.Message;
 
       message.Must().Contain(nameof(MyUnhandledExactlyOnceTommand));
       message.Must().Contain("neither this endpoint's own handlers nor any remembered peer's advertisement");

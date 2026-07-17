@@ -72,17 +72,17 @@ public class Given_an_exactly_once_tessaging_endpoint_declaring_no_discovery_reg
 
    [PCT] public void the_endpoint_starts_and_runs() => _endpoint.IsRunning.Must().BeTrue();
 
-   [PCT] public void a_tommand_the_endpoint_sends_that_its_own_roster_serves_has_executed_inline_in_the_senders_unit_of_work_when_the_send_returns()
+   [PCT] public async Task a_tommand_the_endpoint_sends_that_its_own_roster_serves_has_executed_inline_in_the_senders_unit_of_work_when_the_send_returns()
    {
-      _endpoint.ServiceLocator.Resolve<IIndependentTommandSender>().Send(new TommandTheEndpointSendsItself());
+      await _endpoint.ServiceLocator.Resolve<IIndependentTommandSender>().SendAsync(new TommandTheEndpointSendsItself());
 
       //No waiting: inline execution is synchronous with the send, so the handler has already run.
       _inRosterTommandHandlerGate.Passed.Must().Be(1);
    }
 
-   [PCT] public void a_failing_in_roster_tommand_handler_fails_the_senders_execution() =>
-      Invoking(() => _endpoint.ServiceLocator.Resolve<IIndependentTommandSender>().Send(new TommandWhoseHandlerFails()))
-         .Must().Throw<InRosterTommandHandlerFailure>();
+   [PCT] public async Task a_failing_in_roster_tommand_handler_fails_the_senders_execution() =>
+      await InvokingAsync(async () => await _endpoint.ServiceLocator.Resolve<IIndependentTommandSender>().SendAsync(new TommandWhoseHandlerFails()))
+         .Must().ThrowAsync<InRosterTommandHandlerFailure>();
 
    protected internal class TommandTheEndpointSendsItself : TessageTypes.Remotable.ExactlyOnce.Tommand;
    protected internal class TommandWhoseHandlerFails : TessageTypes.Remotable.ExactlyOnce.Tommand;

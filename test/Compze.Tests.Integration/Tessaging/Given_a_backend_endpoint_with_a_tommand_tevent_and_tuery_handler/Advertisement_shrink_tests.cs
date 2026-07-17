@@ -49,7 +49,7 @@ public class Advertisement_shrink_tests : EndpointHostTestBase
       await BackendPeerRegistry.RecordAdvertisementAsync(new EndpointInformation("NeverConnectedPeer", NeverConnectedPeerId, [tommandTypeIdString]));
 
       //The send binds to the sole remembered handler - the never-connected peer - and waits for its return.
-      BackendEndPoint.ServiceLocator.Resolve<IIndependentTommandSender>().Send(new MyUnhandledExactlyOnceTommand());
+      await BackendEndPoint.ServiceLocator.Resolve<IIndependentTommandSender>().SendAsync(new MyUnhandledExactlyOnceTommand());
       (await BackendOutboxSqlLayer.GetUndeliveredTessagesForEndpointAsync(NeverConnectedPeerId)).Must().HaveCount(1);
 
       //The peer's replaced advertisement no longer handles the type: the tommand is stranded - kept, but never delivered to an endpoint that no longer has the handler.
@@ -65,7 +65,7 @@ public class Advertisement_shrink_tests : EndpointHostTestBase
       await StartHostWithOnlyTheBackendEndpointAsync();
 
       //Bound at send to the remembered Remote endpoint - the sole remembered handler of the type.
-      BackendEndPoint.ServiceLocator.Resolve<IIndependentTommandSender>().Send(new MyExactlyOnceTommandHandledByTheRemoteEndpoint());
+      await BackendEndPoint.ServiceLocator.Resolve<IIndependentTommandSender>().SendAsync(new MyExactlyOnceTommandHandledByTheRemoteEndpoint());
       //Published while Remote is down: its kept taggregate subscription must still deliver on its return - the control proving recovery delivery runs.
       await Navigator.PostAsync(MyCreateTaggregateTommand.Create());
 

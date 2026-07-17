@@ -90,9 +90,15 @@ public class Given_two_best_effort_endpoints : UniversalTestBase
       _bestEffortTeventsHandledOnTheSubscriber.Single().SequenceNumber.Must().Be(1);
    }
 
-   [PCT] public void publishing_a_tevent_declaring_the_exactly_once_contract_fails_loud_naming_the_missing_delivery_leg() =>
+   //Published through the async door: an exactly-once tevent's own type contract demands it, and this pin is about the
+   //missing delivery leg - the sync door would refuse the tevent one assert earlier, for the synchrony reason.
+   [PCT] public async Task publishing_a_tevent_declaring_the_exactly_once_contract_fails_loud_naming_the_missing_delivery_leg() =>
+      (await InvokingAsync(async () => await PublishAsyncOnThePublisherEndpointInATransaction(new TeventDeclaringTheExactlyOnceContract()))
+        .Must().ThrowAsync<Exception>()).Which.Message.Must().Contain("demands the exactly-once delivery leg");
+
+   [PCT] public void publishing_a_tevent_declaring_the_exactly_once_contract_through_the_synchronous_door_fails_loud_naming_the_async_contract() =>
       Invoking(() => PublishOnThePublisherEndpointInATransaction(new TeventDeclaringTheExactlyOnceContract()))
-        .Must().Throw<Exception>().Which.Message.Must().Contain("demands the exactly-once delivery leg");
+        .Must().Throw<Exception>().Which.Message.Must().Contain("exactly-once kinds are async end to end");
 
    [PCT] public async Task registering_a_handler_for_a_tevent_declaring_the_exactly_once_contract_fails_at_composition()
    {
@@ -161,6 +167,10 @@ public class Given_two_best_effort_endpoints : UniversalTestBase
    void PublishOnThePublisherEndpointInATransaction(ITevent tevent) =>
       _publisherEndpoint.ServiceLocator.Resolve<IScopeFactory>().ExecuteUnitOfWork(unitOfWork =>
                                                                                                       unitOfWork.Resolve<IUnitOfWorkTeventPublisher>().Publish(tevent));
+
+   async Task PublishAsyncOnThePublisherEndpointInATransaction(ITevent tevent) =>
+      await _publisherEndpoint.ServiceLocator.Resolve<IScopeFactory>().ExecuteUnitOfWorkAsync(async unitOfWork =>
+                                                                                                 await unitOfWork.Resolve<IUnitOfWorkTeventPublisher>().PublishAsync(tevent));
 
    ///<summary>Knows the address of every endpoint in the host, so each endpoint's router connects to all of them — the<br/>
    /// discovery a production suite gets from a shared registry, with nothing persisted anywhere.</summary>

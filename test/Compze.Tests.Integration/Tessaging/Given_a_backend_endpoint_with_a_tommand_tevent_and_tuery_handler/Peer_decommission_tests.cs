@@ -34,7 +34,7 @@ public class Peer_decommission_tests : EndpointHostTestBase
       //Owed to the down peer: two tevents its remembered subscriptions match, and a tommand bound to it at send.
       await Navigator.PostAsync(MyCreateTaggregateTommand.Create());
       await Navigator.PostAsync(MyCreateTaggregateTommand.Create());
-      BackendEndPoint.ServiceLocator.Resolve<IIndependentTommandSender>().Send(new MyExactlyOnceTommandHandledByTheRemoteEndpoint());
+      await BackendEndPoint.ServiceLocator.Resolve<IIndependentTommandSender>().SendAsync(new MyExactlyOnceTommandHandledByTheRemoteEndpoint());
 
       var report = await BackendPeerAdministration.DecommissionAsync(RemoteEndpointId);
 
@@ -66,14 +66,14 @@ public class Peer_decommission_tests : EndpointHostTestBase
       //...and with neither of them live a send cannot know which is current: it fails loud rather than strand the tommand.
       await Host.DisposeAsync();
       await StartHostWithOnlyTheBackendEndpointAsync();
-      Invoking(() => BackendEndPoint.ServiceLocator.Resolve<IIndependentTommandSender>().Send(new MyExactlyOnceTommandHandledByTheRemoteEndpoint()))
-         .Must().Throw<Exception>().Which.Message.Must().Contain("More than one remembered peer");
+      (await InvokingAsync(async () => await BackendEndPoint.ServiceLocator.Resolve<IIndependentTommandSender>().SendAsync(new MyExactlyOnceTommandHandledByTheRemoteEndpoint()))
+         .Must().ThrowAsync<Exception>()).Which.Message.Must().Contain("More than one remembered peer");
 
       //Decommissioning the retired predecessor resolves the ambiguity - it was owed nothing, and the report says so...
       (await BackendPeerAdministration.DecommissionAsync(RemoteEndpointId)).Discarded.Must().BeEmpty();
 
       //...the send binds to the sole remaining remembered handler, and the successor receives it on its return.
-      BackendEndPoint.ServiceLocator.Resolve<IIndependentTommandSender>().Send(new MyExactlyOnceTommandHandledByTheRemoteEndpoint());
+      await BackendEndPoint.ServiceLocator.Resolve<IIndependentTommandSender>().SendAsync(new MyExactlyOnceTommandHandledByTheRemoteEndpoint());
       await Host.DisposeAsyncWithoutWaitingForEndpointsToBeAtRest(); //The tommand is undelivered: awaiting rest would wait for the successor's return.
       await StartHostWithTheBackendEndpointAndASuccessorToTheRemoteEndpointAsync();
       RemoteSuccessorTommandHandlerThreadGate.AwaitPassedThroughCountEqualTo(1, WaitTimeout.Seconds(15));
@@ -85,7 +85,7 @@ public class Peer_decommission_tests : EndpointHostTestBase
       //advertisement then renounces the type: the tommand is stranded, awaiting exactly this resolution (see Advertisement_shrink_tests).
       var tommandTypeIdString = BackendEndPoint.ServiceLocator.Resolve<ITypeMap>().GetId(typeof(MyUnhandledExactlyOnceTommand)).CanonicalString;
       await BackendPeerRegistry.RecordAdvertisementAsync(new EndpointInformation("NeverConnectedPeer", NeverConnectedPeerId, [tommandTypeIdString]));
-      BackendEndPoint.ServiceLocator.Resolve<IIndependentTommandSender>().Send(new MyUnhandledExactlyOnceTommand());
+      await BackendEndPoint.ServiceLocator.Resolve<IIndependentTommandSender>().SendAsync(new MyUnhandledExactlyOnceTommand());
       await BackendPeerRegistry.RecordAdvertisementAsync(new EndpointInformation("NeverConnectedPeer", NeverConnectedPeerId, []));
 
       var strandedEntry = (await BackendPeerAdministration.DecommissionAsync(NeverConnectedPeerId)).Discarded.Single();

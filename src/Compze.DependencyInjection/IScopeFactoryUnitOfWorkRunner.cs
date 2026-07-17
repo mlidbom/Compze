@@ -50,6 +50,13 @@ public static class IScopeFactoryUnitOfWorkRunner
          return await function(scope.Resolver).caf();
       }
 
+      ///<summary>Runs <paramref name="action"/> in a fresh <see cref="IScope"/> with no transaction of its own — see <see cref="ExecuteInIsolatedScopeAsync{TResult}"/>.</summary>
+      public async Task ExecuteInIsolatedScopeAsync([InstantHandle]Func<IScopeResolver, Task> action)
+      {
+         using var scope = @this.BeginScope();
+         await action(scope.Resolver).caf();
+      }
+
       ///<summary>Runs <paramref name="function"/> in a fresh <see cref="IScope"/> with no transaction of its own — the context<br/>
       /// for work that changes nothing, such as executing a tuery. This is deliberately not a unit of work: there is nothing to<br/>
       /// commit or roll back. An ambient transaction, when the caller has one, is left as it is, so reads join its consistency.</summary>

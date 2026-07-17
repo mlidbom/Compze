@@ -50,9 +50,11 @@ partial class Outbox : IOutbox
       _tessagingRouter = tessagingRouter;
    }
 
-   public void PublishTransactionally(IPublisherTevent<IExactlyOnceTevent> wrappedTevent)
+   public async Task PublishTransactionallyAsync(IPublisherTevent<IExactlyOnceTevent> wrappedTevent)
    {
       State.NotNull(Transaction.Current);
+      //Captured before the first await: the commit hook must bind to the caller's unit of work even if the ambient has drifted in a continuation.
+      var transaction = Transaction.Current;
       var dedupId = wrappedTevent.Tevent.Id;
       this.Log().Debug($"Will publish tevent if transaction succeeds: {dedupId} ({wrappedTevent.GetType().Name})");
 
@@ -60,10 +62,9 @@ partial class Outbox : IOutbox
       //down at publish time still gets its receiver row, and the recovery backlog its next connection loads delivers the tevent
       //on its return. (A peer is another endpoint, so the registry never lists us: tevents to ourselves dispatch synchronously in-process.)
       var subscriberIds = _peerRegistry.SubscriberIdsFor(wrappedTevent);
-      //Interim bridge: dies when the publisher door goes async later in phase 7.
-      _storage.SaveTessageAsync(wrappedTevent, dedupId, [..subscriberIds]).GetAwaiter().GetResult();
+      await _storage.SaveTessageAsync(wrappedTevent, dedupId, [..subscriberIds]).caf();
 
-      Transaction.Current.OnCommittedSuccessfully(() =>
+      transaction.OnCommittedSuccessfully(() =>
       {
          //Delivery starts now toward the listed peers' live connections, looked up at commit rather than at publish: a
          //subscriber connection that appeared in between loaded its recovery backlog before this row committed, so only a
@@ -80,9 +81,11 @@ partial class Outbox : IOutbox
       });
    }
 
-   public void SendTransactionally(IExactlyOnceTommand exactlyOnceTommand)
+   public async Task SendTransactionallyAsync(IExactlyOnceTommand exactlyOnceTommand)
    {
       State.NotNull(Transaction.Current);
+      //Captured before the first await: the commit hook must bind to the caller's unit of work even if the ambient has drifted in a continuation.
+      var transaction = Transaction.Current;
       this.Log().Debug($"Will send tommand if transaction succeeds: {exactlyOnceTommand.Id} ({exactlyOnceTommand.GetType().Name})");
 
       //The tommand binds to its one specific receiver here, at send: every tessage between a sender and a receiver rides that
@@ -90,10 +93,9 @@ partial class Outbox : IOutbox
       //(Routing at delivery time was tried and retracted: re-delivery could reach an endpoint whose inbox never saw the
       //tommand, breaking exactly-once across handler replacement - see dev_docs/TODO/WIP/Tessaging/durable-peer-topology.md.)
       var receiverId = ResolveReceiver(exactlyOnceTommand);
-      //Interim bridge: dies when the tommand-sender door goes async later in phase 7.
-      _storage.SaveTessageAsync(exactlyOnceTommand, exactlyOnceTommand.Id, receiverId).GetAwaiter().GetResult();
+      await _storage.SaveTessageAsync(exactlyOnceTommand, exactlyOnceTommand.Id, receiverId).caf();
 
-      Transaction.Current.OnCommittedSuccessfully(() =>
+      transaction.OnCommittedSuccessfully(() =>
       {
          //Looked up at commit rather than at send: a connection that appeared in between loaded its recovery backlog before
          //this row committed, so only a commit-time lookup sees it. The row is bound: it must enter no other endpoint's

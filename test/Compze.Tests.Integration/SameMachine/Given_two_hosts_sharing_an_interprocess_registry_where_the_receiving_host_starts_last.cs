@@ -83,7 +83,7 @@ public class Given_two_hosts_sharing_an_interprocess_registry_where_the_receivin
       _registry.Dispose();
    }
 
-   [PCT] public void a_tommand_sent_by_the_sender_reaches_the_receivers_handler_once_reconciliation_has_discovered_it()
+   [PCT] public async Task a_tommand_sent_by_the_sender_reaches_the_receivers_handler_once_reconciliation_has_discovered_it()
    {
       //Until the sender's reconciliation loop has discovered the receiver, the handler is unknown and sending fails loud -
       //the stated contract. The retry loop rides that loudness until discovery completes.
@@ -92,14 +92,14 @@ public class Given_two_hosts_sharing_an_interprocess_registry_where_the_receivin
       {
          try
          {
-            _senderEndpoint.ServiceLocator.Resolve<IIndependentTommandSender>().Send(new TommandDiscoveredThroughReconciliation());
+            await _senderEndpoint.ServiceLocator.Resolve<IIndependentTommandSender>().SendAsync(new TommandDiscoveredThroughReconciliation());
             break;
          }
 #pragma warning disable CA1031 //Retrying until the reconciliation loop discovers the receiver; past the deadline the filter is false and the real exception propagates.
          catch(Exception) when(DateTime.UtcNow < retryDeadline)
 #pragma warning restore CA1031
          {
-            Thread.Sleep(100);
+            await Task.Delay(100);
          }
       }
 

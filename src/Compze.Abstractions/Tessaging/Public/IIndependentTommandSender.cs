@@ -12,7 +12,7 @@ namespace Compze.Abstractions.Tessaging.Public;
 /// application classes take it as an ordinary constructor dependency.</remarks>
 public interface IIndependentTommandSender
 {
-   ///<summary>Sends <paramref name="tommand"/> as its own unit of work — see <see cref="IUnitOfWorkTommandSender.Send"/>.<br/>
-   /// The unit of work commits when the call returns; the tommand is then durably on its way, exactly-once.</summary>
-   void Send(IExactlyOnceTommand tommand);
+   ///<summary>Sends <paramref name="tommand"/> as its own unit of work — see <see cref="IUnitOfWorkTommandSender.SendAsync"/>.<br/>
+   /// The unit of work commits when the awaited send completes; the tommand is then durably on its way, exactly-once.</summary>
+   Task SendAsync(IExactlyOnceTommand tommand);
 }

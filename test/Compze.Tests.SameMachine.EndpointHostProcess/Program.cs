@@ -83,11 +83,8 @@ public static class Program
       endpoint.NewtonsoftSerializer();
       endpoint.SqliteEndpointDatabase("EndpointHostProcess");
       endpoint.ParticipateIn(registry);
-      endpoint.RegisterTessageHandlers(handle => handle.ForTommand((TommandSentToTheEndpointHostProcess _, IUnitOfWorkTommandSender unitOfWorkTommandSender) =>
-       {
-          unitOfWorkTommandSender.Send(new TommandSentBackToTheSpecificationProcess());
-          return Task.CompletedTask;
-       }));
+      endpoint.RegisterTessageHandlers(handle => handle.ForTommand(async (TommandSentToTheEndpointHostProcess _, IUnitOfWorkTommandSender unitOfWorkTommandSender) =>
+          await unitOfWorkTommandSender.SendAsync(new TommandSentBackToTheSpecificationProcess())));
    }
 
    ///<summary>The best-effort composition: no database, no configuration, nothing persisted anywhere in this process — the<br/>

@@ -25,13 +25,14 @@ public class Transaction_policies_internal : EndpointHostTestBase
       Invoking(() => TransactionScopeCe.Execute(() => Navigator.Post(MyAtMostOnceTypermediaTommandWithResult.Create())))
         .Must().Throw<TessageValidator.TransactionPolicyViolationException>();
 
-   [PCT] public void Sending_an_ExactlyOnceTommand_through_the_unit_of_work_tommand_sender_in_a_scope_without_a_transaction_throws_TransactionPolicyViolationException() =>
-      Invoking(() => RemoteEndpoint.ServiceLocator.Resolve<IScopeFactory>().ExecuteInIsolatedScope(scope => scope.Resolve<IUnitOfWorkTommandSender>().Send(new MyExactlyOnceTommand())))
-        .Must().Throw<TessageValidator.TransactionPolicyViolationException>();
+   [PCT] public async Task Sending_an_ExactlyOnceTommand_through_the_unit_of_work_tommand_sender_in_a_scope_without_a_transaction_throws_TransactionPolicyViolationException() =>
+      await InvokingAsync(async () => await RemoteEndpoint.ServiceLocator.Resolve<IScopeFactory>().ExecuteInIsolatedScopeAsync(async scope =>
+              await scope.Resolve<IUnitOfWorkTommandSender>().SendAsync(new MyExactlyOnceTommand())))
+        .Must().ThrowAsync<TessageValidator.TransactionPolicyViolationException>();
 
-   [PCT] public void Sending_an_ExactlyOnceTommand_through_the_independent_tommand_sender_from_within_an_ambient_transaction_throws() =>
-      Invoking(() => TransactionScopeCe.Execute(() => RemoteEndpoint.ServiceLocator.Resolve<IIndependentTommandSender>().Send(new MyExactlyOnceTommand())))
-        .Must().Throw<Exception>()
+   [PCT] public async Task Sending_an_ExactlyOnceTommand_through_the_independent_tommand_sender_from_within_an_ambient_transaction_throws() =>
+      (await InvokingAsync(async () => await TransactionScopeCe.ExecuteAsync(async () => await RemoteEndpoint.ServiceLocator.Resolve<IIndependentTommandSender>().SendAsync(new MyExactlyOnceTommand())))
+        .Must().ThrowAsync<Exception>())
         .Which.Message.Must().Contain("ambient transaction");
 
    [PCT] public void Calling_GetRemote_within_a_transaction_with_Tuery_throws_TransactionPolicyViolationException() =>

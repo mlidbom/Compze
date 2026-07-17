@@ -45,12 +45,12 @@ public class Parallelism_policies : EndpointHostTestBase
                                              .TryAwaitQueueLengthEqualTo(2, WaitTimeout.Milliseconds(100)).Must().Be(false);
    }
 
-   [PCT] public void Two_exactly_once_tommand_handlers_cannot_execute_in_parallel()
+   [PCT] public async Task Two_exactly_once_tommand_handlers_cannot_execute_in_parallel()
    {
       CloseGates();
 
-      RemoteEndpoint.ServiceLocator.Resolve<IIndependentTommandSender>().Send(new MyExactlyOnceTommand());
-      RemoteEndpoint.ServiceLocator.Resolve<IIndependentTommandSender>().Send(new MyExactlyOnceTommand());
+      await RemoteEndpoint.ServiceLocator.Resolve<IIndependentTommandSender>().SendAsync(new MyExactlyOnceTommand());
+      await RemoteEndpoint.ServiceLocator.Resolve<IIndependentTommandSender>().SendAsync(new MyExactlyOnceTommand());
 
       MyExactlyOnceTommandHandlerThreadGate.AwaitQueueLengthEqualTo(1)
                               .TryAwaitQueueLengthEqualTo(2, timeout: WaitTimeout.Milliseconds(100)).Must().Be(false);

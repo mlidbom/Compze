@@ -18,7 +18,7 @@ public class EndpointHostTest_Tests : EndpointHostTestBase
    [PCT]  public async Task If_tommand_handler_throws_disposing_host_throws_AggregateException_containing_the_thrown_exception()
    {
       MyExactlyOnceTommandHandlerThreadGate.ThrowPostPassThrough(_thrownException);
-      RemoteEndpoint.ServiceLocator.Resolve<IIndependentTommandSender>().Send(new MyExactlyOnceTommand());
+      await RemoteEndpoint.ServiceLocator.Resolve<IIndependentTommandSender>().SendAsync(new MyExactlyOnceTommand());
       await AssertDisposingHostThrowsAggregateExceptionHierarchyContainingThrownExceptionAsANonAggregateException();
    }
 

@@ -65,7 +65,7 @@ partial class MySqlPeerRegistrySqlLayer(IMySqlConnectionPool connectionFactory, 
             await using var _ = reader.caf();
             while(await reader.ReadAsync().caf())
             {
-               raw.Add((reader.GetGuid(0), reader.IsDBNull(1) ? null : reader.GetString(1)));
+               raw.Add((reader.GetGuid(0), await reader.IsDBNullAsync(1).caf() ? null : reader.GetString(1)));
             }
 
             return raw;
