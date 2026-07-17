@@ -137,18 +137,25 @@ typermedia API.
 ```csharp
 public interface IUnitOfWorkTeventPublisher
 {
-   void Publish(ITevent tevent);
+   void Publish(ITevent tevent);        //strictly-local and best-effort kinds: sync stays first-class
+   Task PublishAsync(ITevent tevent);   //every kind - the one form an IExactlyOnceTevent may use
 }
 ```
 
 Tevent-only, scoped, and the single fan-out point: it routes each tevent by the guarantee interfaces the
 tevent's type declares:
 
-- always → in-process synchronous delivery, inline in the caller's transaction (participation);
+- always → in-process delivery to this process's handlers, inline in the caller's transaction (participation);
 - `IExactlyOnceTevent` → also the outbox (durable, delivered on commit);
 - `IRemotableTevent` but not `IExactlyOnceTevent` → also the best-effort transport (best-effort, delivered on
   commit);
 - not `IRemotableTevent` → local only.
+
+Synchrony follows the type, and the sync/async pair mirrors it: `PublishAsync` serves every kind, awaiting
+participation and the durable outbox write an exactly-once tevent's contract demands, while the synchronous
+`Publish` serves the kinds whose contract keeps sync first-class and refuses an `IExactlyOnceTevent` loudly,
+pointing at `PublishAsync` — publishing one writes durable rows inside the caller's transaction, which is
+database I/O, async end to end by the type's contract.
 
 It requires and honors the ambient transaction. Required: publishing with none present throws — there is no
 unit of work to publish within, and the independent publisher is the door for such callers. Honored: both
@@ -172,8 +179,8 @@ What this shape buys:
 
 The independent counterpart, for code that runs outside any unit of work — application code with no ambient
 scope or transaction. A root-resolvable singleton, so a plain application class takes it as an ordinary
-constructor dependency; each `Publish` runs as its own unit of work (`ExecuteUnitOfWork` around the
-unit-of-work publisher), committed when the call returns.
+constructor dependency; each publish runs as its own unit of work around the unit-of-work publisher,
+committed when the call (or the awaited `PublishAsync`) completes — with the same sync/async split.
 
 Independence is asserted, not assumed — safety lives in asserts, not names: called from within an ambient
 transaction it throws, because `TransactionScopeOption.Required` would silently *join* that transaction and
@@ -386,6 +393,16 @@ As of 2026-07-15:
   the ordinary publisher under ambient-transaction suppression) was built alongside it and deleted
   2026-07-16: nothing ever consumed it, and with no consumer to arbitrate its contested semantics, the type
   claimed a settled abstraction that did not exist — see "No publish-side escape hatch" above.
+- Synchrony follows the type at the doors (2026-07-17, migration-plan phase 7): the tevent publishers became
+  the sync/async pair described above; the tommand senders went async-only (`SendAsync` — `IExactlyOnceTommand`
+  is statically exactly-once, so no sync form remains, and the inline in-roster execution is awaited);
+  `IPeerAdministration.DecommissionAsync`; the tessaging SQL layers, the outbox/inbox storages, the inbox's
+  handler execution and the wire-serving executor forms went async end to end across all four backends, with
+  the ambient transaction flowing across awaits. The one deliberate sync-context bridge is the tevent
+  store's: the Teventive taggregate model raises tevents synchronously from constructors and domain methods,
+  and the store forwards them where they are raised. Session affinity became transactional in the same
+  stroke: an async unit of work legitimately migrates across threads, so the thread-affinity usage guard
+  died — one session serving two transactions remains the misuse that fails loud.
 - The observation redesign (2026-07-17, migration-plan phase 6): committed facts only, off-thread,
   per-observer FIFO — the contract stated under "`ObserveTevents` — observation" above, replacing the
   original fires-immediately-even-for-doomed-transactions semantics (the fires-even-on-rollback spec

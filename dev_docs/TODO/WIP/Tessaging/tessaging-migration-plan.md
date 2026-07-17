@@ -56,8 +56,23 @@ tracker, so the testing host's at-rest wait covers the observation queues exactl
 an endpoint additionally drains the dispatcher at disposal, after listening stops and *before* its
 container tears down — a drain left to container teardown could not run the observers, since scope
 creation is refused once container disposal begins. New pins: per-observer FIFO order, off-thread
-dispatch, drain-at-disposal, and a throwing observer's failure rethrown at testing-host disposal. The
-destination is
+dispatch, drain-at-disposal, and a throwing observer's failure rethrown at testing-host disposal.
+**Phase 7 executed 2026-07-17**, four green commits: (1) the async foundations —
+`ExecuteUnitOfWorkAsync`/`ExecuteInIsolatedScopeAsync` with the ambient transaction flowing across awaits,
+`TransactionScopeCe.ExecuteAsync` public, the pool's `UseCommandAsync`, and a task runner that tracks
+genuinely async work; (2) the tessaging SQL layers and the peer vertical async across all four backends;
+(3) the doors — the tevent publishers as sync/async pairs whose synchronous form refuses an exactly-once
+tevent (the settled build-time question answered: neither one-async-method, which would break
+strictly-local sync-first-class, nor a sync form serving everything, which would break exactly-once
+async-end-to-end — the pair with the type-contract assert is the only shape honoring both), the tommand
+senders async-only with the inline in-roster execution awaited, administration async, and the tevent
+store's one deliberate sync-context bridge (the taggregate model raises tevents synchronously from
+constructors and domain methods — asyncifying Teventive itself is not a call-site choice); (4) the inbox
+and wire-serving execution async end to end. The async depth exposed two latent defects the thread-pinned
+era masked, both root-caused: the sample's statistics initializer kept an in-memory initialized-flag that
+survived its transaction's rollback, and `SingleThreadUseGuard` asserted thread affinity on sessions whose
+async-era identity is their transaction — session affinity is transactional now, the thread guard deleted,
+the multi-threaded-use pins re-pinned as multi-transaction-use pins. The destination is
 [tessaging-target-design.md](tessaging-target-design.md); the rationale and evidence are in
 [style-substrate-and-hosting-evaluation.md](style-substrate-and-hosting-evaluation.md). This document is the
 path: the ordered phases, what each contains, and what gates what. Every phase is a run of increments that

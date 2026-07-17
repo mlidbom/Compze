@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## 0.2.1-alpha
 
+- Async command plumbing rounded out: `IDbConnectionPool.UseCommandAsync` (the convenience the sync side already had) and `ExecuteReaderAndSelectAsync` (the async reader-loop twin).
 - README update.
 
 ## 0.2.0-alpha.1

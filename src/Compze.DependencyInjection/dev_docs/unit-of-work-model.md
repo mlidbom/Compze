@@ -15,8 +15,8 @@ Every piece of work the framework runs falls into exactly one of three context k
 
 | Context | Mechanics | Who runs in it |
 |---|---|---|
-| **Unit of work** | fresh scope + transaction (`ExecuteUnitOfWork`) | tommand handlers, exactly-once inbox processing, best-effort tevent dispatch, every independent door's mutating verb |
-| **Isolated scope** | fresh scope, no transaction of its own (`ExecuteInIsolatedScope`); an ambient transaction, if the caller has one, is left as-is so reads join its consistency | tuery handlers, discovery queries |
+| **Unit of work** | fresh scope + transaction (`ExecuteUnitOfWork` / `ExecuteUnitOfWorkAsync`) | tommand handlers, exactly-once inbox processing, best-effort tevent dispatch, every independent door's mutating verb |
+| **Isolated scope** | fresh scope, no transaction of its own (`ExecuteInIsolatedScope` / `ExecuteInIsolatedScopeAsync`); an ambient transaction, if the caller has one, is left as-is so reads join its consistency | tuery handlers, discovery queries |
 | **Detached** | fresh scope on a context born transaction-free: the observation dispatch pump starts with `ExecutionContext` flow suppressed, so there is no ambient transaction to suppress — and the pump asserts that guarantee | observation handlers |
 
 A tuery execution is deliberately **not** a unit of work: it changes nothing, so there is nothing to commit
@@ -26,6 +26,13 @@ same as isolated-scope: a read *wants* to see the caller's uncommitted writes wh
 an observer observes committed facts from outside every transaction, so its context carries none — by
 construction since observation dispatch moved off-thread (it queues at the publisher's commit and runs on
 the engine's observation dispatch pump).
+
+**The choreography is async-flow-safe.** The async envelope forms open their transaction scope with async
+flow enabled, so the ambient transaction flows across the execution's awaits: one unit of work legitimately
+migrates across pool threads, and its identity is its transaction, never a thread. Session affinity follows:
+the scoped sessions (the document db session, the tevent store updater) guard against serving **two
+transactions** — one session belongs to one unit of work — while the thread-affinity guard of the
+synchronous era is gone, since thread identity stopped being an invariant of correct executions.
 
 ## `IUnitOfWorkResolver` — the requirement, stated in the types
 
