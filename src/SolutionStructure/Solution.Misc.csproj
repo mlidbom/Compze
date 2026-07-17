@@ -1,0 +1,13 @@
+<!-- ReSharper disable MarkupAttributeTypo -->
+<!--
+   Surfaces the repository's loose non-C# files in the solution so they are editable from the IDE.
+   Excludes everything by default; add a glob below for each file kind to bring in.
+-->
+<Project Sdk="Microsoft.NET.Sdk">
+   <Import Project="solutionstructure.minimal-build-involvement.props" />
+
+   <ItemGroup>
+      <None Include="../../**/*.*" Exclude="$(DeskmancerExcludes);**/*.axaml;**/*.md;**/*.Build.props;**/*.ps1;**/*.psm1;**/*.slnx;**/*.editorconfig;**/*.props;**/*.manifest;**/*.wixproj;**/*.wxs;**/*.yml;**/*.wxl;**/.git/**" KeepDuplicates="false" />
+   </ItemGroup>
+
+</Project>

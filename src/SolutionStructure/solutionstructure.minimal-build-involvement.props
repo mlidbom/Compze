@@ -9,4 +9,8 @@
    <PropertyGroup>
       <BuildOutputExcludes>**/bin/**;**/obj/**</BuildOutputExcludes>
    </PropertyGroup>
+
+   <ItemGroup>
+      <None Include="../SolutionStructure/solutionstructure.minimal-build-involvement.props"/>
+   </ItemGroup>
 </Project>

@@ -1,0 +1,12 @@
+<!-- ReSharper disable MarkupAttributeTypo -->
+<Project Sdk="Microsoft.NET.Sdk">
+   <PropertyGroup>
+     <RootNamespace>Solution.README</RootNamespace>
+   </PropertyGroup>
+   <Import Project="solutionstructure.minimal-build-involvement.props" />
+
+   <ItemGroup>
+      <None Include="../../.claude*/**" Exclude="**/node_modules/**"  KeepDuplicates="false" />
+      <None Include="../../**/.github/**/*.md"  Exclude="**/node_modules/**" KeepDuplicates="false" />
+   </ItemGroup>
+</Project>
