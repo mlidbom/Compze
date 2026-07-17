@@ -244,8 +244,10 @@ public abstract class EndpointBuilder
    private protected TBuiltEndpoint BuildEndpoint<TBuiltEndpoint>(Func<IDependencyInjectionContainer, TBuiltEndpoint> createEndpoint) where TBuiltEndpoint : Endpoint
    {
       AssertTheFoundationIsDeclared();
-      RegisterTheSharedEndpointCore();
+      //The tier registers first: the shared substrate adapts to what the tier declares - the peer registry's durability
+      //follows the tier's declared persistence, so the sql layers must already be registered when it registers.
       RegisterTheTierMachinery();
+      RegisterTheSharedEndpointCore();
       _composed = true;
 
       var container = _containerBuilder.Build();

@@ -1,6 +1,5 @@
 using Compze.Abstractions.Hosting.Public;
 using Compze.DependencyInjection;
-using Compze.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.Tests.Infrastructure;
@@ -18,14 +17,14 @@ namespace Compze.Tests.Integration.Tessaging;
 public class TaskRunnerExceptionHandlingTests : UniversalTestBase
 {
 #pragma warning disable CA2213 // Disposable fields should be disposed
-   readonly ITestingEndpointHost _host;
+   readonly TestingEndpointHost _host;
 #pragma warning restore CA2213 // Disposable fields should be disposed
    readonly ITaskRunner _taskRunner;
 
    public TaskRunnerExceptionHandlingTests()
    {
-      _host = TestingEndpointHost.Create(new ExactlyOnceTessagingTestingEndpointHostFeature());
-      var endpoint = _host.RegisterEndpoint("endpoint", new EndpointId(Guid.Parse("A1B2C3D4-E5F6-4748-9ABC-DEF012345678")), builder => builder.TypeMapper.RegisterIntegrationTestTypeMappings());
+      _host = TestingEndpointHost.Create();
+      var endpoint = _host.RegisterExactlyOnceEndpoint("endpoint", new EndpointId(Guid.Parse("A1B2C3D4-E5F6-4748-9ABC-DEF012345678")), it => it.MapTypes(mapper => mapper.RegisterIntegrationTestTypeMappings()));
 
       _taskRunner = endpoint.ServiceLocator.Resolve<ITaskRunner>();
    }

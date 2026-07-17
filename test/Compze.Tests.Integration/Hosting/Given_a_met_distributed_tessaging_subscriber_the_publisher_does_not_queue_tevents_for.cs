@@ -10,8 +10,8 @@ using Compze.Internals.Serialization.Newtonsoft.Wiring;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Internals.Testing;
 using Compze.Must;
+using Compze.Tessaging.Endpoints;
 using Compze.Tessaging.Engine;
-using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Implementation.Peers;
 using Compze.Tests.Common.Tessaging.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler;
 using Compze.Tests.Infrastructure;
@@ -37,7 +37,7 @@ public class Given_a_met_distributed_tessaging_subscriber_the_publisher_does_not
    static readonly EndpointId SubscriberEndpointId = new(Guid.Parse("5a92c4e1-7f3b-4d08-b6c5-90e12a8d47f3"));
 
    readonly IEndpointHost _publisherHost;
-   readonly IEndpoint _publisherEndpoint;
+   readonly BestEffortEndpoint _publisherEndpoint;
    IEndpointHost _subscriberHost;
    readonly AddressesOfTheLiveHosts _registry = new();
 
@@ -47,17 +47,18 @@ public class Given_a_met_distributed_tessaging_subscriber_the_publisher_does_not
    public Given_a_met_distributed_tessaging_subscriber_the_publisher_does_not_queue_tevents_for()
    {
       _publisherHost = EndpointHost.Production.Create(() => TestEnv.DIContainer.CreateTestingContainerBuilder());
-      _publisherEndpoint = _publisherHost.RegisterEndpoint(
+      _publisherEndpoint = _publisherHost.RegisterEndpoint(container => BestEffortEndpoint.Compose(
+         container,
          "NoQueueingPublisherEndpoint",
          new EndpointId(Guid.Parse("e47b06d2-3c95-48a1-bf60-27d8c41e95b0")),
-         builder =>
+         endpoint =>
          {
-            builder.TypeMapper.RegisterIntegrationTestTypeMappings();
-            builder.ComposeFoundationWithCurrentTestsTransportAndNoDatabase()
-                   .AddDistributedTessaging(tessaging => tessaging.NewtonsoftSerializer())
-                   .DiscoverEndpointsThrough(_registry)
-                   .DoNotQueueTeventsFor(SubscriberEndpointId);
-         });
+            endpoint.MapTypes(mapper => mapper.RegisterIntegrationTestTypeMappings());
+            endpoint.TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport());
+            endpoint.NewtonsoftSerializer();
+            endpoint.DiscoverEndpointsThrough(_registry);
+            endpoint.DoNotQueueTeventsFor(SubscriberEndpointId);
+         }));
 
       _subscriberHost = CreateSubscriberHost();
    }
@@ -65,20 +66,21 @@ public class Given_a_met_distributed_tessaging_subscriber_the_publisher_does_not
    IEndpointHost CreateSubscriberHost()
    {
       var host = EndpointHost.Production.Create(() => TestEnv.DIContainer.CreateTestingContainerBuilder());
-      host.RegisterEndpoint(
+      host.RegisterEndpoint(container => BestEffortEndpoint.Compose(
+         container,
          "NoQueueingSubscriberEndpoint",
          SubscriberEndpointId,
-         builder =>
+         endpoint =>
          {
-            builder.TypeMapper.RegisterIntegrationTestTypeMappings();
-            builder.ComposeFoundationWithCurrentTestsTransportAndNoDatabase()
-                   .AddDistributedTessaging(tessaging => tessaging.NewtonsoftSerializer())
-                   .RegisterTessageHandlers(handle => handle.ForTevent((IMyBestEffortTevent tevent) =>
-                    {
-                       _teventsHandledOnTheSubscriber.Enqueue(tevent);
-                       _subscriberTeventHandlerGate.AwaitPassThrough();
-                    }));
-         });
+            endpoint.MapTypes(mapper => mapper.RegisterIntegrationTestTypeMappings());
+            endpoint.TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport());
+            endpoint.NewtonsoftSerializer();
+            endpoint.RegisterTessageHandlers(handle => handle.ForTevent((IMyBestEffortTevent tevent) =>
+             {
+                _teventsHandledOnTheSubscriber.Enqueue(tevent);
+                _subscriberTeventHandlerGate.AwaitPassThrough();
+             }));
+         }));
       return host;
    }
 

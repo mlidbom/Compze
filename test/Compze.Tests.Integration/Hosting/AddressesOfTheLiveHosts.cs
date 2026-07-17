@@ -1,10 +1,10 @@
 using Compze.Abstractions.Hosting.Public;
-using Compze.Tessaging.Hosting;
+using Compze.Tessaging.Endpoints;
 using Compze.Threading;
 
 namespace Compze.Tests.Integration.Hosting;
 
-///<summary>Serves the live hosts' Tessaging addresses to an endpoint's router — the discovery a production suite gets from a<br/>
+///<summary>Serves the live hosts' endpoint addresses to an endpoint's router — the discovery a production suite gets from a<br/>
 /// shared registry — and counts the router's reads, so a specification can await the reconciliation pass that acts on a<br/>
 /// membership change (<see cref="AwaitTwoReadsCompletingAfterNow"/>) instead of sleeping and hoping.</summary>
 class AddressesOfTheLiveHosts : IEndpointRegistry
@@ -22,8 +22,9 @@ class AddressesOfTheLiveHosts : IEndpointRegistry
       return (IReadOnlyList<EndpointAddress>)
       [
          .._liveHosts.SelectMany(host => host.Endpoints)
-                     .Where(endpoint => endpoint.TessagingAddress is not null)
-                     .Select(endpoint => endpoint.TessagingAddress!)
+                     .OfType<Endpoint>()
+                     .Where(endpoint => endpoint.Address is not null)
+                     .Select(endpoint => endpoint.Address!)
       ];
    });
 

@@ -1,6 +1,8 @@
 using Compze.Abstractions.Hosting.Public;
 using Compze.Teventive.Taggregates.Tevents.Public;
 using Compze.Teventive.TeventStore.Wiring;
+using Compze.Tessaging.Endpoints;
+using Compze.Tessaging.Engine;
 using Compze.Tessaging.Hosting;
 
 namespace Compze.Teventive.TeventStore.Typermedia;
@@ -12,14 +14,22 @@ public static class TeventStoreTypermediaRegistrar
       @this.TypeMapper.MapTypesFromAssemblyContaining<TeventStoreApi>();
       @this.TypeMapper.MapTypesFromAssemblyContaining<TeventCache>();
       @this.Registrar.TeventStore(@this.Configuration.ConnectionStringName);
-      return new TeventStoreRegistrationBuilder(@this);
+      return new TeventStoreRegistrationBuilder(register => @this.RegisterTessageHandlers(register));
+   }
+
+   public static TeventStoreRegistrationBuilder RegisterTeventStore(this ExactlyOnceEndpointBuilder @this)
+   {
+      @this.TypeMapper.MapTypesFromAssemblyContaining<TeventStoreApi>();
+      @this.TypeMapper.MapTypesFromAssemblyContaining<TeventCache>();
+      @this.Registrar.TeventStore(@this.Configuration.ConnectionStringName);
+      return new TeventStoreRegistrationBuilder(@this.RegisterTessageHandlers);
    }
 }
 
 public class TeventStoreRegistrationBuilder
 {
-   readonly IEndpointBuilder _endpointBuilder;
-   internal TeventStoreRegistrationBuilder(IEndpointBuilder endpointBuilder) => _endpointBuilder = endpointBuilder;
+   readonly Action<Action<TessageHandlerRegistrar>> _registerTessageHandlers;
+   internal TeventStoreRegistrationBuilder(Action<Action<TessageHandlerRegistrar>> registerTessageHandlers) => _registerTessageHandlers = registerTessageHandlers;
 
    ///<summary>Declares the tevent store's typermedia handlers for <typeparamref name="TTaggregate"/> — save, get-for-update, the<br/>
    /// readonly-copy tueries, and the history tuery — into the endpoint's one engine: a store integration is a handler<br/>
@@ -28,7 +38,7 @@ public class TeventStoreRegistrationBuilder
       where TTaggregate : class, ITaggregate<TTevent>
       where TTevent : ITaggregateTevent
    {
-      _endpointBuilder.RegisterTessageHandlers(TeventStoreApi.RegisterHandlersForTaggregate<TTaggregate, TTevent>);
+      _registerTessageHandlers(TeventStoreApi.RegisterHandlersForTaggregate<TTaggregate, TTevent>);
       return this;
    }
 }

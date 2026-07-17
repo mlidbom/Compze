@@ -1,13 +1,13 @@
 using Compze.Abstractions.Hosting.Public;
-using Compze.Hosting.Testing;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Must;
 
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
+using Compze.Tessaging.Endpoints;
 using Compze.Tessaging.Typermedia.Client;
 using Compze.Tessaging.Engine;
-using Compze.Tessaging.Hosting;
+using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Typermedia;
 using Compze.Tessaging.Typermedia;
 
@@ -15,34 +15,34 @@ using Compze.Tessaging.Typermedia;
 #pragma warning disable IDE1006 //Reviewed OK: Test Naming Styles
 
 namespace Compze.Tessaging.Specifications.Typermedia;
-///<summary>The end-to-end proof that a typermedia-only composition works: a host with only the Typermedia testing feature serves a remote client over HTTP.</summary>
+///<summary>The end-to-end proof that a typermedia-only composition works: a best-effort endpoint whose roster holds only typermedia handlers serves a remote client.</summary>
 public class Given_an_endpoint_hosting_only_typermedia : UniversalTestBase
 {
-   readonly ITestingEndpointHost _host;
-   readonly IEndpoint _endpoint;
+   readonly TestingEndpointHost _host;
+   readonly BestEffortEndpoint _endpoint;
    TypermediaTestClient _client = null!;
 
    public Given_an_endpoint_hosting_only_typermedia()
    {
-      _host = TestingEndpointHost.Create(new DistributedTypermediaTestingEndpointHostFeature());
+      _host = TestingEndpointHost.Create();
 
-      _endpoint = _host.RegisterEndpoint(
+      _endpoint = _host.RegisterBestEffortEndpoint(
          "TypermediaOnly",
          new EndpointId(Guid.Parse("4A0EFCC3-49B6-4B8F-8F90-2E12B4B3A1D2")),
-         builder =>
+         endpoint =>
          {
-            builder.TypeMapper.RegisterTypermediaHostingSpecificationTypeMappings();
+            endpoint.MapTypes(mapper => mapper.RegisterTypermediaHostingSpecificationTypeMappings());
 
-            builder.RegisterTessageHandlers(handle => handle
-                      .ForTuery((GreetingTuery tuery) => new Greeting { Message = $"Hello {tuery.Name}!" })
-                      .ForTommand((RegisterGreeterTommand tommand) => new GreeterRegistered { Name = tommand.Name }));
+            endpoint.RegisterTessageHandlers(handle => handle
+                       .ForTuery((GreetingTuery tuery) => new Greeting { Message = $"Hello {tuery.Name}!" })
+                       .ForTommand((RegisterGreeterTommand tommand) => new GreeterRegistered { Name = tommand.Name }));
          });
    }
 
    protected override async Task InitializeAsyncInternal()
    {
       await _host.StartAsync().caf();
-      _client = await TypermediaTestClient.ConnectTo(_endpoint.TypermediaAddress!, mapper => mapper.RegisterTypermediaHostingSpecificationTypeMappings()).caf();
+      _client = await TypermediaTestClient.ConnectTo(_endpoint.Address!, mapper => mapper.RegisterTypermediaHostingSpecificationTypeMappings()).caf();
    }
 
    protected override async Task DisposeAsyncInternal()

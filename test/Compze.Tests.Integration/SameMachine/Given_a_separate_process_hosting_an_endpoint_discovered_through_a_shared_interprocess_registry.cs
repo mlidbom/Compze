@@ -3,12 +3,13 @@ using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Abstractions.Hosting.Public;
 using Compze.Abstractions.Wiring.Testing.Internal;
+using Compze.Hosting;
 using Compze.Hosting.SameMachine;
 using Compze.Hosting.Testing;
 using Compze.Hosting.Testing.Wiring;
 using Compze.Internals.Testing;
+using Compze.Tessaging.Endpoints;
 using Compze.Tessaging.Engine;
-using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
@@ -35,8 +36,8 @@ public class Given_a_separate_process_hosting_an_endpoint_discovered_through_a_s
    readonly DirectoryInfo _workDirectory = null!;
    readonly InterprocessEndpointRegistry _registry = null!;
    readonly EndpointHostProcessHandle _endpointHostProcess = null!;
-   readonly ITestingEndpointHost _specificationHost = null!;
-   readonly IEndpoint _specificationEndpoint = null!;
+   readonly IEndpointHost _specificationHost = null!;
+   readonly ExactlyOnceEndpoint _specificationEndpoint = null!;
    readonly IThreadGate _replyTommandGate = IThreadGate.NewOpen(WaitTimeout.Seconds(1), "replyTommand");
 
    public Given_a_separate_process_hosting_an_endpoint_discovered_through_a_shared_interprocess_registry()
@@ -50,23 +51,24 @@ public class Given_a_separate_process_hosting_an_endpoint_discovered_through_a_s
 
       _endpointHostProcess = EndpointHostProcessHandle.Start(registryName, _workDirectory, EndpointHostProcessProgram.ExactlyOnceTessagingComposition);
 
-      _specificationHost = TestingEndpointHost.Create();
-      _specificationEndpoint = _specificationHost.RegisterEndpoint(
+      _specificationHost = EndpointHost.Production.Create(() => TestEnv.DIContainer.CreateTestingContainerBuilder()
+                                                                       ._mutate(it => it.Registrar.CurrentTestsDbPoolIfNotCloneContainer()));
+      _specificationEndpoint = _specificationHost.RegisterEndpoint(container => ExactlyOnceEndpoint.Compose(
+         container,
          "SpecificationEndpoint",
          new EndpointId(Guid.NewGuid()),
-         builder =>
+         endpoint =>
          {
-            builder.TypeMapper.MapTypesFromAssemblyContaining<TommandSentToTheEndpointHostProcess>();
-            builder.Registrar
-                   .CurrentTestsEndpointTransport()
-                   .CurrentTestsConfiguredSqlLayer(connectionStringName: builder.Configuration.Id.ToString());
-            builder.AddExactlyOnceTessaging().ParticipateIn(_registry);
-            builder.RegisterTessageHandlers(handle => handle.ForTommand((TommandSentBackToTheSpecificationProcess _) =>
+            endpoint.MapTypes(mapper => mapper.MapTypesFromAssemblyContaining<TommandSentToTheEndpointHostProcess>());
+            endpoint.TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport());
+            endpoint.Database(registrar => registrar.CurrentTestsConfiguredSqlLayer(connectionStringName: endpoint.Configuration.Id.ToString()));
+            endpoint.ParticipateIn(_registry);
+            endpoint.RegisterTessageHandlers(handle => handle.ForTommand((TommandSentBackToTheSpecificationProcess _) =>
             {
                _replyTommandGate.AwaitPassThrough();
                return Task.CompletedTask;
             }));
-         });
+         }));
    }
 
    protected override async Task InitializeAsyncInternal()

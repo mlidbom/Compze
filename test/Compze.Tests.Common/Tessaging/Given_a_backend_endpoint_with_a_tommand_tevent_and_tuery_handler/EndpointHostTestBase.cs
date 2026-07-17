@@ -4,8 +4,12 @@ using Compze.DependencyInjection;
 using Compze.Hosting.Testing;
 using Compze.Hosting.Testing.Wiring;
 using Compze.Internals.Testing;
+using Compze.Tessaging.Endpoints;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Typermedia;
+//Both testing namespaces are imported (TestEnv's pluggable components live beside the dying feature-based host), so the
+//surviving host is named explicitly until the old one is deleted with the feature machinery.
+using TestingEndpointHost = Compze.Tessaging.Hosting.Testing.TestingEndpointHost;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.LinqCE;
 using Compze.Abstractions.Hosting.Public;
@@ -44,7 +48,7 @@ public abstract class EndpointHostTestBase : UniversalTestBase
    /// a blue/green replacement is a different endpoint that advertises the same tommand type, never the old identity reused.</summary>
    protected static readonly EndpointId RemoteSuccessorEndpointId = new(Guid.Parse("46ECC3A4-5657-4A0A-9C78-9FEEA5A1010D"));
 
-   protected ITestingEndpointHost Host { get; private set; } = null!;
+   protected TestingEndpointHost Host { get; private set; } = null!;
    public IThreadGate MyExactlyOnceTommandHandlerThreadGate { get; }
    public IThreadGate MyExactlyOnceTommandHandledByTheRemoteEndpointHandlerThreadGate { get; }
    public IThreadGate RemoteSuccessorTommandHandlerThreadGate { get; }
@@ -67,10 +71,10 @@ public abstract class EndpointHostTestBase : UniversalTestBase
 
    IReadOnlyList<IThreadGate> AllGates  { get; }
 
-   protected IEndpoint BackendEndPoint { get; private set; } = null!;
+   protected ExactlyOnceEndpoint BackendEndPoint { get; private set; } = null!;
    TypermediaTestClient Client { get; set; } = null!;
    protected IRemoteTypermediaNavigator Navigator => Client.Navigator;
-   protected IEndpoint RemoteEndpoint { get; private set; } = null!;
+   protected ExactlyOnceEndpoint RemoteEndpoint { get; private set; } = null!;
    IDependencyInjectionContainer? _rootContainer;
 
    protected EndpointHostTestBase()
@@ -118,20 +122,20 @@ public abstract class EndpointHostTestBase : UniversalTestBase
    void CreateHostAndRegisterBackendEndpoint()
    {
       _rootContainer ??= CreateRootBuilder().Build();
-      Host = TestingEndpointHost.Create(_rootContainer, new ExactlyOnceTessagingTestingEndpointHostFeature(), new DistributedTypermediaTestingEndpointHostFeature());
+      Host = TestingEndpointHost.Create(_rootContainer);
 
-      BackendEndPoint = Host.RegisterEndpoint(
+      BackendEndPoint = Host.RegisterExactlyOnceEndpoint(
          "Backend",
          BackendEndpointId,
-         builder =>
+         endpoint =>
          {
-            builder.TypeMapper.RegisterCommonTestTypeMappings();
+            endpoint.MapTypes(mapper => mapper.RegisterCommonTestTypeMappings());
 
-            builder.RegisterTeventStore()
-                   .HandleTaggregate<MyTaggregate, IMyTaggregateTevent>();
+            endpoint.RegisterTeventStore()
+                    .HandleTaggregate<MyTaggregate, IMyTaggregateTevent>();
 
             //Exactly-once kinds are async end to end, so their handlers are declared async; the gates themselves are synchronous, so the bodies complete their tasks synchronously.
-            builder.RegisterTessageHandlers(handle => handle
+            endpoint.RegisterTessageHandlers(handle => handle
                       .ForTommand((MyExactlyOnceTommand _) =>
                        {
                           MyExactlyOnceTommandHandlerThreadGate.AwaitPassThrough();
@@ -170,21 +174,21 @@ public abstract class EndpointHostTestBase : UniversalTestBase
                        }));
 
             //Observation - the transaction-ignoring subscription kind: fires at publish time for the Backend's own locally published tevents.
-            builder.ObserveTevents(observe => observe
+            endpoint.ObserveTevents(observe => observe
                       .ForTevent((IMyTaggregateTevent _) => MyTaggregateTeventBackendObserverThreadGate.AwaitPassThrough()));
          });
    }
 
    void RegisterRemoteEndpoint(bool withItsTommandHandler = true) =>
-      RemoteEndpoint = Host.RegisterEndpoint("Remote",
+      RemoteEndpoint = Host.RegisterExactlyOnceEndpoint("Remote",
                                              RemoteEndpointId,
-                                             builder =>
+                                             endpoint =>
                                              {
-                                                builder.TypeMapper.RegisterCommonTestTypeMappings();
+                                                endpoint.MapTypes(mapper => mapper.RegisterCommonTestTypeMappings());
 
                                                 if(withItsTommandHandler)
                                                 {
-                                                   builder.RegisterTessageHandlers(handle => handle
+                                                   endpoint.RegisterTessageHandlers(handle => handle
                                                              .ForTommand((MyExactlyOnceTommandHandledByTheRemoteEndpoint _) =>
                                                               {
                                                                  MyExactlyOnceTommandHandledByTheRemoteEndpointHandlerThreadGate.AwaitPassThrough();
@@ -192,7 +196,7 @@ public abstract class EndpointHostTestBase : UniversalTestBase
                                                               }));
                                                 }
 
-                                                builder.RegisterTessageHandlers(handle => handle
+                                                endpoint.RegisterTessageHandlers(handle => handle
                                                           .ForTevent((IMyTaggregateTevent _) =>
                                                            {
                                                               MyRemoteTaggregateTeventHandlerThreadGate.AwaitPassThrough();
@@ -211,7 +215,7 @@ public abstract class EndpointHostTestBase : UniversalTestBase
                                                            }));
 
                                                 //Observation - the transaction-ignoring subscription kind: fires on arrival, before and outside the transactional handling above.
-                                                builder.ObserveTevents(observe => observe
+                                                endpoint.ObserveTevents(observe => observe
                                                           .ForTevent((IMyTaggregateTevent _) => MyTaggregateTeventRemoteObserverThreadGate.AwaitPassThrough())
                                                           .ForTevent((IMyBestEffortTevent _) => MyBestEffortTeventRemoteObserverThreadGate.AwaitPassThrough()));
                                              });
@@ -251,13 +255,13 @@ public abstract class EndpointHostTestBase : UniversalTestBase
    {
       CreateHostAndRegisterBackendEndpoint();
       RemoteEndpoint = null!; //There is no Remote endpoint in this host either: the successor replaces it under its own, new identity.
-      Host.RegisterEndpoint("RemoteSuccessor",
+      Host.RegisterExactlyOnceEndpoint("RemoteSuccessor",
                             RemoteSuccessorEndpointId,
-                            builder =>
+                            endpoint =>
                             {
-                               builder.TypeMapper.RegisterCommonTestTypeMappings();
+                               endpoint.MapTypes(mapper => mapper.RegisterCommonTestTypeMappings());
 
-                               builder.RegisterTessageHandlers(handle => handle
+                               endpoint.RegisterTessageHandlers(handle => handle
                                          .ForTommand((MyExactlyOnceTommandHandledByTheRemoteEndpoint _) =>
                                           {
                                              RemoteSuccessorTommandHandlerThreadGate.AwaitPassThrough();
@@ -270,7 +274,7 @@ public abstract class EndpointHostTestBase : UniversalTestBase
    async Task StartHostAndConnectClientAsync()
    {
       await Host.StartAsync();
-      Client = await TypermediaTestClient.ConnectTo(BackendEndPoint.TypermediaAddress!, mapper => mapper.RegisterCommonTestTypeMappings());
+      Client = await TypermediaTestClient.ConnectTo(BackendEndPoint.Address!, mapper => mapper.RegisterCommonTestTypeMappings());
    }
 
    protected void CloseGates() => AllGates.ForEach(gate => gate.Close());

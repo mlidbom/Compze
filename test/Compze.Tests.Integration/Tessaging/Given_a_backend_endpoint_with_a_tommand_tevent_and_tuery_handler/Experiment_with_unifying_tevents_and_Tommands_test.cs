@@ -1,9 +1,8 @@
 using Compze.Abstractions.Hosting.Public;
-using Compze.Tessaging.Hosting;
+using Compze.Tessaging.Endpoints;
 using Compze.Tessaging.Typermedia.Client;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Tessaging.Engine;
-using Compze.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Typermedia;
 using Compze.Tests.Common;
@@ -30,26 +29,26 @@ namespace Compze.Tests.Integration.Tessaging.Given_a_backend_endpoint_with_a_tom
 
 public class Experiment_with_unifying_tevents_and_tommands_test : UniversalTestBase
 {
-   readonly ITestingEndpointHost _host;
+   readonly TestingEndpointHost _host;
 
    IScopeFactory _userDomainScopeFactory = null!;
    TypermediaTestClient _client = null!;
-   readonly IEndpoint _userManagementDomainEndpoint;
+   readonly ExactlyOnceEndpoint _userManagementDomainEndpoint;
 
    public Experiment_with_unifying_tevents_and_tommands_test()
    {
-      _host = TestingEndpointHost.Create(new ExactlyOnceTessagingTestingEndpointHostFeature(), new DistributedTypermediaTestingEndpointHostFeature());
+      _host = TestingEndpointHost.Create();
 
-      _userManagementDomainEndpoint = _host.RegisterEndpoint(
+      _userManagementDomainEndpoint = _host.RegisterExactlyOnceEndpoint(
          "UserManagement.Domain",
          new EndpointId(Guid.Parse("A4A2BA96-8D82-47AC-8A1B-38476C7B5D5D")),
-         builder =>
+         endpoint =>
          {
-            builder.TypeMapper.RegisterIntegrationTestTypeMappings();
+            endpoint.MapTypes(mapper => mapper.RegisterIntegrationTestTypeMappings());
 
-            builder.Registrar.TeventStore(builder.Configuration.ConnectionStringName);
+            endpoint.Registrar.TeventStore(endpoint.Configuration.ConnectionStringName);
 
-            builder.RegisterTessageHandlers(handle => handle
+            endpoint.RegisterTessageHandlers(handle => handle
                       .ForTevent((IUserTevent.UserRegistered _) => Task.CompletedTask)
                       .ForTuery((GetUserTuery tuery, ITeventStoreReader teventReader) => new UserResource(teventReader.GetHistory(tuery.UserId)))
                       .ForTommand((UserRegistrarTommand.RegisterUserTypermediaTommand typermediaTommand, ITeventStoreUpdater store) =>
@@ -64,7 +63,7 @@ public class Experiment_with_unifying_tevents_and_tommands_test : UniversalTestB
    {
       await _host.StartAsync();
 
-      _client = await TypermediaTestClient.ConnectTo(_userManagementDomainEndpoint.TypermediaAddress!,
+      _client = await TypermediaTestClient.ConnectTo(_userManagementDomainEndpoint.Address!,
                                                      mapper =>
                                                      {
                                                         mapper.RegisterIntegrationTestTypeMappings();

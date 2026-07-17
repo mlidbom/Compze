@@ -27,6 +27,16 @@ public static class MsSqlTessagingRegistrar
       }
    }
 
+   extension(Compze.Tessaging.Endpoints.ExactlyOnceEndpointBuilder @this)
+   {
+      ///<summary>Declares the endpoint's database: SQL Server, reached through <paramref name="connectionStringName"/> — filling<br/>
+      /// the exactly-once endpoint's one database parameter with the whole engine pairing: the connection pool, the type-id<br/>
+      /// interner Tessaging's sql layers share, and Tessaging's SQL Server sql layers.</summary>
+      public void MsSqlEndpointDatabase(string connectionStringName) =>
+         @this.Database(registrar => registrar.MsSqlEndpointDatabase(connectionStringName)
+                                              .MsSqlTessagingSqlLayer());
+   }
+
    public static IComponentRegistrar MsSqlTessagingSqlLayer(this IComponentRegistrar registrar) =>
       registrar.MsSqlTypeIdInterner()
                .MsSqlSchemaContribution(MsSqlInboxSqlLayer.SchemaCreationSql)

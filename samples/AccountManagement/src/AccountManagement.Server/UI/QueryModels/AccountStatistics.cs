@@ -1,10 +1,9 @@
 using AccountManagement.Domain.Tevents;
 using Compze.DocumentDb;
 using Compze.Abstractions.Public;
-using Compze.Abstractions.Hosting.Public;
+using Compze.Tessaging.Endpoints;
 using Compze.Tessaging.Engine;
 using Compze.DependencyInjection;
-using Compze.Tessaging.Hosting;
 using Compze.Teventive.TeventStore.QueryModels.SelfGeneratingQueryModels;
 using Compze.Tessaging.Typermedia.Client;
 using Compze.Tessaging.Typermedia;
@@ -53,10 +52,10 @@ static class AccountStatistics
          return Task.CompletedTask;
       });
 
-   internal static void Register(IEndpointBuilder builder)
+   internal static void Register(ExactlyOnceEndpointBuilder endpoint)
    {
-      builder.Registrar.Register(Singleton.For<StatisticsSingletonInitializer>().CreatedBy(() => new StatisticsSingletonInitializer()));
-      builder.RegisterTessageHandlers(MaintainStatisticsWhenRelevantTeventsAreReceived);
+      endpoint.Registrar.Register(Singleton.For<StatisticsSingletonInitializer>().CreatedBy(() => new StatisticsSingletonInitializer()));
+      endpoint.RegisterTessageHandlers(MaintainStatisticsWhenRelevantTeventsAreReceived);
    }
 
    class StatisticsSingletonInitializer

@@ -1,13 +1,13 @@
 using Compze.Abstractions.Hosting.Public;
-using Compze.Hosting.Testing;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Must;
 
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
+using Compze.Tessaging.Endpoints;
 using Compze.Tessaging.Typermedia.Client;
 using Compze.Tessaging.Engine;
-using Compze.Tessaging.Hosting;
+using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Typermedia;
 using static Compze.Must.MustActions;
 using Compze.Tessaging.Typermedia;
@@ -25,42 +25,42 @@ public class Given_two_endpoints_advertising_the_same_typermedia_tuery_type : Un
    static readonly EndpointId FirstEndpointId = new(Guid.Parse("07500559-DE01-4EBA-A1C5-71B0FFBAA0C0"));
    static readonly EndpointId SecondEndpointId = new(Guid.Parse("D5A0272D-CE21-476F-8ADE-B0AF5FB1DC01"));
 
-   readonly ITestingEndpointHost _host;
-   readonly IEndpoint _firstEndpoint;
-   readonly IEndpoint _secondEndpoint;
+   readonly TestingEndpointHost _host;
+   readonly BestEffortEndpoint _firstEndpoint;
+   readonly BestEffortEndpoint _secondEndpoint;
    TypermediaTestClient _client = null!;
 
    public Given_two_endpoints_advertising_the_same_typermedia_tuery_type()
    {
-      _host = TestingEndpointHost.Create(new DistributedTypermediaTestingEndpointHostFeature());
+      _host = TestingEndpointHost.Create();
 
-      _firstEndpoint = _host.RegisterEndpoint(
+      _firstEndpoint = _host.RegisterBestEffortEndpoint(
          "FirstHandler",
          FirstEndpointId,
-         builder =>
+         endpoint =>
          {
-            builder.TypeMapper.RegisterTypermediaHostingSpecificationTypeMappings();
-            builder.RegisterTessageHandlers(handle => handle
-                      .ForTuery((TueryBothEndpointsHandle tuery) => new TueryAnswer { Message = "from the first endpoint" }));
+            endpoint.MapTypes(mapper => mapper.RegisterTypermediaHostingSpecificationTypeMappings());
+            endpoint.RegisterTessageHandlers(handle => handle
+                       .ForTuery((TueryBothEndpointsHandle tuery) => new TueryAnswer { Message = "from the first endpoint" }));
          });
 
-      _secondEndpoint = _host.RegisterEndpoint(
+      _secondEndpoint = _host.RegisterBestEffortEndpoint(
          "SecondHandler",
          SecondEndpointId,
-         builder =>
+         endpoint =>
          {
-            builder.TypeMapper.RegisterTypermediaHostingSpecificationTypeMappings();
-            builder.RegisterTessageHandlers(handle => handle
-                      .ForTuery((TueryBothEndpointsHandle tuery) => new TueryAnswer { Message = "from the second endpoint" })
-                      .ForTuery((TueryOnlyTheSecondEndpointHandles tuery) => new TueryAnswer { Message = "only the second endpoint handles this" }));
+            endpoint.MapTypes(mapper => mapper.RegisterTypermediaHostingSpecificationTypeMappings());
+            endpoint.RegisterTessageHandlers(handle => handle
+                       .ForTuery((TueryBothEndpointsHandle tuery) => new TueryAnswer { Message = "from the second endpoint" })
+                       .ForTuery((TueryOnlyTheSecondEndpointHandles tuery) => new TueryAnswer { Message = "only the second endpoint handles this" }));
          });
    }
 
    protected override async Task InitializeAsyncInternal()
    {
       await _host.StartAsync().caf();
-      _client = await TypermediaTestClient.ConnectTo(_firstEndpoint.TypermediaAddress!, mapper => mapper.RegisterTypermediaHostingSpecificationTypeMappings()).caf();
-      await _client.AlsoConnectTo(_secondEndpoint.TypermediaAddress!).caf();
+      _client = await TypermediaTestClient.ConnectTo(_firstEndpoint.Address!, mapper => mapper.RegisterTypermediaHostingSpecificationTypeMappings()).caf();
+      await _client.AlsoConnectTo(_secondEndpoint.Address!).caf();
    }
 
    protected override async Task DisposeAsyncInternal()

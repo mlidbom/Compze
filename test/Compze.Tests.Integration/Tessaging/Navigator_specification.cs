@@ -1,7 +1,7 @@
 using Compze.Abstractions.Hosting.Public;
 using Compze.Tessaging.Typermedia.Client;
 using Compze.Abstractions.Tessaging.Public;
-using Compze.Hosting.Testing;
+using Compze.Tessaging.Endpoints;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Typermedia;
 using Compze.Tests.Infrastructure;
@@ -12,7 +12,6 @@ using Compze.Must;
 
 using Compze.Tessaging.Typermedia;
 using Compze.Tessaging.Engine;
-using Compze.Tessaging.Hosting;
 
 // ReSharper disable MemberCanBeMadeStatic.Global
 // ReSharper disable MemberCanBeMadeStatic.Local
@@ -21,24 +20,24 @@ namespace Compze.Tests.Integration.Tessaging;
 
 public class Navigator_specification : UniversalTestBase
 {
-   readonly ITestingEndpointHost _host;
-   readonly IEndpoint _endpoint;
+   readonly TestingEndpointHost _host;
+   readonly ExactlyOnceEndpoint _endpoint;
    TypermediaTestClient _client = null!;
 
    public Navigator_specification()
    {
       var tueryResults = new List<UserResource>();
 
-      _host = TestingEndpointHost.Create(new ExactlyOnceTessagingTestingEndpointHostFeature(), new DistributedTypermediaTestingEndpointHostFeature());
+      _host = TestingEndpointHost.Create();
 
-      _endpoint = _host.RegisterEndpoint(
+      _endpoint = _host.RegisterExactlyOnceEndpoint(
          "Backend",
          new EndpointId(Guid.Parse("3A1B6A8C-D232-476C-A15A-9C8295413210")),
-         builder =>
+         endpoint =>
          {
-            builder.TypeMapper.RegisterIntegrationTestTypeMappings();
+            endpoint.MapTypes(mapper => mapper.RegisterIntegrationTestTypeMappings());
 
-            builder.RegisterTessageHandlers(handle => handle
+            endpoint.RegisterTessageHandlers(handle => handle
                       .ForTuery((GetUserTuery tuery) => tueryResults.Single(result => result.Name == tuery.Name))
                       .ForTuery((UserApiStartPageTuery _) => new UserApiStartPage())
                       .ForTommand((RegisterUserTypermediaTommand typermediaTommand, IUnitOfWorkTommandSender _) =>
@@ -52,7 +51,7 @@ public class Navigator_specification : UniversalTestBase
    protected override async Task InitializeAsyncInternal()
    {
       await _host.StartAsync().caf();
-      _client = await TypermediaTestClient.ConnectTo(_endpoint.TypermediaAddress!, mapper => mapper.RegisterIntegrationTestTypeMappings()).caf();
+      _client = await TypermediaTestClient.ConnectTo(_endpoint.Address!, mapper => mapper.RegisterIntegrationTestTypeMappings()).caf();
    }
 
    protected override async Task DisposeAsyncInternal()

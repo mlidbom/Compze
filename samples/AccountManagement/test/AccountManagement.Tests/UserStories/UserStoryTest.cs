@@ -1,9 +1,7 @@
 using AccountManagement.UserStories.Scenarios;
-using Compze.Abstractions.Hosting.Public;
-using Compze.Hosting.Testing;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
+using Compze.Tessaging.Endpoints;
 using Compze.Tessaging.Hosting.Testing;
-using Compze.Tessaging.Typermedia.Client;
 using Compze.Tessaging.Hosting.Testing.Typermedia;
 using Compze.Tests.Infrastructure;
 
@@ -11,21 +9,21 @@ namespace AccountManagement.UserStories;
 
 public abstract class UserStoryTest : UniversalTestBase
 {
-   ITestingEndpointHost Host { get; set; }
-   readonly IEndpoint _endpoint;
+   TestingEndpointHost Host { get; }
+   readonly ExactlyOnceEndpoint _endpoint;
    TypermediaTestClient _client = null!;
    internal AccountScenarioApi Scenario => new(_client.Navigator);
 
    protected UserStoryTest()
    {
-      Host = TestingEndpointHost.Create(new ExactlyOnceTessagingTestingEndpointHostFeature(), new DistributedTypermediaTestingEndpointHostFeature());
+      Host = TestingEndpointHost.Create();
       _endpoint = AccountManagementServerDomainBootstrapper.RegisterWith(Host);
    }
 
    protected override async Task InitializeAsyncInternal()
    {
       await Host.StartAsync().caf();
-      _client = await TypermediaTestClient.ConnectTo(_endpoint.TypermediaAddress!, mapper => mapper.RegisterAccountManagementTypeMappings()).caf();
+      _client = await TypermediaTestClient.ConnectTo(_endpoint.Address!, mapper => mapper.RegisterAccountManagementTypeMappings()).caf();
    }
 
    protected override async Task DisposeAsyncInternal()

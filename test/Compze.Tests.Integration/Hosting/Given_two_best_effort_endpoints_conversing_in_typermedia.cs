@@ -11,6 +11,7 @@ using Compze.Internals.Testing;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Must;
 
+using Compze.Tessaging.Endpoints;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Tessaging.Typermedia;
@@ -24,47 +25,50 @@ using static Compze.Must.MustActions;
 namespace Compze.Tests.Integration.Hosting;
 
 ///<summary>
-/// Two endpoints whose foundations declare their transports but — deliberately — no databases converse in
-/// typermedia: the asking endpoint navigates the answering endpoint's tueries and tommands through its own
-/// <see cref="IRemoteTypermediaNavigator"/>, routed by its typermedia router's live reconciliation against the
-/// registry the endpoint declared it discovers through — never by a configured address. The answering endpoint
-/// declares no registry: it only serves, and navigating from it fails loud naming the missing declaration. The
-/// host is the production host — nothing is pre-registered, so the composition stands entirely on what it declares.
+/// Two best-effort endpoints (<see cref="BestEffortEndpoint.Compose"/>) converse in typermedia — request/response neither
+/// queues nor persists, so the tier serves it identically to the exactly-once tier. The asking endpoint navigates the
+/// answering endpoint's tueries and tommands through its own <see cref="IRemoteTypermediaNavigator"/>, routed by its router's
+/// live reconciliation against the registry the endpoint declared it discovers through — never by a configured address. The
+/// answering endpoint declares no registry: it only serves, and navigating from it fails loud naming the missing
+/// declaration. The host is the production host — nothing is pre-registered, so the composition stands entirely on what it
+/// declares.
 ///</summary>
-public class Given_two_endpoints_composing_distributed_typermedia_on_foundations_declaring_no_database : UniversalTestBase
+public class Given_two_best_effort_endpoints_conversing_in_typermedia : UniversalTestBase
 {
    readonly IEndpointHost _host;
-   readonly IEndpoint _askingEndpoint;
-   readonly IEndpoint _answeringEndpoint;
+   readonly BestEffortEndpoint _askingEndpoint;
+   readonly BestEffortEndpoint _answeringEndpoint;
 
-   public Given_two_endpoints_composing_distributed_typermedia_on_foundations_declaring_no_database()
+   public Given_two_best_effort_endpoints_conversing_in_typermedia()
    {
       _host = EndpointHost.Production.Create(() => TestEnv.DIContainer.CreateTestingContainerBuilder());
-      var endpointsOfTheHost = new TypermediaAddressesOfTheHostsEndpoints(() => _host.Endpoints);
+      var endpointsOfTheHost = new AddressesOfTheHostsEndpoints(() => _host.Endpoints);
 
-      _askingEndpoint = _host.RegisterEndpoint(
+      _askingEndpoint = _host.RegisterEndpoint(container => BestEffortEndpoint.Compose(
+         container,
          "TypermediaAskingEndpoint",
          new EndpointId(Guid.Parse("3f7b9c25-81d4-4a6e-b0f2-c58a17d93e46")),
-         builder =>
+         endpoint =>
          {
-            builder.TypeMapper.RegisterIntegrationTestTypeMappings();
-            builder.ComposeFoundationWithCurrentTestsTransportAndNoDatabase()
-                   .AddDistributedTypermedia(typermedia => typermedia.NewtonsoftSerializer())
-                   .DiscoverEndpointsThrough(endpointsOfTheHost);
-         });
+            endpoint.MapTypes(mapper => mapper.RegisterIntegrationTestTypeMappings());
+            endpoint.TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport());
+            endpoint.NewtonsoftSerializer();
+            endpoint.DiscoverEndpointsThrough(endpointsOfTheHost);
+         }));
 
-      _answeringEndpoint = _host.RegisterEndpoint(
+      _answeringEndpoint = _host.RegisterEndpoint(container => BestEffortEndpoint.Compose(
+         container,
          "TypermediaAnsweringEndpoint",
          new EndpointId(Guid.Parse("b93d40e7-2c58-4f1b-a6d9-04e8c6a25f17")),
-         builder =>
+         endpoint =>
          {
-            builder.TypeMapper.RegisterIntegrationTestTypeMappings();
-            builder.ComposeFoundationWithCurrentTestsTransportAndNoDatabase()
-                   .AddDistributedTypermedia(typermedia => typermedia.NewtonsoftSerializer())
-                   .RegisterTessageHandlers(handle => handle
-                       .ForTuery((GetTheAnswerTuery _) => new AnswerResource(answeredBy: "TypermediaAnsweringEndpoint"))
-                       .ForTommand((RegisterGreetingTypermediaTommand tommand) => new GreetingRegisteredConfirmationResource(tommand.Greeting)));
-         });
+            endpoint.MapTypes(mapper => mapper.RegisterIntegrationTestTypeMappings());
+            endpoint.TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport());
+            endpoint.NewtonsoftSerializer();
+            endpoint.RegisterTessageHandlers(handle => handle
+                .ForTuery((GetTheAnswerTuery _) => new AnswerResource(answeredBy: "TypermediaAnsweringEndpoint"))
+                .ForTommand((RegisterGreetingTypermediaTommand tommand) => new GreetingRegisteredConfirmationResource(tommand.Greeting)));
+         }));
    }
 
    protected override async Task InitializeAsyncInternal() => await _host.StartAsync().caf();
@@ -87,14 +91,15 @@ public class Given_two_endpoints_composing_distributed_typermedia_on_foundations
    TResult NavigateFromTheAskingEndpoint<TResult>(Func<IRemoteTypermediaNavigator, TResult> navigate) =>
       _askingEndpoint.ServiceLocator.Resolve<IScopeFactory>().ExecuteInIsolatedScope(scope => navigate(scope.Resolve<IRemoteTypermediaNavigator>()));
 
-   ///<summary>Knows the typermedia address of every endpoint in the host, so each endpoint's typermedia router connects to all of<br/>
-   /// them — the discovery a production suite gets from a shared registry, with nothing persisted anywhere.</summary>
-   class TypermediaAddressesOfTheHostsEndpoints(Func<IReadOnlyList<IEndpoint>> hostEndpoints) : IEndpointRegistry
+   ///<summary>Knows the address of every endpoint in the host, so each endpoint's router connects to all of them — the<br/>
+   /// discovery a production suite gets from a shared registry, with nothing persisted anywhere.</summary>
+   class AddressesOfTheHostsEndpoints(Func<IReadOnlyList<IEndpoint>> hostEndpoints) : IEndpointRegistry
    {
       readonly Func<IReadOnlyList<IEndpoint>> _hostEndpoints = hostEndpoints;
 
-      public IEnumerable<EndpointAddress> ServerEndpointAddresses => [.._hostEndpoints().Where(it => it.TypermediaAddress is not null)
-                                                                                        .Select(it => it.TypermediaAddress!)];
+      public IEnumerable<EndpointAddress> ServerEndpointAddresses => [.._hostEndpoints().OfType<Endpoint>()
+                                                                                        .Where(it => it.Address is not null)
+                                                                                        .Select(it => it.Address!)];
    }
 
    protected internal class GetTheAnswerTuery : TessageTypes.Remotable.NonTransactional.Tueries.Tuery<AnswerResource>;

@@ -2,11 +2,14 @@ using Compze.Abstractions.Hosting.Public;
 using Compze.Abstractions.Wiring.Testing.Internal;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
+using Compze.Hosting;
 using Compze.Hosting.SameMachine;
 using Compze.Hosting.Testing;
 using Compze.Hosting.Testing.Wiring;
 using Compze.Internals.Testing;
 using Compze.Must;
+
+using Compze.Tessaging.Endpoints;
 
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
@@ -35,8 +38,8 @@ public class Given_a_separate_process_hosting_a_typermedia_endpoint_discovered_t
    readonly DirectoryInfo _workDirectory = null!;
    readonly InterprocessEndpointRegistry _registry = null!;
    readonly EndpointHostProcessHandle _endpointHostProcess = null!;
-   readonly ITestingEndpointHost _specificationHost = null!;
-   readonly IEndpoint _specificationEndpoint = null!;
+   readonly IEndpointHost _specificationHost = null!;
+   readonly BestEffortEndpoint _specificationEndpoint = null!;
 
    public Given_a_separate_process_hosting_a_typermedia_endpoint_discovered_through_a_shared_interprocess_registry()
    {
@@ -49,16 +52,18 @@ public class Given_a_separate_process_hosting_a_typermedia_endpoint_discovered_t
 
       _endpointHostProcess = EndpointHostProcessHandle.Start(registryName, _workDirectory, EndpointHostProcessProgram.DatabaselessComposition);
 
-      _specificationHost = TestingEndpointHost.Create();
-      _specificationEndpoint = _specificationHost.RegisterEndpoint(
+      _specificationHost = EndpointHost.Production.Create(() => TestEnv.DIContainer.CreateTestingContainerBuilder());
+      _specificationEndpoint = _specificationHost.RegisterEndpoint(container => BestEffortEndpoint.Compose(
+         container,
          "SpecificationEndpoint",
          new EndpointId(Guid.NewGuid()),
-         builder =>
+         endpoint =>
          {
-            builder.TypeMapper.MapTypesFromAssemblyContaining<TueryAskedByTheSpecificationProcess>();
-            builder.Registrar.CurrentTestsEndpointTransport();
-            builder.AddDistributedTypermedia().DiscoverEndpointsThrough(_registry);
-         });
+            endpoint.MapTypes(mapper => mapper.MapTypesFromAssemblyContaining<TueryAskedByTheSpecificationProcess>());
+            endpoint.TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport());
+            endpoint.Serializer(registrar => registrar.CurrentTestsSerializersIfNotClonedContainer());
+            endpoint.DiscoverEndpointsThrough(_registry);
+         }));
    }
 
    protected override async Task InitializeAsyncInternal()
