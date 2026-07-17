@@ -12,7 +12,7 @@ namespace Compze.Tests.Integration.Tessaging.ServiceBusSpecification.Given_a_bac
 ///<summary>A tommand binds to its one specific receiver at send time — the live handler when one is connected, otherwise the<br/>
 /// sole remembered peer whose advertisement handles the type — so a handler being down never makes the send explode, while<br/>
 /// every tessage between a sender and a receiver rides that pair's single ordered, receiver-deduped delivery stream: the<br/>
-/// exactly-once in-order guarantee holds by construction (see <c>dev_docs/TODO/durable-peer-topology.md</c>, which also records<br/>
+/// exactly-once in-order guarantee holds by construction (see <c>dev_docs/TODO/WIP/Tessaging/durable-peer-topology.md</c>, which also records<br/>
 /// why routing at delivery time was tried and retracted).</summary>
 [LongRunning]
 public class Tommand_receiver_binding_tests : EndpointHostTestBase

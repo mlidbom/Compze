@@ -76,7 +76,7 @@ Which rung an edge lands on:
   whatever the tevent's type.
 
 **Exactly-once membership is remembered, not live**: an exactly-once tevent's receivers are the peers whose
-remembered advertisement subscribes to it (the peer registry — `dev_docs/TODO/durable-peer-topology.md` at
+remembered advertisement subscribes to it (the peer registry — `dev_docs/TODO/WIP/Tessaging/durable-peer-topology.md` at
 the repo root), never the connections that happen to be live at publish time. A subscribing peer that is
 down when the tevent is published receives it on its return.
 
@@ -129,7 +129,7 @@ paired with one ambient transaction, begun and completed together (see
 unit-of-work publisher, which joins it; code outside any publishes through the independent publisher, which
 gives each publish its own. The same duality repeats across the front doors:
 `IUnitOfWorkTommandSender`/`IIndependentTommandSender` for sending tommands, and
-`ISessionLocalTypermediaNavigator`/`IIndependentLocalTypermediaNavigator` for navigating the local
+`ILocalTypermediaNavigatorSession`/`IIndependentLocalTypermediaNavigator` for navigating the local
 typermedia API.
 
 ### `IUnitOfWorkTeventPublisher` — publish within the caller's unit of work
@@ -266,7 +266,7 @@ Per rung:
 - **Best-effort: in order, across the subscriber's downtime.** Every remembered subscriber has an in-memory
   queue on the publisher that outlives connections: tevents published while the subscriber is down accumulate
   in publish order and its next connection drains them on its return — queue-while-down (see
-  `dev_docs/TODO/durable-peer-topology.md` at the repo root). A delivery failure *pauses* the stream whole:
+  `dev_docs/TODO/WIP/Tessaging/durable-peer-topology.md` at the repo root). A delivery failure *pauses* the stream whole:
   the one tevent in flight at the failure is dropped, loudly — without receiver dedup a re-send could
   duplicate it, and nothing on this tier is ever re-sent — while everything queued behind it stays queued in
   order, resuming when the peer answers a tessage-free probe or reconnects. There is never a silent
@@ -287,7 +287,7 @@ subscription-side election at all: an `IExactlyOnceTommand`'s type is its delive
 transactional, asynchronous), sent through `IUnitOfWorkTommandSender.Send`, and an endpoint even
 routes tommands to *itself* through the outbox so the guarantee holds. A tommand binds to its one specific
 receiver at send time — the live handler when one is connected, otherwise the sole remembered peer whose
-advertisement handles the type (`dev_docs/TODO/durable-peer-topology.md` at the repo root) — so a
+advertisement handles the type (`dev_docs/TODO/WIP/Tessaging/durable-peer-topology.md` at the repo root) — so a
 known-but-down handler receives the tommand on its return without the send exploding, while every tessage
 between a sender and a receiver rides that pair's single ordered, receiver-deduped delivery stream:
 exactly-once in-order holds by construction. An in-flight tommand therefore never delivers to a blue/green

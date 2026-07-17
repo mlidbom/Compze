@@ -5,6 +5,6 @@ namespace Compze.Tessaging.Implementation.TessageHandling.Dispatching;
 ///<summary>Thrown when a tommand is sent whose type nothing known handles: neither this endpoint's own handlers nor any<br/>
 /// remembered peer's advertisement (see <see cref="Peers.IPeerRegistry"/>). A tommand binds to a specific receiver at send<br/>
 /// time, and an endpoint handling the type must have been met at least once to be bound to — first contact is the boundary<br/>
-/// (see <c>dev_docs/TODO/durable-peer-topology.md</c>).</summary>
+/// (see <c>dev_docs/TODO/WIP/Tessaging/durable-peer-topology.md</c>).</summary>
 class NoHandlerForTessageTypeException(Type tommandType) : Exception(
    $"Nothing handles the tommand type {tommandType.GetFullNameCompilable()}: neither this endpoint's own handlers nor any remembered peer's advertisement. An endpoint that handles it must have been met at least once before sends can route to it.");

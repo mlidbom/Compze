@@ -3,7 +3,7 @@ using Compze.Abstractions.Hosting.Public;
 namespace Compze.Tessaging.Implementation.Peers;
 
 ///<summary>The administrative operations on the endpoint's peer memory — the surface the future bus-management endpoints exist<br/>
-/// to expose (see <c>dev_docs/TODO/durable-peer-topology.md</c>). Every transport-speaking endpoint registers one, alongside its<br/>
+/// to expose (see <c>dev_docs/TODO/WIP/Tessaging/durable-peer-topology.md</c>). Every transport-speaking endpoint registers one, alongside its<br/>
 /// <see cref="IPeerRegistry"/>.</summary>
 public interface IPeerAdministration
 {

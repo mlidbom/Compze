@@ -215,7 +215,7 @@ public abstract class EndpointHostTestBase : UniversalTestBase
    ///<summary>Starts a host in which the Remote endpoint returns with a shrunk advertisement: it no longer handles<br/>
    /// <see cref="MyExactlyOnceTommandHandledByTheRemoteEndpoint"/>, while every tevent subscription remains — the deployment<br/>
    /// where a handler was removed from an endpoint that keeps its identity (see the advertisement lifecycle in<br/>
-   /// <c>dev_docs/TODO/durable-peer-topology.md</c>).</summary>
+   /// <c>dev_docs/TODO/WIP/Tessaging/durable-peer-topology.md</c>).</summary>
    protected async Task StartHostWithTheRemoteEndpointReturningNoLongerHandlingItsTommandAsync()
    {
       CreateHostAndRegisterBackendEndpoint();

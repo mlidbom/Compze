@@ -111,7 +111,7 @@ public class DistributedTessagingEndpointFeature
    /// being code. Every tevent published before a required peer's first advertisement is held for it — in order, within the<br/>
    /// queue bound — and the subset matching its subscriptions delivers when it is first met, so startup ordering stops<br/>
    /// mattering: nothing a required peer should see is lost to the discovery race<br/>
-   /// (see <c>dev_docs/TODO/durable-peer-topology.md</c>). Declare before the host starts, like every composition declaration.</summary>
+   /// (see <c>dev_docs/TODO/WIP/Tessaging/durable-peer-topology.md</c>). Declare before the host starts, like every composition declaration.</summary>
    public DistributedTessagingEndpointFeature RequirePeers(params EndpointId[] requiredPeers)
    {
       State.Assert(!requiredPeers.Contains(_endpointId), () => "An endpoint cannot require itself: a peer is another endpoint, and tevents to the endpoint's own handlers are delivered in-process.");
@@ -121,7 +121,7 @@ public class DistributedTessagingEndpointFeature
    }
 
    ///<summary>Declares peers this endpoint deliberately keeps nothing for — the per-peer opt-down from queue-while-down<br/>
-   /// (see <c>dev_docs/TODO/durable-peer-topology.md</c>). Ephemerality is a property of the relationship, not of the endpoint:<br/>
+   /// (see <c>dev_docs/TODO/WIP/Tessaging/durable-peer-topology.md</c>). Ephemerality is a property of the relationship, not of the endpoint:<br/>
    /// an application that requires its billing peer may genuinely not care whether the statistics collector is up. A tevent for<br/>
    /// a not-queued-for peer is delivered only while the peer is connected: published while it is down, the tevent is dropped,<br/>
    /// and a delivery failure drops the peer's queued stream whole — the subscriber resumes from tevents published after its<br/>

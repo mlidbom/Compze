@@ -15,7 +15,7 @@ Every piece of work the framework runs falls into exactly one of three context k
 
 | Context | Mechanics | Who runs in it |
 |---|---|---|
-| **Unit of work** | fresh scope + transaction (`ExecuteUnitOfWork`) | tommand handlers, exactly-once inbox processing, transient tevent dispatch, every independent door's mutating verb |
+| **Unit of work** | fresh scope + transaction (`ExecuteUnitOfWork`) | tommand handlers, exactly-once inbox processing, best-effort tevent dispatch, every independent door's mutating verb |
 | **Isolated scope** | fresh scope, no transaction of its own (`ExecuteInIsolatedScope`); an ambient transaction, if the caller has one, is left as-is so reads join its consistency | tuery handlers, discovery queries |
 | **Detached** | fresh scope + ambient transaction actively **suppressed** | observation handlers |
 
@@ -38,7 +38,7 @@ express which:
 - **Tevent participation handlers** receive `IUnitOfWorkResolver` too: every delivery path runs them inside
   a unit of work — the publisher's own for a local publish (asserted: `IUnitOfWorkTeventPublisher` throws
   with no ambient transaction), the inbox processing's own for an exactly-once arrival, the direct
-  dispatch's own for a transient arrival. Observation handlers, delivered detached from any transaction by
+  dispatch's own for a best-effort arrival. Observation handlers, delivered detached from any transaction by
   contract, have their own registrar and keep `IScopeResolver`.
 
 Beyond resolution, the resolver is the unit of work's handle: `Id` (a `UnitOfWorkId`, backed by the
@@ -88,7 +88,7 @@ context — the same duality `IRootResolver`/`IScopeResolver` expresses at the c
 |---|---|
 | `IUnitOfWorkTeventPublisher` | `IIndependentTeventPublisher` |
 | `IUnitOfWorkTommandSender` (formerly `IServiceBusSession` — a misnomer twice over: no conversational state, and its requirement is the unit of work, not merely the session) | `IIndependentTommandSender` |
-| `ISessionLocalTypermediaNavigator` (formerly `IInProcessTypermediaNavigator`) | `IIndependentLocalTypermediaNavigator` (tommands = own unit of work; tueries = own isolated scope) |
+| `ILocalTypermediaNavigatorSession` (formerly `IInProcessTypermediaNavigator`) | `IIndependentLocalTypermediaNavigator` (tommands = own unit of work; tueries = own isolated scope) |
 | — | `IRemoteTypermediaNavigator`: independent by *nature* — remote typermedia sends are forbidden inside a transaction, so there is no within-the-caller's-context flavor to pair with, and no qualifier |
 
 The left column's prefix is the weakest context the component's whole surface requires. The publisher and

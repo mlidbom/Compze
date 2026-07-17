@@ -1,7 +1,7 @@
 namespace Compze.Tessaging.Implementation.Peers;
 
 ///<summary>Observes the peer lifecycle events the <see cref="IPeerRegistry"/> records — first contact and advertisement<br/>
-/// replacement (see the advertisement lifecycle in <c>dev_docs/TODO/durable-peer-topology.md</c>). Registered as a component<br/>
+/// replacement (see the advertisement lifecycle in <c>dev_docs/TODO/WIP/Tessaging/durable-peer-topology.md</c>). Registered as a component<br/>
 /// set: each delivery tier that keeps tessages for peers contributes the observer that keeps what it holds consistent with<br/>
 /// what the peer's advertisement declares — the outbox contributes one; an endpoint composing no such tier has none.</summary>
 ///<remarks>The registry notifies observers from inside <see cref="IPeerRegistry.RecordAdvertisement"/> — on the durable<br/>

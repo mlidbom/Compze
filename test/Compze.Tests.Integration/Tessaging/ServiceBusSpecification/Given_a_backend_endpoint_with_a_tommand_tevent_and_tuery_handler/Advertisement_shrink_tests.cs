@@ -13,7 +13,7 @@ using Compze.TypeIdentifiers;
 namespace Compze.Tests.Integration.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler;
 
 ///<summary>A shrunk advertisement is the peer's own explicit declaration — an unsubscribe by the subscription's owner — and<br/>
-/// what the outbox owes the peer follows it (see the advertisement lifecycle in <c>dev_docs/TODO/durable-peer-topology.md</c>):<br/>
+/// what the outbox owes the peer follows it (see the advertisement lifecycle in <c>dev_docs/TODO/WIP/Tessaging/durable-peer-topology.md</c>):<br/>
 /// undelivered tevents whose subscriptions the peer renounced are discarded, loudly, and undelivered tommands of types the peer<br/>
 /// no longer handles are stranded, loudly — kept, but excluded from the recovery backlog until resolved explicitly, because<br/>
 /// delivering them would fail on an endpoint that no longer has the handler.</summary>

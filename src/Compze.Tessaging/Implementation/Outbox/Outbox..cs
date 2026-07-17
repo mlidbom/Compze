@@ -87,7 +87,7 @@ partial class Outbox : IOutbox
       //The tommand binds to its one specific receiver here, at send: every tessage between a sender and a receiver rides that
       //pair's single ordered, receiver-deduped delivery stream, which is what makes exactly-once in-order hold by construction.
       //(Routing at delivery time was tried and retracted: re-delivery could reach an endpoint whose inbox never saw the
-      //tommand, breaking exactly-once across handler replacement - see dev_docs/TODO/durable-peer-topology.md.)
+      //tommand, breaking exactly-once across handler replacement - see dev_docs/TODO/WIP/Tessaging/durable-peer-topology.md.)
       var receiverId = ResolveReceiver(exactlyOnceTommand);
       _storage.SaveTessage(exactlyOnceTommand, exactlyOnceTommand.Id, receiverId);
 

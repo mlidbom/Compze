@@ -165,7 +165,7 @@ class TessagingRouter : ITessagingRouter, IDisposable
       await connection.InitAsync().caf();
 
       //Peer memory is recorded on every advertisement fetch: first contact creates the peer, a re-fetch replaces its stored
-      //advertisement (see dev_docs/TODO/durable-peer-topology.md). The endpoint itself is not a peer - a peer is another endpoint.
+      //advertisement (see dev_docs/TODO/WIP/Tessaging/durable-peer-topology.md). The endpoint itself is not a peer - a peer is another endpoint.
       if(connection.EndpointInformation.Id != _configuration.Id)
       {
          try

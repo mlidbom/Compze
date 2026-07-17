@@ -8,7 +8,7 @@ using Compze.Tests.Infrastructure.XUnit;
 
 namespace Compze.Tests.Integration.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler;
 
-///<summary>The peer registry (see <c>dev_docs/TODO/durable-peer-topology.md</c>): an exactly-once endpoint durably remembers the<br/>
+///<summary>The peer registry (see <c>dev_docs/TODO/WIP/Tessaging/durable-peer-topology.md</c>): an exactly-once endpoint durably remembers the<br/>
 /// peers it has met — each peer's identity and last-known advertisement, recorded on every advertisement fetch, mirrored in<br/>
 /// memory, and persisted in the endpoint's database.</summary>
 public class Peer_registry_tests : EndpointHostTestBase

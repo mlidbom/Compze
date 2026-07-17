@@ -7,7 +7,7 @@ namespace Compze.Tessaging.Implementation.Peers;
 ///<summary>The endpoint's memory of its peers — the endpoints it works with: each peer's identity and its last-known<br/>
 /// advertisement (which remotable tessage types it handles and subscribes to). Written on every advertisement fetch, it is<br/>
 /// what lets delivery membership stop depending on liveness: a peer is remembered while down — absence (a crash, a clean stop)<br/>
-/// is never forgetting (see <c>dev_docs/TODO/durable-peer-topology.md</c>).</summary>
+/// is never forgetting (see <c>dev_docs/TODO/WIP/Tessaging/durable-peer-topology.md</c>).</summary>
 ///<remarks>Why it exists: without it, remote tevent fan-out was decided by the live connections at publish time, so a<br/>
 /// subscriber that was down when a tevent was published — a routine rolling restart sufficed — silently never received it.</remarks>
 ///<remarks>Every transport-speaking endpoint registers exactly one, through the distributed Tessaging core. Durability follows<br/>

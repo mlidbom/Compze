@@ -14,7 +14,7 @@ namespace Compze.Tessaging.Implementation.BestEffortDelivery;
 /// peer (<see cref="PeerQueue"/>), owned here — never by a connection — so the queue survives connection churn. The<br/>
 /// <see cref="BestEffortTeventDeliveryLeg"/> enqueues into it on commit whether or not the peer is currently connected, and the<br/>
 /// connection's best-effort delivery stream drains the peer's queue while one is live: a known peer that is down accumulates its<br/>
-/// tessages in order and receives them on its return (see <c>dev_docs/TODO/durable-peer-topology.md</c>). Being memory, it<br/>
+/// tessages in order and receives them on its return (see <c>dev_docs/TODO/WIP/Tessaging/durable-peer-topology.md</c>). Being memory, it<br/>
 /// promises nothing across a crash of this process — that is the exactly-once tier's job.</summary>
 ///<remarks>A required peer the endpoint has never met (<c>RequirePeers</c> on the distributed Tessaging feature) has its queue<br/>
 /// from the start, awaiting first contact: everything published is held for it — its subscriptions are unknown until its first<br/>
@@ -24,7 +24,7 @@ partial class BestEffortTeventQueues : IDisposable, IPeerDecommissionParticipant
 {
    ///<summary>The bound on each peer's queue — generous: a lot of tevents, little memory on current hardware. A publish that<br/>
    /// would exceed it fails loud (<see cref="BestEffortTeventQueueOverflowException"/>): backpressure loses nothing, while<br/>
-   /// silently shedding queued tevents does (see <c>dev_docs/TODO/durable-peer-topology.md</c>).</summary>
+   /// silently shedding queued tevents does (see <c>dev_docs/TODO/WIP/Tessaging/durable-peer-topology.md</c>).</summary>
    internal const int MaximumQueuedTeventsPerPeer = 10_000;
 
    readonly ITypeMap _typeMap;

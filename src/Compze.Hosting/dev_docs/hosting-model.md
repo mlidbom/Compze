@@ -27,7 +27,7 @@ event, a *tommand* a command, a *tuery* a query.)
 
 - **Tessaging** is the asynchronous style — the service-bus conversation. Handlers publish tevents and send
   tommands; subscribers receive every tevent whose type they are compatible with; an inbox/outbox provides
-  transactional, exactly-once delivery; a scheduler delivers tommands at a future time. Tessaging is for
+  transactional, exactly-once delivery. Tessaging is for
   *telling the world what happened* and trusting it arrives.
 - **Typermedia** is the request/response style — hypermedia principles ("navigate an API by following
   links") extended with .NET types. A client navigates an endpoint's API by executing tueries and tommands
@@ -159,7 +159,7 @@ wired once whether it arrives alone or under distribution).
   Tessaging declaration.
 - **Typermedia splits two ways**, because it has no mode-exclusive service: distributed Typermedia simply
   contains in-process Typermedia. `InProcessTypermediaEndpointFeature` (in `Compze.Typermedia`,
-  `AddInProcessTypermedia()`) wires the handler registry and the `ISessionLocalTypermediaNavigator` through
+  `AddInProcessTypermedia()`) wires the handler registry and the `ILocalTypermediaNavigatorSession` through
   which strictly local tueries and tommands execute synchronously, in the caller's transaction.
   `DistributedTypermediaEndpointFeature` (in `Compze.Typermedia.Client`, `AddDistributedTypermedia()`)
   composes it and adds the handler executor that serves remote clients, discovery, and the client side
@@ -201,7 +201,7 @@ declared `IEndpointAddressAnnouncer` in the announcing phase.
 reconciling against the `IEndpointRegistry`'s membership in the sending phase (continuously, so endpoints
 that appear, disappear, or restart at a new address are followed — see
 [same-machine hosting](wip/same-machine-hosting.md)) and starts the connections' delivery streams.
-`ExactlyOnceTessagingEndpointComponent` listens with its inbox and scheduler and initializes the outbox's
+`ExactlyOnceTessagingEndpointComponent` listens with its inbox and initializes the outbox's
 durable storage — all in the listening phase, so that when sending starts anywhere, every connection's
 exactly-once stream finds the storage ready to load its recovery backlog from.
 `DistributedTypermediaEndpointComponent` mirrors the shape on the Typermedia side: the shared server serves
@@ -226,7 +226,7 @@ in-process endpoint has no address: there is nothing to connect to, ever).
 Everything above assumes an endpoint that converses with other endpoints. But both communication styles have
 a purely synchronous core that is valuable entirely on its own, inside a single process: publishing tevents
 that restructure the internal flow of an application, and executing strictly local tueries and tommands
-through the `ISessionLocalTypermediaNavigator`. Everything in that core runs synchronously, on the calling
+through the `ILocalTypermediaNavigatorSession`. Everything in that core runs synchronously, on the calling
 thread, within the caller's transaction — so there are no transports to start, no discovery, no background
 work, and therefore *nothing to host*. In-process Compze is container wiring, not hosting.
 
@@ -237,7 +237,7 @@ features are built from, so there is exactly one definition of what each style i
 var builder = /* any Compze container builder */;
 builder.Registrar
        .InProcessTessaging()    // handler registry, synchronous in-process tevent delivery, IUnitOfWorkTeventPublisher (no remote legs)
-       .InProcessTypermedia();  // handler registry, ISessionLocalTypermediaNavigator
+       .InProcessTypermedia();  // handler registry, ILocalTypermediaNavigatorSession
 var container = builder.Build();
 ```
 

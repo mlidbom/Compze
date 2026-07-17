@@ -11,7 +11,7 @@ namespace Compze.Tessaging.Implementation.Peers;
 
 ///<summary>The <see cref="IPeerRegistry"/> of a database-less endpoint: the peers met during this process's lifetime, remembered<br/>
 /// in memory (<see cref="RememberedPeers"/>) and treated the same as a durably remembered peer for as long as the process lives<br/>
-/// (see <c>dev_docs/TODO/durable-peer-topology.md</c>). Nothing survives the process — by design: the composition that persists<br/>
+/// (see <c>dev_docs/TODO/WIP/Tessaging/durable-peer-topology.md</c>). Nothing survives the process — by design: the composition that persists<br/>
 /// nothing has nowhere to keep more.</summary>
 [UsedImplicitly] class ProcessLifetimePeerRegistry : IPeerRegistry
 {
