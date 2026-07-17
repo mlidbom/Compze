@@ -4,8 +4,7 @@
 there.** The rationale and the path live in
 [style-substrate-and-hosting-evaluation.md](style-substrate-and-hosting-evaluation.md); this document never
 compares or narrates. Settled decisions are Magnus's (⚖); what is deliberately left open is listed at the
-end. Working name flagged inline: `LocalTessagingEngine` is not final. API sketches are illustrative, not
-final signatures.
+end.
 
 ## Tessaging and its two siblings
 
@@ -79,8 +78,6 @@ code in one endpoint from touching tables another endpoint considers its own. Th
 status as an aggregate boundary in DDD: a discipline the framework supports structurally and cannot police.
 
 ## The LocalTessagingEngine
-
-*(working name — the concept is settled, the final name is not)*
 
 The **LocalTessagingEngine** is the tessage-conversing heart of one container — one set of wiring. It is
 what every Tessaging application composes, and for many applications it is all of Tessaging they ever
