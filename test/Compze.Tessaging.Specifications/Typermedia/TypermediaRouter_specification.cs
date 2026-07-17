@@ -32,11 +32,11 @@ public class Given_a_started_typermedia_router_with_no_connected_endpoints : Uni
              .CurrentTestsSerializersIfNotClonedContainer()
              .CurrentTestsTypermediaClientTransport()
              .TypermediaClientTypeIdentifierMapper(_ => {})
-             .TypermediaRouter()
+             .TypermediaClientRouter()
              .RemoteTypermediaNavigator();
 
       _container = builder.Build();
-      _container.Resolve<ITypermediaRouter>().Start();
+      _container.Resolve<ITypermediaClientRouter>().Start();
       _navigator = _container.Resolve<IRemoteTypermediaNavigator>();
    }
 

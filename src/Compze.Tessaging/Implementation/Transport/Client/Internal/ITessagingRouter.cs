@@ -31,4 +31,10 @@ interface ITessagingRouter
     /// types, so matching is against the wrapper — pure type assignability. Which delivery leg the tevent travels to a matched subscriber is not routing's concern:<br/>
     /// the published tevent's own type decides that (see <see cref="Compze.Abstractions.Tessaging.Public.IUnitOfWorkTeventPublisher"/>).</summary>
     IReadOnlyList<ITessagingInboxConnection> SubscriberConnectionsFor(IPublisherTevent<IRemotableTevent> wrappedTevent);
+
+    ///<summary>The address of the one connected endpoint whose advertisement handles the typermedia tessage type<br/>
+    /// <paramref name="tessageType"/> — request/response routes liveness-only, so no route throws the no-handler failure and<br/>
+    /// several live handlers throw <c>MultipleHandlersForTypermediaTypeException</c> naming the endpoints, never a silent pick.<br/>
+    /// Fails loud when the endpoint declared no discovery registry: with nothing to discover through there is nothing to navigate.</summary>
+    EndpointAddress AddressOfTypermediaHandlerFor(Type tessageType);
 }

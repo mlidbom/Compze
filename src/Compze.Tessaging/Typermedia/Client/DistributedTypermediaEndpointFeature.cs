@@ -4,6 +4,7 @@ using Compze.Contracts;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Tessaging.Internals.Transport;
+using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Typermedia.HandlerRegistration;
 using Compze.Tessaging.Typermedia.Hosting;
 
@@ -12,16 +13,18 @@ namespace Compze.Tessaging.Typermedia.Client;
 ///<summary>
 /// Wires the distributed Typermedia pipeline into an endpoint: everything in-process Typermedia has
 /// (<see cref="InProcessTypermediaEndpointFeature"/>, which it composes), plus the handler executor serving
-/// remote clients, discovery, and the client side through which the endpoint itself navigates other
-/// endpoints' typermedia (<see cref="IRemoteTypermediaNavigator"/>, routed by the endpoint's
-/// <see cref="ITypermediaRouter"/>). Created idempotently through
+/// remote clients, and the client side through which the endpoint itself navigates other endpoints'
+/// typermedia (<see cref="IRemoteTypermediaNavigator"/>). Created idempotently through
 /// <see cref="EndpointBuilderDistributedTypermediaExtensions.AddDistributedTypermedia(IEndpointBuilder)"/> /
 /// <see cref="IEndpointBuilder.GetOrAddFeature{TFeature}"/>: this is how distributed Typermedia plugs into a
 /// hosting mechanism that knows nothing of it, and the feature instance is the handle through which the
 /// endpoint's typermedia handlers are registered (<see cref="RegisterHandlers"/>).
 ///
-/// Serving is done by the endpoint's one transport server (<see cref="EndpointTransportServerFeature"/>,
-/// which it composes): the feature registers Typermedia's request-handling contribution
+/// The distributed substrate — the one transport server, the one router, discovery, and peer memory — is the
+/// distributed Tessaging core's (<see cref="DistributedTessagingEndpointFeature"/>, which this feature
+/// composes): typermedia tessages route through the endpoint's one router exactly as every other tessage kind
+/// does (<see cref="TypermediaRouting"/>), and the endpoint's one advertisement carries its typermedia types
+/// beside its TessageBus ones. The feature registers Typermedia's request-handling contribution
 /// (<see cref="TypermediaTransportServerRegistrar.TypermediaTransportServer"/>) itself — protocol-free, so the
 /// composing layer declares only the endpoint's transport protocol. The endpoint's address is exposed as the
 /// <c>TypermediaAddress</c> extension property (<see cref="EndpointTypermediaExtensions"/>).
@@ -29,35 +32,35 @@ namespace Compze.Tessaging.Typermedia.Client;
 /// How the endpoint finds the endpoints it navigates and is found by them is declared on the feature itself:
 /// <see cref="DiscoverEndpointsThrough"/> (the read side), <see cref="AnnounceAddressTo"/> (the write side), or
 /// <see cref="ParticipateIn{TRegistry}"/> (both at once, for a registry that has both faces — a same-machine
-/// suite's interprocess registry). Declaring no registry means the endpoint only serves: navigating from it
-/// fails loud naming the missing declaration (an external client connects to an explicitly known address
-/// instead — e.g. <c>TypermediaTestClient</c>). The runtime lifecycle lives in
-/// <see cref="DistributedTypermediaEndpointComponent"/>.
+/// suite's interprocess registry) — each delegating to the composed Tessaging core, where the one router's
+/// topology is declared. Declaring no registry means the endpoint only serves: navigating from it fails loud
+/// naming the missing declaration (an external client connects to an explicitly known address instead —
+/// e.g. <c>TypermediaTestClient</c>).
 ///</summary>
 public class DistributedTypermediaEndpointFeature
 {
    public TypermediaHandlerRegistrarWithDependencyInjectionSupport RegisterHandlers { get; }
 
-   readonly EndpointTransportServerFeature _transportServer;
-   IEndpointRegistry? _endpointRegistry;
+   readonly DistributedTessagingEndpointFeature _tessagingCore;
 
    ///<summary>Declares that the endpoint announces where it listens to <paramref name="announcer"/> — see<br/>
-   /// <see cref="EndpointTransportServerFeature.AnnounceAddressTo"/>, to which this delegates: the announced address is the<br/>
-   /// endpoint's one transport-server address, serving every distributed capability the endpoint speaks.</summary>
+   /// <see cref="EndpointTransportServerFeature.AnnounceAddressTo"/>, to which this delegates through the composed Tessaging<br/>
+   /// core: the announced address is the endpoint's one transport-server address, serving every distributed capability the<br/>
+   /// endpoint speaks.</summary>
    public DistributedTypermediaEndpointFeature AnnounceAddressTo(IEndpointAddressAnnouncer announcer)
    {
-      _transportServer.AnnounceAddressTo(announcer);
+      _tessagingCore.AnnounceAddressTo(announcer);
       return this;
    }
 
    ///<summary>Declares the registry through which this endpoint discovers the endpoints whose typermedia it navigates — the read<br/>
-   /// side of discovery, whose write side is <see cref="AnnounceAddressTo"/>. The endpoint's typermedia router keeps reconciling<br/>
-   /// its connections against the registry's membership. Declaring none means the endpoint only serves — navigating from it fails<br/>
-   /// loud naming this declaration as the missing piece.</summary>
+   /// side of discovery, whose write side is <see cref="AnnounceAddressTo"/>. Delegates to the composed Tessaging core: the<br/>
+   /// endpoint's one router keeps reconciling its connections against the registry's membership, and typermedia routes ride<br/>
+   /// those connections. Declaring none means the endpoint only serves — navigating from it fails loud naming this declaration<br/>
+   /// as the missing piece.</summary>
    public DistributedTypermediaEndpointFeature DiscoverEndpointsThrough(IEndpointRegistry registry)
    {
-      State.Assert(_endpointRegistry is null, () => $"The endpoint already declared the registry it discovers endpoints through — an endpoint discovers through exactly one {nameof(IEndpointRegistry)}.");
-      _endpointRegistry = registry;
+      _tessagingCore.DiscoverEndpointsThrough(registry);
       return this;
    }
 
@@ -73,21 +76,19 @@ public class DistributedTypermediaEndpointFeature
    {
       AssertTheEndpointsFoundationIsDeclared(builder.Registrar);
 
-      builder.TypeMapper.MapTypesFromAssemblyContaining<TypermediaEndpointInformation>(); // Compze.Tessaging.Typermedia.Client — the typermedia discovery types
-
+      //The distributed substrate is the Tessaging core's: one transport server, one router, one advertisement, peer memory.
+      _tessagingCore = builder.AddDistributedTessaging();
       RegisterHandlers = builder.AddInProcessTypermedia().RegisterHandlers;
-      _transportServer = EndpointTransportServerFeature.GetOrAddTo(builder);
 
       TypermediaHandlerExecutor.RegisterWith(builder.Registrar);
       builder.Registrar.TypermediaTransportServer()
              .TypermediaTransport()
-             .TypermediaRouter()
+             .TypermediaRouting()
              .RemoteTypermediaNavigator();
 
-      builder.OnContainerBuilt(resolver => TypermediaEndpointDiscoveryQueryRegistration.RegisterQueryHandlers(
-                                  new EndpointDiscoveryQueryRegistrarWithDependencyInjectionSupport(resolver.Resolve<EndpointDiscoveryQueryExecutor>())));
-
-      builder.AddComponent(resolver => new DistributedTypermediaEndpointComponent(resolver.Resolve<ITypermediaRouter>(), _transportServer, _endpointRegistry));
+      //The Typermedia side's share of the endpoint's one advertisement (see IEndpointAdvertisementContributor).
+      builder.Registrar.Register(Singleton.ForSet<IEndpointAdvertisementContributor>()
+                                          .CreatedBy((ITypermediaHandlerRegistry handlerRegistry) => new TypermediaAdvertisementContributor(handlerRegistry)));
    }
 
    ///<summary>Distributed Typermedia builds on declarations the feature cannot make itself: the endpoint's transport protocol and<br/>

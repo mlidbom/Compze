@@ -1,3 +1,4 @@
+using Compze.Tessaging.Internals.Transport;
 using Compze.Abstractions.Hosting.Public;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.DependencyInjection;
@@ -83,9 +84,9 @@ public class Peer_decommission_tests : EndpointHostTestBase
       //A tommand is bound to the never-connected peer - the sole remembered handler of its type - and the peer's replaced
       //advertisement then renounces the type: the tommand is stranded, awaiting exactly this resolution (see Advertisement_shrink_tests).
       var tommandTypeIdString = BackendEndPoint.ServiceLocator.Resolve<ITypeMap>().GetId(typeof(MyUnhandledExactlyOnceTommand)).CanonicalString;
-      BackendPeerRegistry.RecordAdvertisement(new TessagingEndpointInformation("NeverConnectedPeer", NeverConnectedPeerId, [tommandTypeIdString]));
+      BackendPeerRegistry.RecordAdvertisement(new EndpointInformation("NeverConnectedPeer", NeverConnectedPeerId, [tommandTypeIdString]));
       BackendEndPoint.ServiceLocator.Resolve<IIndependentTommandSender>().Send(new MyUnhandledExactlyOnceTommand());
-      BackendPeerRegistry.RecordAdvertisement(new TessagingEndpointInformation("NeverConnectedPeer", NeverConnectedPeerId, []));
+      BackendPeerRegistry.RecordAdvertisement(new EndpointInformation("NeverConnectedPeer", NeverConnectedPeerId, []));
 
       var strandedEntry = BackendPeerAdministration.Decommission(NeverConnectedPeerId).Discarded.Single();
 
@@ -99,9 +100,9 @@ public class Peer_decommission_tests : EndpointHostTestBase
       //A tevent is owed to the never-connected peer, whose replaced advertisement then renounces every subscription: the
       //tevent was discarded at the shrink - by the audience's own choice - not kept stranded, so the decommission finds nothing.
       var remoteAdvertisement = BackendPeerRegistry.Peers.Single(peer => peer.Id.Equals(RemoteEndpointId)).HandledTessageTypes;
-      BackendPeerRegistry.RecordAdvertisement(new TessagingEndpointInformation("NeverConnectedPeer", NeverConnectedPeerId, [..remoteAdvertisement]));
+      BackendPeerRegistry.RecordAdvertisement(new EndpointInformation("NeverConnectedPeer", NeverConnectedPeerId, [..remoteAdvertisement]));
       await Navigator.PostAsync(MyCreateTaggregateTommand.Create());
-      BackendPeerRegistry.RecordAdvertisement(new TessagingEndpointInformation("NeverConnectedPeer", NeverConnectedPeerId, []));
+      BackendPeerRegistry.RecordAdvertisement(new EndpointInformation("NeverConnectedPeer", NeverConnectedPeerId, []));
 
       BackendPeerAdministration.Decommission(NeverConnectedPeerId).Discarded.Must().BeEmpty();
    }

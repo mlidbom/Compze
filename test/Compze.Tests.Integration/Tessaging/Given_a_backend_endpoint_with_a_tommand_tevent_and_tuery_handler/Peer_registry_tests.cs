@@ -3,6 +3,7 @@ using Compze.Must;
 using Compze.Tessaging.Implementation.Peers;
 using Compze.Tessaging.Implementation.TessageHandling.Abstractions;
 using Compze.Tessaging.Transport.SqlLayer;
+using Compze.Tessaging.Typermedia.HandlerRegistration;
 using Compze.Tests.Common.Tessaging.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler;
 using Compze.Tests.Infrastructure.XUnit;
 
@@ -27,6 +28,21 @@ public class Peer_registry_tests : EndpointHostTestBase
                                          .Single(peer => peer.Id.Equals(RemoteEndpointId));
 
       persistedPeer.HandledTessageTypes.SetEquals(RemoteEndpointAdvertisedTypes).Must().BeTrue();
+   }
+
+   ///<summary>The acceptance pin that the substrate harmonization is real: one advertisement, remembered once, covers every<br/>
+   /// tessage kind — so peer memory (and with it decommission, which removes the whole remembered peer) covers typermedia<br/>
+   /// types exactly as it covers TessageBus ones.</summary>
+   [PCT] public void The_remote_endpoint_remembers_the_backends_typermedia_types_in_the_same_advertisement_as_its_tessaging_ones()
+   {
+      var rememberedBackend = RemoteEndpoint.ServiceLocator.Resolve<IPeerRegistry>().Peers
+                                            .Single(peer => peer.Id.Equals(BackendEndpointId));
+
+      var backendTypermediaTypes = BackendEndPoint.ServiceLocator.Resolve<ITypermediaHandlerRegistry>()
+                                                  .HandledRemoteTypermediaTypeIds().Select(typeId => typeId.CanonicalString).ToList();
+
+      (backendTypermediaTypes.Count > 0).Must().BeTrue();
+      backendTypermediaTypes.All(typermediaType => rememberedBackend.HandledTessageTypes.Contains(typermediaType)).Must().BeTrue();
    }
 
    HashSet<string> RemoteEndpointAdvertisedTypes =>

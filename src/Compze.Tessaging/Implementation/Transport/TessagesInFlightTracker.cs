@@ -1,3 +1,4 @@
+using Compze.Tessaging.Internals.Transport;
 using Compze.Abstractions.Public;
 using Compze.Abstractions.Hosting.Public;
 using Compze.Tessaging.Implementation.Transport.Abstractions;
@@ -67,7 +68,7 @@ public class TessagesInFlightTracker : ITessagesInFlightTracker
 
       internal void DoneWith(TransportTessage.InComing tessage, EndpointId handlingEndpointId, Exception? exception)
       {
-         if(tessage.TessageTypeId.Type == typeof(TessagingEndpointInformationQuery))
+         if(tessage.TessageTypeId.Type == typeof(EndpointInformationQuery))
             return; //this is an initial endpoint information request though which the endpoint IDs we use to track tessages is first established.
          if(exception != null)
          {

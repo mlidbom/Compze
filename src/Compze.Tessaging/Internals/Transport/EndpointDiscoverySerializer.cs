@@ -8,8 +8,8 @@ namespace Compze.Tessaging.Internals.Transport;
 ///<summary>The fixed wire format of the endpoint-discovery conversation. Deliberately not pluggable: discovery is the handshake<br/>
 /// that must work between any two Compze endpoints before anything is known about how they are composed — so the framework owns<br/>
 /// the format outright, and no serializer choice a composition makes can break two endpoints' ability to find each other.</summary>
-///<remarks>Communication styles contribute their own discovery queries (Tessaging's <c>TessagingEndpointInformationQuery</c>,<br/>
-/// Typermedia's <c>TypermediaEndpointInformationQuery</c> — each defined in its own style's assembly, which this assembly does not<br/>
+///<remarks>Communication styles contribute their own discovery queries (Tessaging's <c>EndpointInformationQuery</c>,<br/>
+/// Typermedia's <c>EndpointInformationQuery</c> — each defined in its own style's assembly, which this assembly does not<br/>
 /// reference), so the payload set is open. A contributed payload must be a plain wire shape this<br/>
 /// fixed format can handle: one deserialization constructor (<c>[JsonConstructor]</c> when there are several) whose parameters<br/>
 /// match the get-only properties, over primitives, collections, <see cref="EndpointId"/>, and <see cref="EndpointAddress"/>.</remarks>

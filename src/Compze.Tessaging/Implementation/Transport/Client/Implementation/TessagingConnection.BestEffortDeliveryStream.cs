@@ -1,3 +1,4 @@
+using Compze.Tessaging.Internals.Transport;
 using Compze.Tessaging.Implementation.BestEffortDelivery;
 using Compze.Tessaging.Implementation.Transport.Abstractions;
 using Compze.Internals.Logging;
@@ -131,7 +132,7 @@ partial class TessagingConnection
 
             try
             {
-               _connection._endpointDiscoveryQueryTransport.GetAsync(new TessagingEndpointInformationQuery(), _connection.RemoteAddress).GetAwaiter().GetResult();
+               _connection._endpointDiscoveryQueryTransport.GetAsync(new EndpointInformationQuery(), _connection.RemoteAddress).GetAwaiter().GetResult();
                this.Log().Info($"Endpoint {_connection.EndpointInformation.Id} answered the probe; best-effort delivery resumes with the queued remainder.");
                return;
             }

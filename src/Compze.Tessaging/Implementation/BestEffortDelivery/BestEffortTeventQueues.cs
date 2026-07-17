@@ -1,3 +1,4 @@
+using Compze.Tessaging.Internals.Transport;
 using System.Transactions;
 using Compze.Abstractions.Hosting.Public;
 using Compze.Contracts;
@@ -66,7 +67,7 @@ partial class BestEffortTeventQueues : IDisposable, IPeerDecommissionParticipant
    /// were unknown, is discarded. For a decommissioned peer's tombstone this is the revival: a re-announce is first contact<br/>
    /// again, so a fresh queue replaces the tombstone (a not-queued-for declaration is the composition's and survives the<br/>
    /// revival). For every other peer: its standing queue.</summary>
-   internal PeerQueue ForConnectedPeer(TessagingEndpointInformation advertisement)
+   internal PeerQueue ForConnectedPeer(EndpointInformation advertisement)
    {
       PeerQueue? tombstoneToDispose = null;
       var queue = _monitor.Locked(() =>

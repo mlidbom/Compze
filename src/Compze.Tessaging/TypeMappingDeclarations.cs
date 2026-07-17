@@ -1,5 +1,5 @@
 using Compze.TypeIdentifiers;
-using Compze.Tessaging.Implementation.Transport;
+using Compze.Tessaging.Internals.Transport;
 
 [assembly: AssemblyTypeMapper(typeof(Compze.Tessaging.AssemblyTypeMapper))]
 
@@ -9,8 +9,5 @@ namespace Compze.Tessaging;
 class AssemblyTypeMapper : IAssemblyTypeMapper
 {
    public void Map(IAssemblyTypeMappingRegistrar map)
-   {
-      map.Map<TessagingEndpointInformationQuery>("e441c4e2-cc09-4331-9dd9-c9790e72987a");
-      new Typermedia.Client.AssemblyTypeMapper().Map(map);
-   }
+      => map.Map<EndpointInformationQuery>("e441c4e2-cc09-4331-9dd9-c9790e72987a");
 }

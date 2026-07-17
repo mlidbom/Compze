@@ -93,6 +93,7 @@ public class DistributedTessagingEndpointFeature
    /// connects to no other endpoint.</summary>
    public DistributedTessagingEndpointFeature DiscoverEndpointsThrough(IEndpointRegistry registry)
    {
+      if(ReferenceEquals(_endpointRegistry, registry)) return this; //Idempotent: several features composing this core may each declare the endpoint's one registry.
       State.Assert(_endpointRegistry is null, () => $"The endpoint already declared the registry it discovers endpoints through — an endpoint discovers through exactly one {nameof(IEndpointRegistry)}.");
       _endpointRegistry = registry;
       return this;
@@ -140,8 +141,6 @@ public class DistributedTessagingEndpointFeature
       AssertTheEndpointsFoundationIsDeclared(register);
       _endpointId = builder.Configuration.Id;
 
-      builder.TypeMapper.MapTypesFromAssemblyContaining<TessagingEndpointInformationQuery>(); // Compze.Tessaging — the tessaging discovery types
-
       var inProcessTessaging = builder.AddInProcessTessaging();
       _handlerRegistrar = inProcessTessaging.RegisterHandlers;
       _transactionIgnoringTeventHandlerRegistrar = inProcessTessaging.RegisterTransactionIgnoringTeventHandlers;
@@ -161,15 +160,16 @@ public class DistributedTessagingEndpointFeature
               .TessagingTransportMessagePoster()
               .BestEffortTessagingRequestHandlers();
 
+      //The TessageBus side's share of the endpoint's one advertisement (see IEndpointAdvertisementContributor).
+      register.Register(Singleton.ForSet<IEndpointAdvertisementContributor>()
+                                 .CreatedBy((ITessageHandlerRegistry handlerRegistry) => new TessagingAdvertisementContributor(handlerRegistry)));
+
       builder.OnContainerBuilt(resolver =>
       {
          var handlerRegistry = resolver.Resolve<ITessageHandlerRegistry>();
          AssertNoRegisteredHandlerDemandsMoreThanTheEndpointDelivers(register, handlerRegistry);
          //Advertisement soundness fails at endpoint setup, not when the first peer queries: it asserts that every advertised type has a TypeId mapping and gets a route on the peers' routers.
          handlerRegistry.HandledRemoteTessageTypeIds();
-
-         TessagingEndpointDiscoveryQueryRegistration.RegisterQueryHandlers(
-            new EndpointDiscoveryQueryRegistrarWithDependencyInjectionSupport(resolver.Resolve<EndpointDiscoveryQueryExecutor>()));
       });
 
       builder.AddComponent(resolver => new DistributedTessagingEndpointComponent(resolver, _transportServer, _endpointRegistry));

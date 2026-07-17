@@ -1,3 +1,4 @@
+using Compze.Tessaging.Internals.Transport;
 using System.Transactions;
 using Compze.Abstractions.Hosting.Public;
 using Compze.Abstractions.Tessaging.Public;
@@ -34,7 +35,7 @@ namespace Compze.Tessaging.Implementation.Peers;
       _rememberedPeers.ReplaceAllWith(_sqlLayer.GetPeers().Select(peer => new RememberedPeer(peer.Id, peer.HandledTessageTypes, _typeMap)));
    }
 
-   public void RecordAdvertisement(TessagingEndpointInformation advertisement)
+   public void RecordAdvertisement(EndpointInformation advertisement)
    {
       var peer = new RememberedPeer(advertisement.Id, advertisement.HandledTessageTypes, _typeMap);
       var previous = _rememberedPeers.Find(peer.Id);

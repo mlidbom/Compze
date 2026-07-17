@@ -1,3 +1,4 @@
+using Compze.Tessaging.Internals.Transport;
 using Compze.Abstractions.Hosting.Public;
 using Compze.Hosting.Configuration;
 using Compze.Hosting.Testing;
@@ -21,14 +22,14 @@ namespace Compze.Tessaging.Hosting.Testing.Typermedia;
 public class TypermediaTestClient : IAsyncDisposable
 {
    readonly IDependencyInjectionContainer _container;
-   readonly ITypermediaRouter _typermediaRouter;
+   readonly ITypermediaClientRouter _typermediaRouter;
 
    public IRemoteTypermediaNavigator Navigator { get; }
 
    TypermediaTestClient(IDependencyInjectionContainer container)
    {
       _container = container;
-      _typermediaRouter = container.Resolve<ITypermediaRouter>();
+      _typermediaRouter = container.Resolve<ITypermediaClientRouter>();
       Navigator = container.Resolve<IRemoteTypermediaNavigator>();
    }
 
@@ -42,7 +43,7 @@ public class TypermediaTestClient : IAsyncDisposable
              .CurrentTestsTypermediaClientTransport()
              .JSonAppConfigFileConfigurationParameterProvider()
              .TypermediaClientTypeIdentifierMapper(registerDomainTypeMappings)
-             .TypermediaRouter()
+             .TypermediaClientRouter()
              .RemoteTypermediaNavigator();
 
       var client = new TypermediaTestClient(builder.Build());
@@ -73,7 +74,7 @@ public static class TypermediaClientTypeIdentifierMapperRegistrar
    {
       var mapper = new TypeMapper();
       mapper.MapTypesFromAssemblyContaining<EndpointAddress>();               // Compze.Abstractions — the shared message-type hierarchy
-      mapper.MapTypesFromAssemblyContaining<TypermediaEndpointInformation>(); // Compze.Tessaging.Typermedia.Client — the typermedia discovery types
+      mapper.MapTypesFromAssemblyContaining<EndpointInformation>(); // Compze.Tessaging.Typermedia.Client — the typermedia discovery types
       registerDomainTypeMappings(mapper);
       return @this.Register(Singleton.For<ITypeMapper>().Instance(mapper))
                   .Register(Singleton.For<ITypeMap>().Instance(mapper));

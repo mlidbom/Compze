@@ -9,13 +9,16 @@ namespace Compze.Tessaging.Implementation.Peers;
 /// advertisement, with the advertised type strings resolved to types once, when the peer is remembered — so<br/>
 /// <see cref="SubscribesTo"/> and <see cref="Handles"/> are pure type checks on every publish and send. The advertisement<br/>
 /// partitions the way the router's route registration partitions it: tevent subscriptions are wrapper types matched by<br/>
-/// assignability, everything else is a tommand type matched exactly — so the registry and the routes always agree.</summary>
+/// assignability, exactly-once tommand types are matched exactly — so the registry and the routes always agree. The peer's<br/>
+/// typermedia types ride in the one advertisement too (<see cref="HandledTessageTypes"/>): request/response takes no part in<br/>
+/// TessageBus delivery binding, but remembering them is what the readiness/waiting-sends effort's known-but-down distinction<br/>
+/// is computed from.</summary>
 public class RememberedPeer
 {
    ///<summary>The peer's identity — stable across restarts and address changes.</summary>
    public EndpointId Id { get; }
 
-   ///<summary>The peer's last-known advertisement: the canonical type-id strings of every remotable tessage type it handles and subscribes to.</summary>
+   ///<summary>The peer's last-known advertisement: the canonical type-id strings of every remotable tessage type it serves, of every kind.</summary>
    public IReadOnlySet<string> HandledTessageTypes { get; }
 
    readonly IReadOnlyList<Type> _teventSubscriptions;
@@ -27,7 +30,7 @@ public class RememberedPeer
       HandledTessageTypes = handledTessageTypes;
       var advertisedTypes = handledTessageTypes.Select(typeIdString => typeMap.GetId(typeIdString).Type).ToList();
       _teventSubscriptions = [..advertisedTypes.Where(advertisedType => advertisedType.Is<ITevent>())];
-      _handledTommandTypes = [..advertisedTypes.Where(advertisedType => !advertisedType.Is<ITevent>())];
+      _handledTommandTypes = [..advertisedTypes.Where(advertisedType => advertisedType.Is<IExactlyOnceTommand>())];
    }
 
    ///<summary>Whether this peer's last-known advertisement subscribes to <paramref name="wrappedTevent"/> — the same<br/>

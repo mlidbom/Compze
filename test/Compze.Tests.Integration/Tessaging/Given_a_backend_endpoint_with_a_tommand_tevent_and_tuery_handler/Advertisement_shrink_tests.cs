@@ -1,3 +1,4 @@
+using Compze.Tessaging.Internals.Transport;
 using Compze.Abstractions.Hosting.Public;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.DependencyInjection;
@@ -29,14 +30,14 @@ public class Advertisement_shrink_tests : EndpointHostTestBase
    {
       //The never-connected peer's first advertisement copies the Remote endpoint's, taggregate tevent subscriptions included.
       var remoteAdvertisement = BackendPeerRegistry.Peers.Single(peer => peer.Id.Equals(RemoteEndpointId)).HandledTessageTypes;
-      BackendPeerRegistry.RecordAdvertisement(new TessagingEndpointInformation("NeverConnectedPeer", NeverConnectedPeerId, [..remoteAdvertisement]));
+      BackendPeerRegistry.RecordAdvertisement(new EndpointInformation("NeverConnectedPeer", NeverConnectedPeerId, [..remoteAdvertisement]));
 
       //Publishes IMyTaggregateTevent exactly-once: fan-out reads the remembered subscribers, so the never-connected peer gets its undelivered row.
       await Navigator.PostAsync(MyCreateTaggregateTommand.Create());
       BackendOutboxSqlLayer.GetUndeliveredTessagesForEndpoint(NeverConnectedPeerId).Must().HaveCount(1);
 
       //The peer's replaced advertisement renounces every subscription: the tevent lost its audience by that audience's own choice.
-      BackendPeerRegistry.RecordAdvertisement(new TessagingEndpointInformation("NeverConnectedPeer", NeverConnectedPeerId, []));
+      BackendPeerRegistry.RecordAdvertisement(new EndpointInformation("NeverConnectedPeer", NeverConnectedPeerId, []));
 
       BackendOutboxSqlLayer.GetUndeliveredTessagesForEndpoint(NeverConnectedPeerId).Must().BeEmpty();
    }
@@ -45,14 +46,14 @@ public class Advertisement_shrink_tests : EndpointHostTestBase
    {
       //The never-connected peer's first advertisement is the sole remembered handler of MyUnhandledExactlyOnceTommand - a type no real endpoint in this suite handles.
       var tommandTypeIdString = BackendEndPoint.ServiceLocator.Resolve<ITypeMap>().GetId(typeof(MyUnhandledExactlyOnceTommand)).CanonicalString;
-      BackendPeerRegistry.RecordAdvertisement(new TessagingEndpointInformation("NeverConnectedPeer", NeverConnectedPeerId, [tommandTypeIdString]));
+      BackendPeerRegistry.RecordAdvertisement(new EndpointInformation("NeverConnectedPeer", NeverConnectedPeerId, [tommandTypeIdString]));
 
       //The send binds to the sole remembered handler - the never-connected peer - and waits for its return.
       BackendEndPoint.ServiceLocator.Resolve<IIndependentTommandSender>().Send(new MyUnhandledExactlyOnceTommand());
       BackendOutboxSqlLayer.GetUndeliveredTessagesForEndpoint(NeverConnectedPeerId).Must().HaveCount(1);
 
       //The peer's replaced advertisement no longer handles the type: the tommand is stranded - kept, but never delivered to an endpoint that no longer has the handler.
-      BackendPeerRegistry.RecordAdvertisement(new TessagingEndpointInformation("NeverConnectedPeer", NeverConnectedPeerId, []));
+      BackendPeerRegistry.RecordAdvertisement(new EndpointInformation("NeverConnectedPeer", NeverConnectedPeerId, []));
 
       BackendOutboxSqlLayer.GetUndeliveredTessagesForEndpoint(NeverConnectedPeerId).Must().BeEmpty();
    }

@@ -1,3 +1,4 @@
+using Compze.Tessaging.Internals.Transport;
 using Compze.Abstractions.Hosting.Public;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Tessaging.Implementation.Transport;
@@ -18,7 +19,7 @@ public interface IPeerRegistry
 {
    ///<summary>Records <paramref name="advertisement"/> as the advertising peer's current one, replacing what was stored —<br/>
    /// creating the peer on first contact.</summary>
-   void RecordAdvertisement(TessagingEndpointInformation advertisement);
+   void RecordAdvertisement(EndpointInformation advertisement);
 
    ///<summary>Every remembered peer, with its last-known advertisement. Served from memory: the registry mirrors its backing<br/>
    /// store, loaded at start and updated on every <see cref="RecordAdvertisement"/>.</summary>

@@ -7,10 +7,12 @@ using Compze.Tessaging.Implementation.Peers;
 using Compze.Tessaging.Implementation.Transport.Abstractions;
 using Compze.Tessaging.Implementation.Transport.Client.Internal;
 using Compze.Tessaging.SystemCE.ThreadingCE;
+using Compze.Tessaging.Typermedia.Client;
 using Compze.Contracts;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Logging;
+using Compze.Internals.SystemCE.CollectionsCE.GenericCE;
 using Compze.Internals.SystemCE.ReflectionCE;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Threading;
@@ -60,6 +62,9 @@ class TessagingRouter : ITessagingRouter, IDisposable
 
    readonly Dictionary<EndpointId, TessagingConnection> _connections = new();
    readonly Dictionary<Type, TessagingConnection> _tommandHandlerRoutes = new();
+   //Multi-entry, deliberately: several live endpoints advertising one typermedia type is a diagnosable send-time condition
+   //(MultipleHandlersForTypermediaTypeException), never a rebuild failure and never a silent pick.
+   readonly Dictionary<Type, List<TessagingConnection>> _typermediaHandlerRoutes = new();
    readonly List<(Type TeventType, TessagingConnection Connection)> _teventSubscriberRoutes = [];
    readonly Dictionary<Type, IReadOnlyList<TessagingConnection>> _teventSubscriberRouteCache = new();
 
@@ -235,6 +240,7 @@ class TessagingRouter : ITessagingRouter, IDisposable
    void RebuildRoutes()
    {
       _tommandHandlerRoutes.Clear();
+      _typermediaHandlerRoutes.Clear();
       _teventSubscriberRoutes.Clear();
       _teventSubscriberRouteCache.Clear();
       foreach(var connection in _connections.Values)
@@ -258,10 +264,13 @@ class TessagingRouter : ITessagingRouter, IDisposable
             State.Assert(tessageType.Is<IPublisherTevent<IRemotableTevent>>(),
                          () => $"Endpoint {connection.EndpointInformation.Id} advertises the tevent subscription {tessageType.FullName}, which no route can serve: an advertised tevent subscription is the wrapper type matching every wrapping of a remotable tevent type ({nameof(IPublisherTevent<>)}<{nameof(IRemotableTevent)}>). Every advertised type must get a route — a subscription must never be silently dropped.");
             _teventSubscriberRoutes.Add((tessageType, connection));
+         } else if(tessageType.Is<IAtMostOnceTypermediaTommand>() || tessageType.Is<IRemotableTuery<object>>())
+         {
+            _typermediaHandlerRoutes.GetOrAdd(tessageType, () => []).Add(connection);
          } else
          {
             State.Assert(tessageType.Is<IExactlyOnceTommand>(),
-                         () => $"Endpoint {connection.EndpointInformation.Id} advertises the tessage type {tessageType.FullName}, which no route can serve: Tessaging routes tommands exactly-once only ({nameof(IExactlyOnceTommand)} — see src/Compze.Tessaging/dev_docs/tevent-delivery-model.md). Every advertised type must get a route — a subscription must never be silently dropped.");
+                         () => $"Endpoint {connection.EndpointInformation.Id} advertises the tessage type {tessageType.FullName}, which no route can serve: TessageBus tommands route exactly-once only ({nameof(IExactlyOnceTommand)} — see src/Compze.Tessaging/dev_docs/tevent-delivery-model.md). Every advertised type must get a route — a subscription must never be silently dropped.");
             _tommandHandlerRoutes.Add(tessageType, connection);
          }
       }
@@ -278,6 +287,19 @@ class TessagingRouter : ITessagingRouter, IDisposable
    public ITessagingInboxConnection? LiveConnectionToHandlerFor(IRemotableTommand tommand) =>
       _monitor.Locked(() =>
          AssertNotStopped().__(() => _tommandHandlerRoutes.GetValueOrDefault(tommand.GetType())));
+
+   public EndpointAddress AddressOfTypermediaHandlerFor(Type tessageType) =>
+      _monitor.Locked(() =>
+      {
+         AssertNotStopped();
+         State.Assert(_endpointRegistry is not null,
+                      () => "Remote typermedia navigation requires the registry the endpoint discovers other endpoints through — declare DiscoverEndpointsThrough/ParticipateIn on the endpoint's distributed feature. (An external client application navigates explicitly known addresses through the typermedia client router instead.)");
+         return _typermediaHandlerRoutes.TryGetValue(tessageType, out var connections)
+                   ? connections.Count == 1
+                        ? connections[0].RemoteAddress
+                        : throw new MultipleHandlersForTypermediaTypeException(tessageType, [..connections.Select(connection => connection.EndpointInformation.Id)])
+                   : throw new NoHandlerForTypermediaTypeException(tessageType);
+      });
 
    public IReadOnlyList<ITessagingInboxConnection> SubscriberConnectionsFor(IPublisherTevent<IRemotableTevent> wrappedTevent) =>
       _monitor.Locked(() =>

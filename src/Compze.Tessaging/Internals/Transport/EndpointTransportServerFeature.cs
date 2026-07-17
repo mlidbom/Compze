@@ -1,6 +1,7 @@
 using Compze.Abstractions.Hosting.Public;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
+using Compze.TypeIdentifiers;
 
 namespace Compze.Tessaging.Internals.Transport;
 
@@ -20,7 +21,15 @@ public class EndpointTransportServerFeature
    ///<summary>Composes the feature into <paramref name="builder"/>'s endpoint, creating it if no other communication style already did.</summary>
    public static EndpointTransportServerFeature GetOrAddTo(IEndpointBuilder builder) => builder.GetOrAddFeature(it => new EndpointTransportServerFeature(it));
 
-   EndpointTransportServerFeature(IEndpointBuilder builder) =>
+   EndpointTransportServerFeature(IEndpointBuilder builder)
+   {
+      builder.TypeMapper.MapTypesFromAssemblyContaining<EndpointInformationQuery>(); // Compze.Tessaging — the endpoint-discovery types
+
+      //The one discovery question every transport-speaking endpoint serves: its answer is the endpoint's one advertisement,
+      //unioned from every communication style's contribution (see IEndpointAdvertisementContributor).
+      builder.OnContainerBuilt(resolver => EndpointInformationQueryRegistration.RegisterQueryHandlers(
+                                  new EndpointDiscoveryQueryRegistrarWithDependencyInjectionSupport(resolver.Resolve<EndpointDiscoveryQueryExecutor>())));
+
       builder.AddComponent(resolver =>
       {
          var component = new EndpointTransportServerComponent(resolver.Resolve<IEndpointTransportServer>(),
@@ -29,6 +38,7 @@ public class EndpointTransportServerFeature
          _component = component;
          return component;
       });
+   }
 
    ///<summary>Declares that the endpoint announces where it listens to <paramref name="announcer"/>. The announcement is made in the<br/>
    /// host's announcing phase — after every endpoint in the host has finished starting to listen and before any endpoint starts<br/>
@@ -36,7 +46,11 @@ public class EndpointTransportServerFeature
    /// endpoint the host announced; it is retracted in the mirror phase, before any sending stops, so the address stops being advertised<br/>
    /// before anything goes deaf. An endpoint announces to every announcer declared; declaring none means the endpoint is found some<br/>
    /// other way (a fixed address list) or only serves.</summary>
-   public void AnnounceAddressTo(IEndpointAddressAnnouncer announcer) => _addressAnnouncers.Add(announcer);
+   public void AnnounceAddressTo(IEndpointAddressAnnouncer announcer)
+   {
+      //Idempotent for the same announcer: several features composing the endpoint may each declare the endpoint's one registry.
+      if(!_addressAnnouncers.Contains(announcer)) _addressAnnouncers.Add(announcer);
+   }
 
    ///<summary>The address where the endpoint's transport server listens; null until it is listening.</summary>
    public EndpointAddress? ListeningAddress => _component?.ListeningAddress;

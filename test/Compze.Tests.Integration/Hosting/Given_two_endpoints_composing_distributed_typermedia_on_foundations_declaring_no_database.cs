@@ -82,7 +82,7 @@ public class Given_two_endpoints_composing_distributed_typermedia_on_foundations
    [PCT] public void navigating_from_the_endpoint_that_declared_no_discovery_registry_fails_loud_naming_the_missing_declaration() =>
       Invoking(() => _answeringEndpoint.ServiceLocator.Resolve<IScopeFactory>().ExecuteInIsolatedScope(
                   scope => scope.Resolve<IRemoteTypermediaNavigator>().Get(new GetTheAnswerTuery())))
-        .Must().Throw<Exception>().Which.Message.Must().Contain("declares the registry it discovers other endpoints through");
+        .Must().Throw<Exception>().Which.Message.Must().Contain("DiscoverEndpointsThrough/ParticipateIn");
 
    TResult NavigateFromTheAskingEndpoint<TResult>(Func<IRemoteTypermediaNavigator, TResult> navigate) =>
       _askingEndpoint.ServiceLocator.Resolve<IScopeFactory>().ExecuteInIsolatedScope(scope => navigate(scope.Resolve<IRemoteTypermediaNavigator>()));
