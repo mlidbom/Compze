@@ -21,12 +21,12 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_DependencyInjection)' != 'true'">
     <ProjectReference Include="..\Compze.DependencyInjection\Compze.DependencyInjection.csproj" />
   </ItemGroup>
-  <!-- Compze.Tessaging.Abstractions — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging_Abstractions)' == 'true'">
-    <PackageReference Include="Compze.Tessaging.Abstractions" Version="*-*" />
+  <!-- Compze.Tessaging — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging)' == 'true'">
+    <PackageReference Include="Compze.Tessaging" Version="*-*" />
   </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging_Abstractions)' != 'true'">
-    <ProjectReference Include="..\Compze.Tessaging.Abstractions\Compze.Tessaging.Abstractions.csproj" />
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging)' != 'true'">
+    <ProjectReference Include="..\Compze.Tessaging\Compze.Tessaging.csproj" />
   </ItemGroup>
   <!-- Compze.Teventive — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Teventive)' == 'true'">

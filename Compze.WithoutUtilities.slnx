@@ -24,7 +24,6 @@
   </Folder>
   <Project Path="src/Compze.Abstractions/Compze.Abstractions.csproj" />
   <Project Path="src/Compze.Core/Compze.Core.csproj" />
-  <Project Path="src/Compze.Tessaging.Abstractions/Compze.Tessaging.Abstractions.csproj" />
   <Project Path="src/Compze.DocumentDb/Compze.DocumentDb.csproj" />
   <Project Path="src/Compze.Internals.Serialization.Newtonsoft/Compze.Internals.Serialization.Newtonsoft.csproj" />
 </Solution>

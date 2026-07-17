@@ -1,6 +1,6 @@
 using Compze.Abstractions.Hosting.Public;
 using Compze.Abstractions.Tessaging.Public;
-using Compze.Tessaging.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
+using Compze.Tessaging.TessageHandling.Registration.Public;
 
 namespace Compze.Tessaging.Hosting;
 

@@ -1,6 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using Compze.TypeIdentifiers;
-using Compze.Tessaging.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
+using Compze.Tessaging.TessageHandling.Registration.Public;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Abstractions.Tessaging.Validation;
 using Compze.Contracts;

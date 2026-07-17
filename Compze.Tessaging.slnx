@@ -1,5 +1,4 @@
 <Solution>
-  <Project Path="src/Compze.Tessaging.Abstractions/Compze.Tessaging.Abstractions.csproj" />
   <Project Path="src/Compze.Tessaging/Compze.Tessaging.csproj" />
   <Project Path="src/Compze.Tessaging.Hosting.Testing/Compze.Tessaging.Hosting.Testing.csproj" />
   <Project Path="src/Compze.Tessaging.MicrosoftSql/Compze.Tessaging.MicrosoftSql.csproj" />

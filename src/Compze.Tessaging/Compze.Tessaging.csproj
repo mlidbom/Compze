@@ -58,13 +58,6 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Transport)' != 'true'">
     <ProjectReference Include="..\Compze.Internals.Transport\Compze.Internals.Transport.csproj" />
   </ItemGroup>
-  <!-- Compze.Tessaging.Abstractions — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging_Abstractions)' == 'true'">
-    <PackageReference Include="Compze.Tessaging.Abstractions" Version="*-*" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging_Abstractions)' != 'true'">
-    <ProjectReference Include="..\Compze.Tessaging.Abstractions\Compze.Tessaging.Abstractions.csproj" />
-  </ItemGroup>
   <!-- Compze.Teventive — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Teventive)' == 'true'">
     <PackageReference Include="Compze.Teventive" Version="*-*" />

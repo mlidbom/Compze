@@ -219,7 +219,6 @@
       <Project Path="src/Compze.Internals.Transport/Compze.Internals.Transport.csproj" />
    </Folder>
    <Folder Name="/Compze.Tessaging/">
-      <Project Path="src/Compze.Tessaging.Abstractions/Compze.Tessaging.Abstractions.csproj" />
       <Project Path="src/Compze.Tessaging/Compze.Tessaging.csproj" />
    </Folder>
    <Folder Name="/Compze.TypeIdentifiers/SqlLayers/">

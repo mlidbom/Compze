@@ -9,7 +9,7 @@ using Compze.Internals.Testing;
 using Compze.Must;
 
 using Compze.Tessaging;
-using Compze.Tessaging.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
+using Compze.Tessaging.TessageHandling.Registration.Public;
 using Compze.Tests.Infrastructure;
 using Compze.Teventive.Taggregates.BaseClasses;
 using Compze.Teventive.Taggregates.Tevents.Public;

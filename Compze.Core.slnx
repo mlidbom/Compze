@@ -117,7 +117,6 @@
     <Project Path="test/Compze.Internals.SystemCE.Tests/Compze.Internals.SystemCE.Tests.csproj" />
   </Folder>
   <Folder Name="/Compze.Tessaging/">
-    <Project Path="src/Compze.Tessaging.Abstractions/Compze.Tessaging.Abstractions.csproj" />
     <Project Path="src/Compze.Tessaging/Compze.Tessaging.csproj" />
   </Folder>
   <Folder Name="/Compze.Typermedia/">

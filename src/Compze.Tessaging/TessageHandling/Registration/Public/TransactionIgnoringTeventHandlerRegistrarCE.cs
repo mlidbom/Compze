@@ -1,7 +1,7 @@
 using Compze.Abstractions.Tessaging.Public;
 using Compze.DependencyInjection;
 
-namespace Compze.Tessaging.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
+namespace Compze.Tessaging.TessageHandling.Registration.Public;
 
 ///<summary>Convenience overloads for <see cref="ITransactionIgnoringTeventHandlerRegistrar"/> — the same shapes<br/>
 /// <see cref="TessageHandlerRegistrarCE"/> gives <see cref="ITessageHandlerRegistrar"/>: extra lambda parameters are resolved from<br/>

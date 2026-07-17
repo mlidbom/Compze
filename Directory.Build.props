@@ -89,8 +89,6 @@
     <UsePackageReference_Compze_Must Condition="'$(UsePackageReference_Compze_Must)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Must.csproj|'))">true</UsePackageReference_Compze_Must>
     <!-- Compze.Tessaging -->
     <UsePackageReference_Compze_Tessaging Condition="'$(UsePackageReference_Compze_Tessaging)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Tessaging.csproj|'))">true</UsePackageReference_Compze_Tessaging>
-    <!-- Compze.Tessaging.Abstractions -->
-    <UsePackageReference_Compze_Tessaging_Abstractions Condition="'$(UsePackageReference_Compze_Tessaging_Abstractions)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Tessaging.Abstractions.csproj|'))">true</UsePackageReference_Compze_Tessaging_Abstractions>
     <!-- Compze.Tessaging.Hosting.Testing -->
     <UsePackageReference_Compze_Tessaging_Hosting_Testing Condition="'$(UsePackageReference_Compze_Tessaging_Hosting_Testing)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Tessaging.Hosting.Testing.csproj|'))">true</UsePackageReference_Compze_Tessaging_Hosting_Testing>
     <!-- Compze.Tessaging.MicrosoftSql -->

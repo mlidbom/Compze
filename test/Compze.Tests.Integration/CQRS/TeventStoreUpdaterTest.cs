@@ -3,7 +3,7 @@ using System.Transactions;
 using Compze.Contracts;
 using Compze.Abstractions.Public;
 using Compze.xUnitMatrix;
-using Compze.Tessaging.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
+using Compze.Tessaging.TessageHandling.Registration.Public;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Abstractions.Wiring.Testing.Internal;
 using JetBrains.Annotations;

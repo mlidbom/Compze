@@ -7,7 +7,7 @@ using Compze.Hosting.SameMachine;
 using Compze.Hosting.Testing;
 using Compze.Hosting.Testing.Wiring;
 using Compze.Internals.Testing;
-using Compze.Tessaging.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
+using Compze.Tessaging.TessageHandling.Registration.Public;
 using Compze.Tessaging.Hosting;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;

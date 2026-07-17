@@ -11,7 +11,7 @@ using Compze.Internals.SystemCE.LinqCE;
 using Compze.Abstractions.Hosting.Public;
 using Compze.Tessaging.Hosting;
 using Compze.Typermedia.Client;
-using Compze.Tessaging.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
+using Compze.Tessaging.TessageHandling.Registration.Public;
 using Compze.Tests.Infrastructure;
 using Compze.Teventive.TeventStore.Typermedia;
 using Compze.Underscore;

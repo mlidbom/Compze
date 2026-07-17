@@ -23,7 +23,7 @@ public static class InProcessTessagingRegistrar
    /// delivery legs, so every published tevent — a taggregate's committed tevents included — is delivered
    /// synchronously to this process's handlers, within the publisher's transaction.<br/>
    /// Register handlers after the container is built, through the resolved
-   /// <see cref="Compze.Tessaging.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public.ITessageHandlerRegistrar"/>.
+   /// <see cref="Compze.Tessaging.TessageHandling.Registration.Public.ITessageHandlerRegistrar"/>.
    ///</summary>
    ///<remarks>
    /// In-process dispatch routes by <see cref="Type"/> and needs no type-id mappings, so when no

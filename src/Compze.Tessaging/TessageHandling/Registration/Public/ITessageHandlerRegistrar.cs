@@ -2,7 +2,7 @@ using Compze.Abstractions.Tessaging.Public;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 
-namespace Compze.Tessaging.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
+namespace Compze.Tessaging.TessageHandling.Registration.Public;
 
 public interface ITessageHandlerRegistrar
 {

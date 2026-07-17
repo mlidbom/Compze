@@ -2,7 +2,7 @@ using Compze.Abstractions.Hosting.Public;
 using Compze.Tessaging.Hosting;
 using Compze.Typermedia.Client;
 using Compze.Abstractions.Tessaging.Public;
-using Compze.Tessaging.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
+using Compze.Tessaging.TessageHandling.Registration.Public;
 using Compze.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Typermedia.Hosting.Testing;
