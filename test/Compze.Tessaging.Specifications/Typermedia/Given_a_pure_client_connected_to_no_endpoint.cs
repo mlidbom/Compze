@@ -1,13 +1,10 @@
 using Compze.Abstractions.Public;
 using Compze.Abstractions.Tessaging.Public;
-using Compze.DependencyInjection;
-using Compze.DependencyInjection.Abstractions;
 using Compze.Hosting.Testing.Wiring;
 using Compze.Internals.Testing;
 using Compze.Must;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
-using Compze.Tessaging.Hosting.Testing.Typermedia;
 using Compze.Tessaging.Hosting.Testing.Typermedia.Wiring;
 using Compze.Hosting.Testing;
 using static Compze.Must.MustActions;
@@ -20,33 +17,26 @@ using Compze.Tessaging.Typermedia.Client;
 namespace Compze.Tessaging.Specifications.Typermedia;
 using Compze.Tessaging.Typermedia;
 
-public class Given_a_started_typermedia_router_with_no_connected_endpoints : UniversalTestBase
+///<summary>A pure client (<see cref="TypermediaClient"/>) that has connected to no endpoint has no routes: navigating fails<br/>
+/// loud with the no-handler failure, never silently.</summary>
+public class Given_a_pure_client_connected_to_no_endpoint : UniversalTestBase
 {
-   readonly IDependencyInjectionContainer _container;
-   readonly IRemoteTypermediaNavigator _navigator;
+   readonly TypermediaClient _client;
 
-   public Given_a_started_typermedia_router_with_no_connected_endpoints()
-   {
-      var builder = TestEnv.DIContainer.CreateTestingContainerBuilder();
-      builder.Registrar
-             .CurrentTestsSerializersIfNotClonedContainer()
-             .CurrentTestsTypermediaClientTransport()
-             .TypermediaClientTypeIdentifierMapper(_ => {})
-             .TypermediaClientRouter()
-             .RemoteTypermediaNavigator();
+   public Given_a_pure_client_connected_to_no_endpoint() =>
+      _client = TypermediaClient.Compose(TestEnv.DIContainer.CreateTestingContainerBuilder(), compose =>
+      {
+         compose.TransportProtocol(registrar => registrar.CurrentTestsEndpointTransportClient());
+         compose.Serializer(registrar => registrar.CurrentTestsSerializersIfNotClonedContainer());
+      });
 
-      _container = builder.Build();
-      _container.Resolve<ITypermediaClientRouter>().Start();
-      _navigator = _container.Resolve<IRemoteTypermediaNavigator>();
-   }
-
-   protected override async Task DisposeAsyncInternal() => await _container.DisposeAsync();
+   protected override async Task DisposeAsyncInternal() => await _client.DisposeAsync();
 
    [PCT] public void getting_a_tuery_throws_NoHandlerForTypermediaTypeException() =>
-      Invoking(() => _navigator.Get(new SomeTuery())).Must().Throw<NoHandlerForTypermediaTypeException>();
+      Invoking(() => _client.Navigator.Get(new SomeTuery())).Must().Throw<NoHandlerForTypermediaTypeException>();
 
    [PCT] public void posting_a_tommand_throws_NoHandlerForTypermediaTypeException() =>
-      Invoking(() => _navigator.Post(SomeTommand.Create())).Must().Throw<NoHandlerForTypermediaTypeException>();
+      Invoking(() => _client.Navigator.Post(SomeTommand.Create())).Must().Throw<NoHandlerForTypermediaTypeException>();
 
    // ReSharper disable once ClassNeverInstantiated.Local
    class SomeTueryResult;

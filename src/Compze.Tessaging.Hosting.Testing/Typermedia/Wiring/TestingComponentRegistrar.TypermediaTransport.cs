@@ -15,17 +15,15 @@ using Transport = Compze.Abstractions.Wiring.Testing.Internal.Transport; //Insid
 
 public static class TestingComponentRegistrarTypermediaTransport
 {
-   ///<summary>Registers only the client side of the Typermedia transport, for the current test's <see cref="Transport"/> — for a test client that connects to endpoints without hosting one.<br/>
-   /// (An endpoint needs no such registration: the distributed Typermedia feature registers its own client side, on the endpoint transport the protocol declaration supplies.)</summary>
-   public static IComponentRegistrar CurrentTestsTypermediaClientTransport(this IComponentRegistrar register) =>
+   ///<summary>Registers the endpoint transport client of the current test's <see cref="Transport"/> — the transport-client<br/>
+   /// strategy a pure client's composition declares (<c>TypermediaClientBuilder.TransportProtocol</c>).</summary>
+   public static IComponentRegistrar CurrentTestsEndpointTransportClient(this IComponentRegistrar register) =>
       TestEnv.Transport switch
       {
          Transport.AspNetCore => register.CastTo<TestingComponentRegistrar>()
-                                         .HttpEndpointTransportClientIfNotRegistered()
-                                         .TypermediaTransport(),
+                                         .HttpEndpointTransportClientIfNotRegistered(),
          Transport.NamedPipes => register.CastTo<TestingComponentRegistrar>()
-                                         .NamedPipeEndpointTransportClientIfNotRegistered()
-                                         .TypermediaTransport(),
+                                         .NamedPipeEndpointTransportClientIfNotRegistered(),
          _ => throw new ArgumentOutOfRangeException()
       };
 }
