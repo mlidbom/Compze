@@ -50,6 +50,9 @@ public class TypermediaTestClient : IAsyncDisposable
       return client;
    }
 
+   ///<summary>Connects this client to one more endpoint's typermedia address — an external client navigating several known endpoints.</summary>
+   public async Task AlsoConnectTo(EndpointAddress typermediaAddress) => await _typermediaRouter.ConnectAsync(typermediaAddress).caf();
+
    public async ValueTask DisposeAsync()
    {
       _typermediaRouter.Stop();

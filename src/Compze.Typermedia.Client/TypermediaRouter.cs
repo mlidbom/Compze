@@ -3,6 +3,7 @@ using Compze.Abstractions.Hosting.Public;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Contracts;
 using Compze.Internals.Logging;
+using Compze.Internals.SystemCE.CollectionsCE.GenericCE;
 using Compze.Internals.SystemCE.ReflectionCE;
 using Compze.Internals.Transport;
 using Compze.DependencyInjection;
@@ -54,8 +55,8 @@ class TypermediaRouter : ITypermediaRouter, IDisposable
    bool _running;
    readonly Dictionary<EndpointId, TypermediaConnection> _connections = new();
    //Copy-on-write: the route tables are replaced whole under the monitor and read lock-free on the routing hot path.
-   IReadOnlyDictionary<Type, TypermediaConnection> _tommandHandlerRoutes = new Dictionary<Type, TypermediaConnection>();
-   IReadOnlyDictionary<Type, TypermediaConnection> _tueryHandlerRoutes = new Dictionary<Type, TypermediaConnection>();
+   IReadOnlyDictionary<Type, IReadOnlyList<TypermediaConnection>> _tommandHandlerRoutes = new Dictionary<Type, IReadOnlyList<TypermediaConnection>>();
+   IReadOnlyDictionary<Type, IReadOnlyList<TypermediaConnection>> _tueryHandlerRoutes = new Dictionary<Type, IReadOnlyList<TypermediaConnection>>();
 
    public async Task ConnectAsync(EndpointAddress endpointAddress)
    {
@@ -140,11 +141,13 @@ class TypermediaRouter : ITypermediaRouter, IDisposable
    }
 
    ///<summary>Re-derives the route tables from the current connections — membership changed, so routes derived from a dropped or<br/>
-   /// replaced connection must not survive. Must be called under the monitor.</summary>
+   /// replaced connection must not survive. Several connections advertising one type build a multi-entry route: a duplicate is a<br/>
+   /// diagnosable send-time condition (<see cref="MultipleHandlersForTypermediaTypeException"/>), never a rebuild failure — a rebuild<br/>
+   /// that threw would freeze the route tables while the connections keep changing. Must be called under the monitor.</summary>
    void RebuildRouteTables()
    {
-      var tommandHandlerRoutes = new Dictionary<Type, TypermediaConnection>();
-      var tueryHandlerRoutes = new Dictionary<Type, TypermediaConnection>();
+      var tommandHandlerRoutes = new Dictionary<Type, List<TypermediaConnection>>();
+      var tueryHandlerRoutes = new Dictionary<Type, List<TypermediaConnection>>();
 
       foreach(var connection in _connections.Values)
       {
@@ -154,28 +157,31 @@ class TypermediaRouter : ITypermediaRouter, IDisposable
 
             if(tessageType.Is<IAtMostOnceTypermediaTommand>())
             {
-               tommandHandlerRoutes.Add(tessageType, connection);
+               tommandHandlerRoutes.GetOrAdd(tessageType, () => []).Add(connection);
             } else if(tessageType.Is<IRemotableTuery<object>>())
             {
-               tueryHandlerRoutes.Add(tessageType, connection);
+               tueryHandlerRoutes.GetOrAdd(tessageType, () => []).Add(connection);
             }
             //Exactly-once types are the Tessaging router's to route.
          }
       }
 
-      Interlocked.Exchange(ref _tommandHandlerRoutes, tommandHandlerRoutes);
-      Interlocked.Exchange(ref _tueryHandlerRoutes, tueryHandlerRoutes);
+      Interlocked.Exchange(ref _tommandHandlerRoutes, tommandHandlerRoutes.ToDictionary(route => route.Key, route => (IReadOnlyList<TypermediaConnection>)route.Value));
+      Interlocked.Exchange(ref _tueryHandlerRoutes, tueryHandlerRoutes.ToDictionary(route => route.Key, route => (IReadOnlyList<TypermediaConnection>)route.Value));
    }
 
-   TypermediaConnection ConnectionToHandlerFor(IAtMostOnceTypermediaTommand tommand) =>
-      _tommandHandlerRoutes.TryGetValue(tommand.GetType(), out var connection)
-         ? connection
-         : throw new NoHandlerForTypermediaTypeException(tommand.GetType());
+   TypermediaConnection ConnectionToHandlerFor(IAtMostOnceTypermediaTommand tommand) => SingleRoutedConnectionFor(tommand.GetType(), _tommandHandlerRoutes);
 
-   TypermediaConnection ConnectionToHandlerFor<TTuery>(IRemotableTuery<TTuery> tuery) =>
-      _tueryHandlerRoutes.TryGetValue(tuery.GetType(), out var connection)
-         ? connection
-         : throw new NoHandlerForTypermediaTypeException(tuery.GetType());
+   TypermediaConnection ConnectionToHandlerFor<TTuery>(IRemotableTuery<TTuery> tuery) => SingleRoutedConnectionFor(tuery.GetType(), _tueryHandlerRoutes);
+
+   ///<summary>The one connection a typermedia tessage executes on: no route throws <see cref="NoHandlerForTypermediaTypeException"/>;<br/>
+   /// several routes throw <see cref="MultipleHandlersForTypermediaTypeException"/> naming the endpoints — never a silent pick.</summary>
+   static TypermediaConnection SingleRoutedConnectionFor(Type tessageType, IReadOnlyDictionary<Type, IReadOnlyList<TypermediaConnection>> handlerRoutes) =>
+      handlerRoutes.TryGetValue(tessageType, out var connections)
+         ? connections.Count == 1
+              ? connections[0]
+              : throw new MultipleHandlersForTypermediaTypeException(tessageType, [..connections.Select(connection => connection.EndpointInformation.Id)])
+         : throw new NoHandlerForTypermediaTypeException(tessageType);
 
    public async Task PostAsync(IAtMostOnceTypermediaTommand tommand)
    {

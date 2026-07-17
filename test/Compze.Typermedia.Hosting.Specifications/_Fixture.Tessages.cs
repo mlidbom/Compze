@@ -33,12 +33,23 @@ public class RegisterGreeterTommand : TessageTypes.Remotable.AtMostOnce.AtMostOn
    public string Name { get; set; } = "";
 }
 
+public class TueryAnswer
+{
+   public string Message { get; set; } = "";
+}
+
+public class TueryBothEndpointsHandle : TessageTypes.Remotable.NonTransactional.Tueries.Tuery<TueryAnswer>;
+
+public class TueryOnlyTheSecondEndpointHandles : TessageTypes.Remotable.NonTransactional.Tueries.Tuery<TueryAnswer>;
+
 #pragma warning disable CA1812 // Instantiated via reflection through the [assembly: AssemblyTypeMapper(typeof(...))] attribute.
 class AssemblyTypeMapper : IAssemblyTypeMapper
 {
    public void Map(IAssemblyTypeMappingRegistrar map)
       => map.Map<GreetingTuery>("7e8158a9-4972-4bd3-a0a5-9b261e7e5e64")
-            .Map<RegisterGreeterTommand>("8b7a82f3-9c2e-4f24-9a96-2f0d2af56a01");
+            .Map<RegisterGreeterTommand>("8b7a82f3-9c2e-4f24-9a96-2f0d2af56a01")
+            .Map<TueryBothEndpointsHandle>("c93a55b7-30a1-4a35-b7c8-01c9d61d31e6")
+            .Map<TueryOnlyTheSecondEndpointHandles>("5f2f0f68-8a4e-4a2e-b7a2-38d8bd7fca10");
 }
 
 public static class TypermediaHostingSpecificationTypeMappings
