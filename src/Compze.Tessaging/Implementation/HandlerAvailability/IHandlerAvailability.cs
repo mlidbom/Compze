@@ -38,4 +38,12 @@ interface IHandlerAvailability
    /// binds exactly once, before its row is saved, and rides the bound pair's single ordered, receiver-deduped delivery<br/>
    /// stream — waiting only moves <em>when</em> that one bind happens in the two states that used to throw immediately.</remarks>
    Task<EndpointId> AwaitBindableReceiverOfAsync(Type tommandType);
+
+   ///<summary>Readiness (see <see cref="IEndpoint.AwaitReadinessAsync"/>): completes when a handler for every type in<br/>
+   /// <paramref name="readinessTypes"/> is available — the endpoint's own roster serves it, an exactly-once tommand type has<br/>
+   /// a bindable receiver, or a request/response type has exactly one live route: precisely the availability a send would<br/>
+   /// not have to wait for. Waits at most <paramref name="patience"/> — null means the endpoint's declared<br/>
+   /// handler-availability patience — then throws <see cref="EndpointNotReadyWithinPatienceException"/> naming every type<br/>
+   /// still unavailable and what the peer memory remembers about it.</summary>
+   Task AwaitHandlersForAsync(ReadinessTypes readinessTypes, TimeSpan? patience);
 }

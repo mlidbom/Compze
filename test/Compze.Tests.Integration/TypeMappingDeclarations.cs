@@ -12,6 +12,7 @@ class AssemblyTypeMapper : IAssemblyTypeMapper
    {
       map.Map<CQRS.IMigratedAfterUserChangedEmailTevent>("99302c63-3bfc-4e81-a678-16e73ff982c5")
          .Map<Tessaging.MyExactlyOnceTommandHandledOnlyByTheLateEndpoint>("b8f4a2d6-91c7-4e83-a5f0-6d2b9c41e758")
+         .Map<Tessaging.MyTueryHandledOnlyByTheLateEndpoint>("4c7e19a3-d582-4b60-9f14-8a3d5e72c091")
          .Map<CQRS.IMigratedBeforeUserRegisteredTevent>("3cd859f1-a710-46a6-b3e2-e6b251db6467")
          .Map<CQRS.IMigratedReplaceUserChangedPasswordTevent>("e2a8b2fb-c6b1-455b-a79b-e94b80b44604")
          .Map<CQRS.ISomeTevent>("30e74877-d75a-430c-b466-a50f0dd928b3")

@@ -7,6 +7,7 @@ using Compze.Internals.SystemCE.LinqCE;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tessaging.Engine;
 using Compze.Tessaging.Internals.Transport;
+using Compze.Tessaging.Implementation.HandlerAvailability;
 using Compze.Tessaging.Implementation.Peers;
 using Compze.Tessaging.Implementation.Transport.Client.Internal;
 using Compze.Tessaging.SystemCE.ThreadingCE;
@@ -35,6 +36,7 @@ public abstract class Endpoint : IEndpoint
    readonly IEndpointRegistry? _endpointRegistry;
    readonly ITessagingRouter _router;
    readonly IPeerRegistry _peerRegistry;
+   readonly IHandlerAvailability _handlerAvailability;
    readonly IBackgroundExceptionReporter _backgroundExceptionReporter;
    readonly TeventObservationDispatcher _observationDispatcher;
 
@@ -55,6 +57,7 @@ public abstract class Endpoint : IEndpoint
       _transportServer = ServiceLocator.Resolve<IEndpointTransportServer>();
       _router = ServiceLocator.Resolve<ITessagingRouter>();
       _peerRegistry = ServiceLocator.Resolve<IPeerRegistry>();
+      _handlerAvailability = ServiceLocator.Resolve<IHandlerAvailability>();
       _backgroundExceptionReporter = ServiceLocator.Resolve<IBackgroundExceptionReporter>();
       _observationDispatcher = ServiceLocator.Resolve<TeventObservationDispatcher>();
    }
@@ -130,6 +133,15 @@ public abstract class Endpoint : IEndpoint
       _isListening = false;
       _router.Stop();
       await _transportServer.StopAsync().caf();
+   }
+
+   public async Task AwaitReadinessAsync(ReadinessTypes readinessTypes, TimeSpan? patience = null)
+   {
+      //Asserted rather than waited for: readiness measures the world outside the endpoint, and an endpoint that has not
+      //started cannot see that world - its router discovers nothing before the sending phase - so awaiting readiness on it
+      //would time out with a message blaming the deployment for what is a startup-ordering mistake here.
+      State.Assert(IsRunning, () => "Readiness is awaited on a started endpoint: start the endpoint (or the host that owns it) first.");
+      await _handlerAvailability.AwaitHandlersForAsync(readinessTypes, patience).caf();
    }
 
    ///<summary>Starts the exactly-once tier's durable vertical in the listening phase — the best-effort endpoint has none, so the base does nothing.</summary>

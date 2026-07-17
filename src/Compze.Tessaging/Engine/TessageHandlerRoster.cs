@@ -80,6 +80,12 @@ public class TessageHandlerRoster
    /// and only a tommand whose handler lives elsewhere crosses the endpoint boundary through delivery machinery.</summary>
    internal bool HandlesTommand(Type tommandType) => _voidTommandHandlers.ContainsKey(tommandType) || _tommandHandlersWithResults.ContainsKey(tommandType);
 
+   ///<summary>Whether this roster holds a handler for the single-handler tessage type <paramref name="tessageType"/> — a<br/>
+   /// tommand of either shape, or a tuery. What readiness asks about the endpoint's own half: a type the endpoint itself<br/>
+   /// serves is reachable in-boundary — inline for tommands, the strictly-local navigator for typermedia — needing no<br/>
+   /// discovery and no route (see <c>IHandlerAvailability</c>).</summary>
+   internal bool HandlesTheSingleHandlerType(Type tessageType) => HandlesTommand(tessageType) || _tueryHandlers.ContainsKey(tessageType);
+
    ///<summary>The engine's advertisement: the <see cref="TypeId"/> of every remotable, non-infrastructure tessage type this roster<br/>
    /// serves, of every kind, in the form remote routing matches against — tevent subscriptions as their translated wrapper types,<br/>
    /// tommands and tueries as they stand. Computed once; asserts that every advertised type has a type-id mapping.</summary>

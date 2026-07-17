@@ -1,10 +1,13 @@
 using Compze.Abstractions.Hosting.Public;
+using Compze.Abstractions.Tessaging.Public;
+using Compze.Tessaging.Engine;
 using Compze.Tessaging.Implementation.Peers;
 using Compze.Tessaging.Implementation.TessageHandling.Dispatching;
 using Compze.Tessaging.Implementation.Transport.Client.Internal;
 using Compze.Tessaging.Typermedia.Client;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
+using Compze.Internals.SystemCE.ReflectionCE;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 
 namespace Compze.Tessaging.Implementation.HandlerAvailability;
@@ -13,8 +16,8 @@ static class HandlerAvailabilityRegistrar
 {
    internal static IComponentRegistrar HandlerAvailability(this IComponentRegistrar registrar)
       => registrar.Register(Singleton.For<IHandlerAvailability>().CreatedBy(
-            (ITessagingRouter router, IPeerRegistry peerRegistry, HandlerAvailabilityPatience patience)
-               => new HandlerAvailability(router, peerRegistry, patience)));
+            (ITessagingRouter router, IPeerRegistry peerRegistry, TessageHandlerRoster roster, HandlerAvailabilityPatience patience)
+               => new HandlerAvailability(router, peerRegistry, roster, patience)));
 }
 
 #pragma warning disable CA1724 // Type name intentionally matches namespace concept
@@ -26,12 +29,14 @@ class HandlerAvailability : IHandlerAvailability
 
    readonly ITessagingRouter _router;
    readonly IPeerRegistry _peerRegistry;
+   readonly TessageHandlerRoster _roster;
    readonly HandlerAvailabilityPatience _patience;
 
-   internal HandlerAvailability(ITessagingRouter router, IPeerRegistry peerRegistry, HandlerAvailabilityPatience patience)
+   internal HandlerAvailability(ITessagingRouter router, IPeerRegistry peerRegistry, TessageHandlerRoster roster, HandlerAvailabilityPatience patience)
    {
       _router = router;
       _peerRegistry = peerRegistry;
+      _roster = roster;
       _patience = patience;
    }
 
@@ -71,5 +76,43 @@ class HandlerAvailability : IHandlerAvailability
                      : MultipleHandlersForTessageTypeException.BecausePatienceIsExhausted(tommandType, _patience.Duration, rememberedHandlerIds);
          await Task.Delay(RecheckInterval).caf();
       }
+   }
+
+   public async Task AwaitHandlersForAsync(ReadinessTypes readinessTypes, TimeSpan? patience)
+   {
+      var effectivePatience = patience ?? _patience.Duration;
+      var deadline = DateTime.UtcNow + effectivePatience;
+      while(true)
+      {
+         var stillUnavailable = readinessTypes.Types.Where(tessageType => !AHandlerIsAvailableFor(tessageType)).ToList();
+         if(stillUnavailable.Count == 0) return;
+         if(DateTime.UtcNow >= deadline)
+            throw new EndpointNotReadyWithinPatienceException(
+               $"The endpoint could still not reach a handler for every awaited type when its patience ran out (waited {effectivePatience.TotalSeconds:0.###}s). Still unavailable: "
+               + string.Join("; ", stillUnavailable.Select(DescribeUnavailabilityOf)));
+         await Task.Delay(RecheckInterval).caf();
+      }
+   }
+
+   ///<summary>Whether a send of the single-handler type <paramref name="tessageType"/> would proceed without waiting: the<br/>
+   /// endpoint's own roster serves it — reachable in-boundary, inline for tommands, the strictly-local navigator for<br/>
+   /// typermedia — or, per the type's kind, an exactly-once tommand has a bindable receiver (a live handler, or the sole<br/>
+   /// remembered one: known-but-down is served by the outbox waiting out the peer's absence) or a request/response type has<br/>
+   /// exactly one live route.</summary>
+   bool AHandlerIsAvailableFor(Type tessageType) =>
+      _roster.HandlesTheSingleHandlerType(tessageType)
+      || (tessageType.Is<IExactlyOnceTommand>()
+             ? _router.LiveConnectionToHandlerFor(tessageType) != null || _peerRegistry.HandlerIdsFor(tessageType).Count == 1
+             : _router.TypermediaRoutesFor(tessageType).Count == 1);
+
+   string DescribeUnavailabilityOf(Type tessageType)
+   {
+      if(!tessageType.Is<IExactlyOnceTommand>() && _router.TypermediaRoutesFor(tessageType) is { Count: > 1 } ambiguousRoutes)
+         return $"{tessageType.GetFullNameCompilable()} (more than one connected endpoint advertises it: {string.Join(", ", ambiguousRoutes.Select(route => route.HandlerEndpointId))})";
+
+      var rememberedHandlerIds = _peerRegistry.HandlerIdsFor(tessageType);
+      return rememberedHandlerIds.Count == 0
+                ? $"{tessageType.GetFullNameCompilable()} (nothing this endpoint has ever met serves it)"
+                : $"{tessageType.GetFullNameCompilable()} (remembered peers whose last-known advertisement serves it: {string.Join(", ", rememberedHandlerIds)}, none live)";
    }
 }
