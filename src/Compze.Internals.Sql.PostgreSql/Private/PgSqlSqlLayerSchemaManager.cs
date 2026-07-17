@@ -11,6 +11,13 @@ namespace Compze.Internals.Sql.PostgreSql.Private;
 /// hot path of a write/read-locked transaction.</remarks>
 class PgSqlSqlLayerSchemaManager
 {
+   //Several endpoints joining one domain database create their schemas concurrently - from one process or many - and the
+   //scripts' IF-NOT-EXISTS guards are not concurrency-safe DDL. The engine's advisory lock serializes schema creation
+   //across connections and processes; acquisition, batch, and release must share one connection, because the lock is
+   //session-scoped.
+   const string AcquireSchemaCreationLockSql = "SELECT pg_advisory_lock(hashtext('Compze.SchemaCreation')::bigint);";
+   const string ReleaseSchemaCreationLockSql = "SELECT pg_advisory_unlock(hashtext('Compze.SchemaCreation')::bigint);";
+
    readonly IPgSqlConnectionPool _connectionPool;
    readonly string _schemaCreationSql;
    readonly RunOnceAsync _runOnce = new();
@@ -23,7 +30,18 @@ class PgSqlSqlLayerSchemaManager
 
    public async Task EnsureSchemaInitializedAsync() => await _runOnce.RunIfFirstCallAsync(async () =>
       await TransactionScopeCe.SuppressAmbientAsync(async () =>
-         await _connectionPool.ExecuteNonQueryAsync(_schemaCreationSql).caf()).caf()).caf();
+         await _connectionPool.UseConnectionAsync(async connection =>
+         {
+            await connection.ExecuteNonQueryAsync(AcquireSchemaCreationLockSql).caf();
+            try
+            {
+               return await connection.ExecuteNonQueryAsync(_schemaCreationSql).caf();
+            }
+            finally
+            {
+               await connection.ExecuteNonQueryAsync(ReleaseSchemaCreationLockSql).caf();
+            }
+         }).caf()).caf()).caf();
 
    public void EnsureSchemaInitialized() => EnsureSchemaInitializedAsync().Wait();
 }

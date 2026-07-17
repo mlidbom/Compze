@@ -1,3 +1,4 @@
+using System.Globalization;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Internals.SystemCE.TransactionsCE;
 using Compze.Threading;
@@ -11,6 +12,12 @@ namespace Compze.Internals.Sql.MySql.Private;
 /// hot path of a write/read-locked transaction.</remarks>
 class MySqlSqlLayerSchemaManager
 {
+   //Several endpoints joining one domain database create their schemas concurrently - from one process or many - and the
+   //scripts' IF-NOT-EXISTS guards are not concurrency-safe DDL. The engine's named lock serializes schema creation across
+   //connections and processes; acquisition, batch, and release must share one connection, because the lock is
+   //session-scoped.
+   const string SchemaCreationLockName = "Compze.SchemaCreation";
+
    readonly IMySqlConnectionPool _connectionPool;
    readonly string _schemaCreationSql;
    readonly RunOnceAsync _runOnce = new();
@@ -23,7 +30,22 @@ class MySqlSqlLayerSchemaManager
 
    public async Task EnsureSchemaInitializedAsync() => await _runOnce.RunIfFirstCallAsync(async () =>
       await TransactionScopeCe.SuppressAmbientAsync(async () =>
-         await _connectionPool.ExecuteNonQueryAsync(_schemaCreationSql).caf()).caf()).caf();
+         await _connectionPool.UseConnectionAsync(async connection =>
+         {
+            //GET_LOCK returns 1 on success, 0 on timeout, NULL on error - anything but 1 must fail loud, or the batch
+            //would run unserialized.
+            var lockResult = await connection.ExecuteScalarAsync($"SELECT GET_LOCK('{SchemaCreationLockName}', 60)").caf();
+            if(Convert.ToInt64(lockResult ?? 0L, CultureInfo.InvariantCulture) != 1)
+               throw new InvalidOperationException($"Failed to acquire the schema-creation lock ('{SchemaCreationLockName}') within 60 seconds.");
+            try
+            {
+               return await connection.ExecuteNonQueryAsync(_schemaCreationSql).caf();
+            }
+            finally
+            {
+               await connection.ExecuteNonQueryAsync($"SELECT RELEASE_LOCK('{SchemaCreationLockName}')").caf();
+            }
+         }).caf()).caf()).caf();
 
    public void EnsureSchemaInitialized() => EnsureSchemaInitializedAsync().Wait();
 }

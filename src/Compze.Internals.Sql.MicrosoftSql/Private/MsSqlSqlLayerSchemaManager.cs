@@ -11,6 +11,19 @@ namespace Compze.Internals.Sql.MicrosoftSql.Private;
 /// hot path of a write/read-locked transaction.</remarks>
 class MsSqlSqlLayerSchemaManager
 {
+   //Several endpoints joining one domain database create their schemas concurrently - from one process or many - and the
+   //scripts' IF-NOT-EXISTS guards are not concurrency-safe DDL. The engine's application lock serializes schema creation
+   //across connections and processes; acquisition, batch, and release must share one connection, because the lock is
+   //session-scoped.
+   const string AcquireSchemaCreationLockSql =
+      """
+      DECLARE @lockResult int;
+      EXEC @lockResult = sp_getapplock @Resource = 'Compze.SchemaCreation', @LockMode = 'Exclusive', @LockOwner = 'Session', @LockTimeout = 60000;
+      IF @lockResult < 0 THROW 51000, 'Failed to acquire the schema-creation application lock (Compze.SchemaCreation) within 60 seconds.', 1;
+      """;
+
+   const string ReleaseSchemaCreationLockSql = "EXEC sp_releaseapplock @Resource = 'Compze.SchemaCreation', @LockOwner = 'Session';";
+
    readonly IMsSqlConnectionPool _connectionPool;
    readonly string _schemaCreationSql;
    readonly RunOnceAsync _runOnce = new();
@@ -23,7 +36,18 @@ class MsSqlSqlLayerSchemaManager
 
    public async Task EnsureSchemaInitializedAsync() => await _runOnce.RunIfFirstCallAsync(async () =>
       await TransactionScopeCe.SuppressAmbientAsync(async () =>
-         await _connectionPool.ExecuteNonQueryAsync(_schemaCreationSql).caf()).caf()).caf();
+         await _connectionPool.UseConnectionAsync(async connection =>
+         {
+            await connection.ExecuteNonQueryAsync(AcquireSchemaCreationLockSql).caf();
+            try
+            {
+               return await connection.ExecuteNonQueryAsync(_schemaCreationSql).caf();
+            }
+            finally
+            {
+               await connection.ExecuteNonQueryAsync(ReleaseSchemaCreationLockSql).caf();
+            }
+         }).caf()).caf()).caf();
 
    public void EnsureSchemaInitialized() => EnsureSchemaInitializedAsync().Wait();
 }

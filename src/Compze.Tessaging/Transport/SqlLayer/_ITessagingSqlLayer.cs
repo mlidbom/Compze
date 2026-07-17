@@ -149,6 +149,11 @@ public interface ITessagingSqlLayer
       Task<IReadOnlyList<EndpointCatalogEntry>> GetEntriesAsync();
 
       Task InitAsync();
+
+      //todo: Decommissioning an endpoint's storage = dropping its prefixed table-set and deleting its catalog entry (refused
+      //while its process lease is held). The design equation is settled (tessaging-target-design.md); the administration door
+      //that performs the act - its surface, safety asserts, and report shape, mirroring PeerDecommissionReport - awaits its
+      //first consumer.
    }
 
    ///<summary>One endpoint's row in the domain database's endpoint catalog: its identity, when it first registered, and who —<br/>

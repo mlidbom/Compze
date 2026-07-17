@@ -68,10 +68,16 @@ public class TestingEndpointHost : EndpointHost
    /// keeps its database across host rebuilds and specs can script restarts), and participation in<br/>
    /// <see cref="EndpointRegistry"/> — plus whatever <paramref name="declare"/> declares.</summary>
    public ExactlyOnceEndpoint RegisterExactlyOnceEndpoint(string name, EndpointId id, Action<ExactlyOnceEndpointBuilder> declare) =>
+      RegisterExactlyOnceEndpointInDomainDatabase(name, id, domainDatabaseName: id.ToString(), declare);
+
+   ///<summary>Like <see cref="RegisterExactlyOnceEndpoint"/>, but the endpoint joins the named shared domain database instead<br/>
+   /// of one of its own — the composition for several endpoints storing side by side in one domain database: each with its<br/>
+   /// prefixed table-set, sharing the endpoint catalog and the type-id interner.</summary>
+   public ExactlyOnceEndpoint RegisterExactlyOnceEndpointInDomainDatabase(string name, EndpointId id, string domainDatabaseName, Action<ExactlyOnceEndpointBuilder> declare) =>
       RegisterEndpoint(container => ExactlyOnceEndpoint.Compose(container, name, id, endpoint =>
       {
          DeclareTheCurrentTestsConcerns(endpoint);
-         endpoint.DomainDatabase(registrar => registrar.CurrentTestsConfiguredSqlLayer(connectionStringName: id.ToString()));
+         endpoint.DomainDatabase(registrar => registrar.CurrentTestsConfiguredSqlLayer(connectionStringName: domainDatabaseName));
          declare(endpoint);
       }));
 

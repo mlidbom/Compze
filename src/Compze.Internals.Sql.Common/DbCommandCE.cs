@@ -11,6 +11,9 @@ public static class DbCommandCE
    internal static object? ExecuteScalar(this DbCommand @this, string commandText) =>
       @this.SetCommandText(commandText).ExecuteScalar();
 
+   internal static async Task<object?> ExecuteScalarAsync(this DbCommand @this, string commandText) =>
+      await @this.SetCommandText(commandText).ExecuteScalarAsync().caf();
+
 
    internal static int ExecuteNonQuery(this DbCommand @this, string commandText) =>
       @this.SetCommandText(commandText).ExecuteNonQuery();

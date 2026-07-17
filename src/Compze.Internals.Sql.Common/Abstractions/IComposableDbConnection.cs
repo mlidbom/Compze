@@ -38,4 +38,5 @@ public interface ICompzeDbConnection<out TCommand> : ICompzeDbConnection
 
    object? ExecuteScalar(string commandText) => UseCommand(command => command.ExecuteScalar(commandText));
 
+   async Task<object?> ExecuteScalarAsync(string commandText) => await UseCommandAsync(async command => await command.SetCommandText(commandText).ExecuteScalarAsync().caf()).caf();
 }
