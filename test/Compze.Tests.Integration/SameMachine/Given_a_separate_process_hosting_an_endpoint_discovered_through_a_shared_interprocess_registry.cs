@@ -1,6 +1,5 @@
 using Compze.Abstractions.Tessaging.Public;
 using Compze.DependencyInjection;
-using Compze.DependencyInjection.Abstractions;
 using Compze.Abstractions.Hosting.Public;
 using Compze.Abstractions.Wiring.Testing.Internal;
 using Compze.Hosting;
@@ -10,6 +9,7 @@ using Compze.Hosting.Testing.Wiring;
 using Compze.Internals.Testing;
 using Compze.Tessaging.Endpoints;
 using Compze.Tessaging.Engine;
+using Compze.Tessaging.Implementation.TessageHandling.Dispatching;
 using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
@@ -108,27 +108,19 @@ public class Given_a_separate_process_hosting_an_endpoint_discovered_through_a_s
    [Skip<Transport>([Transport.AspNetCore], "The endpoint host process speaks named pipes; the conversation only makes sense when the specification's endpoint does too")]
    [PCT] public async Task a_tommand_sent_to_the_process_is_handled_there_and_its_reply_tommand_comes_back()
    {
-      //Until this process's reconciliation loop has discovered the endpoint host process - which is still starting up -
-      //the handler is unknown and sending fails loud. The retry loop rides that loudness until discovery completes.
-      var retryDeadline = DateTime.UtcNow + TimeSpan.FromSeconds(30);
-      while(true)
+      //The send is a waiting send: the tommand's handler has never been met until this endpoint's reconciliation discovers
+      //the endpoint host process - which is still starting up - and the exactly-once cold-start bind waits that discovery out
+      //within the endpoint's handler-availability patience, then binds. (The hand-rolled retry-on-no-handler loop this
+      //replaced is exactly the pattern waiting sends exist to dissolve.) The catch only enriches an exhausted wait with the
+      //process's fate and console output - the diagnosis a cross-process failure needs - and rethrows.
+      try
       {
-         try
-         {
-            await _specificationEndpoint.ServiceLocator.Resolve<IIndependentTommandSender>().SendAsync(new TommandSentToTheEndpointHostProcess());
-            break;
-         }
-#pragma warning disable CA1031 //Retrying until discovery completes; past the deadline the exception propagates wrapped with the endpoint host process's console output.
-         catch(Exception) when(DateTime.UtcNow < retryDeadline)
-         {
-            _endpointHostProcess.ThrowDescribingTheFailureIfTheProcessHasExited();
-            await Task.Delay(100);
-         }
-         catch(Exception stillUndiscoveredAtTheRetryDeadline)
-#pragma warning restore CA1031
-         {
-            throw new InvalidOperationException($"The endpoint host process was not discovered within the retry deadline.{Environment.NewLine}{_endpointHostProcess.ConsoleOutput}", stillUndiscoveredAtTheRetryDeadline);
-         }
+         await _specificationEndpoint.ServiceLocator.Resolve<IIndependentTommandSender>().SendAsync(new TommandSentToTheEndpointHostProcess());
+      }
+      catch(NoHandlerForTessageTypeException notDiscoveredWithinPatience)
+      {
+         _endpointHostProcess.ThrowDescribingTheFailureIfTheProcessHasExited();
+         throw new InvalidOperationException($"The endpoint host process was not discovered within the endpoint's handler-availability patience.{Environment.NewLine}{_endpointHostProcess.ConsoleOutput}", notDiscoveredWithinPatience);
       }
 
       try
