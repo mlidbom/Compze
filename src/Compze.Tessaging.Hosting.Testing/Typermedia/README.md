@@ -23,7 +23,7 @@ Typermedia's plug-in for the testing endpoint host in `Compze.Hosting.Testing`, 
 using var host = TestingEndpointHost.Create(new DistributedTypermediaTestingEndpointHostFeature());
 var endpoint = host.RegisterEndpoint("MyEndpoint", endpointId, builder =>
 {
-   builder.RegisterTypermediaHandlers.ForTuery((MyTuery tuery) => HandleTuery(tuery));
+   builder.RegisterTessageHandlers(handle => handle.ForTuery((MyTuery tuery) => HandleTuery(tuery)));
 });
 await host.StartAsync();
 

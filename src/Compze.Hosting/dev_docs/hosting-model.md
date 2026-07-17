@@ -93,8 +93,9 @@ var endpoint = host.RegisterEndpoint("AccountManagement", new EndpointId(Guid.Pa
    foundation.AddExactlyOnceTessaging(tessaging => tessaging.NewtonsoftSerializer());
    foundation.AddDistributedTypermedia(typermedia => typermedia.NewtonsoftSerializer());
 
-   builder.RegisterTessagingHandlers.ForTevent((IAccountTevent tevent) => ...);
-   builder.RegisterTypermediaHandlers.ForTuery((AccountTuery tuery) => ...);
+   builder.RegisterTessageHandlers(handle => handle
+      .ForTevent(async (IAccountTevent tevent, IUnitOfWorkResolver unitOfWork) => ...)
+      .ForTuery((AccountTuery tuery) => ...));
 });
 host.Start();
 ```
@@ -126,8 +127,9 @@ as a **feature** behind it:
 - `GetOrAddFeature<TFeature>(createFeature)` — creates the feature once per endpoint and remembers it.
   `AddExactlyOnceTessaging()`, `AddDistributedTessaging()`, `AddInProcessTessaging()`, `AddDistributedTypermedia()`, and
   `AddInProcessTypermedia()` are one-line extension methods over this call, and
-  `RegisterTessagingHandlers` / `RegisterTypermediaHandlers` are extension properties that add the style's
-  in-process core on first touch and return its handler registrar.
+  `RegisterTessageHandlers` / `ObserveTevents` are extension methods that add the in-process cores on first
+  touch and declare into the endpoint's one engine — one registrar covers all four tessage kinds, because the
+  tessage's type carries its kind, guarantee, and synchrony.
 - Inside its constructor, a feature uses the rest of the builder surface to wire its whole vertical: it
   registers its services with `builder.Registrar`, maps its message types with `builder.TypeMapper`,
   schedules post-container-build work with `builder.OnContainerBuilt(...)` (e.g. registering discovery
@@ -139,7 +141,9 @@ wired once whether it arrives alone or under distribution).
 
 - **Tessaging splits three ways**, each layer containing the one below it.
   `InProcessTessagingEndpointFeature` (in `Compze.Tessaging`, `AddInProcessTessaging()`) is the style's
-  synchronous core: the handler registry, the synchronous in-process tevent delivery every tevent travels,
+  synchronous core: the endpoint's one engine (the `TessageHandlerRoster` and the one `TessageHandlerExecutor`,
+  shared with every other style feature on the endpoint), through which the synchronous in-process tevent
+  delivery every tevent travels,
   and the endpoint's `IUnitOfWorkTeventPublisher` (plus its independent counterpart, `IIndependentTeventPublisher`,
   for code outside any unit of work) — routing each published tevent by the delivery
   contract its type declares (see
@@ -155,16 +159,16 @@ wired once whether it arrives alone or under distribution).
   what wires the durable tevent delivery leg the publisher routes every `IExactlyOnceTevent` through, and
   what grants the router's connections their durable exactly-once delivery streams. Whether a tevent
   crosses the wire is a property of the tevent's type, honored by the legs the composition wires — not an
-  endpoint-wide mode — which is also what keeps `RegisterTessagingHandlers` order-independent of every other
+  endpoint-wide mode — which is also what keeps `RegisterTessageHandlers` order-independent of every other
   Tessaging declaration.
 - **Typermedia splits two ways**, because it has no mode-exclusive service: distributed Typermedia simply
   contains in-process Typermedia. `InProcessTypermediaEndpointFeature` (in the `Compze.Tessaging.Typermedia` namespace,
-  `AddInProcessTypermedia()`) wires the handler registry and the `ILocalTypermediaNavigatorSession` through
+  `AddInProcessTypermedia()`) shares the endpoint's one engine and wires the `ILocalTypermediaNavigatorSession` through
   which strictly local tueries and tommands execute synchronously, in the caller's transaction.
   `DistributedTypermediaEndpointFeature` (in the `Compze.Tessaging.Typermedia.Client` namespace, `AddDistributedTypermedia()`)
   composes it and adds the handler executor that serves remote clients, discovery, and the client side
   through which the endpoint itself navigates other endpoints' typermedia — the `IRemoteTypermediaNavigator`,
-  routed by the endpoint's `TypermediaRouter` against the registry the endpoint declares it discovers
+  routed by the endpoint's one router against the registry the endpoint declares it discovers
   through; declaring no registry means the endpoint only serves.
 - **Serving is shared.** An endpoint runs **one transport server**, whatever it speaks: every
   transport-speaking feature composes `EndpointTransportServerFeature` (in the `Compze.Tessaging.Internals.Transport` namespace) — the same
@@ -230,21 +234,23 @@ through the `ILocalTypermediaNavigatorSession`. Everything in that core runs syn
 thread, within the caller's transaction — so there are no transports to start, no discovery, no background
 work, and therefore *nothing to host*. In-process Compze is container wiring, not hosting.
 
-Each style is composed into a plain container by one registrar extension — the same wiring units its endpoint
-features are built from, so there is exactly one definition of what each style is:
+Both cores together are the **LocalTessagingEngine** — the tessage-conversing heart of one container — and a
+plain container composes it from one declaration block, built on the same wiring units the endpoint features
+are built from, so there is exactly one definition of what the engine is:
 
 ```csharp
 var builder = /* any Compze container builder */;
-builder.Registrar
-       .InProcessTessaging()    // handler registry, synchronous in-process tevent delivery, IUnitOfWorkTeventPublisher (no remote legs)
-       .InProcessTypermedia();  // handler registry, ILocalTypermediaNavigatorSession
+builder.Registrar.LocalTessagingEngine(engine => engine
+   .RegisterTessageHandlers(handle => handle
+      .ForTevent((ISomethingHappenedTevent tevent) => ...)
+      .ForTuery((SomeTuery tuery) => ...)));
 var container = builder.Build();
 ```
 
-Handlers are registered after the container is built, through the resolved `ITessageHandlerRegistrar` /
-`ITypermediaHandlerRegistrar` — and since application handler-registration code is written against those same
-registrar interfaces in every composition, the same registrations run unchanged under an in-process container,
-an in-process endpoint, or a distributed endpoint.
+The declaration block is the one and only way anything gets into the engine: the roster closes when the
+engine is built, and the same declaration block is the surface everywhere — a plain container, an in-process
+endpoint, or a distributed endpoint — so an application's handler declarations run unchanged under any
+composition.
 
 Three things to know:
 

@@ -191,7 +191,7 @@ host.RegisterEndpoint("BackgroundWorker", new EndpointId(Guid.Parse("...")), bui
           .AddExactlyOnceTessaging(tessaging => tessaging.NewtonsoftSerializer())
           .ParticipateIn(registry);   // discover the others through it AND announce ourselves to it
 
-   builder.RegisterTessagingHandlers.ForTommand<MyTommand>(tommand => ...);
+   builder.RegisterTessageHandlers(handle => handle.ForTommand(async (MyTommand tommand, IUnitOfWorkResolver unitOfWork) => ...));
 });
 
 await host.StartAsync();

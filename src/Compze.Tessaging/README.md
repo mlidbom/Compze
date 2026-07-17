@@ -12,7 +12,7 @@ This package provides the messaging infrastructure that powers Compze's type-rou
 
 - **Tommand, tuery, and tevent handling** — Type-routed message dispatch for `ITommand`, `ITuery`, and `ITevent`
 - **Message routing** — Automatic routing based on .NET type compatibility
-- **Three compositions, each containing the one below** — `InProcessTessaging()` composes the synchronous in-process core into a plain container with no transports at all; `AddDistributedTessaging()` adds guarantee-free conversation across endpoints with nothing persisted anywhere; `AddExactlyOnceTessaging()` adds the full inbox/outbox pipeline through which endpoints converse with delivery guarantees
+- **Three compositions, each containing the one below** — `LocalTessagingEngine(...)` composes the engine — the synchronous local core of the whole paradigm — into a plain container with no transports at all; `AddDistributedTessaging()` adds guarantee-free conversation across endpoints with nothing persisted anywhere; `AddExactlyOnceTessaging()` adds the full inbox/outbox pipeline through which endpoints converse with delivery guarantees
 
 ### Type-routed messaging example
 

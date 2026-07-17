@@ -211,11 +211,11 @@ delivery guarantee comes from each arriving tevent's type — the subscriber nev
 - an arriving best-effort tevent → direct dispatch in a unit of work of its own — atomic handler writes, but
   no dedup and no retry.
 
-### `RegisterTransactionIgnoringTeventHandlers` — observation
+### `ObserveTevents` — observation
 
 The one subscription-side choice: opt a handler all the way down to observation — "observe regardless of
 transactional fate". Where the default registration delivers under the arriving tevent type's full
-guarantee, `RegisterTransactionIgnoringTeventHandlers` observes even if the transaction the tevent was
+guarantee, an `ObserveTevents` observer observes even if the transaction the tevent was
 published or is processed in rolls back.
 
 The observation contract, stated honestly — this is the fine print a subscriber accepts by using the escape
@@ -363,7 +363,7 @@ As of 2026-07-15:
   silently downgraded; this is reachable through a wide subscription (say, to a plain `ITevent` interface)
   that a remote publisher's exactly-once tevent happens to match, which no setup-time rule can see.
 - The transaction-ignoring subscription escape hatch (2026-07-15).
-  `RegisterTransactionIgnoringTeventHandlers` (an endpoint-builder property, backed by
+  `ObserveTevents` (a declaration verb on the engine builder and every endpoint feature, backed by
   `ITransactionIgnoringTeventHandlerRegistrar` — a separate registrar, so opting out of every guarantee is
   visible and off the common surface) registers observation handlers, dispatched by the observation
   dispatcher at every point a tevent is first registered: a local publish (at publish time), an

@@ -11,7 +11,20 @@ contributions — an interim seam the roster replaces); the `TessagingRouter` ro
 endpoint's `ITypermediaRouting` rides it; the reconcile-loop twin died — `TypermediaClientRouter` keeps only
 the explicit-connect client shape; `DistributedTypermediaEndpointFeature` composes the distributed Tessaging
 core; peer memory remembers the one advertisement, typermedia types included, so decommission covers them by
-construction (pinned in `Peer_registry_tests`). The destination is
+construction (pinned in `Peer_registry_tests`). **Phase 4 executed 2026-07-17**: the `TessageHandlerRoster`
+(one immutable map for all four kinds, replacing both registries; duplicate single-handler registration and
+registration-after-build explode; advertisement = its projections, computed once) and the one
+`TessageHandlerExecutor` (the five donors' choreography died into it) landed together, wired; the
+`LocalTessagingEngineBuilder` with the ⚖ declaration idiom and the target handler signatures — async-only
+verbs for exactly-once kinds enforced at declaration, sync first-class for the rest — replaced
+`InProcessTessaging()`/`InProcessTypermedia()` in plain containers (`LocalTessagingEngine(engine => ...)`,
+one per container) and the per-style registrar surfaces on endpoints (`RegisterTessageHandlers` /
+`ObserveTevents` on every feature and the endpoint builder, all declaring into the endpoint's one
+`LocalTessagingEngineFeature`); every registration site in the suite, the doc samples, the store
+integrations (tevent store, document db), and the AccountManagement sample migrated to the declaration
+blocks, exactly-once handlers landing on their async shapes. Observation semantics carried over unchanged,
+as planned. Still interim, dying in phase 5: the `IEndpointAdvertisementContributor` seam over the roster's
+two kind-partition projections, and `LocalTessagingEngineFeature` itself. The destination is
 [tessaging-target-design.md](tessaging-target-design.md); the rationale and evidence are in
 [style-substrate-and-hosting-evaluation.md](style-substrate-and-hosting-evaluation.md). This document is the
 path: the ordered phases, what each contains, and what gates what. Every phase is a run of increments that

@@ -19,7 +19,7 @@ Tessaging's plug-in for the testing endpoint host in `Compze.Hosting.Testing`:
 using var host = TestingEndpointHost.Create(new ExactlyOnceTessagingTestingEndpointHostFeature());
 var endpoint = host.RegisterEndpoint("MyEndpoint", endpointId, builder =>
 {
-   builder.RegisterTessagingHandlers.ForTommand((MyTommand tommand) => Handle(tommand));
+   builder.RegisterTessageHandlers(handle => handle.ForTommand((MyTommand tommand) => Handle(tommand)));
 });
 await host.StartAsync();
 ```

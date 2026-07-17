@@ -215,7 +215,7 @@ unhandled-tevent ignore configuration is translated the same way subscriptions a
   the `IExactlyOnceTevent` it stores - its `Id` is the wrapped tevent's, so exactly-once deduplication is
   unchanged), and the receiving inbox deserializes the wrapper and routes it by its type.
 - Endpoints advertise tevent subscriptions in their translated wrapper form
-  (`TessageHandlerRegistry.HandledRemoteTessageTypeIds`); the sender matches wrapped tevents against the
+  (now the `TessageHandlerRoster`'s advertisement projection); the sender matches wrapped tevents against the
   advertised wrapper types by assignability. `AssertMappingsExistFor` on the translated advertisement
   validates `TypeId` coverage for the wrapper types at endpoint start; the publish side fails loudly in
   `TypeMapper.GetId` for an unmapped concrete wrapper.
@@ -496,7 +496,7 @@ is FIXED (2026-07-13): `GetUndeliveredTessagesForEndpoint` orders by the outbox 
 ## Related but out of scope here
 
 - Migration metadata persistence incomplete (`ITeventMigration.cs:10`).
-- `//performance: Use static caching trick.` on the `TessageHandlerRegistry` routing walk (`:71`).
+- `//performance: Use static caching trick.` on the `TessageHandlerRoster` routing walk.
 - Open marker-interface questions in `_TessageTypes..Interfaces.cs`: commented-out `IStrictlyLocalTevent`
   (`:51-52`) and `IFireAndForgetTommand` (`:22-23`), and whether `IAtMostOnceTessage` should exist (`:66`).
 - The `src/Compze.ServiceBus*` directories on disk are untracked `bin`/`obj` residue from the
