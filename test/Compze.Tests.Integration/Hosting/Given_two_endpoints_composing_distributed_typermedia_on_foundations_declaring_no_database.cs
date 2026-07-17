@@ -15,7 +15,7 @@ using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Tessaging.Typermedia;
 using Compze.Tessaging.Typermedia.Client;
-using Compze.Tessaging.Typermedia.HandlerRegistration;
+using Compze.Tessaging.Engine;
 using static Compze.Must.MustActions;
 
 // ReSharper disable InconsistentNaming for testing
@@ -61,9 +61,9 @@ public class Given_two_endpoints_composing_distributed_typermedia_on_foundations
             builder.TypeMapper.RegisterIntegrationTestTypeMappings();
             builder.ComposeFoundationWithCurrentTestsTransportAndNoDatabase()
                    .AddDistributedTypermedia(typermedia => typermedia.NewtonsoftSerializer())
-                   .RegisterHandlers
-                   .ForTuery((GetTheAnswerTuery _) => new AnswerResource(answeredBy: "TypermediaAnsweringEndpoint"))
-                   .ForTommandWithResult((RegisterGreetingTypermediaTommand tommand) => new GreetingRegisteredConfirmationResource(tommand.Greeting));
+                   .RegisterTessageHandlers(handle => handle
+                       .ForTuery((GetTheAnswerTuery _) => new AnswerResource(answeredBy: "TypermediaAnsweringEndpoint"))
+                       .ForTommand((RegisterGreetingTypermediaTommand tommand) => new GreetingRegisteredConfirmationResource(tommand.Greeting)));
          });
    }
 

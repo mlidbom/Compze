@@ -5,7 +5,6 @@ using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Tessaging.Engine;
 using Compze.Tessaging.Internals.Transport;
-using Compze.Tessaging.TessageHandling.Registration.Public;
 using Compze.Tessaging.Implementation.Peers;
 using Compze.Tessaging.Implementation.TessageHandling.Abstractions;
 using Compze.Tessaging.Implementation.BestEffortDelivery;
@@ -33,8 +32,8 @@ namespace Compze.Tessaging.Hosting;
 /// cannot speak: registering a handler for a tessage type that demands the exactly-once contract fails at
 /// setup, and publishing an exactly-once tevent fails naming the missing delivery leg. Created idempotently
 /// through <see cref="EndpointBuilderTessagingExtensions.AddDistributedTessaging"/> /
-/// <see cref="IEndpointBuilder.GetOrAddFeature{TFeature}"/>, and the feature instance is the handle through
-/// which the endpoint's tessaging handlers are registered (<see cref="RegisterHandlers"/>).
+/// <see cref="IEndpointBuilder.GetOrAddFeature{TFeature}"/>, and the endpoint's tessage handlers are declared
+/// through <see cref="RegisterTessageHandlers"/>, into the endpoint's one engine.
 ///
 /// Serving is done by the endpoint's one transport server (<see cref="EndpointTransportServerFeature"/>,
 /// which it composes): the feature registers the best-effort tier's request-handling contribution
@@ -54,21 +53,22 @@ namespace Compze.Tessaging.Hosting;
 ///</summary>
 public class DistributedTessagingEndpointFeature
 {
-   readonly ITessageHandlerRegistrar _handlerRegistrar;
-   readonly ITransactionIgnoringTeventHandlerRegistrar _transactionIgnoringTeventHandlerRegistrar;
+   readonly LocalTessagingEngineFeature _engine;
 
-   public DistributedTessagingEndpointFeature RegisterHandlers(Action<ITessageHandlerRegistrar> registrar)
+   ///<summary>Declares handlers for all four tessage kinds into the endpoint's one engine — see<br/>
+   /// <see cref="LocalTessagingEngineBuilder.RegisterTessageHandlers"/>, whose declaration idiom this is.</summary>
+   public DistributedTessagingEndpointFeature RegisterTessageHandlers(Action<TessageHandlerRegistrar> register)
    {
-      registrar(_handlerRegistrar);
+      _engine.RegisterTessageHandlers(register);
       return this;
    }
 
-   ///<summary>Registers transaction-ignoring tevent handlers — observation, the one subscription-side opt-down<br/>
-   /// (see <c>src/Compze.Tessaging/dev_docs/tevent-delivery-model.md</c>): the handler fires once, immediately, when a matching<br/>
+   ///<summary>Declares tevent observers — observation, the one subscription-side opt-down<br/>
+   /// (see <c>src/Compze.Tessaging/dev_docs/tevent-delivery-model.md</c>): an observer fires once, immediately, when a matching<br/>
    /// tevent is published locally or arrives from another endpoint, outside any transaction and with no delivery guarantees.</summary>
-   public DistributedTessagingEndpointFeature RegisterTransactionIgnoringTeventHandlers(Action<ITransactionIgnoringTeventHandlerRegistrar> registrar)
+   public DistributedTessagingEndpointFeature ObserveTevents(Action<TeventObservationRegistrar> observe)
    {
-      registrar(_transactionIgnoringTeventHandlerRegistrar);
+      _engine.ObserveTevents(observe);
       return this;
    }
 
@@ -142,9 +142,8 @@ public class DistributedTessagingEndpointFeature
       AssertTheEndpointsFoundationIsDeclared(register);
       _endpointId = builder.Configuration.Id;
 
-      var inProcessTessaging = builder.AddInProcessTessaging();
-      _handlerRegistrar = inProcessTessaging.RegisterHandlers;
-      _transactionIgnoringTeventHandlerRegistrar = inProcessTessaging.RegisterTransactionIgnoringTeventHandlers;
+      builder.AddInProcessTessaging();
+      _engine = LocalTessagingEngineFeature.GetOrAddTo(builder);
       _transportServer = EndpointTransportServerFeature.GetOrAddTo(builder);
 
       if(!register.IsRegistered<ITessagesInFlightTracker>())

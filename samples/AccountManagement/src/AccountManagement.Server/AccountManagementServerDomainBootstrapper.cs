@@ -42,7 +42,7 @@ public static class AccountManagementServerDomainBootstrapper
                                RegisterTypeMappings(builder);
 
                                builder.RegisterDocumentDb()
-                                      .HandleDocumentType<AccountStatistics.SingletonStatisticsQueryModel>(builder.RegisterTypermediaHandlers);
+                                      .HandleDocumentType<AccountStatistics.SingletonStatisticsQueryModel>();
 
                                AccountStatistics.Register(builder);
                             });
@@ -58,16 +58,17 @@ public static class AccountManagementServerDomainBootstrapper
              .HandleTaggregate<Account, IAccountTevent>();
 
       builder.RegisterDocumentDb()
-             .HandleDocumentType<TeventStoreApi.TueryApi.TaggregateLink<Account>>(builder.RegisterTypermediaHandlers);
+             .HandleDocumentType<TeventStoreApi.TueryApi.TaggregateLink<Account>>();
    }
 
-   static void RegisterHandlers(IEndpointBuilder builder)
-   {
-      UIAdapterLayer.Register(builder.RegisterTypermediaHandlers);
+   static void RegisterHandlers(IEndpointBuilder builder) =>
+      builder.RegisterTessageHandlers(handle =>
+      {
+         UIAdapterLayer.Register(handle);
 
-      AccountQueryModel.Api.RegisterHandlers(builder.RegisterTypermediaHandlers);
+         AccountQueryModel.Api.RegisterHandlers(handle);
 
-      EmailToAccountMapper.UpdateMappingWhenEmailChanges(builder.RegisterTessagingHandlers);
-      EmailToAccountMapper.TryGetAccountByEmail(builder.RegisterTypermediaHandlers);
-   }
+         EmailToAccountMapper.UpdateMappingWhenEmailChanges(handle);
+         EmailToAccountMapper.TryGetAccountByEmail(handle);
+      });
 }

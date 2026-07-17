@@ -2,7 +2,7 @@ using Compze.Abstractions.Hosting.Public;
 using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Typermedia.Client;
 using Compze.Abstractions.Tessaging.Public;
-using Compze.Tessaging.TessageHandling.Registration.Public;
+using Compze.Tessaging.Engine;
 using Compze.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Typermedia;
@@ -20,7 +20,6 @@ using Compze.Teventive.Taggregates.Tevents.Public;
 using Compze.Teventive.TeventStore.Abstractions.Public;
 using Compze.Teventive.TeventStore.Wiring;
 using Compze.Tessaging.Typermedia;
-using Compze.Tessaging.Typermedia.HandlerRegistration;
 
 #pragma warning disable CA1715 //Interfaces without I prefix
 // ReSharper disable MemberCanBeInternal for testing
@@ -50,16 +49,14 @@ public class Experiment_with_unifying_tevents_and_tommands_test : UniversalTestB
 
             builder.Registrar.TeventStore(builder.Configuration.ConnectionStringName);
 
-            builder.RegisterTessagingHandlers
-                   .ForTevent((IUserTevent.UserRegistered _) => {});
-
-            builder.RegisterTypermediaHandlers
-                   .ForTuery((GetUserTuery tuery, ITeventStoreReader teventReader) => new UserResource(teventReader.GetHistory(tuery.UserId)))
-                   .ForTommandWithResult((UserRegistrarTommand.RegisterUserTypermediaTommand typermediaTommand, ITeventStoreUpdater store) =>
-                    {
-                       store.Save(UserTaggregate.Register(typermediaTommand));
-                       return new RegisterUserResult(typermediaTommand.UserId);
-                    });
+            builder.RegisterTessageHandlers(handle => handle
+                      .ForTevent((IUserTevent.UserRegistered _) => Task.CompletedTask)
+                      .ForTuery((GetUserTuery tuery, ITeventStoreReader teventReader) => new UserResource(teventReader.GetHistory(tuery.UserId)))
+                      .ForTommand((UserRegistrarTommand.RegisterUserTypermediaTommand typermediaTommand, ITeventStoreUpdater store) =>
+                       {
+                          store.Save(UserTaggregate.Register(typermediaTommand));
+                          return new RegisterUserResult(typermediaTommand.UserId);
+                       }));
          });
    }
 

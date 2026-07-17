@@ -1,4 +1,4 @@
-using Compze.Tessaging.TessageHandling.Registration.Public;
+using Compze.Tessaging.Engine;
 using Compze.Teventive.Taggregates.Tevents.Public;
 using static System.Console;
 
@@ -48,11 +48,11 @@ namespace Website.paradigms.semantic_tevents
       {
          public void IllustrateTeventListening()
          {
-            ITessageHandlerRegistrar registrar = null!;
+            TessageHandlerRegistrar registrar = null!;
 
             #region EmailPropertyUpdatedListener
             registrar
-              .ForTevent<IUserEmailPropertyUpdated>(emailUpdated => WriteLine($"User: {emailUpdated.TaggregateId} Email: {emailUpdated.Email}"));
+              .ForTevent<IUserEmailPropertyUpdated>(emailUpdated => { WriteLine($"User: {emailUpdated.TaggregateId} Email: {emailUpdated.Email}"); return Task.CompletedTask; });
             #endregion
          }
       }

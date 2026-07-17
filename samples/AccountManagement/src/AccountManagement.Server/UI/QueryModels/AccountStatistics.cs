@@ -2,7 +2,7 @@ using AccountManagement.Domain.Tevents;
 using Compze.DocumentDb;
 using Compze.Abstractions.Public;
 using Compze.Abstractions.Hosting.Public;
-using Compze.Tessaging.TessageHandling.Registration.Public;
+using Compze.Tessaging.Engine;
 using Compze.DependencyInjection;
 using Compze.Tessaging.Hosting;
 using Compze.Teventive.TeventStore.QueryModels.SelfGeneratingQueryModels;
@@ -38,7 +38,8 @@ static class AccountStatistics
       internal static Guid StaticId = Guid.Parse("93498554-5C2E-4D6A-862D-2DA7BCCAC747");
    }
 
-   static void MaintainStatisticsWhenRelevantTeventsAreReceived(ITessageHandlerRegistrar registrar) => registrar.ForTevent(
+   //Account tevents are exactly-once kinds, and exactly-once kinds are async end to end - so the handler is declared async; its work is synchronous today, so it completes its task synchronously.
+   static void MaintainStatisticsWhenRelevantTeventsAreReceived(TessageHandlerRegistrar registrar) => registrar.ForTevent(
       (IAccountTevent tevent, ILocalTypermediaNavigatorSession navigator, StatisticsSingletonInitializer initializer) =>
       {
          initializer.EnsureInitialized(navigator);
@@ -48,12 +49,14 @@ static class AccountStatistics
             navigator.Execute(new DocumentDbApi().Tueries.GetForUpdate<SingletonStatisticsQueryModel>(SingletonStatisticsQueryModel.StaticId))
                      .ApplyTevent(tevent);
          }
+
+         return Task.CompletedTask;
       });
 
    internal static void Register(IEndpointBuilder builder)
    {
       builder.Registrar.Register(Singleton.For<StatisticsSingletonInitializer>().CreatedBy(() => new StatisticsSingletonInitializer()));
-      MaintainStatisticsWhenRelevantTeventsAreReceived(builder.RegisterTessagingHandlers);
+      builder.RegisterTessageHandlers(MaintainStatisticsWhenRelevantTeventsAreReceived);
    }
 
    class StatisticsSingletonInitializer

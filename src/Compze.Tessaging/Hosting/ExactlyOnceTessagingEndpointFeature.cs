@@ -3,7 +3,7 @@ using Compze.Abstractions.Hosting.Public;
 using Compze.Contracts;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Tessaging.Internals.Transport;
-using Compze.Tessaging.TessageHandling.Registration.Public;
+using Compze.Tessaging.Engine;
 using Compze.Tessaging.Implementation;
 using Compze.Tessaging.Implementation.Outbox;
 using Compze.Tessaging.Implementation.Peers;
@@ -30,8 +30,8 @@ namespace Compze.Tessaging.Hosting;
 /// delivery stream. Created idempotently through
 /// <see cref="EndpointBuilderTessagingExtensions.AddExactlyOnceTessaging"/> /
 /// <see cref="IEndpointBuilder.GetOrAddFeature{TFeature}"/>: this is how exactly-once Tessaging plugs into a
-/// hosting mechanism that knows nothing of it, and the feature instance is the handle through which the
-/// endpoint's tessaging handlers are registered (<see cref="RegisterHandlers"/>).
+/// hosting mechanism that knows nothing of it, and the endpoint's tessage handlers are declared through
+/// <see cref="RegisterTessageHandlers"/>, into the endpoint's one engine.
 ///
 /// The feature registers the exactly-once request handling served by the endpoint's one transport server
 /// (<see cref="ExactlyOnceTessagingRequestHandlersRegistrar.ExactlyOnceTessagingRequestHandlers"/>) — arriving
@@ -44,9 +44,19 @@ public class ExactlyOnceTessagingEndpointFeature
 {
    readonly DistributedTessagingEndpointFeature _distributedTessagingCore;
 
-   public ExactlyOnceTessagingEndpointFeature RegisterHandlers(Action<ITessageHandlerRegistrar> registrar)
+   ///<summary>Declares handlers for all four tessage kinds into the endpoint's one engine — see<br/>
+   /// <see cref="LocalTessagingEngineBuilder.RegisterTessageHandlers"/>, whose declaration idiom this is.</summary>
+   public ExactlyOnceTessagingEndpointFeature RegisterTessageHandlers(Action<TessageHandlerRegistrar> register)
    {
-      _distributedTessagingCore.RegisterHandlers(registrar);
+      _distributedTessagingCore.RegisterTessageHandlers(register);
+      return this;
+   }
+
+   ///<summary>Declares tevent observers — observation, the deliberately transaction-ignoring watch surface; see<br/>
+   /// <see cref="DistributedTessagingEndpointFeature.ObserveTevents"/>, to which this delegates.</summary>
+   public ExactlyOnceTessagingEndpointFeature ObserveTevents(Action<TeventObservationRegistrar> observe)
+   {
+      _distributedTessagingCore.ObserveTevents(observe);
       return this;
    }
 

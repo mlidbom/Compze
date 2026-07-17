@@ -6,12 +6,11 @@ using Compze.Hosting.Testing;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Must;
 
-using Compze.Tessaging.TessageHandling.Registration.Public;
+using Compze.Tessaging.Engine;
 using Compze.Tessaging.Hosting;
 using Compze.Tests.Infrastructure;
 using Compze.Tessaging.Typermedia;
 using Compze.Tessaging.Typermedia.Client;
-using Compze.Tessaging.Typermedia.HandlerRegistration;
 using Compze.Tests.Infrastructure.XUnit;
 
 // ReSharper disable InconsistentNaming for testing
@@ -41,8 +40,9 @@ public class Given_an_endpoint_declaring_only_in_process_tessaging_and_typermedi
             builder.AddInProcessTessaging();
             builder.AddInProcessTypermedia();
 
-            builder.RegisterTessagingHandlers.ForTevent((IMyGreetingRequestedTevent tevent) => _receivedTevents.Add(tevent));
-            builder.RegisterTypermediaHandlers.ForTuery((MyStrictlyLocalGreetingTuery tuery) => new MyGreeting { Message = $"Hello {tuery.Name}!" });
+            builder.RegisterTessageHandlers(handle => handle
+                      .ForTevent((IMyGreetingRequestedTevent tevent) => _receivedTevents.Add(tevent))
+                      .ForTuery((MyStrictlyLocalGreetingTuery tuery) => new MyGreeting { Message = $"Hello {tuery.Name}!" }));
          });
    }
 

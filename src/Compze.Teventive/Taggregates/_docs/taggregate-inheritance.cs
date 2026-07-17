@@ -1,4 +1,4 @@
-using Compze.Tessaging.TessageHandling.Registration.Public;
+using Compze.Tessaging.Engine;
 using Compze.Teventive.Taggregates.Tevents.Public;
 using static System.Console;
 
@@ -37,25 +37,29 @@ class Examples
 
    public void Listeners()
    {
-      ITessageHandlerRegistrar registrar = null!;
+      TessageHandlerRegistrar registrar = null!;
 
       #region doglistener
       registrar
-        .ForTevent<IDogTevent<IAnimalTevent.IBorn>>(born => WriteLine($"Dog Id:{born.Tevent.TaggregateId} was born!"));
+        .ForTevent<IDogTevent<IAnimalTevent.IBorn>>(born => { WriteLine($"Dog Id:{born.Tevent.TaggregateId} was born!"); return Task.CompletedTask; });
       #endregion
       #region catlistener
       registrar
-        .ForTevent<ICatTevent<IAnimalTevent.IBorn>>(born => WriteLine($"Cat Id:{born.Tevent.TaggregateId} was born!"));
+        .ForTevent<ICatTevent<IAnimalTevent.IBorn>>(born => { WriteLine($"Cat Id:{born.Tevent.TaggregateId} was born!"); return Task.CompletedTask; });
       #endregion
       #region animallistener
       registrar
-        .ForTevent<IAnimalTevent.IBorn>(born => WriteLine($"Animal Id:{born.TaggregateId} was born!"));
+        .ForTevent<IAnimalTevent.IBorn>(born => { WriteLine($"Animal Id:{born.TaggregateId} was born!"); return Task.CompletedTask; });
       #endregion
 
       #region wrappedanimallistener
       registrar
         .ForTevent<IAnimalTevent<IAnimalTevent.IBorn>>(
-            born => WriteLine($"{born.GetType().Name.Replace("Tevent", "")} Id: {born.Tevent.TaggregateId}, was born!"));
+            born =>
+            {
+               WriteLine($"{born.GetType().Name.Replace("Tevent", "")} Id: {born.Tevent.TaggregateId}, was born!");
+               return Task.CompletedTask;
+            });
       #endregion
    }
 }

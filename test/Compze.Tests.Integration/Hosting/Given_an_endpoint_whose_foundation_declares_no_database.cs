@@ -17,7 +17,7 @@ using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Tessaging.Typermedia;
 using Compze.Tessaging.Typermedia.Client;
-using Compze.Tessaging.Typermedia.HandlerRegistration;
+using Compze.Tessaging.Engine;
 using Compze.Tessaging.Hosting.Testing.Typermedia;
 using static Compze.Must.MustActions;
 
@@ -55,13 +55,13 @@ public class Given_an_endpoint_whose_foundation_declares_no_database : Universal
             ComposeTheFoundationWithoutADatabase(builder)
               .AddDistributedTypermedia(typermedia => typermedia.NewtonsoftSerializer());
 
-            builder.RegisterTypermediaHandlers
-                   .ForTuery((GetUserTuery tuery) => registeredUsers.Single(user => user.Name == tuery.Name))
-                   .ForTommandWithResult((RegisterUserTypermediaTommand tommand) =>
-                    {
-                       registeredUsers.Add(new UserResource(tommand.Name));
-                       return new UserRegisteredConfirmationResource(tommand.Name);
-                    });
+            builder.RegisterTessageHandlers(handle => handle
+                      .ForTuery((GetUserTuery tuery) => registeredUsers.Single(user => user.Name == tuery.Name))
+                      .ForTommand((RegisterUserTypermediaTommand tommand) =>
+                       {
+                          registeredUsers.Add(new UserResource(tommand.Name));
+                          return new UserRegisteredConfirmationResource(tommand.Name);
+                       }));
          });
    }
 

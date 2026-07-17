@@ -6,7 +6,6 @@ using Compze.DependencyInjection.Abstractions;
 using Compze.Tessaging.Engine;
 using Compze.Tessaging.Internals.Transport;
 using Compze.Tessaging.Hosting;
-using Compze.Tessaging.Typermedia.HandlerRegistration;
 using Compze.Tessaging.Typermedia.Hosting;
 
 namespace Compze.Tessaging.Typermedia.Client;
@@ -40,9 +39,17 @@ namespace Compze.Tessaging.Typermedia.Client;
 ///</summary>
 public class DistributedTypermediaEndpointFeature
 {
-   public TypermediaHandlerRegistrarWithDependencyInjectionSupport RegisterHandlers { get; }
+   readonly InProcessTypermediaEndpointFeature _inProcessTypermedia;
 
    readonly DistributedTessagingEndpointFeature _tessagingCore;
+
+   ///<summary>Declares handlers for all four tessage kinds into the endpoint's one engine — see<br/>
+   /// <see cref="LocalTessagingEngineBuilder.RegisterTessageHandlers"/>, whose declaration idiom this is.</summary>
+   public DistributedTypermediaEndpointFeature RegisterTessageHandlers(Action<TessageHandlerRegistrar> register)
+   {
+      _inProcessTypermedia.RegisterTessageHandlers(register);
+      return this;
+   }
 
    ///<summary>Declares that the endpoint announces where it listens to <paramref name="announcer"/> — see<br/>
    /// <see cref="EndpointTransportServerFeature.AnnounceAddressTo"/>, to which this delegates through the composed Tessaging<br/>
@@ -79,7 +86,7 @@ public class DistributedTypermediaEndpointFeature
 
       //The distributed substrate is the Tessaging core's: one transport server, one router, one advertisement, peer memory.
       _tessagingCore = builder.AddDistributedTessaging();
-      RegisterHandlers = builder.AddInProcessTypermedia().RegisterHandlers;
+      _inProcessTypermedia = builder.AddInProcessTypermedia();
 
       TypermediaHandlerExecutor.RegisterWith(builder.Registrar);
       builder.Registrar.TypermediaTransportServer()

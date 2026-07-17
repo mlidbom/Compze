@@ -2,19 +2,21 @@ using Compze.Abstractions.Hosting.Public;
 
 namespace Compze.Tessaging.Engine;
 
-///<summary>The endpoint's one engine core — roster, executor, and the handler registrations they are built from — created<br/>
-/// idempotently (<see cref="IEndpointBuilder.GetOrAddFeature{TFeature}"/>) so that every style feature composing the endpoint<br/>
-/// shares the same roster: one engine per container, whichever feature arrives first brings it. An interim shim — the concrete<br/>
-/// endpoint types replace the feature machinery, and with it this class, when they land.</summary>
+///<summary>The endpoint's one engine — roster, executor, and the declaration surface they are built from — created idempotently<br/>
+/// (<see cref="IEndpointBuilder.GetOrAddFeature{TFeature}"/>) so that every style feature composing the endpoint shares the same<br/>
+/// engine: one engine per container, whichever feature arrives first brings it. The style features' declaration verbs<br/>
+/// (<c>RegisterTessageHandlers</c>/<c>ObserveTevents</c>) all delegate here, into the endpoint's one<br/>
+/// <see cref="LocalTessagingEngineBuilder"/>. An interim shim — the concrete endpoint types replace the feature machinery, and<br/>
+/// with it this class, when they land.</summary>
 class LocalTessagingEngineFeature
 {
-   internal TessageHandlerRegistrations HandlerRegistrations { get; }
+   internal LocalTessagingEngineBuilder EngineBuilder { get; } = new();
 
    internal static LocalTessagingEngineFeature GetOrAddTo(IEndpointBuilder builder) => builder.GetOrAddFeature(it => new LocalTessagingEngineFeature(it));
 
-   LocalTessagingEngineFeature(IEndpointBuilder builder)
-   {
-      HandlerRegistrations = new TessageHandlerRegistrations();
-      builder.Registrar.RegisterLocalTessagingEngineCore(HandlerRegistrations);
-   }
+   LocalTessagingEngineFeature(IEndpointBuilder builder) => builder.Registrar.RegisterLocalTessagingEngineCore(EngineBuilder.HandlerRegistrations);
+
+   internal void RegisterTessageHandlers(Action<TessageHandlerRegistrar> register) => EngineBuilder.RegisterTessageHandlers(register);
+
+   internal void ObserveTevents(Action<TeventObservationRegistrar> observe) => EngineBuilder.ObserveTevents(observe);
 }

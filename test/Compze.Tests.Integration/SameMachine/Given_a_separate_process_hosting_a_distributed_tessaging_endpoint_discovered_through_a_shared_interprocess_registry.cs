@@ -7,7 +7,7 @@ using Compze.Hosting.SameMachine;
 using Compze.Hosting.Testing;
 using Compze.Hosting.Testing.Wiring;
 using Compze.Internals.Testing;
-using Compze.Tessaging.TessageHandling.Registration.Public;
+using Compze.Tessaging.Engine;
 using Compze.Tessaging.Hosting;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
@@ -62,7 +62,7 @@ public class Given_a_separate_process_hosting_a_distributed_tessaging_endpoint_d
                    //below, before either process has discovered the other, is held for the required peer and delivered on first
                    //contact instead of vanishing into the discovery race.
                    .RequirePeers(MultiProcessConversationEndpoints.EndpointHostProcessEndpointId);
-            builder.RegisterTessagingHandlers.ForTevent((IBestEffortTeventPublishedByTheEndpointHostProcess _) => _replyTeventReceived.Set());
+            builder.RegisterTessageHandlers(handle => handle.ForTevent((IBestEffortTeventPublishedByTheEndpointHostProcess _) => _replyTeventReceived.Set()));
          });
    }
 

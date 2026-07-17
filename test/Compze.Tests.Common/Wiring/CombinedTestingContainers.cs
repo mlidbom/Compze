@@ -30,13 +30,13 @@ public static class CombinedTestingContainers
       @this.CreateTestingContainerBuilder()
            ._mutate(it => it.Registrar.CurrentTestsPluggableComponents());
 
-   public static IDependencyInjectionContainer CreateContainerForTesting(this DIContainer @this, Action<ITypeMapper> registerDomainTypeMappings, [InstantHandle] Action<IComponentRegistrar> setup)
+   public static IDependencyInjectionContainer CreateContainerForTesting(this DIContainer @this, Action<ITypeMapper> registerDomainTypeMappings, [InstantHandle] Action<IComponentRegistrar> setup, Action<LocalTessagingEngineBuilder>? composeEngine = null)
    {
       var builder = @this.CreateWithCurrentTestsPluggableComponents();
       builder.Registrar
                .TypeIdentifierMapper(registerDomainTypeMappings)
                .DummyConfigurationParameterProvider()
-               .LocalTessagingEngine(engine => {});
+               .LocalTessagingEngine(composeEngine ?? (engine => {}));
       setup(builder.Registrar);
 
       return builder.Build();
@@ -44,12 +44,12 @@ public static class CombinedTestingContainers
 
    public const string TeventStoreConnectionStringName = "Fake_connectionstring_for_database_testing";
 
-   public static IDependencyInjectionContainer SetupTestingContainer(this DIContainer @this, Action<ITypeMapper> registerDomainTypeMappings, [InstantHandle] Action<IComponentRegistrar>? configureContainer = null) =>
+   public static IDependencyInjectionContainer SetupTestingContainer(this DIContainer @this, Action<ITypeMapper> registerDomainTypeMappings, [InstantHandle] Action<IComponentRegistrar>? configureContainer = null, Action<LocalTessagingEngineBuilder>? composeEngine = null) =>
       CompzeLogger.For(typeof(CombinedTestingContainers)).ExceptionsAndRethrow(() =>
                                                                               @this.CreateContainerForTesting(registerDomainTypeMappings, register =>
                                                                               {
                                                                                  register.DocumentDb();
                                                                                  register.TeventStore(TeventStoreConnectionStringName);
                                                                                  configureContainer?.Invoke(register);
-                                                                              }));
+                                                                              }, composeEngine));
 }

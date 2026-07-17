@@ -12,7 +12,7 @@ using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Internals.SystemCE.TransactionsCE.Testing;
 using Compze.Internals.Testing;
 using Compze.Must;
-using Compze.Tessaging.TessageHandling.Registration.Public;
+using Compze.Tessaging.Engine;
 using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Implementation.BestEffortDelivery;
 using Compze.Tessaging.Implementation.Peers;
@@ -77,7 +77,7 @@ public class Given_a_met_distributed_tessaging_subscriber_that_goes_down : Unive
             builder.TypeMapper.RegisterIntegrationTestTypeMappings();
             builder.ComposeFoundationWithCurrentTestsTransportAndNoDatabase()
                    .AddDistributedTessaging(tessaging => tessaging.NewtonsoftSerializer())
-                   .RegisterHandlers(register => register.ForTevent((IMyBestEffortTevent tevent) =>
+                   .RegisterTessageHandlers(handle => handle.ForTevent((IMyBestEffortTevent tevent) =>
                     {
                        _teventsHandledOnTheSubscriber.Enqueue(tevent);
                        _subscriberTeventHandlerGate.AwaitPassThrough();

@@ -9,7 +9,7 @@ using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Internals.Testing;
 using Compze.Must;
 
-using Compze.Tessaging.TessageHandling.Registration.Public;
+using Compze.Tessaging.Engine;
 using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Tests.Infrastructure;
@@ -54,7 +54,11 @@ public class Given_an_exactly_once_tessaging_endpoint_declaring_no_discovery_reg
             builder.Registrar.CurrentTestsEndpointTransport()
                    .CurrentTestsConfiguredSqlLayer(connectionStringName: builder.Configuration.Id.ToString());
             builder.AddExactlyOnceTessaging()
-                   .RegisterHandlers(register => register.ForTommand((TommandTheEndpointSendsItself _) => _selfSentTommandHandlerGate.AwaitPassThrough()));
+                   .RegisterTessageHandlers(handle => handle.ForTommand((TommandTheEndpointSendsItself _) =>
+                    {
+                       _selfSentTommandHandlerGate.AwaitPassThrough();
+                       return Task.CompletedTask;
+                    }));
          });
    }
 

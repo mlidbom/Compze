@@ -9,16 +9,15 @@ using Compze.Tessaging.Hosting.Testing.Typermedia;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.LinqCE;
 using Compze.Abstractions.Hosting.Public;
+using Compze.Tessaging.Engine;
 using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Typermedia.Client;
-using Compze.Tessaging.TessageHandling.Registration.Public;
 using Compze.Tests.Infrastructure;
 using Compze.Teventive.TeventStore.Typermedia;
 using Compze.Underscore;
 using Compze.Threading;
 using Compze.Threading.Testing;
 using Compze.Tessaging.Typermedia;
-using Compze.Tessaging.Typermedia.HandlerRegistration;
 
 // ReSharper disable ClassNeverInstantiated.Global
 // ReSharper disable InconsistentNaming for testing
@@ -131,37 +130,48 @@ public abstract class EndpointHostTestBase : UniversalTestBase
             builder.RegisterTeventStore()
                    .HandleTaggregate<MyTaggregate, IMyTaggregateTevent>();
 
-            builder.RegisterTessagingHandlers
-                   .ForTommand((MyExactlyOnceTommand _) => MyExactlyOnceTommandHandlerThreadGate.AwaitPassThrough())
-                   .ForTevent((IMyExactlyOnceTevent _) => TeventHandlerThreadGate.AwaitPassThrough())
-                   .ForTevent((IMyTaggregateTevent _) => MyLocalTaggregateTeventHandlerThreadGate.AwaitPassThrough())
-                   .ForTevent((IMyBestEffortTevent _) => MyBestEffortTeventLocalHandlerThreadGate.AwaitPassThrough());
+            //Exactly-once kinds are async end to end, so their handlers are declared async; the gates themselves are synchronous, so the bodies complete their tasks synchronously.
+            builder.RegisterTessageHandlers(handle => handle
+                      .ForTommand((MyExactlyOnceTommand _) =>
+                       {
+                          MyExactlyOnceTommandHandlerThreadGate.AwaitPassThrough();
+                          return Task.CompletedTask;
+                       })
+                      .ForTevent((IMyExactlyOnceTevent _) =>
+                       {
+                          TeventHandlerThreadGate.AwaitPassThrough();
+                          return Task.CompletedTask;
+                       })
+                      .ForTevent((IMyTaggregateTevent _) =>
+                       {
+                          MyLocalTaggregateTeventHandlerThreadGate.AwaitPassThrough();
+                          return Task.CompletedTask;
+                       })
+                      .ForTevent((IMyBestEffortTevent _) => MyBestEffortTeventLocalHandlerThreadGate.AwaitPassThrough())
+                      .ForTommand((MyCreateTaggregateTommand tommand, ILocalTypermediaNavigatorSession navigator) =>
+                       {
+                          MyCreateTaggregateTommandHandlerThreadGate.AwaitPassThrough();
+                          MyTaggregate.Create(tommand.TaggregateId, navigator);
+                       })
+                      .ForTommand((MyUpdateTaggregateTommand tommand, ILocalTypermediaNavigatorSession navigator) =>
+                       {
+                          MyUpdateTaggregateTommandHandlerThreadGate.AwaitPassThrough();
+                          navigator.Execute(new TeventStoreApi().Tueries.GetForUpdate<MyTaggregate>(tommand.TaggregateId)).Update();
+                       })
+                      .ForTuery((MyTuery _) =>
+                       {
+                          TueryHandlerThreadGate.AwaitPassThrough();
+                          return new MyTueryResult();
+                       })
+                      .ForTommand((MyAtMostOnceTypermediaTommandWithResult _) =>
+                       {
+                          TommandHandlerWithResultThreadGate.AwaitPassThrough();
+                          return new MyTommandResult();
+                       }));
 
             //Observation - the transaction-ignoring subscription kind: fires at publish time for the Backend's own locally published tevents.
-            builder.RegisterTransactionIgnoringTeventHandlers
-                   .ForTevent((IMyTaggregateTevent _) => MyTaggregateTeventBackendObserverThreadGate.AwaitPassThrough());
-
-            builder.RegisterTypermediaHandlers
-                   .ForTommand((MyCreateTaggregateTommand tommand, ILocalTypermediaNavigatorSession navigator) =>
-                    {
-                       MyCreateTaggregateTommandHandlerThreadGate.AwaitPassThrough();
-                       MyTaggregate.Create(tommand.TaggregateId, navigator);
-                    })
-                   .ForTommand((MyUpdateTaggregateTommand tommand, ILocalTypermediaNavigatorSession navigator) =>
-                    {
-                       MyUpdateTaggregateTommandHandlerThreadGate.AwaitPassThrough();
-                       navigator.Execute(new TeventStoreApi().Tueries.GetForUpdate<MyTaggregate>(tommand.TaggregateId)).Update();
-                    })
-                   .ForTuery((MyTuery _) =>
-                    {
-                       TueryHandlerThreadGate.AwaitPassThrough();
-                       return new MyTueryResult();
-                    })
-                   .ForTommandWithResult((MyAtMostOnceTypermediaTommandWithResult _) =>
-                    {
-                       TommandHandlerWithResultThreadGate.AwaitPassThrough();
-                       return new MyTommandResult();
-                    });
+            builder.ObserveTevents(observe => observe
+                      .ForTevent((IMyTaggregateTevent _) => MyTaggregateTeventBackendObserverThreadGate.AwaitPassThrough()));
          });
    }
 
@@ -174,24 +184,36 @@ public abstract class EndpointHostTestBase : UniversalTestBase
 
                                                 if(withItsTommandHandler)
                                                 {
-                                                   builder.RegisterTessagingHandlers
-                                                          .ForTommand((MyExactlyOnceTommandHandledByTheRemoteEndpoint _) => MyExactlyOnceTommandHandledByTheRemoteEndpointHandlerThreadGate.AwaitPassThrough());
+                                                   builder.RegisterTessageHandlers(handle => handle
+                                                             .ForTommand((MyExactlyOnceTommandHandledByTheRemoteEndpoint _) =>
+                                                              {
+                                                                 MyExactlyOnceTommandHandledByTheRemoteEndpointHandlerThreadGate.AwaitPassThrough();
+                                                                 return Task.CompletedTask;
+                                                              }));
                                                 }
 
-                                                builder.RegisterTessagingHandlers
-                                                       .ForTevent((IMyTaggregateTevent _) => MyRemoteTaggregateTeventHandlerThreadGate.AwaitPassThrough())
-                                                       //Publisher-conscious subscription: subscribing to the taggregate's wrapper type receives the wrapped tevent as MyTaggregate published it.
-                                                       .ForTevent((IMyTaggregateTevent<IMyTaggregateTevent> _) => MyRemotePublisherConsciousTeventHandlerThreadGate.AwaitPassThrough())
-                                                       .ForTevent((IMyBestEffortTevent tevent) =>
-                                                        {
-                                                           RemotelyReceivedBestEffortTevents.Enqueue(tevent);
-                                                           MyBestEffortTeventRemoteHandlerThreadGate.AwaitPassThrough();
-                                                        });
+                                                builder.RegisterTessageHandlers(handle => handle
+                                                          .ForTevent((IMyTaggregateTevent _) =>
+                                                           {
+                                                              MyRemoteTaggregateTeventHandlerThreadGate.AwaitPassThrough();
+                                                              return Task.CompletedTask;
+                                                           })
+                                                          //Publisher-conscious subscription: subscribing to the taggregate's wrapper type receives the wrapped tevent as MyTaggregate published it.
+                                                          .ForTevent((IMyTaggregateTevent<IMyTaggregateTevent> _) =>
+                                                           {
+                                                              MyRemotePublisherConsciousTeventHandlerThreadGate.AwaitPassThrough();
+                                                              return Task.CompletedTask;
+                                                           })
+                                                          .ForTevent((IMyBestEffortTevent tevent) =>
+                                                           {
+                                                              RemotelyReceivedBestEffortTevents.Enqueue(tevent);
+                                                              MyBestEffortTeventRemoteHandlerThreadGate.AwaitPassThrough();
+                                                           }));
 
                                                 //Observation - the transaction-ignoring subscription kind: fires on arrival, before and outside the transactional handling above.
-                                                builder.RegisterTransactionIgnoringTeventHandlers
-                                                       .ForTevent((IMyTaggregateTevent _) => MyTaggregateTeventRemoteObserverThreadGate.AwaitPassThrough())
-                                                       .ForTevent((IMyBestEffortTevent _) => MyBestEffortTeventRemoteObserverThreadGate.AwaitPassThrough());
+                                                builder.ObserveTevents(observe => observe
+                                                          .ForTevent((IMyTaggregateTevent _) => MyTaggregateTeventRemoteObserverThreadGate.AwaitPassThrough())
+                                                          .ForTevent((IMyBestEffortTevent _) => MyBestEffortTeventRemoteObserverThreadGate.AwaitPassThrough()));
                                              });
 
    protected async Task StartHostAsync()
@@ -235,8 +257,12 @@ public abstract class EndpointHostTestBase : UniversalTestBase
                             {
                                builder.TypeMapper.RegisterCommonTestTypeMappings();
 
-                               builder.RegisterTessagingHandlers
-                                      .ForTommand((MyExactlyOnceTommandHandledByTheRemoteEndpoint _) => RemoteSuccessorTommandHandlerThreadGate.AwaitPassThrough());
+                               builder.RegisterTessageHandlers(handle => handle
+                                         .ForTommand((MyExactlyOnceTommandHandledByTheRemoteEndpoint _) =>
+                                          {
+                                             RemoteSuccessorTommandHandlerThreadGate.AwaitPassThrough();
+                                             return Task.CompletedTask;
+                                          }));
                             });
       await StartHostAndConnectClientAsync();
    }

@@ -21,9 +21,18 @@ public static class TessageHandlerRegistrarCE
                                                                                                              where TDependency1 : class
          => @this.ForTevent<TTevent>((tevent, unitOfWork) => handler(tevent, unitOfWork.Resolve<TDependency1>()));
 
+      public TessageHandlerRegistrar ForTevent<TTevent, TDependency1>(Func<TTevent, TDependency1, Task> handler) where TTevent : ITevent
+                                                                                                                 where TDependency1 : class
+         => @this.ForTevent<TTevent>((tevent, unitOfWork) => handler(tevent, unitOfWork.Resolve<TDependency1>()));
+
       public TessageHandlerRegistrar ForTevent<TTevent, TDependency1, TDependency2>(Action<TTevent, TDependency1, TDependency2> handler) where TTevent : ITevent
                                                                                                                                          where TDependency1 : class
                                                                                                                                          where TDependency2 : class
+         => @this.ForTevent<TTevent>((tevent, unitOfWork) => handler(tevent, unitOfWork.Resolve<TDependency1>(), unitOfWork.Resolve<TDependency2>()));
+
+      public TessageHandlerRegistrar ForTevent<TTevent, TDependency1, TDependency2>(Func<TTevent, TDependency1, TDependency2, Task> handler) where TTevent : ITevent
+                                                                                                                                             where TDependency1 : class
+                                                                                                                                             where TDependency2 : class
          => @this.ForTevent<TTevent>((tevent, unitOfWork) => handler(tevent, unitOfWork.Resolve<TDependency1>(), unitOfWork.Resolve<TDependency2>()));
 
       public TessageHandlerRegistrar ForTommand<TTommand>(Action<TTommand> handler) where TTommand : ITommand
@@ -34,6 +43,10 @@ public static class TessageHandlerRegistrarCE
 
       public TessageHandlerRegistrar ForTommand<TTommand, TDependency1>(Action<TTommand, TDependency1> handler) where TTommand : ITommand
                                                                                                                 where TDependency1 : class
+         => @this.ForTommand<TTommand>((tommand, unitOfWork) => handler(tommand, unitOfWork.Resolve<TDependency1>()));
+
+      public TessageHandlerRegistrar ForTommand<TTommand, TDependency1>(Func<TTommand, TDependency1, Task> handler) where TTommand : ITommand
+                                                                                                                    where TDependency1 : class
          => @this.ForTommand<TTommand>((tommand, unitOfWork) => handler(tommand, unitOfWork.Resolve<TDependency1>()));
 
       public TessageHandlerRegistrar ForTommand<TTommand, TResult>(Func<TTommand, TResult> handler) where TTommand : ITommand<TResult>

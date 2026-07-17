@@ -6,7 +6,8 @@ using Compze.Must;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Tessaging.Typermedia.Client;
-using Compze.Tessaging.Typermedia.HandlerRegistration;
+using Compze.Tessaging.Engine;
+using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Hosting.Testing.Typermedia;
 using static Compze.Must.MustActions;
 using Compze.Tessaging.Typermedia;
@@ -39,8 +40,8 @@ public class Given_two_endpoints_advertising_the_same_typermedia_tuery_type : Un
          builder =>
          {
             builder.TypeMapper.RegisterTypermediaHostingSpecificationTypeMappings();
-            builder.RegisterTypermediaHandlers
-                   .ForTuery((TueryBothEndpointsHandle tuery) => new TueryAnswer { Message = "from the first endpoint" });
+            builder.RegisterTessageHandlers(handle => handle
+                      .ForTuery((TueryBothEndpointsHandle tuery) => new TueryAnswer { Message = "from the first endpoint" }));
          });
 
       _secondEndpoint = _host.RegisterEndpoint(
@@ -49,9 +50,9 @@ public class Given_two_endpoints_advertising_the_same_typermedia_tuery_type : Un
          builder =>
          {
             builder.TypeMapper.RegisterTypermediaHostingSpecificationTypeMappings();
-            builder.RegisterTypermediaHandlers
-                   .ForTuery((TueryBothEndpointsHandle tuery) => new TueryAnswer { Message = "from the second endpoint" })
-                   .ForTuery((TueryOnlyTheSecondEndpointHandles tuery) => new TueryAnswer { Message = "only the second endpoint handles this" });
+            builder.RegisterTessageHandlers(handle => handle
+                      .ForTuery((TueryBothEndpointsHandle tuery) => new TueryAnswer { Message = "from the second endpoint" })
+                      .ForTuery((TueryOnlyTheSecondEndpointHandles tuery) => new TueryAnswer { Message = "only the second endpoint handles this" }));
          });
    }
 

@@ -12,7 +12,7 @@ using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Internals.Testing;
 using Compze.Must;
 
-using Compze.Tessaging.TessageHandling.Registration.Public;
+using Compze.Tessaging.Engine;
 using Compze.Tessaging.Hosting;
 using Compze.Tests.Common.Tessaging.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler;
 using Compze.Tests.Infrastructure;
@@ -68,7 +68,7 @@ public class Given_two_endpoints_composing_distributed_tessaging_on_foundations_
             builder.ComposeFoundationWithCurrentTestsTransportAndNoDatabase()
                    .AddDistributedTessaging(tessaging => tessaging.NewtonsoftSerializer())
                    .DiscoverEndpointsThrough(endpointsOfTheHost)
-                   .RegisterHandlers(register => register.ForTevent((IMyBestEffortTevent tevent) =>
+                   .RegisterTessageHandlers(handle => handle.ForTevent((IMyBestEffortTevent tevent) =>
                     {
                        _bestEffortTeventsHandledOnTheSubscriber.Enqueue(tevent);
                        _subscriberBestEffortTeventHandlerGate.AwaitPassThrough();
@@ -99,7 +99,7 @@ public class Given_two_endpoints_composing_distributed_tessaging_on_foundations_
                                            new EndpointId(Guid.NewGuid()),
                                            builder => builder.ComposeFoundationWithCurrentTestsTransportAndNoDatabase()
                                                              .AddDistributedTessaging(tessaging => tessaging.NewtonsoftSerializer())
-                                                             .RegisterHandlers(register => register.ForTevent((ITeventDeclaringTheExactlyOnceContract _) => {}))))
+                                                             .RegisterTessageHandlers(handle => handle.ForTevent((ITeventDeclaringTheExactlyOnceContract _) => Task.CompletedTask))))
         .Must().Throw<Exception>().Which.Message.Must().Contain("wires no exactly-once delivery machinery");
    }
 
@@ -110,7 +110,7 @@ public class Given_two_endpoints_composing_distributed_tessaging_on_foundations_
                                            new EndpointId(Guid.NewGuid()),
                                            builder => builder.ComposeFoundationWithCurrentTestsTransportAndNoDatabase()
                                                              .AddDistributedTessaging(tessaging => tessaging.NewtonsoftSerializer())
-                                                             .RegisterTransactionIgnoringTeventHandlers(register => register.ForTevent((ITeventDeclaringTheExactlyOnceContract _) => {}))))
+                                                             .ObserveTevents(observe => observe.ForTevent((ITeventDeclaringTheExactlyOnceContract _) => {}))))
         .Must().Throw<Exception>().Which.Message.Must().Contain("wires no exactly-once delivery machinery");
    }
 
@@ -121,7 +121,7 @@ public class Given_two_endpoints_composing_distributed_tessaging_on_foundations_
                                            new EndpointId(Guid.NewGuid()),
                                            builder => builder.ComposeFoundationWithCurrentTestsTransportAndNoDatabase()
                                                              .AddDistributedTessaging(tessaging => tessaging.NewtonsoftSerializer())
-                                                             .RegisterHandlers(register => register.ForTommand((TommandDeclaringTheExactlyOnceContract _) => {}))))
+                                                             .RegisterTessageHandlers(handle => handle.ForTommand((TommandDeclaringTheExactlyOnceContract _) => Task.CompletedTask))))
         .Must().Throw<Exception>().Which.Message.Must().Contain("wires no exactly-once delivery machinery");
    }
 

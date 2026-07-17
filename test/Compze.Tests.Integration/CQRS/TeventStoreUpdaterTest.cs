@@ -3,7 +3,7 @@ using System.Transactions;
 using Compze.Contracts;
 using Compze.Abstractions.Public;
 using Compze.xUnitMatrix;
-using Compze.Tessaging.TessageHandling.Registration.Public;
+using Compze.Tessaging.Engine;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Abstractions.Wiring.Testing.Internal;
 using JetBrains.Annotations;
@@ -49,12 +49,15 @@ public class TeventStoreUpdaterTest : UniversalTestBase
 
    public TeventStoreUpdaterTest()
    {
-      _container = TestEnv.DIContainer.SetupTestingContainer(mapper => mapper.RegisterIntegrationTestTypeMappings());
-
       _teventSpy = new TeventSpy();
 
-      _container.Resolve<ITessageHandlerRegistrar>()
-                     .ForTevent<IExactlyOnceTevent>((tevent, _) => _teventSpy.Receive(tevent));
+      //Exactly-once kinds are async end to end, so the spy subscription is declared async; the spy is synchronous, so it completes its task synchronously.
+      _container = TestEnv.DIContainer.SetupTestingContainer(mapper => mapper.RegisterIntegrationTestTypeMappings(),
+                                                             composeEngine: engine => engine.RegisterTessageHandlers(handle => handle.ForTevent((IExactlyOnceTevent tevent) =>
+                                                             {
+                                                                _teventSpy.Receive(tevent);
+                                                                return Task.CompletedTask;
+                                                             })));
    }
 
    protected override async Task DisposeAsyncInternal() => await _container.DisposeAsync().AsTask();

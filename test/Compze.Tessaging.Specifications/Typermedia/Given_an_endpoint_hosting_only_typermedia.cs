@@ -6,7 +6,8 @@ using Compze.Must;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Tessaging.Typermedia.Client;
-using Compze.Tessaging.Typermedia.HandlerRegistration;
+using Compze.Tessaging.Engine;
+using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Hosting.Testing.Typermedia;
 using Compze.Tessaging.Typermedia;
 
@@ -32,9 +33,9 @@ public class Given_an_endpoint_hosting_only_typermedia : UniversalTestBase
          {
             builder.TypeMapper.RegisterTypermediaHostingSpecificationTypeMappings();
 
-            builder.RegisterTypermediaHandlers
-                   .ForTuery((GreetingTuery tuery) => new Greeting { Message = $"Hello {tuery.Name}!" })
-                   .ForTommandWithResult((RegisterGreeterTommand tommand) => new GreeterRegistered { Name = tommand.Name });
+            builder.RegisterTessageHandlers(handle => handle
+                      .ForTuery((GreetingTuery tuery) => new Greeting { Message = $"Hello {tuery.Name}!" })
+                      .ForTommand((RegisterGreeterTommand tommand) => new GreeterRegistered { Name = tommand.Name }));
          });
    }
 

@@ -7,7 +7,7 @@ using Compze.Hosting.SameMachine;
 using Compze.Hosting.Testing;
 using Compze.Hosting.Testing.Wiring;
 using Compze.Internals.Testing;
-using Compze.Tessaging.TessageHandling.Registration.Public;
+using Compze.Tessaging.Engine;
 using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Tests.Infrastructure;
@@ -61,7 +61,11 @@ public class Given_a_separate_process_hosting_an_endpoint_discovered_through_a_s
                    .CurrentTestsEndpointTransport()
                    .CurrentTestsConfiguredSqlLayer(connectionStringName: builder.Configuration.Id.ToString());
             builder.AddExactlyOnceTessaging().ParticipateIn(_registry);
-            builder.RegisterTessagingHandlers.ForTommand<TommandSentBackToTheSpecificationProcess>(_ => _replyTommandGate.AwaitPassThrough());
+            builder.RegisterTessageHandlers(handle => handle.ForTommand((TommandSentBackToTheSpecificationProcess _) =>
+            {
+               _replyTommandGate.AwaitPassThrough();
+               return Task.CompletedTask;
+            }));
          });
    }
 

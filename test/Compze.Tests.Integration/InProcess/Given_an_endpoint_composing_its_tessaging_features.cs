@@ -4,7 +4,7 @@ using Compze.Hosting.Testing.Wiring;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Must;
 
-using Compze.Tessaging.TessageHandling.Registration.Public;
+using Compze.Tessaging.Engine;
 using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Tests.Infrastructure;
@@ -50,7 +50,7 @@ public class Given_an_endpoint_composing_its_tessaging_features : UniversalTestB
    [PCT] public void registering_tessaging_handlers_before_declaring_in_process_tessaging_succeeds() =>
       RegisterEndpointWith("HandlersThenInProcess", builder =>
       {
-         builder.RegisterTessagingHandlers.ForTevent((IMyGreetingRequestedTevent _) => {});
+         builder.RegisterTessageHandlers(handle => handle.ForTevent((IMyGreetingRequestedTevent _) => {}));
          builder.AddInProcessTessaging();
       }).Must().NotBeNull();
 
@@ -58,7 +58,7 @@ public class Given_an_endpoint_composing_its_tessaging_features : UniversalTestB
       RegisterEndpointWith("HandlersThenExactlyOnce", builder =>
       {
          DeclareTheEndpointsFoundation(builder);
-         builder.RegisterTessagingHandlers.ForTevent((IMyGreetingRequestedTevent _) => {});
+         builder.RegisterTessageHandlers(handle => handle.ForTevent((IMyGreetingRequestedTevent _) => {}));
          builder.AddExactlyOnceTessaging();
       }).Must().NotBeNull();
 

@@ -10,7 +10,7 @@ using Compze.Teventive.Taggregates.Tevents.Public;
 using Compze.Teventive.TeventStore.QueryModels.SelfGeneratingQueryModels;
 using Compze.Teventive.TeventStore.Typermedia;
 using Compze.Tessaging.Typermedia;
-using Compze.Tessaging.Typermedia.HandlerRegistration;
+using Compze.Tessaging.Engine;
 
 namespace AccountManagement.UI.QueryModels;
 
@@ -45,9 +45,9 @@ class AccountQueryModel : SelfGeneratingQueryModel<AccountQueryModel, IAccountTe
          public TessageTypes.StrictlyLocal.Tueries.EntityLink<AccountQueryModel> Get(EntityId id) => new(id);
       }
 
-      public static void RegisterHandlers(TypermediaHandlerRegistrarWithDependencyInjectionSupport registrar) => Get(registrar);
+      public static void RegisterHandlers(TessageHandlerRegistrar registrar) => Get(registrar);
 
-      static void Get(TypermediaHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTuery(
+      static void Get(TessageHandlerRegistrar registrar) => registrar.ForTuery(
          (TessageTypes.StrictlyLocal.Tueries.EntityLink<AccountQueryModel> tuery, ILocalTypermediaNavigatorSession navigator) =>
             //todo this Id conversion feels iffy
             new AccountQueryModel(navigator.Execute(new TeventStoreApi().Tueries.GetHistory<IAccountTevent>(new TaggregateId(tuery.EntityId.Value)))));

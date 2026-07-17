@@ -6,7 +6,8 @@ using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tests.Infrastructure;
 using Compze.Tessaging.Hosting.Testing.Typermedia;
 using Compze.Tessaging.Typermedia;
-using Compze.Tessaging.Typermedia.HandlerRegistration;
+using Compze.Tessaging.Engine;
+using Compze.Tessaging.Hosting;
 
 namespace Compze.Tests.Performance.Internals.Tessaging.Hypermedia;
 
@@ -27,9 +28,9 @@ public abstract class PerformanceTestBase : UniversalTestBase
          {
             builder.TypeMapper.RegisterPerformanceTestTypeMappings();
 
-            builder.RegisterTypermediaHandlers
-                   .ForTuery((MyRemoteTuery _) => new MyTueryResult())
-                   .ForTuery((MyLocalStrictlyLocalTuery _) => new MyTueryResult());
+            builder.RegisterTessageHandlers(handle => handle
+                      .ForTuery((MyRemoteTuery _) => new MyTueryResult())
+                      .ForTuery((MyLocalStrictlyLocalTuery _) => new MyTueryResult()));
          });
    }
 

@@ -11,7 +11,8 @@ using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Must;
 
 using Compze.Tessaging.Typermedia;
-using Compze.Tessaging.Typermedia.HandlerRegistration;
+using Compze.Tessaging.Engine;
+using Compze.Tessaging.Hosting;
 
 // ReSharper disable MemberCanBeMadeStatic.Global
 // ReSharper disable MemberCanBeMadeStatic.Local
@@ -37,14 +38,14 @@ public class Navigator_specification : UniversalTestBase
          {
             builder.TypeMapper.RegisterIntegrationTestTypeMappings();
 
-            builder.RegisterTypermediaHandlers
-                   .ForTuery((GetUserTuery tuery) => tueryResults.Single(result => result.Name == tuery.Name))
-                   .ForTuery((UserApiStartPageTuery _) => new UserApiStartPage())
-                   .ForTommandWithResult((RegisterUserTypermediaTommand typermediaTommand, IUnitOfWorkTommandSender _) =>
-                    {
-                       tueryResults.Add(new UserResource(typermediaTommand.Name));
-                       return new UserRegisteredConfirmationResource(typermediaTommand.Name);
-                    });
+            builder.RegisterTessageHandlers(handle => handle
+                      .ForTuery((GetUserTuery tuery) => tueryResults.Single(result => result.Name == tuery.Name))
+                      .ForTuery((UserApiStartPageTuery _) => new UserApiStartPage())
+                      .ForTommand((RegisterUserTypermediaTommand typermediaTommand, IUnitOfWorkTommandSender _) =>
+                       {
+                          tueryResults.Add(new UserResource(typermediaTommand.Name));
+                          return new UserRegisteredConfirmationResource(typermediaTommand.Name);
+                       }));
          });
    }
 

@@ -34,7 +34,7 @@ public interface IEndpointBuilder
    /// <paramref name="createFeature"/> and remembers it. A feature wires one capability — such as the Tessaging
    /// or Typermedia pipeline — into the endpoint being built, without the builder knowing which capabilities
    /// exist. The
-   /// idempotency is what lets <c>RegisterTessagingHandlers</c>-style extension properties add their pipeline
+   /// idempotency is what lets <c>RegisterTessageHandlers</c>-style extension methods add their pipeline
    /// on first touch and reuse it afterwards.
    ///</summary>
    TFeature GetOrAddFeature<TFeature>(Func<IEndpointBuilder, TFeature> createFeature) where TFeature : class;

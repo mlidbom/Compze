@@ -10,10 +10,9 @@ using Compze.Hosting;
 using Compze.Hosting.SameMachine;
 using Compze.Internals.Serialization.Newtonsoft.Wiring;
 using Compze.Tessaging.Internals.Transport.NamedPipes;
-using Compze.Tessaging.TessageHandling.Registration.Public;
+using Compze.Tessaging.Engine;
 using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Typermedia.Client;
-using Compze.Tessaging.Typermedia.HandlerRegistration;
 using Compze.Internals.Sql.Sqlite.Wiring;
 using Compze.Tessaging.Sqlite.Wiring;
 
@@ -90,7 +89,11 @@ public static class Program
                                       .SqliteEndpointDatabase("EndpointHostProcess"))
              .AddExactlyOnceTessaging(tessaging => tessaging.NewtonsoftSerializer())
              .ParticipateIn(registry)
-             .RegisterHandlers(register => register.ForTommand<TommandSentToTheEndpointHostProcess, IUnitOfWorkTommandSender>((_, unitOfWorkTommandSender) => unitOfWorkTommandSender.Send(new TommandSentBackToTheSpecificationProcess())));
+             .RegisterTessageHandlers(handle => handle.ForTommand((TommandSentToTheEndpointHostProcess _, IUnitOfWorkTommandSender unitOfWorkTommandSender) =>
+              {
+                 unitOfWorkTommandSender.Send(new TommandSentBackToTheSpecificationProcess());
+                 return Task.CompletedTask;
+              }));
    }
 
    ///<summary>The database-less composition: no database declaration, no configuration, nothing persisted anywhere in this<br/>
@@ -106,11 +109,11 @@ public static class Program
                 //the specification's tevent, which can happen before this process's own reconciliation has met the specification's
                 //endpoint - held for the required peer, it delivers on first contact instead of vanishing into the discovery race.
                 .RequirePeers(MultiProcessConversationEndpoints.SpecificationProcessEndpointId)
-                .RegisterHandlers(register => register.ForTevent((IBestEffortTeventPublishedByTheSpecificationProcess _, IUnitOfWorkTeventPublisher teventPublisher) =>
-                                                                    teventPublisher.Publish(new BestEffortTeventPublishedByTheEndpointHostProcess())));
+                .RegisterTessageHandlers(handle => handle.ForTevent((IBestEffortTeventPublishedByTheSpecificationProcess _, IUnitOfWorkTeventPublisher teventPublisher) =>
+                                                                       teventPublisher.Publish(new BestEffortTeventPublishedByTheEndpointHostProcess())));
 
       foundation.AddDistributedTypermedia(typermedia => typermedia.NewtonsoftSerializer())
-                .RegisterHandlers.ForTuery((TueryAskedByTheSpecificationProcess _) => new AnswerToTheTueryAskedByTheSpecificationProcess(answeredBy: "EndpointHostProcess"));
+                .RegisterTessageHandlers(handle => handle.ForTuery((TueryAskedByTheSpecificationProcess _) => new AnswerToTheTueryAskedByTheSpecificationProcess(answeredBy: "EndpointHostProcess")));
    }
 
    ///<summary>The name of the environment variable through which the specification that launches this process passes the directory<br/>

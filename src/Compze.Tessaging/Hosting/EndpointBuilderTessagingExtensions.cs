@@ -1,6 +1,7 @@
 using Compze.Abstractions.Hosting.Public;
 using Compze.Abstractions.Tessaging.Public;
-using Compze.Tessaging.TessageHandling.Registration.Public;
+using Compze.Tessaging.Engine;
+using Compze.Tessaging.Typermedia;
 
 namespace Compze.Tessaging.Hosting;
 
@@ -38,23 +39,38 @@ public static class EndpointBuilderTessagingExtensions
       public ExactlyOnceTessagingEndpointFeature AddExactlyOnceTessaging() => @this.GetOrAddFeature(builder => new ExactlyOnceTessagingEndpointFeature(builder));
 
       ///<summary>
-      /// Registers tessaging handlers, adding in-process Tessaging (<see cref="AddInProcessTessaging"/>) to
-      /// the endpoint if it is not already added. Handlers receive tevents published in-process; they are
-      /// reachable from other endpoints only when the endpoint also speaks Tessaging across the wire
-      /// (<see cref="AddDistributedTessaging"/> / <see cref="EndpointBuilderTessagingExtensions.AddExactlyOnceTessaging"/>).
+      /// Declares handlers for all four tessage kinds into the endpoint's one engine — one registrar covers
+      /// them all, because the tessage's type carries its kind, guarantee, and synchrony. Adds the in-process
+      /// cores of both siblings (<see cref="AddInProcessTessaging"/> /
+      /// <see cref="EndpointBuilderTypermediaExtensions.AddInProcessTypermedia"/>) to the endpoint if not
+      /// already added, so the local doors exist for whatever is declared. Handlers receive tessages raised
+      /// in-process; they are reachable from other endpoints only when the endpoint also speaks across the
+      /// wire (<see cref="AddDistributedTessaging"/> / <see cref="AddExactlyOnceTessaging"/> /
+      /// distributed Typermedia).
       ///</summary>
-      public ITessageHandlerRegistrar RegisterTessagingHandlers => @this.AddInProcessTessaging().RegisterHandlers;
+      public IEndpointBuilder RegisterTessageHandlers(Action<TessageHandlerRegistrar> register)
+      {
+         @this.AddInProcessTessaging();
+         @this.AddInProcessTypermedia();
+         LocalTessagingEngineFeature.GetOrAddTo(@this).RegisterTessageHandlers(register);
+         return @this;
+      }
 
       ///<summary>
-      /// Registers transaction-ignoring tevent handlers — observation, the one subscription-side opt-down
+      /// Declares tevent observers — observation, the one subscription-side opt-down
       /// (see <c>src/Compze.Tessaging/dev_docs/tevent-delivery-model.md</c>) — adding in-process Tessaging
-      /// (<see cref="AddInProcessTessaging"/>) to the endpoint if it is not already added. Such a handler
+      /// (<see cref="AddInProcessTessaging"/>) to the endpoint if it is not already added. An observer
       /// fires once, immediately, when a matching tevent is published locally or arrives from another
       /// endpoint: outside any transaction, undeterred by the fate of the transaction the tevent was
-      /// published or is processed in, with no retry — a throwing handler is reported through the
+      /// published or is processed in, with no retry — a throwing observer is reported through the
       /// background-exception reporter and that delivery is over.
       ///</summary>
-      public ITransactionIgnoringTeventHandlerRegistrar RegisterTransactionIgnoringTeventHandlers => @this.AddInProcessTessaging().RegisterTransactionIgnoringTeventHandlers;
+      public IEndpointBuilder ObserveTevents(Action<TeventObservationRegistrar> observe)
+      {
+         @this.AddInProcessTessaging();
+         LocalTessagingEngineFeature.GetOrAddTo(@this).ObserveTevents(observe);
+         return @this;
+      }
    }
 }
 
