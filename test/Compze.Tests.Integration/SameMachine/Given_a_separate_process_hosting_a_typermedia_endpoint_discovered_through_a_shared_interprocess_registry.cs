@@ -103,27 +103,21 @@ public class Given_a_separate_process_hosting_a_typermedia_endpoint_discovered_t
    [Skip<Transport>([Transport.AspNetCore], "The endpoint host process speaks named pipes; the conversation only makes sense when the specification's endpoint does too")]
    [PCT] public void a_tuery_executed_here_is_answered_there()
    {
-      //Until this endpoint's typermedia reconciliation loop has discovered the endpoint host process - which is still starting
-      //up - no route exists for the tuery's type and navigating fails loud. The retry loop rides that loudness until discovery completes.
+      //The navigation is a waiting send: no route exists for the tuery's type until this endpoint's reconciliation discovers
+      //the endpoint host process - which is still starting up - and the send waits that discovery out within the endpoint's
+      //handler-availability patience. (The hand-rolled retry-on-no-handler loop this replaced is exactly the pattern waiting
+      //sends exist to dissolve.) The catch only enriches an exhausted wait with the process's fate and console output - the
+      //diagnosis a cross-process failure needs - and rethrows.
       AnswerToTheTueryAskedByTheSpecificationProcess answer;
-      var retryDeadline = DateTime.UtcNow + TimeSpan.FromSeconds(30);
-      while(true)
+      try
       {
-         try
-         {
-            answer = _specificationEndpoint.ServiceLocator.Resolve<IScopeFactory>().ExecuteInIsolatedScope(
-               scope => scope.Resolve<IRemoteTypermediaNavigator>().Get(new TueryAskedByTheSpecificationProcess()));
-            break;
-         }
-         catch(NoHandlerForTypermediaTypeException) when(DateTime.UtcNow < retryDeadline)
-         {
-            _endpointHostProcess.ThrowDescribingTheFailureIfTheProcessHasExited();
-            Thread.Sleep(100);
-         }
-         catch(NoHandlerForTypermediaTypeException stillUndiscoveredAtTheRetryDeadline)
-         {
-            throw new InvalidOperationException($"The endpoint host process was not discovered within the retry deadline.{Environment.NewLine}{_endpointHostProcess.ConsoleOutput}", stillUndiscoveredAtTheRetryDeadline);
-         }
+         answer = _specificationEndpoint.ServiceLocator.Resolve<IScopeFactory>().ExecuteInIsolatedScope(
+            scope => scope.Resolve<IRemoteTypermediaNavigator>().Get(new TueryAskedByTheSpecificationProcess()));
+      }
+      catch(NoHandlerForTypermediaTypeException notDiscoveredWithinPatience)
+      {
+         _endpointHostProcess.ThrowDescribingTheFailureIfTheProcessHasExited();
+         throw new InvalidOperationException($"The endpoint host process was not discovered within the endpoint's handler-availability patience.{Environment.NewLine}{_endpointHostProcess.ConsoleOutput}", notDiscoveredWithinPatience);
       }
 
       answer.AnsweredBy.Must().Be("EndpointHostProcess");

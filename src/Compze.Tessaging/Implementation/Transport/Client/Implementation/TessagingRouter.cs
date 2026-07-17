@@ -7,7 +7,6 @@ using Compze.Tessaging.Implementation.Peers;
 using Compze.Tessaging.Implementation.Transport.Abstractions;
 using Compze.Tessaging.Implementation.Transport.Client.Internal;
 using Compze.Tessaging.SystemCE.ThreadingCE;
-using Compze.Tessaging.Typermedia.Client;
 using Compze.Contracts;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
@@ -291,17 +290,15 @@ class TessagingRouter : ITessagingRouter, IDisposable
       _monitor.Locked(() =>
          AssertNotStopped().__(() => _tommandHandlerRoutes.GetValueOrDefault(tommand.GetType())));
 
-   public EndpointAddress AddressOfTypermediaHandlerFor(Type tessageType) =>
+   public IReadOnlyList<TypermediaRoute> TypermediaRoutesFor(Type tessageType) =>
       _monitor.Locked(() =>
       {
          AssertNotStopped();
          State.Assert(_endpointRegistry is not null,
                       () => "Remote typermedia navigation requires the registry the endpoint discovers other endpoints through — declare DiscoverEndpointsThrough/ParticipateIn on the endpoint's distributed feature. (An external client application navigates explicitly known addresses through the typermedia client router instead.)");
          return _typermediaHandlerRoutes.TryGetValue(tessageType, out var connections)
-                   ? connections.Count == 1
-                        ? connections[0].RemoteAddress
-                        : throw new MultipleHandlersForTypermediaTypeException(tessageType, [..connections.Select(connection => connection.EndpointInformation.Id)])
-                   : throw new NoHandlerForTypermediaTypeException(tessageType);
+                   ? (IReadOnlyList<TypermediaRoute>)[..connections.Select(connection => new TypermediaRoute(connection.EndpointInformation.Id, connection.RemoteAddress))]
+                   : [];
       });
 
    public IReadOnlyList<ITessagingInboxConnection> SubscriberConnectionsFor(IPublisherTevent<IRemotableTevent> wrappedTevent) =>

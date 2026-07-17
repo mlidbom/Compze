@@ -34,9 +34,10 @@ interface ITessagingRouter
     /// the published tevent's own type decides that (see <see cref="Compze.Abstractions.Tessaging.Public.IUnitOfWorkTeventPublisher"/>).</summary>
     IReadOnlyList<ITessagingInboxConnection> SubscriberConnectionsFor(IPublisherTevent<IRemotableTevent> wrappedTevent);
 
-    ///<summary>The address of the one connected endpoint whose advertisement handles the typermedia tessage type<br/>
-    /// <paramref name="tessageType"/> — request/response routes liveness-only, so no route throws the no-handler failure and<br/>
-    /// several live handlers throw <c>MultipleHandlersForTypermediaTypeException</c> naming the endpoints, never a silent pick.<br/>
-    /// Fails loud when the endpoint declared no discovery registry: with nothing to discover through there is nothing to navigate.</summary>
-    EndpointAddress AddressOfTypermediaHandlerFor(Type tessageType);
+    ///<summary>The live routes for the typermedia tessage type <paramref name="tessageType"/>: every connected endpoint whose<br/>
+    /// current advertisement handles it. Request/response routes liveness-only, and interpreting the count is the asker's<br/>
+    /// business, not routing's — waiting sends wait, within patience, for the list to become a single entry<br/>
+    /// (see <c>IHandlerAvailability</c>). Fails loud when the endpoint declared no discovery registry: with nothing to<br/>
+    /// discover through there is nothing to navigate.</summary>
+    IReadOnlyList<TypermediaRoute> TypermediaRoutesFor(Type tessageType);
 }

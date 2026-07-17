@@ -8,11 +8,9 @@ using Compze.Tessaging.Internals.Transport;
 using Compze.Tessaging.Implementation;
 using Compze.Tessaging.Implementation.Abstractions;
 using Compze.Tessaging.Implementation.BestEffortDelivery;
-using Compze.Tessaging.Implementation.Transport;
+using Compze.Tessaging.Implementation.HandlerAvailability;
 using Compze.Tessaging.Implementation.Peers;
-using Compze.Tessaging.Implementation.Transport.Abstractions;
 using Compze.Tessaging.Implementation.Transport.Client.Implementation;
-using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.Tessaging.Transport;
 using Compze.Tessaging.Typermedia;
 using Compze.Tessaging.Typermedia.Client;
@@ -49,6 +47,8 @@ public abstract class EndpointBuilder
    readonly List<IEndpointAddressAnnouncer> _addressAnnouncers = [];
    readonly List<EndpointId> _requiredPeers = [];
    readonly List<EndpointId> _peersNotQueuedFor = [];
+   HandlerAvailabilityPatience _handlerAvailabilityPatience = Implementation.HandlerAvailability.HandlerAvailabilityPatience.Default;
+   bool _handlerAvailabilityPatienceDeclared;
    IEndpointRegistry? _endpointRegistry;
    Action<IComponentRegistrar>? _registerTransportProtocol;
    Action<IComponentRegistrar>? _registerSerializer;
@@ -176,6 +176,18 @@ public abstract class EndpointBuilder
       _peersNotQueuedFor.AddRange(peers);
    }
 
+   ///<summary>Declares the endpoint's handler-availability patience: how long a send whose type has no live, unambiguous<br/>
+   /// route right now waits for one to appear — a first contact, a known peer's return, an ambiguity resolving — before<br/>
+   /// failing loud. Declared at most once; defaults to a flat 30 seconds<br/>
+   /// (see <c>dev_docs/TODO/WIP/Tessaging/readiness-and-waiting-sends.md</c>).</summary>
+   public void HandlerAvailabilityPatience(TimeSpan patience)
+   {
+      AssertStillComposing();
+      State.Assert(!_handlerAvailabilityPatienceDeclared, () => "The endpoint already declared its handler-availability patience — an endpoint has exactly one.");
+      _handlerAvailabilityPatienceDeclared = true;
+      _handlerAvailabilityPatience = new HandlerAvailabilityPatience(patience);
+   }
+
    ///<summary>Hands the endpoint the tessages-in-flight tracker its testing composition awaits quiescence through — the<br/>
    /// testing device behind "a test cannot pass with work silently in flight". Production compositions declare none and get<br/>
    /// the do-nothing tracker.</summary>
@@ -209,6 +221,7 @@ public abstract class EndpointBuilder
                          Singleton.For<ITypeMap>().Instance(_typeMapper),
                          Singleton.For<EndpointId>().Instance(Configuration.Id),
                          Singleton.For<EndpointConfiguration>().Instance(Configuration),
+                         Singleton.For<HandlerAvailabilityPatience>().Instance(_handlerAvailabilityPatience),
                          Singleton.For<ITessagesInFlightTracker>().Instance(_tessagesInFlightTracker ?? new NullOpTessagesInFlightTracker()));
 
       EndpointDiscoveryQueryExecutor.RegisterWith(Registrar);
@@ -223,11 +236,13 @@ public abstract class EndpointBuilder
                .LocalTypermediaNavigatorSession()
                .IndependentLocalTypermediaNavigator();
 
-      //The transport-speaking substrate: one router, peer memory and its administration, the best-effort tevent delivery leg
-      //(the RequirePeers/DoNotQueueTeventsFor declarations are captured by the lists), and the tier's request handling.
+      //The transport-speaking substrate: one router, peer memory and its administration, the waiting sends' availability door,
+      //the best-effort tevent delivery leg (the RequirePeers/DoNotQueueTeventsFor declarations are captured by the lists),
+      //and the tier's request handling.
       Registrar.PeerRegistry()
                .PeerAdministration()
                .TessagingTransport()
+               .HandlerAvailability()
                .BestEffortTeventDelivery(_requiredPeers, _peersNotQueuedFor)
                .TessagingTransportMessagePoster()
                .BestEffortTessagingRequestHandlers();

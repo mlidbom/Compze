@@ -98,13 +98,15 @@ class TypermediaClientRouter : ITypermediaClientRouter, IDisposable
    TypermediaConnection ConnectionToHandlerFor<TTuery>(IRemotableTuery<TTuery> tuery) => SingleRoutedConnectionFor(tuery.GetType(), _tueryHandlerRoutes);
 
    ///<summary>The one connection a typermedia tessage executes on: no route throws <see cref="NoHandlerForTypermediaTypeException"/>;<br/>
-   /// several routes throw <see cref="MultipleHandlersForTypermediaTypeException"/> naming the endpoints — never a silent pick.</summary>
+   /// several routes throw <see cref="MultipleHandlersForTypermediaTypeException"/> naming the endpoints — never a silent pick.<br/>
+   /// Both throw immediately, deliberately: a client's connections change only by its own explicit connects, so unlike an<br/>
+   /// endpoint's waiting sends there is no discovery to wait for.</summary>
    static TypermediaConnection SingleRoutedConnectionFor(Type tessageType, IReadOnlyDictionary<Type, IReadOnlyList<TypermediaConnection>> handlerRoutes) =>
       handlerRoutes.TryGetValue(tessageType, out var connections)
          ? connections.Count == 1
               ? connections[0]
-              : throw new MultipleHandlersForTypermediaTypeException(tessageType, [..connections.Select(connection => connection.EndpointInformation.Id)])
-         : throw new NoHandlerForTypermediaTypeException(tessageType);
+              : throw MultipleHandlersForTypermediaTypeException.AmongTheClientsConnectedEndpoints(tessageType, [..connections.Select(connection => connection.EndpointInformation.Id)])
+         : throw NoHandlerForTypermediaTypeException.BecauseTheClientIsConnectedToNoHandler(tessageType);
 
    public async Task PostAsync(IAtMostOnceTypermediaTommand tommand)
    {
