@@ -5,7 +5,8 @@ documentation gets a proper home; nothing lives here — each link's target rema
 
 ## The active effort
 
-- [durable-peer-topology.md](../../durable-peer-topology.md) — **the current effort's single home**: the
+- [dev_docs/TODO/WIP/Tessaging/tessaging-WIP.md](../../../../dev_docs/TODO/WIP/Tessaging/tessaging-WIP.md) — **this documentitself**:
+- [dev_docs/TODO/WIP/Tessaging/durable-peer-topology.md](../../../../dev_docs/TODO/WIP/Tessaging/durable-peer-topology.md) — **the current effort's single home**: the
   settled design (⚖-marked decisions: vocabulary, shrink, decommissioning, the queue bound, ...) and the
   increment log. Increments 1–6 are done (peer registry → fan-out reads it → tommand receiver binding → the
   transient→distributed/best-effort rename → the distributed tier: queue-while-down, `RequirePeers`, the
@@ -20,32 +21,32 @@ documentation gets a proper home; nothing lives here — each link's target rema
 
 ## Standing design documents the effort keeps as-built
 
-- [tevent-delivery-model.md](../../../../src/Compze.Tessaging/dev_docs/tevent-delivery-model.md) — the
+- [src/Compze.Tessaging/dev_docs/tevent-delivery-model.md](../../../../src/Compze.Tessaging/dev_docs/tevent-delivery-model.md) — the
   delivery-model reference: the participation / exactly-once / best-effort / observation ladder, the
   wiring rules, the no-escape-hatch decisions.
-- [hosting-model.md](../../../../src/Compze.Hosting/dev_docs/hosting-model.md) — the hosting/composition
+- [src/Compze.Hosting/dev_docs/hosting-model.md](../../../../src/Compze.Hosting/dev_docs/hosting-model.md) — the hosting/composition
   model the Tessaging features plug into (features, foundations, endpoint lifecycle phases).
-- [Compze.Tessaging/_docs/introduction.md](../../../../src/Compze.Tessaging/_docs/introduction.md) — the
+- [src/Compze.Tessaging/_docs/introduction.md](../../../../src/Compze.Tessaging/_docs/introduction.md) — the
   public, website-published introduction (`_docs` = public docs, `dev_docs` = internal — a deliberate split,
   never merged).
 
 ## Changelogs carrying the effort's as-built record
 
-- [Compze.Tessaging/CHANGELOG.md](../../../../src/Compze.Tessaging/CHANGELOG.md) — the effort's main record,
+- [src/Compze.Tessaging/CHANGELOG.md](../../../../src/Compze.Tessaging/CHANGELOG.md) — the effort's main record,
   one bullet per increment.
-- [Compze.Tessaging.Abstractions/CHANGELOG.md](../../../../src/Compze.Tessaging.Abstractions/CHANGELOG.md)
-- [Compze.Internals.Transport/CHANGELOG.md](../../../../src/Compze.Internals.Transport/CHANGELOG.md) and
-  [Compze.Internals.Transport.AspNet/CHANGELOG.md](../../../../src/Compze.Internals.Transport.AspNet/CHANGELOG.md)
+- [src/Compze.Tessaging.Abstractions/CHANGELOG.md](../../../../src/Compze.Tessaging.Abstractions/CHANGELOG.md)
+- [src/Compze.Internals.Transport/CHANGELOG.md](../../../../src/Compze.Internals.Transport/CHANGELOG.md) and
+  [src/Compze.Internals.Transport.AspNet/CHANGELOG.md](../../../../src/Compze.Internals.Transport.AspNet/CHANGELOG.md)
   — the wire surface (request kinds, routes) renamed in increment 4.
-- [Compze.Internals.SystemCE/CHANGELOG.md](../../../../src/Compze.Internals.SystemCE/CHANGELOG.md) —
+- [src/Compze.Internals.SystemCE/CHANGELOG.md](../../../../src/Compze.Internals.SystemCE/CHANGELOG.md) —
   `Transaction.OnCompletedWithoutCommitting`, added for the queue-slot reservations in increment 5.
 
 ## Parked and completed relatives
 
-- [type-assignability-routing-and-publisher-identifying-tevents.md](../../../../src/TODO/type-assignability-routing-and-publisher-identifying-tevents.md)
+- [src/TODO/type-assignability-routing-and-publisher-identifying-tevents.md](../../../../src/TODO/type-assignability-routing-and-publisher-identifying-tevents.md)
   — parked notes on the routing model and the `IPublisherTevent` wrapper family.
-- [done/typermedia-tessaging-split/](../../done/typermedia-tessaging-split/typermedia-tessaging-split-v3.md)
+- [dev_docs/TODO/done/typermedia-tessaging-split/typermedia-tessaging-split-v3.md](../../../../dev_docs/TODO/done/typermedia-tessaging-split/typermedia-tessaging-split-v3.md)
   — the completed predecessor effort this work grew out of (v3 is the final design; the folder holds the
   earlier versions and design questions).
-- [done/client-endpoint-entanglement.md](../../done/client-endpoint-entanglement.md) — the completed
+- [dev_docs/TODO/done/client-endpoint-entanglement.md](../../../../dev_docs/TODO/done/client-endpoint-entanglement.md) — the completed
   client/endpoint untangling that preceded it.
