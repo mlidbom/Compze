@@ -55,7 +55,7 @@ across real OS processes.
 The HTTP transport exists for the general case: endpoints on different machines, standard middleboxes,
 external clients. Same-machine conversations need none of that, and paying for it hurts exactly where an
 application suite is sensitive — an ASP.NET Core/Kestrel server in every process means dependency weight,
-per-process working set, and startup time. The named-pipe transport (`Compze.Internals.Transport.NamedPipes`)
+per-process working set, and startup time. The named-pipe transport (`Compze.Tessaging.Internals.Transport.NamedPipes`)
 replaces it with `System.IO.Pipes` from the base runtime: no web stack at all, and cross-platform — on
 Linux/macOS the same API rides Unix domain sockets.
 

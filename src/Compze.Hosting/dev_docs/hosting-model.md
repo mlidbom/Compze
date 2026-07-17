@@ -70,7 +70,7 @@ The rule is enforced by the dependency directions between three layers:
 |---|---|---|
 | **Contracts** | `Compze.Abstractions` → `Compze.Abstractions.Hosting.Public` | No |
 | **Mechanism** | `Compze.Hosting` (production), `Compze.Hosting.Testing` (testing) | No |
-| **Features** | `Compze.Tessaging`/`Compze.Tessaging.Hosting.Testing`, `Compze.Typermedia` + `Compze.Typermedia.Client`/`Compze.Typermedia.Hosting.Testing` | Each knows only itself |
+| **Features** | `Compze.Tessaging` (both siblings; Typermedia under the `Compze.Tessaging.Typermedia` namespaces) / `Compze.Tessaging.Hosting.Testing` | Each style's features know only their own style |
 
 The contracts define what hosting *is*: `IEndpointHost`, `IEndpoint`, `IEndpointBuilder`,
 `IEndpointComponent`, plus the endpoint value types (`EndpointId`, `EndpointAddress`,
@@ -158,16 +158,16 @@ wired once whether it arrives alone or under distribution).
   endpoint-wide mode — which is also what keeps `RegisterTessagingHandlers` order-independent of every other
   Tessaging declaration.
 - **Typermedia splits two ways**, because it has no mode-exclusive service: distributed Typermedia simply
-  contains in-process Typermedia. `InProcessTypermediaEndpointFeature` (in `Compze.Typermedia`,
+  contains in-process Typermedia. `InProcessTypermediaEndpointFeature` (in the `Compze.Tessaging.Typermedia` namespace,
   `AddInProcessTypermedia()`) wires the handler registry and the `ILocalTypermediaNavigatorSession` through
   which strictly local tueries and tommands execute synchronously, in the caller's transaction.
-  `DistributedTypermediaEndpointFeature` (in `Compze.Typermedia.Client`, `AddDistributedTypermedia()`)
+  `DistributedTypermediaEndpointFeature` (in the `Compze.Tessaging.Typermedia.Client` namespace, `AddDistributedTypermedia()`)
   composes it and adds the handler executor that serves remote clients, discovery, and the client side
   through which the endpoint itself navigates other endpoints' typermedia — the `IRemoteTypermediaNavigator`,
   routed by the endpoint's `TypermediaRouter` against the registry the endpoint declares it discovers
   through; declaring no registry means the endpoint only serves.
 - **Serving is shared.** An endpoint runs **one transport server**, whatever it speaks: every
-  transport-speaking feature composes `EndpointTransportServerFeature` (in `Compze.Internals.Transport`) — the same
+  transport-speaking feature composes `EndpointTransportServerFeature` (in the `Compze.Tessaging.Internals.Transport` namespace) — the same
   `GetOrAddFeature` pattern one level down — and *contribute their request handling to it* (request-kind
   handlers, served identically by the named-pipe and ASP.NET Core transports) rather than each running a
   server of its own. One server means one address per endpoint, which is what lets an endpoint registry map
@@ -320,7 +320,7 @@ What the pieces do:
   version wins.
 - **`DistributedTypermediaTestingEndpointHostFeature`** registers the Typermedia transport and
   `AddDistributedTypermedia()` declaring `ParticipateIn` the host's endpoint registry.
-- **`TypermediaTestClient`** (in `Compze.Typermedia.Hosting.Testing`) is a remote client in its own container,
+- **`TypermediaTestClient`** (in `Compze.Tessaging.Hosting.Testing`) is a remote client in its own container,
   connecting to an endpoint's `TypermediaAddress` over the current test's transport exactly as an external
   application would.
 

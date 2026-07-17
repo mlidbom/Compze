@@ -1,3 +1,6 @@
+> **The `Compze.Typermedia` package folded into `Compze.Tessaging` on 2026-07-17** - this README describes it as
+> it was packaged separately; the prose is rewritten when the paradigm's docs are.
+
 # Compze.Typermedia
 
 Core Typermedia infrastructure: handler registry, handler dispatch, and request handling for type-routed request-response APIs.

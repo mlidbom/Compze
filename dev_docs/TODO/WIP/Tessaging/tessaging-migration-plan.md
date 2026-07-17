@@ -1,6 +1,11 @@
 # The Tessaging migration plan: from today's code to the target design
 
-**Status: plan, recorded 2026-07-17.** The destination is
+**Status: plan, recorded 2026-07-17. Phases 1 and 2 executed 2026-07-17** (phase 1: debris, both Typermedia
+defect fixes, the record→class conversion, the stale-prose sweep, the ServiceBus vocabulary's death;
+phase 2: `Compze.Tessaging.Abstractions`, the Typermedia trio + its testing project, and
+`Compze.Internals.Transport` folded into the paradigm assemblies; `Compze.Internals.Transport.AspNet`
+renamed `Compze.Tessaging.AspNetCore`; the three typermedia spec projects merged into
+`Compze.Tessaging.Specifications`). The destination is
 [tessaging-target-design.md](tessaging-target-design.md); the rationale and evidence are in
 [style-substrate-and-hosting-evaluation.md](style-substrate-and-hosting-evaluation.md). This document is the
 path: the ordered phases, what each contains, and what gates what. Every phase is a run of increments that

@@ -1,3 +1,6 @@
+> **The `Compze.Typermedia.Hosting.Testing` package folded into `Compze.Tessaging` on 2026-07-17** - this README describes it as
+> it was packaged separately; the prose is rewritten when the paradigm's docs are.
+
 # Compze.Typermedia.Hosting.Testing
 
 Testing support for [Compze](https://github.com/mlidbom/Compze) Typermedia hosting.

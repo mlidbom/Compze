@@ -88,10 +88,10 @@ This is the largest sub-product, and the one that composes everything else.
 
 - `src/Compze.Tessaging` — messaging infrastructure
 - `src/Compze.Teventive.TeventStore` — the tevent store
-- `src/Compze.Internals.Transport.AspNet` — the ASP.NET transport
+- `src/Compze.Tessaging.AspNetCore` — the ASP.NET Core transport
 - `src/Compze.Tessaging.Hosting.Testing` — testing host
 - **Dependencies**: Nearly everything — Contracts, Functional, Sql, DI, Logging, SystemCE, ThreadingCE, Serialization, Testing, DbPool
-- **Done since**: Teventive and Typermedia are extracted as top-level sub-products (`Compze.Teventive`, `Compze.Typermedia`); Tessaging survives as the messaging sub-product.
+- **Done since**: Teventive is extracted as a top-level sub-product (`Compze.Teventive`). Typermedia was extracted too, then deliberately re-merged (2026-07-17): `Compze.Tessaging` is the paradigm project carrying both siblings - see dev_docs/TODO/WIP/Tessaging/tessaging-migration-plan.md.
 
 ---
 

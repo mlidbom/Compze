@@ -81,7 +81,7 @@ Site links address the junction paths, e.g. `~/Compze/Teventive/Taggregates/_doc
 
 #pragma warning disable // Documentation example code: deliberately illustrative fragments, not production code.
 
-namespace Compze.Tessaging.Abstractions;
+namespace Compze.Tessaging;
 
 /// <summary>
 /// Example code for documentation purposes.

@@ -14,8 +14,7 @@ capability — each plugs its pipeline into the endpoint builder as a feature, f
 
 | Package | Description |
 |---------|-------------|
-| [Compze.Tessaging](https://www.nuget.org/packages/Compze.Tessaging) | Messaging pipeline; plugs in via `AddExactlyOnceTessaging()` / `RegisterTessagingHandlers` |
-| [Compze.Typermedia.Client](https://www.nuget.org/packages/Compze.Typermedia.Client) | Typermedia pipeline; plugs in via `AddDistributedTypermedia()` / `RegisterTypermediaHandlers` |
+| [Compze.Tessaging](https://www.nuget.org/packages/Compze.Tessaging) | The Tessaging paradigm - both siblings' pipelines; plugs in via `AddExactlyOnceTessaging()` / `AddDistributedTypermedia()` / the handler registrars |
 
 ## License
 
