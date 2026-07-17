@@ -19,7 +19,7 @@ namespace Compze.Tests.Integration.Tessaging;
 /// discovery wait that a waiting send would otherwise make the first unlucky caller pay. A handler is reachable when the<br/>
 /// endpoint itself serves the type, or when a send of the type would proceed without waiting; exhausted patience throws<br/>
 /// <see cref="EndpointNotReadyWithinPatienceException"/> naming every type still unavailable<br/>
-/// (see <c>dev_docs/TODO/WIP/Tessaging/readiness-and-waiting-sends.md</c>).</summary>
+/// (see <c>src/Compze.Tessaging/dev_docs/peer-model.md</c>).</summary>
 public class Given_an_endpoint_awaiting_readiness : UniversalTestBase
 {
    static readonly EndpointId AwaitingEndpointId = new(Guid.Parse("C5D91E37-8A46-4B02-9F58-1E74A6C0D823"));

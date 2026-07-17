@@ -126,7 +126,7 @@ the interner file derives from the domain database's name, so co-located endpoin
 storage-drop administration act is parked as a todo at the catalog surface: the design equation is settled,
 the door awaits its first consumer. The destination is
 [tessaging-target-design.md](tessaging-target-design.md); the rationale and evidence are in
-[style-substrate-and-hosting-evaluation.md](style-substrate-and-hosting-evaluation.md). This document is the
+[style-substrate-and-hosting-evaluation.md](../DONE/style-substrate-and-hosting-evaluation.md). This document is the
 path: the ordered phases, what each contains, and what gates what. Every phase is a run of increments that
 each build clean, pass the full test suite, and are committed with a message recording the why.
 
@@ -271,7 +271,7 @@ interface).
 
 ## Phase 8 — Readiness and waiting sends, built once
 
-The four increments already sketched in [readiness-and-waiting-sends.md](readiness-and-waiting-sends.md),
+The four increments already sketched in [readiness-and-waiting-sends.md](../DONE/readiness-and-waiting-sends.md),
 now with their unambiguous *where* (the one router and one peer registry from phase 3). Before the storage
 phase because it carries the ⚖ before-the-next-release commitment, and it is what triggered this whole arc.
 
@@ -310,7 +310,7 @@ here. Everything else is design already ⚖-settled in the target document.
 ## Related documents
 
 - [tessaging-target-design.md](tessaging-target-design.md) — the destination.
-- [style-substrate-and-hosting-evaluation.md](style-substrate-and-hosting-evaluation.md) — the rationale
+- [style-substrate-and-hosting-evaluation.md](../DONE/style-substrate-and-hosting-evaluation.md) — the rationale
   and evidence; question 9's option space, now settled above.
-- [readiness-and-waiting-sends.md](readiness-and-waiting-sends.md) — phase 8's design, settled.
+- [readiness-and-waiting-sends.md](../DONE/readiness-and-waiting-sends.md) — phase 8's design, settled.
 - [tessaging-WIP.md](tessaging-WIP.md) — the hub.

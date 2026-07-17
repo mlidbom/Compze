@@ -7,7 +7,7 @@ namespace Compze.Tessaging.Implementation.TessageHandling.Dispatching;
 /// live — a handler replacement whose retired peer was never decommissioned. A tommand binds to one specific receiver at send<br/>
 /// time so the pair's exactly-once in-order guarantee holds; with several remembered handlers and no live one there is no way<br/>
 /// to know which is current, and binding to the wrong one would strand the tommand (see<br/>
-/// <c>dev_docs/TODO/WIP/Tessaging/durable-peer-topology.md</c> — decommissioning the retired peer resolves this). Exclusively<br/>
+/// <c>src/Compze.Tessaging/dev_docs/peer-model.md</c> — decommissioning the retired peer resolves this). Exclusively<br/>
 /// the patience-exhausted failure: the send first waited, bounded by the endpoint's handler-availability patience, for one of<br/>
 /// the remembered handlers to connect — live is current by definition, so the moment one does the send binds to it — or for a<br/>
 /// decommission to resolve the replacement (see <c>IHandlerAvailability</c>). Public because it reaches the sending<br/>

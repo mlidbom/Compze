@@ -1,40 +1,58 @@
 # Tessaging work in progress
 
-
-- [dev_docs/TODO/WIP/Tessaging/tessaging-WIP.md](../../../../dev_docs/TODO/WIP/Tessaging/tessaging-WIP.md) this document itself
+The hub for ongoing Tessaging work. Current-state documentation — how the project actually works — lives in
+[the parent dev_docs folder](../); this folder holds only the efforts still in flight, and
+[DONE](../DONE/) holds the completed ones.
 
 ## Ongoing work
-### Existing documents
-- [dev_docs/TODO/WIP/Tessaging/durable-peer-topology.md](../../../../dev_docs/TODO/WIP/Tessaging/durable-peer-topology.md)
-- [dev_docs/TODO/WIP/Tessaging/readiness-and-waiting-sends.md](../../../../dev_docs/TODO/WIP/Tessaging/readiness-and-waiting-sends.md)
-  — design settled ⚖ 2026-07-17 (absorbs and retires "Typermedia parity"/increment 7); implementation gated
-  on the style-substrate question, evaluated in the document below.
-- [dev_docs/TODO/WIP/Tessaging/style-substrate-and-hosting-evaluation.md](../../../../dev_docs/TODO/WIP/Tessaging/style-substrate-and-hosting-evaluation.md)
-  — the style-substrate + hosting evaluation (revised 2026-07-17): ⚖ Tessaging is the common paradigm,
-  Typermedia and TessageBus its two siblings; the feature machinery on trial — proposed collapse into
-  concrete endpoint types; the exact set of remaining projects and their names is still unsettled.
-- [dev_docs/TODO/WIP/Tessaging/tessaging-target-design.md](../../../../dev_docs/TODO/WIP/Tessaging/tessaging-target-design.md)
-  — the imagined target design, described straight up (no narration of change): ⚖ the consistency law
-  (endpoint = immediate-consistency boundary, universal; inline in-roster tommands), the
-  domain/endpoint/process triad (DB == domain, never endpoint; per-endpoint table-sets + endpoint catalog),
-  the LocalTessagingEngine with builder/roster/executor/doors, synchrony-follows-the-type,
-  the two endpoint types, administration, topology.
-- [dev_docs/TODO/WIP/Tessaging/tessaging-migration-plan.md](../../../../dev_docs/TODO/WIP/Tessaging/tessaging-migration-plan.md)
-  — the path from today's code to the target design: ten ordered phases (debris/defects → project homes →
-  one router → the engine → endpoint types → observation → synchrony → readiness → storage → Host
-  demotion), each a run of green committed increments. ⚖ the project homes settled (option (a): one
-  paradigm project, ASP.NET Core transport carved out).
-- [src/Compze.Tessaging/dev_docs/tevent-delivery-model.md](../../../../src/Compze.Tessaging/dev_docs/tevent-delivery-model.md)
-- [src/Compze.Hosting/dev_docs/hosting-model.md](../../../../src/Compze.Hosting/dev_docs/hosting-model.md)
-- [src/Compze.Hosting/dev_docs/wip/same-machine-hosting.md](../../../../src/Compze.Hosting/dev_docs/wip/same-machine-hosting.md)
+
+- [tessaging-migration-plan.md](tessaging-migration-plan.md) — the path from the pre-harmonization code to
+  the target design: ten ordered phases, each a run of green committed increments. **Phases 1–9 are
+  executed; phase 10 — the Host demotion — remains**, and after it a final rolling-docs coherence sweep.
+- [tessaging-target-design.md](tessaging-target-design.md) — the destination, described straight up: ⚖ the
+  consistency law, the domain/endpoint/process triad, the LocalTessagingEngine, synchrony-follows-the-type,
+  the two endpoint types, administration, topology. Phase 10's remaining delta from the current state is the
+  Host's role: the target's "a host is an optional convenience; endpoints are first-class" is not yet what
+  the code does. When phase 10 lands, this document retires to DONE and the current-state docs are the
+  living truth.
+- [src/Compze.Hosting/dev_docs/wip/same-machine-hosting.md](../../../Compze.Hosting/dev_docs/wip/same-machine-hosting.md)
+  — same-machine hosting: the named-pipe transport, the interprocess registry, and the router's
+  reconciliation.
+
+## Current-state documentation (the parent folder)
+
+- [tessaging-model.md](../tessaging-model.md) — what Tessaging is: the paradigm and its two siblings, the
+  consistency law, the engine, endpoints, storage, topology, administration.
+- [tevent-delivery-model.md](../tevent-delivery-model.md) — how tevents travel: the delivery ladder,
+  publishing, subscribing, observation, ordering.
+- [peer-model.md](../peer-model.md) — the endpoint's memory of its peers and everything computed from it:
+  fan-out membership, receiver binding, queue-while-down, advertisement lifecycle, decommission, waiting
+  sends and readiness.
+- [storage-model.md](../storage-model.md) — the domain database: per-endpoint table-sets, the endpoint
+  catalog, the process lease, schema creation.
+- [code-map.md](../code-map.md) — where everything lives: projects, namespaces, key types, the test suite.
+- [src/Compze.Hosting/dev_docs/hosting-model.md](../../../Compze.Hosting/dev_docs/hosting-model.md) — what
+  an endpoint and a host are; production and testing hosting.
 
 ## References
 
-- [src/TODO/type-assignability-routing-and-publisher-identifying-tevents.md](../../../../src/TODO/type-assignability-routing-and-publisher-identifying-tevents.md)
+- [src/TODO/type-assignability-routing-and-publisher-identifying-tevents.md](../../../TODO/type-assignability-routing-and-publisher-identifying-tevents.md)
 
-### Previous efforts
-- [dev_docs/TODO/done/typermedia-tessaging-split/typermedia-tessaging-split-v3.md](../../../../dev_docs/TODO/done/typermedia-tessaging-split/typermedia-tessaging-split-v3.md)
-- [dev_docs/TODO/done/client-endpoint-entanglement.md](../../../../dev_docs/TODO/done/client-endpoint-entanglement.md)
+### Completed efforts
+
+- [DONE/durable-peer-topology.md](../DONE/durable-peer-topology.md) — peer memory, queue-while-down, shrink,
+  decommission.
+- [DONE/readiness-and-waiting-sends.md](../DONE/readiness-and-waiting-sends.md) — waiting sends and the
+  readiness awaitable.
+- [DONE/style-substrate-and-hosting-evaluation.md](../DONE/style-substrate-and-hosting-evaluation.md) — the
+  evaluation whose verdicts drove the harmonization: Tessaging the common paradigm, the feature machinery's
+  death, the concrete endpoint types. Question 6's distributed-quiescence sketch still awaits its own
+  design effort.
+- [DONE/typermedia-tessaging-split/](../DONE/typermedia-tessaging-split/) — the split that preceded the
+  harmonization.
+- [DONE/client-endpoint-entanglement.md](../DONE/client-endpoint-entanglement.md),
+  [DONE/remove-iclient.md](../DONE/remove-iclient.md) — earlier untanglings.
 
 ### Public documentation
-- [src/Compze.Tessaging/_docs/introduction.md](../../../../src/Compze.Tessaging/_docs/introduction.md)
+
+- [src/Compze.Tessaging/_docs/introduction.md](../../_docs/introduction.md)

@@ -22,7 +22,7 @@ namespace Compze.Tessaging.Specifications.Typermedia;
 /// waits out the endpoint's handler-availability patience — and when it throws, the message tells known-but-down from<br/>
 /// never-seen by the peer memory: a remembered peer whose last-known advertisement serves the type is named as known and<br/>
 /// currently down; a type nothing this endpoint has ever met serves is named a probable deployment or configuration error<br/>
-/// (see <c>dev_docs/TODO/WIP/Tessaging/readiness-and-waiting-sends.md</c>).</summary>
+/// (see <c>src/Compze.Tessaging/dev_docs/peer-model.md</c>).</summary>
 public class Given_an_endpoint_navigating_a_typermedia_type_with_no_live_route : UniversalTestBase
 {
    static readonly EndpointId NavigatorEndpointId = new(Guid.Parse("6F8D2C15-B7A9-4E30-95D6-1A4B8C7E2F90"));

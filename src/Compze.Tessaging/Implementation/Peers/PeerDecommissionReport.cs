@@ -5,7 +5,7 @@ namespace Compze.Tessaging.Implementation.Peers;
 ///<summary>What <see cref="IPeerAdministration.DecommissionAsync"/> did: the peer that left the endpoint's memory, and everything the<br/>
 /// endpoint still held for it that was discarded as part of the act — decommissioning a peer with undelivered tessages is loud<br/>
 /// and deliberate, so the act itself reports what it discarded, never discarding as a silent side effect<br/>
-/// (see <c>dev_docs/TODO/WIP/Tessaging/durable-peer-topology.md</c>).</summary>
+/// (see <c>src/Compze.Tessaging/dev_docs/peer-model.md</c>).</summary>
 public class PeerDecommissionReport
 {
    internal PeerDecommissionReport(EndpointId decommissionedPeer, IReadOnlyList<DiscardedTessages> discarded)

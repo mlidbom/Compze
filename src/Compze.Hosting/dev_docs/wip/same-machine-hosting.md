@@ -156,15 +156,20 @@ own tevent subscriptions by in-boundary participation:
   have crashed a moment before the liveness filter would prune it. The failure is logged and the address
   retried on the next pass.
 
-A dynamic topology implies contracts callers must know:
+A dynamic topology implies contracts callers must know (the full story is
+[the peer model](../../../Compze.Tessaging/dev_docs/peer-model.md)):
 
-- **Subscribers join from now on.** A tevent published before an endpoint was discovered is not retroactively
-  delivered to it — exactly like a subscriber that did not exist yet.
-- **A tommand with no discovered handler fails loud at send.** Tommands are 1:1; sending one nobody handles
-  is an error, never a silent drop. A sender that knows the handler is starting up rides that loudness as its
-  synchronization: retry until discovery completes (the multi-process specifications below do exactly this).
-- **Typermedia navigation fails the same way**: executing a tuery or tommand no discovered endpoint handles
-  fails loud, and rides the same retry-until-discovered synchronization.
+- **Subscribers join from now on.** A tevent published before an endpoint was first discovered is not
+  retroactively delivered to it — exactly like a subscriber that did not exist yet. The exception is a peer
+  the composition declares with `RequirePeers`: everything published before its first advertisement is held
+  for it and delivered on first contact — which is what makes a multi-process suite's startup a non-event.
+- **Tommand sends and typermedia navigations wait out discovery.** A send whose type has no live,
+  unambiguous route right now waits — bounded by the endpoint's handler-availability patience (a flat 30
+  seconds unless declared otherwise) — for the route to appear: a first contact, or a known peer's return.
+  Only exhausted patience fails loud, telling known-but-down (naming the remembered peer) from never-seen
+  (naming the probable deployment error). The startup discovery race is absorbed by the machinery, not by
+  caller retry loops; an application that wants the wait paid at startup instead of by its first caller
+  awaits `IEndpoint.AwaitReadinessAsync` before opening traffic.
 
 Reconciliation is not same-machine-specific: the router converges on whatever `IEndpointRegistry` it is
 given — a fixed address list converges once and stays; the interprocess registry is what makes membership
@@ -217,8 +222,8 @@ first use.
 REAL process boundary: it spawns the endpoint host process above as a separate OS process, both processes
 open the same registry, each discovers the other through it, and an exactly-once tommand conversation crosses
 in both directions — the specification sends a tommand, the other process handles it and sends a reply
-tommand back. The send retries until the reconciliation loop has discovered the still-starting process — the
-fail-loud-then-retry synchronization described above, exercised for real.
+tommand back. The send waits out the reconciliation loop's discovery of the still-starting process — the
+waiting send described above, exercised for real.
 
 ## Implementation status
 

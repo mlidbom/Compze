@@ -13,7 +13,7 @@ namespace Compze.Tessaging.Implementation.Outbox;
 partial class Outbox
 {
    ///<summary>The outbox's side of the peer lifecycle: keeps what the outbox owes a peer consistent with what the peer's own<br/>
-   /// advertisement declares (see the advertisement lifecycle in <c>dev_docs/TODO/WIP/Tessaging/durable-peer-topology.md</c>). On every<br/>
+   /// advertisement declares (see the advertisement lifecycle in <c>src/Compze.Tessaging/dev_docs/peer-model.md</c>). On every<br/>
    /// advertisement replacement it reconciles the peer's undelivered tessages against the fresh advertisement — a shrunk one is<br/>
    /// the peer's explicit renunciation, so undelivered tevents no remaining subscription matches are discarded, loudly, and<br/>
    /// undelivered tommands of types the peer no longer handles are stranded, loudly: delivering either would hand the peer<br/>

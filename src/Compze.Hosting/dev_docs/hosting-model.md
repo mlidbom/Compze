@@ -41,7 +41,9 @@ carries a tessage is chosen by reading its type.
 
 ### The three composed shapes
 
-There are exactly three things an application composes, all in `Compze.Tessaging`:
+There are exactly three things an application composes, all in `Compze.Tessaging` (the paradigm itself —
+tessage kinds, the consistency law, the engine — is
+[the Tessaging model](../../Compze.Tessaging/dev_docs/tessaging-model.md)):
 
 1. **The LocalTessagingEngine** — the tessage-conversing heart of one container, for the application that
    converses only with itself (see "The engine" below). Not an endpoint: no identity, no address, no wire.
@@ -136,8 +138,8 @@ listening.
 ## Readiness and waiting sends — discovery stops being the application's race to lose
 
 The host's phase barrier orders *this host's* endpoints; it says nothing about the rest of the topology —
-other processes still starting, a peer restarting mid-day. Two composing mechanisms cover that (designed in
-`dev_docs/TODO/WIP/Tessaging/readiness-and-waiting-sends.md`, built in migration phase 8):
+other processes still starting, a peer restarting mid-day. Two composing mechanisms cover that (see
+[the peer model](../../Compze.Tessaging/dev_docs/peer-model.md)):
 
 - **Waiting sends** — implicit, per-call: a send whose type has no live, unambiguous route right now waits,
   bounded by the endpoint's **handler-availability patience** (a flat 30 seconds unless the composition
@@ -160,7 +162,8 @@ other processes still starting, a peer restarting mid-day. Two composing mechani
 An exactly-once endpoint declares the **domain database it joins** (`SqliteDomainDatabase(...)` and kin),
 never a database of its own: the database is the domain's — the domain data the endpoint's executions touch
 lives there, and the exactly-once machinery's atomicity *is* its co-location with that data. Any number of
-endpoints join one domain database (built in migration phase 9):
+endpoints join one domain database (the whole story:
+[the storage model](../../Compze.Tessaging/dev_docs/storage-model.md)):
 
 - **Each endpoint owns a prefixed table-set** (`EndpointTableSet`): its inbox, its outbox and outbox
   dispatching, and its durable peer memory, each table prefixed with the endpoint's name

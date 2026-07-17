@@ -27,7 +27,7 @@ Decided so far (⚖ Magnus, 2026-07-17):
   the transport-weight exception.** `Compze.Tessaging` is the paradigm project (both siblings' machinery as
   namespaces within it; the named-pipe transport folds in); the ASP.NET Core transport stays its own
   project; the four SQL backend projects keep their shape. Recorded in
-  [tessaging-migration-plan.md](tessaging-migration-plan.md).
+  [tessaging-migration-plan.md](../WIP/tessaging-migration-plan.md).
 
 Everything here is grounded in a code dig (file anchors throughout) plus a usage inventory of the two real
 consumers: Deskmancer and the AccountManagement sample.
@@ -540,4 +540,4 @@ Proposed, awaiting decision:
 - [durable-peer-topology.md](durable-peer-topology.md): complete and unchanged; its peer memory, lifecycle
   observation, and decommission machinery are the pieces migration step 2 moves under the one router and
   generalizes across the siblings.
-- [tessaging-WIP.md](tessaging-WIP.md): the hub; links this document.
+- [tessaging-WIP.md](../WIP/tessaging-WIP.md): the hub; links this document.

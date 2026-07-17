@@ -92,7 +92,7 @@ partial class Outbox : IOutbox
       //The tommand binds to its one specific receiver here, at send: every tessage between a sender and a receiver rides that
       //pair's single ordered, receiver-deduped delivery stream, which is what makes exactly-once in-order hold by construction.
       //(Routing at delivery time was tried and retracted: re-delivery could reach an endpoint whose inbox never saw the
-      //tommand, breaking exactly-once across handler replacement - see dev_docs/TODO/WIP/Tessaging/durable-peer-topology.md.)
+      //tommand, breaking exactly-once across handler replacement - see src/Compze.Tessaging/dev_docs/DONE/durable-peer-topology.md.)
       //The bind is a waiting send: with no bindable receiver right now - never-seen, or several remembered with none live -
       //it waits, within the endpoint's handler-availability patience, inside the caller's unit of work. On SQLite one corner
       //degrades to the pre-waiting failure, delayed: a caller whose transaction already wrote to the domain database

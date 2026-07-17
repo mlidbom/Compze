@@ -8,7 +8,7 @@ namespace Compze.Tessaging.Implementation.HandlerAvailability;
 /// waits, bounded by the endpoint's <see cref="HandlerAvailabilityPatience"/>, for the world to become right (a first contact,<br/>
 /// a known peer's return, an ambiguity resolving), then proceeds normally; only exhausted patience fails loud, and the failure<br/>
 /// says what was waited for, for how long, and what the peer memory remembers<br/>
-/// (see <c>dev_docs/TODO/WIP/Tessaging/readiness-and-waiting-sends.md</c>).</summary>
+/// (see <c>src/Compze.Tessaging/dev_docs/peer-model.md</c>).</summary>
 ///<remarks>Why it exists: every remote-facing request/response send used to race discovery at startup — sent before the<br/>
 /// serving peer's advertisement was discovered, it exploded instantly, and applications were forced to hand-roll readiness<br/>
 /// probes and retry loops around the framework. Waiting absorbs the startup race and steady-state churn (a handler endpoint<br/>
