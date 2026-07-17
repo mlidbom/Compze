@@ -211,9 +211,11 @@ rebuilds and specs can script restarts), and participation in the host's endpoin
 `InterprocessEndpointRegistry` of the host's own (in a per-host temp directory deleted with the host), so
 every test runs the production announce/discover pipeline, not a test-only registry. All endpoints are built
 from clones of one root container, so they share the test database pool and serializers. On dispose the host
-waits until no tessages are in flight and rethrows background exceptions no assertion observed — a test
-cannot pass while silently dropping in-flight work (`DisposeAsyncWithoutWaitingForEndpointsToBeAtRest` opts
-out, for tests that deliberately leave work scheduled).
+waits until no tessages are in flight — transport deliveries and queued tevent observations alike, since the
+engines' observation dispatch reports to the tracker — and rethrows background exceptions no assertion
+observed: a test cannot pass while silently dropping in-flight work or a throwing observer's failure
+(`DisposeAsyncWithoutWaitingForEndpointsToBeAtRest` opts out, for tests that deliberately leave work
+scheduled).
 
 **`TypermediaTestClient`** (in `Compze.Tessaging.Hosting.Testing`) is the pure client composed for tests: it
 runs in its own container and connects to an endpoint's `Address` over the current test's transport exactly

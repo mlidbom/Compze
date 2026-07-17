@@ -65,7 +65,7 @@ property:
 | **Participation** | In-process, synchronous, in the *publisher's* transaction. A handler failure aborts the publish itself. | — (the strongest thing there is) |
 | **Exactly-once** | Durable (outbox → inbox), handler in its *own* transaction, deduped, retried until handled. | Participation in the publisher's transaction |
 | **Best-effort** | Across the wire, handler in its *own* transaction. No store, no dedup, no retry. | Guaranteed arrival |
-| **Observation** | Direct invocation, no transaction, no guarantees. | Transactional handling |
+| **Observation** | Committed facts only, off-thread, per-observer FIFO, no transaction. | Transactional handling |
 
 Which rung an edge lands on:
 
@@ -213,25 +213,36 @@ delivery guarantee comes from each arriving tevent's type — the subscriber nev
 
 ### `ObserveTevents` — observation
 
-The one subscription-side choice: opt a handler all the way down to observation — "observe regardless of
-transactional fate". Where the default registration delivers under the arriving tevent type's full
-guarantee, an `ObserveTevents` observer observes even if the transaction the tevent was
-published or is processed in rolls back.
+The one subscription-side choice: opt a handler all the way down to observation — watching, never
+participating. Where the default registration delivers under the arriving tevent type's full guarantee, an
+`ObserveTevents` observer stands outside the consistency model: it joins no transaction and its fate touches
+no execution.
 
-The observation contract, stated honestly — this is the fine print a subscriber accepts by using the escape
-hatch, and it is why the escape hatch is for infrastructure, never domain logic:
+The observation contract — the fine print a subscriber accepts by dropping to this rung:
 
-- **Fires once, immediately, at registration of the tevent** — for an exactly-once arrival that is the
-  moment the inbox registers it (after dedup, before transactional processing); for a best-effort arrival, on
-  arrival; for a local publish, at publish time, outside the publisher's transaction.
-- **At most once, never duplicates.** The exactly-once path dispatches observers only on first registration,
-  so the inbox's dedup shields observers too; the best-effort path delivers at most once by nature.
-- **May observe doomed tevents.** The transactional processing of an observed tevent may subsequently fail;
-  a locally observed tevent's publishing transaction may roll back. The observer has already run.
-- **Ordering relative to transactional handlers is unspecified.** Observation is dispatched immediately;
-  the transactional handlers run when the inbox schedules them. Races are possible.
-- **A throwing observer is reported, never retried** — surfaced through the background-exception reporter,
-  not swallowed, not redelivered.
+- **Committed facts only.** A locally published tevent is queued for its observers when its publishing unit
+  of work commits — a rolled-back publish is never observed, because an observer must never watch an
+  execution that never happened. An arriving tevent is queued on arrival: it is already a committed fact on
+  its publisher. (For an exactly-once arrival that is the moment the inbox registers it, after dedup and
+  before transactional processing; the *local handling's* later fate is a separate execution the observer
+  deliberately ignores.)
+- **Off-thread, isolated in both directions.** Dispatch runs on the engine's `TeventObservationDispatcher`,
+  never on the publisher's or the transport's thread: an observer's failure never fails the caller, and an
+  observer's latency never blocks it.
+- **Per-observer FIFO.** Each observer has its own dispatch queue, so an observing read model sees tevents in
+  the order they were queued — publish order locally, arrival order remotely — while a slow observer delays
+  only itself. Tevents a participation handler publishes in response to another are observed after their
+  cause.
+- **At most once, never duplicates.** The exactly-once path queues observers only on first registration, so
+  the inbox's dedup shields observers too; the best-effort path delivers at most once by nature.
+- **Ordering relative to transactional handlers is unspecified.** Observation is queued at commit/arrival and
+  dispatched in its own time; the transactional handlers run when their pipeline schedules them. Races are
+  possible.
+- **A throwing observer is reported, never retried** — surfaced through the background-exception reporter
+  (production logs loud; the testing host's disposal rethrows), not swallowed, not redelivered.
+- **Never discarded.** The testing host's at-rest wait covers the observation queues — a test cannot pass
+  with observation work in flight — and an endpoint's disposal drains them (after listening stops, while the
+  container still serves the observers their scopes).
 
 ### Wiring rules — loud failure, one direction
 
@@ -375,6 +386,16 @@ As of 2026-07-15:
   the ordinary publisher under ambient-transaction suppression) was built alongside it and deleted
   2026-07-16: nothing ever consumed it, and with no consumer to arbitrate its contested semantics, the type
   claimed a settled abstraction that did not exist — see "No publish-side escape hatch" above.
+- The observation redesign (2026-07-17, migration-plan phase 6): committed facts only, off-thread,
+  per-observer FIFO — the contract stated under "`ObserveTevents` — observation" above, replacing the
+  original fires-immediately-even-for-doomed-transactions semantics (the fires-even-on-rollback spec
+  deliberately inverted). A local publish queues its observers through
+  `IUnitOfWorkResolver.OnCommittedSuccessfully`; dispatch moved from inline invocation in the executor to the
+  engine's `TeventObservationDispatcher`, whose pump starts with `ExecutionContext` flow suppressed (so the
+  committing caller's ambient transaction cannot leak into observer scopes) and which reports queued and
+  dispatched transitions to the tessages-in-flight tracker — the testing host's at-rest wait covers the
+  observation queues, where inline dispatch had covered them only transitively. An endpoint drains the
+  dispatcher at disposal, after listening stops and before its container tears down.
 
 Everything this document describes is built. One refinement the guarantee-free composition forced on the
 wiring rules as first written: "Observation is allowed anywhere — direct dispatch needs no machinery" holds

@@ -14,6 +14,9 @@ using Compze.Threading.Testing;
 
 using static Compze.Must.MustActions;
 
+// ReSharper disable InconsistentNaming for testing
+#pragma warning disable IDE1006 //Reviewed OK: Test Naming Styles
+
 namespace Compze.Tests.Integration.Tessaging;
 
 ///<summary>The testing host's disposal contract for tevent observation: its at-rest wait covers the observation queues — a test<br/>

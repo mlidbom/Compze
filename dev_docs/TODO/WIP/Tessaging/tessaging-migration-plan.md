@@ -43,7 +43,21 @@ and the roster's kind partitions, the twin serializer slots, the typed foundatio
 `ITestingEndpointHostFeature` seam, and `IEndpoint`'s phase methods dropping the "Components" word; (5) the
 pure client — `TypermediaClient`, the third composed shape, which `TypermediaTestClient` now rides. One
 ordering lesson recorded in code: the tier registers before the shared substrate, because the peer
-registry's durability follows the tier's declared persistence. The destination is
+registry's durability follows the tier's declared persistence. **Phase 6 executed 2026-07-17**, three green
+commits: the tessages-in-flight tracker re-homed out of the transport namespace (truthful home first — it
+was about to cover more than transport), then the observation redesign whole: a local publish queues its
+observers through `IUnitOfWorkResolver.OnCommittedSuccessfully` — a rolled-back publish is never observed,
+the fires-even-on-rollback pins deliberately inverted at both the engine and the endpoint level — arrival
+sites queue already-committed facts on arrival, and dispatch runs off-thread on the engine's
+`TeventObservationDispatcher` with one FIFO queue per observer, failures to the background-exception
+reporter, and the pump started with `ExecutionContext` flow suppressed so the committing caller's ambient
+transaction cannot leak into observer scopes. The dispatcher reports queued/dispatched transitions to the
+tracker, so the testing host's at-rest wait covers the observation queues exactly as this phase demanded;
+an endpoint additionally drains the dispatcher at disposal, after listening stops and *before* its
+container tears down — a drain left to container teardown could not run the observers, since scope
+creation is refused once container disposal begins. New pins: per-observer FIFO order, off-thread
+dispatch, drain-at-disposal, and a throwing observer's failure rethrown at testing-host disposal. The
+destination is
 [tessaging-target-design.md](tessaging-target-design.md); the rationale and evidence are in
 [style-substrate-and-hosting-evaluation.md](style-substrate-and-hosting-evaluation.md). This document is the
 path: the ordered phases, what each contains, and what gates what. Every phase is a run of increments that

@@ -5,7 +5,6 @@ using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Tessaging.Implementation.Abstractions;
 using Compze.Tessaging.SystemCE.ThreadingCE;
-using Compze.Teventive.Tevents.Public;
 using Compze.Threading;
 using Compze.Threading.ResourceAccess;
 
@@ -105,7 +104,7 @@ public sealed class TeventObservationDispatcher : IDisposable
       internal bool AwaitDrained(WaitTimeout timeout)
       {
          var hadWork = _state.Read(it => it.Pumping || it.PendingTevents.Count > 0);
-         if(hadWork) _state.Await(it => !it.Pumping && it.PendingTevents.Count == 0, timeout: timeout);
+         if(hadWork) _state.Await(it => it is { Pumping: false, PendingTevents.Count: 0 }, timeout: timeout);
          return hadWork;
       }
 

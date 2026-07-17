@@ -17,13 +17,15 @@ Every piece of work the framework runs falls into exactly one of three context k
 |---|---|---|
 | **Unit of work** | fresh scope + transaction (`ExecuteUnitOfWork`) | tommand handlers, exactly-once inbox processing, best-effort tevent dispatch, every independent door's mutating verb |
 | **Isolated scope** | fresh scope, no transaction of its own (`ExecuteInIsolatedScope`); an ambient transaction, if the caller has one, is left as-is so reads join its consistency | tuery handlers, discovery queries |
-| **Detached** | fresh scope + ambient transaction actively **suppressed** | observation handlers |
+| **Detached** | fresh scope on a context born transaction-free: the observation dispatch pump starts with `ExecutionContext` flow suppressed, so there is no ambient transaction to suppress — and the pump asserts that guarantee | observation handlers |
 
 A tuery execution is deliberately **not** a unit of work: it changes nothing, so there is nothing to commit
 or roll back. (On SQLite this is also load-bearing: any transaction that touches a SQLite connection takes
 the per-database write gate, so transactional reads would serialize against writes.) Detached is not the
 same as isolated-scope: a read *wants* to see the caller's uncommitted writes when a transaction is ambient;
-an observer must survive the caller's rollback, so it suppresses.
+an observer observes committed facts from outside every transaction, so its context carries none — by
+construction since observation dispatch moved off-thread (it queues at the publisher's commit and runs on
+the engine's observation dispatch pump).
 
 ## `IUnitOfWorkResolver` — the requirement, stated in the types
 
@@ -45,7 +47,7 @@ Beyond resolution, the resolver is the unit of work's handle: `Id` (a `UnitOfWor
 transaction's `LocalIdentifier` — value-equal exactly when it identifies the same unit of work) and the
 completion hooks `OnCommittedSuccessfully(action)` / `OnCompleted(action)`, thin veneers over the
 `TransactionCompleted`-based callbacks the framework already trusted internally (the outbox's
-send-on-commit, the connection cleanup). All three operate on the transaction **captured when the resolver
+send-on-commit, the connection cleanup, observation's queue-at-commit). All three operate on the transaction **captured when the resolver
 was created**, never on `Transaction.Current`, so they bind to the unit of work the resolver certifies even
 where the ambient transaction has drifted.
 
