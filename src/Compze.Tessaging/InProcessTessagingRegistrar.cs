@@ -46,7 +46,7 @@ public static class InProcessTessagingRegistrar
       {
          var typeMapper = new TypeMapper();
          typeMapper.MapTypesFromAssemblyContaining<IExactlyOnceTevent>(); // Compze.Abstractions
-         typeMapper.MapTypesFromAssemblyContaining<ITaggregateTevent>();  // Compze.Core — the Teventive type hierarchy
+         typeMapper.MapTypesFromAssemblyContaining<ITaggregateTevent>();  // Compze.Teventive — the Teventive type hierarchy
          @this.Register(Singleton.For<ITypeMapper>().Instance(typeMapper),
                         Singleton.For<ITypeMap>().Instance(typeMapper));
       }

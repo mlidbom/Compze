@@ -40,7 +40,7 @@ public class InProcessTessagingEndpointFeature
 
    internal InProcessTessagingEndpointFeature(IEndpointBuilder builder)
    {
-      builder.TypeMapper.MapTypesFromAssemblyContaining<ITaggregateTevent>(); // Compze.Core — the Teventive type hierarchy
+      builder.TypeMapper.MapTypesFromAssemblyContaining<ITaggregateTevent>(); // Compze.Teventive — the Teventive type hierarchy
 
       var handlerRegistry = new TessageHandlerRegistry(builder.TypeMap);
       RegisterHandlers = handlerRegistry;

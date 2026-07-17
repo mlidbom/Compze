@@ -11,10 +11,6 @@
   <ItemGroup>
     <PackageReference Include="Npgsql" Version="9.0.4" />
   </ItemGroup>
-  <!-- Compze.Core — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Core)' == 'true'">
-    <PackageReference Include="Compze.Core" Version="*-*" />
-  </ItemGroup>
   <!-- Compze.Internals.Sql.PostgreSql — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Sql_PostgreSql)' == 'true'">
     <PackageReference Include="Compze.Internals.Sql.PostgreSql" Version="*-*" />
