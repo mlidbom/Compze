@@ -9,7 +9,7 @@ namespace Compze.Tessaging.Endpoints;
 
 ///<summary>
 /// The exactly-once endpoint: the <see cref="Endpoint"/> whose TessageBus rung is exactly-once. Everything the best-effort
-/// endpoint has, plus the durable vertical in its database: the inbox (receiver dedup, transactional retry), the outbox
+/// endpoint has, plus the durable vertical in the domain database it joins: the inbox (receiver dedup, transactional retry), the outbox
 /// (durable rows, recovery backlog, per-peer exactly-once in-order delivery streams), durable peer memory, and the
 /// tommand-sending doors (<see cref="Compze.Abstractions.Tessaging.Public.IUnitOfWorkTommandSender"/> /
 /// <see cref="Compze.Abstractions.Tessaging.Public.IIndependentTommandSender"/>). Serves all four tessage kinds

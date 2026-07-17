@@ -31,7 +31,7 @@ namespace Compze.Tessaging.Endpoints;
 /// <see cref="DiscoverEndpointsThrough"/> / <see cref="AnnounceAddressTo"/>, <see cref="RequirePeers"/>,
 /// <see cref="DoNotQueueTeventsFor"/>). Composition choices are parameters, not plugins: the implementation packages offer
 /// their choices as extension methods over this surface (e.g. <c>NamedPipeEndpointTransport()</c>,
-/// <c>NewtonsoftSerializer()</c>, <c>SqliteEndpointDatabase(...)</c>), each filling the one parameter it names.
+/// <c>NewtonsoftSerializer()</c>, <c>SqliteDomainDatabase(...)</c>), each filling the one parameter it names.
 ///
 /// The builder exists only inside the composition callback: the callback's end is the declaration's end, the build closes
 /// the roster, and any attempt to declare afterward explodes. Domain components register through <see cref="Registrar"/>,

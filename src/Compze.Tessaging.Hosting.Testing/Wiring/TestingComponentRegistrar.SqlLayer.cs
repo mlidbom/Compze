@@ -38,19 +38,19 @@ public static class TestingComponentRegistrarSqlLayer
    static IComponentRegistrar CurrentTestsConfiguredSqlLayer(this TestingComponentRegistrar @this, string connectionStringName) =>
       TestEnv.SqlLayer switch
       {
-         SqlLayer.MsSql => @this.MsSqlEndpointDatabase(connectionStringName)
+         SqlLayer.MsSql => @this.MsSqlDomainDatabase(connectionStringName)
                                 .MsSqlDocumentDbSqlLayer()
                                 .MsSqlTessagingSqlLayer()
                                 .MsSqlTeventStoreSqlLayer(),
-         SqlLayer.MySql => @this.MySqlEndpointDatabase(connectionStringName)
+         SqlLayer.MySql => @this.MySqlDomainDatabase(connectionStringName)
                                 .MySqlDocumentDbSqlLayer()
                                 .MySqlTessagingSqlLayer()
                                 .MySqlTeventStoreSqlLayer(),
-         SqlLayer.PgSql => @this.PgSqlEndpointDatabase(connectionStringName)
+         SqlLayer.PgSql => @this.PgSqlDomainDatabase(connectionStringName)
                                 .PgSqlDocumentDbSqlLayer()
                                 .PgSqlTessagingSqlLayer()
                                 .PgSqlTeventStoreSqlLayer(),
-         SqlLayer.Sqlite => @this.SqliteEndpointDatabase(connectionStringName)
+         SqlLayer.Sqlite => @this.SqliteDomainDatabase(connectionStringName)
                                  .SqliteTypeIdInterner($"{connectionStringName}.TypeIdInterner")
                                  .SqliteDocumentDbSqlLayer()
                                  .SqliteTessagingSqlLayer()

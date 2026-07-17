@@ -55,7 +55,7 @@ public class Given_an_exactly_once_tessaging_endpoint_declaring_no_discovery_reg
          {
             endpoint.MapTypes(mapper => mapper.RegisterIntegrationTestTypeMappings());
             endpoint.TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport());
-            endpoint.Database(registrar => registrar.CurrentTestsConfiguredSqlLayer(connectionStringName: endpoint.Configuration.Id.ToString()));
+            endpoint.DomainDatabase(registrar => registrar.CurrentTestsConfiguredSqlLayer(connectionStringName: endpoint.Configuration.Id.ToString()));
             endpoint.RegisterTessageHandlers(handle => handle
                        .ForTommand((TommandTheEndpointSendsItself _) =>
                         {

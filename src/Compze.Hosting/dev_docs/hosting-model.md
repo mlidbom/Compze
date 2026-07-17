@@ -85,7 +85,7 @@ var endpoint = host.RegisterEndpoint(container => ExactlyOnceEndpoint.Compose(
    {
       endpoint.AspNetCoreEndpointTransport();
       endpoint.NewtonsoftSerializer();
-      endpoint.SqliteEndpointDatabase("AccountManagement");
+      endpoint.SqliteDomainDatabase("AccountManagement");
       endpoint.ParticipateIn(registry);
 
       endpoint.MapTypes(mapper => mapper.RegisterMyDomainTypeMappings());
@@ -102,9 +102,9 @@ and the builder exists only inside the callback: the callback's end is the decla
 closes the roster, and any attempt to declare afterward explodes. The named declarations come from the
 implementation packages, each filling the one parameter it names: the transport protocol
 (`NamedPipeEndpointTransport()` / `AspNetCoreEndpointTransport()`), the endpoint's one serializer
-(`NewtonsoftSerializer()`), and — on the exactly-once tier — the database, whose named declaration registers
-the whole engine pairing (`SqliteEndpointDatabase(...)` and kin: the connection pool, the type-id interner,
-and Tessaging's sql layers for that engine). Store integrations (a tevent store's `HandleTaggregate`, a
+(`NewtonsoftSerializer()`), and — on the exactly-once tier — the domain database the endpoint joins, whose
+named declaration registers the whole engine pairing (`SqliteDomainDatabase(...)` and kin: the connection
+pool, the type-id interner, and Tessaging's sql layers for that engine). Store integrations (a tevent store's `HandleTaggregate`, a
 document db's `HandleDocumentType`) plug into this same surface — handler contributors like any other.
 
 ## The lifecycle phases

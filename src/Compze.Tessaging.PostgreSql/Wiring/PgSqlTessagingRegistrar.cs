@@ -15,12 +15,12 @@ public static class PgSqlTessagingRegistrar
 {
    extension(Compze.Tessaging.Endpoints.ExactlyOnceEndpointBuilder @this)
    {
-      ///<summary>Declares the endpoint's database: PostgreSQL, reached through <paramref name="connectionStringName"/> — filling<br/>
-      /// the exactly-once endpoint's one database parameter with the whole engine pairing: the connection pool, the type-id<br/>
-      /// interner Tessaging's sql layers share, and Tessaging's PostgreSQL sql layers.</summary>
-      public void PgSqlEndpointDatabase(string connectionStringName) =>
-         @this.Database(registrar => registrar.PgSqlEndpointDatabase(connectionStringName)
-                                              .PgSqlTessagingSqlLayer());
+      ///<summary>Declares the domain database this endpoint joins: PostgreSQL, reached through <paramref name="connectionStringName"/> —<br/>
+      /// filling the exactly-once endpoint's one domain-database parameter with the whole engine pairing: the connection pool,<br/>
+      /// the type-id interner Tessaging's sql layers share, and Tessaging's PostgreSQL sql layers.</summary>
+      public void PgSqlDomainDatabase(string connectionStringName) =>
+         @this.DomainDatabase(registrar => registrar.PgSqlDomainDatabase(connectionStringName)
+                                                    .PgSqlTessagingSqlLayer());
    }
 
    public static IComponentRegistrar PgSqlTessagingSqlLayer(this IComponentRegistrar registrar) =>

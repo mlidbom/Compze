@@ -81,7 +81,7 @@ public class Given_a_best_effort_endpoint_serving_typermedia_to_a_remote_client 
       user.Name.Must().Be("first-user");
    }
 
-   [PCT] public async Task composing_an_exactly_once_endpoint_without_a_database_fails_loud_naming_the_missing_declaration()
+   [PCT] public async Task composing_an_exactly_once_endpoint_without_a_domain_database_fails_loud_naming_the_missing_declaration()
    {
       await using var host = EndpointHost.Production.Create(() => TestEnv.DIContainer.CreateTestingContainerBuilder());
       Invoking(() => host.RegisterEndpoint(container => ExactlyOnceEndpoint.Compose(
@@ -92,7 +92,7 @@ public class Given_a_best_effort_endpoint_serving_typermedia_to_a_remote_client 
                            endpoint.TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport());
                            endpoint.NewtonsoftSerializer();
                         })))
-         .Must().Throw<Exception>().Which.Message.Must().Contain("The endpoint declares no database");
+         .Must().Throw<Exception>().Which.Message.Must().Contain("The endpoint declares no domain database");
    }
 
    protected internal class GetUserTuery(string name) : TessageTypes.Remotable.NonTransactional.Tueries.Tuery<UserResource>

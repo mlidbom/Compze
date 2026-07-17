@@ -71,7 +71,7 @@ public class TestingEndpointHost : EndpointHost
       RegisterEndpoint(container => ExactlyOnceEndpoint.Compose(container, name, id, endpoint =>
       {
          DeclareTheCurrentTestsConcerns(endpoint);
-         endpoint.Database(registrar => registrar.CurrentTestsConfiguredSqlLayer(connectionStringName: id.ToString()));
+         endpoint.DomainDatabase(registrar => registrar.CurrentTestsConfiguredSqlLayer(connectionStringName: id.ToString()));
          declare(endpoint);
       }));
 

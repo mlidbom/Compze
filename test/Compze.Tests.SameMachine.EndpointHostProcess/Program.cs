@@ -81,7 +81,7 @@ public static class Program
       endpoint.MapTypes(mapper => mapper.MapTypesFromAssemblyContaining<TommandSentToTheEndpointHostProcess>());
       endpoint.NamedPipeEndpointTransport();
       endpoint.NewtonsoftSerializer();
-      endpoint.SqliteEndpointDatabase("EndpointHostProcess");
+      endpoint.SqliteDomainDatabase("EndpointHostProcess");
       endpoint.ParticipateIn(registry);
       endpoint.RegisterTessageHandlers(handle => handle.ForTommand(async (TommandSentToTheEndpointHostProcess _, IUnitOfWorkTommandSender unitOfWorkTommandSender) =>
           await unitOfWorkTommandSender.SendAsync(new TommandSentBackToTheSpecificationProcess())));

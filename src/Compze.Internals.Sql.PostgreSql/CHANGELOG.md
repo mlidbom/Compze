@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## 0.3.0-alpha
 
-- `PgSqlEndpointDatabase(connectionStringName)`: declares the endpoint's database — registers the connection pool every sql layer the endpoint registers stores its data through; the sql layers wire their shared infrastructure (the type-id interner) themselves.
+- `PgSqlDomainDatabase(connectionStringName)`: declares the domain database this endpoint joins — registers the connection pool every sql layer the endpoint registers stores its data through; the sql layers wire their shared infrastructure (the type-id interner) themselves.
 
 ## 0.2.1-alpha
 

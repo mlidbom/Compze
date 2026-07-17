@@ -61,7 +61,7 @@ public class Given_a_separate_process_hosting_an_endpoint_discovered_through_a_s
          {
             endpoint.MapTypes(mapper => mapper.MapTypesFromAssemblyContaining<TommandSentToTheEndpointHostProcess>());
             endpoint.TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport());
-            endpoint.Database(registrar => registrar.CurrentTestsConfiguredSqlLayer(connectionStringName: endpoint.Configuration.Id.ToString()));
+            endpoint.DomainDatabase(registrar => registrar.CurrentTestsConfiguredSqlLayer(connectionStringName: endpoint.Configuration.Id.ToString()));
             endpoint.ParticipateIn(_registry);
             endpoint.RegisterTessageHandlers(handle => handle.ForTommand((TommandSentBackToTheSpecificationProcess _) =>
             {

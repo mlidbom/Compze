@@ -65,7 +65,7 @@ public class Given_two_hosts_sharing_an_interprocess_registry_where_the_receivin
    {
       endpoint.MapTypes(mapper => mapper.RegisterIntegrationTestTypeMappings());
       endpoint.TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport());
-      endpoint.Database(registrar => registrar.CurrentTestsConfiguredSqlLayer(connectionStringName: endpoint.Configuration.Id.ToString()));
+      endpoint.DomainDatabase(registrar => registrar.CurrentTestsConfiguredSqlLayer(connectionStringName: endpoint.Configuration.Id.ToString()));
       endpoint.ParticipateIn(_registry);
    }
 

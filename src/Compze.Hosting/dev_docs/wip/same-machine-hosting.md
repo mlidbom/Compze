@@ -189,7 +189,7 @@ host.RegisterEndpoint(container => ExactlyOnceEndpoint.Compose(
    endpoint.MapTypes(mapper => mapper.MapTypesFromAssemblyContaining<MyTommand>());
    endpoint.NamedPipeEndpointTransport();
    endpoint.NewtonsoftSerializer();
-   endpoint.SqliteEndpointDatabase("BackgroundWorker");
+   endpoint.SqliteDomainDatabase("BackgroundWorker");
    endpoint.ParticipateIn(registry);   // discover the others through it AND announce ourselves to it
 
    endpoint.RegisterTessageHandlers(handle => handle.ForTommand(async (MyTommand tommand, IUnitOfWorkResolver unitOfWork) => ...));

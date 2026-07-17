@@ -15,13 +15,13 @@ public static class SqliteTessagingRegistrar
 {
    extension(Compze.Tessaging.Endpoints.ExactlyOnceEndpointBuilder @this)
    {
-      ///<summary>Declares the endpoint's database: sqlite, reached through <paramref name="connectionStringName"/> — filling the<br/>
-      /// exactly-once endpoint's one database parameter with the whole engine pairing: the connection pool, the sqlite type-id<br/>
-      /// interner Tessaging's sql layers share (derived from the declaration), and Tessaging's sqlite sql layers.</summary>
-      public void SqliteEndpointDatabase(string connectionStringName) =>
-         @this.Database(registrar => registrar.SqliteEndpointDatabase(connectionStringName)
-                                              .SqliteTypeIdInterner(new SqliteEndpointDatabase(connectionStringName))
-                                              .SqliteTessagingSqlLayer());
+      ///<summary>Declares the domain database this endpoint joins: sqlite, reached through <paramref name="connectionStringName"/> —<br/>
+      /// filling the exactly-once endpoint's one domain-database parameter with the whole engine pairing: the connection pool,<br/>
+      /// the sqlite type-id interner Tessaging's sql layers share (derived from the declaration), and Tessaging's sqlite sql layers.</summary>
+      public void SqliteDomainDatabase(string connectionStringName) =>
+         @this.DomainDatabase(registrar => registrar.SqliteDomainDatabase(connectionStringName)
+                                                    .SqliteTypeIdInterner(new SqliteDomainDatabase(connectionStringName))
+                                                    .SqliteTessagingSqlLayer());
    }
 
    public static IComponentRegistrar SqliteTessagingSqlLayer(this IComponentRegistrar registrar) =>
