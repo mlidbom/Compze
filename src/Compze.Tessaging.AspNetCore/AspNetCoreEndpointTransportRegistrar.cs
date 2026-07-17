@@ -1,9 +1,8 @@
 using Compze.Abstractions.Hosting.Public;
 using Compze.DependencyInjection.Abstractions;
+using Compze.Tessaging.Internals.Transport;
 
 namespace Compze.Tessaging.AspNetCore;
-
-using Compze.Tessaging.Internals.Transport;
 
 public static class AspNetCoreEndpointTransportRegistrar
 {

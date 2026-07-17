@@ -2,12 +2,12 @@ using Compze.Abstractions.Public;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.TypeIdentifiers;
 
-[assembly: AssemblyTypeMapper(typeof(Compze.Tessaging.Typermedia.Hosting.Specifications.AssemblyTypeMapper))]
+[assembly: AssemblyTypeMapper(typeof(Compze.Tessaging.Specifications.Typermedia.AssemblyTypeMapper))]
 
 // ReSharper disable ClassNeverInstantiated.Global
 #pragma warning disable CA1724 // Type names should not match namespaces
 
-namespace Compze.Tessaging.Typermedia.Hosting.Specifications;
+namespace Compze.Tessaging.Specifications.Typermedia;
 
 public class Greeting
 {

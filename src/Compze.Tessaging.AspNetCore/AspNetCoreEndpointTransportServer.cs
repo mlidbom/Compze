@@ -13,10 +13,9 @@ using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using LogLevel = Microsoft.Extensions.Logging.LogLevel;
+using Compze.Tessaging.Internals.Transport;
 
 namespace Compze.Tessaging.AspNetCore;
-
-using Compze.Tessaging.Internals.Transport;
 
 public static class AspNetCoreEndpointTransportServerRegistrar
 {

@@ -3,11 +3,12 @@ using Compze.Abstractions.Tessaging.Public;
 using Compze.Must;
 
 using Compze.xUnitBDD;
+using Compze.Tessaging.Typermedia;
 
 // ReSharper disable InconsistentNaming for testing
 #pragma warning disable IDE1006 //Reviewed OK: Test Naming Styles
 
-namespace Compze.Tessaging.Typermedia.Specifications;
+namespace Compze.Tessaging.Specifications.Typermedia;
 
 ///<summary>Specifies how a <see cref="NavigationSpecification"/> composes navigation steps: each step receives the previous step's result and the chain executes against whichever navigator it is run on.</summary>
 public class NavigationSpecification_specification

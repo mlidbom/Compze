@@ -8,12 +8,12 @@ using Compze.Tests.Infrastructure.XUnit;
 using Compze.Tessaging.Typermedia.Client;
 using Compze.Tessaging.Typermedia.HandlerRegistration;
 using Compze.Tessaging.Hosting.Testing.Typermedia;
+using Compze.Tessaging.Typermedia;
 
 // ReSharper disable InconsistentNaming for testing
 #pragma warning disable IDE1006 //Reviewed OK: Test Naming Styles
 
-namespace Compze.Tessaging.Typermedia.Hosting.Specifications;
-
+namespace Compze.Tessaging.Specifications.Typermedia;
 ///<summary>The end-to-end proof that a typermedia-only composition works: a host with only the Typermedia testing feature serves a remote client over HTTP.</summary>
 public class Given_an_endpoint_hosting_only_typermedia : UniversalTestBase
 {

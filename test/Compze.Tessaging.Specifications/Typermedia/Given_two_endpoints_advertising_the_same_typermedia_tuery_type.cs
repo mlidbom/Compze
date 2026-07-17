@@ -9,12 +9,12 @@ using Compze.Tessaging.Typermedia.Client;
 using Compze.Tessaging.Typermedia.HandlerRegistration;
 using Compze.Tessaging.Hosting.Testing.Typermedia;
 using static Compze.Must.MustActions;
+using Compze.Tessaging.Typermedia;
 
 // ReSharper disable InconsistentNaming for testing
 #pragma warning disable IDE1006 //Reviewed OK: Test Naming Styles
 
-namespace Compze.Tessaging.Typermedia.Hosting.Specifications;
-
+namespace Compze.Tessaging.Specifications.Typermedia;
 ///<summary>A typermedia tessage executes on exactly one handler, so several live endpoints advertising the same type is a<br/>
 /// diagnosable send-time condition — <see cref="MultipleHandlersForTypermediaTypeException"/> naming the endpoints — never a<br/>
 /// route-table rebuild failure and never a silent pick. The second specification pins the never-a-rebuild-failure half: routes<br/>

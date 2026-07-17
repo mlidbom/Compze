@@ -10,7 +10,7 @@ using static Compze.Must.MustActions;
 #pragma warning disable IDE1006 //Reviewed OK: Test Naming Styles
 #pragma warning disable CA1812 // Never-instantiated test message types exist only to be looked up
 
-namespace Compze.Tessaging.Typermedia.Specifications;
+namespace Compze.Tessaging.Specifications.Typermedia;
 
 ///<summary>Every lookup on the <see cref="TypermediaHandlerRegistry"/> speaks one language for a missing handler:<br/>
 /// <see cref="NoHandlerException"/> naming the tessage type — never a raw dictionary failure. The two Type-keyed lookups the<br/>
