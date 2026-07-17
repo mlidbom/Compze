@@ -1,4 +1,5 @@
 using Compze.Abstractions.Hosting.Public;
+using Compze.Tessaging.Implementation.TessageHandling.Dispatching;
 using Compze.Tessaging.Typermedia.Client;
 
 namespace Compze.Tessaging.Implementation.HandlerAvailability;
@@ -24,4 +25,17 @@ interface IHandlerAvailability
    /// several live routes still ambiguous after patience throw <see cref="MultipleHandlersForTypermediaTypeException"/><br/>
    /// naming the endpoints — never a silent pick.</summary>
    Task<EndpointAddress> AwaitAddressOfTypermediaHandlerForAsync(Type tessageType);
+
+   ///<summary>The one endpoint an exactly-once tommand of type <paramref name="tommandType"/> binds to at send: the live<br/>
+   /// handler when one is connected — current by definition — otherwise the sole remembered peer whose advertisement handles<br/>
+   /// the type. A known-but-down handler binds immediately, never waited on: the row waits out the peer's absence in the<br/>
+   /// outbox's storage. What waits, within patience, are the two states with no bindable receiver: a type nothing this<br/>
+   /// endpoint has ever met serves — waiting for its first contact, after which the send binds and proceeds — and several<br/>
+   /// remembered handlers with none live — waiting for one to connect (live is current by definition, resolving the<br/>
+   /// replacement ambiguity) or for a decommission to resolve it. Exhausted patience throws<br/>
+   /// <see cref="NoHandlerForTessageTypeException"/> / <see cref="MultipleHandlersForTessageTypeException"/>.</summary>
+   ///<remarks>The wait strictly precedes the bind, so the exactly-once in-order guarantee is untouched: the tommand still<br/>
+   /// binds exactly once, before its row is saved, and rides the bound pair's single ordered, receiver-deduped delivery<br/>
+   /// stream — waiting only moves <em>when</em> that one bind happens in the two states that used to throw immediately.</remarks>
+   Task<EndpointId> AwaitBindableReceiverOfAsync(Type tommandType);
 }

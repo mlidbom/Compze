@@ -1,9 +1,8 @@
 using System.Transactions;
-using Compze.Abstractions.Hosting.Public;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Tessaging.Implementation.Abstractions;
+using Compze.Tessaging.Implementation.HandlerAvailability;
 using Compze.Tessaging.Implementation.Peers;
-using Compze.Tessaging.Implementation.TessageHandling.Dispatching;
 using Compze.Tessaging.Implementation.Transport.Client.Implementation;
 using Compze.Tessaging.Implementation.Transport.Client.Internal;
 using Compze.Contracts;
@@ -27,8 +26,8 @@ partial class Outbox : IOutbox
    internal static void RegisterWith(IComponentRegistrar registrar)
    {
       registrar.Register(Singleton.For<IOutbox>()
-                                  .CreatedBy((ITessagingRouter tessagingRouter, ITessageStorage tessageStorage, IPeerRegistry peerRegistry)
-                                                => new Outbox(tessagingRouter, tessageStorage, peerRegistry)));
+                                  .CreatedBy((ITessagingRouter tessagingRouter, ITessageStorage tessageStorage, IPeerRegistry peerRegistry, IHandlerAvailability handlerAvailability)
+                                                => new Outbox(tessagingRouter, tessageStorage, peerRegistry, handlerAvailability)));
       //Wiring the outbox is what wires the endpoint's exactly-once tevent delivery: the outbox joins the delivery-leg set the IUnitOfWorkTeventPublisher routes through...
       registrar.Register(Singleton.ForSet<IExactlyOnceTeventDeliveryLeg>().CreatedBy((IOutbox outbox) => outbox));
       //...and what grants the router's connections their exactly-once delivery streams, backed by the outbox's storage: on an endpoint without the outbox this set is empty and connections carry no such stream (see TessagingConnection).
@@ -42,12 +41,14 @@ partial class Outbox : IOutbox
    readonly ITessageStorage _storage;
    readonly IPeerRegistry _peerRegistry;
    readonly ITessagingRouter _tessagingRouter;
+   readonly IHandlerAvailability _handlerAvailability;
 
-   Outbox(ITessagingRouter tessagingRouter, ITessageStorage tessageStorage, IPeerRegistry peerRegistry)
+   Outbox(ITessagingRouter tessagingRouter, ITessageStorage tessageStorage, IPeerRegistry peerRegistry, IHandlerAvailability handlerAvailability)
    {
       _storage = tessageStorage;
       _peerRegistry = peerRegistry;
       _tessagingRouter = tessagingRouter;
+      _handlerAvailability = handlerAvailability;
    }
 
    public async Task PublishTransactionallyAsync(IPublisherTevent<IExactlyOnceTevent> wrappedTevent)
@@ -92,7 +93,12 @@ partial class Outbox : IOutbox
       //pair's single ordered, receiver-deduped delivery stream, which is what makes exactly-once in-order hold by construction.
       //(Routing at delivery time was tried and retracted: re-delivery could reach an endpoint whose inbox never saw the
       //tommand, breaking exactly-once across handler replacement - see dev_docs/TODO/WIP/Tessaging/durable-peer-topology.md.)
-      var receiverId = ResolveReceiver(exactlyOnceTommand);
+      //The bind is a waiting send: with no bindable receiver right now - never-seen, or several remembered with none live -
+      //it waits, within the endpoint's handler-availability patience, inside the caller's unit of work. On SQLite one corner
+      //degrades to the pre-waiting failure, delayed: a caller whose transaction already wrote to the endpoint's database
+      //holds the per-database write gate across the wait, so the first-contact advertisement recording that would satisfy it
+      //cannot commit - the wait exhausts, the transaction rolls back releasing the gate, the recording lands, and a retry binds.
+      var receiverId = await _handlerAvailability.AwaitBindableReceiverOfAsync(exactlyOnceTommand.GetType()).caf();
       await _storage.SaveTessageAsync(exactlyOnceTommand, exactlyOnceTommand.Id, receiverId).caf();
 
       transaction.OnCommittedSuccessfully(() =>
@@ -100,31 +106,11 @@ partial class Outbox : IOutbox
          //Looked up at commit rather than at send: a connection that appeared in between loaded its recovery backlog before
          //this row committed, so only a commit-time lookup sees it. The row is bound: it must enter no other endpoint's
          //stream, so a live handler that is not the bound receiver leaves the row waiting for its endpoint's return.
-         var liveConnection = _tessagingRouter.LiveConnectionToHandlerFor(exactlyOnceTommand);
+         var liveConnection = _tessagingRouter.LiveConnectionToHandlerFor(exactlyOnceTommand.GetType());
          if(liveConnection == null || !liveConnection.EndpointInformation.Id.Equals(receiverId)) return;
          this.Log().Debug($"OnCommittedSuccessfully: Delivering tommand {exactlyOnceTommand.Id} to endpoint {receiverId}");
          liveConnection.EnqueueForExactlyOnceDelivery(exactlyOnceTommand, exactlyOnceTommand.Id);
       });
-   }
-
-   ///<summary>The one endpoint this send binds to: the live handler when one is connected — current by definition — otherwise<br/>
-   /// the sole remembered peer whose advertisement handles the type. Always another endpoint: an in-roster tommand never<br/>
-   /// reaches the outbox, because the sender door executes it inline (the consistency law). No remembered handler fails loud<br/>
-   /// (<see cref="NoHandlerForTessageTypeException"/>); more<br/>
-   /// than one — a handler replacement whose retired peer was never decommissioned, with none of them up — fails loud too<br/>
-   /// (<see cref="MultipleHandlersForTessageTypeException"/>), because binding to the wrong one would strand the tommand.</summary>
-   EndpointId ResolveReceiver(IExactlyOnceTommand exactlyOnceTommand)
-   {
-      var liveConnection = _tessagingRouter.LiveConnectionToHandlerFor(exactlyOnceTommand);
-      if(liveConnection != null) return liveConnection.EndpointInformation.Id;
-
-      var rememberedHandlerIds = _peerRegistry.HandlerIdsFor(exactlyOnceTommand.GetType());
-      return rememberedHandlerIds.Count switch
-      {
-         0 => throw new NoHandlerForTessageTypeException(exactlyOnceTommand.GetType()),
-         1 => rememberedHandlerIds[0],
-         _ => throw new MultipleHandlersForTessageTypeException(exactlyOnceTommand.GetType(), rememberedHandlerIds)
-      };
    }
 
    bool _running = false;

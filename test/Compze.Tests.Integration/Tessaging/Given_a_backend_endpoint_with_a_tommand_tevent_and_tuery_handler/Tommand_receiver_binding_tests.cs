@@ -57,13 +57,14 @@ public class Tommand_receiver_binding_tests : EndpointHostTestBase
       MyExactlyOnceTommandHandledByTheRemoteEndpointHandlerThreadGate.AwaitPassedThroughCountEqualTo(1, WaitTimeout.Seconds(15));
    }
 
-   [PCT] public async Task Sending_a_tommand_while_multiple_remembered_peers_advertise_its_type_and_none_is_live_fails_loudly_naming_the_type()
+   [PCT] public async Task Sending_a_tommand_while_multiple_remembered_peers_advertise_its_type_and_none_is_live_fails_after_patience_naming_the_type()
    {
       //The Backend met the Remote endpoint at the initial start; meeting a successor too leaves TWO remembered peers advertising the type.
       await Host.DisposeAsync();
       await StartHostWithTheBackendEndpointAndASuccessorToTheRemoteEndpointAsync();
 
       //With neither of them live there is no way to know which is current: binding to the wrong one would strand the tommand.
+      //The send waits out the Backend's handler-availability patience for one of them to connect, then fails loud.
       await Host.DisposeAsync();
       await StartHostWithOnlyTheBackendEndpointAsync();
 
@@ -72,14 +73,17 @@ public class Tommand_receiver_binding_tests : EndpointHostTestBase
 
       message.Must().Contain(nameof(MyExactlyOnceTommandHandledByTheRemoteEndpoint));
       message.Must().Contain("More than one remembered peer");
+      message.Must().Contain("handler-availability patience");
    }
 
-   [PCT] public async Task Sending_a_tommand_whose_type_neither_a_remembered_peer_nor_the_endpoint_itself_handles_fails_loudly_naming_the_type()
+   [PCT] public async Task Sending_a_tommand_whose_type_neither_a_remembered_peer_nor_the_endpoint_itself_handles_fails_after_patience_naming_the_type()
    {
+      //The send waits out the Backend's handler-availability patience for a first contact with an endpoint handling the type, then fails loud.
       var message = (await InvokingAsync(async () => await BackendEndPoint.ServiceLocator.Resolve<IIndependentTommandSender>().SendAsync(new MyUnhandledExactlyOnceTommand()))
                    .Must().ThrowAsync<Exception>()).Which.Message;
 
       message.Must().Contain(nameof(MyUnhandledExactlyOnceTommand));
       message.Must().Contain("neither this endpoint's own handlers nor any remembered peer's advertisement");
+      message.Must().Contain("handler-availability patience");
    }
 }

@@ -128,6 +128,11 @@ public abstract class EndpointHostTestBase : UniversalTestBase
          {
             endpoint.MapTypes(mapper => mapper.RegisterCommonTestTypeMappings());
 
+            //Short deliberately: every send these specs expect to succeed binds instantly (a live or sole-remembered handler),
+            //so the only sends that wait are the ones pinning the patience-exhausted failures - which would otherwise wait out
+            //the 30s default. Specs that need a wait to SUCCEED compose their own endpoints with their own patience.
+            endpoint.HandlerAvailabilityPatience(TimeSpan.FromMilliseconds(500));
+
             endpoint.RegisterTeventStore()
                     .HandleTaggregate<MyTaggregate, IMyTaggregateTevent>();
 

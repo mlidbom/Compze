@@ -21,11 +21,11 @@ interface ITessagingRouter
     void Stop();
     void StartDelivery();
     void StopDelivery();
-    ///<summary>The live connection to the endpoint whose current advertisement handles <paramref name="tommand"/>'s type —<br/>
-    /// null when no connected endpoint does. Deliberately liveness-only: a tommand binds to its one specific receiver at<br/>
-    /// send time, preferring the live handler and falling back to the sole remembered one<br/>
+    ///<summary>The live connection to the endpoint whose current advertisement handles the tommand type<br/>
+    /// <paramref name="tommandType"/> — null when no connected endpoint does. Deliberately liveness-only: a tommand binds to<br/>
+    /// its one specific receiver at send time, preferring the live handler and falling back to the sole remembered one<br/>
     /// (see <see cref="Peers.IPeerRegistry.HandlerIdsFor"/>), so a handler being down never makes the send explode.</summary>
-    ITessagingInboxConnection? LiveConnectionToHandlerFor(IRemotableTommand tommand);
+    ITessagingInboxConnection? LiveConnectionToHandlerFor(Type tommandType);
     ///<summary>Whether a live connection to the endpoint currently exists. What <see cref="Peers.IPeerAdministration.DecommissionAsync"/><br/>
     /// asserts against: decommissioning declares a peer gone for good, and a connected peer is not gone.</summary>
     bool HasLiveConnectionTo(EndpointId endpointId);

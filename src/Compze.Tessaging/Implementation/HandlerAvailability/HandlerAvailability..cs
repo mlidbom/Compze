@@ -1,5 +1,6 @@
 using Compze.Abstractions.Hosting.Public;
 using Compze.Tessaging.Implementation.Peers;
+using Compze.Tessaging.Implementation.TessageHandling.Dispatching;
 using Compze.Tessaging.Implementation.Transport.Client.Internal;
 using Compze.Tessaging.Typermedia.Client;
 using Compze.DependencyInjection;
@@ -50,6 +51,24 @@ class HandlerAvailability : IHandlerAvailability
             throw liveRoutes.Count == 0
                      ? NoHandlerForTypermediaTypeException.BecausePatienceIsExhausted(tessageType, _patience.Duration, _peerRegistry.HandlerIdsFor(tessageType))
                      : MultipleHandlersForTypermediaTypeException.BecausePatienceIsExhausted(tessageType, _patience.Duration, [..liveRoutes.Select(route => route.HandlerEndpointId)]);
+         await Task.Delay(RecheckInterval).caf();
+      }
+   }
+
+   public async Task<EndpointId> AwaitBindableReceiverOfAsync(Type tommandType)
+   {
+      var deadline = DateTime.UtcNow + _patience.Duration;
+      while(true)
+      {
+         //The same preference order the bind always had: the live handler - current by definition - over the sole remembered one.
+         var liveConnection = _router.LiveConnectionToHandlerFor(tommandType);
+         if(liveConnection != null) return liveConnection.EndpointInformation.Id;
+         var rememberedHandlerIds = _peerRegistry.HandlerIdsFor(tommandType);
+         if(rememberedHandlerIds.Count == 1) return rememberedHandlerIds[0];
+         if(DateTime.UtcNow >= deadline) //After the checks above: the last check happens at or after the deadline, so a receiver that became bindable in the final interval is never missed.
+            throw rememberedHandlerIds.Count == 0
+                     ? NoHandlerForTessageTypeException.BecausePatienceIsExhausted(tommandType, _patience.Duration)
+                     : MultipleHandlersForTessageTypeException.BecausePatienceIsExhausted(tommandType, _patience.Duration, rememberedHandlerIds);
          await Task.Delay(RecheckInterval).caf();
       }
    }

@@ -286,9 +286,9 @@ class TessagingRouter : ITessagingRouter, IDisposable
 
    public bool HasLiveConnectionTo(EndpointId endpointId) => _monitor.Locked(() => _connections.ContainsKey(endpointId));
 
-   public ITessagingInboxConnection? LiveConnectionToHandlerFor(IRemotableTommand tommand) =>
+   public ITessagingInboxConnection? LiveConnectionToHandlerFor(Type tommandType) =>
       _monitor.Locked(() =>
-         AssertNotStopped().__(() => _tommandHandlerRoutes.GetValueOrDefault(tommand.GetType())));
+         AssertNotStopped().__(() => _tommandHandlerRoutes.GetValueOrDefault(tommandType)));
 
    public IReadOnlyList<TypermediaRoute> TypermediaRoutesFor(Type tessageType) =>
       _monitor.Locked(() =>
