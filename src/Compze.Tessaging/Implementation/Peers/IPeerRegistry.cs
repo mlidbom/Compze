@@ -12,7 +12,8 @@ namespace Compze.Tessaging.Implementation.Peers;
 ///<remarks>Why it exists: without it, remote tevent fan-out was decided by the live connections at publish time, so a<br/>
 /// subscriber that was down when a tevent was published — a routine rolling restart sufficed — silently never received it.</remarks>
 ///<remarks>Every transport-speaking endpoint registers exactly one, through the distributed Tessaging core. Durability follows<br/>
-/// the foundation: with Tessaging persistence declared, peer memory lives in the endpoint's database and survives restarts<br/>
+/// the foundation: with Tessaging persistence declared, peer memory lives in the endpoint's prefixed table-set in the domain<br/>
+/// database it joins and survives restarts<br/>
 /// (<see cref="DurablePeerRegistry"/>, where a peer is remembered until explicitly decommissioned); on a database-less endpoint<br/>
 /// it lives in memory for the life of the process (<see cref="ProcessLifetimePeerRegistry"/>).</remarks>
 public interface IPeerRegistry

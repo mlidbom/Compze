@@ -379,8 +379,12 @@ observed. The tracker is a testing device; the production-honest await is quiesc
 
 ## Deliberately unsettled
 
-- **The exact table-prefix convention** for the per-endpoint table-sets — an implementation-time decision
-  inside the settled storage model.
+- ~~**The exact table-prefix convention** for the per-endpoint table-sets — an implementation-time decision
+  inside the settled storage model.~~ *Settled in migration phase 9 (`EndpointTableSet`): each table is
+  prefixed `«EndpointName»_` (`Backend_InboxTessages`), which makes an exactly-once endpoint's name
+  identifier material — a letter followed by letters, digits, or underscores, at most 28 characters
+  (63, PostgreSQL's identifier limit, minus the longest identifier the schemas generate beyond the name) —
+  asserted loud at composition, never sanitized silently.*
 
 ## Related documents
 

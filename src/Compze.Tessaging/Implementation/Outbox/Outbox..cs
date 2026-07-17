@@ -95,7 +95,7 @@ partial class Outbox : IOutbox
       //tommand, breaking exactly-once across handler replacement - see dev_docs/TODO/WIP/Tessaging/durable-peer-topology.md.)
       //The bind is a waiting send: with no bindable receiver right now - never-seen, or several remembered with none live -
       //it waits, within the endpoint's handler-availability patience, inside the caller's unit of work. On SQLite one corner
-      //degrades to the pre-waiting failure, delayed: a caller whose transaction already wrote to the endpoint's database
+      //degrades to the pre-waiting failure, delayed: a caller whose transaction already wrote to the domain database
       //holds the per-database write gate across the wait, so the first-contact advertisement recording that would satisfy it
       //cannot commit - the wait exhausts, the transaction rolls back releasing the gate, the recording lands, and a retry binds.
       var receiverId = await _handlerAvailability.AwaitBindableReceiverOfAsync(exactlyOnceTommand.GetType()).caf();

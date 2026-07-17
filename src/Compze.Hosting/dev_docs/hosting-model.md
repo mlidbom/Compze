@@ -118,8 +118,10 @@ listening, and a router taking its first look at an endpoint registry when sendi
 endpoint the host announced, never a partial membership decided by start-up racing. Stopping runs in
 reverse: addresses are retracted before any sending stops, and sending stops before listening.
 
-What each phase does inside an endpoint: peer memory loads, the durable vertical initializes (exactly-once
-tier), and the one transport server starts in the listening phase; the address is announced to every
+What each phase does inside an endpoint: the exactly-once tier claims its process lease in the domain
+database's endpoint catalog (the first act — whether this process may run the endpoint at all is decided
+before anything else touches the database), peer memory loads, the durable vertical initializes, and the
+one transport server starts in the listening phase; the address is announced to every
 declared `IEndpointAddressAnnouncer` in the announcing phase; and in the sending phase the router converges
 on the registry's membership — minus the endpoint's own announced address: routes lead only to *other*
 endpoints — and the connections' delivery streams start, loading their recovery backlogs from the storage
@@ -152,6 +154,35 @@ other processes still starting, a peer restarting mid-day. Two composing mechani
   `ReadinessTypes` reflection factories (`InAssemblyContaining`, `InNamespaceOf`), which admit only the
   remotable single-handler kinds — tevents are multi-subscriber, have no one handler to await, and their
   delivery is fully served by the peer topology's queue-while-down machinery.
+
+## The domain database — storage belongs to the domain, endpoints join it
+
+An exactly-once endpoint declares the **domain database it joins** (`SqliteDomainDatabase(...)` and kin),
+never a database of its own: the database is the domain's — the domain data the endpoint's executions touch
+lives there, and the exactly-once machinery's atomicity *is* its co-location with that data. Any number of
+endpoints join one domain database (built in migration phase 9):
+
+- **Each endpoint owns a prefixed table-set** (`EndpointTableSet`): its inbox, its outbox and outbox
+  dispatching, and its durable peer memory, each table prefixed with the endpoint's name
+  (`Backend_InboxTessages`). The prefix is what makes an exactly-once endpoint's name identifier material —
+  a letter followed by letters, digits, or underscores, at most 28 characters — asserted loud at
+  composition, never sanitized silently.
+- **The domain-level tables are deliberately unprefixed** — the type-id interner, the tevent store, the
+  document db, and the endpoint catalog are the domain's data, shared by every endpoint that joins.
+- **One shared table per domain database: the endpoint catalog** — each endpoint's name, `EndpointId`,
+  creation time, and process lease. It enforces name uniqueness (a name only ever belongs to one endpoint;
+  an id never silently re-keys itself under a new name — renaming means decommissioning the old storage)
+  and the one-process-per-endpoint rule, and it tells administration which endpoints inhabit the database.
+- **The process lease** is a heartbeat lease, claimed as the first act of starting to listen. A claimant
+  finding it held waits out one lease duration (`ExactlyOnceEndpointBuilder.ProcessLeaseDuration`, default
+  15 seconds) — a crashed predecessor's lease goes stale within that and is taken over silently, so crash
+  recovery needs no manual cleanup — and only a holder proven alive by its heartbeats fails the start loud
+  (`EndpointAlreadyRunningInAnotherProcessException`, naming the holder). The lease is released at
+  disposal, after the observation drain, once nothing in the process writes to the domain database.
+
+Because endpoints start in parallel under the host, several endpoints' first boot against one fresh domain
+database creates the shared schemas concurrently — schema creation therefore serializes under the engine's
+advisory lock on every backend that needs one, correct across connections and processes.
 
 ## The engine — when there is nothing to host
 

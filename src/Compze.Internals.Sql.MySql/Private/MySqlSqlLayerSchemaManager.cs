@@ -6,7 +6,7 @@ using Compze.Threading;
 namespace Compze.Internals.Sql.MySql.Private;
 
 ///<summary>Runs the supplied schema-creation scripts against its database as a single suppressed-transaction batch — exactly once, on first touch.</summary>
-///<remarks>For the endpoint's database the scripts arrive as <see cref="MySqlSchemaContribution"/>s, each feature backend's registration<br/>
+///<remarks>For the domain database an endpoint joins the scripts arrive as <see cref="MySqlSchemaContribution"/>s, each feature backend's registration<br/>
 /// contributing its own — so neither this plumbing nor any composing layer references or enumerates the feature backends.<br/>
 /// Creating all tables together up front (before any business transaction takes a lock) is what keeps schema creation off the<br/>
 /// hot path of a write/read-locked transaction.</remarks>

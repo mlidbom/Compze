@@ -100,7 +100,31 @@ not have to wait for, so the two mechanisms compose instead of overlapping; the 
 `ReadinessTypes` reflection factories (`InAssemblyContaining`, `InNamespaceOf`) filtering to the remotable
 single-handler kinds, anything else failing loud at composition; exhausted patience throws
 `EndpointNotReadyWithinPatienceException` naming every type still unavailable and what the peer memory
-remembers about each. The ⚖ before-the-next-release commitment this phase carried is discharged. The destination is
+remembers about each. The ⚖ before-the-next-release commitment this phase carried is discharged.
+**Phase 9 executed 2026-07-17**, four green commits: (1) the rename first — the foundation declaration names
+the domain database this endpoint joins (`SqliteDomainDatabase` and kin, `ExactlyOnceEndpointBuilder.DomainDatabase`),
+because `*EndpointDatabase` spoke an ownership the design never meant; (2) each endpoint owns a prefixed
+table-set (`EndpointTableSet` — inbox, outbox and its dispatching, durable peer memory, prefixed
+`«EndpointName»_`), which settles the deliberately-unsettled prefix convention and makes an exactly-once
+endpoint's name identifier material — a letter then letters/digits/underscores, at most 28 characters
+(63, PostgreSQL's identifier limit, minus the longest generated identifier beyond the name), asserted loud
+at composition, never sanitized; the domain-level tables (interner, tevent store, document db, the catalog)
+stay deliberately unprefixed — they are the domain's data; (3) the endpoint catalog and the process lease —
+one shared `EndpointCatalog` table per domain database enforcing name-uniqueness and never-silently-re-keyed
+ids, and a heartbeat lease (`EndpointProcessLease`, duration declared via
+`ExactlyOnceEndpointBuilder.ProcessLeaseDuration`, default 15s) claimed as the first act of starting to
+listen: a claimant waits out one lease duration so a crashed predecessor's stale lease is taken over
+silently — crash recovery needs no manual cleanup — while a holder proven alive by its heartbeats fails the
+start loud (`EndpointAlreadyRunningInAnotherProcessException`, naming the holder), and a live holder whose
+lease is stolen (debugger pause, machine sleep) reports through the background-exception machinery; (4) the
+proof — two endpoints joined to one domain database converse exactly-once in both directions through their
+prefixed outboxes and inboxes, the catalog lists both, and the rule pins land; the parallel first boot this
+exposed (endpoints start under the host's `WhenAll`, and IF-NOT-EXISTS guards are not concurrency-safe DDL)
+is fixed by construction: schema creation serializes under each engine's advisory lock, correct across
+connections and processes. On sqlite the separate per-endpoint interner database is retired by construction —
+the interner file derives from the domain database's name, so co-located endpoints share one. The
+storage-drop administration act is parked as a todo at the catalog surface: the design equation is settled,
+the door awaits its first consumer. The destination is
 [tessaging-target-design.md](tessaging-target-design.md); the rationale and evidence are in
 [style-substrate-and-hosting-evaluation.md](style-substrate-and-hosting-evaluation.md). This document is the
 path: the ordered phases, what each contains, and what gates what. Every phase is a run of increments that
