@@ -1,6 +1,6 @@
 using Compze.DocumentDb.Private;
 using Compze.DependencyInjection.Abstractions;
-using Compze.Typermedia.HandlerRegistration;
+using Compze.Tessaging.Typermedia.HandlerRegistration;
 
 namespace Compze.DocumentDb.Wiring;
 

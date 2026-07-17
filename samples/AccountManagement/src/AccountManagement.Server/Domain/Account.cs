@@ -6,7 +6,7 @@ using CommunityToolkit.Diagnostics;
 using Compze.Internals.Logging;
 using Compze.Teventive;
 using Compze.Teventive.Taggregates.BaseClasses;
-using Compze.Typermedia;
+using Compze.Tessaging.Typermedia;
 
 namespace AccountManagement.Domain;
 

@@ -12,8 +12,8 @@ using Compze.Internals.Serialization.Newtonsoft.Wiring;
 using Compze.Internals.Transport.NamedPipes;
 using Compze.Tessaging.TessageHandling.Registration.Public;
 using Compze.Tessaging.Hosting;
-using Compze.Typermedia.Client;
-using Compze.Typermedia.HandlerRegistration;
+using Compze.Tessaging.Typermedia.Client;
+using Compze.Tessaging.Typermedia.HandlerRegistration;
 using Compze.Internals.Sql.Sqlite.Wiring;
 using Compze.Tessaging.Sqlite.Wiring;
 

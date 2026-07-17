@@ -7,8 +7,8 @@ using Compze.Internals.Testing;
 using Compze.Must;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
-using Compze.Typermedia.Hosting.Testing;
-using Compze.Typermedia.Hosting.Testing.Wiring;
+using Compze.Tessaging.Hosting.Testing.Typermedia;
+using Compze.Tessaging.Hosting.Testing.Typermedia.Wiring;
 using Compze.Hosting.Testing;
 using static Compze.Must.MustActions;
 
@@ -16,7 +16,7 @@ using static Compze.Must.MustActions;
 #pragma warning disable IDE1006 //Reviewed OK: Test Naming Styles
 #pragma warning disable CA1812 // Instantiated by the serializer / never instantiated test message types
 
-namespace Compze.Typermedia.Client.Specifications;
+namespace Compze.Tessaging.Typermedia.Client.Specifications;
 
 public class Given_a_started_typermedia_router_with_no_connected_endpoints : UniversalTestBase
 {

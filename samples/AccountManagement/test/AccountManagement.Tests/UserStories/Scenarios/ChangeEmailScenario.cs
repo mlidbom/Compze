@@ -1,6 +1,6 @@
 using AccountManagement.API;
 using AccountManagement.Domain;
-using Compze.Typermedia;
+using Compze.Tessaging.Typermedia;
 
 namespace AccountManagement.UserStories.Scenarios;
 

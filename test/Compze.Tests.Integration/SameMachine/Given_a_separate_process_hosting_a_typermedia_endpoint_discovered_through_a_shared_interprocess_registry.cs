@@ -11,8 +11,8 @@ using Compze.Must;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Tests.SameMachine.EndpointHostProcess;
-using Compze.Typermedia;
-using Compze.Typermedia.Client;
+using Compze.Tessaging.Typermedia;
+using Compze.Tessaging.Typermedia.Client;
 using Compze.xUnitMatrix;
 //The unqualified name Program silently resolves to the entry point xUnit v3 generates into THIS test assembly, not to the endpoint host process's class.
 using EndpointHostProcessProgram = Compze.Tests.SameMachine.EndpointHostProcess.Program;

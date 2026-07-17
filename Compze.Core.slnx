@@ -119,14 +119,6 @@
   <Folder Name="/Compze.Tessaging/">
     <Project Path="src/Compze.Tessaging/Compze.Tessaging.csproj" />
   </Folder>
-  <Folder Name="/Compze.Typermedia/">
-    <Project Path="src/Compze.Typermedia.Client/Compze.Typermedia.Client.csproj" />
-    <Project Path="src/Compze.Typermedia/Compze.Typermedia.csproj" />
-  </Folder>
-  <Folder Name="/Compze.Typermedia/Hosting-Transport/">
-    <Project Path="src/Compze.Typermedia.Hosting.Testing/Compze.Typermedia.Hosting.Testing.csproj" />
-    <Project Path="src/Compze.Typermedia.Hosting/Compze.Typermedia.Hosting.csproj" />
-  </Folder>
   <Folder Name="/Compze.Typermedia/Specifications/">
     <Project Path="test/Compze.Typermedia.Client.Specifications/Compze.Typermedia.Client.Specifications.csproj" />
     <Project Path="test/Compze.Typermedia.Hosting.Specifications/Compze.Typermedia.Hosting.Specifications.csproj" />

@@ -1,8 +1,8 @@
 using Compze.Hosting.Testing;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tessaging.Hosting.Testing;
-using Compze.Typermedia.Client;
-using Compze.Typermedia.Hosting.Testing;
+using Compze.Tessaging.Typermedia.Client;
+using Compze.Tessaging.Hosting.Testing.Typermedia;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
 

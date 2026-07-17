@@ -7,8 +7,8 @@ using Compze.Internals.Testing;
 using Compze.Must;
 
 using Compze.Tests.Infrastructure;
-using Compze.Typermedia;
-using Compze.Typermedia.HandlerRegistration;
+using Compze.Tessaging.Typermedia;
+using Compze.Tessaging.Typermedia.HandlerRegistration;
 using Compze.Tests.Infrastructure.XUnit;
 using static Compze.Must.MustActions;
 

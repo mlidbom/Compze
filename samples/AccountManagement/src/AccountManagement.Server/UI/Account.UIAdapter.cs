@@ -4,8 +4,8 @@ using AccountManagement.Domain.Tevents;
 using AccountManagement.Domain.Passwords;
 using AccountManagement.Domain.Registration;
 using Compze.Abstractions.Tessaging.Public;
-using Compze.Typermedia;
-using Compze.Typermedia.HandlerRegistration;
+using Compze.Tessaging.Typermedia;
+using Compze.Tessaging.Typermedia.HandlerRegistration;
 
 namespace AccountManagement.UI;
 

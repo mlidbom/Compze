@@ -7,8 +7,8 @@ using Compze.Abstractions.Hosting.Public;
 using Compze.DocumentDb.Wiring;
 using Compze.Tessaging.Hosting;
 using Compze.Teventive.TeventStore.Typermedia;
-using Compze.Typermedia;
-using Compze.Typermedia.Client;
+using Compze.Tessaging.Typermedia;
+using Compze.Tessaging.Typermedia.Client;
 
 namespace AccountManagement;
 

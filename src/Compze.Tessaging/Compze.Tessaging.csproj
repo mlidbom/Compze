@@ -86,4 +86,18 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_Underscore)' != 'true'">
     <ProjectReference Include="..\Compze.Underscore\Compze.Underscore.csproj" />
   </ItemGroup>
+  <!-- Compze.TypeIdentifiers — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_TypeIdentifiers)' == 'true'">
+    <PackageReference Include="Compze.TypeIdentifiers" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_TypeIdentifiers)' != 'true'">
+    <ProjectReference Include="..\Compze.TypeIdentifiers\Compze.TypeIdentifiers.csproj" />
+  </ItemGroup>
+  <!-- Compze.Unit — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Unit)' == 'true'">
+    <PackageReference Include="Compze.Unit" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Unit)' != 'true'">
+    <ProjectReference Include="..\Compze.Unit\Compze.Unit.csproj" />
+  </ItemGroup>
 </Project>

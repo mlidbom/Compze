@@ -15,10 +15,10 @@ using Compze.Must;
 using Compze.Tessaging.Hosting;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
-using Compze.Typermedia;
-using Compze.Typermedia.Client;
-using Compze.Typermedia.HandlerRegistration;
-using Compze.Typermedia.Hosting.Testing;
+using Compze.Tessaging.Typermedia;
+using Compze.Tessaging.Typermedia.Client;
+using Compze.Tessaging.Typermedia.HandlerRegistration;
+using Compze.Tessaging.Hosting.Testing.Typermedia;
 using static Compze.Must.MustActions;
 
 // ReSharper disable InconsistentNaming for testing

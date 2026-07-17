@@ -42,11 +42,11 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_Threading)' != 'true'">
     <ProjectReference Include="..\Compze.Threading\Compze.Threading.csproj" />
   </ItemGroup>
-  <!-- Compze.Typermedia — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Typermedia)' == 'true'">
-    <PackageReference Include="Compze.Typermedia" Version="*-*" />
+  <!-- Compze.Tessaging — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging)' == 'true'">
+    <PackageReference Include="Compze.Tessaging" Version="*-*" />
   </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Typermedia)' != 'true'">
-    <ProjectReference Include="..\Compze.Typermedia\Compze.Typermedia.csproj" />
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging)' != 'true'">
+    <ProjectReference Include="..\Compze.Tessaging\Compze.Tessaging.csproj" />
   </ItemGroup>
 </Project>

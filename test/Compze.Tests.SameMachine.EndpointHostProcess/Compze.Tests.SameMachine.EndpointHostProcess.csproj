@@ -56,11 +56,4 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_TypeIdentifiers_Interning_Sqlite)' != 'true'">
     <ProjectReference Include="..\..\src\Compze.TypeIdentifiers.Interning.Sqlite\Compze.TypeIdentifiers.Interning.Sqlite.csproj" />
   </ItemGroup>
-  <!-- Compze.Typermedia.Client — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Typermedia_Client)' == 'true'">
-    <PackageReference Include="Compze.Typermedia.Client" Version="*-*" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Typermedia_Client)' != 'true'">
-    <ProjectReference Include="..\..\src\Compze.Typermedia.Client\Compze.Typermedia.Client.csproj" />
-  </ItemGroup>
 </Project>

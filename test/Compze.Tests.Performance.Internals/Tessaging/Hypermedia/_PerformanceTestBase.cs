@@ -1,12 +1,12 @@
 using Compze.Abstractions.Hosting.Public;
-using Compze.Typermedia.Client;
+using Compze.Tessaging.Typermedia.Client;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Hosting.Testing;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tests.Infrastructure;
-using Compze.Typermedia.Hosting.Testing;
-using Compze.Typermedia;
-using Compze.Typermedia.HandlerRegistration;
+using Compze.Tessaging.Hosting.Testing.Typermedia;
+using Compze.Tessaging.Typermedia;
+using Compze.Tessaging.Typermedia.HandlerRegistration;
 
 namespace Compze.Tests.Performance.Internals.Tessaging.Hypermedia;
 

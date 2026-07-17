@@ -1,17 +1,17 @@
 using Compze.Abstractions.Hosting.Public;
-using Compze.Typermedia.Client;
+using Compze.Tessaging.Typermedia.Client;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing;
-using Compze.Typermedia.Hosting.Testing;
+using Compze.Tessaging.Hosting.Testing.Typermedia;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Abstractions.Public;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Must;
 
-using Compze.Typermedia;
-using Compze.Typermedia.HandlerRegistration;
+using Compze.Tessaging.Typermedia;
+using Compze.Tessaging.Typermedia.HandlerRegistration;
 
 // ReSharper disable MemberCanBeMadeStatic.Global
 // ReSharper disable MemberCanBeMadeStatic.Local

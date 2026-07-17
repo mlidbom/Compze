@@ -2,11 +2,11 @@ using Compze.Abstractions.Hosting.Public;
 using Compze.Hosting;
 using Compze.Hosting.Testing;
 using Compze.Hosting.Testing.Wiring;
-using Compze.Typermedia.Client;
+using Compze.Tessaging.Typermedia.Client;
 using Compze.Internals.Testing;
 using Compze.Tessaging.Hosting.Testing.Wiring;
-using Compze.Typermedia.Hosting.Testing;
-using Compze.Typermedia.Hosting.Testing.Wiring;
+using Compze.Tessaging.Hosting.Testing.Typermedia;
+using Compze.Tessaging.Hosting.Testing.Typermedia.Wiring;
 using Compze.Underscore;
 using JetBrains.Annotations;
 

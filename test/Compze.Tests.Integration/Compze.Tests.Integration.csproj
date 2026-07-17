@@ -112,12 +112,12 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_TypeIdentifiers_Interning)' != 'true'">
     <ProjectReference Include="..\..\src\Compze.TypeIdentifiers.Interning\Compze.TypeIdentifiers.Interning.csproj" />
   </ItemGroup>
-  <!-- Compze.Typermedia — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Typermedia)' == 'true'">
-    <PackageReference Include="Compze.Typermedia" Version="*-*" />
+  <!-- Compze.Tessaging — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging)' == 'true'">
+    <PackageReference Include="Compze.Tessaging" Version="*-*" />
   </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Typermedia)' != 'true'">
-    <ProjectReference Include="..\..\src\Compze.Typermedia\Compze.Typermedia.csproj" />
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging)' != 'true'">
+    <ProjectReference Include="..\..\src\Compze.Tessaging\Compze.Tessaging.csproj" />
   </ItemGroup>
   <!-- Compze.Underscore — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Underscore)' == 'true'">

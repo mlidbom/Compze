@@ -5,16 +5,16 @@ using Compze.Must;
 
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
-using Compze.Typermedia.Client;
-using Compze.Typermedia.HandlerRegistration;
-using Compze.Typermedia.Hosting.Testing;
+using Compze.Tessaging.Typermedia.Client;
+using Compze.Tessaging.Typermedia.HandlerRegistration;
+using Compze.Tessaging.Hosting.Testing.Typermedia;
 
 // ReSharper disable InconsistentNaming for testing
 #pragma warning disable IDE1006 //Reviewed OK: Test Naming Styles
 
-namespace Compze.Typermedia.Hosting.Specifications;
+namespace Compze.Tessaging.Typermedia.Hosting.Specifications;
 
-///<summary>The end-to-end proof that Typermedia stands alone: a host with only the Typermedia testing feature serves a remote client over HTTP, with no Tessaging assembly anywhere in the process.</summary>
+///<summary>The end-to-end proof that a typermedia-only composition works: a host with only the Typermedia testing feature serves a remote client over HTTP.</summary>
 public class Given_an_endpoint_hosting_only_typermedia : UniversalTestBase
 {
    readonly ITestingEndpointHost _host;
@@ -60,9 +60,4 @@ public class Given_an_endpoint_hosting_only_typermedia : UniversalTestBase
       _client.Navigator.Navigate(NavigationSpecification.Get(new GreetingTuery { Name = "World" })
                                                         .Select(greeting => greeting.Message))
              .Must().Be("Hello World!");
-
-   [PCT] public void no_tessaging_assembly_is_loaded_into_the_test_process() =>
-      AppDomain.CurrentDomain.GetAssemblies()
-               .Where(assembly => assembly.GetName().Name!.StartsWith("Compze.Tessaging", StringComparison.Ordinal))
-               .Must().BeEmpty();
 }

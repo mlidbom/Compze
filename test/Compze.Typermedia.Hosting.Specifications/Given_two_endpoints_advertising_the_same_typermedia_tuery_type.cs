@@ -5,15 +5,15 @@ using Compze.Must;
 
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
-using Compze.Typermedia.Client;
-using Compze.Typermedia.HandlerRegistration;
-using Compze.Typermedia.Hosting.Testing;
+using Compze.Tessaging.Typermedia.Client;
+using Compze.Tessaging.Typermedia.HandlerRegistration;
+using Compze.Tessaging.Hosting.Testing.Typermedia;
 using static Compze.Must.MustActions;
 
 // ReSharper disable InconsistentNaming for testing
 #pragma warning disable IDE1006 //Reviewed OK: Test Naming Styles
 
-namespace Compze.Typermedia.Hosting.Specifications;
+namespace Compze.Tessaging.Typermedia.Hosting.Specifications;
 
 ///<summary>A typermedia tessage executes on exactly one handler, so several live endpoints advertising the same type is a<br/>
 /// diagnosable send-time condition — <see cref="MultipleHandlersForTypermediaTypeException"/> naming the endpoints — never a<br/>

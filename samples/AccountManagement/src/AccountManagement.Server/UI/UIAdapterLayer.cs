@@ -1,4 +1,4 @@
-using Compze.Typermedia.HandlerRegistration;
+using Compze.Tessaging.Typermedia.HandlerRegistration;
 
 namespace AccountManagement.UI;
 

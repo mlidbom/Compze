@@ -1,11 +1,11 @@
 using Compze.Abstractions.Hosting.Public;
 using Compze.Tessaging.Hosting;
-using Compze.Typermedia.Client;
+using Compze.Tessaging.Typermedia.Client;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Tessaging.TessageHandling.Registration.Public;
 using Compze.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing;
-using Compze.Typermedia.Hosting.Testing;
+using Compze.Tessaging.Hosting.Testing.Typermedia;
 using Compze.Tests.Common;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
@@ -19,8 +19,8 @@ using Compze.Teventive.Taggregates.BaseClasses;
 using Compze.Teventive.Taggregates.Tevents.Public;
 using Compze.Teventive.TeventStore.Abstractions.Public;
 using Compze.Teventive.TeventStore.Wiring;
-using Compze.Typermedia;
-using Compze.Typermedia.HandlerRegistration;
+using Compze.Tessaging.Typermedia;
+using Compze.Tessaging.Typermedia.HandlerRegistration;
 
 #pragma warning disable CA1715 //Interfaces without I prefix
 // ReSharper disable MemberCanBeInternal for testing

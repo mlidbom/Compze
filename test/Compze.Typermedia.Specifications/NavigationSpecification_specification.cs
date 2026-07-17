@@ -7,7 +7,7 @@ using Compze.xUnitBDD;
 // ReSharper disable InconsistentNaming for testing
 #pragma warning disable IDE1006 //Reviewed OK: Test Naming Styles
 
-namespace Compze.Typermedia.Specifications;
+namespace Compze.Tessaging.Typermedia.Specifications;
 
 ///<summary>Specifies how a <see cref="NavigationSpecification"/> composes navigation steps: each step receives the previous step's result and the chain executes against whichever navigator it is run on.</summary>
 public class NavigationSpecification_specification

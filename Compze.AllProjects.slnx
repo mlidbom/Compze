@@ -227,12 +227,6 @@
       <Project Path="src/Compze.TypeIdentifiers.Interning.PostgreSql/Compze.TypeIdentifiers.Interning.PostgreSql.csproj" />
       <Project Path="src/Compze.TypeIdentifiers.Interning.Sqlite/Compze.TypeIdentifiers.Interning.Sqlite.csproj" />
    </Folder>
-   <Folder Name="/Compze.Typermedia/">
-      <Project Path="src/Compze.Typermedia.Client/Compze.Typermedia.Client.csproj" />
-      <Project Path="src/Compze.Typermedia.Hosting.Testing/Compze.Typermedia.Hosting.Testing.csproj" />
-      <Project Path="src/Compze.Typermedia.Hosting/Compze.Typermedia.Hosting.csproj" />
-      <Project Path="src/Compze.Typermedia/Compze.Typermedia.csproj" />
-   </Folder>
    <Folder Name="/Compze.Typermedia/Specifications/">
       <Project Path="test/Compze.Typermedia.Client.Specifications/Compze.Typermedia.Client.Specifications.csproj" />
       <Project Path="test/Compze.Typermedia.Hosting.Specifications/Compze.Typermedia.Hosting.Specifications.csproj" />

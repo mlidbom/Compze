@@ -9,9 +9,9 @@ using Compze.Must;
 using Compze.Tessaging.TessageHandling.Registration.Public;
 using Compze.Tessaging.Hosting;
 using Compze.Tests.Infrastructure;
-using Compze.Typermedia;
-using Compze.Typermedia.Client;
-using Compze.Typermedia.HandlerRegistration;
+using Compze.Tessaging.Typermedia;
+using Compze.Tessaging.Typermedia.Client;
+using Compze.Tessaging.Typermedia.HandlerRegistration;
 using Compze.Tests.Infrastructure.XUnit;
 
 // ReSharper disable InconsistentNaming for testing

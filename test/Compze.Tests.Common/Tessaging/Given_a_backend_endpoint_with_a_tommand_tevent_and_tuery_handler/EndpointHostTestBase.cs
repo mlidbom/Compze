@@ -5,20 +5,20 @@ using Compze.Hosting.Testing;
 using Compze.Hosting.Testing.Wiring;
 using Compze.Internals.Testing;
 using Compze.Tessaging.Hosting.Testing;
-using Compze.Typermedia.Hosting.Testing;
+using Compze.Tessaging.Hosting.Testing.Typermedia;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.LinqCE;
 using Compze.Abstractions.Hosting.Public;
 using Compze.Tessaging.Hosting;
-using Compze.Typermedia.Client;
+using Compze.Tessaging.Typermedia.Client;
 using Compze.Tessaging.TessageHandling.Registration.Public;
 using Compze.Tests.Infrastructure;
 using Compze.Teventive.TeventStore.Typermedia;
 using Compze.Underscore;
 using Compze.Threading;
 using Compze.Threading.Testing;
-using Compze.Typermedia;
-using Compze.Typermedia.HandlerRegistration;
+using Compze.Tessaging.Typermedia;
+using Compze.Tessaging.Typermedia.HandlerRegistration;
 
 // ReSharper disable ClassNeverInstantiated.Global
 // ReSharper disable InconsistentNaming for testing

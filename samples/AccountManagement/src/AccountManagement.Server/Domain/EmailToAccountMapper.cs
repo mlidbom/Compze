@@ -3,8 +3,8 @@ using Compze.DocumentDb;
 using Compze.Tessaging.TessageHandling.Registration.Public;
 using JetBrains.Annotations;
 using AccountLink = Compze.Teventive.TeventStore.Typermedia.TeventStoreApi.TueryApi.TaggregateLink<AccountManagement.Domain.Account>;
-using Compze.Typermedia;
-using Compze.Typermedia.HandlerRegistration;
+using Compze.Tessaging.Typermedia;
+using Compze.Tessaging.Typermedia.HandlerRegistration;
 
 namespace AccountManagement.Domain;
 

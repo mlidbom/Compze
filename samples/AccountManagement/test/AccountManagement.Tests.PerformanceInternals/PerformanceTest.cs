@@ -8,8 +8,8 @@ using Compze.Hosting.Testing;
 using Compze.Internals.Testing;
 using Compze.Internals.Testing.Performance;
 using Compze.Tessaging.Hosting.Testing;
-using Compze.Typermedia.Client;
-using Compze.Typermedia.Hosting.Testing;
+using Compze.Tessaging.Typermedia.Client;
+using Compze.Tessaging.Hosting.Testing.Typermedia;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.SystemCE.CollectionsCE.ConcurrentCE;
 using Compze.Tests.Infrastructure.XUnit;
@@ -19,7 +19,7 @@ using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Must;
 
 using AccountId = AccountManagement.Domain.AccountId;
-using Compze.Typermedia;
+using Compze.Tessaging.Typermedia;
 
 namespace AccountManagement;
 
