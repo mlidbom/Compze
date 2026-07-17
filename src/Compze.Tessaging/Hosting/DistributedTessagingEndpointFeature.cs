@@ -23,7 +23,8 @@ namespace Compze.Tessaging.Hosting;
 /// everything in-process Tessaging has (<see cref="InProcessTessagingEndpointFeature"/>, which it composes),
 /// plus the endpoint's one transport server, the router that connects to the other endpoints, the peer
 /// registry — the endpoint's memory of the peers it works with (<see cref="IPeerRegistry"/>, durable when the
-/// foundation declares Tessaging persistence, process-lifetime otherwise) — and the
+/// foundation declares Tessaging persistence, process-lifetime otherwise) — with its administration surface
+/// (<see cref="IPeerAdministration"/>: decommissioning a peer that is gone for good), and the
 /// best-effort tevent delivery leg. An endpoint with only this feature converses in best-effort tevents — a
 /// published <see cref="Compze.Abstractions.Tessaging.Public.IRemotableTevent"/> crosses the wire best-effort,
 /// with no outbox, no inbox, and no database anywhere (see <c>dev_docs/tevent-delivery-model.md</c>) — so it
@@ -154,6 +155,7 @@ public class DistributedTessagingEndpointFeature
       //The background-exception reporter arrives with the in-process core the feature composes above.
       register.TaskRunner()
               .PeerRegistry()
+              .PeerAdministration()
               .TessagingTransport()
               .BestEffortTeventDelivery(_requiredPeers, _peersNotQueuedFor) //Captured by reference: the composition's RequirePeers/DoNotQueueTeventsFor declarations fill them before the container builds.
               .TessagingTransportMessagePoster()

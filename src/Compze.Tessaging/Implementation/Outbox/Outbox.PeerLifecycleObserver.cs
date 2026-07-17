@@ -1,3 +1,4 @@
+using Compze.Abstractions.Hosting.Public;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Internals.Logging;
 using Compze.Internals.SystemCE.ReflectionCE;
@@ -23,12 +24,27 @@ partial class Outbox
    /// renounced type concurrently with the shrink that renounced it, and the rerun on the peer's next advertisement prunes it.</remarks>
    ///<remarks>A stranded tommand stays stranded even when a later advertisement re-grows the type: while it was stranded, later<br/>
    /// tessages in the pair's stream kept delivering, so quietly re-scheduling it would deliver it out of order. Resolution is<br/>
-   /// explicit, on the decommission surface.</remarks>
-   internal class PeerLifecycleObserver : IPeerLifecycleObserver
+   /// explicit, on the decommission surface (<see cref="IPeerAdministration.Decommission"/>) — whose outbox share this class<br/>
+   /// also is (<see cref="IPeerDecommissionParticipant"/>): decommissioning the peer discards everything the outbox still owed<br/>
+   /// it, stranded tommands included, reported by the act.</remarks>
+   internal class PeerLifecycleObserver : IPeerLifecycleObserver, IPeerDecommissionParticipant
    {
       readonly ITessageStorage _storage;
 
       internal PeerLifecycleObserver(ITessageStorage storage) => _storage = storage;
+
+      public IReadOnlyList<PeerDecommissionReport.DiscardedTessages> DiscardEverythingKeptFor(EndpointId peer)
+      {
+         //Durable, so it rides the decommission act's ambient transaction directly.
+         var discarded = _storage.DiscardAllTessagesOwedTo(peer);
+         var awaitingTheReturn = discarded.Where(it => !it.WasStranded).ToList();
+         var stranded = discarded.Where(it => it.WasStranded).ToList();
+
+         List<PeerDecommissionReport.DiscardedTessages> report = [];
+         if(awaitingTheReturn.Count > 0) report.Add(new PeerDecommissionReport.DiscardedTessages($"undelivered exactly-once tessage(s) that were awaiting the peer's return (types: {DistinctTypeNames(awaitingTheReturn.Select(it => it.TypeId))})", awaitingTheReturn.Count));
+         if(stranded.Count > 0) report.Add(new PeerDecommissionReport.DiscardedTessages($"stranded tommand(s) that were awaiting exactly this resolution (types: {DistinctTypeNames(stranded.Select(it => it.TypeId))})", stranded.Count));
+         return report;
+      }
 
       public void PeerMetForTheFirstTime(RememberedPeer peer)
       {

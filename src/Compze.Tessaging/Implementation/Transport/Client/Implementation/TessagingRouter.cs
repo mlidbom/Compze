@@ -273,6 +273,8 @@ class TessagingRouter : ITessagingRouter, IDisposable
 
    ContractAsserter AssertNotStopped() => State.Assert(!_stopped, () => "router is stopped");
 
+   public bool HasLiveConnectionTo(EndpointId endpointId) => _monitor.Locked(() => _connections.ContainsKey(endpointId));
+
    public ITessagingInboxConnection? LiveConnectionToHandlerFor(IRemotableTommand tommand) =>
       _monitor.Locked(() =>
          AssertNotStopped().__(() => _tommandHandlerRoutes.GetValueOrDefault(tommand.GetType())));

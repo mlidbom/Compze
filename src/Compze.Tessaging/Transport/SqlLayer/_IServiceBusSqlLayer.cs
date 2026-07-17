@@ -83,6 +83,10 @@ public interface IServiceBusSqlLayer
       ///<summary>Every remembered peer, with its stored advertisement.</summary>
       IReadOnlyList<PersistedPeer> GetPeers();
 
+      ///<summary>Deletes <paramref name="peerId"/>'s row and stored advertisement — the durable half of decommissioning the<br/>
+      /// peer. Runs in the caller's ambient transaction: the whole decommission act commits or rolls back together.</summary>
+      void DeletePeer(EndpointId peerId);
+
       Task InitAsync();
    }
 

@@ -282,5 +282,23 @@ patience, then fail loud naming the unserved type).
      handlers on the receiver, so the discard's direct evidence is the sender's warning report, storage
      hygiene, and avoided wire traffic — the specs therefore pin it through the recovery backlog of a
      remembered peer that never connects.
-   - *Decommission surface*: next.
+   - *Decommission surface* **DONE 2026-07-17**: `IPeerAdministration.Decommission(EndpointId)` (public,
+     registered by the distributed core alongside `IPeerRegistry`) — the one way a peer leaves the endpoint's
+     memory. The act removes the peer from the registry (`IPeerRegistry.Decommission` — durable delete rides
+     the act's transaction, the in-memory mirror forgets on commit) and discards everything the endpoint
+     still held for it through an `IPeerDecommissionParticipant` component set, one participant per tier
+     that keeps tessages for peers: the outbox (undelivered rows including stranded tommands — their
+     explicit resolution) and the best-effort queues (queued tevents, a required peer's first-contact
+     hold). Loud and deliberate: the returned `PeerDecommissionReport` lists what was discarded, and the
+     act logs a warning. One transaction of its own; every in-memory consequence (mirror forget, queue
+     drop) runs only on commit, so an act that fails partway — the unknown-peer failure included — changes
+     nothing. Fails loud on self, on a connected peer (`ITessagingRouter.HasLiveConnectionTo` — a connected
+     peer is not gone), and on an unknown peer. A decommissioned peer's best-effort queue stays as a
+     tombstone declining every tessage — a publish racing the act must find a queue that declines, never a
+     fresh one holding tessages for a forgotten peer — until the peer's next connection replaces it: a
+     re-announce is a first contact again (registry-side automatically; outbox-side backed by the
+     first-contact sweep). Specified in `Peer_decommission_tests` (discard + report + re-announce-is-first-
+     contact, the `MultipleHandlersForTessageTypeException` resolution, stranded-tommand discard reported,
+     shrink-discarded tevents absent from the report, the three loud failures) and in the two distributed
+     hosting specs (queued-tevent discard with revival on return; ending a never-met required peer's hold).
 7. **Typermedia parity** (before the next release).

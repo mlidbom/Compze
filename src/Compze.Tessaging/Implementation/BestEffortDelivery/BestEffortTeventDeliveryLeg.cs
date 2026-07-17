@@ -27,6 +27,8 @@ static class BestEffortTeventDeliveryRegistrar
                   //The stream factory grants the router's connections their best-effort delivery streams, each draining its peer's queue - the same wiring idiom as the exactly-once stream factory the outbox registers.
                   .Register(Singleton.For<TessagingConnection.BestEffortDeliveryStream.Factory>()
                                      .CreatedBy((BestEffortTeventQueues queues) => new TessagingConnection.BestEffortDeliveryStream.Factory(queues)))
+                  //The queues are the tier's share of decommissioning a peer: what they keep for it is discarded, reported, by the act (IPeerAdministration.Decommission).
+                  .Register(Singleton.ForSet<IPeerDecommissionParticipant>().CreatedBy((BestEffortTeventQueues queues) => queues))
                   .Register(BestEffortTeventDeliveryLeg.RegisterWith);
 }
 
@@ -68,9 +70,9 @@ class BestEffortTeventDeliveryLeg : IBestEffortTeventDeliveryLeg
       //advertisement in the registry before the held tevents flush, so this read order can never miss a peer mid-transition -
       //the reverse order could see it in neither.
       var peersAwaitingFirstContact = _queues.PeersAwaitingFirstContact;
-      IReadOnlyList<EndpointId> subscriberIds = peersAwaitingFirstContact.Count == 0
-                                                   ? _peerRegistry.SubscriberIdsFor(wrappedTevent)
-                                                   : [..peersAwaitingFirstContact.Union(_peerRegistry.SubscriberIdsFor(wrappedTevent))];
+      var subscriberIds = peersAwaitingFirstContact.Count == 0
+                             ? _peerRegistry.SubscriberIdsFor(wrappedTevent)
+                             : [..peersAwaitingFirstContact.Union(_peerRegistry.SubscriberIdsFor(wrappedTevent))];
       if(subscriberIds.Count == 0) return;
 
       //One envelope identity per publish, shared by every subscriber's delivery: it carries no dedup meaning on this leg

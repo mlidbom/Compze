@@ -1,5 +1,7 @@
+using System.Transactions;
 using Compze.Abstractions.Hosting.Public;
 using Compze.Abstractions.Tessaging.Public;
+using Compze.Contracts;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Internals.SystemCE.TransactionsCE;
 using Compze.Tessaging.Implementation.Transport;
@@ -45,6 +47,14 @@ namespace Compze.Tessaging.Implementation.Peers;
          _lifecycleObservers.NotifyAdvertisementRecorded(previous, peer);
       }));
       _rememberedPeers.Remember(peer);
+   }
+
+   public void Decommission(EndpointId peer)
+   {
+      State.NotNull(Transaction.Current);
+      _sqlLayer.DeletePeer(peer);
+      //The mirror follows only on commit: fan-out and receiver binding must keep seeing the peer while the act can still roll back.
+      Transaction.Current.OnCommittedSuccessfully(() => _rememberedPeers.Forget(peer));
    }
 
    public IReadOnlyList<RememberedPeer> Peers => _rememberedPeers.Peers;

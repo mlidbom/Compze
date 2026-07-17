@@ -1,6 +1,5 @@
 using Compze.Abstractions.Hosting.Public;
 using Compze.Internals.Sql.Common;
-using Compze.Internals.Sql.Common.Abstractions;
 using Compze.Internals.Sql.Sqlite;
 using Compze.Internals.Sql.Sqlite.Private;
 using Compze.Internals.SystemCE.LinqCE;
@@ -76,6 +75,21 @@ partial class SqlitePeerRegistrySqlLayer(ISqliteConnectionPool connectionFactory
                     .Select(peer => new IServiceBusSqlLayer.PersistedPeer(
                                new EndpointId(peer.Key),
                                peer.Where(row => row.HandledTessageType != null).Select(row => row.HandledTessageType!).ToHashSet()))];
+   }
+
+   public void DeletePeer(EndpointId peerId)
+   {
+      _connectionFactory.UseCommand(
+         command => command
+                   .SetCommandText(
+                       $"""
+
+                        DELETE FROM {Types.TableName} WHERE {Types.EndpointId} = @{Types.EndpointId};
+                        DELETE FROM {Peers.TableName} WHERE {Peers.EndpointId} = @{Peers.EndpointId};
+
+                        """)
+                   .AddMediumTextParameter(Peers.EndpointId, peerId.ToString())
+                   .ExecuteNonQuery());
    }
 
    public async Task InitAsync() => await _schemaManager.EnsureSchemaInitializedAsync().caf();

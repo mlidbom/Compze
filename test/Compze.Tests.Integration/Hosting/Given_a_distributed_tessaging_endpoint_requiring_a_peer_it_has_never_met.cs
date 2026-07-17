@@ -12,6 +12,7 @@ using Compze.Internals.Testing;
 using Compze.Must;
 using Compze.Tessaging.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
 using Compze.Tessaging.Hosting;
+using Compze.Tessaging.Implementation.Peers;
 using Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
@@ -79,6 +80,30 @@ public class Given_a_distributed_tessaging_endpoint_requiring_a_peer_it_has_neve
 
       _subscriberTeventHandlerGate.AwaitPassedThroughCountEqualTo(3);
       _teventsHandledOnTheSubscriber.Select(it => it.SequenceNumber).SequenceEqual(1.Through(3)).Must().BeTrue();
+   }
+
+   [PCT] public async Task decommissioning_the_never_met_required_peer_ends_the_hold_and_the_peers_later_arrival_is_a_plain_first_contact()
+   {
+      1.Through(3).ForEach(PublishOnThePublisherEndpointInATransaction);
+
+      //The act ends the first-contact hold, discarding the three held tevents - reported: the composition required a peer
+      //that an administrator now declares is not coming.
+      var report = _publisherEndpoint.ServiceLocator.Resolve<IPeerAdministration>().Decommission(RequiredSubscriberEndpointId);
+      report.Discarded.Single().Count.Must().Be(3);
+      report.Discarded.Single().Description.Must().Contain("first contact");
+
+      //Published after the decommission: held for nobody, delivered to nobody.
+      PublishOnThePublisherEndpointInATransaction(sequenceNumber: 4);
+
+      //When the peer arrives after all it is a plain first contact: it receives only what is published after it is met.
+      _subscriberHost = CreateSubscriberHost();
+      await _subscriberHost.StartAsync();
+      _registry.Add(_subscriberHost);
+      _registry.AwaitTwoReadsCompletingAfterNow(); //Two reads guarantee a full reconciliation pass ran: the connection is up, its delivery stream draining a fresh queue.
+      PublishOnThePublisherEndpointInATransaction(sequenceNumber: 5);
+
+      _subscriberTeventHandlerGate.AwaitPassedThroughCountEqualTo(1);
+      _teventsHandledOnTheSubscriber.Select(it => it.SequenceNumber).Single().Must().Be(5);
    }
 
    IEndpointHost CreateSubscriberHost()

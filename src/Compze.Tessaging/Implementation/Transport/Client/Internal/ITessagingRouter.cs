@@ -24,6 +24,9 @@ interface ITessagingRouter
     /// send time, preferring the live handler and falling back to the sole remembered one<br/>
     /// (see <see cref="Peers.IPeerRegistry.HandlerIdsFor"/>), so a handler being down never makes the send explode.</summary>
     ITessagingInboxConnection? LiveConnectionToHandlerFor(IRemotableTommand tommand);
+    ///<summary>Whether a live connection to the endpoint currently exists. What <see cref="Peers.IPeerAdministration.Decommission"/><br/>
+    /// asserts against: decommissioning declares a peer gone for good, and a connected peer is not gone.</summary>
+    bool HasLiveConnectionTo(EndpointId endpointId);
     ///<summary>The connections to every endpoint whose advertised tevent subscriptions match <paramref name="wrappedTevent"/>. Advertised subscriptions are wrapper<br/>
     /// types, so matching is against the wrapper — pure type assignability. Which delivery leg the tevent travels to a matched subscriber is not routing's concern:<br/>
     /// the published tevent's own type decides that (see <see cref="Compze.Abstractions.Tessaging.Public.IUnitOfWorkTeventPublisher"/>).</summary>
