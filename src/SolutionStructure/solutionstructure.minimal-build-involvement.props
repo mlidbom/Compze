@@ -7,7 +7,8 @@
    </PropertyGroup>
 
    <PropertyGroup>
-      <BuildOutputExcludes>**/bin/**;**/obj/**</BuildOutputExcludes>
+      <BuildOutputExcludes>**/bin/**;**/obj/**;**/node_modules/**</BuildOutputExcludes>
+      <CompzeExcludes>**/bin/**;**/obj/**;**/node_modules/**;**/*_NCrunchResults/**;**/nCrunchTemp_*/**</CompzeExcludes>
    </PropertyGroup>
 
    <ItemGroup>

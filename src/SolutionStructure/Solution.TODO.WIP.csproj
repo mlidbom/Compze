@@ -3,6 +3,6 @@
    <Import Project="solutionstructure.minimal-build-involvement.props" />
 
    <ItemGroup>
-      <None Include="../../**/wip/**/*.md" Exclude="$(BuildOutputExcludes);" KeepDuplicates="false" />
+      <None Include="../../**/wip/**/*.md" Exclude="$(CompzeExcludes);" KeepDuplicates="false" />
    </ItemGroup>
 </Project>

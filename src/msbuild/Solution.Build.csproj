@@ -3,12 +3,12 @@
    <Import Project="../SolutionStructure/solutionstructure.minimal-build-involvement.props" />
 
    <ItemGroup>
-      <None Include="../../**/*.slnx" Exclude="$(BuildOutputExcludes)" KeepDuplicates="false" />
-      <None Include="../**/*.props" Exclude="$(BuildOutputExcludes)" KeepDuplicates="false" />
-      <None Include="../**/*.targets" Exclude="$(BuildOutputExcludes)" KeepDuplicates="false" />
+      <None Include="../../**/*.slnx" Exclude="$(CompzeExcludes)" KeepDuplicates="false" />
+      <None Include="../**/*.props" Exclude="$(CompzeExcludes)" KeepDuplicates="false" />
+      <None Include="../**/*.targets" Exclude="$(CompzeExcludes)" KeepDuplicates="false" />
 
-      <None Include="../../**/*.ps1" Exclude="$(BuildOutputExcludes)" KeepDuplicates="false" />
-      <None Include="../../**/*.psm1" Exclude="$(BuildOutputExcludes)" KeepDuplicates="false" />
-      <None Include="../../**/*.yml" Exclude="$(BuildOutputExcludes)" KeepDuplicates="false" />
+      <None Include="../../**/*.ps1" Exclude="$(CompzeExcludes)" KeepDuplicates="false" />
+      <None Include="../../**/*.psm1" Exclude="$(CompzeExcludes)" KeepDuplicates="false" />
+      <None Include="../../**/*.yml" Exclude="$(CompzeExcludes)" KeepDuplicates="false" />
    </ItemGroup>
 </Project>

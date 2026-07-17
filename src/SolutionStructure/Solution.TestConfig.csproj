@@ -3,8 +3,8 @@
    <Import Project="solutionstructure.minimal-build-involvement.props" />
 
    <ItemGroup>
-      <None Include="../**/*test*.json" Exclude="$(BuildOutputExcludes)" KeepDuplicates="false" />
-      <None Include="../**/*.autoinclude.cs" Exclude="$(BuildOutputExcludes)" KeepDuplicates="false" />
-      <None Include="../**/*TestUsingPluggableComponentCombinations*" Exclude="$(BuildOutputExcludes)" KeepDuplicates="false" />
+      <None Include="../**/*test*.json" Exclude="$(CompzeExcludes)" KeepDuplicates="false" />
+      <None Include="../**/*.autoinclude.cs" Exclude="$(CompzeExcludes)" KeepDuplicates="false" />
+      <None Include="../**/*TestUsingPluggableComponentCombinations*" Exclude="$(CompzeExcludes)" KeepDuplicates="false" />
    </ItemGroup>
 </Project>

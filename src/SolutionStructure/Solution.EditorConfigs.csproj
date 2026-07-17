@@ -3,6 +3,6 @@
    <Import Project="solutionstructure.minimal-build-involvement.props" />
 
    <ItemGroup>
-      <None Include="../**/*.editorconfig" Exclude="$(BuildOutputExcludes)" KeepDuplicates="false" />
+      <None Include="../**/*.editorconfig" Exclude="$(CompzeExcludes)" KeepDuplicates="false" />
    </ItemGroup>
 </Project>

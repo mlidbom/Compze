@@ -6,8 +6,8 @@
    <Import Project="solutionstructure.minimal-build-involvement.props" />
 
    <ItemGroup>
-      <None Include="../../**/*.md*" Exclude="$(BuildOutputExcludes)" KeepDuplicates="false" />
-      <None Include="../**/*readme*" Exclude="$(BuildOutputExcludes)" KeepDuplicates="false" />
-      <None Include="../**/*changelog*" Exclude="$(BuildOutputExcludes)" KeepDuplicates="false" />
+      <None Include="../../**/*.md*" Exclude="$(CompzeExcludes)" KeepDuplicates="false" />
+      <None Include="../**/*readme*" Exclude="$(CompzeExcludes)" KeepDuplicates="false" />
+      <None Include="../**/*changelog*" Exclude="$(CompzeExcludes)" KeepDuplicates="false" />
    </ItemGroup>
 </Project>

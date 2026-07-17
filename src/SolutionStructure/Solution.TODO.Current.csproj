@@ -3,7 +3,7 @@
    <Import Project="solutionstructure.minimal-build-involvement.props" />
 
    <ItemGroup>
-      <None Include="../../**/*TODO*/**/*.md" Exclude="$(BuildOutputExcludes);**/done/**;**/*TODO*.md" KeepDuplicates="false" />
-      <None Include="../../**/*TODO*.md" Exclude="$(BuildOutputExcludes)" KeepDuplicates="false" />
+      <None Include="../../**/*TODO*/**/*.md" Exclude="$(CompzeExcludes);**/done/**;**/*TODO*.md" KeepDuplicates="false" />
+      <None Include="../../**/*TODO*.md" Exclude="$(CompzeExcludes)" KeepDuplicates="false" />
    </ItemGroup>
 </Project>
