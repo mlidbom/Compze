@@ -24,9 +24,10 @@ public partial class DocumentDbSession : IDocumentDbSession
 
       internal ContextEnsuringWrapper(DocumentDbSession wrapped)
       {
+         //Transaction affinity, never thread affinity: an async unit of work legitimately migrates across threads, and the
+         //misuse that must fail loud is one session serving two transactions.
          _guarded = new UsageGuard<DocumentDbSession>(wrapped,
                                                       new CombinationUsageGuard(
-                                                         new SingleThreadUseGuard(wrapped),
                                                          new SingleTransactionUsageGuard(wrapped),
                                                          new EnlistInAmbientTransactionUsageGuard(() => _guarded!.Wrapped.FlushChanges())));
       }

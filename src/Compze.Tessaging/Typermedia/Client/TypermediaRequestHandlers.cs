@@ -3,6 +3,7 @@ using Compze.Abstractions.Serialization.Internal;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Tessaging.Internals.Transport;
 using Compze.DependencyInjection;
+using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Tessaging.Typermedia.Hosting;
 
@@ -32,12 +33,12 @@ class TypermediaRequestHandlers : ITransportRequestHandlerContribution
    {
       RequestHandlers = new Dictionary<TransportRequestKind, Func<TransportRequest, Task<string>>>
       {
-         [TransportRequestKind.TypermediaTuery] = request => Task.FromResult(serializer.SerializeResult(executor.ExecuteTuery(DeserializeTessage(request)))),
-         [TransportRequestKind.TypermediaTommandWithResult] = request => Task.FromResult(serializer.SerializeResult(executor.ExecuteTommandWithResult(DeserializeTessage(request)))),
-         [TransportRequestKind.TypermediaVoidTommand] = request =>
+         [TransportRequestKind.TypermediaTuery] = async request => serializer.SerializeResult(await executor.ExecuteTueryAsync(DeserializeTessage(request)).caf()),
+         [TransportRequestKind.TypermediaTommandWithResult] = async request => serializer.SerializeResult(await executor.ExecuteTommandWithResultAsync(DeserializeTessage(request)).caf()),
+         [TransportRequestKind.TypermediaVoidTommand] = async request =>
          {
-            executor.ExecuteVoidTommand((IAtMostOnceTypermediaTommand)DeserializeTessage(request));
-            return Task.FromResult("");
+            await executor.ExecuteVoidTommandAsync((IAtMostOnceTypermediaTommand)DeserializeTessage(request)).caf();
+            return "";
          }
       };
 

@@ -60,21 +60,17 @@ static class AccountStatistics
 
    class StatisticsSingletonInitializer
    {
-      readonly Lock _lock = new();
-      bool _isInitialized;
       readonly DocumentDbApi _documentDbApi = new();
+
+      ///<summary>Ensures the singleton document exists, inside the caller's own transaction and idempotently per invocation:<br/>
+      /// no in-memory initialized-flag, deliberately — such a flag set inside a transaction outlives its rollback, and a<br/>
+      /// failed first handling attempt would then skip initialization on every retry. The tevent handlers this serves never<br/>
+      /// run in parallel with each other, so the check-then-save cannot race itself.</summary>
       public void EnsureInitialized(ILocalTypermediaNavigatorSession navigator)
       {
-         lock(_lock)
+         if(navigator.Execute(_documentDbApi.Tueries.TryGet<SingletonStatisticsQueryModel>(SingletonStatisticsQueryModel.StaticId)) is null)
          {
-            if(!_isInitialized)
-            {
-               _isInitialized = true;
-               if(navigator.Execute(_documentDbApi.Tueries.TryGet<SingletonStatisticsQueryModel>(SingletonStatisticsQueryModel.StaticId)) is null)
-               {
-                  navigator.Execute(_documentDbApi.Tommands.Save(new SingletonStatisticsQueryModel()));
-               }
-            }
+            navigator.Execute(_documentDbApi.Tommands.Save(new SingletonStatisticsQueryModel()));
          }
       }
    }

@@ -7,6 +7,7 @@ using Compze.Tessaging.Implementation.Transport.Abstractions;
 using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Logging;
+using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Internals.SystemCE.TransactionsCE;
 using Compze.Teventive.Tevents.Public;
 
@@ -24,7 +25,7 @@ public partial class Inbox
             readonly TaskCompletionSource<object?> _taskCompletionSource = new(TaskCreationOptions.RunContinuationsAsynchronously);
             internal readonly TransportTessage.InComing TransportTessage;
             readonly Coordinator _coordinator;
-            readonly Func<object, IUnitOfWorkResolver, object?> _tessageTask;
+            readonly Func<object, IUnitOfWorkResolver, Task<object?>> _tessageTask;
             readonly ITaskRunner _taskRunner;
             readonly ITessageStorage _tessageStorage;
             readonly IScopeFactory _scopeFactory;
@@ -35,15 +36,15 @@ public partial class Inbox
 
             const string ExecuteTaskName = $"{nameof(HandlerExecutionTask)}_{nameof(Execute)}";
 
-            public void Execute() => _taskRunner.Run(ExecuteTaskName, ExecuteCore);
+            public void Execute() => _taskRunner.Run(ExecuteTaskName, ExecuteCoreAsync);
 
-            void ExecuteCore()
+            async Task ExecuteCoreAsync()
             {
                try
                {
                   this.Log().Debug($"Handler executing {TransportTessage.TessageTypeEnum} tessage {TessageId}");
                   var tessage = TransportTessage.DeserializeTessageAndCacheForNextCall();
-                  ExecuteTransactionalTessage(tessage);
+                  await ExecuteTransactionalTessageAsync(tessage).caf();
                }
 #pragma warning disable CA1031 // Catch all exception types to ensure _taskCompletionSource is always resolved
                catch(Exception exception)
@@ -54,7 +55,7 @@ public partial class Inbox
                }
             }
 
-            void ExecuteTransactionalTessage(ITessage tessage)
+            async Task ExecuteTransactionalTessageAsync(ITessage tessage)
             {
                var retryPolicy = new DefaultRetryPolicy(tessage);
 
@@ -65,13 +66,12 @@ public partial class Inbox
                   try
                   {
                      using var scope = _scopeFactory.BeginScope();
-                     result = TransactionScopeCe.Execute(() =>
+                     result = await TransactionScopeCe.ExecuteAsync(async () =>
                      {
-                        var innerResult = _tessageTask(tessage, UnitOfWorkResolver.From(scope.Resolver));
-                        //Interim bridge: dies when the inbox's handler execution goes async later in phase 7.
-                        _tessageStorage.MarkAsSucceededAsync(TransportTessage).GetAwaiter().GetResult();
+                        var innerResult = await _tessageTask(tessage, UnitOfWorkResolver.From(scope.Resolver)).caf();
+                        await _tessageStorage.MarkAsSucceededAsync(TransportTessage).caf();
                         return innerResult;
-                     });
+                     }).caf();
                      tessageHandlerSucceeded = true;
 
                      this.Log().Debug($"Transactional tessage {TessageId} completed successfully");
@@ -91,12 +91,12 @@ public partial class Inbox
                         return;
                      }
 
-                     _tessageStorage.RecordExceptionAsync(TransportTessage, exception).GetAwaiter().GetResult();
+                     await _tessageStorage.RecordExceptionAsync(TransportTessage, exception).caf();
 
                      if(!retryPolicy.TryAwaitNextRetryTimeForException(exception))
                      {
                         this.Log().Warning(exception, $"Transactional tessage {TessageId} failed after exhausting retries.");
-                        _tessageStorage.MarkAsFailedAsync(TransportTessage).GetAwaiter().GetResult();
+                        await _tessageStorage.MarkAsFailedAsync(TransportTessage).caf();
                         _taskCompletionSource.SetException(exception);
                         _coordinator.Failed(this, exception);
                         return;
@@ -120,19 +120,19 @@ public partial class Inbox
             }
 
             //Refactor: Switching should not be necessary. See also inbox.
-            Func<object, IUnitOfWorkResolver, object?> CreateTessageTask() =>
+            Func<object, IUnitOfWorkResolver, Task<object?>> CreateTessageTask() =>
                TransportTessage.TessageTypeEnum switch
                {
-                  TransportTessageType.ExactlyOnceTevent => (tessage, unitOfWork) =>
+                  TransportTessageType.ExactlyOnceTevent => async (tessage, unitOfWork) =>
                   {
                      //The whole wrapped tevent travels the wire, so a received tevent arrives already wrapped; Wrapped normalizes and passes it through unchanged.
-                     _executor.ExecuteTeventHandlers(PublisherTevent.Wrapped((ITevent)tessage), unitOfWork).GetAwaiter().GetResult();
+                     await _executor.ExecuteTeventHandlers(PublisherTevent.Wrapped((ITevent)tessage), unitOfWork).caf();
                      return null;
                   },
-                  TransportTessageType.ExactlyOnceTommand => (tessage, unitOfWork) =>
+                  TransportTessageType.ExactlyOnceTommand => async (tessage, unitOfWork) =>
                   {
-                     _executor.ExecuteTommandHandler((IExactlyOnceTommand)tessage, unitOfWork).GetAwaiter().GetResult();
-                     return unit; //Todo:Properly handle tommands with and without return values
+                     await _executor.ExecuteTommandHandler((IExactlyOnceTommand)tessage, unitOfWork).caf();
+                     return (object?)unit; //Todo:Properly handle tommands with and without return values
                   },
                   _ => throw new ArgumentOutOfRangeException()
                };

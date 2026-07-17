@@ -2,6 +2,7 @@ using Compze.Abstractions.Tessaging.Public;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Logging;
+using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tessaging.Engine;
 
 namespace Compze.Tessaging.Typermedia.Hosting;
@@ -16,39 +17,39 @@ public class TypermediaHandlerExecutor
 
    internal TypermediaHandlerExecutor(TessageHandlerExecutor executor) => _executor = executor;
 
-   public object ExecuteTuery(ITessage tuery)
+   public async Task<object> ExecuteTueryAsync(ITessage tuery)
    {
       this.Log().Debug($"Executing tuery {tuery.GetType().Name}");
-      return _executor.ExecuteTueryHandlerInIsolatedScope((ITuery)tuery);
+      return await _executor.ExecuteTueryHandlerInIsolatedScopeAsync((ITuery)tuery).caf();
    }
 
-   public object ExecuteTommandWithResult(ITessage tommand)
+   public async Task<object> ExecuteTommandWithResultAsync(ITessage tommand)
    {
       this.Log().Debug($"Executing tommand with result {tommand.GetType().Name}");
-      return ExecuteWithRetry(() => _executor.ExecuteTommandHandlerWithResultInOwnUnitOfWork((IAtMostOnceTypermediaTommand)tommand));
+      return await ExecuteWithRetryAsync(async () => await _executor.ExecuteTommandHandlerWithResultInOwnUnitOfWorkAsync((IAtMostOnceTypermediaTommand)tommand).caf()).caf();
    }
 
-   public void ExecuteVoidTommand(IAtMostOnceTypermediaTommand tommand)
+   public async Task ExecuteVoidTommandAsync(IAtMostOnceTypermediaTommand tommand)
    {
       this.Log().Debug($"Executing void tommand {tommand.GetType().Name}");
-      ExecuteWithRetry<object?>(() =>
+      await ExecuteWithRetryAsync<object?>(async () =>
       {
-         _executor.ExecuteVoidTommandHandlerInOwnUnitOfWork(tommand);
+         await _executor.ExecuteVoidTommandHandlerInOwnUnitOfWorkAsync(tommand).caf();
          return null;
-      });
+      }).caf();
    }
 
    const int MaxAttempts = 5;
 
 #pragma warning disable CA1031 // Catch-all is intentional — retry any exception, matching DefaultRetryPolicy behavior
-   TResult ExecuteWithRetry<TResult>(Func<TResult> action)
+   async Task<TResult> ExecuteWithRetryAsync<TResult>(Func<Task<TResult>> action)
    {
       var remainingAttempts = MaxAttempts;
       while(true)
       {
          try
          {
-            return action();
+            return await action().caf();
          }
          //Todo:review: Should we have some sort of retryable exception test here perhaps? And/or a backoff delay? Rather than hammering away instantly regardless of the error?
          catch(Exception ex) when(ex is not NoHandlerException && --remainingAttempts > 0) //A missing handler is a programming error, not a transient failure to retry.

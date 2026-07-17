@@ -35,7 +35,9 @@ class TeventStoreUpdater : ITeventStoreReader, ITeventStoreUpdater
    {
       Argument.NotNull(teventPublisher).NotNull(store);
 
-      _usageGuard = new CombinationUsageGuard(new SingleThreadUseGuard(this), new SingleTransactionUsageGuard(this));
+      //Transaction affinity, never thread affinity: an async unit of work legitimately migrates across threads, and the
+      //misuse that must fail loud is one session serving two transactions.
+      _usageGuard = new SingleTransactionUsageGuard(this);
       _teventPublisher = teventPublisher;
       _store = store;
       _taggregateTypeValidator = taggregateTypeValidator;

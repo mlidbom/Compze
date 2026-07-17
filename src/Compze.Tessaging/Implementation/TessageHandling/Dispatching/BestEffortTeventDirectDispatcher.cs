@@ -6,6 +6,7 @@ using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Logging;
+using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tessaging.Implementation.Abstractions;
 using Compze.Teventive.Tevents.Public;
 
@@ -38,7 +39,7 @@ class BestEffortTeventDirectDispatcher
       _endpointId = endpointId;
    }
 
-   public void Dispatch(TransportTessage.InComing transportTessage)
+   public async Task DispatchAsync(TransportTessage.InComing transportTessage)
    {
       this.Log().Debug($"Direct-dispatching {transportTessage.TessageTypeEnum} tessage {transportTessage.TessageId}");
       try
@@ -48,7 +49,7 @@ class BestEffortTeventDirectDispatcher
          //An arriving best-effort tevent is already a committed fact on its publisher: it queues for this endpoint's observers on
          //arrival, before the transactional handling below - dispatched off-thread, per-observer FIFO.
          _observationDispatcher.QueueForObservers(wrappedTevent);
-         _executor.ExecuteTeventHandlersInOwnUnitOfWork(wrappedTevent);
+         await _executor.ExecuteTeventHandlersInOwnUnitOfWorkAsync(wrappedTevent).caf();
       }
 #pragma warning disable CA1031 //The best-effort tier has no store to retry from: a failed handling is reported and the tevent is gone - never bounced to the sender, whose delivery already succeeded and who has nothing durable to redeliver from.
       catch(Exception exception)
