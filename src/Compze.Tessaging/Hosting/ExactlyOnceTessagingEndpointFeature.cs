@@ -2,7 +2,7 @@ using Compze.Abstractions.Serialization.Internal;
 using Compze.Abstractions.Hosting.Public;
 using Compze.Contracts;
 using Compze.DependencyInjection.Abstractions;
-using Compze.Internals.Transport;
+using Compze.Tessaging.Internals.Transport;
 using Compze.Tessaging.TessageHandling.Registration.Public;
 using Compze.Tessaging.Implementation;
 using Compze.Tessaging.Implementation.Outbox;

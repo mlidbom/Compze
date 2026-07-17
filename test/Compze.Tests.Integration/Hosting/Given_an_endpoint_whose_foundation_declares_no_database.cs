@@ -8,8 +8,8 @@ using Compze.Hosting.Testing.Wiring;
 using Compze.Internals.Serialization.Newtonsoft.Wiring;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Internals.Testing;
-using Compze.Internals.Transport.AspNet;
-using Compze.Internals.Transport.NamedPipes;
+using Compze.Tessaging.AspNetCore;
+using Compze.Tessaging.Internals.Transport.NamedPipes;
 using Compze.Must;
 
 using Compze.Tessaging.Hosting;

@@ -10,7 +10,7 @@ namespace Compze.Tessaging.Hosting;
 ///<summary>The exactly-once Tessaging pipeline's runtime lifecycle within an endpoint: the inbox listens, and the outbox's<br/>
 /// durable storage is initialized before any endpoint in the host starts sending — the sending phase's connection delivery streams<br/>
 /// load their recovery backlogs from it. (The endpoint's one transport server runs its own lifecycle in<br/>
-/// <see cref="Compze.Internals.Transport.EndpointTransportServerFeature"/>'s component; the router's connection and delivery<br/>
+/// <see cref="Compze.Tessaging.Internals.Transport.EndpointTransportServerFeature"/>'s component; the router's connection and delivery<br/>
 /// lifecycle — and the peer registry's — belongs to the transport-speaking core's<br/>
 /// <see cref="DistributedTessagingEndpointComponent"/>.)</summary>
 sealed class ExactlyOnceTessagingEndpointComponent : IEndpointComponent

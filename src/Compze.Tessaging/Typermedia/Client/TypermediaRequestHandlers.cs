@@ -1,7 +1,7 @@
 using Compze.TypeIdentifiers;
 using Compze.Abstractions.Serialization.Internal;
 using Compze.Abstractions.Tessaging.Public;
-using Compze.Internals.Transport;
+using Compze.Tessaging.Internals.Transport;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Tessaging.Typermedia.Hosting;

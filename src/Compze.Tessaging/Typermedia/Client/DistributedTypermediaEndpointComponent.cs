@@ -1,6 +1,6 @@
 using Compze.Abstractions.Hosting.Public;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
-using Compze.Internals.Transport;
+using Compze.Tessaging.Internals.Transport;
 
 namespace Compze.Tessaging.Typermedia.Client;
 

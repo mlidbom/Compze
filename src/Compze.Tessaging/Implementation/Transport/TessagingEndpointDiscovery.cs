@@ -2,7 +2,7 @@ using System.Text.Json.Serialization;
 using Compze.TypeIdentifiers;
 using Compze.Abstractions.Hosting.Public;
 using Compze.Abstractions.Tessaging.Public;
-using Compze.Internals.Transport;
+using Compze.Tessaging.Internals.Transport;
 using Compze.Tessaging.Implementation.TessageHandling.Abstractions;
 
 namespace Compze.Tessaging.Implementation.Transport;

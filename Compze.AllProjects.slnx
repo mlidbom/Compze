@@ -215,8 +215,7 @@
       <Project Path="test/Compze.Internals.SystemCE.Tests/Compze.Internals.SystemCE.Tests.csproj" />
    </Folder>
    <Folder Name="/Compze.Internals/Transport/">
-      <Project Path="src/Compze.Internals.Transport.AspNet/Compze.Internals.Transport.AspNet.csproj" />
-      <Project Path="src/Compze.Internals.Transport/Compze.Internals.Transport.csproj" />
+      <Project Path="src/Compze.Tessaging.AspNetCore/Compze.Tessaging.AspNetCore.csproj" />
    </Folder>
    <Folder Name="/Compze.Tessaging/">
       <Project Path="src/Compze.Tessaging/Compze.Tessaging.csproj" />

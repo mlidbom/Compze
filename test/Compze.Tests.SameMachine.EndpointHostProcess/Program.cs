@@ -9,7 +9,7 @@ using Compze.DependencyInjection.Microsoft;
 using Compze.Hosting;
 using Compze.Hosting.SameMachine;
 using Compze.Internals.Serialization.Newtonsoft.Wiring;
-using Compze.Internals.Transport.NamedPipes;
+using Compze.Tessaging.Internals.Transport.NamedPipes;
 using Compze.Tessaging.TessageHandling.Registration.Public;
 using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Typermedia.Client;

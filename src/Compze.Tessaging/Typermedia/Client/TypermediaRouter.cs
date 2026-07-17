@@ -5,7 +5,7 @@ using Compze.Contracts;
 using Compze.Internals.Logging;
 using Compze.Internals.SystemCE.CollectionsCE.GenericCE;
 using Compze.Internals.SystemCE.ReflectionCE;
-using Compze.Internals.Transport;
+using Compze.Tessaging.Internals.Transport;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;

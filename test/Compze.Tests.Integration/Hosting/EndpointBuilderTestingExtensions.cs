@@ -2,8 +2,8 @@
 using Compze.Abstractions.Wiring.Testing.Internal;
 using Compze.Hosting.Testing;
 using Compze.Internals.Testing;
-using Compze.Internals.Transport.AspNet;
-using Compze.Internals.Transport.NamedPipes;
+using Compze.Tessaging.AspNetCore;
+using Compze.Tessaging.Internals.Transport.NamedPipes;
 
 namespace Compze.Tests.Integration.Hosting;
 

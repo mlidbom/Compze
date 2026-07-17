@@ -5,7 +5,7 @@ using Compze.Abstractions.Tessaging.Public;
 using Compze.Abstractions.Hosting.Public;
 using Compze.Contracts;
 using Compze.Tessaging.Implementation.Transport.Abstractions;
-using Compze.Internals.Transport;
+using Compze.Tessaging.Internals.Transport;
 using Compze.Tessaging.Implementation.Transport.Client.Internal;
 using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.Internals.Logging;

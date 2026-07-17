@@ -2,7 +2,7 @@ using Compze.Abstractions.Configuration.Internal;
 using Compze.Abstractions.Hosting.Public;
 using Compze.TypeIdentifiers;
 using Compze.Hosting.Configuration;
-using Compze.Internals.Transport;
+using Compze.Tessaging.Internals.Transport;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 

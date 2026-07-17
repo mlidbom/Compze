@@ -51,13 +51,6 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_SystemCE)' != 'true'">
     <ProjectReference Include="..\Compze.Internals.SystemCE\Compze.Internals.SystemCE.csproj" />
   </ItemGroup>
-  <!-- Compze.Internals.Transport — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Transport)' == 'true'">
-    <PackageReference Include="Compze.Internals.Transport" Version="*-*" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Transport)' != 'true'">
-    <ProjectReference Include="..\Compze.Internals.Transport\Compze.Internals.Transport.csproj" />
-  </ItemGroup>
   <!-- Compze.Teventive — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Teventive)' == 'true'">
     <PackageReference Include="Compze.Teventive" Version="*-*" />
@@ -99,5 +92,12 @@
   </ItemGroup>
   <ItemGroup Condition="'$(UsePackageReference_Compze_Unit)' != 'true'">
     <ProjectReference Include="..\Compze.Unit\Compze.Unit.csproj" />
+  </ItemGroup>
+  <!-- Compze.Abstractions — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Abstractions)' == 'true'">
+    <PackageReference Include="Compze.Abstractions" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Abstractions)' != 'true'">
+    <ProjectReference Include="..\Compze.Abstractions\Compze.Abstractions.csproj" />
   </ItemGroup>
 </Project>

@@ -178,19 +178,19 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Testing)' != 'true'">
     <ProjectReference Include="..\Compze.Internals.Testing\Compze.Internals.Testing.csproj" />
   </ItemGroup>
-  <!-- Compze.Internals.Transport — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Transport)' == 'true'">
-    <PackageReference Include="Compze.Internals.Transport" Version="*-*" />
+  <!-- Compze.Tessaging — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging)' == 'true'">
+    <PackageReference Include="Compze.Tessaging" Version="*-*" />
   </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Transport)' != 'true'">
-    <ProjectReference Include="..\Compze.Internals.Transport\Compze.Internals.Transport.csproj" />
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging)' != 'true'">
+    <ProjectReference Include="..\Compze.Tessaging\Compze.Tessaging.csproj" />
   </ItemGroup>
-  <!-- Compze.Internals.Transport.AspNet — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Transport_AspNet)' == 'true'">
-    <PackageReference Include="Compze.Internals.Transport.AspNet" Version="*-*" />
+  <!-- Compze.Tessaging.AspNetCore — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging_AspNetCore)' == 'true'">
+    <PackageReference Include="Compze.Tessaging.AspNetCore" Version="*-*" />
   </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Transport_AspNet)' != 'true'">
-    <ProjectReference Include="..\Compze.Internals.Transport.AspNet\Compze.Internals.Transport.AspNet.csproj" />
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging_AspNetCore)' != 'true'">
+    <ProjectReference Include="..\Compze.Tessaging.AspNetCore\Compze.Tessaging.AspNetCore.csproj" />
   </ItemGroup>
   <!-- Compze.TypeIdentifiers — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_TypeIdentifiers)' == 'true'">

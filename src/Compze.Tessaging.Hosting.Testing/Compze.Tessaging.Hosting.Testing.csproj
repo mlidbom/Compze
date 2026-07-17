@@ -105,12 +105,12 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Testing)' != 'true'">
     <ProjectReference Include="..\Compze.Internals.Testing\Compze.Internals.Testing.csproj" />
   </ItemGroup>
-  <!-- Compze.Internals.Transport.AspNet — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Transport_AspNet)' == 'true'">
-    <PackageReference Include="Compze.Internals.Transport.AspNet" Version="*-*" />
+  <!-- Compze.Tessaging.AspNetCore — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging_AspNetCore)' == 'true'">
+    <PackageReference Include="Compze.Tessaging.AspNetCore" Version="*-*" />
   </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Transport_AspNet)' != 'true'">
-    <ProjectReference Include="..\Compze.Internals.Transport.AspNet\Compze.Internals.Transport.AspNet.csproj" />
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging_AspNetCore)' != 'true'">
+    <ProjectReference Include="..\Compze.Tessaging.AspNetCore\Compze.Tessaging.AspNetCore.csproj" />
   </ItemGroup>
   <!-- Compze.Tessaging — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging)' == 'true'">

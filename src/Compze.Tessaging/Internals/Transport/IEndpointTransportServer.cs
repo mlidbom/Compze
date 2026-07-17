@@ -1,0 +1,21 @@
+using Compze.Abstractions.Hosting.Public;
+
+namespace Compze.Tessaging.Internals.Transport;
+
+///<summary>The one transport server through which an endpoint listens: whatever the endpoint speaks — Tessaging, Typermedia, or<br/>
+/// both — is served through this single server, at the endpoint's single <see cref="Address"/>. Each communication style contributes<br/>
+/// its request handling to the server rather than running a server of its own; the server itself answers the infrastructure<br/>
+/// queries endpoint discovery runs on, which every endpoint serves no matter what it speaks.</summary>
+///<remarks>One server means one address per endpoint — which is what lets an <see cref="IEndpointRegistry"/> map an<br/>
+/// <see cref="EndpointId"/> to a single address, and lets every capability's discovery bootstrap through it.<br/>
+/// Which transport implements the server — named pipes, ASP.NET Core — is decided by the composition: each transport registers<br/>
+/// its implementation guarded (first registration wins), so every communication style's transport registration can demand a<br/>
+/// server without conflicting when an endpoint hosts several styles.</remarks>
+public interface IEndpointTransportServer : IAsyncDisposable
+{
+   ///<summary>The address clients connect to. Valid once the server is listening.</summary>
+   EndpointAddress Address { get; }
+
+   Task StartAsync();
+   Task StopAsync();
+}

@@ -3,7 +3,7 @@ using Compze.Abstractions.Serialization.Internal;
 using Compze.Contracts;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
-using Compze.Internals.Transport;
+using Compze.Tessaging.Internals.Transport;
 using Compze.Tessaging.Typermedia.HandlerRegistration;
 using Compze.Tessaging.Typermedia.Hosting;
 

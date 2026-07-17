@@ -3,7 +3,7 @@ using Compze.Abstractions.Hosting.Public;
 using Compze.Contracts;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
-using Compze.Internals.Transport;
+using Compze.Tessaging.Internals.Transport;
 using Compze.Tessaging.TessageHandling.Registration.Public;
 using Compze.Tessaging.Implementation.Peers;
 using Compze.Tessaging.Implementation.TessageHandling.Abstractions;
@@ -13,7 +13,7 @@ using Compze.Tessaging.Implementation.Transport.Abstractions;
 using Compze.Tessaging.Implementation.Transport.Client.Implementation;
 using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.Tessaging.Transport;
-using Compze.Internals.Transport.NamedPipes;
+using Compze.Tessaging.Internals.Transport.NamedPipes;
 
 namespace Compze.Tessaging.Hosting;
 

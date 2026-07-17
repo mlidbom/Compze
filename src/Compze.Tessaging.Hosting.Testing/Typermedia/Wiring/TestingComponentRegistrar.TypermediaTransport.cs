@@ -4,8 +4,8 @@ using Compze.Hosting.Testing;
 using Compze.Hosting.Testing.Wiring;
 using Compze.Internals.SystemCE;
 using Compze.Internals.Testing;
-using Compze.Internals.Transport;
-using Compze.Internals.Transport.NamedPipes;
+using Compze.Tessaging.Internals.Transport;
+using Compze.Tessaging.Internals.Transport.NamedPipes;
 using Compze.Tessaging.Typermedia;
 using Compze.Tessaging.Typermedia.Client;
 
