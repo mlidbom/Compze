@@ -10,9 +10,9 @@
   — design settled ⚖ 2026-07-17 (absorbs and retires "Typermedia parity"/increment 7); implementation gated
   on the style-substrate question, evaluated in the document below.
 - [dev_docs/TODO/WIP/Tessaging/style-substrate-and-hosting-evaluation.md](../../../../dev_docs/TODO/WIP/Tessaging/style-substrate-and-hosting-evaluation.md)
-  — the style-substrate + hosting evaluation (revised 2026-07-17): ⚖ one harmonized Tessaging with
-  Typermedia as its request/response face; the feature machinery on trial — proposed collapse into
-  concrete endpoint types; remaining decisions open (the asynchronous face's name, project folding).
+  — the style-substrate + hosting evaluation (revised 2026-07-17): ⚖ Tessaging is the common paradigm,
+  Typermedia and TessageBus its two siblings; the feature machinery on trial — proposed collapse into
+  concrete endpoint types; the exact set of remaining projects and their names is still unsettled.
 - [src/Compze.Tessaging/dev_docs/tevent-delivery-model.md](../../../../src/Compze.Tessaging/dev_docs/tevent-delivery-model.md)
 - [src/Compze.Hosting/dev_docs/hosting-model.md](../../../../src/Compze.Hosting/dev_docs/hosting-model.md)
 - [src/Compze.Hosting/dev_docs/wip/same-machine-hosting.md](../../../../src/Compze.Hosting/dev_docs/wip/same-machine-hosting.md)

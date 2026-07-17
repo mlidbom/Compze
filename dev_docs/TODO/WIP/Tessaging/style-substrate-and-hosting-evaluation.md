@@ -1,23 +1,31 @@
 # The style substrate and the Host: an evaluation
 
-**Status: evaluation, revised 2026-07-17 after the feature-machinery challenge. Open recommendations are
-proposals; the decisions are Magnus's.** This document answers the nine questions chartered as "the big
-job" — whether the typermedia<>tessaging split still earns its keep below the public models, whether the
-hosting layer's style-ignorance is real, and what the Host actually is — and, since the first revision, a
-tenth: whether the endpoint-feature machinery itself survives. Its verdicts gate the implementation of
-[readiness-and-waiting-sends.md](readiness-and-waiting-sends.md) — building readiness into today's
-duplication and migrating it later would be the backwards order.
+**Status: evaluation, revised 2026-07-17 (twice: the feature-machinery challenge, then the naming
+settlement). Open recommendations are proposals; the decisions are Magnus's.** This document answers the
+nine questions chartered as "the big job" — whether the typermedia<>tessaging split still earns its keep
+below the public models, whether the hosting layer's style-ignorance is real, and what the Host actually
+is — and, since the first revision, a tenth: whether the endpoint-feature machinery itself survives. Its
+verdicts gate the implementation of [readiness-and-waiting-sends.md](readiness-and-waiting-sends.md) —
+building readiness into today's duplication and migrating it later would be the backwards order.
 
 Decided so far (⚖ Magnus, 2026-07-17):
 
-- ⚖ **Tessaging is one harmonized concept** — tueries, typermedia tommands, tevents, and tommands are its
-  message kinds, not two styles' private vocabularies.
-- ⚖ **Typermedia survives as a name**: the request/response face of Tessaging. Its asynchronous sibling
-  face also gets a name of its own, in the same family (candidates in question 9 — the choice is open).
+- ⚖ **Tessaging is the common paradigm** — one harmonized concept whose message kinds are tueries,
+  typermedia tommands, tevents, and tommands.
+- ⚖ **Typermedia and TessageBus are its two siblings**, built on the common paradigm: **Typermedia** (the
+  request/response style — hypermedia with types) and **TessageBus** (the asynchronous style — the message
+  bus with tessages). The names follow the family's generative rule: take the established industry concept
+  and make the t-substitution — event → tevent, command → tommand, query → tuery, message → tessage,
+  aggregate → taggregate, event store → `TeventStore`, hypermedia → Typermedia, **message bus →
+  TessageBus**. (The earlier candidates Typercast/Typerpost/Typergram are retracted — they mistook the
+  shared `Typer-` stem for the rule.) A symmetry worth putting in the public docs: the two siblings are the
+  two canonical integration styles of the literature, each re-founded on .NET types — ask now and follow
+  typed links; or tell the world and trust it arrives.
 - ⚖ **"Ship another communication style" is not on the roadmap** and has no imaginable meaning — the
   open-ended capability seam has no prospective consumer, ever.
-- ⚖ **Whether Typermedia needs projects separate from `Compze.Tessaging` is very much in doubt** (leaning
-  fold-in).
+- **Unsettled: the exact set of remaining projects and their names** (question 9 presents the options).
+  Today's `Compze.Tessaging` project carries the TessageBus sibling under the paradigm's name — untangling
+  that is part of the same decision.
 
 Everything here is grounded in a code dig (file anchors throughout) plus a usage inventory of the two real
 consumers: Deskmancer and the AccountManagement sample.
@@ -30,40 +38,40 @@ The code says that is the wrong shape. There are **three** parties:
 1. **A shared substrate that already exists**, half-extracted: the message-type hierarchy and hosting
    contracts in `Compze.Abstractions`, and the transport client/server, wire envelope, request-handler
    contribution seam, discovery round-trip, and address announcement in `Compze.Internals.Transport`.
-2. **A private copy, per style, of the substrate's missing half**: each style separately implements the
+2. **A private copy, per sibling, of the substrate's missing half**: each separately implements the
    reconcile-against-registry router, the connection map, the endpoint-information discovery payload, and
    the distributed feature/component/composition scaffolding — near-verbatim twins.
-3. **Genuine face semantics**: tevent/tommand delivery machinery (outbox, inbox, best-effort queues,
-   delivery streams, peer memory) on the asynchronous side; navigators, handler executor, and the
+3. **Genuine sibling semantics**: tevent/tommand delivery machinery (outbox, inbox, best-effort queues,
+   delivery streams, peer memory) on the TessageBus side; navigators, handler executor, and the
    request/response shape on the Typermedia side.
 
-Under the harmonized model the fate of party 2 is sharper than the first revision of this document proposed.
-The first proposal was to *extract* it into a pluggable substrate with style-contributed seams (route
-predicates, delivery-stream factories) — pluggability whose only purpose was preserving style ignorance.
-⚖ Harmonization abolishes style ignorance as a goal, so party 2 is not extracted — **it is deleted**: one
-router that simply knows Tessaging's four message kinds, one advertisement, one discovery query, wired
-concretely (see "The feature machinery on trial" below).
+Under the harmonized paradigm the fate of party 2 is sharper than the first revision of this document
+proposed. The first proposal was to *extract* it into a pluggable substrate with style-contributed seams
+(route predicates, delivery-stream factories) — pluggability whose only purpose was preserving style
+ignorance. ⚖ Harmonization abolishes style ignorance as a goal, so party 2 is not extracted — **it is
+deleted**: one router that simply knows Tessaging's four message kinds, one advertisement, one discovery
+query, wired concretely (see "The feature machinery on trial" below).
 
 The same decision reverses the polarity of a whole class of findings. The dig catalogued "style leaks" in
-the shared seed — `TransportRequestKind` enumerating both faces' message kinds, `HttpConstants` carrying
-both route tables, Tessaging's discovery query being an `ITuery`, Typermedia's contracts living in the
+the shared seed — `TransportRequestKind` enumerating both siblings' message kinds, `HttpConstants` carrying
+both route tables, TessageBus's discovery query being an `ITuery`, Typermedia's contracts living in the
 `Compze.Abstractions.Tessaging.Public` namespace. Under the split's rules those were fictions undermining
 the design. Under harmonization they are the opposite: **evidence that the code has wanted to be one thing
-all along**. A wire enum naming the four message kinds of one model is not a leak; it is the model.
+all along**. A wire enum naming the four message kinds of one paradigm is not a leak; it is the paradigm.
 
 ## Ground truth: what real applications use
 
 | Dimension | Deskmancer (real product) | AccountManagement (sample) |
 |---|---|---|
 | Role of Compze messaging | External-observation/test channel only; **off on every production launch** | The application's whole spine |
-| Asynchronous tier | `AddTransientTessaging` = today's `AddDistributedTessaging` (pre-rename packages) | `AddExactlyOnceTessaging` |
+| TessageBus tier | `AddTransientTessaging` = today's `AddDistributedTessaging` (pre-rename packages) | `AddExactlyOnceTessaging` |
 | Typermedia | `AddDistributedTypermedia` | `AddDistributedTypermedia` |
 | Production process IPC | Hand-rolled named kernel events + shared disk state — deliberately not Compze | n/a (single process) |
 | Tessages on the wire | Best-effort tevents (`IAnalyticsEvent` family + probe/echo pair), 2 tueries; **zero tommands** | 4 `AtMostOnceTypermediaTommand`s, tueries; domain tevents stored, not remoted |
 | Transport | Named pipes | In-memory testing transport — **even in the "production" MVC host** |
 | Discovery | `InterprocessEndpointRegistry`, zero configuration | None (client connects to the known `TypermediaAddress`) |
 | Persistence | None, explicitly | Full stack (TeventStore + DocumentDb + SQL, throwaway pooled DB) |
-| Readiness | **Hand-rolled**: a probe/echo tessage pair + 30s poll loop for the asynchronous attach; a `while(true)` catching `NoHandlerForTypermediaTypeException` with `Thread.Sleep(100)` for typermedia (`ExternalObservationSubscriber.cs:90-132`) | None needed (single process; host-wide barrier covers it) |
+| Readiness | **Hand-rolled**: a probe/echo tessage pair + 30s poll loop for the TessageBus attach; a `while(true)` catching `NoHandlerForTypermediaTypeException` with `Thread.Sleep(100)` for typermedia (`ExternalObservationSubscriber.cs:90-132`) | None needed (single process; host-wide barrier covers it) |
 | Hosts × endpoints × processes | 2 hosts × 1 endpoint each × 2 processes | 1 host × 2 endpoints × 1 process |
 
 Three conclusions this table forces:
@@ -81,8 +89,8 @@ Three conclusions this table forces:
   side channel.
 - **The consumer that matters wants the light stack**: named pipes, no database, no web stack, best-effort
   tevents + typermedia, tiny composition. Every consolidation here serves it directly; multi-endpoint
-  host machinery serves only tests. And both real consumers already speak **both faces on every endpoint** —
-  nobody composes one face without the other.
+  host machinery serves only tests. And both real consumers already speak **both siblings on every
+  endpoint** — nobody composes one without the other.
 
 ## Findings
 
@@ -94,33 +102,33 @@ Three conclusions this table forces:
 | Addressing | `EndpointAddress` + per-transport realizations (`NamedPipeAddress`, Kestrel URL) |
 | Point-to-point send | `IEndpointTransportClient` (HTTP + named-pipe implementations) |
 | The one server per endpoint | `IEndpointTransportServer`, `EndpointTransportServerFeature`/`Component` |
-| Request-handler seam | `ITransportRequestHandlerContribution` + `TransportRequestHandlerMap` — the faces contribute their request kinds to the one server |
+| Request-handler seam | `ITransportRequestHandlerContribution` + `TransportRequestHandlerMap` — the siblings contribute their request kinds to the one server |
 | Wire envelope + framing | `TransportRequest`, `TransportRequestKind`, `NamedPipeFraming`, `HttpConstants` |
 | Announcement (write side) | `EndpointTransportServerFeature.AnnounceAddressTo` → `IEndpointAddressAnnouncer` |
 | Discovery round-trip | `IEndpointDiscoveryQueryTransport` + `EndpointDiscoveryQueryExecutor` + the fixed `EndpointDiscoverySerializer` |
 | Registry contracts + implementation | `IEndpointRegistry`/`IEndpointRegistryAndAnnouncer` (Abstractions); `InterprocessEndpointRegistry` (`Compze.Hosting.SameMachine`) |
-| The message-type hierarchy | One file: `Compze.Abstractions\Tessaging\Public\_TessageTypes..Interfaces.cs` — both faces' contracts, one root |
-| The guarantee ladder's vocabulary | Same file: `IAtMostOnceTessage`, `IAtLeastOnceTessage`, `IExactlyOnceTessage` span both faces (see question 7) |
+| The message-type hierarchy | One file: `Compze.Abstractions\Tessaging\Public\_TessageTypes..Interfaces.cs` — both siblings' contracts, one root |
+| The guarantee ladder's vocabulary | Same file: `IAtMostOnceTessage`, `IAtLeastOnceTessage`, `IExactlyOnceTessage` span both siblings (see question 7) |
 
-### What each face duplicates privately (party 2, measured)
+### What each sibling duplicates privately (party 2, measured)
 
-| Asynchronous face | Typermedia face | Notes |
+| TessageBus (today's `Compze.Tessaging` code) | Typermedia | Notes |
 |---|---|---|
 | `TessagingRouter` (315 lines) | `TypermediaRouter` (229 lines) | Same reconcile loop, same `AwaitPossibleMembershipChange` wait, same connection map keyed by `EndpointId`, same drop/replace-on-restart logic — down to **word-for-word identical doc comments** on `ReconcileLivenessInterval` and `ReconcileLoop`. The Typermedia copy's own class comment admits it: "the same dynamic topology the Tessaging router runs on." |
 | `TessagingEndpointInformationQuery`/`TessagingEndpointInformation` | `TypermediaEndpointInformationQuery`/`TypermediaEndpointInformation` | Structurally identical payloads: `Name` + `EndpointId Id` + a `HashSet<string>` of canonical type-id strings. Two questions asked over the same address, answered by the same server. |
 | `DistributedTessagingEndpointFeature`/`Component` | `DistributedTypermediaEndpointFeature`/`Component` | Same scaffolding: assert foundation declared, map discovery types, compose the in-process core, `EndpointTransportServerFeature.GetOrAddTo`, register discovery handler on container-built, add the lifecycle component, `DiscoverEndpointsThrough`/`AnnounceAddressTo`/`ParticipateIn`. |
 | `ExactlyOnceTessagingRequestHandlers` + `BestEffortTessagingRequestHandlers` | `TypermediaRequestHandlers` | Same `ITransportRequestHandlerContribution` shape, different request kinds. |
 | `ITessagingSerializer` + `ITessagingSerializerSlot` | `ITypermediaSerializer` + `ITypermediaSerializerSlot` | Parallel slots in `Compze.Abstractions\Serialization\Internal`, both filled by the same generic `NewtonsoftSerializer()`. |
-| `HandledRemoteTessageTypeIds()` | `HandledRemoteTypermediaTypeIds()` | The advertisement source, per face. |
-| `ITessageHandlerRegistrar` (`ForTevent`/`ForTommand`) | `ITypermediaHandlerRegistrar` (`ForTuery`/`ForTommand`×3) | Two handler-registration surfaces for one model's four message kinds. |
+| `HandledRemoteTessageTypeIds()` | `HandledRemoteTypermediaTypeIds()` | The advertisement source, per sibling. |
+| `ITessageHandlerRegistrar` (`ForTevent`/`ForTommand`) | `ITypermediaHandlerRegistrar` (`ForTuery`/`ForTommand`×3) | Two handler-registration surfaces for one paradigm's four message kinds. |
 | Testing host feature | Testing host feature | `ExactlyOnceTessagingTestingEndpointHostFeature` / `DistributedTypermediaTestingEndpointHostFeature`. |
 
-The line count is modest (~450 duplicated substrate lines per face). The cost is not lines — it is that
+The line count is modest (~450 duplicated substrate lines per sibling). The cost is not lines — it is that
 **every substrate-level effort must be designed, built, spec'd, and maintained twice**, and the copies
-drift: the Typermedia copy has already drifted into defects the other copy handles deliberately (see
+drift: the Typermedia copy has already drifted into defects the TessageBus copy handles deliberately (see
 "Defects" below).
 
-### What only the asynchronous face has (the negative space)
+### What only TessageBus has (the negative space)
 
 Peer memory (`IPeerRegistry`, `DurablePeerRegistry`/`ProcessLifetimePeerRegistry`, `RememberedPeer`),
 lifecycle observation (`IPeerLifecycleObserver`), administration (`IPeerAdministration.Decommission`,
@@ -137,14 +145,14 @@ remembering one advertisement per peer.
 
 ### Defects and debris found while digging
 
-Defects (both in the Typermedia copy; the asynchronous copy handles the equivalents deliberately):
+Defects (both in the Typermedia copy; the TessageBus copy handles the equivalents deliberately):
 
 1. **Duplicate typermedia route = permanently failing reconciliation.**
    `TypermediaRouter.RebuildRouteTables` uses `Dictionary.Add`
    (`src/Compze.Typermedia.Client/TypermediaRouter.cs:157,160`), so two endpoints advertising the same
    typermedia type throw `ArgumentException` inside the reconcile pass. The loop survives (catch-log-retry)
    but every subsequent pass fails at the same point: route tables freeze while `_connections` keeps
-   mutating. The asynchronous face treats the same situation as a deliberate, diagnosable send-time failure
+   mutating. TessageBus treats the same situation as a deliberate, diagnosable send-time failure
    (`MultipleHandlersForTessageTypeException`, decommission as the remedy). One harmonized router makes one
    policy structural.
 2. **Server-side no-handler is a bare `KeyNotFoundException` — and gets retried.**
@@ -180,21 +188,21 @@ The abstract plugin machinery — `GetOrAddFeature`, endpoint features, contribu
 registrars, serializer slots, `OnContainerBuilt` hooks, testing-host features — is not incidental
 complexity. It is the split's **exoskeleton**: every piece of it exists to let two independent verticals
 share one endpoint without knowing each other. Its three documented justifications (hosting-model.md) all
-presuppose separate style deliverables — "each style developed, shipped, tested alone" (no styles to keep
+presuppose separate style deliverables — "each style developed, shipped, tested alone" (no strangers to keep
 apart after harmonization), "capabilities declared in one visible place" (a constructor does that better),
 "a new capability without touching hosting" (⚖ no third style, ever). Merge the organism and the
 exoskeleton is dead weight. Piece by piece:
 
 | Machinery | Why it exists | Fate under harmonization |
 |---|---|---|
-| `GetOrAddFeature` idempotency | Shared demands arrive from multiple independent directions: both faces demand `EndpointTransportServerFeature`; both `Add*` verbs and the `RegisterXHandlers` properties demand the in-process core | **Dies.** One concrete composition per tier = one arrival path = nothing to reconcile |
+| `GetOrAddFeature` idempotency | Shared demands arrive from multiple independent directions: both siblings demand `EndpointTransportServerFeature`; both `Add*` verbs and the `RegisterXHandlers` properties demand the in-process core | **Dies.** One concrete composition per tier = one arrival path = nothing to reconcile |
 | `ITransportRequestHandlerContribution` + `TransportRequestHandlerMap` union/assert | The server must serve request kinds it is forbidden to know | **Dies.** The server takes its closed handler map for Tessaging's four kinds directly |
 | Every `IfNotRegistered` guard (`EndpointDiscoveryQueryTransportIfNotRegistered`, HTTP client factory, transport server, the tracker default, `CurrentTestsInfrastructureTransportIfNotRegistered`) | Whichever of two mutually-ignorant features arrives first must win | **Dies.** One wiring path registers everything exactly once |
-| Twin serializer slots + compose-lambdas (`AddExactlyOnceTessaging(t => t.NewtonsoftSerializer())`) | Each style fills its own slot without seeing the other's | **Dies.** One serializer, one constructor parameter |
+| Twin serializer slots + compose-lambdas (`AddExactlyOnceTessaging(t => t.NewtonsoftSerializer())`) | Each sibling fills its own slot without seeing the other's | **Dies.** One serializer, one constructor parameter |
 | `OnContainerBuilt` hooks | Features schedule work against a container whose building they don't control | **Dies.** A concrete composition root does the work in order |
 | `IEndpointComponent` + `AddComponent` contribution sets | Unknown capabilities join the lifecycle phases | **Dies as a contribution seam.** A concrete endpoint type implements `IEndpoint`'s six phase methods itself, starting its own known parts in order — "what starts when" becomes one readable method per phase instead of a traced component set |
 | `ITestingEndpointHostFeature` | The same rule repeated one level up | **Dies.** Concrete per-tier test wiring |
-| Per-face `Add*` verbs + `EndpointFoundation` slot-filling choreography | Features added later must find foundation registrations already in place | **Shrinks.** The foundation's compiler-routed database pairing survives as ordinary constructor typing on the concrete tier types |
+| Per-sibling `Add*` verbs + `EndpointFoundation` slot-filling choreography | Features added later must find foundation registrations already in place | **Shrinks.** The foundation's compiler-routed database pairing survives as ordinary constructor typing on the concrete tier types |
 | The style-contribution seams this document's first revision proposed (route predicates, stream factories) | Preserving style ignorance inside a shared substrate | **Withdrawn.** The one router knows the four kinds: tevents route by assignability, everything else by exact type — which the dig showed is the *only* style-typed part of either router today |
 
 The dig had already documented the machinery creaking: feature-arrival **order** sensitivity (the
@@ -206,10 +214,10 @@ natural" — the abstraction dictating project layout.
 **Is there any real reason not to wire everything unconditionally within a tier?** None found. An endpoint
 with the tuery executor wired but no tuery handlers registered costs a few idle singletons, an empty
 advertisement set, and requests that fail loud. Ground truth agrees: both real consumers already speak both
-faces on every endpoint. Unconditional wiring actively closes holes — decommission-covers-only-one-face and
-the twin-discovery chatter become structurally impossible. The one conditionality that is **real** is the
-tier, because the guarantee ladder is real and durability follows the foundation: an outbox cannot exist
-without storage.
+siblings on every endpoint. Unconditional wiring actively closes holes — decommission-covers-only-one-sibling
+and the twin-discovery chatter become structurally impossible. The one conditionality that is **real** is
+the tier, because the guarantee ladder is real and durability follows the foundation: an outbox cannot
+exist without storage.
 
 What survives, as ordinary parameters and strategies rather than plugin machinery: the transport protocol
 (a strategy interface with two implementations — already is), the sql backend (foundation-typed — already
@@ -232,46 +240,48 @@ human can read top to bottom**:
    registry, tommand senders; parameterized by the database foundation. (AccountManagement's exact
    composition.)
 
-Plus the one small extra shape that is real: a **pure client** — navigator + transport client, no server —
-today's `TypermediaTestClient`.
+The two endpoint tiers differ only in their **TessageBus rung** — which delivery guarantees the endpoint can
+give; Typermedia rides both tiers identically (request/response neither queues nor persists). Plus the one
+small extra shape that is real: a **pure client** — navigator + transport client, no server — today's
+`TypermediaTestClient`.
 
 Each type is a composition root that openly lists its parts and drives its own lifecycle phases. The parts
 that do the actual work — router, outbox, queues, streams, executor, registries — survive untouched; what
 melts is the composition plumbing between them. Handler registration plausibly unifies too: one registrar
-with `ForTuery`/`ForTommand`/`ForTevent` instead of two per-face surfaces. Consciously given up:
-the ship-a-face-alone property (dies with harmonization by definition), the "no Tessaging assembly loaded"
-proof specs (same), and the open capability seam (⚖ no consumer, ever; a seam can be re-extracted from
-working concrete code if the inconceivable happens).
+with `ForTuery`/`ForTommand`/`ForTevent` instead of two per-sibling surfaces. Consciously given up:
+the ship-a-sibling-alone property (dies with harmonization by definition), the "no Tessaging assembly
+loaded" proof specs (same), and the open capability seam (⚖ no consumer, ever; a seam can be re-extracted
+from working concrete code if the inconceivable happens).
 
 ---
 
 ## Question 1 — Is there any point left to the split?
 
-**What still earns its keep:** the faces' *public models*. A tuery is a synchronous question; a tevent is a
-persistent fact told to the world. Distinct message kinds, distinct navigator/publisher surfaces, distinct
+**What still earns its keep:** the siblings' *public models*. A tuery is a synchronous question; a tevent is
+a persistent fact told to the world. Distinct message kinds, distinct navigator/publisher surfaces, distinct
 delivery semantics. Nothing in the dig argues against any of that, and the June split's production-code
 disentanglement made real structure visible that the old entanglement hid — including the twin routers
 themselves, whose near-identity is the central evidence here.
 
 **What no longer earns its keep:** the boundary as an architectural wall. Evaluated rung by rung under the
-harmonized model:
+harmonized paradigm:
 
 | Rung | Verdict | Reasoning |
 |---|---|---|
-| **Message-type hierarchy** | Already one | One file, one root, since the beginning; the faces interleave in it (`ITommand<TResult> : ITyperMediaTessage<TResult>`) |
-| **Wire protocol / request kinds** | Already one | One envelope, one kind enum, one route table, one server. Under harmonization the kind enum stops being a leak and becomes the model |
+| **Message-type hierarchy** | Already one | One file, one root, since the beginning; the siblings interleave in it (`ITommand<TResult> : ITyperMediaTessage<TResult>`) |
+| **Wire protocol / request kinds** | Already one | One envelope, one kind enum, one route table, one server. Under harmonization the kind enum stops being a leak and becomes the paradigm |
 | **Discovery mechanism** | Already one | One query transport, one executor, one fixed serializer |
 | **Advertisement (payload)** | **Unify** | Two structurally identical payloads answering two questions over one address become one `EndpointInformation` carrying name + id + handled types. The old "advertisement unification" question dissolves here |
 | **Router / connections / reconciliation** | **Unify — concretely** | One router knowing the four kinds (tevent-assignability, exact-match for the rest). No contribution seams: the seam-based merge proposed in this document's first revision is withdrawn |
 | **Peer memory / lifecycle / administration** | **Unify** | One registry remembering one advertisement per peer; `Decommission` covers every message kind at once; readiness's typermedia knowledge exists for free |
-| **Delivery machinery** | **Keep per face** | Outbox/inbox/queues/streams are the asynchronous face; the handler executor and navigators are Typermedia. This is party 3 — never merge it |
-| **Composition surface** | **Concrete endpoint types** | The per-face `Add*` feature verbs die with the lattice (see "The feature machinery on trial"); the tier is the composition |
-| **Assemblies** | ⚖ In doubt, leaning fold | Typermedia's separate projects (`Compze.Typermedia`, `.Client`, `.Hosting`) likely fold into `Compze.Tessaging`; question 9 |
+| **Delivery machinery** | **Keep per sibling** | Outbox/inbox/queues/streams are TessageBus; the handler executor and navigators are Typermedia. This is party 3 — never merge it |
+| **Composition surface** | **Concrete endpoint types** | The per-sibling `Add*` feature verbs die with the lattice (see "The feature machinery on trial"); the tier is the composition |
+| **Assemblies** | **Unsettled** | The exact set of remaining projects and their names is an open decision; question 9 |
 
-**Recommendation:** keep the faces' public models and delivery semantics distinct *inside* one harmonized
+**Recommendation:** keep the siblings' public models and delivery semantics distinct *inside* one harmonized
 Tessaging; delete party 2 into the concrete shapes above. The split was not a mistake — it removed real
 entanglement and made the substrate visible. Its follow-through is harmonization, not re-entanglement: the
-faces stop being strangers sharing a flat, and become two faces of one thing.
+siblings stop being strangers sharing a flat, and become two children of one paradigm.
 
 ## Question 2 — What duplication and complexity would disappear?
 
@@ -279,7 +289,7 @@ Immediately, party 2 (the twin table above): routers, discovery payloads, featur
 advertisement sources, serializer slots, handler-registrar pair. With the feature machinery's collapse, the
 abstraction layer itself joins the list: `GetOrAddFeature` and the feature classes, the
 request-handler-contribution union machinery, every `IfNotRegistered` guard, the `OnContainerBuilt` hook
-choreography, the `IEndpointComponent` contribution seam, the testing-host feature seam, the per-face
+choreography, the `IEndpointComponent` contribution seam, the testing-host feature seam, the per-sibling
 `Add*` verbs and slot-filling lambdas. What remains is Magnus's list: **choose the tier, the transport, the
 sql layer, and the serializer; register your handlers.**
 
@@ -290,7 +300,7 @@ The future tax is the larger number — per pending roadmap item, on today's arc
 | Waiting sends | Built twice: once against the `TessagingRouter`/peer registry, once against the `TypermediaRouter` with no peer memory to consult | Built once where the one router and peer memory live |
 | Readiness | Same twice-over, plus porting peer knowledge to Typermedia first | One awaitable over one peer registry |
 | Typermedia peer knowledge (retired "increment 7") | A Typermedia-private peer-memory port | Free — the registry already remembers every peer's one advertisement |
-| Decommission for typermedia routes | Unbuilt; today's `Decommission` covers the asynchronous face only | Covered by the same act — one router, one registry |
+| Decommission for typermedia routes | Unbuilt; today's `Decommission` covers TessageBus only | Covered by the same act — one router, one registry |
 | Distributed quiescence (question 6) | Two report sources, two aggregations | One administration surface |
 | A new transport | Already cheap (transport is shared) — unchanged | Unchanged |
 
@@ -342,8 +352,7 @@ Options:
   (above) each own their composition and lifecycle; the host-wide barrier weakens to what is honest
   everywhere: per-endpoint phase ordering plus announced-means-listening. Startup completeness — today the
   barrier's guarantee 3 — is carried instead by the mechanisms that already carry it cross-process:
-  queue-while-down and `RequirePeers` for the asynchronous face, readiness/waiting-sends for
-  request/response.
+  queue-while-down and `RequirePeers` for TessageBus, readiness/waiting-sends for request/response.
 - **(b) Keep the Host as the sole entry, keep the barrier, document it as in-process-only comfort.** Cheaper
   now; but it leaves two worlds (in-host strong ordering, cross-host convergence), keeps specs passing
   against guarantees production topologies don't have, and keeps the "why must a Host exist" question
@@ -400,17 +409,17 @@ Sketch — deliberately shaped like the machinery that already works:
   the mirror on the way back up: **readiness = safe to start taking traffic; quiescence = safe to stop** —
   two faces of production administration, siblings on the same administration surface. Both span every
   message kind by construction: a tuery in flight and a tevent in a queue both block quiescence — which is
-  also why quiescence is unbuildable per-face and unbuildable on the shared-heap tracker. It has one
+  also why quiescence is unbuildable per-sibling and unbuildable on the shared-heap tracker. It has one
   possible home: the harmonized Tessaging core.
 
 This is a sketch to be designed properly in its own effort.
 
-## Question 7 — The guarantee vertical is the tier ladder, and it spans the faces
+## Question 7 — The guarantee vertical is the tier ladder, and it spans the siblings
 
 Confirmed by the type hierarchy itself: the delivery-guarantee ladder is declared in the shared root —
 `IAtMostOnceTessage` (which `IAtMostOnceTypermediaTommand` and `IExactlyOnceTessage` both extend),
-`IAtLeastOnceTessage`, `IExactlyOnceTessage` — and spans the faces: at-most-once is a *typermedia* tommand
-rung and an *exactly-once* building block at once. The transactionality markers
+`IAtLeastOnceTessage`, `IExactlyOnceTessage` — and spans the siblings: at-most-once is a *typermedia*
+tommand rung and an *exactly-once* building block at once. The transactionality markers
 (`IMustBeSentTransactionally`, `ICannotBeSentRemotelyFromWithinTransaction`) are the same shape. Under the
 collapse this stops being an observation and becomes the design: **the concrete endpoint tiers ARE the
 ladder's rungs** — the best-effort endpoint serves the guarantee-free kinds, the exactly-once endpoint adds
@@ -426,52 +435,63 @@ an endpoint feature, `RequirePeers`, and multi-endpoint production hosting.
 
 ## Question 9 — Naming and migration
 
-**The names.** ⚖ The harmonized whole is **Tessaging** — which also dissolves the long-flagged namespace
-overload: `Compze.Abstractions.Tessaging.Public` holding tueries stops being one style's name annexing the
-parent domain and becomes simply the domain. ⚖ **Typermedia** survives as the name of the request/response
-face. The asynchronous face needs its own name in the same family — candidates (the choice is Magnus's):
+**The names — ⚖ settled.** **Tessaging** is the common paradigm; **Typermedia** and **TessageBus** are its
+two siblings. The generative rule (established concept + t-substitution, `TeventStore` as the compound
+precedent) is recorded in the decisions block at the top. Two knock-on resolutions come free:
 
-- **Typercast** — the shared `Typer-` stem plus *cast* (broadcast): telling the world. Reads as
-  Typermedia's natural sibling; slightly over-indexes on tevents (tommands are directed, not broadcast).
-- **Typerpost** — *post* covers both faces of the asynchronous conversation: posting a notice to the world
-  (tevents) and posting a letter to an address (tommands), with the mail metaphor carrying exactly the
-  asynchronous, trust-it-arrives semantics.
-- **Typergram** — *telegram*: directed, asynchronous, delivery-guaranteed. Evocative; slightly
-  tommand-leaning.
-- Keeping **Tessaging** as the face's name and renaming the parent instead — rejected-leaning: it re-runs
-  the overload this decision just resolved, and the parent owns the word everywhere (`tessage`,
-  `TessageId`, the project name).
+- The long-flagged namespace overload dissolves: `Compze.Abstractions.Tessaging.Public` holding tueries
+  stops being one style's name annexing the parent domain and becomes simply the paradigm's domain.
+- The parked ServiceBus remnants get their rename target: `IServiceBusSqlLayer` and the
+  `ServiceBusSpecification` test folder rename into the TessageBus vocabulary (exact names decided at
+  rename time). "ServiceBus" died as borrowed jargon on a lying type; TessageBus is the coined, truthful
+  replacement for the concept — the same move as hypermedia → Typermedia, completing itself.
 
-**The homes.** This document's first revision proposed a new substrate package
-(`Compze.DistributedEndpoints`); **withdrawn** — under harmonization the substrate is not a separate thing
-needing a separate home; it *is* Tessaging's core, and the home is **`Compze.Tessaging`**. Consequences,
-each its own decision:
+One naming caveat noticed and accepted: "bus" can suggest a broker in the middle, and Compze's tessage bus
+is brokerless peer-to-peer — but the term's actual industry usage (NServiceBus, MassTransit) covers
+brokerless topologies, so it informs rather than lies.
 
-- ⚖ (leaning) The Typermedia projects (`Compze.Typermedia`, `.Client`, `.Hosting`, `.Hosting.Testing`) fold
-  into `Compze.Tessaging` and its testing package; Typermedia lives on as namespaces and type names — the
-  navigators, `NavigationSpecification`, the face's message kinds.
-- `Compze.Internals.Transport` folds in too (option a) or stays a wire-level internal library (option b).
-  Folding is the honest default: after harmonization its "style leaks" are simply Tessaging's own four
-  message kinds, and the dig showed it already owns endpoint lifecycle, announcement, and discovery — more
-  Tessaging core than "transport". What argues for (b) is only size/layering taste.
-- `Compze.Hosting` shrinks toward its two real contents: the `InterprocessEndpointRegistry` (same-machine
-  discovery infrastructure) and the Host convenience (question 4). Where those ultimately live is decided
-  with the Host demotion, last.
-- The per-backend SQL projects (`Compze.Tessaging.Sqlite` etc.) already have the right shape and stay.
+**The homes — explicitly UNSETTLED (⚖ Magnus: "what this means for the exact set of remaining projects and
+their names is still unsettled").** What the settlement *does* fix is the tension to resolve: today's
+`Compze.Tessaging` project carries the TessageBus sibling under the paradigm's name, and the paradigm's
+core (endpoint types, router, peers, discovery, wire) needs a home that both siblings' machinery lives
+under or beside. The option space, laid out for that decision:
+
+- **(a) One project:** `Compze.Tessaging` = the paradigm — core plus both siblings' machinery in one
+  assembly (Typermedia's projects and `Compze.Internals.Transport` fold in; siblings live as namespaces:
+  `Compze.Tessaging.Typermedia`, `Compze.Tessaging.TessageBus`, or similar). Simplest dependency graph;
+  matches "both real consumers speak both siblings"; the assembly is not small.
+- **(b) Paradigm core + two sibling projects:** `Compze.Tessaging` (core: hierarchy, endpoint types, router,
+  peers, discovery, transports) with `Compze.TessageBus` (outbox/inbox/queues/streams/senders) and
+  `Compze.Typermedia` (navigators/executor) atop it. Truthful names per project; but the concrete endpoint
+  types wire both siblings unconditionally, so either the endpoint types move *up* into a composition
+  project referencing both siblings, or the core references the siblings — the layering needs care to avoid
+  re-creating a composition layer the collapse just deleted.
+- **(c) Minimal movement:** keep today's project set, rename in place (`Compze.Tessaging` →
+  `Compze.TessageBus`; a new home for the paradigm core grown out of `Compze.Internals.Transport`). Cheapest
+  mechanically; leaves the most seams.
+
+The per-backend SQL projects (`Compze.Tessaging.Sqlite` etc.) keep their shape in every option; whether
+they follow the paradigm's name or the TessageBus name depends on where the durable vertical lands (they
+hold inbox/outbox — TessageBus — but also the peer-registry layer, which is paradigm-level after
+harmonization; not clean either way, decide with the homes). `Compze.Hosting` shrinks toward its two real
+contents — the `InterprocessEndpointRegistry` and the Host convenience — whose ultimate home is decided
+with the Host demotion, last. This document deliberately makes no recommendation among (a)/(b)/(c); the
+next design conversation should settle it before migration step 2 begins.
 
 **Migration order — rehome concepts before restructuring, names and homes first, wiring second:**
 
-1. **Names + deletions + defect fixes (no design risk, ship immediately):** decide the asynchronous face's
-   name (it gates renames and prose everywhere); "in-process" → "local" in vocabulary and docs; delete the
-   husk directories and the vestigial `Compze.Core` references; fix the two Typermedia defects (bugs today,
+1. **Names + deletions + defect fixes (no design risk, ship immediately):** "in-process" → "local" in
+   vocabulary and docs; the ServiceBus-remnant renames into the TessageBus vocabulary; delete the husk
+   directories and the vestigial `Compze.Core` references; fix the two Typermedia defects (bugs today,
    independent of everything here); fix the stale hosting-model.md prose.
-2. **Build the concrete tier types on the harmonized model, deleting the lattice as they land:** one
-   advertisement + one discovery query; one router knowing the four kinds; peer memory, lifecycle
-   observation, and `Decommission` under it (decommission thereby covering typermedia routes is the
-   acceptance test that the harmonization is real); one handler registrar; the best-effort and exactly-once
-   endpoint types replacing the feature compositions; the local container registrar replacing the
-   `AddInProcess*` features. This goes **straight to concrete** — the first revision's pluggable-substrate
-   waypoint is withdrawn as scaffolding for a style boundary that no longer exists.
+2. **Settle the homes (the open decision above), then build the concrete tier types on the harmonized
+   paradigm, deleting the lattice as they land:** one advertisement + one discovery query; one router
+   knowing the four kinds; peer memory, lifecycle observation, and `Decommission` under it (decommission
+   thereby covering typermedia routes is the acceptance test that the harmonization is real); one handler
+   registrar; the best-effort and exactly-once endpoint types replacing the feature compositions; the local
+   container registrar replacing the `AddInProcess*` features. This goes **straight to concrete** — the
+   first revision's pluggable-substrate waypoint is withdrawn as scaffolding for a style boundary that no
+   longer exists.
 3. **Readiness + waiting sends, built once, into the concrete types** — the increments already sketched in
    [readiness-and-waiting-sends.md](readiness-and-waiting-sends.md), now with an unambiguous *where*.
 4. **The Host demotion (question 4a), last:** endpoint types first-class, host a convenience, barrier
@@ -487,8 +507,8 @@ both.
 
 ## Recommendation summary
 
-⚖ already decided: one harmonized Tessaging; Typermedia = the request/response face's name; no third style,
-ever; Typermedia's separate projects in doubt (leaning fold).
+⚖ already decided: Tessaging is the common paradigm; **Typermedia** and **TessageBus** are its two
+siblings; no third style, ever; the exact project set and names remain unsettled.
 
 Proposed, awaiting decision:
 
@@ -496,18 +516,17 @@ Proposed, awaiting decision:
    best-effort endpoint type, an exactly-once endpoint type, a pure-client composition. Unconditional wiring
    of all four message kinds within a tier; the tier is the only real conditionality, because durability
    follows the foundation.
-2. Name the asynchronous face (Typercast / Typerpost / Typergram candidates above).
-3. One advertisement, one router, one peer registry, one handler registrar — built concretely inside step 2,
-   no contribution seams.
-4. "In-process" dies; **local** is the word for same-endpoint scope, and local Tessaging is container
+2. One advertisement, one router, one peer registry, one handler registrar — built concretely inside
+   migration step 2, no contribution seams.
+3. "In-process" dies; **local** is the word for same-endpoint scope, and local Tessaging is container
    wiring, not hosting.
-5. Home everything in `Compze.Tessaging` (Typermedia projects fold in; `Internals.Transport` folds or stays
-   wire-internal); `Compze.DistributedEndpoints` proposal withdrawn.
-6. Demote the Host to a multi-endpoint convenience over first-class endpoint types — after
+4. Settle the project homes (options (a)/(b)/(c) in question 9) in a design conversation before migration
+   step 2.
+5. Demote the Host to a multi-endpoint convenience over first-class endpoint types — after
    readiness/waiting-sends land.
-7. Keep the testing host; its feature seam dies into concrete per-tier test wiring; distributed quiescence
+6. Keep the testing host; its feature seam dies into concrete per-tier test wiring; distributed quiescence
    eventually gives specs and operators an honest await.
-8. Fix the two Typermedia defects and delete the debris now, independent of every decision above.
+7. Fix the two Typermedia defects and delete the debris now, independent of every decision above.
 
 ## Relation to the other effort documents
 
@@ -516,5 +535,5 @@ Proposed, awaiting decision:
   steps (migration steps 1–2 above).
 - [durable-peer-topology.md](durable-peer-topology.md): complete and unchanged; its peer memory, lifecycle
   observation, and decommission machinery are the pieces migration step 2 moves under the one router and
-  generalizes across the faces.
+  generalizes across the siblings.
 - [tessaging-WIP.md](tessaging-WIP.md): the hub; links this document.
