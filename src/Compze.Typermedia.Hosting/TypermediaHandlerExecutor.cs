@@ -14,33 +14,24 @@ public class TypermediaHandlerExecutor(IScopeFactory scopeFactory, ITypermediaHa
    public object ExecuteTuery(ITessage tuery)
    {
       this.Log().Debug($"Executing tuery {tuery.GetType().Name}");
-      return _scopeFactory.ExecuteInIsolatedScope(scopeResolver =>
-      {
-         var handler = _handlerRegistry.GetTueryHandler(tuery.GetType());
-         return handler((ITuery<object>)tuery, scopeResolver);
-      });
+      var handler = _handlerRegistry.GetTueryHandler(tuery.GetType());
+      return _scopeFactory.ExecuteInIsolatedScope(scopeResolver => handler((ITuery<object>)tuery, scopeResolver));
    }
 
    public object ExecuteTommandWithResult(ITessage tommand)
    {
       this.Log().Debug($"Executing tommand with result {tommand.GetType().Name}");
-      return ExecuteWithRetry(() => _scopeFactory.ExecuteUnitOfWork(unitOfWork =>
-      {
-         var handler = _handlerRegistry.GetTommandHandlerWithReturnValue(tommand.GetType());
-         return handler((IAtMostOnceTypermediaTommand)tommand, unitOfWork);
-      }));
+      var handler = _handlerRegistry.GetTommandHandlerWithReturnValue(tommand.GetType()); //Resolved before the retry loop: no handler is a programming error, not a transient failure to retry.
+      return ExecuteWithRetry(() => _scopeFactory.ExecuteUnitOfWork(unitOfWork => handler((IAtMostOnceTypermediaTommand)tommand, unitOfWork)));
    }
 
    public void ExecuteVoidTommand(IAtMostOnceTypermediaTommand tommand)
    {
       this.Log().Debug($"Executing void tommand {tommand.GetType().Name}");
+      var handler = _handlerRegistry.GetVoidTommandHandler(tommand); //Resolved before the retry loop: no handler is a programming error, not a transient failure to retry.
       ExecuteWithRetry<object?>(() =>
       {
-         _scopeFactory.ExecuteUnitOfWork(unitOfWork =>
-         {
-            var handler = _handlerRegistry.GetVoidTommandHandler(tommand);
-            handler(tommand, unitOfWork);
-         });
+         _scopeFactory.ExecuteUnitOfWork(unitOfWork => handler(tommand, unitOfWork));
          return null;
       });
    }

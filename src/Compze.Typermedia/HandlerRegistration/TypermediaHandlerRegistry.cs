@@ -52,9 +52,15 @@ public sealed class TypermediaHandlerRegistry(ITypeMap typeMap) : ITypermediaHan
       throw new NoHandlerException(tommand.GetType());
    }
 
-   public Func<ITommand, IUnitOfWorkResolver, object> GetTommandHandlerWithReturnValue(Type tommandType) => _tommandHandlersReturningResults[tommandType].HandlerMethod;
+   public Func<ITommand, IUnitOfWorkResolver, object> GetTommandHandlerWithReturnValue(Type tommandType) =>
+      _tommandHandlersReturningResults.TryGetValue(tommandType, out var handler)
+         ? handler.HandlerMethod
+         : throw new NoHandlerException(tommandType);
 
-   public Func<ITuery<object>, IScopeResolver, object> GetTueryHandler(Type tueryType) => _tueryHandlers[tueryType].HandlerMethod;
+   public Func<ITuery<object>, IScopeResolver, object> GetTueryHandler(Type tueryType) =>
+      _tueryHandlers.TryGetValue(tueryType, out var handler)
+         ? handler.HandlerMethod
+         : throw new NoHandlerException(tueryType);
 
    public Func<IStrictlyLocalTuery<TTuery, TResult>, IScopeResolver, TResult> GetTueryHandler<TTuery, TResult>(IStrictlyLocalTuery<TTuery, TResult> tuery) where TTuery : IStrictlyLocalTuery<TTuery, TResult>
    {
