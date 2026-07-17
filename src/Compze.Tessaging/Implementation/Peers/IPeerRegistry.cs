@@ -39,8 +39,8 @@ public interface IPeerRegistry
    /// <paramref name="tommand"/>'s type — matched exactly, the way the router's tommand routes match. A tommand binds to its<br/>
    /// one specific receiver at send time, and when no handler is live this list is where the receiver comes from: exactly one<br/>
    /// entry is the known-but-down handler; none means nothing known serves the type; more than one is a handler replacement<br/>
-   /// whose retired peer was never decommissioned. The one handler this registry cannot answer for is the endpoint itself —<br/>
-   /// a peer is another endpoint — covered by the router's always-live self-connection.</summary>
+   /// whose retired peer was never decommissioned. The endpoint itself never asks: a peer is another endpoint, and an<br/>
+   /// in-roster tommand executes inline in the sender's execution — it never reaches the outbox's receiver binding at all.</summary>
    IReadOnlyList<EndpointId> HandlerIdsFor(IExactlyOnceTommand tommand);
 
    ///<summary>The registry's share of decommissioning <paramref name="peer"/> — the one way a peer leaves the endpoint's memory<br/>

@@ -19,7 +19,7 @@ sealed class DistributedTessagingEndpointComponent : IEndpointComponent, IAsyncD
 {
    readonly ITessagingRouter _tessagingRouter;
    readonly IPeerRegistry _peerRegistry;
-   //Null when the endpoint declares no discovery registry: it serves, converses in-process, and self-sends, but connects to no other endpoint.
+   //Null when the endpoint declares no discovery registry: it serves whatever reaches it, and its own roster serves its sends inline, but it connects to no other endpoint.
    readonly IEndpointRegistry? _endpointRegistry;
    readonly IBackgroundExceptionReporter _backgroundExceptionReporter;
    readonly EndpointTransportServerFeature _transportServer;
@@ -40,10 +40,10 @@ sealed class DistributedTessagingEndpointComponent : IEndpointComponent, IAsyncD
 
    public async Task StartSendingAsync()
    {
-      //The router converges on the registry's membership - plus the endpoint's own inbox always: an exactly-once tommand routes
-      //to whichever endpoint advertises its type, the sender itself included, so self-sent tommands ride the outbox -> own-inbox
-      //pipeline like any other - and keeps reconciling, so endpoints in other processes that appear, disappear, or restart at a
-      //new address are connected, dropped, or re-connected as the registry changes.
+      //The router converges on the registry's membership - minus the endpoint's own announced address, which the registry lists
+      //like any other: routes lead only to other endpoints, since the roster serves in-roster tommands inline and the endpoint's
+      //own tevent subscriptions by in-boundary participation - and keeps reconciling, so endpoints in other processes that
+      //appear, disappear, or restart at a new address are connected, dropped, or re-connected as the registry changes.
       //The endpoint's transport server started in the listening phase, which the host completes everywhere before any sending
       //starts, so its address exists here - and so does every durable storage a composed exactly-once pipeline initialized,
       //which is what lets the connections' exactly-once streams load their recovery backlogs when delivery starts below.

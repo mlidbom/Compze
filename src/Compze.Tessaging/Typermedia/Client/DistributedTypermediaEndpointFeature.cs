@@ -17,8 +17,8 @@ namespace Compze.Tessaging.Typermedia.Client;
 /// typermedia (<see cref="IRemoteTypermediaNavigator"/>). Created idempotently through
 /// <see cref="EndpointBuilderDistributedTypermediaExtensions.AddDistributedTypermedia(IEndpointBuilder)"/> /
 /// <see cref="IEndpointBuilder.GetOrAddFeature{TFeature}"/>: this is how distributed Typermedia plugs into a
-/// hosting mechanism that knows nothing of it, and the feature instance is the handle through which the
-/// endpoint's typermedia handlers are registered (<see cref="RegisterHandlers"/>).
+/// hosting mechanism that knows nothing of it, and the endpoint's typermedia handlers are declared through
+/// <see cref="RegisterTessageHandlers"/> — one registrar covering all four tessage kinds, into the endpoint's one engine.
 ///
 /// The distributed substrate — the one transport server, the one router, discovery, and peer memory — is the
 /// distributed Tessaging core's (<see cref="DistributedTessagingEndpointFeature"/>, which this feature

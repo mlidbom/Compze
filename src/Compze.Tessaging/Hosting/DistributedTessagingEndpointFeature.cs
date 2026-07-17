@@ -89,9 +89,9 @@ public class DistributedTessagingEndpointFeature
 
    ///<summary>Declares the registry through which this endpoint discovers the endpoints it converses with — the read side of discovery,<br/>
    /// whose write side is <see cref="AnnounceAddressTo"/>. The endpoint's router keeps reconciling its connections against the<br/>
-   /// registry's membership. Declaring none means the endpoint discovers nothing: it serves whatever reaches it, converses<br/>
-   /// in-process, and self-sends (its router maintains the connection to its own inbox, which needs no discovery) — but it<br/>
-   /// connects to no other endpoint.</summary>
+   /// registry's membership. Declaring none means the endpoint discovers nothing: it serves whatever reaches it, and its own<br/>
+   /// roster serves its sends inline (an in-roster tommand executes in the sender's execution, needing no discovery and no<br/>
+   /// wire) — but it connects to no other endpoint.</summary>
    public DistributedTessagingEndpointFeature DiscoverEndpointsThrough(IEndpointRegistry registry)
    {
       if(ReferenceEquals(_endpointRegistry, registry)) return this; //Idempotent: several features composing this core may each declare the endpoint's one registry.

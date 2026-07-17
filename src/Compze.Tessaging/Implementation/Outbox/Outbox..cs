@@ -103,9 +103,10 @@ partial class Outbox : IOutbox
       });
    }
 
-   ///<summary>The one endpoint this send binds to: the live handler when one is connected — current by definition, and the only<br/>
-   /// route that can name the endpoint itself, which the registry never lists — otherwise the sole remembered peer whose<br/>
-   /// advertisement handles the type. No remembered handler fails loud (<see cref="NoHandlerForTessageTypeException"/>); more<br/>
+   ///<summary>The one endpoint this send binds to: the live handler when one is connected — current by definition — otherwise<br/>
+   /// the sole remembered peer whose advertisement handles the type. Always another endpoint: an in-roster tommand never<br/>
+   /// reaches the outbox, because the sender door executes it inline (the consistency law). No remembered handler fails loud<br/>
+   /// (<see cref="NoHandlerForTessageTypeException"/>); more<br/>
    /// than one — a handler replacement whose retired peer was never decommissioned, with none of them up — fails loud too<br/>
    /// (<see cref="MultipleHandlersForTessageTypeException"/>), because binding to the wrong one would strand the tommand.</summary>
    EndpointId ResolveReceiver(IExactlyOnceTommand exactlyOnceTommand)

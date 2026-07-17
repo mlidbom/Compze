@@ -54,7 +54,7 @@ class TessagingRouter : ITessagingRouter, IDisposable
    readonly CancellationTokenSource _reconcileLoopCancellation = new();
    Task? _reconcileLoop;
    IEndpointRegistry? _endpointRegistry;
-   EndpointAddress? _ownInboxAddress;
+   EndpointAddress? _ownAddress;
 
    bool _deliveryStarted;
    bool _stopped;
@@ -83,12 +83,12 @@ class TessagingRouter : ITessagingRouter, IDisposable
       _exceptionReporter = exceptionReporter;
    }
 
-   public async Task StartMaintainingConnectionsAsync(IEndpointRegistry? endpointRegistry, EndpointAddress ownInboxAddress)
+   public async Task StartMaintainingConnectionsAsync(IEndpointRegistry? endpointRegistry, EndpointAddress ownAddress)
    {
       _endpointRegistry = endpointRegistry;
-      _ownInboxAddress = ownInboxAddress;
+      _ownAddress = ownAddress;
       await ReconcileConnectionsAsync().caf();
-      //With no registry declared the membership is the self-connection alone and never changes, so there is nothing to keep reconciling.
+      //With no registry declared there is no membership to converge on - the endpoint connects to no other endpoint - so there is nothing to keep reconciling.
       if(endpointRegistry is not null)
          _reconcileLoop = Task.Factory.StartNew(ReconcileLoop, CancellationToken.None, TaskCreationOptions.LongRunning, TaskScheduler.Default);
    }
@@ -115,14 +115,14 @@ class TessagingRouter : ITessagingRouter, IDisposable
       }
    }
 
-   ///<summary>One reconciliation pass: connections converge on the registry's current membership, plus our own inbox always — an<br/>
-   /// exactly-once tommand routes to whichever endpoint advertises its type, the sender itself included, so a tommand an endpoint<br/>
-   /// sends that its own handlers serve rides the outbox → own-inbox pipeline with the same delivery semantics as any other<br/>
-   /// tommand. Our own address needs no discovery, so the self-connection exists even when no registry is declared.</summary>
+   ///<summary>One reconciliation pass: connections converge on the registry's current membership — minus our own announced<br/>
+   /// address, which the registry lists like any other. Routes lead only to <em>other</em> endpoints: nothing self-addressed ever<br/>
+   /// crosses the wire, because the roster serves in-roster tommands inline and the endpoint's own tevent subscriptions by<br/>
+   /// in-boundary participation (the consistency law), so the router maintains no connection to self.</summary>
    async Task ReconcileConnectionsAsync()
    {
       var desiredAddresses = (_endpointRegistry?.ServerEndpointAddresses ?? []).ToHashSet();
-      desiredAddresses.Add(_ownInboxAddress!);
+      desiredAddresses.Remove(_ownAddress!);
 
       List<EndpointAddress> addressesToConnect = [];
       List<TessagingConnection> connectionsToDrop = [];
@@ -170,19 +170,21 @@ class TessagingRouter : ITessagingRouter, IDisposable
       await connection.InitAsync().caf();
 
       //Peer memory is recorded on every advertisement fetch: first contact creates the peer, a re-fetch replaces its stored
-      //advertisement (see dev_docs/TODO/WIP/Tessaging/durable-peer-topology.md). The endpoint itself is not a peer - a peer is another endpoint.
-      if(connection.EndpointInformation.Id != _configuration.Id)
+      //advertisement (see dev_docs/TODO/WIP/Tessaging/durable-peer-topology.md).
+      try
       {
-         try
-         {
-            _peerRegistry.RecordAdvertisement(connection.EndpointInformation);
-         }
-         catch
-         {
-            //The reconciliation pass retries the whole connect: an unrecorded advertisement must not leave a live connection behind, or no later pass would ever record it.
-            connection.Dispose();
-            throw;
-         }
+         //A peer is another endpoint, and our own address never enters a reconciliation pass - so an answer claiming our
+         //identity means another process is running under this endpoint's EndpointId: a misconfiguration that must fail loud,
+         //never be remembered as a peer.
+         State.Assert(connection.EndpointInformation.Id != _configuration.Id,
+                      () => $"The endpoint at {remoteEndpointAddress.Uri} answered discovery with this endpoint's own identity ({_configuration.Id}): another process is running under this endpoint's EndpointId, and an endpoint runs in exactly one process at a time.");
+         _peerRegistry.RecordAdvertisement(connection.EndpointInformation);
+      }
+      catch
+      {
+         //The reconciliation pass retries the whole connect: an unrecorded advertisement must not leave a live connection behind, or no later pass would ever record it.
+         connection.Dispose();
+         throw;
       }
 
       _monitor.Locked(() =>

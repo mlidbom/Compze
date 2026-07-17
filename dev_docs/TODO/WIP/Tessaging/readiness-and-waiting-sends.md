@@ -129,8 +129,9 @@ decommissioned peer's types count as never-seen again.
    binding to the live one is correct by the existing preference order, so waiting legitimately resolves
    the ambiguity; only exhausted patience throws it, still naming the peers and the decommission remedy.
 6. ⚖ **Scope exclusion is structural, not a rule:** `ILocalTypermediaNavigatorSession` is a different type
-   that never crosses the wire, so in-process navigation cannot race discovery by construction; the only
-   remote "self" case rides the always-live self-connection and trivially never waits.
+   that never crosses the wire, so in-process navigation cannot race discovery by construction; and a
+   "self" send does not exist remotely at all — an in-roster tommand executes inline in the sender's
+   execution (the consistency law), so it has nothing to wait for by construction.
 
 ## The gating open question: the style substrate
 

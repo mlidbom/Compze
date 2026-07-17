@@ -261,11 +261,11 @@ Three things to know:
   and for persistent-store serialization. The compositions supply a default type mapper when none is
   registered; an application whose tevent store needs domain mappings registers its own first.
 - **Wanting guaranteed tommand delivery does not make an endpoint "in-process".** A Tessaging tommand's type
-  *is* its delivery contract — exactly-once, transactional, asynchronous — and stripping that synchronously
-  would lie about the type. The synchronous local ask already has a truthful home: Typermedia's strictly
-  local tommand. An application that wants the guarantees within a single process is a distributed endpoint
-  that happens to be alone in its host; Compze already routes self-sent tommands through the outbox for
-  exactly this reason.
+  declares its cross-boundary delivery contract — exactly-once, transactional, asynchronous. Within the
+  boundary the consistency law applies instead: a tommand whose handler is in the endpoint's own roster
+  executes inline, in the sender's execution — exactly-once by construction, one transaction, no delivery
+  machinery involved. An application that wants the guarantees within a single process is a distributed
+  endpoint that happens to be alone in its host.
 
 The same cores are also available to hosted endpoints as the `AddInProcessTessaging()` /
 `AddInProcessTypermedia()` features — for an endpoint that, say, speaks exactly-once Tessaging to the world
@@ -280,9 +280,9 @@ registers its own provider wins; `AppSettingsJsonConfigurationParameterProvider`
 is only the default. How endpoints find each other is a declaration on each transport-speaking feature:
 `AddDistributedTessaging().DiscoverEndpointsThrough(registry)`, which `AddExactlyOnceTessaging()` delegates to,
 and `AddDistributedTypermedia().DiscoverEndpointsThrough(registry)`. Declaring no registry means the endpoint
-discovers nothing and only serves that style — with one Tessaging-specific nuance: its router still maintains
-the connection to its own inbox (an address that needs no discovery), so an exactly-once tommand the endpoint
-sends that its own handlers serve still routes normally. For processes on one
+discovers nothing and only serves that style: it connects to no other endpoint, and a tommand it sends that
+its own roster serves executes inline, in the sender's execution — nothing self-addressed ever crosses the
+wire, so no discovery is needed for an endpoint's conversation with itself. For processes on one
 machine the registry is the `InterprocessEndpointRegistry`, which is also the announcer, so an endpoint
 declares both sides at once with `ParticipateIn(registry)` — endpoints announce their freshly generated
 addresses and discover each other with zero configuration; the whole story lives in

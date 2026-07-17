@@ -76,6 +76,11 @@ public class TessageHandlerRoster
    public Func<ITuery, IScopeResolver, Task<object>> GetTueryHandler(Type tueryType) =>
       _tueryHandlers.TryGetValue(tueryType, out var handler) ? handler : throw new NoHandlerException(tueryType);
 
+   ///<summary>Whether this roster holds a handler for the tommand type <paramref name="tommandType"/> — the question the<br/>
+   /// tommand-sender door asks to honor the consistency law: an in-roster tommand executes inline, in the sender's execution,<br/>
+   /// and only a tommand whose handler lives elsewhere crosses the endpoint boundary through delivery machinery.</summary>
+   internal bool HandlesTommand(Type tommandType) => _voidTommandHandlers.ContainsKey(tommandType) || _tommandHandlersWithResults.ContainsKey(tommandType);
+
    ///<summary>The engine's advertisement: the <see cref="TypeId"/> of every remotable, non-infrastructure tessage type this roster<br/>
    /// serves, of every kind, in the form remote routing matches against — tevent subscriptions as their translated wrapper types,<br/>
    /// tommands and tueries as they stand. Computed once; asserts that every advertised type has a type-id mapping.</summary>
