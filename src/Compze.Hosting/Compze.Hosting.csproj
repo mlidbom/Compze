@@ -45,19 +45,19 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_SystemCE)' != 'true'">
     <ProjectReference Include="..\Compze.Internals.SystemCE\Compze.Internals.SystemCE.csproj" />
   </ItemGroup>
-  <!-- Compze.Tessaging — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging)' == 'true'">
-    <PackageReference Include="Compze.Tessaging" Version="*-*" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging)' != 'true'">
-    <ProjectReference Include="..\Compze.Tessaging\Compze.Tessaging.csproj" />
-  </ItemGroup>
   <!-- Compze.InterprocessObject — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_InterprocessObject)' == 'true'">
     <PackageReference Include="Compze.InterprocessObject" Version="*-*" />
   </ItemGroup>
   <ItemGroup Condition="'$(UsePackageReference_Compze_InterprocessObject)' != 'true'">
     <ProjectReference Include="..\Compze.InterprocessObject\Compze.InterprocessObject.csproj" />
+  </ItemGroup>
+  <!-- Compze.Tessaging — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging)' == 'true'">
+    <PackageReference Include="Compze.Tessaging" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging)' != 'true'">
+    <ProjectReference Include="..\Compze.Tessaging\Compze.Tessaging.csproj" />
   </ItemGroup>
   <!-- Compze.Threading — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Threading)' == 'true'">

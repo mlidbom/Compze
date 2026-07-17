@@ -16,6 +16,13 @@
     <Compile Remove="_docs\**\*.cs" />
     <None Include="_docs\**\*.cs" />
   </ItemGroup>
+  <!-- Compze.Abstractions — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Abstractions)' == 'true'">
+    <PackageReference Include="Compze.Abstractions" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Abstractions)' != 'true'">
+    <ProjectReference Include="..\Compze.Abstractions\Compze.Abstractions.csproj" />
+  </ItemGroup>
   <!-- Compze.Contracts — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Contracts)' == 'true'">
     <PackageReference Include="Compze.Contracts" Version="*-*" />
@@ -72,13 +79,6 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_Threading)' != 'true'">
     <ProjectReference Include="..\Compze.Threading\Compze.Threading.csproj" />
   </ItemGroup>
-  <!-- Compze.Underscore — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Underscore)' == 'true'">
-    <PackageReference Include="Compze.Underscore" Version="*-*" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Underscore)' != 'true'">
-    <ProjectReference Include="..\Compze.Underscore\Compze.Underscore.csproj" />
-  </ItemGroup>
   <!-- Compze.TypeIdentifiers — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_TypeIdentifiers)' == 'true'">
     <PackageReference Include="Compze.TypeIdentifiers" Version="*-*" />
@@ -86,18 +86,18 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_TypeIdentifiers)' != 'true'">
     <ProjectReference Include="..\Compze.TypeIdentifiers\Compze.TypeIdentifiers.csproj" />
   </ItemGroup>
+  <!-- Compze.Underscore — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Underscore)' == 'true'">
+    <PackageReference Include="Compze.Underscore" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Underscore)' != 'true'">
+    <ProjectReference Include="..\Compze.Underscore\Compze.Underscore.csproj" />
+  </ItemGroup>
   <!-- Compze.Unit — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Unit)' == 'true'">
     <PackageReference Include="Compze.Unit" Version="*-*" />
   </ItemGroup>
   <ItemGroup Condition="'$(UsePackageReference_Compze_Unit)' != 'true'">
     <ProjectReference Include="..\Compze.Unit\Compze.Unit.csproj" />
-  </ItemGroup>
-  <!-- Compze.Abstractions — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Abstractions)' == 'true'">
-    <PackageReference Include="Compze.Abstractions" Version="*-*" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Abstractions)' != 'true'">
-    <ProjectReference Include="..\Compze.Abstractions\Compze.Abstractions.csproj" />
   </ItemGroup>
 </Project>

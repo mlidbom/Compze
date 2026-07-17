@@ -25,4 +25,17 @@ public static class NamedPipeEndpointTransportRegistrar
          return new EndpointFoundation(@this.Builder);
       }
    }
+
+}
+
+//Its own class only because the two extension blocks' generated names would otherwise collide (CA1708); folds into
+//NamedPipeEndpointTransportRegistrar when the EndpointComposer surface dies with the feature machinery.
+public static class NamedPipeEndpointTransportDeclaration
+{
+   extension(Endpoints.EndpointBuilder @this)
+   {
+      ///<summary>Declares the endpoint's transport protocol: named pipes — the same-machine protocol, with no web stack.<br/>
+      /// See <see cref="NamedPipeEndpointTransportRegistrar.NamedPipeEndpointTransport(IComponentRegistrar)"/>, to which this delegates.</summary>
+      public void NamedPipeEndpointTransport() => @this.TransportProtocol(registrar => registrar.NamedPipeEndpointTransport());
+   }
 }

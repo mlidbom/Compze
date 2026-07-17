@@ -1,0 +1,54 @@
+using Compze.Abstractions.Hosting.Public;
+using Compze.DependencyInjection;
+using Compze.DependencyInjection.Abstractions;
+using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
+using Compze.Tessaging.Implementation.Abstractions;
+using Compze.Tessaging.Implementation.TessageHandling.Abstractions;
+
+namespace Compze.Tessaging.Endpoints;
+
+///<summary>
+/// The exactly-once endpoint: the <see cref="Endpoint"/> whose TessageBus rung is exactly-once. Everything the best-effort
+/// endpoint has, plus the durable vertical in its database: the inbox (receiver dedup, transactional retry), the outbox
+/// (durable rows, recovery backlog, per-peer exactly-once in-order delivery streams), durable peer memory, and the
+/// tommand-sending doors (<see cref="Compze.Abstractions.Tessaging.Public.IUnitOfWorkTommandSender"/> /
+/// <see cref="Compze.Abstractions.Tessaging.Public.IIndependentTommandSender"/>). Serves all four tessage kinds
+/// unconditionally.
+///
+/// Composed through <see cref="Compose"/>. Which machinery carries a given tessage is decided by the tessage's type and the
+/// consistency law: a send whose handler is in the roster executes inline, in the sender's execution — exactly-once by
+/// construction, no delivery machinery involved — and a send whose handler lives elsewhere crosses the boundary through the
+/// durable vertical.
+///</summary>
+public class ExactlyOnceEndpoint : Endpoint
+{
+   readonly IInbox _inbox;
+   readonly IOutbox _outbox;
+
+   ///<summary>Composes an exactly-once endpoint: runs <paramref name="compose"/> over the endpoint's declaration surface<br/>
+   /// (<see cref="ExactlyOnceEndpointBuilder"/>), builds the endpoint's container, and returns the endpoint, ready for its<br/>
+   /// lifecycle to be driven — directly, or by the <see cref="IEndpointHost"/> that owns it<br/>
+   /// (<see cref="IEndpointHost.RegisterEndpoint{TEndpoint}"/>).</summary>
+   public static ExactlyOnceEndpoint Compose(IContainerBuilder containerBuilder, string name, EndpointId id, Action<ExactlyOnceEndpointBuilder> compose)
+   {
+      var builder = new ExactlyOnceEndpointBuilder(containerBuilder, new EndpointConfiguration(name, id));
+      compose(builder);
+      return builder.Build();
+   }
+
+   internal ExactlyOnceEndpoint(IDependencyInjectionContainer container,
+                                EndpointConfiguration configuration,
+                                IReadOnlyList<IEndpointAddressAnnouncer> addressAnnouncers,
+                                IEndpointRegistry? endpointRegistry)
+      : base(container, configuration, addressAnnouncers, endpointRegistry)
+   {
+      _inbox = ServiceLocator.Resolve<IInbox>();
+      _outbox = ServiceLocator.Resolve<IOutbox>();
+   }
+
+   ///<summary>The inbox listens and the outbox's durable storage initializes in the listening phase — before any endpoint in<br/>
+   /// the host starts sending, so the sending phase's connection delivery streams can load their recovery backlogs from it.</summary>
+   private protected override async Task StartTheDurableVerticalAsync() => await Task.WhenAll(_inbox.StartAsync(), _outbox.StartAsync()).caf();
+
+   private protected override async Task StopTheDurableVerticalAsync() => await _outbox.StopAsync().caf();
+}

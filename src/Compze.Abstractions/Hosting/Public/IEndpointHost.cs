@@ -1,3 +1,4 @@
+using Compze.DependencyInjection.Abstractions;
 
 namespace Compze.Abstractions.Hosting.Public;
 
@@ -16,6 +17,12 @@ public interface IEndpointHost : IAsyncDisposable
 {
     ///<summary>Declares an endpoint. The <paramref name="setup"/> callback receives the endpoint's <see cref="IEndpointBuilder"/>: add capabilities (such as <c>AddExactlyOnceTessaging()</c> / <c>AddDistributedTypermedia()</c>), register handlers, and register the endpoint's own components.</summary>
     IEndpoint RegisterEndpoint(string name, EndpointId id, Action<IEndpointBuilder> setup);
+
+    ///<summary>Registers a composed endpoint with the host, which owns it from here: the host drives its lifecycle phases<br/>
+    /// host-wide and disposes it. The callback receives a fresh container builder from the host's container factory and<br/>
+    /// returns the endpoint composed on it — e.g. <c>host.RegisterEndpoint(container => ExactlyOnceEndpoint.Compose(container, ...))</c>.<br/>
+    /// The host never knows the endpoint's tier: what the endpoint is, is decided entirely by its composition.</summary>
+    TEndpoint RegisterEndpoint<TEndpoint>(Func<IContainerBuilder, TEndpoint> composeEndpoint) where TEndpoint : IEndpoint;
 
     ///<summary>The endpoints registered with this host so far, in registration order.</summary>
     IReadOnlyList<IEndpoint> Endpoints { get; }

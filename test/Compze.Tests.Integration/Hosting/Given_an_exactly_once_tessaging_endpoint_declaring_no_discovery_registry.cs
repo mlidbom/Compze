@@ -9,8 +9,8 @@ using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Internals.Testing;
 using Compze.Must;
 
+using Compze.Tessaging.Endpoints;
 using Compze.Tessaging.Engine;
-using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
@@ -25,22 +25,21 @@ using static Compze.Must.MustActions;
 namespace Compze.Tests.Integration.Hosting;
 
 ///<summary>
-/// An endpoint composing the full exactly-once Tessaging pipeline that — deliberately — declares no discovery
-/// registry: it discovers nothing and connects to no other endpoint, but it starts, serves, and converses with
-/// itself. A tommand the endpoint sends that its own roster serves executes inline, through the engine's one
-/// executor, in the sender's execution — the consistency law: in-boundary is immediate and transactional, so
-/// the handling is exactly-once by construction (one transaction, no delivery machinery involved) and its
-/// failure fails the sender's execution. The process-manager pattern — handling one tessage sends a follow-up
-/// tommand belonging to the same endpoint — is in-boundary composition, needing no discovery and no wire. The
-/// host is the production host — nothing is pre-registered, so the composition stands entirely on what it
-/// declares.
+/// An exactly-once endpoint that — deliberately — declares no discovery registry: it discovers nothing and connects to no
+/// other endpoint, but it starts, serves, and converses with itself. A tommand the endpoint sends that its own roster serves
+/// executes inline, through the engine's one executor, in the sender's execution — the consistency law: in-boundary is
+/// immediate and transactional, so the handling is exactly-once by construction (one transaction, no delivery machinery
+/// involved) and its failure fails the sender's execution. The process-manager pattern — handling one tessage sends a
+/// follow-up tommand belonging to the same endpoint — is in-boundary composition, needing no discovery and no wire. The host
+/// is the production host and the endpoint is composed explicitly (<see cref="ExactlyOnceEndpoint.Compose"/>), so the
+/// composition stands entirely on what it declares.
 ///</summary>
 public class Given_an_exactly_once_tessaging_endpoint_declaring_no_discovery_registry : UniversalTestBase
 {
    static readonly WaitTimeout HandlerTimeout = WaitTimeout.Seconds(30);
 
    readonly IEndpointHost _host;
-   readonly IEndpoint _endpoint;
+   readonly ExactlyOnceEndpoint _endpoint;
    readonly IThreadGate _inRosterTommandHandlerGate = IThreadGate.NewOpen(HandlerTimeout, "inRosterTommandHandler");
 
    public Given_an_exactly_once_tessaging_endpoint_declaring_no_discovery_registry()
@@ -48,23 +47,23 @@ public class Given_an_exactly_once_tessaging_endpoint_declaring_no_discovery_reg
       _host = EndpointHost.Production.Create(() => TestEnv.DIContainer.CreateTestingContainerBuilder()
                                                           ._mutate(it => it.Registrar.CurrentTestsDbPoolIfNotCloneContainer()));
 
-      _endpoint = _host.RegisterEndpoint(
+      _endpoint = _host.RegisterEndpoint(container => ExactlyOnceEndpoint.Compose(
+         container,
          "EndpointDeclaringNoDiscoveryRegistry",
          new EndpointId(Guid.Parse("5b7e2f4a-9c81-4c56-8a3d-e1f60b924d7c")),
-         builder =>
+         endpoint =>
          {
-            builder.TypeMapper.RegisterIntegrationTestTypeMappings();
-            builder.Registrar.CurrentTestsEndpointTransport()
-                   .CurrentTestsConfiguredSqlLayer(connectionStringName: builder.Configuration.Id.ToString());
-            builder.AddExactlyOnceTessaging()
-                   .RegisterTessageHandlers(handle => handle
+            endpoint.MapTypes(mapper => mapper.RegisterIntegrationTestTypeMappings());
+            endpoint.TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport());
+            endpoint.Database(registrar => registrar.CurrentTestsConfiguredSqlLayer(connectionStringName: endpoint.Configuration.Id.ToString()));
+            endpoint.RegisterTessageHandlers(handle => handle
                        .ForTommand((TommandTheEndpointSendsItself _) =>
                         {
                            _inRosterTommandHandlerGate.AwaitPassThrough();
                            return Task.CompletedTask;
                         })
                        .ForTommand((TommandWhoseHandlerFails _, IUnitOfWorkResolver _) => Task.FromException(new InRosterTommandHandlerFailure())));
-         });
+         }));
    }
 
    protected override async Task InitializeAsyncInternal() => await _host.StartAsync().caf();

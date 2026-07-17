@@ -105,19 +105,19 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Testing)' != 'true'">
     <ProjectReference Include="..\Compze.Internals.Testing\Compze.Internals.Testing.csproj" />
   </ItemGroup>
-  <!-- Compze.Tessaging.AspNetCore — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging_AspNetCore)' == 'true'">
-    <PackageReference Include="Compze.Tessaging.AspNetCore" Version="*-*" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging_AspNetCore)' != 'true'">
-    <ProjectReference Include="..\Compze.Tessaging.AspNetCore\Compze.Tessaging.AspNetCore.csproj" />
-  </ItemGroup>
   <!-- Compze.Tessaging — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging)' == 'true'">
     <PackageReference Include="Compze.Tessaging" Version="*-*" />
   </ItemGroup>
   <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging)' != 'true'">
     <ProjectReference Include="..\Compze.Tessaging\Compze.Tessaging.csproj" />
+  </ItemGroup>
+  <!-- Compze.Tessaging.AspNetCore — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging_AspNetCore)' == 'true'">
+    <PackageReference Include="Compze.Tessaging.AspNetCore" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging_AspNetCore)' != 'true'">
+    <ProjectReference Include="..\Compze.Tessaging.AspNetCore\Compze.Tessaging.AspNetCore.csproj" />
   </ItemGroup>
   <!-- Compze.Tessaging.MicrosoftSql — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging_MicrosoftSql)' == 'true'">

@@ -28,11 +28,10 @@
       <Value>UsePackageReference_Compze_Internals_Logging_Serilog = true</Value>
       <Value>UsePackageReference_Compze_Internals_SystemCE = true</Value>
       <Value>UsePackageReference_Compze_Internals_Testing = true</Value>
-      <Value>UsePackageReference_Compze_Internals_Transport = true</Value>
-      <Value>UsePackageReference_Compze_Internals_Transport_AspNet = true</Value>
       <Value>UsePackageReference_Compze_InterprocessObject = true</Value>
       <Value>UsePackageReference_Compze_InterprocessObject_MemoryPack = true</Value>
       <Value>UsePackageReference_Compze_Must = true</Value>
+      <Value>UsePackageReference_Compze_Tessaging_AspNetCore = true</Value>
       <Value>UsePackageReference_Compze_Tessaging_MicrosoftSql = true</Value>
       <Value>UsePackageReference_Compze_Tessaging_MySql = true</Value>
       <Value>UsePackageReference_Compze_Tessaging_PostgreSql = true</Value>
@@ -51,10 +50,6 @@
       <Value>UsePackageReference_Compze_TypeIdentifiers_Interning_MySql = true</Value>
       <Value>UsePackageReference_Compze_TypeIdentifiers_Interning_PostgreSql = true</Value>
       <Value>UsePackageReference_Compze_TypeIdentifiers_Interning_Sqlite = true</Value>
-      <Value>UsePackageReference_Compze_Typermedia = true</Value>
-      <Value>UsePackageReference_Compze_Typermedia_Client = true</Value>
-      <Value>UsePackageReference_Compze_Typermedia_Hosting = true</Value>
-      <Value>UsePackageReference_Compze_Typermedia_Hosting_Testing = true</Value>
       <Value>UsePackageReference_Compze_Underscore = true</Value>
       <Value>UsePackageReference_Compze_Unit = true</Value>
       <Value>UsePackageReference_Compze_xUnit = true</Value>

@@ -26,4 +26,17 @@ public static class AspNetCoreEndpointTransportRegistrar
          return new EndpointFoundation(@this.Builder);
       }
    }
+
+}
+
+//Its own class only because the two extension blocks' generated names would otherwise collide (CA1708); folds into
+//AspNetCoreEndpointTransportRegistrar when the EndpointComposer surface dies with the feature machinery.
+public static class AspNetCoreEndpointTransportDeclaration
+{
+   extension(Compze.Tessaging.Endpoints.EndpointBuilder @this)
+   {
+      ///<summary>Declares the endpoint's transport protocol: HTTP served by ASP.NET Core — the network protocol. See<br/>
+      /// <see cref="AspNetCoreEndpointTransportRegistrar.AspNetCoreEndpointTransport(IComponentRegistrar)"/>, to which this delegates.</summary>
+      public void AspNetCoreEndpointTransport() => @this.TransportProtocol(registrar => registrar.AspNetCoreEndpointTransport());
+   }
 }

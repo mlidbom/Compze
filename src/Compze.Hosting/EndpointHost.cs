@@ -43,6 +43,13 @@ public class EndpointHost : IEndpointHost
       return endpoint;
    }
 
+   public TEndpoint RegisterEndpoint<TEndpoint>(Func<IContainerBuilder, TEndpoint> composeEndpoint) where TEndpoint : IEndpoint
+   {
+      var endpoint = composeEndpoint(_containerFactory());
+      _endpoints.Add(endpoint);
+      return endpoint;
+   }
+
    bool _isStarted;
 
    public async Task StartAsync()
