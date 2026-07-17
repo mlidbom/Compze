@@ -13,6 +13,9 @@
   — the style-substrate + hosting evaluation (revised 2026-07-17): ⚖ Tessaging is the common paradigm,
   Typermedia and TessageBus its two siblings; the feature machinery on trial — proposed collapse into
   concrete endpoint types; the exact set of remaining projects and their names is still unsettled.
+- [dev_docs/TODO/WIP/Tessaging/tessaging-target-design.md](../../../../dev_docs/TODO/WIP/Tessaging/tessaging-target-design.md)
+  — the imagined target design, described straight up (no narration of change): the LocalTessagingEngine
+  (working name), its builder/roster/executor/doors, the two endpoint types, administration, topology.
 - [src/Compze.Tessaging/dev_docs/tevent-delivery-model.md](../../../../src/Compze.Tessaging/dev_docs/tevent-delivery-model.md)
 - [src/Compze.Hosting/dev_docs/hosting-model.md](../../../../src/Compze.Hosting/dev_docs/hosting-model.md)
 - [src/Compze.Hosting/dev_docs/wip/same-machine-hosting.md](../../../../src/Compze.Hosting/dev_docs/wip/same-machine-hosting.md)
