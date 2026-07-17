@@ -2,9 +2,9 @@
 
 This document takes a developer who is new to Compze from zero to understanding how multiple processes on one
 machine form one application — how their endpoints find each other with zero configuration and converse with
-no web stack and no database server. It is the companion to [the hosting model](hosting-model.md), which
+no web stack and no database server. It is the companion to [the hosting model](../hosting-model.md), which
 explains what an endpoint and a host *are*, and to
-[the tevent delivery model](../../Compze.Tessaging/dev_docs/tevent-delivery-model.md), which explains the
+[the tevent delivery model](../../../Compze.Tessaging/dev_docs/tevent-delivery-model.md), which explains the
 guarantees that hold once the conversation flows. This document explains how the conversation reaches across
 process boundaries on one machine.
 
@@ -150,7 +150,7 @@ own tevent subscriptions by in-boundary participation:
 - **An endpoint returns at a new address** — addresses are per-instance; identity is the `EndpointId` — → the
   old connection is replaced by the new one. On the Tessaging side the endpoint's undelivered backlog loads
   into the new connection in send order (see the ordering guarantee in
-  [the tevent delivery model](../../Compze.Tessaging/dev_docs/tevent-delivery-model.md#ordering)) — the backlog
+  [the tevent delivery model](../../../Compze.Tessaging/dev_docs/tevent-delivery-model.md#ordering)) — the backlog
   follows the endpoint; on the Typermedia side the routes simply point at the new address.
 - **A listed address does not answer** → topology churn, not a bug: the process may still be starting, or may
   have crashed a moment before the liveness filter would prune it. The failure is logged and the address
@@ -243,7 +243,7 @@ As of 2026-07-15, everything this document describes is built and verified:
 - The no-SQL same-machine suite (2026-07-15): the endpoint host process hosting a best-effort endpoint, and
   a best-effort tevent conversation
   crossing real process boundaries in both directions with no database anywhere in either process — see
-  [the tevent delivery model](../../Compze.Tessaging/dev_docs/tevent-delivery-model.md).
+  [the tevent delivery model](../../../Compze.Tessaging/dev_docs/tevent-delivery-model.md).
 - Typermedia over the same dynamic topology (2026-07-15): an endpoint that declares the registry it
   discovers through (`DiscoverEndpointsThrough`/`ParticipateIn`) routes typermedia tessages through its one
   reconciling router, and navigates other endpoints'
