@@ -379,8 +379,6 @@ observed. The tracker is a testing device; the production-honest await is quiesc
 
 ## Deliberately unsettled
 
-- **The project/package layout** — the set of remaining projects and their names (options in the
-  evaluation document, question 9).
 - **The exact table-prefix convention** for the per-endpoint table-sets — an implementation-time decision
   inside the settled storage model.
 

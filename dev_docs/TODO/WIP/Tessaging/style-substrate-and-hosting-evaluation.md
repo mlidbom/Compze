@@ -23,9 +23,11 @@ Decided so far (⚖ Magnus, 2026-07-17):
   typed links; or tell the world and trust it arrives.
 - ⚖ **"Ship another communication style" is not on the roadmap** and has no imaginable meaning — the
   open-ended capability seam has no prospective consumer, ever.
-- **Unsettled: the exact set of remaining projects and their names** (question 9 presents the options).
-  Today's `Compze.Tessaging` project carries the TessageBus sibling under the paradigm's name — untangling
-  that is part of the same decision.
+- ⚖ **The project homes are settled (2026-07-17): question 9's option (a) — one paradigm project — with
+  the transport-weight exception.** `Compze.Tessaging` is the paradigm project (both siblings' machinery as
+  namespaces within it; the named-pipe transport folds in); the ASP.NET Core transport stays its own
+  project; the four SQL backend projects keep their shape. Recorded in
+  [tessaging-migration-plan.md](tessaging-migration-plan.md).
 
 Everything here is grounded in a code dig (file anchors throughout) plus a usage inventory of the two real
 consumers: Deskmancer and the AccountManagement sample.
@@ -450,8 +452,9 @@ One naming caveat noticed and accepted: "bus" can suggest a broker in the middle
 is brokerless peer-to-peer — but the term's actual industry usage (NServiceBus, MassTransit) covers
 brokerless topologies, so it informs rather than lies.
 
-**The homes — explicitly UNSETTLED (⚖ Magnus: "what this means for the exact set of remaining projects and
-their names is still unsettled").** What the settlement *does* fix is the tension to resolve: today's
+**The homes — ⚖ settled 2026-07-17: option (a) with the transport-weight exception (see the decisions
+block at the top; the option space below is kept as the decision's record).** The tension the naming
+settlement fixed: today's
 `Compze.Tessaging` project carries the TessageBus sibling under the paradigm's name, and the paradigm's
 core (endpoint types, router, peers, discovery, wire) needs a home that both siblings' machinery lives
 under or beside. The option space, laid out for that decision:
@@ -475,8 +478,7 @@ they follow the paradigm's name or the TessageBus name depends on where the dura
 hold inbox/outbox — TessageBus — but also the peer-registry layer, which is paradigm-level after
 harmonization; not clean either way, decide with the homes). `Compze.Hosting` shrinks toward its two real
 contents — the `InterprocessEndpointRegistry` and the Host convenience — whose ultimate home is decided
-with the Host demotion, last. This document deliberately makes no recommendation among (a)/(b)/(c); the
-next design conversation should settle it before migration step 2 begins.
+with the Host demotion, last.
 
 **Migration order — rehome concepts before restructuring, names and homes first, wiring second:**
 

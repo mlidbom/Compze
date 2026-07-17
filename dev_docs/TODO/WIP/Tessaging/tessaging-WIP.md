@@ -17,8 +17,13 @@
   — the imagined target design, described straight up (no narration of change): ⚖ the consistency law
   (endpoint = immediate-consistency boundary, universal; inline in-roster tommands), the
   domain/endpoint/process triad (DB == domain, never endpoint; per-endpoint table-sets + endpoint catalog),
-  the LocalTessagingEngine (working name) with builder/roster/executor/doors, synchrony-follows-the-type,
+  the LocalTessagingEngine with builder/roster/executor/doors, synchrony-follows-the-type,
   the two endpoint types, administration, topology.
+- [dev_docs/TODO/WIP/Tessaging/tessaging-migration-plan.md](../../../../dev_docs/TODO/WIP/Tessaging/tessaging-migration-plan.md)
+  — the path from today's code to the target design: ten ordered phases (debris/defects → project homes →
+  one router → the engine → endpoint types → observation → synchrony → readiness → storage → Host
+  demotion), each a run of green committed increments. ⚖ the project homes settled (option (a): one
+  paradigm project, ASP.NET Core transport carved out).
 - [src/Compze.Tessaging/dev_docs/tevent-delivery-model.md](../../../../src/Compze.Tessaging/dev_docs/tevent-delivery-model.md)
 - [src/Compze.Hosting/dev_docs/hosting-model.md](../../../../src/Compze.Hosting/dev_docs/hosting-model.md)
 - [src/Compze.Hosting/dev_docs/wip/same-machine-hosting.md](../../../../src/Compze.Hosting/dev_docs/wip/same-machine-hosting.md)
