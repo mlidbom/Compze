@@ -1,11 +1,17 @@
 # Readiness and waiting sends: request/response stops racing discovery
 
-**Status: design settled 2026-07-17 (⚖ decisions below) — implementation gated on one open question.** The
-design conversation resolved every question except the style-substrate question (see "The gating open
-question"), which decides *where* this gets built and therefore precedes implementation. One constraint was
-inherited as settled from the start: this effort absorbs what the durable peer topology's increment plan
-called "Typermedia parity" (increment 7), and that item's ⚖ *lands before the next release* commitment
-transfers with it.
+**Status: IMPLEMENTED 2026-07-17 — migration phase 8, four green commits (one per increment below).** The
+gating style-substrate question resolved in this effort's favor before building: the substrate collapsed
+into one paradigm project during migration phases 2–5 (see
+[style-substrate-and-hosting-evaluation.md](style-substrate-and-hosting-evaluation.md) and
+[tessaging-migration-plan.md](tessaging-migration-plan.md)), so readiness and waiting were built exactly
+once, on the one router and one peer memory. The ⚖ *lands before the next release* commitment inherited
+from the durable peer topology's "Typermedia parity" item is discharged. The design below stands as built;
+the as-built vocabulary: the patience is the endpoint's **handler-availability patience**
+(`EndpointBuilder.HandlerAvailabilityPatience`, flat 30s default per ⚖ 2), the waiting mechanism is
+`IHandlerAvailability`, readiness is `IEndpoint.AwaitReadinessAsync(ReadinessTypes, patience?)` with the
+`ReadinessTypes` reflection factories of ⚖ 1, and the patience-exhausted failure for readiness is
+`EndpointNotReadyWithinPatienceException`.
 
 ## The trigger (shared with the durable peer topology)
 
@@ -133,7 +139,7 @@ decommissioned peer's types count as never-seen again.
    "self" send does not exist remotely at all — an in-roster tommand executes inline in the sender's
    execution (the consistency law), so it has nothing to wait for by construction.
 
-## The gating open question: the style substrate
+## The gating open question: the style substrate *(resolved — the substrate collapsed first, as this section demanded)*
 
 Designing this effort surfaced a recurring pattern: dynamic topology needed a Typermedia parity batch, peer
 memory spawned "increment 7", decommission today covers Tessaging routes and not typermedia ones — and this
@@ -157,10 +163,28 @@ Independent and composing, exactly as [durable-peer-topology.md](durable-peer-to
 effort's increments are complete and unchanged; this one consumes its peer memory (`RememberedPeer`, the
 registry, the lifecycle events) as the substrate that tells waiting whether it is rational.
 
-## Increment sketch (gated on the substrate decision, which decides where each part is built)
+## The increments, as executed (migration phase 8, one green commit each)
 
-1. Typermedia knowledge — process-lifetime, per ⚖ 3 (the retired "increment 7", right-sized).
-2. Waiting sends for typermedia tueries and tommands.
-3. Waiting sends for the exactly-once tommand cold-start bind (walked through the exactly-once in-order
-   guarantee first).
-4. The readiness awaitable, with the type-set reflection helpers (⚖ 1).
+1. Typermedia knowledge (the retired "increment 7", right-sized): peer memory already remembered typermedia
+   types since migration phase 3 — this increment generalized the single-handler query
+   (`IPeerRegistry.HandlerIdsFor(Type)`, exact match over every remotable single-handler kind), sized
+   exactly by what the known-but-down vs never-seen distinction needs. Even leaner than ⚖ 3 anticipated: no
+   separate typermedia memory exists at all — the one peer memory serves, with durability following the
+   foundation as it always did.
+2. Waiting sends for typermedia tueries and tommands: `IHandlerAvailability`, a bounded re-check loop over
+   the router's routes and the peer memory (polled deliberately — the wait window is rare and bounded, so
+   polling's simplicity beats signal plumbing); the no-handler family became exclusively the
+   patience-exhausted failure per ⚖ 5; the external client's router keeps immediate throws (its connections
+   change only by its own explicit connects — nothing to wait for); the interprocess spec's hand-rolled
+   retry loop dissolved into one waiting navigation.
+3. Waiting sends for the exactly-once cold-start bind, walked through the exactly-once in-order guarantee
+   first: the wait strictly precedes the one bind-at-send, so the construction the guarantee rides is
+   untouched. The ⚖ 5 side effect pinned: with several remembered handlers and none live, the send binds to
+   the one that connects — live is current by definition. One documented corner: on SQLite, a sender whose
+   transaction already holds the per-database write gate blocks the very advertisement recording that would
+   satisfy its wait, degrading to the pre-waiting failure delayed by patience.
+4. The readiness awaitable: `IEndpoint.AwaitReadinessAsync(ReadinessTypes, patience?)`, availability
+   defined as precisely what a send would not have to wait for (own-roster types count available — served
+   in-boundary), `ReadinessTypes` reflection factories per ⚖ 1 failing loud at composition on anything
+   non-single-handler or empty, `EndpointNotReadyWithinPatienceException` naming every type still
+   unavailable with the known-but-down vs never-seen wording per type.

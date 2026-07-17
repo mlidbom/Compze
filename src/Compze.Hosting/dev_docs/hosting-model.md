@@ -131,6 +131,28 @@ endpoint answers the one discovery question (its name, its `EndpointId`, and its
 roster's one projection, covering every tessage kind). The endpoint's `Address` is null until it is
 listening.
 
+## Readiness and waiting sends — discovery stops being the application's race to lose
+
+The host's phase barrier orders *this host's* endpoints; it says nothing about the rest of the topology —
+other processes still starting, a peer restarting mid-day. Two composing mechanisms cover that (designed in
+`dev_docs/TODO/WIP/Tessaging/readiness-and-waiting-sends.md`, built in migration phase 8):
+
+- **Waiting sends** — implicit, per-call: a send whose type has no live, unambiguous route right now waits,
+  bounded by the endpoint's **handler-availability patience** (a flat 30 seconds unless the composition
+  declares otherwise — `EndpointBuilder.HandlerAvailabilityPatience`), for the world to become right — a
+  first contact, a known peer's return, an ambiguity resolving — then proceeds normally. Only exhausted
+  patience fails loud, and the failure tells known-but-down (naming the remembered peer) from never-seen
+  (naming the probable deployment error).
+- **Readiness** — explicit: `IEndpoint.AwaitReadinessAsync(ReadinessTypes, patience?)` completes when the
+  endpoint can reach a handler for every named type — its own roster serves it, an exactly-once tommand
+  type has a bindable receiver, or a request/response type has exactly one live route: precisely the
+  availability a send would not have to wait for. Awaited on a started endpoint, typically at startup
+  before opening traffic, it front-loads the discovery wait a waiting send would otherwise make the first
+  unlucky caller pay; an orchestrator's readiness probe wires to it. The type sets come from the
+  `ReadinessTypes` reflection factories (`InAssemblyContaining`, `InNamespaceOf`), which admit only the
+  remotable single-handler kinds — tevents are multi-subscriber, have no one handler to await, and their
+  delivery is fully served by the peer topology's queue-while-down machinery.
+
 ## The engine — when there is nothing to host
 
 Everything above assumes an endpoint that converses with other endpoints. But the paradigm's purely

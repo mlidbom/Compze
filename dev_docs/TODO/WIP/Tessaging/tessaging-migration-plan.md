@@ -72,7 +72,35 @@ and wire-serving execution async end to end. The async depth exposed two latent 
 era masked, both root-caused: the sample's statistics initializer kept an in-memory initialized-flag that
 survived its transaction's rollback, and `SingleThreadUseGuard` asserted thread affinity on sessions whose
 async-era identity is their transaction — session affinity is transactional now, the thread guard deleted,
-the multi-threaded-use pins re-pinned as multi-transaction-use pins. The destination is
+the multi-threaded-use pins re-pinned as multi-transaction-use pins.
+**Phase 8 executed 2026-07-17**, four green commits: (1) peer memory answering the single-handler question
+for every remotable single-handler kind — the Type-keyed exact-match `HandlerIdsFor` replacing the
+tommand-shaped surface, sized exactly by what the known-but-down vs never-seen distinction needs; (2)
+waiting sends for typermedia: every remote navigation waits, bounded by the endpoint's
+handler-availability patience (a flat 30 seconds unless the composition declares otherwise —
+`EndpointBuilder.HandlerAvailabilityPatience`), through the new `IHandlerAvailability` — a bounded
+re-check loop over the router's routes and the peer memory, deliberately polled rather than
+signal-plumbed, classifying its patience-exhausted failure from the same snapshot whose check exhausted
+the patience; the no-handler exception family became exclusively the patience-exhausted failure, telling
+known-but-down (naming the remembered peer) from never-seen (naming the probable deployment error), while
+the external client's router keeps its immediate throws — its connections change only by its own explicit
+connects — and the interprocess spec's hand-rolled retry-on-no-handler loop dissolved into the single
+waiting navigation; (3) the exactly-once cold-start bind waits — walked through the exactly-once in-order
+guarantee before building: the wait strictly precedes the one bind-at-send, so the tommand still binds
+exactly once, before its row is saved, and rides the bound pair's single ordered receiver-deduped stream;
+never-seen waits for the first contact and then binds, several-remembered-none-live waits for one to
+connect (live is current by definition, resolving the replacement ambiguity) or for a decommission, the
+sole-remembered-down handler binds immediately exactly as before, and the SQLite corner — a sender whose
+transaction already holds the write gate blocks the very advertisement recording that would satisfy its
+wait, degrading to the pre-waiting failure delayed by patience — is documented at the wait site; (4)
+readiness — `IEndpoint.AwaitReadinessAsync(ReadinessTypes, patience?)` completes when a handler for every
+named type is available: the endpoint's own roster serves it, an exactly-once tommand type has a bindable
+receiver, or a request/response type has exactly one live route — precisely the availability a send would
+not have to wait for, so the two mechanisms compose instead of overlapping; the type sets are
+`ReadinessTypes` reflection factories (`InAssemblyContaining`, `InNamespaceOf`) filtering to the remotable
+single-handler kinds, anything else failing loud at composition; exhausted patience throws
+`EndpointNotReadyWithinPatienceException` naming every type still unavailable and what the peer memory
+remembers about each. The ⚖ before-the-next-release commitment this phase carried is discharged. The destination is
 [tessaging-target-design.md](tessaging-target-design.md); the rationale and evidence are in
 [style-substrate-and-hosting-evaluation.md](style-substrate-and-hosting-evaluation.md). This document is the
 path: the ordered phases, what each contains, and what gates what. Every phase is a run of increments that
