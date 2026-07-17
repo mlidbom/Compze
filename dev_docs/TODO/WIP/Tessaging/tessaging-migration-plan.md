@@ -5,7 +5,13 @@ defect fixes, the record→class conversion, the stale-prose sweep, the ServiceB
 phase 2: `Compze.Tessaging.Abstractions`, the Typermedia trio + its testing project, and
 `Compze.Internals.Transport` folded into the paradigm assemblies; `Compze.Internals.Transport.AspNet`
 renamed `Compze.Tessaging.AspNetCore`; the three typermedia spec projects merged into
-`Compze.Tessaging.Specifications`). The destination is
+`Compze.Tessaging.Specifications`). **Phase 3 executed 2026-07-17**: one `EndpointInformation` +
+`EndpointInformationQuery` (advertisement unioned from per-style `IEndpointAdvertisementContributor`
+contributions — an interim seam the roster replaces); the `TessagingRouter` routes all four kinds and the
+endpoint's `ITypermediaRouting` rides it; the reconcile-loop twin died — `TypermediaClientRouter` keeps only
+the explicit-connect client shape; `DistributedTypermediaEndpointFeature` composes the distributed Tessaging
+core; peer memory remembers the one advertisement, typermedia types included, so decommission covers them by
+construction (pinned in `Peer_registry_tests`). The destination is
 [tessaging-target-design.md](tessaging-target-design.md); the rationale and evidence are in
 [style-substrate-and-hosting-evaluation.md](style-substrate-and-hosting-evaluation.md). This document is the
 path: the ordered phases, what each contains, and what gates what. Every phase is a run of increments that
