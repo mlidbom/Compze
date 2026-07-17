@@ -15,6 +15,7 @@ using Compze.Internals.Logging;
 using Compze.Internals.SystemCE.CollectionsCE.GenericCE;
 using Compze.Internals.SystemCE.ReflectionCE;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
+using Compze.Tessaging.Implementation.Abstractions;
 using Compze.Threading;
 
 namespace Compze.Tessaging.Implementation.Transport.Client.Implementation;

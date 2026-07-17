@@ -8,6 +8,7 @@ using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Internals.Testing;
 using Compze.Tessaging.Endpoints;
 using Compze.Tessaging.Hosting.Testing.Wiring;
+using Compze.Tessaging.Implementation;
 using Compze.Tessaging.Implementation.Transport;
 using Compze.Threading;
 using Compze.Underscore;

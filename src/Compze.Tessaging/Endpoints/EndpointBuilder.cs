@@ -6,6 +6,7 @@ using Compze.DependencyInjection.Abstractions;
 using Compze.Tessaging.Engine;
 using Compze.Tessaging.Internals.Transport;
 using Compze.Tessaging.Implementation;
+using Compze.Tessaging.Implementation.Abstractions;
 using Compze.Tessaging.Implementation.BestEffortDelivery;
 using Compze.Tessaging.Implementation.Transport;
 using Compze.Tessaging.Implementation.Peers;

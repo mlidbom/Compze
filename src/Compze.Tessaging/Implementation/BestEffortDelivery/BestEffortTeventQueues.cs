@@ -3,6 +3,7 @@ using System.Transactions;
 using Compze.Abstractions.Hosting.Public;
 using Compze.Contracts;
 using Compze.Internals.SystemCE.TransactionsCE;
+using Compze.Tessaging.Implementation.Abstractions;
 using Compze.Tessaging.Implementation.Peers;
 using Compze.Tessaging.Implementation.Transport;
 using Compze.Tessaging.Implementation.Transport.Abstractions;

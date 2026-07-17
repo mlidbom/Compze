@@ -1,7 +1,8 @@
 using Compze.Abstractions.Hosting.Public;
+using Compze.Tessaging.Implementation.Transport.Abstractions;
 using Compze.Threading;
 
-namespace Compze.Tessaging.Implementation.Transport.Abstractions;
+namespace Compze.Tessaging.Implementation.Abstractions;
 
 public interface ITessagesInFlightTracker
 {

@@ -2,7 +2,7 @@ using System.Globalization;
 using System.Text;
 using Compze.Threading.Exceptions;
 
-namespace Compze.Tessaging.Implementation.Transport;
+namespace Compze.Tessaging.Implementation;
 
 class AwaitNoTessagesInFlightTimeoutException(AwaitingConditionTimeoutException innerException, IReadOnlyList<TessagesInFlightTracker.InFlightTessage> undeliveredTessages)
    : Exception(FormatMessage(undeliveredTessages), innerException)
