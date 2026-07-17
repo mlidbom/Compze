@@ -5,12 +5,12 @@ using Compze.Must;
 using Compze.Tessaging.Implementation.Peers;
 using Compze.Tessaging.Implementation.Transport;
 using Compze.Tessaging.Transport.SqlLayer;
-using Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler;
+using Compze.Tests.Common.Tessaging.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Threading;
 using Compze.TypeIdentifiers;
 
-namespace Compze.Tests.Integration.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler;
+namespace Compze.Tests.Integration.Tessaging.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler;
 
 ///<summary>A shrunk advertisement is the peer's own explicit declaration — an unsubscribe by the subscription's owner — and<br/>
 /// what the outbox owes the peer follows it (see the advertisement lifecycle in <c>dev_docs/TODO/WIP/Tessaging/durable-peer-topology.md</c>):<br/>
@@ -79,5 +79,5 @@ public class Advertisement_shrink_tests : EndpointHostTestBase
    }
 
    IPeerRegistry BackendPeerRegistry => BackendEndPoint.ServiceLocator.Resolve<IPeerRegistry>();
-   IServiceBusSqlLayer.IOutboxSqlLayer BackendOutboxSqlLayer => BackendEndPoint.ServiceLocator.Resolve<IServiceBusSqlLayer.IOutboxSqlLayer>();
+   ITessagingSqlLayer.IOutboxSqlLayer BackendOutboxSqlLayer => BackendEndPoint.ServiceLocator.Resolve<ITessagingSqlLayer.IOutboxSqlLayer>();
 }

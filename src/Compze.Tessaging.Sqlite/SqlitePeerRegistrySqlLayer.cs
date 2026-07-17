@@ -5,12 +5,12 @@ using Compze.Internals.Sql.Sqlite.Private;
 using Compze.Internals.SystemCE.LinqCE;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tessaging.Transport.SqlLayer;
-using Peers = Compze.Tessaging.Transport.SqlLayer.IServiceBusSqlLayer.PeersDatabaseSchemaStrings;
-using Types = Compze.Tessaging.Transport.SqlLayer.IServiceBusSqlLayer.PeerHandledTessageTypesDatabaseSchemaStrings;
+using Peers = Compze.Tessaging.Transport.SqlLayer.ITessagingSqlLayer.PeersDatabaseSchemaStrings;
+using Types = Compze.Tessaging.Transport.SqlLayer.ITessagingSqlLayer.PeerHandledTessageTypesDatabaseSchemaStrings;
 
 namespace Compze.Tessaging.Sqlite;
 
-partial class SqlitePeerRegistrySqlLayer(ISqliteConnectionPool connectionFactory, SqliteSqlLayerSchemaManager schemaManager) : IServiceBusSqlLayer.IPeerRegistrySqlLayer
+partial class SqlitePeerRegistrySqlLayer(ISqliteConnectionPool connectionFactory, SqliteSqlLayerSchemaManager schemaManager) : ITessagingSqlLayer.IPeerRegistrySqlLayer
 {
    readonly ISqliteConnectionPool _connectionFactory = connectionFactory;
    readonly SqliteSqlLayerSchemaManager _schemaManager = schemaManager;
@@ -46,7 +46,7 @@ partial class SqlitePeerRegistrySqlLayer(ISqliteConnectionPool connectionFactory
          });
    }
 
-   public IReadOnlyList<IServiceBusSqlLayer.PersistedPeer> GetPeers()
+   public IReadOnlyList<ITessagingSqlLayer.PersistedPeer> GetPeers()
    {
       var rows = _connectionFactory.UseCommand(
          command =>
@@ -72,7 +72,7 @@ partial class SqlitePeerRegistrySqlLayer(ISqliteConnectionPool connectionFactory
          });
 
       return [..rows.GroupBy(row => row.EndpointId)
-                    .Select(peer => new IServiceBusSqlLayer.PersistedPeer(
+                    .Select(peer => new ITessagingSqlLayer.PersistedPeer(
                                new EndpointId(peer.Key),
                                peer.Where(row => row.HandledTessageType != null).Select(row => row.HandledTessageType!).ToHashSet()))];
    }

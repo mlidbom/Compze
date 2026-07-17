@@ -443,10 +443,12 @@ precedent) is recorded in the decisions block at the top. Two knock-on resolutio
 
 - The long-flagged namespace overload dissolves: `Compze.Abstractions.Tessaging.Public` holding tueries
   stops being one style's name annexing the parent domain and becomes simply the paradigm's domain.
-- The parked ServiceBus remnants get their rename target: `IServiceBusSqlLayer` and the
-  `ServiceBusSpecification` test folder rename into the TessageBus vocabulary (exact names decided at
-  rename time). "ServiceBus" died as borrowed jargon on a lying type; TessageBus is the coined, truthful
-  replacement for the concept — the same move as hypermedia → Typermedia, completing itself.
+- The parked ServiceBus remnants got their renames (executed in migration phase 1): `IServiceBusSqlLayer`
+  is `ITessagingSqlLayer` — the paradigm's word, not TessageBus's, because the layer holds the peer
+  registry (paradigm-level after harmonization) beside the inbox and outbox, and the target design names
+  what it stores "tessaging storage" — and the `ServiceBusSpecification` test folders dissolved into their
+  already-truthful `Tessaging/` parents, since their specs span both siblings (tueries and the navigator
+  beside outbox, inbox, and peers). "ServiceBus" died as borrowed jargon on a lying type.
 
 One naming caveat noticed and accepted: "bus" can suggest a broker in the middle, and Compze's tessage bus
 is brokerless peer-to-peer — but the term's actual industry usage (NServiceBus, MassTransit) covers

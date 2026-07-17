@@ -7,18 +7,18 @@ using Compze.Internals.SystemCE.LinqCE;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tessaging.Transport.SqlLayer;
 using Compze.TypeIdentifiers.Interning;
-using DispatchingTable = Compze.Tessaging.Transport.SqlLayer.IServiceBusSqlLayer.OutboxTessageDispatchingTableSchemaStrings;
-using TessageTable = Compze.Tessaging.Transport.SqlLayer.IServiceBusSqlLayer.OutboxTessagesDatabaseSchemaStrings;
+using DispatchingTable = Compze.Tessaging.Transport.SqlLayer.ITessagingSqlLayer.OutboxTessageDispatchingTableSchemaStrings;
+using TessageTable = Compze.Tessaging.Transport.SqlLayer.ITessagingSqlLayer.OutboxTessagesDatabaseSchemaStrings;
 
 namespace Compze.Tessaging.MicrosoftSql;
 
-partial class MsSqlOutboxSqlLayer(IMsSqlConnectionPool connectionFactory, MsSqlSqlLayerSchemaManager schemaManager, ITypeIdInterner typeIdInterner) : IServiceBusSqlLayer.IOutboxSqlLayer
+partial class MsSqlOutboxSqlLayer(IMsSqlConnectionPool connectionFactory, MsSqlSqlLayerSchemaManager schemaManager, ITypeIdInterner typeIdInterner) : ITessagingSqlLayer.IOutboxSqlLayer
 {
    readonly IMsSqlConnectionPool _connectionFactory = connectionFactory;
    readonly MsSqlSqlLayerSchemaManager _schemaManager = schemaManager;
    readonly ITypeIdInterner _typeIdInterner = typeIdInterner;
 
-   public void SaveTessage(IServiceBusSqlLayer.OutboxTessageWithReceivers tessageWithReceivers)
+   public void SaveTessage(ITessagingSqlLayer.OutboxTessageWithReceivers tessageWithReceivers)
    {
       // Intern before opening a connection: interning may hit the database, and nesting a second connection
       // inside a held one deadlocks the pool.
@@ -55,7 +55,7 @@ partial class MsSqlOutboxSqlLayer(IMsSqlConnectionPool connectionFactory, MsSqlS
          });
    }
 
-   public IServiceBusSqlLayer.MarkAsReceivedResult MarkAsReceived(TessageId tessageId, EndpointId endpointId)
+   public ITessagingSqlLayer.MarkAsReceivedResult MarkAsReceived(TessageId tessageId, EndpointId endpointId)
    {
       var affectedRows = _connectionFactory.UseCommand(
          command => command
@@ -74,8 +74,8 @@ partial class MsSqlOutboxSqlLayer(IMsSqlConnectionPool connectionFactory, MsSqlS
                    .ExecuteNonQuery());
 
       return affectedRows == 1
-                ? IServiceBusSqlLayer.MarkAsReceivedResult.Initial
-                : IServiceBusSqlLayer.MarkAsReceivedResult.WasAlreadyMarked;
+                ? ITessagingSqlLayer.MarkAsReceivedResult.Initial
+                : ITessagingSqlLayer.MarkAsReceivedResult.WasAlreadyMarked;
    }
 
    public void RecordDeliveryFailure(TessageId tessageId, EndpointId endpointId, string failureReason)
@@ -100,7 +100,7 @@ partial class MsSqlOutboxSqlLayer(IMsSqlConnectionPool connectionFactory, MsSqlS
                    .ExecuteNonQuery());
    }
 
-   public IReadOnlyList<IServiceBusSqlLayer.UndeliveredTessage> GetUndeliveredTessagesForEndpoint(EndpointId endpointId)
+   public IReadOnlyList<ITessagingSqlLayer.UndeliveredTessage> GetUndeliveredTessagesForEndpoint(EndpointId endpointId)
    {
       // The TypeId column holds an interned int. Resolve it to the canonical type string AFTER the reader has
       // closed — resolving during the read could open a second connection on a cache miss while the reader is held.
@@ -137,7 +137,7 @@ partial class MsSqlOutboxSqlLayer(IMsSqlConnectionPool connectionFactory, MsSqlS
             return rows;
          });
 
-      return [..raw.Select(row => new IServiceBusSqlLayer.UndeliveredTessage(
+      return [..raw.Select(row => new ITessagingSqlLayer.UndeliveredTessage(
                               tessageId: row.TessageId,
                               typeId: _typeIdInterner.GetTypeId(row.TypeId),
                               serializedTessage: row.Body))];
@@ -186,7 +186,7 @@ partial class MsSqlOutboxSqlLayer(IMsSqlConnectionPool connectionFactory, MsSqlS
          });
    }
 
-   public IReadOnlyList<IServiceBusSqlLayer.DiscardedTessage> DiscardAllTessagesOwedTo(EndpointId endpointId)
+   public IReadOnlyList<ITessagingSqlLayer.DiscardedTessage> DiscardAllTessagesOwedTo(EndpointId endpointId)
    {
       // The TypeId column holds an interned int. Resolve it to the canonical type string AFTER the reader has
       // closed — resolving during the read could open a second connection on a cache miss while the reader is held.
@@ -223,7 +223,7 @@ partial class MsSqlOutboxSqlLayer(IMsSqlConnectionPool connectionFactory, MsSqlS
 
       DiscardUndeliveredTessages(endpointId, [..owed.Select(row => row.TessageId)]);
 
-      return [..owed.Select(row => new IServiceBusSqlLayer.DiscardedTessage(
+      return [..owed.Select(row => new ITessagingSqlLayer.DiscardedTessage(
                               tessageId: row.TessageId,
                               typeId: _typeIdInterner.GetTypeId(row.TypeId),
                               wasStranded: row.WasStranded))];

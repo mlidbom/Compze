@@ -27,8 +27,7 @@ using Compze.Typermedia.HandlerRegistration;
 #pragma warning disable CA1724  // Type names should not match namespaces
 #pragma warning disable CA1715  // Interfaces should start with I
 
-//todo: The ServiceBusSpecification folder/namespace (here and in Compze.Tests.Integration) still speaks the dead ServiceBus vocabulary — IServiceBusSession died with the UnitOfWork*/Independent* renames. Rename the folders and namespaces.
-namespace Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler;
+namespace Compze.Tests.Common.Tessaging.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler;
 
 public abstract class EndpointHostTestBase : UniversalTestBase
 {

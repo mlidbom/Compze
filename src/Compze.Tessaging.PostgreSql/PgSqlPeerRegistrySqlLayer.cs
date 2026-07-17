@@ -5,12 +5,12 @@ using Compze.Internals.Sql.PostgreSql.Private;
 using Compze.Internals.SystemCE.LinqCE;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tessaging.Transport.SqlLayer;
-using Peers = Compze.Tessaging.Transport.SqlLayer.IServiceBusSqlLayer.PeersDatabaseSchemaStrings;
-using Types = Compze.Tessaging.Transport.SqlLayer.IServiceBusSqlLayer.PeerHandledTessageTypesDatabaseSchemaStrings;
+using Peers = Compze.Tessaging.Transport.SqlLayer.ITessagingSqlLayer.PeersDatabaseSchemaStrings;
+using Types = Compze.Tessaging.Transport.SqlLayer.ITessagingSqlLayer.PeerHandledTessageTypesDatabaseSchemaStrings;
 
 namespace Compze.Tessaging.PostgreSql;
 
-partial class PgSqlPeerRegistrySqlLayer(IPgSqlConnectionPool connectionFactory, PgSqlSqlLayerSchemaManager schemaManager) : IServiceBusSqlLayer.IPeerRegistrySqlLayer
+partial class PgSqlPeerRegistrySqlLayer(IPgSqlConnectionPool connectionFactory, PgSqlSqlLayerSchemaManager schemaManager) : ITessagingSqlLayer.IPeerRegistrySqlLayer
 {
    readonly IPgSqlConnectionPool _connectionFactory = connectionFactory;
    readonly PgSqlSqlLayerSchemaManager _schemaManager = schemaManager;
@@ -46,7 +46,7 @@ partial class PgSqlPeerRegistrySqlLayer(IPgSqlConnectionPool connectionFactory, 
          });
    }
 
-   public IReadOnlyList<IServiceBusSqlLayer.PersistedPeer> GetPeers()
+   public IReadOnlyList<ITessagingSqlLayer.PersistedPeer> GetPeers()
    {
       var rows = _connectionFactory.UseCommand(
          command =>
@@ -72,7 +72,7 @@ partial class PgSqlPeerRegistrySqlLayer(IPgSqlConnectionPool connectionFactory, 
          });
 
       return [..rows.GroupBy(row => row.EndpointId)
-                    .Select(peer => new IServiceBusSqlLayer.PersistedPeer(
+                    .Select(peer => new ITessagingSqlLayer.PersistedPeer(
                                new EndpointId(peer.Key),
                                peer.Where(row => row.HandledTessageType != null).Select(row => row.HandledTessageType!).ToHashSet()))];
    }

@@ -4,7 +4,7 @@ using Compze.TypeIdentifiers;
 
 namespace Compze.Tessaging.Transport.SqlLayer;
 
-public interface IServiceBusSqlLayer
+public interface ITessagingSqlLayer
 {
 
    public interface IOutboxSqlLayer

@@ -27,7 +27,7 @@ using Compze.Typermedia.HandlerRegistration;
 // ReSharper disable InconsistentNaming for testing
 #pragma warning disable CA1724 // Type names should not match namespaces
 
-namespace Compze.Tests.Integration.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler;
+namespace Compze.Tests.Integration.Tessaging.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler;
 
 public class Experiment_with_unifying_tevents_and_tommands_test : UniversalTestBase
 {

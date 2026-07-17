@@ -5,11 +5,11 @@ using Compze.Tessaging.Transport.SqlLayer;
 
 namespace Compze.Tessaging.Implementation.TessageHandling.Inbox;
 
-class InboxTessageStorage(IServiceBusSqlLayer.IInboxSqlLayer sqlLayer) : Inbox.ITessageStorage
+class InboxTessageStorage(ITessagingSqlLayer.IInboxSqlLayer sqlLayer) : Inbox.ITessageStorage
 {
-   readonly IServiceBusSqlLayer.IInboxSqlLayer _sqlLayer = sqlLayer;
+   readonly ITessagingSqlLayer.IInboxSqlLayer _sqlLayer = sqlLayer;
 
-   public IServiceBusSqlLayer.SaveTessageResult SaveIncomingTessage(TransportTessage.InComing tessage)
+   public ITessagingSqlLayer.SaveTessageResult SaveIncomingTessage(TransportTessage.InComing tessage)
       => _sqlLayer.SaveTessage(tessage.TessageId, tessage.TessageTypeId, tessage.Body);
 
    public void MarkAsSucceeded(TransportTessage.InComing tessage)

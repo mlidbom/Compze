@@ -19,14 +19,14 @@ partial class Outbox
       // ReSharper disable once MemberHidesStaticFromOuterClass
       internal static void RegisterWith(IComponentRegistrar registrar)
          => registrar.Register(Singleton.For<ITessageStorage>()
-                                        .CreatedBy((IServiceBusSqlLayer.IOutboxSqlLayer sqlLayer, ITypeMap typeMap, ITessagingSerializer serializer)
+                                        .CreatedBy((ITessagingSqlLayer.IOutboxSqlLayer sqlLayer, ITypeMap typeMap, ITessagingSerializer serializer)
                                                       => new TessageStorage(sqlLayer, typeMap, serializer)));
 
-      readonly IServiceBusSqlLayer.IOutboxSqlLayer _sqlLayer;
+      readonly ITessagingSqlLayer.IOutboxSqlLayer _sqlLayer;
       readonly ITypeMap _typeMap;
       readonly ITessagingSerializer _serializer;
 
-      TessageStorage(IServiceBusSqlLayer.IOutboxSqlLayer sqlLayer, ITypeMap typeMap, ITessagingSerializer serializer)
+      TessageStorage(ITessagingSqlLayer.IOutboxSqlLayer sqlLayer, ITypeMap typeMap, ITessagingSerializer serializer)
       {
          _sqlLayer = sqlLayer;
          _typeMap = typeMap;
@@ -35,7 +35,7 @@ partial class Outbox
 
       public void SaveTessage(ITessage tessage, TessageId dedupId, params EndpointId[] receiverEndpointIds)
       {
-         var outboxTessageWithReceivers = new IServiceBusSqlLayer.OutboxTessageWithReceivers(_serializer.SerializeTessage(tessage),
+         var outboxTessageWithReceivers = new ITessagingSqlLayer.OutboxTessageWithReceivers(_serializer.SerializeTessage(tessage),
                                                                                              _typeMap.GetId(tessage.GetType()),
                                                                                              dedupId,
                                                                                              receiverEndpointIds);
@@ -47,7 +47,7 @@ partial class Outbox
       {
          var result = _sqlLayer.MarkAsReceived(tessageId, receiverId);
 
-         if(result == IServiceBusSqlLayer.MarkAsReceivedResult.WasAlreadyMarked)
+         if(result == ITessagingSqlLayer.MarkAsReceivedResult.WasAlreadyMarked)
          {
             this.Log().Info($"Tessage {tessageId} to endpoint {receiverId.Value} was already marked as received.");
          }
@@ -62,7 +62,7 @@ partial class Outbox
          _sqlLayer.RecordDeliveryFailure(tessageId, receiverId, failureReason);
       }
 
-      public IReadOnlyList<IServiceBusSqlLayer.UndeliveredTessage> GetUndeliveredTessagesForEndpoint(EndpointId endpointId) =>
+      public IReadOnlyList<ITessagingSqlLayer.UndeliveredTessage> GetUndeliveredTessagesForEndpoint(EndpointId endpointId) =>
          _sqlLayer.GetUndeliveredTessagesForEndpoint(endpointId);
 
       public void DiscardUndeliveredTessages(EndpointId endpointId, IReadOnlyList<TessageId> tessageIds) =>
@@ -71,7 +71,7 @@ partial class Outbox
       public void StrandUndeliveredTessages(EndpointId endpointId, IReadOnlyList<TessageId> tessageIds) =>
          _sqlLayer.StrandUndeliveredTessages(endpointId, tessageIds);
 
-      public IReadOnlyList<IServiceBusSqlLayer.DiscardedTessage> DiscardAllTessagesOwedTo(EndpointId endpointId) =>
+      public IReadOnlyList<ITessagingSqlLayer.DiscardedTessage> DiscardAllTessagesOwedTo(EndpointId endpointId) =>
          _sqlLayer.DiscardAllTessagesOwedTo(endpointId);
 
       public async Task StartAsync() => await _sqlLayer.InitAsync().caf();

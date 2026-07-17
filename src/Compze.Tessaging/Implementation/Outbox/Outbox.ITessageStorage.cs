@@ -16,7 +16,7 @@ partial class Outbox
 
       ///<summary>The endpoint's recovery backlog: every tessage bound to it and not yet received, in send order. Stranded<br/>
       /// tessages are excluded — a stranded tommand waits for explicit resolution on the decommission surface, never for delivery.</summary>
-      IReadOnlyList<IServiceBusSqlLayer.UndeliveredTessage> GetUndeliveredTessagesForEndpoint(EndpointId endpointId);
+      IReadOnlyList<ITessagingSqlLayer.UndeliveredTessage> GetUndeliveredTessagesForEndpoint(EndpointId endpointId);
 
       ///<summary>Discards these undelivered tessages bound to <paramref name="endpointId"/> — they will never be delivered:<br/>
       /// the fate of undelivered tevents whose subscriber renounced its subscription in a shrunk advertisement.</summary>
@@ -29,7 +29,7 @@ partial class Outbox
 
       ///<summary>Discards everything still owed to <paramref name="endpointId"/>, stranded tessages included, returning what was<br/>
       /// discarded so the caller can report it: the storage half of decommissioning a peer, and of the first-contact sweep.</summary>
-      IReadOnlyList<IServiceBusSqlLayer.DiscardedTessage> DiscardAllTessagesOwedTo(EndpointId endpointId);
+      IReadOnlyList<ITessagingSqlLayer.DiscardedTessage> DiscardAllTessagesOwedTo(EndpointId endpointId);
 
       Task StartAsync();
    }

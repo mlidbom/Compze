@@ -24,7 +24,7 @@ static class InboxRegistrar
    internal static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(
          Singleton.For<ITessageStorage>()
-                  .CreatedBy((IServiceBusSqlLayer.IInboxSqlLayer sqlLayer)
+                  .CreatedBy((ITessagingSqlLayer.IInboxSqlLayer sqlLayer)
                                 => new InboxTessageStorage(sqlLayer)),
          Singleton.For<HandlerExecutionEngine>()
                   .CreatedBy((ITessagesInFlightTracker globalStateTracker, ITessageHandlerRegistry tessagingHandlerRegistry, IScopeFactory scopeFactory, ITessageStorage storage, ITaskRunner taskRunner, EndpointConfiguration configuration)
@@ -60,7 +60,7 @@ static class InboxRegistrar
       this.Log().Debug($"Receiving {tessage.TessageTypeEnum} tessage {tessage.TessageId}");
       var saveResult = _storage.SaveIncomingTessage(tessage);
 
-      if(saveResult == IServiceBusSqlLayer.SaveTessageResult.Duplicate)
+      if(saveResult == ITessagingSqlLayer.SaveTessageResult.Duplicate)
       {
          //The dedup shields observers too: observation is dispatched only on a tessage's first registration, never for a redelivery.
          this.Log().Debug($"Skipping duplicate tessage {tessage.TessageId}");

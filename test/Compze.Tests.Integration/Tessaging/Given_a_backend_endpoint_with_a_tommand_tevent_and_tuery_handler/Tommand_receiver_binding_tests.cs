@@ -1,13 +1,13 @@
 using Compze.Abstractions.Tessaging.Public;
 using Compze.DependencyInjection;
 using Compze.Must;
-using Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler;
+using Compze.Tests.Common.Tessaging.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Threading;
 
 using static Compze.Must.MustActions;
 
-namespace Compze.Tests.Integration.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler;
+namespace Compze.Tests.Integration.Tessaging.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler;
 
 ///<summary>A tommand binds to its one specific receiver at send time — the live handler when one is connected, otherwise the<br/>
 /// sole remembered peer whose advertisement handles the type — so a handler being down never makes the send explode, while<br/>

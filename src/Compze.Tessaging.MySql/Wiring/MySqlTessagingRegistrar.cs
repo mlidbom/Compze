@@ -33,10 +33,10 @@ public static class MySqlTessagingRegistrar
                .MySqlSchemaContribution(MySqlOutboxSqlLayer.SchemaCreationSql)
                .MySqlSchemaContribution(MySqlPeerRegistrySqlLayer.SchemaCreationSql)
                .Register(
-         Singleton.For<IServiceBusSqlLayer.IOutboxSqlLayer>()
+         Singleton.For<ITessagingSqlLayer.IOutboxSqlLayer>()
                   .CreatedBy((IMySqlConnectionPool endpointSqlConnection, MySqlSqlLayerSchemaManager schemaManager, ITypeIdInterner typeIdInterner) => new MySqlOutboxSqlLayer(endpointSqlConnection, schemaManager, typeIdInterner)),
-         Singleton.For<IServiceBusSqlLayer.IInboxSqlLayer>()
+         Singleton.For<ITessagingSqlLayer.IInboxSqlLayer>()
                   .CreatedBy((IMySqlConnectionPool endpointSqlConnection, MySqlSqlLayerSchemaManager schemaManager, ITypeIdInterner typeIdInterner) => new MySqlInboxSqlLayer(endpointSqlConnection, schemaManager, typeIdInterner)),
-         Singleton.For<IServiceBusSqlLayer.IPeerRegistrySqlLayer>()
+         Singleton.For<ITessagingSqlLayer.IPeerRegistrySqlLayer>()
                   .CreatedBy((IMySqlConnectionPool endpointSqlConnection, MySqlSqlLayerSchemaManager schemaManager) => new MySqlPeerRegistrySqlLayer(endpointSqlConnection, schemaManager)));
 }

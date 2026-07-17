@@ -33,10 +33,10 @@ public static class PgSqlTessagingRegistrar
                .PgSqlSchemaContribution(PgSqlOutboxSqlLayer.SchemaCreationSql)
                .PgSqlSchemaContribution(PgSqlPeerRegistrySqlLayer.SchemaCreationSql)
                .Register(
-         Singleton.For<IServiceBusSqlLayer.IOutboxSqlLayer>()
+         Singleton.For<ITessagingSqlLayer.IOutboxSqlLayer>()
                   .CreatedBy((IPgSqlConnectionPool endpointSqlConnection, PgSqlSqlLayerSchemaManager schemaManager, ITypeIdInterner typeIdInterner) => new PgSqlOutboxSqlLayer(endpointSqlConnection, schemaManager, typeIdInterner)),
-         Singleton.For<IServiceBusSqlLayer.IInboxSqlLayer>()
+         Singleton.For<ITessagingSqlLayer.IInboxSqlLayer>()
                   .CreatedBy((IPgSqlConnectionPool endpointSqlConnection, PgSqlSqlLayerSchemaManager schemaManager, ITypeIdInterner typeIdInterner) => new PgSqlInboxSqlLayer(endpointSqlConnection, schemaManager, typeIdInterner)),
-         Singleton.For<IServiceBusSqlLayer.IPeerRegistrySqlLayer>()
+         Singleton.For<ITessagingSqlLayer.IPeerRegistrySqlLayer>()
                   .CreatedBy((IPgSqlConnectionPool endpointSqlConnection, PgSqlSqlLayerSchemaManager schemaManager) => new PgSqlPeerRegistrySqlLayer(endpointSqlConnection, schemaManager)));
 }

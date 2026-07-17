@@ -58,7 +58,7 @@ partial class Outbox
          var undelivered = _storage.GetUndeliveredTessagesForEndpoint(current.Id);
          if(undelivered.Count == 0) return;
 
-         List<IServiceBusSqlLayer.UndeliveredTessage> renouncedTevents = [], noLongerHandledTommands = [];
+         List<ITessagingSqlLayer.UndeliveredTessage> renouncedTevents = [], noLongerHandledTommands = [];
          foreach(var tessage in undelivered)
          {
             var tessageType = tessage.TypeId.Type;

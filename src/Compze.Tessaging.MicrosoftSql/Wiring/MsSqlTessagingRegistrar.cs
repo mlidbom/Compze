@@ -33,10 +33,10 @@ public static class MsSqlTessagingRegistrar
                .MsSqlSchemaContribution(MsSqlOutboxSqlLayer.SchemaCreationSql)
                .MsSqlSchemaContribution(MsSqlPeerRegistrySqlLayer.SchemaCreationSql)
                .Register(
-         Singleton.For<IServiceBusSqlLayer.IOutboxSqlLayer>()
+         Singleton.For<ITessagingSqlLayer.IOutboxSqlLayer>()
                   .CreatedBy((IMsSqlConnectionPool endpointSqlConnection, MsSqlSqlLayerSchemaManager schemaManager, ITypeIdInterner typeIdInterner) => new MsSqlOutboxSqlLayer(endpointSqlConnection, schemaManager, typeIdInterner)),
-         Singleton.For<IServiceBusSqlLayer.IInboxSqlLayer>()
+         Singleton.For<ITessagingSqlLayer.IInboxSqlLayer>()
                   .CreatedBy((IMsSqlConnectionPool endpointSqlConnection, MsSqlSqlLayerSchemaManager schemaManager, ITypeIdInterner typeIdInterner) => new MsSqlInboxSqlLayer(endpointSqlConnection, schemaManager, typeIdInterner)),
-         Singleton.For<IServiceBusSqlLayer.IPeerRegistrySqlLayer>()
+         Singleton.For<ITessagingSqlLayer.IPeerRegistrySqlLayer>()
                   .CreatedBy((IMsSqlConnectionPool endpointSqlConnection, MsSqlSqlLayerSchemaManager schemaManager) => new MsSqlPeerRegistrySqlLayer(endpointSqlConnection, schemaManager)));
 }

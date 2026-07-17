@@ -5,12 +5,12 @@ using Compze.Internals.Sql.MySql.Private;
 using Compze.Internals.SystemCE.LinqCE;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tessaging.Transport.SqlLayer;
-using Peers = Compze.Tessaging.Transport.SqlLayer.IServiceBusSqlLayer.PeersDatabaseSchemaStrings;
-using Types = Compze.Tessaging.Transport.SqlLayer.IServiceBusSqlLayer.PeerHandledTessageTypesDatabaseSchemaStrings;
+using Peers = Compze.Tessaging.Transport.SqlLayer.ITessagingSqlLayer.PeersDatabaseSchemaStrings;
+using Types = Compze.Tessaging.Transport.SqlLayer.ITessagingSqlLayer.PeerHandledTessageTypesDatabaseSchemaStrings;
 
 namespace Compze.Tessaging.MySql;
 
-partial class MySqlPeerRegistrySqlLayer(IMySqlConnectionPool connectionFactory, MySqlSqlLayerSchemaManager schemaManager) : IServiceBusSqlLayer.IPeerRegistrySqlLayer
+partial class MySqlPeerRegistrySqlLayer(IMySqlConnectionPool connectionFactory, MySqlSqlLayerSchemaManager schemaManager) : ITessagingSqlLayer.IPeerRegistrySqlLayer
 {
    readonly IMySqlConnectionPool _connectionFactory = connectionFactory;
    readonly MySqlSqlLayerSchemaManager _schemaManager = schemaManager;
@@ -45,7 +45,7 @@ partial class MySqlPeerRegistrySqlLayer(IMySqlConnectionPool connectionFactory, 
          });
    }
 
-   public IReadOnlyList<IServiceBusSqlLayer.PersistedPeer> GetPeers()
+   public IReadOnlyList<ITessagingSqlLayer.PersistedPeer> GetPeers()
    {
       var rows = _connectionFactory.UseCommand(
          command =>
@@ -71,7 +71,7 @@ partial class MySqlPeerRegistrySqlLayer(IMySqlConnectionPool connectionFactory, 
          });
 
       return [..rows.GroupBy(row => row.EndpointId)
-                    .Select(peer => new IServiceBusSqlLayer.PersistedPeer(
+                    .Select(peer => new ITessagingSqlLayer.PersistedPeer(
                                new EndpointId(peer.Key),
                                peer.Where(row => row.HandledTessageType != null).Select(row => row.HandledTessageType!).ToHashSet()))];
    }

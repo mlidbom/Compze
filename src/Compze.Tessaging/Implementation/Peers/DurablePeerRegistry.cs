@@ -16,12 +16,12 @@ namespace Compze.Tessaging.Implementation.Peers;
 /// advertisement fetch. Peer memory survives restarts on both sides: a peer is remembered until explicitly decommissioned.</summary>
 [UsedImplicitly] class DurablePeerRegistry : IPeerRegistry
 {
-   readonly IServiceBusSqlLayer.IPeerRegistrySqlLayer _sqlLayer;
+   readonly ITessagingSqlLayer.IPeerRegistrySqlLayer _sqlLayer;
    readonly ITypeMap _typeMap;
    readonly IReadOnlyList<IPeerLifecycleObserver> _lifecycleObservers;
    readonly RememberedPeers _rememberedPeers = new();
 
-   internal DurablePeerRegistry(IServiceBusSqlLayer.IPeerRegistrySqlLayer sqlLayer, ITypeMap typeMap, IReadOnlyList<IPeerLifecycleObserver> lifecycleObservers)
+   internal DurablePeerRegistry(ITessagingSqlLayer.IPeerRegistrySqlLayer sqlLayer, ITypeMap typeMap, IReadOnlyList<IPeerLifecycleObserver> lifecycleObservers)
    {
       _sqlLayer = sqlLayer;
       _typeMap = typeMap;

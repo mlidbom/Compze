@@ -101,7 +101,7 @@ public class ExactlyOnceTessagingEndpointFeature
    {
       State.Assert(register.IsRegistered<IEndpointTransportServer>(),
                    () => "The endpoint declares no transport protocol. Declare it before adding exactly-once Tessaging — e.g. ComposeEndpoint(it => it.NamedPipeEndpointTransport()...) — or register NamedPipeEndpointTransport()/AspNetCoreEndpointTransport().");
-      State.Assert(register.IsRegistered<IServiceBusSqlLayer.IInboxSqlLayer>() && register.IsRegistered<IServiceBusSqlLayer.IOutboxSqlLayer>() && register.IsRegistered<IServiceBusSqlLayer.IPeerRegistrySqlLayer>(),
+      State.Assert(register.IsRegistered<ITessagingSqlLayer.IInboxSqlLayer>() && register.IsRegistered<ITessagingSqlLayer.IOutboxSqlLayer>() && register.IsRegistered<ITessagingSqlLayer.IPeerRegistrySqlLayer>(),
                    () => "The endpoint declares no Tessaging persistence. Add the feature on a foundation whose database is declared — e.g. ComposeEndpoint(it => ...SqliteEndpointDatabase(...)).AddExactlyOnceTessaging(...) — or register Tessaging's sql layers (e.g. SqliteTessagingSqlLayer()) before adding it. An endpoint that deliberately persists nothing speaks guarantee-free Tessaging instead: AddDistributedTessaging(...).");
       State.Assert(register.IsRegistered<ITessagingSerializer>(),
                    () => "The endpoint declares no Tessaging serializer. Fill the serializer slot when adding the feature — e.g. AddExactlyOnceTessaging(tessaging => tessaging.NewtonsoftSerializer()) — or register one (e.g. NewtonsoftTessagingSerializer()) before adding it.");

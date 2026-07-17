@@ -16,7 +16,7 @@ using Compze.Typermedia.HandlerRegistration;
 // ReSharper disable MemberCanBeMadeStatic.Global
 // ReSharper disable MemberCanBeMadeStatic.Local
 
-namespace Compze.Tests.Integration.Tessaging.ServiceBusSpecification;
+namespace Compze.Tests.Integration.Tessaging;
 
 public class Navigator_specification : UniversalTestBase
 {

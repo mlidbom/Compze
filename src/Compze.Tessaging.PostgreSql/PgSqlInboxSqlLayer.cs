@@ -7,17 +7,17 @@ using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tessaging.Transport.SqlLayer;
 using Compze.TypeIdentifiers;
 using Compze.TypeIdentifiers.Interning;
-using TessageTable =  Compze.Tessaging.Transport.SqlLayer.IServiceBusSqlLayer.InboxTessageDatabaseSchemaStrings;
+using TessageTable =  Compze.Tessaging.Transport.SqlLayer.ITessagingSqlLayer.InboxTessageDatabaseSchemaStrings;
 
 namespace Compze.Tessaging.PostgreSql;
 
-partial class PgSqlInboxSqlLayer(IPgSqlConnectionPool connectionFactory, PgSqlSqlLayerSchemaManager schemaManager, ITypeIdInterner typeIdInterner) : IServiceBusSqlLayer.IInboxSqlLayer
+partial class PgSqlInboxSqlLayer(IPgSqlConnectionPool connectionFactory, PgSqlSqlLayerSchemaManager schemaManager, ITypeIdInterner typeIdInterner) : ITessagingSqlLayer.IInboxSqlLayer
 {
    readonly IPgSqlConnectionPool _connectionFactory = connectionFactory;
    readonly PgSqlSqlLayerSchemaManager _schemaManager = schemaManager;
    readonly ITypeIdInterner _typeIdInterner = typeIdInterner;
 
-   public IServiceBusSqlLayer.SaveTessageResult SaveTessage(TessageId tessageId, TypeId typeId, string serializedTessage)
+   public ITessagingSqlLayer.SaveTessageResult SaveTessage(TessageId tessageId, TypeId typeId, string serializedTessage)
    {
       // Intern before opening a connection: interning may hit the database, and nesting a second connection
       // inside a held one deadlocks the pool.
@@ -43,8 +43,8 @@ partial class PgSqlInboxSqlLayer(IPgSqlConnectionPool connectionFactory, PgSqlSq
               .ExecuteNonQuery();
 
             return affectedRows == 0
-               ? IServiceBusSqlLayer.SaveTessageResult.Duplicate
-               : IServiceBusSqlLayer.SaveTessageResult.NewTessage;
+               ? ITessagingSqlLayer.SaveTessageResult.Duplicate
+               : ITessagingSqlLayer.SaveTessageResult.NewTessage;
          });
    }
 

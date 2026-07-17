@@ -108,8 +108,8 @@ These use `[PCT]`/`[PCTSerializer]`/`[PCTDIContainer]` and inherit from `Univers
 | 42 | [TeventMigrationTest.cs](../test/Compze.Tests.Integration/CQRS/TeventRefactoring/Migrations/TeventMigrationTest.cs) | ~30 | Event migration scenarios with complex before/after inheritance trees. |
 | 43 | [After_Creating_Two_Dbs_Named_DB1_And_DB2.cs](../test/Compze.Tests.Integration/Testing/Sql/After_Creating_Two_Dbs_Named_DB1_And_DB2.cs) | 6 | Already BDD-named, could nest into topic groups. |
 | 44 | [DuplicateRegistrationTests.cs](../test/Compze.Tests.Integration/DependencyInjection/DuplicateRegistrationTests.cs) | 3 | DI duplicate registration checks. |
-| 45 | [Navigator_specification.cs](../test/Compze.Tests.Integration/Tessaging/ServiceBusSpecification/Navigator_specification.cs) | 3 | Service bus navigation. |
-| 46 | Given_a_backend_endpoint tests (9 files in [ServiceBusSpecification/](../test/Compze.Tests.Integration/Tessaging/ServiceBusSpecification/Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler/)) | ~30 | Already has BDD-style folder/file organization. Internal structure could be improved. |
+| 45 | [Navigator_specification.cs](../test/Compze.Tests.Integration/Tessaging/Navigator_specification.cs) | 3 | Service bus navigation. |
+| 46 | Given_a_backend_endpoint tests (9 files in [ServiceBusSpecification/](../test/Compze.Tests.Integration/Tessaging/Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler/)) | ~30 | Already has BDD-style folder/file organization. Internal structure could be improved. |
 
 ### Compze.Tests.Performance.Internals (`[PCT]`)
 

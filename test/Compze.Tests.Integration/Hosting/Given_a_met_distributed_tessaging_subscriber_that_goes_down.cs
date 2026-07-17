@@ -16,7 +16,7 @@ using Compze.Tessaging.Abstractions.Tessaging.Hosting.TessageHandling.Registrati
 using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Implementation.BestEffortDelivery;
 using Compze.Tessaging.Implementation.Peers;
-using Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler;
+using Compze.Tests.Common.Tessaging.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Threading;
