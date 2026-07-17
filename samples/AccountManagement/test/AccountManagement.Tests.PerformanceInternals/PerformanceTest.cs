@@ -19,9 +19,6 @@ using Compze.Must;
 
 using AccountId = AccountManagement.Domain.AccountId;
 using Compze.Tessaging.Typermedia;
-//Both testing namespaces are imported (TestEnv's pluggable components live beside the dying feature-based host), so the
-//surviving host is named explicitly until the old one is deleted with the feature machinery.
-using TestingEndpointHost = Compze.Tessaging.Hosting.Testing.TestingEndpointHost;
 
 namespace AccountManagement;
 

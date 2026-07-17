@@ -13,20 +13,6 @@ namespace Compze.Tessaging.PostgreSql.Wiring;
 
 public static class PgSqlTessagingRegistrar
 {
-   extension(EndpointFoundation<PgSqlEndpointDatabase> @this)
-   {
-      ///<summary>Adds exactly-once Tessaging to an endpoint whose database is PostgreSQL: registers Tessaging's inbox/outbox sql layers<br/>
-      /// (<see cref="PgSqlTessagingSqlLayer"/>) in the endpoint's database, runs <paramref name="compose"/> to fill the feature's<br/>
-      /// slots (e.g. the serializer), and adds the feature. The compiler routes this pairing through the foundation's type —<br/>
-      /// Tessaging-on-PostgreSQL exists only for an endpoint whose foundation declares a PostgreSQL database.</summary>
-      public ExactlyOnceTessagingEndpointFeature AddExactlyOnceTessaging(Action<ExactlyOnceTessagingComposition> compose)
-      {
-         @this.Builder.Registrar.PgSqlTessagingSqlLayer();
-         compose(new ExactlyOnceTessagingComposition(@this.Builder.Registrar));
-         return @this.Builder.AddExactlyOnceTessaging();
-      }
-   }
-
    extension(Compze.Tessaging.Endpoints.ExactlyOnceEndpointBuilder @this)
    {
       ///<summary>Declares the endpoint's database: PostgreSQL, reached through <paramref name="connectionStringName"/> — filling<br/>

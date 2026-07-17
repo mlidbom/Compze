@@ -9,14 +9,6 @@ namespace Compze.Teventive.TeventStore.Typermedia;
 
 public static class TeventStoreTypermediaRegistrar
 {
-   public static TeventStoreRegistrationBuilder RegisterTeventStore(this IEndpointBuilder @this)
-   {
-      @this.TypeMapper.MapTypesFromAssemblyContaining<TeventStoreApi>();
-      @this.TypeMapper.MapTypesFromAssemblyContaining<TeventCache>();
-      @this.Registrar.TeventStore(@this.Configuration.ConnectionStringName);
-      return new TeventStoreRegistrationBuilder(register => @this.RegisterTessageHandlers(register));
-   }
-
    public static TeventStoreRegistrationBuilder RegisterTeventStore(this ExactlyOnceEndpointBuilder @this)
    {
       @this.TypeMapper.MapTypesFromAssemblyContaining<TeventStoreApi>();

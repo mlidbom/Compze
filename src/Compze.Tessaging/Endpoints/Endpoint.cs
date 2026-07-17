@@ -67,11 +67,7 @@ public abstract class Endpoint : IEndpoint
 
    public bool IsRunning => _isListening && _isSending;
 
-   ///<summary>Always empty: the <see cref="IEndpointComponent"/> seam belongs to the feature-machinery hosting path and dies<br/>
-   /// with it — a concrete endpoint type has no components; it drives its own lifecycle phases in the methods below.</summary>
-   public IReadOnlyList<IEndpointComponent> Components => [];
-
-   public async Task StartListeningComponentsAsync()
+   public async Task StartListeningAsync()
    {
       State.Assert(!_isListening);
       this.Log().Info($"Endpoint '{_configuration.Name}' ({Id}) starting to listen");
@@ -82,7 +78,7 @@ public abstract class Endpoint : IEndpoint
       await _transportServer.StartAsync().caf();
    }
 
-   public Task AnnounceAddressComponentsAsync()
+   public Task AnnounceAddressAsync()
    {
       State.Assert(_isListening && !_hasAnnounced);
       this.Log().Info($"Endpoint '{_configuration.Name}' ({Id}) announcing address");
@@ -91,7 +87,7 @@ public abstract class Endpoint : IEndpoint
       return Task.CompletedTask;
    }
 
-   public async Task StartSendingComponentsAsync()
+   public async Task StartSendingAsync()
    {
       State.Assert(!_isSending);
       this.Log().Info($"Endpoint '{_configuration.Name}' ({Id}) starting to send");
@@ -106,7 +102,7 @@ public abstract class Endpoint : IEndpoint
       _router.StartDelivery();
    }
 
-   public async Task StopSendingComponentsAsync()
+   public async Task StopSendingAsync()
    {
       if(!_isSending) return;
       this.Log().Info($"Endpoint '{_configuration.Name}' ({Id}) stopping sending");
@@ -115,7 +111,7 @@ public abstract class Endpoint : IEndpoint
       await StopTheDurableVerticalAsync().caf();
    }
 
-   public Task RetractAddressComponentsAsync()
+   public Task RetractAddressAsync()
    {
       if(!_hasAnnounced) return Task.CompletedTask;
       this.Log().Info($"Endpoint '{_configuration.Name}' ({Id}) retracting address");
@@ -124,7 +120,7 @@ public abstract class Endpoint : IEndpoint
       return Task.CompletedTask;
    }
 
-   public async Task StopListeningComponentsAsync()
+   public async Task StopListeningAsync()
    {
       if(!_isListening) return;
       this.Log().Info($"Endpoint '{_configuration.Name}' ({Id}) stopping listening");
@@ -142,9 +138,9 @@ public abstract class Endpoint : IEndpoint
    public async ValueTask DisposeAsync()
    {
       this.Log().Debug($"Endpoint '{_configuration.Name}' ({Id}) disposing");
-      await RetractAddressComponentsAsync().caf();
-      await StopSendingComponentsAsync().caf();
-      await StopListeningComponentsAsync().caf();
+      await RetractAddressAsync().caf();
+      await StopSendingAsync().caf();
+      await StopListeningAsync().caf();
       await _container.DisposeAsync().caf();
       //The container also disposes the server it holds; server disposal is idempotent, and disposing what we hold keeps ownership legible.
       await _transportServer.DisposeAsync().caf();

@@ -7,12 +7,6 @@ namespace Compze.DocumentDb.Wiring;
 
 public static class EndpointBuilderDocumentDbExtensions
 {
-   public static EndpointDocumentDbRegistrationBuilder RegisterDocumentDb(this IEndpointBuilder @this)
-   {
-      @this.Registrar.DocumentDb();
-      return new EndpointDocumentDbRegistrationBuilder(register => @this.RegisterTessageHandlers(register));
-   }
-
    public static EndpointDocumentDbRegistrationBuilder RegisterDocumentDb(this ExactlyOnceEndpointBuilder @this)
    {
       @this.Registrar.DocumentDb();

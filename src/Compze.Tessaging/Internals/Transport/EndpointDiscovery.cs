@@ -32,19 +32,3 @@ public class EndpointInformation
    public HashSet<string> HandledTessageTypes { get; }
 }
 
-///<summary>Contributes an endpoint's advertised remotable tessage type-ids to its one <see cref="EndpointInformation"/><br/>
-/// advertisement: each communication style's handler registry contributes the remotable types it serves.</summary>
-///<remarks>An interim seam: when the <c>TessageHandlerRoster</c> lands (see<br/>
-/// <c>dev_docs/TODO/WIP/Tessaging/tessaging-target-design.md</c>) the one roster is the advertisement's single source and this<br/>
-/// contribution set dies with the feature machinery.</remarks>
-interface IEndpointAdvertisementContributor
-{
-   ISet<TypeId> AdvertisedRemoteTessageTypeIds();
-}
-
-static class EndpointInformationQueryRegistration
-{
-   internal static void RegisterQueryHandlers(EndpointDiscoveryQueryRegistrarWithDependencyInjectionSupport registrar) =>
-      registrar.ForQuery((EndpointInformationQuery _, IComponentSet<IEndpointAdvertisementContributor> contributors, EndpointConfiguration configuration) =>
-                            new EndpointInformation([..contributors.SelectMany(contributor => contributor.AdvertisedRemoteTessageTypeIds())], configuration));
-}

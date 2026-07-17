@@ -7,9 +7,6 @@ using Compze.Internals.Testing;
 using Compze.Tessaging.Endpoints;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Typermedia;
-//Both testing namespaces are imported (TestEnv's pluggable components live beside the dying feature-based host), so the
-//surviving host is named explicitly until the old one is deleted with the feature machinery.
-using TestingEndpointHost = Compze.Tessaging.Hosting.Testing.TestingEndpointHost;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.LinqCE;
 using Compze.Abstractions.Hosting.Public;

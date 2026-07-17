@@ -86,15 +86,6 @@ public class TessageHandlerRoster
    /// tommands and tueries as they stand. Computed once; asserts that every advertised type has a type-id mapping.</summary>
    public ISet<TypeId> AdvertisedRemoteTessageTypeIds() => _handledRemoteTessageBusTypeIds.Value.Union(_handledRemoteTypermediaTypeIds.Value).ToHashSet();
 
-   ///<summary>The TessageBus partition of the advertisement (<see cref="AdvertisedRemoteTessageTypeIds"/>): remotable tevent<br/>
-   /// subscriptions and exactly-once tommands. An interim seam — the per-style advertisement contributors die into the roster's<br/>
-   /// one advertisement when the concrete endpoint types replace the feature machinery.</summary>
-   internal ISet<TypeId> HandledRemoteTessageBusTypeIds() => _handledRemoteTessageBusTypeIds.Value;
-
-   ///<summary>The Typermedia partition of the advertisement (<see cref="AdvertisedRemoteTessageTypeIds"/>): remotable tueries and<br/>
-   /// typermedia tommands. An interim seam — see <see cref="HandledRemoteTessageBusTypeIds"/>.</summary>
-   internal ISet<TypeId> HandledRemoteTypermediaTypeIds() => _handledRemoteTypermediaTypeIds.Value;
-
    ///<summary>The registered handler tessage types whose type declares the exactly-once delivery contract — the types an engine's<br/>
    /// endpoint may only advertise when its composition wires the exactly-once machinery (the inbox that persists, dedups, and<br/>
    /// retries). Observation subscriptions count too: observing a remote exactly-once tevent still requires receiving it<br/>

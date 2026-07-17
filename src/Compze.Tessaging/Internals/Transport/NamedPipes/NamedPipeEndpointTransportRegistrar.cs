@@ -1,4 +1,3 @@
-using Compze.Abstractions.Hosting.Public;
 using Compze.DependencyInjection.Abstractions;
 
 namespace Compze.Tessaging.Internals.Transport.NamedPipes;
@@ -7,35 +6,17 @@ public static class NamedPipeEndpointTransportRegistrar
 {
    ///<summary>Declares the endpoint's transport protocol: named pipes. Registers the named-pipe endpoint transport client<br/>
    /// (<see cref="IEndpointTransportClient"/>), the endpoint-discovery query transport that runs on it, and the endpoint's one<br/>
-   /// transport server (<see cref="IEndpointTransportServer"/>) serving every communication style's contributed request handlers —<br/>
-   /// the same-machine protocol, with no web stack. The communication styles themselves register nothing protocol-specific.</summary>
+   /// transport server (<see cref="IEndpointTransportServer"/>) serving every remotable capability's contributed request handlers —<br/>
+   /// the same-machine protocol, with no web stack.</summary>
    public static IComponentRegistrar NamedPipeEndpointTransport(this IComponentRegistrar registrar)
       => registrar.NamedPipeEndpointTransportClientIfNotRegistered()
                   .EndpointDiscoveryQueryTransportIfNotRegistered()
                   .NamedPipeEndpointTransportServerIfNotRegistered();
 
-   extension(EndpointComposer @this)
-   {
-      ///<summary>Declares the endpoint's transport protocol: named pipes — see <see cref="NamedPipeEndpointTransport(IComponentRegistrar)"/>,<br/>
-      /// to which this delegates. Returns the endpoint's foundation (<see cref="EndpointFoundation"/>), on which the database is<br/>
-      /// declared and the distributed features are added.</summary>
-      public EndpointFoundation NamedPipeEndpointTransport()
-      {
-         @this.Builder.Registrar.NamedPipeEndpointTransport();
-         return new EndpointFoundation(@this.Builder);
-      }
-   }
-
-}
-
-//Its own class only because the two extension blocks' generated names would otherwise collide (CA1708); folds into
-//NamedPipeEndpointTransportRegistrar when the EndpointComposer surface dies with the feature machinery.
-public static class NamedPipeEndpointTransportDeclaration
-{
    extension(Endpoints.EndpointBuilder @this)
    {
       ///<summary>Declares the endpoint's transport protocol: named pipes — the same-machine protocol, with no web stack.<br/>
-      /// See <see cref="NamedPipeEndpointTransportRegistrar.NamedPipeEndpointTransport(IComponentRegistrar)"/>, to which this delegates.</summary>
+      /// See <see cref="NamedPipeEndpointTransport(IComponentRegistrar)"/>, to which this delegates.</summary>
       public void NamedPipeEndpointTransport() => @this.TransportProtocol(registrar => registrar.NamedPipeEndpointTransport());
    }
 }

@@ -16,8 +16,8 @@ namespace Compze.Tessaging.Hosting.Testing.Typermedia;
 
 ///<summary>
 /// A remote Typermedia client for tests: it runs in its own container — wired with the current test's pluggable
-/// components, never sharing the endpoint's — and connects over HTTP to one endpoint's typermedia address
-/// (see <see cref="EndpointTypermediaExtensions"/>), exactly as an external client application would.
+/// components, never sharing the endpoint's — and connects to one endpoint's address
+/// (<c>Endpoint.Address</c>, the endpoint's one transport-server address), exactly as an external client application would.
 ///</summary>
 public class TypermediaTestClient : IAsyncDisposable
 {

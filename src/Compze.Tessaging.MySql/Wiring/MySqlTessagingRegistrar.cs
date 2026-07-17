@@ -13,20 +13,6 @@ namespace Compze.Tessaging.MySql.Wiring;
 
 public static class MySqlTessagingRegistrar
 {
-   extension(EndpointFoundation<MySqlEndpointDatabase> @this)
-   {
-      ///<summary>Adds exactly-once Tessaging to an endpoint whose database is MySQL: registers Tessaging's inbox/outbox sql layers<br/>
-      /// (<see cref="MySqlTessagingSqlLayer"/>) in the endpoint's database, runs <paramref name="compose"/> to fill the feature's<br/>
-      /// slots (e.g. the serializer), and adds the feature. The compiler routes this pairing through the foundation's type —<br/>
-      /// Tessaging-on-MySQL exists only for an endpoint whose foundation declares a MySQL database.</summary>
-      public ExactlyOnceTessagingEndpointFeature AddExactlyOnceTessaging(Action<ExactlyOnceTessagingComposition> compose)
-      {
-         @this.Builder.Registrar.MySqlTessagingSqlLayer();
-         compose(new ExactlyOnceTessagingComposition(@this.Builder.Registrar));
-         return @this.Builder.AddExactlyOnceTessaging();
-      }
-   }
-
    extension(Compze.Tessaging.Endpoints.ExactlyOnceEndpointBuilder @this)
    {
       ///<summary>Declares the endpoint's database: MySQL, reached through <paramref name="connectionStringName"/> — filling the<br/>

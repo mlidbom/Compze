@@ -7,15 +7,14 @@ using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 namespace Compze.Hosting;
 
 ///<summary>
-/// The <see cref="IEndpointHost"/> mechanism. It builds each endpoint from a fresh container (via the factory
-/// it was created with) and a <see cref="ServerEndpointBuilder"/>, and guarantees the host-wide phase
-/// ordering — every endpoint's listening components start before any endpoint announces its address, and every
-/// address is announced before any endpoint's sending components start (see <see cref="IEndpointComponent"/>
-/// for why). What an endpoint can actually do is decided by the features its setup callback adds; the host
-/// never knows.
+/// The <see cref="IEndpointHost"/> mechanism. Each endpoint is composed on a fresh container builder from the factory the
+/// host was created with (<see cref="IEndpointHost.RegisterEndpoint{TEndpoint}"/>), and the host guarantees the host-wide
+/// phase ordering — every endpoint starts listening before any endpoint announces its address, and every address is
+/// announced before any endpoint starts sending (see <see cref="IEndpoint"/>). What an endpoint can actually do is decided
+/// by its composition; the host never knows.
 ///
-/// Production hosts are created via <see cref="Production.Create"/>; tests use
-/// <c>TestingEndpointHost.Create</c> (Compze.Hosting.Testing), which subclasses this mechanism.
+/// Production hosts are created via <see cref="Production.Create"/>; tests use the testing host in
+/// Compze.Tessaging.Hosting.Testing, which subclasses this mechanism.
 ///</summary>
 public class EndpointHost : IEndpointHost
 {
@@ -28,19 +27,6 @@ public class EndpointHost : IEndpointHost
    public static class Production
    {
       public static IEndpointHost Create(Func<IContainerBuilder> containerFactory) => new EndpointHost(containerFactory);
-   }
-
-   public virtual IEndpoint RegisterEndpoint(string name, EndpointId id, Action<IEndpointBuilder> setup) => InternalRegisterEndpoint(new EndpointConfiguration(name, id), setup);
-
-   IEndpoint InternalRegisterEndpoint(EndpointConfiguration configuration, Action<IEndpointBuilder> setup)
-   {
-      var builder = new ServerEndpointBuilder(_containerFactory(), configuration);
-      setup(builder);
-
-      var endpoint = builder.Build();
-
-      _endpoints.Add(endpoint);
-      return endpoint;
    }
 
    public TEndpoint RegisterEndpoint<TEndpoint>(Func<IContainerBuilder, TEndpoint> composeEndpoint) where TEndpoint : IEndpoint
@@ -57,9 +43,9 @@ public class EndpointHost : IEndpointHost
          State.Assert(!_isStarted, Endpoints.None(endpoint => endpoint.IsRunning));
          this.Log().Info($"Starting with {Endpoints.Count} endpoint(s)");
 
-         await Task.WhenAll(Endpoints.Select(endpointToStart => endpointToStart.StartListeningComponentsAsync())).WithAggregateExceptions().caf();
-         await Task.WhenAll(Endpoints.Select(endpointToStart => endpointToStart.AnnounceAddressComponentsAsync())).WithAggregateExceptions().caf();
-         await Task.WhenAll(Endpoints.Select(endpointToStart => endpointToStart.StartSendingComponentsAsync())).WithAggregateExceptions().caf();
+         await Task.WhenAll(Endpoints.Select(endpointToStart => endpointToStart.StartListeningAsync())).WithAggregateExceptions().caf();
+         await Task.WhenAll(Endpoints.Select(endpointToStart => endpointToStart.AnnounceAddressAsync())).WithAggregateExceptions().caf();
+         await Task.WhenAll(Endpoints.Select(endpointToStart => endpointToStart.StartSendingAsync())).WithAggregateExceptions().caf();
          _isStarted = true;
    }
 
@@ -75,9 +61,9 @@ public class EndpointHost : IEndpointHost
          if(_isStarted)
          {
             _isStarted = false;
-            await Task.WhenAll(Endpoints.Select(endpoint => endpoint.RetractAddressComponentsAsync())).WithAggregateExceptions().caf();
-            await Task.WhenAll(Endpoints.Select(endpoint => endpoint.StopSendingComponentsAsync())).WithAggregateExceptions().caf();
-            await Task.WhenAll(Endpoints.Select(endpoint => endpoint.StopListeningComponentsAsync())).WithAggregateExceptions().caf();
+            await Task.WhenAll(Endpoints.Select(endpoint => endpoint.RetractAddressAsync())).WithAggregateExceptions().caf();
+            await Task.WhenAll(Endpoints.Select(endpoint => endpoint.StopSendingAsync())).WithAggregateExceptions().caf();
+            await Task.WhenAll(Endpoints.Select(endpoint => endpoint.StopListeningAsync())).WithAggregateExceptions().caf();
          }
 
          await Task.WhenAll(Endpoints.Select(endpoint => endpoint.DisposeAsync().AsTask())).WithAggregateExceptions().caf();
