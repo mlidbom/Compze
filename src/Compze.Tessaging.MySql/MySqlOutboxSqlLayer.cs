@@ -119,6 +119,7 @@ partial class MySqlOutboxSqlLayer(IMySqlConnectionPool connectionFactory, MySqlS
                     FROM {TessageTable.TableName} m
                     INNER JOIN {DispatchingTable.TableName} d ON m.{TessageTable.TessageId} = d.{DispatchingTable.TessageId}
                     WHERE d.{DispatchingTable.IsReceived} = 0
+                      AND d.{DispatchingTable.IsStranded} = 0 -- A stranded tessage waits for explicit resolution on the decommission surface, never for delivery.
                       AND d.{DispatchingTable.EndpointId} = @endpointId
                     ORDER BY m.{TessageTable.GeneratedId} -- Send order: recovery re-establishes in-order delivery, oldest undelivered first.
 
@@ -141,6 +142,95 @@ partial class MySqlOutboxSqlLayer(IMySqlConnectionPool connectionFactory, MySqlS
                               typeId: _typeIdInterner.GetTypeId(row.TypeId),
                               serializedTessage: row.Body))];
    }
+
+   public void DiscardUndeliveredTessages(EndpointId endpointId, IReadOnlyList<TessageId> tessageIds)
+   {
+      if(tessageIds.Count == 0) return;
+      _connectionFactory.UseCommand(
+         command =>
+         {
+            command
+              .SetCommandText(
+                  $"""
+
+                   DELETE FROM {DispatchingTable.TableName}
+                   WHERE {DispatchingTable.EndpointId} = @{DispatchingTable.EndpointId}
+                     AND {DispatchingTable.TessageId} IN ( {TessageIdParameterList(tessageIds.Count)} )
+
+                   """)
+              .AddParameter(DispatchingTable.EndpointId, endpointId.Value);
+            tessageIds.ForEach((tessageId, index) => command.AddParameter($"{DispatchingTable.TessageId}_{index}", tessageId.Value));
+            command.ExecuteNonQuery();
+         });
+   }
+
+   public void StrandUndeliveredTessages(EndpointId endpointId, IReadOnlyList<TessageId> tessageIds)
+   {
+      if(tessageIds.Count == 0) return;
+      _connectionFactory.UseCommand(
+         command =>
+         {
+            command
+              .SetCommandText(
+                  $"""
+
+                   UPDATE {DispatchingTable.TableName}
+                       SET {DispatchingTable.IsStranded} = 1
+                   WHERE {DispatchingTable.EndpointId} = @{DispatchingTable.EndpointId}
+                     AND {DispatchingTable.TessageId} IN ( {TessageIdParameterList(tessageIds.Count)} )
+
+                   """)
+              .AddParameter(DispatchingTable.EndpointId, endpointId.Value);
+            tessageIds.ForEach((tessageId, index) => command.AddParameter($"{DispatchingTable.TessageId}_{index}", tessageId.Value));
+            command.ExecuteNonQuery();
+         });
+   }
+
+   public IReadOnlyList<IServiceBusSqlLayer.DiscardedTessage> DiscardAllTessagesOwedTo(EndpointId endpointId)
+   {
+      // The TypeId column holds an interned int. Resolve it to the canonical type string AFTER the reader has
+      // closed — resolving during the read could open a second connection on a cache miss while the reader is held.
+      var owed = _connectionFactory.UseCommand(
+         command =>
+         {
+            var rows = new List<(TessageId TessageId, int TypeId, bool WasStranded)>();
+
+            command
+               .SetCommandText(
+                   $"""
+
+                    SELECT d.{DispatchingTable.TessageId},
+                           m.{TessageTable.TypeId},
+                           d.{DispatchingTable.IsStranded}
+                    FROM {DispatchingTable.TableName} d
+                    INNER JOIN {TessageTable.TableName} m ON m.{TessageTable.TessageId} = d.{DispatchingTable.TessageId}
+                    WHERE d.{DispatchingTable.IsReceived} = 0
+                      AND d.{DispatchingTable.EndpointId} = @endpointId
+
+                    """)
+               .AddParameter("endpointId", endpointId.Value);
+
+            using var reader = command.ExecuteReader();
+            while(reader.Read())
+            {
+               rows.Add((new TessageId(reader.GetGuid(0)),
+                         reader.GetInt32(1),
+                         reader.GetBoolean(2)));
+            }
+
+            return rows;
+         });
+
+      DiscardUndeliveredTessages(endpointId, [..owed.Select(row => row.TessageId)]);
+
+      return [..owed.Select(row => new IServiceBusSqlLayer.DiscardedTessage(
+                              tessageId: row.TessageId,
+                              typeId: _typeIdInterner.GetTypeId(row.TypeId),
+                              wasStranded: row.WasStranded))];
+   }
+
+   static string TessageIdParameterList(int tessageIdCount) =>
+      string.Join(", ", Enumerable.Range(0, tessageIdCount).Select(index => $"@{DispatchingTable.TessageId}_{index}"));
 
    public async Task InitAsync() => await _schemaManager.EnsureSchemaInitializedAsync().caf();
 }

@@ -166,15 +166,20 @@ public abstract class EndpointHostTestBase : UniversalTestBase
          });
    }
 
-   void RegisterRemoteEndpoint() =>
+   void RegisterRemoteEndpoint(bool withItsTommandHandler = true) =>
       RemoteEndpoint = Host.RegisterEndpoint("Remote",
                                              RemoteEndpointId,
                                              builder =>
                                              {
                                                 builder.TypeMapper.RegisterCommonTestTypeMappings();
 
+                                                if(withItsTommandHandler)
+                                                {
+                                                   builder.RegisterTessagingHandlers
+                                                          .ForTommand((MyExactlyOnceTommandHandledByTheRemoteEndpoint _) => MyExactlyOnceTommandHandledByTheRemoteEndpointHandlerThreadGate.AwaitPassThrough());
+                                                }
+
                                                 builder.RegisterTessagingHandlers
-                                                       .ForTommand((MyExactlyOnceTommandHandledByTheRemoteEndpoint _) => MyExactlyOnceTommandHandledByTheRemoteEndpointHandlerThreadGate.AwaitPassThrough())
                                                        .ForTevent((IMyTaggregateTevent _) => MyRemoteTaggregateTeventHandlerThreadGate.AwaitPassThrough())
                                                        //Publisher-conscious subscription: subscribing to the taggregate's wrapper type receives the wrapped tevent as MyTaggregate published it.
                                                        .ForTevent((IMyTaggregateTevent<IMyTaggregateTevent> _) => MyRemotePublisherConsciousTeventHandlerThreadGate.AwaitPassThrough())
@@ -204,6 +209,17 @@ public abstract class EndpointHostTestBase : UniversalTestBase
    {
       CreateHostAndRegisterBackendEndpoint();
       RemoteEndpoint = null!; //There is no Remote endpoint in this host: touching it must fail loudly, not answer from the previous host's disposed instance.
+      await StartHostAndConnectClientAsync();
+   }
+
+   ///<summary>Starts a host in which the Remote endpoint returns with a shrunk advertisement: it no longer handles<br/>
+   /// <see cref="MyExactlyOnceTommandHandledByTheRemoteEndpoint"/>, while every tevent subscription remains — the deployment<br/>
+   /// where a handler was removed from an endpoint that keeps its identity (see the advertisement lifecycle in<br/>
+   /// <c>dev_docs/TODO/durable-peer-topology.md</c>).</summary>
+   protected async Task StartHostWithTheRemoteEndpointReturningNoLongerHandlingItsTommandAsync()
+   {
+      CreateHostAndRegisterBackendEndpoint();
+      RegisterRemoteEndpoint(withItsTommandHandler: false);
       await StartHostAndConnectClientAsync();
    }
 

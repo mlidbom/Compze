@@ -28,6 +28,7 @@ partial class PgSqlOutboxSqlLayer
         {Dispatch.TessageId}        {PgSqlGuidType} NOT NULL,
         {Dispatch.EndpointId}       {PgSqlGuidType} NOT NULL,
         {Dispatch.IsReceived}       boolean         NOT NULL,
+        {Dispatch.IsStranded}       boolean         NOT NULL DEFAULT false,
         {Dispatch.RetryCount}       integer         NOT NULL DEFAULT 0,
         {Dispatch.LastAttemptTime}  timestamptz     NULL,
         {Dispatch.FailureReason}    TEXT            NULL,

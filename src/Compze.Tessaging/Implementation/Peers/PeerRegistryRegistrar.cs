@@ -14,7 +14,7 @@ static class PeerRegistryRegistrar
    public static IComponentRegistrar PeerRegistry(this IComponentRegistrar registrar)
       => registrar.IsRegistered<IServiceBusSqlLayer.IPeerRegistrySqlLayer>()
             ? registrar.Register(Singleton.For<IPeerRegistry>()
-                                          .CreatedBy((IServiceBusSqlLayer.IPeerRegistrySqlLayer sqlLayer, ITypeMap typeMap) => new DurablePeerRegistry(sqlLayer, typeMap)))
+                                          .CreatedBy((IServiceBusSqlLayer.IPeerRegistrySqlLayer sqlLayer, ITypeMap typeMap, IComponentSet<IPeerLifecycleObserver> lifecycleObservers) => new DurablePeerRegistry(sqlLayer, typeMap, [..lifecycleObservers])))
             : registrar.Register(Singleton.For<IPeerRegistry>()
-                                          .CreatedBy((ITypeMap typeMap) => new ProcessLifetimePeerRegistry(typeMap)));
+                                          .CreatedBy((ITypeMap typeMap, IComponentSet<IPeerLifecycleObserver> lifecycleObservers) => new ProcessLifetimePeerRegistry(typeMap, [..lifecycleObservers])));
 }

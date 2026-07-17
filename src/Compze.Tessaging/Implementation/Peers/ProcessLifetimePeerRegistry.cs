@@ -13,14 +13,24 @@ namespace Compze.Tessaging.Implementation.Peers;
 [UsedImplicitly] class ProcessLifetimePeerRegistry : IPeerRegistry
 {
    readonly ITypeMap _typeMap;
+   readonly IReadOnlyList<IPeerLifecycleObserver> _lifecycleObservers;
    readonly RememberedPeers _rememberedPeers = new();
 
-   internal ProcessLifetimePeerRegistry(ITypeMap typeMap) => _typeMap = typeMap;
+   internal ProcessLifetimePeerRegistry(ITypeMap typeMap, IReadOnlyList<IPeerLifecycleObserver> lifecycleObservers)
+   {
+      _typeMap = typeMap;
+      _lifecycleObservers = lifecycleObservers;
+   }
 
    public Task StartAsync() => Task.CompletedTask;
 
-   public void RecordAdvertisement(TessagingEndpointInformation advertisement) =>
-      _rememberedPeers.Remember(new RememberedPeer(advertisement.Id, advertisement.HandledTessageTypes, _typeMap));
+   public void RecordAdvertisement(TessagingEndpointInformation advertisement)
+   {
+      var peer = new RememberedPeer(advertisement.Id, advertisement.HandledTessageTypes, _typeMap);
+      var previous = _rememberedPeers.Find(peer.Id);
+      _rememberedPeers.Remember(peer);
+      _lifecycleObservers.NotifyAdvertisementRecorded(previous, peer);
+   }
 
    public IReadOnlyList<RememberedPeer> Peers => _rememberedPeers.Peers;
 

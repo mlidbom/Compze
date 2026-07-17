@@ -29,6 +29,7 @@ partial class MySqlOutboxSqlLayer
             {D.TessageId}        {MySqlGuidType} NOT NULL,
             {D.EndpointId}       {MySqlGuidType} NOT NULL,
             {D.IsReceived}       bit             NOT NULL,
+            {D.IsStranded}       bit             NOT NULL DEFAULT 0,
             {D.RetryCount}       int             NOT NULL DEFAULT 0,
             {D.LastAttemptTime}  datetime        NULL,
             {D.FailureReason}    MEDIUMTEXT      NULL,

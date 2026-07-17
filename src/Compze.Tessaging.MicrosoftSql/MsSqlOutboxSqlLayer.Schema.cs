@@ -27,6 +27,7 @@ partial class MsSqlOutboxSqlLayer
                {Dispatching.TessageId}        uniqueidentifier NOT NULL,
                {Dispatching.EndpointId}       uniqueidentifier NOT NULL,
                {Dispatching.IsReceived}       bit              NOT NULL,
+               {Dispatching.IsStranded}       bit              NOT NULL DEFAULT 0,
                {Dispatching.RetryCount}       int              NOT NULL DEFAULT 0,
                {Dispatching.LastAttemptTime}  datetime2        NULL,
                {Dispatching.FailureReason}    nvarchar(MAX)    NULL,

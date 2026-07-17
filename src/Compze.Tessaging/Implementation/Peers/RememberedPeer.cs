@@ -32,10 +32,18 @@ public class RememberedPeer
 
    ///<summary>Whether this peer's last-known advertisement subscribes to <paramref name="wrappedTevent"/> — the same<br/>
    /// advertised-wrapper-type assignability test the router's routes apply.</summary>
-   internal bool SubscribesTo(IPublisherTevent<IRemotableTevent> wrappedTevent)
-      => _teventSubscriptions.Any(subscription => subscription.IsInstanceOfType(wrappedTevent));
+   internal bool SubscribesTo(IPublisherTevent<IRemotableTevent> wrappedTevent) => SubscribesToTeventsOf(wrappedTevent.GetType());
+
+   ///<summary>The type-level form of <see cref="SubscribesTo"/>, for tevents at rest — an outbox row carries the published<br/>
+   /// wrapper's type, not an instance — asking the same question: does any advertised subscription match this wrapper type?</summary>
+   internal bool SubscribesToTeventsOf(Type publishedWrapperType)
+      => _teventSubscriptions.Any(subscription => subscription.IsAssignableFrom(publishedWrapperType));
 
    ///<summary>Whether this peer's last-known advertisement handles <paramref name="tommand"/>'s type — the same exact-type<br/>
    /// match the router's tommand routes apply.</summary>
-   internal bool Handles(IExactlyOnceTommand tommand) => _handledTommandTypes.Contains(tommand.GetType());
+   internal bool Handles(IExactlyOnceTommand tommand) => HandlesTommandsOf(tommand.GetType());
+
+   ///<summary>The type-level form of <see cref="Handles"/>, for tommands at rest — an outbox row carries the tommand's type,<br/>
+   /// not an instance.</summary>
+   internal bool HandlesTommandsOf(Type tommandType) => _handledTommandTypes.Contains(tommandType);
 }

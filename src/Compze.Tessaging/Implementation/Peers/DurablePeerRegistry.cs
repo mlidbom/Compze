@@ -16,12 +16,14 @@ namespace Compze.Tessaging.Implementation.Peers;
 {
    readonly IServiceBusSqlLayer.IPeerRegistrySqlLayer _sqlLayer;
    readonly ITypeMap _typeMap;
+   readonly IReadOnlyList<IPeerLifecycleObserver> _lifecycleObservers;
    readonly RememberedPeers _rememberedPeers = new();
 
-   internal DurablePeerRegistry(IServiceBusSqlLayer.IPeerRegistrySqlLayer sqlLayer, ITypeMap typeMap)
+   internal DurablePeerRegistry(IServiceBusSqlLayer.IPeerRegistrySqlLayer sqlLayer, ITypeMap typeMap, IReadOnlyList<IPeerLifecycleObserver> lifecycleObservers)
    {
       _sqlLayer = sqlLayer;
       _typeMap = typeMap;
+      _lifecycleObservers = lifecycleObservers;
    }
 
    public async Task StartAsync()
@@ -32,9 +34,17 @@ namespace Compze.Tessaging.Implementation.Peers;
 
    public void RecordAdvertisement(TessagingEndpointInformation advertisement)
    {
-      //Its own transaction, never the caller's: recording an advertisement is fact-keeping - the fetch happened - and must not roll back with any unrelated ambient transaction.
-      TransactionScopeCe.SuppressAmbient(() => TransactionScopeCe.Execute(() => _sqlLayer.SaveAdvertisement(advertisement.Id, advertisement.HandledTessageTypes)));
-      _rememberedPeers.Remember(new RememberedPeer(advertisement.Id, advertisement.HandledTessageTypes, _typeMap));
+      var peer = new RememberedPeer(advertisement.Id, advertisement.HandledTessageTypes, _typeMap);
+      var previous = _rememberedPeers.Find(peer.Id);
+      //Its own transaction, never the caller's: recording an advertisement is fact-keeping - the fetch happened - and must not
+      //roll back with any unrelated ambient transaction. The lifecycle observers are notified inside it, so the recorded
+      //advertisement and its consequences - the outbox pruning what a shrink orphaned - commit or roll back together.
+      TransactionScopeCe.SuppressAmbient(() => TransactionScopeCe.Execute(() =>
+      {
+         _sqlLayer.SaveAdvertisement(advertisement.Id, advertisement.HandledTessageTypes);
+         _lifecycleObservers.NotifyAdvertisementRecorded(previous, peer);
+      }));
+      _rememberedPeers.Remember(peer);
    }
 
    public IReadOnlyList<RememberedPeer> Peers => _rememberedPeers.Peers;

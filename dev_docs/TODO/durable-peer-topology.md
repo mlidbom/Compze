@@ -131,7 +131,7 @@ lower guarantee is opt-in, never a default.**
   the subscription's owner, nothing like absence. Persisted subscriptions/routes of the dropped types are
   pruned going forward. Already-persisted undelivered rows split by kind:
   - **Tevents**: the subscriber renounced interest — the undelivered tevents lost their audience by that
-    audience's own choice. Dropped, **with loud reporting** (count and types), never silently.
+    audience's own choice. Discarded, **with loud reporting** (count and types), never silently.
   - **Tommands**: someone commanded an action that now has no handler — almost certainly a deployment
     error. A tommand is bound to its receiver, so a successor does not automatically receive it: a
     stranded tommand is reported loudly and resolved explicitly — discarded or reassigned — on the
@@ -191,8 +191,10 @@ patience, then fail loud naming the unserved type).
 - **First contact is the boundary** (exactly-once): a subscriber the publisher has never seen receives
   nothing published before its first discovery — deliberate semantics, pinned.
 - **Advertisement shrink**: subscriber returns advertising fewer types; persisted subscriptions prune;
-  undelivered tevents of dropped types are dropped with loud reporting; undelivered tommands strand loudly
-  or deliver to a successor.
+  undelivered tevents of renounced subscriptions are discarded with loud reporting; undelivered tommands of
+  no-longer-handled types strand loudly, awaiting explicit resolution on the decommission surface. *(A
+  stranded tommand never auto-delivers to a successor — bind-at-send settled that; "or deliver to a
+  successor" in the first draft predated the ⚖ route-at-delivery retraction.)*
 - **Decommission**: explicit decommission removes the peer, reports discarded undelivered rows; publishes
   stop fanning out to it; a later re-announce is first contact.
 - **Distributed queue-while-down**: peer met, then down; published tevents queue in order; peer returns;
@@ -264,4 +266,21 @@ patience, then fail loud naming the unserved type).
      `DoNotQueueTeventsFor` — delivered only while connected, drop-stream-whole on failure, mutually
      exclusive with requiring (`Given_a_met_distributed_tessaging_subscriber_the_publisher_does_not_queue_tevents_for`).
 6. **Shrink + decommission surfaces.**
+   - *Shrink* **DONE 2026-07-17**: the peer registries notify an `IPeerLifecycleObserver` component set from
+     inside `RecordAdvertisement` — on the durable registry inside the same transaction that persists the
+     advertisement, and always before the peer's connection loads its recovery backlog, so what is pruned
+     never enters a delivery stream. The outbox's observer (`Outbox.PeerLifecycleObserver`) reconciles the
+     peer's undelivered rows against every replaced advertisement: undelivered tevents no remaining
+     subscription matches are discarded loudly; undelivered tommands of no-longer-handled types are stranded
+     loudly (`IsStranded` on the dispatching row, all four backends, excluded from the recovery backlog). On
+     first contact anything already bound to the peer is discarded — nothing can be owed a peer before it is
+     first known, so such rows are leftovers of a decommissioned predecessor identity (a publish fanning out
+     on the not-yet-replaced peer memory can race a decommission; reconciliation reruns on every replacement
+     rather than only detected shrinks, so that leak self-heals on the peer's next advertisement).
+     Specified in `Advertisement_shrink_tests` (verified discriminating — all legs red against the previous
+     behavior). *Deliberately invisible corner:* a renounced tevent delivered anyway would dispatch to zero
+     handlers on the receiver, so the discard's direct evidence is the sender's warning report, storage
+     hygiene, and avoided wire traffic — the specs therefore pin it through the recovery backlog of a
+     remembered peer that never connects.
+   - *Decommission surface*: next.
 7. **Typermedia parity** (before the next release).

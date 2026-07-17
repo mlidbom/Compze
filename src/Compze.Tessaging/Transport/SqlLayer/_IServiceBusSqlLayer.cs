@@ -19,10 +19,36 @@ public interface IServiceBusSqlLayer
       void RecordDeliveryFailure(TessageId tessageId, EndpointId endpointId, string failureReason);
 
       ///<summary>The endpoint's recovery backlog: every tessage bound to <paramref name="endpointId"/> and not yet received,<br/>
-      /// in send order (the outbox tessage table's monotonic <c>GeneratedId</c>).</summary>
+      /// in send order (the outbox tessage table's monotonic <c>GeneratedId</c>). Stranded tessages are excluded — a stranded<br/>
+      /// tommand waits for explicit resolution on the decommission surface, never for delivery.</summary>
       IReadOnlyList<UndeliveredTessage> GetUndeliveredTessagesForEndpoint(EndpointId endpointId);
 
+      ///<summary>Discards these undelivered tessages bound to <paramref name="endpointId"/>: their dispatching rows are deleted,<br/>
+      /// so they will never be delivered — the fate of undelivered tevents whose subscriber renounced its subscription in a<br/>
+      /// shrunk advertisement. Runs in the caller's ambient transaction.</summary>
+      void DiscardUndeliveredTessages(EndpointId endpointId, IReadOnlyList<TessageId> tessageIds);
+
+      ///<summary>Marks these undelivered tessages bound to <paramref name="endpointId"/> stranded: kept, but excluded from the<br/>
+      /// recovery backlog — the fate of undelivered tommands whose bound receiver's shrunk advertisement no longer handles their<br/>
+      /// type. A stranded tommand is resolved explicitly on the decommission surface. Runs in the caller's ambient transaction.</summary>
+      void StrandUndeliveredTessages(EndpointId endpointId, IReadOnlyList<TessageId> tessageIds);
+
+      ///<summary>Discards everything still owed to <paramref name="endpointId"/> — every unreceived dispatching row bound to it,<br/>
+      /// stranded ones included — returning what was discarded, so the caller can report it: the storage half of decommissioning<br/>
+      /// a peer, and of the first-contact sweep. Runs in the caller's ambient transaction.</summary>
+      IReadOnlyList<DiscardedTessage> DiscardAllTessagesOwedTo(EndpointId endpointId);
+
       Task InitAsync();
+   }
+
+   ///<summary>One tessage discarded by <see cref="IOutboxSqlLayer.DiscardAllTessagesOwedTo"/>, described for the discarder's<br/>
+   /// report: its identity, its type, and whether it had been stranded (see <see cref="IOutboxSqlLayer.StrandUndeliveredTessages"/>)<br/>
+   /// or was awaiting the peer's return.</summary>
+   public class DiscardedTessage(TessageId tessageId, TypeId typeId, bool wasStranded)
+   {
+      public TessageId TessageId { get; } = tessageId;
+      public TypeId TypeId { get; } = typeId;
+      public bool WasStranded { get; } = wasStranded;
    }
 
    public enum MarkAsReceivedResult
@@ -120,6 +146,7 @@ public interface IServiceBusSqlLayer
       public const string TessageId = nameof(TessageId);
       public const string EndpointId = nameof(EndpointId);
       public const string IsReceived = nameof(IsReceived);
+      public const string IsStranded = nameof(IsStranded);
       public const string RetryCount = nameof(RetryCount);
       public const string LastAttemptTime = nameof(LastAttemptTime);
       public const string FailureReason = nameof(FailureReason);

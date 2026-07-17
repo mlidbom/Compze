@@ -15,6 +15,9 @@ class RememberedPeers
 
    internal void Remember(RememberedPeer peer) => _monitor.Locked(() => _peers = _peers.SetInCopy(peer.Id, peer));
 
+   ///<summary>The remembered peer with this identity — null when no peer with it has been remembered.</summary>
+   internal RememberedPeer? Find(EndpointId peerId) => _monitor.Locked(() => _peers.GetValueOrDefault(peerId));
+
    internal void ReplaceAllWith(IEnumerable<RememberedPeer> peers) => _monitor.Locked(() => _peers = peers.ToDictionary(peer => peer.Id));
 
    internal IReadOnlyList<RememberedPeer> Peers => _monitor.Locked(() => (IReadOnlyList<RememberedPeer>)[.._peers.Values]);

@@ -21,6 +21,7 @@ partial class SqliteOutboxSqlLayer
            {D.TessageId}        TEXT    NOT NULL,
            {D.EndpointId}       TEXT    NOT NULL,
            {D.IsReceived}       INTEGER NOT NULL,
+           {D.IsStranded}       INTEGER NOT NULL DEFAULT 0,
            {D.RetryCount}       INTEGER NOT NULL DEFAULT 0,
            {D.LastAttemptTime}  TEXT    NULL,
            {D.FailureReason}    TEXT    NULL,

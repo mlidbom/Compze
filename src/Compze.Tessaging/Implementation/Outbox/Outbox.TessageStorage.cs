@@ -65,6 +65,15 @@ partial class Outbox
       public IReadOnlyList<IServiceBusSqlLayer.UndeliveredTessage> GetUndeliveredTessagesForEndpoint(EndpointId endpointId) =>
          _sqlLayer.GetUndeliveredTessagesForEndpoint(endpointId);
 
+      public void DiscardUndeliveredTessages(EndpointId endpointId, IReadOnlyList<TessageId> tessageIds) =>
+         _sqlLayer.DiscardUndeliveredTessages(endpointId, tessageIds);
+
+      public void StrandUndeliveredTessages(EndpointId endpointId, IReadOnlyList<TessageId> tessageIds) =>
+         _sqlLayer.StrandUndeliveredTessages(endpointId, tessageIds);
+
+      public IReadOnlyList<IServiceBusSqlLayer.DiscardedTessage> DiscardAllTessagesOwedTo(EndpointId endpointId) =>
+         _sqlLayer.DiscardAllTessagesOwedTo(endpointId);
+
       public async Task StartAsync() => await _sqlLayer.InitAsync().caf();
    }
 }
