@@ -1,9 +1,8 @@
 using Compze.Abstractions.Tessaging.Public;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
+using Compze.Tessaging.Engine;
 using Compze.Tessaging.Implementation;
-using Compze.Tessaging.Implementation.TessageHandling.Dispatching;
-using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.Teventive.Taggregates.Tevents.Public;
 using Compze.TypeIdentifiers;
 
@@ -17,8 +16,8 @@ namespace Compze.Tessaging;
 public static class InProcessTessagingRegistrar
 {
    ///<summary>
-   /// Wires in-process Tessaging into the container being built: the handler registry, the synchronous
-   /// in-process tevent delivery every tevent travels, and the container's one
+   /// Wires in-process Tessaging into the container being built: the engine core — the handler roster and the
+   /// one executor, through which every tevent is delivered synchronously — and the container's one
    /// <see cref="Compze.Abstractions.Tessaging.Public.IUnitOfWorkTeventPublisher"/>. The composition wires no remote
    /// delivery legs, so every published tevent — a taggregate's committed tevents included — is delivered
    /// synchronously to this process's handlers, within the publisher's transaction.<br/>
@@ -34,12 +33,9 @@ public static class InProcessTessagingRegistrar
    public static IComponentRegistrar InProcessTessaging(this IComponentRegistrar @this)
    {
       if(!@this.IsRegistered<ITypeMap>()) RegisterDefaultTypeMapper();
+      if(!@this.IsRegistered<TessageHandlerRoster>()) @this.RegisterLocalTessagingEngineCore();
 
-      return @this.TessageHandlerRegistry()
-                  .BackgroundExceptionReporter()
-                  .InProcessTeventPublisher()
-                  .TeventObservationDispatcher()
-                  .UnitOfWorkTeventPublisher()
+      return @this.UnitOfWorkTeventPublisher()
                   .IndependentTeventPublisher();
 
       void RegisterDefaultTypeMapper()

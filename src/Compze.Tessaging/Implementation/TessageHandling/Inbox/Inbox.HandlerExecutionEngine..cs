@@ -1,5 +1,5 @@
 using Compze.Abstractions.Hosting.Public;
-using Compze.Tessaging.Implementation.TessageHandling.Abstractions;
+using Compze.Tessaging.Engine;
 using Compze.Tessaging.Implementation.TessageHandling.Dispatching;
 using Compze.Tessaging.Implementation.Transport.Abstractions;
 using Compze.Tessaging.SystemCE.ThreadingCE;
@@ -13,7 +13,7 @@ public partial class Inbox
    // ReSharper disable once ArrangeTypeMemberModifiers Resharper is confused. If I remove Internal my code stops compiling.
    public partial class HandlerExecutionEngine(
       ITessagesInFlightTracker globalStateTracker,
-      ITessageHandlerRegistry tessagingHandlerRegistry,
+      TessageHandlerExecutor executor,
       IScopeFactory scopeFactory,
       ITessageStorage storage,
       ITaskRunner taskRunner,
@@ -26,7 +26,7 @@ public partial class Inbox
          new TommandsAndTeventHandlersDoNotRunInParallelWithEachOtherInTheSameEndpoint()
       ];
 
-      readonly Coordinator _coordinator = new(globalStateTracker, taskRunner, storage, scopeFactory, tessagingHandlerRegistry, endpointId);
+      readonly Coordinator _coordinator = new(globalStateTracker, taskRunner, storage, scopeFactory, executor, endpointId);
       readonly ITaskRunner _taskRunner = taskRunner;
 
       internal void Enqueue(TransportTessage.InComing transportTessage)

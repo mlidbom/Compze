@@ -1,22 +1,20 @@
 using Compze.Abstractions.Hosting.Public;
 using Compze.Abstractions.Tessaging.Public;
-using Compze.DependencyInjection;
 using Compze.Tessaging.TessageHandling.Registration.Public;
+using Compze.Tessaging.Engine;
 using Compze.Tessaging.Implementation;
-using Compze.Tessaging.Implementation.TessageHandling.Abstractions;
-using Compze.Tessaging.Implementation.TessageHandling.Dispatching;
-using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.Teventive.Taggregates.Tevents.Public;
 
 namespace Compze.Tessaging.Hosting;
 
 ///<summary>
 /// Wires in-process Tessaging into an endpoint — the style's synchronous core, which distribution composes
-/// and extends: the handler registry, the synchronous in-process tevent delivery every tevent travels
-/// (<see cref="IInProcessTeventPublisher"/>), and the endpoint's one <see cref="IUnitOfWorkTeventPublisher"/>, which
-/// routes each published tevent by the delivery contract its type declares. With nothing but this feature the
-/// endpoint wires no remote delivery legs, so tevents are delivered synchronously, on the publishing thread,
-/// within the publisher's transaction, to this process's handlers. Created idempotently through
+/// and extends: the endpoint's one engine core (<see cref="LocalTessagingEngineFeature"/> — the handler
+/// roster and the one executor, shared with every other style feature on the endpoint) and the endpoint's one
+/// <see cref="IUnitOfWorkTeventPublisher"/>, which routes each published tevent by the delivery contract its
+/// type declares. With nothing but this feature the endpoint wires no remote delivery legs, so tevents are
+/// delivered synchronously, on the publishing thread, within the publisher's transaction, to this process's
+/// handlers. Created idempotently through
 /// <see cref="EndpointBuilderTessagingExtensions.AddInProcessTessaging"/> /
 /// <see cref="IEndpointBuilder.GetOrAddFeature{TFeature}"/>, and the feature instance is the handle through
 /// which the endpoint's tessaging handlers are registered (<see cref="RegisterHandlers"/>).
@@ -42,15 +40,11 @@ public class InProcessTessagingEndpointFeature
    {
       builder.TypeMapper.MapTypesFromAssemblyContaining<ITaggregateTevent>(); // Compze.Teventive — the Teventive type hierarchy
 
-      var handlerRegistry = new TessageHandlerRegistry(builder.TypeMap);
-      RegisterHandlers = handlerRegistry;
-      RegisterTransactionIgnoringTeventHandlers = handlerRegistry;
+      var engine = LocalTessagingEngineFeature.GetOrAddTo(builder);
+      RegisterHandlers = engine.HandlerRegistrations;
+      RegisterTransactionIgnoringTeventHandlers = engine.HandlerRegistrations;
 
-      builder.Registrar.Register(Singleton.For<ITessageHandlerRegistry, ITessageHandlerRegistrar, ITransactionIgnoringTeventHandlerRegistrar>().Instance(handlerRegistry))
-                       .BackgroundExceptionReporter()
-                       .InProcessTeventPublisher()
-                       .TeventObservationDispatcher()
-                       .UnitOfWorkTeventPublisher()
+      builder.Registrar.UnitOfWorkTeventPublisher()
                        .IndependentTeventPublisher();
    }
 }

@@ -3,7 +3,7 @@ using Compze.Abstractions.Wiring.Testing.Internal;
 using Compze.Hosting.Testing.Wiring;
 using Compze.Tessaging;
 using Compze.Tessaging.Hosting.Testing.Wiring;
-using Compze.Tessaging.Typermedia.HandlerRegistration;
+using Compze.Tessaging.Typermedia;
 using Compze.Tessaging.Hosting.Testing.Typermedia.Wiring;
 using Compze.TypeIdentifiers;
 using Compze.DependencyInjection.Abstractions;
@@ -38,7 +38,7 @@ public static class CombinedTestingContainers
                .TypeIdentifierMapper(registerDomainTypeMappings)
                .DummyConfigurationParameterProvider()
                .InProcessTessaging()
-               .TypermediaHandlerRegistry();
+               .InProcessTypermedia();
       setup(builder.Registrar);
 
       return builder.Build();

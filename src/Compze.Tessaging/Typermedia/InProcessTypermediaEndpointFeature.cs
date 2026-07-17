@@ -1,11 +1,13 @@
 using Compze.Abstractions.Hosting.Public;
-using Compze.DependencyInjection;
+using Compze.Tessaging.Engine;
 using Compze.Tessaging.Typermedia.HandlerRegistration;
 
 namespace Compze.Tessaging.Typermedia;
 
 ///<summary>
-/// Wires in-process Typermedia into an endpoint: the handler registry and the
+/// Wires in-process Typermedia into an endpoint: the endpoint's one engine core
+/// (<see cref="LocalTessagingEngineFeature"/> — the handler roster and the one executor, shared with every
+/// other style feature on the endpoint) and the
 /// <see cref="ILocalTypermediaNavigatorSession"/> through which strictly local tueries and tommands execute
 /// synchronously, on the calling thread, in the caller's session — a tommand within the caller's transaction.
 /// Wires no transport server and no
@@ -25,11 +27,10 @@ public class InProcessTypermediaEndpointFeature
 
    internal InProcessTypermediaEndpointFeature(IEndpointBuilder builder)
    {
-      var handlerRegistry = new TypermediaHandlerRegistry(builder.TypeMap);
-      RegisterHandlers = new TypermediaHandlerRegistrarWithDependencyInjectionSupport(handlerRegistry);
+      var engine = LocalTessagingEngineFeature.GetOrAddTo(builder);
+      RegisterHandlers = new TypermediaHandlerRegistrarWithDependencyInjectionSupport(engine.HandlerRegistrations);
 
-      builder.Registrar.Register(Singleton.For<ITypermediaHandlerRegistry, ITypermediaHandlerRegistrar>().Instance(handlerRegistry))
-                       .LocalTypermediaNavigatorSession()
+      builder.Registrar.LocalTypermediaNavigatorSession()
                        .IndependentLocalTypermediaNavigator();
    }
 }

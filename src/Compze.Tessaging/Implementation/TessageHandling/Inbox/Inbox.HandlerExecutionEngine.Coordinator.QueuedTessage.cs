@@ -2,7 +2,7 @@ using Compze.Contracts;
 using Compze.Abstractions.Public;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.DependencyInjection;
-using Compze.Tessaging.Implementation.TessageHandling.Abstractions;
+using Compze.Tessaging.Engine;
 using Compze.Tessaging.Implementation.Transport.Abstractions;
 using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.DependencyInjection.Abstractions;
@@ -28,7 +28,7 @@ public partial class Inbox
             readonly ITaskRunner _taskRunner;
             readonly ITessageStorage _tessageStorage;
             readonly IScopeFactory _scopeFactory;
-            readonly ITessageHandlerRegistry _tessagingHandlerRegistry;
+            readonly TessageHandlerExecutor _executor;
 
             internal Task<object?> Task => _taskCompletionSource.Task;
             internal TessageId TessageId { get; }
@@ -106,7 +106,7 @@ public partial class Inbox
                }
             }
 
-            internal HandlerExecutionTask(TransportTessage.InComing transportTessage, Coordinator coordinator, ITaskRunner taskRunner, ITessageStorage tessageStorage, IScopeFactory scopeFactory, ITessageHandlerRegistry tessagingHandlerRegistry)
+            internal HandlerExecutionTask(TransportTessage.InComing transportTessage, Coordinator coordinator, ITaskRunner taskRunner, ITessageStorage tessageStorage, IScopeFactory scopeFactory, TessageHandlerExecutor executor)
             {
                TessageId = transportTessage.TessageId;
                TransportTessage = transportTessage;
@@ -114,7 +114,7 @@ public partial class Inbox
                _taskRunner = taskRunner;
                _tessageStorage = tessageStorage;
                _scopeFactory = scopeFactory;
-               _tessagingHandlerRegistry = tessagingHandlerRegistry;
+               _executor = executor;
                _tessageTask = CreateTessageTask();
             }
 
@@ -122,18 +122,15 @@ public partial class Inbox
             Func<object, IUnitOfWorkResolver, object?> CreateTessageTask() =>
                TransportTessage.TessageTypeEnum switch
                {
-                  TransportTessageType.ExactlyOnceTevent => (tessage, kernel) =>
+                  TransportTessageType.ExactlyOnceTevent => (tessage, unitOfWork) =>
                   {
                      //The whole wrapped tevent travels the wire, so a received tevent arrives already wrapped; Wrapped normalizes and passes it through unchanged.
-                     var wrappedTevent = PublisherTevent.Wrapped((ITevent)tessage);
-                     var teventHandlers = _tessagingHandlerRegistry.GetTeventHandlers(wrappedTevent.GetType());
-                     teventHandlers.ForEach(handler => handler(wrappedTevent, kernel));
+                     _executor.ExecuteTeventHandlers(PublisherTevent.Wrapped((ITevent)tessage), unitOfWork).GetAwaiter().GetResult();
                      return null;
                   },
-                  TransportTessageType.ExactlyOnceTommand => (tessage, kernel) =>
+                  TransportTessageType.ExactlyOnceTommand => (tessage, unitOfWork) =>
                   {
-                     var tommandHandler = _tessagingHandlerRegistry.GetTommandHandler(tessage.GetType());
-                     tommandHandler((IExactlyOnceTommand)tessage, kernel);
+                     _executor.ExecuteTommandHandler((IExactlyOnceTommand)tessage, unitOfWork).GetAwaiter().GetResult();
                      return unit; //Todo:Properly handle tommands with and without return values
                   },
                   _ => throw new ArgumentOutOfRangeException()

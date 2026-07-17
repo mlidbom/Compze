@@ -1,7 +1,9 @@
 using Compze.Abstractions.Hosting.Public;
+using Compze.Abstractions.Tessaging.Public;
+using Compze.Tessaging.Engine;
 using Compze.Tessaging.Implementation.TessageHandling.Abstractions;
-using Compze.Tessaging.Implementation.TessageHandling.Dispatching;
 using Compze.Tessaging.Implementation.Transport.Abstractions;
+using Compze.Teventive.Tevents.Public;
 using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
@@ -27,24 +29,24 @@ static class InboxRegistrar
                   .CreatedBy((ITessagingSqlLayer.IInboxSqlLayer sqlLayer)
                                 => new InboxTessageStorage(sqlLayer)),
          Singleton.For<HandlerExecutionEngine>()
-                  .CreatedBy((ITessagesInFlightTracker globalStateTracker, ITessageHandlerRegistry tessagingHandlerRegistry, IScopeFactory scopeFactory, ITessageStorage storage, ITaskRunner taskRunner, EndpointConfiguration configuration)
-                                => new HandlerExecutionEngine(globalStateTracker, tessagingHandlerRegistry, scopeFactory, storage, taskRunner, configuration.Id)),
+                  .CreatedBy((ITessagesInFlightTracker globalStateTracker, TessageHandlerExecutor executor, IScopeFactory scopeFactory, ITessageStorage storage, ITaskRunner taskRunner, EndpointConfiguration configuration)
+                                => new HandlerExecutionEngine(globalStateTracker, executor, scopeFactory, storage, taskRunner, configuration.Id)),
          Singleton.For<IInbox>()
-                  .CreatedBy((HandlerExecutionEngine handlerExecutionEngine, ITessageStorage tessageStorage, TeventObservationDispatcher teventObservationDispatcher)
-                                => new Inbox(handlerExecutionEngine, tessageStorage, teventObservationDispatcher))
+                  .CreatedBy((HandlerExecutionEngine handlerExecutionEngine, ITessageStorage tessageStorage, TessageHandlerExecutor executor)
+                                => new Inbox(handlerExecutionEngine, tessageStorage, executor))
       );
 
    readonly HandlerExecutionEngine _handlerExecutionEngine;
 
    readonly ITessageStorage _storage;
 
-   readonly TeventObservationDispatcher _teventObservationDispatcher;
+   readonly TessageHandlerExecutor _executor;
 
-   internal Inbox(HandlerExecutionEngine handlerExecutionEngine, ITessageStorage tessageStorage, TeventObservationDispatcher teventObservationDispatcher)
+   internal Inbox(HandlerExecutionEngine handlerExecutionEngine, ITessageStorage tessageStorage, TessageHandlerExecutor executor)
    {
       _handlerExecutionEngine = handlerExecutionEngine;
       _storage = tessageStorage;
-      _teventObservationDispatcher = teventObservationDispatcher;
+      _executor = executor;
    }
 
    public async Task StartAsync()
@@ -67,9 +69,10 @@ static class InboxRegistrar
          return Task.CompletedTask;
       }
 
-      //Observation fires at registration: after dedup, before the transactional processing the engine schedules.
-      if(tessage.TessageTypeEnum == TransportTessageType.ExactlyOnceTevent)
-         _teventObservationDispatcher.Dispatch(tessage);
+      //Observation fires at registration: after dedup, before the transactional processing the engine schedules. Deserialization-frugal:
+      //the wrapper type on the envelope answers whether observers match, so an arriving tevent nothing observes is never deserialized here.
+      if(tessage.TessageTypeEnum == TransportTessageType.ExactlyOnceTevent && _executor.AnyTeventObserversFor(tessage.TessageTypeId.Type))
+         _executor.ExecuteTeventObservers(PublisherTevent.Wrapped((ITevent)tessage.DeserializeTessageAndCacheForNextCall()));
 
       _handlerExecutionEngine.Enqueue(tessage);
       return Task.CompletedTask;

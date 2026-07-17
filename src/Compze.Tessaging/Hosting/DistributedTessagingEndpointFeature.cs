@@ -3,6 +3,7 @@ using Compze.Abstractions.Hosting.Public;
 using Compze.Contracts;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
+using Compze.Tessaging.Engine;
 using Compze.Tessaging.Internals.Transport;
 using Compze.Tessaging.TessageHandling.Registration.Public;
 using Compze.Tessaging.Implementation.Peers;
@@ -162,14 +163,14 @@ public class DistributedTessagingEndpointFeature
 
       //The TessageBus side's share of the endpoint's one advertisement (see IEndpointAdvertisementContributor).
       register.Register(Singleton.ForSet<IEndpointAdvertisementContributor>()
-                                 .CreatedBy((ITessageHandlerRegistry handlerRegistry) => new TessagingAdvertisementContributor(handlerRegistry)));
+                                 .CreatedBy((TessageHandlerRoster roster) => new TessagingAdvertisementContributor(roster)));
 
       builder.OnContainerBuilt(resolver =>
       {
-         var handlerRegistry = resolver.Resolve<ITessageHandlerRegistry>();
-         AssertNoRegisteredHandlerDemandsMoreThanTheEndpointDelivers(register, handlerRegistry);
+         var roster = resolver.Resolve<TessageHandlerRoster>();
+         AssertNoRegisteredHandlerDemandsMoreThanTheEndpointDelivers(register, roster);
          //Advertisement soundness fails at endpoint setup, not when the first peer queries: it asserts that every advertised type has a TypeId mapping and gets a route on the peers' routers.
-         handlerRegistry.HandledRemoteTessageTypeIds();
+         roster.HandledRemoteTessageBusTypeIds();
       });
 
       builder.AddComponent(resolver => new DistributedTessagingEndpointComponent(resolver, _transportServer, _endpointRegistry));
@@ -180,11 +181,11 @@ public class DistributedTessagingEndpointFeature
    /// <see cref="IInbox"/> to persist, dedup, and retry — a registered handler for a tessage type that declares the exactly-once<br/>
    /// contract could never be honored: advertising it would pull exactly-once traffic the endpoint must refuse, stalling every<br/>
    /// sender's in-order delivery to it. Silently downgrading the guarantee instead is data loss dressed as success.</summary>
-   static void AssertNoRegisteredHandlerDemandsMoreThanTheEndpointDelivers(IComponentRegistrar register, ITessageHandlerRegistry handlerRegistry)
+   static void AssertNoRegisteredHandlerDemandsMoreThanTheEndpointDelivers(IComponentRegistrar register, TessageHandlerRoster roster)
    {
       if(register.IsRegistered<IInbox>()) return; //The exactly-once machinery is wired: every declarable delivery contract is deliverable.
 
-      var typesDemandingExactlyOnceDelivery = handlerRegistry.RegisteredTypesDemandingExactlyOnceDelivery();
+      var typesDemandingExactlyOnceDelivery = roster.RegisteredTypesDemandingExactlyOnceDelivery();
       State.Assert(typesDemandingExactlyOnceDelivery.Count == 0,
                    () => $"This endpoint wires no exactly-once delivery machinery — distributed Tessaging has no inbox to persist, dedup, and retry with — but handlers are registered for tessage types whose declared contract demands it: {string.Join(", ", typesDemandingExactlyOnceDelivery.Select(it => it.FullName))}. A subscription takes the tessage type's full declared guarantee (observation included: observing a remote exactly-once tevent still requires receiving it exactly-once), and an endpoint that cannot honor a guarantee must not advertise for it. Compose exactly-once Tessaging on a database-backed foundation instead, or handle tessage types that declare no exactly-once contract.");
    }

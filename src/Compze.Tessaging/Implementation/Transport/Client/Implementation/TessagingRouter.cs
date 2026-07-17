@@ -249,8 +249,8 @@ class TessagingRouter : ITessagingRouter, IDisposable
 
    ///<summary>Builds a route for <em>every</em> type <paramref name="connection"/>'s endpoint advertises — an advertised type no<br/>
    /// route serves would be a silently dead subscription, so anything unroutable is asserted against instead of skipped.<br/>
-   /// <see cref="TessageHandling.Abstractions.ITessageHandlerRegistry.HandledRemoteTessageTypeIds"/> asserts the same soundness on<br/>
-   /// the advertising endpoint at its start, where a violation fails loudest.</summary>
+   /// The advertising endpoint's <see cref="Engine.TessageHandlerRoster"/> asserts the same soundness when its advertisement is<br/>
+   /// first computed, where a violation fails loudest.</summary>
    void RegisterRoutes(TessagingConnection connection, ISet<string> handledTypeIdStrings)
    {
       foreach(var typeIdString in handledTypeIdStrings)

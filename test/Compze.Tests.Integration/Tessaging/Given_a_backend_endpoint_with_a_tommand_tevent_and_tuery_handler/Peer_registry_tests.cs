@@ -1,11 +1,11 @@
 using Compze.DependencyInjection;
 using Compze.Must;
+using Compze.Tessaging.Engine;
 using Compze.Tessaging.Implementation.Peers;
-using Compze.Tessaging.Implementation.TessageHandling.Abstractions;
 using Compze.Tessaging.Transport.SqlLayer;
-using Compze.Tessaging.Typermedia.HandlerRegistration;
 using Compze.Tests.Common.Tessaging.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler;
 using Compze.Tests.Infrastructure.XUnit;
+using Compze.TypeIdentifiers;
 
 namespace Compze.Tests.Integration.Tessaging.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler;
 
@@ -38,13 +38,13 @@ public class Peer_registry_tests : EndpointHostTestBase
       var rememberedBackend = RemoteEndpoint.ServiceLocator.Resolve<IPeerRegistry>().Peers
                                             .Single(peer => peer.Id.Equals(BackendEndpointId));
 
-      var backendTypermediaTypes = BackendEndPoint.ServiceLocator.Resolve<ITypermediaHandlerRegistry>()
-                                                  .HandledRemoteTypermediaTypeIds().Select(typeId => typeId.CanonicalString).ToList();
+      var typeMap = BackendEndPoint.ServiceLocator.Resolve<ITypeMap>();
+      IReadOnlyList<Type> backendTypermediaTypes = [typeof(MyCreateTaggregateTommand), typeof(MyTuery), typeof(MyAtMostOnceTypermediaTommandWithResult)];
 
-      (backendTypermediaTypes.Count > 0).Must().BeTrue();
-      backendTypermediaTypes.All(typermediaType => rememberedBackend.HandledTessageTypes.Contains(typermediaType)).Must().BeTrue();
+      backendTypermediaTypes.All(typermediaType => rememberedBackend.HandledTessageTypes.Contains(typeMap.GetId(typermediaType).CanonicalString)).Must().BeTrue();
    }
 
+   ///<summary>The Remote endpoint registers only TessageBus handlers, so its roster's whole advertisement is what the backend must remember of it.</summary>
    HashSet<string> RemoteEndpointAdvertisedTypes =>
-      [..RemoteEndpoint.ServiceLocator.Resolve<ITessageHandlerRegistry>().HandledRemoteTessageTypeIds().Select(typeId => typeId.CanonicalString)];
+      [..RemoteEndpoint.ServiceLocator.Resolve<TessageHandlerRoster>().AdvertisedRemoteTessageTypeIds().Select(typeId => typeId.CanonicalString)];
 }

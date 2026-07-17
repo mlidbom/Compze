@@ -3,6 +3,7 @@ using Compze.Abstractions.Serialization.Internal;
 using Compze.Contracts;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
+using Compze.Tessaging.Engine;
 using Compze.Tessaging.Internals.Transport;
 using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Typermedia.HandlerRegistration;
@@ -88,7 +89,7 @@ public class DistributedTypermediaEndpointFeature
 
       //The Typermedia side's share of the endpoint's one advertisement (see IEndpointAdvertisementContributor).
       builder.Registrar.Register(Singleton.ForSet<IEndpointAdvertisementContributor>()
-                                          .CreatedBy((ITypermediaHandlerRegistry handlerRegistry) => new TypermediaAdvertisementContributor(handlerRegistry)));
+                                          .CreatedBy((TessageHandlerRoster roster) => new TypermediaAdvertisementContributor(roster)));
    }
 
    ///<summary>Distributed Typermedia builds on declarations the feature cannot make itself: the endpoint's transport protocol and<br/>

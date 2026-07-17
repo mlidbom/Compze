@@ -1,6 +1,6 @@
 using Compze.Abstractions.Hosting.Public;
 using Compze.Abstractions.Tessaging.Public;
-using Compze.Tessaging.Implementation.TessageHandling.Abstractions;
+using Compze.Tessaging.Engine;
 using Compze.Tessaging.Implementation.Transport.Abstractions;
 using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.DependencyInjection;
@@ -11,28 +11,25 @@ using Compze.Teventive.Tevents.Public;
 namespace Compze.Tessaging.Implementation.TessageHandling.Dispatching;
 
 ///<summary>The receiving half of the best-effort delivery leg — the direct-dispatch counterpart of the inbox: an arriving best-effort<br/>
-/// tevent is dispatched to this endpoint's subscribed handlers right here, in its own unit of work, with no store,<br/>
+/// tevent is dispatched through the engine's one executor (<see cref="TessageHandlerExecutor"/>) to this endpoint's subscribed<br/>
+/// handlers right here, in its own unit of work, with no store,<br/>
 /// no dedup and no retry (see <c>src/Compze.Tessaging/dev_docs/tevent-delivery-model.md</c>). Handlers execute before the transport<br/>
 /// acknowledgement is written, so one-tessage-in-flight-per-destination keeps handling in send order.</summary>
 class BestEffortTeventDirectDispatcher
 {
    public static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(Singleton.For<BestEffortTeventDirectDispatcher>()
-                                     .CreatedBy((ITessageHandlerRegistry handlerRegistry, TeventObservationDispatcher teventObservationDispatcher, IScopeFactory scopeFactory, ITessagesInFlightTracker tessagesInFlightTracker, IBackgroundExceptionReporter exceptionReporter, EndpointConfiguration configuration)
-                                                   => new BestEffortTeventDirectDispatcher(handlerRegistry, teventObservationDispatcher, scopeFactory, tessagesInFlightTracker, exceptionReporter, configuration.Id)));
+                                     .CreatedBy((TessageHandlerExecutor executor, ITessagesInFlightTracker tessagesInFlightTracker, IBackgroundExceptionReporter exceptionReporter, EndpointConfiguration configuration)
+                                                   => new BestEffortTeventDirectDispatcher(executor, tessagesInFlightTracker, exceptionReporter, configuration.Id)));
 
-   readonly ITessageHandlerRegistry _handlerRegistry;
-   readonly TeventObservationDispatcher _teventObservationDispatcher;
-   readonly IScopeFactory _scopeFactory;
+   readonly TessageHandlerExecutor _executor;
    readonly ITessagesInFlightTracker _tessagesInFlightTracker;
    readonly IBackgroundExceptionReporter _exceptionReporter;
    readonly EndpointId _endpointId;
 
-   BestEffortTeventDirectDispatcher(ITessageHandlerRegistry handlerRegistry, TeventObservationDispatcher teventObservationDispatcher, IScopeFactory scopeFactory, ITessagesInFlightTracker tessagesInFlightTracker, IBackgroundExceptionReporter exceptionReporter, EndpointId endpointId)
+   BestEffortTeventDirectDispatcher(TessageHandlerExecutor executor, ITessagesInFlightTracker tessagesInFlightTracker, IBackgroundExceptionReporter exceptionReporter, EndpointId endpointId)
    {
-      _handlerRegistry = handlerRegistry;
-      _teventObservationDispatcher = teventObservationDispatcher;
-      _scopeFactory = scopeFactory;
+      _executor = executor;
       _tessagesInFlightTracker = tessagesInFlightTracker;
       _exceptionReporter = exceptionReporter;
       _endpointId = endpointId;
@@ -46,12 +43,8 @@ class BestEffortTeventDirectDispatcher
          //The whole wrapped tevent travels the wire, so a received tevent arrives already wrapped; Wrapped normalizes and passes it through unchanged.
          var wrappedTevent = PublisherTevent.Wrapped((ITevent)transportTessage.DeserializeTessageAndCacheForNextCall());
          //Observation fires on arrival, before and outside the transactional handling below.
-         _teventObservationDispatcher.Dispatch(wrappedTevent);
-         _scopeFactory.ExecuteUnitOfWork(unitOfWork =>
-         {
-            foreach(var handler in _handlerRegistry.GetTeventHandlers(wrappedTevent.GetType()))
-               handler(wrappedTevent, unitOfWork);
-         });
+         _executor.ExecuteTeventObservers(wrappedTevent);
+         _executor.ExecuteTeventHandlersInOwnUnitOfWork(wrappedTevent);
       }
 #pragma warning disable CA1031 //The best-effort tier has no store to retry from: a failed handling is reported and the tevent is gone - never bounced to the sender, whose delivery already succeeded and who has nothing durable to redeliver from.
       catch(Exception exception)

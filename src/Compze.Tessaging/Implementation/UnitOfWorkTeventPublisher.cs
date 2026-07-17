@@ -4,8 +4,8 @@ using Compze.Abstractions.Tessaging.Validation;
 using Compze.Contracts;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
+using Compze.Tessaging.Engine;
 using Compze.Tessaging.Implementation.Abstractions;
-using Compze.Tessaging.Implementation.TessageHandling.Dispatching;
 using Compze.Teventive.Tevents.Public;
 using JetBrains.Annotations;
 
@@ -18,8 +18,9 @@ static class UnitOfWorkTeventPublisherRegistrar
 }
 
 ///<summary>The <see cref="IUnitOfWorkTeventPublisher"/>: routes each published tevent by the delivery contract its type declares.<br/>
-/// Participation — synchronous delivery to this process's handlers via <see cref="IInProcessTeventPublisher"/>, within the<br/>
-/// caller's transaction — is the leg every tevent travels; an <see cref="IExactlyOnceTevent"/> additionally travels the endpoint's<br/>
+/// Participation — synchronous delivery to this process's handlers through the engine's one executor<br/>
+/// (<see cref="TessageHandlerExecutor"/>), within the caller's transaction — is the leg every tevent travels; an<br/>
+/// <see cref="IExactlyOnceTevent"/> additionally travels the endpoint's<br/>
 /// <see cref="IExactlyOnceTeventDeliveryLeg"/>, and a remotable tevent whose type declares no exactly-once guarantee the endpoint's<br/>
 /// <see cref="IBestEffortTeventDeliveryLeg"/>, when the composition wires them. Zero wired legs is the deliberately in-process<br/>
 /// composition, where participation already serves every subscriber that can exist; a remote-capable endpoint missing the leg a<br/>
@@ -28,19 +29,17 @@ static class UnitOfWorkTeventPublisherRegistrar
 {
    public static void RegisterWith(IComponentRegistrar registrar)
       => registrar.Register(Scoped.For<IUnitOfWorkTeventPublisher>()
-                                  .CreatedBy((IInProcessTeventPublisher inProcessTeventPublisher, TeventObservationDispatcher teventObservationDispatcher, IComponentSet<IExactlyOnceTeventDeliveryLeg> exactlyOnceDeliveryLegs, IComponentSet<IBestEffortTeventDeliveryLeg> bestEffortDeliveryLegs, IScopeResolver scopeResolver)
-                                                => new UnitOfWorkTeventPublisher(inProcessTeventPublisher, teventObservationDispatcher, exactlyOnceDeliveryLegs, bestEffortDeliveryLegs, scopeResolver)));
+                                  .CreatedBy((TessageHandlerExecutor executor, IComponentSet<IExactlyOnceTeventDeliveryLeg> exactlyOnceDeliveryLegs, IComponentSet<IBestEffortTeventDeliveryLeg> bestEffortDeliveryLegs, IScopeResolver scopeResolver)
+                                                => new UnitOfWorkTeventPublisher(executor, exactlyOnceDeliveryLegs, bestEffortDeliveryLegs, scopeResolver)));
 
-   readonly IInProcessTeventPublisher _inProcessTeventPublisher;
-   readonly TeventObservationDispatcher _teventObservationDispatcher;
+   readonly TessageHandlerExecutor _executor;
    readonly IExactlyOnceTeventDeliveryLeg? _exactlyOnceDeliveryLeg;
    readonly IBestEffortTeventDeliveryLeg? _bestEffortDeliveryLeg;
    readonly IScopeResolver _scopeResolver;
 
-   UnitOfWorkTeventPublisher(IInProcessTeventPublisher inProcessTeventPublisher, TeventObservationDispatcher teventObservationDispatcher, IEnumerable<IExactlyOnceTeventDeliveryLeg> exactlyOnceDeliveryLegs, IEnumerable<IBestEffortTeventDeliveryLeg> bestEffortDeliveryLegs, IScopeResolver scopeResolver)
+   UnitOfWorkTeventPublisher(TessageHandlerExecutor executor, IEnumerable<IExactlyOnceTeventDeliveryLeg> exactlyOnceDeliveryLegs, IEnumerable<IBestEffortTeventDeliveryLeg> bestEffortDeliveryLegs, IScopeResolver scopeResolver)
    {
-      _inProcessTeventPublisher = inProcessTeventPublisher;
-      _teventObservationDispatcher = teventObservationDispatcher;
+      _executor = executor;
       _exactlyOnceDeliveryLeg = exactlyOnceDeliveryLegs.SingleOrDefault();
       _bestEffortDeliveryLeg = bestEffortDeliveryLegs.SingleOrDefault();
       _scopeResolver = scopeResolver;
@@ -51,11 +50,13 @@ static class UnitOfWorkTeventPublisherRegistrar
       State.Assert(Transaction.Current != null,
                    () => $"{nameof(IUnitOfWorkTeventPublisher)} publishes within the caller's unit of work, and there is no ambient transaction — no unit of work to publish within. Run the caller through ExecuteUnitOfWork, or publish through {nameof(IIndependentTeventPublisher)}, which runs each publish as its own unit of work.");
       var unitOfWork = UnitOfWorkResolver.From(_scopeResolver);
+      //Every tevent is wrapped before routing: a tevent published without a publisher-identifying wrapper is wrapped here, and routing operates on the wrapper's type.
       var wrappedTevent = PublisherTevent.Wrapped(tevent);
       var remoteDelivery = RemoteDeliveryFor(wrappedTevent);
-      _inProcessTeventPublisher.Publish(wrappedTevent, unitOfWork);
+      TessageInspector.AssertValidToExecuteLocally(wrappedTevent);
+      _executor.ExecuteTeventHandlers(wrappedTevent, unitOfWork).GetAwaiter().GetResult();
       //Observation fires at publish time, outside the publisher's transaction - the observers of a locally published tevent hear it even if that transaction later rolls back.
-      _teventObservationDispatcher.Dispatch(wrappedTevent);
+      _executor.ExecuteTeventObservers(wrappedTevent);
       remoteDelivery?.Invoke();
    }
 

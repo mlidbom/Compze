@@ -1,33 +1,38 @@
 using Compze.Abstractions.Tessaging.Public;
 using Compze.DependencyInjection;
 using Compze.Internals.SystemCE.UsageGuards;
-using Compze.Tessaging.Typermedia.HandlerRegistration;
 using Compze.Abstractions.Tessaging.Validation;
 using Compze.DependencyInjection.Abstractions;
+using Compze.Tessaging.Engine;
 
 namespace Compze.Tessaging.Typermedia;
 
-class LocalTypermediaNavigatorSession(ITypermediaHandlerRegistry typermediaHandlerRegistry, IScopeResolver scopeResolver) : ILocalTypermediaNavigatorSession
+class LocalTypermediaNavigatorSession : ILocalTypermediaNavigatorSession
 {
-   readonly ITypermediaHandlerRegistry _typermediaHandlerRegistry = typermediaHandlerRegistry;
-   readonly IScopeResolver _scopeResolver = scopeResolver;
-   readonly IUsageGuard _contextGuard = new CombinationUsageGuard(new SingleTransactionUsageGuard(typermediaHandlerRegistry));
+   readonly TessageHandlerExecutor _executor;
+   readonly IScopeResolver _scopeResolver;
+   readonly IUsageGuard _contextGuard;
+
+   internal LocalTypermediaNavigatorSession(TessageHandlerExecutor executor, IScopeResolver scopeResolver)
+   {
+      _executor = executor;
+      _scopeResolver = scopeResolver;
+      _contextGuard = new CombinationUsageGuard(new SingleTransactionUsageGuard(this));
+   }
 
    public TResult Execute<TResult>(IStrictlyLocalTommand<TResult> tommand)
    {
       CommonAssertion(tommand);
 
-      var tommandHandler = _typermediaHandlerRegistry.GetTommandHandler(tommand);
       //CommonAssertion has asserted the caller's ambient transaction (an IStrictlyLocalTommand must be sent transactionally), so the caller's scope IS a unit of work - From certifies exactly that.
-      return tommandHandler.Invoke(tommand, UnitOfWorkResolver.From(_scopeResolver));
+      return _executor.ExecuteTommandHandler(tommand, UnitOfWorkResolver.From(_scopeResolver)).GetAwaiter().GetResult();
    }
 
    public void Execute(IStrictlyLocalTommand tommand)
    {
       CommonAssertion(tommand);
 
-      var tommandHandler = _typermediaHandlerRegistry.GetVoidTommandHandler(tommand);
-      tommandHandler.Invoke(tommand, UnitOfWorkResolver.From(_scopeResolver));
+      _executor.ExecuteTommandHandler(tommand, UnitOfWorkResolver.From(_scopeResolver)).GetAwaiter().GetResult();
    }
 
    public TResult Execute<TTuery, TResult>(IStrictlyLocalTuery<TTuery, TResult> tuery) where TTuery : IStrictlyLocalTuery<TTuery, TResult>
@@ -39,8 +44,7 @@ class LocalTypermediaNavigatorSession(ITypermediaHandlerRegistry typermediaHandl
       if(tuery is ICreateMyOwnResultTuery<TResult> selfCreating)
          return selfCreating.CreateResult();
 
-      var tueryHandler = _typermediaHandlerRegistry.GetTueryHandler(tuery);
-      return tueryHandler.Invoke(tuery, _scopeResolver);
+      return _executor.ExecuteTueryHandler(tuery, _scopeResolver).GetAwaiter().GetResult();
    }
 
    void CommonAssertion(ITessage tessage)

@@ -1,5 +1,6 @@
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
+using Compze.Tessaging.Engine;
 using Compze.TypeIdentifiers;
 using Compze.Tessaging.Typermedia.HandlerRegistration;
 
@@ -13,7 +14,8 @@ namespace Compze.Tessaging.Typermedia;
 public static class InProcessTypermediaRegistrar
 {
    ///<summary>
-   /// Wires in-process Typermedia into the container being built: the handler registry and the
+   /// Wires in-process Typermedia into the container being built: the engine core — the handler roster and the
+   /// one executor, shared with in-process Tessaging when both are composed — and the
    /// <see cref="ILocalTypermediaNavigatorSession"/> through which strictly local tueries and tommands execute
    /// synchronously, on the calling thread, in the caller's session — a tommand within the caller's transaction.<br/>
    /// Register handlers after the container is built, through the resolved
@@ -27,9 +29,9 @@ public static class InProcessTypermediaRegistrar
    public static IComponentRegistrar InProcessTypermedia(this IComponentRegistrar @this)
    {
       if(!@this.IsRegistered<ITypeMap>()) RegisterEmptyDefaultTypeMapper();
+      if(!@this.IsRegistered<TessageHandlerRoster>()) @this.RegisterLocalTessagingEngineCore();
 
-      return @this.TypermediaHandlerRegistry()
-                  .LocalTypermediaNavigatorSession()
+      return @this.LocalTypermediaNavigatorSession()
                   .IndependentLocalTypermediaNavigator();
 
       void RegisterEmptyDefaultTypeMapper()
