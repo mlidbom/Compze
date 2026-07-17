@@ -27,7 +27,10 @@ public static class SqliteTessagingRegistrar
       registrar.SqliteSchemaContribution((EndpointTableSet tables) => SqliteInboxSqlLayer.SchemaCreationSql(tables))
                .SqliteSchemaContribution((EndpointTableSet tables) => SqliteOutboxSqlLayer.SchemaCreationSql(tables))
                .SqliteSchemaContribution((EndpointTableSet tables) => SqlitePeerRegistrySqlLayer.SchemaCreationSql(tables))
+               .SqliteSchemaContribution(SqliteEndpointCatalogSqlLayer.SchemaCreationSql)
                .Register(
+         Singleton.For<ITessagingSqlLayer.IEndpointCatalogSqlLayer>()
+                  .CreatedBy((ISqliteConnectionPool endpointSqlConnection, SqliteSqlLayerSchemaManager schemaManager) => new SqliteEndpointCatalogSqlLayer(endpointSqlConnection, schemaManager)),
          Singleton.For<ITessagingSqlLayer.IOutboxSqlLayer>()
                   .CreatedBy((ISqliteConnectionPool endpointSqlConnection, SqliteSqlLayerSchemaManager schemaManager, ITypeIdInterner typeIdInterner, EndpointTableSet tables) => new SqliteOutboxSqlLayer(endpointSqlConnection, schemaManager, typeIdInterner, tables)),
          Singleton.For<ITessagingSqlLayer.IInboxSqlLayer>()

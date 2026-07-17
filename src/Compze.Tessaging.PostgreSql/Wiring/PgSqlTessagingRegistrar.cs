@@ -27,7 +27,10 @@ public static class PgSqlTessagingRegistrar
                .PgSqlSchemaContribution((EndpointTableSet tables) => PgSqlInboxSqlLayer.SchemaCreationSql(tables))
                .PgSqlSchemaContribution((EndpointTableSet tables) => PgSqlOutboxSqlLayer.SchemaCreationSql(tables))
                .PgSqlSchemaContribution((EndpointTableSet tables) => PgSqlPeerRegistrySqlLayer.SchemaCreationSql(tables))
+               .PgSqlSchemaContribution(PgSqlEndpointCatalogSqlLayer.SchemaCreationSql)
                .Register(
+         Singleton.For<ITessagingSqlLayer.IEndpointCatalogSqlLayer>()
+                  .CreatedBy((IPgSqlConnectionPool endpointSqlConnection, PgSqlSqlLayerSchemaManager schemaManager) => new PgSqlEndpointCatalogSqlLayer(endpointSqlConnection, schemaManager)),
          Singleton.For<ITessagingSqlLayer.IOutboxSqlLayer>()
                   .CreatedBy((IPgSqlConnectionPool endpointSqlConnection, PgSqlSqlLayerSchemaManager schemaManager, ITypeIdInterner typeIdInterner, EndpointTableSet tables) => new PgSqlOutboxSqlLayer(endpointSqlConnection, schemaManager, typeIdInterner, tables)),
          Singleton.For<ITessagingSqlLayer.IInboxSqlLayer>()

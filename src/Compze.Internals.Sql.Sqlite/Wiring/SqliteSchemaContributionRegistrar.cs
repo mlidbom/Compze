@@ -5,12 +5,12 @@ namespace Compze.Internals.Sql.Sqlite.Wiring;
 
 static class SqliteSchemaContributionRegistrar
 {
-   ///<summary>Contributes <paramref name="schemaCreationSql"/> — one feature backend's <see cref="Private.SqliteSchemaContribution"/> —<br/>
-   /// to the schema of the database behind the endpoint's <see cref="ISqliteConnectionPool"/>, and on the first contribution registers the<br/>
-   /// <see cref="Private.SqliteSqlLayerSchemaManager"/> that creates every contributed schema in a single batch before the database's first use.<br/>
-   /// Called by each sqlite feature backend's registration — never by a composing layer, which stays ignorant of schemas entirely.</summary>
    extension(IComponentRegistrar @this)
    {
+      ///<summary>Contributes <paramref name="schemaCreationSql"/> — one feature backend's <see cref="Private.SqliteSchemaContribution"/> —<br/>
+      /// to the schema of the database behind the endpoint's <see cref="ISqliteConnectionPool"/>, and on the first contribution registers the<br/>
+      /// <see cref="Private.SqliteSqlLayerSchemaManager"/> that creates every contributed schema in a single batch before the database's first use.<br/>
+      /// Called by each sqlite feature backend's registration — never by a composing layer, which stays ignorant of schemas entirely.</summary>
       internal IComponentRegistrar SqliteSchemaContribution(string schemaCreationSql)
       {
          @this.Register(Singleton.ForSet<Private.SqliteSchemaContribution>()

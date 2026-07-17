@@ -5,12 +5,12 @@ namespace Compze.Internals.Sql.MicrosoftSql.Wiring;
 
 static class MsSqlSchemaContributionRegistrar
 {
-   ///<summary>Contributes <paramref name="schemaCreationSql"/> — one feature backend's <see cref="Private.MsSqlSchemaContribution"/> —<br/>
-   /// to the schema of the database behind the endpoint's <see cref="IMsSqlConnectionPool"/>, and on the first contribution registers the<br/>
-   /// <see cref="Private.MsSqlSqlLayerSchemaManager"/> that creates every contributed schema in a single batch before the database's first use.<br/>
-   /// Called by each MS SQL feature backend's registration — never by a composing layer, which stays ignorant of schemas entirely.</summary>
    extension(IComponentRegistrar @this)
    {
+      ///<summary>Contributes <paramref name="schemaCreationSql"/> — one feature backend's <see cref="Private.MsSqlSchemaContribution"/> —<br/>
+      /// to the schema of the database behind the endpoint's <see cref="IMsSqlConnectionPool"/>, and on the first contribution registers the<br/>
+      /// <see cref="Private.MsSqlSqlLayerSchemaManager"/> that creates every contributed schema in a single batch before the database's first use.<br/>
+      /// Called by each MS SQL feature backend's registration — never by a composing layer, which stays ignorant of schemas entirely.</summary>
       internal IComponentRegistrar MsSqlSchemaContribution(string schemaCreationSql)
       {
          @this.Register(Singleton.ForSet<Private.MsSqlSchemaContribution>()

@@ -2,6 +2,7 @@ using Compze.Abstractions.Hosting.Public;
 using Compze.Contracts;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
+using Compze.Tessaging.Implementation.EndpointCatalog;
 using Compze.Tessaging.Implementation.Outbox;
 using Compze.Tessaging.Implementation.TessageHandling.Inbox;
 using Compze.Tessaging.Hosting;
@@ -19,8 +20,23 @@ namespace Compze.Tessaging.Endpoints;
 public sealed class ExactlyOnceEndpointBuilder : EndpointBuilder
 {
    Action<IComponentRegistrar>? _registerDomainDatabase;
+   ProcessLeaseDuration _processLeaseDuration = Implementation.EndpointCatalog.ProcessLeaseDuration.Default;
+   bool _processLeaseDurationDeclared;
 
    internal ExactlyOnceEndpointBuilder(IContainerBuilder containerBuilder, EndpointConfiguration configuration) : base(containerBuilder, configuration) {}
+
+   ///<summary>Declares how long the endpoint's process lease stays valid without a heartbeat — the knob the endpoint<br/>
+   /// catalog's one-process-per-endpoint rule turns on: a holder heartbeating within the duration counts as alive, a starting<br/>
+   /// process waits out at most one duration for a dead predecessor's lease to go stale before taking over, and only a holder<br/>
+   /// proven alive by its heartbeats makes the start fail loud<br/>
+   /// (<see cref="EndpointAlreadyRunningInAnotherProcessException"/>). Declared at most once; defaults to 15 seconds.</summary>
+   public void ProcessLeaseDuration(TimeSpan duration)
+   {
+      AssertStillComposing();
+      State.Assert(!_processLeaseDurationDeclared, () => "The endpoint already declared its process-lease duration — an endpoint has exactly one.");
+      _processLeaseDurationDeclared = true;
+      _processLeaseDuration = new ProcessLeaseDuration(duration);
+   }
 
    ///<summary>Declares the domain database this endpoint joins — where the domain data its executions touch lives, and where<br/>
    /// its durable vertical lives with it. Declared exactly once, through a database package's named extension<br/>
@@ -39,15 +55,18 @@ public sealed class ExactlyOnceEndpointBuilder : EndpointBuilder
                    () => "The endpoint declares no domain database. An exactly-once endpoint's durable vertical — inbox, outbox, durable peer memory — lives in the domain database it joins: declare it in the composition, e.g. endpoint.SqliteDomainDatabase(...). An endpoint that deliberately persists nothing is a best-effort endpoint instead (BestEffortEndpoint.Compose).");
    }
 
-   ///<summary>The durable vertical: the declared domain database, the inbox (receiver dedup, transactional retry), the outbox<br/>
-   /// (durable rows, recovery backlog, per-peer exactly-once in-order delivery streams), the tommand-sending doors, and the<br/>
-   /// exactly-once request handling that receives arriving tessages into the inbox.</summary>
+   ///<summary>The durable vertical: the declared domain database, the endpoint's place in it (the table-set and the endpoint<br/>
+   /// catalog's process lease), the inbox (receiver dedup, transactional retry), the outbox (durable rows, recovery backlog,<br/>
+   /// per-peer exactly-once in-order delivery streams), the tommand-sending doors, and the exactly-once request handling that<br/>
+   /// receives arriving tessages into the inbox.</summary>
    private protected override void RegisterTheTierMachinery()
    {
       //Computed eagerly, so an endpoint name that cannot key storage fails loud at composition, not at first resolution.
-      Registrar.Register(Singleton.For<EndpointTableSet>().Instance(EndpointTableSet.For(Configuration)));
+      Registrar.Register(Singleton.For<EndpointTableSet>().Instance(EndpointTableSet.For(Configuration)),
+                         Singleton.For<ProcessLeaseDuration>().Instance(_processLeaseDuration));
       _registerDomainDatabase!(Registrar);
-      Registrar.Outbox()
+      Registrar.EndpointProcessLease()
+               .Outbox()
                .Inbox()
                .UnitOfWorkTommandSender()
                .IndependentTommandSender()

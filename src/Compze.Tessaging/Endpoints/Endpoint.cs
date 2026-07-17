@@ -77,6 +77,10 @@ public abstract class Endpoint : IEndpoint
    {
       State.Assert(!_isListening);
       this.Log().Info($"Endpoint '{_configuration.Name}' ({Id}) starting to listen");
+
+      //Whether this process may run the endpoint at all is decided before the endpoint touches anything else: a refused claim
+      //throws out of here with the endpoint still fully un-started, so its teardown has nothing to unwind.
+      await ClaimTheProcessLeaseAsync().caf();
       _isListening = true;
 
       await _peerRegistry.StartAsync().caf();
@@ -144,6 +148,15 @@ public abstract class Endpoint : IEndpoint
       await _handlerAvailability.AwaitHandlersForAsync(readinessTypes, patience).caf();
    }
 
+   ///<summary>The exactly-once tier registers the endpoint in the domain database's endpoint catalog and claims its process<br/>
+   /// lease — the first act of starting to listen, before anything else touches the database. The best-effort endpoint has no<br/>
+   /// database, so the base does nothing.</summary>
+   private protected virtual Task ClaimTheProcessLeaseAsync() => Task.CompletedTask;
+
+   ///<summary>The exactly-once tier releases its process lease at disposal — after the observation drain, once nothing in<br/>
+   /// this process writes to the domain database anymore. The best-effort endpoint has no database, so the base does nothing.</summary>
+   private protected virtual Task ReleaseTheProcessLeaseAsync() => Task.CompletedTask;
+
    ///<summary>Starts the exactly-once tier's durable vertical in the listening phase — the best-effort endpoint has none, so the base does nothing.</summary>
    private protected virtual Task StartTheDurableVerticalAsync() => Task.CompletedTask;
 
@@ -161,6 +174,9 @@ public abstract class Endpoint : IEndpoint
       //observers. Nothing enqueues new observation work after listening stopped - except observers themselves, which the
       //drain's passes cover.
       _observationDispatcher.Dispose();
+      //After the drain: nothing in this process writes to the domain database anymore, so the process lease can be freed for
+      //the endpoint's next process.
+      await ReleaseTheProcessLeaseAsync().caf();
       await _container.DisposeAsync().caf();
       //The container also disposes the server it holds; server disposal is idempotent, and disposing what we hold keeps ownership legible.
       await _transportServer.DisposeAsync().caf();

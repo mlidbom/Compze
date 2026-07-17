@@ -3,6 +3,7 @@ using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tessaging.Implementation.Abstractions;
+using Compze.Tessaging.Implementation.EndpointCatalog;
 using Compze.Tessaging.Implementation.TessageHandling.Abstractions;
 
 namespace Compze.Tessaging.Endpoints;
@@ -24,6 +25,7 @@ public class ExactlyOnceEndpoint : Endpoint
 {
    readonly IInbox _inbox;
    readonly IOutbox _outbox;
+   readonly EndpointProcessLease _processLease;
 
    ///<summary>Composes an exactly-once endpoint: runs <paramref name="compose"/> over the endpoint's declaration surface<br/>
    /// (<see cref="ExactlyOnceEndpointBuilder"/>), builds the endpoint's container, and returns the endpoint, ready for its<br/>
@@ -44,7 +46,15 @@ public class ExactlyOnceEndpoint : Endpoint
    {
       _inbox = ServiceLocator.Resolve<IInbox>();
       _outbox = ServiceLocator.Resolve<IOutbox>();
+      _processLease = ServiceLocator.Resolve<EndpointProcessLease>();
    }
+
+   ///<summary>Registers the endpoint in the domain database's endpoint catalog and claims its process lease — see<br/>
+   /// <see cref="EndpointProcessLease"/>: an endpoint runs in exactly one process at a time, asserted here, before anything<br/>
+   /// else touches the database.</summary>
+   private protected override async Task ClaimTheProcessLeaseAsync() => await _processLease.AcquireAsync().caf();
+
+   private protected override async Task ReleaseTheProcessLeaseAsync() => await _processLease.ReleaseAsync().caf();
 
    ///<summary>The inbox listens and the outbox's durable storage initializes in the listening phase — before any endpoint in<br/>
    /// the host starts sending, so the sending phase's connection delivery streams can load their recovery backlogs from it.</summary>

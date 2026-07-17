@@ -118,6 +118,67 @@ public interface ITessagingSqlLayer
       public string SerializedTessage { get; } = serializedTessage;
    }
 
+   ///<summary>The endpoint catalog's persistence: the one shared, unprefixed table every domain database carries — each<br/>
+   /// endpoint's name, <see cref="EndpointId"/>, creation time, and process lease. It is what enforces name uniqueness and<br/>
+   /// the one-process-per-endpoint rule, and what tells administration which endpoints inhabit the database.</summary>
+   ///<remarks>The lease members are single conditional statements, so racing claimants serialize on the database and exactly<br/>
+   /// one wins — no read-then-write window. Every timestamp is written by the caller's clock: staleness judgements assume the<br/>
+   /// processes sharing a domain database keep reasonably synchronized clocks.</remarks>
+   public interface IEndpointCatalogSqlLayer
+   {
+      Task<EndpointCatalogEntry?> GetEntryByNameAsync(string endpointName);
+      Task<EndpointCatalogEntry?> GetEntryByEndpointIdAsync(EndpointId endpointId);
+
+      ///<summary>Creates the endpoint's catalog entry with the process lease already held — the first-registration path.<br/>
+      /// False when an entry under <paramref name="endpointName"/> already exists, including one a racing process created<br/>
+      /// this instant.</summary>
+      Task<bool> TryInsertEntryHoldingTheLeaseAsync(string endpointName, EndpointId endpointId, Guid leaseHolderId, string leaseHolderDescription, DateTime utcNow);
+
+      ///<summary>Takes the process lease iff it is free or stale — unrefreshed since before <paramref name="staleBefore"/>.</summary>
+      Task<bool> TryTakeTheLeaseAsync(string endpointName, Guid leaseHolderId, string leaseHolderDescription, DateTime utcNow, DateTime staleBefore);
+
+      ///<summary>Refreshes the lease's heartbeat iff <paramref name="leaseHolderId"/> still holds it. False means the lease<br/>
+      /// was taken from us: this process went unrefreshed past the lease duration and was presumed dead.</summary>
+      Task<bool> TryHeartbeatAsync(string endpointName, Guid leaseHolderId, DateTime utcNow);
+
+      ///<summary>Releases the lease iff <paramref name="leaseHolderId"/> still holds it — the clean-shutdown half; a crashed<br/>
+      /// process's lease is instead taken over once stale.</summary>
+      Task ReleaseTheLeaseAsync(string endpointName, Guid leaseHolderId);
+
+      ///<summary>Every endpoint inhabiting the domain database.</summary>
+      Task<IReadOnlyList<EndpointCatalogEntry>> GetEntriesAsync();
+
+      Task InitAsync();
+   }
+
+   ///<summary>One endpoint's row in the domain database's endpoint catalog: its identity, when it first registered, and who —<br/>
+   /// if anyone — holds its process lease right now.</summary>
+   public class EndpointCatalogEntry(string endpointName, EndpointId endpointId, DateTime createdUtc, string? leaseHolderDescription, DateTime? leaseHeartbeatUtc)
+   {
+      public string EndpointName { get; } = endpointName;
+      public EndpointId EndpointId { get; } = endpointId;
+      public DateTime CreatedUtc { get; } = createdUtc;
+
+      ///<summary>Human-readable description of the process holding the lease — null when the lease is free.</summary>
+      public string? LeaseHolderDescription { get; } = leaseHolderDescription;
+
+      public DateTime? LeaseHeartbeatUtc { get; } = leaseHeartbeatUtc;
+   }
+
+   public static class EndpointCatalogDatabaseSchemaStrings
+   {
+      ///<summary>The catalog is domain-level data about the endpoints, inherently shared — the one deliberately unprefixed<br/>
+      /// Tessaging table, unlike the per-endpoint table-sets (<see cref="EndpointTableSet"/>).</summary>
+      public const string TableName = "EndpointCatalog";
+
+      public const string EndpointName = nameof(EndpointName);
+      public const string EndpointId = nameof(EndpointId);
+      public const string CreatedUtc = nameof(CreatedUtc);
+      public const string LeaseHolderId = nameof(LeaseHolderId);
+      public const string LeaseHolderDescription = nameof(LeaseHolderDescription);
+      public const string LeaseHeartbeatUtc = nameof(LeaseHeartbeatUtc);
+   }
+
    public static class InboxTessageDatabaseSchemaStrings
    {
       public const string GeneratedId = nameof(GeneratedId);
