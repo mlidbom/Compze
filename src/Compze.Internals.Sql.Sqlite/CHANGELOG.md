@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## 0.3.0-alpha
 
-- `SqliteEndpointDatabase`: the declaration that an endpoint's database is sqlite, carried by `EndpointFoundation<SqliteEndpointDatabase>` so the features added on the foundation bind their sqlite sql layers through the compiler. The declaration itself lives here too — `SqliteEndpointDatabase(connectionStringName)` and its `ComposeEndpoint` composition form register the endpoint's connection pool; the sql-layer features wire their shared infrastructure (the type-id interner) themselves.
+- `SqliteEndpointDatabase`: the declaration that an endpoint's database is sqlite. `SqliteEndpointDatabase(connectionStringName)` registers the endpoint's connection pool, and the declaration type carries the connection-string name the sqlite pairings derive their wiring from — e.g. the type-id interner's own database name, which on sqlite lives in a separate database file.
 
 ## 0.2.1-alpha
 

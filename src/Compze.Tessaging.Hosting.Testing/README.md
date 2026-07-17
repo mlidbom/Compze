@@ -8,18 +8,19 @@ Compze is a .NET framework for building expressive domains through **Teventive p
 
 ## What's in this package?
 
-Tessaging's plug-in for the testing endpoint host in `Compze.Hosting.Testing`:
+The endpoint host tests use, plus the per-tier test wiring it hands each endpoint:
 
-- **`ExactlyOnceTessagingTestingEndpointHostFeature`** — wires the full exactly-once Tessaging pipeline, transport, and persistence into every endpoint a `TestingEndpointHost` registers, tracks tessages in flight host-wide, and makes the host wait until everything is at rest before disposing — so tests cannot silently drop in-flight work.
-- **Persistence test wiring** — `CurrentTestsConfiguredSqlLayer()` registers the Tessaging vertical's storage stack (type-id interner, document db, tessaging inbox/outbox, tevent store) against the SQL backend the current test runs against. (The endpoint's transport protocol comes from `CurrentTestsEndpointTransport()` in `Compze.Hosting.Testing` — Tessaging registers nothing protocol-specific.)
+- **`TestingEndpointHost`** — registers the concrete endpoint types with the current test's concerns handed in at construction: `RegisterExactlyOnceEndpoint` / `RegisterBestEffortEndpoint` supply the host's one tessages-in-flight tracker, the current test's transport protocol and serializers, the pooled test database keyed by the endpoint's id (exactly-once tier), and participation in the host's own interprocess registry. On dispose the host waits until no tessages are in flight and rethrows background exceptions — so tests cannot silently drop in-flight work.
+- **`TypermediaTestClient`** — the pure client composed for tests (see the Typermedia README beside this one).
+- **Persistence test wiring** — `CurrentTestsConfiguredSqlLayer()` registers the Tessaging vertical's storage stack (type-id interner, document db, tessaging inbox/outbox, tevent store) against the SQL backend the current test runs against. (The endpoint's transport protocol comes from `CurrentTestsEndpointTransport()` in `Compze.Hosting.Testing`.)
 
 ### Quick start
 
 ```csharp
-using var host = TestingEndpointHost.Create(new ExactlyOnceTessagingTestingEndpointHostFeature());
-var endpoint = host.RegisterEndpoint("MyEndpoint", endpointId, builder =>
+using var host = TestingEndpointHost.Create();
+var endpoint = host.RegisterExactlyOnceEndpoint("MyEndpoint", endpointId, endpoint =>
 {
-   builder.RegisterTessageHandlers(handle => handle.ForTommand((MyTommand tommand) => Handle(tommand)));
+   endpoint.RegisterTessageHandlers(handle => handle.ForTommand(async (MyTommand tommand, IUnitOfWorkResolver unitOfWork) => await HandleAsync(tommand)));
 });
 await host.StartAsync();
 ```

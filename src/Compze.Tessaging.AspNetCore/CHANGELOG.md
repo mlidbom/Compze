@@ -9,7 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 - The project is renamed from `Compze.Internals.Transport.AspNet` to `Compze.Tessaging.AspNetCore`: the ASP.NET Core transport for the Tessaging paradigm, kept as its own package so the web stack never rides into consumers that do not want it.
 
 - `TransportRequestController` serves the best-effort-tevent route (`internal/tessaging/best-effort-tevent`, `TransportRequestKind.BestEffortTevent`) alongside the existing kinds.
-- The protocol declaration composes: `AspNetCoreEndpointTransport()` on `ComposeEndpoint`'s composer returns the endpoint's `EndpointFoundation`.
+- The protocol declaration composes: `AspNetCoreEndpointTransport()` on an endpoint's declaration surface (`EndpointBuilder`) fills the endpoint's transport-protocol parameter.
 - `AspNetCoreEndpointTransportServer`: the one Kestrel server per endpoint — consolidating the two near-identical per-style servers that previously lived in `Compze.Tessaging.Hosting.AspNetCore` and `Compze.Typermedia.Hosting.AspNetCore`.
 - One dispatch surface instead of per-feature controllers: `TransportRequestController` serves every communication style's routes by rebuilding each `TransportRequest` from route, headers and body and dispatching through the endpoint's `TransportRequestHandlerMap` — the very same contributed request handlers the named-pipe server serves. The per-feature MVC controllers (`TessagingController`, `TypermediaController`) and the `AspNetCoreControllerContribution` application-part mechanism are gone, and with them the `Compze.Tessaging.Hosting.AspNetCore` and `Compze.Typermedia.Hosting.AspNetCore` assemblies.
 

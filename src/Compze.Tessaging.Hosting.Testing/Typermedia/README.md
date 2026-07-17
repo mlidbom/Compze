@@ -11,23 +11,24 @@ Compze is a .NET framework for building expressive domains through **Teventive p
 
 ## What's in this package?
 
-Typermedia's plug-in for the testing endpoint host in `Compze.Hosting.Testing`, plus a remote test client:
+The pure client composed for tests:
 
-- **`DistributedTypermediaTestingEndpointHostFeature`** — wires the distributed Typermedia pipeline and transport into every endpoint a `TestingEndpointHost` registers.
-- **`TypermediaTestClient`** — a remote Typermedia client running in its own container, connecting to an endpoint's typermedia address over HTTP exactly as an external client application would.
-- **Transport test wiring** — `CurrentTestsTypermediaTransport()` for endpoints, `CurrentTestsTypermediaClientTransport()` for clients.
+- **`TypermediaTestClient`** — the pure client (`TypermediaClient`) running in its own container, connecting to an endpoint's address over the current test's transport exactly as an external client application would.
+- **Transport test wiring** — `CurrentTestsEndpointTransportClient()`, the transport-client strategy a pure client's composition declares.
+
+Every endpoint the testing host registers serves typermedia — both endpoint types serve all four tessage kinds, unconditionally — so there is no typermedia-specific endpoint wiring here.
 
 ### Quick start
 
 ```csharp
-using var host = TestingEndpointHost.Create(new DistributedTypermediaTestingEndpointHostFeature());
-var endpoint = host.RegisterEndpoint("MyEndpoint", endpointId, builder =>
+using var host = TestingEndpointHost.Create();
+var endpoint = host.RegisterBestEffortEndpoint("MyEndpoint", endpointId, endpoint =>
 {
-   builder.RegisterTessageHandlers(handle => handle.ForTuery((MyTuery tuery) => HandleTuery(tuery)));
+   endpoint.RegisterTessageHandlers(handle => handle.ForTuery((MyTuery tuery) => HandleTuery(tuery)));
 });
 await host.StartAsync();
 
-await using var client = await TypermediaTestClient.ConnectTo(endpoint.TypermediaAddress!, mapper => mapper.RegisterMyDomainTypeMappings());
+await using var client = await TypermediaTestClient.ConnectTo(endpoint.Address!, mapper => mapper.RegisterMyDomainTypeMappings());
 var result = client.Navigator.Get(new MyTuery());
 ```
 

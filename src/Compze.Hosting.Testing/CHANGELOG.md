@@ -2,7 +2,7 @@
 
 ## 0.2.0-alpha
 
-- `TestingEndpointHost` owns a real `InterprocessEndpointRegistry` (`ITestingEndpointHost.EndpointRegistry`), created per host in a unique temp directory and deleted when the host is disposed. The testing features have every endpoint `ParticipateIn` it, so every test runs the production announce/discover pipeline — announcement, signal-driven reconciliation, retraction — instead of a test-only in-memory registry.
+- The package narrows to the pluggable-component test wiring (DI containers, serializers, database pools, `TestingComponentRegistrar`). The testing endpoint host and its `ITestingEndpointHostFeature` seam are gone: the seam died with the endpoint feature machinery, and the surviving testing host lives in `Compze.Tessaging.Hosting.Testing`, registering the concrete endpoint types with per-tier test wiring — which requires knowing the tiers.
 
 ## 0.1.0-alpha.1
 

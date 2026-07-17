@@ -1,20 +1,21 @@
 # Compze.Hosting
 
-Endpoint hosting for the Compze framework. This package knows nothing of Tessaging, Typermedia, or any other
-capability — each plugs its pipeline into the endpoint builder as a feature, from its own package.
+Endpoint hosting for the Compze framework. This package never looks inside an endpoint — the host receives
+composed endpoints (`RegisterEndpoint(container => ExactlyOnceEndpoint.Compose(container, ...))`) and drives
+their shared lifecycle.
 
 ## What's in this package?
 
-- **`EndpointHost`** — Manages endpoint lifecycle: all endpoints start listening before any starts sending
-- **`Endpoint`** — A running endpoint that drives the lifecycle of whatever components its features registered
-- **`ServerEndpointBuilder`** — The `IEndpointBuilder` implementation: container, type mapper, features, components
+- **`EndpointHost`** — owns a set of composed endpoints and runs each lifecycle phase host-wide: every
+  endpoint starts listening before any announces its address, and every address is announced before any
+  endpoint starts sending
 - **`AppSettingsJsonConfigurationParameterProvider`** — Configuration parameters from `appsettings.json`
 
 ## Related packages
 
 | Package | Description |
 |---------|-------------|
-| [Compze.Tessaging](https://www.nuget.org/packages/Compze.Tessaging) | The Tessaging paradigm - both siblings' pipelines; plugs in via `AddExactlyOnceTessaging()` / `AddDistributedTypermedia()` / the handler registrars |
+| [Compze.Tessaging](https://www.nuget.org/packages/Compze.Tessaging) | The Tessaging paradigm - the endpoint types (`ExactlyOnceEndpoint` / `BestEffortEndpoint`), the LocalTessagingEngine, and the pure client |
 
 ## License
 

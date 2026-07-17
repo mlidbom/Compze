@@ -23,8 +23,27 @@ one per container) and the per-style registrar surfaces on endpoints (`RegisterT
 `LocalTessagingEngineFeature`); every registration site in the suite, the doc samples, the store
 integrations (tevent store, document db), and the AccountManagement sample migrated to the declaration
 blocks, exactly-once handlers landing on their async shapes. Observation semantics carried over unchanged,
-as planned. Still interim, dying in phase 5: the `IEndpointAdvertisementContributor` seam over the roster's
-two kind-partition projections, and `LocalTessagingEngineFeature` itself. The destination is
+as planned. **Phase 5 executed 2026-07-17**, five green commits: (1) the consistency law's behavior change —
+the tommand-sender door consults the roster, in-roster executes inline in the sender's execution
+(exactly-once by construction; in-boundary failure fails the sender), the router's self-connection is
+deleted (reconciliation now *excludes* the endpoint's own announced address — the registry lists it like any
+other — and an answer claiming the endpoint's own identity fails loud), and the self-send spec is re-pinned
+to "has executed inline when the send returns" plus a failing-handler-fails-the-sender pin; (2) the concrete
+endpoint types (`Compze.Tessaging.Endpoints`): `BestEffortEndpoint` and `ExactlyOnceEndpoint` as plain
+composition roots — engine + identity + wire, all four kinds unconditionally, lifecycle phases in readable
+methods, composition choices as named parameter declarations (transport, the one serializer, the database
+pairing, topology, the tracker) with missing declarations failing loud from builder state — and
+`EndpointHost.RegisterEndpoint<TEndpoint>(Func<IContainerBuilder, TEndpoint>)` as the host's one
+tier-ignorant door; (3) the per-tier `TestingEndpointHost` (moved to `Compze.Tessaging.Hosting.Testing`) and
+the migration of every consumer (~25 spec files, the separate-process program — now the
+production-composition exemplar — and the whole AccountManagement sample); (4) the feature machinery's
+death: the five features, `IEndpointBuilder`/`GetOrAddFeature`/`OnContainerBuilt`/`AddComponent`,
+`IEndpointComponent`, `ServerEndpointBuilder` + the generic `Endpoint`, the advertisement-contributor seam
+and the roster's kind partitions, the twin serializer slots, the typed foundation, the
+`ITestingEndpointHostFeature` seam, and `IEndpoint`'s phase methods dropping the "Components" word; (5) the
+pure client — `TypermediaClient`, the third composed shape, which `TypermediaTestClient` now rides. One
+ordering lesson recorded in code: the tier registers before the shared substrate, because the peer
+registry's durability follows the tier's declared persistence. The destination is
 [tessaging-target-design.md](tessaging-target-design.md); the rationale and evidence are in
 [style-substrate-and-hosting-evaluation.md](style-substrate-and-hosting-evaluation.md). This document is the
 path: the ordered phases, what each contains, and what gates what. Every phase is a run of increments that

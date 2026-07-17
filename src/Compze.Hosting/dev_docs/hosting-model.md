@@ -10,73 +10,66 @@ production applications and the test suite.
 
 A Compze application is built as one or more **endpoints**. An endpoint is the unit of isolation and
 deployment — think of it as a service: it has its own dependency injection container, its own connection
-string and storage, its own registered message handlers, and its own transports listening on the network.
+string and storage, its own registered message handlers, and its own transport listening on the network.
 Endpoints do not call each other's code; they converse by sending messages. Several endpoints can run in one
 process, or each in its own — the model is the same.
 
 **Hosting** is everything between "here are my handlers and domain logic" and "a running system serving
-them": building each endpoint's container, wiring its message pipelines, starting its transports in a safe
+them": building each endpoint's container, wiring its message pipelines, starting its transport in a safe
 order, letting endpoints discover each other, and tearing it all down cleanly. A **host** is the object that
 owns a set of endpoints and drives that shared lifecycle.
 
-### Two ways to converse: Tessaging and Typermedia
+### Two ways to converse: Tessaging's two siblings
 
 Compze gives application code two **communication styles** — two different ways for endpoints and clients to
-converse. (Compze names its message concepts with a leading *t*: a *tessage* is a message, a *tevent* an
+converse, both built on the one Tessaging paradigm: conversation through *tessages*, messages routed by their
+.NET type. (Compze names its message concepts with a leading *t*: a *tessage* is a message, a *tevent* an
 event, a *tommand* a command, a *tuery* a query.)
 
-- **Tessaging** is the asynchronous style — the service-bus conversation. Handlers publish tevents and send
-  tommands; subscribers receive every tevent whose type they are compatible with; an inbox/outbox provides
-  transactional, exactly-once delivery. Tessaging is for
-  *telling the world what happened* and trusting it arrives.
+- **TessageBus** is the asynchronous style — the message bus re-founded on tessages. Handlers publish tevents
+  and send tommands; subscribers receive every tevent whose type they are compatible with; an inbox/outbox
+  provides transactional, exactly-once delivery. TessageBus is for *telling the world what happened* and
+  trusting it arrives.
 - **Typermedia** is the request/response style — hypermedia principles ("navigate an API by following
   links") extended with .NET types. A client navigates an endpoint's API by executing tueries and tommands
   and following the typed results to the next step. Typermedia is for *asking questions and getting answers,
   now*.
 
-Each style is a complete vertical: its own message kinds, routing, handler execution, and transport. They are
-peers, and neither knows the other exists.
+A tessage's type is its whole contract: its kind, its delivery guarantee, its transactionality, its
+remotability, and its synchrony are all declared by the interfaces the type extends, and the machinery that
+carries a tessage is chosen by reading its type.
 
-### The one design rule
+### The three composed shapes
 
-Everything in the hosting design follows from a single rule:
+There are exactly three things an application composes, all in `Compze.Tessaging`:
 
-> **The hosting machinery knows nothing of Tessaging, Typermedia, or any other capability. Capabilities plug
-> themselves in as features. The application decides what each endpoint speaks.**
+1. **The LocalTessagingEngine** — the tessage-conversing heart of one container, for the application that
+   converses only with itself (see "The engine" below). Not an endpoint: no identity, no address, no wire.
+2. **An endpoint** — an engine given identity and a wire. There are exactly two endpoint types, differing
+   only in what crossing the endpoint boundary guarantees: `BestEffortEndpoint` (no database; per-peer
+   best-effort tevent queues) and `ExactlyOnceEndpoint` (everything the best-effort endpoint has, plus the
+   durable vertical: inbox, outbox, durable peer memory, and the tommand-sending doors). **Both serve all
+   four tessage kinds, unconditionally.**
+3. **The pure client** — `TypermediaClient`: a navigator and a transport client with no server, for an
+   external application navigating endpoints' typermedia at explicitly known addresses.
 
-Why this rule? Because what an endpoint *is* (a container, a lifecycle, an identity) is a different concept
-from what an endpoint *can say* (Tessaging? Typermedia? both?). Keeping them apart means each communication
-style can be developed, shipped, and — crucially — tested entirely on its own; an endpoint's capabilities are
-declared in one visible place, its own setup; and a new capability can be added without touching the hosting
-machinery at all.
+An endpoint is a plain composition root: composition choices are parameters, not plugins. Its declaration
+surface takes the transport protocol, the one serializer, the database (exactly-once tier), the topology
+declarations, and the same engine declaration block every composition speaks — and a missing declaration
+fails loud at composition, naming what is missing.
 
-The rule is applied three times, at three scales:
+## The shape of the code
 
-1. **Per endpoint:** capabilities plug into an endpoint being built, as *endpoint features*.
-2. **Within each communication style:** the style's synchronous in-process core is itself a feature, and
-   distribution is a feature composed on top of it — so a style can be used entirely in-process, with no
-   transports and nothing to host.
-3. **Per testing host:** capabilities plug into the test host, as *testing host features*, so one neutral
-   testing host serves Tessaging-only, Typermedia-only, and combined tests alike.
-
-The rest of this document walks the model top-down: the code layout that enforces the rule, then endpoints
-and hosts, then how a communication style plugs in and runs, then production and testing composition.
-
-## The shape of the code: three layers
-
-The rule is enforced by the dependency directions between three layers:
-
-| Layer | Home | Knows about Tessaging/Typermedia? |
+| Layer | Home | Knows about the styles? |
 |---|---|---|
-| **Contracts** | `Compze.Abstractions` → `Compze.Abstractions.Hosting.Public` | No |
-| **Mechanism** | `Compze.Hosting` (production), `Compze.Hosting.Testing` (testing) | No |
-| **Features** | `Compze.Tessaging` (both siblings; Typermedia under the `Compze.Tessaging.Typermedia` namespaces) / `Compze.Tessaging.Hosting.Testing` | Each style's features know only their own style |
+| **Contracts** | `Compze.Abstractions` → `Compze.Abstractions.Hosting.Public` | No — `IEndpointHost`, `IEndpoint`, the endpoint value types (`EndpointId`, `EndpointAddress`, `EndpointConfiguration`), `IEndpointRegistry`/`IEndpointAddressAnnouncer` |
+| **The host mechanism** | `Compze.Hosting` | No — `EndpointHost` drives lifecycle phases host-wide over `IEndpoint`s it never looks inside |
+| **The composed shapes** | `Compze.Tessaging` (`Compze.Tessaging.Endpoints`, `Compze.Tessaging.Engine`, the Typermedia namespaces) | Yes — the endpoint types compose both siblings, always |
 
-The contracts define what hosting *is*: `IEndpointHost`, `IEndpoint`, `IEndpointBuilder`,
-`IEndpointComponent`, plus the endpoint value types (`EndpointId`, `EndpointAddress`,
-`EndpointConfiguration`) and `IEndpointRegistry`. The mechanism implements them without referencing any
-Tessaging or Typermedia project. Each communication style references the contracts and plugs itself in.
-Composition — what each endpoint actually speaks — happens at the outermost layer: the application or the test.
+The host mechanism implements the contracts without referencing what an endpoint speaks: it hands each
+registration a fresh container builder from its factory and receives a composed `IEndpoint` back
+(`RegisterEndpoint(container => ExactlyOnceEndpoint.Compose(container, ...))`). Composition — what each
+endpoint actually is — happens at the outermost layer: the application or the test.
 
 ## Endpoints and hosts
 
@@ -84,159 +77,72 @@ Declaring an endpoint looks like this, and is the same regardless of host:
 
 ```csharp
 var host = EndpointHost.Production.Create(CreateContainerBuilder);
-var endpoint = host.RegisterEndpoint("AccountManagement", new EndpointId(Guid.Parse("...")), builder =>
-{
-   builder.TypeMapper.RegisterMyDomainTypeMappings();
+var endpoint = host.RegisterEndpoint(container => ExactlyOnceEndpoint.Compose(
+   container,
+   "AccountManagement",
+   new EndpointId(Guid.Parse("...")),
+   endpoint =>
+   {
+      endpoint.AspNetCoreEndpointTransport();
+      endpoint.NewtonsoftSerializer();
+      endpoint.SqliteEndpointDatabase("AccountManagement");
+      endpoint.ParticipateIn(registry);
 
-   var foundation = builder.ComposeEndpoint(it => it.AspNetCoreEndpointTransport()
-                                                    .SqliteEndpointDatabase("AccountManagement"));
-   foundation.AddExactlyOnceTessaging(tessaging => tessaging.NewtonsoftSerializer());
-   foundation.AddDistributedTypermedia(typermedia => typermedia.NewtonsoftSerializer());
-
-   builder.RegisterTessageHandlers(handle => handle
-      .ForTevent(async (IAccountTevent tevent, IUnitOfWorkResolver unitOfWork) => ...)
-      .ForTuery((AccountTuery tuery) => ...));
-});
+      endpoint.MapTypes(mapper => mapper.RegisterMyDomainTypeMappings());
+      endpoint.RegisterTessageHandlers(handle => handle
+         .ForTevent(async (IAccountTevent tevent, IUnitOfWorkResolver unitOfWork) => ...)
+         .ForTuery((AccountTuery tuery) => ...));
+   }));
 host.Start();
 ```
 
-`ComposeEndpoint` declares the endpoint's *foundation* — its transport protocol and, when it persists, its
-database — exactly once; the features are added on top of it. The foundation's type carries the database
-engine, so adding exactly-once Tessaging on a sqlite foundation registers Tessaging's sqlite sql layers: the
-pairing is routed by the compiler, and a foundation the feature needs but the setup never declared fails at
-setup time with an error naming the missing declaration.
+`Compose`'s callback receives the endpoint's declaration surface (`ExactlyOnceEndpointBuilder` /
+`BestEffortEndpointBuilder`) — everything the endpoint will be is declared before its container is built,
+and the builder exists only inside the callback: the callback's end is the declaration's end, the build
+closes the roster, and any attempt to declare afterward explodes. The named declarations come from the
+implementation packages, each filling the one parameter it names: the transport protocol
+(`NamedPipeEndpointTransport()` / `AspNetCoreEndpointTransport()`), the endpoint's one serializer
+(`NewtonsoftSerializer()`), and — on the exactly-once tier — the database, whose named declaration registers
+the whole engine pairing (`SqliteEndpointDatabase(...)` and kin: the connection pool, the type-id interner,
+and Tessaging's sql layers for that engine). Store integrations (a tevent store's `HandleTaggregate`, a
+document db's `HandleDocumentType`) plug into this same surface — handler contributors like any other.
 
-`RegisterEndpoint`'s callback receives the endpoint's `IEndpointBuilder` — the declaration surface through
-which everything the endpoint will be is stated before its container is built. When the callback returns, the
-mechanism builds the container and assembles the endpoint. The builder itself contributes only what every
-endpoint needs no matter what it speaks: the type mapper (pre-mapped with the shared message hierarchy and
-the discovery types), the endpoint's identity, the configuration provider, and the endpoint-discovery query
-executor through which the endpoint answers discovery.
+## The lifecycle phases
 
-Notice what the example already shows: the endpoint above converses with other endpoints in both styles, not
-because any host or builder decided so, but because its own setup declares `AddExactlyOnceTessaging()` and
-`AddDistributedTypermedia()`. Registering handlers declares something smaller — that the endpoint
-*understands* those tessages in-process; conversing over the network is its own explicit declaration. That is
-the design rule made concrete — which brings us to how those lines of code work.
+Each endpoint drives its own lifecycle in readable methods — listen → announce → send on the way up,
+retract → stop sending → stop listening on the way down — and the host runs each phase **host-wide**: when a
+host starts, every endpoint finishes `StartListeningAsync` before any endpoint runs `AnnounceAddressAsync`,
+and every announcement lands before any endpoint starts `StartSendingAsync`. Nothing can send to an endpoint
+that is not yet ready to receive, an announced address is always one whose whole endpoint is already
+listening, and a router taking its first look at an endpoint registry when sending starts sees every
+endpoint the host announced, never a partial membership decided by start-up racing. Stopping runs in
+reverse: addresses are retracted before any sending stops, and sending stops before listening.
 
-## How a capability plugs in: features
+What each phase does inside an endpoint: peer memory loads, the durable vertical initializes (exactly-once
+tier), and the one transport server starts in the listening phase; the address is announced to every
+declared `IEndpointAddressAnnouncer` in the announcing phase; and in the sending phase the router converges
+on the registry's membership — minus the endpoint's own announced address: routes lead only to *other*
+endpoints — and the connections' delivery streams start, loading their recovery backlogs from the storage
+the listening phase initialized.
 
-The builder does not know which capabilities exist. It offers one seam, and each capability packages itself
-as a **feature** behind it:
+An endpoint runs **one transport server** with one address, serving every remotable capability it speaks —
+which is what lets an endpoint registry map an `EndpointId` to a single address, and it is where the
+endpoint answers the one discovery question (its name, its `EndpointId`, and its advertisement — the
+roster's one projection, covering every tessage kind). The endpoint's `Address` is null until it is
+listening.
 
-- `GetOrAddFeature<TFeature>(createFeature)` — creates the feature once per endpoint and remembers it.
-  `AddExactlyOnceTessaging()`, `AddDistributedTessaging()`, `AddInProcessTessaging()`, `AddDistributedTypermedia()`, and
-  `AddInProcessTypermedia()` are one-line extension methods over this call, and
-  `RegisterTessageHandlers` / `ObserveTevents` are extension methods that add the in-process cores on first
-  touch and declare into the endpoint's one engine — one registrar covers all four tessage kinds, because the
-  tessage's type carries its kind, guarantee, and synchrony.
-- Inside its constructor, a feature uses the rest of the builder surface to wire its whole vertical: it
-  registers its services with `builder.Registrar`, maps its message types with `builder.TypeMapper`,
-  schedules post-container-build work with `builder.OnContainerBuilt(...)` (e.g. registering discovery
-  handlers with the resolved query executor), and adds its runtime lifecycle with `builder.AddComponent(...)`.
+## The engine — when there is nothing to host
 
-The design rule is applied a third time *inside* each communication style: the style's in-process core is
-itself a feature, and distribution is a feature composed on top of it (via `GetOrAddFeature`, so the core is
-wired once whether it arrives alone or under distribution).
+Everything above assumes an endpoint that converses with other endpoints. But the paradigm's purely
+synchronous core is valuable entirely on its own, inside a single process: publishing tevents that
+restructure the internal flow of an application, and executing strictly local tueries and tommands through
+the `ILocalTypermediaNavigatorSession`. Everything in that core runs synchronously, on the calling thread,
+within the caller's transaction — so there are no transports to start, no discovery, no background work, and
+therefore *nothing to host*. In-process Compze is container wiring, not hosting.
 
-- **Tessaging splits three ways**, each layer containing the one below it.
-  `InProcessTessagingEndpointFeature` (in `Compze.Tessaging`, `AddInProcessTessaging()`) is the style's
-  synchronous core: the endpoint's one engine (the `TessageHandlerRoster` and the one `TessageHandlerExecutor`,
-  shared with every other style feature on the endpoint), through which the synchronous in-process tevent
-  delivery every tevent travels,
-  and the endpoint's `IUnitOfWorkTeventPublisher` (plus its independent counterpart, `IIndependentTeventPublisher`,
-  for code outside any unit of work) — routing each published tevent by the delivery
-  contract its type declares (see
-  [the tevent delivery model](../../Compze.Tessaging/dev_docs/tevent-delivery-model.md)). With nothing but this
-  feature the endpoint wires no remote delivery legs — no transport, inbox, or outbox —
-  so tevents are delivered synchronously to this process's handlers, in the publisher's transaction.
-  `DistributedTessagingEndpointFeature` (`AddDistributedTessaging()`) composes it into the transport-speaking
-  core: the transport server, the router that connects to the other endpoints, and the best-effort tevent
-  delivery leg — guarantee-free Tessaging, persisting nothing, so it composes on the database-less
-  foundation; everything exactly-once fails loud at setup or publish.
-  `ExactlyOnceTessagingEndpointFeature` (`AddExactlyOnceTessaging()`) composes that core and adds the
-  exactly-once vertical: inbox, outbox, the durable peer registry, and the tommand senders — and wiring the outbox is
-  what wires the durable tevent delivery leg the publisher routes every `IExactlyOnceTevent` through, and
-  what grants the router's connections their durable exactly-once delivery streams. Whether a tevent
-  crosses the wire is a property of the tevent's type, honored by the legs the composition wires — not an
-  endpoint-wide mode — which is also what keeps `RegisterTessageHandlers` order-independent of every other
-  Tessaging declaration.
-- **Typermedia splits two ways**, because it has no mode-exclusive service: distributed Typermedia simply
-  contains in-process Typermedia. `InProcessTypermediaEndpointFeature` (in the `Compze.Tessaging.Typermedia` namespace,
-  `AddInProcessTypermedia()`) shares the endpoint's one engine and wires the `ILocalTypermediaNavigatorSession` through
-  which strictly local tueries and tommands execute synchronously, in the caller's transaction.
-  `DistributedTypermediaEndpointFeature` (in the `Compze.Tessaging.Typermedia.Client` namespace, `AddDistributedTypermedia()`)
-  composes it and adds the handler executor that serves remote clients, discovery, and the client side
-  through which the endpoint itself navigates other endpoints' typermedia — the `IRemoteTypermediaNavigator`,
-  routed by the endpoint's one router against the registry the endpoint declares it discovers
-  through; declaring no registry means the endpoint only serves.
-- **Serving is shared.** An endpoint runs **one transport server**, whatever it speaks: every
-  transport-speaking feature composes `EndpointTransportServerFeature` (in the `Compze.Tessaging.Internals.Transport` namespace) — the same
-  `GetOrAddFeature` pattern one level down — and *contribute their request handling to it* (request-kind
-  handlers, served identically by the named-pipe and ASP.NET Core transports) rather than each running a
-  server of its own. One server means one address per endpoint, which is what lets an endpoint registry map
-  an `EndpointId` to a single address; the server itself answers the endpoint-discovery queries endpoint
-  discovery runs on, which every endpoint serves no matter what it speaks. Which transport implements the
-  server is composition: each transport registers its `IEndpointTransportServer` implementation guarded, so
-  every style's transport registration can demand a server and the first wins.
-
-A feature lives in its own capability's assembly, where the internal access it needs is natural — no
-`InternalsVisibleTo` back-doors.
-
-## How a capability runs: components and the lifecycle phases
-
-A feature describes what an endpoint *has*; an `IEndpointComponent` (added via `AddComponent`) is what
-actually *runs* — the capability's runtime lifecycle. Components are created when the endpoint starts
-listening; the container is built by then, so the factory can resolve whatever it needs.
-
-The lifecycle has three phases — listening, then announcing, then sending — and the ordering guarantee is
-**host-wide**: when a host starts, every endpoint's components finish `StartListeningAsync` before any
-component anywhere runs `AnnounceAddressAsync`, and every announcement lands before any component starts
-`StartSendingAsync`. That is the whole point of the split: nothing can send to an endpoint that is not yet
-ready to receive, an announced address is always one whose whole endpoint is already listening, and a
-sending-phase component that reads announcements — a router taking its first look at an endpoint registry —
-sees every endpoint the host announced, never a partial membership decided by start-up racing. Stopping runs
-in reverse: addresses are retracted (`RetractAddressAsync`) before any sending stops, and sending stops
-before listening. All but the listening-phase members are default no-ops because most components neither
-announce nor initiate sending. The components in play: `EndpointTransportServerFeature`'s component runs the
-endpoint's one transport server through the listening phase and announces the endpoint's address to every
-declared `IEndpointAddressAnnouncer` in the announcing phase.
-`DistributedTessagingEndpointComponent` — the transport-speaking Tessaging core's lifecycle — sets its router
-reconciling against the `IEndpointRegistry`'s membership in the sending phase (continuously, so endpoints
-that appear, disappear, or restart at a new address are followed — see
-[same-machine hosting](wip/same-machine-hosting.md)) and starts the connections' delivery streams.
-`ExactlyOnceTessagingEndpointComponent` listens with its inbox and initializes the outbox's
-durable storage — all in the listening phase, so that when sending starts anywhere, every connection's
-exactly-once stream finds the storage ready to load its recovery backlog from.
-`DistributedTypermediaEndpointComponent` mirrors the shape on the Typermedia side: the shared server serves
-its requests, and when the endpoint declared the registry it discovers through, the sending phase sets the
-typermedia router reconciling the same way. Only the
-transport-speaking features add components at all — an endpoint declaring only in-process features has no
-runtime lifecycle, and the host starts it with nothing to drive.
-
-## Addresses are extension properties
-
-`IEndpoint` has no address members, because the hosting machinery does not know which communication styles an
-endpoint speaks — per-style *presence* is each style's own concern. Each communication style contributes an
-extension property reading its own component: `endpoint.TessagingAddress` (from `EndpointTessagingExtensions`)
-and `endpoint.TypermediaAddress` (from `EndpointTypermediaExtensions`). The *value* behind both is the same —
-the endpoint's one transport-server address — but each property is null for endpoints without that style's
-distributed pipeline, so a property answers "can I converse with this endpoint in this style, and where".
-Both are also null until the endpoint is listening — there is nothing to connect to before that (an
-in-process endpoint has no address: there is nothing to connect to, ever).
-
-## In-process composition — when there is nothing to host
-
-Everything above assumes an endpoint that converses with other endpoints. But both communication styles have
-a purely synchronous core that is valuable entirely on its own, inside a single process: publishing tevents
-that restructure the internal flow of an application, and executing strictly local tueries and tommands
-through the `ILocalTypermediaNavigatorSession`. Everything in that core runs synchronously, on the calling
-thread, within the caller's transaction — so there are no transports to start, no discovery, no background
-work, and therefore *nothing to host*. In-process Compze is container wiring, not hosting.
-
-Both cores together are the **LocalTessagingEngine** — the tessage-conversing heart of one container — and a
-plain container composes it from one declaration block, built on the same wiring units the endpoint features
-are built from, so there is exactly one definition of what the engine is:
+That core is the **LocalTessagingEngine** — the tessage-conversing heart of one container — and a plain
+container composes it from one declaration block, built on the same wiring the endpoint types compose, so
+there is exactly one definition of what the engine is:
 
 ```csharp
 var builder = /* any Compze container builder */;
@@ -248,18 +154,18 @@ var container = builder.Build();
 ```
 
 The declaration block is the one and only way anything gets into the engine: the roster closes when the
-engine is built, and the same declaration block is the surface everywhere — a plain container, an in-process
-endpoint, or a distributed endpoint — so an application's handler declarations run unchanged under any
+engine is built, and the same declaration block is the surface everywhere — a plain container, a best-effort
+endpoint, an exactly-once endpoint — so an application's handler declarations run unchanged under any
 composition.
 
 Three things to know:
 
 - **"In-process" describes communication, not storage.** A real, persistent tevent store composes with
-  in-process Tessaging unchanged; a taggregate's committed tevents are simply delivered only to this
+  the engine unchanged; a taggregate's committed tevents are simply delivered only to this
   process's handlers.
 - **No type-id ceremony.** In-process dispatch routes by `System.Type`; type-id mappings exist for the wire
-  and for persistent-store serialization. The compositions supply a default type mapper when none is
-  registered; an application whose tevent store needs domain mappings registers its own first.
+  and for persistent-store serialization. The plain-container composition supplies a default type mapper
+  when none is registered; an application whose tevent store needs domain mappings registers its own first.
 - **Wanting guaranteed tommand delivery does not make an endpoint "in-process".** A Tessaging tommand's type
   declares its cross-boundary delivery contract — exactly-once, transactional, asynchronous. Within the
   boundary the consistency law applies instead: a tommand whose handler is in the endpoint's own roster
@@ -267,20 +173,13 @@ Three things to know:
   machinery involved. An application that wants the guarantees within a single process is a distributed
   endpoint that happens to be alone in its host.
 
-The same cores are also available to hosted endpoints as the `AddInProcessTessaging()` /
-`AddInProcessTypermedia()` features — for an endpoint that, say, speaks exactly-once Tessaging to the world
-while structuring its own request handling with strictly local Typermedia navigation, without paying for a
-transport server it never serves.
-
 ## Production hosting
 
 `EndpointHost.Production.Create(containerFactory)` — the factory produces a fresh container builder per
-endpoint. Endpoints read configuration through `IConfigurationParameterProvider`: an endpoint setup that
-registers its own provider wins; `AppSettingsJsonConfigurationParameterProvider` reading `appsettings.json`
-is only the default. How endpoints find each other is a declaration on each transport-speaking feature:
-`AddDistributedTessaging().DiscoverEndpointsThrough(registry)`, which `AddExactlyOnceTessaging()` delegates to,
-and `AddDistributedTypermedia().DiscoverEndpointsThrough(registry)`. Declaring no registry means the endpoint
-discovers nothing and only serves that style: it connects to no other endpoint, and a tommand it sends that
+endpoint. How endpoints find each other is a topology declaration in each endpoint's composition:
+`DiscoverEndpointsThrough(registry)` (the read side), `AnnounceAddressTo(announcer)` (the write side), or
+`ParticipateIn(registry)` for a registry with both faces. Declaring no registry means the endpoint
+discovers nothing and only serves: it connects to no other endpoint, and a tommand it sends that
 its own roster serves executes inline, in the sender's execution — nothing self-addressed ever crosses the
 wire, so no discovery is needed for an endpoint's conversation with itself. For processes on one
 machine the registry is the `InterprocessEndpointRegistry`, which is also the announcer, so an endpoint
@@ -293,70 +192,37 @@ addresses and discover each other with zero configuration; the whole story lives
 Compze tests are black-box integration tests: they host real endpoints with the real pipelines against real
 (throwaway, pooled) databases — no mocks. The testing side therefore needs everything production hosting has,
 plus test concerns: a database pool, the pluggable-component matrix, and guarantees that a test cannot pass
-while work is still in flight. `Compze.Hosting.Testing` provides this by repeating the design rule one level
-up: `TestingEndpointHost` knows nothing of Tessaging or Typermedia either, and capabilities plug into the
-*host* as `ITestingEndpointHostFeature`s:
+while work is still in flight. The testing host (`TestingEndpointHost` in `Compze.Tessaging.Hosting.Testing`)
+provides this as concrete per-tier wiring:
 
 ```csharp
-using var host = TestingEndpointHost.Create(new ExactlyOnceTessagingTestingEndpointHostFeature(),
-                                            new DistributedTypermediaTestingEndpointHostFeature());
+using var host = TestingEndpointHost.Create();
+var backend = host.RegisterExactlyOnceEndpoint("Backend", backendId, endpoint =>
+{
+   endpoint.MapTypes(mapper => mapper.RegisterMyDomainTypeMappings());
+   endpoint.RegisterTessageHandlers(handle => ...);
+});
 ```
 
-Every endpoint the host registers gets, before the test's own setup runs, each feature's standard test
-wiring — so individual tests don't repeat it. There is no "combined host" type: a Tessaging-only,
-Typermedia-only, or combined host is just `Create` with the matching features.
+`RegisterExactlyOnceEndpoint` / `RegisterBestEffortEndpoint` hand each endpoint its test concerns at
+construction — the host's one tessages-in-flight tracker, the current test's transport protocol, the pooled
+test database keyed by the endpoint's id (exactly-once tier, so an endpoint keeps its database across host
+rebuilds and specs can script restarts), and participation in the host's endpoint registry: a real
+`InterprocessEndpointRegistry` of the host's own (in a per-host temp directory deleted with the host), so
+every test runs the production announce/discover pipeline, not a test-only registry. All endpoints are built
+from clones of one root container, so they share the test database pool and serializers. On dispose the host
+waits until no tessages are in flight and rethrows background exceptions no assertion observed — a test
+cannot pass while silently dropping in-flight work (`DisposeAsyncWithoutWaitingForEndpointsToBeAtRest` opts
+out, for tests that deliberately leave work scheduled).
 
-What the pieces do:
-
-- **`TestingEndpointHost`** builds all endpoints from clones of one root container, so they share the test
-  database pool and serializers, and gives every endpoint the shared transport infrastructure. It owns a real
-  `InterprocessEndpointRegistry` of its own (`ITestingEndpointHost.EndpointRegistry`, in a per-host temp
-  directory deleted with the host), which the features have every endpoint participate in — so every test
-  runs the production announce/discover pipeline, not a test-only registry. On dispose it
-  asks each feature to wait until its background work is at rest and rethrows background exceptions no
-  assertion observed — a test cannot pass while silently dropping in-flight work
-  (`DisposeAsyncWithoutWaitingForEndpointsToBeAtRest` opts out, for tests that deliberately leave work
-  scheduled).
-- **`ExactlyOnceTessagingTestingEndpointHostFeature`** registers, per endpoint: a host-wide
-  tessages-in-flight tracker (this is what the dispose-time quiescence wait reads), the endpoint transport of
-  the current test's protocol, the Tessaging vertical's SQL persistence stack, and finally
-  `AddExactlyOnceTessaging()` declaring `ParticipateIn` the host's endpoint registry (so routers connect to
-  every endpoint in the host). The tracker pre-registration matters:
-  the transport-speaking Tessaging core guards its tracker default with `IsRegistered`, so the host's
-  version wins.
-- **`DistributedTypermediaTestingEndpointHostFeature`** registers the Typermedia transport and
-  `AddDistributedTypermedia()` declaring `ParticipateIn` the host's endpoint registry.
-- **`TypermediaTestClient`** (in `Compze.Tessaging.Hosting.Testing`) is a remote client in its own container,
-  connecting to an endpoint's `TypermediaAddress` over the current test's transport exactly as an external
-  application would.
+**`TypermediaTestClient`** (in `Compze.Tessaging.Hosting.Testing`) is the pure client composed for tests: it
+runs in its own container and connects to an endpoint's `Address` over the current test's transport exactly
+as an external application would.
 
 Test containers are built through `TestEnv.DIContainer.CreateTestingContainerBuilder()`, whose registrar is a
 `TestingComponentRegistrar`: when production wiring like `MsSqlConnectionPool(name)` asks it for a testing
 override, it supplies one that resolves connection strings through the test database pool. This is how
 production registrars run unmodified against throwaway pooled databases, across every SQL backend, DI
-container, and serializer in the current test's `PluggableComponents` configuration.
-
-The transport itself is an axis of that same matrix (`TestEnv.Transport`): the same specifications run over
-HTTP (ASP.NET Core) and over named pipes (see [same-machine hosting](wip/same-machine-hosting.md)). The
-endpoint-discovery query transport every endpoint needs no matter what it speaks belongs to no single
-communication style, so every communication style's transport registration demands it itself through the
-guarded `…EndpointDiscoveryQueryTransportIfNotRegistered()` registrars: whichever registers first wins, and
-an endpoint hosting both styles gets it once.
-
-## Adding a new communication style
-
-The proof of the design rule is what it takes to add a third communication style:
-
-1. Define the style's in-process core — its handler registry and synchronous dispatch — and wrap it in an
-   endpoint feature behind `AddInProcessX()` and (if it has handlers) a `RegisterXHandlers` extension
-   property, plus a registrar extension composing the same wiring into a plain container.
-2. Define the distribution pipeline's services and an `IEndpointComponent` for its runtime lifecycle, and
-   wrap them in a feature that composes the in-process core via `GetOrAddFeature`, behind
-   `AddDistributedX()`.
-3. If the style has an address, expose it as an extension property on `IEndpoint` reading your component.
-4. For tests, write an `ITestingEndpointHostFeature` that registers the style's test transport and calls
-   `AddDistributedX()` for every endpoint — and, if the style has background work, hold the tracker for it
-   and implement the at-rest members. The in-process core needs no testing host feature: there is no
-   transport to wire and no background work to await.
-
-Nothing in `Compze.Abstractions`, `Compze.Hosting`, or `Compze.Hosting.Testing` needs to change.
+container, and serializer in the current test's `PluggableComponents` configuration. The transport itself is
+an axis of that same matrix (`TestEnv.Transport`): the same specifications run over HTTP (ASP.NET Core) and
+over named pipes (see [same-machine hosting](wip/same-machine-hosting.md)).

@@ -7,7 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 ## 0.2.0-alpha
 
 - `MySqlTessagingSqlLayer()` demands the MySQL type-id interner itself (`MySqlTypeIdInterner()`) — interner wiring vanishes from composing layers.
-- `AddExactlyOnceTessaging(compose)` on `EndpointFoundation<MySqlEndpointDatabase>`: adds exactly-once Tessaging to an endpoint whose database is MySQL, registering Tessaging's MySQL inbox/outbox sql layers — the engine pairing is routed by the compiler through the foundation's type.
+- `MySqlEndpointDatabase(connectionStringName)` on `ExactlyOnceEndpointBuilder`: declares that the endpoint's database is MySQL, filling the exactly-once endpoint's one database parameter with the whole engine pairing — the connection pool, the type-id interner Tessaging's sql layers share, and Tessaging's MySQL inbox/outbox sql layers.
 
 ## 0.1.0-alpha
 

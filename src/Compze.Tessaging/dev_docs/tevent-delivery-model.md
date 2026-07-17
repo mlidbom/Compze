@@ -339,10 +339,9 @@ As of 2026-07-15:
   remote delivery but not the leg a tevent's contract demands fails the publish naming the missing leg
   (zero wired legs remains the deliberately local composition, where participation serves every subscriber
   that exists).
-- The guarantee-free Tessaging composition on the database-less endpoint foundation (2026-07-15):
-  `AddDistributedTessaging(tessaging => tessaging.NewtonsoftSerializer())` — the transport-speaking Tessaging
-  core, which the full distributed pipeline composes and extends. It wires the transport server, the router,
-  and the best-effort delivery leg on the plain (database-less) `EndpointFoundation`: no outbox, no inbox, no
+- The guarantee-free tier as a composed shape (2026-07-15; since the concrete endpoint types landed,
+  `BestEffortEndpoint.Compose(...)`): the transport server, the router,
+  and the best-effort delivery leg with no database declared: no outbox, no inbox, no
   SQL anywhere — the best-effort tier and participation are all the delivery there is. A connection carries one
   delivery stream per tier the endpoint wires (the in-memory best-effort stream always; the durable
   exactly-once stream exactly when the outbox's wiring grants the router its storage-backed stream factory),
