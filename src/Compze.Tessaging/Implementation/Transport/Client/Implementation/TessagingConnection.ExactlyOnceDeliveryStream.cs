@@ -60,7 +60,9 @@ partial class TessagingConnection
       //oldest undelivered tessage - the same order the send loop preserves while running.
       void LoadUndeliveredTessages()
       {
-         var undelivered = _tessageStorage.GetUndeliveredTessagesForEndpoint(_connection.EndpointInformation.Id);
+         //The stream is a dedicated-thread head-of-line pump, deliberately synchronous - it bridges its storage's async calls
+         //the same way it already bridges the transport post below.
+         var undelivered = _tessageStorage.GetUndeliveredTessagesForEndpointAsync(_connection.EndpointInformation.Id).GetAwaiter().GetResult();
          if(undelivered.Count == 0) return;
 
          this.Log().Info($"Loading {undelivered.Count} undelivered tessage(s) for recovery to endpoint {_connection.EndpointInformation.Id}");
@@ -114,7 +116,7 @@ partial class TessagingConnection
             _connection._transportMessagePoster.PostAsync(pending, _connection.RemoteAddress).GetAwaiter().GetResult();
 
             this.Log().Debug($"Delivered tessage {pending.TessageId} to endpoint {_connection.EndpointInformation.Id}");
-            _connection._exceptionReporter.RunSwallowingAndReportingAnyExceptions(() => _tessageStorage.MarkAsReceived(pending.TessageId, _connection.EndpointInformation.Id));
+            _connection._exceptionReporter.RunSwallowingAndReportingAnyExceptions(() => _tessageStorage.MarkAsReceivedAsync(pending.TessageId, _connection.EndpointInformation.Id).GetAwaiter().GetResult());
             return true;
          }
 #pragma warning disable CA1031 // Background thread — must catch all to keep the send loop running
@@ -122,7 +124,7 @@ partial class TessagingConnection
          {
 #pragma warning restore CA1031
             this.Log().Warning(exception, $"Delivery failed for tessage {pending.TessageId} to endpoint {_connection.EndpointInformation.Id}");
-            _connection._exceptionReporter.RunSwallowingAndReportingAnyExceptions(() => _tessageStorage.RecordDeliveryFailure(pending.TessageId, _connection.EndpointInformation.Id, exception));
+            _connection._exceptionReporter.RunSwallowingAndReportingAnyExceptions(() => _tessageStorage.RecordDeliveryFailureAsync(pending.TessageId, _connection.EndpointInformation.Id, exception).GetAwaiter().GetResult());
             return false;
          }
       }

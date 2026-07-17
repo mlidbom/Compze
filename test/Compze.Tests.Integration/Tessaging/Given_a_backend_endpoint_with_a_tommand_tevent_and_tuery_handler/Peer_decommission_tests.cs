@@ -15,7 +15,7 @@ using static Compze.Must.MustActions;
 namespace Compze.Tests.Integration.Tessaging.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler;
 
 ///<summary>Decommissioning is the one way a peer leaves the endpoint's memory — an administrative act, never an inference<br/>
-/// (see <c>dev_docs/TODO/WIP/Tessaging/durable-peer-topology.md</c>): <see cref="IPeerAdministration.Decommission"/> removes the peer —<br/>
+/// (see <c>dev_docs/TODO/WIP/Tessaging/durable-peer-topology.md</c>): <see cref="IPeerAdministration.DecommissionAsync"/> removes the peer —<br/>
 /// publishes stop fanning out to it, sends stop binding to it — and discards everything the endpoint still held for it,<br/>
 /// reported by the act, never as a silent side effect. A decommissioned peer that later re-announces is a first contact again.</summary>
 [LongRunning]
@@ -36,7 +36,7 @@ public class Peer_decommission_tests : EndpointHostTestBase
       await Navigator.PostAsync(MyCreateTaggregateTommand.Create());
       BackendEndPoint.ServiceLocator.Resolve<IIndependentTommandSender>().Send(new MyExactlyOnceTommandHandledByTheRemoteEndpoint());
 
-      var report = BackendPeerAdministration.Decommission(RemoteEndpointId);
+      var report = await BackendPeerAdministration.DecommissionAsync(RemoteEndpointId);
 
       //The act reports what it discarded...
       report.DecommissionedPeer.Must().Be(RemoteEndpointId);
@@ -70,7 +70,7 @@ public class Peer_decommission_tests : EndpointHostTestBase
          .Must().Throw<Exception>().Which.Message.Must().Contain("More than one remembered peer");
 
       //Decommissioning the retired predecessor resolves the ambiguity - it was owed nothing, and the report says so...
-      BackendPeerAdministration.Decommission(RemoteEndpointId).Discarded.Must().BeEmpty();
+      (await BackendPeerAdministration.DecommissionAsync(RemoteEndpointId)).Discarded.Must().BeEmpty();
 
       //...the send binds to the sole remaining remembered handler, and the successor receives it on its return.
       BackendEndPoint.ServiceLocator.Resolve<IIndependentTommandSender>().Send(new MyExactlyOnceTommandHandledByTheRemoteEndpoint());
@@ -79,16 +79,16 @@ public class Peer_decommission_tests : EndpointHostTestBase
       RemoteSuccessorTommandHandlerThreadGate.AwaitPassedThroughCountEqualTo(1, WaitTimeout.Seconds(15));
    }
 
-   [PCT] public void A_stranded_tommand_is_discarded_and_reported_when_its_peer_is_decommissioned()
+   [PCT] public async Task A_stranded_tommand_is_discarded_and_reported_when_its_peer_is_decommissioned()
    {
       //A tommand is bound to the never-connected peer - the sole remembered handler of its type - and the peer's replaced
       //advertisement then renounces the type: the tommand is stranded, awaiting exactly this resolution (see Advertisement_shrink_tests).
       var tommandTypeIdString = BackendEndPoint.ServiceLocator.Resolve<ITypeMap>().GetId(typeof(MyUnhandledExactlyOnceTommand)).CanonicalString;
-      BackendPeerRegistry.RecordAdvertisement(new EndpointInformation("NeverConnectedPeer", NeverConnectedPeerId, [tommandTypeIdString]));
+      await BackendPeerRegistry.RecordAdvertisementAsync(new EndpointInformation("NeverConnectedPeer", NeverConnectedPeerId, [tommandTypeIdString]));
       BackendEndPoint.ServiceLocator.Resolve<IIndependentTommandSender>().Send(new MyUnhandledExactlyOnceTommand());
-      BackendPeerRegistry.RecordAdvertisement(new EndpointInformation("NeverConnectedPeer", NeverConnectedPeerId, []));
+      await BackendPeerRegistry.RecordAdvertisementAsync(new EndpointInformation("NeverConnectedPeer", NeverConnectedPeerId, []));
 
-      var strandedEntry = BackendPeerAdministration.Decommission(NeverConnectedPeerId).Discarded.Single();
+      var strandedEntry = (await BackendPeerAdministration.DecommissionAsync(NeverConnectedPeerId)).Discarded.Single();
 
       strandedEntry.Description.Must().Contain("stranded");
       strandedEntry.Description.Must().Contain(nameof(MyUnhandledExactlyOnceTommand));
@@ -100,11 +100,11 @@ public class Peer_decommission_tests : EndpointHostTestBase
       //A tevent is owed to the never-connected peer, whose replaced advertisement then renounces every subscription: the
       //tevent was discarded at the shrink - by the audience's own choice - not kept stranded, so the decommission finds nothing.
       var remoteAdvertisement = BackendPeerRegistry.Peers.Single(peer => peer.Id.Equals(RemoteEndpointId)).HandledTessageTypes;
-      BackendPeerRegistry.RecordAdvertisement(new EndpointInformation("NeverConnectedPeer", NeverConnectedPeerId, [..remoteAdvertisement]));
+      await BackendPeerRegistry.RecordAdvertisementAsync(new EndpointInformation("NeverConnectedPeer", NeverConnectedPeerId, [..remoteAdvertisement]));
       await Navigator.PostAsync(MyCreateTaggregateTommand.Create());
-      BackendPeerRegistry.RecordAdvertisement(new EndpointInformation("NeverConnectedPeer", NeverConnectedPeerId, []));
+      await BackendPeerRegistry.RecordAdvertisementAsync(new EndpointInformation("NeverConnectedPeer", NeverConnectedPeerId, []));
 
-      BackendPeerAdministration.Decommission(NeverConnectedPeerId).Discarded.Must().BeEmpty();
+      (await BackendPeerAdministration.DecommissionAsync(NeverConnectedPeerId)).Discarded.Must().BeEmpty();
    }
 
    [PCT] public async Task Decommissioning_a_connected_peer_fails_loud()
@@ -113,17 +113,17 @@ public class Peer_decommission_tests : EndpointHostTestBase
       await Navigator.PostAsync(MyCreateTaggregateTommand.Create());
       MyRemoteTaggregateTeventHandlerThreadGate.AwaitPassedThroughCountEqualTo(1, WaitTimeout.Seconds(15));
 
-      Invoking(() => BackendPeerAdministration.Decommission(RemoteEndpointId))
-         .Must().Throw<Exception>().Which.Message.Must().Contain("currently connected");
+      (await InvokingAsync(async () => await BackendPeerAdministration.DecommissionAsync(RemoteEndpointId)).Must().ThrowAsync<Exception>())
+         .Which.Message.Must().Contain("currently connected");
    }
 
-   [PCT] public void Decommissioning_the_endpoint_itself_fails_loud() =>
-      Invoking(() => BackendPeerAdministration.Decommission(BackendEndpointId))
-         .Must().Throw<Exception>().Which.Message.Must().Contain("cannot decommission itself");
+   [PCT] public async Task Decommissioning_the_endpoint_itself_fails_loud() =>
+      (await InvokingAsync(async () => await BackendPeerAdministration.DecommissionAsync(BackendEndpointId)).Must().ThrowAsync<Exception>())
+         .Which.Message.Must().Contain("cannot decommission itself");
 
-   [PCT] public void Decommissioning_an_unknown_peer_fails_loud() =>
-      Invoking(() => BackendPeerAdministration.Decommission(new EndpointId(Guid.Parse("8C2D1F5A-0B9E-4D67-A3C4-F51E2B08D9A7"))))
-         .Must().Throw<Exception>().Which.Message.Must().Contain("not a peer this endpoint knows");
+   [PCT] public async Task Decommissioning_an_unknown_peer_fails_loud() =>
+      (await InvokingAsync(async () => await BackendPeerAdministration.DecommissionAsync(new EndpointId(Guid.Parse("8C2D1F5A-0B9E-4D67-A3C4-F51E2B08D9A7")))).Must().ThrowAsync<Exception>())
+         .Which.Message.Must().Contain("not a peer this endpoint knows");
 
    IPeerAdministration BackendPeerAdministration => BackendEndPoint.ServiceLocator.Resolve<IPeerAdministration>();
    IPeerRegistry BackendPeerRegistry => BackendEndPoint.ServiceLocator.Resolve<IPeerRegistry>();

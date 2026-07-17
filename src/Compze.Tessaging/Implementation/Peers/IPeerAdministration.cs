@@ -21,5 +21,5 @@ public interface IPeerAdministration
    /// neither remembered nor held for.<br/>
    /// The whole act is one transaction of its own: durable removals and discards commit together, every in-memory consequence<br/>
    /// runs only on commit, so an act that fails partway changes nothing.</remarks>
-   PeerDecommissionReport Decommission(EndpointId peer);
+   Task<PeerDecommissionReport> DecommissionAsync(EndpointId peer);
 }

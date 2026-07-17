@@ -58,16 +58,16 @@ static class InboxRegistrar
       this.Log().Info("Started");
    }
 
-   public Task ReceiveAsync(TransportTessage.InComing tessage)
+   public async Task ReceiveAsync(TransportTessage.InComing tessage)
    {
       this.Log().Debug($"Receiving {tessage.TessageTypeEnum} tessage {tessage.TessageId}");
-      var saveResult = _storage.SaveIncomingTessage(tessage);
+      var saveResult = await _storage.SaveIncomingTessageAsync(tessage).caf();
 
       if(saveResult == ITessagingSqlLayer.SaveTessageResult.Duplicate)
       {
          //The dedup shields observers too: observation is dispatched only on a tessage's first registration, never for a redelivery.
          this.Log().Debug($"Skipping duplicate tessage {tessage.TessageId}");
-         return Task.CompletedTask;
+         return;
       }
 
       //Observation queues at registration: after dedup - so the dedup shields observers from redeliveries - and before the
@@ -78,7 +78,6 @@ static class InboxRegistrar
          _observationDispatcher.QueueForObservers(PublisherTevent.Wrapped((ITevent)tessage.DeserializeTessageAndCacheForNextCall()));
 
       _handlerExecutionEngine.Enqueue(tessage);
-      return Task.CompletedTask;
    }
 
    public ValueTask DisposeAsync()

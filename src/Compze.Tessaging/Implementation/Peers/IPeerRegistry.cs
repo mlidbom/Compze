@@ -19,10 +19,10 @@ public interface IPeerRegistry
 {
    ///<summary>Records <paramref name="advertisement"/> as the advertising peer's current one, replacing what was stored —<br/>
    /// creating the peer on first contact.</summary>
-   void RecordAdvertisement(EndpointInformation advertisement);
+   Task RecordAdvertisementAsync(EndpointInformation advertisement);
 
    ///<summary>Every remembered peer, with its last-known advertisement. Served from memory: the registry mirrors its backing<br/>
-   /// store, loaded at start and updated on every <see cref="RecordAdvertisement"/>.</summary>
+   /// store, loaded at start and updated on every <see cref="RecordAdvertisementAsync"/>.</summary>
    IReadOnlyList<RememberedPeer> Peers { get; }
 
    ///<summary>The <see cref="EndpointId"/> of every remembered peer whose last-known advertisement subscribes to<br/>
@@ -44,11 +44,11 @@ public interface IPeerRegistry
    IReadOnlyList<EndpointId> HandlerIdsFor(IExactlyOnceTommand tommand);
 
    ///<summary>The registry's share of decommissioning <paramref name="peer"/> — the one way a peer leaves the endpoint's memory<br/>
-   /// (see <see cref="IPeerAdministration.Decommission"/>, the surface that performs the whole act and calls this inside the<br/>
+   /// (see <see cref="IPeerAdministration.DecommissionAsync"/>, the surface that performs the whole act and calls this inside the<br/>
    /// act's transaction): durable removal rides that transaction, and the in-memory memory forgets the peer only on commit — so<br/>
    /// a decommission that fails partway leaves the peer fully remembered, and the moment the act commits, tevent fan-out stops<br/>
    /// including the peer and tommand sends stop binding to it.</summary>
-   void Decommission(EndpointId peer);
+   Task DecommissionAsync(EndpointId peer);
 
    ///<summary>Initializes the registry's backing store, if any, and loads the remembered peers into memory. Runs in the<br/>
    /// endpoint's listening phase, before any endpoint in the host starts sending.</summary>

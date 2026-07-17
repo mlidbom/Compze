@@ -22,9 +22,9 @@ public class Peer_registry_tests : EndpointHostTestBase
       rememberedPeer.HandledTessageTypes.SetEquals(RemoteEndpointAdvertisedTypes).Must().BeTrue();
    }
 
-   [PCT] public void The_remembered_peer_is_persisted_in_the_backends_database_not_only_mirrored_in_memory()
+   [PCT] public async Task The_remembered_peer_is_persisted_in_the_backends_database_not_only_mirrored_in_memory()
    {
-      var persistedPeer = BackendEndPoint.ServiceLocator.Resolve<ITessagingSqlLayer.IPeerRegistrySqlLayer>().GetPeers()
+      var persistedPeer = (await BackendEndPoint.ServiceLocator.Resolve<ITessagingSqlLayer.IPeerRegistrySqlLayer>().GetPeersAsync())
                                          .Single(peer => peer.Id.Equals(RemoteEndpointId));
 
       persistedPeer.HandledTessageTypes.SetEquals(RemoteEndpointAdvertisedTypes).Must().BeTrue();

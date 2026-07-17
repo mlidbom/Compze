@@ -15,10 +15,10 @@ partial class PgSqlPeerRegistrySqlLayer(IPgSqlConnectionPool connectionFactory, 
    readonly IPgSqlConnectionPool _connectionFactory = connectionFactory;
    readonly PgSqlSqlLayerSchemaManager _schemaManager = schemaManager;
 
-   public void SaveAdvertisement(EndpointId peerId, IReadOnlySet<string> handledTessageTypes)
+   public async Task SaveAdvertisementAsync(EndpointId peerId, IReadOnlySet<string> handledTessageTypes)
    {
-      _connectionFactory.UseCommand(
-         command =>
+      await _connectionFactory.UseCommandAsync(
+         async command =>
          {
             command
               .SetCommandText(
@@ -42,14 +42,14 @@ partial class PgSqlPeerRegistrySqlLayer(IPgSqlConnectionPool connectionFactory, 
 
                                                 """).AddMediumTextParameter($"{Types.HandledTessageType}_{index}", handledTessageType));
 
-            command.ExecuteNonQuery();
-         });
+            return await command.ExecuteNonQueryAsync().caf();
+         }).caf();
    }
 
-   public IReadOnlyList<ITessagingSqlLayer.PersistedPeer> GetPeers()
+   public async Task<IReadOnlyList<ITessagingSqlLayer.PersistedPeer>> GetPeersAsync()
    {
-      var rows = _connectionFactory.UseCommand(
-         command =>
+      var rows = await _connectionFactory.UseCommandAsync(
+         async command =>
          {
             var raw = new List<(Guid EndpointId, string? HandledTessageType)>();
 
@@ -62,14 +62,15 @@ partial class PgSqlPeerRegistrySqlLayer(IPgSqlConnectionPool connectionFactory, 
 
                 """);
 
-            using var reader = command.ExecuteReader();
-            while(reader.Read())
+            var reader = await command.ExecuteReaderAsync().caf();
+            await using var _ = reader.caf();
+            while(await reader.ReadAsync().caf())
             {
                raw.Add((reader.GetGuid(0), reader.IsDBNull(1) ? null : reader.GetString(1)));
             }
 
             return raw;
-         });
+         }).caf();
 
       return [..rows.GroupBy(row => row.EndpointId)
                     .Select(peer => new ITessagingSqlLayer.PersistedPeer(
@@ -77,10 +78,10 @@ partial class PgSqlPeerRegistrySqlLayer(IPgSqlConnectionPool connectionFactory, 
                                peer.Where(row => row.HandledTessageType != null).Select(row => row.HandledTessageType!).ToHashSet()))];
    }
 
-   public void DeletePeer(EndpointId peerId)
+   public async Task DeletePeerAsync(EndpointId peerId)
    {
-      _connectionFactory.UseCommand(
-         command => command
+      await _connectionFactory.UseCommandAsync(
+         async command => await command
                    .SetCommandText(
                        $"""
 
@@ -89,7 +90,7 @@ partial class PgSqlPeerRegistrySqlLayer(IPgSqlConnectionPool connectionFactory, 
 
                         """)
                    .AddParameter(Peers.EndpointId, peerId.Value)
-                   .ExecuteNonQuery());
+                   .ExecuteNonQueryAsync().caf()).caf();
    }
 
    public async Task InitAsync() => await _schemaManager.EnsureSchemaInitializedAsync().caf();

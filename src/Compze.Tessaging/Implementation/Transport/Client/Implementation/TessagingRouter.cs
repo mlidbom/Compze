@@ -179,7 +179,7 @@ class TessagingRouter : ITessagingRouter, IDisposable
          //never be remembered as a peer.
          State.Assert(connection.EndpointInformation.Id != _configuration.Id,
                       () => $"The endpoint at {remoteEndpointAddress.Uri} answered discovery with this endpoint's own identity ({_configuration.Id}): another process is running under this endpoint's EndpointId, and an endpoint runs in exactly one process at a time.");
-         _peerRegistry.RecordAdvertisement(connection.EndpointInformation);
+         await _peerRegistry.RecordAdvertisementAsync(connection.EndpointInformation).caf();
       }
       catch
       {

@@ -2,6 +2,7 @@ using Compze.Abstractions.Hosting.Public;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Internals.Logging;
 using Compze.Internals.SystemCE.ReflectionCE;
+using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tessaging.Implementation.Peers;
 using Compze.Tessaging.Transport.SqlLayer;
 using Compze.TypeIdentifiers;
@@ -24,7 +25,7 @@ partial class Outbox
    /// renounced type concurrently with the shrink that renounced it, and the rerun on the peer's next advertisement prunes it.</remarks>
    ///<remarks>A stranded tommand stays stranded even when a later advertisement re-grows the type: while it was stranded, later<br/>
    /// tessages in the pair's stream kept delivering, so quietly re-scheduling it would deliver it out of order. Resolution is<br/>
-   /// explicit, on the decommission surface (<see cref="IPeerAdministration.Decommission"/>) — whose outbox share this class<br/>
+   /// explicit, on the decommission surface (<see cref="IPeerAdministration.DecommissionAsync"/>) — whose outbox share this class<br/>
    /// also is (<see cref="IPeerDecommissionParticipant"/>): decommissioning the peer discards everything the outbox still owed<br/>
    /// it, stranded tommands included, reported by the act.</remarks>
    internal class PeerLifecycleObserver : IPeerLifecycleObserver, IPeerDecommissionParticipant
@@ -33,10 +34,10 @@ partial class Outbox
 
       internal PeerLifecycleObserver(ITessageStorage storage) => _storage = storage;
 
-      public IReadOnlyList<PeerDecommissionReport.DiscardedTessages> DiscardEverythingKeptFor(EndpointId peer)
+      public async Task<IReadOnlyList<PeerDecommissionReport.DiscardedTessages>> DiscardEverythingKeptForAsync(EndpointId peer)
       {
          //Durable, so it rides the decommission act's ambient transaction directly.
-         var discarded = _storage.DiscardAllTessagesOwedTo(peer);
+         var discarded = await _storage.DiscardAllTessagesOwedToAsync(peer).caf();
          var awaitingTheReturn = discarded.Where(it => !it.WasStranded).ToList();
          var stranded = discarded.Where(it => it.WasStranded).ToList();
 
@@ -46,16 +47,16 @@ partial class Outbox
          return report;
       }
 
-      public void PeerMetForTheFirstTime(RememberedPeer peer)
+      public async Task PeerMetForTheFirstTimeAsync(RememberedPeer peer)
       {
-         var leftovers = _storage.DiscardAllTessagesOwedTo(peer.Id);
+         var leftovers = await _storage.DiscardAllTessagesOwedToAsync(peer.Id).caf();
          if(leftovers.Count == 0) return;
          this.Log().Warning($"First contact with peer {peer.Id}: discarded {leftovers.Count} tessage(s) already bound to its identity - leftovers of a decommissioned predecessor, since nothing can be owed a peer before it is first known. Types: {DistinctTypeNames(leftovers.Select(it => it.TypeId))}.");
       }
 
-      public void PeerAdvertisementReplaced(RememberedPeer previous, RememberedPeer current)
+      public async Task PeerAdvertisementReplacedAsync(RememberedPeer previous, RememberedPeer current)
       {
-         var undelivered = _storage.GetUndeliveredTessagesForEndpoint(current.Id);
+         var undelivered = await _storage.GetUndeliveredTessagesForEndpointAsync(current.Id).caf();
          if(undelivered.Count == 0) return;
 
          List<ITessagingSqlLayer.UndeliveredTessage> renouncedTevents = [], noLongerHandledTommands = [];
@@ -71,21 +72,21 @@ partial class Outbox
             }
          }
 
-         DiscardTheRenouncedTevents();
-         StrandTheNoLongerHandledTommands();
+         await DiscardTheRenouncedTeventsAsync().caf();
+         await StrandTheNoLongerHandledTommandsAsync().caf();
          return;
 
-         void DiscardTheRenouncedTevents()
+         async Task DiscardTheRenouncedTeventsAsync()
          {
             if(renouncedTevents.Count == 0) return;
-            _storage.DiscardUndeliveredTessages(current.Id, [..renouncedTevents.Select(it => it.TessageId)]);
+            await _storage.DiscardUndeliveredTessagesAsync(current.Id, [..renouncedTevents.Select(it => it.TessageId)]).caf();
             this.Log().Warning($"Peer {current.Id}'s replaced advertisement no longer subscribes to the type(s) of {renouncedTevents.Count} undelivered tevent(s) bound to it. They lost their audience by that audience's own choice and are discarded. Types: {DistinctTypeNames(renouncedTevents.Select(it => it.TypeId))}.");
          }
 
-         void StrandTheNoLongerHandledTommands()
+         async Task StrandTheNoLongerHandledTommandsAsync()
          {
             if(noLongerHandledTommands.Count == 0) return;
-            _storage.StrandUndeliveredTessages(current.Id, [..noLongerHandledTommands.Select(it => it.TessageId)]);
+            await _storage.StrandUndeliveredTessagesAsync(current.Id, [..noLongerHandledTommands.Select(it => it.TessageId)]).caf();
             this.Log().Warning($"Peer {current.Id}'s replaced advertisement no longer handles the type(s) of {noLongerHandledTommands.Count} undelivered tommand(s) bound to it - someone commanded an action that now has no handler there, almost certainly a deployment error. They are stranded: kept, but not delivered, until resolved explicitly when the peer is decommissioned. Types: {DistinctTypeNames(noLongerHandledTommands.Select(it => it.TypeId))}.");
          }
       }

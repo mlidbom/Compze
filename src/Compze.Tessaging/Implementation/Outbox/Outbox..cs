@@ -60,7 +60,8 @@ partial class Outbox : IOutbox
       //down at publish time still gets its receiver row, and the recovery backlog its next connection loads delivers the tevent
       //on its return. (A peer is another endpoint, so the registry never lists us: tevents to ourselves dispatch synchronously in-process.)
       var subscriberIds = _peerRegistry.SubscriberIdsFor(wrappedTevent);
-      _storage.SaveTessage(wrappedTevent, dedupId, [..subscriberIds]);
+      //Interim bridge: dies when the publisher door goes async later in phase 7.
+      _storage.SaveTessageAsync(wrappedTevent, dedupId, [..subscriberIds]).GetAwaiter().GetResult();
 
       Transaction.Current.OnCommittedSuccessfully(() =>
       {
@@ -89,7 +90,8 @@ partial class Outbox : IOutbox
       //(Routing at delivery time was tried and retracted: re-delivery could reach an endpoint whose inbox never saw the
       //tommand, breaking exactly-once across handler replacement - see dev_docs/TODO/WIP/Tessaging/durable-peer-topology.md.)
       var receiverId = ResolveReceiver(exactlyOnceTommand);
-      _storage.SaveTessage(exactlyOnceTommand, exactlyOnceTommand.Id, receiverId);
+      //Interim bridge: dies when the tommand-sender door goes async later in phase 7.
+      _storage.SaveTessageAsync(exactlyOnceTommand, exactlyOnceTommand.Id, receiverId).GetAwaiter().GetResult();
 
       Transaction.Current.OnCommittedSuccessfully(() =>
       {

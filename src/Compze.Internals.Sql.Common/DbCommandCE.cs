@@ -40,6 +40,18 @@ public static class DbCommandCE
       return result;
    }
 
+   public static async Task<IReadOnlyList<T>> ExecuteReaderAndSelectAsync<T, TCommand, TReader>(this TCommand @this, Func<TReader, T> select)
+      where TCommand : DbCommand
+      where TReader : DbDataReader
+   {
+      var reader = (TReader)await @this.ExecuteReaderAsync().caf();
+      //makes sure DisposeAsync is called without capturing sync context. We can't do it inline because then reader would be ConfiguredAsyncDisposable, not TReader
+      await using var _ = reader.caf();
+      var result = new List<T>();
+      while(await reader.ReadAsync().caf()) result.Add(select(reader));
+      return result;
+   }
+
    static readonly IReadOnlyList<string> ParameterPrefixes = ["@", ":"];
 
    // ReSharper disable once UnusedMember.Global : Only used when debugging,but very useful then

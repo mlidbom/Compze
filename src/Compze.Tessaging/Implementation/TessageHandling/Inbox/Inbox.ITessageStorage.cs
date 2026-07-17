@@ -7,10 +7,10 @@ public partial class Inbox
 {
    public interface ITessageStorage
    {
-      ITessagingSqlLayer.SaveTessageResult SaveIncomingTessage(TransportTessage.InComing tessage);
-      void MarkAsSucceeded(TransportTessage.InComing tessage);
-      void RecordException(TransportTessage.InComing tessage, Exception exception );
-      void MarkAsFailed(TransportTessage.InComing tessage);
+      Task<ITessagingSqlLayer.SaveTessageResult> SaveIncomingTessageAsync(TransportTessage.InComing tessage);
+      Task MarkAsSucceededAsync(TransportTessage.InComing tessage);
+      Task RecordExceptionAsync(TransportTessage.InComing tessage, Exception exception);
+      Task MarkAsFailedAsync(TransportTessage.InComing tessage);
       Task StartAsync();
    }
 }

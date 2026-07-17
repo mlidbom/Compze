@@ -17,15 +17,15 @@ partial class PgSqlInboxSqlLayer(IPgSqlConnectionPool connectionFactory, PgSqlSq
    readonly PgSqlSqlLayerSchemaManager _schemaManager = schemaManager;
    readonly ITypeIdInterner _typeIdInterner = typeIdInterner;
 
-   public ITessagingSqlLayer.SaveTessageResult SaveTessage(TessageId tessageId, TypeId typeId, string serializedTessage)
+   public async Task<ITessagingSqlLayer.SaveTessageResult> SaveTessageAsync(TessageId tessageId, TypeId typeId, string serializedTessage)
    {
       // Intern before opening a connection: interning may hit the database, and nesting a second connection
       // inside a held one deadlocks the pool.
       var internedTypeId = _typeIdInterner.GetOrInternId(typeId);
-      return _connectionFactory.UseCommand(
-         command =>
+      return await _connectionFactory.UseCommandAsync(
+         async command =>
          {
-            var affectedRows = command
+            var affectedRows = await command
               .SetCommandText(
                   $"""
 
@@ -40,19 +40,19 @@ partial class PgSqlInboxSqlLayer(IPgSqlConnectionPool connectionFactory, PgSqlSq
                //performance: Like with the tevent store, keep all framework properties out of the JSON and put it into separate columns instead. For tevents. Reuse a pre-serialized instance from the persisting to the tevent store.
               .AddMediumTextParameter(TessageTable.Body, serializedTessage)
               .PrepareStatement()
-              .ExecuteNonQuery();
+              .ExecuteNonQueryAsync().caf();
 
             return affectedRows == 0
                ? ITessagingSqlLayer.SaveTessageResult.Duplicate
                : ITessagingSqlLayer.SaveTessageResult.NewTessage;
-         });
+         }).caf();
    }
 
-   public int MarkAsSucceeded(TessageId tessageId)
+   public async Task<int> MarkAsSucceededAsync(TessageId tessageId)
    {
-      return _connectionFactory.UseCommand(
-         command =>
-            command
+      return await _connectionFactory.UseCommandAsync(
+         async command =>
+            await command
               .SetCommandText(
                   $"""
 
@@ -64,13 +64,13 @@ partial class PgSqlInboxSqlLayer(IPgSqlConnectionPool connectionFactory, PgSqlSq
                    """)
               .AddParameter(TessageTable.TessageId, tessageId.Value)
               .PrepareStatement()
-              .ExecuteNonQuery());
+              .ExecuteNonQueryAsync().caf()).caf();
    }
 
-   public int RecordException(TessageId tessageId, string exceptionStackTrace, string exceptionTessage, string exceptionType)
+   public async Task<int> RecordExceptionAsync(TessageId tessageId, string exceptionStackTrace, string exceptionTessage, string exceptionType)
    {
-      return _connectionFactory.UseCommand(
-         command => command
+      return await _connectionFactory.UseCommandAsync(
+         async command => await command
                    .SetCommandText(
                        $"""
 
@@ -88,13 +88,13 @@ partial class PgSqlInboxSqlLayer(IPgSqlConnectionPool connectionFactory, PgSqlSq
                    .AddMediumTextParameter(TessageTable.ExceptionTessage, exceptionTessage)
                    .AddVarcharParameter(TessageTable.ExceptionType, 500, exceptionType)
                    .PrepareStatement()
-                   .ExecuteNonQuery());
+                   .ExecuteNonQueryAsync().caf()).caf();
    }
 
-   public int MarkAsFailed(TessageId tessageId)
+   public async Task<int> MarkAsFailedAsync(TessageId tessageId)
    {
-      return _connectionFactory.UseCommand(
-         command => command
+      return await _connectionFactory.UseCommandAsync(
+         async command => await command
                    .SetCommandText(
                        $"""
 
@@ -105,7 +105,7 @@ partial class PgSqlInboxSqlLayer(IPgSqlConnectionPool connectionFactory, PgSqlSq
                         """)
                    .AddParameter(TessageTable.TessageId, tessageId.Value)
                    .PrepareStatement()
-                   .ExecuteNonQuery());
+                   .ExecuteNonQueryAsync().caf()).caf();
    }
 
    public async Task InitAsync() => await _schemaManager.EnsureSchemaInitializedAsync().caf();

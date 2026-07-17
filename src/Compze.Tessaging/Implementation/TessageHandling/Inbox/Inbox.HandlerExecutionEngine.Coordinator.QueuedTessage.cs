@@ -68,7 +68,8 @@ public partial class Inbox
                      result = TransactionScopeCe.Execute(() =>
                      {
                         var innerResult = _tessageTask(tessage, UnitOfWorkResolver.From(scope.Resolver));
-                        _tessageStorage.MarkAsSucceeded(TransportTessage);
+                        //Interim bridge: dies when the inbox's handler execution goes async later in phase 7.
+                        _tessageStorage.MarkAsSucceededAsync(TransportTessage).GetAwaiter().GetResult();
                         return innerResult;
                      });
                      tessageHandlerSucceeded = true;
@@ -90,12 +91,12 @@ public partial class Inbox
                         return;
                      }
 
-                     _tessageStorage.RecordException(TransportTessage, exception);
+                     _tessageStorage.RecordExceptionAsync(TransportTessage, exception).GetAwaiter().GetResult();
 
                      if(!retryPolicy.TryAwaitNextRetryTimeForException(exception))
                      {
                         this.Log().Warning(exception, $"Transactional tessage {TessageId} failed after exhausting retries.");
-                        _tessageStorage.MarkAsFailed(TransportTessage);
+                        _tessageStorage.MarkAsFailedAsync(TransportTessage).GetAwaiter().GetResult();
                         _taskCompletionSource.SetException(exception);
                         _coordinator.Failed(this, exception);
                         return;

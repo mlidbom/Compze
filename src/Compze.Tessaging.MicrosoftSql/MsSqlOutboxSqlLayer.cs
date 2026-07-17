@@ -18,13 +18,13 @@ partial class MsSqlOutboxSqlLayer(IMsSqlConnectionPool connectionFactory, MsSqlS
    readonly MsSqlSqlLayerSchemaManager _schemaManager = schemaManager;
    readonly ITypeIdInterner _typeIdInterner = typeIdInterner;
 
-   public void SaveTessage(ITessagingSqlLayer.OutboxTessageWithReceivers tessageWithReceivers)
+   public async Task SaveTessageAsync(ITessagingSqlLayer.OutboxTessageWithReceivers tessageWithReceivers)
    {
       // Intern before opening a connection: interning may hit the database, and nesting a second connection
       // inside a held one deadlocks the pool.
       var internedTypeId = _typeIdInterner.GetOrInternId(tessageWithReceivers.TypeId);
-      _connectionFactory.UseCommand(
-         command =>
+      await _connectionFactory.UseCommandAsync(
+         async command =>
          {
             command
               .SetCommandText(
@@ -45,20 +45,20 @@ partial class MsSqlOutboxSqlLayer(IMsSqlConnectionPool connectionFactory, MsSqlS
                (endpointId, index)
                   => command.AppendCommandText($"""
 
-                                                INSERT {DispatchingTable.TableName} 
-                                                            ({DispatchingTable.TessageId},  {DispatchingTable.EndpointId},          {DispatchingTable.IsReceived}) 
+                                                INSERT {DispatchingTable.TableName}
+                                                            ({DispatchingTable.TessageId},  {DispatchingTable.EndpointId},          {DispatchingTable.IsReceived})
                                                     VALUES (@{DispatchingTable.TessageId}, @{DispatchingTable.EndpointId}_{index}, @{DispatchingTable.IsReceived})
 
                                                 """).AddParameter($"{DispatchingTable.EndpointId}_{index}", endpointId.Value));
 
-            command.ExecuteNonQuery();
-         });
+            return await command.ExecuteNonQueryAsync().caf();
+         }).caf();
    }
 
-   public ITessagingSqlLayer.MarkAsReceivedResult MarkAsReceived(TessageId tessageId, EndpointId endpointId)
+   public async Task<ITessagingSqlLayer.MarkAsReceivedResult> MarkAsReceivedAsync(TessageId tessageId, EndpointId endpointId)
    {
-      var affectedRows = _connectionFactory.UseCommand(
-         command => command
+      var affectedRows = await _connectionFactory.UseCommandAsync(
+         async command => await command
                    .SetCommandText(
                        $"""
 
@@ -71,21 +71,21 @@ partial class MsSqlOutboxSqlLayer(IMsSqlConnectionPool connectionFactory, MsSqlS
                         """)
                    .AddParameter(DispatchingTable.TessageId, tessageId.Value)
                    .AddParameter(DispatchingTable.EndpointId, endpointId.Value)
-                   .ExecuteNonQuery());
+                   .ExecuteNonQueryAsync().caf()).caf();
 
       return affectedRows == 1
                 ? ITessagingSqlLayer.MarkAsReceivedResult.Initial
                 : ITessagingSqlLayer.MarkAsReceivedResult.WasAlreadyMarked;
    }
 
-   public void RecordDeliveryFailure(TessageId tessageId, EndpointId endpointId, string failureReason)
+   public async Task RecordDeliveryFailureAsync(TessageId tessageId, EndpointId endpointId, string failureReason)
    {
-      _connectionFactory.UseCommand(
-         command => command
+      await _connectionFactory.UseCommandAsync(
+         async command => await command
                    .SetCommandText(
                        $"""
 
-                        UPDATE {DispatchingTable.TableName} 
+                        UPDATE {DispatchingTable.TableName}
                             SET {DispatchingTable.RetryCount} = {DispatchingTable.RetryCount} + 1,
                                 {DispatchingTable.LastAttemptTime} = @{DispatchingTable.LastAttemptTime},
                                 {DispatchingTable.FailureReason} = @{DispatchingTable.FailureReason}
@@ -97,15 +97,15 @@ partial class MsSqlOutboxSqlLayer(IMsSqlConnectionPool connectionFactory, MsSqlS
                    .AddParameter(DispatchingTable.EndpointId, endpointId.Value)
                    .AddDateTime2Parameter(DispatchingTable.LastAttemptTime, DateTime.UtcNow)
                    .AddNVarcharMaxParameter(DispatchingTable.FailureReason, failureReason)
-                   .ExecuteNonQuery());
+                   .ExecuteNonQueryAsync().caf()).caf();
    }
 
-   public IReadOnlyList<ITessagingSqlLayer.UndeliveredTessage> GetUndeliveredTessagesForEndpoint(EndpointId endpointId)
+   public async Task<IReadOnlyList<ITessagingSqlLayer.UndeliveredTessage>> GetUndeliveredTessagesForEndpointAsync(EndpointId endpointId)
    {
       // The TypeId column holds an interned int. Resolve it to the canonical type string AFTER the reader has
       // closed — resolving during the read could open a second connection on a cache miss while the reader is held.
-      var raw = _connectionFactory.UseCommand(
-         command =>
+      var raw = await _connectionFactory.UseCommandAsync(
+         async command =>
          {
             var rows = new List<(TessageId TessageId, int TypeId, string Body)>();
 
@@ -126,8 +126,9 @@ partial class MsSqlOutboxSqlLayer(IMsSqlConnectionPool connectionFactory, MsSqlS
                     """)
                .AddParameter("endpointId", endpointId.Value);
 
-            using var reader = command.ExecuteReader();
-            while(reader.Read())
+            var reader = await command.ExecuteReaderAsync().caf();
+            await using var _ = reader.caf();
+            while(await reader.ReadAsync().caf())
             {
                rows.Add((new TessageId(reader.GetGuid(0)),
                          reader.GetInt32(1),
@@ -135,7 +136,7 @@ partial class MsSqlOutboxSqlLayer(IMsSqlConnectionPool connectionFactory, MsSqlS
             }
 
             return rows;
-         });
+         }).caf();
 
       return [..raw.Select(row => new ITessagingSqlLayer.UndeliveredTessage(
                               tessageId: row.TessageId,
@@ -143,11 +144,11 @@ partial class MsSqlOutboxSqlLayer(IMsSqlConnectionPool connectionFactory, MsSqlS
                               serializedTessage: row.Body))];
    }
 
-   public void DiscardUndeliveredTessages(EndpointId endpointId, IReadOnlyList<TessageId> tessageIds)
+   public async Task DiscardUndeliveredTessagesAsync(EndpointId endpointId, IReadOnlyList<TessageId> tessageIds)
    {
       if(tessageIds.Count == 0) return;
-      _connectionFactory.UseCommand(
-         command =>
+      await _connectionFactory.UseCommandAsync(
+         async command =>
          {
             command
               .SetCommandText(
@@ -160,15 +161,15 @@ partial class MsSqlOutboxSqlLayer(IMsSqlConnectionPool connectionFactory, MsSqlS
                    """)
               .AddParameter(DispatchingTable.EndpointId, endpointId.Value);
             tessageIds.ForEach((tessageId, index) => command.AddParameter($"{DispatchingTable.TessageId}_{index}", tessageId.Value));
-            command.ExecuteNonQuery();
-         });
+            return await command.ExecuteNonQueryAsync().caf();
+         }).caf();
    }
 
-   public void StrandUndeliveredTessages(EndpointId endpointId, IReadOnlyList<TessageId> tessageIds)
+   public async Task StrandUndeliveredTessagesAsync(EndpointId endpointId, IReadOnlyList<TessageId> tessageIds)
    {
       if(tessageIds.Count == 0) return;
-      _connectionFactory.UseCommand(
-         command =>
+      await _connectionFactory.UseCommandAsync(
+         async command =>
          {
             command
               .SetCommandText(
@@ -182,16 +183,16 @@ partial class MsSqlOutboxSqlLayer(IMsSqlConnectionPool connectionFactory, MsSqlS
                    """)
               .AddParameter(DispatchingTable.EndpointId, endpointId.Value);
             tessageIds.ForEach((tessageId, index) => command.AddParameter($"{DispatchingTable.TessageId}_{index}", tessageId.Value));
-            command.ExecuteNonQuery();
-         });
+            return await command.ExecuteNonQueryAsync().caf();
+         }).caf();
    }
 
-   public IReadOnlyList<ITessagingSqlLayer.DiscardedTessage> DiscardAllTessagesOwedTo(EndpointId endpointId)
+   public async Task<IReadOnlyList<ITessagingSqlLayer.DiscardedTessage>> DiscardAllTessagesOwedToAsync(EndpointId endpointId)
    {
       // The TypeId column holds an interned int. Resolve it to the canonical type string AFTER the reader has
       // closed — resolving during the read could open a second connection on a cache miss while the reader is held.
-      var owed = _connectionFactory.UseCommand(
-         command =>
+      var owed = await _connectionFactory.UseCommandAsync(
+         async command =>
          {
             var rows = new List<(TessageId TessageId, int TypeId, bool WasStranded)>();
 
@@ -210,8 +211,9 @@ partial class MsSqlOutboxSqlLayer(IMsSqlConnectionPool connectionFactory, MsSqlS
                     """)
                .AddParameter("endpointId", endpointId.Value);
 
-            using var reader = command.ExecuteReader();
-            while(reader.Read())
+            var reader = await command.ExecuteReaderAsync().caf();
+            await using var _ = reader.caf();
+            while(await reader.ReadAsync().caf())
             {
                rows.Add((new TessageId(reader.GetGuid(0)),
                          reader.GetInt32(1),
@@ -219,9 +221,9 @@ partial class MsSqlOutboxSqlLayer(IMsSqlConnectionPool connectionFactory, MsSqlS
             }
 
             return rows;
-         });
+         }).caf();
 
-      DiscardUndeliveredTessages(endpointId, [..owed.Select(row => row.TessageId)]);
+      await DiscardUndeliveredTessagesAsync(endpointId, [..owed.Select(row => row.TessageId)]).caf();
 
       return [..owed.Select(row => new ITessagingSqlLayer.DiscardedTessage(
                               tessageId: row.TessageId,

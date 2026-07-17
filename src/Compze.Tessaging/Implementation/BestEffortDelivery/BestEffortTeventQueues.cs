@@ -90,10 +90,10 @@ partial class BestEffortTeventQueues : IDisposable, IPeerDecommissionParticipant
    /// peer's return, or held awaiting a required peer's first contact — is reported, and dropped when the act commits, the<br/>
    /// queue becoming a tombstone (<see cref="PeerQueue.IsDecommissioned"/>). A tier that keeps nothing for the peer reports<br/>
    /// nothing; an empty hold still reports its zero-count ending — the hold itself was something the endpoint kept.</summary>
-   public IReadOnlyList<PeerDecommissionReport.DiscardedTessages> DiscardEverythingKeptFor(EndpointId peer)
+   public Task<IReadOnlyList<PeerDecommissionReport.DiscardedTessages>> DiscardEverythingKeptForAsync(EndpointId peer)
    {
       var queue = _monitor.Locked(() => _queues.GetValueOrDefault(peer));
-      if(queue == null || queue.IsDecommissioned) return [];
+      if(queue == null || queue.IsDecommissioned) return Task.FromResult<IReadOnlyList<PeerDecommissionReport.DiscardedTessages>>([]);
 
       //In-memory, so the drop is deferred to the act's commit: an act that fails partway must change nothing.
       State.NotNull(Transaction.Current);
@@ -104,10 +104,11 @@ partial class BestEffortTeventQueues : IDisposable, IPeerDecommissionParticipant
             _tessagesInFlightTracker.DroppedBeforeDelivery(droppedTessage, peer);
       });
 
-      return [new PeerDecommissionReport.DiscardedTessages(queue.IsAwaitingFirstContact
-                                                              ? "best-effort tevent(s) held awaiting the required peer's first contact - the hold ends with the decommission"
-                                                              : "best-effort tevent(s) queued awaiting the peer's return",
-                                                           queue.QueuedCount)];
+      return Task.FromResult<IReadOnlyList<PeerDecommissionReport.DiscardedTessages>>(
+         [new PeerDecommissionReport.DiscardedTessages(queue.IsAwaitingFirstContact
+                                                          ? "best-effort tevent(s) held awaiting the required peer's first contact - the hold ends with the decommission"
+                                                          : "best-effort tevent(s) queued awaiting the peer's return",
+                                                       queue.QueuedCount)]);
    }
 
    public void Dispose() => _monitor.Locked(() =>

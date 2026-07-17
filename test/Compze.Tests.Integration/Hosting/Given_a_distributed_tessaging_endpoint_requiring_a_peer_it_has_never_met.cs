@@ -89,7 +89,7 @@ public class Given_a_distributed_tessaging_endpoint_requiring_a_peer_it_has_neve
 
       //The act ends the first-contact hold, discarding the three held tevents - reported: the composition required a peer
       //that an administrator now declares is not coming.
-      var report = _publisherEndpoint.ServiceLocator.Resolve<IPeerAdministration>().Decommission(RequiredSubscriberEndpointId);
+      var report = await _publisherEndpoint.ServiceLocator.Resolve<IPeerAdministration>().DecommissionAsync(RequiredSubscriberEndpointId);
       report.Discarded.Single().Count.Must().Be(3);
       report.Discarded.Single().Description.Must().Contain("first contact");
 

@@ -123,7 +123,7 @@ public class Given_a_met_distributed_tessaging_subscriber_that_goes_down : Unive
       2.Through(4).ForEach(PublishOnThePublisherEndpointInATransaction);
 
       //The act discards the three queued tevents, reported - decommissioning a peer with held tessages is loud and deliberate.
-      var report = _publisherEndpoint.ServiceLocator.Resolve<IPeerAdministration>().Decommission(SubscriberEndpointId);
+      var report = await _publisherEndpoint.ServiceLocator.Resolve<IPeerAdministration>().DecommissionAsync(SubscriberEndpointId);
       report.Discarded.Single().Count.Must().Be(3);
 
       //Published while decommissioned: fanned out to nobody - nothing anywhere remembers the peer.

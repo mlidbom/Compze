@@ -12,37 +12,37 @@ public interface ITessagingSqlLayer
       ///<summary>Persists the tessage with one dispatching row per receiver, bound at save: a tevent's remembered subscribers,<br/>
       /// a tommand's one resolved receiver. Every tessage between a sender and a receiver thereby rides that pair's single<br/>
       /// ordered, receiver-deduped delivery stream — what makes exactly-once in-order hold by construction.</summary>
-      void SaveTessage(OutboxTessageWithReceivers tessageWithReceivers);
+      Task SaveTessageAsync(OutboxTessageWithReceivers tessageWithReceivers);
 
-      MarkAsReceivedResult MarkAsReceived(TessageId tessageId, EndpointId endpointId);
+      Task<MarkAsReceivedResult> MarkAsReceivedAsync(TessageId tessageId, EndpointId endpointId);
 
-      void RecordDeliveryFailure(TessageId tessageId, EndpointId endpointId, string failureReason);
+      Task RecordDeliveryFailureAsync(TessageId tessageId, EndpointId endpointId, string failureReason);
 
       ///<summary>The endpoint's recovery backlog: every tessage bound to <paramref name="endpointId"/> and not yet received,<br/>
       /// in send order (the outbox tessage table's monotonic <c>GeneratedId</c>). Stranded tessages are excluded — a stranded<br/>
       /// tommand waits for explicit resolution on the decommission surface, never for delivery.</summary>
-      IReadOnlyList<UndeliveredTessage> GetUndeliveredTessagesForEndpoint(EndpointId endpointId);
+      Task<IReadOnlyList<UndeliveredTessage>> GetUndeliveredTessagesForEndpointAsync(EndpointId endpointId);
 
       ///<summary>Discards these undelivered tessages bound to <paramref name="endpointId"/>: their dispatching rows are deleted,<br/>
       /// so they will never be delivered — the fate of undelivered tevents whose subscriber renounced its subscription in a<br/>
       /// shrunk advertisement. Runs in the caller's ambient transaction.</summary>
-      void DiscardUndeliveredTessages(EndpointId endpointId, IReadOnlyList<TessageId> tessageIds);
+      Task DiscardUndeliveredTessagesAsync(EndpointId endpointId, IReadOnlyList<TessageId> tessageIds);
 
       ///<summary>Marks these undelivered tessages bound to <paramref name="endpointId"/> stranded: kept, but excluded from the<br/>
       /// recovery backlog — the fate of undelivered tommands whose bound receiver's shrunk advertisement no longer handles their<br/>
       /// type. A stranded tommand is resolved explicitly on the decommission surface. Runs in the caller's ambient transaction.</summary>
-      void StrandUndeliveredTessages(EndpointId endpointId, IReadOnlyList<TessageId> tessageIds);
+      Task StrandUndeliveredTessagesAsync(EndpointId endpointId, IReadOnlyList<TessageId> tessageIds);
 
       ///<summary>Discards everything still owed to <paramref name="endpointId"/> — every unreceived dispatching row bound to it,<br/>
       /// stranded ones included — returning what was discarded, so the caller can report it: the storage half of decommissioning<br/>
       /// a peer, and of the first-contact sweep. Runs in the caller's ambient transaction.</summary>
-      IReadOnlyList<DiscardedTessage> DiscardAllTessagesOwedTo(EndpointId endpointId);
+      Task<IReadOnlyList<DiscardedTessage>> DiscardAllTessagesOwedToAsync(EndpointId endpointId);
 
       Task InitAsync();
    }
 
-   ///<summary>One tessage discarded by <see cref="IOutboxSqlLayer.DiscardAllTessagesOwedTo"/>, described for the discarder's<br/>
-   /// report: its identity, its type, and whether it had been stranded (see <see cref="IOutboxSqlLayer.StrandUndeliveredTessages"/>)<br/>
+   ///<summary>One tessage discarded by <see cref="IOutboxSqlLayer.DiscardAllTessagesOwedToAsync"/>, described for the discarder's<br/>
+   /// report: its identity, its type, and whether it had been stranded (see <see cref="IOutboxSqlLayer.StrandUndeliveredTessagesAsync"/>)<br/>
    /// or was awaiting the peer's return.</summary>
    public class DiscardedTessage(TessageId tessageId, TypeId typeId, bool wasStranded)
    {
@@ -65,10 +65,10 @@ public interface ITessagingSqlLayer
 
    public interface IInboxSqlLayer
    {
-      SaveTessageResult SaveTessage(TessageId tessageId, TypeId typeId, string serializedTessage);
-      int MarkAsSucceeded(TessageId tessageId);
-      int RecordException(TessageId tessageId, string exceptionStackTrace, string exceptionTessage, string exceptionType);
-      int MarkAsFailed(TessageId tessageId);
+      Task<SaveTessageResult> SaveTessageAsync(TessageId tessageId, TypeId typeId, string serializedTessage);
+      Task<int> MarkAsSucceededAsync(TessageId tessageId);
+      Task<int> RecordExceptionAsync(TessageId tessageId, string exceptionStackTrace, string exceptionTessage, string exceptionType);
+      Task<int> MarkAsFailedAsync(TessageId tessageId);
       Task InitAsync();
    }
 
@@ -78,14 +78,14 @@ public interface ITessagingSqlLayer
    {
       ///<summary>Replaces <paramref name="peerId"/>'s stored advertisement wholesale — creating the peer on first contact.<br/>
       /// The caller runs it inside its own transaction, so a reader never sees a half-replaced advertisement.</summary>
-      void SaveAdvertisement(EndpointId peerId, IReadOnlySet<string> handledTessageTypes);
+      Task SaveAdvertisementAsync(EndpointId peerId, IReadOnlySet<string> handledTessageTypes);
 
       ///<summary>Every remembered peer, with its stored advertisement.</summary>
-      IReadOnlyList<PersistedPeer> GetPeers();
+      Task<IReadOnlyList<PersistedPeer>> GetPeersAsync();
 
       ///<summary>Deletes <paramref name="peerId"/>'s row and stored advertisement — the durable half of decommissioning the<br/>
       /// peer. Runs in the caller's ambient transaction: the whole decommission act commits or rolls back together.</summary>
-      void DeletePeer(EndpointId peerId);
+      Task DeletePeerAsync(EndpointId peerId);
 
       Task InitAsync();
    }

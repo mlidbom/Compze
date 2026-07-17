@@ -1,6 +1,7 @@
 using Compze.Tessaging.Implementation.Transport.Abstractions;
 using Compze.Contracts;
 using Compze.Internals.SystemCE.ReflectionCE;
+using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tessaging.Transport.SqlLayer;
 
 namespace Compze.Tessaging.Implementation.TessageHandling.Inbox;
@@ -9,25 +10,25 @@ class InboxTessageStorage(ITessagingSqlLayer.IInboxSqlLayer sqlLayer) : Inbox.IT
 {
    readonly ITessagingSqlLayer.IInboxSqlLayer _sqlLayer = sqlLayer;
 
-   public ITessagingSqlLayer.SaveTessageResult SaveIncomingTessage(TransportTessage.InComing tessage)
-      => _sqlLayer.SaveTessage(tessage.TessageId, tessage.TessageTypeId, tessage.Body);
+   public async Task<ITessagingSqlLayer.SaveTessageResult> SaveIncomingTessageAsync(TransportTessage.InComing tessage)
+      => await _sqlLayer.SaveTessageAsync(tessage.TessageId, tessage.TessageTypeId, tessage.Body).caf();
 
-   public void MarkAsSucceeded(TransportTessage.InComing tessage)
-      => _sqlLayer.MarkAsSucceeded(tessage.TessageId)
+   public async Task MarkAsSucceededAsync(TransportTessage.InComing tessage)
+      => (await _sqlLayer.MarkAsSucceededAsync(tessage.TessageId).caf())
                ._assert(affectedRows => affectedRows == 1);
 
-   public void RecordException(TransportTessage.InComing tessage, Exception exception)
+   public async Task RecordExceptionAsync(TransportTessage.InComing tessage, Exception exception)
    {
-      _sqlLayer.RecordException(tessage.TessageId,
-                                exception.StackTrace ?? string.Empty,
-                                exception.Message,
-                                exception.GetType().GetFullNameCompilable())
+      (await _sqlLayer.RecordExceptionAsync(tessage.TessageId,
+                                            exception.StackTrace ?? string.Empty,
+                                            exception.Message,
+                                            exception.GetType().GetFullNameCompilable()).caf())
                ._assert(affectedRows => affectedRows == 1);
    }
 
-   public void MarkAsFailed(TransportTessage.InComing tessage) =>
-      _sqlLayer.MarkAsFailed(tessage.TessageId)
+   public async Task MarkAsFailedAsync(TransportTessage.InComing tessage) =>
+      (await _sqlLayer.MarkAsFailedAsync(tessage.TessageId).caf())
                ._assert(affectedRows => affectedRows == 1);
 
-   public Task StartAsync() => _sqlLayer.InitAsync();
+   public async Task StartAsync() => await _sqlLayer.InitAsync().caf();
 }
