@@ -9,8 +9,5 @@
       <None Include="../../**/*.md*" Exclude="$(CompzeExcludes)" KeepDuplicates="false" />
       <None Include="../**/*readme*" Exclude="$(CompzeExcludes)" KeepDuplicates="false" />
       <None Include="../**/*changelog*" Exclude="$(CompzeExcludes)" KeepDuplicates="false" />
-      <None Update="..\..\dev_docs\TODO\WIP\Tessaging\durable-peer-topology.md">
-        <Link>dev_docs\TODO\WIP\Tessaging\durable-peer-topology.md</Link>
-      </None>
    </ItemGroup>
 </Project>
