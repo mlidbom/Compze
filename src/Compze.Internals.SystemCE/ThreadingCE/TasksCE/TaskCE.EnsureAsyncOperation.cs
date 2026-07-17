@@ -10,6 +10,11 @@ public static partial class TaskCE
    /// </summary>
    public static Task Run(Action action) => Run(action.ToFunc());
 
+   ///<summary>Like <see cref="Run(Action)"/> for async work: starts <paramref name="asyncFunction"/> on a thread-pool thread —<br/>
+   /// guaranteed not inline on the caller — and returns a task that completes when the whole async work does, not when its<br/>
+   /// synchronous prefix returns.</summary>
+   public static async Task Run(Func<Task> asyncFunction) => await (await Run<Task>(asyncFunction).caf()).caf();
+
    public static IEnumerable<Task<TResult>> Run<TResult>(params Func<TResult>[] funcs) => funcs.Select(Run).ToList();
 
    public static IEnumerable<Task> Run(params Action[] actions) => actions.Select(Run).ToList();

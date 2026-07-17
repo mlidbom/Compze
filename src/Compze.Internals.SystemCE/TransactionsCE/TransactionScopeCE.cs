@@ -24,12 +24,22 @@ public static class TransactionScopeCe
 
    public static async Task SuppressAmbientAsync(Func<Task> action) => await ExecuteAsync(action, TransactionScopeOption.Suppress).caf();
 
-   static async Task ExecuteAsync([InstantHandle] Func<Task> action, TransactionScopeOption option = TransactionScopeOption.Required)
+   public static async Task ExecuteAsync([InstantHandle] Func<Task> action, TransactionScopeOption option = TransactionScopeOption.Required)
    {
       using var transactionScope = new TransactionScope(option,
                                                         new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted },
                                                         TransactionScopeAsyncFlowOption.Enabled);
       await action().caf();
       transactionScope.Complete();
+   }
+
+   public static async Task<TResult> ExecuteAsync<TResult>([InstantHandle] Func<Task<TResult>> action, TransactionScopeOption option = TransactionScopeOption.Required)
+   {
+      using var transactionScope = new TransactionScope(option,
+                                                        new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted },
+                                                        TransactionScopeAsyncFlowOption.Enabled);
+      var result = await action().caf();
+      transactionScope.Complete();
+      return result;
    }
 }

@@ -10,6 +10,9 @@ public interface ITaskRunner
 {
    void Run(string taskName, Action action);
    void Run(string taskName, Func<Unit> task);
+   ///<summary>Runs <paramref name="asyncAction"/> as a tracked background task: started on a thread-pool thread, tracked until<br/>
+   /// the whole async work completes, its failure reported through the background-exception reporter.</summary>
+   void Run(string taskName, Func<Task> asyncAction);
    Thread RunOnNamedThread(string threadName, ThreadStart threadLoop, ThreadPriority priority = ThreadPriority.Normal);
 }
 
@@ -29,13 +32,21 @@ static class TaskRunnerRegistrar
 
       TaskRunnerCore(IBackgroundExceptionReporter exceptionReporter) => _exceptionReporter = exceptionReporter;
 
-      public void Run(string taskName, Action action)
+      public void Run(string taskName, Action action) => Run(taskName, () =>
       {
-         var task = TaskCE.Run(() =>
+         action();
+         return Task.CompletedTask;
+      });
+
+      public void Run(string taskName, Func<Unit> task) => Run(taskName, () => { task(); });
+
+      public void Run(string taskName, Func<Task> asyncAction)
+      {
+         var task = TaskCE.Run(async () =>
          {
             try
             {
-               action();
+               await asyncAction().caf();
             }
 #pragma warning disable CA1031 //This is specifically designed for making sure that exceptions thrown in places where they cannot be surfaced directly, are not just ignored
             catch(Exception exception)
@@ -56,8 +67,6 @@ static class TaskRunnerRegistrar
          _inProgressTasks.Update(it => it.Add(task));
          task.ContinueWithCE(_ => _inProgressTasks.Update(it => it.Remove(task))); //While surprising to me, completedTask and task are NOT the same object.
       }
-
-      public void Run(string taskName, Func<Unit> task) => Run(taskName, () => { task(); });
 
       public Thread RunOnNamedThread(string threadName, ThreadStart threadLoop, ThreadPriority priority = ThreadPriority.Normal)
       {
