@@ -6,18 +6,12 @@
 ## Ongoing work
 ### Existing documents
 - [dev_docs/TODO/WIP/Tessaging/durable-peer-topology.md](../../../../dev_docs/TODO/WIP/Tessaging/durable-peer-topology.md)
+- [dev_docs/TODO/WIP/Tessaging/readiness-and-waiting-sends.md](../../../../dev_docs/TODO/WIP/Tessaging/readiness-and-waiting-sends.md)
+  — proposal draft, design conversation pending; proposes absorbing what durable-peer-topology.md calls
+  "Typermedia parity" (increment 7) as its knowledge substrate.
 - [src/Compze.Tessaging/dev_docs/tevent-delivery-model.md](../../../../src/Compze.Tessaging/dev_docs/tevent-delivery-model.md)
 - [src/Compze.Hosting/dev_docs/hosting-model.md](../../../../src/Compze.Hosting/dev_docs/hosting-model.md)
 - [src/Compze.Hosting/dev_docs/wip/same-machine-hosting.md](../../../../src/Compze.Hosting/dev_docs/wip/same-machine-hosting.md)
-
-### Missing documentation
-- **Readiness/waiting-sends** — the companion effort: bounded route patience for request/response sends and
-  an explicit readiness awaitable. *No document of its own yet* — it exists only as the "Relation to the
-  readiness/waiting-sends effort" section and scattered mentions inside durable-peer-topology.md; writing its
-  proposal is the next design conversation.
-- **Typermedia parity** (increment 7) likewise has no document of its own: the settled part (it lands before
-  the next release; registry entries follow the same model) is in durable-peer-topology.md, details
-  deliberately deferred until the increment starts.
 
 ## References
 
