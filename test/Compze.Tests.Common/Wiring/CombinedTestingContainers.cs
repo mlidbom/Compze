@@ -1,9 +1,8 @@
 using Compze.DocumentDb.Wiring;
 using Compze.Abstractions.Wiring.Testing.Internal;
 using Compze.Hosting.Testing.Wiring;
-using Compze.Tessaging;
+using Compze.Tessaging.Engine;
 using Compze.Tessaging.Hosting.Testing.Wiring;
-using Compze.Tessaging.Typermedia;
 using Compze.Tessaging.Hosting.Testing.Typermedia.Wiring;
 using Compze.TypeIdentifiers;
 using Compze.DependencyInjection.Abstractions;
@@ -37,8 +36,7 @@ public static class CombinedTestingContainers
       builder.Registrar
                .TypeIdentifierMapper(registerDomainTypeMappings)
                .DummyConfigurationParameterProvider()
-               .InProcessTessaging()
-               .InProcessTypermedia();
+               .LocalTessagingEngine(engine => {});
       setup(builder.Registrar);
 
       return builder.Build();

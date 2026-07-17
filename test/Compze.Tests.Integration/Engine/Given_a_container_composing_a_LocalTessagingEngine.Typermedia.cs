@@ -1,47 +1,30 @@
-﻿using System.Transactions;
+using System.Transactions;
 using Compze.DependencyInjection;
-using Compze.DependencyInjection.Abstractions;
-using Compze.Hosting.Testing;
-using Compze.Hosting.Testing.Wiring;
-using Compze.Internals.Testing;
 using Compze.Must;
 
-using Compze.Tests.Infrastructure;
+using Compze.Tessaging.Engine;
 using Compze.Tessaging.Typermedia;
-using Compze.Tessaging.Typermedia.HandlerRegistration;
+using Compze.Tests.Integration.InProcess;
 using Compze.Tests.Infrastructure.XUnit;
 using static Compze.Must.MustActions;
 
 // ReSharper disable InconsistentNaming for testing
 #pragma warning disable IDE1006 //Reviewed OK: Test Naming Styles
 
-namespace Compze.Tests.Integration.InProcess;
+namespace Compze.Tests.Integration.Engine;
 
-///<summary>In-process Typermedia composed into a plain container — no endpoint, no host, no transport server, no discovery: the handler registry and the in-process navigator through which strictly local tueries and tommands execute synchronously.</summary>
-public class Given_a_container_composed_with_InProcessTypermedia : UniversalTestBase
+///<summary>The typermedia face of the engine (see the main partial): strictly-local tueries and tommands declared in the same<br/>
+/// composition block execute synchronously, on the calling thread, in the caller's session — a tommand within the caller's transaction.</summary>
+public partial class Given_a_container_composing_a_LocalTessagingEngine
 {
-   protected IDependencyInjectionContainer Container { get; }
-   protected TypermediaHandlerRegistrarWithDependencyInjectionSupport RegisterHandlers { get; }
-
-   public Given_a_container_composed_with_InProcessTypermedia()
-   {
-      var builder = TestEnv.DIContainer.CreateTestingContainerBuilder();
-      builder.Registrar.InProcessTypermedia();
-      Container = builder.Build();
-      RegisterHandlers = new TypermediaHandlerRegistrarWithDependencyInjectionSupport(Container.RootResolver.Resolve<ITypermediaHandlerRegistrar>());
-   }
-
-   protected override async Task DisposeAsyncInternal() => await Container.DisposeAsync();
-
-   public class after_registering_a_strictly_local_tuery_handler_and_a_strictly_local_tommand_handler : Given_a_container_composed_with_InProcessTypermedia
+   public class with_a_declared_strictly_local_tuery_handler_and_tommand_handler : Given_a_container_composing_a_LocalTessagingEngine
    {
       readonly List<string> _registeredGreeters = [];
 
-      public after_registering_a_strictly_local_tuery_handler_and_a_strictly_local_tommand_handler()
-      {
-         RegisterHandlers.ForTuery((MyStrictlyLocalGreetingTuery tuery) => new MyGreeting { Message = $"Hello {tuery.Name}!" })
-                         .ForTommand((MyStrictlyLocalRegisterGreeterTommand tommand) => _registeredGreeters.Add(tommand.Name));
-      }
+      public with_a_declared_strictly_local_tuery_handler_and_tommand_handler() =>
+         ComposeContainerWithEngine(engine => engine.RegisterTessageHandlers(handle => handle
+            .ForTuery((MyStrictlyLocalGreetingTuery tuery) => new MyGreeting { Message = $"Hello {tuery.Name}!" })
+            .ForTommand((MyStrictlyLocalRegisterGreeterTommand tommand) => _registeredGreeters.Add(tommand.Name))));
 
       [PCT] public void executing_the_tuery_through_the_unit_of_work_local_typermedia_navigator_returns_the_handlers_result() =>
          Container.ScopeFactory.ExecuteInIsolatedScope(scope => scope.Resolve<ILocalTypermediaNavigatorSession>().Execute(new MyStrictlyLocalGreetingTuery { Name = "World" }).Message.Must().Be("Hello World!"));

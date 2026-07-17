@@ -12,5 +12,9 @@ class LocalTessagingEngineFeature
 
    internal static LocalTessagingEngineFeature GetOrAddTo(IEndpointBuilder builder) => builder.GetOrAddFeature(it => new LocalTessagingEngineFeature(it));
 
-   LocalTessagingEngineFeature(IEndpointBuilder builder) => HandlerRegistrations = builder.Registrar.RegisterLocalTessagingEngineCore();
+   LocalTessagingEngineFeature(IEndpointBuilder builder)
+   {
+      HandlerRegistrations = new TessageHandlerRegistrations();
+      builder.Registrar.RegisterLocalTessagingEngineCore(HandlerRegistrations);
+   }
 }
