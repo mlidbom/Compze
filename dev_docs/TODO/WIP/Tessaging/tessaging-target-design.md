@@ -227,7 +227,7 @@ Three concepts, deliberately orthogonal:
   to an endpoint.** The domain's aggregates, query models, and stores live in it, shared among the domain's
   endpoints as the domain designers see fit — domain data is not Tessaging's business.
 - **The endpoint** is a consistency-and-handling unit *within* a domain: its own container, engine, roster,
-  identity, address, and segregated tessaging state. An endpoint is a tiny microservice inside a
+  identity, address, and segregated tessaging state. An endpoint can be microservice inside a
   potentially huge domain, knowing almost nothing of the rest of it — it declares its own type mappings and
   its own serializer, which is what makes extracting it to its own process a deployment act rather than an
   untangling. **Any number of endpoints live in one domain, and adding one is a handful of lines of code.**
@@ -379,8 +379,6 @@ observed. The tracker is a testing device; the production-honest await is quiesc
 
 ## Deliberately unsettled
 
-- **The engine's final name.** `LocalTessagingEngine` is the working name (truthful; does not roll off the
-  tongue).
 - **The project/package layout** — the set of remaining projects and their names (options in the
   evaluation document, question 9).
 - **The exact table-prefix convention** for the per-endpoint table-sets — an implementation-time decision
