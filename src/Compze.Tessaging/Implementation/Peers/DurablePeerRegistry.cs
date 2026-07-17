@@ -63,5 +63,5 @@ namespace Compze.Tessaging.Implementation.Peers;
 
    public IReadOnlyList<EndpointId> SubscriberIdsFor(IPublisherTevent<IRemotableTevent> wrappedTevent) => _rememberedPeers.SubscriberIdsFor(wrappedTevent);
 
-   public IReadOnlyList<EndpointId> HandlerIdsFor(IExactlyOnceTommand tommand) => _rememberedPeers.HandlerIdsFor(tommand);
+   public IReadOnlyList<EndpointId> HandlerIdsFor(Type tessageType) => _rememberedPeers.HandlerIdsFor(tessageType);
 }

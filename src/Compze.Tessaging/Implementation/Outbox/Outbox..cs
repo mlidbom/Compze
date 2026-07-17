@@ -118,7 +118,7 @@ partial class Outbox : IOutbox
       var liveConnection = _tessagingRouter.LiveConnectionToHandlerFor(exactlyOnceTommand);
       if(liveConnection != null) return liveConnection.EndpointInformation.Id;
 
-      var rememberedHandlerIds = _peerRegistry.HandlerIdsFor(exactlyOnceTommand);
+      var rememberedHandlerIds = _peerRegistry.HandlerIdsFor(exactlyOnceTommand.GetType());
       return rememberedHandlerIds.Count switch
       {
          0 => throw new NoHandlerForTessageTypeException(exactlyOnceTommand.GetType()),

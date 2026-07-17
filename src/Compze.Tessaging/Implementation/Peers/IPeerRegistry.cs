@@ -35,13 +35,16 @@ public interface IPeerRegistry
    /// never the reverse.</remarks>
    IReadOnlyList<EndpointId> SubscriberIdsFor(IPublisherTevent<IRemotableTevent> wrappedTevent);
 
-   ///<summary>The <see cref="EndpointId"/> of every remembered peer whose last-known advertisement handles<br/>
-   /// <paramref name="tommand"/>'s type — matched exactly, the way the router's tommand routes match. A tommand binds to its<br/>
-   /// one specific receiver at send time, and when no handler is live this list is where the receiver comes from: exactly one<br/>
-   /// entry is the known-but-down handler; none means nothing known serves the type; more than one is a handler replacement<br/>
-   /// whose retired peer was never decommissioned. The endpoint itself never asks: a peer is another endpoint, and an<br/>
-   /// in-roster tommand executes inline in the sender's execution — it never reaches the outbox's receiver binding at all.</summary>
-   IReadOnlyList<EndpointId> HandlerIdsFor(IExactlyOnceTommand tommand);
+   ///<summary>The <see cref="EndpointId"/> of every remembered peer whose last-known advertisement handles the remotable<br/>
+   /// single-handler type <paramref name="tessageType"/> — an exactly-once tommand, a typermedia tommand, or a tuery — matched<br/>
+   /// exactly, the way the router's routes match these kinds. Exactly one entry is the known-but-down handler; none means<br/>
+   /// nothing this endpoint has ever met serves the type (never-seen); more than one is a handler replacement whose retired<br/>
+   /// peer was never decommissioned. Two askers: an exactly-once tommand binds to its one specific receiver at send time, and<br/>
+   /// when no handler is live this list is where the receiver comes from; and waiting sends and readiness compute their<br/>
+   /// known-but-down vs never-seen availability and failure wording from it, for every single-handler kind. The endpoint<br/>
+   /// itself never asks: a peer is another endpoint, and an in-roster tessage is served in-boundary — an in-roster tommand<br/>
+   /// executes inline in the sender's execution and never reaches the outbox's receiver binding at all.</summary>
+   IReadOnlyList<EndpointId> HandlerIdsFor(Type tessageType);
 
    ///<summary>The registry's share of decommissioning <paramref name="peer"/> — the one way a peer leaves the endpoint's memory<br/>
    /// (see <see cref="IPeerAdministration.DecommissionAsync"/>, the surface that performs the whole act and calls this inside the<br/>

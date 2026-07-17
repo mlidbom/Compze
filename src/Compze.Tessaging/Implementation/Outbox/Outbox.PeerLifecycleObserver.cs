@@ -66,7 +66,7 @@ partial class Outbox
             if(tessageType.Is<ITevent>())
             {
                if(!current.SubscribesToTeventsOf(tessageType)) renouncedTevents.Add(tessage);
-            } else if(!current.HandlesTommandsOf(tessageType))
+            } else if(!current.Handles(tessageType))
             {
                noLongerHandledTommands.Add(tessage);
             }
