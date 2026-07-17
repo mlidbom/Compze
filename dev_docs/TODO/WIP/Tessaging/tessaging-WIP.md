@@ -7,8 +7,8 @@
 ### Existing documents
 - [dev_docs/TODO/WIP/Tessaging/durable-peer-topology.md](../../../../dev_docs/TODO/WIP/Tessaging/durable-peer-topology.md)
 - [dev_docs/TODO/WIP/Tessaging/readiness-and-waiting-sends.md](../../../../dev_docs/TODO/WIP/Tessaging/readiness-and-waiting-sends.md)
-  — proposal draft, design conversation pending; proposes absorbing what durable-peer-topology.md calls
-  "Typermedia parity" (increment 7) as its knowledge substrate.
+  — design settled ⚖ 2026-07-17 (absorbs and retires "Typermedia parity"/increment 7); implementation gated
+  on the style-substrate question, whose evaluation document is next.
 - [src/Compze.Tessaging/dev_docs/tevent-delivery-model.md](../../../../src/Compze.Tessaging/dev_docs/tevent-delivery-model.md)
 - [src/Compze.Hosting/dev_docs/hosting-model.md](../../../../src/Compze.Hosting/dev_docs/hosting-model.md)
 - [src/Compze.Hosting/dev_docs/wip/same-machine-hosting.md](../../../../src/Compze.Hosting/dev_docs/wip/same-machine-hosting.md)
