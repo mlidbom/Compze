@@ -1,10 +1,13 @@
 using Compze.DocumentDb.Wiring;
+using Compze.Abstractions.Hosting.Public;
 using Compze.Abstractions.Wiring.Testing.Internal;
 using Compze.Hosting.Testing.Wiring;
 using Compze.Tessaging.Engine;
 using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Tessaging.Hosting.Testing.Typermedia.Wiring;
+using Compze.Tessaging.Transport.SqlLayer;
 using Compze.TypeIdentifiers;
+using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Underscore;
 using Compze.Internals.Logging;
@@ -22,9 +25,16 @@ public static class CombinedTestingContainers
 
    ///<summary>Registers everything a combined Tessaging+Typermedia test endpoint needs of the current test's pluggable components: the endpoint transport and the full SQL persistence stack.<br/>
    /// (Each communication style's feature registers its own transport client and request handling on top of the endpoint transport.)</summary>
-   public static IComponentRegistrar CurrentTestsPluggableComponents(this IComponentRegistrar register, string connectionStringName) =>
-      register.CurrentTestsEndpointTransport()
-              .CurrentTestsConfiguredSqlLayer(connectionStringName);
+   public static IComponentRegistrar CurrentTestsPluggableComponents(this IComponentRegistrar register, string connectionStringName)
+   {
+      //A plain testing container is not an endpoint, so no composition declares the table-set Tessaging's sql layers prefix
+      //their tables with - declare one for the container. An endpoint composition registers the endpoint's own set first.
+      if(!register.IsRegistered<EndpointTableSet>())
+         register.Register(Singleton.For<EndpointTableSet>().Instance(EndpointTableSet.For(new EndpointConfiguration("TestingContainer", new EndpointId(Guid.NewGuid())))));
+
+      return register.CurrentTestsEndpointTransport()
+                     .CurrentTestsConfiguredSqlLayer(connectionStringName);
+   }
 
    public static IContainerBuilder CreateWithCurrentTestsPluggableComponents(this DIContainer @this) =>
       @this.CreateTestingContainerBuilder()

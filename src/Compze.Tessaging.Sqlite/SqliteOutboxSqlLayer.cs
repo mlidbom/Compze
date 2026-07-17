@@ -12,11 +12,12 @@ using TessageTable = Compze.Tessaging.Transport.SqlLayer.ITessagingSqlLayer.Outb
 
 namespace Compze.Tessaging.Sqlite;
 
-partial class SqliteOutboxSqlLayer(ISqliteConnectionPool connectionFactory, SqliteSqlLayerSchemaManager schemaManager, ITypeIdInterner typeIdInterner) : ITessagingSqlLayer.IOutboxSqlLayer
+partial class SqliteOutboxSqlLayer(ISqliteConnectionPool connectionFactory, SqliteSqlLayerSchemaManager schemaManager, ITypeIdInterner typeIdInterner, EndpointTableSet tables) : ITessagingSqlLayer.IOutboxSqlLayer
 {
    readonly ISqliteConnectionPool _connectionFactory = connectionFactory;
    readonly SqliteSqlLayerSchemaManager _schemaManager = schemaManager;
    readonly ITypeIdInterner _typeIdInterner = typeIdInterner;
+   readonly EndpointTableSet _tables = tables;
 
    public async Task SaveTessageAsync(ITessagingSqlLayer.OutboxTessageWithReceivers tessageWithReceivers)
    {
@@ -30,7 +31,7 @@ partial class SqliteOutboxSqlLayer(ISqliteConnectionPool connectionFactory, Sqli
               .SetCommandText(
                   $"""
 
-                   INSERT INTO {TessageTable.TableName}
+                   INSERT INTO {_tables.OutboxTessages}
                                ({TessageTable.TessageId},  {TessageTable.TypeId}, {TessageTable.SerializedTessage})
                        VALUES (@{TessageTable.TessageId}, @{TessageTable.TypeId}, @{TessageTable.SerializedTessage});
 
@@ -44,7 +45,7 @@ partial class SqliteOutboxSqlLayer(ISqliteConnectionPool connectionFactory, Sqli
                (endpointId, index)
                   => command.AppendCommandText($"""
 
-                                                INSERT INTO {DispatchingTable.TableName}
+                                                INSERT INTO {_tables.OutboxTessageDispatching}
                                                             ({DispatchingTable.TessageId},  {DispatchingTable.EndpointId},          {DispatchingTable.IsReceived})
                                                     VALUES (@{DispatchingTable.TessageId}, @{DispatchingTable.EndpointId}_{index}, @{DispatchingTable.IsReceived});
 
@@ -61,7 +62,7 @@ partial class SqliteOutboxSqlLayer(ISqliteConnectionPool connectionFactory, Sqli
                    .SetCommandText(
                        $"""
 
-                        UPDATE {DispatchingTable.TableName}
+                        UPDATE {_tables.OutboxTessageDispatching}
                             SET {DispatchingTable.IsReceived} = 1
                         WHERE {DispatchingTable.TessageId} = @{DispatchingTable.TessageId}
                             AND {DispatchingTable.EndpointId} = @{DispatchingTable.EndpointId}
@@ -84,7 +85,7 @@ partial class SqliteOutboxSqlLayer(ISqliteConnectionPool connectionFactory, Sqli
                    .SetCommandText(
                        $"""
 
-                        UPDATE {DispatchingTable.TableName}
+                        UPDATE {_tables.OutboxTessageDispatching}
                             SET {DispatchingTable.RetryCount} = {DispatchingTable.RetryCount} + 1,
                                 {DispatchingTable.LastAttemptTime} = @{DispatchingTable.LastAttemptTime},
                                 {DispatchingTable.FailureReason} = @{DispatchingTable.FailureReason}
@@ -115,8 +116,8 @@ partial class SqliteOutboxSqlLayer(ISqliteConnectionPool connectionFactory, Sqli
                     SELECT m.{TessageTable.TessageId},
                            m.{TessageTable.TypeId},
                            m.{TessageTable.SerializedTessage}
-                    FROM {TessageTable.TableName} m
-                    INNER JOIN {DispatchingTable.TableName} d ON m.{TessageTable.TessageId} = d.{DispatchingTable.TessageId}
+                    FROM {_tables.OutboxTessages} m
+                    INNER JOIN {_tables.OutboxTessageDispatching} d ON m.{TessageTable.TessageId} = d.{DispatchingTable.TessageId}
                     WHERE d.{DispatchingTable.IsReceived} = 0
                       AND d.{DispatchingTable.IsStranded} = 0 --A stranded tessage waits for explicit resolution on the decommission surface, never for delivery.
                       AND d.{DispatchingTable.EndpointId} = @endpointId
@@ -153,7 +154,7 @@ partial class SqliteOutboxSqlLayer(ISqliteConnectionPool connectionFactory, Sqli
               .SetCommandText(
                   $"""
 
-                   DELETE FROM {DispatchingTable.TableName}
+                   DELETE FROM {_tables.OutboxTessageDispatching}
                    WHERE {DispatchingTable.EndpointId} = @{DispatchingTable.EndpointId}
                      AND {DispatchingTable.TessageId} IN ( {TessageIdParameterList(tessageIds.Count)} )
 
@@ -174,7 +175,7 @@ partial class SqliteOutboxSqlLayer(ISqliteConnectionPool connectionFactory, Sqli
               .SetCommandText(
                   $"""
 
-                   UPDATE {DispatchingTable.TableName}
+                   UPDATE {_tables.OutboxTessageDispatching}
                        SET {DispatchingTable.IsStranded} = 1
                    WHERE {DispatchingTable.EndpointId} = @{DispatchingTable.EndpointId}
                      AND {DispatchingTable.TessageId} IN ( {TessageIdParameterList(tessageIds.Count)} )
@@ -202,8 +203,8 @@ partial class SqliteOutboxSqlLayer(ISqliteConnectionPool connectionFactory, Sqli
                     SELECT d.{DispatchingTable.TessageId},
                            m.{TessageTable.TypeId},
                            d.{DispatchingTable.IsStranded}
-                    FROM {DispatchingTable.TableName} d
-                    INNER JOIN {TessageTable.TableName} m ON m.{TessageTable.TessageId} = d.{DispatchingTable.TessageId}
+                    FROM {_tables.OutboxTessageDispatching} d
+                    INNER JOIN {_tables.OutboxTessages} m ON m.{TessageTable.TessageId} = d.{DispatchingTable.TessageId}
                     WHERE d.{DispatchingTable.IsReceived} = 0
                       AND d.{DispatchingTable.EndpointId} = @endpointId
 

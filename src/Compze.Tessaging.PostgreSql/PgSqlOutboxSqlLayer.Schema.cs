@@ -1,3 +1,4 @@
+using Compze.Tessaging.Transport.SqlLayer;
 using Tessage = Compze.Tessaging.Transport.SqlLayer.ITessagingSqlLayer.OutboxTessagesDatabaseSchemaStrings;
 using Dispatch = Compze.Tessaging.Transport.SqlLayer.ITessagingSqlLayer.OutboxTessageDispatchingTableSchemaStrings;
 
@@ -7,10 +8,10 @@ partial class PgSqlOutboxSqlLayer
 {
    const string PgSqlGuidType = "UUID";
 
-   public const string SchemaCreationSql =
+   public static string SchemaCreationSql(EndpointTableSet tables) =>
       $"""
 
-       CREATE TABLE IF NOT EXISTS {Tessage.TableName}
+       CREATE TABLE IF NOT EXISTS {tables.OutboxTessages}
        (
          {Tessage.GeneratedId}       bigint GENERATED ALWAYS AS IDENTITY NOT NULL,
          {Tessage.TypeId}            int                                 NOT NULL,
@@ -19,11 +20,11 @@ partial class PgSqlOutboxSqlLayer
 
          PRIMARY KEY ({Tessage.GeneratedId}),
 
-         CONSTRAINT IX_{Tessage.TableName}_Unique_{Tessage.TessageId} UNIQUE ( {Tessage.TessageId} )
+         CONSTRAINT IX_{tables.OutboxTessages}_Unique_{Tessage.TessageId} UNIQUE ( {Tessage.TessageId} )
        );
 
 
-       CREATE TABLE  IF NOT EXISTS {Dispatch.TableName}
+       CREATE TABLE  IF NOT EXISTS {tables.OutboxTessageDispatching}
        (
         {Dispatch.TessageId}        {PgSqlGuidType} NOT NULL,
         {Dispatch.EndpointId}       {PgSqlGuidType} NOT NULL,
@@ -35,7 +36,7 @@ partial class PgSqlOutboxSqlLayer
 
 
         PRIMARY KEY ( {Dispatch.TessageId}, {Dispatch.EndpointId}),
-         FOREIGN KEY ({Dispatch.TessageId}) REFERENCES {Tessage.TableName} ({Tessage.TessageId})
+         FOREIGN KEY ({Dispatch.TessageId}) REFERENCES {tables.OutboxTessages} ({Tessage.TessageId})
        );
 
        """;

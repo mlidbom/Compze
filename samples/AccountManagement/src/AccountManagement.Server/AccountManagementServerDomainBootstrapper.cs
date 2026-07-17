@@ -32,7 +32,7 @@ public static class AccountManagementServerDomainBootstrapper
 
    static void RegisterAccountStatisticsEndpoint(TestingEndpointHost host) =>
       host.RegisterExactlyOnceEndpoint(
-         name: "AccountManagement.Statistics",
+         name: "AccountManagementStatistics",
          id: new EndpointId(Guid.Parse(input: "B16250DE-4321-4FBD-A0CC-E42C7A1B0B34")),
          declare: endpoint =>
          {

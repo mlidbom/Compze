@@ -1,3 +1,4 @@
+using Compze.Tessaging.Transport.SqlLayer;
 using Tessage = Compze.Tessaging.Transport.SqlLayer.ITessagingSqlLayer.OutboxTessagesDatabaseSchemaStrings;
 using D = Compze.Tessaging.Transport.SqlLayer.ITessagingSqlLayer.OutboxTessageDispatchingTableSchemaStrings;
 
@@ -5,10 +6,10 @@ namespace Compze.Tessaging.Sqlite;
 
 partial class SqliteOutboxSqlLayer
 {
-   public const string SchemaCreationSql =
+   public static string SchemaCreationSql(EndpointTableSet tables) =>
       $"""
 
-       CREATE TABLE IF NOT EXISTS {Tessage.TableName}
+       CREATE TABLE IF NOT EXISTS {tables.OutboxTessages}
        (
            {Tessage.GeneratedId}       INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
            {Tessage.TypeId}            INTEGER                           NOT NULL,
@@ -16,7 +17,7 @@ partial class SqliteOutboxSqlLayer
            {Tessage.SerializedTessage} TEXT                              NOT NULL
        );
 
-       CREATE TABLE IF NOT EXISTS {D.TableName}
+       CREATE TABLE IF NOT EXISTS {tables.OutboxTessageDispatching}
        (
            {D.TessageId}        TEXT    NOT NULL,
            {D.EndpointId}       TEXT    NOT NULL,
@@ -27,7 +28,7 @@ partial class SqliteOutboxSqlLayer
            {D.FailureReason}    TEXT    NULL,
 
            PRIMARY KEY( {D.TessageId}, {D.EndpointId}),
-           FOREIGN KEY ( {D.TessageId} ) REFERENCES {Tessage.TableName} ({Tessage.TessageId})
+           FOREIGN KEY ( {D.TessageId} ) REFERENCES {tables.OutboxTessages} ({Tessage.TessageId})
        );
 
        """;

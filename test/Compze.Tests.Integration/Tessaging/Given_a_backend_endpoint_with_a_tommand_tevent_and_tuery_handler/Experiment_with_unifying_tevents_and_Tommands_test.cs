@@ -40,7 +40,7 @@ public class Experiment_with_unifying_tevents_and_tommands_test : UniversalTestB
       _host = TestingEndpointHost.Create();
 
       _userManagementDomainEndpoint = _host.RegisterExactlyOnceEndpoint(
-         "UserManagement.Domain",
+         "UserManagementDomain",
          new EndpointId(Guid.Parse("A4A2BA96-8D82-47AC-8A1B-38476C7B5D5D")),
          endpoint =>
          {

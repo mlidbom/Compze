@@ -11,11 +11,12 @@ using TessageTable =  Compze.Tessaging.Transport.SqlLayer.ITessagingSqlLayer.Inb
 
 namespace Compze.Tessaging.PostgreSql;
 
-partial class PgSqlInboxSqlLayer(IPgSqlConnectionPool connectionFactory, PgSqlSqlLayerSchemaManager schemaManager, ITypeIdInterner typeIdInterner) : ITessagingSqlLayer.IInboxSqlLayer
+partial class PgSqlInboxSqlLayer(IPgSqlConnectionPool connectionFactory, PgSqlSqlLayerSchemaManager schemaManager, ITypeIdInterner typeIdInterner, EndpointTableSet tables) : ITessagingSqlLayer.IInboxSqlLayer
 {
    readonly IPgSqlConnectionPool _connectionFactory = connectionFactory;
    readonly PgSqlSqlLayerSchemaManager _schemaManager = schemaManager;
    readonly ITypeIdInterner _typeIdInterner = typeIdInterner;
+   readonly EndpointTableSet _tables = tables;
 
    public async Task<ITessagingSqlLayer.SaveTessageResult> SaveTessageAsync(TessageId tessageId, TypeId typeId, string serializedTessage)
    {
@@ -29,7 +30,7 @@ partial class PgSqlInboxSqlLayer(IPgSqlConnectionPool connectionFactory, PgSqlSq
               .SetCommandText(
                   $"""
 
-                   INSERT INTO {TessageTable.TableName} 
+                   INSERT INTO {_tables.InboxTessages} 
                                ({TessageTable.TessageId},  {TessageTable.TypeId},  {TessageTable.Body}, {TessageTable.Status}) 
                        VALUES (@{TessageTable.TessageId}, @{TessageTable.TypeId}, @{TessageTable.Body}, {(int)InboxTessageStatus.UnHandled})
                    ON CONFLICT ({TessageTable.TessageId}) DO NOTHING;
@@ -56,7 +57,7 @@ partial class PgSqlInboxSqlLayer(IPgSqlConnectionPool connectionFactory, PgSqlSq
               .SetCommandText(
                   $"""
 
-                   UPDATE {TessageTable.TableName} 
+                   UPDATE {_tables.InboxTessages} 
                        SET {TessageTable.Status} = {(int)InboxTessageStatus.Succeeded}
                    WHERE {TessageTable.TessageId} = @{TessageTable.TessageId}
                        AND {TessageTable.Status} = {(int)InboxTessageStatus.UnHandled};
@@ -74,7 +75,7 @@ partial class PgSqlInboxSqlLayer(IPgSqlConnectionPool connectionFactory, PgSqlSq
                    .SetCommandText(
                        $"""
 
-                        UPDATE {TessageTable.TableName} 
+                        UPDATE {_tables.InboxTessages} 
                             SET {TessageTable.ExceptionCount} = {TessageTable.ExceptionCount} + 1,
                                 {TessageTable.ExceptionType} = @{TessageTable.ExceptionType},
                                 {TessageTable.ExceptionStackTrace} = @{TessageTable.ExceptionStackTrace},
@@ -98,7 +99,7 @@ partial class PgSqlInboxSqlLayer(IPgSqlConnectionPool connectionFactory, PgSqlSq
                    .SetCommandText(
                        $"""
 
-                        UPDATE {TessageTable.TableName} 
+                        UPDATE {_tables.InboxTessages} 
                             SET {TessageTable.Status} = {(int)InboxTessageStatus.Failed}
                         WHERE {TessageTable.TessageId} = @{TessageTable.TessageId}
                             AND {TessageTable.Status} = {(int)InboxTessageStatus.UnHandled};

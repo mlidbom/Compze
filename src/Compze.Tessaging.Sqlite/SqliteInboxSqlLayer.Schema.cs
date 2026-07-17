@@ -1,13 +1,14 @@
+using Compze.Tessaging.Transport.SqlLayer;
 using Tessage = Compze.Tessaging.Transport.SqlLayer.ITessagingSqlLayer.InboxTessageDatabaseSchemaStrings;
 
 namespace Compze.Tessaging.Sqlite;
 
 partial class SqliteInboxSqlLayer
 {
-   public const string SchemaCreationSql =
+   public static string SchemaCreationSql(EndpointTableSet tables) =>
       $"""
 
-       CREATE TABLE IF NOT EXISTS {Tessage.TableName}
+       CREATE TABLE IF NOT EXISTS {tables.InboxTessages}
        (
            {Tessage.GeneratedId}         INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
            {Tessage.TypeId}              INTEGER                           NOT NULL,

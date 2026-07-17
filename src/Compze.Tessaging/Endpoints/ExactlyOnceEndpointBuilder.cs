@@ -1,10 +1,12 @@
 using Compze.Abstractions.Hosting.Public;
 using Compze.Contracts;
+using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Tessaging.Implementation.Outbox;
 using Compze.Tessaging.Implementation.TessageHandling.Inbox;
 using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Transport;
+using Compze.Tessaging.Transport.SqlLayer;
 
 namespace Compze.Tessaging.Endpoints;
 
@@ -42,6 +44,8 @@ public sealed class ExactlyOnceEndpointBuilder : EndpointBuilder
    /// exactly-once request handling that receives arriving tessages into the inbox.</summary>
    private protected override void RegisterTheTierMachinery()
    {
+      //Computed eagerly, so an endpoint name that cannot key storage fails loud at composition, not at first resolution.
+      Registrar.Register(Singleton.For<EndpointTableSet>().Instance(EndpointTableSet.For(Configuration)));
       _registerDomainDatabase!(Registrar);
       Registrar.Outbox()
                .Inbox()

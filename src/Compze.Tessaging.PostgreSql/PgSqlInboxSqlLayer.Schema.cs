@@ -1,3 +1,4 @@
+using Compze.Tessaging.Transport.SqlLayer;
 using Tessage = Compze.Tessaging.Transport.SqlLayer.ITessagingSqlLayer.InboxTessageDatabaseSchemaStrings;
 
 namespace Compze.Tessaging.PostgreSql;
@@ -6,9 +7,9 @@ partial class PgSqlInboxSqlLayer
 {
    const string PgSqlGuidType = "UUID";
 
-   public const string SchemaCreationSql =
+   public static string SchemaCreationSql(EndpointTableSet tables) =>
       $"""
-           CREATE TABLE IF NOT EXISTS {Tessage.TableName}
+           CREATE TABLE IF NOT EXISTS {tables.InboxTessages}
            (
                {Tessage.GeneratedId}           bigint GENERATED ALWAYS AS IDENTITY NOT NULL,
                {Tessage.TypeId}                int                                 NOT NULL,
@@ -23,7 +24,7 @@ partial class PgSqlInboxSqlLayer
 
                PRIMARY KEY ( {Tessage.GeneratedId} ),
 
-               CONSTRAINT IX_{Tessage.TableName}_Unique_{Tessage.TessageId} UNIQUE ( {Tessage.TessageId} )
+               CONSTRAINT IX_{tables.InboxTessages}_Unique_{Tessage.TessageId} UNIQUE ( {Tessage.TessageId} )
            );
 
        """;

@@ -11,11 +11,12 @@ using TessageTable = Compze.Tessaging.Transport.SqlLayer.ITessagingSqlLayer.Inbo
 
 namespace Compze.Tessaging.MicrosoftSql;
 
-partial class MsSqlInboxSqlLayer(IMsSqlConnectionPool connectionFactory, MsSqlSqlLayerSchemaManager schemaManager, ITypeIdInterner typeIdInterner) : ITessagingSqlLayer.IInboxSqlLayer
+partial class MsSqlInboxSqlLayer(IMsSqlConnectionPool connectionFactory, MsSqlSqlLayerSchemaManager schemaManager, ITypeIdInterner typeIdInterner, EndpointTableSet tables) : ITessagingSqlLayer.IInboxSqlLayer
 {
    readonly IMsSqlConnectionPool _connectionFactory = connectionFactory;
    readonly MsSqlSqlLayerSchemaManager _schemaManager = schemaManager;
    readonly ITypeIdInterner _typeIdInterner = typeIdInterner;
+   readonly EndpointTableSet _tables = tables;
 
    public async Task<ITessagingSqlLayer.SaveTessageResult> SaveTessageAsync(TessageId tessageId, TypeId typeId, string serializedTessage)
    {
@@ -28,7 +29,7 @@ partial class MsSqlInboxSqlLayer(IMsSqlConnectionPool connectionFactory, MsSqlSq
             var affectedRows = await command
               .SetCommandText(
                   $"""
-                   MERGE {TessageTable.TableName} AS target
+                   MERGE {_tables.InboxTessages} AS target
                    USING (SELECT @{TessageTable.TessageId} AS {TessageTable.TessageId}, --create a one row table "source" to be merged if its rows are not already in the table
                                  @{TessageTable.TypeId} AS {TessageTable.TypeId},
                                  @{TessageTable.Body} AS {TessageTable.Body}) AS source
@@ -58,7 +59,7 @@ partial class MsSqlInboxSqlLayer(IMsSqlConnectionPool connectionFactory, MsSqlSq
               .SetCommandText(
                   $"""
 
-                   UPDATE {TessageTable.TableName}
+                   UPDATE {_tables.InboxTessages}
                        SET {TessageTable.Status} = {(int)InboxTessageStatus.Succeeded}
                    WHERE {TessageTable.TessageId} = @{TessageTable.TessageId}
                        AND {TessageTable.Status} = {(int)InboxTessageStatus.UnHandled}
@@ -75,7 +76,7 @@ partial class MsSqlInboxSqlLayer(IMsSqlConnectionPool connectionFactory, MsSqlSq
                    .SetCommandText(
                        $"""
 
-                        UPDATE {TessageTable.TableName}
+                        UPDATE {_tables.InboxTessages}
                             SET {TessageTable.ExceptionCount} = {TessageTable.ExceptionCount} + 1,
                                 {TessageTable.ExceptionType} = @{TessageTable.ExceptionType},
                                 {TessageTable.ExceptionStackTrace} = @{TessageTable.ExceptionStackTrace},
@@ -98,7 +99,7 @@ partial class MsSqlInboxSqlLayer(IMsSqlConnectionPool connectionFactory, MsSqlSq
                    .SetCommandText(
                        $"""
 
-                        UPDATE {TessageTable.TableName}
+                        UPDATE {_tables.InboxTessages}
                             SET {TessageTable.Status} = {(int)InboxTessageStatus.Failed}
                         WHERE {TessageTable.TessageId} = @{TessageTable.TessageId}
                             AND {TessageTable.Status} = {(int)InboxTessageStatus.UnHandled}

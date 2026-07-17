@@ -1,15 +1,16 @@
+using Compze.Tessaging.Transport.SqlLayer;
 using Tessage = Compze.Tessaging.Transport.SqlLayer.ITessagingSqlLayer.InboxTessageDatabaseSchemaStrings;
 
 namespace Compze.Tessaging.MicrosoftSql;
 
 partial class MsSqlInboxSqlLayer
 {
-   public const string SchemaCreationSql =
+   public static string SchemaCreationSql(EndpointTableSet tables) =>
       $"""
 
-       IF NOT EXISTS(select name from sys.tables where name = '{Tessage.TableName}')
+       IF NOT EXISTS(select name from sys.tables where name = '{tables.InboxTessages}')
        BEGIN
-           CREATE TABLE {Tessage.TableName}
+           CREATE TABLE {tables.InboxTessages}
            (
                {Tessage.GeneratedId}         bigint IDENTITY(1,1) NOT NULL,
                {Tessage.TypeId}              int                  NOT NULL,
@@ -22,9 +23,9 @@ partial class MsSqlInboxSqlLayer
                {Tessage.ExceptionTessage}    nvarchar(MAX)        NULL,
 
 
-               CONSTRAINT PK_{Tessage.TableName} PRIMARY KEY CLUSTERED ( [{Tessage.GeneratedId}] ASC ),
+               CONSTRAINT PK_{tables.InboxTessages} PRIMARY KEY CLUSTERED ( [{Tessage.GeneratedId}] ASC ),
 
-               CONSTRAINT IX_{Tessage.TableName}_Unique_{Tessage.TessageId} UNIQUE ( {Tessage.TessageId} )
+               CONSTRAINT IX_{tables.InboxTessages}_Unique_{Tessage.TessageId} UNIQUE ( {Tessage.TessageId} )
            )
        END
 

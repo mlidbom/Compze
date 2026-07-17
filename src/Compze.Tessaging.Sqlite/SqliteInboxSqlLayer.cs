@@ -11,11 +11,12 @@ using TessageTable =  Compze.Tessaging.Transport.SqlLayer.ITessagingSqlLayer.Inb
 
 namespace Compze.Tessaging.Sqlite;
 
-partial class SqliteInboxSqlLayer(ISqliteConnectionPool connectionFactory, SqliteSqlLayerSchemaManager schemaManager, ITypeIdInterner typeIdInterner) : ITessagingSqlLayer.IInboxSqlLayer
+partial class SqliteInboxSqlLayer(ISqliteConnectionPool connectionFactory, SqliteSqlLayerSchemaManager schemaManager, ITypeIdInterner typeIdInterner, EndpointTableSet tables) : ITessagingSqlLayer.IInboxSqlLayer
 {
    readonly ISqliteConnectionPool _connectionFactory = connectionFactory;
    readonly SqliteSqlLayerSchemaManager _schemaManager = schemaManager;
    readonly ITypeIdInterner _typeIdInterner = typeIdInterner;
+   readonly EndpointTableSet _tables = tables;
 
    public async Task<ITessagingSqlLayer.SaveTessageResult> SaveTessageAsync(TessageId tessageId, TypeId typeId, string serializedTessage)
    {
@@ -29,7 +30,7 @@ partial class SqliteInboxSqlLayer(ISqliteConnectionPool connectionFactory, Sqlit
               .SetCommandText(
                   $"""
 
-                   INSERT INTO {TessageTable.TableName}
+                   INSERT INTO {_tables.InboxTessages}
                                ({TessageTable.TessageId},  {TessageTable.TypeId},  {TessageTable.Body}, {TessageTable.Status})
                        VALUES (@{TessageTable.TessageId}, @{TessageTable.TypeId}, @{TessageTable.Body}, {(int)InboxTessageStatus.UnHandled})
                    ON CONFLICT ({TessageTable.TessageId}) DO NOTHING
@@ -54,7 +55,7 @@ partial class SqliteInboxSqlLayer(ISqliteConnectionPool connectionFactory, Sqlit
               .SetCommandText(
                   $"""
 
-                   UPDATE {TessageTable.TableName}
+                   UPDATE {_tables.InboxTessages}
                        SET {TessageTable.Status} = {(int)InboxTessageStatus.Succeeded}
                    WHERE {TessageTable.TessageId} = @{TessageTable.TessageId}
                        AND {TessageTable.Status} = {(int)InboxTessageStatus.UnHandled}
@@ -71,7 +72,7 @@ partial class SqliteInboxSqlLayer(ISqliteConnectionPool connectionFactory, Sqlit
                    .SetCommandText(
                        $"""
 
-                        UPDATE {TessageTable.TableName}
+                        UPDATE {_tables.InboxTessages}
                             SET {TessageTable.ExceptionCount} = {TessageTable.ExceptionCount} + 1,
                                 {TessageTable.ExceptionType} = @{TessageTable.ExceptionType},
                                 {TessageTable.ExceptionStackTrace} = @{TessageTable.ExceptionStackTrace},
@@ -94,7 +95,7 @@ partial class SqliteInboxSqlLayer(ISqliteConnectionPool connectionFactory, Sqlit
                    .SetCommandText(
                        $"""
 
-                        UPDATE {TessageTable.TableName}
+                        UPDATE {_tables.InboxTessages}
                             SET {TessageTable.Status} = {(int)InboxTessageStatus.Failed}
                         WHERE {TessageTable.TessageId} = @{TessageTable.TessageId}
                             AND {TessageTable.Status} = {(int)InboxTessageStatus.UnHandled}

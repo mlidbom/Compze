@@ -120,8 +120,6 @@ public interface ITessagingSqlLayer
 
    public static class InboxTessageDatabaseSchemaStrings
    {
-      public const string TableName = "InboxTessages";
-
       public const string GeneratedId = nameof(GeneratedId);
       public const string TypeId = nameof(TypeId);
       public const string TessageId = nameof(TessageId);
@@ -135,8 +133,6 @@ public interface ITessagingSqlLayer
 
    public static class OutboxTessagesDatabaseSchemaStrings
    {
-      public const string TableName = "OutboxTessages";
-
       public const string GeneratedId = nameof(GeneratedId);
       public const string TypeId = nameof(TypeId);
       public const string TessageId = nameof(TessageId);
@@ -145,8 +141,6 @@ public interface ITessagingSqlLayer
 
    public static class OutboxTessageDispatchingTableSchemaStrings
    {
-      public const string TableName = "OutboxTessageDispatching";
-
       public const string TessageId = nameof(TessageId);
       public const string EndpointId = nameof(EndpointId);
       public const string IsReceived = nameof(IsReceived);
@@ -158,15 +152,11 @@ public interface ITessagingSqlLayer
 
    public static class PeersDatabaseSchemaStrings
    {
-      public const string TableName = "Peers";
-
       public const string EndpointId = nameof(EndpointId);
    }
 
    public static class PeerHandledTessageTypesDatabaseSchemaStrings
    {
-      public const string TableName = "PeerHandledTessageTypes";
-
       public const string EndpointId = nameof(EndpointId);
       public const string HandledTessageType = nameof(HandledTessageType);
    }

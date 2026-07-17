@@ -49,7 +49,7 @@ public class Given_an_exactly_once_tessaging_endpoint_declaring_no_discovery_reg
 
       _endpoint = _host.RegisterEndpoint(container => ExactlyOnceEndpoint.Compose(
          container,
-         "EndpointDeclaringNoDiscoveryRegistry",
+         "NoDiscoveryRegistry",
          new EndpointId(Guid.Parse("5b7e2f4a-9c81-4c56-8a3d-e1f60b924d7c")),
          endpoint =>
          {

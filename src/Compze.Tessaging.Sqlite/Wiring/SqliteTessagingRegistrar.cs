@@ -1,10 +1,9 @@
-using Compze.Abstractions.Hosting.Public;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Sql.Sqlite;
 using Compze.Internals.Sql.Sqlite.Private;
 using Compze.Internals.Sql.Sqlite.Wiring;
-using Compze.Tessaging.Hosting;
+using Compze.Tessaging.Endpoints;
 using Compze.Tessaging.Transport.SqlLayer;
 using Compze.TypeIdentifiers.Interning;
 using Compze.TypeIdentifiers.Interning.Sqlite.Wiring;
@@ -13,7 +12,7 @@ namespace Compze.Tessaging.Sqlite.Wiring;
 
 public static class SqliteTessagingRegistrar
 {
-   extension(Compze.Tessaging.Endpoints.ExactlyOnceEndpointBuilder @this)
+   extension(ExactlyOnceEndpointBuilder @this)
    {
       ///<summary>Declares the domain database this endpoint joins: sqlite, reached through <paramref name="connectionStringName"/> —<br/>
       /// filling the exactly-once endpoint's one domain-database parameter with the whole engine pairing: the connection pool,<br/>
@@ -25,14 +24,14 @@ public static class SqliteTessagingRegistrar
    }
 
    public static IComponentRegistrar SqliteTessagingSqlLayer(this IComponentRegistrar registrar) =>
-      registrar.SqliteSchemaContribution(SqliteInboxSqlLayer.SchemaCreationSql)
-               .SqliteSchemaContribution(SqliteOutboxSqlLayer.SchemaCreationSql)
-               .SqliteSchemaContribution(SqlitePeerRegistrySqlLayer.SchemaCreationSql)
+      registrar.SqliteSchemaContribution((EndpointTableSet tables) => SqliteInboxSqlLayer.SchemaCreationSql(tables))
+               .SqliteSchemaContribution((EndpointTableSet tables) => SqliteOutboxSqlLayer.SchemaCreationSql(tables))
+               .SqliteSchemaContribution((EndpointTableSet tables) => SqlitePeerRegistrySqlLayer.SchemaCreationSql(tables))
                .Register(
          Singleton.For<ITessagingSqlLayer.IOutboxSqlLayer>()
-                  .CreatedBy((ISqliteConnectionPool endpointSqlConnection, SqliteSqlLayerSchemaManager schemaManager, ITypeIdInterner typeIdInterner) => new SqliteOutboxSqlLayer(endpointSqlConnection, schemaManager, typeIdInterner)),
+                  .CreatedBy((ISqliteConnectionPool endpointSqlConnection, SqliteSqlLayerSchemaManager schemaManager, ITypeIdInterner typeIdInterner, EndpointTableSet tables) => new SqliteOutboxSqlLayer(endpointSqlConnection, schemaManager, typeIdInterner, tables)),
          Singleton.For<ITessagingSqlLayer.IInboxSqlLayer>()
-                  .CreatedBy((ISqliteConnectionPool endpointSqlConnection, SqliteSqlLayerSchemaManager schemaManager, ITypeIdInterner typeIdInterner) => new SqliteInboxSqlLayer(endpointSqlConnection, schemaManager, typeIdInterner)),
+                  .CreatedBy((ISqliteConnectionPool endpointSqlConnection, SqliteSqlLayerSchemaManager schemaManager, ITypeIdInterner typeIdInterner, EndpointTableSet tables) => new SqliteInboxSqlLayer(endpointSqlConnection, schemaManager, typeIdInterner, tables)),
          Singleton.For<ITessagingSqlLayer.IPeerRegistrySqlLayer>()
-                  .CreatedBy((ISqliteConnectionPool endpointSqlConnection, SqliteSqlLayerSchemaManager schemaManager) => new SqlitePeerRegistrySqlLayer(endpointSqlConnection, schemaManager)));
+                  .CreatedBy((ISqliteConnectionPool endpointSqlConnection, SqliteSqlLayerSchemaManager schemaManager, EndpointTableSet tables) => new SqlitePeerRegistrySqlLayer(endpointSqlConnection, schemaManager, tables)));
 }
