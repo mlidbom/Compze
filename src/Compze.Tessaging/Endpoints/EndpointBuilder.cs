@@ -4,13 +4,13 @@ using Compze.Contracts;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Tessaging.Engine;
-using Compze.Tessaging.Internals.Transport;
 using Compze.Tessaging.Implementation;
 using Compze.Tessaging.Implementation.Abstractions;
 using Compze.Tessaging.Implementation.BestEffortDelivery;
 using Compze.Tessaging.Implementation.HandlerAvailability;
 using Compze.Tessaging.Implementation.Peers;
 using Compze.Tessaging.Implementation.Transport.Client.Implementation;
+using Compze.Tessaging.Internals.Transport;
 using Compze.Tessaging.Transport;
 using Compze.Tessaging.Typermedia;
 using Compze.Tessaging.Typermedia.Client;
@@ -97,13 +97,14 @@ public abstract class EndpointBuilder<TConcreteBuilder> where TConcreteBuilder :
 
    ///<summary>Declares tevent observers — observation, the deliberately transaction-ignoring watch surface, under its own verb<br/>
    /// so the distinct semantics are visible at the declaration site — see <see cref="LocalTessagingEngineBuilder.ObserveTevents"/>.</summary>
-   public TConcreteBuilder ObserveTevents(Action<TeventObservationRegistrar> observe)
+   public TConcreteBuilder ObserveTevents(Action<TeventObservationRegistrar> registerObservations)
    {
       AssertStillComposing();
-      _engine.ObserveTevents(observe);
+      _engine.ObserveTevents(registerObservations);
       return Self;
    }
 
+   //todo: This just taking an IComponentRegistrar feels iffy. Can we make setting up the protocol easier and safer to do?
    ///<summary>Declares the endpoint's transport protocol — the strategy behind the endpoint's one transport server and its<br/>
    /// transport client. Declared exactly once, through a protocol package's named extension<br/>
    /// (e.g. <c>NamedPipeEndpointTransport()</c>, <c>AspNetCoreEndpointTransport()</c>).</summary>
@@ -115,6 +116,7 @@ public abstract class EndpointBuilder<TConcreteBuilder> where TConcreteBuilder :
       return Self;
    }
 
+   //todo: This just taking an IComponentRegistrar feels iffy. Can we make setting up serialization easier and safer to do?
    ///<summary>Declares the endpoint's one serializer — the format of everything the endpoint sends and receives, of every<br/>
    /// tessage kind. Declared at most once, through a serializer package's named extension (e.g. <c>NewtonsoftSerializer()</c>);<br/>
    /// a composition whose container already carries the serializers (a testing container cloned from a suite root) declares none.</summary>
@@ -233,9 +235,9 @@ public abstract class EndpointBuilder<TConcreteBuilder> where TConcreteBuilder :
    /// and Typermedia's serving and navigating sides — both tiers serve all four tessage kinds, unconditionally.</summary>
    private protected void RegisterTheSharedEndpointCore()
    {
-      _typeMapper.MapTypesFromAssemblyContaining<EndpointAddress>();            // Compze.Abstractions — the shared message-type hierarchy and hosting contracts
-      _typeMapper.MapTypesFromAssemblyContaining<ITaggregateTevent>();          // Compze.Teventive — the Teventive type hierarchy
-      _typeMapper.MapTypesFromAssemblyContaining<EndpointInformationQuery>();   // Compze.Tessaging — the endpoint-discovery types
+      _typeMapper.MapTypesFromAssemblyContaining<EndpointAddress>();          // Compze.Abstractions — the shared message-type hierarchy and hosting contracts
+      _typeMapper.MapTypesFromAssemblyContaining<ITaggregateTevent>();        // Compze.Teventive — the Teventive type hierarchy
+      _typeMapper.MapTypesFromAssemblyContaining<EndpointInformationQuery>(); // Compze.Tessaging — the endpoint-discovery types
 
       Registrar.Register(Singleton.For<ITypeMapper>().Instance(_typeMapper),
                          Singleton.For<ITypeMap>().Instance(_typeMapper),
@@ -289,8 +291,8 @@ public abstract class EndpointBuilder<TConcreteBuilder> where TConcreteBuilder :
       //The one discovery question every endpoint serves: its answer is the endpoint's identity and its one advertisement -
       //the roster's projection, covering every tessage kind.
       new EndpointDiscoveryQueryRegistrarWithDependencyInjectionSupport(container.RootResolver.Resolve<EndpointDiscoveryQueryExecutor>())
-         .ForQuery((EndpointInformationQuery _, TessageHandlerRoster roster, EndpointConfiguration configuration) =>
-                      new EndpointInformation([..roster.AdvertisedRemoteTessageTypeIds()], configuration));
+        .ForQuery((EndpointInformationQuery _, TessageHandlerRoster roster, EndpointConfiguration configuration) =>
+                     new EndpointInformation([.. roster.AdvertisedRemoteTessageTypeIds()], configuration));
       AssertTheRosterIsSound(container.RootResolver.Resolve<TessageHandlerRoster>());
 
       return createEndpoint(container);
