@@ -27,7 +27,7 @@ using static Compze.Must.MustActions;
 namespace Compze.Tests.Integration.Hosting;
 
 ///<summary>
-/// Two best-effort endpoints (<see cref="BestEffortEndpoint.Compose"/>) converse in best-effort tevents: guarantee-free
+/// Two best-effort endpoints (<see cref="BestEffortEndpoint.Build"/>) converse in best-effort tevents: guarantee-free
 /// Tessaging with no outbox, no inbox, and no database anywhere in either endpoint. Everything exactly-once is exactly what
 /// such an endpoint cannot speak: registering a handler for a tessage type declaring the exactly-once contract — either
 /// subscription kind — fails loud at composition, and publishing an exactly-once tevent fails loud naming the missing
@@ -49,7 +49,7 @@ public class Given_two_best_effort_endpoints : UniversalTestBase
       _host = EndpointHost.Production.Create(() => TestEnv.DIContainer.CreateTestingContainerBuilder());
       var endpointsOfTheHost = new AddressesOfTheHostsEndpoints(() => _host.Endpoints);
 
-      _publisherEndpoint = _host.RegisterEndpoint(container => BestEffortEndpoint.Compose(
+      _publisherEndpoint = _host.RegisterEndpoint(container => BestEffortEndpoint.Build(
          container,
          "BestEffortPublisherEndpoint",
          new EndpointId(Guid.Parse("6d0a3a3e-59c8-4b0b-9e51-2f47a68d31c4")),
@@ -65,7 +65,7 @@ public class Given_two_best_effort_endpoints : UniversalTestBase
             endpoint.RequirePeers(SubscriberEndpointId);
          }));
 
-      _host.RegisterEndpoint(container => BestEffortEndpoint.Compose(
+      _host.RegisterEndpoint(container => BestEffortEndpoint.Build(
          container,
          "BestEffortSubscriberEndpoint",
          SubscriberEndpointId,
@@ -108,7 +108,7 @@ public class Given_two_best_effort_endpoints : UniversalTestBase
    [PCT] public async Task registering_a_handler_for_a_tevent_declaring_the_exactly_once_contract_fails_at_composition()
    {
       await using var host = EndpointHost.Production.Create(() => TestEnv.DIContainer.CreateTestingContainerBuilder());
-      Invoking(() => host.RegisterEndpoint(container => BestEffortEndpoint.Compose(
+      Invoking(() => host.RegisterEndpoint(container => BestEffortEndpoint.Build(
                         container, "ExactlyOnceSubscriptionOnABestEffortEndpoint", new EndpointId(Guid.NewGuid()),
                         endpoint =>
                         {
@@ -121,7 +121,7 @@ public class Given_two_best_effort_endpoints : UniversalTestBase
    [PCT] public async Task registering_a_transaction_ignoring_handler_for_a_tevent_declaring_the_exactly_once_contract_fails_at_composition()
    {
       await using var host = EndpointHost.Production.Create(() => TestEnv.DIContainer.CreateTestingContainerBuilder());
-      Invoking(() => host.RegisterEndpoint(container => BestEffortEndpoint.Compose(
+      Invoking(() => host.RegisterEndpoint(container => BestEffortEndpoint.Build(
                         container, "ExactlyOnceObservationOnABestEffortEndpoint", new EndpointId(Guid.NewGuid()),
                         endpoint =>
                         {
@@ -134,7 +134,7 @@ public class Given_two_best_effort_endpoints : UniversalTestBase
    [PCT] public async Task registering_a_handler_for_a_tommand_declaring_the_exactly_once_contract_fails_at_composition()
    {
       await using var host = EndpointHost.Production.Create(() => TestEnv.DIContainer.CreateTestingContainerBuilder());
-      Invoking(() => host.RegisterEndpoint(container => BestEffortEndpoint.Compose(
+      Invoking(() => host.RegisterEndpoint(container => BestEffortEndpoint.Build(
                         container, "ExactlyOnceTommandHandlerOnABestEffortEndpoint", new EndpointId(Guid.NewGuid()),
                         endpoint =>
                         {
@@ -147,7 +147,7 @@ public class Given_two_best_effort_endpoints : UniversalTestBase
    [PCT] public async Task composing_an_endpoint_without_a_serializer_fails_loud_naming_the_missing_declaration()
    {
       await using var host = EndpointHost.Production.Create(() => TestEnv.DIContainer.CreateTestingContainerBuilder());
-      Invoking(() => host.RegisterEndpoint(container => BestEffortEndpoint.Compose(
+      Invoking(() => host.RegisterEndpoint(container => BestEffortEndpoint.Build(
                         container, "BestEffortEndpointWithoutASerializer", new EndpointId(Guid.NewGuid()),
                         endpoint => endpoint.TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport()))))
         .Must().Throw<Exception>().Which.Message.Must().Contain("The endpoint declares no serializer");
@@ -156,7 +156,7 @@ public class Given_two_best_effort_endpoints : UniversalTestBase
    [PCT] public async Task composing_an_endpoint_without_a_transport_protocol_fails_loud_naming_the_missing_declaration()
    {
       await using var host = EndpointHost.Production.Create(() => TestEnv.DIContainer.CreateTestingContainerBuilder());
-      Invoking(() => host.RegisterEndpoint(container => BestEffortEndpoint.Compose(
+      Invoking(() => host.RegisterEndpoint(container => BestEffortEndpoint.Build(
                         container, "BestEffortEndpointWithoutATransportProtocol", new EndpointId(Guid.NewGuid()),
                         endpoint => endpoint.NewtonsoftSerializer())))
         .Must().Throw<Exception>().Which.Message.Must().Contain("The endpoint declares no transport protocol");

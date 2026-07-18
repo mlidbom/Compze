@@ -46,7 +46,7 @@ public static class CombinedTestingContainers
       builder.Registrar
                .TypeIdentifierMapper(registerDomainTypeMappings)
                .DummyConfigurationParameterProvider()
-               .LocalTessagingEngine(composeEngine ?? (engine => {}));
+               .LocalTessagingEngine(composeEngine ?? (_ => {}));
       setup(builder.Registrar);
 
       return builder.Build();

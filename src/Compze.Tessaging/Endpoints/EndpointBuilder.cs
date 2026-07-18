@@ -21,7 +21,7 @@ using Compze.TypeIdentifiers;
 namespace Compze.Tessaging.Endpoints;
 
 ///<summary>
-/// The declaration surface an endpoint is composed through — what <see cref="BestEffortEndpoint.Compose"/> /
+/// The declaration surface an endpoint is composed through — what <see cref="BestEffortEndpoint.Build"/> /
 /// <see cref="ExactlyOnceEndpoint.Compose"/> hand their composition callback. An endpoint is an engine given identity and a
 /// wire, and this surface declares all three: the engine (<see cref="MapTypes"/>, <see cref="RegisterTessageHandlers"/>,
 /// <see cref="ObserveTevents"/> — the same declaration block a plain container's LocalTessagingEngine uses, so an

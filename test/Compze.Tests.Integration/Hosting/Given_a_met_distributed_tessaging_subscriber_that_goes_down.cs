@@ -52,7 +52,7 @@ public class Given_a_met_distributed_tessaging_subscriber_that_goes_down : Unive
    public Given_a_met_distributed_tessaging_subscriber_that_goes_down()
    {
       _publisherHost = EndpointHost.Production.Create(() => TestEnv.DIContainer.CreateTestingContainerBuilder());
-      _publisherEndpoint = _publisherHost.RegisterEndpoint(container => BestEffortEndpoint.Compose(
+      _publisherEndpoint = _publisherHost.RegisterEndpoint(container => BestEffortEndpoint.Build(
          container,
          "QueueWhileDownPublisherEndpoint",
          new EndpointId(Guid.Parse("21c2e6a4-9b0f-4c3d-8a57-3f1de08b6c92")),
@@ -70,7 +70,7 @@ public class Given_a_met_distributed_tessaging_subscriber_that_goes_down : Unive
    IEndpointHost CreateSubscriberHost()
    {
       var host = EndpointHost.Production.Create(() => TestEnv.DIContainer.CreateTestingContainerBuilder());
-      host.RegisterEndpoint(container => BestEffortEndpoint.Compose(
+      host.RegisterEndpoint(container => BestEffortEndpoint.Build(
          container,
          "QueueWhileDownSubscriberEndpoint",
          SubscriberEndpointId,

@@ -12,19 +12,19 @@ namespace Compze.Tessaging.Endpoints;
 /// exactly-once delivery fails at composition: this endpoint has no inbox to persist, dedup, and retry with, and an endpoint
 /// that cannot honor a guarantee must not advertise for it.
 ///
-/// Composed through <see cref="Compose"/>; with no durable state, the consistency law holds for it trivially — inline
+/// Composed through <see cref="Build"/>; with no durable state, the consistency law holds for it trivially — inline
 /// handling <em>is</em> its consistency.
 ///</summary>
 public class BestEffortEndpoint : Endpoint
 {
-   ///<summary>Composes a best-effort endpoint: runs <paramref name="compose"/> over the endpoint's declaration surface<br/>
+   ///<summary>Composes a best-effort endpoint: runs <paramref name="build"/> over the endpoint's declaration surface<br/>
    /// (<see cref="BestEffortEndpointBuilder"/>), builds the endpoint's container, and returns the endpoint, ready for its<br/>
    /// lifecycle to be driven — directly, or by the <see cref="IEndpointHost"/> that owns it<br/>
    /// (<see cref="IEndpointHost.RegisterEndpoint{TEndpoint}"/>).</summary>
-   public static BestEffortEndpoint Compose(IContainerBuilder containerBuilder, string name, EndpointId id, Action<BestEffortEndpointBuilder> compose)
+   public static BestEffortEndpoint Build(IContainerBuilder containerBuilder, string name, EndpointId id, Action<BestEffortEndpointBuilder> build)
    {
       var builder = new BestEffortEndpointBuilder(containerBuilder, new EndpointConfiguration(name, id));
-      compose(builder);
+      build(builder);
       return builder.Build();
    }
 

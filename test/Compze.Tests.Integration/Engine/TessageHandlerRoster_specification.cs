@@ -43,7 +43,7 @@ public class TessageHandlerRoster_specification : UniversalTestBase
    {
       readonly TessageHandlerRoster _roster;
       public with_nothing_declared_every_missing_handler_lookup_throws_NoHandlerException_naming_the_type() =>
-         _roster = ComposeContainerWithEngineAndGetItsRoster(engine => {});
+         _roster = ComposeContainerWithEngineAndGetItsRoster(_ => {});
 
       [PCT] public void the_tuery_handler_lookup() =>
          Invoking(() => _roster.GetTueryHandler(typeof(UnhandledTuery)))

@@ -54,7 +54,7 @@ public static class Program
                   endpoint => ComposeExactlyOnceTessagingOnASqliteDatabase(endpoint, registry, workDirectory)));
                break;
             case DatabaselessComposition:
-               host.RegisterEndpoint(container => Compze.Tessaging.Endpoints.BestEffortEndpoint.Compose(
+               host.RegisterEndpoint(container => Compze.Tessaging.Endpoints.BestEffortEndpoint.Build(
                   container, "EndpointHostProcess", MultiProcessConversationEndpoints.EndpointHostProcessEndpointId,
                   endpoint => ComposeDistributedTessagingAndTypermediaWithNoDatabase(endpoint, registry)));
                break;

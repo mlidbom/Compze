@@ -18,7 +18,7 @@ namespace Compze.Tessaging.Engine;
 /// after that explodes — the roster is closed, per the engine's contract that its roster can only change by building a new engine.</summary>
 ///<remarks>Single-handler kinds — tueries and tommands — hold exactly one handler per tessage type: registering a second explodes<br/>
 /// immediately, at declaration. Tevent subscriptions are multi-subscriber and accumulate freely.</remarks>
-public sealed partial class TessageHandlerRegistrations
+public sealed class TessageHandlerRegistrations
 {
    readonly IMonitor _monitor = IMonitor.New();
    bool _rosterIsBuilt;
@@ -89,7 +89,7 @@ public sealed partial class TessageHandlerRegistrations
       AssertSingleHandlerKindIsUnregistered(_tommandHandlersWithResults, typeof(TTommand));
 
       _tommandHandlersWithResults.Add(typeof(TTommand),
-                                      new TessageHandlerRoster.TommandHandlerWithResult(typeof(TResult), async (tommand, unitOfWork) => (object)(await handler((TTommand)tommand, unitOfWork).caf())!));
+                                      new TessageHandlerRoster.TommandHandlerWithResult(typeof(TResult), async (tommand, unitOfWork) => (await handler((TTommand)tommand, unitOfWork).caf())!));
    });
 
    ///<summary>Registers the handler for <typeparamref name="TTuery"/>. Tuery handlers receive a plain <see cref="IScopeResolver"/>,<br/>
@@ -101,7 +101,7 @@ public sealed partial class TessageHandlerRegistrations
       TessageInspector.AssertValid<TTuery>();
       AssertSingleHandlerKindIsUnregistered(_tueryHandlers, typeof(TTuery));
 
-      _tueryHandlers.Add(typeof(TTuery), async (tuery, scope) => (object)(await handler((TTuery)tuery, scope).caf())!);
+      _tueryHandlers.Add(typeof(TTuery), async (tuery, scope) => (await handler((TTuery)tuery, scope).caf())!);
    });
 
    ///<summary>Builds the immutable <see cref="TessageHandlerRoster"/> from everything registered so far and closes registration:<br/>

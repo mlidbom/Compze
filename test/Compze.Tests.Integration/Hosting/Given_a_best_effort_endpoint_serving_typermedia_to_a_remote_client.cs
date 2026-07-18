@@ -22,7 +22,7 @@ using static Compze.Must.MustActions;
 namespace Compze.Tests.Integration.Hosting;
 
 ///<summary>
-/// A best-effort endpoint (<see cref="BestEffortEndpoint.Compose"/>) hosts everything that persists nothing: it serves
+/// A best-effort endpoint (<see cref="BestEffortEndpoint.Build"/>) hosts everything that persists nothing: it serves
 /// remote tueries and tommands with no outbox, no inbox, and no database anywhere, and an external client application
 /// navigates its typermedia at its address. The durable vertical is exactly what such an endpoint cannot carry: an
 /// exactly-once endpoint composed without a database declaration fails loud at composition, naming the missing declaration.
@@ -40,7 +40,7 @@ public class Given_a_best_effort_endpoint_serving_typermedia_to_a_remote_client 
       var registeredUsers = new List<UserResource>();
 
       _host = EndpointHost.Production.Create(() => TestEnv.DIContainer.CreateTestingContainerBuilder());
-      _endpoint = _host.RegisterEndpoint(container => BestEffortEndpoint.Compose(
+      _endpoint = _host.RegisterEndpoint(container => BestEffortEndpoint.Build(
          container,
          "DatabaselessTypermediaEndpoint",
          new EndpointId(Guid.Parse("d2f9c1a4-6e83-4b57-9a02-8c5d41e7f6b0")),

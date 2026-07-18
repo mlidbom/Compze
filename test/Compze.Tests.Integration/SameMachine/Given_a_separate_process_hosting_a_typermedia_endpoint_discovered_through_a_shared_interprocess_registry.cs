@@ -53,7 +53,7 @@ public class Given_a_separate_process_hosting_a_typermedia_endpoint_discovered_t
       _endpointHostProcess = EndpointHostProcessHandle.Start(registryName, _workDirectory, EndpointHostProcessProgram.DatabaselessComposition);
 
       _specificationHost = EndpointHost.Production.Create(() => TestEnv.DIContainer.CreateTestingContainerBuilder());
-      _specificationEndpoint = _specificationHost.RegisterEndpoint(container => BestEffortEndpoint.Compose(
+      _specificationEndpoint = _specificationHost.RegisterEndpoint(container => BestEffortEndpoint.Build(
          container,
          "SpecificationEndpoint",
          new EndpointId(Guid.NewGuid()),

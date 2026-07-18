@@ -47,7 +47,7 @@ public class Given_a_met_distributed_tessaging_subscriber_the_publisher_does_not
    public Given_a_met_distributed_tessaging_subscriber_the_publisher_does_not_queue_tevents_for()
    {
       _publisherHost = EndpointHost.Production.Create(() => TestEnv.DIContainer.CreateTestingContainerBuilder());
-      _publisherEndpoint = _publisherHost.RegisterEndpoint(container => BestEffortEndpoint.Compose(
+      _publisherEndpoint = _publisherHost.RegisterEndpoint(container => BestEffortEndpoint.Build(
          container,
          "NoQueueingPublisherEndpoint",
          new EndpointId(Guid.Parse("e47b06d2-3c95-48a1-bf60-27d8c41e95b0")),
@@ -66,7 +66,7 @@ public class Given_a_met_distributed_tessaging_subscriber_the_publisher_does_not
    IEndpointHost CreateSubscriberHost()
    {
       var host = EndpointHost.Production.Create(() => TestEnv.DIContainer.CreateTestingContainerBuilder());
-      host.RegisterEndpoint(container => BestEffortEndpoint.Compose(
+      host.RegisterEndpoint(container => BestEffortEndpoint.Build(
          container,
          "NoQueueingSubscriberEndpoint",
          SubscriberEndpointId,

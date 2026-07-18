@@ -236,7 +236,7 @@ public partial class Given_a_container_composing_a_LocalTessagingEngine : Univer
 
    public class the_independent_tevent_publisher : Given_a_container_composing_a_LocalTessagingEngine
    {
-      public the_independent_tevent_publisher() => ComposeContainerWithEngine(engine => {});
+      public the_independent_tevent_publisher() => ComposeContainerWithEngine(_ => {});
 
       [PCT] public void throws_when_called_from_within_an_ambient_transaction() =>
          Invoking(() =>
@@ -250,7 +250,7 @@ public partial class Given_a_container_composing_a_LocalTessagingEngine : Univer
 
    public class the_unit_of_work_tevent_publisher : Given_a_container_composing_a_LocalTessagingEngine
    {
-      public the_unit_of_work_tevent_publisher() => ComposeContainerWithEngine(engine => {});
+      public the_unit_of_work_tevent_publisher() => ComposeContainerWithEngine(_ => {});
 
       [PCT] public void throws_when_publishing_outside_an_ambient_transaction() =>
          Container.ScopeFactory.ExecuteInIsolatedScope(scope =>
@@ -264,8 +264,8 @@ public partial class Given_a_container_composing_a_LocalTessagingEngine : Univer
       [PCT] public void explodes_stating_exactly_one_engine_per_container()
       {
          var builder = TestEnv.DIContainer.CreateTestingContainerBuilder();
-         builder.Registrar.LocalTessagingEngine(engine => {});
-         Invoking(() => builder.Registrar.LocalTessagingEngine(engine => {}))
+         builder.Registrar.LocalTessagingEngine(_ => {});
+         Invoking(() => builder.Registrar.LocalTessagingEngine(_ => {}))
             .Must().Throw<Exception>()
             .Which.Message.Must().Contain("exactly one engine per container");
       }

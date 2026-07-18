@@ -25,7 +25,7 @@ using static Compze.Must.MustActions;
 namespace Compze.Tests.Integration.Hosting;
 
 ///<summary>
-/// Two best-effort endpoints (<see cref="BestEffortEndpoint.Compose"/>) converse in typermedia — request/response neither
+/// Two best-effort endpoints (<see cref="BestEffortEndpoint.Build"/>) converse in typermedia — request/response neither
 /// queues nor persists, so the tier serves it identically to the exactly-once tier. The asking endpoint navigates the
 /// answering endpoint's tueries and tommands through its own <see cref="IRemoteTypermediaNavigator"/>, routed by its router's
 /// live reconciliation against the registry the endpoint declared it discovers through — never by a configured address. The
@@ -44,7 +44,7 @@ public class Given_two_best_effort_endpoints_conversing_in_typermedia : Universa
       _host = EndpointHost.Production.Create(() => TestEnv.DIContainer.CreateTestingContainerBuilder());
       var endpointsOfTheHost = new AddressesOfTheHostsEndpoints(() => _host.Endpoints);
 
-      _askingEndpoint = _host.RegisterEndpoint(container => BestEffortEndpoint.Compose(
+      _askingEndpoint = _host.RegisterEndpoint(container => BestEffortEndpoint.Build(
          container,
          "TypermediaAskingEndpoint",
          new EndpointId(Guid.Parse("3f7b9c25-81d4-4a6e-b0f2-c58a17d93e46")),
@@ -56,7 +56,7 @@ public class Given_two_best_effort_endpoints_conversing_in_typermedia : Universa
             endpoint.DiscoverEndpointsThrough(endpointsOfTheHost);
          }));
 
-      _answeringEndpoint = _host.RegisterEndpoint(container => BestEffortEndpoint.Compose(
+      _answeringEndpoint = _host.RegisterEndpoint(container => BestEffortEndpoint.Build(
          container,
          "TypermediaAnsweringEndpoint",
          new EndpointId(Guid.Parse("b93d40e7-2c58-4f1b-a6d9-04e8c6a25f17")),

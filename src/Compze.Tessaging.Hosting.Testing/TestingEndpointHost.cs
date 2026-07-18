@@ -86,7 +86,7 @@ public class TestingEndpointHost : EndpointHost
    ///<summary>Registers a <see cref="BestEffortEndpoint"/> composed with the current test's concerns — the host's tracker,<br/>
    /// transport, serializers, and participation in <see cref="EndpointRegistry"/> — plus whatever <paramref name="declare"/> declares.</summary>
    public BestEffortEndpoint RegisterBestEffortEndpoint(string name, EndpointId id, Action<BestEffortEndpointBuilder> declare) =>
-      RegisterEndpoint(container => BestEffortEndpoint.Compose(container, name, id, endpoint =>
+      RegisterEndpoint(container => BestEffortEndpoint.Build(container, name, id, endpoint =>
       {
          DeclareTheCurrentTestsConcerns(endpoint);
          declare(endpoint);
