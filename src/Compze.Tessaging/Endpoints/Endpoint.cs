@@ -178,24 +178,35 @@ public abstract class Endpoint : IEndpoint
    public async ValueTask DisposeAsync()
    {
       this.Log().Debug($"Endpoint '{_configuration.Name}' ({Id}) disposing");
-      await RetractAddressAsync().caf();
-      await StopSendingAsync().caf();
-      await StopListeningAsync().caf();
-      //After listening stops nothing new arrives, so the inbox drains to empty here - while the container still serves its
-      //handlers their scopes - before teardown. Empty queues before teardown is the graceful-shutdown property (nothing
-      //half-processed) that a rolling restart or a serialization-format change wants.
-      await DrainTheInboxAsync().caf();
-      //Drain the observation queues while the container still serves the observers their scopes: once container disposal
-      //begins, scope creation is refused, so a drain left to the container's own singleton teardown could no longer run the
-      //observers. Nothing enqueues new observation work after listening stopped - except observers themselves, which the
-      //drain's passes cover.
-      _observationDispatcher.Dispose();
-      //After the drain: nothing in this process writes to the domain database anymore, so the process lease can be freed for
-      //the endpoint's next process.
-      await ReleaseTheProcessLeaseAsync().caf();
-      await _container.DisposeAsync().caf();
-      //The container also disposes the server it holds; server disposal is idempotent, and disposing what we hold keeps ownership legible.
-      await _transportServer.DisposeAsync().caf();
+      try
+      {
+         await RetractAddressAsync().caf();
+         await StopSendingAsync().caf();
+         await StopListeningAsync().caf();
+         //After listening stops nothing new arrives, so the inbox drains to empty here - while the container still serves its
+         //handlers their scopes - before teardown. Empty queues before teardown is the graceful-shutdown property (nothing
+         //half-processed) that a rolling restart or a serialization-format change wants.
+         await DrainTheInboxAsync().caf();
+         //Drain the observation queues while the container still serves the observers their scopes: once container disposal
+         //begins, scope creation is refused, so a drain left to the container's own singleton teardown could no longer run the
+         //observers. Nothing enqueues new observation work after listening stopped - except observers themselves, which the
+         //drain's passes cover.
+         _observationDispatcher.Dispose();
+         //After the drain: nothing in this process writes to the domain database anymore, so the process lease can be freed for
+         //the endpoint's next process.
+         await ReleaseTheProcessLeaseAsync().caf();
+      }
+      finally
+      {
+         //Resource release must run even when a quiescing step above throws - most easily a delivery thread that will not stop,
+         //whose 5s join throws out of StopSendingAsync. Disposing the container joins the router's reconcile loop, ending the
+         //peer-registry transaction a pass may hold open, and disposes every other singleton. Skipping it abandons that
+         //transaction - and its connection, released only by transaction completion and held by a process-wide static pool -
+         //open until the transaction-timeout backstop fires. The quiescing exception still propagates once the finally completes.
+         await _container.DisposeAsync().caf();
+         //The container also disposes the server it holds; server disposal is idempotent, and disposing what we hold keeps ownership legible.
+         await _transportServer.DisposeAsync().caf();
+      }
       _backgroundExceptionReporter.ThrowIfAnyExceptions();
    }
 }

@@ -230,6 +230,12 @@ class TessagingRouter : ITessagingRouter, IDisposable
    public void StopDelivery()
    {
       _reconcileLoopCancellation.Cancel();
+      //Join the reconcile loop before returning: a pass in flight holds the peer-registry advertisement transaction open
+      //(ReconcileConnectionsAsync -> ConnectAsync -> RecordAdvertisementAsync), so stopping delivery must mean that transaction
+      //has reached its terminal state - not merely that the loop was signalled. Awaited outside the monitor: a pass in flight
+      //takes the monitor to finish, so joining while holding it would deadlock. Ordered before the connections are stopped so
+      //their delivery threads are no longer blocked behind that transaction's locks when they are joined.
+      _reconcileLoop?.WaitUnwrappingException();
       _monitor.Locked(() =>
       {
          _deliveryStarted = false;
