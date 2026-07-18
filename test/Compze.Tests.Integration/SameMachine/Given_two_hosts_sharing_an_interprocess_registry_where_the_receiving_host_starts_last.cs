@@ -40,12 +40,12 @@ public class Given_two_hosts_sharing_an_interprocess_registry_where_the_receivin
       //The production host, and each endpoint composed by hand: the shared interprocess registry - not a testing host's own
       //registry - is how the endpoints find each other, exactly as separate processes would.
       _senderHost = EndpointHost.Production.Create(CreateEndpointContainerBuilder);
-      _senderEndpoint = _senderHost.RegisterEndpoint(container => ExactlyOnceEndpoint.Compose(
+      _senderEndpoint = _senderHost.RegisterEndpoint(container => ExactlyOnceEndpoint.Build(
          container, "Sender", new EndpointId(Guid.NewGuid()),
          ComposeEndpointDiscoveredThroughTheRegistry));
 
       _receiverHost = EndpointHost.Production.Create(CreateEndpointContainerBuilder);
-      _receiverHost.RegisterEndpoint(container => ExactlyOnceEndpoint.Compose(
+      _receiverHost.RegisterEndpoint(container => ExactlyOnceEndpoint.Build(
          container, "Receiver", new EndpointId(Guid.NewGuid()),
          endpointBuilder =>
          {
@@ -66,7 +66,7 @@ public class Given_two_hosts_sharing_an_interprocess_registry_where_the_receivin
       endpointBuilder
          .MapTypes(mapper => mapper.RegisterIntegrationTestTypeMappings())
          .TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport())
-         .DomainDatabase(registrar => registrar.CurrentTestsConfiguredSqlLayer(connectionStringName: endpointBuilder.Configuration.Id.ToString()))
+         .ConfigurePersistence(registrar => registrar.CurrentTestsConfiguredSqlLayer(connectionStringName: endpointBuilder.Configuration.Id.ToString()))
          .ParticipateIn(_registry);
    }
 

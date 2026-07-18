@@ -12,7 +12,7 @@ using Compze.Tessaging.Transport.SqlLayer;
 namespace Compze.Tessaging.Endpoints;
 
 ///<summary>The declaration surface an <see cref="ExactlyOnceEndpoint"/> is composed through — everything the base<br/>
-/// <see cref="EndpointBuilder{TConcreteBuilder}"/> declares, plus the domain database this endpoint joins (<see cref="DomainDatabase"/>): the<br/>
+/// <see cref="EndpointBuilder{TConcreteBuilder}"/> declares, plus the domain database this endpoint joins (<see cref="ConfigurePersistence"/>): the<br/>
 /// durable vertical — inbox, outbox, durable peer memory — lives in it, and its atomicity <em>is</em> its co-location with<br/>
 /// the domain data the endpoint's executions touch. Declared through a database package's named extension<br/>
 /// (e.g. <c>SqliteDomainDatabase(...)</c>), which registers the engine pairing — the connection pool, the type-id<br/>
@@ -39,10 +39,11 @@ public sealed class ExactlyOnceEndpointBuilder : EndpointBuilder<ExactlyOnceEndp
       return this;
    }
 
+   //todo:review: This just dealing in an IComponentRegistrar feels questionable
    ///<summary>Declares the domain database this endpoint joins — where the domain data its executions touch lives, and where<br/>
    /// its durable vertical lives with it. Declared exactly once, through a database package's named extension<br/>
    /// (e.g. <c>SqliteDomainDatabase(...)</c>).</summary>
-   public ExactlyOnceEndpointBuilder DomainDatabase(Action<IComponentRegistrar> registerDomainDatabase)
+   public ExactlyOnceEndpointBuilder ConfigurePersistence(Action<IComponentRegistrar> registerDomainDatabase)
    {
       AssertStillComposing();
       State.Assert(_registerDomainDatabase is null, () => "The endpoint already declared the domain database it joins — an endpoint joins exactly one.");

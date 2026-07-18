@@ -31,7 +31,7 @@ namespace Compze.Tests.Integration.Hosting;
 /// immediate and transactional, so the handling is exactly-once by construction (one transaction, no delivery machinery
 /// involved) and its failure fails the sender's execution. The process-manager pattern — handling one tessage sends a
 /// follow-up tommand belonging to the same endpoint — is in-boundary composition, needing no discovery and no wire. The host
-/// is the production host and the endpoint is composed explicitly (<see cref="ExactlyOnceEndpoint.Compose"/>), so the
+/// is the production host and the endpoint is composed explicitly (<see cref="ExactlyOnceEndpoint.Build"/>), so the
 /// composition stands entirely on what it declares.
 ///</summary>
 public class Given_an_exactly_once_tessaging_endpoint_declaring_no_discovery_registry : UniversalTestBase
@@ -47,7 +47,7 @@ public class Given_an_exactly_once_tessaging_endpoint_declaring_no_discovery_reg
       _host = EndpointHost.Production.Create(() => TestEnv.DIContainer.CreateTestingContainerBuilder()
                                                           ._mutate(it => it.Registrar.CurrentTestsDbPoolIfNotCloneContainer()));
 
-      _endpoint = _host.RegisterEndpoint(container => ExactlyOnceEndpoint.Compose(
+      _endpoint = _host.RegisterEndpoint(container => ExactlyOnceEndpoint.Build(
          container,
          "NoDiscoveryRegistry",
          new EndpointId(Guid.Parse("5b7e2f4a-9c81-4c56-8a3d-e1f60b924d7c")),
@@ -56,7 +56,7 @@ public class Given_an_exactly_once_tessaging_endpoint_declaring_no_discovery_reg
             endpointBuilder
                .MapTypes(mapper => mapper.RegisterIntegrationTestTypeMappings())
                .TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport())
-               .DomainDatabase(registrar => registrar.CurrentTestsConfiguredSqlLayer(connectionStringName: endpointBuilder.Configuration.Id.ToString()))
+               .ConfigurePersistence(registrar => registrar.CurrentTestsConfiguredSqlLayer(connectionStringName: endpointBuilder.Configuration.Id.ToString()))
                .RegisterTessageHandlers(handle => handle
                        .ForTommand((TommandTheEndpointSendsItself _) =>
                         {

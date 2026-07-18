@@ -16,7 +16,7 @@ namespace Compze.Tessaging.Endpoints;
 /// <see cref="Compze.Abstractions.Tessaging.Public.IIndependentTommandSender"/>). Serves all four tessage kinds
 /// unconditionally.
 ///
-/// Composed through <see cref="Compose"/>. Which machinery carries a given tessage is decided by the tessage's type and the
+/// Composed through <see cref="Build"/>. Which machinery carries a given tessage is decided by the tessage's type and the
 /// consistency law: a send whose handler is in the roster executes inline, in the sender's execution — exactly-once by
 /// construction, no delivery machinery involved — and a send whose handler lives elsewhere crosses the boundary through the
 /// durable vertical.
@@ -27,14 +27,14 @@ public class ExactlyOnceEndpoint : Endpoint
    readonly IOutbox _outbox;
    readonly EndpointProcessLease _processLease;
 
-   ///<summary>Composes an exactly-once endpoint: runs <paramref name="compose"/> over the endpoint's declaration surface<br/>
+   ///<summary>Composes an exactly-once endpoint: runs <paramref name="build"/> over the endpoint's declaration surface<br/>
    /// (<see cref="ExactlyOnceEndpointBuilder"/>), builds the endpoint's container, and returns the endpoint, ready for its<br/>
    /// lifecycle to be driven — directly, or by the <see cref="IEndpointHost"/> that owns it<br/>
    /// (<see cref="IEndpointHost.RegisterEndpoint{TEndpoint}"/>).</summary>
-   public static ExactlyOnceEndpoint Compose(IContainerBuilder containerBuilder, string name, EndpointId id, Action<ExactlyOnceEndpointBuilder> compose)
+   public static ExactlyOnceEndpoint Build(IContainerBuilder containerBuilder, string name, EndpointId id, Action<ExactlyOnceEndpointBuilder> build)
    {
       var builder = new ExactlyOnceEndpointBuilder(containerBuilder, new EndpointConfiguration(name, id));
-      compose(builder);
+      build(builder);
       return builder.Build();
    }
 

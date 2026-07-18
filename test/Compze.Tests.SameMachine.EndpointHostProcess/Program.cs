@@ -49,7 +49,7 @@ public static class Program
          switch(composition)
          {
             case ExactlyOnceTessagingComposition:
-               host.RegisterEndpoint(container => Compze.Tessaging.Endpoints.ExactlyOnceEndpoint.Compose(
+               host.RegisterEndpoint(container => Compze.Tessaging.Endpoints.ExactlyOnceEndpoint.Build(
                   container, "EndpointHostProcess", MultiProcessConversationEndpoints.EndpointHostProcessEndpointId,
                   endpointBuilder => ComposeExactlyOnceTessagingOnASqliteDatabase(endpointBuilder, registry, workDirectory)));
                break;

@@ -18,7 +18,7 @@ public static class SqliteTessagingRegistrar
       /// filling the exactly-once endpoint's one domain-database parameter with the whole engine pairing: the connection pool,<br/>
       /// the sqlite type-id interner Tessaging's sql layers share (derived from the declaration), and Tessaging's sqlite sql layers.</summary>
       public ExactlyOnceEndpointBuilder SqliteDomainDatabase(string connectionStringName) =>
-         @this.DomainDatabase(registrar => registrar.SqliteDomainDatabase(connectionStringName)
+         @this.ConfigurePersistence(registrar => registrar.SqliteDomainDatabase(connectionStringName)
                                                     .SqliteTypeIdInterner(new SqliteDomainDatabase(connectionStringName))
                                                     .SqliteTessagingSqlLayer());
    }

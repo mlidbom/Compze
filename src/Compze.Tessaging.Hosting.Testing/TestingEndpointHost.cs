@@ -76,10 +76,10 @@ public class TestingEndpointHost : EndpointHost
    /// of one of its own — the composition for several endpoints storing side by side in one domain database: each with its<br/>
    /// prefixed table-set, sharing the endpoint catalog and the type-id interner.</summary>
    public ExactlyOnceEndpoint RegisterExactlyOnceEndpointInDomainDatabase(string name, EndpointId id, string domainDatabaseName, Action<ExactlyOnceEndpointBuilder> declare) =>
-      RegisterEndpoint(container => ExactlyOnceEndpoint.Compose(container, name, id, endpointBuilder =>
+      RegisterEndpoint(container => ExactlyOnceEndpoint.Build(container, name, id, endpointBuilder =>
       {
          DeclareTheCurrentTestsConcerns(endpointBuilder);
-         endpointBuilder.DomainDatabase(registrar => registrar.CurrentTestsConfiguredSqlLayer(connectionStringName: domainDatabaseName));
+         endpointBuilder.ConfigurePersistence(registrar => registrar.CurrentTestsConfiguredSqlLayer(connectionStringName: domainDatabaseName));
          declare(endpointBuilder);
       }));
 

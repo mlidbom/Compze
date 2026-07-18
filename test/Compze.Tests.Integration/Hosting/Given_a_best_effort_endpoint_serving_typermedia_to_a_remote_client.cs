@@ -81,7 +81,7 @@ public class Given_a_best_effort_endpoint_serving_typermedia_to_a_remote_client 
    [PCT] public async Task composing_an_exactly_once_endpoint_without_a_domain_database_fails_loud_naming_the_missing_declaration()
    {
       await using var host = EndpointHost.Production.Create(() => TestEnv.DIContainer.CreateTestingContainerBuilder());
-      Invoking(() => host.RegisterEndpoint(container => ExactlyOnceEndpoint.Compose(
+      Invoking(() => host.RegisterEndpoint(container => ExactlyOnceEndpoint.Build(
                         container, "TessagingWithoutADatabase", new EndpointId(Guid.NewGuid()),
                         endpointBuilder => endpointBuilder
                            .MapTypes(mapper => mapper.RegisterIntegrationTestTypeMappings())

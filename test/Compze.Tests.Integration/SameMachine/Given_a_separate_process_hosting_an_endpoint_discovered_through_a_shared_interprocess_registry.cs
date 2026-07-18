@@ -53,7 +53,7 @@ public class Given_a_separate_process_hosting_an_endpoint_discovered_through_a_s
 
       _specificationHost = EndpointHost.Production.Create(() => TestEnv.DIContainer.CreateTestingContainerBuilder()
                                                                        ._mutate(it => it.Registrar.CurrentTestsDbPoolIfNotCloneContainer()));
-      _specificationEndpoint = _specificationHost.RegisterEndpoint(container => ExactlyOnceEndpoint.Compose(
+      _specificationEndpoint = _specificationHost.RegisterEndpoint(container => ExactlyOnceEndpoint.Build(
          container,
          "SpecificationEndpoint",
          new EndpointId(Guid.NewGuid()),
@@ -62,7 +62,7 @@ public class Given_a_separate_process_hosting_an_endpoint_discovered_through_a_s
             endpointBuilder
                .MapTypes(mapper => mapper.MapTypesFromAssemblyContaining<TommandSentToTheEndpointHostProcess>())
                .TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport())
-               .DomainDatabase(registrar => registrar.CurrentTestsConfiguredSqlLayer(connectionStringName: endpointBuilder.Configuration.Id.ToString()))
+               .ConfigurePersistence(registrar => registrar.CurrentTestsConfiguredSqlLayer(connectionStringName: endpointBuilder.Configuration.Id.ToString()))
                .ParticipateIn(_registry)
                .RegisterTessageHandlers(handle => handle.ForTommand((TommandSentBackToTheSpecificationProcess _) =>
             {
