@@ -90,21 +90,25 @@ class TessagingRouter : ITessagingRouter, IDisposable
       await ReconcileConnectionsAsync().caf();
       //With no registry declared there is no membership to converge on - the endpoint connects to no other endpoint - so there is nothing to keep reconciling.
       if(endpointRegistry is not null)
-         _reconcileLoop = Task.Factory.StartNew(ReconcileLoop, CancellationToken.None, TaskCreationOptions.LongRunning, TaskScheduler.Default);
+         _reconcileLoop = TaskCE.Run(ReconcileLoopAsync);
    }
 
-   ///<summary>Runs on its own thread (the registry wait blocks it): waits until the registry signals that membership may have<br/>
-   /// changed — or <see cref="ReconcileLivenessInterval"/> elapses, covering what no signal carries — then reconciles.</summary>
-   void ReconcileLoop()
+   ///<summary>Waits until the registry signals that membership may have changed — or <see cref="ReconcileLivenessInterval"/><br/>
+   /// elapses, covering what no signal carries — then reconciles. An async loop, not a thread blocked on the reconcile.</summary>
+   ///<remarks>The reconcile pass runs as an awaited continuation, never a thread blocked on it. A pass records peer advertisements<br/>
+   /// (<see cref="IPeerRegistry"/>) inside a <see cref="System.Transactions.TransactionScope"/>; blocking a thread on that async<br/>
+   /// work — the previous <c>WaitUnwrappingException</c> — stranded the ambient transaction, so its connection held its locks until<br/>
+   /// the transaction timeout. Only the registry wait blocks, offloaded off the loop so it never blocks the pass's continuations.</remarks>
+   async Task ReconcileLoopAsync()
    {
       while(!_reconcileLoopCancellation.IsCancellationRequested)
       {
-         _endpointRegistry!.AwaitPossibleMembershipChange(ReconcileLivenessInterval, _reconcileLoopCancellation.Token);
+         await TaskCE.Run(() => _endpointRegistry!.AwaitPossibleMembershipChange(ReconcileLivenessInterval, _reconcileLoopCancellation.Token)).caf();
          if(_reconcileLoopCancellation.IsCancellationRequested) return;
 
          try
          {
-            ReconcileConnectionsAsync().WaitUnwrappingException();
+            await ReconcileConnectionsAsync().caf();
          }
 #pragma warning disable CA1031 //A reconciliation pass must never kill the loop; an unexpected failure is reported and surfaces the way every background exception does.
          catch(Exception exception)
