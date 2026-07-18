@@ -17,7 +17,7 @@ public static class TransactionScopeCe
    /// <see cref="System.Transactions.TransactionManager.MaximumTimeout"/> (10 minutes on this runtime) — far too long a leak. This<br/>
    /// bounds it to a value well above any real unit of work here, so a wedged one self-heals in bounded time. Clean shutdown means<br/>
    /// it is essentially never reached.</remarks>
-   static readonly TimeSpan TransactionTimeout = TimeSpan.FromMinutes(1);
+   static readonly TimeSpan TransactionTimeout = 45.Seconds();
 
    static readonly TransactionOptions UnitOfWorkTransactionOptions = new()
    {
