@@ -51,4 +51,6 @@ class DbPoolMachineWideState
    }
 
    internal void ReleaseReservationsFor(Guid poolId) => _shared.Update(state => state.ReleaseReservationsFor(poolId));
+
+   internal void RenewReservationsFor(Guid poolId, TimeSpan reservationLength) => _shared.Update(state => state.RenewReservationsFor(poolId, reservationLength));
 }
