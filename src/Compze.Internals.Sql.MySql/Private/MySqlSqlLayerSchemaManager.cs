@@ -16,7 +16,10 @@ class MySqlSqlLayerSchemaManager
    //scripts' IF-NOT-EXISTS guards are not concurrency-safe DDL. The engine's named lock serializes schema creation across
    //connections and processes; acquisition, batch, and release must share one connection, because the lock is
    //session-scoped.
-   const string SchemaCreationLockName = "Compze.SchemaCreation";
+   //The name is scoped to the CURRENT database (DATABASE()): a MySQL GET_LOCK is SERVER-GLOBAL by name, so a constant name
+   //would serialize schema creation across every unrelated database on the same server - a needless cross-database bottleneck
+   //and a latent deadlock risk. Per-database scoping serializes only the endpoints that actually share one domain database.
+   const string SchemaCreationLockNamePrefix = "Compze.SchemaCreation";
 
    readonly IMySqlConnectionPool _connectionPool;
    readonly string _schemaCreationSql;
@@ -33,17 +36,17 @@ class MySqlSqlLayerSchemaManager
          await _connectionPool.UseConnectionAsync(async connection =>
          {
             //GET_LOCK returns 1 on success, 0 on timeout, NULL on error - anything but 1 must fail loud, or the batch
-            //would run unserialized.
-            var lockResult = await connection.ExecuteScalarAsync($"SELECT GET_LOCK('{SchemaCreationLockName}', 60)").caf();
+            //would run unserialized. DATABASE() scopes the lock to the connection's current database (see the prefix's remark).
+            var lockResult = await connection.ExecuteScalarAsync($"SELECT GET_LOCK(CONCAT('{SchemaCreationLockNamePrefix}:', DATABASE()), 60)").caf();
             if(Convert.ToInt64(lockResult ?? 0L, CultureInfo.InvariantCulture) != 1)
-               throw new InvalidOperationException($"Failed to acquire the schema-creation lock ('{SchemaCreationLockName}') within 60 seconds.");
+               throw new InvalidOperationException($"Failed to acquire the schema-creation lock ('{SchemaCreationLockNamePrefix}:<database>') within 60 seconds.");
             try
             {
                return await connection.ExecuteNonQueryAsync(_schemaCreationSql).caf();
             }
             finally
             {
-               await connection.ExecuteNonQueryAsync($"SELECT RELEASE_LOCK('{SchemaCreationLockName}')").caf();
+               await connection.ExecuteNonQueryAsync($"SELECT RELEASE_LOCK(CONCAT('{SchemaCreationLockNamePrefix}:', DATABASE()))").caf();
             }
          }).caf()).caf()).caf();
 
