@@ -7,7 +7,7 @@ using Compze.Internals.Sql.MySql.Private;
 using Compze.TypeIdentifiers;
 using Compze.TypeIdentifiers.Interning;
 using Compze.Internals.SystemCE;
-using MySql.Data.MySqlClient;
+using MySqlConnector;
 using System.Diagnostics.CodeAnalysis;
 using Schema = Compze.DocumentDb.Internal.SqlLayer.IDocumentDbSqlLayer.DocumentTableSchemaStrings;
 

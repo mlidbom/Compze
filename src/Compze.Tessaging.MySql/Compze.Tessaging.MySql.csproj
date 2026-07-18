@@ -9,7 +9,7 @@
     <PackageTags>compze;messaging;inbox;outbox;mysql</PackageTags>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="MySql.Data" Version="9.4.0" />
+    <PackageReference Include="MySqlConnector" Version="2.6.1" />
   </ItemGroup>
   <!-- Compze.Internals.Sql.MySql — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Sql_MySql)' == 'true'">

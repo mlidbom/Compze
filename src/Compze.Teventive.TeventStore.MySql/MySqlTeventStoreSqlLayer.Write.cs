@@ -5,7 +5,7 @@ using Compze.Internals.Sql.MySql;
 using Compze.Internals.Sql.MySql.Private;
 using Compze.Internals.SystemCE;
 using Compze.Teventive.TeventStore.Abstractions.Internal.SqlLayer.Abstractions;
-using MySql.Data.MySqlClient;
+using MySqlConnector;
 using ReadOrder = Compze.Teventive.TeventStore.Abstractions.Internal.SqlLayer.Abstractions.ReadOrder;
 using Tevent = Compze.Teventive.TeventStore.Abstractions.Internal.SqlLayer.TeventTableSchemaStrings;
 

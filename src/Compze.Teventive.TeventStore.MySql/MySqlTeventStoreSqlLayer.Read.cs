@@ -3,7 +3,7 @@ using Compze.Internals.Sql.Common;
 using Compze.Internals.Sql.MySql.Private;
 using Compze.Teventive.TeventStore.Abstractions.Internal.SqlLayer.Abstractions;
 using Compze.TypeIdentifiers.Interning;
-using MySql.Data.MySqlClient;
+using MySqlConnector;
 using Tevent = Compze.Teventive.TeventStore.Abstractions.Internal.SqlLayer.TeventTableSchemaStrings;
 
 namespace Compze.Teventive.TeventStore.MySql;

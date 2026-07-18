@@ -1,7 +1,7 @@
 using System.Transactions;
 using Compze.Internals.Sql.MySql;
 using JetBrains.Annotations;
-using MySql.Data.MySqlClient;
+using MySqlConnector;
 
 namespace Compze.Teventive.TeventStore.MySql;
 

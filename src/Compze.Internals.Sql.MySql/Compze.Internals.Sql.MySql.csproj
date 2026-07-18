@@ -8,7 +8,7 @@
     <Description>For Compze internal use only. Do not take a direct dependency on this package. MySQL connection, pool, and command plumbing shared by the Compze.*.MySql feature backends.</Description>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="MySql.Data" Version="9.4.0" />
+    <PackageReference Include="MySqlConnector" Version="2.6.1" />
   </ItemGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="Compze.TypeIdentifiers.Interning.MySql" />

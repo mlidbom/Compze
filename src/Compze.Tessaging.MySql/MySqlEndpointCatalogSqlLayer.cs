@@ -4,7 +4,7 @@ using Compze.Internals.Sql.MySql;
 using Compze.Internals.Sql.MySql.Private;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tessaging.Transport.SqlLayer;
-using MySql.Data.MySqlClient;
+using MySqlConnector;
 using Catalog = Compze.Tessaging.Transport.SqlLayer.ITessagingSqlLayer.EndpointCatalogDatabaseSchemaStrings;
 
 namespace Compze.Tessaging.MySql;
