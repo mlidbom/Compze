@@ -278,6 +278,10 @@ public abstract class EndpointHostTestBase : UniversalTestBase
    async Task StartHostAndConnectClientAsync()
    {
       await Host.StartAsync();
+      //These specs' very next act rides the endpoints having discovered each other - tevent fan-out membership, peer-memory
+      //assertions, instant binds within the deliberately short handler-availability patience - so the mutual first contact is
+      //awaited explicitly instead of racing the reconciliation.
+      await Host.AwaitEndpointsHaveMetEachOtherAsync();
       Client = await TypermediaTestClient.ConnectTo(BackendEndPoint.Address!, mapper => mapper.RegisterCommonTestTypeMappings());
    }
 

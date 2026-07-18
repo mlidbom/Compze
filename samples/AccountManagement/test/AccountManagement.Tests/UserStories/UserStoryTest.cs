@@ -23,6 +23,10 @@ public abstract class UserStoryTest : UniversalTestBase
    protected override async Task InitializeAsyncInternal()
    {
       await Host.StartAsync().caf();
+      //The statistics endpoint's query models update from the domain endpoint's tevents, and exactly-once fan-out membership
+      //is the remembered subscribers - first contact is the boundary - so the user stories' immediate acts await the two
+      //endpoints having met instead of racing the discovery.
+      await Host.AwaitEndpointsHaveMetEachOtherAsync().caf();
       _client = await TypermediaTestClient.ConnectTo(_endpoint.Address!, mapper => mapper.RegisterAccountManagementTypeMappings()).caf();
    }
 

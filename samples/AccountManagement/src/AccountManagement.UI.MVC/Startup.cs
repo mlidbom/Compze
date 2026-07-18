@@ -28,6 +28,9 @@ public class Startup
       services.AddMvc();
 
       _host.Start();
+      //The statistics endpoint's query models update from the domain endpoint's tevents, and exactly-once fan-out membership
+      //is the remembered subscribers - first contact is the boundary - so traffic opens only after the two endpoints have met.
+      _host.AwaitEndpointsHaveMetEachOtherAsync().GetAwaiter().GetResult();
 
       _client = TypermediaTestClient.ConnectTo(_endpoint.Address!, mapper => mapper.RegisterAccountManagementTypeMappings()).GetAwaiter().GetResult();
       services.AddHttpContextAccessor();

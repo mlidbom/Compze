@@ -59,7 +59,13 @@ public class Given_an_endpoint_navigating_a_typermedia_type_two_live_endpoints_a
                        .ForTuery((TueryBothEndpointsHandle _) => new TueryAnswer { Message = $"from {name}" }));
          });
 
-   protected override async Task InitializeAsyncInternal() => await _host.StartAsync().caf();
+   protected override async Task InitializeAsyncInternal()
+   {
+      await _host.StartAsync().caf();
+      //The ambiguity pin needs BOTH advertising handlers visible to the navigator endpoint before it navigates - with only one
+      //discovered, the navigation would succeed instead of failing loud naming both.
+      await _host.AwaitEndpointsHaveMetEachOtherAsync().caf();
+   }
 
    protected override async Task DisposeAsyncInternal() => await _host.DisposeAsync().caf();
 

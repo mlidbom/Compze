@@ -3,12 +3,14 @@ using Compze.Hosting;
 using Compze.Hosting.SameMachine;
 using Compze.Hosting.Testing;
 using Compze.Hosting.Testing.Wiring;
+using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Internals.Testing;
 using Compze.Tessaging.Endpoints;
 using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Tessaging.Implementation;
+using Compze.Tessaging.Implementation.Peers;
 using Compze.Tessaging.Implementation.Transport;
 using Compze.Threading;
 using Compze.Underscore;
@@ -29,6 +31,7 @@ namespace Compze.Tessaging.Hosting.Testing;
 public class TestingEndpointHost : EndpointHost
 {
    static readonly WaitTimeout EndpointsAtRestTimeout = WaitTimeout.Seconds(10);
+   static readonly TimeSpan EndpointsMeetingTimeout = TimeSpan.FromSeconds(30);
 
    readonly TessagesInFlightTracker _tessagesInFlightTracker = new();
    readonly IDependencyInjectionContainer _rootContainer;
@@ -96,6 +99,32 @@ public class TestingEndpointHost : EndpointHost
       endpoint.TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport());
       //The serializers arrive with the cloned root container; the topology with the host's registry.
       endpoint.ParticipateIn(_endpointRegistry);
+   }
+
+   ///<summary>Awaits every endpoint of this host remembering every other endpoint of the host as a peer — mutual first<br/>
+   /// contact. <see cref="EndpointHost.StartAsync"/> completes when every endpoint has started; whether the endpoints have<br/>
+   /// *discovered each other* is topology convergence, completing at signal latency after the start. A specification whose<br/>
+   /// very next act rides that discovery — an exactly-once tevent whose fan-out membership is the remembered subscribers<br/>
+   /// (first contact is the boundary: a tevent published before a subscriber was ever met is not owed to it), an assertion<br/>
+   /// over peer memory, an ambiguity pin needing every advertising handler visible — awaits this after starting, instead of<br/>
+   /// racing the reconciliation. A production composition awaits what it needs through the production surfaces instead:<br/>
+   /// readiness for the types it will send to, <c>RequirePeers</c> for best-effort tevents, waiting sends for the rest.</summary>
+   public async Task AwaitEndpointsHaveMetEachOtherAsync()
+   {
+      var endpoints = Endpoints.OfType<Endpoint>().ToList();
+      var deadline = DateTime.UtcNow + EndpointsMeetingTimeout;
+      foreach(var endpoint in endpoints)
+      {
+         var peerRegistry = endpoint.ServiceLocator.Resolve<IPeerRegistry>();
+         foreach(var other in endpoints.Where(other => !other.Id.Equals(endpoint.Id)))
+         {
+            while(!peerRegistry.Peers.Any(peer => peer.Id.Equals(other.Id)))
+            {
+               if(DateTime.UtcNow > deadline) throw new TimeoutException($"Endpoint '{endpoint.Id}' has not met endpoint '{other.Id}' within {EndpointsMeetingTimeout}.");
+               await Task.Delay(TimeSpan.FromMilliseconds(10)).caf();
+            }
+         }
+      }
    }
 
    bool _disposed;
