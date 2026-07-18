@@ -79,25 +79,59 @@ public class DbPool : StrictlyManagedResourceBase<DbPool>
          return _sqlLayer.ConnectionStringFor(reservedDatabase);
       }
 
-      reservedDatabase = _machineWideState.ReserveDatabase(reservationName, _poolId, _reservationLength);
-      _log.Info($"Reserved pool database: {reservedDatabase.Name}");
+      reservedDatabase = ReserveAndEmptyAFreshDatabase(reservationName);
       reservedDatabases.Add(reservedDatabase);
-
-      try
-      {
-         _log.Debug($"Resetting database {reservedDatabase.Name}");
-         TransactionScopeCe.SuppressAmbient(() => _sqlLayer.ResetDatabase(reservedDatabase));
-      }
-#pragma warning disable CA1031 //It's hard to know what kind of exception a sql layer may end up throwing, and it's likewise hard to see any other action to take than nuking the database and starting over
-      catch(Exception exception)
-      {
-#pragma warning restore CA1031
-         _log.Warning(exception, $"Resetting database {reservedDatabase.Name} failed. Calling {nameof(IDbPoolSqlLayer.EnsureDatabaseExistsAndIsEmpty)}");
-         TransactionScopeCe.SuppressAmbient(() => _sqlLayer.EnsureDatabaseExistsAndIsEmpty(reservedDatabase));
-      }
-
       return _sqlLayer.ConnectionStringFor(reservedDatabase);
    });
+
+   ///<summary>Reserves a database and empties it, ready for the reservation to use.</summary>
+   ///<remarks>A reserved database can still carry an open transaction left by a leaked prior use — emptying it then blocks on the<br/>
+   /// held metadata lock (see <see cref="KeepReservedDatabasesLeasedWhileAlive"/>). The sql layer bounds that wait so the reset<br/>
+   /// fails fast rather than hanging; this then abandons the database and reserves another, so one stray transaction can never<br/>
+   /// gridlock the pool. The abandoned database stays reserved — a released one is the most-recently-used and would be handed back<br/>
+   /// on the next reservation — and is freed when this pool disposes (by when the stray transaction has timed out) or by lease<br/>
+   /// expiry. Bounded by <see cref="DatabaseResetAttempts"/>, so a reset that keeps failing for a reason other than a lock wait<br/>
+   /// still surfaces.<br/>
+   /// The inner reset → <see cref="IDbPoolSqlLayer.EnsureDatabaseExistsAndIsEmpty"/> fallback is retained: a first-ever use has no<br/>
+   /// database to reset (the MsSql and PostgreSql layers empty an existing one rather than create it), so creating it is the<br/>
+   /// recovery there, and it is also a fair fallback for a transient reset failure.</remarks>
+   DbPoolDatabase ReserveAndEmptyAFreshDatabase(string reservationName)
+   {
+      for(var attempt = 1; ; attempt++)
+      {
+         var reservedDatabase = _machineWideState.ReserveDatabase(reservationName, _poolId, _reservationLength);
+         _log.Info($"Reserved pool database: {reservedDatabase.Name}");
+         try
+         {
+            EmptyDatabase(reservedDatabase);
+            return reservedDatabase;
+         }
+#pragma warning disable CA1031 //A sql layer can throw many exception types for a blocked or failed reset; the recovery — a different database — is the same for all, and a persistent failure still surfaces once the attempts run out.
+         catch(Exception exception) when(attempt < DatabaseResetAttempts)
+         {
+#pragma warning restore CA1031
+            _log.Warning(exception, $"Emptying reserved database {reservedDatabase.Name} failed (attempt {attempt} of {DatabaseResetAttempts}); a leaked transaction may still hold its metadata lock. Abandoning it and reserving another.");
+         }
+      }
+
+      void EmptyDatabase(DbPoolDatabase database)
+      {
+         try
+         {
+            _log.Debug($"Resetting database {database.Name}");
+            TransactionScopeCe.SuppressAmbient(() => _sqlLayer.ResetDatabase(database));
+         }
+#pragma warning disable CA1031 //It's hard to know what kind of exception a sql layer may end up throwing, and it's likewise hard to see any other action to take than nuking the database and starting over
+         catch(Exception exception)
+         {
+#pragma warning restore CA1031
+            _log.Warning(exception, $"Resetting database {database.Name} failed. Calling {nameof(IDbPoolSqlLayer.EnsureDatabaseExistsAndIsEmpty)}");
+            TransactionScopeCe.SuppressAmbient(() => _sqlLayer.EnsureDatabaseExistsAndIsEmpty(database));
+         }
+      }
+   }
+
+   const int DatabaseResetAttempts = 5;
 
    ///<summary>While this pool is alive it heartbeats its reservations, pushing each lease's expiration out (see<br/>
    /// <see cref="DbPoolDatabase.RenewReservation"/>). Without this a fixed lease would expire under any test that runs longer<br/>
