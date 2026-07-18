@@ -47,12 +47,10 @@ public class Given_an_endpoint_whose_typermedia_navigation_races_discovery : Uni
       var lateEndpoint = _host.RegisterBestEffortEndpoint(
          "LateHandler",
          LateEndpointId,
-         endpointBuilder =>
-         {
-            endpointBuilder.MapTypes(mapper => mapper.RegisterTypermediaHostingSpecificationTypeMappings());
-            endpointBuilder.RegisterTessageHandlers(handle => handle
-                       .ForTuery((TueryServedByTheLateEndpoint _) => new TueryAnswer { Message = "served on first contact" }));
-         });
+         endpointBuilder => endpointBuilder
+            .MapTypes(mapper => mapper.RegisterTypermediaHostingSpecificationTypeMappings())
+            .RegisterTessageHandlers(handle => handle
+                       .ForTuery((TueryServedByTheLateEndpoint _) => new TueryAnswer { Message = "served on first contact" })));
       //The late endpoint starts now, driving its own phase ordering. Its announcement is what the waiting send's patience is
       //spent waiting for.
       await lateEndpoint.StartAsync();

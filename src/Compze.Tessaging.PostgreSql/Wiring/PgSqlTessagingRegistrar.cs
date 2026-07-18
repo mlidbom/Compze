@@ -17,7 +17,7 @@ public static class PgSqlTessagingRegistrar
       ///<summary>Declares the domain database this endpoint joins: PostgreSQL, reached through <paramref name="connectionStringName"/> —<br/>
       /// filling the exactly-once endpoint's one domain-database parameter with the whole engine pairing: the connection pool,<br/>
       /// the type-id interner Tessaging's sql layers share, and Tessaging's PostgreSQL sql layers.</summary>
-      public void PgSqlDomainDatabase(string connectionStringName) =>
+      public ExactlyOnceEndpointBuilder PgSqlDomainDatabase(string connectionStringName) =>
          @this.DomainDatabase(registrar => registrar.PgSqlDomainDatabase(connectionStringName)
                                                     .PgSqlTessagingSqlLayer());
    }

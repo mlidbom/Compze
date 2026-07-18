@@ -47,11 +47,9 @@ public class Given_two_hosts_each_starting_an_endpoint_with_the_same_name_and_id
       host.RegisterExactlyOnceEndpoint(
          "Contested",
          ContestedEndpointId,
-         endpointBuilder =>
-         {
-            endpointBuilder.MapTypes(mapper => mapper.RegisterIntegrationTestTypeMappings());
-            endpointBuilder.ProcessLeaseDuration(LeaseDuration);
-         });
+         endpointBuilder => endpointBuilder
+            .MapTypes(mapper => mapper.RegisterIntegrationTestTypeMappings())
+            .ProcessLeaseDuration(LeaseDuration));
 
    protected override async Task InitializeAsyncInternal() => await _firstHost.StartAsync();
 

@@ -83,16 +83,14 @@ public class Given_an_exactly_once_tommand_send_racing_discovery : UniversalTest
       var lateHandlerEndpoint = _host.RegisterExactlyOnceEndpoint(
          "LateHandler",
          LateHandlerEndpointId,
-         endpointBuilder =>
-         {
-            endpointBuilder.MapTypes(mapper => mapper.RegisterIntegrationTestTypeMappings());
-            endpointBuilder.RegisterTessageHandlers(handle => handle
+         endpointBuilder => endpointBuilder
+            .MapTypes(mapper => mapper.RegisterIntegrationTestTypeMappings())
+            .RegisterTessageHandlers(handle => handle
                        .ForTommand((MyExactlyOnceTommandHandledOnlyByTheLateEndpoint _) =>
                         {
                            _lateHandlerThreadGate.AwaitPassThrough();
                            return Task.CompletedTask;
-                        }));
-         });
+                        })));
       await lateHandlerEndpoint.StartAsync();
    }
 }

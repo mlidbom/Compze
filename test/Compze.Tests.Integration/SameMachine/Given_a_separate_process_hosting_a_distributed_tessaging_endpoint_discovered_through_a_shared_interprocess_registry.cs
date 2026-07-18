@@ -56,15 +56,16 @@ public class Given_a_separate_process_hosting_a_distributed_tessaging_endpoint_d
          MultiProcessConversationEndpoints.SpecificationProcessEndpointId,
          endpointBuilder =>
          {
-            endpointBuilder.MapTypes(mapper => mapper.MapTypesFromAssemblyContaining<TommandSentToTheEndpointHostProcess>());
-            endpointBuilder.TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport());
-            endpointBuilder.Serializer(registrar => registrar.CurrentTestsSerializersIfNotClonedContainer());
-            endpointBuilder.ParticipateIn(_registry);
-            //Requiring the endpoint host process's endpoint makes the outbound leg deterministic: the tevent published
-            //below, before either process has discovered the other, is held for the required peer and delivered on first
-            //contact instead of vanishing into the discovery race.
-            endpointBuilder.RequirePeers(MultiProcessConversationEndpoints.EndpointHostProcessEndpointId);
-            endpointBuilder.RegisterTessageHandlers(handle => handle.ForTevent((IBestEffortTeventPublishedByTheEndpointHostProcess _) => _replyTeventReceived.Set()));
+            endpointBuilder
+               .MapTypes(mapper => mapper.MapTypesFromAssemblyContaining<TommandSentToTheEndpointHostProcess>())
+               .TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport())
+               .Serializer(registrar => registrar.CurrentTestsSerializersIfNotClonedContainer())
+               .ParticipateIn(_registry)
+               //Requiring the endpoint host process's endpoint makes the outbound leg deterministic: the tevent published
+               //below, before either process has discovered the other, is held for the required peer and delivered on first
+               //contact instead of vanishing into the discovery race.
+               .RequirePeers(MultiProcessConversationEndpoints.EndpointHostProcessEndpointId)
+               .RegisterTessageHandlers(handle => handle.ForTevent((IBestEffortTeventPublishedByTheEndpointHostProcess _) => _replyTeventReceived.Set()));
          }));
    }
 

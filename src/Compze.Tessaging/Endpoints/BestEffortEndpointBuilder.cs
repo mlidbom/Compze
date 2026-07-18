@@ -5,10 +5,10 @@ using Compze.Tessaging.Engine;
 
 namespace Compze.Tessaging.Endpoints;
 
-///<summary>The declaration surface a <see cref="BestEffortEndpoint"/> is composed through — see <see cref="EndpointBuilder"/>.<br/>
+///<summary>The declaration surface a <see cref="BestEffortEndpoint"/> is composed through — see <see cref="EndpointBuilder{TConcreteBuilder}"/>.<br/>
 /// The best-effort tier declares no database: it persists nothing, which is exactly what makes it the tier with zero<br/>
 /// operational ceremony.</summary>
-public sealed class BestEffortEndpointBuilder : EndpointBuilder
+public sealed class BestEffortEndpointBuilder : EndpointBuilder<BestEffortEndpointBuilder>
 {
    internal BestEffortEndpointBuilder(IContainerBuilder containerBuilder, EndpointConfiguration configuration) : base(containerBuilder, configuration) {}
 

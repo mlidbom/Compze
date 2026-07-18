@@ -24,14 +24,11 @@ public abstract class PerformanceTestBase : UniversalTestBase
       ServerEndpoint = Host.RegisterBestEffortEndpoint(
          "Backend",
          new EndpointId(Guid.Parse("DDD0A67C-D2A2-4197-9AF8-38B6AEDF8FA7")),
-         endpointBuilder =>
-         {
-            endpointBuilder.MapTypes(mapper => mapper.RegisterPerformanceTestTypeMappings());
-
-            endpointBuilder.RegisterTessageHandlers(handle => handle
+         endpointBuilder => endpointBuilder
+            .MapTypes(mapper => mapper.RegisterPerformanceTestTypeMappings())
+            .RegisterTessageHandlers(handle => handle
                        .ForTuery((MyRemoteTuery _) => new MyTueryResult())
-                       .ForTuery((MyLocalStrictlyLocalTuery _) => new MyTueryResult()));
-         });
+                       .ForTuery((MyLocalStrictlyLocalTuery _) => new MyTueryResult())));
    }
 
    protected override async Task InitializeAsyncInternal()

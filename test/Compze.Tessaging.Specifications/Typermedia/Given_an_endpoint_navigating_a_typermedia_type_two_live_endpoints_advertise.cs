@@ -37,12 +37,10 @@ public class Given_an_endpoint_navigating_a_typermedia_type_two_live_endpoints_a
       _navigatorEndpoint = _host.RegisterBestEffortEndpoint(
          "Navigator",
          NavigatorEndpointId,
-         endpointBuilder =>
-         {
-            endpointBuilder.MapTypes(mapper => mapper.RegisterTypermediaHostingSpecificationTypeMappings());
+         endpointBuilder => endpointBuilder
+            .MapTypes(mapper => mapper.RegisterTypermediaHostingSpecificationTypeMappings())
             //Short deliberately: this specification pins what exhausted patience says, so waiting out the full default would only slow the suite.
-            endpointBuilder.HandlerAvailabilityPatience(TimeSpan.FromMilliseconds(100));
-         });
+            .HandlerAvailabilityPatience(TimeSpan.FromMilliseconds(100)));
 
       RegisterHandlerEndpoint("FirstHandler", FirstHandlerEndpointId);
       RegisterHandlerEndpoint("SecondHandler", SecondHandlerEndpointId);
@@ -52,12 +50,10 @@ public class Given_an_endpoint_navigating_a_typermedia_type_two_live_endpoints_a
       _host.RegisterBestEffortEndpoint(
          name,
          id,
-         endpointBuilder =>
-         {
-            endpointBuilder.MapTypes(mapper => mapper.RegisterTypermediaHostingSpecificationTypeMappings());
-            endpointBuilder.RegisterTessageHandlers(handle => handle
-                       .ForTuery((TueryBothEndpointsHandle _) => new TueryAnswer { Message = $"from {name}" }));
-         });
+         endpointBuilder => endpointBuilder
+            .MapTypes(mapper => mapper.RegisterTypermediaHostingSpecificationTypeMappings())
+            .RegisterTessageHandlers(handle => handle
+                       .ForTuery((TueryBothEndpointsHandle _) => new TueryAnswer { Message = $"from {name}" })));
 
    protected override async Task InitializeAsyncInternal()
    {

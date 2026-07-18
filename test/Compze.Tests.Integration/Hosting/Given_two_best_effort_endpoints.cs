@@ -53,17 +53,15 @@ public class Given_two_best_effort_endpoints : UniversalTestBase
          container,
          "BestEffortPublisherEndpoint",
          new EndpointId(Guid.Parse("6d0a3a3e-59c8-4b0b-9e51-2f47a68d31c4")),
-         endpointBuilder =>
-         {
-            endpointBuilder.MapTypes(mapper => mapper.RegisterIntegrationTestTypeMappings());
-            endpointBuilder.TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport());
-            endpointBuilder.NewtonsoftSerializer();
-            endpointBuilder.DiscoverEndpointsThrough(endpointsOfTheHost);
+         endpointBuilder => endpointBuilder
+            .MapTypes(mapper => mapper.RegisterIntegrationTestTypeMappings())
+            .TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport())
+            .NewtonsoftSerializer()
+            .DiscoverEndpointsThrough(endpointsOfTheHost)
             //The composition declares the relationship: a tevent published before the subscriber's first contact - the two
             //endpoints start in parallel and discover each other by reconciliation - is held for it and delivered on the meet,
             //instead of being lost to the startup race (queue-before-first-contact).
-            endpointBuilder.RequirePeers(SubscriberEndpointId);
-         }));
+            .RequirePeers(SubscriberEndpointId)));
 
       _host.RegisterEndpoint(container => BestEffortEndpoint.Build(
          container,
@@ -71,15 +69,16 @@ public class Given_two_best_effort_endpoints : UniversalTestBase
          SubscriberEndpointId,
          endpointBuilder =>
          {
-            endpointBuilder.MapTypes(mapper => mapper.RegisterIntegrationTestTypeMappings());
-            endpointBuilder.TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport());
-            endpointBuilder.NewtonsoftSerializer();
-            endpointBuilder.DiscoverEndpointsThrough(endpointsOfTheHost);
-            endpointBuilder.RegisterTessageHandlers(handle => handle.ForTevent((IMyBestEffortTevent tevent) =>
-             {
-                _bestEffortTeventsHandledOnTheSubscriber.Enqueue(tevent);
-                _subscriberBestEffortTeventHandlerGate.AwaitPassThrough();
-             }));
+            endpointBuilder
+               .MapTypes(mapper => mapper.RegisterIntegrationTestTypeMappings())
+               .TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport())
+               .NewtonsoftSerializer()
+               .DiscoverEndpointsThrough(endpointsOfTheHost)
+               .RegisterTessageHandlers(handle => handle.ForTevent((IMyBestEffortTevent tevent) =>
+                {
+                   _bestEffortTeventsHandledOnTheSubscriber.Enqueue(tevent);
+                   _subscriberBestEffortTeventHandlerGate.AwaitPassThrough();
+                }));
          }));
    }
 

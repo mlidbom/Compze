@@ -59,11 +59,12 @@ public class Given_a_separate_process_hosting_an_endpoint_discovered_through_a_s
          new EndpointId(Guid.NewGuid()),
          endpointBuilder =>
          {
-            endpointBuilder.MapTypes(mapper => mapper.MapTypesFromAssemblyContaining<TommandSentToTheEndpointHostProcess>());
-            endpointBuilder.TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport());
-            endpointBuilder.DomainDatabase(registrar => registrar.CurrentTestsConfiguredSqlLayer(connectionStringName: endpointBuilder.Configuration.Id.ToString()));
-            endpointBuilder.ParticipateIn(_registry);
-            endpointBuilder.RegisterTessageHandlers(handle => handle.ForTommand((TommandSentBackToTheSpecificationProcess _) =>
+            endpointBuilder
+               .MapTypes(mapper => mapper.MapTypesFromAssemblyContaining<TommandSentToTheEndpointHostProcess>())
+               .TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport())
+               .DomainDatabase(registrar => registrar.CurrentTestsConfiguredSqlLayer(connectionStringName: endpointBuilder.Configuration.Id.ToString()))
+               .ParticipateIn(_registry)
+               .RegisterTessageHandlers(handle => handle.ForTommand((TommandSentBackToTheSpecificationProcess _) =>
             {
                _replyTommandGate.AwaitPassThrough();
                return Task.CompletedTask;

@@ -92,7 +92,7 @@ public class TestingEndpointHost : EndpointHost
          declare(endpointBuilder);
       }));
 
-   void DeclareTheCurrentTestsConcerns(EndpointBuilder endpointBuilder)
+   void DeclareTheCurrentTestsConcerns<TConcreteBuilder>(EndpointBuilder<TConcreteBuilder> endpointBuilder) where TConcreteBuilder : EndpointBuilder<TConcreteBuilder>
    {
       endpointBuilder.TrackTessagesInFlightWith(_tessagesInFlightTracker);
       endpointBuilder.TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport());

@@ -8,7 +8,7 @@ namespace Compze.Tessaging.Implementation.HandlerAvailability;
 class HandlerAvailabilityPatience
 {
    ///<summary>The flat 30-second default every endpoint gets unless its composition declares otherwise<br/>
-   /// (<see cref="Endpoints.EndpointBuilder.HandlerAvailabilityPatience"/>).</summary>
+   /// (<see cref="Endpoints.EndpointBuilder{TConcreteBuilder}.HandlerAvailabilityPatience"/>).</summary>
    internal static readonly HandlerAvailabilityPatience Default = new(TimeSpan.FromSeconds(30));
 
    internal TimeSpan Duration { get; }

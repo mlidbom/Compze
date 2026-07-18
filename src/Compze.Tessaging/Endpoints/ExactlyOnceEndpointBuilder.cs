@@ -12,12 +12,12 @@ using Compze.Tessaging.Transport.SqlLayer;
 namespace Compze.Tessaging.Endpoints;
 
 ///<summary>The declaration surface an <see cref="ExactlyOnceEndpoint"/> is composed through — everything the base<br/>
-/// <see cref="EndpointBuilder"/> declares, plus the domain database this endpoint joins (<see cref="DomainDatabase"/>): the<br/>
+/// <see cref="EndpointBuilder{TConcreteBuilder}"/> declares, plus the domain database this endpoint joins (<see cref="DomainDatabase"/>): the<br/>
 /// durable vertical — inbox, outbox, durable peer memory — lives in it, and its atomicity <em>is</em> its co-location with<br/>
 /// the domain data the endpoint's executions touch. Declared through a database package's named extension<br/>
 /// (e.g. <c>SqliteDomainDatabase(...)</c>), which registers the engine pairing — the connection pool, the type-id<br/>
 /// interner, and Tessaging's sql layers for that engine — so the pairing is routed by the extension's target type.</summary>
-public sealed class ExactlyOnceEndpointBuilder : EndpointBuilder
+public sealed class ExactlyOnceEndpointBuilder : EndpointBuilder<ExactlyOnceEndpointBuilder>
 {
    Action<IComponentRegistrar>? _registerDomainDatabase;
    ProcessLeaseDuration _processLeaseDuration = Implementation.EndpointCatalog.ProcessLeaseDuration.Default;
@@ -30,22 +30,24 @@ public sealed class ExactlyOnceEndpointBuilder : EndpointBuilder
    /// process waits out at most one duration for a dead predecessor's lease to go stale before taking over, and only a holder<br/>
    /// proven alive by its heartbeats makes the start fail loud<br/>
    /// (<see cref="EndpointAlreadyRunningInAnotherProcessException"/>). Declared at most once; defaults to 15 seconds.</summary>
-   public void ProcessLeaseDuration(TimeSpan duration)
+   public ExactlyOnceEndpointBuilder ProcessLeaseDuration(TimeSpan duration)
    {
       AssertStillComposing();
       State.Assert(!_processLeaseDurationDeclared, () => "The endpoint already declared its process-lease duration — an endpoint has exactly one.");
       _processLeaseDurationDeclared = true;
       _processLeaseDuration = new ProcessLeaseDuration(duration);
+      return this;
    }
 
    ///<summary>Declares the domain database this endpoint joins — where the domain data its executions touch lives, and where<br/>
    /// its durable vertical lives with it. Declared exactly once, through a database package's named extension<br/>
    /// (e.g. <c>SqliteDomainDatabase(...)</c>).</summary>
-   public void DomainDatabase(Action<IComponentRegistrar> registerDomainDatabase)
+   public ExactlyOnceEndpointBuilder DomainDatabase(Action<IComponentRegistrar> registerDomainDatabase)
    {
       AssertStillComposing();
       State.Assert(_registerDomainDatabase is null, () => "The endpoint already declared the domain database it joins — an endpoint joins exactly one.");
       _registerDomainDatabase = registerDomainDatabase;
+      return this;
    }
 
    private protected override void AssertTheFoundationIsDeclared()

@@ -10,7 +10,7 @@ public static class EndpointBuilderDocumentDbExtensions
    public static EndpointDocumentDbRegistrationBuilder RegisterDocumentDb(this ExactlyOnceEndpointBuilder @this)
    {
       @this.Registrar.DocumentDb();
-      return new EndpointDocumentDbRegistrationBuilder(@this.RegisterTessageHandlers);
+      return new EndpointDocumentDbRegistrationBuilder(register => @this.RegisterTessageHandlers(register));
    }
 }
 

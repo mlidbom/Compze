@@ -63,10 +63,11 @@ public class Given_two_hosts_sharing_an_interprocess_registry_where_the_receivin
 
    void ComposeEndpointDiscoveredThroughTheRegistry(ExactlyOnceEndpointBuilder endpointBuilder)
    {
-      endpointBuilder.MapTypes(mapper => mapper.RegisterIntegrationTestTypeMappings());
-      endpointBuilder.TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport());
-      endpointBuilder.DomainDatabase(registrar => registrar.CurrentTestsConfiguredSqlLayer(connectionStringName: endpointBuilder.Configuration.Id.ToString()));
-      endpointBuilder.ParticipateIn(_registry);
+      endpointBuilder
+         .MapTypes(mapper => mapper.RegisterIntegrationTestTypeMappings())
+         .TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport())
+         .DomainDatabase(registrar => registrar.CurrentTestsConfiguredSqlLayer(connectionStringName: endpointBuilder.Configuration.Id.ToString()))
+         .ParticipateIn(_registry);
    }
 
    protected override async Task InitializeAsyncInternal()

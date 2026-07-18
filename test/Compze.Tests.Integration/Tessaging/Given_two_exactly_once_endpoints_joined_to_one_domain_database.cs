@@ -53,31 +53,27 @@ public class Given_two_exactly_once_endpoints_joined_to_one_domain_database : Un
          "FirstNeighbor",
          FirstNeighborEndpointId,
          DomainDatabaseName,
-         endpointBuilder =>
-         {
-            endpointBuilder.MapTypes(mapper => mapper.RegisterIntegrationTestTypeMappings());
-            endpointBuilder.RegisterTessageHandlers(handle => handle
+         endpointBuilder => endpointBuilder
+            .MapTypes(mapper => mapper.RegisterIntegrationTestTypeMappings())
+            .RegisterTessageHandlers(handle => handle
                        .ForTommand((MyReplyTommandHandledByTheFirstNeighbor _) =>
                         {
                            _firstNeighborReplyHandlerGate.AwaitPassThrough();
                            return Task.CompletedTask;
-                        }));
-         });
+                        })));
 
       _secondNeighbor = _host.RegisterExactlyOnceEndpointInDomainDatabase(
          "SecondNeighbor",
          SecondNeighborEndpointId,
          DomainDatabaseName,
-         endpointBuilder =>
-         {
-            endpointBuilder.MapTypes(mapper => mapper.RegisterIntegrationTestTypeMappings());
-            endpointBuilder.RegisterTessageHandlers(handle => handle
+         endpointBuilder => endpointBuilder
+            .MapTypes(mapper => mapper.RegisterIntegrationTestTypeMappings())
+            .RegisterTessageHandlers(handle => handle
                        .ForTommand((MyTommandHandledByTheSecondNeighbor _) =>
                         {
                            _secondNeighborHandlerGate.AwaitPassThrough();
                            return Task.CompletedTask;
-                        }));
-         });
+                        })));
    }
 
    protected override async Task InitializeAsyncInternal() => await _host.StartAsync();

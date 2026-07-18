@@ -78,31 +78,33 @@ public static class Program
       endpointBuilder.Registrar.Register(Singleton.For<IConfigurationParameterProvider>()
                                            .CreatedBy(() => new SqliteDatabasePerConnectionStringNameConfigurationParameterProvider(workDirectory)));
 
-      endpointBuilder.MapTypes(mapper => mapper.MapTypesFromAssemblyContaining<TommandSentToTheEndpointHostProcess>());
-      endpointBuilder.NamedPipeEndpointTransport();
-      endpointBuilder.NewtonsoftSerializer();
-      endpointBuilder.SqliteDomainDatabase("EndpointHostProcess");
-      endpointBuilder.ParticipateIn(registry);
-      endpointBuilder.RegisterTessageHandlers(handle => handle.ForTommand(async (TommandSentToTheEndpointHostProcess _, IUnitOfWorkTommandSender unitOfWorkTommandSender) =>
-          await unitOfWorkTommandSender.SendAsync(new TommandSentBackToTheSpecificationProcess())));
+      endpointBuilder
+         .MapTypes(mapper => mapper.MapTypesFromAssemblyContaining<TommandSentToTheEndpointHostProcess>())
+         .NamedPipeEndpointTransport()
+         .NewtonsoftSerializer()
+         .SqliteDomainDatabase("EndpointHostProcess")
+         .ParticipateIn(registry)
+         .RegisterTessageHandlers(handle => handle.ForTommand(async (TommandSentToTheEndpointHostProcess _, IUnitOfWorkTommandSender unitOfWorkTommandSender) =>
+            await unitOfWorkTommandSender.SendAsync(new TommandSentBackToTheSpecificationProcess())));
    }
 
    ///<summary>The best-effort composition: no database, no configuration, nothing persisted anywhere in this process — the<br/>
    /// best-effort tier and participation are all the tevent delivery there is, and the same endpoint serves tueries.</summary>
    static void ComposeDistributedTessagingAndTypermediaWithNoDatabase(Compze.Tessaging.Endpoints.BestEffortEndpointBuilder endpointBuilder, InterprocessEndpointRegistry registry)
    {
-      endpointBuilder.MapTypes(mapper => mapper.MapTypesFromAssemblyContaining<TommandSentToTheEndpointHostProcess>());
-      endpointBuilder.NamedPipeEndpointTransport();
-      endpointBuilder.NewtonsoftSerializer();
-      endpointBuilder.ParticipateIn(registry);
-      //Requiring the specification's endpoint makes the reply leg deterministic: the reply is published while handling
-      //the specification's tevent, which can happen before this process's own reconciliation has met the specification's
-      //endpoint - held for the required peer, it delivers on first contact instead of vanishing into the discovery race.
-      endpointBuilder.RequirePeers(MultiProcessConversationEndpoints.SpecificationProcessEndpointId);
-      endpointBuilder.RegisterTessageHandlers(handle => handle
-                 .ForTevent((IBestEffortTeventPublishedByTheSpecificationProcess _, IUnitOfWorkTeventPublisher teventPublisher) =>
-                               teventPublisher.Publish(new BestEffortTeventPublishedByTheEndpointHostProcess()))
-                 .ForTuery((TueryAskedByTheSpecificationProcess _) => new AnswerToTheTueryAskedByTheSpecificationProcess(answeredBy: "EndpointHostProcess")));
+      endpointBuilder
+         .MapTypes(mapper => mapper.MapTypesFromAssemblyContaining<TommandSentToTheEndpointHostProcess>())
+         .NamedPipeEndpointTransport()
+         .NewtonsoftSerializer()
+         .ParticipateIn(registry)
+         //Requiring the specification's endpoint makes the reply leg deterministic: the reply is published while handling
+         //the specification's tevent, which can happen before this process's own reconciliation has met the specification's
+         //endpoint - held for the required peer, it delivers on first contact instead of vanishing into the discovery race.
+         .RequirePeers(MultiProcessConversationEndpoints.SpecificationProcessEndpointId)
+         .RegisterTessageHandlers(handle => handle
+            .ForTevent((IBestEffortTeventPublishedByTheSpecificationProcess _, IUnitOfWorkTeventPublisher teventPublisher) =>
+                          teventPublisher.Publish(new BestEffortTeventPublishedByTheEndpointHostProcess()))
+            .ForTuery((TueryAskedByTheSpecificationProcess _) => new AnswerToTheTueryAskedByTheSpecificationProcess(answeredBy: "EndpointHostProcess")));
    }
 
    ///<summary>The name of the environment variable through which the specification that launches this process passes the directory<br/>

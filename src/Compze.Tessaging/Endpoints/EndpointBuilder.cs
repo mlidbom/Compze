@@ -37,8 +37,14 @@ namespace Compze.Tessaging.Endpoints;
 /// the roster, and any attempt to declare afterward explodes. Domain components register through <see cref="Registrar"/>,
 /// and store integrations (a tevent store's <c>HandleTaggregate</c>, a document db's <c>HandleDocumentType</c>) plug into
 /// this same surface — handler contributors like any other.
+///
+/// Every declaration returns the builder as its concrete tier type (<typeparamref name="TConcreteBuilder"/>), so a
+/// composition chains declaration after declaration in one fluent expression, and a tier-specific declaration stays
+/// reachable after a base declaration instead of the chain narrowing to the base type mid-way.
 ///</summary>
-public abstract class EndpointBuilder
+///<typeparam name="TConcreteBuilder">The concrete tier builder subtype — the curiously-recurring self type — so every<br/>
+/// inherited declaration returns that concrete type and a chain never loses the tier's own declarations.</typeparam>
+public abstract class EndpointBuilder<TConcreteBuilder> where TConcreteBuilder : EndpointBuilder<TConcreteBuilder>
 {
    readonly IContainerBuilder _containerBuilder;
    readonly TypeMapper _typeMapper = new();
@@ -61,56 +67,63 @@ public abstract class EndpointBuilder
       Configuration = configuration;
    }
 
+   ///<summary>This builder as its concrete tier type (<see cref="BestEffortEndpointBuilder"/> / <see cref="ExactlyOnceEndpointBuilder"/>) —<br/>
+   /// the fluent return every declaration hands back, so a composition chains declaration after declaration without ever losing<br/>
+   /// the tier's own declarations. The cast is the curiously-recurring generic's guarantee: the self type <em>is</em> this instance.</summary>
+   private protected TConcreteBuilder Self => (TConcreteBuilder)this;
+
    ///<summary>Registers the endpoint's components with its container — domain components, query models, whatever the endpoint's application code needs.</summary>
    public IComponentRegistrar Registrar => _containerBuilder.Registrar;
 
    ///<summary>The endpoint's identity and naming; also registered in the container so the endpoint's services can know which endpoint they serve.</summary>
    public EndpointConfiguration Configuration { get; }
 
-   ///<summary>Registers the endpoint's message-type-to-identifier mappings — the contract that lets types travel between endpoints without sharing assembly-qualified names.</summary>
-   public ITypeMapper TypeMapper => _typeMapper;
-
    ///<summary>Declares the endpoint's type-id mappings — the stable identities its tessage types carry into persistent stores and onto the wire.</summary>
-   public void MapTypes(Action<ITypeMapper> map)
+   public TConcreteBuilder MapTypes(Action<ITypeMapper> map)
    {
       AssertStillComposing();
       map(_typeMapper);
+      return Self;
    }
 
    ///<summary>Declares handlers for all four tessage kinds through the one <see cref="TessageHandlerRegistrar"/> — see<br/>
    /// <see cref="LocalTessagingEngineBuilder.RegisterTessageHandlers"/>, whose declaration idiom this is.</summary>
-   public void RegisterTessageHandlers(Action<TessageHandlerRegistrar> register)
+   public TConcreteBuilder RegisterTessageHandlers(Action<TessageHandlerRegistrar> register)
    {
       AssertStillComposing();
       _engine.RegisterTessageHandlers(register);
+      return Self;
    }
 
    ///<summary>Declares tevent observers — observation, the deliberately transaction-ignoring watch surface, under its own verb<br/>
    /// so the distinct semantics are visible at the declaration site — see <see cref="LocalTessagingEngineBuilder.ObserveTevents"/>.</summary>
-   public void ObserveTevents(Action<TeventObservationRegistrar> observe)
+   public TConcreteBuilder ObserveTevents(Action<TeventObservationRegistrar> observe)
    {
       AssertStillComposing();
       _engine.ObserveTevents(observe);
+      return Self;
    }
 
    ///<summary>Declares the endpoint's transport protocol — the strategy behind the endpoint's one transport server and its<br/>
    /// transport client. Declared exactly once, through a protocol package's named extension<br/>
    /// (e.g. <c>NamedPipeEndpointTransport()</c>, <c>AspNetCoreEndpointTransport()</c>).</summary>
-   public void TransportProtocol(Action<IComponentRegistrar> registerProtocol)
+   public TConcreteBuilder TransportProtocol(Action<IComponentRegistrar> registerProtocol)
    {
       AssertStillComposing();
       State.Assert(_registerTransportProtocol is null, () => "The endpoint already declared its transport protocol — an endpoint speaks exactly one.");
       _registerTransportProtocol = registerProtocol;
+      return Self;
    }
 
    ///<summary>Declares the endpoint's one serializer — the format of everything the endpoint sends and receives, of every<br/>
    /// tessage kind. Declared at most once, through a serializer package's named extension (e.g. <c>NewtonsoftSerializer()</c>);<br/>
    /// a composition whose container already carries the serializers (a testing container cloned from a suite root) declares none.</summary>
-   public void Serializer(Action<IComponentRegistrar> registerSerializer)
+   public TConcreteBuilder Serializer(Action<IComponentRegistrar> registerSerializer)
    {
       AssertStillComposing();
       State.Assert(_registerSerializer is null, () => "The endpoint already declared its serializer — an endpoint has exactly one.");
       _registerSerializer = registerSerializer;
+      return Self;
    }
 
    ///<summary>Declares the registry through which this endpoint discovers the endpoints it converses with — the read side of<br/>
@@ -118,12 +131,13 @@ public abstract class EndpointBuilder
    /// against the registry's membership. Declaring none means the endpoint discovers nothing: it serves whatever reaches it,<br/>
    /// and its own roster serves its sends inline (an in-roster tommand executes in the sender's execution, needing no<br/>
    /// discovery and no wire) — but it connects to no other endpoint.</summary>
-   public void DiscoverEndpointsThrough(IEndpointRegistry registry)
+   public TConcreteBuilder DiscoverEndpointsThrough(IEndpointRegistry registry)
    {
       AssertStillComposing();
-      if(ReferenceEquals(_endpointRegistry, registry)) return; //Idempotent: ParticipateIn and a direct declaration may both name the endpoint's one registry.
+      if(ReferenceEquals(_endpointRegistry, registry)) return Self; //Idempotent: ParticipateIn and a direct declaration may both name the endpoint's one registry.
       State.Assert(_endpointRegistry is null, () => $"The endpoint already declared the registry it discovers endpoints through — an endpoint discovers through exactly one {nameof(IEndpointRegistry)}.");
       _endpointRegistry = registry;
+      return Self;
    }
 
    ///<summary>Declares that the endpoint announces where it listens to <paramref name="announcer"/>. The announcement is made<br/>
@@ -132,20 +146,22 @@ public abstract class EndpointBuilder
    /// the address stops being advertised before anything goes deaf. An endpoint<br/>
    /// announces to every announcer declared; declaring none means the endpoint is found some other way (a fixed address<br/>
    /// list) or only serves.</summary>
-   public void AnnounceAddressTo(IEndpointAddressAnnouncer announcer)
+   public TConcreteBuilder AnnounceAddressTo(IEndpointAddressAnnouncer announcer)
    {
       AssertStillComposing();
       if(!_addressAnnouncers.Contains(announcer)) _addressAnnouncers.Add(announcer); //Idempotent for the same announcer: ParticipateIn and a direct declaration may both name it.
+      return Self;
    }
 
    ///<summary>Declares that the endpoint participates in <paramref name="registry"/>: it discovers the other endpoints through<br/>
    /// it (<see cref="DiscoverEndpointsThrough"/>) AND announces its own listening address to it (<see cref="AnnounceAddressTo"/>) —<br/>
    /// the composition a same-machine application suite uses, where every process both finds the others and is found by them.<br/>
    /// Declare the two sides separately instead when a deployment is asymmetric.</summary>
-   public void ParticipateIn<TRegistry>(TRegistry registry) where TRegistry : IEndpointRegistry, IEndpointAddressAnnouncer
+   public TConcreteBuilder ParticipateIn<TRegistry>(TRegistry registry) where TRegistry : IEndpointRegistry, IEndpointAddressAnnouncer
    {
       DiscoverEndpointsThrough(registry);
       AnnounceAddressTo(registry);
+      return Self;
    }
 
    ///<summary>Declares peers this endpoint requires — peers it works with whose <see cref="EndpointId"/> the composition knows.<br/>
@@ -154,12 +170,13 @@ public abstract class EndpointBuilder
    /// queue bound — and the subset matching its subscriptions delivers when it is first met, so startup ordering stops<br/>
    /// mattering: nothing a required peer should see is lost to the discovery race<br/>
    /// (see <c>src/Compze.Tessaging/dev_docs/peer-model.md</c>).</summary>
-   public void RequirePeers(params EndpointId[] requiredPeers)
+   public TConcreteBuilder RequirePeers(params EndpointId[] requiredPeers)
    {
       AssertStillComposing();
       State.Assert(!requiredPeers.Contains(Configuration.Id), () => "An endpoint cannot require itself: a peer is another endpoint, and the endpoint's own roster serves its tessages in-boundary.");
       State.Assert(!requiredPeers.Intersect(_peersNotQueuedFor).Any(), () => "A peer cannot be both required and not-queued-for: requiring a peer means holding everything for it until it is met, declining to queue means keeping nothing for it while it is away.");
       _requiredPeers.AddRange(requiredPeers);
+      return Self;
    }
 
    ///<summary>Declares peers this endpoint deliberately keeps nothing for — the per-peer opt-down from queue-while-down<br/>
@@ -168,33 +185,36 @@ public abstract class EndpointBuilder
    /// a not-queued-for peer is delivered only while the peer is connected: published while it is down, the tevent is dropped,<br/>
    /// and a delivery failure drops the peer's queued stream whole — the subscriber resumes from tevents published after its<br/>
    /// return. Every peer not declared here gets queue-while-down.</summary>
-   public void DoNotQueueTeventsFor(params EndpointId[] peers)
+   public TConcreteBuilder DoNotQueueTeventsFor(params EndpointId[] peers)
    {
       AssertStillComposing();
       State.Assert(!peers.Contains(Configuration.Id), () => "An endpoint cannot decline queueing for itself: a peer is another endpoint, and the endpoint's own roster serves its tessages in-boundary.");
       State.Assert(!peers.Intersect(_requiredPeers).Any(), () => "A peer cannot be both required and not-queued-for: requiring a peer means holding everything for it until it is met, declining to queue means keeping nothing for it while it is away.");
       _peersNotQueuedFor.AddRange(peers);
+      return Self;
    }
 
    ///<summary>Declares the endpoint's handler-availability patience: how long a send whose type has no live, unambiguous<br/>
    /// route right now waits for one to appear — a first contact, a known peer's return, an ambiguity resolving — before<br/>
    /// failing loud. Declared at most once; defaults to a flat 30 seconds<br/>
    /// (see <c>src/Compze.Tessaging/dev_docs/peer-model.md</c>).</summary>
-   public void HandlerAvailabilityPatience(TimeSpan patience)
+   public TConcreteBuilder HandlerAvailabilityPatience(TimeSpan patience)
    {
       AssertStillComposing();
       State.Assert(!_handlerAvailabilityPatienceDeclared, () => "The endpoint already declared its handler-availability patience — an endpoint has exactly one.");
       _handlerAvailabilityPatienceDeclared = true;
       _handlerAvailabilityPatience = new HandlerAvailabilityPatience(patience);
+      return Self;
    }
 
    ///<summary>Hands the endpoint the tessages-in-flight tracker its testing composition awaits quiescence through — the<br/>
    /// testing device behind "a test cannot pass with work silently in flight". Production compositions declare none and get<br/>
    /// the do-nothing tracker.</summary>
-   public void TrackTessagesInFlightWith(ITessagesInFlightTracker tracker)
+   public TConcreteBuilder TrackTessagesInFlightWith(ITessagesInFlightTracker tracker)
    {
       AssertStillComposing();
       _tessagesInFlightTracker = tracker;
+      return Self;
    }
 
    private protected void AssertStillComposing() =>

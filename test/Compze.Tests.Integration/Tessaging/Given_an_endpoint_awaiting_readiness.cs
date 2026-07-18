@@ -34,14 +34,12 @@ public class Given_an_endpoint_awaiting_readiness : UniversalTestBase
       _awaitingEndpoint = _host.RegisterExactlyOnceEndpoint(
          "Awaiting",
          AwaitingEndpointId,
-         endpointBuilder =>
-         {
-            endpointBuilder.MapTypes(mapper => mapper.RegisterIntegrationTestTypeMappings());
+         endpointBuilder => endpointBuilder
+            .MapTypes(mapper => mapper.RegisterIntegrationTestTypeMappings())
             //The endpoint's own roster serves these two - what the readiness-for-own-types specification awaits.
-            endpointBuilder.RegisterTessageHandlers(handle => handle
+            .RegisterTessageHandlers(handle => handle
                        .ForTommand((MyExactlyOnceTommand _) => Task.CompletedTask)
-                       .ForTuery((MyTuery _) => new MyTueryResult()));
-         });
+                       .ForTuery((MyTuery _) => new MyTueryResult())));
    }
 
    protected override async Task InitializeAsyncInternal() => await _host.StartAsync();
@@ -83,13 +81,11 @@ public class Given_an_endpoint_awaiting_readiness : UniversalTestBase
       var lateHandlerEndpoint = _host.RegisterExactlyOnceEndpoint(
          "LateHandler",
          LateHandlerEndpointId,
-         endpointBuilder =>
-         {
-            endpointBuilder.MapTypes(mapper => mapper.RegisterIntegrationTestTypeMappings());
-            endpointBuilder.RegisterTessageHandlers(handle => handle
+         endpointBuilder => endpointBuilder
+            .MapTypes(mapper => mapper.RegisterIntegrationTestTypeMappings())
+            .RegisterTessageHandlers(handle => handle
                        .ForTommand((MyExactlyOnceTommandHandledOnlyByTheLateEndpoint _) => Task.CompletedTask)
-                       .ForTuery((MyTueryHandledOnlyByTheLateEndpoint _) => new MyTueryResult()));
-         });
+                       .ForTuery((MyTueryHandledOnlyByTheLateEndpoint _) => new MyTueryResult())));
       await lateHandlerEndpoint.StartAsync();
    }
 }

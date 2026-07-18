@@ -6,8 +6,8 @@ namespace Compze.Tessaging.Endpoints;
 ///<summary>
 /// The best-effort endpoint: the <see cref="Endpoint"/> whose TessageBus rung is best-effort. No database. Process-lifetime
 /// peer memory; per-peer best-effort tevent queues that outlive connections (queue-while-down,
-/// <see cref="EndpointBuilder.RequirePeers"/> pens for peers that must be met before anything is dropped, a bound per peer,
-/// <see cref="EndpointBuilder.DoNotQueueTeventsFor"/> opt-down); arriving tessages dispatch through the engine's executor.
+/// <see cref="EndpointBuilder{TConcreteBuilder}.RequirePeers"/> pens for peers that must be met before anything is dropped, a bound per peer,
+/// <see cref="EndpointBuilder{TConcreteBuilder}.DoNotQueueTeventsFor"/> opt-down); arriving tessages dispatch through the engine's executor.
 /// Serves all four tessage kinds unconditionally — but a handler for a tessage type whose declared contract demands
 /// exactly-once delivery fails at composition: this endpoint has no inbox to persist, dedup, and retry with, and an endpoint
 /// that cannot honor a guarantee must not advertise for it.
