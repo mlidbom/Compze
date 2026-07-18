@@ -7,11 +7,12 @@ using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 namespace Compze.Hosting;
 
 ///<summary>
-/// The <see cref="IEndpointHost"/> mechanism. Each endpoint is composed on a fresh container builder from the factory the
-/// host was created with (<see cref="IEndpointHost.RegisterEndpoint{TEndpoint}"/>), and the host guarantees the host-wide
-/// phase ordering — every endpoint starts listening before any endpoint announces its address, and every address is
-/// announced before any endpoint starts sending (see <see cref="IEndpoint"/>). What an endpoint can actually do is decided
-/// by its composition; the host never knows.
+/// The <see cref="IEndpointHost"/> mechanism: a convenience owning several endpoints' lifecycles in one process. Each
+/// endpoint is composed on a fresh container builder from the factory the host was created with
+/// (<see cref="IEndpointHost.RegisterEndpoint{TEndpoint}"/>); starting the host starts every endpoint, each driving its own
+/// phase ordering (see <see cref="IEndpoint.StartAsync"/>), and disposing it disposes them. The host adds nothing an
+/// endpoint cannot do alone — endpoints are first-class — and it never knows what an endpoint can do: that is decided
+/// entirely by the endpoint's composition.
 ///
 /// Production hosts are created via <see cref="Production.Create"/>; tests use the testing host in
 /// Compze.Tessaging.Hosting.Testing, which subclasses this mechanism.
@@ -40,13 +41,11 @@ public class EndpointHost : IEndpointHost
 
    public async Task StartAsync()
    {
-         State.Assert(!_isStarted, Endpoints.None(endpoint => endpoint.IsRunning));
-         this.Log().Info($"Starting with {Endpoints.Count} endpoint(s)");
+      State.Assert(!_isStarted, Endpoints.None(endpoint => endpoint.IsRunning));
+      this.Log().Info($"Starting with {Endpoints.Count} endpoint(s)");
 
-         await Task.WhenAll(Endpoints.Select(endpointToStart => endpointToStart.StartListeningAsync())).WithAggregateExceptions().caf();
-         await Task.WhenAll(Endpoints.Select(endpointToStart => endpointToStart.AnnounceAddressAsync())).WithAggregateExceptions().caf();
-         await Task.WhenAll(Endpoints.Select(endpointToStart => endpointToStart.StartSendingAsync())).WithAggregateExceptions().caf();
-         _isStarted = true;
+      await Task.WhenAll(Endpoints.Select(endpointToStart => endpointToStart.StartAsync())).WithAggregateExceptions().caf();
+      _isStarted = true;
    }
 
    public void Start() => StartAsync().WaitUnwrappingException();
@@ -58,14 +57,8 @@ public class EndpointHost : IEndpointHost
       {
          _disposed = true;
          this.Log().Info("Disposing");
-         if(_isStarted)
-         {
-            _isStarted = false;
-            await Task.WhenAll(Endpoints.Select(endpoint => endpoint.RetractAddressAsync())).WithAggregateExceptions().caf();
-            await Task.WhenAll(Endpoints.Select(endpoint => endpoint.StopSendingAsync())).WithAggregateExceptions().caf();
-            await Task.WhenAll(Endpoints.Select(endpoint => endpoint.StopListeningAsync())).WithAggregateExceptions().caf();
-         }
-
+         _isStarted = false;
+         //Each endpoint's disposal drives its own mirror phases - retract, stop sending, stop listening - before tearing down.
          await Task.WhenAll(Endpoints.Select(endpoint => endpoint.DisposeAsync().AsTask())).WithAggregateExceptions().caf();
       }
    }

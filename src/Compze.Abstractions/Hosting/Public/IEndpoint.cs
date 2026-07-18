@@ -5,10 +5,11 @@ namespace Compze.Abstractions.Hosting.Public;
 ///<summary>
 /// One deployable unit of a Compze application: its own dependency injection container and the machinery that listens and
 /// sends on its behalf. An endpoint is a plain composition root — what it is, is decided entirely by its composition
-/// (e.g. <c>ExactlyOnceEndpoint.Compose</c> / <c>BestEffortEndpoint.Compose</c> in Compze.Tessaging) — and it drives its own
-/// lifecycle phases in the methods below: listen → announce → send on the way up, retract → stop sending → stop listening on
-/// the way down. An <see cref="IEndpointHost"/> owns a set of endpoints and runs each phase host-wide
-/// (<see cref="IEndpointHost.RegisterEndpoint{TEndpoint}"/>).
+/// (e.g. <c>ExactlyOnceEndpoint.Compose</c> / <c>BestEffortEndpoint.Compose</c> in Compze.Tessaging) — and it is
+/// first-class: construct it, <see cref="StartAsync"/> it, dispose it. It drives its own lifecycle phases in order —
+/// listen → announce → send on the way up, retract → stop sending → stop listening at disposal — so an announced address is
+/// always one that is actually listening. An <see cref="IEndpointHost"/> is an optional convenience owning several
+/// endpoints' lifecycles in one process; it adds nothing an endpoint cannot do alone.
 ///</summary>
 public interface IEndpoint : IAsyncDisposable
 {
@@ -18,12 +19,13 @@ public interface IEndpoint : IAsyncDisposable
    ///<summary>True when both the listening and the sending phase have started.</summary>
    bool IsRunning { get; }
 
-   Task StartListeningAsync();
-   Task AnnounceAddressAsync();
-   Task StartSendingAsync();
-   Task StopSendingAsync();
-   Task RetractAddressAsync();
-   Task StopListeningAsync();
+   ///<summary>Starts the endpoint, driving its lifecycle phases in order: listen (the endpoint's machinery initializes and<br/>
+   /// its one transport server starts), announce (the listening address is announced to every declared announcer), send (the<br/>
+   /// endpoint's router converges on its registry's membership and delivery starts). Completes when the endpoint has started;<br/>
+   /// whether the endpoints it converses with have been <em>discovered</em> is topology convergence, continuing at signal<br/>
+   /// latency after the start — an application that wants that wait paid up front awaits <see cref="AwaitReadinessAsync"/><br/>
+   /// before opening traffic.</summary>
+   Task StartAsync();
 
    ///<summary>Readiness: completes when this endpoint can reach a handler for every type in<br/>
    /// <paramref name="readinessTypes"/> — the framework-native replacement for the startup readiness probes applications<br/>

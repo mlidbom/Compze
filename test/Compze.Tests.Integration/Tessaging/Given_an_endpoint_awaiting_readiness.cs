@@ -90,9 +90,7 @@ public class Given_an_endpoint_awaiting_readiness : UniversalTestBase
                        .ForTommand((MyExactlyOnceTommandHandledOnlyByTheLateEndpoint _) => Task.CompletedTask)
                        .ForTuery((MyTueryHandledOnlyByTheLateEndpoint _) => new MyTueryResult()));
          });
-      await lateHandlerEndpoint.StartListeningAsync();
-      await lateHandlerEndpoint.AnnounceAddressAsync();
-      await lateHandlerEndpoint.StartSendingAsync();
+      await lateHandlerEndpoint.StartAsync();
    }
 }
 

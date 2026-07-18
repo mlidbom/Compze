@@ -127,9 +127,9 @@ public abstract class EndpointBuilder
    }
 
    ///<summary>Declares that the endpoint announces where it listens to <paramref name="announcer"/>. The announcement is made<br/>
-   /// in the host's announcing phase — after every endpoint in the host has finished starting to listen and before any<br/>
-   /// endpoint starts sending — so an announced address is always one that is actually listening; it is retracted in the<br/>
-   /// mirror phase, before any sending stops, so the address stops being advertised before anything goes deaf. An endpoint<br/>
+   /// in the endpoint's announcing phase — after its listening phase and before its sending phase — so an announced address<br/>
+   /// is always one that is actually listening; it is retracted in the mirror phase, before the endpoint's sending stops, so<br/>
+   /// the address stops being advertised before anything goes deaf. An endpoint<br/>
    /// announces to every announcer declared; declaring none means the endpoint is found some other way (a fixed address<br/>
    /// list) or only serves.</summary>
    public void AnnounceAddressTo(IEndpointAddressAnnouncer announcer)

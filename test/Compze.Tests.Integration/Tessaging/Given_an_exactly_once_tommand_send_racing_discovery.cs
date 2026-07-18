@@ -93,9 +93,7 @@ public class Given_an_exactly_once_tommand_send_racing_discovery : UniversalTest
                            return Task.CompletedTask;
                         }));
          });
-      await lateHandlerEndpoint.StartListeningAsync();
-      await lateHandlerEndpoint.AnnounceAddressAsync();
-      await lateHandlerEndpoint.StartSendingAsync();
+      await lateHandlerEndpoint.StartAsync();
    }
 }
 

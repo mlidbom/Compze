@@ -53,11 +53,9 @@ public class Given_an_endpoint_whose_typermedia_navigation_races_discovery : Uni
             endpoint.RegisterTessageHandlers(handle => handle
                        .ForTuery((TueryServedByTheLateEndpoint _) => new TueryAnswer { Message = "served on first contact" }));
          });
-      //The host's phase barrier already ran, so the specification drives the late endpoint's own lifecycle phases - the same
-      //phases, in the same order. Its announcement is what the waiting send's patience is spent waiting for.
-      await lateEndpoint.StartListeningAsync();
-      await lateEndpoint.AnnounceAddressAsync();
-      await lateEndpoint.StartSendingAsync();
+      //The late endpoint starts now, driving its own phase ordering. Its announcement is what the waiting send's patience is
+      //spent waiting for.
+      await lateEndpoint.StartAsync();
 
       (await tueryTask).Message.Must().Be("served on first contact");
    }

@@ -3,7 +3,6 @@ using Compze.Contracts;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Logging;
-using Compze.Internals.SystemCE.LinqCE;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tessaging.Engine;
 using Compze.Tessaging.Internals.Transport;
@@ -21,10 +20,12 @@ namespace Compze.Tessaging.Endpoints;
 /// boundary guarantees: <see cref="BestEffortEndpoint"/> and <see cref="ExactlyOnceEndpoint"/>. Both serve all four tessage
 /// kinds, unconditionally.
 ///
-/// The endpoint is a plain composition root: it owns its container and drives its own lifecycle phases in the methods below —
-/// listen → announce → send on the way up, retract → stop sending → stop listening on the way down. An
-/// <see cref="IEndpointHost"/> runs each phase host-wide across its endpoints, so an announced address is always one that is
-/// actually listening and nothing sends to an endpoint not yet ready to receive.
+/// The endpoint is first-class: a plain composition root that owns its container and drives its own lifecycle —
+/// <see cref="StartAsync"/> runs the up-phases in order (listen → announce → send), disposal runs the mirror
+/// (retract → stop sending → stop listening), so an announced address is always one that is actually listening. The
+/// individual phase methods remain public for callers that script a phase deliberately — a specification stopping the
+/// listening to observe delivery waiting out downtime, a late-started endpoint. An <see cref="IEndpointHost"/> is an
+/// optional convenience starting and disposing several endpoints together; it adds nothing an endpoint cannot do alone.
 ///</summary>
 public abstract class Endpoint : IEndpoint
 {
@@ -73,6 +74,13 @@ public abstract class Endpoint : IEndpoint
 
    public bool IsRunning => _isListening && _isSending;
 
+   public async Task StartAsync()
+   {
+      await StartListeningAsync().caf();
+      await AnnounceAddressAsync().caf();
+      await StartSendingAsync().caf();
+   }
+
    public async Task StartListeningAsync()
    {
       State.Assert(!_isListening);
@@ -105,9 +113,9 @@ public abstract class Endpoint : IEndpoint
 
       //The router converges on the registry's membership - minus the endpoint's own announced address: routes lead only to
       //other endpoints, since the roster serves in-roster tommands inline and the endpoint's own tevent subscriptions by
-      //in-boundary participation. The transport server started in the listening phase, which the host completes everywhere
-      //before any sending starts, so its address exists here - and so does every durable storage the exactly-once tier
-      //initialized, which is what lets the connections' exactly-once streams load their recovery backlogs when delivery starts.
+      //in-boundary participation. The endpoint's own listening phase already ran: the transport server's address exists here,
+      //and so does every durable storage the exactly-once tier initialized - which is what lets the connections' exactly-once
+      //streams load their recovery backlogs when delivery starts.
       await _router.StartMaintainingConnectionsAsync(_endpointRegistry, _transportServer.Address).caf();
       _router.StartDelivery();
    }

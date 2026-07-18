@@ -37,6 +37,7 @@ namespace Compze.Tests.Integration.Hosting;
 public class Given_two_best_effort_endpoints : UniversalTestBase
 {
    static readonly WaitTimeout HandlerTimeout = WaitTimeout.Seconds(30);
+   static readonly EndpointId SubscriberEndpointId = new(Guid.Parse("a4c1f7d2-8b35-49e0-b6a9-5d21c30e79f8"));
 
    readonly IEndpointHost _host;
    readonly BestEffortEndpoint _publisherEndpoint;
@@ -58,12 +59,16 @@ public class Given_two_best_effort_endpoints : UniversalTestBase
             endpoint.TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport());
             endpoint.NewtonsoftSerializer();
             endpoint.DiscoverEndpointsThrough(endpointsOfTheHost);
+            //The composition declares the relationship: a tevent published before the subscriber's first contact - the two
+            //endpoints start in parallel and discover each other by reconciliation - is held for it and delivered on the meet,
+            //instead of being lost to the startup race (queue-before-first-contact).
+            endpoint.RequirePeers(SubscriberEndpointId);
          }));
 
       _host.RegisterEndpoint(container => BestEffortEndpoint.Compose(
          container,
          "BestEffortSubscriberEndpoint",
-         new EndpointId(Guid.Parse("a4c1f7d2-8b35-49e0-b6a9-5d21c30e79f8")),
+         SubscriberEndpointId,
          endpoint =>
          {
             endpoint.MapTypes(mapper => mapper.RegisterIntegrationTestTypeMappings());
