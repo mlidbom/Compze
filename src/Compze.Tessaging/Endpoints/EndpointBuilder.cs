@@ -203,9 +203,9 @@ public abstract class EndpointBuilder
    private protected virtual void AssertTheFoundationIsDeclared()
    {
       State.Assert(_registerTransportProtocol is not null,
-                   () => "The endpoint declares no transport protocol. Declare it in the composition — e.g. endpoint.NamedPipeEndpointTransport() or endpoint.AspNetCoreEndpointTransport().");
+                   () => "The endpoint declares no transport protocol. Declare it in the composition — e.g. endpointBuilder.NamedPipeEndpointTransport() or endpointBuilder.AspNetCoreEndpointTransport().");
       State.Assert(_registerSerializer is not null || (Registrar.IsRegistered<ITessagingSerializer>() && Registrar.IsRegistered<ITypermediaSerializer>()),
-                   () => "The endpoint declares no serializer. Declare it in the composition — e.g. endpoint.NewtonsoftSerializer() — the endpoint's one serializer parameter. (A testing container cloned from a suite root already carries the suite's serializers; only such a composition declares none.)");
+                   () => "The endpoint declares no serializer. Declare it in the composition — e.g. endpointBuilder.NewtonsoftSerializer() — the endpoint's one serializer parameter. (A testing container cloned from a suite root already carries the suite's serializers; only such a composition declares none.)");
    }
 
    ///<summary>The registrations both endpoint tiers share: the engine and its doors, identity, discovery serving, the<br/>

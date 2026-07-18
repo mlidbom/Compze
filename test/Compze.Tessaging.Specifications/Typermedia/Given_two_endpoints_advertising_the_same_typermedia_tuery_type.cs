@@ -37,20 +37,20 @@ public class Given_two_endpoints_advertising_the_same_typermedia_tuery_type : Un
       _firstEndpoint = _host.RegisterBestEffortEndpoint(
          "FirstHandler",
          FirstEndpointId,
-         endpoint =>
+         endpointBuilder =>
          {
-            endpoint.MapTypes(mapper => mapper.RegisterTypermediaHostingSpecificationTypeMappings());
-            endpoint.RegisterTessageHandlers(handle => handle
+            endpointBuilder.MapTypes(mapper => mapper.RegisterTypermediaHostingSpecificationTypeMappings());
+            endpointBuilder.RegisterTessageHandlers(handle => handle
                        .ForTuery((TueryBothEndpointsHandle _) => new TueryAnswer { Message = "from the first endpoint" }));
          });
 
       _secondEndpoint = _host.RegisterBestEffortEndpoint(
          "SecondHandler",
          SecondEndpointId,
-         endpoint =>
+         endpointBuilder =>
          {
-            endpoint.MapTypes(mapper => mapper.RegisterTypermediaHostingSpecificationTypeMappings());
-            endpoint.RegisterTessageHandlers(handle => handle
+            endpointBuilder.MapTypes(mapper => mapper.RegisterTypermediaHostingSpecificationTypeMappings());
+            endpointBuilder.RegisterTessageHandlers(handle => handle
                        .ForTuery((TueryBothEndpointsHandle _) => new TueryAnswer { Message = "from the second endpoint" })
                        .ForTuery((TueryOnlyTheSecondEndpointHandles _) => new TueryAnswer { Message = "only the second endpoint handles this" }));
          });

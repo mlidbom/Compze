@@ -18,11 +18,11 @@ public static class AccountManagementServerDomainBootstrapper
       var domainEndpoint = host.RegisterExactlyOnceEndpoint(
          name: "AccountManagement",
          id: new EndpointId(Guid.Parse(input: "1A1BE9C8-C8F6-4E38-ABFB-F101E5EDB00D")),
-         declare: endpoint =>
+         declare: endpointBuilder =>
          {
-            RegisterTypeMappings(endpoint);
-            RegisterDomainComponents(endpoint);
-            RegisterHandlers(endpoint);
+            RegisterTypeMappings(endpointBuilder);
+            RegisterDomainComponents(endpointBuilder);
+            RegisterHandlers(endpointBuilder);
          });
 
       RegisterAccountStatisticsEndpoint(host);
@@ -34,30 +34,30 @@ public static class AccountManagementServerDomainBootstrapper
       host.RegisterExactlyOnceEndpoint(
          name: "AccountManagementStatistics",
          id: new EndpointId(Guid.Parse(input: "B16250DE-4321-4FBD-A0CC-E42C7A1B0B34")),
-         declare: endpoint =>
+         declare: endpointBuilder =>
          {
-            RegisterTypeMappings(endpoint);
+            RegisterTypeMappings(endpointBuilder);
 
-            endpoint.RegisterDocumentDb()
+            endpointBuilder.RegisterDocumentDb()
                     .HandleDocumentType<AccountStatistics.SingletonStatisticsQueryModel>();
 
-            AccountStatistics.Register(endpoint);
+            AccountStatistics.Register(endpointBuilder);
          });
 
-   static void RegisterTypeMappings(ExactlyOnceEndpointBuilder endpoint) =>
-      endpoint.MapTypes(mapper => mapper.RegisterAccountManagementTypeMappings());
+   static void RegisterTypeMappings(ExactlyOnceEndpointBuilder endpointBuilder) =>
+      endpointBuilder.MapTypes(mapper => mapper.RegisterAccountManagementTypeMappings());
 
-   static void RegisterDomainComponents(ExactlyOnceEndpointBuilder endpoint)
+   static void RegisterDomainComponents(ExactlyOnceEndpointBuilder endpointBuilder)
    {
-      endpoint.RegisterTeventStore()
+      endpointBuilder.RegisterTeventStore()
               .HandleTaggregate<Account, IAccountTevent>();
 
-      endpoint.RegisterDocumentDb()
+      endpointBuilder.RegisterDocumentDb()
               .HandleDocumentType<TeventStoreApi.TueryApi.TaggregateLink<Account>>();
    }
 
-   static void RegisterHandlers(ExactlyOnceEndpointBuilder endpoint) =>
-      endpoint.RegisterTessageHandlers(handle =>
+   static void RegisterHandlers(ExactlyOnceEndpointBuilder endpointBuilder) =>
+      endpointBuilder.RegisterTessageHandlers(handle =>
       {
          UIAdapterLayer.Register(handle);
 

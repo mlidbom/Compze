@@ -52,7 +52,7 @@ public sealed class ExactlyOnceEndpointBuilder : EndpointBuilder
    {
       base.AssertTheFoundationIsDeclared();
       State.Assert(_registerDomainDatabase is not null,
-                   () => "The endpoint declares no domain database. An exactly-once endpoint's durable vertical — inbox, outbox, durable peer memory — lives in the domain database it joins: declare it in the composition, e.g. endpoint.SqliteDomainDatabase(...). An endpoint that deliberately persists nothing is a best-effort endpoint instead (BestEffortEndpoint.Compose).");
+                   () => "The endpoint declares no domain database. An exactly-once endpoint's durable vertical — inbox, outbox, durable peer memory — lives in the domain database it joins: declare it in the composition, e.g. endpointBuilder.SqliteDomainDatabase(...). An endpoint that deliberately persists nothing is a best-effort endpoint instead (BestEffortEndpoint.Compose).");
    }
 
    ///<summary>The durable vertical: the declared domain database, the endpoint's place in it (the table-set and the endpoint<br/>

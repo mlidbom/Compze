@@ -53,10 +53,10 @@ public class Given_two_exactly_once_endpoints_joined_to_one_domain_database : Un
          "FirstNeighbor",
          FirstNeighborEndpointId,
          DomainDatabaseName,
-         endpoint =>
+         endpointBuilder =>
          {
-            endpoint.MapTypes(mapper => mapper.RegisterIntegrationTestTypeMappings());
-            endpoint.RegisterTessageHandlers(handle => handle
+            endpointBuilder.MapTypes(mapper => mapper.RegisterIntegrationTestTypeMappings());
+            endpointBuilder.RegisterTessageHandlers(handle => handle
                        .ForTommand((MyReplyTommandHandledByTheFirstNeighbor _) =>
                         {
                            _firstNeighborReplyHandlerGate.AwaitPassThrough();
@@ -68,10 +68,10 @@ public class Given_two_exactly_once_endpoints_joined_to_one_domain_database : Un
          "SecondNeighbor",
          SecondNeighborEndpointId,
          DomainDatabaseName,
-         endpoint =>
+         endpointBuilder =>
          {
-            endpoint.MapTypes(mapper => mapper.RegisterIntegrationTestTypeMappings());
-            endpoint.RegisterTessageHandlers(handle => handle
+            endpointBuilder.MapTypes(mapper => mapper.RegisterIntegrationTestTypeMappings());
+            endpointBuilder.RegisterTessageHandlers(handle => handle
                        .ForTommand((MyTommandHandledByTheSecondNeighbor _) =>
                         {
                            _secondNeighborHandlerGate.AwaitPassThrough();
@@ -114,7 +114,7 @@ public class Given_two_exactly_once_endpoints_joined_to_one_domain_database : Un
          "FirstNeighbor",
          new EndpointId(Guid.NewGuid()),
          DomainDatabaseName,
-         endpoint => endpoint.MapTypes(mapper => mapper.RegisterIntegrationTestTypeMappings()));
+         endpointBuilder => endpointBuilder.MapTypes(mapper => mapper.RegisterIntegrationTestTypeMappings()));
 
       var startFailure = (await InvokingAsync(async () => await otherHost.StartAsync()).Must().ThrowAsync<AggregateException>()).Which;
       startFailure.Flatten().InnerExceptions.Single().Message.Must()
@@ -131,7 +131,7 @@ public class Given_two_exactly_once_endpoints_joined_to_one_domain_database : Un
          "RenamedNeighbor",
          FirstNeighborEndpointId,
          DomainDatabaseName,
-         endpoint => endpoint.MapTypes(mapper => mapper.RegisterIntegrationTestTypeMappings()));
+         endpointBuilder => endpointBuilder.MapTypes(mapper => mapper.RegisterIntegrationTestTypeMappings()));
 
       var startFailure = (await InvokingAsync(async () => await otherHost.StartAsync()).Must().ThrowAsync<AggregateException>()).Which;
       startFailure.Flatten().InnerExceptions.Single().Message.Must()

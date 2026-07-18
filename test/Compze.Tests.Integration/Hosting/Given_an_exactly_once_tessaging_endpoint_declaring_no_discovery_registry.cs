@@ -51,12 +51,12 @@ public class Given_an_exactly_once_tessaging_endpoint_declaring_no_discovery_reg
          container,
          "NoDiscoveryRegistry",
          new EndpointId(Guid.Parse("5b7e2f4a-9c81-4c56-8a3d-e1f60b924d7c")),
-         endpoint =>
+         endpointBuilder =>
          {
-            endpoint.MapTypes(mapper => mapper.RegisterIntegrationTestTypeMappings());
-            endpoint.TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport());
-            endpoint.DomainDatabase(registrar => registrar.CurrentTestsConfiguredSqlLayer(connectionStringName: endpoint.Configuration.Id.ToString()));
-            endpoint.RegisterTessageHandlers(handle => handle
+            endpointBuilder.MapTypes(mapper => mapper.RegisterIntegrationTestTypeMappings());
+            endpointBuilder.TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport());
+            endpointBuilder.DomainDatabase(registrar => registrar.CurrentTestsConfiguredSqlLayer(connectionStringName: endpointBuilder.Configuration.Id.ToString()));
+            endpointBuilder.RegisterTessageHandlers(handle => handle
                        .ForTommand((TommandTheEndpointSendsItself _) =>
                         {
                            _inRosterTommandHandlerGate.AwaitPassThrough();

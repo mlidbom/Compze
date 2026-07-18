@@ -57,13 +57,13 @@ public class Given_a_separate_process_hosting_an_endpoint_discovered_through_a_s
          container,
          "SpecificationEndpoint",
          new EndpointId(Guid.NewGuid()),
-         endpoint =>
+         endpointBuilder =>
          {
-            endpoint.MapTypes(mapper => mapper.MapTypesFromAssemblyContaining<TommandSentToTheEndpointHostProcess>());
-            endpoint.TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport());
-            endpoint.DomainDatabase(registrar => registrar.CurrentTestsConfiguredSqlLayer(connectionStringName: endpoint.Configuration.Id.ToString()));
-            endpoint.ParticipateIn(_registry);
-            endpoint.RegisterTessageHandlers(handle => handle.ForTommand((TommandSentBackToTheSpecificationProcess _) =>
+            endpointBuilder.MapTypes(mapper => mapper.MapTypesFromAssemblyContaining<TommandSentToTheEndpointHostProcess>());
+            endpointBuilder.TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport());
+            endpointBuilder.DomainDatabase(registrar => registrar.CurrentTestsConfiguredSqlLayer(connectionStringName: endpointBuilder.Configuration.Id.ToString()));
+            endpointBuilder.ParticipateIn(_registry);
+            endpointBuilder.RegisterTessageHandlers(handle => handle.ForTommand((TommandSentBackToTheSpecificationProcess _) =>
             {
                _replyTommandGate.AwaitPassThrough();
                return Task.CompletedTask;

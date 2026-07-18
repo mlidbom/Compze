@@ -48,24 +48,24 @@ public class Given_two_best_effort_endpoints_conversing_in_typermedia : Universa
          container,
          "TypermediaAskingEndpoint",
          new EndpointId(Guid.Parse("3f7b9c25-81d4-4a6e-b0f2-c58a17d93e46")),
-         endpoint =>
+         endpointBuilder =>
          {
-            endpoint.MapTypes(mapper => mapper.RegisterIntegrationTestTypeMappings());
-            endpoint.TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport());
-            endpoint.NewtonsoftSerializer();
-            endpoint.DiscoverEndpointsThrough(endpointsOfTheHost);
+            endpointBuilder.MapTypes(mapper => mapper.RegisterIntegrationTestTypeMappings());
+            endpointBuilder.TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport());
+            endpointBuilder.NewtonsoftSerializer();
+            endpointBuilder.DiscoverEndpointsThrough(endpointsOfTheHost);
          }));
 
       _answeringEndpoint = _host.RegisterEndpoint(container => BestEffortEndpoint.Build(
          container,
          "TypermediaAnsweringEndpoint",
          new EndpointId(Guid.Parse("b93d40e7-2c58-4f1b-a6d9-04e8c6a25f17")),
-         endpoint =>
+         endpointBuilder =>
          {
-            endpoint.MapTypes(mapper => mapper.RegisterIntegrationTestTypeMappings());
-            endpoint.TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport());
-            endpoint.NewtonsoftSerializer();
-            endpoint.RegisterTessageHandlers(handle => handle
+            endpointBuilder.MapTypes(mapper => mapper.RegisterIntegrationTestTypeMappings());
+            endpointBuilder.TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport());
+            endpointBuilder.NewtonsoftSerializer();
+            endpointBuilder.RegisterTessageHandlers(handle => handle
                 .ForTuery((GetTheAnswerTuery _) => new AnswerResource(answeredBy: "TypermediaAnsweringEndpoint"))
                 .ForTommand((RegisterGreetingTypermediaTommand tommand) => new GreetingRegisteredConfirmationResource(tommand.Greeting)));
          }));

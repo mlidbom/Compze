@@ -42,13 +42,13 @@ public class Experiment_with_unifying_tevents_and_tommands_test : UniversalTestB
       _userManagementDomainEndpoint = _host.RegisterExactlyOnceEndpoint(
          "UserManagementDomain",
          new EndpointId(Guid.Parse("A4A2BA96-8D82-47AC-8A1B-38476C7B5D5D")),
-         endpoint =>
+         endpointBuilder =>
          {
-            endpoint.MapTypes(mapper => mapper.RegisterIntegrationTestTypeMappings());
+            endpointBuilder.MapTypes(mapper => mapper.RegisterIntegrationTestTypeMappings());
 
-            endpoint.Registrar.TeventStore(endpoint.Configuration.ConnectionStringName);
+            endpointBuilder.Registrar.TeventStore(endpointBuilder.Configuration.ConnectionStringName);
 
-            endpoint.RegisterTessageHandlers(handle => handle
+            endpointBuilder.RegisterTessageHandlers(handle => handle
                       .ForTevent((IUserTevent.UserRegistered _) => Task.CompletedTask)
                       .ForTuery((GetUserTuery tuery, ITeventStoreReader teventReader) => new UserResource(teventReader.GetHistory(tuery.UserId)))
                       .ForTommand((UserRegistrarTommand.RegisterUserTypermediaTommand typermediaTommand, ITeventStoreUpdater store) =>

@@ -52,10 +52,10 @@ static class AccountStatistics
          return Task.CompletedTask;
       });
 
-   internal static void Register(ExactlyOnceEndpointBuilder endpoint)
+   internal static void Register(ExactlyOnceEndpointBuilder endpointBuilder)
    {
-      endpoint.Registrar.Register(Singleton.For<StatisticsSingletonInitializer>().CreatedBy(() => new StatisticsSingletonInitializer()));
-      endpoint.RegisterTessageHandlers(MaintainStatisticsWhenRelevantTeventsAreReceived);
+      endpointBuilder.Registrar.Register(Singleton.For<StatisticsSingletonInitializer>().CreatedBy(() => new StatisticsSingletonInitializer()));
+      endpointBuilder.RegisterTessageHandlers(MaintainStatisticsWhenRelevantTeventsAreReceived);
    }
 
    class StatisticsSingletonInitializer

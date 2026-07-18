@@ -29,11 +29,11 @@ public class Given_an_endpoint_hosting_only_typermedia : UniversalTestBase
       _endpoint = _host.RegisterBestEffortEndpoint(
          "TypermediaOnly",
          new EndpointId(Guid.Parse("4A0EFCC3-49B6-4B8F-8F90-2E12B4B3A1D2")),
-         endpoint =>
+         endpointBuilder =>
          {
-            endpoint.MapTypes(mapper => mapper.RegisterTypermediaHostingSpecificationTypeMappings());
+            endpointBuilder.MapTypes(mapper => mapper.RegisterTypermediaHostingSpecificationTypeMappings());
 
-            endpoint.RegisterTessageHandlers(handle => handle
+            endpointBuilder.RegisterTessageHandlers(handle => handle
                        .ForTuery((GreetingTuery tuery) => new Greeting { Message = $"Hello {tuery.Name}!" })
                        .ForTommand((RegisterGreeterTommand tommand) => new GreeterRegistered { Name = tommand.Name }));
          });

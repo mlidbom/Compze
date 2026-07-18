@@ -41,11 +41,11 @@ public class Given_an_endpoint_navigating_a_typermedia_type_with_no_live_route :
       _navigatorEndpoint = _host.RegisterBestEffortEndpoint(
          "Navigator",
          NavigatorEndpointId,
-         endpoint =>
+         endpointBuilder =>
          {
-            endpoint.MapTypes(mapper => mapper.RegisterTypermediaHostingSpecificationTypeMappings());
+            endpointBuilder.MapTypes(mapper => mapper.RegisterTypermediaHostingSpecificationTypeMappings());
             //Short deliberately: these specifications pin what exhausted patience says, so waiting out the full default would only slow the suite.
-            endpoint.HandlerAvailabilityPatience(TimeSpan.FromMilliseconds(100));
+            endpointBuilder.HandlerAvailabilityPatience(TimeSpan.FromMilliseconds(100));
          });
    }
 

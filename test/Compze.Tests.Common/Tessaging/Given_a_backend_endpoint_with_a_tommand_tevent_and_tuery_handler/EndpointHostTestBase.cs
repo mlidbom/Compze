@@ -124,20 +124,20 @@ public abstract class EndpointHostTestBase : UniversalTestBase
       BackendEndPoint = Host.RegisterExactlyOnceEndpoint(
          "Backend",
          BackendEndpointId,
-         endpoint =>
+         endpointBuilder =>
          {
-            endpoint.MapTypes(mapper => mapper.RegisterCommonTestTypeMappings());
+            endpointBuilder.MapTypes(mapper => mapper.RegisterCommonTestTypeMappings());
 
             //Short deliberately: every send these specs expect to succeed binds instantly (a live or sole-remembered handler),
             //so the only sends that wait are the ones pinning the patience-exhausted failures - which would otherwise wait out
             //the 30s default. Specs that need a wait to SUCCEED compose their own endpoints with their own patience.
-            endpoint.HandlerAvailabilityPatience(TimeSpan.FromMilliseconds(500));
+            endpointBuilder.HandlerAvailabilityPatience(TimeSpan.FromMilliseconds(500));
 
-            endpoint.RegisterTeventStore()
+            endpointBuilder.RegisterTeventStore()
                     .HandleTaggregate<MyTaggregate, IMyTaggregateTevent>();
 
             //Exactly-once kinds are async end to end, so their handlers are declared async; the gates themselves are synchronous, so the bodies complete their tasks synchronously.
-            endpoint.RegisterTessageHandlers(handle => handle
+            endpointBuilder.RegisterTessageHandlers(handle => handle
                       .ForTommand((MyExactlyOnceTommand _) =>
                        {
                           MyExactlyOnceTommandHandlerThreadGate.AwaitPassThrough();
@@ -177,7 +177,7 @@ public abstract class EndpointHostTestBase : UniversalTestBase
 
             //Observation - the transaction-ignoring subscription kind: the Backend's own locally published tevents are queued for
             //this observer when their publishing unit of work commits, and dispatched off-thread.
-            endpoint.ObserveTevents(observe => observe
+            endpointBuilder.ObserveTevents(observe => observe
                       .ForTevent((IMyTaggregateTevent _) => MyTaggregateTeventBackendObserverThreadGate.AwaitPassThrough()));
          });
    }
@@ -185,13 +185,13 @@ public abstract class EndpointHostTestBase : UniversalTestBase
    void RegisterRemoteEndpoint(bool withItsTommandHandler = true) =>
       RemoteEndpoint = Host.RegisterExactlyOnceEndpoint("Remote",
                                              RemoteEndpointId,
-                                             endpoint =>
+                                             endpointBuilder =>
                                              {
-                                                endpoint.MapTypes(mapper => mapper.RegisterCommonTestTypeMappings());
+                                                endpointBuilder.MapTypes(mapper => mapper.RegisterCommonTestTypeMappings());
 
                                                 if(withItsTommandHandler)
                                                 {
-                                                   endpoint.RegisterTessageHandlers(handle => handle
+                                                   endpointBuilder.RegisterTessageHandlers(handle => handle
                                                              .ForTommand((MyExactlyOnceTommandHandledByTheRemoteEndpoint _) =>
                                                               {
                                                                  MyExactlyOnceTommandHandledByTheRemoteEndpointHandlerThreadGate.AwaitPassThrough();
@@ -199,7 +199,7 @@ public abstract class EndpointHostTestBase : UniversalTestBase
                                                               }));
                                                 }
 
-                                                endpoint.RegisterTessageHandlers(handle => handle
+                                                endpointBuilder.RegisterTessageHandlers(handle => handle
                                                           .ForTevent((IMyTaggregateTevent _) =>
                                                            {
                                                               MyRemoteTaggregateTeventHandlerThreadGate.AwaitPassThrough();
@@ -219,7 +219,7 @@ public abstract class EndpointHostTestBase : UniversalTestBase
 
                                                 //Observation - the transaction-ignoring subscription kind: an arriving tevent is queued for these observers on
                                                 //arrival (it is already a committed fact on its publisher), before and outside the transactional handling above.
-                                                endpoint.ObserveTevents(observe => observe
+                                                endpointBuilder.ObserveTevents(observe => observe
                                                           .ForTevent((IMyTaggregateTevent _) => MyTaggregateTeventRemoteObserverThreadGate.AwaitPassThrough())
                                                           .ForTevent((IMyBestEffortTevent _) => MyBestEffortTeventRemoteObserverThreadGate.AwaitPassThrough()));
                                              });
@@ -261,11 +261,11 @@ public abstract class EndpointHostTestBase : UniversalTestBase
       RemoteEndpoint = null!; //There is no Remote endpoint in this host either: the successor replaces it under its own, new identity.
       Host.RegisterExactlyOnceEndpoint("RemoteSuccessor",
                             RemoteSuccessorEndpointId,
-                            endpoint =>
+                            endpointBuilder =>
                             {
-                               endpoint.MapTypes(mapper => mapper.RegisterCommonTestTypeMappings());
+                               endpointBuilder.MapTypes(mapper => mapper.RegisterCommonTestTypeMappings());
 
-                               endpoint.RegisterTessageHandlers(handle => handle
+                               endpointBuilder.RegisterTessageHandlers(handle => handle
                                          .ForTommand((MyExactlyOnceTommandHandledByTheRemoteEndpoint _) =>
                                           {
                                              RemoteSuccessorTommandHandlerThreadGate.AwaitPassThrough();

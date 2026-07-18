@@ -53,29 +53,29 @@ public class Given_two_best_effort_endpoints : UniversalTestBase
          container,
          "BestEffortPublisherEndpoint",
          new EndpointId(Guid.Parse("6d0a3a3e-59c8-4b0b-9e51-2f47a68d31c4")),
-         endpoint =>
+         endpointBuilder =>
          {
-            endpoint.MapTypes(mapper => mapper.RegisterIntegrationTestTypeMappings());
-            endpoint.TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport());
-            endpoint.NewtonsoftSerializer();
-            endpoint.DiscoverEndpointsThrough(endpointsOfTheHost);
+            endpointBuilder.MapTypes(mapper => mapper.RegisterIntegrationTestTypeMappings());
+            endpointBuilder.TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport());
+            endpointBuilder.NewtonsoftSerializer();
+            endpointBuilder.DiscoverEndpointsThrough(endpointsOfTheHost);
             //The composition declares the relationship: a tevent published before the subscriber's first contact - the two
             //endpoints start in parallel and discover each other by reconciliation - is held for it and delivered on the meet,
             //instead of being lost to the startup race (queue-before-first-contact).
-            endpoint.RequirePeers(SubscriberEndpointId);
+            endpointBuilder.RequirePeers(SubscriberEndpointId);
          }));
 
       _host.RegisterEndpoint(container => BestEffortEndpoint.Build(
          container,
          "BestEffortSubscriberEndpoint",
          SubscriberEndpointId,
-         endpoint =>
+         endpointBuilder =>
          {
-            endpoint.MapTypes(mapper => mapper.RegisterIntegrationTestTypeMappings());
-            endpoint.TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport());
-            endpoint.NewtonsoftSerializer();
-            endpoint.DiscoverEndpointsThrough(endpointsOfTheHost);
-            endpoint.RegisterTessageHandlers(handle => handle.ForTevent((IMyBestEffortTevent tevent) =>
+            endpointBuilder.MapTypes(mapper => mapper.RegisterIntegrationTestTypeMappings());
+            endpointBuilder.TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport());
+            endpointBuilder.NewtonsoftSerializer();
+            endpointBuilder.DiscoverEndpointsThrough(endpointsOfTheHost);
+            endpointBuilder.RegisterTessageHandlers(handle => handle.ForTevent((IMyBestEffortTevent tevent) =>
              {
                 _bestEffortTeventsHandledOnTheSubscriber.Enqueue(tevent);
                 _subscriberBestEffortTeventHandlerGate.AwaitPassThrough();
@@ -110,10 +110,10 @@ public class Given_two_best_effort_endpoints : UniversalTestBase
       await using var host = EndpointHost.Production.Create(() => TestEnv.DIContainer.CreateTestingContainerBuilder());
       Invoking(() => host.RegisterEndpoint(container => BestEffortEndpoint.Build(
                         container, "ExactlyOnceSubscriptionOnABestEffortEndpoint", new EndpointId(Guid.NewGuid()),
-                        endpoint =>
+                        endpointBuilder =>
                         {
-                           ComposeMinimalFoundation(endpoint);
-                           endpoint.RegisterTessageHandlers(handle => handle.ForTevent((ITeventDeclaringTheExactlyOnceContract _) => Task.CompletedTask));
+                           ComposeMinimalFoundation(endpointBuilder);
+                           endpointBuilder.RegisterTessageHandlers(handle => handle.ForTevent((ITeventDeclaringTheExactlyOnceContract _) => Task.CompletedTask));
                         })))
         .Must().Throw<Exception>().Which.Message.Must().Contain("wires no exactly-once delivery machinery");
    }
@@ -123,10 +123,10 @@ public class Given_two_best_effort_endpoints : UniversalTestBase
       await using var host = EndpointHost.Production.Create(() => TestEnv.DIContainer.CreateTestingContainerBuilder());
       Invoking(() => host.RegisterEndpoint(container => BestEffortEndpoint.Build(
                         container, "ExactlyOnceObservationOnABestEffortEndpoint", new EndpointId(Guid.NewGuid()),
-                        endpoint =>
+                        endpointBuilder =>
                         {
-                           ComposeMinimalFoundation(endpoint);
-                           endpoint.ObserveTevents(observe => observe.ForTevent((ITeventDeclaringTheExactlyOnceContract _) => {}));
+                           ComposeMinimalFoundation(endpointBuilder);
+                           endpointBuilder.ObserveTevents(observe => observe.ForTevent((ITeventDeclaringTheExactlyOnceContract _) => {}));
                         })))
         .Must().Throw<Exception>().Which.Message.Must().Contain("wires no exactly-once delivery machinery");
    }
@@ -136,10 +136,10 @@ public class Given_two_best_effort_endpoints : UniversalTestBase
       await using var host = EndpointHost.Production.Create(() => TestEnv.DIContainer.CreateTestingContainerBuilder());
       Invoking(() => host.RegisterEndpoint(container => BestEffortEndpoint.Build(
                         container, "ExactlyOnceTommandHandlerOnABestEffortEndpoint", new EndpointId(Guid.NewGuid()),
-                        endpoint =>
+                        endpointBuilder =>
                         {
-                           ComposeMinimalFoundation(endpoint);
-                           endpoint.RegisterTessageHandlers(handle => handle.ForTommand((TommandDeclaringTheExactlyOnceContract _) => Task.CompletedTask));
+                           ComposeMinimalFoundation(endpointBuilder);
+                           endpointBuilder.RegisterTessageHandlers(handle => handle.ForTommand((TommandDeclaringTheExactlyOnceContract _) => Task.CompletedTask));
                         })))
         .Must().Throw<Exception>().Which.Message.Must().Contain("wires no exactly-once delivery machinery");
    }
@@ -149,7 +149,7 @@ public class Given_two_best_effort_endpoints : UniversalTestBase
       await using var host = EndpointHost.Production.Create(() => TestEnv.DIContainer.CreateTestingContainerBuilder());
       Invoking(() => host.RegisterEndpoint(container => BestEffortEndpoint.Build(
                         container, "BestEffortEndpointWithoutASerializer", new EndpointId(Guid.NewGuid()),
-                        endpoint => endpoint.TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport()))))
+                        endpointBuilder => endpointBuilder.TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport()))))
         .Must().Throw<Exception>().Which.Message.Must().Contain("The endpoint declares no serializer");
    }
 
@@ -158,15 +158,15 @@ public class Given_two_best_effort_endpoints : UniversalTestBase
       await using var host = EndpointHost.Production.Create(() => TestEnv.DIContainer.CreateTestingContainerBuilder());
       Invoking(() => host.RegisterEndpoint(container => BestEffortEndpoint.Build(
                         container, "BestEffortEndpointWithoutATransportProtocol", new EndpointId(Guid.NewGuid()),
-                        endpoint => endpoint.NewtonsoftSerializer())))
+                        endpointBuilder => endpointBuilder.NewtonsoftSerializer())))
         .Must().Throw<Exception>().Which.Message.Must().Contain("The endpoint declares no transport protocol");
    }
 
-   static void ComposeMinimalFoundation(BestEffortEndpointBuilder endpoint)
+   static void ComposeMinimalFoundation(BestEffortEndpointBuilder endpointBuilder)
    {
-      endpoint.MapTypes(mapper => mapper.RegisterIntegrationTestTypeMappings());
-      endpoint.TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport());
-      endpoint.NewtonsoftSerializer();
+      endpointBuilder.MapTypes(mapper => mapper.RegisterIntegrationTestTypeMappings());
+      endpointBuilder.TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport());
+      endpointBuilder.NewtonsoftSerializer();
    }
 
    void PublishOnThePublisherEndpointInATransaction(ITevent tevent) =>

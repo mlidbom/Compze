@@ -37,11 +37,11 @@ public class Given_an_endpoint_navigating_a_typermedia_type_two_live_endpoints_a
       _navigatorEndpoint = _host.RegisterBestEffortEndpoint(
          "Navigator",
          NavigatorEndpointId,
-         endpoint =>
+         endpointBuilder =>
          {
-            endpoint.MapTypes(mapper => mapper.RegisterTypermediaHostingSpecificationTypeMappings());
+            endpointBuilder.MapTypes(mapper => mapper.RegisterTypermediaHostingSpecificationTypeMappings());
             //Short deliberately: this specification pins what exhausted patience says, so waiting out the full default would only slow the suite.
-            endpoint.HandlerAvailabilityPatience(TimeSpan.FromMilliseconds(100));
+            endpointBuilder.HandlerAvailabilityPatience(TimeSpan.FromMilliseconds(100));
          });
 
       RegisterHandlerEndpoint("FirstHandler", FirstHandlerEndpointId);
@@ -52,10 +52,10 @@ public class Given_an_endpoint_navigating_a_typermedia_type_two_live_endpoints_a
       _host.RegisterBestEffortEndpoint(
          name,
          id,
-         endpoint =>
+         endpointBuilder =>
          {
-            endpoint.MapTypes(mapper => mapper.RegisterTypermediaHostingSpecificationTypeMappings());
-            endpoint.RegisterTessageHandlers(handle => handle
+            endpointBuilder.MapTypes(mapper => mapper.RegisterTypermediaHostingSpecificationTypeMappings());
+            endpointBuilder.RegisterTessageHandlers(handle => handle
                        .ForTuery((TueryBothEndpointsHandle _) => new TueryAnswer { Message = $"from {name}" }));
          });
 

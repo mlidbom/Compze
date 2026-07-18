@@ -44,13 +44,13 @@ public class Given_a_best_effort_endpoint_serving_typermedia_to_a_remote_client 
          container,
          "DatabaselessTypermediaEndpoint",
          new EndpointId(Guid.Parse("d2f9c1a4-6e83-4b57-9a02-8c5d41e7f6b0")),
-         endpoint =>
+         endpointBuilder =>
          {
-            endpoint.MapTypes(mapper => mapper.RegisterIntegrationTestTypeMappings());
-            endpoint.TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport());
-            endpoint.NewtonsoftSerializer();
+            endpointBuilder.MapTypes(mapper => mapper.RegisterIntegrationTestTypeMappings());
+            endpointBuilder.TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport());
+            endpointBuilder.NewtonsoftSerializer();
 
-            endpoint.RegisterTessageHandlers(handle => handle
+            endpointBuilder.RegisterTessageHandlers(handle => handle
                        .ForTuery((GetUserTuery tuery) => registeredUsers.Single(user => user.Name == tuery.Name))
                        .ForTommand((RegisterUserTypermediaTommand tommand) =>
                         {
@@ -86,11 +86,11 @@ public class Given_a_best_effort_endpoint_serving_typermedia_to_a_remote_client 
       await using var host = EndpointHost.Production.Create(() => TestEnv.DIContainer.CreateTestingContainerBuilder());
       Invoking(() => host.RegisterEndpoint(container => ExactlyOnceEndpoint.Compose(
                         container, "TessagingWithoutADatabase", new EndpointId(Guid.NewGuid()),
-                        endpoint =>
+                        endpointBuilder =>
                         {
-                           endpoint.MapTypes(mapper => mapper.RegisterIntegrationTestTypeMappings());
-                           endpoint.TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport());
-                           endpoint.NewtonsoftSerializer();
+                           endpointBuilder.MapTypes(mapper => mapper.RegisterIntegrationTestTypeMappings());
+                           endpointBuilder.TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport());
+                           endpointBuilder.NewtonsoftSerializer();
                         })))
          .Must().Throw<Exception>().Which.Message.Must().Contain("The endpoint declares no domain database");
    }

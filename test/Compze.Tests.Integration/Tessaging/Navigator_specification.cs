@@ -33,11 +33,11 @@ public class Navigator_specification : UniversalTestBase
       _endpoint = _host.RegisterExactlyOnceEndpoint(
          "Backend",
          new EndpointId(Guid.Parse("3A1B6A8C-D232-476C-A15A-9C8295413210")),
-         endpoint =>
+         endpointBuilder =>
          {
-            endpoint.MapTypes(mapper => mapper.RegisterIntegrationTestTypeMappings());
+            endpointBuilder.MapTypes(mapper => mapper.RegisterIntegrationTestTypeMappings());
 
-            endpoint.RegisterTessageHandlers(handle => handle
+            endpointBuilder.RegisterTessageHandlers(handle => handle
                       .ForTuery((GetUserTuery tuery) => tueryResults.Single(result => result.Name == tuery.Name))
                       .ForTuery((UserApiStartPageTuery _) => new UserApiStartPage())
                       .ForTommand((RegisterUserTypermediaTommand typermediaTommand, IUnitOfWorkTommandSender _) =>

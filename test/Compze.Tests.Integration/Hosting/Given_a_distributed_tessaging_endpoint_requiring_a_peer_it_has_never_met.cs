@@ -50,13 +50,13 @@ public class Given_a_distributed_tessaging_endpoint_requiring_a_peer_it_has_neve
          container,
          "FirstContactPublisherEndpoint",
          new EndpointId(Guid.Parse("c85d19e7-4a2b-4f60-9d38-71b06c5f2ea4")),
-         endpoint =>
+         endpointBuilder =>
          {
-            endpoint.MapTypes(mapper => mapper.RegisterIntegrationTestTypeMappings());
-            endpoint.TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport());
-            endpoint.NewtonsoftSerializer();
-            endpoint.DiscoverEndpointsThrough(_registry);
-            endpoint.RequirePeers(RequiredSubscriberEndpointId);
+            endpointBuilder.MapTypes(mapper => mapper.RegisterIntegrationTestTypeMappings());
+            endpointBuilder.TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport());
+            endpointBuilder.NewtonsoftSerializer();
+            endpointBuilder.DiscoverEndpointsThrough(_registry);
+            endpointBuilder.RequirePeers(RequiredSubscriberEndpointId);
          }));
    }
 
@@ -114,12 +114,12 @@ public class Given_a_distributed_tessaging_endpoint_requiring_a_peer_it_has_neve
          container,
          "FirstContactRequiredSubscriberEndpoint",
          RequiredSubscriberEndpointId,
-         endpoint =>
+         endpointBuilder =>
          {
-            endpoint.MapTypes(mapper => mapper.RegisterIntegrationTestTypeMappings());
-            endpoint.TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport());
-            endpoint.NewtonsoftSerializer();
-            endpoint.RegisterTessageHandlers(handle => handle.ForTevent((IMyBestEffortTevent tevent) =>
+            endpointBuilder.MapTypes(mapper => mapper.RegisterIntegrationTestTypeMappings());
+            endpointBuilder.TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport());
+            endpointBuilder.NewtonsoftSerializer();
+            endpointBuilder.RegisterTessageHandlers(handle => handle.ForTevent((IMyBestEffortTevent tevent) =>
              {
                 _teventsHandledOnTheSubscriber.Enqueue(tevent);
                 _subscriberTeventHandlerGate.AwaitPassThrough();

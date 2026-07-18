@@ -56,12 +56,12 @@ public class Given_a_met_distributed_tessaging_subscriber_that_goes_down : Unive
          container,
          "QueueWhileDownPublisherEndpoint",
          new EndpointId(Guid.Parse("21c2e6a4-9b0f-4c3d-8a57-3f1de08b6c92")),
-         endpoint =>
+         endpointBuilder =>
          {
-            endpoint.MapTypes(mapper => mapper.RegisterIntegrationTestTypeMappings());
-            endpoint.TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport());
-            endpoint.NewtonsoftSerializer();
-            endpoint.DiscoverEndpointsThrough(_registry);
+            endpointBuilder.MapTypes(mapper => mapper.RegisterIntegrationTestTypeMappings());
+            endpointBuilder.TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport());
+            endpointBuilder.NewtonsoftSerializer();
+            endpointBuilder.DiscoverEndpointsThrough(_registry);
          }));
 
       _subscriberHost = CreateSubscriberHost();
@@ -74,12 +74,12 @@ public class Given_a_met_distributed_tessaging_subscriber_that_goes_down : Unive
          container,
          "QueueWhileDownSubscriberEndpoint",
          SubscriberEndpointId,
-         endpoint =>
+         endpointBuilder =>
          {
-            endpoint.MapTypes(mapper => mapper.RegisterIntegrationTestTypeMappings());
-            endpoint.TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport());
-            endpoint.NewtonsoftSerializer();
-            endpoint.RegisterTessageHandlers(handle => handle.ForTevent((IMyBestEffortTevent tevent) =>
+            endpointBuilder.MapTypes(mapper => mapper.RegisterIntegrationTestTypeMappings());
+            endpointBuilder.TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport());
+            endpointBuilder.NewtonsoftSerializer();
+            endpointBuilder.RegisterTessageHandlers(handle => handle.ForTevent((IMyBestEffortTevent tevent) =>
              {
                 _teventsHandledOnTheSubscriber.Enqueue(tevent);
                 _subscriberTeventHandlerGate.AwaitPassThrough();

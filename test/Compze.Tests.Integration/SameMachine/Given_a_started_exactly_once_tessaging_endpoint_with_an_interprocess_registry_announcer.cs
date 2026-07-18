@@ -29,7 +29,7 @@ public class Given_a_started_exactly_once_tessaging_endpoint_with_an_interproces
       _host = TestingEndpointHost.Create();
       _endpoint = _host.RegisterExactlyOnceEndpoint("AnnouncingEndpoint",
                                                     new EndpointId(Guid.NewGuid()),
-                                                    endpoint => endpoint.AnnounceAddressTo(_registry));
+                                                    endpointBuilder => endpointBuilder.AnnounceAddressTo(_registry));
    }
 
    protected override async Task InitializeAsyncInternal() => await _host.StartAsync();

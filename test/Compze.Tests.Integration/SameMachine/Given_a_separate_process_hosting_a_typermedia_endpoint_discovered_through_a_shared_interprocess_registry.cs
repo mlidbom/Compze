@@ -57,12 +57,12 @@ public class Given_a_separate_process_hosting_a_typermedia_endpoint_discovered_t
          container,
          "SpecificationEndpoint",
          new EndpointId(Guid.NewGuid()),
-         endpoint =>
+         endpointBuilder =>
          {
-            endpoint.MapTypes(mapper => mapper.MapTypesFromAssemblyContaining<TueryAskedByTheSpecificationProcess>());
-            endpoint.TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport());
-            endpoint.Serializer(registrar => registrar.CurrentTestsSerializersIfNotClonedContainer());
-            endpoint.DiscoverEndpointsThrough(_registry);
+            endpointBuilder.MapTypes(mapper => mapper.MapTypesFromAssemblyContaining<TueryAskedByTheSpecificationProcess>());
+            endpointBuilder.TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport());
+            endpointBuilder.Serializer(registrar => registrar.CurrentTestsSerializersIfNotClonedContainer());
+            endpointBuilder.DiscoverEndpointsThrough(_registry);
          }));
    }
 

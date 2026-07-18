@@ -51,13 +51,13 @@ public class Given_a_met_distributed_tessaging_subscriber_the_publisher_does_not
          container,
          "NoQueueingPublisherEndpoint",
          new EndpointId(Guid.Parse("e47b06d2-3c95-48a1-bf60-27d8c41e95b0")),
-         endpoint =>
+         endpointBuilder =>
          {
-            endpoint.MapTypes(mapper => mapper.RegisterIntegrationTestTypeMappings());
-            endpoint.TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport());
-            endpoint.NewtonsoftSerializer();
-            endpoint.DiscoverEndpointsThrough(_registry);
-            endpoint.DoNotQueueTeventsFor(SubscriberEndpointId);
+            endpointBuilder.MapTypes(mapper => mapper.RegisterIntegrationTestTypeMappings());
+            endpointBuilder.TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport());
+            endpointBuilder.NewtonsoftSerializer();
+            endpointBuilder.DiscoverEndpointsThrough(_registry);
+            endpointBuilder.DoNotQueueTeventsFor(SubscriberEndpointId);
          }));
 
       _subscriberHost = CreateSubscriberHost();
@@ -70,12 +70,12 @@ public class Given_a_met_distributed_tessaging_subscriber_the_publisher_does_not
          container,
          "NoQueueingSubscriberEndpoint",
          SubscriberEndpointId,
-         endpoint =>
+         endpointBuilder =>
          {
-            endpoint.MapTypes(mapper => mapper.RegisterIntegrationTestTypeMappings());
-            endpoint.TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport());
-            endpoint.NewtonsoftSerializer();
-            endpoint.RegisterTessageHandlers(handle => handle.ForTevent((IMyBestEffortTevent tevent) =>
+            endpointBuilder.MapTypes(mapper => mapper.RegisterIntegrationTestTypeMappings());
+            endpointBuilder.TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport());
+            endpointBuilder.NewtonsoftSerializer();
+            endpointBuilder.RegisterTessageHandlers(handle => handle.ForTevent((IMyBestEffortTevent tevent) =>
              {
                 _teventsHandledOnTheSubscriber.Enqueue(tevent);
                 _subscriberTeventHandlerGate.AwaitPassThrough();

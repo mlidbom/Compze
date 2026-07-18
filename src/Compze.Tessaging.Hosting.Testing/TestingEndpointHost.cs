@@ -76,28 +76,28 @@ public class TestingEndpointHost : EndpointHost
    /// of one of its own — the composition for several endpoints storing side by side in one domain database: each with its<br/>
    /// prefixed table-set, sharing the endpoint catalog and the type-id interner.</summary>
    public ExactlyOnceEndpoint RegisterExactlyOnceEndpointInDomainDatabase(string name, EndpointId id, string domainDatabaseName, Action<ExactlyOnceEndpointBuilder> declare) =>
-      RegisterEndpoint(container => ExactlyOnceEndpoint.Compose(container, name, id, endpoint =>
+      RegisterEndpoint(container => ExactlyOnceEndpoint.Compose(container, name, id, endpointBuilder =>
       {
-         DeclareTheCurrentTestsConcerns(endpoint);
-         endpoint.DomainDatabase(registrar => registrar.CurrentTestsConfiguredSqlLayer(connectionStringName: domainDatabaseName));
-         declare(endpoint);
+         DeclareTheCurrentTestsConcerns(endpointBuilder);
+         endpointBuilder.DomainDatabase(registrar => registrar.CurrentTestsConfiguredSqlLayer(connectionStringName: domainDatabaseName));
+         declare(endpointBuilder);
       }));
 
    ///<summary>Registers a <see cref="BestEffortEndpoint"/> composed with the current test's concerns — the host's tracker,<br/>
    /// transport, serializers, and participation in <see cref="EndpointRegistry"/> — plus whatever <paramref name="declare"/> declares.</summary>
    public BestEffortEndpoint RegisterBestEffortEndpoint(string name, EndpointId id, Action<BestEffortEndpointBuilder> declare) =>
-      RegisterEndpoint(container => BestEffortEndpoint.Build(container, name, id, endpoint =>
+      RegisterEndpoint(container => BestEffortEndpoint.Build(container, name, id, endpointBuilder =>
       {
-         DeclareTheCurrentTestsConcerns(endpoint);
-         declare(endpoint);
+         DeclareTheCurrentTestsConcerns(endpointBuilder);
+         declare(endpointBuilder);
       }));
 
-   void DeclareTheCurrentTestsConcerns(EndpointBuilder endpoint)
+   void DeclareTheCurrentTestsConcerns(EndpointBuilder endpointBuilder)
    {
-      endpoint.TrackTessagesInFlightWith(_tessagesInFlightTracker);
-      endpoint.TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport());
+      endpointBuilder.TrackTessagesInFlightWith(_tessagesInFlightTracker);
+      endpointBuilder.TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport());
       //The serializers arrive with the cloned root container; the topology with the host's registry.
-      endpoint.ParticipateIn(_endpointRegistry);
+      endpointBuilder.ParticipateIn(_endpointRegistry);
    }
 
    ///<summary>Awaits every endpoint of this host remembering every other endpoint of the host as a peer — mutual first<br/>

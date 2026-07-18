@@ -54,17 +54,17 @@ public class Given_a_separate_process_hosting_a_distributed_tessaging_endpoint_d
          container,
          "SpecificationEndpoint",
          MultiProcessConversationEndpoints.SpecificationProcessEndpointId,
-         endpoint =>
+         endpointBuilder =>
          {
-            endpoint.MapTypes(mapper => mapper.MapTypesFromAssemblyContaining<TommandSentToTheEndpointHostProcess>());
-            endpoint.TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport());
-            endpoint.Serializer(registrar => registrar.CurrentTestsSerializersIfNotClonedContainer());
-            endpoint.ParticipateIn(_registry);
+            endpointBuilder.MapTypes(mapper => mapper.MapTypesFromAssemblyContaining<TommandSentToTheEndpointHostProcess>());
+            endpointBuilder.TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport());
+            endpointBuilder.Serializer(registrar => registrar.CurrentTestsSerializersIfNotClonedContainer());
+            endpointBuilder.ParticipateIn(_registry);
             //Requiring the endpoint host process's endpoint makes the outbound leg deterministic: the tevent published
             //below, before either process has discovered the other, is held for the required peer and delivered on first
             //contact instead of vanishing into the discovery race.
-            endpoint.RequirePeers(MultiProcessConversationEndpoints.EndpointHostProcessEndpointId);
-            endpoint.RegisterTessageHandlers(handle => handle.ForTevent((IBestEffortTeventPublishedByTheEndpointHostProcess _) => _replyTeventReceived.Set()));
+            endpointBuilder.RequirePeers(MultiProcessConversationEndpoints.EndpointHostProcessEndpointId);
+            endpointBuilder.RegisterTessageHandlers(handle => handle.ForTevent((IBestEffortTeventPublishedByTheEndpointHostProcess _) => _replyTeventReceived.Set()));
          }));
    }
 

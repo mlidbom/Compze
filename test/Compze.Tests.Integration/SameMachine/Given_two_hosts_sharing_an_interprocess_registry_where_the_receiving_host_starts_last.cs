@@ -47,10 +47,10 @@ public class Given_two_hosts_sharing_an_interprocess_registry_where_the_receivin
       _receiverHost = EndpointHost.Production.Create(CreateEndpointContainerBuilder);
       _receiverHost.RegisterEndpoint(container => ExactlyOnceEndpoint.Compose(
          container, "Receiver", new EndpointId(Guid.NewGuid()),
-         endpoint =>
+         endpointBuilder =>
          {
-            ComposeEndpointDiscoveredThroughTheRegistry(endpoint);
-            endpoint.RegisterTessageHandlers(handle => handle.ForTommand((TommandDiscoveredThroughReconciliation _) =>
+            ComposeEndpointDiscoveredThroughTheRegistry(endpointBuilder);
+            endpointBuilder.RegisterTessageHandlers(handle => handle.ForTommand((TommandDiscoveredThroughReconciliation _) =>
             {
                _receivedTommandGate.AwaitPassThrough();
                return Task.CompletedTask;
@@ -61,12 +61,12 @@ public class Given_two_hosts_sharing_an_interprocess_registry_where_the_receivin
    static IContainerBuilder CreateEndpointContainerBuilder() =>
       TestEnv.DIContainer.CreateTestingContainerBuilder()._mutate(it => it.Registrar.CurrentTestsDbPoolIfNotCloneContainer());
 
-   void ComposeEndpointDiscoveredThroughTheRegistry(ExactlyOnceEndpointBuilder endpoint)
+   void ComposeEndpointDiscoveredThroughTheRegistry(ExactlyOnceEndpointBuilder endpointBuilder)
    {
-      endpoint.MapTypes(mapper => mapper.RegisterIntegrationTestTypeMappings());
-      endpoint.TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport());
-      endpoint.DomainDatabase(registrar => registrar.CurrentTestsConfiguredSqlLayer(connectionStringName: endpoint.Configuration.Id.ToString()));
-      endpoint.ParticipateIn(_registry);
+      endpointBuilder.MapTypes(mapper => mapper.RegisterIntegrationTestTypeMappings());
+      endpointBuilder.TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport());
+      endpointBuilder.DomainDatabase(registrar => registrar.CurrentTestsConfiguredSqlLayer(connectionStringName: endpointBuilder.Configuration.Id.ToString()));
+      endpointBuilder.ParticipateIn(_registry);
    }
 
    protected override async Task InitializeAsyncInternal()
