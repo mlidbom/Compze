@@ -127,7 +127,7 @@ class EndpointProcessLease
          if(await Task.WhenAny(_released.Task, Task.Delay(_leaseDuration.HeartbeatInterval)).caf() == _released.Task)
             return;
 
-         var renewed = await TransactionScopeCe.ExecuteAsync(() => _catalog.TryHeartbeatAsync(_endpoint.Name, _leaseHolderId, UtcTimeSource.UtcNow), TransactionScopeOption.Suppress).caf();
+         var renewed = await TransactionScopeCe.SuppressAmbientAsync(() => _catalog.TryHeartbeatAsync(_endpoint.Name, _leaseHolderId, UtcTimeSource.UtcNow)).caf();
          if(renewed) continue;
 
          _backgroundExceptionReporter.ReportException(new EndpointAlreadyRunningInAnotherProcessException(

@@ -33,6 +33,7 @@ public static class TransactionScopeCe
       transactionScope.Complete();
    }
 
+   public static async Task<TResult> SuppressAmbientAsync<TResult>([InstantHandle] Func<Task<TResult>> action) => await ExecuteAsync(action, TransactionScopeOption.Suppress).caf();
    public static async Task<TResult> ExecuteAsync<TResult>([InstantHandle] Func<Task<TResult>> action, TransactionScopeOption option = TransactionScopeOption.Required)
    {
       using var transactionScope = new TransactionScope(option,
