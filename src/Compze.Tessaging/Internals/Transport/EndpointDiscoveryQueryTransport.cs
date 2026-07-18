@@ -34,14 +34,14 @@ class EndpointDiscoveryQueryTransport : IEndpointDiscoveryQueryTransport
       _typeMap = typeMap;
    }
 
-   public async Task<TResult> GetAsync<TResult>(ITuery<TResult> query, EndpointAddress address)
+   public async Task<TResult> GetAsync<TResult>(ITuery<TResult> query, EndpointAddress address, CancellationToken cancellationToken = default)
    {
       var request = new TransportRequest(TransportRequestKind.EndpointDiscoveryQuery,
                                          new TessageId(),
                                          _typeMap.GetId(query.GetType()).CanonicalString,
                                          EndpointDiscoverySerializer.SerializeQuery(query));
 
-      var responseJson = await _transportClient.SendAsync(request, address).caf();
+      var responseJson = await _transportClient.SendAsync(request, address, cancellationToken).caf();
       return EndpointDiscoverySerializer.DeserializeResult<TResult>(responseJson);
    }
 }

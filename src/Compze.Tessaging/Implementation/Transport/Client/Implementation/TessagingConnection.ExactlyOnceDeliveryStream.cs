@@ -1,6 +1,7 @@
 using Compze.Tessaging.Implementation.Transport.Abstractions;
 using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.Internals.Logging;
+using Compze.Internals.SystemCE.ThreadingCE;
 using Compze.Threading.ResourceAccess;
 
 namespace Compze.Tessaging.Implementation.Transport.Client.Implementation;
@@ -53,7 +54,7 @@ partial class TessagingConnection
          _sendLoopThread = _connection._taskRunner.RunOnNamedThread($"ExactlyOnceDelivery-{_connection.EndpointInformation.Id.Value:N}", SendLoop, ThreadPriority.BelowNormal);
       }
 
-      internal void AwaitSendLoopTermination() => _sendLoopThread?.Join(5.Seconds());
+      internal void AwaitSendLoopTermination() => _sendLoopThread?.JoinCE(5.Seconds());
 
       //In-order delivery survives recovery: GetUndeliveredTessagesForEndpoint returns the backlog in send order
       //(the outbox tessage table's monotonic GeneratedId), so re-enqueueing it re-establishes head-of-line on the
@@ -104,6 +105,7 @@ partial class TessagingConnection
                }
             }
          }
+         catch(OperationCanceledException) {} // Expected during shutdown: cancellation aborted an in-flight send.
          catch(ObjectDisposedException) {} // Expected during shutdown
 
          this.Log().Info($"Stopped exactly-once delivery loop for endpoint {_connection.EndpointInformation.Id}");
@@ -113,7 +115,7 @@ partial class TessagingConnection
       {
          try
          {
-            _connection._transportMessagePoster.PostAsync(pending, _connection.RemoteAddress).GetAwaiter().GetResult();
+            _connection._transportMessagePoster.PostAsync(pending, _connection.RemoteAddress, _connection._cancellationSource.Token).GetAwaiter().GetResult();
 
             this.Log().Debug($"Delivered tessage {pending.TessageId} to endpoint {_connection.EndpointInformation.Id}");
             _connection._exceptionReporter.RunSwallowingAndReportingAnyExceptions(() => _tessageStorage.MarkAsReceivedAsync(pending.TessageId, _connection.EndpointInformation.Id).GetAwaiter().GetResult());
@@ -123,6 +125,9 @@ partial class TessagingConnection
          catch(Exception exception)
          {
 #pragma warning restore CA1031
+            //Shutdown cancelled the in-flight send: not a delivery failure. The tessage stays undelivered in the outbox and
+            //redelivers on the next start (deduplicated by the receiver), so let the cancellation propagate and end the loop.
+            _connection._cancellationSource.Token.ThrowIfCancellationRequested();
             this.Log().Warning(exception, $"Delivery failed for tessage {pending.TessageId} to endpoint {_connection.EndpointInformation.Id}");
             _connection._exceptionReporter.RunSwallowingAndReportingAnyExceptions(() => _tessageStorage.RecordDeliveryFailureAsync(pending.TessageId, _connection.EndpointInformation.Id, exception).GetAwaiter().GetResult());
             return false;

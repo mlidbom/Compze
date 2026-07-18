@@ -10,5 +10,5 @@ namespace Compze.Tessaging.Internals.Transport;
 /// the serving side's exception type and detail, whatever the protocol.</remarks>
 public interface IEndpointTransportClient
 {
-   Task<string> SendAsync(TransportRequest request, EndpointAddress address);
+   Task<string> SendAsync(TransportRequest request, EndpointAddress address, CancellationToken cancellationToken = default);
 }

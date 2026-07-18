@@ -20,6 +20,6 @@ public static class NamedPipeEndpointTransportClientRegistrar
 /// <see cref="NamedPipeTransportClient"/> to the endpoint's named-pipe transport server (<see cref="NamedPipeEndpointTransportServer"/>).</summary>
 class NamedPipeEndpointTransportClient : IEndpointTransportClient
 {
-   public async Task<string> SendAsync(TransportRequest request, EndpointAddress address) =>
-      await NamedPipeTransportClient.SendAsync(request, address).caf();
+   public async Task<string> SendAsync(TransportRequest request, EndpointAddress address, CancellationToken cancellationToken = default) =>
+      await NamedPipeTransportClient.SendAsync(request, address, cancellationToken).caf();
 }

@@ -2,6 +2,7 @@ using Compze.Tessaging.Internals.Transport;
 using Compze.Tessaging.Implementation.BestEffortDelivery;
 using Compze.Tessaging.Implementation.Transport.Abstractions;
 using Compze.Internals.Logging;
+using Compze.Internals.SystemCE.ThreadingCE;
 
 namespace Compze.Tessaging.Implementation.Transport.Client.Implementation;
 
@@ -51,7 +52,7 @@ partial class TessagingConnection
          _sendLoopThread = _connection._taskRunner.RunOnNamedThread($"BestEffortDelivery-{_connection.EndpointInformation.Id.Value:N}", SendLoop, ThreadPriority.BelowNormal);
       }
 
-      internal void AwaitSendLoopTermination() => _sendLoopThread?.Join(5.Seconds());
+      internal void AwaitSendLoopTermination() => _sendLoopThread?.JoinCE(5.Seconds());
 
       void SendLoop()
       {
@@ -76,13 +77,15 @@ partial class TessagingConnection
 
                try
                {
-                  _connection._transportMessagePoster.PostAsync(pending, _connection.RemoteAddress).GetAwaiter().GetResult();
+                  _connection._transportMessagePoster.PostAsync(pending, _connection.RemoteAddress, _connection._cancellationSource.Token).GetAwaiter().GetResult();
                   this.Log().Debug($"Delivered best-effort tessage {pending.TessageId} to endpoint {_connection.EndpointInformation.Id}");
                }
 #pragma warning disable CA1031 // Background thread, and the failure policies below ARE the best-effort tier's handling of every delivery failure.
                catch(Exception exception)
                {
 #pragma warning restore CA1031
+                  //Shutdown cancelled the in-flight send: exit the loop rather than treating it as a delivery failure to drop or pause on.
+                  _connection._cancellationSource.Token.ThrowIfCancellationRequested();
                   if(_peerQueue.QueueingDeclined)
                      DropTheQueuedStreamWholeForTheNotQueuedForPeer(failedTessage: pending, exception);
                   else
@@ -90,6 +93,7 @@ partial class TessagingConnection
                }
             }
          }
+         catch(OperationCanceledException) {} // Expected during shutdown: cancellation aborted an in-flight send or probe.
          catch(ObjectDisposedException) {} // Expected during shutdown
          finally
          {
@@ -132,7 +136,7 @@ partial class TessagingConnection
 
             try
             {
-               _connection._endpointDiscoveryQueryTransport.GetAsync(new EndpointInformationQuery(), _connection.RemoteAddress).GetAwaiter().GetResult();
+               _connection._endpointDiscoveryQueryTransport.GetAsync(new EndpointInformationQuery(), _connection.RemoteAddress, _connection._cancellationSource.Token).GetAwaiter().GetResult();
                this.Log().Info($"Endpoint {_connection.EndpointInformation.Id} answered the probe; best-effort delivery resumes with the queued remainder.");
                return;
             }
@@ -140,6 +144,8 @@ partial class TessagingConnection
             catch(Exception probeException)
             {
 #pragma warning restore CA1031
+               //Shutdown cancelled the probe: exit rather than counting it as the peer still being unreachable.
+               _connection._cancellationSource.Token.ThrowIfCancellationRequested();
                _consecutiveProbeFailures++;
                this.Log().Debug($"Probe of endpoint {_connection.EndpointInformation.Id} failed ({probeException.GetType().Name}); best-effort delivery stays paused (consecutive probe failures: {_consecutiveProbeFailures}).");
             }

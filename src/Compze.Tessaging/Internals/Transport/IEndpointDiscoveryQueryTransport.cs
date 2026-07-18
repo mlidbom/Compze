@@ -5,5 +5,5 @@ namespace Compze.Tessaging.Internals.Transport;
 
 public interface IEndpointDiscoveryQueryTransport
 {
-   Task<TResult> GetAsync<TResult>(ITuery<TResult> query, EndpointAddress address);
+   Task<TResult> GetAsync<TResult>(ITuery<TResult> query, EndpointAddress address, CancellationToken cancellationToken = default);
 }

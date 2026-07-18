@@ -27,7 +27,7 @@ class HttpEndpointTransportClient : IEndpointTransportClient
 
    internal HttpEndpointTransportClient(IHttpClientFactoryCE httpClientFactory) => _httpClientFactory = httpClientFactory;
 
-   public async Task<string> SendAsync(TransportRequest request, EndpointAddress address)
+   public async Task<string> SendAsync(TransportRequest request, EndpointAddress address, CancellationToken cancellationToken = default)
    {
       var requestUri = new Uri(address.Uri, RouteFor(request.Kind));
 
@@ -36,8 +36,8 @@ class HttpEndpointTransportClient : IEndpointTransportClient
       content.Headers.Add(HttpConstants.Headers.TessageId, request.TessageId.ToString());
       content.Headers.Add(HttpConstants.Headers.PayLoadTypeId, request.PayloadTypeIdString);
 
-      var response = await httpClient.PostAsync(requestUri, content).caf();
-      if(response.IsSuccessStatusCode) return await response.Content.ReadAsStringAsync().caf();
+      var response = await httpClient.PostAsync(requestUri, content, cancellationToken).caf();
+      if(response.IsSuccessStatusCode) return await response.Content.ReadAsStringAsync(cancellationToken).caf();
 
       var problemDetails = await ProblemDetails.FromResponse(response).caf();
 
