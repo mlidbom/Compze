@@ -6,6 +6,7 @@ using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Logging;
 using Compze.Internals.SystemCE.ThreadingCE;
+using Compze.Threading;
 using Compze.Tessaging.Implementation.Abstractions;
 
 namespace Compze.Tessaging.Implementation.TessageHandling.Inbox;
@@ -24,6 +25,12 @@ public partial class Inbox
       Thread? _awaitDispatchableTessageThread;
       readonly CancellationTokenSource _stopping = new();
 
+      ///<summary>How long <see cref="AwaitAllReceivedTessagesProcessed"/> waits for the inbox to drain before giving up and letting<br/>
+      /// teardown proceed. Generous: a normal shutdown drains in milliseconds, so reaching this means a handler is likely hung -<br/>
+      /// which properly belongs to a per-handler watchdog on the engine, not to shutdown. Until that exists this is the loud,<br/>
+      /// non-hanging backstop.</summary>
+      static readonly WaitTimeout ShutdownDrainPatience = WaitTimeout.Seconds(30);
+
       readonly IReadOnlyList<ITessageDispatchingRule> _dispatchingRules =
       [
          new TommandsAndTeventHandlersDoNotRunInParallelWithEachOtherInTheSameEndpoint()
@@ -38,6 +45,10 @@ public partial class Inbox
          _coordinator.EnqueueTessageTask(transportTessage);
       }
 
+      ///<summary>Drains the inbox for shutdown: waits (best-effort, up to <see cref="ShutdownDrainPatience"/>) for every received<br/>
+      /// tessage to finish processing, so the endpoint tears down with empty queues.</summary>
+      internal void AwaitAllReceivedTessagesProcessed() => _coordinator.AwaitAllReceivedTessagesProcessed(ShutdownDrainPatience);
+
       void AwaitDispatchableTessageThreadLoop()
       {
          try
@@ -48,7 +59,7 @@ public partial class Inbox
                task.Execute();
             }
          }
-         catch(OperationCanceledException) {} // Expected during shutdown: Stop() cancelled the wait for the next dispatchable tessage.
+         catch(OperationCanceledException) {} // Expected during shutdown: Dispose() cancelled the wait for the next dispatchable tessage.
       }
 
       internal void Start()

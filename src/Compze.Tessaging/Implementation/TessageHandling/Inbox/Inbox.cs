@@ -80,6 +80,8 @@ static class InboxRegistrar
       _handlerExecutionEngine.Enqueue(tessage);
    }
 
+   public void AwaitAllReceivedTessagesProcessed() => _handlerExecutionEngine.AwaitAllReceivedTessagesProcessed();
+
    public ValueTask DisposeAsync()
    {
       this.Log().Debug("Disposing");

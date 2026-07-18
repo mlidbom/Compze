@@ -171,12 +171,20 @@ public abstract class Endpoint : IEndpoint
    ///<summary>Stops the exactly-once tier's durable vertical when sending stops — the best-effort endpoint has none, so the base does nothing.</summary>
    private protected virtual Task StopTheDurableVerticalAsync() => Task.CompletedTask;
 
+   ///<summary>Drains the exactly-once inbox before teardown: waits for every already-received tessage to finish handling so the<br/>
+   /// endpoint tears down with empty queues. The best-effort endpoint has no inbox, so the base does nothing.</summary>
+   private protected virtual Task DrainTheInboxAsync() => Task.CompletedTask;
+
    public async ValueTask DisposeAsync()
    {
       this.Log().Debug($"Endpoint '{_configuration.Name}' ({Id}) disposing");
       await RetractAddressAsync().caf();
       await StopSendingAsync().caf();
       await StopListeningAsync().caf();
+      //After listening stops nothing new arrives, so the inbox drains to empty here - while the container still serves its
+      //handlers their scopes - before teardown. Empty queues before teardown is the graceful-shutdown property (nothing
+      //half-processed) that a rolling restart or a serialization-format change wants.
+      await DrainTheInboxAsync().caf();
       //Drain the observation queues while the container still serves the observers their scopes: once container disposal
       //begins, scope creation is refused, so a drain left to the container's own singleton teardown could no longer run the
       //observers. Nothing enqueues new observation work after listening stopped - except observers themselves, which the
