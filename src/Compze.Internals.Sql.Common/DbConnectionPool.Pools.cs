@@ -10,121 +10,127 @@ using Compze.Internals.SystemCE.TransactionsCE;
 
 namespace Compze.Internals.Sql.Common;
 
-public abstract partial class DbConnectionPool<TConnection, TCommand>
+///<summary>Every operation under one transaction runs on ONE shared connection, and a connection does exactly one thing at a<br/>
+/// time. Outside a transaction each operation opens its own fresh connection; inside a transaction the connection is held as an<br/>
+/// <see cref="IAsyncShared{TConnection}"/>, so concurrent operations under one transaction — several async calls awaited together,<br/>
+/// say — serialize onto the connection instead of colliding on it: a collision no provider actually supports and that MySQL<br/>
+/// rejects outright ("already an open DataReader"). The serialization is re-entrant per async flow, so a nested<br/>
+/// <see cref="UseConnection{TResult}"/> on the same flow does not deadlock while independent flows serialize.</summary>
+///<remarks>One connection per transaction is the only correct model, so there is no per-backend variation — every backend uses<br/>
+/// this pool. Two connections in one transaction is a distributed transaction — a separate database session each — which every<br/>
+/// supported provider refuses without a coordinator (MySQL and Npgsql outright; SqlClient unless implicit distributed<br/>
+/// transactions are enabled), and a coordinator (MSDTC) is Windows-only and defeats the cross-platform goal.</remarks>
+public partial class DbConnectionPool<TConnection, TCommand> : IDbConnectionPool<TConnection, TCommand>
    where TConnection : IPoolableConnection, ICompzeDbConnection<TCommand>
    where TCommand : DbCommand
 {
-   public class DefaultDbConnectionPool(string connectionString, Func<string, TConnection> createConnection) : DbConnectionPool<TConnection, TCommand>, IDbConnectionPool<TConnection, TCommand>
+   readonly string _connectionString;
+   readonly Func<string, TConnection> _createConnection;
+
+   readonly IThreadShared<Dictionary<string, IAsyncShared<TConnection>>> _transactionConnections =
+      IThreadShared.New(new Dictionary<string, IAsyncShared<TConnection>>());
+
+   static readonly RunOnce RunOnce = new();
+
+   internal DbConnectionPool(string connectionString, Func<string, TConnection> createConnection)
    {
-      readonly string _connectionString = connectionString;
-      readonly Func<string, TConnection> _createConnection = createConnection;
-
-      static readonly RunOnce RunOnce = new();
-
-      protected async Task<TConnection> OpenConnectionAsync()
-      {
-         using var escalationForbidden = TransactionCE.NoTransactionEscalationScope($"Opening {typeof(TConnection)}");
-         var connection = _createConnection(_connectionString);
-
-         //This is here so that we can reassure ourselves, via a profiler, time and time again that it is actually the
-         //first opening of a connection that takes very long and thus trying our own pooling will not help.
-         if(RunOnce.IsFirstCall())
-         {
-            await connection.OpenAsync().caf(); //Currently 120 passing tests total of 60 seconds runtime, average per test 500ms.
-         } else
-         {
-            await connection.OpenAsync().caf();
-         }
-
-         return connection;
-      }
-
-      protected TConnection OpenConnection()
-      {
-         using var escalationForbidden = TransactionCE.NoTransactionEscalationScope($"Opening {typeof(TConnection)}");
-         var connection = _createConnection(_connectionString);
-
-         //This is here so that we can reassure ourselves, via a profiler, time and time again that it is actually the
-         //first opening of a connection that takes very long and thus trying our own pooling will not help.
-         if(RunOnce.IsFirstCall())
-         {
-            connection.Open(); //Currently 120 passing tests total of 60 seconds runtime, average per test 500ms.
-         } else
-         {
-            connection.Open();
-         }
-
-         return connection;
-      }
-
-      public virtual TResult UseConnection<TResult>(Func<TConnection, TResult> func)
-      {
-         using var connection = OpenConnection();
-         return func(connection);
-      }
-
-      public virtual async Task<TResult> UseConnectionAsync<TResult>(Func<TConnection, Task<TResult>> func)
-      {
-         var connection = await OpenConnectionAsync().caf();
-         //makes sure DisposeAsync is called without capturing sync context. We can't do it inline because then connection would be ConfiguredAsyncDisposable, not TConnection
-         await using var _ = connection.caf();
-         return await func(connection).caf();
-      }
-
-      public override string ToString() => _connectionString;
+      _connectionString = connectionString;
+      _createConnection = createConnection;
    }
 
-   ///<summary>A pool whose every operation under one transaction runs on ONE shared connection, and a connection does exactly one<br/>
-   /// thing at a time. Each transaction's connection is held as an <see cref="IAsyncShared{TConnection}"/>, so concurrent operations<br/>
-   /// under one transaction — several async calls awaited together, say — serialize onto the connection instead of colliding on it: a<br/>
-   /// collision no provider actually supports and that MySQL rejects outright ("already an open DataReader"). The serialization is<br/>
-   /// re-entrant per async flow, so a nested <see cref="UseConnection{TResult}"/> on the same flow does not deadlock while independent<br/>
-   /// flows serialize.</summary>
-   public class TransactionAffinityDbConnectionPool(string connectionString, Func<string, TConnection> createConnection) : DefaultDbConnectionPool(connectionString, createConnection)
+   public TResult UseConnection<TResult>(Func<TConnection, TResult> func)
    {
-      readonly IThreadShared<Dictionary<string, IAsyncShared<TConnection>>> _transactionConnections =
-         IThreadShared.New(new Dictionary<string, IAsyncShared<TConnection>>());
+      var transactionLocalIdentifier = Transaction.Current?.TransactionInformation.LocalIdentifier;
 
-      public override async Task<TResult> UseConnectionAsync<TResult>(Func<TConnection, Task<TResult>> func)
+      if(transactionLocalIdentifier == null)
       {
-         var transactionLocalIdentifier = Transaction.Current?.TransactionInformation.LocalIdentifier;
-
-         if(transactionLocalIdentifier == null)
-         {
-            return await base.UseConnectionAsync(func).caf();
-         }
-
-         return await GetOrOpenSharedConnection(transactionLocalIdentifier, () => OpenConnectionAsync()).LockedAsync(func).caf();
+         return UseOwnFreshConnection(func);
       }
 
-      public override TResult UseConnection<TResult>(Func<TConnection, TResult> func)
+#pragma warning disable CA1849 // The synchronous UseConnection path must open synchronously; Task.FromResult bridges that sync open into the Task-backed IAsyncShared the async path also feeds.
+      return GetOrOpenSharedConnection(transactionLocalIdentifier, () => Task.FromResult(OpenConnection())).Locked(func);
+#pragma warning restore CA1849
+   }
+
+   public async Task<TResult> UseConnectionAsync<TResult>(Func<TConnection, Task<TResult>> func)
+   {
+      var transactionLocalIdentifier = Transaction.Current?.TransactionInformation.LocalIdentifier;
+
+      if(transactionLocalIdentifier == null)
       {
-         var transactionLocalIdentifier = Transaction.Current?.TransactionInformation.LocalIdentifier;
-
-         if(transactionLocalIdentifier == null)
-         {
-            return base.UseConnection(func);
-         }
-
-         return GetOrOpenSharedConnection(transactionLocalIdentifier, () => Task.FromResult(OpenConnection())).Locked(func);
+         return await UseOwnFreshConnectionAsync(func).caf();
       }
 
-      IAsyncShared<TConnection> GetOrOpenSharedConnection(string transactionLocalIdentifier, Func<Task<TConnection>> openConnection) =>
-         _transactionConnections.Locked(
-            transactionConnections => transactionConnections.GetOrAdd(
-               transactionLocalIdentifier,
-               constructor: () =>
+      return await GetOrOpenSharedConnection(transactionLocalIdentifier, () => OpenConnectionAsync()).LockedAsync(func).caf();
+   }
+
+   TResult UseOwnFreshConnection<TResult>(Func<TConnection, TResult> func)
+   {
+      using var connection = OpenConnection();
+      return func(connection);
+   }
+
+   async Task<TResult> UseOwnFreshConnectionAsync<TResult>(Func<TConnection, Task<TResult>> func)
+   {
+      var connection = await OpenConnectionAsync().caf();
+      //makes sure DisposeAsync is called without capturing sync context. We can't do it inline because then connection would be ConfiguredAsyncDisposable, not TConnection
+      await using var _ = connection.caf();
+      return await func(connection).caf();
+   }
+
+   TConnection OpenConnection()
+   {
+      using var escalationForbidden = TransactionCE.NoTransactionEscalationScope($"Opening {typeof(TConnection)}");
+      var connection = _createConnection(_connectionString);
+
+      //This is here so that we can reassure ourselves, via a profiler, time and time again that it is actually the
+      //first opening of a connection that takes very long and thus trying our own pooling will not help.
+      if(RunOnce.IsFirstCall())
+      {
+         connection.Open(); //Currently 120 passing tests total of 60 seconds runtime, average per test 500ms.
+      } else
+      {
+         connection.Open();
+      }
+
+      return connection;
+   }
+
+   async Task<TConnection> OpenConnectionAsync()
+   {
+      using var escalationForbidden = TransactionCE.NoTransactionEscalationScope($"Opening {typeof(TConnection)}");
+      var connection = _createConnection(_connectionString);
+
+      //This is here so that we can reassure ourselves, via a profiler, time and time again that it is actually the
+      //first opening of a connection that takes very long and thus trying our own pooling will not help.
+      if(RunOnce.IsFirstCall())
+      {
+         await connection.OpenAsync().caf(); //Currently 120 passing tests total of 60 seconds runtime, average per test 500ms.
+      } else
+      {
+         await connection.OpenAsync().caf();
+      }
+
+      return connection;
+   }
+
+   IAsyncShared<TConnection> GetOrOpenSharedConnection(string transactionLocalIdentifier, Func<Task<TConnection>> openConnection) =>
+      _transactionConnections.Locked(
+         transactionConnections => transactionConnections.GetOrAdd(
+            transactionLocalIdentifier,
+            constructor: () =>
+            {
+               var sharedConnection = IAsyncShared.New(openConnection());
+               Transaction.Current!.OnCompleted(action: () => _transactionConnections.Locked(transactionConnectionsAfterTransaction =>
                {
-                  var sharedConnection = IAsyncShared.New(openConnection());
-                  Transaction.Current!.OnCompleted(action: () => _transactionConnections.Locked(transactionConnectionsAfterTransaction =>
+                  if(transactionConnectionsAfterTransaction.Remove(transactionLocalIdentifier, out var completed))
                   {
-                     if(transactionConnectionsAfterTransaction.Remove(transactionLocalIdentifier, out var completed))
-                     {
-                        completed.Locked(connection => connection.Dispose());
-                        completed.Dispose();
-                     }
-                  }));
-                  return sharedConnection;
+                     completed.Locked(connection => connection.Dispose());
+                     completed.Dispose();
+                  }
                }));
-   }
+               return sharedConnection;
+            }));
+
+   public override string ToString() => _connectionString;
 }

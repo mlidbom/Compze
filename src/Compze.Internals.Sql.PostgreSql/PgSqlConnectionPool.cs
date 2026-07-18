@@ -25,7 +25,6 @@ public interface IPgSqlConnectionPool : IDbConnectionPool<ICompzeNpgsqlConnectio
                var connectionString = getConnectionString();
                return DbConnectionPool<ICompzeNpgsqlConnection, NpgsqlCommand>.ForConnectionString(
                   connectionString,
-                  PoolableConnectionFlags.MustUseSameConnectionThroughoutATransaction,
                   ICompzeNpgsqlConnection.Create);
             });
       }
