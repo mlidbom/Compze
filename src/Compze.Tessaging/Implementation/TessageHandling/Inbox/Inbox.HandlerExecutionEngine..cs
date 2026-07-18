@@ -25,10 +25,9 @@ public partial class Inbox
       Thread? _awaitDispatchableTessageThread;
       readonly CancellationTokenSource _stopping = new();
 
+      //todo: properly belongs to a per-handler watchdog on the engine, not to shutdown. Until that exists this is the loud, non-hanging backstop.
       ///<summary>How long <see cref="AwaitAllReceivedTessagesProcessed"/> waits for the inbox to drain before giving up and letting<br/>
-      /// teardown proceed. Generous: a normal shutdown drains in milliseconds, so reaching this means a handler is likely hung -<br/>
-      /// which properly belongs to a per-handler watchdog on the engine, not to shutdown. Until that exists this is the loud,<br/>
-      /// non-hanging backstop.</summary>
+      /// teardown proceed. Generous: a normal shutdown drains in milliseconds, so reaching this means a handler is likely hung</summary>
       static readonly WaitTimeout ShutdownDrainPatience = WaitTimeout.Seconds(30);
 
       readonly IReadOnlyList<ITessageDispatchingRule> _dispatchingRules =
