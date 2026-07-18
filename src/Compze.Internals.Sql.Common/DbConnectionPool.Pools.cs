@@ -80,6 +80,7 @@ public partial class DbConnectionPool<TConnection, TCommand> : IDbConnectionPool
 
    TConnection OpenConnection()
    {
+      using var escalationForbidden = TransactionCE.NoTransactionEscalationScope($"Opening {typeof(TConnection)}");
       var connection = _createConnection(_connectionString);
 
       //This is here so that we can reassure ourselves, via a profiler, time and time again that it is actually the
@@ -97,6 +98,7 @@ public partial class DbConnectionPool<TConnection, TCommand> : IDbConnectionPool
 
    async Task<TConnection> OpenConnectionAsync()
    {
+      using var escalationForbidden = TransactionCE.NoTransactionEscalationScope($"Opening {typeof(TConnection)}");
       var connection = _createConnection(_connectionString);
 
       //This is here so that we can reassure ourselves, via a profiler, time and time again that it is actually the
