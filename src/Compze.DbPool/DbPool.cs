@@ -5,6 +5,7 @@ using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Logging;
 using Compze.Internals.SystemCE;
 using Compze.Internals.SystemCE.ReflectionCE;
+using Compze.Internals.SystemCE.ThreadingCE;
 using Compze.Internals.SystemCE.TransactionsCE;
 using Compze.Threading;
 using Compze.Threading.ResourceAccess;
@@ -45,7 +46,16 @@ public class DbPool : StrictlyManagedResourceBase<DbPool>
 
       _machineWideState = new DbPoolMachineWideState(sqlLayer.GetType().GetFullNameCompilable());
 
-      _leaseHeartbeatThread = new Thread(KeepReservedDatabasesLeasedWhileAlive) { IsBackground = true, Name = $"DbPool.LeaseHeartbeat.{_poolId:N}" };
+      //The heartbeat captures only these locals - never 'this' - so the running thread holds the pool through a WeakReference
+      //alone. A pool abandoned without disposal must stay collectable, or its finalizer could never report the missing Dispose.
+      var poolReference = new WeakReference<DbPool>(this);
+      var disposeSignal = _disposing.Token;
+      var heartbeatInterval = _leaseHeartbeatInterval;
+      _leaseHeartbeatThread = new Thread(() => KeepReservedDatabasesLeasedWhileAlive(poolReference, heartbeatInterval, disposeSignal))
+                              {
+                                 IsBackground = true,
+                                 Name = $"DbPool.LeaseHeartbeat.{_poolId:N}"
+                              };
       _leaseHeartbeatThread.Start();
    }
 
@@ -96,14 +106,25 @@ public class DbPool : StrictlyManagedResourceBase<DbPool>
    /// process stops heartbeating; its databases are reclaimed once the lease elapses - crash recovery, not conflict.</summary>
    ///<remarks>Runs on its own thread rather than the thread pool: the very failure this guards against (a machine so overloaded<br/>
    /// that work stalls) is when the thread pool starves, and a starved heartbeat is exactly what would false-reclaim a live<br/>
-   /// pool's database. It renews by <see cref="_poolId"/> straight against the machine-wide state, taking no pool-local lock,<br/>
-   /// so a reservation in progress - even one blocked in a slow database reset - never delays a heartbeat.</remarks>
-   void KeepReservedDatabasesLeasedWhileAlive()
+   /// pool's database.<br/>
+   /// It takes the pool only through a <see cref="WeakReference{T}"/>, so a pool abandoned WITHOUT disposal stays collectable and<br/>
+   /// its finalizer still reports the missing <see cref="Dispose"/> (see <see cref="StrictlyManagedResourceBase{TInheritor}"/>) - a<br/>
+   /// strong capture would root it forever, hiding the leak and holding its databases for good. When the pool is collected the<br/>
+   /// loop ends and its abandoned reservations lease-expire. Renewal (<see cref="RenewOwnReservations"/>) goes straight against the<br/>
+   /// machine-wide state by <see cref="_poolId"/>, taking no pool-local lock, so a reservation in progress - even one blocked in a<br/>
+   /// slow database reset - never delays a heartbeat.</remarks>
+   static void KeepReservedDatabasesLeasedWhileAlive(WeakReference<DbPool> poolReference, TimeSpan heartbeatInterval, CancellationToken disposeSignal)
    {
       //WaitOne returns true the instant Dispose cancels the token, ending the loop; false when the interval elapses, driving a renewal.
-      while(!_disposing.Token.WaitHandle.WaitOne(_leaseHeartbeatInterval))
-         _machineWideState.RenewReservationsFor(_poolId, _reservationLength);
+      while(!disposeSignal.WaitHandle.WaitOne(heartbeatInterval))
+      {
+         //Abandoned without disposal and collected: stop renewing so the reservations lease-expire and are reclaimed.
+         if(!poolReference.TryGetTarget(out var pool)) return;
+         pool.RenewOwnReservations();
+      }
    }
+
+   void RenewOwnReservations() => _machineWideState.RenewReservationsFor(_poolId, _reservationLength);
 
    public override void Dispose()
    {
@@ -115,7 +136,7 @@ public class DbPool : StrictlyManagedResourceBase<DbPool>
          _sqlLayer.Dispose(reservedDatabases);
          _machineWideState.ReleaseReservationsFor(_poolId);
       });
-      _leaseHeartbeatThread.Join(_leaseHeartbeatInterval + 5.Seconds());
+      _leaseHeartbeatThread.JoinCE(_leaseHeartbeatInterval + 5.Seconds());
       _disposing.Dispose();
    }
 }
