@@ -1,6 +1,5 @@
-// ReSharper disable CheckNamespace
 // ReSharper disable UnusedType.Global
-namespace ServiceBusApi;
+namespace Compze.Tests.ScratchPad.APIDraft;
 
 interface ICentralServer;
 
