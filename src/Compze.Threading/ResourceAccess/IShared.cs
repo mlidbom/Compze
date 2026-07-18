@@ -1,4 +1,5 @@
 using Compze.SystemCE;
+using JetBrains.Annotations;
 
 namespace Compze.Threading.ResourceAccess;
 
@@ -10,7 +11,7 @@ public interface IShared
       readonly TShared _shared = shared;
       public ICriticalSection CriticalSection { get; } = criticalSection;
 
-      public TResult Locked<TResult>(Func<TShared, TResult> func, CancellationToken cancellationToken = default, LockTimeout? timeout = null) =>
+      public TResult Locked<TResult>([InstantHandle]Func<TShared, TResult> func, CancellationToken cancellationToken = default, LockTimeout? timeout = null) =>
          CriticalSection.Locked(() => func(_shared), cancellationToken, timeout);
    }
 }
@@ -23,9 +24,9 @@ public interface IShared<out TShared>
 
 #pragma warning disable CA1068 // Passing cancellation token around is standard practice in modern .NET while the timeout overrides are very rarely used. We don't want to force the common case to use named parameters.
    ///<summary>Acquires the lock, passes the shared object to <paramref name="func"/>, returns the result, then releases the lock.</summary>
-   TResult Locked<TResult>(Func<TShared, TResult> func, CancellationToken cancellationToken = default, LockTimeout? timeout = null);
+   TResult Locked<TResult>([InstantHandle]Func<TShared, TResult> func, CancellationToken cancellationToken = default, LockTimeout? timeout = null);
 
    ///<summary>Acquires the lock, passes the shared object to <paramref name="action"/>, then releases the lock.</summary>
-   Unit Locked(Action<TShared> action, CancellationToken cancellationToken = default, LockTimeout? timeout = null) => Locked(action.ToFunc(), cancellationToken, timeout);
+   Unit Locked([InstantHandle]Action<TShared> action, CancellationToken cancellationToken = default, LockTimeout? timeout = null) => Locked(action.ToFunc(), cancellationToken, timeout);
 #pragma warning restore CA1068
 }
