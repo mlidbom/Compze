@@ -35,17 +35,4 @@ public static class TransactionCE
 
       public void OnCompleted(Action action) => @this.TransactionCompleted += (_, _) => action();
    }
-
-   public static IDisposable NoTransactionEscalationScope(string scopeDescription)
-   {
-      var transactionInformationDistributedIdentifierBefore = Transaction.Current?.TransactionInformation.DistributedIdentifier ?? Guid.Empty;
-
-      return new Disposable(() =>
-      {
-         if(Transaction.Current != null && transactionInformationDistributedIdentifierBefore == Guid.Empty && Transaction.Current.TransactionInformation.DistributedIdentifier != Guid.Empty)
-         {
-            throw new Exception($"{scopeDescription} escalated transaction to distributed. For now this is disallowed");
-         }
-      });
-   }
 }
