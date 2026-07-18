@@ -1,5 +1,6 @@
 using System.Transactions;
 using Compze.Internals.SystemCE.CollectionsCE.GenericCE;
+using Compze.Internals.SystemCE.ThreadingCE.Async;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Threading;
 using Compze.Threading.ResourceAccess;
@@ -75,8 +76,20 @@ public abstract partial class DbConnectionPool<TConnection, TCommand>
 
    public class TransactionAffinityDbConnectionPool(string connectionString, Func<string, TConnection> createConnection) : DefaultDbConnectionPool(connectionString, createConnection)
    {
-      readonly IThreadShared<Dictionary<string, Task<TConnection>>> _transactionConnections =
-         IThreadShared.New(new Dictionary<string, Task<TConnection>>());
+      ///<summary>A transaction's operations all run on ONE shared connection, and a connection does exactly one thing at a<br/>
+      /// time. This bundles that connection with an async, re-entrancy-aware lock so concurrent operations under one transaction<br/>
+      /// (several async calls awaited together, say) serialize onto the connection instead of colliding on it - a collision no<br/>
+      /// provider actually supports and that MySQL rejects outright ("already an open DataReader"). The lock is re-entrant<br/>
+      /// (<see cref="IAsyncLockCE"/> tracks entrance per async flow) so a nested UseConnection on the same flow does not deadlock;<br/>
+      /// independent flows serialize.</summary>
+      sealed class SharedTransactionConnection(Task<TConnection> connection)
+      {
+         internal Task<TConnection> Connection { get; } = connection;
+         internal IAsyncLockCE SerializedAccess { get; } = IAsyncLockCE.WithDefaultTimeout();
+      }
+
+      readonly IThreadShared<Dictionary<string, SharedTransactionConnection>> _transactionConnections =
+         IThreadShared.New(new Dictionary<string, SharedTransactionConnection>());
 
       public override async Task<TResult> UseConnectionAsync<TResult>(Func<TConnection, Task<TResult>> func)
       {
@@ -85,26 +98,11 @@ public abstract partial class DbConnectionPool<TConnection, TCommand>
          if(transactionLocalIdentifier == null)
          {
             return await base.UseConnectionAsync(func).caf();
-         } else
-         {
-            //TConnection requires that the same connection is used throughout a transaction
-            var getConnectionTask = _transactionConnections.Locked(
-               transactionConnections => transactionConnections.GetOrAdd(
-                  transactionLocalIdentifier,
-                  constructor: async () =>
-                  {
-                     var connection = await OpenConnectionAsync().caf();
-                     Transaction.Current!.OnCompleted(action: () => _transactionConnections.Locked(transactionConnectionsAfterTransaction =>
-                     {
-                        transactionConnectionsAfterTransaction.Remove(transactionLocalIdentifier);
-                        connection.Dispose();
-                     }));
-                     return connection;
-                  }));
-
-            var connection = await getConnectionTask.caf();
-            return await func(connection).caf();
          }
+
+         var shared = GetOrOpenSharedConnection(transactionLocalIdentifier, () => OpenConnectionAsync());
+         var connection = await shared.Connection.caf();
+         return await shared.SerializedAccess.LockedAsync(() => func(connection)).caf();
       }
 
       public override TResult UseConnection<TResult>(Func<TConnection, TResult> func)
@@ -114,25 +112,28 @@ public abstract partial class DbConnectionPool<TConnection, TCommand>
          if(transactionLocalIdentifier == null)
          {
             return base.UseConnection(func);
-         } else
-         {
-            //TConnection requires that the same connection is used throughout a transaction
-            var getConnectionTask = _transactionConnections.Locked(
-               transactionConnections => transactionConnections.GetOrAdd(
-                  transactionLocalIdentifier,
-                  constructor: () =>
-                  {
-                     var createConnectionTask = Task.FromResult(OpenConnection());
-                     Transaction.Current!.OnCompleted(action: () => _transactionConnections.Locked(transactionConnectionsAfterTransaction =>
-                     {
-                        transactionConnectionsAfterTransaction.Remove(transactionLocalIdentifier);
-                        createConnectionTask.Result.Dispose();
-                     }));
-                     return createConnectionTask;
-                  }));
-
-            return func(getConnectionTask.Result);
          }
+
+         var shared = GetOrOpenSharedConnection(transactionLocalIdentifier, () => Task.FromResult(OpenConnection()));
+         return shared.SerializedAccess.Locked(() => func(shared.Connection.Result));
       }
+
+      SharedTransactionConnection GetOrOpenSharedConnection(string transactionLocalIdentifier, Func<Task<TConnection>> openConnection) =>
+         _transactionConnections.Locked(
+            transactionConnections => transactionConnections.GetOrAdd(
+               transactionLocalIdentifier,
+               constructor: () =>
+               {
+                  var connectionTask = openConnection();
+                  Transaction.Current!.OnCompleted(action: () => _transactionConnections.Locked(transactionConnectionsAfterTransaction =>
+                  {
+                     if(transactionConnectionsAfterTransaction.Remove(transactionLocalIdentifier, out var completed))
+                     {
+                        completed.Connection.Result.Dispose();
+                        completed.SerializedAccess.Dispose();
+                     }
+                  }));
+                  return new SharedTransactionConnection(connectionTask);
+               }));
    }
 }
