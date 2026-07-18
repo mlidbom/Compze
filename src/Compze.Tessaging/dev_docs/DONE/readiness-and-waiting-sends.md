@@ -4,7 +4,7 @@
 gating style-substrate question resolved in this effort's favor before building: the substrate collapsed
 into one paradigm project during migration phases 2–5 (see
 [style-substrate-and-hosting-evaluation.md](style-substrate-and-hosting-evaluation.md) and
-[tessaging-migration-plan.md](../WIP/tessaging-migration-plan.md)), so readiness and waiting were built exactly
+[tessaging-migration-plan.md](tessaging-migration-plan.md)), so readiness and waiting were built exactly
 once, on the one router and one peer memory. The ⚖ *lands before the next release* commitment inherited
 from the durable peer topology's "Typermedia parity" item is discharged. The design below stands as built;
 the as-built vocabulary: the patience is the endpoint's **handler-availability patience**

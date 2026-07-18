@@ -1,6 +1,10 @@
 # The Tessaging migration plan: from today's code to the target design
 
-**Status: plan, recorded 2026-07-17. Phases 1 and 2 executed 2026-07-17** (phase 1: debris, both Typermedia
+**Status: EXECUTED IN FULL — all ten phases done, the last on 2026-07-18. This document is the migration's
+record; the living current-state documentation is in [the parent dev_docs folder](../)
+([tessaging-model.md](../tessaging-model.md) and kin).**
+
+**Phases 1 and 2 executed 2026-07-17** (phase 1: debris, both Typermedia
 defect fixes, the record→class conversion, the stale-prose sweep, the ServiceBus vocabulary's death;
 phase 2: `Compze.Tessaging.Abstractions`, the Typermedia trio + its testing project, and
 `Compze.Internals.Transport` folded into the paradigm assemblies; `Compze.Internals.Transport.AspNet`
@@ -124,9 +128,24 @@ is fixed by construction: schema creation serializes under each engine's advisor
 connections and processes. On sqlite the separate per-endpoint interner database is retired by construction —
 the interner file derives from the domain database's name, so co-located endpoints share one. The
 storage-drop administration act is parked as a todo at the catalog surface: the design equation is settled,
-the door awaits its first consumer. The destination is
+the door awaits its first consumer.
+**Phase 10 executed 2026-07-18**, two green commits plus the docs sweep: (1) the mutual-first-contact
+await — `TestingEndpointHost.AwaitEndpointsHaveMetEachOtherAsync`, awaited explicitly by the fixtures whose
+very next act rides in-host discovery (tevent fan-out membership, peer-memory assertions, ambiguity pins,
+instant binds within a deliberately short patience) — landed first, passing instantly under the still-standing
+barrier; (2) the demotion — `Endpoint.StartAsync` drives the endpoint's own listen → announce → send
+(disposal already drove the mirror), `IEndpoint` slims to the first-class surface (`ServiceLocator`,
+`IsRunning`, `StartAsync`, `AwaitReadinessAsync`) with the six phase methods staying public on the concrete
+`Endpoint` for deliberate phase scripting, and `EndpointHost` becomes a WhenAll convenience over the
+endpoints' own starts and disposals. The host-wide barrier is gone: its headline guarantee — a router's
+first look at the registry sees every endpoint the host announced — held only inside one process's
+`StartAsync`, and per-endpoint ordering keeps what is honest everywhere (an announced address is always one
+that is actually listening). The specs migrated to the explicit awaits as planned: the
+two-best-effort-endpoints spec declares its subscriber with `RequirePeers` (the production device —
+queue-before-first-contact holds the pre-meet publish), the late-endpoint racing specs collapse their three
+phase calls onto the one `StartAsync`, and the shared fixtures ride the met-await. The destination is
 [tessaging-target-design.md](tessaging-target-design.md); the rationale and evidence are in
-[style-substrate-and-hosting-evaluation.md](../DONE/style-substrate-and-hosting-evaluation.md). This document is the
+[style-substrate-and-hosting-evaluation.md](style-substrate-and-hosting-evaluation.md). This document is the
 path: the ordered phases, what each contains, and what gates what. Every phase is a run of increments that
 each build clean, pass the full test suite, and are committed with a message recording the why.
 
@@ -271,7 +290,7 @@ interface).
 
 ## Phase 8 — Readiness and waiting sends, built once
 
-The four increments already sketched in [readiness-and-waiting-sends.md](../DONE/readiness-and-waiting-sends.md),
+The four increments already sketched in [readiness-and-waiting-sends.md](readiness-and-waiting-sends.md),
 now with their unambiguous *where* (the one router and one peer registry from phase 3). Before the storage
 phase because it carries the ⚖ before-the-next-release commitment, and it is what triggered this whole arc.
 
@@ -310,7 +329,7 @@ here. Everything else is design already ⚖-settled in the target document.
 ## Related documents
 
 - [tessaging-target-design.md](tessaging-target-design.md) — the destination.
-- [style-substrate-and-hosting-evaluation.md](../DONE/style-substrate-and-hosting-evaluation.md) — the rationale
+- [style-substrate-and-hosting-evaluation.md](style-substrate-and-hosting-evaluation.md) — the rationale
   and evidence; question 9's option space, now settled above.
-- [readiness-and-waiting-sends.md](../DONE/readiness-and-waiting-sends.md) — phase 8's design, settled.
-- [tessaging-WIP.md](tessaging-WIP.md) — the hub.
+- [readiness-and-waiting-sends.md](readiness-and-waiting-sends.md) — phase 8's design, settled.
+- [tessaging-WIP.md](../WIP/tessaging-WIP.md) — the hub.

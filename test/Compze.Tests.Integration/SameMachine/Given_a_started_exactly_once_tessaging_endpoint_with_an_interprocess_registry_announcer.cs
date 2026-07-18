@@ -12,8 +12,8 @@ using Compze.Tests.Infrastructure.XUnit;
 
 namespace Compze.Tests.Integration.SameMachine;
 
-///<summary>The endpoint announces where it listens once every endpoint in the host has finished starting to listen, and retracts the<br/>
-/// announcement as the first act of the host's stopping — so the registry only ever lists addresses that are actually listening and fully ready.</summary>
+///<summary>The endpoint announces where it listens after its own listening phase and retracts the announcement as the first<br/>
+/// act of its disposal — so the registry only ever lists addresses that are actually listening and fully ready.</summary>
 public class Given_a_started_exactly_once_tessaging_endpoint_with_an_interprocess_registry_announcer : UniversalTestBase
 {
    static DirectoryInfo TestDirectory => new DirectoryInfo(Path.Combine(Path.GetTempPath(), "Compze", "Tests", "EndpointRegistry"))._mutate(it => it.Create());

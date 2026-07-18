@@ -5,11 +5,9 @@ namespace Compze.Abstractions.Hosting.Public;
 ///<remarks>An endpoint declares who it announces to in its composition (<c>AnnounceAddressTo(...)</c>, or <c>ParticipateIn(...)</c><br/>
 /// for a registry with both faces); declaring none — a deployment whose<br/>
 /// endpoints are found through a fixed address list — means nothing is announced. The announced address is the endpoint's one transport-server<br/>
-/// address, serving every distributed capability the endpoint speaks. The endpoint announces in the host's announcing phase —<br/>
-/// after every endpoint in the host has finished starting to listen and before any endpoint starts sending — so an announced<br/>
-/// address is always one that is actually listening, and a router's first look at a registry sees every endpoint the host<br/>
-/// announced; it retracts in the mirror phase, before any sending stops, so the address stops being advertised before anything<br/>
-/// goes deaf.</remarks>
+/// address, serving every distributed capability the endpoint speaks. The endpoint announces in its announcing phase — after<br/>
+/// its listening phase and before its sending phase — so an announced address is always one that is actually listening; it<br/>
+/// retracts in the mirror phase, before its sending stops, so the address stops being advertised before anything goes deaf.</remarks>
 public interface IEndpointAddressAnnouncer
 {
    ///<summary>Announces that the endpoint listens at <paramref name="address"/>, replacing any address it announced before.</summary>

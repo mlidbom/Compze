@@ -1,9 +1,11 @@
 # The Tessaging target design
 
-**Status: the imagined target design, described straight up — what the system is, not how the codebase gets
-there.** The rationale and the path live in
-[style-substrate-and-hosting-evaluation.md](../DONE/style-substrate-and-hosting-evaluation.md); this document never
-compares or narrates. Settled decisions are Magnus's (⚖); what is deliberately left open is listed at the
+**Status: BUILT IN FULL — the migration's ten phases are executed, the last on 2026-07-18. This document is
+the design record; the living current-state documentation is in [the parent dev_docs folder](../)
+([tessaging-model.md](../tessaging-model.md) and kin).** The rationale and the path live in
+[style-substrate-and-hosting-evaluation.md](style-substrate-and-hosting-evaluation.md) and
+[tessaging-migration-plan.md](tessaging-migration-plan.md); this document never
+compares or narrates. Settled decisions are Magnus's (⚖); what was deliberately left open is listed at the
 end.
 
 ## Tessaging and its two siblings
@@ -124,7 +126,7 @@ the roster — the inline path the consistency law mandates), an endpoint's inbo
 server. There is exactly one implementation of "run this roster's response correctly", and therefore
 exactly one policy for its failures: a tessage of a single-handler kind that reaches an engine with no
 handler for it raises the no-handler exception family — which, per
-[readiness-and-waiting-sends.md](../DONE/readiness-and-waiting-sends.md), is exclusively the patience-exhausted
+[readiness-and-waiting-sends.md](readiness-and-waiting-sends.md), is exclusively the patience-exhausted
 failure.
 
 ### The doors
@@ -324,7 +326,7 @@ Administration is a first-class production surface:
 - **Decommission** (`IPeerAdministration`): retire a departed peer deliberately — discard what is held for
   it, resolve handler ambiguities it left behind, report what was discarded.
 - **Readiness**: awaitable "handlers for these types are available" — safe to start taking traffic
-  ([readiness-and-waiting-sends.md](../DONE/readiness-and-waiting-sends.md)).
+  ([readiness-and-waiting-sends.md](readiness-and-waiting-sends.md)).
 - **Quiescence**: awaitable "no volatile work is in flight across the suite" — safe to stop
   (sketched in the evaluation document; designed in its own effort).
 
@@ -388,10 +390,10 @@ observed. The tracker is a testing device; the production-honest await is quiesc
 
 ## Related documents
 
-- [style-substrate-and-hosting-evaluation.md](../DONE/style-substrate-and-hosting-evaluation.md) — the rationale,
+- [style-substrate-and-hosting-evaluation.md](style-substrate-and-hosting-evaluation.md) — the rationale,
   the evidence, and how the codebase gets here.
-- [readiness-and-waiting-sends.md](../DONE/readiness-and-waiting-sends.md) — readiness and waiting sends, design
+- [readiness-and-waiting-sends.md](readiness-and-waiting-sends.md) — readiness and waiting sends, design
   settled.
-- [durable-peer-topology.md](../DONE/durable-peer-topology.md) — peer memory, queue-while-down, shrink, and
+- [durable-peer-topology.md](durable-peer-topology.md) — peer memory, queue-while-down, shrink, and
   decommission, as built.
-- [tessaging-WIP.md](tessaging-WIP.md) — the hub.
+- [tessaging-WIP.md](../WIP/tessaging-WIP.md) — the hub.

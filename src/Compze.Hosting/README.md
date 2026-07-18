@@ -1,14 +1,14 @@
 # Compze.Hosting
 
 Endpoint hosting for the Compze framework. This package never looks inside an endpoint — the host receives
-composed endpoints (`RegisterEndpoint(container => ExactlyOnceEndpoint.Compose(container, ...))`) and drives
-their shared lifecycle.
+composed endpoints (`RegisterEndpoint(container => ExactlyOnceEndpoint.Compose(container, ...))`), starts
+them, and disposes them.
 
 ## What's in this package?
 
-- **`EndpointHost`** — owns a set of composed endpoints and runs each lifecycle phase host-wide: every
-  endpoint starts listening before any announces its address, and every address is announced before any
-  endpoint starts sending
+- **`EndpointHost`** — a convenience owning several endpoints' lifecycles in one process: starting the host
+  starts every endpoint, each driving its own phase ordering (listen → announce → send), and disposing it
+  disposes them. Endpoints are first-class; the host adds nothing an endpoint cannot do alone
 - **`AppSettingsJsonConfigurationParameterProvider`** — Configuration parameters from `appsettings.json`
 
 ## Related packages

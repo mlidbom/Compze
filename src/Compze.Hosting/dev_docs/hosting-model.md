@@ -16,8 +16,10 @@ process, or each in its own — the model is the same.
 
 **Hosting** is everything between "here are my handlers and domain logic" and "a running system serving
 them": building each endpoint's container, wiring its message pipelines, starting its transport in a safe
-order, letting endpoints discover each other, and tearing it all down cleanly. A **host** is the object that
-owns a set of endpoints and drives that shared lifecycle.
+order, letting endpoints discover each other, and tearing it all down cleanly. An endpoint is
+**first-class**: compose it, start it, dispose it — it drives its own lifecycle. A **host** is an optional
+convenience owning several endpoints' lifecycles in one process; it adds nothing an endpoint cannot do
+alone.
 
 ### Two ways to converse: Tessaging's two siblings
 
@@ -65,7 +67,7 @@ fails loud at composition, naming what is missing.
 | Layer | Home | Knows about the styles? |
 |---|---|---|
 | **Contracts** | `Compze.Abstractions` → `Compze.Abstractions.Hosting.Public` | No — `IEndpointHost`, `IEndpoint`, the endpoint value types (`EndpointId`, `EndpointAddress`, `EndpointConfiguration`), `IEndpointRegistry`/`IEndpointAddressAnnouncer` |
-| **The host mechanism** | `Compze.Hosting` | No — `EndpointHost` drives lifecycle phases host-wide over `IEndpoint`s it never looks inside |
+| **The host mechanism** | `Compze.Hosting` | No — `EndpointHost` starts and disposes `IEndpoint`s it never looks inside |
 | **The composed shapes** | `Compze.Tessaging` (`Compze.Tessaging.Endpoints`, `Compze.Tessaging.Engine`, the Typermedia namespaces) | Yes — the endpoint types compose both siblings, always |
 
 The host mechanism implements the contracts without referencing what an endpoint speaks: it hands each
@@ -111,14 +113,14 @@ document db's `HandleDocumentType`) plug into this same surface — handler cont
 
 ## The lifecycle phases
 
-Each endpoint drives its own lifecycle in readable methods — listen → announce → send on the way up,
-retract → stop sending → stop listening on the way down — and the host runs each phase **host-wide**: when a
-host starts, every endpoint finishes `StartListeningAsync` before any endpoint runs `AnnounceAddressAsync`,
-and every announcement lands before any endpoint starts `StartSendingAsync`. Nothing can send to an endpoint
-that is not yet ready to receive, an announced address is always one whose whole endpoint is already
-listening, and a router taking its first look at an endpoint registry when sending starts sees every
-endpoint the host announced, never a partial membership decided by start-up racing. Stopping runs in
-reverse: addresses are retracted before any sending stops, and sending stops before listening.
+Each endpoint drives its own lifecycle: `StartAsync` runs the up-phases in order — listen → announce →
+send — and disposal runs the mirror — retract → stop sending → stop listening. The per-endpoint ordering is
+what makes "an announced address is always one that is actually listening" true in every process topology,
+and the mirror keeps an address from being advertised after the endpoint goes deaf. There is deliberately
+**no ordering between endpoints** — a host starting several starts them in parallel, each running its own
+phases — because any cross-endpoint ordering could only ever hold inside one process: whether endpoints have
+discovered each other is topology convergence, identical for co-hosted and separated endpoints, covered by
+readiness, waiting sends, queue-while-down, and `RequirePeers` (below).
 
 What each phase does inside an endpoint: the exactly-once tier claims its process lease in the domain
 database's endpoint catalog (the first act — whether this process may run the endpoint at all is decided
@@ -137,8 +139,9 @@ listening.
 
 ## Readiness and waiting sends — discovery stops being the application's race to lose
 
-The host's phase barrier orders *this host's* endpoints; it says nothing about the rest of the topology —
-other processes still starting, a peer restarting mid-day. Two composing mechanisms cover that (see
+An endpoint's start completes when *it* has started; whether the rest of the topology — co-hosted
+endpoints, other processes still starting, a peer restarting mid-day — has been discovered is continuous
+convergence. Two composing mechanisms make that nobody's race to lose (see
 [the peer model](../../Compze.Tessaging/dev_docs/peer-model.md)):
 
 - **Waiting sends** — implicit, per-call: a send whose type has no live, unambiguous route right now waits,
@@ -271,7 +274,9 @@ waits until no tessages are in flight — transport deliveries and queued tevent
 engines' observation dispatch reports to the tracker — and rethrows background exceptions no assertion
 observed: a test cannot pass while silently dropping in-flight work or a throwing observer's failure
 (`DisposeAsyncWithoutWaitingForEndpointsToBeAtRest` opts out, for tests that deliberately leave work
-scheduled).
+scheduled). A specification whose very next act rides the host's endpoints having discovered each other —
+tevent fan-out membership, peer-memory assertions — awaits `AwaitEndpointsHaveMetEachOtherAsync()` after
+starting, instead of racing the reconciliation.
 
 **`TypermediaTestClient`** (in `Compze.Tessaging.Hosting.Testing`) is the pure client composed for tests: it
 runs in its own container and connects to an endpoint's `Address` over the current test's transport exactly

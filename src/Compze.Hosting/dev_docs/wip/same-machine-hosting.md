@@ -31,11 +31,10 @@ Unpacked:
 
 - **A fresh address per start.** No address is worth writing down — not in a configuration file, not in
   another endpoint's setup. Whoever needs the address reads it from the registry at the moment of use.
-- **Announced means listening.** Announcement is its own host-wide phase, after every endpoint's listening
-  and before any endpoint's sending — so an announced address is always one that is actually listening, and a
-  router's first look at the registry sees every endpoint its host announced. Retraction is the mirror phase,
-  before any sending stops. Addresses announced by a process that crashed are invisible, because the registry
-  checks announcer liveness.
+- **Announced means listening.** Announcement is its own phase of the endpoint's lifecycle, after its
+  listening phase and before its sending phase — so an announced address is always one that is actually
+  listening. Retraction is the mirror phase, before the endpoint's sending stops. Addresses announced by a
+  process that crashed are invisible, because the registry checks announcer liveness.
 - **Senders converge; nothing is wired once.** Connections are not established at startup and assumed
   thereafter — they are *reconciled* against the registry's current membership, continuously. Endpoints that
   appear, disappear, or restart at a new address are connected, dropped, or re-connected as the registry
@@ -109,10 +108,9 @@ endpoint.AnnounceAddressTo(registry);
 
 Declaring none — a deployment whose endpoints are found through a fixed address list — means nothing is
 announced. The announced address is the endpoint's one transport-server address, serving every distributed
-capability the endpoint speaks. The announcement is made in the host's announcing phase — after every
-endpoint in the host has finished starting to listen and before any endpoint starts sending — and retracted
-in the mirror phase before any sending stops, so an announced address is always one that is actually
-listening, and a router's first look at the registry sees every endpoint its host announced.
+capability the endpoint speaks. The announcement is made in the endpoint's announcing phase — after its
+listening phase and before its sending phase — and retracted in the mirror phase before its sending stops,
+so an announced address is always one that is actually listening.
 
 **Crashed processes announce nothing — structurally.** The backing file outlives crashed processes by design
 (that is how announcements survive restarts), so a crash cannot retract. Instead, every entry records the

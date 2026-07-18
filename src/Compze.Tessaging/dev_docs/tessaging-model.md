@@ -248,9 +248,10 @@ Three concepts, deliberately orthogonal:
   at startup (the endpoint catalog's process lease — see [the storage model](storage-model.md));
   tolerating it — failover, fault tolerance — is its own future design effort.
 
-A **host** (`EndpointHost`, in `Compze.Hosting`) owns several endpoints' lifecycles in one process,
-driving their phases together; co-hosted endpoints converse exactly as separated ones do — through real
-transport connections, never through a same-process shortcut.
+A **host** (`EndpointHost`, in `Compze.Hosting`) is an optional convenience owning several endpoints'
+lifecycles in one process. Endpoints are first-class; a host adds nothing an endpoint cannot do alone, and
+co-hosted endpoints converse exactly as separated ones do — through real transport connections, never
+through a same-process shortcut.
 
 ## Tessaging storage within the domain database
 
@@ -355,13 +356,12 @@ Composition choices are parameters and strategies, not plugins:
 
 ## Lifecycle and topology
 
-An endpoint's lifecycle is six phases in readable methods: listen → announce → send on the way up,
-retract → stop sending → stop listening on the way down. The host runs each phase host-wide — every
-endpoint finishes a phase before any endpoint starts the next — so within one host, an announced address is
-always one that is actually listening, and a router's first look at the registry sees every endpoint its
-host announced. Across hosts no such barrier exists, and none is needed: readiness fronts the wait where an
-application wants it paid, waiting sends absorb the churn windows, and queue-while-down and `RequirePeers`
-hold one-way tessages for peers not yet met (see [the peer model](peer-model.md)).
+Each endpoint drives its own phases: `StartAsync` runs listen → announce → send in order, and disposal runs
+the mirror — retract → stop sending → stop listening. An announced address is always one that is actually
+listening, in every process topology, because the ordering is per-endpoint; there is deliberately no
+ordering *between* endpoints, co-hosted or not. Startup order is nobody's problem: readiness fronts the
+wait where an application wants it paid, waiting sends absorb the churn windows, and queue-while-down and
+`RequirePeers` hold one-way tessages for peers not yet met (see [the peer model](peer-model.md)).
 
 **Addresses come in two deployment strategies; identity is the `EndpointId` in both:**
 

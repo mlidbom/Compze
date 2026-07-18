@@ -1,23 +1,38 @@
 # Tessaging work in progress
 
 The hub for ongoing Tessaging work. Current-state documentation — how the project actually works — lives in
-[the parent dev_docs folder](../); this folder holds only the efforts still in flight, and
-[DONE](../DONE/) holds the completed ones.
+[the parent dev_docs folder](../); this folder holds only the efforts in flight, and [DONE](../DONE/) holds
+the completed ones.
 
 ## Ongoing work
 
-- [tessaging-migration-plan.md](tessaging-migration-plan.md) — the path from the pre-harmonization code to
-  the target design: ten ordered phases, each a run of green committed increments. **Phases 1–9 are
-  executed; phase 10 — the Host demotion — remains**, and after it a final rolling-docs coherence sweep.
-- [tessaging-target-design.md](tessaging-target-design.md) — the destination, described straight up: ⚖ the
-  consistency law, the domain/endpoint/process triad, the LocalTessagingEngine, synchrony-follows-the-type,
-  the two endpoint types, administration, topology. Phase 10's remaining delta from the current state is the
-  Host's role: the target's "a host is an optional convenience; endpoints are first-class" is not yet what
-  the code does. When phase 10 lands, this document retires to DONE and the current-state docs are the
-  living truth.
-- [src/Compze.Hosting/dev_docs/wip/same-machine-hosting.md](../../../Compze.Hosting/dev_docs/wip/same-machine-hosting.md)
-  — same-machine hosting: the named-pipe transport, the interprocess registry, and the router's
-  reconciliation.
+**None.** The Tessaging migration is executed in full — all ten phases of
+[the migration plan](../DONE/tessaging-migration-plan.md), the last (the Host demotion) on 2026-07-18 — and
+the current-state docs are the living truth.
+
+## Open items awaiting their own efforts
+
+- **Distributed quiescence** — the awaitable "no volatile work is in flight across the suite → safe to
+  stop", readiness's sibling on the way down. Sketched in
+  [the style-substrate evaluation, question 6](../DONE/style-substrate-and-hosting-evaluation.md); to be
+  designed properly in its own effort.
+- **The ultimate home of `EndpointHost` and `InterprocessEndpointRegistry`** — the homes decision deferred
+  this to the Host demotion; the demotion kept the project shapes unchanged, so the question is now free-
+  standing: `Compze.Hosting` holds a ~60-line convenience and the same-machine registry, and whether either
+  deserves a different home is an open naming/homes conversation.
+- **Awaiting a subscriber's first contact on the production surface** — exactly-once tevent fan-out
+  membership is the remembered subscribers, and first contact is the boundary; readiness covers only
+  single-handler kinds and `RequirePeers` only the best-effort queues, so a production application that
+  publishes exactly-once tevents right at startup and must not lose them to the discovery race has no
+  first-class await for "my known subscriber has been met" — today it would poll `IPeerRegistry.Peers`, and
+  the testing host wraps exactly that as `AwaitEndpointsHaveMetEachOtherAsync`. Whether this deserves a
+  production surface is an open design question.
+- **The public website docs** (`src/Websites/Website/docs/tessaging/`) still speak dead ServiceBus
+  vocabulary, and `_docs/introduction.md` + its `TessageHandling.cs` samples predate the declaration idiom —
+  a pass of their own.
+- **The storage-drop administration act** — decommissioning an endpoint's storage (dropping its prefixed
+  table-set, deleting its catalog entry) is a settled design equation parked as a todo at
+  `ITessagingSqlLayer.IEndpointCatalogSqlLayer`, awaiting its first consumer.
 
 ## Current-state documentation (the parent folder)
 
@@ -33,6 +48,9 @@ The hub for ongoing Tessaging work. Current-state documentation — how the proj
 - [code-map.md](../code-map.md) — where everything lives: projects, namespaces, key types, the test suite.
 - [src/Compze.Hosting/dev_docs/hosting-model.md](../../../Compze.Hosting/dev_docs/hosting-model.md) — what
   an endpoint and a host are; production and testing hosting.
+- [src/Compze.Hosting/dev_docs/wip/same-machine-hosting.md](../../../Compze.Hosting/dev_docs/wip/same-machine-hosting.md)
+  — same-machine hosting: the named-pipe transport, the interprocess registry, and the router's
+  reconciliation.
 
 ## References
 
@@ -40,14 +58,18 @@ The hub for ongoing Tessaging work. Current-state documentation — how the proj
 
 ### Completed efforts
 
+- [DONE/tessaging-migration-plan.md](../DONE/tessaging-migration-plan.md) — the ten-phase migration, executed
+  in full: debris → homes → one router → the engine → endpoint types → observation → synchrony → readiness →
+  storage → the Host demotion.
+- [DONE/tessaging-target-design.md](../DONE/tessaging-target-design.md) — the destination, built in full: the
+  design record behind the current-state docs.
 - [DONE/durable-peer-topology.md](../DONE/durable-peer-topology.md) — peer memory, queue-while-down, shrink,
   decommission.
 - [DONE/readiness-and-waiting-sends.md](../DONE/readiness-and-waiting-sends.md) — waiting sends and the
   readiness awaitable.
 - [DONE/style-substrate-and-hosting-evaluation.md](../DONE/style-substrate-and-hosting-evaluation.md) — the
   evaluation whose verdicts drove the harmonization: Tessaging the common paradigm, the feature machinery's
-  death, the concrete endpoint types. Question 6's distributed-quiescence sketch still awaits its own
-  design effort.
+  death, the concrete endpoint types, the Host demotion.
 - [DONE/typermedia-tessaging-split/](../DONE/typermedia-tessaging-split/) — the split that preceded the
   harmonization.
 - [DONE/client-endpoint-entanglement.md](../DONE/client-endpoint-entanglement.md),

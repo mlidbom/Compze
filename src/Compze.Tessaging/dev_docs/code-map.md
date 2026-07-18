@@ -18,7 +18,7 @@ Neighbors Tessaging is built on:
 | Project | What Tessaging takes from it |
 |---|---|
 | `Compze.Abstractions` | The tessage-type hierarchy and the door contracts (`Tessaging/Public`: `_TessageTypes..Interfaces.cs`, the `TessageTypes` base-class families, `IUnitOfWorkTeventPublisher`/`IIndependentTeventPublisher`, `IUnitOfWorkTommandSender`/`IIndependentTommandSender`); the hosting contracts (`Hosting/Public`: `IEndpoint`, `IEndpointHost`, `EndpointId`, `EndpointAddress`, `EndpointConfiguration`, `IEndpointRegistry`/`IEndpointAddressAnnouncer`). |
-| `Compze.Hosting` | `EndpointHost` (the host mechanism) and `InterprocessEndpointRegistry` (`SameMachine/` — the zero-configuration same-machine discovery registry). |
+| `Compze.Hosting` | `EndpointHost` (the optional convenience owning several endpoints' lifecycles in one process — endpoints are first-class) and `InterprocessEndpointRegistry` (`SameMachine/` — the zero-configuration same-machine discovery registry). |
 | `Compze.Teventive` | The tevent wrapper (`PublisherIdentifyingTevent<TTevent>`, implementing `IPublisherTevent<TTevent>`) and the taggregate/tevent-store machinery that publishes through Tessaging's doors. |
 | `Compze.DependencyInjection` | The container abstractions and the unit-of-work model (`IUnitOfWorkResolver`, `IScopeResolver`) every handler shape receives — see its `dev_docs/unit-of-work-model.md`. |
 
