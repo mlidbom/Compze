@@ -48,7 +48,7 @@ public partial class DbConnectionPool<TConnection, TCommand> : IDbConnectionPool
       }
 
 #pragma warning disable CA1849 // The synchronous UseConnection path must open synchronously; Task.FromResult bridges that sync open into the Task-backed IAsyncShared the async path also feeds.
-      return GetOrOpenSharedConnection(transactionLocalIdentifier, () => Task.FromResult(OpenConnection())).Locked(func);
+      return GetOrOpenTransactionSpecificConnection(transactionLocalIdentifier, () => Task.FromResult(OpenConnection())).Locked(func);
 #pragma warning restore CA1849
    }
 
@@ -61,7 +61,7 @@ public partial class DbConnectionPool<TConnection, TCommand> : IDbConnectionPool
          return await UseOwnFreshConnectionAsync(func).caf();
       }
 
-      return await GetOrOpenSharedConnection(transactionLocalIdentifier, () => OpenConnectionAsync()).LockedAsync(func).caf();
+      return await GetOrOpenTransactionSpecificConnection(transactionLocalIdentifier, OpenConnectionAsync).LockedAsync(func).caf();
    }
 
    TResult UseOwnFreshConnection<TResult>(Func<TConnection, TResult> func)
@@ -114,7 +114,7 @@ public partial class DbConnectionPool<TConnection, TCommand> : IDbConnectionPool
       return connection;
    }
 
-   IAsyncShared<TConnection> GetOrOpenSharedConnection(string transactionLocalIdentifier, Func<Task<TConnection>> openConnection) =>
+   IAsyncShared<TConnection> GetOrOpenTransactionSpecificConnection(string transactionLocalIdentifier, Func<Task<TConnection>> openConnection) =>
       _transactionConnections.Locked(
          transactionConnections => transactionConnections.GetOrAdd(
             transactionLocalIdentifier,
