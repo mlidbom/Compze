@@ -5,6 +5,7 @@ using Compze.Tessaging.Implementation.Transport.Abstractions;
 using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Logging;
+using Compze.Internals.SystemCE.ThreadingCE;
 using Compze.Tessaging.Implementation.Abstractions;
 
 namespace Compze.Tessaging.Implementation.TessageHandling.Inbox;
@@ -18,9 +19,10 @@ public partial class Inbox
       IScopeFactory scopeFactory,
       ITessageStorage storage,
       ITaskRunner taskRunner,
-      EndpointId endpointId)
+      EndpointId endpointId) : IDisposable
    {
       Thread? _awaitDispatchableTessageThread;
+      readonly CancellationTokenSource _stopping = new();
 
       readonly IReadOnlyList<ITessageDispatchingRule> _dispatchingRules =
       [
@@ -38,12 +40,15 @@ public partial class Inbox
 
       void AwaitDispatchableTessageThreadLoop()
       {
-         while(true)
+         try
          {
-            var task = _coordinator.AwaitExecutableHandlerExecutionTask(_dispatchingRules);
-            task.Execute();
+            while(!_stopping.IsCancellationRequested)
+            {
+               var task = _coordinator.AwaitExecutableHandlerExecutionTask(_dispatchingRules, _stopping.Token);
+               task.Execute();
+            }
          }
-         // ReSharper disable once FunctionNeverReturns
+         catch(OperationCanceledException) {} // Expected during shutdown: Stop() cancelled the wait for the next dispatchable tessage.
       }
 
       internal void Start()
@@ -55,16 +60,17 @@ public partial class Inbox
             ThreadPriority.AboveNormal);
       }
 
-      internal void Stop()
+      public void Dispose()
       {
-         this.Log().Info("Stopping");
          if(_awaitDispatchableTessageThread != null)
          {
-            _awaitDispatchableTessageThread.Interrupt();
-            _awaitDispatchableTessageThread.Join();
+            this.Log().Info("Stopping");
+            _stopping.Cancel();
+            _awaitDispatchableTessageThread.JoinCE(5.Seconds());
             _awaitDispatchableTessageThread = null;
+            this.Log().Info("Stopped");
          }
-         this.Log().Info("Stopped");
+         _stopping.Dispose();
       }
    }
 }

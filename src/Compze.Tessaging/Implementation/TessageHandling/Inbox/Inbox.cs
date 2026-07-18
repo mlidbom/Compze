@@ -83,7 +83,7 @@ static class InboxRegistrar
    public ValueTask DisposeAsync()
    {
       this.Log().Debug("Disposing");
-      _handlerExecutionEngine.Stop();
+      _handlerExecutionEngine.Dispose();
       return ValueTask.CompletedTask;
    }
 }

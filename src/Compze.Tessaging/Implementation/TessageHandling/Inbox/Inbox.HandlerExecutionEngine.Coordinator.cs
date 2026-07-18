@@ -26,10 +26,10 @@ public partial class Inbox
          readonly TessageHandlerExecutor _executor = executor;
          readonly IAwaitableThreadShared<NonThreadsafeImplementation> _implementation = IAwaitableThreadShared.New(new NonThreadsafeImplementation(globalStateTracker, endpointId));
 
-         internal HandlerExecutionTask AwaitExecutableHandlerExecutionTask(IReadOnlyList<ITessageDispatchingRule> dispatchingRules)
+         internal HandlerExecutionTask AwaitExecutableHandlerExecutionTask(IReadOnlyList<ITessageDispatchingRule> dispatchingRules, CancellationToken cancellationToken)
          {
             HandlerExecutionTask? handlerExecutionTask = null;
-            _implementation.Await(implementation => implementation.TryGetDispatchableTessage(dispatchingRules, out handlerExecutionTask));
+            _implementation.Await(implementation => implementation.TryGetDispatchableTessage(dispatchingRules, out handlerExecutionTask), cancellationToken);
             return handlerExecutionTask._assert().NotNull();
          }
 
