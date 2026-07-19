@@ -1,8 +1,6 @@
 using System.Transactions;
-using Compze.Abstractions.Hosting.Public;
-using Compze.Abstractions.Public;
-using Compze.Abstractions.Serialization.Internal;
-using Compze.Abstractions.Tessaging.Public;
+using Compze.Tessaging.Endpoints;
+using Compze.Tessaging.Serialization.Internal;
 using Compze.Contracts;
 using Compze.Tessaging.Implementation.Abstractions;
 using Compze.Tessaging.Implementation.Peers;
@@ -12,6 +10,8 @@ using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Logging;
 using Compze.Internals.SystemCE.TransactionsCE;
+using Compze.Tessaging.Abstractions.Public;
+using Compze.Tessaging.Abstractions.TessageTypes;
 using Compze.TypeIdentifiers;
 
 namespace Compze.Tessaging.Implementation.BestEffortDelivery;

@@ -1,8 +1,8 @@
 using Compze.Tessaging.Internals.Transport;
-using Compze.Abstractions.Hosting.Public;
-using Compze.Abstractions.Tessaging.Public;
+using Compze.Tessaging.Endpoints;
 using Compze.DependencyInjection;
 using Compze.Must;
+using Compze.Tessaging.Abstractions.Public;
 using Compze.Tessaging.Implementation.Peers;
 using Compze.Tessaging.Implementation.Transport;
 using Compze.Tests.Common.Tessaging.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler;

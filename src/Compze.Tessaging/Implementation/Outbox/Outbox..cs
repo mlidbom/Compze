@@ -1,5 +1,4 @@
 using System.Transactions;
-using Compze.Abstractions.Tessaging.Public;
 using Compze.Tessaging.Implementation.Abstractions;
 using Compze.Tessaging.Implementation.HandlerAvailability;
 using Compze.Tessaging.Implementation.Peers;
@@ -11,6 +10,7 @@ using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Logging;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Internals.SystemCE.TransactionsCE;
+using Compze.Tessaging.Abstractions.TessageTypes;
 
 namespace Compze.Tessaging.Implementation.Outbox;
 

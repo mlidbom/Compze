@@ -1,4 +1,4 @@
-using Compze.Abstractions.Hosting.Public;
+using Compze.Tessaging.Endpoints;
 
 namespace Compze.Tessaging.Implementation.Peers;
 

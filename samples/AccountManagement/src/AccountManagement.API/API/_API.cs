@@ -2,9 +2,9 @@
 // ReSharper disable MemberCanBeMadeStatic.Local
 
 using AccountManagement.Domain;
-using Compze.Abstractions.Hosting.Public;
-using Compze.Abstractions.Tessaging.Public;
 using Compze.Internals.SystemCE;
+using Compze.Tessaging.Abstractions.Public;
+using Compze.Tessaging.Abstractions.TessageTypes;
 using Compze.Tessaging.Typermedia;
 
 namespace AccountManagement.API;

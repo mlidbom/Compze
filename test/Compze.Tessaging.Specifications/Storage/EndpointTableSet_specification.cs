@@ -1,4 +1,4 @@
-using Compze.Abstractions.Hosting.Public;
+using Compze.Tessaging.Endpoints;
 using Compze.Must;
 using Compze.Tessaging.Transport.SqlLayer;
 using Compze.xUnitBDD;

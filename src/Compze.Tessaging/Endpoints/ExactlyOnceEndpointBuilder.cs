@@ -1,4 +1,3 @@
-using Compze.Abstractions.Hosting.Public;
 using Compze.Contracts;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;

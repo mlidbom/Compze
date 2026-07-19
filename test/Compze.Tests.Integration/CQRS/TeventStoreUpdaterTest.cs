@@ -4,7 +4,6 @@ using Compze.Contracts;
 using Compze.Abstractions.Public;
 using Compze.xUnitMatrix;
 using Compze.Tessaging.Engine;
-using Compze.Abstractions.Tessaging.Public;
 using Compze.Abstractions.Wiring.Testing.Internal;
 using JetBrains.Annotations;
 using Compze.Internals.SystemCE.TransactionsCE;
@@ -25,7 +24,8 @@ using Compze.Threading;
 using Compze.Threading.Testing;
 using Compze.Internals.SystemCE.UsageGuards;
 using Compze.Must;
-
+using Compze.Tessaging.Abstractions.Public;
+using Compze.Tessaging.Abstractions.TessageTypes;
 using Compze.Teventive;
 using Compze.Teventive.Taggregates.Tevents.Public;
 using Compze.Teventive.TeventStore.Abstractions.Public;

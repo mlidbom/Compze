@@ -1,5 +1,6 @@
 using System.Text;
-using Compze.Abstractions.Hosting.Public;
+using Compze.Tessaging.Endpoints;
+using Compze.Tessaging.Endpoints.Discovery;
 using Compze.Internals.SystemCE.DiagnosticsCE;
 using Compze.InterprocessObject;
 using Compze.Threading;

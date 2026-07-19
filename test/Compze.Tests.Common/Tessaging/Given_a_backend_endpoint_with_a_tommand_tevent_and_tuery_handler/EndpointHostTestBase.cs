@@ -1,5 +1,4 @@
 using System.Collections.Concurrent;
-using Compze.Abstractions.Tessaging.Public;
 using Compze.DependencyInjection;
 using Compze.Hosting.Testing;
 using Compze.Hosting.Testing.Wiring;
@@ -9,7 +8,7 @@ using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Typermedia;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.LinqCE;
-using Compze.Abstractions.Hosting.Public;
+using Compze.Tessaging.Abstractions.Public;
 using Compze.Tessaging.Engine;
 using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Typermedia.Client;

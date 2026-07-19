@@ -4,6 +4,7 @@ using Compze.Internals.Sql.Common;
 using Compze.Internals.Sql.MySql;
 using Compze.Internals.Sql.MySql.Private;
 using Compze.Internals.SystemCE;
+using Compze.Tessaging.Abstractions.Public;
 using Compze.Teventive.TeventStore.Abstractions.Internal.SqlLayer.Abstractions;
 using MySqlConnector;
 using ReadOrder = Compze.Teventive.TeventStore.Abstractions.Internal.SqlLayer.Abstractions.ReadOrder;

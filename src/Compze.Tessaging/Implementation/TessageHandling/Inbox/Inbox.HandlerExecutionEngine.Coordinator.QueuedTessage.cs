@@ -1,5 +1,3 @@
-using Compze.Abstractions.Public;
-using Compze.Abstractions.Tessaging.Public;
 using Compze.DependencyInjection;
 using Compze.Tessaging.Engine;
 using Compze.Tessaging.Implementation.Transport.Abstractions;
@@ -8,7 +6,8 @@ using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Logging;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Internals.SystemCE.TransactionsCE;
-using Compze.Teventive.Tevents.Public;
+using Compze.Tessaging.Abstractions.Public;
+using Compze.Tessaging.Abstractions.TessageTypes;
 
 namespace Compze.Tessaging.Implementation.TessageHandling.Inbox;
 

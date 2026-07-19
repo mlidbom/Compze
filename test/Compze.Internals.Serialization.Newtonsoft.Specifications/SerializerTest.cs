@@ -5,6 +5,8 @@ using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Serialization.Newtonsoft.Wiring;
 using Compze.Hosting.Testing.Wiring;
+using Compze.Tessaging.Abstractions.Public;
+using Compze.Tessaging.Abstractions.TessageTypes;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Teventive.TeventStore.Abstractions.Internal;
@@ -23,8 +25,9 @@ public class SerializerTest : UniversalTestBase
    {
       var serializer = PCTSerializerAttribute.Serializer;
       var typeMapper = new TypeMapper();
-      typeMapper.MapTypesFromAssemblyContaining<TentityId>();          // Compze.Abstractions — entity ids and the shared message types these specs serialize
-      typeMapper.MapTypesFromAssemblyContaining<AssemblyTypeMapper>(); // Compze.Core — the tevent and document types these specs serialize
+      typeMapper.MapTypesFromAssemblyContaining<TentityId>();           // Compze.Abstractions — the entity ids these specs serialize
+      typeMapper.MapTypesFromAssemblyContaining<IExactlyOnceTevent>();  // Compze.Tessaging.Abstractions — the tessage types these specs serialize
+      typeMapper.MapTypesFromAssemblyContaining<AssemblyTypeMapper>();  // this specification assembly — the tevent and document types these specs serialize
 #pragma warning disable CA2000 // We are disposing this disposable in DisposeInternal
       _container = DIContainer.Microsoft
                              .CreateTestingContainerBuilder()

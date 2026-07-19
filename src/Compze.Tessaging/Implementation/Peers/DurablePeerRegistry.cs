@@ -1,10 +1,10 @@
 using Compze.Tessaging.Internals.Transport;
 using System.Transactions;
-using Compze.Abstractions.Hosting.Public;
-using Compze.Abstractions.Tessaging.Public;
+using Compze.Tessaging.Endpoints;
 using Compze.Contracts;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Internals.SystemCE.TransactionsCE;
+using Compze.Tessaging.Abstractions.TessageTypes;
 using Compze.Tessaging.Transport.SqlLayer;
 using Compze.TypeIdentifiers;
 using JetBrains.Annotations;

@@ -1,5 +1,4 @@
 using Compze.Abstractions.Public;
-using Compze.Abstractions.Tessaging.Public;
 using Compze.Hosting.Testing;
 using Compze.Internals.Testing;
 using Compze.Tests.Common;
@@ -11,7 +10,7 @@ using Compze.Internals.SystemCE.TransactionsCE;
 using System.Transactions;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Must;
-
+using Compze.Tessaging.Abstractions.Public;
 using Compze.Teventive;
 using Compze.Teventive.Taggregates.BaseClasses;
 using Compze.Teventive.Taggregates.Tevents.Public;

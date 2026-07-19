@@ -1,5 +1,5 @@
-using Compze.Abstractions.Hosting.Public;
-using Compze.Abstractions.Tessaging.Public;
+using Compze.Tessaging.Endpoints;
+using Compze.Tessaging.Endpoints.Discovery;
 using Compze.Tessaging.Engine;
 using Compze.Tessaging.Implementation.Peers;
 using Compze.Tessaging.Implementation.TessageHandling.Dispatching;
@@ -9,6 +9,7 @@ using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.ReflectionCE;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
+using Compze.Tessaging.Abstractions.TessageTypes;
 
 namespace Compze.Tessaging.Implementation.HandlerAvailability;
 

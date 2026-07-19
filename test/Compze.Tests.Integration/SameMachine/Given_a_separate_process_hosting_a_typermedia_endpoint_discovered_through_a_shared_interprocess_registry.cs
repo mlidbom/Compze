@@ -1,4 +1,4 @@
-using Compze.Abstractions.Hosting.Public;
+using Compze.Tessaging.Endpoints;
 using Compze.Abstractions.Wiring.Testing.Internal;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
@@ -9,7 +9,6 @@ using Compze.Hosting.Testing.Wiring;
 using Compze.Internals.Testing;
 using Compze.Must;
 
-using Compze.Tessaging.Endpoints;
 
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;

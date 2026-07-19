@@ -1,7 +1,5 @@
-using Compze.Abstractions.Hosting.Public;
-using Compze.Tessaging.Typermedia.Client;
-using Compze.Abstractions.Tessaging.Public;
 using Compze.Tessaging.Endpoints;
+using Compze.Tessaging.Typermedia.Client;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Typermedia;
 using Compze.Tests.Infrastructure;
@@ -9,7 +7,8 @@ using Compze.Tests.Infrastructure.XUnit;
 using Compze.Abstractions.Public;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Must;
-
+using Compze.Tessaging.Abstractions.Public;
+using Compze.Tessaging.Abstractions.TessageTypes;
 using Compze.Tessaging.Typermedia;
 using Compze.Tessaging.Engine;
 

@@ -1,7 +1,6 @@
 using System.Collections.Concurrent;
 using System.Transactions;
-using Compze.Abstractions.Hosting.Public;
-using Compze.Abstractions.Tessaging.Public;
+using Compze.Tessaging.Endpoints;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Hosting;
@@ -12,7 +11,7 @@ using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Internals.SystemCE.TransactionsCE.Testing;
 using Compze.Internals.Testing;
 using Compze.Must;
-using Compze.Tessaging.Endpoints;
+using Compze.Tessaging.Abstractions.Public;
 using Compze.Tessaging.Engine;
 using Compze.Tessaging.Implementation.BestEffortDelivery;
 using Compze.Tessaging.Implementation.Peers;

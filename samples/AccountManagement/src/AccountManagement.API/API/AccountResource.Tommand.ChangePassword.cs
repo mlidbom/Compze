@@ -1,7 +1,9 @@
 using AccountManagement.API.ValidationAttributes;
 using AccountManagement.Domain;
-using Compze.Abstractions.Tessaging.Public;
 using System.ComponentModel.DataAnnotations;
+using Compze.Tessaging.Abstractions.Public;
+using Compze.Tessaging.Abstractions.TessageTypes;
+
 // ReSharper disable PropertyCanBeMadeInitOnly.Local
 
 namespace AccountManagement.API;

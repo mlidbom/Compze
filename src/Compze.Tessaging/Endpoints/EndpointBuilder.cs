@@ -1,8 +1,10 @@
-using Compze.Abstractions.Hosting.Public;
-using Compze.Abstractions.Serialization.Internal;
+using Compze.Abstractions.Public;
+using Compze.Tessaging.Endpoints.Discovery;
+using Compze.Tessaging.Serialization.Internal;
 using Compze.Contracts;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
+using Compze.Tessaging.Abstractions.TessageTypes;
 using Compze.Tessaging.Engine;
 using Compze.Tessaging.Implementation;
 using Compze.Tessaging.Implementation.Abstractions;
@@ -233,8 +235,9 @@ public abstract class EndpointBuilder<TConcreteBuilder> where TConcreteBuilder :
    /// and Typermedia's serving and navigating sides — both tiers serve all four tessage kinds, unconditionally.</summary>
    void RegisterTheSharedEndpointCore()
    {
-      _typeMapper.MapTypesFromAssemblyContaining<EndpointAddress>();          // Compze.Abstractions — the shared message-type hierarchy and hosting contracts
-      _typeMapper.MapTypesFromAssemblyContaining<EndpointInformationQuery>(); // Compze.Tessaging — the endpoint-discovery types
+      _typeMapper.MapTypesFromAssemblyContaining<TentityId>();                // Compze.Abstractions — the entity id types
+      _typeMapper.MapTypesFromAssemblyContaining<IExactlyOnceTevent>();       // Compze.Tessaging.Abstractions — the tessage type hierarchy
+      _typeMapper.MapTypesFromAssemblyContaining<EndpointInformationQuery>(); // Compze.Tessaging — the endpoint-discovery types and the endpoint address
 
       Registrar.Register(Singleton.For<ITypeMapper>().Instance(_typeMapper),
                          Singleton.For<ITypeMap>().Instance(_typeMapper),

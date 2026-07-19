@@ -1,4 +1,4 @@
-using Compze.Abstractions.Hosting.Public;
+using Compze.Tessaging.Endpoints.Discovery;
 using Compze.Contracts;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;

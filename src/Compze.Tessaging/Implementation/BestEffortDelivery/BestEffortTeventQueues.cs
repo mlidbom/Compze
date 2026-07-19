@@ -1,6 +1,6 @@
 using Compze.Tessaging.Internals.Transport;
 using System.Transactions;
-using Compze.Abstractions.Hosting.Public;
+using Compze.Tessaging.Endpoints;
 using Compze.Contracts;
 using Compze.Internals.SystemCE.TransactionsCE;
 using Compze.Tessaging.Implementation.Abstractions;

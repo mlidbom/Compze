@@ -1,5 +1,6 @@
 using Compze.Abstractions.Public;
 using Compze.Abstractions.Time.Public;
+using Compze.Tessaging.Abstractions.Public;
 
 namespace Compze.Teventive.Taggregates.Tevents.Public;
 

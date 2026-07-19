@@ -1,8 +1,8 @@
 using Compze.Abstractions.Public;
-using Compze.Abstractions.Tessaging.Public;
 using Compze.Contracts;
+using Compze.Tessaging.Abstractions.Public;
+using Compze.Tessaging.Abstractions.TessageTypes;
 using Compze.Teventive.Taggregates.Tevents.Public;
-using Compze.Teventive.Tevents.Public;
 
 namespace Compze.Teventive.Taggregates.BaseClasses.Shared;
 

@@ -1,4 +1,4 @@
-using Compze.Abstractions.Hosting.Public;
+using Compze.Tessaging.Endpoints;
 using Compze.DependencyInjection;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.SystemCE.ThreadingCE;

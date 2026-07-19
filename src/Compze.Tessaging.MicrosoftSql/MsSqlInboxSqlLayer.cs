@@ -1,8 +1,8 @@
-using Compze.Abstractions.Public;
 using Compze.Internals.Sql.Common;
 using Compze.Internals.Sql.MicrosoftSql;
 using Compze.Internals.Sql.MicrosoftSql.Private;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
+using Compze.Tessaging.Abstractions.Public;
 using Compze.Tessaging.Transport.SqlLayer;
 using Compze.TypeIdentifiers;
 using Compze.TypeIdentifiers.Interning;

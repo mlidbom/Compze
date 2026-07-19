@@ -1,12 +1,12 @@
-using Compze.Abstractions.Public;
 using Compze.TypeIdentifiers;
-using Compze.Abstractions.Serialization.Internal;
-using Compze.Abstractions.Tessaging.Public;
-using Compze.Abstractions.Hosting.Public;
+using Compze.Tessaging.Serialization.Internal;
+using Compze.Tessaging.Endpoints.Discovery;
 using Compze.Tessaging.Internals.Transport;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
+using Compze.Tessaging.Abstractions.Public;
+using Compze.Tessaging.Abstractions.TessageTypes;
 
 namespace Compze.Tessaging.Typermedia.Client;
 

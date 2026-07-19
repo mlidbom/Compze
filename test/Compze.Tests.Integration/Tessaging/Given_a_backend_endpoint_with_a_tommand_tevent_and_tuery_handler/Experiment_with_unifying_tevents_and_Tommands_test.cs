@@ -1,7 +1,5 @@
-using Compze.Abstractions.Hosting.Public;
 using Compze.Tessaging.Endpoints;
 using Compze.Tessaging.Typermedia.Client;
-using Compze.Abstractions.Tessaging.Public;
 using Compze.Tessaging.Engine;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Typermedia;
@@ -12,7 +10,8 @@ using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Abstractions.Public;
 using Compze.Must;
-
+using Compze.Tessaging.Abstractions.Public;
+using Compze.Tessaging.Abstractions.TessageTypes;
 using Compze.Teventive;
 using Compze.Teventive.Taggregates.BaseClasses;
 using Compze.Teventive.Taggregates.Tevents.Public;

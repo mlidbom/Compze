@@ -1,8 +1,9 @@
-using Compze.Abstractions.Hosting.Public;
-using Compze.Abstractions.Serialization.Internal;
+using Compze.Abstractions.Public;
+using Compze.Tessaging.Serialization.Internal;
 using Compze.Contracts;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
+using Compze.Tessaging.Abstractions.TessageTypes;
 using Compze.Tessaging.Internals.Transport;
 using Compze.TypeIdentifiers;
 
@@ -62,8 +63,9 @@ public sealed class TypermediaClientBuilder
       State.Assert(_registerSerializer is not null || Registrar.IsRegistered<ITypermediaSerializer>(),
                    () => "The client declares no serializer. Declare it in the composition — e.g. client.NewtonsoftSerializer(). (A testing container already carrying the suite's serializers declares none.)");
 
-      _typeMapper.MapTypesFromAssemblyContaining<EndpointAddress>();         // Compze.Abstractions — the shared message-type hierarchy
-      _typeMapper.MapTypesFromAssemblyContaining<EndpointInformation>();     // Compze.Tessaging — the endpoint-discovery types the client's router reads advertisements through
+      _typeMapper.MapTypesFromAssemblyContaining<TentityId>();               // Compze.Abstractions — the entity id types
+      _typeMapper.MapTypesFromAssemblyContaining<IExactlyOnceTevent>();      // Compze.Tessaging.Abstractions — the tessage type hierarchy
+      _typeMapper.MapTypesFromAssemblyContaining<EndpointInformation>();     // Compze.Tessaging — the endpoint-discovery types the client's router reads advertisements through, and the endpoint address
 
       Registrar.Register(Singleton.For<ITypeMapper>().Instance(_typeMapper),
                          Singleton.For<ITypeMap>().Instance(_typeMapper));

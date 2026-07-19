@@ -1,5 +1,5 @@
 using System.IO.Pipes;
-using Compze.Abstractions.Hosting.Public;
+using Compze.Tessaging.Endpoints.Discovery;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 
 namespace Compze.Tessaging.Internals.Transport.NamedPipes;

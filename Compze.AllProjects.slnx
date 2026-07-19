@@ -216,6 +216,7 @@
    </Folder>
    <Folder Name="/Compze.Internals/Transport/" />
    <Folder Name="/Compze.Tessaging/">
+      <Project Path="src/Compze.Tessaging.Abstractions/Compze.Tessaging.Abstractions.csproj" />
       <Project Path="src/Compze.Tessaging.AspNetCore/Compze.Tessaging.AspNetCore.csproj" />
       <Project Path="src/Compze.Tessaging/Compze.Tessaging.csproj" />
    </Folder>

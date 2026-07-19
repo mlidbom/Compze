@@ -1,8 +1,7 @@
-using Compze.Abstractions.Hosting.Public;
+using Compze.Tessaging.Endpoints;
 using Compze.Abstractions.Time.Public;
 using Compze.DependencyInjection;
 using Compze.Must;
-using Compze.Tessaging.Endpoints;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Transport.SqlLayer;
 using Compze.Tests.Infrastructure;

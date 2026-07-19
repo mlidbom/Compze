@@ -1,7 +1,8 @@
-using Compze.Abstractions.Tessaging.Public;
-using Compze.Abstractions.Tessaging.Validation;
 using Compze.Contracts;
 using Compze.Internals.SystemCE.ReflectionCE;
+using Compze.Tessaging.Abstractions.Public;
+using Compze.Tessaging.Abstractions.TessageTypes;
+using Compze.Tessaging.Abstractions.Validation;
 
 namespace Compze.Teventive.Infrastructure.EventDispatching;
 

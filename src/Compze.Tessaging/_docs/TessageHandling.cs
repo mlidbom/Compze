@@ -1,10 +1,11 @@
 // ReSharper disable All
 
-using Compze.Abstractions.Tessaging.Public;
+using Compze.Tessaging.Abstractions.Public;
+using Compze.Tessaging.Abstractions.TessageTypes;
 
 #pragma warning disable
 
-namespace Compze.Tessaging.Abstractions;
+namespace Compze.Tessaging.Documentation;
 
 /// <summary>
 /// Example code for documentation purposes - demonstrates basic tessage handling patterns.

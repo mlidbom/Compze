@@ -1,6 +1,6 @@
-using Compze.Abstractions.Public;
-using Compze.Abstractions.Hosting.Public;
-using Compze.Abstractions.Tessaging.Public;
+using Compze.Tessaging.Abstractions.Public;
+using Compze.Tessaging.Abstractions.TessageTypes;
+using Compze.Tessaging.Endpoints;
 using Compze.Tessaging.Transport.SqlLayer;
 
 namespace Compze.Tessaging.Implementation.Outbox;

@@ -1,5 +1,6 @@
-using Compze.Abstractions.Tessaging.Public;
-using Compze.Abstractions.Tessaging.Validation;
+using Compze.Tessaging.Abstractions.Public;
+using Compze.Tessaging.Abstractions.TessageTypes;
+using Compze.Tessaging.Abstractions.Validation;
 using Compze.Tests.Infrastructure;
 using Compze.xUnitBDD;
 using static Compze.Must.MustActions;

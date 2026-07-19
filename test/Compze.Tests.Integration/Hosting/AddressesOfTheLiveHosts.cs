@@ -1,5 +1,5 @@
-using Compze.Abstractions.Hosting.Public;
 using Compze.Tessaging.Endpoints;
+using Compze.Tessaging.Endpoints.Discovery;
 using Compze.Threading;
 
 namespace Compze.Tests.Integration.Hosting;

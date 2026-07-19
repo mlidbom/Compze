@@ -1,4 +1,4 @@
-using Compze.Abstractions.Tessaging.Public;
+using Compze.Tessaging.Abstractions.TessageTypes;
 
 namespace Compze.Tessaging.Typermedia;
 

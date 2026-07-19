@@ -3,9 +3,8 @@ using AccountManagement.Domain;
 using AccountManagement.Domain.Tevents;
 using AccountManagement.UI;
 using AccountManagement.UI.QueryModels;
-using Compze.Abstractions.Hosting.Public;
-using Compze.DocumentDb.Wiring;
 using Compze.Tessaging.Endpoints;
+using Compze.DocumentDb.Wiring;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Teventive.TeventStore.Typermedia;
 

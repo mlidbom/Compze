@@ -1,0 +1,51 @@
+<Project Sdk="Microsoft.NET.Sdk">
+   <PropertyGroup>
+      <TargetFramework>net10.0</TargetFramework>
+      <Nullable>enable</Nullable>
+      <Version>0.4.0-alpha</Version>
+      <!-- TODO:docs: Remove once all public API members have XML documentation comments -->
+      <NoWarn>CS1591</NoWarn>
+      <Description>The tessage type system: the ITessage hierarchy Compze routes by type — tevents, tommands and tueries, the delivery-guarantee and transactional markers that classify them, the base types implementing them, and the validation holding tessage types to those rules. Depend on this to declare an application's tessages without depending on the Tessaging engine that delivers them.</Description>
+   </PropertyGroup>
+
+   <ItemGroup>
+      <InterntalsVisibleTo Include="Compze.Tessaging"/>
+      <InternalsVisibleTo Include="Compze.Tests.Unit" />
+   </ItemGroup>
+
+   <!-- Compze.Abstractions — flex reference -->
+   <ItemGroup Condition="'$(UsePackageReference_Compze_Abstractions)' == 'true'">
+      <PackageReference Include="Compze.Abstractions" Version="*-*"/>
+   </ItemGroup>
+   <ItemGroup Condition="'$(UsePackageReference_Compze_Abstractions)' != 'true'">
+      <ProjectReference Include="..\Compze.Abstractions\Compze.Abstractions.csproj"/>
+   </ItemGroup>
+   <!-- Compze.Contracts — flex reference -->
+   <ItemGroup Condition="'$(UsePackageReference_Compze_Contracts)' == 'true'">
+      <PackageReference Include="Compze.Contracts" Version="*-*"/>
+   </ItemGroup>
+   <ItemGroup Condition="'$(UsePackageReference_Compze_Contracts)' != 'true'">
+      <ProjectReference Include="..\Compze.Contracts\Compze.Contracts.csproj"/>
+   </ItemGroup>
+   <!-- Compze.Internals.SystemCE — flex reference -->
+   <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_SystemCE)' == 'true'">
+      <PackageReference Include="Compze.Internals.SystemCE" Version="*-*"/>
+   </ItemGroup>
+   <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_SystemCE)' != 'true'">
+      <ProjectReference Include="..\Compze.Internals.SystemCE\Compze.Internals.SystemCE.csproj"/>
+   </ItemGroup>
+   <!-- Compze.Threading — flex reference -->
+   <ItemGroup Condition="'$(UsePackageReference_Compze_Threading)' == 'true'">
+      <PackageReference Include="Compze.Threading" Version="*-*"/>
+   </ItemGroup>
+   <ItemGroup Condition="'$(UsePackageReference_Compze_Threading)' != 'true'">
+      <ProjectReference Include="..\Compze.Threading\Compze.Threading.csproj"/>
+   </ItemGroup>
+   <!-- Compze.TypeIdentifiers — flex reference -->
+   <ItemGroup Condition="'$(UsePackageReference_Compze_TypeIdentifiers)' == 'true'">
+      <PackageReference Include="Compze.TypeIdentifiers" Version="*-*"/>
+   </ItemGroup>
+   <ItemGroup Condition="'$(UsePackageReference_Compze_TypeIdentifiers)' != 'true'">
+      <ProjectReference Include="..\Compze.TypeIdentifiers\Compze.TypeIdentifiers.csproj"/>
+   </ItemGroup>
+</Project>

@@ -1,4 +1,4 @@
-using Compze.Abstractions.Hosting.Public;
+using Compze.Tessaging.Endpoints;
 using Compze.Internals.SystemCE.ReflectionCE;
 
 namespace Compze.Tessaging.Implementation.TessageHandling.Dispatching;

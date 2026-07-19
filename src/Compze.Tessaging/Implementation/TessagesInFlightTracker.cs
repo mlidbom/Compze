@@ -1,8 +1,8 @@
 using Compze.Tessaging.Internals.Transport;
-using Compze.Abstractions.Public;
-using Compze.Abstractions.Hosting.Public;
+using Compze.Tessaging.Endpoints;
 using Compze.Tessaging.Implementation.Transport.Abstractions;
 using Compze.Internals.SystemCE.CollectionsCE.GenericCE;
+using Compze.Tessaging.Abstractions.Public;
 using Compze.Tessaging.Implementation.Abstractions;
 using Compze.Threading;
 using Compze.Threading.Exceptions;

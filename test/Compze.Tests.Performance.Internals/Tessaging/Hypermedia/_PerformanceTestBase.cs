@@ -1,9 +1,9 @@
-using Compze.Abstractions.Hosting.Public;
-using Compze.Tessaging.Typermedia.Client;
-using Compze.Abstractions.Tessaging.Public;
-using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
-using Compze.Tests.Infrastructure;
 using Compze.Tessaging.Endpoints;
+using Compze.Tessaging.Typermedia.Client;
+using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
+using Compze.Tessaging.Abstractions.Public;
+using Compze.Tessaging.Abstractions.TessageTypes;
+using Compze.Tests.Infrastructure;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Typermedia;
 using Compze.Tessaging.Typermedia;

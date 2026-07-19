@@ -1,4 +1,5 @@
-using Compze.Abstractions.Hosting.Public;
+using Compze.Tessaging.Endpoints;
+using Compze.Tessaging.Endpoints.Discovery;
 using Compze.Hosting.SameMachine;
 using Compze.Internals.SystemCE.DiagnosticsCE;
 using Compze.Must;

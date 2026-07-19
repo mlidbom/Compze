@@ -1,5 +1,6 @@
 using AccountManagement.Domain;
-using Compze.Abstractions.Tessaging.Public;
+using Compze.Tessaging.Abstractions.Public;
+using Compze.Tessaging.Abstractions.TessageTypes;
 using JetBrains.Annotations;
 // ReSharper disable MemberCanBeMadeStatic.Global
 

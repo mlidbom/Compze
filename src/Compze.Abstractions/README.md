@@ -8,11 +8,13 @@ Compze is a .NET framework for building expressive domains through **Teventive p
 
 ## What's in this package?
 
-- **Entity and identity types** — `EntityId`, `TentityId`, `TaggregateId`, and strongly-typed ID base classes
-- **Messaging contracts** — `ITessage`, `ITevent`, `ITommand`, `ITuery`, and the full message type hierarchy
-- **Time abstractions** — `IUtcTimeTimeSource`
-- **Serialization interfaces** — `IJsonSerializer`, `IBinarySerializer`
-- **Type mapping** — `ITypeMappingRegistar`, type identity infrastructure
+- **Entity and identity types** — `EntityId`, `TentityId`, `TaggregateId`, the `Entity<>` base classes, and `ValueWrapper<>`
+- **Time abstractions** — `IUtcTimeTimeSource`, and the testing time source that overrides it
+- **Serialization interfaces** — `IJsonSerializer`, `IDocumentDbSerializer`
+- **Configuration** — `IConfigurationParameterProvider`
+
+The tessage type system (`ITessage`, `ITevent`, `ITommand`, `ITuery` and the full hierarchy) is **not** here —
+it lives in `Compze.Tessaging.Abstractions`.
 
 ## Installation
 

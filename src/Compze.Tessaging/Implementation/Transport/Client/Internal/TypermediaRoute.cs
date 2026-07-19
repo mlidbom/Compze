@@ -1,4 +1,5 @@
-using Compze.Abstractions.Hosting.Public;
+using Compze.Tessaging.Endpoints;
+using Compze.Tessaging.Endpoints.Discovery;
 
 namespace Compze.Tessaging.Implementation.Transport.Client.Internal;
 

@@ -1,5 +1,7 @@
-using Compze.Abstractions.Tessaging.Public;
-using Compze.Abstractions.Hosting.Public;
+using Compze.Tessaging.Abstractions.Public;
+using Compze.Tessaging.Abstractions.TessageTypes;
+using Compze.Tessaging.Endpoints;
+using Compze.Tessaging.Endpoints.Discovery;
 
 namespace Compze.Tessaging.Implementation.Transport.Client.Internal;
 
@@ -31,7 +33,7 @@ interface ITessagingRouter
     bool HasLiveConnectionTo(EndpointId endpointId);
     ///<summary>The connections to every endpoint whose advertised tevent subscriptions match <paramref name="wrappedTevent"/>. Advertised subscriptions are wrapper<br/>
     /// types, so matching is against the wrapper — pure type assignability. Which delivery leg the tevent travels to a matched subscriber is not routing's concern:<br/>
-    /// the published tevent's own type decides that (see <see cref="Compze.Abstractions.Tessaging.Public.IUnitOfWorkTeventPublisher"/>).</summary>
+    /// the published tevent's own type decides that (see <see cref="IUnitOfWorkTeventPublisher"/>).</summary>
     IReadOnlyList<ITessagingInboxConnection> SubscriberConnectionsFor(IPublisherTevent<IRemotableTevent> wrappedTevent);
 
     ///<summary>The live routes for the typermedia tessage type <paramref name="tessageType"/>: every connected endpoint whose<br/>

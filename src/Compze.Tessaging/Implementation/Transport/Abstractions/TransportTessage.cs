@@ -1,8 +1,8 @@
-using Compze.Abstractions.Public;
 using Compze.TypeIdentifiers;
-using Compze.Abstractions.Serialization.Internal;
-using Compze.Abstractions.Tessaging.Public;
+using Compze.Tessaging.Serialization.Internal;
 using Compze.Contracts;
+using Compze.Tessaging.Abstractions.Public;
+using Compze.Tessaging.Abstractions.TessageTypes;
 
 namespace Compze.Tessaging.Implementation.Transport.Abstractions;
 

@@ -1,7 +1,9 @@
-using Compze.Abstractions.Tessaging.Public;
+using Compze.Abstractions.Public;
 using Compze.Contracts;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
+using Compze.Tessaging.Abstractions.Public;
+using Compze.Tessaging.Abstractions.TessageTypes;
 using Compze.Tessaging.Implementation;
 using Compze.Tessaging.Implementation.Abstractions;
 using Compze.Tessaging.Typermedia;
@@ -47,7 +49,8 @@ public static class LocalTessagingEngineRegistrar
       if(engineBuilder.TypeMappingDeclarations.Count == 0 && registrar.IsRegistered<ITypeMap>()) return;
 
       var typeMapper = new TypeMapper();
-      typeMapper.MapTypesFromAssemblyContaining<IExactlyOnceTevent>(); // Compze.Abstractions
+      typeMapper.MapTypesFromAssemblyContaining<TentityId>();          // Compze.Abstractions — the entity id types
+      typeMapper.MapTypesFromAssemblyContaining<IExactlyOnceTevent>(); // Compze.Tessaging.Abstractions — the tessage type hierarchy
       engineBuilder.TypeMappingDeclarations.ForEach(declareMappings => declareMappings(typeMapper));
       registrar.Register(Singleton.For<ITypeMapper>().Instance(typeMapper),
                          Singleton.For<ITypeMap>().Instance(typeMapper));

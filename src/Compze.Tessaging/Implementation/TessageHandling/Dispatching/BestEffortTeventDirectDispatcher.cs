@@ -1,5 +1,4 @@
-using Compze.Abstractions.Hosting.Public;
-using Compze.Abstractions.Tessaging.Public;
+using Compze.Tessaging.Endpoints;
 using Compze.Tessaging.Engine;
 using Compze.Tessaging.Implementation.Transport.Abstractions;
 using Compze.Tessaging.SystemCE.ThreadingCE;
@@ -7,8 +6,8 @@ using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Logging;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
+using Compze.Tessaging.Abstractions.TessageTypes;
 using Compze.Tessaging.Implementation.Abstractions;
-using Compze.Teventive.Tevents.Public;
 
 namespace Compze.Tessaging.Implementation.TessageHandling.Dispatching;
 

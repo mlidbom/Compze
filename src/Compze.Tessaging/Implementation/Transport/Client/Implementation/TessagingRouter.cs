@@ -1,7 +1,7 @@
 using Compze.TypeIdentifiers;
-using Compze.Abstractions.Serialization.Internal;
-using Compze.Abstractions.Hosting.Public;
-using Compze.Abstractions.Tessaging.Public;
+using Compze.Tessaging.Serialization.Internal;
+using Compze.Tessaging.Endpoints;
+using Compze.Tessaging.Endpoints.Discovery;
 using Compze.Tessaging.Internals.Transport;
 using Compze.Tessaging.Implementation.Peers;
 using Compze.Tessaging.Implementation.Transport.Abstractions;
@@ -14,6 +14,7 @@ using Compze.Internals.Logging;
 using Compze.Internals.SystemCE.CollectionsCE.GenericCE;
 using Compze.Internals.SystemCE.ReflectionCE;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
+using Compze.Tessaging.Abstractions.TessageTypes;
 using Compze.Tessaging.Implementation.Abstractions;
 using Compze.Threading;
 

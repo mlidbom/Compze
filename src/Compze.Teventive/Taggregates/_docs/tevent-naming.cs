@@ -1,7 +1,9 @@
+using Compze.Tessaging.Abstractions.Public;
+using Compze.Tessaging.Abstractions.TessageTypes;
 using Compze.Tessaging.Engine;
 using Compze.Teventive.Taggregates.Tevents.Public;
 using static System.Console;
-using Tessaging_ITevent = Compze.Abstractions.Tessaging.Public.ITevent;
+using Tessaging_ITevent = Compze.Tessaging.Abstractions.TessageTypes.ITevent;
 
 #pragma warning disable // Documentation example code: deliberately illustrative fragments (empty marker interfaces, never-instantiated examples), not production code.
 
@@ -21,7 +23,7 @@ namespace Website.paradigms.semantic_tevents
    {
       class Unhelpful
       {
-         interface IName : Tessaging_ITevent;
+         interface IName : ITevent;
 
          public void IllustrateTeventListening()
          {

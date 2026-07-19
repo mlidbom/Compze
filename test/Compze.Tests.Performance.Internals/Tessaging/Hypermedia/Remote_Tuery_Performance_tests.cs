@@ -1,10 +1,11 @@
-using Compze.Abstractions.Tessaging.Public;
 using Compze.Internals.Testing;
 using Compze.Internals.Testing.Performance;
 using Compze.Internals.SystemCE;
 using Compze.Internals.SystemCE.LinqCE;
+using Compze.Tessaging.Abstractions.Public;
+using Compze.Tessaging.Abstractions.TessageTypes;
 using Compze.Tests.Infrastructure.XUnit;
-using CreatesItsOwnResultTuery = Compze.Abstractions.Tessaging.Public.TessageTypes.Remotable.NonTransactional.Tueries.NewableResultLink<Compze.Tests.Performance.Internals.Tessaging.Hypermedia.PerformanceTestBase.MyTueryResult>;
+using CreatesItsOwnResultTuery = Compze.Tessaging.Abstractions.TessageTypes.TessageTypes.Remotable.NonTransactional.Tueries.NewableResultLink<Compze.Tests.Performance.Internals.Tessaging.Hypermedia.PerformanceTestBase.MyTueryResult>;
 using Compze.Tessaging.Typermedia;
 
 namespace Compze.Tests.Performance.Internals.Tessaging.Hypermedia;

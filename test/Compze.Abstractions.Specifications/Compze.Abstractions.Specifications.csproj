@@ -27,6 +27,13 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_Must)' != 'true'">
     <ProjectReference Include="..\..\src\Compze.Must\Compze.Must.csproj" />
   </ItemGroup>
+  <!-- Compze.Tessaging.Abstractions — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging_Abstractions)' == 'true'">
+    <PackageReference Include="Compze.Tessaging.Abstractions" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging_Abstractions)' != 'true'">
+    <ProjectReference Include="..\..\src\Compze.Tessaging.Abstractions\Compze.Tessaging.Abstractions.csproj" />
+  </ItemGroup>
   <!-- Compze.Tests.Infrastructure — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Tests_Infrastructure)' == 'true'">
     <PackageReference Include="Compze.Tests.Infrastructure" Version="*-*" />

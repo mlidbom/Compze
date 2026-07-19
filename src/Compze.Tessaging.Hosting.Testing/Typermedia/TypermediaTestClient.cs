@@ -1,4 +1,4 @@
-using Compze.Abstractions.Hosting.Public;
+using Compze.Tessaging.Endpoints.Discovery;
 using Compze.Hosting.Configuration;
 using Compze.Hosting.Testing;
 using Compze.Hosting.Testing.Wiring;

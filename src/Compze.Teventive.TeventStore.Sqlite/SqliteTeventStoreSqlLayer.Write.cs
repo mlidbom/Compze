@@ -3,6 +3,7 @@ using Compze.Contracts;
 using Compze.Internals.Sql.Common;
 using Compze.Internals.Sql.Sqlite.Private;
 using Compze.Internals.SystemCE;
+using Compze.Tessaging.Abstractions.Public;
 using Compze.Teventive.TeventStore.Abstractions.Internal.SqlLayer.Abstractions;
 using Microsoft.Data.Sqlite;
 using ReadOrder = Compze.Teventive.TeventStore.Abstractions.Internal.SqlLayer.Abstractions.ReadOrder;

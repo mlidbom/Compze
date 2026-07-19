@@ -1,10 +1,10 @@
 using Compze.TypeIdentifiers;
-using Compze.Abstractions.Public;
-using Compze.Abstractions.Tessaging.Public;
-using Compze.Abstractions.Hosting.Public;
+using Compze.Tessaging.Endpoints.Discovery;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
+using Compze.Tessaging.Abstractions.Public;
+using Compze.Tessaging.Abstractions.TessageTypes;
 
 namespace Compze.Tessaging.Internals.Transport;
 

@@ -14,7 +14,7 @@ like, in production and in tests).
 **Tessaging** is the common paradigm: conversation through **tessages** — messages routed by their .NET
 type. A tessage's type is its whole contract: its kind, its delivery guarantee, its transactionality, its
 remotability, and its synchrony are all declared by the interfaces the type extends
-(`Compze.Abstractions`, `_TessageTypes..Interfaces.cs`), and the machinery that carries a tessage is chosen
+(`Compze.Tessaging.Abstractions`, `_TessageTypes..Interfaces.cs`), and the machinery that carries a tessage is chosen
 by reading its type.
 
 Two siblings are built on the paradigm:

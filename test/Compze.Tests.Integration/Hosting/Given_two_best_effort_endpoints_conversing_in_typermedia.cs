@@ -1,6 +1,6 @@
-using Compze.Abstractions.Hosting.Public;
+using Compze.Tessaging.Endpoints;
+using Compze.Tessaging.Endpoints.Discovery;
 using Compze.Abstractions.Public;
-using Compze.Abstractions.Tessaging.Public;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Hosting;
@@ -10,8 +10,8 @@ using Compze.Internals.Serialization.Newtonsoft.Wiring;
 using Compze.Internals.Testing;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Must;
-
-using Compze.Tessaging.Endpoints;
+using Compze.Tessaging.Abstractions.Public;
+using Compze.Tessaging.Abstractions.TessageTypes;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Tessaging.Typermedia;

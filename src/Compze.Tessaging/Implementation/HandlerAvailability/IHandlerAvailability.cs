@@ -1,4 +1,5 @@
-using Compze.Abstractions.Hosting.Public;
+using Compze.Tessaging.Endpoints;
+using Compze.Tessaging.Endpoints.Discovery;
 using Compze.Tessaging.Implementation.TessageHandling.Dispatching;
 using Compze.Tessaging.Typermedia.Client;
 

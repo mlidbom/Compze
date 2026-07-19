@@ -1,7 +1,8 @@
-using Compze.Abstractions.Hosting.Public;
+using Compze.Tessaging.Endpoints.Discovery;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
+using Compze.Tessaging.Abstractions.Public;
 using Compze.Tessaging.Implementation.Abstractions;
 using Compze.Tessaging.Implementation.EndpointCatalog;
 using Compze.Tessaging.Implementation.TessageHandling.Abstractions;
@@ -12,8 +13,8 @@ namespace Compze.Tessaging.Endpoints;
 /// The exactly-once endpoint: the <see cref="Endpoint"/> whose TessageBus rung is exactly-once. Everything the best-effort
 /// endpoint has, plus the durable vertical in the domain database it joins: the inbox (receiver dedup, transactional retry), the outbox
 /// (durable rows, recovery backlog, per-peer exactly-once in-order delivery streams), durable peer memory, and the
-/// tommand-sending doors (<see cref="Compze.Abstractions.Tessaging.Public.IUnitOfWorkTommandSender"/> /
-/// <see cref="Compze.Abstractions.Tessaging.Public.IIndependentTommandSender"/>). Serves all four tessage kinds
+/// tommand-sending doors (<see cref="IUnitOfWorkTommandSender"/> /
+/// <see cref="IIndependentTommandSender"/>). Serves all four tessage kinds
 /// unconditionally.
 ///
 /// Composed through <see cref="Build"/>. Which machinery carries a given tessage is decided by the tessage's type and the

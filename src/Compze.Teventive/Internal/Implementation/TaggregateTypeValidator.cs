@@ -1,8 +1,8 @@
 using System.Reflection;
-using Compze.Abstractions.Tessaging.Validation;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.ReflectionCE;
+using Compze.Tessaging.Abstractions.Validation;
 using Compze.Teventive.Taggregates.BaseClasses;
 using Compze.TypeIdentifiers;
 using JetBrains.Annotations;

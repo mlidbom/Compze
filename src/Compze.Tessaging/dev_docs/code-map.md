@@ -9,6 +9,7 @@ are in [the Tessaging model](tessaging-model.md); this is the street map.
 | Project | What it is |
 |---|---|
 | `Compze.Tessaging` | The paradigm project: the engine, the endpoint types, both siblings' machinery, the named-pipe transport, the wire, the SQL-layer contracts. Almost everything in this document is here. |
+| `Compze.Tessaging.Abstractions` | The tessage type system alone: the `ITessage` hierarchy (`Public/_TessageTypes..Interfaces.cs`), the `TessageTypes` base-class families, `TessageId`, the publisher/sender door contracts, and the `Validation/` inspectors. Separate from the engine so that an application — or `Compze.Teventive` — can declare and speak tessages without depending on the machinery that delivers them. |
 | `Compze.Tessaging.AspNetCore` | The ASP.NET Core transport — its own project so the web stack is not dragged into every consumer. |
 | `Compze.Tessaging.Sqlite` / `.MicrosoftSql` / `.MySql` / `.PostgreSql` | One project per SQL engine: the inbox/outbox/peer-registry/endpoint-catalog SQL layers, their schemas, and the `«Engine»DomainDatabase(...)` pairing declarations. |
 | `Compze.Tessaging.Hosting.Testing` | The testing host (`TestingEndpointHost`) and `TypermediaTestClient` — per-tier test wiring over the production pipelines. |
@@ -17,19 +18,27 @@ Neighbors Tessaging is built on:
 
 | Project | What Tessaging takes from it |
 |---|---|
-| `Compze.Abstractions` | The tessage-type hierarchy and the door contracts (`Tessaging/Public`: `_TessageTypes..Interfaces.cs`, the `TessageTypes` base-class families, `IUnitOfWorkTeventPublisher`/`IIndependentTeventPublisher`, `IUnitOfWorkTommandSender`/`IIndependentTommandSender`); the hosting contracts (`Hosting/Public`: `IEndpoint`, `IEndpointHost`, `EndpointId`, `EndpointAddress`, `EndpointConfiguration`, `IEndpointRegistry`/`IEndpointAddressAnnouncer`). |
+| `Compze.Abstractions` | The identity and entity primitives the tessage types are built on: `EntityId` and its `TentityId`/`TaggregateId` branches, `Entity<>`, `ValueWrapper<>`, and `IUtcTimeTimeSource`. |
 | `Compze.Hosting` | `EndpointHost` (the optional convenience owning several endpoints' lifecycles in one process — endpoints are first-class) and `InterprocessEndpointRegistry` (`SameMachine/` — the zero-configuration same-machine discovery registry). |
-| `Compze.Teventive` | The tevent wrapper (`PublisherIdentifyingTevent<TTevent>`, implementing `IPublisherTevent<TTevent>`) and the taggregate/tevent-store machinery that publishes through Tessaging's doors. |
+| `Compze.Teventive` | The taggregate/tevent-store machinery that publishes through Tessaging's doors, wrapping what it raises in the `PublisherTevent<TTevent>` the engine routes by. |
 | `Compze.DependencyInjection` | The container abstractions and the unit-of-work model (`IUnitOfWorkResolver`, `IScopeResolver`) every handler shape receives — see its `dev_docs/unit-of-work-model.md`. |
 
 ## Inside `Compze.Tessaging`, namespace by namespace
 
 ### The public composition surfaces
 
-- **`Endpoints/`** — the composed shapes: `Endpoint` (the abstract lifecycle — six phase methods),
-  `BestEffortEndpoint` and `ExactlyOnceEndpoint` (each with its `Compose(...)` composition root), their
-  declaration surfaces `EndpointBuilder` / `BestEffortEndpointBuilder` / `ExactlyOnceEndpointBuilder`, and
-  `EndpointAlreadyRunningInAnotherProcessException`.
+- **`Endpoints/`** — what an endpoint is, contract and composition together: `IEndpoint` and `IEndpointHost`
+  (the contracts), `Endpoint` (the abstract lifecycle — six phase methods), `BestEffortEndpoint` and
+  `ExactlyOnceEndpoint` (each with its `Compose(...)` composition root), their declaration surfaces
+  `EndpointBuilder` / `BestEffortEndpointBuilder` / `ExactlyOnceEndpointBuilder`, the identity value types
+  `EndpointId` and `EndpointConfiguration`, `ReadinessTypes`, and the two exceptions
+  `EndpointAlreadyRunningInAnotherProcessException` and `EndpointNotReadyWithinPatienceException`.
+  - **`Endpoints/Discovery/`** — how endpoints find each other: `EndpointAddress` (the address as a value),
+    `IEndpointRegistry` (the read side), `IEndpointAddressAnnouncer` (the write side), and
+    `IEndpointRegistryAndAnnouncer` (both faces, what an endpoint participates in).
+- **`Serialization/`** — the two conversation-protocol serializer ports: `ITessagingSerializer` (every
+  tessage the pipeline sends, receives, and stores) and `ITypermediaSerializer` (the typermedia conversation
+  and its results). Each protocol serializes independently.
 - **`Engine/`** — the LocalTessagingEngine: `LocalTessagingEngineRegistrar` (the
   `Registrar.LocalTessagingEngine(engine => ...)` plain-container composition),
   `LocalTessagingEngineBuilder`, `TessageHandlerRegistrar` (the `ForTevent`/`ForTommand`/`ForTuery`

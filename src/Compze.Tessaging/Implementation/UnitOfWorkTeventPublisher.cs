@@ -1,13 +1,13 @@
 using System.Transactions;
-using Compze.Abstractions.Tessaging.Public;
-using Compze.Abstractions.Tessaging.Validation;
 using Compze.Contracts;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Tessaging.Engine;
 using Compze.Tessaging.Implementation.Abstractions;
-using Compze.Teventive.Tevents.Public;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
+using Compze.Tessaging.Abstractions.Public;
+using Compze.Tessaging.Abstractions.TessageTypes;
+using Compze.Tessaging.Abstractions.Validation;
 using JetBrains.Annotations;
 
 namespace Compze.Tessaging.Implementation;

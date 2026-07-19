@@ -1,13 +1,12 @@
-using Compze.Abstractions.Tessaging.Public;
 using Compze.DependencyInjection;
-using Compze.Abstractions.Hosting.Public;
+using Compze.Tessaging.Endpoints;
 using Compze.Abstractions.Wiring.Testing.Internal;
 using Compze.Hosting;
 using Compze.Hosting.SameMachine;
 using Compze.Hosting.Testing;
 using Compze.Hosting.Testing.Wiring;
 using Compze.Internals.Testing;
-using Compze.Tessaging.Endpoints;
+using Compze.Tessaging.Abstractions.Public;
 using Compze.Tessaging.Engine;
 using Compze.Tessaging.Implementation.TessageHandling.Dispatching;
 using Compze.Tessaging.Hosting.Testing.Wiring;

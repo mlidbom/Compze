@@ -1,7 +1,6 @@
-using Compze.Abstractions.Hosting.Public;
+using Compze.Tessaging.Endpoints;
 using Compze.Teventive.Taggregates.Tevents.Public;
 using Compze.Teventive.TeventStore.Wiring;
-using Compze.Tessaging.Endpoints;
 using Compze.Tessaging.Engine;
 using Compze.Tessaging.Hosting;
 

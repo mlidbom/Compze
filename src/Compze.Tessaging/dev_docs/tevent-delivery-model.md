@@ -85,7 +85,7 @@ with transactional handler execution). Only observation runs without a transacti
 
 ## The tevent type hierarchy: contracts, not mechanisms
 
-Defined in `Compze.Abstractions` (`_TessageTypes..Interfaces.cs`):
+Defined in `Compze.Tessaging.Abstractions` (`_TessageTypes..Interfaces.cs`):
 
 - **`ITevent`** — a type-routed event. By itself: participation only; never leaves the process.
 - **`IRemotableTevent : ITevent`** — may cross endpoint boundaries; promises nothing further. **This is the

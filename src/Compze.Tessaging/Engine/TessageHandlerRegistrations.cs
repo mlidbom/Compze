@@ -1,11 +1,10 @@
-using Compze.Abstractions.Tessaging.Public;
-using Compze.Abstractions.Tessaging.Validation;
 using Compze.Contracts;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.CollectionsCE.GenericCE;
 using Compze.Internals.SystemCE.ReflectionCE;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
-using Compze.Teventive.Tevents.Public;
+using Compze.Tessaging.Abstractions.TessageTypes;
+using Compze.Tessaging.Abstractions.Validation;
 using Compze.Threading;
 using Compze.TypeIdentifiers;
 

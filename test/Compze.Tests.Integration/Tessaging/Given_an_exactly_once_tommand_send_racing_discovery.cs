@@ -1,7 +1,7 @@
-using Compze.Abstractions.Hosting.Public;
-using Compze.Abstractions.Tessaging.Public;
-using Compze.DependencyInjection;
 using Compze.Tessaging.Endpoints;
+using Compze.DependencyInjection;
+using Compze.Tessaging.Abstractions.Public;
+using Compze.Tessaging.Abstractions.TessageTypes;
 using Compze.Tessaging.Engine;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Implementation.Peers;

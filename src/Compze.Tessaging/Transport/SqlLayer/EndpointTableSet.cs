@@ -1,4 +1,4 @@
-using Compze.Abstractions.Hosting.Public;
+using Compze.Tessaging.Endpoints;
 using Compze.Contracts;
 
 namespace Compze.Tessaging.Transport.SqlLayer;

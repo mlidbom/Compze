@@ -66,7 +66,7 @@ fails loud at composition, naming what is missing.
 
 | Layer | Home | Knows about the styles? |
 |---|---|---|
-| **Contracts** | `Compze.Abstractions` → `Compze.Abstractions.Hosting.Public` | No — `IEndpointHost`, `IEndpoint`, the endpoint value types (`EndpointId`, `EndpointAddress`, `EndpointConfiguration`), `IEndpointRegistry`/`IEndpointAddressAnnouncer` |
+| **Contracts** | `Compze.Tessaging` → `Compze.Tessaging.Endpoints` (+ `.Discovery`) | No — `IEndpointHost`, `IEndpoint`, the endpoint value types (`EndpointId`, `EndpointConfiguration`), and in `.Discovery` the address `EndpointAddress` with `IEndpointRegistry`/`IEndpointAddressAnnouncer` |
 | **The host mechanism** | `Compze.Hosting` | No — `EndpointHost` starts and disposes `IEndpoint`s it never looks inside |
 | **The composed shapes** | `Compze.Tessaging` (`Compze.Tessaging.Endpoints`, `Compze.Tessaging.Engine`, the Typermedia namespaces) | Yes — the endpoint types compose both siblings, always |
 

@@ -1,6 +1,6 @@
-using Compze.Abstractions.Hosting.Public;
-using Compze.Abstractions.Tessaging.Public;
+using Compze.Tessaging.Endpoints;
 using Compze.Internals.SystemCE.ReflectionCE;
+using Compze.Tessaging.Abstractions.TessageTypes;
 using Compze.TypeIdentifiers;
 
 namespace Compze.Tessaging.Implementation.Peers;

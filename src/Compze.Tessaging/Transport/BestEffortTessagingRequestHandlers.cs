@@ -1,5 +1,5 @@
 using Compze.TypeIdentifiers;
-using Compze.Abstractions.Serialization.Internal;
+using Compze.Tessaging.Serialization.Internal;
 using Compze.DependencyInjection;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.DependencyInjection.Abstractions;

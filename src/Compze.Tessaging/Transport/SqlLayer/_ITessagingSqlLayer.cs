@@ -1,5 +1,5 @@
-using Compze.Abstractions.Hosting.Public;
-using Compze.Abstractions.Public;
+using Compze.Tessaging.Endpoints;
+using Compze.Tessaging.Abstractions.Public;
 using Compze.TypeIdentifiers;
 
 namespace Compze.Tessaging.Transport.SqlLayer;

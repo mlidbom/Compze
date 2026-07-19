@@ -1,10 +1,9 @@
 using Compze.TypeIdentifiers;
-using Compze.Abstractions.Tessaging.Public;
 using Compze.Contracts;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.ReflectionCE;
+using Compze.Tessaging.Abstractions.TessageTypes;
 using Compze.Tessaging.Implementation.Abstractions;
-using Compze.Teventive.Tevents.Public;
 
 namespace Compze.Tessaging.Engine;
 
