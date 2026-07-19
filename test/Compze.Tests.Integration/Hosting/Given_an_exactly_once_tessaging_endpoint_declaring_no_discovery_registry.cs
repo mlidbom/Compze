@@ -53,7 +53,7 @@ public class Given_an_exactly_once_tessaging_endpoint_declaring_no_discovery_reg
          endpointBuilder =>
          {
             endpointBuilder
-               .MapTypes(mapper => mapper.RegisterIntegrationTestTypeMappings())
+               .RegisterComponents(registrar => registrar.RequireIntegrationTestTypeMappings())
                .TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport())
                .ConfigurePersistence(registrar => registrar.CurrentTestsConfiguredSqlLayer(connectionStringName: endpointBuilder.Configuration.Id.ToString()))
                .RegisterTessageHandlers(handle => handle

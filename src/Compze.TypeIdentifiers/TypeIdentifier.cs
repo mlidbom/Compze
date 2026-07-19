@@ -11,7 +11,7 @@ namespace Compze.TypeIdentifiers;
 ///   <item><see cref="StableGenericTypeIdentifier"/> — generic type from a stable assembly.</item>
 ///   <item><see cref="ArrayTypeIdentifier"/> — array wrapping any element type identifier.</item>
 /// </list>
-/// This is implementation detail of <see cref="TypeMapper"/>/<see cref="TypeNameMapper"/>. The public
+/// This is implementation detail of <see cref="TypeMap"/>/<see cref="TypeNameMapper"/>. The public
 /// type identity is <see cref="TypeId"/>.
 /// </summary>
 abstract class TypeIdentifier : IEquatable<TypeIdentifier>

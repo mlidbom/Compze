@@ -5,7 +5,7 @@ using Compze.Hosting.Testing.Wiring;
 using Compze.Tessaging.Typermedia;
 using Compze.Tessaging.Typermedia.Client;
 using Compze.Tessaging.Hosting.Testing.Typermedia.Wiring;
-using Compze.TypeIdentifiers;
+using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Internals.Testing;
 
@@ -24,15 +24,17 @@ public class TypermediaTestClient : IAsyncDisposable
 
    TypermediaTestClient(TypermediaClient client) => _client = client;
 
-   public static async Task<TypermediaTestClient> ConnectTo(EndpointAddress endpointAddress, Action<ITypeMapper> registerDomainTypeMappings)
+   ///<param name="declareRequiredDomainTypeMappings">Declares the domain assemblies whose type identity this client needs —<br/>
+   /// <c>registrar =&gt; registrar.RequireMappedTypesFromAssemblyContaining&lt;SomeDomainTessage&gt;()</c>. Tests declare their<br/>
+   /// domain explicitly, exactly as a production client does, so a test that forgets a type fails the same way the real<br/>
+   /// application would — there is no AppDomain-wide scan.</param>
+   public static async Task<TypermediaTestClient> ConnectTo(EndpointAddress endpointAddress, Action<IComponentRegistrar> declareRequiredDomainTypeMappings)
    {
       var client = TypermediaClient.Compose(TestEnv.DIContainer.CreateTestingContainerBuilder(), compose =>
       {
          compose.TransportProtocol(registrar => registrar.CurrentTestsEndpointTransportClient());
          compose.Serializer(registrar => registrar.CurrentTestsSerializersIfNotClonedContainer());
-         //Tests register their domain mappings explicitly, exactly as a production client does, so a test that forgets to
-         //register a type fails the same way the real application would - there is no AppDomain-wide scan.
-         compose.MapTypes(registerDomainTypeMappings);
+         declareRequiredDomainTypeMappings(compose.Registrar);
          compose.Registrar.JSonAppConfigFileConfigurationParameterProvider();
       });
 

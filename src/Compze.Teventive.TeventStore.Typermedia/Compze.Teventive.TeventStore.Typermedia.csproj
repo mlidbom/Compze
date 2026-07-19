@@ -49,4 +49,11 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_Teventive_TeventStore_Abstractions)' != 'true'">
     <ProjectReference Include="..\Compze.Teventive.TeventStore.Abstractions\Compze.Teventive.TeventStore.Abstractions.csproj" />
   </ItemGroup>
+  <!-- Compze.TypeIdentifiers.DependencyInjection — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_TypeIdentifiers_DependencyInjection)' == 'true'">
+    <PackageReference Include="Compze.TypeIdentifiers.DependencyInjection" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_TypeIdentifiers_DependencyInjection)' != 'true'">
+    <ProjectReference Include="..\Compze.TypeIdentifiers.DependencyInjection\Compze.TypeIdentifiers.DependencyInjection.csproj" />
+  </ItemGroup>
 </Project>

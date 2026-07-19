@@ -126,7 +126,7 @@ public abstract class EndpointHostTestBase : UniversalTestBase
          endpointBuilder =>
          {
             endpointBuilder
-               .MapTypes(mapper => mapper.RegisterCommonTestTypeMappings())
+               .RegisterComponents(registrar => registrar.RequireCommonTestTypeMappings())
                //Short deliberately: every send these specs expect to succeed binds instantly (a live or sole-remembered handler),
                //so the only sends that wait are the ones pinning the patience-exhausted failures - which would otherwise wait out
                //the 30s default. Specs that need a wait to SUCCEED compose their own endpoints with their own patience.
@@ -185,7 +185,7 @@ public abstract class EndpointHostTestBase : UniversalTestBase
                                              RemoteEndpointId,
                                              endpointBuilder =>
                                              {
-                                                endpointBuilder.MapTypes(mapper => mapper.RegisterCommonTestTypeMappings());
+                                                endpointBuilder.Registrar.RequireCommonTestTypeMappings();
 
                                                 if(withItsTommandHandler)
                                                 {
@@ -259,7 +259,7 @@ public abstract class EndpointHostTestBase : UniversalTestBase
       Host.RegisterExactlyOnceEndpoint("RemoteSuccessor",
                             RemoteSuccessorEndpointId,
                             endpointBuilder => endpointBuilder
-                               .MapTypes(mapper => mapper.RegisterCommonTestTypeMappings())
+                               .RegisterComponents(registrar => registrar.RequireCommonTestTypeMappings())
                                .RegisterTessageHandlers(handle => handle
                                          .ForTommand((MyExactlyOnceTommandHandledByTheRemoteEndpoint _) =>
                                           {
@@ -276,7 +276,7 @@ public abstract class EndpointHostTestBase : UniversalTestBase
       //assertions, instant binds within the deliberately short handler-availability patience - so the mutual first contact is
       //awaited explicitly instead of racing the reconciliation.
       await Host.AwaitEndpointsHaveMetEachOtherAsync();
-      Client = await TypermediaTestClient.ConnectTo(BackendEndPoint.Address!, mapper => mapper.RegisterCommonTestTypeMappings());
+      Client = await TypermediaTestClient.ConnectTo(BackendEndPoint.Address!, registrar => registrar.RequireCommonTestTypeMappings());
    }
 
    protected void CloseGates() => AllGates.ForEach(gate => gate.Close());

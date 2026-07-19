@@ -54,7 +54,7 @@ public class Given_two_exactly_once_endpoints_joined_to_one_domain_database : Un
          FirstNeighborEndpointId,
          DomainDatabaseName,
          endpointBuilder => endpointBuilder
-            .MapTypes(mapper => mapper.RegisterIntegrationTestTypeMappings())
+            .RegisterComponents(registrar => registrar.RequireIntegrationTestTypeMappings())
             .RegisterTessageHandlers(handle => handle
                        .ForTommand((MyReplyTommandHandledByTheFirstNeighbor _) =>
                         {
@@ -67,7 +67,7 @@ public class Given_two_exactly_once_endpoints_joined_to_one_domain_database : Un
          SecondNeighborEndpointId,
          DomainDatabaseName,
          endpointBuilder => endpointBuilder
-            .MapTypes(mapper => mapper.RegisterIntegrationTestTypeMappings())
+            .RegisterComponents(registrar => registrar.RequireIntegrationTestTypeMappings())
             .RegisterTessageHandlers(handle => handle
                        .ForTommand((MyTommandHandledByTheSecondNeighbor _) =>
                         {
@@ -110,7 +110,7 @@ public class Given_two_exactly_once_endpoints_joined_to_one_domain_database : Un
          "FirstNeighbor",
          new EndpointId(Guid.NewGuid()),
          DomainDatabaseName,
-         endpointBuilder => endpointBuilder.MapTypes(mapper => mapper.RegisterIntegrationTestTypeMappings()));
+         endpointBuilder => endpointBuilder.RegisterComponents(registrar => registrar.RequireIntegrationTestTypeMappings()));
 
       var startFailure = (await InvokingAsync(async () => await otherHost.StartAsync()).Must().ThrowAsync<AggregateException>()).Which;
       startFailure.Flatten().InnerExceptions.Single().Message.Must()
@@ -127,7 +127,7 @@ public class Given_two_exactly_once_endpoints_joined_to_one_domain_database : Un
          "RenamedNeighbor",
          FirstNeighborEndpointId,
          DomainDatabaseName,
-         endpointBuilder => endpointBuilder.MapTypes(mapper => mapper.RegisterIntegrationTestTypeMappings()));
+         endpointBuilder => endpointBuilder.RegisterComponents(registrar => registrar.RequireIntegrationTestTypeMappings()));
 
       var startFailure = (await InvokingAsync(async () => await otherHost.StartAsync()).Must().ThrowAsync<AggregateException>()).Which;
       startFailure.Flatten().InnerExceptions.Single().Message.Must()

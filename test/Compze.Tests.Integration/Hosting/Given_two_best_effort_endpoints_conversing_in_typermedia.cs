@@ -49,7 +49,7 @@ public class Given_two_best_effort_endpoints_conversing_in_typermedia : Universa
          "TypermediaAskingEndpoint",
          new EndpointId(Guid.Parse("3f7b9c25-81d4-4a6e-b0f2-c58a17d93e46")),
          endpointBuilder => endpointBuilder
-            .MapTypes(mapper => mapper.RegisterIntegrationTestTypeMappings())
+            .RegisterComponents(registrar => registrar.RequireIntegrationTestTypeMappings())
             .TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport())
             .NewtonsoftSerializer()
             .DiscoverEndpointsThrough(endpointsOfTheHost)));
@@ -59,7 +59,7 @@ public class Given_two_best_effort_endpoints_conversing_in_typermedia : Universa
          "TypermediaAnsweringEndpoint",
          new EndpointId(Guid.Parse("b93d40e7-2c58-4f1b-a6d9-04e8c6a25f17")),
          endpointBuilder => endpointBuilder
-            .MapTypes(mapper => mapper.RegisterIntegrationTestTypeMappings())
+            .RegisterComponents(registrar => registrar.RequireIntegrationTestTypeMappings())
             .TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport())
             .NewtonsoftSerializer()
             .RegisterTessageHandlers(handle => handle

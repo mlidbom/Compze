@@ -12,7 +12,7 @@ namespace Compze.Tests.Common.Sql.DocumentDb;
 
 public abstract class DocumentDbTestsBase : UniversalTestBase
 {
-   protected IDependencyInjectionContainer Container { get; } = TestEnv.DIContainer.SetupTestingContainer(mapper => mapper.RegisterCommonTestTypeMappings());
+   protected IDependencyInjectionContainer Container { get; } = TestEnv.DIContainer.SetupTestingContainer(registrar => registrar.RequireCommonTestTypeMappings());
 
    protected override async Task DisposeAsyncInternal() => await Container.DisposeAsync();
 

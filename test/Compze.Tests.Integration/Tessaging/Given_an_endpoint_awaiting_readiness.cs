@@ -34,7 +34,7 @@ public class Given_an_endpoint_awaiting_readiness : UniversalTestBase
          "Awaiting",
          AwaitingEndpointId,
          endpointBuilder => endpointBuilder
-            .MapTypes(mapper => mapper.RegisterIntegrationTestTypeMappings())
+            .RegisterComponents(registrar => registrar.RequireIntegrationTestTypeMappings())
             //The endpoint's own roster serves these two - what the readiness-for-own-types specification awaits.
             .RegisterTessageHandlers(handle => handle
                        .ForTommand((MyExactlyOnceTommand _) => Task.CompletedTask)
@@ -81,7 +81,7 @@ public class Given_an_endpoint_awaiting_readiness : UniversalTestBase
          "LateHandler",
          LateHandlerEndpointId,
          endpointBuilder => endpointBuilder
-            .MapTypes(mapper => mapper.RegisterIntegrationTestTypeMappings())
+            .RegisterComponents(registrar => registrar.RequireIntegrationTestTypeMappings())
             .RegisterTessageHandlers(handle => handle
                        .ForTommand((MyExactlyOnceTommandHandledOnlyByTheLateEndpoint _) => Task.CompletedTask)
                        .ForTuery((MyTueryHandledOnlyByTheLateEndpoint _) => new MyTueryResult())));

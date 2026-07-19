@@ -189,7 +189,7 @@ var host = EndpointHost.Production.Create(() => new MicrosoftContainerBuilder(ne
 host.RegisterEndpoint(container => ExactlyOnceEndpoint.Compose(
    container, "BackgroundWorker", new EndpointId(Guid.Parse("...")), endpoint =>
 {
-   endpoint.MapTypes(mapper => mapper.MapTypesFromAssemblyContaining<MyTommand>());
+   endpoint.RegisterComponents(registrar => registrar.RequireMappedTypesFromAssemblyContaining<MyTommand>());
    endpoint.NamedPipeEndpointTransport();
    endpoint.NewtonsoftSerializer();
    endpoint.SqliteDomainDatabase("BackgroundWorker");

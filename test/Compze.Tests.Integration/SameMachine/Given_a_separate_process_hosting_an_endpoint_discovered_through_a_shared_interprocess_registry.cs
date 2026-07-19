@@ -22,6 +22,8 @@ using EndpointHostProcessProgram = Compze.Tests.SameMachine.EndpointHostProcess.
 // ReSharper disable InconsistentNaming for testing
 #pragma warning disable IDE1006 //Reviewed OK: Test Naming Styles
 
+using Compze.TypeIdentifiers.DependencyInjection;
+
 namespace Compze.Tests.Integration.SameMachine;
 
 ///<summary>The same-machine story end to end, across REAL process boundaries: a separate OS process hosts an endpoint over named<br/>
@@ -59,7 +61,7 @@ public class Given_a_separate_process_hosting_an_endpoint_discovered_through_a_s
          endpointBuilder =>
          {
             endpointBuilder
-               .MapTypes(mapper => mapper.MapTypesFromAssemblyContaining<TommandSentToTheEndpointHostProcess>())
+               .RegisterComponents(registrar => registrar.RequireMappedTypesFromAssemblyContaining<TommandSentToTheEndpointHostProcess>())
                .TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport())
                .ConfigurePersistence(registrar => registrar.CurrentTestsConfiguredSqlLayer(connectionStringName: endpointBuilder.Configuration.Id.ToString()))
                .ParticipateIn(_registry)

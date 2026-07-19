@@ -32,7 +32,7 @@ public class Startup
       //is the remembered subscribers - first contact is the boundary - so traffic opens only after the two endpoints have met.
       _host.AwaitEndpointsHaveMetEachOtherAsync().GetAwaiter().GetResult();
 
-      _client = TypermediaTestClient.ConnectTo(_endpoint.Address!, mapper => mapper.RegisterAccountManagementTypeMappings()).GetAwaiter().GetResult();
+      _client = TypermediaTestClient.ConnectTo(_endpoint.Address!, registrar => registrar.RequireAccountManagementTypeMappings()).GetAwaiter().GetResult();
       services.AddHttpContextAccessor();
       services.AddScoped(_ => _client.Navigator);
    }

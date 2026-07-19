@@ -33,7 +33,7 @@ public class PerformanceTest : UniversalTestBase
       _host = TestingEndpointHost.Create();
       var endpoint = AccountManagementServerDomainBootstrapper.RegisterWith(_host);
       await _host.StartAsync().caf();
-      _client = await TypermediaTestClient.ConnectTo(endpoint.Address!, mapper => mapper.RegisterAccountManagementTypeMappings()).caf();
+      _client = await TypermediaTestClient.ConnectTo(endpoint.Address!, registrar => registrar.RequireAccountManagementTypeMappings()).caf();
       _scenarioApi = new AccountScenarioApi(_client.Navigator);
       //Warmup
       StopwatchCE.TimeExecution(() => _scenarioApi.Register.Execute(), iterations: 10);

@@ -37,7 +37,7 @@ public class Given_two_endpoints_advertising_the_same_typermedia_tuery_type : Un
          FirstEndpointId,
          endpointBuilder =>
          {
-            endpointBuilder.MapTypes(mapper => mapper.RegisterTypermediaHostingSpecificationTypeMappings());
+            endpointBuilder.Registrar.RequireTypermediaHostingSpecificationTypeMappings();
             endpointBuilder.RegisterTessageHandlers(handle => handle
                                                       .ForTuery((TueryBothEndpointsHandle _) => new TueryAnswer { Message = "from the first endpoint" }));
          });
@@ -47,7 +47,7 @@ public class Given_two_endpoints_advertising_the_same_typermedia_tuery_type : Un
          SecondEndpointId,
          endpointBuilder =>
          {
-            endpointBuilder.MapTypes(mapper => mapper.RegisterTypermediaHostingSpecificationTypeMappings());
+            endpointBuilder.Registrar.RequireTypermediaHostingSpecificationTypeMappings();
             endpointBuilder.RegisterTessageHandlers(handle => handle
                                                              .ForTuery((TueryBothEndpointsHandle _) => new TueryAnswer { Message = "from the second endpoint" })
                                                              .ForTuery((TueryOnlyTheSecondEndpointHandles _) => new TueryAnswer { Message = "only the second endpoint handles this" }));
@@ -57,7 +57,7 @@ public class Given_two_endpoints_advertising_the_same_typermedia_tuery_type : Un
    protected override async Task InitializeAsyncInternal()
    {
       await _host.StartAsync().caf();
-      _client = await TypermediaTestClient.ConnectTo(_firstEndpoint.Address!, mapper => mapper.RegisterTypermediaHostingSpecificationTypeMappings()).caf();
+      _client = await TypermediaTestClient.ConnectTo(_firstEndpoint.Address!, registrar => registrar.RequireTypermediaHostingSpecificationTypeMappings()).caf();
       await _client.AlsoConnectTo(_secondEndpoint.Address!).caf();
    }
 

@@ -92,7 +92,7 @@ var endpoint = host.RegisterEndpoint(container => ExactlyOnceEndpoint.Compose(
       endpoint.SqliteDomainDatabase("AccountManagement");
       endpoint.ParticipateIn(registry);
 
-      endpoint.MapTypes(mapper => mapper.RegisterMyDomainTypeMappings());
+      endpoint.RegisterComponents(registrar => registrar.RequireMyDomainTypeMappings());
       endpoint.RegisterTessageHandlers(handle => handle
          .ForTevent(async (IAccountTevent tevent, IUnitOfWorkResolver unitOfWork) => ...)
          .ForTuery((AccountTuery tuery) => ...));
@@ -258,7 +258,7 @@ provides this as concrete per-tier wiring:
 using var host = TestingEndpointHost.Create();
 var backend = host.RegisterExactlyOnceEndpoint("Backend", backendId, endpoint =>
 {
-   endpoint.MapTypes(mapper => mapper.RegisterMyDomainTypeMappings());
+   endpoint.RegisterComponents(registrar => registrar.RequireMyDomainTypeMappings());
    endpoint.RegisterTessageHandlers(handle => ...);
 });
 ```

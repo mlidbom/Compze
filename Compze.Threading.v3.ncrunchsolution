@@ -57,6 +57,7 @@
       <Value>UsePackageReference_Compze_Teventive_TeventStore_Sqlite = true</Value>
       <Value>UsePackageReference_Compze_Teventive_TeventStore_Typermedia = true</Value>
       <Value>UsePackageReference_Compze_TypeIdentifiers = true</Value>
+      <Value>UsePackageReference_Compze_TypeIdentifiers_DependencyInjection = true</Value>
       <Value>UsePackageReference_Compze_TypeIdentifiers_Interning = true</Value>
       <Value>UsePackageReference_Compze_TypeIdentifiers_Interning_MicrosoftSql = true</Value>
       <Value>UsePackageReference_Compze_TypeIdentifiers_Interning_MySql = true</Value>

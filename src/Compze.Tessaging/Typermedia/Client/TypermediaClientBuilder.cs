@@ -5,7 +5,7 @@ using Compze.DependencyInjection.Abstractions;
 using Compze.Tessaging.Abstractions.TessageTypes;
 using Compze.Tessaging.Internals.Transport;
 using Compze.Tessaging.Serialization;
-using Compze.TypeIdentifiers;
+using Compze.TypeIdentifiers.DependencyInjection;
 
 namespace Compze.Tessaging.Typermedia.Client;
 
@@ -19,7 +19,6 @@ namespace Compze.Tessaging.Typermedia.Client;
 public sealed class TypermediaClientBuilder
 {
    readonly IContainerBuilder _containerBuilder;
-   readonly TypeMapper _typeMapper = new();
    Action<IComponentRegistrar>? _registerTransportProtocol;
    Action<IComponentRegistrar>? _registerSerializer;
    bool _composed;
@@ -28,13 +27,6 @@ public sealed class TypermediaClientBuilder
 
    ///<summary>Registers the client's components with its container.</summary>
    internal IComponentRegistrar Registrar => _containerBuilder.Registrar;
-
-   ///<summary>Declares the client's type-id mappings — the mirror of what the endpoints it navigates map.</summary>
-   internal void MapTypes(Action<ITypeMapper> map)
-   {
-      AssertStillComposing();
-      map(_typeMapper);
-   }
 
    ///<summary>Declares the client's transport protocol — the transport-client strategy only: a pure client runs no server.</summary>
    public void TransportProtocol(Action<IComponentRegistrar> registerProtocolClient)
@@ -63,12 +55,11 @@ public sealed class TypermediaClientBuilder
       State.Assert(_registerSerializer is not null || Registrar.IsRegistered<ITypermediaSerializer>(),
                    () => "The client declares no serializer. Declare it in the composition — e.g. client.NewtonsoftSerializer(). (A testing container already carrying the suite's serializers declares none.)");
 
-      _typeMapper.MapTypesFromAssemblyContaining<TentityId>();               // Compze.Abstractions — the entity id types
-      _typeMapper.MapTypesFromAssemblyContaining<IExactlyOnceTevent>();      // Compze.Tessaging.Abstractions — the tessage type hierarchy
-      _typeMapper.MapTypesFromAssemblyContaining<EndpointInformation>();     // Compze.Tessaging — the endpoint-discovery types the client's router reads advertisements through, and the endpoint address
-
-      Registrar.Register(Singleton.For<ITypeMapper>().Instance(_typeMapper),
-                         Singleton.For<ITypeMap>().Instance(_typeMapper));
+      //A pure client runs no engine, so it declares for itself what the engine would otherwise require: the tessage type
+      //hierarchy it navigates, the entity ids those tessages carry, and the advertisements its router reads.
+      Registrar.RequireMappedTypesFromAssemblyContaining<TentityId>()
+               .RequireMappedTypesFromAssemblyContaining<IExactlyOnceTevent>()
+               .RequireMappedTypesFromAssemblyContaining<EndpointInformation>();
 
       _registerTransportProtocol!(Registrar);
       _registerSerializer?.Invoke(Registrar);

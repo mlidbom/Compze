@@ -50,7 +50,7 @@ public class Given_a_distributed_tessaging_endpoint_requiring_a_peer_it_has_neve
          "FirstContactPublisherEndpoint",
          new EndpointId(Guid.Parse("c85d19e7-4a2b-4f60-9d38-71b06c5f2ea4")),
          endpointBuilder => endpointBuilder
-            .MapTypes(mapper => mapper.RegisterIntegrationTestTypeMappings())
+            .RegisterComponents(registrar => registrar.RequireIntegrationTestTypeMappings())
             .TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport())
             .NewtonsoftSerializer()
             .DiscoverEndpointsThrough(_registry)
@@ -114,7 +114,7 @@ public class Given_a_distributed_tessaging_endpoint_requiring_a_peer_it_has_neve
          endpointBuilder =>
          {
             endpointBuilder
-               .MapTypes(mapper => mapper.RegisterIntegrationTestTypeMappings())
+               .RegisterComponents(registrar => registrar.RequireIntegrationTestTypeMappings())
                .TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport())
                .NewtonsoftSerializer()
                .RegisterTessageHandlers(handle => handle.ForTevent((IMyBestEffortTevent tevent) =>

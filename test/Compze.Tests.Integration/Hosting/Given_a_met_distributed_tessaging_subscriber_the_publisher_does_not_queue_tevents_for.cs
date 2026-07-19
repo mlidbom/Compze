@@ -51,7 +51,7 @@ public class Given_a_met_distributed_tessaging_subscriber_the_publisher_does_not
          "NoQueueingPublisherEndpoint",
          new EndpointId(Guid.Parse("e47b06d2-3c95-48a1-bf60-27d8c41e95b0")),
          endpointBuilder => endpointBuilder
-            .MapTypes(mapper => mapper.RegisterIntegrationTestTypeMappings())
+            .RegisterComponents(registrar => registrar.RequireIntegrationTestTypeMappings())
             .TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport())
             .NewtonsoftSerializer()
             .DiscoverEndpointsThrough(_registry)
@@ -70,7 +70,7 @@ public class Given_a_met_distributed_tessaging_subscriber_the_publisher_does_not
          endpointBuilder =>
          {
             endpointBuilder
-               .MapTypes(mapper => mapper.RegisterIntegrationTestTypeMappings())
+               .RegisterComponents(registrar => registrar.RequireIntegrationTestTypeMappings())
                .TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport())
                .NewtonsoftSerializer()
                .RegisterTessageHandlers(handle => handle.ForTevent((IMyBestEffortTevent tevent) =>

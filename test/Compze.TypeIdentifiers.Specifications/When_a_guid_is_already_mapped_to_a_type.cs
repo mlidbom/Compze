@@ -53,21 +53,7 @@ public class When_a_guid_is_already_mapped_to_a_type
          => Invoking(() => _registrar.MapOpenGeneric(typeof(SecondGenericSharingAGuid<>), SharedId)).Must().Throw<InvalidOperationException>();
    }
 
-   public class for_leaf_types_in_the_merged_type_map : When_a_guid_is_already_mapped_to_a_type
-   {
-      readonly TypeNameMapper _mapper = new();
-      public for_leaf_types_in_the_merged_type_map() => _mapper.AddLeafTypeMapping(typeof(FirstTypeSharingAGuid), Guid.Parse(SharedId));
-
-      [XF] public void mapping_a_second_leaf_type_to_the_same_guid_throws_InvalidOperationException()
-         => Invoking(() => _mapper.AddLeafTypeMapping(typeof(SecondTypeSharingAGuid), Guid.Parse(SharedId))).Must().Throw<InvalidOperationException>();
-   }
-
-   public class for_open_generic_types_in_the_merged_type_map : When_a_guid_is_already_mapped_to_a_type
-   {
-      readonly TypeNameMapper _mapper = new();
-      public for_open_generic_types_in_the_merged_type_map() => _mapper.AddOpenGenericMapping(typeof(FirstGenericSharingAGuid<>), Guid.Parse(SharedId));
-
-      [XF] public void mapping_a_second_open_generic_to_the_same_guid_throws_InvalidOperationException()
-         => Invoking(() => _mapper.AddOpenGenericMapping(typeof(SecondGenericSharingAGuid<>), Guid.Parse(SharedId))).Must().Throw<InvalidOperationException>();
-   }
+   //The cross-assembly form of this collision — two assemblies each claiming the same GUID — is detected when
+   //TypeMapBuilder merges their declarations, but stating it needs a second fixture assembly that deliberately reuses one
+   //of this assembly's GUIDs. Until that fixture exists, only the within-assembly form above is specified.
 }

@@ -3,6 +3,7 @@ using Compze.Teventive.Taggregates.Tevents.Public;
 using Compze.Teventive.TeventStore.Wiring;
 using Compze.Tessaging.Engine;
 using Compze.Tessaging.Hosting;
+using Compze.TypeIdentifiers.DependencyInjection;
 
 namespace Compze.Teventive.TeventStore.Typermedia;
 
@@ -10,12 +11,9 @@ public static class TeventStoreTypermediaRegistrar
 {
    public static TeventStoreRegistrationBuilder RegisterTeventStore(this ExactlyOnceEndpointBuilder @this)
    {
-      @this.MapTypes( mapper =>
-      {
-         mapper.MapTypesFromAssemblyContaining<TeventStoreApi>();
-         mapper.MapTypesFromAssemblyContaining<TeventCache>();
-      });
-      @this.Registrar.TeventStore(@this.Configuration.ConnectionStringName);
+      //The store's typermedia surface puts its own tessage types on the wire; the store proper requires the rest where it registers.
+      @this.Registrar.RequireMappedTypesFromAssemblyContaining<TeventStoreApi>()
+                     .TeventStore(@this.Configuration.ConnectionStringName);
       return new TeventStoreRegistrationBuilder(register => @this.RegisterTessageHandlers(register));
    }
 }

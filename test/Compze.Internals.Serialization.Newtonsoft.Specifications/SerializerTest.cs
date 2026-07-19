@@ -9,7 +9,7 @@ using Compze.Tessaging.Abstractions.TessageTypes;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Teventive.TeventStore.Abstractions.Internal;
-using Compze.TypeIdentifiers;
+using Compze.TypeIdentifiers.DependencyInjection;
 
 namespace Compze.Internals.Serialization.Newtonsoft.Specifications;
 
@@ -23,16 +23,13 @@ public class SerializerTest : UniversalTestBase
    protected SerializerTest()
    {
       var serializer = PCTSerializerAttribute.Serializer;
-      var typeMapper = new TypeMapper();
-      typeMapper.MapTypesFromAssemblyContaining<TentityId>();           // Compze.Abstractions — the entity ids these specs serialize
-      typeMapper.MapTypesFromAssemblyContaining<IExactlyOnceTevent>();  // Compze.Tessaging.Abstractions — the tessage types these specs serialize
-      typeMapper.MapTypesFromAssemblyContaining<AssemblyTypeMapper>();  // this specification assembly — the tevent and document types these specs serialize
 #pragma warning disable CA2000 // We are disposing this disposable in DisposeInternal
       _container = DIContainer.Microsoft
                              .CreateTestingContainerBuilder()
                              ._mutate(it => RegisterSerializer(it.Registrar, serializer)
-                                              .Register(Singleton.For<ITypeMapper>().Instance(typeMapper))
-                                              .Register(Singleton.For<ITypeMap>().Instance(typeMapper)))
+                                              .RequireMappedTypesFromAssemblyContaining<TentityId>()          // Compze.Abstractions — the entity ids these specs serialize
+                                              .RequireMappedTypesFromAssemblyContaining<IExactlyOnceTevent>() // Compze.Tessaging.Abstractions — the tessage types these specs serialize
+                                              .RequireMappedTypesFromAssemblyContaining<AssemblyTypeMapper>()) // this specification assembly — the tevent and document types these specs serialize
                              .Build();
 #pragma warning restore CA2000
    }

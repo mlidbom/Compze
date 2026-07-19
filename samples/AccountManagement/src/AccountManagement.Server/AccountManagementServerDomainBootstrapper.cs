@@ -44,7 +44,7 @@ public static class AccountManagementServerDomainBootstrapper
          });
 
    static void RegisterTypeMappings(ExactlyOnceEndpointBuilder endpointBuilder) =>
-      endpointBuilder.MapTypes(mapper => mapper.RegisterAccountManagementTypeMappings());
+      endpointBuilder.Registrar.RequireAccountManagementTypeMappings();
 
    static void RegisterDomainComponents(ExactlyOnceEndpointBuilder endpointBuilder)
    {

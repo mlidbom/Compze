@@ -28,7 +28,7 @@ public class Given_a_domain_database_remembering_a_crashed_processes_lease : Uni
       _rebornEndpoint = _host.RegisterExactlyOnceEndpoint(
          "Reborn",
          RebornEndpointId,
-         endpointBuilder => endpointBuilder.MapTypes(mapper => mapper.RegisterIntegrationTestTypeMappings()));
+         endpointBuilder => endpointBuilder.RegisterComponents(registrar => registrar.RequireIntegrationTestTypeMappings()));
    }
 
    //The crash is scripted through the catalog sql layer: the crashed predecessor's entry, its lease held and last

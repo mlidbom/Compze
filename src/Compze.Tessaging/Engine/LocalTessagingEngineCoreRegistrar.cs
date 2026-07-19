@@ -1,8 +1,11 @@
+using Compze.Abstractions.Public;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
+using Compze.Tessaging.Abstractions.TessageTypes;
 using Compze.Tessaging.Implementation.Abstractions;
 using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.TypeIdentifiers;
+using Compze.TypeIdentifiers.DependencyInjection;
 
 namespace Compze.Tessaging.Engine;
 
@@ -19,11 +22,14 @@ static class LocalTessagingEngineCoreRegistrar
 {
    internal static IComponentRegistrar RegisterLocalTessagingEngineCore(this IComponentRegistrar registrar, TessageHandlerRegistrations handlerRegistrations)
    {
-      return registrar.Register(Singleton.For<TessageHandlerRegistrations>().Instance(handlerRegistrations),
-                         Singleton.For<TessageHandlerRoster>().CreatedBy((TessageHandlerRegistrations registrations, ITypeMap typeMap) => registrations.BuildRoster(typeMap)),
-                         Singleton.For<TessageHandlerExecutor>().CreatedBy((TessageHandlerRoster roster, IScopeFactory scopeFactory) => new TessageHandlerExecutor(roster, scopeFactory)),
-                         Singleton.For<TeventObservationDispatcher>().CreatedBy((TessageHandlerRoster roster, IScopeFactory scopeFactory, IBackgroundExceptionReporter backgroundExceptionReporter, ITessagesInFlightTracker tessagesInFlightTracker, ITaskRunner taskRunner)
-                                                                                  => new TeventObservationDispatcher(roster, scopeFactory, backgroundExceptionReporter, tessagesInFlightTracker, taskRunner)))
+      //The roster is built over the tessage type hierarchy, and the tessages it routes carry entity ids in their payloads.
+      return registrar.RequireMappedTypesFromAssemblyContaining<IExactlyOnceTevent>()
+                      .RequireMappedTypesFromAssemblyContaining<TentityId>()
+                      .Register(Singleton.For<TessageHandlerRegistrations>().Instance(handlerRegistrations),
+                                Singleton.For<TessageHandlerRoster>().CreatedBy((TessageHandlerRegistrations registrations, ITypeMap typeMap) => registrations.BuildRoster(typeMap)),
+                                Singleton.For<TessageHandlerExecutor>().CreatedBy((TessageHandlerRoster roster, IScopeFactory scopeFactory) => new TessageHandlerExecutor(roster, scopeFactory)),
+                                Singleton.For<TeventObservationDispatcher>().CreatedBy((TessageHandlerRoster roster, IScopeFactory scopeFactory, IBackgroundExceptionReporter backgroundExceptionReporter, ITessagesInFlightTracker tessagesInFlightTracker, ITaskRunner taskRunner)
+                                                                                         => new TeventObservationDispatcher(roster, scopeFactory, backgroundExceptionReporter, tessagesInFlightTracker, taskRunner)))
                       .TaskRunner()
                       .BackgroundExceptionReporter();
    }

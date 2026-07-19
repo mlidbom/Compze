@@ -13,7 +13,7 @@ public class SetupTest : UniversalTestBase
       var host = TestingEndpointHost.Create();
       var endpoint = AccountManagementServerDomainBootstrapper.RegisterWith(host);
       await host.StartAsync().caf();
-      await using var client = await TypermediaTestClient.ConnectTo(endpoint.Address!, mapper => mapper.RegisterAccountManagementTypeMappings()).caf();
+      await using var client = await TypermediaTestClient.ConnectTo(endpoint.Address!, registrar => registrar.RequireAccountManagementTypeMappings()).caf();
       await host.DisposeAsync().caf();
    }
 }

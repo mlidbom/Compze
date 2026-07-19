@@ -44,7 +44,7 @@ public class Given_a_best_effort_endpoint_serving_typermedia_to_a_remote_client 
          "DatabaselessTypermediaEndpoint",
          new EndpointId(Guid.Parse("d2f9c1a4-6e83-4b57-9a02-8c5d41e7f6b0")),
          endpointBuilder => endpointBuilder
-            .MapTypes(mapper => mapper.RegisterIntegrationTestTypeMappings())
+            .RegisterComponents(registrar => registrar.RequireIntegrationTestTypeMappings())
             .TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport())
             .NewtonsoftSerializer()
             .RegisterTessageHandlers(handle => handle
@@ -59,7 +59,7 @@ public class Given_a_best_effort_endpoint_serving_typermedia_to_a_remote_client 
    protected override async Task InitializeAsyncInternal()
    {
       await _host.StartAsync().caf();
-      _client = await TypermediaTestClient.ConnectTo(_endpoint.Address!, mapper => mapper.RegisterIntegrationTestTypeMappings()).caf();
+      _client = await TypermediaTestClient.ConnectTo(_endpoint.Address!, registrar => registrar.RequireIntegrationTestTypeMappings()).caf();
    }
 
    protected override async Task DisposeAsyncInternal()
@@ -83,7 +83,7 @@ public class Given_a_best_effort_endpoint_serving_typermedia_to_a_remote_client 
       Invoking(() => host.RegisterEndpoint(container => ExactlyOnceEndpoint.Build(
                         container, "TessagingWithoutADatabase", new EndpointId(Guid.NewGuid()),
                         endpointBuilder => endpointBuilder
-                           .MapTypes(mapper => mapper.RegisterIntegrationTestTypeMappings())
+                           .RegisterComponents(registrar => registrar.RequireIntegrationTestTypeMappings())
                            .TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport())
                            .NewtonsoftSerializer())))
          .Must().Throw<Exception>().Which.Message.Must().Contain("The endpoint declares no domain database");

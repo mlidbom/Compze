@@ -190,7 +190,6 @@ and synchrony, so the verbs differ only by handler shape:
 
 ```csharp
 container.Registrar.LocalTessagingEngine(engine => engine
-   .MapTypes(mapper => mapper.MapTypesFromAssemblyContaining<IAccountTevent>())
    .RegisterTessageHandlers(handle => handle
       .ForTevent(async (IAccountTevent tevent, IUnitOfWorkResolver unitOfWork) => ...)   //exactly-once kind: async handler
       .ForTuery((AccountTuery tuery, IScopeResolver scope) => ...)                       //strictly-local kind: sync stays first-class

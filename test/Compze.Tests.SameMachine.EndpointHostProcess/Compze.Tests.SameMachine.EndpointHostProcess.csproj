@@ -49,6 +49,13 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging_Sqlite)' != 'true'">
     <ProjectReference Include="..\..\src\Compze.Tessaging.Sqlite\Compze.Tessaging.Sqlite.csproj" />
   </ItemGroup>
+  <!-- Compze.TypeIdentifiers.DependencyInjection — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_TypeIdentifiers_DependencyInjection)' == 'true'">
+    <PackageReference Include="Compze.TypeIdentifiers.DependencyInjection" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_TypeIdentifiers_DependencyInjection)' != 'true'">
+    <ProjectReference Include="..\..\src\Compze.TypeIdentifiers.DependencyInjection\Compze.TypeIdentifiers.DependencyInjection.csproj" />
+  </ItemGroup>
   <!-- Compze.TypeIdentifiers.Interning.Sqlite — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_TypeIdentifiers_Interning_Sqlite)' == 'true'">
     <PackageReference Include="Compze.TypeIdentifiers.Interning.Sqlite" Version="*-*" />

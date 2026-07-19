@@ -1,5 +1,3 @@
-using Compze.TypeIdentifiers;
-
 namespace Compze.Tessaging.Engine;
 
 ///<summary>The builder through which a LocalTessagingEngine — the tessage-conversing heart of one container — is declared, in<br/>
@@ -7,24 +5,15 @@ namespace Compze.Tessaging.Engine;
 /// one idiom: a builder method takes an <see cref="Action{T}"/> over a short-lived registrar and returns the builder, so<br/>
 /// declarations chain, and the registrar exists only inside its callback — the callback's end is the registration's end, the<br/>
 /// build closes the roster, and any attempt to register afterward explodes.</summary>
-///<remarks>Type mappings are declared on the same builder (<see cref="MapTypes"/>) — they serve persistent stores and, when an<br/>
-/// endpoint wraps the engine, the wire. The same declaration block is the surface everywhere — a plain container<br/>
-/// (<see cref="LocalTessagingEngineRegistrar.LocalTessagingEngine"/>) or an endpoint — so an application's handler<br/>
-/// registrations run unchanged under any composition.</remarks>
+///<remarks>Type mappings are not declared here: a component declares the assemblies whose type identity it needs where it is<br/>
+/// registered, through <c>Registrar.RequireMappedTypesFromAssemblyContaining&lt;T&gt;()</c>. The same declaration block is the<br/>
+/// surface everywhere — a plain container (<see cref="LocalTessagingEngineRegistrar.LocalTessagingEngine"/>) or an endpoint —<br/>
+/// so an application's handler registrations run unchanged under any composition.</remarks>
 public sealed class LocalTessagingEngineBuilder
 {
    internal TessageHandlerRegistrations HandlerRegistrations { get; } = new();
-   internal List<Action<ITypeMapper>> TypeMappingDeclarations { get; } = [];
 
    internal LocalTessagingEngineBuilder() {}
-
-   ///<summary>Declares the engine's type-id mappings — the stable identities its tessage types carry into persistent stores and,<br/>
-   /// when an endpoint wraps the engine, onto the wire. A strictly-local composition that persists nothing needs none.</summary>
-   public LocalTessagingEngineBuilder MapTypes(Action<ITypeMapper> map)
-   {
-      TypeMappingDeclarations.Add(map);
-      return this;
-   }
 
    ///<summary>Declares handlers for all four tessage kinds through the one <see cref="TessageHandlerRegistrar"/> — the tessage's<br/>
    /// own type carries its kind, guarantee, and synchrony, so the verbs differ only by handler shape.</summary>

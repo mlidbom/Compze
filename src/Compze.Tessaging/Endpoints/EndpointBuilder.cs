@@ -24,7 +24,7 @@ namespace Compze.Tessaging.Endpoints;
 ///<summary>
 /// The declaration surface an endpoint is composed through — what <see cref="BestEffortEndpoint.Build"/> /
 /// <see cref="ExactlyOnceEndpoint.Build"/> hand their composition callback. An endpoint is an engine given identity and a
-/// wire, and this surface declares all three: the engine (<see cref="MapTypes"/>, <see cref="RegisterTessageHandlers"/>,
+/// wire, and this surface declares all three: the engine (<see cref="RegisterTessageHandlers"/>,
 /// <see cref="ObserveTevents"/> — the same declaration block a plain container's LocalTessagingEngine uses, so an
 /// application's handler declarations run unchanged under any composition), the identity (<see cref="Configuration"/>, given
 /// at composition), and the wire: the transport protocol (<see cref="TransportProtocol"/>), the endpoint's one serializer
@@ -39,6 +39,10 @@ namespace Compze.Tessaging.Endpoints;
 /// and store integrations (a tevent store's <c>HandleTaggregate</c>, a document db's <c>HandleDocumentType</c>) plug into
 /// this same surface — handler contributors like any other.
 ///
+/// Type-id mappings are not declared here: a component declares the assemblies whose type identity it needs where it is
+/// registered, through <c>Registrar.RequireMappedTypesFromAssemblyContaining&lt;T&gt;()</c>, and the endpoint's container
+/// composes one <see cref="ITypeMap"/> from every such declaration.
+///
 /// Every declaration returns the builder as its concrete tier type (<typeparamref name="TConcreteBuilder"/>), so a
 /// composition chains declaration after declaration in one fluent expression, and a tier-specific declaration stays
 /// reachable after a base declaration instead of the chain narrowing to the base type mid-way.
@@ -48,7 +52,6 @@ namespace Compze.Tessaging.Endpoints;
 public abstract class EndpointBuilder<TConcreteBuilder> where TConcreteBuilder : EndpointBuilder<TConcreteBuilder>
 {
    readonly IContainerBuilder _containerBuilder;
-   readonly TypeMapper _typeMapper = new();
    readonly LocalTessagingEngineBuilder _engine = new();
 
    readonly List<IEndpointAddressAnnouncer> _addressAnnouncers = [];
@@ -75,16 +78,19 @@ public abstract class EndpointBuilder<TConcreteBuilder> where TConcreteBuilder :
    ///<summary>Registers the endpoint's components with its container — domain components, query models, whatever the endpoint's application code needs.</summary>
    public IComponentRegistrar Registrar => _containerBuilder.Registrar;
 
-   ///<summary>The endpoint's identity and naming; also registered in the container so the endpoint's services can know which endpoint they serve.</summary>
-   public EndpointConfiguration Configuration { get; }
-
-   ///<summary>Declares the endpoint's type-id mappings — the stable identities its tessage types carry into persistent stores and onto the wire.</summary>
-   public TConcreteBuilder MapTypes(Action<ITypeMapper> map)
+   ///<summary>The chainable form of <see cref="Registrar"/>: registers components without breaking out of the declaration<br/>
+   /// chain — the same shape as <see cref="TransportProtocol"/> and <see cref="Serializer"/>. This is where an endpoint's<br/>
+   /// components declare the type identity they need, through<br/>
+   /// <c>RegisterComponents(registrar =&gt; registrar.RequireMappedTypesFromAssemblyContaining&lt;T&gt;())</c>.</summary>
+   public TConcreteBuilder RegisterComponents(Action<IComponentRegistrar> register)
    {
       AssertStillComposing();
-      map(_typeMapper);
+      register(Registrar);
       return Self;
    }
+
+   ///<summary>The endpoint's identity and naming; also registered in the container so the endpoint's services can know which endpoint they serve.</summary>
+   public EndpointConfiguration Configuration { get; }
 
    ///<summary>Declares handlers for all four tessage kinds through the one <see cref="TessageHandlerRegistrar"/> — see<br/>
    /// <see cref="LocalTessagingEngineBuilder.RegisterTessageHandlers"/>, whose declaration idiom this is.</summary>
@@ -235,13 +241,7 @@ public abstract class EndpointBuilder<TConcreteBuilder> where TConcreteBuilder :
    /// and Typermedia's serving and navigating sides — both tiers serve all four tessage kinds, unconditionally.</summary>
    void RegisterTheSharedEndpointCore()
    {
-      _typeMapper.MapTypesFromAssemblyContaining<TentityId>();                // Compze.Abstractions — the entity id types
-      _typeMapper.MapTypesFromAssemblyContaining<IExactlyOnceTevent>();       // Compze.Tessaging.Abstractions — the tessage type hierarchy
-      _typeMapper.MapTypesFromAssemblyContaining<EndpointInformationQuery>(); // Compze.Tessaging — the endpoint-discovery types and the endpoint address
-
-      Registrar.Register(Singleton.For<ITypeMapper>().Instance(_typeMapper),
-                         Singleton.For<ITypeMap>().Instance(_typeMapper),
-                         Singleton.For<EndpointId>().Instance(Configuration.Id),
+      Registrar.Register(Singleton.For<EndpointId>().Instance(Configuration.Id),
                          Singleton.For<EndpointConfiguration>().Instance(Configuration),
                          Singleton.For<HandlerAvailabilityPatience>().Instance(_handlerAvailabilityPatience),
                          Singleton.For<ITessagesInFlightTracker>().Instance(_tessagesInFlightTracker ?? new NullOpTessagesInFlightTracker()));
@@ -288,6 +288,9 @@ public abstract class EndpointBuilder<TConcreteBuilder> where TConcreteBuilder :
       _composed = true;
 
       var container = _containerBuilder.Build();
+      //Compose the type map here, at composition, so a missing or contradicting type-mapping requirement fails while the
+      //composition is still on the stack rather than when the endpoint first serializes something.
+      container.RootResolver.Resolve<ITypeMap>();
       //The one discovery question every endpoint serves: its answer is the endpoint's identity and its one advertisement -
       //the roster's projection, covering every tessage kind.
       new EndpointDiscoveryQueryRegistrarWithDependencyInjectionSupport(container.RootResolver.Resolve<EndpointDiscoveryQueryExecutor>())

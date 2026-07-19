@@ -33,7 +33,7 @@ public class Navigator_specification : UniversalTestBase
          "Backend",
          new EndpointId(Guid.Parse("3A1B6A8C-D232-476C-A15A-9C8295413210")),
          endpointBuilder => endpointBuilder
-            .MapTypes(mapper => mapper.RegisterIntegrationTestTypeMappings())
+            .RegisterComponents(registrar => registrar.RequireIntegrationTestTypeMappings())
             .RegisterTessageHandlers(handle => handle
                       .ForTuery((GetUserTuery tuery) => tueryResults.Single(result => result.Name == tuery.Name))
                       .ForTuery((UserApiStartPageTuery _) => new UserApiStartPage())
@@ -47,7 +47,7 @@ public class Navigator_specification : UniversalTestBase
    protected override async Task InitializeAsyncInternal()
    {
       await _host.StartAsync().caf();
-      _client = await TypermediaTestClient.ConnectTo(_endpoint.Address!, mapper => mapper.RegisterIntegrationTestTypeMappings()).caf();
+      _client = await TypermediaTestClient.ConnectTo(_endpoint.Address!, registrar => registrar.RequireIntegrationTestTypeMappings()).caf();
    }
 
    protected override async Task DisposeAsyncInternal()

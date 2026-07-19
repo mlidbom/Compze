@@ -24,7 +24,7 @@ public class TaskRunnerExceptionHandlingTests : UniversalTestBase
    public TaskRunnerExceptionHandlingTests()
    {
       _host = TestingEndpointHost.Create();
-      var endpoint = _host.RegisterExactlyOnceEndpoint("endpoint", new EndpointId(Guid.Parse("A1B2C3D4-E5F6-4748-9ABC-DEF012345678")), it => it.MapTypes(mapper => mapper.RegisterIntegrationTestTypeMappings()));
+      var endpoint = _host.RegisterExactlyOnceEndpoint("endpoint", new EndpointId(Guid.Parse("A1B2C3D4-E5F6-4748-9ABC-DEF012345678")), it => it.RegisterComponents(registrar => registrar.RequireIntegrationTestTypeMappings()));
 
       _taskRunner = endpoint.ServiceLocator.Resolve<ITaskRunner>();
    }

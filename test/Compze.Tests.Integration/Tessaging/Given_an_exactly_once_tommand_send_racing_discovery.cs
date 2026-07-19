@@ -38,7 +38,7 @@ public class Given_an_exactly_once_tommand_send_racing_discovery : UniversalTest
       _senderEndpoint = _host.RegisterExactlyOnceEndpoint(
          "Sender",
          SenderEndpointId,
-         endpointBuilder => endpointBuilder.MapTypes(mapper => mapper.RegisterIntegrationTestTypeMappings()));
+         endpointBuilder => endpointBuilder.RegisterComponents(registrar => registrar.RequireIntegrationTestTypeMappings()));
    }
 
    protected override async Task InitializeAsyncInternal() => await _host.StartAsync();
@@ -84,7 +84,7 @@ public class Given_an_exactly_once_tommand_send_racing_discovery : UniversalTest
          "LateHandler",
          LateHandlerEndpointId,
          endpointBuilder => endpointBuilder
-            .MapTypes(mapper => mapper.RegisterIntegrationTestTypeMappings())
+            .RegisterComponents(registrar => registrar.RequireIntegrationTestTypeMappings())
             .RegisterTessageHandlers(handle => handle
                        .ForTommand((MyExactlyOnceTommandHandledOnlyByTheLateEndpoint _) =>
                         {

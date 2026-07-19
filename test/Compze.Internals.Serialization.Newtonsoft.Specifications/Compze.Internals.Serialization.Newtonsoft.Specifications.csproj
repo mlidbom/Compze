@@ -49,6 +49,13 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_Teventive_TeventStore_Abstractions)' != 'true'">
     <ProjectReference Include="..\..\src\Compze.Teventive.TeventStore.Abstractions\Compze.Teventive.TeventStore.Abstractions.csproj" />
   </ItemGroup>
+  <!-- Compze.TypeIdentifiers.DependencyInjection — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_TypeIdentifiers_DependencyInjection)' == 'true'">
+    <PackageReference Include="Compze.TypeIdentifiers.DependencyInjection" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_TypeIdentifiers_DependencyInjection)' != 'true'">
+    <ProjectReference Include="..\..\src\Compze.TypeIdentifiers.DependencyInjection\Compze.TypeIdentifiers.DependencyInjection.csproj" />
+  </ItemGroup>
   <!-- Compze.Underscore — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Underscore)' == 'true'">
     <PackageReference Include="Compze.Underscore" Version="*-*" />

@@ -24,6 +24,8 @@ using Compze.Tessaging.Typermedia;
 // ReSharper disable InconsistentNaming for testing
 #pragma warning disable CA1724 // Type names should not match namespaces
 
+using Compze.TypeIdentifiers.DependencyInjection;
+
 namespace Compze.Tests.Integration.Tessaging.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler;
 
 public class Experiment_with_unifying_tevents_and_tommands_test : UniversalTestBase
@@ -43,10 +45,10 @@ public class Experiment_with_unifying_tevents_and_tommands_test : UniversalTestB
          new EndpointId(Guid.Parse("A4A2BA96-8D82-47AC-8A1B-38476C7B5D5D")),
          endpointBuilder =>
          {
-            endpointBuilder.MapTypes(mapper =>
+            endpointBuilder.RegisterComponents(registrar =>
             {
-               mapper.RegisterIntegrationTestTypeMappings();
-               mapper.MapTypesFromAssemblyContaining<ITaggregateTevent>();
+               registrar.RequireIntegrationTestTypeMappings();
+               registrar.RequireMappedTypesFromAssemblyContaining<ITaggregateTevent>();
             });
 
             endpointBuilder.Registrar.TeventStore(endpointBuilder.Configuration.ConnectionStringName);
@@ -67,10 +69,10 @@ public class Experiment_with_unifying_tevents_and_tommands_test : UniversalTestB
       await _host.StartAsync();
 
       _client = await TypermediaTestClient.ConnectTo(_userManagementDomainEndpoint.Address!,
-                                                     mapper =>
+                                                     registrar =>
                                                      {
-                                                        mapper.RegisterIntegrationTestTypeMappings();
-                                                        mapper.MapTypesFromAssemblyContaining<ITaggregateTevent>(); // Compze.Core — the UserResource this client fetches carries raw tevent history
+                                                        registrar.RequireIntegrationTestTypeMappings();
+                                                        registrar.RequireMappedTypesFromAssemblyContaining<ITaggregateTevent>(); // Compze.Teventive — the UserResource this client fetches carries raw tevent history
                                                      });
 
       _userDomainScopeFactory = _userManagementDomainEndpoint.ServiceLocator.Resolve<IScopeFactory>();

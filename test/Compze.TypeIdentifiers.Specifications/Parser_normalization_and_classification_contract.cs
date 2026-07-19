@@ -70,9 +70,7 @@ public class Parser_normalization_and_classification_contract
    // serialize -> resolve round-trip. Under the old classification it self-corrupted into "GUID, 0".
    public class A_type_whose_name_is_guid_shaped : Parser_normalization_and_classification_contract
    {
-      readonly TypeMapper _mapper = new();
-      public A_type_whose_name_is_guid_shaped()
-         => _mapper.UseStableNameStrategyForAssemblyContaining<deadbeefdeadbeefdeadbeefdeadbeef>();
+      readonly ITypeMap _mapper = new TypeMapBuilder().UseStableNameStrategyForAssemblyContaining<deadbeefdeadbeefdeadbeefdeadbeef>().Build();
 
       [XF] public void persists_as_a_named_component_keeping_its_assembly()
          => _mapper.GetId(typeof(deadbeefdeadbeefdeadbeefdeadbeef)).CanonicalString

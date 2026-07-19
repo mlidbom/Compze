@@ -1,17 +1,16 @@
 using AccountManagement.API;
 using AccountManagement.Domain;
 using AccountManagement.Domain.Tevents;
-using Compze.TypeIdentifiers;
+using Compze.DependencyInjection.Abstractions;
+using Compze.TypeIdentifiers.DependencyInjection;
 
 namespace AccountManagement;
 
 public static class AccountManagementTypeMappings
 {
-   /// <summary>Registers the AccountManagement domain type mappings (domain, tevents, and API resources).</summary>
-   public static void RegisterAccountManagementTypeMappings(this ITypeMapper mapper)
-   {
-      mapper.MapTypesFromAssemblyContaining<Account>();
-      mapper.MapTypesFromAssemblyContaining<IAccountTevent>();
-      mapper.MapTypesFromAssemblyContaining<AccountResource>();
-   }
+   /// <summary>Requires the type identity the AccountManagement domain needs: its domain types, its tevents, and its API resources.</summary>
+   public static IComponentRegistrar RequireAccountManagementTypeMappings(this IComponentRegistrar @this) =>
+      @this.RequireMappedTypesFromAssemblyContaining<Account>()
+           .RequireMappedTypesFromAssemblyContaining<IAccountTevent>()
+           .RequireMappedTypesFromAssemblyContaining<AccountResource>();
 }

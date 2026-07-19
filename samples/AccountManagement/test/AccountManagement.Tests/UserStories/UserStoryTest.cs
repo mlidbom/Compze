@@ -27,7 +27,7 @@ public abstract class UserStoryTest : UniversalTestBase
       //is the remembered subscribers - first contact is the boundary - so the user stories' immediate acts await the two
       //endpoints having met instead of racing the discovery.
       await Host.AwaitEndpointsHaveMetEachOtherAsync().caf();
-      _client = await TypermediaTestClient.ConnectTo(_endpoint.Address!, mapper => mapper.RegisterAccountManagementTypeMappings()).caf();
+      _client = await TypermediaTestClient.ConnectTo(_endpoint.Address!, registrar => registrar.RequireAccountManagementTypeMappings()).caf();
    }
 
    protected override async Task DisposeAsyncInternal()

@@ -12,6 +12,7 @@ using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Internals.Transport.NamedPipes;
 using Compze.Tessaging.Engine;
 using Compze.Tessaging.Sqlite.Wiring;
+using Compze.TypeIdentifiers.DependencyInjection;
 
 namespace Compze.Tests.SameMachine.EndpointHostProcess;
 
@@ -75,11 +76,12 @@ public static class Program
 
    static void ComposeExactlyOnceTessagingOnASqliteDatabase(Compze.Tessaging.Endpoints.ExactlyOnceEndpointBuilder endpointBuilder, InterprocessEndpointRegistry registry, DirectoryInfo workDirectory)
    {
-      endpointBuilder.Registrar.Register(Singleton.For<IConfigurationParameterProvider>()
-                                           .CreatedBy(() => new SqliteDatabasePerConnectionStringNameConfigurationParameterProvider(workDirectory)));
+      endpointBuilder.Registrar
+                     .Register(Singleton.For<IConfigurationParameterProvider>()
+                                        .CreatedBy(() => new SqliteDatabasePerConnectionStringNameConfigurationParameterProvider(workDirectory)))
+                     .RequireMappedTypesFromAssemblyContaining<TommandSentToTheEndpointHostProcess>();
 
       endpointBuilder
-         .MapTypes(mapper => mapper.MapTypesFromAssemblyContaining<TommandSentToTheEndpointHostProcess>())
          .NamedPipeEndpointTransport()
          .NewtonsoftSerializer()
          .SqliteDomainDatabase("EndpointHostProcess")
@@ -92,8 +94,9 @@ public static class Program
    /// best-effort tier and participation are all the tevent delivery there is, and the same endpoint serves tueries.</summary>
    static void ComposeDistributedTessagingAndTypermediaWithNoDatabase(Compze.Tessaging.Endpoints.BestEffortEndpointBuilder endpointBuilder, InterprocessEndpointRegistry registry)
    {
+      endpointBuilder.Registrar.RequireMappedTypesFromAssemblyContaining<TommandSentToTheEndpointHostProcess>();
+
       endpointBuilder
-         .MapTypes(mapper => mapper.MapTypesFromAssemblyContaining<TommandSentToTheEndpointHostProcess>())
          .NamedPipeEndpointTransport()
          .NewtonsoftSerializer()
          .ParticipateIn(registry)

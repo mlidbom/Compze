@@ -181,7 +181,7 @@ public abstract class TeventMigrationTestBase : UniversalTestBase
 
    protected static IDependencyInjectionContainer CreateContainerForTeventStoreType(Func<IReadOnlyList<ITeventMigration>> migrationsFactory)
    {
-      var container = TestEnv.DIContainer.CreateContainerForTesting(mapper => mapper.RegisterIntegrationTestTypeMappings(), register => register.TeventStoreForFlexibleTesting(CombinedTestingContainers.TeventStoreConnectionStringName, migrationsFactory));
+      var container = TestEnv.DIContainer.CreateContainerForTesting(registrar => registrar.RequireIntegrationTestTypeMappings(), register => register.TeventStoreForFlexibleTesting(CombinedTestingContainers.TeventStoreConnectionStringName, migrationsFactory));
 
       return container;
    }

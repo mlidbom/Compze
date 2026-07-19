@@ -1,14 +1,13 @@
-using Compze.TypeIdentifiers;
+using Compze.DependencyInjection.Abstractions;
 using Compze.Tests.Integration;
+using Compze.TypeIdentifiers.DependencyInjection;
 
 namespace Compze.Tests.Performance.Internals;
 
 public static class PerformanceTestTypeMappings
 {
-   /// <summary>Registers the shared + integration test domains plus this assembly's own type mappings.</summary>
-   public static void RegisterPerformanceTestTypeMappings(this ITypeMapper mapper)
-   {
-      mapper.RegisterIntegrationTestTypeMappings();
-      mapper.MapTypesFromAssemblyContaining<Compze.Tests.Performance.Internals.AssemblyTypeMapper>();
-   }
+   /// <summary>Requires the shared and integration test domains plus this assembly's own type identity.</summary>
+   public static IComponentRegistrar RequirePerformanceTestTypeMappings(this IComponentRegistrar @this) =>
+      @this.RequireIntegrationTestTypeMappings()
+           .RequireMappedTypesFromAssemblyContaining<AssemblyTypeMapper>();
 }

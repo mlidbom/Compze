@@ -28,7 +28,7 @@ public class Given_an_endpoint_hosting_only_typermedia : UniversalTestBase
          "TypermediaOnly",
          new EndpointId(Guid.Parse("4A0EFCC3-49B6-4B8F-8F90-2E12B4B3A1D2")),
          endpointBuilder => endpointBuilder
-            .MapTypes(mapper => mapper.RegisterTypermediaHostingSpecificationTypeMappings())
+            .RegisterComponents(registrar => registrar.RequireTypermediaHostingSpecificationTypeMappings())
             .RegisterTessageHandlers(handle => handle
                        .ForTuery((GreetingTuery tuery) => new Greeting { Message = $"Hello {tuery.Name}!" })
                        .ForTommand((RegisterGreeterTommand tommand) => new GreeterRegistered { Name = tommand.Name })));
@@ -37,7 +37,7 @@ public class Given_an_endpoint_hosting_only_typermedia : UniversalTestBase
    protected override async Task InitializeAsyncInternal()
    {
       await _host.StartAsync().caf();
-      _client = await TypermediaTestClient.ConnectTo(_endpoint.Address!, mapper => mapper.RegisterTypermediaHostingSpecificationTypeMappings()).caf();
+      _client = await TypermediaTestClient.ConnectTo(_endpoint.Address!, registrar => registrar.RequireTypermediaHostingSpecificationTypeMappings()).caf();
    }
 
    protected override async Task DisposeAsyncInternal()

@@ -40,11 +40,11 @@ public static class CombinedTestingContainers
       @this.CreateTestingContainerBuilder()
            ._mutate(it => it.Registrar.CurrentTestsPluggableComponents());
 
-   public static IDependencyInjectionContainer CreateContainerForTesting(this DIContainer @this, Action<ITypeMapper> registerDomainTypeMappings, [InstantHandle] Action<IComponentRegistrar> setup, Action<LocalTessagingEngineBuilder>? composeEngine = null)
+   public static IDependencyInjectionContainer CreateContainerForTesting(this DIContainer @this, Action<IComponentRegistrar> declareRequiredDomainTypeMappings, [InstantHandle] Action<IComponentRegistrar> setup, Action<LocalTessagingEngineBuilder>? composeEngine = null)
    {
       var builder = @this.CreateWithCurrentTestsPluggableComponents();
       builder.Registrar
-               .TypeIdentifierMapper(registerDomainTypeMappings)
+               .TypeIdentifierMapper(declareRequiredDomainTypeMappings)
                .DummyConfigurationParameterProvider()
                .LocalTessagingEngine(composeEngine ?? (_ => {}));
       setup(builder.Registrar);
@@ -54,9 +54,9 @@ public static class CombinedTestingContainers
 
    public const string TeventStoreConnectionStringName = "Fake_connectionstring_for_database_testing";
 
-   public static IDependencyInjectionContainer SetupTestingContainer(this DIContainer @this, Action<ITypeMapper> registerDomainTypeMappings, [InstantHandle] Action<IComponentRegistrar>? configureContainer = null, Action<LocalTessagingEngineBuilder>? composeEngine = null) =>
+   public static IDependencyInjectionContainer SetupTestingContainer(this DIContainer @this, Action<IComponentRegistrar> declareRequiredDomainTypeMappings, [InstantHandle] Action<IComponentRegistrar>? configureContainer = null, Action<LocalTessagingEngineBuilder>? composeEngine = null) =>
       CompzeLogger.For(typeof(CombinedTestingContainers)).ExceptionsAndRethrow(() =>
-                                                                              @this.CreateContainerForTesting(registerDomainTypeMappings, register =>
+                                                                              @this.CreateContainerForTesting(declareRequiredDomainTypeMappings, register =>
                                                                               {
                                                                                  register.DocumentDb();
                                                                                  register.TeventStore(TeventStoreConnectionStringName);

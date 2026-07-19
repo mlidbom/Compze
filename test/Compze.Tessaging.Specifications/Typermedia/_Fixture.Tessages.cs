@@ -1,6 +1,8 @@
+using Compze.DependencyInjection.Abstractions;
 using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Abstractions.TessageTypes;
 using Compze.TypeIdentifiers;
+using Compze.TypeIdentifiers.DependencyInjection;
 // ReSharper disable PropertyCanBeMadeInitOnly.Global serialization...
 // ReSharper disable MemberCanBeInternal serialization...
 
@@ -60,9 +62,10 @@ class AssemblyTypeMapper : IAssemblyTypeMapper
             .Map<TueryNothingServes>("9d41c2b7-6a35-4a90-8f3e-5b7c1d20ae44");
 }
 
+// ReSharper disable once CheckNamespace
 public static class TypermediaHostingSpecificationTypeMappings
 {
-   /// <summary>Registers the type mappings declared by this specification assembly (its test message types).</summary>
-   public static void RegisterTypermediaHostingSpecificationTypeMappings(this ITypeMapper mapper)
-      => mapper.MapTypesFromAssemblyContaining<AssemblyTypeMapper>();
+   /// <summary>Requires the type identity of this specification assembly — its test message types.</summary>
+   public static IComponentRegistrar RequireTypermediaHostingSpecificationTypeMappings(this IComponentRegistrar @this)
+      => @this.RequireMappedTypesFromAssemblyContaining<AssemblyTypeMapper>();
 }

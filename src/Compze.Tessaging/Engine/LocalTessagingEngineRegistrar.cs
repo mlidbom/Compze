@@ -22,9 +22,9 @@ public static class LocalTessagingEngineRegistrar
    /// the doors application code injects — <see cref="IUnitOfWorkTeventPublisher"/>/<see cref="IIndependentTeventPublisher"/><br/>
    /// for publishing tevents, <see cref="ILocalTypermediaNavigatorSession"/>/<see cref="IIndependentLocalTypermediaNavigator"/><br/>
    /// for strictly-local navigation. Exactly one engine per container: composing a second explodes.</summary>
-   ///<remarks>When the composition declares no type mappings (<see cref="LocalTessagingEngineBuilder.MapTypes"/>) and the<br/>
-   /// container registers no <see cref="ITypeMap"/> of its own, a default mapper with only the framework's mappings is<br/>
-   /// supplied — local dispatch routes by <see cref="Type"/> and needs no mappings; persistent stores and endpoints do.</remarks>
+   ///<remarks>The engine requires the type identity it needs where its core registers — local dispatch routes by<br/>
+   /// <see cref="Type"/> and needs no mappings, but the persistent stores and endpoints that ride the engine do. A container<br/>
+   /// whose domain types are persisted or transmitted declares them the same way, next to the components that need them.</remarks>
    public static IComponentRegistrar LocalTessagingEngine(this IComponentRegistrar @this, Action<LocalTessagingEngineBuilder> compose)
    {
       State.Assert(!@this.IsRegistered<TessageHandlerRoster>(),
@@ -33,7 +33,6 @@ public static class LocalTessagingEngineRegistrar
       var engineBuilder = new LocalTessagingEngineBuilder();
       compose(engineBuilder);
 
-      RegisterTypeMapping(@this, engineBuilder);
       //A plain container has no testing host to await its at-rest, so the engine's observation bookkeeping reports to the null
       //device. (An endpoint composition declares the tracker its testing host hands it instead.)
       @this.Register(Singleton.For<ITessagesInFlightTracker>().Instance(new NullOpTessagesInFlightTracker()));
@@ -44,15 +43,4 @@ public static class LocalTessagingEngineRegistrar
                   .IndependentLocalTypermediaNavigator();
    }
 
-   static void RegisterTypeMapping(IComponentRegistrar registrar, LocalTessagingEngineBuilder engineBuilder)
-   {
-      if(engineBuilder.TypeMappingDeclarations.Count == 0 && registrar.IsRegistered<ITypeMap>()) return;
-
-      var typeMapper = new TypeMapper();
-      typeMapper.MapTypesFromAssemblyContaining<TentityId>();          // Compze.Abstractions — the entity id types
-      typeMapper.MapTypesFromAssemblyContaining<IExactlyOnceTevent>(); // Compze.Tessaging.Abstractions — the tessage type hierarchy
-      engineBuilder.TypeMappingDeclarations.ForEach(declareMappings => declareMappings(typeMapper));
-      registrar.Register(Singleton.For<ITypeMapper>().Instance(typeMapper),
-                         Singleton.For<ITypeMap>().Instance(typeMapper));
-   }
 }

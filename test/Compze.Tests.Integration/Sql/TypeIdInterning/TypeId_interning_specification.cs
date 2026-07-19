@@ -29,25 +29,20 @@ namespace Compze.Tests.Integration.Sql.TypeIdInterning;
 /// </summary>
 public class TypeId_interning_specification : UniversalTestBase
 {
-   readonly IDependencyInjectionContainer _container = TestEnv.DIContainer.SetupTestingContainer(mapper => mapper.RegisterIntegrationTestTypeMappings());
+   readonly IDependencyInjectionContainer _container = TestEnv.DIContainer.SetupTestingContainer(registrar => registrar.RequireIntegrationTestTypeMappings());
 
    ITypeIdInternerPersistence Persistence => _container.Resolve<ITypeIdInternerPersistence>();
 
    protected override void DisposeInternal() => _container.Dispose();
 
-   static ITypeMap StableDeployment()
-   {
-      var mapper = new TypeMapper();
-      mapper.UseStableNameStrategyForAssemblyContaining<CQRS.UserRegistered>();
-      return mapper;
-   }
+   //Two deployments of the same application, one before and one after the assembly was reclassified. Each builds its own
+   //map: within one map the two strategies contradict each other, but across deployments the reclassification is the
+   //very thing these specs are about.
+   static ITypeMap StableDeployment() =>
+      new TypeMapBuilder().UseStableNameStrategyForAssemblyContaining<CQRS.UserRegistered>().Build();
 
-   static ITypeMap MappedDeployment()
-   {
-      var mapper = new TypeMapper();
-      mapper.MapTypesFromAssemblyContaining<AssemblyTypeMapper>();
-      return mapper;
-   }
+   static ITypeMap MappedDeployment() =>
+      new TypeMapBuilder().MapTypesFromAssemblyContaining<AssemblyTypeMapper>().Build();
 
    ITypeIdInterner InternerOver(ITypeMap typeMap) => TypeIdInterner.For(Persistence, typeMap);
 

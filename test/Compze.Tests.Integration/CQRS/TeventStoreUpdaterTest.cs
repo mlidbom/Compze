@@ -52,7 +52,7 @@ public class TeventStoreUpdaterTest : UniversalTestBase
       _teventSpy = new TeventSpy();
 
       //Exactly-once kinds are async end to end, so the spy subscription is declared async; the spy is synchronous, so it completes its task synchronously.
-      _container = TestEnv.DIContainer.SetupTestingContainer(mapper => mapper.RegisterIntegrationTestTypeMappings(),
+      _container = TestEnv.DIContainer.SetupTestingContainer(registrar => registrar.RequireIntegrationTestTypeMappings(),
                                                              composeEngine: engine => engine.RegisterTessageHandlers(handle => handle.ForTevent((IExactlyOnceTevent tevent) =>
                                                              {
                                                                 _teventSpy.Receive(tevent);

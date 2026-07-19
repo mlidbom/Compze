@@ -15,7 +15,7 @@ namespace Compze.TypeIdentifiers.Specifications;
 /// </summary>
 public class TypeId_is_the_canonical_identity_of_a_type
 {
-   readonly ITypeMap _map = new TypeMapper();
+   readonly ITypeMap _map = new TypeMapBuilder().Build();
 
    public class For_the_same_type : TypeId_is_the_canonical_identity_of_a_type
    {

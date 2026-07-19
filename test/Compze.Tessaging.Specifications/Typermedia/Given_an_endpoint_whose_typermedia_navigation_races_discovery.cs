@@ -31,7 +31,7 @@ public class Given_an_endpoint_whose_typermedia_navigation_races_discovery : Uni
       _navigatorEndpoint = _host.RegisterBestEffortEndpoint(
          "Navigator",
          NavigatorEndpointId,
-         endpointBuilder => endpointBuilder.MapTypes(mapper => mapper.RegisterTypermediaHostingSpecificationTypeMappings()));
+         endpointBuilder => endpointBuilder.RegisterComponents(registrar => registrar.RequireTypermediaHostingSpecificationTypeMappings()));
    }
 
    protected override async Task InitializeAsyncInternal() => await _host.StartAsync().caf();
@@ -47,7 +47,7 @@ public class Given_an_endpoint_whose_typermedia_navigation_races_discovery : Uni
          "LateHandler",
          LateEndpointId,
          endpointBuilder => endpointBuilder
-            .MapTypes(mapper => mapper.RegisterTypermediaHostingSpecificationTypeMappings())
+            .RegisterComponents(registrar => registrar.RequireTypermediaHostingSpecificationTypeMappings())
             .RegisterTessageHandlers(handle => handle
                        .ForTuery((TueryServedByTheLateEndpoint _) => new TueryAnswer { Message = "served on first contact" })));
       //The late endpoint starts now, driving its own phase ordering. Its announcement is what the waiting send's patience is

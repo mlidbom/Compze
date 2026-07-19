@@ -45,6 +45,7 @@
       <Value>UsePackageReference_Compze_Threading_Interprocess = true</Value>
       <Value>UsePackageReference_Compze_Threading_Testing = true</Value>
       <Value>UsePackageReference_Compze_TypeIdentifiers = true</Value>
+      <Value>UsePackageReference_Compze_TypeIdentifiers_DependencyInjection = true</Value>
       <Value>UsePackageReference_Compze_TypeIdentifiers_Interning = true</Value>
       <Value>UsePackageReference_Compze_TypeIdentifiers_Interning_MicrosoftSql = true</Value>
       <Value>UsePackageReference_Compze_TypeIdentifiers_Interning_MySql = true</Value>

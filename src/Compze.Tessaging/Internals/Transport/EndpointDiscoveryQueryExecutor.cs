@@ -3,7 +3,9 @@ using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Logging;
 using Compze.Internals.SystemCE.CollectionsCE.GenericCE;
 using Compze.Tessaging.Abstractions.TessageTypes;
+using Compze.Tessaging.Endpoints.Discovery;
 using Compze.Threading;
+using Compze.TypeIdentifiers.DependencyInjection;
 
 namespace Compze.Tessaging.Internals.Transport;
 
@@ -34,8 +36,10 @@ public class EndpointDiscoveryQueryExecutor
    }
 
    internal static void RegisterWith(IComponentRegistrar registrar) =>
-      registrar.Register(
-         Singleton.For<EndpointDiscoveryQueryExecutor>()
-                  .CreatedBy((IScopeFactory scopeFactory)
-                                => new EndpointDiscoveryQueryExecutor(scopeFactory)));
+      registrar //The discovery conversation itself goes on the wire: the query, the advertisement it answers with, and the endpoint address in it.
+              .RequireMappedTypesFromAssemblyContaining<EndpointInformationQuery>()
+              .Register(
+                  Singleton.For<EndpointDiscoveryQueryExecutor>()
+                           .CreatedBy((IScopeFactory scopeFactory)
+                                         => new EndpointDiscoveryQueryExecutor(scopeFactory)));
 }

@@ -15,12 +15,7 @@ namespace Compze.TypeIdentifiers.Specifications;
 /// </summary>
 public class TryGetId_specification
 {
-   static TypeMapper BuildMapper()
-   {
-      var mapper = new TypeMapper();
-      mapper.MapTypesFromAssembly(typeof(TentityId).Assembly);
-      return mapper;
-   }
+   static ITypeMap BuildMapper() => new TypeMapBuilder().MapTypesFromAssembly(typeof(TentityId).Assembly).Build();
 
    public class For_a_mapped_type : TryGetId_specification
    {

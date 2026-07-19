@@ -38,7 +38,7 @@ public class Tevent_observation_at_host_disposal_tests : UniversalTestBase
       _host = TestingEndpointHost.Create();
       _endpoint = _host.RegisterExactlyOnceEndpoint("Observing", ObservingEndpointId, it =>
       {
-         it.MapTypes(mapper => mapper.RegisterIntegrationTestTypeMappings());
+         it.RegisterComponents(registrar => registrar.RequireIntegrationTestTypeMappings());
          it.ObserveTevents(observe => observe.ForTevent<IMyGreetingRequestedTevent>((tevent, _) => observer(tevent)));
       });
    }

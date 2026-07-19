@@ -54,7 +54,7 @@ public class Given_two_best_effort_endpoints : UniversalTestBase
          "BestEffortPublisherEndpoint",
          new EndpointId(Guid.Parse("6d0a3a3e-59c8-4b0b-9e51-2f47a68d31c4")),
          endpointBuilder => endpointBuilder
-            .MapTypes(mapper => mapper.RegisterIntegrationTestTypeMappings())
+            .RegisterComponents(registrar => registrar.RequireIntegrationTestTypeMappings())
             .TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport())
             .NewtonsoftSerializer()
             .DiscoverEndpointsThrough(endpointsOfTheHost)
@@ -70,7 +70,7 @@ public class Given_two_best_effort_endpoints : UniversalTestBase
          endpointBuilder =>
          {
             endpointBuilder
-               .MapTypes(mapper => mapper.RegisterIntegrationTestTypeMappings())
+               .RegisterComponents(registrar => registrar.RequireIntegrationTestTypeMappings())
                .TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport())
                .NewtonsoftSerializer()
                .DiscoverEndpointsThrough(endpointsOfTheHost)
@@ -163,7 +163,7 @@ public class Given_two_best_effort_endpoints : UniversalTestBase
 
    static void ComposeMinimalFoundation(BestEffortEndpointBuilder endpointBuilder)
    {
-      endpointBuilder.MapTypes(mapper => mapper.RegisterIntegrationTestTypeMappings());
+      endpointBuilder.RegisterComponents(registrar => registrar.RequireIntegrationTestTypeMappings());
       endpointBuilder.TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport());
       endpointBuilder.NewtonsoftSerializer();
    }
