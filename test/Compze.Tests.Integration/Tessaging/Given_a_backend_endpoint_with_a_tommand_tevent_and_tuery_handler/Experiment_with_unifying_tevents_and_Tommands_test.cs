@@ -69,11 +69,7 @@ public class Experiment_with_unifying_tevents_and_tommands_test : UniversalTestB
       await _host.StartAsync();
 
       _client = await TypermediaTestClient.ConnectTo(_userManagementDomainEndpoint.Address!,
-                                                     registrar =>
-                                                     {
-                                                        registrar.RequireIntegrationTestTypeMappings();
-                                                        registrar.RequireMappedTypesFromAssemblyContaining<ITaggregateTevent>(); // Compze.Teventive — the UserResource this client fetches carries raw tevent history
-                                                     });
+                                                     registrar => registrar.RequireIntegrationTestTypeMappings());
 
       _userDomainScopeFactory = _userManagementDomainEndpoint.ServiceLocator.Resolve<IScopeFactory>();
 

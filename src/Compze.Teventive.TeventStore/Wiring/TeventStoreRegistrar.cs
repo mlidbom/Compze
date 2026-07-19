@@ -1,8 +1,6 @@
-using Compze.Abstractions.Public;
 using Compze.Contracts;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Teventive.Internal.Implementation;
-using Compze.Teventive.Taggregates.Tevents.Public;
 using Compze.Teventive.TeventStore.Abstractions.Refactoring.Migrations.Public;
 using Compze.TypeIdentifiers.DependencyInjection;
 
@@ -30,9 +28,7 @@ public static class TeventStoreRegistrar
 
       //Everything the store persists needs identity that survives renames: its own stored types, the taggregate tevent
       //hierarchy it stores, and the entity ids those tevents carry.
-      registrar.RequireMappedTypesFromAssemblyContaining<TeventCache>()
-               .RequireMappedTypesFromAssemblyContaining<ITaggregateTevent>()
-               .RequireMappedTypesFromAssemblyContaining<TentityId>();
+      registrar.RequireMappedTypesFromAssemblyContaining<TeventCache>();
 
       return registrar.Register(TaggregateTypeValidator.RegisterWith,
                                 TeventCache.RegisterWith,

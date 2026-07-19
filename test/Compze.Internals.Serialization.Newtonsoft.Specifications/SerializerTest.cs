@@ -26,15 +26,13 @@ public class SerializerTest : UniversalTestBase
 #pragma warning disable CA2000 // We are disposing this disposable in DisposeInternal
       _container = DIContainer.Microsoft
                              .CreateTestingContainerBuilder()
-                             ._mutate(it => RegisterSerializer(it.Registrar, serializer)
-                                              .RequireMappedTypesFromAssemblyContaining<TentityId>()          // Compze.Abstractions — the entity ids these specs serialize
-                                              .RequireMappedTypesFromAssemblyContaining<IExactlyOnceTevent>() // Compze.Tessaging.Abstractions — the tessage types these specs serialize
-                                              .RequireMappedTypesFromAssemblyContaining<AssemblyTypeMapper>()) // this specification assembly — the tevent and document types these specs serialize
+                             ._mutate(it => RegisterSerializers(it.Registrar, serializer)
+                                              .RequireMappedTypesFromAssemblyContaining<SerializerTest>())
                              .Build();
 #pragma warning restore CA2000
    }
 
-   static IComponentRegistrar RegisterSerializer(IComponentRegistrar register, Serializer serializer) =>
+   static IComponentRegistrar RegisterSerializers(IComponentRegistrar register, Serializer serializer) =>
       serializer switch
       {
          Serializer.Newtonsoft => register.NewtonsoftTessagingSerializer()

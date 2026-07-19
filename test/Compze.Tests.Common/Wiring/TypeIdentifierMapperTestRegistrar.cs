@@ -17,7 +17,6 @@ public static class TypeIdentifierMapperTestRegistrar
    /// </remarks>
    public static IComponentRegistrar TypeIdentifierMapper(this IComponentRegistrar @this, Action<IComponentRegistrar> declareRequiredDomainTypeMappings)
    {
-      @this.RequireMappedTypesFromAssemblyContaining<ITaggregateTevent>();
       declareRequiredDomainTypeMappings(@this);
       return @this;
    }

@@ -55,12 +55,6 @@ public sealed class TypermediaClientBuilder
       State.Assert(_registerSerializer is not null || Registrar.IsRegistered<ITypermediaSerializer>(),
                    () => "The client declares no serializer. Declare it in the composition — e.g. client.NewtonsoftSerializer(). (A testing container already carrying the suite's serializers declares none.)");
 
-      //A pure client runs no engine, so it declares for itself what the engine would otherwise require: the tessage type
-      //hierarchy it navigates, the entity ids those tessages carry, and the advertisements its router reads.
-      Registrar.RequireMappedTypesFromAssemblyContaining<TentityId>()
-               .RequireMappedTypesFromAssemblyContaining<IExactlyOnceTevent>()
-               .RequireMappedTypesFromAssemblyContaining<EndpointInformation>();
-
       _registerTransportProtocol!(Registrar);
       _registerSerializer?.Invoke(Registrar);
 
