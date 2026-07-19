@@ -1,4 +1,5 @@
 using Compze.Abstractions.Tessaging.Public;
+using Compze.Teventive.Tevents.Public;
 using Compze.TypeIdentifiers;
 
 [assembly: AssemblyTypeMapper(typeof(Compze.Abstractions.AssemblyTypeMapper))]
@@ -19,6 +20,7 @@ class AssemblyTypeMapper : IAssemblyTypeMapper
          .MapOpenGeneric(typeof(TessageTypes.Remotable.NonTransactional.Tueries.TaggregateLink<>), "e0f1a2b3-c4d5-4e6f-7a8b-9c0d1e2f3a4b")
          .MapOpenGeneric(typeof(TessageTypes.Remotable.AtMostOnce.AtMostOnceTypermediaTommand<>), "f1a2b3c4-d5e6-4f7a-8b9c-0d1e2f3a4b5c")
          .MapOpenGeneric(typeof(IPublisherTevent<>), "a6907e78-2e6c-4674-a426-78008791b0a0")
+         .MapOpenGeneric(typeof(PublisherTevent<>), "9c3ad661-f59c-42b6-b416-c38375eefc56")
          .Map<Hosting.Public.EndpointAddress>("f2a3b4c5-d6e7-4f80-91a2-b3c4d5e6f7a8");
    }
 }
