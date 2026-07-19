@@ -38,8 +38,16 @@
   </Folder>
   <Folder Name="/Compze.TypeIdentifiers/">
     <Project Path="src/Compze.TypeIdentifiers.DependencyInjection/Compze.TypeIdentifiers.DependencyInjection.csproj" />
-    <Project Path="src/Compze.TypeIdentifiers.Interning/Compze.TypeIdentifiers.Interning.csproj" />
     <Project Path="src/Compze.TypeIdentifiers/Compze.TypeIdentifiers.csproj" />
+  </Folder>
+  <Folder Name="/Compze.TypeIdentifiers/Interning/">
+    <Project Path="src/Compze.TypeIdentifiers.Interning/Compze.TypeIdentifiers.Interning.csproj" />
+  </Folder>
+  <Folder Name="/Compze.TypeIdentifiers/Interning/SqlLayers/">
+    <Project Path="src/Compze.TypeIdentifiers.Interning.MicrosoftSql/Compze.TypeIdentifiers.Interning.MicrosoftSql.csproj" />
+    <Project Path="src/Compze.TypeIdentifiers.Interning.MySql/Compze.TypeIdentifiers.Interning.MySql.csproj" />
+    <Project Path="src/Compze.TypeIdentifiers.Interning.PostgreSql/Compze.TypeIdentifiers.Interning.PostgreSql.csproj" />
+    <Project Path="src/Compze.TypeIdentifiers.Interning.Sqlite/Compze.TypeIdentifiers.Interning.Sqlite.csproj" />
   </Folder>
   <Folder Name="/Compze.TypeIdentifiers/Specifications/">
     <Project Path="test/Compze.TypeIdentifiers.Specifications/Compze.TypeIdentifiers.Specifications.csproj" />
@@ -220,12 +228,6 @@
     <Project Path="src/Compze.Tessaging.Abstractions/Compze.Tessaging.Abstractions.csproj" />
     <Project Path="src/Compze.Tessaging.AspNetCore/Compze.Tessaging.AspNetCore.csproj" />
     <Project Path="src/Compze.Tessaging/Compze.Tessaging.csproj" />
-  </Folder>
-  <Folder Name="/Compze.TypeIdentifiers/SqlLayers/">
-    <Project Path="src/Compze.TypeIdentifiers.Interning.MicrosoftSql/Compze.TypeIdentifiers.Interning.MicrosoftSql.csproj" />
-    <Project Path="src/Compze.TypeIdentifiers.Interning.MySql/Compze.TypeIdentifiers.Interning.MySql.csproj" />
-    <Project Path="src/Compze.TypeIdentifiers.Interning.PostgreSql/Compze.TypeIdentifiers.Interning.PostgreSql.csproj" />
-    <Project Path="src/Compze.TypeIdentifiers.Interning.Sqlite/Compze.TypeIdentifiers.Interning.Sqlite.csproj" />
   </Folder>
   <Folder Name="/Compze.Tessaging/Specifications/">
     <Project Path="test/Compze.Tessaging.Specifications/Compze.Tessaging.Specifications.csproj" />
