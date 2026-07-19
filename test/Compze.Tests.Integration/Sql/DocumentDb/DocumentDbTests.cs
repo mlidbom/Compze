@@ -7,6 +7,7 @@ using Compze.Tests.Common.Sql.DocumentDb;
 using Compze.Tests.Infrastructure;
 using Compze.DependencyInjection;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
+using Compze.Internals.SystemCE.TransactionsCE;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Internals.SystemCE.UsageGuards;
 using Compze.Must;
@@ -537,29 +538,17 @@ public class DocumentDbTests : DocumentDbTestsBase
     }
 
     [PCT]
-    public void ThrowsIfUsedByMultipleThreads()
+    public void ThrowsIfUsedByMultipleTransactions()
     {
-        IDocumentDbSession? session = null;
-        using var wait = new ManualResetEventSlim();
-        var task = TaskCE.Run(() =>
+        //The session's affinity is its transaction, never a thread: an async unit of work legitimately migrates across threads,
+        //while one session serving two transactions is the misuse that must fail loud.
+        Container.ExecuteInIsolatedScope(scope =>
         {
-            Container.ExecuteInIsolatedScope(scope => session = scope.DocumentDbSession());
-            wait.Set();
+            var session = scope.DocumentDbSession();
+            TransactionScopeCe.Execute(() => session.TryGet(Guid.NewGuid(), out User? _));
+            TransactionScopeCe.Execute(() => Invoking(() => session.TryGet(Guid.NewGuid(), out User? _))
+                                                           .Must().Throw<ComponentUsedByMultipleTransactionsException>());
         });
-        wait.Wait();
-        task.Wait();
-        session = session._assert().NotNull();
-
-        var user = new User();
-
-        Invoking(() => session.Get<User>(Guid.NewGuid())).Must().Throw<MultiThreadedUseException>();
-        Invoking(() => session.GetAll<User>()).Must().Throw<MultiThreadedUseException>();
-        Invoking(() => session.Save(user, user.Id)).Must().Throw<MultiThreadedUseException>();
-        Invoking(() => session.Delete(user)).Must().Throw<MultiThreadedUseException>();
-        Invoking(() => session.Dispose()).Must().Throw<MultiThreadedUseException>();
-        Invoking(() => session.Save(new User())).Must().Throw<MultiThreadedUseException>();
-        Invoking(() => session.TryGet(Guid.NewGuid(), out user)).Must().Throw<MultiThreadedUseException>();
-        Invoking(() => session.Delete(user)).Must().Throw<MultiThreadedUseException>();
     }
 
 

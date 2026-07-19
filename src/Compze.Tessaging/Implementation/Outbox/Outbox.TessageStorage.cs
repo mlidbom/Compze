@@ -19,60 +19,60 @@ partial class Outbox
       // ReSharper disable once MemberHidesStaticFromOuterClass
       internal static void RegisterWith(IComponentRegistrar registrar)
          => registrar.Register(Singleton.For<ITessageStorage>()
-                                        .CreatedBy((IServiceBusSqlLayer.IOutboxSqlLayer sqlLayer, ITypeMap typeMap, ITessagingSerializer serializer)
+                                        .CreatedBy((ITessagingSqlLayer.IOutboxSqlLayer sqlLayer, ITypeMap typeMap, ITessagingSerializer serializer)
                                                       => new TessageStorage(sqlLayer, typeMap, serializer)));
 
-      readonly IServiceBusSqlLayer.IOutboxSqlLayer _sqlLayer;
+      readonly ITessagingSqlLayer.IOutboxSqlLayer _sqlLayer;
       readonly ITypeMap _typeMap;
       readonly ITessagingSerializer _serializer;
 
-      TessageStorage(IServiceBusSqlLayer.IOutboxSqlLayer sqlLayer, ITypeMap typeMap, ITessagingSerializer serializer)
+      TessageStorage(ITessagingSqlLayer.IOutboxSqlLayer sqlLayer, ITypeMap typeMap, ITessagingSerializer serializer)
       {
          _sqlLayer = sqlLayer;
          _typeMap = typeMap;
          _serializer = serializer;
       }
 
-      public void SaveTessage(ITessage tessage, TessageId dedupId, params EndpointId[] receiverEndpointIds)
+      public async Task SaveTessageAsync(ITessage tessage, TessageId dedupId, params EndpointId[] receiverEndpointIds)
       {
-         var outboxTessageWithReceivers = new IServiceBusSqlLayer.OutboxTessageWithReceivers(_serializer.SerializeTessage(tessage),
+         var outboxTessageWithReceivers = new ITessagingSqlLayer.OutboxTessageWithReceivers(_serializer.SerializeTessage(tessage),
                                                                                              _typeMap.GetId(tessage.GetType()),
                                                                                              dedupId,
                                                                                              receiverEndpointIds);
 
-         _sqlLayer.SaveTessage(outboxTessageWithReceivers);
+         await _sqlLayer.SaveTessageAsync(outboxTessageWithReceivers).caf();
       }
 
-      public void MarkAsReceived(TessageId tessageId, EndpointId receiverId)
+      public async Task MarkAsReceivedAsync(TessageId tessageId, EndpointId receiverId)
       {
-         var result = _sqlLayer.MarkAsReceived(tessageId, receiverId);
+         var result = await _sqlLayer.MarkAsReceivedAsync(tessageId, receiverId).caf();
 
-         if(result == IServiceBusSqlLayer.MarkAsReceivedResult.WasAlreadyMarked)
+         if(result == ITessagingSqlLayer.MarkAsReceivedResult.WasAlreadyMarked)
          {
             this.Log().Info($"Tessage {tessageId} to endpoint {receiverId.Value} was already marked as received.");
          }
       }
 
-      public void RecordDeliveryFailure(TessageId tessageId, EndpointId receiverId, Exception? exception)
+      public async Task RecordDeliveryFailureAsync(TessageId tessageId, EndpointId receiverId, Exception? exception)
       {
          var failureReason = exception != null
                                 ? $"{exception.GetType().Name}: {exception.Message}\n{exception.StackTrace}"
                                 : "Unknown failure";
 
-         _sqlLayer.RecordDeliveryFailure(tessageId, receiverId, failureReason);
+         await _sqlLayer.RecordDeliveryFailureAsync(tessageId, receiverId, failureReason).caf();
       }
 
-      public IReadOnlyList<IServiceBusSqlLayer.UndeliveredTessage> GetUndeliveredTessagesForEndpoint(EndpointId endpointId) =>
-         _sqlLayer.GetUndeliveredTessagesForEndpoint(endpointId);
+      public async Task<IReadOnlyList<ITessagingSqlLayer.UndeliveredTessage>> GetUndeliveredTessagesForEndpointAsync(EndpointId endpointId) =>
+         await _sqlLayer.GetUndeliveredTessagesForEndpointAsync(endpointId).caf();
 
-      public void DiscardUndeliveredTessages(EndpointId endpointId, IReadOnlyList<TessageId> tessageIds) =>
-         _sqlLayer.DiscardUndeliveredTessages(endpointId, tessageIds);
+      public async Task DiscardUndeliveredTessagesAsync(EndpointId endpointId, IReadOnlyList<TessageId> tessageIds) =>
+         await _sqlLayer.DiscardUndeliveredTessagesAsync(endpointId, tessageIds).caf();
 
-      public void StrandUndeliveredTessages(EndpointId endpointId, IReadOnlyList<TessageId> tessageIds) =>
-         _sqlLayer.StrandUndeliveredTessages(endpointId, tessageIds);
+      public async Task StrandUndeliveredTessagesAsync(EndpointId endpointId, IReadOnlyList<TessageId> tessageIds) =>
+         await _sqlLayer.StrandUndeliveredTessagesAsync(endpointId, tessageIds).caf();
 
-      public IReadOnlyList<IServiceBusSqlLayer.DiscardedTessage> DiscardAllTessagesOwedTo(EndpointId endpointId) =>
-         _sqlLayer.DiscardAllTessagesOwedTo(endpointId);
+      public async Task<IReadOnlyList<ITessagingSqlLayer.DiscardedTessage>> DiscardAllTessagesOwedToAsync(EndpointId endpointId) =>
+         await _sqlLayer.DiscardAllTessagesOwedToAsync(endpointId).caf();
 
       public async Task StartAsync() => await _sqlLayer.InitAsync().caf();
    }

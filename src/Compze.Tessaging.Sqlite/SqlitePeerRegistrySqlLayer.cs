@@ -5,29 +5,30 @@ using Compze.Internals.Sql.Sqlite.Private;
 using Compze.Internals.SystemCE.LinqCE;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tessaging.Transport.SqlLayer;
-using Peers = Compze.Tessaging.Transport.SqlLayer.IServiceBusSqlLayer.PeersDatabaseSchemaStrings;
-using Types = Compze.Tessaging.Transport.SqlLayer.IServiceBusSqlLayer.PeerHandledTessageTypesDatabaseSchemaStrings;
+using Peers = Compze.Tessaging.Transport.SqlLayer.ITessagingSqlLayer.PeersDatabaseSchemaStrings;
+using Types = Compze.Tessaging.Transport.SqlLayer.ITessagingSqlLayer.PeerHandledTessageTypesDatabaseSchemaStrings;
 
 namespace Compze.Tessaging.Sqlite;
 
-partial class SqlitePeerRegistrySqlLayer(ISqliteConnectionPool connectionFactory, SqliteSqlLayerSchemaManager schemaManager) : IServiceBusSqlLayer.IPeerRegistrySqlLayer
+partial class SqlitePeerRegistrySqlLayer(ISqliteConnectionPool connectionFactory, SqliteSqlLayerSchemaManager schemaManager, EndpointTableSet tables) : ITessagingSqlLayer.IPeerRegistrySqlLayer
 {
    readonly ISqliteConnectionPool _connectionFactory = connectionFactory;
    readonly SqliteSqlLayerSchemaManager _schemaManager = schemaManager;
+   readonly EndpointTableSet _tables = tables;
 
-   public void SaveAdvertisement(EndpointId peerId, IReadOnlySet<string> handledTessageTypes)
+   public async Task SaveAdvertisementAsync(EndpointId peerId, IReadOnlySet<string> handledTessageTypes)
    {
-      _connectionFactory.UseCommand(
-         command =>
+      await _connectionFactory.UseCommandAsync(
+         async command =>
          {
             command
               .SetCommandText(
                   $"""
 
-                   INSERT INTO {Peers.TableName} ({Peers.EndpointId}) VALUES (@{Peers.EndpointId})
+                   INSERT INTO {_tables.Peers} ({Peers.EndpointId}) VALUES (@{Peers.EndpointId})
                        ON CONFLICT ({Peers.EndpointId}) DO NOTHING;
 
-                   DELETE FROM {Types.TableName} WHERE {Types.EndpointId} = @{Types.EndpointId};
+                   DELETE FROM {_tables.PeerHandledTessageTypes} WHERE {Types.EndpointId} = @{Types.EndpointId};
 
                    """)
               .AddMediumTextParameter(Peers.EndpointId, peerId.ToString());
@@ -36,20 +37,20 @@ partial class SqlitePeerRegistrySqlLayer(ISqliteConnectionPool connectionFactory
                (handledTessageType, index)
                   => command.AppendCommandText($"""
 
-                                                INSERT INTO {Types.TableName}
+                                                INSERT INTO {_tables.PeerHandledTessageTypes}
                                                             ({Types.EndpointId},  {Types.HandledTessageType})
                                                     VALUES (@{Types.EndpointId}, @{Types.HandledTessageType}_{index});
 
                                                 """).AddMediumTextParameter($"{Types.HandledTessageType}_{index}", handledTessageType));
 
-            command.ExecuteNonQuery();
-         });
+            return await command.ExecuteNonQueryAsync().caf();
+         }).caf();
    }
 
-   public IReadOnlyList<IServiceBusSqlLayer.PersistedPeer> GetPeers()
+   public async Task<IReadOnlyList<ITessagingSqlLayer.PersistedPeer>> GetPeersAsync()
    {
-      var rows = _connectionFactory.UseCommand(
-         command =>
+      var rows = await _connectionFactory.UseCommandAsync(
+         async command =>
          {
             var raw = new List<(Guid EndpointId, string? HandledTessageType)>();
 
@@ -57,39 +58,40 @@ partial class SqlitePeerRegistrySqlLayer(ISqliteConnectionPool connectionFactory
                $"""
 
                 SELECT p.{Peers.EndpointId}, t.{Types.HandledTessageType}
-                FROM {Peers.TableName} p
-                LEFT JOIN {Types.TableName} t ON p.{Peers.EndpointId} = t.{Types.EndpointId}
+                FROM {_tables.Peers} p
+                LEFT JOIN {_tables.PeerHandledTessageTypes} t ON p.{Peers.EndpointId} = t.{Types.EndpointId}
 
                 """);
 
-            using var reader = command.ExecuteReader();
-            while(reader.Read())
+            var reader = await command.ExecuteReaderAsync().caf();
+            await using var _ = reader.caf();
+            while(await reader.ReadAsync().caf())
             {
-               raw.Add((reader.GetGuidFromString(0), reader.IsDBNull(1) ? null : reader.GetString(1)));
+               raw.Add((reader.GetGuidFromString(0), await reader.IsDBNullAsync(1).caf() ? null : reader.GetString(1)));
             }
 
             return raw;
-         });
+         }).caf();
 
       return [..rows.GroupBy(row => row.EndpointId)
-                    .Select(peer => new IServiceBusSqlLayer.PersistedPeer(
+                    .Select(peer => new ITessagingSqlLayer.PersistedPeer(
                                new EndpointId(peer.Key),
                                peer.Where(row => row.HandledTessageType != null).Select(row => row.HandledTessageType!).ToHashSet()))];
    }
 
-   public void DeletePeer(EndpointId peerId)
+   public async Task DeletePeerAsync(EndpointId peerId)
    {
-      _connectionFactory.UseCommand(
-         command => command
+      await _connectionFactory.UseCommandAsync(
+         async command => await command
                    .SetCommandText(
                        $"""
 
-                        DELETE FROM {Types.TableName} WHERE {Types.EndpointId} = @{Types.EndpointId};
-                        DELETE FROM {Peers.TableName} WHERE {Peers.EndpointId} = @{Peers.EndpointId};
+                        DELETE FROM {_tables.PeerHandledTessageTypes} WHERE {Types.EndpointId} = @{Types.EndpointId};
+                        DELETE FROM {_tables.Peers} WHERE {Peers.EndpointId} = @{Peers.EndpointId};
 
                         """)
                    .AddMediumTextParameter(Peers.EndpointId, peerId.ToString())
-                   .ExecuteNonQuery());
+                   .ExecuteNonQueryAsync().caf()).caf();
    }
 
    public async Task InitAsync() => await _schemaManager.EnsureSchemaInitializedAsync().caf();

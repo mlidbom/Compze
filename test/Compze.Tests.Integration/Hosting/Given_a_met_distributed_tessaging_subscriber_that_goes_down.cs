@@ -12,11 +12,11 @@ using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Internals.SystemCE.TransactionsCE.Testing;
 using Compze.Internals.Testing;
 using Compze.Must;
-using Compze.Tessaging.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
-using Compze.Tessaging.Hosting;
+using Compze.Tessaging.Endpoints;
+using Compze.Tessaging.Engine;
 using Compze.Tessaging.Implementation.BestEffortDelivery;
 using Compze.Tessaging.Implementation.Peers;
-using Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler;
+using Compze.Tests.Common.Tessaging.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Threading;
@@ -29,7 +29,7 @@ using static Compze.Must.MustActions;
 namespace Compze.Tests.Integration.Hosting;
 
 ///<summary>
-/// Queue-while-down on the distributed tier (see <c>dev_docs/TODO/durable-peer-topology.md</c>): a publisher that has met a
+/// Queue-while-down on the distributed tier (see <c>src/Compze.Tessaging/dev_docs/peer-model.md</c>): a publisher that has met a
 /// subscribing peer keeps its tevents for it while the peer is down — in memory, in order, nothing persisted anywhere — and the
 /// peer's next connection drains them on its return. The subscriber lives in its own host so it can go down and return while
 /// the publisher stays up; identity is the subscriber's <see cref="EndpointId"/>, which its next incarnation keeps.
@@ -40,7 +40,7 @@ public class Given_a_met_distributed_tessaging_subscriber_that_goes_down : Unive
    static readonly EndpointId SubscriberEndpointId = new(Guid.Parse("7b7e51d5-2e1a-4e0c-9c11-6c0f5b1d2a43"));
 
    readonly IEndpointHost _publisherHost;
-   readonly IEndpoint _publisherEndpoint;
+   readonly BestEffortEndpoint _publisherEndpoint;
    IEndpointHost _subscriberHost;
    readonly AddressesOfTheLiveHosts _registry = new();
 
@@ -52,16 +52,15 @@ public class Given_a_met_distributed_tessaging_subscriber_that_goes_down : Unive
    public Given_a_met_distributed_tessaging_subscriber_that_goes_down()
    {
       _publisherHost = EndpointHost.Production.Create(() => TestEnv.DIContainer.CreateTestingContainerBuilder());
-      _publisherEndpoint = _publisherHost.RegisterEndpoint(
+      _publisherEndpoint = _publisherHost.RegisterEndpoint(container => BestEffortEndpoint.Build(
+         container,
          "QueueWhileDownPublisherEndpoint",
          new EndpointId(Guid.Parse("21c2e6a4-9b0f-4c3d-8a57-3f1de08b6c92")),
-         builder =>
-         {
-            builder.TypeMapper.RegisterIntegrationTestTypeMappings();
-            builder.ComposeFoundationWithCurrentTestsTransportAndNoDatabase()
-                   .AddDistributedTessaging(tessaging => tessaging.NewtonsoftSerializer())
-                   .DiscoverEndpointsThrough(_registry);
-         });
+         endpointBuilder => endpointBuilder
+            .MapTypes(mapper => mapper.RegisterIntegrationTestTypeMappings())
+            .TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport())
+            .NewtonsoftSerializer()
+            .DiscoverEndpointsThrough(_registry)));
 
       _subscriberHost = CreateSubscriberHost();
    }
@@ -69,20 +68,22 @@ public class Given_a_met_distributed_tessaging_subscriber_that_goes_down : Unive
    IEndpointHost CreateSubscriberHost()
    {
       var host = EndpointHost.Production.Create(() => TestEnv.DIContainer.CreateTestingContainerBuilder());
-      host.RegisterEndpoint(
+      host.RegisterEndpoint(container => BestEffortEndpoint.Build(
+         container,
          "QueueWhileDownSubscriberEndpoint",
          SubscriberEndpointId,
-         builder =>
+         endpointBuilder =>
          {
-            builder.TypeMapper.RegisterIntegrationTestTypeMappings();
-            builder.ComposeFoundationWithCurrentTestsTransportAndNoDatabase()
-                   .AddDistributedTessaging(tessaging => tessaging.NewtonsoftSerializer())
-                   .RegisterHandlers(register => register.ForTevent((IMyBestEffortTevent tevent) =>
-                    {
-                       _teventsHandledOnTheSubscriber.Enqueue(tevent);
-                       _subscriberTeventHandlerGate.AwaitPassThrough();
-                    }));
-         });
+            endpointBuilder
+               .MapTypes(mapper => mapper.RegisterIntegrationTestTypeMappings())
+               .TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport())
+               .NewtonsoftSerializer()
+               .RegisterTessageHandlers(handle => handle.ForTevent((IMyBestEffortTevent tevent) =>
+                {
+                   _teventsHandledOnTheSubscriber.Enqueue(tevent);
+                   _subscriberTeventHandlerGate.AwaitPassThrough();
+                }));
+         }));
       return host;
    }
 
@@ -121,7 +122,7 @@ public class Given_a_met_distributed_tessaging_subscriber_that_goes_down : Unive
       2.Through(4).ForEach(PublishOnThePublisherEndpointInATransaction);
 
       //The act discards the three queued tevents, reported - decommissioning a peer with held tessages is loud and deliberate.
-      var report = _publisherEndpoint.ServiceLocator.Resolve<IPeerAdministration>().Decommission(SubscriberEndpointId);
+      var report = await _publisherEndpoint.ServiceLocator.Resolve<IPeerAdministration>().DecommissionAsync(SubscriberEndpointId);
       report.Discarded.Single().Count.Must().Be(3);
 
       //Published while decommissioned: fanned out to nobody - nothing anywhere remembers the peer.

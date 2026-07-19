@@ -1,0 +1,335 @@
+# The Tessaging migration plan: from today's code to the target design
+
+**Status: EXECUTED IN FULL — all ten phases done, the last on 2026-07-18. This document is the migration's
+record; the living current-state documentation is in [the parent dev_docs folder](../)
+([tessaging-model.md](../tessaging-model.md) and kin).**
+
+**Phases 1 and 2 executed 2026-07-17** (phase 1: debris, both Typermedia
+defect fixes, the record→class conversion, the stale-prose sweep, the ServiceBus vocabulary's death;
+phase 2: `Compze.Tessaging.Abstractions`, the Typermedia trio + its testing project, and
+`Compze.Internals.Transport` folded into the paradigm assemblies; `Compze.Internals.Transport.AspNet`
+renamed `Compze.Tessaging.AspNetCore`; the three typermedia spec projects merged into
+`Compze.Tessaging.Specifications`). **Phase 3 executed 2026-07-17**: one `EndpointInformation` +
+`EndpointInformationQuery` (advertisement unioned from per-style `IEndpointAdvertisementContributor`
+contributions — an interim seam the roster replaces); the `TessagingRouter` routes all four kinds and the
+endpoint's `ITypermediaRouting` rides it; the reconcile-loop twin died — `TypermediaClientRouter` keeps only
+the explicit-connect client shape; `DistributedTypermediaEndpointFeature` composes the distributed Tessaging
+core; peer memory remembers the one advertisement, typermedia types included, so decommission covers them by
+construction (pinned in `Peer_registry_tests`). **Phase 4 executed 2026-07-17**: the `TessageHandlerRoster`
+(one immutable map for all four kinds, replacing both registries; duplicate single-handler registration and
+registration-after-build explode; advertisement = its projections, computed once) and the one
+`TessageHandlerExecutor` (the five donors' choreography died into it) landed together, wired; the
+`LocalTessagingEngineBuilder` with the ⚖ declaration idiom and the target handler signatures — async-only
+verbs for exactly-once kinds enforced at declaration, sync first-class for the rest — replaced
+`InProcessTessaging()`/`InProcessTypermedia()` in plain containers (`LocalTessagingEngine(engine => ...)`,
+one per container) and the per-style registrar surfaces on endpoints (`RegisterTessageHandlers` /
+`ObserveTevents` on every feature and the endpoint builder, all declaring into the endpoint's one
+`LocalTessagingEngineFeature`); every registration site in the suite, the doc samples, the store
+integrations (tevent store, document db), and the AccountManagement sample migrated to the declaration
+blocks, exactly-once handlers landing on their async shapes. Observation semantics carried over unchanged,
+as planned. **Phase 5 executed 2026-07-17**, five green commits: (1) the consistency law's behavior change —
+the tommand-sender door consults the roster, in-roster executes inline in the sender's execution
+(exactly-once by construction; in-boundary failure fails the sender), the router's self-connection is
+deleted (reconciliation now *excludes* the endpoint's own announced address — the registry lists it like any
+other — and an answer claiming the endpoint's own identity fails loud), and the self-send spec is re-pinned
+to "has executed inline when the send returns" plus a failing-handler-fails-the-sender pin; (2) the concrete
+endpoint types (`Compze.Tessaging.Endpoints`): `BestEffortEndpoint` and `ExactlyOnceEndpoint` as plain
+composition roots — engine + identity + wire, all four kinds unconditionally, lifecycle phases in readable
+methods, composition choices as named parameter declarations (transport, the one serializer, the database
+pairing, topology, the tracker) with missing declarations failing loud from builder state — and
+`EndpointHost.RegisterEndpoint<TEndpoint>(Func<IContainerBuilder, TEndpoint>)` as the host's one
+tier-ignorant door; (3) the per-tier `TestingEndpointHost` (moved to `Compze.Tessaging.Hosting.Testing`) and
+the migration of every consumer (~25 spec files, the separate-process program — now the
+production-composition exemplar — and the whole AccountManagement sample); (4) the feature machinery's
+death: the five features, `IEndpointBuilder`/`GetOrAddFeature`/`OnContainerBuilt`/`AddComponent`,
+`IEndpointComponent`, `ServerEndpointBuilder` + the generic `Endpoint`, the advertisement-contributor seam
+and the roster's kind partitions, the twin serializer slots, the typed foundation, the
+`ITestingEndpointHostFeature` seam, and `IEndpoint`'s phase methods dropping the "Components" word; (5) the
+pure client — `TypermediaClient`, the third composed shape, which `TypermediaTestClient` now rides. One
+ordering lesson recorded in code: the tier registers before the shared substrate, because the peer
+registry's durability follows the tier's declared persistence. **Phase 6 executed 2026-07-17**, three green
+commits: the tessages-in-flight tracker re-homed out of the transport namespace (truthful home first — it
+was about to cover more than transport), then the observation redesign whole: a local publish queues its
+observers through `IUnitOfWorkResolver.OnCommittedSuccessfully` — a rolled-back publish is never observed,
+the fires-even-on-rollback pins deliberately inverted at both the engine and the endpoint level — arrival
+sites queue already-committed facts on arrival, and dispatch runs off-thread on the engine's
+`TeventObservationDispatcher` with one FIFO queue per observer, failures to the background-exception
+reporter, and the pump started with `ExecutionContext` flow suppressed so the committing caller's ambient
+transaction cannot leak into observer scopes. The dispatcher reports queued/dispatched transitions to the
+tracker, so the testing host's at-rest wait covers the observation queues exactly as this phase demanded;
+an endpoint additionally drains the dispatcher at disposal, after listening stops and *before* its
+container tears down — a drain left to container teardown could not run the observers, since scope
+creation is refused once container disposal begins. New pins: per-observer FIFO order, off-thread
+dispatch, drain-at-disposal, and a throwing observer's failure rethrown at testing-host disposal.
+**Phase 7 executed 2026-07-17**, four green commits: (1) the async foundations —
+`ExecuteUnitOfWorkAsync`/`ExecuteInIsolatedScopeAsync` with the ambient transaction flowing across awaits,
+`TransactionScopeCe.ExecuteAsync` public, the pool's `UseCommandAsync`, and a task runner that tracks
+genuinely async work; (2) the tessaging SQL layers and the peer vertical async across all four backends;
+(3) the doors — the tevent publishers as sync/async pairs whose synchronous form refuses an exactly-once
+tevent (the settled build-time question answered: neither one-async-method, which would break
+strictly-local sync-first-class, nor a sync form serving everything, which would break exactly-once
+async-end-to-end — the pair with the type-contract assert is the only shape honoring both), the tommand
+senders async-only with the inline in-roster execution awaited, administration async, and the tevent
+store's one deliberate sync-context bridge (the taggregate model raises tevents synchronously from
+constructors and domain methods — asyncifying Teventive itself is not a call-site choice); (4) the inbox
+and wire-serving execution async end to end. The async depth exposed two latent defects the thread-pinned
+era masked, both root-caused: the sample's statistics initializer kept an in-memory initialized-flag that
+survived its transaction's rollback, and `SingleThreadUseGuard` asserted thread affinity on sessions whose
+async-era identity is their transaction — session affinity is transactional now, the thread guard deleted,
+the multi-threaded-use pins re-pinned as multi-transaction-use pins.
+**Phase 8 executed 2026-07-17**, four green commits: (1) peer memory answering the single-handler question
+for every remotable single-handler kind — the Type-keyed exact-match `HandlerIdsFor` replacing the
+tommand-shaped surface, sized exactly by what the known-but-down vs never-seen distinction needs; (2)
+waiting sends for typermedia: every remote navigation waits, bounded by the endpoint's
+handler-availability patience (a flat 30 seconds unless the composition declares otherwise —
+`EndpointBuilder.HandlerAvailabilityPatience`), through the new `IHandlerAvailability` — a bounded
+re-check loop over the router's routes and the peer memory, deliberately polled rather than
+signal-plumbed, classifying its patience-exhausted failure from the same snapshot whose check exhausted
+the patience; the no-handler exception family became exclusively the patience-exhausted failure, telling
+known-but-down (naming the remembered peer) from never-seen (naming the probable deployment error), while
+the external client's router keeps its immediate throws — its connections change only by its own explicit
+connects — and the interprocess spec's hand-rolled retry-on-no-handler loop dissolved into the single
+waiting navigation; (3) the exactly-once cold-start bind waits — walked through the exactly-once in-order
+guarantee before building: the wait strictly precedes the one bind-at-send, so the tommand still binds
+exactly once, before its row is saved, and rides the bound pair's single ordered receiver-deduped stream;
+never-seen waits for the first contact and then binds, several-remembered-none-live waits for one to
+connect (live is current by definition, resolving the replacement ambiguity) or for a decommission, the
+sole-remembered-down handler binds immediately exactly as before, and the SQLite corner — a sender whose
+transaction already holds the write gate blocks the very advertisement recording that would satisfy its
+wait, degrading to the pre-waiting failure delayed by patience — is documented at the wait site; (4)
+readiness — `IEndpoint.AwaitReadinessAsync(ReadinessTypes, patience?)` completes when a handler for every
+named type is available: the endpoint's own roster serves it, an exactly-once tommand type has a bindable
+receiver, or a request/response type has exactly one live route — precisely the availability a send would
+not have to wait for, so the two mechanisms compose instead of overlapping; the type sets are
+`ReadinessTypes` reflection factories (`InAssemblyContaining`, `InNamespaceOf`) filtering to the remotable
+single-handler kinds, anything else failing loud at composition; exhausted patience throws
+`EndpointNotReadyWithinPatienceException` naming every type still unavailable and what the peer memory
+remembers about each. The ⚖ before-the-next-release commitment this phase carried is discharged.
+**Phase 9 executed 2026-07-17**, four green commits: (1) the rename first — the foundation declaration names
+the domain database this endpoint joins (`SqliteDomainDatabase` and kin, `ExactlyOnceEndpointBuilder.DomainDatabase`),
+because `*EndpointDatabase` spoke an ownership the design never meant; (2) each endpoint owns a prefixed
+table-set (`EndpointTableSet` — inbox, outbox and its dispatching, durable peer memory, prefixed
+`«EndpointName»_`), which settles the deliberately-unsettled prefix convention and makes an exactly-once
+endpoint's name identifier material — a letter then letters/digits/underscores, at most 28 characters
+(63, PostgreSQL's identifier limit, minus the longest generated identifier beyond the name), asserted loud
+at composition, never sanitized; the domain-level tables (interner, tevent store, document db, the catalog)
+stay deliberately unprefixed — they are the domain's data; (3) the endpoint catalog and the process lease —
+one shared `EndpointCatalog` table per domain database enforcing name-uniqueness and never-silently-re-keyed
+ids, and a heartbeat lease (`EndpointProcessLease`, duration declared via
+`ExactlyOnceEndpointBuilder.ProcessLeaseDuration`, default 15s) claimed as the first act of starting to
+listen: a claimant waits out one lease duration so a crashed predecessor's stale lease is taken over
+silently — crash recovery needs no manual cleanup — while a holder proven alive by its heartbeats fails the
+start loud (`EndpointAlreadyRunningInAnotherProcessException`, naming the holder), and a live holder whose
+lease is stolen (debugger pause, machine sleep) reports through the background-exception machinery; (4) the
+proof — two endpoints joined to one domain database converse exactly-once in both directions through their
+prefixed outboxes and inboxes, the catalog lists both, and the rule pins land; the parallel first boot this
+exposed (endpoints start under the host's `WhenAll`, and IF-NOT-EXISTS guards are not concurrency-safe DDL)
+is fixed by construction: schema creation serializes under each engine's advisory lock, correct across
+connections and processes. On sqlite the separate per-endpoint interner database is retired by construction —
+the interner file derives from the domain database's name, so co-located endpoints share one. The
+storage-drop administration act is parked as a todo at the catalog surface: the design equation is settled,
+the door awaits its first consumer.
+**Phase 10 executed 2026-07-18**, two green commits plus the docs sweep: (1) the mutual-first-contact
+await — `TestingEndpointHost.AwaitEndpointsHaveMetEachOtherAsync`, awaited explicitly by the fixtures whose
+very next act rides in-host discovery (tevent fan-out membership, peer-memory assertions, ambiguity pins,
+instant binds within a deliberately short patience) — landed first, passing instantly under the still-standing
+barrier; (2) the demotion — `Endpoint.StartAsync` drives the endpoint's own listen → announce → send
+(disposal already drove the mirror), `IEndpoint` slims to the first-class surface (`ServiceLocator`,
+`IsRunning`, `StartAsync`, `AwaitReadinessAsync`) with the six phase methods staying public on the concrete
+`Endpoint` for deliberate phase scripting, and `EndpointHost` becomes a WhenAll convenience over the
+endpoints' own starts and disposals. The host-wide barrier is gone: its headline guarantee — a router's
+first look at the registry sees every endpoint the host announced — held only inside one process's
+`StartAsync`, and per-endpoint ordering keeps what is honest everywhere (an announced address is always one
+that is actually listening). The specs migrated to the explicit awaits as planned: the
+two-best-effort-endpoints spec declares its subscriber with `RequirePeers` (the production device —
+queue-before-first-contact holds the pre-meet publish), the late-endpoint racing specs collapse their three
+phase calls onto the one `StartAsync`, and the shared fixtures ride the met-await. The destination is
+[tessaging-target-design.md](tessaging-target-design.md); the rationale and evidence are in
+[style-substrate-and-hosting-evaluation.md](style-substrate-and-hosting-evaluation.md). This document is the
+path: the ordered phases, what each contains, and what gates what. Every phase is a run of increments that
+each build clean, pass the full test suite, and are committed with a message recording the why.
+
+## The ordering principle
+
+Re-home concepts before restructuring — truthful names and homes first, wiring second. Applied here:
+
+1. **Debris, defects, and truthful names first** (no design risk).
+2. **Then the homes** (the project moves), so everything after is born where it belongs.
+3. **Then unify the workers** — router, advertisement, peer memory — which survive unchanged into the
+   target, so nothing is built twice.
+4. **Then replace the plumbing** — the LocalTessagingEngine and the concrete endpoint types, deleting the
+   feature machinery as they land.
+5. **Only then the behavior changes that need the new structure** — inline in-roster tommands, the
+   observation redesign, synchrony-follows-the-type, the storage model.
+6. **Readiness before storage** (it carries the ⚖ before-the-next-release commitment inherited from
+   "Typermedia parity"); **the Host demotion last** (only after readiness exists to carry what the host-wide
+   barrier pretended to guarantee).
+
+## ⚖ The project homes (evaluation question 9 — settled 2026-07-17)
+
+**Option (a) — one paradigm project — with the transport-weight exception:**
+
+- **`Compze.Tessaging` is the paradigm project**: the LocalTessagingEngine, the concrete endpoint types, and
+  both siblings' machinery as namespaces within it. The named-pipe transport folds in — `System.IO.Pipes`
+  is base runtime, no dependency weight. `Compze.Typermedia`, `Compze.Typermedia.Client`,
+  `Compze.Typermedia.Hosting`, `Compze.Tessaging.Abstractions`, and `Compze.Internals.Transport` fold into
+  it.
+- **The ASP.NET Core transport stays its own project** (working name `Compze.Tessaging.AspNetCore`):
+  folding it in would drag the web stack into every consumer, and the consumer that matters wants the light
+  stack.
+- **The four SQL backend projects keep their shape** (`Compze.Tessaging.Sqlite` and kin).
+- Testing projects fold correspondingly. Exact final names for the folded projects are decided at move time,
+  inside the settled shape.
+
+## What the plan rests on (verified in the code, 2026-07-17)
+
+- **Tevents already obey the consistency law.** `Outbox.PublishTransactionally` excludes self from fan-out;
+  an endpoint's own subscription to its own exactly-once tevent is served by participation only. The only
+  self-addressed wire traffic is the exactly-once tommand path (`Outbox.SendTransactionally` →
+  self-connection → own transport server → own inbox), so deleting the self-connection is a tommand-path
+  change plus one spec, not a broad rewiring.
+- **Every handler surface today is synchronous** — `Action`/`Func` only, and the doors are `void Publish` /
+  `void Send`. Synchrony-follows-the-type is new machinery, not a rename sweep.
+- **Observation today is inline on the caller's thread and spec-pinned to fire even when the publishing
+  transaction rolls back.** The target's committed-facts-only, off-thread contract deliberately inverts that
+  pin.
+- **The endpoint catalog is a wholly new table** — nothing anywhere persists an endpoint's own identity
+  today.
+- **The one executor has exactly five donors**: `InProcessTeventPublisher`, the `Inbox` handler-execution
+  engine, `BestEffortTeventDirectDispatcher`, `TypermediaHandlerExecutor`, `TeventObservationDispatcher`.
+
+## Phase 1 — Debris, defects, stale prose, safe renames *(mechanical, no design risk)*
+
+1. Delete the nine husk directories (seven `Compze.ServiceBus*`, `Compze.Tessaging.Hosting.AspNetCore`,
+   `Compze.Typermedia.Hosting.AspNetCore`) and the vestigial `Compze.Core` FlexRef blocks in the six csprojs
+   (a stale-nupkg hazard), plus the two stale `// Compze.Core` comments.
+2. Fix the two Typermedia defects: `TypermediaRouter.RebuildRouteTables`'s `Dictionary.Add` crash-loop
+   becomes the TessageBus policy (a duplicate route is a diagnosable send-time condition, decommission the
+   remedy); `TypermediaHandlerRegistry`'s raw indexers become a proper no-handler exception, and
+   `ExecuteWithRetry` stops retrying programming-error-shaped failures.
+3. `EndpointAddress` record → class.
+4. Stale-prose sweep: `hosting-model.md` (the nonexistent "scheduler", the pre-rename navigator name),
+   `unit-of-work-model.md` ("transient tevent dispatch"), and every file still pointing at the old
+   `dev_docs/TODO/durable-peer-topology.md` path.
+5. The ServiceBus-remnant renames out of the borrowed jargon: `IServiceBusSqlLayer` and the
+   `ServiceBusSpecification` test folders.
+6. "In-process" → "local" as vocabulary — applied only where the word is conceptual; prose that truthfully
+   describes the current `InProcess*` classes keeps their names, and the doomed classes themselves die under
+   their old names in phase 5 (renaming corpses is churn).
+
+## Phase 2 — Move the projects into the settled homes
+
+The folds and renames from the ⚖ homes decision above, as their own mechanical green increment
+(`C-Merge-Project`/`C-Rename-Project` plus the Rider refactoring engine), so everything after is born in its
+home.
+
+## Phase 3 — One advertisement, one discovery query, one router, peers across all kinds
+
+Unify the workers in place, under the existing feature wiring — they survive unchanged into the endpoint
+types, so nothing here is done twice: merge the two structurally identical endpoint-information payloads and
+discovery queries into one; `TessagingRouter` absorbs the typermedia routes (exact-type single-handler kinds
+beside the tevent-assignability routes — the only style-typed difference that exists); `TypermediaRouter` is
+deleted; the peer registry remembers the one advertisement per peer. **The acceptance test that the
+harmonization is real: `Decommission` covers typermedia routes.** This also dissolves the "Typermedia
+parity" debt permanently and puts peer knowledge exactly where readiness will need it.
+
+## Phase 4 — The LocalTessagingEngine
+
+The heart of the migration, several increments:
+
+1. **The `TessageHandlerRoster`** — one immutable map for all four kinds, merging `TessageHandlerRegistry`
+   and `TypermediaHandlerRegistry`; the advertisement becomes its pure projection, computed once; a second
+   handler for a single-handler type explodes at build.
+2. **The one executor** — replacing the five donors' choreography: a tevent's response is all compatible
+   handlers in one unit of work, a tommand's its single handler in a unit of work, a tuery's its single
+   handler in a scope; one no-handler policy. Written **async-capable from birth** — it is a new class,
+   written right once — with the sync strictly-local path staying genuinely synchronous.
+3. **The builder** — `LocalTessagingEngineBuilder` with the settled registrar idiom
+   (`Builder RegisterTessageHandlers(Action<TessageHandlerRegistrar> register)`, `MapTypes`,
+   `ObserveTevents`), replacing the `InProcessTessaging()`/`InProcessTypermedia()` container extensions and
+   the `RegisterTessagingHandlers`/`RegisterTypermediaHandlers` extension properties; one engine per
+   container, a second explodes. **The registrar is born with the target handler signatures** — async-only
+   verbs for exactly-once kinds, sync first-class for strictly-local — so the one big spec migration (every
+   registration site moves to the declaration block anyway) lands on the final shapes and never moves again.
+4. The old endpoint features are adapted to compose the engine (a thin shim, deleted in phase 5), so the
+   suite stays green throughout. Observation semantics are carried over unchanged in this phase — the
+   redesign is its own phase, so each behavior change is its own commit.
+
+## Phase 5 — Concrete endpoint types; the feature machinery dies
+
+The best-effort endpoint and the exactly-once endpoint as plain composition roots wrapping an engine plus
+identity and wire, serving all four kinds unconditionally, each driving its own lifecycle phases in readable
+methods; the pure client as the third shape. `GetOrAddFeature`, the contribution seams, the
+`IfNotRegistered` guards, the twin serializer slots, `OnContainerBuilt`, the `IEndpointComponent` seam, and
+the `ITestingEndpointHostFeature` seam all die; testing becomes concrete per-tier wiring (the tracker handed
+in at construction).
+
+**Into this phase lands the consistency law's behavior change:** the tommand-sender door consults the
+roster — in-roster executes inline through the engine's executor, in the sender's execution; the
+self-connection is deleted from the router. The exactly-once-in-order walk is short and by construction: an
+inline tommand never touches the wire, so there is no stream to order and no dedup to need. The dedicated
+self-send spec changes meaning deliberately — from "delivered through its own inbox" to "executes inline in
+the sender's unit of work".
+
+## Phase 6 — Observation redesigned: committed facts, off-thread
+
+Queue observed tevents at commit (`IUnitOfWorkResolver.OnCommittedSuccessfully` is the hook), dispatch
+off-thread with per-observer FIFO, failures to the background-exception reporter, and the testing at-rest
+wait extended to cover the observation queues (today the in-flight tracker does not see observation at all —
+it is only transitively covered by inline dispatch, which stops being true the moment dispatch goes
+off-thread). The fires-even-on-rollback spec inverts — that is the point.
+
+## Phase 7 — Synchrony follows the type: the doors
+
+The surface sweep the async-native executor makes cheap: the exactly-once doors go async
+(`IUnitOfWorkTeventPublisher`/`IIndependentTeventPublisher`, the tommand senders — outbox writes are
+database I/O), remote typermedia async-first, administration async, strictly-local doors keeping sync
+first-class. One design detail settled at build time: whether the shared tevent-publisher door becomes one
+async method or a sync/async pair (it serves both strictly-local and exactly-once tevents through one
+interface).
+
+## Phase 8 — Readiness and waiting sends, built once
+
+The four increments already sketched in [readiness-and-waiting-sends.md](readiness-and-waiting-sends.md),
+now with their unambiguous *where* (the one router and one peer registry from phase 3). Before the storage
+phase because it carries the ⚖ before-the-next-release commitment, and it is what triggered this whole arc.
+
+## Phase 9 — Storage: the database belongs to the domain
+
+Per-endpoint prefixed table-sets across all four backends (the shared table-name constants and per-backend
+`Schema.cs` DDL make this well-localized); the endpoint catalog table (name uniqueness asserted loud,
+`EndpointId`, the process lease — one process per endpoint, a conflict fails loud at startup); the type-id
+interner shared per domain database (on SQLite this also retires the separate per-endpoint interner database
+file); decommissioning an endpoint's storage = dropping its set; the foundation declaration reworded from
+"the endpoint's database" to "the domain database this endpoint joins". New specs: several endpoints
+conversing exactly-once inside one domain database; the lease conflict. The exact prefix convention is the
+deliberately-unsettled implementation-time decision — settled here.
+
+## Phase 10 — The Host demotion *(last)*
+
+Only after readiness exists to carry what the host-wide barrier pretended to guarantee: endpoint types
+first-class, `EndpointHost` a `WhenAll` convenience, the barrier weakened to per-endpoint phase ordering,
+and the specs that implicitly rode first-look-sees-all migrated to explicit awaits (readiness,
+`RequirePeers` pens, the read-counting registry idiom).
+
+## Rolling throughout
+
+[hosting-model.md](../../../../src/Compze.Hosting/dev_docs/hosting-model.md),
+[tevent-delivery-model.md](../../../../src/Compze.Tessaging/dev_docs/tevent-delivery-model.md), and
+[same-machine-hosting.md](../../../../src/Compze.Hosting/dev_docs/wip/same-machine-hosting.md) are rewritten
+as the machinery they describe changes — never left lying — with a final coherence sweep at the end.
+
+## Size and risk, honestly
+
+Phases 1–3 are days-scale and low-risk. Phases 4–5 are the big ones — every handler-registration site in
+the suite migrates in phase 4, and the endpoint types in phase 5 touch every hosting spec. Phase 7's async
+depth in the inbox, and the SQLite write-gate-across-awaits interaction, is the least sizable piece from
+here. Everything else is design already ⚖-settled in the target document.
+
+## Related documents
+
+- [tessaging-target-design.md](tessaging-target-design.md) — the destination.
+- [style-substrate-and-hosting-evaluation.md](style-substrate-and-hosting-evaluation.md) — the rationale
+  and evidence; question 9's option space, now settled above.
+- [readiness-and-waiting-sends.md](readiness-and-waiting-sends.md) — phase 8's design, settled.
+- [tessaging-WIP.md](../WIP/tessaging-WIP.md) — the hub.

@@ -2,7 +2,7 @@ using Compze.Internals.Sql.Common;
 using Compze.Internals.Sql.Common.Abstractions;
 using Compze.Internals.SystemCE;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
-using MySql.Data.MySqlClient;
+using MySqlConnector;
 
 namespace Compze.Internals.Sql.MySql;
 
@@ -23,7 +23,6 @@ public interface IMySqlConnectionPool : IDbConnectionPool<ICompzeMySqlConnection
                var connectionString = getConnectionString();
                return DbConnectionPool<ICompzeMySqlConnection, MySqlCommand>.ForConnectionString(
                   connectionString,
-                  PoolableConnectionFlags.MustUseSameConnectionThroughoutATransaction,//todo:review: verify that this is needed. Enabling for now to see if it fixes CI issues.
                   ICompzeMySqlConnection.Create);
             });
       }

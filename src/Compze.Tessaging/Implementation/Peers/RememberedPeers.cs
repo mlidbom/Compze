@@ -29,6 +29,6 @@ class RememberedPeers
    internal IReadOnlyList<EndpointId> SubscriberIdsFor(IPublisherTevent<IRemotableTevent> wrappedTevent) =>
       _monitor.Locked(() => (IReadOnlyList<EndpointId>)[.._peers.Values.Where(peer => peer.SubscribesTo(wrappedTevent)).Select(peer => peer.Id)]);
 
-   internal IReadOnlyList<EndpointId> HandlerIdsFor(IExactlyOnceTommand tommand) =>
-      _monitor.Locked(() => (IReadOnlyList<EndpointId>)[.._peers.Values.Where(peer => peer.Handles(tommand)).Select(peer => peer.Id)]);
+   internal IReadOnlyList<EndpointId> HandlerIdsFor(Type tessageType) =>
+      _monitor.Locked(() => (IReadOnlyList<EndpointId>)[.._peers.Values.Where(peer => peer.Handles(tessageType)).Select(peer => peer.Id)]);
 }

@@ -9,4 +9,8 @@ public interface IInbox
    Task StartAsync();
 
    Task ReceiveAsync(TransportTessage.InComing tessage);
+
+   ///<summary>Waits (best-effort) for every already-received tessage to finish handling, so the endpoint tears down with empty<br/>
+   /// queues. Called during shutdown after the transport has stopped, so nothing new arrives and the inbox drains to idle.</summary>
+   void AwaitAllReceivedTessagesProcessed();
 }

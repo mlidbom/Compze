@@ -10,10 +10,10 @@ using Compze.Internals.Serialization.Newtonsoft.Wiring;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Internals.Testing;
 using Compze.Must;
-using Compze.Tessaging.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
-using Compze.Tessaging.Hosting;
+using Compze.Tessaging.Endpoints;
+using Compze.Tessaging.Engine;
 using Compze.Tessaging.Implementation.Peers;
-using Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler;
+using Compze.Tests.Common.Tessaging.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Threading;
@@ -26,7 +26,7 @@ namespace Compze.Tests.Integration.Hosting;
 
 ///<summary>
 /// The per-peer opt-down from queue-while-down (<c>DoNotQueueTeventsFor</c> — see
-/// <c>dev_docs/TODO/durable-peer-topology.md</c>): ephemerality is a property of the relationship, so an endpoint that queues
+/// <c>src/Compze.Tessaging/dev_docs/peer-model.md</c>): ephemerality is a property of the relationship, so an endpoint that queues
 /// for the peers it depends on can still declare, peer by peer, that it keeps nothing for one it does not care about. Tevents
 /// for such a peer are delivered only while it is connected: published while it is down, they are dropped, and the peer resumes
 /// from tevents published after its return.
@@ -37,7 +37,7 @@ public class Given_a_met_distributed_tessaging_subscriber_the_publisher_does_not
    static readonly EndpointId SubscriberEndpointId = new(Guid.Parse("5a92c4e1-7f3b-4d08-b6c5-90e12a8d47f3"));
 
    readonly IEndpointHost _publisherHost;
-   readonly IEndpoint _publisherEndpoint;
+   readonly BestEffortEndpoint _publisherEndpoint;
    IEndpointHost _subscriberHost;
    readonly AddressesOfTheLiveHosts _registry = new();
 
@@ -47,17 +47,16 @@ public class Given_a_met_distributed_tessaging_subscriber_the_publisher_does_not
    public Given_a_met_distributed_tessaging_subscriber_the_publisher_does_not_queue_tevents_for()
    {
       _publisherHost = EndpointHost.Production.Create(() => TestEnv.DIContainer.CreateTestingContainerBuilder());
-      _publisherEndpoint = _publisherHost.RegisterEndpoint(
+      _publisherEndpoint = _publisherHost.RegisterEndpoint(container => BestEffortEndpoint.Build(
+         container,
          "NoQueueingPublisherEndpoint",
          new EndpointId(Guid.Parse("e47b06d2-3c95-48a1-bf60-27d8c41e95b0")),
-         builder =>
-         {
-            builder.TypeMapper.RegisterIntegrationTestTypeMappings();
-            builder.ComposeFoundationWithCurrentTestsTransportAndNoDatabase()
-                   .AddDistributedTessaging(tessaging => tessaging.NewtonsoftSerializer())
-                   .DiscoverEndpointsThrough(_registry)
-                   .DoNotQueueTeventsFor(SubscriberEndpointId);
-         });
+         endpointBuilder => endpointBuilder
+            .MapTypes(mapper => mapper.RegisterIntegrationTestTypeMappings())
+            .TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport())
+            .NewtonsoftSerializer()
+            .DiscoverEndpointsThrough(_registry)
+            .DoNotQueueTeventsFor(SubscriberEndpointId)));
 
       _subscriberHost = CreateSubscriberHost();
    }
@@ -65,20 +64,22 @@ public class Given_a_met_distributed_tessaging_subscriber_the_publisher_does_not
    IEndpointHost CreateSubscriberHost()
    {
       var host = EndpointHost.Production.Create(() => TestEnv.DIContainer.CreateTestingContainerBuilder());
-      host.RegisterEndpoint(
+      host.RegisterEndpoint(container => BestEffortEndpoint.Build(
+         container,
          "NoQueueingSubscriberEndpoint",
          SubscriberEndpointId,
-         builder =>
+         endpointBuilder =>
          {
-            builder.TypeMapper.RegisterIntegrationTestTypeMappings();
-            builder.ComposeFoundationWithCurrentTestsTransportAndNoDatabase()
-                   .AddDistributedTessaging(tessaging => tessaging.NewtonsoftSerializer())
-                   .RegisterHandlers(register => register.ForTevent((IMyBestEffortTevent tevent) =>
-                    {
-                       _teventsHandledOnTheSubscriber.Enqueue(tevent);
-                       _subscriberTeventHandlerGate.AwaitPassThrough();
-                    }));
-         });
+            endpointBuilder
+               .MapTypes(mapper => mapper.RegisterIntegrationTestTypeMappings())
+               .TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport())
+               .NewtonsoftSerializer()
+               .RegisterTessageHandlers(handle => handle.ForTevent((IMyBestEffortTevent tevent) =>
+                {
+                   _teventsHandledOnTheSubscriber.Enqueue(tevent);
+                   _subscriberTeventHandlerGate.AwaitPassThrough();
+                }));
+         }));
       return host;
    }
 

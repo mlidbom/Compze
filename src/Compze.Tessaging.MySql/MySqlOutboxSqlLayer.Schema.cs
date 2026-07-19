@@ -1,5 +1,6 @@
-using M = Compze.Tessaging.Transport.SqlLayer.IServiceBusSqlLayer.OutboxTessagesDatabaseSchemaStrings;
-using D = Compze.Tessaging.Transport.SqlLayer.IServiceBusSqlLayer.OutboxTessageDispatchingTableSchemaStrings;
+using Compze.Tessaging.Transport.SqlLayer;
+using M = Compze.Tessaging.Transport.SqlLayer.ITessagingSqlLayer.OutboxTessagesDatabaseSchemaStrings;
+using D = Compze.Tessaging.Transport.SqlLayer.ITessagingSqlLayer.OutboxTessageDispatchingTableSchemaStrings;
 
 namespace Compze.Tessaging.MySql;
 
@@ -7,10 +8,10 @@ partial class MySqlOutboxSqlLayer
 {
    const string MySqlGuidType = "CHAR(36)";
 
-   public const string SchemaCreationSql =
+   public static string SchemaCreationSql(EndpointTableSet tables) =>
       $"""
 
-        CREATE TABLE IF NOT EXISTS {M.TableName}
+        CREATE TABLE IF NOT EXISTS {tables.OutboxTessages}
         (
             {M.GeneratedId}       bigint          NOT NULL  AUTO_INCREMENT,
             {M.TypeId}            int             NOT NULL,
@@ -19,12 +20,12 @@ partial class MySqlOutboxSqlLayer
 
             PRIMARY KEY ( {M.GeneratedId}),
 
-            UNIQUE INDEX IX_{M.TableName}_Unique_{M.TessageId} ( {M.TessageId} )
+            UNIQUE INDEX IX_{tables.OutboxTessages}_Unique_{M.TessageId} ( {M.TessageId} )
         )
         ENGINE = InnoDB
         DEFAULT CHARACTER SET = utf8mb4;
 
-        CREATE TABLE  IF NOT EXISTS {D.TableName}
+        CREATE TABLE  IF NOT EXISTS {tables.OutboxTessageDispatching}
         (
             {D.TessageId}        {MySqlGuidType} NOT NULL,
             {D.EndpointId}       {MySqlGuidType} NOT NULL,
@@ -38,7 +39,7 @@ partial class MySqlOutboxSqlLayer
             PRIMARY KEY ( {D.TessageId}, {D.EndpointId}),
                 /*WITH (ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = OFF) ON PRIMARY,*/
 
-            FOREIGN KEY ({D.TessageId}) REFERENCES {M.TableName} ({M.TessageId})
+            FOREIGN KEY ({D.TessageId}) REFERENCES {tables.OutboxTessages} ({M.TessageId})
         )
         ENGINE = InnoDB
         DEFAULT CHARACTER SET = utf8mb4;

@@ -35,6 +35,12 @@ namespace Compze.DbPool;
    void CollectGarbage() => Databases.Where(db => db.ShouldBeReleased)
                                      .ForEach(db => db.Release());
 
+   ///<summary>Renews the lease on every database currently reserved by <paramref name="poolId"/>. The pool calls this on a<br/>
+   /// heartbeat so its reservations stay fresh for as long as it lives - only a dead pool stops renewing and has its databases<br/>
+   /// reclaimed by <see cref="CollectGarbage"/> once the lease elapses.</summary>
+   public void RenewReservationsFor(Guid poolId, TimeSpan reservationLength) =>
+      DatabasesReservedBy(poolId).ForEach(db => db.RenewReservation(reservationLength));
+
    public void ReleaseReservationsFor(Guid poolId) => DatabasesReservedBy(poolId).ForEach(db => db.Release());
 
    public DateTime EarliestReservationExpiration => Databases.Where(db => db.IsReserved)

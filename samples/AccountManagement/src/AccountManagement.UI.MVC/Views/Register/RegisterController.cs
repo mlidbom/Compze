@@ -2,7 +2,7 @@ using AccountManagement.API;
 using AccountManagement.Domain.Registration;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Compze.Typermedia;
+using Compze.Tessaging.Typermedia;
 
 namespace AccountManagement.UI.MVC.Views.Register;
 

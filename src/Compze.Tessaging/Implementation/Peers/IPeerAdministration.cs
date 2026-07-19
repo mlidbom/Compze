@@ -3,7 +3,7 @@ using Compze.Abstractions.Hosting.Public;
 namespace Compze.Tessaging.Implementation.Peers;
 
 ///<summary>The administrative operations on the endpoint's peer memory — the surface the future bus-management endpoints exist<br/>
-/// to expose (see <c>dev_docs/TODO/durable-peer-topology.md</c>). Every transport-speaking endpoint registers one, alongside its<br/>
+/// to expose (see <c>src/Compze.Tessaging/dev_docs/peer-model.md</c>). Every transport-speaking endpoint registers one, alongside its<br/>
 /// <see cref="IPeerRegistry"/>.</summary>
 public interface IPeerAdministration
 {
@@ -21,5 +21,5 @@ public interface IPeerAdministration
    /// neither remembered nor held for.<br/>
    /// The whole act is one transaction of its own: durable removals and discards commit together, every in-memory consequence<br/>
    /// runs only on commit, so an act that fails partway changes nothing.</remarks>
-   PeerDecommissionReport Decommission(EndpointId peer);
+   Task<PeerDecommissionReport> DecommissionAsync(EndpointId peer);
 }

@@ -1,10 +1,9 @@
 using AccountManagement.Domain.Tevents;
 using Compze.DocumentDb;
-using Compze.Tessaging.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
+using Compze.Tessaging.Engine;
 using JetBrains.Annotations;
 using AccountLink = Compze.Teventive.TeventStore.Typermedia.TeventStoreApi.TueryApi.TaggregateLink<AccountManagement.Domain.Account>;
-using Compze.Typermedia;
-using Compze.Typermedia.HandlerRegistration;
+using Compze.Tessaging.Typermedia;
 
 namespace AccountManagement.Domain;
 
@@ -12,7 +11,8 @@ namespace AccountManagement.Domain;
 {
    static DocumentDbApi DocumentDb => new();
 
-   internal static void UpdateMappingWhenEmailChanges(ITessageHandlerRegistrar registrar) => registrar.ForTevent(
+   //Account tevents are exactly-once kinds, and exactly-once kinds are async end to end - so the handler is declared async; its work is synchronous today, so it completes its task synchronously.
+   internal static void UpdateMappingWhenEmailChanges(TessageHandlerRegistrar registrar) => registrar.ForTevent(
       (IAccountTevent.PropertyUpdated.Email emailUpdated, ILocalTypermediaNavigatorSession navigator) =>
       {
          if(emailUpdated.TaggregateVersion > 1)
@@ -23,9 +23,10 @@ namespace AccountManagement.Domain;
 
          var newEmail = emailUpdated.Email;
          navigator.Execute(DocumentDb.Tommands.Save(newEmail.StringValue, InternalApi.Tueries.GetForUpdate(emailUpdated.TaggregateId)));
+         return Task.CompletedTask;
       });
 
-   internal static void TryGetAccountByEmail(TypermediaHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTuery(
+   internal static void TryGetAccountByEmail(TessageHandlerRegistrar registrar) => registrar.ForTuery(
       (InternalApi.Tuery.TryGetByEmailTuery tuery, ILocalTypermediaNavigatorSession navigator) =>
          navigator.Execute(DocumentDb.Tueries.TryGet<AccountLink>(tuery.Email.StringValue)) is { } accountLink
             ? navigator.Execute(accountLink)

@@ -1,4 +1,4 @@
-using Compze.Tessaging.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
+using Compze.Tessaging.Engine;
 using Compze.Teventive.Taggregates.Tevents.Public;
 using static System.Console;
 using Tessaging_ITevent = Compze.Abstractions.Tessaging.Public.ITevent;
@@ -25,20 +25,20 @@ namespace Website.paradigms.semantic_tevents
 
          public void IllustrateTeventListening()
          {
-            ITessageHandlerRegistrar registrar = null!;
+            TessageHandlerRegistrar registrar = null!;
 
             #region Unhelpful
-            registrar.ForTevent<IName>(nameTevent => WriteLine("Uhmm... What is happening here?"));
+            registrar.ForTevent<IName>(nameTevent => { WriteLine("Uhmm... What is happening here?"); return Task.CompletedTask; });
             #endregion
 
             #region helpful
             registrar
-              .ForTevent<UserTevent.Profile.PropertyUpdated.IName>(clarity => WriteLine($"Ahh: {clarity.Name}"));
+              .ForTevent<UserTevent.Profile.PropertyUpdated.IName>(clarity => { WriteLine($"Ahh: {clarity.Name}"); return Task.CompletedTask; });
             #endregion
 
             #region helpful2
             registrar
-              .ForTevent<IUserTevent.IProfile.IPropertyUpdated.IName>(clarity => WriteLine($"Ahh: {clarity.Name}"));
+              .ForTevent<IUserTevent.IProfile.IPropertyUpdated.IName>(clarity => { WriteLine($"Ahh: {clarity.Name}"); return Task.CompletedTask; });
             #endregion
          }
       }

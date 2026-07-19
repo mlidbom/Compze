@@ -6,7 +6,7 @@ using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE;
 using Compze.Hosting.Testing;
 using Compze.Tests.Infrastructure.XUnit;
-using Compze.Typermedia;
+using Compze.Tessaging.Typermedia;
 
 namespace Compze.Tests.Performance.Internals.Tessaging.Hypermedia;
 

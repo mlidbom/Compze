@@ -1,4 +1,4 @@
-using MySql.Data.MySqlClient;
+using MySqlConnector;
 
 namespace Compze.Internals.Sql.MySql;
 
@@ -8,7 +8,6 @@ static class SqlExceptions
 #pragma warning disable CA1724 // Type name intentionally matches namespace concept
    internal static class MySql
    {
-      const int PrimaryKeyViolationSqlErrorNumber = 1062;
-      public static bool IsPrimaryKeyViolation(MySqlException e) => e.Data["Server Error Code"] as int? == PrimaryKeyViolationSqlErrorNumber;
+      public static bool IsPrimaryKeyViolation(MySqlException e) => e.ErrorCode == MySqlErrorCode.DuplicateKeyEntry;
    }
 }

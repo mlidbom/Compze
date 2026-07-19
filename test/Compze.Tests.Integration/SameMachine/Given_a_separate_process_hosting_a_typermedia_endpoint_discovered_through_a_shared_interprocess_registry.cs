@@ -2,17 +2,20 @@ using Compze.Abstractions.Hosting.Public;
 using Compze.Abstractions.Wiring.Testing.Internal;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
+using Compze.Hosting;
 using Compze.Hosting.SameMachine;
 using Compze.Hosting.Testing;
 using Compze.Hosting.Testing.Wiring;
 using Compze.Internals.Testing;
 using Compze.Must;
 
+using Compze.Tessaging.Endpoints;
+
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Tests.SameMachine.EndpointHostProcess;
-using Compze.Typermedia;
-using Compze.Typermedia.Client;
+using Compze.Tessaging.Typermedia;
+using Compze.Tessaging.Typermedia.Client;
 using Compze.xUnitMatrix;
 //The unqualified name Program silently resolves to the entry point xUnit v3 generates into THIS test assembly, not to the endpoint host process's class.
 using EndpointHostProcessProgram = Compze.Tests.SameMachine.EndpointHostProcess.Program;
@@ -35,8 +38,8 @@ public class Given_a_separate_process_hosting_a_typermedia_endpoint_discovered_t
    readonly DirectoryInfo _workDirectory = null!;
    readonly InterprocessEndpointRegistry _registry = null!;
    readonly EndpointHostProcessHandle _endpointHostProcess = null!;
-   readonly ITestingEndpointHost _specificationHost = null!;
-   readonly IEndpoint _specificationEndpoint = null!;
+   readonly IEndpointHost _specificationHost = null!;
+   readonly BestEffortEndpoint _specificationEndpoint = null!;
 
    public Given_a_separate_process_hosting_a_typermedia_endpoint_discovered_through_a_shared_interprocess_registry()
    {
@@ -49,16 +52,16 @@ public class Given_a_separate_process_hosting_a_typermedia_endpoint_discovered_t
 
       _endpointHostProcess = EndpointHostProcessHandle.Start(registryName, _workDirectory, EndpointHostProcessProgram.DatabaselessComposition);
 
-      _specificationHost = TestingEndpointHost.Create();
-      _specificationEndpoint = _specificationHost.RegisterEndpoint(
+      _specificationHost = EndpointHost.Production.Create(() => TestEnv.DIContainer.CreateTestingContainerBuilder());
+      _specificationEndpoint = _specificationHost.RegisterEndpoint(container => BestEffortEndpoint.Build(
+         container,
          "SpecificationEndpoint",
          new EndpointId(Guid.NewGuid()),
-         builder =>
-         {
-            builder.TypeMapper.MapTypesFromAssemblyContaining<TueryAskedByTheSpecificationProcess>();
-            builder.Registrar.CurrentTestsEndpointTransport();
-            builder.AddDistributedTypermedia().DiscoverEndpointsThrough(_registry);
-         });
+         endpointBuilder => endpointBuilder
+            .MapTypes(mapper => mapper.MapTypesFromAssemblyContaining<TueryAskedByTheSpecificationProcess>())
+            .TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport())
+            .Serializer(registrar => registrar.CurrentTestsSerializersIfNotClonedContainer())
+            .DiscoverEndpointsThrough(_registry)));
    }
 
    protected override async Task InitializeAsyncInternal()
@@ -98,27 +101,21 @@ public class Given_a_separate_process_hosting_a_typermedia_endpoint_discovered_t
    [Skip<Transport>([Transport.AspNetCore], "The endpoint host process speaks named pipes; the conversation only makes sense when the specification's endpoint does too")]
    [PCT] public void a_tuery_executed_here_is_answered_there()
    {
-      //Until this endpoint's typermedia reconciliation loop has discovered the endpoint host process - which is still starting
-      //up - no route exists for the tuery's type and navigating fails loud. The retry loop rides that loudness until discovery completes.
+      //The navigation is a waiting send: no route exists for the tuery's type until this endpoint's reconciliation discovers
+      //the endpoint host process - which is still starting up - and the send waits that discovery out within the endpoint's
+      //handler-availability patience. (The hand-rolled retry-on-no-handler loop this replaced is exactly the pattern waiting
+      //sends exist to dissolve.) The catch only enriches an exhausted wait with the process's fate and console output - the
+      //diagnosis a cross-process failure needs - and rethrows.
       AnswerToTheTueryAskedByTheSpecificationProcess answer;
-      var retryDeadline = DateTime.UtcNow + TimeSpan.FromSeconds(30);
-      while(true)
+      try
       {
-         try
-         {
-            answer = _specificationEndpoint.ServiceLocator.Resolve<IScopeFactory>().ExecuteInIsolatedScope(
-               scope => scope.Resolve<IRemoteTypermediaNavigator>().Get(new TueryAskedByTheSpecificationProcess()));
-            break;
-         }
-         catch(NoHandlerForTypermediaTypeException) when(DateTime.UtcNow < retryDeadline)
-         {
-            _endpointHostProcess.ThrowDescribingTheFailureIfTheProcessHasExited();
-            Thread.Sleep(100);
-         }
-         catch(NoHandlerForTypermediaTypeException stillUndiscoveredAtTheRetryDeadline)
-         {
-            throw new InvalidOperationException($"The endpoint host process was not discovered within the retry deadline.{Environment.NewLine}{_endpointHostProcess.ConsoleOutput}", stillUndiscoveredAtTheRetryDeadline);
-         }
+         answer = _specificationEndpoint.ServiceLocator.Resolve<IScopeFactory>().ExecuteInIsolatedScope(
+            scope => scope.Resolve<IRemoteTypermediaNavigator>().Get(new TueryAskedByTheSpecificationProcess()));
+      }
+      catch(NoHandlerForTypermediaTypeException notDiscoveredWithinPatience)
+      {
+         _endpointHostProcess.ThrowDescribingTheFailureIfTheProcessHasExited();
+         throw new InvalidOperationException($"The endpoint host process was not discovered within the endpoint's handler-availability patience.{Environment.NewLine}{_endpointHostProcess.ConsoleOutput}", notDiscoveredWithinPatience);
       }
 
       answer.AnsweredBy.Must().Be("EndpointHostProcess");

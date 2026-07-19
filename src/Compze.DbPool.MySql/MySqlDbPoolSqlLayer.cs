@@ -3,7 +3,7 @@ using Compze.Internals.Sql.MySql;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Threading.ResourceAccess;
-using MySql.Data.MySqlClient;
+using MySqlConnector;
 
 namespace Compze.DbPool.MySql;
 
@@ -17,6 +17,11 @@ sealed class MySqlDbPoolSqlLayer : IDbPoolSqlLayer
    readonly IMySqlConnectionPool _masterConnectionPool;
 
    const string ConnectionStringConfigurationParameterName = "COMPOSABLE_MYSQL_DATABASE_POOL_MASTER_CONNECTIONSTRING";
+
+   ///<summary>How long a database reset's <c>DROP DATABASE</c> waits for the schema metadata lock before failing, rather than<br/>
+   /// blocking until a connection timeout when a leaked transaction still holds it. Short: a reset of a genuinely free database<br/>
+   /// waits for nothing, so this only bounds the pathological case.</summary>
+   const int ResetLockWaitTimeoutSeconds = 3;
 
    readonly IThreadShared<MySqlConnectionStringBuilder> _connectionStringBuilder;
 
@@ -43,8 +48,13 @@ sealed class MySqlDbPoolSqlLayer : IDbPoolSqlLayer
    public void ResetDatabase(DbPoolDatabase db)
    {
       ResetConnectionPool(db);
-      //I experimented with dropping objects like for the other databases, but it was not faster than just dropping and recreating the database.
+
+      //A short lock_wait_timeout so a DROP blocked on a metadata lock held by a leaked transaction fails fast (seconds) rather
+      //than hanging until a connection timeout. The pool then abandons this database and reserves another, so one stray
+      //transaction can never gridlock the pool (see Compze.DbPool.DbPool.ConnectionStringFor). Session-scoped: it rides the same
+      //connection as the DROP/CREATE below and never leaks to any other use of this pooled connection.
       _masterConnectionPool.ExecuteNonQuery($"""
+                                             SET SESSION lock_wait_timeout = {ResetLockWaitTimeoutSeconds};
                                              DROP DATABASE IF EXISTS {db.Name};
                                              CREATE DATABASE {db.Name};
                                              """);

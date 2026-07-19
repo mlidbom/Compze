@@ -5,7 +5,6 @@ using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Logging;
 using Compze.Internals.SystemCE.LinqCE;
-using Compze.Internals.SystemCE.UsageGuards;
 using Compze.Teventive.Taggregates.Tevents.Public;
 using Compze.Teventive.Tevents.Public;
 using Compze.Teventive.TeventStore.Abstractions.Internal;
@@ -26,8 +25,6 @@ namespace Compze.Teventive.TeventStore;
    readonly ITeventStoreSerializer _serializer;
    static readonly ILogger Log = CompzeLogger.For<TeventStore>();
 
-   readonly SingleThreadUseGuard _usageGuard;
-
    readonly ITeventStoreSqlLayer _sqlLayer;
 
    readonly TeventCache _cache;
@@ -46,7 +43,6 @@ namespace Compze.Teventive.TeventStore;
 
       _migrationFactories = migrations.ToList();
 
-      _usageGuard = new SingleThreadUseGuard(this);
       _cache = cache;
       _sqlLayer = sqlLayer;
    }
@@ -57,7 +53,6 @@ namespace Compze.Teventive.TeventStore;
 
    IReadOnlyList<ITaggregateTevent<ITaggregateTevent>> GetTaggregateHistoryInternal(TaggregateId taggregateId, bool takeWriteLock)
    {
-      _usageGuard.EnsureAccessValid();
       _sqlLayer.SetupSchemaIfDatabaseUnInitialized();
 
       var cachedTaggregateHistory = _cache.Get(taggregateId);
@@ -133,7 +128,6 @@ namespace Compze.Teventive.TeventStore;
 
    public void StreamTevents(int batchSize, Action<IReadOnlyList<ITaggregateTevent<ITaggregateTevent>>> handleTevents)
    {
-      _usageGuard.EnsureAccessValid();
       _sqlLayer.SetupSchemaIfDatabaseUnInitialized();
 
       var batches = StreamTevents(batchSize)
@@ -147,7 +141,6 @@ namespace Compze.Teventive.TeventStore;
 
    public void SaveSingleTaggregateTevents(IReadOnlyList<ITaggregateTevent<ITaggregateTevent>> wrappedTevents)
    {
-      _usageGuard.EnsureAccessValid();
       _sqlLayer.SetupSchemaIfDatabaseUnInitialized();
 
       var taggregateId = wrappedTevents[0].Tevent.TaggregateId;
@@ -180,7 +173,6 @@ namespace Compze.Teventive.TeventStore;
 
    public void DeleteTaggregate(TaggregateId taggregateId)
    {
-      _usageGuard.EnsureAccessValid();
       _sqlLayer.SetupSchemaIfDatabaseUnInitialized();
       _cache.Remove(taggregateId);
       _sqlLayer.DeleteTaggregate(taggregateId);
@@ -189,7 +181,6 @@ namespace Compze.Teventive.TeventStore;
    public IEnumerable<TaggregateId> StreamTaggregateIdsInCreationOrder(Type? teventType = null)
    {
       Argument.Assert(teventType == null || teventType.IsInterface && (typeof(ITaggregateTevent).IsAssignableFrom(teventType) || typeof(IPublisherTevent<ITaggregateTevent>).IsAssignableFrom(teventType)));
-      _usageGuard.EnsureAccessValid();
 
       _sqlLayer.SetupSchemaIfDatabaseUnInitialized();
       //The rows store wrapper types, so an inner tevent type filter is translated: it matches every wrapping of that tevent type.

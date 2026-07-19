@@ -5,69 +5,65 @@ using AccountManagement.UI;
 using AccountManagement.UI.QueryModels;
 using Compze.Abstractions.Hosting.Public;
 using Compze.DocumentDb.Wiring;
-using Compze.Tessaging.Hosting;
+using Compze.Tessaging.Endpoints;
+using Compze.Tessaging.Hosting.Testing;
 using Compze.Teventive.TeventStore.Typermedia;
-using Compze.Typermedia;
-using Compze.Typermedia.Client;
 
 namespace AccountManagement;
 
 public static class AccountManagementServerDomainBootstrapper
 {
-   public static IEndpoint RegisterWith(IEndpointHost host)
+   public static ExactlyOnceEndpoint RegisterWith(TestingEndpointHost host)
    {
-      var domainEndpoint = host.RegisterEndpoint(name: "AccountManagement",
-                                   id: new EndpointId(Guid.Parse(input: "1A1BE9C8-C8F6-4E38-ABFB-F101E5EDB00D")),
-                                   setup: builder =>
-                                   {
-                                      builder.AddExactlyOnceTessaging();
-                                      builder.AddDistributedTypermedia();
-                                      RegisterTypeMappings(builder);
-                                      RegisterDomainComponents(builder);
-                                      RegisterHandlers(builder);
-                                   });
+      var domainEndpoint = host.RegisterExactlyOnceEndpoint(
+         name: "AccountManagement",
+         id: new EndpointId(Guid.Parse(input: "1A1BE9C8-C8F6-4E38-ABFB-F101E5EDB00D")),
+         declare: endpointBuilder =>
+         {
+            RegisterTypeMappings(endpointBuilder);
+            RegisterDomainComponents(endpointBuilder);
+            RegisterHandlers(endpointBuilder);
+         });
 
       RegisterAccountStatisticsEndpoint(host);
 
       return domainEndpoint;
    }
 
-   static void RegisterAccountStatisticsEndpoint(IEndpointHost host) =>
-      host.RegisterEndpoint(name: "AccountManagement.Statistics",
-                            id: new EndpointId(Guid.Parse(input: "B16250DE-4321-4FBD-A0CC-E42C7A1B0B34")),
-                            setup: builder =>
-                            {
-                               builder.AddExactlyOnceTessaging();
-                               builder.AddDistributedTypermedia();
-                               RegisterTypeMappings(builder);
+   static void RegisterAccountStatisticsEndpoint(TestingEndpointHost host) =>
+      host.RegisterExactlyOnceEndpoint(
+         name: "AccountManagementStatistics",
+         id: new EndpointId(Guid.Parse(input: "B16250DE-4321-4FBD-A0CC-E42C7A1B0B34")),
+         declare: endpointBuilder =>
+         {
+            RegisterTypeMappings(endpointBuilder);
 
-                               builder.RegisterDocumentDb()
-                                      .HandleDocumentType<AccountStatistics.SingletonStatisticsQueryModel>(builder.RegisterTypermediaHandlers);
+            endpointBuilder.RegisterDocumentDb()
+                    .HandleDocumentType<AccountStatistics.SingletonStatisticsQueryModel>();
 
-                               AccountStatistics.Register(builder);
-                            });
+            AccountStatistics.Register(endpointBuilder);
+         });
 
-   static void RegisterTypeMappings(IEndpointBuilder builder)
+   static void RegisterTypeMappings(ExactlyOnceEndpointBuilder endpointBuilder) =>
+      endpointBuilder.MapTypes(mapper => mapper.RegisterAccountManagementTypeMappings());
+
+   static void RegisterDomainComponents(ExactlyOnceEndpointBuilder endpointBuilder)
    {
-      builder.TypeMapper.RegisterAccountManagementTypeMappings();
+      endpointBuilder.RegisterTeventStore()
+              .HandleTaggregate<Account, IAccountTevent>();
+
+      endpointBuilder.RegisterDocumentDb()
+              .HandleDocumentType<TeventStoreApi.TueryApi.TaggregateLink<Account>>();
    }
 
-   static void RegisterDomainComponents(IEndpointBuilder builder)
-   {
-      builder.RegisterTeventStore()
-             .HandleTaggregate<Account, IAccountTevent>();
+   static void RegisterHandlers(ExactlyOnceEndpointBuilder endpointBuilder) =>
+      endpointBuilder.RegisterTessageHandlers(handle =>
+      {
+         UIAdapterLayer.Register(handle);
 
-      builder.RegisterDocumentDb()
-             .HandleDocumentType<TeventStoreApi.TueryApi.TaggregateLink<Account>>(builder.RegisterTypermediaHandlers);
-   }
+         AccountQueryModel.Api.RegisterHandlers(handle);
 
-   static void RegisterHandlers(IEndpointBuilder builder)
-   {
-      UIAdapterLayer.Register(builder.RegisterTypermediaHandlers);
-
-      AccountQueryModel.Api.RegisterHandlers(builder.RegisterTypermediaHandlers);
-
-      EmailToAccountMapper.UpdateMappingWhenEmailChanges(builder.RegisterTessagingHandlers);
-      EmailToAccountMapper.TryGetAccountByEmail(builder.RegisterTypermediaHandlers);
-   }
+         EmailToAccountMapper.UpdateMappingWhenEmailChanges(handle);
+         EmailToAccountMapper.TryGetAccountByEmail(handle);
+      });
 }

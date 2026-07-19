@@ -2,7 +2,6 @@ using System.Diagnostics.CodeAnalysis;
 using Compze.Abstractions.Public;
 using Compze.Contracts;
 using Compze.DocumentDb.Infrastructure;
-using Compze.Internals.SystemCE.UsageGuards;
 using Compze.Teventive.TeventStore.Abstractions.QueryModels.Generators.Public;
 
 namespace Compze.Teventive.TeventStore.QueryModels.Generators;
@@ -10,19 +9,16 @@ namespace Compze.Teventive.TeventStore.QueryModels.Generators;
 // ReSharper disable once ClassWithVirtualMembersNeverInherited.Global
 public class QueryModelGeneratingQueryModelReader : IVersioningQueryModelReader
 {
-   readonly IUsageGuard _usageGuard;
    readonly IEnumerable<IQueryModelGenerator> _documentGenerators;
    readonly EntitiesByIdAndTypeCache _entitiesByIdAndType = new();
 
    public QueryModelGeneratingQueryModelReader(IEnumerable<IQueryModelGenerator> documentGenerators)
    {
       _documentGenerators = documentGenerators;
-      _usageGuard = new SingleThreadUseGuard(this);
    }
 
    public virtual TValue Get<TValue>(EntityId key) where TValue : class
    {
-      _usageGuard.EnsureAccessValid();
       if(TryGet(key, out TValue? value))
       {
          return value._assert().NotNull();
@@ -33,7 +29,6 @@ public class QueryModelGeneratingQueryModelReader : IVersioningQueryModelReader
 
    public virtual TValue GetVersion<TValue>(EntityId key, int version) where TValue : class
    {
-      _usageGuard.EnsureAccessValid();
       if(TryGetVersion(key, out TValue? value, version))
       {
          return value._assert().NotNull();
@@ -47,7 +42,6 @@ public class QueryModelGeneratingQueryModelReader : IVersioningQueryModelReader
    protected virtual bool TryGetVersion<TDocument>(EntityId key, [NotNullWhen(true)] out TDocument? document, int version = -1) where TDocument : class
    {
       var requiresVersioning = version > 0;
-      _usageGuard.EnsureAccessValid();
 
       document = null;
 

@@ -14,8 +14,14 @@ namespace Compze.Abstractions.Tessaging.Public;
 public interface IIndependentTeventPublisher
 {
    ///<summary>Publishes <paramref name="tevent"/> as its own unit of work, routed per the delivery contract its type declares —<br/>
-   /// see <see cref="IUnitOfWorkTeventPublisher.Publish"/>. The unit of work commits when the call returns: an<br/>
-   /// <see cref="IExactlyOnceTevent"/> is then durably on its way, a best-effort remotable tevent has been handed to the wire,<br/>
-   /// and this process's subscribed handlers have already run.</summary>
+   /// with the same sync/async split as <see cref="IUnitOfWorkTeventPublisher"/>: this form serves the kinds whose contract<br/>
+   /// keeps sync first-class and refuses an <see cref="IExactlyOnceTevent"/>, pointing at <see cref="PublishAsync"/>. The unit<br/>
+   /// of work commits when the call returns: a best-effort remotable tevent has been handed to the wire, and this process's<br/>
+   /// subscribed handlers have already run.</summary>
    void Publish(ITevent tevent);
+
+   ///<summary>Publishes <paramref name="tevent"/> as its own unit of work — the one form serving every tevent kind, awaiting<br/>
+   /// participation and the durable outbox write an <see cref="IExactlyOnceTevent"/>'s contract demands. The unit of work<br/>
+   /// commits when the awaited publish completes; an exactly-once tevent is then durably on its way.</summary>
+   Task PublishAsync(ITevent tevent);
 }

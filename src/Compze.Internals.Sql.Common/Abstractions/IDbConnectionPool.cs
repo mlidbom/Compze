@@ -27,4 +27,7 @@ public interface IDbConnectionPool<out TConnection, out TCommand>
 
    TResult UseCommand<TResult>(Func<TCommand, TResult> action) =>
       UseConnection(connection => connection.UseCommand(action));
+
+   async Task<TResult> UseCommandAsync<TResult>(Func<TCommand, Task<TResult>> action) =>
+      await UseConnectionAsync(async connection => await connection.UseCommandAsync(action).caf()).caf();
 }

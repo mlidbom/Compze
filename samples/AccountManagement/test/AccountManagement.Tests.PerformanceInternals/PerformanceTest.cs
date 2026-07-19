@@ -2,14 +2,13 @@ using AccountManagement.API;
 using AccountManagement.Domain.Registration;
 using AccountManagement.UserStories.Scenarios;
 using Compze.xUnitMatrix;
-using Compze.Abstractions.Hosting.Public;
 using Compze.Abstractions.Wiring.Testing.Internal;
 using Compze.Hosting.Testing;
 using Compze.Internals.Testing;
 using Compze.Internals.Testing.Performance;
 using Compze.Tessaging.Hosting.Testing;
-using Compze.Typermedia.Client;
-using Compze.Typermedia.Hosting.Testing;
+using Compze.Tessaging.Typermedia.Client;
+using Compze.Tessaging.Hosting.Testing.Typermedia;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.SystemCE.CollectionsCE.ConcurrentCE;
 using Compze.Tests.Infrastructure.XUnit;
@@ -19,22 +18,22 @@ using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Must;
 
 using AccountId = AccountManagement.Domain.AccountId;
-using Compze.Typermedia;
+using Compze.Tessaging.Typermedia;
 
 namespace AccountManagement;
 
 public class PerformanceTest : UniversalTestBase
 {
-   ITestingEndpointHost? _host;
+   TestingEndpointHost? _host;
    TypermediaTestClient? _client;
    AccountScenarioApi? _scenarioApi;
 
    protected override async Task InitializeAsyncInternal()
    {
-      _host = TestingEndpointHost.Create(new ExactlyOnceTessagingTestingEndpointHostFeature(), new DistributedTypermediaTestingEndpointHostFeature());
+      _host = TestingEndpointHost.Create();
       var endpoint = AccountManagementServerDomainBootstrapper.RegisterWith(_host);
       await _host.StartAsync().caf();
-      _client = await TypermediaTestClient.ConnectTo(endpoint.TypermediaAddress!, mapper => mapper.RegisterAccountManagementTypeMappings()).caf();
+      _client = await TypermediaTestClient.ConnectTo(endpoint.Address!, mapper => mapper.RegisterAccountManagementTypeMappings()).caf();
       _scenarioApi = new AccountScenarioApi(_client.Navigator);
       //Warmup
       StopwatchCE.TimeExecution(() => _scenarioApi.Register.Execute(), iterations: 10);

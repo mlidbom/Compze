@@ -1,5 +1,5 @@
 using Compze.Internals.Sql.Common;
-using MySql.Data.MySqlClient;
+using MySqlConnector;
 
 namespace Compze.Internals.Sql.MySql.Private;
 

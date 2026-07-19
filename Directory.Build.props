@@ -77,10 +77,6 @@
     <UsePackageReference_Compze_Internals_SystemCE Condition="'$(UsePackageReference_Compze_Internals_SystemCE)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Internals.SystemCE.csproj|'))">true</UsePackageReference_Compze_Internals_SystemCE>
     <!-- Compze.Internals.Testing -->
     <UsePackageReference_Compze_Internals_Testing Condition="'$(UsePackageReference_Compze_Internals_Testing)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Internals.Testing.csproj|'))">true</UsePackageReference_Compze_Internals_Testing>
-    <!-- Compze.Internals.Transport -->
-    <UsePackageReference_Compze_Internals_Transport Condition="'$(UsePackageReference_Compze_Internals_Transport)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Internals.Transport.csproj|'))">true</UsePackageReference_Compze_Internals_Transport>
-    <!-- Compze.Internals.Transport.AspNet -->
-    <UsePackageReference_Compze_Internals_Transport_AspNet Condition="'$(UsePackageReference_Compze_Internals_Transport_AspNet)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Internals.Transport.AspNet.csproj|'))">true</UsePackageReference_Compze_Internals_Transport_AspNet>
     <!-- Compze.InterprocessObject -->
     <UsePackageReference_Compze_InterprocessObject Condition="'$(UsePackageReference_Compze_InterprocessObject)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.InterprocessObject.csproj|'))">true</UsePackageReference_Compze_InterprocessObject>
     <!-- Compze.InterprocessObject.MemoryPack -->
@@ -89,8 +85,8 @@
     <UsePackageReference_Compze_Must Condition="'$(UsePackageReference_Compze_Must)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Must.csproj|'))">true</UsePackageReference_Compze_Must>
     <!-- Compze.Tessaging -->
     <UsePackageReference_Compze_Tessaging Condition="'$(UsePackageReference_Compze_Tessaging)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Tessaging.csproj|'))">true</UsePackageReference_Compze_Tessaging>
-    <!-- Compze.Tessaging.Abstractions -->
-    <UsePackageReference_Compze_Tessaging_Abstractions Condition="'$(UsePackageReference_Compze_Tessaging_Abstractions)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Tessaging.Abstractions.csproj|'))">true</UsePackageReference_Compze_Tessaging_Abstractions>
+    <!-- Compze.Tessaging.AspNetCore -->
+    <UsePackageReference_Compze_Tessaging_AspNetCore Condition="'$(UsePackageReference_Compze_Tessaging_AspNetCore)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Tessaging.AspNetCore.csproj|'))">true</UsePackageReference_Compze_Tessaging_AspNetCore>
     <!-- Compze.Tessaging.Hosting.Testing -->
     <UsePackageReference_Compze_Tessaging_Hosting_Testing Condition="'$(UsePackageReference_Compze_Tessaging_Hosting_Testing)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Tessaging.Hosting.Testing.csproj|'))">true</UsePackageReference_Compze_Tessaging_Hosting_Testing>
     <!-- Compze.Tessaging.MicrosoftSql -->
@@ -137,14 +133,6 @@
     <UsePackageReference_Compze_TypeIdentifiers_Interning_PostgreSql Condition="'$(UsePackageReference_Compze_TypeIdentifiers_Interning_PostgreSql)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.TypeIdentifiers.Interning.PostgreSql.csproj|'))">true</UsePackageReference_Compze_TypeIdentifiers_Interning_PostgreSql>
     <!-- Compze.TypeIdentifiers.Interning.Sqlite -->
     <UsePackageReference_Compze_TypeIdentifiers_Interning_Sqlite Condition="'$(UsePackageReference_Compze_TypeIdentifiers_Interning_Sqlite)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.TypeIdentifiers.Interning.Sqlite.csproj|'))">true</UsePackageReference_Compze_TypeIdentifiers_Interning_Sqlite>
-    <!-- Compze.Typermedia -->
-    <UsePackageReference_Compze_Typermedia Condition="'$(UsePackageReference_Compze_Typermedia)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Typermedia.csproj|'))">true</UsePackageReference_Compze_Typermedia>
-    <!-- Compze.Typermedia.Client -->
-    <UsePackageReference_Compze_Typermedia_Client Condition="'$(UsePackageReference_Compze_Typermedia_Client)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Typermedia.Client.csproj|'))">true</UsePackageReference_Compze_Typermedia_Client>
-    <!-- Compze.Typermedia.Hosting -->
-    <UsePackageReference_Compze_Typermedia_Hosting Condition="'$(UsePackageReference_Compze_Typermedia_Hosting)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Typermedia.Hosting.csproj|'))">true</UsePackageReference_Compze_Typermedia_Hosting>
-    <!-- Compze.Typermedia.Hosting.Testing -->
-    <UsePackageReference_Compze_Typermedia_Hosting_Testing Condition="'$(UsePackageReference_Compze_Typermedia_Hosting_Testing)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Typermedia.Hosting.Testing.csproj|'))">true</UsePackageReference_Compze_Typermedia_Hosting_Testing>
     <!-- Compze.Underscore -->
     <UsePackageReference_Compze_Underscore Condition="'$(UsePackageReference_Compze_Underscore)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Underscore.csproj|'))">true</UsePackageReference_Compze_Underscore>
     <!-- Compze.Unit -->

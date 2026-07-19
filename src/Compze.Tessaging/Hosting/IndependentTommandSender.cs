@@ -3,6 +3,7 @@ using Compze.Abstractions.Tessaging.Public;
 using Compze.Contracts;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
+using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using JetBrains.Annotations;
 
 namespace Compze.Tessaging.Hosting;
@@ -26,10 +27,10 @@ static class IndependentTommandSenderRegistrar
 
    IndependentTommandSender(IScopeFactory scopeFactory) => _scopeFactory = scopeFactory;
 
-   public void Send(IExactlyOnceTommand tommand)
+   public async Task SendAsync(IExactlyOnceTommand tommand)
    {
       State.Assert(Transaction.Current == null,
                    () => $"{nameof(IIndependentTommandSender)} was called from within an ambient transaction — inside a unit of work. An independent send runs as its own unit of work; called here it would silently join the caller's transaction instead of standing alone. Send through {nameof(IUnitOfWorkTommandSender)}, which deliberately joins the caller's unit of work.");
-      _scopeFactory.ExecuteUnitOfWork(unitOfWork => unitOfWork.Resolve<IUnitOfWorkTommandSender>().Send(tommand));
+      await _scopeFactory.ExecuteUnitOfWorkAsync(async unitOfWork => await unitOfWork.Resolve<IUnitOfWorkTommandSender>().SendAsync(tommand).caf()).caf();
    }
 }

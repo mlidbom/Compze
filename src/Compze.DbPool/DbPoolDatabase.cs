@@ -50,5 +50,15 @@ public partial class DbPoolDatabase
       return this;
    }
 
+   ///<summary>Pushes this reservation's expiration out to another <paramref name="reservationLength"/> from now. The owning pool<br/>
+   /// calls this on a heartbeat while it is alive, so a reservation held for longer than one lease is never mistaken for a<br/>
+   /// crashed pool's abandoned reservation and reclaimed out from under the live pool.</summary>
+   internal DbPoolDatabase RenewReservation(TimeSpan reservationLength)
+   {
+      Contract.State.Assert(IsReserved);
+      ReservationExpirationTime = DateTime.UtcNow + reservationLength;
+      return this;
+   }
+
    public override string ToString() => $"{nameof(Id)}: {Id}, {nameof(IsReserved)}: {IsReserved}, {nameof(ReservationExpirationTime)}: {ReservationExpirationTime}, {nameof(ReservationName)}:{ReservationName}, {nameof(ReservedByPoolId)}:{ReservedByPoolId}";
 }

@@ -10,6 +10,13 @@
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
   </ItemGroup>
+  <!-- Compze.Tessaging — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging)' == 'true'">
+    <PackageReference Include="Compze.Tessaging" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging)' != 'true'">
+    <ProjectReference Include="..\Compze.Tessaging\Compze.Tessaging.csproj" />
+  </ItemGroup>
   <!-- Compze.Teventive — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Teventive)' == 'true'">
     <PackageReference Include="Compze.Teventive" Version="*-*" />

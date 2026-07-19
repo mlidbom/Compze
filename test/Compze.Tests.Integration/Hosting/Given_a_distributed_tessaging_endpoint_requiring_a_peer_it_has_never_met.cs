@@ -10,10 +10,10 @@ using Compze.Internals.Serialization.Newtonsoft.Wiring;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Internals.Testing;
 using Compze.Must;
-using Compze.Tessaging.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
-using Compze.Tessaging.Hosting;
+using Compze.Tessaging.Endpoints;
+using Compze.Tessaging.Engine;
 using Compze.Tessaging.Implementation.Peers;
-using Compze.Tests.Common.Tessaging.ServiceBusSpecification.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler;
+using Compze.Tests.Common.Tessaging.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Threading;
@@ -25,7 +25,7 @@ using Compze.Threading.Testing;
 namespace Compze.Tests.Integration.Hosting;
 
 ///<summary>
-/// Queue-before-first-contact on the distributed tier (see <c>dev_docs/TODO/durable-peer-topology.md</c>): a publisher that
+/// Queue-before-first-contact on the distributed tier (see <c>src/Compze.Tessaging/dev_docs/peer-model.md</c>): a publisher that
 /// requires a peer by <see cref="EndpointId"/> (<c>RequirePeers</c>) holds everything published before that peer's first
 /// advertisement, and the subset matching the peer's subscriptions delivers, in order, when the peer is first met — so startup
 /// ordering stops mattering and nothing a required peer should see is lost to the discovery race.
@@ -36,7 +36,7 @@ public class Given_a_distributed_tessaging_endpoint_requiring_a_peer_it_has_neve
    static readonly EndpointId RequiredSubscriberEndpointId = new(Guid.Parse("94f7a3c8-1d5e-4b26-8c09-e57b20d84a61"));
 
    readonly IEndpointHost _publisherHost;
-   readonly IEndpoint _publisherEndpoint;
+   readonly BestEffortEndpoint _publisherEndpoint;
    IEndpointHost? _subscriberHost;
    readonly AddressesOfTheLiveHosts _registry = new();
 
@@ -46,17 +46,16 @@ public class Given_a_distributed_tessaging_endpoint_requiring_a_peer_it_has_neve
    public Given_a_distributed_tessaging_endpoint_requiring_a_peer_it_has_never_met()
    {
       _publisherHost = EndpointHost.Production.Create(() => TestEnv.DIContainer.CreateTestingContainerBuilder());
-      _publisherEndpoint = _publisherHost.RegisterEndpoint(
+      _publisherEndpoint = _publisherHost.RegisterEndpoint(container => BestEffortEndpoint.Build(
+         container,
          "FirstContactPublisherEndpoint",
          new EndpointId(Guid.Parse("c85d19e7-4a2b-4f60-9d38-71b06c5f2ea4")),
-         builder =>
-         {
-            builder.TypeMapper.RegisterIntegrationTestTypeMappings();
-            builder.ComposeFoundationWithCurrentTestsTransportAndNoDatabase()
-                   .AddDistributedTessaging(tessaging => tessaging.NewtonsoftSerializer())
-                   .DiscoverEndpointsThrough(_registry)
-                   .RequirePeers(RequiredSubscriberEndpointId);
-         });
+         endpointBuilder => endpointBuilder
+            .MapTypes(mapper => mapper.RegisterIntegrationTestTypeMappings())
+            .TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport())
+            .NewtonsoftSerializer()
+            .DiscoverEndpointsThrough(_registry)
+            .RequirePeers(RequiredSubscriberEndpointId)));
    }
 
    protected override async Task InitializeAsyncInternal() => await _publisherHost.StartAsync().caf();
@@ -88,7 +87,7 @@ public class Given_a_distributed_tessaging_endpoint_requiring_a_peer_it_has_neve
 
       //The act ends the first-contact hold, discarding the three held tevents - reported: the composition required a peer
       //that an administrator now declares is not coming.
-      var report = _publisherEndpoint.ServiceLocator.Resolve<IPeerAdministration>().Decommission(RequiredSubscriberEndpointId);
+      var report = await _publisherEndpoint.ServiceLocator.Resolve<IPeerAdministration>().DecommissionAsync(RequiredSubscriberEndpointId);
       report.Discarded.Single().Count.Must().Be(3);
       report.Discarded.Single().Description.Must().Contain("first contact");
 
@@ -109,20 +108,22 @@ public class Given_a_distributed_tessaging_endpoint_requiring_a_peer_it_has_neve
    IEndpointHost CreateSubscriberHost()
    {
       var host = EndpointHost.Production.Create(() => TestEnv.DIContainer.CreateTestingContainerBuilder());
-      host.RegisterEndpoint(
+      host.RegisterEndpoint(container => BestEffortEndpoint.Build(
+         container,
          "FirstContactRequiredSubscriberEndpoint",
          RequiredSubscriberEndpointId,
-         builder =>
+         endpointBuilder =>
          {
-            builder.TypeMapper.RegisterIntegrationTestTypeMappings();
-            builder.ComposeFoundationWithCurrentTestsTransportAndNoDatabase()
-                   .AddDistributedTessaging(tessaging => tessaging.NewtonsoftSerializer())
-                   .RegisterHandlers(register => register.ForTevent((IMyBestEffortTevent tevent) =>
-                    {
-                       _teventsHandledOnTheSubscriber.Enqueue(tevent);
-                       _subscriberTeventHandlerGate.AwaitPassThrough();
-                    }));
-         });
+            endpointBuilder
+               .MapTypes(mapper => mapper.RegisterIntegrationTestTypeMappings())
+               .TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport())
+               .NewtonsoftSerializer()
+               .RegisterTessageHandlers(handle => handle.ForTevent((IMyBestEffortTevent tevent) =>
+                {
+                   _teventsHandledOnTheSubscriber.Enqueue(tevent);
+                   _subscriberTeventHandlerGate.AwaitPassThrough();
+                }));
+         }));
       return host;
    }
 

@@ -1,5 +1,5 @@
 using Compze.Abstractions.Hosting.Public;
-using Compze.Internals.Transport;
+using Compze.Tessaging.Internals.Transport;
 using Compze.Tessaging.Implementation.Transport.Abstractions;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
@@ -29,9 +29,9 @@ class TransportMessagePoster : ITransportMessagePoster
 
    TransportMessagePoster(IEndpointTransportClient transportClient) => _transportClient = transportClient;
 
-   public async Task PostAsync(TransportTessage.OutGoing tessage, EndpointAddress endPointAddress) =>
+   public async Task PostAsync(TransportTessage.OutGoing tessage, EndpointAddress endPointAddress, CancellationToken cancellationToken = default) =>
       await _transportClient.SendAsync(new TransportRequest(RequestKindFor(tessage), tessage.TessageId, tessage.Type.CanonicalString, tessage.Body),
-                                       endPointAddress).caf();
+                                       endPointAddress, cancellationToken).caf();
 
    static TransportRequestKind RequestKindFor(TransportTessage.OutGoing tessage) =>
       tessage.TessageTypeEnum switch

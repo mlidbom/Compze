@@ -2,7 +2,7 @@ using Compze.TypeIdentifiers;
 using Compze.Abstractions.Serialization.Internal;
 using Compze.Abstractions.Hosting.Public;
 using Compze.Abstractions.Tessaging.Public;
-using Compze.Internals.Transport;
+using Compze.Tessaging.Internals.Transport;
 using Compze.Tessaging.Implementation.Peers;
 using Compze.Tessaging.Implementation.Transport.Abstractions;
 using Compze.Tessaging.Implementation.Transport.Client.Internal;
@@ -11,8 +11,10 @@ using Compze.Contracts;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Logging;
+using Compze.Internals.SystemCE.CollectionsCE.GenericCE;
 using Compze.Internals.SystemCE.ReflectionCE;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
+using Compze.Tessaging.Implementation.Abstractions;
 using Compze.Threading;
 
 namespace Compze.Tessaging.Implementation.Transport.Client.Implementation;
@@ -52,7 +54,7 @@ class TessagingRouter : ITessagingRouter, IDisposable
    readonly CancellationTokenSource _reconcileLoopCancellation = new();
    Task? _reconcileLoop;
    IEndpointRegistry? _endpointRegistry;
-   EndpointAddress? _ownInboxAddress;
+   EndpointAddress? _ownAddress;
 
    bool _deliveryStarted;
    bool _stopped;
@@ -60,6 +62,9 @@ class TessagingRouter : ITessagingRouter, IDisposable
 
    readonly Dictionary<EndpointId, TessagingConnection> _connections = new();
    readonly Dictionary<Type, TessagingConnection> _tommandHandlerRoutes = new();
+   //Multi-entry, deliberately: several live endpoints advertising one typermedia type is a diagnosable send-time condition
+   //(MultipleHandlersForTypermediaTypeException), never a rebuild failure and never a silent pick.
+   readonly Dictionary<Type, List<TessagingConnection>> _typermediaHandlerRoutes = new();
    readonly List<(Type TeventType, TessagingConnection Connection)> _teventSubscriberRoutes = [];
    readonly Dictionary<Type, IReadOnlyList<TessagingConnection>> _teventSubscriberRouteCache = new();
 
@@ -78,28 +83,32 @@ class TessagingRouter : ITessagingRouter, IDisposable
       _exceptionReporter = exceptionReporter;
    }
 
-   public async Task StartMaintainingConnectionsAsync(IEndpointRegistry? endpointRegistry, EndpointAddress ownInboxAddress)
+   public async Task StartMaintainingConnectionsAsync(IEndpointRegistry? endpointRegistry, EndpointAddress ownAddress)
    {
       _endpointRegistry = endpointRegistry;
-      _ownInboxAddress = ownInboxAddress;
+      _ownAddress = ownAddress;
       await ReconcileConnectionsAsync().caf();
-      //With no registry declared the membership is the self-connection alone and never changes, so there is nothing to keep reconciling.
+      //With no registry declared there is no membership to converge on - the endpoint connects to no other endpoint - so there is nothing to keep reconciling.
       if(endpointRegistry is not null)
-         _reconcileLoop = Task.Factory.StartNew(ReconcileLoop, CancellationToken.None, TaskCreationOptions.LongRunning, TaskScheduler.Default);
+         _reconcileLoop = TaskCE.Run(ReconcileLoopAsync);
    }
 
-   ///<summary>Runs on its own thread (the registry wait blocks it): waits until the registry signals that membership may have<br/>
-   /// changed — or <see cref="ReconcileLivenessInterval"/> elapses, covering what no signal carries — then reconciles.</summary>
-   void ReconcileLoop()
+   ///<summary>Waits until the registry signals that membership may have changed — or <see cref="ReconcileLivenessInterval"/><br/>
+   /// elapses, covering what no signal carries — then reconciles. An async loop, not a thread blocked on the reconcile.</summary>
+   ///<remarks>The reconcile pass runs as an awaited continuation, never a thread blocked on it. A pass records peer advertisements<br/>
+   /// (<see cref="IPeerRegistry"/>) inside a <see cref="System.Transactions.TransactionScope"/>; blocking a thread on that async<br/>
+   /// work — the previous <c>WaitUnwrappingException</c> — stranded the ambient transaction, so its connection held its locks until<br/>
+   /// the transaction timeout. Only the registry wait blocks, offloaded off the loop so it never blocks the pass's continuations.</remarks>
+   async Task ReconcileLoopAsync()
    {
       while(!_reconcileLoopCancellation.IsCancellationRequested)
       {
-         _endpointRegistry!.AwaitPossibleMembershipChange(ReconcileLivenessInterval, _reconcileLoopCancellation.Token);
+         await TaskCE.Run(() => _endpointRegistry!.AwaitPossibleMembershipChange(ReconcileLivenessInterval, _reconcileLoopCancellation.Token)).caf();
          if(_reconcileLoopCancellation.IsCancellationRequested) return;
 
          try
          {
-            ReconcileConnectionsAsync().WaitUnwrappingException();
+            await ReconcileConnectionsAsync().caf();
          }
 #pragma warning disable CA1031 //A reconciliation pass must never kill the loop; an unexpected failure is reported and surfaces the way every background exception does.
          catch(Exception exception)
@@ -110,14 +119,14 @@ class TessagingRouter : ITessagingRouter, IDisposable
       }
    }
 
-   ///<summary>One reconciliation pass: connections converge on the registry's current membership, plus our own inbox always — an<br/>
-   /// exactly-once tommand routes to whichever endpoint advertises its type, the sender itself included, so a tommand an endpoint<br/>
-   /// sends that its own handlers serve rides the outbox → own-inbox pipeline with the same delivery semantics as any other<br/>
-   /// tommand. Our own address needs no discovery, so the self-connection exists even when no registry is declared.</summary>
+   ///<summary>One reconciliation pass: connections converge on the registry's current membership — minus our own announced<br/>
+   /// address, which the registry lists like any other. Routes lead only to <em>other</em> endpoints: nothing self-addressed ever<br/>
+   /// crosses the wire, because the roster serves in-roster tommands inline and the endpoint's own tevent subscriptions by<br/>
+   /// in-boundary participation (the consistency law), so the router maintains no connection to self.</summary>
    async Task ReconcileConnectionsAsync()
    {
       var desiredAddresses = (_endpointRegistry?.ServerEndpointAddresses ?? []).ToHashSet();
-      desiredAddresses.Add(_ownInboxAddress!);
+      desiredAddresses.Remove(_ownAddress!);
 
       List<EndpointAddress> addressesToConnect = [];
       List<TessagingConnection> connectionsToDrop = [];
@@ -165,19 +174,21 @@ class TessagingRouter : ITessagingRouter, IDisposable
       await connection.InitAsync().caf();
 
       //Peer memory is recorded on every advertisement fetch: first contact creates the peer, a re-fetch replaces its stored
-      //advertisement (see dev_docs/TODO/durable-peer-topology.md). The endpoint itself is not a peer - a peer is another endpoint.
-      if(connection.EndpointInformation.Id != _configuration.Id)
+      //advertisement (see src/Compze.Tessaging/dev_docs/peer-model.md).
+      try
       {
-         try
-         {
-            _peerRegistry.RecordAdvertisement(connection.EndpointInformation);
-         }
-         catch
-         {
-            //The reconciliation pass retries the whole connect: an unrecorded advertisement must not leave a live connection behind, or no later pass would ever record it.
-            connection.Dispose();
-            throw;
-         }
+         //A peer is another endpoint, and our own address never enters a reconciliation pass - so an answer claiming our
+         //identity means another process is running under this endpoint's EndpointId: a misconfiguration that must fail loud,
+         //never be remembered as a peer.
+         State.Assert(connection.EndpointInformation.Id != _configuration.Id,
+                      () => $"The endpoint at {remoteEndpointAddress.Uri} answered discovery with this endpoint's own identity ({_configuration.Id}): another process is running under this endpoint's EndpointId, and an endpoint runs in exactly one process at a time.");
+         await _peerRegistry.RecordAdvertisementAsync(connection.EndpointInformation).caf();
+      }
+      catch
+      {
+         //The reconciliation pass retries the whole connect: an unrecorded advertisement must not leave a live connection behind, or no later pass would ever record it.
+         connection.Dispose();
+         throw;
       }
 
       _monitor.Locked(() =>
@@ -223,6 +234,12 @@ class TessagingRouter : ITessagingRouter, IDisposable
    public void StopDelivery()
    {
       _reconcileLoopCancellation.Cancel();
+      //Join the reconcile loop before returning: a pass in flight holds the peer-registry advertisement transaction open
+      //(ReconcileConnectionsAsync -> ConnectAsync -> RecordAdvertisementAsync), so stopping delivery must mean that transaction
+      //has reached its terminal state - not merely that the loop was signalled. Awaited outside the monitor: a pass in flight
+      //takes the monitor to finish, so joining while holding it would deadlock. Ordered before the connections are stopped so
+      //their delivery threads are no longer blocked behind that transaction's locks when they are joined.
+      _reconcileLoop?.WaitUnwrappingException();
       _monitor.Locked(() =>
       {
          _deliveryStarted = false;
@@ -235,6 +252,7 @@ class TessagingRouter : ITessagingRouter, IDisposable
    void RebuildRoutes()
    {
       _tommandHandlerRoutes.Clear();
+      _typermediaHandlerRoutes.Clear();
       _teventSubscriberRoutes.Clear();
       _teventSubscriberRouteCache.Clear();
       foreach(var connection in _connections.Values)
@@ -243,8 +261,8 @@ class TessagingRouter : ITessagingRouter, IDisposable
 
    ///<summary>Builds a route for <em>every</em> type <paramref name="connection"/>'s endpoint advertises — an advertised type no<br/>
    /// route serves would be a silently dead subscription, so anything unroutable is asserted against instead of skipped.<br/>
-   /// <see cref="TessageHandling.Abstractions.ITessageHandlerRegistry.HandledRemoteTessageTypeIds"/> asserts the same soundness on<br/>
-   /// the advertising endpoint at its start, where a violation fails loudest.</summary>
+   /// The advertising endpoint's <see cref="Engine.TessageHandlerRoster"/> asserts the same soundness when its advertisement is<br/>
+   /// first computed, where a violation fails loudest.</summary>
    void RegisterRoutes(TessagingConnection connection, ISet<string> handledTypeIdStrings)
    {
       foreach(var typeIdString in handledTypeIdStrings)
@@ -258,10 +276,13 @@ class TessagingRouter : ITessagingRouter, IDisposable
             State.Assert(tessageType.Is<IPublisherTevent<IRemotableTevent>>(),
                          () => $"Endpoint {connection.EndpointInformation.Id} advertises the tevent subscription {tessageType.FullName}, which no route can serve: an advertised tevent subscription is the wrapper type matching every wrapping of a remotable tevent type ({nameof(IPublisherTevent<>)}<{nameof(IRemotableTevent)}>). Every advertised type must get a route — a subscription must never be silently dropped.");
             _teventSubscriberRoutes.Add((tessageType, connection));
+         } else if(tessageType.Is<IAtMostOnceTypermediaTommand>() || tessageType.Is<IRemotableTuery<object>>())
+         {
+            _typermediaHandlerRoutes.GetOrAdd(tessageType, () => []).Add(connection);
          } else
          {
             State.Assert(tessageType.Is<IExactlyOnceTommand>(),
-                         () => $"Endpoint {connection.EndpointInformation.Id} advertises the tessage type {tessageType.FullName}, which no route can serve: Tessaging routes tommands exactly-once only ({nameof(IExactlyOnceTommand)} — see src/Compze.Tessaging/dev_docs/tevent-delivery-model.md). Every advertised type must get a route — a subscription must never be silently dropped.");
+                         () => $"Endpoint {connection.EndpointInformation.Id} advertises the tessage type {tessageType.FullName}, which no route can serve: TessageBus tommands route exactly-once only ({nameof(IExactlyOnceTommand)} — see src/Compze.Tessaging/dev_docs/tevent-delivery-model.md). Every advertised type must get a route — a subscription must never be silently dropped.");
             _tommandHandlerRoutes.Add(tessageType, connection);
          }
       }
@@ -275,9 +296,20 @@ class TessagingRouter : ITessagingRouter, IDisposable
 
    public bool HasLiveConnectionTo(EndpointId endpointId) => _monitor.Locked(() => _connections.ContainsKey(endpointId));
 
-   public ITessagingInboxConnection? LiveConnectionToHandlerFor(IRemotableTommand tommand) =>
+   public ITessagingInboxConnection? LiveConnectionToHandlerFor(Type tommandType) =>
       _monitor.Locked(() =>
-         AssertNotStopped().__(() => _tommandHandlerRoutes.GetValueOrDefault(tommand.GetType())));
+         AssertNotStopped().__(() => _tommandHandlerRoutes.GetValueOrDefault(tommandType)));
+
+   public IReadOnlyList<TypermediaRoute> TypermediaRoutesFor(Type tessageType) =>
+      _monitor.Locked(() =>
+      {
+         AssertNotStopped();
+         State.Assert(_endpointRegistry is not null,
+                      () => "Remote typermedia navigation requires the registry the endpoint discovers other endpoints through — declare DiscoverEndpointsThrough/ParticipateIn on the endpoint's distributed feature. (An external client application navigates explicitly known addresses through the typermedia client router instead.)");
+         return _typermediaHandlerRoutes.TryGetValue(tessageType, out var connections)
+                   ? (IReadOnlyList<TypermediaRoute>)[..connections.Select(connection => new TypermediaRoute(connection.EndpointInformation.Id, connection.RemoteAddress))]
+                   : [];
+      });
 
    public IReadOnlyList<ITessagingInboxConnection> SubscriberConnectionsFor(IPublisherTevent<IRemotableTevent> wrappedTevent) =>
       _monitor.Locked(() =>

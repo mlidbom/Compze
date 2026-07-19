@@ -23,7 +23,6 @@ public interface IMsSqlConnectionPool : IDbConnectionPool<ICompzeMsSqlConnection
                var connectionString = getConnectionString();
                return DbConnectionPool<ICompzeMsSqlConnection, SqlCommand>.ForConnectionString(
                   connectionString,
-                  PoolableConnectionFlags.Defaults,
                   ICompzeMsSqlConnection.Create);
             });
       }

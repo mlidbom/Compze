@@ -16,6 +16,17 @@ public interface IMyUnrelatedTevent : ITevent;
 
 class MySpecialGreetingRequestedTevent : IMySpecialGreetingRequestedTevent;
 
+///<summary>A tevent carrying its publish's sequence number — for pinning that observation dispatch preserves publish order (per-observer FIFO).</summary>
+public interface IMyNumberedTevent : ITevent
+{
+   int SequenceNumber { get; }
+}
+
+class MyNumberedTevent(int sequenceNumber) : IMyNumberedTevent
+{
+   public int SequenceNumber { get; } = sequenceNumber;
+}
+
 public class MyGreeting
 {
    public string Message { get; set; } = "";

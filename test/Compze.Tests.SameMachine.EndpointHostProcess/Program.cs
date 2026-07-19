@@ -9,12 +9,8 @@ using Compze.DependencyInjection.Microsoft;
 using Compze.Hosting;
 using Compze.Hosting.SameMachine;
 using Compze.Internals.Serialization.Newtonsoft.Wiring;
-using Compze.Internals.Transport.NamedPipes;
-using Compze.Tessaging.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
-using Compze.Tessaging.Hosting;
-using Compze.Typermedia.Client;
-using Compze.Typermedia.HandlerRegistration;
-using Compze.Internals.Sql.Sqlite.Wiring;
+using Compze.Tessaging.Internals.Transport.NamedPipes;
+using Compze.Tessaging.Engine;
 using Compze.Tessaging.Sqlite.Wiring;
 
 namespace Compze.Tests.SameMachine.EndpointHostProcess;
@@ -50,25 +46,21 @@ public static class Program
       var host = EndpointHost.Production.Create(() => new MicrosoftContainerBuilder(new ComponentRegistrar()));
       await using(host)
       {
-         host.RegisterEndpoint(
-            "EndpointHostProcess",
-            MultiProcessConversationEndpoints.EndpointHostProcessEndpointId,
-            builder =>
-            {
-               builder.TypeMapper.MapTypesFromAssemblyContaining<TommandSentToTheEndpointHostProcess>();
-
-               switch(composition)
-               {
-                  case ExactlyOnceTessagingComposition:
-                     ComposeExactlyOnceTessagingOnASqliteDatabase(builder, registry, workDirectory);
-                     break;
-                  case DatabaselessComposition:
-                     ComposeDistributedTessagingAndTypermediaWithNoDatabase(builder, registry);
-                     break;
-                  default:
-                     throw new ArgumentOutOfRangeException(nameof(args), composition, $"Unknown composition argument. Pass {ExactlyOnceTessagingComposition} or {DatabaselessComposition}.");
-               }
-            });
+         switch(composition)
+         {
+            case ExactlyOnceTessagingComposition:
+               host.RegisterEndpoint(container => Compze.Tessaging.Endpoints.ExactlyOnceEndpoint.Build(
+                  container, "EndpointHostProcess", MultiProcessConversationEndpoints.EndpointHostProcessEndpointId,
+                  endpointBuilder => ComposeExactlyOnceTessagingOnASqliteDatabase(endpointBuilder, registry, workDirectory)));
+               break;
+            case DatabaselessComposition:
+               host.RegisterEndpoint(container => Compze.Tessaging.Endpoints.BestEffortEndpoint.Build(
+                  container, "EndpointHostProcess", MultiProcessConversationEndpoints.EndpointHostProcessEndpointId,
+                  endpointBuilder => ComposeDistributedTessagingAndTypermediaWithNoDatabase(endpointBuilder, registry)));
+               break;
+            default:
+               throw new ArgumentOutOfRangeException(nameof(args), composition, $"Unknown composition argument. Pass {ExactlyOnceTessagingComposition} or {DatabaselessComposition}.");
+         }
 
          await host.StartAsync();
 
@@ -81,36 +73,38 @@ public static class Program
       return 0;
    }
 
-   static void ComposeExactlyOnceTessagingOnASqliteDatabase(IEndpointBuilder builder, InterprocessEndpointRegistry registry, DirectoryInfo workDirectory)
+   static void ComposeExactlyOnceTessagingOnASqliteDatabase(Compze.Tessaging.Endpoints.ExactlyOnceEndpointBuilder endpointBuilder, InterprocessEndpointRegistry registry, DirectoryInfo workDirectory)
    {
-      builder.Registrar.Register(Singleton.For<IConfigurationParameterProvider>()
-                                          .CreatedBy(() => new SqliteDatabasePerConnectionStringNameConfigurationParameterProvider(workDirectory)));
+      endpointBuilder.Registrar.Register(Singleton.For<IConfigurationParameterProvider>()
+                                           .CreatedBy(() => new SqliteDatabasePerConnectionStringNameConfigurationParameterProvider(workDirectory)));
 
-      builder.ComposeEndpoint(it => it.NamedPipeEndpointTransport()
-                                      .SqliteEndpointDatabase("EndpointHostProcess"))
-             .AddExactlyOnceTessaging(tessaging => tessaging.NewtonsoftSerializer())
-             .ParticipateIn(registry)
-             .RegisterHandlers(register => register.ForTommand<TommandSentToTheEndpointHostProcess, IUnitOfWorkTommandSender>((_, unitOfWorkTommandSender) => unitOfWorkTommandSender.Send(new TommandSentBackToTheSpecificationProcess())));
+      endpointBuilder
+         .MapTypes(mapper => mapper.MapTypesFromAssemblyContaining<TommandSentToTheEndpointHostProcess>())
+         .NamedPipeEndpointTransport()
+         .NewtonsoftSerializer()
+         .SqliteDomainDatabase("EndpointHostProcess")
+         .ParticipateIn(registry)
+         .RegisterTessageHandlers(handle => handle.ForTommand(async (TommandSentToTheEndpointHostProcess _, IUnitOfWorkTommandSender unitOfWorkTommandSender) =>
+            await unitOfWorkTommandSender.SendAsync(new TommandSentBackToTheSpecificationProcess())));
    }
 
-   ///<summary>The database-less composition: no database declaration, no configuration, nothing persisted anywhere in this<br/>
-   /// process — guarantee-free distributed Tessaging (the best-effort tier and participation are all the tevent delivery there is)<br/>
-   /// plus distributed Typermedia serving tueries.</summary>
-   static void ComposeDistributedTessagingAndTypermediaWithNoDatabase(IEndpointBuilder builder, InterprocessEndpointRegistry registry)
+   ///<summary>The best-effort composition: no database, no configuration, nothing persisted anywhere in this process — the<br/>
+   /// best-effort tier and participation are all the tevent delivery there is, and the same endpoint serves tueries.</summary>
+   static void ComposeDistributedTessagingAndTypermediaWithNoDatabase(Compze.Tessaging.Endpoints.BestEffortEndpointBuilder endpointBuilder, InterprocessEndpointRegistry registry)
    {
-      var foundation = builder.ComposeEndpoint(it => it.NamedPipeEndpointTransport());
-
-      foundation.AddDistributedTessaging(tessaging => tessaging.NewtonsoftSerializer())
-                .ParticipateIn(registry)
-                //Requiring the specification's endpoint makes the reply leg deterministic: the reply is published while handling
-                //the specification's tevent, which can happen before this process's own reconciliation has met the specification's
-                //endpoint - held for the required peer, it delivers on first contact instead of vanishing into the discovery race.
-                .RequirePeers(MultiProcessConversationEndpoints.SpecificationProcessEndpointId)
-                .RegisterHandlers(register => register.ForTevent((IBestEffortTeventPublishedByTheSpecificationProcess _, IUnitOfWorkTeventPublisher teventPublisher) =>
-                                                                    teventPublisher.Publish(new BestEffortTeventPublishedByTheEndpointHostProcess())));
-
-      foundation.AddDistributedTypermedia(typermedia => typermedia.NewtonsoftSerializer())
-                .RegisterHandlers.ForTuery((TueryAskedByTheSpecificationProcess _) => new AnswerToTheTueryAskedByTheSpecificationProcess(answeredBy: "EndpointHostProcess"));
+      endpointBuilder
+         .MapTypes(mapper => mapper.MapTypesFromAssemblyContaining<TommandSentToTheEndpointHostProcess>())
+         .NamedPipeEndpointTransport()
+         .NewtonsoftSerializer()
+         .ParticipateIn(registry)
+         //Requiring the specification's endpoint makes the reply leg deterministic: the reply is published while handling
+         //the specification's tevent, which can happen before this process's own reconciliation has met the specification's
+         //endpoint - held for the required peer, it delivers on first contact instead of vanishing into the discovery race.
+         .RequirePeers(MultiProcessConversationEndpoints.SpecificationProcessEndpointId)
+         .RegisterTessageHandlers(handle => handle
+            .ForTevent((IBestEffortTeventPublishedByTheSpecificationProcess _, IUnitOfWorkTeventPublisher teventPublisher) =>
+                          teventPublisher.Publish(new BestEffortTeventPublishedByTheEndpointHostProcess()))
+            .ForTuery((TueryAskedByTheSpecificationProcess _) => new AnswerToTheTueryAskedByTheSpecificationProcess(answeredBy: "EndpointHostProcess")));
    }
 
    ///<summary>The name of the environment variable through which the specification that launches this process passes the directory<br/>

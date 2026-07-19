@@ -1,14 +1,15 @@
 using Compze.Abstractions.Tessaging.Public;
 using Compze.DependencyInjection;
-using Compze.DependencyInjection.Abstractions;
 using Compze.Abstractions.Hosting.Public;
 using Compze.Abstractions.Wiring.Testing.Internal;
+using Compze.Hosting;
 using Compze.Hosting.SameMachine;
 using Compze.Hosting.Testing;
 using Compze.Hosting.Testing.Wiring;
 using Compze.Internals.Testing;
-using Compze.Tessaging.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
-using Compze.Tessaging.Hosting;
+using Compze.Tessaging.Endpoints;
+using Compze.Tessaging.Engine;
+using Compze.Tessaging.Implementation.TessageHandling.Dispatching;
 using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
@@ -35,8 +36,8 @@ public class Given_a_separate_process_hosting_an_endpoint_discovered_through_a_s
    readonly DirectoryInfo _workDirectory = null!;
    readonly InterprocessEndpointRegistry _registry = null!;
    readonly EndpointHostProcessHandle _endpointHostProcess = null!;
-   readonly ITestingEndpointHost _specificationHost = null!;
-   readonly IEndpoint _specificationEndpoint = null!;
+   readonly IEndpointHost _specificationHost = null!;
+   readonly ExactlyOnceEndpoint _specificationEndpoint = null!;
    readonly IThreadGate _replyTommandGate = IThreadGate.NewOpen(WaitTimeout.Seconds(1), "replyTommand");
 
    public Given_a_separate_process_hosting_an_endpoint_discovered_through_a_shared_interprocess_registry()
@@ -50,19 +51,25 @@ public class Given_a_separate_process_hosting_an_endpoint_discovered_through_a_s
 
       _endpointHostProcess = EndpointHostProcessHandle.Start(registryName, _workDirectory, EndpointHostProcessProgram.ExactlyOnceTessagingComposition);
 
-      _specificationHost = TestingEndpointHost.Create();
-      _specificationEndpoint = _specificationHost.RegisterEndpoint(
+      _specificationHost = EndpointHost.Production.Create(() => TestEnv.DIContainer.CreateTestingContainerBuilder()
+                                                                       ._mutate(it => it.Registrar.CurrentTestsDbPoolIfNotCloneContainer()));
+      _specificationEndpoint = _specificationHost.RegisterEndpoint(container => ExactlyOnceEndpoint.Build(
+         container,
          "SpecificationEndpoint",
          new EndpointId(Guid.NewGuid()),
-         builder =>
+         endpointBuilder =>
          {
-            builder.TypeMapper.MapTypesFromAssemblyContaining<TommandSentToTheEndpointHostProcess>();
-            builder.Registrar
-                   .CurrentTestsEndpointTransport()
-                   .CurrentTestsConfiguredSqlLayer(connectionStringName: builder.Configuration.Id.ToString());
-            builder.AddExactlyOnceTessaging().ParticipateIn(_registry);
-            builder.RegisterTessagingHandlers.ForTommand<TommandSentBackToTheSpecificationProcess>(_ => _replyTommandGate.AwaitPassThrough());
-         });
+            endpointBuilder
+               .MapTypes(mapper => mapper.MapTypesFromAssemblyContaining<TommandSentToTheEndpointHostProcess>())
+               .TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport())
+               .ConfigurePersistence(registrar => registrar.CurrentTestsConfiguredSqlLayer(connectionStringName: endpointBuilder.Configuration.Id.ToString()))
+               .ParticipateIn(_registry)
+               .RegisterTessageHandlers(handle => handle.ForTommand((TommandSentBackToTheSpecificationProcess _) =>
+            {
+               _replyTommandGate.AwaitPassThrough();
+               return Task.CompletedTask;
+            }));
+         }));
    }
 
    protected override async Task InitializeAsyncInternal()
@@ -100,29 +107,21 @@ public class Given_a_separate_process_hosting_an_endpoint_discovered_through_a_s
    }
 
    [Skip<Transport>([Transport.AspNetCore], "The endpoint host process speaks named pipes; the conversation only makes sense when the specification's endpoint does too")]
-   [PCT] public void a_tommand_sent_to_the_process_is_handled_there_and_its_reply_tommand_comes_back()
+   [PCT] public async Task a_tommand_sent_to_the_process_is_handled_there_and_its_reply_tommand_comes_back()
    {
-      //Until this process's reconciliation loop has discovered the endpoint host process - which is still starting up -
-      //the handler is unknown and sending fails loud. The retry loop rides that loudness until discovery completes.
-      var retryDeadline = DateTime.UtcNow + TimeSpan.FromSeconds(30);
-      while(true)
+      //The send is a waiting send: the tommand's handler has never been met until this endpoint's reconciliation discovers
+      //the endpoint host process - which is still starting up - and the exactly-once cold-start bind waits that discovery out
+      //within the endpoint's handler-availability patience, then binds. (The hand-rolled retry-on-no-handler loop this
+      //replaced is exactly the pattern waiting sends exist to dissolve.) The catch only enriches an exhausted wait with the
+      //process's fate and console output - the diagnosis a cross-process failure needs - and rethrows.
+      try
       {
-         try
-         {
-            _specificationEndpoint.ServiceLocator.Resolve<IIndependentTommandSender>().Send(new TommandSentToTheEndpointHostProcess());
-            break;
-         }
-#pragma warning disable CA1031 //Retrying until discovery completes; past the deadline the exception propagates wrapped with the endpoint host process's console output.
-         catch(Exception) when(DateTime.UtcNow < retryDeadline)
-         {
-            _endpointHostProcess.ThrowDescribingTheFailureIfTheProcessHasExited();
-            Thread.Sleep(100);
-         }
-         catch(Exception stillUndiscoveredAtTheRetryDeadline)
-#pragma warning restore CA1031
-         {
-            throw new InvalidOperationException($"The endpoint host process was not discovered within the retry deadline.{Environment.NewLine}{_endpointHostProcess.ConsoleOutput}", stillUndiscoveredAtTheRetryDeadline);
-         }
+         await _specificationEndpoint.ServiceLocator.Resolve<IIndependentTommandSender>().SendAsync(new TommandSentToTheEndpointHostProcess());
+      }
+      catch(NoHandlerForTessageTypeException notDiscoveredWithinPatience)
+      {
+         _endpointHostProcess.ThrowDescribingTheFailureIfTheProcessHasExited();
+         throw new InvalidOperationException($"The endpoint host process was not discovered within the endpoint's handler-availability patience.{Environment.NewLine}{_endpointHostProcess.ConsoleOutput}", notDiscoveredWithinPatience);
       }
 
       try

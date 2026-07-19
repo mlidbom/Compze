@@ -9,17 +9,20 @@ namespace Compze.Tessaging.Implementation.Peers;
 /// advertisement, with the advertised type strings resolved to types once, when the peer is remembered — so<br/>
 /// <see cref="SubscribesTo"/> and <see cref="Handles"/> are pure type checks on every publish and send. The advertisement<br/>
 /// partitions the way the router's route registration partitions it: tevent subscriptions are wrapper types matched by<br/>
-/// assignability, everything else is a tommand type matched exactly — so the registry and the routes always agree.</summary>
+/// assignability; the remotable single-handler types — exactly-once tommands, typermedia tommands, tueries — are matched<br/>
+/// exactly — so the registry and the routes always agree. The single-handler memory serves two askers: send-time receiver<br/>
+/// binding for exactly-once tommands, and the known-but-down vs never-seen distinction waiting sends and readiness compute<br/>
+/// their availability and failure wording from.</summary>
 public class RememberedPeer
 {
    ///<summary>The peer's identity — stable across restarts and address changes.</summary>
    public EndpointId Id { get; }
 
-   ///<summary>The peer's last-known advertisement: the canonical type-id strings of every remotable tessage type it handles and subscribes to.</summary>
+   ///<summary>The peer's last-known advertisement: the canonical type-id strings of every remotable tessage type it serves, of every kind.</summary>
    public IReadOnlySet<string> HandledTessageTypes { get; }
 
    readonly IReadOnlyList<Type> _teventSubscriptions;
-   readonly HashSet<Type> _handledTommandTypes;
+   readonly HashSet<Type> _handledSingleHandlerTypes;
 
    internal RememberedPeer(EndpointId id, IReadOnlySet<string> handledTessageTypes, ITypeMap typeMap)
    {
@@ -27,7 +30,7 @@ public class RememberedPeer
       HandledTessageTypes = handledTessageTypes;
       var advertisedTypes = handledTessageTypes.Select(typeIdString => typeMap.GetId(typeIdString).Type).ToList();
       _teventSubscriptions = [..advertisedTypes.Where(advertisedType => advertisedType.Is<ITevent>())];
-      _handledTommandTypes = [..advertisedTypes.Where(advertisedType => !advertisedType.Is<ITevent>())];
+      _handledSingleHandlerTypes = [..advertisedTypes.Where(advertisedType => !advertisedType.Is<ITevent>())];
    }
 
    ///<summary>Whether this peer's last-known advertisement subscribes to <paramref name="wrappedTevent"/> — the same<br/>
@@ -39,11 +42,8 @@ public class RememberedPeer
    internal bool SubscribesToTeventsOf(Type publishedWrapperType)
       => _teventSubscriptions.Any(subscription => subscription.IsAssignableFrom(publishedWrapperType));
 
-   ///<summary>Whether this peer's last-known advertisement handles <paramref name="tommand"/>'s type — the same exact-type<br/>
-   /// match the router's tommand routes apply.</summary>
-   internal bool Handles(IExactlyOnceTommand tommand) => HandlesTommandsOf(tommand.GetType());
-
-   ///<summary>The type-level form of <see cref="Handles"/>, for tommands at rest — an outbox row carries the tommand's type,<br/>
-   /// not an instance.</summary>
-   internal bool HandlesTommandsOf(Type tommandType) => _handledTommandTypes.Contains(tommandType);
+   ///<summary>Whether this peer's last-known advertisement handles the remotable single-handler type<br/>
+   /// <paramref name="tessageType"/> — an exactly-once tommand, a typermedia tommand, or a tuery — the same exact-type match<br/>
+   /// the router's routes apply to these kinds. (Tevent subscriptions are a different question: <see cref="SubscribesTo"/>.)</summary>
+   internal bool Handles(Type tessageType) => _handledSingleHandlerTypes.Contains(tessageType);
 }

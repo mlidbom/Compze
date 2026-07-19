@@ -1,8 +1,9 @@
 using Compze.TypeIdentifiers;
 using Compze.Abstractions.Serialization.Internal;
 using Compze.DependencyInjection;
+using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.DependencyInjection.Abstractions;
-using Compze.Internals.Transport;
+using Compze.Tessaging.Internals.Transport;
 using Compze.Tessaging.Implementation.TessageHandling.Dispatching;
 using Compze.Tessaging.Implementation.Transport.Abstractions;
 
@@ -42,10 +43,10 @@ class BestEffortTessagingRequestHandlers : ITransportRequestHandlerContribution
       return;
 
       //The acknowledgement is written after the handlers have executed, so one-tessage-in-flight-per-destination keeps handling in send order.
-      Task<string> DispatchDirectly(TransportRequest request)
+      async Task<string> DispatchDirectly(TransportRequest request)
       {
-         bestEffortTeventDirectDispatcher.Dispatch(new TransportTessage.InComing(request.Body, request.PayloadTypeIdString, request.TessageId, typeMap, serializer));
-         return Task.FromResult("");
+         await bestEffortTeventDirectDispatcher.DispatchAsync(new TransportTessage.InComing(request.Body, request.PayloadTypeIdString, request.TessageId, typeMap, serializer)).caf();
+         return "";
       }
    }
 }

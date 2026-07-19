@@ -1,31 +1,21 @@
-using Compze.Abstractions.Hosting.Public;
-using Compze.Hosting;
-using Compze.Hosting.Testing;
-using Compze.Hosting.Testing.Wiring;
-using Compze.Typermedia.Client;
-using Compze.Internals.Testing;
-using Compze.Tessaging.Hosting.Testing.Wiring;
-using Compze.Typermedia.Hosting.Testing;
-using Compze.Typermedia.Hosting.Testing.Wiring;
-using Compze.Underscore;
+using Compze.Tessaging.Endpoints;
+using Compze.Tessaging.Hosting.Testing;
+using Compze.Tessaging.Hosting.Testing.Typermedia;
 using JetBrains.Annotations;
 
 namespace AccountManagement.UI.MVC;
 
 public class Startup
 {
-   readonly IEndpointHost _host;
-   readonly IEndpoint _endpoint;
+   readonly TestingEndpointHost _host;
+   readonly ExactlyOnceEndpoint _endpoint;
    TypermediaTestClient _client = null!;
 
    public Startup(IConfiguration configuration)
    {
       Configuration = configuration;
-      //This demo host runs on the testing wiring: each endpoint gets the Tessaging and Typermedia transports and the full SQL persistence stack against a throwaway pooled database.
-      _host = EndpointHost.Production.Create(() => TestEnv.DIContainer.CreateTestingContainerBuilder()
-                                                          ._mutate(it => it.Registrar
-                                                                           .CurrentTestsEndpointTransport()
-                                                                           .CurrentTestsConfiguredSqlLayer(connectionStringName: Guid.NewGuid().ToString())));
+      //This demo host runs on the testing wiring: each endpoint gets the current test environment's transports, serializers, and the full SQL persistence stack against a throwaway pooled database.
+      _host = TestingEndpointHost.Create();
       _endpoint = AccountManagementServerDomainBootstrapper.RegisterWith(_host);
    }
 
@@ -38,8 +28,11 @@ public class Startup
       services.AddMvc();
 
       _host.Start();
+      //The statistics endpoint's query models update from the domain endpoint's tevents, and exactly-once fan-out membership
+      //is the remembered subscribers - first contact is the boundary - so traffic opens only after the two endpoints have met.
+      _host.AwaitEndpointsHaveMetEachOtherAsync().GetAwaiter().GetResult();
 
-      _client = TypermediaTestClient.ConnectTo(_endpoint.TypermediaAddress!, mapper => mapper.RegisterAccountManagementTypeMappings()).GetAwaiter().GetResult();
+      _client = TypermediaTestClient.ConnectTo(_endpoint.Address!, mapper => mapper.RegisterAccountManagementTypeMappings()).GetAwaiter().GetResult();
       services.AddHttpContextAccessor();
       services.AddScoped(_ => _client.Navigator);
    }

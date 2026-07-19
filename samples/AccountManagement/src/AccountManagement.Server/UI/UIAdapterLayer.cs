@@ -1,15 +1,15 @@
-using Compze.Typermedia.HandlerRegistration;
+using Compze.Tessaging.Engine;
 
 namespace AccountManagement.UI;
 
 static class UIAdapterLayer
 {
-   public static void Register(TypermediaHandlerRegistrarWithDependencyInjectionSupport typermediaRegistrar)
+   public static void Register(TessageHandlerRegistrar registrar)
    {
-      AccountUIAdapter.GetById(typermediaRegistrar);
-      AccountUIAdapter.Register(typermediaRegistrar);
-      AccountUIAdapter.ChangeEmail(typermediaRegistrar);
-      AccountUIAdapter.ChangePassword(typermediaRegistrar);
-      AccountUIAdapter.Login(typermediaRegistrar);
+      AccountUIAdapter.GetById(registrar);
+      AccountUIAdapter.Register(registrar);
+      AccountUIAdapter.ChangeEmail(registrar);
+      AccountUIAdapter.ChangePassword(registrar);
+      AccountUIAdapter.Login(registrar);
    }
 }

@@ -5,7 +5,7 @@ using AccountManagement.Domain;
 using Compze.Abstractions.Hosting.Public;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Internals.SystemCE;
-using Compze.Typermedia;
+using Compze.Tessaging.Typermedia;
 
 namespace AccountManagement.API;
 
@@ -51,8 +51,4 @@ public class AccountApi : IStaticInstancePropertySingleton<AccountApi>
       public NavigationSpecification<AccountResource.Tommand.LogIn.LoginAttemptResult> Login(string email, string password) => Tommands.Post(tommands => tommands.Login.WithValues(email, password));
    }
 
-   ///<summary>This method ensures that the client endpoints has everything it needs to use the services in this API. Type mappings etc. Teventually we will probably be setting up pipeline components such as custom caches etc here.</summary>
-   public static void RegisterWithClientEndpoint(IEndpointBuilder builder)
-   {
-   }
 }

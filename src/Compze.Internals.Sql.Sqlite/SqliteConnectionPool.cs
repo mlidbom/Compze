@@ -26,7 +26,6 @@ public interface ISqliteConnectionPool : IDbConnectionPool<ICompzeSqliteConnecti
                var connectionString = getConnectionString();
                return DbConnectionPool<ICompzeSqliteConnection, SqliteCommand>.ForConnectionString(
                   connectionString,
-                  PoolableConnectionFlags.MustUseSameConnectionThroughoutATransaction,
                   ICompzeSqliteConnection.Create);
             });
       }

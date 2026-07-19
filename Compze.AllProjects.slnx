@@ -215,11 +215,9 @@
       <Project Path="test/Compze.Internals.SystemCE.Tests/Compze.Internals.SystemCE.Tests.csproj" />
    </Folder>
    <Folder Name="/Compze.Internals/Transport/">
-      <Project Path="src/Compze.Internals.Transport.AspNet/Compze.Internals.Transport.AspNet.csproj" />
-      <Project Path="src/Compze.Internals.Transport/Compze.Internals.Transport.csproj" />
+      <Project Path="src/Compze.Tessaging.AspNetCore/Compze.Tessaging.AspNetCore.csproj" />
    </Folder>
    <Folder Name="/Compze.Tessaging/">
-      <Project Path="src/Compze.Tessaging.Abstractions/Compze.Tessaging.Abstractions.csproj" />
       <Project Path="src/Compze.Tessaging/Compze.Tessaging.csproj" />
    </Folder>
    <Folder Name="/Compze.TypeIdentifiers/SqlLayers/">
@@ -228,16 +226,8 @@
       <Project Path="src/Compze.TypeIdentifiers.Interning.PostgreSql/Compze.TypeIdentifiers.Interning.PostgreSql.csproj" />
       <Project Path="src/Compze.TypeIdentifiers.Interning.Sqlite/Compze.TypeIdentifiers.Interning.Sqlite.csproj" />
    </Folder>
-   <Folder Name="/Compze.Typermedia/">
-      <Project Path="src/Compze.Typermedia.Client/Compze.Typermedia.Client.csproj" />
-      <Project Path="src/Compze.Typermedia.Hosting.Testing/Compze.Typermedia.Hosting.Testing.csproj" />
-      <Project Path="src/Compze.Typermedia.Hosting/Compze.Typermedia.Hosting.csproj" />
-      <Project Path="src/Compze.Typermedia/Compze.Typermedia.csproj" />
-   </Folder>
-   <Folder Name="/Compze.Typermedia/Specifications/">
-      <Project Path="test/Compze.Typermedia.Client.Specifications/Compze.Typermedia.Client.Specifications.csproj" />
-      <Project Path="test/Compze.Typermedia.Hosting.Specifications/Compze.Typermedia.Hosting.Specifications.csproj" />
-      <Project Path="test/Compze.Typermedia.Specifications/Compze.Typermedia.Specifications.csproj" />
+   <Folder Name="/Compze.Tessaging/Specifications/">
+      <Project Path="test/Compze.Tessaging.Specifications/Compze.Tessaging.Specifications.csproj" />
    </Folder>
    <Folder Name="/_Tests/">
       <Project Path="test/Compze.Tests.CodePolicies/Compze.Tests.CodePolicies.csproj" />

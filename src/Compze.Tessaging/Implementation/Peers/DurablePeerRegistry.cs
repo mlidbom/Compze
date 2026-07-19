@@ -1,3 +1,4 @@
+using Compze.Tessaging.Internals.Transport;
 using System.Transactions;
 using Compze.Abstractions.Hosting.Public;
 using Compze.Abstractions.Tessaging.Public;
@@ -16,12 +17,12 @@ namespace Compze.Tessaging.Implementation.Peers;
 /// advertisement fetch. Peer memory survives restarts on both sides: a peer is remembered until explicitly decommissioned.</summary>
 [UsedImplicitly] class DurablePeerRegistry : IPeerRegistry
 {
-   readonly IServiceBusSqlLayer.IPeerRegistrySqlLayer _sqlLayer;
+   readonly ITessagingSqlLayer.IPeerRegistrySqlLayer _sqlLayer;
    readonly ITypeMap _typeMap;
    readonly IReadOnlyList<IPeerLifecycleObserver> _lifecycleObservers;
    readonly RememberedPeers _rememberedPeers = new();
 
-   internal DurablePeerRegistry(IServiceBusSqlLayer.IPeerRegistrySqlLayer sqlLayer, ITypeMap typeMap, IReadOnlyList<IPeerLifecycleObserver> lifecycleObservers)
+   internal DurablePeerRegistry(ITessagingSqlLayer.IPeerRegistrySqlLayer sqlLayer, ITypeMap typeMap, IReadOnlyList<IPeerLifecycleObserver> lifecycleObservers)
    {
       _sqlLayer = sqlLayer;
       _typeMap = typeMap;
@@ -31,35 +32,36 @@ namespace Compze.Tessaging.Implementation.Peers;
    public async Task StartAsync()
    {
       await _sqlLayer.InitAsync().caf();
-      _rememberedPeers.ReplaceAllWith(_sqlLayer.GetPeers().Select(peer => new RememberedPeer(peer.Id, peer.HandledTessageTypes, _typeMap)));
+      _rememberedPeers.ReplaceAllWith((await _sqlLayer.GetPeersAsync().caf()).Select(peer => new RememberedPeer(peer.Id, peer.HandledTessageTypes, _typeMap)));
    }
 
-   public void RecordAdvertisement(TessagingEndpointInformation advertisement)
+   public async Task RecordAdvertisementAsync(EndpointInformation advertisement)
    {
       var peer = new RememberedPeer(advertisement.Id, advertisement.HandledTessageTypes, _typeMap);
       var previous = _rememberedPeers.Find(peer.Id);
       //Its own transaction, never the caller's: recording an advertisement is fact-keeping - the fetch happened - and must not
       //roll back with any unrelated ambient transaction. The lifecycle observers are notified inside it, so the recorded
       //advertisement and its consequences - the outbox pruning what a shrink orphaned - commit or roll back together.
-      TransactionScopeCe.SuppressAmbient(() => TransactionScopeCe.Execute(() =>
+      await TransactionScopeCe.SuppressAmbientAsync(async () => await TransactionScopeCe.ExecuteAsync(async () =>
       {
-         _sqlLayer.SaveAdvertisement(advertisement.Id, advertisement.HandledTessageTypes);
-         _lifecycleObservers.NotifyAdvertisementRecorded(previous, peer);
-      }));
+         await _sqlLayer.SaveAdvertisementAsync(advertisement.Id, advertisement.HandledTessageTypes).caf();
+         await _lifecycleObservers.NotifyAdvertisementRecordedAsync(previous, peer).caf();
+      }).caf()).caf();
       _rememberedPeers.Remember(peer);
    }
 
-   public void Decommission(EndpointId peer)
+   public async Task DecommissionAsync(EndpointId peer)
    {
       State.NotNull(Transaction.Current);
-      _sqlLayer.DeletePeer(peer);
+      var transaction = Transaction.Current;
+      await _sqlLayer.DeletePeerAsync(peer).caf();
       //The mirror follows only on commit: fan-out and receiver binding must keep seeing the peer while the act can still roll back.
-      Transaction.Current.OnCommittedSuccessfully(() => _rememberedPeers.Forget(peer));
+      transaction.OnCommittedSuccessfully(() => _rememberedPeers.Forget(peer));
    }
 
    public IReadOnlyList<RememberedPeer> Peers => _rememberedPeers.Peers;
 
    public IReadOnlyList<EndpointId> SubscriberIdsFor(IPublisherTevent<IRemotableTevent> wrappedTevent) => _rememberedPeers.SubscriberIdsFor(wrappedTevent);
 
-   public IReadOnlyList<EndpointId> HandlerIdsFor(IExactlyOnceTommand tommand) => _rememberedPeers.HandlerIdsFor(tommand);
+   public IReadOnlyList<EndpointId> HandlerIdsFor(Type tessageType) => _rememberedPeers.HandlerIdsFor(tessageType);
 }

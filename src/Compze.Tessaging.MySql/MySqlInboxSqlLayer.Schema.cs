@@ -1,4 +1,5 @@
-using T = Compze.Tessaging.Transport.SqlLayer.IServiceBusSqlLayer.InboxTessageDatabaseSchemaStrings;
+using Compze.Tessaging.Transport.SqlLayer;
+using T = Compze.Tessaging.Transport.SqlLayer.ITessagingSqlLayer.InboxTessageDatabaseSchemaStrings;
 
 namespace Compze.Tessaging.MySql;
 
@@ -6,10 +7,10 @@ partial class MySqlInboxSqlLayer
 {
    const string MySqlGuidType = "CHAR(36)";
 
-   public const string SchemaCreationSql =
+   public static string SchemaCreationSql(EndpointTableSet tables) =>
       $"""
 
-           CREATE TABLE IF NOT EXISTS {T.TableName}
+           CREATE TABLE IF NOT EXISTS {tables.InboxTessages}
            (
                {T.GeneratedId}         bigint          NOT NULL  AUTO_INCREMENT,
                {T.TypeId}              int             NOT NULL,
@@ -24,7 +25,7 @@ partial class MySqlInboxSqlLayer
 
                PRIMARY KEY ( {T.GeneratedId} ),
 
-               UNIQUE INDEX IX_{T.TableName}_Unique_{T.TessageId} ( {T.TessageId} )
+               UNIQUE INDEX IX_{tables.InboxTessages}_Unique_{T.TessageId} ( {T.TessageId} )
            )
        ENGINE = InnoDB
        DEFAULT CHARACTER SET = utf8mb4;

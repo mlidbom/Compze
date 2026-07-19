@@ -1,7 +1,9 @@
+using Compze.Tessaging.Internals.Transport;
 using System.Transactions;
 using Compze.Abstractions.Hosting.Public;
 using Compze.Contracts;
 using Compze.Internals.SystemCE.TransactionsCE;
+using Compze.Tessaging.Implementation.Abstractions;
 using Compze.Tessaging.Implementation.Peers;
 using Compze.Tessaging.Implementation.Transport;
 using Compze.Tessaging.Implementation.Transport.Abstractions;
@@ -14,7 +16,7 @@ namespace Compze.Tessaging.Implementation.BestEffortDelivery;
 /// peer (<see cref="PeerQueue"/>), owned here — never by a connection — so the queue survives connection churn. The<br/>
 /// <see cref="BestEffortTeventDeliveryLeg"/> enqueues into it on commit whether or not the peer is currently connected, and the<br/>
 /// connection's best-effort delivery stream drains the peer's queue while one is live: a known peer that is down accumulates its<br/>
-/// tessages in order and receives them on its return (see <c>dev_docs/TODO/durable-peer-topology.md</c>). Being memory, it<br/>
+/// tessages in order and receives them on its return (see <c>src/Compze.Tessaging/dev_docs/peer-model.md</c>). Being memory, it<br/>
 /// promises nothing across a crash of this process — that is the exactly-once tier's job.</summary>
 ///<remarks>A required peer the endpoint has never met (<c>RequirePeers</c> on the distributed Tessaging feature) has its queue<br/>
 /// from the start, awaiting first contact: everything published is held for it — its subscriptions are unknown until its first<br/>
@@ -24,7 +26,7 @@ partial class BestEffortTeventQueues : IDisposable, IPeerDecommissionParticipant
 {
    ///<summary>The bound on each peer's queue — generous: a lot of tevents, little memory on current hardware. A publish that<br/>
    /// would exceed it fails loud (<see cref="BestEffortTeventQueueOverflowException"/>): backpressure loses nothing, while<br/>
-   /// silently shedding queued tevents does (see <c>dev_docs/TODO/durable-peer-topology.md</c>).</summary>
+   /// silently shedding queued tevents does (see <c>src/Compze.Tessaging/dev_docs/peer-model.md</c>).</summary>
    internal const int MaximumQueuedTeventsPerPeer = 10_000;
 
    readonly ITypeMap _typeMap;
@@ -66,7 +68,7 @@ partial class BestEffortTeventQueues : IDisposable, IPeerDecommissionParticipant
    /// were unknown, is discarded. For a decommissioned peer's tombstone this is the revival: a re-announce is first contact<br/>
    /// again, so a fresh queue replaces the tombstone (a not-queued-for declaration is the composition's and survives the<br/>
    /// revival). For every other peer: its standing queue.</summary>
-   internal PeerQueue ForConnectedPeer(TessagingEndpointInformation advertisement)
+   internal PeerQueue ForConnectedPeer(EndpointInformation advertisement)
    {
       PeerQueue? tombstoneToDispose = null;
       var queue = _monitor.Locked(() =>
@@ -88,10 +90,10 @@ partial class BestEffortTeventQueues : IDisposable, IPeerDecommissionParticipant
    /// peer's return, or held awaiting a required peer's first contact — is reported, and dropped when the act commits, the<br/>
    /// queue becoming a tombstone (<see cref="PeerQueue.IsDecommissioned"/>). A tier that keeps nothing for the peer reports<br/>
    /// nothing; an empty hold still reports its zero-count ending — the hold itself was something the endpoint kept.</summary>
-   public IReadOnlyList<PeerDecommissionReport.DiscardedTessages> DiscardEverythingKeptFor(EndpointId peer)
+   public Task<IReadOnlyList<PeerDecommissionReport.DiscardedTessages>> DiscardEverythingKeptForAsync(EndpointId peer)
    {
       var queue = _monitor.Locked(() => _queues.GetValueOrDefault(peer));
-      if(queue == null || queue.IsDecommissioned) return [];
+      if(queue == null || queue.IsDecommissioned) return Task.FromResult<IReadOnlyList<PeerDecommissionReport.DiscardedTessages>>([]);
 
       //In-memory, so the drop is deferred to the act's commit: an act that fails partway must change nothing.
       State.NotNull(Transaction.Current);
@@ -102,10 +104,11 @@ partial class BestEffortTeventQueues : IDisposable, IPeerDecommissionParticipant
             _tessagesInFlightTracker.DroppedBeforeDelivery(droppedTessage, peer);
       });
 
-      return [new PeerDecommissionReport.DiscardedTessages(queue.IsAwaitingFirstContact
-                                                              ? "best-effort tevent(s) held awaiting the required peer's first contact - the hold ends with the decommission"
-                                                              : "best-effort tevent(s) queued awaiting the peer's return",
-                                                           queue.QueuedCount)];
+      return Task.FromResult<IReadOnlyList<PeerDecommissionReport.DiscardedTessages>>(
+         [new PeerDecommissionReport.DiscardedTessages(queue.IsAwaitingFirstContact
+                                                          ? "best-effort tevent(s) held awaiting the required peer's first contact - the hold ends with the decommission"
+                                                          : "best-effort tevent(s) queued awaiting the peer's return",
+                                                       queue.QueuedCount)]);
    }
 
    public void Dispose() => _monitor.Locked(() =>

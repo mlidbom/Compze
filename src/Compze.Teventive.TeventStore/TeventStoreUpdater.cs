@@ -35,7 +35,9 @@ class TeventStoreUpdater : ITeventStoreReader, ITeventStoreUpdater
    {
       Argument.NotNull(teventPublisher).NotNull(store);
 
-      _usageGuard = new CombinationUsageGuard(new SingleThreadUseGuard(this), new SingleTransactionUsageGuard(this));
+      //Transaction affinity, never thread affinity: an async unit of work legitimately migrates across threads, and the
+      //misuse that must fail loud is one session serving two transactions.
+      _usageGuard = new SingleTransactionUsageGuard(this);
       _teventPublisher = teventPublisher;
       _store = store;
       _taggregateTypeValidator = taggregateTypeValidator;
@@ -107,7 +109,11 @@ class TeventStoreUpdater : ITeventStoreReader, ITeventStoreUpdater
 
          _store.SaveSingleTaggregateTevents(wrappedTevents);
 
-         wrappedTevents.ForEach(wrappedTevent => _teventPublisher.Publish(wrappedTevent));
+         //The Teventive taggregate model raises tevents synchronously - from constructors and domain methods - and this session
+         //forwards them where they are raised, inside the caller's unit of work. That synchronous context meets the exactly-once
+         //publisher door's async-only contract here, in this one deliberate bridge; the alternative - an async taggregate domain
+         //model - would be a redesign of Teventive itself, not a call-site choice.
+         wrappedTevents.ForEach(wrappedTevent => _teventPublisher.PublishAsync(wrappedTevent).GetAwaiter().GetResult());
       });
 
       _idMap.Add(taggregate.Id, taggregate);
@@ -124,7 +130,8 @@ class TeventStoreUpdater : ITeventStoreReader, ITeventStoreUpdater
       }
 
       _store.SaveSingleTaggregateTevents([wrappedTevent]);
-      _teventPublisher.Publish(wrappedTevent);
+      //The same deliberate sync-context bridge as in Save: the taggregate's tevent stream raises synchronously mid-domain-call.
+      _teventPublisher.PublishAsync(wrappedTevent).GetAwaiter().GetResult();
    }
 
    public void Delete(TaggregateId taggregateId)

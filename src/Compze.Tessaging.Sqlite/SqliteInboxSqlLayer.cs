@@ -7,30 +7,31 @@ using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tessaging.Transport.SqlLayer;
 using Compze.TypeIdentifiers;
 using Compze.TypeIdentifiers.Interning;
-using TessageTable =  Compze.Tessaging.Transport.SqlLayer.IServiceBusSqlLayer.InboxTessageDatabaseSchemaStrings;
+using TessageTable =  Compze.Tessaging.Transport.SqlLayer.ITessagingSqlLayer.InboxTessageDatabaseSchemaStrings;
 
 namespace Compze.Tessaging.Sqlite;
 
-partial class SqliteInboxSqlLayer(ISqliteConnectionPool connectionFactory, SqliteSqlLayerSchemaManager schemaManager, ITypeIdInterner typeIdInterner) : IServiceBusSqlLayer.IInboxSqlLayer
+partial class SqliteInboxSqlLayer(ISqliteConnectionPool connectionFactory, SqliteSqlLayerSchemaManager schemaManager, ITypeIdInterner typeIdInterner, EndpointTableSet tables) : ITessagingSqlLayer.IInboxSqlLayer
 {
    readonly ISqliteConnectionPool _connectionFactory = connectionFactory;
    readonly SqliteSqlLayerSchemaManager _schemaManager = schemaManager;
    readonly ITypeIdInterner _typeIdInterner = typeIdInterner;
+   readonly EndpointTableSet _tables = tables;
 
-   public IServiceBusSqlLayer.SaveTessageResult SaveTessage(TessageId tessageId, TypeId typeId, string serializedTessage)
+   public async Task<ITessagingSqlLayer.SaveTessageResult> SaveTessageAsync(TessageId tessageId, TypeId typeId, string serializedTessage)
    {
       // Intern before opening a connection: interning may hit the database, and nesting a second connection
       // inside a held one deadlocks the pool.
       var internedTypeId = _typeIdInterner.GetOrInternId(typeId);
-      return _connectionFactory.UseCommand(
-         command =>
+      return await _connectionFactory.UseCommandAsync(
+         async command =>
          {
-            var affectedRows = command
+            var affectedRows = await command
               .SetCommandText(
                   $"""
 
-                   INSERT INTO {TessageTable.TableName} 
-                               ({TessageTable.TessageId},  {TessageTable.TypeId},  {TessageTable.Body}, {TessageTable.Status}) 
+                   INSERT INTO {_tables.InboxTessages}
+                               ({TessageTable.TessageId},  {TessageTable.TypeId},  {TessageTable.Body}, {TessageTable.Status})
                        VALUES (@{TessageTable.TessageId}, @{TessageTable.TypeId}, @{TessageTable.Body}, {(int)InboxTessageStatus.UnHandled})
                    ON CONFLICT ({TessageTable.TessageId}) DO NOTHING
 
@@ -38,45 +39,45 @@ partial class SqliteInboxSqlLayer(ISqliteConnectionPool connectionFactory, Sqlit
               .AddMediumTextParameter(TessageTable.TessageId, tessageId.ToString())
               .AddParameter(TessageTable.TypeId, internedTypeId)
               .AddMediumTextParameter(TessageTable.Body, serializedTessage)
-              .ExecuteNonQuery();
+              .ExecuteNonQueryAsync().caf();
 
             return affectedRows == 0
-               ? IServiceBusSqlLayer.SaveTessageResult.Duplicate
-               : IServiceBusSqlLayer.SaveTessageResult.NewTessage;
-         });
+               ? ITessagingSqlLayer.SaveTessageResult.Duplicate
+               : ITessagingSqlLayer.SaveTessageResult.NewTessage;
+         }).caf();
    }
 
-   public int MarkAsSucceeded(TessageId tessageId)
+   public async Task<int> MarkAsSucceededAsync(TessageId tessageId)
    {
-      return _connectionFactory.UseCommand(
-         command =>
-            command
+      return await _connectionFactory.UseCommandAsync(
+         async command =>
+            await command
               .SetCommandText(
                   $"""
 
-                   UPDATE {TessageTable.TableName} 
+                   UPDATE {_tables.InboxTessages}
                        SET {TessageTable.Status} = {(int)InboxTessageStatus.Succeeded}
                    WHERE {TessageTable.TessageId} = @{TessageTable.TessageId}
                        AND {TessageTable.Status} = {(int)InboxTessageStatus.UnHandled}
 
                    """)
               .AddMediumTextParameter(TessageTable.TessageId, tessageId.ToString())
-              .ExecuteNonQuery());
+              .ExecuteNonQueryAsync().caf()).caf();
    }
 
-   public int RecordException(TessageId tessageId, string exceptionStackTrace, string exceptionTessage, string exceptionType)
+   public async Task<int> RecordExceptionAsync(TessageId tessageId, string exceptionStackTrace, string exceptionTessage, string exceptionType)
    {
-      return _connectionFactory.UseCommand(
-         command => command
+      return await _connectionFactory.UseCommandAsync(
+         async command => await command
                    .SetCommandText(
                        $"""
 
-                        UPDATE {TessageTable.TableName} 
+                        UPDATE {_tables.InboxTessages}
                             SET {TessageTable.ExceptionCount} = {TessageTable.ExceptionCount} + 1,
                                 {TessageTable.ExceptionType} = @{TessageTable.ExceptionType},
                                 {TessageTable.ExceptionStackTrace} = @{TessageTable.ExceptionStackTrace},
                                 {TessageTable.ExceptionTessage} = @{TessageTable.ExceptionTessage}
-                                
+
                         WHERE {TessageTable.TessageId} = @{TessageTable.TessageId}
 
                         """)
@@ -84,23 +85,23 @@ partial class SqliteInboxSqlLayer(ISqliteConnectionPool connectionFactory, Sqlit
                    .AddMediumTextParameter(TessageTable.ExceptionStackTrace, exceptionStackTrace)
                    .AddMediumTextParameter(TessageTable.ExceptionTessage, exceptionTessage)
                    .AddMediumTextParameter(TessageTable.ExceptionType, exceptionType)
-                   .ExecuteNonQuery());
+                   .ExecuteNonQueryAsync().caf()).caf();
    }
 
-   public int MarkAsFailed(TessageId tessageId)
+   public async Task<int> MarkAsFailedAsync(TessageId tessageId)
    {
-      return _connectionFactory.UseCommand(
-         command => command
+      return await _connectionFactory.UseCommandAsync(
+         async command => await command
                    .SetCommandText(
                        $"""
 
-                        UPDATE {TessageTable.TableName} 
+                        UPDATE {_tables.InboxTessages}
                             SET {TessageTable.Status} = {(int)InboxTessageStatus.Failed}
                         WHERE {TessageTable.TessageId} = @{TessageTable.TessageId}
                             AND {TessageTable.Status} = {(int)InboxTessageStatus.UnHandled}
                         """)
                    .AddMediumTextParameter(TessageTable.TessageId, tessageId.ToString())
-                   .ExecuteNonQuery());
+                   .ExecuteNonQueryAsync().caf()).caf();
    }
 
    public async Task InitAsync() => await _schemaManager.EnsureSchemaInitializedAsync().caf();

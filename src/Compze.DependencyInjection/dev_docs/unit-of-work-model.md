@@ -15,15 +15,24 @@ Every piece of work the framework runs falls into exactly one of three context k
 
 | Context | Mechanics | Who runs in it |
 |---|---|---|
-| **Unit of work** | fresh scope + transaction (`ExecuteUnitOfWork`) | tommand handlers, exactly-once inbox processing, transient tevent dispatch, every independent door's mutating verb |
-| **Isolated scope** | fresh scope, no transaction of its own (`ExecuteInIsolatedScope`); an ambient transaction, if the caller has one, is left as-is so reads join its consistency | tuery handlers, discovery queries |
-| **Detached** | fresh scope + ambient transaction actively **suppressed** | observation handlers |
+| **Unit of work** | fresh scope + transaction (`ExecuteUnitOfWork` / `ExecuteUnitOfWorkAsync`) | tommand handlers, exactly-once inbox processing, best-effort tevent dispatch, every independent door's mutating verb |
+| **Isolated scope** | fresh scope, no transaction of its own (`ExecuteInIsolatedScope` / `ExecuteInIsolatedScopeAsync`); an ambient transaction, if the caller has one, is left as-is so reads join its consistency | tuery handlers, discovery queries |
+| **Detached** | fresh scope on a context born transaction-free: the observation dispatch pump starts with `ExecutionContext` flow suppressed, so there is no ambient transaction to suppress — and the pump asserts that guarantee | observation handlers |
 
 A tuery execution is deliberately **not** a unit of work: it changes nothing, so there is nothing to commit
 or roll back. (On SQLite this is also load-bearing: any transaction that touches a SQLite connection takes
 the per-database write gate, so transactional reads would serialize against writes.) Detached is not the
 same as isolated-scope: a read *wants* to see the caller's uncommitted writes when a transaction is ambient;
-an observer must survive the caller's rollback, so it suppresses.
+an observer observes committed facts from outside every transaction, so its context carries none — by
+construction since observation dispatch moved off-thread (it queues at the publisher's commit and runs on
+the engine's observation dispatch pump).
+
+**The choreography is async-flow-safe.** The async envelope forms open their transaction scope with async
+flow enabled, so the ambient transaction flows across the execution's awaits: one unit of work legitimately
+migrates across pool threads, and its identity is its transaction, never a thread. Session affinity follows:
+the scoped sessions (the document db session, the tevent store updater) guard against serving **two
+transactions** — one session belongs to one unit of work — while the thread-affinity guard of the
+synchronous era is gone, since thread identity stopped being an invariant of correct executions.
 
 ## `IUnitOfWorkResolver` — the requirement, stated in the types
 
@@ -38,14 +47,14 @@ express which:
 - **Tevent participation handlers** receive `IUnitOfWorkResolver` too: every delivery path runs them inside
   a unit of work — the publisher's own for a local publish (asserted: `IUnitOfWorkTeventPublisher` throws
   with no ambient transaction), the inbox processing's own for an exactly-once arrival, the direct
-  dispatch's own for a transient arrival. Observation handlers, delivered detached from any transaction by
+  dispatch's own for a best-effort arrival. Observation handlers, delivered detached from any transaction by
   contract, have their own registrar and keep `IScopeResolver`.
 
 Beyond resolution, the resolver is the unit of work's handle: `Id` (a `UnitOfWorkId`, backed by the
 transaction's `LocalIdentifier` — value-equal exactly when it identifies the same unit of work) and the
 completion hooks `OnCommittedSuccessfully(action)` / `OnCompleted(action)`, thin veneers over the
 `TransactionCompleted`-based callbacks the framework already trusted internally (the outbox's
-send-on-commit, the connection cleanup). All three operate on the transaction **captured when the resolver
+send-on-commit, the connection cleanup, observation's queue-at-commit). All three operate on the transaction **captured when the resolver
 was created**, never on `Transaction.Current`, so they bind to the unit of work the resolver certifies even
 where the ambient transaction has drifted.
 
@@ -88,7 +97,7 @@ context — the same duality `IRootResolver`/`IScopeResolver` expresses at the c
 |---|---|
 | `IUnitOfWorkTeventPublisher` | `IIndependentTeventPublisher` |
 | `IUnitOfWorkTommandSender` (formerly `IServiceBusSession` — a misnomer twice over: no conversational state, and its requirement is the unit of work, not merely the session) | `IIndependentTommandSender` |
-| `ISessionLocalTypermediaNavigator` (formerly `IInProcessTypermediaNavigator`) | `IIndependentLocalTypermediaNavigator` (tommands = own unit of work; tueries = own isolated scope) |
+| `ILocalTypermediaNavigatorSession` (formerly `IInProcessTypermediaNavigator`) | `IIndependentLocalTypermediaNavigator` (tommands = own unit of work; tueries = own isolated scope) |
 | — | `IRemoteTypermediaNavigator`: independent by *nature* — remote typermedia sends are forbidden inside a transaction, so there is no within-the-caller's-context flavor to pair with, and no qualifier |
 
 The left column's prefix is the weakest context the component's whole surface requires. The publisher and

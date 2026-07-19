@@ -1,4 +1,4 @@
-using Compze.Tessaging.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
+using Compze.Tessaging.Engine;
 using Compze.Teventive.Taggregates.Tevents.Public;
 using static System.Console;
 
@@ -40,13 +40,13 @@ namespace Website.paradigms.semantic_tevents
       {
          public void IllustrateTeventListening()
          {
-            ITessageHandlerRegistrar registrar = null!;
+            TessageHandlerRegistrar registrar = null!;
 
             #region UserTeventRegistration
             registrar
               .ForTevent<IUserTevent>(userTevent => WriteLine($"User: {userTevent.TaggregateId} something happened"))
               .ForTevent<IUserRegistered>(userRegistered => WriteLine($"User: {userRegistered.TaggregateId} registered"))
-              .ForTevent<IUserImported>(userImported => WriteLine($"User: {userImported.TaggregateId} imported"));
+              .ForTevent<IUserImported>(userImported => { WriteLine($"User: {userImported.TaggregateId} imported"); return Task.CompletedTask; });
             #endregion
          }
       }

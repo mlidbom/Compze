@@ -52,6 +52,7 @@ public class VolatileTransactionParticipant_specification : DocumentDbTestsBase
    {
       [PCT]
       [Skip<SqlLayer>(SqlLayer.PgSql, "Npgsql has a bug where it swallows exceptions thrown by callbacks registered to TransactionCompleted")]
+      [Skip<SqlLayer>(SqlLayer.MySql, "MySqlConnector's enlistment calls PreparingEnlistment.Prepared() inside its own Prepare try-block, so an exception thrown by a TransactionCompleted callback is misattributed to a prepare failure and force-rolls-back an already-committed enlistment - surfacing 'The operation is not valid for the current state of the enlistment.' instead of the callback's exception. The data still commits correctly (see data_written_in_the_transaction_is_committed).")]
       public void the_original_exception_propagates_not_a_ForceRollback_error()
       {
          var user = new User { Email = "test@test.com", Password = "password" };

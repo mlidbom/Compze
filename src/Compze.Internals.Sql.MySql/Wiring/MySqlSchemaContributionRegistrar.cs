@@ -5,23 +5,42 @@ namespace Compze.Internals.Sql.MySql.Wiring;
 
 static class MySqlSchemaContributionRegistrar
 {
-   ///<summary>Contributes <paramref name="schemaCreationSql"/> — one feature backend's <see cref="Private.MySqlSchemaContribution"/> —<br/>
-   /// to the schema of the database behind the endpoint's <see cref="IMySqlConnectionPool"/>, and on the first contribution registers the<br/>
-   /// <see cref="Private.MySqlSqlLayerSchemaManager"/> that creates every contributed schema in a single batch before the database's first use.<br/>
-   /// Called by each MySQL feature backend's registration — never by a composing layer, which stays ignorant of schemas entirely.</summary>
-   internal static IComponentRegistrar MySqlSchemaContribution(this IComponentRegistrar registrar, string schemaCreationSql)
+   extension(IComponentRegistrar @this)
    {
-      registrar.Register(Singleton.ForSet<Private.MySqlSchemaContribution>()
-                                  .CreatedBy(() => new Private.MySqlSchemaContribution(schemaCreationSql)));
-
-      if(!registrar.IsRegistered<Private.MySqlSqlLayerSchemaManager>())
+      ///<summary>Contributes <paramref name="schemaCreationSql"/> — one feature backend's <see cref="Private.MySqlSchemaContribution"/> —<br/>
+      /// to the schema of the database behind the endpoint's <see cref="IMySqlConnectionPool"/>, and on the first contribution registers the<br/>
+      /// <see cref="Private.MySqlSqlLayerSchemaManager"/> that creates every contributed schema in a single batch before the database's first use.<br/>
+      /// Called by each MySQL feature backend's registration — never by a composing layer, which stays ignorant of schemas entirely.</summary>
+      internal IComponentRegistrar MySqlSchemaContribution(string schemaCreationSql)
       {
-         registrar.Register(Singleton.For<Private.MySqlSqlLayerSchemaManager>()
-                                     .DelegateToParentServiceLocatorWhenCloning()
-                                     .CreatedBy((IMySqlConnectionPool connectionPool, IComponentSet<Private.MySqlSchemaContribution> contributions)
-                                                   => new Private.MySqlSqlLayerSchemaManager(connectionPool, [..contributions.Select(it => it.SchemaCreationSql)])));
+         @this.Register(Singleton.ForSet<Private.MySqlSchemaContribution>()
+                                 .CreatedBy(() => new Private.MySqlSchemaContribution(schemaCreationSql)));
+
+         return @this.SchemaManagerOnTheFirstContribution();
       }
 
-      return registrar;
+      ///<summary>The overload for schema-creation sql that only exists once the container can say what the tables are named —<br/>
+      /// e.g. Tessaging's per-endpoint prefixed table-set: <paramref name="schemaCreationSql"/> is invoked at resolution time<br/>
+      /// with the container's <typeparamref name="TTableNames"/>.</summary>
+      internal IComponentRegistrar MySqlSchemaContribution<TTableNames>(Func<TTableNames, string> schemaCreationSql) where TTableNames : class
+      {
+         @this.Register(Singleton.ForSet<Private.MySqlSchemaContribution>()
+                                 .CreatedBy((TTableNames tableNames) => new Private.MySqlSchemaContribution(schemaCreationSql(tableNames))));
+
+         return @this.SchemaManagerOnTheFirstContribution();
+      }
+
+      IComponentRegistrar SchemaManagerOnTheFirstContribution()
+      {
+         if(!@this.IsRegistered<Private.MySqlSqlLayerSchemaManager>())
+         {
+            @this.Register(Singleton.For<Private.MySqlSqlLayerSchemaManager>()
+                                    .DelegateToParentServiceLocatorWhenCloning()
+                                    .CreatedBy((IMySqlConnectionPool connectionPool, IComponentSet<Private.MySqlSchemaContribution> contributions)
+                                                  => new Private.MySqlSqlLayerSchemaManager(connectionPool, [..contributions.Select(it => it.SchemaCreationSql)])));
+         }
+
+         return @this;
+      }
    }
 }

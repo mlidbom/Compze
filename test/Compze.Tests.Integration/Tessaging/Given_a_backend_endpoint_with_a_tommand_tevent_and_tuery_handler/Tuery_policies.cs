@@ -1,0 +1,22 @@
+using Compze.Tests.Common.Tessaging.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler;
+using Compze.Tests.Infrastructure.XUnit;
+
+namespace Compze.Tests.Integration.Tessaging.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler;
+
+public class Tuery_policies : EndpointHostTestBase
+{
+   [PCT] public async Task The_same_tuery_can_be_reused_in_parallel_without_issues()
+   {
+      var myTuery = new MyTuery();
+
+      TueryHandlerThreadGate.Close();
+
+      var tueriesResults = Task.WhenAll(1.Through(5)
+                                         .Select(_ => Navigator.GetAsync(myTuery)));
+
+      TueryHandlerThreadGate.AwaitQueueLengthEqualTo(5);
+      TueryHandlerThreadGate.Open();
+
+      await tueriesResults;
+   }
+}

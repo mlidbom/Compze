@@ -9,7 +9,7 @@
     <PackageTags>compze;document-database;persistence;mysql</PackageTags>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="MySql.Data" Version="9.4.0" />
+    <PackageReference Include="MySqlConnector" Version="2.6.1" />
   </ItemGroup>
   <!-- Compze.DocumentDb — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_DocumentDb)' == 'true'">

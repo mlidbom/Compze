@@ -3,12 +3,13 @@ using Compze.Abstractions.Tessaging.Public;
 using Compze.Abstractions.Wiring.Testing.Internal;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
+using Compze.Hosting;
 using Compze.Hosting.SameMachine;
 using Compze.Hosting.Testing;
 using Compze.Hosting.Testing.Wiring;
 using Compze.Internals.Testing;
-using Compze.Tessaging.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
-using Compze.Tessaging.Hosting;
+using Compze.Tessaging.Endpoints;
+using Compze.Tessaging.Engine;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Tests.SameMachine.EndpointHostProcess;
@@ -22,7 +23,7 @@ using EndpointHostProcessProgram = Compze.Tests.SameMachine.EndpointHostProcess.
 namespace Compze.Tests.Integration.SameMachine;
 
 ///<summary>The guarantee-free same-machine story end to end, across REAL process boundaries: a separate OS process hosts a<br/>
-/// distributed-Tessaging endpoint over named pipes, both processes discover each other through a shared<br/>
+/// best-effort endpoint over named pipes, both processes discover each other through a shared<br/>
 /// <see cref="InterprocessEndpointRegistry"/>, and a best-effort tevent conversation crosses in both directions — no web stack, no<br/>
 /// configuration, and no database anywhere in either process: nothing is persisted, so nothing can be lost that was promised kept.</summary>
 public class Given_a_separate_process_hosting_a_distributed_tessaging_endpoint_discovered_through_a_shared_interprocess_registry : UniversalTestBase
@@ -33,8 +34,8 @@ public class Given_a_separate_process_hosting_a_distributed_tessaging_endpoint_d
    readonly DirectoryInfo _workDirectory = null!;
    readonly InterprocessEndpointRegistry _registry = null!;
    readonly EndpointHostProcessHandle _endpointHostProcess = null!;
-   readonly ITestingEndpointHost _specificationHost = null!;
-   readonly IEndpoint _specificationEndpoint = null!;
+   readonly IEndpointHost _specificationHost = null!;
+   readonly BestEffortEndpoint _specificationEndpoint = null!;
    readonly ManualResetEventSlim _replyTeventReceived = new();
 
    public Given_a_separate_process_hosting_a_distributed_tessaging_endpoint_discovered_through_a_shared_interprocess_registry()
@@ -48,22 +49,24 @@ public class Given_a_separate_process_hosting_a_distributed_tessaging_endpoint_d
 
       _endpointHostProcess = EndpointHostProcessHandle.Start(registryName, _workDirectory, EndpointHostProcessProgram.DatabaselessComposition);
 
-      _specificationHost = TestingEndpointHost.Create();
-      _specificationEndpoint = _specificationHost.RegisterEndpoint(
+      _specificationHost = EndpointHost.Production.Create(() => TestEnv.DIContainer.CreateTestingContainerBuilder());
+      _specificationEndpoint = _specificationHost.RegisterEndpoint(container => BestEffortEndpoint.Build(
+         container,
          "SpecificationEndpoint",
          MultiProcessConversationEndpoints.SpecificationProcessEndpointId,
-         builder =>
+         endpointBuilder =>
          {
-            builder.TypeMapper.MapTypesFromAssemblyContaining<TommandSentToTheEndpointHostProcess>();
-            builder.Registrar.CurrentTestsEndpointTransport();
-            builder.AddDistributedTessaging()
-                   .ParticipateIn(_registry)
-                   //Requiring the endpoint host process's endpoint makes the outbound leg deterministic: the tevent published
-                   //below, before either process has discovered the other, is held for the required peer and delivered on first
-                   //contact instead of vanishing into the discovery race.
-                   .RequirePeers(MultiProcessConversationEndpoints.EndpointHostProcessEndpointId);
-            builder.RegisterTessagingHandlers.ForTevent((IBestEffortTeventPublishedByTheEndpointHostProcess _) => _replyTeventReceived.Set());
-         });
+            endpointBuilder
+               .MapTypes(mapper => mapper.MapTypesFromAssemblyContaining<TommandSentToTheEndpointHostProcess>())
+               .TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport())
+               .Serializer(registrar => registrar.CurrentTestsSerializersIfNotClonedContainer())
+               .ParticipateIn(_registry)
+               //Requiring the endpoint host process's endpoint makes the outbound leg deterministic: the tevent published
+               //below, before either process has discovered the other, is held for the required peer and delivered on first
+               //contact instead of vanishing into the discovery race.
+               .RequirePeers(MultiProcessConversationEndpoints.EndpointHostProcessEndpointId)
+               .RegisterTessageHandlers(handle => handle.ForTevent((IBestEffortTeventPublishedByTheEndpointHostProcess _) => _replyTeventReceived.Set()));
+         }));
    }
 
    protected override async Task InitializeAsyncInternal()
@@ -105,7 +108,7 @@ public class Given_a_separate_process_hosting_a_distributed_tessaging_endpoint_d
    {
       //ONE publish, before either process has discovered the other, and no retrying: each process requires the other's endpoint,
       //so the tevent is held for the endpoint host process until first contact, and its reply is held for this endpoint the same
-      //way - queue-before-first-contact makes the startup race a non-event (see dev_docs/TODO/durable-peer-topology.md).
+      //way - queue-before-first-contact makes the startup race a non-event (see src/Compze.Tessaging/dev_docs/peer-model.md).
       _specificationEndpoint.ServiceLocator.Resolve<IScopeFactory>().ExecuteUnitOfWork(unitOfWork =>
          unitOfWork.Resolve<IUnitOfWorkTeventPublisher>().Publish(new BestEffortTeventPublishedByTheSpecificationProcess()));
 

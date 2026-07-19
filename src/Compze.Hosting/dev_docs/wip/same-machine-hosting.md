@@ -2,9 +2,9 @@
 
 This document takes a developer who is new to Compze from zero to understanding how multiple processes on one
 machine form one application — how their endpoints find each other with zero configuration and converse with
-no web stack and no database server. It is the companion to [the hosting model](hosting-model.md), which
+no web stack and no database server. It is the companion to [the hosting model](../hosting-model.md), which
 explains what an endpoint and a host *are*, and to
-[the tevent delivery model](../../Compze.Tessaging/dev_docs/tevent-delivery-model.md), which explains the
+[the tevent delivery model](../../../Compze.Tessaging/dev_docs/tevent-delivery-model.md), which explains the
 guarantees that hold once the conversation flows. This document explains how the conversation reaches across
 process boundaries on one machine.
 
@@ -31,11 +31,10 @@ Unpacked:
 
 - **A fresh address per start.** No address is worth writing down — not in a configuration file, not in
   another endpoint's setup. Whoever needs the address reads it from the registry at the moment of use.
-- **Announced means listening.** Announcement is its own host-wide phase, after every endpoint's listening
-  and before any endpoint's sending — so an announced address is always one that is actually listening, and a
-  router's first look at the registry sees every endpoint its host announced. Retraction is the mirror phase,
-  before any sending stops. Addresses announced by a process that crashed are invisible, because the registry
-  checks announcer liveness.
+- **Announced means listening.** Announcement is its own phase of the endpoint's lifecycle, after its
+  listening phase and before its sending phase — so an announced address is always one that is actually
+  listening. Retraction is the mirror phase, before the endpoint's sending stops. Addresses announced by a
+  process that crashed are invisible, because the registry checks announcer liveness.
 - **Senders converge; nothing is wired once.** Connections are not established at startup and assumed
   thereafter — they are *reconciled* against the registry's current membership, continuously. Endpoints that
   appear, disappear, or restart at a new address are connected, dropped, or re-connected as the registry
@@ -55,7 +54,7 @@ across real OS processes.
 The HTTP transport exists for the general case: endpoints on different machines, standard middleboxes,
 external clients. Same-machine conversations need none of that, and paying for it hurts exactly where an
 application suite is sensitive — an ASP.NET Core/Kestrel server in every process means dependency weight,
-per-process working set, and startup time. The named-pipe transport (`Compze.Internals.Transport.NamedPipes`)
+per-process working set, and startup time. The named-pipe transport (`Compze.Tessaging.Internals.Transport.NamedPipes`)
 replaces it with `System.IO.Pipes` from the base runtime: no web stack at all, and cross-platform — on
 Linux/macOS the same API rides Unix domain sockets.
 
@@ -101,18 +100,17 @@ survive process restarts. The registry's name and directory (`OpenOrCreateSessio
 directory)`) ARE the application-suite boundary: processes that should discover each other's endpoints open
 the same registry; unrelated applications use their own.
 
-An endpoint declares who it announces to on its transport feature:
+An endpoint declares who it announces to in its composition:
 
 ```csharp
-builder.AddExactlyOnceTessaging().AnnounceAddressTo(registry);
+endpoint.AnnounceAddressTo(registry);
 ```
 
 Declaring none — a deployment whose endpoints are found through a fixed address list — means nothing is
 announced. The announced address is the endpoint's one transport-server address, serving every distributed
-capability the endpoint speaks. The announcement is made in the host's announcing phase — after every
-endpoint in the host has finished starting to listen and before any endpoint starts sending — and retracted
-in the mirror phase before any sending stops, so an announced address is always one that is actually
-listening, and a router's first look at the registry sees every endpoint its host announced.
+capability the endpoint speaks. The announcement is made in the endpoint's announcing phase — after its
+listening phase and before its sending phase — and retracted in the mirror phase before its sending stops,
+so an announced address is always one that is actually listening.
 
 **Crashed processes announce nothing — structurally.** The backing file outlives crashed processes by design
 (that is how announcements survive restarts), so a crash cannot retract. Instead, every entry records the
@@ -125,50 +123,56 @@ exactly what breaks same-machine discovery on Linux. Addresses whose announcing 
 invisible to readers, and every announcement prunes them from the file — announcement is the registry's
 self-cleaning moment. A crashed process's addresses are never routed to and never accumulate.
 
-## Dynamic topology: the routers reconcile
+## Dynamic topology: the router reconciles
 
-Neither communication style's sending phase connects its router to a fixed address list and assumes it
-thereafter. Each sets its router *reconciling* — the `TessagingRouter` and, when the endpoint declared the
-registry it discovers through, the `TypermediaRouter` alike: converge on the registry's membership now, then
-keep converging. Between passes a router waits on the registry's change signal
+The sending phase does not connect the endpoint's router to a fixed address list and assume it thereafter.
+It sets the one `TessagingRouter` *reconciling*: converge on the registry's membership now, then
+keep converging. Between passes the router waits on the registry's change signal
 (`IEndpointRegistry.AwaitPossibleMembershipChange`): the interprocess registry raises its backing
 interprocess object's cross-process signal on every announcement and retraction, so a topology change wakes
 every waiting router on the machine and propagates at signal latency — tens of milliseconds at most — rather
 than at a polling interval. The wait also times out once a second, because two things no signal can carry
 still need a periodic pass: a crashed process's addresses disappearing (a crash signals nothing — the
 liveness filter just stops listing them), and retrying connections that failed. Each pass compares the
-connected addresses with the registry's current addresses:
+connected addresses with the registry's current addresses — minus the endpoint's own announced address:
+routes lead only to *other* endpoints, since the roster serves in-roster tommands inline and the endpoint's
+own tevent subscriptions by in-boundary participation:
 
-- **An endpoint appears** → connect. The new connection learns the remote endpoint's identity and its handled
-  tessage types through the endpoint-discovery query — each style asks its own question over the same
-  address — and the style's routes are registered for it: tommand and tevent routes on the Tessaging router,
-  typermedia tommand and tuery routes on the Typermedia router.
+- **An endpoint appears** → connect. The new connection learns the remote endpoint's identity and its one
+  advertisement through the endpoint-discovery query, and routes are registered for every tessage kind it
+  advertises: tevent subscriptions by type-assignability, tommand, typermedia-tommand, and tuery routes by
+  exact type.
 - **An endpoint's address leaves the registry** (it stopped and retracted, or crashed and was pruned by
   liveness) → the connection is dropped and its routes with it. Undelivered exactly-once tessages for it stay
   in the outbox's storage — exactly-once means they wait for the endpoint's return.
 - **An endpoint returns at a new address** — addresses are per-instance; identity is the `EndpointId` — → the
   old connection is replaced by the new one. On the Tessaging side the endpoint's undelivered backlog loads
   into the new connection in send order (see the ordering guarantee in
-  [the tevent delivery model](../../Compze.Tessaging/dev_docs/tevent-delivery-model.md#ordering)) — the backlog
+  [the tevent delivery model](../../../Compze.Tessaging/dev_docs/tevent-delivery-model.md#ordering)) — the backlog
   follows the endpoint; on the Typermedia side the routes simply point at the new address.
 - **A listed address does not answer** → topology churn, not a bug: the process may still be starting, or may
   have crashed a moment before the liveness filter would prune it. The failure is logged and the address
   retried on the next pass.
 
-A dynamic topology implies contracts callers must know:
+A dynamic topology implies contracts callers must know (the full story is
+[the peer model](../../../Compze.Tessaging/dev_docs/peer-model.md)):
 
-- **Subscribers join from now on.** A tevent published before an endpoint was discovered is not retroactively
-  delivered to it — exactly like a subscriber that did not exist yet.
-- **A tommand with no discovered handler fails loud at send.** Tommands are 1:1; sending one nobody handles
-  is an error, never a silent drop. A sender that knows the handler is starting up rides that loudness as its
-  synchronization: retry until discovery completes (the multi-process specifications below do exactly this).
-- **Typermedia navigation fails the same way**: executing a tuery or tommand no discovered endpoint handles
-  fails loud, and rides the same retry-until-discovered synchronization.
+- **Subscribers join from now on.** A tevent published before an endpoint was first discovered is not
+  retroactively delivered to it — exactly like a subscriber that did not exist yet. The exception is a peer
+  the composition declares with `RequirePeers`: everything published before its first advertisement is held
+  for it and delivered on first contact — which is what makes a multi-process suite's startup a non-event.
+- **Tommand sends and typermedia navigations wait out discovery.** A send whose type has no live,
+  unambiguous route right now waits — bounded by the endpoint's handler-availability patience (a flat 30
+  seconds unless declared otherwise) — for the route to appear: a first contact, or a known peer's return.
+  Only exhausted patience fails loud, telling known-but-down (naming the remembered peer) from never-seen
+  (naming the probable deployment error). The startup discovery race is absorbed by the machinery, not by
+  caller retry loops; an application that wants the wait paid at startup instead of by its first caller
+  awaits `IEndpoint.AwaitReadinessAsync` before opening traffic.
 
-Reconciliation is not same-machine-specific: the routers converge on whatever `IEndpointRegistry` they are
+Reconciliation is not same-machine-specific: the router converges on whatever `IEndpointRegistry` it is
 given — a fixed address list converges once and stays; the interprocess registry is what makes membership
 *live*. The testing host runs every test's endpoints on a real interprocess registry of its own
-(`ITestingEndpointHost.EndpointRegistry`), so every test exercises this same announce/discover pipeline.
+(`TestingEndpointHost.EndpointRegistry`), so every test exercises this same announce/discover pipeline.
 
 ## The whole composition
 
@@ -182,30 +186,30 @@ Trimmed to its shape:
 using var registry = InterprocessEndpointRegistry.OpenOrCreateSessionLocal("MySuite.EndpointRegistry", dataDirectory);
 var host = EndpointHost.Production.Create(() => new MicrosoftContainerBuilder(new ComponentRegistrar()));
 
-host.RegisterEndpoint("BackgroundWorker", new EndpointId(Guid.Parse("...")), builder =>
+host.RegisterEndpoint(container => ExactlyOnceEndpoint.Compose(
+   container, "BackgroundWorker", new EndpointId(Guid.Parse("...")), endpoint =>
 {
-   builder.TypeMapper.MapTypesFromAssemblyContaining<MyTommand>();
+   endpoint.MapTypes(mapper => mapper.MapTypesFromAssemblyContaining<MyTommand>());
+   endpoint.NamedPipeEndpointTransport();
+   endpoint.NewtonsoftSerializer();
+   endpoint.SqliteDomainDatabase("BackgroundWorker");
+   endpoint.ParticipateIn(registry);   // discover the others through it AND announce ourselves to it
 
-   builder.ComposeEndpoint(it => it.NamedPipeEndpointTransport()
-                                   .SqliteEndpointDatabase("BackgroundWorker"))
-          .AddExactlyOnceTessaging(tessaging => tessaging.NewtonsoftSerializer())
-          .ParticipateIn(registry);   // discover the others through it AND announce ourselves to it
-
-   builder.RegisterTessagingHandlers.ForTommand<MyTommand>(tommand => ...);
-});
+   endpoint.RegisterTessageHandlers(handle => handle.ForTommand(async (MyTommand tommand, IUnitOfWorkResolver unitOfWork) => ...));
+}));
 
 await host.StartAsync();
 ```
 
-`ComposeEndpoint` declares the endpoint's foundation exactly once — the transport protocol and the database —
-and the features are added on top of it: `AddExactlyOnceTessaging` on a sqlite foundation registers Tessaging's
-sqlite inbox/outbox sql layers, with the pairing routed by the compiler through the foundation's type.
+The database declaration registers the whole engine pairing — the connection pool, the type-id interner, and
+Tessaging's sqlite inbox/outbox sql layers — through one named declaration on the exactly-once tier's
+declaration surface.
 
 `ParticipateIn` declares the registry's two faces at once: `DiscoverEndpointsThrough`, the *read* side the
 router reconciles against, and `AnnounceAddressTo`, the *write* side the endpoint's lifecycle drives — declare
 the sides separately when a deployment is asymmetric. No address, port, or connection string appears anywhere — the
 pipe names are generated, the announcements distribute them, and the connection strings resolve to sqlite
-files in the process's data directory. No schema setup appears either: each sql-layer feature contributes its
+files in the process's data directory. No schema setup appears either: each sql layer contributes its
 own schema-creation SQL as part of registering itself, and all of it runs as one batch before the database's
 first use.
 
@@ -216,8 +220,8 @@ first use.
 REAL process boundary: it spawns the endpoint host process above as a separate OS process, both processes
 open the same registry, each discovers the other through it, and an exactly-once tommand conversation crosses
 in both directions — the specification sends a tommand, the other process handles it and sends a reply
-tommand back. The send retries until the reconciliation loop has discovered the still-starting process — the
-fail-loud-then-retry synchronization described above, exercised for real.
+tommand back. The send waits out the reconciliation loop's discovery of the still-starting process — the
+waiting send described above, exercised for real.
 
 ## Implementation status
 
@@ -234,15 +238,15 @@ As of 2026-07-15, everything this document describes is built and verified:
   including the backlog following a restarted endpoint.
 - The multi-process specifications and their endpoint host process — also the first production-hosting
   composition exercised end to end.
-- The no-SQL same-machine suite (2026-07-15): the endpoint host process hosting guarantee-free distributed
-  Tessaging (`AddDistributedTessaging`) on the database-less foundation, and a best-effort tevent conversation
+- The no-SQL same-machine suite (2026-07-15): the endpoint host process hosting a best-effort endpoint, and
+  a best-effort tevent conversation
   crossing real process boundaries in both directions with no database anywhere in either process — see
-  [the tevent delivery model](../../Compze.Tessaging/dev_docs/tevent-delivery-model.md).
-- Typermedia dynamic-topology parity (2026-07-15): an endpoint that declares the registry it discovers
-  through on its distributed-Typermedia feature (`DiscoverEndpointsThrough`/`ParticipateIn`) has its
-  `TypermediaRouter` reconciling exactly as the Tessaging router does, and navigates other endpoints'
+  [the tevent delivery model](../../../Compze.Tessaging/dev_docs/tevent-delivery-model.md).
+- Typermedia over the same dynamic topology (2026-07-15): an endpoint that declares the registry it
+  discovers through (`DiscoverEndpointsThrough`/`ParticipateIn`) routes typermedia tessages through its one
+  reconciling router, and navigates other endpoints'
   typermedia through its own `IRemoteTypermediaNavigator` — proven across real OS processes with no database
   in either process: the specification's endpoint discovers the endpoint host process through the shared
   registry and its tuery is answered there. An endpoint that declares no registry only serves; navigating
-  from it fails loud naming the missing declaration (an external client connects to an explicitly known
-  address instead).
+  from it fails loud naming the missing declaration (an external client — the pure client — connects to an
+  explicitly known address instead).

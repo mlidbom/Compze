@@ -4,14 +4,14 @@ using AccountManagement.Domain.Tevents;
 using AccountManagement.Domain.Passwords;
 using AccountManagement.Domain.Registration;
 using Compze.Abstractions.Tessaging.Public;
-using Compze.Typermedia;
-using Compze.Typermedia.HandlerRegistration;
+using Compze.Tessaging.Typermedia;
+using Compze.Tessaging.Engine;
 
 namespace AccountManagement.UI;
 
 static class AccountUIAdapter
 {
-   public static void Login(TypermediaHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTommandWithResult(
+   public static void Login(TessageHandlerRegistrar registrar) => registrar.ForTommand(
       (AccountResource.Tommand.LogIn logIn, ILocalTypermediaNavigatorSession navigator) =>
       {
          var email = Email.Parse(logIn.Email);
@@ -30,15 +30,15 @@ static class AccountUIAdapter
          }
       });
 
-   internal static void ChangePassword(TypermediaHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTommand(
+   internal static void ChangePassword(TessageHandlerRegistrar registrar) => registrar.ForTommand(
       (AccountResource.Tommand.ChangePassword tommand, ILocalTypermediaNavigatorSession navigator) =>
          navigator.Execute(InternalApi.Tueries.GetForUpdate(tommand.AccountId)).ChangePassword(tommand.OldPassword, new Password(tommand.NewPassword)));
 
-   internal static void ChangeEmail(TypermediaHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTommand(
+   internal static void ChangeEmail(TessageHandlerRegistrar registrar) => registrar.ForTommand(
       (AccountResource.Tommand.ChangeEmail tommand, ILocalTypermediaNavigatorSession navigator) =>
          navigator.Execute(InternalApi.Tueries.GetForUpdate(tommand.AccountId)).ChangeEmail(Email.Parse(tommand.Email)));
 
-   internal static void Register(TypermediaHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTommandWithResult(
+   internal static void Register(TessageHandlerRegistrar registrar) => registrar.ForTommand(
       (AccountResource.Tommand.Register tommand, ILocalTypermediaNavigatorSession bus) =>
       {
          var (status, account) = Account.Register(tommand.AccountId, Email.Parse(tommand.Email), new Password(tommand.Password), bus);
@@ -50,7 +50,7 @@ static class AccountUIAdapter
          };
       });
 
-   internal static void GetById(TypermediaHandlerRegistrarWithDependencyInjectionSupport registrar) => registrar.ForTuery(
+   internal static void GetById(TessageHandlerRegistrar registrar) => registrar.ForTuery(
       (TessageTypes.Remotable.NonTransactional.Tueries.TaggregateLink<AccountResource> accountTuery, ILocalTypermediaNavigatorSession navigator)
          => new AccountResource(navigator.Execute(InternalApi.AccountQueryModel.Tueries.Get(accountTuery.TaggregateId))));
 }

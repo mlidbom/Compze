@@ -5,17 +5,18 @@ using Compze.Abstractions.Tessaging.Public;
 using Compze.Abstractions.Hosting.Public;
 using Compze.Contracts;
 using Compze.Tessaging.Implementation.Transport.Abstractions;
-using Compze.Internals.Transport;
+using Compze.Tessaging.Internals.Transport;
 using Compze.Tessaging.Implementation.Transport.Client.Internal;
 using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.Internals.Logging;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
+using Compze.Tessaging.Implementation.Abstractions;
 
 namespace Compze.Tessaging.Implementation.Transport.Client.Implementation;
 
 partial class TessagingConnection : ITessagingInboxConnection, IDisposable
 {
-   public TessagingEndpointInformation EndpointInformation { get; private set; } = null!;
+   public EndpointInformation EndpointInformation { get; private set; } = null!;
 
    ///<summary>The address this connection delivers to — the endpoint's location when the connection was made; the endpoint's identity is <see cref="EndpointInformation"/>'s id.</summary>
    internal EndpointAddress RemoteAddress { get; }
@@ -61,7 +62,7 @@ partial class TessagingConnection : ITessagingInboxConnection, IDisposable
    }
 
    public async Task InitAsync() =>
-      EndpointInformation = await _endpointDiscoveryQueryTransport.GetAsync(new TessagingEndpointInformationQuery(), RemoteAddress).caf();
+      EndpointInformation = await _endpointDiscoveryQueryTransport.GetAsync(new EndpointInformationQuery(), RemoteAddress).caf();
 
    public void EnqueueForExactlyOnceDelivery(ITessage tessage, TessageId dedupId)
    {

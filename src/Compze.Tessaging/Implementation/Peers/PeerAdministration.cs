@@ -3,6 +3,7 @@ using Compze.Contracts;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Logging;
+using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Internals.SystemCE.TransactionsCE;
 using Compze.Tessaging.Implementation.Transport.Client.Internal;
 
@@ -36,7 +37,7 @@ class PeerAdministration : IPeerAdministration
       _configuration = configuration;
    }
 
-   public PeerDecommissionReport Decommission(EndpointId peer)
+   public async Task<PeerDecommissionReport> DecommissionAsync(EndpointId peer)
    {
       State.Assert(!peer.Equals(_configuration.Id), () => "An endpoint cannot decommission itself: a peer is another endpoint.");
       State.Assert(!_router.HasLiveConnectionTo(peer),
@@ -48,14 +49,16 @@ class PeerAdministration : IPeerAdministration
       //One act, one transaction - its own, never a caller's: the registry's durable removal and the durable tiers' discards
       //commit together, and every in-memory consequence (the registry forgetting the peer, the best-effort queues dropping
       //theirs) runs only on commit - so an act that fails partway, the unknown-peer failure below included, changes nothing.
-      TransactionScopeCe.SuppressAmbient(() => TransactionScopeCe.Execute(() =>
+      await TransactionScopeCe.SuppressAmbientAsync(async () => await TransactionScopeCe.ExecuteAsync(async () =>
       {
-         _peerRegistry.Decommission(peer);
-         IReadOnlyList<PeerDecommissionReport.DiscardedTessages> discarded = [.._decommissionParticipants.SelectMany(participant => participant.DiscardEverythingKeptFor(peer))];
+         await _peerRegistry.DecommissionAsync(peer).caf();
+         List<PeerDecommissionReport.DiscardedTessages> discarded = [];
+         foreach(var participant in _decommissionParticipants)
+            discarded.AddRange(await participant.DiscardEverythingKeptForAsync(peer).caf());
          State.Assert(peerIsRemembered || discarded.Count > 0,
                       () => $"{peer} is not a peer this endpoint knows: no advertisement of it was ever recorded - or it was already decommissioned - and nothing is held for it.");
          report = new PeerDecommissionReport(peer, discarded);
-      }));
+      }).caf()).caf();
 
       this.Log().Warning($"Decommissioned peer {peer}."
                        + (report.Discarded.Count == 0

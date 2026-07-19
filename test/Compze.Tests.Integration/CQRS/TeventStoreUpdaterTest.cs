@@ -3,7 +3,7 @@ using System.Transactions;
 using Compze.Contracts;
 using Compze.Abstractions.Public;
 using Compze.xUnitMatrix;
-using Compze.Tessaging.Abstractions.Tessaging.Hosting.TessageHandling.Registration.Public;
+using Compze.Tessaging.Engine;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Abstractions.Wiring.Testing.Internal;
 using JetBrains.Annotations;
@@ -49,12 +49,15 @@ public class TeventStoreUpdaterTest : UniversalTestBase
 
    public TeventStoreUpdaterTest()
    {
-      _container = TestEnv.DIContainer.SetupTestingContainer(mapper => mapper.RegisterIntegrationTestTypeMappings());
-
       _teventSpy = new TeventSpy();
 
-      _container.Resolve<ITessageHandlerRegistrar>()
-                     .ForTevent<IExactlyOnceTevent>((tevent, _) => _teventSpy.Receive(tevent));
+      //Exactly-once kinds are async end to end, so the spy subscription is declared async; the spy is synchronous, so it completes its task synchronously.
+      _container = TestEnv.DIContainer.SetupTestingContainer(mapper => mapper.RegisterIntegrationTestTypeMappings(),
+                                                             composeEngine: engine => engine.RegisterTessageHandlers(handle => handle.ForTevent((IExactlyOnceTevent tevent) =>
+                                                             {
+                                                                _teventSpy.Receive(tevent);
+                                                                return Task.CompletedTask;
+                                                             })));
    }
 
    protected override async Task DisposeAsyncInternal() => await _container.DisposeAsync().AsTask();
@@ -96,29 +99,17 @@ public class TeventStoreUpdaterTest : UniversalTestBase
    }
 
    [PCT]
-   public void ThrowsIfUsedByMultipleThreads()
+   public void ThrowsIfUsedByMultipleTransactions()
    {
-      ITeventStoreUpdater? updater = null;
-      ITeventStoreReader? reader = null;
-      using var wait = new ManualResetEventSlim();
-      TaskCE.Run(() =>
+      //The session's affinity is its transaction, never a thread: an async unit of work legitimately migrates across threads,
+      //while one session serving two transactions is the misuse that must fail loud.
+      _container.ExecuteInIsolatedScope(scope =>
       {
-         _container.ExecuteInIsolatedScope(scope =>
-         {
-            updater = scope.TeventStoreUpdater();
-            reader = scope.TeventStoreReader();
-         });
-         wait.Set();
+         var updater = scope.TeventStoreUpdater();
+         TransactionScopeCe.Execute(() => updater.TryGet(new TaggregateId(), out User? _));
+         TransactionScopeCe.Execute(() => MustActions.Invoking(() => updater.TryGet(new TaggregateId(), out User? _))
+                                                     .Must().Throw<ComponentUsedByMultipleTransactionsException>());
       });
-      wait.Wait();
-      updater = updater._assert().NotNull();
-      reader = reader._assert().NotNull();
-
-      MustActions.Invoking(() => updater.Get<User>(new TaggregateId())).Must().Throw<MultiThreadedUseException>();
-      MustActions.Invoking(() => updater.Dispose()).Must().Throw<MultiThreadedUseException>();
-      MustActions.Invoking(() => reader.GetReadonlyCopyOfVersion<User>(new TaggregateId(), 1)).Must().Throw<MultiThreadedUseException>();
-      MustActions.Invoking(() => updater.Save(new User())).Must().Throw<MultiThreadedUseException>();
-      MustActions.Invoking(() => updater.TryGet(new TaggregateId(), out User? _)).Must().Throw<MultiThreadedUseException>();
    }
 
    [PCT]

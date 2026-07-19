@@ -157,13 +157,6 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_Threading)' != 'true'">
     <ProjectReference Include="..\..\src\Compze.Threading\Compze.Threading.csproj" />
   </ItemGroup>
-  <!-- Compze.Typermedia.Hosting.Testing — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Typermedia_Hosting_Testing)' == 'true'">
-    <PackageReference Include="Compze.Typermedia.Hosting.Testing" Version="*-*" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Typermedia_Hosting_Testing)' != 'true'">
-    <ProjectReference Include="..\..\src\Compze.Typermedia.Hosting.Testing\Compze.Typermedia.Hosting.Testing.csproj" />
-  </ItemGroup>
   <!-- Compze.Underscore — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Underscore)' == 'true'">
     <PackageReference Include="Compze.Underscore" Version="*-*" />
