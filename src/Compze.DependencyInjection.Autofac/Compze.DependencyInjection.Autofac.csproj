@@ -7,10 +7,9 @@
     <NoWarn>CS1591</NoWarn>
     <Description>Autofac dependency injection integration for the Compze framework.</Description>
   </PropertyGroup>
-   <ItemGroup>
-      <InternalsVisibleTo Include="Compze.DependencyInjection.Autofac.Extensions.Hosting" />
-   </ItemGroup>
-   
+  <ItemGroup>
+    <InternalsVisibleTo Include="Compze.DependencyInjection.Autofac.Extensions.Hosting" />
+  </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Autofac" Version="8.3.0" />
   </ItemGroup>
