@@ -2,6 +2,7 @@ using Compze.Tessaging.Endpoints;
 using Compze.Tessaging.Typermedia.Client;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tessaging.Abstractions.TessageTypes;
+using Compze.Tessaging.Endpoints.BestEffort;
 using Compze.Tests.Infrastructure;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Typermedia;

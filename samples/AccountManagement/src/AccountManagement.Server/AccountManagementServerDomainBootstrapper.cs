@@ -5,6 +5,7 @@ using AccountManagement.UI;
 using AccountManagement.UI.QueryModels;
 using Compze.Tessaging.Endpoints;
 using Compze.DocumentDb.Wiring;
+using Compze.Tessaging.Endpoints.ExactlyOnce;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Teventive.TeventStore.Typermedia;
 

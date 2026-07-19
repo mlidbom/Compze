@@ -12,6 +12,7 @@ using Compze.Internals.SystemCE.TransactionsCE.Testing;
 using Compze.Internals.Testing;
 using Compze.Must;
 using Compze.Tessaging.Abstractions;
+using Compze.Tessaging.Endpoints.BestEffort;
 using Compze.Tessaging.Engine;
 using Compze.Tessaging.Implementation.BestEffortDelivery;
 using Compze.Tessaging.Implementation.Peers;

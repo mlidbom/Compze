@@ -1,4 +1,5 @@
 using Compze.Tessaging.Endpoints;
+using Compze.Tessaging.Endpoints.ExactlyOnce;
 using Compze.Tessaging.Engine;
 using Compze.Tessaging.Hosting;
 

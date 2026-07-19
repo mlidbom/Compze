@@ -1,4 +1,4 @@
-namespace Compze.Tessaging.Endpoints;
+namespace Compze.Tessaging.Endpoints.Exceptions;
 
 ///<summary>Thrown when <see cref="IEndpoint.AwaitReadinessAsync"/> exhausts its patience: the endpoint could still not reach<br/>
 /// a handler for every awaited type. The message names each type still unavailable and what the endpoint's peer memory<br/>

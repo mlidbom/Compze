@@ -2,6 +2,8 @@ using Compze.Tessaging.Endpoints.Discovery;
 using Compze.Contracts;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
+using Compze.Tessaging.Endpoints.BestEffort;
+using Compze.Tessaging.Endpoints.ExactlyOnce;
 using Compze.Tessaging.Engine;
 using Compze.Tessaging.Implementation;
 using Compze.Tessaging.Implementation.Abstractions;

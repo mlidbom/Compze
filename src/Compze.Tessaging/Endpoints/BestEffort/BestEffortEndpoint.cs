@@ -1,7 +1,7 @@
-using Compze.Tessaging.Endpoints.Discovery;
 using Compze.DependencyInjection.Abstractions;
+using Compze.Tessaging.Endpoints.Discovery;
 
-namespace Compze.Tessaging.Endpoints;
+namespace Compze.Tessaging.Endpoints.BestEffort;
 
 ///<summary>
 /// The best-effort endpoint: the <see cref="Endpoint"/> whose TessageBus rung is best-effort. No database. Process-lifetime

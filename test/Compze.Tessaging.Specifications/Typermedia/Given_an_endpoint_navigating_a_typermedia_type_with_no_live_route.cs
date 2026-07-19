@@ -2,6 +2,7 @@ using Compze.Tessaging.Endpoints;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Must;
 using Compze.DependencyInjection;
+using Compze.Tessaging.Endpoints.BestEffort;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Implementation.Peers;
 using Compze.Tessaging.Internals.Transport;

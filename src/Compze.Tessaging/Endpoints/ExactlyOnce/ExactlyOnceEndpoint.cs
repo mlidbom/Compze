@@ -1,13 +1,13 @@
-using Compze.Tessaging.Endpoints.Discovery;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tessaging.Abstractions;
+using Compze.Tessaging.Endpoints.Discovery;
 using Compze.Tessaging.Implementation.Abstractions;
 using Compze.Tessaging.Implementation.EndpointCatalog;
 using Compze.Tessaging.Implementation.TessageHandling.Abstractions;
 
-namespace Compze.Tessaging.Endpoints;
+namespace Compze.Tessaging.Endpoints.ExactlyOnce;
 
 ///<summary>
 /// The exactly-once endpoint: the <see cref="Endpoint"/> whose TessageBus rung is exactly-once. Everything the best-effort

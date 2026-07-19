@@ -1,4 +1,5 @@
 using Compze.DependencyInjection.Abstractions;
+using Compze.Tessaging.Endpoints.Exceptions;
 
 namespace Compze.Tessaging.Endpoints;
 

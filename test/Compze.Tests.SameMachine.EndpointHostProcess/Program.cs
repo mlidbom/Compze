@@ -9,6 +9,8 @@ using Compze.Hosting;
 using Compze.Hosting.SameMachine;
 using Compze.Internals.Serialization.Newtonsoft.Wiring;
 using Compze.Tessaging.Abstractions;
+using Compze.Tessaging.Endpoints.BestEffort;
+using Compze.Tessaging.Endpoints.ExactlyOnce;
 using Compze.Tessaging.Internals.Transport.NamedPipes;
 using Compze.Tessaging.Engine;
 using Compze.Tessaging.Sqlite.Wiring;
@@ -50,12 +52,12 @@ public static class Program
          switch(composition)
          {
             case ExactlyOnceTessagingComposition:
-               host.RegisterEndpoint(container => Compze.Tessaging.Endpoints.ExactlyOnceEndpoint.Build(
+               host.RegisterEndpoint(container => ExactlyOnceEndpoint.Build(
                   container, "EndpointHostProcess", MultiProcessConversationEndpoints.EndpointHostProcessEndpointId,
                   endpointBuilder => ComposeExactlyOnceTessagingOnASqliteDatabase(endpointBuilder, registry, workDirectory)));
                break;
             case DatabaselessComposition:
-               host.RegisterEndpoint(container => Compze.Tessaging.Endpoints.BestEffortEndpoint.Build(
+               host.RegisterEndpoint(container => BestEffortEndpoint.Build(
                   container, "EndpointHostProcess", MultiProcessConversationEndpoints.EndpointHostProcessEndpointId,
                   endpointBuilder => ComposeDistributedTessagingAndTypermediaWithNoDatabase(endpointBuilder, registry)));
                break;
@@ -74,7 +76,7 @@ public static class Program
       return 0;
    }
 
-   static void ComposeExactlyOnceTessagingOnASqliteDatabase(Compze.Tessaging.Endpoints.ExactlyOnceEndpointBuilder endpointBuilder, InterprocessEndpointRegistry registry, DirectoryInfo workDirectory)
+   static void ComposeExactlyOnceTessagingOnASqliteDatabase(ExactlyOnceEndpointBuilder endpointBuilder, InterprocessEndpointRegistry registry, DirectoryInfo workDirectory)
    {
       endpointBuilder.Registrar
                      .Register(Singleton.For<IConfigurationParameterProvider>()
@@ -92,7 +94,7 @@ public static class Program
 
    ///<summary>The best-effort composition: no database, no configuration, nothing persisted anywhere in this process — the<br/>
    /// best-effort tier and participation are all the tevent delivery there is, and the same endpoint serves tueries.</summary>
-   static void ComposeDistributedTessagingAndTypermediaWithNoDatabase(Compze.Tessaging.Endpoints.BestEffortEndpointBuilder endpointBuilder, InterprocessEndpointRegistry registry)
+   static void ComposeDistributedTessagingAndTypermediaWithNoDatabase(BestEffortEndpointBuilder endpointBuilder, InterprocessEndpointRegistry registry)
    {
       endpointBuilder.Registrar.RequireMappedTypesFromAssemblyContaining<TommandSentToTheEndpointHostProcess>();
 

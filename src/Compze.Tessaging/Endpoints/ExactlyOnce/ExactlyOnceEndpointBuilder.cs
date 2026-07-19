@@ -1,14 +1,15 @@
 using Compze.Contracts;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
+using Compze.Tessaging.Endpoints.Exceptions;
+using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Implementation.EndpointCatalog;
 using Compze.Tessaging.Implementation.Outbox;
 using Compze.Tessaging.Implementation.TessageHandling.Inbox;
-using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Transport;
 using Compze.Tessaging.Transport.SqlLayer;
 
-namespace Compze.Tessaging.Endpoints;
+namespace Compze.Tessaging.Endpoints.ExactlyOnce;
 
 ///<summary>The declaration surface an <see cref="ExactlyOnceEndpoint"/> is composed through — everything the base<br/>
 /// <see cref="EndpointBuilder{TConcreteBuilder}"/> declares, plus the domain database this endpoint joins (<see cref="ConfigurePersistence"/>): the<br/>

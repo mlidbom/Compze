@@ -1,4 +1,5 @@
 using Compze.Tessaging.Endpoints;
+using Compze.Tessaging.Endpoints.ExactlyOnce;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Typermedia;
 using JetBrains.Annotations;

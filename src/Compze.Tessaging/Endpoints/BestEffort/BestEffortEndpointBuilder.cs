@@ -2,7 +2,7 @@ using Compze.Contracts;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Tessaging.Engine;
 
-namespace Compze.Tessaging.Endpoints;
+namespace Compze.Tessaging.Endpoints.BestEffort;
 
 ///<summary>The declaration surface a <see cref="BestEffortEndpoint"/> is composed through — see <see cref="EndpointBuilder{TConcreteBuilder}"/>.<br/>
 /// The best-effort tier declares no database: it persists nothing, which is exactly what makes it the tier with zero<br/>

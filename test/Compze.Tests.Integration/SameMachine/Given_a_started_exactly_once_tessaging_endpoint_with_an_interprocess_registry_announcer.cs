@@ -1,7 +1,7 @@
 using Compze.Tessaging.Endpoints;
 using Compze.Hosting.SameMachine;
 using Compze.Must;
-
+using Compze.Tessaging.Endpoints.ExactlyOnce;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;

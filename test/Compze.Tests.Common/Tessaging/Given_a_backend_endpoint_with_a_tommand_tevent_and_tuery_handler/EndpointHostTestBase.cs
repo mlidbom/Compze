@@ -9,6 +9,7 @@ using Compze.Tessaging.Hosting.Testing.Typermedia;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.LinqCE;
 using Compze.Tessaging.Abstractions;
+using Compze.Tessaging.Endpoints.ExactlyOnce;
 using Compze.Tessaging.Engine;
 using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Typermedia.Client;

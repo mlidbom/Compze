@@ -1,5 +1,6 @@
 using Compze.Tessaging.Endpoints;
 using Compze.Tessaging.Endpoints.Discovery;
+using Compze.Tessaging.Endpoints.Exceptions;
 using Compze.Tessaging.Implementation.TessageHandling.Dispatching;
 using Compze.Tessaging.Typermedia.Client;
 

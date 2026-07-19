@@ -9,6 +9,7 @@ using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Must;
 using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Abstractions.TessageTypes;
+using Compze.Tessaging.Endpoints.ExactlyOnce;
 using Compze.Tessaging.Typermedia;
 using Compze.Tessaging.Engine;
 

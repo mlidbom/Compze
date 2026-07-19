@@ -7,6 +7,7 @@ using Compze.Internals.Testing;
 using Compze.Must;
 using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Abstractions.TessageTypes;
+using Compze.Tessaging.Endpoints.ExactlyOnce;
 using Compze.Tessaging.Engine;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Transport.SqlLayer;

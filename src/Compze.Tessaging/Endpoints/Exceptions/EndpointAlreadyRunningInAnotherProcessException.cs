@@ -1,4 +1,4 @@
-namespace Compze.Tessaging.Endpoints;
+namespace Compze.Tessaging.Endpoints.Exceptions;
 
 ///<summary>An endpoint runs in exactly one process at a time, and another live process already holds this endpoint's process<br/>
 /// lease in the domain database's endpoint catalog. Thrown at startup — two processes claiming the same endpoint is a<br/>
