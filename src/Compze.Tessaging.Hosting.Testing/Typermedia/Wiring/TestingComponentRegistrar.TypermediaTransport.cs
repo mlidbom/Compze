@@ -4,6 +4,7 @@ using Compze.Hosting.Testing.Wiring;
 using Compze.Internals.SystemCE;
 using Compze.Internals.Testing;
 using Compze.Tessaging.Internals.Transport;
+using Compze.Tessaging.Internals.Transport.AspNet;
 using Compze.Tessaging.Internals.Transport.NamedPipes;
 
 namespace Compze.Tessaging.Hosting.Testing.Typermedia.Wiring;
