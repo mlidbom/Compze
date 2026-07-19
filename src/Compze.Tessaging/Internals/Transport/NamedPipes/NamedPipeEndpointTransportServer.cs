@@ -26,12 +26,25 @@ public static class NamedPipeEndpointTransportServerRegistrar
 class NamedPipeEndpointTransportServer : IEndpointTransportServer
 {
    readonly NamedPipeTransportServer _server;
+   volatile EndpointAddress? _address;
 
    internal NamedPipeEndpointTransportServer(TransportRequestHandlerMap handlerMap) => _server = new NamedPipeTransportServer(handlerMap.HandleAsync);
 
-   public EndpointAddress Address => _server.Address;
+   ///<summary>Null until the server is listening and again once it stops - honoring the endpoint transport server contract (see<br/>
+   /// <see cref="IEndpointTransportServer.Address"/>), even though the underlying pipe address is known from construction.</summary>
+   public EndpointAddress? Address => _address;
 
-   public async Task StartAsync() => await _server.StartAsync().caf();
-   public async Task StopAsync() => await _server.StopAsync().caf();
+   public async Task StartAsync()
+   {
+      await _server.StartAsync().caf();
+      _address = _server.Address;
+   }
+
+   public async Task StopAsync()
+   {
+      _address = null;
+      await _server.StopAsync().caf();
+   }
+
    public async ValueTask DisposeAsync() => await _server.DisposeAsync().caf();
 }

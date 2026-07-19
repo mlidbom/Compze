@@ -13,8 +13,10 @@ namespace Compze.Tessaging.Internals.Transport;
 /// server without conflicting when an endpoint hosts several styles.</remarks>
 public interface IEndpointTransportServer : IAsyncDisposable
 {
-   ///<summary>The address clients connect to. Valid once the server is listening.</summary>
-   EndpointAddress Address { get; }
+   ///<summary>The address clients connect to while the server is listening, or <see langword="null"/> when it is not - before it<br/>
+   /// has started and after it has stopped. A single atomic read, so it is safe to read concurrently with the server starting or<br/>
+   /// stopping: a reader sees either the address or null, never a half-torn-down server.</summary>
+   EndpointAddress? Address { get; }
 
    Task StartAsync();
    Task StopAsync();

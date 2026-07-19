@@ -69,8 +69,9 @@ public abstract class Endpoint : IEndpoint
    public IRootResolver ServiceLocator { get; }
 
    ///<summary>The address where the endpoint's one transport server listens — serving every remotable capability the endpoint<br/>
-   /// speaks, of every tessage kind. Null until the endpoint is listening.</summary>
-   public EndpointAddress? Address => _isListening ? _transportServer.Address : null;
+   /// speaks, of every tessage kind. Null until the endpoint is listening, and again once it stops: the transport server clears<br/>
+   /// its address before tearing down, so this is safe to read concurrently with the endpoint starting or stopping.</summary>
+   public EndpointAddress? Address => _transportServer.Address;
 
    public bool IsRunning => _isListening && _isSending;
 
@@ -101,7 +102,8 @@ public abstract class Endpoint : IEndpoint
       State.Assert(_isListening && !_hasAnnounced);
       this.Log().Info($"Endpoint '{_configuration.Name}' ({Id}) announcing address");
       _hasAnnounced = true;
-      _addressAnnouncers.ForEach(announcer => announcer.AnnounceEndpointAddress(Id, _transportServer.Address));
+      var address = _transportServer.Address._assert().NotNull(); //The listening phase already ran, so the server has an address.
+      _addressAnnouncers.ForEach(announcer => announcer.AnnounceEndpointAddress(Id, address));
       return Task.CompletedTask;
    }
 
@@ -116,7 +118,7 @@ public abstract class Endpoint : IEndpoint
       //in-boundary participation. The endpoint's own listening phase already ran: the transport server's address exists here,
       //and so does every durable storage the exactly-once tier initialized - which is what lets the connections' exactly-once
       //streams load their recovery backlogs when delivery starts.
-      await _router.StartMaintainingConnectionsAsync(_endpointRegistry, _transportServer.Address).caf();
+      await _router.StartMaintainingConnectionsAsync(_endpointRegistry, _transportServer.Address._assert().NotNull()).caf();
       _router.StartDelivery();
    }
 

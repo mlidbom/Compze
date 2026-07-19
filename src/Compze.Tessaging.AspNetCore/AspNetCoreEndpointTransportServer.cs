@@ -1,6 +1,5 @@
 using System.Reflection;
 using Compze.Abstractions.Hosting.Public;
-using Compze.Contracts;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.DependencyInjection.Extensions.Hosting;
@@ -42,16 +41,25 @@ class AspNetCoreEndpointTransportServer : IEndpointTransportServer
 {
    readonly IChildContainerHostIntegration _hostIntegration;
    WebApplication? _webApplication;
+   volatile EndpointAddress? _address;
 
    internal AspNetCoreEndpointTransportServer(IChildContainerHostIntegration hostIntegration) => _hostIntegration = hostIntegration;
 
-   public EndpointAddress Address => new(new Uri(_webApplication._assert().NotNull().Urls.First()));
+   ///<summary>Read from the cached <see cref="_address"/> rather than the live <see cref="WebApplication"/>, so a reader never<br/>
+   /// touches a server that <see cref="StopAsync"/> is disposing out from under it - the address is captured once the server is<br/>
+   /// listening and cleared before it stops.</summary>
+   public EndpointAddress? Address => _address;
 
-   public async Task StartAsync() => _webApplication = await StartServerAsync().caf();
+   public async Task StartAsync()
+   {
+      _webApplication = await StartServerAsync().caf();
+      _address = new EndpointAddress(new Uri(_webApplication.Urls.First()));
+   }
 
    public async Task StopAsync()
    {
       if(_webApplication is null) return;
+      _address = null;
       await _webApplication.StopAsync().caf();
       await _webApplication.DisposeAsync().caf();
       _webApplication = null;
