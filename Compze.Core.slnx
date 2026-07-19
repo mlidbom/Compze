@@ -48,18 +48,6 @@
       <Project Path="samples/AccountManagement/test/AccountManagement.Tests.Unit/AccountManagement.Tests.Unit.csproj" />
       <Project Path="samples/AccountManagement/test/AccountManagement.Tests/AccountManagement.Tests.csproj" />
    </Folder>
-   <Folder Name="/_Solution Items/">
-      <File Path="README.md" />
-      <File Path=".editorconfig" />
-      <File Path="test/test-common-appsettings.json" />
-      <File Path="src/TestUsingPluggableComponentCombinations" />
-      <File Path="src/TestUsingPluggableComponentCombinations.example" />
-   </Folder>
-   <Folder Name="/_Solution Items/Tests/">
-      <File Path="test/test-common-appsettings.json" />
-      <File Path="src/TestUsingPluggableComponentCombinations" />
-      <File Path="src/TestUsingPluggableComponentCombinations.example" />
-   </Folder>
    <Folder Name="/_Websites/">
       <Project Path="src/Websites/Website/Website.csproj" />
    </Folder>
