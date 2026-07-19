@@ -8,6 +8,9 @@
     <Description>The Teventive programming model for the Compze framework: taggregates, tevents and tevent dispatching.</Description>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="JetBrains.Annotations" Version="2025.2.4" />
+  </ItemGroup>
+  <ItemGroup>
     <InternalsVisibleTo Include="Compze.Teventive.TeventStore" />
   </ItemGroup>
   <!-- Exclude _docs files from compilation but keep them visible.

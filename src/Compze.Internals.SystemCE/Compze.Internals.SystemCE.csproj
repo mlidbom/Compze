@@ -7,6 +7,9 @@
     <Description>For Compze internal use only. Do not take a direct dependency on this package.</Description>
     <NoWarn>CS1591</NoWarn>
   </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="JetBrains.Annotations" Version="2025.2.4" />
+  </ItemGroup>
   <!-- Compze.Contracts — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Contracts)' == 'true'">
     <PackageReference Include="Compze.Contracts" Version="*-*" />

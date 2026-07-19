@@ -4,6 +4,9 @@
     <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="JetBrains.Annotations" Version="2025.2.4" />
+  </ItemGroup>
   <PropertyGroup>
     <RootNamespace>AccountManagement</RootNamespace>
   </PropertyGroup>

@@ -12,6 +12,7 @@
     </PackageReference>
     <PackageReference Include="xunit.v3" Version="3.1.0" />
     <PackageReference Include="SequentialGuid" Version="5.0.3" />
+    <PackageReference Include="JetBrains.Annotations" Version="2025.2.4" />
   </ItemGroup>
   <!-- Compze.Internals.SystemCE — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_SystemCE)' == 'true'">

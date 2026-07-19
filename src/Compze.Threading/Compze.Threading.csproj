@@ -6,6 +6,9 @@
     <Description>Pit of success threading primitives. Impossible to forget to lock. Automatically resolves and diagnoses deadlocks, including both the involved stack traces in the exception.</Description>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="JetBrains.Annotations" Version="2025.2.4" />
+  </ItemGroup>
+  <ItemGroup>
     <InternalsVisibleTo Include="Compze.Threading.InternalSpecifications" />
     <InternalsVisibleTo Include="Compze.Threading.Interprocess" />
   </ItemGroup>

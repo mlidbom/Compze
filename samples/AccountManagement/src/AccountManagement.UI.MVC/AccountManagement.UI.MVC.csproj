@@ -5,6 +5,9 @@
     <IsPackable>false</IsPackable>
     <WarnOnPackingNonPackableProject>false</WarnOnPackingNonPackableProject>
   </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="JetBrains.Annotations" Version="2025.2.4" />
+  </ItemGroup>
   <PropertyGroup>
     <RootNamespace>AccountManagement.UI.MVC</RootNamespace>
   </PropertyGroup>
