@@ -1,6 +1,8 @@
 using Compze.Abstractions.Public;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.TypeIdentifiers;
+// ReSharper disable PropertyCanBeMadeInitOnly.Global serialization...
+// ReSharper disable MemberCanBeInternal serialization...
 
 [assembly: AssemblyTypeMapper(typeof(Compze.Tessaging.Specifications.Typermedia.AssemblyTypeMapper))]
 
