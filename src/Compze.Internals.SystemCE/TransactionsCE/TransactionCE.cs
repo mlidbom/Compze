@@ -49,7 +49,10 @@ public static class TransactionCE
    public static void AllowDistributedTransactions()
    {
       _distributedTransactionsAllowed = true;
-      TransactionManager.ImplicitDistributedTransactions = true;
+      //The platform switch that actually lets a transaction escalate exists only on Windows (MSDTC); on other platforms
+      //distributed transactions are unsupported regardless, so the runtime enforces that itself when escalation is attempted.
+      if(OperatingSystem.IsWindows())
+         TransactionManager.ImplicitDistributedTransactions = true;
    }
 
    ///<summary>Asserts that the work done within the returned scope does not escalate the ambient <see cref="Transaction.Current"/><br/>
