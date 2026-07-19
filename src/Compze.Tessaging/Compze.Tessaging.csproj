@@ -7,14 +7,14 @@
     <NoWarn>CS1591</NoWarn>
     <Description>Messaging infrastructure for the Compze framework including command, query, and event handling.</Description>
   </PropertyGroup>
-   <ItemGroup>
-      <InternalsVisibleTo Include="Compze.Tessaging.AspNetCore" />
-      <InternalsVisibleTo Include="Compze.Tessaging.Hosting.Testing" />
-      <InternalsVisibleTo Include="Compze.Tessaging.MicrosoftSql" />
-      <InternalsVisibleTo Include="Compze.Tessaging.MySql" />
-      <InternalsVisibleTo Include="Compze.Tessaging.PostgreSql" />
-      <InternalsVisibleTo Include="Compze.Tessaging.Sqlite" />
-   </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="Compze.Tessaging.AspNetCore" />
+    <InternalsVisibleTo Include="Compze.Tessaging.Hosting.Testing" />
+    <InternalsVisibleTo Include="Compze.Tessaging.MicrosoftSql" />
+    <InternalsVisibleTo Include="Compze.Tessaging.MySql" />
+    <InternalsVisibleTo Include="Compze.Tessaging.PostgreSql" />
+    <InternalsVisibleTo Include="Compze.Tessaging.Sqlite" />
+  </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="9.0.9" />
   </ItemGroup>
