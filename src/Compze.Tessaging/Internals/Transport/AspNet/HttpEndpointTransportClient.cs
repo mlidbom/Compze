@@ -2,6 +2,7 @@ using Compze.Tessaging.Endpoints.Discovery;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
+using Compze.Tessaging.Internals.Transport.AspNet;
 
 namespace Compze.Tessaging.Internals.Transport;
 

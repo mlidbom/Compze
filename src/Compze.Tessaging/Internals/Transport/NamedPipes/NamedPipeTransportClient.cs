@@ -1,7 +1,6 @@
 using System.IO.Pipes;
 using Compze.Tessaging.Endpoints.Discovery;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
-using Compze.Tessaging.Internals.Transport.Exceptions;
 
 namespace Compze.Tessaging.Internals.Transport.NamedPipes;
 

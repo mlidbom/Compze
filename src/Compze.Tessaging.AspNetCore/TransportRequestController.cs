@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Compze.Tessaging.Internals.Transport;
 using Compze.Tessaging.Internals.Transport.AspNet;
-using Compze.Tessaging.Internals.Transport.Exceptions;
 
 namespace Compze.Tessaging.AspNetCore;
 
