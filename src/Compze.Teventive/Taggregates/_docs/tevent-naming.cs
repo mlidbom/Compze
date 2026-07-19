@@ -1,5 +1,6 @@
 using Compze.Tessaging.Abstractions.TessageTypes;
 using Compze.Tessaging.Engine;
+using Compze.Tessaging.Engine.HandlerRegistration.TessageHandlers;
 using Compze.Teventive.Taggregates.Tevents.Public;
 using static System.Console;
 using Tessaging_ITevent = Compze.Tessaging.Abstractions.TessageTypes.ITevent;

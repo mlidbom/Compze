@@ -11,6 +11,8 @@ using Compze.Internals.SystemCE.LinqCE;
 using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Endpoints.ExactlyOnce;
 using Compze.Tessaging.Engine;
+using Compze.Tessaging.Engine.HandlerRegistration.TessageHandlers;
+using Compze.Tessaging.Engine.HandlerRegistration.TeventObservation;
 using Compze.Tessaging.Hosting;
 using Compze.Tessaging.Typermedia.Client;
 using Compze.Tests.Infrastructure;

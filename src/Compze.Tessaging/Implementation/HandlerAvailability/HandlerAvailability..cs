@@ -11,6 +11,7 @@ using Compze.Internals.SystemCE.ReflectionCE;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tessaging.Abstractions.TessageTypes;
 using Compze.Tessaging.Endpoints.Exceptions;
+using Compze.Tessaging.Engine.HandlerRegistration;
 
 namespace Compze.Tessaging.Implementation.HandlerAvailability;
 

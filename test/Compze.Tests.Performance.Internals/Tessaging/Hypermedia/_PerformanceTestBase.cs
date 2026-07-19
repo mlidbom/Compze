@@ -8,6 +8,7 @@ using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Typermedia;
 using Compze.Tessaging.Typermedia;
 using Compze.Tessaging.Engine;
+using Compze.Tessaging.Engine.HandlerRegistration.TessageHandlers;
 
 namespace Compze.Tests.Performance.Internals.Tessaging.Hypermedia;
 

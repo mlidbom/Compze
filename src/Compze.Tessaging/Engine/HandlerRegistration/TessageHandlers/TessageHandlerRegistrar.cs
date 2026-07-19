@@ -3,7 +3,7 @@ using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.ReflectionCE;
 using Compze.Tessaging.Abstractions.TessageTypes;
 
-namespace Compze.Tessaging.Engine;
+namespace Compze.Tessaging.Engine.HandlerRegistration.TessageHandlers;
 
 ///<summary>The declaration surface for an engine's handlers — one registrar covering all four tessage kinds, because the<br/>
 /// tessage's own type carries its kind, guarantee, and synchrony, so the verbs differ only by handler shape. Handed to the<br/>

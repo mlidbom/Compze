@@ -4,6 +4,7 @@ using Compze.Internals.Logging;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tessaging.Abstractions.TessageTypes;
 using Compze.Tessaging.Engine;
+using Compze.Tessaging.Engine.Exceptions;
 
 namespace Compze.Tessaging.Typermedia.Hosting;
 

@@ -1,7 +1,7 @@
 using Compze.DependencyInjection;
 using Compze.Tessaging.Abstractions.TessageTypes;
 
-namespace Compze.Tessaging.Engine;
+namespace Compze.Tessaging.Engine.HandlerRegistration.TessageHandlers;
 
 ///<summary>Convenience overloads for <see cref="TessageHandlerRegistrar"/>: register a handler whose extra lambda parameters are<br/>
 /// resolved from the handling context — the unit of work for tevents and tommands, the scope for tueries — or one that needs no<br/>

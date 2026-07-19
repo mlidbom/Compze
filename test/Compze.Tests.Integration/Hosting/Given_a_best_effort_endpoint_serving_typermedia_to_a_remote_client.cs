@@ -14,6 +14,7 @@ using Compze.Tessaging.Endpoints.ExactlyOnce;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Tessaging.Engine;
+using Compze.Tessaging.Engine.HandlerRegistration.TessageHandlers;
 using Compze.Tessaging.Hosting.Testing.Typermedia;
 using static Compze.Must.MustActions;
 

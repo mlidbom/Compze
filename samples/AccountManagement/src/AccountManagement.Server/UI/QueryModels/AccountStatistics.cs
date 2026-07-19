@@ -5,6 +5,7 @@ using Compze.Tessaging.Endpoints;
 using Compze.Tessaging.Engine;
 using Compze.DependencyInjection;
 using Compze.Tessaging.Endpoints.ExactlyOnce;
+using Compze.Tessaging.Engine.HandlerRegistration.TessageHandlers;
 using Compze.Teventive.TeventStore.QueryModels.SelfGeneratingQueryModels;
 using Compze.Tessaging.Typermedia.Client;
 using Compze.Tessaging.Typermedia;

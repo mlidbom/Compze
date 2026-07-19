@@ -18,6 +18,7 @@ using Compze.Tests.Infrastructure.XUnit;
 using Compze.Tessaging.Typermedia;
 using Compze.Tessaging.Typermedia.Client;
 using Compze.Tessaging.Engine;
+using Compze.Tessaging.Engine.HandlerRegistration.TessageHandlers;
 using static Compze.Must.MustActions;
 
 // ReSharper disable InconsistentNaming for testing

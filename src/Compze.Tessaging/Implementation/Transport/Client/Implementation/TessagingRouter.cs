@@ -14,6 +14,7 @@ using Compze.Internals.SystemCE.CollectionsCE.GenericCE;
 using Compze.Internals.SystemCE.ReflectionCE;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tessaging.Abstractions.TessageTypes;
+using Compze.Tessaging.Engine.HandlerRegistration;
 using Compze.Tessaging.Implementation.Abstractions;
 using Compze.Tessaging.Serialization;
 using Compze.Threading;
@@ -262,7 +263,7 @@ class TessagingRouter : ITessagingRouter, IDisposable
 
    ///<summary>Builds a route for <em>every</em> type <paramref name="connection"/>'s endpoint advertises — an advertised type no<br/>
    /// route serves would be a silently dead subscription, so anything unroutable is asserted against instead of skipped.<br/>
-   /// The advertising endpoint's <see cref="Engine.TessageHandlerRoster"/> asserts the same soundness when its advertisement is<br/>
+   /// The advertising endpoint's <see cref="TessageHandlerRoster"/> asserts the same soundness when its advertisement is<br/>
    /// first computed, where a violation fails loudest.</summary>
    void RegisterRoutes(TessagingConnection connection, ISet<string> handledTypeIdStrings)
    {

@@ -5,10 +5,11 @@ using Compze.Internals.SystemCE.ReflectionCE;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tessaging.Abstractions.TessageTypes;
 using Compze.Tessaging.Abstractions.Validation;
+using Compze.Tessaging.Engine.HandlerRegistration.TeventObservation;
 using Compze.Threading;
 using Compze.TypeIdentifiers;
 
-namespace Compze.Tessaging.Engine;
+namespace Compze.Tessaging.Engine.HandlerRegistration.TessageHandlers;
 
 ///<summary>The handler registrations gathered while an engine is being composed — the mutable precursor its immutable<br/>
 /// <see cref="TessageHandlerRoster"/> is built from, covering all four tessage kinds (tevents, tommands, tueries, of either<br/>

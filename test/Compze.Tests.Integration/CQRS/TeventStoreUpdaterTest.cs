@@ -26,6 +26,7 @@ using Compze.Internals.SystemCE.UsageGuards;
 using Compze.Must;
 using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Abstractions.TessageTypes;
+using Compze.Tessaging.Engine.HandlerRegistration.TessageHandlers;
 using Compze.Teventive;
 using Compze.Teventive.Taggregates.Tevents.Public;
 using Compze.Teventive.TeventStore.Abstractions.Public;

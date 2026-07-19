@@ -1,11 +1,14 @@
-using Compze.TypeIdentifiers;
 using Compze.Contracts;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.ReflectionCE;
 using Compze.Tessaging.Abstractions.TessageTypes;
+using Compze.Tessaging.Engine.Exceptions;
+using Compze.Tessaging.Engine.HandlerRegistration.TessageHandlers;
+using Compze.Tessaging.Engine.HandlerRegistration.TeventObservation;
 using Compze.Tessaging.Implementation.Abstractions;
+using Compze.TypeIdentifiers;
 
-namespace Compze.Tessaging.Engine;
+namespace Compze.Tessaging.Engine.HandlerRegistration;
 
 ///<summary>The closed set of what one engine understands: an immutable map from tessage type to handler covering all four<br/>
 /// tessage kinds — tevents and tommands of the TessageBus style, tueries and tommands of the Typermedia style — plus tevent<br/>

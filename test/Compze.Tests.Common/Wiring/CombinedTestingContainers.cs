@@ -11,6 +11,7 @@ using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Underscore;
 using Compze.Internals.Logging;
+using Compze.Tessaging.Engine.Wiring;
 using Compze.Teventive.TeventStore.Wiring;
 using JetBrains.Annotations;
 

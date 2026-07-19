@@ -1,8 +1,9 @@
 using Compze.Contracts;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Tessaging.Abstractions.TessageTypes;
+using Compze.Tessaging.Engine.HandlerRegistration.TessageHandlers;
 
-namespace Compze.Tessaging.Engine;
+namespace Compze.Tessaging.Engine.HandlerRegistration.TeventObservation;
 
 ///<summary>The declaration surface for tevent observation — the deliberately transaction-ignoring watch surface, declared under<br/>
 /// its own verb (<see cref="LocalTessagingEngineBuilder.ObserveTevents"/>) so the distinct semantics are visible at the<br/>

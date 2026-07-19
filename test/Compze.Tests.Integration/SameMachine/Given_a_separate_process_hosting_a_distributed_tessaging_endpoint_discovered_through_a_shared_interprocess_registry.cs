@@ -10,6 +10,7 @@ using Compze.Internals.Testing;
 using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Endpoints.BestEffort;
 using Compze.Tessaging.Engine;
+using Compze.Tessaging.Engine.HandlerRegistration.TessageHandlers;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Tests.SameMachine.EndpointHostProcess;

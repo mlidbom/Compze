@@ -13,6 +13,7 @@ using Compze.Tessaging.Endpoints.BestEffort;
 using Compze.Tessaging.Endpoints.ExactlyOnce;
 using Compze.Tessaging.Internals.Transport.NamedPipes;
 using Compze.Tessaging.Engine;
+using Compze.Tessaging.Engine.HandlerRegistration.TessageHandlers;
 using Compze.Tessaging.Sqlite.Wiring;
 using Compze.TypeIdentifiers.DependencyInjection;
 

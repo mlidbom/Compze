@@ -1,7 +1,8 @@
 using Compze.DependencyInjection;
 using Compze.Tessaging.Abstractions.TessageTypes;
+using Compze.Tessaging.Engine.HandlerRegistration.TessageHandlers;
 
-namespace Compze.Tessaging.Engine;
+namespace Compze.Tessaging.Engine.HandlerRegistration.TeventObservation;
 
 ///<summary>Convenience overloads for <see cref="TeventObservationRegistrar"/> — the same shapes<br/>
 /// <see cref="TessageHandlerRegistrarCE"/> gives <see cref="TessageHandlerRegistrar"/>: extra lambda parameters are resolved<br/>

@@ -1,11 +1,13 @@
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
+using Compze.Tessaging.Engine.HandlerRegistration;
+using Compze.Tessaging.Engine.HandlerRegistration.TessageHandlers;
 using Compze.Tessaging.Implementation.Abstractions;
 using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.TypeIdentifiers;
 using Compze.TypeIdentifiers.DependencyInjection;
 
-namespace Compze.Tessaging.Engine;
+namespace Compze.Tessaging.Engine.Wiring;
 
 ///<summary>Registers the engine's core into a container: the gathered <see cref="TessageHandlerRegistrations"/>, the<br/>
 /// <see cref="TessageHandlerRoster"/> built from them when the container's singletons materialize, the one<br/>

@@ -1,7 +1,8 @@
 using Compze.DependencyInjection.Abstractions;
 using Compze.Tessaging.Abstractions.TessageTypes;
+using Compze.Tessaging.Engine.HandlerRegistration.TessageHandlers;
 
-namespace Compze.Tessaging.Engine;
+namespace Compze.Tessaging.Engine.HandlerRegistration.TeventObservation;
 
 ///<summary>One declared tevent observer, as the <see cref="TessageHandlerRoster"/> holds it: the wrapper routing key the<br/>
 /// subscription translates to (see <see cref="TessageHandlerRegistrations.AddTeventObserver{TTevent}"/>) paired with the<br/>

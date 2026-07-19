@@ -8,6 +8,7 @@ using Compze.Internals.SystemCE.UsageGuards;
 using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Abstractions.TessageTypes;
 using Compze.Tessaging.Abstractions.Validation;
+using Compze.Tessaging.Engine.HandlerRegistration;
 
 namespace Compze.Tessaging.Hosting;
 
