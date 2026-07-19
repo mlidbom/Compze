@@ -1,138 +1,131 @@
 <Solution>
-  <Configurations>
-    <BuildType Name="Debug" />
-    <BuildType Name="docs" />
-    <BuildType Name="Release" />
-    <Platform Name="Any CPU" />
-    <Platform Name="x64" />
-    <Platform Name="x86" />
-  </Configurations>
-  <Folder Name="/Compze.Abstractions/">
-    <Project Path="src/Compze.Abstractions/Compze.Abstractions.csproj" />
-  </Folder>
-  <Folder Name="/Compze.Abstractions/Specifications/">
-    <Project Path="test/Compze.Abstractions.Specifications/Compze.Abstractions.Specifications.csproj" />
-  </Folder>
-  <Folder Name="/Compze.Tessaging/Hosting-Transport/">
-    <Project Path="src/Compze.Tessaging.Hosting.Testing/Compze.Tessaging.Hosting.Testing.csproj" />
-  </Folder>
-  <Folder Name="/Compze.Tessaging/Hosting-Transport/SqlLayers/">
-    <Project Path="src/Compze.Tessaging.MicrosoftSql/Compze.Tessaging.MicrosoftSql.csproj" />
-    <Project Path="src/Compze.Tessaging.MySql/Compze.Tessaging.MySql.csproj" />
-    <Project Path="src/Compze.Tessaging.PostgreSql/Compze.Tessaging.PostgreSql.csproj" />
-    <Project Path="src/Compze.Tessaging.Sqlite/Compze.Tessaging.Sqlite.csproj" />
-  </Folder>
-  <Folder Name="/Compze.Teventive/">
-    <Project Path="src/Compze.Teventive/Compze.Teventive.csproj" />
-  </Folder>
-  <Folder Name="/Compze.Teventive/TeventStore/">
-    <Project Path="src/Compze.Teventive.TeventStore.Abstractions/Compze.Teventive.TeventStore.Abstractions.csproj" />
-    <Project Path="src/Compze.Teventive.TeventStore.Typermedia/Compze.Teventive.TeventStore.Typermedia.csproj" />
-    <Project Path="src/Compze.Teventive.TeventStore/Compze.Teventive.TeventStore.csproj" />
-  </Folder>
-  <Folder Name="/Compze.Teventive/TeventStore/SqlLayers/">
-    <Project Path="src/Compze.Teventive.TeventStore.MicrosoftSql/Compze.Teventive.TeventStore.MicrosoftSql.csproj" />
-    <Project Path="src/Compze.Teventive.TeventStore.MySql/Compze.Teventive.TeventStore.MySql.csproj" />
-    <Project Path="src/Compze.Teventive.TeventStore.PostgreSql/Compze.Teventive.TeventStore.PostgreSql.csproj" />
-    <Project Path="src/Compze.Teventive.TeventStore.Sqlite/Compze.Teventive.TeventStore.Sqlite.csproj" />
-  </Folder>
-  <Folder Name="/Compze.TypeIdentifiers/">
-    <Project Path="src/Compze.TypeIdentifiers.Interning.MicrosoftSql/Compze.TypeIdentifiers.Interning.MicrosoftSql.csproj" />
-    <Project Path="src/Compze.TypeIdentifiers.Interning.MySql/Compze.TypeIdentifiers.Interning.MySql.csproj" />
-    <Project Path="src/Compze.TypeIdentifiers.Interning.PostgreSql/Compze.TypeIdentifiers.Interning.PostgreSql.csproj" />
-    <Project Path="src/Compze.TypeIdentifiers.Interning.Sqlite/Compze.TypeIdentifiers.Interning.Sqlite.csproj" />
-    <Project Path="src/Compze.TypeIdentifiers.Interning/Compze.TypeIdentifiers.Interning.csproj" />
-    <Project Path="src/Compze.TypeIdentifiers/Compze.TypeIdentifiers.csproj" />
-  </Folder>
-  <Folder Name="/Compze.TypeIdentifiers/Specifications/">
-    <Project Path="test/Compze.TypeIdentifiers.Specifications/Compze.TypeIdentifiers.Specifications.csproj" />
-  </Folder>
-  <Folder Name="/_Samples/" />
-  <Folder Name="/_Samples/AccountManagement/">
-    <Project Path="samples/AccountManagement/src/AccountManagement.API/AccountManagement.API.csproj" />
-    <Project Path="samples/AccountManagement/src/AccountManagement.Domain.Tevents/AccountManagement.Domain.Tevents.csproj" />
-    <Project Path="samples/AccountManagement/src/AccountManagement.Server/AccountManagement.Server.csproj" />
-    <Project Path="samples/AccountManagement/src/AccountManagement.UI.MVC/AccountManagement.UI.MVC.csproj" />
-  </Folder>
-  <Folder Name="/_Samples/AccountManagement/Tests/">
-    <Project Path="samples/AccountManagement/test/AccountManagement.Tests.PerformanceInternals/AccountManagement.Tests.PerformanceInternals.csproj" />
-    <Project Path="samples/AccountManagement/test/AccountManagement.Tests.Unit/AccountManagement.Tests.Unit.csproj" />
-    <Project Path="samples/AccountManagement/test/AccountManagement.Tests/AccountManagement.Tests.csproj" />
-  </Folder>
-  <Folder Name="/_Solution Items/">
-    <File Path="README.md" />
-    <File Path="Writing_documentation.md" />
-    <File Path=".editorconfig" />
-    <File Path="test/test-common-appsettings.json" />
-    <File Path="src/TestUsingPluggableComponentCombinations" />
-    <File Path="src/TestUsingPluggableComponentCombinations.example" />
-    <File Path="src/TODO_must_assertion_improvements.md" />
-  </Folder>
-  <Folder Name="/_Solution Items/Tests/">
-    <File Path="test/test-common-appsettings.json" />
-    <File Path="src/TestUsingPluggableComponentCombinations" />
-    <File Path="src/TestUsingPluggableComponentCombinations.example" />
-  </Folder>
-  <Folder Name="/~Solution Structure/">
-    <Project Path="src/msbuild/Solution.Build.csproj" />
-    <Project Path="src/SolutionStructure/Solution.EditorConfigs.csproj" />
-    <Project Path="src/SolutionStructure/Solution.README.csproj" />
-    <Project Path="src/SolutionStructure/Solution.TestConfig.csproj" />
-    <Project Path="src/SolutionStructure/Solution.TODO.csproj" />
-  </Folder>
-  <Folder Name="/Compze.DocumentDb/SqlLayers/">
-    <Project Path="src/Compze.DocumentDb.MicrosoftSql/Compze.DocumentDb.MicrosoftSql.csproj" />
-    <Project Path="src/Compze.DocumentDb.MySql/Compze.DocumentDb.MySql.csproj" />
-    <Project Path="src/Compze.DocumentDb.PostgreSql/Compze.DocumentDb.PostgreSql.csproj" />
-    <Project Path="src/Compze.DocumentDb.Sqlite/Compze.DocumentDb.Sqlite.csproj" />
-  </Folder>
-  <Folder Name="/Compze.Hosting/">
-    <Project Path="src/Compze.Hosting.Testing/Compze.Hosting.Testing.csproj" />
-    <Project Path="src/Compze.Hosting/Compze.Hosting.csproj" />
-  </Folder>
-  <Folder Name="/Compze.Internals.Transport/">
-    <Project Path="src/Compze.Tessaging.AspNetCore/Compze.Tessaging.AspNetCore.csproj" />
-  </Folder>
-  <Folder Name="/Compze.Internals/">
-    <Project Path="src/Compze.Internals.Testing/Compze.Internals.Testing.csproj" />
-  </Folder>
-  <Folder Name="/Compze.Internals/Compze.Internals.Serialization/">
-    <Project Path="src/Compze.Internals.Serialization.Newtonsoft/Compze.Internals.Serialization.Newtonsoft.csproj" />
-  </Folder>
-  <Folder Name="/Compze.Internals/Compze.Internals.Serialization/Specifications/">
-    <Project Path="test/Compze.Internals.Serialization.Newtonsoft.Specifications/Compze.Internals.Serialization.Newtonsoft.Specifications.csproj" />
-  </Folder>
-  <Folder Name="/Compze.Internals/Compze.Internals.Sql/">
-    <Project Path="src/Compze.Internals.Sql.Common/Compze.Internals.Sql.Common.csproj" />
-    <Project Path="src/Compze.Internals.Sql.MicrosoftSql/Compze.Internals.Sql.MicrosoftSql.csproj" />
-    <Project Path="src/Compze.Internals.Sql.MySql/Compze.Internals.Sql.MySql.csproj" />
-    <Project Path="src/Compze.Internals.Sql.PostgreSql/Compze.Internals.Sql.PostgreSql.csproj" />
-    <Project Path="src/Compze.Internals.Sql.Sqlite/Compze.Internals.Sql.Sqlite.csproj" />
-  </Folder>
-  <Folder Name="/Compze.Internals/Compze.Internals.SystemCE/">
-    <Project Path="src/Compze.Internals.SystemCE/Compze.Internals.SystemCE.csproj" />
-  </Folder>
-  <Folder Name="/Compze.Internals/Compze.Internals.SystemCE/Tests/">
-    <Project Path="test/Compze.Internals.SystemCE.Tests/Compze.Internals.SystemCE.Tests.csproj" />
-  </Folder>
-  <Folder Name="/Compze.Tessaging/">
-    <Project Path="src/Compze.Tessaging/Compze.Tessaging.csproj" />
-  </Folder>
-  <Folder Name="/Compze.Tessaging/Specifications/">
-    <Project Path="test/Compze.Tessaging.Specifications/Compze.Tessaging.Specifications.csproj" />
-  </Folder>
-  <Folder Name="/_Tests/">
-    <Project Path="test/Compze.Tests.CodePolicies/Compze.Tests.CodePolicies.csproj" />
-    <Project Path="test/Compze.Tests.Common/Compze.Tests.Common.csproj" />
-    <Project Path="test/Compze.Tests.Infrastructure/Compze.Tests.Infrastructure.csproj" />
-    <Project Path="test/Compze.Tests.Integration/Compze.Tests.Integration.csproj" />
-    <Project Path="test/Compze.Tests.Performance.Internals/Compze.Tests.Performance.Internals.csproj" />
-    <Project Path="test/Compze.Tests.SameMachine.EndpointHostProcess/Compze.Tests.SameMachine.EndpointHostProcess.csproj" />
-    <Project Path="test/Compze.Tests.ScratchPad/Compze.Tests.ScratchPad.csproj" />
-    <Project Path="test/Compze.Tests.Unit/Compze.Tests.Unit.csproj" />
-  </Folder>
-  <Folder Name="/Compze.DocumentDb/">
-    <Project Path="src/Compze.DocumentDb/Compze.DocumentDb.csproj" />
-  </Folder>
-  <Project Path="DevScripts/Scripts.csproj" />
+   <Configurations>
+      <BuildType Name="Debug" />
+      <BuildType Name="docs" />
+      <BuildType Name="Release" />
+      <Platform Name="Any CPU" />
+      <Platform Name="x64" />
+      <Platform Name="x86" />
+   </Configurations>
+   <Folder Name="/Compze.Abstractions/">
+      <Project Path="src/Compze.Abstractions/Compze.Abstractions.csproj" />
+   </Folder>
+   <Folder Name="/Compze.Abstractions/Specifications/">
+      <Project Path="test/Compze.Abstractions.Specifications/Compze.Abstractions.Specifications.csproj" />
+   </Folder>
+   <Folder Name="/Compze.Tessaging/Hosting-Transport/">
+      <Project Path="src/Compze.Tessaging.Hosting.Testing/Compze.Tessaging.Hosting.Testing.csproj" />
+   </Folder>
+   <Folder Name="/Compze.Tessaging/Hosting-Transport/SqlLayers/">
+      <Project Path="src/Compze.Tessaging.MicrosoftSql/Compze.Tessaging.MicrosoftSql.csproj" />
+      <Project Path="src/Compze.Tessaging.MySql/Compze.Tessaging.MySql.csproj" />
+      <Project Path="src/Compze.Tessaging.PostgreSql/Compze.Tessaging.PostgreSql.csproj" />
+      <Project Path="src/Compze.Tessaging.Sqlite/Compze.Tessaging.Sqlite.csproj" />
+   </Folder>
+   <Folder Name="/Compze.Teventive/">
+      <Project Path="src/Compze.Teventive/Compze.Teventive.csproj" />
+   </Folder>
+   <Folder Name="/Compze.Teventive/TeventStore/">
+      <Project Path="src/Compze.Teventive.TeventStore.Abstractions/Compze.Teventive.TeventStore.Abstractions.csproj" />
+      <Project Path="src/Compze.Teventive.TeventStore.Typermedia/Compze.Teventive.TeventStore.Typermedia.csproj" />
+      <Project Path="src/Compze.Teventive.TeventStore/Compze.Teventive.TeventStore.csproj" />
+   </Folder>
+   <Folder Name="/Compze.Teventive/TeventStore/SqlLayers/">
+      <Project Path="src/Compze.Teventive.TeventStore.MicrosoftSql/Compze.Teventive.TeventStore.MicrosoftSql.csproj" />
+      <Project Path="src/Compze.Teventive.TeventStore.MySql/Compze.Teventive.TeventStore.MySql.csproj" />
+      <Project Path="src/Compze.Teventive.TeventStore.PostgreSql/Compze.Teventive.TeventStore.PostgreSql.csproj" />
+      <Project Path="src/Compze.Teventive.TeventStore.Sqlite/Compze.Teventive.TeventStore.Sqlite.csproj" />
+   </Folder>
+   <Folder Name="/_Samples/" />
+   <Folder Name="/_Samples/AccountManagement/">
+      <Project Path="samples/AccountManagement/src/AccountManagement.API/AccountManagement.API.csproj" />
+      <Project Path="samples/AccountManagement/src/AccountManagement.Domain.Tevents/AccountManagement.Domain.Tevents.csproj" />
+      <Project Path="samples/AccountManagement/src/AccountManagement.Server/AccountManagement.Server.csproj" />
+      <Project Path="samples/AccountManagement/src/AccountManagement.UI.MVC/AccountManagement.UI.MVC.csproj" />
+   </Folder>
+   <Folder Name="/_Samples/AccountManagement/Tests/">
+      <Project Path="samples/AccountManagement/test/AccountManagement.Tests.PerformanceInternals/AccountManagement.Tests.PerformanceInternals.csproj" />
+      <Project Path="samples/AccountManagement/test/AccountManagement.Tests.Unit/AccountManagement.Tests.Unit.csproj" />
+      <Project Path="samples/AccountManagement/test/AccountManagement.Tests/AccountManagement.Tests.csproj" />
+   </Folder>
+   <Folder Name="/_Solution Items/">
+      <File Path="README.md" />
+      <File Path=".editorconfig" />
+      <File Path="test/test-common-appsettings.json" />
+      <File Path="src/TestUsingPluggableComponentCombinations" />
+      <File Path="src/TestUsingPluggableComponentCombinations.example" />
+   </Folder>
+   <Folder Name="/_Solution Items/Tests/">
+      <File Path="test/test-common-appsettings.json" />
+      <File Path="src/TestUsingPluggableComponentCombinations" />
+      <File Path="src/TestUsingPluggableComponentCombinations.example" />
+   </Folder>
+   <Folder Name="/_Websites/">
+      <Project Path="src/Websites/Website/Website.csproj" />
+   </Folder>
+   <Folder Name="/~Solution Structure/">
+      <Project Path="src/msbuild/Solution.Build.csproj" />
+      <Project Path="src/SolutionStructure/Solution.Agents.csproj" />
+      <Project Path="src/SolutionStructure/Solution.Misc.csproj" />
+      <Project Path="src/SolutionStructure/Solution.UserDocs.csproj" />
+      <Project Path="src/SolutionStructure/Solution.dev_docs.csproj" />
+      <Project Path="src/SolutionStructure/Solution.EditorConfigs.csproj" />
+      <Project Path="src/SolutionStructure/Solution.Markdown.csproj" />
+      <Project Path="src/SolutionStructure/Solution.TestConfig.csproj" />
+      <Project Path="src/SolutionStructure/Solution.TODO.Current.csproj" />
+      <Project Path="src/SolutionStructure/Solution.TODO.WIP.csproj" />
+      <Project Path="src/SolutionStructure/Solution.TODO.Done.csproj" />
+   </Folder>
+   <Folder Name="/Compze.DocumentDb/SqlLayers/">
+      <Project Path="src/Compze.DocumentDb.MicrosoftSql/Compze.DocumentDb.MicrosoftSql.csproj" />
+      <Project Path="src/Compze.DocumentDb.MySql/Compze.DocumentDb.MySql.csproj" />
+      <Project Path="src/Compze.DocumentDb.PostgreSql/Compze.DocumentDb.PostgreSql.csproj" />
+      <Project Path="src/Compze.DocumentDb.Sqlite/Compze.DocumentDb.Sqlite.csproj" />
+   </Folder>
+   <Folder Name="/Compze.Hosting/">
+      <Project Path="src/Compze.Hosting.Testing/Compze.Hosting.Testing.csproj" />
+      <Project Path="src/Compze.Hosting/Compze.Hosting.csproj" />
+   </Folder>
+   <Folder Name="/Compze.Internals/">
+      <Project Path="src/Compze.Internals.Testing/Compze.Internals.Testing.csproj" />
+   </Folder>
+   <Folder Name="/Compze.Internals/Serialization/">
+      <Project Path="src/Compze.Internals.Serialization.Newtonsoft/Compze.Internals.Serialization.Newtonsoft.csproj" />
+   </Folder>
+   <Folder Name="/Compze.Internals/Serialization/Specifications/">
+      <Project Path="test/Compze.Internals.Serialization.Newtonsoft.Specifications/Compze.Internals.Serialization.Newtonsoft.Specifications.csproj" />
+   </Folder>
+   <Folder Name="/Compze.Internals/Sql/">
+      <Project Path="src/Compze.Internals.Sql.Common/Compze.Internals.Sql.Common.csproj" />
+      <Project Path="src/Compze.Internals.Sql.MicrosoftSql/Compze.Internals.Sql.MicrosoftSql.csproj" />
+      <Project Path="src/Compze.Internals.Sql.MySql/Compze.Internals.Sql.MySql.csproj" />
+      <Project Path="src/Compze.Internals.Sql.PostgreSql/Compze.Internals.Sql.PostgreSql.csproj" />
+      <Project Path="src/Compze.Internals.Sql.Sqlite/Compze.Internals.Sql.Sqlite.csproj" />
+   </Folder>
+   <Folder Name="/Compze.Internals/SystemCE/">
+      <Project Path="src/Compze.Internals.SystemCE/Compze.Internals.SystemCE.csproj" />
+   </Folder>
+   <Folder Name="/Compze.Internals/SystemCE/Tests/">
+      <Project Path="test/Compze.Internals.SystemCE.Tests/Compze.Internals.SystemCE.Tests.csproj" />
+   </Folder>
+   <Folder Name="/Compze.Tessaging/">
+      <Project Path="src/Compze.Tessaging.AspNetCore/Compze.Tessaging.AspNetCore.csproj" />
+      <Project Path="src/Compze.Tessaging/Compze.Tessaging.csproj" />
+   </Folder>
+   <Folder Name="/Compze.Tessaging/Specifications/">
+      <Project Path="test/Compze.Tessaging.Specifications/Compze.Tessaging.Specifications.csproj" />
+   </Folder>
+   <Folder Name="/_Tests/">
+      <Project Path="test/Compze.Tests.CodePolicies/Compze.Tests.CodePolicies.csproj" />
+      <Project Path="test/Compze.Tests.Common/Compze.Tests.Common.csproj" />
+      <Project Path="test/Compze.Tests.Infrastructure/Compze.Tests.Infrastructure.csproj" />
+      <Project Path="test/Compze.Tests.Integration/Compze.Tests.Integration.csproj" />
+      <Project Path="test/Compze.Tests.Performance.Internals/Compze.Tests.Performance.Internals.csproj" />
+      <Project Path="test/Compze.Tests.SameMachine.EndpointHostProcess/Compze.Tests.SameMachine.EndpointHostProcess.csproj" />
+      <Project Path="test/Compze.Tests.Unit/Compze.Tests.Unit.csproj" />
+   </Folder>
+   <Folder Name="/Compze.DocumentDb/">
+      <Project Path="src/Compze.DocumentDb/Compze.DocumentDb.csproj" />
+   </Folder>
+   <Project Path="DevScripts/Scripts.csproj" />
 </Solution>

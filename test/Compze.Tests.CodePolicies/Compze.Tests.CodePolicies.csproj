@@ -8,7 +8,6 @@
     <ProjectReference Include="..\Compze.Abstractions.Specifications\Compze.Abstractions.Specifications.csproj" />
     <ProjectReference Include="..\Compze.Tests.Common\Compze.Tests.Common.csproj" />
     <ProjectReference Include="..\Compze.Tests.Integration\Compze.Tests.Integration.csproj" />
-    <ProjectReference Include="..\Compze.Tests.ScratchPad\Compze.Tests.ScratchPad.csproj" />
     <ProjectReference Include="..\Compze.Tests.Unit\Compze.Tests.Unit.csproj" />
   </ItemGroup>
   <ItemGroup>
