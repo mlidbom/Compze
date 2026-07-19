@@ -1,16 +1,4 @@
 <Project>
-  <!-- Every JetBrains annotation attribute is [Conditional("JETBRAINS_ANNOTATIONS")], so without that symbol the
-       compiler erases every usage: the annotations vanish from the assembly and any consumer referencing us as a
-       package - which is every focused solution, via FlexRef - sees none of them, silently. Referencing the package
-       therefore always means emitting the annotations; there is no case where we want one without the other. Stated
-       once here rather than repeated in every csproj, so the pairing cannot be forgotten.
-       This lives in .targets because Directory.Build.props is imported before the project body, where the project's
-       own PackageReference items do not exist yet. -->
-  <PropertyGroup>
-    <ProjectReferencesJetBrainsAnnotations>@(PackageReference->AnyHaveMetadataValue('Identity','JetBrains.Annotations'))</ProjectReferencesJetBrainsAnnotations>
-    <DefineConstants Condition="'$(ProjectReferencesJetBrainsAnnotations)' == 'true'">$(DefineConstants);JETBRAINS_ANNOTATIONS</DefineConstants>
-  </PropertyGroup>
-
   <!-- Local dev pack: append timestamp suffix to avoid NuGet cache staleness.
        Set CompzeLocalPackSuffix via /p:CompzeLocalPackSuffix=dev.TIMESTAMP from C-Pack.
        This runs in .targets (after project evaluation) so $(Version) has the real project version.

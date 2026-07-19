@@ -8,7 +8,7 @@
     <Description>The Teventive programming model for the Compze framework: taggregates, tevents and tevent dispatching.</Description>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="JetBrains.Annotations" Version="2025.2.4" />
+    <PackageReference Include="JetBrains.Annotations.Sources" Version="2025.2.4" PrivateAssets="all" />
   </ItemGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="Compze.Teventive.TeventStore" />
