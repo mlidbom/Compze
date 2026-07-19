@@ -9,7 +9,7 @@
    </PropertyGroup>
 
    <ItemGroup>
-      <InterntalsVisibleTo Include="Compze.Tessaging"/>
+      <InternalsVisibleTo Include="Compze.Tessaging"/>
       <InternalsVisibleTo Include="Compze.Tests.Unit" />
    </ItemGroup>
 

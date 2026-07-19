@@ -15,7 +15,7 @@ public static class PublisherTevent
 
    ///<summary>The tevent in its wrapped form: an already-wrapped tevent passes through as it stands; anything else is wrapped by <see cref="WrapTevent{TTevent}"/>.<br/>
    /// Every tevent is wrapped before routing - a boundary that receives a tevent that may or may not already be wrapped normalizes here.</summary>
-   public static IPublisherTevent<ITevent> Wrapped(ITevent tevent) => tevent as IPublisherTevent<ITevent> ?? WrapTevent(tevent);
+   internal static IPublisherTevent<ITevent> Wrapped(ITevent tevent) => tevent as IPublisherTevent<ITevent> ?? WrapTevent(tevent);
 
    ///<summary>Wraps <paramref name="tevent"/> in <paramref name="wrapperTeventImplementation"/>'s generic type definition closed over the tevent's runtime type,<br/>
    /// so that the wrapper is assignable to the wrapper interface of every tevent type the wrapped tevent itself is assignable to.<br/>

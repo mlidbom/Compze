@@ -3,7 +3,7 @@ using Compze.Tessaging.Abstractions.TessageTypes;
 
 namespace Compze.Tessaging.Abstractions.Validation;
 
-public static class TessageValidator
+static class TessageValidator
 {
    public static void AssertValidToExecuteLocally(ITessage tessage)
    {

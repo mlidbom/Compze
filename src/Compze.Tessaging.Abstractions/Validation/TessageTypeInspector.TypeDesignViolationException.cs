@@ -2,7 +2,7 @@ namespace Compze.Tessaging.Abstractions.Validation;
 
 public static partial class TessageTypeInspector
 {
-   public class TessageTypeDesignViolationException(string message) : Exception(message + TypeDesignRationale)
+   internal class TessageTypeDesignViolationException(string message) : Exception(message + TypeDesignRationale)
    {
       const string TypeDesignRationale = """
 

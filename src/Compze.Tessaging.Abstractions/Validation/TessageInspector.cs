@@ -15,7 +15,7 @@ namespace Compze.Tessaging.Abstractions.Validation;
 /// rules a message <c>instance</c> must satisfy for a particular use
 /// (<see cref="AssertValidToSendRemote"/>, <see cref="AssertValidToExecuteLocally"/>).
 /// </remarks>
-public static class TessageInspector
+static class TessageInspector
 {
    /// <summary>Asserts that <typeparamref name="TTessage"/> is a validly-designed type for a handler to subscribe to.</summary>
    public static void AssertValidForSubscription<TTessage>() => TessageTypeInspector.AssertValidForSubscription(typeof(TTessage));
