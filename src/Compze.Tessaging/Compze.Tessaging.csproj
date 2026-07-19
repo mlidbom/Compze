@@ -52,13 +52,6 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Logging)' != 'true'">
     <ProjectReference Include="..\Compze.Internals.Logging\Compze.Internals.Logging.csproj" />
   </ItemGroup>
-  <!-- Compze.Internals.Sql.Common — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Sql_Common)' == 'true'">
-    <PackageReference Include="Compze.Internals.Sql.Common" Version="*-*" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Sql_Common)' != 'true'">
-    <ProjectReference Include="..\Compze.Internals.Sql.Common\Compze.Internals.Sql.Common.csproj" />
-  </ItemGroup>
   <!-- Compze.Internals.SystemCE — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_SystemCE)' == 'true'">
     <PackageReference Include="Compze.Internals.SystemCE" Version="*-*" />
