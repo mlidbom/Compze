@@ -16,7 +16,7 @@ using Compze.Tessaging.Internals.Transport;
 
 namespace Compze.Tessaging.AspNetCore;
 
-public static class AspNetCoreEndpointTransportServerRegistrar
+static class AspNetCoreEndpointTransportServerRegistrar
 {
    ///<summary>Registers the ASP.NET Core implementation of the endpoint's one transport server (<see cref="IEndpointTransportServer"/>)<br/>
    /// together with the endpoint's <see cref="TransportRequestHandlerMap"/> and the <see cref="TransportRequestController"/> serving it,<br/>

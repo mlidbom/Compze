@@ -8,7 +8,7 @@ using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 
 namespace Compze.Tessaging.Internals.Transport;
 
-public static class EndpointDiscoveryQueryTransportRegistrar
+static class EndpointDiscoveryQueryTransportRegistrar
 {
    ///<summary>Registers the endpoint-discovery query transport, which runs on the endpoint transport client<br/>
    /// (<see cref="IEndpointTransportClient"/>). Guarded so that every transport registration demands it itself — a composing<br/>

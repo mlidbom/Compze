@@ -84,7 +84,7 @@ public sealed class TessageHandlerRegistrar
 
    ///<summary>The synchronous form of <see cref="ForTommand{TTommand,TResult}(Func{TTommand,IUnitOfWorkResolver,Task{TResult}})"/> —<br/>
    /// first-class: today's result-bearing tommand kinds (strictly-local and at-most-once typermedia) are not exactly-once.</summary>
-   public TessageHandlerRegistrar ForTommand<TTommand, TResult>(Func<TTommand, IUnitOfWorkResolver, TResult> handler) where TTommand : ITommand<TResult>
+   internal TessageHandlerRegistrar ForTommand<TTommand, TResult>(Func<TTommand, IUnitOfWorkResolver, TResult> handler) where TTommand : ITommand<TResult>
    {
       AssertUsedOnlyInsideItsCallback();
       _registrations.AddTommandHandlerWithResult<TTommand, TResult>((tommand, unitOfWork) => Task.FromResult(handler(tommand, unitOfWork)));

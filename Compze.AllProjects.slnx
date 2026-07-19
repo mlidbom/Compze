@@ -214,10 +214,9 @@
    <Folder Name="/Compze.Internals/SystemCE/Tests/">
       <Project Path="test/Compze.Internals.SystemCE.Tests/Compze.Internals.SystemCE.Tests.csproj" />
    </Folder>
-   <Folder Name="/Compze.Internals/Transport/">
-      <Project Path="src/Compze.Tessaging.AspNetCore/Compze.Tessaging.AspNetCore.csproj" />
-   </Folder>
+   <Folder Name="/Compze.Internals/Transport/" />
    <Folder Name="/Compze.Tessaging/">
+      <Project Path="src/Compze.Tessaging.AspNetCore/Compze.Tessaging.AspNetCore.csproj" />
       <Project Path="src/Compze.Tessaging/Compze.Tessaging.csproj" />
    </Folder>
    <Folder Name="/Compze.TypeIdentifiers/SqlLayers/">

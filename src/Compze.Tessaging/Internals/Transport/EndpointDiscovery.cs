@@ -2,6 +2,7 @@ using System.Text.Json.Serialization;
 using Compze.TypeIdentifiers;
 using Compze.Abstractions.Hosting.Public;
 using Compze.Abstractions.Tessaging.Public;
+// ReSharper disable UnusedAutoPropertyAccessor.Global serilization requires it
 
 namespace Compze.Tessaging.Internals.Transport;
 
@@ -26,8 +27,8 @@ public class EndpointInformation
       HandledTessageTypes = handledTessageTypes;
    }
 
-   public string Name { get; }
-   internal EndpointId Id { get; }
-   internal HashSet<string> HandledTessageTypes { get; }
+   public string Name { get; private set; }
+   public EndpointId Id { get; private set;}
+   public HashSet<string> HandledTessageTypes { get; private set;}
 }
 

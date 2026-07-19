@@ -1,6 +1,5 @@
 using Compze.Abstractions.Public;
 using Compze.Internals.Sql.Common;
-using Compze.Internals.Sql.Common.Abstractions;
 using Compze.Internals.Sql.MySql;
 using Compze.Internals.Sql.MySql.Private;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;

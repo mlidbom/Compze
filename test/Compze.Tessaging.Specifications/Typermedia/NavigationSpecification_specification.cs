@@ -4,6 +4,7 @@ using Compze.Must;
 
 using Compze.xUnitBDD;
 using Compze.Tessaging.Typermedia;
+// ReSharper disable PropertyCanBeMadeInitOnly.Local serilization requires the setters
 
 // ReSharper disable InconsistentNaming for testing
 #pragma warning disable IDE1006 //Reviewed OK: Test Naming Styles
@@ -35,7 +36,7 @@ public class NavigationSpecification_specification
    [XF] public void a_chained_Post_posts_the_tommand_built_from_the_previous_steps_result()
    {
       NavigationSpecification.Get(new TheAnswerTuery())
-                             .Post(answer => RememberNumberTommand.Create(answer))
+                             .Post(RememberNumberTommand.Create)
                              .NavigateOn(_navigator);
 
       ((RememberNumberTommand)_navigator.PostedTommands.Single()).Number.Must().Be(42);

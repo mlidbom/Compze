@@ -5,7 +5,7 @@ using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 
 namespace Compze.Tessaging.Internals.Transport;
 
-public static class HttpEndpointTransportClientRegistrar
+static class HttpEndpointTransportClientRegistrar
 {
    ///<summary>Registers the HTTP implementation of the endpoint transport's client side (<see cref="IEndpointTransportClient"/>),<br/>
    /// plus the <see cref="IHttpClientFactoryCE"/> it posts through. Guarded so that every HTTP transport registration can demand it<br/>

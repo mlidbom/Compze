@@ -13,11 +13,4 @@ public static class AspNetCoreEndpointTransportRegistrar
       => registrar.HttpEndpointTransportClientIfNotRegistered()
                   .EndpointDiscoveryQueryTransportIfNotRegistered()
                   .AspNetCoreEndpointTransportServerIfNotRegistered();
-
-   extension<TConcreteBuilder>(Compze.Tessaging.Endpoints.EndpointBuilder<TConcreteBuilder> @this) where TConcreteBuilder : Compze.Tessaging.Endpoints.EndpointBuilder<TConcreteBuilder>
-   {
-      ///<summary>Declares the endpoint's transport protocol: HTTP served by ASP.NET Core — the network protocol. See<br/>
-      /// <see cref="AspNetCoreEndpointTransport(IComponentRegistrar)"/>, to which this delegates.</summary>
-      public TConcreteBuilder AspNetCoreEndpointTransport() => @this.TransportProtocol(registrar => registrar.AspNetCoreEndpointTransport());
-   }
 }

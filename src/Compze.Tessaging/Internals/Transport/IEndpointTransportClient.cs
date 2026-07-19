@@ -8,7 +8,7 @@ namespace Compze.Tessaging.Internals.Transport;
 /// the protocol difference between named pipes and HTTP lives entirely in its implementations.</summary>
 ///<remarks>A handler exception on the serving side surfaces here as a <see cref="MessageDispatchingFailedException"/> carrying<br/>
 /// the serving side's exception type and detail, whatever the protocol.</remarks>
-public interface IEndpointTransportClient
+interface IEndpointTransportClient
 {
    Task<string> SendAsync(TransportRequest request, EndpointAddress address, CancellationToken cancellationToken = default);
 }

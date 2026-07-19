@@ -15,7 +15,6 @@ using Compze.Tessaging.Typermedia.Client;
 #pragma warning disable CA1812 // Instantiated by the serializer / never instantiated test message types
 
 namespace Compze.Tessaging.Specifications.Typermedia;
-using Compze.Tessaging.Typermedia;
 
 ///<summary>A pure client (<see cref="TypermediaClient"/>) that has connected to no endpoint has no routes: navigating fails<br/>
 /// loud with the no-handler failure, never silently.</summary>

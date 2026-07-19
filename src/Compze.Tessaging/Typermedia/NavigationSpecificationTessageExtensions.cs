@@ -16,7 +16,9 @@ public static class NavigationSpecificationTessageExtensions
 
    public static TResult GetOn<TResult>(this IRemotableTuery<TResult> tuery, IRemoteTypermediaNavigator bus) => NavigationSpecification.Get(tuery).NavigateOn(bus);
 
-   public static TResult Navigate<TResult>(this IRemoteTypermediaNavigator navigator, NavigationSpecification<TResult> navigationSpecification) => navigationSpecification.NavigateOn(navigator);
-
-   public static async Task<TResult> NavigateAsync<TResult>(this IRemoteTypermediaNavigator navigator, NavigationSpecification<TResult> navigationSpecification) => await navigationSpecification.NavigateOnAsync(navigator).caf();
+   extension(IRemoteTypermediaNavigator navigator)
+   {
+      public TResult Navigate<TResult>(NavigationSpecification<TResult> navigationSpecification) => navigationSpecification.NavigateOn(navigator);
+      public async Task<TResult> NavigateAsync<TResult>(NavigationSpecification<TResult> navigationSpecification) => await navigationSpecification.NavigateOnAsync(navigator).caf();
+   }
 }

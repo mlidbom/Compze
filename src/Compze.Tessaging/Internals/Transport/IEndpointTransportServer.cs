@@ -11,7 +11,7 @@ namespace Compze.Tessaging.Internals.Transport;
 /// Which transport implements the server — named pipes, ASP.NET Core — is decided by the composition: each transport registers<br/>
 /// its implementation guarded (first registration wins), so every communication style's transport registration can demand a<br/>
 /// server without conflicting when an endpoint hosts several styles.</remarks>
-public interface IEndpointTransportServer : IAsyncDisposable
+interface IEndpointTransportServer : IAsyncDisposable
 {
    ///<summary>The address clients connect to while the server is listening, or <see langword="null"/> when it is not - before it<br/>
    /// has started and after it has stopped. A single atomic read, so it is safe to read concurrently with the server starting or<br/>

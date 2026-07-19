@@ -1,4 +1,3 @@
-using Compze.Abstractions.Wiring.Testing.Internal;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Hosting.Testing;
 using Compze.Hosting.Testing.Wiring;
@@ -6,8 +5,6 @@ using Compze.Internals.SystemCE;
 using Compze.Internals.Testing;
 using Compze.Tessaging.Internals.Transport;
 using Compze.Tessaging.Internals.Transport.NamedPipes;
-using Compze.Tessaging.Typermedia;
-using Compze.Tessaging.Typermedia.Client;
 
 namespace Compze.Tessaging.Hosting.Testing.Typermedia.Wiring;
 

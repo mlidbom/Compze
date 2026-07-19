@@ -1,7 +1,7 @@
 namespace Compze.Tessaging.Internals.Transport;
 
 #pragma warning disable CA1724 // Nested type names intentionally match namespace concepts
-public static class HttpConstants
+static class HttpConstants
 {
    public static class Routes
    {

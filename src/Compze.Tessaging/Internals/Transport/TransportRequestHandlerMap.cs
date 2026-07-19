@@ -10,7 +10,7 @@ namespace Compze.Tessaging.Internals.Transport;
 /// handlers (<see cref="ITransportRequestHandlerContribution"/>), plus the <see cref="TransportRequestKind.EndpointDiscoveryQuery"/><br/>
 /// handler — which the map supplies itself, because every endpoint answers discovery no matter what it speaks. One handler per<br/>
 /// <see cref="TransportRequestKind"/>; the named-pipe and ASP.NET Core transport servers both dispatch through this one map.</summary>
-public sealed class TransportRequestHandlerMap
+sealed class TransportRequestHandlerMap
 {
    public static void RegisterWith(IComponentRegistrar registrar) =>
       registrar.Register(
