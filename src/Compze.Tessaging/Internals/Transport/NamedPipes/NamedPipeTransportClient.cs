@@ -9,7 +9,7 @@ namespace Compze.Tessaging.Internals.Transport.NamedPipes;
 /// the same-machine, no-web-stack counterpart of posting to an HTTP transport route.</summary>
 ///<remarks>Each send opens its own connection — cheap for a local pipe, and with the callers' sequential send disciplines it<br/>
 /// preserves send order the same way one-request-at-a-time HTTP posting does.</remarks>
-public static class NamedPipeTransportClient
+static class NamedPipeTransportClient
 {
    static readonly TimeSpan ConnectTimeout = TimeSpan.FromSeconds(10);
 

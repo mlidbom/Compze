@@ -14,7 +14,7 @@ namespace Compze.Tessaging.Implementation.TessageHandling.Inbox;
 public partial class Inbox
 {
    // ReSharper disable once ArrangeTypeMemberModifiers Resharper is confused. If I remove Internal my code stops compiling.
-   public partial class HandlerExecutionEngine(
+   internal partial class HandlerExecutionEngine(
       ITessagesInFlightTracker globalStateTracker,
       TessageHandlerExecutor executor,
       IScopeFactory scopeFactory,

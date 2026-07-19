@@ -7,7 +7,7 @@ using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 
 namespace Compze.Tessaging.Implementation.Transport.Client.Implementation;
 
-public static class TransportMessagePosterRegistrar
+static class TransportMessagePosterRegistrar
 {
    ///<summary>Registers the client side of the Tessaging transport (<see cref="TransportMessagePoster"/>), which runs on the<br/>
    /// endpoint transport client (<see cref="IEndpointTransportClient"/>) a protocol registration supplies.</summary>

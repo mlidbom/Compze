@@ -64,7 +64,7 @@ public abstract class Endpoint : IEndpoint
    }
 
    ///<summary>The endpoint's stable identity: addresses are per-instance and change across restarts; the <see cref="EndpointId"/> never does.</summary>
-   public EndpointId Id => _configuration.Id;
+   internal EndpointId Id => _configuration.Id;
 
    public IRootResolver ServiceLocator { get; }
 
@@ -82,7 +82,7 @@ public abstract class Endpoint : IEndpoint
       await StartSendingAsync().caf();
    }
 
-   public async Task StartListeningAsync()
+   async Task StartListeningAsync()
    {
       State.Assert(!_isListening);
       this.Log().Info($"Endpoint '{_configuration.Name}' ({Id}) starting to listen");
@@ -97,7 +97,7 @@ public abstract class Endpoint : IEndpoint
       await _transportServer.StartAsync().caf();
    }
 
-   public Task AnnounceAddressAsync()
+   Task AnnounceAddressAsync()
    {
       State.Assert(_isListening && !_hasAnnounced);
       this.Log().Info($"Endpoint '{_configuration.Name}' ({Id}) announcing address");
@@ -107,7 +107,7 @@ public abstract class Endpoint : IEndpoint
       return Task.CompletedTask;
    }
 
-   public async Task StartSendingAsync()
+   async Task StartSendingAsync()
    {
       State.Assert(!_isSending);
       this.Log().Info($"Endpoint '{_configuration.Name}' ({Id}) starting to send");
@@ -122,7 +122,7 @@ public abstract class Endpoint : IEndpoint
       _router.StartDelivery();
    }
 
-   public async Task StopSendingAsync()
+   async Task StopSendingAsync()
    {
       if(!_isSending) return;
       this.Log().Info($"Endpoint '{_configuration.Name}' ({Id}) stopping sending");
@@ -131,7 +131,7 @@ public abstract class Endpoint : IEndpoint
       await StopTheDurableVerticalAsync().caf();
    }
 
-   public Task RetractAddressAsync()
+   Task RetractAddressAsync()
    {
       if(!_hasAnnounced) return Task.CompletedTask;
       this.Log().Info($"Endpoint '{_configuration.Name}' ({Id}) retracting address");

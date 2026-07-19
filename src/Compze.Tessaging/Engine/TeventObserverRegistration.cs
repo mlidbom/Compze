@@ -18,7 +18,7 @@ sealed class TeventObserverRegistration
 
    ///<summary>The wrapper type this observer's subscription matches — the routing key every dispatch site's wrapper type is<br/>
    /// tested against, exactly as participation subscriptions are keyed.</summary>
-   internal Type SubscribedWrapperType { get; }
+   Type SubscribedWrapperType { get; }
 
    ///<summary>The observing delegate: receives the wrapped tevent and the fresh scope its invocation runs in.</summary>
    internal Action<ITevent, IScopeResolver> Observe { get; }

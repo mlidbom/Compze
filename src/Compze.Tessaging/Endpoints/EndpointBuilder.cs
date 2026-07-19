@@ -55,7 +55,6 @@ public abstract class EndpointBuilder<TConcreteBuilder> where TConcreteBuilder :
    readonly List<EndpointId> _peersNotQueuedFor = [];
    HandlerAvailabilityPatience _handlerAvailabilityPatience = Implementation.HandlerAvailability.HandlerAvailabilityPatience.Default;
    bool _handlerAvailabilityPatienceDeclared;
-   IEndpointRegistry? _endpointRegistry;
    Action<IComponentRegistrar>? _registerTransportProtocol;
    Action<IComponentRegistrar>? _registerSerializer;
    ITessagesInFlightTracker? _tessagesInFlightTracker;
@@ -70,7 +69,7 @@ public abstract class EndpointBuilder<TConcreteBuilder> where TConcreteBuilder :
    ///<summary>This builder as its concrete tier type (<see cref="BestEffortEndpointBuilder"/> / <see cref="ExactlyOnceEndpointBuilder"/>) —<br/>
    /// the fluent return every declaration hands back, so a composition chains declaration after declaration without ever losing<br/>
    /// the tier's own declarations. The cast is the curiously-recurring generic's guarantee: the self type <em>is</em> this instance.</summary>
-   private protected TConcreteBuilder Self => (TConcreteBuilder)this;
+   TConcreteBuilder Self => (TConcreteBuilder)this;
 
    ///<summary>Registers the endpoint's components with its container — domain components, query models, whatever the endpoint's application code needs.</summary>
    public IComponentRegistrar Registrar => _containerBuilder.Registrar;
@@ -136,9 +135,9 @@ public abstract class EndpointBuilder<TConcreteBuilder> where TConcreteBuilder :
    public TConcreteBuilder DiscoverEndpointsThrough(IEndpointRegistry registry)
    {
       AssertStillComposing();
-      if(ReferenceEquals(_endpointRegistry, registry)) return Self; //Idempotent: ParticipateIn and a direct declaration may both name the endpoint's one registry.
-      State.Assert(_endpointRegistry is null, () => $"The endpoint already declared the registry it discovers endpoints through — an endpoint discovers through exactly one {nameof(IEndpointRegistry)}.");
-      _endpointRegistry = registry;
+      if(ReferenceEquals(EndpointRegistry, registry)) return Self; //Idempotent: ParticipateIn and a direct declaration may both name the endpoint's one registry.
+      State.Assert(EndpointRegistry is null, () => $"The endpoint already declared the registry it discovers endpoints through — an endpoint discovers through exactly one {nameof(IEndpointRegistry)}.");
+      EndpointRegistry = registry;
       return Self;
    }
 
@@ -212,7 +211,7 @@ public abstract class EndpointBuilder<TConcreteBuilder> where TConcreteBuilder :
    ///<summary>Hands the endpoint the tessages-in-flight tracker its testing composition awaits quiescence through — the<br/>
    /// testing device behind "a test cannot pass with work silently in flight". Production compositions declare none and get<br/>
    /// the do-nothing tracker.</summary>
-   public TConcreteBuilder TrackTessagesInFlightWith(ITessagesInFlightTracker tracker)
+   internal TConcreteBuilder TrackTessagesInFlightWith(ITessagesInFlightTracker tracker)
    {
       AssertStillComposing();
       _tessagesInFlightTracker = tracker;
@@ -233,7 +232,7 @@ public abstract class EndpointBuilder<TConcreteBuilder> where TConcreteBuilder :
    ///<summary>The registrations both endpoint tiers share: the engine and its doors, identity, discovery serving, the<br/>
    /// transport-speaking substrate (router, peer memory and administration, the best-effort delivery leg, request handling),<br/>
    /// and Typermedia's serving and navigating sides — both tiers serve all four tessage kinds, unconditionally.</summary>
-   private protected void RegisterTheSharedEndpointCore()
+   void RegisterTheSharedEndpointCore()
    {
       _typeMapper.MapTypesFromAssemblyContaining<EndpointAddress>();          // Compze.Abstractions — the shared message-type hierarchy and hosting contracts
       _typeMapper.MapTypesFromAssemblyContaining<ITaggregateTevent>();        // Compze.Teventive — the Teventive type hierarchy
@@ -307,5 +306,5 @@ public abstract class EndpointBuilder<TConcreteBuilder> where TConcreteBuilder :
    private protected virtual void AssertTheRosterIsSound(TessageHandlerRoster roster) => roster.AdvertisedRemoteTessageTypeIds();
 
    private protected IReadOnlyList<IEndpointAddressAnnouncer> AddressAnnouncers => _addressAnnouncers;
-   private protected IEndpointRegistry? EndpointRegistry => _endpointRegistry;
+   private protected IEndpointRegistry? EndpointRegistry { get; private set; }
 }

@@ -12,7 +12,7 @@ using Compze.Threading;
 
 namespace Compze.Tessaging.Typermedia.Client;
 
-public static class TypermediaClientRouterRegistrar
+static class TypermediaClientRouterRegistrar
 {
    public static IComponentRegistrar TypermediaClientRouter(this IComponentRegistrar registrar)
       => registrar.Register(Client.TypermediaClientRouter.RegisterWith);

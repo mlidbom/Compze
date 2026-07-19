@@ -23,7 +23,7 @@ namespace Compze.Tessaging.Engine;
 /// Created with the engine, drained at disposal — no observation is discarded: an endpoint drains explicitly after its<br/>
 /// listening stops and before its container tears down, because the drain runs observers and observers need the container's<br/>
 /// scopes; the container's own disposal of this singleton is only the backstop for compositions without such a lifecycle.</remarks>
-public sealed class TeventObservationDispatcher : IDisposable
+sealed class TeventObservationDispatcher : IDisposable
 {
    static readonly WaitTimeout DrainAtDisposalTimeout = WaitTimeout.Seconds(30);
 

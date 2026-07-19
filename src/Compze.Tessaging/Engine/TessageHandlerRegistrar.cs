@@ -1,6 +1,5 @@
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Contracts;
-using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.ReflectionCE;
 using Compze.Teventive.Tevents.Public;
@@ -27,7 +26,7 @@ public sealed class TessageHandlerRegistrar
    /// publisher's unit of work, an exactly-once arrival inside the inbox processing's own, and a best-effort arrival inside the<br/>
    /// direct dispatch's own. A handler registered here never runs outside one — delivery detached from any transaction is<br/>
    /// observation, declared under its own verb (<see cref="LocalTessagingEngineBuilder.ObserveTevents"/>).</summary>
-   public TessageHandlerRegistrar ForTevent<TTevent>(Func<TTevent, IUnitOfWorkResolver, Task> handler) where TTevent : ITevent
+   internal TessageHandlerRegistrar ForTevent<TTevent>(Func<TTevent, IUnitOfWorkResolver, Task> handler) where TTevent : ITevent
    {
       AssertUsedOnlyInsideItsCallback();
       _registrations.AddTeventHandler(handler);
@@ -37,7 +36,7 @@ public sealed class TessageHandlerRegistrar
    ///<summary>The synchronous form of <see cref="ForTevent{TTevent}(Func{TTevent,IUnitOfWorkResolver,Task})"/> — first-class for<br/>
    /// subscriptions whose kind is not exactly-once; a subscription demanding exactly-once delivery explodes here, because<br/>
    /// exactly-once kinds are async end to end.</summary>
-   public TessageHandlerRegistrar ForTevent<TTevent>(Action<TTevent, IUnitOfWorkResolver> handler) where TTevent : ITevent
+   internal TessageHandlerRegistrar ForTevent<TTevent>(Action<TTevent, IUnitOfWorkResolver> handler) where TTevent : ITevent
    {
       AssertUsedOnlyInsideItsCallback();
       AssertSubscriptionAllowsSynchronousHandlers<TTevent>();
@@ -62,7 +61,7 @@ public sealed class TessageHandlerRegistrar
    ///<summary>The synchronous form of <see cref="ForTommand{TTommand}(Func{TTommand,IUnitOfWorkResolver,Task})"/> — first-class<br/>
    /// for strictly-local and at-most-once typermedia tommands; an exactly-once tommand explodes here, because exactly-once kinds<br/>
    /// are async end to end.</summary>
-   public TessageHandlerRegistrar ForTommand<TTommand>(Action<TTommand, IUnitOfWorkResolver> handler) where TTommand : ITommand
+   internal TessageHandlerRegistrar ForTommand<TTommand>(Action<TTommand, IUnitOfWorkResolver> handler) where TTommand : ITommand
    {
       AssertUsedOnlyInsideItsCallback();
       AssertTommandKindAllowsSynchronousHandlers<TTommand>();
@@ -104,7 +103,7 @@ public sealed class TessageHandlerRegistrar
 
    ///<summary>The synchronous form of <see cref="ForTuery{TTuery,TResult}(Func{TTuery,IScopeResolver,Task{TResult}})"/> —<br/>
    /// first-class: a tuery's synchrony is the caller's business, not a delivery guarantee's.</summary>
-   public TessageHandlerRegistrar ForTuery<TTuery, TResult>(Func<TTuery, IScopeResolver, TResult> handler) where TTuery : ITuery<TResult>
+   internal TessageHandlerRegistrar ForTuery<TTuery, TResult>(Func<TTuery, IScopeResolver, TResult> handler) where TTuery : ITuery<TResult>
    {
       AssertUsedOnlyInsideItsCallback();
       _registrations.AddTueryHandler<TTuery, TResult>((tuery, scope) => Task.FromResult(handler(tuery, scope)));

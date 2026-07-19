@@ -36,7 +36,7 @@ public static class TransportTessage
          return _tessage;
       }
 
-      public InComing(string body, string persistedTypeString, TessageId tessageId, ITypeMap typeMap, ITessagingSerializer serializer)
+      internal InComing(string body, string persistedTypeString, TessageId tessageId, ITypeMap typeMap, ITessagingSerializer serializer)
       {
          _serializer = serializer;
          Body = body;

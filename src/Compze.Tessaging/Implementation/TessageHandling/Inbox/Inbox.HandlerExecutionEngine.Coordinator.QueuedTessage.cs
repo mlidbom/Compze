@@ -1,4 +1,3 @@
-using Compze.Contracts;
 using Compze.Abstractions.Public;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.DependencyInjection;
@@ -15,7 +14,7 @@ namespace Compze.Tessaging.Implementation.TessageHandling.Inbox;
 
 public partial class Inbox
 {
-   public partial class HandlerExecutionEngine
+   partial class HandlerExecutionEngine
    {
       partial class Coordinator
       {
@@ -134,7 +133,8 @@ public partial class Inbox
                      await _executor.ExecuteTommandHandler((IExactlyOnceTommand)tessage, unitOfWork).caf();
                      return unit; //Todo:Properly handle tommands with and without return values
                   },
-                  _ => throw new ArgumentOutOfRangeException()
+                  TransportTessageType.BestEffortTevent => throw new ArgumentOutOfRangeException(),
+                  _                                     => throw new ArgumentOutOfRangeException()
                };
          }
       }

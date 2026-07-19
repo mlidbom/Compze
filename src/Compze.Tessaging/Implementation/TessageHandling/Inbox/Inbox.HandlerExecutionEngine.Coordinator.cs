@@ -16,7 +16,7 @@ namespace Compze.Tessaging.Implementation.TessageHandling.Inbox;
 
 public partial class Inbox
 {
-   public partial class HandlerExecutionEngine
+   partial class HandlerExecutionEngine
    {
       //refactor: Consider moving all tessage type specific responsibilities into the tessage class or other class. Probably create more subtypes so that no type checking is required. See also inbox.
       partial class Coordinator(ITessagesInFlightTracker globalStateTracker, ITaskRunner taskRunner, ITessageStorage tessageStorage, IScopeFactory scopeFactory, TessageHandlerExecutor executor, EndpointId endpointId)
@@ -75,12 +75,12 @@ public partial class Inbox
             ///<summary>True when the inbox is quiescent: nothing is waiting to execute and no handler is executing.</summary>
             internal bool IsIdle => WaitingCount == 0 && ExecutingCount == 0;
             internal int WaitingCount => _tessagesWaitingToExecute.Count;
-            internal int ExecutingCount => _executingTessages;
+            internal int ExecutingCount { get; private set; }
 
             internal bool TryGetDispatchableTessage(IReadOnlyList<ITessageDispatchingRule> dispatchingRules, [NotNullWhen(true)] out HandlerExecutionTask? dispatchable)
             {
                dispatchable = null!;
-               if(_executingTessages >= MaxConcurrentlyExecutingHandlers)
+               if(ExecutingCount >= MaxConcurrentlyExecutingHandlers)
                {
                   return false;
                }
@@ -106,8 +106,8 @@ public partial class Inbox
             //Refactor: Switching should not be necessary. See also inbox.
             void Dispatching(HandlerExecutionTask dispatchable)
             {
-               this.Log().Debug($"Dispatching {dispatchable.TransportTessage.TessageTypeEnum} tessage {dispatchable.TessageId} (executing: {_executingTessages + 1}, waiting: {_tessagesWaitingToExecute.Count})");
-               _executingTessages++;
+               this.Log().Debug($"Dispatching {dispatchable.TransportTessage.TessageTypeEnum} tessage {dispatchable.TessageId} (executing: {ExecutingCount + 1}, waiting: {_tessagesWaitingToExecute.Count})");
+               ExecutingCount++;
 
                switch(dispatchable.TransportTessage.TessageTypeEnum)
                {
@@ -117,6 +117,7 @@ public partial class Inbox
                   case TransportTessageType.ExactlyOnceTommand:
                      _executingExactlyOnceTommands.Add(dispatchable.TransportTessage);
                      break;
+                  case TransportTessageType.BestEffortTevent:
                   default:
                      throw new ArgumentOutOfRangeException();
                }
@@ -127,25 +128,25 @@ public partial class Inbox
             //Refactor: Switching should not be necessary. See also inbox.
             void DoneDispatching(HandlerExecutionTask doneExecuting, Exception? exception = null)
             {
-               this.Log().Debug($"Done with {doneExecuting.TransportTessage.TessageTypeEnum} tessage {doneExecuting.TessageId}{(exception != null ? " (FAILED)" : "")} (executing: {_executingTessages - 1}, waiting: {_tessagesWaitingToExecute.Count})");
-               _executingTessages--;
+               this.Log().Debug($"Done with {doneExecuting.TransportTessage.TessageTypeEnum} tessage {doneExecuting.TessageId}{(exception != null ? " (FAILED)" : "")} (executing: {ExecutingCount - 1}, waiting: {_tessagesWaitingToExecute.Count})");
+               ExecutingCount--;
 
                switch(doneExecuting.TransportTessage.TessageTypeEnum)
                {
                   case TransportTessageType.ExactlyOnceTevent:
                      _executingExactlyOnceTevents.Remove(doneExecuting.TransportTessage);
-                     _globalStateTracker.DoneWith(doneExecuting.TransportTessage, _endpointId, exception);
                      break;
                   case TransportTessageType.ExactlyOnceTommand:
                      _executingExactlyOnceTommands.Remove(doneExecuting.TransportTessage);
-                     _globalStateTracker.DoneWith(doneExecuting.TransportTessage, _endpointId, exception);
                      break;
+                  case TransportTessageType.BestEffortTevent:
                   default:
                      throw new ArgumentOutOfRangeException();
                }
+
+               _globalStateTracker.DoneWith(doneExecuting.TransportTessage, _endpointId, exception);
             }
 
-            int _executingTessages;
             readonly List<TransportTessage.InComing> _executingExactlyOnceTommands = [];
             readonly List<TransportTessage.InComing> _executingExactlyOnceTevents = [];
          }

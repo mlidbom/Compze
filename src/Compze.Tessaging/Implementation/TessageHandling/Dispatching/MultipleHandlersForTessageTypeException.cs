@@ -12,7 +12,7 @@ namespace Compze.Tessaging.Implementation.TessageHandling.Dispatching;
 /// the remembered handlers to connect — live is current by definition, so the moment one does the send binds to it — or for a<br/>
 /// decommission to resolve the replacement (see <c>IHandlerAvailability</c>). Public because it reaches the sending<br/>
 /// application code, which must be able to catch it.</summary>
-public class MultipleHandlersForTessageTypeException : Exception
+class MultipleHandlersForTessageTypeException : Exception
 {
    MultipleHandlersForTessageTypeException(string message) : base(message) {}
 

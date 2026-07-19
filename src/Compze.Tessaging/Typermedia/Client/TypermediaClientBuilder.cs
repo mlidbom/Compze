@@ -26,10 +26,10 @@ public sealed class TypermediaClientBuilder
    internal TypermediaClientBuilder(IContainerBuilder containerBuilder) => _containerBuilder = containerBuilder;
 
    ///<summary>Registers the client's components with its container.</summary>
-   public IComponentRegistrar Registrar => _containerBuilder.Registrar;
+   internal IComponentRegistrar Registrar => _containerBuilder.Registrar;
 
    ///<summary>Declares the client's type-id mappings — the mirror of what the endpoints it navigates map.</summary>
-   public void MapTypes(Action<ITypeMapper> map)
+   internal void MapTypes(Action<ITypeMapper> map)
    {
       AssertStillComposing();
       map(_typeMapper);

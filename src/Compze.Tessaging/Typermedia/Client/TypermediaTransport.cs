@@ -10,7 +10,7 @@ using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 
 namespace Compze.Tessaging.Typermedia.Client;
 
-public static class TypermediaTransportRegistrar
+static class TypermediaTransportRegistrar
 {
    ///<summary>Registers the client side of the Typermedia transport (<see cref="TypermediaTransport"/>) plus the<br/>
    /// endpoint-discovery query transport it discovers endpoints through — both run on the endpoint transport client<br/>

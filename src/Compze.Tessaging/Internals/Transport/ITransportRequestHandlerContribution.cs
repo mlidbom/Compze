@@ -6,7 +6,7 @@ namespace Compze.Tessaging.Internals.Transport;
 /// resolves the whole set and serves the union.</summary>
 ///<remarks><see cref="TransportRequestKind.EndpointDiscoveryQuery"/> is never contributed — the server itself answers<br/>
 /// endpoint-discovery queries, because every endpoint serves discovery no matter what it speaks.</remarks>
-public interface ITransportRequestHandlerContribution
+interface ITransportRequestHandlerContribution
 {
    ///<summary>The handler for each request kind this communication style serves.</summary>
    IReadOnlyDictionary<TransportRequestKind, Func<TransportRequest, Task<string>>> RequestHandlers { get; }

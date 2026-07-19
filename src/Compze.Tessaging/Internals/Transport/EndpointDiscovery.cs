@@ -2,7 +2,6 @@ using System.Text.Json.Serialization;
 using Compze.TypeIdentifiers;
 using Compze.Abstractions.Hosting.Public;
 using Compze.Abstractions.Tessaging.Public;
-using Compze.DependencyInjection.Abstractions;
 
 namespace Compze.Tessaging.Internals.Transport;
 
@@ -28,7 +27,7 @@ public class EndpointInformation
    }
 
    public string Name { get; }
-   public EndpointId Id { get; }
-   public HashSet<string> HandledTessageTypes { get; }
+   internal EndpointId Id { get; }
+   internal HashSet<string> HandledTessageTypes { get; }
 }
 

@@ -1,6 +1,5 @@
 using Compze.Abstractions.Tessaging.Public;
 using Compze.DependencyInjection;
-using Compze.DependencyInjection.Abstractions;
 
 namespace Compze.Tessaging.Internals.Transport;
 
@@ -23,7 +22,7 @@ public class EndpointDiscoveryQueryRegistrarWithDependencyInjectionSupport(Endpo
       return this;
    }
 
-   public EndpointDiscoveryQueryRegistrarWithDependencyInjectionSupport ForQuery<TQuery, TDependency1, TDependency2, TResult>(
+   internal EndpointDiscoveryQueryRegistrarWithDependencyInjectionSupport ForQuery<TQuery, TDependency1, TDependency2, TResult>(
       Func<TQuery, TDependency1, TDependency2, TResult> handler) where TQuery : ITuery<TResult>
                                                                  where TDependency1 : class
                                                                  where TDependency2 : class

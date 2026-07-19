@@ -5,8 +5,6 @@ using Compze.Contracts;
 using Compze.Internals.SystemCE.TransactionsCE;
 using Compze.Tessaging.Implementation.Abstractions;
 using Compze.Tessaging.Implementation.Peers;
-using Compze.Tessaging.Implementation.Transport;
-using Compze.Tessaging.Implementation.Transport.Abstractions;
 using Compze.Threading;
 using Compze.TypeIdentifiers;
 

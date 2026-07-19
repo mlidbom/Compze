@@ -2,7 +2,6 @@ using Compze.Abstractions.Tessaging.Public;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
-using Compze.Teventive.Tevents.Public;
 
 namespace Compze.Tessaging.Engine;
 
@@ -18,7 +17,7 @@ namespace Compze.Tessaging.Engine;
 /// and the own-context forms run the async unit-of-work envelope, whose ambient transaction flows across the handlers'<br/>
 /// awaits. Tevent observation is not executed here: it is the deliberately transaction-ignoring watch surface, dispatched<br/>
 /// off-thread by the engine's <see cref="TeventObservationDispatcher"/>.</remarks>
-public class TessageHandlerExecutor
+class TessageHandlerExecutor
 {
    readonly TessageHandlerRoster _roster;
    readonly IScopeFactory _scopeFactory;

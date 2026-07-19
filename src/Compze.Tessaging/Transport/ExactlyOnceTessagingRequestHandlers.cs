@@ -9,7 +9,7 @@ using Compze.Tessaging.Implementation.Transport.Abstractions;
 
 namespace Compze.Tessaging.Transport;
 
-public static class ExactlyOnceTessagingRequestHandlersRegistrar
+static class ExactlyOnceTessagingRequestHandlersRegistrar
 {
    ///<summary>Registers the exactly-once pipeline's request handling (<see cref="ExactlyOnceTessagingRequestHandlers"/>),<br/>
    /// contributed to the endpoint's one transport server — the protocol registration supplies the server itself.</summary>

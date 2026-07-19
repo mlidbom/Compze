@@ -11,11 +11,11 @@ namespace Compze.Tessaging.Typermedia.Hosting;
 /// engine's one executor (<see cref="TessageHandlerExecutor"/>), adding the arrival-side retry a remote tommand gets — a<br/>
 /// transient handling failure is retried here, at the receiver, invisibly to the caller. A missing handler is never retried:<br/>
 /// <see cref="NoHandlerException"/> is a programming error, not a transient failure.</summary>
-public class TypermediaHandlerExecutor
+class TypermediaHandlerExecutor
 {
    readonly TessageHandlerExecutor _executor;
 
-   internal TypermediaHandlerExecutor(TessageHandlerExecutor executor) => _executor = executor;
+   TypermediaHandlerExecutor(TessageHandlerExecutor executor) => _executor = executor;
 
    public async Task<object> ExecuteTueryAsync(ITessage tuery)
    {

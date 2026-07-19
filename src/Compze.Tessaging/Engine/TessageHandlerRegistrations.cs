@@ -1,7 +1,6 @@
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Abstractions.Tessaging.Validation;
 using Compze.Contracts;
-using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.CollectionsCE.GenericCE;
 using Compze.Internals.SystemCE.ReflectionCE;
@@ -18,7 +17,7 @@ namespace Compze.Tessaging.Engine;
 /// after that explodes — the roster is closed, per the engine's contract that its roster can only change by building a new engine.</summary>
 ///<remarks>Single-handler kinds — tueries and tommands — hold exactly one handler per tessage type: registering a second explodes<br/>
 /// immediately, at declaration. Tevent subscriptions are multi-subscriber and accumulate freely.</remarks>
-public sealed class TessageHandlerRegistrations
+sealed class TessageHandlerRegistrations
 {
    readonly IMonitor _monitor = IMonitor.New();
    bool _rosterIsBuilt;

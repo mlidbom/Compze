@@ -5,7 +5,6 @@ using Compze.Abstractions.Tessaging.Public;
 using Compze.Contracts;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Internals.SystemCE.TransactionsCE;
-using Compze.Tessaging.Implementation.Transport;
 using Compze.Tessaging.Transport.SqlLayer;
 using Compze.TypeIdentifiers;
 using JetBrains.Annotations;

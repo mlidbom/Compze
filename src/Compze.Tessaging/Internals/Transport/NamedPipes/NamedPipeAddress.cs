@@ -5,10 +5,10 @@ namespace Compze.Tessaging.Internals.Transport.NamedPipes;
 
 ///<summary>The named-pipe transport's <see cref="EndpointAddress"/> scheme: <c>compze.pipe://localhost/&lt;pipe-name&gt;</c>.<br/>
 /// A pipe name is generated fresh per server start — the same-machine analog of the HTTP transport's dynamically allocated ports.</summary>
-public static class NamedPipeAddress
+static class NamedPipeAddress
 {
    ///<summary>The URI scheme identifying an address served by the named-pipe transport.</summary>
-   public const string Scheme = "compze.pipe";
+   const string Scheme = "compze.pipe";
 
    ///<summary>A pipe name no other server is using: the named-pipe analog of asking the OS for a free port.</summary>
    public static string NewUniquePipeName() => $"Compze.{Guid.NewGuid():N}";

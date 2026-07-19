@@ -13,7 +13,7 @@ namespace Compze.Tessaging.Internals.Transport;
 /// reference), so the payload set is open. A contributed payload must be a plain wire shape this<br/>
 /// fixed format can handle: one deserialization constructor (<c>[JsonConstructor]</c> when there are several) whose parameters<br/>
 /// match the get-only properties, over primitives, collections, <see cref="EndpointId"/>, and <see cref="EndpointAddress"/>.</remarks>
-public static class EndpointDiscoverySerializer
+static class EndpointDiscoverySerializer
 {
    static readonly JsonSerializerOptions WireFormat = new()
    {

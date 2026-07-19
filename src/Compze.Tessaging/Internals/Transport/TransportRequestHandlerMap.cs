@@ -20,7 +20,7 @@ public sealed class TransportRequestHandlerMap
 
    readonly IReadOnlyDictionary<TransportRequestKind, Func<TransportRequest, Task<string>>> _handlers;
 
-   internal TransportRequestHandlerMap(EndpointDiscoveryQueryExecutor endpointDiscoveryQueryExecutor, ITypeMap typeMap, IEnumerable<ITransportRequestHandlerContribution> contributions)
+   TransportRequestHandlerMap(EndpointDiscoveryQueryExecutor endpointDiscoveryQueryExecutor, ITypeMap typeMap, IEnumerable<ITransportRequestHandlerContribution> contributions)
    {
       var handlers = new Dictionary<TransportRequestKind, Func<TransportRequest, Task<string>>>
       {

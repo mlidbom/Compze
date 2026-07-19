@@ -5,7 +5,7 @@ using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 
 namespace Compze.Tessaging.Internals.Transport.NamedPipes;
 
-public static class NamedPipeEndpointTransportServerRegistrar
+static class NamedPipeEndpointTransportServerRegistrar
 {
    ///<summary>Registers the named-pipe implementation of the endpoint's one transport server (<see cref="IEndpointTransportServer"/>)<br/>
    /// together with the endpoint's <see cref="TransportRequestHandlerMap"/> it serves, unless a transport already registered one —<br/>

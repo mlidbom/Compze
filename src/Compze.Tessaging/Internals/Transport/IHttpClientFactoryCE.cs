@@ -3,19 +3,19 @@ using Compze.DependencyInjection.Abstractions;
 
 namespace Compze.Tessaging.Internals.Transport;
 
-public interface IHttpClientFactoryCE
+interface IHttpClientFactoryCE
 {
    HttpClient CreateClient();
 }
 
-public static class HttpClientFactoryCERegistrar
+static class HttpClientFactoryCERegistrar
 {
    ///<summary>Registers the endpoint's one <see cref="IHttpClientFactoryCE"/>. Guarded so that every HTTP transport registration<br/>
    /// demands it itself — a composing layer never registers it.</summary>
    public static IComponentRegistrar HttpClientFactoryCEIfNotRegistered(this IComponentRegistrar registrar)
       => registrar.IsRegistered<IHttpClientFactoryCE>()
             ? registrar
-            : registrar.Register(Transport.HttpClientFactoryCE.RegisterWith);
+            : registrar.Register(HttpClientFactoryCE.RegisterWith);
 }
 
 class HttpClientFactoryCE : IHttpClientFactoryCE

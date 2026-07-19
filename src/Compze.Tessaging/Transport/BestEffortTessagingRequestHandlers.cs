@@ -9,7 +9,7 @@ using Compze.Tessaging.Implementation.Transport.Abstractions;
 
 namespace Compze.Tessaging.Transport;
 
-public static class BestEffortTessagingRequestHandlersRegistrar
+static class BestEffortTessagingRequestHandlersRegistrar
 {
    ///<summary>Registers the best-effort tier's request handling (<see cref="BestEffortTessagingRequestHandlers"/>), contributed to the<br/>
    /// endpoint's one transport server — the protocol registration supplies the server itself.</summary>

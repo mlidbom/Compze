@@ -16,7 +16,7 @@ namespace Compze.Tessaging.Internals.Transport.NamedPipes;
 ///<remarks>Connections are served by a fixed pool of listener loops, each serving its accepted connection to completion before<br/>
 /// accepting the next. The pool bounds concurrent handler executions, and a connection burst beyond it queues in the clients'<br/>
 /// pending connects — the transport's natural backpressure.</remarks>
-public sealed class NamedPipeTransportServer : IAsyncDisposable
+sealed class NamedPipeTransportServer : IAsyncDisposable
 {
    static readonly int ParallelListenerCount = Math.Max(Environment.ProcessorCount * 2, 8);
 

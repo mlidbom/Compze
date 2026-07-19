@@ -8,17 +8,17 @@ namespace Compze.Tessaging.Internals.Transport;
 public class TransportRequest
 {
    ///<summary>Which kind of conversation this request opens; the server dispatches to the handler registered for it.</summary>
-   public TransportRequestKind Kind { get; }
+   internal TransportRequestKind Kind { get; }
 
    ///<summary>The envelope identity infrastructure dedups on, when the kind participates in deduplication (the exactly-once kinds and typermedia tommands).<br/>
    /// Kinds that carry no dedup identity (tueries, endpoint-discovery queries) send a fresh id, which the receiver ignores.</summary>
-   public TessageId TessageId { get; }
+   internal TessageId TessageId { get; }
 
    ///<summary>The canonical string of the payload type's type id (<c>TypeId.CanonicalString</c>); the receiver resolves it to the .NET type to deserialize <see cref="Body"/> as.</summary>
-   public string PayloadTypeIdString { get; }
+   internal string PayloadTypeIdString { get; }
 
    ///<summary>The serialized tessage.</summary>
-   public string Body { get; }
+   internal string Body { get; }
 
    public TransportRequest(TransportRequestKind kind, TessageId tessageId, string payloadTypeIdString, string body)
    {

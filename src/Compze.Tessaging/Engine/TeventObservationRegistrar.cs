@@ -1,6 +1,5 @@
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Contracts;
-using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 
 namespace Compze.Tessaging.Engine;

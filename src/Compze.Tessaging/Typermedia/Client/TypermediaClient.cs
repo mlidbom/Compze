@@ -43,7 +43,7 @@ public class TypermediaClient : IAsyncDisposable
 
    ///<summary>Connects to the one endpoint listening at <paramref name="endpointAddress"/> and registers routes for the<br/>
    /// typermedia types it advertises. Call once per known endpoint — a client may navigate several.</summary>
-   public async Task ConnectAsync(EndpointAddress endpointAddress) => await _typermediaClientRouter.ConnectAsync(endpointAddress).caf();
+   internal async Task ConnectAsync(EndpointAddress endpointAddress) => await _typermediaClientRouter.ConnectAsync(endpointAddress).caf();
 
    public async ValueTask DisposeAsync()
    {

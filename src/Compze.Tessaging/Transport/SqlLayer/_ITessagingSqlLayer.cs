@@ -6,7 +6,6 @@ namespace Compze.Tessaging.Transport.SqlLayer;
 
 public interface ITessagingSqlLayer
 {
-
    public interface IOutboxSqlLayer
    {
       ///<summary>Persists the tessage with one dispatching row per receiver, bound at save: a tevent's remembered subscribers,<br/>
@@ -47,8 +46,8 @@ public interface ITessagingSqlLayer
    public class DiscardedTessage(TessageId tessageId, TypeId typeId, bool wasStranded)
    {
       public TessageId TessageId { get; } = tessageId;
-      public TypeId TypeId { get; } = typeId;
-      public bool WasStranded { get; } = wasStranded;
+      internal TypeId TypeId { get; } = typeId;
+      internal bool WasStranded { get; } = wasStranded;
    }
 
    public enum MarkAsReceivedResult
@@ -103,19 +102,19 @@ public interface ITessagingSqlLayer
 
    public class OutboxTessageWithReceivers(string serializedTessage, TypeId typeId, TessageId tessageId, IEnumerable<EndpointId> receiverEndpointIds)
    {
-      public string SerializedTessage { get; } = serializedTessage;
-      public TypeId TypeId { get; } = typeId;
-      public TessageId TessageId { get; } = tessageId;
-      public IEnumerable<EndpointId> ReceiverEndpointIds { get; } = [..receiverEndpointIds];
+      internal string SerializedTessage { get; } = serializedTessage;
+      internal TypeId TypeId { get; } = typeId;
+      internal TessageId TessageId { get; } = tessageId;
+      internal IEnumerable<EndpointId> ReceiverEndpointIds { get; } = [.. receiverEndpointIds];
    }
 
    ///<summary>One tessage the outbox still owes delivery of, as loaded into a connection's recovery backlog: exactly what<br/>
    /// re-enqueueing needs — identity for dedup, type for deserialization, and the serialized body.</summary>
    public class UndeliveredTessage(TessageId tessageId, TypeId typeId, string serializedTessage)
    {
-      public TessageId TessageId { get; } = tessageId;
-      public TypeId TypeId { get; } = typeId;
-      public string SerializedTessage { get; } = serializedTessage;
+      internal TessageId TessageId { get; } = tessageId;
+      internal TypeId TypeId { get; } = typeId;
+      internal string SerializedTessage { get; } = serializedTessage;
    }
 
    ///<summary>The endpoint catalog's persistence: the one shared, unprefixed table every domain database carries — each<br/>
@@ -161,20 +160,20 @@ public interface ITessagingSqlLayer
    public class EndpointCatalogEntry(string endpointName, EndpointId endpointId, DateTime createdUtc, string? leaseHolderDescription, DateTime? leaseHeartbeatUtc)
    {
       public string EndpointName { get; } = endpointName;
-      public EndpointId EndpointId { get; } = endpointId;
+      internal EndpointId EndpointId { get; } = endpointId;
       public DateTime CreatedUtc { get; } = createdUtc;
 
       ///<summary>Human-readable description of the process holding the lease — null when the lease is free.</summary>
-      public string? LeaseHolderDescription { get; } = leaseHolderDescription;
+      internal string? LeaseHolderDescription { get; } = leaseHolderDescription;
 
-      public DateTime? LeaseHeartbeatUtc { get; } = leaseHeartbeatUtc;
+      internal DateTime? LeaseHeartbeatUtc { get; } = leaseHeartbeatUtc;
    }
 
    public static class EndpointCatalogDatabaseSchemaStrings
    {
       ///<summary>The catalog is domain-level data about the endpoints, inherently shared — the one deliberately unprefixed<br/>
       /// Tessaging table, unlike the per-endpoint table-sets (<see cref="EndpointTableSet"/>).</summary>
-      public const string TableName = "EndpointCatalog";
+      internal const string TableName = "EndpointCatalog";
 
       public const string EndpointName = nameof(EndpointName);
       public const string EndpointId = nameof(EndpointId);

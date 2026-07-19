@@ -4,11 +4,10 @@ using Compze.Contracts;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using JetBrains.Annotations;
-using static Compze.Contracts.Contract;
 
 namespace Compze.Tessaging.Typermedia;
 
-public static class IndependentLocalTypermediaNavigatorRegistrar
+static class IndependentLocalTypermediaNavigatorRegistrar
 {
    public static IComponentRegistrar IndependentLocalTypermediaNavigator(this IComponentRegistrar registrar)
       => registrar.Register(Typermedia.IndependentLocalTypermediaNavigator.RegisterWith);

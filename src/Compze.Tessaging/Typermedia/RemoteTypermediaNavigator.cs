@@ -7,7 +7,7 @@ using JetBrains.Annotations;
 
 namespace Compze.Tessaging.Typermedia;
 
-public static class RemoteTypermediaNavigatorRegistrar
+static class RemoteTypermediaNavigatorRegistrar
 {
    public static IComponentRegistrar RemoteTypermediaNavigator(this IComponentRegistrar registrar)
       => registrar.Register(Typermedia.RemoteTypermediaNavigator.RegisterWith);

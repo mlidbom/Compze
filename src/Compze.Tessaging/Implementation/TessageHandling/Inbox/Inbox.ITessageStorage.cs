@@ -5,7 +5,7 @@ namespace Compze.Tessaging.Implementation.TessageHandling.Inbox;
 
 public partial class Inbox
 {
-   public interface ITessageStorage
+   internal interface ITessageStorage
    {
       Task<ITessagingSqlLayer.SaveTessageResult> SaveIncomingTessageAsync(TransportTessage.InComing tessage);
       Task MarkAsSucceededAsync(TransportTessage.InComing tessage);

@@ -1,7 +1,6 @@
 using Compze.Tessaging.Internals.Transport;
 using Compze.Abstractions.Hosting.Public;
 using Compze.Abstractions.Tessaging.Public;
-using Compze.Tessaging.Implementation.Transport;
 
 namespace Compze.Tessaging.Implementation.Peers;
 

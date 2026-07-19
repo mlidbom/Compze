@@ -9,7 +9,7 @@ using Compze.Tessaging.Typermedia.Hosting;
 
 namespace Compze.Tessaging.Typermedia.Client;
 
-public static class TypermediaTransportServerRegistrar
+static class TypermediaTransportServerRegistrar
 {
    ///<summary>Registers Typermedia's request handling (<see cref="TypermediaRequestHandlers"/>), contributed to the endpoint's one<br/>
    /// transport server — the protocol registration supplies the server itself.</summary>

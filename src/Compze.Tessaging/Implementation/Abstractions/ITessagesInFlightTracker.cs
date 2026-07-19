@@ -10,7 +10,7 @@ namespace Compze.Tessaging.Implementation.Abstractions;
 /// (the engine's <see cref="TeventObservationDispatcher"/> reports those transitions). The testing host hands one tracker to<br/>
 /// every endpoint it registers and awaits its at-rest on dispose, so a test cannot pass with work still in flight; production<br/>
 /// compositions run the null tracker — the production-honest await is quiescence, not this device.</summary>
-public interface ITessagesInFlightTracker
+interface ITessagesInFlightTracker
 {
     IReadOnlyList<Exception> GetExceptions();
 
