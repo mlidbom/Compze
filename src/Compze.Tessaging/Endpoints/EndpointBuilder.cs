@@ -15,7 +15,6 @@ using Compze.Tessaging.Transport;
 using Compze.Tessaging.Typermedia;
 using Compze.Tessaging.Typermedia.Client;
 using Compze.Tessaging.Typermedia.Hosting;
-using Compze.Teventive.Taggregates.Tevents.Public;
 using Compze.TypeIdentifiers;
 
 namespace Compze.Tessaging.Endpoints;
@@ -235,7 +234,6 @@ public abstract class EndpointBuilder<TConcreteBuilder> where TConcreteBuilder :
    void RegisterTheSharedEndpointCore()
    {
       _typeMapper.MapTypesFromAssemblyContaining<EndpointAddress>();          // Compze.Abstractions — the shared message-type hierarchy and hosting contracts
-      _typeMapper.MapTypesFromAssemblyContaining<ITaggregateTevent>();        // Compze.Teventive — the Teventive type hierarchy
       _typeMapper.MapTypesFromAssemblyContaining<EndpointInformationQuery>(); // Compze.Tessaging — the endpoint-discovery types
 
       Registrar.Register(Singleton.For<ITypeMapper>().Instance(_typeMapper),

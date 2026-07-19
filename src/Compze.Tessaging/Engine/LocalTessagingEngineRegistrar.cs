@@ -5,7 +5,6 @@ using Compze.DependencyInjection.Abstractions;
 using Compze.Tessaging.Implementation;
 using Compze.Tessaging.Implementation.Abstractions;
 using Compze.Tessaging.Typermedia;
-using Compze.Teventive.Taggregates.Tevents.Public;
 using Compze.TypeIdentifiers;
 
 namespace Compze.Tessaging.Engine;
@@ -49,7 +48,6 @@ public static class LocalTessagingEngineRegistrar
 
       var typeMapper = new TypeMapper();
       typeMapper.MapTypesFromAssemblyContaining<IExactlyOnceTevent>(); // Compze.Abstractions
-      typeMapper.MapTypesFromAssemblyContaining<ITaggregateTevent>();  // Compze.Teventive — the Teventive type hierarchy
       engineBuilder.TypeMappingDeclarations.ForEach(declareMappings => declareMappings(typeMapper));
       registrar.Register(Singleton.For<ITypeMapper>().Instance(typeMapper),
                          Singleton.For<ITypeMap>().Instance(typeMapper));
