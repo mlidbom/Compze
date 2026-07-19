@@ -28,7 +28,7 @@ public static class TeventStoreRegistrar
 
       //Everything the store persists needs identity that survives renames: its own stored types, the taggregate tevent
       //hierarchy it stores, and the entity ids those tevents carry.
-      registrar.RequireMappedTypesFromAssemblyContaining<TeventCache>();
+      registrar.RequireMappedTypesFromAssemblyContaining<Refactoring.Migrations.EndOfTaggregateHistoryTeventPlaceHolder>();
 
       return registrar.Register(TaggregateTypeValidator.RegisterWith,
                                 TeventCache.RegisterWith,
