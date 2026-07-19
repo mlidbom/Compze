@@ -1,10 +1,10 @@
-using Compze.Tessaging.Endpoints.Discovery;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
-using Compze.Tessaging.Internals.Transport.AspNet;
+using Compze.Tessaging.Endpoints.Discovery;
+using Compze.Tessaging.Internals.Transport.Exceptions;
 
-namespace Compze.Tessaging.Internals.Transport;
+namespace Compze.Tessaging.Internals.Transport.AspNet;
 
 static class HttpEndpointTransportClientRegistrar
 {

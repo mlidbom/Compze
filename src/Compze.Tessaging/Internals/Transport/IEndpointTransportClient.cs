@@ -1,4 +1,5 @@
 using Compze.Tessaging.Endpoints.Discovery;
+using Compze.Tessaging.Internals.Transport.Exceptions;
 
 namespace Compze.Tessaging.Internals.Transport;
 

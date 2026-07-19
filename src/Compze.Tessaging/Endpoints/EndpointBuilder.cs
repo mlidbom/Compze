@@ -1,9 +1,7 @@
-using Compze.Abstractions.Public;
 using Compze.Tessaging.Endpoints.Discovery;
 using Compze.Contracts;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
-using Compze.Tessaging.Abstractions.TessageTypes;
 using Compze.Tessaging.Engine;
 using Compze.Tessaging.Implementation;
 using Compze.Tessaging.Implementation.Abstractions;

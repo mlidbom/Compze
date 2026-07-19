@@ -8,7 +8,7 @@ namespace Compze.Tessaging.Serialization;
 ///<remarks>Each conversation protocol serializes independently: Typermedia through <see cref="ITypermediaSerializer"/>, and endpoint<br/>
 /// discovery through its fixed framework-internal format. What must agree is the sender's and receiver's serializer per protocol,<br/>
 /// across processes — not the protocols' serializers with each other.</remarks>
-public interface ITessagingSerializer
+interface ITessagingSerializer
 {
    string SerializeTessage(ITessage tessage);
    ITessage DeserializeTessage(Type tessageType, string json);
