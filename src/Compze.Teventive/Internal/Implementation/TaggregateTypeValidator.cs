@@ -1,7 +1,7 @@
 using System.Reflection;
 using Compze.Abstractions.Tessaging.Validation;
 using Compze.DependencyInjection;
-using Compze.DependencyInjection.Abstractions;
+using Compze.DependencyInjection.Wiring.Registration;
 using Compze.Internals.SystemCE.ReflectionCE;
 using Compze.Teventive.Taggregates.BaseClasses;
 using Compze.TypeIdentifiers;

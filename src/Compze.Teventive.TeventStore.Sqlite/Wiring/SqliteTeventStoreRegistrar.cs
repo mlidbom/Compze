@@ -1,5 +1,5 @@
 using Compze.DependencyInjection;
-using Compze.DependencyInjection.Abstractions;
+using Compze.DependencyInjection.Wiring.Registration;
 using Compze.Internals.Sql.Sqlite;
 using Compze.Internals.Sql.Sqlite.Private;
 using Compze.Internals.Sql.Sqlite.Wiring;

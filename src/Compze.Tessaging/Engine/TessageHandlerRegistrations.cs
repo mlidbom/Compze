@@ -2,7 +2,7 @@ using Compze.Abstractions.Tessaging.Public;
 using Compze.Abstractions.Tessaging.Validation;
 using Compze.Contracts;
 using Compze.DependencyInjection;
-using Compze.DependencyInjection.Abstractions;
+using Compze.DependencyInjection.Runtime.Resolution;
 using Compze.Internals.SystemCE.CollectionsCE.GenericCE;
 using Compze.Internals.SystemCE.ReflectionCE;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;

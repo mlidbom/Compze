@@ -1,8 +1,8 @@
 using System.Reflection;
 using Compze.Abstractions.Hosting.Public;
 using Compze.DependencyInjection;
-using Compze.DependencyInjection.Abstractions;
 using Compze.DependencyInjection.Extensions.Hosting;
+using Compze.DependencyInjection.Wiring.Registration;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;

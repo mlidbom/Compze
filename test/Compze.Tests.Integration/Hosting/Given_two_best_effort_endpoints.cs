@@ -3,7 +3,7 @@ using Compze.Abstractions.Hosting.Public;
 using Compze.Abstractions.Public;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.DependencyInjection;
-using Compze.DependencyInjection.Abstractions;
+using Compze.DependencyInjection.Runtime.Resolution;
 using Compze.Hosting;
 using Compze.Hosting.Testing;
 using Compze.Hosting.Testing.Wiring;

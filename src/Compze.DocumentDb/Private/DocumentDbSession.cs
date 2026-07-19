@@ -4,10 +4,10 @@ using Compze.DocumentDb.Internal.SqlLayer.Exceptions;
 using Compze.DocumentDb.Public;
 using Compze.Abstractions.Public;
 using Compze.DependencyInjection;
-using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.TransactionsCE;
 using Compze.Internals.SystemCE.UsageGuards;
 using Compze.Contracts;
+using Compze.DependencyInjection.Wiring.Registration;
 
 namespace Compze.DocumentDb.Private;
 

@@ -6,6 +6,7 @@ using Compze.Tests.Common;
 using Compze.Tests.Common.Sql.DocumentDb;
 using Compze.Tests.Infrastructure;
 using Compze.DependencyInjection;
+using Compze.DependencyInjection.Runtime;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Internals.SystemCE.TransactionsCE;
 using Compze.Tests.Infrastructure.XUnit;

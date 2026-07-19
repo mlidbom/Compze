@@ -3,7 +3,7 @@ using System.Transactions;
 using Compze.Abstractions.Public;
 using Compze.Contracts;
 using Compze.DependencyInjection;
-using Compze.DependencyInjection.Abstractions;
+using Compze.DependencyInjection.Wiring.Registration;
 using Compze.Internals.SystemCE;
 using Compze.Internals.SystemCE.TransactionsCE;
 using Compze.Teventive.Taggregates.Tevents.Public;

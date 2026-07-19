@@ -1,7 +1,7 @@
 using Compze.Abstractions.Hosting.Public;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.DependencyInjection;
-using Compze.DependencyInjection.Abstractions;
+using Compze.DependencyInjection.Runtime.Resolution;
 using Compze.Internals.Logging;
 using Compze.Must;
 using Compze.Tessaging.Endpoints;

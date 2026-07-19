@@ -1,4 +1,5 @@
-using Compze.DependencyInjection.Abstractions;
+using Compze.DependencyInjection.Runtime;
+using Compze.DependencyInjection.Wiring.Registration;
 
 namespace Compze.Hosting.Testing.Wiring;
 

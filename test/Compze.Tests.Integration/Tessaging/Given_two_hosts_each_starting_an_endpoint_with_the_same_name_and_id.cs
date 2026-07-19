@@ -1,5 +1,5 @@
 using Compze.Abstractions.Hosting.Public;
-using Compze.DependencyInjection.Abstractions;
+using Compze.DependencyInjection.Runtime;
 using Compze.Hosting.Testing;
 using Compze.Hosting.Testing.Wiring;
 using Compze.Internals.Testing;

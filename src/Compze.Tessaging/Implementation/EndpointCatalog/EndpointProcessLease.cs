@@ -2,13 +2,13 @@ using Compze.Abstractions.Hosting.Public;
 using Compze.Abstractions.Time.Public;
 using Compze.Contracts;
 using Compze.DependencyInjection;
-using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Internals.SystemCE.TransactionsCE;
 using Compze.Tessaging.Endpoints;
 using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.Tessaging.Transport.SqlLayer;
 using System.Transactions;
+using Compze.DependencyInjection.Wiring.Registration;
 
 namespace Compze.Tessaging.Implementation.EndpointCatalog;
 

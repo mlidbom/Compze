@@ -2,7 +2,7 @@ using Compze.TypeIdentifiers;
 using Compze.Abstractions.Serialization.Internal;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.DependencyInjection;
-using Compze.DependencyInjection.Abstractions;
+using Compze.DependencyInjection.Wiring.Registration;
 
 namespace Compze.Internals.Serialization.Newtonsoft.Private.Typermedia;
 

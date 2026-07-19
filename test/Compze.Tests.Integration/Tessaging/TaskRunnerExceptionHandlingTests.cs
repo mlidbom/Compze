@@ -1,5 +1,6 @@
 using Compze.Abstractions.Hosting.Public;
 using Compze.DependencyInjection;
+using Compze.DependencyInjection.Runtime.Resolution;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.Tests.Infrastructure;

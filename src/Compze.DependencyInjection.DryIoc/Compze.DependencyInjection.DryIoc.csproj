@@ -7,6 +7,9 @@
     <NoWarn>CS1591</NoWarn>
     <Description>DryIoc dependency injection integration for the Compze framework.</Description>
   </PropertyGroup>
+   <ItemGroup>
+      <InternalsVisibleTo Include="Compze.DependencyInjection.DryIoc.Extensions.Hosting" />
+   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="DryIoc.dll" Version="6.0.0-preview-09" />
   </ItemGroup>

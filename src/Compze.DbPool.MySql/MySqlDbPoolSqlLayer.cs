@@ -1,7 +1,7 @@
 using Compze.Underscore;
 using Compze.Internals.Sql.MySql;
 using Compze.DependencyInjection;
-using Compze.DependencyInjection.Abstractions;
+using Compze.DependencyInjection.Wiring.Registration;
 using Compze.Threading.ResourceAccess;
 using MySqlConnector;
 

@@ -7,11 +7,11 @@ using Compze.Internals.Sql.MicrosoftSql.Private;
 using Compze.TypeIdentifiers;
 using Compze.TypeIdentifiers.Interning;
 using Compze.DependencyInjection;
-using Compze.DependencyInjection.Abstractions;
 using Compze.Underscore;
 using Compze.Internals.SystemCE;
 using Microsoft.Data.SqlClient;
 using System.Diagnostics.CodeAnalysis;
+using Compze.DependencyInjection.Wiring.Registration;
 using Schema = Compze.DocumentDb.Internal.SqlLayer.IDocumentDbSqlLayer.DocumentTableSchemaStrings;
 
 namespace Compze.DocumentDb.MicrosoftSql;

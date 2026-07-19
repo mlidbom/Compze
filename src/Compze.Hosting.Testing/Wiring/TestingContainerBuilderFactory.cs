@@ -1,5 +1,4 @@
 using Compze.Abstractions.Wiring.Testing.Internal;
-using Compze.DependencyInjection.Abstractions;
 using Compze.DependencyInjection.Autofac;
 using Compze.DependencyInjection.Autofac.Extensions.Hosting;
 using Compze.DependencyInjection.DryIoc;
@@ -8,6 +7,7 @@ using Compze.DependencyInjection.LightInject;
 using Compze.DependencyInjection.LightInject.Extensions.Hosting;
 using Compze.DependencyInjection.Microsoft;
 using Compze.DependencyInjection.Microsoft.Extensions.Hosting;
+using Compze.DependencyInjection.Wiring;
 using Compze.Underscore;
 
 namespace Compze.Hosting.Testing.Wiring;

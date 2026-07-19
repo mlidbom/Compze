@@ -1,6 +1,7 @@
 using System.Transactions;
 using Compze.Abstractions.Wiring.Testing.Internal;
 using Compze.DependencyInjection;
+using Compze.DependencyInjection.Runtime;
 using Compze.Internals.SystemCE.TransactionsCE;
 using Compze.Must;
 

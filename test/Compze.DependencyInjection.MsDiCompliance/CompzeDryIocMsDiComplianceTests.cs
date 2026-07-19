@@ -1,6 +1,6 @@
-using Compze.DependencyInjection.Abstractions;
 using Compze.DependencyInjection.DryIoc;
 using Compze.DependencyInjection.DryIoc.Extensions.Hosting;
+using Compze.DependencyInjection.Wiring.Registration;
 using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Specification;

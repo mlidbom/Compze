@@ -6,7 +6,7 @@ using Compze.Tessaging.Implementation.TessageHandling.Dispatching;
 using Compze.Tessaging.Implementation.Transport.Client.Internal;
 using Compze.Tessaging.Typermedia.Client;
 using Compze.DependencyInjection;
-using Compze.DependencyInjection.Abstractions;
+using Compze.DependencyInjection.Wiring.Registration;
 using Compze.Internals.SystemCE.ReflectionCE;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 

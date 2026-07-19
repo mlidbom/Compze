@@ -2,7 +2,8 @@ using System.Transactions;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Contracts;
 using Compze.DependencyInjection;
-using Compze.DependencyInjection.Abstractions;
+using Compze.DependencyInjection.Runtime.Resolution;
+using Compze.DependencyInjection.Wiring.Registration;
 using JetBrains.Annotations;
 using static Compze.Contracts.Contract;
 

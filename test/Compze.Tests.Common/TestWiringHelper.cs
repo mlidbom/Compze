@@ -1,6 +1,6 @@
 using Compze.DocumentDb.Public;
 using Compze.DependencyInjection;
-using Compze.DependencyInjection.Abstractions;
+using Compze.DependencyInjection.Runtime.Resolution;
 using Compze.Teventive.TeventStore.Abstractions.Public;
 
 namespace Compze.Tests.Common;

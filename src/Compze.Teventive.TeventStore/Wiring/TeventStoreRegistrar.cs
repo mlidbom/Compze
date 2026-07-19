@@ -1,5 +1,5 @@
 using Compze.Contracts;
-using Compze.DependencyInjection.Abstractions;
+using Compze.DependencyInjection.Wiring.Registration;
 using Compze.Teventive.Internal.Implementation;
 using Compze.Teventive.TeventStore.Abstractions.Refactoring.Migrations.Public;
 

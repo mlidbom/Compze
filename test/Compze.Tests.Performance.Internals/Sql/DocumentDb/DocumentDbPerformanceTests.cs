@@ -7,6 +7,7 @@ using Compze.Tests.Common.Sql.DocumentDb;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.DependencyInjection;
+using Compze.DependencyInjection.Runtime;
 using Compze.Internals.SystemCE;
 
 

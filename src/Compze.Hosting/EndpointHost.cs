@@ -1,6 +1,6 @@
 using Compze.Abstractions.Hosting.Public;
 using Compze.Contracts;
-using Compze.DependencyInjection.Abstractions;
+using Compze.DependencyInjection.Wiring;
 using Compze.Internals.Logging;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 

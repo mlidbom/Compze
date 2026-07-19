@@ -1,5 +1,5 @@
 using Autofac.Extensions.DependencyInjection;
-using Compze.DependencyInjection.Abstractions;
+using Compze.DependencyInjection.Wiring.Registration;
 using Compze.Internals.SystemCE;
 using Compze.Underscore;
 using Microsoft.Extensions.DependencyInjection;

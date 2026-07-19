@@ -1,9 +1,8 @@
-using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE;
 using LightInject;
 using LightInject.Microsoft.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
-using ContainerOptions = Compze.DependencyInjection.Abstractions.ContainerOptions;
+using ContainerOptions = Compze.DependencyInjection.Wiring.Registration.ContainerOptions;
 
 namespace Compze.DependencyInjection.LightInject.Extensions.Hosting;
 

@@ -5,6 +5,7 @@ using Compze.Hosting.Testing.Wiring;
 using Compze.Tests.Common;
 using Compze.Tests.Common.CQRS.TeventRefactoring.Migrations;
 using Compze.DependencyInjection;
+using Compze.DependencyInjection.Runtime;
 using Compze.Tests.Infrastructure;
 using Compze.Internals.SystemCE.TransactionsCE;
 using Compze.Tests.Infrastructure.XUnit;

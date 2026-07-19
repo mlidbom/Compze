@@ -8,7 +8,7 @@ using Compze.Tests.Infrastructure.XUnit;
 using Compze.TypeIdentifiers;
 using Compze.TypeIdentifiers.Interning;
 using Compze.DependencyInjection;
-using Compze.DependencyInjection.Abstractions;
+using Compze.DependencyInjection.Runtime;
 using Compze.Must;
 
 using static Compze.Must.MustActions;

@@ -7,6 +7,9 @@
     <NoWarn>CS1591</NoWarn>
     <Description>LightInject dependency injection integration for the Compze framework.</Description>
   </PropertyGroup>
+   <ItemGroup>
+      <InternalsVisibleTo Include="Compze.DependencyInjection.LightInject.Extensions.Hosting" />
+   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="LightInject" Version="7.0.1" />
   </ItemGroup>

@@ -8,7 +8,8 @@ using Compze.Tests.Common.Wiring;
 using Compze.Tests.Common.CQRS.TeventRefactoring.Migrations;
 using Compze.Tests.Infrastructure;
 using Compze.DependencyInjection;
-using Compze.DependencyInjection.Abstractions;
+using Compze.DependencyInjection.Runtime;
+using Compze.DependencyInjection.Runtime.Resolution;
 using Compze.Internals.Logging;
 using Compze.Must;
 

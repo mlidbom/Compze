@@ -1,5 +1,9 @@
 using Compze.Contracts;
-using Compze.DependencyInjection.Abstractions;
+using Compze.DependencyInjection.Runtime;
+using Compze.DependencyInjection.Runtime.Resolution;
+using Compze.DependencyInjection.Runtime.Resolution.Internal;
+using Compze.DependencyInjection.Wiring;
+using Compze.DependencyInjection.Wiring.Registration;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -16,7 +20,7 @@ public sealed class MicrosoftContainer : DependencyInjectionContainer, IRootReso
 
    public override MicrosoftContainerBuilder CreateCloneContainerBuilder() => (MicrosoftContainerBuilder)base.CreateCloneContainerBuilder();
 
-   public override MicrosoftContainerBuilder CreateChildContainerBuilder() => (MicrosoftContainerBuilder)base.CreateChildContainerBuilder();
+   internal override MicrosoftContainerBuilder CreateChildContainerBuilder() => (MicrosoftContainerBuilder)base.CreateChildContainerBuilder();
 
    protected override object ResolveCore(Type serviceType)
    {

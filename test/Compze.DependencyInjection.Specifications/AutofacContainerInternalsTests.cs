@@ -1,4 +1,3 @@
-using Compze.DependencyInjection.Abstractions;
 using Compze.DependencyInjection.Autofac;
 using Compze.Must;
 

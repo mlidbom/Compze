@@ -3,7 +3,7 @@ using Compze.Abstractions.Public;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Contracts;
 using Compze.DependencyInjection;
-using Compze.DependencyInjection.Abstractions;
+using Compze.DependencyInjection.Wiring.Registration;
 using Compze.Internals.SystemCE.LinqCE;
 using Compze.Internals.SystemCE.ReactiveCE;
 using Compze.Internals.SystemCE.ReflectionCE;

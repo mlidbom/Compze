@@ -1,4 +1,4 @@
-using Compze.DependencyInjection.Abstractions;
+using Compze.DependencyInjection.Runtime.Resolution;
 
 namespace Compze.Abstractions.Hosting.Public;
 

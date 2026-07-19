@@ -1,7 +1,10 @@
 using Compze.Contracts;
-using Compze.DependencyInjection.Abstractions;
+using Compze.DependencyInjection.Runtime;
+using Compze.DependencyInjection.Runtime.Resolution;
+using Compze.DependencyInjection.Wiring;
+using Compze.DependencyInjection.Wiring.Registration;
 using LightInject;
-using IScope = Compze.DependencyInjection.Abstractions.IScope;
+using IScope = Compze.DependencyInjection.Runtime.Resolution.IScope;
 using LightInjectScope = global::LightInject.Scope;
 
 namespace Compze.DependencyInjection.LightInject;
@@ -22,7 +25,7 @@ public sealed class LightInjectContainer : DependencyInjectionContainer, IRootRe
 
    public override LightInjectContainerBuilder CreateCloneContainerBuilder() => (LightInjectContainerBuilder)base.CreateCloneContainerBuilder();
 
-   public override LightInjectContainerBuilder CreateChildContainerBuilder() => (LightInjectContainerBuilder)base.CreateChildContainerBuilder();
+   internal override LightInjectContainerBuilder CreateChildContainerBuilder() => (LightInjectContainerBuilder)base.CreateChildContainerBuilder();
 
    protected override object ResolveCore(Type serviceType)
    {
@@ -55,7 +58,7 @@ public sealed class LightInjectContainer : DependencyInjectionContainer, IRootRe
       }
    }
 
-   public IScope BeginScope()
+   public Runtime.Resolution.IScope BeginScope()
    {
       Contract.State.NotDisposed(_isDisposed, this);
 

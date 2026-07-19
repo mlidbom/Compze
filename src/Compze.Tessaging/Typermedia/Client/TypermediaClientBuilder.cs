@@ -2,7 +2,8 @@ using Compze.Abstractions.Hosting.Public;
 using Compze.Abstractions.Serialization.Internal;
 using Compze.Contracts;
 using Compze.DependencyInjection;
-using Compze.DependencyInjection.Abstractions;
+using Compze.DependencyInjection.Wiring;
+using Compze.DependencyInjection.Wiring.Registration;
 using Compze.Tessaging.Internals.Transport;
 using Compze.TypeIdentifiers;
 

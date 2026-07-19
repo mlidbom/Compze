@@ -1,7 +1,8 @@
 using Compze.Abstractions.Hosting.Public;
 using Compze.Contracts;
 using Compze.DependencyInjection;
-using Compze.DependencyInjection.Abstractions;
+using Compze.DependencyInjection.Runtime.Resolution;
+using Compze.DependencyInjection.Wiring.Registration;
 using Compze.Internals.Logging;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Internals.SystemCE.TransactionsCE;

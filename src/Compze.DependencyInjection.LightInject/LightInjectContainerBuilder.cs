@@ -1,7 +1,11 @@
 using System.Reflection;
-using Compze.DependencyInjection.Abstractions;
+using Compze.DependencyInjection.Runtime;
+using Compze.DependencyInjection.Runtime.Resolution;
+using Compze.DependencyInjection.Runtime.Resolution.Internal;
+using Compze.DependencyInjection.Wiring;
+using Compze.DependencyInjection.Wiring.Registration;
 using LightInject;
-using ContainerOptions = Compze.DependencyInjection.Abstractions.ContainerOptions;
+using ContainerOptions = Compze.DependencyInjection.Wiring.Registration.ContainerOptions;
 
 namespace Compze.DependencyInjection.LightInject;
 

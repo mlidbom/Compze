@@ -1,5 +1,5 @@
+using Compze.DependencyInjection.Wiring.Registration;
 using Compze.DocumentDb.Private;
-using Compze.DependencyInjection.Abstractions;
 
 namespace Compze.DocumentDb.Wiring;
 

@@ -1,5 +1,5 @@
 using Compze.DependencyInjection;
-using Compze.DependencyInjection.Abstractions;
+using Compze.DependencyInjection.Wiring.Registration;
 
 namespace Compze.Tessaging.Internals.Transport;
 

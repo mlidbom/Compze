@@ -7,7 +7,7 @@ using Compze.Tessaging.Implementation.Transport.Client.Implementation;
 using Compze.Tessaging.Implementation.Transport.Client.Internal;
 using Compze.Contracts;
 using Compze.DependencyInjection;
-using Compze.DependencyInjection.Abstractions;
+using Compze.DependencyInjection.Wiring.Registration;
 using Compze.Internals.Logging;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Internals.SystemCE.TransactionsCE;

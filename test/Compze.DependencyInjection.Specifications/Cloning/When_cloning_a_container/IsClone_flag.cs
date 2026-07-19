@@ -1,4 +1,5 @@
 using Compze.DependencyInjection.Specifications.Infrastructure;
+using Compze.DependencyInjection.Wiring.Registration;
 using Compze.Must;
 
 

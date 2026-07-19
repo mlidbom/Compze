@@ -1,8 +1,8 @@
 using Compze.TypeIdentifiers;
 using Compze.Abstractions.Serialization.Internal;
 using Compze.DependencyInjection;
+using Compze.DependencyInjection.Wiring.Registration;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
-using Compze.DependencyInjection.Abstractions;
 using Compze.Tessaging.Internals.Transport;
 using Compze.Tessaging.Implementation.TessageHandling.Dispatching;
 using Compze.Tessaging.Implementation.Transport.Abstractions;

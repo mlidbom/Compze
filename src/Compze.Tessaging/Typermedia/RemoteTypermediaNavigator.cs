@@ -1,7 +1,7 @@
 using Compze.Abstractions.Tessaging.Public;
 using Compze.DependencyInjection;
-using Compze.DependencyInjection.Abstractions;
 using Compze.Abstractions.Tessaging.Validation;
+using Compze.DependencyInjection.Wiring.Registration;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using JetBrains.Annotations;
 

@@ -1,7 +1,7 @@
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Contracts;
 using Compze.DependencyInjection;
-using Compze.DependencyInjection.Abstractions;
+using Compze.DependencyInjection.Runtime.Resolution;
 using Compze.Internals.SystemCE.ReflectionCE;
 using Compze.Teventive.Tevents.Public;
 

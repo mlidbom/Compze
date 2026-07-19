@@ -1,5 +1,5 @@
 using Compze.Abstractions.Serialization.Internal;
-using Compze.DependencyInjection.Abstractions;
+using Compze.DependencyInjection.Wiring.Registration;
 
 namespace Compze.Internals.Serialization.Newtonsoft.Wiring;
 

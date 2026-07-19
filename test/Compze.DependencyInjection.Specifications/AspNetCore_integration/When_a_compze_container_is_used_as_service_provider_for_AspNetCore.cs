@@ -1,6 +1,6 @@
 using System.Net;
-using Compze.DependencyInjection.Abstractions;
 using Compze.DependencyInjection.Specifications.Infrastructure;
+using Compze.DependencyInjection.Wiring.Registration;
 using Compze.Must;
 
 using Microsoft.AspNetCore.Builder;

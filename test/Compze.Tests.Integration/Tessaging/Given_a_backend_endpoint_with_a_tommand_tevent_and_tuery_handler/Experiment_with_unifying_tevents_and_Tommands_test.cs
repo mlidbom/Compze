@@ -9,8 +9,8 @@ using Compze.Tests.Common;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.DependencyInjection;
-using Compze.DependencyInjection.Abstractions;
 using Compze.Abstractions.Public;
+using Compze.DependencyInjection.Runtime.Resolution;
 using Compze.Must;
 
 using Compze.Teventive;

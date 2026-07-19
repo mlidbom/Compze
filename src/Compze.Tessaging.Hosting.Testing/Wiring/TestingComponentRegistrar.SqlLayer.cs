@@ -1,4 +1,5 @@
 using Compze.Abstractions.Wiring.Testing.Internal;
+using Compze.DependencyInjection.Wiring.Registration;
 using Compze.Internals.Sql.MicrosoftSql.Wiring;
 using Compze.Internals.Sql.MySql.Wiring;
 using Compze.Internals.Sql.PostgreSql.Wiring;
@@ -14,7 +15,6 @@ using Compze.Tessaging.MySql.Wiring;
 using Compze.Tessaging.PostgreSql.Wiring;
 using Compze.Tessaging.Sqlite.Wiring;
 using Compze.TypeIdentifiers.Interning.Sqlite.Wiring;
-using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE;
 using Compze.Internals.Testing;
 using Compze.Teventive.TeventStore.MicrosoftSql.Wiring;

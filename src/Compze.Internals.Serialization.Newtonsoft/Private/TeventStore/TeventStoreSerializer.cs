@@ -1,6 +1,6 @@
 using Compze.TypeIdentifiers;
 using Compze.DependencyInjection;
-using Compze.DependencyInjection.Abstractions;
+using Compze.DependencyInjection.Wiring.Registration;
 using Compze.Teventive.Taggregates.Tevents.Public;
 using Compze.Teventive.TeventStore.Abstractions.Internal;
 using Newtonsoft.Json;

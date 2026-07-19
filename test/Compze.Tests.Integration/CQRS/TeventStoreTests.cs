@@ -6,9 +6,9 @@ using Compze.Tests.Common;
 using Compze.Tests.Common.Wiring;
 using Compze.Tests.Infrastructure;
 using Compze.DependencyInjection;
-using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.TransactionsCE;
 using System.Transactions;
+using Compze.DependencyInjection.Runtime;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Must;
 

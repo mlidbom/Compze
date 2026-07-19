@@ -1,6 +1,10 @@
 using Autofac;
-using Compze.DependencyInjection.Abstractions;
+using Compze.DependencyInjection.Runtime;
+using Compze.DependencyInjection.Runtime.Resolution;
+using Compze.DependencyInjection.Runtime.Resolution.Internal;
+using Compze.DependencyInjection.Wiring.Registration;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
+using ContainerBuilder = Compze.DependencyInjection.Wiring.ContainerBuilder;
 
 namespace Compze.DependencyInjection.Autofac;
 
@@ -14,7 +18,7 @@ public sealed class AutofacContainer : DependencyInjectionContainer, IRootResolv
 
    public override AutofacContainerBuilder CreateCloneContainerBuilder() => (AutofacContainerBuilder)base.CreateCloneContainerBuilder();
 
-   public override AutofacContainerBuilder CreateChildContainerBuilder() => (AutofacContainerBuilder)base.CreateChildContainerBuilder();
+   internal override AutofacContainerBuilder CreateChildContainerBuilder() => (AutofacContainerBuilder)base.CreateChildContainerBuilder();
 
    protected override object ResolveCore(Type serviceType) => _container.Resolve(serviceType);
 

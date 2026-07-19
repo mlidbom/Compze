@@ -3,8 +3,8 @@ using Compze.Abstractions.Serialization.Internal;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Tessaging.Internals.Transport;
 using Compze.DependencyInjection;
+using Compze.DependencyInjection.Wiring.Registration;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
-using Compze.DependencyInjection.Abstractions;
 using Compze.Tessaging.Typermedia.Hosting;
 
 namespace Compze.Tessaging.Typermedia.Client;

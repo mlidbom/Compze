@@ -6,6 +6,7 @@ using Compze.Abstractions.Hosting.Public;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Microsoft;
+using Compze.DependencyInjection.Wiring.Registration;
 using Compze.Hosting;
 using Compze.Hosting.SameMachine;
 using Compze.Internals.Serialization.Newtonsoft.Wiring;

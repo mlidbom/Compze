@@ -2,7 +2,7 @@ using Compze.Abstractions.Wiring.Testing.Internal;
 using Compze.Internals.Testing;
 using Compze.Internals.Testing.Performance;
 using Compze.DependencyInjection;
-using Compze.DependencyInjection.Abstractions;
+using Compze.DependencyInjection.Runtime.Resolution;
 using Compze.Internals.SystemCE;
 using Compze.Hosting.Testing;
 using Compze.Tests.Infrastructure.XUnit;

@@ -9,7 +9,7 @@ using Compze.Tessaging.Implementation.Peers;
 using Compze.Tessaging.Implementation.Transport.Abstractions;
 using Compze.Tessaging.Implementation.Transport.Client.Implementation;
 using Compze.DependencyInjection;
-using Compze.DependencyInjection.Abstractions;
+using Compze.DependencyInjection.Wiring.Registration;
 using Compze.Internals.Logging;
 using Compze.Internals.SystemCE.TransactionsCE;
 using Compze.TypeIdentifiers;

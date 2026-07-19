@@ -1,5 +1,6 @@
 using Compze.Abstractions.Wiring.Testing.Internal;
 using Compze.DependencyInjection;
+using Compze.DependencyInjection.Runtime;
 using Compze.Internals.Sql.Common.Abstractions;
 using Compze.Internals.Sql.MicrosoftSql;
 using Compze.Internals.Sql.MySql;
@@ -9,7 +10,6 @@ using Compze.Hosting.Testing;
 using Compze.Internals.Testing;
 using Compze.Hosting.Testing.Wiring;
 using Compze.Tests.Infrastructure;
-using Compze.DependencyInjection.Abstractions;
 
 namespace Compze.DbPool.Tests;
 

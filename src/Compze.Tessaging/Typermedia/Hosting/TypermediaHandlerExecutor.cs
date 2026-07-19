@@ -1,6 +1,6 @@
 using Compze.Abstractions.Tessaging.Public;
 using Compze.DependencyInjection;
-using Compze.DependencyInjection.Abstractions;
+using Compze.DependencyInjection.Wiring.Registration;
 using Compze.Internals.Logging;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tessaging.Engine;

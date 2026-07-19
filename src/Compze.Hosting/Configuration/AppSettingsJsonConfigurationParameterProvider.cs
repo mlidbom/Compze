@@ -1,6 +1,6 @@
 using Compze.Abstractions.Configuration.Internal;
 using Compze.DependencyInjection;
-using Compze.DependencyInjection.Abstractions;
+using Compze.DependencyInjection.Wiring.Registration;
 using Microsoft.Extensions.Configuration;
 
 namespace Compze.Hosting.Configuration;

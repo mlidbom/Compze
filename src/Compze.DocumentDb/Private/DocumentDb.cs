@@ -8,7 +8,7 @@ using Compze.Abstractions.Serialization.Internal;
 using Compze.Abstractions.Time.Public;
 using Compze.Contracts;
 using Compze.DependencyInjection;
-using Compze.DependencyInjection.Abstractions;
+using Compze.DependencyInjection.Wiring.Registration;
 using Compze.Internals.SystemCE.CollectionsCE.GenericCE;
 
 namespace Compze.DocumentDb.Private;

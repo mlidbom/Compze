@@ -1,4 +1,4 @@
-using Compze.DependencyInjection.Abstractions;
+using Compze.DependencyInjection.Wiring.Registration;
 using Compze.Internals.SystemCE;
 using Compze.Internals.SystemCE.LinqCE;
 using Compze.Underscore;

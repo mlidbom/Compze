@@ -1,6 +1,10 @@
 using Autofac;
-using Compze.DependencyInjection.Abstractions;
+using Compze.DependencyInjection.Runtime;
+using Compze.DependencyInjection.Runtime.Resolution;
+using Compze.DependencyInjection.Runtime.Resolution.Internal;
+using Compze.DependencyInjection.Wiring.Registration;
 using Compze.Internals.SystemCE.LinqCE;
+using ContainerBuilder = Compze.DependencyInjection.Wiring.ContainerBuilder;
 
 namespace Compze.DependencyInjection.Autofac;
 

@@ -2,7 +2,7 @@ using Compze.Underscore;
 using Compze.Internals.Sql.Common;
 using Compze.Internals.Sql.PostgreSql;
 using Compze.DependencyInjection;
-using Compze.DependencyInjection.Abstractions;
+using Compze.DependencyInjection.Wiring.Registration;
 using Compze.Threading.ResourceAccess;
 using Npgsql;
 

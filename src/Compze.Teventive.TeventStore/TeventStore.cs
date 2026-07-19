@@ -2,7 +2,7 @@ using Compze.Abstractions.Public;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Contracts;
 using Compze.DependencyInjection;
-using Compze.DependencyInjection.Abstractions;
+using Compze.DependencyInjection.Wiring.Registration;
 using Compze.Internals.Logging;
 using Compze.Internals.SystemCE.LinqCE;
 using Compze.Teventive.Taggregates.Tevents.Public;

@@ -1,7 +1,7 @@
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Tessaging.Implementation.HandlerAvailability;
 using Compze.DependencyInjection;
-using Compze.DependencyInjection.Abstractions;
+using Compze.DependencyInjection.Wiring.Registration;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 
 namespace Compze.Tessaging.Typermedia.Client;

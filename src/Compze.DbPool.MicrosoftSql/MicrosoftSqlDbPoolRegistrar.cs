@@ -1,4 +1,4 @@
-using Compze.DependencyInjection.Abstractions;
+using Compze.DependencyInjection.Wiring.Registration;
 
 namespace Compze.DbPool.MicrosoftSql;
 

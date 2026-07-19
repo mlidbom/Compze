@@ -6,7 +6,7 @@ using Compze.Internals.SystemCE.CollectionsCE.GenericCE;
 using Compze.Internals.SystemCE.ReflectionCE;
 using Compze.Tessaging.Internals.Transport;
 using Compze.DependencyInjection;
-using Compze.DependencyInjection.Abstractions;
+using Compze.DependencyInjection.Wiring.Registration;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Threading;
 

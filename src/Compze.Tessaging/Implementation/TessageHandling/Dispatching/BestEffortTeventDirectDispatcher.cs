@@ -4,7 +4,7 @@ using Compze.Tessaging.Engine;
 using Compze.Tessaging.Implementation.Transport.Abstractions;
 using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.DependencyInjection;
-using Compze.DependencyInjection.Abstractions;
+using Compze.DependencyInjection.Wiring.Registration;
 using Compze.Internals.Logging;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tessaging.Implementation.Abstractions;

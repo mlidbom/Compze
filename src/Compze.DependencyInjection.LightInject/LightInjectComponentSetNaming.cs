@@ -1,3 +1,5 @@
+using Compze.DependencyInjection.Wiring.Registration;
+
 namespace Compze.DependencyInjection.LightInject;
 
 /// <summary>

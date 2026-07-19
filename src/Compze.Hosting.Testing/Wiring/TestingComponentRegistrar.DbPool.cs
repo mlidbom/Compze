@@ -3,10 +3,10 @@ using Compze.DbPool.MicrosoftSql;
 using Compze.DbPool.MySql;
 using Compze.DbPool.PostgreSql;
 using Compze.DbPool.Sqlite;
-using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE;
 using Compze.Internals.Testing;
 using Compze.DbPool;
+using Compze.DependencyInjection.Wiring.Registration;
 
 namespace Compze.Hosting.Testing.Wiring;
 

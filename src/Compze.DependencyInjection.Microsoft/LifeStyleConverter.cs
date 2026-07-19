@@ -1,4 +1,4 @@
-using Compze.DependencyInjection.Abstractions;
+using Compze.DependencyInjection.Wiring.Registration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Compze.DependencyInjection.Microsoft;

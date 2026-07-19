@@ -1,5 +1,5 @@
-using Compze.DependencyInjection.Abstractions;
 using Compze.DependencyInjection.Extensions.Hosting;
+using Compze.DependencyInjection.Wiring.Registration;
 using Compze.Underscore;
 using Microsoft.Extensions.Hosting;
 

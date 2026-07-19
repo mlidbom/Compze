@@ -1,5 +1,6 @@
 using Compze.Abstractions.Public;
 using Compze.DependencyInjection;
+using Compze.DependencyInjection.Runtime;
 using Compze.Internals.Serialization.Newtonsoft.Private.TeventStore;
 using Compze.Hosting.Testing;
 using Compze.Internals.Testing;
@@ -7,7 +8,6 @@ using Compze.Internals.Testing.Performance;
 using Compze.Tests.Common.Wiring;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
-using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE;
 using Compze.Internals.SystemCE.LinqCE;
 using Compze.Teventive.Taggregates.BaseClasses;

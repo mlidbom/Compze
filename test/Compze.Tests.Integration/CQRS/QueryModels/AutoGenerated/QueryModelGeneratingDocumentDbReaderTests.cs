@@ -1,6 +1,8 @@
 using Compze.Abstractions.Public;
 using Compze.DependencyInjection;
-using Compze.DependencyInjection.Abstractions;
+using Compze.DependencyInjection.Runtime;
+using Compze.DependencyInjection.Runtime.Resolution;
+using Compze.DependencyInjection.Wiring.Registration;
 using Compze.Hosting.Testing;
 using Compze.Internals.SystemCE.TransactionsCE;
 using Compze.Internals.Testing;

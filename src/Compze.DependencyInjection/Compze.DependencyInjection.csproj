@@ -6,6 +6,18 @@
     <!-- TODO:docs: Remove once all public API members have XML documentation comments -->
     <NoWarn>CS1591</NoWarn>
   </PropertyGroup>
+
+   <ItemGroup>
+      <InternalsVisibleTo Include="Compze.DependencyInjection.Autofac" />
+      <InternalsVisibleTo Include="Compze.DependencyInjection.DryIoc" />
+      <InternalsVisibleTo Include="Compze.DependencyInjection.LightInject" />
+      <InternalsVisibleTo Include="Compze.DependencyInjection.Microsoft" />
+      <InternalsVisibleTo Include="Compze.DependencyInjection.Autofac.Extensions.Hosting" />
+      <InternalsVisibleTo Include="Compze.DependencyInjection.DryIoc.Extensions.Hosting" />
+      <InternalsVisibleTo Include="Compze.DependencyInjection.LightInject.Extensions.Hosting" />
+      <InternalsVisibleTo Include="Compze.DependencyInjection.Microsoft.Extensions.Hosting" />
+   </ItemGroup>
+   
   <!-- Compze.Contracts — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Contracts)' == 'true'">
     <PackageReference Include="Compze.Contracts" Version="*-*" />

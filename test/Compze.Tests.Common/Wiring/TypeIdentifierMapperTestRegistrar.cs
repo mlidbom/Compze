@@ -2,7 +2,7 @@ using Compze.Abstractions.Tessaging.Public;
 using Compze.Tessaging.Internals.Transport;
 using Compze.TypeIdentifiers;
 using Compze.DependencyInjection;
-using Compze.DependencyInjection.Abstractions;
+using Compze.DependencyInjection.Wiring.Registration;
 using Compze.Teventive.Taggregates.Tevents.Public;
 
 namespace Compze.Tests.Common.Wiring;

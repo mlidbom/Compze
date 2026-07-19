@@ -4,7 +4,7 @@ using Compze.Internals.Testing;
 using Compze.Tests.Common.Wiring;
 using Compze.Tests.Infrastructure;
 using Compze.DependencyInjection;
-using Compze.DependencyInjection.Abstractions;
+using Compze.DependencyInjection.Runtime;
 using JetBrains.Annotations;
 using Xunit;
 

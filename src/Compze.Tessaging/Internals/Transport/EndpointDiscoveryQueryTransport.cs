@@ -3,7 +3,7 @@ using Compze.Abstractions.Public;
 using Compze.Abstractions.Tessaging.Public;
 using Compze.Abstractions.Hosting.Public;
 using Compze.DependencyInjection;
-using Compze.DependencyInjection.Abstractions;
+using Compze.DependencyInjection.Wiring.Registration;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 
 namespace Compze.Tessaging.Internals.Transport;

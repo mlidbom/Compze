@@ -1,7 +1,11 @@
 using Compze.Contracts;
-using Compze.DependencyInjection.Abstractions;
+using Compze.DependencyInjection.Runtime;
+using Compze.DependencyInjection.Runtime.Resolution;
+using Compze.DependencyInjection.Runtime.Resolution.Internal;
+using Compze.DependencyInjection.Wiring;
+using Compze.DependencyInjection.Wiring.Registration;
 using DryIoc;
-using IScope = Compze.DependencyInjection.Abstractions.IScope;
+using IScope = Compze.DependencyInjection.Runtime.Resolution.IScope;
 
 namespace Compze.DependencyInjection.DryIoc;
 
@@ -16,7 +20,7 @@ public sealed class DryIocContainer : DependencyInjectionContainer, IRootResolve
 
    public override DryIocContainerBuilder CreateCloneContainerBuilder() => (DryIocContainerBuilder)base.CreateCloneContainerBuilder();
 
-   public override DryIocContainerBuilder CreateChildContainerBuilder() => (DryIocContainerBuilder)base.CreateChildContainerBuilder();
+   internal override DryIocContainerBuilder CreateChildContainerBuilder() => (DryIocContainerBuilder)base.CreateChildContainerBuilder();
 
    protected override object ResolveCore(Type serviceType)
    {
@@ -30,7 +34,7 @@ public sealed class DryIocContainer : DependencyInjectionContainer, IRootResolve
       return (IEnumerable<object>)_container.Resolve(typeof(IEnumerable<>).MakeGenericType(serviceType));
    }
 
-   public IScope BeginScope()
+   public Runtime.Resolution.IScope BeginScope()
    {
       Contract.State.NotDisposed(_isDisposed, this);
 

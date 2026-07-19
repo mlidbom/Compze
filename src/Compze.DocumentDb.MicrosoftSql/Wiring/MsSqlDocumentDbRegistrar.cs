@@ -1,4 +1,4 @@
-using Compze.DependencyInjection.Abstractions;
+using Compze.DependencyInjection.Wiring.Registration;
 using Compze.Internals.Sql.MicrosoftSql.Wiring;
 using Layer = Compze.DocumentDb.MicrosoftSql.MsSqlDocumentDbSqlLayer;
 

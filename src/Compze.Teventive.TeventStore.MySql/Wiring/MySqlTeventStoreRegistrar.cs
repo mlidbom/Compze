@@ -1,5 +1,5 @@
 using Compze.DependencyInjection;
-using Compze.DependencyInjection.Abstractions;
+using Compze.DependencyInjection.Wiring.Registration;
 using Compze.Internals.Sql.MySql;
 using Compze.Internals.Sql.MySql.Private;
 using Compze.Internals.Sql.MySql.Wiring;
