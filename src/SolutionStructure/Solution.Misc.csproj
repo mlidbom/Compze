@@ -7,7 +7,7 @@
    <Import Project="solutionstructure.minimal-build-involvement.props" />
 
    <ItemGroup>
-      <None Include="../../**/*.*" Exclude="$(CompzeExcludes);**/*.axaml;**/*.md;**/*.Build.props;**/*.ps1;**/*.psm1;**/*.slnx;**/*.editorconfig;**/*.props;**/*.manifest;**/*.wixproj;**/*.wxs;**/*.yml;**/*.wxl;**/.git/**;**/Website/Compze/**" KeepDuplicates="false" />
+      <None Include="../../**/*.*" Exclude="$(CompzeExcludes);**/*.axaml;**/*.md;**/*.Build.props;**/*.ps1;**/*.psm1;**/*.slnx;**/*.editorconfig;**/*.props;**/*.manifest;**/*.wixproj;**/*.wxs;**/*.yml;**/*.wxl;**/.git/**;**/Website/Compze/**;**/*.cs;**/*.csproj;**/*.trx" KeepDuplicates="false" />
    </ItemGroup>
 
 </Project>
