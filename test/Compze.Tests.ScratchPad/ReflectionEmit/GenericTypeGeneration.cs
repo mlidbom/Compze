@@ -1,13 +1,12 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using Compze.Contracts;
-using Compze.Tessaging.Public;
 using Compze.Internals.SystemCE.CollectionsCE.GenericCE;
 using Compze.Internals.SystemCE.ReflectionCE;
 using Compze.Internals.SystemCE.ReflectionCE.EmitCE;
 using Compze.Threading;
 using Compze.Must;
-
+using Compze.Tessaging.Abstractions.TessageTypes;
 using Compze.xUnitBDD;
 
 namespace Compze.Tests.ScratchPad.ReflectionEmit;

@@ -7,7 +7,7 @@ using Compze.Tests.Infrastructure.XUnit;
 using Compze.Abstractions.Public;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Must;
-using Compze.Tessaging.Abstractions.Public;
+using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Abstractions.TessageTypes;
 using Compze.Tessaging.Typermedia;
 using Compze.Tessaging.Engine;

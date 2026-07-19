@@ -3,7 +3,6 @@ using Compze.Tessaging.Internals.Transport;
 using Compze.TypeIdentifiers;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
-using Compze.Tessaging.Abstractions.Public;
 using Compze.Tessaging.Abstractions.TessageTypes;
 using Compze.Teventive.Taggregates.Tevents.Public;
 

@@ -1,7 +1,6 @@
 using Compze.Abstractions.Public;
 using Compze.Contracts;
 using Compze.Internals.SystemCE.LinqCE;
-using Compze.Tessaging.Abstractions.Public;
 using Compze.Tessaging.Abstractions.TessageTypes;
 using Compze.Teventive.Taggregates.Tevents.Public;
 

@@ -5,7 +5,7 @@ using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Tessaging.Hosting.Testing.Typermedia.Wiring;
 using Compze.Hosting.Testing;
-using Compze.Tessaging.Abstractions.Public;
+using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Abstractions.TessageTypes;
 using static Compze.Must.MustActions;
 using Compze.Tessaging.Typermedia.Client;

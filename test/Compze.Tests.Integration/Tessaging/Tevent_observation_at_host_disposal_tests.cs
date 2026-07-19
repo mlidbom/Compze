@@ -3,7 +3,7 @@ using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Logging;
 using Compze.Must;
-using Compze.Tessaging.Abstractions.Public;
+using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;

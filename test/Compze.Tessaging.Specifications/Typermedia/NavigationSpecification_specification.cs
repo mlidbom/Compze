@@ -1,5 +1,5 @@
 using Compze.Must;
-using Compze.Tessaging.Abstractions.Public;
+using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Abstractions.TessageTypes;
 using Compze.xUnitBDD;
 using Compze.Tessaging.Typermedia;

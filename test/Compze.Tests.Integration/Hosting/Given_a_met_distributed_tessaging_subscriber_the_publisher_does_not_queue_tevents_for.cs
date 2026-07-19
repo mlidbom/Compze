@@ -9,7 +9,7 @@ using Compze.Internals.Serialization.Newtonsoft.Wiring;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Internals.Testing;
 using Compze.Must;
-using Compze.Tessaging.Abstractions.Public;
+using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Engine;
 using Compze.Tessaging.Implementation.Peers;
 using Compze.Tests.Common.Tessaging.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler;

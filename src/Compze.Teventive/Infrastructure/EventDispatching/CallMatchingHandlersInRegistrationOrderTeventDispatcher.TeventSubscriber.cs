@@ -1,6 +1,5 @@
 using Compze.Contracts;
 using Compze.Internals.SystemCE.ReflectionCE;
-using Compze.Tessaging.Abstractions.Public;
 using Compze.Tessaging.Abstractions.TessageTypes;
 using Compze.Tessaging.Abstractions.Validation;
 

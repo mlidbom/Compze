@@ -1,5 +1,4 @@
 using Compze.Abstractions.Public;
-using Compze.Tessaging.Abstractions.Public;
 
 // ReSharper disable RedundantNameQualifier
 // ReSharper disable UnusedTypeParameter

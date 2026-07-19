@@ -5,7 +5,7 @@ using JetBrains.Annotations;
 using Compze.Tessaging.Engine;
 using Compze.Tessaging.Implementation.Abstractions;
 using Compze.Internals.SystemCE.UsageGuards;
-using Compze.Tessaging.Abstractions.Public;
+using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Abstractions.TessageTypes;
 using Compze.Tessaging.Abstractions.Validation;
 

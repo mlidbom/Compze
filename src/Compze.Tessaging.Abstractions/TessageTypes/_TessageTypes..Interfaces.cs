@@ -2,8 +2,6 @@
 
 // ReSharper disable MemberCanBeInternal
 
-using Compze.Tessaging.Abstractions.Public;
-
 #pragma warning disable CA1040 //We define a number of empty marker interfaces here that are vital for framework functionality
 // ReSharper disable UnusedTypeParameter
 

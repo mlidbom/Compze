@@ -1,6 +1,6 @@
 using Compze.Tessaging.Abstractions.TessageTypes;
 
-namespace Compze.Tessaging.Serialization.Internal;
+namespace Compze.Tessaging.Serialization;
 
 ///<summary>The Tessaging pipeline's own serializer: the format of every <see cref="ITessage"/> the pipeline sends and<br/>
 /// receives. That format is both the wire body and what the inbox/outbox store, because the outbox persists the wire-ready body<br/>

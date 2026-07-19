@@ -1,5 +1,4 @@
 using Compze.DocumentDb.Public;
-using Compze.Tessaging.Abstractions.Public;
 using Compze.Tessaging.Abstractions.TessageTypes;
 using Compze.Tessaging.Engine;
 

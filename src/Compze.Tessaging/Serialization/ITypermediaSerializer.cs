@@ -1,6 +1,6 @@
 using Compze.Tessaging.Abstractions.TessageTypes;
 
-namespace Compze.Tessaging.Serialization.Internal;
+namespace Compze.Tessaging.Serialization;
 
 ///<summary>The Typermedia feature's own serializer: the format of the Typermedia conversation — the tueries and tommands<br/>
 /// (<see cref="ITypermediaTessage"/>) a client sends, and the results the serving endpoint returns.</summary>

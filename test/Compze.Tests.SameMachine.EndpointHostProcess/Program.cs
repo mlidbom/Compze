@@ -8,7 +8,7 @@ using Compze.DependencyInjection.Microsoft;
 using Compze.Hosting;
 using Compze.Hosting.SameMachine;
 using Compze.Internals.Serialization.Newtonsoft.Wiring;
-using Compze.Tessaging.Abstractions.Public;
+using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Internals.Transport.NamedPipes;
 using Compze.Tessaging.Engine;
 using Compze.Tessaging.Sqlite.Wiring;

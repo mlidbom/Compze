@@ -1,4 +1,4 @@
-using Compze.Tessaging.Abstractions.Public;
+using Compze.Tessaging.Abstractions;
 
 namespace Compze.Tessaging.Internals.Transport;
 

@@ -8,7 +8,7 @@ using Compze.Internals.SystemCE.TransactionsCE.Testing;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Threading;
 using Compze.Must;
-using Compze.Tessaging.Abstractions.Public;
+using Compze.Tessaging.Abstractions;
 using static Compze.Must.MustActions;
 
 namespace Compze.Tests.Integration.Tessaging.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler;

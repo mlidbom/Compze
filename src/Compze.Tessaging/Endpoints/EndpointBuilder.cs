@@ -1,6 +1,5 @@
 using Compze.Abstractions.Public;
 using Compze.Tessaging.Endpoints.Discovery;
-using Compze.Tessaging.Serialization.Internal;
 using Compze.Contracts;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
@@ -13,6 +12,7 @@ using Compze.Tessaging.Implementation.HandlerAvailability;
 using Compze.Tessaging.Implementation.Peers;
 using Compze.Tessaging.Implementation.Transport.Client.Implementation;
 using Compze.Tessaging.Internals.Transport;
+using Compze.Tessaging.Serialization;
 using Compze.Tessaging.Transport;
 using Compze.Tessaging.Typermedia;
 using Compze.Tessaging.Typermedia.Client;

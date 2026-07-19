@@ -7,7 +7,7 @@ using Compze.Hosting.Testing;
 using Compze.Hosting.Testing.Wiring;
 using Compze.Internals.Testing;
 using Compze.Must;
-using Compze.Tessaging.Abstractions.Public;
+using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Abstractions.TessageTypes;
 using Compze.Tessaging.Engine;
 using Compze.Tests.Infrastructure;

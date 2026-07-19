@@ -4,7 +4,6 @@ using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Logging;
 using Compze.Internals.SystemCE.LinqCE;
-using Compze.Tessaging.Abstractions.Public;
 using Compze.Tessaging.Abstractions.TessageTypes;
 using Compze.Teventive.Taggregates.Tevents.Public;
 using Compze.Teventive.TeventStore.Abstractions.Internal;

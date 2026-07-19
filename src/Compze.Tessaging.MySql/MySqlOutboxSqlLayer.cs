@@ -4,7 +4,7 @@ using Compze.Internals.Sql.MySql;
 using Compze.Internals.Sql.MySql.Private;
 using Compze.Internals.SystemCE.LinqCE;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
-using Compze.Tessaging.Abstractions.Public;
+using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Transport.SqlLayer;
 using Compze.TypeIdentifiers.Interning;
 using DispatchingTable = Compze.Tessaging.Transport.SqlLayer.ITessagingSqlLayer.OutboxTessageDispatchingTableSchemaStrings;

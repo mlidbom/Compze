@@ -1,5 +1,4 @@
 using Compze.Contracts;
-using Compze.Tessaging.Abstractions.Public;
 using Compze.Tessaging.Abstractions.TessageTypes;
 
 namespace Compze.Teventive;

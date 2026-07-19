@@ -3,7 +3,7 @@ using Compze.Contracts;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
-using Compze.Tessaging.Abstractions.Public;
+using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Abstractions.TessageTypes;
 using JetBrains.Annotations;
 

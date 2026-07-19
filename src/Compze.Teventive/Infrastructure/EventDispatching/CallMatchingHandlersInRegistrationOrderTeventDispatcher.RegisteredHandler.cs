@@ -1,5 +1,4 @@
 using Compze.Internals.SystemCE.ReflectionCE;
-using Compze.Tessaging.Abstractions.Public;
 using Compze.Tessaging.Abstractions.TessageTypes;
 
 namespace Compze.Teventive.Infrastructure.EventDispatching;

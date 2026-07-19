@@ -5,7 +5,7 @@ using Compze.DependencyInjection.Abstractions;
 using Compze.Tessaging.Engine;
 using Compze.Tessaging.Implementation.Abstractions;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
-using Compze.Tessaging.Abstractions.Public;
+using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Abstractions.TessageTypes;
 using Compze.Tessaging.Abstractions.Validation;
 using JetBrains.Annotations;

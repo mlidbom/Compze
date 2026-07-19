@@ -1,5 +1,4 @@
 using Compze.TypeIdentifiers;
-using Compze.Tessaging.Serialization.Internal;
 using Compze.Tessaging.Endpoints;
 using Compze.Tessaging.Endpoints.Discovery;
 using Compze.Tessaging.Internals.Transport;
@@ -16,6 +15,7 @@ using Compze.Internals.SystemCE.ReflectionCE;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tessaging.Abstractions.TessageTypes;
 using Compze.Tessaging.Implementation.Abstractions;
+using Compze.Tessaging.Serialization;
 using Compze.Threading;
 
 namespace Compze.Tessaging.Implementation.Transport.Client.Implementation;

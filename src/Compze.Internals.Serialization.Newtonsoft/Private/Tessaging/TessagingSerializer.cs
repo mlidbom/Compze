@@ -1,9 +1,8 @@
 using Compze.TypeIdentifiers;
-using Compze.Tessaging.Serialization.Internal;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
-using Compze.Tessaging.Abstractions.Public;
 using Compze.Tessaging.Abstractions.TessageTypes;
+using Compze.Tessaging.Serialization;
 
 namespace Compze.Internals.Serialization.Newtonsoft.Private.Tessaging;
 

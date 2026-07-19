@@ -1,10 +1,10 @@
 using Compze.Abstractions.Public;
-using Compze.Tessaging.Serialization.Internal;
 using Compze.Contracts;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Tessaging.Abstractions.TessageTypes;
 using Compze.Tessaging.Internals.Transport;
+using Compze.Tessaging.Serialization;
 using Compze.TypeIdentifiers;
 
 namespace Compze.Tessaging.Typermedia.Client;

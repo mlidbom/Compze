@@ -2,7 +2,7 @@ using Compze.Abstractions.Public;
 using Compze.Contracts;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
-using Compze.Tessaging.Abstractions.Public;
+using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Abstractions.TessageTypes;
 using Compze.Tessaging.Implementation;
 using Compze.Tessaging.Implementation.Abstractions;

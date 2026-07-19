@@ -2,7 +2,7 @@ using Compze.Tessaging.Endpoints.Discovery;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
-using Compze.Tessaging.Abstractions.Public;
+using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Implementation.Abstractions;
 using Compze.Tessaging.Implementation.EndpointCatalog;
 using Compze.Tessaging.Implementation.TessageHandling.Abstractions;

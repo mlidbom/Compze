@@ -5,7 +5,6 @@ using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Serialization.Newtonsoft.Wiring;
 using Compze.Hosting.Testing.Wiring;
-using Compze.Tessaging.Abstractions.Public;
 using Compze.Tessaging.Abstractions.TessageTypes;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;

@@ -2,7 +2,6 @@ using AccountManagement.API.ValidationAttributes;
 using AccountManagement.Domain;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
-using Compze.Tessaging.Abstractions.Public;
 using Compze.Tessaging.Abstractions.TessageTypes;
 
 // ReSharper disable PropertyCanBeMadeInitOnly.Global

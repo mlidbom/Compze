@@ -4,7 +4,7 @@ using Compze.Internals.Sql.Common;
 using Compze.Internals.Sql.PostgreSql;
 using Compze.Internals.Sql.PostgreSql.Private;
 using Compze.Internals.SystemCE;
-using Compze.Tessaging.Abstractions.Public;
+using Compze.Tessaging.Abstractions;
 using Compze.Teventive.TeventStore.Abstractions.Internal.SqlLayer.Abstractions;
 using Npgsql;
 using NpgsqlTypes;

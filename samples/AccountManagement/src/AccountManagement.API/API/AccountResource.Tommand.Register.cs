@@ -3,7 +3,7 @@ using AccountManagement.Domain;
 using Compze.Abstractions.Public;
 using JetBrains.Annotations;
 using System.ComponentModel.DataAnnotations;
-using Compze.Tessaging.Abstractions.Public;
+using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Abstractions.TessageTypes;
 
 // ReSharper disable MemberCanBeMadeStatic.Global Because we want these members to be accessed through the fluent API we don't want to make them static.

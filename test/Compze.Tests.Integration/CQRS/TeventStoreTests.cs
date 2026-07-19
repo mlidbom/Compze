@@ -10,7 +10,7 @@ using Compze.Internals.SystemCE.TransactionsCE;
 using System.Transactions;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Must;
-using Compze.Tessaging.Abstractions.Public;
+using Compze.Tessaging.Abstractions;
 using Compze.Teventive;
 using Compze.Teventive.Taggregates.BaseClasses;
 using Compze.Teventive.Taggregates.Tevents.Public;

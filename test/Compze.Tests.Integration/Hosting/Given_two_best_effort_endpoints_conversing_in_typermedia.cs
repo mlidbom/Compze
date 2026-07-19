@@ -10,7 +10,7 @@ using Compze.Internals.Serialization.Newtonsoft.Wiring;
 using Compze.Internals.Testing;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Must;
-using Compze.Tessaging.Abstractions.Public;
+using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Abstractions.TessageTypes;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
