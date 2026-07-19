@@ -9,6 +9,6 @@
 
       <None Include="../../**/*.ps1" Exclude="$(CompzeExcludes)" KeepDuplicates="false" />
       <None Include="../../**/*.psm1" Exclude="$(CompzeExcludes)" KeepDuplicates="false" />
-      <None Include="../../**/*.yml" Exclude="$(CompzeExcludes)" KeepDuplicates="false" />
+      <None Include="../../**/*.yml" Exclude="$(CompzeExcludes);**/Websites/**;**/_docs/**" KeepDuplicates="false" />
    </ItemGroup>
 </Project>
