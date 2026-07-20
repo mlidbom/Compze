@@ -1,4 +1,5 @@
 using Compze.Tessaging.Typermedia;
+using Compze.Tessaging.Typermedia.Internal;
 
 namespace Compze.Tessaging.TessageBus.Internal;
 

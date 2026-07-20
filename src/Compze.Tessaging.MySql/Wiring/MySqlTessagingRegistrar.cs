@@ -3,7 +3,7 @@ using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Sql.MySql;
 using Compze.Internals.Sql.MySql.Private;
 using Compze.Internals.Sql.MySql.Wiring;
-using Compze.Tessaging.Transport.SqlLayer;
+using Compze.Tessaging.Internal.SqlLayer;
 using Compze.TypeIdentifiers.Interning;
 using Compze.TypeIdentifiers.Interning.MySql.Wiring;
 

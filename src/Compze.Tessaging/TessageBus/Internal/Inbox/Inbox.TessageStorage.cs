@@ -1,8 +1,8 @@
 using Compze.Contracts;
 using Compze.Internals.SystemCE.ReflectionCE;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
-using Compze.Tessaging.Internal.Transport.Abstractions;
-using Compze.Tessaging.Transport.SqlLayer;
+using Compze.Tessaging.Internal.Transport;
+using Compze.Tessaging.Internal.SqlLayer;
 
 namespace Compze.Tessaging.TessageBus.Internal.Inbox;
 

@@ -5,10 +5,12 @@ using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Logging;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Internals.SystemCE.TransactionsCE;
-using Compze.Tessaging.Internal.Abstractions;
+using Compze.Tessaging.TessageBus.Internal.BestEffortDelivery;
+using Compze.Tessaging.Internal.TessagesInFlight;
 using Compze.Tessaging.Internal.HandlerAvailability;
-using Compze.Tessaging.Internal.Peers;
-using Compze.Tessaging.Internal.Transport.Client.Implementation;
+using Compze.Tessaging.Peers;
+using Compze.Tessaging.Peers.Internal;
+using Compze.Tessaging.Internal.Routing;
 
 namespace Compze.Tessaging.TessageBus.Internal.Outbox;
 

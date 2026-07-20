@@ -3,7 +3,8 @@ using Compze.Tests.Common.Tessaging.Given_a_backend_endpoint_with_a_tommand_teve
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Must;
 using Compze.Tessaging.TessageBus;
-using Compze.Tessaging.Transport.Exceptions;
+using Compze.Tessaging.Typermedia;
+using Compze.Tessaging.Internal.Transport;
 using static Compze.Must.MustActions;
 
 // ReSharper disable InconsistentNaming
@@ -19,11 +20,11 @@ public class EndpointHostTest_Tests : EndpointHostTestBase
       await AssertDisposingHostThrowsAggregateExceptionHierarchyContainingThrownExceptionAsANonAggregateException();
    }
 
-   [PCT]  public async Task If_tommand_handler_with_result_throws_disposing_host_throws_AggregateException_containing_the_thrown_exception_and_SendAsync_throws_MessageDispatchingFailedException()
+   [PCT]  public async Task If_tommand_handler_with_result_throws_disposing_host_throws_AggregateException_containing_the_thrown_exception_and_SendAsync_throws_TessageDispatchingFailedException()
    {
       TommandHandlerWithResultThreadGate.ThrowPostPassThrough(_thrownException);
       await InvokingAsync(async () => await Navigator.PostAsync(MyAtMostOnceTypermediaTommandWithResult.Create()))
-                         .Must().ThrowAsync<MessageDispatchingFailedException>();
+                         .Must().ThrowAsync<TessageDispatchingFailedException>();
    }
 
    [PCT]  public async Task If_tevent_handler_throws_disposing_host_throws_AggregateException_containing_the_thrown_exception()
@@ -33,12 +34,12 @@ public class EndpointHostTest_Tests : EndpointHostTestBase
       await AssertDisposingHostThrowsAggregateExceptionHierarchyContainingThrownExceptionAsANonAggregateException();
    }
 
-   [PCT]  public async Task If_tuery_handler_throws_disposing_host_throws_AggregateException_containing_the_thrown_exception_and_SendAsync_throws_MessageDispatchingFailedException()
+   [PCT]  public async Task If_tuery_handler_throws_disposing_host_throws_AggregateException_containing_the_thrown_exception_and_SendAsync_throws_TessageDispatchingFailedException()
    {
       TueryHandlerThreadGate.ThrowPostPassThrough(_thrownException);
       //urgent: this seems to do some pretty strange async related things
       await InvokingAsync(() => Navigator.GetAsync(new MyTuery()))
-                         .Must().ThrowAsync<MessageDispatchingFailedException>();
+                         .Must().ThrowAsync<TessageDispatchingFailedException>();
    }
 
    async Task AssertDisposingHostThrowsAggregateExceptionHierarchyContainingThrownExceptionAsANonAggregateException()

@@ -1,6 +1,6 @@
-using Compze.Tessaging.Transport.SqlLayer;
-using Peers = Compze.Tessaging.Transport.SqlLayer.ITessagingSqlLayer.PeersDatabaseSchemaStrings;
-using Types = Compze.Tessaging.Transport.SqlLayer.ITessagingSqlLayer.PeerHandledTessageTypesDatabaseSchemaStrings;
+using Compze.Tessaging.Internal.SqlLayer;
+using PeersSchema = Compze.Tessaging.Internal.SqlLayer.ITessagingSqlLayer.PeersDatabaseSchemaStrings;
+using Types = Compze.Tessaging.Internal.SqlLayer.ITessagingSqlLayer.PeerHandledTessageTypesDatabaseSchemaStrings;
 
 namespace Compze.Tessaging.MicrosoftSql;
 
@@ -13,9 +13,9 @@ partial class MsSqlPeerRegistrySqlLayer
        BEGIN
            CREATE TABLE {tables.Peers}
            (
-               {Peers.EndpointId} uniqueidentifier NOT NULL,
+               {PeersSchema.EndpointId} uniqueidentifier NOT NULL,
 
-               CONSTRAINT PK_{tables.Peers} PRIMARY KEY CLUSTERED ( {Peers.EndpointId} )
+               CONSTRAINT PK_{tables.Peers} PRIMARY KEY CLUSTERED ( {PeersSchema.EndpointId} )
            )
 
            CREATE TABLE {tables.PeerHandledTessageTypes}
@@ -23,7 +23,7 @@ partial class MsSqlPeerRegistrySqlLayer
                {Types.EndpointId}         uniqueidentifier NOT NULL,
                {Types.HandledTessageType} nvarchar(MAX)    NOT NULL,
 
-               CONSTRAINT FK_{tables.PeerHandledTessageTypes}_{Types.EndpointId} FOREIGN KEY ( {Types.EndpointId} ) REFERENCES {tables.Peers} ({Peers.EndpointId})
+               CONSTRAINT FK_{tables.PeerHandledTessageTypes}_{Types.EndpointId} FOREIGN KEY ( {Types.EndpointId} ) REFERENCES {tables.Peers} ({PeersSchema.EndpointId})
            )
 
            CREATE INDEX IX_{tables.PeerHandledTessageTypes}_{Types.EndpointId} ON {tables.PeerHandledTessageTypes} ( {Types.EndpointId} )

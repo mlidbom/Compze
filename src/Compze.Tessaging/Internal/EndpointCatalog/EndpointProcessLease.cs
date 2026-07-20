@@ -8,7 +8,7 @@ using Compze.Internals.SystemCE.TransactionsCE;
 using Compze.Tessaging.Endpoints;
 using Compze.Tessaging.Endpoints.Exceptions;
 using Compze.Tessaging.Internal.SystemCE.ThreadingCE;
-using Compze.Tessaging.Transport.SqlLayer;
+using Compze.Tessaging.Internal.SqlLayer;
 
 namespace Compze.Tessaging.Internal.EndpointCatalog;
 

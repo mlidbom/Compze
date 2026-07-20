@@ -5,22 +5,26 @@ using Compze.DependencyInjection.Abstractions;
 using Compze.Tessaging.Endpoints.BestEffort;
 using Compze.Tessaging.Endpoints.ExactlyOnce;
 using Compze.Tessaging.Engine;
+using Compze.Tessaging.Engine.Internal;
 using Compze.Tessaging.Engine.HandlerRegistration;
+using Compze.Tessaging.Engine.HandlerRegistration.Internal;
 using Compze.Tessaging.Engine.HandlerRegistration.TessageHandlers;
 using Compze.Tessaging.Engine.HandlerRegistration.TeventObservation;
 using Compze.Tessaging.Engine.Wiring;
-using Compze.Tessaging.Internal;
-using Compze.Tessaging.Internal.Abstractions;
-using Compze.Tessaging.Internal.BestEffortDelivery;
-using Compze.Tessaging.Internal.HandlerAvailability;
-using Compze.Tessaging.Internal.Peers;
-using Compze.Tessaging.Internal.Transport.Client.Implementation;
 using Compze.Tessaging.TessageBus.Internal;
-using Compze.Tessaging.Transport;
-using Compze.Tessaging.Transport.Discovery;
+using Compze.Tessaging.Internal.TessagesInFlight;
+using Compze.Tessaging.TessageBus.Internal.BestEffortDelivery;
+using Compze.Tessaging.TessageBus.Internal.Outbox;
+using Compze.Tessaging.Internal.HandlerAvailability;
+using Compze.Tessaging.Peers;
+using Compze.Tessaging.Peers.Internal;
+using Compze.Tessaging.Internal.Routing;
+using Compze.Tessaging.Internal.Transport;
+using Compze.Tessaging.Internal.Transport.Advertisement;
 using Compze.Tessaging.Typermedia;
+using Compze.Tessaging.Typermedia.Internal;
 using Compze.Tessaging.Typermedia.Client;
-using Compze.Tessaging.Typermedia.Hosting;
+using Compze.Tessaging.Typermedia.Client.Internal;
 using Compze.TypeIdentifiers;
 
 namespace Compze.Tessaging.Endpoints;
@@ -250,7 +254,7 @@ public abstract class EndpointBuilder<TConcreteBuilder> where TConcreteBuilder :
                          Singleton.For<HandlerAvailabilityPatience>().Instance(_handlerAvailabilityPatience),
                          Singleton.For<ITessagesInFlightTracker>().Instance(_tessagesInFlightTracker ?? new NullOpTessagesInFlightTracker()));
 
-      EndpointDiscoveryQueryExecutor.RegisterWith(Registrar);
+      EndpointInformationQueryExecutor.RegisterWith(Registrar);
 
       _registerTransportProtocol!(Registrar);
       _registerSerializer?.Invoke(Registrar);
@@ -297,7 +301,7 @@ public abstract class EndpointBuilder<TConcreteBuilder> where TConcreteBuilder :
       container.RootResolver.Resolve<ITypeMap>();
       //The one discovery question every endpoint serves: its answer is the endpoint's identity and its one advertisement -
       //the roster's projection, covering every tessage kind.
-      new EndpointDiscoveryQueryRegistrarWithDependencyInjectionSupport(container.RootResolver.Resolve<EndpointDiscoveryQueryExecutor>())
+      new EndpointInformationQueryRegistrarWithDependencyInjectionSupport(container.RootResolver.Resolve<EndpointInformationQueryExecutor>())
         .ForQuery((EndpointInformationQuery _, TessageHandlerRoster roster, EndpointConfiguration configuration) =>
                      new EndpointInformation([.. roster.AdvertisedRemoteTessageTypeIds()], configuration));
       AssertTheRosterIsSound(container.RootResolver.Resolve<TessageHandlerRoster>());

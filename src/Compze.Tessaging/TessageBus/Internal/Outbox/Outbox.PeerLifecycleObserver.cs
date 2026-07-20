@@ -2,8 +2,9 @@ using Compze.Internals.Logging;
 using Compze.Internals.SystemCE.ReflectionCE;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tessaging.Endpoints;
-using Compze.Tessaging.Internal.Peers;
-using Compze.Tessaging.Transport.SqlLayer;
+using Compze.Tessaging.Peers;
+using Compze.Tessaging.Peers.Internal;
+using Compze.Tessaging.Internal.SqlLayer;
 using Compze.TypeIdentifiers;
 
 namespace Compze.Tessaging.TessageBus.Internal.Outbox;

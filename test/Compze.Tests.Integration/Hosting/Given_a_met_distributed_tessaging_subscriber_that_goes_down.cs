@@ -1,3 +1,4 @@
+using Compze.Tessaging.TessageBus.Exceptions;
 using System.Collections.Concurrent;
 using System.Transactions;
 using Compze.Tessaging.Endpoints;
@@ -14,8 +15,9 @@ using Compze.Must;
 using Compze.Tessaging.TessageBus;
 using Compze.Tessaging.Endpoints.BestEffort;
 using Compze.Tessaging.Engine.HandlerRegistration.TessageHandlers;
-using Compze.Tessaging.Internal.BestEffortDelivery;
-using Compze.Tessaging.Internal.Peers;
+using Compze.Tessaging.TessageBus.Internal.BestEffortDelivery;
+using Compze.Tessaging.Peers;
+using Compze.Tessaging.Peers.Internal;
 using Compze.Tests.Common.Tessaging.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;

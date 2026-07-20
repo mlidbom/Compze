@@ -1,5 +1,7 @@
 using Compze.DependencyInjection.Abstractions;
-using Compze.Tessaging.Transport.Discovery;
+using Compze.Tessaging.Internal.Transport.Advertisement;
+
+using Compze.Tessaging.Internal.Transport.NamedPipes;
 
 namespace Compze.Tessaging.Transport.NamedPipes;
 
@@ -11,7 +13,7 @@ public static class NamedPipeEndpointTransportRegistrar
    /// the same-machine protocol, with no web stack.</summary>
    public static IComponentRegistrar NamedPipeEndpointTransport(this IComponentRegistrar registrar)
       => registrar.NamedPipeEndpointTransportClientIfNotRegistered()
-                  .EndpointDiscoveryQueryTransportIfNotRegistered()
+                  .EndpointInformationQueryTransportIfNotRegistered()
                   .NamedPipeEndpointTransportServerIfNotRegistered();
 
    extension<TConcreteBuilder>(Endpoints.EndpointBuilder<TConcreteBuilder> @this) where TConcreteBuilder : Endpoints.EndpointBuilder<TConcreteBuilder>

@@ -4,9 +4,9 @@ using Compze.Internals.Sql.MicrosoftSql;
 using Compze.Internals.Sql.MicrosoftSql.Private;
 using Compze.Internals.SystemCE.LinqCE;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
-using Compze.Tessaging.Transport.SqlLayer;
-using Peers = Compze.Tessaging.Transport.SqlLayer.ITessagingSqlLayer.PeersDatabaseSchemaStrings;
-using Types = Compze.Tessaging.Transport.SqlLayer.ITessagingSqlLayer.PeerHandledTessageTypesDatabaseSchemaStrings;
+using Compze.Tessaging.Internal.SqlLayer;
+using PeersSchema = Compze.Tessaging.Internal.SqlLayer.ITessagingSqlLayer.PeersDatabaseSchemaStrings;
+using Types = Compze.Tessaging.Internal.SqlLayer.ITessagingSqlLayer.PeerHandledTessageTypesDatabaseSchemaStrings;
 
 namespace Compze.Tessaging.MicrosoftSql;
 
@@ -25,13 +25,13 @@ partial class MsSqlPeerRegistrySqlLayer(IMsSqlConnectionPool connectionFactory, 
               .SetCommandText(
                   $"""
 
-                   IF NOT EXISTS (SELECT 1 FROM {_tables.Peers} WHERE {Peers.EndpointId} = @{Peers.EndpointId})
-                       INSERT INTO {_tables.Peers} ({Peers.EndpointId}) VALUES (@{Peers.EndpointId});
+                   IF NOT EXISTS (SELECT 1 FROM {_tables.Peers} WHERE {PeersSchema.EndpointId} = @{PeersSchema.EndpointId})
+                       INSERT INTO {_tables.Peers} ({PeersSchema.EndpointId}) VALUES (@{PeersSchema.EndpointId});
 
                    DELETE FROM {_tables.PeerHandledTessageTypes} WHERE {Types.EndpointId} = @{Types.EndpointId};
 
                    """)
-              .AddParameter(Peers.EndpointId, peerId.Value);
+              .AddParameter(PeersSchema.EndpointId, peerId.Value);
 
             handledTessageTypes.ForEach(
                (handledTessageType, index)
@@ -57,9 +57,9 @@ partial class MsSqlPeerRegistrySqlLayer(IMsSqlConnectionPool connectionFactory, 
             command.SetCommandText(
                $"""
 
-                SELECT p.{Peers.EndpointId}, t.{Types.HandledTessageType}
+                SELECT p.{PeersSchema.EndpointId}, t.{Types.HandledTessageType}
                 FROM {_tables.Peers} p
-                LEFT JOIN {_tables.PeerHandledTessageTypes} t ON p.{Peers.EndpointId} = t.{Types.EndpointId}
+                LEFT JOIN {_tables.PeerHandledTessageTypes} t ON p.{PeersSchema.EndpointId} = t.{Types.EndpointId}
 
                 """);
 
@@ -87,10 +87,10 @@ partial class MsSqlPeerRegistrySqlLayer(IMsSqlConnectionPool connectionFactory, 
                        $"""
 
                         DELETE FROM {_tables.PeerHandledTessageTypes} WHERE {Types.EndpointId} = @{Types.EndpointId};
-                        DELETE FROM {_tables.Peers} WHERE {Peers.EndpointId} = @{Peers.EndpointId};
+                        DELETE FROM {_tables.Peers} WHERE {PeersSchema.EndpointId} = @{PeersSchema.EndpointId};
 
                         """)
-                   .AddParameter(Peers.EndpointId, peerId.Value)
+                   .AddParameter(PeersSchema.EndpointId, peerId.Value)
                    .ExecuteNonQueryAsync().caf()).caf();
    }
 

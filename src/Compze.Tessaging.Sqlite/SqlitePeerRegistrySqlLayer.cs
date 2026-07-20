@@ -4,9 +4,9 @@ using Compze.Internals.Sql.Sqlite;
 using Compze.Internals.Sql.Sqlite.Private;
 using Compze.Internals.SystemCE.LinqCE;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
-using Compze.Tessaging.Transport.SqlLayer;
-using Peers = Compze.Tessaging.Transport.SqlLayer.ITessagingSqlLayer.PeersDatabaseSchemaStrings;
-using Types = Compze.Tessaging.Transport.SqlLayer.ITessagingSqlLayer.PeerHandledTessageTypesDatabaseSchemaStrings;
+using Compze.Tessaging.Internal.SqlLayer;
+using PeersSchema = Compze.Tessaging.Internal.SqlLayer.ITessagingSqlLayer.PeersDatabaseSchemaStrings;
+using Types = Compze.Tessaging.Internal.SqlLayer.ITessagingSqlLayer.PeerHandledTessageTypesDatabaseSchemaStrings;
 
 namespace Compze.Tessaging.Sqlite;
 
@@ -25,13 +25,13 @@ partial class SqlitePeerRegistrySqlLayer(ISqliteConnectionPool connectionFactory
               .SetCommandText(
                   $"""
 
-                   INSERT INTO {_tables.Peers} ({Peers.EndpointId}) VALUES (@{Peers.EndpointId})
-                       ON CONFLICT ({Peers.EndpointId}) DO NOTHING;
+                   INSERT INTO {_tables.Peers} ({PeersSchema.EndpointId}) VALUES (@{PeersSchema.EndpointId})
+                       ON CONFLICT ({PeersSchema.EndpointId}) DO NOTHING;
 
                    DELETE FROM {_tables.PeerHandledTessageTypes} WHERE {Types.EndpointId} = @{Types.EndpointId};
 
                    """)
-              .AddMediumTextParameter(Peers.EndpointId, peerId.ToString());
+              .AddMediumTextParameter(PeersSchema.EndpointId, peerId.ToString());
 
             handledTessageTypes.ForEach(
                (handledTessageType, index)
@@ -57,9 +57,9 @@ partial class SqlitePeerRegistrySqlLayer(ISqliteConnectionPool connectionFactory
             command.SetCommandText(
                $"""
 
-                SELECT p.{Peers.EndpointId}, t.{Types.HandledTessageType}
+                SELECT p.{PeersSchema.EndpointId}, t.{Types.HandledTessageType}
                 FROM {_tables.Peers} p
-                LEFT JOIN {_tables.PeerHandledTessageTypes} t ON p.{Peers.EndpointId} = t.{Types.EndpointId}
+                LEFT JOIN {_tables.PeerHandledTessageTypes} t ON p.{PeersSchema.EndpointId} = t.{Types.EndpointId}
 
                 """);
 
@@ -87,10 +87,10 @@ partial class SqlitePeerRegistrySqlLayer(ISqliteConnectionPool connectionFactory
                        $"""
 
                         DELETE FROM {_tables.PeerHandledTessageTypes} WHERE {Types.EndpointId} = @{Types.EndpointId};
-                        DELETE FROM {_tables.Peers} WHERE {Peers.EndpointId} = @{Peers.EndpointId};
+                        DELETE FROM {_tables.Peers} WHERE {PeersSchema.EndpointId} = @{PeersSchema.EndpointId};
 
                         """)
-                   .AddMediumTextParameter(Peers.EndpointId, peerId.ToString())
+                   .AddMediumTextParameter(PeersSchema.EndpointId, peerId.ToString())
                    .ExecuteNonQueryAsync().caf()).caf();
    }
 

@@ -1,5 +1,7 @@
+using Compze.Tessaging.Internal.Transport;
+using Compze.Tessaging.Internal.Transport.AspNetCore;
 using Compze.DependencyInjection.Abstractions;
-using Compze.Tessaging.Transport.Discovery;
+using Compze.Tessaging.Internal.Transport.Advertisement;
 
 namespace Compze.Tessaging.Transport.AspNetCore;
 
@@ -11,6 +13,6 @@ public static class AspNetCoreEndpointTransportRegistrar
    /// handlers.</summary>
    public static IComponentRegistrar AspNetCoreEndpointTransport(this IComponentRegistrar registrar)
       => registrar.HttpEndpointTransportClientIfNotRegistered()
-                  .EndpointDiscoveryQueryTransportIfNotRegistered()
+                  .EndpointInformationQueryTransportIfNotRegistered()
                   .AspNetCoreEndpointTransportServerIfNotRegistered();
 }

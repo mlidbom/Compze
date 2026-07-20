@@ -1,6 +1,6 @@
-using Compze.Tessaging.Transport.SqlLayer;
-using Peers = Compze.Tessaging.Transport.SqlLayer.ITessagingSqlLayer.PeersDatabaseSchemaStrings;
-using Types = Compze.Tessaging.Transport.SqlLayer.ITessagingSqlLayer.PeerHandledTessageTypesDatabaseSchemaStrings;
+using Compze.Tessaging.Internal.SqlLayer;
+using PeersSchema = Compze.Tessaging.Internal.SqlLayer.ITessagingSqlLayer.PeersDatabaseSchemaStrings;
+using Types = Compze.Tessaging.Internal.SqlLayer.ITessagingSqlLayer.PeerHandledTessageTypesDatabaseSchemaStrings;
 
 namespace Compze.Tessaging.MySql;
 
@@ -13,9 +13,9 @@ partial class MySqlPeerRegistrySqlLayer
 
         CREATE TABLE IF NOT EXISTS {tables.Peers}
         (
-            {Peers.EndpointId} {MySqlGuidType} NOT NULL,
+            {PeersSchema.EndpointId} {MySqlGuidType} NOT NULL,
 
-            PRIMARY KEY ( {Peers.EndpointId} )
+            PRIMARY KEY ( {PeersSchema.EndpointId} )
         )
         ENGINE = InnoDB
         DEFAULT CHARACTER SET = utf8mb4;
@@ -25,7 +25,7 @@ partial class MySqlPeerRegistrySqlLayer
             {Types.EndpointId}         {MySqlGuidType} NOT NULL,
             {Types.HandledTessageType} MEDIUMTEXT      NOT NULL,
 
-            FOREIGN KEY ({Types.EndpointId}) REFERENCES {tables.Peers} ({Peers.EndpointId})
+            FOREIGN KEY ({Types.EndpointId}) REFERENCES {tables.Peers} ({PeersSchema.EndpointId})
         )
         ENGINE = InnoDB
         DEFAULT CHARACTER SET = utf8mb4;

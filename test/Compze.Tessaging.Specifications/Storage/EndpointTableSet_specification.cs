@@ -1,6 +1,6 @@
 using Compze.Tessaging.Endpoints;
 using Compze.Must;
-using Compze.Tessaging.Transport.SqlLayer;
+using Compze.Tessaging.Internal.SqlLayer;
 using Compze.xUnitBDD;
 using static Compze.Must.MustActions;
 

@@ -1,9 +1,11 @@
+using Compze.Tessaging.Internal.Transport.AspNetCore;
 using Compze.Contracts;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Logging;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
-using Compze.Tessaging.Transport.Exceptions;
+using Compze.Tessaging.Typermedia;
+using Compze.Tessaging.Internal.Transport;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,7 +16,7 @@ namespace Compze.Tessaging.Transport.AspNetCore;
 ///<summary>The ASP.NET Core dispatch surface of the endpoint's transport server: receives every communication style's requests<br/>
 /// on their per-kind routes (<see cref="HttpConstants.Routes"/>), rebuilds each <see cref="TransportRequest"/> from route, headers<br/>
 /// and body, and dispatches it through the endpoint's one <see cref="TransportRequestHandlerMap"/>. A handler exception travels<br/>
-/// back as a problem response the client rethrows as <see cref="MessageDispatchingFailedException"/> — the web-stack counterpart<br/>
+/// back as a problem response the client rethrows as <see cref="TessageDispatchingFailedException"/> — the web-stack counterpart<br/>
 /// of the named-pipe transport server's request serving.</summary>
 class TransportRequestController : Controller
 {
@@ -44,7 +46,7 @@ class TransportRequestController : Controller
    [HttpPost(HttpConstants.Routes.Typermedia.TommandNoResult)]
    public Task<IActionResult> TypermediaVoidTommand() => DispatchAsync(TransportRequestKind.TypermediaVoidTommand);
 
-   [HttpPost(HttpConstants.Routes.EndpointDiscovery.Query)]
+   [HttpPost(HttpConstants.Routes.EndpointInformation.Query)]
    public Task<IActionResult> EndpointDiscoveryQuery() => DispatchAsync(TransportRequestKind.EndpointDiscoveryQuery);
 
    async Task<IActionResult> DispatchAsync(TransportRequestKind kind)

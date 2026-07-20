@@ -1,6 +1,6 @@
-using Compze.Tessaging.Transport.SqlLayer;
-using Tessage = Compze.Tessaging.Transport.SqlLayer.ITessagingSqlLayer.OutboxTessagesDatabaseSchemaStrings;
-using D = Compze.Tessaging.Transport.SqlLayer.ITessagingSqlLayer.OutboxTessageDispatchingTableSchemaStrings;
+using Compze.Tessaging.Internal.SqlLayer;
+using Tessage = Compze.Tessaging.Internal.SqlLayer.ITessagingSqlLayer.OutboxTessagesDatabaseSchemaStrings;
+using D = Compze.Tessaging.Internal.SqlLayer.ITessagingSqlLayer.OutboxTessageDispatchingTableSchemaStrings;
 
 namespace Compze.Tessaging.Sqlite;
 

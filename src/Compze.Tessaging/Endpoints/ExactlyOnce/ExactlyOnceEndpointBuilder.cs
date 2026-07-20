@@ -4,10 +4,12 @@ using Compze.DependencyInjection.Abstractions;
 using Compze.Tessaging.Endpoints.Exceptions;
 using Compze.Tessaging.Internal.EndpointCatalog;
 using Compze.Tessaging.TessageBus;
+using Compze.Tessaging.TessageBus.Internal;
+using Compze.Tessaging.Internal.Routing;
 using Compze.Tessaging.TessageBus.Internal.Inbox;
 using Compze.Tessaging.TessageBus.Internal.Outbox;
-using Compze.Tessaging.Transport;
-using Compze.Tessaging.Transport.SqlLayer;
+using Compze.Tessaging.Internal.Transport;
+using Compze.Tessaging.Internal.SqlLayer;
 
 namespace Compze.Tessaging.Endpoints.ExactlyOnce;
 

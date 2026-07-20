@@ -1,6 +1,8 @@
+using Compze.Tessaging.Engine.HandlerRegistration.Internal;
 using Compze.Tessaging.Engine.HandlerRegistration.TessageHandlers;
 using Compze.Tessaging.Engine.HandlerRegistration.TeventObservation;
 using Compze.Tessaging.Engine.Wiring;
+using Compze.Tessaging.Engine.Internal;
 
 namespace Compze.Tessaging.Engine;
 

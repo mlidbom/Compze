@@ -3,7 +3,7 @@ using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Logging;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tessaging.Endpoints;
-using Compze.Tessaging.Transport.SqlLayer;
+using Compze.Tessaging.Internal.SqlLayer;
 using Compze.TypeIdentifiers;
 
 namespace Compze.Tessaging.TessageBus.Internal.Outbox;

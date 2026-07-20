@@ -1,14 +1,15 @@
+using Compze.Tessaging.Internal.Transport.AspNetCore;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Hosting.Testing;
 using Compze.Hosting.Testing.Wiring;
 using Compze.Internals.SystemCE;
 using Compze.Internals.Testing;
 using Compze.Tessaging.Transport.AspNetCore;
-using Compze.Tessaging.Transport.NamedPipes;
+using Compze.Tessaging.Internal.Transport.NamedPipes;
 
 namespace Compze.Tessaging.Hosting.Testing.Typermedia.Wiring;
 
-using Transport = Compze.Abstractions.Wiring.Testing.Internal.Transport; //Inside the namespace, so it outranks the Compze.Tessaging.Transport namespace this file's new home would otherwise resolve Transport to.
+using Transport = Compze.Abstractions.Wiring.Testing.Internal.Transport; //Inside the namespace, so it outranks the Compze.Tessaging.Internal.Transport namespace this file's new home would otherwise resolve Transport to.
 
 public static class TestingComponentRegistrarTypermediaTransport
 {

@@ -1,6 +1,6 @@
-using Compze.Tessaging.Transport.SqlLayer;
-using Outbox = Compze.Tessaging.Transport.SqlLayer.ITessagingSqlLayer.OutboxTessagesDatabaseSchemaStrings;
-using Dispatching = Compze.Tessaging.Transport.SqlLayer.ITessagingSqlLayer.OutboxTessageDispatchingTableSchemaStrings;
+using Compze.Tessaging.Internal.SqlLayer;
+using Outbox = Compze.Tessaging.Internal.SqlLayer.ITessagingSqlLayer.OutboxTessagesDatabaseSchemaStrings;
+using Dispatching = Compze.Tessaging.Internal.SqlLayer.ITessagingSqlLayer.OutboxTessageDispatchingTableSchemaStrings;
 
 namespace Compze.Tessaging.MicrosoftSql;
 

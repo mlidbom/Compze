@@ -1,4 +1,4 @@
-using Compze.Tessaging.Internal.Transport.Abstractions;
+using Compze.Tessaging.Internal.Transport;
 using Compze.Tessaging.TessageBus.Internal.Inbox;
 
 namespace Compze.Tessaging.TessageBus.Internal.TessageHandling.Dispatching;

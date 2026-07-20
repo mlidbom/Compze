@@ -4,7 +4,7 @@ using Compze.Abstractions.Wiring.Testing.Internal;
 using Compze.Hosting.Testing.Wiring;
 using Compze.Tessaging.Engine;
 using Compze.Tessaging.Hosting.Testing.Wiring;
-using Compze.Tessaging.Transport.SqlLayer;
+using Compze.Tessaging.Internal.SqlLayer;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Underscore;

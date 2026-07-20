@@ -1,7 +1,8 @@
 using Compze.Tests.Common.Tessaging.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Must;
-using Compze.Tessaging.Transport.Exceptions;
+using Compze.Tessaging.Typermedia;
+using Compze.Tessaging.Internal.Transport;
 using static Compze.Must.MustActions;
 
 namespace Compze.Tests.Integration.Tessaging.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler;
@@ -24,7 +25,7 @@ public class Tevent_observation_tests : EndpointHostTestBase
       MyCreateTaggregateTommandHandlerThreadGate.FailTransactionOnPreparePostPassThrough(new Exception("50A21F9C-8E0E-4E36-83AF-C2A6DE7B0980"));
 
       Invoking(() => Navigator.Post(MyCreateTaggregateTommand.Create()))
-                    .Must().Throw<MessageDispatchingFailedException>();
+                    .Must().Throw<TessageDispatchingFailedException>();
 
       //Deterministic without any waiting: a tevent is queued for its observers only when its publishing unit of work commits,
       //and every server-side retry of the tommand's transaction rolled back - no attempt's publish was ever a committed fact.

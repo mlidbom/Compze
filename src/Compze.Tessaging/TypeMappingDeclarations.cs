@@ -1,6 +1,6 @@
 using Compze.TypeIdentifiers;
 using Compze.Tessaging.Endpoints.Discovery;
-using Compze.Tessaging.Transport.Discovery;
+using Compze.Tessaging.Internal.Transport.Advertisement;
 
 [assembly: AssemblyTypeMapper(typeof(Compze.Tessaging.TessagingAssemblyTypeMapper))]
 

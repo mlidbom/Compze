@@ -3,9 +3,9 @@ using Compze.Internals.Sql.Common;
 using Compze.Internals.Sql.MicrosoftSql;
 using Compze.Internals.Sql.MicrosoftSql.Private;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
-using Compze.Tessaging.Transport.SqlLayer;
+using Compze.Tessaging.Internal.SqlLayer;
 using Microsoft.Data.SqlClient;
-using Catalog = Compze.Tessaging.Transport.SqlLayer.ITessagingSqlLayer.EndpointCatalogDatabaseSchemaStrings;
+using Catalog = Compze.Tessaging.Internal.SqlLayer.ITessagingSqlLayer.EndpointCatalogDatabaseSchemaStrings;
 
 namespace Compze.Tessaging.MicrosoftSql;
 

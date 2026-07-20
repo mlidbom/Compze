@@ -1,4 +1,4 @@
-using Catalog = Compze.Tessaging.Transport.SqlLayer.ITessagingSqlLayer.EndpointCatalogDatabaseSchemaStrings;
+using Catalog = Compze.Tessaging.Internal.SqlLayer.ITessagingSqlLayer.EndpointCatalogDatabaseSchemaStrings;
 
 namespace Compze.Tessaging.PostgreSql;
 

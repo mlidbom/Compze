@@ -3,6 +3,7 @@ using Compze.Tessaging.Endpoints.Discovery;
 using Compze.Tessaging.Endpoints.Exceptions;
 using Compze.Tessaging.TessageBus.Internal.TessageHandling.Dispatching;
 using Compze.Tessaging.Typermedia.Client;
+using Compze.Tessaging.Typermedia.Client.Internal;
 
 namespace Compze.Tessaging.Internal.HandlerAvailability;
 

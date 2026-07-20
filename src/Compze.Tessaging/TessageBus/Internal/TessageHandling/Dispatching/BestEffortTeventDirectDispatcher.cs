@@ -4,9 +4,12 @@ using Compze.Internals.Logging;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tessaging.Endpoints;
 using Compze.Tessaging.Engine;
-using Compze.Tessaging.Internal.Abstractions;
+using Compze.Tessaging.Engine.Internal;
+using Compze.Tessaging.TessageBus.Internal.BestEffortDelivery;
+using Compze.Tessaging.TessageBus.Internal.Outbox;
+using Compze.Tessaging.Internal.TessagesInFlight;
 using Compze.Tessaging.Internal.SystemCE.ThreadingCE;
-using Compze.Tessaging.Internal.Transport.Abstractions;
+using Compze.Tessaging.Internal.Transport;
 
 namespace Compze.Tessaging.TessageBus.Internal.TessageHandling.Dispatching;
 
