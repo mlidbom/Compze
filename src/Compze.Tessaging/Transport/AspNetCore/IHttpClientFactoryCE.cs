@@ -1,7 +1,7 @@
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 
-namespace Compze.Tessaging.Transport.AspNet;
+namespace Compze.Tessaging.Transport.AspNetCore;
 
 interface IHttpClientFactoryCE
 {

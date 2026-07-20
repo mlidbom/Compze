@@ -4,7 +4,7 @@ using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tessaging.Endpoints.Discovery;
 using Compze.Tessaging.Transport.Exceptions;
 
-namespace Compze.Tessaging.Transport.AspNet;
+namespace Compze.Tessaging.Transport.AspNetCore;
 
 static class HttpEndpointTransportClientRegistrar
 {

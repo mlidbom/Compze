@@ -1,5 +1,4 @@
 using Compze.DependencyInjection.Abstractions;
-using Compze.Tessaging.Transport.AspNet;
 using Compze.Tessaging.Transport.Discovery;
 
 namespace Compze.Tessaging.Transport.AspNetCore;
