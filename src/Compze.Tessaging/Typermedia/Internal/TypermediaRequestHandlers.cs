@@ -3,7 +3,6 @@ using Compze.DependencyInjection;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Tessaging.Internal.Transport;
-using Compze.Tessaging.TessageBus.Internal;
 
 namespace Compze.Tessaging.Typermedia.Internal;
 

@@ -5,7 +5,6 @@ using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tessaging.Internal.Transport;
-using Compze.Tessaging.TessageBus.Internal;
 using Compze.Tessaging.Internal.Transport.Advertisement;
 
 namespace Compze.Tessaging.Typermedia.Internal;
