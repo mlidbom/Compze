@@ -47,7 +47,7 @@ public interface ICreateMyOwnResultTuery<out TResult> : ITuery<TResult>
 public interface IStrictlyLocalTessage;
 
 
-//todo: Review: an interface that is NOT an ITessage, in the tessages types file named as an ITessage!?
+//todo: Review: Urgent: an interface that is NOT an ITessage, in the tessages types file named as an ITessage!? There is Zero question that this is utterly wrong. The only question is just what a sane design looks like.
 ///<summary>Marker interface for infrastructure-internal tessages that should be excluded from remote route advertisement.</summary>
 public interface IInternalInfrastructureTessage;
 
