@@ -46,6 +46,8 @@ public interface ICreateMyOwnResultTuery<out TResult> : ITuery<TResult>
 //With the strictly local message types we can implement behavioral guarantees in frameworks, forbidding nonsensical combinations.
 public interface IStrictlyLocalTessage;
 
+
+//todo: Review: an interface that is NOT an ITessage, in the tessages types file named as an ITessage!?
 ///<summary>Marker interface for infrastructure-internal tessages that should be excluded from remote route advertisement.</summary>
 public interface IInternalInfrastructureTessage;
 
