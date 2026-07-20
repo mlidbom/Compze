@@ -112,13 +112,6 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging)' != 'true'">
     <ProjectReference Include="..\Compze.Tessaging\Compze.Tessaging.csproj" />
   </ItemGroup>
-  <!-- Compze.Tessaging.AspNetCore — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging_AspNetCore)' == 'true'">
-    <PackageReference Include="Compze.Tessaging.AspNetCore" Version="*-*" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging_AspNetCore)' != 'true'">
-    <ProjectReference Include="..\Compze.Tessaging.AspNetCore\Compze.Tessaging.AspNetCore.csproj" />
-  </ItemGroup>
   <!-- Compze.Tessaging.MicrosoftSql — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging_MicrosoftSql)' == 'true'">
     <PackageReference Include="Compze.Tessaging.MicrosoftSql" Version="*-*" />
@@ -146,6 +139,13 @@
   </ItemGroup>
   <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging_Sqlite)' != 'true'">
     <ProjectReference Include="..\Compze.Tessaging.Sqlite\Compze.Tessaging.Sqlite.csproj" />
+  </ItemGroup>
+  <!-- Compze.Tessaging.Transport.AspNetCore — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging_Transport_AspNetCore)' == 'true'">
+    <PackageReference Include="Compze.Tessaging.Transport.AspNetCore" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging_Transport_AspNetCore)' != 'true'">
+    <ProjectReference Include="..\Compze.Tessaging.Transport.AspNetCore\Compze.Tessaging.Transport.AspNetCore.csproj" />
   </ItemGroup>
   <!-- Compze.Teventive.TeventStore.Abstractions — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Teventive_TeventStore_Abstractions)' == 'true'">

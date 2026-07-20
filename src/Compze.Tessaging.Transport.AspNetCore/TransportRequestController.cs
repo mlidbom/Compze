@@ -4,13 +4,13 @@ using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Logging;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tessaging.Abstractions;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Compze.Tessaging.Internals.Transport;
 using Compze.Tessaging.Internals.Transport.AspNet;
 using Compze.Tessaging.Internals.Transport.Exceptions;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 
-namespace Compze.Tessaging.AspNetCore;
+namespace Compze.Tessaging.Transport.AspNetCore;
 
 #pragma warning disable CA1031 //We catch all exceptions here to route them back to the client, exactly as the named-pipe transport server does.
 

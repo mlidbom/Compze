@@ -40,12 +40,12 @@
       <Value>UsePackageReference_Compze_InterprocessObject_MemoryPack = true</Value>
       <Value>UsePackageReference_Compze_Tessaging = true</Value>
       <Value>UsePackageReference_Compze_Tessaging_Abstractions = true</Value>
-      <Value>UsePackageReference_Compze_Tessaging_AspNetCore = true</Value>
       <Value>UsePackageReference_Compze_Tessaging_Hosting_Testing = true</Value>
       <Value>UsePackageReference_Compze_Tessaging_MicrosoftSql = true</Value>
       <Value>UsePackageReference_Compze_Tessaging_MySql = true</Value>
       <Value>UsePackageReference_Compze_Tessaging_PostgreSql = true</Value>
       <Value>UsePackageReference_Compze_Tessaging_Sqlite = true</Value>
+      <Value>UsePackageReference_Compze_Tessaging_Transport_AspNetCore = true</Value>
       <Value>UsePackageReference_Compze_Tests_Infrastructure = true</Value>
       <Value>UsePackageReference_Compze_Teventive = true</Value>
       <Value>UsePackageReference_Compze_Teventive_TeventStore = true</Value>

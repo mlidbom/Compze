@@ -185,12 +185,12 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging)' != 'true'">
     <ProjectReference Include="..\Compze.Tessaging\Compze.Tessaging.csproj" />
   </ItemGroup>
-  <!-- Compze.Tessaging.AspNetCore — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging_AspNetCore)' == 'true'">
-    <PackageReference Include="Compze.Tessaging.AspNetCore" Version="*-*" />
+  <!-- Compze.Tessaging.Transport.AspNetCore — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging_Transport_AspNetCore)' == 'true'">
+    <PackageReference Include="Compze.Tessaging.Transport.AspNetCore" Version="*-*" />
   </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging_AspNetCore)' != 'true'">
-    <ProjectReference Include="..\Compze.Tessaging.AspNetCore\Compze.Tessaging.AspNetCore.csproj" />
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging_Transport_AspNetCore)' != 'true'">
+    <ProjectReference Include="..\Compze.Tessaging.Transport.AspNetCore\Compze.Tessaging.Transport.AspNetCore.csproj" />
   </ItemGroup>
   <!-- Compze.TypeIdentifiers — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_TypeIdentifiers)' == 'true'">

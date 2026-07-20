@@ -81,8 +81,6 @@
     <UsePackageReference_Compze_Tessaging Condition="'$(UsePackageReference_Compze_Tessaging)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Tessaging.csproj|'))">true</UsePackageReference_Compze_Tessaging>
     <!-- Compze.Tessaging.Abstractions -->
     <UsePackageReference_Compze_Tessaging_Abstractions Condition="'$(UsePackageReference_Compze_Tessaging_Abstractions)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Tessaging.Abstractions.csproj|'))">true</UsePackageReference_Compze_Tessaging_Abstractions>
-    <!-- Compze.Tessaging.AspNetCore -->
-    <UsePackageReference_Compze_Tessaging_AspNetCore Condition="'$(UsePackageReference_Compze_Tessaging_AspNetCore)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Tessaging.AspNetCore.csproj|'))">true</UsePackageReference_Compze_Tessaging_AspNetCore>
     <!-- Compze.Tessaging.Hosting.Testing -->
     <UsePackageReference_Compze_Tessaging_Hosting_Testing Condition="'$(UsePackageReference_Compze_Tessaging_Hosting_Testing)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Tessaging.Hosting.Testing.csproj|'))">true</UsePackageReference_Compze_Tessaging_Hosting_Testing>
     <!-- Compze.Tessaging.MicrosoftSql -->
@@ -93,6 +91,8 @@
     <UsePackageReference_Compze_Tessaging_PostgreSql Condition="'$(UsePackageReference_Compze_Tessaging_PostgreSql)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Tessaging.PostgreSql.csproj|'))">true</UsePackageReference_Compze_Tessaging_PostgreSql>
     <!-- Compze.Tessaging.Sqlite -->
     <UsePackageReference_Compze_Tessaging_Sqlite Condition="'$(UsePackageReference_Compze_Tessaging_Sqlite)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Tessaging.Sqlite.csproj|'))">true</UsePackageReference_Compze_Tessaging_Sqlite>
+    <!-- Compze.Tessaging.Transport.AspNetCore -->
+    <UsePackageReference_Compze_Tessaging_Transport_AspNetCore Condition="'$(UsePackageReference_Compze_Tessaging_Transport_AspNetCore)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Tessaging.Transport.AspNetCore.csproj|'))">true</UsePackageReference_Compze_Tessaging_Transport_AspNetCore>
     <!-- Compze.Tests.Infrastructure -->
     <UsePackageReference_Compze_Tests_Infrastructure Condition="'$(UsePackageReference_Compze_Tests_Infrastructure)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Tests.Infrastructure.csproj|'))">true</UsePackageReference_Compze_Tests_Infrastructure>
     <!-- Compze.Teventive -->

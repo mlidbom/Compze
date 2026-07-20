@@ -2,7 +2,7 @@ using Compze.DependencyInjection.Abstractions;
 using Compze.Tessaging.Internals.Transport;
 using Compze.Tessaging.Internals.Transport.AspNet;
 
-namespace Compze.Tessaging.AspNetCore;
+namespace Compze.Tessaging.Transport.AspNetCore;
 
 public static class AspNetCoreEndpointTransportRegistrar
 {

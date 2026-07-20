@@ -19,6 +19,20 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_Abstractions)' != 'true'">
     <ProjectReference Include="..\..\src\Compze.Abstractions\Compze.Abstractions.csproj" />
   </ItemGroup>
+  <!-- Compze.DependencyInjection — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_DependencyInjection)' == 'true'">
+    <PackageReference Include="Compze.DependencyInjection" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_DependencyInjection)' != 'true'">
+    <ProjectReference Include="..\..\src\Compze.DependencyInjection\Compze.DependencyInjection.csproj" />
+  </ItemGroup>
+  <!-- Compze.DependencyInjection.Microsoft — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_DependencyInjection_Microsoft)' == 'true'">
+    <PackageReference Include="Compze.DependencyInjection.Microsoft" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_DependencyInjection_Microsoft)' != 'true'">
+    <ProjectReference Include="..\..\src\Compze.DependencyInjection.Microsoft\Compze.DependencyInjection.Microsoft.csproj" />
+  </ItemGroup>
   <!-- Compze.Must — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Must)' == 'true'">
     <PackageReference Include="Compze.Must" Version="*-*" />
@@ -40,13 +54,6 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_TypeIdentifiers)' != 'true'">
     <ProjectReference Include="..\..\src\Compze.TypeIdentifiers\Compze.TypeIdentifiers.csproj" />
   </ItemGroup>
-  <!-- Compze.xUnitBDD — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_xUnitBDD)' == 'true'">
-    <PackageReference Include="Compze.xUnitBDD" Version="*-*" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_xUnitBDD)' != 'true'">
-    <ProjectReference Include="..\..\src\Compze.xUnitBDD\Compze.xUnitBDD.csproj" />
-  </ItemGroup>
   <!-- Compze.TypeIdentifiers.DependencyInjection — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_TypeIdentifiers_DependencyInjection)' == 'true'">
     <PackageReference Include="Compze.TypeIdentifiers.DependencyInjection" Version="*-*" />
@@ -54,18 +61,11 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_TypeIdentifiers_DependencyInjection)' != 'true'">
     <ProjectReference Include="..\..\src\Compze.TypeIdentifiers.DependencyInjection\Compze.TypeIdentifiers.DependencyInjection.csproj" />
   </ItemGroup>
-  <!-- Compze.DependencyInjection — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_DependencyInjection)' == 'true'">
-    <PackageReference Include="Compze.DependencyInjection" Version="*-*" />
+  <!-- Compze.xUnitBDD — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_xUnitBDD)' == 'true'">
+    <PackageReference Include="Compze.xUnitBDD" Version="*-*" />
   </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_DependencyInjection)' != 'true'">
-    <ProjectReference Include="..\..\src\Compze.DependencyInjection\Compze.DependencyInjection.csproj" />
-  </ItemGroup>
-  <!-- Compze.DependencyInjection.Microsoft — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_DependencyInjection_Microsoft)' == 'true'">
-    <PackageReference Include="Compze.DependencyInjection.Microsoft" Version="*-*" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_DependencyInjection_Microsoft)' != 'true'">
-    <ProjectReference Include="..\..\src\Compze.DependencyInjection.Microsoft\Compze.DependencyInjection.Microsoft.csproj" />
+  <ItemGroup Condition="'$(UsePackageReference_Compze_xUnitBDD)' != 'true'">
+    <ProjectReference Include="..\..\src\Compze.xUnitBDD\Compze.xUnitBDD.csproj" />
   </ItemGroup>
 </Project>

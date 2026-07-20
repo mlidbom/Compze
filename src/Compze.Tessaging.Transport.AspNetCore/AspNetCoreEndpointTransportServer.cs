@@ -1,9 +1,10 @@
 using System.Reflection;
-using Compze.Tessaging.Endpoints.Discovery;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.DependencyInjection.Extensions.Hosting;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
+using Compze.Tessaging.Endpoints.Discovery;
+using Compze.Tessaging.Internals.Transport;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -12,9 +13,8 @@ using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using LogLevel = Microsoft.Extensions.Logging.LogLevel;
-using Compze.Tessaging.Internals.Transport;
 
-namespace Compze.Tessaging.AspNetCore;
+namespace Compze.Tessaging.Transport.AspNetCore;
 
 static class AspNetCoreEndpointTransportServerRegistrar
 {
