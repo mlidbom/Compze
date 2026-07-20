@@ -7,7 +7,6 @@ using Compze.Internals.SystemCE.LinqCE;
 using Compze.Internals.SystemCE.ReactiveCE;
 using Compze.Internals.SystemCE.ReflectionCE;
 using Compze.Internals.SystemCE.UsageGuards;
-using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Abstractions.TessageBus;
 using Compze.Teventive.Internal;
 using Compze.Teventive.Taggregates.Tevents.Public;

@@ -1,6 +1,4 @@
 using Compze.Tessaging.Endpoints;
-using Compze.Tessaging.Typermedia.Client;
-using Compze.Tessaging.Engine;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Typermedia;
 using Compze.Tests.Common;

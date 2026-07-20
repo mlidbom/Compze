@@ -5,7 +5,6 @@ using Compze.Internals.Logging;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Internals.SystemCE.TransactionsCE;
 using Compze.Tessaging.Endpoints;
-using Compze.Tessaging.Internals.Transport.Client.Internal;
 using Compze.Tessaging.TessageBus;
 
 namespace Compze.Tessaging.Internals.Peers;

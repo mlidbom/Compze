@@ -4,7 +4,6 @@ using Compze.Tessaging.Abstractions.Validation.Exceptions;
 using Compze.Tests.Infrastructure;
 using Compze.xUnitBDD;
 using static Compze.Must.MustActions;
-using TessageTypeInspector = Compze.Tessaging.Abstractions.Validation.TessageTypeInspector;
 
 // ReSharper disable InconsistentNaming
 

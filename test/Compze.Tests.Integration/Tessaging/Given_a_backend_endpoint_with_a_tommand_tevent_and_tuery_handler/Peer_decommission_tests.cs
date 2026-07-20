@@ -1,7 +1,6 @@
 using Compze.Tessaging.Endpoints;
 using Compze.DependencyInjection;
 using Compze.Must;
-using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Abstractions.TessageBus;
 using Compze.Tessaging.Internals.Peers;
 using Compze.Tessaging.Transport.Discovery;

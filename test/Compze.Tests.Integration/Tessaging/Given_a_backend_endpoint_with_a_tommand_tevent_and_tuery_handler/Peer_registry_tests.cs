@@ -1,6 +1,5 @@
 using Compze.DependencyInjection;
 using Compze.Must;
-using Compze.Tessaging.Engine;
 using Compze.Tessaging.Engine.HandlerRegistration;
 using Compze.Tessaging.Internals.Peers;
 using Compze.Tessaging.Transport.SqlLayer;

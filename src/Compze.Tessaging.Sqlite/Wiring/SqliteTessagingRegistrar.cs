@@ -3,7 +3,6 @@ using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Sql.Sqlite;
 using Compze.Internals.Sql.Sqlite.Private;
 using Compze.Internals.Sql.Sqlite.Wiring;
-using Compze.Tessaging.Endpoints;
 using Compze.Tessaging.Endpoints.ExactlyOnce;
 using Compze.Tessaging.Transport.SqlLayer;
 using Compze.TypeIdentifiers.Interning;

@@ -2,7 +2,6 @@ using System.Globalization;
 using System.Transactions;
 using Compze.Abstractions.Time.Public;
 using Compze.Internals.Sql.Common;
-using Compze.Internals.Sql.Common.Abstractions;
 using Compze.Internals.Sql.PostgreSql;
 using Compze.Internals.Sql.PostgreSql.Private;
 using Compze.Internals.SystemCE.TransactionsCE;

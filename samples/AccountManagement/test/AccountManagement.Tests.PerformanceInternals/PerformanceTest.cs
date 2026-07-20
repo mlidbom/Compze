@@ -7,7 +7,6 @@ using Compze.Hosting.Testing;
 using Compze.Internals.Testing;
 using Compze.Internals.Testing.Performance;
 using Compze.Tessaging.Hosting.Testing;
-using Compze.Tessaging.Typermedia.Client;
 using Compze.Tessaging.Hosting.Testing.Typermedia;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.SystemCE.CollectionsCE.ConcurrentCE;

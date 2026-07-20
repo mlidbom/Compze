@@ -1,12 +1,10 @@
 using Compze.DocumentDb.Internal.SqlLayer;
 using Compze.DocumentDb.Internal.SqlLayer.Exceptions;
 using Compze.Internals.Sql.Common;
-using Compze.Internals.Sql.Common.Abstractions;
 using Compze.Internals.Sql.Sqlite;
 using Compze.Internals.Sql.Sqlite.Private;
 using Compze.TypeIdentifiers;
 using Compze.TypeIdentifiers.Interning;
-using Compze.Underscore;
 using Compze.Internals.SystemCE;
 using Microsoft.Data.Sqlite;
 using System.Diagnostics.CodeAnalysis;

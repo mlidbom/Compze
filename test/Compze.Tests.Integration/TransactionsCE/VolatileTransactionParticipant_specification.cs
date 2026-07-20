@@ -6,7 +6,6 @@ using Compze.Must;
 
 using Compze.Tests.Common;
 using Compze.Tests.Common.Sql.DocumentDb;
-using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.xUnitMatrix;
 

@@ -1,5 +1,4 @@
 using Compze.TypeIdentifiers;
-using Compze.Tests.Common.Sql.DocumentDb;
 
 [assembly: AssemblyTypeMapper(typeof(Compze.Tests.Integration.AssemblyTypeMapper))]
 

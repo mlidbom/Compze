@@ -1,6 +1,5 @@
 using Compze.Tessaging.Endpoints;
 using Compze.Tessaging.Endpoints.Discovery;
-using Compze.Abstractions.Public;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Hosting;
@@ -16,8 +15,6 @@ using Compze.Tessaging.Endpoints.BestEffort;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Tessaging.Typermedia;
-using Compze.Tessaging.Typermedia.Client;
-using Compze.Tessaging.Engine;
 using Compze.Tessaging.Engine.HandlerRegistration.TessageHandlers;
 using static Compze.Must.MustActions;
 

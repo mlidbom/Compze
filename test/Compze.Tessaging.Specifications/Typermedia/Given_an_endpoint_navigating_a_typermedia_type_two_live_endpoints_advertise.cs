@@ -3,7 +3,6 @@ using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Must;
 using Compze.DependencyInjection;
 using Compze.Tessaging.Endpoints.BestEffort;
-using Compze.Tessaging.Engine;
 using Compze.Tessaging.Engine.HandlerRegistration.TessageHandlers;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Typermedia;

@@ -8,7 +8,6 @@ using Compze.Tessaging.Endpoints.Discovery;
 using Compze.Tessaging.Endpoints.Exceptions;
 using Compze.Tessaging.Engine.HandlerRegistration;
 using Compze.Tessaging.Internals.Peers;
-using Compze.Tessaging.Internals.Transport.Client.Internal;
 using Compze.Tessaging.TessageBus;
 using Compze.Tessaging.TessageBus.Internals.TessageHandling.Dispatching;
 using Compze.Tessaging.Typermedia.Client;

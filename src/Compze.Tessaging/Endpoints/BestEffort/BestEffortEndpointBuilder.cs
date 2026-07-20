@@ -1,6 +1,5 @@
 using Compze.Contracts;
 using Compze.DependencyInjection.Abstractions;
-using Compze.Tessaging.Engine;
 using Compze.Tessaging.Engine.HandlerRegistration;
 
 namespace Compze.Tessaging.Endpoints.BestEffort;

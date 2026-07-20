@@ -1,6 +1,5 @@
 using AccountManagement.API.ValidationAttributes;
 using AccountManagement.Domain;
-using Compze.Abstractions.Public;
 using JetBrains.Annotations;
 using System.ComponentModel.DataAnnotations;
 using Compze.Tessaging.Abstractions;

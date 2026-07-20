@@ -1,6 +1,5 @@
 using AccountManagement.Domain.Tevents;
 using Compze.DocumentDb;
-using Compze.Tessaging.Engine;
 using Compze.Tessaging.Engine.HandlerRegistration.TessageHandlers;
 using JetBrains.Annotations;
 using AccountLink = Compze.Teventive.TeventStore.Typermedia.TeventStoreApi.TueryApi.TaggregateLink<AccountManagement.Domain.Account>;

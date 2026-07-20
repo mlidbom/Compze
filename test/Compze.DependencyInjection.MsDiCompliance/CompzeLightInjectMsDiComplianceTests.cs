@@ -1,8 +1,6 @@
-using Compze.DependencyInjection.Abstractions;
 using Compze.DependencyInjection.LightInject;
 using Compze.DependencyInjection.LightInject.Extensions.Hosting;
 using JetBrains.Annotations;
-using LightInject;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Specification;
 using ContainerOptions = Compze.DependencyInjection.Abstractions.ContainerOptions;

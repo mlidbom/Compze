@@ -1,7 +1,6 @@
 using Compze.Must;
 
 using Compze.Teventive;
-using Compze.Teventive.Taggregates.BaseClasses;
 using Compze.Teventive.Taggregates.BaseClasses.Shared;
 using Compze.Teventive.Taggregates.Tevents.Public;
 using Compze.xUnitBDD;

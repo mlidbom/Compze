@@ -1,7 +1,6 @@
 using Compze.Contracts;
 using Compze.Internals.SystemCE.ReflectionCE;
 using Compze.Tessaging.Abstractions.TessageTypes;
-using Compze.Tessaging.Abstractions.Validation;
 using TessageTypeInspector = Compze.Tessaging.Abstractions.Validation.TessageTypeInspector;
 
 namespace Compze.Teventive.Infrastructure.EventDispatching;

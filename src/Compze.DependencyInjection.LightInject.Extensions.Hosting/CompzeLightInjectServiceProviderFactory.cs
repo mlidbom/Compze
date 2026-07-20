@@ -1,4 +1,3 @@
-using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE;
 using LightInject;
 using LightInject.Microsoft.DependencyInjection;

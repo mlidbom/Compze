@@ -1,4 +1,3 @@
-using Compze.TypeIdentifiers;
 using Compze.Must;
 
 using Compze.xUnitBDD;

@@ -9,7 +9,6 @@ using Compze.Tessaging.Endpoints.Exceptions;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
-using Compze.Underscore;
 using static Compze.Must.MustActions;
 
 // ReSharper disable InconsistentNaming for testing

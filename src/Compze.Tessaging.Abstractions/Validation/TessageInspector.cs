@@ -1,5 +1,4 @@
 using Compze.Tessaging.Abstractions.TessageTypes;
-using Compze.Tessaging.Abstractions.Validation.Exceptions;
 
 namespace Compze.Tessaging.Abstractions.Validation;
 

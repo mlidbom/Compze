@@ -6,7 +6,6 @@ using Compze.Tessaging.Abstractions.TessageTypes;
 using Compze.Tessaging.Endpoints.Discovery;
 using Compze.Tessaging.Internals.Abstractions;
 using Compze.Tessaging.Internals.Transport.Abstractions;
-using Compze.Tessaging.Internals.Transport.Client.Internal;
 using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.Tessaging.TessageBus;
 using Compze.Tessaging.TessageBus.Internals;

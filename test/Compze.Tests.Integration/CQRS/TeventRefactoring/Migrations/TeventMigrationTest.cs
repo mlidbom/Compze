@@ -4,14 +4,11 @@ using Compze.Hosting.Testing.Wiring;
 using Compze.Tests.Common;
 using Compze.Tests.Common.CQRS.TeventRefactoring.Migrations;
 using Compze.DependencyInjection;
-using Compze.Tests.Infrastructure;
 using Compze.Internals.SystemCE.TransactionsCE;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Must;
-using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Abstractions.TessageBus;
 using Compze.Tests.Common.CQRS.TeventRefactoring.Migrations.Tevents;
-using Compze.Teventive.Taggregates.Tevents.Public;
 using Compze.Teventive.TeventStore.Abstractions.Public;
 using Compze.Teventive.TeventStore.Abstractions.Refactoring.Migrations.Public;
 

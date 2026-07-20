@@ -1,6 +1,5 @@
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE;
-using DryIoc;
 using DryIoc.Microsoft.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 

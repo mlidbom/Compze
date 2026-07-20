@@ -1,10 +1,8 @@
 using Compze.Tessaging.Endpoints;
-using Compze.Tessaging.Typermedia.Client;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Typermedia;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
-using Compze.Abstractions.Public;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Must;
 using Compze.Tessaging.Abstractions;
@@ -12,7 +10,6 @@ using Compze.Tessaging.Abstractions.TessageBus;
 using Compze.Tessaging.Abstractions.TessageTypes;
 using Compze.Tessaging.Endpoints.ExactlyOnce;
 using Compze.Tessaging.Typermedia;
-using Compze.Tessaging.Engine;
 using Compze.Tessaging.Engine.HandlerRegistration.TessageHandlers;
 
 // ReSharper disable MemberCanBeMadeStatic.Global

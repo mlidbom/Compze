@@ -1,8 +1,6 @@
 using System.Transactions;
 using Compze.DependencyInjection;
 using Compze.Must;
-
-using Compze.Tessaging.Engine;
 using Compze.Tessaging.Engine.HandlerRegistration.TessageHandlers;
 using Compze.Tessaging.Typermedia;
 using Compze.Tests.Integration.InProcess;

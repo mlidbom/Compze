@@ -7,7 +7,6 @@ using Compze.Internals.Testing;
 using Compze.Internals.Testing.Performance;
 using Compze.Tests.Common;
 using Compze.Tests.Common.CQRS.TeventRefactoring.Migrations;
-using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Tests.Integration.CQRS.TeventRefactoring.Migrations;
 using Compze.DependencyInjection;

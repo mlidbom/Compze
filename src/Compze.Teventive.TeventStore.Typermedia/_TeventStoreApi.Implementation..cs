@@ -2,7 +2,6 @@ using Compze.Abstractions.Public;
 using Compze.Tessaging.Abstractions.TessageTypes;
 using Compze.Teventive.Taggregates.Tevents.Public;
 using Compze.Teventive.TeventStore.Abstractions.Public;
-using Compze.Tessaging.Engine;
 using Compze.Tessaging.Engine.HandlerRegistration.TessageHandlers;
 
 // ReSharper disable MemberCanBePrivate.Global they are public so that serializers work

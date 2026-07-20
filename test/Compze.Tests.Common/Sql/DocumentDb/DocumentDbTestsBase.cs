@@ -6,7 +6,6 @@ using Compze.Tests.Infrastructure;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using JetBrains.Annotations;
-using Xunit;
 
 namespace Compze.Tests.Common.Sql.DocumentDb;
 

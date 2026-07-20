@@ -10,7 +10,6 @@ using Compze.Teventive.Taggregates.Tevents.Public;
 using Compze.Teventive.TeventStore.QueryModels.SelfGeneratingQueryModels;
 using Compze.Teventive.TeventStore.Typermedia;
 using Compze.Tessaging.Typermedia;
-using Compze.Tessaging.Engine;
 using Compze.Tessaging.Engine.HandlerRegistration.TessageHandlers;
 
 namespace AccountManagement.UI.QueryModels;

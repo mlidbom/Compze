@@ -1,6 +1,4 @@
 using Compze.DependencyInjection.Abstractions;
-using Compze.Teventive.Taggregates.Tevents.Public;
-using Compze.TypeIdentifiers.DependencyInjection;
 
 namespace Compze.Tests.Common.Wiring;
 

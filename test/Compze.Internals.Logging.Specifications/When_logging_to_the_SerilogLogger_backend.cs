@@ -2,7 +2,6 @@
 using Serilog;
 using Serilog.Core;
 using Serilog.Events;
-using ILogger = Compze.Internals.Logging.ILogger;
 using SerilogLogger = Compze.Internals.Logging.Serilog.SerilogLogger;
 
 // ReSharper disable InconsistentNaming

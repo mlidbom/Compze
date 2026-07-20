@@ -9,7 +9,6 @@ using Compze.Tessaging.Endpoints.ExactlyOnce;
 using Compze.Tessaging.Engine;
 using Compze.Tessaging.Internals.HandlerAvailability;
 using Compze.Tessaging.Internals.Peers;
-using Compze.Tessaging.Internals.Transport.Client.Internal;
 using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.Tessaging.TessageBus;
 using Compze.Tessaging.Transport;

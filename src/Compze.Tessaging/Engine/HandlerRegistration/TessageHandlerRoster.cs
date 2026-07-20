@@ -6,7 +6,6 @@ using Compze.Tessaging.Abstractions.TessageTypes;
 using Compze.Tessaging.Engine.Exceptions;
 using Compze.Tessaging.Engine.HandlerRegistration.TessageHandlers;
 using Compze.Tessaging.Engine.HandlerRegistration.TeventObservation;
-using Compze.Tessaging.Internals.Abstractions;
 using Compze.TypeIdentifiers;
 
 namespace Compze.Tessaging.Engine.HandlerRegistration;
