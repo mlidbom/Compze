@@ -13,6 +13,7 @@ using Compze.Tessaging.Engine;
 using Compze.Tessaging.Engine.HandlerRegistration.TessageHandlers;
 using Compze.Tessaging.Engine.HandlerRegistration.TeventObservation;
 using Compze.Tessaging.Engine.Wiring;
+using Compze.Tessaging.TessageTypes;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Integration.InProcess;
 using Compze.Teventive.Taggregates.BaseClasses;

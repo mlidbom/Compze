@@ -1,4 +1,6 @@
 
+using Compze.Tessaging.TessageTypes;
+
 namespace Compze.Tessaging.TessageBus;
 
 ///<summary>Publishes tevents from code that runs outside any unit of work — application code with no ambient scope or<br/>

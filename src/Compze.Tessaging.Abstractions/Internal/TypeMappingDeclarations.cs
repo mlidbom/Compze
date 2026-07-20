@@ -1,4 +1,5 @@
 using Compze.Tessaging.TessageBus;
+using Compze.Tessaging.TessageTypes;
 using Compze.TypeIdentifiers;
 
 [assembly: AssemblyTypeMapper(typeof(Compze.Tessaging.Internal.AssemblyTypeMapper))]

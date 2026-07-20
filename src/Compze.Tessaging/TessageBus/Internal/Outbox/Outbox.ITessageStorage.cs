@@ -1,5 +1,6 @@
 using Compze.Tessaging.Endpoints;
 using Compze.Tessaging.Internal.SqlLayer;
+using Compze.Tessaging.TessageTypes;
 
 namespace Compze.Tessaging.TessageBus.Internal.Outbox;
 

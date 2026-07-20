@@ -3,6 +3,7 @@ using AccountManagement.Domain;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
 using Compze.Tessaging;
+using Compze.Tessaging.TessageTypes;
 
 // ReSharper disable PropertyCanBeMadeInitOnly.Global
 

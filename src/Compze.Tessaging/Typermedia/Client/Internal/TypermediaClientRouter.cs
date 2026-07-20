@@ -9,6 +9,7 @@ using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tessaging.Internal.Transport.Advertisement;
+using Compze.Tessaging.TessageTypes;
 using Compze.Threading;
 
 namespace Compze.Tessaging.Typermedia.Client.Internal;

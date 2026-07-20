@@ -2,6 +2,7 @@ using Compze.Tessaging.Validation.Internal;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
+using Compze.Tessaging.TessageTypes;
 using Compze.Tessaging.Validation;
 using JetBrains.Annotations;
 

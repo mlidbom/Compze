@@ -1,5 +1,6 @@
 using Compze.Must;
 using Compze.Tessaging;
+using Compze.Tessaging.TessageTypes;
 using Compze.Teventive;
 
 namespace Compze.Tests.Unit.CQRS.TeventHandling;

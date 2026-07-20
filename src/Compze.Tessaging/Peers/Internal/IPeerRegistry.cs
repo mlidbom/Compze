@@ -3,6 +3,7 @@ using Compze.Tessaging.TessageBus;
 using Compze.Tessaging.TessageBus.Internal;
 using Compze.Tessaging.Internal.Routing;
 using Compze.Tessaging.Internal.Transport.Advertisement;
+using Compze.Tessaging.TessageTypes;
 
 namespace Compze.Tessaging.Peers.Internal;
 

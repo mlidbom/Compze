@@ -4,6 +4,7 @@ using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Internals.SystemCE.TransactionsCE;
 using Compze.Tessaging.Endpoints;
 using Compze.Tessaging.Internal.Transport.Advertisement;
+using Compze.Tessaging.TessageTypes;
 using Compze.TypeIdentifiers;
 using JetBrains.Annotations;
 

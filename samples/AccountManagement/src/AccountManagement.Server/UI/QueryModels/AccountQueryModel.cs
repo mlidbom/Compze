@@ -11,6 +11,7 @@ using Compze.Teventive.TeventStore.QueryModels.SelfGeneratingQueryModels;
 using Compze.Teventive.TeventStore.Typermedia;
 using Compze.Tessaging.Typermedia;
 using Compze.Tessaging.Engine.HandlerRegistration.TessageHandlers;
+using Compze.Tessaging.TessageTypes;
 
 namespace AccountManagement.UI.QueryModels;
 

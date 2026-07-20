@@ -1,4 +1,5 @@
 using Compze.Tessaging.Endpoints.Discovery;
+using Compze.Tessaging.TessageTypes;
 
 namespace Compze.Tessaging.Internal.Transport.Advertisement;
 

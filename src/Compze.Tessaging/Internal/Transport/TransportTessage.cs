@@ -1,5 +1,6 @@
 using Compze.Contracts;
 using Compze.Tessaging.TessageBus.Internal;
+using Compze.Tessaging.TessageTypes;
 using Compze.TypeIdentifiers;
 
 namespace Compze.Tessaging.Internal.Transport;

@@ -14,6 +14,7 @@ using Compze.Tessaging.TessageBus;
 using Compze.Tessaging.TessageBus.Internal;
 using Compze.Tessaging.Internal.Routing;
 using Compze.Tessaging.TessageBus.Internal.TessageHandling.Dispatching;
+using Compze.Tessaging.TessageTypes;
 using Compze.Tessaging.Typermedia.Client;
 using Compze.Tessaging.Typermedia.Client.Internal;
 

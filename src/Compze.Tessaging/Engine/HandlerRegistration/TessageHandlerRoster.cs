@@ -9,6 +9,7 @@ using Compze.Tessaging.Internal.Routing;
 using Compze.Tessaging.Engine.Exceptions;
 using Compze.Tessaging.Engine.HandlerRegistration.TessageHandlers;
 using Compze.Tessaging.Engine.HandlerRegistration.TeventObservation;
+using Compze.Tessaging.TessageTypes;
 using Compze.TypeIdentifiers;
 
 namespace Compze.Tessaging.Engine.HandlerRegistration;

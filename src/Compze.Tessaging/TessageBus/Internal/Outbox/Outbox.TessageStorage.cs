@@ -4,6 +4,7 @@ using Compze.Internals.Logging;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tessaging.Endpoints;
 using Compze.Tessaging.Internal.SqlLayer;
+using Compze.Tessaging.TessageTypes;
 using Compze.TypeIdentifiers;
 
 namespace Compze.Tessaging.TessageBus.Internal.Outbox;

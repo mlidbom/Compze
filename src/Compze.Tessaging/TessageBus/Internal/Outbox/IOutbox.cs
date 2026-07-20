@@ -1,5 +1,6 @@
 using Compze.Tessaging.TessageBus.Internal.BestEffortDelivery;
 using Compze.Tessaging.Internal.TessagesInFlight;
+using Compze.Tessaging.TessageTypes;
 
 namespace Compze.Tessaging.TessageBus.Internal.Outbox;
 

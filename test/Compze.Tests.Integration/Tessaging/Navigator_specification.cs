@@ -10,6 +10,7 @@ using Compze.Tessaging.TessageBus;
 using Compze.Tessaging.Endpoints.ExactlyOnce;
 using Compze.Tessaging.Typermedia;
 using Compze.Tessaging.Engine.HandlerRegistration.TessageHandlers;
+using Compze.Tessaging.TessageTypes;
 
 // ReSharper disable MemberCanBeMadeStatic.Global
 // ReSharper disable MemberCanBeMadeStatic.Local

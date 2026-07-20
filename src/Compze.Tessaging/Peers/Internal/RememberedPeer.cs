@@ -1,5 +1,6 @@
 using Compze.Internals.SystemCE.ReflectionCE;
 using Compze.Tessaging.Endpoints;
+using Compze.Tessaging.TessageTypes;
 using Compze.TypeIdentifiers;
 
 namespace Compze.Tessaging.Peers.Internal;

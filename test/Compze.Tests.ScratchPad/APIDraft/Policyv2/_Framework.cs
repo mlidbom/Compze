@@ -3,6 +3,7 @@
 
 using System;
 using Compze.Tessaging;
+using Compze.Tessaging.TessageTypes;
 
 namespace Compze.Tests.ScratchPad.APIDraft.Policyv2;
 

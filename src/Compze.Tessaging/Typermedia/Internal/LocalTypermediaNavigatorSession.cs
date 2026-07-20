@@ -5,6 +5,7 @@ using Compze.DependencyInjection.Abstractions;
 using Compze.Tessaging.Validation;
 using Compze.Tessaging.Engine;
 using Compze.Tessaging.Engine.Internal;
+using Compze.Tessaging.TessageTypes;
 
 namespace Compze.Tessaging.Typermedia.Internal;
 

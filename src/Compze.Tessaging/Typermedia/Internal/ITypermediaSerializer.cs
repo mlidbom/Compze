@@ -1,3 +1,5 @@
+using Compze.Tessaging.TessageTypes;
+
 namespace Compze.Tessaging.Typermedia.Internal;
 
 ///<summary>The Typermedia feature's own serializer: the format of the Typermedia conversation — the tueries and tommands<br/>

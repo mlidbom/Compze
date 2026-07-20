@@ -11,6 +11,7 @@ using Compze.Tessaging.Internal.HandlerAvailability;
 using Compze.Tessaging.Peers;
 using Compze.Tessaging.Peers.Internal;
 using Compze.Tessaging.Internal.Routing;
+using Compze.Tessaging.TessageTypes;
 
 namespace Compze.Tessaging.TessageBus.Internal.Outbox;
 

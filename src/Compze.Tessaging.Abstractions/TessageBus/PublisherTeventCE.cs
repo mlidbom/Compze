@@ -1,4 +1,6 @@
 
+using Compze.Tessaging.TessageTypes;
+
 namespace Compze.Tessaging.TessageBus;
 
 public static class PublisherTeventCE

@@ -11,6 +11,7 @@ using Compze.Tessaging.Internal.TessagesInFlight;
 using Compze.Tessaging.Internal.SystemCE.ThreadingCE;
 using Compze.Tessaging.Internal.Transport;
 using Compze.Tessaging.Internal.SqlLayer;
+using Compze.Tessaging.TessageTypes;
 using JetBrains.Annotations;
 
 namespace Compze.Tessaging.TessageBus.Internal.Inbox;

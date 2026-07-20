@@ -2,6 +2,7 @@ using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tessaging.Internal.HandlerAvailability;
+using Compze.Tessaging.TessageTypes;
 
 namespace Compze.Tessaging.Typermedia.Internal;
 

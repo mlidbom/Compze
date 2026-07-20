@@ -5,7 +5,7 @@
 #pragma warning disable CA1040 //We define a number of empty marker interfaces here that are vital for framework functionality
 // ReSharper disable UnusedTypeParameter
 
-namespace Compze.Tessaging;
+namespace Compze.Tessaging.TessageTypes;
 
 ///<summary>A message routed by type</summary>
 public interface ITessage;

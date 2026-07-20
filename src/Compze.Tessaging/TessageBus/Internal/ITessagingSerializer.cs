@@ -1,3 +1,5 @@
+using Compze.Tessaging.TessageTypes;
+
 namespace Compze.Tessaging.TessageBus.Internal;
 
 ///<summary>The Tessaging pipeline's own serializer: the format of every <see cref="ITessage"/> the pipeline sends and<br/>

@@ -1,4 +1,6 @@
 
+using Compze.Tessaging.TessageTypes;
+
 namespace Compze.Tessaging.TessageBus;
 
 ///<summary>Publishes tevents within the caller's unit of work: the publisher is scoped, participation delivers through the<br/>

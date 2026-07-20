@@ -1,4 +1,6 @@
 
+using Compze.Tessaging.TessageTypes;
+
 namespace Compze.Tessaging.TessageBus;
 
 ///<summary>Sends exactly-once tommands within the caller's unit of work: the send joins the caller's ambient transaction, so a<br/>

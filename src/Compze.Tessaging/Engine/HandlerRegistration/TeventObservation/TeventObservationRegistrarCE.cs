@@ -1,5 +1,6 @@
 using Compze.DependencyInjection;
 using Compze.Tessaging.Engine.HandlerRegistration.TessageHandlers;
+using Compze.Tessaging.TessageTypes;
 
 namespace Compze.Tessaging.Engine.HandlerRegistration.TeventObservation;
 

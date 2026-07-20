@@ -1,5 +1,6 @@
 using Compze.Tessaging.TessageBus;
 using Compze.Tessaging;
+using Compze.Tessaging.TessageTypes;
 using Compze.Tests.Infrastructure;
 using Compze.Teventive;
 using Compze.Teventive.Taggregates.Tevents.Public;

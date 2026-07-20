@@ -1,4 +1,6 @@
 
+using Compze.Tessaging.TessageTypes;
+
 namespace Compze.Tessaging.Typermedia;
 
 ///<summary>Navigates the local typermedia API — the API this endpoint itself serves — within the caller's session: the<br/>

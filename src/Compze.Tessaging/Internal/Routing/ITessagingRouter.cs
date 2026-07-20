@@ -3,6 +3,7 @@ using Compze.Tessaging.Endpoints;
 using Compze.Tessaging.Endpoints.Discovery;
 using Compze.Tessaging.Peers;
 using Compze.Tessaging.Peers.Internal;
+using Compze.Tessaging.TessageTypes;
 
 namespace Compze.Tessaging.Internal.Routing;
 

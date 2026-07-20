@@ -1,4 +1,5 @@
 using Compze.DependencyInjection.Abstractions;
+using Compze.Tessaging.TessageTypes;
 using Compze.TypeIdentifiers;
 using Compze.TypeIdentifiers.DependencyInjection;
 // ReSharper disable PropertyCanBeMadeInitOnly.Global serialization...

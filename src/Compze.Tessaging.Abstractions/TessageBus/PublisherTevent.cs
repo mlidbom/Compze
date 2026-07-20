@@ -1,4 +1,5 @@
 using Compze.Internals.SystemCE.ReflectionCE;
+using Compze.Tessaging.TessageTypes;
 
 namespace Compze.Tessaging.TessageBus;
 

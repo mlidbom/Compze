@@ -10,6 +10,7 @@ using Compze.Tessaging.Internal.Transport;
 using Compze.Tessaging.TessageBus;
 using Compze.Tessaging.TessageBus.Internal;
 using Compze.Tessaging.Internal.Transport.Advertisement;
+using Compze.Tessaging.TessageTypes;
 using Compze.TypeIdentifiers;
 
 namespace Compze.Tessaging.Internal.Routing;

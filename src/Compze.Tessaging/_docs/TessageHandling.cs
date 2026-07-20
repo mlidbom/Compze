@@ -1,5 +1,6 @@
 // ReSharper disable All
 
+using Compze.Tessaging.TessageTypes;
 
 #pragma warning disable
 

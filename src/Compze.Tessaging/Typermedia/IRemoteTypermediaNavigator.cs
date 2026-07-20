@@ -1,4 +1,6 @@
 
+using Compze.Tessaging.TessageTypes;
+
 namespace Compze.Tessaging.Typermedia;
 
 ///<summary>Navigates remote typermedia APIs — the APIs other endpoints serve: posts at-most-once typermedia tommands to them<br/>

@@ -5,6 +5,7 @@ using Compze.Internals.SystemCE.ReflectionCE;
 using Compze.Tessaging.TessageBus;
 using Compze.Tessaging.TessageBus.Internal;
 using Compze.Tessaging.Internal.Routing;
+using Compze.Tessaging.TessageTypes;
 
 namespace Compze.Tessaging.Engine.HandlerRegistration.TessageHandlers;
 

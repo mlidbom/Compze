@@ -2,6 +2,7 @@ using Compze.Tessaging.Validation.Internal;
 using System.Reflection;
 using Compze.Internals.SystemCE.CollectionsCE.GenericCE;
 using Compze.Internals.SystemCE.ReflectionCE;
+using Compze.Tessaging.TessageTypes;
 using Compze.Tessaging.Validation.Exceptions;
 using Compze.Threading;
 

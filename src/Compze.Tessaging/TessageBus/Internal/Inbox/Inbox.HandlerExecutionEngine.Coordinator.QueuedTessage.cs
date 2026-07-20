@@ -8,6 +8,7 @@ using Compze.Tessaging.Engine.Internal;
 using Compze.Tessaging.Internal.SystemCE.ThreadingCE;
 using Compze.Tessaging.Internal.Transport;
 using Compze.Tessaging.TessageBus.Internal.TessageHandling;
+using Compze.Tessaging.TessageTypes;
 
 namespace Compze.Tessaging.TessageBus.Internal.Inbox;
 

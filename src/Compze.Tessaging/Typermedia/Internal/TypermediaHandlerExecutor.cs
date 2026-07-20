@@ -5,6 +5,7 @@ using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tessaging.Engine;
 using Compze.Tessaging.Engine.Internal;
 using Compze.Tessaging.Engine.Exceptions;
+using Compze.Tessaging.TessageTypes;
 
 namespace Compze.Tessaging.Typermedia.Internal;
 

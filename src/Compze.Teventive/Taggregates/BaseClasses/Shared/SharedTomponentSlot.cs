@@ -2,6 +2,7 @@ using Compze.Abstractions.Public;
 using Compze.Contracts;
 using Compze.Tessaging.TessageBus;
 using Compze.Tessaging;
+using Compze.Tessaging.TessageTypes;
 using Compze.Teventive.Taggregates.Tevents.Public;
 
 namespace Compze.Teventive.Taggregates.BaseClasses.Shared;

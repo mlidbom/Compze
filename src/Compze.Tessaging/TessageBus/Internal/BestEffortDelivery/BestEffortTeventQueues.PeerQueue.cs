@@ -7,6 +7,7 @@ using Compze.Tessaging.Internal.TessagesInFlight;
 using Compze.Tessaging.Peers;
 using Compze.Tessaging.Peers.Internal;
 using Compze.Tessaging.Internal.Transport;
+using Compze.Tessaging.TessageTypes;
 using Compze.Threading;
 
 namespace Compze.Tessaging.TessageBus.Internal.BestEffortDelivery;

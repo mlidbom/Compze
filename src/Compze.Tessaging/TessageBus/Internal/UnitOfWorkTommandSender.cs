@@ -9,6 +9,7 @@ using Compze.Tessaging.Engine.Internal;
 using Compze.Tessaging.Engine.HandlerRegistration;
 using Compze.Tessaging.Engine.HandlerRegistration.Internal;
 using Compze.Tessaging.TessageBus.Internal.Outbox;
+using Compze.Tessaging.TessageTypes;
 using JetBrains.Annotations;
 
 namespace Compze.Tessaging.TessageBus.Internal;

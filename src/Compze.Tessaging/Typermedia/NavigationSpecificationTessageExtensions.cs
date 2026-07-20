@@ -1,4 +1,5 @@
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
+using Compze.Tessaging.TessageTypes;
 
 namespace Compze.Tessaging.Typermedia;
 

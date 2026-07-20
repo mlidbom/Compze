@@ -11,6 +11,7 @@ using Compze.Tessaging.Peers;
 using Compze.Tessaging.Peers.Internal;
 using Compze.Tessaging.Internal.Transport;
 using Compze.Tessaging.Internal.Routing;
+using Compze.Tessaging.TessageTypes;
 using Compze.TypeIdentifiers;
 
 namespace Compze.Tessaging.TessageBus.Internal.BestEffortDelivery;

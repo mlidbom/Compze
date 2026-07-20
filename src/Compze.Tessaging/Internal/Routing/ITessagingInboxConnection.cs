@@ -1,4 +1,5 @@
 using Compze.Tessaging.Internal.Transport.Advertisement;
+using Compze.Tessaging.TessageTypes;
 
 namespace Compze.Tessaging.Internal.Routing;
 

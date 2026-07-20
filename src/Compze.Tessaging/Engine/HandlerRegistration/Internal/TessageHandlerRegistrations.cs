@@ -10,6 +10,7 @@ using Compze.Tessaging.TessageBus.Internal;
 using Compze.Tessaging.Internal.Routing;
 using Compze.Tessaging.Validation;
 using Compze.Tessaging.Engine.HandlerRegistration.TeventObservation;
+using Compze.Tessaging.TessageTypes;
 using Compze.Threading;
 using Compze.TypeIdentifiers;
 

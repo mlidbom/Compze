@@ -2,6 +2,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using Compze.Tessaging.Endpoints;
 using Compze.Tessaging.Endpoints.Discovery;
+using Compze.Tessaging.TessageTypes;
 
 namespace Compze.Tessaging.Internal.Transport.Advertisement;
 

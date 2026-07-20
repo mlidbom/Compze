@@ -1,5 +1,6 @@
 using Compze.Internals.SystemCE.CollectionsCE.GenericCE;
 using Compze.Tessaging.Endpoints;
+using Compze.Tessaging.TessageTypes;
 using Compze.Threading;
 
 namespace Compze.Tessaging.Peers.Internal;

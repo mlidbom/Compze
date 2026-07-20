@@ -11,6 +11,7 @@ using Compze.Tessaging.Engine.Internal;
 using Compze.Tessaging.TessageBus.Internal.BestEffortDelivery;
 using Compze.Tessaging.TessageBus.Internal.Outbox;
 using Compze.Tessaging.Internal.TessagesInFlight;
+using Compze.Tessaging.TessageTypes;
 using JetBrains.Annotations;
 
 namespace Compze.Tessaging.TessageBus.Internal;

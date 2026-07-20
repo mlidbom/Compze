@@ -1,4 +1,6 @@
 
+using Compze.Tessaging.TessageTypes;
+
 namespace Compze.Tessaging.TessageBus;
 
 ///<summary>Sends exactly-once tommands from code that runs outside any unit of work — application code with no ambient scope<br/>
