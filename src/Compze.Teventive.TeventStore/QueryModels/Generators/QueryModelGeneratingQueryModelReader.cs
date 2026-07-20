@@ -24,7 +24,7 @@ public class QueryModelGeneratingQueryModelReader : IVersioningQueryModelReader
          return value._assert().NotNull();
       }
 
-      throw new NoSuchDocumentException(key, typeof(TValue));
+      throw new NoSuchQueryModelException(key, typeof(TValue));
    }
 
    public virtual TValue GetVersion<TValue>(EntityId key, int version) where TValue : class
@@ -34,7 +34,7 @@ public class QueryModelGeneratingQueryModelReader : IVersioningQueryModelReader
          return value._assert().NotNull();
       }
 
-      throw new NoSuchDocumentException(key, typeof(TValue));
+      throw new NoSuchQueryModelException(key, typeof(TValue));
    }
 
    protected virtual bool TryGet<TDocument>(EntityId key, [NotNullWhen(true)] out TDocument? document) where TDocument : class => TryGetVersion(key, out document);

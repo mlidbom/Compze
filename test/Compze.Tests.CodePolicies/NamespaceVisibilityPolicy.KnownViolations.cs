@@ -10,7 +10,6 @@ public static partial class NamespaceVisibilityPolicy
       /// each needs a deliberate decision: internalize the type, or move it to a public home.</summary>
       public static readonly IReadOnlyList<string> PublicTypesInInternalOrPrivateNamespaces =
       [
-         "Compze.Abstractions.Configuration.Internal.IConfigurationParameterProvider",
          "Compze.Abstractions.Serialization.Internal.IDocumentDbSerializer",
          "Compze.Abstractions.Serialization.Internal.IJsonSerializer",
          "Compze.Abstractions.Wiring.Testing.Internal.DIContainer",
@@ -19,8 +18,6 @@ public static partial class NamespaceVisibilityPolicy
          "Compze.Abstractions.Wiring.Testing.Internal.SqlLayer",
          "Compze.Abstractions.Wiring.Testing.Internal.SqlLayerExtensions",
          "Compze.Abstractions.Wiring.Testing.Internal.Transport",
-         "Compze.DocumentDb.Internal.SqlLayer.Exceptions.AttemptToSaveAlreadyPersistedValueException",
-         "Compze.DocumentDb.Internal.SqlLayer.Exceptions.NoSuchDocumentException",
          "Compze.DocumentDb.Private.DocumentDbSession",
          "Compze.DocumentDb.Private.DocumentDbSession+ContextEnsuringWrapper",
          "Compze.DocumentDb.Private.DocumentDbSession+DocumentItem",
@@ -48,7 +45,6 @@ public static partial class NamespaceVisibilityPolicy
          "Compze.Tessaging.Internal.SqlLayer.ITessagingSqlLayer+UndeliveredTessage",
          "Compze.Tessaging.Internal.Transport.Advertisement.EndpointInformation",
          "Compze.Tessaging.Peers.Internal.IPeerRegistry",
-         "Compze.Teventive.Internal.Implementation.AllowPublicSettersAttribute",
          "Compze.Teventive.TeventStore.Abstractions.Internal.ITeventStoreSerializer",
          "Compze.Teventive.TeventStore.Abstractions.Internal.SqlLayer.Abstractions.ReadOrder"
       ];

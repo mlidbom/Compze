@@ -1,5 +1,5 @@
 using Compze.DocumentDb.Internal.SqlLayer;
-using Compze.DocumentDb.Internal.SqlLayer.Exceptions;
+using Compze.DocumentDb.Exceptions;
 using Compze.Internals.Sql.Common;
 using Compze.Internals.Sql.Sqlite;
 using Compze.Internals.Sql.Sqlite.Private;

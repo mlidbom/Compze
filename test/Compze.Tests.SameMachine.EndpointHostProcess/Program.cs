@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using System.Globalization;
 using System.Runtime.Loader;
-using Compze.Abstractions.Configuration.Internal;
+using Compze.Abstractions.Configuration;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Microsoft;
 using Compze.Hosting;

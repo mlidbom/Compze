@@ -1,6 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using Compze.DocumentDb.Infrastructure;
-using Compze.DocumentDb.Internal.SqlLayer.Exceptions;
+using Compze.DocumentDb.Exceptions;
 using Compze.DocumentDb.Public;
 using Compze.Abstractions.Public;
 using Compze.DependencyInjection;

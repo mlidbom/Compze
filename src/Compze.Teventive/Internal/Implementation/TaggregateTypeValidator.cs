@@ -47,12 +47,7 @@ static class TaggregateTypeValidator<TDomainClass, TTeventImplementation, TTeven
                             .Where(member => member.SetMethod?.IsPublic == true)
                             .ToList();
 
-      var totalMutableProperties = publicFields.Concat(publicProperties).ToList();
-      // ReSharper disable once AssignNullToNotNullAttribute
-      // ReSharper disable once ConditionIsAlwaysTrueOrFalse
-      totalMutableProperties = totalMutableProperties.Where(member => member.DeclaringType?.GetCustomAttribute<AllowPublicSettersAttribute>() == null).ToList();
-
-      return totalMutableProperties;
+      return publicFields.Concat(publicProperties).ToList();
    }
 
    static IReadOnlyList<Type> GetAllInheritingClassesOrInterfaces(Type type) => type.Assembly.GetTypes()

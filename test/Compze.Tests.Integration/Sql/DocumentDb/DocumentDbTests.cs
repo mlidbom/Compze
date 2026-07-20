@@ -6,6 +6,7 @@ using Compze.DependencyInjection;
 using Compze.Internals.SystemCE.TransactionsCE;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Internals.SystemCE.UsageGuards;
+using Compze.DocumentDb.Exceptions;
 using Compze.Must;
 
 using static Compze.Must.MustActions;
@@ -61,7 +62,7 @@ public class DocumentDbTests : DocumentDbTestsBase
     }
 
     [PCT]
-    public void GetAllWithIdsThrowsNoSuchDocumentExceptionExceptionIfAnyIdIsMissing()
+    public void GetAllWithIdsThrowsNoSuchDocumentExceptionIfAnyIdIsMissing()
     {
         var ids = 1.Through(9)
                    .Select(index => new EntityId(Guid.Parse($"00000000-0000-0000-0000-00000000000{index}")))
@@ -77,7 +78,13 @@ public class DocumentDbTests : DocumentDbTestsBase
                                                    .Append(new EntityId(Guid.Parse("00000000-0000-0000-0000-000000000099")))
                                                    .ToArray())
                                   // ReSharper disable once ReturnValueOfPureMethodIsNotUsed
-                                  .ToArray()).Must().Throw<ArgumentOutOfRangeException>());
+                                  .ToArray()).Must().Throw<NoSuchDocumentException>());
+    }
+
+    [PCT]
+    public void GettingANonExistentDocumentThrowsNoSuchDocumentException()
+    {
+        UseInScope(reader => Invoking(() => reader.Get<User>(new EntityId())).Must().Throw<NoSuchDocumentException>());
     }
 
 
@@ -202,7 +209,7 @@ public class DocumentDbTests : DocumentDbTestsBase
         UseInTransactionalScope((reader, updater) =>
         {
            updater.Save(lowerCase.TheEmail, lowerCase);
-           Invoking(() => updater.Save(upperCase.TheEmail, upperCase)).Must().Throw<ArgumentException>();
+           Invoking(() => updater.Save(upperCase.TheEmail, upperCase)).Must().Throw<AttemptToSaveAlreadyPersistedValueException>();
 
            reader.Get<Email>(lowerCase.TheEmail)
                  .Must()
@@ -212,7 +219,7 @@ public class DocumentDbTests : DocumentDbTestsBase
         UseInTransactionalScope((reader, updater) =>
         {
 
-            Invoking(() => updater.Save(upperCase.TheEmail, upperCase)).Must().Throw<ArgumentException>();
+            Invoking(() => updater.Save(upperCase.TheEmail, upperCase)).Must().Throw<AttemptToSaveAlreadyPersistedValueException>();
             reader.Get<Email>(upperCase.TheEmail)
                 .TheEmail.Must()
                 .Be(lowerCase.TheEmail);
@@ -221,8 +228,8 @@ public class DocumentDbTests : DocumentDbTestsBase
                 .Be(reader.Get<Email>(upperCase.TheEmail));
 
             updater.Delete<Email>(upperCase.TheEmail);
-            Invoking(() => updater.Delete<Email>(upperCase.TheEmail)).Must().Throw<ArgumentOutOfRangeException>();
-            Invoking(() => updater.Delete<Email>(lowerCase.TheEmail)).Must().Throw<ArgumentOutOfRangeException>();
+            Invoking(() => updater.Delete<Email>(upperCase.TheEmail)).Must().Throw<NoSuchDocumentException>();
+            Invoking(() => updater.Delete<Email>(lowerCase.TheEmail)).Must().Throw<NoSuchDocumentException>();
         });
     }
 
@@ -235,7 +242,7 @@ public class DocumentDbTests : DocumentDbTestsBase
         UseInTransactionalScope((reader, updater) =>
         {
             updater.Save(noWhitespace.TheEmail, noWhitespace);
-            Invoking(() => updater.Save(withWhitespace.TheEmail, withWhitespace)).Must().Throw<ArgumentException>();
+            Invoking(() => updater.Save(withWhitespace.TheEmail, withWhitespace)).Must().Throw<AttemptToSaveAlreadyPersistedValueException>();
 
             reader.Get<Email>(noWhitespace.TheEmail)
                 .Must()
@@ -244,7 +251,7 @@ public class DocumentDbTests : DocumentDbTestsBase
 
         UseInTransactionalScope((reader, updater) =>
         {
-            Invoking(() => updater.Save(withWhitespace.TheEmail, withWhitespace)).Must().Throw<ArgumentException>();
+            Invoking(() => updater.Save(withWhitespace.TheEmail, withWhitespace)).Must().Throw<AttemptToSaveAlreadyPersistedValueException>();
             reader.Get<Email>(withWhitespace.TheEmail)
                 .TheEmail.Must()
                 .Be(noWhitespace.TheEmail);
@@ -253,8 +260,8 @@ public class DocumentDbTests : DocumentDbTestsBase
                 .Be(reader.Get<Email>(withWhitespace.TheEmail));
 
             updater.Delete<Email>(withWhitespace.TheEmail);
-            Invoking(() => updater.Delete<Email>(withWhitespace.TheEmail)).Must().Throw<ArgumentOutOfRangeException>();
-            Invoking(() => updater.Delete<Email>(noWhitespace.TheEmail)).Must().Throw<ArgumentOutOfRangeException>();
+            Invoking(() => updater.Delete<Email>(withWhitespace.TheEmail)).Must().Throw<NoSuchDocumentException>();
+            Invoking(() => updater.Delete<Email>(noWhitespace.TheEmail)).Must().Throw<NoSuchDocumentException>();
         });
     }
 
@@ -404,7 +411,7 @@ public class DocumentDbTests : DocumentDbTestsBase
         });
 
         var buster = new Dog { Id = new EntityId() };
-        UseInTransactionalScope((_, updater) => Invoking(() => updater.Delete(buster)).Must().Throw<ArgumentOutOfRangeException>());
+        UseInTransactionalScope((_, updater) => Invoking(() => updater.Delete(buster)).Must().Throw<NoSuchDocumentException>());
     }
 
     [PCT]
