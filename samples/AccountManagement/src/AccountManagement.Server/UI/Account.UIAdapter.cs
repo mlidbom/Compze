@@ -52,6 +52,6 @@ static class AccountUIAdapter
       });
 
    internal static void GetById(TessageHandlerRegistrar registrar) => registrar.ForTuery(
-      (TessageTypes.Remotable.NonTransactional.Tueries.TaggregateLink<AccountResource> accountTuery, ILocalTypermediaNavigatorSession navigator)
+      (Remotable.NonTransactional.Tueries.TaggregateLink<AccountResource> accountTuery, ILocalTypermediaNavigatorSession navigator)
          => new AccountResource(navigator.Execute(InternalApi.AccountQueryModel.Tueries.Get(accountTuery.TaggregateId))));
 }

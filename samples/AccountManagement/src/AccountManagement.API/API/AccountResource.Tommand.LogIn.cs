@@ -12,7 +12,7 @@ public partial class AccountResource
 {
    public static partial class Tommand
    {
-      public partial class LogIn : TessageTypes.Remotable.AtMostOnce.AtMostOnceTypermediaTommand<LogIn.LoginAttemptResult>
+      public partial class LogIn : Remotable.AtMostOnce.AtMostOnceTypermediaTommand<LogIn.LoginAttemptResult>
       {
          public static LogIn Create() => new() {Id = new TessageId()};
 

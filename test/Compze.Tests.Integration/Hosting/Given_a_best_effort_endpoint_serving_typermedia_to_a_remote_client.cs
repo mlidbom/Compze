@@ -92,7 +92,7 @@ public class Given_a_best_effort_endpoint_serving_typermedia_to_a_remote_client 
          .Must().Throw<Exception>().Which.Message.Must().Contain("The endpoint declares no domain database");
    }
 
-   protected internal class GetUserTuery(string name) : TessageTypes.Remotable.NonTransactional.Tueries.Tuery<UserResource>
+   protected internal class GetUserTuery(string name) : Remotable.NonTransactional.Tueries.Tuery<UserResource>
    {
       public string Name { get; private set; } = name;
    }
@@ -102,7 +102,7 @@ public class Given_a_best_effort_endpoint_serving_typermedia_to_a_remote_client 
       public string Name { get; private set; } = name;
    }
 
-   protected internal class RegisterUserTypermediaTommand : TessageTypes.Remotable.AtMostOnce.AtMostOnceTypermediaTommand<UserRegisteredConfirmationResource>
+   protected internal class RegisterUserTypermediaTommand : Remotable.AtMostOnce.AtMostOnceTypermediaTommand<UserRegisteredConfirmationResource>
    {
       RegisterUserTypermediaTommand() {}
 

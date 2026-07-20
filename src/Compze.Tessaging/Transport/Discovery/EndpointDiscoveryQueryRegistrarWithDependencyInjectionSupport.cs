@@ -15,7 +15,7 @@ public class EndpointDiscoveryQueryRegistrarWithDependencyInjectionSupport(Endpo
    }
 
    public EndpointDiscoveryQueryRegistrarWithDependencyInjectionSupport ForQuery<TQuery, TDependency1, TResult>(
-      Func<TQuery, TDependency1, TResult> handler) where TQuery : TessageTypes.Remotable.NonTransactional.Tueries.Tuery<TResult>
+      Func<TQuery, TDependency1, TResult> handler) where TQuery : Remotable.NonTransactional.Tueries.Tuery<TResult>
                                                    where TDependency1 : class
    {
       _executor.RegisterQueryHandler<TQuery, TResult>((query, scopeResolver) => handler(query, scopeResolver.Resolve<TDependency1>()));

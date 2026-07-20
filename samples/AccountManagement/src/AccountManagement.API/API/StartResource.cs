@@ -15,7 +15,7 @@ namespace AccountManagement.API;
    internal class TueriesResource
 #pragma warning restore CA1724 // Type names should not match namespaces
    {
-      internal TessageTypes.Remotable.NonTransactional.Tueries.TaggregateLink<AccountResource> AccountById(AccountId accountId) => new(accountId);
+      internal Remotable.NonTransactional.Tueries.TaggregateLink<AccountResource> AccountById(AccountId accountId) => new(accountId);
    }
 
    internal class TommandsResource

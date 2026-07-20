@@ -21,25 +21,25 @@ namespace Compze.Tests.Common.Tessaging.Given_a_backend_endpoint_with_a_tommand_
 
 public class MyTommandResult;
 
-public class MyAtMostOnceTypermediaTommandWithResult : TessageTypes.Remotable.AtMostOnce.AtMostOnceTypermediaTommand<MyTommandResult>
+public class MyAtMostOnceTypermediaTommandWithResult : Remotable.AtMostOnce.AtMostOnceTypermediaTommand<MyTommandResult>
 {
    MyAtMostOnceTypermediaTommandWithResult() {}
    public static MyAtMostOnceTypermediaTommandWithResult Create() => new() { Id = new TessageId() };
 }
 
 public class MyTueryResult;
-public class MyTuery : TessageTypes.Remotable.NonTransactional.Tueries.Tuery<MyTueryResult>;
+public class MyTuery : Remotable.NonTransactional.Tueries.Tuery<MyTueryResult>;
 class MyExactlyOnceTevent : TaggregateTevent, IMyExactlyOnceTevent;
 interface IMyExactlyOnceTevent : ITaggregateTevent;
-public class MyExactlyOnceTommand : TessageTypes.Remotable.ExactlyOnce.Tommand;
+public class MyExactlyOnceTommand : Remotable.ExactlyOnce.Tommand;
 
 ///<summary>An exactly-once tommand whose handler lives on the Remote endpoint (<see cref="MyExactlyOnceTommand"/>'s lives on the<br/>
 /// Backend), so specifications can send from the Backend toward a handler endpoint that may be down or replaced.</summary>
-public class MyExactlyOnceTommandHandledByTheRemoteEndpoint : TessageTypes.Remotable.ExactlyOnce.Tommand;
+public class MyExactlyOnceTommandHandledByTheRemoteEndpoint : Remotable.ExactlyOnce.Tommand;
 
 ///<summary>An exactly-once tommand no endpoint registers a handler for: sending it must fail loud — a tommand routes to<br/>
 /// whichever endpoint advertises its type, and nothing advertises this one.</summary>
-public class MyUnhandledExactlyOnceTommand : TessageTypes.Remotable.ExactlyOnce.Tommand;
+public class MyUnhandledExactlyOnceTommand : Remotable.ExactlyOnce.Tommand;
 
 ///<summary>A best-effort tevent: plain <see cref="IRemotableTevent"/> IS the best-effort delivery tier — best-effort across the wire,<br/>
 /// no store, no dedup, no retry (see <c>src/Compze.Tessaging/dev_docs/tevent-delivery-model.md</c>).</summary>
@@ -54,7 +54,7 @@ public class MyBestEffortTevent : IMyBestEffortTevent
    public int SequenceNumber { get; set; }
 }
 
-class MyUpdateTaggregateTommand : TessageTypes.Remotable.AtMostOnce.AtMostOnceTypermediaTommand
+class MyUpdateTaggregateTommand : Remotable.AtMostOnce.AtMostOnceTypermediaTommand
 {
    [Obsolete("Used by serializer", error: true)]
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
@@ -64,7 +64,7 @@ class MyUpdateTaggregateTommand : TessageTypes.Remotable.AtMostOnce.AtMostOnceTy
    public TaggregateId TaggregateId { get; private set; }
 }
 
-public class MyCreateTaggregateTommand : TessageTypes.Remotable.AtMostOnce.AtMostOnceTypermediaTommand
+public class MyCreateTaggregateTommand : Remotable.AtMostOnce.AtMostOnceTypermediaTommand
 {
    [Obsolete("Used by serializer", error: true)]
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.

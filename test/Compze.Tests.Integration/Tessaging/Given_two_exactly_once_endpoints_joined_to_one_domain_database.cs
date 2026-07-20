@@ -141,6 +141,6 @@ public class Given_two_exactly_once_endpoints_joined_to_one_domain_database : Un
    }
 }
 
-public class MyTommandHandledByTheSecondNeighbor : TessageTypes.Remotable.ExactlyOnce.Tommand;
+public class MyTommandHandledByTheSecondNeighbor : Remotable.ExactlyOnce.Tommand;
 
-public class MyReplyTommandHandledByTheFirstNeighbor : TessageTypes.Remotable.ExactlyOnce.Tommand;
+public class MyReplyTommandHandledByTheFirstNeighbor : Remotable.ExactlyOnce.Tommand;

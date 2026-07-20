@@ -44,7 +44,7 @@ public abstract class PerformanceTestBase : UniversalTestBase
       await Host.DisposeAsync().caf();
    }
 
-   protected internal class MyRemoteTuery : TessageTypes.Remotable.NonTransactional.Tueries.Tuery<MyTueryResult>;
-   protected internal class MyLocalStrictlyLocalTuery : TessageTypes.StrictlyLocal.Tueries.StrictlyLocalTuery<MyLocalStrictlyLocalTuery, MyTueryResult>;
+   protected internal class MyRemoteTuery : Remotable.NonTransactional.Tueries.Tuery<MyTueryResult>;
+   protected internal class MyLocalStrictlyLocalTuery : StrictlyLocal.Tueries.StrictlyLocalTuery<MyLocalStrictlyLocalTuery, MyTueryResult>;
    protected internal class MyTueryResult;
 }

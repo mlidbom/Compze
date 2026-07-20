@@ -34,12 +34,12 @@ public class MyGreeting
    public string Message { get; set; } = "";
 }
 
-public class MyStrictlyLocalGreetingTuery : TessageTypes.StrictlyLocal.Tueries.StrictlyLocalTuery<MyStrictlyLocalGreetingTuery, MyGreeting>
+public class MyStrictlyLocalGreetingTuery : StrictlyLocal.Tueries.StrictlyLocalTuery<MyStrictlyLocalGreetingTuery, MyGreeting>
 {
    public string Name { get; set; } = "";
 }
 
-public class MyStrictlyLocalRegisterGreeterTommand : TessageTypes.StrictlyLocal.Tommands.StrictlyLocalTommand
+public class MyStrictlyLocalRegisterGreeterTommand : StrictlyLocal.Tommands.StrictlyLocalTommand
 {
    public string Name { get; set; } = "";
 }

@@ -110,7 +110,7 @@ public class Experiment_with_unifying_tevents_and_tommands_test : UniversalTestB
 
    public static class UserRegistrarTommand
    {
-      public class RegisterUserTypermediaTommand : TessageTypes.Remotable.AtMostOnce.AtMostOnceTypermediaTommand<RegisterUserResult>
+      public class RegisterUserTypermediaTommand : Remotable.AtMostOnce.AtMostOnceTypermediaTommand<RegisterUserResult>
       {
          public TaggregateId UserId { get; private set; } = new();
 
@@ -160,7 +160,7 @@ public class Experiment_with_unifying_tevents_and_tommands_test : UniversalTestB
       }
    }
 
-   public class GetUserTuery(TaggregateId userId) : TessageTypes.Remotable.NonTransactional.Tueries.Tuery<UserResource>
+   public class GetUserTuery(TaggregateId userId) : Remotable.NonTransactional.Tueries.Tuery<UserResource>
    {
       public TaggregateId UserId { get; private set; } = userId;
    }

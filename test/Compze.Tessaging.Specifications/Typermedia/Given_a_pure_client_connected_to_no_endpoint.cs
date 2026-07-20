@@ -39,9 +39,9 @@ public class Given_a_pure_client_connected_to_no_endpoint : UniversalTestBase
 
    // ReSharper disable once ClassNeverInstantiated.Local
    class SomeTueryResult;
-   class SomeTuery : TessageTypes.Remotable.NonTransactional.Tueries.Tuery<SomeTueryResult>;
+   class SomeTuery : Remotable.NonTransactional.Tueries.Tuery<SomeTueryResult>;
 
-   class SomeTommand : TessageTypes.Remotable.AtMostOnce.AtMostOnceTypermediaTommand
+   class SomeTommand : Remotable.AtMostOnce.AtMostOnceTypermediaTommand
    {
       SomeTommand() {}
       public static SomeTommand Create() => new() { Id = new TessageId() };

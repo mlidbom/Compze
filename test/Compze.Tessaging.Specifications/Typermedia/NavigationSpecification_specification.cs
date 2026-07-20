@@ -41,15 +41,15 @@ public class NavigationSpecification_specification
       ((RememberNumberTommand)_navigator.PostedTommands.Single()).Number.Must().Be(42);
    }
 
-   class TheAnswerTuery : TessageTypes.Remotable.NonTransactional.Tueries.Tuery<int>;
+   class TheAnswerTuery : Remotable.NonTransactional.Tueries.Tuery<int>;
 
-   class AddTuery : TessageTypes.Remotable.NonTransactional.Tueries.Tuery<int>
+   class AddTuery : Remotable.NonTransactional.Tueries.Tuery<int>
    {
       public int Left { get; set; }
       public int Right { get; set; }
    }
 
-   class RememberNumberTommand : TessageTypes.Remotable.AtMostOnce.AtMostOnceTypermediaTommand
+   class RememberNumberTommand : Remotable.AtMostOnce.AtMostOnceTypermediaTommand
    {
       RememberNumberTommand() {}
       public static RememberNumberTommand Create(int number) => new() { Id = new TessageId(), Number = number };

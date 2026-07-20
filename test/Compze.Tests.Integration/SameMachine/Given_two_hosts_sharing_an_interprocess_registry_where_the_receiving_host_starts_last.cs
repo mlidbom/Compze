@@ -110,5 +110,5 @@ public class Given_two_hosts_sharing_an_interprocess_registry_where_the_receivin
       _receivedTommandGate.AwaitPassedThroughCountEqualTo(1, WaitTimeout.Seconds(15));
    }
 
-   internal class TommandDiscoveredThroughReconciliation : TessageTypes.Remotable.ExactlyOnce.Tommand;
+   internal class TommandDiscoveredThroughReconciliation : Remotable.ExactlyOnce.Tommand;
 }

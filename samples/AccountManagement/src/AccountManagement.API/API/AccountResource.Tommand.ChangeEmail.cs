@@ -12,7 +12,7 @@ public partial class AccountResource
 {
    public static partial class Tommand
    {
-      public class ChangeEmail : TessageTypes.Remotable.AtMostOnce.AtMostOnceTypermediaTommand
+      public class ChangeEmail : Remotable.AtMostOnce.AtMostOnceTypermediaTommand
       {
          [JsonConstructor]public ChangeEmail(AccountId accountId, string email)
          {

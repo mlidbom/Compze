@@ -43,13 +43,13 @@ class AccountQueryModel : SelfGeneratingQueryModel<AccountQueryModel, IAccountTe
       internal Tuery Tueries => new();
       internal class Tuery
       {
-         public TessageTypes.StrictlyLocal.Tueries.EntityLink<AccountQueryModel> Get(EntityId id) => new(id);
+         public StrictlyLocal.Tueries.EntityLink<AccountQueryModel> Get(EntityId id) => new(id);
       }
 
       public static void RegisterHandlers(TessageHandlerRegistrar registrar) => Get(registrar);
 
       static void Get(TessageHandlerRegistrar registrar) => registrar.ForTuery(
-         (TessageTypes.StrictlyLocal.Tueries.EntityLink<AccountQueryModel> tuery, ILocalTypermediaNavigatorSession navigator) =>
+         (StrictlyLocal.Tueries.EntityLink<AccountQueryModel> tuery, ILocalTypermediaNavigatorSession navigator) =>
             //todo this Id conversion feels iffy
             new AccountQueryModel(navigator.Execute(new TeventStoreApi().Tueries.GetHistory<IAccountTevent>(new TaggregateId(tuery.EntityId.Value)))));
    }

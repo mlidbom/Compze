@@ -87,7 +87,7 @@ public class Given_an_exactly_once_tessaging_endpoint_declaring_no_discovery_reg
       await InvokingAsync(async () => await _endpoint.ServiceLocator.Resolve<IIndependentTommandSender>().SendAsync(new TommandWhoseHandlerFails()))
          .Must().ThrowAsync<InRosterTommandHandlerFailure>();
 
-   protected internal class TommandTheEndpointSendsItself : TessageTypes.Remotable.ExactlyOnce.Tommand;
-   protected internal class TommandWhoseHandlerFails : TessageTypes.Remotable.ExactlyOnce.Tommand;
+   protected internal class TommandTheEndpointSendsItself : Remotable.ExactlyOnce.Tommand;
+   protected internal class TommandWhoseHandlerFails : Remotable.ExactlyOnce.Tommand;
    class InRosterTommandHandlerFailure : Exception;
 }

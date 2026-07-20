@@ -201,5 +201,5 @@ public class Given_two_best_effort_endpoints : UniversalTestBase
       public TessageId Id { get; } = new();
    }
 
-   protected internal class TommandDeclaringTheExactlyOnceContract : TessageTypes.Remotable.ExactlyOnce.Tommand;
+   protected internal class TommandDeclaringTheExactlyOnceContract : Remotable.ExactlyOnce.Tommand;
 }

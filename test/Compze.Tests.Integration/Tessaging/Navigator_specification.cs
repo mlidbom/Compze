@@ -89,7 +89,7 @@ public class Navigator_specification : UniversalTestBase
       public RegisterUserTypermediaTommand RegisterUser(string userName) => RegisterUserTypermediaTommand.Create(userName);
    }
 
-   protected internal class GetUserTuery(string name) : TessageTypes.Remotable.NonTransactional.Tueries.Tuery<UserResource>
+   protected internal class GetUserTuery(string name) : Remotable.NonTransactional.Tueries.Tuery<UserResource>
    {
       public string Name { get; private set; } = name;
    }
@@ -99,7 +99,7 @@ public class Navigator_specification : UniversalTestBase
       public string Name { get; private set; } = name;
    }
 
-   protected internal class RegisterUserTypermediaTommand : TessageTypes.Remotable.AtMostOnce.AtMostOnceTypermediaTommand<UserRegisteredConfirmationResource>
+   protected internal class RegisterUserTypermediaTommand : Remotable.AtMostOnce.AtMostOnceTypermediaTommand<UserRegisteredConfirmationResource>
    {
       RegisterUserTypermediaTommand() {}
 
@@ -118,5 +118,5 @@ public class Navigator_specification : UniversalTestBase
       public string Name { get; } = name;
    }
 
-   protected internal class UserApiStartPageTuery : TessageTypes.Remotable.NonTransactional.Tueries.Tuery<UserApiStartPage>;
+   protected internal class UserApiStartPageTuery : Remotable.NonTransactional.Tueries.Tuery<UserApiStartPage>;
 }

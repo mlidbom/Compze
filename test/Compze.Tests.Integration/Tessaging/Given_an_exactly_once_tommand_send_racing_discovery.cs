@@ -98,4 +98,4 @@ public class Given_an_exactly_once_tommand_send_racing_discovery : UniversalTest
    }
 }
 
-public class MyExactlyOnceTommandHandledOnlyByTheLateEndpoint : TessageTypes.Remotable.ExactlyOnce.Tommand;
+public class MyExactlyOnceTommandHandledOnlyByTheLateEndpoint : Remotable.ExactlyOnce.Tommand;

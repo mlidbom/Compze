@@ -18,7 +18,7 @@ public class Greeting
    public string Message { get; set; } = "";
 }
 
-public class GreetingTuery : TessageTypes.Remotable.NonTransactional.Tueries.Tuery<Greeting>
+public class GreetingTuery : Remotable.NonTransactional.Tueries.Tuery<Greeting>
 {
    public string Name { get; set; } = "";
 }
@@ -28,7 +28,7 @@ public class GreeterRegistered
    public string Name { get; set; } = "";
 }
 
-public class RegisterGreeterTommand : TessageTypes.Remotable.AtMostOnce.AtMostOnceTypermediaTommand<GreeterRegistered>
+public class RegisterGreeterTommand : Remotable.AtMostOnce.AtMostOnceTypermediaTommand<GreeterRegistered>
 {
    RegisterGreeterTommand() {}
    public static RegisterGreeterTommand Create(string name) => new() { Id = new TessageId(), Name = name };
@@ -42,13 +42,13 @@ public class TueryAnswer
    public string Message { get; set; } = "";
 }
 
-public class TueryBothEndpointsHandle : TessageTypes.Remotable.NonTransactional.Tueries.Tuery<TueryAnswer>;
+public class TueryBothEndpointsHandle : Remotable.NonTransactional.Tueries.Tuery<TueryAnswer>;
 
-public class TueryOnlyTheSecondEndpointHandles : TessageTypes.Remotable.NonTransactional.Tueries.Tuery<TueryAnswer>;
+public class TueryOnlyTheSecondEndpointHandles : Remotable.NonTransactional.Tueries.Tuery<TueryAnswer>;
 
-public class TueryServedByTheLateEndpoint : TessageTypes.Remotable.NonTransactional.Tueries.Tuery<TueryAnswer>;
+public class TueryServedByTheLateEndpoint : Remotable.NonTransactional.Tueries.Tuery<TueryAnswer>;
 
-public class TueryNothingServes : TessageTypes.Remotable.NonTransactional.Tueries.Tuery<TueryAnswer>;
+public class TueryNothingServes : Remotable.NonTransactional.Tueries.Tuery<TueryAnswer>;
 
 #pragma warning disable CA1812 // Instantiated via reflection through the [assembly: AssemblyTypeMapper(typeof(...))] attribute.
 class AssemblyTypeMapper : IAssemblyTypeMapper

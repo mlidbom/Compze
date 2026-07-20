@@ -92,4 +92,4 @@ public class Given_an_endpoint_awaiting_readiness : UniversalTestBase
    }
 }
 
-public class MyTueryHandledOnlyByTheLateEndpoint : TessageTypes.Remotable.NonTransactional.Tueries.Tuery<MyTueryResult>;
+public class MyTueryHandledOnlyByTheLateEndpoint : Remotable.NonTransactional.Tueries.Tuery<MyTueryResult>;

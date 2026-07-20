@@ -100,14 +100,14 @@ public class Given_two_best_effort_endpoints_conversing_in_typermedia : Universa
                                                                                         .Select(it => it.Address!)];
    }
 
-   protected internal class GetTheAnswerTuery : TessageTypes.Remotable.NonTransactional.Tueries.Tuery<AnswerResource>;
+   protected internal class GetTheAnswerTuery : Remotable.NonTransactional.Tueries.Tuery<AnswerResource>;
 
    protected internal class AnswerResource(string answeredBy)
    {
       public string AnsweredBy { get; private set; } = answeredBy;
    }
 
-   protected internal class RegisterGreetingTypermediaTommand : TessageTypes.Remotable.AtMostOnce.AtMostOnceTypermediaTommand<GreetingRegisteredConfirmationResource>
+   protected internal class RegisterGreetingTypermediaTommand : Remotable.AtMostOnce.AtMostOnceTypermediaTommand<GreetingRegisteredConfirmationResource>
    {
       RegisterGreetingTypermediaTommand() {}
 

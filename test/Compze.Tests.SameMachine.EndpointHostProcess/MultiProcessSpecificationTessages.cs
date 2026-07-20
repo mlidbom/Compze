@@ -22,11 +22,11 @@ public static class MultiProcessConversationEndpoints
 }
 
 ///<summary>The tommand the specification process sends to the endpoint host process — the parent→child leg of the multi-process conversation.</summary>
-public class TommandSentToTheEndpointHostProcess : TessageTypes.Remotable.ExactlyOnce.Tommand;
+public class TommandSentToTheEndpointHostProcess : Remotable.ExactlyOnce.Tommand;
 
 ///<summary>The tommand the endpoint host process sends back to the specification process's endpoint when it handles<br/>
 /// <see cref="TommandSentToTheEndpointHostProcess"/> — the child→parent leg, proving the child discovered the parent through the registry.</summary>
-public class TommandSentBackToTheSpecificationProcess : TessageTypes.Remotable.ExactlyOnce.Tommand;
+public class TommandSentBackToTheSpecificationProcess : Remotable.ExactlyOnce.Tommand;
 
 ///<summary>The best-effort tevent the specification process publishes — the parent→child leg of the guarantee-free multi-process<br/>
 /// conversation: a plain <see cref="IRemotableTevent"/>, crossing the wire best-effort with no database in either process.</summary>
@@ -42,7 +42,7 @@ public class BestEffortTeventPublishedByTheEndpointHostProcess : IBestEffortTeve
 
 ///<summary>The tuery the specification process executes against the endpoint host process — the typermedia leg of the<br/>
 /// database-less multi-process conversation: the answering endpoint is found through the shared registry, never by a configured address.</summary>
-public class TueryAskedByTheSpecificationProcess : TessageTypes.Remotable.NonTransactional.Tueries.Tuery<AnswerToTheTueryAskedByTheSpecificationProcess>;
+public class TueryAskedByTheSpecificationProcess : Remotable.NonTransactional.Tueries.Tuery<AnswerToTheTueryAskedByTheSpecificationProcess>;
 
 ///<summary>The endpoint host process's answer to <see cref="TueryAskedByTheSpecificationProcess"/> — proof the tuery crossed the<br/>
 /// process boundary and was answered there.</summary>

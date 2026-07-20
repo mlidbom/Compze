@@ -102,12 +102,12 @@ public class TessageHandlerRoster_specification : UniversalTestBase
    }
 
    protected class Answer;
-   class UnhandledTuery : TessageTypes.Remotable.NonTransactional.Tueries.Tuery<Answer>;
-   class UnhandledTommandWithResult : TessageTypes.Remotable.AtMostOnce.AtMostOnceTypermediaTommand<Answer>;
-   class UnhandledVoidTommand : TessageTypes.Remotable.AtMostOnce.AtMostOnceTypermediaTommand;
-   protected class HandledTuery : TessageTypes.Remotable.NonTransactional.Tueries.Tuery<Answer>;
-   protected class HandledVoidTommand : TessageTypes.Remotable.AtMostOnce.AtMostOnceTypermediaTommand;
-   protected class HandledExactlyOnceTommand : TessageTypes.Remotable.ExactlyOnce.Tommand;
+   class UnhandledTuery : Remotable.NonTransactional.Tueries.Tuery<Answer>;
+   class UnhandledTommandWithResult : Remotable.AtMostOnce.AtMostOnceTypermediaTommand<Answer>;
+   class UnhandledVoidTommand : Remotable.AtMostOnce.AtMostOnceTypermediaTommand;
+   protected class HandledTuery : Remotable.NonTransactional.Tueries.Tuery<Answer>;
+   protected class HandledVoidTommand : Remotable.AtMostOnce.AtMostOnceTypermediaTommand;
+   protected class HandledExactlyOnceTommand : Remotable.ExactlyOnce.Tommand;
    protected interface IHandledExactlyOnceTevent : IExactlyOnceTevent;
    interface IUnsubscribedTevent : ITevent;
 }
