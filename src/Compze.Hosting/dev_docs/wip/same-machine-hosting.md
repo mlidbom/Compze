@@ -195,7 +195,7 @@ host.RegisterEndpoint(container => ExactlyOnceEndpoint.Compose(
    endpoint.SqliteDomainDatabase("BackgroundWorker");
    endpoint.ParticipateIn(registry);   // discover the others through it AND announce ourselves to it
 
-   endpoint.RegisterTessageHandlers(handle => handle.ForTommand(async (MyTommand tommand, IUnitOfWorkResolver unitOfWork) => ...));
+   endpoint.RegisterTessageBusHandlers(handle => handle.ForTommand(async (MyTommand tommand, IUnitOfWorkResolver unitOfWork) => ...));
 }));
 
 await host.StartAsync();

@@ -23,7 +23,6 @@ using Compze.Internals.SystemCE.UsageGuards;
 using Compze.Must;
 using Compze.Tessaging.TessageBus;
 using Compze.Tessaging;
-using Compze.Tessaging.Engine.HandlerRegistration.TessageHandlers;
 using Compze.Tessaging.TessageTypes;
 using Compze.Teventive;
 using Compze.Teventive.Taggregates.Tevents.Public;
@@ -52,7 +51,7 @@ public class TeventStoreUpdaterTest : UniversalTestBase
 
       //Exactly-once kinds are async end to end, so the spy subscription is declared async; the spy is synchronous, so it completes its task synchronously.
       _container = TestEnv.DIContainer.SetupTestingContainer(registrar => registrar.RequireIntegrationTestTypeMappings(),
-                                                             composeEngine: engine => engine.RegisterTessageHandlers(handle => handle.ForTevent((IExactlyOnceTevent tevent) =>
+                                                             composeEngine: engine => engine.RegisterTessageBusHandlers(handle => handle.ForTevent((IExactlyOnceTevent tevent) =>
                                                              {
                                                                 _teventSpy.Receive(tevent);
                                                                 return Task.CompletedTask;

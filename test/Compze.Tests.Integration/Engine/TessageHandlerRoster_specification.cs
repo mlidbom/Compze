@@ -8,7 +8,8 @@ using Compze.Tessaging;
 using Compze.Tessaging.Engine;
 using Compze.Tessaging.Engine.Exceptions;
 using Compze.Tessaging.Engine.HandlerRegistration;
-using Compze.Tessaging.Engine.HandlerRegistration.TessageHandlers;
+using Compze.Tessaging.TessageBus;
+using Compze.Tessaging.Typermedia;
 using Compze.Tessaging.Engine.Wiring;
 using Compze.Tessaging.TessageTypes;
 using Compze.Tests.Infrastructure;
@@ -24,8 +25,9 @@ namespace Compze.Tests.Integration.Engine;
 ///<summary>The <see cref="TessageHandlerRoster"/>: the closed set of what one engine understands. Every lookup speaks one<br/>
 /// language for a missing handler — <see cref="NoHandlerException"/> naming the tessage type, never a raw dictionary failure<br/>
 /// (the two Type-keyed lookups the remote executor calls regressed to raw indexers once: KeyNotFoundException, retried<br/>
-/// server-side). Tueries and tommands are single-handler kinds whose second registration explodes at declaration, and<br/>
-/// synchrony follows the type: declaring a synchronous handler for an exactly-once kind explodes at declaration.</summary>
+/// server-side). Tueries and tommands are single-handler kinds whose second registration explodes at declaration; the registrar<br/>
+/// split routes each tommand kind to its sibling's registrar at declaration; and synchrony follows the type: a subscription<br/>
+/// demanding exactly-once delivery explodes when declared with a synchronous handler.</summary>
 public class TessageHandlerRoster_specification : UniversalTestBase
 {
    IDependencyInjectionContainer? _container;
@@ -72,30 +74,37 @@ public class TessageHandlerRoster_specification : UniversalTestBase
    public class declaring_a_second_handler_for_a_single_handler_tessage_type_explodes_at_declaration_naming_the_type : TessageHandlerRoster_specification
    {
       [PCT] public void for_a_tuery_type() =>
-         Invoking(() => ComposeContainerWithEngineAndGetItsRoster(engine => engine.RegisterTessageHandlers(handle => handle
+         Invoking(() => ComposeContainerWithEngineAndGetItsRoster(engine => engine.RegisterTypermediaHandlers(handle => handle
                           .ForTuery((HandledTuery _) => new Answer())
                           .ForTuery((HandledTuery _) => new Answer()))))
             .Must().Throw<Exception>()
             .Which.Message.Must().Contain(typeof(HandledTuery).FullName!).Contain("single-handler");
 
       [PCT] public void for_a_typermedia_tommand_type() =>
-         Invoking(() => ComposeContainerWithEngineAndGetItsRoster(engine => engine.RegisterTessageHandlers(handle => handle
+         Invoking(() => ComposeContainerWithEngineAndGetItsRoster(engine => engine.RegisterTypermediaHandlers(handle => handle
                           .ForTommand((HandledVoidTommand _) => {})
                           .ForTommand((HandledVoidTommand _) => {}))))
             .Must().Throw<Exception>()
             .Which.Message.Must().Contain(typeof(HandledVoidTommand).FullName!).Contain("single-handler");
    }
 
-   public class declaring_a_synchronous_handler_for_an_exactly_once_kind_explodes_at_declaration : TessageHandlerRoster_specification
+   ///<summary>The registrar split partitions the tommand kinds by the doors that serve them: the exactly-once tommand is sent<br/>
+   /// through the bus, every other tommand kind is navigated. The bus registrar's constraints enforce its side statically —<br/>
+   /// a synchronous exactly-once tommand handler is no longer even expressible — so the declaration-time protection left to pin<br/>
+   /// is the typermedia registrar refusing the bus's kind.</summary>
+   public class declaring_an_exactly_once_tommand_handler_through_the_typermedia_registrar : TessageHandlerRoster_specification
    {
-      [PCT] public void for_an_exactly_once_tommand_stating_that_exactly_once_kinds_are_async_end_to_end() =>
-         Invoking(() => ComposeContainerWithEngineAndGetItsRoster(engine => engine.RegisterTessageHandlers(handle => handle
+      [PCT] public void explodes_at_declaration_pointing_to_the_TessageBus_registration_verb() =>
+         Invoking(() => ComposeContainerWithEngineAndGetItsRoster(engine => engine.RegisterTypermediaHandlers(handle => handle
                           .ForTommand((HandledExactlyOnceTommand _) => {}))))
             .Must().Throw<Exception>()
-            .Which.Message.Must().Contain(typeof(HandledExactlyOnceTommand).FullName!).Contain("async end to end");
+            .Which.Message.Must().Contain(typeof(HandledExactlyOnceTommand).FullName!).Contain(nameof(LocalTessagingEngineBuilder.RegisterTessageBusHandlers));
+   }
 
+   public class declaring_a_synchronous_handler_for_an_exactly_once_kind_explodes_at_declaration : TessageHandlerRoster_specification
+   {
       [PCT] public void for_a_subscription_demanding_exactly_once_delivery_stating_that_exactly_once_kinds_are_async_end_to_end() =>
-         Invoking(() => ComposeContainerWithEngineAndGetItsRoster(engine => engine.RegisterTessageHandlers(handle => handle
+         Invoking(() => ComposeContainerWithEngineAndGetItsRoster(engine => engine.RegisterTessageBusHandlers(handle => handle
                           .ForTevent((IHandledExactlyOnceTevent _) => {}))))
             .Must().Throw<Exception>()
             .Which.Message.Must().Contain(typeof(IHandledExactlyOnceTevent).FullName!).Contain("async end to end");

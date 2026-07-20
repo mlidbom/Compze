@@ -6,7 +6,6 @@ using Compze.Tests.Infrastructure;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Typermedia;
 using Compze.Tessaging.Typermedia;
-using Compze.Tessaging.Engine.HandlerRegistration.TessageHandlers;
 using Compze.Tessaging.TessageTypes;
 
 namespace Compze.Tests.Performance.Internals.Tessaging.Hypermedia;
@@ -26,7 +25,7 @@ public abstract class PerformanceTestBase : UniversalTestBase
          new EndpointId(Guid.Parse("DDD0A67C-D2A2-4197-9AF8-38B6AEDF8FA7")),
          endpointBuilder => endpointBuilder
             .RegisterComponents(registrar => registrar.RequirePerformanceTestTypeMappings())
-            .RegisterTessageHandlers(handle => handle
+            .RegisterTypermediaHandlers(handle => handle
                        .ForTuery((MyRemoteTuery _) => new MyTueryResult())
                        .ForTuery((MyLocalStrictlyLocalTuery _) => new MyTueryResult())));
    }

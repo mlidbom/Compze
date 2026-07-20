@@ -9,7 +9,6 @@ using Compze.Internals.Testing;
 using Compze.Tessaging.TessageBus;
 using Compze.Tessaging;
 using Compze.Tessaging.Endpoints.ExactlyOnce;
-using Compze.Tessaging.Engine.HandlerRegistration.TessageHandlers;
 using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Tessaging.TessageTypes;
 using Compze.Tests.Infrastructure;
@@ -52,7 +51,7 @@ public class Given_two_hosts_sharing_an_interprocess_registry_where_the_receivin
          endpointBuilder =>
          {
             ComposeEndpointDiscoveredThroughTheRegistry(endpointBuilder);
-            endpointBuilder.RegisterTessageHandlers(handle => handle.ForTommand((TommandDiscoveredThroughReconciliation _) =>
+            endpointBuilder.RegisterTessageBusHandlers(handle => handle.ForTommand((TommandDiscoveredThroughReconciliation _) =>
             {
                _receivedTommandGate.AwaitPassThrough();
                return Task.CompletedTask;

@@ -1,5 +1,5 @@
 using Compze.Tessaging;
-using Compze.Tessaging.Engine.HandlerRegistration.TessageHandlers;
+using Compze.Tessaging.TessageBus;
 using Compze.Tessaging.TessageTypes;
 using Compze.Teventive.Taggregates.Tevents.Public;
 using static System.Console;
@@ -26,7 +26,7 @@ namespace Website.paradigms.semantic_tevents
 
          public void IllustrateTeventListening()
          {
-            TessageHandlerRegistrar registrar = null!;
+            TessageBusHandlerRegistrar registrar = null!;
 
             #region Unhelpful
             registrar.ForTevent<IName>(nameTevent => { WriteLine("Uhmm... What is happening here?"); return Task.CompletedTask; });

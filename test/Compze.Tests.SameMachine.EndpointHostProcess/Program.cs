@@ -10,7 +10,7 @@ using Compze.Internals.Serialization.Newtonsoft.Wiring;
 using Compze.Tessaging.TessageBus;
 using Compze.Tessaging.Endpoints.BestEffort;
 using Compze.Tessaging.Endpoints.ExactlyOnce;
-using Compze.Tessaging.Engine.HandlerRegistration.TessageHandlers;
+using Compze.Tessaging.Typermedia;
 using Compze.Tessaging.Sqlite.Wiring;
 using Compze.Tessaging.Transport.NamedPipes;
 using Compze.TypeIdentifiers.DependencyInjection;
@@ -87,7 +87,7 @@ public static class Program
          .NewtonsoftSerializer()
          .SqliteDomainDatabase("EndpointHostProcess")
          .ParticipateIn(registry)
-         .RegisterTessageHandlers(handle => handle.ForTommand(async (TommandSentToTheEndpointHostProcess _, IUnitOfWorkTommandSender unitOfWorkTommandSender) =>
+         .RegisterTessageBusHandlers(handle => handle.ForTommand(async (TommandSentToTheEndpointHostProcess _, IUnitOfWorkTommandSender unitOfWorkTommandSender) =>
             await unitOfWorkTommandSender.SendAsync(new TommandSentBackToTheSpecificationProcess())));
    }
 
@@ -105,9 +105,10 @@ public static class Program
          //the specification's tevent, which can happen before this process's own reconciliation has met the specification's
          //endpoint - held for the required peer, it delivers on first contact instead of vanishing into the discovery race.
          .RequirePeers(MultiProcessConversationEndpoints.SpecificationProcessEndpointId)
-         .RegisterTessageHandlers(handle => handle
+         .RegisterTessageBusHandlers(handle => handle
             .ForTevent((IBestEffortTeventPublishedByTheSpecificationProcess _, IUnitOfWorkTeventPublisher teventPublisher) =>
-                          teventPublisher.Publish(new BestEffortTeventPublishedByTheEndpointHostProcess()))
+                          teventPublisher.Publish(new BestEffortTeventPublishedByTheEndpointHostProcess())))
+         .RegisterTypermediaHandlers(handle => handle
             .ForTuery((TueryAskedByTheSpecificationProcess _) => new AnswerToTheTueryAskedByTheSpecificationProcess(answeredBy: "EndpointHostProcess")));
    }
 

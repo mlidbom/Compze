@@ -11,7 +11,7 @@ using Compze.Tessaging.Endpoints.BestEffort;
 using Compze.Tessaging.Endpoints.ExactlyOnce;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
-using Compze.Tessaging.Engine.HandlerRegistration.TessageHandlers;
+using Compze.Tessaging.Typermedia;
 using Compze.Tessaging.Hosting.Testing.Typermedia;
 using Compze.Tessaging.TessageTypes;
 using static Compze.Must.MustActions;
@@ -48,7 +48,7 @@ public class Given_a_best_effort_endpoint_serving_typermedia_to_a_remote_client 
             .RegisterComponents(registrar => registrar.RequireIntegrationTestTypeMappings())
             .TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport())
             .NewtonsoftSerializer()
-            .RegisterTessageHandlers(handle => handle
+            .RegisterTypermediaHandlers(handle => handle
                        .ForTuery((GetUserTuery tuery) => registeredUsers.Single(user => user.Name == tuery.Name))
                        .ForTommand((RegisterUserTypermediaTommand tommand) =>
                         {

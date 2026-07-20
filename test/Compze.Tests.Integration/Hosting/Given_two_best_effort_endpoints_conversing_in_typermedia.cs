@@ -14,7 +14,6 @@ using Compze.Tessaging.Endpoints.BestEffort;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Tessaging.Typermedia;
-using Compze.Tessaging.Engine.HandlerRegistration.TessageHandlers;
 using Compze.Tessaging.TessageTypes;
 using static Compze.Must.MustActions;
 
@@ -61,7 +60,7 @@ public class Given_two_best_effort_endpoints_conversing_in_typermedia : Universa
             .RegisterComponents(registrar => registrar.RequireIntegrationTestTypeMappings())
             .TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport())
             .NewtonsoftSerializer()
-            .RegisterTessageHandlers(handle => handle
+            .RegisterTypermediaHandlers(handle => handle
                 .ForTuery((GetTheAnswerTuery _) => new AnswerResource(answeredBy: "TypermediaAnsweringEndpoint"))
                 .ForTommand((RegisterGreetingTypermediaTommand tommand) => new GreetingRegisteredConfirmationResource(tommand.Greeting)))));
    }

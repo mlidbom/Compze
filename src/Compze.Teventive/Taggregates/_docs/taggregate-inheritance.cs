@@ -1,4 +1,4 @@
-using Compze.Tessaging.Engine.HandlerRegistration.TessageHandlers;
+using Compze.Tessaging.TessageBus;
 using Compze.Teventive.Taggregates.Tevents.Public;
 using static System.Console;
 
@@ -37,7 +37,7 @@ class Examples
 
    public void Listeners()
    {
-      TessageHandlerRegistrar registrar = null!;
+      TessageBusHandlerRegistrar registrar = null!;
 
       #region doglistener
       registrar

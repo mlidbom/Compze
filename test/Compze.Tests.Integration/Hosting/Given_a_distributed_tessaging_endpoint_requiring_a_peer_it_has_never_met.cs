@@ -11,7 +11,6 @@ using Compze.Internals.Testing;
 using Compze.Must;
 using Compze.Tessaging.TessageBus;
 using Compze.Tessaging.Endpoints.BestEffort;
-using Compze.Tessaging.Engine.HandlerRegistration.TessageHandlers;
 using Compze.Tessaging.Peers;
 using Compze.Tessaging.Peers.Internal;
 using Compze.Tests.Common.Tessaging.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler;
@@ -119,7 +118,7 @@ public class Given_a_distributed_tessaging_endpoint_requiring_a_peer_it_has_neve
                .RegisterComponents(registrar => registrar.RequireIntegrationTestTypeMappings())
                .TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport())
                .NewtonsoftSerializer()
-               .RegisterTessageHandlers(handle => handle.ForTevent((IMyBestEffortTevent tevent) =>
+               .RegisterTessageBusHandlers(handle => handle.ForTevent((IMyBestEffortTevent tevent) =>
                 {
                    _teventsHandledOnTheSubscriber.Enqueue(tevent);
                    _subscriberTeventHandlerGate.AwaitPassThrough();

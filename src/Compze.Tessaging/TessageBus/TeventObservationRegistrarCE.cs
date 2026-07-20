@@ -1,11 +1,10 @@
 using Compze.DependencyInjection;
-using Compze.Tessaging.Engine.HandlerRegistration.TessageHandlers;
 using Compze.Tessaging.TessageTypes;
 
-namespace Compze.Tessaging.Engine.HandlerRegistration.TeventObservation;
+namespace Compze.Tessaging.TessageBus;
 
 ///<summary>Convenience overloads for <see cref="TeventObservationRegistrar"/> — the same shapes<br/>
-/// <see cref="TessageHandlerRegistrarCE"/> gives <see cref="TessageHandlerRegistrar"/>: extra lambda parameters are resolved<br/>
+/// <see cref="TessageBusHandlerRegistrarCE"/> gives <see cref="TessageBusHandlerRegistrar"/>: extra lambda parameters are resolved<br/>
 /// from the observer's scope, or the observer takes just the tevent.</summary>
 public static class TeventObservationRegistrarCE
 {

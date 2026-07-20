@@ -1,4 +1,4 @@
-using Compze.Tessaging.Engine.HandlerRegistration.TessageHandlers;
+using Compze.Tessaging.TessageBus;
 using Compze.Teventive.Taggregates.Tevents.Public;
 using static System.Console;
 
@@ -48,7 +48,7 @@ namespace Website.paradigms.semantic_tevents
       {
          public void IllustrateTeventListening()
          {
-            TessageHandlerRegistrar registrar = null!;
+            TessageBusHandlerRegistrar registrar = null!;
 
             #region EmailPropertyUpdatedListener
             registrar

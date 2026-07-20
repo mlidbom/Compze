@@ -2,7 +2,7 @@ using Compze.Tessaging.Endpoints;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Must;
 using Compze.Tessaging.Endpoints.BestEffort;
-using Compze.Tessaging.Engine.HandlerRegistration.TessageHandlers;
+using Compze.Tessaging.Typermedia;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Typermedia;
 using Compze.Tessaging.Typermedia.Client;
@@ -39,7 +39,7 @@ public class Given_two_endpoints_advertising_the_same_typermedia_tuery_type : Un
          endpointBuilder =>
          {
             endpointBuilder.Registrar.RequireTypermediaHostingSpecificationTypeMappings();
-            endpointBuilder.RegisterTessageHandlers(handle => handle
+            endpointBuilder.RegisterTypermediaHandlers(handle => handle
                                                       .ForTuery((TueryBothEndpointsHandle _) => new TueryAnswer { Message = "from the first endpoint" }));
          });
 
@@ -49,7 +49,7 @@ public class Given_two_endpoints_advertising_the_same_typermedia_tuery_type : Un
          endpointBuilder =>
          {
             endpointBuilder.Registrar.RequireTypermediaHostingSpecificationTypeMappings();
-            endpointBuilder.RegisterTessageHandlers(handle => handle
+            endpointBuilder.RegisterTypermediaHandlers(handle => handle
                                                              .ForTuery((TueryBothEndpointsHandle _) => new TueryAnswer { Message = "from the second endpoint" })
                                                              .ForTuery((TueryOnlyTheSecondEndpointHandles _) => new TueryAnswer { Message = "only the second endpoint handles this" }));
          });

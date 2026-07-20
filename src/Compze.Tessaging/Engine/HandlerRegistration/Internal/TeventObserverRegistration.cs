@@ -1,6 +1,6 @@
 using Compze.Tessaging.Engine.Internal;
 using Compze.DependencyInjection.Abstractions;
-using Compze.Tessaging.Engine.HandlerRegistration.TessageHandlers;
+using Compze.Tessaging.TessageBus;
 using Compze.Tessaging.TessageTypes;
 
 namespace Compze.Tessaging.Engine.HandlerRegistration.Internal;

@@ -3,7 +3,8 @@ using Compze.Must;
 using Compze.Tessaging;
 using Compze.Tessaging.Endpoints.ExactlyOnce;
 using Compze.Tessaging.Endpoints.Exceptions;
-using Compze.Tessaging.Engine.HandlerRegistration.TessageHandlers;
+using Compze.Tessaging.TessageBus;
+using Compze.Tessaging.Typermedia;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.TessageTypes;
 using Compze.Tests.Common.Tessaging.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler;
@@ -39,8 +40,9 @@ public class Given_an_endpoint_awaiting_readiness : UniversalTestBase
          endpointBuilder => endpointBuilder
             .RegisterComponents(registrar => registrar.RequireIntegrationTestTypeMappings())
             //The endpoint's own roster serves these two - what the readiness-for-own-types specification awaits.
-            .RegisterTessageHandlers(handle => handle
-                       .ForTommand((MyExactlyOnceTommand _) => Task.CompletedTask)
+            .RegisterTessageBusHandlers(handle => handle
+                       .ForTommand((MyExactlyOnceTommand _) => Task.CompletedTask))
+            .RegisterTypermediaHandlers(handle => handle
                        .ForTuery((MyTuery _) => new MyTueryResult())));
    }
 
@@ -85,8 +87,9 @@ public class Given_an_endpoint_awaiting_readiness : UniversalTestBase
          LateHandlerEndpointId,
          endpointBuilder => endpointBuilder
             .RegisterComponents(registrar => registrar.RequireIntegrationTestTypeMappings())
-            .RegisterTessageHandlers(handle => handle
-                       .ForTommand((MyExactlyOnceTommandHandledOnlyByTheLateEndpoint _) => Task.CompletedTask)
+            .RegisterTessageBusHandlers(handle => handle
+                       .ForTommand((MyExactlyOnceTommandHandledOnlyByTheLateEndpoint _) => Task.CompletedTask))
+            .RegisterTypermediaHandlers(handle => handle
                        .ForTuery((MyTueryHandledOnlyByTheLateEndpoint _) => new MyTueryResult())));
       await lateHandlerEndpoint.StartAsync();
    }

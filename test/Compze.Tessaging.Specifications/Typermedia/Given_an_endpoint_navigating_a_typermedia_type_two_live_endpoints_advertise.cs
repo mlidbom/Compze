@@ -3,9 +3,8 @@ using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Must;
 using Compze.DependencyInjection;
 using Compze.Tessaging.Endpoints.BestEffort;
-using Compze.Tessaging.Engine.HandlerRegistration.TessageHandlers;
-using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Typermedia;
+using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Typermedia.Client;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
@@ -52,7 +51,7 @@ public class Given_an_endpoint_navigating_a_typermedia_type_two_live_endpoints_a
          id,
          endpointBuilder => endpointBuilder
             .RegisterComponents(registrar => registrar.RequireTypermediaHostingSpecificationTypeMappings())
-            .RegisterTessageHandlers(handle => handle
+            .RegisterTypermediaHandlers(handle => handle
                        .ForTuery((TueryBothEndpointsHandle _) => new TueryAnswer { Message = $"from {name}" })));
 
    protected override async Task InitializeAsyncInternal()

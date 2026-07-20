@@ -8,7 +8,6 @@ using Compze.Must;
 using Compze.Tessaging.TessageBus;
 using Compze.Tessaging;
 using Compze.Tessaging.Endpoints.ExactlyOnce;
-using Compze.Tessaging.Engine.HandlerRegistration.TessageHandlers;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Internal.SqlLayer;
 using Compze.Tessaging.TessageTypes;
@@ -56,7 +55,7 @@ public class Given_two_exactly_once_endpoints_joined_to_one_domain_database : Un
          DomainDatabaseName,
          endpointBuilder => endpointBuilder
             .RegisterComponents(registrar => registrar.RequireIntegrationTestTypeMappings())
-            .RegisterTessageHandlers(handle => handle
+            .RegisterTessageBusHandlers(handle => handle
                        .ForTommand((MyReplyTommandHandledByTheFirstNeighbor _) =>
                         {
                            _firstNeighborReplyHandlerGate.AwaitPassThrough();
@@ -69,7 +68,7 @@ public class Given_two_exactly_once_endpoints_joined_to_one_domain_database : Un
          DomainDatabaseName,
          endpointBuilder => endpointBuilder
             .RegisterComponents(registrar => registrar.RequireIntegrationTestTypeMappings())
-            .RegisterTessageHandlers(handle => handle
+            .RegisterTessageBusHandlers(handle => handle
                        .ForTommand((MyTommandHandledByTheSecondNeighbor _) =>
                         {
                            _secondNeighborHandlerGate.AwaitPassThrough();

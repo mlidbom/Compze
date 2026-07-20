@@ -5,14 +5,13 @@ using AccountManagement.Domain.Passwords;
 using AccountManagement.Domain.Registration;
 using Compze.Tessaging;
 using Compze.Tessaging.Typermedia;
-using Compze.Tessaging.Engine.HandlerRegistration.TessageHandlers;
 using Compze.Tessaging.TessageTypes;
 
 namespace AccountManagement.UI;
 
 static class AccountUIAdapter
 {
-   public static void Login(TessageHandlerRegistrar registrar) => registrar.ForTommand(
+   public static void Login(TypermediaHandlerRegistrar registrar) => registrar.ForTommand(
       (AccountResource.Tommand.LogIn logIn, ILocalTypermediaNavigatorSession navigator) =>
       {
          var email = Email.Parse(logIn.Email);
@@ -31,15 +30,15 @@ static class AccountUIAdapter
          }
       });
 
-   internal static void ChangePassword(TessageHandlerRegistrar registrar) => registrar.ForTommand(
+   internal static void ChangePassword(TypermediaHandlerRegistrar registrar) => registrar.ForTommand(
       (AccountResource.Tommand.ChangePassword tommand, ILocalTypermediaNavigatorSession navigator) =>
          navigator.Execute(InternalApi.Tueries.GetForUpdate(tommand.AccountId)).ChangePassword(tommand.OldPassword, new Password(tommand.NewPassword)));
 
-   internal static void ChangeEmail(TessageHandlerRegistrar registrar) => registrar.ForTommand(
+   internal static void ChangeEmail(TypermediaHandlerRegistrar registrar) => registrar.ForTommand(
       (AccountResource.Tommand.ChangeEmail tommand, ILocalTypermediaNavigatorSession navigator) =>
          navigator.Execute(InternalApi.Tueries.GetForUpdate(tommand.AccountId)).ChangeEmail(Email.Parse(tommand.Email)));
 
-   internal static void Register(TessageHandlerRegistrar registrar) => registrar.ForTommand(
+   internal static void Register(TypermediaHandlerRegistrar registrar) => registrar.ForTommand(
       (AccountResource.Tommand.Register tommand, ILocalTypermediaNavigatorSession bus) =>
       {
          var (status, account) = Account.Register(tommand.AccountId, Email.Parse(tommand.Email), new Password(tommand.Password), bus);
@@ -51,7 +50,7 @@ static class AccountUIAdapter
          };
       });
 
-   internal static void GetById(TessageHandlerRegistrar registrar) => registrar.ForTuery(
+   internal static void GetById(TypermediaHandlerRegistrar registrar) => registrar.ForTuery(
       (Remotable.NonTransactional.Tueries.TaggregateLink<AccountResource> accountTuery, ILocalTypermediaNavigatorSession navigator)
          => new AccountResource(navigator.Execute(InternalApi.AccountQueryModel.Tueries.Get(accountTuery.TaggregateId))));
 }

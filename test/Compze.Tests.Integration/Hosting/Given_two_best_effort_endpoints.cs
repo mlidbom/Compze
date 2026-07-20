@@ -13,8 +13,6 @@ using Compze.Must;
 using Compze.Tessaging;
 using Compze.Tessaging.TessageBus;
 using Compze.Tessaging.Endpoints.BestEffort;
-using Compze.Tessaging.Engine.HandlerRegistration.TessageHandlers;
-using Compze.Tessaging.Engine.HandlerRegistration.TeventObservation;
 using Compze.Tessaging.TessageTypes;
 using Compze.Tests.Common.Tessaging.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler;
 using Compze.Tests.Infrastructure;
@@ -76,7 +74,7 @@ public class Given_two_best_effort_endpoints : UniversalTestBase
                .TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport())
                .NewtonsoftSerializer()
                .DiscoverEndpointsThrough(endpointsOfTheHost)
-               .RegisterTessageHandlers(handle => handle.ForTevent((IMyBestEffortTevent tevent) =>
+               .RegisterTessageBusHandlers(handle => handle.ForTevent((IMyBestEffortTevent tevent) =>
                 {
                    _bestEffortTeventsHandledOnTheSubscriber.Enqueue(tevent);
                    _subscriberBestEffortTeventHandlerGate.AwaitPassThrough();
@@ -114,7 +112,7 @@ public class Given_two_best_effort_endpoints : UniversalTestBase
                         endpointBuilder =>
                         {
                            ComposeMinimalFoundation(endpointBuilder);
-                           endpointBuilder.RegisterTessageHandlers(handle => handle.ForTevent((ITeventDeclaringTheExactlyOnceContract _) => Task.CompletedTask));
+                           endpointBuilder.RegisterTessageBusHandlers(handle => handle.ForTevent((ITeventDeclaringTheExactlyOnceContract _) => Task.CompletedTask));
                         })))
         .Must().Throw<Exception>().Which.Message.Must().Contain("wires no exactly-once delivery machinery");
    }
@@ -140,7 +138,7 @@ public class Given_two_best_effort_endpoints : UniversalTestBase
                         endpointBuilder =>
                         {
                            ComposeMinimalFoundation(endpointBuilder);
-                           endpointBuilder.RegisterTessageHandlers(handle => handle.ForTommand((TommandDeclaringTheExactlyOnceContract _) => Task.CompletedTask));
+                           endpointBuilder.RegisterTessageBusHandlers(handle => handle.ForTommand((TommandDeclaringTheExactlyOnceContract _) => Task.CompletedTask));
                         })))
         .Must().Throw<Exception>().Which.Message.Must().Contain("wires no exactly-once delivery machinery");
    }

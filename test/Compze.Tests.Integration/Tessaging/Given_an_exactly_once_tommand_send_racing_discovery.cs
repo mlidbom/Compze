@@ -3,7 +3,6 @@ using Compze.DependencyInjection;
 using Compze.Tessaging.TessageBus;
 using Compze.Tessaging;
 using Compze.Tessaging.Endpoints.ExactlyOnce;
-using Compze.Tessaging.Engine.HandlerRegistration.TessageHandlers;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Peers;
 using Compze.Tessaging.Peers.Internal;
@@ -88,7 +87,7 @@ public class Given_an_exactly_once_tommand_send_racing_discovery : UniversalTest
          LateHandlerEndpointId,
          endpointBuilder => endpointBuilder
             .RegisterComponents(registrar => registrar.RequireIntegrationTestTypeMappings())
-            .RegisterTessageHandlers(handle => handle
+            .RegisterTessageBusHandlers(handle => handle
                        .ForTommand((MyExactlyOnceTommandHandledOnlyByTheLateEndpoint _) =>
                         {
                            _lateHandlerThreadGate.AwaitPassThrough();

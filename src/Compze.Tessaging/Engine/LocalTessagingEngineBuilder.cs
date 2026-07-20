@@ -1,8 +1,8 @@
 using Compze.Tessaging.Engine.HandlerRegistration.Internal;
-using Compze.Tessaging.Engine.HandlerRegistration.TessageHandlers;
-using Compze.Tessaging.Engine.HandlerRegistration.TeventObservation;
 using Compze.Tessaging.Engine.Wiring;
 using Compze.Tessaging.Engine.Internal;
+using Compze.Tessaging.TessageBus;
+using Compze.Tessaging.Typermedia;
 
 namespace Compze.Tessaging.Engine;
 
@@ -21,11 +21,21 @@ public sealed class LocalTessagingEngineBuilder
 
    internal LocalTessagingEngineBuilder() {}
 
-   ///<summary>Declares handlers for all four tessage kinds through the one <see cref="TessageHandlerRegistrar"/> — the tessage's<br/>
-   /// own type carries its kind, guarantee, and synchrony, so the verbs differ only by handler shape.</summary>
-   public LocalTessagingEngineBuilder RegisterTessageHandlers(Action<TessageHandlerRegistrar> register)
+   ///<summary>Declares handlers for the TessageBus kinds — tevents and tommands whose type declares no result — through the<br/>
+   /// <see cref="TessageBusHandlerRegistrar"/>; the tessage's own type carries its guarantee, locality, and synchrony.</summary>
+   public LocalTessagingEngineBuilder RegisterTessageBusHandlers(Action<TessageBusHandlerRegistrar> register)
    {
-      var registrar = new TessageHandlerRegistrar(HandlerRegistrations);
+      var registrar = new TessageBusHandlerRegistrar(HandlerRegistrations);
+      register(registrar);
+      registrar.EndCallback();
+      return this;
+   }
+
+   ///<summary>Declares handlers for the Typermedia kinds — the conversational tessages whose handler answers a caller: tommands<br/>
+   /// whose type declares a result, and tueries — through the <see cref="TypermediaHandlerRegistrar"/>.</summary>
+   public LocalTessagingEngineBuilder RegisterTypermediaHandlers(Action<TypermediaHandlerRegistrar> register)
+   {
+      var registrar = new TypermediaHandlerRegistrar(HandlerRegistrations);
       register(registrar);
       registrar.EndCallback();
       return this;

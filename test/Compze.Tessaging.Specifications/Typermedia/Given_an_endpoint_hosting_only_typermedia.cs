@@ -4,10 +4,9 @@ using Compze.Must;
 using Compze.Tessaging.Endpoints.BestEffort;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
-using Compze.Tessaging.Engine.HandlerRegistration.TessageHandlers;
+using Compze.Tessaging.Typermedia;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Typermedia;
-using Compze.Tessaging.Typermedia;
 
 // ReSharper disable InconsistentNaming for testing
 #pragma warning disable IDE1006 //Reviewed OK: Test Naming Styles
@@ -29,7 +28,7 @@ public class Given_an_endpoint_hosting_only_typermedia : UniversalTestBase
          new EndpointId(Guid.Parse("4A0EFCC3-49B6-4B8F-8F90-2E12B4B3A1D2")),
          endpointBuilder => endpointBuilder
             .RegisterComponents(registrar => registrar.RequireTypermediaHostingSpecificationTypeMappings())
-            .RegisterTessageHandlers(handle => handle
+            .RegisterTypermediaHandlers(handle => handle
                        .ForTuery((GreetingTuery tuery) => new Greeting { Message = $"Hello {tuery.Name}!" })
                        .ForTommand((RegisterGreeterTommand tommand) => new GreeterRegistered { Name = tommand.Name })));
    }

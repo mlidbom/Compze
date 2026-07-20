@@ -9,7 +9,6 @@ using Compze.Hosting.Testing.Wiring;
 using Compze.Internals.Testing;
 using Compze.Tessaging.TessageBus;
 using Compze.Tessaging.Endpoints.ExactlyOnce;
-using Compze.Tessaging.Engine.HandlerRegistration.TessageHandlers;
 using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Tessaging.TessageBus.Internal.TessageHandling.Dispatching;
 using Compze.Tests.Infrastructure;
@@ -67,7 +66,7 @@ public class Given_a_separate_process_hosting_an_endpoint_discovered_through_a_s
                .TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport())
                .ConfigurePersistence(registrar => registrar.CurrentTestsConfiguredSqlLayer(connectionStringName: endpointBuilder.Configuration.Id.ToString()))
                .ParticipateIn(_registry)
-               .RegisterTessageHandlers(handle => handle.ForTommand((TommandSentBackToTheSpecificationProcess _) =>
+               .RegisterTessageBusHandlers(handle => handle.ForTommand((TommandSentBackToTheSpecificationProcess _) =>
             {
                _replyTommandGate.AwaitPassThrough();
                return Task.CompletedTask;

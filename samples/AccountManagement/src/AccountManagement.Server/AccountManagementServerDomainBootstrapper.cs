@@ -56,13 +56,14 @@ public static class AccountManagementServerDomainBootstrapper
    }
 
    static void RegisterHandlers(ExactlyOnceEndpointBuilder endpointBuilder) =>
-      endpointBuilder.RegisterTessageHandlers(handle =>
-      {
-         UIAdapterLayer.Register(handle);
+      endpointBuilder
+        .RegisterTypermediaHandlers(handle =>
+         {
+            UIAdapterLayer.Register(handle);
 
-         AccountQueryModel.Api.RegisterHandlers(handle);
+            AccountQueryModel.Api.RegisterHandlers(handle);
 
-         EmailToAccountMapper.UpdateMappingWhenEmailChanges(handle);
-         EmailToAccountMapper.TryGetAccountByEmail(handle);
-      });
+            EmailToAccountMapper.TryGetAccountByEmail(handle);
+         })
+        .RegisterTessageBusHandlers(handle => EmailToAccountMapper.UpdateMappingWhenEmailChanges(handle));
 }

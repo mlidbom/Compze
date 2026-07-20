@@ -4,7 +4,7 @@ using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Tessaging.Engine.HandlerRegistration;
 using Compze.Tessaging.Engine.HandlerRegistration.Internal;
-using Compze.Tessaging.Engine.HandlerRegistration.TeventObservation;
+using Compze.Tessaging.TessageBus;
 using Compze.Tessaging.TessageBus.Internal.BestEffortDelivery;
 using Compze.Tessaging.TessageBus.Internal.Outbox;
 using Compze.Tessaging.Internal.TessagesInFlight;

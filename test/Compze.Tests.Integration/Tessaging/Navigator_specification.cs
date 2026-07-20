@@ -9,7 +9,6 @@ using Compze.Tessaging;
 using Compze.Tessaging.TessageBus;
 using Compze.Tessaging.Endpoints.ExactlyOnce;
 using Compze.Tessaging.Typermedia;
-using Compze.Tessaging.Engine.HandlerRegistration.TessageHandlers;
 using Compze.Tessaging.TessageTypes;
 
 // ReSharper disable MemberCanBeMadeStatic.Global
@@ -34,7 +33,7 @@ public class Navigator_specification : UniversalTestBase
          new EndpointId(Guid.Parse("3A1B6A8C-D232-476C-A15A-9C8295413210")),
          endpointBuilder => endpointBuilder
             .RegisterComponents(registrar => registrar.RequireIntegrationTestTypeMappings())
-            .RegisterTessageHandlers(handle => handle
+            .RegisterTypermediaHandlers(handle => handle
                       .ForTuery((GetUserTuery tuery) => tueryResults.Single(result => result.Name == tuery.Name))
                       .ForTuery((UserApiStartPageTuery _) => new UserApiStartPage())
                       .ForTommand((RegisterUserTypermediaTommand typermediaTommand, IUnitOfWorkTommandSender _) =>

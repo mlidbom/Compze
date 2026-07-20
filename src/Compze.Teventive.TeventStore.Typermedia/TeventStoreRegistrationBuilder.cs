@@ -1,7 +1,7 @@
 using Compze.Tessaging.Endpoints.ExactlyOnce;
+using Compze.Tessaging.Typermedia;
 using Compze.Teventive.Taggregates.Tevents.Public;
 using Compze.Teventive.TeventStore.Wiring;
-using Compze.Tessaging.Engine.HandlerRegistration.TessageHandlers;
 using Compze.TypeIdentifiers.DependencyInjection;
 
 namespace Compze.Teventive.TeventStore.Typermedia;
@@ -13,14 +13,14 @@ public static class TeventStoreTypermediaRegistrar
       //The store's typermedia surface puts its own tessage types on the wire; the store proper requires the rest where it registers.
       @this.Registrar.RequireMappedTypesFromAssemblyContaining<TeventStoreApi>()
                      .TeventStore(@this.Configuration.ConnectionStringName);
-      return new TeventStoreRegistrationBuilder(register => @this.RegisterTessageHandlers(register));
+      return new TeventStoreRegistrationBuilder(register => @this.RegisterTypermediaHandlers(register));
    }
 }
 
 public class TeventStoreRegistrationBuilder
 {
-   readonly Action<Action<TessageHandlerRegistrar>> _registerTessageHandlers;
-   internal TeventStoreRegistrationBuilder(Action<Action<TessageHandlerRegistrar>> registerTessageHandlers) => _registerTessageHandlers = registerTessageHandlers;
+   readonly Action<Action<TypermediaHandlerRegistrar>> _registerTypermediaHandlers;
+   internal TeventStoreRegistrationBuilder(Action<Action<TypermediaHandlerRegistrar>> registerTypermediaHandlers) => _registerTypermediaHandlers = registerTypermediaHandlers;
 
    ///<summary>Declares the tevent store's typermedia handlers for <typeparamref name="TTaggregate"/> — save, get-for-update, the<br/>
    /// readonly-copy tueries, and the history tuery — into the endpoint's one engine: a store integration is a handler<br/>
@@ -29,7 +29,7 @@ public class TeventStoreRegistrationBuilder
       where TTaggregate : class, ITaggregate<TTevent>
       where TTevent : ITaggregateTevent
    {
-      _registerTessageHandlers(TeventStoreApi.RegisterHandlersForTaggregate<TTaggregate, TTevent>);
+      _registerTypermediaHandlers(TeventStoreApi.RegisterHandlersForTaggregate<TTaggregate, TTevent>);
       return this;
    }
 }
