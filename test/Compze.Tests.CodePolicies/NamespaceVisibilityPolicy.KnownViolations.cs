@@ -50,7 +50,6 @@ public static partial class NamespaceVisibilityPolicy
          "Compze.Tessaging.Internal.SqlLayer.ITessagingSqlLayer+PersistedPeer",
          "Compze.Tessaging.Internal.SqlLayer.ITessagingSqlLayer+SaveTessageResult",
          "Compze.Tessaging.Internal.SqlLayer.ITessagingSqlLayer+UndeliveredTessage",
-         "Compze.Tessaging.Internal.SystemCE.ThreadingCE.ITaskRunner",
          "Compze.Tessaging.Internal.Transport.Advertisement.EndpointInformation",
          "Compze.Tessaging.Peers.Internal.IPeerRegistry",
          "Compze.Tessaging.Peers.Internal.RememberedPeer",

@@ -7,7 +7,7 @@ using Compze.Threading.ResourceAccess;
 namespace Compze.Tessaging.Internal.SystemCE.ThreadingCE;
 
 //todo: this should not be public. And whether it belongs in this project is another question
-public interface ITaskRunner
+interface ITaskRunner
 {
    void Run(string taskName, Action action);
    void Run(string taskName, Func<Unit> task);

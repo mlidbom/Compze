@@ -84,4 +84,27 @@ public class Tevent_observation_at_host_disposal_tests : UniversalTestBase
             .Which.Flatten().InnerExceptions.Must().Satisfy(it => it.Contains(observerException));
       });
    }
+
+   [PCT] public async Task every_failure_of_an_observer_that_throws_on_each_of_three_observed_tevents_is_collected_into_the_one_rethrown_AggregateException()
+   {
+      await CompzeLogger.SuppressLoggingWhileRunningAsync(async () =>
+      {
+         var failureCount = 0;
+         CreateHostWithAnEndpointObserving(_ => throw new InvalidOperationException($"observer-failure-{Interlocked.Increment(ref failureCount)}"));
+         await _host.StartAsync();
+
+         PublishAnObservedTevent();
+         PublishAnObservedTevent();
+         PublishAnObservedTevent();
+
+         //A throwing observer is reported and never retried; its queue moves on to the next observation, so three observed
+         //tevents produce three reported failures, and the disposal rethrow carries every one of them.
+         (await InvokingAsync(async () => await _host.DisposeAsync()).Must().ThrowAsync<AggregateException>())
+            .Which.Flatten().InnerExceptions
+            .Must().HaveCount(3)
+            .Satisfy(it => it.Any(exception => exception.Message == "observer-failure-1"))
+            .Satisfy(it => it.Any(exception => exception.Message == "observer-failure-2"))
+            .Satisfy(it => it.Any(exception => exception.Message == "observer-failure-3"));
+      });
+   }
 }
