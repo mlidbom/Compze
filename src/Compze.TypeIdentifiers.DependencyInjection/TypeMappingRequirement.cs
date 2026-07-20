@@ -10,10 +10,12 @@ namespace Compze.TypeIdentifiers.DependencyInjection;
 /// to one <see cref="TypeMapBuilder"/> when the map is first resolved, so the requirements' registration order cannot
 /// change the resulting map, and two components needing the same assembly is ordinary rather than a conflict.
 /// </remarks>
-sealed class TypeMappingRequirement(Action<TypeMapBuilder> declare)
+sealed class TypeMappingRequirement(Action<TypeMapBuilder> declareTypeMappingRequirements)
 {
+   readonly Action<TypeMapBuilder> _declareTypeMappingRequirements = declareTypeMappingRequirements;
+
    /// <summary>Makes this requirement's declaration against the builder the container's one <see cref="ITypeMap"/> is being built from.</summary>
-   internal void DeclareInto(TypeMapBuilder builder) => declare(builder);
+   internal void DeclareInto(TypeMapBuilder builder) => _declareTypeMappingRequirements(builder);
 
    /// <summary>Requires the types of the assembly containing <typeparamref name="T"/> to be mapped to the GUIDs that assembly declares.</summary>
    internal static TypeMappingRequirement MappedTypesFromAssemblyContaining<T>() =>
