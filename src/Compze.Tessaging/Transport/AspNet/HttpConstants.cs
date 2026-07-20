@@ -1,4 +1,4 @@
-namespace Compze.Tessaging.Internals.Transport.AspNet;
+namespace Compze.Tessaging.Transport.AspNet;
 
 #pragma warning disable CA1724 // Nested type names intentionally match namespace concepts
 static class HttpConstants

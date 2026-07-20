@@ -1,7 +1,7 @@
-using Compze.Tessaging.Endpoints.Discovery;
 using Compze.Contracts;
+using Compze.Tessaging.Endpoints.Discovery;
 
-namespace Compze.Tessaging.Internals.Transport.NamedPipes;
+namespace Compze.Tessaging.Transport.NamedPipes;
 
 ///<summary>The named-pipe transport's <see cref="EndpointAddress"/> scheme: <c>compze.pipe://localhost/&lt;pipe-name&gt;</c>.<br/>
 /// A pipe name is generated fresh per server start — the same-machine analog of the HTTP transport's dynamically allocated ports.</summary>

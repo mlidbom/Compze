@@ -1,11 +1,11 @@
 using System.IO.Pipes;
-using Compze.Tessaging.Endpoints.Discovery;
 using Compze.Contracts;
 using Compze.Internals.Logging;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
+using Compze.Tessaging.Endpoints.Discovery;
 using Compze.Threading;
 
-namespace Compze.Tessaging.Internals.Transport.NamedPipes;
+namespace Compze.Tessaging.Transport.NamedPipes;
 
 ///<summary>The server side of the named-pipe transport: listens on a freshly named pipe, reads<br/>
 /// <see cref="TransportRequest"/>s, dispatches each through the dispatch function it is given, and answers with the<br/>

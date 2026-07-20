@@ -1,6 +1,6 @@
 using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Endpoints;
-using Compze.Tessaging.Internals.Transport.Discovery;
+using Compze.Tessaging.Transport.Discovery;
 using Compze.TypeIdentifiers;
 
 namespace Compze.Tessaging.Transport.SqlLayer;

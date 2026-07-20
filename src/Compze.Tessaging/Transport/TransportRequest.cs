@@ -1,6 +1,6 @@
 using Compze.Tessaging.Abstractions;
 
-namespace Compze.Tessaging.Internals.Transport;
+namespace Compze.Tessaging.Transport;
 
 ///<summary>One request sent to an endpoint's transport server (<see cref="IEndpointTransportServer"/>): the transport-level envelope<br/>
 /// (<see cref="Kind"/>, <see cref="TessageId"/>, <see cref="PayloadTypeIdString"/>) plus the serialized tessage <see cref="Body"/>.<br/>

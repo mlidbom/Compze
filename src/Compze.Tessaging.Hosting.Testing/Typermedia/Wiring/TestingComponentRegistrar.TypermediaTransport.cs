@@ -3,8 +3,8 @@ using Compze.Hosting.Testing;
 using Compze.Hosting.Testing.Wiring;
 using Compze.Internals.SystemCE;
 using Compze.Internals.Testing;
-using Compze.Tessaging.Internals.Transport.AspNet;
-using Compze.Tessaging.Internals.Transport.NamedPipes;
+using Compze.Tessaging.Transport.AspNet;
+using Compze.Tessaging.Transport.NamedPipes;
 
 namespace Compze.Tessaging.Hosting.Testing.Typermedia.Wiring;
 

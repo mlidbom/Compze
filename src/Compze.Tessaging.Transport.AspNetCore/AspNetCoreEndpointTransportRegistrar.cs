@@ -1,7 +1,6 @@
 using Compze.DependencyInjection.Abstractions;
-using Compze.Tessaging.Internals.Transport;
-using Compze.Tessaging.Internals.Transport.AspNet;
-using Compze.Tessaging.Internals.Transport.Discovery;
+using Compze.Tessaging.Transport.AspNet;
+using Compze.Tessaging.Transport.Discovery;
 
 namespace Compze.Tessaging.Transport.AspNetCore;
 

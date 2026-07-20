@@ -3,7 +3,7 @@ using Compze.Contracts;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using JetBrains.Annotations;
 
-namespace Compze.Tessaging.Internals.Transport.Exceptions;
+namespace Compze.Tessaging.Transport.Exceptions;
 
 #pragma warning disable CA1812 // Instantiated via JSON deserialization
 [UsedImplicitly] public class ProblemDetails

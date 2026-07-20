@@ -1,9 +1,9 @@
-using Compze.Tessaging.Endpoints.Discovery;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
+using Compze.Tessaging.Endpoints.Discovery;
 
-namespace Compze.Tessaging.Internals.Transport.NamedPipes;
+namespace Compze.Tessaging.Transport.NamedPipes;
 
 static class NamedPipeEndpointTransportClientRegistrar
 {

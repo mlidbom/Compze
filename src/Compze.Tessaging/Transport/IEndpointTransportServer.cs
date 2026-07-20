@@ -1,8 +1,7 @@
+using Compze.Tessaging.Endpoints;
 using Compze.Tessaging.Endpoints.Discovery;
 
-using Compze.Tessaging.Endpoints;
-
-namespace Compze.Tessaging.Internals.Transport;
+namespace Compze.Tessaging.Transport;
 
 ///<summary>The one transport server through which an endpoint listens: whatever the endpoint speaks — Tessaging, Typermedia, or<br/>
 /// both — is served through this single server, at the endpoint's single <see cref="Address"/>. Each communication style contributes<br/>

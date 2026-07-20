@@ -1,8 +1,8 @@
 using Compze.Abstractions.Wiring.Testing.Internal;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Testing;
-using Compze.Tessaging.Internals.Transport.NamedPipes;
 using Compze.Tessaging.Transport.AspNetCore;
+using Compze.Tessaging.Transport.NamedPipes;
 
 namespace Compze.Hosting.Testing.Wiring;
 

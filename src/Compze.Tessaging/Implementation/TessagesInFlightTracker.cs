@@ -1,10 +1,9 @@
-using Compze.Tessaging.Internals.Transport;
 using Compze.Tessaging.Endpoints;
 using Compze.Tessaging.Implementation.Transport.Abstractions;
 using Compze.Internals.SystemCE.CollectionsCE.GenericCE;
 using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Implementation.Abstractions;
-using Compze.Tessaging.Internals.Transport.Discovery;
+using Compze.Tessaging.Transport.Discovery;
 using Compze.Threading;
 using Compze.Threading.Exceptions;
 using Compze.Threading.ResourceAccess;

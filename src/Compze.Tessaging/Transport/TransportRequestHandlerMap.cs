@@ -1,11 +1,11 @@
-using Compze.TypeIdentifiers;
 using Compze.Contracts;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
-using Compze.Tessaging.Internals.Transport.Discovery;
+using Compze.Tessaging.Transport.Discovery;
+using Compze.TypeIdentifiers;
 
-namespace Compze.Tessaging.Internals.Transport;
+namespace Compze.Tessaging.Transport;
 
 ///<summary>Everything the endpoint's transport server serves: the union of every communication style's contributed request<br/>
 /// handlers (<see cref="ITransportRequestHandlerContribution"/>), plus the <see cref="TransportRequestKind.EndpointDiscoveryQuery"/><br/>

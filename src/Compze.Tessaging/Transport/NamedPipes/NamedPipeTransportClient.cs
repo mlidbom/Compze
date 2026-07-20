@@ -1,9 +1,9 @@
 using System.IO.Pipes;
-using Compze.Tessaging.Endpoints.Discovery;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
-using Compze.Tessaging.Internals.Transport.Exceptions;
+using Compze.Tessaging.Endpoints.Discovery;
+using Compze.Tessaging.Transport.Exceptions;
 
-namespace Compze.Tessaging.Internals.Transport.NamedPipes;
+namespace Compze.Tessaging.Transport.NamedPipes;
 
 ///<summary>The client side of the named-pipe transport: sends one <see cref="TransportRequest"/> to the<br/>
 /// <see cref="NamedPipeTransportServer"/> at an <see cref="EndpointAddress"/> and returns the response payload —<br/>

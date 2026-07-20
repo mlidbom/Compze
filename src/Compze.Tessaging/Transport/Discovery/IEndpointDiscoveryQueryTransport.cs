@@ -1,7 +1,7 @@
 using Compze.Tessaging.Abstractions.TessageTypes;
 using Compze.Tessaging.Endpoints.Discovery;
 
-namespace Compze.Tessaging.Internals.Transport.Discovery;
+namespace Compze.Tessaging.Transport.Discovery;
 
 interface IEndpointDiscoveryQueryTransport
 {

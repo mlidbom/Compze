@@ -1,9 +1,9 @@
 using Compze.Tessaging.Endpoints.Discovery;
-using Compze.Tessaging.Internals.Transport;
 using Compze.Tessaging.Implementation.Transport.Abstractions;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
+using Compze.Tessaging.Transport;
 
 namespace Compze.Tessaging.Implementation.Transport.Client.Implementation;
 

@@ -1,7 +1,6 @@
 using Compze.Tessaging.Abstractions.TessageTypes;
-using Compze.Tessaging.Internals.Transport;
 using Compze.Tessaging.Endpoints;
-using Compze.Tessaging.Internals.Transport.Discovery;
+using Compze.Tessaging.Transport.Discovery;
 
 namespace Compze.Tessaging.Implementation.Peers;
 

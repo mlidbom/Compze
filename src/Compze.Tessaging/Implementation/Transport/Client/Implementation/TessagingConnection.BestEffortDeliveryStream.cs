@@ -1,9 +1,8 @@
-using Compze.Tessaging.Internals.Transport;
 using Compze.Tessaging.Implementation.BestEffortDelivery;
 using Compze.Tessaging.Implementation.Transport.Abstractions;
 using Compze.Internals.Logging;
 using Compze.Internals.SystemCE.ThreadingCE;
-using Compze.Tessaging.Internals.Transport.Discovery;
+using Compze.Tessaging.Transport.Discovery;
 
 namespace Compze.Tessaging.Implementation.Transport.Client.Implementation;
 

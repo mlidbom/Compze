@@ -1,11 +1,10 @@
-using Compze.Tessaging.Internals.Transport;
 using System.Transactions;
 using Compze.Tessaging.Endpoints;
 using Compze.Contracts;
 using Compze.Internals.SystemCE.TransactionsCE;
 using Compze.Tessaging.Implementation.Abstractions;
 using Compze.Tessaging.Implementation.Peers;
-using Compze.Tessaging.Internals.Transport.Discovery;
+using Compze.Tessaging.Transport.Discovery;
 using Compze.Threading;
 using Compze.TypeIdentifiers;
 

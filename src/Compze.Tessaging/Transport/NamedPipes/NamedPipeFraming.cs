@@ -3,7 +3,7 @@ using System.Text;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tessaging.Abstractions;
 
-namespace Compze.Tessaging.Internals.Transport.NamedPipes;
+namespace Compze.Tessaging.Transport.NamedPipes;
 
 ///<summary>The named-pipe transport's wire format: how a <see cref="TransportRequest"/> and its response are written to<br/>
 /// and read from the pipe's byte stream. One request frame is answered by exactly one response frame, in lockstep.</summary>

@@ -6,7 +6,7 @@ using Compze.Tessaging.Abstractions.TessageTypes;
 using Compze.Tessaging.Endpoints.Discovery;
 using Compze.TypeIdentifiers;
 
-namespace Compze.Tessaging.Internals.Transport.Discovery;
+namespace Compze.Tessaging.Transport.Discovery;
 
 static class EndpointDiscoveryQueryTransportRegistrar
 {

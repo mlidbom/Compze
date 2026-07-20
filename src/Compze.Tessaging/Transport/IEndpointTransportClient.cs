@@ -1,7 +1,7 @@
 using Compze.Tessaging.Endpoints.Discovery;
-using Compze.Tessaging.Internals.Transport.Exceptions;
+using Compze.Tessaging.Transport.Exceptions;
 
-namespace Compze.Tessaging.Internals.Transport;
+namespace Compze.Tessaging.Transport;
 
 ///<summary>The client side of the endpoint transport: sends one <see cref="TransportRequest"/> to the transport server<br/>
 /// (<see cref="IEndpointTransportServer"/>) of the endpoint at an <see cref="EndpointAddress"/> and returns the response payload.<br/>

@@ -1,4 +1,4 @@
-namespace Compze.Tessaging.Internals.Transport;
+namespace Compze.Tessaging.Transport;
 
 ///<summary>One communication style's request handling, contributed to the endpoint's one transport server<br/>
 /// (<see cref="IEndpointTransportServer"/>): which <see cref="TransportRequestKind"/>s the style serves, and how.<br/>
