@@ -1,34 +1,26 @@
 using Compze.DependencyInjection;
 using Compze.Must;
-using Compze.Tessaging.Engine.HandlerRegistration;
 using Compze.Tessaging.Peers;
-using Compze.Tessaging.Peers.Internal;
-using Compze.Tessaging.Internal.SqlLayer;
 using Compze.Tests.Common.Tessaging.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.TypeIdentifiers;
 
 namespace Compze.Tests.Integration.Tessaging.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler;
 
-///<summary>The peer registry (see <c>src/Compze.Tessaging/dev_docs/peer-model.md</c>): an exactly-once endpoint durably remembers the<br/>
-/// peers it has met — each peer's identity and last-known advertisement, recorded on every advertisement fetch, mirrored in<br/>
-/// memory, and persisted in the endpoint's prefixed table-set in the domain database it joins.</summary>
+///<summary>The peer memory (see <c>src/Compze.Tessaging/dev_docs/peer-model.md</c>): an exactly-once endpoint durably remembers the<br/>
+/// peers it has met — each peer's identity and last-known advertisement — read through <see cref="IPeerAdministration.Peers"/>.<br/>
+/// That the memory is durable, not merely mirrored in memory, is pinned by the restart conversations: every specification that<br/>
+/// rebuilds the host and finds the down peer still remembered (tevent delivery to peers that are down, decommission, the<br/>
+/// advertisement shrinks) reads it back from the endpoint's database.</summary>
 public class Peer_registry_tests : EndpointHostTestBase
 {
-   [PCT] public void After_start_the_backend_remembers_the_remote_endpoint_as_a_peer_whose_advertisement_matches_what_the_remote_advertises()
+   [PCT] public void After_start_the_backend_remembers_the_remote_endpoint_with_the_tommand_type_it_handles_in_its_advertisement()
    {
-      var rememberedPeer = BackendEndPoint.ServiceLocator.Resolve<IPeerRegistry>().Peers
+      var rememberedPeer = BackendEndPoint.ServiceLocator.Resolve<IPeerAdministration>().Peers
                                           .Single(peer => peer.Id.Equals(RemoteEndpointId));
 
-      rememberedPeer.HandledTessageTypes.SetEquals(RemoteEndpointAdvertisedTypes).Must().BeTrue();
-   }
-
-   [PCT] public async Task The_remembered_peer_is_persisted_in_the_backends_database_not_only_mirrored_in_memory()
-   {
-      var persistedPeer = (await BackendEndPoint.ServiceLocator.Resolve<ITessagingSqlLayer.IPeerRegistrySqlLayer>().GetPeersAsync())
-                                         .Single(peer => peer.Id.Equals(RemoteEndpointId));
-
-      persistedPeer.HandledTessageTypes.SetEquals(RemoteEndpointAdvertisedTypes).Must().BeTrue();
+      var typeMap = BackendEndPoint.ServiceLocator.Resolve<ITypeMap>();
+      rememberedPeer.HandledTessageTypes.Contains(typeMap.GetId(typeof(MyExactlyOnceTommandHandledByTheRemoteEndpoint)).CanonicalString).Must().BeTrue();
    }
 
    ///<summary>The acceptance pin that the substrate harmonization is real: one advertisement, remembered once, covers every<br/>
@@ -36,7 +28,7 @@ public class Peer_registry_tests : EndpointHostTestBase
    /// types exactly as it covers TessageBus ones.</summary>
    [PCT] public void The_remote_endpoint_remembers_the_backends_typermedia_types_in_the_same_advertisement_as_its_tessaging_ones()
    {
-      var rememberedBackend = RemoteEndpoint.ServiceLocator.Resolve<IPeerRegistry>().Peers
+      var rememberedBackend = RemoteEndpoint.ServiceLocator.Resolve<IPeerAdministration>().Peers
                                             .Single(peer => peer.Id.Equals(BackendEndpointId));
 
       var typeMap = BackendEndPoint.ServiceLocator.Resolve<ITypeMap>();
@@ -44,8 +36,4 @@ public class Peer_registry_tests : EndpointHostTestBase
 
       backendTypermediaTypes.All(typermediaType => rememberedBackend.HandledTessageTypes.Contains(typeMap.GetId(typermediaType).CanonicalString)).Must().BeTrue();
    }
-
-   ///<summary>The Remote endpoint registers only TessageBus handlers, so its roster's whole advertisement is what the backend must remember of it.</summary>
-   HashSet<string> RemoteEndpointAdvertisedTypes =>
-      [..RemoteEndpoint.ServiceLocator.Resolve<TessageHandlerRoster>().AdvertisedRemoteTessageTypeIds().Select(typeId => typeId.CanonicalString)];
 }

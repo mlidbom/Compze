@@ -3,7 +3,7 @@ using Compze.Tessaging.Endpoints;
 using Compze.Tessaging.TessageTypes;
 using Compze.TypeIdentifiers;
 
-namespace Compze.Tessaging.Peers.Internal;
+namespace Compze.Tessaging.Peers;
 
 ///<summary>One peer as this endpoint remembers it: the peer's identity (<see cref="EndpointId"/>) and its last-known<br/>
 /// advertisement, with the advertised type strings resolved to types once, when the peer is remembered — so<br/>

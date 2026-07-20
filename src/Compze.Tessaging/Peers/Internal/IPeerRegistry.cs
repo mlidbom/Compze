@@ -18,7 +18,7 @@ namespace Compze.Tessaging.Peers.Internal;
 /// database it joins and survives restarts<br/>
 /// (<see cref="DurablePeerRegistry"/>, where a peer is remembered until explicitly decommissioned); on a database-less endpoint<br/>
 /// it lives in memory for the life of the process (<see cref="ProcessLifetimePeerRegistry"/>).</remarks>
-public interface IPeerRegistry
+interface IPeerRegistry
 {
    ///<summary>Records <paramref name="advertisement"/> as the advertising peer's current one, replacing what was stored —<br/>
    /// creating the peer on first contact.</summary>

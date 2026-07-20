@@ -3,12 +3,9 @@ using Compze.DependencyInjection;
 using Compze.Must;
 using Compze.Tessaging.TessageBus;
 using Compze.Tessaging.Peers;
-using Compze.Tessaging.Peers.Internal;
-using Compze.Tessaging.Internal.Transport.Advertisement;
 using Compze.Tests.Common.Tessaging.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Threading;
-using Compze.TypeIdentifiers;
 
 using static Compze.Must.MustActions;
 
@@ -21,10 +18,6 @@ namespace Compze.Tests.Integration.Tessaging.Given_a_backend_endpoint_with_a_tom
 [LongRunning]
 public class Peer_decommission_tests : EndpointHostTestBase
 {
-   ///<summary>A remembered peer this specification plays the router for — see <see cref="Advertisement_shrink_tests"/>, whose<br/>
-   /// never-connected-peer technique the stranded-tommand specifications here build on.</summary>
-   static readonly EndpointId NeverConnectedPeerId = new(Guid.Parse("0B94D1E6-7A3F-4C52-8E19-D40C6B27F8A3"));
-
    [PCT] public async Task Decommissioning_a_down_remembered_subscriber_discards_what_it_was_owed_reports_it_and_its_later_return_is_a_first_contact()
    {
       //The Backend met the Remote endpoint when the host started; rebuild the host without it: the peer is down, not gone.
@@ -42,7 +35,7 @@ public class Peer_decommission_tests : EndpointHostTestBase
       report.DecommissionedPeer.Must().Be(RemoteEndpointId);
       report.Discarded.Single().Count.Must().Be(3);
       //...and the peer left the endpoint's memory.
-      BackendPeerRegistry.Peers.Any(peer => peer.Id.Equals(RemoteEndpointId)).Must().BeFalse();
+      BackendPeerAdministration.Peers.Any(peer => peer.Id.Equals(RemoteEndpointId)).Must().BeFalse();
 
       //Published while decommissioned: fanned out to nobody - nothing anywhere remembers the peer.
       await Navigator.PostAsync(MyCreateTaggregateTommand.Create());
@@ -81,30 +74,50 @@ public class Peer_decommission_tests : EndpointHostTestBase
 
    [PCT] public async Task A_stranded_tommand_is_discarded_and_reported_when_its_peer_is_decommissioned()
    {
-      //A tommand is bound to the never-connected peer - the sole remembered handler of its type - and the peer's replaced
-      //advertisement then renounces the type: the tommand is stranded, awaiting exactly this resolution (see Advertisement_shrink_tests).
-      var tommandTypeIdString = BackendEndPoint.ServiceLocator.Resolve<ITypeMap>().GetId(typeof(MyUnhandledExactlyOnceTommand)).CanonicalString;
-      await BackendPeerRegistry.RecordAdvertisementAsync(new EndpointInformation("NeverConnectedPeer", NeverConnectedPeerId, [tommandTypeIdString]));
-      await BackendEndPoint.ServiceLocator.Resolve<IIndependentTommandSender>().SendAsync(new MyUnhandledExactlyOnceTommand());
-      await BackendPeerRegistry.RecordAdvertisementAsync(new EndpointInformation("NeverConnectedPeer", NeverConnectedPeerId, []));
+      //Strand the tommand through the real conversation (see Advertisement_shrink_tests): the Backend met the Remote endpoint,
+      //the Remote endpoint went down, the send bound to it as the sole remembered handler, and it returned no longer handling
+      //the type - the tommand is stranded, awaiting exactly this resolution.
+      await Host.DisposeAsync();
+      await StartHostWithOnlyTheBackendEndpointAsync();
+      await BackendEndPoint.ServiceLocator.Resolve<IIndependentTommandSender>().SendAsync(new MyExactlyOnceTommandHandledByTheRemoteEndpoint());
+      await Host.DisposeAsyncWithoutWaitingForEndpointsToBeAtRest(); //The tommand is undelivered: awaiting rest would wait for Remote's return.
+      await StartHostWithTheRemoteEndpointReturningNoLongerHandlingItsTommandAsync();
 
-      var strandedEntry = (await BackendPeerAdministration.DecommissionAsync(NeverConnectedPeerId)).Discarded.Single();
+      //The returned endpoint does not receive the tommand - the strand is the shrink's doing, and this bounded non-delivery
+      //window is also what gives the shrink time to record before the rebuild below.
+      MyExactlyOnceTommandHandledByTheRemoteEndpointHandlerThreadGate.TryAwaitPassedThroughCountEqualTo(1, WaitTimeout.Seconds(2)).Must().BeFalse();
+
+      //Decommissioning requires the peer down: rebuild once more without it.
+      await Host.DisposeAsync();
+      await StartHostWithOnlyTheBackendEndpointAsync();
+
+      var strandedEntry = (await BackendPeerAdministration.DecommissionAsync(RemoteEndpointId)).Discarded.Single();
 
       strandedEntry.Description.Must().Contain("stranded");
-      strandedEntry.Description.Must().Contain(nameof(MyUnhandledExactlyOnceTommand));
+      strandedEntry.Description.Must().Contain(nameof(MyExactlyOnceTommandHandledByTheRemoteEndpoint));
       strandedEntry.Count.Must().Be(1);
    }
 
    [PCT] public async Task A_renounced_tevent_discarded_at_shrink_is_absent_from_the_peers_decommission_report()
    {
-      //A tevent is owed to the never-connected peer, whose replaced advertisement then renounces every subscription: the
-      //tevent was discarded at the shrink - by the audience's own choice - not kept stranded, so the decommission finds nothing.
-      var remoteAdvertisement = BackendPeerRegistry.Peers.Single(peer => peer.Id.Equals(RemoteEndpointId)).HandledTessageTypes;
-      await BackendPeerRegistry.RecordAdvertisementAsync(new EndpointInformation("NeverConnectedPeer", NeverConnectedPeerId, [..remoteAdvertisement]));
+      //Discard the tevent through the real conversation: the Backend met the Remote endpoint, the Remote endpoint went down,
+      //a tevent its remembered subscription matches was published in its absence, and it returned having renounced every
+      //tevent subscription - the tevent was discarded at the shrink, by the audience's own choice, not kept stranded.
+      await Host.DisposeAsync();
+      await StartHostWithOnlyTheBackendEndpointAsync();
       await Navigator.PostAsync(MyCreateTaggregateTommand.Create());
-      await BackendPeerRegistry.RecordAdvertisementAsync(new EndpointInformation("NeverConnectedPeer", NeverConnectedPeerId, []));
+      await Host.DisposeAsyncWithoutWaitingForEndpointsToBeAtRest(); //The tevent is undelivered: awaiting rest would wait for Remote's return.
+      await StartHostWithTheRemoteEndpointReturningHavingRenouncedItsTeventSubscriptionsAsync();
 
-      (await BackendPeerAdministration.DecommissionAsync(NeverConnectedPeerId)).Discarded.Must().BeEmpty();
+      //The returned endpoint does not receive the tevent - the discard is the shrink's doing, and this bounded non-delivery
+      //window is also what gives the shrink time to record before the rebuild below.
+      MyRemoteTaggregateTeventHandlerThreadGate.TryAwaitPassedThroughCountEqualTo(1, WaitTimeout.Seconds(2)).Must().BeFalse();
+
+      //Decommissioning requires the peer down: rebuild once more without it.
+      await Host.DisposeAsync();
+      await StartHostWithOnlyTheBackendEndpointAsync();
+
+      (await BackendPeerAdministration.DecommissionAsync(RemoteEndpointId)).Discarded.Must().BeEmpty();
    }
 
    [PCT] public async Task Decommissioning_a_connected_peer_fails_loud()
@@ -126,5 +139,4 @@ public class Peer_decommission_tests : EndpointHostTestBase
          .Which.Message.Must().Contain("not a peer this endpoint knows");
 
    IPeerAdministration BackendPeerAdministration => BackendEndPoint.ServiceLocator.Resolve<IPeerAdministration>();
-   IPeerRegistry BackendPeerRegistry => BackendEndPoint.ServiceLocator.Resolve<IPeerRegistry>();
 }

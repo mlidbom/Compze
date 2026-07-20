@@ -4,14 +4,10 @@ using Compze.Must;
 using Compze.DependencyInjection;
 using Compze.Tessaging.Endpoints.BestEffort;
 using Compze.Tessaging.Hosting.Testing;
-using Compze.Tessaging.Peers;
-using Compze.Tessaging.Peers.Internal;
-using Compze.Tessaging.Internal.Transport.Advertisement;
 using Compze.Tessaging.Typermedia;
 using Compze.Tessaging.Typermedia.Client;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
-using Compze.TypeIdentifiers;
 using static Compze.Must.MustActions;
 
 // ReSharper disable InconsistentNaming for testing
@@ -28,8 +24,8 @@ public class Given_an_endpoint_navigating_a_typermedia_type_with_no_live_route :
 {
    static readonly EndpointId NavigatorEndpointId = new(Guid.Parse("6F8D2C15-B7A9-4E30-95D6-1A4B8C7E2F90"));
 
-   ///<summary>A remembered peer this specification plays the router for: recording its advertisement directly scripts a peer<br/>
-   /// that serves the type and is down — known-but-down with no process behind it.</summary>
+   ///<summary>A peer that served <see cref="TueryOnlyADownPeerServes"/>, was met, and went down — its endpoint disposed, its<br/>
+   /// connection gone, its advertisement still remembered: absence never touches peer memory.</summary>
    static readonly EndpointId DownPeerId = new(Guid.Parse("D2E94B71-3C58-4A06-B8F1-7E60A5D49C23"));
 
    readonly TestingEndpointHost _host;
@@ -64,10 +60,19 @@ public class Given_an_endpoint_navigating_a_typermedia_type_with_no_live_route :
 
    [PCT] public async Task navigating_a_type_only_a_remembered_down_peer_serves_fails_after_patience_naming_the_peer_as_known_and_down()
    {
-      var tueryTypeIdString = _navigatorEndpoint.ServiceLocator.Resolve<ITypeMap>().GetId(typeof(TueryNothingServes)).CanonicalString;
-      await _navigatorEndpoint.ServiceLocator.Resolve<IPeerRegistry>().RecordAdvertisementAsync(new EndpointInformation("DownPeer", DownPeerId, [tueryTypeIdString]));
+      //The navigator meets the peer serving the type, and the peer then goes down: its endpoint disposed, its connection
+      //gone, its advertisement still remembered - absence never touches peer memory.
+      var downPeerEndpoint = _host.RegisterBestEffortEndpoint(
+         "DownPeer",
+         DownPeerId,
+         endpointBuilder => endpointBuilder
+            .RegisterComponents(registrar => registrar.RequireTypermediaHostingSpecificationTypeMappings())
+            .RegisterTypermediaHandlers(handle => handle.ForTuery((TueryOnlyADownPeerServes _) => new TueryAnswer())));
+      await downPeerEndpoint.StartAsync();
+      await _host.AwaitEndpointsHaveMetEachOtherAsync();
+      await downPeerEndpoint.DisposeAsync();
 
-      (await InvokingAsync(() => _navigator.GetAsync(new TueryNothingServes())).Must().ThrowAsync<NoHandlerForTypermediaTypeException>())
+      (await InvokingAsync(() => _navigator.GetAsync(new TueryOnlyADownPeerServes())).Must().ThrowAsync<NoHandlerForTypermediaTypeException>())
       .Which.Message.Must().Contain(DownPeerId.ToString())
       .Contain("known and currently down");
    }

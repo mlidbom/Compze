@@ -8,6 +8,11 @@ namespace Compze.Tessaging.Peers;
 /// <see cref="IPeerRegistry"/>.</summary>
 public interface IPeerAdministration
 {
+   ///<summary>The endpoint's remembered peers — every peer the memory holds an advertisement of, connected or not. The read<br/>
+   /// side of administration: what <see cref="DecommissionAsync"/> acts on, and the wait predicate for "has this endpoint met<br/>
+   /// that peer yet".</summary>
+   IReadOnlyList<RememberedPeer> Peers { get; }
+
    ///<summary>Decommissions <paramref name="peer"/>: the one way a peer leaves the endpoint's memory — an administrative act,<br/>
    /// never an inference (absence is not a lifecycle event: a crash, liveness pruning, or a clean stop never touch peer<br/>
    /// memory). The act removes the peer from the <see cref="IPeerRegistry"/> — publishes stop fanning out to it and sends stop<br/>

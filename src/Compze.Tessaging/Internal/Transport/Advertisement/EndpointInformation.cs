@@ -15,7 +15,7 @@ class EndpointInformationQuery : ITuery<EndpointInformation>;
 ///<summary>The answer to endpoint discovery: who the endpoint is and its one advertisement — every remotable tessage type it<br/>
 /// serves, of every kind (tevent subscriptions, tommands, tueries, typermedia tommands), as canonical type-id strings.<br/>
 /// A plain wire shape serialized by the fixed <see cref="EndpointInformationQuerySerializer"/> format.</summary>
-public class EndpointInformation
+class EndpointInformation
 {
    internal EndpointInformation(IEnumerable<TypeId> advertisedTessageTypeIds, EndpointConfiguration configuration)
       : this(configuration.Name, configuration.Id, [..advertisedTessageTypeIds.Select(id => id.CanonicalString)]) {}

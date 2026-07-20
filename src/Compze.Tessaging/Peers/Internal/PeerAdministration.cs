@@ -39,6 +39,8 @@ class PeerAdministration : IPeerAdministration
       _configuration = configuration;
    }
 
+   public IReadOnlyList<RememberedPeer> Peers => _peerRegistry.Peers;
+
    public async Task<PeerDecommissionReport> DecommissionAsync(EndpointId peer)
    {
       State.Assert(!peer.Equals(_configuration.Id), () => "An endpoint cannot decommission itself: a peer is another endpoint.");

@@ -179,7 +179,7 @@ public abstract class EndpointHostTestBase : UniversalTestBase
          });
    }
 
-   void RegisterRemoteEndpoint(bool withItsTommandHandler = true) =>
+   void RegisterRemoteEndpoint(bool withItsTommandHandler = true, bool withItsTeventSubscriptions = true) =>
       RemoteEndpoint = Host.RegisterExactlyOnceEndpoint("Remote",
                                              RemoteEndpointId,
                                              endpointBuilder =>
@@ -195,6 +195,8 @@ public abstract class EndpointHostTestBase : UniversalTestBase
                                                                  return Task.CompletedTask;
                                                               }));
                                                 }
+
+                                                if(!withItsTeventSubscriptions) return;
 
                                                 endpointBuilder.RegisterTessageBusHandlers(handle => handle
                                                           .ForTevent((IMyTaggregateTevent _) =>
@@ -245,6 +247,16 @@ public abstract class EndpointHostTestBase : UniversalTestBase
    {
       CreateHostAndRegisterBackendEndpoint();
       RegisterRemoteEndpoint(withItsTommandHandler: false);
+      await StartHostAndConnectClientAsync();
+   }
+
+   ///<summary>The mirror of <see cref="StartHostWithTheRemoteEndpointReturningNoLongerHandlingItsTommandAsync"/>: the Remote<br/>
+   /// endpoint returns having renounced every tevent subscription — its advertisement keeps only the tommand handler — the<br/>
+   /// deployment where an endpoint keeping its identity stopped subscribing.</summary>
+   protected async Task StartHostWithTheRemoteEndpointReturningHavingRenouncedItsTeventSubscriptionsAsync()
+   {
+      CreateHostAndRegisterBackendEndpoint();
+      RegisterRemoteEndpoint(withItsTeventSubscriptions: false);
       await StartHostAndConnectClientAsync();
    }
 
