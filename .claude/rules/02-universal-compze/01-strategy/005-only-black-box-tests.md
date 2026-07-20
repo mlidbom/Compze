@@ -9,9 +9,8 @@ The same goes for any and all implementation details of that kind.
 
 If it is not possible for a consumer to drive the library into the state we imagine we need to test, it is literally pointless to test it.
 
-# When tests need a capability the public API lacks
-The preference order:
-1. Improve the public API.
+# When tests supposedly need a capability the public API lacks
+1. Figure out how to test it using the public API. If that is impossible, seriously question if the test is needed.
 2. A shipped public testing package (the `Compze.Tessaging.Hosting.Testing` pattern) — a first-class testing surface, not a hole into the library.
 3. `*.InternalSpecifications` (below) as the last resort.
 
