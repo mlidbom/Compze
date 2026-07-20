@@ -4,6 +4,7 @@ using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.TransactionsCE.Testing;
 using Compze.Must;
 using Compze.Tessaging.Abstractions;
+using Compze.Tessaging.Abstractions.TessageBus;
 using Compze.Tests.Common.Tessaging.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Threading;

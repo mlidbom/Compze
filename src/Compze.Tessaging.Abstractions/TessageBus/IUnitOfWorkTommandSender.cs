@@ -1,6 +1,6 @@
 using Compze.Tessaging.Abstractions.TessageTypes;
 
-namespace Compze.Tessaging.Abstractions;
+namespace Compze.Tessaging.Abstractions.TessageBus;
 
 ///<summary>Sends exactly-once tommands within the caller's unit of work: the send joins the caller's ambient transaction, so a<br/>
 /// rolled-back unit of work never leaks a tommand. Code outside any unit of work sends through<br/>

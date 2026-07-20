@@ -1,8 +1,11 @@
 using Compze.Tessaging.Abstractions.TessageTypes;
 using Compze.Tessaging.Abstractions.Validation;
+using Compze.Tessaging.Abstractions.Validation.Exceptions;
 using Compze.Tests.Infrastructure;
 using Compze.xUnitBDD;
 using static Compze.Must.MustActions;
+using TessageTypeInspector = Compze.Tessaging.Abstractions.Validation.TessageTypeInspector;
+
 // ReSharper disable InconsistentNaming
 
 namespace Compze.Tests.Unit.Tessaging;
@@ -12,8 +15,8 @@ interface INonCovariantParameterPublisherTevent : IPublisherTevent<ITevent>;
 
 public class TessageTypeInspector_throws_TessageTypeDesignViolationException_if_ : UniversalTestBase
 {
-   static void AssertInvalidForSending<TTessage>() => Invoking(TessageInspector.AssertValid<TTessage>).Must().Throw<TessageTypeInspector.TessageTypeDesignViolationException>();
-   static void AssertInvalidForSubscription<TTessage>() => Invoking(TessageInspector.AssertValidForSubscription<TTessage>).Must().Throw<TessageTypeInspector.TessageTypeDesignViolationException>();
+   static void AssertInvalidForSending<TTessage>() => Invoking(TessageInspector.AssertValid<TTessage>).Must().Throw<TessageTypeDesignViolationException>();
+   static void AssertInvalidForSubscription<TTessage>() => Invoking(TessageInspector.AssertValidForSubscription<TTessage>).Must().Throw<TessageTypeDesignViolationException>();
 
    public class Inspecting_type_for_subscription_ : TessageTypeInspector_throws_TessageTypeDesignViolationException_if_
    {

@@ -25,6 +25,7 @@ using Compze.Threading.Testing;
 using Compze.Internals.SystemCE.UsageGuards;
 using Compze.Must;
 using Compze.Tessaging.Abstractions;
+using Compze.Tessaging.Abstractions.TessageBus;
 using Compze.Tessaging.Abstractions.TessageTypes;
 using Compze.Tessaging.Engine.HandlerRegistration.TessageHandlers;
 using Compze.Teventive;

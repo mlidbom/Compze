@@ -9,6 +9,7 @@ using Compze.Internals.SystemCE.TransactionsCE;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Must;
 using Compze.Tessaging.Abstractions;
+using Compze.Tessaging.Abstractions.TessageBus;
 using Compze.Tests.Common.CQRS.TeventRefactoring.Migrations.Tevents;
 using Compze.Teventive.Taggregates.Tevents.Public;
 using Compze.Teventive.TeventStore.Abstractions.Public;

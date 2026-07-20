@@ -1,5 +1,6 @@
 using Compze.Abstractions.Public;
 using Compze.Tessaging.Abstractions;
+using Compze.Tessaging.Abstractions.TessageBus;
 using Compze.Tessaging.Abstractions.TessageTypes;
 using Compze.Teventive.Taggregates.Tevents.Public;
 

@@ -6,6 +6,7 @@ using Compze.Internals.SystemCE.TransactionsCE;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Must;
 using Compze.Tessaging.Abstractions;
+using Compze.Tessaging.Abstractions.TessageBus;
 using Compze.Tessaging.Abstractions.Validation;
 using Compze.Tessaging.Abstractions.Validation.Exceptions;
 using static Compze.Must.MustActions;

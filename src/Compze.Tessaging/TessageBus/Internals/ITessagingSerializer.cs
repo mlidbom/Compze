@@ -1,7 +1,7 @@
 using Compze.Tessaging.Abstractions.TessageTypes;
 using Compze.Tessaging.Typermedia;
 
-namespace Compze.Tessaging.TessageBus;
+namespace Compze.Tessaging.TessageBus.Internals;
 
 ///<summary>The Tessaging pipeline's own serializer: the format of every <see cref="ITessage"/> the pipeline sends and<br/>
 /// receives. That format is both the wire body and what the inbox/outbox store, because the outbox persists the wire-ready body<br/>

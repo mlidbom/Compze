@@ -2,6 +2,7 @@ using Compze.Contracts;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Tessaging.Abstractions;
+using Compze.Tessaging.Abstractions.TessageBus;
 using Compze.Tessaging.Engine.HandlerRegistration;
 using Compze.Tessaging.Internals;
 using Compze.Tessaging.Internals.Abstractions;

@@ -8,6 +8,7 @@ using Compze.Tests.Infrastructure.XUnit;
 using Compze.Threading;
 using Compze.Must;
 using Compze.Tessaging.Abstractions;
+using Compze.Tessaging.Abstractions.TessageBus;
 using Compze.Tessaging.Transport.Exceptions;
 using static Compze.Must.MustActions;
 

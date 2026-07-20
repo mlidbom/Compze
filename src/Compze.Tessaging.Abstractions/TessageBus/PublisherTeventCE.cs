@@ -1,6 +1,6 @@
 using Compze.Tessaging.Abstractions.TessageTypes;
 
-namespace Compze.Tessaging.Abstractions;
+namespace Compze.Tessaging.Abstractions.TessageBus;
 
 public static class PublisherTeventCE
 {

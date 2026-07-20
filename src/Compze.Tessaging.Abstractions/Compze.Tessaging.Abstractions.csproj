@@ -46,4 +46,7 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_TypeIdentifiers)' != 'true'">
     <ProjectReference Include="..\Compze.TypeIdentifiers\Compze.TypeIdentifiers.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Typermedia\" />
+  </ItemGroup>
 </Project>

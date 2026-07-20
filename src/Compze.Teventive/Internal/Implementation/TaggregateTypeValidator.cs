@@ -6,6 +6,7 @@ using Compze.Tessaging.Abstractions.Validation;
 using Compze.Teventive.Taggregates.BaseClasses;
 using Compze.TypeIdentifiers;
 using JetBrains.Annotations;
+using TessageTypeInspector = Compze.Tessaging.Abstractions.Validation.TessageTypeInspector;
 
 namespace Compze.Teventive.Internal.Implementation;
 
