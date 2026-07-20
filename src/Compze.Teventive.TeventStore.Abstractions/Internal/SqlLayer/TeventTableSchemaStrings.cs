@@ -1,6 +1,6 @@
 namespace Compze.Teventive.TeventStore.Abstractions.Internal.SqlLayer;
 
-public static class TeventTableSchemaStrings
+static class TeventTableSchemaStrings
 {
    public const string TableName = "Tevent";
 

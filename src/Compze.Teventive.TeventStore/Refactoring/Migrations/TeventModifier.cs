@@ -15,9 +15,9 @@ namespace Compze.Teventive.TeventStore.Refactoring.Migrations;
 //This is one of those central classes for which optimization is actually vitally important.
 //Each of the optimizations were done with the help of a profiler and running benchmarks on the tested performance improvements time and time again.
 //Performance: Consider whether using the new stackalloc and Range types might allow us to improve performance of migrations.
-public class TeventModifier(Action<IReadOnlyList<TeventModifier.RefactoredTevent>> teventsAddedCallback) : ITeventModifier
+class TeventModifier(Action<IReadOnlyList<TeventModifier.RefactoredTevent>> teventsAddedCallback) : ITeventModifier
 {
-   public class RefactoredTevent(ITaggregateTevent<ITaggregateTevent> newWrappedTevent, TaggregateTeventStorageInformation storageInformation)
+   internal class RefactoredTevent(ITaggregateTevent<ITaggregateTevent> newWrappedTevent, TaggregateTeventStorageInformation storageInformation)
    {
       internal ITaggregateTevent<ITaggregateTevent> NewWrappedTevent { get; private set; } = newWrappedTevent;
       internal TaggregateTeventStorageInformation StorageInformation { get; private set; } = storageInformation;

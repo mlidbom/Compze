@@ -1,7 +1,7 @@
 namespace Compze.Teventive.TeventStore.Abstractions.Internal.SqlLayer.Abstractions;
 
 [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1008:Enums should have zero value", Justification = "All enum values represent valid refactoring operations. A 'None' value would not be meaningful in this domain context.")]
-public enum TaggregateTeventRefactoringType
+enum TaggregateTeventRefactoringType
 {
    Replace = 1,
    InsertBefore = 2,

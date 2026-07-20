@@ -3,7 +3,7 @@ using Compze.Tessaging;
 
 namespace Compze.Teventive.TeventStore.Abstractions.Internal.SqlLayer.Abstractions;
 
-public interface ITeventStoreSqlLayer
+interface ITeventStoreSqlLayer
 {
    void SetupSchemaIfDatabaseUnInitialized();
 

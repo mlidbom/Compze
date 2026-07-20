@@ -4,7 +4,7 @@ using Compze.TypeIdentifiers;
 
 namespace Compze.Teventive.TeventStore.Abstractions.Internal.SqlLayer.Abstractions;
 
-public class TeventDataRow
+class TeventDataRow
 {
    public TeventDataRow(TaggregateTeventData tevent, TaggregateTeventStorageInformation storageInformation, TypeId teventType, string teventAsJson)
    {

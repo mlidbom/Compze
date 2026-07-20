@@ -1,6 +1,6 @@
 namespace Compze.Teventive.TeventStore.Abstractions.Internal.SqlLayer.Abstractions;
 
-public class TeventInsertionSpecification(TaggregateTeventData tevent, int insertedVersion, int effectiveVersion)
+class TeventInsertionSpecification(TaggregateTeventData tevent, int insertedVersion, int effectiveVersion)
 {
    public TeventInsertionSpecification(TaggregateTeventData tevent) : this(tevent, tevent.TaggregateVersion, tevent.TaggregateVersion) {}
 

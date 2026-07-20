@@ -3,7 +3,7 @@ using Compze.TypeIdentifiers;
 
 namespace Compze.DocumentDb.Internal.SqlLayer;
 
-public interface IDocumentDbSqlLayer
+interface IDocumentDbSqlLayer
 {
    void Update(IReadOnlyList<WriteRow> toUpdate);
    bool TryGet(string idString, TypeId typeId, bool useUpdateLock, [NotNullWhen(true)] out ReadRow? document);

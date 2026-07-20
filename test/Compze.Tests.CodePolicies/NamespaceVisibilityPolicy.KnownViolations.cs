@@ -21,10 +21,6 @@ public static partial class NamespaceVisibilityPolicy
          "Compze.Abstractions.Wiring.Testing.Internal.Transport",
          "Compze.DocumentDb.Internal.SqlLayer.Exceptions.AttemptToSaveAlreadyPersistedValueException",
          "Compze.DocumentDb.Internal.SqlLayer.Exceptions.NoSuchDocumentException",
-         "Compze.DocumentDb.Internal.SqlLayer.IDocumentDbSqlLayer",
-         "Compze.DocumentDb.Internal.SqlLayer.IDocumentDbSqlLayer+DocumentTableSchemaStrings",
-         "Compze.DocumentDb.Internal.SqlLayer.IDocumentDbSqlLayer+ReadRow",
-         "Compze.DocumentDb.Internal.SqlLayer.IDocumentDbSqlLayer+WriteRow",
          "Compze.DocumentDb.Private.DocumentDbSession",
          "Compze.DocumentDb.Private.DocumentDbSession+ContextEnsuringWrapper",
          "Compze.DocumentDb.Private.DocumentDbSession+DocumentItem",
@@ -54,21 +50,7 @@ public static partial class NamespaceVisibilityPolicy
          "Compze.Tessaging.Peers.Internal.IPeerRegistry",
          "Compze.Teventive.Internal.Implementation.AllowPublicSettersAttribute",
          "Compze.Teventive.TeventStore.Abstractions.Internal.ITeventStoreSerializer",
-         "Compze.Teventive.TeventStore.Abstractions.Internal.SqlLayer.Abstractions.CreationTeventRow",
-         "Compze.Teventive.TeventStore.Abstractions.Internal.SqlLayer.Abstractions.ITeventStoreSqlLayer",
-         "Compze.Teventive.TeventStore.Abstractions.Internal.SqlLayer.Abstractions.ReadOrder",
-         "Compze.Teventive.TeventStore.Abstractions.Internal.SqlLayer.Abstractions.TaggregateTeventData",
-         "Compze.Teventive.TeventStore.Abstractions.Internal.SqlLayer.Abstractions.TaggregateTeventRefactoringInformation",
-         "Compze.Teventive.TeventStore.Abstractions.Internal.SqlLayer.Abstractions.TaggregateTeventRefactoringType",
-         "Compze.Teventive.TeventStore.Abstractions.Internal.SqlLayer.Abstractions.TaggregateTeventStorageInformation",
-         "Compze.Teventive.TeventStore.Abstractions.Internal.SqlLayer.Abstractions.TeventDataRow",
-         "Compze.Teventive.TeventStore.Abstractions.Internal.SqlLayer.Abstractions.TeventDuplicateKeyException",
-         "Compze.Teventive.TeventStore.Abstractions.Internal.SqlLayer.Abstractions.TeventInsertionSpecification",
-         "Compze.Teventive.TeventStore.Abstractions.Internal.SqlLayer.Abstractions.TeventNeighborhood",
-         "Compze.Teventive.TeventStore.Abstractions.Internal.SqlLayer.Abstractions.VersionSpecification",
-         "Compze.Teventive.TeventStore.Abstractions.Internal.SqlLayer.TeventTableSchemaStrings",
-         "Compze.Teventive.TeventStore.Abstractions.Refactoring.Migrations.Internal.ICompleteTeventStreamMutator",
-         "Compze.Teventive.TeventStore.Abstractions.Refactoring.Migrations.Internal.ISingleTaggregateInstanceTeventStreamMutator"
+         "Compze.Teventive.TeventStore.Abstractions.Internal.SqlLayer.Abstractions.ReadOrder"
       ];
 
       ///<summary>Namespaces without an Internal or Private section that hold top-level internal types —<br/>

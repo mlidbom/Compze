@@ -35,7 +35,7 @@ namespace Compze.Teventive.TeventStore;
                                   .CreatedBy((ITeventStoreSqlLayer sqlLayer, ITypeMap typeMap, ITeventStoreSerializer serializer, TeventCache cache) =>
                                                 new TeventStore(sqlLayer, typeMap, serializer, cache, migrations())));
 
-   public TeventStore(ITeventStoreSqlLayer sqlLayer, ITypeMap typeMap, ITeventStoreSerializer serializer, TeventCache cache, IEnumerable<ITeventMigration> migrations)
+   internal TeventStore(ITeventStoreSqlLayer sqlLayer, ITypeMap typeMap, ITeventStoreSerializer serializer, TeventCache cache, IEnumerable<ITeventMigration> migrations)
    {
       _typeMap = typeMap;
       _serializer = serializer;
@@ -190,7 +190,7 @@ namespace Compze.Teventive.TeventStore;
                               .Select(it => it.TaggregateId);
    }
 
-   public class TaggregateTeventWithRefactoringInformation(ITaggregateTevent<ITaggregateTevent> wrappedTevent, TaggregateTeventStorageInformation storageInformation)
+   internal class TaggregateTeventWithRefactoringInformation(ITaggregateTevent<ITaggregateTevent> wrappedTevent, TaggregateTeventStorageInformation storageInformation)
    {
       internal ITaggregateTevent<ITaggregateTevent> WrappedTevent { get; } = wrappedTevent;
       internal TaggregateTeventStorageInformation StorageInformation { get; } = storageInformation;

@@ -1,6 +1,6 @@
 namespace Compze.Teventive.TeventStore.Abstractions.Internal.SqlLayer.Abstractions;
 
-public class TaggregateTeventStorageInformation
+class TaggregateTeventStorageInformation
 {
    public int InsertedVersion { get; set; }
    public int EffectiveVersion { get; set; }

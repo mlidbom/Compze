@@ -1,6 +1,6 @@
 namespace Compze.Teventive.TeventStore.Abstractions.Internal.SqlLayer.Abstractions;
 
-public class TeventNeighborhood
+class TeventNeighborhood
 {
    public ReadOrder EffectiveReadOrder { get; }
    public ReadOrder PreviousTeventReadOrder { get; }
