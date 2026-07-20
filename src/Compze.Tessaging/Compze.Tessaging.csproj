@@ -104,9 +104,15 @@
     <ProjectReference Include="..\Compze.Unit\Compze.Unit.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Internals\Outbox\" />
+    <Folder Include="Internals\TessageHandling\Abstractions\" />
+    <Folder Include="Internals\TessageHandling\Dispatching\" />
+    <Folder Include="Internals\TessageHandling\Inbox\" />
     <Folder Include="Internals\Transport\AspNet\" />
     <Folder Include="Internals\Transport\Discovery\" />
     <Folder Include="Internals\Transport\Exceptions\" />
     <Folder Include="Internals\Transport\NamedPipes\" />
+    <Folder Include="TessageBus\Internals\" />
+    <Folder Include="TessageBus\Internals\TessageHandling\Abstractions\" />
   </ItemGroup>
 </Project>

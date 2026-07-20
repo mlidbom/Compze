@@ -2,10 +2,10 @@ using Compze.Contracts;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Tessaging.Endpoints.Exceptions;
-using Compze.Tessaging.Hosting;
-using Compze.Tessaging.Implementation.EndpointCatalog;
-using Compze.Tessaging.Implementation.Outbox;
-using Compze.Tessaging.Implementation.TessageHandling.Inbox;
+using Compze.Tessaging.Internals.EndpointCatalog;
+using Compze.Tessaging.TessageBus;
+using Compze.Tessaging.TessageBus.Internals.Outbox;
+using Compze.Tessaging.TessageBus.Internals.TessageHandling.Inbox;
 using Compze.Tessaging.Transport;
 using Compze.Tessaging.Transport.SqlLayer;
 
@@ -20,7 +20,7 @@ namespace Compze.Tessaging.Endpoints.ExactlyOnce;
 public sealed class ExactlyOnceEndpointBuilder : EndpointBuilder<ExactlyOnceEndpointBuilder>
 {
    Action<IComponentRegistrar>? _registerDomainDatabase;
-   ProcessLeaseDuration _processLeaseDuration = Implementation.EndpointCatalog.ProcessLeaseDuration.Default;
+   ProcessLeaseDuration _processLeaseDuration = Internals.EndpointCatalog.ProcessLeaseDuration.Default;
    bool _processLeaseDurationDeclared;
 
    internal ExactlyOnceEndpointBuilder(IContainerBuilder containerBuilder, EndpointConfiguration configuration) : base(containerBuilder, configuration) {}

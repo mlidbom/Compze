@@ -2,7 +2,7 @@ using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Tessaging.Engine.HandlerRegistration;
 using Compze.Tessaging.Engine.HandlerRegistration.TessageHandlers;
-using Compze.Tessaging.Implementation.Abstractions;
+using Compze.Tessaging.Internals.Abstractions;
 using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.TypeIdentifiers;
 using Compze.TypeIdentifiers.DependencyInjection;

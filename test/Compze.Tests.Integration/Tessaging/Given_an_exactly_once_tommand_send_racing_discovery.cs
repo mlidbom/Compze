@@ -6,7 +6,7 @@ using Compze.Tessaging.Endpoints.ExactlyOnce;
 using Compze.Tessaging.Engine;
 using Compze.Tessaging.Engine.HandlerRegistration.TessageHandlers;
 using Compze.Tessaging.Hosting.Testing;
-using Compze.Tessaging.Implementation.Peers;
+using Compze.Tessaging.Internals.Peers;
 using Compze.Tessaging.Transport.Discovery;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;

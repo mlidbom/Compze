@@ -1,6 +1,5 @@
 using Compze.Contracts;
 using Compze.DependencyInjection.Abstractions;
-using Compze.Tessaging.Serialization;
 
 namespace Compze.Tessaging.Typermedia.Client;
 
