@@ -3,7 +3,6 @@ using Compze.Abstractions.Wiring.Testing.Internal;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Testing;
 using Compze.Tessaging.Transport.AspNetCore;
-using Compze.Tessaging.Internal.Transport.NamedPipes;
 
 namespace Compze.Hosting.Testing.Wiring;
 

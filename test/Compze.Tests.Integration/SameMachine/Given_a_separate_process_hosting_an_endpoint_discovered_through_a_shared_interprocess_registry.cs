@@ -10,7 +10,6 @@ using Compze.Internals.Testing;
 using Compze.Tessaging.TessageBus;
 using Compze.Tessaging.Endpoints.ExactlyOnce;
 using Compze.Tessaging.Hosting.Testing.Wiring;
-using Compze.Tessaging.TessageBus.Internal.TessageHandling.Dispatching;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Tests.SameMachine.EndpointHostProcess;

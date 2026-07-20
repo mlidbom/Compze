@@ -8,7 +8,6 @@ using Compze.Hosting.Testing.Wiring;
 using Compze.Internals.Testing;
 using Compze.Must;
 using Compze.Tessaging.TessageBus;
-using Compze.Tessaging;
 using Compze.Tessaging.Engine;
 using Compze.Tessaging.Engine.Wiring;
 using Compze.Tessaging.TessageTypes;

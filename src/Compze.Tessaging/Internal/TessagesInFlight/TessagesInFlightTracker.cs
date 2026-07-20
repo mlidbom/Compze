@@ -1,7 +1,5 @@
 using Compze.Internals.SystemCE.CollectionsCE.GenericCE;
 using Compze.Tessaging.Endpoints;
-using Compze.Tessaging.TessageBus.Internal.BestEffortDelivery;
-using Compze.Tessaging.TessageBus.Internal.Outbox;
 using Compze.Tessaging.Internal.Transport;
 using Compze.Tessaging.Internal.Transport.Advertisement;
 using Compze.Threading;

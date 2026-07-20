@@ -1,5 +1,4 @@
 using Compze.DocumentDb.Public;
-using Compze.Tessaging;
 using Compze.Tessaging.Typermedia;
 using Compze.Tessaging.TessageTypes;
 

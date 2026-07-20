@@ -6,7 +6,6 @@ using Compze.Hosting.Testing.Wiring;
 using Compze.Internals.Testing;
 using Compze.Must;
 using Compze.Tessaging.TessageBus;
-using Compze.Tessaging;
 using Compze.Tessaging.Endpoints.ExactlyOnce;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.TessageTypes;

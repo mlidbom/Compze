@@ -6,14 +6,10 @@ using Compze.Internals.Logging;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tessaging.Endpoints.BestEffort;
 using Compze.Tessaging.Endpoints.ExactlyOnce;
-using Compze.Tessaging.Engine;
 using Compze.Tessaging.Engine.Internal;
 using Compze.Tessaging.Internal.HandlerAvailability;
-using Compze.Tessaging.Peers;
 using Compze.Tessaging.Peers.Internal;
 using Compze.Tessaging.Internal.SystemCE.ThreadingCE;
-using Compze.Tessaging.TessageBus;
-using Compze.Tessaging.TessageBus.Internal;
 using Compze.Tessaging.Internal.Routing;
 using Compze.Tessaging.Internal.Transport;
 

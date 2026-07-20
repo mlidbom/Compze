@@ -3,7 +3,6 @@ using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Logging;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Internals.SystemCE.TransactionsCE;
-using Compze.Tessaging.Engine;
 using Compze.Tessaging.Engine.Internal;
 using Compze.Tessaging.Internal.SystemCE.ThreadingCE;
 using Compze.Tessaging.Internal.Transport;

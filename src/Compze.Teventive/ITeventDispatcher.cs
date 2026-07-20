@@ -1,5 +1,4 @@
 using Compze.Tessaging.TessageBus;
-using Compze.Tessaging;
 using Compze.Tessaging.TessageTypes;
 
 namespace Compze.Teventive;

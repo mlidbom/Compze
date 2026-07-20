@@ -4,8 +4,6 @@ using Compze.Contracts;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.ReflectionCE;
 using Compze.Tessaging.TessageBus;
-using Compze.Tessaging.TessageBus.Internal;
-using Compze.Tessaging.Internal.Routing;
 using Compze.Tessaging.Engine.Exceptions;
 using Compze.Tessaging.TessageTypes;
 using Compze.TypeIdentifiers;

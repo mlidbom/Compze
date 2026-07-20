@@ -1,5 +1,4 @@
 using Compze.Tessaging.Endpoints;
-using Compze.Tessaging.Engine;
 using Compze.Tessaging.Engine.Internal;
 using Compze.Tessaging.Internal.Transport;
 using Compze.Threading;

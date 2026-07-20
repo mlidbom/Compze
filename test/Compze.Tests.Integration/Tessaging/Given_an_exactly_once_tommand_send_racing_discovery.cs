@@ -3,7 +3,6 @@ using Compze.DependencyInjection;
 using Compze.Must;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Tessaging.TessageBus;
-using Compze.Tessaging;
 using Compze.Tessaging.Endpoints.ExactlyOnce;
 using Compze.Hosting.Testing;
 using Compze.Hosting.Testing.Wiring;
@@ -14,7 +13,6 @@ using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Threading;
 using Compze.Threading.Testing;
-using Compze.Underscore;
 
 // ReSharper disable InconsistentNaming for testing
 #pragma warning disable IDE1006 //Reviewed OK: Test Naming Styles

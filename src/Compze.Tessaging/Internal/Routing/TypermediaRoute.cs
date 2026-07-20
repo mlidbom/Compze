@@ -1,7 +1,5 @@
 using Compze.Tessaging.Endpoints;
 using Compze.Tessaging.Endpoints.Discovery;
-using Compze.Tessaging.TessageBus;
-using Compze.Tessaging.TessageBus.Internal;
 
 namespace Compze.Tessaging.Internal.Routing;
 

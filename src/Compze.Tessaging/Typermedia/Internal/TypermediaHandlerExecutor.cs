@@ -2,7 +2,6 @@ using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Logging;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
-using Compze.Tessaging.Engine;
 using Compze.Tessaging.Engine.Internal;
 using Compze.Tessaging.Engine.Exceptions;
 using Compze.Tessaging.TessageTypes;

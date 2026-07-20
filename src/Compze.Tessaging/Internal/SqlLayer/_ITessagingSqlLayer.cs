@@ -1,5 +1,4 @@
 using Compze.Tessaging.Endpoints;
-using Compze.Tessaging.Peers;
 using Compze.Tessaging.Peers.Internal;
 using Compze.Tessaging.Internal.Transport.Advertisement;
 using Compze.TypeIdentifiers;

@@ -3,7 +3,6 @@ using System.Transactions;
 using Compze.Contracts;
 using Compze.Internals.SystemCE.TransactionsCE;
 using Compze.Tessaging.Endpoints;
-using Compze.Tessaging.TessageBus.Internal.Outbox;
 using Compze.Tessaging.Internal.TessagesInFlight;
 using Compze.Tessaging.Peers;
 using Compze.Tessaging.Peers.Internal;

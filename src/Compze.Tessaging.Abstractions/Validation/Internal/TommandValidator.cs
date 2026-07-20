@@ -1,6 +1,5 @@
 using System.ComponentModel.DataAnnotations;
 using Compze.Tessaging.TessageTypes;
-using Compze.Tessaging.Validation.Exceptions;
 
 namespace Compze.Tessaging.Validation.Internal;
 

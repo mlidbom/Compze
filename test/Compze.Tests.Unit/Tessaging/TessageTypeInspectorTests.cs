@@ -1,8 +1,5 @@
 using Compze.Tessaging.Validation.Internal;
-using Compze.Tessaging;
 using Compze.Tessaging.TessageTypes;
-using Compze.Tessaging.Validation;
-using Compze.Tessaging.Validation.Exceptions;
 using Compze.Tests.Infrastructure;
 using Compze.xUnitBDD;
 using static Compze.Must.MustActions;

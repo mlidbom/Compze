@@ -1,5 +1,4 @@
 using Compze.Abstractions.Public;
-using Compze.Tessaging;
 using Compze.Tessaging.TessageTypes;
 using Compze.Teventive;
 using Compze.Teventive.Taggregates.BaseClasses;

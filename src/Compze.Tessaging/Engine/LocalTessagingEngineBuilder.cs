@@ -1,6 +1,5 @@
 using Compze.Tessaging.Engine.HandlerRegistration.Internal;
 using Compze.Tessaging.Engine.Wiring;
-using Compze.Tessaging.Engine.Internal;
 using Compze.Tessaging.TessageBus;
 using Compze.Tessaging.Typermedia;
 

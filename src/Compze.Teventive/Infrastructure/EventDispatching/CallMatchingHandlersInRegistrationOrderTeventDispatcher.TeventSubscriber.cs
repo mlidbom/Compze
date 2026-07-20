@@ -1,6 +1,5 @@
 using Compze.Contracts;
 using Compze.Internals.SystemCE.ReflectionCE;
-using Compze.Tessaging;
 using Compze.Tessaging.TessageTypes;
 using TessageTypeInspector = Compze.Tessaging.Validation.Internal.TessageTypeInspector;
 

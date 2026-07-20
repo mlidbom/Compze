@@ -3,7 +3,6 @@
 
 using AccountManagement.Domain;
 using Compze.Internals.SystemCE;
-using Compze.Tessaging;
 using Compze.Tessaging.TessageTypes;
 using Compze.Tessaging.Typermedia;
 

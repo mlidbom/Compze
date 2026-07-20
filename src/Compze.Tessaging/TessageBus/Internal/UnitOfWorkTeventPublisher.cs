@@ -4,13 +4,9 @@ using Compze.Contracts;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
-using Compze.Tessaging.Internal.Routing;
-using Compze.Tessaging.Validation;
-using Compze.Tessaging.Engine;
 using Compze.Tessaging.Engine.Internal;
 using Compze.Tessaging.TessageBus.Internal.BestEffortDelivery;
 using Compze.Tessaging.TessageBus.Internal.Outbox;
-using Compze.Tessaging.Internal.TessagesInFlight;
 using Compze.Tessaging.TessageTypes;
 using JetBrains.Annotations;
 

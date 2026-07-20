@@ -4,7 +4,6 @@ using Compze.Tests.Infrastructure.XUnit;
 using Compze.Must;
 using Compze.Tessaging.TessageBus;
 using Compze.Tessaging.Typermedia;
-using Compze.Tessaging.Internal.Transport;
 using static Compze.Must.MustActions;
 
 // ReSharper disable InconsistentNaming

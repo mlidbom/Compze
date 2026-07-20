@@ -1,4 +1,3 @@
-using Compze.Tessaging.Typermedia.Internal;
 using Compze.TypeIdentifiers;
 using Compze.Tessaging.Endpoints.Discovery;
 using Compze.DependencyInjection;

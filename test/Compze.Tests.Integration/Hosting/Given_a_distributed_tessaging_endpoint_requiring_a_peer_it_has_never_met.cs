@@ -12,7 +12,6 @@ using Compze.Must;
 using Compze.Tessaging.TessageBus;
 using Compze.Tessaging.Endpoints.BestEffort;
 using Compze.Tessaging.Peers;
-using Compze.Tessaging.Peers.Internal;
 using Compze.Tests.Common.Tessaging.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;

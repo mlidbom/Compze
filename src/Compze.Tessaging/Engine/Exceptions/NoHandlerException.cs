@@ -1,5 +1,4 @@
 using Compze.Tessaging.Engine.HandlerRegistration;
-using Compze.Tessaging.Engine.HandlerRegistration.Internal;
 
 namespace Compze.Tessaging.Engine.Exceptions;
 

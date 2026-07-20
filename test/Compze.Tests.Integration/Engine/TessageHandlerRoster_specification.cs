@@ -4,7 +4,6 @@ using Compze.Hosting.Testing;
 using Compze.Hosting.Testing.Wiring;
 using Compze.Internals.Testing;
 using Compze.Must;
-using Compze.Tessaging;
 using Compze.Tessaging.Engine;
 using Compze.Tessaging.Engine.Exceptions;
 using Compze.Tessaging.Engine.HandlerRegistration;

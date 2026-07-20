@@ -1,6 +1,5 @@
 using Compze.Tessaging.Endpoints;
 using Compze.Must;
-using Compze.Tessaging;
 using Compze.Tessaging.Endpoints.ExactlyOnce;
 using Compze.Tessaging.Endpoints.Exceptions;
 using Compze.Tessaging.TessageBus;

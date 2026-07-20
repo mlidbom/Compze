@@ -3,7 +3,6 @@ using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tessaging.Engine.Exceptions;
 using Compze.Tessaging.Engine.HandlerRegistration;
-using Compze.Tessaging.Engine.HandlerRegistration.Internal;
 using Compze.Tessaging.TessageTypes;
 
 namespace Compze.Tessaging.Engine.Internal;

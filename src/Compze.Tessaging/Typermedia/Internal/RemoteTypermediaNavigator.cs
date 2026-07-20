@@ -3,7 +3,6 @@ using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tessaging.TessageTypes;
-using Compze.Tessaging.Validation;
 using JetBrains.Annotations;
 
 namespace Compze.Tessaging.Typermedia.Internal;
