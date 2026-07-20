@@ -5,7 +5,7 @@ using Compze.TypeIdentifiers;
 
 namespace Compze.Tessaging.Internal.SqlLayer;
 
-public interface ITessagingSqlLayer
+interface ITessagingSqlLayer
 {
    public interface IOutboxSqlLayer
    {

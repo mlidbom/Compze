@@ -11,7 +11,7 @@ using Compze.Tests.Infrastructure.XUnit;
 // ReSharper disable InconsistentNaming for testing
 #pragma warning disable IDE1006 //Reviewed OK: Test Naming Styles
 
-namespace Compze.Tests.Integration.Tessaging;
+namespace Compze.Tessaging.InternalSpecifications;
 
 ///<summary>A crashed process never releases its process lease — the lease just stops being refreshed. The endpoint's next<br/>
 /// process must not fail loud on that corpse: a lease unrefreshed for a whole lease duration is stale, and a starting<br/>
@@ -29,7 +29,7 @@ public class Given_a_domain_database_remembering_a_crashed_processes_lease : Uni
       _rebornEndpoint = _host.RegisterExactlyOnceEndpoint(
          "Reborn",
          RebornEndpointId,
-         endpointBuilder => endpointBuilder.RegisterComponents(registrar => registrar.RequireIntegrationTestTypeMappings()));
+         endpointBuilder => endpointBuilder.RegisterComponents(registrar => registrar.RequireTessagingInternalSpecificationTypeMappings()));
    }
 
    //The crash is scripted through the catalog sql layer: the crashed predecessor's entry, its lease held and last

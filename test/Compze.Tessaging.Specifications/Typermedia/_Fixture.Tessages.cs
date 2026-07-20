@@ -49,8 +49,6 @@ public class TueryServedByTheLateEndpoint : Remotable.NonTransactional.Tueries.T
 
 public class TueryNothingServes : Remotable.NonTransactional.Tueries.Tuery<TueryAnswer>;
 
-public class TueryOnlyADownPeerServes : Remotable.NonTransactional.Tueries.Tuery<TueryAnswer>;
-
 #pragma warning disable CA1812 // Instantiated via reflection through the [assembly: AssemblyTypeMapper(typeof(...))] attribute.
 class AssemblyTypeMapper : IAssemblyTypeMapper
 {
@@ -60,8 +58,7 @@ class AssemblyTypeMapper : IAssemblyTypeMapper
             .Map<TueryBothEndpointsHandle>("c93a55b7-30a1-4a35-b7c8-01c9d61d31e6")
             .Map<TueryOnlyTheSecondEndpointHandles>("5f2f0f68-8a4e-4a2e-b7a2-38d8bd7fca10")
             .Map<TueryServedByTheLateEndpoint>("2a6de5cf-40b8-4f11-9c76-8f0e2f5f13b2")
-            .Map<TueryNothingServes>("9d41c2b7-6a35-4a90-8f3e-5b7c1d20ae44")
-            .Map<TueryOnlyADownPeerServes>("4b0e7d92-5c1a-4e83-9f27-6d38a0b45c19");
+            .Map<TueryNothingServes>("9d41c2b7-6a35-4a90-8f3e-5b7c1d20ae44");
 }
 
 // ReSharper disable once CheckNamespace

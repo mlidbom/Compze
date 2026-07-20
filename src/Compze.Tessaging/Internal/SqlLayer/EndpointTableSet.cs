@@ -13,7 +13,7 @@ namespace Compze.Tessaging.Internal.SqlLayer;
 /// silently. The cap derives from PostgreSQL's 63-byte identifier limit and the longest identifier the schemas generate<br/>
 /// (<c>IX_«name»_OutboxTessages_Unique_TessageId</c>, 35 characters beyond the name); whoever adds a longer generated<br/>
 /// identifier re-derives it.</remarks>
-public class EndpointTableSet
+class EndpointTableSet
 {
    ///<summary>The endpoint-name length cap: PostgreSQL's 63-byte identifier limit minus the longest identifier the schemas<br/>
    /// generate beyond the name (see the class remarks).</summary>
