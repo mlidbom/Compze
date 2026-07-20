@@ -1,4 +1,3 @@
-using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Abstractions.TessageBus;
 using Compze.Tessaging.Abstractions.TessageTypes;
 using Compze.Tessaging.Endpoints;
@@ -6,7 +5,7 @@ using Compze.Tessaging.Endpoints.Discovery;
 using Compze.Tessaging.Internals.Peers;
 using Compze.Tessaging.Internals.Transport.Client.Internal;
 
-namespace Compze.Tessaging.te;
+namespace Compze.Tessaging.TessageBus;
 
 interface ITessagingRouter
 {

@@ -1,6 +1,6 @@
 using Compze.Tessaging.Endpoints;
 using Compze.Tessaging.Endpoints.Discovery;
-using Compze.Tessaging.te;
+using Compze.Tessaging.TessageBus;
 
 namespace Compze.Tessaging.Internals.Transport.Client.Internal;
 
