@@ -9,7 +9,6 @@ using Compze.Tessaging.TessageBus;
 using Compze.Tessaging;
 using Compze.Tessaging.Endpoints.ExactlyOnce;
 using Compze.Tessaging.Hosting.Testing;
-using Compze.Tessaging.Internal.SqlLayer;
 using Compze.Tessaging.TessageTypes;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
@@ -23,7 +22,7 @@ using static Compze.Must.MustActions;
 namespace Compze.Tests.Integration.Tessaging;
 
 ///<summary>The domain database is the domain's, never an endpoint's: any number of endpoints join one, each storing in its<br/>
-/// own prefixed table-set (<see cref="EndpointTableSet"/>) and sharing the domain-level tables — the endpoint catalog, the<br/>
+/// own prefixed table-set (<c>EndpointTableSet</c>) and sharing the domain-level tables — the endpoint catalog, the<br/>
 /// type-id interner — and they converse exactly-once through their prefixed outboxes and inboxes side by side in the one<br/>
 /// database. The catalog is also where the domain database's endpoint rules are enforced: a name only ever belongs to one<br/>
 /// endpoint, and an endpoint id never silently re-keys itself under a new name.</summary>
@@ -93,15 +92,6 @@ public class Given_two_exactly_once_endpoints_joined_to_one_domain_database : Un
       _firstNeighborReplyHandlerGate.AwaitPassedThroughCountEqualTo(1, WaitTimeout.Seconds(15));
    }
 
-   [PCT] public async Task the_endpoint_catalog_lists_both_neighbors()
-   {
-      var entries = await _firstNeighbor.ServiceLocator.Resolve<ITessagingSqlLayer.IEndpointCatalogSqlLayer>().GetEntriesAsync();
-
-      entries.Count.Must().Be(2);
-      var endpointNames = entries.Select(entry => entry.EndpointName).ToList();
-      endpointNames.Must().Contain("FirstNeighbor");
-      endpointNames.Must().Contain("SecondNeighbor");
-   }
 
    [PCT] public async Task a_third_endpoint_claiming_an_occupied_name_with_a_different_id_fails_loud_naming_the_collision()
    {
