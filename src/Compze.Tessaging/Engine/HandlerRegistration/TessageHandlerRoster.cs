@@ -114,7 +114,6 @@ public class TessageHandlerRoster
       //routing matches wrapped tevents against. Advertised = routable: the filter is the exact shape the routers build tevent routes from (wrapper-of-remotable), so a
       //subscription to a type outside it is a purely local subscription, truthfully absent from the advertisement.
       var handledTeventTypes = _subscribedTeventTypes
-                              .Where(subscribedType => !subscribedType.Implements<TessageTypesInternal.ITessage>())
                               .Select(PublisherTevent.WrapperTypeMatchingAllWrappingsOf)
                               .Where(wrapperType => wrapperType.Is<IPublisherTevent<IRemotableTevent>>());
 
@@ -122,7 +121,7 @@ public class TessageHandlerRoster
       //tommand handler of NEITHER kind would advertise a type no route can ever serve - a silently unreachable handler. Every
       //advertised type must get a route - fail loud instead.
       var remotableVoidTommandTypes = _voidTommandHandlers.Keys
-                                                          .Where(tommandType => tommandType.Implements<IRemotableTessage>() && !tommandType.Implements<TessageTypesInternal.ITessage>())
+                                                          .Where(tommandType => tommandType.Implements<IRemotableTessage>())
                                                           .ToArray();
       var handledTommandTypes = remotableVoidTommandTypes.Where(tommandType => tommandType.Is<IExactlyOnceTommand>()).ToArray();
 
@@ -146,7 +145,6 @@ public class TessageHandlerRoster
                                                     .Concat(_tueryHandlers.Keys)
                                                     .Concat(_voidTommandHandlers.Keys.Where(tommandType => tommandType.Is<IAtMostOnceTypermediaTommand>()))
                                                     .Where(tessageType => tessageType.Implements<IRemotableTessage>())
-                                                    .Where(tessageType => !tessageType.Implements<IInternalInfrastructureTessage>())
                                                     .ToHashSet();
 
       var remoteResultTypes = _tommandHandlersWithResults
