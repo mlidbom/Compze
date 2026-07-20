@@ -68,5 +68,5 @@ public class ReadinessTypes
 
    static bool IsARemotableSingleHandlerTessageType(Type type) =>
       type is { IsClass: true, IsAbstract: false, IsGenericTypeDefinition: false }
-      && (type.Is<IExactlyOnceTommand>() || type.Is<IAtMostOnceTypermediaTommand>() || type.Is<IRemotableTuery<object>>());
+      && (type.Is<IExactlyOneReceiverTessage>() && type.Is<IRemotableTessage>());
 }

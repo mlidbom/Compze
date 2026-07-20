@@ -13,8 +13,10 @@ public interface ITessage;
 ///<summary>A type routed message that informs that something happened.</summary>
 public interface ITevent : ITessage;
 
+public interface IExactlyOneReceiverTessage : ITessage;
+
 ///<summary>A type routed message that instructs the receiver to do something.</summary>
-public interface ITommand : ITessage;
+public interface ITommand : IExactlyOneReceiverTessage;
 
 //todo:review: Should the commented out type below exist?
 //public interface IFireAndForgetTommand : ITommand;
@@ -27,7 +29,7 @@ public interface ICannotBeSentRemotelyFromWithinTransaction : ITessage;
 
 //Typermedia
 //todo:review: should the version without a type parameter remain? Could ITyperMediaTessage<object> replace what it does today?
-public interface ITypermediaTessage : ICannotBeSentRemotelyFromWithinTransaction;
+public interface ITypermediaTessage : ICannotBeSentRemotelyFromWithinTransaction, IExactlyOneReceiverTessage;
 public interface ITyperMediaTessage<out TResult> : ITypermediaTessage;
 public interface ITommand<out TResult> : ITommand, ITyperMediaTessage<TResult>;
 
