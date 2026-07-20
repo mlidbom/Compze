@@ -6,11 +6,15 @@ In order to make it easy for a reader to follow the structure of the code we use
   * Internal: For code that may be shared with other parts of compze using InternalsVisibleTo
   * Private: For code that should never be used by any other project even if it may be technically visible due to InternalsVisibleTo. todo: consider enforcing this through nsdepcop or our CodePolicies project
 
+Where the Internal/Private section sits:
+* A concept with a public side keeps its machinery in an Internal/Private namespace nested BELOW the concept — `Compze.Tessaging.TessageBus.Internal` — at whatever depth the public aspect lives.
+* Machinery with no public face at all nests below a root Internal/Private namespace of the project.
+
 These namespaces are obligatory. A project that has only Internal and/or Private types should have NO code outside of namespaces with Private or Internal as a section. 
 
 For many of our project, most of the code in our projects should be in Internal or Private namespaces. 
 
-It is FORBIDDEN to have ANY public types in any namespace where a section of the namespace is named Internal or Private: Enforce through our CodePolicies project
+It is FORBIDDEN to have ANY public types in any namespace where a section of the namespace is named Internal or Private. The inverse also holds: no top-level internal type lives outside an Internal/Private namespace section. Both invariants are enforced by Compze.Tests.CodePolicies (allowlisted violations shrinking to zero).
 
 
 ## Internals projects and namespaces

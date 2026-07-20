@@ -5,8 +5,8 @@ This document takes a developer who is new to the Tessaging code from zero to un
 companions each take one part deeper: [the tevent delivery model](tevent-delivery-model.md) (how tevents
 travel and what each guarantee means), [the peer model](peer-model.md) (what an endpoint remembers about the
 endpoints it works with, and everything computed from that memory), [the storage model](storage-model.md)
-(the domain database and what Tessaging keeps in it), [the code map](code-map.md) (where everything lives),
-and [the hosting model](../../Compze.Hosting/dev_docs/hosting-model.md) (what running all of this looks
+(the domain database and what Tessaging keeps in it), and
+[the hosting model](../../Compze.Hosting/dev_docs/hosting-model.md) (what running all of this looks
 like, in production and in tests).
 
 ## Tessaging and its two siblings
@@ -148,6 +148,19 @@ Every published tevent gets in-boundary participation — delivery to this engin
 inside the publisher's execution, per the consistency law. Whether a tevent *also* travels further is a
 property of its type, honored by whatever delivery machinery the composition possesses; the publisher door
 is the same either way (see [the tevent delivery model](tevent-delivery-model.md)).
+
+The whole door set — including the remote-facing doors an endpoint adds — by need:
+
+| Need | Door | Requires |
+|---|---|---|
+| Publish a tevent inside my unit of work | `IUnitOfWorkTeventPublisher` | Ambient transaction (asserted) |
+| Publish a tevent as its own unit of work | `IIndependentTeventPublisher` | No ambient transaction (asserted) |
+| Send an exactly-once tommand inside my unit of work | `IUnitOfWorkTommandSender` | Exactly-once tier |
+| Send an exactly-once tommand as its own unit of work | `IIndependentTommandSender` | Exactly-once tier |
+| Execute strictly-local tueries/tommands in my session | `ILocalTypermediaNavigatorSession` | — |
+| Execute strictly-local tueries/tommands independently | `IIndependentLocalTypermediaNavigator` | — |
+| Navigate another endpoint's typermedia | `IRemoteTypermediaNavigator` | An endpoint (any tier) |
+| Navigate typermedia from outside any endpoint | `TypermediaClient` | An explicitly known address |
 
 ### Tevent observation
 
@@ -387,5 +400,7 @@ test concerns (the tessages-in-flight tracker, the pooled database, the matrix-s
 serializer) at construction. A test cannot pass while work is silently in flight: disposal awaits the
 tracker's at-rest — which covers observation queues — and rethrows background exceptions no assertion
 observed. The testing host and the pluggable-component matrix are described in
-[the hosting model](../../Compze.Hosting/dev_docs/hosting-model.md); the spec layout in
-[the code map](code-map.md).
+[the hosting model](../../Compze.Hosting/dev_docs/hosting-model.md). The specs live in
+`test/Compze.Tessaging.Specifications` (the project's own: storage rules, typermedia navigation, the pure
+client) and `test/Compze.Tests.Integration` (the black-box conversation suite, peer-memory pins, readiness,
+same-machine real-process specs), on shared fixtures from `test/Compze.Tests.Common`.

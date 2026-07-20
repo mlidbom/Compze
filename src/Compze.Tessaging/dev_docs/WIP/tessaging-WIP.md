@@ -45,7 +45,6 @@ the current-state docs are the living truth.
   sends and readiness.
 - [storage-model.md](../storage-model.md) — the domain database: per-endpoint table-sets, the endpoint
   catalog, the process lease, schema creation.
-- [code-map.md](../code-map.md) — where everything lives: projects, namespaces, key types, the test suite.
 - [src/Compze.Hosting/dev_docs/hosting-model.md](../../../Compze.Hosting/dev_docs/hosting-model.md) — what
   an endpoint and a host are; production and testing hosting.
 - [src/Compze.Hosting/dev_docs/wip/same-machine-hosting.md](../../../Compze.Hosting/dev_docs/wip/same-machine-hosting.md)

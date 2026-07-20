@@ -15,4 +15,7 @@ If Resharper reports that a type or member can be made internal,protected,privat
 1. The visibility is minimized.
 2. A black box test is written to verify the public behavior of the symbol making the inspection go away
 
+The choice between 1 and 2 is the design decision *does a consumer need this?* — the black box test pins a
+deliberate yes. Never pick 2 just to silence the inspection.
+
 
