@@ -8,6 +8,7 @@ using Compze.Tessaging.Engine.HandlerRegistration.TessageHandlers;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Implementation.Peers;
 using Compze.Tessaging.Internals.Transport;
+using Compze.Tessaging.Internals.Transport.Discovery;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Threading;

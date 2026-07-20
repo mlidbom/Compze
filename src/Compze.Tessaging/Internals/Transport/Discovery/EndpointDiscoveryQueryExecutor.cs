@@ -5,7 +5,7 @@ using Compze.Internals.SystemCE.CollectionsCE.GenericCE;
 using Compze.Tessaging.Abstractions.TessageTypes;
 using Compze.Threading;
 
-namespace Compze.Tessaging.Internals.Transport;
+namespace Compze.Tessaging.Internals.Transport.Discovery;
 
 public class EndpointDiscoveryQueryExecutor
 {

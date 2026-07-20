@@ -6,6 +6,7 @@ using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Abstractions.TessageTypes;
+using Compze.Tessaging.Internals.Transport.Discovery;
 using Compze.Tessaging.Serialization;
 
 namespace Compze.Tessaging.Typermedia.Client;

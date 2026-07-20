@@ -1,5 +1,6 @@
 using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Endpoints;
+using Compze.Tessaging.Internals.Transport.Discovery;
 using Compze.TypeIdentifiers;
 
 namespace Compze.Tessaging.Transport.SqlLayer;
@@ -96,7 +97,7 @@ public interface ITessagingSqlLayer
 
       //todo: We seem to always serialize and persist TypeIds as nothing more than strings. We should have a value type for this.
       ///<summary>The canonical type-id strings of the remotable tessage types the peer advertised — the same strings its<br/>
-      /// <see cref="Internals.Transport.EndpointInformation.HandledTessageTypes"/> carries on the wire.</summary>
+      /// <see cref="EndpointInformation.HandledTessageTypes"/> carries on the wire.</summary>
       public IReadOnlySet<string> HandledTessageTypes { get; } = handledTessageTypes;
    }
 

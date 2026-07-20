@@ -1,4 +1,5 @@
 using Compze.DependencyInjection.Abstractions;
+using Compze.Tessaging.Internals.Transport.Discovery;
 
 namespace Compze.Tessaging.Internals.Transport.NamedPipes;
 

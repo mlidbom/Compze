@@ -1,11 +1,11 @@
 using System.Text.Json.Serialization;
 using Compze.Tessaging.Abstractions.TessageTypes;
-using Compze.TypeIdentifiers;
 using Compze.Tessaging.Endpoints;
+using Compze.TypeIdentifiers;
 
 // ReSharper disable UnusedAutoPropertyAccessor.Global serilization requires it
 
-namespace Compze.Tessaging.Internals.Transport;
+namespace Compze.Tessaging.Internals.Transport.Discovery;
 
 ///<summary>The endpoint-discovery query "who are you, and which remotable tessage types do you serve?" — the one question a<br/>
 /// connecting endpoint's router asks to learn the identity behind an address and build its routes, for every tessage kind at<br/>

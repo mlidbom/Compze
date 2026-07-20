@@ -6,6 +6,7 @@ using Compze.Tessaging.Endpoints.BestEffort;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Implementation.Peers;
 using Compze.Tessaging.Internals.Transport;
+using Compze.Tessaging.Internals.Transport.Discovery;
 using Compze.Tessaging.Typermedia;
 using Compze.Tessaging.Typermedia.Client;
 using Compze.Tests.Infrastructure;

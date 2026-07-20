@@ -16,6 +16,7 @@ using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tessaging.Abstractions.TessageTypes;
 using Compze.Tessaging.Engine.HandlerRegistration;
 using Compze.Tessaging.Implementation.Abstractions;
+using Compze.Tessaging.Internals.Transport.Discovery;
 using Compze.Tessaging.Serialization;
 using Compze.Threading;
 

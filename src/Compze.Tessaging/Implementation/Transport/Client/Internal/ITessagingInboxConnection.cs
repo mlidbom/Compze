@@ -1,6 +1,7 @@
 using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Internals.Transport;
 using Compze.Tessaging.Abstractions.TessageTypes;
+using Compze.Tessaging.Internals.Transport.Discovery;
 
 namespace Compze.Tessaging.Implementation.Transport.Client.Internal;
 

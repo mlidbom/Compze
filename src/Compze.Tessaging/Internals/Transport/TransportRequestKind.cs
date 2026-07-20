@@ -1,3 +1,5 @@
+using Compze.Tessaging.Internals.Transport.Discovery;
+
 namespace Compze.Tessaging.Internals.Transport;
 
 ///<summary>Which kind of conversation a <see cref="TransportRequest"/> opens — carried by the named pipes as the request's kind field,<br/>

@@ -16,6 +16,7 @@ using Compze.Tessaging.Implementation.HandlerAvailability;
 using Compze.Tessaging.Implementation.Peers;
 using Compze.Tessaging.Implementation.Transport.Client.Implementation;
 using Compze.Tessaging.Internals.Transport;
+using Compze.Tessaging.Internals.Transport.Discovery;
 using Compze.Tessaging.Serialization;
 using Compze.Tessaging.Transport;
 using Compze.Tessaging.Typermedia;

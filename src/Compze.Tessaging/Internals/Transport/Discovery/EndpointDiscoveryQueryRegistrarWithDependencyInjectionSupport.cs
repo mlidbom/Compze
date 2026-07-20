@@ -1,7 +1,7 @@
 using Compze.DependencyInjection;
 using Compze.Tessaging.Abstractions.TessageTypes;
 
-namespace Compze.Tessaging.Internals.Transport;
+namespace Compze.Tessaging.Internals.Transport.Discovery;
 
 public class EndpointDiscoveryQueryRegistrarWithDependencyInjectionSupport(EndpointDiscoveryQueryExecutor executor)
 {

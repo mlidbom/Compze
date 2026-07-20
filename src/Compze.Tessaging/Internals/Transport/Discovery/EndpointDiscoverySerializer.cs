@@ -4,7 +4,7 @@ using Compze.Tessaging.Abstractions.TessageTypes;
 using Compze.Tessaging.Endpoints;
 using Compze.Tessaging.Endpoints.Discovery;
 
-namespace Compze.Tessaging.Internals.Transport;
+namespace Compze.Tessaging.Internals.Transport.Discovery;
 
 ///<summary>The fixed wire format of the endpoint-discovery conversation. Deliberately not pluggable: discovery is the handshake<br/>
 /// that must work between any two Compze endpoints before anything is known about how they are composed — so the framework owns<br/>
