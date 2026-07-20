@@ -16,7 +16,7 @@ static class TypermediaTransportRegistrar
    /// endpoint-discovery query transport it discovers endpoints through — both run on the endpoint transport client<br/>
    /// (<see cref="IEndpointTransportClient"/>) that the endpoint's protocol declaration (or a client-only composition's<br/>
    /// transport-client registration) supplies.</summary>
-   public static IComponentRegistrar TypermediaTransport(this IComponentRegistrar registrar)
+   internal static IComponentRegistrar TypermediaTransport(this IComponentRegistrar registrar)
       => registrar.EndpointDiscoveryQueryTransportIfNotRegistered()
                   .Register(Client.TypermediaTransport.RegisterWith);
 }

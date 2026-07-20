@@ -11,7 +11,7 @@ namespace Compze.Tessaging.Typermedia.Client;
 /// (<see cref="ConnectAsync"/>): it serves nothing, is discovered by nobody, and participates in no registry — request/response
 /// through <see cref="Navigator"/> is all it does.
 ///
-/// Composed through <see cref="Compose"/>, in its own container: the client declares its transport-client protocol, its
+/// Composed through <see cref="Build"/>, in its own container: the client declares its transport-client protocol, its
 /// serializer, and its own type mappings — the mirror of what the endpoints it navigates map — exactly as a production client
 /// application deploys.
 ///</summary>
@@ -31,13 +31,13 @@ public class TypermediaClient : IAsyncDisposable
       _typermediaClientRouter.Start();
    }
 
-   ///<summary>Composes a pure client: runs <paramref name="compose"/> over the client's declaration surface<br/>
+   ///<summary>Composes a pure client: runs <paramref name="build"/> over the client's declaration surface<br/>
    /// (<see cref="TypermediaClientBuilder"/>), builds the client's container, and returns the client, ready to<br/>
    /// <see cref="ConnectAsync"/> to the endpoints it knows.</summary>
-   public static TypermediaClient Compose(IContainerBuilder containerBuilder, Action<TypermediaClientBuilder> compose)
+   public static TypermediaClient Build(IContainerBuilder containerBuilder, Action<TypermediaClientBuilder> build)
    {
       var builder = new TypermediaClientBuilder(containerBuilder);
-      compose(builder);
+      build(builder);
       return builder.Build();
    }
 

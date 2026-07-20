@@ -20,8 +20,8 @@ public static class NewtonsoftTypermediaClientSerializerRegistrar
    extension(TypermediaClientBuilder @this)
    {
       ///<summary>Declares the pure client's serializer: Newtonsoft.Json — filling the one serializer parameter the client<br/>
-      /// takes (<see cref="TypermediaClientBuilder.Serializer"/>). A pure client converses only in typermedia, so its<br/>
+      /// takes (<see cref="TypermediaClientBuilder.ConfigureSerializer"/>). A pure client converses only in typermedia, so its<br/>
       /// serializer is the typermedia one.</summary>
-      public void NewtonsoftSerializer() => @this.Serializer(registrar => registrar.NewtonsoftTypermediaSerializer());
+      public void NewtonsoftSerializer() => @this.ConfigureSerializer(registrar => registrar.NewtonsoftTypermediaSerializer());
    }
 }

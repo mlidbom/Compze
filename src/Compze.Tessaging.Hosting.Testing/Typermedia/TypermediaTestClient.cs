@@ -1,13 +1,13 @@
-using Compze.Tessaging.Endpoints.Discovery;
+using Compze.DependencyInjection.Abstractions;
 using Compze.Hosting.Configuration;
 using Compze.Hosting.Testing;
 using Compze.Hosting.Testing.Wiring;
-using Compze.Tessaging.Typermedia;
-using Compze.Tessaging.Typermedia.Client;
-using Compze.Tessaging.Hosting.Testing.Typermedia.Wiring;
-using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Internals.Testing;
+using Compze.Tessaging.Endpoints.Discovery;
+using Compze.Tessaging.Hosting.Testing.Typermedia.Wiring;
+using Compze.Tessaging.Typermedia;
+using Compze.Tessaging.Typermedia.Client;
 
 namespace Compze.Tessaging.Hosting.Testing.Typermedia;
 
@@ -24,19 +24,20 @@ public class TypermediaTestClient : IAsyncDisposable
 
    TypermediaTestClient(TypermediaClient client) => _client = client;
 
-   ///<param name="declareRequiredDomainTypeMappings">Declares the domain assemblies whose type identity this client needs —<br/>
-   /// <c>registrar =&gt; registrar.RequireMappedTypesFromAssemblyContaining&lt;SomeDomainTessage&gt;()</c>. Tests declare their<br/>
-   /// domain explicitly, exactly as a production client does, so a test that forgets a type fails the same way the real<br/>
-   /// application would — there is no AppDomain-wide scan.</param>
-   public static async Task<TypermediaTestClient> ConnectTo(EndpointAddress endpointAddress, Action<IComponentRegistrar> declareRequiredDomainTypeMappings)
+   //todo: This just taking an IComponentRegistrar feels iffy. Can we make setting up the type mappings easier and safer to do?
+   //todo: With registries implemented, should this just have a single hardcoded address to connect to?
+   /// <param name="endpointAddress">The endpoint to connect to</param>
+   /// <param name="declareRequiredTypeMappings">Used to configure the domain assemblies whose type identity this client needs</param>
+   public static async Task<TypermediaTestClient> ConnectTo(EndpointAddress endpointAddress, Action<IComponentRegistrar> declareRequiredTypeMappings)
    {
-      var client = TypermediaClient.Compose(TestEnv.DIContainer.CreateTestingContainerBuilder(), compose =>
-      {
-         compose.TransportProtocol(registrar => registrar.CurrentTestsEndpointTransportClient());
-         compose.Serializer(registrar => registrar.CurrentTestsSerializersIfNotClonedContainer());
-         declareRequiredDomainTypeMappings(compose.Registrar);
-         compose.Registrar.JSonAppConfigFileConfigurationParameterProvider();
-      });
+      var client = TypermediaClient.Build(TestEnv.DIContainer.CreateTestingContainerBuilder(),
+                                          builder =>
+                                          {
+                                             builder.ConfigureTransport(registrar => registrar.CurrentTestsEndpointTransportClient())
+                                                    .ConfigureSerializer(registrar => registrar.CurrentTestsSerializersIfNotClonedContainer())
+                                                    .DeclareRequiredTypeMappings(declareRequiredTypeMappings);
+                                             builder.Registrar.JSonAppConfigFileConfigurationParameterProvider();
+                                          });
 
       var testClient = new TypermediaTestClient(client);
       await client.ConnectAsync(endpointAddress).caf();
