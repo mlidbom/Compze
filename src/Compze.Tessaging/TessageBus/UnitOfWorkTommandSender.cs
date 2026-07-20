@@ -8,6 +8,7 @@ using Compze.Tessaging.Abstractions.Validation;
 using Compze.Tessaging.Engine;
 using Compze.Tessaging.Engine.HandlerRegistration;
 using Compze.Tessaging.Internals.Abstractions;
+using Compze.Tessaging.TessageBus.Internals.Outbox;
 using JetBrains.Annotations;
 
 namespace Compze.Tessaging.TessageBus;

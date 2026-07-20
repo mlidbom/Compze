@@ -5,6 +5,7 @@ using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Endpoints.Discovery;
 using Compze.Tessaging.Internals.Abstractions;
 using Compze.Tessaging.Internals.EndpointCatalog;
+using Compze.Tessaging.TessageBus.Internals.Outbox;
 using Compze.Tessaging.TessageBus.Internals.TessageHandling.Inbox;
 
 namespace Compze.Tessaging.Endpoints.ExactlyOnce;
