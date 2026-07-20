@@ -1,4 +1,4 @@
-namespace Compze.Tessaging.Validation.Exceptions;
+namespace Compze.Tessaging.Validation.Internal;
 
 internal class TessageTypeDesignViolationException(string message) : Exception(message + TypeDesignRationale)
 {

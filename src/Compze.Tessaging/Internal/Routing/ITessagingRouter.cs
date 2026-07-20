@@ -1,3 +1,4 @@
+using Compze.Tessaging.TessageBus;
 using Compze.Tessaging.Endpoints;
 using Compze.Tessaging.Endpoints.Discovery;
 using Compze.Tessaging.Peers;

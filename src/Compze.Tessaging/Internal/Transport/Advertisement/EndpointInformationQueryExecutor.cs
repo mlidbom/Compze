@@ -6,7 +6,7 @@ using Compze.Threading;
 
 namespace Compze.Tessaging.Internal.Transport.Advertisement;
 
-public class EndpointInformationQueryExecutor
+class EndpointInformationQueryExecutor
 {
    readonly IScopeFactory _scopeFactory;
    IReadOnlyDictionary<Type, Func<object, IScopeResolver, object>> _queryHandlers = new Dictionary<Type, Func<object, IScopeResolver, object>>();

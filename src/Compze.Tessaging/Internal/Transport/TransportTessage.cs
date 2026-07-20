@@ -4,7 +4,7 @@ using Compze.TypeIdentifiers;
 
 namespace Compze.Tessaging.Internal.Transport;
 
-public static class TransportTessage
+static class TransportTessage
 {
    public class InComing
    {

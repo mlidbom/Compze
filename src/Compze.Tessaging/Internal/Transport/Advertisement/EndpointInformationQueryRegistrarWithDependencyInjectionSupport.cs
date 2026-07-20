@@ -2,7 +2,7 @@ using Compze.DependencyInjection;
 
 namespace Compze.Tessaging.Internal.Transport.Advertisement;
 
-public class EndpointInformationQueryRegistrarWithDependencyInjectionSupport(EndpointInformationQueryExecutor executor)
+class EndpointInformationQueryRegistrarWithDependencyInjectionSupport(EndpointInformationQueryExecutor executor)
 {
    readonly EndpointInformationQueryExecutor _executor = executor;
 

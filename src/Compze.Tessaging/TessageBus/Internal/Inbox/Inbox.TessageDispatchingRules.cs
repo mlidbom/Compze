@@ -3,7 +3,7 @@ using Compze.Tessaging.TessageBus.Internal.TessageHandling.Dispatching;
 
 namespace Compze.Tessaging.TessageBus.Internal.Inbox;
 
-public partial class Inbox
+partial class Inbox
 {
    public class TommandsAndTeventHandlersDoNotRunInParallelWithEachOtherInTheSameEndpoint : ITessageDispatchingRule
    {

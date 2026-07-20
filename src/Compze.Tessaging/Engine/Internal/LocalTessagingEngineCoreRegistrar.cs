@@ -1,3 +1,4 @@
+using Compze.Tessaging.Engine.Wiring;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Tessaging.Engine.HandlerRegistration;

@@ -1,7 +1,7 @@
 using System.Transactions;
 using Compze.Tessaging.Validation.Exceptions;
 
-namespace Compze.Tessaging.Validation;
+namespace Compze.Tessaging.Validation.Internal;
 
 static class TessageValidator
 {

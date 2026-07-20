@@ -1,3 +1,4 @@
+using Compze.Tessaging.TessageBus.Exceptions;
 using System.Transactions;
 using Compze.Contracts;
 using Compze.Internals.SystemCE.TransactionsCE;

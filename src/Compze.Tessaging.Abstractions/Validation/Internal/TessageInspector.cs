@@ -1,5 +1,5 @@
 
-namespace Compze.Tessaging.Validation;
+namespace Compze.Tessaging.Validation.Internal;
 
 /// <summary>
 /// The one place messaging code calls to assert that a message — a "tessage" (the framework's umbrella term

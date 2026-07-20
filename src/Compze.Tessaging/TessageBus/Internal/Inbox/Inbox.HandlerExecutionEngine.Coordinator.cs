@@ -16,7 +16,7 @@ using Compze.Threading.ResourceAccess;
 
 namespace Compze.Tessaging.TessageBus.Internal.Inbox;
 
-public partial class Inbox
+partial class Inbox
 {
    partial class HandlerExecutionEngine
    {

@@ -2,7 +2,7 @@ using Compze.Tessaging.Internal.Transport;
 
 namespace Compze.Tessaging.TessageBus.Internal.Inbox;
 
-public interface IExecutingTessagesSnapshot
+interface IExecutingTessagesSnapshot
 {
     IReadOnlyList<TransportTessage.InComing> ExactlyOnceTommands { get; }
     IReadOnlyList<TransportTessage.InComing> ExactlyOnceTevents { get; }

@@ -11,7 +11,7 @@ using Compze.Tessaging.TessageBus.Internal.TessageHandling;
 
 namespace Compze.Tessaging.TessageBus.Internal.Inbox;
 
-public partial class Inbox
+partial class Inbox
 {
    partial class HandlerExecutionEngine
    {

@@ -14,7 +14,7 @@ using Compze.Threading;
 
 namespace Compze.Tessaging.TessageBus.Internal.Inbox;
 
-public partial class Inbox
+partial class Inbox
 {
    // ReSharper disable once ArrangeTypeMemberModifiers Resharper is confused. If I remove Internal my code stops compiling.
    internal partial class HandlerExecutionEngine(

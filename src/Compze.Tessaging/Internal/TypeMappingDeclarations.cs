@@ -2,9 +2,9 @@ using Compze.TypeIdentifiers;
 using Compze.Tessaging.Endpoints.Discovery;
 using Compze.Tessaging.Internal.Transport.Advertisement;
 
-[assembly: AssemblyTypeMapper(typeof(Compze.Tessaging.TessagingAssemblyTypeMapper))]
+[assembly: AssemblyTypeMapper(typeof(Compze.Tessaging.Internal.TessagingAssemblyTypeMapper))]
 
-namespace Compze.Tessaging;
+namespace Compze.Tessaging.Internal;
 
 //The conventional name AssemblyTypeMapper belongs to Compze.Tessaging.Abstractions, which shares this root namespace and is
 //visible here through InternalsVisibleTo, so this assembly's mapper carries its assembly's name.

@@ -10,7 +10,7 @@ using Compze.Threading.ResourceAccess;
 
 namespace Compze.Tessaging.Internal.TessagesInFlight;
 
-public class TessagesInFlightTracker : ITessagesInFlightTracker
+class TessagesInFlightTracker : ITessagesInFlightTracker
 {
    readonly IAwaitableThreadShared<NonThreadSafeImplementation> _implementation = IAwaitableThreadShared.New(new NonThreadSafeImplementation());
 

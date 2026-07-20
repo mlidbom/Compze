@@ -1,3 +1,4 @@
+using Compze.Tessaging.Engine.Internal;
 using Compze.Tessaging.Engine.HandlerRegistration.Internal;
 using Compze.Contracts;
 using Compze.DependencyInjection.Abstractions;

@@ -6,7 +6,7 @@ using JetBrains.Annotations;
 namespace Compze.Tessaging.Internal.Transport;
 
 #pragma warning disable CA1812 // Instantiated via JSON deserialization
-[UsedImplicitly] public class ProblemDetails
+[UsedImplicitly] class ProblemDetails
 {
    public string Type { get; init; } = "";
    public string Title { get; init; } = "";
