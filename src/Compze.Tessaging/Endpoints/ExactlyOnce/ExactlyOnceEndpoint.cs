@@ -3,9 +3,9 @@ using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tessaging.Abstractions.TessageBus;
 using Compze.Tessaging.Endpoints.Discovery;
-using Compze.Tessaging.Internals.EndpointCatalog;
-using Compze.Tessaging.TessageBus.Internals.Inbox;
-using Compze.Tessaging.TessageBus.Internals.Outbox;
+using Compze.Tessaging.Internal.EndpointCatalog;
+using Compze.Tessaging.TessageBus.Internal.Inbox;
+using Compze.Tessaging.TessageBus.Internal.Outbox;
 
 namespace Compze.Tessaging.Endpoints.ExactlyOnce;
 

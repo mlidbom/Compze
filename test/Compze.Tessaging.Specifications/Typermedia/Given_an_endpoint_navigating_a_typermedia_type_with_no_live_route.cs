@@ -4,7 +4,7 @@ using Compze.Must;
 using Compze.DependencyInjection;
 using Compze.Tessaging.Endpoints.BestEffort;
 using Compze.Tessaging.Hosting.Testing;
-using Compze.Tessaging.Internals.Peers;
+using Compze.Tessaging.Internal.Peers;
 using Compze.Tessaging.Transport.Discovery;
 using Compze.Tessaging.Typermedia;
 using Compze.Tessaging.Typermedia.Client;

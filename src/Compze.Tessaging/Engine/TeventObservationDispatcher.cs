@@ -5,8 +5,8 @@ using Compze.DependencyInjection.Abstractions;
 using Compze.Tessaging.Abstractions.TessageTypes;
 using Compze.Tessaging.Engine.HandlerRegistration;
 using Compze.Tessaging.Engine.HandlerRegistration.TeventObservation;
-using Compze.Tessaging.Internals.Abstractions;
-using Compze.Tessaging.SystemCE.ThreadingCE;
+using Compze.Tessaging.Internal.Abstractions;
+using Compze.Tessaging.Internal.SystemCE.ThreadingCE;
 using Compze.Threading;
 using Compze.Threading.ResourceAccess;
 

@@ -1,7 +1,6 @@
 using Compze.Tessaging.Endpoints;
 using Compze.DependencyInjection;
 using Compze.Tessaging.Hosting.Testing;
-using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Internals.Logging;
@@ -9,7 +8,7 @@ using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Threading;
 using Compze.Threading.Testing;
 using Compze.Must;
-
+using Compze.Tessaging.Internal.SystemCE.ThreadingCE;
 using static Compze.Must.MustActions;
 
 namespace Compze.Tests.Integration.Tessaging;

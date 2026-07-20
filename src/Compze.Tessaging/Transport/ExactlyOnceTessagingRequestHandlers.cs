@@ -2,9 +2,9 @@ using Compze.TypeIdentifiers;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
-using Compze.Tessaging.Internals.Transport.Abstractions;
-using Compze.Tessaging.TessageBus.Internals;
-using Compze.Tessaging.TessageBus.Internals.Inbox;
+using Compze.Tessaging.Internal.Transport.Abstractions;
+using Compze.Tessaging.TessageBus.Internal;
+using Compze.Tessaging.TessageBus.Internal.Inbox;
 
 namespace Compze.Tessaging.Transport;
 

@@ -3,7 +3,7 @@ using Compze.TypeIdentifiers;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Tessaging.Abstractions.TessageTypes;
-using Compze.Tessaging.TessageBus.Internals;
+using Compze.Tessaging.TessageBus.Internal;
 using Compze.TypeIdentifiers.DependencyInjection;
 
 namespace Compze.Internals.Serialization.Newtonsoft.Private.Tessaging;

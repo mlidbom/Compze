@@ -3,8 +3,8 @@ using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Tessaging.Abstractions.TessageBus;
 using Compze.Tessaging.Engine.HandlerRegistration;
-using Compze.Tessaging.Internals;
-using Compze.Tessaging.Internals.Abstractions;
+using Compze.Tessaging.Internal;
+using Compze.Tessaging.Internal.Abstractions;
 using Compze.Tessaging.Typermedia;
 
 namespace Compze.Tessaging.Engine.Wiring;

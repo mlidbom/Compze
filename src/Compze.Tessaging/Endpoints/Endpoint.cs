@@ -7,9 +7,9 @@ using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tessaging.Endpoints.BestEffort;
 using Compze.Tessaging.Endpoints.ExactlyOnce;
 using Compze.Tessaging.Engine;
-using Compze.Tessaging.Internals.HandlerAvailability;
-using Compze.Tessaging.Internals.Peers;
-using Compze.Tessaging.SystemCE.ThreadingCE;
+using Compze.Tessaging.Internal.HandlerAvailability;
+using Compze.Tessaging.Internal.Peers;
+using Compze.Tessaging.Internal.SystemCE.ThreadingCE;
 using Compze.Tessaging.TessageBus;
 using Compze.Tessaging.Transport;
 
