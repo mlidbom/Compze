@@ -35,7 +35,7 @@ As the general rule, create one file for each type, so that types are easy to br
 For nested typed, use partial types and OuterType.NestedType.cs as the file names. 
 
 ## Small cohesive namespaces.
-Should split up a namespace into multiple whenever you can find clear categories/groups of types in the namespace.
+Split up a namespace into multiple whenever you can find clear categories/groups of types in the namespace.
 
 Strongly consider splitting it if there are more files in the namespace than fit in a humans limited short term memory. More than 10 is a strong signal indeed. There is probably some conceptual line between the types. Find it and split the namespace.
 
