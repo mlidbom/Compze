@@ -6,7 +6,7 @@ using Compze.Hosting.SameMachine;
 using Compze.Hosting.Testing;
 using Compze.Hosting.Testing.Wiring;
 using Compze.Internals.Testing;
-using Compze.Tessaging.Abstractions.TessageBus;
+using Compze.Tessaging.TessageBus;
 using Compze.Tessaging.Endpoints.ExactlyOnce;
 using Compze.Tessaging.Engine.HandlerRegistration.TessageHandlers;
 using Compze.Tessaging.Hosting.Testing.Wiring;

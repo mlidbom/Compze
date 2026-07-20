@@ -1,5 +1,4 @@
 using Compze.Internals.SystemCE.ReflectionCE;
-using Compze.Tessaging.Abstractions.TessageTypes;
 using Compze.Tessaging.Endpoints;
 using Compze.TypeIdentifiers;
 

@@ -5,7 +5,6 @@ using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Logging;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Internals.SystemCE.TransactionsCE;
-using Compze.Tessaging.Abstractions.TessageTypes;
 using Compze.Tessaging.Internal.Abstractions;
 using Compze.Tessaging.Internal.HandlerAvailability;
 using Compze.Tessaging.Internal.Peers;

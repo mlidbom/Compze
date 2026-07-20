@@ -1,6 +1,5 @@
-using Compze.Tessaging.Abstractions.TessageTypes;
 
-namespace Compze.Tessaging.Abstractions.Validation;
+namespace Compze.Tessaging.Validation;
 
 /// <summary>
 /// The one place messaging code calls to assert that a message — a "tessage" (the framework's umbrella term

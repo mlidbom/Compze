@@ -5,7 +5,7 @@ using Compze.Abstractions.Public;
 // ReSharper disable MemberHidesStaticFromOuterClass
 // ReSharper disable once PropertyCanBeMadeInitOnly.Global serializers need setters.
 
-namespace Compze.Tessaging.Abstractions.TessageTypes;
+namespace Compze.Tessaging;
 
 public static class Remotable
 {

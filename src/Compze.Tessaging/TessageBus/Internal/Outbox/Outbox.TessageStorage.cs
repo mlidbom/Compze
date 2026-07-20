@@ -2,8 +2,6 @@ using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Logging;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
-using Compze.Tessaging.Abstractions;
-using Compze.Tessaging.Abstractions.TessageTypes;
 using Compze.Tessaging.Endpoints;
 using Compze.Tessaging.Transport.SqlLayer;
 using Compze.TypeIdentifiers;

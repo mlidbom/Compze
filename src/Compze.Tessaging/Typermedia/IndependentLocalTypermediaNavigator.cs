@@ -2,7 +2,6 @@ using System.Transactions;
 using Compze.Contracts;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
-using Compze.Tessaging.Abstractions.TessageTypes;
 using JetBrains.Annotations;
 
 namespace Compze.Tessaging.Typermedia;

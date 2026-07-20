@@ -2,7 +2,6 @@ using System.Transactions;
 using Compze.Contracts;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Internals.SystemCE.TransactionsCE;
-using Compze.Tessaging.Abstractions.TessageTypes;
 using Compze.Tessaging.Endpoints;
 using Compze.Tessaging.Transport.Discovery;
 using Compze.TypeIdentifiers;

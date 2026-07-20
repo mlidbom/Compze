@@ -1,5 +1,5 @@
 using Compze.Must;
-using Compze.Tessaging.Abstractions.TessageTypes;
+using Compze.Tessaging;
 using Compze.Teventive;
 using Compze.Teventive.Taggregates.Tevents.Public;
 using Compze.xUnitBDD;

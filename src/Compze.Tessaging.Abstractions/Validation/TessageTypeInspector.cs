@@ -1,11 +1,10 @@
 using System.Reflection;
 using Compze.Internals.SystemCE.CollectionsCE.GenericCE;
 using Compze.Internals.SystemCE.ReflectionCE;
-using Compze.Tessaging.Abstractions.TessageTypes;
-using Compze.Tessaging.Abstractions.Validation.Exceptions;
+using Compze.Tessaging.Validation.Exceptions;
 using Compze.Threading;
 
-namespace Compze.Tessaging.Abstractions.Validation;
+namespace Compze.Tessaging.Validation;
 
 public static partial class TessageTypeInspector
 {

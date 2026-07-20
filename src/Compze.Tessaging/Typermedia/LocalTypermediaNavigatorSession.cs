@@ -1,8 +1,7 @@
 using Compze.DependencyInjection;
 using Compze.Internals.SystemCE.UsageGuards;
 using Compze.DependencyInjection.Abstractions;
-using Compze.Tessaging.Abstractions.TessageTypes;
-using Compze.Tessaging.Abstractions.Validation;
+using Compze.Tessaging.Validation;
 using Compze.Tessaging.Engine;
 
 namespace Compze.Tessaging.Typermedia;

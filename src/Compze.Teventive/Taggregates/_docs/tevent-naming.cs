@@ -1,4 +1,4 @@
-using Compze.Tessaging.Abstractions.TessageTypes;
+using Compze.Tessaging;
 using Compze.Tessaging.Engine.HandlerRegistration.TessageHandlers;
 using Compze.Teventive.Taggregates.Tevents.Public;
 using static System.Console;

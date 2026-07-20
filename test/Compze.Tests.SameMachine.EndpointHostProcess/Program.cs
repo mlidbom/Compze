@@ -7,7 +7,7 @@ using Compze.DependencyInjection.Microsoft;
 using Compze.Hosting;
 using Compze.Hosting.SameMachine;
 using Compze.Internals.Serialization.Newtonsoft.Wiring;
-using Compze.Tessaging.Abstractions.TessageBus;
+using Compze.Tessaging.TessageBus;
 using Compze.Tessaging.Endpoints.BestEffort;
 using Compze.Tessaging.Endpoints.ExactlyOnce;
 using Compze.Tessaging.Engine.HandlerRegistration.TessageHandlers;

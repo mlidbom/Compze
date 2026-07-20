@@ -4,7 +4,7 @@ using Compze.Contracts;
 using Compze.Internals.Sql.Common;
 using Compze.Internals.Sql.MicrosoftSql.Private;
 using Compze.Internals.SystemCE;
-using Compze.Tessaging.Abstractions;
+using Compze.Tessaging;
 using Compze.Teventive.TeventStore.Abstractions.Internal.SqlLayer.Abstractions;
 using Microsoft.Data.SqlClient;
 using ReadOrder = Compze.Teventive.TeventStore.Abstractions.Internal.SqlLayer.Abstractions.ReadOrder;

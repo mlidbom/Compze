@@ -2,7 +2,7 @@ using Compze.Abstractions.Public;
 using Compze.Abstractions.Time.Public;
 using Compze.Contracts;
 using Compze.Internals.SystemCE.ReactiveCE;
-using Compze.Tessaging.Abstractions.TessageTypes;
+using Compze.Tessaging;
 using Compze.Teventive.Internal.Implementation;
 using Compze.Teventive.Taggregates.Tevents.Public;
 

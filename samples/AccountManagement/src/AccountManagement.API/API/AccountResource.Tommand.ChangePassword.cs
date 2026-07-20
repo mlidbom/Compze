@@ -1,7 +1,7 @@
 using AccountManagement.API.ValidationAttributes;
 using AccountManagement.Domain;
 using System.ComponentModel.DataAnnotations;
-using Compze.Tessaging.Abstractions.TessageTypes;
+using Compze.Tessaging;
 
 // ReSharper disable PropertyCanBeMadeInitOnly.Local
 

@@ -1,6 +1,5 @@
 using Compze.Contracts;
 using Compze.Internals.Logging;
-using Compze.Tessaging.Abstractions.TessageTypes;
 using Compze.Tessaging.Endpoints;
 using Compze.Tessaging.Internal.Abstractions;
 using Compze.Tessaging.Internal.Peers;

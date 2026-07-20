@@ -1,5 +1,4 @@
 using Compze.DependencyInjection;
-using Compze.Tessaging.Abstractions.TessageTypes;
 
 namespace Compze.Tessaging.Transport.Discovery;
 

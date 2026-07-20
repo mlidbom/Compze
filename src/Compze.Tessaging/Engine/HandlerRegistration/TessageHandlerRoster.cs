@@ -1,8 +1,7 @@
 using Compze.Contracts;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.ReflectionCE;
-using Compze.Tessaging.Abstractions.TessageBus;
-using Compze.Tessaging.Abstractions.TessageTypes;
+using Compze.Tessaging.TessageBus;
 using Compze.Tessaging.Engine.Exceptions;
 using Compze.Tessaging.Engine.HandlerRegistration.TessageHandlers;
 using Compze.Tessaging.Engine.HandlerRegistration.TeventObservation;

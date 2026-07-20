@@ -1,7 +1,6 @@
 using Compze.Internals.SystemCE.ReflectionCE;
-using Compze.Tessaging.Abstractions.TessageTypes;
 
-namespace Compze.Tessaging.Abstractions.TessageBus;
+namespace Compze.Tessaging.TessageBus;
 
 ///<summary>Wraps tevents that are published without a publisher-identifying wrapper: every tevent is wrapped before routing,<br/>
 /// and a tevent dispatched unwrapped is wrapped by <see cref="WrapTevent{TTevent}"/> in a <see cref="PublisherTevent{TTevent}"/> closed over its runtime type.</summary>

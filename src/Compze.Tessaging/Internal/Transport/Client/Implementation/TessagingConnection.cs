@@ -1,8 +1,6 @@
 using Compze.Contracts;
 using Compze.Internals.Logging;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
-using Compze.Tessaging.Abstractions;
-using Compze.Tessaging.Abstractions.TessageTypes;
 using Compze.Tessaging.Endpoints.Discovery;
 using Compze.Tessaging.Internal.Abstractions;
 using Compze.Tessaging.Internal.SystemCE.ThreadingCE;

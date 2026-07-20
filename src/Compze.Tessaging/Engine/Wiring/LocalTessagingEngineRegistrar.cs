@@ -1,7 +1,7 @@
 using Compze.Contracts;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
-using Compze.Tessaging.Abstractions.TessageBus;
+using Compze.Tessaging.TessageBus;
 using Compze.Tessaging.Engine.HandlerRegistration;
 using Compze.Tessaging.Internal;
 using Compze.Tessaging.Internal.Abstractions;

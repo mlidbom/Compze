@@ -5,7 +5,6 @@ using Compze.Internals.Logging;
 using Compze.Internals.SystemCE.CollectionsCE.GenericCE;
 using Compze.Internals.SystemCE.ReflectionCE;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
-using Compze.Tessaging.Abstractions.TessageTypes;
 using Compze.Tessaging.Endpoints;
 using Compze.Tessaging.Endpoints.Discovery;
 using Compze.Tessaging.Engine.HandlerRegistration;

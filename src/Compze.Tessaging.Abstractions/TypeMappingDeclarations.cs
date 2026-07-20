@@ -1,10 +1,9 @@
-using Compze.Tessaging.Abstractions.TessageBus;
-using Compze.Tessaging.Abstractions.TessageTypes;
+using Compze.Tessaging.TessageBus;
 using Compze.TypeIdentifiers;
 
-[assembly: AssemblyTypeMapper(typeof(Compze.Tessaging.Abstractions.AssemblyTypeMapper))]
+[assembly: AssemblyTypeMapper(typeof(Compze.Tessaging.AssemblyTypeMapper))]
 
-namespace Compze.Tessaging.Abstractions;
+namespace Compze.Tessaging;
 
 #pragma warning disable CA1812 // Instantiated via reflection through the [assembly: AssemblyTypeMapper(typeof(...))] attribute.
 class AssemblyTypeMapper : IAssemblyTypeMapper

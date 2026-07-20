@@ -1,6 +1,4 @@
 using Compze.Contracts;
-using Compze.Tessaging.Abstractions;
-using Compze.Tessaging.Abstractions.TessageTypes;
 using Compze.Tessaging.TessageBus.Internal;
 using Compze.TypeIdentifiers;
 

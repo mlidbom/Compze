@@ -7,7 +7,7 @@ using Compze.DependencyInjection;
 using Compze.Internals.SystemCE.TransactionsCE;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Must;
-using Compze.Tessaging.Abstractions.TessageBus;
+using Compze.Tessaging.TessageBus;
 using Compze.Tests.Common.CQRS.TeventRefactoring.Migrations.Tevents;
 using Compze.Teventive.TeventStore.Abstractions.Public;
 using Compze.Teventive.TeventStore.Abstractions.Refactoring.Migrations.Public;

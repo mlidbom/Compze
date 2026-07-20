@@ -1,6 +1,5 @@
 using Compze.Contracts;
-using Compze.Tessaging.Abstractions;
-using Compze.Tessaging.Abstractions.TessageTypes;
+using Compze.Tessaging;
 using JetBrains.Annotations;
 
 namespace Compze.Teventive.Taggregates.BaseClasses.Shared;

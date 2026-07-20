@@ -1,5 +1,3 @@
-using Compze.Tessaging.Abstractions.TessageBus;
-using Compze.Tessaging.Abstractions.TessageTypes;
 using Compze.Tessaging.Endpoints;
 using Compze.Tessaging.Endpoints.Discovery;
 using Compze.Tessaging.Internal.Peers;

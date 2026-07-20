@@ -1,7 +1,7 @@
 using Compze.Abstractions.Public;
 using Compze.Internals.Sql.Common;
 using Compze.Internals.Sql.MySql.Private;
-using Compze.Tessaging.Abstractions;
+using Compze.Tessaging;
 using Compze.Teventive.TeventStore.Abstractions.Internal.SqlLayer.Abstractions;
 using Compze.TypeIdentifiers.Interning;
 using MySqlConnector;

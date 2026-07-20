@@ -2,12 +2,14 @@ using Compze.TypeIdentifiers;
 using Compze.Tessaging.Endpoints.Discovery;
 using Compze.Tessaging.Transport.Discovery;
 
-[assembly: AssemblyTypeMapper(typeof(Compze.Tessaging.AssemblyTypeMapper))]
+[assembly: AssemblyTypeMapper(typeof(Compze.Tessaging.TessagingAssemblyTypeMapper))]
 
 namespace Compze.Tessaging;
 
+//The conventional name AssemblyTypeMapper belongs to Compze.Tessaging.Abstractions, which shares this root namespace and is
+//visible here through InternalsVisibleTo, so this assembly's mapper carries its assembly's name.
 #pragma warning disable CA1812 // Instantiated via reflection through the [assembly: AssemblyTypeMapper(typeof(...))] attribute.
-class AssemblyTypeMapper : IAssemblyTypeMapper
+class TessagingAssemblyTypeMapper : IAssemblyTypeMapper
 {
    public void Map(IAssemblyTypeMappingRegistrar map)
       => map.Map<EndpointInformationQuery>("e441c4e2-cc09-4331-9dd9-c9790e72987a")

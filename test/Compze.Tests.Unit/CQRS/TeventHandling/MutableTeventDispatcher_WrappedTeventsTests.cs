@@ -1,5 +1,5 @@
-using Compze.Tessaging.Abstractions.TessageBus;
-using Compze.Tessaging.Abstractions.TessageTypes;
+using Compze.Tessaging.TessageBus;
+using Compze.Tessaging;
 using Compze.Tests.Infrastructure;
 using Compze.Teventive;
 using Compze.Teventive.Taggregates.Tevents.Public;

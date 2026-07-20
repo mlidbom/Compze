@@ -1,4 +1,3 @@
-using Compze.Tessaging.Abstractions.TessageTypes;
 
 namespace Compze.Tessaging.TessageBus.Internal.TessageHandling;
 

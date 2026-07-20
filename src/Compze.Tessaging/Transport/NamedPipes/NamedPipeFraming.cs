@@ -1,7 +1,6 @@
 using System.Buffers.Binary;
 using System.Text;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
-using Compze.Tessaging.Abstractions;
 
 namespace Compze.Tessaging.Transport.NamedPipes;
 

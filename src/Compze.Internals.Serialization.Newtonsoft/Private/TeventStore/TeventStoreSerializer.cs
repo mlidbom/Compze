@@ -2,7 +2,7 @@ using Compze.Abstractions.Public;
 using Compze.TypeIdentifiers;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
-using Compze.Tessaging.Abstractions.TessageTypes;
+using Compze.Tessaging;
 using Compze.Teventive.Taggregates.Tevents.Public;
 using Compze.Teventive.TeventStore.Abstractions.Internal;
 using Compze.TypeIdentifiers.DependencyInjection;

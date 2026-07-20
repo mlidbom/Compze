@@ -1,7 +1,7 @@
 // ReSharper disable ForCanBeConvertedToForeach this file needs these optimizations...
 
-using Compze.Tessaging.Abstractions.TessageBus;
-using Compze.Tessaging.Abstractions.TessageTypes;
+using Compze.Tessaging.TessageBus;
+using Compze.Tessaging;
 
 // ReSharper disable StaticMemberInGenericType
 

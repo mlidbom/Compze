@@ -1,7 +1,7 @@
 using Compze.Tessaging.Endpoints;
 using Compze.DependencyInjection;
-using Compze.Tessaging.Abstractions.TessageBus;
-using Compze.Tessaging.Abstractions.TessageTypes;
+using Compze.Tessaging.TessageBus;
+using Compze.Tessaging;
 using Compze.Tessaging.Endpoints.ExactlyOnce;
 using Compze.Tessaging.Engine.HandlerRegistration.TessageHandlers;
 using Compze.Tessaging.Hosting.Testing;

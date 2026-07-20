@@ -1,8 +1,7 @@
 using System.Transactions;
-using Compze.Tessaging.Abstractions.TessageTypes;
-using Compze.Tessaging.Abstractions.Validation.Exceptions;
+using Compze.Tessaging.Validation.Exceptions;
 
-namespace Compze.Tessaging.Abstractions.Validation;
+namespace Compze.Tessaging.Validation;
 
 static class TessageValidator
 {

@@ -1,7 +1,7 @@
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
-using Compze.Tessaging.Abstractions.TessageBus;
+using Compze.Tessaging.TessageBus;
 using Compze.Tessaging.Endpoints.Discovery;
 using Compze.Tessaging.Internal.EndpointCatalog;
 using Compze.Tessaging.TessageBus.Internal.Inbox;

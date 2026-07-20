@@ -1,6 +1,5 @@
-using Compze.Tessaging.Abstractions.TessageTypes;
 
-namespace Compze.Tessaging.Abstractions.TessageBus;
+namespace Compze.Tessaging.TessageBus;
 
 ///<summary>Publishes tevents from code that runs outside any unit of work — application code with no ambient scope or<br/>
 /// transaction, such as host-level infrastructure or a service narrating analytics facts. Each publish runs as its own<br/>

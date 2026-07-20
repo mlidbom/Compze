@@ -1,4 +1,3 @@
-using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Endpoints;
 using Compze.Tessaging.Internal.Peers;
 using Compze.Tessaging.Transport.Discovery;

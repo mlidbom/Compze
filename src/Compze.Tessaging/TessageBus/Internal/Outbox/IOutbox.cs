@@ -1,4 +1,3 @@
-using Compze.Tessaging.Abstractions.TessageTypes;
 using Compze.Tessaging.Internal.Abstractions;
 
 namespace Compze.Tessaging.TessageBus.Internal.Outbox;

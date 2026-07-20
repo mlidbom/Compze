@@ -3,7 +3,7 @@ using Compze.Abstractions.Public;
 using Compze.Contracts;
 using Compze.Internals.SystemCE;
 using Compze.Internals.SystemCE.LinqCE;
-using Compze.Tessaging.Abstractions;
+using Compze.Tessaging;
 using Compze.Teventive.Taggregates.Tevents.Public;
 using Compze.Teventive.TeventStore.Abstractions.Internal.SqlLayer.Abstractions;
 using Compze.Teventive.TeventStore.Refactoring.Migrations;

@@ -1,6 +1,6 @@
 using Compze.Abstractions.Public;
 using Compze.Must;
-using Compze.Tessaging.Abstractions;
+using Compze.Tessaging;
 using Compze.xUnitBDD;
 // ReSharper disable SuspiciousTypeConversion.Global
 // ReSharper disable InconsistentNaming

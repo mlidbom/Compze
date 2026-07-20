@@ -7,7 +7,6 @@ using Compze.Internals.SystemCE.ReflectionCE;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
-using Compze.Tessaging.Abstractions.TessageTypes;
 using Compze.Tessaging.Transport.Discovery;
 using Compze.Threading;
 

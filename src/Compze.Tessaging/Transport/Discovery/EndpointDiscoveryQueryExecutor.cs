@@ -2,7 +2,6 @@ using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Logging;
 using Compze.Internals.SystemCE.CollectionsCE.GenericCE;
-using Compze.Tessaging.Abstractions.TessageTypes;
 using Compze.Threading;
 
 namespace Compze.Tessaging.Transport.Discovery;

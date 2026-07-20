@@ -1,6 +1,5 @@
-using Compze.Tessaging.Abstractions.TessageTypes;
 
-namespace Compze.Tessaging.Abstractions.TessageBus;
+namespace Compze.Tessaging.TessageBus;
 
 ///<summary>Sends exactly-once tommands from code that runs outside any unit of work — application code with no ambient scope<br/>
 /// or transaction. Each send runs as its own independent unit of work, committed when the call returns: the tommand is then<br/>

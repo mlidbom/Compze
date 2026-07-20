@@ -1,4 +1,4 @@
-using Compze.Tessaging.Abstractions.TessageTypes;
+using Compze.Tessaging;
 using Compze.Tessaging.Endpoints;
 using Compze.TypeIdentifiers;
 

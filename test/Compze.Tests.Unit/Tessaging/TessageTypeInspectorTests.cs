@@ -1,6 +1,6 @@
-using Compze.Tessaging.Abstractions.TessageTypes;
-using Compze.Tessaging.Abstractions.Validation;
-using Compze.Tessaging.Abstractions.Validation.Exceptions;
+using Compze.Tessaging;
+using Compze.Tessaging.Validation;
+using Compze.Tessaging.Validation.Exceptions;
 using Compze.Tests.Infrastructure;
 using Compze.xUnitBDD;
 using static Compze.Must.MustActions;

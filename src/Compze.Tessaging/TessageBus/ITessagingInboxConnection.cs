@@ -1,5 +1,3 @@
-using Compze.Tessaging.Abstractions;
-using Compze.Tessaging.Abstractions.TessageTypes;
 using Compze.Tessaging.Transport.Discovery;
 
 namespace Compze.Tessaging.TessageBus;

@@ -2,7 +2,6 @@ using System.Transactions;
 using Compze.Contracts;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
-using Compze.Tessaging.Abstractions.TessageTypes;
 using Compze.Tessaging.Engine.HandlerRegistration;
 using Compze.Tessaging.Engine.HandlerRegistration.TeventObservation;
 using Compze.Tessaging.Internal.Abstractions;

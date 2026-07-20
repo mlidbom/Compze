@@ -1,5 +1,4 @@
 using Compze.Internals.SystemCE.CollectionsCE.GenericCE;
-using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Endpoints;
 using Compze.Tessaging.Internal.Abstractions;
 using Compze.Tessaging.Internal.Transport.Abstractions;

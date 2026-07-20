@@ -4,7 +4,6 @@ using Compze.Internals.Sql.Sqlite;
 using Compze.Internals.Sql.Sqlite.Private;
 using Compze.Internals.SystemCE.LinqCE;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
-using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Transport.SqlLayer;
 using Compze.TypeIdentifiers.Interning;
 using DispatchingTable = Compze.Tessaging.Transport.SqlLayer.ITessagingSqlLayer.OutboxTessageDispatchingTableSchemaStrings;

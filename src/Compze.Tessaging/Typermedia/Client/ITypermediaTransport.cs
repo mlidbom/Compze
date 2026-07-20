@@ -1,4 +1,3 @@
-using Compze.Tessaging.Abstractions.TessageTypes;
 using Compze.Tessaging.Endpoints.Discovery;
 
 namespace Compze.Tessaging.Typermedia.Client;

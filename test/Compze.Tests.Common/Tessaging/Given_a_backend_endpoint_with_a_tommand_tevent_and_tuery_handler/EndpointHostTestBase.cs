@@ -8,7 +8,7 @@ using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Typermedia;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.LinqCE;
-using Compze.Tessaging.Abstractions.TessageBus;
+using Compze.Tessaging.TessageBus;
 using Compze.Tessaging.Endpoints.ExactlyOnce;
 using Compze.Tessaging.Engine.HandlerRegistration.TessageHandlers;
 using Compze.Tessaging.Engine.HandlerRegistration.TeventObservation;

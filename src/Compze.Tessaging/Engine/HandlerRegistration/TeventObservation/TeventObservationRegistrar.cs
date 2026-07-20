@@ -1,6 +1,5 @@
 using Compze.Contracts;
 using Compze.DependencyInjection.Abstractions;
-using Compze.Tessaging.Abstractions.TessageTypes;
 using Compze.Tessaging.Engine.HandlerRegistration.TessageHandlers;
 
 namespace Compze.Tessaging.Engine.HandlerRegistration.TeventObservation;

@@ -10,7 +10,7 @@ using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Logging;
 using Compze.Must;
-using Compze.Tessaging.Abstractions.TessageBus;
+using Compze.Tessaging.TessageBus;
 using Compze.Teventive.Taggregates.Tevents.Public;
 using Compze.Teventive.TeventStore;
 using Compze.Teventive.TeventStore.Abstractions.Public;
