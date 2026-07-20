@@ -1,14 +1,12 @@
-using Compze.Tessaging.Validation.Internal;
 using System.Reflection;
 using Compze.Internals.SystemCE.CollectionsCE.GenericCE;
 using Compze.Internals.SystemCE.ReflectionCE;
 using Compze.Tessaging.TessageTypes;
-using Compze.Tessaging.Validation.Exceptions;
 using Compze.Threading;
 
-namespace Compze.Tessaging.Validation;
+namespace Compze.Tessaging.Validation.Internal;
 
-public static partial class TessageTypeInspector
+static class TessageTypeInspector
 {
    static readonly TessageTypeDesignRule[] TessageTypeDesignRules =
    [

@@ -12,6 +12,7 @@
   <ItemGroup>
     <InternalsVisibleTo Include="Compze.Tessaging" />
     <InternalsVisibleTo Include="Compze.Tests.Unit" />
+    <InternalsVisibleTo Include="Compze.Teventive" />
   </ItemGroup>
   <!-- Compze.Abstractions — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Abstractions)' == 'true'">
