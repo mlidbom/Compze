@@ -2,7 +2,7 @@ using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Abstractions.TessageTypes;
 using Compze.Tessaging.Transport.Discovery;
 
-namespace Compze.Tessaging.Internals.Transport.Client.Internal;
+namespace Compze.Tessaging.te;
 
 ///<summary>A connection through which tessages are delivered to one remote endpoint's transport server. It carries one ordered<br/>
 /// stream per delivery tier the endpoint wires: the best-effort stream — draining the peer's in-memory queue in the endpoint's<br/>

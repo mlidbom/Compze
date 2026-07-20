@@ -1,5 +1,6 @@
 using Compze.Tessaging.Abstractions.TessageTypes;
 using Compze.Tessaging.TessageBus;
+using Compze.Tessaging.TessageBus.Internals;
 
 namespace Compze.Tessaging.Typermedia;
 

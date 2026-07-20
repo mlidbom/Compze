@@ -1,6 +1,6 @@
 using Compze.Tessaging.Internals.Transport.Abstractions;
 
-namespace Compze.Tessaging.TessageBus.Internals.TessageHandling.Inbox;
+namespace Compze.Tessaging.TessageBus.Internals.Inbox;
 
 public interface IExecutingTessagesSnapshot
 {

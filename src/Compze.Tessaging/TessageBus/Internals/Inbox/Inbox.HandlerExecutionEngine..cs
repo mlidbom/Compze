@@ -9,7 +9,7 @@ using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.Tessaging.TessageBus.Internals.TessageHandling.Dispatching;
 using Compze.Threading;
 
-namespace Compze.Tessaging.TessageBus.Internals.TessageHandling.Inbox;
+namespace Compze.Tessaging.TessageBus.Internals.Inbox;
 
 public partial class Inbox
 {

@@ -4,8 +4,8 @@ using Compze.DependencyInjection.Abstractions;
 using Compze.Tessaging.Endpoints.Exceptions;
 using Compze.Tessaging.Internals.EndpointCatalog;
 using Compze.Tessaging.TessageBus;
+using Compze.Tessaging.TessageBus.Internals.Inbox;
 using Compze.Tessaging.TessageBus.Internals.Outbox;
-using Compze.Tessaging.TessageBus.Internals.TessageHandling.Inbox;
 using Compze.Tessaging.Transport;
 using Compze.Tessaging.Transport.SqlLayer;
 

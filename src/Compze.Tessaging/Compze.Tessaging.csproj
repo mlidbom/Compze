@@ -112,7 +112,6 @@
     <Folder Include="Internals\Transport\Discovery\" />
     <Folder Include="Internals\Transport\Exceptions\" />
     <Folder Include="Internals\Transport\NamedPipes\" />
-    <Folder Include="TessageBus\Internals\" />
     <Folder Include="TessageBus\Internals\TessageHandling\Abstractions\" />
   </ItemGroup>
 </Project>

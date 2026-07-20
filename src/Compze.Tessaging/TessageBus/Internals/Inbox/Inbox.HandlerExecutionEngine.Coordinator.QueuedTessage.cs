@@ -8,8 +8,9 @@ using Compze.Tessaging.Abstractions.TessageTypes;
 using Compze.Tessaging.Engine;
 using Compze.Tessaging.Internals.Transport.Abstractions;
 using Compze.Tessaging.SystemCE.ThreadingCE;
+using Compze.Tessaging.TessageBus.Internals.TessageHandling;
 
-namespace Compze.Tessaging.TessageBus.Internals.TessageHandling.Inbox;
+namespace Compze.Tessaging.TessageBus.Internals.Inbox;
 
 public partial class Inbox
 {

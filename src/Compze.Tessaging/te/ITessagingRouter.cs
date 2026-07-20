@@ -2,8 +2,10 @@ using Compze.Tessaging.Abstractions;
 using Compze.Tessaging.Abstractions.TessageTypes;
 using Compze.Tessaging.Endpoints;
 using Compze.Tessaging.Endpoints.Discovery;
+using Compze.Tessaging.Internals.Peers;
+using Compze.Tessaging.Internals.Transport.Client.Internal;
 
-namespace Compze.Tessaging.Internals.Transport.Client.Internal;
+namespace Compze.Tessaging.te;
 
 interface ITessagingRouter
 {
@@ -26,9 +28,9 @@ interface ITessagingRouter
     ///<summary>The live connection to the endpoint whose current advertisement handles the tommand type<br/>
     /// <paramref name="tommandType"/> — null when no connected endpoint does. Deliberately liveness-only: a tommand binds to<br/>
     /// its one specific receiver at send time, preferring the live handler and falling back to the sole remembered one<br/>
-    /// (see <see cref="Peers.IPeerRegistry.HandlerIdsFor"/>), so a handler being down never makes the send explode.</summary>
+    /// (see <see cref="IPeerRegistry.HandlerIdsFor"/>), so a handler being down never makes the send explode.</summary>
     ITessagingInboxConnection? LiveConnectionToHandlerFor(Type tommandType);
-    ///<summary>Whether a live connection to the endpoint currently exists. What <see cref="Peers.IPeerAdministration.DecommissionAsync"/><br/>
+    ///<summary>Whether a live connection to the endpoint currently exists. What <see cref="IPeerAdministration.DecommissionAsync"/><br/>
     /// asserts against: decommissioning declares a peer gone for good, and a connected peer is not gone.</summary>
     bool HasLiveConnectionTo(EndpointId endpointId);
     ///<summary>The connections to every endpoint whose advertised tevent subscriptions match <paramref name="wrappedTevent"/>. Advertised subscriptions are wrapper<br/>

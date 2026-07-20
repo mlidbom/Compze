@@ -4,7 +4,7 @@ using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tessaging.Internals.Transport.Abstractions;
 using Compze.Tessaging.Transport.SqlLayer;
 
-namespace Compze.Tessaging.TessageBus.Internals.TessageHandling.Inbox;
+namespace Compze.Tessaging.TessageBus.Internals.Inbox;
 
 class InboxTessageStorage(ITessagingSqlLayer.IInboxSqlLayer sqlLayer) : Inbox.ITessageStorage
 {

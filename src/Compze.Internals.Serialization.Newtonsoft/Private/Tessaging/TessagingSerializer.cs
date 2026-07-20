@@ -4,6 +4,7 @@ using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Tessaging.Abstractions.TessageTypes;
 using Compze.Tessaging.TessageBus;
+using Compze.Tessaging.TessageBus.Internals;
 using Compze.TypeIdentifiers.DependencyInjection;
 
 namespace Compze.Internals.Serialization.Newtonsoft.Private.Tessaging;

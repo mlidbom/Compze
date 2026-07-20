@@ -4,6 +4,7 @@ using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Tessaging.Internals.Transport.Abstractions;
 using Compze.Tessaging.TessageBus;
+using Compze.Tessaging.TessageBus.Internals;
 using Compze.Tessaging.TessageBus.Internals.TessageHandling.Dispatching;
 
 namespace Compze.Tessaging.Transport;

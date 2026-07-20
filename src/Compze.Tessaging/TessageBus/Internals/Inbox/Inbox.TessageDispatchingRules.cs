@@ -1,7 +1,7 @@
 using Compze.Tessaging.Internals.Transport.Abstractions;
 using Compze.Tessaging.TessageBus.Internals.TessageHandling.Dispatching;
 
-namespace Compze.Tessaging.TessageBus.Internals.TessageHandling.Inbox;
+namespace Compze.Tessaging.TessageBus.Internals.Inbox;
 
 public partial class Inbox
 {

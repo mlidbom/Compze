@@ -12,6 +12,7 @@ using Compze.Tessaging.Internals.Peers;
 using Compze.Tessaging.Internals.Transport.Abstractions;
 using Compze.Tessaging.Internals.Transport.Client.Implementation;
 using Compze.Tessaging.TessageBus;
+using Compze.Tessaging.TessageBus.Internals;
 using Compze.TypeIdentifiers;
 
 namespace Compze.Tessaging.Internals.BestEffortDelivery;

@@ -16,6 +16,7 @@ using Compze.Tessaging.Internals.HandlerAvailability;
 using Compze.Tessaging.Internals.Peers;
 using Compze.Tessaging.Internals.Transport.Client.Implementation;
 using Compze.Tessaging.TessageBus;
+using Compze.Tessaging.TessageBus.Internals;
 using Compze.Tessaging.Transport;
 using Compze.Tessaging.Transport.Discovery;
 using Compze.Tessaging.Typermedia;

@@ -14,6 +14,7 @@ using Compze.Tessaging.Endpoints.ExactlyOnce;
 using Compze.Tessaging.Engine;
 using Compze.Tessaging.Engine.HandlerRegistration.TessageHandlers;
 using Compze.Tessaging.Sqlite.Wiring;
+using Compze.Tessaging.Transport.NamedPipes;
 using Compze.TypeIdentifiers.DependencyInjection;
 
 namespace Compze.Tests.SameMachine.EndpointHostProcess;

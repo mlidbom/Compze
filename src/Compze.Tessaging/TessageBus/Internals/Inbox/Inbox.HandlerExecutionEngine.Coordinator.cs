@@ -11,7 +11,7 @@ using Compze.Tessaging.TessageBus.Internals.TessageHandling.Dispatching;
 using Compze.Threading;
 using Compze.Threading.ResourceAccess;
 
-namespace Compze.Tessaging.TessageBus.Internals.TessageHandling.Inbox;
+namespace Compze.Tessaging.TessageBus.Internals.Inbox;
 
 public partial class Inbox
 {

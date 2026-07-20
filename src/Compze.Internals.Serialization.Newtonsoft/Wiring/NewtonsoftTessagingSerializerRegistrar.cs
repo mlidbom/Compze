@@ -1,5 +1,6 @@
 using Compze.DependencyInjection.Abstractions;
 using Compze.Tessaging.TessageBus;
+using Compze.Tessaging.TessageBus.Internals;
 
 namespace Compze.Internals.Serialization.Newtonsoft.Wiring;
 

@@ -11,12 +11,12 @@ using Compze.Tessaging.SystemCE.ThreadingCE;
 using Compze.Tessaging.Transport.SqlLayer;
 using JetBrains.Annotations;
 
-namespace Compze.Tessaging.TessageBus.Internals.TessageHandling.Inbox;
+namespace Compze.Tessaging.TessageBus.Internals.Inbox;
 
 static class InboxRegistrar
 {
    public static IComponentRegistrar Inbox(this IComponentRegistrar registrar)
-      => registrar.Register(TessageHandling.Inbox.Inbox.RegisterWith);
+      => registrar.Register(Internals.Inbox.Inbox.RegisterWith);
 }
 
 #pragma warning disable CA1724 // Type name intentionally matches namespace concept

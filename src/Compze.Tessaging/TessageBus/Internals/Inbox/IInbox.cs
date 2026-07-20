@@ -1,6 +1,6 @@
 using Compze.Tessaging.Internals.Transport.Abstractions;
 
-namespace Compze.Tessaging.TessageBus.Internals.TessageHandling.Inbox;
+namespace Compze.Tessaging.TessageBus.Internals.Inbox;
 
 ///<summary>The receiving half of the endpoint's exactly-once Tessaging pipeline: arriving tessages are registered here by the<br/>
 /// endpoint's transport request handling, persisted and deduped, then handled transactionally — retried until handled.</summary>
