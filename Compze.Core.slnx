@@ -81,7 +81,7 @@
       <Project Path="src/Compze.Internals.Serialization.Newtonsoft/Compze.Internals.Serialization.Newtonsoft.csproj" />
    </Folder>
    <Folder Name="/Compze.Internals/Serialization/Specifications/">
-      <Project Path="test/Compze.Internals.Serialization.Newtonsoft.Specifications/Compze.Internals.Serialization.Newtonsoft.Specifications.csproj" />
+      <Project Path="test/Compze.Internals.Serialization.Newtonsoft.InternalSpecifications/Compze.Internals.Serialization.Newtonsoft.InternalSpecifications.csproj" />
    </Folder>
    <Folder Name="/Compze.Internals/Sql/">
       <Project Path="src/Compze.Internals.Sql.Common/Compze.Internals.Sql.Common.csproj" />

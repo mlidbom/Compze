@@ -13,7 +13,7 @@ using Compze.Tests.Infrastructure.XUnit;
 // ReSharper disable UnusedMemberHierarchy.Global
 // ReSharper disable MemberCanBeProtected.Global
 
-namespace Compze.Internals.Serialization.Newtonsoft.Specifications
+namespace Compze.Internals.Serialization.Newtonsoft.InternalSpecifications
 {
    public class When_serializing_types_with_ValueWrapper_members : SerializerTest
    {

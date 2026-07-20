@@ -1,3 +1,5 @@
+using Compze.Internals.SystemCE;
+using Compze.Internals.SystemCE.LinqCE;
 using Compze.Tests.Infrastructure;
 using Compze.Must;
 
@@ -5,7 +7,7 @@ using Compze.xUnitBDD;
 using ReadOrder = Compze.Teventive.TeventStore.Abstractions.Internal.SqlLayer.Abstractions.ReadOrder;
 using static Compze.Must.MustActions;
 
-namespace Compze.Tests.Unit.Sql.TeventStore;
+namespace Compze.Teventive.TeventStore.InternalSpecifications;
 
  public class ReadOrderTests : UniversalTestBase
 {

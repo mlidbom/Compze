@@ -2,7 +2,7 @@ using Compze.Teventive.Taggregates.Tevents.Public;
 
 namespace Compze.Teventive.TeventStore.Abstractions.Internal;
 
-public interface ITeventStoreSerializer
+interface ITeventStoreSerializer
 {
    ///<summary>Serializes the whole wrapped tevent - the <see cref="ITaggregateTevent{TTeventInterface}"/> wrapper with its inner tevent inside - as one object graph.</summary>
    string Serialize(ITaggregateTevent<ITaggregateTevent> wrappedTevent);

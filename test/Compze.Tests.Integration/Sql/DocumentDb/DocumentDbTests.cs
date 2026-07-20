@@ -87,6 +87,31 @@ public class DocumentDbTests : DocumentDbTestsBase
         UseInScope(reader => Invoking(() => reader.Get<User>(new EntityId())).Must().Throw<NoSuchDocumentException>());
     }
 
+    [PCT]
+    public void DocumentsOfDifferentTypesWithTheSameIdAreDistinctDocuments()
+    {
+        var sharedId = new EntityId();
+        var user = new User(sharedId.Value);
+        var dog = new Dog { Id = sharedId };
+
+        UseInTransactionalScope((_, updater) =>
+        {
+            updater.Save(user.Id, user);
+            updater.Save(dog);
+        });
+
+        UseInTransactionalScope((reader, updater) =>
+        {
+            reader.Get<User>(sharedId).Id.Must().Be(sharedId);
+            reader.Get<Dog>(sharedId).Id.Must().Be(sharedId);
+
+            updater.Delete<Dog>(sharedId);
+
+            reader.Get<User>(sharedId).Id.Must().Be(sharedId);
+            Invoking(() => reader.Get<Dog>(sharedId)).Must().Throw<NoSuchDocumentException>();
+        });
+    }
+
 
     [PCT]
     public void GetAllWithIdsReturnsTheSameInstanceForAnyPreviouslyFetchedDocuments()

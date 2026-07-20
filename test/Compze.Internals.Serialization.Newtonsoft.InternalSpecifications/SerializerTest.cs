@@ -9,7 +9,7 @@ using Compze.Tests.Infrastructure.XUnit;
 using Compze.Teventive.TeventStore.Abstractions.Internal;
 using Compze.TypeIdentifiers.DependencyInjection;
 
-namespace Compze.Internals.Serialization.Newtonsoft.Specifications;
+namespace Compze.Internals.Serialization.Newtonsoft.InternalSpecifications;
 
 public class SerializerTest : UniversalTestBase
 {

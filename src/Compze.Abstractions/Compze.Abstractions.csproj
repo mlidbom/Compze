@@ -9,6 +9,9 @@
   </PropertyGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="Compze.Abstractions.Specifications" />
+    <InternalsVisibleTo Include="Compze.DocumentDb" />
+    <InternalsVisibleTo Include="Compze.Internals.Serialization.Newtonsoft" />
+    <InternalsVisibleTo Include="Compze.Internals.Serialization.Newtonsoft.InternalSpecifications" />
   </ItemGroup>
   <!-- Compze.Contracts — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Contracts)' == 'true'">

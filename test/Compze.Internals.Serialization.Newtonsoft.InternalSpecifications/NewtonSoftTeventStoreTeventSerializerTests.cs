@@ -7,7 +7,7 @@ using Compze.Teventive.Taggregates.Tevents.Public;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
 
-namespace Compze.Internals.Serialization.Newtonsoft.Specifications;
+namespace Compze.Internals.Serialization.Newtonsoft.InternalSpecifications;
 
 public class NewtonSoftTeventStoreTeventSerializerTests : SerializerTest
 {

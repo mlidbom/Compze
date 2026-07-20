@@ -12,7 +12,7 @@ using Compze.Contracts;
 namespace Compze.DocumentDb.Private;
 
 // ReSharper disable once ClassWithVirtualMembersNeverInherited.Global
-public partial class DocumentDbSession : IDocumentDbSession
+partial class DocumentDbSession : IDocumentDbSession
 {
    internal static void RegisterWith(IComponentRegistrar registrar) =>
       registrar.Register(Scoped.For<IDocumentDbSession, IDocumentDbUpdater, IDocumentDbReader, IDocumentDbBulkReader>()

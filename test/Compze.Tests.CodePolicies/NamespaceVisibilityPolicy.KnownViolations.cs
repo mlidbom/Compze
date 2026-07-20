@@ -10,20 +10,12 @@ public static partial class NamespaceVisibilityPolicy
       /// each needs a deliberate decision: internalize the type, or move it to a public home.</summary>
       public static readonly IReadOnlyList<string> PublicTypesInInternalOrPrivateNamespaces =
       [
-         "Compze.Abstractions.Serialization.Internal.IDocumentDbSerializer",
-         "Compze.Abstractions.Serialization.Internal.IJsonSerializer",
          "Compze.Abstractions.Wiring.Testing.Internal.DIContainer",
          "Compze.Abstractions.Wiring.Testing.Internal.DIContainerExtensions",
          "Compze.Abstractions.Wiring.Testing.Internal.Serializer",
          "Compze.Abstractions.Wiring.Testing.Internal.SqlLayer",
          "Compze.Abstractions.Wiring.Testing.Internal.SqlLayerExtensions",
          "Compze.Abstractions.Wiring.Testing.Internal.Transport",
-         "Compze.DocumentDb.Private.DocumentDbSession",
-         "Compze.DocumentDb.Private.DocumentDbSession+ContextEnsuringWrapper",
-         "Compze.DocumentDb.Private.DocumentDbSession+DocumentItem",
-         "Compze.DocumentDb.Private.DocumentDbSession+DocumentKey",
-         "Compze.DocumentDb.Private.DocumentDbSession+DocumentKey`1",
-         "Compze.Internals.Serialization.Newtonsoft.Private.TeventStore.NewtonsoftTeventStoreSerializer",
          "Compze.Tessaging.Internal.SqlLayer.EndpointTableSet",
          "Compze.Tessaging.Internal.SqlLayer.ITessagingSqlLayer",
          "Compze.Tessaging.Internal.SqlLayer.ITessagingSqlLayer+DiscardedTessage",
@@ -45,8 +37,6 @@ public static partial class NamespaceVisibilityPolicy
          "Compze.Tessaging.Internal.SqlLayer.ITessagingSqlLayer+UndeliveredTessage",
          "Compze.Tessaging.Internal.Transport.Advertisement.EndpointInformation",
          "Compze.Tessaging.Peers.Internal.IPeerRegistry",
-         "Compze.Teventive.TeventStore.Abstractions.Internal.ITeventStoreSerializer",
-         "Compze.Teventive.TeventStore.Abstractions.Internal.SqlLayer.Abstractions.ReadOrder"
       ];
 
       ///<summary>Namespaces without an Internal or Private section that hold top-level internal types —<br/>

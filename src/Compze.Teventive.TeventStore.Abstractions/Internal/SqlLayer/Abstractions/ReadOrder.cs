@@ -5,7 +5,7 @@ using Compze.Contracts;
 
 namespace Compze.Teventive.TeventStore.Abstractions.Internal.SqlLayer.Abstractions;
 
-public readonly struct ReadOrder : IComparable<ReadOrder>, IEquatable<ReadOrder>
+readonly struct ReadOrder : IComparable<ReadOrder>, IEquatable<ReadOrder>
 {
    const int IntegerDigits = 20;  // Maximum digits in the integer part
    const int FractionDigits = 19; // Number of digits in the fractional part (always exactly 19)

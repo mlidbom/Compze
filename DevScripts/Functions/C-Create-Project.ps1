@@ -11,7 +11,7 @@ function C-Create-Project {
     - Creates a basic .csproj file
     - Adds the project to the .slnx solution file in the appropriate folder structure
     
-    Test projects are detected by name: contains ".Tests." or ends with ".Tests"
+    Test projects are detected by name: contains ".Tests." or ends with ".Tests", "Specifications" (which covers ".Specifications" and ".InternalSpecifications")
     
     .PARAMETER ProjectName
     The full name of the project to create (e.g., "Compze.Wiring" or "Compze.Tests.MyFeature")
@@ -39,7 +39,7 @@ function C-Create-Project {
     }
     
     # Step 1: Determine if test or library project, and calculate directory path
-    $isTest = ($ProjectName -match '\.Tests\.' -or $ProjectName -match '\.Tests$')
+    $isTest = ($ProjectName -match '\.Tests\.' -or $ProjectName -match '\.Tests$' -or $ProjectName -match 'Specifications$')
     
     if ($isTest) {
         $projectDir = Join-Path $script:CompzeRoot "test" $ProjectName

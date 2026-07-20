@@ -10,7 +10,7 @@ using Newtonsoft.Json;
 
 namespace Compze.Internals.Serialization.Newtonsoft.Private.TeventStore;
 
-public class NewtonsoftTeventStoreSerializer : ITeventStoreSerializer
+class NewtonsoftTeventStoreSerializer : ITeventStoreSerializer
 {
    public static readonly JsonSerializerSettings JsonSettings = RenamingAndNonPublicMembersSupportingJsonSettings.TeventStore;
 
