@@ -81,16 +81,6 @@ public sealed class TypeMapBuilder
       return this;
    }
 
-   /// <summary>Declares every assembly signed with <paramref name="publicKeyToken"/> stable — the by-signature form of
-   /// <see cref="UseStableNameStrategyForAssembly"/>, for a whole publisher at once.</summary>
-   public TypeMapBuilder UseStableNameStrategyForPublicKeyToken(string publicKeyToken)
-   {
-#pragma warning disable CA1308 // .NET assembly-qualified-name public-key tokens are lowercase hex by convention; ToUpperInvariant would break type resolution.
-      _stablePublicKeyTokens.Add(publicKeyToken.ToLowerInvariant());
-#pragma warning restore CA1308
-      return this;
-   }
-
    /// <summary>Builds the finished, immutable <see cref="ITypeMap"/> from everything declared so far.</summary>
    /// <remarks>
    /// The declarations are copied, not handed over: a builder used again after building must not reach into a map that
