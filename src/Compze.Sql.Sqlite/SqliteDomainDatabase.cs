@@ -5,8 +5,9 @@ namespace Compze.Sql.Sqlite;
 /// database name (<c>SqliteTypeIdInterner(...)</c>), which on sqlite lives in a separate database file.</summary>
 public class SqliteDomainDatabase
 {
-   ///<summary>The name whose configured connection string reaches the domain database.</summary>
-   public string ConnectionStringName { get; }
+   ///<summary>The name whose configured connection string reaches the domain database. The consumer supplies it at construction;<br/>
+   /// only the Sqlite pairings read it back.</summary>
+   internal string ConnectionStringName { get; }
 
    public SqliteDomainDatabase(string connectionStringName) => ConnectionStringName = connectionStringName;
 }
