@@ -1,7 +1,6 @@
 using System.Text.Json.Serialization;
 using Compze.Tessaging._private.Transport.Advertisement;
 using Compze.Tessaging.Endpoints;
-using Compze.Tessaging.TessageTypes;
 using Compze.TypeIdentifiers;
 
 // ReSharper disable UnusedAutoPropertyAccessor.Global serilization requires it

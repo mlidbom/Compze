@@ -3,7 +3,6 @@ using Compze.Hosting.Testing;
 using Compze.Hosting.Testing.Wiring;
 using Compze.Tessaging.Engine;
 using Compze.Tessaging.Hosting.Testing.Wiring;
-using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Underscore;
 using Compze.Internals.Logging;

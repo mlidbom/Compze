@@ -1,5 +1,4 @@
 using Compze.DependencyInjection.Abstractions;
-using Compze.DbPool.Sqlite._private;
 
 namespace Compze.DbPool.Sqlite;
 

@@ -1,7 +1,6 @@
 using Compze.Internals.Logging;
 using Compze.Internals.SystemCE.ThreadingCE;
 using Compze.Tessaging._private.SystemCE.ThreadingCE;
-using Compze.Tessaging._internal.Transport;
 using Compze.Tessaging.TessageBus._private.Outbox;
 using Compze.Threading.ResourceAccess;
 using Compze.Tessaging._private.Transport;

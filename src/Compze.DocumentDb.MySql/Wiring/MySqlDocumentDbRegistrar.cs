@@ -2,7 +2,6 @@ using Compze.DocumentDb._internal.SqlLayer;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Sql.MySql._internal;
-using Compze.Sql.MySql.Wiring;
 using Compze.TypeIdentifiers.Interning;
 using Compze.TypeIdentifiers.Interning.MySql.Wiring;
 using Layer = Compze.DocumentDb.MySql._private.MySqlDocumentDbSqlLayer;

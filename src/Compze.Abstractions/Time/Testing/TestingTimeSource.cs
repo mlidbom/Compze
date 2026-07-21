@@ -1,5 +1,4 @@
 using System.Globalization;
-using Compze.Abstractions.Time;
 using Compze.Internals.SystemCE.ThreadingCE;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 

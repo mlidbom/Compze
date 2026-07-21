@@ -1,5 +1,4 @@
 using Compze.TypeIdentifiers;
-using Compze.Abstractions._private;
 
 [assembly: AssemblyTypeMapper(typeof(Compze.Abstractions._private.AssemblyTypeMapper))]
 

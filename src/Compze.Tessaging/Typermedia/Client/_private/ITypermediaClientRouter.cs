@@ -1,4 +1,3 @@
-using Compze.Tessaging.Typermedia._internal;
 using Compze.Tessaging.Endpoints.Discovery;
 using Compze.Tessaging.Typermedia._private;
 

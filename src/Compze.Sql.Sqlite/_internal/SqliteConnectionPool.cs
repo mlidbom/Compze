@@ -2,11 +2,9 @@ using System.Diagnostics;
 using System.Transactions;
 using Compze.Sql.Common._internal;
 using Compze.Sql.Common._internal.Abstractions;
-using Compze.Sql.Sqlite._private;
 using Compze.Internals.SystemCE;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Microsoft.Data.Sqlite;
-using Compze.Sql.Sqlite._internal;
 
 namespace Compze.Sql.Sqlite._internal;
 

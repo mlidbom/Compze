@@ -1,7 +1,6 @@
 using System.Diagnostics;
 using Compze.Threading.Exceptions;
 using Compze.Threading._internal.Utilities;
-using Compze.Threading._private.Utilities;
 using Compze.Threading.Exceptions._private;
 
 namespace Compze.Threading;

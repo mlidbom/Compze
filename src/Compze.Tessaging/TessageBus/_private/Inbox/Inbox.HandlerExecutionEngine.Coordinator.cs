@@ -6,7 +6,6 @@ using Compze.Tessaging.Endpoints;
 using Compze.Tessaging.Engine._private;
 using Compze.Tessaging._internal.TessagesInFlight;
 using Compze.Tessaging._private.SystemCE.ThreadingCE;
-using Compze.Tessaging._internal.Transport;
 using Compze.Tessaging.TessageBus._private.TessageHandling.Dispatching;
 using Compze.Threading;
 using Compze.Threading.ResourceAccess;

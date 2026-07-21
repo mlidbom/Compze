@@ -3,7 +3,6 @@ using Compze.Internals.SystemCE.ReflectionCE;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tessaging.Endpoints;
 using Compze.Tessaging.Peers;
-using Compze.Tessaging.Peers._internal;
 using Compze.Tessaging._internal.SqlLayer;
 using Compze.Tessaging.TessageTypes;
 using Compze.TypeIdentifiers;

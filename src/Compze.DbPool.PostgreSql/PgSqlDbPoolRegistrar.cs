@@ -1,5 +1,4 @@
 using Compze.DependencyInjection.Abstractions;
-using Compze.DbPool.PostgreSql._private;
 
 namespace Compze.DbPool.PostgreSql;
 

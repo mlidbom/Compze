@@ -1,8 +1,6 @@
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
-using Compze.Sql.Sqlite;
 using Compze.Sql.Sqlite._internal;
-using Compze.Sql.Sqlite.Wiring;
 using Compze.Teventive.TeventStore.Abstractions._internal.SqlLayer.Abstractions;
 using Compze.TypeIdentifiers.Interning;
 using Layer = Compze.Teventive.TeventStore.Sqlite._private.SqliteTeventStoreSqlLayer;

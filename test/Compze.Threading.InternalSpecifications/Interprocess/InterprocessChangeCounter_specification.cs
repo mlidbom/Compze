@@ -1,7 +1,6 @@
 using Compze.Must;
 
 using Compze.Tests.Infrastructure;
-using Compze.Threading.Interprocess;
 using Compze.Threading.InternalSpecifications.TestInfrastructure;
 using Compze.Underscore;
 using Compze.xUnitBDD;

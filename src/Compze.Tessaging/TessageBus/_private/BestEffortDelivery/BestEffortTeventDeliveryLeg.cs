@@ -7,7 +7,6 @@ using Compze.Internals.SystemCE.TransactionsCE;
 using Compze.Tessaging.Endpoints;
 using Compze.Tessaging._internal.TessagesInFlight;
 using Compze.Tessaging.Peers._internal;
-using Compze.Tessaging._internal.Transport;
 using Compze.Tessaging._private.Routing;
 using Compze.Tessaging.TessageTypes;
 using Compze.TypeIdentifiers;

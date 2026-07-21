@@ -11,7 +11,6 @@ using Compze.Teventive.TeventStore.Abstractions._internal;
 using Compze.Teventive.TeventStore.Abstractions._internal.SqlLayer.Abstractions;
 using Compze.Teventive.TeventStore.Abstractions;
 using Compze.Teventive.TeventStore.Abstractions.Refactoring.Migrations;
-using Compze.Teventive.TeventStore.Refactoring.Migrations;
 using Compze.TypeIdentifiers;
 using JetBrains.Annotations;
 using static Compze.Contracts.Contract;

@@ -1,4 +1,3 @@
-using Compze.xUnit;
 using Xunit.v3;
 using Compze.xUnit._internal;
 

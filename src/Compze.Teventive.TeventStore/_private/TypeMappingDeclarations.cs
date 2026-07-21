@@ -1,7 +1,5 @@
-using Compze.Teventive.TeventStore;
 using Compze.TypeIdentifiers;
 using Compze.Teventive.TeventStore._private;
-using Compze.Teventive.TeventStore.Refactoring.Migrations._private;
 
 [assembly: AssemblyTypeMapper(typeof(AssemblyTypeMapper))]
 

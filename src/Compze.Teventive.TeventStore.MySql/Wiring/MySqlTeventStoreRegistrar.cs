@@ -1,7 +1,6 @@
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Sql.MySql._internal;
-using Compze.Sql.MySql.Wiring;
 using Compze.Teventive.TeventStore.Abstractions._internal.SqlLayer.Abstractions;
 using Compze.TypeIdentifiers.Interning;
 using Compze.TypeIdentifiers.Interning.MySql.Wiring;

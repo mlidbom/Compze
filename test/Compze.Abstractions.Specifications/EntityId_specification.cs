@@ -1,4 +1,3 @@
-using Compze.Abstractions;
 using Compze.Must;
 using Compze.Tessaging;
 using Compze.xUnitBDD;

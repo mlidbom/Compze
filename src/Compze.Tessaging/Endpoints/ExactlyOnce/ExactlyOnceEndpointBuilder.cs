@@ -3,7 +3,6 @@ using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Tessaging.Endpoints.Exceptions;
 using Compze.Tessaging._private.EndpointCatalog;
-using Compze.Tessaging.TessageBus._internal;
 using Compze.Tessaging.TessageBus._private.Inbox;
 using Compze.Tessaging.TessageBus._private.Outbox;
 using Compze.Tessaging._internal.SqlLayer;

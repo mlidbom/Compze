@@ -1,7 +1,6 @@
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Sql.MicrosoftSql._internal;
-using Compze.Sql.MicrosoftSql.Wiring;
 using Compze.Teventive.TeventStore.Abstractions._internal.SqlLayer.Abstractions;
 using Compze.TypeIdentifiers.Interning;
 using Compze.TypeIdentifiers.Interning.MicrosoftSql.Wiring;

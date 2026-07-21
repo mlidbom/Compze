@@ -1,4 +1,3 @@
-using Compze.Serialization.Newtonsoft._private;
 using Compze.Serialization.Newtonsoft._private.TeventStore;
 using Newtonsoft.Json;
 

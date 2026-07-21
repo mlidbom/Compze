@@ -1,5 +1,4 @@
 using Compze.DependencyInjection.Abstractions;
-using Compze.DbPool.MySql._private;
 
 namespace Compze.DbPool.MySql;
 

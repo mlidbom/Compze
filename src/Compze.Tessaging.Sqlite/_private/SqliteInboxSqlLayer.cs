@@ -1,5 +1,4 @@
 using Compze.Sql.Common._internal;
-using Compze.Sql.Sqlite;
 using Compze.Sql.Sqlite._internal;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tessaging._internal.SqlLayer;

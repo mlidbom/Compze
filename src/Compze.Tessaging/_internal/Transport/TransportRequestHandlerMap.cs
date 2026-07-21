@@ -2,7 +2,6 @@ using Compze.Contracts;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
-using Compze.Tessaging._internal.Transport.Advertisement;
 using Compze.TypeIdentifiers;
 using Compze.Tessaging._private.Transport.Advertisement;
 using Compze.Tessaging._private.Transport;

@@ -1,6 +1,5 @@
 using Compze.Tessaging.Endpoints;
 using Compze.Sql.Common._internal;
-using Compze.Sql.Sqlite;
 using Compze.Sql.Sqlite._internal;
 using Compze.Internals.SystemCE.LinqCE;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;

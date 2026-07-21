@@ -1,8 +1,6 @@
 using Compze.Internals.Logging;
 using Compze.Internals.SystemCE.ThreadingCE;
 using Compze.Tessaging.TessageBus._private.BestEffortDelivery;
-using Compze.Tessaging._internal.Transport;
-using Compze.Tessaging._internal.Transport.Advertisement;
 using Compze.Tessaging._private.Transport;
 using Compze.Tessaging._private.Transport.Advertisement;
 

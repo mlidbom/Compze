@@ -4,7 +4,6 @@ using Compze.Internals.Logging;
 using Compze.Tessaging.Endpoints;
 using Compze.Tessaging._internal.TessagesInFlight;
 using Compze.Tessaging.Peers;
-using Compze.Tessaging._internal.Transport;
 using Compze.Tessaging.TessageTypes;
 using Compze.Threading;
 using Compze.Tessaging._private.Transport;

@@ -1,4 +1,3 @@
-using Compze.xUnit;
 using Compze.xUnit._internal;
 
 namespace Compze.xUnitBDD._private;

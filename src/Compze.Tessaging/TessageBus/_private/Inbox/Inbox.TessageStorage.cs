@@ -1,7 +1,6 @@
 using Compze.Contracts;
 using Compze.Internals.SystemCE.ReflectionCE;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
-using Compze.Tessaging._internal.Transport;
 using Compze.Tessaging._internal.SqlLayer;
 using Compze.Tessaging._private.Transport;
 

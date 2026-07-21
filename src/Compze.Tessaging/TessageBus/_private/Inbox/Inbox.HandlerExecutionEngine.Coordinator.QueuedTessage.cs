@@ -5,7 +5,6 @@ using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Internals.SystemCE.TransactionsCE;
 using Compze.Tessaging.Engine._private;
 using Compze.Tessaging._private.SystemCE.ThreadingCE;
-using Compze.Tessaging._internal.Transport;
 using Compze.Tessaging.TessageBus._private.TessageHandling;
 using Compze.Tessaging.TessageTypes;
 using Compze.Tessaging._private.Transport;

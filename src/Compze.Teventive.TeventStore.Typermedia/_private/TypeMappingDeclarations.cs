@@ -1,4 +1,3 @@
-using Compze.Teventive.TeventStore.Typermedia;
 using Compze.TypeIdentifiers;
 using Compze.Teventive.TeventStore.Typermedia._private;
 

@@ -5,7 +5,6 @@ using Compze.Internals.SystemCE.TransactionsCE;
 using Compze.Tessaging.Endpoints;
 using Compze.Tessaging._internal.TessagesInFlight;
 using Compze.Tessaging.Peers;
-using Compze.Tessaging.Peers._internal;
 using Compze.Tessaging._internal.Transport.Advertisement;
 using Compze.Threading;
 using Compze.TypeIdentifiers;

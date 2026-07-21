@@ -1,7 +1,6 @@
 using Compze.DocumentDb._internal.SqlLayer;
 using Compze.DocumentDb.Exceptions;
 using Compze.Sql.Common._internal;
-using Compze.Sql.Sqlite;
 using Compze.Sql.Sqlite._internal;
 using Compze.TypeIdentifiers;
 using Compze.TypeIdentifiers.Interning;

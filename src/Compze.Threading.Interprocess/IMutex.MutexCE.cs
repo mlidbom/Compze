@@ -1,6 +1,5 @@
 using Compze.Threading.Interprocess._private.Exceptions;
 using Compze.Threading._internal.Utilities;
-using Compze.Threading._private.Utilities;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Runtime.Versioning;

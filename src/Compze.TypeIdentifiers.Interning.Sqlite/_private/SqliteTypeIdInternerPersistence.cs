@@ -2,7 +2,6 @@ using System.Globalization;
 using System.Transactions;
 using Compze.Abstractions.Time;
 using Compze.Sql.Common._internal;
-using Compze.Sql.Sqlite;
 using Compze.Sql.Sqlite._internal;
 using Compze.Internals.SystemCE.TransactionsCE;
 using Types = Compze.TypeIdentifiers.Interning.TypeIdsTableSchema.Types;

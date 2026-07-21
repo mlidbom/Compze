@@ -1,4 +1,3 @@
-using Compze.Tessaging.Typermedia._internal;
 using Compze.TypeIdentifiers;
 using Compze.Tessaging.Endpoints;
 using Compze.Tessaging.Endpoints.Discovery;
@@ -8,7 +7,6 @@ using Compze.Internals.SystemCE.ReflectionCE;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
-using Compze.Tessaging._internal.Transport.Advertisement;
 using Compze.Tessaging.TessageTypes;
 using Compze.Threading;
 using Compze.Tessaging.Typermedia._private;

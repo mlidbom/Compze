@@ -2,7 +2,6 @@ using System.Diagnostics.CodeAnalysis;
 using Compze.DocumentDb._internal.SqlLayer;
 using Compze.DocumentDb.Exceptions;
 using Compze.DocumentDb._private.SqlLayer.Exceptions;
-using Compze.DocumentDb;
 using Compze.Abstractions;
 using Compze.TypeIdentifiers;
 using Compze.Abstractions.Serialization._internal;
