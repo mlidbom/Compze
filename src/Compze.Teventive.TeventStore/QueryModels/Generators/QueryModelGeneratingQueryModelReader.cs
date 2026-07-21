@@ -3,6 +3,7 @@ using Compze.Abstractions;
 using Compze.Contracts;
 using Compze.DocumentDb.Infrastructure;
 using Compze.Teventive.TeventStore.Abstractions.QueryModels.Generators;
+using Compze.Teventive.TeventStore.Abstractions.QueryModels.Generators._internal;
 
 namespace Compze.Teventive.TeventStore.QueryModels.Generators;
 
@@ -29,7 +30,7 @@ public class QueryModelGeneratingQueryModelReader : IVersioningQueryModelReader
 
    public virtual TValue GetVersion<TValue>(EntityId key, int version) where TValue : class
    {
-      if(TryGetVersion(key, out TValue? value, version))
+      if(TryGetVersion(key, version, out TValue? value))
       {
          return value._assert().NotNull();
       }
@@ -37,9 +38,11 @@ public class QueryModelGeneratingQueryModelReader : IVersioningQueryModelReader
       throw new NoSuchQueryModelException(key, typeof(TValue));
    }
 
-   protected virtual bool TryGet<TDocument>(EntityId key, [NotNullWhen(true)] out TDocument? document) where TDocument : class => TryGetVersion(key, out document);
+   public virtual bool TryGet<TDocument>(EntityId key, [NotNullWhen(true)] out TDocument? document) where TDocument : class => TryGetCore(key, version: -1, out document);
 
-   protected virtual bool TryGetVersion<TDocument>(EntityId key, [NotNullWhen(true)] out TDocument? document, int version = -1) where TDocument : class
+   public virtual bool TryGetVersion<TDocument>(EntityId key, int version, [NotNullWhen(true)] out TDocument? document) where TDocument : class => TryGetCore(key, version, out document);
+
+   bool TryGetCore<TDocument>(EntityId key, int version, [NotNullWhen(true)] out TDocument? document) where TDocument : class
    {
       var requiresVersioning = version > 0;
 

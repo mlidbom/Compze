@@ -11,7 +11,7 @@ using Compze.Tessaging.TessageBus;
 using Compze.Teventive._internal;
 using Compze.Teventive.Taggregates.Tevents;
 using Compze.Teventive.TeventStore.Abstractions;
-using Compze.Teventive.TeventStore.Abstractions.Exceptions;
+using Compze.Teventive.TeventStore.Abstractions._internal.Exceptions;
 using static Compze.Contracts.Contract;
 
 namespace Compze.Teventive.TeventStore._private;

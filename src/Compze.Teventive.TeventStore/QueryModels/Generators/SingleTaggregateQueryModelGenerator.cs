@@ -6,6 +6,7 @@ using Compze.Teventive.Taggregates.Tevents;
 using Compze.Teventive.TeventStore.Abstractions;
 using Compze.Teventive.TeventStore.Abstractions.QueryModels;
 using Compze.Teventive.TeventStore.Abstractions.QueryModels.Generators;
+using Compze.Teventive.TeventStore.Abstractions.QueryModels.Generators._internal;
 using JetBrains.Annotations;
 
 namespace Compze.Teventive.TeventStore.QueryModels.Generators;
