@@ -32,19 +32,33 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_DependencyInjection)' != 'true'">
     <ProjectReference Include="..\..\..\..\src\Compze.DependencyInjection\Compze.DependencyInjection.csproj" />
   </ItemGroup>
+  <!-- Compze.DependencyInjection.Microsoft — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_DependencyInjection_Microsoft)' == 'true'">
+    <PackageReference Include="Compze.DependencyInjection.Microsoft" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_DependencyInjection_Microsoft)' != 'true'">
+    <ProjectReference Include="..\..\..\..\src\Compze.DependencyInjection.Microsoft\Compze.DependencyInjection.Microsoft.csproj" />
+  </ItemGroup>
+  <!-- Compze.DependencyInjection.Microsoft.Extensions.Hosting — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_DependencyInjection_Microsoft_Extensions_Hosting)' == 'true'">
+    <PackageReference Include="Compze.DependencyInjection.Microsoft.Extensions.Hosting" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_DependencyInjection_Microsoft_Extensions_Hosting)' != 'true'">
+    <ProjectReference Include="..\..\..\..\src\Compze.DependencyInjection.Microsoft.Extensions.Hosting\Compze.DependencyInjection.Microsoft.Extensions.Hosting.csproj" />
+  </ItemGroup>
+  <!-- Compze.DocumentDb.MicrosoftSql — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_DocumentDb_MicrosoftSql)' == 'true'">
+    <PackageReference Include="Compze.DocumentDb.MicrosoftSql" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_DocumentDb_MicrosoftSql)' != 'true'">
+    <ProjectReference Include="..\..\..\..\src\Compze.DocumentDb.MicrosoftSql\Compze.DocumentDb.MicrosoftSql.csproj" />
+  </ItemGroup>
   <!-- Compze.Hosting — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Hosting)' == 'true'">
     <PackageReference Include="Compze.Hosting" Version="*-*" />
   </ItemGroup>
   <ItemGroup Condition="'$(UsePackageReference_Compze_Hosting)' != 'true'">
     <ProjectReference Include="..\..\..\..\src\Compze.Hosting\Compze.Hosting.csproj" />
-  </ItemGroup>
-  <!-- Compze.Hosting.Testing — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Hosting_Testing)' == 'true'">
-    <PackageReference Include="Compze.Hosting.Testing" Version="*-*" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Hosting_Testing)' != 'true'">
-    <ProjectReference Include="..\..\..\..\src\Compze.Hosting.Testing\Compze.Hosting.Testing.csproj" />
   </ItemGroup>
   <!-- Compze.Internals.Logging — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Logging)' == 'true'">
@@ -53,19 +67,26 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Logging)' != 'true'">
     <ProjectReference Include="..\..\..\..\src\Compze.Internals.Logging\Compze.Internals.Logging.csproj" />
   </ItemGroup>
+  <!-- Compze.Internals.Serialization.Newtonsoft — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Serialization_Newtonsoft)' == 'true'">
+    <PackageReference Include="Compze.Internals.Serialization.Newtonsoft" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Serialization_Newtonsoft)' != 'true'">
+    <ProjectReference Include="..\..\..\..\src\Compze.Internals.Serialization.Newtonsoft\Compze.Internals.Serialization.Newtonsoft.csproj" />
+  </ItemGroup>
+  <!-- Compze.Internals.Sql.MicrosoftSql — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Sql_MicrosoftSql)' == 'true'">
+    <PackageReference Include="Compze.Internals.Sql.MicrosoftSql" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Sql_MicrosoftSql)' != 'true'">
+    <ProjectReference Include="..\..\..\..\src\Compze.Internals.Sql.MicrosoftSql\Compze.Internals.Sql.MicrosoftSql.csproj" />
+  </ItemGroup>
   <!-- Compze.Internals.SystemCE — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_SystemCE)' == 'true'">
     <PackageReference Include="Compze.Internals.SystemCE" Version="*-*" />
   </ItemGroup>
   <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_SystemCE)' != 'true'">
     <ProjectReference Include="..\..\..\..\src\Compze.Internals.SystemCE\Compze.Internals.SystemCE.csproj" />
-  </ItemGroup>
-  <!-- Compze.Internals.Testing — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Testing)' == 'true'">
-    <PackageReference Include="Compze.Internals.Testing" Version="*-*" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Testing)' != 'true'">
-    <ProjectReference Include="..\..\..\..\src\Compze.Internals.Testing\Compze.Internals.Testing.csproj" />
   </ItemGroup>
   <!-- Compze.Tessaging — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging)' == 'true'">
@@ -74,12 +95,26 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging)' != 'true'">
     <ProjectReference Include="..\..\..\..\src\Compze.Tessaging\Compze.Tessaging.csproj" />
   </ItemGroup>
-  <!-- Compze.Tessaging.Hosting.Testing — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging_Hosting_Testing)' == 'true'">
-    <PackageReference Include="Compze.Tessaging.Hosting.Testing" Version="*-*" />
+  <!-- Compze.Tessaging.MicrosoftSql — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging_MicrosoftSql)' == 'true'">
+    <PackageReference Include="Compze.Tessaging.MicrosoftSql" Version="*-*" />
   </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging_Hosting_Testing)' != 'true'">
-    <ProjectReference Include="..\..\..\..\src\Compze.Tessaging.Hosting.Testing\Compze.Tessaging.Hosting.Testing.csproj" />
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging_MicrosoftSql)' != 'true'">
+    <ProjectReference Include="..\..\..\..\src\Compze.Tessaging.MicrosoftSql\Compze.Tessaging.MicrosoftSql.csproj" />
+  </ItemGroup>
+  <!-- Compze.Tessaging.Transport.AspNetCore — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging_Transport_AspNetCore)' == 'true'">
+    <PackageReference Include="Compze.Tessaging.Transport.AspNetCore" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging_Transport_AspNetCore)' != 'true'">
+    <ProjectReference Include="..\..\..\..\src\Compze.Tessaging.Transport.AspNetCore\Compze.Tessaging.Transport.AspNetCore.csproj" />
+  </ItemGroup>
+  <!-- Compze.Teventive.TeventStore.MicrosoftSql — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Teventive_TeventStore_MicrosoftSql)' == 'true'">
+    <PackageReference Include="Compze.Teventive.TeventStore.MicrosoftSql" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Teventive_TeventStore_MicrosoftSql)' != 'true'">
+    <ProjectReference Include="..\..\..\..\src\Compze.Teventive.TeventStore.MicrosoftSql\Compze.Teventive.TeventStore.MicrosoftSql.csproj" />
   </ItemGroup>
   <!-- Compze.Threading — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Threading)' == 'true'">

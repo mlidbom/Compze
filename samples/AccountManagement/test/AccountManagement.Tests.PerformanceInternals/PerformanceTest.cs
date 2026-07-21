@@ -16,6 +16,7 @@ using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Must;
 
 using AccountId = AccountManagement.Domain.AccountId;
+using static AccountManagement.AccountManagementServerDomainBootstrapper;
 using Compze.Tessaging.Typermedia;
 
 namespace AccountManagement;
@@ -29,7 +30,8 @@ public class PerformanceTest : UniversalTestBase
    protected override async Task InitializeAsyncInternal()
    {
       _host = TestingEndpointHost.Create();
-      var endpoint = AccountManagementServerDomainBootstrapper.RegisterWith(_host);
+      var endpoint = _host.RegisterExactlyOnceEndpoint(DomainEndpointName, DomainEndpointId, DeclareDomainEndpoint);
+      _host.RegisterExactlyOnceEndpoint(StatisticsEndpointName, StatisticsEndpointId, DeclareStatisticsEndpoint);
       await _host.StartAsync().caf();
       _client = await TypermediaTestClient.ConnectTo(endpoint.Address!, registrar => registrar.RequireAccountManagementTypeMappings()).caf();
       _scenarioApi = new AccountScenarioApi(_client.Navigator);
