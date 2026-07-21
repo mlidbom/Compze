@@ -1,7 +1,7 @@
 using System.Reflection;
 using Compze.Internals.SystemCE;
 
-namespace Compze.Tests.CodePolicies;
+namespace Compze.Tests.CodePolicies.Infrastructure;
 
 static class AppDomainExtensions
 {

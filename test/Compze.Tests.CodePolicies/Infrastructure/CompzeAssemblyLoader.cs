@@ -1,6 +1,6 @@
 using System.Reflection;
 
-namespace Compze.Tests.CodePolicies;
+namespace Compze.Tests.CodePolicies.Infrastructure;
 
 static class CompzeAssemblyLoader
 {

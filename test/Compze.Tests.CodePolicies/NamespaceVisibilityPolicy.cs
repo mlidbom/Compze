@@ -1,5 +1,6 @@
 using System.Runtime.CompilerServices;
 using Compze.Internals.SystemCE;
+using Compze.Tests.CodePolicies.Infrastructure;
 using Compze.Must;
 using Compze.xUnitBDD;
 

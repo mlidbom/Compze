@@ -1,7 +1,7 @@
 using Compze.Contracts;
 using static Compze.Contracts.Contract;
 
-namespace Compze.Tests.CodePolicies;
+namespace Compze.Tests.CodePolicies.Infrastructure;
 
 ///<summary>Locates the Compze repository the running tests were built from, so code policies can inspect its sources and project layout.</summary>
 static class CompzeRepository

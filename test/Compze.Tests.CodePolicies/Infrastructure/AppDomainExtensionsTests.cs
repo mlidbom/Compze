@@ -3,13 +3,13 @@ using Compze.Must;
 
 using Compze.xUnitBDD;
 
-namespace Compze.Tests.CodePolicies;
+namespace Compze.Tests.CodePolicies.Infrastructure;
 
 public static class AppDomainExtensionsTests
 {
    public static class AllCompzeTypes
    {
-      [XF(Skip = "We are in the middle of a major refactoring and this frequently breaks the tests")]
+      [XF]
       public static void ReturnsTypesFromEveryCompzeAssembly()
       {
          CompzeAssemblyLoader.EnsureAllCompzeAssembliesAreLoaded();
