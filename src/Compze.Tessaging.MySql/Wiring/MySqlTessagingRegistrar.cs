@@ -1,13 +1,13 @@
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Sql.MySql;
-using Compze.Internals.Sql.MySql.Private;
 using Compze.Internals.Sql.MySql.Wiring;
 using Compze.Tessaging.Internal.SqlLayer;
 using Compze.TypeIdentifiers.Interning;
 using Compze.TypeIdentifiers.Interning.MySql.Wiring;
 using Compze.Internals.Sql.MySql.Wiring.Internal;
 using Compze.Tessaging.MySql.Private;
+using Compze.Internals.Sql.MySql.Internal;
 
 namespace Compze.Tessaging.MySql.Wiring;
 

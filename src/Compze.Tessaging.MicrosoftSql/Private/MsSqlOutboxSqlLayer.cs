@@ -1,13 +1,13 @@
 using Compze.Tessaging.Endpoints;
 using Compze.Internals.Sql.Common;
 using Compze.Internals.Sql.MicrosoftSql;
-using Compze.Internals.Sql.MicrosoftSql.Private;
 using Compze.Internals.SystemCE.LinqCE;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tessaging.Internal.SqlLayer;
 using Compze.TypeIdentifiers.Interning;
 using DispatchingTable = Compze.Tessaging.Internal.SqlLayer.ITessagingSqlLayer.OutboxTessageDispatchingTableSchemaStrings;
 using TessageTable = Compze.Tessaging.Internal.SqlLayer.ITessagingSqlLayer.OutboxTessagesDatabaseSchemaStrings;
+using Compze.Internals.Sql.MicrosoftSql.Internal;
 
 namespace Compze.Tessaging.MicrosoftSql.Private;
 

@@ -1,7 +1,7 @@
 using Compze.Internals.Sql.Common;
 using Microsoft.Data.SqlClient;
 
-namespace Compze.Internals.Sql.MicrosoftSql.Private;
+namespace Compze.Internals.Sql.MicrosoftSql.Internal;
 
 static class MsSqlCommandExtensions
 {

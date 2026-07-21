@@ -2,12 +2,12 @@ using System.Data;
 using System.Data.SqlTypes;
 using Compze.Abstractions.Public;
 using Compze.Internals.Sql.Common;
-using Compze.Internals.Sql.MicrosoftSql.Private;
 using Compze.Tessaging;
 using Compze.Teventive.TeventStore.Abstractions.Internal.SqlLayer.Abstractions;
 using Compze.TypeIdentifiers.Interning;
 using Microsoft.Data.SqlClient;
 using Tevent = Compze.Teventive.TeventStore.Abstractions.Internal.SqlLayer.TeventTableSchemaStrings;
+using Compze.Internals.Sql.MicrosoftSql.Internal;
 
 namespace Compze.Teventive.TeventStore.MicrosoftSql.Private;
 

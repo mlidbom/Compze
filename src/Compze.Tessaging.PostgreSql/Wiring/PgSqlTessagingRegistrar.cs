@@ -1,13 +1,13 @@
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Sql.PostgreSql;
-using Compze.Internals.Sql.PostgreSql.Private;
 using Compze.Internals.Sql.PostgreSql.Wiring;
 using Compze.Tessaging.Internal.SqlLayer;
 using Compze.TypeIdentifiers.Interning;
 using Compze.TypeIdentifiers.Interning.PostgreSql.Wiring;
 using Compze.Internals.Sql.PostgreSql.Wiring.Internal;
 using Compze.Tessaging.PostgreSql.Private;
+using Compze.Internals.Sql.PostgreSql.Internal;
 
 namespace Compze.Tessaging.PostgreSql.Wiring;
 

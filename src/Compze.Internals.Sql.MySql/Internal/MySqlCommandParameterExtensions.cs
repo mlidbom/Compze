@@ -1,7 +1,7 @@
 using System.Data;
 using MySqlConnector;
 
-namespace Compze.Internals.Sql.MySql.Private;
+namespace Compze.Internals.Sql.MySql.Internal;
 
 static class MySqlCommandParameterExtensions
 {

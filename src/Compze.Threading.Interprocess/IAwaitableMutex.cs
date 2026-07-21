@@ -1,3 +1,5 @@
+using Compze.Threading.Interprocess.Internal;
+
 namespace Compze.Threading.Interprocess;
 
 /// <summary>

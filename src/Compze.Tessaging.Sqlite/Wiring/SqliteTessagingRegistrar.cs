@@ -1,7 +1,6 @@
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Sql.Sqlite;
-using Compze.Internals.Sql.Sqlite.Private;
 using Compze.Internals.Sql.Sqlite.Wiring;
 using Compze.Tessaging.Endpoints.ExactlyOnce;
 using Compze.Tessaging.Internal.SqlLayer;
@@ -9,6 +8,7 @@ using Compze.TypeIdentifiers.Interning;
 using Compze.TypeIdentifiers.Interning.Sqlite.Wiring;
 using Compze.Internals.Sql.Sqlite.Wiring.Internal;
 using Compze.Tessaging.Sqlite.Private;
+using Compze.Internals.Sql.Sqlite.Internal;
 
 namespace Compze.Tessaging.Sqlite.Wiring;
 

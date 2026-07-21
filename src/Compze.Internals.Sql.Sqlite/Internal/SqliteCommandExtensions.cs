@@ -1,7 +1,7 @@
 using Compze.Internals.Sql.Common;
 using Microsoft.Data.Sqlite;
 
-namespace Compze.Internals.Sql.Sqlite.Private;
+namespace Compze.Internals.Sql.Sqlite.Internal;
 
 static class SqliteCommandExtensions
 {

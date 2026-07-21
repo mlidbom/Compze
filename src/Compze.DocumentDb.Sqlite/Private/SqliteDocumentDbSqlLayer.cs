@@ -2,13 +2,13 @@ using Compze.DocumentDb.Internal.SqlLayer;
 using Compze.DocumentDb.Exceptions;
 using Compze.Internals.Sql.Common;
 using Compze.Internals.Sql.Sqlite;
-using Compze.Internals.Sql.Sqlite.Private;
 using Compze.TypeIdentifiers;
 using Compze.TypeIdentifiers.Interning;
 using Compze.Internals.SystemCE;
 using Microsoft.Data.Sqlite;
 using System.Diagnostics.CodeAnalysis;
 using Schema = Compze.DocumentDb.Internal.SqlLayer.IDocumentDbSqlLayer.DocumentTableSchemaStrings;
+using Compze.Internals.Sql.Sqlite.Internal;
 
 namespace Compze.DocumentDb.Sqlite.Private;
 

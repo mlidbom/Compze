@@ -1,7 +1,6 @@
 using Compze.Tessaging.Endpoints;
 using Compze.Internals.Sql.Common;
 using Compze.Internals.Sql.PostgreSql;
-using Compze.Internals.Sql.PostgreSql.Private;
 using Compze.Internals.SystemCE.LinqCE;
 using NpgsqlTypes;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
@@ -9,6 +8,7 @@ using Compze.Tessaging.Internal.SqlLayer;
 using Compze.TypeIdentifiers.Interning;
 using DispatchingTable = Compze.Tessaging.Internal.SqlLayer.ITessagingSqlLayer.OutboxTessageDispatchingTableSchemaStrings;
 using TessageTable = Compze.Tessaging.Internal.SqlLayer.ITessagingSqlLayer.OutboxTessagesDatabaseSchemaStrings;
+using Compze.Internals.Sql.PostgreSql.Internal;
 
 namespace Compze.Tessaging.PostgreSql.Private;
 

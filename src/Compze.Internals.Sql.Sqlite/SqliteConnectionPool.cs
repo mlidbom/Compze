@@ -6,6 +6,7 @@ using Compze.Internals.Sql.Sqlite.Private;
 using Compze.Internals.SystemCE;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Microsoft.Data.Sqlite;
+using Compze.Internals.Sql.Sqlite.Internal;
 
 namespace Compze.Internals.Sql.Sqlite;
 

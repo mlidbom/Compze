@@ -3,7 +3,7 @@ using Compze.Internals.SystemCE;
 using Npgsql;
 using NpgsqlTypes;
 
-namespace Compze.Internals.Sql.PostgreSql.Private;
+namespace Compze.Internals.Sql.PostgreSql.Internal;
 
 static class NpgsqlCommandParameterExtensions
 {

@@ -15,7 +15,7 @@ static class AppDomainExtensions
          ];
 
       ///<summary>Every type in the loaded Compze library assemblies — the shipped packages the code policies govern.<br/>
-      /// Test assemblies (<c>*.Tests*</c>, <c>*.Specifications</c>) are not policed.</summary>
+      /// Test assemblies (<c>*.Tests*</c>, <c>*.Specifications</c>, <c>*.InternalSpecifications</c>) are not policed.</summary>
       public IReadOnlyList<Type> AllCompzeLibraryTypes() =>
          [
             .. @this.GetAssemblies()
@@ -27,6 +27,6 @@ static class AppDomainExtensions
    static bool IsCompzeLibraryAssembly(Assembly assembly)
    {
       var name = assembly.GetName().Name!;
-      return name.StartsWithOrdinal("Compze.") && !name.ContainsOrdinal(".Tests") && !name.ContainsOrdinal(".Specifications");
+      return name.StartsWithOrdinal("Compze.") && !name.ContainsOrdinal(".Tests") && !name.EndsWithOrdinal("Specifications");
    }
 }

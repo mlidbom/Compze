@@ -1,5 +1,6 @@
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
+using Compze.Internals.Sql.PostgreSql.Internal;
 
 namespace Compze.Internals.Sql.PostgreSql.Wiring.Internal;
 
@@ -9,7 +10,7 @@ static class PgSqlSchemaContributionRegistrar
    {
       ///<summary>Contributes <paramref name="schemaCreationSql"/> — one feature backend's <see cref="Private.PgSqlSchemaContribution"/> —<br/>
       /// to the schema of the database behind the endpoint's <see cref="IPgSqlConnectionPool"/>, and on the first contribution registers the<br/>
-      /// <see cref="Private.PgSqlSqlLayerSchemaManager"/> that creates every contributed schema in a single batch before the database's first use.<br/>
+      /// <see cref="PgSqlSqlLayerSchemaManager"/> that creates every contributed schema in a single batch before the database's first use.<br/>
       /// Called by each PostgreSQL feature backend's registration — never by a composing layer, which stays ignorant of schemas entirely.</summary>
       internal IComponentRegistrar PgSqlSchemaContribution(string schemaCreationSql)
       {
@@ -32,12 +33,12 @@ static class PgSqlSchemaContributionRegistrar
 
       IComponentRegistrar SchemaManagerOnTheFirstContribution()
       {
-         if(!@this.IsRegistered<Private.PgSqlSqlLayerSchemaManager>())
+         if(!@this.IsRegistered<PgSqlSqlLayerSchemaManager>())
          {
-            @this.Register(Singleton.For<Private.PgSqlSqlLayerSchemaManager>()
+            @this.Register(Singleton.For<PgSqlSqlLayerSchemaManager>()
                                     .DelegateToParentServiceLocatorWhenCloning()
                                     .CreatedBy((IPgSqlConnectionPool connectionPool, IComponentSet<Private.PgSqlSchemaContribution> contributions)
-                                                  => new Private.PgSqlSqlLayerSchemaManager(connectionPool, [..contributions.Select(it => it.SchemaCreationSql)])));
+                                                  => new PgSqlSqlLayerSchemaManager(connectionPool, [..contributions.Select(it => it.SchemaCreationSql)])));
          }
 
          return @this;

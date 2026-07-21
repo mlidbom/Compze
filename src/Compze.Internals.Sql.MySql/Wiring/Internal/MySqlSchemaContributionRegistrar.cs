@@ -1,5 +1,6 @@
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
+using Compze.Internals.Sql.MySql.Internal;
 
 namespace Compze.Internals.Sql.MySql.Wiring.Internal;
 
@@ -9,7 +10,7 @@ static class MySqlSchemaContributionRegistrar
    {
       ///<summary>Contributes <paramref name="schemaCreationSql"/> — one feature backend's <see cref="Private.MySqlSchemaContribution"/> —<br/>
       /// to the schema of the database behind the endpoint's <see cref="IMySqlConnectionPool"/>, and on the first contribution registers the<br/>
-      /// <see cref="Private.MySqlSqlLayerSchemaManager"/> that creates every contributed schema in a single batch before the database's first use.<br/>
+      /// <see cref="MySqlSqlLayerSchemaManager"/> that creates every contributed schema in a single batch before the database's first use.<br/>
       /// Called by each MySQL feature backend's registration — never by a composing layer, which stays ignorant of schemas entirely.</summary>
       internal IComponentRegistrar MySqlSchemaContribution(string schemaCreationSql)
       {
@@ -32,12 +33,12 @@ static class MySqlSchemaContributionRegistrar
 
       IComponentRegistrar SchemaManagerOnTheFirstContribution()
       {
-         if(!@this.IsRegistered<Private.MySqlSqlLayerSchemaManager>())
+         if(!@this.IsRegistered<MySqlSqlLayerSchemaManager>())
          {
-            @this.Register(Singleton.For<Private.MySqlSqlLayerSchemaManager>()
+            @this.Register(Singleton.For<MySqlSqlLayerSchemaManager>()
                                     .DelegateToParentServiceLocatorWhenCloning()
                                     .CreatedBy((IMySqlConnectionPool connectionPool, IComponentSet<Private.MySqlSchemaContribution> contributions)
-                                                  => new Private.MySqlSqlLayerSchemaManager(connectionPool, [..contributions.Select(it => it.SchemaCreationSql)])));
+                                                  => new MySqlSqlLayerSchemaManager(connectionPool, [..contributions.Select(it => it.SchemaCreationSql)])));
          }
 
          return @this;

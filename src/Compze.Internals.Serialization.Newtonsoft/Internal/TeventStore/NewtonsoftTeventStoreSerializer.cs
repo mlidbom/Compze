@@ -1,4 +1,5 @@
 using Compze.Abstractions.Public;
+using Compze.Internals.Serialization.Newtonsoft.Private;
 using Compze.TypeIdentifiers;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
@@ -8,7 +9,7 @@ using Compze.Teventive.TeventStore.Abstractions.Internal;
 using Compze.TypeIdentifiers.DependencyInjection;
 using Newtonsoft.Json;
 
-namespace Compze.Internals.Serialization.Newtonsoft.Private.TeventStore;
+namespace Compze.Internals.Serialization.Newtonsoft.Internal.TeventStore;
 
 class NewtonsoftTeventStoreSerializer : ITeventStoreSerializer
 {

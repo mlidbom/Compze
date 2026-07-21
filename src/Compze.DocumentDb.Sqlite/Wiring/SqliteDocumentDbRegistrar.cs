@@ -2,11 +2,11 @@ using Compze.DocumentDb.Internal.SqlLayer;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Sql.Sqlite;
-using Compze.Internals.Sql.Sqlite.Private;
 using Compze.Internals.Sql.Sqlite.Wiring;
 using Compze.TypeIdentifiers.Interning;
 using Layer = Compze.DocumentDb.Sqlite.Private.SqliteDocumentDbSqlLayer;
 using Compze.Internals.Sql.Sqlite.Wiring.Internal;
+using Compze.Internals.Sql.Sqlite.Internal;
 
 namespace Compze.DocumentDb.Sqlite.Wiring;
 

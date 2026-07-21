@@ -2,7 +2,6 @@ using Compze.Abstractions.Public;
 using Compze.Contracts;
 using Compze.Internals.Sql.Common;
 using Compze.Internals.Sql.PostgreSql;
-using Compze.Internals.Sql.PostgreSql.Private;
 using Compze.Internals.SystemCE;
 using Compze.Tessaging;
 using Compze.Teventive.TeventStore.Abstractions.Internal.SqlLayer.Abstractions;

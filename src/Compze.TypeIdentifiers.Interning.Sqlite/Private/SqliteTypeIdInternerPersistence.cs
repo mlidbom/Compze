@@ -3,11 +3,11 @@ using System.Transactions;
 using Compze.Abstractions.Time.Public;
 using Compze.Internals.Sql.Common;
 using Compze.Internals.Sql.Sqlite;
-using Compze.Internals.Sql.Sqlite.Private;
 using Compze.Internals.SystemCE.TransactionsCE;
 using Types = Compze.TypeIdentifiers.Interning.TypeIdsTableSchema.Types;
 using Strings = Compze.TypeIdentifiers.Interning.TypeIdsTableSchema.Strings;
 using Names = Compze.TypeIdentifiers.Interning.TypeIdsTableSchema.Names;
+using Compze.Internals.Sql.Sqlite.Internal;
 
 namespace Compze.TypeIdentifiers.Interning.Sqlite.Private;
 

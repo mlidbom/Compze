@@ -1,11 +1,11 @@
 using Compze.Tessaging.Endpoints;
 using Compze.Internals.Sql.Common;
 using Compze.Internals.Sql.MySql;
-using Compze.Internals.Sql.MySql.Private;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tessaging.Internal.SqlLayer;
 using MySqlConnector;
 using Catalog = Compze.Tessaging.Internal.SqlLayer.ITessagingSqlLayer.EndpointCatalogDatabaseSchemaStrings;
+using Compze.Internals.Sql.MySql.Internal;
 
 namespace Compze.Tessaging.MySql.Private;
 

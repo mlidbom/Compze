@@ -1,3 +1,5 @@
+using Compze.TypeIdentifiers.Internal;
+
 namespace Compze.TypeIdentifiers.Private;
 
 /// <summary>

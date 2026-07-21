@@ -1,13 +1,13 @@
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Sql.MicrosoftSql;
-using Compze.Internals.Sql.MicrosoftSql.Private;
 using Compze.Internals.Sql.MicrosoftSql.Wiring;
 using Compze.Tessaging.Internal.SqlLayer;
 using Compze.TypeIdentifiers.Interning;
 using Compze.TypeIdentifiers.Interning.MicrosoftSql.Wiring;
 using Compze.Internals.Sql.MicrosoftSql.Wiring.Internal;
 using Compze.Tessaging.MicrosoftSql.Private;
+using Compze.Internals.Sql.MicrosoftSql.Internal;
 
 namespace Compze.Tessaging.MicrosoftSql.Wiring;
 

@@ -1,13 +1,13 @@
 using Compze.Abstractions.Public;
 using Compze.Contracts;
 using Compze.Internals.Sql.Common;
-using Compze.Internals.Sql.Sqlite.Private;
 using Compze.Internals.SystemCE;
 using Compze.Tessaging;
 using Compze.Teventive.TeventStore.Abstractions.Internal.SqlLayer.Abstractions;
 using Microsoft.Data.Sqlite;
 using ReadOrder = Compze.Teventive.TeventStore.Abstractions.Internal.SqlLayer.Abstractions.ReadOrder;
 using Tevent = Compze.Teventive.TeventStore.Abstractions.Internal.SqlLayer.TeventTableSchemaStrings;
+using Compze.Internals.Sql.Sqlite.Internal;
 
 namespace Compze.Teventive.TeventStore.Sqlite.Private;
 

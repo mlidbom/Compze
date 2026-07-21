@@ -6,9 +6,16 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Compze.Abstractions.Specifications\Compze.Abstractions.Specifications.csproj" />
+    <ProjectReference Include="..\Compze.DbPool.Tests\Compze.DbPool.Tests.csproj" />
+    <ProjectReference Include="..\Compze.Internals.Serialization.Newtonsoft.InternalSpecifications\Compze.Internals.Serialization.Newtonsoft.InternalSpecifications.csproj" />
+    <ProjectReference Include="..\Compze.Tessaging.InternalSpecifications\Compze.Tessaging.InternalSpecifications.csproj" />
     <ProjectReference Include="..\Compze.Tests.Common\Compze.Tests.Common.csproj" />
     <ProjectReference Include="..\Compze.Tests.Integration\Compze.Tests.Integration.csproj" />
+    <ProjectReference Include="..\Compze.Tests.Performance.Internals\Compze.Tests.Performance.Internals.csproj" />
     <ProjectReference Include="..\Compze.Tests.Unit\Compze.Tests.Unit.csproj" />
+    <ProjectReference Include="..\Compze.Teventive.TeventStore.InternalSpecifications\Compze.Teventive.TeventStore.InternalSpecifications.csproj" />
+    <ProjectReference Include="..\Compze.Threading.InternalSpecifications\Compze.Threading.InternalSpecifications.csproj" />
+    <ProjectReference Include="..\Compze.TypeIdentifiers.Specifications\Compze.TypeIdentifiers.Specifications.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />

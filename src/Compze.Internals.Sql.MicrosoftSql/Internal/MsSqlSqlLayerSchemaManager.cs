@@ -1,8 +1,9 @@
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Internals.SystemCE.TransactionsCE;
 using Compze.Threading;
+using Compze.Internals.Sql.MicrosoftSql.Private;
 
-namespace Compze.Internals.Sql.MicrosoftSql.Private;
+namespace Compze.Internals.Sql.MicrosoftSql.Internal;
 
 ///<summary>Runs the supplied schema-creation scripts against its database as a single suppressed-transaction batch — exactly once, on first touch.</summary>
 ///<remarks>For the domain database an endpoint joins the scripts arrive as <see cref="MsSqlSchemaContribution"/>s, each feature backend's registration<br/>

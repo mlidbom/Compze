@@ -2,7 +2,6 @@ using Compze.DocumentDb.Internal.SqlLayer;
 using Compze.DocumentDb.Exceptions;
 using Compze.Internals.Sql.Common;
 using Compze.Internals.Sql.PostgreSql;
-using Compze.Internals.Sql.PostgreSql.Private;
 using Compze.TypeIdentifiers;
 using Compze.TypeIdentifiers.Interning;
 using Compze.Internals.SystemCE;
