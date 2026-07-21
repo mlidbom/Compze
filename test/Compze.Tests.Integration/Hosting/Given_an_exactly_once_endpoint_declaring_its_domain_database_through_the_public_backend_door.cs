@@ -18,7 +18,6 @@ using Compze.DocumentDb.PostgreSql.Wiring;
 using Compze.DocumentDb.Sqlite.Wiring;
 using Compze.Tessaging.TessageBus;
 using Compze.Tessaging.Endpoints.ExactlyOnce;
-using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Tessaging.MicrosoftSql.Wiring;
 using Compze.Tessaging.MySql.Wiring;
 using Compze.Tessaging.PostgreSql.Wiring;

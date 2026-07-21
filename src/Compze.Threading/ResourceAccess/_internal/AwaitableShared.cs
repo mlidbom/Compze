@@ -1,7 +1,6 @@
 // ReSharper disable ConvertToPrimaryConstructor
 
 using System.Diagnostics.CodeAnalysis;
-using Compze.SystemCE;
 
 namespace Compze.Threading.ResourceAccess._internal;
 
