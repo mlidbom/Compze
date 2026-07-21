@@ -161,7 +161,8 @@ public class IAwaitableCriticalSection_specification : UniversalTestBase
 
          _runner.Run(() =>
          {
-            criticalSection.UpdateWhen(() => conditionMet, () => actionExecuted = true);
+            //A statement-block lambda so overload resolution picks the Action-taking UpdateWhen under specification - the expression form would bind to the Func overload.
+            criticalSection.UpdateWhen(() => conditionMet, () => { actionExecuted = true; });
             updateWhenReturned.AwaitPassThrough();
          });
 

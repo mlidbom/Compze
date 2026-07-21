@@ -55,12 +55,12 @@ static class TessageTypeInspector
       foreach(var rule in TessageTypeDesignRules) rule.AssertFulfilledBy(type);
    }
 
-   public abstract class TessageTypeDesignRule
+   abstract class TessageTypeDesignRule
    {
       internal abstract void AssertFulfilledBy(Type type);
    }
 
-   public abstract class SimpleTessageTypeDesignRule : TessageTypeDesignRule
+   abstract class SimpleTessageTypeDesignRule : TessageTypeDesignRule
    {
       protected abstract bool IsInvalid(Type type);
       protected abstract string CreateTessage(Type type);

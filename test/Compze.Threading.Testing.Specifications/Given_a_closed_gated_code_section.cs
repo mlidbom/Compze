@@ -15,7 +15,8 @@ public class Given_a_closed_gated_code_section : UniversalTestBase
    [XF] public void ExecuteWithExclusiveLock_with_an_action_executes_the_action_receiving_the_section_itself()
    {
       IGatedCodeSection? received = null;
-      _codeSection.ExecuteWithExclusiveLock(section => received = section);
+      //A statement-block lambda so overload resolution picks the action-taking ExecuteWithExclusiveLock under specification - the expression form would bind to the result-returning overload.
+      _codeSection.ExecuteWithExclusiveLock(section => { received = section; });
       received.Must().NotBeNull().ReferenceEqual(_codeSection);
    }
 }
