@@ -15,7 +15,7 @@ public static partial class NamespaceVisibilityPolicy
       ///<summary>Namespaces without an <c>_internal</c> or <c>_private</c> section that hold top-level internal types —<br/>
       /// each burns down by moving its internal types below the concept's <c>_private</c> section — or <c>_internal</c>,
       /// when other assemblies genuinely consume them.</summary>
-      public static readonly IReadOnlyList<string> NamespacesWithInternalTopLevelTypesOutsideInternalOrPrivateSections =
+      public static readonly IReadOnlyList<string> InternalTopLevelTypesOutsideInternalOrPrivateSections =
       [
       ];
    }

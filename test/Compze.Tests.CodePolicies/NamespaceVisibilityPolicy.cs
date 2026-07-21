@@ -1,5 +1,6 @@
 using System.Runtime.CompilerServices;
 using Compze.Internals.SystemCE;
+using Compze.Internals.SystemCE.ReflectionCE;
 using Compze.Tests.CodePolicies.Infrastructure;
 using Compze.Must;
 using Compze.xUnitBDD;
@@ -36,12 +37,12 @@ public static partial class NamespaceVisibilityPolicy
                                                      && !type.IsDefined(typeof(CompilerGeneratedAttribute), inherit: false)
                                                      && type.Namespace?.StartsWithOrdinal("Compze") == true
                                                      && !HasNonPublicSection(type.Namespace))
-                                         .Select(type => type.Namespace!)
+                                         .Select(type => type.GetFullNameCompilable())
                                          .Distinct()
                                          .Order(StringComparer.Ordinal)
                                          .ToList();
 
-      violatingNamespaces.Must().SequenceEqual(KnownViolations.NamespacesWithInternalTopLevelTypesOutsideInternalOrPrivateSections);
+      violatingNamespaces.Must().SequenceEqual(KnownViolations.InternalTopLevelTypesOutsideInternalOrPrivateSections);
    }
 
    ///<summary>Namespaces named Public were the old strategy's inverse marking — labeling the public face instead of hiding
