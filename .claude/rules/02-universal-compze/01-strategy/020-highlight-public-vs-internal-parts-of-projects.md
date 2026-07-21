@@ -33,5 +33,5 @@ Note: It is possible that some existing "Internals" projects should simply not e
 
 Note: The name Internals is also up for debate and may well be changed to make the meaning clearer.
 
-## Public namespaces
-Public namespaces are a legacy of an old strategy. They should all be removed. Public is the default face of a project and what you see in it's root folder is expected to be public, with the non-public implementation details hidden away in other namespaces, or nested as private/internal types inside the public types
+## Public namespaces are gone — public is the default face
+An old strategy marked the public side with namespaces named Public. That is inverted now: what you see in a project's root namespace is expected to be public, with the non-public implementation details hidden below _internal/_private sections or nested as private/internal types inside the public types. No namespace may contain a Public section — enforced by Compze.Tests.CodePolicies' NamespaceVisibilityPolicy, tests included.

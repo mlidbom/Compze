@@ -1,6 +1,6 @@
 using AccountManagement.Domain.Tevents;
 using Compze.DocumentDb;
-using Compze.Abstractions.Public;
+using Compze.Abstractions;
 using Compze.DependencyInjection;
 using Compze.Tessaging.Endpoints.ExactlyOnce;
 using Compze.Tessaging.TessageBus;

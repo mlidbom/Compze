@@ -1,5 +1,5 @@
 using Compze.Tessaging.Endpoints;
-using Compze.Abstractions.Time.Public;
+using Compze.Abstractions.Time;
 using Compze.DependencyInjection;
 using Compze.Must;
 using Compze.Tessaging.Endpoints.ExactlyOnce;

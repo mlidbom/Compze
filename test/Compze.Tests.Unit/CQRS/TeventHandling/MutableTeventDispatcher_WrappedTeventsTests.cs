@@ -2,7 +2,7 @@ using Compze.Tessaging.TessageBus;
 using Compze.Tessaging.TessageTypes;
 using Compze.Tests.Infrastructure;
 using Compze.Teventive;
-using Compze.Teventive.Taggregates.Tevents.Public;
+using Compze.Teventive.Taggregates.Tevents;
 using Compze.xUnitBDD;
 
 namespace Compze.Tests.Unit.CQRS.TeventHandling;

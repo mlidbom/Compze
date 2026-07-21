@@ -1,7 +1,7 @@
 using Compze.Contracts;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Teventive._internal.Implementation;
-using Compze.Teventive.TeventStore.Abstractions.Refactoring.Migrations.Public;
+using Compze.Teventive.TeventStore.Abstractions.Refactoring.Migrations;
 using Compze.TypeIdentifiers.DependencyInjection;
 using Compze.Teventive.TeventStore.Refactoring.Migrations._private;
 using Compze.Teventive.TeventStore._private;

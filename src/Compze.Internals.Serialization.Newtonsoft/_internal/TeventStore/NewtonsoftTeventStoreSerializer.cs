@@ -1,10 +1,10 @@
-using Compze.Abstractions.Public;
+using Compze.Abstractions;
 using Compze.Internals.Serialization.Newtonsoft._private;
 using Compze.TypeIdentifiers;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Tessaging.TessageTypes;
-using Compze.Teventive.Taggregates.Tevents.Public;
+using Compze.Teventive.Taggregates.Tevents;
 using Compze.Teventive.TeventStore.Abstractions._internal;
 using Compze.TypeIdentifiers.DependencyInjection;
 using Newtonsoft.Json;

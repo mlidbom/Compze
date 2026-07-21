@@ -1,6 +1,6 @@
 using Compze.Tessaging.TessageBus;
 using Compze.Tessaging.TessageTypes;
-using Compze.Teventive.Taggregates.Tevents.Public;
+using Compze.Teventive.Taggregates.Tevents;
 using static System.Console;
 
 #pragma warning disable // Documentation example code: deliberately illustrative fragments (empty marker interfaces, never-instantiated examples), not production code.

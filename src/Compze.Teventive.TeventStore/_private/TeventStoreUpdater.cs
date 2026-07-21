@@ -1,5 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
-using Compze.Abstractions.Public;
+using Compze.Abstractions;
 using Compze.Contracts;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
@@ -9,9 +9,9 @@ using Compze.Internals.SystemCE.ReflectionCE;
 using Compze.Internals.SystemCE.UsageGuards;
 using Compze.Tessaging.TessageBus;
 using Compze.Teventive._internal;
-using Compze.Teventive.Taggregates.Tevents.Public;
-using Compze.Teventive.TeventStore.Abstractions.Public;
-using Compze.Teventive.TeventStore.Abstractions.Public.Exceptions;
+using Compze.Teventive.Taggregates.Tevents;
+using Compze.Teventive.TeventStore.Abstractions;
+using Compze.Teventive.TeventStore.Abstractions.Exceptions;
 using static Compze.Contracts.Contract;
 
 namespace Compze.Teventive.TeventStore._private;

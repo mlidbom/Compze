@@ -1,4 +1,4 @@
-using Compze.Teventive.Taggregates.Tevents.Public;
+using Compze.Teventive.Taggregates.Tevents;
 
 namespace Compze.Teventive.TeventStore.Abstractions._internal;
 

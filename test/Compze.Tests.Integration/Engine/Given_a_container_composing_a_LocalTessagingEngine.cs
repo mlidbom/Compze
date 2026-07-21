@@ -14,7 +14,7 @@ using Compze.Tessaging.TessageTypes;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Integration.InProcess;
 using Compze.Teventive.Taggregates.BaseClasses;
-using Compze.Teventive.Taggregates.Tevents.Public;
+using Compze.Teventive.Taggregates.Tevents;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Threading;
 using Compze.Threading.Testing;

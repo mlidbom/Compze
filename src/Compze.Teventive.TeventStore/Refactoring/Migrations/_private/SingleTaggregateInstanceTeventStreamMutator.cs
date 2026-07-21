@@ -1,10 +1,10 @@
-using Compze.Abstractions.Public;
+using Compze.Abstractions;
 using Compze.Contracts;
 using Compze.Internals.SystemCE.LinqCE;
 using Compze.Teventive.Taggregates.BaseClasses;
-using Compze.Teventive.Taggregates.Tevents.Public;
+using Compze.Teventive.Taggregates.Tevents;
 using Compze.Teventive.TeventStore.Abstractions.Refactoring.Migrations._internal;
-using Compze.Teventive.TeventStore.Abstractions.Refactoring.Migrations.Public;
+using Compze.Teventive.TeventStore.Abstractions.Refactoring.Migrations;
 using Compze.Teventive.TeventStore._private;
 
 // ReSharper disable ForCanBeConvertedToForeach

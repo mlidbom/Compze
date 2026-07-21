@@ -1,5 +1,5 @@
 using Compze.Internals.SystemCE.ReflectionCE;
-using Compze.Teventive.Taggregates.Tevents.Public;
+using Compze.Teventive.Taggregates.Tevents;
 
 namespace Compze.Teventive.TeventStore.QueryModels.SelfGeneratingQueryModels;
 

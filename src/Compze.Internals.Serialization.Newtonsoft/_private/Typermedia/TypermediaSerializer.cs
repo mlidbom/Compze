@@ -1,9 +1,9 @@
 using Compze.Tessaging.Typermedia._internal;
-using Compze.Abstractions.Public;
+using Compze.Abstractions;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Tessaging.TessageTypes;
-using Compze.Teventive.Taggregates.Tevents.Public;
+using Compze.Teventive.Taggregates.Tevents;
 using Compze.TypeIdentifiers;
 using Compze.TypeIdentifiers.DependencyInjection;
 

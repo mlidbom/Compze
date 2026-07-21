@@ -1,4 +1,4 @@
-using Compze.DocumentDb.Public;
+using Compze.DocumentDb;
 using Compze.Contracts;
 
 namespace Compze.DocumentDb._private;

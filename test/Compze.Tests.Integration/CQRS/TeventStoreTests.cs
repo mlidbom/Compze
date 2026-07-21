@@ -1,4 +1,4 @@
-using Compze.Abstractions.Public;
+using Compze.Abstractions;
 using Compze.Hosting.Testing;
 using Compze.Internals.Testing;
 using Compze.Tests.Common;
@@ -13,8 +13,8 @@ using Compze.Must;
 using Compze.Tessaging.TessageBus;
 using Compze.Teventive;
 using Compze.Teventive.Taggregates.BaseClasses;
-using Compze.Teventive.Taggregates.Tevents.Public;
-using Compze.Teventive.TeventStore.Abstractions.Public;
+using Compze.Teventive.Taggregates.Tevents;
+using Compze.Teventive.TeventStore.Abstractions;
 
 namespace Compze.Tests.Integration.CQRS;
 

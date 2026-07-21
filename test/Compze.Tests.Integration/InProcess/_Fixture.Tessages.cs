@@ -1,8 +1,8 @@
-using Compze.Abstractions.Public;
+using Compze.Abstractions;
 using Compze.Tessaging;
 using Compze.Tessaging.TessageBus;
 using Compze.Tessaging.TessageTypes;
-using Compze.Teventive.Taggregates.Tevents.Public;
+using Compze.Teventive.Taggregates.Tevents;
 
 // ReSharper disable ClassNeverInstantiated.Global
 

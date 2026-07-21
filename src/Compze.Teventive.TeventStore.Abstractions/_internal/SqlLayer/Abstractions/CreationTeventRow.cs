@@ -1,4 +1,4 @@
-using Compze.Abstractions.Public;
+using Compze.Abstractions;
 using Compze.TypeIdentifiers;
 
 namespace Compze.Teventive.TeventStore.Abstractions._internal.SqlLayer.Abstractions;

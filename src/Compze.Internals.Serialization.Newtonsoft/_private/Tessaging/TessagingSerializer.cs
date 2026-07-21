@@ -1,4 +1,4 @@
-using Compze.Abstractions.Public;
+using Compze.Abstractions;
 using Compze.TypeIdentifiers;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;

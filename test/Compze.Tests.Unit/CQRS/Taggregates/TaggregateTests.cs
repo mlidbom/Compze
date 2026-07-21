@@ -1,13 +1,13 @@
-using Compze.Abstractions.Time.Public;
+using Compze.Abstractions.Time;
 using Compze.Tests.Infrastructure;
 using Compze.Internals.SystemCE.ReactiveCE;
 using Compze.xUnitBDD;
-using Compze.Abstractions.Public;
+using Compze.Abstractions;
 using Compze.Must;
 
 using Compze.Teventive;
 using Compze.Teventive.Taggregates.BaseClasses;
-using Compze.Teventive.Taggregates.Tevents.Public;
+using Compze.Teventive.Taggregates.Tevents;
 
 namespace Compze.Tests.Unit.CQRS.Taggregates;
 

@@ -1,6 +1,6 @@
 using Compze.Tessaging.Endpoints.ExactlyOnce;
 using Compze.Tessaging.Typermedia;
-using Compze.Teventive.Taggregates.Tevents.Public;
+using Compze.Teventive.Taggregates.Tevents;
 using Compze.Teventive.TeventStore.Wiring;
 using Compze.TypeIdentifiers.DependencyInjection;
 

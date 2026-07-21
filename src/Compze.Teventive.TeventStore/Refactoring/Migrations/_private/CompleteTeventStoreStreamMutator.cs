@@ -1,8 +1,8 @@
-using Compze.Abstractions.Public;
+using Compze.Abstractions;
 using Compze.Internals.SystemCE.CollectionsCE.GenericCE;
-using Compze.Teventive.Taggregates.Tevents.Public;
+using Compze.Teventive.Taggregates.Tevents;
 using Compze.Teventive.TeventStore.Abstractions.Refactoring.Migrations._internal;
-using Compze.Teventive.TeventStore.Abstractions.Refactoring.Migrations.Public;
+using Compze.Teventive.TeventStore.Abstractions.Refactoring.Migrations;
 
 namespace Compze.Teventive.TeventStore.Refactoring.Migrations._private;
 

@@ -1,6 +1,6 @@
 using System.Collections.ObjectModel;
 using System.Transactions;
-using Compze.Abstractions.Public;
+using Compze.Abstractions;
 using Compze.xUnitMatrix;
 using JetBrains.Annotations;
 using Compze.Internals.SystemCE.TransactionsCE;
@@ -23,8 +23,8 @@ using Compze.Must;
 using Compze.Tessaging.TessageBus;
 using Compze.Tessaging.TessageTypes;
 using Compze.Teventive;
-using Compze.Teventive.Taggregates.Tevents.Public;
-using Compze.Teventive.TeventStore.Abstractions.Public;
+using Compze.Teventive.Taggregates.Tevents;
+using Compze.Teventive.TeventStore.Abstractions;
 using EnumerableCE = Compze.Internals.SystemCE.LinqCE.EnumerableCE;
 
 // ReSharper disable AccessToDisposedClosure

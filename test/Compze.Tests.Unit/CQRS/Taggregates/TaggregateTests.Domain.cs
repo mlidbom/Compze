@@ -1,6 +1,6 @@
-using Compze.Abstractions.Public;
+using Compze.Abstractions;
 using Compze.Teventive.Taggregates.BaseClasses;
-using Compze.Teventive.Taggregates.Tevents.Public;
+using Compze.Teventive.Taggregates.Tevents;
 using JetBrains.Annotations;
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 

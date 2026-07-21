@@ -1,8 +1,8 @@
 using Compze.Teventive;
 using Compze.Teventive.Taggregates.BaseClasses;
-using Compze.Teventive.Taggregates.Tevents.Public;
-using Compze.TypeIdentifiers;
+using Compze.Teventive.Taggregates.Tevents;
 using Compze.Teventive._private;
+using Compze.TypeIdentifiers;
 
 [assembly: AssemblyTypeMapper(typeof(AssemblyTypeMapper))]
 

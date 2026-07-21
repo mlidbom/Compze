@@ -1,8 +1,8 @@
 using System.Diagnostics.CodeAnalysis;
 using Compze.DocumentDb.Infrastructure;
 using Compze.DocumentDb.Exceptions;
-using Compze.DocumentDb.Public;
-using Compze.Abstractions.Public;
+using Compze.DocumentDb;
+using Compze.Abstractions;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.TransactionsCE;

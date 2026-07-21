@@ -1,6 +1,6 @@
 using System.Data;
 using System.Data.SqlTypes;
-using Compze.Abstractions.Public;
+using Compze.Abstractions;
 using Compze.Internals.Sql.Common;
 using Compze.Tessaging;
 using Compze.Teventive.TeventStore.Abstractions._internal.SqlLayer.Abstractions;

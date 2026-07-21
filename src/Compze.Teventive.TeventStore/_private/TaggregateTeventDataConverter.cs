@@ -1,4 +1,4 @@
-using Compze.Teventive.Taggregates.Tevents.Public;
+using Compze.Teventive.Taggregates.Tevents;
 using Compze.Teventive.TeventStore.Abstractions._internal.SqlLayer.Abstractions;
 
 namespace Compze.Teventive.TeventStore._private;

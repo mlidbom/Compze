@@ -1,5 +1,5 @@
 using System.Data;
-using Compze.Abstractions.Public;
+using Compze.Abstractions;
 using Compze.Contracts;
 using Compze.Internals.Sql.Common;
 using Compze.Internals.SystemCE;

@@ -1,7 +1,7 @@
 using AccountManagement.Domain;
 using AccountManagement.UI.QueryModels;
 using CommunityToolkit.Diagnostics;
-using Compze.Abstractions.Public;
+using Compze.Abstractions;
 using Compze.Tessaging.TessageTypes;
 using Compze.Teventive.TeventStore.Typermedia;
 

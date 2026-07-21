@@ -1,4 +1,4 @@
-using Compze.Abstractions.Public;
+using Compze.Abstractions;
 using Compze.Hosting.Testing.Wiring;
 using Compze.Tests.Common;
 using Compze.Tests.Common.Sql.DocumentDb;

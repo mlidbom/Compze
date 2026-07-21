@@ -1,9 +1,9 @@
 using Compze.Contracts;
 using Compze.Internals.SystemCE.CollectionsCE.GenericCE;
 using Compze.Internals.SystemCE.LinqCE;
-using Compze.Teventive.Taggregates.Tevents.Public;
+using Compze.Teventive.Taggregates.Tevents;
 using Compze.Teventive.TeventStore.Abstractions._internal.SqlLayer.Abstractions;
-using Compze.Teventive.TeventStore.Abstractions.Refactoring.Migrations.Public;
+using Compze.Teventive.TeventStore.Abstractions.Refactoring.Migrations;
 
 #pragma warning disable CS0618 // Type or member is obsolete
 

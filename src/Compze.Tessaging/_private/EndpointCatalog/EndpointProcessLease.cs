@@ -1,5 +1,5 @@
 using System.Transactions;
-using Compze.Abstractions.Time.Public;
+using Compze.Abstractions.Time;
 using Compze.Contracts;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;

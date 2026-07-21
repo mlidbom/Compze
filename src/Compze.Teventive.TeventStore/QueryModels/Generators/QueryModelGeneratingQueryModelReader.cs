@@ -1,8 +1,8 @@
 using System.Diagnostics.CodeAnalysis;
-using Compze.Abstractions.Public;
+using Compze.Abstractions;
 using Compze.Contracts;
 using Compze.DocumentDb.Infrastructure;
-using Compze.Teventive.TeventStore.Abstractions.QueryModels.Generators.Public;
+using Compze.Teventive.TeventStore.Abstractions.QueryModels.Generators;
 
 namespace Compze.Teventive.TeventStore.QueryModels.Generators;
 

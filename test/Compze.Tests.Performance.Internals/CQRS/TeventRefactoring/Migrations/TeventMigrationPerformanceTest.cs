@@ -1,5 +1,5 @@
-using Compze.Abstractions.Public;
-using Compze.Abstractions.Time.Public;
+using Compze.Abstractions;
+using Compze.Abstractions.Time;
 using Compze.Hosting.Testing;
 using Compze.Hosting.Testing.Wiring;
 using Compze.Internals.Testing;
@@ -15,7 +15,7 @@ using Compze.Internals.SystemCE.LinqCE;
 using Compze.Contracts;
 using Compze.Tests.Common.CQRS.TeventRefactoring.Migrations.Tevents;
 using Compze.Teventive;
-using Compze.Teventive.TeventStore.Abstractions.Refactoring.Migrations.Public;
+using Compze.Teventive.TeventStore.Abstractions.Refactoring.Migrations;
 
 namespace Compze.Tests.Performance.Internals.CQRS.TeventRefactoring.Migrations;
 
