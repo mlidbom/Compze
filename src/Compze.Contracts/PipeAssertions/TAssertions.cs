@@ -8,7 +8,7 @@ namespace Compze.Contracts;
 // ReSharper disable once InconsistentNaming
 public static class TAssertions
 {
-   ///<summary>Throws <see cref="AssertionFailedException"/> if the value is null. Returns the value as non-nullable on success.</summary>
+   ///<summary>Throws <see cref="AssertionFailedException"/> if the value is false. Returns the value on success.</summary>
    [MethodImpl(MethodImplOptions.AggressiveInlining)]
    public static bool True(this PipeAssertTarget<bool> @this)
    {

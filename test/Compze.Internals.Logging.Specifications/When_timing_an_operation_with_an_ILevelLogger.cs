@@ -61,6 +61,27 @@ public class When_timing_an_operation_with_an_ILevelLogger
       [XF] public void the_second_line_reports_the_elapsed_time() => _logger.Captured[1].Template.Must().NotBeNull().Be("{spanPath} {label} took {elapsedMs:F1}ms");
    }
 
+   public class that_returns_nothing : When_timing_an_operation_with_an_ILevelLogger
+   {
+      int _operationRunCount;
+      public that_returns_nothing() => _logger.Debug().ExecutionTime(() => { _operationRunCount++; });
+
+      [XF] public void the_operation_runs_exactly_once() => _operationRunCount.Must().Be(1);
+      [XF] public void two_lines_are_logged() => _logger.Captured.Count.Must().Be(2);
+      [XF] public void the_second_line_reports_the_elapsed_time() => _logger.Captured[1].Template.Must().NotBeNull().Be("{spanPath} {label} took {elapsedMs:F1}ms");
+   }
+
+   public class that_is_asynchronous_and_returns_nothing : When_timing_an_operation_with_an_ILevelLogger
+   {
+      int _operationRunCount;
+      public that_is_asynchronous_and_returns_nothing() => AwaitTimedOperation().GetAwaiter().GetResult();
+      async Task AwaitTimedOperation() => await _logger.Debug().ExecutionTimeAsync(async () => { await Task.Yield(); _operationRunCount++; });
+
+      [XF] public void the_operation_runs_exactly_once() => _operationRunCount.Must().Be(1);
+      [XF] public void two_lines_are_logged() => _logger.Captured.Count.Must().Be(2);
+      [XF] public void the_second_line_reports_the_elapsed_time() => _logger.Captured[1].Template.Must().NotBeNull().Be("{spanPath} {label} took {elapsedMs:F1}ms");
+   }
+
    public class that_contains_a_nested_timed_operation : When_timing_an_operation_with_an_ILevelLogger
    {
       public that_contains_a_nested_timed_operation() => _logger.Debug().ExecutionTime("outer", () => _logger.Debug().ExecutionTime("inner", () => 0));
