@@ -7,6 +7,12 @@
     <NoWarn>CS1591</NoWarn>
     <Description>Document database for the Compze framework: typed document storage, reading, updating, and bulk operations.</Description>
   </PropertyGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="Compze.DocumentDb.MicrosoftSql" />
+    <InternalsVisibleTo Include="Compze.DocumentDb.MySql" />
+    <InternalsVisibleTo Include="Compze.DocumentDb.PostgreSql" />
+    <InternalsVisibleTo Include="Compze.DocumentDb.Sqlite" />
+  </ItemGroup>
   <!-- Compze.Abstractions — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Abstractions)' == 'true'">
     <PackageReference Include="Compze.Abstractions" Version="*-*" />

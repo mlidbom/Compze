@@ -1,16 +1,17 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Transactions;
-using Compze.Abstractions.Public;
+using Compze.Abstractions;
 using Compze.Contracts;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE;
 using Compze.Internals.SystemCE.TransactionsCE;
-using Compze.Teventive.Taggregates.Tevents.Public;
-using Compze.Teventive.TeventStore.Abstractions.Internal.SqlLayer.Abstractions;
+using Compze.Teventive.Taggregates.Tevents;
+using Compze.Teventive.TeventStore.Abstractions._internal.SqlLayer.Abstractions;
 using Compze.Threading;
 using Compze.Threading.ResourceAccess;
 using Microsoft.Extensions.Caching.Memory;
+using Compze.Teventive.TeventStore._private;
 
 namespace Compze.Teventive.TeventStore;
 

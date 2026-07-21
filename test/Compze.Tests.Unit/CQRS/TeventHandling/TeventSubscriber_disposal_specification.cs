@@ -2,7 +2,7 @@ using Compze.Contracts.Exceptions;
 using Compze.Must;
 
 using Compze.Teventive;
-using Compze.Teventive.Taggregates.Tevents.Public;
+using Compze.Teventive.Taggregates.Tevents;
 using Compze.xUnitBDD;
 
 using static Compze.Must.MustActions;

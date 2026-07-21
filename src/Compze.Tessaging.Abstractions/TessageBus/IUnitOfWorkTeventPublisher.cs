@@ -1,6 +1,7 @@
-using Compze.Tessaging.Abstractions.TessageTypes;
 
-namespace Compze.Tessaging.Abstractions.TessageBus;
+using Compze.Tessaging.TessageTypes;
+
+namespace Compze.Tessaging.TessageBus;
 
 ///<summary>Publishes tevents within the caller's unit of work: the publisher is scoped, participation delivers through the<br/>
 /// caller's scope, and the caller's ambient transaction decides when remote delivery happens. Anything running inside a unit of<br/>

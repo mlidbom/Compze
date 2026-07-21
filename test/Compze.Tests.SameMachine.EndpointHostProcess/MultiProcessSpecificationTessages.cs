@@ -1,5 +1,5 @@
-using Compze.Tessaging.Abstractions.TessageTypes;
 using Compze.Tessaging.Endpoints;
+using Compze.Tessaging.TessageTypes;
 using Compze.TypeIdentifiers;
 
 [assembly: AssemblyTypeMapper(typeof(Compze.Tests.SameMachine.EndpointHostProcess.AssemblyTypeMapper))]

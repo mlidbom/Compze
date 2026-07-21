@@ -93,8 +93,9 @@ var endpoint = host.RegisterEndpoint(container => ExactlyOnceEndpoint.Compose(
       endpoint.ParticipateIn(registry);
 
       endpoint.RegisterComponents(registrar => registrar.RequireMyDomainTypeMappings());
-      endpoint.RegisterTessageHandlers(handle => handle
-         .ForTevent(async (IAccountTevent tevent, IUnitOfWorkResolver unitOfWork) => ...)
+      endpoint.RegisterTessageBusHandlers(handle => handle
+         .ForTevent(async (IAccountTevent tevent, IUnitOfWorkResolver unitOfWork) => ...));
+      endpoint.RegisterTypermediaHandlers(handle => handle
          .ForTuery((AccountTuery tuery) => ...));
    }));
 host.Start();
@@ -206,8 +207,9 @@ there is exactly one definition of what the engine is:
 ```csharp
 var builder = /* any Compze container builder */;
 builder.Registrar.LocalTessagingEngine(engine => engine
-   .RegisterTessageHandlers(handle => handle
-      .ForTevent((ISomethingHappenedTevent tevent) => ...)
+   .RegisterTessageBusHandlers(handle => handle
+      .ForTevent((ISomethingHappenedTevent tevent) => ...))
+   .RegisterTypermediaHandlers(handle => handle
       .ForTuery((SomeTuery tuery) => ...)));
 var container = builder.Build();
 ```
@@ -259,7 +261,7 @@ using var host = TestingEndpointHost.Create();
 var backend = host.RegisterExactlyOnceEndpoint("Backend", backendId, endpoint =>
 {
    endpoint.RegisterComponents(registrar => registrar.RequireMyDomainTypeMappings());
-   endpoint.RegisterTessageHandlers(handle => ...);
+   endpoint.RegisterTessageBusHandlers(handle => ...);
 });
 ```
 

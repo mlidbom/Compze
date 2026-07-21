@@ -1,7 +1,7 @@
 <Solution>
   <Project Path="src/Compze.Internals.Serialization.Newtonsoft/Compze.Internals.Serialization.Newtonsoft.csproj" />
   <Folder Name="/Tests/">
-    <Project Path="test/Compze.Internals.Serialization.Newtonsoft.Specifications/Compze.Internals.Serialization.Newtonsoft.Specifications.csproj" />
+    <Project Path="test/Compze.Internals.Serialization.Newtonsoft.InternalSpecifications/Compze.Internals.Serialization.Newtonsoft.InternalSpecifications.csproj" />
     <Project Path="test/Compze.Tests.Infrastructure/Compze.Tests.Infrastructure.csproj" />
   </Folder>
 </Solution>

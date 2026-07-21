@@ -2,6 +2,8 @@
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
+    <!-- The project name stays provisional while the paradigm's project topology settles; the namespaces are already final. -->
+    <RootNamespace>Compze.Tessaging</RootNamespace>
     <Version>0.4.0-alpha</Version>
     <!-- TODO:docs: Remove once all public API members have XML documentation comments -->
     <NoWarn>CS1591</NoWarn>
@@ -9,7 +11,8 @@
   </PropertyGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="Compze.Tessaging" />
-    <InternalsVisibleTo Include="Compze.Tests.Unit" />
+    <InternalsVisibleTo Include="Compze.Tessaging.InternalSpecifications" />
+    <InternalsVisibleTo Include="Compze.Teventive" />
   </ItemGroup>
   <!-- Compze.Abstractions — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Abstractions)' == 'true'">
@@ -45,8 +48,5 @@
   </ItemGroup>
   <ItemGroup Condition="'$(UsePackageReference_Compze_TypeIdentifiers)' != 'true'">
     <ProjectReference Include="..\Compze.TypeIdentifiers\Compze.TypeIdentifiers.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Typermedia\" />
   </ItemGroup>
 </Project>

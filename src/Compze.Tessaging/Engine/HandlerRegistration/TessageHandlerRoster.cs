@@ -1,11 +1,11 @@
+using Compze.Tessaging.Engine._private;
+using Compze.Tessaging.Engine.HandlerRegistration._private;
 using Compze.Contracts;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.ReflectionCE;
-using Compze.Tessaging.Abstractions.TessageBus;
-using Compze.Tessaging.Abstractions.TessageTypes;
+using Compze.Tessaging.TessageBus;
 using Compze.Tessaging.Engine.Exceptions;
-using Compze.Tessaging.Engine.HandlerRegistration.TessageHandlers;
-using Compze.Tessaging.Engine.HandlerRegistration.TeventObservation;
+using Compze.Tessaging.TessageTypes;
 using Compze.TypeIdentifiers;
 
 namespace Compze.Tessaging.Engine.HandlerRegistration;

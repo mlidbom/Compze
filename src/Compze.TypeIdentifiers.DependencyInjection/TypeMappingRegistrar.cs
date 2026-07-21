@@ -1,5 +1,6 @@
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
+using Compze.TypeIdentifiers.DependencyInjection._private;
 
 namespace Compze.TypeIdentifiers.DependencyInjection;
 

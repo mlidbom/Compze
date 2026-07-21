@@ -1,6 +1,6 @@
 using Compze.Contracts;
 using Compze.Internals.SystemCE.ReflectionCE;
-using Compze.Tessaging.Abstractions.TessageTypes;
+using Compze.Tessaging.TessageTypes;
 
 namespace Compze.Tessaging.Endpoints;
 

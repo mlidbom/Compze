@@ -3,14 +3,13 @@ using AccountManagement.Domain;
 using AccountManagement.Domain.Tevents;
 using AccountManagement.Domain.Passwords;
 using CommunityToolkit.Diagnostics;
-using Compze.Abstractions.Public;
-using Compze.Tessaging.Abstractions.TessageTypes;
+using Compze.Abstractions;
 using Compze.Teventive;
-using Compze.Teventive.Taggregates.Tevents.Public;
+using Compze.Teventive.Taggregates.Tevents;
 using Compze.Teventive.TeventStore.QueryModels.SelfGeneratingQueryModels;
 using Compze.Teventive.TeventStore.Typermedia;
 using Compze.Tessaging.Typermedia;
-using Compze.Tessaging.Engine.HandlerRegistration.TessageHandlers;
+using Compze.Tessaging.TessageTypes;
 
 namespace AccountManagement.UI.QueryModels;
 
@@ -45,9 +44,9 @@ class AccountQueryModel : SelfGeneratingQueryModel<AccountQueryModel, IAccountTe
          public StrictlyLocal.Tueries.EntityLink<AccountQueryModel> Get(EntityId id) => new(id);
       }
 
-      public static void RegisterHandlers(TessageHandlerRegistrar registrar) => Get(registrar);
+      public static void RegisterHandlers(TypermediaHandlerRegistrar registrar) => Get(registrar);
 
-      static void Get(TessageHandlerRegistrar registrar) => registrar.ForTuery(
+      static void Get(TypermediaHandlerRegistrar registrar) => registrar.ForTuery(
          (StrictlyLocal.Tueries.EntityLink<AccountQueryModel> tuery, ILocalTypermediaNavigatorSession navigator) =>
             //todo this Id conversion feels iffy
             new AccountQueryModel(navigator.Execute(new TeventStoreApi().Tueries.GetHistory<IAccountTevent>(new TaggregateId(tuery.EntityId.Value)))));

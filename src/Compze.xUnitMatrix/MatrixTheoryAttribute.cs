@@ -3,6 +3,7 @@ using Compze.Internals.SystemCE.LinqCE;
 using Xunit;
 using Xunit.Sdk;
 using Xunit.v3;
+using Compze.xUnitMatrix._private;
 
 // ReSharper disable ExplicitCallerInfoArgument
 

@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using System.Globalization;
 using System.Text;
-using Compze.Internals.Logging.Internal;
+using Compze.Internals.Logging._private;
 
 namespace Compze.Internals.Logging;
 

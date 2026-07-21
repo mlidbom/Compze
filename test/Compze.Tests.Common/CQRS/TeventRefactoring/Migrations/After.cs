@@ -1,6 +1,6 @@
 using Compze.Internals.SystemCE.LinqCE;
-using Compze.Teventive.Taggregates.Tevents.Public;
-using Compze.Teventive.TeventStore.Abstractions.Refactoring.Migrations.Public;
+using Compze.Teventive.Taggregates.Tevents;
+using Compze.Teventive.TeventStore.Abstractions.Refactoring.Migrations;
 using Compze.Teventive.TeventStore.Refactoring.Migrations;
 
 namespace Compze.Tests.Common.CQRS.TeventRefactoring.Migrations;

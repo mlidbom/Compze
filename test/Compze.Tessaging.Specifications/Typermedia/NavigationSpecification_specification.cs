@@ -1,6 +1,5 @@
 using Compze.Must;
-using Compze.Tessaging.Abstractions;
-using Compze.Tessaging.Abstractions.TessageTypes;
+using Compze.Tessaging.TessageTypes;
 using Compze.xUnitBDD;
 using Compze.Tessaging.Typermedia;
 // ReSharper disable PropertyCanBeMadeInitOnly.Local serilization requires the setters

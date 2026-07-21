@@ -1,6 +1,6 @@
-using Compze.Abstractions.Public;
-using Compze.Tessaging.Abstractions;
-using Compze.Teventive.Taggregates.Tevents.Public;
+using Compze.Abstractions;
+using Compze.Tessaging;
+using Compze.Teventive.Taggregates.Tevents;
 
 namespace Compze.Teventive;
 

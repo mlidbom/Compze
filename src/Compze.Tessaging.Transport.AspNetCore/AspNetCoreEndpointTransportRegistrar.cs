@@ -1,5 +1,10 @@
+using Compze.Tessaging._internal.Transport;
+using Compze.Tessaging._internal.Transport.AspNetCore;
 using Compze.DependencyInjection.Abstractions;
-using Compze.Tessaging.Transport.Discovery;
+using Compze.Tessaging._internal.Transport.Advertisement;
+using Compze.Tessaging.Typermedia.Client;
+using Compze.Tessaging.Transport.AspNetCore._private;
+using Compze.Tessaging._private.Transport;
 
 namespace Compze.Tessaging.Transport.AspNetCore;
 
@@ -11,6 +16,11 @@ public static class AspNetCoreEndpointTransportRegistrar
    /// handlers.</summary>
    public static IComponentRegistrar AspNetCoreEndpointTransport(this IComponentRegistrar registrar)
       => registrar.HttpEndpointTransportClientIfNotRegistered()
-                  .EndpointDiscoveryQueryTransportIfNotRegistered()
+                  .EndpointInformationQueryTransportIfNotRegistered()
                   .AspNetCoreEndpointTransportServerIfNotRegistered();
+
+   ///<summary>Declares the client side of the HTTP endpoint transport alone — the transport-client strategy a pure client's<br/>
+   /// composition declares (<see cref="TypermediaClientBuilder.ConfigureTransport"/>): a pure client speaks to endpoints, it never serves.</summary>
+   public static IComponentRegistrar AspNetCoreEndpointTransportClient(this IComponentRegistrar registrar)
+      => registrar.HttpEndpointTransportClientIfNotRegistered();
 }

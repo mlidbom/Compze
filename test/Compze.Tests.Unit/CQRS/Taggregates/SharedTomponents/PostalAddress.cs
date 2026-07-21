@@ -1,4 +1,4 @@
-using Compze.Tessaging.Abstractions.TessageTypes;
+using Compze.Tessaging.TessageTypes;
 using Compze.Teventive.Taggregates.BaseClasses.Shared;
 
 // ReSharper disable ClassNeverInstantiated.Global

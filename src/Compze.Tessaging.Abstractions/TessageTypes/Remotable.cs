@@ -1,11 +1,11 @@
-using Compze.Abstractions.Public;
+using Compze.Abstractions;
 
 // ReSharper disable RedundantNameQualifier
 // ReSharper disable UnusedTypeParameter
 // ReSharper disable MemberHidesStaticFromOuterClass
 // ReSharper disable once PropertyCanBeMadeInitOnly.Global serializers need setters.
 
-namespace Compze.Tessaging.Abstractions.TessageTypes;
+namespace Compze.Tessaging.TessageTypes;
 
 public static class Remotable
 {

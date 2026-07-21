@@ -1,4 +1,4 @@
-using Compze.Abstractions.Public.Infrastructure;
+using Compze.Abstractions.Infrastructure;
 
 
 // ReSharper disable InconsistentNaming

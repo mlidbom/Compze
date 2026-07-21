@@ -1,5 +1,5 @@
 using System.Runtime.CompilerServices;
-using Compze.Internals.Logging.Internal;
+using Compze.Internals.Logging._private;
 
 namespace Compze.Internals.Logging;
 

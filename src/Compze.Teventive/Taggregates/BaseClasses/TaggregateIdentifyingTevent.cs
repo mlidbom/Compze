@@ -1,5 +1,5 @@
-using Compze.Tessaging.Abstractions.TessageBus;
-using Compze.Teventive.Taggregates.Tevents.Public;
+using Compze.Tessaging.TessageBus;
+using Compze.Teventive.Taggregates.Tevents;
 
 namespace Compze.Teventive.Taggregates.BaseClasses;
 

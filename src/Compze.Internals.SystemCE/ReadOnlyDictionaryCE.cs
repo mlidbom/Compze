@@ -1,3 +1,5 @@
+using Compze.Internals.SystemCE._private;
+
 namespace Compze.Internals.SystemCE;
 
 public static class ReadOnlyDictionaryCE

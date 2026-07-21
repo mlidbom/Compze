@@ -1,9 +1,9 @@
-using Compze.Abstractions.Public;
+using Compze.Abstractions;
 using Compze.Contracts;
 using Compze.Internals.SystemCE.LinqCE;
-using Compze.Tessaging.Abstractions.TessageBus;
-using Compze.Tessaging.Abstractions.TessageTypes;
-using Compze.Teventive.Taggregates.Tevents.Public;
+using Compze.Tessaging.TessageBus;
+using Compze.Tessaging.TessageTypes;
+using Compze.Teventive.Taggregates.Tevents;
 
 namespace Compze.Teventive.TeventStore.QueryModels.SelfGeneratingQueryModels;
 

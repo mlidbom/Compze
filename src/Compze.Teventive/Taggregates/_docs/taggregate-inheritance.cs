@@ -1,5 +1,5 @@
-using Compze.Tessaging.Engine.HandlerRegistration.TessageHandlers;
-using Compze.Teventive.Taggregates.Tevents.Public;
+using Compze.Tessaging.TessageBus;
+using Compze.Teventive.Taggregates.Tevents;
 using static System.Console;
 
 #pragma warning disable // Documentation example code: deliberately illustrative fragments (empty marker interfaces, never-instantiated examples), not production code.
@@ -37,7 +37,7 @@ class Examples
 
    public void Listeners()
    {
-      TessageHandlerRegistrar registrar = null!;
+      TessageBusHandlerRegistrar registrar = null!;
 
       #region doglistener
       registrar

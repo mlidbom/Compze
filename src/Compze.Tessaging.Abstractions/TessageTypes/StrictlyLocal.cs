@@ -1,6 +1,6 @@
-﻿using Compze.Abstractions.Public;
+﻿using Compze.Abstractions;
 
-namespace Compze.Tessaging.Abstractions.TessageTypes;
+namespace Compze.Tessaging.TessageTypes;
 
 public static class StrictlyLocal
 {

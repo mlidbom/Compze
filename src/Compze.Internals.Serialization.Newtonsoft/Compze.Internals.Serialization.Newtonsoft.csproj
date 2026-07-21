@@ -8,6 +8,9 @@
     <Description>Newtonsoft.Json serialization support for the Compze framework.</Description>
   </PropertyGroup>
   <ItemGroup>
+    <InternalsVisibleTo Include="Compze.Tests.Performance.Internals" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
   </ItemGroup>
   <!-- Compze.Tessaging — flex reference -->

@@ -1,5 +1,5 @@
-using Compze.Tessaging.Abstractions.TessageTypes;
-using Compze.Teventive.Infrastructure.EventDispatching;
+using Compze.Tessaging.TessageTypes;
+using Compze.Teventive._private.Infrastructure.EventDispatching;
 
 namespace Compze.Teventive;
 

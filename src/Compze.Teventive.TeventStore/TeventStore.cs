@@ -1,20 +1,22 @@
-using Compze.Abstractions.Public;
+using Compze.Abstractions;
 using Compze.Contracts;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Logging;
 using Compze.Internals.SystemCE.LinqCE;
-using Compze.Tessaging.Abstractions.TessageBus;
-using Compze.Tessaging.Abstractions.TessageTypes;
-using Compze.Teventive.Taggregates.Tevents.Public;
-using Compze.Teventive.TeventStore.Abstractions.Internal;
-using Compze.Teventive.TeventStore.Abstractions.Internal.SqlLayer.Abstractions;
-using Compze.Teventive.TeventStore.Abstractions.Public;
-using Compze.Teventive.TeventStore.Abstractions.Refactoring.Migrations.Public;
+using Compze.Tessaging.TessageBus;
+using Compze.Tessaging.TessageTypes;
+using Compze.Teventive.Taggregates.Tevents;
+using Compze.Teventive.TeventStore.Abstractions._internal;
+using Compze.Teventive.TeventStore.Abstractions._internal.SqlLayer.Abstractions;
+using Compze.Teventive.TeventStore.Abstractions;
+using Compze.Teventive.TeventStore.Abstractions.Refactoring.Migrations;
 using Compze.Teventive.TeventStore.Refactoring.Migrations;
 using Compze.TypeIdentifiers;
 using JetBrains.Annotations;
 using static Compze.Contracts.Contract;
+using Compze.Teventive.TeventStore._private;
+using Compze.Teventive.TeventStore.Refactoring.Migrations._private;
 
 namespace Compze.Teventive.TeventStore;
 
@@ -35,7 +37,7 @@ namespace Compze.Teventive.TeventStore;
                                   .CreatedBy((ITeventStoreSqlLayer sqlLayer, ITypeMap typeMap, ITeventStoreSerializer serializer, TeventCache cache) =>
                                                 new TeventStore(sqlLayer, typeMap, serializer, cache, migrations())));
 
-   public TeventStore(ITeventStoreSqlLayer sqlLayer, ITypeMap typeMap, ITeventStoreSerializer serializer, TeventCache cache, IEnumerable<ITeventMigration> migrations)
+   internal TeventStore(ITeventStoreSqlLayer sqlLayer, ITypeMap typeMap, ITeventStoreSerializer serializer, TeventCache cache, IEnumerable<ITeventMigration> migrations)
    {
       _typeMap = typeMap;
       _serializer = serializer;
@@ -190,7 +192,7 @@ namespace Compze.Teventive.TeventStore;
                               .Select(it => it.TaggregateId);
    }
 
-   public class TaggregateTeventWithRefactoringInformation(ITaggregateTevent<ITaggregateTevent> wrappedTevent, TaggregateTeventStorageInformation storageInformation)
+   internal class TaggregateTeventWithRefactoringInformation(ITaggregateTevent<ITaggregateTevent> wrappedTevent, TaggregateTeventStorageInformation storageInformation)
    {
       internal ITaggregateTevent<ITaggregateTevent> WrappedTevent { get; } = wrappedTevent;
       internal TaggregateTeventStorageInformation StorageInformation { get; } = storageInformation;

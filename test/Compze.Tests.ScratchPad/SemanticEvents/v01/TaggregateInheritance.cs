@@ -1,4 +1,4 @@
-using Compze.Teventive.Taggregates.Tevents.Public;
+using Compze.Teventive.Taggregates.Tevents;
 
 // ReSharper disable All
 #pragma warning disable IDE0059 // Unnecessary assignment of a value

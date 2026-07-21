@@ -6,18 +6,18 @@ using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
-using Compze.Abstractions.Public;
+using Compze.Abstractions;
 using Compze.Must;
-using Compze.Tessaging.Abstractions;
-using Compze.Tessaging.Abstractions.TessageTypes;
+using Compze.Tessaging;
 using Compze.Tessaging.Endpoints.ExactlyOnce;
-using Compze.Tessaging.Engine.HandlerRegistration.TessageHandlers;
+using Compze.Tessaging.TessageBus;
+using Compze.Tessaging.Typermedia;
+using Compze.Tessaging.TessageTypes;
 using Compze.Teventive;
 using Compze.Teventive.Taggregates.BaseClasses;
-using Compze.Teventive.Taggregates.Tevents.Public;
-using Compze.Teventive.TeventStore.Abstractions.Public;
+using Compze.Teventive.Taggregates.Tevents;
+using Compze.Teventive.TeventStore.Abstractions;
 using Compze.Teventive.TeventStore.Wiring;
-using Compze.Tessaging.Typermedia;
 
 #pragma warning disable CA1715 //Interfaces without I prefix
 // ReSharper disable MemberCanBeInternal for testing
@@ -53,8 +53,9 @@ public class Experiment_with_unifying_tevents_and_tommands_test : UniversalTestB
 
             endpointBuilder.Registrar.TeventStore(endpointBuilder.Configuration.ConnectionStringName);
 
-            endpointBuilder.RegisterTessageHandlers(handle => handle
-                      .ForTevent((IUserTevent.UserRegistered _) => Task.CompletedTask)
+            endpointBuilder.RegisterTessageBusHandlers(handle => handle
+                      .ForTevent((IUserTevent.UserRegistered _) => Task.CompletedTask));
+            endpointBuilder.RegisterTypermediaHandlers(handle => handle
                       .ForTuery((GetUserTuery tuery, ITeventStoreReader teventReader) => new UserResource(teventReader.GetHistory(tuery.UserId)))
                       .ForTommand((UserRegistrarTommand.RegisterUserTypermediaTommand typermediaTommand, ITeventStoreUpdater store) =>
                        {

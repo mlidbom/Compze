@@ -1,4 +1,3 @@
-using Compze.Abstractions.Wiring.Testing.Internal;
 using Compze.DependencyInjection.Abstractions;
 using Compze.DependencyInjection.Autofac;
 using Compze.DependencyInjection.Autofac.Extensions.Hosting;

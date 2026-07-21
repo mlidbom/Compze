@@ -1,8 +1,7 @@
 using System.Collections.ObjectModel;
 using System.Transactions;
-using Compze.Abstractions.Public;
+using Compze.Abstractions;
 using Compze.xUnitMatrix;
-using Compze.Abstractions.Wiring.Testing.Internal;
 using JetBrains.Annotations;
 using Compze.Internals.SystemCE.TransactionsCE;
 using Compze.Hosting.Testing;
@@ -21,12 +20,11 @@ using Compze.Threading;
 using Compze.Threading.Testing;
 using Compze.Internals.SystemCE.UsageGuards;
 using Compze.Must;
-using Compze.Tessaging.Abstractions.TessageBus;
-using Compze.Tessaging.Abstractions.TessageTypes;
-using Compze.Tessaging.Engine.HandlerRegistration.TessageHandlers;
+using Compze.Tessaging.TessageBus;
+using Compze.Tessaging.TessageTypes;
 using Compze.Teventive;
-using Compze.Teventive.Taggregates.Tevents.Public;
-using Compze.Teventive.TeventStore.Abstractions.Public;
+using Compze.Teventive.Taggregates.Tevents;
+using Compze.Teventive.TeventStore.Abstractions;
 using EnumerableCE = Compze.Internals.SystemCE.LinqCE.EnumerableCE;
 
 // ReSharper disable AccessToDisposedClosure
@@ -51,7 +49,7 @@ public class TeventStoreUpdaterTest : UniversalTestBase
 
       //Exactly-once kinds are async end to end, so the spy subscription is declared async; the spy is synchronous, so it completes its task synchronously.
       _container = TestEnv.DIContainer.SetupTestingContainer(registrar => registrar.RequireIntegrationTestTypeMappings(),
-                                                             composeEngine: engine => engine.RegisterTessageHandlers(handle => handle.ForTevent((IExactlyOnceTevent tevent) =>
+                                                             composeEngine: engine => engine.RegisterTessageBusHandlers(handle => handle.ForTevent((IExactlyOnceTevent tevent) =>
                                                              {
                                                                 _teventSpy.Receive(tevent);
                                                                 return Task.CompletedTask;

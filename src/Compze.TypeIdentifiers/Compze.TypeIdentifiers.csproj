@@ -7,7 +7,7 @@
     <PackageTags>type-identity;type-mapping;serialization;persistence;refactoring-safe</PackageTags>
   </PropertyGroup>
   <ItemGroup>
-    <InternalsVisibleTo Include="Compze.TypeIdentifiers.Specifications" />
+    <InternalsVisibleTo Include="Compze.TypeIdentifiers.InternalSpecifications" />
   </ItemGroup>
   <!-- Compze.Contracts — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Contracts)' == 'true'">

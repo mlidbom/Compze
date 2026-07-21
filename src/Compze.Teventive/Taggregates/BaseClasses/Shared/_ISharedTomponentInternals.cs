@@ -1,5 +1,5 @@
-using Compze.Abstractions.Public;
-using Compze.Tessaging.Abstractions.TessageTypes;
+using Compze.Abstractions;
+using Compze.Tessaging.TessageTypes;
 
 namespace Compze.Teventive.Taggregates.BaseClasses.Shared;
 

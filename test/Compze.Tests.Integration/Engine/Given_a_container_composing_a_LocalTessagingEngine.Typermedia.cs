@@ -1,7 +1,6 @@
 using System.Transactions;
 using Compze.DependencyInjection;
 using Compze.Must;
-using Compze.Tessaging.Engine.HandlerRegistration.TessageHandlers;
 using Compze.Tessaging.Typermedia;
 using Compze.Tests.Integration.InProcess;
 using Compze.Tests.Infrastructure.XUnit;
@@ -21,7 +20,7 @@ public partial class Given_a_container_composing_a_LocalTessagingEngine
       readonly List<string> _registeredGreeters = [];
 
       public with_a_declared_strictly_local_tuery_handler_and_tommand_handler() =>
-         ComposeContainerWithEngine(engine => engine.RegisterTessageHandlers(handle => handle
+         ComposeContainerWithEngine(engine => engine.RegisterTypermediaHandlers(handle => handle
             .ForTuery((MyStrictlyLocalGreetingTuery tuery) => new MyGreeting { Message = $"Hello {tuery.Name}!" })
             .ForTommand((MyStrictlyLocalRegisterGreeterTommand tommand) => _registeredGreeters.Add(tommand.Name))));
 

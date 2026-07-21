@@ -9,10 +9,9 @@ using Compze.Internals.Serialization.Newtonsoft.Wiring;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Internals.Testing;
 using Compze.Must;
-using Compze.Tessaging.Abstractions.TessageBus;
+using Compze.Tessaging.TessageBus;
 using Compze.Tessaging.Endpoints.BestEffort;
-using Compze.Tessaging.Engine.HandlerRegistration.TessageHandlers;
-using Compze.Tessaging.Internal.Peers;
+using Compze.Tessaging.Peers;
 using Compze.Tests.Common.Tessaging.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
@@ -74,7 +73,7 @@ public class Given_a_met_distributed_tessaging_subscriber_the_publisher_does_not
                .RegisterComponents(registrar => registrar.RequireIntegrationTestTypeMappings())
                .TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport())
                .NewtonsoftSerializer()
-               .RegisterTessageHandlers(handle => handle.ForTevent((IMyBestEffortTevent tevent) =>
+               .RegisterTessageBusHandlers(handle => handle.ForTevent((IMyBestEffortTevent tevent) =>
                 {
                    _teventsHandledOnTheSubscriber.Enqueue(tevent);
                    _subscriberTeventHandlerGate.AwaitPassThrough();
@@ -130,7 +129,7 @@ public class Given_a_met_distributed_tessaging_subscriber_the_publisher_does_not
    void AwaitThePublisherRememberingTheSubscriber()
    {
       var deadline = DateTime.UtcNow + TimeSpan.FromSeconds(30);
-      while(!_publisherEndpoint.ServiceLocator.Resolve<IPeerRegistry>().Peers.Any(peer => peer.Id.Equals(SubscriberEndpointId)))
+      while(!_publisherEndpoint.ServiceLocator.Resolve<IPeerAdministration>().Peers.Any(peer => peer.Id.Equals(SubscriberEndpointId)))
       {
          if(DateTime.UtcNow > deadline) throw new TimeoutException("The publisher never met the subscriber: it never appeared in the publisher's peer registry.");
          Thread.Sleep(20);

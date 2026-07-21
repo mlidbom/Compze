@@ -1,14 +1,9 @@
-using Compze.Tessaging.Endpoints;
-using Compze.DependencyInjection;
 using Compze.Must;
-using Compze.Tessaging.Abstractions.TessageBus;
-using Compze.Tessaging.Internal.Peers;
-using Compze.Tessaging.Transport.Discovery;
-using Compze.Tessaging.Transport.SqlLayer;
+using Compze.DependencyInjection;
+using Compze.Tessaging.TessageBus;
 using Compze.Tests.Common.Tessaging.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Threading;
-using Compze.TypeIdentifiers;
 
 namespace Compze.Tests.Integration.Tessaging.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler;
 
@@ -16,45 +11,32 @@ namespace Compze.Tests.Integration.Tessaging.Given_a_backend_endpoint_with_a_tom
 /// what the outbox owes the peer follows it (see the advertisement lifecycle in <c>src/Compze.Tessaging/dev_docs/peer-model.md</c>):<br/>
 /// undelivered tevents whose subscriptions the peer renounced are discarded, loudly, and undelivered tommands of types the peer<br/>
 /// no longer handles are stranded, loudly — kept, but excluded from the recovery backlog until resolved explicitly, because<br/>
-/// delivering them would fail on an endpoint that no longer has the handler.</summary>
+/// delivering them would fail on an endpoint that no longer has the handler. Both halves are scripted as the real conversation:<br/>
+/// the Backend meets the Remote endpoint, the Remote endpoint goes down, and it returns with the shrunk advertisement — the<br/>
+/// deployment where an endpoint keeping its identity dropped a handler or a subscription.</summary>
 [LongRunning]
 public class Advertisement_shrink_tests : EndpointHostTestBase
 {
-   ///<summary>A remembered peer this specification plays the router for: <see cref="IPeerRegistry.RecordAdvertisementAsync"/> is<br/>
-   /// exactly the seam a connection's advertisement fetch drives, so recording directly scripts the peer's advertisement<br/>
-   /// lifecycle with no process behind it — the peer never connects, so nothing ever races delivery of what is bound to it.</summary>
-   static readonly EndpointId NeverConnectedPeerId = new(Guid.Parse("5D3A97E2-8C41-4F0B-9D26-3B71C4E8A951"));
-
-   [PCT] public async Task An_undelivered_tevent_bound_to_a_remembered_peer_whose_replaced_advertisement_renounces_its_subscription_leaves_the_recovery_backlog()
+   [PCT] public async Task A_tevent_published_while_its_subscriber_is_down_is_not_delivered_when_the_subscriber_returns_having_renounced_its_subscription_while_the_kept_tommand_is()
    {
-      //The never-connected peer's first advertisement copies the Remote endpoint's, taggregate tevent subscriptions included.
-      var remoteAdvertisement = BackendPeerRegistry.Peers.Single(peer => peer.Id.Equals(RemoteEndpointId)).HandledTessageTypes;
-      await BackendPeerRegistry.RecordAdvertisementAsync(new EndpointInformation("NeverConnectedPeer", NeverConnectedPeerId, [..remoteAdvertisement]));
+      //The Backend met the Remote endpoint when the host started; rebuild the host without it: the subscriber is now down.
+      await Host.DisposeAsync();
+      await StartHostWithOnlyTheBackendEndpointAsync();
 
-      //Publishes IMyTaggregateTevent exactly-once: fan-out reads the remembered subscribers, so the never-connected peer gets its undelivered row.
+      //Published while Remote is down: its remembered taggregate subscription makes the outbox owe it the tevent.
       await Navigator.PostAsync(MyCreateTaggregateTommand.Create());
-      (await BackendOutboxSqlLayer.GetUndeliveredTessagesForEndpointAsync(NeverConnectedPeerId)).Must().HaveCount(1);
+      //Bound at send to the remembered Remote endpoint - the control proving recovery delivery runs when it returns.
+      await BackendEndPoint.ServiceLocator.Resolve<IIndependentTommandSender>().SendAsync(new MyExactlyOnceTommandHandledByTheRemoteEndpoint());
 
-      //The peer's replaced advertisement renounces every subscription: the tevent lost its audience by that audience's own choice.
-      await BackendPeerRegistry.RecordAdvertisementAsync(new EndpointInformation("NeverConnectedPeer", NeverConnectedPeerId, []));
+      await Host.DisposeAsyncWithoutWaitingForEndpointsToBeAtRest(); //Both tessages are undelivered: awaiting rest would wait for Remote's return.
+      await StartHostWithTheRemoteEndpointReturningHavingRenouncedItsTeventSubscriptionsAsync();
 
-      (await BackendOutboxSqlLayer.GetUndeliveredTessagesForEndpointAsync(NeverConnectedPeerId)).Must().BeEmpty();
-   }
-
-   [PCT] public async Task An_undelivered_tommand_bound_to_a_remembered_handler_whose_replaced_advertisement_no_longer_handles_its_type_leaves_the_recovery_backlog()
-   {
-      //The never-connected peer's first advertisement is the sole remembered handler of MyUnhandledExactlyOnceTommand - a type no real endpoint in this suite handles.
-      var tommandTypeIdString = BackendEndPoint.ServiceLocator.Resolve<ITypeMap>().GetId(typeof(MyUnhandledExactlyOnceTommand)).CanonicalString;
-      await BackendPeerRegistry.RecordAdvertisementAsync(new EndpointInformation("NeverConnectedPeer", NeverConnectedPeerId, [tommandTypeIdString]));
-
-      //The send binds to the sole remembered handler - the never-connected peer - and waits for its return.
-      await BackendEndPoint.ServiceLocator.Resolve<IIndependentTommandSender>().SendAsync(new MyUnhandledExactlyOnceTommand());
-      (await BackendOutboxSqlLayer.GetUndeliveredTessagesForEndpointAsync(NeverConnectedPeerId)).Must().HaveCount(1);
-
-      //The peer's replaced advertisement no longer handles the type: the tommand is stranded - kept, but never delivered to an endpoint that no longer has the handler.
-      await BackendPeerRegistry.RecordAdvertisementAsync(new EndpointInformation("NeverConnectedPeer", NeverConnectedPeerId, []));
-
-      (await BackendOutboxSqlLayer.GetUndeliveredTessagesForEndpointAsync(NeverConnectedPeerId)).Must().BeEmpty();
+      //The kept tommand delivers...
+      MyExactlyOnceTommandHandledByTheRemoteEndpointHandlerThreadGate.AwaitPassedThroughCountEqualTo(1, WaitTimeout.Seconds(15));
+      //...while the tevent, whose subscription the returned advertisement renounced, is discarded rather than delivered to an
+      //endpoint that no longer subscribes. That discarded means gone - not kept the way a stranded tommand is kept - is
+      //pinned by the decommission report specifications.
+      MyRemoteTaggregateTeventHandlerThreadGate.TryAwaitPassedThroughCountEqualTo(1, WaitTimeout.Seconds(2)).Must().BeFalse();
    }
 
    [PCT] public async Task A_tommand_bound_to_a_down_handler_that_returns_no_longer_handling_its_type_is_not_delivered_to_it_while_its_kept_tevent_subscriptions_are()
@@ -77,7 +59,4 @@ public class Advertisement_shrink_tests : EndpointHostTestBase
       //endpoint that would fail it - were it delivered, the failed handling would surface when the host disposes.
       MyExactlyOnceTommandHandledByTheRemoteEndpointHandlerThreadGate.TryAwaitPassedThroughCountEqualTo(1, WaitTimeout.Seconds(2)).Must().BeFalse();
    }
-
-   IPeerRegistry BackendPeerRegistry => BackendEndPoint.ServiceLocator.Resolve<IPeerRegistry>();
-   ITessagingSqlLayer.IOutboxSqlLayer BackendOutboxSqlLayer => BackendEndPoint.ServiceLocator.Resolve<ITessagingSqlLayer.IOutboxSqlLayer>();
 }

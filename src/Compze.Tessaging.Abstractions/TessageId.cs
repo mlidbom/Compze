@@ -1,7 +1,7 @@
-using Compze.Abstractions.Public;
-using Compze.Tessaging.Abstractions.TessageTypes;
+using Compze.Abstractions;
+using Compze.Tessaging.TessageTypes;
 
-namespace Compze.Tessaging.Abstractions;
+namespace Compze.Tessaging;
 
 ///<summary>Identifies exactly one <see cref="ITessageWithIdentity"/>, generated when the tessage is created and never<br/>
 /// modified afterwards. This is the identity the infrastructure deduplicates on, so it is what makes delivery guarantees<br/>

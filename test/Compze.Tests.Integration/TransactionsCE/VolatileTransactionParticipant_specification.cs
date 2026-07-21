@@ -1,5 +1,5 @@
 using System.Transactions;
-using Compze.Abstractions.Wiring.Testing.Internal;
+using Compze.Hosting.Testing;
 using Compze.DependencyInjection;
 using Compze.Internals.SystemCE.TransactionsCE;
 using Compze.Must;

@@ -1,7 +1,7 @@
 using Compze.Must;
-using Compze.Tessaging.Abstractions.TessageTypes;
+using Compze.Tessaging.TessageTypes;
 using Compze.Teventive;
-using Compze.Teventive.Taggregates.Tevents.Public;
+using Compze.Teventive.Taggregates.Tevents;
 using Compze.xUnitBDD;
 
 // ReSharper disable SuspiciousTypeConversion.Global

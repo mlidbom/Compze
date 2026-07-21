@@ -8,7 +8,9 @@
     <Description>Core abstractions for the Compze framework: entity IDs, message type contracts, time sources, serialization interfaces, and type mapping infrastructure.</Description>
   </PropertyGroup>
   <ItemGroup>
-    <InternalsVisibleTo Include="Compze.Abstractions.Specifications" />
+    <InternalsVisibleTo Include="Compze.DocumentDb" />
+    <InternalsVisibleTo Include="Compze.Internals.Serialization.Newtonsoft" />
+    <InternalsVisibleTo Include="Compze.Internals.Serialization.Newtonsoft.InternalSpecifications" />
   </ItemGroup>
   <!-- Compze.Contracts — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Contracts)' == 'true'">

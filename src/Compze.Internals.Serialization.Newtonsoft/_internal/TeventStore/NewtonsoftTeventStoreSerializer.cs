@@ -1,0 +1,34 @@
+using Compze.Abstractions;
+using Compze.Internals.Serialization.Newtonsoft._private;
+using Compze.TypeIdentifiers;
+using Compze.DependencyInjection;
+using Compze.DependencyInjection.Abstractions;
+using Compze.Tessaging.TessageTypes;
+using Compze.Teventive.Taggregates.Tevents;
+using Compze.Teventive.TeventStore.Abstractions._internal;
+using Compze.TypeIdentifiers.DependencyInjection;
+using Newtonsoft.Json;
+
+namespace Compze.Internals.Serialization.Newtonsoft._internal.TeventStore;
+
+class NewtonsoftTeventStoreSerializer : ITeventStoreSerializer
+{
+   public static readonly JsonSerializerSettings JsonSettings = RenamingAndNonPublicMembersSupportingJsonSettings.TeventStore;
+
+   readonly RenamingSupportingJsonSerializer _serializer;
+
+   internal static IComponentRegistrar RegisterWith(IComponentRegistrar registrar)
+      => registrar
+        .RequireMappedTypesFromAssemblyContaining<TentityId>()
+        .RequireMappedTypesFromAssemblyContaining<IExactlyOnceTevent>()
+        .RequireMappedTypesFromAssemblyContaining<ITaggregateTevent>()
+        .Register(
+         Singleton.For<ITeventStoreSerializer>()
+                  .CreatedBy((ITypeMap typeMap) => new NewtonsoftTeventStoreSerializer(typeMap)));
+
+   NewtonsoftTeventStoreSerializer(ITypeMap typeMap) => _serializer = new RenamingSupportingJsonSerializer(JsonSettings, typeMap);
+
+   public string Serialize(ITaggregateTevent<ITaggregateTevent> wrappedTevent) => _serializer.Serialize(wrappedTevent);
+   public ITaggregateTevent<ITaggregateTevent> Deserialize(Type wrapperTeventType, string json) => (ITaggregateTevent<ITaggregateTevent>)_serializer.Deserialize(wrapperTeventType, json);
+}
+

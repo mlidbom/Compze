@@ -1,5 +1,5 @@
-using Compze.Abstractions.Public;
-using Compze.Teventive.Taggregates.Tevents.Public;
+using Compze.Abstractions;
+using Compze.Teventive.Taggregates.Tevents;
 
 // ReSharper disable MemberCanBeMadeStatic.Global we want composable fluent APIs. No statics please.
 

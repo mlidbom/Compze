@@ -1,6 +1,5 @@
-using Compze.DocumentDb.Public;
-using Compze.Tessaging.Abstractions.TessageTypes;
-using Compze.Tessaging.Engine.HandlerRegistration.TessageHandlers;
+using Compze.Tessaging.Typermedia;
+using Compze.Tessaging.TessageTypes;
 
 namespace Compze.DocumentDb;
 
@@ -13,7 +12,7 @@ public partial class DocumentDbApi
          internal GetDocumentForUpdate(Guid id) => Id = id;
          Guid Id { get; set; }
 
-         internal static void RegisterHandler(TessageHandlerRegistrar registrar) => registrar.ForTuery(
+         internal static void RegisterHandler(TypermediaHandlerRegistrar registrar) => registrar.ForTuery(
             (GetDocumentForUpdate<TDocument> tuery, IDocumentDbUpdater updater) => updater.GetForUpdate<TDocument>(tuery.Id));
       }
 
@@ -22,7 +21,7 @@ public partial class DocumentDbApi
          internal TryGetDocument(string id) => Id = id;
          string Id { get; set; }
 
-         internal static void RegisterHandler(TessageHandlerRegistrar registrar) => registrar.ForTuery(
+         internal static void RegisterHandler(TypermediaHandlerRegistrar registrar) => registrar.ForTuery(
             (TryGetDocument<TDocument> tuery, IDocumentDbReader updater) => updater.TryGet<TDocument>(tuery.Id, out var document) ? document : null);
       }
 
@@ -31,7 +30,7 @@ public partial class DocumentDbApi
          internal GetReadonlyCopyOfDocument(Guid id) => Id = id;
          Guid Id { get; set; }
 
-         internal static void RegisterHandler(TessageHandlerRegistrar registrar) => registrar.ForTuery(
+         internal static void RegisterHandler(TypermediaHandlerRegistrar registrar) => registrar.ForTuery(
             (GetReadonlyCopyOfDocument<TDocument> tuery, IDocumentDbReader reader) => reader.Get<TDocument>(tuery.Id));
       }
    }
@@ -43,7 +42,7 @@ public partial class DocumentDbApi
          internal DeleteDocument(string key) => Key = key;
          string Key { get; }
 
-         internal static void RegisterHandler(TessageHandlerRegistrar registrar) => registrar.ForTommand(
+         internal static void RegisterHandler(TypermediaHandlerRegistrar registrar) => registrar.ForTommand(
             (DeleteDocument<TDocument> command, IDocumentDbUpdater updater) => updater.Delete<TDocument>(command.Key));
       }
 
@@ -58,12 +57,12 @@ public partial class DocumentDbApi
          string Key { get; }
          TDocument Entity { get; }
 
-         internal static void RegisterHandler(TessageHandlerRegistrar registrar) => registrar.ForTommand(
+         internal static void RegisterHandler(TypermediaHandlerRegistrar registrar) => registrar.ForTommand(
             (SaveDocument<TDocument> command, IDocumentDbUpdater updater) => updater.Save(command.Key, command.Entity));
       }
    }
 
-   public static void HandleDocumentType<TDocument>(TessageHandlerRegistrar registrar) where TDocument : class
+   public static void HandleDocumentType<TDocument>(TypermediaHandlerRegistrar registrar) where TDocument : class
    {
       TueryApi.TryGetDocument<TDocument>.RegisterHandler(registrar);
       TueryApi.GetReadonlyCopyOfDocument<TDocument>.RegisterHandler(registrar);

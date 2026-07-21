@@ -2,7 +2,7 @@ using Compze.Must;
 
 using Compze.Teventive;
 using Compze.Teventive.Taggregates.BaseClasses.Shared;
-using Compze.Teventive.Taggregates.Tevents.Public;
+using Compze.Teventive.Taggregates.Tevents;
 using Compze.xUnitBDD;
 
 // ReSharper disable InconsistentNaming for testing

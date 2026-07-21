@@ -1,6 +1,7 @@
-using Compze.Tessaging.Abstractions.TessageTypes;
 
-namespace Compze.Tessaging.Abstractions.Validation.Exceptions;
+using Compze.Tessaging.TessageTypes;
+
+namespace Compze.Tessaging.Validation.Exceptions;
 
 public class TransactionPolicyViolationException(string message) : Exception(message + TransactionPolicyRationale)
 {

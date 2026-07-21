@@ -8,10 +8,8 @@ using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Typermedia;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.LinqCE;
-using Compze.Tessaging.Abstractions.TessageBus;
+using Compze.Tessaging.TessageBus;
 using Compze.Tessaging.Endpoints.ExactlyOnce;
-using Compze.Tessaging.Engine.HandlerRegistration.TessageHandlers;
-using Compze.Tessaging.Engine.HandlerRegistration.TeventObservation;
 using Compze.Tests.Infrastructure;
 using Compze.Teventive.TeventStore.Typermedia;
 using Compze.Underscore;
@@ -136,7 +134,7 @@ public abstract class EndpointHostTestBase : UniversalTestBase
                     .HandleTaggregate<MyTaggregate, IMyTaggregateTevent>();
 
             //Exactly-once kinds are async end to end, so their handlers are declared async; the gates themselves are synchronous, so the bodies complete their tasks synchronously.
-            endpointBuilder.RegisterTessageHandlers(handle => handle
+            endpointBuilder.RegisterTessageBusHandlers(handle => handle
                       .ForTommand((MyExactlyOnceTommand _) =>
                        {
                           MyExactlyOnceTommandHandlerThreadGate.AwaitPassThrough();
@@ -152,7 +150,8 @@ public abstract class EndpointHostTestBase : UniversalTestBase
                           MyLocalTaggregateTeventHandlerThreadGate.AwaitPassThrough();
                           return Task.CompletedTask;
                        })
-                      .ForTevent((IMyBestEffortTevent _) => MyBestEffortTeventLocalHandlerThreadGate.AwaitPassThrough())
+                      .ForTevent((IMyBestEffortTevent _) => MyBestEffortTeventLocalHandlerThreadGate.AwaitPassThrough()))
+                      .RegisterTypermediaHandlers(handle => handle
                       .ForTommand((MyCreateTaggregateTommand tommand, ILocalTypermediaNavigatorSession navigator) =>
                        {
                           MyCreateTaggregateTommandHandlerThreadGate.AwaitPassThrough();
@@ -180,7 +179,7 @@ public abstract class EndpointHostTestBase : UniversalTestBase
          });
    }
 
-   void RegisterRemoteEndpoint(bool withItsTommandHandler = true) =>
+   void RegisterRemoteEndpoint(bool withItsTommandHandler = true, bool withItsTeventSubscriptions = true) =>
       RemoteEndpoint = Host.RegisterExactlyOnceEndpoint("Remote",
                                              RemoteEndpointId,
                                              endpointBuilder =>
@@ -189,7 +188,7 @@ public abstract class EndpointHostTestBase : UniversalTestBase
 
                                                 if(withItsTommandHandler)
                                                 {
-                                                   endpointBuilder.RegisterTessageHandlers(handle => handle
+                                                   endpointBuilder.RegisterTessageBusHandlers(handle => handle
                                                              .ForTommand((MyExactlyOnceTommandHandledByTheRemoteEndpoint _) =>
                                                               {
                                                                  MyExactlyOnceTommandHandledByTheRemoteEndpointHandlerThreadGate.AwaitPassThrough();
@@ -197,7 +196,9 @@ public abstract class EndpointHostTestBase : UniversalTestBase
                                                               }));
                                                 }
 
-                                                endpointBuilder.RegisterTessageHandlers(handle => handle
+                                                if(!withItsTeventSubscriptions) return;
+
+                                                endpointBuilder.RegisterTessageBusHandlers(handle => handle
                                                           .ForTevent((IMyTaggregateTevent _) =>
                                                            {
                                                               MyRemoteTaggregateTeventHandlerThreadGate.AwaitPassThrough();
@@ -249,6 +250,16 @@ public abstract class EndpointHostTestBase : UniversalTestBase
       await StartHostAndConnectClientAsync();
    }
 
+   ///<summary>The mirror of <see cref="StartHostWithTheRemoteEndpointReturningNoLongerHandlingItsTommandAsync"/>: the Remote<br/>
+   /// endpoint returns having renounced every tevent subscription — its advertisement keeps only the tommand handler — the<br/>
+   /// deployment where an endpoint keeping its identity stopped subscribing.</summary>
+   protected async Task StartHostWithTheRemoteEndpointReturningHavingRenouncedItsTeventSubscriptionsAsync()
+   {
+      CreateHostAndRegisterBackendEndpoint();
+      RegisterRemoteEndpoint(withItsTeventSubscriptions: false);
+      await StartHostAndConnectClientAsync();
+   }
+
    ///<summary>Starts a host containing the Backend endpoint and a successor to the Remote endpoint: a NEW endpoint identity<br/>
    /// (<see cref="RemoteSuccessorEndpointId"/>) whose advertisement handles <see cref="MyExactlyOnceTommandHandledByTheRemoteEndpoint"/> —<br/>
    /// the blue/green replacement shape: the predecessor retired, and a different endpoint advertises the same tommand type.</summary>
@@ -260,7 +271,7 @@ public abstract class EndpointHostTestBase : UniversalTestBase
                             RemoteSuccessorEndpointId,
                             endpointBuilder => endpointBuilder
                                .RegisterComponents(registrar => registrar.RequireCommonTestTypeMappings())
-                               .RegisterTessageHandlers(handle => handle
+                               .RegisterTessageBusHandlers(handle => handle
                                          .ForTommand((MyExactlyOnceTommandHandledByTheRemoteEndpoint _) =>
                                           {
                                              RemoteSuccessorTommandHandlerThreadGate.AwaitPassThrough();

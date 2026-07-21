@@ -1,9 +1,9 @@
-using Compze.Abstractions.Public;
-using Compze.Tessaging.Abstractions;
-using Compze.Tessaging.Abstractions.TessageTypes;
+using Compze.Abstractions;
+using Compze.Tessaging;
+using Compze.Tessaging.TessageTypes;
 using Compze.Teventive;
 using Compze.Teventive.Taggregates.BaseClasses;
-using Compze.Teventive.Taggregates.Tevents.Public;
+using Compze.Teventive.Taggregates.Tevents;
 using Compze.Teventive.TeventStore.Typermedia;
 using Compze.Tessaging.Typermedia;
 

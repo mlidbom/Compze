@@ -1,10 +1,10 @@
-using Compze.Tessaging.Engine.HandlerRegistration.TessageHandlers;
+using Compze.Tessaging.Typermedia;
 
 namespace AccountManagement.UI;
 
 static class UIAdapterLayer
 {
-   public static void Register(TessageHandlerRegistrar registrar)
+   public static void Register(TypermediaHandlerRegistrar registrar)
    {
       AccountUIAdapter.GetById(registrar);
       AccountUIAdapter.Register(registrar);

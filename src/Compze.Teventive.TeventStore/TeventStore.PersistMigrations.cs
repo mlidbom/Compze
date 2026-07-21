@@ -1,13 +1,15 @@
 using System.Transactions;
-using Compze.Abstractions.Public;
+using Compze.Abstractions;
 using Compze.Contracts;
 using Compze.Internals.SystemCE;
 using Compze.Internals.SystemCE.LinqCE;
-using Compze.Tessaging.Abstractions;
-using Compze.Teventive.Taggregates.Tevents.Public;
-using Compze.Teventive.TeventStore.Abstractions.Internal.SqlLayer.Abstractions;
+using Compze.Tessaging;
+using Compze.Teventive.Taggregates.Tevents;
+using Compze.Teventive.TeventStore.Abstractions._internal.SqlLayer.Abstractions;
 using Compze.Teventive.TeventStore.Refactoring.Migrations;
-using ReadOrder = Compze.Teventive.TeventStore.Abstractions.Internal.SqlLayer.Abstractions.ReadOrder;
+using ReadOrder = Compze.Teventive.TeventStore.Abstractions._internal.SqlLayer.Abstractions.ReadOrder;
+using Compze.Teventive.TeventStore.Refactoring.Migrations._private;
+using Compze.Teventive.TeventStore._private;
 
 namespace Compze.Teventive.TeventStore;
 

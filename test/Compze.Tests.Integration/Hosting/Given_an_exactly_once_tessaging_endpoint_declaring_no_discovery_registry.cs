@@ -7,11 +7,10 @@ using Compze.Hosting.Testing.Wiring;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Internals.Testing;
 using Compze.Must;
-using Compze.Tessaging.Abstractions.TessageBus;
-using Compze.Tessaging.Abstractions.TessageTypes;
+using Compze.Tessaging.TessageBus;
 using Compze.Tessaging.Endpoints.ExactlyOnce;
-using Compze.Tessaging.Engine.HandlerRegistration.TessageHandlers;
 using Compze.Tessaging.Hosting.Testing.Wiring;
+using Compze.Tessaging.TessageTypes;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Threading;
@@ -57,7 +56,7 @@ public class Given_an_exactly_once_tessaging_endpoint_declaring_no_discovery_reg
                .RegisterComponents(registrar => registrar.RequireIntegrationTestTypeMappings())
                .TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport())
                .ConfigurePersistence(registrar => registrar.CurrentTestsConfiguredSqlLayer(connectionStringName: endpointBuilder.Configuration.Id.ToString()))
-               .RegisterTessageHandlers(handle => handle
+               .RegisterTessageBusHandlers(handle => handle
                        .ForTommand((TommandTheEndpointSendsItself _) =>
                         {
                            _inRosterTommandHandlerGate.AwaitPassThrough();

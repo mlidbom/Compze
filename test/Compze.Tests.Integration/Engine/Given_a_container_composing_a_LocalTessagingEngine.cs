@@ -7,16 +7,14 @@ using Compze.Hosting.Testing;
 using Compze.Hosting.Testing.Wiring;
 using Compze.Internals.Testing;
 using Compze.Must;
-using Compze.Tessaging.Abstractions.TessageBus;
-using Compze.Tessaging.Abstractions.TessageTypes;
+using Compze.Tessaging.TessageBus;
 using Compze.Tessaging.Engine;
-using Compze.Tessaging.Engine.HandlerRegistration.TessageHandlers;
-using Compze.Tessaging.Engine.HandlerRegistration.TeventObservation;
 using Compze.Tessaging.Engine.Wiring;
+using Compze.Tessaging.TessageTypes;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Integration.InProcess;
 using Compze.Teventive.Taggregates.BaseClasses;
-using Compze.Teventive.Taggregates.Tevents.Public;
+using Compze.Teventive.Taggregates.Tevents;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Threading;
 using Compze.Threading.Testing;
@@ -69,7 +67,7 @@ public partial class Given_a_container_composing_a_LocalTessagingEngine : Univer
 
       public after_publishing_an_unwrapped_tevent_through_the_unit_of_work_tevent_publisher()
       {
-         ComposeContainerWithEngine(engine => engine.RegisterTessageHandlers(handle => handle
+         ComposeContainerWithEngine(engine => engine.RegisterTessageBusHandlers(handle => handle
             .ForTevent((IMyGreetingRequestedTevent tevent) =>
              {
                 _receivedBySubscriberToTheTeventsBaseInterface.Add(tevent);
@@ -97,7 +95,7 @@ public partial class Given_a_container_composing_a_LocalTessagingEngine : Univer
       public after_publishing_a_wrapped_taggregate_tevent_through_the_unit_of_work_tevent_publisher()
       {
          //Taggregate tevents are exactly-once kinds, and exactly-once kinds are async end to end - so these subscriptions declare async handlers.
-         ComposeContainerWithEngine(engine => engine.RegisterTessageHandlers(handle => handle
+         ComposeContainerWithEngine(engine => engine.RegisterTessageBusHandlers(handle => handle
             .ForTevent((ITaggregateTevent tevent) =>
              {
                 _receivedBySubscriberToTheInnerTeventType.Add(tevent);
@@ -126,7 +124,7 @@ public partial class Given_a_container_composing_a_LocalTessagingEngine : Univer
       public after_publishing_a_tevent_inside_a_transaction_that_rolls_back()
       {
          ComposeContainerWithEngine(engine => engine
-            .RegisterTessageHandlers(handle => handle.ForTevent((IMyGreetingRequestedTevent tevent) => _receivedBySubscriber.Add(tevent)))
+            .RegisterTessageBusHandlers(handle => handle.ForTevent((IMyGreetingRequestedTevent tevent) => _receivedBySubscriber.Add(tevent)))
             .ObserveTevents(observe => observe.ForTevent((IMyGreetingRequestedTevent tevent) => _observedByObserver.Add(tevent))));
 
          Invoking(() => Container.ScopeFactory.ExecuteUnitOfWork(unitOfWork =>
@@ -206,7 +204,7 @@ public partial class Given_a_container_composing_a_LocalTessagingEngine : Univer
       public after_publishing_a_tevent_when_the_first_of_two_observers_throws()
       {
          ComposeContainerWithEngine(engine => engine
-            .RegisterTessageHandlers(handle => handle.ForTevent((IMyGreetingRequestedTevent tevent) => _receivedBySubscriber.Add(tevent)))
+            .RegisterTessageBusHandlers(handle => handle.ForTevent((IMyGreetingRequestedTevent tevent) => _receivedBySubscriber.Add(tevent)))
             .ObserveTevents(observe => observe
                .ForTevent((IMyGreetingRequestedTevent _) => throw new Exception("thrown by the first observer"))
                .ForTevent((IMyGreetingRequestedTevent tevent) =>
@@ -230,7 +228,7 @@ public partial class Given_a_container_composing_a_LocalTessagingEngine : Univer
 
       public after_publishing_a_tevent_through_the_independent_tevent_publisher_resolved_from_the_root()
       {
-         ComposeContainerWithEngine(engine => engine.RegisterTessageHandlers(handle => handle.ForTevent((IMyGreetingRequestedTevent tevent) => _receivedBySubscriber.Add(tevent))));
+         ComposeContainerWithEngine(engine => engine.RegisterTessageBusHandlers(handle => handle.ForTevent((IMyGreetingRequestedTevent tevent) => _receivedBySubscriber.Add(tevent))));
          Container.RootResolver.Resolve<IIndependentTeventPublisher>().Publish(_publishedTevent);
       }
 
@@ -276,10 +274,10 @@ public partial class Given_a_container_composing_a_LocalTessagingEngine : Univer
 
    public class a_registrar_held_beyond_its_declaration_callback : Given_a_container_composing_a_LocalTessagingEngine
    {
-      TessageHandlerRegistrar _escapedRegistrar = null!;
+      TessageBusHandlerRegistrar _escapedRegistrar = null!;
 
       public a_registrar_held_beyond_its_declaration_callback() =>
-         ComposeContainerWithEngine(engine => engine.RegisterTessageHandlers(handle => _escapedRegistrar = handle));
+         ComposeContainerWithEngine(engine => engine.RegisterTessageBusHandlers(handle => _escapedRegistrar = handle));
 
       [PCT] public void explodes_when_used_stating_that_the_registrar_exists_only_inside_its_callback() =>
          Invoking(() => _escapedRegistrar.ForTevent((IMyGreetingRequestedTevent _) => {}))

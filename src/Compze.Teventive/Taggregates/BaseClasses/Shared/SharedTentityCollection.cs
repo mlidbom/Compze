@@ -1,5 +1,6 @@
 using System.Collections;
 using Compze.Internals.SystemCE.ReflectionCE;
+using Compze.Teventive.Taggregates.BaseClasses._private;
 
 namespace Compze.Teventive.Taggregates.BaseClasses.Shared;
 

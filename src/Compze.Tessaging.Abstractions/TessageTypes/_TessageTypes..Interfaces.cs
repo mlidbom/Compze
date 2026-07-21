@@ -5,7 +5,7 @@
 #pragma warning disable CA1040 //We define a number of empty marker interfaces here that are vital for framework functionality
 // ReSharper disable UnusedTypeParameter
 
-namespace Compze.Tessaging.Abstractions.TessageTypes;
+namespace Compze.Tessaging.TessageTypes;
 
 ///<summary>A message routed by type</summary>
 public interface ITessage;
@@ -28,14 +28,14 @@ public interface IMustBeSentAndHandledTransactionally : IMustBeSentTransactional
 public interface ICannotBeSentRemotelyFromWithinTransaction : ITessage;
 
 //Typermedia
-//todo:review: should the version without a type parameter remain? Could ITyperMediaTessage<object> replace what it does today?
+//todo:review: should the version without a type parameter remain? Could ITypermediaTessage<object> replace what it does today?
 public interface ITypermediaTessage : ICannotBeSentRemotelyFromWithinTransaction, IExactlyOneReceiverTessage;
-public interface ITyperMediaTessage<out TResult> : ITypermediaTessage;
-public interface ITommand<out TResult> : ITommand, ITyperMediaTessage<TResult>;
+public interface ITypermediaTessage<out TResult> : ITypermediaTessage;
+public interface ITommand<out TResult> : ITommand, ITypermediaTessage<TResult>;
 
 //todo:review: should the version without a type parameter remain? Could ITuery<object> replace what it does today?
 public interface ITuery : ITypermediaTessage;
-public interface ITuery<out TResult> : ITuery, ITyperMediaTessage<TResult>;
+public interface ITuery<out TResult> : ITuery, ITypermediaTessage<TResult>;
 
 ///<summary>Many resources in a hypermedia API do not actually need access to backend data. The data in the tuery is sufficient to create the result. For such tueries implement this interface. That way no network roundtrip is required to perform the tuery.</summary>
 public interface ICreateMyOwnResultTuery<out TResult> : ITuery<TResult>

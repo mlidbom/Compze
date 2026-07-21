@@ -1,4 +1,3 @@
-using Compze.Abstractions.Wiring.Testing.Internal;
 
 namespace Compze.Hosting.Testing;
 

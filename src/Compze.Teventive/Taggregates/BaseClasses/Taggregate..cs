@@ -1,10 +1,10 @@
-using Compze.Abstractions.Public;
-using Compze.Abstractions.Time.Public;
+using Compze.Abstractions;
+using Compze.Abstractions.Time;
 using Compze.Contracts;
 using Compze.Internals.SystemCE.ReactiveCE;
-using Compze.Tessaging.Abstractions.TessageTypes;
-using Compze.Teventive.Internal.Implementation;
-using Compze.Teventive.Taggregates.Tevents.Public;
+using Compze.Tessaging.TessageTypes;
+using Compze.Teventive._private.Implementation;
+using Compze.Teventive.Taggregates.Tevents;
 
 namespace Compze.Teventive.Taggregates.BaseClasses;
 

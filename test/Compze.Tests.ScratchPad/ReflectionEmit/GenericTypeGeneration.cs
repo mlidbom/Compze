@@ -6,7 +6,7 @@ using Compze.Internals.SystemCE.ReflectionCE;
 using Compze.Internals.SystemCE.ReflectionCE.EmitCE;
 using Compze.Threading;
 using Compze.Must;
-using Compze.Tessaging.Abstractions.TessageTypes;
+using Compze.Tessaging.TessageTypes;
 using Compze.xUnitBDD;
 
 namespace Compze.Tests.ScratchPad.ReflectionEmit;

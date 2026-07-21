@@ -1,5 +1,5 @@
 using Compze.Contracts;
-using Compze.Tessaging.Abstractions.TessageTypes;
+using Compze.Tessaging.TessageTypes;
 
 namespace Compze.Teventive;
 
@@ -26,7 +26,7 @@ public class TeventDispatcherConfig
 
    ///<summary>The tevent types that may legitimately go unhandled: dispatching a tevent that no registered handler matches throws a <see cref="TeventUnhandledException"/><br/>
    /// unless the tevent is assignable to one of these types. The types need not belong to the dispatcher's own tevent hierarchy: any interface the concrete tevents<br/>
-   /// implement works, such as a generic tevent like <see cref="Taggregates.Tevents.Public.ITaggregateCreatedTevent"/> from a parallel hierarchy.</summary>
+   /// implement works, such as a generic tevent like <see cref="Taggregates.Tevents.ITaggregateCreatedTevent"/> from a parallel hierarchy.</summary>
    public IReadOnlyList<Type> IgnoredUnhandled
    {
       get;

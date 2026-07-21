@@ -11,8 +11,8 @@ using Compze.Internals.Testing;
 using Compze.Tessaging.Endpoints.BestEffort;
 using Compze.Tessaging.Endpoints.ExactlyOnce;
 using Compze.Tessaging.Hosting.Testing.Wiring;
-using Compze.Tessaging.Internal;
-using Compze.Tessaging.Internal.Peers;
+using Compze.Tessaging._internal.TessagesInFlight;
+using Compze.Tessaging.Peers._internal;
 using Compze.Threading;
 using Compze.Underscore;
 

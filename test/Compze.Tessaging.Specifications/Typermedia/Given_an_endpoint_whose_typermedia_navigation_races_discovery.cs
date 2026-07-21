@@ -3,9 +3,8 @@ using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Must;
 using Compze.DependencyInjection;
 using Compze.Tessaging.Endpoints.BestEffort;
-using Compze.Tessaging.Engine.HandlerRegistration.TessageHandlers;
-using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Typermedia;
+using Compze.Tessaging.Hosting.Testing;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
 
@@ -49,7 +48,7 @@ public class Given_an_endpoint_whose_typermedia_navigation_races_discovery : Uni
          LateEndpointId,
          endpointBuilder => endpointBuilder
             .RegisterComponents(registrar => registrar.RequireTypermediaHostingSpecificationTypeMappings())
-            .RegisterTessageHandlers(handle => handle
+            .RegisterTypermediaHandlers(handle => handle
                        .ForTuery((TueryServedByTheLateEndpoint _) => new TueryAnswer { Message = "served on first contact" })));
       //The late endpoint starts now, driving its own phase ordering. Its announcement is what the waiting send's patience is
       //spent waiting for.

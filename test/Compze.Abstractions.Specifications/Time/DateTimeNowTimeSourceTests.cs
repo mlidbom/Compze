@@ -1,4 +1,4 @@
-using Compze.Abstractions.Time.Public;
+using Compze.Abstractions.Time;
 using Compze.Tests.Infrastructure;
 using Compze.Must;
 

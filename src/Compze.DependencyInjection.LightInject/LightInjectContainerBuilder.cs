@@ -2,6 +2,7 @@ using System.Reflection;
 using Compze.DependencyInjection.Abstractions;
 using LightInject;
 using ContainerOptions = Compze.DependencyInjection.Abstractions.ContainerOptions;
+using Compze.DependencyInjection.LightInject._private;
 
 namespace Compze.DependencyInjection.LightInject;
 

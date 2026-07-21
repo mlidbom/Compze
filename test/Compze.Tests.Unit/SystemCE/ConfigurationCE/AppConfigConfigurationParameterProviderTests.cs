@@ -1,4 +1,4 @@
-using Compze.Abstractions.Configuration.Internal;
+using Compze.Abstractions.Configuration;
 using Compze.Hosting.Configuration;
 using Compze.Tests.Infrastructure;
 using Compze.Must;

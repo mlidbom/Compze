@@ -1,4 +1,5 @@
 using System.Transactions;
+using Compze.Internals.SystemCE.TransactionsCE._private;
 
 namespace Compze.Internals.SystemCE.TransactionsCE.Testing;
 

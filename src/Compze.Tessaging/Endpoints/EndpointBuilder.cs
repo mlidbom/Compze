@@ -5,31 +5,35 @@ using Compze.DependencyInjection.Abstractions;
 using Compze.Tessaging.Endpoints.BestEffort;
 using Compze.Tessaging.Endpoints.ExactlyOnce;
 using Compze.Tessaging.Engine;
+using Compze.Tessaging.Engine._private;
 using Compze.Tessaging.Engine.HandlerRegistration;
-using Compze.Tessaging.Engine.HandlerRegistration.TessageHandlers;
-using Compze.Tessaging.Engine.HandlerRegistration.TeventObservation;
-using Compze.Tessaging.Engine.Wiring;
-using Compze.Tessaging.Internal;
-using Compze.Tessaging.Internal.Abstractions;
-using Compze.Tessaging.Internal.BestEffortDelivery;
-using Compze.Tessaging.Internal.HandlerAvailability;
-using Compze.Tessaging.Internal.Peers;
-using Compze.Tessaging.Internal.Transport.Client.Implementation;
-using Compze.Tessaging.TessageBus.Internal;
-using Compze.Tessaging.Transport;
-using Compze.Tessaging.Transport.Discovery;
+using Compze.Tessaging.TessageBus;
+using Compze.Tessaging.TessageBus._internal;
+using Compze.Tessaging._internal.TessagesInFlight;
+using Compze.Tessaging.TessageBus._private.BestEffortDelivery;
+using Compze.Tessaging._private.HandlerAvailability;
+using Compze.Tessaging.Peers._internal;
+using Compze.Tessaging._private.Routing;
+using Compze.Tessaging._internal.Transport;
+using Compze.Tessaging._internal.Transport.Advertisement;
 using Compze.Tessaging.Typermedia;
-using Compze.Tessaging.Typermedia.Client;
-using Compze.Tessaging.Typermedia.Hosting;
+using Compze.Tessaging.Typermedia._internal;
 using Compze.TypeIdentifiers;
+using Compze.Tessaging._private.TessagesInFlight;
+using Compze.Tessaging._private.Transport.Advertisement;
+using Compze.Tessaging.TessageBus._private;
+using Compze.Tessaging.Peers._private;
+using Compze.Tessaging.Typermedia._private;
+using Compze.Tessaging._private.Transport;
 
 namespace Compze.Tessaging.Endpoints;
 
 ///<summary>
 /// The declaration surface an endpoint is composed through — what <see cref="BestEffortEndpoint.Build"/> /
 /// <see cref="ExactlyOnceEndpoint.Build"/> hand their composition callback. An endpoint is an engine given identity and a
-/// wire, and this surface declares all three: the engine (<see cref="RegisterTessageHandlers"/>,
-/// <see cref="ObserveTevents"/> — the same declaration block a plain container's LocalTessagingEngine uses, so an
+/// wire, and this surface declares all three: the engine (<see cref="RegisterTessageBusHandlers"/>,
+/// <see cref="RegisterTypermediaHandlers"/>, <see cref="ObserveTevents"/> — the same declaration block a plain container's
+/// LocalTessagingEngine uses, so an
 /// application's handler declarations run unchanged under any composition), the identity (<see cref="Configuration"/>, given
 /// at composition), and the wire: the transport protocol (<see cref="TransportProtocol"/>), the endpoint's one serializer
 /// (<see cref="Serializer"/>), and the topology declarations (<see cref="ParticipateIn{TRegistry}"/> /
@@ -61,7 +65,7 @@ public abstract class EndpointBuilder<TConcreteBuilder> where TConcreteBuilder :
    readonly List<IEndpointAddressAnnouncer> _addressAnnouncers = [];
    readonly List<EndpointId> _requiredPeers = [];
    readonly List<EndpointId> _peersNotQueuedFor = [];
-   HandlerAvailabilityPatience _handlerAvailabilityPatience = Internal.HandlerAvailability.HandlerAvailabilityPatience.Default;
+   HandlerAvailabilityPatience _handlerAvailabilityPatience = _private.HandlerAvailability.HandlerAvailabilityPatience.Default;
    bool _handlerAvailabilityPatienceDeclared;
    Action<IComponentRegistrar>? _registerTransportProtocol;
    Action<IComponentRegistrar>? _registerSerializer;
@@ -96,12 +100,23 @@ public abstract class EndpointBuilder<TConcreteBuilder> where TConcreteBuilder :
    ///<summary>The endpoint's identity and naming; also registered in the container so the endpoint's services can know which endpoint they serve.</summary>
    public EndpointConfiguration Configuration { get; }
 
-   ///<summary>Declares handlers for all four tessage kinds through the one <see cref="TessageHandlerRegistrar"/> — see<br/>
-   /// <see cref="LocalTessagingEngineBuilder.RegisterTessageHandlers"/>, whose declaration idiom this is.</summary>
-   public TConcreteBuilder RegisterTessageHandlers(Action<TessageHandlerRegistrar> register)
+   ///<summary>Declares handlers for the TessageBus kinds — tevents and tommands whose type declares no result — through the<br/>
+   /// <see cref="TessageBusHandlerRegistrar"/>; see <see cref="LocalTessagingEngineBuilder.RegisterTessageBusHandlers"/>, whose<br/>
+   /// declaration idiom this is.</summary>
+   public TConcreteBuilder RegisterTessageBusHandlers(Action<TessageBusHandlerRegistrar> register)
    {
       AssertStillComposing();
-      _engine.RegisterTessageHandlers(register);
+      _engine.RegisterTessageBusHandlers(register);
+      return Self;
+   }
+
+   ///<summary>Declares handlers for the Typermedia kinds — tommands whose type declares a result, and tueries — through the<br/>
+   /// <see cref="TypermediaHandlerRegistrar"/>; see <see cref="LocalTessagingEngineBuilder.RegisterTypermediaHandlers"/>, whose<br/>
+   /// declaration idiom this is.</summary>
+   public TConcreteBuilder RegisterTypermediaHandlers(Action<TypermediaHandlerRegistrar> register)
+   {
+      AssertStillComposing();
+      _engine.RegisterTypermediaHandlers(register);
       return Self;
    }
 
@@ -250,7 +265,7 @@ public abstract class EndpointBuilder<TConcreteBuilder> where TConcreteBuilder :
                          Singleton.For<HandlerAvailabilityPatience>().Instance(_handlerAvailabilityPatience),
                          Singleton.For<ITessagesInFlightTracker>().Instance(_tessagesInFlightTracker ?? new NullOpTessagesInFlightTracker()));
 
-      EndpointDiscoveryQueryExecutor.RegisterWith(Registrar);
+      EndpointInformationQueryExecutor.RegisterWith(Registrar);
 
       _registerTransportProtocol!(Registrar);
       _registerSerializer?.Invoke(Registrar);
@@ -297,7 +312,7 @@ public abstract class EndpointBuilder<TConcreteBuilder> where TConcreteBuilder :
       container.RootResolver.Resolve<ITypeMap>();
       //The one discovery question every endpoint serves: its answer is the endpoint's identity and its one advertisement -
       //the roster's projection, covering every tessage kind.
-      new EndpointDiscoveryQueryRegistrarWithDependencyInjectionSupport(container.RootResolver.Resolve<EndpointDiscoveryQueryExecutor>())
+      new EndpointInformationQueryRegistrarWithDependencyInjectionSupport(container.RootResolver.Resolve<EndpointInformationQueryExecutor>())
         .ForQuery((EndpointInformationQuery _, TessageHandlerRoster roster, EndpointConfiguration configuration) =>
                      new EndpointInformation([.. roster.AdvertisedRemoteTessageTypeIds()], configuration));
       AssertTheRosterIsSound(container.RootResolver.Resolve<TessageHandlerRoster>());

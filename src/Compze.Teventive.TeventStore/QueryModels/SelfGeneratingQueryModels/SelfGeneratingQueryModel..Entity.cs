@@ -1,6 +1,6 @@
 using Compze.Contracts;
 using Compze.Internals.SystemCE.ReflectionCE;
-using Compze.Teventive.Taggregates.Tevents.Public;
+using Compze.Teventive.Taggregates.Tevents;
 using JetBrains.Annotations;
 
 namespace Compze.Teventive.TeventStore.QueryModels.SelfGeneratingQueryModels;

@@ -3,7 +3,7 @@
 
 using AccountManagement.Domain;
 using Compze.Internals.SystemCE;
-using Compze.Tessaging.Abstractions.TessageTypes;
+using Compze.Tessaging.TessageTypes;
 using Compze.Tessaging.Typermedia;
 
 namespace AccountManagement.API;

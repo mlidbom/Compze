@@ -1,8 +1,8 @@
-using Compze.Abstractions.Public;
-using Compze.Tessaging.Abstractions.TessageTypes;
-using Compze.Teventive.Taggregates.Tevents.Public;
-using Compze.Teventive.TeventStore.Abstractions.Public;
-using Compze.Tessaging.Engine.HandlerRegistration.TessageHandlers;
+using Compze.Abstractions;
+using Compze.Teventive.Taggregates.Tevents;
+using Compze.Teventive.TeventStore.Abstractions;
+using Compze.Tessaging.Typermedia;
+using Compze.Tessaging.TessageTypes;
 
 // ReSharper disable MemberCanBePrivate.Global they are public so that serializers work
 
@@ -23,7 +23,7 @@ public partial class TeventStoreApi
          internal TaggregateLink(TaggregateId id) => Id = id;
          public TaggregateId Id { get; private set; }
 
-         internal static void RegisterHandler(TessageHandlerRegistrar registrar) => registrar.ForTuery((TaggregateLink<TTaggregate> tuery, ITeventStoreUpdater updater) => updater.Get<TTaggregate>(tuery.Id));
+         internal static void RegisterHandler(TypermediaHandlerRegistrar registrar) => registrar.ForTuery((TaggregateLink<TTaggregate> tuery, ITeventStoreUpdater updater) => updater.Get<TTaggregate>(tuery.Id));
       }
 
       public class GetTaggregateHistory<TTevent> : StrictlyLocal.Tueries.StrictlyLocalTuery<GetTaggregateHistory<TTevent>, IEnumerable<ITaggregateTevent<TTevent>>> where TTevent : ITaggregateTevent
@@ -35,7 +35,7 @@ public partial class TeventStoreApi
          internal GetTaggregateHistory(TaggregateId id) => Id = id;
          public TaggregateId Id { get; private set; }
 
-         internal static void RegisterHandler(TessageHandlerRegistrar registrar) => registrar.ForTuery((GetTaggregateHistory<TTevent> tuery, ITeventStoreReader reader) => reader.GetHistory(tuery.Id).Cast<ITaggregateTevent<TTevent>>());
+         internal static void RegisterHandler(TypermediaHandlerRegistrar registrar) => registrar.ForTuery((GetTaggregateHistory<TTevent> tuery, ITeventStoreReader reader) => reader.GetHistory(tuery.Id).Cast<ITaggregateTevent<TTevent>>());
       }
 
       public class GetReadonlyCopyOfTaggregate<TTaggregate> : StrictlyLocal.Tueries.StrictlyLocalTuery<GetReadonlyCopyOfTaggregate<TTaggregate>, TTaggregate> where TTaggregate : class, ITaggregate
@@ -49,7 +49,7 @@ public partial class TeventStoreApi
          internal GetReadonlyCopyOfTaggregate(TaggregateId id) => Id = id;
          public TaggregateId Id { get; private set; }
 
-         internal static void RegisterHandler(TessageHandlerRegistrar registrar) => registrar.ForTuery((GetReadonlyCopyOfTaggregate<TTaggregate> tuery, ITeventStoreReader reader) => reader.GetReadonlyCopy<TTaggregate>(tuery.Id));
+         internal static void RegisterHandler(TypermediaHandlerRegistrar registrar) => registrar.ForTuery((GetReadonlyCopyOfTaggregate<TTaggregate> tuery, ITeventStoreReader reader) => reader.GetReadonlyCopy<TTaggregate>(tuery.Id));
       }
 
       public class GetReadonlyCopyOfTaggregateVersion<TTaggregate> : StrictlyLocal.Tueries.StrictlyLocalTuery<GetReadonlyCopyOfTaggregateVersion<TTaggregate>, TTaggregate> where TTaggregate : class, ITaggregate
@@ -69,7 +69,7 @@ public partial class TeventStoreApi
          public TaggregateId Id { get; private set; }
          public int Version { get; private set; }
 
-         internal static void RegisterHandler(TessageHandlerRegistrar registrar) => registrar.ForTuery((GetReadonlyCopyOfTaggregateVersion<TTaggregate> tuery, ITeventStoreReader reader) => reader.GetReadonlyCopyOfVersion<TTaggregate>(tuery.Id, tuery.Version));
+         internal static void RegisterHandler(TypermediaHandlerRegistrar registrar) => registrar.ForTuery((GetReadonlyCopyOfTaggregateVersion<TTaggregate> tuery, ITeventStoreReader reader) => reader.GetReadonlyCopyOfVersion<TTaggregate>(tuery.Id, tuery.Version));
       }
    }
 
@@ -81,11 +81,11 @@ public partial class TeventStoreApi
          internal SaveTaggregate(TTaggregate entity) => Entity = entity;
          public TTaggregate Entity { get; private set; }
 
-         internal static void RegisterHandler(TessageHandlerRegistrar registrar) => registrar.ForTommand((SaveTaggregate<TTaggregate> tommand, ITeventStoreUpdater updater) => updater.Save(tommand.Entity));
+         internal static void RegisterHandler(TypermediaHandlerRegistrar registrar) => registrar.ForTommand((SaveTaggregate<TTaggregate> tommand, ITeventStoreUpdater updater) => updater.Save(tommand.Entity));
       }
    }
 
-   public static void RegisterHandlersForTaggregate<TTaggregate, TTevent>(TessageHandlerRegistrar registrar)
+   public static void RegisterHandlersForTaggregate<TTaggregate, TTevent>(TypermediaHandlerRegistrar registrar)
       where TTaggregate : class, ITaggregate<TTevent>
       where TTevent : ITaggregateTevent
    {

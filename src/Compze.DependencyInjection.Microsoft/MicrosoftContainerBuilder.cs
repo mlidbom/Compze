@@ -1,6 +1,7 @@
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.LinqCE;
 using Microsoft.Extensions.DependencyInjection;
+using Compze.DependencyInjection.Microsoft._private;
 
 namespace Compze.DependencyInjection.Microsoft;
 

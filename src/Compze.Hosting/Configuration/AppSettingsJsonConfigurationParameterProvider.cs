@@ -1,4 +1,4 @@
-using Compze.Abstractions.Configuration.Internal;
+using Compze.Abstractions.Configuration;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Microsoft.Extensions.Configuration;

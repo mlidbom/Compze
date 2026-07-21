@@ -1,4 +1,4 @@
-using Compze.Abstractions.Time.Public;
+using Compze.Abstractions.Time;
 using Compze.Hosting.Testing;
 using Compze.Hosting.Testing.Wiring;
 using Compze.Internals.Testing;
@@ -10,11 +10,11 @@ using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Logging;
 using Compze.Must;
-using Compze.Tessaging.Abstractions.TessageBus;
-using Compze.Teventive.Taggregates.Tevents.Public;
+using Compze.Tessaging.TessageBus;
+using Compze.Teventive.Taggregates.Tevents;
 using Compze.Teventive.TeventStore;
-using Compze.Teventive.TeventStore.Abstractions.Public;
-using Compze.Teventive.TeventStore.Abstractions.Refactoring.Migrations.Public;
+using Compze.Teventive.TeventStore.Abstractions;
+using Compze.Teventive.TeventStore.Abstractions.Refactoring.Migrations;
 using Compze.Teventive.TeventStore.Wiring;
 
 // ReSharper disable AccessToModifiedClosure

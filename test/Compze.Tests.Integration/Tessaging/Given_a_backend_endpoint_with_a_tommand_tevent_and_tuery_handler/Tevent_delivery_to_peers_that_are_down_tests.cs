@@ -1,6 +1,6 @@
 using Compze.DependencyInjection;
 using Compze.Must;
-using Compze.Tessaging.Internal.Peers;
+using Compze.Tessaging.Peers;
 using Compze.Tests.Common.Tessaging.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Threading;
@@ -20,7 +20,7 @@ public class Tevent_delivery_to_peers_that_are_down_tests : EndpointHostTestBase
       await StartHostWithOnlyTheBackendEndpointAsync();
 
       //Down is not forgotten: the Backend's peer registry loaded Remote and its subscriptions from the Backend's database.
-      BackendPeerRegistry.Peers.Select(peer => peer.Id).Must().Contain(RemoteEndpointId);
+      BackendPeerAdministration.Peers.Select(peer => peer.Id).Must().Contain(RemoteEndpointId);
 
       //Publishes IMyTaggregateTevent - which Remote subscribes to - exactly-once, while Remote is down.
       await Navigator.PostAsync(MyCreateTaggregateTommand.Create());
@@ -31,5 +31,5 @@ public class Tevent_delivery_to_peers_that_are_down_tests : EndpointHostTestBase
       MyRemoteTaggregateTeventHandlerThreadGate.AwaitPassedThroughCountEqualTo(1, WaitTimeout.Seconds(15));
    }
 
-   IPeerRegistry BackendPeerRegistry => BackendEndPoint.ServiceLocator.Resolve<IPeerRegistry>();
+   IPeerAdministration BackendPeerAdministration => BackendEndPoint.ServiceLocator.Resolve<IPeerAdministration>();
 }

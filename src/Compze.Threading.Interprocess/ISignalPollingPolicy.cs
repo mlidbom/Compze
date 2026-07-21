@@ -1,5 +1,7 @@
 using Compze.Contracts;
 
+using Compze.Threading.Interprocess._internal;
+
 namespace Compze.Threading.Interprocess;
 
 /// <summary>

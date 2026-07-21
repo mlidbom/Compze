@@ -4,8 +4,8 @@ using Compze.Tests.Common.Tessaging.Given_a_backend_endpoint_with_a_tommand_teve
 using Compze.Internals.SystemCE.TransactionsCE;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Must;
-using Compze.Tessaging.Abstractions.TessageBus;
-using Compze.Tessaging.Abstractions.Validation.Exceptions;
+using Compze.Tessaging.TessageBus;
+using Compze.Tessaging.Validation.Exceptions;
 using static Compze.Must.MustActions;
 
 namespace Compze.Tests.Integration.Tessaging.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler;

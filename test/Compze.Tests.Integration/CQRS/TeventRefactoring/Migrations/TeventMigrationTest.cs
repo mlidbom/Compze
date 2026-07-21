@@ -1,5 +1,5 @@
-using Compze.Abstractions.Public;
-using Compze.Abstractions.Time.Public;
+using Compze.Abstractions;
+using Compze.Abstractions.Time;
 using Compze.Hosting.Testing.Wiring;
 using Compze.Tests.Common;
 using Compze.Tests.Common.CQRS.TeventRefactoring.Migrations;
@@ -7,10 +7,10 @@ using Compze.DependencyInjection;
 using Compze.Internals.SystemCE.TransactionsCE;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Must;
-using Compze.Tessaging.Abstractions.TessageBus;
+using Compze.Tessaging.TessageBus;
 using Compze.Tests.Common.CQRS.TeventRefactoring.Migrations.Tevents;
-using Compze.Teventive.TeventStore.Abstractions.Public;
-using Compze.Teventive.TeventStore.Abstractions.Refactoring.Migrations.Public;
+using Compze.Teventive.TeventStore.Abstractions;
+using Compze.Teventive.TeventStore.Abstractions.Refactoring.Migrations;
 
 // ReSharper disable AccessToDisposedClosure
 // ReSharper disable AccessToModifiedClosure

@@ -1,9 +1,8 @@
 using Compze.Tests.Infrastructure;
 using Compze.Must;
 
-using Compze.Teventive.Internal.Implementation;
 using Compze.Teventive.Taggregates.BaseClasses;
-using Compze.Teventive.Taggregates.Tevents.Public;
+using Compze.Teventive.Taggregates.Tevents;
 using Compze.xUnitBDD;
 using JetBrains.Annotations;
 using static Compze.Must.MustActions;
@@ -59,12 +58,6 @@ public class PublicSettersAndFieldsAreDisallowedTests : UniversalTestBase
    {
       public string Public1 { get; set; } = string.Empty;
 
-      [AllowPublicSetters]
-      public class Ignored : RootTevent
-      {
-         public string IgnoredMember { get; set; } = string.Empty;
-      }
-
       public class Component : RootTevent, IRootTevent.Component
       {
          public string Public2 { get; set; } = string.Empty;
@@ -116,15 +109,14 @@ public class PublicSettersAndFieldsAreDisallowedTests : UniversalTestBase
       }
    }
 
-   [XF] public void Trying_to_create_instance_of_taggregate_throws_and_lists_all_broken_types_in_exception_except_ignored()
+   [XF] public void Trying_to_create_instance_of_taggregate_throws_and_lists_all_broken_types_in_exception()
    {
       Invoking(() => new Root())
         .Must().Throw<Exception>()
         .Which.InnerException!
         .Message.Must()
         .Contain(typeof(Root).FullName!)
-        .Contain(typeof(IRootTevent).FullName!)
-        .NotContain(typeof(RootTevent.Ignored).FullName!);
+        .Contain(typeof(IRootTevent).FullName!);
    }
 
    [XF] public void Trying_to_create_instance_of_component_throws_and_lists_all_broken_types_in_exception()
