@@ -27,7 +27,7 @@ partial class CallMatchingHandlersInRegistrationOrderTeventDispatcher<TTevent> :
 
    internal CallMatchingHandlersInRegistrationOrderTeventDispatcher(TeventDispatcherConfig config)
    {
-      _ignoreAllUnhandled = config.Options.HasFlag(TeventDispatcherOptions.IgnoreAllUnhandled);
+      _ignoreAllUnhandled = config.IgnoresAllUnhandled;
       //Routing operates exclusively on wrapper types, so an inner tevent type in the ignore configuration is translated: ignoring a tevent type ignores every wrapping of it.
       _ignoredTevents = config.IgnoredUnhandled.Select(PublisherTevent.WrapperTypeMatchingAllWrappingsOf).ToHashSet();
    }

@@ -66,6 +66,39 @@ public static class MutableTeventDispatcher_specification
          }
       }
 
+      public class with_a_config_ignoring_three_tevent_types_through_the_three_type_IgnoreUnhandled_overload : Given_an_instance
+      {
+         public with_a_config_ignoring_three_tevent_types_through_the_three_type_IgnoreUnhandled_overload()
+            : base(TeventDispatcherConfig.Default.IgnoreUnhandled<IUserTevent.IIgnoredUserTevent, IUserTevent.IUserSkillsAdded, IUserTevent.IUserSkillsRemoved>()) {}
+
+         [XF] public void dispatching_a_tevent_of_each_of_the_three_ignored_types_throws_nothing()
+         {
+            _dispatcher.Dispatch(new IgnoredUserTevent());
+            _dispatcher.Dispatch(new UserSkillsAdded());
+            _dispatcher.Dispatch(new UserSkillsRemoved());
+         }
+
+         [XF] public void dispatching_an_unhandled_tevent_of_a_type_not_among_the_three_still_throws() =>
+            _dispatcher.Invoking(it => it.Dispatch(new UnHandledUserTevent())).Must().Throw<TeventUnhandledException>();
+      }
+
+      public class with_a_config_ignoring_four_tevent_types_through_the_four_type_IgnoreUnhandled_overload : Given_an_instance
+      {
+         public with_a_config_ignoring_four_tevent_types_through_the_four_type_IgnoreUnhandled_overload()
+            : base(TeventDispatcherConfig.Default.IgnoreUnhandled<IUserTevent.IIgnoredUserTevent, IUserTevent.IUserSkillsAdded, IUserTevent.IUserSkillsRemoved, IUserTevent.IUserCreatedTevent>()) {}
+
+         [XF] public void dispatching_a_tevent_of_each_of_the_four_ignored_types_throws_nothing()
+         {
+            _dispatcher.Dispatch(new IgnoredUserTevent());
+            _dispatcher.Dispatch(new UserSkillsAdded());
+            _dispatcher.Dispatch(new UserSkillsRemoved());
+            _dispatcher.Dispatch(new UserCreatedTevent());
+         }
+
+         [XF] public void dispatching_an_unhandled_tevent_of_a_type_not_among_the_four_still_throws() =>
+            _dispatcher.Invoking(it => it.Dispatch(new UnHandledUserTevent())).Must().Throw<TeventUnhandledException>();
+      }
+
       public class with_2_registered_handlers_for_the_same_tevent_type_then_when_dispatching_tevent : Given_an_instance
       {
          [XF] public void handlers_are_called_in_registration_order()
@@ -102,5 +135,9 @@ public static class MutableTeventDispatcher_specification
       class UserCreatedTevent : TaggregateTevent, IUserTevent.IUserCreatedTevent;
 
       class UserRegistered : TaggregateTevent, IUserTevent.IUserRegistered;
+
+      class UserSkillsAdded : TaggregateTevent, IUserTevent.IUserSkillsAdded;
+
+      class UserSkillsRemoved : TaggregateTevent, IUserTevent.IUserSkillsRemoved;
    }
 }

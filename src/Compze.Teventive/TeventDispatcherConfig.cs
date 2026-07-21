@@ -7,10 +7,11 @@ namespace Compze.Teventive;
 /// which tevents may legitimately go unhandled is dispatcher-lifetime policy, not mutable registration state.</summary>
 public class TeventDispatcherConfig
 {
-   ///<summary>The default config <see cref="Options"/> is <see cref="TeventDispatcherOptions.None"/> and <see cref="IgnoredUnhandled"/> is empty.</summary>
+   ///<summary>The default config: every dispatched tevent must have a matching handler (<see cref="IgnoresAllUnhandled"/> is off and <see cref="IgnoredUnhandled"/> is empty).</summary>
    public static readonly TeventDispatcherConfig Default = new();
 
-   public static readonly TeventDispatcherConfig IgnoreAllUnhandled = new(TeventDispatcherOptions.IgnoreAllUnhandled);
+   ///<summary>The config where no dispatched tevent is required to have a matching handler: the <see cref="TeventUnhandledException"/> check is disabled entirely.</summary>
+   public static readonly TeventDispatcherConfig IgnoreAllUnhandled = new(ignoresAllUnhandled: true);
 
    ///<summary>Create a copy of the config that allows the passed types to be unhandled when published.</summary>
    public TeventDispatcherConfig IgnoreUnhandled<T1>() => new(this) { IgnoredUnhandled = [.. IgnoredUnhandled, .. EnumerableCE.OfTypes<T1>()] };
@@ -21,8 +22,8 @@ public class TeventDispatcherConfig
    ///<summary>Create a copy of the config that allows the passed types to be unhandled when published.</summary>
    public TeventDispatcherConfig IgnoreUnhandled<T1, T2, T3, T4>() => new(this) { IgnoredUnhandled = [.. IgnoredUnhandled, .. EnumerableCE.OfTypes<T1, T2, T3, T4>()] };
 
-   ///<summary>The on/off dispatcher options to enable.</summary>
-   internal TeventDispatcherOptions Options { get; init; }
+   ///<summary>When true, no dispatched tevent is required to have a matching handler: the <see cref="TeventUnhandledException"/> check is disabled entirely — see <see cref="IgnoreAllUnhandled"/>.</summary>
+   internal bool IgnoresAllUnhandled { get; init; }
 
    ///<summary>The tevent types that may legitimately go unhandled: dispatching a tevent that no registered handler matches throws a <see cref="TeventUnhandledException"/><br/>
    /// unless the tevent is assignable to one of these types. The types need not belong to the dispatcher's own tevent hierarchy: any interface the concrete tevents<br/>
@@ -41,21 +42,11 @@ public class TeventDispatcherConfig
       }
    }
 
-   TeventDispatcherConfig(TeventDispatcherConfig source) : this(source.Options, source.IgnoredUnhandled) {}
+   TeventDispatcherConfig(TeventDispatcherConfig source) : this(source.IgnoresAllUnhandled, source.IgnoredUnhandled) {}
 
-   TeventDispatcherConfig(TeventDispatcherOptions options = TeventDispatcherOptions.None, IReadOnlyList<Type>? ignoreUnhandled = null)
+   TeventDispatcherConfig(bool ignoresAllUnhandled = false, IReadOnlyList<Type>? ignoreUnhandled = null)
    {
-      Options = options;
+      IgnoresAllUnhandled = ignoresAllUnhandled;
       IgnoredUnhandled = ignoreUnhandled ?? [];
    }
-}
-
-///<summary>The on/off options an <see cref="IMutableTeventDispatcher{TTevent}"/> can be created with via <see cref="TeventDispatcherConfig"/>.</summary>
-[Flags]
-public enum TeventDispatcherOptions
-{
-   None = 0,
-
-   ///<summary>No dispatched tevent is required to have a matching handler: the <see cref="TeventUnhandledException"/> check is disabled entirely.</summary>
-   IgnoreAllUnhandled = 1
 }
