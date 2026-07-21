@@ -29,7 +29,7 @@ Internals is a signal that while these projects may expose public types, these a
 
 It is both possible and natural for an Internals project to have _internal and/or _private sections within it.
 
-Note: It is possible that some existing "Internals" projects should simply not expose anything publicly. Review is required.
+Note: The Internals projects were reviewed 2026-07-21. SystemCE and Logging (+Logging.Serilog) are deliberately publishing-worthy — external consumers use them accepting the churn. Serialization.Newtonsoft and the Sql family were found to be consumer-facing backend packages wearing the wrong label and were promoted to Compze.Serialization.Newtonsoft and Compze.Sql.* (Sql.Common fully dark behind InternalsVisibleTo). Compze.Internals.Testing's fate (promote the performance-testing harness vs go dark) is still an open decision.
 
 Note: The name Internals is also up for debate and may well be changed to make the meaning clearer.
 
