@@ -44,9 +44,14 @@ public partial class Given_a_container_composing_a_LocalTessagingEngine : Univer
 
    ///<summary>Each nested context composes its own container: the engine's declaration block is the one and only way handlers get<br/>
    /// into the engine, so a context's handlers are declared at composition — never registered afterward.</summary>
-   protected void ComposeContainerWithEngine(Action<LocalTessagingEngineBuilder> engine)
+   protected void ComposeContainerWithEngine(Action<LocalTessagingEngineBuilder> engine) => ComposeContainerWithEngine(_ => {}, engine);
+
+   ///<summary>The form for contexts whose handlers resolve components: <paramref name="components"/> registers them in the same<br/>
+   /// container the engine composes into.</summary>
+   protected void ComposeContainerWithEngine(Action<IComponentRegistrar> components, Action<LocalTessagingEngineBuilder> engine)
    {
       var builder = TestEnv.DIContainer.CreateTestingContainerBuilder();
+      components(builder.Registrar);
       builder.Registrar.LocalTessagingEngine(engine);
       _container = builder.Build();
    }

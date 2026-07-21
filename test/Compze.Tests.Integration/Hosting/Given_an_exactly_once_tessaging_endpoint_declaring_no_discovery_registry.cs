@@ -40,6 +40,7 @@ public class Given_an_exactly_once_tessaging_endpoint_declaring_no_discovery_reg
    readonly IEndpointHost _host;
    readonly ExactlyOnceEndpoint _endpoint;
    readonly IThreadGate _inRosterTommandHandlerGate = IThreadGate.NewOpen(HandlerTimeout, "inRosterTommandHandler");
+   object? _serviceResolvedIntoTheTommandHandler;
 
    public Given_an_exactly_once_tessaging_endpoint_declaring_no_discovery_registry()
    {
@@ -53,13 +54,20 @@ public class Given_an_exactly_once_tessaging_endpoint_declaring_no_discovery_reg
          endpointBuilder =>
          {
             endpointBuilder
-               .RegisterComponents(registrar => registrar.RequireIntegrationTestTypeMappings())
+               .RegisterComponents(registrar => registrar
+                  .RequireIntegrationTestTypeMappings()
+                  ._mutate(it => it.Register(Scoped.For<ServiceResolvedIntoTheTommandHandler>().CreatedBy(() => new ServiceResolvedIntoTheTommandHandler()))))
                .TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport())
                .ConfigurePersistence(registrar => registrar.CurrentTestsConfiguredSqlLayer(connectionStringName: endpointBuilder.Configuration.Id.ToString()))
                .RegisterTessageBusHandlers(handle => handle
                        .ForTommand((TommandTheEndpointSendsItself _) =>
                         {
                            _inRosterTommandHandlerGate.AwaitPassThrough();
+                           return Task.CompletedTask;
+                        })
+                       .ForTommand((TommandWhoseHandlerResolvesADependency _, ServiceResolvedIntoTheTommandHandler resolved) =>
+                        {
+                           _serviceResolvedIntoTheTommandHandler = resolved;
                            return Task.CompletedTask;
                         })
                        .ForTommand((TommandWhoseHandlerFails _, IUnitOfWorkResolver _) => Task.FromException(new InRosterTommandHandlerFailure())));
@@ -84,7 +92,17 @@ public class Given_an_exactly_once_tessaging_endpoint_declaring_no_discovery_reg
       await InvokingAsync(async () => await _endpoint.ServiceLocator.Resolve<IIndependentTommandSender>().SendAsync(new TommandWhoseHandlerFails()))
          .Must().ThrowAsync<InRosterTommandHandlerFailure>();
 
+   [PCT] public async Task a_tommand_handler_declared_through_the_with_dependency_overload_receives_its_dependency_resolved()
+   {
+      await _endpoint.ServiceLocator.Resolve<IIndependentTommandSender>().SendAsync(new TommandWhoseHandlerResolvesADependency());
+
+      //No waiting: inline execution is synchronous with the send, so the handler has already run.
+      _serviceResolvedIntoTheTommandHandler.Must().NotBeNull();
+   }
+
    protected internal class TommandTheEndpointSendsItself : Remotable.ExactlyOnce.Tommand;
+   protected internal class TommandWhoseHandlerResolvesADependency : Remotable.ExactlyOnce.Tommand;
    protected internal class TommandWhoseHandlerFails : Remotable.ExactlyOnce.Tommand;
    class InRosterTommandHandlerFailure : Exception;
+   class ServiceResolvedIntoTheTommandHandler;
 }

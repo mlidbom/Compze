@@ -57,12 +57,16 @@ public class Given_two_best_effort_endpoints_conversing_in_typermedia : Universa
          "TypermediaAnsweringEndpoint",
          new EndpointId(Guid.Parse("b93d40e7-2c58-4f1b-a6d9-04e8c6a25f17")),
          endpointBuilder => endpointBuilder
-            .RegisterComponents(registrar => registrar.RequireIntegrationTestTypeMappings())
+            .RegisterComponents(registrar => registrar
+               .RequireIntegrationTestTypeMappings()
+               ._mutate(it => it.Register(Scoped.For<GreetingFlourisher>().CreatedBy(() => new GreetingFlourisher()))))
             .TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport())
             .NewtonsoftSerializer()
             .RegisterTypermediaHandlers(handle => handle
                 .ForTuery((GetTheAnswerTuery _) => new AnswerResource(answeredBy: "TypermediaAnsweringEndpoint"))
-                .ForTommand((RegisterGreetingTypermediaTommand tommand) => new GreetingRegisteredConfirmationResource(tommand.Greeting)))));
+                .ForTommand((RegisterGreetingTypermediaTommand tommand) => new GreetingRegisteredConfirmationResource(tommand.Greeting))
+                .ForTommand((RegisterGreetingWithAResolvedFlourishTommand tommand, GreetingFlourisher flourisher) => new GreetingRegisteredConfirmationResource(flourisher.AddFlourish(tommand.Greeting)))
+                .ForTommand((RegisterGreetingThroughTheCoreAsyncVerbTommand tommand, IUnitOfWorkResolver _) => Task.FromResult(new GreetingRegisteredConfirmationResource(tommand.Greeting))))));
    }
 
    protected override async Task InitializeAsyncInternal() => await _host.StartAsync().caf();
@@ -76,6 +80,14 @@ public class Given_two_best_effort_endpoints_conversing_in_typermedia : Universa
    [PCT] public void a_tommand_posted_on_one_endpoint_is_handled_by_the_endpoint_handling_its_type_and_its_result_comes_back() =>
       NavigateFromTheAskingEndpoint(navigator => navigator.Post(RegisterGreetingTypermediaTommand.Create("hello from the asking endpoint")))
         .Greeting.Must().Be("hello from the asking endpoint");
+
+   [PCT] public void a_tommand_whose_handler_was_declared_through_the_with_dependency_overload_is_answered_using_the_resolved_dependency() =>
+      NavigateFromTheAskingEndpoint(navigator => navigator.Post(RegisterGreetingWithAResolvedFlourishTommand.Create("hello")))
+        .Greeting.Must().Be("hello, with a flourish!");
+
+   [PCT] public void a_tommand_whose_handler_was_declared_through_the_core_async_result_verb_is_answered() =>
+      NavigateFromTheAskingEndpoint(navigator => navigator.Post(RegisterGreetingThroughTheCoreAsyncVerbTommand.Create("hello asynchronously")))
+        .Greeting.Must().Be("hello asynchronously");
 
    [PCT] public void navigating_from_the_endpoint_that_declared_no_discovery_registry_fails_loud_naming_the_missing_declaration() =>
       Invoking(() => _answeringEndpoint.ServiceLocator.Resolve<IScopeFactory>().ExecuteInIsolatedScope(
@@ -119,5 +131,36 @@ public class Given_two_best_effort_endpoints_conversing_in_typermedia : Universa
    protected internal class GreetingRegisteredConfirmationResource(string greeting)
    {
       public string Greeting { get; } = greeting;
+   }
+
+   protected internal class RegisterGreetingWithAResolvedFlourishTommand : Remotable.AtMostOnce.AtMostOnceTypermediaTommand<GreetingRegisteredConfirmationResource>
+   {
+      RegisterGreetingWithAResolvedFlourishTommand() {}
+
+      public static RegisterGreetingWithAResolvedFlourishTommand Create(string greeting) => new()
+                                                                                            {
+                                                                                               Greeting = greeting,
+                                                                                               Id = new TessageId()
+                                                                                            };
+
+      public string Greeting { get; private init; } = "";
+   }
+
+   protected internal class RegisterGreetingThroughTheCoreAsyncVerbTommand : Remotable.AtMostOnce.AtMostOnceTypermediaTommand<GreetingRegisteredConfirmationResource>
+   {
+      RegisterGreetingThroughTheCoreAsyncVerbTommand() {}
+
+      public static RegisterGreetingThroughTheCoreAsyncVerbTommand Create(string greeting) => new()
+                                                                                              {
+                                                                                                 Greeting = greeting,
+                                                                                                 Id = new TessageId()
+                                                                                              };
+
+      public string Greeting { get; private init; } = "";
+   }
+
+   class GreetingFlourisher
+   {
+      public string AddFlourish(string greeting) => $"{greeting}, with a flourish!";
    }
 }
