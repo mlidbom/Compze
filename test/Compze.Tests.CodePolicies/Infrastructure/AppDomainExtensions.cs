@@ -22,12 +22,18 @@ static class AppDomainExtensions
                     .SelectMany(assembly => assembly.GetTypes())
          ];
 
-      ///<summary>Every type in the loaded Compze library assemblies — the shipped packages the code policies govern.<br/>
+      ///<summary>The loaded Compze library assemblies — the shipped packages the code policies govern.<br/>
       /// Test assemblies (<c>*.Tests*</c>, <c>*.Specifications</c>, <c>*.InternalSpecifications</c>) are not policed.</summary>
-      public IReadOnlyList<Type> AllCompzeLibraryTypes() =>
+      public IReadOnlyList<Assembly> AllCompzeLibraryAssemblies() =>
          [
             .. @this.GetAssemblies()
                     .Where(IsCompzeLibraryAssembly)
+         ];
+
+      ///<summary>Every type in the loaded Compze library assemblies — see <see cref="AllCompzeLibraryAssemblies"/>.</summary>
+      public IReadOnlyList<Type> AllCompzeLibraryTypes() =>
+         [
+            .. @this.AllCompzeLibraryAssemblies()
                     .SelectMany(assembly => assembly.GetTypes())
          ];
    }

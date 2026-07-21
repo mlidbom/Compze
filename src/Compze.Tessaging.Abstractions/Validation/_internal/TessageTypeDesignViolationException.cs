@@ -1,7 +1,10 @@
 namespace Compze.Tessaging.Validation._internal;
 
-internal class TessageTypeDesignViolationException(string message) : Exception(message + TypeDesignRationale)
+internal class TessageTypeDesignViolationException(string violation) : Exception(violation + TypeDesignRationale)
 {
+   ///<summary>The violation alone, without <see cref="TypeDesignRationale"/> — for callers aggregating several violations into one report.</summary>
+   public string Violation { get; } = violation;
+
    const string TypeDesignRationale = """
 
 
