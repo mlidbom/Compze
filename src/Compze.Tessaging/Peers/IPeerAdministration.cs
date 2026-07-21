@@ -1,4 +1,4 @@
-using Compze.Tessaging.Peers.Internal;
+using Compze.Tessaging.Peers._internal;
 using Compze.Tessaging.Endpoints;
 
 namespace Compze.Tessaging.Peers;

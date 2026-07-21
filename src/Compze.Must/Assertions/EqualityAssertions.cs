@@ -1,9 +1,9 @@
 using System.Collections;
 using System.Runtime.CompilerServices;
 using Compze.Internals.SystemCE.ReflectionCE;
-using Compze.Must.Private.Serialization;
+using Compze.Must._private.Serialization;
 using Newtonsoft.Json;
-using Compze.Must.Private;
+using Compze.Must._private;
 
 namespace Compze.Must;
 

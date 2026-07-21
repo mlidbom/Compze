@@ -1,16 +1,16 @@
-using Compze.Tessaging.Engine.Private;
+using Compze.Tessaging.Engine._private;
 using Compze.Contracts;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Tessaging.TessageBus;
-using Compze.Tessaging.TessageBus.Internal;
+using Compze.Tessaging.TessageBus._internal;
 using Compze.Tessaging.Engine.HandlerRegistration;
-using Compze.Tessaging.Internal.TessagesInFlight;
+using Compze.Tessaging._internal.TessagesInFlight;
 using Compze.Tessaging.Typermedia;
-using Compze.Tessaging.Typermedia.Internal;
-using Compze.Tessaging.Private.TessagesInFlight;
-using Compze.Tessaging.TessageBus.Private;
-using Compze.Tessaging.Typermedia.Private;
+using Compze.Tessaging.Typermedia._internal;
+using Compze.Tessaging._private.TessagesInFlight;
+using Compze.Tessaging.TessageBus._private;
+using Compze.Tessaging.Typermedia._private;
 
 namespace Compze.Tessaging.Engine.Wiring;
 

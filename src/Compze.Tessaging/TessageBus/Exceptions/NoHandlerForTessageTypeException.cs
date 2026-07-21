@@ -1,5 +1,5 @@
 using Compze.Internals.SystemCE.ReflectionCE;
-using Compze.Tessaging.Peers.Internal;
+using Compze.Tessaging.Peers._internal;
 
 namespace Compze.Tessaging.TessageBus.Exceptions;
 

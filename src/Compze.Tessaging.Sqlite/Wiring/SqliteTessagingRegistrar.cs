@@ -3,12 +3,12 @@ using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Sql.Sqlite;
 using Compze.Internals.Sql.Sqlite.Wiring;
 using Compze.Tessaging.Endpoints.ExactlyOnce;
-using Compze.Tessaging.Internal.SqlLayer;
+using Compze.Tessaging._internal.SqlLayer;
 using Compze.TypeIdentifiers.Interning;
 using Compze.TypeIdentifiers.Interning.Sqlite.Wiring;
-using Compze.Internals.Sql.Sqlite.Wiring.Internal;
-using Compze.Tessaging.Sqlite.Private;
-using Compze.Internals.Sql.Sqlite.Internal;
+using Compze.Internals.Sql.Sqlite.Wiring._internal;
+using Compze.Tessaging.Sqlite._private;
+using Compze.Internals.Sql.Sqlite._internal;
 
 namespace Compze.Tessaging.Sqlite.Wiring;
 

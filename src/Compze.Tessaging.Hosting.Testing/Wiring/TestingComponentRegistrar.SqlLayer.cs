@@ -16,7 +16,7 @@ using Compze.TypeIdentifiers.Interning.Sqlite.Wiring;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Tessaging.Endpoints;
-using Compze.Tessaging.Internal.SqlLayer;
+using Compze.Tessaging._internal.SqlLayer;
 using Compze.Internals.SystemCE;
 using Compze.Internals.Testing;
 using Compze.Teventive.TeventStore.MicrosoftSql.Wiring;

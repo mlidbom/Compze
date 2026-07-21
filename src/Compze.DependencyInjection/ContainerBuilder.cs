@@ -2,7 +2,7 @@ using System.Reflection;
 using Compze.Contracts;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.LinqCE;
-using Compze.DependencyInjection.Private;
+using Compze.DependencyInjection._private;
 
 namespace Compze.DependencyInjection;
 

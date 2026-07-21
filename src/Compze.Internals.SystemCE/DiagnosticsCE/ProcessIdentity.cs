@@ -1,5 +1,5 @@
 using System.Diagnostics;
-using Compze.Internals.SystemCE.DiagnosticsCE.Private;
+using Compze.Internals.SystemCE.DiagnosticsCE._private;
 
 namespace Compze.Internals.SystemCE.DiagnosticsCE;
 

@@ -1,7 +1,7 @@
 using System.Runtime.CompilerServices;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.SystemCE;
-using Compze.Internals.Logging.Private;
+using Compze.Internals.Logging._private;
 
 // ReSharper disable UnusedMember.Global Diagnostics API — used occasionally while researching performance, and by sibling apps built on our logging.
 // ReSharper disable UnusedType.Global

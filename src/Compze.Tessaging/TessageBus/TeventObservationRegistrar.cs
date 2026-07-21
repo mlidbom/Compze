@@ -1,8 +1,8 @@
 using Compze.Contracts;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Tessaging.Engine;
-using Compze.Tessaging.Engine.HandlerRegistration.Private;
-using Compze.Tessaging.Engine.Private;
+using Compze.Tessaging.Engine.HandlerRegistration._private;
+using Compze.Tessaging.Engine._private;
 using Compze.Tessaging.TessageTypes;
 
 namespace Compze.Tessaging.TessageBus;

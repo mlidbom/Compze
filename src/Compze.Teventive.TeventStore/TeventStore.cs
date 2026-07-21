@@ -7,16 +7,16 @@ using Compze.Internals.SystemCE.LinqCE;
 using Compze.Tessaging.TessageBus;
 using Compze.Tessaging.TessageTypes;
 using Compze.Teventive.Taggregates.Tevents.Public;
-using Compze.Teventive.TeventStore.Abstractions.Internal;
-using Compze.Teventive.TeventStore.Abstractions.Internal.SqlLayer.Abstractions;
+using Compze.Teventive.TeventStore.Abstractions._internal;
+using Compze.Teventive.TeventStore.Abstractions._internal.SqlLayer.Abstractions;
 using Compze.Teventive.TeventStore.Abstractions.Public;
 using Compze.Teventive.TeventStore.Abstractions.Refactoring.Migrations.Public;
 using Compze.Teventive.TeventStore.Refactoring.Migrations;
 using Compze.TypeIdentifiers;
 using JetBrains.Annotations;
 using static Compze.Contracts.Contract;
-using Compze.Teventive.TeventStore.Private;
-using Compze.Teventive.TeventStore.Refactoring.Migrations.Private;
+using Compze.Teventive.TeventStore._private;
+using Compze.Teventive.TeventStore.Refactoring.Migrations._private;
 
 namespace Compze.Teventive.TeventStore;
 

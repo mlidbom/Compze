@@ -2,7 +2,7 @@ using System.Runtime.CompilerServices;
 using Compze.Internals.SystemCE.ReflectionCE;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using JetBrains.Annotations;
-using Compze.Must.Private;
+using Compze.Must._private;
 
 namespace Compze.Must;
 

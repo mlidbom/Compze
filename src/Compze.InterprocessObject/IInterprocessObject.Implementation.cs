@@ -2,7 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 using Compze.Internals.SystemCE.IOCE;
 using Compze.Threading;
 using Compze.Threading.Interprocess;
-using Compze.InterprocessObject.Private;
+using Compze.InterprocessObject._private;
 
 namespace Compze.InterprocessObject;
 

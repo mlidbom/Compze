@@ -2,9 +2,9 @@ using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Sql.PostgreSql;
 using Compze.Internals.Sql.PostgreSql.Wiring;
-using Compze.TypeIdentifiers.Interning.PostgreSql.Private;
-using Compze.Internals.Sql.PostgreSql.Wiring.Internal;
-using Compze.Internals.Sql.PostgreSql.Internal;
+using Compze.TypeIdentifiers.Interning.PostgreSql._private;
+using Compze.Internals.Sql.PostgreSql.Wiring._internal;
+using Compze.Internals.Sql.PostgreSql._internal;
 
 namespace Compze.TypeIdentifiers.Interning.PostgreSql.Wiring;
 

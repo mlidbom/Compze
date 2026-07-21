@@ -1,4 +1,4 @@
-using Compze.Tessaging.Engine.HandlerRegistration.Private;
+using Compze.Tessaging.Engine.HandlerRegistration._private;
 using Compze.Tessaging.Engine.Wiring;
 using Compze.Tessaging.TessageBus;
 using Compze.Tessaging.Typermedia;

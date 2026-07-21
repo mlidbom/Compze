@@ -1,4 +1,4 @@
-using Compze.TypeIdentifiers.Internal;
+using Compze.TypeIdentifiers._internal;
 
 namespace Compze.TypeIdentifiers.InternalSpecifications;
 

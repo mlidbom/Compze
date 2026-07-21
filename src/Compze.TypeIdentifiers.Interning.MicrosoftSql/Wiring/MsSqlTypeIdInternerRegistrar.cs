@@ -2,9 +2,9 @@ using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Sql.MicrosoftSql;
 using Compze.Internals.Sql.MicrosoftSql.Wiring;
-using Compze.TypeIdentifiers.Interning.MicrosoftSql.Private;
-using Compze.Internals.Sql.MicrosoftSql.Wiring.Internal;
-using Compze.Internals.Sql.MicrosoftSql.Internal;
+using Compze.TypeIdentifiers.Interning.MicrosoftSql._private;
+using Compze.Internals.Sql.MicrosoftSql.Wiring._internal;
+using Compze.Internals.Sql.MicrosoftSql._internal;
 
 namespace Compze.TypeIdentifiers.Interning.MicrosoftSql.Wiring;
 

@@ -1,5 +1,5 @@
 using System.Runtime.CompilerServices;
-using Compze.Must.Private;
+using Compze.Must._private;
 
 // ReSharper disable InconsistentNaming
 

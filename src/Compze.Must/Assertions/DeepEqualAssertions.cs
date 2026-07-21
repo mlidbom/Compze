@@ -1,9 +1,9 @@
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using Compze.Must.Private.Serialization;
+using Compze.Must._private.Serialization;
 using Newtonsoft.Json;
-using Compze.Must.Private;
+using Compze.Must._private;
 
 // ReSharper disable InconsistentNaming
 namespace Compze.Must;

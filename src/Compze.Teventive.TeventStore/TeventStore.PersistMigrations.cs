@@ -5,11 +5,11 @@ using Compze.Internals.SystemCE;
 using Compze.Internals.SystemCE.LinqCE;
 using Compze.Tessaging;
 using Compze.Teventive.Taggregates.Tevents.Public;
-using Compze.Teventive.TeventStore.Abstractions.Internal.SqlLayer.Abstractions;
+using Compze.Teventive.TeventStore.Abstractions._internal.SqlLayer.Abstractions;
 using Compze.Teventive.TeventStore.Refactoring.Migrations;
-using ReadOrder = Compze.Teventive.TeventStore.Abstractions.Internal.SqlLayer.Abstractions.ReadOrder;
-using Compze.Teventive.TeventStore.Refactoring.Migrations.Private;
-using Compze.Teventive.TeventStore.Private;
+using ReadOrder = Compze.Teventive.TeventStore.Abstractions._internal.SqlLayer.Abstractions.ReadOrder;
+using Compze.Teventive.TeventStore.Refactoring.Migrations._private;
+using Compze.Teventive.TeventStore._private;
 
 namespace Compze.Teventive.TeventStore;
 

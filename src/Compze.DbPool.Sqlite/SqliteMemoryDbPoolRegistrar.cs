@@ -1,10 +1,10 @@
 using Compze.DependencyInjection.Abstractions;
-using Compze.DbPool.Sqlite.Private;
+using Compze.DbPool.Sqlite._private;
 
 namespace Compze.DbPool.Sqlite;
 
 public static class SqliteMemoryDbPoolRegistrar
 {
    public static IComponentRegistrar SqliteMemoryDbPoolSqlLayer(this IComponentRegistrar registrar) =>
-      Sqlite.Private.SqliteMemoryDbPoolSqlLayer.RegisterWith(registrar);
+      Sqlite._private.SqliteMemoryDbPoolSqlLayer.RegisterWith(registrar);
 }

@@ -1,4 +1,4 @@
-using Compze.Tessaging.Validation.Internal;
+using Compze.Tessaging.Validation._internal;
 using Compze.Tessaging.TessageTypes;
 using Compze.Tests.Infrastructure;
 using Compze.xUnitBDD;

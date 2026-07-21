@@ -1,4 +1,4 @@
-using Compze.Abstractions.Serialization.Internal;
+using Compze.Abstractions.Serialization._internal;
 using Compze.Hosting.Testing;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
@@ -6,7 +6,7 @@ using Compze.Internals.Serialization.Newtonsoft.Wiring;
 using Compze.Hosting.Testing.Wiring;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
-using Compze.Teventive.TeventStore.Abstractions.Internal;
+using Compze.Teventive.TeventStore.Abstractions._internal;
 using Compze.TypeIdentifiers.DependencyInjection;
 
 namespace Compze.Internals.Serialization.Newtonsoft.InternalSpecifications;

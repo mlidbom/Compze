@@ -4,7 +4,7 @@ using Compze.Tests.Infrastructure;
 using Compze.Must;
 
 using Compze.xUnitBDD;
-using ReadOrder = Compze.Teventive.TeventStore.Abstractions.Internal.SqlLayer.Abstractions.ReadOrder;
+using ReadOrder = Compze.Teventive.TeventStore.Abstractions._internal.SqlLayer.Abstractions.ReadOrder;
 using static Compze.Must.MustActions;
 
 namespace Compze.Teventive.TeventStore.InternalSpecifications;

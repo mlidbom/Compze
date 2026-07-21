@@ -1,5 +1,5 @@
-using Compze.Tessaging.Engine.Private;
-using Compze.Tessaging.Engine.HandlerRegistration.Private;
+using Compze.Tessaging.Engine._private;
+using Compze.Tessaging.Engine.HandlerRegistration._private;
 using Compze.Contracts;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.ReflectionCE;

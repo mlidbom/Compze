@@ -1,4 +1,4 @@
-using Compze.Teventive.Private.Implementation;
+using Compze.Teventive._private.Implementation;
 using Compze.Teventive.Taggregates.Tevents.Public;
 
 namespace Compze.Teventive.Taggregates.BaseClasses;

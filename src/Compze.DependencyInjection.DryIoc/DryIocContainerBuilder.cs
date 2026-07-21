@@ -1,7 +1,7 @@
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.LinqCE;
 using DryIoc;
-using Compze.DependencyInjection.DryIoc.Private;
+using Compze.DependencyInjection.DryIoc._private;
 
 namespace Compze.DependencyInjection.DryIoc;
 

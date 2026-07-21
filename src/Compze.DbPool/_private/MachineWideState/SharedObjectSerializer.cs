@@ -1,0 +1,21 @@
+using Compze.Contracts;
+using Compze.InterprocessObject;
+using MemoryPack;
+
+namespace Compze.DbPool._private.MachineWideState;
+
+class MemoryPackDbPoolStateSerializer : IInterprocessObjectSerializer<DbPoolState>
+{
+   internal static readonly MemoryPackDbPoolStateSerializer Instance = new();
+
+   static MemoryPackDbPoolStateSerializer()
+   {
+      // Force JIT + formatter registration so the cost in profiling isn't attributed to the first real call.
+      var warmup = MemoryPackSerializer.Serialize(new DbPoolState());
+      MemoryPackSerializer.Deserialize<DbPoolState>(warmup);
+   }
+
+   public byte[] Serialize(DbPoolState instance) => MemoryPackSerializer.Serialize(instance);
+
+   public DbPoolState Deserialize(byte[] data) => MemoryPackSerializer.Deserialize<DbPoolState>(data)._assert().NotNull();
+}

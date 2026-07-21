@@ -1,4 +1,4 @@
-using Compze.Must.Private;
+using Compze.Must._private;
 
 namespace Compze.Must;
 // ReSharper disable InconsistentNaming

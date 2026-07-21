@@ -2,7 +2,7 @@ using Compze.Contracts;
 using Compze.DependencyInjection.Abstractions;
 using DryIoc;
 using IScope = Compze.DependencyInjection.Abstractions.IScope;
-using Compze.DependencyInjection.DryIoc.Private;
+using Compze.DependencyInjection.DryIoc._private;
 
 namespace Compze.DependencyInjection.DryIoc;
 

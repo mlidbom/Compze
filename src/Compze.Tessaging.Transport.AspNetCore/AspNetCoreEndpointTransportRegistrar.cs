@@ -1,10 +1,10 @@
-using Compze.Tessaging.Internal.Transport;
-using Compze.Tessaging.Internal.Transport.AspNetCore;
+using Compze.Tessaging._internal.Transport;
+using Compze.Tessaging._internal.Transport.AspNetCore;
 using Compze.DependencyInjection.Abstractions;
-using Compze.Tessaging.Internal.Transport.Advertisement;
+using Compze.Tessaging._internal.Transport.Advertisement;
 using Compze.Tessaging.Typermedia.Client;
-using Compze.Tessaging.Transport.AspNetCore.Private;
-using Compze.Tessaging.Private.Transport;
+using Compze.Tessaging.Transport.AspNetCore._private;
+using Compze.Tessaging._private.Transport;
 
 namespace Compze.Tessaging.Transport.AspNetCore;
 

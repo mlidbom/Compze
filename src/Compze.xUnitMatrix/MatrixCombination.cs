@@ -2,7 +2,7 @@ using Compze.Internals.SystemCE;
 using System.ComponentModel;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Xunit.Sdk;
-using Compze.xUnitMatrix.Private;
+using Compze.xUnitMatrix._private;
 
 namespace Compze.xUnitMatrix;
 

@@ -1,35 +1,37 @@
 In order to make it easy for a reader to follow the structure of the code we use namespace and project name conventions
 
-## Private and Internal namespaces
+## _internal and _private namespaces
 
 * Code that should never be used directly by a consumer of a library goes in namespaces called:
-  * Internal: For code that IS shared with other parts of compze using InternalsVisibleTo — a type no other assembly consumes does not belong here; it goes under Private.
-  * Private: For code that must never be used by any other project even if it may be technically visible due to InternalsVisibleTo.
+  * _internal: For code that IS shared with other parts of compze using InternalsVisibleTo — a type no other assembly consumes does not belong here; it goes under _private.
+  * _private: For code that must never be used by any other project even if it may be technically visible due to InternalsVisibleTo.
 
-Both directions are enforced by Compze.Tests.CodePolicies' PrivateNamespaceIsolationPolicy, which scans the compiled assemblies' type references: no assembly may reference a type in another assembly's Private namespace, and every type in an Internal namespace must actually be referenced by another assembly. This makes the classification self-maintaining: a foreign consumer appearing forces promotion Private→Internal; the last consumer disappearing forces demotion Internal→Private.
+Why the lowercase underscore form: these sections are not domain concepts — they are visibility machinery, in effect language extensions making up for the access modifier C# lacks. The `_lowercase` spelling makes them look like what they are (keyword-like markers, not PascalCase domain words), keeps them visually distinct from real namespaces, and sorts them before normal namespaces in IDE project views and file explorers — the same signal `_docs` folders already carry.
 
-Where the Internal/Private section sits:
-* A concept with a public side keeps its machinery in an Internal/Private namespace nested BELOW the concept — `Compze.Tessaging.TessageBus.Internal` — at whatever depth the public aspect lives.
-* Machinery with no public face at all nests below a root Internal/Private namespace of the project.
+Both directions are enforced by Compze.Tests.CodePolicies' PrivateNamespaceIsolationPolicy, which scans the compiled assemblies' type references: no assembly may reference a type in another assembly's _private namespace, and every type in an _internal namespace must actually be referenced by another assembly. This makes the classification self-maintaining: a foreign consumer appearing forces promotion _private→_internal; the last consumer disappearing forces demotion _internal→_private.
 
-These namespaces are obligatory. A project that has only Internal and/or Private types should have NO code outside of namespaces with Private or Internal as a section. 
+Where the _internal/_private section sits:
+* A concept with a public side keeps its machinery in an _internal/_private namespace nested BELOW the concept — `Compze.Tessaging.TessageBus._internal` — at whatever depth the public aspect lives.
+* Machinery with no public face at all nests below a root _internal/_private namespace of the project.
 
-For many of our project, most of the code in our projects should be in Internal or Private namespaces. 
+These namespaces are obligatory. A project that has only _internal and/or _private types should have NO code outside of namespaces with _private or _internal as a section. 
 
-It is FORBIDDEN to have ANY public types in any namespace where a section of the namespace is named Internal or Private. The inverse also holds: no top-level internal type lives outside an Internal/Private namespace section. Both invariants are enforced by Compze.Tests.CodePolicies (the allowlists have burned to zero and stay there).
+For many of our project, most of the code in our projects should be in _internal or _private namespaces. 
+
+It is FORBIDDEN to have ANY public types in any namespace where a section of the namespace is named _internal or _private. The inverse also holds: no top-level internal type lives outside an _internal/_private namespace section. Both invariants are enforced by Compze.Tests.CodePolicies (the allowlists have burned to zero and stay there).
 
 
 ## Internals projects and namespaces
-The projects (and their associated namespaces) called Internals are NOT the same as those with sections named Internal or Private
+The projects (and their associated namespaces) called Internals are NOT the same as those with sections named _internal or _private
 
 Internals is a signal that while these projects may expose public types, these are special. They are not truly designed for public use, but as utilities for use by the rest of Compze. We do not put the same effort and thought into the design of the types in these projects that we do into our other projects. Each such project will contain in its description that it is not recommended for consumers to take a direct dependency on these project, nor for them to use the types in them. The APIs may change frequently, types and/or members may be removed. Semantic versioning will be followed, but they may race through major versions, each breaking compatibility.
 
 
-It is both possible and natural for an Internals project to have Internal and/or Private sections within it.
+It is both possible and natural for an Internals project to have _internal and/or _private sections within it.
 
-Note: It is possible that some existing "Internals" projects should simply be named Internal and not expose anything publicly. Review is required.
+Note: It is possible that some existing "Internals" projects should simply not expose anything publicly. Review is required.
 
-Note: The name Internals is also up for debate and may well be changed to make the meaning clearer and reduce potential confusion with Internal.
+Note: The name Internals is also up for debate and may well be changed to make the meaning clearer.
 
 ## Public namespaces
 Public namespaces are a legacy of an old strategy. They should all be removed. Public is the default face of a project and what you see in it's root folder is expected to be public, with the non-public implementation details hidden away in other namespaces, or nested as private/internal types inside the public types

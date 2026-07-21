@@ -1,7 +1,7 @@
 // ReSharper disable RedundantBoolCompare
 // ReSharper disable InconsistentNaming
 
-using Compze.Must.Private;
+using Compze.Must._private;
 
 namespace Compze.Must;
 

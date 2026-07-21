@@ -1,4 +1,4 @@
-using Compze.Internals.SystemCE.ReactiveCE.Private;
+using Compze.Internals.SystemCE.ReactiveCE._private;
 
 namespace Compze.Internals.SystemCE.ReactiveCE;
 

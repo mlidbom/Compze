@@ -3,7 +3,7 @@ using Compze.Internals.Logging;
 using Compze.Internals.SystemCE;
 using Compze.Internals.SystemCE.ReflectionCE;
 using Compze.Threading;
-using Compze.DbPool.SystemCE.Private;
+using Compze.DbPool.SystemCE._private;
 
 namespace Compze.DbPool.SystemCE;
 

@@ -8,7 +8,7 @@ using Compze.Internals.SystemCE.ReflectionCE;
 using Compze.Internals.SystemCE.TransactionsCE;
 using Compze.Threading;
 using Compze.Threading.ResourceAccess;
-using Compze.DbPool.Private;
+using Compze.DbPool._private;
 
 #pragma warning disable CA1724 //I don't care that the class uses the same name as the namespace
 

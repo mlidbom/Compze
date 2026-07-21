@@ -2,7 +2,7 @@ using Compze.Contracts;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.ReflectionCE;
 using Compze.Tessaging.Engine;
-using Compze.Tessaging.Engine.HandlerRegistration.Private;
+using Compze.Tessaging.Engine.HandlerRegistration._private;
 using Compze.Tessaging.TessageTypes;
 
 namespace Compze.Tessaging.Typermedia;

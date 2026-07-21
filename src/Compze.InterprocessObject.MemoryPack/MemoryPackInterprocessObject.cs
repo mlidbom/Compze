@@ -1,5 +1,5 @@
 using Compze.Threading;
-using Compze.InterprocessObject.MemoryPack.Private;
+using Compze.InterprocessObject.MemoryPack._private;
 
 namespace Compze.InterprocessObject.MemoryPack;
 
