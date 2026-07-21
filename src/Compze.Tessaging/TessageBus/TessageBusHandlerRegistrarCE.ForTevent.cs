@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Compze.DependencyInjection;
 using Compze.Tessaging.TessageTypes;
 
@@ -6,8 +7,10 @@ namespace Compze.Tessaging.TessageBus;
 ///<summary>Convenience overloads for <see cref="TessageBusHandlerRegistrar"/>: register a handler whose extra lambda parameters<br/>
 /// are resolved from the unit of work delivering the tessage, or one that needs no resolutions at all, instead of taking the<br/>
 /// resolver and resolving by hand. Each delegates to the core verb of its shape, so the synchrony rules (exactly-once kinds are<br/>
-/// async-only) apply identically here.</summary>
-public static class TessageBusHandlerRegistrarCE
+/// async-only) apply identically here.<br/>
+/// One file per verb: this file holds the <c>ForTevent</c> overloads, <c>TessageBusHandlerRegistrarCE.ForTommand.cs</c> the rest.</summary>
+[SuppressMessage("Naming", "CA1708:Identifiers should differ by more than case", Justification = "The per-verb partial files each declare an extension block for the same receiver; the compiler-generated grouping members share a display name — no real member collides.")]
+public static partial class TessageBusHandlerRegistrarCE
 {
    extension(TessageBusHandlerRegistrar @this)
    {
@@ -34,12 +37,5 @@ public static class TessageBusHandlerRegistrarCE
                                                                                                                                                 where TDependency1 : class
                                                                                                                                                 where TDependency2 : class
          => @this.ForTevent<TTevent>((tevent, unitOfWork) => handler(tevent, unitOfWork.Resolve<TDependency1>(), unitOfWork.Resolve<TDependency2>()));
-
-      public TessageBusHandlerRegistrar ForTommand<TTommand>(Func<TTommand, Task> handler) where TTommand : IExactlyOnceTommand
-         => @this.ForTommand<TTommand>((tommand, _) => handler(tommand));
-
-      public TessageBusHandlerRegistrar ForTommand<TTommand, TDependency1>(Func<TTommand, TDependency1, Task> handler) where TTommand : IExactlyOnceTommand
-                                                                                                                       where TDependency1 : class
-         => @this.ForTommand<TTommand>((tommand, unitOfWork) => handler(tommand, unitOfWork.Resolve<TDependency1>()));
    }
 }
