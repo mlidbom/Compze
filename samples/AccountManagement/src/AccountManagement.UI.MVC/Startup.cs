@@ -19,6 +19,7 @@ using static AccountManagement.AccountManagementServerDomainBootstrapper;
 
 namespace AccountManagement.UI.MVC;
 
+//todo:urgent: Creating endpoints, starting them up, and connecting a client to them.... We need a fundamental restructuring to make this sane.
 ///<summary>The production composition of the AccountManagement system, all in this one process: the domain's two endpoints on<br/>
 /// an <see cref="EndpointHost"/> — each on its own Microsoft DI container, speaking the ASP.NET Core endpoint transport,<br/>
 /// serializing with Newtonsoft, joining the one MsSql domain database (connection string in appsettings.json) — and the MVC<br/>

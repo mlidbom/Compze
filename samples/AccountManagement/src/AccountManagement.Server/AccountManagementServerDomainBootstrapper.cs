@@ -9,6 +9,10 @@ using Compze.Teventive.TeventStore.Typermedia;
 
 namespace AccountManagement;
 
+
+//todo: urgent: redesign: There is nothing that actually encapsulates properly what these endpoints are. Instead there are scattered names and ids that are
+// built together by other code. This is honestly a complete mess that we urgently need to fix. And it is not about Account management, it is about how we design the story
+// of how to build endpoints in Compze as a whole
 ///<summary>Declares the AccountManagement domain's two endpoints — what they handle and store. The composition hosting them<br/>
 /// declares the environment: container technology, transport, serializer, domain database and discovery. The endpoint names<br/>
 /// and ids are declared here so that every composition — production and tests alike — hosts the same endpoints.</summary>
@@ -34,6 +38,7 @@ public static class AccountManagementServerDomainBootstrapper
    {
       RegisterTypeMappings(endpointBuilder);
 
+      //todo: urgent: Registering a DocumentDb should use the same kind of fluent builder thinking we use elsewhere and whether it belongs on the ExactlyOnceEndpointBuilder at all is debatable to say the least.
       endpointBuilder.RegisterDocumentDb()
               .HandleDocumentType<AccountStatistics.SingletonStatisticsQueryModel>();
 
@@ -45,6 +50,7 @@ public static class AccountManagementServerDomainBootstrapper
 
    static void RegisterDomainComponents(ExactlyOnceEndpointBuilder endpointBuilder)
    {
+      //todo: urgent: Registering a TeventStore should use the same kind of fluent builder thinking we use elsewhere and whether it belongs on the ExactlyOnceEndpointBuilder at all is debatable to say the least.
       endpointBuilder.RegisterTeventStore()
               .HandleTaggregate<Account, IAccountTevent>();
 
