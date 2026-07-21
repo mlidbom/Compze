@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Must;
@@ -177,8 +178,8 @@ public partial class Given_a_container_composing_a_LocalTessagingEngine
 
    public class with_tevent_observers_declared_through_every_registration_overload : Given_a_container_composing_a_LocalTessagingEngine
    {
-      readonly List<string> _observingOverloads = [];
-      readonly List<object> _dependenciesResolvedIntoObservers = [];
+      readonly ConcurrentBag<string> _observingOverloads = [];
+      readonly ConcurrentBag<object> _dependenciesResolvedIntoObservers = [];
       readonly IThreadGate _observerGate = IThreadGate.NewOpen(WaitTimeout.Seconds(10), nameof(_observerGate));
 
       public with_tevent_observers_declared_through_every_registration_overload() =>
