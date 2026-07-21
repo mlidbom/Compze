@@ -12,7 +12,7 @@ public sealed class AutofacContainer : DependencyInjectionContainer, IRootResolv
       : base(registrations, sourceRegistrar) =>
       _container = container;
 
-   public override AutofacContainerBuilder CreateCloneContainerBuilder() => (AutofacContainerBuilder)base.CreateCloneContainerBuilder();
+   protected override AutofacContainerBuilder CreateCloneContainerBuilder() => (AutofacContainerBuilder)base.CreateCloneContainerBuilder();
 
    public override AutofacContainerBuilder CreateChildContainerBuilder() => (AutofacContainerBuilder)base.CreateChildContainerBuilder();
 

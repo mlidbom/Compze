@@ -17,7 +17,7 @@ class EndpointTableSet
 {
    ///<summary>The endpoint-name length cap: PostgreSQL's 63-byte identifier limit minus the longest identifier the schemas<br/>
    /// generate beyond the name (see the class remarks).</summary>
-   public const int MaximumEndpointNameLength = 28;
+   const int MaximumEndpointNameLength = 28;
 
    public string InboxTessages { get; }
    public string OutboxTessages { get; }

@@ -30,7 +30,7 @@ public class TeventDispatcherConfig
    internal IReadOnlyList<Type> IgnoredUnhandled
    {
       get;
-      init
+      private init
       {
          foreach(var teventType in value)
          {
@@ -43,7 +43,7 @@ public class TeventDispatcherConfig
 
    TeventDispatcherConfig(TeventDispatcherConfig source) : this(source.Options, source.IgnoredUnhandled) {}
 
-   public TeventDispatcherConfig(TeventDispatcherOptions options = TeventDispatcherOptions.None, IReadOnlyList<Type>? ignoreUnhandled = null)
+   TeventDispatcherConfig(TeventDispatcherOptions options = TeventDispatcherOptions.None, IReadOnlyList<Type>? ignoreUnhandled = null)
    {
       Options = options;
       IgnoredUnhandled = ignoreUnhandled ?? [];

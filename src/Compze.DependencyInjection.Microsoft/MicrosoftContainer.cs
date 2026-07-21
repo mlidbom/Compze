@@ -14,7 +14,7 @@ public sealed class MicrosoftContainer : DependencyInjectionContainer, IRootReso
       : base(registrations, sourceRegistrar) =>
       _serviceProvider = serviceProvider;
 
-   public override MicrosoftContainerBuilder CreateCloneContainerBuilder() => (MicrosoftContainerBuilder)base.CreateCloneContainerBuilder();
+   protected override MicrosoftContainerBuilder CreateCloneContainerBuilder() => (MicrosoftContainerBuilder)base.CreateCloneContainerBuilder();
 
    public override MicrosoftContainerBuilder CreateChildContainerBuilder() => (MicrosoftContainerBuilder)base.CreateChildContainerBuilder();
 

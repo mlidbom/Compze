@@ -71,7 +71,7 @@ public sealed class TypeMapBuilder
    /// GUIDs. Suitable only for assemblies whose type names will not be renamed or moved, because a persisted name that
    /// later changes no longer resolves.
    /// </summary>
-   public TypeMapBuilder UseStableNameStrategyForAssembly(Assembly assembly)
+   TypeMapBuilder UseStableNameStrategyForAssembly(Assembly assembly)
    {
       if(!DeclareStrategyFor(assembly, AssemblyTypeIdentityStrategy.StableTypeNames)) return this;
 

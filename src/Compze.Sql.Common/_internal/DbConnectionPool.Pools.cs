@@ -32,7 +32,7 @@ partial class DbConnectionPool<TConnection, TCommand> : IDbConnectionPool<TConne
 
    static readonly RunOnce RunOnce = new();
 
-   internal DbConnectionPool(string connectionString, Func<string, TConnection> createConnection)
+   DbConnectionPool(string connectionString, Func<string, TConnection> createConnection)
    {
       _connectionString = connectionString;
       _createConnection = createConnection;

@@ -49,7 +49,7 @@ public abstract class DependencyInjectionContainer : IDependencyInjectionContain
 
    IContainerBuilder IDependencyInjectionContainer.CreateCloneContainerBuilder() => CreateCloneContainerBuilder();
 
-   public virtual ContainerBuilder CreateCloneContainerBuilder()
+   protected virtual ContainerBuilder CreateCloneContainerBuilder()
    {
       Log.Info($"Cloning IDependencyInjectionContainer: {GetHashCode()}");
       IRootResolver sourceRootResolver = (IRootResolver)this;

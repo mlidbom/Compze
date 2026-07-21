@@ -15,7 +15,7 @@ public sealed class DryIocContainer : DependencyInjectionContainer, IRootResolve
       : base(registrations, sourceRegistrar) =>
       _container = container;
 
-   public override DryIocContainerBuilder CreateCloneContainerBuilder() => (DryIocContainerBuilder)base.CreateCloneContainerBuilder();
+   protected override DryIocContainerBuilder CreateCloneContainerBuilder() => (DryIocContainerBuilder)base.CreateCloneContainerBuilder();
 
    public override DryIocContainerBuilder CreateChildContainerBuilder() => (DryIocContainerBuilder)base.CreateChildContainerBuilder();
 

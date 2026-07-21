@@ -21,7 +21,7 @@ public sealed class LightInjectContainer : DependencyInjectionContainer, IRootRe
       _memberNamesByServiceType = LightInjectComponentSetNaming.ComputeMemberNamesByServiceType(registrations);
    }
 
-   public override LightInjectContainerBuilder CreateCloneContainerBuilder() => (LightInjectContainerBuilder)base.CreateCloneContainerBuilder();
+   protected override LightInjectContainerBuilder CreateCloneContainerBuilder() => (LightInjectContainerBuilder)base.CreateCloneContainerBuilder();
 
    public override LightInjectContainerBuilder CreateChildContainerBuilder() => (LightInjectContainerBuilder)base.CreateChildContainerBuilder();
 

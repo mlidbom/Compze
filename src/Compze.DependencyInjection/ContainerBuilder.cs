@@ -65,7 +65,7 @@ public abstract class ContainerBuilder : IContainerBuilder
       }
    }
 
-   protected ContainerOptions Options { get; set; } = ContainerOptions.Default;
+   protected ContainerOptions Options { get; private set; } = ContainerOptions.Default;
 
    protected abstract DependencyInjectionContainer BuildInternal();
 

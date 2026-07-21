@@ -26,7 +26,7 @@ public sealed class TypeIdInterner : ITypeIdInterner
    volatile bool _loaded;
 
    /// <summary>Creates an interner backed by <paramref name="persistence"/>, using <paramref name="typeMap"/> to resolve persisted spellings to .NET types.</summary>
-   public TypeIdInterner(ITypeIdInternerPersistence persistence, ITypeMap typeMap)
+   TypeIdInterner(ITypeIdInternerPersistence persistence, ITypeMap typeMap)
    {
       _persistence = persistence;
       _typeMap = typeMap;

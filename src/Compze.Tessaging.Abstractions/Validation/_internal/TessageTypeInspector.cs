@@ -74,7 +74,7 @@ static class TessageTypeInspector
       }
    }
 
-   public class MustBeITessage : SimpleTessageTypeDesignRule
+   class MustBeITessage : SimpleTessageTypeDesignRule
    {
       protected override bool IsInvalid(Type type) => !type.Implements<ITessage>();
       protected override string CreateTessage(Type type) => $"{type.GetFullNameCompilable()} does not implement {typeof(ITessage).GetFullNameCompilable()}";
@@ -86,17 +86,17 @@ static class TessageTypeInspector
       protected override string CreateTessage(Type type) => $"{type.GetFullNameCompilable()} implements both {typeof(TInterface1).GetFullNameCompilable()} and {typeof(TInterface2).GetFullNameCompilable()}";
    }
 
-   public class CannotBeBothTommandAndTevent : MutuallyExclusiveInterfaces<ITommand, ITevent>;
+   class CannotBeBothTommandAndTevent : MutuallyExclusiveInterfaces<ITommand, ITevent>;
 
-   public class CannotBeBothTommandAndTuery : MutuallyExclusiveInterfaces<ITommand, ITuery<object>>;
+   class CannotBeBothTommandAndTuery : MutuallyExclusiveInterfaces<ITommand, ITuery<object>>;
 
-   public class CannotBeBothTeventAndTuery : MutuallyExclusiveInterfaces<ITevent, ITuery<object>>;
+   class CannotBeBothTeventAndTuery : MutuallyExclusiveInterfaces<ITevent, ITuery<object>>;
 
-   public class CannotBeBothRemotableAndStrictlyLocal : MutuallyExclusiveInterfaces<IRemotableTessage, IStrictlyLocalTessage>;
+   class CannotBeBothRemotableAndStrictlyLocal : MutuallyExclusiveInterfaces<IRemotableTessage, IStrictlyLocalTessage>;
 
-   public class CannotForbidAndRequireTransactionalSender : MutuallyExclusiveInterfaces<IMustBeSentTransactionally, ICannotBeSentRemotelyFromWithinTransaction>;
+   class CannotForbidAndRequireTransactionalSender : MutuallyExclusiveInterfaces<IMustBeSentTransactionally, ICannotBeSentRemotelyFromWithinTransaction>;
 
-   public class WrapperTeventInterfaceMustBeGenericAndDeclareTypeParameterAsAsOutParameter : TessageTypeDesignRule
+   class WrapperTeventInterfaceMustBeGenericAndDeclareTypeParameterAsAsOutParameter : TessageTypeDesignRule
    {
       internal override void AssertFulfilledBy(Type type)
       {

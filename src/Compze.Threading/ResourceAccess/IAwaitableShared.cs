@@ -12,7 +12,7 @@ public interface IAwaitableShared
    {
       readonly TShared _shared;
 
-      public AwaitableShared(TShared shared, IAwaitableCriticalSection criticalSection)
+      protected AwaitableShared(TShared shared, IAwaitableCriticalSection criticalSection)
       {
          _shared = shared;
          CriticalSection = criticalSection;

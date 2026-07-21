@@ -12,7 +12,7 @@ public static class DIContainerExtensions
       TValue dryIoc) where TValue : notnull =>
       container.ValueFor(autofac, microsoft, dryIoc, dryIoc);
 
-   public static TValue ValueFor<TValue>(
+   static TValue ValueFor<TValue>(
       this DIContainer container,
       TValue autofac,
       TValue microsoft,
