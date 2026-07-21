@@ -142,6 +142,38 @@ public class MutexCE_specification : UniversalTestBase
       }
    }
 
+   public class TryTakeLock : MutexCE_specification
+   {
+      [XF] public void returns_a_lock_immediately_when_the_mutex_is_free()
+      {
+         using var mutex = IMutex.Global("MutexCE_specification.TryTakeLock.free");
+         var lockHandle = mutex.TryTakeLock(LockTimeout.Zero);
+         lockHandle.Must().NotBeNull();
+         lockHandle!.Dispose();
+      }
+
+      [XF] public void returns_null_immediately_while_another_instance_holds_the_mutex_and_a_lock_once_it_is_released()
+      {
+         const string name = "MutexCE_specification.TryTakeLock.held";
+         using var holdingMutex = IMutex.Global(name);
+         using var tryingMutex = IMutex.Global(name);
+
+         var insideLock = IThreadGate.NewClosed(WaitTimeout.Seconds(30), "insideLock");
+         using var runner = TestingTaskRunner.WithTimeout(30.Seconds());
+         var holdingTask = runner.Run(() => holdingMutex.Locked(insideLock.AwaitPassThrough));
+
+         insideLock.TryAwaitQueueLengthEqualTo(1).Must().BeTrue();
+         tryingMutex.TryTakeLock(LockTimeout.Zero).Must().BeNull();
+
+         insideLock.Open();
+         holdingTask.Wait(10.Seconds());
+
+         var lockHandle = tryingMutex.TryTakeLock(LockTimeout.Zero);
+         lockHandle.Must().NotBeNull();
+         lockHandle!.Dispose();
+      }
+   }
+
    public new class Dispose : MutexCE_specification
    {
       [XF] public void can_be_disposed_without_error()
@@ -170,8 +202,8 @@ public class MutexCE_specification : UniversalTestBase
 
          using var runner = TestingTaskRunner.WithTimeout(30.Seconds());
          runner.Run(
-            () => mutex1.Locked(() => insideMutex.AwaitPassThrough()),
-            () => mutex2.Locked(() => insideMutex.AwaitPassThrough()));
+            () => mutex1.Locked(insideMutex.AwaitPassThrough),
+            () => mutex2.Locked(insideMutex.AwaitPassThrough));
 
          insideMutex.TryAwaitQueueLengthEqualTo(1).Must().BeTrue();
 
@@ -196,8 +228,8 @@ public class MutexCE_specification : UniversalTestBase
 
          using var runner = TestingTaskRunner.WithTimeout(30.Seconds());
          runner.Run(
-            () => mutex1.Locked(() => insideMutex.AwaitPassThrough()),
-            () => mutex2.Locked(() => insideMutex.AwaitPassThrough()));
+            () => mutex1.Locked(insideMutex.AwaitPassThrough),
+            () => mutex2.Locked(insideMutex.AwaitPassThrough));
 
          insideMutex.TryAwaitQueueLengthEqualTo(1).Must().BeTrue();
 

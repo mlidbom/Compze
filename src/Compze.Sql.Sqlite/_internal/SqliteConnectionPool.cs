@@ -13,12 +13,19 @@ interface ISqliteConnectionPool : IDbConnectionPool<ICompzeSqliteConnection, Sql
    static ISqliteConnectionPool CreateInstance(string connectionString) => CreateInstance(() => connectionString);
    static SqliteConnectionPool CreateInstance(Func<string> getConnectionString) => new(getConnectionString);
 
+   ///<summary>The connection string identifying the database this pool serves — what a caller needs to derive the<br/>
+   /// database's identity outside the pool's fresh-connection-per-operation model (the endpoint catalog's process lock<br/>
+   /// keys its machine-local lock on it).</summary>
+   string ConnectionString { get; }
+
    public class SqliteConnectionPool : ISqliteConnectionPool
    {
       readonly LazyCE<IDbConnectionPool<ICompzeSqliteConnection, SqliteCommand>> _pool;
+      readonly Func<string> _getConnectionString;
 
       internal SqliteConnectionPool(Func<string> getConnectionString)
       {
+         _getConnectionString = getConnectionString;
          _pool = new LazyCE<IDbConnectionPool<ICompzeSqliteConnection, SqliteCommand>>(
             () =>
             {
@@ -28,6 +35,8 @@ interface ISqliteConnectionPool : IDbConnectionPool<ICompzeSqliteConnection, Sql
                   ICompzeSqliteConnection.Create);
             });
       }
+
+      public string ConnectionString => _getConnectionString();
 
       public override string ToString() => _pool.ValueIfInitialized()?.ToString() ?? "Not initialized";
       public TResult UseConnection<TResult>(Func<ICompzeSqliteConnection, TResult> func) => AutocommitTransientLockRetry.Execute(() => _pool.Value.UseConnection(func));

@@ -13,6 +13,12 @@
     <PackageReference Include="xunit.v3" Version="3.1.0" />
     <PackageReference Include="JetBrains.Annotations.Sources" Version="2025.2.4" PrivateAssets="all" />
   </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="6.1.3" />
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="9.0.1" />
+    <PackageReference Include="MySqlConnector" Version="2.6.1" />
+    <PackageReference Include="Npgsql" Version="9.0.4" />
+  </ItemGroup>
   <!-- Compze.DbPool — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_DbPool)' == 'true'">
     <PackageReference Include="Compze.DbPool" Version="*-*" />
@@ -75,11 +81,5 @@
   </ItemGroup>
   <ItemGroup Condition="'$(UsePackageReference_Compze_xUnitBDD)' != 'true'">
     <ProjectReference Include="..\..\src\Compze.xUnitBDD\Compze.xUnitBDD.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Microsoft.Data.SqlClient" Version="6.1.3" />
-    <PackageReference Include="Microsoft.Data.Sqlite" Version="9.0.1" />
-    <PackageReference Include="MySqlConnector" Version="2.6.1" />
-    <PackageReference Include="Npgsql" Version="9.0.4" />
   </ItemGroup>
 </Project>

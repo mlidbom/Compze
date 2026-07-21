@@ -12,12 +12,10 @@ partial class MsSqlEndpointCatalogSqlLayer
        BEGIN
            CREATE TABLE {Catalog.TableName}
            (
-               {Catalog.EndpointName}           nvarchar(64)     NOT NULL,
-               {Catalog.EndpointId}             uniqueidentifier NOT NULL,
-               {Catalog.CreatedUtc}             datetime2        NOT NULL,
-               {Catalog.LeaseHolderId}          uniqueidentifier NULL,
-               {Catalog.LeaseHolderDescription} nvarchar(500)    NULL,
-               {Catalog.LeaseHeartbeatUtc}      datetime2        NULL,
+               {Catalog.EndpointName}          nvarchar(64)     NOT NULL,
+               {Catalog.EndpointId}            uniqueidentifier NOT NULL,
+               {Catalog.CreatedUtc}            datetime2        NOT NULL,
+               {Catalog.LockHolderDescription} nvarchar(500)    NULL,
 
                CONSTRAINT PK_{Catalog.TableName} PRIMARY KEY CLUSTERED ( {Catalog.EndpointName} ),
 

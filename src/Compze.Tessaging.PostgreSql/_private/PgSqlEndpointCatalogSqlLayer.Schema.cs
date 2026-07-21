@@ -12,12 +12,10 @@ partial class PgSqlEndpointCatalogSqlLayer
 
        CREATE TABLE IF NOT EXISTS {Catalog.TableName}
        (
-         {Catalog.EndpointName}           TEXT            NOT NULL,
-         {Catalog.EndpointId}             {PgSqlGuidType} NOT NULL,
-         {Catalog.CreatedUtc}             timestamptz     NOT NULL,
-         {Catalog.LeaseHolderId}          {PgSqlGuidType} NULL,
-         {Catalog.LeaseHolderDescription} TEXT            NULL,
-         {Catalog.LeaseHeartbeatUtc}      timestamptz     NULL,
+         {Catalog.EndpointName}          TEXT            NOT NULL,
+         {Catalog.EndpointId}            {PgSqlGuidType} NOT NULL,
+         {Catalog.CreatedUtc}            timestamptz     NOT NULL,
+         {Catalog.LockHolderDescription} TEXT            NULL,
 
          PRIMARY KEY ( {Catalog.EndpointName} ),
 

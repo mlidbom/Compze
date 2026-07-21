@@ -29,6 +29,13 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging)' != 'true'">
     <ProjectReference Include="..\Compze.Tessaging\Compze.Tessaging.csproj" />
   </ItemGroup>
+  <!-- Compze.Threading.Interprocess — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Threading_Interprocess)' == 'true'">
+    <PackageReference Include="Compze.Threading.Interprocess" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Threading_Interprocess)' != 'true'">
+    <ProjectReference Include="..\Compze.Threading.Interprocess\Compze.Threading.Interprocess.csproj" />
+  </ItemGroup>
   <!-- Compze.TypeIdentifiers.Interning — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_TypeIdentifiers_Interning)' == 'true'">
     <PackageReference Include="Compze.TypeIdentifiers.Interning" Version="*-*" />

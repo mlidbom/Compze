@@ -257,7 +257,7 @@ Three concepts, deliberately orthogonal:
 - **The process** is pure deployment. A domain's endpoints may span processes; one process may host
   endpoints of several domains; the choice is free — except that **an endpoint runs in exactly one
   process at a time**. Two processes claiming the same endpoint is a misconfiguration that fails loud
-  at startup (the endpoint catalog's process lease — see [the storage model](storage-model.md));
+  at startup (the endpoint catalog's process lock — see [the storage model](storage-model.md));
   tolerating it — failover, fault tolerance — is its own future design effort.
 
 A **host** (`EndpointHost`, in `Compze.Hosting`) is an optional convenience owning several endpoints'
@@ -275,7 +275,7 @@ inbox, outbox, and durable peer memory, under the endpoint's name as prefix), th
 (type-id interner, tevent store, document db, endpoint catalog) are shared by every endpoint that joins,
 and the endpoint catalog enforces name uniqueness and the one-process-per-endpoint rule. A best-effort
 endpoint has no database and none of the above; the law and the boundary hold for it unchanged. The whole
-story — the prefix rule, the catalog, the process lease, schema creation — is
+story — the prefix rule, the catalog, the process lock, schema creation — is
 [the storage model](storage-model.md).
 
 On SQLite, a domain database is one single-writer file: co-located busy endpoints share its write gate.

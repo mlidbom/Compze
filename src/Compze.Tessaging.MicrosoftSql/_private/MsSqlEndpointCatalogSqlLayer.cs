@@ -1,3 +1,4 @@
+using System.Data;
 using Compze.Tessaging.Endpoints;
 using Compze.Sql.Common._internal;
 using Compze.Sql.MicrosoftSql._internal;
@@ -19,7 +20,7 @@ partial class MsSqlEndpointCatalogSqlLayer(IMsSqlConnectionPool connectionFactor
    public async Task<ITessagingSqlLayer.EndpointCatalogEntry?> GetEntryByEndpointIdAsync(EndpointId endpointId) =>
       (await EntriesAsync($"WHERE {Catalog.EndpointId} = @filter", command => command.AddParameter("filter", endpointId.Value)).caf()).SingleOrDefault();
 
-   public async Task<bool> TryInsertEntryHoldingTheLeaseAsync(string endpointName, EndpointId endpointId, Guid leaseHolderId, string leaseHolderDescription, DateTime utcNow) =>
+   public async Task<bool> TryInsertEntryAsync(string endpointName, EndpointId endpointId, DateTime utcNow) =>
       await _connectionFactory.UseCommandAsync(
          async command => 1 == await command
                    .SetCommandText(
@@ -28,73 +29,80 @@ partial class MsSqlEndpointCatalogSqlLayer(IMsSqlConnectionPool connectionFactor
                        $"""
 
                         INSERT INTO {Catalog.TableName}
-                                    ({Catalog.EndpointName},  {Catalog.EndpointId},  {Catalog.CreatedUtc},  {Catalog.LeaseHolderId},  {Catalog.LeaseHolderDescription},  {Catalog.LeaseHeartbeatUtc})
-                             SELECT @{Catalog.EndpointName}, @{Catalog.EndpointId}, @{Catalog.CreatedUtc}, @{Catalog.LeaseHolderId}, @{Catalog.LeaseHolderDescription}, @{Catalog.LeaseHeartbeatUtc}
+                                    ({Catalog.EndpointName},  {Catalog.EndpointId},  {Catalog.CreatedUtc})
+                             SELECT @{Catalog.EndpointName}, @{Catalog.EndpointId}, @{Catalog.CreatedUtc}
                         WHERE NOT EXISTS (SELECT 1 FROM {Catalog.TableName} WITH (UPDLOCK, HOLDLOCK) WHERE {Catalog.EndpointName} = @{Catalog.EndpointName})
 
                         """)
                    .AddNVarcharMaxParameter(Catalog.EndpointName, endpointName)
                    .AddParameter(Catalog.EndpointId, endpointId.Value)
                    .AddDateTime2Parameter(Catalog.CreatedUtc, utcNow)
-                   .AddParameter(Catalog.LeaseHolderId, leaseHolderId)
-                   .AddNVarcharMaxParameter(Catalog.LeaseHolderDescription, leaseHolderDescription)
-                   .AddDateTime2Parameter(Catalog.LeaseHeartbeatUtc, utcNow)
                    .ExecuteNonQueryAsync().caf()).caf();
 
-   public async Task<bool> TryTakeTheLeaseAsync(string endpointName, Guid leaseHolderId, string leaseHolderDescription, DateTime utcNow, DateTime staleBefore) =>
-      await _connectionFactory.UseCommandAsync(
-         async command => 1 == await command
-                   .SetCommandText(
-                       $"""
+   //The lock is a session-owned sp_getapplock on a dedicated connection: it lives exactly as long as the session, so a
+   //crashed process's lock is released when the server notices its connection die, and no pause can lose a live holder's
+   //lock. sp_getapplock resources are scoped to the current database, so the endpoint name alone identifies the lock.
+   public async Task<ITessagingSqlLayer.IEndpointProcessLockHold?> TryTakeProcessLockAsync(string endpointName, Action<Exception> onLockLostWhileHeld)
+   {
+      //Pooling would break the lock's session-lifetime semantics: a pooled connection's server session outlives its
+      //dispose, still owning the session-scoped lock as a ghost until the pool reuses or prunes it. Unpooled, dispose
+      //really ends the session - and this one long-held connection per endpoint gains nothing from a pool anyway.
+      SqlConnection? connection = new(new SqlConnectionStringBuilder(_connectionFactory.ConnectionString) { Pooling = false }.ConnectionString);
+      try
+      {
+         await connection.OpenAsync().caf();
+         var command = connection.CreateCommand();
+         await using(command.caf())
+         {
+            command.CommandText = "sp_getapplock";
+            command.CommandType = CommandType.StoredProcedure;
+            command.Parameters.AddWithValue("Resource", $"CompzeEndpointProcessLock_{endpointName}");
+            command.Parameters.AddWithValue("LockMode", "Exclusive");
+            command.Parameters.AddWithValue("LockOwner", "Session");
+            command.Parameters.AddWithValue("LockTimeout", 0);
+            var lockResult = command.Parameters.Add(new SqlParameter("ReturnValue", SqlDbType.Int) { Direction = ParameterDirection.ReturnValue });
+            await command.ExecuteNonQueryAsync().caf();
+            //0 = granted, 1 = granted after waiting; negative values are refusals and failures.
+            if((int)lockResult.Value < 0) return null;
 
-                        UPDATE {Catalog.TableName}
-                            SET {Catalog.LeaseHolderId} = @{Catalog.LeaseHolderId},
-                                {Catalog.LeaseHolderDescription} = @{Catalog.LeaseHolderDescription},
-                                {Catalog.LeaseHeartbeatUtc} = @{Catalog.LeaseHeartbeatUtc}
-                        WHERE {Catalog.EndpointName} = @{Catalog.EndpointName}
-                          AND ({Catalog.LeaseHolderId} IS NULL OR {Catalog.LeaseHeartbeatUtc} < @StaleBefore)
+            var session = new ProcessLockSession(connection, onLockLostWhileHeld);
+            connection = null; //Ownership transferred: the session holds the lock by holding the connection.
+            return session;
+         }
+      }
+      finally
+      {
+         if(connection != null) await connection.DisposeAsync().caf();
+      }
+   }
 
-                        """)
-                   .AddNVarcharMaxParameter(Catalog.EndpointName, endpointName)
-                   .AddParameter(Catalog.LeaseHolderId, leaseHolderId)
-                   .AddNVarcharMaxParameter(Catalog.LeaseHolderDescription, leaseHolderDescription)
-                   .AddDateTime2Parameter(Catalog.LeaseHeartbeatUtc, utcNow)
-                   .AddDateTime2Parameter("StaleBefore", staleBefore)
-                   .ExecuteNonQueryAsync().caf()).caf();
-
-   public async Task<bool> TryHeartbeatAsync(string endpointName, Guid leaseHolderId, DateTime utcNow) =>
-      await _connectionFactory.UseCommandAsync(
-         async command => 1 == await command
-                   .SetCommandText(
-                       $"""
-
-                        UPDATE {Catalog.TableName}
-                            SET {Catalog.LeaseHeartbeatUtc} = @{Catalog.LeaseHeartbeatUtc}
-                        WHERE {Catalog.EndpointName} = @{Catalog.EndpointName}
-                          AND {Catalog.LeaseHolderId} = @{Catalog.LeaseHolderId}
-
-                        """)
-                   .AddNVarcharMaxParameter(Catalog.EndpointName, endpointName)
-                   .AddParameter(Catalog.LeaseHolderId, leaseHolderId)
-                   .AddDateTime2Parameter(Catalog.LeaseHeartbeatUtc, utcNow)
-                   .ExecuteNonQueryAsync().caf()).caf();
-
-   public async Task ReleaseTheLeaseAsync(string endpointName, Guid leaseHolderId) =>
+   public async Task RecordLockHolderAsync(string endpointName, string lockHolderDescription) =>
       await _connectionFactory.UseCommandAsync(
          async command => await command
                    .SetCommandText(
                        $"""
 
                         UPDATE {Catalog.TableName}
-                            SET {Catalog.LeaseHolderId} = NULL,
-                                {Catalog.LeaseHolderDescription} = NULL,
-                                {Catalog.LeaseHeartbeatUtc} = NULL
+                            SET {Catalog.LockHolderDescription} = @{Catalog.LockHolderDescription}
                         WHERE {Catalog.EndpointName} = @{Catalog.EndpointName}
-                          AND {Catalog.LeaseHolderId} = @{Catalog.LeaseHolderId}
 
                         """)
                    .AddNVarcharMaxParameter(Catalog.EndpointName, endpointName)
-                   .AddParameter(Catalog.LeaseHolderId, leaseHolderId)
+                   .AddNVarcharMaxParameter(Catalog.LockHolderDescription, lockHolderDescription)
+                   .ExecuteNonQueryAsync().caf()).caf();
+
+   public async Task ClearLockHolderAsync(string endpointName) =>
+      await _connectionFactory.UseCommandAsync(
+         async command => await command
+                   .SetCommandText(
+                       $"""
+
+                        UPDATE {Catalog.TableName}
+                            SET {Catalog.LockHolderDescription} = NULL
+                        WHERE {Catalog.EndpointName} = @{Catalog.EndpointName}
+
+                        """)
+                   .AddNVarcharMaxParameter(Catalog.EndpointName, endpointName)
                    .ExecuteNonQueryAsync().caf()).caf();
 
    async Task<IReadOnlyList<ITessagingSqlLayer.EndpointCatalogEntry>> EntriesAsync(string filterClause, Action<SqlCommand> addFilterParameter) =>
@@ -106,7 +114,7 @@ partial class MsSqlEndpointCatalogSqlLayer(IMsSqlConnectionPool connectionFactor
             command.SetCommandText(
                $"""
 
-                SELECT {Catalog.EndpointName}, {Catalog.EndpointId}, {Catalog.LeaseHolderDescription}, {Catalog.LeaseHeartbeatUtc}
+                SELECT {Catalog.EndpointName}, {Catalog.EndpointId}, {Catalog.LockHolderDescription}
                 FROM {Catalog.TableName} {filterClause}
 
                 """);
@@ -119,8 +127,7 @@ partial class MsSqlEndpointCatalogSqlLayer(IMsSqlConnectionPool connectionFactor
                entries.Add(new ITessagingSqlLayer.EndpointCatalogEntry(
                               endpointName: reader.GetString(0),
                               endpointId: new EndpointId(reader.GetGuid(1)),
-                              leaseHolderDescription: await reader.IsDBNullAsync(2).caf() ? null : reader.GetString(2),
-                              leaseHeartbeatUtc: await reader.IsDBNullAsync(3).caf() ? null : DateTime.SpecifyKind(reader.GetDateTime(3), DateTimeKind.Utc)));
+                              lockHolderDescription: await reader.IsDBNullAsync(2).caf() ? null : reader.GetString(2)));
             }
 
             return entries;

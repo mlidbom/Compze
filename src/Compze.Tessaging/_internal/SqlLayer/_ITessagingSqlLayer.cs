@@ -118,31 +118,38 @@ interface ITessagingSqlLayer
    }
 
    ///<summary>The endpoint catalog's persistence: the one shared, unprefixed table every domain database carries — each<br/>
-   /// endpoint's name, <see cref="EndpointId"/>, creation time, and process lease. It is what enforces name uniqueness and<br/>
-   /// the one-process-per-endpoint rule, and what tells administration which endpoints inhabit the database.</summary>
-   ///<remarks>The lease members are single conditional statements, so racing claimants serialize on the database and exactly<br/>
-   /// one wins — no read-then-write window. Every timestamp is written by the caller's clock: staleness judgements assume the<br/>
-   /// processes sharing a domain database keep reasonably synchronized clocks.</remarks>
+   /// endpoint's name, <see cref="EndpointId"/>, creation time, and — while one is running — a description of the process<br/>
+   /// holding its process lock. It is what enforces name uniqueness and, through <see cref="TryTakeProcessLockAsync"/>, the<br/>
+   /// one-process-per-endpoint rule, and what tells administration which endpoints inhabit the database.</summary>
+   ///<remarks>The process lock is exclusivity a live holder holds — a database session for the server engines, an OS lock for<br/>
+   /// the machine-local ones — never a time-bounded lease: no pause, however long, can lose it, and a dead process's lock is<br/>
+   /// released by the infrastructure, so a restart after a crash claims the endpoint immediately. The recorded<br/>
+   /// <see cref="EndpointCatalogEntry.LockHolderDescription"/> is advisory bookkeeping for error messages and administration;<br/>
+   /// the lock itself is the enforcement.</remarks>
    public interface IEndpointCatalogSqlLayer
    {
       Task<EndpointCatalogEntry?> GetEntryByNameAsync(string endpointName);
       Task<EndpointCatalogEntry?> GetEntryByEndpointIdAsync(EndpointId endpointId);
 
-      ///<summary>Creates the endpoint's catalog entry with the process lease already held — the first-registration path.<br/>
-      /// False when an entry under <paramref name="endpointName"/> already exists, including one a racing process created<br/>
-      /// this instant.</summary>
-      Task<bool> TryInsertEntryHoldingTheLeaseAsync(string endpointName, EndpointId endpointId, Guid leaseHolderId, string leaseHolderDescription, DateTime utcNow);
+      ///<summary>Creates the endpoint's catalog entry. False when an entry under <paramref name="endpointName"/> already<br/>
+      /// exists, including one a racing process created this instant.</summary>
+      Task<bool> TryInsertEntryAsync(string endpointName, EndpointId endpointId, DateTime utcNow);
 
-      ///<summary>Takes the process lease iff it is free or stale — unrefreshed since before <paramref name="staleBefore"/>.</summary>
-      Task<bool> TryTakeTheLeaseAsync(string endpointName, Guid leaseHolderId, string leaseHolderDescription, DateTime utcNow, DateTime staleBefore);
+      ///<summary>Takes the endpoint's process lock iff no other live process holds it. Null when another live process holds<br/>
+      /// it — the claim is refused immediately: the holder holding proves it alive, so there is nothing to wait for.<br/>
+      /// Disposing the returned hold releases the lock for the endpoint's next process; the holding process dying releases<br/>
+      /// it too, through the infrastructure. <paramref name="onLockLostWhileHeld"/> reports the one way the lock can be<br/>
+      /// lost without being released: the holding database session dying under a live holder — the domain database<br/>
+      /// unreachable from this process.</summary>
+      Task<IEndpointProcessLockHold?> TryTakeProcessLockAsync(string endpointName, Action<Exception> onLockLostWhileHeld);
 
-      ///<summary>Refreshes the lease's heartbeat iff <paramref name="leaseHolderId"/> still holds it. False means the lease<br/>
-      /// was taken from us: this process went unrefreshed past the lease duration and was presumed dead.</summary>
-      Task<bool> TryHeartbeatAsync(string endpointName, Guid leaseHolderId, DateTime utcNow);
+      ///<summary>Records who holds the endpoint's process lock — the advisory bookkeeping the loud startup refusal and<br/>
+      /// administration read; the lock itself is the enforcement.</summary>
+      Task RecordLockHolderAsync(string endpointName, string lockHolderDescription);
 
-      ///<summary>Releases the lease iff <paramref name="leaseHolderId"/> still holds it — the clean-shutdown half; a crashed<br/>
-      /// process's lease is instead taken over once stale.</summary>
-      Task ReleaseTheLeaseAsync(string endpointName, Guid leaseHolderId);
+      ///<summary>Clears the recorded lock holder — the clean-shutdown half of <see cref="RecordLockHolderAsync"/>. A crashed<br/>
+      /// process's recorded holder lingers; that is harmless, because the lock, not the bookkeeping, decides.</summary>
+      Task ClearLockHolderAsync(string endpointName);
 
       Task InitAsync();
 
@@ -152,17 +159,20 @@ interface ITessagingSqlLayer
       //first consumer.
    }
 
-   ///<summary>One endpoint's row in the domain database's endpoint catalog: its identity and who — if anyone — holds its<br/>
-   /// process lease right now.</summary>
-   public class EndpointCatalogEntry(string endpointName, EndpointId endpointId, string? leaseHolderDescription, DateTime? leaseHeartbeatUtc)
+   ///<summary>The endpoint's held process lock (see <see cref="IEndpointCatalogSqlLayer.TryTakeProcessLockAsync"/>):<br/>
+   /// disposal releases the lock for the endpoint's next process.</summary>
+   public interface IEndpointProcessLockHold : IAsyncDisposable;
+
+   ///<summary>One endpoint's row in the domain database's endpoint catalog: its identity and — advisory bookkeeping — who<br/>
+   /// recorded itself as holding its process lock (see <see cref="IEndpointCatalogSqlLayer"/>).</summary>
+   public class EndpointCatalogEntry(string endpointName, EndpointId endpointId, string? lockHolderDescription)
    {
       public string EndpointName { get; } = endpointName;
       internal EndpointId EndpointId { get; } = endpointId;
 
-      ///<summary>Human-readable description of the process holding the lease — null when the lease is free.</summary>
-      internal string? LeaseHolderDescription { get; } = leaseHolderDescription;
-
-      internal DateTime? LeaseHeartbeatUtc { get; } = leaseHeartbeatUtc;
+      ///<summary>Human-readable description of the process that recorded itself as the lock holder — null after a clean<br/>
+      /// shutdown, possibly a crashed process's lingering record otherwise: the lock, not this bookkeeping, decides.</summary>
+      internal string? LockHolderDescription { get; } = lockHolderDescription;
    }
 
    public static class EndpointCatalogDatabaseSchemaStrings
@@ -174,9 +184,7 @@ interface ITessagingSqlLayer
       public const string EndpointName = nameof(EndpointName);
       public const string EndpointId = nameof(EndpointId);
       public const string CreatedUtc = nameof(CreatedUtc);
-      public const string LeaseHolderId = nameof(LeaseHolderId);
-      public const string LeaseHolderDescription = nameof(LeaseHolderDescription);
-      public const string LeaseHeartbeatUtc = nameof(LeaseHeartbeatUtc);
+      public const string LockHolderDescription = nameof(LockHolderDescription);
    }
 
    public static class InboxTessageDatabaseSchemaStrings

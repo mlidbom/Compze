@@ -19,7 +19,7 @@ partial class PgSqlEndpointCatalogSqlLayer(IPgSqlConnectionPool connectionFactor
    public async Task<ITessagingSqlLayer.EndpointCatalogEntry?> GetEntryByEndpointIdAsync(EndpointId endpointId) =>
       (await EntriesAsync($"WHERE {Catalog.EndpointId} = @filter", command => command.AddParameter("filter", endpointId.Value)).caf()).SingleOrDefault();
 
-   public async Task<bool> TryInsertEntryHoldingTheLeaseAsync(string endpointName, EndpointId endpointId, Guid leaseHolderId, string leaseHolderDescription, DateTime utcNow) =>
+   public async Task<bool> TryInsertEntryAsync(string endpointName, EndpointId endpointId, DateTime utcNow) =>
       await _connectionFactory.UseCommandAsync(
          async command => 1 == await command
                    .SetCommandText(
@@ -28,73 +28,74 @@ partial class PgSqlEndpointCatalogSqlLayer(IPgSqlConnectionPool connectionFactor
                        $"""
 
                         INSERT INTO {Catalog.TableName}
-                                    ({Catalog.EndpointName},  {Catalog.EndpointId},  {Catalog.CreatedUtc},  {Catalog.LeaseHolderId},  {Catalog.LeaseHolderDescription},  {Catalog.LeaseHeartbeatUtc})
-                            VALUES (@{Catalog.EndpointName}, @{Catalog.EndpointId}, @{Catalog.CreatedUtc}, @{Catalog.LeaseHolderId}, @{Catalog.LeaseHolderDescription}, @{Catalog.LeaseHeartbeatUtc})
+                                    ({Catalog.EndpointName},  {Catalog.EndpointId},  {Catalog.CreatedUtc})
+                            VALUES (@{Catalog.EndpointName}, @{Catalog.EndpointId}, @{Catalog.CreatedUtc})
                         ON CONFLICT ({Catalog.EndpointName}) DO NOTHING
 
                         """)
                    .AddMediumTextParameter(Catalog.EndpointName, endpointName)
                    .AddParameter(Catalog.EndpointId, endpointId.Value)
                    .AddTimestampWithTimeZone(Catalog.CreatedUtc, utcNow)
-                   .AddParameter(Catalog.LeaseHolderId, leaseHolderId)
-                   .AddMediumTextParameter(Catalog.LeaseHolderDescription, leaseHolderDescription)
-                   .AddTimestampWithTimeZone(Catalog.LeaseHeartbeatUtc, utcNow)
                    .ExecuteNonQueryAsync().caf()).caf();
 
-   public async Task<bool> TryTakeTheLeaseAsync(string endpointName, Guid leaseHolderId, string leaseHolderDescription, DateTime utcNow, DateTime staleBefore) =>
-      await _connectionFactory.UseCommandAsync(
-         async command => 1 == await command
-                   .SetCommandText(
-                       $"""
+   //The lock is a session-scoped advisory lock on a dedicated connection: it lives exactly as long as the session, so a
+   //crashed process's lock is released when the server notices its connection die, and no pause can lose a live holder's
+   //lock. Advisory lock keys are 64-bit integers; the database name joins the hash input so identical endpoint names in
+   //different domain databases can never collide, whatever the server's lock-key scoping.
+   public async Task<ITessagingSqlLayer.IEndpointProcessLockHold?> TryTakeProcessLockAsync(string endpointName, Action<Exception> onLockLostWhileHeld)
+   {
+      //Pooling would break the lock's session-lifetime semantics: a pooled connection's server session outlives its
+      //dispose, still owning the session-scoped lock as a ghost until the pool reuses or prunes it. Unpooled, dispose
+      //really ends the session - and this one long-held connection per endpoint gains nothing from a pool anyway.
+      NpgsqlConnection? connection = new(new NpgsqlConnectionStringBuilder(_connectionFactory.ConnectionString) { Pooling = false }.ConnectionString);
+      try
+      {
+         await connection.OpenAsync().caf();
+         var command = connection.CreateCommand();
+         await using(command.caf())
+         {
+            command.CommandText = "SELECT pg_try_advisory_lock(@LockKey)";
+            command.Parameters.AddWithValue("LockKey", ProcessLockKeys.Int64Key(connection.Database, endpointName));
+            if(!(bool)(await command.ExecuteScalarAsync().caf())!) return null;
 
-                        UPDATE {Catalog.TableName}
-                            SET {Catalog.LeaseHolderId} = @{Catalog.LeaseHolderId},
-                                {Catalog.LeaseHolderDescription} = @{Catalog.LeaseHolderDescription},
-                                {Catalog.LeaseHeartbeatUtc} = @{Catalog.LeaseHeartbeatUtc}
-                        WHERE {Catalog.EndpointName} = @{Catalog.EndpointName}
-                          AND ({Catalog.LeaseHolderId} IS NULL OR {Catalog.LeaseHeartbeatUtc} < @StaleBefore)
+            var session = new ProcessLockSession(connection, onLockLostWhileHeld);
+            connection = null; //Ownership transferred: the session holds the lock by holding the connection.
+            return session;
+         }
+      }
+      finally
+      {
+         if(connection != null) await connection.DisposeAsync().caf();
+      }
+   }
 
-                        """)
-                   .AddMediumTextParameter(Catalog.EndpointName, endpointName)
-                   .AddParameter(Catalog.LeaseHolderId, leaseHolderId)
-                   .AddMediumTextParameter(Catalog.LeaseHolderDescription, leaseHolderDescription)
-                   .AddTimestampWithTimeZone(Catalog.LeaseHeartbeatUtc, utcNow)
-                   .AddTimestampWithTimeZone("StaleBefore", staleBefore)
-                   .ExecuteNonQueryAsync().caf()).caf();
-
-   public async Task<bool> TryHeartbeatAsync(string endpointName, Guid leaseHolderId, DateTime utcNow) =>
-      await _connectionFactory.UseCommandAsync(
-         async command => 1 == await command
-                   .SetCommandText(
-                       $"""
-
-                        UPDATE {Catalog.TableName}
-                            SET {Catalog.LeaseHeartbeatUtc} = @{Catalog.LeaseHeartbeatUtc}
-                        WHERE {Catalog.EndpointName} = @{Catalog.EndpointName}
-                          AND {Catalog.LeaseHolderId} = @{Catalog.LeaseHolderId}
-
-                        """)
-                   .AddMediumTextParameter(Catalog.EndpointName, endpointName)
-                   .AddParameter(Catalog.LeaseHolderId, leaseHolderId)
-                   .AddTimestampWithTimeZone(Catalog.LeaseHeartbeatUtc, utcNow)
-                   .ExecuteNonQueryAsync().caf()).caf();
-
-   public async Task ReleaseTheLeaseAsync(string endpointName, Guid leaseHolderId) =>
+   public async Task RecordLockHolderAsync(string endpointName, string lockHolderDescription) =>
       await _connectionFactory.UseCommandAsync(
          async command => await command
                    .SetCommandText(
                        $"""
 
                         UPDATE {Catalog.TableName}
-                            SET {Catalog.LeaseHolderId} = NULL,
-                                {Catalog.LeaseHolderDescription} = NULL,
-                                {Catalog.LeaseHeartbeatUtc} = NULL
+                            SET {Catalog.LockHolderDescription} = @{Catalog.LockHolderDescription}
                         WHERE {Catalog.EndpointName} = @{Catalog.EndpointName}
-                          AND {Catalog.LeaseHolderId} = @{Catalog.LeaseHolderId}
 
                         """)
                    .AddMediumTextParameter(Catalog.EndpointName, endpointName)
-                   .AddParameter(Catalog.LeaseHolderId, leaseHolderId)
+                   .AddMediumTextParameter(Catalog.LockHolderDescription, lockHolderDescription)
+                   .ExecuteNonQueryAsync().caf()).caf();
+
+   public async Task ClearLockHolderAsync(string endpointName) =>
+      await _connectionFactory.UseCommandAsync(
+         async command => await command
+                   .SetCommandText(
+                       $"""
+
+                        UPDATE {Catalog.TableName}
+                            SET {Catalog.LockHolderDescription} = NULL
+                        WHERE {Catalog.EndpointName} = @{Catalog.EndpointName}
+
+                        """)
+                   .AddMediumTextParameter(Catalog.EndpointName, endpointName)
                    .ExecuteNonQueryAsync().caf()).caf();
 
    async Task<IReadOnlyList<ITessagingSqlLayer.EndpointCatalogEntry>> EntriesAsync(string filterClause, Action<NpgsqlCommand> addFilterParameter) =>
@@ -106,7 +107,7 @@ partial class PgSqlEndpointCatalogSqlLayer(IPgSqlConnectionPool connectionFactor
             command.SetCommandText(
                $"""
 
-                SELECT {Catalog.EndpointName}, {Catalog.EndpointId}, {Catalog.LeaseHolderDescription}, {Catalog.LeaseHeartbeatUtc}
+                SELECT {Catalog.EndpointName}, {Catalog.EndpointId}, {Catalog.LockHolderDescription}
                 FROM {Catalog.TableName} {filterClause}
 
                 """);
@@ -119,8 +120,7 @@ partial class PgSqlEndpointCatalogSqlLayer(IPgSqlConnectionPool connectionFactor
                entries.Add(new ITessagingSqlLayer.EndpointCatalogEntry(
                               endpointName: reader.GetString(0),
                               endpointId: new EndpointId(reader.GetGuid(1)),
-                              leaseHolderDescription: await reader.IsDBNullAsync(2).caf() ? null : reader.GetString(2),
-                              leaseHeartbeatUtc: await reader.IsDBNullAsync(3).caf() ? null : DateTime.SpecifyKind(reader.GetDateTime(3), DateTimeKind.Utc)));
+                              lockHolderDescription: await reader.IsDBNullAsync(2).caf() ? null : reader.GetString(2)));
             }
 
             return entries;

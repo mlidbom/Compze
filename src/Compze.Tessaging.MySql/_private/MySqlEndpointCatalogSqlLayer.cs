@@ -19,82 +19,91 @@ partial class MySqlEndpointCatalogSqlLayer(IMySqlConnectionPool connectionFactor
    public async Task<ITessagingSqlLayer.EndpointCatalogEntry?> GetEntryByEndpointIdAsync(EndpointId endpointId) =>
       (await EntriesAsync($"WHERE {Catalog.EndpointId} = @filter", command => command.AddParameter("filter", endpointId.Value)).caf()).SingleOrDefault();
 
-   public async Task<bool> TryInsertEntryHoldingTheLeaseAsync(string endpointName, EndpointId endpointId, Guid leaseHolderId, string leaseHolderDescription, DateTime utcNow) =>
+   public async Task<bool> TryInsertEntryAsync(string endpointName, EndpointId endpointId, DateTime utcNow) =>
       await _connectionFactory.UseCommandAsync(
          async command => 1 == await command
                    .SetCommandText(
                        //INSERT IGNORE is MySQL's race-safe insert-if-absent: a racing registration's row makes this one
                        //affect zero rows instead of erroring. The caveat - it would also swallow an EndpointId-uniqueness
-                       //violation - is covered by the id-consistency read the process lease performs before inserting.
+                       //violation - is covered by the id-consistency read the process lock performs before inserting.
                        $"""
 
                         INSERT IGNORE INTO {Catalog.TableName}
-                                    ({Catalog.EndpointName},  {Catalog.EndpointId},  {Catalog.CreatedUtc},  {Catalog.LeaseHolderId},  {Catalog.LeaseHolderDescription},  {Catalog.LeaseHeartbeatUtc})
-                            VALUES (@{Catalog.EndpointName}, @{Catalog.EndpointId}, @{Catalog.CreatedUtc}, @{Catalog.LeaseHolderId}, @{Catalog.LeaseHolderDescription}, @{Catalog.LeaseHeartbeatUtc})
+                                    ({Catalog.EndpointName},  {Catalog.EndpointId},  {Catalog.CreatedUtc})
+                            VALUES (@{Catalog.EndpointName}, @{Catalog.EndpointId}, @{Catalog.CreatedUtc})
 
                         """)
                    .AddMediumTextParameter(Catalog.EndpointName, endpointName)
                    .AddParameter(Catalog.EndpointId, endpointId.Value)
                    .AddDateTime2Parameter(Catalog.CreatedUtc, utcNow)
-                   .AddParameter(Catalog.LeaseHolderId, leaseHolderId)
-                   .AddMediumTextParameter(Catalog.LeaseHolderDescription, leaseHolderDescription)
-                   .AddDateTime2Parameter(Catalog.LeaseHeartbeatUtc, utcNow)
                    .ExecuteNonQueryAsync().caf()).caf();
 
-   public async Task<bool> TryTakeTheLeaseAsync(string endpointName, Guid leaseHolderId, string leaseHolderDescription, DateTime utcNow, DateTime staleBefore) =>
-      await _connectionFactory.UseCommandAsync(
-         async command => 1 == await command
-                   .SetCommandText(
-                       $"""
+   //The lock is a session-scoped GET_LOCK on a dedicated connection: it lives exactly as long as the session, so a
+   //crashed process's lock is released when the server notices its connection die, and no pause can lose a live holder's
+   //lock. GET_LOCK names are server-wide and capped at 64 characters; the database name joins the hashed lock name so
+   //identical endpoint names in different domain databases on one server can never collide.
+   public async Task<ITessagingSqlLayer.IEndpointProcessLockHold?> TryTakeProcessLockAsync(string endpointName, Action<Exception> onLockLostWhileHeld)
+   {
+      //Pooling would break the lock's session-lifetime semantics: a pooled connection's server session outlives its
+      //dispose, still owning the session-scoped lock as a ghost until the pool reuses or prunes it. Unpooled, dispose
+      //really ends the session - and this one long-held connection per endpoint gains nothing from a pool anyway.
+      MySqlConnection? connection = new(new MySqlConnectionStringBuilder(_connectionFactory.ConnectionString) { Pooling = false }.ConnectionString);
+      try
+      {
+         await connection.OpenAsync().caf();
+         var command = connection.CreateCommand();
+         await using(command.caf())
+         {
+            command.CommandText = "SELECT GET_LOCK(@LockName, 0)";
+            command.Parameters.AddWithValue("LockName", ProcessLockKeys.Name(connection.Database, endpointName));
+            var lockResult = await command.ExecuteScalarAsync().caf();
+            if(lockResult is 1L)
+            {
+               var session = new ProcessLockSession(connection, onLockLostWhileHeld);
+               connection = null; //Ownership transferred: the session holds the lock by holding the connection.
+               return session;
+            }
 
-                        UPDATE {Catalog.TableName}
-                            SET {Catalog.LeaseHolderId} = @{Catalog.LeaseHolderId},
-                                {Catalog.LeaseHolderDescription} = @{Catalog.LeaseHolderDescription},
-                                {Catalog.LeaseHeartbeatUtc} = @{Catalog.LeaseHeartbeatUtc}
-                        WHERE {Catalog.EndpointName} = @{Catalog.EndpointName}
-                          AND ({Catalog.LeaseHolderId} IS NULL OR {Catalog.LeaseHeartbeatUtc} < @StaleBefore)
+            //0 is the one result that means "held by another session"; NULL means the server failed to even try - a
+            //refusal message naming another process would lie, so fail as what it is.
+            if(lockResult is not 0L) throw new InvalidOperationException($"GET_LOCK failed instead of answering: returned {lockResult ?? "NULL"}.");
+         }
 
-                        """)
-                   .AddMediumTextParameter(Catalog.EndpointName, endpointName)
-                   .AddParameter(Catalog.LeaseHolderId, leaseHolderId)
-                   .AddMediumTextParameter(Catalog.LeaseHolderDescription, leaseHolderDescription)
-                   .AddDateTime2Parameter(Catalog.LeaseHeartbeatUtc, utcNow)
-                   .AddDateTime2Parameter("StaleBefore", staleBefore)
-                   .ExecuteNonQueryAsync().caf()).caf();
+         return null;
+      }
+      finally
+      {
+         if(connection != null) await connection.DisposeAsync().caf();
+      }
+   }
 
-   public async Task<bool> TryHeartbeatAsync(string endpointName, Guid leaseHolderId, DateTime utcNow) =>
-      await _connectionFactory.UseCommandAsync(
-         async command => 1 == await command
-                   .SetCommandText(
-                       $"""
-
-                        UPDATE {Catalog.TableName}
-                            SET {Catalog.LeaseHeartbeatUtc} = @{Catalog.LeaseHeartbeatUtc}
-                        WHERE {Catalog.EndpointName} = @{Catalog.EndpointName}
-                          AND {Catalog.LeaseHolderId} = @{Catalog.LeaseHolderId}
-
-                        """)
-                   .AddMediumTextParameter(Catalog.EndpointName, endpointName)
-                   .AddParameter(Catalog.LeaseHolderId, leaseHolderId)
-                   .AddDateTime2Parameter(Catalog.LeaseHeartbeatUtc, utcNow)
-                   .ExecuteNonQueryAsync().caf()).caf();
-
-   public async Task ReleaseTheLeaseAsync(string endpointName, Guid leaseHolderId) =>
+   public async Task RecordLockHolderAsync(string endpointName, string lockHolderDescription) =>
       await _connectionFactory.UseCommandAsync(
          async command => await command
                    .SetCommandText(
                        $"""
 
                         UPDATE {Catalog.TableName}
-                            SET {Catalog.LeaseHolderId} = NULL,
-                                {Catalog.LeaseHolderDescription} = NULL,
-                                {Catalog.LeaseHeartbeatUtc} = NULL
+                            SET {Catalog.LockHolderDescription} = @{Catalog.LockHolderDescription}
                         WHERE {Catalog.EndpointName} = @{Catalog.EndpointName}
-                          AND {Catalog.LeaseHolderId} = @{Catalog.LeaseHolderId}
 
                         """)
                    .AddMediumTextParameter(Catalog.EndpointName, endpointName)
-                   .AddParameter(Catalog.LeaseHolderId, leaseHolderId)
+                   .AddMediumTextParameter(Catalog.LockHolderDescription, lockHolderDescription)
+                   .ExecuteNonQueryAsync().caf()).caf();
+
+   public async Task ClearLockHolderAsync(string endpointName) =>
+      await _connectionFactory.UseCommandAsync(
+         async command => await command
+                   .SetCommandText(
+                       $"""
+
+                        UPDATE {Catalog.TableName}
+                            SET {Catalog.LockHolderDescription} = NULL
+                        WHERE {Catalog.EndpointName} = @{Catalog.EndpointName}
+
+                        """)
+                   .AddMediumTextParameter(Catalog.EndpointName, endpointName)
                    .ExecuteNonQueryAsync().caf()).caf();
 
    async Task<IReadOnlyList<ITessagingSqlLayer.EndpointCatalogEntry>> EntriesAsync(string filterClause, Action<MySqlCommand> addFilterParameter) =>
@@ -106,7 +115,7 @@ partial class MySqlEndpointCatalogSqlLayer(IMySqlConnectionPool connectionFactor
             command.SetCommandText(
                $"""
 
-                SELECT {Catalog.EndpointName}, {Catalog.EndpointId}, {Catalog.LeaseHolderDescription}, {Catalog.LeaseHeartbeatUtc}
+                SELECT {Catalog.EndpointName}, {Catalog.EndpointId}, {Catalog.LockHolderDescription}
                 FROM {Catalog.TableName} {filterClause}
 
                 """);
@@ -119,8 +128,7 @@ partial class MySqlEndpointCatalogSqlLayer(IMySqlConnectionPool connectionFactor
                entries.Add(new ITessagingSqlLayer.EndpointCatalogEntry(
                               endpointName: reader.GetString(0),
                               endpointId: new EndpointId(reader.GetGuid(1)),
-                              leaseHolderDescription: await reader.IsDBNullAsync(2).caf() ? null : reader.GetString(2),
-                              leaseHeartbeatUtc: await reader.IsDBNullAsync(3).caf() ? null : DateTime.SpecifyKind(reader.GetDateTime(3), DateTimeKind.Utc)));
+                              lockHolderDescription: await reader.IsDBNullAsync(2).caf() ? null : reader.GetString(2)));
             }
 
             return entries;

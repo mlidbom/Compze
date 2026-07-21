@@ -46,7 +46,7 @@ silently altered name would silently re-home the endpoint's storage.
 Creating an endpoint needs nothing beyond the `CREATE TABLE` rights the framework's startup
 schema-creation already uses, on every backend identically — which is what keeps endpoint creation a
 handful of lines with zero operational ceremony. Decommissioning an endpoint's storage means dropping its
-prefixed table-set and deleting its catalog entry (refused while its process lease is held); the
+prefixed table-set and deleting its catalog entry (refused while its process lock is held); the
 administration door for that act does not exist yet — it is parked as a todo at the catalog surface,
 awaiting its first consumer.
 
@@ -65,42 +65,52 @@ with no declaration; on the heavier backends the interner table simply lives in 
 
 One shared table per domain database — `EndpointCatalog` — is Tessaging's only shared table: domain-level
 data *about* endpoints, inherently shared. Columns: `EndpointName` (primary key), `EndpointId` (unique),
-`CreatedUtc`, and the process lease (`LeaseHolderId`, `LeaseHolderDescription`, `LeaseHeartbeatUtc`).
+`CreatedUtc`, and — advisory bookkeeping — the recorded lock holder (`LockHolderDescription`).
 Its SQL surface is `ITessagingSqlLayer.IEndpointCatalogSqlLayer`, implemented per backend. It enforces:
 
 - **Name uniqueness**: a name only ever belongs to one endpoint. A second endpoint claiming an occupied
   name with a different `EndpointId` fails its start loud, immediately.
 - **Identity stability**: an `EndpointId` never silently re-keys itself under a new name — renaming an
   endpoint means decommissioning the old storage. Also loud and immediate.
-- **One process per endpoint**: the process lease, below.
+- **One process per endpoint**: the process lock, below.
 
 The catalog also tells administration which endpoints inhabit the database
 (`IEndpointCatalogSqlLayer.GetEntriesAsync`).
 
-## The process lease
+## The process lock
 
-An endpoint runs in exactly one process at a time, enforced by a **heartbeat lease** in the catalog row
-(`EndpointProcessLease`, `Compze.Tessaging.Implementation.EndpointCatalog`):
+An endpoint runs in exactly one process at a time, enforced by a **process lock** — exclusivity a live
+holder holds, never a time-bounded lease (`EndpointProcessLock`,
+`Compze.Tessaging._private.EndpointCatalog`). A heartbeat lease was the previous design and was abandoned
+on principle: no timeout can distinguish a paused-but-alive holder from a dead one, so under enough load a
+live holder's lease went stale and a claimant legitimately split the endpoint across two processes.
 
 - **Claimed as the first act of starting to listen** — whether this process may run the endpoint at all is
   decided before anything else touches the database, and before any endpoint state mutates, so a refused
   claim leaves the endpoint fully un-started.
-- **The knob is `ExactlyOnceEndpointBuilder.ProcessLeaseDuration`** (default 15 seconds). The holder
-  heartbeats at a fifth of the duration; a lease whose heartbeat is older than one duration is stale.
-- **A claimant finding the lease held waits out one lease duration.** A crashed predecessor's lease goes
-  stale within that window and is **taken over silently** — crash recovery needs no manual cleanup. A
-  holder proven alive by its heartbeats fails the claimant's start loud
-  (`EndpointAlreadyRunningInAnotherProcessException`, naming the holding process and its heartbeat age).
-- **A live holder whose lease is stolen** (a debugger pause or machine sleep long enough for its lease to
-  go stale under a waiting claimant) discovers the loss at its next heartbeat and reports through the
-  background-exception machinery.
+- **The lock is a session-scoped database lock on a dedicated held connection** (MS SQL `sp_getapplock`
+  session-owned, PostgreSQL `pg_try_advisory_lock`, MySQL `GET_LOCK`): it lives exactly as long as the
+  session, so a crashed process's lock is released when the server notices its connection die — the
+  endpoint's next process claims it with **no waiting and no manual cleanup** — and no pause, however
+  long, can lose a live holder's lock: there is no timeout for load, a debugger, or a machine sleep to
+  overrun. SQLite has no server sessions, so there the lock is an OS-level machine-wide mutex keyed on the
+  database's identity (`SqliteEndpointProcessLockHold`) — a sqlite database is machine-local by nature, so
+  a machine-wide OS lock covers every process that could open it, and the OS releases a dead process's
+  mutex the same way the servers release a dead session's locks.
+- **A claimant finding the lock held is refused immediately and loudly**
+  (`EndpointAlreadyRunningInAnotherProcessException`, naming the holding process): the lock being held is
+  itself proof of a live holder, so there is nothing to wait out.
+- **The held session is kept alive by a periodic ping** (`ProcessLockSession`), defeating infrastructure
+  that reaps idle database sessions. The ping failing means the domain database is unreachable from the
+  holding process — the one way a live holder can lose the lock — and is reported loud through the
+  background-exception machinery (`EndpointProcessLockSessionLostException`).
+- **The catalog row records the holder's description** — advisory bookkeeping for the refusal message and
+  administration; the lock itself is the enforcement, so a crashed process's lingering record blocks
+  nothing.
 - **Released at disposal**, after the observation drain — once nothing in the process writes to the domain
   database.
-- Every catalog act runs with the ambient transaction suppressed — the lease is its own act, never part of
-  a business transaction. Claims and heartbeats are single conditional statements, so racing claimants
-  serialize on the row without read-then-write races. Lease timestamps come from the claimants' clocks: the
-  processes sharing a domain database are assumed clock-synchronized to within a fraction of the lease
-  duration (same machine, or NTP-disciplined).
+- Every catalog act runs with the ambient transaction suppressed — the lock is its own act, never part of
+  a business transaction. No clock synchronization is assumed: nothing about the lock is a timestamp.
 
 ## Schema creation
 
@@ -118,9 +128,8 @@ processes. SQLite needs no lock: it is single-writer by nature.
 ## Per-backend specifics worth knowing
 
 - **SQLite stores datetimes as INTEGER ticks** (UTC `DateTime.Ticks`) — its driver has no datetime affinity
-  worth trusting for comparisons; the catalog's staleness arithmetic runs on ticks.
-- **MySQL datetime columns are `datetime(6)`**: plain `datetime` has second precision, insufficient for
-  heartbeat arithmetic.
+  worth trusting for comparisons.
+- **MySQL datetime columns are `datetime(6)`**: plain `datetime` has second precision.
 - **MS SQL uses `datetime2`; PostgreSQL uses `timestamptz`.** All backends read timestamps back as UTC.
 - **The catalog's race-safe insert differs per engine**: SQLite `INSERT ... SELECT ... WHERE NOT EXISTS`
   (safe under the single writer), MS SQL `WITH (UPDLOCK, HOLDLOCK)`, MySQL `INSERT IGNORE` (with a
@@ -137,5 +146,5 @@ rules; `test/Compze.Tests.Integration/Tessaging/Given_two_exactly_once_endpoints
 proves two endpoints conversing exactly-once inside one domain database, the catalog listing both, and the
 catalog's identity rules;
 `Given_two_hosts_each_starting_an_endpoint_with_the_same_name_and_id.cs` and
-`Given_a_domain_database_remembering_a_crashed_processes_lease.cs` pin the lease conflict and the silent
-stale takeover.
+`Given_a_domain_database_remembering_a_crashed_processes_catalog_entry.cs` pin the lock refusal and the
+crash-recovery start — the lock, not the lingering bookkeeping, decides.

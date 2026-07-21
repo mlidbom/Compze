@@ -11,12 +11,10 @@ partial class SqliteEndpointCatalogSqlLayer
 
        CREATE TABLE IF NOT EXISTS {Catalog.TableName}
        (
-           {Catalog.EndpointName}           TEXT    NOT NULL,
-           {Catalog.EndpointId}             TEXT    NOT NULL UNIQUE,
-           {Catalog.CreatedUtc}             INTEGER NOT NULL,
-           {Catalog.LeaseHolderId}          TEXT    NULL,
-           {Catalog.LeaseHolderDescription} TEXT    NULL,
-           {Catalog.LeaseHeartbeatUtc}      INTEGER NULL,
+           {Catalog.EndpointName}          TEXT    NOT NULL,
+           {Catalog.EndpointId}            TEXT    NOT NULL UNIQUE,
+           {Catalog.CreatedUtc}            INTEGER NOT NULL,
+           {Catalog.LockHolderDescription} TEXT    NULL,
 
            PRIMARY KEY ( {Catalog.EndpointName} )
        );

@@ -123,7 +123,7 @@ phases — because any cross-endpoint ordering could only ever hold inside one p
 discovered each other is topology convergence, identical for co-hosted and separated endpoints, covered by
 readiness, waiting sends, queue-while-down, and `RequirePeers` (below).
 
-What each phase does inside an endpoint: the exactly-once tier claims its process lease in the domain
+What each phase does inside an endpoint: the exactly-once tier claims its process lock in the domain
 database's endpoint catalog (the first act — whether this process may run the endpoint at all is decided
 before anything else touches the database), peer memory loads, the durable vertical initializes, and the
 one transport server starts in the listening phase; the address is announced to every
@@ -177,15 +177,19 @@ endpoints join one domain database (the whole story:
 - **The domain-level tables are deliberately unprefixed** — the type-id interner, the tevent store, the
   document db, and the endpoint catalog are the domain's data, shared by every endpoint that joins.
 - **One shared table per domain database: the endpoint catalog** — each endpoint's name, `EndpointId`,
-  creation time, and process lease. It enforces name uniqueness (a name only ever belongs to one endpoint;
-  an id never silently re-keys itself under a new name — renaming means decommissioning the old storage)
-  and the one-process-per-endpoint rule, and it tells administration which endpoints inhabit the database.
-- **The process lease** is a heartbeat lease, claimed as the first act of starting to listen. A claimant
-  finding it held waits out one lease duration (`ExactlyOnceEndpointBuilder.ProcessLeaseDuration`, default
-  15 seconds) — a crashed predecessor's lease goes stale within that and is taken over silently, so crash
-  recovery needs no manual cleanup — and only a holder proven alive by its heartbeats fails the start loud
-  (`EndpointAlreadyRunningInAnotherProcessException`, naming the holder). The lease is released at
-  disposal, after the observation drain, once nothing in the process writes to the domain database.
+  creation time, and the recorded lock holder. It enforces name uniqueness (a name only ever belongs to one
+  endpoint; an id never silently re-keys itself under a new name — renaming means decommissioning the old
+  storage) and the one-process-per-endpoint rule, and it tells administration which endpoints inhabit the
+  database.
+- **The process lock** is exclusivity a live holder holds — a session-scoped database lock on a dedicated
+  held connection (an OS-level machine-wide mutex on SQLite, which has no server sessions) — claimed as the
+  first act of starting to listen, never a time-bounded lease. A crashed process's lock is released by the
+  infrastructure (its database session dies with it), so the endpoint's next process claims it immediately —
+  crash recovery needs no waiting and no manual cleanup — while a claimant finding the lock held has proof
+  of a live holder and fails its start loud, immediately
+  (`EndpointAlreadyRunningInAnotherProcessException`, naming the holder); no pause, however long, can make a
+  live holder look dead. The lock is released at disposal, after the observation drain, once nothing in the
+  process writes to the domain database.
 
 Because endpoints start in parallel under the host, several endpoints' first boot against one fresh domain
 database creates the shared schemas concurrently — schema creation therefore serializes under the engine's
