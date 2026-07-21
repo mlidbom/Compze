@@ -6,7 +6,8 @@ using Compze.Internals.Sql.PostgreSql.Private;
 using Compze.Internals.Sql.PostgreSql.Wiring;
 using Compze.TypeIdentifiers.Interning;
 using Compze.TypeIdentifiers.Interning.PostgreSql.Wiring;
-using Layer = Compze.DocumentDb.PostgreSql.PgSqlDocumentDbSqlLayer;
+using Layer = Compze.DocumentDb.PostgreSql.Private.PgSqlDocumentDbSqlLayer;
+using Compze.Internals.Sql.PostgreSql.Wiring.Internal;
 
 namespace Compze.DocumentDb.PostgreSql.Wiring;
 

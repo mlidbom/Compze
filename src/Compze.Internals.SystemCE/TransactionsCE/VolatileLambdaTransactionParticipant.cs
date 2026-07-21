@@ -1,5 +1,6 @@
 using System.Transactions;
 using Compze.Contracts;
+using Compze.Internals.SystemCE.Private;
 
 namespace Compze.Internals.SystemCE.TransactionsCE;
 

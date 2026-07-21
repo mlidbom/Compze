@@ -1,4 +1,5 @@
 using Compze.Threading.Exceptions;
+using Compze.Threading.Interprocess.Internal;
 
 namespace Compze.Threading.Interprocess;
 

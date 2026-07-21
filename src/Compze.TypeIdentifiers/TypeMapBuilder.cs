@@ -1,4 +1,6 @@
 using System.Reflection;
+using Compze.TypeIdentifiers.Internal;
+using Compze.TypeIdentifiers.Private;
 
 namespace Compze.TypeIdentifiers;
 

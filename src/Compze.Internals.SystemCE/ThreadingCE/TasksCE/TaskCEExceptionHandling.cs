@@ -1,3 +1,5 @@
+using Compze.Internals.SystemCE.ThreadingCE.TasksCE.Private;
+
 namespace Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 
 public static class TaskCEExceptionHandling

@@ -1,11 +1,12 @@
-using Compze.Threading.Interprocess.Exceptions;
-using Compze.Threading.Utilities;
+using Compze.Threading.Interprocess.Private.Exceptions;
+using Compze.Threading.Internal.Utilities;
+using Compze.Threading.Private.Utilities;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
 using System.Security.AccessControl;
 using System.Security.Principal;
-using Compze.Threading.SystemCE;
+using Compze.Threading.Internal.SystemCE;
 
 namespace Compze.Threading.Interprocess;
 

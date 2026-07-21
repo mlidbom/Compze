@@ -2,6 +2,7 @@ using System.Diagnostics;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.SystemCE;
 using Compze.Threading;
+using Compze.Internals.SystemCE.Private;
 
 namespace Compze.Internals.SystemCE.ThreadingCE.Async;
 

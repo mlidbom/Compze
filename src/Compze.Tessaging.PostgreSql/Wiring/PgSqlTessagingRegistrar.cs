@@ -6,6 +6,8 @@ using Compze.Internals.Sql.PostgreSql.Wiring;
 using Compze.Tessaging.Internal.SqlLayer;
 using Compze.TypeIdentifiers.Interning;
 using Compze.TypeIdentifiers.Interning.PostgreSql.Wiring;
+using Compze.Internals.Sql.PostgreSql.Wiring.Internal;
+using Compze.Tessaging.PostgreSql.Private;
 
 namespace Compze.Tessaging.PostgreSql.Wiring;
 

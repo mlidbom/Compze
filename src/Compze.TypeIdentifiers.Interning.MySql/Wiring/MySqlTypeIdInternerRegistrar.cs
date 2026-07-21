@@ -3,6 +3,8 @@ using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Sql.MySql;
 using Compze.Internals.Sql.MySql.Private;
 using Compze.Internals.Sql.MySql.Wiring;
+using Compze.TypeIdentifiers.Interning.MySql.Private;
+using Compze.Internals.Sql.MySql.Wiring.Internal;
 
 namespace Compze.TypeIdentifiers.Interning.MySql.Wiring;
 

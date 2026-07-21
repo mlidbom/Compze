@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using Compze.TypeIdentifiers.Interning.Private;
 
 namespace Compze.TypeIdentifiers.Interning;
 

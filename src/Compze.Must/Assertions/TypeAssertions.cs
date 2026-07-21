@@ -1,3 +1,5 @@
+using Compze.Must.Private;
+
 namespace Compze.Must;
 // ReSharper disable InconsistentNaming
 /// <summary>Assertions about the runtime type of the value.</summary>

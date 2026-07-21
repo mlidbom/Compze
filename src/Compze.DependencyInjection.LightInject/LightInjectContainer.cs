@@ -3,6 +3,7 @@ using Compze.DependencyInjection.Abstractions;
 using LightInject;
 using IScope = Compze.DependencyInjection.Abstractions.IScope;
 using LightInjectScope = global::LightInject.Scope;
+using Compze.DependencyInjection.LightInject.Private;
 
 namespace Compze.DependencyInjection.LightInject;
 

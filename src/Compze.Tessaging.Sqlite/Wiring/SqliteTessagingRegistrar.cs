@@ -7,6 +7,8 @@ using Compze.Tessaging.Endpoints.ExactlyOnce;
 using Compze.Tessaging.Internal.SqlLayer;
 using Compze.TypeIdentifiers.Interning;
 using Compze.TypeIdentifiers.Interning.Sqlite.Wiring;
+using Compze.Internals.Sql.Sqlite.Wiring.Internal;
+using Compze.Tessaging.Sqlite.Private;
 
 namespace Compze.Tessaging.Sqlite.Wiring;
 

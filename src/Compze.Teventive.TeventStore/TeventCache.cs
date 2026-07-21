@@ -11,6 +11,7 @@ using Compze.Teventive.TeventStore.Abstractions.Internal.SqlLayer.Abstractions;
 using Compze.Threading;
 using Compze.Threading.ResourceAccess;
 using Microsoft.Extensions.Caching.Memory;
+using Compze.Teventive.TeventStore.Private;
 
 namespace Compze.Teventive.TeventStore;
 

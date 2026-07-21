@@ -6,7 +6,8 @@ using Compze.Internals.Sql.MySql.Private;
 using Compze.Internals.Sql.MySql.Wiring;
 using Compze.TypeIdentifiers.Interning;
 using Compze.TypeIdentifiers.Interning.MySql.Wiring;
-using Layer = Compze.DocumentDb.MySql.MySqlDocumentDbSqlLayer;
+using Layer = Compze.DocumentDb.MySql.Private.MySqlDocumentDbSqlLayer;
+using Compze.Internals.Sql.MySql.Wiring.Internal;
 
 namespace Compze.DocumentDb.MySql.Wiring;
 

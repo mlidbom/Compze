@@ -2,6 +2,7 @@ using Compze.Must;
 
 using Compze.xUnitBDD;
 using static Compze.TypeIdentifiers.Specifications.TypeNameMapperFixture;
+using Compze.TypeIdentifiers.Internal;
 
 // ReSharper disable InconsistentNaming
 #pragma warning disable CA1052

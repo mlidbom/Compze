@@ -1,4 +1,5 @@
-using Compze.Threading.Utilities;
+using Compze.Threading.Internal.Utilities;
+using Compze.Threading.Private.Utilities;
 using Compze.Contracts;
 
 // ReSharper disable UnusedMember.Global

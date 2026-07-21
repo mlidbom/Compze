@@ -1,6 +1,7 @@
 using System.Reflection;
 using Compze.Contracts;
 using Compze.DependencyInjection.Abstractions;
+using Compze.DependencyInjection.Private;
 
 namespace Compze.DependencyInjection;
 

@@ -6,7 +6,9 @@ using Compze.Internals.Sql.PostgreSql.Wiring;
 using Compze.Teventive.TeventStore.Abstractions.Internal.SqlLayer.Abstractions;
 using Compze.TypeIdentifiers.Interning;
 using Compze.TypeIdentifiers.Interning.PostgreSql.Wiring;
-using Layer = Compze.Teventive.TeventStore.PostgreSql.PgSqlTeventStoreSqlLayer;
+using Layer = Compze.Teventive.TeventStore.PostgreSql.Private.PgSqlTeventStoreSqlLayer;
+using Compze.Internals.Sql.PostgreSql.Wiring.Internal;
+using Compze.Teventive.TeventStore.PostgreSql.Private;
 
 namespace Compze.Teventive.TeventStore.PostgreSql.Wiring;
 

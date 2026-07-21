@@ -6,6 +6,8 @@ using Compze.Internals.Sql.MicrosoftSql.Wiring;
 using Compze.Tessaging.Internal.SqlLayer;
 using Compze.TypeIdentifiers.Interning;
 using Compze.TypeIdentifiers.Interning.MicrosoftSql.Wiring;
+using Compze.Internals.Sql.MicrosoftSql.Wiring.Internal;
+using Compze.Tessaging.MicrosoftSql.Private;
 
 namespace Compze.Tessaging.MicrosoftSql.Wiring;
 

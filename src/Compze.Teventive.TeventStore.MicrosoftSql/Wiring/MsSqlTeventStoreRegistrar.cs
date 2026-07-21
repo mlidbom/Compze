@@ -6,7 +6,9 @@ using Compze.Internals.Sql.MicrosoftSql.Wiring;
 using Compze.Teventive.TeventStore.Abstractions.Internal.SqlLayer.Abstractions;
 using Compze.TypeIdentifiers.Interning;
 using Compze.TypeIdentifiers.Interning.MicrosoftSql.Wiring;
-using Layer = Compze.Teventive.TeventStore.MicrosoftSql.MsSqlTeventStoreSqlLayer;
+using Layer = Compze.Teventive.TeventStore.MicrosoftSql.Private.MsSqlTeventStoreSqlLayer;
+using Compze.Internals.Sql.MicrosoftSql.Wiring.Internal;
+using Compze.Teventive.TeventStore.MicrosoftSql.Private;
 
 namespace Compze.Teventive.TeventStore.MicrosoftSql.Wiring;
 

@@ -1,5 +1,6 @@
 using Compze.SystemCE;
 using Compze.Threading;
+using Compze.Internals.SystemCE.Private;
 
 namespace Compze.Internals.SystemCE;
 

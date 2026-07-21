@@ -5,7 +5,8 @@ using Compze.Internals.Sql.Sqlite;
 using Compze.Internals.Sql.Sqlite.Private;
 using Compze.Internals.Sql.Sqlite.Wiring;
 using Compze.TypeIdentifiers.Interning;
-using Layer = Compze.DocumentDb.Sqlite.SqliteDocumentDbSqlLayer;
+using Layer = Compze.DocumentDb.Sqlite.Private.SqliteDocumentDbSqlLayer;
+using Compze.Internals.Sql.Sqlite.Wiring.Internal;
 
 namespace Compze.DocumentDb.Sqlite.Wiring;
 

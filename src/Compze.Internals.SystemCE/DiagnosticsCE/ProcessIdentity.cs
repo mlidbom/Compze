@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using Compze.Internals.SystemCE.DiagnosticsCE.Private;
 
 namespace Compze.Internals.SystemCE.DiagnosticsCE;
 

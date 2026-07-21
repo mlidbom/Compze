@@ -8,6 +8,8 @@ using Compze.Teventive.Taggregates.Tevents.Public;
 using Compze.Teventive.TeventStore.Abstractions.Internal.SqlLayer.Abstractions;
 using Compze.Teventive.TeventStore.Refactoring.Migrations;
 using ReadOrder = Compze.Teventive.TeventStore.Abstractions.Internal.SqlLayer.Abstractions.ReadOrder;
+using Compze.Teventive.TeventStore.Refactoring.Migrations.Private;
+using Compze.Teventive.TeventStore.Private;
 
 namespace Compze.Teventive.TeventStore;
 

@@ -3,6 +3,7 @@ using System.Diagnostics;
 using Compze.Internals.SystemCE;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using JetBrains.Annotations;
+using Compze.Internals.Testing.Performance.Private;
 
 namespace Compze.Internals.Testing.Performance;
 

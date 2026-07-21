@@ -1,6 +1,8 @@
 // ReSharper disable RedundantBoolCompare
 // ReSharper disable InconsistentNaming
 
+using Compze.Must.Private;
+
 namespace Compze.Must;
 
 /// <summary>Boolean assertions.</summary>

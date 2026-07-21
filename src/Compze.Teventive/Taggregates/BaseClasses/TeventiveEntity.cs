@@ -3,6 +3,7 @@ using Compze.Internals.SystemCE.ReflectionCE;
 using Compze.Teventive.Internal.Implementation;
 using Compze.Teventive.Taggregates.Tevents.Public;
 using JetBrains.Annotations;
+using Compze.Teventive.Taggregates.BaseClasses.Private;
 
 namespace Compze.Teventive.Taggregates.BaseClasses;
 

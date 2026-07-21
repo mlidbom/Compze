@@ -1,6 +1,7 @@
 using System.Runtime.CompilerServices;
 using Xunit;
 using Xunit.v3;
+using Compze.xUnitBDD.Private;
 
 // ReSharper disable ExplicitCallerInfoArgument
 

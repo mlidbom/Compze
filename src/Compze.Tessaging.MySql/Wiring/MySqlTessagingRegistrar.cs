@@ -6,6 +6,8 @@ using Compze.Internals.Sql.MySql.Wiring;
 using Compze.Tessaging.Internal.SqlLayer;
 using Compze.TypeIdentifiers.Interning;
 using Compze.TypeIdentifiers.Interning.MySql.Wiring;
+using Compze.Internals.Sql.MySql.Wiring.Internal;
+using Compze.Tessaging.MySql.Private;
 
 namespace Compze.Tessaging.MySql.Wiring;
 

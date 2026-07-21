@@ -15,6 +15,8 @@ using Compze.Teventive.TeventStore.Refactoring.Migrations;
 using Compze.TypeIdentifiers;
 using JetBrains.Annotations;
 using static Compze.Contracts.Contract;
+using Compze.Teventive.TeventStore.Private;
+using Compze.Teventive.TeventStore.Refactoring.Migrations.Private;
 
 namespace Compze.Teventive.TeventStore;
 

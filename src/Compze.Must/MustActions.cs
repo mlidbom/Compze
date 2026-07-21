@@ -2,6 +2,7 @@ using System.Runtime.CompilerServices;
 using Compze.Internals.SystemCE.ReflectionCE;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using JetBrains.Annotations;
+using Compze.Must.Private;
 
 namespace Compze.Must;
 
@@ -125,29 +126,4 @@ public class CaughtException<TException>(TException exception)
 {
    /// <summary>The caught exception, for asserting on its properties.</summary>
    public TException Which { get; } = exception;
-}
-
-static class InvokingMustThrowExtensions
-{
-   public static string ThrowAssertionFailureHeading(this IAssertionContext<Func<Task>> context, Type expectedException)
-   {
-      return $"""
-              {AssertionContext.Separator}
-              Failing assertion:
-              {AssertionContext.Separator}
-              InvokingAsync({context.Expression}).Must().ThrowAsync<{expectedException.Name}>()
-              {AssertionContext.Separator}
-              """;
-   }
-
-   public static string ThrowAssertionFailureHeading(this IAssertionContext<Action> context, Type expectedException)
-   {
-      return $"""
-              {AssertionContext.Separator}
-              Failing assertion:
-              {AssertionContext.Separator}
-              Invoking({context.Expression}).Must().Throw<{expectedException.Name}>()
-              {AssertionContext.Separator}
-              """;
-   }
 }

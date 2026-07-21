@@ -5,7 +5,9 @@ using Compze.Internals.Sql.Sqlite.Private;
 using Compze.Internals.Sql.Sqlite.Wiring;
 using Compze.Teventive.TeventStore.Abstractions.Internal.SqlLayer.Abstractions;
 using Compze.TypeIdentifiers.Interning;
-using Layer = Compze.Teventive.TeventStore.Sqlite.SqliteTeventStoreSqlLayer;
+using Layer = Compze.Teventive.TeventStore.Sqlite.Private.SqliteTeventStoreSqlLayer;
+using Compze.Internals.Sql.Sqlite.Wiring.Internal;
+using Compze.Teventive.TeventStore.Sqlite.Private;
 
 namespace Compze.Teventive.TeventStore.Sqlite.Wiring;
 
