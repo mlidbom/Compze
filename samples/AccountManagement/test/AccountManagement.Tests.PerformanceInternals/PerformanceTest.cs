@@ -2,7 +2,6 @@ using AccountManagement.API;
 using AccountManagement.Domain.Registration;
 using AccountManagement.UserStories.Scenarios;
 using Compze.xUnitMatrix;
-using Compze.Abstractions.Wiring.Testing.Internal;
 using Compze.Hosting.Testing;
 using Compze.Internals.Testing;
 using Compze.Internals.Testing.Performance;

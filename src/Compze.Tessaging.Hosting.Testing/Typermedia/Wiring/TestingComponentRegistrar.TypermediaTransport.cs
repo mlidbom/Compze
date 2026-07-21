@@ -8,7 +8,7 @@ using Compze.Tessaging.Internal.Transport.NamedPipes;
 
 namespace Compze.Tessaging.Hosting.Testing.Typermedia.Wiring;
 
-using Transport = Compze.Abstractions.Wiring.Testing.Internal.Transport; //Inside the namespace, so it outranks the Compze.Tessaging.Internal.Transport namespace this file's new home would otherwise resolve Transport to.
+using Transport = Compze.Hosting.Testing.Transport; //Inside the namespace, so it outranks the Compze.Tessaging.Internal.Transport namespace this file's new home would otherwise resolve Transport to.
 
 public static class TestingComponentRegistrarTypermediaTransport
 {

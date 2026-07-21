@@ -1,6 +1,5 @@
 using Compze.Abstractions.Public;
 using Compze.Abstractions.Time.Public;
-using Compze.Abstractions.Wiring.Testing.Internal;
 using Compze.Hosting.Testing;
 using Compze.Hosting.Testing.Wiring;
 using Compze.Internals.Testing;

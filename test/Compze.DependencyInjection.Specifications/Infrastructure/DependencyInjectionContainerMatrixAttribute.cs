@@ -1,5 +1,5 @@
 using System.Runtime.CompilerServices;
-using Compze.Abstractions.Wiring.Testing.Internal;
+using Compze.Hosting.Testing;
 using Compze.xUnitMatrix;
 
 namespace Compze.DependencyInjection.Specifications.Infrastructure;

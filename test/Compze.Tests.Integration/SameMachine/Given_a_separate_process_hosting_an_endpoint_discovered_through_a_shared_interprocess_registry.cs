@@ -1,7 +1,6 @@
 using Compze.Tessaging.TessageBus.Exceptions;
 using Compze.DependencyInjection;
 using Compze.Tessaging.Endpoints;
-using Compze.Abstractions.Wiring.Testing.Internal;
 using Compze.Hosting;
 using Compze.Hosting.SameMachine;
 using Compze.Hosting.Testing;

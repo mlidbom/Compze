@@ -10,12 +10,6 @@ public static partial class NamespaceVisibilityPolicy
       /// each needs a deliberate decision: internalize the type, or move it to a public home.</summary>
       public static readonly IReadOnlyList<string> PublicTypesInInternalOrPrivateNamespaces =
       [
-         "Compze.Abstractions.Wiring.Testing.Internal.DIContainer",
-         "Compze.Abstractions.Wiring.Testing.Internal.DIContainerExtensions",
-         "Compze.Abstractions.Wiring.Testing.Internal.Serializer",
-         "Compze.Abstractions.Wiring.Testing.Internal.SqlLayer",
-         "Compze.Abstractions.Wiring.Testing.Internal.SqlLayerExtensions",
-         "Compze.Abstractions.Wiring.Testing.Internal.Transport",
       ];
 
       ///<summary>Namespaces without an Internal or Private section that hold top-level internal types —<br/>

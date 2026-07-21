@@ -1,5 +1,4 @@
 using Compze.Tessaging.Endpoints;
-using Compze.Abstractions.Wiring.Testing.Internal;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Hosting;

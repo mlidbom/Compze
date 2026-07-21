@@ -2,7 +2,6 @@ using System.Collections.ObjectModel;
 using System.Transactions;
 using Compze.Abstractions.Public;
 using Compze.xUnitMatrix;
-using Compze.Abstractions.Wiring.Testing.Internal;
 using JetBrains.Annotations;
 using Compze.Internals.SystemCE.TransactionsCE;
 using Compze.Hosting.Testing;

@@ -1,4 +1,3 @@
-using Compze.Abstractions.Wiring.Testing.Internal;
 using Compze.Internals.Sql.MicrosoftSql.Wiring;
 using Compze.Internals.Sql.MySql.Wiring;
 using Compze.Internals.Sql.PostgreSql.Wiring;

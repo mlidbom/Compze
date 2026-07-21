@@ -1,5 +1,5 @@
 using Compze.Abstractions.Serialization.Internal;
-using Compze.Abstractions.Wiring.Testing.Internal;
+using Compze.Hosting.Testing;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Serialization.Newtonsoft.Wiring;

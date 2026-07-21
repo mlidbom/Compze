@@ -1,5 +1,5 @@
 using Compze.DocumentDb.Wiring;
-using Compze.Abstractions.Wiring.Testing.Internal;
+using Compze.Hosting.Testing;
 using Compze.Hosting.Testing.Wiring;
 using Compze.Tessaging.Engine;
 using Compze.Tessaging.Hosting.Testing.Wiring;

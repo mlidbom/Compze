@@ -1,4 +1,4 @@
-namespace Compze.Abstractions.Wiring.Testing.Internal;
+namespace Compze.Hosting.Testing;
 
 #pragma warning disable CA1724 //We don't much care that it has the same name as a namespace somewhere else.
 

@@ -96,6 +96,13 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_DependencyInjection_Microsoft_Extensions_Hosting)' != 'true'">
     <ProjectReference Include="..\..\src\Compze.DependencyInjection.Microsoft.Extensions.Hosting\Compze.DependencyInjection.Microsoft.Extensions.Hosting.csproj" />
   </ItemGroup>
+  <!-- Compze.Hosting.Testing — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Hosting_Testing)' == 'true'">
+    <PackageReference Include="Compze.Hosting.Testing" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Hosting_Testing)' != 'true'">
+    <ProjectReference Include="..\..\src\Compze.Hosting.Testing\Compze.Hosting.Testing.csproj" />
+  </ItemGroup>
   <!-- Compze.Must — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Must)' == 'true'">
     <PackageReference Include="Compze.Must" Version="*-*" />
