@@ -9,7 +9,7 @@ public sealed class InternerSnapshot(
    IReadOnlyList<(int TypeId, string TypeString)> spellings)
 {
    /// <summary>The conceptual type ids paired with their current fully-qualified names.</summary>
-   public IReadOnlyList<(int Id, string CurrentName)> Types { get; } = types;
+   internal IReadOnlyList<(int Id, string CurrentName)> Types { get; } = types;
    /// <summary>Every persisted <c>$type</c> spelling paired with the conceptual id it resolves to.</summary>
-   public IReadOnlyList<(int TypeId, string TypeString)> Spellings { get; } = spellings;
+   internal IReadOnlyList<(int TypeId, string TypeString)> Spellings { get; } = spellings;
 }

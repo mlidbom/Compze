@@ -1,3 +1,4 @@
+using Compze.Threading.ResourceAccess._internal;
 namespace Compze.Threading.ResourceAccess;
 
 ///<summary>An <see cref="IAwaitableShared{TShared}"/> backed by an in-process <see cref="IAwaitableMonitor"/>.</summary>
@@ -18,7 +19,7 @@ public interface IAwaitableThreadShared
    public static IAwaitableThreadShared<TShared> New<TShared>(TShared shared, IAwaitableMonitor monitor) =>
       new AwaitableThreadShared<TShared>(shared, monitor);
 
-   internal class AwaitableThreadShared<TShared>(TShared shared, IAwaitableMonitor monitor) : IAwaitableShared.AwaitableShared<TShared>(shared, monitor), IAwaitableThreadShared<TShared>
+   internal class AwaitableThreadShared<TShared>(TShared shared, IAwaitableMonitor monitor) : AwaitableShared<TShared>(shared, monitor), IAwaitableThreadShared<TShared>
    {
       public IAwaitableMonitor Monitor { get; } = monitor;
    }

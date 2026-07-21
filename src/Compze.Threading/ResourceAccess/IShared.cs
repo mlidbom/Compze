@@ -3,19 +3,6 @@ using JetBrains.Annotations;
 
 namespace Compze.Threading.ResourceAccess;
 
-///<summary>Contains the internal base implementation for <see cref="IShared{TShared}"/>.</summary>
-public interface IShared
-{
-   internal class Shared<TShared>(TShared shared, ICriticalSection criticalSection) : IShared<TShared>
-   {
-      readonly TShared _shared = shared;
-      public ICriticalSection CriticalSection { get; } = criticalSection;
-
-      public TResult Locked<TResult>([InstantHandle]Func<TShared, TResult> func, CancellationToken cancellationToken = default, LockTimeout? timeout = null) =>
-         CriticalSection.Locked(() => func(_shared), cancellationToken, timeout);
-   }
-}
-
 ///<summary>Provides lock-protected access to a shared object of type <typeparamref name="TShared"/>.</summary>
 public interface IShared<out TShared>
 {

@@ -22,13 +22,13 @@ public static class PublisherTevent
    /// so that the wrapper is assignable to the wrapper interface of every tevent type the wrapped tevent itself is assignable to.<br/>
    /// This is the one home of publisher-declared wrapping: a taggregate wrapping in its declared wrapper implementation and a shared tomponent's slot<br/>
    /// wrapping in its adopting wrapper tevent both close their wrapper type here.</summary>
-   public static IPublisherTevent<ITevent> WrapIn(Type wrapperTeventImplementation, ITevent tevent) =>
+   internal static IPublisherTevent<ITevent> WrapIn(Type wrapperTeventImplementation, ITevent tevent) =>
       (IPublisherTevent<ITevent>)Constructor.ForGenericType(wrapperTeventImplementation)
                                             .WithArgument(tevent.GetType())
                                             .Invoke(tevent);
 
    ///<summary>The wrapper type <see cref="WrapTevent{TTevent}"/> produces for a tevent of <paramref name="teventType"/>: <see cref="PublisherTevent{TTevent}"/> closed over it.</summary>
-   public static Type WrapperTypeFor(Type teventType) => typeof(PublisherTevent<>).MakeGenericType(teventType);
+   internal static Type WrapperTypeFor(Type teventType) => typeof(PublisherTevent<>).MakeGenericType(teventType);
 
    ///<summary>The wrapper type every wrapping of <paramref name="teventType"/> is assignable to: <see cref="IPublisherTevent{TTevent}"/> closed over it.<br/>
    /// This is the one translation rule of the routing model: subscribing to, filtering by, or ignoring an inner tevent type means matching every<br/>

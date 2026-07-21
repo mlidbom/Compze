@@ -1,3 +1,4 @@
+using Compze.Threading.ResourceAccess._internal;
 namespace Compze.Threading.ResourceAccess;
 
 ///<summary>An <see cref="IShared{TShared}"/> backed by an in-process <see cref="IMonitor"/>.</summary>
@@ -18,7 +19,7 @@ public interface IThreadShared
    public static IThreadShared<TShared> New<TShared>(TShared shared, IMonitor monitor) =>
       new ThreadShared<TShared>(shared, monitor);
 
-   internal class ThreadShared<TShared>(TShared shared, IMonitor monitor) : IShared.Shared<TShared>(shared, monitor), IThreadShared<TShared>
+   internal class ThreadShared<TShared>(TShared shared, IMonitor monitor) : Shared<TShared>(shared, monitor), IThreadShared<TShared>
    {
       public IMonitor Monitor { get; } = monitor;
    }

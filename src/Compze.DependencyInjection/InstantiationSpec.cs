@@ -7,7 +7,7 @@ public class InstantiationSpec
    public object? SingletonInstance { get; }
    public object RunFactoryMethod(IServiceResolver kern) => FactoryMethod(kern);
    Func<IServiceResolver, object> FactoryMethod { get; }
-   public Type FactoryMethodReturnType { get; }
+   internal Type FactoryMethodReturnType { get; }
 
    internal static InstantiationSpec FromInstance(object instance) => new(instance);
 

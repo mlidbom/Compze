@@ -90,7 +90,7 @@ public class TessageHandlerRoster
    ///<summary>The engine's advertisement: the <see cref="TypeId"/> of every remotable, non-infrastructure tessage type this roster<br/>
    /// serves, of every kind, in the form remote routing matches against — tevent subscriptions as their translated wrapper types,<br/>
    /// tommands and tueries as they stand. Computed once; asserts that every advertised type has a type-id mapping.</summary>
-   public ISet<TypeId> AdvertisedRemoteTessageTypeIds() => _handledRemoteTessageBusTypeIds.Value.Union(_handledRemoteTypermediaTypeIds.Value).ToHashSet();
+   internal ISet<TypeId> AdvertisedRemoteTessageTypeIds() => _handledRemoteTessageBusTypeIds.Value.Union(_handledRemoteTypermediaTypeIds.Value).ToHashSet();
 
    ///<summary>The registered handler tessage types whose type declares the exactly-once delivery contract — the types an engine's<br/>
    /// endpoint may only advertise when its composition wires the exactly-once machinery (the inbox that persists, dedups, and<br/>

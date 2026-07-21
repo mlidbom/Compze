@@ -1,5 +1,6 @@
 using Compze.Threading.ResourceAccess;
 
+using Compze.Threading.ResourceAccess._internal;
 namespace Compze.Threading.Interprocess.ResourceAccess;
 
 ///<summary>Factory for creating <see cref="IAwaitableProcessShared{TShared}"/> instances that protect a shared object with a cross-process <see cref="IAwaitableMutex"/>.
@@ -20,7 +21,7 @@ public interface IAwaitableProcessShared
       new AwaitableProcessShared<TShared>(shared, IAwaitableMutex.Local(name, directory, lockTimeout, waitTimeout, signalPollingPolicy, onAbandonedMutex));
 #pragma warning restore CA2000
 
-   internal class AwaitableProcessShared<TShared>(TShared shared, IAwaitableMutex mutex) : IAwaitableShared.AwaitableShared<TShared>(shared, mutex), IAwaitableProcessShared<TShared>
+   internal class AwaitableProcessShared<TShared>(TShared shared, IAwaitableMutex mutex) : AwaitableShared<TShared>(shared, mutex), IAwaitableProcessShared<TShared>
    {
       public IAwaitableMutex Mutex { get; } = mutex;
       public void Dispose() => Mutex.Dispose();

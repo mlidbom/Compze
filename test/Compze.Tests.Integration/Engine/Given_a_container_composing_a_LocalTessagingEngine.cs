@@ -240,6 +240,28 @@ public partial class Given_a_container_composing_a_LocalTessagingEngine : Univer
       [PCT] public void the_subscriber_receives_the_published_tevent() => _receivedBySubscriber.Single().Must().ReferenceEqual(_publishedTevent);
    }
 
+   public class after_publishing_a_wrapped_taggregate_tevent_through_the_independent_tevent_publishers_async_door : Given_a_container_composing_a_LocalTessagingEngine
+   {
+      readonly List<ITaggregateTevent> _receivedBySubscriber = [];
+      readonly TaggregateTevent<MyTaggregateTevent> _publishedWrappedTevent = new(new MyTaggregateTevent());
+
+      public after_publishing_a_wrapped_taggregate_tevent_through_the_independent_tevent_publishers_async_door()
+      {
+         //Taggregate tevents are exactly-once kinds, and exactly-once kinds are async end to end - so the subscription declares an async handler.
+         ComposeContainerWithEngine(engine => engine.RegisterTessageBusHandlers(handle => handle
+            .ForTevent((ITaggregateTevent tevent) =>
+             {
+                _receivedBySubscriber.Add(tevent);
+                return Task.CompletedTask;
+             })));
+
+         //An exactly-once tevent publishes through the async door - the sync Publish refuses it - bridged here because a specification context's act is its constructor.
+         Container.RootResolver.Resolve<IIndependentTeventPublisher>().PublishAsync(_publishedWrappedTevent).GetAwaiter().GetResult();
+      }
+
+      [PCT] public void the_subscriber_receives_the_inner_tevent() => _receivedBySubscriber.Single().Must().ReferenceEqual(_publishedWrappedTevent.Tevent);
+   }
+
    public class the_independent_tevent_publisher : Given_a_container_composing_a_LocalTessagingEngine
    {
       public the_independent_tevent_publisher() => ComposeContainerWithEngine(_ => {});

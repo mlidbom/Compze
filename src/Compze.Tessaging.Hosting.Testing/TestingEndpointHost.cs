@@ -40,11 +40,6 @@ public class TestingEndpointHost : EndpointHost
    readonly DirectoryInfo _endpointRegistryDirectory;
    readonly InterprocessEndpointRegistry _endpointRegistry;
 
-   ///<summary>The registry every endpoint in the host participates in: each announces its address here and discovers the<br/>
-   /// others through it — backed by a real interprocess registry the host owns (created per host, deleted when the host is<br/>
-   /// disposed), so a separate process can participate in the same suite by opening it.</summary>
-   public IEndpointRegistryAndAnnouncer EndpointRegistry => _endpointRegistry;
-
    TestingEndpointHost(IDependencyInjectionContainer rootContainer, bool ownsRootContainer) : base(rootContainer.CreateCloneContainerBuilder)
    {
       _rootContainer = rootContainer;
@@ -69,8 +64,8 @@ public class TestingEndpointHost : EndpointHost
 
    ///<summary>Registers an <see cref="ExactlyOnceEndpoint"/> composed with the current test's concerns — the host's tracker,<br/>
    /// transport, serializers, the pooled test database (its connection string keyed by the endpoint's id, so an endpoint<br/>
-   /// keeps its database across host rebuilds and specs can script restarts), and participation in<br/>
-   /// <see cref="EndpointRegistry"/> — plus whatever <paramref name="declare"/> declares.</summary>
+   /// keeps its database across host rebuilds and specs can script restarts), and participation in the host's own<br/>
+   /// interprocess endpoint registry — plus whatever <paramref name="declare"/> declares.</summary>
    public ExactlyOnceEndpoint RegisterExactlyOnceEndpoint(string name, EndpointId id, Action<ExactlyOnceEndpointBuilder> declare) =>
       RegisterExactlyOnceEndpointInDomainDatabase(name, id, domainDatabaseName: id.ToString(), declare);
 
@@ -86,7 +81,8 @@ public class TestingEndpointHost : EndpointHost
       }));
 
    ///<summary>Registers a <see cref="BestEffortEndpoint"/> composed with the current test's concerns — the host's tracker,<br/>
-   /// transport, serializers, and participation in <see cref="EndpointRegistry"/> — plus whatever <paramref name="build"/> declares.</summary>
+   /// transport, serializers, and participation in the host's own interprocess endpoint registry — plus whatever<br/>
+   /// <paramref name="build"/> declares.</summary>
    public BestEffortEndpoint RegisterBestEffortEndpoint(string name, EndpointId id, Action<BestEffortEndpointBuilder> build) =>
       RegisterEndpoint(container => BestEffortEndpoint.Build(container, name, id, endpointBuilder =>
       {
