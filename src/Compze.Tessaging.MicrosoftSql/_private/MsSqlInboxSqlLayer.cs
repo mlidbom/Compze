@@ -113,6 +113,22 @@ partial class MsSqlInboxSqlLayer(IMsSqlConnectionPool connectionFactory, MsSqlSq
                    .AddParameter(Admissions.SenderEndpointId, position.SenderEndpointId.Value)
                    .ExecuteScalarAsync().caf())!).caf();
 
+   //UPDLOCK+ROWLOCK take the row lock the claim IS - held to the end of the caller's ambient handling transaction - and
+   //READPAST makes a row another live handling transaction has claimed report unclaimable instead of blocking on it.
+   public async Task<bool> TryClaimForHandlingAsync(TessageId tessageId) =>
+      await _connectionFactory.UseCommandAsync(
+         async command => null != await command
+                   .SetCommandText(
+                       $"""
+
+                        SELECT 1 FROM {_tables.InboxTessages} WITH (UPDLOCK, ROWLOCK, READPAST)
+                        WHERE {TessageTable.TessageId} = @{TessageTable.TessageId}
+                            AND {TessageTable.Status} = {(int)InboxTessageStatus.UnHandled}
+
+                        """)
+                   .AddParameter(TessageTable.TessageId, tessageId.Value)
+                   .ExecuteScalarAsync().caf()).caf();
+
    public async Task<int> MarkAsSucceededAsync(TessageId tessageId)
    {
       return await _connectionFactory.UseCommandAsync(

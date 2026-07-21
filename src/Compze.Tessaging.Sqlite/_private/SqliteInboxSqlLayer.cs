@@ -112,6 +112,24 @@ partial class SqliteInboxSqlLayer(ISqliteConnectionPool connectionFactory, Sqlit
                    .AddMediumTextParameter(Admissions.SenderEndpointId, position.SenderEndpointId.ToString())
                    .ExecuteScalarAsync().caf())!).caf();
 
+   //SQLite has no row locks: the claim is a same-value write, whose enlistment takes the per-database write lock the
+   //caller's ambient handling transaction then holds to its end - a racing claimant waits there and finds the status
+   //changed. changes() counts matched rows even when the written value is unchanged, so 1 row means claimed.
+   public async Task<bool> TryClaimForHandlingAsync(TessageId tessageId) =>
+      1 == await _connectionFactory.UseCommandAsync(
+         async command => await command
+                   .SetCommandText(
+                       $"""
+
+                        UPDATE {_tables.InboxTessages}
+                            SET {TessageTable.Status} = {TessageTable.Status}
+                        WHERE {TessageTable.TessageId} = @{TessageTable.TessageId}
+                            AND {TessageTable.Status} = {(int)InboxTessageStatus.UnHandled}
+
+                        """)
+                   .AddMediumTextParameter(TessageTable.TessageId, tessageId.ToString())
+                   .ExecuteNonQueryAsync().caf()).caf();
+
    public async Task<int> MarkAsSucceededAsync(TessageId tessageId)
    {
       return await _connectionFactory.UseCommandAsync(

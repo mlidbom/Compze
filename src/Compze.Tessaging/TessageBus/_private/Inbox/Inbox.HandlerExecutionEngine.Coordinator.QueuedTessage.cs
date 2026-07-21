@@ -60,16 +60,33 @@ partial class Inbox
                while(true)
                {
                   var tessageHandlerSucceeded = false;
+                  var claimed = true;
                   object? result = null;
                   try
                   {
                      using var scope = _scopeFactory.BeginScope();
                      result = await TransactionScopeCe.ExecuteAsync(async () =>
                      {
+                        //The claim rides this handling transaction, so it and the handler's work commit or roll back as one:
+                        //a second execution of the same tessage - whatever produced it - skips before running any handler.
+                        if(!await _tessageStorage.TryClaimForHandlingAsync(TransportTessage).caf())
+                        {
+                           claimed = false;
+                           return null;
+                        }
                         var innerResult = await _tessageTask(tessage, UnitOfWorkResolver.From(scope.Resolver)).caf();
                         await _tessageStorage.MarkAsSucceededAsync(TransportTessage).caf();
                         return innerResult;
                      }).caf();
+
+                     if(!claimed)
+                     {
+                        this.Log().Info($"Skipping tessage {TessageId}: it is not this execution's to handle - its handling already finished, or another live handling execution holds its claim.");
+                        _taskCompletionSource.SetResult(null);
+                        _coordinator.Succeeded(this);
+                        return;
+                     }
+
                      tessageHandlerSucceeded = true;
 
                      this.Log().Debug($"Transactional tessage {TessageId} completed successfully");

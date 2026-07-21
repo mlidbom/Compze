@@ -93,6 +93,14 @@ interface ITessagingSqlLayer
       /// Advancing the high-water mark and inserting the row commit atomically, so exactly-once in-order admission holds by<br/>
       /// construction.</summary>
       Task<SaveTessageResult> SaveTessageAsync(TessageId tessageId, TypeId typeId, string serializedTessage, DeliveryStreamPosition deliveryStreamPosition);
+
+      ///<summary>Claims the tessage's row for the caller's handling execution, exclusively: rides the caller's ambient<br/>
+      /// handling transaction, taking a row-level claim held to its end, so the claim and the handler's work commit or roll<br/>
+      /// back as one. False means the tessage is not this execution's to handle — its handling already finished<br/>
+      /// (<see cref="InboxTessageDatabaseSchemaStrings.Status"/> is no longer UnHandled), or another live handling<br/>
+      /// transaction holds the claim — and the caller skips without touching it.</summary>
+      Task<bool> TryClaimForHandlingAsync(TessageId tessageId);
+
       Task<int> MarkAsSucceededAsync(TessageId tessageId);
       Task<int> RecordExceptionAsync(TessageId tessageId, string exceptionStackTrace, string exceptionTessage, string exceptionType);
       Task<int> MarkAsFailedAsync(TessageId tessageId);

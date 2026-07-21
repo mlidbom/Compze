@@ -117,6 +117,24 @@ partial class PgSqlInboxSqlLayer(IPgSqlConnectionPool connectionFactory, PgSqlSq
                    .PrepareStatement()
                    .ExecuteScalarAsync().caf())!).caf();
 
+   //FOR UPDATE takes the row lock the claim IS - held to the end of the caller's ambient handling transaction - and
+   //SKIP LOCKED makes a row another live handling transaction has claimed report unclaimable instead of blocking on it.
+   public async Task<bool> TryClaimForHandlingAsync(TessageId tessageId) =>
+      await _connectionFactory.UseCommandAsync(
+         async command => null != await command
+                   .SetCommandText(
+                       $"""
+
+                        SELECT 1 FROM {_tables.InboxTessages}
+                        WHERE {TessageTable.TessageId} = @{TessageTable.TessageId}
+                            AND {TessageTable.Status} = {(int)InboxTessageStatus.UnHandled}
+                        FOR UPDATE SKIP LOCKED;
+
+                        """)
+                   .AddParameter(TessageTable.TessageId, tessageId.Value)
+                   .PrepareStatement()
+                   .ExecuteScalarAsync().caf()).caf();
+
    public async Task<int> MarkAsSucceededAsync(TessageId tessageId)
    {
       return await _connectionFactory.UseCommandAsync(
