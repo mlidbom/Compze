@@ -150,6 +150,28 @@ public class IAwaitableCriticalSection_specification : UniversalTestBase
       }
    }
 
+   public class UpdateWhen_with_Action : IAwaitableCriticalSection_specification
+   {
+      [IAwaitableCriticalSectionMatrix] public void Blocks_until_the_condition_becomes_true_then_executes_the_action_within_the_update_lock()
+      {
+         var criticalSection = _factory.Create();
+         var conditionMet = false;
+         var actionExecuted = false;
+         var updateWhenReturned = IThreadGate.NewOpen(WaitTimeout.Seconds(10), "updateWhenReturned");
+
+         _runner.Run(() =>
+         {
+            criticalSection.UpdateWhen(() => conditionMet, () => actionExecuted = true);
+            updateWhenReturned.AwaitPassThrough();
+         });
+
+         updateWhenReturned.TryAwaitPassedThroughCountEqualTo(1, WaitTimeout.Milliseconds(100)).Must().BeFalse();
+         criticalSection.Update(() => conditionMet = true);
+         updateWhenReturned.AwaitPassedThroughCountEqualTo(1);
+         actionExecuted.Must().BeTrue();
+      }
+   }
+
    public class TakeUpdateLockWhen : IAwaitableCriticalSection_specification
    {
       [IAwaitableCriticalSectionMatrix] public void Returns_lock_when_condition_is_immediately_true()

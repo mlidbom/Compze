@@ -19,6 +19,9 @@ public class Given_a_locked_ThreadGate : UniversalTestBase
    [XF] public void Calling_AllowOneThreadToPassThrough_throws_an_AwaitingConditionTimedOutException_since_no_threads_are_waiting_to_pass()
       => Invoking(() => IThreadGate.NewClosed(WaitTimeout.Milliseconds(20), "testGate").AwaitLetOneThreadPassThrough()).Must().Throw<AwaitingConditionTimeoutException>();
 
+   [XF] public void Calling_AwaitClosed_returns_immediately_since_the_gate_is_already_closed()
+      => IThreadGate.NewClosed(WaitTimeout.Milliseconds(20), "testGate").AwaitClosed();
+
    public class After_starting_10_threads_that_all_call_PassThrough : UniversalTestBase
    {
       [XF] public void Within_10_seconds_all_threads_are_blocked_on_Passthrough_and_none_have_passed_the_gate()
