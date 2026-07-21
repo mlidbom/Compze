@@ -6,9 +6,6 @@
     <Version>0.7.0-alpha</Version>
     <Description>Create an object shared between processes in a single line of code. Fully atomic modifications, await conditions becoming true, automatic corruption recovery, pluggable serialization.</Description>
   </PropertyGroup>
-  <ItemGroup>
-    <InternalsVisibleTo Include="Compze.DbPool.Tests" />
-  </ItemGroup>
   <!-- Compze.Contracts — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Contracts)' == 'true'">
     <PackageReference Include="Compze.Contracts" Version="*-*" />

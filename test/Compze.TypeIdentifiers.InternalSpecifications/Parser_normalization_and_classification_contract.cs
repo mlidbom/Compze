@@ -7,7 +7,7 @@ using Compze.TypeIdentifiers.Internal;
 // ReSharper disable InconsistentNaming
 #pragma warning disable CA1052
 
-namespace Compze.TypeIdentifiers.Specifications;
+namespace Compze.TypeIdentifiers.InternalSpecifications;
 
 /// <summary>
 /// The frozen behavioural contract for the parser rework: normalization-on-read and reserved-'0'-authoritative

@@ -4,6 +4,11 @@ using Compze.TypeIdentifiers;
 
 namespace Compze.TypeIdentifiers.Specifications;
 
+// Test types — same assembly as the test project, so assembly-scoped mapping declarations accept them.
+public class RegistrationTestEntity;
+// ReSharper disable once UnusedTypeParameter Empty marker type, generic only so the specs can exercise generic-type handling via typeof(); the parameter is intentionally unused.
+public class RegistrationTestGeneric<T>;
+
 public class EndToEndTestMappings : IAssemblyTypeMapper
 {
    public void Map(IAssemblyTypeMappingRegistrar registrar) =>

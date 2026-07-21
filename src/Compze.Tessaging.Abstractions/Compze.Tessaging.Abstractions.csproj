@@ -11,7 +11,7 @@
   </PropertyGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="Compze.Tessaging" />
-    <InternalsVisibleTo Include="Compze.Tests.Unit" />
+    <InternalsVisibleTo Include="Compze.Tessaging.InternalSpecifications" />
     <InternalsVisibleTo Include="Compze.Teventive" />
   </ItemGroup>
   <!-- Compze.Abstractions — flex reference -->

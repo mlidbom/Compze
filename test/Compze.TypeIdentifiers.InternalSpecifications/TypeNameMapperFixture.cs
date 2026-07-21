@@ -1,6 +1,6 @@
 using Compze.TypeIdentifiers.Internal;
 
-namespace Compze.TypeIdentifiers.Specifications;
+namespace Compze.TypeIdentifiers.InternalSpecifications;
 
 /// <summary>
 /// Builds <see cref="TypeNameMapper"/> instances directly from stated mappings, bypassing <see cref="TypeMapBuilder"/>

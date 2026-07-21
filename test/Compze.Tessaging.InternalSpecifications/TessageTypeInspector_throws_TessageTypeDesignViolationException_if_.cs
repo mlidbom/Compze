@@ -6,7 +6,7 @@ using static Compze.Must.MustActions;
 
 // ReSharper disable InconsistentNaming
 
-namespace Compze.Tests.Unit.Tessaging;
+namespace Compze.Tessaging.InternalSpecifications;
 
 interface INonGenericPublisherTevent : IPublisherTevent<ITevent>;
 interface INonCovariantParameterPublisherTevent : IPublisherTevent<ITevent>;

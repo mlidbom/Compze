@@ -2,11 +2,9 @@ using System.Reflection;
 using System.Reflection.Metadata;
 using System.Reflection.PortableExecutable;
 using System.Runtime.CompilerServices;
-using Compze.Contracts;
 using Compze.Internals.SystemCE;
 using Compze.Must;
 using Compze.xUnitBDD;
-using static Compze.Contracts.Contract;
 
 namespace Compze.Tests.CodePolicies;
 
@@ -48,7 +46,7 @@ public static class PrivateNamespaceIsolationPolicy
                                              .Select(grant => grant.AssemblyName.Split(',')[0].Trim())
                                              .Where(consumer => consumer.StartsWithOrdinal("Compze")
                                                              && !loadedAssemblyNames.Contains(consumer)
-                                                             && IsRepoProject(consumer))
+                                                             && CompzeRepository.IsRepoProject(consumer))
                                              .Select(consumer => $"{assembly.GetName().Name} grants InternalsVisibleTo {consumer}, which is not loaded for scanning"))
                       .Distinct()
                       .Order(StringComparer.Ordinal)
@@ -84,19 +82,4 @@ public static class PrivateNamespaceIsolationPolicy
       }
    }
 
-   static bool IsRepoProject(string projectName)
-   {
-      var repositoryRoot = FindRepositoryRoot();
-      return File.Exists(Path.Combine(repositoryRoot, "src", projectName, projectName + ".csproj"))
-          || File.Exists(Path.Combine(repositoryRoot, "test", projectName, projectName + ".csproj"));
-   }
-
-   static string FindRepositoryRoot()
-   {
-      var directory = new DirectoryInfo(AppContext.BaseDirectory);
-      while(directory is not null && !File.Exists(Path.Combine(directory.FullName, "Compze.AllProjects.slnx")))
-         directory = directory.Parent;
-      State.Assert(directory is not null, () => $"Found no Compze.AllProjects.slnx above {AppContext.BaseDirectory}.");
-      return directory!.FullName;
-   }
 }

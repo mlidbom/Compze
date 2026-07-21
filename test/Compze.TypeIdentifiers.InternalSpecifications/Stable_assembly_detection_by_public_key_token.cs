@@ -1,13 +1,13 @@
 using Compze.Must;
 
 using Compze.xUnitBDD;
-using static Compze.TypeIdentifiers.Specifications.TypeNameMapperFixture;
+using static Compze.TypeIdentifiers.InternalSpecifications.TypeNameMapperFixture;
 using Compze.TypeIdentifiers.Internal;
 
 // ReSharper disable InconsistentNaming
 #pragma warning disable CA1052
 
-namespace Compze.TypeIdentifiers.Specifications;
+namespace Compze.TypeIdentifiers.InternalSpecifications;
 
 /// <summary>
 /// Stability is decided from the live type's assembly public key token at lookup time — never from a snapshot of

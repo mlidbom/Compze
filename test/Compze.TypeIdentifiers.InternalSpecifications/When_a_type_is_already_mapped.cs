@@ -9,7 +9,7 @@ using Compze.TypeIdentifiers.Internal;
 #pragma warning disable CA1052
 #pragma warning disable CS8981 // BDD-style spec class names describe context using lowercase ASCII.
 
-namespace Compze.TypeIdentifiers.Specifications;
+namespace Compze.TypeIdentifiers.InternalSpecifications;
 
 // Test types — same assembly as the test project, so the registrar accepts them.
 public class TypeRegisteredTwice;

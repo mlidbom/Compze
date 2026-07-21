@@ -6,7 +6,7 @@ using Compze.TypeIdentifiers.Internal;
 // ReSharper disable InconsistentNaming
 #pragma warning disable CA1052
 
-namespace Compze.TypeIdentifiers.Specifications;
+namespace Compze.TypeIdentifiers.InternalSpecifications;
 
 // Test types used in mapping tests
 public class TestEntity;

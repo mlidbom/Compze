@@ -1,8 +1,6 @@
 using Compze.Internals.SystemCE;
 using Compze.Must;
 using Compze.xUnitBDD;
-using Compze.Contracts;
-using static Compze.Contracts.Contract;
 
 namespace Compze.Tests.CodePolicies;
 
@@ -21,7 +19,7 @@ public static class TessagingSiblingIndependencePolicy
 
    static List<string> UsingDirectiveViolations(string siblingFolder, string forbiddenNamespacePrefix)
    {
-      var repositoryRoot = FindRepositoryRoot();
+      var repositoryRoot = CompzeRepository.Root;
       var siblingSourceFolders = new[]
       {
          Path.Combine(repositoryRoot, "src", "Compze.Tessaging", siblingFolder),
@@ -38,14 +36,5 @@ public static class TessagingSiblingIndependencePolicy
                                     .Select(it => $"{Path.GetRelativePath(repositoryRoot, file)}({it.lineNumber}): {it.line.Trim()}"))
             .Order(StringComparer.Ordinal)
             .ToList();
-   }
-
-   static string FindRepositoryRoot()
-   {
-      var directory = new DirectoryInfo(AppContext.BaseDirectory);
-      while(directory is not null && !File.Exists(Path.Combine(directory.FullName, "Compze.AllProjects.slnx")))
-         directory = directory.Parent;
-      State.Assert(directory is not null, () => $"Found no Compze.AllProjects.slnx above {AppContext.BaseDirectory}.");
-      return directory!.FullName;
    }
 }

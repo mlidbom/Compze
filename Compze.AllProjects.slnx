@@ -248,4 +248,5 @@
   <Project Path="DevScripts/Scripts.csproj" />
   <Project Path="test/Compze.Teventive.TeventStore.InternalSpecifications/Compze.Teventive.TeventStore.InternalSpecifications.csproj" />
   <Project Path="test/Compze.Tessaging.InternalSpecifications/Compze.Tessaging.InternalSpecifications.csproj" />
+  <Project Path="test/Compze.TypeIdentifiers.InternalSpecifications/Compze.TypeIdentifiers.InternalSpecifications.csproj" />
 </Solution>
