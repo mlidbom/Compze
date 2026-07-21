@@ -1,11 +1,10 @@
-using Compze.Sql.Common;
-using Compze.Sql.PostgreSql;
+using Compze.Sql.Common._internal;
+using Compze.Sql.PostgreSql._internal;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tessaging._internal.SqlLayer;
 using Compze.TypeIdentifiers;
 using Compze.TypeIdentifiers.Interning;
 using TessageTable =  Compze.Tessaging._internal.SqlLayer.ITessagingSqlLayer.InboxTessageDatabaseSchemaStrings;
-using Compze.Sql.PostgreSql._internal;
 using Compze.Tessaging._private.SqlLayer;
 
 namespace Compze.Tessaging.PostgreSql._private;

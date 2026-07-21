@@ -1,5 +1,5 @@
 using System.Transactions;
-using Compze.Sql.PostgreSql;
+using Compze.Sql.PostgreSql._internal;
 using JetBrains.Annotations;
 using Npgsql;
 

@@ -1,11 +1,11 @@
 using System.Data.Common;
-using Compze.Sql.Common.Abstractions;
+using Compze.Sql.Common._internal.Abstractions;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Microsoft.Data.SqlClient;
 
-namespace Compze.Sql.MicrosoftSql;
+namespace Compze.Sql.MicrosoftSql._internal;
 
-public interface ICompzeMsSqlConnection : IPoolableConnection, ICompzeDbConnection<SqlCommand>
+interface ICompzeMsSqlConnection : IPoolableConnection, ICompzeDbConnection<SqlCommand>
 {
    public static ICompzeMsSqlConnection Create(string connString) => new CompzeMsSqlConnection(connString);
 

@@ -1,4 +1,4 @@
-using Compze.Sql.MicrosoftSql;
+using Compze.Sql.MicrosoftSql._internal;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Microsoft.Data.SqlClient;

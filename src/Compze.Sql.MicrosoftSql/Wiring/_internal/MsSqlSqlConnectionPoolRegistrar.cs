@@ -1,10 +1,11 @@
 using Compze.Abstractions.Configuration;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
+using Compze.Sql.MicrosoftSql._internal;
 
-namespace Compze.Sql.MicrosoftSql.Wiring;
+namespace Compze.Sql.MicrosoftSql.Wiring._internal;
 
-public static class MsSqlSqlConnectionPoolRegistrar
+static class MsSqlSqlConnectionPoolRegistrar
 {
    public interface ITestingRegistrar
    {

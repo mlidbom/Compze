@@ -8,7 +8,7 @@ using Compze.Internals.SystemCE.TransactionsCE;
 
 // ReSharper disable StaticMemberInGenericType
 
-namespace Compze.Sql.Common;
+namespace Compze.Sql.Common._internal;
 
 ///<summary>Every operation under one transaction runs on ONE shared connection, and a connection does exactly one thing at a<br/>
 /// time. Outside a transaction each operation opens its own fresh connection; inside a transaction the connection is held as an<br/>
@@ -20,7 +20,7 @@ namespace Compze.Sql.Common;
 /// this pool. Two connections in one transaction is a distributed transaction — a separate database session each — which every<br/>
 /// supported provider refuses without a coordinator (MySQL and Npgsql outright; SqlClient unless implicit distributed<br/>
 /// transactions are enabled), and a coordinator (MSDTC) is Windows-only and defeats the cross-platform goal.</remarks>
-public partial class DbConnectionPool<TConnection, TCommand> : IDbConnectionPool<TConnection, TCommand>
+partial class DbConnectionPool<TConnection, TCommand> : IDbConnectionPool<TConnection, TCommand>
    where TConnection : IPoolableConnection, ICompzeDbConnection<TCommand>
    where TCommand : DbCommand
 {

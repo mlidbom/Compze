@@ -1,13 +1,13 @@
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 
-namespace Compze.Sql.Common.Abstractions;
+namespace Compze.Sql.Common._internal.Abstractions;
 
-public interface ICompzeDbConnection
+interface ICompzeDbConnection
 {
    DbCommand CreateCommand();
 }
 
-public interface ICompzeDbConnection<out TCommand> : ICompzeDbConnection
+interface ICompzeDbConnection<out TCommand> : ICompzeDbConnection
    where TCommand : DbCommand
 {
    new TCommand CreateCommand();

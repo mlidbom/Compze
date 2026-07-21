@@ -7,6 +7,31 @@
     <NoWarn>CS1591</NoWarn>
     <Description>For Compze internal use only. Do not take a direct dependency on this package</Description>
   </PropertyGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="Compze.Sql.MicrosoftSql" />
+    <InternalsVisibleTo Include="Compze.Sql.MySql" />
+    <InternalsVisibleTo Include="Compze.Sql.PostgreSql" />
+    <InternalsVisibleTo Include="Compze.Sql.Sqlite" />
+    <InternalsVisibleTo Include="Compze.DbPool.MicrosoftSql" />
+    <InternalsVisibleTo Include="Compze.DbPool.MySql" />
+    <InternalsVisibleTo Include="Compze.DbPool.PostgreSql" />
+    <InternalsVisibleTo Include="Compze.DocumentDb.MicrosoftSql" />
+    <InternalsVisibleTo Include="Compze.DocumentDb.MySql" />
+    <InternalsVisibleTo Include="Compze.DocumentDb.PostgreSql" />
+    <InternalsVisibleTo Include="Compze.DocumentDb.Sqlite" />
+    <InternalsVisibleTo Include="Compze.Tessaging.MicrosoftSql" />
+    <InternalsVisibleTo Include="Compze.Tessaging.MySql" />
+    <InternalsVisibleTo Include="Compze.Tessaging.PostgreSql" />
+    <InternalsVisibleTo Include="Compze.Tessaging.Sqlite" />
+    <InternalsVisibleTo Include="Compze.Teventive.TeventStore.MicrosoftSql" />
+    <InternalsVisibleTo Include="Compze.Teventive.TeventStore.MySql" />
+    <InternalsVisibleTo Include="Compze.Teventive.TeventStore.PostgreSql" />
+    <InternalsVisibleTo Include="Compze.Teventive.TeventStore.Sqlite" />
+    <InternalsVisibleTo Include="Compze.TypeIdentifiers.Interning.MicrosoftSql" />
+    <InternalsVisibleTo Include="Compze.TypeIdentifiers.Interning.MySql" />
+    <InternalsVisibleTo Include="Compze.TypeIdentifiers.Interning.PostgreSql" />
+    <InternalsVisibleTo Include="Compze.TypeIdentifiers.Interning.Sqlite" />
+  </ItemGroup>
   <!-- Compze.Contracts — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Contracts)' == 'true'">
     <PackageReference Include="Compze.Contracts" Version="*-*" />

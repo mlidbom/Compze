@@ -1,4 +1,4 @@
-using Compze.Sql.MicrosoftSql;
+using Compze.Sql.MicrosoftSql._internal;
 
 namespace Compze.DbPool.MicrosoftSql._private;
 

@@ -1,12 +1,12 @@
-using Compze.Sql.Common;
-using Compze.Sql.Common.Abstractions;
+using Compze.Sql.Common._internal;
+using Compze.Sql.Common._internal.Abstractions;
 using Compze.Internals.SystemCE;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Npgsql;
 
-namespace Compze.Sql.PostgreSql;
+namespace Compze.Sql.PostgreSql._internal;
 
-public interface IPgSqlConnectionPool : IDbConnectionPool<ICompzeNpgsqlConnection, NpgsqlCommand>
+interface IPgSqlConnectionPool : IDbConnectionPool<ICompzeNpgsqlConnection, NpgsqlCommand>
 {
    public static IPgSqlConnectionPool CreateInstance1(Func<string> getConnectionString) => new PgSqlConnectionPool(getConnectionString);
    public static IPgSqlConnectionPool CreateInstance(string connectionString) => new PgSqlConnectionPool(connectionString);

@@ -1,9 +1,9 @@
 using Compze.Internals.SystemCE.CollectionsCE.GenericCE;
 using Compze.Threading.ResourceAccess;
 
-namespace Compze.Sql.Common;
+namespace Compze.Sql.Common._internal;
 
-public partial class DbConnectionPool<TConnection, TCommand>
+partial class DbConnectionPool<TConnection, TCommand>
    where TConnection : IPoolableConnection, ICompzeDbConnection<TCommand>
    where TCommand : DbCommand
 {

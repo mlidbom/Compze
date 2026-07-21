@@ -1,12 +1,12 @@
-using Compze.Sql.Common;
-using Compze.Sql.Common.Abstractions;
+using Compze.Sql.Common._internal;
+using Compze.Sql.Common._internal.Abstractions;
 using Compze.Internals.SystemCE;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using MySqlConnector;
 
-namespace Compze.Sql.MySql;
+namespace Compze.Sql.MySql._internal;
 
-public interface IMySqlConnectionPool : IDbConnectionPool<ICompzeMySqlConnection, MySqlCommand>
+interface IMySqlConnectionPool : IDbConnectionPool<ICompzeMySqlConnection, MySqlCommand>
 {
    static IMySqlConnectionPool CreateInstance(string connectionString) => CreateInstance(() => connectionString);
    static MySqlConnectionPool CreateInstance(Func<string> getConnectionString) => new(getConnectionString);

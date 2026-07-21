@@ -1,12 +1,12 @@
 using Compze.Tessaging.Endpoints;
-using Compze.Sql.Common;
+using Compze.Sql.Common._internal;
 using Compze.Sql.Sqlite;
+using Compze.Sql.Sqlite._internal;
 using Compze.Internals.SystemCE.LinqCE;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tessaging._internal.SqlLayer;
 using PeersSchema = Compze.Tessaging._internal.SqlLayer.ITessagingSqlLayer.PeersDatabaseSchemaStrings;
 using Types = Compze.Tessaging._internal.SqlLayer.ITessagingSqlLayer.PeerHandledTessageTypesDatabaseSchemaStrings;
-using Compze.Sql.Sqlite._internal;
 
 namespace Compze.Tessaging.Sqlite._private;
 

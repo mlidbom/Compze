@@ -1,4 +1,4 @@
-using Compze.Sql.Common;
+using Compze.Sql.Common._internal;
 using Microsoft.Data.Sqlite;
 
 namespace Compze.Sql.Sqlite._internal;

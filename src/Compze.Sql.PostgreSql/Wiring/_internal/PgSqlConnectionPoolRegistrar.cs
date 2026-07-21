@@ -1,10 +1,11 @@
 using Compze.Abstractions.Configuration;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
+using Compze.Sql.PostgreSql._internal;
 
-namespace Compze.Sql.PostgreSql.Wiring;
+namespace Compze.Sql.PostgreSql.Wiring._internal;
 
-public static class PgSqlConnectionPoolRegistrar
+static class PgSqlConnectionPoolRegistrar
 {
    public interface ITestingRegistrar
    {

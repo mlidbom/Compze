@@ -1,15 +1,16 @@
 using Compze.Abstractions.Configuration;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
+using Compze.Sql.Sqlite._internal;
 
-namespace Compze.Sql.Sqlite.Wiring;
+namespace Compze.Sql.Sqlite.Wiring._internal;
 
 /// <summary>
 /// Registers the <see cref="ISqliteTypeIdInternerConnectionPool"/> — the pool for the interner's own database.
 /// Mirrors <see cref="SqliteConnectionPoolRegistrar"/>: in a test container it defers to the test database pool,
 /// otherwise it reads the connection string from configuration.
 /// </summary>
-public static class SqliteTypeIdInternerConnectionPoolRegistrar
+static class SqliteTypeIdInternerConnectionPoolRegistrar
 {
    /// <summary>Implemented by the testing infrastructure to point the interner pool at a pooled test database instead of configuration.</summary>
    public interface ITestingRegistrar

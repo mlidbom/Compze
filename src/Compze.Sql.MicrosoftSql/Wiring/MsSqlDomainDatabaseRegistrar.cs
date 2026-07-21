@@ -1,4 +1,5 @@
 using Compze.DependencyInjection.Abstractions;
+using Compze.Sql.MicrosoftSql.Wiring._internal;
 
 namespace Compze.Sql.MicrosoftSql.Wiring;
 

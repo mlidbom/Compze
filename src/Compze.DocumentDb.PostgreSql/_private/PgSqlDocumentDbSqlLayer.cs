@@ -1,14 +1,13 @@
 using Compze.DocumentDb._internal.SqlLayer;
 using Compze.DocumentDb.Exceptions;
-using Compze.Sql.Common;
-using Compze.Sql.PostgreSql;
+using Compze.Sql.Common._internal;
+using Compze.Sql.PostgreSql._internal;
 using Compze.TypeIdentifiers;
 using Compze.TypeIdentifiers.Interning;
 using Compze.Internals.SystemCE;
 using Npgsql;
 using System.Diagnostics.CodeAnalysis;
 using Schema = Compze.DocumentDb._internal.SqlLayer.IDocumentDbSqlLayer.DocumentTableSchemaStrings;
-using Compze.Sql.PostgreSql._internal;
 
 namespace Compze.DocumentDb.PostgreSql._private;
 

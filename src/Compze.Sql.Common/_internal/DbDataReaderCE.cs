@@ -1,6 +1,6 @@
-namespace Compze.Sql.Common;
+namespace Compze.Sql.Common._internal;
 
-public static class DbDataReaderCE
+static class DbDataReaderCE
 {
    public static Guid GetGuidFromString(this DbDataReader @this, int index) => Guid.Parse(@this.GetString(index));
 

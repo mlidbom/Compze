@@ -1,6 +1,6 @@
 using Compze.Abstractions;
 using Compze.Contracts;
-using Compze.Sql.Common;
+using Compze.Sql.Common._internal;
 using Compze.Internals.SystemCE;
 using Compze.Tessaging;
 using Compze.Teventive.TeventStore.Abstractions._internal.SqlLayer.Abstractions;

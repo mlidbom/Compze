@@ -1,10 +1,11 @@
 using Compze.Abstractions.Configuration;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
+using Compze.Sql.MySql._internal;
 
-namespace Compze.Sql.MySql.Wiring;
+namespace Compze.Sql.MySql.Wiring._internal;
 
-public static class MySqlConnectionPoolRegistrar
+static class MySqlConnectionPoolRegistrar
 {
    public interface ITestingRegistrar
    {

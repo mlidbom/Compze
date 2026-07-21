@@ -1,13 +1,12 @@
 using System.Globalization;
 using System.Transactions;
 using Compze.Abstractions.Time;
-using Compze.Sql.Common;
-using Compze.Sql.MySql;
+using Compze.Sql.Common._internal;
+using Compze.Sql.MySql._internal;
 using Compze.Internals.SystemCE.TransactionsCE;
 using Types = Compze.TypeIdentifiers.Interning.TypeIdsTableSchema.Types;
 using Strings = Compze.TypeIdentifiers.Interning.TypeIdsTableSchema.Strings;
 using Names = Compze.TypeIdentifiers.Interning.TypeIdsTableSchema.Names;
-using Compze.Sql.MySql._internal;
 
 namespace Compze.TypeIdentifiers.Interning.MySql._private;
 

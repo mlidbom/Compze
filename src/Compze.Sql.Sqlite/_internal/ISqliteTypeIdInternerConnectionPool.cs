@@ -1,4 +1,4 @@
-namespace Compze.Sql.Sqlite;
+namespace Compze.Sql.Sqlite._internal;
 
 /// <summary>
 /// The connection pool for the type-id interner's <em>own</em> database — a second SQLite database, separate from
@@ -15,7 +15,7 @@ namespace Compze.Sql.Sqlite;
 /// <see cref="ISqliteConnectionPool"/> to coexist with it. It adds no members — it is the business pool's behaviour
 /// pointed at a different database.
 /// </remarks>
-public interface ISqliteTypeIdInternerConnectionPool : ISqliteConnectionPool
+interface ISqliteTypeIdInternerConnectionPool : ISqliteConnectionPool
 {
    /// <summary>
    /// The business <see cref="ISqliteConnectionPool.SqliteConnectionPool"/> behaviour, tagged as the interner's

@@ -1,16 +1,16 @@
 using System.Collections.Concurrent;
 using System.Data.Common;
 using System.Transactions;
-using Compze.Sql.Common.Abstractions;
+using Compze.Sql.Common._internal.Abstractions;
 using Compze.Contracts;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Internals.SystemCE.TransactionsCE;
 using Microsoft.Data.Sqlite;
 using IsolationLevel = System.Data.IsolationLevel;
 
-namespace Compze.Sql.Sqlite;
+namespace Compze.Sql.Sqlite._internal;
 
-public interface ICompzeSqliteConnection : IPoolableConnection, ICompzeDbConnection<SqliteCommand>
+interface ICompzeSqliteConnection : IPoolableConnection, ICompzeDbConnection<SqliteCommand>
 {
    public static ICompzeSqliteConnection Create(string connString) => new CompzeSqliteConnection(connString);
 

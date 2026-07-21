@@ -1,11 +1,11 @@
 using System.Data.Common;
-using Compze.Sql.Common.Abstractions;
+using Compze.Sql.Common._internal.Abstractions;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using MySqlConnector;
 
-namespace Compze.Sql.MySql;
+namespace Compze.Sql.MySql._internal;
 
-public interface ICompzeMySqlConnection : IPoolableConnection, ICompzeDbConnection<MySqlCommand>
+interface ICompzeMySqlConnection : IPoolableConnection, ICompzeDbConnection<MySqlCommand>
 {
    public static ICompzeMySqlConnection Create(string connString) => new CompzeMySqlConnection(connString);
 

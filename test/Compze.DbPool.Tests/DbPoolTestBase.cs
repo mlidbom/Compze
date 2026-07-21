@@ -1,14 +1,14 @@
+using System.Data.Common;
 using Compze.DependencyInjection;
-using Compze.Sql.Common.Abstractions;
-using Compze.Sql.MicrosoftSql;
-using Compze.Sql.MySql;
-using Compze.Sql.PostgreSql;
-using Compze.Sql.Sqlite;
 using Compze.Hosting.Testing;
 using Compze.Internals.Testing;
 using Compze.Hosting.Testing.Wiring;
 using Compze.Tests.Infrastructure;
 using Compze.DependencyInjection.Abstractions;
+using Microsoft.Data.SqlClient;
+using Microsoft.Data.Sqlite;
+using MySqlConnector;
+using Npgsql;
 
 namespace Compze.DbPool.Tests;
 
@@ -36,37 +36,21 @@ public abstract class DbPoolTestBase : UniversalTestBase
    protected DbPool ResolvePool() =>
       _container.Resolve<DbPool>();
 
-   protected static void UseConnection(string connectionString, DbPool pool, Action<ICompzeDbConnection> func)
+   protected static void UseConnection(string reservationName, DbPool pool, Action<DbConnection> func)
    {
-      switch(TestEnv.SqlLayer)
-      {
-         case SqlLayer.MsSql:
-            UseMsSqlConnection(pool.ConnectionStringFor(connectionString), func);
-            break;
-         case SqlLayer.PgSql:
-            UsePgSqlConnection(pool.ConnectionStringFor(connectionString), func);
-            break;
-         case SqlLayer.MySql:
-            UseMySqlConnection(pool.ConnectionStringFor(connectionString), func);
-            break;
-         case SqlLayer.Sqlite:
-         case SqlLayer.SqliteMemory:
-            UseSqliteConnection(pool.ConnectionStringFor(connectionString), func);
-            break;
-         default:
-            throw new ArgumentOutOfRangeException();
-      }
+      using var connection = CreateConnection(pool.ConnectionStringFor(reservationName));
+      connection.Open();
+      func(connection);
    }
 
-   static void UseMySqlConnection(string connectionStringFor, Action<ICompzeDbConnection> func) =>
-      IMySqlConnectionPool.CreateInstance(connectionStringFor).UseConnection(func);
-
-   static void UsePgSqlConnection(string connectionStringFor, Action<ICompzeDbConnection> func) =>
-      IPgSqlConnectionPool.CreateInstance(connectionStringFor).UseConnection(func);
-
-   static void UseMsSqlConnection(string connectionStringFor, Action<ICompzeDbConnection> func) =>
-      IMsSqlConnectionPool.CreateInstance(connectionStringFor).UseConnection(func);
-
-   static void UseSqliteConnection(string connectionStringFor, Action<ICompzeDbConnection> func) =>
-      ISqliteConnectionPool.CreateInstance(connectionStringFor).UseConnection(func);
+   ///<summary>Opens the ADO.NET provider's own connection type for the current <see cref="TestEnv.SqlLayer"/> — exactly what a<br/>
+   /// <see cref="DbPool"/> consumer does with the connection string the pool hands them.</summary>
+   protected static DbConnection CreateConnection(string connectionString) => TestEnv.SqlLayer switch
+   {
+      SqlLayer.MsSql => new SqlConnection(connectionString),
+      SqlLayer.PgSql => new NpgsqlConnection(connectionString),
+      SqlLayer.MySql => new MySqlConnection(connectionString),
+      SqlLayer.Sqlite or SqlLayer.SqliteMemory => new SqliteConnection(connectionString),
+      _ => throw new ArgumentOutOfRangeException()
+   };
 }

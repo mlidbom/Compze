@@ -1,5 +1,5 @@
 using System.Transactions;
-using Compze.Sql.MicrosoftSql;
+using Compze.Sql.MicrosoftSql._internal;
 using JetBrains.Annotations;
 using Microsoft.Data.SqlClient;
 

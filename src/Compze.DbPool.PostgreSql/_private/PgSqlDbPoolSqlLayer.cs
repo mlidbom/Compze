@@ -1,6 +1,6 @@
 using Compze.Underscore;
-using Compze.Sql.Common;
-using Compze.Sql.PostgreSql;
+using Compze.Sql.Common._internal;
+using Compze.Sql.PostgreSql._internal;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Threading.ResourceAccess;

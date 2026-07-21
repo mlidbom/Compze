@@ -1,8 +1,4 @@
 using Compze.DependencyInjection;
-using Compze.Sql.MicrosoftSql;
-using Compze.Sql.MySql;
-using Compze.Sql.PostgreSql;
-using Compze.Sql.Sqlite;
 using Compze.Hosting.Testing;
 using Compze.Internals.Testing;
 using Compze.Internals.Testing.Performance;
@@ -108,30 +104,12 @@ public class DbPoolPerformanceTests : DbPoolTestBase
       pool.SetLogLevel(LogLevel.Warning);
       var reservationName = Guid.NewGuid().ToString();
 
-      Action useConnection;
-
-      switch(TestEnv.SqlLayer)
+      var connectionString = pool.ConnectionStringFor(reservationName);
+      Action useConnection = () =>
       {
-         case SqlLayer.MsSql:
-            var msSqlConnectionProvider = IMsSqlConnectionPool.CreateInstance(pool.ConnectionStringFor(reservationName));
-            useConnection = () => msSqlConnectionProvider.UseConnection(_ => {});
-            break;
-         case SqlLayer.MySql:
-            var mySqlConnectionProvider = IMySqlConnectionPool.CreateInstance(pool.ConnectionStringFor(reservationName));
-            useConnection = () => mySqlConnectionProvider.UseConnection(_ => {});
-            break;
-         case SqlLayer.PgSql:
-            var pgSqlConnectionProvider = IPgSqlConnectionPool.CreateInstance(pool.ConnectionStringFor(reservationName));
-            useConnection = () => pgSqlConnectionProvider.UseConnection(_ => {});
-            break;
-         case SqlLayer.Sqlite:
-         case SqlLayer.SqliteMemory:
-            var sqliteConnectionProvider = ISqliteConnectionPool.CreateInstance(pool.ConnectionStringFor(reservationName));
-            useConnection = () => sqliteConnectionProvider.UseConnection(_ => {});
-            break;
-         default:
-            throw new ArgumentOutOfRangeException();
-      }
+         using var connection = CreateConnection(connectionString);
+         connection.Open();
+      };
 
       useConnection();
 

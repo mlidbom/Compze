@@ -1,4 +1,4 @@
-using Compze.Sql.Common;
+using Compze.Sql.Common._internal;
 using MySqlConnector;
 
 namespace Compze.Sql.MySql._internal;

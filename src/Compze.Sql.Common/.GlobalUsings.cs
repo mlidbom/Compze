@@ -6,4 +6,4 @@ global using Compze.Internals.SystemCE.LinqCE;
 global using static Compze.Contracts.Contract;
 
 global using System.Data.Common;
-global using Compze.Sql.Common.Abstractions;
+global using Compze.Sql.Common._internal.Abstractions;

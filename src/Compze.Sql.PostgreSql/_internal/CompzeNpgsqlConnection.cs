@@ -1,11 +1,11 @@
 using System.Data.Common;
-using Compze.Sql.Common.Abstractions;
+using Compze.Sql.Common._internal.Abstractions;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Npgsql;
 
-namespace Compze.Sql.PostgreSql;
+namespace Compze.Sql.PostgreSql._internal;
 
-public interface ICompzeNpgsqlConnection : IPoolableConnection, ICompzeDbConnection<NpgsqlCommand>
+interface ICompzeNpgsqlConnection : IPoolableConnection, ICompzeDbConnection<NpgsqlCommand>
 {
    //todo:review: Check if upgrade of Npgsql from 4.1.4 to 7.0.0 means that we should change something.
    //Npgsql 7.0 Release Notes | Npgsql Documentation https://www.npgsql.org/doc/release-notes/7.0.html

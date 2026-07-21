@@ -1,4 +1,4 @@
-using Compze.Sql.Common;
+using Compze.Sql.Common._internal;
 using Npgsql;
 
 namespace Compze.Sql.PostgreSql._internal;

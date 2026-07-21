@@ -2,9 +2,9 @@ using Compze.Contracts;
 using Compze.Internals.Logging;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 
-namespace Compze.Sql.Common;
+namespace Compze.Sql.Common._internal;
 
-public static class DbCommandCE
+static class DbCommandCE
 {
    static readonly ILogger Log = CompzeLogger.For(typeof(DbCommandCE));
 

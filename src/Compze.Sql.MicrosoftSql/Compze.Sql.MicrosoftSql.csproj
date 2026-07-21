@@ -8,6 +8,15 @@
     <Description>SQL Server support for the Compze framework: declares the MsSql domain database that Compze endpoints join. Also carries the SQL Server plumbing the Compze.*.MicrosoftSql feature backends share.</Description>
   </PropertyGroup>
   <ItemGroup>
+    <InternalsVisibleTo Include="Compze.DbPool.MicrosoftSql" />
+    <InternalsVisibleTo Include="Compze.DocumentDb.MicrosoftSql" />
+    <InternalsVisibleTo Include="Compze.Tessaging.MicrosoftSql" />
+    <InternalsVisibleTo Include="Compze.Teventive.TeventStore.MicrosoftSql" />
+    <InternalsVisibleTo Include="Compze.TypeIdentifiers.Interning.MicrosoftSql" />
+    <InternalsVisibleTo Include="Compze.Hosting.Testing" />
+    <InternalsVisibleTo Include="Compze.Tessaging.Hosting.Testing" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="Microsoft.Data.SqlClient" Version="6.1.3" />
   </ItemGroup>
   <ItemGroup>

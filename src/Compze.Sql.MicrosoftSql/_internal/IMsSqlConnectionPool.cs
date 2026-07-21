@@ -1,12 +1,12 @@
-using Compze.Sql.Common;
-using Compze.Sql.Common.Abstractions;
+using Compze.Sql.Common._internal;
+using Compze.Sql.Common._internal.Abstractions;
 using Compze.Internals.SystemCE;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Microsoft.Data.SqlClient;
 
-namespace Compze.Sql.MicrosoftSql;
+namespace Compze.Sql.MicrosoftSql._internal;
 
-public interface IMsSqlConnectionPool : IDbConnectionPool<ICompzeMsSqlConnection, SqlCommand>
+interface IMsSqlConnectionPool : IDbConnectionPool<ICompzeMsSqlConnection, SqlCommand>
 {
    static IMsSqlConnectionPool CreateInstance(string connectionString) => CreateInstance(() => connectionString);
    static MsSqlConnectionPool CreateInstance(Func<string> getConnectionString) => new(getConnectionString);

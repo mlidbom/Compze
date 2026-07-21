@@ -1,16 +1,16 @@
 using System.Diagnostics;
 using System.Transactions;
-using Compze.Sql.Common;
-using Compze.Sql.Common.Abstractions;
+using Compze.Sql.Common._internal;
+using Compze.Sql.Common._internal.Abstractions;
 using Compze.Sql.Sqlite._private;
 using Compze.Internals.SystemCE;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Microsoft.Data.Sqlite;
 using Compze.Sql.Sqlite._internal;
 
-namespace Compze.Sql.Sqlite;
+namespace Compze.Sql.Sqlite._internal;
 
-public interface ISqliteConnectionPool : IDbConnectionPool<ICompzeSqliteConnection, SqliteCommand>
+interface ISqliteConnectionPool : IDbConnectionPool<ICompzeSqliteConnection, SqliteCommand>
 {
    static ISqliteConnectionPool CreateInstance(string connectionString) => CreateInstance(() => connectionString);
    static SqliteConnectionPool CreateInstance(Func<string> getConnectionString) => new(getConnectionString);

@@ -1,10 +1,11 @@
 using Compze.Abstractions.Configuration;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
+using Compze.Sql.Sqlite._internal;
 
-namespace Compze.Sql.Sqlite.Wiring;
+namespace Compze.Sql.Sqlite.Wiring._internal;
 
-public static class SqliteConnectionPoolRegistrar
+static class SqliteConnectionPoolRegistrar
 {
    public interface ITestingRegistrar
    {

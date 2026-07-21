@@ -1,7 +1,7 @@
 using Compze.Abstractions;
 using Compze.Contracts;
-using Compze.Sql.Common;
-using Compze.Sql.PostgreSql;
+using Compze.Sql.Common._internal;
+using Compze.Sql.PostgreSql._internal;
 using Compze.Internals.SystemCE;
 using Compze.Tessaging;
 using Compze.Teventive.TeventStore.Abstractions._internal.SqlLayer.Abstractions;
@@ -9,7 +9,6 @@ using Npgsql;
 using NpgsqlTypes;
 using ReadOrder = Compze.Teventive.TeventStore.Abstractions._internal.SqlLayer.Abstractions.ReadOrder;
 using Tevent = Compze.Teventive.TeventStore.Abstractions._internal.SqlLayer.TeventTableSchemaStrings;
-using Compze.Sql.PostgreSql._internal;
 
 namespace Compze.Teventive.TeventStore.PostgreSql._private;
 

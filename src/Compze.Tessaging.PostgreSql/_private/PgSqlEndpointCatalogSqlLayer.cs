@@ -1,11 +1,10 @@
 using Compze.Tessaging.Endpoints;
-using Compze.Sql.Common;
-using Compze.Sql.PostgreSql;
+using Compze.Sql.Common._internal;
+using Compze.Sql.PostgreSql._internal;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tessaging._internal.SqlLayer;
 using Npgsql;
 using Catalog = Compze.Tessaging._internal.SqlLayer.ITessagingSqlLayer.EndpointCatalogDatabaseSchemaStrings;
-using Compze.Sql.PostgreSql._internal;
 
 namespace Compze.Tessaging.PostgreSql._private;
 

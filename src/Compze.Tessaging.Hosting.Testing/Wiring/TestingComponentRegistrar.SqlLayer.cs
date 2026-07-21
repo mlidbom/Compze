@@ -23,6 +23,7 @@ using Compze.Teventive.TeventStore.MicrosoftSql.Wiring;
 using Compze.Teventive.TeventStore.MySql.Wiring;
 using Compze.Teventive.TeventStore.PostgreSql.Wiring;
 using Compze.Teventive.TeventStore.Sqlite.Wiring;
+using Compze.Sql.Sqlite.Wiring._internal;
 
 namespace Compze.Tessaging.Hosting.Testing.Wiring;
 

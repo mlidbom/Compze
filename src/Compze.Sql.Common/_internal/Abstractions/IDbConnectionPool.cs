@@ -1,9 +1,9 @@
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.SystemCE;
 
-namespace Compze.Sql.Common.Abstractions;
+namespace Compze.Sql.Common._internal.Abstractions;
 
-public interface IDbConnectionPool<out TConnection, out TCommand>
+interface IDbConnectionPool<out TConnection, out TCommand>
    where TConnection : IPoolableConnection, ICompzeDbConnection<TCommand>
    where TCommand : DbCommand
 {

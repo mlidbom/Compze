@@ -8,6 +8,15 @@
     <Description>PostgreSQL support for the Compze framework: declares the PgSql domain database that Compze endpoints join. Also carries the PostgreSQL plumbing the Compze.*.PostgreSql feature backends share.</Description>
   </PropertyGroup>
   <ItemGroup>
+    <InternalsVisibleTo Include="Compze.DbPool.PostgreSql" />
+    <InternalsVisibleTo Include="Compze.DocumentDb.PostgreSql" />
+    <InternalsVisibleTo Include="Compze.Tessaging.PostgreSql" />
+    <InternalsVisibleTo Include="Compze.Teventive.TeventStore.PostgreSql" />
+    <InternalsVisibleTo Include="Compze.TypeIdentifiers.Interning.PostgreSql" />
+    <InternalsVisibleTo Include="Compze.Hosting.Testing" />
+    <InternalsVisibleTo Include="Compze.Tessaging.Hosting.Testing" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="Npgsql" Version="9.0.4" />
   </ItemGroup>
   <ItemGroup>

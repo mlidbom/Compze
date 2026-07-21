@@ -8,6 +8,15 @@
     <Description>MySQL support for the Compze framework: declares the MySql domain database that Compze endpoints join. Also carries the MySQL plumbing the Compze.*.MySql feature backends share.</Description>
   </PropertyGroup>
   <ItemGroup>
+    <InternalsVisibleTo Include="Compze.DbPool.MySql" />
+    <InternalsVisibleTo Include="Compze.DocumentDb.MySql" />
+    <InternalsVisibleTo Include="Compze.Tessaging.MySql" />
+    <InternalsVisibleTo Include="Compze.Teventive.TeventStore.MySql" />
+    <InternalsVisibleTo Include="Compze.TypeIdentifiers.Interning.MySql" />
+    <InternalsVisibleTo Include="Compze.Hosting.Testing" />
+    <InternalsVisibleTo Include="Compze.Tessaging.Hosting.Testing" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="MySqlConnector" Version="2.6.1" />
   </ItemGroup>
   <ItemGroup>

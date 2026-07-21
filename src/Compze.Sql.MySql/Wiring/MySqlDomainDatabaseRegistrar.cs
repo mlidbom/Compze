@@ -1,4 +1,5 @@
 using Compze.DependencyInjection.Abstractions;
+using Compze.Sql.MySql.Wiring._internal;
 
 namespace Compze.Sql.MySql.Wiring;
 

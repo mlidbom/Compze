@@ -1,4 +1,5 @@
 using Compze.DependencyInjection.Abstractions;
+using Compze.Sql.PostgreSql.Wiring._internal;
 
 namespace Compze.Sql.PostgreSql.Wiring;
 
