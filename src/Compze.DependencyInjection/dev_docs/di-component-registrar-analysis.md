@@ -83,7 +83,7 @@ public static IComponentRegistrar SqliteMemoryConnectionPool(this IComponentRegi
    if(registrar.TryGetTestingRegistrar<ITestingRegistrar>() is {} testingRegistrar)
       return testingRegistrar.Register(name);
    else
-      throw new InvalidOperationException("SqliteMemory is only supported in testing mode");
+      throw new InvalidOperationException("An in-memory sqlite domain database is composable only under the testing hosts for now.");
 }
 ```
 

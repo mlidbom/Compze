@@ -23,7 +23,6 @@ using Compze.Teventive.TeventStore.MicrosoftSql.Wiring;
 using Compze.Teventive.TeventStore.MySql.Wiring;
 using Compze.Teventive.TeventStore.PostgreSql.Wiring;
 using Compze.Teventive.TeventStore.Sqlite.Wiring;
-using Compze.Sql.Sqlite.Wiring._internal;
 
 namespace Compze.Tessaging.Hosting.Testing.Wiring;
 
@@ -65,7 +64,7 @@ public static class TestingComponentRegistrarSqlLayer
                                  .SqliteDocumentDbSqlLayer()
                                  .SqliteTessagingSqlLayer()
                                  .SqliteTeventStoreSqlLayer(),
-         SqlLayer.SqliteMemory => @this.SqliteMemoryConnectionPool(connectionStringName)
+         SqlLayer.SqliteMemory => @this.SqliteMemoryDomainDatabase(connectionStringName)
                                        .SqliteTypeIdInterner($"{connectionStringName}.TypeIdInterner")
                                        .SqliteDocumentDbSqlLayer()
                                        .SqliteTessagingSqlLayer()

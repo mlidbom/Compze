@@ -39,9 +39,10 @@ namespace Compze.Tests.Integration.Hosting;
 ///<summary>
 /// The consumer-proof for the domain-database doors: an exactly-once endpoint whose persistence is declared exactly the way a
 /// consumer composes it — the current backend's public registrar door (<c>MsSqlDomainDatabase(...)</c>,
-/// <c>MySqlDomainDatabase(...)</c>, <c>PgSqlDomainDatabase(...)</c>, <c>SqliteDomainDatabase(...)</c>) followed by the feature
-/// sql layers, never the testing hosts' backend switch. The endpoint then converses with itself, proving the whole durable
-/// vertical — schema creation included — stands on the door-declared pool.
+/// <c>MySqlDomainDatabase(...)</c>, <c>PgSqlDomainDatabase(...)</c>, <c>SqliteDomainDatabase(...)</c>,
+/// <c>SqliteMemoryDomainDatabase(...)</c>) followed by the feature sql layers, never the testing hosts' backend switch. The
+/// endpoint then converses with itself, proving the whole durable vertical — schema creation included — stands on the
+/// door-declared pool.
 ///</summary>
 public class Given_an_exactly_once_endpoint_declaring_its_domain_database_through_the_public_backend_door : UniversalTestBase
 {
@@ -88,13 +89,17 @@ public class Given_an_exactly_once_endpoint_declaring_its_domain_database_throug
                                     .PgSqlDocumentDbSqlLayer()
                                     .PgSqlTessagingSqlLayer()
                                     .PgSqlTeventStoreSqlLayer(),
-         //The in-memory combination has no public door of its own — the nearest consumer shape is the on-disk sqlite door,
-         //using the declaration-object interner form so the one door that takes a SqliteDomainDatabase is consumer-proven too.
-         SqlLayer.Sqlite or SqlLayer.SqliteMemory => registrar.SqliteDomainDatabase(connectionStringName)
-                                                              .SqliteTypeIdInterner(new SqliteDomainDatabase($"{connectionStringName}.TypeIdInterner"))
-                                                              .SqliteDocumentDbSqlLayer()
-                                                              .SqliteTessagingSqlLayer()
-                                                              .SqliteTeventStoreSqlLayer(),
+         //The declaration-object interner form rides the on-disk branch so the one door that takes a SqliteDomainDatabase is consumer-proven too.
+         SqlLayer.Sqlite => registrar.SqliteDomainDatabase(connectionStringName)
+                                     .SqliteTypeIdInterner(new SqliteDomainDatabase($"{connectionStringName}.TypeIdInterner"))
+                                     .SqliteDocumentDbSqlLayer()
+                                     .SqliteTessagingSqlLayer()
+                                     .SqliteTeventStoreSqlLayer(),
+         SqlLayer.SqliteMemory => registrar.SqliteMemoryDomainDatabase(connectionStringName)
+                                           .SqliteTypeIdInterner($"{connectionStringName}.TypeIdInterner")
+                                           .SqliteDocumentDbSqlLayer()
+                                           .SqliteTessagingSqlLayer()
+                                           .SqliteTeventStoreSqlLayer(),
          _ => throw new ArgumentOutOfRangeException()
       };
 
