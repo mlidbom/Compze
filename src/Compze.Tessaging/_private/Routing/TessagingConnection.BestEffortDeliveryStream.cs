@@ -77,7 +77,7 @@ partial class TessagingConnection
 
                try
                {
-                  _connection._transportMessagePoster.PostAsync(pending, _connection.RemoteAddress, _connection._cancellationSource.Token).GetAwaiter().GetResult();
+                  _connection._transportMessagePoster.PostAsync(pending, _connection.RemoteAddress, cancellationToken: _connection._cancellationSource.Token).GetAwaiter().GetResult();
                   this.Log().Debug($"Delivered best-effort tessage {pending.TessageId} to endpoint {_connection.EndpointInformation.Id}");
                }
 #pragma warning disable CA1031 // Background thread, and the failure policies below ARE the best-effort tier's handling of every delivery failure.

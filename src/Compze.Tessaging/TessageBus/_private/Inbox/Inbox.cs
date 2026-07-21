@@ -68,6 +68,11 @@ static class InboxRegistrar
          return;
       }
 
+      //The refusal travels back over the transport as this delivery's failure; the sender's sequence-ordered retry redelivers
+      //the stream in order, predecessor first.
+      if(saveResult == ITessagingSqlLayer.SaveTessageResult.RefusedAwaitingItsPredecessor)
+         throw new TessageRefusedAwaitingItsPredecessorException(tessage);
+
       //Observation queues at registration: after dedup - so the dedup shields observers from redeliveries - and before the
       //transactional processing the engine schedules. The arriving tevent is already a committed fact on its publisher, so
       //committed-facts-only holds by construction; dispatch is off-thread, per-observer FIFO. Deserialization-frugal: the wrapper

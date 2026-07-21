@@ -32,15 +32,18 @@ partial class Outbox
          _serializer = serializer;
       }
 
-      public async Task SaveTessageAsync(ITessage tessage, TessageId dedupId, params EndpointId[] receiverEndpointIds)
+      public async Task<IReadOnlyDictionary<EndpointId, long>> SaveTessageAsync(ITessage tessage, TessageId dedupId, params EndpointId[] receiverEndpointIds)
       {
          var outboxTessageWithReceivers = new ITessagingSqlLayer.OutboxTessageWithReceivers(_serializer.SerializeTessage(tessage),
                                                                                              _typeMap.GetId(tessage.GetType()),
                                                                                              dedupId,
                                                                                              receiverEndpointIds);
 
-         await _sqlLayer.SaveTessageAsync(outboxTessageWithReceivers).caf();
+         return await _sqlLayer.SaveTessageAsync(outboxTessageWithReceivers).caf();
       }
+
+      public async Task<long> GetDeliveryStreamPredecessorSequenceNumberAsync(EndpointId receiverId, long sequenceNumber) =>
+         await _sqlLayer.GetDeliveryStreamPredecessorSequenceNumberAsync(receiverId, sequenceNumber).caf();
 
       public async Task MarkAsReceivedAsync(TessageId tessageId, EndpointId receiverId)
       {

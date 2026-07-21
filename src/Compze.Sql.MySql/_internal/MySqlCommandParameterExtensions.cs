@@ -6,6 +6,7 @@ namespace Compze.Sql.MySql._internal;
 static class MySqlCommandParameterExtensions
 {
    public static MySqlCommand AddParameter(this MySqlCommand @this, string name, int value) => AddParameter(@this, name, MySqlDbType.Int32, value);
+   public static MySqlCommand AddParameter(this MySqlCommand @this, string name, long value) => AddParameter(@this, name, MySqlDbType.Int64, value);
    public static MySqlCommand AddParameter(this MySqlCommand @this, string name, Guid value) => AddParameter(@this, name, MySqlDbType.Guid, value);
    public static MySqlCommand AddDateTime2Parameter(this MySqlCommand @this, string name, DateTime value) => AddParameter(@this, name, MySqlDbType.DateTime, value);
    public static MySqlCommand AddVarcharParameter(this MySqlCommand @this, string name, int length, string value) => AddParameter(@this, name, MySqlDbType.VarString, value, length);

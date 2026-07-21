@@ -1,6 +1,8 @@
 using System.Buffers.Binary;
 using System.Text;
+using Compze.Contracts;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
+using Compze.Tessaging.Endpoints;
 using Compze.Tessaging._internal.Transport;
 
 namespace Compze.Tessaging._private.Transport.NamedPipes;
@@ -20,6 +22,15 @@ static class NamedPipeFraming
       await WriteStringAsync(pipe, request.TessageId.ToString(), cancellationToken).caf();
       await WriteStringAsync(pipe, request.PayloadTypeIdString, cancellationToken).caf();
       await WriteStringAsync(pipe, request.Body, cancellationToken).caf();
+      //The exactly-once kinds always carry the tessage's delivery stream position, so its presence is decided by the kind
+      //byte already written — deterministic framing, no marker byte needed.
+      if(KindCarriesADeliveryStreamPosition(request.Kind))
+      {
+         var position = request.DeliveryStreamPosition._assert().NotNull();
+         await WriteStringAsync(pipe, position.SenderEndpointId.Value.ToString(), cancellationToken).caf();
+         await WriteInt64Async(pipe, position.SequenceNumber, cancellationToken).caf();
+         await WriteInt64Async(pipe, position.PredecessorSequenceNumber, cancellationToken).caf();
+      }
       await pipe.FlushAsync(cancellationToken).caf();
    }
 
@@ -30,8 +41,16 @@ static class NamedPipeFraming
       var tessageId = new TessageId(Guid.Parse(await ReadStringAsync(pipe, cancellationToken).caf()));
       var payloadTypeIdString = await ReadStringAsync(pipe, cancellationToken).caf();
       var body = await ReadStringAsync(pipe, cancellationToken).caf();
-      return new TransportRequest(kind, tessageId, payloadTypeIdString, body);
+      if(!KindCarriesADeliveryStreamPosition(kind)) return new TransportRequest(kind, tessageId, payloadTypeIdString, body);
+
+      var senderEndpointId = new EndpointId(Guid.Parse(await ReadStringAsync(pipe, cancellationToken).caf()));
+      var sequenceNumber = await ReadInt64Async(pipe, cancellationToken).caf();
+      var predecessorSequenceNumber = await ReadInt64Async(pipe, cancellationToken).caf();
+      return new TransportRequest(kind, tessageId, payloadTypeIdString, body, new DeliveryStreamPosition(senderEndpointId, sequenceNumber, predecessorSequenceNumber));
    }
+
+   static bool KindCarriesADeliveryStreamPosition(TransportRequestKind kind) =>
+      kind is TransportRequestKind.ExactlyOnceTevent or TransportRequestKind.ExactlyOnceTommand;
 
    internal static async Task WriteSuccessResponseAsync(Stream pipe, string payload, CancellationToken cancellationToken)
    {
@@ -62,6 +81,20 @@ static class NamedPipeFraming
 
    static async Task WriteByteAsync(Stream pipe, byte value, CancellationToken cancellationToken) =>
       await pipe.WriteAsync(new[] { value }, cancellationToken).caf();
+
+   static async Task WriteInt64Async(Stream pipe, long value, CancellationToken cancellationToken)
+   {
+      var bytes = new byte[8];
+      BinaryPrimitives.WriteInt64LittleEndian(bytes, value);
+      await pipe.WriteAsync(bytes, cancellationToken).caf();
+   }
+
+   static async Task<long> ReadInt64Async(Stream pipe, CancellationToken cancellationToken)
+   {
+      var bytes = new byte[8];
+      await pipe.ReadExactlyAsync(bytes, cancellationToken).caf();
+      return BinaryPrimitives.ReadInt64LittleEndian(bytes);
+   }
 
    static async Task WriteStringAsync(Stream pipe, string value, CancellationToken cancellationToken)
    {

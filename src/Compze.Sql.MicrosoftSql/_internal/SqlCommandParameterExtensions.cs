@@ -6,6 +6,7 @@ namespace Compze.Sql.MicrosoftSql._internal;
 static class SqlCommandParameterExtensions
 {
    public static SqlCommand AddParameter(this SqlCommand @this, string name, int value) => AddParameter(@this, name, SqlDbType.Int, value);
+   public static SqlCommand AddParameter(this SqlCommand @this, string name, long value) => AddParameter(@this, name, SqlDbType.BigInt, value);
    public static SqlCommand AddParameter(this SqlCommand @this, string name, Guid value) => AddParameter(@this, name, SqlDbType.UniqueIdentifier, value);
    public static SqlCommand AddDateTime2Parameter(this SqlCommand @this, string name, DateTime value) => AddParameter(@this, name, SqlDbType.DateTime2, value);
    public static SqlCommand AddNVarcharParameter(this SqlCommand @this, string name, int length, string value) => AddParameter(@this, name, SqlDbType.NVarChar, value, length);

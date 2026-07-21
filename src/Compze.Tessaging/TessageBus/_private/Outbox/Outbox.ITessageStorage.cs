@@ -9,7 +9,14 @@ partial class Outbox
 {
    public interface ITessageStorage
    {
-      Task SaveTessageAsync(ITessage tessage, TessageId dedupId, params EndpointId[] receiverEndpointIds);
+      ///<summary>Persists the tessage with one dispatching row per receiver, in the caller's save transaction — see<br/>
+      /// <see cref="ITessagingSqlLayer.IOutboxSqlLayer.SaveTessageAsync"/>. Returns each receiver's assigned delivery stream<br/>
+      /// sequence number, which the commit hook hands the connection's exactly-once stream.</summary>
+      Task<IReadOnlyDictionary<EndpointId, long>> SaveTessageAsync(ITessage tessage, TessageId dedupId, params EndpointId[] receiverEndpointIds);
+
+      ///<summary>The delivery attempt's declared predecessor — see<br/>
+      /// <see cref="ITessagingSqlLayer.IOutboxSqlLayer.GetDeliveryStreamPredecessorSequenceNumberAsync"/>.</summary>
+      Task<long> GetDeliveryStreamPredecessorSequenceNumberAsync(EndpointId receiverId, long sequenceNumber);
       Task MarkAsReceivedAsync(TessageId tessageId, EndpointId receiverId);
       Task RecordDeliveryFailureAsync(TessageId tessageId, EndpointId receiverId, Exception? exception);
 

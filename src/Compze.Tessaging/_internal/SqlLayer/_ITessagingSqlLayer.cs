@@ -1,5 +1,6 @@
 using Compze.Tessaging.Endpoints;
 using Compze.Tessaging.Peers._internal;
+using Compze.Tessaging._internal.Transport;
 using Compze.Tessaging._internal.Transport.Advertisement;
 using Compze.TypeIdentifiers;
 
@@ -11,16 +12,30 @@ interface ITessagingSqlLayer
    {
       ///<summary>Persists the tessage with one dispatching row per receiver, bound at save: a tevent's remembered subscribers,<br/>
       /// a tommand's one resolved receiver. Every tessage between a sender and a receiver thereby rides that pair's single<br/>
-      /// ordered, receiver-deduped delivery stream — what makes exactly-once in-order hold by construction.</summary>
-      Task SaveTessageAsync(OutboxTessageWithReceivers tessageWithReceivers);
+      /// ordered, receiver-deduped delivery stream — what makes exactly-once in-order hold by construction.<br/>
+      /// Each dispatching row is assigned its <see cref="DeliveryStreamPosition"/> sequence number here, in the caller's save<br/>
+      /// transaction, from the pair's counter row (<see cref="OutboxDeliveryStreamCountersSchemaStrings"/>) — whose lock<br/>
+      /// serializes the pair's commits, so sequence order is commit order. Returns each receiver's assigned sequence number,<br/>
+      /// which the commit hook hands the connection's delivery stream and the wire envelope carries to the receiver's inbox door.</summary>
+      Task<IReadOnlyDictionary<EndpointId, long>> SaveTessageAsync(OutboxTessageWithReceivers tessageWithReceivers);
+
+      ///<summary>The declared predecessor for a delivery attempt of the dispatching row at <paramref name="sequenceNumber"/><br/>
+      /// bound to <paramref name="receiverId"/>: the pair's largest lower sequence number that is still deliverable or already<br/>
+      /// received — 0 when none, meaning the tessage leads its stream. Sender-side pruning is excluded: a discarded row is<br/>
+      /// gone and an unreceived stranded row awaits explicit resolution, so neither will ever reach the receiver's door —<br/>
+      /// which admits a tessage exactly when its admission high-water mark equals this declared predecessor<br/>
+      /// (see <see cref="DeliveryStreamPosition"/>). Computed fresh per delivery attempt, because pruning between attempts<br/>
+      /// moves it.</summary>
+      Task<long> GetDeliveryStreamPredecessorSequenceNumberAsync(EndpointId receiverId, long sequenceNumber);
 
       Task<MarkAsReceivedResult> MarkAsReceivedAsync(TessageId tessageId, EndpointId endpointId);
 
       Task RecordDeliveryFailureAsync(TessageId tessageId, EndpointId endpointId, string failureReason);
 
       ///<summary>The endpoint's recovery backlog: every tessage bound to <paramref name="endpointId"/> and not yet received,<br/>
-      /// in send order (the outbox tessage table's monotonic <c>GeneratedId</c>). Stranded tessages are excluded — a stranded<br/>
-      /// tommand waits for explicit resolution on the decommission surface, never for delivery.</summary>
+      /// in the pair's delivery stream sequence order — which is commit order, so recovery re-establishes in-order delivery.<br/>
+      /// Stranded tessages are excluded — a stranded tommand waits for explicit resolution on the decommission surface,<br/>
+      /// never for delivery.</summary>
       Task<IReadOnlyList<UndeliveredTessage>> GetUndeliveredTessagesForEndpointAsync(EndpointId endpointId);
 
       ///<summary>Discards these undelivered tessages bound to <paramref name="endpointId"/>: their dispatching rows are deleted,<br/>
@@ -56,15 +71,28 @@ interface ITessagingSqlLayer
       WasAlreadyMarked
    }
 
+   ///<summary>What the inbox door decided about an arriving tessage — see <see cref="IInboxSqlLayer.SaveTessageAsync"/>.</summary>
    public enum SaveTessageResult
    {
+      ///<summary>Admitted: the tessage is the next in its pair's delivery stream and is now registered, awaiting handling.</summary>
       NewTessage,
-      Duplicate
+      ///<summary>Already admitted earlier — a redelivery. The sender is acknowledged; nothing is registered or handled again.</summary>
+      Duplicate,
+      ///<summary>Refused: the tessage is ahead of its pair's delivery stream — its predecessor has not been admitted yet.<br/>
+      /// The refusal travels back as the delivery's failure, and the sender's retry redelivers in order.</summary>
+      RefusedAwaitingItsPredecessor
    }
 
    public interface IInboxSqlLayer
    {
-      Task<SaveTessageResult> SaveTessageAsync(TessageId tessageId, TypeId typeId, string serializedTessage);
+      ///<summary>The inbox door: atomically admits the tessage iff it is the next in its pair's delivery stream — the pair's<br/>
+      /// admission high-water mark (<see cref="InboxDeliveryStreamAdmissionsSchemaStrings"/>) must equal<br/>
+      /// <paramref name="deliveryStreamPosition"/>'s declared predecessor — registering it durably in the same act.<br/>
+      /// A tessage at or below the high-water mark is a redelivery, reported <see cref="SaveTessageResult.Duplicate"/>; one<br/>
+      /// whose declared predecessor is not the mark is <see cref="SaveTessageResult.RefusedAwaitingItsPredecessor"/>.<br/>
+      /// Advancing the high-water mark and inserting the row commit atomically, so exactly-once in-order admission holds by<br/>
+      /// construction.</summary>
+      Task<SaveTessageResult> SaveTessageAsync(TessageId tessageId, TypeId typeId, string serializedTessage, DeliveryStreamPosition deliveryStreamPosition);
       Task<int> MarkAsSucceededAsync(TessageId tessageId);
       Task<int> RecordExceptionAsync(TessageId tessageId, string exceptionStackTrace, string exceptionTessage, string exceptionType);
       Task<int> MarkAsFailedAsync(TessageId tessageId);
@@ -105,14 +133,20 @@ interface ITessagingSqlLayer
       internal string SerializedTessage { get; } = serializedTessage;
       internal TypeId TypeId { get; } = typeId;
       internal TessageId TessageId { get; } = tessageId;
-      internal IEnumerable<EndpointId> ReceiverEndpointIds { get; } = [.. receiverEndpointIds];
+
+      ///<summary>The bound receivers, in one deterministic order (by <see cref="EndpointId"/>): every save locks its receivers'<br/>
+      /// delivery stream counter rows in this order, so two concurrent saves to overlapping receiver sets can never deadlock<br/>
+      /// on each other's counter rows.</summary>
+      internal IReadOnlyList<EndpointId> ReceiverEndpointIds { get; } = [.. receiverEndpointIds.OrderBy(endpointId => endpointId.Value)];
    }
 
    ///<summary>One tessage the outbox still owes delivery of, as loaded into a connection's recovery backlog: exactly what<br/>
-   /// re-enqueueing needs — identity for dedup, type for deserialization, and the serialized body.</summary>
-   public class UndeliveredTessage(TessageId tessageId, TypeId typeId, string serializedTessage)
+   /// re-enqueueing needs — identity for dedup, the tessage's sequence number in the pair's delivery stream, type for<br/>
+   /// deserialization, and the serialized body.</summary>
+   public class UndeliveredTessage(TessageId tessageId, long deliveryStreamSequenceNumber, TypeId typeId, string serializedTessage)
    {
       internal TessageId TessageId { get; } = tessageId;
+      internal long DeliveryStreamSequenceNumber { get; } = deliveryStreamSequenceNumber;
       internal TypeId TypeId { get; } = typeId;
       internal string SerializedTessage { get; } = serializedTessage;
    }
@@ -192,12 +226,24 @@ interface ITessagingSqlLayer
       public const string GeneratedId = nameof(GeneratedId);
       public const string TypeId = nameof(TypeId);
       public const string TessageId = nameof(TessageId);
+      public const string SenderEndpointId = nameof(SenderEndpointId);
+      public const string DeliveryStreamSequenceNumber = nameof(DeliveryStreamSequenceNumber);
       public const string Body = nameof(Body);
       public const string Status = nameof(Status);
       public const string ExceptionCount = nameof(ExceptionCount);
       public const string ExceptionTessage = nameof(ExceptionTessage);
       public const string ExceptionType = nameof(ExceptionType);
       public const string ExceptionStackTrace = nameof(ExceptionStackTrace);
+   }
+
+   ///<summary>The inbox's per-sender admission high-water marks: one row per sender peer, holding the sequence number of the<br/>
+   /// last tessage admitted from that pair's delivery stream. The inbox door admits a tessage exactly when the mark equals<br/>
+   /// the tessage's declared predecessor (see <see cref="DeliveryStreamPosition"/>), first contact starting from a declared<br/>
+   /// predecessor of 0 — see <see cref="IInboxSqlLayer.SaveTessageAsync"/>.</summary>
+   public static class InboxDeliveryStreamAdmissionsSchemaStrings
+   {
+      public const string SenderEndpointId = nameof(SenderEndpointId);
+      public const string LastAdmittedSequenceNumber = nameof(LastAdmittedSequenceNumber);
    }
 
    public static class OutboxTessagesDatabaseSchemaStrings
@@ -212,11 +258,22 @@ interface ITessagingSqlLayer
    {
       public const string TessageId = nameof(TessageId);
       public const string EndpointId = nameof(EndpointId);
+      public const string DeliveryStreamSequenceNumber = nameof(DeliveryStreamSequenceNumber);
       public const string IsReceived = nameof(IsReceived);
       public const string IsStranded = nameof(IsStranded);
       public const string RetryCount = nameof(RetryCount);
       public const string LastAttemptTime = nameof(LastAttemptTime);
       public const string FailureReason = nameof(FailureReason);
+   }
+
+   ///<summary>The outbox's per-receiver delivery stream counters: one row per receiver peer, holding the last sequence number<br/>
+   /// assigned in that pair's delivery stream. <see cref="IOutboxSqlLayer.SaveTessageAsync"/> increments it inside the save<br/>
+   /// transaction to assign each dispatching row its <see cref="OutboxTessageDispatchingTableSchemaStrings.DeliveryStreamSequenceNumber"/>;<br/>
+   /// the counter row's lock is what serializes the pair's commits, making sequence order commit order.</summary>
+   public static class OutboxDeliveryStreamCountersSchemaStrings
+   {
+      public const string EndpointId = nameof(EndpointId);
+      public const string LastAssignedSequenceNumber = nameof(LastAssignedSequenceNumber);
    }
 
    public static class PeersDatabaseSchemaStrings

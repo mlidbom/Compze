@@ -29,5 +29,8 @@ static class HttpConstants
    {
       public const string TessageId = nameof(TessageId);
       public const string PayLoadTypeId = nameof(PayLoadTypeId);
+      public const string SenderEndpointId = nameof(SenderEndpointId);
+      public const string DeliveryStreamSequenceNumber = nameof(DeliveryStreamSequenceNumber);
+      public const string DeliveryStreamPredecessorSequenceNumber = nameof(DeliveryStreamPredecessorSequenceNumber);
    }
 }

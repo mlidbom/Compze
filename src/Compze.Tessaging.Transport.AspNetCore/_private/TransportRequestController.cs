@@ -3,6 +3,7 @@ using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Logging;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
+using Compze.Tessaging.Endpoints;
 using Compze.Tessaging.Typermedia;
 using Compze.Tessaging._internal.Transport;
 using Microsoft.AspNetCore.Http;
@@ -73,7 +74,18 @@ class TransportRequestController : Controller
       using var reader = new StreamReader(HttpContext.Request.Body);
       var body = await reader.ReadToEndAsync().caf();
 
-      return new TransportRequest(kind, tessageId, payloadTypeIdString, body);
+      return new TransportRequest(kind, tessageId, payloadTypeIdString, body, ReadDeliveryStreamPosition(kind));
+   }
+
+   ///<summary>The exactly-once kinds always carry the tessage's <see cref="DeliveryStreamPosition"/> in the<br/>
+   /// <see cref="HttpConstants.Headers"/>, so its presence is decided by the request's kind, mirroring the client's writing.</summary>
+   DeliveryStreamPosition? ReadDeliveryStreamPosition(TransportRequestKind kind)
+   {
+      if(kind is not (TransportRequestKind.ExactlyOnceTevent or TransportRequestKind.ExactlyOnceTommand)) return null;
+      var senderEndpointId = new EndpointId(Guid.Parse(Request.Headers[HttpConstants.Headers.SenderEndpointId][0]._assert().NotNull()));
+      var sequenceNumber = long.Parse(Request.Headers[HttpConstants.Headers.DeliveryStreamSequenceNumber][0]._assert().NotNull(), System.Globalization.CultureInfo.InvariantCulture);
+      var predecessorSequenceNumber = long.Parse(Request.Headers[HttpConstants.Headers.DeliveryStreamPredecessorSequenceNumber][0]._assert().NotNull(), System.Globalization.CultureInfo.InvariantCulture);
+      return new DeliveryStreamPosition(senderEndpointId, sequenceNumber, predecessorSequenceNumber);
    }
 
    ///<summary>Handlers run outside the MVC request's execution context, so no ambient request state flows into them — the same<br/>

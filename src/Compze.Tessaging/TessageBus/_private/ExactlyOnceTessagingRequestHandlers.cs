@@ -1,3 +1,4 @@
+using Compze.Contracts;
 using Compze.TypeIdentifiers;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
@@ -43,7 +44,7 @@ class ExactlyOnceTessagingRequestHandlers : ITransportRequestHandlerContribution
 
       async Task<string> ReceiveIntoInbox(TransportRequest request)
       {
-         await inbox.ReceiveAsync(new TransportTessage.InComing(request.Body, request.PayloadTypeIdString, request.TessageId, typeMap, serializer)).caf();
+         await inbox.ReceiveAsync(new TransportTessage.InComing(request.Body, request.PayloadTypeIdString, request.TessageId, typeMap, serializer, request.DeliveryStreamPosition._assert().NotNull())).caf();
          return "";
       }
    }

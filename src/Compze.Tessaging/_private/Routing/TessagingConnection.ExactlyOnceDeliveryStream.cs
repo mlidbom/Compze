@@ -1,3 +1,4 @@
+using Compze.Contracts;
 using Compze.Internals.Logging;
 using Compze.Internals.SystemCE.ThreadingCE;
 using Compze.Tessaging._private.SystemCE.ThreadingCE;
@@ -10,9 +11,12 @@ namespace Compze.Tessaging._private.Routing;
 partial class TessagingConnection
 {
    ///<summary>The connection's exactly-once delivery stream: the durable, head-of-line send queue backed by the outbox's storage.<br/>
-   /// The loop does not look at the next tessage until the current one is delivered and acknowledged, retrying a failed delivery<br/>
-   /// with backoff until the subscriber acknowledges it; the storage bookkeeping (delivered / failed) and the recovery at start —<br/>
-   /// reloading the endpoint's undelivered backlog in send order — are what make the guarantee and the ordering survive restarts<br/>
+   /// The queue is keyed and ordered by each tessage's delivery stream sequence number (see <see cref="Compze.Tessaging._internal.Transport.DeliveryStreamPosition"/>),<br/>
+   /// so the send order is the pair's stream order by construction — whatever order commit hooks and the recovery backlog load<br/>
+   /// happened to enqueue in, and with the one legitimate double-enqueue (a commit hook racing the backlog load) collapsing to a<br/>
+   /// single entry. The loop does not look past the lowest-sequenced tessage until it is delivered and acknowledged, retrying a<br/>
+   /// failed delivery with backoff; the storage bookkeeping (delivered / failed) and the recovery at start — reloading the<br/>
+   /// endpoint's undelivered backlog — are what make the guarantee and the ordering survive restarts<br/>
    /// (see <c>src/Compze.Tessaging/dev_docs/tevent-delivery-model.md</c>). A connection carries this stream exactly when the endpoint<br/>
    /// wires the outbox, whose registration grants the router the storage.</summary>
    internal class ExactlyOnceDeliveryStream : IDisposable
@@ -32,7 +36,9 @@ partial class TessagingConnection
 
       readonly TessagingConnection _connection;
       readonly Outbox.ITessageStorage _tessageStorage;
-      readonly IThreadShared<Queue<TransportTessage.OutGoing>> _queue = IThreadShared.New(new Queue<TransportTessage.OutGoing>());
+      //Keyed by delivery stream sequence number: the send loop always leads with the lowest-sequenced undelivered tessage,
+      //and a second offer of an already queued sequence number collapses into the existing entry.
+      readonly IThreadShared<SortedDictionary<long, TransportTessage.OutGoing>> _queue = IThreadShared.New(new SortedDictionary<long, TransportTessage.OutGoing>());
       readonly AutoResetEvent _signal = new(false);
       Thread? _sendLoopThread;
       int _consecutiveFailures;
@@ -45,7 +51,18 @@ partial class TessagingConnection
 
       internal void Enqueue(TransportTessage.OutGoing transportTessage)
       {
-         _queue.Locked(queue => queue.Enqueue(transportTessage));
+         var sequenceNumber = transportTessage.DeliveryStreamSequenceNumber._assert().NotNull().Value;
+         _queue.Locked(queue =>
+         {
+            if(queue.TryGetValue(sequenceNumber, out var alreadyQueued))
+            {
+               //One sequence number is one tessage - the outbox save assigned it exactly once - so a second offer can only be
+               //the same tessage arriving through the other enqueue path (commit hook vs recovery backlog load).
+               State.Assert(alreadyQueued.TessageId == transportTessage.TessageId);
+               return;
+            }
+            queue.Add(sequenceNumber, transportTessage);
+         });
          _signal.Set();
       }
 
@@ -57,9 +74,9 @@ partial class TessagingConnection
 
       internal void AwaitSendLoopTermination() => _sendLoopThread?.JoinCE(5.Seconds());
 
-      //In-order delivery survives recovery: GetUndeliveredTessagesForEndpoint returns the backlog in send order
-      //(the outbox tessage table's monotonic GeneratedId), so re-enqueueing it re-establishes head-of-line on the
-      //oldest undelivered tessage - the same order the send loop preserves while running.
+      //In-order delivery survives recovery: each backlog tessage re-enters the queue at its delivery stream sequence number,
+      //so the send loop leads with the oldest undelivered tessage again - the sequence-keyed queue makes the enqueue order,
+      //including a commit hook racing this load, irrelevant.
       void LoadUndeliveredTessages()
       {
          //The stream is a dedicated-thread head-of-line pump, deliberately synchronous - it bridges its storage's async calls
@@ -72,7 +89,7 @@ partial class TessagingConnection
          {
             var tessageType = undeliveredTessage.TypeId.Type;
             var tessage = _connection._serializer.DeserializeTessage(tessageType, undeliveredTessage.SerializedTessage);
-            _connection.EnqueueForExactlyOnceDelivery(tessage, undeliveredTessage.TessageId);
+            _connection.EnqueueForExactlyOnceDelivery(tessage, undeliveredTessage.TessageId, undeliveredTessage.DeliveryStreamSequenceNumber);
          }
       }
 
@@ -84,7 +101,8 @@ partial class TessagingConnection
          {
             while(!_connection._cancellationSource.IsCancellationRequested)
             {
-               var pending = _queue.Locked(queue => queue.Count > 0 ? queue.Peek() : null);
+               //The lowest-sequenced undelivered tessage: head-of-line in the pair's delivery stream order.
+               var pending = _queue.Locked(queue => queue.Count > 0 ? queue.First().Value : null);
 
                if(pending == null)
                {
@@ -94,7 +112,7 @@ partial class TessagingConnection
 
                if(TrySend(pending))
                {
-                  _queue.Locked(queue => queue.Dequeue());
+                  _queue.Locked(queue => queue.Remove(pending.DeliveryStreamSequenceNumber._assert().NotNull().Value));
 
                   _consecutiveFailures = 0;
                } else
@@ -116,7 +134,10 @@ partial class TessagingConnection
       {
          try
          {
-            _connection._transportMessagePoster.PostAsync(pending, _connection.RemoteAddress, _connection._cancellationSource.Token).GetAwaiter().GetResult();
+            //Freshly computed per attempt: sender-side pruning (discard, strand) can punch a hole below the pending tessage
+            //between attempts, and a refused attempt heals exactly by redeclaring the predecessor the durable rows now name.
+            var predecessorSequenceNumber = _tessageStorage.GetDeliveryStreamPredecessorSequenceNumberAsync(_connection.EndpointInformation.Id, pending.DeliveryStreamSequenceNumber._assert().NotNull().Value).GetAwaiter().GetResult();
+            _connection._transportMessagePoster.PostAsync(pending, _connection.RemoteAddress, predecessorSequenceNumber, _connection._cancellationSource.Token).GetAwaiter().GetResult();
 
             this.Log().Debug($"Delivered tessage {pending.TessageId} to endpoint {_connection.EndpointInformation.Id}");
             _connection._exceptionReporter.RunSwallowingAndReportingAnyExceptions(() => _tessageStorage.MarkAsReceivedAsync(pending.TessageId, _connection.EndpointInformation.Id).GetAwaiter().GetResult());

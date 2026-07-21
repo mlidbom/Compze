@@ -8,6 +8,7 @@ namespace Compze.Sql.PostgreSql._internal;
 static class NpgsqlCommandParameterExtensions
 {
    public static NpgsqlCommand AddParameter(this NpgsqlCommand @this, string name, int value) => AddParameter(@this, name, NpgsqlDbType.Integer, value);
+   public static NpgsqlCommand AddParameter(this NpgsqlCommand @this, string name, long value) => AddParameter(@this, name, NpgsqlDbType.Bigint, value);
    public static NpgsqlCommand AddParameter(this NpgsqlCommand @this, string name, Guid value) => AddParameter(@this, name, NpgsqlDbType.Uuid, value);
    public static NpgsqlCommand AddTimestampWithTimeZone(this NpgsqlCommand @this, string name, DateTime value) => AddParameter(@this, name, NpgsqlDbType.TimestampTz, value.ToUniversalTimeSafely());
    public static NpgsqlCommand AddVarcharParameter(this NpgsqlCommand @this, string name, int length, string value) => AddParameter(@this, name, NpgsqlDbType.Varchar, value, length);

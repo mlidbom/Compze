@@ -22,6 +22,12 @@ class HttpEndpointTransportClient : IEndpointTransportClient
       using var content = new StringContent(request.Body);
       content.Headers.Add(HttpConstants.Headers.TessageId, request.TessageId.ToString());
       content.Headers.Add(HttpConstants.Headers.PayLoadTypeId, request.PayloadTypeIdString);
+      if(request.DeliveryStreamPosition is { } position)
+      {
+         content.Headers.Add(HttpConstants.Headers.SenderEndpointId, position.SenderEndpointId.Value.ToString());
+         content.Headers.Add(HttpConstants.Headers.DeliveryStreamSequenceNumber, position.SequenceNumber.ToString(System.Globalization.CultureInfo.InvariantCulture));
+         content.Headers.Add(HttpConstants.Headers.DeliveryStreamPredecessorSequenceNumber, position.PredecessorSequenceNumber.ToString(System.Globalization.CultureInfo.InvariantCulture));
+      }
 
       var response = await httpClient.PostAsync(requestUri, content, cancellationToken).caf();
       if(response.IsSuccessStatusCode) return await response.Content.ReadAsStringAsync(cancellationToken).caf();

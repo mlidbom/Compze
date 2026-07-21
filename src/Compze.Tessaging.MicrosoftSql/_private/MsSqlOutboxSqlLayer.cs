@@ -5,6 +5,7 @@ using Compze.Internals.SystemCE.LinqCE;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tessaging._internal.SqlLayer;
 using Compze.TypeIdentifiers.Interning;
+using CounterTable = Compze.Tessaging._internal.SqlLayer.ITessagingSqlLayer.OutboxDeliveryStreamCountersSchemaStrings;
 using DispatchingTable = Compze.Tessaging._internal.SqlLayer.ITessagingSqlLayer.OutboxTessageDispatchingTableSchemaStrings;
 using TessageTable = Compze.Tessaging._internal.SqlLayer.ITessagingSqlLayer.OutboxTessagesDatabaseSchemaStrings;
 
@@ -17,11 +18,12 @@ partial class MsSqlOutboxSqlLayer(IMsSqlConnectionPool connectionFactory, MsSqlS
    readonly ITypeIdInterner _typeIdInterner = typeIdInterner;
    readonly EndpointTableSet _tables = tables;
 
-   public async Task SaveTessageAsync(ITessagingSqlLayer.OutboxTessageWithReceivers tessageWithReceivers)
+   public async Task<IReadOnlyDictionary<EndpointId, long>> SaveTessageAsync(ITessagingSqlLayer.OutboxTessageWithReceivers tessageWithReceivers)
    {
       // Intern before opening a connection: interning may hit the database, and nesting a second connection
       // inside a held one deadlocks the pool.
       var internedTypeId = _typeIdInterner.GetOrInternId(tessageWithReceivers.TypeId);
+      var assignedSequenceNumbers = await AssignDeliveryStreamSequenceNumbersAsync(tessageWithReceivers.ReceiverEndpointIds).caf();
       await _connectionFactory.UseCommandAsync(
          async command =>
          {
@@ -45,14 +47,74 @@ partial class MsSqlOutboxSqlLayer(IMsSqlConnectionPool connectionFactory, MsSqlS
                   => command.AppendCommandText($"""
 
                                                 INSERT {_tables.OutboxTessageDispatching}
-                                                            ({DispatchingTable.TessageId},  {DispatchingTable.EndpointId},          {DispatchingTable.IsReceived})
-                                                    VALUES (@{DispatchingTable.TessageId}, @{DispatchingTable.EndpointId}_{index}, @{DispatchingTable.IsReceived})
+                                                            ({DispatchingTable.TessageId},  {DispatchingTable.EndpointId},          {DispatchingTable.DeliveryStreamSequenceNumber},          {DispatchingTable.IsReceived})
+                                                    VALUES (@{DispatchingTable.TessageId}, @{DispatchingTable.EndpointId}_{index}, @{DispatchingTable.DeliveryStreamSequenceNumber}_{index}, @{DispatchingTable.IsReceived})
 
-                                                """).AddParameter($"{DispatchingTable.EndpointId}_{index}", endpointId.Value));
+                                                """)
+                            .AddParameter($"{DispatchingTable.EndpointId}_{index}", endpointId.Value)
+                            .AddParameter($"{DispatchingTable.DeliveryStreamSequenceNumber}_{index}", assignedSequenceNumbers[endpointId]));
 
             return await command.ExecuteNonQueryAsync().caf();
          }).caf();
+      return assignedSequenceNumbers;
    }
+
+   //The counter row's lock, taken by this increment inside the caller's save transaction and held to its commit, serializes
+   //the pair's commits: sequence order is commit order. One receiver at a time, in OutboxTessageWithReceivers' deterministic
+   //order - the lock order that keeps concurrent saves to overlapping receiver sets deadlock-free.
+   async Task<IReadOnlyDictionary<EndpointId, long>> AssignDeliveryStreamSequenceNumbersAsync(IReadOnlyList<EndpointId> receiverEndpointIds)
+   {
+      var assigned = new Dictionary<EndpointId, long>();
+      foreach(var endpointId in receiverEndpointIds)
+      {
+         assigned[endpointId] = (long)(await _connectionFactory.UseCommandAsync(
+            async command => await command
+                      .SetCommandText(
+                          //UPDLOCK+HOLDLOCK serializes racing first contacts for the same receiver on the not-yet-existing
+                          //row's range, exactly as in the endpoint catalog's TryInsertEntryAsync - the loser's NOT EXISTS
+                          //sees the winner's row and it falls through to the increment.
+                          $"""
+
+                           DECLARE @assigned bigint;
+                           UPDATE {_tables.OutboxDeliveryStreamCounters}
+                               SET @assigned = {CounterTable.LastAssignedSequenceNumber} = {CounterTable.LastAssignedSequenceNumber} + 1
+                           WHERE {CounterTable.EndpointId} = @{CounterTable.EndpointId};
+                           IF @assigned IS NULL
+                           BEGIN
+                               INSERT INTO {_tables.OutboxDeliveryStreamCounters}
+                                           ({CounterTable.EndpointId}, {CounterTable.LastAssignedSequenceNumber})
+                                    SELECT @{CounterTable.EndpointId}, 1
+                               WHERE NOT EXISTS (SELECT 1 FROM {_tables.OutboxDeliveryStreamCounters} WITH (UPDLOCK, HOLDLOCK) WHERE {CounterTable.EndpointId} = @{CounterTable.EndpointId});
+                               IF @@ROWCOUNT = 1 SET @assigned = 1;
+                               ELSE UPDATE {_tables.OutboxDeliveryStreamCounters}
+                                        SET @assigned = {CounterTable.LastAssignedSequenceNumber} = {CounterTable.LastAssignedSequenceNumber} + 1
+                                    WHERE {CounterTable.EndpointId} = @{CounterTable.EndpointId};
+                           END
+                           SELECT @assigned;
+
+                           """)
+                      .AddParameter(CounterTable.EndpointId, endpointId.Value)
+                      .ExecuteScalarAsync().caf()).caf())!;
+      }
+      return assigned;
+   }
+
+   public async Task<long> GetDeliveryStreamPredecessorSequenceNumberAsync(EndpointId receiverId, long sequenceNumber) =>
+      await _connectionFactory.UseCommandAsync(
+         async command => (long)(await command
+                   .SetCommandText(
+                       $"""
+
+                        SELECT COALESCE(MAX({DispatchingTable.DeliveryStreamSequenceNumber}), 0)
+                        FROM {_tables.OutboxTessageDispatching}
+                        WHERE {DispatchingTable.EndpointId} = @{DispatchingTable.EndpointId}
+                          AND {DispatchingTable.DeliveryStreamSequenceNumber} < @{DispatchingTable.DeliveryStreamSequenceNumber}
+                          AND NOT ({DispatchingTable.IsStranded} = 1 AND {DispatchingTable.IsReceived} = 0) -- An unreceived stranded row awaits explicit resolution and will never reach the receiver's door.
+
+                        """)
+                   .AddParameter(DispatchingTable.EndpointId, receiverId.Value)
+                   .AddParameter(DispatchingTable.DeliveryStreamSequenceNumber, sequenceNumber)
+                   .ExecuteScalarAsync().caf())!).caf();
 
    public async Task<ITessagingSqlLayer.MarkAsReceivedResult> MarkAsReceivedAsync(TessageId tessageId, EndpointId endpointId)
    {
@@ -106,13 +168,14 @@ partial class MsSqlOutboxSqlLayer(IMsSqlConnectionPool connectionFactory, MsSqlS
       var raw = await _connectionFactory.UseCommandAsync(
          async command =>
          {
-            var rows = new List<(TessageId TessageId, int TypeId, string Body)>();
+            var rows = new List<(TessageId TessageId, long SequenceNumber, int TypeId, string Body)>();
 
             command
                .SetCommandText(
                    $"""
 
                     SELECT m.{TessageTable.TessageId},
+                           d.{DispatchingTable.DeliveryStreamSequenceNumber},
                            m.{TessageTable.TypeId},
                            m.{TessageTable.SerializedTessage}
                     FROM {_tables.OutboxTessages} m
@@ -120,7 +183,7 @@ partial class MsSqlOutboxSqlLayer(IMsSqlConnectionPool connectionFactory, MsSqlS
                     WHERE d.{DispatchingTable.IsReceived} = 0
                       AND d.{DispatchingTable.IsStranded} = 0 -- A stranded tessage waits for explicit resolution on the decommission surface, never for delivery.
                       AND d.{DispatchingTable.EndpointId} = @endpointId
-                    ORDER BY m.{TessageTable.GeneratedId} -- Send order: recovery re-establishes in-order delivery, oldest undelivered first.
+                    ORDER BY d.{DispatchingTable.DeliveryStreamSequenceNumber} -- The pair's stream order, which is commit order: recovery re-establishes in-order delivery.
 
                     """)
                .AddParameter("endpointId", endpointId.Value);
@@ -130,8 +193,9 @@ partial class MsSqlOutboxSqlLayer(IMsSqlConnectionPool connectionFactory, MsSqlS
             while(await reader.ReadAsync().caf())
             {
                rows.Add((new TessageId(reader.GetGuid(0)),
-                         reader.GetInt32(1),
-                         reader.GetString(2)));
+                         reader.GetInt64(1),
+                         reader.GetInt32(2),
+                         reader.GetString(3)));
             }
 
             return rows;
@@ -139,6 +203,7 @@ partial class MsSqlOutboxSqlLayer(IMsSqlConnectionPool connectionFactory, MsSqlS
 
       return [..raw.Select(row => new ITessagingSqlLayer.UndeliveredTessage(
                               tessageId: row.TessageId,
+                              deliveryStreamSequenceNumber: row.SequenceNumber,
                               typeId: _typeIdInterner.GetTypeId(row.TypeId),
                               serializedTessage: row.Body))];
    }

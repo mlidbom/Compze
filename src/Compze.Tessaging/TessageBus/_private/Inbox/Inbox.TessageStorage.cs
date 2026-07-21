@@ -11,7 +11,7 @@ class InboxTessageStorage(ITessagingSqlLayer.IInboxSqlLayer sqlLayer) : Inbox.IT
    readonly ITessagingSqlLayer.IInboxSqlLayer _sqlLayer = sqlLayer;
 
    public async Task<ITessagingSqlLayer.SaveTessageResult> SaveIncomingTessageAsync(TransportTessage.InComing tessage)
-      => await _sqlLayer.SaveTessageAsync(tessage.TessageId, tessage.TessageTypeId, tessage.Body).caf();
+      => await _sqlLayer.SaveTessageAsync(tessage.TessageId, tessage.TessageTypeId, tessage.Body, tessage.DeliveryStreamPosition._assert().NotNull()).caf();
 
    public async Task MarkAsSucceededAsync(TransportTessage.InComing tessage)
       => (await _sqlLayer.MarkAsSucceededAsync(tessage.TessageId).caf())

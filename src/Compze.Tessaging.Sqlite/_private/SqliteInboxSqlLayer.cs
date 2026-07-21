@@ -1,10 +1,13 @@
 using Compze.Sql.Common._internal;
 using Compze.Sql.Sqlite._internal;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
+using Compze.Internals.SystemCE.TransactionsCE;
 using Compze.Tessaging._internal.SqlLayer;
+using Compze.Tessaging._internal.Transport;
 using Compze.TypeIdentifiers;
 using Compze.TypeIdentifiers.Interning;
 using TessageTable =  Compze.Tessaging._internal.SqlLayer.ITessagingSqlLayer.InboxTessageDatabaseSchemaStrings;
+using Admissions = Compze.Tessaging._internal.SqlLayer.ITessagingSqlLayer.InboxDeliveryStreamAdmissionsSchemaStrings;
 using Compze.Tessaging._private.SqlLayer;
 
 namespace Compze.Tessaging.Sqlite._private;
@@ -16,34 +19,98 @@ partial class SqliteInboxSqlLayer(ISqliteConnectionPool connectionFactory, Sqlit
    readonly ITypeIdInterner _typeIdInterner = typeIdInterner;
    readonly EndpointTableSet _tables = tables;
 
-   public async Task<ITessagingSqlLayer.SaveTessageResult> SaveTessageAsync(TessageId tessageId, TypeId typeId, string serializedTessage)
+   public async Task<ITessagingSqlLayer.SaveTessageResult> SaveTessageAsync(TessageId tessageId, TypeId typeId, string serializedTessage, DeliveryStreamPosition deliveryStreamPosition)
    {
       // Intern before opening a connection: interning may hit the database, and nesting a second connection
       // inside a held one deadlocks the pool.
       var internedTypeId = _typeIdInterner.GetOrInternId(typeId);
-      return await _connectionFactory.UseCommandAsync(
-         async command =>
-         {
-            var affectedRows = await command
-              .SetCommandText(
-                  $"""
+      //Admission and registration are one atomic act: the high-water mark advance and the tessage row commit together,
+      //so no crash or race can admit a tessage without registering it, or register one out of stream order.
+      return await TransactionScopeCe.ExecuteAsync(async () =>
+      {
+         if(!await TryAdvanceAdmissionHighWaterMarkAsync(deliveryStreamPosition).caf())
+            //One position in the stream is one tessage, so at or below the mark means this very tessage was admitted
+            //already - a redelivery to acknowledge. Above it, its declared predecessor has not been admitted: refuse.
+            return deliveryStreamPosition.SequenceNumber <= await GetLastAdmittedSequenceNumberAsync(deliveryStreamPosition).caf()
+                      ? ITessagingSqlLayer.SaveTessageResult.Duplicate
+                      : ITessagingSqlLayer.SaveTessageResult.RefusedAwaitingItsPredecessor;
 
-                   INSERT INTO {_tables.InboxTessages}
-                               ({TessageTable.TessageId},  {TessageTable.TypeId},  {TessageTable.Body}, {TessageTable.Status})
-                       VALUES (@{TessageTable.TessageId}, @{TessageTable.TypeId}, @{TessageTable.Body}, {(int)InboxTessageStatus.UnHandled})
-                   ON CONFLICT ({TessageTable.TessageId}) DO NOTHING
+         await _connectionFactory.UseCommandAsync(
+            async command => await command
+                      .SetCommandText(
+                          $"""
 
-                   """)
-              .AddMediumTextParameter(TessageTable.TessageId, tessageId.ToString())
-              .AddParameter(TessageTable.TypeId, internedTypeId)
-              .AddMediumTextParameter(TessageTable.Body, serializedTessage)
-              .ExecuteNonQueryAsync().caf();
+                           INSERT INTO {_tables.InboxTessages}
+                                       ({TessageTable.TessageId},  {TessageTable.TypeId},  {TessageTable.SenderEndpointId},  {TessageTable.DeliveryStreamSequenceNumber},  {TessageTable.Body}, {TessageTable.Status})
+                               VALUES (@{TessageTable.TessageId}, @{TessageTable.TypeId}, @{TessageTable.SenderEndpointId}, @{TessageTable.DeliveryStreamSequenceNumber}, @{TessageTable.Body}, {(int)InboxTessageStatus.UnHandled})
 
-            return affectedRows == 0
-               ? ITessagingSqlLayer.SaveTessageResult.Duplicate
-               : ITessagingSqlLayer.SaveTessageResult.NewTessage;
-         }).caf();
+                           """)
+                      .AddMediumTextParameter(TessageTable.TessageId, tessageId.ToString())
+                      .AddParameter(TessageTable.TypeId, internedTypeId)
+                      .AddMediumTextParameter(TessageTable.SenderEndpointId, deliveryStreamPosition.SenderEndpointId.ToString())
+                      .AddParameter(TessageTable.DeliveryStreamSequenceNumber, deliveryStreamPosition.SequenceNumber)
+                      .AddMediumTextParameter(TessageTable.Body, serializedTessage)
+                      .ExecuteNonQueryAsync().caf()).caf();
+
+         return ITessagingSqlLayer.SaveTessageResult.NewTessage;
+      }).caf();
    }
+
+   //The pair's admission gate: advance the high-water mark iff it equals the tessage's declared predecessor - the previous
+   //stream member the sender's durable rows still name, so sender-side pruning holes are crossed exactly when real. Racing
+   //same-pair admissions serialize on SQLite's per-database write lock; first contact - no row yet - requires a declared
+   //predecessor of 0.
+   async Task<bool> TryAdvanceAdmissionHighWaterMarkAsync(DeliveryStreamPosition position)
+   {
+      var advanced = await _connectionFactory.UseCommandAsync(
+         async command => await command
+                   .SetCommandText(
+                       $"""
+
+                        UPDATE {_tables.InboxDeliveryStreamAdmissions}
+                            SET {Admissions.LastAdmittedSequenceNumber} = @{Admissions.LastAdmittedSequenceNumber}
+                        WHERE {Admissions.SenderEndpointId} = @{Admissions.SenderEndpointId}
+                            AND {Admissions.LastAdmittedSequenceNumber} = @PredecessorSequenceNumber
+
+                        """)
+                   .AddMediumTextParameter(Admissions.SenderEndpointId, position.SenderEndpointId.ToString())
+                   .AddParameter(Admissions.LastAdmittedSequenceNumber, position.SequenceNumber)
+                   .AddParameter("PredecessorSequenceNumber", position.PredecessorSequenceNumber)
+                   .ExecuteNonQueryAsync().caf()).caf();
+      if(advanced == 1) return true;
+
+      var admittedAsFirstContact = await _connectionFactory.UseCommandAsync(
+         async command => await command
+                   .SetCommandText(
+                       $"""
+
+                        INSERT INTO {_tables.InboxDeliveryStreamAdmissions}
+                                    ({Admissions.SenderEndpointId}, {Admissions.LastAdmittedSequenceNumber})
+                             SELECT @{Admissions.SenderEndpointId}, @{Admissions.LastAdmittedSequenceNumber}
+                        WHERE @PredecessorSequenceNumber = 0
+                          AND NOT EXISTS (SELECT 1 FROM {_tables.InboxDeliveryStreamAdmissions} WHERE {Admissions.SenderEndpointId} = @{Admissions.SenderEndpointId})
+
+                        """)
+                   .AddMediumTextParameter(Admissions.SenderEndpointId, position.SenderEndpointId.ToString())
+                   .AddParameter(Admissions.LastAdmittedSequenceNumber, position.SequenceNumber)
+                   .AddParameter("PredecessorSequenceNumber", position.PredecessorSequenceNumber)
+                   .ExecuteNonQueryAsync().caf()).caf();
+      return admittedAsFirstContact == 1;
+   }
+
+   async Task<long> GetLastAdmittedSequenceNumberAsync(DeliveryStreamPosition position) =>
+      await _connectionFactory.UseCommandAsync(
+         async command => (long)(await command
+                   .SetCommandText(
+                       $"""
+
+                        SELECT COALESCE(MAX({Admissions.LastAdmittedSequenceNumber}), 0)
+                        FROM {_tables.InboxDeliveryStreamAdmissions}
+                        WHERE {Admissions.SenderEndpointId} = @{Admissions.SenderEndpointId}
+
+                        """)
+                   .AddMediumTextParameter(Admissions.SenderEndpointId, position.SenderEndpointId.ToString())
+                   .ExecuteScalarAsync().caf())!).caf();
 
    public async Task<int> MarkAsSucceededAsync(TessageId tessageId)
    {

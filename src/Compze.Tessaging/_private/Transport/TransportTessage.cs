@@ -1,6 +1,7 @@
 using Compze.Contracts;
 using Compze.Tessaging.TessageBus._internal;
 using Compze.Tessaging.TessageTypes;
+using Compze.Tessaging._internal.Transport;
 using Compze.TypeIdentifiers;
 
 namespace Compze.Tessaging._private.Transport;
@@ -15,6 +16,11 @@ static class TransportTessage
       internal readonly TypeId TessageTypeId;
       readonly Type _tessageType;
       internal readonly TransportTessageType TessageTypeEnum;
+
+      ///<summary>The tessage's coordinates in its pair's delivery stream — what the inbox door admits on. Carried by every<br/>
+      /// exactly-once tessage arriving over the wire; null on the tiers that have no delivery stream, and on a tessage the<br/>
+      /// inbox recovery scan reloads from its own rows, which was admitted before the crash and faces no door again.</summary>
+      internal readonly DeliveryStreamPosition? DeliveryStreamPosition;
 
       ITessage? _tessage;
 
@@ -35,7 +41,7 @@ static class TransportTessage
          return _tessage;
       }
 
-      internal InComing(string body, string persistedTypeString, TessageId tessageId, ITypeMap typeMap, ITessagingSerializer serializer)
+      internal InComing(string body, string persistedTypeString, TessageId tessageId, ITypeMap typeMap, ITessagingSerializer serializer, DeliveryStreamPosition? deliveryStreamPosition = null)
       {
          _serializer = serializer;
          Body = body;
@@ -43,6 +49,7 @@ static class TransportTessage
          _tessageType = TessageTypeId.Type;
          TessageTypeEnum = _tessageType.TransportTessageType();
          TessageId = tessageId;
+         DeliveryStreamPosition = deliveryStreamPosition;
       }
    }
 
@@ -55,19 +62,25 @@ static class TransportTessage
       internal readonly string Body;
       internal readonly TransportTessageType TessageTypeEnum;
 
-      internal static OutGoing Create(ITessage tessage, TessageId dedupId, ITypeMap typeMap, ITessagingSerializer serializer)
+      ///<summary>The tessage's sequence number in the sender-receiver pair's delivery stream, assigned by the outbox save<br/>
+      /// (see <see cref="DeliveryStreamPosition"/>): the exactly-once send queue's ordering key, and what the wire envelope<br/>
+      /// carries to the receiver's inbox door. Null on the best-effort tier, which has no delivery stream sequence.</summary>
+      internal readonly long? DeliveryStreamSequenceNumber;
+
+      internal static OutGoing Create(ITessage tessage, TessageId dedupId, ITypeMap typeMap, ITessagingSerializer serializer, long? deliveryStreamSequenceNumber = null)
       {
          var body = serializer.SerializeTessage(tessage);
-         return new OutGoing(typeMap.GetId(tessage.GetType()), tessage.GetType(), body, tessage, dedupId);
+         return new OutGoing(typeMap.GetId(tessage.GetType()), tessage.GetType(), body, tessage, dedupId, deliveryStreamSequenceNumber);
       }
 
-      OutGoing(TypeId typeId, Type type, string body, ITessage tessage, TessageId tessageId)
+      OutGoing(TypeId typeId, Type type, string body, ITessage tessage, TessageId tessageId, long? deliveryStreamSequenceNumber)
       {
          Tessage = tessage;
          Type = typeId;
          TessageId = tessageId;
          Body = body;
          TessageTypeEnum = type.TransportTessageType();
+         DeliveryStreamSequenceNumber = deliveryStreamSequenceNumber;
       }
    }
 }

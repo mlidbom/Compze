@@ -62,7 +62,7 @@ partial class Outbox : IOutbox
       //down at publish time still gets its receiver row, and the recovery backlog its next connection loads delivers the tevent
       //on its return. (A peer is another endpoint, so the registry never lists us: tevents to ourselves dispatch synchronously in-process.)
       var subscriberIds = _peerRegistry.SubscriberIdsFor(wrappedTevent);
-      await _storage.SaveTessageAsync(wrappedTevent, dedupId, [..subscriberIds]).caf();
+      var assignedSequenceNumbers = await _storage.SaveTessageAsync(wrappedTevent, dedupId, [..subscriberIds]).caf();
 
       transaction.OnCommittedSuccessfully(() =>
       {
@@ -70,13 +70,14 @@ partial class Outbox : IOutbox
          //subscriber connection that appeared in between loaded its recovery backlog before this row committed, so only a
          //commit-time lookup sees it. Intersecting keeps enqueue ⊆ persist (the registry is written before routes are built
          //from an advertisement — see TessagingRouter.ConnectAsync); a listed peer with no live connection here is exactly
-         //what the backlog load covers when its next connection's delivery starts.
+         //what the backlog load covers when its next connection's delivery starts - and should both paths offer the tessage,
+         //the stream's sequence-keyed queue collapses them.
          _tessagingRouter.SubscriberConnectionsFor(wrappedTevent)
                          .Where(connection => subscriberIds.Contains(connection.EndpointInformation.Id))
                          .ForEach(connection =>
                           {
                              this.Log().Debug($"OnCommittedSuccessfully: Delivering tevent {dedupId} to endpoint {connection.EndpointInformation.Id}");
-                             connection.EnqueueForExactlyOnceDelivery(wrappedTevent, dedupId);
+                             connection.EnqueueForExactlyOnceDelivery(wrappedTevent, dedupId, assignedSequenceNumbers[connection.EndpointInformation.Id]);
                           });
       });
    }
@@ -98,7 +99,7 @@ partial class Outbox : IOutbox
       //holds the per-database write gate across the wait, so the first-contact advertisement recording that would satisfy it
       //cannot commit - the wait exhausts, the transaction rolls back releasing the gate, the recording lands, and a retry binds.
       var receiverId = await _handlerAvailability.AwaitBindableReceiverOfAsync(exactlyOnceTommand.GetType()).caf();
-      await _storage.SaveTessageAsync(exactlyOnceTommand, exactlyOnceTommand.Id, receiverId).caf();
+      var assignedSequenceNumbers = await _storage.SaveTessageAsync(exactlyOnceTommand, exactlyOnceTommand.Id, receiverId).caf();
 
       transaction.OnCommittedSuccessfully(() =>
       {
@@ -108,7 +109,7 @@ partial class Outbox : IOutbox
          var liveConnection = _tessagingRouter.LiveConnectionToHandlerFor(exactlyOnceTommand.GetType());
          if(liveConnection == null || !liveConnection.EndpointInformation.Id.Equals(receiverId)) return;
          this.Log().Debug($"OnCommittedSuccessfully: Delivering tommand {exactlyOnceTommand.Id} to endpoint {receiverId}");
-         liveConnection.EnqueueForExactlyOnceDelivery(exactlyOnceTommand, exactlyOnceTommand.Id);
+         liveConnection.EnqueueForExactlyOnceDelivery(exactlyOnceTommand, exactlyOnceTommand.Id, assignedSequenceNumbers[receiverId]);
       });
    }
 

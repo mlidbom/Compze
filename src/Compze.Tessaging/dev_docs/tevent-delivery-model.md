@@ -271,16 +271,29 @@ The observation contract — the fine print a subscriber accepts by dropping to 
 > **Tevents sent to a given endpoint are delivered in the order they were sent. We never reorder what we
 > send.**
 
-The mechanism is structural, not bookkeeping: one tessage in flight per destination — a single-threaded send
-loop that does not look at message N+1 until N is delivered and acknowledged. No sequence numbers are needed
-while both processes stay up. Pipelining (multiple in flight) is deliberately not implemented: it is only
-worth its complexity for high-latency links, and same-machine delivery is fast sequentially.
+On the exactly-once rung the order is enforced by construction, at both ends of the pair's delivery stream:
+
+- **The sender assigns each tessage its delivery stream sequence number** inside the transaction that saves
+  it — from a per-receiver counter row whose lock serializes the pair's commits, so sequence order is commit
+  order whatever interleaving the sending transactions had. The connection's send queue is keyed by that
+  sequence number: the loop always leads with the lowest-sequenced undelivered tessage, one in flight per
+  destination, never looking past it until it is delivered and acknowledged. Pipelining (multiple in flight)
+  is deliberately not implemented: it is only worth its complexity for high-latency links, and same-machine
+  delivery is fast sequentially.
+- **The receiver's inbox door admits only in stream order.** Each delivery attempt declares its predecessor —
+  the pair's previous still-deliverable-or-received stream member, freshly computed from the sender's durable
+  dispatching rows, so a hole punched by sender-side pruning (a discarded tevent, a stranded tommand) is
+  crossed exactly when the rows say it is real. The door admits a tessage iff the pair's admission high-water
+  mark equals that declared predecessor; a tessage at or below the mark is acknowledged as a redelivered
+  duplicate, and anything else is refused back into the sender's retry, which heals the stream by leading
+  with the missing predecessor. No sender-side path — a commit hook racing the recovery backlog load, a
+  restarted process, anything — can make the receiver register out of order.
 
 Per rung:
 
-- **Exactly-once: order also survives a sender restart.** Recovery reloads the undelivered backlog in send
-  order — the outbox tessage table's monotonic `GeneratedId` — re-establishing head-of-line on the oldest
-  undelivered tessage.
+- **Exactly-once: order also survives a sender restart.** Recovery reloads the undelivered backlog into the
+  sequence-keyed send queue — re-establishing head-of-line on the oldest undelivered tessage — and the inbox
+  door's admission rule holds regardless.
 - **Best-effort: in order, across the subscriber's downtime.** Every remembered subscriber has an in-memory
   queue on the publisher that outlives connections: tevents published while the subscriber is down accumulate
   in publish order and its next connection drains them on its return — queue-while-down (see

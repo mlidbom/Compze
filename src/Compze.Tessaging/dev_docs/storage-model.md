@@ -24,21 +24,24 @@ below.
 
 ## Each endpoint owns a prefixed table-set
 
-`EndpointTableSet` (`Compze.Tessaging.Transport.SqlLayer`) names the five tables an endpoint owns, each
+`EndpointTableSet` (`Compze.Tessaging.Transport.SqlLayer`) names the seven tables an endpoint owns, each
 prefixed with the endpoint's name:
 
 | Table | Holds |
 |---|---|
-| `«Name»_InboxTessages` | Received tessages: dedup identity, body, handling status |
+| `«Name»_InboxTessages` | Admitted tessages: dedup identity, delivery stream position, body, handling status |
+| `«Name»_InboxDeliveryStreamAdmissions` | Per-sender admission high-water marks: the inbox door admits a tessage exactly when the pair's mark equals its declared predecessor |
 | `«Name»_OutboxTessages` | Sent tessages: durable rows awaiting delivery |
-| `«Name»_OutboxTessageDispatching` | Per-receiver delivery bookkeeping (including `IsStranded`) |
+| `«Name»_OutboxTessageDispatching` | Per-receiver delivery bookkeeping: each row's assigned `DeliveryStreamSequenceNumber`, receipt, and `IsStranded` |
+| `«Name»_OutboxDeliveryStreamCounters` | Per-receiver delivery stream counters: the save transaction's increment assigns each dispatching row its sequence number, and the counter row's lock serializes the pair's commits |
 | `«Name»_Peers` | Durable peer memory: each remembered peer's identity |
 | `«Name»_PeerHandledTessageTypes` | Each remembered peer's advertisement, one row per type |
 
 The prefix is what makes an exactly-once endpoint's name **identifier material**: a letter followed by
 letters, digits, or underscores, at most **28 characters**. The cap is derived, not chosen: 63 (PostgreSQL's
-identifier byte limit, the strictest of the four backends) minus 35 (the longest identifier the schemas
-generate beyond the name, `IX_«name»_OutboxTessages_Unique_TessageId`) — the derivation is documented in
+identifier byte limit, the strictest of the four backends) minus 35 (the longest identifiers the schemas
+generate beyond the name: `IX_«name»_OutboxTessages_Unique_TessageId`, and PostgreSQL's auto-named
+`«name»_InboxDeliveryStreamAdmissions_pkey`) — the derivation is documented in
 `EndpointTableSet`'s remarks, and whoever adds a longer generated identifier re-derives it. A
 non-conforming name fails loud at composition (`EndpointTableSet.For`), never sanitized silently: a
 silently altered name would silently re-home the endpoint's storage.

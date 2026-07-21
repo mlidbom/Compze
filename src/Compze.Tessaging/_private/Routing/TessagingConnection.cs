@@ -63,11 +63,14 @@ partial class TessagingConnection : ITessagingInboxConnection, IDisposable
    public async Task InitAsync() =>
       EndpointInformation = await _endpointDiscoveryQueryTransport.GetAsync(new EndpointInformationQuery(), RemoteAddress).caf();
 
-   public void EnqueueForExactlyOnceDelivery(ITessage tessage, TessageId dedupId)
+   public void EnqueueForExactlyOnceDelivery(ITessage tessage, TessageId dedupId, long deliveryStreamSequenceNumber)
    {
       State.Assert(_exactlyOnceStream is not null, () => "An exactly-once delivery reached a connection that carries no exactly-once stream. Only the outbox sends exactly-once, and the wiring that registers the outbox is the wiring that grants every connection its exactly-once stream — this endpoint wires neither.");
 
-      var transportTessage = TransportTessage.OutGoing.Create(tessage, dedupId, _typeMap, _serializer);
+      var transportTessage = TransportTessage.OutGoing.Create(tessage, dedupId, _typeMap, _serializer, deliveryStreamSequenceNumber);
+      //Idempotent per (tessage, endpoint), so when the stream's sequence-keyed queue collapses the one legitimate
+      //double-enqueue — a commit hook and the recovery backlog load both offering the same tessage — the tracker needs no
+      //correction: the surviving entry is delivered and marked done exactly once.
       _tessagesInFlightTracker.SendingTessageOnTransport(transportTessage, EndpointInformation.Id);
       _exactlyOnceStream!.Enqueue(transportTessage);
    }

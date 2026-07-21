@@ -19,11 +19,17 @@ class TransportRequest
    ///<summary>The serialized tessage.</summary>
    internal string Body { get; }
 
-   internal TransportRequest(TransportRequestKind kind, TessageId tessageId, string payloadTypeIdString, string body)
+   ///<summary>The tessage's coordinates in its sender-receiver pair's delivery stream — sender endpoint and dense sequence<br/>
+   /// number — carried by the exactly-once kinds so the receiver's inbox door can admit in stream order. Null for every<br/>
+   /// other kind, which rides no delivery stream.</summary>
+   internal DeliveryStreamPosition? DeliveryStreamPosition { get; }
+
+   internal TransportRequest(TransportRequestKind kind, TessageId tessageId, string payloadTypeIdString, string body, DeliveryStreamPosition? deliveryStreamPosition = null)
    {
       Kind = kind;
       TessageId = tessageId;
       PayloadTypeIdString = payloadTypeIdString;
       Body = body;
+      DeliveryStreamPosition = deliveryStreamPosition;
    }
 }

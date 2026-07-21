@@ -5,6 +5,7 @@ using Compze.Internals.SystemCE.LinqCE;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tessaging._internal.SqlLayer;
 using Compze.TypeIdentifiers.Interning;
+using CounterTable = Compze.Tessaging._internal.SqlLayer.ITessagingSqlLayer.OutboxDeliveryStreamCountersSchemaStrings;
 using DispatchingTable = Compze.Tessaging._internal.SqlLayer.ITessagingSqlLayer.OutboxTessageDispatchingTableSchemaStrings;
 using TessageTable = Compze.Tessaging._internal.SqlLayer.ITessagingSqlLayer.OutboxTessagesDatabaseSchemaStrings;
 
@@ -17,11 +18,12 @@ partial class SqliteOutboxSqlLayer(ISqliteConnectionPool connectionFactory, Sqli
    readonly ITypeIdInterner _typeIdInterner = typeIdInterner;
    readonly EndpointTableSet _tables = tables;
 
-   public async Task SaveTessageAsync(ITessagingSqlLayer.OutboxTessageWithReceivers tessageWithReceivers)
+   public async Task<IReadOnlyDictionary<EndpointId, long>> SaveTessageAsync(ITessagingSqlLayer.OutboxTessageWithReceivers tessageWithReceivers)
    {
       // Intern before opening a connection: interning may hit the database, and nesting a second connection
       // inside a held one deadlocks the pool.
       var internedTypeId = _typeIdInterner.GetOrInternId(tessageWithReceivers.TypeId);
+      var assignedSequenceNumbers = await AssignDeliveryStreamSequenceNumbersAsync(tessageWithReceivers.ReceiverEndpointIds).caf();
       await _connectionFactory.UseCommandAsync(
          async command =>
          {
@@ -44,14 +46,61 @@ partial class SqliteOutboxSqlLayer(ISqliteConnectionPool connectionFactory, Sqli
                   => command.AppendCommandText($"""
 
                                                 INSERT INTO {_tables.OutboxTessageDispatching}
-                                                            ({DispatchingTable.TessageId},  {DispatchingTable.EndpointId},          {DispatchingTable.IsReceived})
-                                                    VALUES (@{DispatchingTable.TessageId}, @{DispatchingTable.EndpointId}_{index}, @{DispatchingTable.IsReceived});
+                                                            ({DispatchingTable.TessageId},  {DispatchingTable.EndpointId},          {DispatchingTable.DeliveryStreamSequenceNumber},          {DispatchingTable.IsReceived})
+                                                    VALUES (@{DispatchingTable.TessageId}, @{DispatchingTable.EndpointId}_{index}, @{DispatchingTable.DeliveryStreamSequenceNumber}_{index}, @{DispatchingTable.IsReceived});
 
-                                                """).AddMediumTextParameter($"{DispatchingTable.EndpointId}_{index}", endpointId.ToString()));
+                                                """)
+                            .AddMediumTextParameter($"{DispatchingTable.EndpointId}_{index}", endpointId.ToString())
+                            .AddParameter($"{DispatchingTable.DeliveryStreamSequenceNumber}_{index}", assignedSequenceNumbers[endpointId]));
 
             return await command.ExecuteNonQueryAsync().caf();
          }).caf();
+      return assignedSequenceNumbers;
    }
+
+   //The pair's commits serialize on SQLite's per-database write lock rather than on the counter row, but the effect is the
+   //same: sequence order is commit order. One receiver at a time, in OutboxTessageWithReceivers' deterministic order,
+   //matching the server engines' counter-row lock order.
+   async Task<IReadOnlyDictionary<EndpointId, long>> AssignDeliveryStreamSequenceNumbersAsync(IReadOnlyList<EndpointId> receiverEndpointIds)
+   {
+      var assigned = new Dictionary<EndpointId, long>();
+      foreach(var endpointId in receiverEndpointIds)
+      {
+         assigned[endpointId] = (long)(await _connectionFactory.UseCommandAsync(
+            async command => await command
+                      .SetCommandText(
+                          $"""
+
+                           INSERT INTO {_tables.OutboxDeliveryStreamCounters}
+                                       ({CounterTable.EndpointId}, {CounterTable.LastAssignedSequenceNumber})
+                               VALUES (@{CounterTable.EndpointId}, 1)
+                           ON CONFLICT ({CounterTable.EndpointId})
+                              DO UPDATE SET {CounterTable.LastAssignedSequenceNumber} = {CounterTable.LastAssignedSequenceNumber} + 1
+                           RETURNING {CounterTable.LastAssignedSequenceNumber};
+
+                           """)
+                      .AddMediumTextParameter(CounterTable.EndpointId, endpointId.ToString())
+                      .ExecuteScalarAsync().caf()).caf())!;
+      }
+      return assigned;
+   }
+
+   public async Task<long> GetDeliveryStreamPredecessorSequenceNumberAsync(EndpointId receiverId, long sequenceNumber) =>
+      await _connectionFactory.UseCommandAsync(
+         async command => (long)(await command
+                   .SetCommandText(
+                       $"""
+
+                        SELECT COALESCE(MAX({DispatchingTable.DeliveryStreamSequenceNumber}), 0)
+                        FROM {_tables.OutboxTessageDispatching}
+                        WHERE {DispatchingTable.EndpointId} = @{DispatchingTable.EndpointId}
+                          AND {DispatchingTable.DeliveryStreamSequenceNumber} < @{DispatchingTable.DeliveryStreamSequenceNumber}
+                          AND NOT ({DispatchingTable.IsStranded} = 1 AND {DispatchingTable.IsReceived} = 0) --An unreceived stranded row awaits explicit resolution and will never reach the receiver's door.
+
+                        """)
+                   .AddMediumTextParameter(DispatchingTable.EndpointId, receiverId.ToString())
+                   .AddParameter(DispatchingTable.DeliveryStreamSequenceNumber, sequenceNumber)
+                   .ExecuteScalarAsync().caf())!).caf();
 
    public async Task<ITessagingSqlLayer.MarkAsReceivedResult> MarkAsReceivedAsync(TessageId tessageId, EndpointId endpointId)
    {
@@ -105,13 +154,14 @@ partial class SqliteOutboxSqlLayer(ISqliteConnectionPool connectionFactory, Sqli
       var raw = await _connectionFactory.UseCommandAsync(
          async command =>
          {
-            var rows = new List<(TessageId TessageId, int TypeId, string Body)>();
+            var rows = new List<(TessageId TessageId, long SequenceNumber, int TypeId, string Body)>();
 
             command
                .SetCommandText(
                    $"""
 
                     SELECT m.{TessageTable.TessageId},
+                           d.{DispatchingTable.DeliveryStreamSequenceNumber},
                            m.{TessageTable.TypeId},
                            m.{TessageTable.SerializedTessage}
                     FROM {_tables.OutboxTessages} m
@@ -119,7 +169,7 @@ partial class SqliteOutboxSqlLayer(ISqliteConnectionPool connectionFactory, Sqli
                     WHERE d.{DispatchingTable.IsReceived} = 0
                       AND d.{DispatchingTable.IsStranded} = 0 --A stranded tessage waits for explicit resolution on the decommission surface, never for delivery.
                       AND d.{DispatchingTable.EndpointId} = @endpointId
-                    ORDER BY m.{TessageTable.GeneratedId} --Send order: recovery re-establishes in-order delivery, oldest undelivered first.
+                    ORDER BY d.{DispatchingTable.DeliveryStreamSequenceNumber} --The pair's stream order, which is commit order: recovery re-establishes in-order delivery.
 
                     """)
                .AddMediumTextParameter("endpointId", endpointId.ToString());
@@ -129,8 +179,9 @@ partial class SqliteOutboxSqlLayer(ISqliteConnectionPool connectionFactory, Sqli
             while(await reader.ReadAsync().caf())
             {
                rows.Add((new TessageId(reader.GetGuidFromString(0)),
-                         reader.GetInt32(1),
-                         reader.GetString(2)));
+                         reader.GetInt64(1),
+                         reader.GetInt32(2),
+                         reader.GetString(3)));
             }
 
             return rows;
@@ -138,6 +189,7 @@ partial class SqliteOutboxSqlLayer(ISqliteConnectionPool connectionFactory, Sqli
 
       return [..raw.Select(row => new ITessagingSqlLayer.UndeliveredTessage(
                               tessageId: row.TessageId,
+                              deliveryStreamSequenceNumber: row.SequenceNumber,
                               typeId: _typeIdInterner.GetTypeId(row.TypeId),
                               serializedTessage: row.Body))];
    }

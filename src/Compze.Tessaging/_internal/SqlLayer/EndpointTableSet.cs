@@ -10,26 +10,35 @@ namespace Compze.Tessaging._internal.SqlLayer;
 /// domain's data, shared by every endpoint that joins the database.</summary>
 ///<remarks>The prefix makes an exactly-once endpoint's name identifier material: a letter followed by letters, digits, or<br/>
 /// underscores, at most <see cref="MaximumEndpointNameLength"/> characters — asserted loud at composition, never sanitized<br/>
-/// silently. The cap derives from PostgreSQL's 63-byte identifier limit and the longest identifier the schemas generate<br/>
-/// (<c>IX_«name»_OutboxTessages_Unique_TessageId</c>, 35 characters beyond the name); whoever adds a longer generated<br/>
-/// identifier re-derives it.</remarks>
+/// silently. The cap derives from PostgreSQL's 63-byte identifier limit and the longest identifiers the schemas generate<br/>
+/// (<c>IX_«name»_OutboxTessages_Unique_TessageId</c>, and PostgreSQL's auto-named <c>«name»_InboxDeliveryStreamAdmissions_pkey</c> —<br/>
+/// both 35 characters beyond the name); whoever adds a longer generated identifier re-derives it.</remarks>
 class EndpointTableSet
 {
    ///<summary>The endpoint-name length cap: PostgreSQL's 63-byte identifier limit minus the longest identifier the schemas<br/>
    /// generate beyond the name (see the class remarks).</summary>
    const int MaximumEndpointNameLength = 28;
 
+   ///<summary>The endpoint-name prefix every table in the set carries. Schemas also brand generated constraint names with it<br/>
+   /// directly when branding them with a full table name would overrun PostgreSQL's 63-byte identifier limit.</summary>
+   public string Prefix { get; }
+
    public string InboxTessages { get; }
+   public string InboxDeliveryStreamAdmissions { get; }
    public string OutboxTessages { get; }
    public string OutboxTessageDispatching { get; }
+   public string OutboxDeliveryStreamCounters { get; }
    public string Peers { get; }
    public string PeerHandledTessageTypes { get; }
 
    EndpointTableSet(string endpointName)
    {
+      Prefix = endpointName;
       InboxTessages = $"{endpointName}_InboxTessages";
+      InboxDeliveryStreamAdmissions = $"{endpointName}_InboxDeliveryStreamAdmissions";
       OutboxTessages = $"{endpointName}_OutboxTessages";
       OutboxTessageDispatching = $"{endpointName}_OutboxTessageDispatching";
+      OutboxDeliveryStreamCounters = $"{endpointName}_OutboxDeliveryStreamCounters";
       Peers = $"{endpointName}_Peers";
       PeerHandledTessageTypes = $"{endpointName}_PeerHandledTessageTypes";
    }
