@@ -12,6 +12,4 @@ public class LazyCE<TValue>(Func<TValue> factory)
    public TValue Value => _monitor.DoubleCheckedLocking(ref _value, _factory);
 
    public TValue? ValueIfInitialized() => _value;
-
-   public void Reset() => _value = null;
 }

@@ -15,10 +15,6 @@ public static partial class TaskCE
    /// synchronous prefix returns.</summary>
    public static async Task Run(Func<Task> asyncFunction) => await (await Run<Task>(asyncFunction).caf()).caf();
 
-   public static IEnumerable<Task<TResult>> Run<TResult>(params Func<TResult>[] funcs) => funcs.Select(Run).ToList();
-
-   public static IEnumerable<Task> Run(params Action[] actions) => actions.Select(Run).ToList();
-
    ///<summary>
    /// Like Task.Run, but this one guarantees that the task runs on a different thread from the caller, eliminating subtle and hard to debug problems in the case where Task.Run occasionally does NOT run on a different thread
    /// Also guarantees that any continuations are executed asynchronously rather than inline, another thing that occasionally may not be the case otherwise, again causing hard to debug issues.

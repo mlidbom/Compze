@@ -16,9 +16,6 @@ public static class DateTimeCE
    ///<summary>Parses a DateTime string using invariant culture to avoid locale-dependent behavior</summary>
    public static DateTime ParseInvariant(string dateTimeString) => DateTime.Parse(dateTimeString, CultureInfo.InvariantCulture);
 
-   public static string ToStringInvariant(this DateTime @this) => @this.ToString(CultureInfo.InvariantCulture);
-   public static string ToStringInvariant(this DateTime @this, string format) => @this.ToString(format, CultureInfo.InvariantCulture);
-
    ///<summary>Ensures that a DateTime instance has a Kind specified so that it can be accurately stored, restored, and passed between systems with different time zones without losing information</summary>
    static DateTime AssertHasKind(this DateTime @this) =>
       Argument.Assert(@this.Kind != DateTimeKind.Unspecified,

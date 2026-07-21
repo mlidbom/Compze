@@ -18,7 +18,5 @@ public partial class DirectoryCE : FileSystemInfoCE
       return new DirectoryCE(GetDirectoryInfo().CreateSubdirectory(subDirectory));
    }
 
-   public string GetFilePath(string fileName) => Path.Combine(GetDirectoryInfo().FullName, fileName);
-
    DirectoryInfo? TryGetSubDirector(string name) => GetDirectoryInfo().GetDirectories().SingleOrDefault(it => it.Name == name);
 }

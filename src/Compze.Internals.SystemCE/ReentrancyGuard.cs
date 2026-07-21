@@ -5,7 +5,6 @@ namespace Compze.Internals.SystemCE;
 public class ReentrancyGuard
 {
    bool _isExecuting = false;
-   bool _reentryWasAttempted = false;
 
    public Unit ExecuteIfNotReEntering(Action action) =>
       ExecuteIfNotReEntering(action.ToFunc());
@@ -14,23 +13,12 @@ public class ReentrancyGuard
    {
       if(_isExecuting)
       {
-         _reentryWasAttempted = true;
          return unit;
       }
 
       using(ScopedChange.Enter(() => _isExecuting = true, () => _isExecuting = false))
       {
          return action();
-      }
-   }
-
-#pragma warning disable CA1024 // Method is appropriate — has side effects (clears flag)
-   public bool GetAndClearReentryWasAttempted()
-#pragma warning restore CA1024
-   {
-      using(new Disposable(() => _reentryWasAttempted = false))
-      {
-         return _reentryWasAttempted;
       }
    }
 }

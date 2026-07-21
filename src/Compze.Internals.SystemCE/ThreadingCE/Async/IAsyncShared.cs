@@ -20,9 +20,6 @@ public interface IAsyncShared<out TShared> : IDisposable
    ///<summary>Awaits the shared object, acquires the lock, passes the object to <paramref name="func"/>, awaits and returns its result, then releases the lock.</summary>
    Task<TResult> LockedAsync<TResult>(Func<TShared, Task<TResult>> func);
 
-   ///<summary>Awaits the shared object, acquires the lock, passes the object to <paramref name="action"/>, awaits it, then releases the lock.</summary>
-   Task<Unit> LockedAsync(Func<TShared, Task> action) => LockedAsync(action.ToAsyncFunc());
-
    ///<summary>Acquires the lock, passes the already-resolved shared object to <paramref name="func"/>, returns its result, then releases the lock.</summary>
    TResult Locked<TResult>(Func<TShared, TResult> func);
 
