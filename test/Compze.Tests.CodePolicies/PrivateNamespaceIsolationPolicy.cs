@@ -23,7 +23,7 @@ public static class PrivateNamespaceIsolationPolicy
    {
       CompzeAssemblyLoader.EnsureAllCompzeAssembliesAreLoaded();
 
-      var violations = AllLoadedCompzeAssemblies()
+      var violations = AppDomain.CurrentDomain.AllCompzeAssemblies()
                       .SelectMany(assembly => ForeignPrivateNamespaceTypeReferencesOf(assembly)
                                              .Select(referencedType => $"{assembly.GetName().Name} -> {referencedType}"))
                       .Distinct()
@@ -32,34 +32,6 @@ public static class PrivateNamespaceIsolationPolicy
 
       violations.Must().SequenceEqual(Array.Empty<string>());
    }
-
-   ///<summary>The isolation scan above can only see consumers whose assemblies are loaded beside this test project. This guard<br/>
-   /// fails when an <see cref="InternalsVisibleToAttribute"/> grant names a repo project that is not loaded — closing the blind<br/>
-   /// spot requires adding a project reference to <c>Compze.Tests.CodePolicies</c> so the consumer's references get scanned too.</summary>
-   [XF] public static void Every_InternalsVisibleTo_consumer_that_exists_in_the_repo_is_loaded_for_scanning()
-   {
-      CompzeAssemblyLoader.EnsureAllCompzeAssembliesAreLoaded();
-      var loadedAssemblyNames = AllLoadedCompzeAssemblies().Select(it => it.GetName().Name!).ToHashSet(StringComparer.Ordinal);
-
-      var violations = AllLoadedCompzeAssemblies()
-                      .SelectMany(assembly => assembly.GetCustomAttributes<InternalsVisibleToAttribute>()
-                                             .Select(grant => grant.AssemblyName.Split(',')[0].Trim())
-                                             .Where(consumer => consumer.StartsWithOrdinal("Compze")
-                                                             && !loadedAssemblyNames.Contains(consumer)
-                                                             && CompzeRepository.IsRepoProject(consumer))
-                                             .Select(consumer => $"{assembly.GetName().Name} grants InternalsVisibleTo {consumer}, which is not loaded for scanning"))
-                      .Distinct()
-                      .Order(StringComparer.Ordinal)
-                      .ToList();
-
-      violations.Must().SequenceEqual(Array.Empty<string>());
-   }
-
-   static IReadOnlyList<Assembly> AllLoadedCompzeAssemblies() =>
-      [
-         .. AppDomain.CurrentDomain.GetAssemblies()
-                     .Where(assembly => !assembly.IsDynamic && assembly.GetName().Name?.StartsWithOrdinal("Compze") == true)
-      ];
 
    ///<summary>Every type this assembly's compiled metadata references that lives in a Private namespace of a different Compze assembly.</summary>
    static IEnumerable<string> ForeignPrivateNamespaceTypeReferencesOf(Assembly assembly)

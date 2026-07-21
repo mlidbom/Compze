@@ -122,6 +122,13 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_SystemCE)' != 'true'">
     <ProjectReference Include="..\..\src\Compze.Internals.SystemCE\Compze.Internals.SystemCE.csproj" />
   </ItemGroup>
+  <!-- Compze.InterprocessObject.MemoryPack — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_InterprocessObject_MemoryPack)' == 'true'">
+    <PackageReference Include="Compze.InterprocessObject.MemoryPack" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_InterprocessObject_MemoryPack)' != 'true'">
+    <ProjectReference Include="..\..\src\Compze.InterprocessObject.MemoryPack\Compze.InterprocessObject.MemoryPack.csproj" />
+  </ItemGroup>
   <!-- Compze.Must — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Must)' == 'true'">
     <PackageReference Include="Compze.Must" Version="*-*" />

@@ -19,8 +19,7 @@ public static class TestProjectInternalsVisibleToPolicy
    {
       CompzeAssemblyLoader.EnsureAllCompzeAssembliesAreLoaded();
 
-      var violations = AppDomain.CurrentDomain.GetAssemblies()
-                                .Where(assembly => !assembly.IsDynamic && assembly.GetName().Name?.StartsWithOrdinal("Compze") == true)
+      var violations = AppDomain.CurrentDomain.AllCompzeAssemblies()
                                 .SelectMany(assembly => assembly.GetCustomAttributes<InternalsVisibleToAttribute>()
                                                                 .Select(grant => grant.AssemblyName.Split(',')[0].Trim())
                                                                 .Where(consumer => CompzeRepository.IsTestProject(consumer) && !consumer.ContainsOrdinal("Internals") && !consumer.ContainsOrdinal("InternalSpecifications"))

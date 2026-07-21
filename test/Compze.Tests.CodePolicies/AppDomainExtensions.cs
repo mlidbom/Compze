@@ -7,6 +7,14 @@ static class AppDomainExtensions
 {
    extension(AppDomain @this)
    {
+      ///<summary>Every Compze assembly currently loaded — the set the code policies scan.<br/>
+      /// <see cref="AssemblyScanCoveragePolicy"/> guards that this set covers the whole repo.</summary>
+      public IReadOnlyList<Assembly> AllCompzeAssemblies() =>
+         [
+            .. @this.GetAssemblies()
+                    .Where(assembly => !assembly.IsDynamic && assembly.GetName().Name?.StartsWithOrdinal("Compze.") == true)
+         ];
+
       public IReadOnlyList<Type> AllCompzeTypes() =>
          [
             .. @this.GetAssemblies()
