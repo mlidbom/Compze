@@ -22,12 +22,12 @@ public class TeventDispatcherConfig
    public TeventDispatcherConfig IgnoreUnhandled<T1, T2, T3, T4>() => new(this) { IgnoredUnhandled = [.. IgnoredUnhandled, .. EnumerableCE.OfTypes<T1, T2, T3, T4>()] };
 
    ///<summary>The on/off dispatcher options to enable.</summary>
-   public TeventDispatcherOptions Options { get; init; }
+   internal TeventDispatcherOptions Options { get; init; }
 
    ///<summary>The tevent types that may legitimately go unhandled: dispatching a tevent that no registered handler matches throws a <see cref="TeventUnhandledException"/><br/>
    /// unless the tevent is assignable to one of these types. The types need not belong to the dispatcher's own tevent hierarchy: any interface the concrete tevents<br/>
    /// implement works, such as a generic tevent like <see cref="Taggregates.Tevents.ITaggregateCreatedTevent"/> from a parallel hierarchy.</summary>
-   public IReadOnlyList<Type> IgnoredUnhandled
+   internal IReadOnlyList<Type> IgnoredUnhandled
    {
       get;
       init

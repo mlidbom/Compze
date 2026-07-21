@@ -1,4 +1,3 @@
-using System.Data.Common;
 using Compze.Sql.Common._internal.Abstractions;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Npgsql;
@@ -19,7 +18,6 @@ interface ICompzeNpgsqlConnection : IPoolableConnection, ICompzeDbConnection<Npg
       public void Open() => Connection.Open();
       public async Task OpenAsync() => await Connection.OpenAsync().caf();
 
-      DbCommand ICompzeDbConnection.CreateCommand() => CreateCommand();
       public NpgsqlCommand CreateCommand() => Connection.CreateCommand();
 
       public void Dispose() => Connection.Dispose();

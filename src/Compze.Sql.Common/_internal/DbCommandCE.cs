@@ -11,10 +11,6 @@ static class DbCommandCE
    internal static object? ExecuteScalar(this DbCommand @this, string commandText) =>
       @this.SetCommandText(commandText).ExecuteScalar();
 
-   internal static async Task<object?> ExecuteScalarAsync(this DbCommand @this, string commandText) =>
-      await @this.SetCommandText(commandText).ExecuteScalarAsync().caf();
-
-
    internal static int ExecuteNonQuery(this DbCommand @this, string commandText) =>
       @this.SetCommandText(commandText).ExecuteNonQuery();
 
@@ -40,18 +36,6 @@ static class DbCommandCE
       using var reader = (TReader)@this.ExecuteReader();
       var result = new List<T>();
       reader.ForEachSuccessfulRead(row => result.Add(select(row)));
-      return result;
-   }
-
-   public static async Task<IReadOnlyList<T>> ExecuteReaderAndSelectAsync<T, TCommand, TReader>(this TCommand @this, Func<TReader, T> select)
-      where TCommand : DbCommand
-      where TReader : DbDataReader
-   {
-      var reader = (TReader)await @this.ExecuteReaderAsync().caf();
-      //makes sure DisposeAsync is called without capturing sync context. We can't do it inline because then reader would be ConfiguredAsyncDisposable, not TReader
-      await using var _ = reader.caf();
-      var result = new List<T>();
-      while(await reader.ReadAsync().caf()) result.Add(select(reader));
       return result;
    }
 

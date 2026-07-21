@@ -42,11 +42,10 @@ interface ITessagingSqlLayer
    }
 
    ///<summary>One tessage discarded by <see cref="IOutboxSqlLayer.DiscardAllTessagesOwedToAsync"/>, described for the discarder's<br/>
-   /// report: its identity, its type, and whether it had been stranded (see <see cref="IOutboxSqlLayer.StrandUndeliveredTessagesAsync"/>)<br/>
+   /// report: its type, and whether it had been stranded (see <see cref="IOutboxSqlLayer.StrandUndeliveredTessagesAsync"/>)<br/>
    /// or was awaiting the peer's return.</summary>
-   public class DiscardedTessage(TessageId tessageId, TypeId typeId, bool wasStranded)
+   public class DiscardedTessage(TypeId typeId, bool wasStranded)
    {
-      public TessageId TessageId { get; } = tessageId;
       internal TypeId TypeId { get; } = typeId;
       internal bool WasStranded { get; } = wasStranded;
    }
@@ -145,9 +144,6 @@ interface ITessagingSqlLayer
       /// process's lease is instead taken over once stale.</summary>
       Task ReleaseTheLeaseAsync(string endpointName, Guid leaseHolderId);
 
-      ///<summary>Every endpoint inhabiting the domain database.</summary>
-      Task<IReadOnlyList<EndpointCatalogEntry>> GetEntriesAsync();
-
       Task InitAsync();
 
       //todo: Decommissioning an endpoint's storage = dropping its prefixed table-set and deleting its catalog entry (refused
@@ -156,13 +152,12 @@ interface ITessagingSqlLayer
       //first consumer.
    }
 
-   ///<summary>One endpoint's row in the domain database's endpoint catalog: its identity, when it first registered, and who —<br/>
-   /// if anyone — holds its process lease right now.</summary>
-   public class EndpointCatalogEntry(string endpointName, EndpointId endpointId, DateTime createdUtc, string? leaseHolderDescription, DateTime? leaseHeartbeatUtc)
+   ///<summary>One endpoint's row in the domain database's endpoint catalog: its identity and who — if anyone — holds its<br/>
+   /// process lease right now.</summary>
+   public class EndpointCatalogEntry(string endpointName, EndpointId endpointId, string? leaseHolderDescription, DateTime? leaseHeartbeatUtc)
    {
       public string EndpointName { get; } = endpointName;
       internal EndpointId EndpointId { get; } = endpointId;
-      public DateTime CreatedUtc { get; } = createdUtc;
 
       ///<summary>Human-readable description of the process holding the lease — null when the lease is free.</summary>
       internal string? LeaseHolderDescription { get; } = leaseHolderDescription;

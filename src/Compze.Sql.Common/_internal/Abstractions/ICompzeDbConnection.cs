@@ -2,15 +2,10 @@ using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 
 namespace Compze.Sql.Common._internal.Abstractions;
 
-interface ICompzeDbConnection
-{
-   DbCommand CreateCommand();
-}
-
-interface ICompzeDbConnection<out TCommand> : ICompzeDbConnection
+interface ICompzeDbConnection<out TCommand>
    where TCommand : DbCommand
 {
-   new TCommand CreateCommand();
+   TCommand CreateCommand();
 
    void UseCommand(Action<TCommand> action)
    {

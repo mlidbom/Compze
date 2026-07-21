@@ -1,4 +1,3 @@
-using System.Data.Common;
 using Compze.Sql.Common._internal.Abstractions;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Microsoft.Data.SqlClient;
@@ -18,7 +17,6 @@ interface ICompzeMsSqlConnection : IPoolableConnection, ICompzeDbConnection<SqlC
       public void Open() => Connection.Open();
       public async Task OpenAsync() => await Connection.OpenAsync().caf();
 
-      DbCommand ICompzeDbConnection.CreateCommand() => CreateCommand();
       public SqlCommand CreateCommand() => Connection.CreateCommand();
 
       public void Dispose() => Connection.Dispose();

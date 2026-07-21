@@ -6,11 +6,10 @@ using Compze.Threading.ResourceAccess;
 
 namespace Compze.Tessaging._private.SystemCE.ThreadingCE;
 
-//todo: this should not be public. And whether it belongs in this project is another question
+//todo: whether this belongs in this project is an open question
 interface ITaskRunner
 {
    void Run(string taskName, Action action);
-   void Run(string taskName, Func<Unit> task);
    ///<summary>Runs <paramref name="asyncAction"/> as a tracked background task: started on a thread-pool thread, tracked until<br/>
    /// the whole async work completes, its failure reported through the background-exception reporter.</summary>
    void Run(string taskName, Func<Task> asyncAction);
@@ -38,8 +37,6 @@ static class TaskRunnerRegistrar
          action();
          return Task.CompletedTask;
       });
-
-      public void Run(string taskName, Func<Unit> task) => Run(taskName, () => { task(); });
 
       public void Run(string taskName, Func<Task> asyncAction)
       {

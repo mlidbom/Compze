@@ -1,5 +1,4 @@
 using System.Collections.Concurrent;
-using System.Data.Common;
 using System.Transactions;
 using Compze.Sql.Common._internal.Abstractions;
 using Compze.Contracts;
@@ -134,7 +133,6 @@ interface ICompzeSqliteConnection : IPoolableConnection, ICompzeDbConnection<Sql
             ? $"PRAGMA busy_timeout={BusyTimeoutMilliseconds}; PRAGMA journal_mode=WAL; PRAGMA synchronous=NORMAL;"
             : $"PRAGMA busy_timeout={BusyTimeoutMilliseconds};";
 
-      DbCommand ICompzeDbConnection.CreateCommand() => CreateCommand();
 
       public SqliteCommand CreateCommand()
       {

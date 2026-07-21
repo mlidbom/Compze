@@ -225,7 +225,6 @@ partial class MsSqlOutboxSqlLayer(IMsSqlConnectionPool connectionFactory, MsSqlS
       await DiscardUndeliveredTessagesAsync(endpointId, [..owed.Select(row => row.TessageId)]).caf();
 
       return [..owed.Select(row => new ITessagingSqlLayer.DiscardedTessage(
-                              tessageId: row.TessageId,
                               typeId: _typeIdInterner.GetTypeId(row.TypeId),
                               wasStranded: row.WasStranded))];
    }

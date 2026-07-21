@@ -44,7 +44,4 @@ partial class DocumentDbSession
       Type Type { get;  }
 
    }
-
-   public class DocumentKey<TDocument>(object id) : DocumentKey(id, typeof(TDocument));
-
 }

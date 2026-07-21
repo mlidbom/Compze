@@ -19,9 +19,6 @@ partial class SqliteEndpointCatalogSqlLayer(ISqliteConnectionPool connectionFact
    public async Task<ITessagingSqlLayer.EndpointCatalogEntry?> GetEntryByEndpointIdAsync(EndpointId endpointId) =>
       (await EntriesAsync($"WHERE {Catalog.EndpointId} = @filter", command => command.AddMediumTextParameter("filter", endpointId.ToString())).caf()).SingleOrDefault();
 
-   public async Task<IReadOnlyList<ITessagingSqlLayer.EndpointCatalogEntry>> GetEntriesAsync() =>
-      await EntriesAsync(filterClause: "", addFilterParameter: _ => {}).caf();
-
    public async Task<bool> TryInsertEntryHoldingTheLeaseAsync(string endpointName, EndpointId endpointId, Guid leaseHolderId, string leaseHolderDescription, DateTime utcNow) =>
       await _connectionFactory.UseCommandAsync(
          async command => 1 == await command
@@ -109,7 +106,7 @@ partial class SqliteEndpointCatalogSqlLayer(ISqliteConnectionPool connectionFact
             command.SetCommandText(
                $"""
 
-                SELECT {Catalog.EndpointName}, {Catalog.EndpointId}, {Catalog.CreatedUtc}, {Catalog.LeaseHolderDescription}, {Catalog.LeaseHeartbeatUtc}
+                SELECT {Catalog.EndpointName}, {Catalog.EndpointId}, {Catalog.LeaseHolderDescription}, {Catalog.LeaseHeartbeatUtc}
                 FROM {Catalog.TableName} {filterClause}
 
                 """);
@@ -122,9 +119,8 @@ partial class SqliteEndpointCatalogSqlLayer(ISqliteConnectionPool connectionFact
                entries.Add(new ITessagingSqlLayer.EndpointCatalogEntry(
                               endpointName: reader.GetString(0),
                               endpointId: new EndpointId(reader.GetGuidFromString(1)),
-                              createdUtc: new DateTime(reader.GetInt64(2), DateTimeKind.Utc),
-                              leaseHolderDescription: await reader.IsDBNullAsync(3).caf() ? null : reader.GetString(3),
-                              leaseHeartbeatUtc: await reader.IsDBNullAsync(4).caf() ? null : new DateTime(reader.GetInt64(4), DateTimeKind.Utc)));
+                              leaseHolderDescription: await reader.IsDBNullAsync(2).caf() ? null : reader.GetString(2),
+                              leaseHeartbeatUtc: await reader.IsDBNullAsync(3).caf() ? null : new DateTime(reader.GetInt64(3), DateTimeKind.Utc)));
             }
 
             return entries;

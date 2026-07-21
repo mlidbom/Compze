@@ -1,4 +1,3 @@
-using System.Data.Common;
 using Compze.Sql.Common._internal.Abstractions;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using MySqlConnector;
@@ -18,7 +17,6 @@ interface ICompzeMySqlConnection : IPoolableConnection, ICompzeDbConnection<MySq
       public void Open() => Connection.Open();
       public async Task OpenAsync() => await Connection.OpenAsync().caf();
 
-      DbCommand ICompzeDbConnection.CreateCommand() => CreateCommand();
       public MySqlCommand CreateCommand() => Connection.CreateCommand();
 
       public void Dispose() => Connection.Dispose();
