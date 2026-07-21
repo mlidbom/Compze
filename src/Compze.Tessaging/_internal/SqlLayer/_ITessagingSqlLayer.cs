@@ -101,6 +101,13 @@ interface ITessagingSqlLayer
       /// transaction holds the claim — and the caller skips without touching it.</summary>
       Task<bool> TryClaimForHandlingAsync(TessageId tessageId);
 
+      ///<summary>The inbox's recovery backlog: every admitted tessage whose handling has not finished — status still<br/>
+      /// UnHandled — in admission order (the inbox table's monotonic <see cref="InboxTessageDatabaseSchemaStrings.GeneratedId"/>;<br/>
+      /// per pair that is stream order, since the admission gate serializes a pair's admissions). A hard crash between a<br/>
+      /// tessage's admission and its handler-commit leaves exactly these rows, with no redelivery coming — the sender was<br/>
+      /// acknowledged at admission — so the recovery scan at endpoint start re-enqueues them for handling.</summary>
+      Task<IReadOnlyList<UnHandledTessage>> GetUnHandledTessagesAsync();
+
       Task<int> MarkAsSucceededAsync(TessageId tessageId);
       Task<int> RecordExceptionAsync(TessageId tessageId, string exceptionStackTrace, string exceptionTessage, string exceptionType);
       Task<int> MarkAsFailedAsync(TessageId tessageId);
@@ -155,6 +162,16 @@ interface ITessagingSqlLayer
    {
       internal TessageId TessageId { get; } = tessageId;
       internal long DeliveryStreamSequenceNumber { get; } = deliveryStreamSequenceNumber;
+      internal TypeId TypeId { get; } = typeId;
+      internal string SerializedTessage { get; } = serializedTessage;
+   }
+
+   ///<summary>One tessage the inbox admitted but whose handling has not finished, as loaded by the recovery scan at endpoint<br/>
+   /// start (see <see cref="IInboxSqlLayer.GetUnHandledTessagesAsync"/>): exactly what re-enqueueing for handling needs —<br/>
+   /// identity, type for deserialization, and the serialized body.</summary>
+   public class UnHandledTessage(TessageId tessageId, TypeId typeId, string serializedTessage)
+   {
+      internal TessageId TessageId { get; } = tessageId;
       internal TypeId TypeId { get; } = typeId;
       internal string SerializedTessage { get; } = serializedTessage;
    }

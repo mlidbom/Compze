@@ -207,8 +207,11 @@ Registering a handler (`ForTevent<TTevent>(...)`) says only "this endpoint under
 delivery guarantee comes from each arriving tevent's type — the subscriber never picks it:
 
 - a local publish → participation (synchronous, publisher's transaction);
-- an arriving `IExactlyOnceTevent` → through the inbox: persisted, deduped, handled in its own transaction,
-  retried until handled;
+- an arriving `IExactlyOnceTevent` → through the inbox: admitted in stream order at the door, registered
+  durably, handled in its own transaction under a row-level handling claim, retried until handled. The
+  sender is acknowledged at admission, so a hard crash between admission and handler-commit gets no
+  redelivery — the inbox's recovery scan at endpoint start re-enqueues every admitted but unhandled tessage,
+  which is what makes acknowledged mean will-be-handled across crashes;
 - an arriving best-effort tevent → direct dispatch in a unit of work of its own — atomic handler writes, but
   no dedup and no retry.
 

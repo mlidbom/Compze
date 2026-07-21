@@ -81,8 +81,10 @@ class TessagesInFlightTracker : ITessagesInFlightTracker
             _busExceptions.Add(exception);
          }
 
-         var inFlightTessage = _trackedTessages[tessage.TessageId];
-         inFlightTessage.EndpointDeliveryStatus[handlingEndpointId] = true;
+         //A tessage this process never sent - one the inbox recovery scan reloaded from its own rows after a crash - has no
+         //in-flight entry here: there is nothing to mark done, only the handling that just finished.
+         if(_trackedTessages.TryGetValue(tessage.TessageId, out var inFlightTessage))
+            inFlightTessage.EndpointDeliveryStatus[handlingEndpointId] = true;
       }
 
       internal void DroppedBeforeDelivery(TransportTessage.OutGoing transportTessage, EndpointId remoteEndpointId) =>

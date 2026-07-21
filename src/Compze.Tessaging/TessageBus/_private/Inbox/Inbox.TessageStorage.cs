@@ -16,6 +16,9 @@ class InboxTessageStorage(ITessagingSqlLayer.IInboxSqlLayer sqlLayer) : Inbox.IT
    public async Task<bool> TryClaimForHandlingAsync(TransportTessage.InComing tessage)
       => await _sqlLayer.TryClaimForHandlingAsync(tessage.TessageId).caf();
 
+   public async Task<IReadOnlyList<ITessagingSqlLayer.UnHandledTessage>> GetUnHandledTessagesAsync()
+      => await _sqlLayer.GetUnHandledTessagesAsync().caf();
+
    public async Task MarkAsSucceededAsync(TransportTessage.InComing tessage)
       => (await _sqlLayer.MarkAsSucceededAsync(tessage.TessageId).caf())
                ._assert(affectedRows => affectedRows == 1);

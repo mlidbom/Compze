@@ -14,6 +14,10 @@ partial class Inbox
       /// is not this execution's to handle, and the caller skips without touching it.</summary>
       Task<bool> TryClaimForHandlingAsync(TransportTessage.InComing tessage);
 
+      ///<summary>The inbox's recovery backlog: every admitted tessage whose handling has not finished, in admission order —<br/>
+      /// see <see cref="ITessagingSqlLayer.IInboxSqlLayer.GetUnHandledTessagesAsync"/>.</summary>
+      Task<IReadOnlyList<ITessagingSqlLayer.UnHandledTessage>> GetUnHandledTessagesAsync();
+
       Task MarkAsSucceededAsync(TransportTessage.InComing tessage);
       Task RecordExceptionAsync(TransportTessage.InComing tessage, Exception exception);
       Task MarkAsFailedAsync(TransportTessage.InComing tessage);

@@ -19,7 +19,8 @@ public class TueryOnlyADownPeerServes : Remotable.NonTransactional.Tueries.Tuery
 class AssemblyTypeMapper : IAssemblyTypeMapper
 {
    public void Map(IAssemblyTypeMappingRegistrar map)
-      => map.Map<TueryOnlyADownPeerServes>("4b0e7d92-5c1a-4e83-9f27-6d38a0b45c19");
+      => map.Map<TueryOnlyADownPeerServes>("4b0e7d92-5c1a-4e83-9f27-6d38a0b45c19")
+            .Map<MyExactlyOnceTommandAdmittedBeforeTheCrash>("7c2f4a81-9d36-4b58-8e07-1f65c3a92d40");
 }
 
 static class TessagingInternalSpecificationTypeMappings
