@@ -94,6 +94,8 @@ static class TessageTypeInspector
 
    class CannotBeBothRemotableAndStrictlyLocal : MutuallyExclusiveInterfaces<IRemotableTessage, IStrictlyLocalTessage>;
 
+   //Todo: This is exclusion is not a fix, it is papering over a design contradiction with a manual if clause while the contradiction still
+   // screams that something is wrong with the types. We will definitely not keep this, what we will do instead is up for debate.
    //A strictly local tessage is exempt: the prohibition against remote sending from within a transaction is vacuous for a tessage that never travels remotely,
    //so requiring a transactional sender contradicts nothing. For every other tessage the combination forbids remote sending outright while claiming nothing about locality - a contradiction.
    class CannotForbidAndRequireTransactionalSender : SimpleTessageTypeDesignRule
