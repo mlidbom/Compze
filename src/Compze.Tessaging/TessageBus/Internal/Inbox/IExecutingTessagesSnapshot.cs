@@ -1,9 +1,0 @@
-using Compze.Tessaging.Internal.Transport;
-
-namespace Compze.Tessaging.TessageBus.Internal.Inbox;
-
-interface IExecutingTessagesSnapshot
-{
-    IReadOnlyList<TransportTessage.InComing> ExactlyOnceTommands { get; }
-    IReadOnlyList<TransportTessage.InComing> ExactlyOnceTevents { get; }
-}

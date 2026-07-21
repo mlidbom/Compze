@@ -1,7 +1,8 @@
 using Compze.Internals.SystemCE.CollectionsCE.GenericCE;
 using Compze.Tessaging.Endpoints;
-using Compze.Tessaging.Internal.Transport;
-using Compze.Tessaging.Internal.Transport.Advertisement;
+using Compze.Tessaging.Private.TessagesInFlight;
+using Compze.Tessaging.Private.Transport;
+using Compze.Tessaging.Private.Transport.Advertisement;
 using Compze.Threading;
 using Compze.Threading.Exceptions;
 using Compze.Threading.ResourceAccess;
@@ -108,15 +109,4 @@ class TessagesInFlightTracker : ITessagesInFlightTracker
       internal IReadOnlyDictionary<string, int> GetPendingObservations() =>
          _pendingObservationsByWrapperTeventType.ToDictionary(it => it.Key.FullName ?? it.Key.Name, it => it.Value);
    }
-}
-
-class NullOpTessagesInFlightTracker : ITessagesInFlightTracker
-{
-   public IReadOnlyList<Exception> GetExceptions() => [];
-   public void SendingTessageOnTransport(TransportTessage.OutGoing transportTessage, EndpointId remoteEndpointId) {}
-   public void AwaitNoTessagesInFlight(WaitTimeout? timeoutOverride) {}
-   public void DoneWith(TransportTessage.InComing tessage, EndpointId handlingEndpointId, Exception? exception) {}
-   public void DroppedBeforeDelivery(TransportTessage.OutGoing transportTessage, EndpointId remoteEndpointId) {}
-   public void TeventObservationQueued(Type wrapperTeventType) {}
-   public void TeventObservationDispatched(Type wrapperTeventType) {}
 }

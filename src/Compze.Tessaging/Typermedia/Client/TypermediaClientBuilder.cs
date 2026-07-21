@@ -1,7 +1,8 @@
-using Compze.Tessaging.Typermedia.Client.Internal;
+using Compze.Tessaging.Typermedia.Client.Private;
 using Compze.Tessaging.Typermedia.Internal;
 using Compze.Contracts;
 using Compze.DependencyInjection.Abstractions;
+using Compze.Tessaging.Typermedia.Private;
 
 namespace Compze.Tessaging.Typermedia.Client;
 

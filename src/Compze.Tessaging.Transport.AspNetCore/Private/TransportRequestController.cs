@@ -8,6 +8,7 @@ using Compze.Tessaging.Typermedia;
 using Compze.Tessaging.Internal.Transport;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Compze.Tessaging.Private.Transport.AspNetCore;
 
 namespace Compze.Tessaging.Transport.AspNetCore.Private;
 

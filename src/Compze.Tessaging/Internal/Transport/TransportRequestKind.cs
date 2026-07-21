@@ -1,4 +1,5 @@
 using Compze.Tessaging.Internal.Transport.Advertisement;
+using Compze.Tessaging.Private.Transport.Advertisement;
 
 namespace Compze.Tessaging.Internal.Transport;
 

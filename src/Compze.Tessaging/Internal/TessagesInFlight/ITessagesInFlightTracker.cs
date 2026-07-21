@@ -1,7 +1,8 @@
 using Compze.Tessaging.Endpoints;
-using Compze.Tessaging.Engine.Internal;
+using Compze.Tessaging.Engine.Private;
 using Compze.Tessaging.Internal.Transport;
 using Compze.Threading;
+using Compze.Tessaging.Private.Transport;
 
 namespace Compze.Tessaging.Internal.TessagesInFlight;
 

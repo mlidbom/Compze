@@ -2,7 +2,7 @@ using Compze.Contracts;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.ReflectionCE;
 using Compze.Tessaging.Engine;
-using Compze.Tessaging.Engine.HandlerRegistration.Internal;
+using Compze.Tessaging.Engine.HandlerRegistration.Private;
 using Compze.Tessaging.TessageTypes;
 
 namespace Compze.Tessaging.TessageBus;

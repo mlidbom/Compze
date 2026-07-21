@@ -13,11 +13,13 @@ namespace Compze.Tests.CodePolicies;
 /// <c>.claude/rules/02-universal-compze/01-strategy/020-highlight-public-vs-internal-parts-of-projects.md</c>:<br/>
 /// an Internal namespace holds code deliberately shared with other Compze assemblies through <see cref="InternalsVisibleToAttribute"/>,<br/>
 /// while a Private namespace holds code no other assembly may use — whether or not an InternalsVisibleTo grant happens to make it<br/>
-/// technically accessible.</summary>
+/// technically accessible. Both directions are enforced: Private is never reached into, and Internal never overstates —<br/>
+/// a type no other assembly consumes belongs under Private.</summary>
 ///<remarks>The compiler cannot tell the two kinds apart — an InternalsVisibleTo grant opens every internal type alike — so this policy<br/>
-/// reads the compiled assemblies' metadata instead: every type reference each Compze assembly makes is checked against Private<br/>
-/// namespaces of the assembly declaring the referenced type. A reference into a foreign Private namespace means one of two things:<br/>
-/// the consumer must stop reaching in, or the type is genuinely shared and belongs in an Internal namespace.</remarks>
+/// reads the compiled assemblies' metadata instead: every type reference each Compze assembly makes is checked against the Private<br/>
+/// namespaces of the assembly declaring the referenced type, and every type living in an Internal namespace is checked to actually<br/>
+/// have such a foreign consumer. Together the two tests make the section names ground truth: a violation either way names the type,<br/>
+/// and the fix is moving it to the section that tells the truth.</remarks>
 public static class PrivateNamespaceIsolationPolicy
 {
    [XF] public static void No_assembly_references_a_type_in_another_assemblys_Private_namespace()
@@ -25,8 +27,9 @@ public static class PrivateNamespaceIsolationPolicy
       CompzeAssemblyLoader.EnsureAllCompzeAssembliesAreLoaded();
 
       var violations = AppDomain.CurrentDomain.AllCompzeAssemblies()
-                      .SelectMany(assembly => ForeignPrivateNamespaceTypeReferencesOf(assembly)
-                                             .Select(referencedType => $"{assembly.GetName().Name} -> {referencedType}"))
+                      .SelectMany(assembly => ForeignCompzeTypeReferencesOf(assembly)
+                                             .Where(reference => reference.Namespace.Split('.').Contains("Private"))
+                                             .Select(reference => $"{assembly.GetName().Name} -> {reference.Namespace}.{reference.Name}"))
                       .Distinct()
                       .Order(StringComparer.Ordinal)
                       .ToList();
@@ -34,8 +37,34 @@ public static class PrivateNamespaceIsolationPolicy
       violations.Must().SequenceEqual(Array.Empty<string>());
    }
 
-   ///<summary>Every type this assembly's compiled metadata references that lives in a Private namespace of a different Compze assembly.</summary>
-   static IEnumerable<string> ForeignPrivateNamespaceTypeReferencesOf(Assembly assembly)
+   ///<summary>The converse guarantee: an Internal namespace claims its types are shared through <see cref="InternalsVisibleToAttribute"/>,<br/>
+   /// so a type there that no other assembly references overstates — it belongs under Private. Together with the isolation test above<br/>
+   /// this keeps the classification self-maintaining: a new foreign consumer of a Private type fails the test above and forces the<br/>
+   /// promotion to Internal; the last consumer of an Internal type disappearing fails this test and forces the demotion to Private.</summary>
+   [XF] public static void Every_type_in_an_Internal_namespace_is_referenced_by_another_assembly()
+   {
+      CompzeAssemblyLoader.EnsureAllCompzeAssembliesAreLoaded();
+
+      var foreignReferencedTypes = AppDomain.CurrentDomain.AllCompzeAssemblies()
+                                  .SelectMany(ForeignCompzeTypeReferencesOf)
+                                  .ToHashSet();
+
+      var violations = AppDomain.CurrentDomain.AllCompzeLibraryTypes()
+                      .Where(type => type is { IsNested: false }
+                                  && !type.IsDefined(typeof(CompilerGeneratedAttribute), inherit: false)
+                                  && type.Namespace?.Split('.').Contains("Internal") == true
+                                  && !foreignReferencedTypes.Contains((type.Assembly.GetName().Name!, type.Namespace!, type.Name)))
+                      .Select(type => type.FullName!)
+                      .Order(StringComparer.Ordinal)
+                      .ToList();
+
+      violations.Must().SequenceEqual(Array.Empty<string>());
+   }
+
+   ///<summary>Every type this assembly's compiled metadata references that a different Compze assembly declares: the declaring<br/>
+   /// assembly, the namespace, and the type name — nested types resolved to their outermost declaring type, which is what the<br/>
+   /// namespace sections classify.</summary>
+   static IEnumerable<(string DeclaringAssembly, string Namespace, string Name)> ForeignCompzeTypeReferencesOf(Assembly assembly)
    {
       using var peReader = new PEReader(File.OpenRead(assembly.Location));
       var metadata = peReader.GetMetadataReader();
@@ -49,10 +78,7 @@ public static class PrivateNamespaceIsolationPolicy
          var declaringAssembly = metadata.GetString(metadata.GetAssemblyReference((AssemblyReferenceHandle)typeReference.ResolutionScope).Name);
          if(!declaringAssembly.StartsWithOrdinal("Compze")) continue;
 
-         var @namespace = metadata.GetString(typeReference.Namespace);
-         if(@namespace.Split('.').Contains("Private"))
-            yield return $"{@namespace}.{metadata.GetString(typeReference.Name)}";
+         yield return (declaringAssembly, metadata.GetString(typeReference.Namespace), metadata.GetString(typeReference.Name));
       }
    }
-
 }

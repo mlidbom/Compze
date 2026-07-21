@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using Compze.Tessaging.Private.Transport.Advertisement;
 using Compze.Tessaging.Endpoints;
 using Compze.Tessaging.TessageTypes;
 using Compze.TypeIdentifiers;
@@ -6,11 +7,6 @@ using Compze.TypeIdentifiers;
 // ReSharper disable UnusedAutoPropertyAccessor.Global serilization requires it
 
 namespace Compze.Tessaging.Internal.Transport.Advertisement;
-
-///<summary>The endpoint-discovery query "who are you, and which remotable tessage types do you serve?" — the one question a<br/>
-/// connecting endpoint's router asks to learn the identity behind an address and build its routes, for every tessage kind at<br/>
-/// once. Every transport-speaking endpoint serves it.</summary>
-class EndpointInformationQuery : ITuery<EndpointInformation>;
 
 ///<summary>The answer to endpoint discovery: who the endpoint is and its one advertisement — every remotable tessage type it<br/>
 /// serves, of every kind (tevent subscriptions, tommands, tueries, typermedia tommands), as canonical type-id strings.<br/>
@@ -32,4 +28,3 @@ class EndpointInformation
    public EndpointId Id { get; private set;}
    public HashSet<string> HandledTessageTypes { get; private set;}
 }
-

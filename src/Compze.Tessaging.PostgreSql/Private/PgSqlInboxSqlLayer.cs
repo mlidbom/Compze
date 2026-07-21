@@ -6,6 +6,7 @@ using Compze.TypeIdentifiers;
 using Compze.TypeIdentifiers.Interning;
 using TessageTable =  Compze.Tessaging.Internal.SqlLayer.ITessagingSqlLayer.InboxTessageDatabaseSchemaStrings;
 using Compze.Internals.Sql.PostgreSql.Internal;
+using Compze.Tessaging.Private.SqlLayer;
 
 namespace Compze.Tessaging.PostgreSql.Private;
 

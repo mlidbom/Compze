@@ -1,6 +1,7 @@
 using System.Transactions;
 using Compze.Tessaging.TessageTypes;
 using Compze.Tessaging.Validation.Exceptions;
+using Compze.Tessaging.Validation.Private;
 
 namespace Compze.Tessaging.Validation.Internal;
 

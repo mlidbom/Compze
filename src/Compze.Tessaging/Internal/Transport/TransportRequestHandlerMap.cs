@@ -4,6 +4,8 @@ using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tessaging.Internal.Transport.Advertisement;
 using Compze.TypeIdentifiers;
+using Compze.Tessaging.Private.Transport.Advertisement;
+using Compze.Tessaging.Private.Transport;
 
 namespace Compze.Tessaging.Internal.Transport;
 

@@ -1,7 +1,8 @@
 using Compze.Tessaging.Endpoints;
-using Compze.Tessaging.Internal.Routing;
+using Compze.Tessaging.Private.Routing;
 using Compze.Tessaging.Internal.Transport.Advertisement;
 using Compze.Tessaging.TessageTypes;
+using Compze.Tessaging.Peers.Private;
 
 namespace Compze.Tessaging.Peers.Internal;
 

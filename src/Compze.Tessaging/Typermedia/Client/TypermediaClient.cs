@@ -1,4 +1,4 @@
-using Compze.Tessaging.Typermedia.Client.Internal;
+using Compze.Tessaging.Typermedia.Client.Private;
 using Compze.Tessaging.Endpoints.Discovery;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;

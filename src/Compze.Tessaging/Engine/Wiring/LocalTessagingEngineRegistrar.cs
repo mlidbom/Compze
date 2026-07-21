@@ -1,4 +1,4 @@
-using Compze.Tessaging.Engine.Internal;
+using Compze.Tessaging.Engine.Private;
 using Compze.Contracts;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
@@ -8,6 +8,9 @@ using Compze.Tessaging.Engine.HandlerRegistration;
 using Compze.Tessaging.Internal.TessagesInFlight;
 using Compze.Tessaging.Typermedia;
 using Compze.Tessaging.Typermedia.Internal;
+using Compze.Tessaging.Private.TessagesInFlight;
+using Compze.Tessaging.TessageBus.Private;
+using Compze.Tessaging.Typermedia.Private;
 
 namespace Compze.Tessaging.Engine.Wiring;
 

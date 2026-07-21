@@ -4,6 +4,7 @@ using Compze.DependencyInjection.Abstractions;
 using Compze.Tessaging.Internal.Transport.Advertisement;
 using Compze.Tessaging.Typermedia.Client;
 using Compze.Tessaging.Transport.AspNetCore.Private;
+using Compze.Tessaging.Private.Transport;
 
 namespace Compze.Tessaging.Transport.AspNetCore;
 

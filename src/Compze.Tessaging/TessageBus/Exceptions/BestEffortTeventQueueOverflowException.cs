@@ -1,4 +1,4 @@
-using Compze.Tessaging.TessageBus.Internal.BestEffortDelivery;
+using Compze.Tessaging.TessageBus.Private.BestEffortDelivery;
 using Compze.Tessaging.Endpoints;
 
 namespace Compze.Tessaging.TessageBus.Exceptions;

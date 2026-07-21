@@ -1,6 +1,6 @@
 using Compze.Contracts;
 using Compze.Internals.SystemCE.ReflectionCE;
-using Compze.Teventive.Internal.Implementation;
+using Compze.Teventive.Private.Implementation;
 using Compze.Teventive.Taggregates.Tevents.Public;
 using JetBrains.Annotations;
 using Compze.Teventive.Taggregates.BaseClasses.Private;
