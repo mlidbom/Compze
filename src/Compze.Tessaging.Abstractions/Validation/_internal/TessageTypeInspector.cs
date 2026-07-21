@@ -94,8 +94,17 @@ static class TessageTypeInspector
 
    class CannotBeBothRemotableAndStrictlyLocal : MutuallyExclusiveInterfaces<IRemotableTessage, IStrictlyLocalTessage>;
 
-   //todo:urgent: This makes all IStrictlyLocalTommand<T> instances invalid.
-   class CannotForbidAndRequireTransactionalSender : MutuallyExclusiveInterfaces<IMustBeSentTransactionally, ICannotBeSentRemotelyFromWithinTransaction>;
+   //A strictly local tessage is exempt: the prohibition against remote sending from within a transaction is vacuous for a tessage that never travels remotely,
+   //so requiring a transactional sender contradicts nothing. For every other tessage the combination forbids remote sending outright while claiming nothing about locality - a contradiction.
+   class CannotForbidAndRequireTransactionalSender : SimpleTessageTypeDesignRule
+   {
+      protected override bool IsInvalid(Type type) => type.Is<IMustBeSentTransactionally>()
+                                                   && type.Is<ICannotBeSentRemotelyFromWithinTransaction>()
+                                                   && !type.Is<IStrictlyLocalTessage>();
+
+      protected override string CreateTessage(Type type) =>
+         $"{type.GetFullNameCompilable()} implements both {typeof(IMustBeSentTransactionally).GetFullNameCompilable()} and {typeof(ICannotBeSentRemotelyFromWithinTransaction).GetFullNameCompilable()} without implementing {typeof(IStrictlyLocalTessage).GetFullNameCompilable()}. For a tessage that may be sent remotely that is a contradiction: it must be sent from within a transaction, yet may never be sent remotely from within one. Declare the tessage {typeof(IStrictlyLocalTessage).GetFullNameCompilable()} if it never travels remotely, or drop one of the two transactional markers.";
+   }
 
    class WrapperTeventInterfaceMustBeGenericAndDeclareTypeParameterAsAsOutParameter : TessageTypeDesignRule
    {

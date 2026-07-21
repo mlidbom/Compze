@@ -44,6 +44,12 @@ public class MyStrictlyLocalRegisterGreeterTommand : StrictlyLocal.Tommands.Stri
    public string Name { get; set; } = "";
 }
 
+///<summary>The result-bearing strictly local tommand kind: registering the greeter returns the total number of greeters registered so far.</summary>
+public class MyStrictlyLocalRegisterGreeterReturningTotalCountTommand : StrictlyLocal.Tommands.StrictlyLocalTommand<int>
+{
+   public string Name { get; set; } = "";
+}
+
 ///<summary>A hand-built <see cref="ITaggregateTevent"/>, for publishing through the <see cref="IUnitOfWorkTeventPublisher"/> without a taggregate or tevent store in the composition.</summary>
 class MyTaggregateTevent : ITaggregateTevent
 {

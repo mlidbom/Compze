@@ -56,4 +56,31 @@ public partial class Given_a_container_composing_a_LocalTessagingEngine
                 .Must().Throw<Exception>()
                 .Which.Message.Must().Contain("ambient transaction");
    }
+
+   public class with_a_declared_result_returning_strictly_local_tommand_handler : Given_a_container_composing_a_LocalTessagingEngine
+   {
+      readonly List<string> _registeredGreeters = [];
+
+      public with_a_declared_result_returning_strictly_local_tommand_handler() =>
+         ComposeContainerWithEngine(engine => engine.RegisterTypermediaHandlers(handle => handle
+            .ForTommand((MyStrictlyLocalRegisterGreeterReturningTotalCountTommand tommand) =>
+             {
+                _registeredGreeters.Add(tommand.Name);
+                return _registeredGreeters.Count;
+             })));
+
+      [PCT] public void executing_the_tommand_through_the_unit_of_work_local_typermedia_navigator_within_a_unit_of_work_invokes_the_handler_and_returns_its_result()
+      {
+         var totalCount = Container.ScopeFactory.ExecuteUnitOfWork(unitOfWork => unitOfWork.Resolve<ILocalTypermediaNavigatorSession>().Execute(new MyStrictlyLocalRegisterGreeterReturningTotalCountTommand { Name = "Greta" }));
+         totalCount.Must().Be(1);
+         _registeredGreeters.Single().Must().Be("Greta");
+      }
+
+      [PCT] public void executing_the_tommand_through_the_independent_local_typermedia_navigator_resolved_from_the_root_invokes_the_handler_in_its_own_unit_of_work_and_returns_its_result()
+      {
+         var totalCount = Container.RootResolver.Resolve<IIndependentLocalTypermediaNavigator>().Execute(new MyStrictlyLocalRegisterGreeterReturningTotalCountTommand { Name = "Greta" });
+         totalCount.Must().Be(1);
+         _registeredGreeters.Single().Must().Be("Greta");
+      }
+   }
 }

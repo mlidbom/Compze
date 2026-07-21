@@ -20,5 +20,7 @@ public static class StrictlyLocal
    public static class Tommands
    {
       public abstract class StrictlyLocalTommand : IStrictlyLocalTommand;
+
+      public abstract class StrictlyLocalTommand<TResult> : StrictlyLocalTommand, IStrictlyLocalTommand<TResult>;
    }
 }
