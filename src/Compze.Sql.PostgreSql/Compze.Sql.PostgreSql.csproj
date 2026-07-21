@@ -1,0 +1,37 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <Version>0.3.0-alpha</Version>
+    <!-- TODO:docs: Remove once all public API members have XML documentation comments -->
+    <NoWarn>CS1591</NoWarn>
+    <Description>PostgreSQL support for the Compze framework: declares the PgSql domain database that Compze endpoints join. Also carries the PostgreSQL plumbing the Compze.*.PostgreSql feature backends share.</Description>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Npgsql" Version="9.0.4" />
+  </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="Compze.TypeIdentifiers.Interning.PostgreSql" />
+    <InternalsVisibleTo Include="Compze.DocumentDb.PostgreSql" />
+    <InternalsVisibleTo Include="Compze.Tessaging.PostgreSql" />
+    <InternalsVisibleTo Include="Compze.Teventive.TeventStore.PostgreSql" />
+  </ItemGroup>
+  <!-- Compze.Internals.Sql.Common — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Sql_Common)' == 'true'">
+    <PackageReference Include="Compze.Internals.Sql.Common" Version="*-*" />
+  </ItemGroup>
+  <!-- Compze.Abstractions — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Abstractions)' == 'true'">
+    <PackageReference Include="Compze.Abstractions" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Abstractions)' != 'true'">
+    <ProjectReference Include="..\Compze.Abstractions\Compze.Abstractions.csproj" />
+  </ItemGroup>
+  <!-- Compze.Sql.Common — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Sql_Common)' == 'true'">
+    <PackageReference Include="Compze.Sql.Common" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Sql_Common)' != 'true'">
+    <ProjectReference Include="..\Compze.Sql.Common\Compze.Sql.Common.csproj" />
+  </ItemGroup>
+</Project>

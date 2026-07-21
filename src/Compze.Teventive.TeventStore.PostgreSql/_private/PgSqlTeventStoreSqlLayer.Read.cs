@@ -1,13 +1,13 @@
 using System.Transactions;
 using Compze.Abstractions;
-using Compze.Internals.Sql.Common;
+using Compze.Sql.Common;
 using Compze.Tessaging;
 using Compze.Teventive.TeventStore.Abstractions._internal.SqlLayer.Abstractions;
 using Compze.TypeIdentifiers.Interning;
 using Npgsql;
 using NpgsqlTypes;
 using Tevent = Compze.Teventive.TeventStore.Abstractions._internal.SqlLayer.TeventTableSchemaStrings;
-using Compze.Internals.Sql.PostgreSql._internal;
+using Compze.Sql.PostgreSql._internal;
 
 namespace Compze.Teventive.TeventStore.PostgreSql._private;
 

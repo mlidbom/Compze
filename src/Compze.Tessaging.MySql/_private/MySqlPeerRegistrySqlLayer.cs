@@ -1,12 +1,12 @@
 using Compze.Tessaging.Endpoints;
-using Compze.Internals.Sql.Common;
-using Compze.Internals.Sql.MySql;
+using Compze.Sql.Common;
+using Compze.Sql.MySql;
 using Compze.Internals.SystemCE.LinqCE;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tessaging._internal.SqlLayer;
 using PeersSchema = Compze.Tessaging._internal.SqlLayer.ITessagingSqlLayer.PeersDatabaseSchemaStrings;
 using Types = Compze.Tessaging._internal.SqlLayer.ITessagingSqlLayer.PeerHandledTessageTypesDatabaseSchemaStrings;
-using Compze.Internals.Sql.MySql._internal;
+using Compze.Sql.MySql._internal;
 
 namespace Compze.Tessaging.MySql._private;
 

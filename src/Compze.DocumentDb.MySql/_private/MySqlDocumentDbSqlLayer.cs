@@ -1,14 +1,14 @@
 using Compze.DocumentDb._internal.SqlLayer;
 using Compze.DocumentDb.Exceptions;
-using Compze.Internals.Sql.Common;
-using Compze.Internals.Sql.MySql;
+using Compze.Sql.Common;
+using Compze.Sql.MySql;
 using Compze.TypeIdentifiers;
 using Compze.TypeIdentifiers.Interning;
 using Compze.Internals.SystemCE;
 using MySqlConnector;
 using System.Diagnostics.CodeAnalysis;
 using Schema = Compze.DocumentDb._internal.SqlLayer.IDocumentDbSqlLayer.DocumentTableSchemaStrings;
-using Compze.Internals.Sql.MySql._internal;
+using Compze.Sql.MySql._internal;
 
 namespace Compze.DocumentDb.MySql._private;
 

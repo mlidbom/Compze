@@ -1,9 +1,9 @@
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
-using Compze.Internals.Sql.Sqlite;
-using Compze.Internals.Sql.Sqlite.Wiring;
+using Compze.Sql.Sqlite;
+using Compze.Sql.Sqlite.Wiring;
 using Compze.TypeIdentifiers.Interning.Sqlite._private;
-using Compze.Internals.Sql.Sqlite._internal;
+using Compze.Sql.Sqlite._internal;
 
 namespace Compze.TypeIdentifiers.Interning.Sqlite.Wiring;
 

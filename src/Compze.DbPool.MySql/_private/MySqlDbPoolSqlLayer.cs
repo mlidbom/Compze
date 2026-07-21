@@ -1,5 +1,5 @@
 using Compze.Underscore;
-using Compze.Internals.Sql.MySql;
+using Compze.Sql.MySql;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Threading.ResourceAccess;

@@ -7,6 +7,10 @@
     <NoWarn>CS1591</NoWarn>
     <Description>Empty SQL Server databases on demand for integration testing etc.</Description>
   </PropertyGroup>
+  <!-- Compze.Internals.Sql.MicrosoftSql — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Sql_MicrosoftSql)' == 'true'">
+    <PackageReference Include="Compze.Internals.Sql.MicrosoftSql" Version="*-*" />
+  </ItemGroup>
   <!-- Compze.DbPool — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_DbPool)' == 'true'">
     <PackageReference Include="Compze.DbPool" Version="*-*" />
@@ -14,11 +18,11 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_DbPool)' != 'true'">
     <ProjectReference Include="..\Compze.DbPool\Compze.DbPool.csproj" />
   </ItemGroup>
-  <!-- Compze.Internals.Sql.MicrosoftSql — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Sql_MicrosoftSql)' == 'true'">
-    <PackageReference Include="Compze.Internals.Sql.MicrosoftSql" Version="*-*" />
+  <!-- Compze.Sql.MicrosoftSql — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Sql_MicrosoftSql)' == 'true'">
+    <PackageReference Include="Compze.Sql.MicrosoftSql" Version="*-*" />
   </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Sql_MicrosoftSql)' != 'true'">
-    <ProjectReference Include="..\Compze.Internals.Sql.MicrosoftSql\Compze.Internals.Sql.MicrosoftSql.csproj" />
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Sql_MicrosoftSql)' != 'true'">
+    <ProjectReference Include="..\Compze.Sql.MicrosoftSql\Compze.Sql.MicrosoftSql.csproj" />
   </ItemGroup>
 </Project>

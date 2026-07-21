@@ -1,13 +1,13 @@
 using Compze.DocumentDb._internal.SqlLayer;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
-using Compze.Internals.Sql.MySql;
-using Compze.Internals.Sql.MySql.Wiring;
+using Compze.Sql.MySql;
+using Compze.Sql.MySql.Wiring;
 using Compze.TypeIdentifiers.Interning;
 using Compze.TypeIdentifiers.Interning.MySql.Wiring;
 using Layer = Compze.DocumentDb.MySql._private.MySqlDocumentDbSqlLayer;
-using Compze.Internals.Sql.MySql.Wiring._internal;
-using Compze.Internals.Sql.MySql._internal;
+using Compze.Sql.MySql.Wiring._internal;
+using Compze.Sql.MySql._internal;
 
 namespace Compze.DocumentDb.MySql.Wiring;
 

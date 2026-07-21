@@ -7,6 +7,22 @@
     <NoWarn>CS1591</NoWarn>
     <Description>Testing support for Compze Tessaging hosting: the Tessaging testing feature for the testing endpoint host, and the Tessaging transport and persistence test wiring.</Description>
   </PropertyGroup>
+  <!-- Compze.Internals.Sql.MicrosoftSql — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Sql_MicrosoftSql)' == 'true'">
+    <PackageReference Include="Compze.Internals.Sql.MicrosoftSql" Version="*-*" />
+  </ItemGroup>
+  <!-- Compze.Internals.Sql.MySql — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Sql_MySql)' == 'true'">
+    <PackageReference Include="Compze.Internals.Sql.MySql" Version="*-*" />
+  </ItemGroup>
+  <!-- Compze.Internals.Sql.PostgreSql — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Sql_PostgreSql)' == 'true'">
+    <PackageReference Include="Compze.Internals.Sql.PostgreSql" Version="*-*" />
+  </ItemGroup>
+  <!-- Compze.Internals.Sql.Sqlite — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Sql_Sqlite)' == 'true'">
+    <PackageReference Include="Compze.Internals.Sql.Sqlite" Version="*-*" />
+  </ItemGroup>
   <!-- Compze.Abstractions — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Abstractions)' == 'true'">
     <PackageReference Include="Compze.Abstractions" Version="*-*" />
@@ -63,34 +79,6 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_Hosting_Testing)' != 'true'">
     <ProjectReference Include="..\Compze.Hosting.Testing\Compze.Hosting.Testing.csproj" />
   </ItemGroup>
-  <!-- Compze.Internals.Sql.MicrosoftSql — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Sql_MicrosoftSql)' == 'true'">
-    <PackageReference Include="Compze.Internals.Sql.MicrosoftSql" Version="*-*" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Sql_MicrosoftSql)' != 'true'">
-    <ProjectReference Include="..\Compze.Internals.Sql.MicrosoftSql\Compze.Internals.Sql.MicrosoftSql.csproj" />
-  </ItemGroup>
-  <!-- Compze.Internals.Sql.MySql — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Sql_MySql)' == 'true'">
-    <PackageReference Include="Compze.Internals.Sql.MySql" Version="*-*" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Sql_MySql)' != 'true'">
-    <ProjectReference Include="..\Compze.Internals.Sql.MySql\Compze.Internals.Sql.MySql.csproj" />
-  </ItemGroup>
-  <!-- Compze.Internals.Sql.PostgreSql — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Sql_PostgreSql)' == 'true'">
-    <PackageReference Include="Compze.Internals.Sql.PostgreSql" Version="*-*" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Sql_PostgreSql)' != 'true'">
-    <ProjectReference Include="..\Compze.Internals.Sql.PostgreSql\Compze.Internals.Sql.PostgreSql.csproj" />
-  </ItemGroup>
-  <!-- Compze.Internals.Sql.Sqlite — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Sql_Sqlite)' == 'true'">
-    <PackageReference Include="Compze.Internals.Sql.Sqlite" Version="*-*" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Sql_Sqlite)' != 'true'">
-    <ProjectReference Include="..\Compze.Internals.Sql.Sqlite\Compze.Internals.Sql.Sqlite.csproj" />
-  </ItemGroup>
   <!-- Compze.Internals.SystemCE — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_SystemCE)' == 'true'">
     <PackageReference Include="Compze.Internals.SystemCE" Version="*-*" />
@@ -104,6 +92,34 @@
   </ItemGroup>
   <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Testing)' != 'true'">
     <ProjectReference Include="..\Compze.Internals.Testing\Compze.Internals.Testing.csproj" />
+  </ItemGroup>
+  <!-- Compze.Sql.MicrosoftSql — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Sql_MicrosoftSql)' == 'true'">
+    <PackageReference Include="Compze.Sql.MicrosoftSql" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Sql_MicrosoftSql)' != 'true'">
+    <ProjectReference Include="..\Compze.Sql.MicrosoftSql\Compze.Sql.MicrosoftSql.csproj" />
+  </ItemGroup>
+  <!-- Compze.Sql.MySql — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Sql_MySql)' == 'true'">
+    <PackageReference Include="Compze.Sql.MySql" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Sql_MySql)' != 'true'">
+    <ProjectReference Include="..\Compze.Sql.MySql\Compze.Sql.MySql.csproj" />
+  </ItemGroup>
+  <!-- Compze.Sql.PostgreSql — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Sql_PostgreSql)' == 'true'">
+    <PackageReference Include="Compze.Sql.PostgreSql" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Sql_PostgreSql)' != 'true'">
+    <ProjectReference Include="..\Compze.Sql.PostgreSql\Compze.Sql.PostgreSql.csproj" />
+  </ItemGroup>
+  <!-- Compze.Sql.Sqlite — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Sql_Sqlite)' == 'true'">
+    <PackageReference Include="Compze.Sql.Sqlite" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Sql_Sqlite)' != 'true'">
+    <ProjectReference Include="..\Compze.Sql.Sqlite\Compze.Sql.Sqlite.csproj" />
   </ItemGroup>
   <!-- Compze.Tessaging — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging)' == 'true'">

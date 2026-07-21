@@ -11,6 +11,10 @@
   <ItemGroup>
     <PackageReference Include="Npgsql" Version="9.0.4" />
   </ItemGroup>
+  <!-- Compze.Internals.Sql.PostgreSql — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Sql_PostgreSql)' == 'true'">
+    <PackageReference Include="Compze.Internals.Sql.PostgreSql" Version="*-*" />
+  </ItemGroup>
   <!-- Compze.DocumentDb — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_DocumentDb)' == 'true'">
     <PackageReference Include="Compze.DocumentDb" Version="*-*" />
@@ -18,12 +22,12 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_DocumentDb)' != 'true'">
     <ProjectReference Include="..\Compze.DocumentDb\Compze.DocumentDb.csproj" />
   </ItemGroup>
-  <!-- Compze.Internals.Sql.PostgreSql — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Sql_PostgreSql)' == 'true'">
-    <PackageReference Include="Compze.Internals.Sql.PostgreSql" Version="*-*" />
+  <!-- Compze.Sql.PostgreSql — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Sql_PostgreSql)' == 'true'">
+    <PackageReference Include="Compze.Sql.PostgreSql" Version="*-*" />
   </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Sql_PostgreSql)' != 'true'">
-    <ProjectReference Include="..\Compze.Internals.Sql.PostgreSql\Compze.Internals.Sql.PostgreSql.csproj" />
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Sql_PostgreSql)' != 'true'">
+    <ProjectReference Include="..\Compze.Sql.PostgreSql\Compze.Sql.PostgreSql.csproj" />
   </ItemGroup>
   <!-- Compze.TypeIdentifiers.Interning — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_TypeIdentifiers_Interning)' == 'true'">

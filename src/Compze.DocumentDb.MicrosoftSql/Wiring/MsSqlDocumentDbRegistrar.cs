@@ -1,7 +1,7 @@
 using Compze.DependencyInjection.Abstractions;
-using Compze.Internals.Sql.MicrosoftSql.Wiring;
+using Compze.Sql.MicrosoftSql.Wiring;
 using Layer = Compze.DocumentDb.MicrosoftSql._private.MsSqlDocumentDbSqlLayer;
-using Compze.Internals.Sql.MicrosoftSql.Wiring._internal;
+using Compze.Sql.MicrosoftSql.Wiring._internal;
 
 namespace Compze.DocumentDb.MicrosoftSql.Wiring;
 

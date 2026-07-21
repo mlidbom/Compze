@@ -105,17 +105,17 @@ Core was designed around minimizing project count to avoid overloading Visual St
 ### Sql
 > SQL abstractions and provider implementations. Internal plumbing consumed by DbPool and Tessaging.
 
-- `src/Compze.Internals.Sql.Common` — shared SQL infrastructure
-- `src/Compze.Internals.Sql.MicrosoftSql`
-- `src/Compze.Internals.Sql.MySql`
-- `src/Compze.Internals.Sql.PostgreSql`
-- `src/Compze.Internals.Sql.Sqlite`
+- `src/Compze.Sql.Common` — shared SQL infrastructure
+- `src/Compze.Sql.MicrosoftSql`
+- `src/Compze.Sql.MySql`
+- `src/Compze.Sql.PostgreSql`
+- `src/Compze.Sql.Sqlite`
 - **Dependencies**: Contracts, DependencyInjection, Logging, SystemCE, ThreadingCE
 
 ### Serialization
 > Serialization implementations. Internal — pluggable implementation detail.
 
-- `src/Compze.Internals.Serialization.Newtonsoft` — Newtonsoft.Json serialization
+- `src/Compze.Serialization.Newtonsoft` — Newtonsoft.Json serialization
 - **Dependencies**: Abstractions, Newtonsoft.Json
 
 ### Logging

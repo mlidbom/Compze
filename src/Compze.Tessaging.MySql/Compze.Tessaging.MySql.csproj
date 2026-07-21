@@ -15,8 +15,12 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Sql_MySql)' == 'true'">
     <PackageReference Include="Compze.Internals.Sql.MySql" Version="*-*" />
   </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Sql_MySql)' != 'true'">
-    <ProjectReference Include="..\Compze.Internals.Sql.MySql\Compze.Internals.Sql.MySql.csproj" />
+  <!-- Compze.Sql.MySql — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Sql_MySql)' == 'true'">
+    <PackageReference Include="Compze.Sql.MySql" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Sql_MySql)' != 'true'">
+    <ProjectReference Include="..\Compze.Sql.MySql\Compze.Sql.MySql.csproj" />
   </ItemGroup>
   <!-- Compze.Tessaging — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging)' == 'true'">

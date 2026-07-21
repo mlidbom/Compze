@@ -1,7 +1,7 @@
 using Compze.DocumentDb._internal.SqlLayer;
 using Compze.DocumentDb.Exceptions;
-using Compze.Internals.Sql.Common;
-using Compze.Internals.Sql.MicrosoftSql;
+using Compze.Sql.Common;
+using Compze.Sql.MicrosoftSql;
 using Compze.TypeIdentifiers;
 using Compze.TypeIdentifiers.Interning;
 using Compze.DependencyInjection;
@@ -10,7 +10,7 @@ using Compze.Internals.SystemCE;
 using Microsoft.Data.SqlClient;
 using System.Diagnostics.CodeAnalysis;
 using Schema = Compze.DocumentDb._internal.SqlLayer.IDocumentDbSqlLayer.DocumentTableSchemaStrings;
-using Compze.Internals.Sql.MicrosoftSql._internal;
+using Compze.Sql.MicrosoftSql._internal;
 
 namespace Compze.DocumentDb.MicrosoftSql._private;
 

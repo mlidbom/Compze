@@ -1,5 +1,5 @@
 using System.Transactions;
-using Compze.Internals.Sql.MySql;
+using Compze.Sql.MySql;
 using JetBrains.Annotations;
 using MySqlConnector;
 

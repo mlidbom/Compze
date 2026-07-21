@@ -2,7 +2,7 @@ using Compze.Tessaging.Endpoints;
 using Compze.Hosting;
 using Compze.Hosting.Testing;
 using Compze.Hosting.Testing.Wiring;
-using Compze.Internals.Serialization.Newtonsoft.Wiring;
+using Compze.Serialization.Newtonsoft.Wiring;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Internals.Testing;
 using Compze.Must;

@@ -1,9 +1,9 @@
 using Compze.DependencyInjection;
-using Compze.Internals.Sql.Common.Abstractions;
-using Compze.Internals.Sql.MicrosoftSql;
-using Compze.Internals.Sql.MySql;
-using Compze.Internals.Sql.PostgreSql;
-using Compze.Internals.Sql.Sqlite;
+using Compze.Sql.Common.Abstractions;
+using Compze.Sql.MicrosoftSql;
+using Compze.Sql.MySql;
+using Compze.Sql.PostgreSql;
+using Compze.Sql.Sqlite;
 using Compze.Hosting.Testing;
 using Compze.Internals.Testing;
 using Compze.Hosting.Testing.Wiring;

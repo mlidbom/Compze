@@ -11,6 +11,10 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Data.Sqlite" Version="9.0.1" />
   </ItemGroup>
+  <!-- Compze.Internals.Sql.Sqlite — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Sql_Sqlite)' == 'true'">
+    <PackageReference Include="Compze.Internals.Sql.Sqlite" Version="*-*" />
+  </ItemGroup>
   <!-- Compze.DocumentDb — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_DocumentDb)' == 'true'">
     <PackageReference Include="Compze.DocumentDb" Version="*-*" />
@@ -18,12 +22,12 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_DocumentDb)' != 'true'">
     <ProjectReference Include="..\Compze.DocumentDb\Compze.DocumentDb.csproj" />
   </ItemGroup>
-  <!-- Compze.Internals.Sql.Sqlite — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Sql_Sqlite)' == 'true'">
-    <PackageReference Include="Compze.Internals.Sql.Sqlite" Version="*-*" />
+  <!-- Compze.Sql.Sqlite — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Sql_Sqlite)' == 'true'">
+    <PackageReference Include="Compze.Sql.Sqlite" Version="*-*" />
   </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Sql_Sqlite)' != 'true'">
-    <ProjectReference Include="..\Compze.Internals.Sql.Sqlite\Compze.Internals.Sql.Sqlite.csproj" />
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Sql_Sqlite)' != 'true'">
+    <ProjectReference Include="..\Compze.Sql.Sqlite\Compze.Sql.Sqlite.csproj" />
   </ItemGroup>
   <!-- Compze.TypeIdentifiers.Interning — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_TypeIdentifiers_Interning)' == 'true'">

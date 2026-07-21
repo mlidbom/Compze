@@ -7,6 +7,14 @@
     <!-- An executable the multi-process specifications spawn, not a test assembly - the test runner must not try to execute it. -->
     <IsTestProject>false</IsTestProject>
   </PropertyGroup>
+  <!-- Compze.Internals.Serialization.Newtonsoft — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Serialization_Newtonsoft)' == 'true'">
+    <PackageReference Include="Compze.Internals.Serialization.Newtonsoft" Version="*-*" />
+  </ItemGroup>
+  <!-- Compze.Internals.Sql.Sqlite — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Sql_Sqlite)' == 'true'">
+    <PackageReference Include="Compze.Internals.Sql.Sqlite" Version="*-*" />
+  </ItemGroup>
   <!-- Compze.DependencyInjection.Microsoft — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_DependencyInjection_Microsoft)' == 'true'">
     <PackageReference Include="Compze.DependencyInjection.Microsoft" Version="*-*" />
@@ -21,19 +29,19 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_Hosting)' != 'true'">
     <ProjectReference Include="..\..\src\Compze.Hosting\Compze.Hosting.csproj" />
   </ItemGroup>
-  <!-- Compze.Internals.Serialization.Newtonsoft — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Serialization_Newtonsoft)' == 'true'">
-    <PackageReference Include="Compze.Internals.Serialization.Newtonsoft" Version="*-*" />
+  <!-- Compze.Serialization.Newtonsoft — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Serialization_Newtonsoft)' == 'true'">
+    <PackageReference Include="Compze.Serialization.Newtonsoft" Version="*-*" />
   </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Serialization_Newtonsoft)' != 'true'">
-    <ProjectReference Include="..\..\src\Compze.Internals.Serialization.Newtonsoft\Compze.Internals.Serialization.Newtonsoft.csproj" />
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Serialization_Newtonsoft)' != 'true'">
+    <ProjectReference Include="..\..\src\Compze.Serialization.Newtonsoft\Compze.Serialization.Newtonsoft.csproj" />
   </ItemGroup>
-  <!-- Compze.Internals.Sql.Sqlite — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Sql_Sqlite)' == 'true'">
-    <PackageReference Include="Compze.Internals.Sql.Sqlite" Version="*-*" />
+  <!-- Compze.Sql.Sqlite — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Sql_Sqlite)' == 'true'">
+    <PackageReference Include="Compze.Sql.Sqlite" Version="*-*" />
   </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Sql_Sqlite)' != 'true'">
-    <ProjectReference Include="..\..\src\Compze.Internals.Sql.Sqlite\Compze.Internals.Sql.Sqlite.csproj" />
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Sql_Sqlite)' != 'true'">
+    <ProjectReference Include="..\..\src\Compze.Sql.Sqlite\Compze.Sql.Sqlite.csproj" />
   </ItemGroup>
   <!-- Compze.Tessaging — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging)' == 'true'">

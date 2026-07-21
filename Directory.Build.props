@@ -55,18 +55,6 @@
     <UsePackageReference_Compze_Internals_Logging Condition="'$(UsePackageReference_Compze_Internals_Logging)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Internals.Logging.csproj|'))">true</UsePackageReference_Compze_Internals_Logging>
     <!-- Compze.Internals.Logging.Serilog -->
     <UsePackageReference_Compze_Internals_Logging_Serilog Condition="'$(UsePackageReference_Compze_Internals_Logging_Serilog)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Internals.Logging.Serilog.csproj|'))">true</UsePackageReference_Compze_Internals_Logging_Serilog>
-    <!-- Compze.Internals.Serialization.Newtonsoft -->
-    <UsePackageReference_Compze_Internals_Serialization_Newtonsoft Condition="'$(UsePackageReference_Compze_Internals_Serialization_Newtonsoft)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Internals.Serialization.Newtonsoft.csproj|'))">true</UsePackageReference_Compze_Internals_Serialization_Newtonsoft>
-    <!-- Compze.Internals.Sql.Common -->
-    <UsePackageReference_Compze_Internals_Sql_Common Condition="'$(UsePackageReference_Compze_Internals_Sql_Common)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Internals.Sql.Common.csproj|'))">true</UsePackageReference_Compze_Internals_Sql_Common>
-    <!-- Compze.Internals.Sql.MicrosoftSql -->
-    <UsePackageReference_Compze_Internals_Sql_MicrosoftSql Condition="'$(UsePackageReference_Compze_Internals_Sql_MicrosoftSql)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Internals.Sql.MicrosoftSql.csproj|'))">true</UsePackageReference_Compze_Internals_Sql_MicrosoftSql>
-    <!-- Compze.Internals.Sql.MySql -->
-    <UsePackageReference_Compze_Internals_Sql_MySql Condition="'$(UsePackageReference_Compze_Internals_Sql_MySql)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Internals.Sql.MySql.csproj|'))">true</UsePackageReference_Compze_Internals_Sql_MySql>
-    <!-- Compze.Internals.Sql.PostgreSql -->
-    <UsePackageReference_Compze_Internals_Sql_PostgreSql Condition="'$(UsePackageReference_Compze_Internals_Sql_PostgreSql)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Internals.Sql.PostgreSql.csproj|'))">true</UsePackageReference_Compze_Internals_Sql_PostgreSql>
-    <!-- Compze.Internals.Sql.Sqlite -->
-    <UsePackageReference_Compze_Internals_Sql_Sqlite Condition="'$(UsePackageReference_Compze_Internals_Sql_Sqlite)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Internals.Sql.Sqlite.csproj|'))">true</UsePackageReference_Compze_Internals_Sql_Sqlite>
     <!-- Compze.Internals.SystemCE -->
     <UsePackageReference_Compze_Internals_SystemCE Condition="'$(UsePackageReference_Compze_Internals_SystemCE)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Internals.SystemCE.csproj|'))">true</UsePackageReference_Compze_Internals_SystemCE>
     <!-- Compze.Internals.Testing -->
@@ -77,6 +65,18 @@
     <UsePackageReference_Compze_InterprocessObject_MemoryPack Condition="'$(UsePackageReference_Compze_InterprocessObject_MemoryPack)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.InterprocessObject.MemoryPack.csproj|'))">true</UsePackageReference_Compze_InterprocessObject_MemoryPack>
     <!-- Compze.Must -->
     <UsePackageReference_Compze_Must Condition="'$(UsePackageReference_Compze_Must)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Must.csproj|'))">true</UsePackageReference_Compze_Must>
+    <!-- Compze.Serialization.Newtonsoft -->
+    <UsePackageReference_Compze_Serialization_Newtonsoft Condition="'$(UsePackageReference_Compze_Serialization_Newtonsoft)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Serialization.Newtonsoft.csproj|'))">true</UsePackageReference_Compze_Serialization_Newtonsoft>
+    <!-- Compze.Sql.Common -->
+    <UsePackageReference_Compze_Sql_Common Condition="'$(UsePackageReference_Compze_Sql_Common)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Sql.Common.csproj|'))">true</UsePackageReference_Compze_Sql_Common>
+    <!-- Compze.Sql.MicrosoftSql -->
+    <UsePackageReference_Compze_Sql_MicrosoftSql Condition="'$(UsePackageReference_Compze_Sql_MicrosoftSql)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Sql.MicrosoftSql.csproj|'))">true</UsePackageReference_Compze_Sql_MicrosoftSql>
+    <!-- Compze.Sql.MySql -->
+    <UsePackageReference_Compze_Sql_MySql Condition="'$(UsePackageReference_Compze_Sql_MySql)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Sql.MySql.csproj|'))">true</UsePackageReference_Compze_Sql_MySql>
+    <!-- Compze.Sql.PostgreSql -->
+    <UsePackageReference_Compze_Sql_PostgreSql Condition="'$(UsePackageReference_Compze_Sql_PostgreSql)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Sql.PostgreSql.csproj|'))">true</UsePackageReference_Compze_Sql_PostgreSql>
+    <!-- Compze.Sql.Sqlite -->
+    <UsePackageReference_Compze_Sql_Sqlite Condition="'$(UsePackageReference_Compze_Sql_Sqlite)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Sql.Sqlite.csproj|'))">true</UsePackageReference_Compze_Sql_Sqlite>
     <!-- Compze.Tessaging -->
     <UsePackageReference_Compze_Tessaging Condition="'$(UsePackageReference_Compze_Tessaging)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Tessaging.csproj|'))">true</UsePackageReference_Compze_Tessaging>
     <!-- Compze.Tessaging.Abstractions -->

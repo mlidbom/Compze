@@ -1,8 +1,8 @@
 using Compze.DependencyInjection;
-using Compze.Internals.Sql.MicrosoftSql;
-using Compze.Internals.Sql.MySql;
-using Compze.Internals.Sql.PostgreSql;
-using Compze.Internals.Sql.Sqlite;
+using Compze.Sql.MicrosoftSql;
+using Compze.Sql.MySql;
+using Compze.Sql.PostgreSql;
+using Compze.Sql.Sqlite;
 using Compze.Hosting.Testing;
 using Compze.Internals.Testing;
 using Compze.Internals.Testing.Performance;

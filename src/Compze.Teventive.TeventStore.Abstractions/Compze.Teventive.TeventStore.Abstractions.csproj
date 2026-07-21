@@ -14,8 +14,8 @@
     <InternalsVisibleTo Include="Compze.Teventive.TeventStore.PostgreSql" />
     <InternalsVisibleTo Include="Compze.Teventive.TeventStore.Sqlite" />
     <InternalsVisibleTo Include="Compze.Teventive.TeventStore.InternalSpecifications" />
-    <InternalsVisibleTo Include="Compze.Internals.Serialization.Newtonsoft" />
-    <InternalsVisibleTo Include="Compze.Internals.Serialization.Newtonsoft.InternalSpecifications" />
+    <InternalsVisibleTo Include="Compze.Serialization.Newtonsoft" />
+    <InternalsVisibleTo Include="Compze.Serialization.Newtonsoft.InternalSpecifications" />
     <InternalsVisibleTo Include="Compze.Tests.Performance.Internals" />
   </ItemGroup>
   <!-- Compze.Abstractions — flex reference -->

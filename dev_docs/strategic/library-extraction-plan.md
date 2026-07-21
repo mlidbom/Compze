@@ -57,7 +57,7 @@ This creates a clear boundary between stable utility code and the evolving core 
 |---------|--------|
 | **Logging** | Coupled to `unit`, custom `ILogger` — not valuable enough externally to warrant the extraction effort. Primarily serves Compze internals. Now `Compze.Internals.Logging`. |
 | **Serialization** | Pluggable implementation detail (Newtonsoft.Json). Consumers use the serialization through Tessaging, not directly. Now `Compze.Internals.Serialization.Newtonsoft`. |
-| **Sql** | Internal SQL plumbing consumed by DbPool and Tessaging. Now `Compze.Internals.Sql.*`. |
+| **Sql** | Internal SQL plumbing consumed by DbPool and Tessaging. Now `Compze.Sql.*`. |
 
 ## Dependency Flow (post-extraction)
 

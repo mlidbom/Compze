@@ -128,7 +128,7 @@ MySQL).
 SQLite gets the same independence a different way, because it allows only one writer per database and does not
 tolerate a second connection writing a database while a transaction holds its write lock. **On SQLite the
 interner is given its own database**, separate from the business data
-([`ISqliteTypeIdInternerConnectionPool`](../../src/Compze.Internals.Sql.Sqlite/ISqliteTypeIdInternerConnectionPool.cs)).
+([`ISqliteTypeIdInternerConnectionPool`](../../src/Compze.Sql.Sqlite/ISqliteTypeIdInternerConnectionPool.cs)).
 A mint suspends any business transaction and runs in its own (`RequiresNew`) transaction on the interner
 database: the connection's per-database write gate serialises minters in-process, and the single transaction
 makes the find-then-insert atomic. Because the interner never opens a second connection to the business

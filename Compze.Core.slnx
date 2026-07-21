@@ -78,17 +78,17 @@
       <Project Path="src/Compze.Internals.Testing/Compze.Internals.Testing.csproj" />
    </Folder>
    <Folder Name="/Compze.Internals/Serialization/">
-      <Project Path="src/Compze.Internals.Serialization.Newtonsoft/Compze.Internals.Serialization.Newtonsoft.csproj" />
+      <Project Path="src/Compze.Serialization.Newtonsoft/Compze.Serialization.Newtonsoft.csproj" />
    </Folder>
    <Folder Name="/Compze.Internals/Serialization/Specifications/">
-      <Project Path="test/Compze.Internals.Serialization.Newtonsoft.InternalSpecifications/Compze.Internals.Serialization.Newtonsoft.InternalSpecifications.csproj" />
+      <Project Path="test/Compze.Serialization.Newtonsoft.InternalSpecifications/Compze.Serialization.Newtonsoft.InternalSpecifications.csproj" />
    </Folder>
    <Folder Name="/Compze.Internals/Sql/">
-      <Project Path="src/Compze.Internals.Sql.Common/Compze.Internals.Sql.Common.csproj" />
-      <Project Path="src/Compze.Internals.Sql.MicrosoftSql/Compze.Internals.Sql.MicrosoftSql.csproj" />
-      <Project Path="src/Compze.Internals.Sql.MySql/Compze.Internals.Sql.MySql.csproj" />
-      <Project Path="src/Compze.Internals.Sql.PostgreSql/Compze.Internals.Sql.PostgreSql.csproj" />
-      <Project Path="src/Compze.Internals.Sql.Sqlite/Compze.Internals.Sql.Sqlite.csproj" />
+      <Project Path="src/Compze.Sql.Common/Compze.Sql.Common.csproj" />
+      <Project Path="src/Compze.Sql.MicrosoftSql/Compze.Sql.MicrosoftSql.csproj" />
+      <Project Path="src/Compze.Sql.MySql/Compze.Sql.MySql.csproj" />
+      <Project Path="src/Compze.Sql.PostgreSql/Compze.Sql.PostgreSql.csproj" />
+      <Project Path="src/Compze.Sql.Sqlite/Compze.Sql.Sqlite.csproj" />
    </Folder>
    <Folder Name="/Compze.Internals/SystemCE/">
       <Project Path="src/Compze.Internals.SystemCE/Compze.Internals.SystemCE.csproj" />

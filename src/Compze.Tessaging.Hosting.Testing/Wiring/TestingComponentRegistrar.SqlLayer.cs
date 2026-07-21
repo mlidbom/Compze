@@ -1,7 +1,7 @@
-using Compze.Internals.Sql.MicrosoftSql.Wiring;
-using Compze.Internals.Sql.MySql.Wiring;
-using Compze.Internals.Sql.PostgreSql.Wiring;
-using Compze.Internals.Sql.Sqlite.Wiring;
+using Compze.Sql.MicrosoftSql.Wiring;
+using Compze.Sql.MySql.Wiring;
+using Compze.Sql.PostgreSql.Wiring;
+using Compze.Sql.Sqlite.Wiring;
 using Compze.DocumentDb.MicrosoftSql.Wiring;
 using Compze.DocumentDb.MySql.Wiring;
 using Compze.DocumentDb.PostgreSql.Wiring;

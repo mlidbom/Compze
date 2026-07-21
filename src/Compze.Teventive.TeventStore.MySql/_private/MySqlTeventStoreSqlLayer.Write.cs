@@ -1,14 +1,14 @@
 using Compze.Abstractions;
 using Compze.Contracts;
-using Compze.Internals.Sql.Common;
-using Compze.Internals.Sql.MySql;
+using Compze.Sql.Common;
+using Compze.Sql.MySql;
 using Compze.Internals.SystemCE;
 using Compze.Tessaging;
 using Compze.Teventive.TeventStore.Abstractions._internal.SqlLayer.Abstractions;
 using MySqlConnector;
 using ReadOrder = Compze.Teventive.TeventStore.Abstractions._internal.SqlLayer.Abstractions.ReadOrder;
 using Tevent = Compze.Teventive.TeventStore.Abstractions._internal.SqlLayer.TeventTableSchemaStrings;
-using Compze.Internals.Sql.MySql._internal;
+using Compze.Sql.MySql._internal;
 
 namespace Compze.Teventive.TeventStore.MySql._private;
 

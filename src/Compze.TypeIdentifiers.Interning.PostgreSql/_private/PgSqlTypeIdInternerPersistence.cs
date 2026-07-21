@@ -1,13 +1,13 @@
 using System.Globalization;
 using System.Transactions;
 using Compze.Abstractions.Time;
-using Compze.Internals.Sql.Common;
-using Compze.Internals.Sql.PostgreSql;
+using Compze.Sql.Common;
+using Compze.Sql.PostgreSql;
 using Compze.Internals.SystemCE.TransactionsCE;
 using Types = Compze.TypeIdentifiers.Interning.TypeIdsTableSchema.Types;
 using Strings = Compze.TypeIdentifiers.Interning.TypeIdsTableSchema.Strings;
 using Names = Compze.TypeIdentifiers.Interning.TypeIdsTableSchema.Names;
-using Compze.Internals.Sql.PostgreSql._internal;
+using Compze.Sql.PostgreSql._internal;
 
 namespace Compze.TypeIdentifiers.Interning.PostgreSql._private;
 

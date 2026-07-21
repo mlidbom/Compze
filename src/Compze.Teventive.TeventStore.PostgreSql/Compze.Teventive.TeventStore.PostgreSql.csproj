@@ -16,8 +16,12 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Sql_PostgreSql)' == 'true'">
     <PackageReference Include="Compze.Internals.Sql.PostgreSql" Version="*-*" />
   </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Sql_PostgreSql)' != 'true'">
-    <ProjectReference Include="..\Compze.Internals.Sql.PostgreSql\Compze.Internals.Sql.PostgreSql.csproj" />
+  <!-- Compze.Sql.PostgreSql — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Sql_PostgreSql)' == 'true'">
+    <PackageReference Include="Compze.Sql.PostgreSql" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Sql_PostgreSql)' != 'true'">
+    <ProjectReference Include="..\Compze.Sql.PostgreSql\Compze.Sql.PostgreSql.csproj" />
   </ItemGroup>
   <!-- Compze.Teventive.TeventStore.Abstractions — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Teventive_TeventStore_Abstractions)' == 'true'">

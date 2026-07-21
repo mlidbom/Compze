@@ -18,6 +18,10 @@
     <PackageReference Include="xunit.v3" Version="3.1.0" />
     <PackageReference Include="JetBrains.Annotations.Sources" Version="2025.2.4" PrivateAssets="all" />
   </ItemGroup>
+  <!-- Compze.Internals.Sql.Sqlite — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Sql_Sqlite)' == 'true'">
+    <PackageReference Include="Compze.Internals.Sql.Sqlite" Version="*-*" />
+  </ItemGroup>
   <!-- Compze.Contracts — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Contracts)' == 'true'">
     <PackageReference Include="Compze.Contracts" Version="*-*" />
@@ -46,13 +50,6 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Logging)' != 'true'">
     <ProjectReference Include="..\..\src\Compze.Internals.Logging\Compze.Internals.Logging.csproj" />
   </ItemGroup>
-  <!-- Compze.Internals.Sql.Sqlite — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Sql_Sqlite)' == 'true'">
-    <PackageReference Include="Compze.Internals.Sql.Sqlite" Version="*-*" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Sql_Sqlite)' != 'true'">
-    <ProjectReference Include="..\..\src\Compze.Internals.Sql.Sqlite\Compze.Internals.Sql.Sqlite.csproj" />
-  </ItemGroup>
   <!-- Compze.Internals.SystemCE — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_SystemCE)' == 'true'">
     <PackageReference Include="Compze.Internals.SystemCE" Version="*-*" />
@@ -66,6 +63,13 @@
   </ItemGroup>
   <ItemGroup Condition="'$(UsePackageReference_Compze_Must)' != 'true'">
     <ProjectReference Include="..\..\src\Compze.Must\Compze.Must.csproj" />
+  </ItemGroup>
+  <!-- Compze.Sql.Sqlite — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Sql_Sqlite)' == 'true'">
+    <PackageReference Include="Compze.Sql.Sqlite" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Sql_Sqlite)' != 'true'">
+    <ProjectReference Include="..\..\src\Compze.Sql.Sqlite\Compze.Sql.Sqlite.csproj" />
   </ItemGroup>
   <!-- Compze.Tessaging — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging)' == 'true'">

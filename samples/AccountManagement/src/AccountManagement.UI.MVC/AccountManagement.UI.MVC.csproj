@@ -18,6 +18,14 @@
   <ItemGroup>
     <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.1" />
   </ItemGroup>
+  <!-- Compze.Internals.Serialization.Newtonsoft — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Serialization_Newtonsoft)' == 'true'">
+    <PackageReference Include="Compze.Internals.Serialization.Newtonsoft" Version="*-*" />
+  </ItemGroup>
+  <!-- Compze.Internals.Sql.MicrosoftSql — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Sql_MicrosoftSql)' == 'true'">
+    <PackageReference Include="Compze.Internals.Sql.MicrosoftSql" Version="*-*" />
+  </ItemGroup>
   <!-- Compze.Contracts — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Contracts)' == 'true'">
     <PackageReference Include="Compze.Contracts" Version="*-*" />
@@ -67,26 +75,26 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Logging)' != 'true'">
     <ProjectReference Include="..\..\..\..\src\Compze.Internals.Logging\Compze.Internals.Logging.csproj" />
   </ItemGroup>
-  <!-- Compze.Internals.Serialization.Newtonsoft — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Serialization_Newtonsoft)' == 'true'">
-    <PackageReference Include="Compze.Internals.Serialization.Newtonsoft" Version="*-*" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Serialization_Newtonsoft)' != 'true'">
-    <ProjectReference Include="..\..\..\..\src\Compze.Internals.Serialization.Newtonsoft\Compze.Internals.Serialization.Newtonsoft.csproj" />
-  </ItemGroup>
-  <!-- Compze.Internals.Sql.MicrosoftSql — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Sql_MicrosoftSql)' == 'true'">
-    <PackageReference Include="Compze.Internals.Sql.MicrosoftSql" Version="*-*" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Sql_MicrosoftSql)' != 'true'">
-    <ProjectReference Include="..\..\..\..\src\Compze.Internals.Sql.MicrosoftSql\Compze.Internals.Sql.MicrosoftSql.csproj" />
-  </ItemGroup>
   <!-- Compze.Internals.SystemCE — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_SystemCE)' == 'true'">
     <PackageReference Include="Compze.Internals.SystemCE" Version="*-*" />
   </ItemGroup>
   <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_SystemCE)' != 'true'">
     <ProjectReference Include="..\..\..\..\src\Compze.Internals.SystemCE\Compze.Internals.SystemCE.csproj" />
+  </ItemGroup>
+  <!-- Compze.Serialization.Newtonsoft — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Serialization_Newtonsoft)' == 'true'">
+    <PackageReference Include="Compze.Serialization.Newtonsoft" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Serialization_Newtonsoft)' != 'true'">
+    <ProjectReference Include="..\..\..\..\src\Compze.Serialization.Newtonsoft\Compze.Serialization.Newtonsoft.csproj" />
+  </ItemGroup>
+  <!-- Compze.Sql.MicrosoftSql — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Sql_MicrosoftSql)' == 'true'">
+    <PackageReference Include="Compze.Sql.MicrosoftSql" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Sql_MicrosoftSql)' != 'true'">
+    <ProjectReference Include="..\..\..\..\src\Compze.Sql.MicrosoftSql\Compze.Sql.MicrosoftSql.csproj" />
   </ItemGroup>
   <!-- Compze.Tessaging — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging)' == 'true'">

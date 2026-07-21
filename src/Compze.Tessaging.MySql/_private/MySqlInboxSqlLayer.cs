@@ -1,11 +1,11 @@
-using Compze.Internals.Sql.Common;
-using Compze.Internals.Sql.MySql;
+using Compze.Sql.Common;
+using Compze.Sql.MySql;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tessaging._internal.SqlLayer;
 using Compze.TypeIdentifiers;
 using Compze.TypeIdentifiers.Interning;
 using TessageTable =  Compze.Tessaging._internal.SqlLayer.ITessagingSqlLayer.InboxTessageDatabaseSchemaStrings;
-using Compze.Internals.Sql.MySql._internal;
+using Compze.Sql.MySql._internal;
 using Compze.Tessaging._private.SqlLayer;
 
 namespace Compze.Tessaging.MySql._private;
