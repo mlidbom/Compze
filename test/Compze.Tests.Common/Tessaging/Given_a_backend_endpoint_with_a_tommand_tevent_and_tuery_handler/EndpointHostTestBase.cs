@@ -26,21 +26,9 @@ using Compze.Tessaging.Typermedia;
 
 namespace Compze.Tests.Common.Tessaging.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler;
 
-public abstract class EndpointHostTestBase : UniversalTestBase
+public abstract partial class EndpointHostTestBase : UniversalTestBase
 {
    static readonly WaitTimeout _timeout = WaitTimeout.Seconds(30);
-
-   ///<summary>The Backend endpoint's identity. Fixed, not generated: an endpoint keeps its identity — and thereby its pooled<br/>
-   /// database — across host rebuilds, which is what lets specs script an endpoint's restart.</summary>
-   protected static readonly EndpointId BackendEndpointId = new(Guid.Parse("DDD0A67C-D2A2-4197-9AF8-38B6AEDF8FA6"));
-
-   ///<summary>The Remote endpoint's identity. Fixed for the same reason as <see cref="BackendEndpointId"/>.</summary>
-   protected static readonly EndpointId RemoteEndpointId = new(Guid.Parse("E72924D3-5279-44B5-B20D-D682E537672B"));
-
-   ///<summary>The identity of the successor to the Remote endpoint (see<br/>
-   /// <see cref="StartHostWithTheBackendEndpointAndASuccessorToTheRemoteEndpointAsync"/>) — deliberately a NEW identity:<br/>
-   /// a blue/green replacement is a different endpoint that advertises the same tommand type, never the old identity reused.</summary>
-   protected static readonly EndpointId RemoteSuccessorEndpointId = new(Guid.Parse("46ECC3A4-5657-4A0A-9C78-9FEEA5A1010D"));
 
    protected TestingEndpointHost Host { get; private set; } = null!;
    public IThreadGate MyExactlyOnceTommandHandlerThreadGate { get; }
@@ -117,110 +105,11 @@ public abstract class EndpointHostTestBase : UniversalTestBase
    {
       _rootContainer ??= CreateRootBuilder().Build();
       Host = TestingEndpointHost.Create(_rootContainer);
-
-      BackendEndPoint = Host.RegisterExactlyOnceEndpoint(
-         "Backend",
-         BackendEndpointId,
-         endpointBuilder =>
-         {
-            endpointBuilder
-               .RegisterComponents(registrar => registrar.RequireCommonTestTypeMappings())
-               //Short deliberately: every send these specs expect to succeed binds instantly (a live or sole-remembered handler),
-               //so the only sends that wait are the ones pinning the patience-exhausted failures - which would otherwise wait out
-               //the 30s default. Specs that need a wait to SUCCEED compose their own endpoints with their own patience.
-               .HandlerAvailabilityPatience(TimeSpan.FromMilliseconds(500));
-
-            endpointBuilder.RegisterTeventStore()
-                    .HandleTaggregate<MyTaggregate, IMyTaggregateTevent>();
-
-            //Exactly-once kinds are async end to end, so their handlers are declared async; the gates themselves are synchronous, so the bodies complete their tasks synchronously.
-            endpointBuilder.RegisterTessageBusHandlers(handle => handle
-                      .ForTommand((MyExactlyOnceTommand _) =>
-                       {
-                          MyExactlyOnceTommandHandlerThreadGate.AwaitPassThrough();
-                          return Task.CompletedTask;
-                       })
-                      .ForTevent((IMyExactlyOnceTevent _) =>
-                       {
-                          TeventHandlerThreadGate.AwaitPassThrough();
-                          return Task.CompletedTask;
-                       })
-                      .ForTevent((IMyTaggregateTevent _) =>
-                       {
-                          MyLocalTaggregateTeventHandlerThreadGate.AwaitPassThrough();
-                          return Task.CompletedTask;
-                       })
-                      .ForTevent((IMyBestEffortTevent _) => MyBestEffortTeventLocalHandlerThreadGate.AwaitPassThrough()))
-                      .RegisterTypermediaHandlers(handle => handle
-                      .ForTommand((MyCreateTaggregateTommand tommand, ILocalTypermediaNavigatorSession navigator) =>
-                       {
-                          MyCreateTaggregateTommandHandlerThreadGate.AwaitPassThrough();
-                          MyTaggregate.Create(tommand.TaggregateId, navigator);
-                       })
-                      .ForTommand((MyUpdateTaggregateTommand tommand, ILocalTypermediaNavigatorSession navigator) =>
-                       {
-                          MyUpdateTaggregateTommandHandlerThreadGate.AwaitPassThrough();
-                          navigator.Execute(new TeventStoreApi().Tueries.GetForUpdate<MyTaggregate>(tommand.TaggregateId)).Update();
-                       })
-                      .ForTuery((MyTuery _) =>
-                       {
-                          TueryHandlerThreadGate.AwaitPassThrough();
-                          return new MyTueryResult();
-                       })
-                      .ForTommand((MyAtMostOnceTypermediaTommandWithResult _) =>
-                       {
-                          TommandHandlerWithResultThreadGate.AwaitPassThrough();
-                          return new MyTommandResult();
-                       }))
-                      //Observation - the transaction-ignoring subscription kind: the Backend's own locally published tevents are queued for
-                      //this observer when their publishing unit of work commits, and dispatched off-thread.
-                      .ObserveTevents(observe => observe
-                      .ForTevent((IMyTaggregateTevent _) => MyTaggregateTeventBackendObserverThreadGate.AwaitPassThrough()));
-         });
+      BackendEndPoint = Host.RegisterEndpoint(new BackendEndpointDeclaration(this));
    }
 
    void RegisterRemoteEndpoint(bool withItsTommandHandler = true, bool withItsTeventSubscriptions = true) =>
-      RemoteEndpoint = Host.RegisterExactlyOnceEndpoint("Remote",
-                                             RemoteEndpointId,
-                                             endpointBuilder =>
-                                             {
-                                                endpointBuilder.Registrar.RequireCommonTestTypeMappings();
-
-                                                if(withItsTommandHandler)
-                                                {
-                                                   endpointBuilder.RegisterTessageBusHandlers(handle => handle
-                                                             .ForTommand((MyExactlyOnceTommandHandledByTheRemoteEndpoint _) =>
-                                                              {
-                                                                 MyExactlyOnceTommandHandledByTheRemoteEndpointHandlerThreadGate.AwaitPassThrough();
-                                                                 return Task.CompletedTask;
-                                                              }));
-                                                }
-
-                                                if(!withItsTeventSubscriptions) return;
-
-                                                endpointBuilder.RegisterTessageBusHandlers(handle => handle
-                                                          .ForTevent((IMyTaggregateTevent _) =>
-                                                           {
-                                                              MyRemoteTaggregateTeventHandlerThreadGate.AwaitPassThrough();
-                                                              return Task.CompletedTask;
-                                                           })
-                                                          //Publisher-conscious subscription: subscribing to the taggregate's wrapper type receives the wrapped tevent as MyTaggregate published it.
-                                                          .ForTevent((IMyTaggregateTevent<IMyTaggregateTevent> _) =>
-                                                           {
-                                                              MyRemotePublisherConsciousTeventHandlerThreadGate.AwaitPassThrough();
-                                                              return Task.CompletedTask;
-                                                           })
-                                                          .ForTevent((IMyBestEffortTevent tevent) =>
-                                                           {
-                                                              RemotelyReceivedBestEffortTevents.Enqueue(tevent);
-                                                              MyBestEffortTeventRemoteHandlerThreadGate.AwaitPassThrough();
-                                                           }))
-                                                          //Observation - the transaction-ignoring subscription kind: an arriving tevent is queued for these observers on
-                                                          //arrival (it is already a committed fact on its publisher), before and outside the transactional handling above.
-                                                          .ObserveTevents(observe => observe
-                                                          .ForTevent((IMyTaggregateTevent _) => MyTaggregateTeventRemoteObserverThreadGate.AwaitPassThrough())
-                                                          .ForTevent((IMyBestEffortTevent _) => MyBestEffortTeventRemoteObserverThreadGate.AwaitPassThrough()));
-                                             });
+      RemoteEndpoint = Host.RegisterEndpoint(new RemoteEndpointDeclaration(this, withItsTommandHandler, withItsTeventSubscriptions));
 
    protected async Task StartHostAsync()
    {
@@ -230,7 +119,7 @@ public abstract class EndpointHostTestBase : UniversalTestBase
    }
 
    ///<summary>Starts a host containing only the Backend endpoint — the Remote endpoint is down. An endpoint keeps its identity<br/>
-   /// and database across host rebuilds (see <see cref="BackendEndpointId"/>), so pairing this with <see cref="StartHostAsync"/><br/>
+   /// and database across host rebuilds (see <see cref="BackendEndpointDeclaration"/>), so pairing this with <see cref="StartHostAsync"/><br/>
    /// scripts the Remote endpoint's downtime: rebuild the host without it, later rebuild it back in.</summary>
    protected async Task StartHostWithOnlyTheBackendEndpointAsync()
    {
@@ -261,22 +150,13 @@ public abstract class EndpointHostTestBase : UniversalTestBase
    }
 
    ///<summary>Starts a host containing the Backend endpoint and a successor to the Remote endpoint: a NEW endpoint identity<br/>
-   /// (<see cref="RemoteSuccessorEndpointId"/>) whose advertisement handles <see cref="MyExactlyOnceTommandHandledByTheRemoteEndpoint"/> —<br/>
+   /// (<see cref="RemoteSuccessorEndpointDeclaration"/>) whose advertisement handles <see cref="MyExactlyOnceTommandHandledByTheRemoteEndpoint"/> —<br/>
    /// the blue/green replacement shape: the predecessor retired, and a different endpoint advertises the same tommand type.</summary>
    protected async Task StartHostWithTheBackendEndpointAndASuccessorToTheRemoteEndpointAsync()
    {
       CreateHostAndRegisterBackendEndpoint();
       RemoteEndpoint = null!; //There is no Remote endpoint in this host either: the successor replaces it under its own, new identity.
-      Host.RegisterExactlyOnceEndpoint("RemoteSuccessor",
-                            RemoteSuccessorEndpointId,
-                            endpointBuilder => endpointBuilder
-                               .RegisterComponents(registrar => registrar.RequireCommonTestTypeMappings())
-                               .RegisterTessageBusHandlers(handle => handle
-                                         .ForTommand((MyExactlyOnceTommandHandledByTheRemoteEndpoint _) =>
-                                          {
-                                             RemoteSuccessorTommandHandlerThreadGate.AwaitPassThrough();
-                                             return Task.CompletedTask;
-                                          })));
+      Host.RegisterEndpoint(new RemoteSuccessorEndpointDeclaration(this));
       await StartHostAndConnectClientAsync();
    }
 

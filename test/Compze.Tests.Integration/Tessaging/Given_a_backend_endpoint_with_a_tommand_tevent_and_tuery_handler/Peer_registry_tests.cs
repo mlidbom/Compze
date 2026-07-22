@@ -17,7 +17,7 @@ public class Peer_registry_tests : EndpointHostTestBase
    [PCT] public void After_start_the_backend_remembers_the_remote_endpoint_with_the_tommand_type_it_handles_in_its_advertisement()
    {
       var rememberedPeer = BackendEndPoint.ServiceLocator.Resolve<IPeerAdministration>().Peers
-                                          .Single(peer => peer.Id.Equals(RemoteEndpointId));
+                                          .Single(peer => peer.Id.Equals(RemoteEndpointDeclaration.Id));
 
       var typeMap = BackendEndPoint.ServiceLocator.Resolve<ITypeMap>();
       rememberedPeer.HandledTessageTypes.Contains(typeMap.GetId(typeof(MyExactlyOnceTommandHandledByTheRemoteEndpoint)).CanonicalString).Must().BeTrue();
@@ -29,7 +29,7 @@ public class Peer_registry_tests : EndpointHostTestBase
    [PCT] public void The_remote_endpoint_remembers_the_backends_typermedia_types_in_the_same_advertisement_as_its_tessaging_ones()
    {
       var rememberedBackend = RemoteEndpoint.ServiceLocator.Resolve<IPeerAdministration>().Peers
-                                            .Single(peer => peer.Id.Equals(BackendEndpointId));
+                                            .Single(peer => peer.Id.Equals(BackendEndpointDeclaration.Id));
 
       var typeMap = BackendEndPoint.ServiceLocator.Resolve<ITypeMap>();
       IReadOnlyList<Type> backendTypermediaTypes = [typeof(MyCreateTaggregateTommand), typeof(MyTuery), typeof(MyAtMostOnceTypermediaTommandWithResult)];

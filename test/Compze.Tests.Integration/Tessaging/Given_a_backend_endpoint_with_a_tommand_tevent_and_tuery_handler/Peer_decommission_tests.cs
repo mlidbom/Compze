@@ -29,13 +29,13 @@ public class Peer_decommission_tests : EndpointHostTestBase
       await Navigator.PostAsync(MyCreateTaggregateTommand.Create());
       await BackendEndPoint.ServiceLocator.Resolve<IIndependentTommandSender>().SendAsync(new MyExactlyOnceTommandHandledByTheRemoteEndpoint());
 
-      var report = await BackendPeerAdministration.DecommissionAsync(RemoteEndpointId);
+      var report = await BackendPeerAdministration.DecommissionAsync(RemoteEndpointDeclaration.Id);
 
       //The act reports what it discarded...
-      report.DecommissionedPeer.Must().Be(RemoteEndpointId);
+      report.DecommissionedPeer.Must().Be(RemoteEndpointDeclaration.Id);
       report.Discarded.Single().Count.Must().Be(3);
       //...and the peer left the endpoint's memory.
-      BackendPeerAdministration.Peers.Any(peer => peer.Id.Equals(RemoteEndpointId)).Must().BeFalse();
+      BackendPeerAdministration.Peers.Any(peer => peer.Id.Equals(RemoteEndpointDeclaration.Id)).Must().BeFalse();
 
       //Published while decommissioned: fanned out to nobody - nothing anywhere remembers the peer.
       await Navigator.PostAsync(MyCreateTaggregateTommand.Create());
@@ -63,7 +63,7 @@ public class Peer_decommission_tests : EndpointHostTestBase
          .Must().ThrowAsync<Exception>()).Which.Message.Must().Contain("More than one remembered peer");
 
       //Decommissioning the retired predecessor resolves the ambiguity - it was owed nothing, and the report says so...
-      (await BackendPeerAdministration.DecommissionAsync(RemoteEndpointId)).Discarded.Must().BeEmpty();
+      (await BackendPeerAdministration.DecommissionAsync(RemoteEndpointDeclaration.Id)).Discarded.Must().BeEmpty();
 
       //...the send binds to the sole remaining remembered handler, and the successor receives it on its return.
       await BackendEndPoint.ServiceLocator.Resolve<IIndependentTommandSender>().SendAsync(new MyExactlyOnceTommandHandledByTheRemoteEndpoint());
@@ -91,7 +91,7 @@ public class Peer_decommission_tests : EndpointHostTestBase
       await Host.DisposeAsync();
       await StartHostWithOnlyTheBackendEndpointAsync();
 
-      var strandedEntry = (await BackendPeerAdministration.DecommissionAsync(RemoteEndpointId)).Discarded.Single();
+      var strandedEntry = (await BackendPeerAdministration.DecommissionAsync(RemoteEndpointDeclaration.Id)).Discarded.Single();
 
       strandedEntry.Description.Must().Contain("stranded");
       strandedEntry.Description.Must().Contain(nameof(MyExactlyOnceTommandHandledByTheRemoteEndpoint));
@@ -117,7 +117,7 @@ public class Peer_decommission_tests : EndpointHostTestBase
       await Host.DisposeAsync();
       await StartHostWithOnlyTheBackendEndpointAsync();
 
-      (await BackendPeerAdministration.DecommissionAsync(RemoteEndpointId)).Discarded.Must().BeEmpty();
+      (await BackendPeerAdministration.DecommissionAsync(RemoteEndpointDeclaration.Id)).Discarded.Must().BeEmpty();
    }
 
    [PCT] public async Task Decommissioning_a_connected_peer_fails_loud()
@@ -126,12 +126,12 @@ public class Peer_decommission_tests : EndpointHostTestBase
       await Navigator.PostAsync(MyCreateTaggregateTommand.Create());
       MyRemoteTaggregateTeventHandlerThreadGate.AwaitPassedThroughCountEqualTo(1, WaitTimeout.Seconds(15));
 
-      (await InvokingAsync(async () => await BackendPeerAdministration.DecommissionAsync(RemoteEndpointId)).Must().ThrowAsync<Exception>())
+      (await InvokingAsync(async () => await BackendPeerAdministration.DecommissionAsync(RemoteEndpointDeclaration.Id)).Must().ThrowAsync<Exception>())
          .Which.Message.Must().Contain("currently connected");
    }
 
    [PCT] public async Task Decommissioning_the_endpoint_itself_fails_loud() =>
-      (await InvokingAsync(async () => await BackendPeerAdministration.DecommissionAsync(BackendEndpointId)).Must().ThrowAsync<Exception>())
+      (await InvokingAsync(async () => await BackendPeerAdministration.DecommissionAsync(BackendEndpointDeclaration.Id)).Must().ThrowAsync<Exception>())
          .Which.Message.Must().Contain("cannot decommission itself");
 
    [PCT] public async Task Decommissioning_an_unknown_peer_fails_loud() =>
