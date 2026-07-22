@@ -62,16 +62,17 @@ public abstract class EndpointDeclaration
    /// <c>Declare</c> override, then the build.</summary>
    private protected void DeclareSharedAspectsOn<TConcreteBuilder>(EndpointBuilder<TConcreteBuilder> builder) where TConcreteBuilder : EndpointBuilder<TConcreteBuilder>
    {
-      if(HandlerAvailabilityPatience is { } patience) builder.HandlerAvailabilityPatience(patience);
-      builder.RequirePeers([.. RequiredPeers]);
-      builder.DoNotQueueTeventsFor([.. PeersNotQueuedFor]);
-      builder.RegisterComponents(RegisterComponents);
-      builder.RegisterTessageBusHandlers(RegisterBestEffortTeventHandlers);
-      builder.RegisterTypermediaHandlers(handle =>
-      {
-         RegisterTypermediaTommandHandlers(handle);
-         RegisterTueryHandlers(handle);
-      });
-      builder.ObserveTevents(ObserveTevents);
+      if(HandlerAvailabilityPatience is {} patience) builder.HandlerAvailabilityPatience(patience);
+
+      builder.RequirePeers([.. RequiredPeers])
+             .DoNotQueueTeventsFor([.. PeersNotQueuedFor])
+             .RegisterComponents(RegisterComponents)
+             .RegisterTessageBusHandlers(RegisterBestEffortTeventHandlers)
+             .RegisterTypermediaHandlers(handle =>
+              {
+                 RegisterTypermediaTommandHandlers(handle);
+                 RegisterTueryHandlers(handle);
+              })
+             .ObserveTevents(ObserveTevents);
    }
 }
