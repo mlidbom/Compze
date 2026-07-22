@@ -26,10 +26,6 @@ namespace Compze.Tests.Integration.Tessaging;
 /// delivery stream (see <c>src/Compze.Tessaging/dev_docs/peer-model.md</c>).</summary>
 public class Given_an_exactly_once_tommand_send_racing_discovery : UniversalTestBase
 {
-   static readonly EndpointId SenderEndpointId = new(Guid.Parse("F1A83D57-2B96-4E40-8C15-7D3E90B62A84"));
-   static readonly EndpointId LateHandlerEndpointId = new(Guid.Parse("58C2E9B4-71D0-4F36-A5E8-9B14F7C3D620"));
-   static readonly EndpointId RetiredPeerId = new(Guid.Parse("9E60B3A8-4C27-4D91-B7F5-2A85D1E04C36"));
-
    TestingEndpointHost _host = null!;
    ExactlyOnceEndpoint _senderEndpoint = null!;
    IDependencyInjectionContainer? _rootContainer;
@@ -68,8 +64,8 @@ public class Given_an_exactly_once_tommand_send_racing_discovery : UniversalTest
       //The sender met the retired peer - a handler of the tommand's type - in one host generation, and the late handler in the
       //next: a handler replacement whose retired predecessor was never decommissioned. Its durable peer memory now remembers
       //two peers advertising the type...
-      await MeetTheEndpointHandlingTheTommandTypeInItsOwnHostGenerationAsync("RetiredPeer", RetiredPeerId, _retiredPeerThreadGate);
-      await MeetTheEndpointHandlingTheTommandTypeInItsOwnHostGenerationAsync("LateHandler", LateHandlerEndpointId, _lateHandlerThreadGate);
+      await MeetTheEndpointHandlingTheTommandTypeInItsOwnHostGenerationAsync(new RetiredPeerEndpointDeclaration(_retiredPeerThreadGate));
+      await MeetTheEndpointHandlingTheTommandTypeInItsOwnHostGenerationAsync(new LateHandlerEndpointDeclaration(_lateHandlerThreadGate));
       //...and in this host generation neither of them is live: with no way to know which is current, the send waits instead of binding blind.
       await RebuildTheHostWithTheSenderEndpointAloneAsync();
 
@@ -92,19 +88,16 @@ public class Given_an_exactly_once_tommand_send_racing_discovery : UniversalTest
                                 ._mutate(it => it.Registrar.CurrentTestsDbPoolIfNotCloneContainer())
                                 .Build();
       _host = TestingEndpointHost.Create(_rootContainer);
-      _senderEndpoint = _host.RegisterExactlyOnceEndpoint(
-         "Sender",
-         SenderEndpointId,
-         endpointBuilder => endpointBuilder.RegisterComponents(registrar => registrar.RequireIntegrationTestTypeMappings()));
+      _senderEndpoint = _host.RegisterEndpoint(new SenderEndpointDeclaration());
    }
 
-   ///<summary>One host generation in which the sender meets <paramref name="name"/> — an endpoint handling<br/>
+   ///<summary>One host generation in which the sender meets <paramref name="handlerEndpoint"/> — an endpoint handling<br/>
    /// <see cref="MyExactlyOnceTommandHandledOnlyByTheLateEndpoint"/> — and remembers its advertisement durably.</summary>
-   async Task MeetTheEndpointHandlingTheTommandTypeInItsOwnHostGenerationAsync(string name, EndpointId id, IThreadGate handlerGate)
+   async Task MeetTheEndpointHandlingTheTommandTypeInItsOwnHostGenerationAsync(IExactlyOnceEndpointDeclaration handlerEndpoint)
    {
       await _host.DisposeAsync();
       CreateHostWithTheSenderEndpoint();
-      RegisterTheEndpointHandlingTheTommandType(name, id, handlerGate);
+      _host.RegisterEndpoint(handlerEndpoint);
       await _host.StartAsync();
       await _host.AwaitEndpointsHaveMetEachOtherAsync();
    }
@@ -121,22 +114,50 @@ public class Given_an_exactly_once_tommand_send_racing_discovery : UniversalTest
    /// phases, in the same order. Its announcement is what the waiting send's patience is spent waiting for.</summary>
    async Task StartTheLateHandlerEndpointAsync()
    {
-      var lateHandlerEndpoint = RegisterTheEndpointHandlingTheTommandType("LateHandler", LateHandlerEndpointId, _lateHandlerThreadGate);
+      var lateHandlerEndpoint = _host.RegisterEndpoint(new LateHandlerEndpointDeclaration(_lateHandlerThreadGate));
       await lateHandlerEndpoint.StartAsync();
    }
 
-   ExactlyOnceEndpoint RegisterTheEndpointHandlingTheTommandType(string name, EndpointId id, IThreadGate handlerGate) =>
-      _host.RegisterExactlyOnceEndpoint(
-         name,
-         id,
-         endpointBuilder => endpointBuilder
-            .RegisterComponents(registrar => registrar.RequireIntegrationTestTypeMappings())
-            .RegisterTessageBusHandlers(handle => handle
-                       .ForTommand((MyExactlyOnceTommandHandledOnlyByTheLateEndpoint _) =>
-                        {
-                           handlerGate.AwaitPassThrough();
-                           return Task.CompletedTask;
-                        })));
+   class SenderEndpointDeclaration : ExactlyOnceEndpointDeclaration<SenderEndpointDeclaration>, IEndpointIdentity
+   {
+      public static string Name => "Sender";
+      public static EndpointId Id => new(Guid.Parse("F1A83D57-2B96-4E40-8C15-7D3E90B62A84"));
+
+      protected override void RegisterComponents(IComponentRegistrar registrar) => registrar.RequireIntegrationTestTypeMappings();
+   }
+
+   ///<summary>What the two tommand-handling endpoints share — everything but identity: the gated handler of<br/>
+   /// <see cref="MyExactlyOnceTommandHandledOnlyByTheLateEndpoint"/>.</summary>
+   abstract class TommandHandlingEndpointDeclaration<TIdentity> : ExactlyOnceEndpointDeclaration<TIdentity> where TIdentity : IEndpointIdentity
+   {
+      readonly IThreadGate _handlerGate;
+      protected TommandHandlingEndpointDeclaration(IThreadGate handlerGate) => _handlerGate = handlerGate;
+
+      protected override void RegisterComponents(IComponentRegistrar registrar) => registrar.RequireIntegrationTestTypeMappings();
+
+      protected override void RegisterExactlyOnceTommandHandlers(IExactlyOnceTommandHandlerRegistrar handle) => handle
+         .ForTommand((MyExactlyOnceTommandHandledOnlyByTheLateEndpoint _) =>
+          {
+             _handlerGate.AwaitPassThrough();
+             return Task.CompletedTask;
+          });
+   }
+
+   class RetiredPeerEndpointDeclaration : TommandHandlingEndpointDeclaration<RetiredPeerEndpointDeclaration>, IEndpointIdentity
+   {
+      public static string Name => "RetiredPeer";
+      public static EndpointId Id => new(Guid.Parse("9E60B3A8-4C27-4D91-B7F5-2A85D1E04C36"));
+
+      internal RetiredPeerEndpointDeclaration(IThreadGate handlerGate) : base(handlerGate) {}
+   }
+
+   class LateHandlerEndpointDeclaration : TommandHandlingEndpointDeclaration<LateHandlerEndpointDeclaration>, IEndpointIdentity
+   {
+      public static string Name => "LateHandler";
+      public static EndpointId Id => new(Guid.Parse("58C2E9B4-71D0-4F36-A5E8-9B14F7C3D620"));
+
+      internal LateHandlerEndpointDeclaration(IThreadGate handlerGate) : base(handlerGate) {}
+   }
 }
 
 public class MyExactlyOnceTommandHandledOnlyByTheLateEndpoint : Remotable.ExactlyOnce.Tommand;

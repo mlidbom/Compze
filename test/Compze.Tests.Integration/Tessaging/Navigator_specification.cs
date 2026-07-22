@@ -3,6 +3,7 @@ using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Typermedia;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
+using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Must;
 using Compze.Tessaging;
@@ -24,23 +25,30 @@ public class Navigator_specification : UniversalTestBase
 
    public Navigator_specification()
    {
-      var tueryResults = new List<UserResource>();
-
       _host = TestingEndpointHost.Create();
+      _endpoint = _host.RegisterEndpoint(new BackendEndpointDeclaration(new List<UserResource>()));
+   }
 
-      _endpoint = _host.RegisterExactlyOnceEndpoint(
-         "Backend",
-         new EndpointId(Guid.Parse("3A1B6A8C-D232-476C-A15A-9C8295413210")),
-         endpointBuilder => endpointBuilder
-            .RegisterComponents(registrar => registrar.RequireIntegrationTestTypeMappings())
-            .RegisterTypermediaHandlers(handle => handle
-                      .ForTuery((GetUserTuery tuery) => tueryResults.Single(result => result.Name == tuery.Name))
-                      .ForTuery((UserApiStartPageTuery _) => new UserApiStartPage())
-                      .ForTommand((RegisterUserTypermediaTommand typermediaTommand, IUnitOfWorkTommandSender _) =>
-                       {
-                          tueryResults.Add(new UserResource(typermediaTommand.Name));
-                          return new UserRegisteredConfirmationResource(typermediaTommand.Name);
-                       })));
+   class BackendEndpointDeclaration : ExactlyOnceEndpointDeclaration<BackendEndpointDeclaration>, IEndpointIdentity
+   {
+      public static string Name => "Backend";
+      public static EndpointId Id => new(Guid.Parse("3A1B6A8C-D232-476C-A15A-9C8295413210"));
+
+      readonly List<UserResource> _tueryResults;
+      internal BackendEndpointDeclaration(List<UserResource> tueryResults) => _tueryResults = tueryResults;
+
+      protected override void RegisterComponents(IComponentRegistrar registrar) => registrar.RequireIntegrationTestTypeMappings();
+
+      protected override void RegisterTueryHandlers(ITueryHandlerRegistrar handle) => handle
+         .ForTuery((GetUserTuery tuery) => _tueryResults.Single(result => result.Name == tuery.Name))
+         .ForTuery((UserApiStartPageTuery _) => new UserApiStartPage());
+
+      protected override void RegisterTypermediaTommandHandlers(ITypermediaTommandHandlerRegistrar handle) => handle
+         .ForTommand((RegisterUserTypermediaTommand typermediaTommand, IUnitOfWorkTommandSender _) =>
+          {
+             _tueryResults.Add(new UserResource(typermediaTommand.Name));
+             return new UserRegisteredConfirmationResource(typermediaTommand.Name);
+          });
    }
 
    protected override async Task InitializeAsyncInternal()
