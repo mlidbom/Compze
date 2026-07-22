@@ -4,16 +4,14 @@ using Compze.Tessaging.TessageBus;
 namespace Compze.Tessaging.Endpoints.ExactlyOnce;
 
 ///<summary>
-/// The declaration a concrete <see cref="ExactlyOnceEndpoint"/> inherits — see <see cref="EndpointDeclaration"/> for the
-/// declaration model. This tier adds the two exactly-once doors: handlers for exactly-once tommands
+/// The declaration a concrete <see cref="ExactlyOnceEndpoint"/> inherits — see <see cref="EndpointDeclaration{TIdentity}"/>
+/// for the declaration model. This tier adds the two exactly-once doors: handlers for exactly-once tommands
 /// (<see cref="RegisterExactlyOnceTommandHandlers"/>) and for tevent subscriptions demanding exactly-once delivery
 /// (<see cref="RegisterExactlyOnceTeventHandlers"/>). The best-effort tier deliberately lacks both — an endpoint that
 /// cannot honor a guarantee has no door to declare handlers demanding it.
 ///</summary>
-public abstract class ExactlyOnceEndpointDeclaration : EndpointDeclaration
+public abstract class ExactlyOnceEndpointDeclaration<TIdentity> : EndpointDeclaration<TIdentity>, IExactlyOnceEndpointDeclaration where TIdentity : IEndpointIdentity
 {
-   protected ExactlyOnceEndpointDeclaration(string name, EndpointId id) : base(name, id) {}
-
    ///<summary>The door for exactly-once tommand handlers — see <see cref="IExactlyOnceTommandHandlerRegistrar"/>.</summary>
    protected virtual void RegisterExactlyOnceTommandHandlers(IExactlyOnceTommandHandlerRegistrar handle) {}
 
@@ -25,11 +23,7 @@ public abstract class ExactlyOnceEndpointDeclaration : EndpointDeclaration
    /// declared over the full declaration surface.</summary>
    protected virtual void Declare(ExactlyOnceEndpointBuilder endpoint) {}
 
-   ///<summary>Builds this declaration into a running-ready <see cref="ExactlyOnceEndpoint"/>: the template that guarantees<br/>
-   /// every composition the same setup order — the environment declares its choices and the domain database binding, the<br/>
-   /// declaration's aspects and doors follow, the general <see cref="Declare"/> override last, and the build closes the<br/>
-   /// roster. Called by the host that owns the endpoint (<see cref="IEndpointHost.RegisterEndpoint(ExactlyOnceEndpointDeclaration)"/>)<br/>
-   /// or directly — an endpoint is first-class and needs no host.</summary>
+   ///<inheritdoc />
    public ExactlyOnceEndpoint BuildOn(IContainerBuilder containerBuilder, IEndpointEnvironment environment)
    {
       var builder = new ExactlyOnceEndpointBuilder(containerBuilder, Configuration);

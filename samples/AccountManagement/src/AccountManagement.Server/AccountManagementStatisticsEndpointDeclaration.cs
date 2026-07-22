@@ -10,11 +10,10 @@ namespace AccountManagement;
 ///<summary>The AccountManagement statistics endpoint: query models maintained from the domain endpoint's tevents, stored as<br/>
 /// documents. Every composition — production and tests alike — hosts this same declaration; the composition brings only the<br/>
 /// <see cref="IEndpointEnvironment"/> it runs in.</summary>
-public class AccountManagementStatisticsEndpointDeclaration : ExactlyOnceEndpointDeclaration
+public class AccountManagementStatisticsEndpointDeclaration : ExactlyOnceEndpointDeclaration<AccountManagementStatisticsEndpointDeclaration>, IEndpointIdentity
 {
-   public static readonly EndpointId Id = new(Guid.Parse("B16250DE-4321-4FBD-A0CC-E42C7A1B0B34"));
-
-   public AccountManagementStatisticsEndpointDeclaration() : base("AccountManagementStatistics", Id) {}
+   public static string Name => "AccountManagementStatistics";
+   public static EndpointId Id => new(Guid.Parse("B16250DE-4321-4FBD-A0CC-E42C7A1B0B34"));
 
    protected override void RegisterComponents(IComponentRegistrar registrar)
    {

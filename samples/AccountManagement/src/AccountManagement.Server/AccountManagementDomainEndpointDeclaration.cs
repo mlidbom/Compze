@@ -15,11 +15,10 @@ namespace AccountManagement;
 ///<summary>The AccountManagement domain endpoint: the <see cref="Account"/> taggregate's tevent store, the email-to-account<br/>
 /// mapping documents, and the domain's typermedia and tessage-bus handlers. Every composition — production and tests alike —<br/>
 /// hosts this same declaration; the composition brings only the <see cref="IEndpointEnvironment"/> it runs in.</summary>
-public class AccountManagementDomainEndpointDeclaration : ExactlyOnceEndpointDeclaration
+public class AccountManagementDomainEndpointDeclaration : ExactlyOnceEndpointDeclaration<AccountManagementDomainEndpointDeclaration>, IEndpointIdentity
 {
-   public static readonly EndpointId Id = new(Guid.Parse("1A1BE9C8-C8F6-4E38-ABFB-F101E5EDB00D"));
-
-   public AccountManagementDomainEndpointDeclaration() : base("AccountManagement", Id) {}
+   public static string Name => "AccountManagement";
+   public static EndpointId Id => new(Guid.Parse("1A1BE9C8-C8F6-4E38-ABFB-F101E5EDB00D"));
 
    //The statistics endpoint's query models update from this endpoint's tevents. Requiring the peer makes the bus queue its
    //tevents for it even before first contact, so traffic can open without awaiting discovery.

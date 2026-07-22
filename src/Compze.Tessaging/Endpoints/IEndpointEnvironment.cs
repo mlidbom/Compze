@@ -3,12 +3,12 @@ using Compze.Tessaging.Endpoints.ExactlyOnce;
 namespace Compze.Tessaging.Endpoints;
 
 ///<summary>
-/// The environment an endpoint runs in — everything a deployment decides and an <see cref="EndpointDeclaration"/>
+/// The environment an endpoint runs in — everything a deployment decides and an <see cref="EndpointDeclaration{TIdentity}"/>
 /// deliberately does not: the transport protocol, the serializer, participation in discovery, and — for the exactly-once
 /// tier — the binding of the endpoint to an actual domain database. One environment serves every endpoint of a process:
 /// a host created with one applies it to every declaration it builds
-/// (<see cref="IEndpointHost.RegisterEndpoint(ExactlyOnceEndpointDeclaration)"/>), and building without a host hands it to
-/// the declaration directly (<see cref="ExactlyOnceEndpointDeclaration.BuildOn"/>). The production composition of an
+/// (<see cref="IEndpointHost.RegisterEndpoint(IExactlyOnceEndpointDeclaration)"/>), and building without a host hands it to
+/// the declaration directly (<see cref="IExactlyOnceEndpointDeclaration.BuildOn"/>). The production composition of an
 /// application implements this once; the testing environment lives inside the testing host.
 ///</summary>
 public interface IEndpointEnvironment

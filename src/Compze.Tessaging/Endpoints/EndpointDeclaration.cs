@@ -7,11 +7,11 @@ using Compze.Tessaging.Typermedia;
 namespace Compze.Tessaging.Endpoints;
 
 ///<summary>
-/// The base of the two endpoint-declaration tiers (<see cref="ExactlyOnceEndpointDeclaration"/> /
-/// <see cref="BestEffortEndpointDeclaration"/>). An endpoint-declaration is what an endpoint IS in every composition —
-/// its identity, its topology stance, and its handlers — declared once, as a class, so that production and tests host the
-/// same endpoint by construction. What varies per deployment — transport, serializer, discovery, the actual domain
-/// database — is the <see cref="IEndpointEnvironment"/>, handed in when the declaration is built.
+/// The base of the two endpoint-declaration tiers (<see cref="ExactlyOnceEndpointDeclaration{TIdentity}"/> /
+/// <see cref="BestEffortEndpointDeclaration{TIdentity}"/>). An endpoint-declaration is what an endpoint IS in every
+/// composition — its identity, its topology stance, and its handlers — declared once, as a class, so that production and
+/// tests host the same endpoint by construction. What varies per deployment — transport, serializer, discovery, the actual
+/// domain database — is the <see cref="IEndpointEnvironment"/>, handed in when the declaration is built.
 ///
 /// The declaration is a blueprint, not the running endpoint: instantiable and inspectable with no container and no
 /// lifecycle, and buildable any number of times — one declaration, several endpoint instances across restarts.
@@ -22,12 +22,17 @@ namespace Compze.Tessaging.Endpoints;
 /// Wiring the doors do not cover — store integrations, arbitrary component registration — goes through the tier's
 /// general <c>Declare</c> override, which receives the full declaration surface.
 ///</summary>
-public abstract class EndpointDeclaration
+///<typeparam name="TIdentity">The endpoint's identity type — the <see cref="IEndpointIdentity"/> whose compiler-enforced<br/>
+/// static <see cref="IEndpointIdentity.Name"/> and <see cref="IEndpointIdentity.Id"/> this declaration builds under. Usually<br/>
+/// the concrete declaration itself, implementing <see cref="IEndpointIdentity"/> beside inheriting this base; a standalone<br/>
+/// identity type works too, for identities that live apart from their declarations (shared identity/contract code).</typeparam>
+public abstract class EndpointDeclaration<TIdentity> where TIdentity : IEndpointIdentity
 {
-   ///<summary>The endpoint's human-readable name and durable <see cref="EndpointId"/> — the identity every composition shares.</summary>
+   ///<summary>The endpoint's human-readable name and durable <see cref="EndpointId"/> — the identity every composition shares,<br/>
+   /// read from <typeparamref name="TIdentity"/>'s statics.</summary>
    private protected EndpointConfiguration Configuration { get; }
 
-   protected EndpointDeclaration(string name, EndpointId id) => Configuration = new EndpointConfiguration(name, id);
+   protected EndpointDeclaration() => Configuration = new EndpointConfiguration(TIdentity.Name, TIdentity.Id);
 
    ///<summary>The peers this endpoint requires — see <see cref="EndpointBuilder{TConcreteBuilder}.RequirePeers"/>. Empty by default.</summary>
    protected virtual IReadOnlyList<EndpointId> RequiredPeers => [];

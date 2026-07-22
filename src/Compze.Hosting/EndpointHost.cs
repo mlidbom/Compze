@@ -1,8 +1,8 @@
-using Compze.Tessaging.Endpoints;
 using Compze.Contracts;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Logging;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
+using Compze.Tessaging.Endpoints;
 using Compze.Tessaging.Endpoints.BestEffort;
 using Compze.Tessaging.Endpoints.ExactlyOnce;
 
@@ -28,7 +28,7 @@ public class EndpointHost : IEndpointHost
    protected EndpointHost(Func<IContainerBuilder> containerFactory) => _containerFactory = containerFactory;
 
    ///<summary>The one <see cref="IEndpointEnvironment"/> every endpoint of this host runs in — what<br/>
-   /// <see cref="RegisterEndpoint(ExactlyOnceEndpointDeclaration)"/> builds each declaration in. Null on a host created<br/>
+   /// <see cref="RegisterEndpoint(IExactlyOnceEndpointDeclaration)"/> builds each declaration in. Null on a host created<br/>
    /// without one, where only the compose-callback registration is available.</summary>
    protected IEndpointEnvironment? Environment { get; set; }
 
@@ -36,7 +36,7 @@ public class EndpointHost : IEndpointHost
    {
       public static IEndpointHost Create(Func<IContainerBuilder> containerFactory) => new EndpointHost(containerFactory);
 
-      ///<summary>Creates a production host that builds every registered <see cref="EndpointDeclaration"/> in <paramref name="environment"/>.</summary>
+      ///<summary>Creates a production host that builds every registered endpoint-declaration (<see cref="EndpointDeclaration{TIdentity}"/>) in <paramref name="environment"/>.</summary>
       public static IEndpointHost Create(Func<IContainerBuilder> containerFactory, IEndpointEnvironment environment) =>
          new EndpointHost(containerFactory) { Environment = environment };
    }
@@ -48,10 +48,10 @@ public class EndpointHost : IEndpointHost
       return endpoint;
    }
 
-   public ExactlyOnceEndpoint RegisterEndpoint(ExactlyOnceEndpointDeclaration declaration) =>
+   public ExactlyOnceEndpoint RegisterEndpoint(IExactlyOnceEndpointDeclaration declaration) =>
       RegisterEndpoint(containerBuilder => declaration.BuildOn(containerBuilder, TheHostsEnvironment()));
 
-   public BestEffortEndpoint RegisterEndpoint(BestEffortEndpointDeclaration declaration) =>
+   public BestEffortEndpoint RegisterEndpoint(IBestEffortEndpointDeclaration declaration) =>
       RegisterEndpoint(containerBuilder => declaration.BuildOn(containerBuilder, TheHostsEnvironment()));
 
    IEndpointEnvironment TheHostsEnvironment()
@@ -74,6 +74,7 @@ public class EndpointHost : IEndpointHost
    public void Start() => StartAsync().WaitUnwrappingException();
 
    bool _disposed;
+
    protected virtual async ValueTask DisposeAsync(bool disposing)
    {
       if(!_disposed)
