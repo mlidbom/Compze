@@ -4,7 +4,6 @@ using Compze.Tessaging.Endpoints.ExactlyOnce;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Hosting.Testing.Typermedia;
 using Compze.Tests.Infrastructure;
-using static AccountManagement.AccountManagementServerDomainBootstrapper;
 
 namespace AccountManagement.UserStories;
 
@@ -18,8 +17,8 @@ public abstract class UserStoryTest : UniversalTestBase
    protected UserStoryTest()
    {
       Host = TestingEndpointHost.Create();
-      _endpoint = Host.RegisterExactlyOnceEndpoint(DomainEndpointName, DomainEndpointId, DeclareDomainEndpoint);
-      Host.RegisterExactlyOnceEndpoint(StatisticsEndpointName, StatisticsEndpointId, DeclareStatisticsEndpoint);
+      _endpoint = Host.RegisterEndpoint(new AccountManagementDomainEndpointDeclaration());
+      Host.RegisterEndpoint(new AccountManagementStatisticsEndpointDeclaration());
    }
 
    protected override async Task InitializeAsyncInternal()
