@@ -39,30 +39,37 @@ public class Experiment_with_unifying_tevents_and_tommands_test : UniversalTestB
    public Experiment_with_unifying_tevents_and_tommands_test()
    {
       _host = TestingEndpointHost.Create();
+      _userManagementDomainEndpoint = _host.RegisterEndpoint(new UserManagementDomainEndpointDeclaration());
+   }
 
-      _userManagementDomainEndpoint = _host.RegisterExactlyOnceEndpoint(
-         "UserManagementDomain",
-         new EndpointId(Guid.Parse("A4A2BA96-8D82-47AC-8A1B-38476C7B5D5D")),
-         endpointBuilder =>
-         {
-            endpointBuilder.RegisterComponents(registrar =>
-            {
-               registrar.RequireIntegrationTestTypeMappings();
-               registrar.RequireMappedTypesFromAssemblyContaining<ITaggregateTevent>();
-            });
+   class UserManagementDomainEndpointDeclaration : ExactlyOnceEndpointDeclaration<UserManagementDomainEndpointDeclaration>, IEndpointIdentity
+   {
+      public static string Name => "UserManagementDomain";
+      public static EndpointId Id => new(Guid.Parse("A4A2BA96-8D82-47AC-8A1B-38476C7B5D5D"));
 
-            endpointBuilder.Registrar.TeventStore(endpointBuilder.Configuration.ConnectionStringName);
+      protected override void RegisterComponents(IComponentRegistrar registrar)
+      {
+         registrar.RequireIntegrationTestTypeMappings();
+         registrar.RequireMappedTypesFromAssemblyContaining<ITaggregateTevent>();
+      }
 
-            endpointBuilder.RegisterTessageBusHandlers(handle => handle
-                      .ForTevent((IUserTevent.UserRegistered _) => Task.CompletedTask));
-            endpointBuilder.RegisterTypermediaHandlers(handle => handle
-                      .ForTuery((GetUserTuery tuery, ITeventStoreReader teventReader) => new UserResource(teventReader.GetHistory(tuery.UserId)))
-                      .ForTommand((UserRegistrarTommand.RegisterUserTypermediaTommand typermediaTommand, ITeventStoreUpdater store) =>
-                       {
-                          store.Save(UserTaggregate.Register(typermediaTommand));
-                          return new RegisterUserResult(typermediaTommand.UserId);
-                       }));
-         });
+      protected override void RegisterExactlyOnceTeventHandlers(IExactlyOnceTeventHandlerRegistrar handle) => handle
+         .ForTevent((IUserTevent.UserRegistered _) => Task.CompletedTask);
+
+      protected override void RegisterTueryHandlers(ITueryHandlerRegistrar handle) => handle
+         .ForTuery((GetUserTuery tuery, ITeventStoreReader teventReader) => new UserResource(teventReader.GetHistory(tuery.UserId)));
+
+      protected override void RegisterTypermediaTommandHandlers(ITypermediaTommandHandlerRegistrar handle) => handle
+         .ForTommand((UserRegistrarTommand.RegisterUserTypermediaTommand typermediaTommand, ITeventStoreUpdater store) =>
+          {
+             store.Save(UserTaggregate.Register(typermediaTommand));
+             return new RegisterUserResult(typermediaTommand.UserId);
+          });
+
+      //The tevent store's components without its typermedia surface: this experiment reads and saves through the store
+      //abstractions directly, so only the store registration itself is declared - the general door's job.
+      protected override void Declare(ExactlyOnceEndpointBuilder endpoint) =>
+         endpoint.Registrar.TeventStore(endpoint.Configuration.ConnectionStringName);
    }
 
    protected override async Task InitializeAsyncInternal()
