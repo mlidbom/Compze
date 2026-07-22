@@ -1,4 +1,6 @@
 using Compze.DependencyInjection.Abstractions;
+using Compze.Tessaging.Endpoints.BestEffort;
+using Compze.Tessaging.Endpoints.ExactlyOnce;
 
 namespace Compze.Tessaging.Endpoints;
 
@@ -21,6 +23,15 @@ public interface IEndpointHost : IAsyncDisposable
     /// returns the endpoint composed on it — e.g. <c>host.RegisterEndpoint(container => ExactlyOnceEndpoint.Compose(container, ...))</c>.<br/>
     /// The host never knows the endpoint's tier: what the endpoint is, is decided entirely by its composition.</summary>
     TEndpoint RegisterEndpoint<TEndpoint>(Func<IContainerBuilder, TEndpoint> composeEndpoint) where TEndpoint : IEndpoint;
+
+    ///<summary>Registers the endpoint an <see cref="ExactlyOnceEndpointDeclaration"/> declares, built in this host's<br/>
+    /// <see cref="IEndpointEnvironment"/> (<see cref="ExactlyOnceEndpointDeclaration.BuildOn"/>) — the declaration brings what<br/>
+    /// the endpoint is, the host brings where it runs.</summary>
+    ExactlyOnceEndpoint RegisterEndpoint(ExactlyOnceEndpointDeclaration declaration);
+
+    ///<summary>Registers the endpoint a <see cref="BestEffortEndpointDeclaration"/> declares, built in this host's<br/>
+    /// <see cref="IEndpointEnvironment"/> (<see cref="BestEffortEndpointDeclaration.BuildOn"/>).</summary>
+    BestEffortEndpoint RegisterEndpoint(BestEffortEndpointDeclaration declaration);
 
     ///<summary>The endpoints registered with this host so far, in registration order.</summary>
     IReadOnlyList<IEndpoint> Endpoints { get; }

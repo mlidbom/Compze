@@ -18,7 +18,7 @@ namespace Compze.Tessaging.TessageBus;
 /// modifies a database by construction, so tommand handlers here have no synchronous form at all, and a subscription demanding<br/>
 /// exactly-once tevent delivery explodes when handed a synchronous handler. Convenience overloads that resolve extra lambda<br/>
 /// parameters from the handling context live in <see cref="TessageBusHandlerRegistrarCE"/>.</remarks>
-public sealed class TessageBusHandlerRegistrar
+public sealed class TessageBusHandlerRegistrar : IExactlyOnceTommandHandlerRegistrar, IExactlyOnceTeventHandlerRegistrar, IBestEffortTeventHandlerRegistrar
 {
    readonly TessageHandlerRegistrations _registrations;
    bool _callbackHasEnded;
@@ -63,6 +63,35 @@ public sealed class TessageBusHandlerRegistrar
       return this;
    }
 
+   //The declaration doors an endpoint-declaration's overrides receive - each showing only its facet of this registrar, with
+   //the door's guarantee-fit asserted at declaration.
+   IExactlyOnceTommandHandlerRegistrar IExactlyOnceTommandHandlerRegistrar.ForTommand<TTommand>(Func<TTommand, IUnitOfWorkResolver, Task> handler)
+   {
+      ForTommand(handler);
+      return this;
+   }
+
+   IExactlyOnceTeventHandlerRegistrar IExactlyOnceTeventHandlerRegistrar.ForTevent<TTevent>(Func<TTevent, IUnitOfWorkResolver, Task> handler)
+   {
+      AssertSubscriptionDemandsExactlyOnceDelivery<TTevent>();
+      ForTevent(handler);
+      return this;
+   }
+
+   IBestEffortTeventHandlerRegistrar IBestEffortTeventHandlerRegistrar.ForTevent<TTevent>(Func<TTevent, IUnitOfWorkResolver, Task> handler)
+   {
+      AssertSubscriptionDoesNotDemandExactlyOnceDelivery<TTevent>();
+      ForTevent(handler);
+      return this;
+   }
+
+   IBestEffortTeventHandlerRegistrar IBestEffortTeventHandlerRegistrar.ForTevent<TTevent>(Action<TTevent, IUnitOfWorkResolver> handler)
+   {
+      AssertSubscriptionDoesNotDemandExactlyOnceDelivery<TTevent>();
+      ForTevent(handler);
+      return this;
+   }
+
    internal void EndCallback() => _callbackHasEnded = true;
 
    void AssertUsedOnlyInsideItsCallback() =>
@@ -70,6 +99,17 @@ public sealed class TessageBusHandlerRegistrar
                    () => $"This {nameof(TessageBusHandlerRegistrar)}'s declaration callback has ended, and the registrar exists only inside it: the callback's end is the registration's end, so nothing can hold a registrar and mutate the engine later. Declare every handler inside the {nameof(LocalTessagingEngineBuilder.RegisterTessageBusHandlers)} callback.");
 
    static void AssertSubscriptionAllowsSynchronousHandlers<TTevent>() where TTevent : ITevent =>
-      State.Assert(!PublisherTevent.WrapperTypeMatchingAllWrappingsOf(typeof(TTevent)).Is<IPublisherTevent<IExactlyOnceTevent>>(),
+      State.Assert(!SubscriptionDemandsExactlyOnceDelivery<TTevent>(),
                    () => $"A subscription to {typeof(TTevent).FullName} demands exactly-once delivery, and exactly-once kinds are async end to end: an exactly-once handler transactionally modifies a database by construction, and that does not happen synchronously. Register an async handler ({nameof(Task)}-returning) instead.");
+
+   static void AssertSubscriptionDemandsExactlyOnceDelivery<TTevent>() where TTevent : ITevent =>
+      State.Assert(SubscriptionDemandsExactlyOnceDelivery<TTevent>(),
+                   () => $"A subscription to {typeof(TTevent).FullName} does not demand exactly-once delivery, so it does not belong behind the exactly-once tevent door. Register it through the best-effort tevent door (RegisterBestEffortTeventHandlers).");
+
+   static void AssertSubscriptionDoesNotDemandExactlyOnceDelivery<TTevent>() where TTevent : ITevent =>
+      State.Assert(!SubscriptionDemandsExactlyOnceDelivery<TTevent>(),
+                   () => $"A subscription to {typeof(TTevent).FullName} demands exactly-once delivery, which only the exactly-once tier's durable vertical can honor. Register it through the exactly-once tevent door (RegisterExactlyOnceTeventHandlers) of an exactly-once endpoint's declaration.");
+
+   static bool SubscriptionDemandsExactlyOnceDelivery<TTevent>() where TTevent : ITevent =>
+      PublisherTevent.WrapperTypeMatchingAllWrappingsOf(typeof(TTevent)).Is<IPublisherTevent<IExactlyOnceTevent>>();
 }

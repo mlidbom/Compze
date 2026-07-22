@@ -46,6 +46,34 @@ public class TestingEndpointHost : EndpointHost
 
       _endpointRegistryDirectory = new DirectoryInfo(Path.Combine(Path.GetTempPath(), "Compze", "Tests", "TestingHostEndpointRegistries", Guid.NewGuid().ToString("N")))._mutate(it => it.Create());
       _endpointRegistry = InterprocessEndpointRegistry.OpenOrCreateSessionLocal("EndpointRegistry", _endpointRegistryDirectory);
+      Environment = new TestingEndpointEnvironment(_tessagesInFlightTracker, _endpointRegistry);
+   }
+
+   ///<summary>The environment every endpoint of this host runs in — the current test's concerns as an<br/>
+   /// <see cref="IEndpointEnvironment"/>: the host's tessages-in-flight tracker, the current test's transport protocol,<br/>
+   /// participation in the host's own interprocess endpoint registry, and the pooled test database keyed by the endpoint's id<br/>
+   /// (so an endpoint keeps its database across host rebuilds and specs can script restarts). The serializers arrive with the<br/>
+   /// cloned root container, so the environment declares none.</summary>
+   class TestingEndpointEnvironment : IEndpointEnvironment
+   {
+      readonly TessagesInFlightTracker _tessagesInFlightTracker;
+      readonly InterprocessEndpointRegistry _endpointRegistry;
+
+      internal TestingEndpointEnvironment(TessagesInFlightTracker tessagesInFlightTracker, InterprocessEndpointRegistry endpointRegistry)
+      {
+         _tessagesInFlightTracker = tessagesInFlightTracker;
+         _endpointRegistry = endpointRegistry;
+      }
+
+      public void DeclareOn<TConcreteBuilder>(EndpointBuilder<TConcreteBuilder> endpointBuilder) where TConcreteBuilder : EndpointBuilder<TConcreteBuilder>
+      {
+         endpointBuilder.TrackTessagesInFlightWith(_tessagesInFlightTracker);
+         endpointBuilder.TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport());
+         endpointBuilder.ParticipateIn(_endpointRegistry);
+      }
+
+      public void DeclareDomainDatabaseOn(ExactlyOnceEndpointBuilder endpointBuilder) =>
+         endpointBuilder.ConfigurePersistence(registrar => registrar.CurrentTestsConfiguredSqlLayer(connectionStringName: endpointBuilder.Configuration.Id.ToString()));
    }
 
    ///<summary>Creates a testing host with its own root container, set up with the current test's DI container technology, serializers and database pool.</summary>
@@ -89,13 +117,8 @@ public class TestingEndpointHost : EndpointHost
          build(endpointBuilder);
       }));
 
-   void DeclareTheCurrentTestsConcerns<TConcreteBuilder>(EndpointBuilder<TConcreteBuilder> endpointBuilder) where TConcreteBuilder : EndpointBuilder<TConcreteBuilder>
-   {
-      endpointBuilder.TrackTessagesInFlightWith(_tessagesInFlightTracker);
-      endpointBuilder.TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport());
-      //The serializers arrive with the cloned root container; the topology with the host's registry.
-      endpointBuilder.ParticipateIn(_endpointRegistry);
-   }
+   void DeclareTheCurrentTestsConcerns<TConcreteBuilder>(EndpointBuilder<TConcreteBuilder> endpointBuilder) where TConcreteBuilder : EndpointBuilder<TConcreteBuilder> =>
+      Environment!.DeclareOn(endpointBuilder);
 
    ///<summary>Awaits every endpoint of this host remembering every other endpoint of the host as a peer — mutual first<br/>
    /// contact. <see cref="EndpointHost.StartAsync"/> completes when every endpoint has started; whether the endpoints have<br/>
