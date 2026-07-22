@@ -1,4 +1,5 @@
 using Compze.Tessaging.Endpoints;
+using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Must;
 using Compze.DependencyInjection;
@@ -22,37 +23,49 @@ namespace Compze.Tessaging.Specifications.Typermedia;
 /// client's connections change only by its own explicit connects.)</summary>
 public class Given_an_endpoint_navigating_a_typermedia_type_two_live_endpoints_advertise : UniversalTestBase
 {
-   static readonly EndpointId NavigatorEndpointId = new(Guid.Parse("B4F07D28-5E91-4C36-A0D7-92E8B1C5F6A3"));
-   static readonly EndpointId FirstHandlerEndpointId = new(Guid.Parse("1C9E5B72-D840-4F13-86A5-3B0F7D2E9C41"));
-   static readonly EndpointId SecondHandlerEndpointId = new(Guid.Parse("E8A31F96-27C4-4D58-B1E0-64D9A0C7B5F2"));
-
    readonly TestingEndpointHost _host;
    readonly BestEffortEndpoint _navigatorEndpoint;
 
    public Given_an_endpoint_navigating_a_typermedia_type_two_live_endpoints_advertise()
    {
       _host = TestingEndpointHost.Create();
-
-      _navigatorEndpoint = _host.RegisterBestEffortEndpoint(
-         "Navigator",
-         NavigatorEndpointId,
-         endpointBuilder => endpointBuilder
-            .RegisterComponents(registrar => registrar.RequireTypermediaHostingSpecificationTypeMappings())
-            //Short deliberately: this specification pins what exhausted patience says, so waiting out the full default would only slow the suite.
-            .HandlerAvailabilityPatience(TimeSpan.FromMilliseconds(100)));
-
-      RegisterHandlerEndpoint("FirstHandler", FirstHandlerEndpointId);
-      RegisterHandlerEndpoint("SecondHandler", SecondHandlerEndpointId);
+      _navigatorEndpoint = _host.RegisterEndpoint(new NavigatorEndpointDeclaration());
+      _host.RegisterEndpoint(new FirstHandlerEndpointDeclaration());
+      _host.RegisterEndpoint(new SecondHandlerEndpointDeclaration());
    }
 
-   void RegisterHandlerEndpoint(string name, EndpointId id) =>
-      _host.RegisterBestEffortEndpoint(
-         name,
-         id,
-         endpointBuilder => endpointBuilder
-            .RegisterComponents(registrar => registrar.RequireTypermediaHostingSpecificationTypeMappings())
-            .RegisterTypermediaHandlers(handle => handle
-                       .ForTuery((TueryBothEndpointsHandle _) => new TueryAnswer { Message = $"from {name}" })));
+   class NavigatorEndpointDeclaration : BestEffortEndpointDeclaration<NavigatorEndpointDeclaration>, IEndpointIdentity
+   {
+      public static string Name => "Navigator";
+      public static EndpointId Id => new(Guid.Parse("B4F07D28-5E91-4C36-A0D7-92E8B1C5F6A3"));
+
+      protected override void RegisterComponents(IComponentRegistrar registrar) => registrar.RequireTypermediaHostingSpecificationTypeMappings();
+
+      //Short deliberately: this specification pins what exhausted patience says, so waiting out the full default would only slow the suite.
+      protected override TimeSpan? HandlerAvailabilityPatience => TimeSpan.FromMilliseconds(100);
+   }
+
+   ///<summary>What the two advertising endpoints share — everything but identity: the declaration of one handler for the<br/>
+   /// contested tuery type, answering under the identity's own name.</summary>
+   abstract class HandlerEndpointDeclaration<TIdentity> : BestEffortEndpointDeclaration<TIdentity> where TIdentity : IEndpointIdentity
+   {
+      protected override void RegisterComponents(IComponentRegistrar registrar) => registrar.RequireTypermediaHostingSpecificationTypeMappings();
+
+      protected override void RegisterTueryHandlers(ITueryHandlerRegistrar handle) => handle
+         .ForTuery((TueryBothEndpointsHandle _) => new TueryAnswer { Message = $"from {TIdentity.Name}" });
+   }
+
+   class FirstHandlerEndpointDeclaration : HandlerEndpointDeclaration<FirstHandlerEndpointDeclaration>, IEndpointIdentity
+   {
+      public static string Name => "FirstHandler";
+      public static EndpointId Id => new(Guid.Parse("1C9E5B72-D840-4F13-86A5-3B0F7D2E9C41"));
+   }
+
+   class SecondHandlerEndpointDeclaration : HandlerEndpointDeclaration<SecondHandlerEndpointDeclaration>, IEndpointIdentity
+   {
+      public static string Name => "SecondHandler";
+      public static EndpointId Id => new(Guid.Parse("E8A31F96-27C4-4D58-B1E0-64D9A0C7B5F2"));
+   }
 
    protected override async Task InitializeAsyncInternal()
    {
@@ -67,7 +80,7 @@ public class Given_an_endpoint_navigating_a_typermedia_type_two_live_endpoints_a
    [PCT] public async Task the_tuery_fails_after_patience_naming_both_endpoints_and_the_unresolved_ambiguity() =>
       (await InvokingAsync(() => _navigatorEndpoint.ServiceLocator.Resolve<IRemoteTypermediaNavigator>().GetAsync(new TueryBothEndpointsHandle()))
           .Must().ThrowAsync<MultipleHandlersForTypermediaTypeException>())
-      .Which.Message.Must().Contain(FirstHandlerEndpointId.ToString())
-      .Contain(SecondHandlerEndpointId.ToString())
+      .Which.Message.Must().Contain(FirstHandlerEndpointDeclaration.Id.ToString())
+      .Contain(SecondHandlerEndpointDeclaration.Id.ToString())
       .Contain("did not resolve within");
 }
