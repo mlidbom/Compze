@@ -40,12 +40,12 @@ public sealed class TypermediaClientBuilder
       return this;
    }
 
-   //todo: This just taking an IComponentRegistrar feels iffy. Can we make setting up the serializer easier and safer to do?
-   ///<summary>Configures the serializer the client will use.</summary>
+   ///<summary>Declares the type mappings the client requires — the assemblies whose type identity its conversations use<br/>
+   /// (<c>registrar.RequireMappedTypesFromAssemblyContaining&lt;T&gt;()</c>).</summary>
    public TypermediaClientBuilder DeclareRequiredTypeMappings(Action<IComponentRegistrar> declare)
    {
       AssertStillComposing();
-      State.Assert(_declareRequiredTypeMappings is null, () => "The client already declared its serializer — a client has exactly one.");
+      State.Assert(_declareRequiredTypeMappings is null, () => "The client already declared its required type mappings.");
       _declareRequiredTypeMappings = declare;
       return this;
    }
@@ -56,7 +56,7 @@ public sealed class TypermediaClientBuilder
    internal TypermediaClient Build()
    {
       State.Assert(_registerTransportProtocol is not null,
-                   () => "The client declares no transport protocol. Declare the transport-client strategy in the composition — e.g. client.TransportProtocol(registrar => registrar.NamedPipeEndpointTransportClientIfNotRegistered()).");
+                   () => "The client declares no transport protocol. Declare the transport-client strategy in the composition — e.g. client.ConfigureTransport(registrar => registrar.NamedPipeEndpointTransportClientIfNotRegistered()).");
       State.Assert(_configureSerializer is not null || Registrar.IsRegistered<ITypermediaSerializer>(),
                    () => "The client declares no serializer. Declare it in the composition — e.g. client.NewtonsoftSerializer(). (A testing container already carrying the suite's serializers declares none.)");
 
