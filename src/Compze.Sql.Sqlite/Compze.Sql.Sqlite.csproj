@@ -2,7 +2,7 @@
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
-    <Version>0.3.0-alpha</Version>
+    <Version>0.4.0-alpha</Version>
     <!-- TODO:docs: Remove once all public API members have XML documentation comments -->
     <NoWarn>CS1591</NoWarn>
     <Description>SQLite support for the Compze framework: declares the SQLite domain database that Compze endpoints join. Also carries the SQLite plumbing the Compze.*.Sqlite feature backends share.</Description>

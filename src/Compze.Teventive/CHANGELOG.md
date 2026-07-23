@@ -4,6 +4,13 @@ All notable changes to Compze.Teventive will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## 0.5.0-alpha
+
+- **`PublisherTevent`, `PublisherTevent<TTevent>` and `WrapTevent` leave for `Compze.Tessaging.Abstractions`.** Every tevent is wrapped before routing, which makes the wrapper a tessaging routing concept rather than a Teventive one — and they already declared a namespace neither the assembly holding them nor the concept routing them pointed at.
+- `TeventDispatcherOptions` is dissolved: a single-flag enum said less than the `IgnoreUnhandled` overloads that now say it directly, including the three- and four-type forms.
+- `AllowPublicSettersAttribute` is deleted, and the unreferenced `Email`/`Password` value types with it.
+- The visibility sweep reaches this package: non-public machinery moves below `_internal`/`_private` namespace sections — the markers that replaced the old `Internal`/`Private` spelling — and types and members are narrowed to the least visibility that compiles.
+
 ## 0.4.0-alpha
 
 - Added shared tomponents and tentities: `SharedTomponent`, `SharedTentity`, `SharedTentityCollection`, and `SharedTomponentSlot` - reusable teventive components and entities that any taggregate can own, rather than being nested in one specific taggregate's tevent hierarchy. A shared teventive's tevents are bare `ITevent`s rooted in its own hierarchy; the owner declares, per member slot, an adopting wrapper tevent (an owner tevent that is also an `IPublisherIdentifyingTevent<T>` of the shared teventive's tevents), and the slot wraps every published tevent in it and routes adopted tevents back to the shared teventive's appliers - during live publishing and history replay alike. Two same-typed members (a shipping and a billing address) are told apart by their slots' adopting wrapper types; individual tentities in a collection by the `ISharedTentityTevent<TTentityId>.EntityId` their tevents carry.

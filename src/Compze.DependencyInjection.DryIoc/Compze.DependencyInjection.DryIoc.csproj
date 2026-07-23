@@ -2,7 +2,7 @@
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
-    <Version>0.5.0-alpha</Version>
+    <Version>0.5.1-alpha</Version>
     <!-- TODO:docs: Remove once all public API members have XML documentation comments -->
     <NoWarn>CS1591</NoWarn>
     <Description>DryIoc dependency injection integration for the Compze framework.</Description>

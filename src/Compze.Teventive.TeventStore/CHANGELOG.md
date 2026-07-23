@@ -4,17 +4,24 @@ All notable changes to Compze.Teventive.TeventStore will be documented in this f
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
-## 0.4.0-alpha
+## 0.5.0-alpha
 
 - The tevent store forwards taggregate tevents through the exactly-once publisher's `PublishAsync`, bridging in one deliberate place: the Teventive taggregate model raises tevents synchronously — from constructors and domain methods — and the store forwards them where they are raised, inside the caller's unit of work. The alternative, an async taggregate domain model, would be a redesign of Teventive itself, not a call-site choice.
 - Session affinity is transactional, never thread-bound: `TeventStoreUpdater` keeps its `SingleTransactionUsageGuard` and sheds the thread-affinity half (an async unit of work legitimately migrates across threads), while `TeventStore` and the query-model generating reader — which only ever had thread affinity, and are legitimately used by several sequential transactions in one scope — lose their guard rather than gain a constraint they never had.
+- `TeventStoreUpdater` publishes the wrapped tevent through `IUnitOfWorkTeventPublisher` (Compze.Abstractions), the one way to publish: publisher identity survives from `Publish` in the taggregate through storage and onward publication, and the tevent's own type decides how far it travels.
+- The tevent-refactoring machinery goes internal: `TeventModifier` with its `RefactoredTevent` and `TaggregateTeventWithRefactoringInformation` pair. The migration author's surface is `ITeventModifier`; the class behind it is machinery.
+- `TryGet` and `TryGetVersion` on the query-model reader are public, and `TryGetVersion` takes its version before the out parameter — the argument order every other Try-pattern member in the framework uses.
+- The visibility sweep reaches this package: non-public machinery moves below `_internal`/`_private` namespace sections — the markers that replaced the old `Internal`/`Private` spelling — and types and members are narrowed to the least visibility that compiles.
+
+## 0.4.0-alpha
+
 - The namespaces caught up with the package rename: `Compze.Tessaging.Teventive.TeventStore.*` is now `Compze.Teventive.TeventStore.*` — the namespaces this package's name has promised all along.
 - The store's currency is now the wrapped tevent: every tevent is persisted exactly as its taggregate published it, inside its publisher's `ITaggregateIdentifyingTevent<TTeventInterface>` wrapper. A row stores the closed wrapper type's `TypeId` and the serialized wrapper object graph, so publisher identity survives storage with zero information loss; hydration deserializes the wrapper and stamps the inner tevent's column-backed properties as before.
 - The migration pipeline speaks wrapped tevents end to end: `SingleTaggregateInstanceTeventStreamMutator`, `TeventModifier` (`RefactoredTevent.NewTevent` -> `NewWrappedTevent`, internal stream `Tevents` -> `WrappedTevents`), and `CompleteTeventStoreStreamMutator` all carry `ITaggregateIdentifyingTevent<ITaggregateTevent>`; the `EndOfTaggregateHistoryTeventPlaceHolder` is wrapped like every other tevent in the stream. Migration matching still inspects the inner creation tevent.
 - `SelfGeneratingQueryModel` mirrors `ITeventDispatcher`'s two dispatch forms: `ApplyTevent(TTaggregateTevent)` auto-wraps a tevent arriving without a wrapper (such as one delivered to an inner-typed bus subscription), and `ApplyTevent(IPublisherIdentifyingTevent<TTaggregateTevent>)` applies an already-wrapped tevent; `LoadFromHistory` takes the persisted wrapped tevents.
 - `SingleTaggregateQueryModelGenerator` feeds its dispatcher the wrapped history; `TeventStoreApi.Tueries.GetHistory<TTevent>` returns `IEnumerable<ITaggregateIdentifyingTevent<TTevent>>`.
 - `ITeventStore.StreamTaggregateIdsInCreationOrder`'s tevent-type filter is translated by the routing model's one translation rule: an inner tevent type matches every wrapping of it; a wrapper type matches as it stands.
-- `TeventStoreUpdater` publishes the wrapped tevent through `IUnitOfWorkTeventPublisher` (Compze.Abstractions), the one way to publish: publisher identity survives from `Publish` in the taggregate through storage and onward publication, and the tevent's own type decides how far it travels.
+- `TeventStoreUpdater` publishes the wrapped tevent through `ITeventPublisher` (Compze.Abstractions), the one way to publish: publisher identity survives from `Publish` in the taggregate through storage and onward publication, and the tevent's own type decides how far it travels.
 
 ## 0.3.1-alpha
 

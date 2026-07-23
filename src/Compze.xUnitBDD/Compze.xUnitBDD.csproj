@@ -3,7 +3,7 @@
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <IsTestProject>false</IsTestProject>
-    <Version>0.5.0-beta</Version>
+    <Version>0.5.1-beta</Version>
     <Description>BDD-style specification testing for xUnit v3. Provides [XF] (ExclusiveFact) attribute that prevents inherited tests from running in child classes, enabling nested class hierarchies that read like executable specifications without test explosion.</Description>
   </PropertyGroup>
   <ItemGroup>

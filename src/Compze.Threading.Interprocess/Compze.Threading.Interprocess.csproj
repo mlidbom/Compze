@@ -3,7 +3,7 @@
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <Version>0.5.0-alpha</Version>
+    <Version>0.5.1-alpha</Version>
     <Description>Cross-process synchronization for Compze.Threading. A system-mutex-backed IAwaitableMutex that offers the full Monitor.Wait condition-wait model across process boundaries, plus IProcessShared/IAwaitableProcessShared and the file-based InterprocessSignal. Extracted from Compze.Threading 0.7.0-alpha.</Description>
   </PropertyGroup>
   <ItemGroup>

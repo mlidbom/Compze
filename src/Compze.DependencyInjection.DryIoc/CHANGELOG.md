@@ -4,6 +4,11 @@ All notable changes to Compze.DependencyInjection.DryIoc will be documented in t
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## 0.5.1-alpha
+
+- `DryIocContainer.CreateCloneContainerBuilder` is `protected`: only the base class calls it, so it leaves the public surface. Breaking for anyone who called it directly, which the narrowing established nobody does.
+- The visibility sweep reaches this package: non-public machinery moves below `_internal`/`_private` namespace sections — the markers that replaced the old `Internal`/`Private` spelling — and types and members are narrowed to the least visibility that compiles.
+
 ## 0.5.0-alpha
 
 ### Added

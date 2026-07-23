@@ -2,7 +2,7 @@
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
-    <Version>0.4.0-alpha</Version>
+    <Version>0.5.0-alpha</Version>
     <!-- TODO:docs: Remove once all public API members have XML documentation comments -->
     <NoWarn>CS1591</NoWarn>
     <Description>Testing support for Compze Tessaging hosting: the Tessaging testing feature for the testing endpoint host, and the Tessaging transport and persistence test wiring.</Description>

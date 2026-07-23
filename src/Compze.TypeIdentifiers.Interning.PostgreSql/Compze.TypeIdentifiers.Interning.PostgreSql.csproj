@@ -2,7 +2,7 @@
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
-    <Version>0.2.0-alpha</Version>
+    <Version>0.2.1-alpha</Version>
     <!-- TODO:docs: Remove once all public API members have XML documentation comments -->
     <NoWarn>CS1591</NoWarn>
     <Description>PostgreSQL backend for Compze type-id interning: a PostgreSQL ITypeIdInternerPersistence implementation for Compze.TypeIdentifiers.Interning.</Description>

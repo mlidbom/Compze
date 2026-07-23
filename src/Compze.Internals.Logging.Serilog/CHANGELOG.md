@@ -4,6 +4,10 @@ All notable changes to Compze.Internals.Logging.Serilog will be documented in th
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## 0.4.1-alpha
+
+- Released in lockstep with [Compze.Internals.Logging](https://www.nuget.org/packages/Compze.Internals.Logging/) 0.4.1-alpha. `SerilogLogger` extends that package's abstract `Logger`, so the two must be upgraded together — a backend compiled against a different core fails to load.
+
 ## 0.4.0-alpha
 
 ### Changed

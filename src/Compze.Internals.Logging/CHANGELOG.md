@@ -4,6 +4,11 @@ All notable changes to Compze.Internals.Logging will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## 0.4.1-alpha
+
+- `LevelLogger`'s implementation moves below `_private`; the logging vocabulary keeps its public shape.
+- The visibility sweep reaches this package: non-public machinery moves below `_internal`/`_private` namespace sections — the markers that replaced the old `Internal`/`Private` spelling — and types and members are narrowed to the least visibility that compiles.
+
 ## 0.4.0-alpha
 
 ### Added

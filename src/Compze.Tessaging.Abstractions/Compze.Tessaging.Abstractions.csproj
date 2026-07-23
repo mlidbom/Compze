@@ -4,7 +4,7 @@
     <Nullable>enable</Nullable>
     <!-- The project name stays provisional while the paradigm's project topology settles; the namespaces are already final. -->
     <RootNamespace>Compze.Tessaging</RootNamespace>
-    <Version>0.4.0-alpha</Version>
+    <Version>0.5.0-alpha</Version>
     <!-- TODO:docs: Remove once all public API members have XML documentation comments -->
     <NoWarn>CS1591</NoWarn>
     <Description>The tessage type system: the ITessage hierarchy Compze routes by type — tevents, tommands and tueries, the delivery-guarantee and transactional markers that classify them, the base types implementing them, and the validation holding tessage types to those rules. Depend on this to declare an application's tessages without depending on the Tessaging engine that delivers them.</Description>

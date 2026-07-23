@@ -1,12 +1,20 @@
 # Changelog
 
-All notable changes to Compze.Internals.Serialization.Newtonsoft will be documented in this file.
+All notable changes to Compze.Serialization.Newtonsoft will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## 0.4.0-alpha
+
+- **The package sheds the `Internals` label: `Compze.Internals.Serialization.Newtonsoft` is `Compze.Serialization.Newtonsoft`.** The label told consumers not to depend on the package, which was never true of something they compose with deliberately. Previously published as [Compze.Internals.Serialization.Newtonsoft](https://www.nuget.org/packages/Compze.Internals.Serialization.Newtonsoft/) 0.3.0-alpha.
+- `NewtonsoftSerializer()`: fills the one serializer parameter an endpoint takes (`EndpointBuilder.Serializer` — registering both wire serializers in one declaration) and the pure client's (`TypermediaClientBuilder.Serializer`).
+- The registrars are the package's whole public face — `NewtonsoftEndpointSerializerRegistrar`, `NewtonsoftTypermediaClientSerializerRegistrar`, and the per-store registrars for the document db, the tevent store, tessaging and typermedia. The serializer classes behind them are internal.
+- The visibility sweep reaches this package: non-public machinery moves below `_internal`/`_private` namespace sections — the markers that replaced the old `Internal`/`Private` spelling — and types and members are narrowed to the least visibility that compiles.
+
 ## 0.3.0-alpha
 
-- `NewtonsoftSerializer()`: fills the one serializer parameter an endpoint takes (`EndpointBuilder.Serializer` — registering both wire serializers in one declaration) and the pure client's (`TypermediaClientBuilder.Serializer`).
+- `NewtonsoftSerializer()`: fills a feature composition's Tessaging- or Typermedia-serializer slot — e.g. `AddExactlyOnceTessaging(tessaging => tessaging.NewtonsoftSerializer())`.
+
 - The tevent store serializer serializes the whole wrapped tevent - the `ITaggregateIdentifyingTevent<TTeventInterface>` wrapper with its inner tevent inside - as one object graph. The inner tevent's column-backed `TaggregateTevent` properties are still excluded from the json.
 
 ## 0.2.0-alpha

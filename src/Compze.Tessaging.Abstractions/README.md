@@ -19,7 +19,8 @@ nothing else:
 - **Base types** — the `TessageTypes` families implementing the markers, and `TessageId`, the identity deduplication is done on
 - **Publisher-identifying tevents** — `IPublisherTevent<TTevent>` and `PublisherTevent<TTevent>`, the wrapper every tevent is routed by
 - **The send/publish contracts** — `IUnitOfWorkTeventPublisher`/`IIndependentTeventPublisher` and `IUnitOfWorkTommandSender`/`IIndependentTommandSender`
-- **Validation** — `TessageTypeInspector` and `TessageValidator`, which hold tessage types to the rules above
+- **The design rules** — `TessageTypeDesignRules`, the rules above as a testing surface: run your own tessage types
+  through them and a type that breaks one fails your suite instead of a deployment
 
 ## Why it is separate from Compze.Tessaging
 

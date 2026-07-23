@@ -10,9 +10,10 @@ Compze is a .NET framework for building expressive domains through **Teventive p
 
 This package provides JSON serialization using [Newtonsoft.Json](https://www.nuget.org/packages/Newtonsoft.Json), configured for Compze's needs:
 
-- **Preconfigured serialization settings** — Handles non-public members and type renaming for event versioning
-- **Event serialization** — Serializes and deserializes Compze events, commands, and query results
-- **Pluggable serializer** — Integrates with Compze's pluggable component architecture
+- **Preconfigured serialization settings** — handles non-public members, and type renaming for tevent versioning
+- **Tessage serialization** — serializes and deserializes tevents, tommands, tueries and their results
+- **The registrars** — `NewtonsoftSerializer()` fills the one serializer parameter an endpoint takes and the pure
+  client's; the per-store registrars fill the tevent store's and the document db's
 
 ## Installation
 
@@ -24,8 +25,9 @@ dotnet add package Compze.Serialization.Newtonsoft
 
 | Package | Description |
 |---------|-------------|
-| [Compze.Core](https://www.nuget.org/packages/Compze.Core) | Core abstractions |
-| [Compze.Tessaging](https://www.nuget.org/packages/Compze.Tessaging) | Messaging infrastructure |
+| [Compze.Tessaging](https://www.nuget.org/packages/Compze.Tessaging/) | The endpoints whose serializer parameter this package fills |
+| [Compze.Teventive.TeventStore](https://www.nuget.org/packages/Compze.Teventive.TeventStore/) | The tevent store whose serializer this package provides |
+| [Compze.DocumentDb](https://www.nuget.org/packages/Compze.DocumentDb/) | The document db whose serializer this package provides |
 
 ## License
 

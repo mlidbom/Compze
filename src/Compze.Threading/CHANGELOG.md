@@ -4,6 +4,11 @@ All notable changes to Compze.Threading will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## 0.9.0-alpha
+
+- The `IShared`/`IAwaitableShared` container interfaces are dissolved. They existed to keep an implementation out of sight, which is what the `_internal`/`_private` namespace sections do now.
+- The visibility sweep reaches this package: non-public machinery moves below `_internal`/`_private` namespace sections — the markers that replaced the old `Internal`/`Private` spelling — and types and members are narrowed to the least visibility that compiles.
+
 ## 0.8.0-alpha
 
 ### Added

@@ -2,7 +2,7 @@
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
-    <Version>0.2.0-alpha</Version>
+    <Version>0.2.1-alpha</Version>
     <!-- TODO:docs: Remove once all public API members have XML documentation comments -->
     <NoWarn>CS1591</NoWarn>
     <Description>SQL Server backend for Compze type-id interning: a SQL Server ITypeIdInternerPersistence implementation for Compze.TypeIdentifiers.Interning.</Description>
