@@ -8,6 +8,7 @@ using Compze.Hosting.Testing.Wiring;
 using Compze.Internals.Testing;
 using Compze.Must;
 using Compze.Tessaging.Endpoints.BestEffort;
+using Compze.Tessaging.Endpoints.ExactlyOnce;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Tests.SameMachine.EndpointHostProcess;
@@ -51,16 +52,34 @@ public class Given_a_separate_process_hosting_a_typermedia_endpoint_discovered_t
 
       _endpointHostProcess = EndpointHostProcessHandle.Start(registryName, _workDirectory, EndpointHostProcessProgram.DatabaselessComposition);
 
-      _specificationHost = EndpointHost.Production.Create(() => TestEnv.DIContainer.CreateTestingContainerBuilder());
-      _specificationEndpoint = _specificationHost.RegisterEndpoint(container => BestEffortEndpoint.Build(
-         container,
-         "SpecificationEndpoint",
-         new EndpointId(Guid.NewGuid()),
-         endpointBuilder => endpointBuilder
-            .RegisterComponents(registrar => registrar.RequireMappedTypesFromAssemblyContaining<TueryAskedByTheSpecificationProcess>())
-            .TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport())
-            .Serializer(registrar => registrar.CurrentTestsSerializersIfNotClonedContainer())
-            .DiscoverEndpointsThrough(_registry)));
+      _specificationHost = EndpointHost.Production.Create(() => TestEnv.DIContainer.CreateTestingContainerBuilder(),
+                                                          new EnvironmentDiscoveringThroughTheSharedRegistry(_registry));
+      _specificationEndpoint = _specificationHost.RegisterEndpoint(new SpecificationEndpointDeclaration());
+   }
+
+   ///<summary>The current test's transport and serializers, plus discovery through the shared interprocess registry — the<br/>
+   /// read side only: this endpoint navigates, it is not navigated to, so it announces nothing.</summary>
+   class EnvironmentDiscoveringThroughTheSharedRegistry : IEndpointEnvironment
+   {
+      readonly InterprocessEndpointRegistry _registry;
+      internal EnvironmentDiscoveringThroughTheSharedRegistry(InterprocessEndpointRegistry registry) => _registry = registry;
+
+      public void DeclareOn<TConcreteBuilder>(EndpointBuilder<TConcreteBuilder> endpointBuilder) where TConcreteBuilder : EndpointBuilder<TConcreteBuilder>
+      {
+         endpointBuilder.TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport());
+         endpointBuilder.Serializer(registrar => registrar.CurrentTestsSerializersIfNotClonedContainer());
+         endpointBuilder.DiscoverEndpointsThrough(_registry);
+      }
+
+      public void DeclareDomainDatabaseOn(ExactlyOnceEndpointBuilder endpointBuilder) {}
+   }
+
+   class SpecificationEndpointDeclaration : BestEffortEndpointDeclaration<SpecificationEndpointDeclaration>, IEndpointIdentity
+   {
+      public static string Name => "SpecificationEndpoint";
+      public static EndpointId Id { get; } = new(Guid.Parse("9AEC257D-E9AB-4E50-9947-6CC0C07C7D9B"));
+
+      protected override void RegisterComponents(IComponentRegistrar registrar) => registrar.RequireMappedTypesFromAssemblyContaining<TueryAskedByTheSpecificationProcess>();
    }
 
    protected override async Task InitializeAsyncInternal()
@@ -117,6 +136,6 @@ public class Given_a_separate_process_hosting_a_typermedia_endpoint_discovered_t
          throw new InvalidOperationException($"The endpoint host process was not discovered within the endpoint's handler-availability patience.{Environment.NewLine}{_endpointHostProcess.ConsoleOutput}", notDiscoveredWithinPatience);
       }
 
-      answer.AnsweredBy.Must().Be("EndpointHostProcess");
+      answer.AnsweredBy.Must().Be(EndpointHostProcessEndpointIdentity.Name);
    }
 }

@@ -1,5 +1,6 @@
 using Compze.Tessaging.TessageBus.Exceptions;
 using Compze.DependencyInjection;
+using Compze.DependencyInjection.Abstractions;
 using Compze.Tessaging.Endpoints;
 using Compze.Hosting;
 using Compze.Hosting.SameMachine;
@@ -52,24 +53,44 @@ public class Given_a_separate_process_hosting_an_endpoint_discovered_through_a_s
       _endpointHostProcess = EndpointHostProcessHandle.Start(registryName, _workDirectory, EndpointHostProcessProgram.ExactlyOnceTessagingComposition);
 
       _specificationHost = EndpointHost.Production.Create(() => TestEnv.DIContainer.CreateTestingContainerBuilder()
-                                                                       ._mutate(it => it.Registrar.CurrentTestsDbPoolIfNotCloneContainer()));
-      _specificationEndpoint = _specificationHost.RegisterEndpoint(container => ExactlyOnceEndpoint.Build(
-         container,
-         "SpecificationEndpoint",
-         new EndpointId(Guid.NewGuid()),
-         endpointBuilder =>
-         {
-            endpointBuilder
-               .RegisterComponents(registrar => registrar.RequireMappedTypesFromAssemblyContaining<TommandSentToTheEndpointHostProcess>())
-               .TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport())
-               .ConfigurePersistence(registrar => registrar.CurrentTestsConfiguredSqlLayer(connectionStringName: endpointBuilder.Configuration.Id.ToString()))
-               .ParticipateIn(_registry)
-               .RegisterTessageBusHandlers(handle => handle.ForTommand((TommandSentBackToTheSpecificationProcess _) =>
-            {
-               _replyTommandGate.AwaitPassThrough();
-               return Task.CompletedTask;
-            }));
-         }));
+                                                                       ._mutate(it => it.Registrar.CurrentTestsDbPoolIfNotCloneContainer()),
+                                                          new EnvironmentParticipatingInTheSharedRegistry(_registry));
+      _specificationEndpoint = _specificationHost.RegisterEndpoint(new SpecificationEndpointDeclaration(this));
+   }
+
+   ///<summary>The current test's transport and domain-database binding, plus participation in the shared interprocess<br/>
+   /// registry the endpoint host process is discovered through.</summary>
+   class EnvironmentParticipatingInTheSharedRegistry : IEndpointEnvironment
+   {
+      readonly InterprocessEndpointRegistry _registry;
+      internal EnvironmentParticipatingInTheSharedRegistry(InterprocessEndpointRegistry registry) => _registry = registry;
+
+      public void DeclareOn<TConcreteBuilder>(EndpointBuilder<TConcreteBuilder> endpointBuilder) where TConcreteBuilder : EndpointBuilder<TConcreteBuilder>
+      {
+         endpointBuilder.TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport());
+         endpointBuilder.ParticipateIn(_registry);
+      }
+
+      public void DeclareDomainDatabaseOn(ExactlyOnceEndpointBuilder endpointBuilder) =>
+         endpointBuilder.ConfigurePersistence(registrar => registrar.CurrentTestsConfiguredSqlLayer(connectionStringName: endpointBuilder.Configuration.Id.ToString()));
+   }
+
+   class SpecificationEndpointDeclaration : ExactlyOnceEndpointDeclaration<SpecificationEndpointDeclaration>, IEndpointIdentity
+   {
+      public static string Name => "SpecificationEndpoint";
+      public static EndpointId Id { get; } = new(Guid.Parse("C143AAD9-E33C-4A8A-A594-E75A8A125DE0"));
+
+      readonly Given_a_separate_process_hosting_an_endpoint_discovered_through_a_shared_interprocess_registry _specification;
+      internal SpecificationEndpointDeclaration(Given_a_separate_process_hosting_an_endpoint_discovered_through_a_shared_interprocess_registry specification) => _specification = specification;
+
+      protected override void RegisterComponents(IComponentRegistrar registrar) => registrar.RequireMappedTypesFromAssemblyContaining<TommandSentToTheEndpointHostProcess>();
+
+      protected override void RegisterExactlyOnceTommandHandlers(IExactlyOnceTommandHandlerRegistrar handle) => handle
+         .ForTommand((TommandSentBackToTheSpecificationProcess _) =>
+          {
+             _specification._replyTommandGate.AwaitPassThrough();
+             return Task.CompletedTask;
+          });
    }
 
    protected override async Task InitializeAsyncInternal()

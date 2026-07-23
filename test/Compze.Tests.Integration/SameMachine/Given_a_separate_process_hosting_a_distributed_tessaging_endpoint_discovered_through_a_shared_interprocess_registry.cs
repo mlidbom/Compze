@@ -8,6 +8,7 @@ using Compze.Hosting.Testing.Wiring;
 using Compze.Internals.Testing;
 using Compze.Tessaging.TessageBus;
 using Compze.Tessaging.Endpoints.BestEffort;
+using Compze.Tessaging.Endpoints.ExactlyOnce;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Tests.SameMachine.EndpointHostProcess;
@@ -25,7 +26,9 @@ namespace Compze.Tests.Integration.SameMachine;
 ///<summary>The guarantee-free same-machine story end to end, across REAL process boundaries: a separate OS process hosts a<br/>
 /// best-effort endpoint over named pipes, both processes discover each other through a shared<br/>
 /// <see cref="InterprocessEndpointRegistry"/>, and a best-effort tevent conversation crosses in both directions — no web stack, no<br/>
-/// configuration, and no database anywhere in either process: nothing is persisted, so nothing can be lost that was promised kept.</summary>
+/// configuration, and no database anywhere in either process: nothing is persisted, so nothing can be lost that was promised kept.<br/>
+/// The specification's endpoint declares under the shared <see cref="SpecificationProcessEndpointIdentity"/>, so the endpoint<br/>
+/// host process can require it by identity.</summary>
 public class Given_a_separate_process_hosting_a_distributed_tessaging_endpoint_discovered_through_a_shared_interprocess_registry : UniversalTestBase
 {
    //The endpoint host process speaks named pipes; the conversation only makes sense when the specification's endpoint does too.
@@ -49,24 +52,44 @@ public class Given_a_separate_process_hosting_a_distributed_tessaging_endpoint_d
 
       _endpointHostProcess = EndpointHostProcessHandle.Start(registryName, _workDirectory, EndpointHostProcessProgram.DatabaselessComposition);
 
-      _specificationHost = EndpointHost.Production.Create(() => TestEnv.DIContainer.CreateTestingContainerBuilder());
-      _specificationEndpoint = _specificationHost.RegisterEndpoint(container => BestEffortEndpoint.Build(
-         container,
-         "SpecificationEndpoint",
-         MultiProcessConversationEndpoints.SpecificationProcessEndpointId,
-         endpointBuilder =>
-         {
-            endpointBuilder
-               .RegisterComponents(registrar => registrar.RequireMappedTypesFromAssemblyContaining<TommandSentToTheEndpointHostProcess>())
-               .TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport())
-               .Serializer(registrar => registrar.CurrentTestsSerializersIfNotClonedContainer())
-               .ParticipateIn(_registry)
-               //Requiring the endpoint host process's endpoint makes the outbound leg deterministic: the tevent published
-               //below, before either process has discovered the other, is held for the required peer and delivered on first
-               //contact instead of vanishing into the discovery race.
-               .RequirePeers(MultiProcessConversationEndpoints.EndpointHostProcessEndpointId)
-               .RegisterTessageBusHandlers(handle => handle.ForTevent((IBestEffortTeventPublishedByTheEndpointHostProcess _) => _replyTeventReceived.Set()));
-         }));
+      _specificationHost = EndpointHost.Production.Create(() => TestEnv.DIContainer.CreateTestingContainerBuilder(),
+                                                          new EnvironmentParticipatingInTheSharedRegistry(_registry));
+      _specificationEndpoint = _specificationHost.RegisterEndpoint(new SpecificationEndpointDeclaration(this));
+   }
+
+   ///<summary>The current test's transport and serializers, plus participation in the shared interprocess registry the<br/>
+   /// endpoint host process is discovered through — no database anywhere.</summary>
+   class EnvironmentParticipatingInTheSharedRegistry : IEndpointEnvironment
+   {
+      readonly InterprocessEndpointRegistry _registry;
+      internal EnvironmentParticipatingInTheSharedRegistry(InterprocessEndpointRegistry registry) => _registry = registry;
+
+      public void DeclareOn<TConcreteBuilder>(EndpointBuilder<TConcreteBuilder> endpointBuilder) where TConcreteBuilder : EndpointBuilder<TConcreteBuilder>
+      {
+         endpointBuilder.TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport());
+         endpointBuilder.Serializer(registrar => registrar.CurrentTestsSerializersIfNotClonedContainer());
+         endpointBuilder.ParticipateIn(_registry);
+      }
+
+      public void DeclareDomainDatabaseOn(ExactlyOnceEndpointBuilder endpointBuilder) {}
+   }
+
+   ///<summary>Declares under the shared <see cref="SpecificationProcessEndpointIdentity"/>: the endpoint host process requires<br/>
+   /// that identity, so its reply tevent is held for this endpoint and delivered on first contact.</summary>
+   class SpecificationEndpointDeclaration : BestEffortEndpointDeclaration<SpecificationProcessEndpointIdentity>
+   {
+      readonly Given_a_separate_process_hosting_a_distributed_tessaging_endpoint_discovered_through_a_shared_interprocess_registry _specification;
+      internal SpecificationEndpointDeclaration(Given_a_separate_process_hosting_a_distributed_tessaging_endpoint_discovered_through_a_shared_interprocess_registry specification) => _specification = specification;
+
+      protected override void RegisterComponents(IComponentRegistrar registrar) => registrar.RequireMappedTypesFromAssemblyContaining<TommandSentToTheEndpointHostProcess>();
+
+      ///<summary>Requiring the endpoint host process's endpoint makes the outbound leg deterministic: the tevent published<br/>
+      /// before either process has discovered the other is held for the required peer and delivered on first contact instead<br/>
+      /// of vanishing into the discovery race.</summary>
+      protected override IReadOnlyList<EndpointId> RequiredPeers => [EndpointHostProcessEndpointIdentity.Id];
+
+      protected override void RegisterBestEffortTeventHandlers(IBestEffortTeventHandlerRegistrar handle) => handle
+         .ForTevent((IBestEffortTeventPublishedByTheEndpointHostProcess _) => _specification._replyTeventReceived.Set());
    }
 
    protected override async Task InitializeAsyncInternal()

@@ -37,37 +37,59 @@ public class Given_two_hosts_sharing_an_interprocess_registry_where_the_receivin
    {
       _registry = InterprocessEndpointRegistry.OpenOrCreateSessionLocal(Guid.NewGuid().ToString(), TestDirectory);
 
-      //The production host, and each endpoint composed by hand: the shared interprocess registry - not a testing host's own
-      //registry - is how the endpoints find each other, exactly as separate processes would.
-      _senderHost = EndpointHost.Production.Create(CreateEndpointContainerBuilder);
-      _senderEndpoint = _senderHost.RegisterEndpoint(container => ExactlyOnceEndpoint.Build(
-         container, "Sender", new EndpointId(Guid.NewGuid()),
-         ComposeEndpointDiscoveredThroughTheRegistry));
+      //Production hosts, and the shared interprocess registry - not a testing host's own registry - is how the endpoints
+      //find each other, exactly as separate processes would.
+      _senderHost = EndpointHost.Production.Create(CreateEndpointContainerBuilder, new EnvironmentParticipatingInTheSharedRegistry(_registry));
+      _senderEndpoint = _senderHost.RegisterEndpoint(new SenderEndpointDeclaration());
 
-      _receiverHost = EndpointHost.Production.Create(CreateEndpointContainerBuilder);
-      _receiverHost.RegisterEndpoint(container => ExactlyOnceEndpoint.Build(
-         container, "Receiver", new EndpointId(Guid.NewGuid()),
-         endpointBuilder =>
-         {
-            ComposeEndpointDiscoveredThroughTheRegistry(endpointBuilder);
-            endpointBuilder.RegisterTessageBusHandlers(handle => handle.ForTommand((TommandDiscoveredThroughReconciliation _) =>
-            {
-               _receivedTommandGate.AwaitPassThrough();
-               return Task.CompletedTask;
-            }));
-         }));
+      _receiverHost = EndpointHost.Production.Create(CreateEndpointContainerBuilder, new EnvironmentParticipatingInTheSharedRegistry(_registry));
+      _receiverHost.RegisterEndpoint(new ReceiverEndpointDeclaration(this));
    }
 
    static IContainerBuilder CreateEndpointContainerBuilder() =>
       TestEnv.DIContainer.CreateTestingContainerBuilder()._mutate(it => it.Registrar.CurrentTestsDbPoolIfNotCloneContainer());
 
-   void ComposeEndpointDiscoveredThroughTheRegistry(ExactlyOnceEndpointBuilder endpointBuilder)
+   ///<summary>The current test's transport and domain-database binding, plus participation in the specification's shared<br/>
+   /// interprocess registry — the discovery this specification is about.</summary>
+   class EnvironmentParticipatingInTheSharedRegistry : IEndpointEnvironment
    {
-      endpointBuilder
-         .RegisterComponents(registrar => registrar.RequireIntegrationTestTypeMappings())
-         .TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport())
-         .ConfigurePersistence(registrar => registrar.CurrentTestsConfiguredSqlLayer(connectionStringName: endpointBuilder.Configuration.Id.ToString()))
-         .ParticipateIn(_registry);
+      readonly InterprocessEndpointRegistry _registry;
+      internal EnvironmentParticipatingInTheSharedRegistry(InterprocessEndpointRegistry registry) => _registry = registry;
+
+      public void DeclareOn<TConcreteBuilder>(EndpointBuilder<TConcreteBuilder> endpointBuilder) where TConcreteBuilder : EndpointBuilder<TConcreteBuilder>
+      {
+         endpointBuilder.TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport());
+         endpointBuilder.ParticipateIn(_registry);
+      }
+
+      public void DeclareDomainDatabaseOn(ExactlyOnceEndpointBuilder endpointBuilder) =>
+         endpointBuilder.ConfigurePersistence(registrar => registrar.CurrentTestsConfiguredSqlLayer(connectionStringName: endpointBuilder.Configuration.Id.ToString()));
+   }
+
+   class SenderEndpointDeclaration : ExactlyOnceEndpointDeclaration<SenderEndpointDeclaration>, IEndpointIdentity
+   {
+      public static string Name => "Sender";
+      public static EndpointId Id { get; } = new(Guid.Parse("DE099D03-3D85-4225-8BEA-D567846AB792"));
+
+      protected override void RegisterComponents(IComponentRegistrar registrar) => registrar.RequireIntegrationTestTypeMappings();
+   }
+
+   class ReceiverEndpointDeclaration : ExactlyOnceEndpointDeclaration<ReceiverEndpointDeclaration>, IEndpointIdentity
+   {
+      public static string Name => "Receiver";
+      public static EndpointId Id { get; } = new(Guid.Parse("90127B1C-2630-4C2E-969E-1E22D9D594A7"));
+
+      readonly Given_two_hosts_sharing_an_interprocess_registry_where_the_receiving_host_starts_last _specification;
+      internal ReceiverEndpointDeclaration(Given_two_hosts_sharing_an_interprocess_registry_where_the_receiving_host_starts_last specification) => _specification = specification;
+
+      protected override void RegisterComponents(IComponentRegistrar registrar) => registrar.RequireIntegrationTestTypeMappings();
+
+      protected override void RegisterExactlyOnceTommandHandlers(IExactlyOnceTommandHandlerRegistrar handle) => handle
+         .ForTommand((TommandDiscoveredThroughReconciliation _) =>
+          {
+             _specification._receivedTommandGate.AwaitPassThrough();
+             return Task.CompletedTask;
+          });
    }
 
    protected override async Task InitializeAsyncInternal()
