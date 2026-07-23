@@ -78,7 +78,9 @@ endpoint actually is — is declared at the outermost layer: the application or 
 ## Endpoints and hosts
 
 An endpoint is declared as a class — an endpoint-declaration — and the same declaration builds under every
-host:
+host. (This section shows the shape; the full model — identity types, environments and their decoration, the
+build template, and the reasoning behind the design — is
+[the endpoint-declaration model](../../Compze.Tessaging/dev_docs/endpoint-declaration-model.md).)
 
 ```csharp
 class AccountManagementEndpointDeclaration : ExactlyOnceEndpointDeclaration<AccountManagementEndpointDeclaration>, IEndpointIdentity
