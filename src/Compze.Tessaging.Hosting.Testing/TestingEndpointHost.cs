@@ -7,7 +7,6 @@ using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Internals.Testing;
-using Compze.Tessaging.Endpoints.BestEffort;
 using Compze.Tessaging.Endpoints.ExactlyOnce;
 using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Tessaging._internal.TessagesInFlight;
@@ -88,37 +87,6 @@ public class TestingEndpointHost : EndpointHost
    ///<summary>Creates a testing host on a root container the test owns and will dispose itself.</summary>
    public static TestingEndpointHost Create(IDependencyInjectionContainer rootContainer) =>
       new(rootContainer, ownsRootContainer: false);
-
-   ///<summary>Registers an <see cref="ExactlyOnceEndpoint"/> composed with the current test's concerns — the host's tracker,<br/>
-   /// transport, serializers, the pooled test database (its connection string keyed by the endpoint's id, so an endpoint<br/>
-   /// keeps its database across host rebuilds and specs can script restarts), and participation in the host's own<br/>
-   /// interprocess endpoint registry — plus whatever <paramref name="declare"/> declares.</summary>
-   public ExactlyOnceEndpoint RegisterExactlyOnceEndpoint(string name, EndpointId id, Action<ExactlyOnceEndpointBuilder> declare) =>
-      RegisterExactlyOnceEndpointInDomainDatabase(name, id, domainDatabaseName: id.ToString(), declare);
-
-   ///<summary>Like <see cref="RegisterExactlyOnceEndpoint"/>, but the endpoint joins the named shared domain database instead<br/>
-   /// of one of its own — the composition for several endpoints storing side by side in one domain database: each with its<br/>
-   /// prefixed table-set, sharing the endpoint catalog and the type-id interner.</summary>
-   public ExactlyOnceEndpoint RegisterExactlyOnceEndpointInDomainDatabase(string name, EndpointId id, string domainDatabaseName, Action<ExactlyOnceEndpointBuilder> declare) =>
-      RegisterEndpoint(container => ExactlyOnceEndpoint.Build(container, name, id, endpointBuilder =>
-      {
-         DeclareTheCurrentTestsConcerns(endpointBuilder);
-         endpointBuilder.ConfigurePersistence(registrar => registrar.CurrentTestsConfiguredSqlLayer(connectionStringName: domainDatabaseName));
-         declare(endpointBuilder);
-      }));
-
-   ///<summary>Registers a <see cref="BestEffortEndpoint"/> composed with the current test's concerns — the host's tracker,<br/>
-   /// transport, serializers, and participation in the host's own interprocess endpoint registry — plus whatever<br/>
-   /// <paramref name="build"/> declares.</summary>
-   public BestEffortEndpoint RegisterBestEffortEndpoint(string name, EndpointId id, Action<BestEffortEndpointBuilder> build) =>
-      RegisterEndpoint(container => BestEffortEndpoint.Build(container, name, id, endpointBuilder =>
-      {
-         DeclareTheCurrentTestsConcerns(endpointBuilder);
-         build(endpointBuilder);
-      }));
-
-   void DeclareTheCurrentTestsConcerns<TConcreteBuilder>(EndpointBuilder<TConcreteBuilder> endpointBuilder) where TConcreteBuilder : EndpointBuilder<TConcreteBuilder> =>
-      Environment!.DeclareOn(endpointBuilder);
 
    ///<summary>Awaits every endpoint of this host remembering every other endpoint of the host as a peer — mutual first<br/>
    /// contact. <see cref="EndpointHost.StartAsync"/> completes when every endpoint has started; whether the endpoints have<br/>

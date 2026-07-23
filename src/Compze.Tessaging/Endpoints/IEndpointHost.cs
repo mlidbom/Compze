@@ -33,6 +33,15 @@ public interface IEndpointHost : IAsyncDisposable
     /// <see cref="IEndpointEnvironment"/> (<see cref="IBestEffortEndpointDeclaration.BuildOn"/>).</summary>
     BestEffortEndpoint RegisterEndpoint(IBestEffortEndpointDeclaration declaration);
 
+    ///<summary>Registers the endpoint an <see cref="IExactlyOnceEndpointDeclaration"/> declares, built in<br/>
+    /// <paramref name="environment"/> instead of this host's own — the composition for an endpoint whose environment differs<br/>
+    /// from its co-hosted neighbors', usually a decorating <see cref="IEndpointEnvironment"/> wrapping the host's with an<br/>
+    /// addition.</summary>
+    ExactlyOnceEndpoint RegisterEndpoint(IExactlyOnceEndpointDeclaration declaration, IEndpointEnvironment environment);
+
+    ///<summary>Registers the endpoint an <see cref="IBestEffortEndpointDeclaration"/> declares, built in <paramref name="environment"/> instead of this host's own.</summary>
+    BestEffortEndpoint RegisterEndpoint(IBestEffortEndpointDeclaration declaration, IEndpointEnvironment environment);
+
     ///<summary>The endpoints registered with this host so far, in registration order.</summary>
     IReadOnlyList<IEndpoint> Endpoints { get; }
 

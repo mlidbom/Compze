@@ -27,10 +27,20 @@ public class EndpointHost : IEndpointHost
 
    protected EndpointHost(Func<IContainerBuilder> containerFactory) => _containerFactory = containerFactory;
 
-   ///<summary>The one <see cref="IEndpointEnvironment"/> every endpoint of this host runs in — what<br/>
-   /// <see cref="RegisterEndpoint(IExactlyOnceEndpointDeclaration)"/> builds each declaration in. Null on a host created<br/>
-   /// without one, where only the compose-callback registration is available.</summary>
-   protected IEndpointEnvironment? Environment { get; set; }
+   ///<summary>The one <see cref="IEndpointEnvironment"/> every endpoint of this host runs in by default — what<br/>
+   /// <see cref="RegisterEndpoint(IExactlyOnceEndpointDeclaration)"/> builds each declaration in. Public so a composition<br/>
+   /// needing the shared environment plus something extra can wrap it in a decorating <see cref="IEndpointEnvironment"/><br/>
+   /// and register through <see cref="RegisterEndpoint(IExactlyOnceEndpointDeclaration, IEndpointEnvironment)"/>.<br/>
+   /// Reading it on a host created without one fails loud: building an endpoint-declaration takes an environment.</summary>
+   public IEndpointEnvironment Environment
+   {
+      get
+      {
+         State.Assert(field is not null, () => $"This host was created without an {nameof(IEndpointEnvironment)}, and building an endpoint-declaration takes one: create the host with EndpointHost.Production.Create(containerFactory, environment).");
+         return field!;
+      }
+      protected set;
+   }
 
    public static class Production
    {
@@ -48,17 +58,15 @@ public class EndpointHost : IEndpointHost
       return endpoint;
    }
 
-   public ExactlyOnceEndpoint RegisterEndpoint(IExactlyOnceEndpointDeclaration declaration) =>
-      RegisterEndpoint(containerBuilder => declaration.BuildOn(containerBuilder, TheHostsEnvironment()));
+   public ExactlyOnceEndpoint RegisterEndpoint(IExactlyOnceEndpointDeclaration declaration) => RegisterEndpoint(declaration, Environment);
 
-   public BestEffortEndpoint RegisterEndpoint(IBestEffortEndpointDeclaration declaration) =>
-      RegisterEndpoint(containerBuilder => declaration.BuildOn(containerBuilder, TheHostsEnvironment()));
+   public BestEffortEndpoint RegisterEndpoint(IBestEffortEndpointDeclaration declaration) => RegisterEndpoint(declaration, Environment);
 
-   IEndpointEnvironment TheHostsEnvironment()
-   {
-      State.Assert(Environment is not null, () => $"This host was created without an {nameof(IEndpointEnvironment)}, and building an endpoint-declaration takes one: create the host with EndpointHost.Production.Create(containerFactory, environment).");
-      return Environment!;
-   }
+   public ExactlyOnceEndpoint RegisterEndpoint(IExactlyOnceEndpointDeclaration declaration, IEndpointEnvironment environment) =>
+      RegisterEndpoint(containerBuilder => declaration.BuildOn(containerBuilder, environment));
+
+   public BestEffortEndpoint RegisterEndpoint(IBestEffortEndpointDeclaration declaration, IEndpointEnvironment environment) =>
+      RegisterEndpoint(containerBuilder => declaration.BuildOn(containerBuilder, environment));
 
    bool _isStarted;
 

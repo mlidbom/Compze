@@ -9,7 +9,10 @@ namespace Compze.Tessaging.Endpoints;
 /// a host created with one applies it to every declaration it builds
 /// (<see cref="IEndpointHost.RegisterEndpoint(IExactlyOnceEndpointDeclaration)"/>), and building without a host hands it to
 /// the declaration directly (<see cref="IExactlyOnceEndpointDeclaration.BuildOn"/>). The production composition of an
-/// application implements this once; the testing environment lives inside the testing host.
+/// application implements this once; the testing environment lives inside the testing host. An endpoint needing the shared
+/// environment plus something extra runs in a decorating implementation wrapping the host's — delegate to the wrapped
+/// environment, add the extra declaration — registered through
+/// <see cref="IEndpointHost.RegisterEndpoint(IExactlyOnceEndpointDeclaration, IEndpointEnvironment)"/>.
 ///</summary>
 public interface IEndpointEnvironment
 {
