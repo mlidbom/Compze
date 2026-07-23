@@ -13,6 +13,7 @@ using Compze.Must;
 using Compze.Tessaging;
 using Compze.Tessaging.TessageBus;
 using Compze.Tessaging.Endpoints.BestEffort;
+using Compze.Tessaging.Endpoints.ExactlyOnce;
 using Compze.Tessaging.TessageTypes;
 using Compze.Tests.Common.Tessaging.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler;
 using Compze.Tests.Infrastructure;
@@ -27,17 +28,16 @@ using static Compze.Must.MustActions;
 namespace Compze.Tests.Integration.Hosting;
 
 ///<summary>
-/// Two best-effort endpoints (<see cref="BestEffortEndpoint.Build"/>) converse in best-effort tevents: guarantee-free
-/// Tessaging with no outbox, no inbox, and no database anywhere in either endpoint. Everything exactly-once is exactly what
-/// such an endpoint cannot speak: registering a handler for a tessage type declaring the exactly-once contract — either
-/// subscription kind — fails loud at composition, and publishing an exactly-once tevent fails loud naming the missing
-/// delivery leg. The host is the production host — nothing is pre-registered, so the composition stands entirely on what it
-/// declares.
+/// Two best-effort endpoints (<see cref="BestEffortEndpointDeclaration{TIdentity}"/>) converse in best-effort tevents:
+/// guarantee-free Tessaging with no outbox, no inbox, and no database anywhere in either endpoint. Everything exactly-once
+/// is exactly what such an endpoint cannot speak: the tier's declaration base has no exactly-once doors, and a declaration
+/// that reaches the demand through the surfaces that remain — the general <c>Declare</c> door, the shared observation
+/// door — fails loud at composition. The host is the production host and the environment is the specifications' own —
+/// nothing is pre-registered, so the composition stands entirely on what it declares.
 ///</summary>
 public class Given_two_best_effort_endpoints : UniversalTestBase
 {
    static readonly WaitTimeout HandlerTimeout = WaitTimeout.Seconds(30);
-   static readonly EndpointId SubscriberEndpointId = new(Guid.Parse("a4c1f7d2-8b35-49e0-b6a9-5d21c30e79f8"));
 
    readonly IEndpointHost _host;
    readonly BestEffortEndpoint _publisherEndpoint;
@@ -46,40 +46,42 @@ public class Given_two_best_effort_endpoints : UniversalTestBase
 
    public Given_two_best_effort_endpoints()
    {
-      _host = EndpointHost.Production.Create(() => TestEnv.DIContainer.CreateTestingContainerBuilder());
-      var endpointsOfTheHost = new AddressesOfTheHostsEndpoints(() => _host.Endpoints);
+      _host = EndpointHost.Production.Create(() => TestEnv.DIContainer.CreateTestingContainerBuilder(),
+                                             new CurrentTestsBestEffortEnvironment(new AddressesOfTheHostsEndpoints(() => _host!.Endpoints)));
 
-      _publisherEndpoint = _host.RegisterEndpoint(container => BestEffortEndpoint.Build(
-         container,
-         "BestEffortPublisherEndpoint",
-         new EndpointId(Guid.Parse("6d0a3a3e-59c8-4b0b-9e51-2f47a68d31c4")),
-         endpointBuilder => endpointBuilder
-            .RegisterComponents(registrar => registrar.RequireIntegrationTestTypeMappings())
-            .TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport())
-            .NewtonsoftSerializer()
-            .DiscoverEndpointsThrough(endpointsOfTheHost)
-            //The composition declares the relationship: a tevent published before the subscriber's first contact - the two
-            //endpoints start in parallel and discover each other by reconciliation - is held for it and delivered on the meet,
-            //instead of being lost to the startup race (queue-before-first-contact).
-            .RequirePeers(SubscriberEndpointId)));
+      _publisherEndpoint = _host.RegisterEndpoint(new PublisherEndpointDeclaration());
+      _host.RegisterEndpoint(new SubscriberEndpointDeclaration(this));
+   }
 
-      _host.RegisterEndpoint(container => BestEffortEndpoint.Build(
-         container,
-         "BestEffortSubscriberEndpoint",
-         SubscriberEndpointId,
-         endpointBuilder =>
-         {
-            endpointBuilder
-               .RegisterComponents(registrar => registrar.RequireIntegrationTestTypeMappings())
-               .TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport())
-               .NewtonsoftSerializer()
-               .DiscoverEndpointsThrough(endpointsOfTheHost)
-               .RegisterTessageBusHandlers(handle => handle.ForTevent((IMyBestEffortTevent tevent) =>
-                {
-                   _bestEffortTeventsHandledOnTheSubscriber.Enqueue(tevent);
-                   _subscriberBestEffortTeventHandlerGate.AwaitPassThrough();
-                }));
-         }));
+   class PublisherEndpointDeclaration : BestEffortEndpointDeclaration<PublisherEndpointDeclaration>, IEndpointIdentity
+   {
+      public static string Name => "BestEffortPublisherEndpoint";
+      public static EndpointId Id { get; } = new(Guid.Parse("6D0A3A3E-59C8-4B0B-9E51-2F47A68D31C4"));
+
+      protected override void RegisterComponents(IComponentRegistrar registrar) => registrar.RequireIntegrationTestTypeMappings();
+
+      ///<summary>The declaration states the relationship: a tevent published before the subscriber's first contact — the two<br/>
+      /// endpoints start in parallel and discover each other by reconciliation — is held for it and delivered on the meet,<br/>
+      /// instead of being lost to the startup race (queue-before-first-contact).</summary>
+      protected override IReadOnlyList<EndpointId> RequiredPeers => [SubscriberEndpointDeclaration.Id];
+   }
+
+   class SubscriberEndpointDeclaration : BestEffortEndpointDeclaration<SubscriberEndpointDeclaration>, IEndpointIdentity
+   {
+      public static string Name => "BestEffortSubscriberEndpoint";
+      public static EndpointId Id { get; } = new(Guid.Parse("A4C1F7D2-8B35-49E0-B6A9-5D21C30E79F8"));
+
+      readonly Given_two_best_effort_endpoints _specification;
+      internal SubscriberEndpointDeclaration(Given_two_best_effort_endpoints specification) => _specification = specification;
+
+      protected override void RegisterComponents(IComponentRegistrar registrar) => registrar.RequireIntegrationTestTypeMappings();
+
+      protected override void RegisterBestEffortTeventHandlers(IBestEffortTeventHandlerRegistrar handle) => handle
+         .ForTevent((IMyBestEffortTevent tevent) =>
+          {
+             _specification._bestEffortTeventsHandledOnTheSubscriber.Enqueue(tevent);
+             _specification._subscriberBestEffortTeventHandlerGate.AwaitPassThrough();
+          });
    }
 
    protected override async Task InitializeAsyncInternal() => await _host.StartAsync().caf();
@@ -106,66 +108,107 @@ public class Given_two_best_effort_endpoints : UniversalTestBase
 
    [PCT] public async Task registering_a_handler_for_a_tevent_declaring_the_exactly_once_contract_fails_at_composition()
    {
-      await using var host = EndpointHost.Production.Create(() => TestEnv.DIContainer.CreateTestingContainerBuilder());
-      Invoking(() => host.RegisterEndpoint(container => BestEffortEndpoint.Build(
-                        container, "ExactlyOnceSubscriptionOnABestEffortEndpoint", new EndpointId(Guid.NewGuid()),
-                        endpointBuilder =>
-                        {
-                           ComposeMinimalFoundation(endpointBuilder);
-                           endpointBuilder.RegisterTessageBusHandlers(handle => handle.ForTevent((ITeventDeclaringTheExactlyOnceContract _) => Task.CompletedTask));
-                        })))
+      await using var host = EndpointHost.Production.Create(() => TestEnv.DIContainer.CreateTestingContainerBuilder(), new CurrentTestsBestEffortEnvironment());
+      Invoking(() => host.RegisterEndpoint(new EndpointDeclarationDemandingAnExactlyOnceTeventSubscription()))
         .Must().Throw<Exception>().Which.Message.Must().Contain("wires no exactly-once delivery machinery");
    }
 
    [PCT] public async Task registering_a_transaction_ignoring_handler_for_a_tevent_declaring_the_exactly_once_contract_fails_at_composition()
    {
-      await using var host = EndpointHost.Production.Create(() => TestEnv.DIContainer.CreateTestingContainerBuilder());
-      Invoking(() => host.RegisterEndpoint(container => BestEffortEndpoint.Build(
-                        container, "ExactlyOnceObservationOnABestEffortEndpoint", new EndpointId(Guid.NewGuid()),
-                        endpointBuilder =>
-                        {
-                           ComposeMinimalFoundation(endpointBuilder);
-                           endpointBuilder.ObserveTevents(observe => observe.ForTevent((ITeventDeclaringTheExactlyOnceContract _) => {}));
-                        })))
+      await using var host = EndpointHost.Production.Create(() => TestEnv.DIContainer.CreateTestingContainerBuilder(), new CurrentTestsBestEffortEnvironment());
+      Invoking(() => host.RegisterEndpoint(new EndpointDeclarationDemandingExactlyOnceTeventObservation()))
         .Must().Throw<Exception>().Which.Message.Must().Contain("wires no exactly-once delivery machinery");
    }
 
    [PCT] public async Task registering_a_handler_for_a_tommand_declaring_the_exactly_once_contract_fails_at_composition()
    {
-      await using var host = EndpointHost.Production.Create(() => TestEnv.DIContainer.CreateTestingContainerBuilder());
-      Invoking(() => host.RegisterEndpoint(container => BestEffortEndpoint.Build(
-                        container, "ExactlyOnceTommandHandlerOnABestEffortEndpoint", new EndpointId(Guid.NewGuid()),
-                        endpointBuilder =>
-                        {
-                           ComposeMinimalFoundation(endpointBuilder);
-                           endpointBuilder.RegisterTessageBusHandlers(handle => handle.ForTommand((TommandDeclaringTheExactlyOnceContract _) => Task.CompletedTask));
-                        })))
+      await using var host = EndpointHost.Production.Create(() => TestEnv.DIContainer.CreateTestingContainerBuilder(), new CurrentTestsBestEffortEnvironment());
+      Invoking(() => host.RegisterEndpoint(new EndpointDeclarationDemandingAnExactlyOnceTommandHandler()))
         .Must().Throw<Exception>().Which.Message.Must().Contain("wires no exactly-once delivery machinery");
    }
 
    [PCT] public async Task composing_an_endpoint_without_a_serializer_fails_loud_naming_the_missing_declaration()
    {
-      await using var host = EndpointHost.Production.Create(() => TestEnv.DIContainer.CreateTestingContainerBuilder());
-      Invoking(() => host.RegisterEndpoint(container => BestEffortEndpoint.Build(
-                        container, "BestEffortEndpointWithoutASerializer", new EndpointId(Guid.NewGuid()),
-                        endpointBuilder => endpointBuilder.TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport()))))
+      await using var host = EndpointHost.Production.Create(() => TestEnv.DIContainer.CreateTestingContainerBuilder(), new EnvironmentDeclaringNoSerializer());
+      Invoking(() => host.RegisterEndpoint(new EndpointDeclarationWithoutASerializer()))
         .Must().Throw<Exception>().Which.Message.Must().Contain("The endpoint declares no serializer");
    }
 
    [PCT] public async Task composing_an_endpoint_without_a_transport_protocol_fails_loud_naming_the_missing_declaration()
    {
-      await using var host = EndpointHost.Production.Create(() => TestEnv.DIContainer.CreateTestingContainerBuilder());
-      Invoking(() => host.RegisterEndpoint(container => BestEffortEndpoint.Build(
-                        container, "BestEffortEndpointWithoutATransportProtocol", new EndpointId(Guid.NewGuid()),
-                        endpointBuilder => endpointBuilder.NewtonsoftSerializer())))
+      await using var host = EndpointHost.Production.Create(() => TestEnv.DIContainer.CreateTestingContainerBuilder(), new EnvironmentDeclaringNoTransportProtocol());
+      Invoking(() => host.RegisterEndpoint(new EndpointDeclarationWithoutATransportProtocol()))
         .Must().Throw<Exception>().Which.Message.Must().Contain("The endpoint declares no transport protocol");
    }
 
-   static void ComposeMinimalFoundation(BestEffortEndpointBuilder endpointBuilder)
+   ///<summary>The tier's declaration base makes an exactly-once tevent subscription structurally inexpressible — there is no<br/>
+   /// door for it — so this declaration reaches the demand through the one surface where it can still be written, the general<br/>
+   /// <c>Declare</c> door, pinning the build-time roster assert as the last line of defense.</summary>
+   class EndpointDeclarationDemandingAnExactlyOnceTeventSubscription : BestEffortEndpointDeclaration<EndpointDeclarationDemandingAnExactlyOnceTeventSubscription>, IEndpointIdentity
    {
-      endpointBuilder.RegisterComponents(registrar => registrar.RequireIntegrationTestTypeMappings());
-      endpointBuilder.TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport());
-      endpointBuilder.NewtonsoftSerializer();
+      public static string Name => "ExactlyOnceSubscriptionOnABestEffortEndpoint";
+      public static EndpointId Id { get; } = new(Guid.Parse("00ABB329-30C5-41BF-BB12-5684C59D6FE9"));
+
+      protected override void RegisterComponents(IComponentRegistrar registrar) => registrar.RequireIntegrationTestTypeMappings();
+
+      protected override void Declare(BestEffortEndpointBuilder endpoint) =>
+         endpoint.RegisterTessageBusHandlers(handle => handle.ForTevent((ITeventDeclaringTheExactlyOnceContract _) => Task.CompletedTask));
+   }
+
+   ///<summary>The observation door is a shared door on every tier, so this exactly-once demand is expressible at declaration<br/>
+   /// time — the build-time roster assert catches it instead.</summary>
+   class EndpointDeclarationDemandingExactlyOnceTeventObservation : BestEffortEndpointDeclaration<EndpointDeclarationDemandingExactlyOnceTeventObservation>, IEndpointIdentity
+   {
+      public static string Name => "ExactlyOnceObservationOnABestEffortEndpoint";
+      public static EndpointId Id { get; } = new(Guid.Parse("7B4B44F9-8873-49A0-B5C7-4E66A01726BF"));
+
+      protected override void RegisterComponents(IComponentRegistrar registrar) => registrar.RequireIntegrationTestTypeMappings();
+
+      protected override void ObserveTevents(ITeventObservationRegistrar observe) => observe.ForTevent((ITeventDeclaringTheExactlyOnceContract _) => {});
+   }
+
+   ///<summary>The tier's declaration base makes an exactly-once tommand handler structurally inexpressible — there is no<br/>
+   /// door for it — so this declaration reaches the demand through the general <c>Declare</c> door, pinning the build-time<br/>
+   /// roster assert as the last line of defense.</summary>
+   class EndpointDeclarationDemandingAnExactlyOnceTommandHandler : BestEffortEndpointDeclaration<EndpointDeclarationDemandingAnExactlyOnceTommandHandler>, IEndpointIdentity
+   {
+      public static string Name => "ExactlyOnceTommandHandlerOnABestEffortEndpoint";
+      public static EndpointId Id { get; } = new(Guid.Parse("88459CC0-4099-4BE0-9D23-5BAAECEEDB61"));
+
+      protected override void RegisterComponents(IComponentRegistrar registrar) => registrar.RequireIntegrationTestTypeMappings();
+
+      protected override void Declare(BestEffortEndpointBuilder endpoint) =>
+         endpoint.RegisterTessageBusHandlers(handle => handle.ForTommand((TommandDeclaringTheExactlyOnceContract _) => Task.CompletedTask));
+   }
+
+   class EndpointDeclarationWithoutASerializer : BestEffortEndpointDeclaration<EndpointDeclarationWithoutASerializer>, IEndpointIdentity
+   {
+      public static string Name => "BestEffortEndpointWithoutASerializer";
+      public static EndpointId Id { get; } = new(Guid.Parse("056B4390-E16B-4E43-941A-632C35EAEAEA"));
+   }
+
+   class EndpointDeclarationWithoutATransportProtocol : BestEffortEndpointDeclaration<EndpointDeclarationWithoutATransportProtocol>, IEndpointIdentity
+   {
+      public static string Name => "BestEffortEndpointWithoutATransportProtocol";
+      public static EndpointId Id { get; } = new(Guid.Parse("3C1FD1F9-C52E-455F-97D8-1F409D83F84B"));
+   }
+
+   ///<summary>An environment that deliberately declares no serializer — only the transport protocol — so composing in it pins the missing-serializer foundation assert.</summary>
+   class EnvironmentDeclaringNoSerializer : IEndpointEnvironment
+   {
+      public void DeclareOn<TConcreteBuilder>(EndpointBuilder<TConcreteBuilder> endpointBuilder) where TConcreteBuilder : EndpointBuilder<TConcreteBuilder> =>
+         endpointBuilder.TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport());
+
+      public void DeclareDomainDatabaseOn(ExactlyOnceEndpointBuilder endpointBuilder) {}
+   }
+
+   ///<summary>An environment that deliberately declares no transport protocol — only the serializer — so composing in it pins the missing-transport foundation assert.</summary>
+   class EnvironmentDeclaringNoTransportProtocol : IEndpointEnvironment
+   {
+      public void DeclareOn<TConcreteBuilder>(EndpointBuilder<TConcreteBuilder> endpointBuilder) where TConcreteBuilder : EndpointBuilder<TConcreteBuilder> =>
+         endpointBuilder.NewtonsoftSerializer();
+
+      public void DeclareDomainDatabaseOn(ExactlyOnceEndpointBuilder endpointBuilder) {}
    }
 
    void PublishOnThePublisherEndpointInATransaction(ITevent tevent) =>

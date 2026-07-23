@@ -5,7 +5,6 @@ using Compze.DependencyInjection.Abstractions;
 using Compze.Hosting;
 using Compze.Hosting.Testing;
 using Compze.Hosting.Testing.Wiring;
-using Compze.Serialization.Newtonsoft.Wiring;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Internals.Testing;
 using Compze.Must;
@@ -32,7 +31,6 @@ namespace Compze.Tests.Integration.Hosting;
 public class Given_a_distributed_tessaging_endpoint_requiring_a_peer_it_has_never_met : UniversalTestBase
 {
    static readonly WaitTimeout HandlerTimeout = WaitTimeout.Seconds(30);
-   static readonly EndpointId RequiredSubscriberEndpointId = new(Guid.Parse("94f7a3c8-1d5e-4b26-8c09-e57b20d84a61"));
 
    readonly IEndpointHost _publisherHost;
    readonly BestEffortEndpoint _publisherEndpoint;
@@ -44,17 +42,37 @@ public class Given_a_distributed_tessaging_endpoint_requiring_a_peer_it_has_neve
 
    public Given_a_distributed_tessaging_endpoint_requiring_a_peer_it_has_never_met()
    {
-      _publisherHost = EndpointHost.Production.Create(() => TestEnv.DIContainer.CreateTestingContainerBuilder());
-      _publisherEndpoint = _publisherHost.RegisterEndpoint(container => BestEffortEndpoint.Build(
-         container,
-         "FirstContactPublisherEndpoint",
-         new EndpointId(Guid.Parse("c85d19e7-4a2b-4f60-9d38-71b06c5f2ea4")),
-         endpointBuilder => endpointBuilder
-            .RegisterComponents(registrar => registrar.RequireIntegrationTestTypeMappings())
-            .TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport())
-            .NewtonsoftSerializer()
-            .DiscoverEndpointsThrough(_registry)
-            .RequirePeers(RequiredSubscriberEndpointId)));
+      _publisherHost = EndpointHost.Production.Create(() => TestEnv.DIContainer.CreateTestingContainerBuilder(), new CurrentTestsBestEffortEnvironment(_registry));
+      _publisherEndpoint = _publisherHost.RegisterEndpoint(new PublisherEndpointDeclaration());
+   }
+
+   class PublisherEndpointDeclaration : BestEffortEndpointDeclaration<PublisherEndpointDeclaration>, IEndpointIdentity
+   {
+      public static string Name => "FirstContactPublisherEndpoint";
+      public static EndpointId Id { get; } = new(Guid.Parse("C85D19E7-4A2B-4F60-9D38-71B06C5F2EA4"));
+
+      protected override void RegisterComponents(IComponentRegistrar registrar) => registrar.RequireIntegrationTestTypeMappings();
+
+      ///<summary>The requirement that opens the first-contact hold: everything published before this peer's first advertisement is held for it.</summary>
+      protected override IReadOnlyList<EndpointId> RequiredPeers => [SubscriberEndpointDeclaration.Id];
+   }
+
+   class SubscriberEndpointDeclaration : BestEffortEndpointDeclaration<SubscriberEndpointDeclaration>, IEndpointIdentity
+   {
+      public static string Name => "FirstContactRequiredSubscriberEndpoint";
+      public static EndpointId Id { get; } = new(Guid.Parse("94F7A3C8-1D5E-4B26-8C09-E57B20D84A61"));
+
+      readonly Given_a_distributed_tessaging_endpoint_requiring_a_peer_it_has_never_met _specification;
+      internal SubscriberEndpointDeclaration(Given_a_distributed_tessaging_endpoint_requiring_a_peer_it_has_never_met specification) => _specification = specification;
+
+      protected override void RegisterComponents(IComponentRegistrar registrar) => registrar.RequireIntegrationTestTypeMappings();
+
+      protected override void RegisterBestEffortTeventHandlers(IBestEffortTeventHandlerRegistrar handle) => handle
+         .ForTevent((IMyBestEffortTevent tevent) =>
+          {
+             _specification._teventsHandledOnTheSubscriber.Enqueue(tevent);
+             _specification._subscriberTeventHandlerGate.AwaitPassThrough();
+          });
    }
 
    protected override async Task InitializeAsyncInternal() => await _publisherHost.StartAsync().caf();
@@ -86,7 +104,7 @@ public class Given_a_distributed_tessaging_endpoint_requiring_a_peer_it_has_neve
 
       //The act ends the first-contact hold, discarding the three held tevents - reported: the composition required a peer
       //that an administrator now declares is not coming.
-      var report = await _publisherEndpoint.ServiceLocator.Resolve<IPeerAdministration>().DecommissionAsync(RequiredSubscriberEndpointId);
+      var report = await _publisherEndpoint.ServiceLocator.Resolve<IPeerAdministration>().DecommissionAsync(SubscriberEndpointDeclaration.Id);
       report.Discarded.Single().Count.Must().Be(3);
       report.Discarded.Single().Description.Must().Contain("first contact");
 
@@ -106,23 +124,8 @@ public class Given_a_distributed_tessaging_endpoint_requiring_a_peer_it_has_neve
 
    IEndpointHost CreateSubscriberHost()
    {
-      var host = EndpointHost.Production.Create(() => TestEnv.DIContainer.CreateTestingContainerBuilder());
-      host.RegisterEndpoint(container => BestEffortEndpoint.Build(
-         container,
-         "FirstContactRequiredSubscriberEndpoint",
-         RequiredSubscriberEndpointId,
-         endpointBuilder =>
-         {
-            endpointBuilder
-               .RegisterComponents(registrar => registrar.RequireIntegrationTestTypeMappings())
-               .TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport())
-               .NewtonsoftSerializer()
-               .RegisterTessageBusHandlers(handle => handle.ForTevent((IMyBestEffortTevent tevent) =>
-                {
-                   _teventsHandledOnTheSubscriber.Enqueue(tevent);
-                   _subscriberTeventHandlerGate.AwaitPassThrough();
-                }));
-         }));
+      var host = EndpointHost.Production.Create(() => TestEnv.DIContainer.CreateTestingContainerBuilder(), new CurrentTestsBestEffortEnvironment());
+      host.RegisterEndpoint(new SubscriberEndpointDeclaration(this));
       return host;
    }
 

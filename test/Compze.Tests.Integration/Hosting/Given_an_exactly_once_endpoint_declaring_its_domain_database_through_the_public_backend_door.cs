@@ -37,8 +37,8 @@ using Compze.TypeIdentifiers.Interning.Sqlite.Wiring;
 namespace Compze.Tests.Integration.Hosting;
 
 ///<summary>
-/// The consumer-proof for the domain-database doors: an exactly-once endpoint whose persistence is declared exactly the way a
-/// consumer composes it — the current backend's public registrar door (<c>MsSqlDomainDatabase(...)</c>,
+/// The consumer-proof for the domain-database doors: an exactly-once endpoint whose environment declares its persistence
+/// exactly the way a consumer composes it — the current backend's public registrar door (<c>MsSqlDomainDatabase(...)</c>,
 /// <c>MySqlDomainDatabase(...)</c>, <c>PgSqlDomainDatabase(...)</c>, <c>SqliteDomainDatabase(...)</c>,
 /// <c>SqliteMemoryDomainDatabase(...)</c>) followed by the feature sql layers, never the testing hosts' backend switch. The
 /// endpoint then converses with itself, proving the whole durable vertical — schema creation included — stands on the
@@ -53,55 +53,70 @@ public class Given_an_exactly_once_endpoint_declaring_its_domain_database_throug
    public Given_an_exactly_once_endpoint_declaring_its_domain_database_through_the_public_backend_door()
    {
       _host = EndpointHost.Production.Create(() => TestEnv.DIContainer.CreateTestingContainerBuilder()
-                                                          ._mutate(it => it.Registrar.CurrentTestsDbPoolIfNotCloneContainer()));
+                                                          ._mutate(it => it.Registrar.CurrentTestsDbPoolIfNotCloneContainer()),
+                                             new EnvironmentDeclaringTheDomainDatabaseThroughThePublicBackendDoor());
 
-      _endpoint = _host.RegisterEndpoint(container => ExactlyOnceEndpoint.Build(
-         container,
-         "PublicDoorDomainDatabase",
-         new EndpointId(Guid.Parse("c4a91b3e-7d20-45f8-9b6a-2e8d51c30f74")),
-         endpointBuilder =>
-         {
-            endpointBuilder
-               .RegisterComponents(registrar => registrar.RequireIntegrationTestTypeMappings())
-               .TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport())
-               .ConfigurePersistence(registrar => DeclareDomainDatabaseThroughThePublicDoor(registrar, connectionStringName: endpointBuilder.Configuration.Id.ToString()))
-               .RegisterTessageBusHandlers(handle => handle
-                       .ForTommand((TommandProvingTheDoorDeclaredPersistenceWorks _) =>
-                        {
-                           _tommandHandled = true;
-                           return Task.CompletedTask;
-                        }));
-         }));
+      _endpoint = _host.RegisterEndpoint(new PublicDoorDomainDatabaseEndpointDeclaration(this));
    }
 
-   static IComponentRegistrar DeclareDomainDatabaseThroughThePublicDoor(IComponentRegistrar registrar, string connectionStringName) =>
-      TestEnv.SqlLayer switch
-      {
-         SqlLayer.MsSql => registrar.MsSqlDomainDatabase(connectionStringName)
-                                    .MsSqlDocumentDbSqlLayer()
-                                    .MsSqlTessagingSqlLayer()
-                                    .MsSqlTeventStoreSqlLayer(),
-         SqlLayer.MySql => registrar.MySqlDomainDatabase(connectionStringName)
-                                    .MySqlDocumentDbSqlLayer()
-                                    .MySqlTessagingSqlLayer()
-                                    .MySqlTeventStoreSqlLayer(),
-         SqlLayer.PgSql => registrar.PgSqlDomainDatabase(connectionStringName)
-                                    .PgSqlDocumentDbSqlLayer()
-                                    .PgSqlTessagingSqlLayer()
-                                    .PgSqlTeventStoreSqlLayer(),
-         //The declaration-object interner form rides the on-disk branch so the one door that takes a SqliteDomainDatabase is consumer-proven too.
-         SqlLayer.Sqlite => registrar.SqliteDomainDatabase(connectionStringName)
-                                     .SqliteTypeIdInterner(new SqliteDomainDatabase($"{connectionStringName}.TypeIdInterner"))
-                                     .SqliteDocumentDbSqlLayer()
-                                     .SqliteTessagingSqlLayer()
-                                     .SqliteTeventStoreSqlLayer(),
-         SqlLayer.SqliteMemory => registrar.SqliteMemoryDomainDatabase(connectionStringName)
-                                           .SqliteTypeIdInterner($"{connectionStringName}.TypeIdInterner")
-                                           .SqliteDocumentDbSqlLayer()
-                                           .SqliteTessagingSqlLayer()
-                                           .SqliteTeventStoreSqlLayer(),
-         _ => throw new ArgumentOutOfRangeException()
-      };
+   ///<summary>The environment whose database binding is this specification's point: the domain database declared exactly the<br/>
+   /// way a consumer composes it — the current backend's public registrar door followed by the feature sql layers, never the<br/>
+   /// testing hosts' backend switch — plus the current test's transport.</summary>
+   class EnvironmentDeclaringTheDomainDatabaseThroughThePublicBackendDoor : IEndpointEnvironment
+   {
+      public void DeclareOn<TConcreteBuilder>(EndpointBuilder<TConcreteBuilder> endpointBuilder) where TConcreteBuilder : EndpointBuilder<TConcreteBuilder> =>
+         endpointBuilder.TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport());
+
+      public void DeclareDomainDatabaseOn(ExactlyOnceEndpointBuilder endpointBuilder) =>
+         endpointBuilder.ConfigurePersistence(registrar => DeclareDomainDatabaseThroughThePublicDoor(registrar, connectionStringName: endpointBuilder.Configuration.Id.ToString()));
+
+      static IComponentRegistrar DeclareDomainDatabaseThroughThePublicDoor(IComponentRegistrar registrar, string connectionStringName) =>
+         TestEnv.SqlLayer switch
+         {
+            SqlLayer.MsSql => registrar.MsSqlDomainDatabase(connectionStringName)
+                                       .MsSqlDocumentDbSqlLayer()
+                                       .MsSqlTessagingSqlLayer()
+                                       .MsSqlTeventStoreSqlLayer(),
+            SqlLayer.MySql => registrar.MySqlDomainDatabase(connectionStringName)
+                                       .MySqlDocumentDbSqlLayer()
+                                       .MySqlTessagingSqlLayer()
+                                       .MySqlTeventStoreSqlLayer(),
+            SqlLayer.PgSql => registrar.PgSqlDomainDatabase(connectionStringName)
+                                       .PgSqlDocumentDbSqlLayer()
+                                       .PgSqlTessagingSqlLayer()
+                                       .PgSqlTeventStoreSqlLayer(),
+            //The declaration-object interner form rides the on-disk branch so the one door that takes a SqliteDomainDatabase is consumer-proven too.
+            SqlLayer.Sqlite => registrar.SqliteDomainDatabase(connectionStringName)
+                                        .SqliteTypeIdInterner(new SqliteDomainDatabase($"{connectionStringName}.TypeIdInterner"))
+                                        .SqliteDocumentDbSqlLayer()
+                                        .SqliteTessagingSqlLayer()
+                                        .SqliteTeventStoreSqlLayer(),
+            SqlLayer.SqliteMemory => registrar.SqliteMemoryDomainDatabase(connectionStringName)
+                                              .SqliteTypeIdInterner($"{connectionStringName}.TypeIdInterner")
+                                              .SqliteDocumentDbSqlLayer()
+                                              .SqliteTessagingSqlLayer()
+                                              .SqliteTeventStoreSqlLayer(),
+            _ => throw new ArgumentOutOfRangeException()
+         };
+   }
+
+   class PublicDoorDomainDatabaseEndpointDeclaration : ExactlyOnceEndpointDeclaration<PublicDoorDomainDatabaseEndpointDeclaration>, IEndpointIdentity
+   {
+      public static string Name => "PublicDoorDomainDatabase";
+      public static EndpointId Id { get; } = new(Guid.Parse("C4A91B3E-7D20-45F8-9B6A-2E8D51C30F74"));
+
+      readonly Given_an_exactly_once_endpoint_declaring_its_domain_database_through_the_public_backend_door _specification;
+      internal PublicDoorDomainDatabaseEndpointDeclaration(Given_an_exactly_once_endpoint_declaring_its_domain_database_through_the_public_backend_door specification) => _specification = specification;
+
+      protected override void RegisterComponents(IComponentRegistrar registrar) => registrar.RequireIntegrationTestTypeMappings();
+
+      protected override void RegisterExactlyOnceTommandHandlers(IExactlyOnceTommandHandlerRegistrar handle) => handle
+         .ForTommand((TommandProvingTheDoorDeclaredPersistenceWorks _) =>
+          {
+             _specification._tommandHandled = true;
+             return Task.CompletedTask;
+          });
+   }
 
    protected override async Task InitializeAsyncInternal() => await _host.StartAsync().caf();
 

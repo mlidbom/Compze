@@ -5,7 +5,6 @@ using Compze.DependencyInjection.Abstractions;
 using Compze.Hosting;
 using Compze.Hosting.Testing;
 using Compze.Hosting.Testing.Wiring;
-using Compze.Serialization.Newtonsoft.Wiring;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Internals.Testing;
 using Compze.Must;
@@ -33,7 +32,6 @@ namespace Compze.Tests.Integration.Hosting;
 public class Given_a_met_distributed_tessaging_subscriber_the_publisher_does_not_queue_tevents_for : UniversalTestBase
 {
    static readonly WaitTimeout HandlerTimeout = WaitTimeout.Seconds(30);
-   static readonly EndpointId SubscriberEndpointId = new(Guid.Parse("5a92c4e1-7f3b-4d08-b6c5-90e12a8d47f3"));
 
    readonly IEndpointHost _publisherHost;
    readonly BestEffortEndpoint _publisherEndpoint;
@@ -45,41 +43,46 @@ public class Given_a_met_distributed_tessaging_subscriber_the_publisher_does_not
 
    public Given_a_met_distributed_tessaging_subscriber_the_publisher_does_not_queue_tevents_for()
    {
-      _publisherHost = EndpointHost.Production.Create(() => TestEnv.DIContainer.CreateTestingContainerBuilder());
-      _publisherEndpoint = _publisherHost.RegisterEndpoint(container => BestEffortEndpoint.Build(
-         container,
-         "NoQueueingPublisherEndpoint",
-         new EndpointId(Guid.Parse("e47b06d2-3c95-48a1-bf60-27d8c41e95b0")),
-         endpointBuilder => endpointBuilder
-            .RegisterComponents(registrar => registrar.RequireIntegrationTestTypeMappings())
-            .TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport())
-            .NewtonsoftSerializer()
-            .DiscoverEndpointsThrough(_registry)
-            .DoNotQueueTeventsFor(SubscriberEndpointId)));
+      _publisherHost = EndpointHost.Production.Create(() => TestEnv.DIContainer.CreateTestingContainerBuilder(), new CurrentTestsBestEffortEnvironment(_registry));
+      _publisherEndpoint = _publisherHost.RegisterEndpoint(new PublisherEndpointDeclaration());
 
       _subscriberHost = CreateSubscriberHost();
    }
 
    IEndpointHost CreateSubscriberHost()
    {
-      var host = EndpointHost.Production.Create(() => TestEnv.DIContainer.CreateTestingContainerBuilder());
-      host.RegisterEndpoint(container => BestEffortEndpoint.Build(
-         container,
-         "NoQueueingSubscriberEndpoint",
-         SubscriberEndpointId,
-         endpointBuilder =>
-         {
-            endpointBuilder
-               .RegisterComponents(registrar => registrar.RequireIntegrationTestTypeMappings())
-               .TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport())
-               .NewtonsoftSerializer()
-               .RegisterTessageBusHandlers(handle => handle.ForTevent((IMyBestEffortTevent tevent) =>
-                {
-                   _teventsHandledOnTheSubscriber.Enqueue(tevent);
-                   _subscriberTeventHandlerGate.AwaitPassThrough();
-                }));
-         }));
+      var host = EndpointHost.Production.Create(() => TestEnv.DIContainer.CreateTestingContainerBuilder(), new CurrentTestsBestEffortEnvironment());
+      host.RegisterEndpoint(new SubscriberEndpointDeclaration(this));
       return host;
+   }
+
+   class PublisherEndpointDeclaration : BestEffortEndpointDeclaration<PublisherEndpointDeclaration>, IEndpointIdentity
+   {
+      public static string Name => "NoQueueingPublisherEndpoint";
+      public static EndpointId Id { get; } = new(Guid.Parse("E47B06D2-3C95-48A1-BF60-27D8C41E95B0"));
+
+      protected override void RegisterComponents(IComponentRegistrar registrar) => registrar.RequireIntegrationTestTypeMappings();
+
+      ///<summary>The opt-down itself: the publisher declares, peer by peer, that it keeps nothing for this one.</summary>
+      protected override IReadOnlyList<EndpointId> PeersNotQueuedFor => [SubscriberEndpointDeclaration.Id];
+   }
+
+   class SubscriberEndpointDeclaration : BestEffortEndpointDeclaration<SubscriberEndpointDeclaration>, IEndpointIdentity
+   {
+      public static string Name => "NoQueueingSubscriberEndpoint";
+      public static EndpointId Id { get; } = new(Guid.Parse("5A92C4E1-7F3B-4D08-B6C5-90E12A8D47F3"));
+
+      readonly Given_a_met_distributed_tessaging_subscriber_the_publisher_does_not_queue_tevents_for _specification;
+      internal SubscriberEndpointDeclaration(Given_a_met_distributed_tessaging_subscriber_the_publisher_does_not_queue_tevents_for specification) => _specification = specification;
+
+      protected override void RegisterComponents(IComponentRegistrar registrar) => registrar.RequireIntegrationTestTypeMappings();
+
+      protected override void RegisterBestEffortTeventHandlers(IBestEffortTeventHandlerRegistrar handle) => handle
+         .ForTevent((IMyBestEffortTevent tevent) =>
+          {
+             _specification._teventsHandledOnTheSubscriber.Enqueue(tevent);
+             _specification._subscriberTeventHandlerGate.AwaitPassThrough();
+          });
    }
 
    protected override async Task InitializeAsyncInternal()
@@ -129,7 +132,7 @@ public class Given_a_met_distributed_tessaging_subscriber_the_publisher_does_not
    void AwaitThePublisherRememberingTheSubscriber()
    {
       var deadline = DateTime.UtcNow + TimeSpan.FromSeconds(30);
-      while(!_publisherEndpoint.ServiceLocator.Resolve<IPeerAdministration>().Peers.Any(peer => peer.Id.Equals(SubscriberEndpointId)))
+      while(!_publisherEndpoint.ServiceLocator.Resolve<IPeerAdministration>().Peers.Any(peer => peer.Id.Equals(SubscriberEndpointDeclaration.Id)))
       {
          if(DateTime.UtcNow > deadline) throw new TimeoutException("The publisher never met the subscriber: it never appeared in the publisher's peer registry.");
          Thread.Sleep(20);

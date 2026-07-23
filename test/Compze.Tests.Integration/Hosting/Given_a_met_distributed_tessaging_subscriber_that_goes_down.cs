@@ -7,7 +7,6 @@ using Compze.DependencyInjection.Abstractions;
 using Compze.Hosting;
 using Compze.Hosting.Testing;
 using Compze.Hosting.Testing.Wiring;
-using Compze.Serialization.Newtonsoft.Wiring;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Internals.SystemCE.TransactionsCE.Testing;
 using Compze.Internals.Testing;
@@ -31,12 +30,12 @@ namespace Compze.Tests.Integration.Hosting;
 /// Queue-while-down on the distributed tier (see <c>src/Compze.Tessaging/dev_docs/peer-model.md</c>): a publisher that has met a
 /// subscribing peer keeps its tevents for it while the peer is down — in memory, in order, nothing persisted anywhere — and the
 /// peer's next connection drains them on its return. The subscriber lives in its own host so it can go down and return while
-/// the publisher stays up; identity is the subscriber's <see cref="EndpointId"/>, which its next incarnation keeps.
+/// the publisher stays up; identity is the subscriber's <see cref="EndpointId"/>, which its next incarnation keeps — one
+/// declaration, several endpoint instances across the incarnations.
 ///</summary>
 public class Given_a_met_distributed_tessaging_subscriber_that_goes_down : UniversalTestBase
 {
    static readonly WaitTimeout HandlerTimeout = WaitTimeout.Seconds(30);
-   static readonly EndpointId SubscriberEndpointId = new(Guid.Parse("7b7e51d5-2e1a-4e0c-9c11-6c0f5b1d2a43"));
 
    readonly IEndpointHost _publisherHost;
    readonly BestEffortEndpoint _publisherEndpoint;
@@ -50,40 +49,43 @@ public class Given_a_met_distributed_tessaging_subscriber_that_goes_down : Unive
 
    public Given_a_met_distributed_tessaging_subscriber_that_goes_down()
    {
-      _publisherHost = EndpointHost.Production.Create(() => TestEnv.DIContainer.CreateTestingContainerBuilder());
-      _publisherEndpoint = _publisherHost.RegisterEndpoint(container => BestEffortEndpoint.Build(
-         container,
-         "QueueWhileDownPublisherEndpoint",
-         new EndpointId(Guid.Parse("21c2e6a4-9b0f-4c3d-8a57-3f1de08b6c92")),
-         endpointBuilder => endpointBuilder
-            .RegisterComponents(registrar => registrar.RequireIntegrationTestTypeMappings())
-            .TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport())
-            .NewtonsoftSerializer()
-            .DiscoverEndpointsThrough(_registry)));
+      _publisherHost = EndpointHost.Production.Create(() => TestEnv.DIContainer.CreateTestingContainerBuilder(), new CurrentTestsBestEffortEnvironment(_registry));
+      _publisherEndpoint = _publisherHost.RegisterEndpoint(new PublisherEndpointDeclaration());
 
       _subscriberHost = CreateSubscriberHost();
    }
 
    IEndpointHost CreateSubscriberHost()
    {
-      var host = EndpointHost.Production.Create(() => TestEnv.DIContainer.CreateTestingContainerBuilder());
-      host.RegisterEndpoint(container => BestEffortEndpoint.Build(
-         container,
-         "QueueWhileDownSubscriberEndpoint",
-         SubscriberEndpointId,
-         endpointBuilder =>
-         {
-            endpointBuilder
-               .RegisterComponents(registrar => registrar.RequireIntegrationTestTypeMappings())
-               .TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport())
-               .NewtonsoftSerializer()
-               .RegisterTessageBusHandlers(handle => handle.ForTevent((IMyBestEffortTevent tevent) =>
-                {
-                   _teventsHandledOnTheSubscriber.Enqueue(tevent);
-                   _subscriberTeventHandlerGate.AwaitPassThrough();
-                }));
-         }));
+      var host = EndpointHost.Production.Create(() => TestEnv.DIContainer.CreateTestingContainerBuilder(), new CurrentTestsBestEffortEnvironment());
+      host.RegisterEndpoint(new SubscriberEndpointDeclaration(this));
       return host;
+   }
+
+   class PublisherEndpointDeclaration : BestEffortEndpointDeclaration<PublisherEndpointDeclaration>, IEndpointIdentity
+   {
+      public static string Name => "QueueWhileDownPublisherEndpoint";
+      public static EndpointId Id { get; } = new(Guid.Parse("21C2E6A4-9B0F-4C3D-8A57-3F1DE08B6C92"));
+
+      protected override void RegisterComponents(IComponentRegistrar registrar) => registrar.RequireIntegrationTestTypeMappings();
+   }
+
+   class SubscriberEndpointDeclaration : BestEffortEndpointDeclaration<SubscriberEndpointDeclaration>, IEndpointIdentity
+   {
+      public static string Name => "QueueWhileDownSubscriberEndpoint";
+      public static EndpointId Id { get; } = new(Guid.Parse("7B7E51D5-2E1A-4E0C-9C11-6C0F5B1D2A43"));
+
+      readonly Given_a_met_distributed_tessaging_subscriber_that_goes_down _specification;
+      internal SubscriberEndpointDeclaration(Given_a_met_distributed_tessaging_subscriber_that_goes_down specification) => _specification = specification;
+
+      protected override void RegisterComponents(IComponentRegistrar registrar) => registrar.RequireIntegrationTestTypeMappings();
+
+      protected override void RegisterBestEffortTeventHandlers(IBestEffortTeventHandlerRegistrar handle) => handle
+         .ForTevent((IMyBestEffortTevent tevent) =>
+          {
+             _specification._teventsHandledOnTheSubscriber.Enqueue(tevent);
+             _specification._subscriberTeventHandlerGate.AwaitPassThrough();
+          });
    }
 
    protected override async Task InitializeAsyncInternal()
@@ -121,7 +123,7 @@ public class Given_a_met_distributed_tessaging_subscriber_that_goes_down : Unive
       2.Through(4).ForEach(PublishOnThePublisherEndpointInATransaction);
 
       //The act discards the three queued tevents, reported - decommissioning a peer with held tessages is loud and deliberate.
-      var report = await _publisherEndpoint.ServiceLocator.Resolve<IPeerAdministration>().DecommissionAsync(SubscriberEndpointId);
+      var report = await _publisherEndpoint.ServiceLocator.Resolve<IPeerAdministration>().DecommissionAsync(SubscriberEndpointDeclaration.Id);
       report.Discarded.Single().Count.Must().Be(3);
 
       //Published while decommissioned: fanned out to nobody - nothing anywhere remembers the peer.
@@ -153,7 +155,7 @@ public class Given_a_met_distributed_tessaging_subscriber_that_goes_down : Unive
          var message = Invoking(() => publisher.Publish(new MyBestEffortTevent { SequenceNumber = 10_002 }))
                       .Must().Throw<BestEffortTeventQueueOverflowException>()
                       .Which.Message;
-         message.Must().Contain(SubscriberEndpointId.ToString());
+         message.Must().Contain(SubscriberEndpointDeclaration.Id.ToString());
          message.Must().Contain("10000");
       });
    }
@@ -202,7 +204,7 @@ public class Given_a_met_distributed_tessaging_subscriber_that_goes_down : Unive
    void AwaitThePublisherRememberingTheSubscriber()
    {
       var deadline = DateTime.UtcNow + TimeSpan.FromSeconds(30);
-      while(!_publisherEndpoint.ServiceLocator.Resolve<IPeerAdministration>().Peers.Any(peer => peer.Id.Equals(SubscriberEndpointId)))
+      while(!_publisherEndpoint.ServiceLocator.Resolve<IPeerAdministration>().Peers.Any(peer => peer.Id.Equals(SubscriberEndpointDeclaration.Id)))
       {
          if(DateTime.UtcNow > deadline) throw new TimeoutException("The publisher never met the subscriber: it never appeared in the publisher's peer registry.");
          Thread.Sleep(20);
