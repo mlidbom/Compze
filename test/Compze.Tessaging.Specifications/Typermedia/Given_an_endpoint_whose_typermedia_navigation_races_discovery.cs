@@ -17,7 +17,7 @@ namespace Compze.Tessaging.Specifications.Typermedia;
 ///<summary>The core waiting-send pin: a remote typermedia send whose type has no live route does not explode — it waits,<br/>
 /// within the endpoint's handler-availability patience, for the route to appear, then proceeds normally. Pinned by firing the<br/>
 /// navigation before the serving endpoint exists at all: the send is already waiting when the serving endpoint is composed,<br/>
-/// announced, and first met (see <c>src/Compze.Tessaging/dev_docs/peer-model.md</c>).</summary>
+/// announced, and first met (see <c>src/Compze.Tessaging/dev_docs/peers.md</c>).</summary>
 public class Given_an_endpoint_whose_typermedia_navigation_races_discovery : UniversalTestBase
 {
    readonly TestingEndpointHost _host;

@@ -12,7 +12,7 @@ using static Compze.Must.MustActions;
 namespace Compze.Tests.Integration.Tessaging.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler;
 
 ///<summary>Decommissioning is the one way a peer leaves the endpoint's memory — an administrative act, never an inference<br/>
-/// (see <c>src/Compze.Tessaging/dev_docs/peer-model.md</c>): <see cref="IPeerAdministration.DecommissionAsync"/> removes the peer —<br/>
+/// (see <c>src/Compze.Tessaging/dev_docs/peers.md</c>): <see cref="IPeerAdministration.DecommissionAsync"/> removes the peer —<br/>
 /// publishes stop fanning out to it, sends stop binding to it — and discards everything the endpoint still held for it,<br/>
 /// reported by the act, never as a silent side effect. A decommissioned peer that later re-announces is a first contact again.</summary>
 [LongRunning]

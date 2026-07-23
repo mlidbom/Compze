@@ -27,7 +27,7 @@ using static Compze.Must.MustActions;
 namespace Compze.Tests.Integration.Hosting;
 
 ///<summary>
-/// Queue-while-down on the distributed tier (see <c>src/Compze.Tessaging/dev_docs/peer-model.md</c>): a publisher that has met a
+/// Queue-while-down on the distributed tier (see <c>src/Compze.Tessaging/dev_docs/peers.md</c>): a publisher that has met a
 /// subscribing peer keeps its tevents for it while the peer is down — in memory, in order, nothing persisted anywhere — and the
 /// peer's next connection drains them on its return. The subscriber lives in its own host so it can go down and return while
 /// the publisher stays up; identity is the subscriber's <see cref="EndpointId"/>, which its next incarnation keeps — one

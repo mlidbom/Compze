@@ -36,7 +36,7 @@ static class BestEffortTeventDeliveryRegistrar
 /// remembered subscribers — never to whoever happens to be connected — by enqueueing it, on commit, into each subscriber's<br/>
 /// in-memory queue (<see cref="BestEffortTeventQueues"/>). A live subscriber's connection drains its queue immediately; a<br/>
 /// subscriber that is down accumulates its tessages in order and receives them on its return<br/>
-/// (see <c>src/Compze.Tessaging/dev_docs/tevent-delivery-model.md</c> and <c>src/Compze.Tessaging/dev_docs/peer-model.md</c>).</summary>
+/// (see <c>src/Compze.Tessaging/dev_docs/tevent-delivery-model.md</c> and <c>src/Compze.Tessaging/dev_docs/peers.md</c>).</summary>
 class BestEffortTeventDeliveryLeg : IBestEffortTeventDeliveryLeg
 {
    internal static void RegisterWith(IComponentRegistrar registrar)

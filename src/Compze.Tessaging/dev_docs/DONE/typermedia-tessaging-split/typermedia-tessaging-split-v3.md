@@ -9,7 +9,7 @@ and `Compze.Tessaging.Abstractions` no longer reference Typermedia — that coup
 > `TypermediaEndpointFeature` → `DistributedTypermediaEndpointFeature` (`AddTypermedia()` → `AddDistributedTypermedia()`),
 > the components and testing host features gained the same `Distributed` prefix, and each style also has an in-process
 > core feature (`TessageHandlingEndpointFeature` + `InProcessTessagingEndpointFeature`; `InProcessTypermediaEndpointFeature`
-> in `Compze.Typermedia`). See `src/Compze.Hosting/dev_docs/hosting-model.md`.
+> in `Compze.Typermedia`). See `src/Compze.Hosting/dev_docs/hosting.md`.
 
 ## Verified current state (2026-06-10)
 

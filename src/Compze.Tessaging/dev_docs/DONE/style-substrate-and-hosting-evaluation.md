@@ -177,7 +177,7 @@ Debris (deletable or trivially fixable, no design decisions needed):
   is exactly the stale-nupkgs failure class. Zero `using Compze.Core` exists; two stale `// Compze.Core`
   comments point at types that now live in `Compze.Teventive`.
 - **`EndpointAddress` is a `record`** — against the no-records convention.
-- **Stale prose in [hosting-model.md](../../../../src/Compze.Hosting/dev_docs/hosting-model.md)**: two
+- **Stale prose in [hosting.md](../../../../src/Compze.Hosting/dev_docs/hosting.md)**: two
   mentions of a tommand "scheduler" (no scheduler exists in the code), and the pre-rename
   `ISessionLocalTypermediaNavigator` (now `ILocalTypermediaNavigatorSession`).
 - **`internal/rpc/...`** as Typermedia's wire route prefix — greenfield, renameable at will.
@@ -189,7 +189,7 @@ Debris (deletable or trivially fixable, no design decisions needed):
 The abstract plugin machinery — `GetOrAddFeature`, endpoint features, contribution sets, guarded
 registrars, serializer slots, `OnContainerBuilt` hooks, testing-host features — is not incidental
 complexity. It is the split's **exoskeleton**: every piece of it exists to let two independent verticals
-share one endpoint without knowing each other. Its three documented justifications (hosting-model.md) all
+share one endpoint without knowing each other. Its three documented justifications (hosting.md) all
 presuppose separate style deliverables — "each style developed, shipped, tested alone" (no strangers to keep
 apart after harmonization), "capabilities declared in one visible place" (a constructor does that better),
 "a new capability without touching hosting" (⚖ no third style, ever). Merge the organism and the
@@ -232,7 +232,7 @@ The tier ladder — local ⊂ best-effort ⊂ exactly-once — collapses from a 
 human can read top to bottom**:
 
 1. **Local Tessaging — no endpoint at all.** A container registrar wiring the handler registry, synchronous
-   dispatch, publishers, and the local navigator. hosting-model.md already says it: "in-process Compze is
+   dispatch, publishers, and the local navigator. hosting.md already says it: "in-process Compze is
    container wiring, not hosting." A local-only *endpoint* stops being a thing — it never was one; the
    `AddInProcess*` endpoint features existed only so the lattice could compose the core.
 2. **The best-effort endpoint** — a concrete type: transport server, discovery, router, process-lifetime
@@ -487,7 +487,7 @@ with the Host demotion, last.
 1. **Names + deletions + defect fixes (no design risk, ship immediately):** "in-process" → "local" in
    vocabulary and docs; the ServiceBus-remnant renames into the TessageBus vocabulary; delete the husk
    directories and the vestigial `Compze.Core` references; fix the two Typermedia defects (bugs today,
-   independent of everything here); fix the stale hosting-model.md prose.
+   independent of everything here); fix the stale hosting.md prose.
 2. **Settle the homes (the open decision above), then build the concrete tier types on the harmonized
    paradigm, deleting the lattice as they land:** one advertisement + one discovery query; one router
    knowing the four kinds; peer memory, lifecycle observation, and `Decommission` under it (decommission

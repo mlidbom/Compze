@@ -88,7 +88,7 @@ public abstract partial class EndpointHostTestBase
    ///<summary>The Remote endpoint: the Backend's conversing peer. Identity fixed for the same reason as<br/>
    /// <see cref="BackendEndpointDeclaration"/>. The constructor flags script deployments where the endpoint returns with a<br/>
    /// shrunk advertisement: no longer handling its tommand, or having renounced its tevent subscriptions (see the<br/>
-   /// advertisement lifecycle in <c>src/Compze.Tessaging/dev_docs/peer-model.md</c>).</summary>
+   /// advertisement lifecycle in <c>src/Compze.Tessaging/dev_docs/peers.md</c>).</summary>
    protected class RemoteEndpointDeclaration : ExactlyOnceEndpointDeclaration<RemoteEndpointDeclaration>, IEndpointIdentity
    {
       public static string Name => "Remote";

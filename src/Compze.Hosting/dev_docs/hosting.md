@@ -1,4 +1,4 @@
-# The Compze hosting model
+# Compze hosting
 
 This document takes a developer who is new to Compze from zero to understanding how hosting works — what is
 actually running when a Compze application runs, how the pieces relate, and how the same machinery hosts both
@@ -45,7 +45,7 @@ carries a tessage is chosen by reading its type.
 
 There are exactly three things an application composes, all in `Compze.Tessaging` (the paradigm itself —
 tessage kinds, the consistency law, the engine — is
-[the Tessaging model](../../Compze.Tessaging/dev_docs/tessaging-model.md)):
+[Tessaging](../../Compze.Tessaging/dev_docs/tessaging.md)):
 
 1. **The LocalTessagingEngine** — the tessage-conversing heart of one container, for the application that
    converses only with itself (see "The engine" below). Not an endpoint: no identity, no address, no wire.
@@ -80,7 +80,7 @@ endpoint actually is — is declared at the outermost layer: the application or 
 An endpoint is declared as a class — an endpoint-declaration — and the same declaration builds under every
 host. (This section shows the shape; the full model — identity types, environments and their decoration, the
 build template, and the reasoning behind the design — is
-[the endpoint-declaration model](../../Compze.Tessaging/dev_docs/endpoint-declaration-model.md).)
+[endpoint-declarations](../../Compze.Tessaging/dev_docs/endpoint-declarations.md).)
 
 ```csharp
 class AccountManagementEndpointDeclaration : ExactlyOnceEndpointDeclaration<AccountManagementEndpointDeclaration>, IEndpointIdentity
@@ -159,7 +159,7 @@ listening.
 An endpoint's start completes when *it* has started; whether the rest of the topology — co-hosted
 endpoints, other processes still starting, a peer restarting mid-day — has been discovered is continuous
 convergence. Two composing mechanisms make that nobody's race to lose (see
-[the peer model](../../Compze.Tessaging/dev_docs/peer-model.md)):
+[peers](../../Compze.Tessaging/dev_docs/peers.md)):
 
 - **Waiting sends** — implicit, per-call: a send whose type has no live, unambiguous route right now waits,
   bounded by the endpoint's **handler-availability patience** (a flat 30 seconds unless the declaration
@@ -183,7 +183,7 @@ An exactly-once endpoint declares the **domain database it joins** (`SqliteDomai
 never a database of its own: the database is the domain's — the domain data the endpoint's executions touch
 lives there, and the exactly-once machinery's atomicity *is* its co-location with that data. Any number of
 endpoints join one domain database (the whole story:
-[the storage model](../../Compze.Tessaging/dev_docs/storage-model.md)):
+[storage](../../Compze.Tessaging/dev_docs/storage.md)):
 
 - **Each endpoint owns a prefixed table-set** (`EndpointTableSet`): its inbox, its outbox and outbox
   dispatching, and its durable peer memory, each table prefixed with the endpoint's name

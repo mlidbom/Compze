@@ -3,8 +3,8 @@
 This document takes a developer who is new to Compze from zero to understanding how tevents are delivered —
 what delivery guarantees exist, where each guarantee comes from, how publishing and subscribing work, and
 what happens when a tevent crosses a process boundary. It is a companion to
-[the Tessaging model](tessaging-model.md), which explains the paradigm the delivery machinery serves, and to
-[the hosting model](../../Compze.Hosting/dev_docs/hosting-model.md), which explains what an endpoint *is*; this
+[Tessaging](tessaging.md), which explains the paradigm the delivery machinery serves, and to
+[Compze hosting](../../Compze.Hosting/dev_docs/hosting.md), which explains what an endpoint *is*; this
 document explains how tevents travel between the code that publishes them and the handlers that receive them.
 
 ## The big picture
@@ -73,7 +73,7 @@ Which rung an edge lands on:
   whatever the tevent's type.
 
 **Exactly-once membership is remembered, not live**: an exactly-once tevent's receivers are the peers whose
-remembered advertisement subscribes to it (the peer registry — see [the peer model](peer-model.md)), never
+remembered advertisement subscribes to it (the peer registry — see [peers](peers.md)), never
 the connections that happen to be live at publish time. A subscribing peer that is down when the tevent is
 published receives it on its return.
 
@@ -120,7 +120,7 @@ the dedup key.
 
 There are two ways to publish, distinguished by the caller's relationship to a **unit of work** — one scope
 paired with one ambient transaction, begun and completed together (see
-`src/Compze.DependencyInjection/dev_docs/unit-of-work-model.md`). Code inside one publishes through the
+`src/Compze.DependencyInjection/dev_docs/unit-of-work.md`). Code inside one publishes through the
 unit-of-work publisher, which joins it; code outside any publishes through the independent publisher, which
 gives each publish its own. The same duality repeats across the application-facing interfaces:
 `IUnitOfWorkTommandSender`/`IIndependentTommandSender` for sending tommands, and
@@ -300,7 +300,7 @@ Per rung:
 - **Best-effort: in order, across the subscriber's downtime.** Every remembered subscriber has an in-memory
   queue on the publisher that outlives connections: tevents published while the subscriber is down accumulate
   in publish order and its next connection drains them on its return — queue-while-down (see
-  [the peer model](peer-model.md)). A delivery failure *pauses* the stream whole:
+  [peers](peers.md)). A delivery failure *pauses* the stream whole:
   the one tevent in flight at the failure is dropped, loudly — without receiver dedup a re-send could
   duplicate it, and nothing on this tier is ever re-sent — while everything queued behind it stays queued in
   order, resuming when the peer answers a tessage-free probe or reconnects. There is never a silent
@@ -322,15 +322,15 @@ subscription-side election at all: an `IExactlyOnceTommand`'s type is its delive
 transactional, asynchronous), sent through `IUnitOfWorkTommandSender.SendAsync`. A tommand whose handler is
 in the sender's own roster never touches delivery machinery at all: it executes inline, in the sender's
 execution — exactly-once by construction, per the consistency law (see
-[the Tessaging model](tessaging-model.md)). A tommand whose handler lives elsewhere binds to its one
+[Tessaging](tessaging.md)). A tommand whose handler lives elsewhere binds to its one
 specific receiver at send time — the live handler when one is connected, otherwise the sole remembered peer
-whose advertisement handles the type (see [the peer model](peer-model.md)) — so a
+whose advertisement handles the type (see [peers](peers.md)) — so a
 known-but-down handler receives the tommand on its return without the send exploding, while every tessage
 between a sender and a receiver rides that pair's single ordered, receiver-deduped delivery stream:
 exactly-once in-order holds by construction. An in-flight tommand therefore never delivers to a blue/green
 successor — it waits for its own endpoint — while new sends bind to the live successor. The synchronous local ask has its own
 truthful home in Typermedia's strictly-local tommand — see
-[the hosting model](../../Compze.Hosting/dev_docs/hosting-model.md). The subscription-side opt-down and the
+[Compze hosting](../../Compze.Hosting/dev_docs/hosting.md). The subscription-side opt-down and the
 best-effort tier described in this document are tevent concepts: they exist because tevent publishing is
 decoupled 1:N fan-out, where the publisher must not decide the durability needs of subscribers it does not
 know.

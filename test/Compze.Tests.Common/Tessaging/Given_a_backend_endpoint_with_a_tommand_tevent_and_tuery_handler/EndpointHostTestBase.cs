@@ -131,7 +131,7 @@ public abstract partial class EndpointHostTestBase : UniversalTestBase
    ///<summary>Starts a host in which the Remote endpoint returns with a shrunk advertisement: it no longer handles<br/>
    /// <see cref="MyExactlyOnceTommandHandledByTheRemoteEndpoint"/>, while every tevent subscription remains — the deployment<br/>
    /// where a handler was removed from an endpoint that keeps its identity (see the advertisement lifecycle in<br/>
-   /// <c>src/Compze.Tessaging/dev_docs/peer-model.md</c>).</summary>
+   /// <c>src/Compze.Tessaging/dev_docs/peers.md</c>).</summary>
    protected async Task StartHostWithTheRemoteEndpointReturningNoLongerHandlingItsTommandAsync()
    {
       CreateHostAndRegisterBackendEndpoint();

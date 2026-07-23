@@ -1,4 +1,4 @@
-# The unit-of-work model
+# The unit of work
 
 > A **unit of work** is one `IScope` paired with one ambient transaction, begun and completed together, so
 > everything executed within it either commits as a whole or rolls back as a whole.

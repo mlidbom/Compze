@@ -182,7 +182,7 @@ public abstract class EndpointBuilder
    /// being code. Every tevent published before a required peer's first advertisement is held for it — in order, within the<br/>
    /// queue bound — and the subset matching its subscriptions delivers when it is first met, so startup ordering stops<br/>
    /// mattering: nothing a required peer should see is lost to the discovery race<br/>
-   /// (see <c>src/Compze.Tessaging/dev_docs/peer-model.md</c>).</summary>
+   /// (see <c>src/Compze.Tessaging/dev_docs/peers.md</c>).</summary>
    public EndpointBuilder RequirePeers(params EndpointId[] requiredPeers)
    {
       AssertStillComposing();
@@ -193,7 +193,7 @@ public abstract class EndpointBuilder
    }
 
    ///<summary>Declares peers this endpoint deliberately keeps nothing for — the per-peer opt-down from queue-while-down<br/>
-   /// (see <c>src/Compze.Tessaging/dev_docs/peer-model.md</c>). Ephemerality is a property of the relationship, not of the endpoint:<br/>
+   /// (see <c>src/Compze.Tessaging/dev_docs/peers.md</c>). Ephemerality is a property of the relationship, not of the endpoint:<br/>
    /// an application that requires its billing peer may genuinely not care whether the statistics collector is up. A tevent for<br/>
    /// a not-queued-for peer is delivered only while the peer is connected: published while it is down, the tevent is dropped,<br/>
    /// and a delivery failure drops the peer's queued stream whole — the subscriber resumes from tevents published after its<br/>
@@ -210,7 +210,7 @@ public abstract class EndpointBuilder
    ///<summary>Declares the endpoint's handler-availability patience: how long a send whose type has no live, unambiguous<br/>
    /// route right now waits for one to appear — a first contact, a known peer's return, an ambiguity resolving — before<br/>
    /// failing loud. Declared at most once; defaults to a flat 30 seconds<br/>
-   /// (see <c>src/Compze.Tessaging/dev_docs/peer-model.md</c>).</summary>
+   /// (see <c>src/Compze.Tessaging/dev_docs/peers.md</c>).</summary>
    public EndpointBuilder HandlerAvailabilityPatience(TimeSpan patience)
    {
       AssertStillComposing();

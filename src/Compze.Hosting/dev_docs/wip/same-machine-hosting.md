@@ -2,7 +2,7 @@
 
 This document takes a developer who is new to Compze from zero to understanding how multiple processes on one
 machine form one application — how their endpoints find each other with zero configuration and converse with
-no web stack and no database server. It is the companion to [the hosting model](../hosting-model.md), which
+no web stack and no database server. It is the companion to [Compze hosting](../hosting.md), which
 explains what an endpoint and a host *are*, and to
 [the tevent delivery model](../../../Compze.Tessaging/dev_docs/tevent-delivery-model.md), which explains the
 guarantees that hold once the conversation flows. This document explains how the conversation reaches across
@@ -155,7 +155,7 @@ own tevent subscriptions by in-boundary participation:
   retried on the next pass.
 
 A dynamic topology implies contracts callers must know (the full story is
-[the peer model](../../../Compze.Tessaging/dev_docs/peer-model.md)):
+[peers](../../../Compze.Tessaging/dev_docs/peers.md)):
 
 - **Subscribers join from now on.** A tevent published before an endpoint was first discovered is not
   retroactively delivered to it — exactly like a subscriber that did not exist yet. The exception is a peer

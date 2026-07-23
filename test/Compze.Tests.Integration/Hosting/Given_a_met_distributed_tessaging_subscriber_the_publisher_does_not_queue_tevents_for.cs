@@ -24,7 +24,7 @@ namespace Compze.Tests.Integration.Hosting;
 
 ///<summary>
 /// The per-peer opt-down from queue-while-down (<c>DoNotQueueTeventsFor</c> — see
-/// <c>src/Compze.Tessaging/dev_docs/peer-model.md</c>): ephemerality is a property of the relationship, so an endpoint that queues
+/// <c>src/Compze.Tessaging/dev_docs/peers.md</c>): ephemerality is a property of the relationship, so an endpoint that queues
 /// for the peers it depends on can still declare, peer by peer, that it keeps nothing for one it does not care about. Tevents
 /// for such a peer are delivered only while it is connected: published while it is down, they are dropped, and the peer resumes
 /// from tevents published after its return.

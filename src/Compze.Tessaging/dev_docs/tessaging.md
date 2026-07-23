@@ -1,12 +1,12 @@
-# The Tessaging model
+# Tessaging
 
 This document takes a developer who is new to the Tessaging code from zero to understanding what the system
 *is* — the paradigm, its consistency model, the engine at its heart, and the endpoints built around it. Its
 companions each take one part deeper: [the tevent delivery model](tevent-delivery-model.md) (how tevents
-travel and what each guarantee means), [the peer model](peer-model.md) (what an endpoint remembers about the
-endpoints it works with, and everything computed from that memory), [the storage model](storage-model.md)
+travel and what each guarantee means), [peers](peers.md) (what an endpoint remembers about the
+endpoints it works with, and everything computed from that memory), [storage](storage.md)
 (the domain database and what Tessaging keeps in it), and
-[the hosting model](../../Compze.Hosting/dev_docs/hosting-model.md) (what running all of this looks
+[Compze hosting](../../Compze.Hosting/dev_docs/hosting.md) (what running all of this looks
 like, in production and in tests).
 
 ## Tessaging and its two siblings
@@ -129,7 +129,7 @@ the roster — the inline path the consistency law mandates), an endpoint's inbo
 server. There is exactly one implementation of "run this roster's response correctly", and therefore
 exactly one policy for its failures: a tessage of a single-handler kind that reaches an engine with no
 handler for it raises the no-handler exception family — which, per
-[the peer model](peer-model.md), is exclusively the patience-exhausted failure.
+[peers](peers.md), is exclusively the patience-exhausted failure.
 
 ### The application-facing interfaces
 
@@ -141,7 +141,7 @@ Application code never touches the engine directly; it injects these interfaces:
   tueries and tommands in the caller's session, or independently.
 
 The UnitOfWork/Independent axis is the
-[unit-of-work model](../../Compze.DependencyInjection/dev_docs/unit-of-work-model.md): the prefix
+[the unit of work](../../Compze.DependencyInjection/dev_docs/unit-of-work.md): the prefix
 names the weakest context the whole surface requires, and the Independent* interfaces assert no ambient transaction.
 
 Every published tevent gets in-boundary participation — delivery to this engine's subscribed handlers,
@@ -257,7 +257,7 @@ Three concepts, deliberately orthogonal:
 - **The process** is pure deployment. A domain's endpoints may span processes; one process may host
   endpoints of several domains; the choice is free — except that **an endpoint runs in exactly one
   process at a time**. Two processes claiming the same endpoint is a misconfiguration that fails loud
-  at startup (the endpoint catalog's process lock — see [the storage model](storage-model.md));
+  at startup (the endpoint catalog's process lock — see [storage](storage.md));
   tolerating it — failover, fault tolerance — is its own future design effort.
 
 A **host** (`EndpointHost`, in `Compze.Hosting`) is an optional convenience owning several endpoints'
@@ -276,7 +276,7 @@ inbox, outbox, and durable peer memory, under the endpoint's name as prefix), th
 and the endpoint catalog enforces name uniqueness and the one-process-per-endpoint rule. A best-effort
 endpoint has no database and none of the above; the law and the boundary hold for it unchanged. The whole
 story — the prefix rule, the catalog, the process lock, schema creation — is
-[the storage model](storage-model.md).
+[storage](storage.md).
 
 On SQLite, a domain database is one single-writer file: co-located busy endpoints share its write gate.
 That is the price of the domain being one database, accepted for SQLite's role; the heavier backends have
@@ -316,7 +316,7 @@ with no server — an external application navigating an endpoint's typermedia a
 Each endpoint type is a plain composition root: it openly lists its parts, and composition choices are
 parameters filled through its builder (`ExactlyOnceEndpointBuilder` /
 `BestEffortEndpointBuilder`) — see the composition walk-through in
-[the hosting model](../../Compze.Hosting/dev_docs/hosting-model.md).
+[Compze hosting](../../Compze.Hosting/dev_docs/hosting.md).
 
 ### One router, one advertisement
 
@@ -338,7 +338,7 @@ An endpoint remembers every peer it has ever met — identity and last advertise
 following the tier: process-lifetime on the best-effort endpoint, database-backed on the exactly-once
 endpoint. Remembered peers are what fan-out, receiver binding, queue-while-down, and waiting are computed
 against; a peer's advertisement shrinking prunes what is owed to it, loudly. The whole story is
-[the peer model](peer-model.md).
+[peers](peers.md).
 
 Administration is a first-class production surface:
 
@@ -373,7 +373,7 @@ the mirror — retract → stop sending → stop listening. An announced address
 listening, in every process topology, because the ordering is per-endpoint; there is deliberately no
 ordering *between* endpoints, co-hosted or not. Startup order is nobody's problem: readiness fronts the
 wait where an application wants it paid, waiting sends absorb the churn windows, and queue-while-down and
-`RequirePeers` hold one-way tessages for peers not yet met (see [the peer model](peer-model.md)).
+`RequirePeers` hold one-way tessages for peers not yet met (see [peers](peers.md)).
 
 **Addresses come in two deployment strategies; identity is the `EndpointId` in both:**
 
@@ -400,7 +400,7 @@ test concerns (the tessages-in-flight tracker, the pooled database, the matrix-s
 serializer) at construction. A test cannot pass while work is silently in flight: disposal awaits the
 tracker's at-rest — which covers observation queues — and rethrows background exceptions no assertion
 observed. The testing host and the pluggable-component matrix are described in
-[the hosting model](../../Compze.Hosting/dev_docs/hosting-model.md). The specs live in
+[Compze hosting](../../Compze.Hosting/dev_docs/hosting.md). The specs live in
 `test/Compze.Tessaging.Specifications` (the project's own: storage rules, typermedia navigation, the pure
 client) and `test/Compze.Tests.Integration` (the black-box conversation suite, peer-memory pins, readiness,
 same-machine real-process specs), on shared fixtures from `test/Compze.Tests.Common`.

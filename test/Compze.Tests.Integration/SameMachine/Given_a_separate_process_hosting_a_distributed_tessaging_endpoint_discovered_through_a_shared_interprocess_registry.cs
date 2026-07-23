@@ -131,7 +131,7 @@ public class Given_a_separate_process_hosting_a_distributed_tessaging_endpoint_d
    {
       //ONE publish, before either process has discovered the other, and no retrying: each process requires the other's endpoint,
       //so the tevent is held for the endpoint host process until first contact, and its reply is held for this endpoint the same
-      //way - queue-before-first-contact makes the startup race a non-event (see src/Compze.Tessaging/dev_docs/peer-model.md).
+      //way - queue-before-first-contact makes the startup race a non-event (see src/Compze.Tessaging/dev_docs/peers.md).
       _specificationEndpoint.ServiceLocator.Resolve<IScopeFactory>().ExecuteUnitOfWork(unitOfWork =>
          unitOfWork.Resolve<IUnitOfWorkTeventPublisher>().Publish(new BestEffortTeventPublishedByTheSpecificationProcess()));
 

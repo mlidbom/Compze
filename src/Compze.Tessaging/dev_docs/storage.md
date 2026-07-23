@@ -1,9 +1,9 @@
-# The storage model: the domain database, and what Tessaging keeps in it
+# Storage: the domain database, and what Tessaging keeps in it
 
 This document takes a developer who is new to the Tessaging code from zero to understanding its storage —
 whose database it is, which tables Tessaging keeps in it, how an endpoint's storage is segregated from its
 neighbors', how one-process-per-endpoint is enforced, and how schemas come to exist. It is a companion to
-[the Tessaging model](tessaging-model.md), which explains why storage is shaped this way (the consistency
+[Tessaging](tessaging.md), which explains why storage is shaped this way (the consistency
 law and the domain/endpoint/process triad).
 
 ## The database belongs to the domain; endpoints join it

@@ -115,7 +115,7 @@ interface ITessagingSqlLayer
    }
 
    ///<summary>The peer registry's persistence: the endpoint's durable memory of its peers and their last-known advertisements<br/>
-   /// (see <see cref="IPeerRegistry"/> and <c>src/Compze.Tessaging/dev_docs/peer-model.md</c>).</summary>
+   /// (see <see cref="IPeerRegistry"/> and <c>src/Compze.Tessaging/dev_docs/peers.md</c>).</summary>
    public interface IPeerRegistrySqlLayer
    {
       ///<summary>Replaces <paramref name="peerId"/>'s stored advertisement wholesale — creating the peer on first contact.<br/>

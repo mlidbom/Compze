@@ -23,7 +23,7 @@ namespace Compze.Tests.Integration.Tessaging;
 /// explode — it waits, within the endpoint's handler-availability patience, for the first contact, and only then binds to its<br/>
 /// one specific receiver. The wait strictly precedes the bind, so the exactly-once in-order guarantee is untouched: the<br/>
 /// tommand still binds exactly once, before its row is saved, and rides the bound pair's single ordered, receiver-deduped<br/>
-/// delivery stream (see <c>src/Compze.Tessaging/dev_docs/peer-model.md</c>).</summary>
+/// delivery stream (see <c>src/Compze.Tessaging/dev_docs/peers.md</c>).</summary>
 public class Given_an_exactly_once_tommand_send_racing_discovery : UniversalTestBase
 {
    TestingEndpointHost _host = null!;

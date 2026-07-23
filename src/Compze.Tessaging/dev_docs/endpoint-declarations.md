@@ -1,8 +1,8 @@
-# The endpoint-declaration model
+# Endpoint-declarations
 
 This document explains how an endpoint is declared and built: the declaration class, the identity type, the
 environment, and how a host puts them together. It is the companion to
-[the hosting model](../../Compze.Hosting/dev_docs/hosting-model.md), which explains what an endpoint and a
+[Compze hosting](../../Compze.Hosting/dev_docs/hosting.md), which explains what an endpoint and a
 host *are* and how they run; this document explains how an endpoint comes to exist. The final section records
 *why* the model has this shape — the decisions behind it.
 

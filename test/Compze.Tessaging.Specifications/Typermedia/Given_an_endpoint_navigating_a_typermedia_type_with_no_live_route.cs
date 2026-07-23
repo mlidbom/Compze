@@ -18,7 +18,7 @@ namespace Compze.Tessaging.Specifications.Typermedia;
 
 ///<summary>The patience-exhausted half of waiting sends: the no-handler failure is never thrown immediately — the send first<br/>
 /// waits out the endpoint's handler-availability patience — and when it throws, the message names a type nothing this endpoint<br/>
-/// has ever met serves as a probable deployment or configuration error (see <c>src/Compze.Tessaging/dev_docs/peer-model.md</c>).<br/>
+/// has ever met serves as a probable deployment or configuration error (see <c>src/Compze.Tessaging/dev_docs/peers.md</c>).<br/>
 /// The known-but-down half is an internal specification, <c>Given_an_endpoint_navigating_a_typermedia_type_only_a_remembered_down_peer_serves</c>:<br/>
 /// a remembered-but-down peer is not deterministically producible through the public API today.</summary>
 public class Given_an_endpoint_navigating_a_typermedia_type_with_no_live_route : UniversalTestBase

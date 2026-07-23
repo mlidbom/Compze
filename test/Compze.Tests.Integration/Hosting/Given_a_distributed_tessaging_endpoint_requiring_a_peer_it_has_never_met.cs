@@ -23,7 +23,7 @@ using Compze.Threading.Testing;
 namespace Compze.Tests.Integration.Hosting;
 
 ///<summary>
-/// Queue-before-first-contact on the distributed tier (see <c>src/Compze.Tessaging/dev_docs/peer-model.md</c>): a publisher that
+/// Queue-before-first-contact on the distributed tier (see <c>src/Compze.Tessaging/dev_docs/peers.md</c>): a publisher that
 /// requires a peer by <see cref="EndpointId"/> (<c>RequirePeers</c>) holds everything published before that peer's first
 /// advertisement, and the subset matching the peer's subscriptions delivers, in order, when the peer is first met — so startup
 /// ordering stops mattering and nothing a required peer should see is lost to the discovery race.
