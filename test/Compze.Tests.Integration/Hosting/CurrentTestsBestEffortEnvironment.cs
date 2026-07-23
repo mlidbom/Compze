@@ -17,7 +17,7 @@ class CurrentTestsBestEffortEnvironment : IEndpointEnvironment
 
    internal CurrentTestsBestEffortEnvironment(IEndpointRegistry? discoverEndpointsThrough = null) => _discoverEndpointsThrough = discoverEndpointsThrough;
 
-   public void DeclareOn<TConcreteBuilder>(EndpointBuilder<TConcreteBuilder> endpointBuilder) where TConcreteBuilder : EndpointBuilder<TConcreteBuilder>
+   public void DeclareOn(EndpointBuilder endpointBuilder)
    {
       endpointBuilder.TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport());
       endpointBuilder.NewtonsoftSerializer();

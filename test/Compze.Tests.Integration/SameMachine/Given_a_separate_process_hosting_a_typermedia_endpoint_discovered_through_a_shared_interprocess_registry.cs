@@ -64,7 +64,7 @@ public class Given_a_separate_process_hosting_a_typermedia_endpoint_discovered_t
       readonly InterprocessEndpointRegistry _registry;
       internal EnvironmentDiscoveringThroughTheSharedRegistry(InterprocessEndpointRegistry registry) => _registry = registry;
 
-      public void DeclareOn<TConcreteBuilder>(EndpointBuilder<TConcreteBuilder> endpointBuilder) where TConcreteBuilder : EndpointBuilder<TConcreteBuilder>
+      public void DeclareOn(EndpointBuilder endpointBuilder)
       {
          endpointBuilder.TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport());
          endpointBuilder.Serializer(registrar => registrar.CurrentTestsSerializersIfNotClonedContainer());

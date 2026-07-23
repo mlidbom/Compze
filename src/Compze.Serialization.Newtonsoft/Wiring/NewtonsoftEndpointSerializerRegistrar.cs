@@ -5,12 +5,12 @@ namespace Compze.Serialization.Newtonsoft.Wiring;
 
 public static class NewtonsoftEndpointSerializerRegistrar
 {
-   extension<TConcreteBuilder>(EndpointBuilder<TConcreteBuilder> @this) where TConcreteBuilder : EndpointBuilder<TConcreteBuilder>
+   extension(EndpointBuilder @this)
    {
       ///<summary>Declares the endpoint's serializer: Newtonsoft.Json — filling the one serializer parameter every endpoint<br/>
-      /// takes (<see cref="EndpointBuilder{TConcreteBuilder}.Serializer"/>), covering everything the endpoint sends and receives, of every<br/>
+      /// takes (<see cref="EndpointBuilder.Serializer"/>), covering everything the endpoint sends and receives, of every<br/>
       /// tessage kind.</summary>
-      public TConcreteBuilder NewtonsoftSerializer() => @this.Serializer(registrar => registrar.NewtonsoftTessagingSerializer()
+      public EndpointBuilder NewtonsoftSerializer() => @this.Serializer(registrar => registrar.NewtonsoftTessagingSerializer()
                                                                                               .NewtonsoftTypermediaSerializer());
    }
 }

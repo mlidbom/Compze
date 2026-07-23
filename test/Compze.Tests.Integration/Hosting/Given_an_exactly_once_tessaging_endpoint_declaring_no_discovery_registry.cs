@@ -55,7 +55,7 @@ public class Given_an_exactly_once_tessaging_endpoint_declaring_no_discovery_reg
    /// the current test's domain-database binding keyed by the endpoint's id.</summary>
    class EnvironmentDeclaringNoDiscoveryRegistry : IEndpointEnvironment
    {
-      public void DeclareOn<TConcreteBuilder>(EndpointBuilder<TConcreteBuilder> endpointBuilder) where TConcreteBuilder : EndpointBuilder<TConcreteBuilder> =>
+      public void DeclareOn(EndpointBuilder endpointBuilder) =>
          endpointBuilder.TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport());
 
       public void DeclareDomainDatabaseOn(ExactlyOnceEndpointBuilder endpointBuilder) =>

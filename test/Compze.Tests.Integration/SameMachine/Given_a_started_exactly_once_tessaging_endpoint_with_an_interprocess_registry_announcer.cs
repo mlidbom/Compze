@@ -49,7 +49,7 @@ public class Given_a_started_exactly_once_tessaging_endpoint_with_an_interproces
          _additionalAnnouncementTarget = additionalAnnouncementTarget;
       }
 
-      public void DeclareOn<TConcreteBuilder>(EndpointBuilder<TConcreteBuilder> endpointBuilder) where TConcreteBuilder : EndpointBuilder<TConcreteBuilder>
+      public void DeclareOn(EndpointBuilder endpointBuilder)
       {
          _environment.DeclareOn(endpointBuilder);
          endpointBuilder.AnnounceAddressTo(_additionalAnnouncementTarget);

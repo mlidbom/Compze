@@ -64,7 +64,7 @@ public class TestingEndpointHost : EndpointHost
          _endpointRegistry = endpointRegistry;
       }
 
-      public void DeclareOn<TConcreteBuilder>(EndpointBuilder<TConcreteBuilder> endpointBuilder) where TConcreteBuilder : EndpointBuilder<TConcreteBuilder>
+      public void DeclareOn(EndpointBuilder endpointBuilder)
       {
          endpointBuilder.TrackTessagesInFlightWith(_tessagesInFlightTracker);
          endpointBuilder.TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport());

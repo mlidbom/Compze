@@ -34,15 +34,15 @@ public abstract class EndpointDeclaration<TIdentity> where TIdentity : IEndpoint
 
    protected EndpointDeclaration() => Configuration = new EndpointConfiguration(TIdentity.Name, TIdentity.Id);
 
-   ///<summary>The peers this endpoint requires — see <see cref="EndpointBuilder{TConcreteBuilder}.RequirePeers"/>. Empty by default.</summary>
+   ///<summary>The peers this endpoint requires — see <see cref="EndpointBuilder.RequirePeers"/>. Empty by default.</summary>
    protected virtual IReadOnlyList<EndpointId> RequiredPeers => [];
 
    ///<summary>The peers this endpoint deliberately keeps nothing for — see<br/>
-   /// <see cref="EndpointBuilder{TConcreteBuilder}.DoNotQueueTeventsFor"/>. Empty by default.</summary>
+   /// <see cref="EndpointBuilder.DoNotQueueTeventsFor"/>. Empty by default.</summary>
    protected virtual IReadOnlyList<EndpointId> PeersNotQueuedFor => [];
 
    ///<summary>The endpoint's handler-availability patience — see<br/>
-   /// <see cref="EndpointBuilder{TConcreteBuilder}.HandlerAvailabilityPatience"/>. Null — the default — means the endpoint's<br/>
+   /// <see cref="EndpointBuilder.HandlerAvailabilityPatience"/>. Null — the default — means the endpoint's<br/>
    /// standard patience.</summary>
    protected virtual TimeSpan? HandlerAvailabilityPatience => null;
 
@@ -65,7 +65,7 @@ public abstract class EndpointDeclaration<TIdentity> where TIdentity : IEndpoint
    ///<summary>Declares everything the tiers share onto the builder: the scalar aspects and the shared doors. The tier's own<br/>
    /// <c>BuildOn</c> is the template — environment first, then this, then the tier's own doors, then the general<br/>
    /// <c>Declare</c> override, then the build.</summary>
-   private protected void DeclareSharedAspectsOn<TConcreteBuilder>(EndpointBuilder<TConcreteBuilder> builder) where TConcreteBuilder : EndpointBuilder<TConcreteBuilder>
+   private protected void DeclareSharedAspectsOn(EndpointBuilder builder)
    {
       if(HandlerAvailabilityPatience is {} patience) builder.HandlerAvailabilityPatience(patience);
 

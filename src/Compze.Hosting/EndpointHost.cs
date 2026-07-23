@@ -10,11 +10,11 @@ namespace Compze.Hosting;
 
 ///<summary>
 /// The <see cref="IEndpointHost"/> mechanism: a convenience owning several endpoints' lifecycles in one process. Each
-/// endpoint is composed on a fresh container builder from the factory the host was created with
-/// (<see cref="IEndpointHost.RegisterEndpoint{TEndpoint}"/>); starting the host starts every endpoint, each driving its own
-/// phase ordering (see <see cref="IEndpoint.StartAsync"/>), and disposing it disposes them. The host adds nothing an
-/// endpoint cannot do alone — endpoints are first-class — and it never knows what an endpoint can do: that is decided
-/// entirely by the endpoint's composition.
+/// registered endpoint-declaration is built on a fresh container builder from the factory the host was created with
+/// (<see cref="IEndpointHost.RegisterEndpoint(IExactlyOnceEndpointDeclaration)"/>); starting the host starts every endpoint,
+/// each driving its own phase ordering (see <see cref="IEndpoint.StartAsync"/>), and disposing it disposes them. The host
+/// adds nothing an endpoint cannot do alone — endpoints are first-class — and it never knows what an endpoint can do: that
+/// is decided entirely by the endpoint's declaration and environment.
 ///
 /// Production hosts are created via <see cref="Production.Create(Func{IContainerBuilder}, IEndpointEnvironment)"/>; tests use the testing host in
 /// Compze.Tessaging.Hosting.Testing, which subclasses this mechanism.
@@ -51,7 +51,7 @@ public class EndpointHost : IEndpointHost
          new EndpointHost(containerFactory) { Environment = environment };
    }
 
-   public TEndpoint RegisterEndpoint<TEndpoint>(Func<IContainerBuilder, TEndpoint> composeEndpoint) where TEndpoint : IEndpoint
+   TEndpoint RegisterEndpoint<TEndpoint>(Func<IContainerBuilder, TEndpoint> composeEndpoint) where TEndpoint : IEndpoint
    {
       var endpoint = composeEndpoint(_containerFactory());
       _endpoints.Add(endpoint);

@@ -110,7 +110,7 @@ public class Given_two_exactly_once_endpoints_joined_to_one_domain_database : Un
       readonly IEndpointEnvironment _environment;
       internal EnvironmentJoiningTheNeighborsDomainDatabase(IEndpointEnvironment environment) => _environment = environment;
 
-      public void DeclareOn<TConcreteBuilder>(EndpointBuilder<TConcreteBuilder> endpointBuilder) where TConcreteBuilder : EndpointBuilder<TConcreteBuilder> =>
+      public void DeclareOn(EndpointBuilder endpointBuilder) =>
          _environment.DeclareOn(endpointBuilder);
 
       public void DeclareDomainDatabaseOn(ExactlyOnceEndpointBuilder endpointBuilder) =>

@@ -196,7 +196,7 @@ public class Given_two_best_effort_endpoints : UniversalTestBase
    ///<summary>An environment that deliberately declares no serializer — only the transport protocol — so composing in it pins the missing-serializer foundation assert.</summary>
    class EnvironmentDeclaringNoSerializer : IEndpointEnvironment
    {
-      public void DeclareOn<TConcreteBuilder>(EndpointBuilder<TConcreteBuilder> endpointBuilder) where TConcreteBuilder : EndpointBuilder<TConcreteBuilder> =>
+      public void DeclareOn(EndpointBuilder endpointBuilder) =>
          endpointBuilder.TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport());
 
       public void DeclareDomainDatabaseOn(ExactlyOnceEndpointBuilder endpointBuilder) {}
@@ -205,7 +205,7 @@ public class Given_two_best_effort_endpoints : UniversalTestBase
    ///<summary>An environment that deliberately declares no transport protocol — only the serializer — so composing in it pins the missing-transport foundation assert.</summary>
    class EnvironmentDeclaringNoTransportProtocol : IEndpointEnvironment
    {
-      public void DeclareOn<TConcreteBuilder>(EndpointBuilder<TConcreteBuilder> endpointBuilder) where TConcreteBuilder : EndpointBuilder<TConcreteBuilder> =>
+      public void DeclareOn(EndpointBuilder endpointBuilder) =>
          endpointBuilder.NewtonsoftSerializer();
 
       public void DeclareDomainDatabaseOn(ExactlyOnceEndpointBuilder endpointBuilder) {}

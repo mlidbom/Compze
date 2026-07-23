@@ -18,12 +18,6 @@ namespace Compze.Tessaging.Endpoints;
 ///</summary>
 public interface IEndpointHost : IAsyncDisposable
 {
-    ///<summary>Registers a composed endpoint with the host, which owns it from here: the host starts it with the others and<br/>
-    /// disposes it. The callback receives a fresh container builder from the host's container factory and<br/>
-    /// returns the endpoint composed on it — e.g. <c>host.RegisterEndpoint(container => ExactlyOnceEndpoint.Compose(container, ...))</c>.<br/>
-    /// The host never knows the endpoint's tier: what the endpoint is, is decided entirely by its composition.</summary>
-    TEndpoint RegisterEndpoint<TEndpoint>(Func<IContainerBuilder, TEndpoint> composeEndpoint) where TEndpoint : IEndpoint;
-
     ///<summary>Registers the endpoint an <see cref="IExactlyOnceEndpointDeclaration"/> declares, built in this host's<br/>
     /// <see cref="IEndpointEnvironment"/> (<see cref="IExactlyOnceEndpointDeclaration.BuildOn"/>) — the declaration brings what<br/>
     /// the endpoint is, the host brings where it runs.</summary>

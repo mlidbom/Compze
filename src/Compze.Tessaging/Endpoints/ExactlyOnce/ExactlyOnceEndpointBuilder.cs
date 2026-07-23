@@ -10,12 +10,12 @@ using Compze.Tessaging.TessageBus._private;
 namespace Compze.Tessaging.Endpoints.ExactlyOnce;
 
 ///<summary>The declaration surface an <see cref="ExactlyOnceEndpoint"/> is composed through — everything the base<br/>
-/// <see cref="EndpointBuilder{TConcreteBuilder}"/> declares, plus the domain database this endpoint joins (<see cref="ConfigurePersistence"/>): the<br/>
+/// <see cref="EndpointBuilder"/> declares, plus the domain database this endpoint joins (<see cref="ConfigurePersistence"/>): the<br/>
 /// durable vertical — inbox, outbox, durable peer memory — lives in it, and its atomicity <em>is</em> its co-location with<br/>
 /// the domain data the endpoint's executions touch. Declared through a database package's named extension<br/>
 /// (e.g. <c>SqliteDomainDatabase(...)</c>), which registers the engine pairing — the connection pool, the type-id<br/>
 /// interner, and Tessaging's sql layers for that engine — so the pairing is routed by the extension's target type.</summary>
-public sealed class ExactlyOnceEndpointBuilder : EndpointBuilder<ExactlyOnceEndpointBuilder>
+public sealed class ExactlyOnceEndpointBuilder : EndpointBuilder
 {
    Action<IComponentRegistrar>? _registerDomainDatabase;
 

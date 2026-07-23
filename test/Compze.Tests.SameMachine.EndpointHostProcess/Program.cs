@@ -119,7 +119,7 @@ public static class Program
          _workDirectory = workDirectory;
       }
 
-      public void DeclareOn<TConcreteBuilder>(EndpointBuilder<TConcreteBuilder> endpointBuilder) where TConcreteBuilder : EndpointBuilder<TConcreteBuilder> => endpointBuilder
+      public void DeclareOn(EndpointBuilder endpointBuilder) => endpointBuilder
          .NamedPipeEndpointTransport()
          .NewtonsoftSerializer()
          .ParticipateIn(_registry);
@@ -140,7 +140,7 @@ public static class Program
 
       internal DatabaselessEnvironment(InterprocessEndpointRegistry registry) => _registry = registry;
 
-      public void DeclareOn<TConcreteBuilder>(EndpointBuilder<TConcreteBuilder> endpointBuilder) where TConcreteBuilder : EndpointBuilder<TConcreteBuilder> => endpointBuilder
+      public void DeclareOn(EndpointBuilder endpointBuilder) => endpointBuilder
          .NamedPipeEndpointTransport()
          .NewtonsoftSerializer()
          .ParticipateIn(_registry);

@@ -64,7 +64,7 @@ public class Given_an_exactly_once_endpoint_declaring_its_domain_database_throug
    /// testing hosts' backend switch — plus the current test's transport.</summary>
    class EnvironmentDeclaringTheDomainDatabaseThroughThePublicBackendDoor : IEndpointEnvironment
    {
-      public void DeclareOn<TConcreteBuilder>(EndpointBuilder<TConcreteBuilder> endpointBuilder) where TConcreteBuilder : EndpointBuilder<TConcreteBuilder> =>
+      public void DeclareOn(EndpointBuilder endpointBuilder) =>
          endpointBuilder.TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport());
 
       public void DeclareDomainDatabaseOn(ExactlyOnceEndpointBuilder endpointBuilder) =>

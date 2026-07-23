@@ -56,7 +56,7 @@ public class Given_two_hosts_sharing_an_interprocess_registry_where_the_receivin
       readonly InterprocessEndpointRegistry _registry;
       internal EnvironmentParticipatingInTheSharedRegistry(InterprocessEndpointRegistry registry) => _registry = registry;
 
-      public void DeclareOn<TConcreteBuilder>(EndpointBuilder<TConcreteBuilder> endpointBuilder) where TConcreteBuilder : EndpointBuilder<TConcreteBuilder>
+      public void DeclareOn(EndpointBuilder endpointBuilder)
       {
          endpointBuilder.TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport());
          endpointBuilder.ParticipateIn(_registry);

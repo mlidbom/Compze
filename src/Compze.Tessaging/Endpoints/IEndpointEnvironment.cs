@@ -18,7 +18,7 @@ public interface IEndpointEnvironment
 {
    ///<summary>Declares this environment's choices on the endpoint being built — the transport protocol, the serializer,<br/>
    /// discovery participation — through the same declaration surface every composition uses.</summary>
-   void DeclareOn<TConcreteBuilder>(EndpointBuilder<TConcreteBuilder> endpointBuilder) where TConcreteBuilder : EndpointBuilder<TConcreteBuilder>;
+   void DeclareOn(EndpointBuilder endpointBuilder);
 
    ///<summary>Binds an exactly-once endpoint to the actual domain database it joins in this environment — the engine and<br/>
    /// connection string behind the endpoint's durable vertical. Called only when building the exactly-once tier: the<br/>
