@@ -15,7 +15,7 @@ using Compze.Tessaging.Typermedia.Client;
 using Compze.Teventive.TeventStore.MicrosoftSql.Wiring;
 using Compze.Underscore;
 using JetBrains.Annotations;
-//ASP.NET Core's implicit usings bring Microsoft.AspNetCore.Builder.EndpointBuilder into scope; the endpoint-declaration surface is the one this composition speaks.
+//ASP.NET Core's implicit usings bring Microsoft.AspNetCore.Builder.EndpointBuilder into scope; this file means Compze's.
 using EndpointBuilder = Compze.Tessaging.Endpoints.EndpointBuilder;
 
 namespace AccountManagement.UI.MVC;
@@ -68,7 +68,7 @@ public class Startup
 
       internal ProductionEnvironment(InterprocessEndpointRegistry endpointRegistry) => _endpointRegistry = endpointRegistry;
 
-      public void DeclareOn(EndpointBuilder endpointBuilder) =>
+      public void Configure(EndpointBuilder endpointBuilder) =>
          endpointBuilder
             .TransportProtocol(registrar => registrar.AspNetCoreEndpointTransport())
             .NewtonsoftSerializer()
@@ -77,7 +77,7 @@ public class Startup
                                                       .NewtonsoftTeventStoreSerializer()
                                                       .JSonAppConfigFileConfigurationParameterProvider());
 
-      public void DeclareDomainDatabaseOn(ExactlyOnceEndpointBuilder endpointBuilder) =>
+      public void ConfigureDomainDatabase(ExactlyOnceEndpointBuilder endpointBuilder) =>
          endpointBuilder.ConfigurePersistence(registrar => registrar.MsSqlDomainDatabase(DomainDatabaseConnectionStringName)
                                                                     .MsSqlTessagingSqlLayer()
                                                                     .MsSqlDocumentDbSqlLayer()

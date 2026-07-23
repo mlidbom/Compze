@@ -3,10 +3,10 @@ using Compze.Tessaging.TessageTypes;
 
 namespace Compze.Tessaging.Typermedia;
 
-///<summary>The minimal declaration door for Typermedia tommand handlers — what an endpoint-declaration's<br/>
+///<summary>The minimal registrar for Typermedia tommand handlers — what an endpoint-declaration's<br/>
 /// <c>RegisterTypermediaTommandHandlers</c> override receives: the navigated tommand kinds, with and without a declared<br/>
 /// result. The one tommand kind that is sent rather than navigated — the exactly-once tommand — explodes here at<br/>
-/// declaration, pointing at its own door.<br/>
+/// registration, pointing at <c>RegisterExactlyOnceTommandHandlers</c>.<br/>
 /// Implemented by <see cref="TypermediaHandlerRegistrar"/>, whose docs carry the full handler semantics.</summary>
 public interface ITypermediaTommandHandlerRegistrar
 {

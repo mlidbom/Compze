@@ -25,29 +25,28 @@ using Compze.Tessaging._private.Transport;
 namespace Compze.Tessaging.Endpoints;
 
 ///<summary>
-/// The declaration surface an endpoint is built through — what an <see cref="EndpointDeclaration{TIdentity}"/>'s build
-/// template declares onto: the <see cref="IEndpointEnvironment"/>'s declarations first, then the declaration's doors, then
-/// the tier's general <c>Declare</c> override, which receives this surface whole. An endpoint is an engine given identity
-/// and a wire, and this surface declares all three: the engine (<see cref="RegisterTessageBusHandlers"/>,
+/// What everything declares on while an endpoint is built: an <see cref="EndpointDeclaration{TIdentity}"/>'s build template
+/// runs the <see cref="IEndpointEnvironment"/>'s configuration first, then the declaration's registration overrides, then
+/// the tier's general <c>Declare</c> override, which receives this builder whole. An endpoint is an engine given identity
+/// and a wire, and this builder declares all three: the engine (<see cref="RegisterTessageBusHandlers"/>,
 /// <see cref="RegisterTypermediaHandlers"/>, <see cref="ObserveTevents"/> — the same declaration block a plain container's
-/// LocalTessagingEngine uses, so an
-/// application's handler declarations run unchanged under any composition), the identity (<see cref="Configuration"/>, given
-/// at composition), and the wire: the transport protocol (<see cref="TransportProtocol"/>), the endpoint's one serializer
+/// LocalTessagingEngine uses, so an application's handler declarations run unchanged in an endpoint or a plain container),
+/// the identity (<see cref="Configuration"/>, from the declaration's <see cref="IEndpointIdentity"/>), and the wire: the
+/// transport protocol (<see cref="TransportProtocol"/>), the endpoint's one serializer
 /// (<see cref="Serializer"/>), and the topology declarations (<see cref="ParticipateIn{TRegistry}"/> /
 /// <see cref="DiscoverEndpointsThrough"/> / <see cref="AnnounceAddressTo"/>, <see cref="RequirePeers"/>,
-/// <see cref="DoNotQueueTeventsFor"/>). Composition choices are parameters, not plugins: the implementation packages offer
-/// their choices as extension methods over this surface (e.g. <c>NamedPipeEndpointTransport()</c>,
+/// <see cref="DoNotQueueTeventsFor"/>). These choices are parameters, not plugins: the implementation packages offer
+/// their choices as extension methods over this builder (e.g. <c>NamedPipeEndpointTransport()</c>,
 /// <c>NewtonsoftSerializer()</c>, <c>SqliteDomainDatabase(...)</c>), each filling the one parameter it names.
 ///
-/// The builder exists only inside the build: the declaration's <c>BuildOn</c> creates it, everything declares on it, the
+/// The builder exists only inside the build: the declaration's <c>Build</c> creates it, everything declares on it, the
 /// build closes the roster, and any attempt to declare afterward explodes. Domain components register through <see cref="Registrar"/>,
 /// and store integrations (a tevent store's <c>HandleTaggregate</c>, a document db's <c>HandleDocumentType</c>) plug into
-/// this same surface — handler contributors like any other.
+/// this same builder — handler contributors like any other.
 ///
 /// Type-id mappings are not declared here: a component declares the assemblies whose type identity it needs where it is
 /// registered, through <c>Registrar.RequireMappedTypesFromAssemblyContaining&lt;T&gt;()</c>, and the endpoint's container
 /// composes one <see cref="ITypeMap"/> from every such declaration.
-///
 ///</summary>
 public abstract class EndpointBuilder
 {
@@ -131,7 +130,7 @@ public abstract class EndpointBuilder
    //todo: This just taking an IComponentRegistrar feels iffy. Can we make setting up serialization easier and safer to do?
    ///<summary>Declares the endpoint's one serializer — the format of everything the endpoint sends and receives, of every<br/>
    /// tessage kind. Declared at most once, through a serializer package's named extension (e.g. <c>NewtonsoftSerializer()</c>);<br/>
-   /// a composition whose container already carries the serializers (a testing container cloned from a suite root) declares none.</summary>
+   /// an environment whose container already carries the serializers (a testing container cloned from a suite root) declares none.</summary>
    public EndpointBuilder Serializer(Action<IComponentRegistrar> registerSerializer)
    {
       AssertStillComposing();
@@ -232,14 +231,14 @@ public abstract class EndpointBuilder
    }
 
    private protected void AssertStillComposing() =>
-      State.Assert(!_composed, () => "The endpoint is already built — the declaration surface exists only inside the declaration's build, and the build closes the roster.");
+      State.Assert(!_composed, () => "The endpoint is already built — its EndpointBuilder exists only inside the declaration's build, and the build closes the roster.");
 
    private protected virtual void AssertTheFoundationIsDeclared()
    {
       State.Assert(_registerTransportProtocol is not null,
-                   () => "The endpoint declares no transport protocol. Declare it in the composition — e.g. endpointBuilder.NamedPipeEndpointTransport() or endpointBuilder.AspNetCoreEndpointTransport().");
+                   () => "The endpoint declares no transport protocol. Declare it in the environment — e.g. endpointBuilder.NamedPipeEndpointTransport() or endpointBuilder.AspNetCoreEndpointTransport().");
       State.Assert(_registerSerializer is not null || (Registrar.IsRegistered<ITessagingSerializer>() && Registrar.IsRegistered<ITypermediaSerializer>()),
-                   () => "The endpoint declares no serializer. Declare it in the composition — e.g. endpointBuilder.NewtonsoftSerializer() — the endpoint's one serializer parameter. (A testing container cloned from a suite root already carries the suite's serializers; only such a composition declares none.)");
+                   () => "The endpoint declares no serializer. Declare it in the environment — e.g. endpointBuilder.NewtonsoftSerializer() — the endpoint's one serializer parameter. (A testing container cloned from a suite root already carries the suite's serializers; only such an environment declares none.)");
    }
 
    ///<summary>The registrations both endpoint tiers share: the engine and its doors, identity, discovery serving, the<br/>
@@ -310,7 +309,7 @@ public abstract class EndpointBuilder
    ///<summary>The tier's own registrations — the exactly-once endpoint's durable vertical; the best-effort endpoint adds nothing.</summary>
    private protected virtual void RegisterTheTierMachinery() {}
 
-   ///<summary>Roster soundness fails at composition, not when the first peer queries: computing the advertisement asserts that<br/>
+   ///<summary>Roster soundness fails at build, not when the first peer queries: computing the advertisement asserts that<br/>
    /// every advertised type has a type-id mapping and gets a route on the peers' routers. The best-effort tier additionally<br/>
    /// asserts that no registered handler demands more than the endpoint delivers.</summary>
    private protected virtual void AssertTheRosterIsSound(TessageHandlerRoster roster) => roster.AdvertisedRemoteTessageTypeIds();

@@ -3,10 +3,10 @@ using Compze.Tessaging.TessageTypes;
 
 namespace Compze.Tessaging.TessageBus;
 
-///<summary>The minimal declaration door for tevent subscriptions that do not demand exactly-once delivery — what an<br/>
-/// endpoint-declaration's <c>RegisterBestEffortTeventHandlers</c> override receives. Both endpoint tiers offer this door:<br/>
-/// best-effort delivery needs no durable vertical. A subscription whose subscribed type demands exactly-once delivery<br/>
-/// explodes here at declaration, pointing at the exactly-once door.<br/>
+///<summary>The minimal registrar for tevent subscriptions that do not demand exactly-once delivery — what an<br/>
+/// endpoint-declaration's <c>RegisterBestEffortTeventHandlers</c> override receives. Both tiers' declarations offer that<br/>
+/// override: best-effort delivery needs no durable vertical. A subscription whose subscribed type demands exactly-once<br/>
+/// delivery explodes here at registration, pointing at <c>RegisterExactlyOnceTeventHandlers</c>.<br/>
 /// Implemented by <see cref="TessageBusHandlerRegistrar"/>, whose docs carry the full handler semantics.</summary>
 public interface IBestEffortTeventHandlerRegistrar
 {
@@ -15,6 +15,6 @@ public interface IBestEffortTeventHandlerRegistrar
    IBestEffortTeventHandlerRegistrar ForTevent<TTevent>(Func<TTevent, IUnitOfWorkResolver, Task> handler) where TTevent : ITevent;
 
    ///<summary>The synchronous form of <see cref="ForTevent{TTevent}(Func{TTevent,IUnitOfWorkResolver,Task})"/> — first-class<br/>
-   /// here, because no subscription behind this door is exactly-once.</summary>
+   /// here, because no subscription registered here is exactly-once.</summary>
    IBestEffortTeventHandlerRegistrar ForTevent<TTevent>(Action<TTevent, IUnitOfWorkResolver> handler) where TTevent : ITevent;
 }

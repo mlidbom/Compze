@@ -11,7 +11,7 @@ namespace Compze.Tests.Integration.Tessaging;
 
 ///<summary>A <see cref="ReadinessTypes"/> set contains only remotable single-handler tessage types — tueries, typermedia<br/>
 /// tommands, exactly-once tommands — the kinds for which "a handler is available" means anything. Anything else, and a set<br/>
-/// that would be empty, fails loud at composition — never as a patience-exhausted timeout later.</summary>
+/// that would be empty, fails loud at build — never as a patience-exhausted timeout later.</summary>
 public class ReadinessTypes_specification
 {
    [XF] public void an_explicit_set_containing_a_tevent_type_fails_loud_naming_the_type_and_the_allowed_kinds() =>

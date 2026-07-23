@@ -4,7 +4,7 @@ using Compze.Tessaging.Engine.HandlerRegistration;
 
 namespace Compze.Tessaging.Endpoints.BestEffort;
 
-///<summary>The declaration surface a <see cref="BestEffortEndpoint"/> is composed through — see <see cref="EndpointBuilder"/>.<br/>
+///<summary>The <see cref="EndpointBuilder"/> a <see cref="BestEffortEndpoint"/> is built through.<br/>
 /// The best-effort tier declares no database: it persists nothing, which is exactly what makes it the tier with zero<br/>
 /// operational ceremony.</summary>
 public sealed class BestEffortEndpointBuilder : EndpointBuilder
@@ -23,7 +23,7 @@ public sealed class BestEffortEndpointBuilder : EndpointBuilder
    {
       var typesDemandingExactlyOnceDelivery = roster.RegisteredTypesDemandingExactlyOnceDelivery();
       State.Assert(typesDemandingExactlyOnceDelivery.Count == 0,
-                   () => $"This best-effort endpoint wires no exactly-once delivery machinery — no inbox to persist, dedup, and retry with — but handlers are registered for tessage types whose declared contract demands it: {string.Join(", ", typesDemandingExactlyOnceDelivery.Select(it => it.FullName))}. A subscription takes the tessage type's full declared guarantee (observation included: observing a remote exactly-once tevent still requires receiving it exactly-once), and an endpoint that cannot honor a guarantee must not advertise for it. Compose an exactly-once endpoint instead, or handle tessage types that declare no exactly-once contract.");
+                   () => $"This best-effort endpoint wires no exactly-once delivery machinery — no inbox to persist, dedup, and retry with — but handlers are registered for tessage types whose declared contract demands it: {string.Join(", ", typesDemandingExactlyOnceDelivery.Select(it => it.FullName))}. A subscription takes the tessage type's full declared guarantee (observation included: observing a remote exactly-once tevent still requires receiving it exactly-once), and an endpoint that cannot honor a guarantee must not advertise for it. Declare an exactly-once endpoint instead, or handle tessage types that declare no exactly-once contract.");
 
       base.AssertTheRosterIsSound(roster);
    }

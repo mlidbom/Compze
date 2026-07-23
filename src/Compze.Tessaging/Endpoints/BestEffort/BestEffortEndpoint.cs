@@ -13,7 +13,7 @@ namespace Compze.Tessaging.Endpoints.BestEffort;
 /// that cannot honor a guarantee must not advertise for it.
 ///
 /// Built from a <see cref="BestEffortEndpointDeclaration{TIdentity}"/>
-/// (<see cref="IBestEffortEndpointDeclaration.BuildOn"/>); with no durable state, the consistency law holds for it
+/// (<see cref="IBestEffortEndpointDeclaration.Build"/>); with no durable state, the consistency law holds for it
 /// trivially — inline handling <em>is</em> its consistency.
 ///</summary>
 public class BestEffortEndpoint : Endpoint

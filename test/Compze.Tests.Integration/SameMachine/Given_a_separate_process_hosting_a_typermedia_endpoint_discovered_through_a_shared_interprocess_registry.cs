@@ -64,14 +64,14 @@ public class Given_a_separate_process_hosting_a_typermedia_endpoint_discovered_t
       readonly InterprocessEndpointRegistry _registry;
       internal EnvironmentDiscoveringThroughTheSharedRegistry(InterprocessEndpointRegistry registry) => _registry = registry;
 
-      public void DeclareOn(EndpointBuilder endpointBuilder)
+      public void Configure(EndpointBuilder endpointBuilder)
       {
          endpointBuilder.TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport());
          endpointBuilder.Serializer(registrar => registrar.CurrentTestsSerializersIfNotClonedContainer());
          endpointBuilder.DiscoverEndpointsThrough(_registry);
       }
 
-      public void DeclareDomainDatabaseOn(ExactlyOnceEndpointBuilder endpointBuilder) {}
+      public void ConfigureDomainDatabase(ExactlyOnceEndpointBuilder endpointBuilder) {}
    }
 
    class SpecificationEndpointDeclaration : BestEffortEndpointDeclaration<SpecificationEndpointDeclaration>, IEndpointIdentity

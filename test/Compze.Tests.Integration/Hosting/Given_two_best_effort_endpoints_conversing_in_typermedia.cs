@@ -28,8 +28,8 @@ namespace Compze.Tests.Integration.Hosting;
 /// <see cref="IRemoteTypermediaNavigator"/>, routed by its router's live reconciliation against the registry its
 /// environment declared it discovers through — never by a configured address. The answering endpoint's environment declares
 /// no registry: it only serves, and navigating from it fails loud naming the missing declaration. The host is the
-/// production host and the environment is the specification's own — nothing is pre-registered, so the composition stands
-/// entirely on what it declares.
+/// production host and the environment is the specification's own — nothing is pre-registered: everything each endpoint is
+/// comes from its declaration and its environment.
 ///</summary>
 public class Given_two_best_effort_endpoints_conversing_in_typermedia : UniversalTestBase
 {

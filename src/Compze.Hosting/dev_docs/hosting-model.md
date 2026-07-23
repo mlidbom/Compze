@@ -52,15 +52,15 @@ tessage kinds, the consistency law, the engine — is
 2. **An endpoint** — an engine given identity and a wire. There are exactly two endpoint types, differing
    only in what crossing the endpoint boundary guarantees: `BestEffortEndpoint` (no database; per-peer
    best-effort tevent queues) and `ExactlyOnceEndpoint` (everything the best-effort endpoint has, plus the
-   durable vertical: inbox, outbox, durable peer memory, and the tommand-sending doors). **Both serve all
+   durable vertical: inbox, outbox, durable peer memory, and the tommand senders). **Both serve all
    four tessage kinds, unconditionally.**
 3. **The pure client** — `TypermediaClient`: a navigator and a transport client with no server, for an
    external application navigating endpoints' typermedia at explicitly known addresses.
 
-An endpoint is a plain composition root: composition choices are parameters, not plugins. Its declaration
+An endpoint is a plain composition root: its choices are parameters, not plugins. Its declaration
 surface takes the transport protocol, the one serializer, the database (exactly-once tier), the topology
-declarations, and the same engine declaration block every composition speaks — and a missing declaration
-fails loud at composition, naming what is missing.
+declarations, and the same engine declaration block every endpoint and plain container speaks — and a missing
+declaration fails loud at build, naming what is missing.
 
 ## The shape of the code
 
@@ -72,7 +72,7 @@ fails loud at composition, naming what is missing.
 
 The host mechanism implements the contracts without referencing what an endpoint speaks: it hands each
 registered declaration a fresh container builder from its factory and receives the built `IEndpoint` back
-(`RegisterEndpoint(declaration)` — the declaration's `BuildOn` runs in the host's environment). What each
+(`RegisterEndpoint(declaration)` — the declaration's `Build` runs in the host's environment). What each
 endpoint actually is — is declared at the outermost layer: the application or the test.
 
 ## Endpoints and hosts
@@ -97,12 +97,12 @@ class AccountManagementEndpointDeclaration : ExactlyOnceEndpointDeclaration<Acco
 
 class ProductionEnvironment : IEndpointEnvironment
 {
-   public void DeclareOn(EndpointBuilder endpointBuilder) => endpointBuilder
+   public void Configure(EndpointBuilder endpointBuilder) => endpointBuilder
       .TransportProtocol(registrar => registrar.AspNetCoreEndpointTransport())
       .NewtonsoftSerializer()
       .ParticipateIn(registry);
 
-   public void DeclareDomainDatabaseOn(ExactlyOnceEndpointBuilder endpointBuilder) =>
+   public void ConfigureDomainDatabase(ExactlyOnceEndpointBuilder endpointBuilder) =>
       endpointBuilder.SqliteDomainDatabase("AccountManagement");
 }
 
@@ -111,15 +111,15 @@ var endpoint = host.RegisterEndpoint(new AccountManagementEndpointDeclaration())
 host.Start();
 ```
 
-The declaration is what the endpoint IS in every composition — its compiler-enforced identity (the
+The declaration is what the endpoint IS — its compiler-enforced identity (the
 `IEndpointIdentity` statics the `TIdentity` type parameter reaches; usually the declaration is its own
-identity), its handler doors, its topology stance — while the `IEndpointEnvironment` is everything a
+identity), its handler registrations, its topology stance — while the `IEndpointEnvironment` is everything a
 deployment decides: the transport protocol, the one serializer, discovery participation, and — on the
-exactly-once tier — the actual domain database. Building runs one template (`BuildOn`): the environment
-declares first, the declaration's scalar aspects and doors follow, and the tier's general `Declare` override
-receives the full declaration surface (`EndpointBuilder` and its tier subtypes) last — store integrations (a
+exactly-once tier — the actual domain database. Building runs one template (`Build`): the environment
+configures first, the declaration's scalar aspects and registration overrides follow, and the tier's general
+`Declare` override receives the full `EndpointBuilder` (its tier subtype) last — store integrations (a
 tevent store's `HandleTaggregate`, a document db's `HandleDocumentType`) plug in there, handler contributors
-like any other. The build closes the roster: the surface exists only inside the build, and any attempt to
+like any other. The build closes the roster: the builder exists only inside the build, and any attempt to
 declare afterward explodes. The named environment declarations come from the implementation packages, each
 filling the one parameter it names: the transport protocol (`NamedPipeEndpointTransport()` /
 `AspNetCoreEndpointTransport()`), the endpoint's one serializer (`NewtonsoftSerializer()`), and the domain
@@ -160,7 +160,7 @@ convergence. Two composing mechanisms make that nobody's race to lose (see
 [the peer model](../../Compze.Tessaging/dev_docs/peer-model.md)):
 
 - **Waiting sends** — implicit, per-call: a send whose type has no live, unambiguous route right now waits,
-  bounded by the endpoint's **handler-availability patience** (a flat 30 seconds unless the composition
+  bounded by the endpoint's **handler-availability patience** (a flat 30 seconds unless the declaration
   declares otherwise — `EndpointBuilder.HandlerAvailabilityPatience`), for the world to become right — a
   first contact, a known peer's return, an ambiguity resolving — then proceeds normally. Only exhausted
   patience fails loud, and the failure tells known-but-down (naming the remembered peer) from never-seen
@@ -187,7 +187,7 @@ endpoints join one domain database (the whole story:
   dispatching, and its durable peer memory, each table prefixed with the endpoint's name
   (`Backend_InboxTessages`). The prefix is what makes an exactly-once endpoint's name identifier material —
   a letter followed by letters, digits, or underscores, at most 28 characters — asserted loud at
-  composition, never sanitized silently.
+  build, never sanitized silently.
 - **The domain-level tables are deliberately unprefixed** — the type-id interner, the tevent store, the
   document db, and the endpoint catalog are the domain's data, shared by every endpoint that joins.
 - **One shared table per domain database: the endpoint catalog** — each endpoint's name, `EndpointId`,
@@ -243,7 +243,7 @@ Three things to know:
   the engine unchanged; a taggregate's committed tevents are simply delivered only to this
   process's handlers.
 - **No type-id ceremony.** In-process dispatch routes by `System.Type`; type-id mappings exist for the wire
-  and for persistent-store serialization. The plain-container composition supplies a default type mapper
+  and for persistent-store serialization. A plain container supplies a default type mapper
   when none is registered; an application whose tevent store needs domain mappings registers its own first.
 - **Wanting guaranteed tommand delivery does not make an endpoint "in-process".** A Tessaging tommand's type
   declares its cross-boundary delivery contract — exactly-once, transactional, asynchronous. Within the

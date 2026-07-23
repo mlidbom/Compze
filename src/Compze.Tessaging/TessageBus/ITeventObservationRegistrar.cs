@@ -3,7 +3,7 @@ using Compze.Tessaging.TessageTypes;
 
 namespace Compze.Tessaging.TessageBus;
 
-///<summary>The minimal declaration door for tevent observation — what an endpoint-declaration's <c>ObserveTevents</c> override<br/>
+///<summary>The minimal registrar for tevent observation — what an endpoint-declaration's <c>ObserveTevents</c> override<br/>
 /// receives. Observation is the deliberately transaction-ignoring watch surface: an observer watches committed facts and never<br/>
 /// participates in the delivering transaction.<br/>
 /// Implemented by <see cref="TeventObservationRegistrar"/>, whose docs carry the full observation semantics.</summary>

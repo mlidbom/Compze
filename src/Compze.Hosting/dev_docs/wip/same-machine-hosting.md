@@ -196,12 +196,12 @@ class BackgroundWorkerEndpointDeclaration : ExactlyOnceEndpointDeclaration<Backg
 
 class SameMachineEnvironment(InterprocessEndpointRegistry registry) : IEndpointEnvironment
 {
-   public void DeclareOn(EndpointBuilder endpointBuilder) => endpointBuilder
+   public void Configure(EndpointBuilder endpointBuilder) => endpointBuilder
       .NamedPipeEndpointTransport()
       .NewtonsoftSerializer()
       .ParticipateIn(registry);   // discover the others through it AND announce ourselves to it
 
-   public void DeclareDomainDatabaseOn(ExactlyOnceEndpointBuilder endpointBuilder) =>
+   public void ConfigureDomainDatabase(ExactlyOnceEndpointBuilder endpointBuilder) =>
       endpointBuilder.SqliteDomainDatabase(BackgroundWorkerEndpointDeclaration.Name);
 }
 
@@ -212,8 +212,8 @@ await host.StartAsync();
 ```
 
 The database declaration registers the whole engine pairing — the connection pool, the type-id interner, and
-Tessaging's sqlite inbox/outbox sql layers — through one named declaration on the exactly-once tier's
-declaration surface.
+Tessaging's sqlite inbox/outbox sql layers — through one named extension on the exactly-once tier's
+`ExactlyOnceEndpointBuilder`.
 
 `ParticipateIn` declares the registry's two faces at once: `DiscoverEndpointsThrough`, the *read* side the
 router reconciles against, and `AnnounceAddressTo`, the *write* side the endpoint's lifecycle drives — declare

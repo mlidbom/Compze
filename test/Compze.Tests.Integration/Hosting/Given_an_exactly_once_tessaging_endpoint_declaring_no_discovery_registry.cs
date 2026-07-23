@@ -30,8 +30,8 @@ namespace Compze.Tests.Integration.Hosting;
 /// in-boundary is immediate and transactional, so the handling is exactly-once by construction (one transaction, no delivery
 /// machinery involved) and its failure fails the sender's execution. The process-manager pattern — handling one tessage sends
 /// a follow-up tommand belonging to the same endpoint — is in-boundary composition, needing no discovery and no wire. The
-/// host is the production host and the environment is the specification's own, so the composition stands entirely on what it
-/// declares.
+/// host is the production host and the environment is the specification's own: everything the endpoint is comes from its
+/// declaration and its environment.
 ///</summary>
 public class Given_an_exactly_once_tessaging_endpoint_declaring_no_discovery_registry : UniversalTestBase
 {
@@ -55,10 +55,10 @@ public class Given_an_exactly_once_tessaging_endpoint_declaring_no_discovery_reg
    /// the current test's domain-database binding keyed by the endpoint's id.</summary>
    class EnvironmentDeclaringNoDiscoveryRegistry : IEndpointEnvironment
    {
-      public void DeclareOn(EndpointBuilder endpointBuilder) =>
+      public void Configure(EndpointBuilder endpointBuilder) =>
          endpointBuilder.TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport());
 
-      public void DeclareDomainDatabaseOn(ExactlyOnceEndpointBuilder endpointBuilder) =>
+      public void ConfigureDomainDatabase(ExactlyOnceEndpointBuilder endpointBuilder) =>
          endpointBuilder.ConfigurePersistence(registrar => registrar.CurrentTestsConfiguredSqlLayer(connectionStringName: endpointBuilder.Configuration.Id.ToString()));
    }
 

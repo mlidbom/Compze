@@ -9,7 +9,7 @@ namespace Compze.Tessaging.Endpoints.BestEffort;
 public interface IBestEffortEndpointDeclaration
 {
    ///<summary>Builds this declaration into a running-ready <see cref="BestEffortEndpoint"/> — see<br/>
-   /// <see cref="IExactlyOnceEndpointDeclaration.BuildOn"/>, whose template this mirrors minus the domain database: this<br/>
+   /// <see cref="IExactlyOnceEndpointDeclaration.Build"/>, whose template this mirrors minus the domain database: this<br/>
    /// tier persists nothing.</summary>
-   BestEffortEndpoint BuildOn(IContainerBuilder containerBuilder, IEndpointEnvironment environment);
+   BestEffortEndpoint Build(IContainerBuilder containerBuilder, IEndpointEnvironment environment);
 }

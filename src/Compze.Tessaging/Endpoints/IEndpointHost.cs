@@ -19,12 +19,12 @@ namespace Compze.Tessaging.Endpoints;
 public interface IEndpointHost : IAsyncDisposable
 {
     ///<summary>Registers the endpoint an <see cref="IExactlyOnceEndpointDeclaration"/> declares, built in this host's<br/>
-    /// <see cref="IEndpointEnvironment"/> (<see cref="IExactlyOnceEndpointDeclaration.BuildOn"/>) — the declaration brings what<br/>
+    /// <see cref="IEndpointEnvironment"/> (<see cref="IExactlyOnceEndpointDeclaration.Build"/>) — the declaration brings what<br/>
     /// the endpoint is, the host brings where it runs.</summary>
     ExactlyOnceEndpoint RegisterEndpoint(IExactlyOnceEndpointDeclaration declaration);
 
     ///<summary>Registers the endpoint an <see cref="IBestEffortEndpointDeclaration"/> declares, built in this host's<br/>
-    /// <see cref="IEndpointEnvironment"/> (<see cref="IBestEffortEndpointDeclaration.BuildOn"/>).</summary>
+    /// <see cref="IEndpointEnvironment"/> (<see cref="IBestEffortEndpointDeclaration.Build"/>).</summary>
     BestEffortEndpoint RegisterEndpoint(IBestEffortEndpointDeclaration declaration);
 
     ///<summary>Registers the endpoint an <see cref="IExactlyOnceEndpointDeclaration"/> declares, built in<br/>

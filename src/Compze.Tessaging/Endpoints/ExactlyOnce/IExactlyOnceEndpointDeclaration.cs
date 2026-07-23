@@ -13,5 +13,5 @@ public interface IExactlyOnceEndpointDeclaration
    /// override last, and the build closes the roster. Called by the host that owns the endpoint<br/>
    /// (<see cref="IEndpointHost.RegisterEndpoint(IExactlyOnceEndpointDeclaration)"/>) or directly — an endpoint is<br/>
    /// first-class and needs no host.</summary>
-   ExactlyOnceEndpoint BuildOn(IContainerBuilder containerBuilder, IEndpointEnvironment environment);
+   ExactlyOnceEndpoint Build(IContainerBuilder containerBuilder, IEndpointEnvironment environment);
 }

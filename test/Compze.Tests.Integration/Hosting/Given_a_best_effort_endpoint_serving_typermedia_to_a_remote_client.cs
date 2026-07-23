@@ -25,9 +25,9 @@ namespace Compze.Tests.Integration.Hosting;
 /// A best-effort endpoint (<see cref="BestEffortEndpointDeclaration{TIdentity}"/>) hosts everything that persists nothing: it
 /// serves remote tueries and tommands with no outbox, no inbox, and no database anywhere, and an external client application
 /// navigates its typermedia at its address. The durable vertical is exactly what such an endpoint cannot carry: an
-/// exactly-once declaration built in an environment binding no domain database fails loud at composition, naming the missing
-/// declaration. The host is the production host and the environment is the specification's own — nothing is pre-registered,
-/// so the composition stands entirely on what it declares.
+/// exactly-once declaration built in an environment binding no domain database fails loud at build, naming the missing
+/// declaration. The host is the production host and the environment is the specification's own — nothing is pre-registered:
+/// everything the endpoint is comes from its declaration and its environment.
 ///</summary>
 public class Given_a_best_effort_endpoint_serving_typermedia_to_a_remote_client : UniversalTestBase
 {
@@ -83,7 +83,7 @@ public class Given_a_best_effort_endpoint_serving_typermedia_to_a_remote_client 
       user.Name.Must().Be("first-user");
    }
 
-   [PCT] public async Task composing_an_exactly_once_endpoint_without_a_domain_database_fails_loud_naming_the_missing_declaration()
+   [PCT] public async Task building_an_exactly_once_endpoint_without_a_domain_database_fails_loud_naming_the_missing_declaration()
    {
       await using var host = EndpointHost.Production.Create(() => TestEnv.DIContainer.CreateTestingContainerBuilder(), new CurrentTestsBestEffortEnvironment());
       Invoking(() => host.RegisterEndpoint(new EndpointDeclarationWithoutADomainDatabase()))

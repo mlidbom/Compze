@@ -67,7 +67,7 @@ public class Experiment_with_unifying_tevents_and_tommands_test : UniversalTestB
           });
 
       //The tevent store's components without its typermedia surface: this experiment reads and saves through the store
-      //abstractions directly, so only the store registration itself is declared - the general door's job.
+      //abstractions directly, so only the store registration itself is declared - the general Declare override's job.
       protected override void Declare(ExactlyOnceEndpointBuilder endpoint) =>
          endpoint.Registrar.TeventStore(endpoint.Configuration.ConnectionStringName);
    }

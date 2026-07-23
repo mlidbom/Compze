@@ -49,13 +49,13 @@ public class Given_a_started_exactly_once_tessaging_endpoint_with_an_interproces
          _additionalAnnouncementTarget = additionalAnnouncementTarget;
       }
 
-      public void DeclareOn(EndpointBuilder endpointBuilder)
+      public void Configure(EndpointBuilder endpointBuilder)
       {
-         _environment.DeclareOn(endpointBuilder);
+         _environment.Configure(endpointBuilder);
          endpointBuilder.AnnounceAddressTo(_additionalAnnouncementTarget);
       }
 
-      public void DeclareDomainDatabaseOn(ExactlyOnceEndpointBuilder endpointBuilder) => _environment.DeclareDomainDatabaseOn(endpointBuilder);
+      public void ConfigureDomainDatabase(ExactlyOnceEndpointBuilder endpointBuilder) => _environment.ConfigureDomainDatabase(endpointBuilder);
    }
 
    protected override async Task InitializeAsyncInternal() => await _host.StartAsync();

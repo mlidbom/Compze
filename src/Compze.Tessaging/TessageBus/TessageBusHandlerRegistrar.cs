@@ -7,9 +7,9 @@ using Compze.Tessaging.TessageTypes;
 
 namespace Compze.Tessaging.TessageBus;
 
-///<summary>The declaration surface for an engine's TessageBus handlers — the two tessage kinds the bus's doors serve: tevents<br/>
+///<summary>Registers an engine's TessageBus handlers — the two tessage kinds the bus serves: tevents<br/>
 /// (published) and exactly-once tommands (sent — <see cref="IUnitOfWorkTommandSender.SendAsync"/> accepts only<br/>
-/// <see cref="IExactlyOnceTommand"/>, and the constraints here mirror its doors). Every other tommand kind is navigated, so its<br/>
+/// <see cref="IExactlyOnceTommand"/>, and the constraints here mirror what it accepts). Every other tommand kind is navigated, so its<br/>
 /// handler is Typermedia's, declared through <see cref="LocalTessagingEngineBuilder.RegisterTypermediaHandlers"/>. Handed to the<br/>
 /// <see cref="LocalTessagingEngineBuilder.RegisterTessageBusHandlers"/> callback and existing only inside it: the callback's end<br/>
 /// is the registration's end, so nothing can hold a registrar and mutate the engine later — using one after its callback<br/>
@@ -52,8 +52,8 @@ public sealed class TessageBusHandlerRegistrar : IExactlyOnceTommandHandlerRegis
       return this;
    }
 
-   ///<summary>Registers the handler for <typeparamref name="TTommand"/> — an exactly-once tommand, the one tommand kind the<br/>
-   /// bus's send door serves. The handler receives the <see cref="IUnitOfWorkResolver"/> of the unit of work its execution IS:<br/>
+   ///<summary>Registers the handler for <typeparamref name="TTommand"/> — an exactly-once tommand, the one tommand kind<br/>
+   /// <see cref="IUnitOfWorkTommandSender.SendAsync"/> accepts. The handler receives the <see cref="IUnitOfWorkResolver"/> of the unit of work its execution IS:<br/>
    /// a tommand mutates state, so every path that executes one runs it inside a unit of work, and its effects commit or roll<br/>
    /// back as a whole. Async only, no synchronous form: exactly-once kinds are async end to end.</summary>
    public TessageBusHandlerRegistrar ForTommand<TTommand>(Func<TTommand, IUnitOfWorkResolver, Task> handler) where TTommand : IExactlyOnceTommand
@@ -63,8 +63,8 @@ public sealed class TessageBusHandlerRegistrar : IExactlyOnceTommandHandlerRegis
       return this;
    }
 
-   //The declaration doors an endpoint-declaration's overrides receive - each showing only its facet of this registrar, with
-   //the door's guarantee-fit asserted at declaration.
+   //The minimal registrars an endpoint-declaration's overrides receive - each showing only its facet of this registrar, with
+   //the facet's guarantee-fit asserted at registration.
    IExactlyOnceTommandHandlerRegistrar IExactlyOnceTommandHandlerRegistrar.ForTommand<TTommand>(Func<TTommand, IUnitOfWorkResolver, Task> handler)
    {
       ForTommand(handler);
@@ -104,11 +104,11 @@ public sealed class TessageBusHandlerRegistrar : IExactlyOnceTommandHandlerRegis
 
    static void AssertSubscriptionDemandsExactlyOnceDelivery<TTevent>() where TTevent : ITevent =>
       State.Assert(SubscriptionDemandsExactlyOnceDelivery<TTevent>(),
-                   () => $"A subscription to {typeof(TTevent).FullName} does not demand exactly-once delivery, so it does not belong behind the exactly-once tevent door. Register it through the best-effort tevent door (RegisterBestEffortTeventHandlers).");
+                   () => $"A subscription to {typeof(TTevent).FullName} does not demand exactly-once delivery, so it does not belong in RegisterExactlyOnceTeventHandlers. Register it through RegisterBestEffortTeventHandlers.");
 
    static void AssertSubscriptionDoesNotDemandExactlyOnceDelivery<TTevent>() where TTevent : ITevent =>
       State.Assert(!SubscriptionDemandsExactlyOnceDelivery<TTevent>(),
-                   () => $"A subscription to {typeof(TTevent).FullName} demands exactly-once delivery, which only the exactly-once tier's durable vertical can honor. Register it through the exactly-once tevent door (RegisterExactlyOnceTeventHandlers) of an exactly-once endpoint's declaration.");
+                   () => $"A subscription to {typeof(TTevent).FullName} demands exactly-once delivery, which only the exactly-once tier's durable vertical can honor. Register it through RegisterExactlyOnceTeventHandlers on an exactly-once endpoint's declaration.");
 
    static bool SubscriptionDemandsExactlyOnceDelivery<TTevent>() where TTevent : ITevent =>
       PublisherTevent.WrapperTypeMatchingAllWrappingsOf(typeof(TTevent)).Is<IPublisherTevent<IExactlyOnceTevent>>();

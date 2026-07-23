@@ -103,17 +103,17 @@ public class Given_two_exactly_once_endpoints_joined_to_one_domain_database : Un
    }
 
    ///<summary>The wrapped <see cref="IEndpointEnvironment"/> except that the endpoint joins the neighbors' shared domain<br/>
-   /// database (<see cref="DomainDatabaseName"/>) instead of one of its own — the composition for several endpoints storing<br/>
+   /// database (<see cref="DomainDatabaseName"/>) instead of one of its own — several endpoints storing<br/>
    /// side by side in one domain database.</summary>
    class EnvironmentJoiningTheNeighborsDomainDatabase : IEndpointEnvironment
    {
       readonly IEndpointEnvironment _environment;
       internal EnvironmentJoiningTheNeighborsDomainDatabase(IEndpointEnvironment environment) => _environment = environment;
 
-      public void DeclareOn(EndpointBuilder endpointBuilder) =>
-         _environment.DeclareOn(endpointBuilder);
+      public void Configure(EndpointBuilder endpointBuilder) =>
+         _environment.Configure(endpointBuilder);
 
-      public void DeclareDomainDatabaseOn(ExactlyOnceEndpointBuilder endpointBuilder) =>
+      public void ConfigureDomainDatabase(ExactlyOnceEndpointBuilder endpointBuilder) =>
          endpointBuilder.ConfigurePersistence(registrar => registrar.CurrentTestsConfiguredSqlLayer(connectionStringName: DomainDatabaseName));
    }
 

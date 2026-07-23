@@ -88,7 +88,7 @@ public sealed class TypermediaHandlerRegistrar : ITypermediaTommandHandlerRegist
       return this;
    }
 
-   //The declaration doors an endpoint-declaration's overrides receive - each showing only its facet of this registrar.
+   //The minimal registrars an endpoint-declaration's overrides receive - each showing only its facet of this registrar.
    ITypermediaTommandHandlerRegistrar ITypermediaTommandHandlerRegistrar.ForTommand<TTommand>(Func<TTommand, IUnitOfWorkResolver, Task> handler)
    {
       ForTommand(handler);

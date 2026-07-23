@@ -64,14 +64,14 @@ public class Given_a_separate_process_hosting_a_distributed_tessaging_endpoint_d
       readonly InterprocessEndpointRegistry _registry;
       internal EnvironmentParticipatingInTheSharedRegistry(InterprocessEndpointRegistry registry) => _registry = registry;
 
-      public void DeclareOn(EndpointBuilder endpointBuilder)
+      public void Configure(EndpointBuilder endpointBuilder)
       {
          endpointBuilder.TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport());
          endpointBuilder.Serializer(registrar => registrar.CurrentTestsSerializersIfNotClonedContainer());
          endpointBuilder.ParticipateIn(_registry);
       }
 
-      public void DeclareDomainDatabaseOn(ExactlyOnceEndpointBuilder endpointBuilder) {}
+      public void ConfigureDomainDatabase(ExactlyOnceEndpointBuilder endpointBuilder) {}
    }
 
    ///<summary>Declares under the shared <see cref="SpecificationProcessEndpointIdentity"/>: the endpoint host process requires<br/>

@@ -3,7 +3,7 @@ using Compze.Tessaging.TessageTypes;
 
 namespace Compze.Tessaging.TessageBus;
 
-///<summary>The minimal declaration door for exactly-once tommand handlers — what an endpoint-declaration's<br/>
+///<summary>The minimal registrar for exactly-once tommand handlers — what an endpoint-declaration's<br/>
 /// <c>RegisterExactlyOnceTommandHandlers</c> override receives. It shows exactly one verb: registering the handler of an<br/>
 /// <see cref="IExactlyOnceTommand"/>, the one tommand kind that is sent through the bus rather than navigated.<br/>
 /// Implemented by <see cref="TessageBusHandlerRegistrar"/>, whose docs carry the full handler semantics.</summary>

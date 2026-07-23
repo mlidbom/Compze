@@ -68,7 +68,7 @@ class AssemblyTypeMapper : IAssemblyTypeMapper
          .Map<Hosting.Given_two_best_effort_endpoints_conversing_in_typermedia.GreetingRegisteredConfirmationResource>("07a3c5d8-fb21-4e96-8c04-9d15e7b62af3")
          .Map<Hosting.Given_two_best_effort_endpoints_conversing_in_typermedia.RegisterGreetingWithAResolvedFlourishTommand>("222cb68f-8a54-4eb6-bf67-479c8c99540c")
          .Map<Hosting.Given_two_best_effort_endpoints_conversing_in_typermedia.RegisterGreetingThroughTheCoreAsyncVerbTommand>("ed5dbe46-4cd1-4eb5-a07a-4b2e74570adb")
-         .Map<Hosting.Given_an_exactly_once_endpoint_declaring_its_domain_database_through_the_public_backend_door.TommandProvingTheDoorDeclaredPersistenceWorks>("ae78cab1-c15a-42b3-b9f6-fea11960a337")
+         .Map<Hosting.Given_an_exactly_once_endpoint_declaring_its_domain_database_through_the_public_backend_registrar_extensions.TommandProvingTheDeclaredPersistenceWorks>("ae78cab1-c15a-42b3-b9f6-fea11960a337")
          .Map<Hosting.Given_an_exactly_once_tessaging_endpoint_declaring_no_discovery_registry.TommandTheEndpointSendsItself>("8f4c2a17-9e5b-4d38-a6c1-53e2b09d47f6")
          .Map<Hosting.Given_an_exactly_once_tessaging_endpoint_declaring_no_discovery_registry.TommandWhoseHandlerResolvesADependency>("3e3bbbde-e60a-4f9d-9e01-3eb029774b4f")
          .Map<Hosting.Given_an_exactly_once_tessaging_endpoint_declaring_no_discovery_registry.TommandWhoseHandlerFails>("3d9f61c8-2b74-4e0a-9c15-8a4b7e26d5f1")

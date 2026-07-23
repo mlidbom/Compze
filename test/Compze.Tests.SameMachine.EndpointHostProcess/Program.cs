@@ -119,12 +119,12 @@ public static class Program
          _workDirectory = workDirectory;
       }
 
-      public void DeclareOn(EndpointBuilder endpointBuilder) => endpointBuilder
+      public void Configure(EndpointBuilder endpointBuilder) => endpointBuilder
          .NamedPipeEndpointTransport()
          .NewtonsoftSerializer()
          .ParticipateIn(_registry);
 
-      public void DeclareDomainDatabaseOn(ExactlyOnceEndpointBuilder endpointBuilder)
+      public void ConfigureDomainDatabase(ExactlyOnceEndpointBuilder endpointBuilder)
       {
          endpointBuilder.Registrar.Register(Singleton.For<IConfigurationParameterProvider>()
                                                      .CreatedBy(() => new SqliteDatabasePerConnectionStringNameConfigurationParameterProvider(_workDirectory)));
@@ -140,12 +140,12 @@ public static class Program
 
       internal DatabaselessEnvironment(InterprocessEndpointRegistry registry) => _registry = registry;
 
-      public void DeclareOn(EndpointBuilder endpointBuilder) => endpointBuilder
+      public void Configure(EndpointBuilder endpointBuilder) => endpointBuilder
          .NamedPipeEndpointTransport()
          .NewtonsoftSerializer()
          .ParticipateIn(_registry);
 
-      public void DeclareDomainDatabaseOn(ExactlyOnceEndpointBuilder endpointBuilder) {}
+      public void ConfigureDomainDatabase(ExactlyOnceEndpointBuilder endpointBuilder) {}
    }
 
    ///<summary>The name of the environment variable through which the specification that launches this process passes the directory<br/>

@@ -30,10 +30,10 @@ namespace Compze.Tests.Integration.Hosting;
 ///<summary>
 /// Two best-effort endpoints (<see cref="BestEffortEndpointDeclaration{TIdentity}"/>) converse in best-effort tevents:
 /// guarantee-free Tessaging with no outbox, no inbox, and no database anywhere in either endpoint. Everything exactly-once
-/// is exactly what such an endpoint cannot speak: the tier's declaration base has no exactly-once doors, and a declaration
-/// that reaches the demand through the surfaces that remain — the general <c>Declare</c> door, the shared observation
-/// door — fails loud at composition. The host is the production host and the environment is the specifications' own —
-/// nothing is pre-registered, so the composition stands entirely on what it declares.
+/// is exactly what such an endpoint cannot speak: the tier's declaration base has no exactly-once registration overrides,
+/// and a declaration that reaches the demand through the surfaces that remain — the general <c>Declare</c> override, the
+/// shared <c>ObserveTevents</c> override — fails loud at build. The host is the production host and the environment is the
+/// specifications' own — nothing is pre-registered: everything each endpoint is comes from its declaration and its environment.
 ///</summary>
 public class Given_two_best_effort_endpoints : UniversalTestBase
 {
@@ -106,35 +106,35 @@ public class Given_two_best_effort_endpoints : UniversalTestBase
       Invoking(() => PublishOnThePublisherEndpointInATransaction(new TeventDeclaringTheExactlyOnceContract()))
         .Must().Throw<Exception>().Which.Message.Must().Contain("exactly-once kinds are async end to end");
 
-   [PCT] public async Task registering_a_handler_for_a_tevent_declaring_the_exactly_once_contract_fails_at_composition()
+   [PCT] public async Task registering_a_handler_for_a_tevent_declaring_the_exactly_once_contract_fails_at_build()
    {
       await using var host = EndpointHost.Production.Create(() => TestEnv.DIContainer.CreateTestingContainerBuilder(), new CurrentTestsBestEffortEnvironment());
       Invoking(() => host.RegisterEndpoint(new EndpointDeclarationDemandingAnExactlyOnceTeventSubscription()))
         .Must().Throw<Exception>().Which.Message.Must().Contain("wires no exactly-once delivery machinery");
    }
 
-   [PCT] public async Task registering_a_transaction_ignoring_handler_for_a_tevent_declaring_the_exactly_once_contract_fails_at_composition()
+   [PCT] public async Task registering_a_transaction_ignoring_handler_for_a_tevent_declaring_the_exactly_once_contract_fails_at_build()
    {
       await using var host = EndpointHost.Production.Create(() => TestEnv.DIContainer.CreateTestingContainerBuilder(), new CurrentTestsBestEffortEnvironment());
       Invoking(() => host.RegisterEndpoint(new EndpointDeclarationDemandingExactlyOnceTeventObservation()))
         .Must().Throw<Exception>().Which.Message.Must().Contain("wires no exactly-once delivery machinery");
    }
 
-   [PCT] public async Task registering_a_handler_for_a_tommand_declaring_the_exactly_once_contract_fails_at_composition()
+   [PCT] public async Task registering_a_handler_for_a_tommand_declaring_the_exactly_once_contract_fails_at_build()
    {
       await using var host = EndpointHost.Production.Create(() => TestEnv.DIContainer.CreateTestingContainerBuilder(), new CurrentTestsBestEffortEnvironment());
       Invoking(() => host.RegisterEndpoint(new EndpointDeclarationDemandingAnExactlyOnceTommandHandler()))
         .Must().Throw<Exception>().Which.Message.Must().Contain("wires no exactly-once delivery machinery");
    }
 
-   [PCT] public async Task composing_an_endpoint_without_a_serializer_fails_loud_naming_the_missing_declaration()
+   [PCT] public async Task building_an_endpoint_without_a_serializer_fails_loud_naming_the_missing_declaration()
    {
       await using var host = EndpointHost.Production.Create(() => TestEnv.DIContainer.CreateTestingContainerBuilder(), new EnvironmentDeclaringNoSerializer());
       Invoking(() => host.RegisterEndpoint(new EndpointDeclarationWithoutASerializer()))
         .Must().Throw<Exception>().Which.Message.Must().Contain("The endpoint declares no serializer");
    }
 
-   [PCT] public async Task composing_an_endpoint_without_a_transport_protocol_fails_loud_naming_the_missing_declaration()
+   [PCT] public async Task building_an_endpoint_without_a_transport_protocol_fails_loud_naming_the_missing_declaration()
    {
       await using var host = EndpointHost.Production.Create(() => TestEnv.DIContainer.CreateTestingContainerBuilder(), new EnvironmentDeclaringNoTransportProtocol());
       Invoking(() => host.RegisterEndpoint(new EndpointDeclarationWithoutATransportProtocol()))
@@ -142,8 +142,8 @@ public class Given_two_best_effort_endpoints : UniversalTestBase
    }
 
    ///<summary>The tier's declaration base makes an exactly-once tevent subscription structurally inexpressible — there is no<br/>
-   /// door for it — so this declaration reaches the demand through the one surface where it can still be written, the general<br/>
-   /// <c>Declare</c> door, pinning the build-time roster assert as the last line of defense.</summary>
+   /// registration override for it — so this declaration reaches the demand through the one surface where it can still be<br/>
+   /// written, the general <c>Declare</c> override, pinning the build-time roster assert as the last line of defense.</summary>
    class EndpointDeclarationDemandingAnExactlyOnceTeventSubscription : BestEffortEndpointDeclaration<EndpointDeclarationDemandingAnExactlyOnceTeventSubscription>, IEndpointIdentity
    {
       public static string Name => "ExactlyOnceSubscriptionOnABestEffortEndpoint";
@@ -155,8 +155,8 @@ public class Given_two_best_effort_endpoints : UniversalTestBase
          endpoint.RegisterTessageBusHandlers(handle => handle.ForTevent((ITeventDeclaringTheExactlyOnceContract _) => Task.CompletedTask));
    }
 
-   ///<summary>The observation door is a shared door on every tier, so this exactly-once demand is expressible at declaration<br/>
-   /// time — the build-time roster assert catches it instead.</summary>
+   ///<summary>The <c>ObserveTevents</c> override is shared across the tiers, so this exactly-once demand is expressible at<br/>
+   /// declaration time — the build-time roster assert catches it instead.</summary>
    class EndpointDeclarationDemandingExactlyOnceTeventObservation : BestEffortEndpointDeclaration<EndpointDeclarationDemandingExactlyOnceTeventObservation>, IEndpointIdentity
    {
       public static string Name => "ExactlyOnceObservationOnABestEffortEndpoint";
@@ -168,8 +168,8 @@ public class Given_two_best_effort_endpoints : UniversalTestBase
    }
 
    ///<summary>The tier's declaration base makes an exactly-once tommand handler structurally inexpressible — there is no<br/>
-   /// door for it — so this declaration reaches the demand through the general <c>Declare</c> door, pinning the build-time<br/>
-   /// roster assert as the last line of defense.</summary>
+   /// registration override for it — so this declaration reaches the demand through the general <c>Declare</c> override,<br/>
+   /// pinning the build-time roster assert as the last line of defense.</summary>
    class EndpointDeclarationDemandingAnExactlyOnceTommandHandler : BestEffortEndpointDeclaration<EndpointDeclarationDemandingAnExactlyOnceTommandHandler>, IEndpointIdentity
    {
       public static string Name => "ExactlyOnceTommandHandlerOnABestEffortEndpoint";
@@ -196,19 +196,19 @@ public class Given_two_best_effort_endpoints : UniversalTestBase
    ///<summary>An environment that deliberately declares no serializer — only the transport protocol — so composing in it pins the missing-serializer foundation assert.</summary>
    class EnvironmentDeclaringNoSerializer : IEndpointEnvironment
    {
-      public void DeclareOn(EndpointBuilder endpointBuilder) =>
+      public void Configure(EndpointBuilder endpointBuilder) =>
          endpointBuilder.TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport());
 
-      public void DeclareDomainDatabaseOn(ExactlyOnceEndpointBuilder endpointBuilder) {}
+      public void ConfigureDomainDatabase(ExactlyOnceEndpointBuilder endpointBuilder) {}
    }
 
    ///<summary>An environment that deliberately declares no transport protocol — only the serializer — so composing in it pins the missing-transport foundation assert.</summary>
    class EnvironmentDeclaringNoTransportProtocol : IEndpointEnvironment
    {
-      public void DeclareOn(EndpointBuilder endpointBuilder) =>
+      public void Configure(EndpointBuilder endpointBuilder) =>
          endpointBuilder.NewtonsoftSerializer();
 
-      public void DeclareDomainDatabaseOn(ExactlyOnceEndpointBuilder endpointBuilder) {}
+      public void ConfigureDomainDatabase(ExactlyOnceEndpointBuilder endpointBuilder) {}
    }
 
    void PublishOnThePublisherEndpointInATransaction(ITevent tevent) =>

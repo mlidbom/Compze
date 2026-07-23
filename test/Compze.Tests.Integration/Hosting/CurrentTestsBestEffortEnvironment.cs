@@ -17,12 +17,12 @@ class CurrentTestsBestEffortEnvironment : IEndpointEnvironment
 
    internal CurrentTestsBestEffortEnvironment(IEndpointRegistry? discoverEndpointsThrough = null) => _discoverEndpointsThrough = discoverEndpointsThrough;
 
-   public void DeclareOn(EndpointBuilder endpointBuilder)
+   public void Configure(EndpointBuilder endpointBuilder)
    {
       endpointBuilder.TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport());
       endpointBuilder.NewtonsoftSerializer();
       if(_discoverEndpointsThrough is not null) endpointBuilder.DiscoverEndpointsThrough(_discoverEndpointsThrough);
    }
 
-   public void DeclareDomainDatabaseOn(ExactlyOnceEndpointBuilder endpointBuilder) {} //Deliberately binds none: this environment hosts the database-less tier, and an exactly-once endpoint built in it fails loud at the foundation assert.
+   public void ConfigureDomainDatabase(ExactlyOnceEndpointBuilder endpointBuilder) {} //Deliberately binds none: this environment hosts the database-less tier, and an exactly-once endpoint built in it fails loud at the foundation assert.
 }

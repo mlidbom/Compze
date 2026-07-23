@@ -3,7 +3,7 @@ using Compze.Tessaging.TessageTypes;
 
 namespace Compze.Tessaging.Typermedia;
 
-///<summary>The minimal declaration door for tuery handlers — what an endpoint-declaration's <c>RegisterTueryHandlers</c><br/>
+///<summary>The minimal registrar for tuery handlers — what an endpoint-declaration's <c>RegisterTueryHandlers</c><br/>
 /// override receives.<br/>
 /// Implemented by <see cref="TypermediaHandlerRegistrar"/>, whose docs carry the full handler semantics.</summary>
 public interface ITueryHandlerRegistrar

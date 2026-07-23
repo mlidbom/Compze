@@ -63,10 +63,10 @@ public class EndpointHost : IEndpointHost
    public BestEffortEndpoint RegisterEndpoint(IBestEffortEndpointDeclaration declaration) => RegisterEndpoint(declaration, Environment);
 
    public ExactlyOnceEndpoint RegisterEndpoint(IExactlyOnceEndpointDeclaration declaration, IEndpointEnvironment environment) =>
-      RegisterEndpoint(containerBuilder => declaration.BuildOn(containerBuilder, environment));
+      RegisterEndpoint(containerBuilder => declaration.Build(containerBuilder, environment));
 
    public BestEffortEndpoint RegisterEndpoint(IBestEffortEndpointDeclaration declaration, IEndpointEnvironment environment) =>
-      RegisterEndpoint(containerBuilder => declaration.BuildOn(containerBuilder, environment));
+      RegisterEndpoint(containerBuilder => declaration.Build(containerBuilder, environment));
 
    bool _isStarted;
 

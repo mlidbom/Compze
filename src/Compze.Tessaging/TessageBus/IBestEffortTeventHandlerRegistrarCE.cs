@@ -4,8 +4,8 @@ using Compze.Tessaging.TessageTypes;
 namespace Compze.Tessaging.TessageBus;
 
 ///<summary>Convenience overloads for <see cref="IBestEffortTeventHandlerRegistrar"/> — the same shapes<br/>
-/// <see cref="TessageBusHandlerRegistrarCE"/> gives the full registrar, synchronous forms included: no subscription behind<br/>
-/// this door is exactly-once.</summary>
+/// <see cref="TessageBusHandlerRegistrarCE"/> gives the full registrar, synchronous forms included: no subscription<br/>
+/// registered here is exactly-once.</summary>
 public static class IBestEffortTeventHandlerRegistrarCE
 {
    extension(IBestEffortTeventHandlerRegistrar @this)

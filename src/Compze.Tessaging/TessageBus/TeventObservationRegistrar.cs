@@ -31,7 +31,7 @@ public sealed class TeventObservationRegistrar : ITeventObservationRegistrar
       return this;
    }
 
-   //The declaration door an endpoint-declaration's ObserveTevents override receives - this registrar's one facet.
+   //The minimal registrar an endpoint-declaration's ObserveTevents override receives - this registrar's one facet.
    ITeventObservationRegistrar ITeventObservationRegistrar.ForTevent<TTevent>(Action<TTevent, IScopeResolver> observer)
    {
       ForTevent(observer);

@@ -64,14 +64,14 @@ public class TestingEndpointHost : EndpointHost
          _endpointRegistry = endpointRegistry;
       }
 
-      public void DeclareOn(EndpointBuilder endpointBuilder)
+      public void Configure(EndpointBuilder endpointBuilder)
       {
          endpointBuilder.TrackTessagesInFlightWith(_tessagesInFlightTracker);
          endpointBuilder.TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport());
          endpointBuilder.ParticipateIn(_endpointRegistry);
       }
 
-      public void DeclareDomainDatabaseOn(ExactlyOnceEndpointBuilder endpointBuilder) =>
+      public void ConfigureDomainDatabase(ExactlyOnceEndpointBuilder endpointBuilder) =>
          endpointBuilder.ConfigurePersistence(registrar => registrar.CurrentTestsConfiguredSqlLayer(connectionStringName: endpointBuilder.Configuration.Id.ToString()));
    }
 
