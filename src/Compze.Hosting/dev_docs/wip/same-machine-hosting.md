@@ -183,21 +183,31 @@ endpoint, named pipes, discovery, and sqlite database *files* standing in for th
 Trimmed to its shape:
 
 ```csharp
-using var registry = InterprocessEndpointRegistry.OpenOrCreateSessionLocal("MySuite.EndpointRegistry", dataDirectory);
-var host = EndpointHost.Production.Create(() => new MicrosoftContainerBuilder(new ComponentRegistrar()));
-
-host.RegisterEndpoint(container => ExactlyOnceEndpoint.Compose(
-   container, "BackgroundWorker", new EndpointId(Guid.Parse("...")), endpoint =>
+class BackgroundWorkerEndpointDeclaration : ExactlyOnceEndpointDeclaration<BackgroundWorkerEndpointDeclaration>, IEndpointIdentity
 {
-   endpoint.RegisterComponents(registrar => registrar.RequireMappedTypesFromAssemblyContaining<MyTommand>());
-   endpoint.NamedPipeEndpointTransport();
-   endpoint.NewtonsoftSerializer();
-   endpoint.SqliteDomainDatabase("BackgroundWorker");
-   endpoint.ParticipateIn(registry);   // discover the others through it AND announce ourselves to it
+   public static string Name => "BackgroundWorker";
+   public static EndpointId Id { get; } = new(Guid.Parse("..."));
 
-   endpoint.RegisterTessageBusHandlers(handle => handle.ForTommand(async (MyTommand tommand, IUnitOfWorkResolver unitOfWork) => ...));
-}));
+   protected override void RegisterComponents(IComponentRegistrar registrar) => registrar.RequireMappedTypesFromAssemblyContaining<MyTommand>();
 
+   protected override void RegisterExactlyOnceTommandHandlers(IExactlyOnceTommandHandlerRegistrar handle) =>
+      handle.ForTommand(async (MyTommand tommand, IUnitOfWorkResolver unitOfWork) => ...);
+}
+
+class SameMachineEnvironment(InterprocessEndpointRegistry registry) : IEndpointEnvironment
+{
+   public void DeclareOn(EndpointBuilder endpointBuilder) => endpointBuilder
+      .NamedPipeEndpointTransport()
+      .NewtonsoftSerializer()
+      .ParticipateIn(registry);   // discover the others through it AND announce ourselves to it
+
+   public void DeclareDomainDatabaseOn(ExactlyOnceEndpointBuilder endpointBuilder) =>
+      endpointBuilder.SqliteDomainDatabase(BackgroundWorkerEndpointDeclaration.Name);
+}
+
+using var registry = InterprocessEndpointRegistry.OpenOrCreateSessionLocal("MySuite.EndpointRegistry", dataDirectory);
+var host = EndpointHost.Production.Create(() => new MicrosoftContainerBuilder(new ComponentRegistrar()), new SameMachineEnvironment(registry));
+host.RegisterEndpoint(new BackgroundWorkerEndpointDeclaration());
 await host.StartAsync();
 ```
 

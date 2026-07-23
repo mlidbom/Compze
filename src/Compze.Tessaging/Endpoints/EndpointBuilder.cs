@@ -232,7 +232,7 @@ public abstract class EndpointBuilder
    }
 
    private protected void AssertStillComposing() =>
-      State.Assert(!_composed, () => "The endpoint is already composed — the declaration surface exists only inside the composition callback, and the build closes the roster.");
+      State.Assert(!_composed, () => "The endpoint is already built — the declaration surface exists only inside the declaration's build, and the build closes the roster.");
 
    private protected virtual void AssertTheFoundationIsDeclared()
    {

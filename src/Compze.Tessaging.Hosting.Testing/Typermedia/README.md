@@ -21,11 +21,17 @@ Every endpoint the testing host registers serves typermedia — both endpoint ty
 ### Quick start
 
 ```csharp
-using var host = TestingEndpointHost.Create();
-var endpoint = host.RegisterBestEffortEndpoint("MyEndpoint", endpointId, endpoint =>
+class MyEndpointDeclaration : BestEffortEndpointDeclaration<MyEndpointDeclaration>, IEndpointIdentity
 {
-   endpoint.RegisterTessageHandlers(handle => handle.ForTuery((MyTuery tuery) => HandleTuery(tuery)));
-});
+   public static string Name => "MyEndpoint";
+   public static EndpointId Id { get; } = new(Guid.Parse("..."));
+
+   protected override void RegisterTueryHandlers(ITueryHandlerRegistrar handle) =>
+      handle.ForTuery((MyTuery tuery) => HandleTuery(tuery));
+}
+
+using var host = TestingEndpointHost.Create();
+var endpoint = host.RegisterEndpoint(new MyEndpointDeclaration());
 await host.StartAsync();
 
 await using var client = await TypermediaTestClient.ConnectTo(endpoint.Address!, mapper => mapper.RegisterMyDomainTypeMappings());

@@ -5,8 +5,8 @@ namespace Compze.Tessaging.Endpoints;
 
 ///<summary>
 /// One deployable unit of a Compze application: its own dependency injection container and the machinery that listens and
-/// sends on its behalf. An endpoint is a plain composition root — what it is, is decided entirely by its composition
-/// (e.g. <c>ExactlyOnceEndpoint.Compose</c> / <c>BestEffortEndpoint.Compose</c> in Compze.Tessaging) — and it is
+/// sends on its behalf. An endpoint is a plain composition root — what it is, is decided entirely by its
+/// <see cref="EndpointDeclaration{TIdentity}"/> and the <see cref="IEndpointEnvironment"/> it is built in — and it is
 /// first-class: construct it, <see cref="StartAsync"/> it, dispose it. It drives its own lifecycle phases in order —
 /// listen → announce → send on the way up, retract → stop sending → stop listening at disposal — so an announced address is
 /// always one that is actually listening. An <see cref="IEndpointHost"/> is an optional convenience owning several

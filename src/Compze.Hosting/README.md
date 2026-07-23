@@ -1,8 +1,8 @@
 # Compze.Hosting
 
-Endpoint hosting for the Compze framework. This package never looks inside an endpoint — the host receives
-composed endpoints (`RegisterEndpoint(container => ExactlyOnceEndpoint.Compose(container, ...))`), starts
-them, and disposes them.
+Endpoint hosting for the Compze framework. This package never looks inside an endpoint — the host builds
+each registered endpoint-declaration in its environment (`RegisterEndpoint(declaration)`), starts the built
+endpoints, and disposes them.
 
 ## What's in this package?
 
@@ -15,7 +15,7 @@ them, and disposes them.
 
 | Package | Description |
 |---------|-------------|
-| [Compze.Tessaging](https://www.nuget.org/packages/Compze.Tessaging) | The Tessaging paradigm - the endpoint types (`ExactlyOnceEndpoint` / `BestEffortEndpoint`), the LocalTessagingEngine, and the pure client |
+| [Compze.Tessaging](https://www.nuget.org/packages/Compze.Tessaging) | Tessaging - the endpoint types (`ExactlyOnceEndpoint` / `BestEffortEndpoint`), the LocalTessagingEngine, and the pure client |
 
 ## License
 
