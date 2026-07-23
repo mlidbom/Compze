@@ -7,7 +7,7 @@ using Compze.Tessaging.TessageTypes;
 
 namespace Compze.Tessaging.Typermedia;
 
-///<summary>The declaration surface for an engine's Typermedia handlers — the conversational kinds a caller navigates: tueries,<br/>
+///<summary>Registers an engine's Typermedia handlers — the conversational kinds a caller navigates: tueries,<br/>
 /// tommands whose type declares a result, and the void tommands a caller executes or posts expecting no answer (strictly-local<br/>
 /// and at-most-once typermedia). The one tommand kind that is not navigated but sent — the exactly-once tommand — is the bus's,<br/>
 /// declared through <see cref="LocalTessagingEngineBuilder.RegisterTessageBusHandlers"/>, and registering one here explodes at<br/>

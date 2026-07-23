@@ -126,7 +126,7 @@ public partial class Given_a_container_composing_a_LocalTessagingEngine
          Execute(new TueryAnsweredByTheCoreAsyncOverload()).Must().Be($"resolved: {nameof(FourthServiceResolvedIntoHandlers)}");
    }
 
-   //The exactly-once ForTommand forms need a send door, which is endpoint-tier machinery — they are exercised in the Hosting specs
+   //The exactly-once ForTommand forms need a tommand sender, which is endpoint-tier machinery — they are exercised in the Hosting specs
    //(Given_an_exactly_once_tessaging_endpoint_declaring_no_discovery_registry), as are the result-bearing typermedia forms.
    public class with_tessage_bus_handlers_declared_through_every_ForTevent_overload : Given_a_container_composing_a_LocalTessagingEngine
    {

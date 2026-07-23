@@ -52,7 +52,7 @@ static class UnitOfWorkTeventPublisherRegistrar
    {
       var wrappedTevent = PublisherTevent.Wrapped(tevent);
       //Synchrony follows the type: an exactly-once publish writes durable rows inside the caller's transaction - database I/O,
-      //async end to end by the type's contract - so the synchronous door refuses it. (C# cannot exclude a subtype statically,
+      //async end to end by the type's contract - so the synchronous Publish refuses it. (C# cannot exclude a subtype statically,
       //so the type contract is enforced here, exactly as the handler declaration verbs enforce theirs.) With the exactly-once
       //kind excluded, the bridge below bridges only participation - the handlers of the kinds whose contract keeps sync first-class.
       State.Assert(wrappedTevent is not IPublisherTevent<IExactlyOnceTevent>,
@@ -62,7 +62,7 @@ static class UnitOfWorkTeventPublisherRegistrar
 
    public async Task PublishAsync(ITevent tevent) => await PublishCoreAsync(PublisherTevent.Wrapped(tevent)).caf();
 
-   //Every tevent is wrapped before routing: a tevent published without a publisher-identifying wrapper is wrapped by the doors above, and routing operates on the wrapper's type.
+   //Every tevent is wrapped before routing: a tevent published without a publisher-identifying wrapper is wrapped by the publish methods above, and routing operates on the wrapper's type.
    async Task PublishCoreAsync(IPublisherTevent<ITevent> wrappedTevent)
    {
       State.Assert(Transaction.Current != null,

@@ -111,7 +111,7 @@ class TeventStoreUpdater : ITeventStoreReader, ITeventStoreUpdater
 
          //The Teventive taggregate model raises tevents synchronously - from constructors and domain methods - and this session
          //forwards them where they are raised, inside the caller's unit of work. That synchronous context meets the exactly-once
-         //publisher door's async-only contract here, in this one deliberate bridge; the alternative - an async taggregate domain
+         //publisher's async-only contract here, in this one deliberate bridge; the alternative - an async taggregate domain
          //model - would be a redesign of Teventive itself, not a call-site choice.
          wrappedTevents.ForEach(wrappedTevent => _teventPublisher.PublishAsync(wrappedTevent).GetAwaiter().GetResult());
       });

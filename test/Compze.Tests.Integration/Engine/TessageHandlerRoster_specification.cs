@@ -87,7 +87,7 @@ public class TessageHandlerRoster_specification : UniversalTestBase
             .Which.Message.Must().Contain(typeof(HandledVoidTommand).FullName!).Contain("single-handler");
    }
 
-   ///<summary>The registrar split partitions the tommand kinds by the doors that serve them: the exactly-once tommand is sent<br/>
+   ///<summary>The registrar split partitions the tommand kinds by how they are served: the exactly-once tommand is sent<br/>
    /// through the bus, every other tommand kind is navigated. The bus registrar's constraints enforce its side statically —<br/>
    /// a synchronous exactly-once tommand handler is no longer even expressible — so the declaration-time protection left to pin<br/>
    /// is the typermedia registrar refusing the bus's kind.</summary>

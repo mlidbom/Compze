@@ -12,6 +12,6 @@ public interface IQueryModelReader
    TValue Get<TValue>(EntityId key) where TValue : class;
 
    ///<summary>False when no query model with key <paramref name="key"/> and type <typeparamref name="TValue"/> can be produced;<br/>
-   /// otherwise true with the model in <paramref name="value"/> — the door for keys that may legitimately not exist.</summary>
+   /// otherwise true with the model in <paramref name="value"/> — the accessor for keys that may legitimately not exist.</summary>
    bool TryGet<TValue>(EntityId key, [NotNullWhen(true)] out TValue? value) where TValue : class;
 }

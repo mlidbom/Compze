@@ -96,13 +96,13 @@ public class Given_two_best_effort_endpoints : UniversalTestBase
       _bestEffortTeventsHandledOnTheSubscriber.Single().SequenceNumber.Must().Be(1);
    }
 
-   //Published through the async door: an exactly-once tevent's own type contract demands it, and this pin is about the
-   //missing delivery leg - the sync door would refuse the tevent one assert earlier, for the synchrony reason.
+   //Published through PublishAsync: an exactly-once tevent's own type contract demands it, and this pin is about the
+   //missing delivery leg - the synchronous Publish would refuse the tevent one assert earlier, for the synchrony reason.
    [PCT] public async Task publishing_a_tevent_declaring_the_exactly_once_contract_fails_loud_naming_the_missing_delivery_leg() =>
       (await InvokingAsync(async () => await PublishAsyncOnThePublisherEndpointInATransaction(new TeventDeclaringTheExactlyOnceContract()))
         .Must().ThrowAsync<Exception>()).Which.Message.Must().Contain("demands the exactly-once delivery leg");
 
-   [PCT] public void publishing_a_tevent_declaring_the_exactly_once_contract_through_the_synchronous_door_fails_loud_naming_the_async_contract() =>
+   [PCT] public void publishing_a_tevent_declaring_the_exactly_once_contract_through_the_synchronous_publish_fails_loud_naming_the_async_contract() =>
       Invoking(() => PublishOnThePublisherEndpointInATransaction(new TeventDeclaringTheExactlyOnceContract()))
         .Must().Throw<Exception>().Which.Message.Must().Contain("exactly-once kinds are async end to end");
 

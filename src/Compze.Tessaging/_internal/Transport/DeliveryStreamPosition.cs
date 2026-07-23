@@ -22,7 +22,7 @@ class DeliveryStreamPosition
    internal long SequenceNumber { get; }
 
    ///<summary>The sequence number of the pair's previous still-deliverable-or-received stream member at this delivery<br/>
-   /// attempt — 0 when this tessage leads the stream. The receiving inbox door admits this tessage iff its admission<br/>
+   /// attempt — 0 when this tessage leads the stream. The receiving inbox admits this tessage iff its admission<br/>
    /// high-water mark equals this value.</summary>
    internal long PredecessorSequenceNumber { get; }
 

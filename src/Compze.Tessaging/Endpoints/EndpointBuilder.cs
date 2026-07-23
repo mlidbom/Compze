@@ -241,7 +241,7 @@ public abstract class EndpointBuilder
                    () => "The endpoint declares no serializer. Declare it in the environment — e.g. endpointBuilder.NewtonsoftSerializer() — the endpoint's one serializer parameter. (A testing container cloned from a suite root already carries the suite's serializers; only such an environment declares none.)");
    }
 
-   ///<summary>The registrations both endpoint tiers share: the engine and its doors, identity, discovery serving, the<br/>
+   ///<summary>The registrations both endpoint tiers share: the engine and its application-facing interfaces, identity, discovery serving, the<br/>
    /// transport-speaking substrate (router, peer memory and administration, the best-effort delivery leg, request handling),<br/>
    /// and Typermedia's serving and navigating sides — both tiers serve all four tessage kinds, unconditionally.</summary>
    void RegisterTheSharedEndpointCore()
@@ -256,14 +256,14 @@ public abstract class EndpointBuilder
       _registerTransportProtocol!(Registrar);
       _registerSerializer?.Invoke(Registrar);
 
-      //The engine and its doors — the same core a plain container's LocalTessagingEngine composes.
+      //The engine and its application-facing interfaces — the same core a plain container's LocalTessagingEngine composes.
       Registrar.RegisterLocalTessagingEngineCore(_engine.HandlerRegistrations)
                .UnitOfWorkTeventPublisher()
                .IndependentTeventPublisher()
                .LocalTypermediaNavigatorSession()
                .IndependentLocalTypermediaNavigator();
 
-      //The transport-speaking substrate: one router, peer memory and its administration, the waiting sends' availability door,
+      //The transport-speaking substrate: one router, peer memory and its administration, the waiting sends' availability machinery,
       //the best-effort tevent delivery leg (the RequirePeers/DoNotQueueTeventsFor declarations are captured by the lists),
       //and the tier's request handling.
       Registrar.PeerRegistry()

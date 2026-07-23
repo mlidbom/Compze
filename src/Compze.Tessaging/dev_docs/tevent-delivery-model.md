@@ -122,7 +122,7 @@ There are two ways to publish, distinguished by the caller's relationship to a *
 paired with one ambient transaction, begun and completed together (see
 `src/Compze.DependencyInjection/dev_docs/unit-of-work-model.md`). Code inside one publishes through the
 unit-of-work publisher, which joins it; code outside any publishes through the independent publisher, which
-gives each publish its own. The same duality repeats across the front doors:
+gives each publish its own. The same duality repeats across the application-facing interfaces:
 `IUnitOfWorkTommandSender`/`IIndependentTommandSender` for sending tommands, and
 `ILocalTypermediaNavigatorSession`/`IIndependentLocalTypermediaNavigator` for navigating the local
 typermedia API.
@@ -153,7 +153,7 @@ pointing at `PublishAsync` — publishing one writes durable rows inside the cal
 database I/O, async end to end by the type's contract.
 
 It requires and honors the ambient transaction. Required: publishing with none present throws — there is no
-unit of work to publish within, and the independent publisher is the door for such callers. Honored: both
+unit of work to publish within, and the independent publisher is the interface for such callers. Honored: both
 remote legs deliver on commit, so a rolled-back transaction never leaks a tevent — for the best-effort leg
 that is "sent-on-commit without durability", not "sent transactionally". It auto-wraps a tevent published
 without a publisher-identifying wrapper.
@@ -181,13 +181,13 @@ Independence is asserted, not assumed — safety lives in asserts, not names: ca
 transaction it throws, because `TransactionScopeOption.Required` would silently *join* that transaction and
 the publish would not stand alone. Inside a unit of work, publish through `IUnitOfWorkTeventPublisher`.
 
-Before this door existed, every outside-the-pipeline caller hand-built the unit of work from container
+Before this interface existed, every outside-the-pipeline caller hand-built the unit of work from container
 primitives — `ExecuteInIsolatedScope(scope => scope.Resolve<ITeventPublisher>().Publish(fact))` — forcing
 application code to speak container language to say one domain verb.
 
 ### No publish-side escape hatch, deliberately
 
-There is no "publish ignoring my transaction" door: no real consumer for one exists — the imaginable
+There is no "publish ignoring my transaction" interface: no real consumer for one exists — the imaginable
 client would be tracing/monitoring infrastructure that must emit *now* regardless of the surrounding
 transaction's fate — and without a consumer to arbitrate them, its correct semantics are contested (deliver
 in the caller's scope under suppression vs. as its own unit of work; whether an
@@ -207,7 +207,7 @@ Registering a handler (`ForTevent<TTevent>(...)`) says only "this endpoint under
 delivery guarantee comes from each arriving tevent's type — the subscriber never picks it:
 
 - a local publish → participation (synchronous, publisher's transaction);
-- an arriving `IExactlyOnceTevent` → through the inbox: admitted in stream order at the door, registered
+- an arriving `IExactlyOnceTevent` → through the inbox: admitted in stream order on arrival, registered
   durably, handled in its own transaction under a row-level handling claim, retried until handled. The
   sender is acknowledged at admission, so a hard crash between admission and handler-commit gets no
   redelivery — the inbox's recovery scan at endpoint start re-enqueues every admitted but unhandled tessage,
@@ -283,10 +283,10 @@ On the exactly-once rung the order is enforced by construction, at both ends of 
   destination, never looking past it until it is delivered and acknowledged. Pipelining (multiple in flight)
   is deliberately not implemented: it is only worth its complexity for high-latency links, and same-machine
   delivery is fast sequentially.
-- **The receiver's inbox door admits only in stream order.** Each delivery attempt declares its predecessor —
+- **The receiver's inbox admits only in stream order.** Each delivery attempt declares its predecessor —
   the pair's previous still-deliverable-or-received stream member, freshly computed from the sender's durable
   dispatching rows, so a hole punched by sender-side pruning (a discarded tevent, a stranded tommand) is
-  crossed exactly when the rows say it is real. The door admits a tessage iff the pair's admission high-water
+  crossed exactly when the rows say it is real. The inbox admits a tessage iff the pair's admission high-water
   mark equals that declared predecessor; a tessage at or below the mark is acknowledged as a redelivered
   duplicate, and anything else is refused back into the sender's retry, which heals the stream by leading
   with the missing predecessor. No sender-side path — a commit hook racing the recovery backlog load, a
@@ -296,7 +296,7 @@ Per rung:
 
 - **Exactly-once: order also survives a sender restart.** Recovery reloads the undelivered backlog into the
   sequence-keyed send queue — re-establishing head-of-line on the oldest undelivered tessage — and the inbox
-  door's admission rule holds regardless.
+  admission rule holds regardless.
 - **Best-effort: in order, across the subscriber's downtime.** Every remembered subscriber has an in-memory
   queue on the publisher that outlives connections: tevents published while the subscriber is down accumulate
   in publish order and its next connection drains them on its return — queue-while-down (see

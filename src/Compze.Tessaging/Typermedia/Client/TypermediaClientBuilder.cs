@@ -51,7 +51,7 @@ public sealed class TypermediaClientBuilder
    }
 
    void AssertStillComposing() =>
-      State.Assert(!_composed, () => "The client is already composed — the declaration surface exists only inside the composition callback.");
+      State.Assert(!_composed, () => "The client is already composed — the builder exists only inside the build callback.");
 
    internal TypermediaClient Build()
    {

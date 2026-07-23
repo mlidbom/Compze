@@ -98,7 +98,7 @@ The engine owns four things:
 
 1. **The roster** — the closed set of what this component understands.
 2. **The executor** — the one implementation of handler execution.
-3. **The doors** — the publishers and navigators application code injects.
+3. **The application-facing interfaces** — the publishers and navigators application code injects.
 4. **Tevent observation** — the transaction-ignoring watch surface.
 
 ### The roster
@@ -124,16 +124,16 @@ one execution context:
 - a **tommand** handler runs in a unit of work — it receives an `IUnitOfWorkResolver`;
 - a **tuery** handler runs in a scope — it receives an `IScopeResolver`.
 
-Every arrival path calls this one executor: the local doors (including a tommand send whose handler is in
+Every arrival path calls this one executor: the application-facing interfaces (including a tommand send whose handler is in
 the roster — the inline path the consistency law mandates), an endpoint's inbox, an endpoint's transport
 server. There is exactly one implementation of "run this roster's response correctly", and therefore
 exactly one policy for its failures: a tessage of a single-handler kind that reaches an engine with no
 handler for it raises the no-handler exception family — which, per
 [the peer model](peer-model.md), is exclusively the patience-exhausted failure.
 
-### The doors
+### The application-facing interfaces
 
-Application code never touches the engine directly; it injects the doors:
+Application code never touches the engine directly; it injects these interfaces:
 
 - `IUnitOfWorkTeventPublisher` / `IIndependentTeventPublisher` — publishing tevents from inside a unit of
   work, or from code that must not be inside one.
@@ -142,16 +142,16 @@ Application code never touches the engine directly; it injects the doors:
 
 The UnitOfWork/Independent axis is the
 [unit-of-work model](../../Compze.DependencyInjection/dev_docs/unit-of-work-model.md): the prefix
-names the weakest context the whole surface requires, and Independent doors assert no ambient transaction.
+names the weakest context the whole surface requires, and the Independent* interfaces assert no ambient transaction.
 
 Every published tevent gets in-boundary participation — delivery to this engine's subscribed handlers,
 inside the publisher's execution, per the consistency law. Whether a tevent *also* travels further is a
-property of its type, honored by whatever delivery machinery the composition possesses; the publisher door
+property of its type, honored by whatever delivery machinery the composition possesses; the publisher
 is the same either way (see [the tevent delivery model](tevent-delivery-model.md)).
 
-The whole door set — including the remote-facing doors an endpoint adds — by need:
+The whole set — including the remote-facing interfaces an endpoint adds — by need:
 
-| Need | Door | Requires |
+| Need | Interface | Requires |
 |---|---|---|
 | Publish a tevent inside my unit of work | `IUnitOfWorkTeventPublisher` | Ambient transaction (asserted) |
 | Publish a tevent as its own unit of work | `IIndependentTeventPublisher` | No ambient transaction (asserted) |
@@ -187,7 +187,7 @@ observer accepts by dropping to this rung — is in
 The engine is declared through its **builder** in one visible block, and the declaration is the one and
 only way anything gets into the engine.
 
-**Every declaration surface follows one idiom**: a builder method takes an `Action` over a short-lived
+**Every registration surface follows one idiom**: a builder method takes an `Action` over a short-lived
 registrar and returns the builder —
 
 ```csharp
@@ -214,7 +214,7 @@ container.Registrar.LocalTessagingEngine(engine => engine
 
 Type mappings are declared on the same builder — they serve persistent stores and, when an endpoint wraps
 the engine, the wire. Store integrations (a tevent store's `HandleTaggregate`, a document db's
-`HandleDocumentType`) plug into this same declaration surface: they are handler contributors like any
+`HandleDocumentType`) plug into this same registration surface: they are handler contributors like any
 other, arriving before the build like everything else.
 
 The same declaration block is the surface *everywhere* — a plain container, a best-effort endpoint, an
@@ -224,7 +224,7 @@ exactly-once endpoint — so an application's handler registrations run unchange
 
 Synchrony is part of the tessage's contract, declared like everything else by its type:
 
-- **Exactly-once kinds are async end to end.** Their doors are async — publishing an exactly-once tevent
+- **Exactly-once kinds are async end to end.** Their interfaces are async — publishing an exactly-once tevent
   or sending a tommand writes durable rows inside the caller's transaction, which is database I/O — and
   their handlers are async-only: an exactly-once handler transactionally modifies a database by
   construction, and that does not happen synchronously in 2026. Registering a synchronous handler for an
@@ -296,7 +296,7 @@ boundary guarantees:
   through the engine's executor.
 - **`ExactlyOnceEndpoint`.** Everything above, plus the durable vertical in its domain's database:
   the inbox (receiver dedup, transactional retry), the outbox (durable rows, recovery backlog, per-peer
-  exactly-once in-order delivery streams), durable peer memory, and the tommand-sending doors —
+  exactly-once in-order delivery streams), durable peer memory, and the tommand senders —
   `IUnitOfWorkTommandSender` / `IIndependentTommandSender`.
 
 Both endpoint types serve **all four message kinds, unconditionally**. What an endpoint understands is its
@@ -307,14 +307,14 @@ handler lives elsewhere crosses the boundary through the tier's machinery. Typer
 on both tiers — request/response neither queues nor persists. A send whose guarantee the composition cannot
 honor fails loud, never silently downgrades.
 
-An endpoint also extends the door set with the remote-facing doors: `IRemoteTypermediaNavigator` for
+An endpoint also extends the set with the remote-facing interfaces: `IRemoteTypermediaNavigator` for
 navigating other endpoints' typermedia, and (on the exactly-once tier) the tommand senders.
 
 The third composed shape is the **pure client** — `TypermediaClient`: a navigator and a transport client
 with no server — an external application navigating an endpoint's typermedia at a known address.
 
 Each endpoint type is a plain composition root: it openly lists its parts, and composition choices are
-parameters filled through its declaration surface (`ExactlyOnceEndpointBuilder` /
+parameters filled through its builder (`ExactlyOnceEndpointBuilder` /
 `BestEffortEndpointBuilder`) — see the composition walk-through in
 [the hosting model](../../Compze.Hosting/dev_docs/hosting-model.md).
 

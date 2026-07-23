@@ -20,7 +20,7 @@ public static class LocalTessagingEngineRegistrar
 {
    ///<summary>Composes the container's one LocalTessagingEngine from its declaration block: the<br/>
    /// <see cref="TessageHandlerRoster"/> built from the declared handlers, the one <see cref="TessageHandlerExecutor"/>, and<br/>
-   /// the doors application code injects — <see cref="IUnitOfWorkTeventPublisher"/>/<see cref="IIndependentTeventPublisher"/><br/>
+   /// the interfaces application code injects — <see cref="IUnitOfWorkTeventPublisher"/>/<see cref="IIndependentTeventPublisher"/><br/>
    /// for publishing tevents, <see cref="ILocalTypermediaNavigatorSession"/>/<see cref="IIndependentLocalTypermediaNavigator"/><br/>
    /// for strictly-local navigation. Exactly one engine per container: composing a second explodes.</summary>
    ///<remarks>The engine requires the type identity it needs where its core registers — local dispatch routes by<br/>

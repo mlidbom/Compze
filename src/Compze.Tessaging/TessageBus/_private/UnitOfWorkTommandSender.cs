@@ -17,7 +17,7 @@ static class UnitOfWorkTommandSenderRegistrar
       => registrar.Register(_private.UnitOfWorkTommandSender.RegisterWith);
 }
 
-///<summary>The <see cref="IUnitOfWorkTommandSender"/>: the tommand-sender door, which consults the endpoint's<br/>
+///<summary>The <see cref="IUnitOfWorkTommandSender"/>: the tommand sender, which consults the endpoint's<br/>
 /// <see cref="TessageHandlerRoster"/> to honor the consistency law. A tommand whose handler is in the roster executes inline,<br/>
 /// through the engine's one executor, in the sender's execution — exactly-once by construction: it is one transaction and no<br/>
 /// delivery machinery is involved. Only a tommand whose handler lives elsewhere crosses the endpoint boundary, through the<br/>

@@ -112,7 +112,7 @@ public partial class Given_a_container_composing_a_LocalTessagingEngine : Univer
                 return Task.CompletedTask;
              })));
 
-         //Taggregate tevents are exactly-once kinds, so they publish through the async door - bridged here because a specification context's act is its constructor.
+         //Taggregate tevents are exactly-once kinds, so they publish through PublishAsync - bridged here because a specification context's act is its constructor.
          Container.ScopeFactory.ExecuteUnitOfWorkAsync(async unitOfWork => await unitOfWork.Resolve<IUnitOfWorkTeventPublisher>().PublishAsync(_publishedWrappedTevent)).GetAwaiter().GetResult();
       }
 
@@ -255,7 +255,7 @@ public partial class Given_a_container_composing_a_LocalTessagingEngine : Univer
                 return Task.CompletedTask;
              })));
 
-         //An exactly-once tevent publishes through the async door - the sync Publish refuses it - bridged here because a specification context's act is its constructor.
+         //An exactly-once tevent publishes through PublishAsync - the sync Publish refuses it - bridged here because a specification context's act is its constructor.
          Container.RootResolver.Resolve<IIndependentTeventPublisher>().PublishAsync(_publishedWrappedTevent).GetAwaiter().GetResult();
       }
 

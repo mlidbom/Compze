@@ -7,7 +7,7 @@ using Compze.Tessaging.TessageTypes;
 
 namespace Compze.Tessaging.TessageBus;
 
-///<summary>The declaration surface for tevent observation — the deliberately transaction-ignoring watch surface, declared under<br/>
+///<summary>Registers tevent observers — observation is the deliberately transaction-ignoring watch surface, declared under<br/>
 /// its own verb (<see cref="LocalTessagingEngineBuilder.ObserveTevents"/>) so the distinct semantics are visible at the<br/>
 /// declaration site: an observer watches, never participates. Handed to the callback and existing only inside it, exactly like<br/>
 /// <see cref="TessageBusHandlerRegistrar"/>.</summary>

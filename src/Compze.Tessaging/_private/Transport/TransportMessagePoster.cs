@@ -41,7 +41,7 @@ class TransportMessagePoster : ITransportMessagePoster
 
    ///<summary>The exactly-once kinds carry the tessage's <see cref="DeliveryStreamPosition"/> on the wire — this endpoint is<br/>
    /// the stream's sender, the outbox save assigned the sequence number, the delivery stream computed the attempt's<br/>
-   /// predecessor — so the receiver's inbox door can admit in stream order.</summary>
+   /// predecessor — so the receiver's inbox can admit in stream order.</summary>
    DeliveryStreamPosition? DeliveryStreamPositionFor(TransportTessage.OutGoing tessage, long? predecessorSequenceNumber) =>
       tessage.DeliveryStreamSequenceNumber is { } sequenceNumber
          ? new DeliveryStreamPosition(_configuration.Id, sequenceNumber, predecessorSequenceNumber._assert().NotNull().Value)

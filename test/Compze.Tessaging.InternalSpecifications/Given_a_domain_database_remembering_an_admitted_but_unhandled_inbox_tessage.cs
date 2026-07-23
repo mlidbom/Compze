@@ -56,7 +56,7 @@ public class Given_a_domain_database_remembering_an_admitted_but_unhandled_inbox
           });
    }
 
-   //The crash is scripted through the inbox sql layer: the tessage is admitted through the door exactly as an arriving
+   //The crash is scripted through the inbox sql layer: the tessage is admitted exactly as an arriving
    //delivery would be - acknowledged to its sender, registered UnHandled - and then no handler ever runs, which is
    //precisely what a process killed between admission and handler-commit leaves behind.
    protected override async Task InitializeAsyncInternal()

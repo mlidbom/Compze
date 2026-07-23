@@ -9,7 +9,7 @@ public interface IExactlyOnceEndpointDeclaration
 {
    ///<summary>Builds this declaration into a running-ready <see cref="ExactlyOnceEndpoint"/>: the template that guarantees<br/>
    /// every composition the same setup order — the environment declares its choices and the domain database binding, the<br/>
-   /// declaration's aspects and doors follow, the general <see cref="ExactlyOnceEndpointDeclaration{TIdentity}.Declare"/><br/>
+   /// declaration's aspects and registration overrides follow, the general <see cref="ExactlyOnceEndpointDeclaration{TIdentity}.Declare"/><br/>
    /// override last, and the build closes the roster. Called by the host that owns the endpoint<br/>
    /// (<see cref="IEndpointHost.RegisterEndpoint(IExactlyOnceEndpointDeclaration)"/>) or directly — an endpoint is<br/>
    /// first-class and needs no host.</summary>

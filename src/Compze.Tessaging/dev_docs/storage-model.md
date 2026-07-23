@@ -30,7 +30,7 @@ prefixed with the endpoint's name:
 | Table | Holds |
 |---|---|
 | `«Name»_InboxTessages` | Admitted tessages: dedup identity, delivery stream position, body, handling status |
-| `«Name»_InboxDeliveryStreamAdmissions` | Per-sender admission high-water marks: the inbox door admits a tessage exactly when the pair's mark equals its declared predecessor |
+| `«Name»_InboxDeliveryStreamAdmissions` | Per-sender admission high-water marks: the inbox admits a tessage exactly when the pair's mark equals its declared predecessor |
 | `«Name»_OutboxTessages` | Sent tessages: durable rows awaiting delivery |
 | `«Name»_OutboxTessageDispatching` | Per-receiver delivery bookkeeping: each row's assigned `DeliveryStreamSequenceNumber`, receipt, and `IsStranded` |
 | `«Name»_OutboxDeliveryStreamCounters` | Per-receiver delivery stream counters: the save transaction's increment assigns each dispatching row its sequence number, and the counter row's lock serializes the pair's commits |
@@ -50,7 +50,7 @@ Creating an endpoint needs nothing beyond the `CREATE TABLE` rights the framewor
 schema-creation already uses, on every backend identically — which is what keeps endpoint creation a
 handful of lines with zero operational ceremony. Decommissioning an endpoint's storage means dropping its
 prefixed table-set and deleting its catalog entry (refused while its process lock is held); the
-administration door for that act does not exist yet — it is parked as a todo at the catalog surface,
+administration operation for that act does not exist yet — it is parked as a todo at the catalog surface,
 awaiting its first consumer.
 
 ## The domain-level tables are deliberately unprefixed

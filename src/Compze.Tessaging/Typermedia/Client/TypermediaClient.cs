@@ -21,7 +21,7 @@ public class TypermediaClient : IAsyncDisposable
    readonly IDependencyInjectionContainer _container;
    readonly ITypermediaClientRouter _typermediaClientRouter;
 
-   ///<summary>The door through which the client navigates the connected endpoints' typermedia.</summary>
+   ///<summary>Navigates the connected endpoints' typermedia.</summary>
    public IRemoteTypermediaNavigator Navigator { get; }
 
    internal TypermediaClient(IDependencyInjectionContainer container)
@@ -32,7 +32,7 @@ public class TypermediaClient : IAsyncDisposable
       _typermediaClientRouter.Start();
    }
 
-   ///<summary>Composes a pure client: runs <paramref name="build"/> over the client's declaration surface<br/>
+   ///<summary>Composes a pure client: runs <paramref name="build"/> over the client's builder<br/>
    /// (<see cref="TypermediaClientBuilder"/>), builds the client's container, and returns the client, ready to<br/>
    /// <see cref="ConnectAsync"/> to the endpoints it knows.</summary>
    public static TypermediaClient Build(IContainerBuilder containerBuilder, Action<TypermediaClientBuilder> build)
