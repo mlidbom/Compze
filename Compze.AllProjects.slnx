@@ -160,7 +160,7 @@
     <Project Path="src/SolutionStructure/Solution.Agents.csproj" />
     <Project Path="src/SolutionStructure/Solution.Misc.csproj" />
     <Project Path="src/SolutionStructure/Solution.UserDocs.csproj" />
-    <Project Path="src/SolutionStructure/Solution.dev_docs.csproj" />
+    <Project Path="src/SolutionStructure/Solution.docs.csproj" />
     <Project Path="src/SolutionStructure/Solution.EditorConfigs.csproj" />
     <Project Path="src/SolutionStructure/Solution.Markdown.csproj" />
     <Project Path="src/SolutionStructure/Solution.TestConfig.csproj" />

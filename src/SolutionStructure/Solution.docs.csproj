@@ -1,0 +1,11 @@
+<!-- ReSharper disable MarkupAttributeTypo -->
+<Project Sdk="Microsoft.NET.Sdk">
+   <PropertyGroup>
+     <RootNamespace>Solution.dev_docs</RootNamespace>
+   </PropertyGroup>
+   <Import Project="solutionstructure.minimal-build-involvement.props" />
+
+   <ItemGroup>
+      <None Include="../../**/*_docs/**" Exclude="$(CompzeExcludes);**/TODO/**;**/done/**;**/Websites/Website/**" KeepDuplicates="false" />
+   </ItemGroup>
+</Project>
