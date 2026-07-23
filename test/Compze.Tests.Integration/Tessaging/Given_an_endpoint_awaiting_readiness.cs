@@ -1,4 +1,5 @@
 using Compze.Tessaging.Endpoints;
+using Compze.DependencyInjection.Abstractions;
 using Compze.Must;
 using Compze.Tessaging.Endpoints.ExactlyOnce;
 using Compze.Tessaging.Endpoints.Exceptions;
@@ -21,28 +22,45 @@ namespace Compze.Tests.Integration.Tessaging;
 /// discovery wait that a waiting send would otherwise make the first unlucky caller pay. A handler is reachable when the<br/>
 /// endpoint itself serves the type, or when a send of the type would proceed without waiting; exhausted patience throws<br/>
 /// <see cref="EndpointNotReadyWithinPatienceException"/> naming every type still unavailable<br/>
-/// (see <c>src/Compze.Tessaging/dev_docs/peer-model.md</c>).</summary>
+/// (see <c>src/Compze.Tessaging/dev_docs/peers.md</c>).</summary>
 public class Given_an_endpoint_awaiting_readiness : UniversalTestBase
 {
-   static readonly EndpointId AwaitingEndpointId = new(Guid.Parse("C5D91E37-8A46-4B02-9F58-1E74A6C0D823"));
-   static readonly EndpointId LateHandlerEndpointId = new(Guid.Parse("7B30F8C2-46D5-4E19-A8B7-5C92E1D46F30"));
-
    readonly TestingEndpointHost _host;
    readonly ExactlyOnceEndpoint _awaitingEndpoint;
 
    public Given_an_endpoint_awaiting_readiness()
    {
       _host = TestingEndpointHost.Create();
-      _awaitingEndpoint = _host.RegisterExactlyOnceEndpoint(
-         "Awaiting",
-         AwaitingEndpointId,
-         endpointBuilder => endpointBuilder
-            .RegisterComponents(registrar => registrar.RequireIntegrationTestTypeMappings())
-            //The endpoint's own roster serves these two - what the readiness-for-own-types specification awaits.
-            .RegisterTessageBusHandlers(handle => handle
-                       .ForTommand((MyExactlyOnceTommand _) => Task.CompletedTask))
-            .RegisterTypermediaHandlers(handle => handle
-                       .ForTuery((MyTuery _) => new MyTueryResult())));
+      _awaitingEndpoint = _host.RegisterEndpoint(new AwaitingEndpointDeclaration());
+   }
+
+   class AwaitingEndpointDeclaration : ExactlyOnceEndpointDeclaration<AwaitingEndpointDeclaration>, IEndpointIdentity
+   {
+      public static string Name => "Awaiting";
+      public static EndpointId Id => new(Guid.Parse("C5D91E37-8A46-4B02-9F58-1E74A6C0D823"));
+
+      protected override void RegisterComponents(IComponentRegistrar registrar) => registrar.RequireIntegrationTestTypeMappings();
+
+      //The endpoint's own roster serves these two - what the readiness-for-own-types specification awaits.
+      protected override void RegisterExactlyOnceTommandHandlers(IExactlyOnceTommandHandlerRegistrar handle) => handle
+         .ForTommand((MyExactlyOnceTommand _) => Task.CompletedTask);
+
+      protected override void RegisterTueryHandlers(ITueryHandlerRegistrar handle) => handle
+         .ForTuery((MyTuery _) => new MyTueryResult());
+   }
+
+   class LateHandlerEndpointDeclaration : ExactlyOnceEndpointDeclaration<LateHandlerEndpointDeclaration>, IEndpointIdentity
+   {
+      public static string Name => "LateHandler";
+      public static EndpointId Id => new(Guid.Parse("7B30F8C2-46D5-4E19-A8B7-5C92E1D46F30"));
+
+      protected override void RegisterComponents(IComponentRegistrar registrar) => registrar.RequireIntegrationTestTypeMappings();
+
+      protected override void RegisterExactlyOnceTommandHandlers(IExactlyOnceTommandHandlerRegistrar handle) => handle
+         .ForTommand((MyExactlyOnceTommandHandledOnlyByTheLateEndpoint _) => Task.CompletedTask);
+
+      protected override void RegisterTueryHandlers(ITueryHandlerRegistrar handle) => handle
+         .ForTuery((MyTueryHandledOnlyByTheLateEndpoint _) => new MyTueryResult());
    }
 
    protected override async Task InitializeAsyncInternal() => await _host.StartAsync();
@@ -81,15 +99,7 @@ public class Given_an_endpoint_awaiting_readiness : UniversalTestBase
    /// announcement is what the readiness await is spent waiting for.</summary>
    async Task StartTheLateHandlerEndpointAsync()
    {
-      var lateHandlerEndpoint = _host.RegisterExactlyOnceEndpoint(
-         "LateHandler",
-         LateHandlerEndpointId,
-         endpointBuilder => endpointBuilder
-            .RegisterComponents(registrar => registrar.RequireIntegrationTestTypeMappings())
-            .RegisterTessageBusHandlers(handle => handle
-                       .ForTommand((MyExactlyOnceTommandHandledOnlyByTheLateEndpoint _) => Task.CompletedTask))
-            .RegisterTypermediaHandlers(handle => handle
-                       .ForTuery((MyTueryHandledOnlyByTheLateEndpoint _) => new MyTueryResult())));
+      var lateHandlerEndpoint = _host.RegisterEndpoint(new LateHandlerEndpointDeclaration());
       await lateHandlerEndpoint.StartAsync();
    }
 }

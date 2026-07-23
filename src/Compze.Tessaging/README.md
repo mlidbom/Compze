@@ -12,7 +12,7 @@ This package provides the messaging infrastructure that powers Compze's type-rou
 
 - **Tommand, tuery, and tevent handling** — Type-routed message dispatch for `ITommand`, `ITuery`, and `ITevent`
 - **Message routing** — Automatic routing based on .NET type compatibility
-- **Three composed shapes** — `LocalTessagingEngine(...)` composes the engine — the synchronous local core of the whole paradigm — into a plain container with no transports at all; `BestEffortEndpoint.Compose(...)` gives the engine identity and a wire with nothing persisted anywhere; `ExactlyOnceEndpoint.Compose(...)` adds the durable vertical (inbox, outbox, durable peer memory, the tommand senders) through which endpoints converse with delivery guarantees. `TypermediaClient` is the pure client — a navigator and a transport client with no server, for external applications
+- **Three composed shapes** — `LocalTessagingEngine(...)` composes the engine — the synchronous local core everything else rides — into a plain container with no transports at all; a `BestEffortEndpointDeclaration` builds an endpoint giving the engine identity and a wire with nothing persisted anywhere; an `ExactlyOnceEndpointDeclaration` adds the durable vertical (inbox, outbox, durable peer memory, the tommand senders) through which endpoints converse with delivery guarantees. `TypermediaClient` is the pure client — a navigator and a transport client with no server, for external applications
 
 ### Type-routed messaging example
 

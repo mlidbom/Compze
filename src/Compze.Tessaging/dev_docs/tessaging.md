@@ -1,12 +1,12 @@
-# The Tessaging model
+# Tessaging
 
 This document takes a developer who is new to the Tessaging code from zero to understanding what the system
 *is* — the paradigm, its consistency model, the engine at its heart, and the endpoints built around it. Its
 companions each take one part deeper: [the tevent delivery model](tevent-delivery-model.md) (how tevents
-travel and what each guarantee means), [the peer model](peer-model.md) (what an endpoint remembers about the
-endpoints it works with, and everything computed from that memory), [the storage model](storage-model.md)
+travel and what each guarantee means), [peers](peers.md) (what an endpoint remembers about the
+endpoints it works with, and everything computed from that memory), [storage](storage.md)
 (the domain database and what Tessaging keeps in it), and
-[the hosting model](../../Compze.Hosting/dev_docs/hosting-model.md) (what running all of this looks
+[Compze hosting](../../Compze.Hosting/dev_docs/hosting.md) (what running all of this looks
 like, in production and in tests).
 
 ## Tessaging and its two siblings
@@ -98,7 +98,7 @@ The engine owns four things:
 
 1. **The roster** — the closed set of what this component understands.
 2. **The executor** — the one implementation of handler execution.
-3. **The doors** — the publishers and navigators application code injects.
+3. **The application-facing interfaces** — the publishers and navigators application code injects.
 4. **Tevent observation** — the transaction-ignoring watch surface.
 
 ### The roster
@@ -124,16 +124,16 @@ one execution context:
 - a **tommand** handler runs in a unit of work — it receives an `IUnitOfWorkResolver`;
 - a **tuery** handler runs in a scope — it receives an `IScopeResolver`.
 
-Every arrival path calls this one executor: the local doors (including a tommand send whose handler is in
+Every arrival path calls this one executor: the application-facing interfaces (including a tommand send whose handler is in
 the roster — the inline path the consistency law mandates), an endpoint's inbox, an endpoint's transport
 server. There is exactly one implementation of "run this roster's response correctly", and therefore
 exactly one policy for its failures: a tessage of a single-handler kind that reaches an engine with no
 handler for it raises the no-handler exception family — which, per
-[the peer model](peer-model.md), is exclusively the patience-exhausted failure.
+[peers](peers.md), is exclusively the patience-exhausted failure.
 
-### The doors
+### The application-facing interfaces
 
-Application code never touches the engine directly; it injects the doors:
+Application code never touches the engine directly; it injects these interfaces:
 
 - `IUnitOfWorkTeventPublisher` / `IIndependentTeventPublisher` — publishing tevents from inside a unit of
   work, or from code that must not be inside one.
@@ -141,17 +141,17 @@ Application code never touches the engine directly; it injects the doors:
   tueries and tommands in the caller's session, or independently.
 
 The UnitOfWork/Independent axis is the
-[unit-of-work model](../../Compze.DependencyInjection/dev_docs/unit-of-work-model.md): the prefix
-names the weakest context the whole surface requires, and Independent doors assert no ambient transaction.
+[the unit of work](../../Compze.DependencyInjection/dev_docs/unit-of-work.md): the prefix
+names the weakest context the whole surface requires, and the Independent* interfaces assert no ambient transaction.
 
 Every published tevent gets in-boundary participation — delivery to this engine's subscribed handlers,
 inside the publisher's execution, per the consistency law. Whether a tevent *also* travels further is a
-property of its type, honored by whatever delivery machinery the composition possesses; the publisher door
+property of its type, honored by whatever delivery machinery the composition possesses; the publisher
 is the same either way (see [the tevent delivery model](tevent-delivery-model.md)).
 
-The whole door set — including the remote-facing doors an endpoint adds — by need:
+The whole set — including the remote-facing interfaces an endpoint adds — by need:
 
-| Need | Door | Requires |
+| Need | Interface | Requires |
 |---|---|---|
 | Publish a tevent inside my unit of work | `IUnitOfWorkTeventPublisher` | Ambient transaction (asserted) |
 | Publish a tevent as its own unit of work | `IIndependentTeventPublisher` | No ambient transaction (asserted) |
@@ -187,7 +187,7 @@ observer accepts by dropping to this rung — is in
 The engine is declared through its **builder** in one visible block, and the declaration is the one and
 only way anything gets into the engine.
 
-**Every declaration surface follows one idiom**: a builder method takes an `Action` over a short-lived
+**Every registration surface follows one idiom**: a builder method takes an `Action` over a short-lived
 registrar and returns the builder —
 
 ```csharp
@@ -214,7 +214,7 @@ container.Registrar.LocalTessagingEngine(engine => engine
 
 Type mappings are declared on the same builder — they serve persistent stores and, when an endpoint wraps
 the engine, the wire. Store integrations (a tevent store's `HandleTaggregate`, a document db's
-`HandleDocumentType`) plug into this same declaration surface: they are handler contributors like any
+`HandleDocumentType`) plug into this same registration surface: they are handler contributors like any
 other, arriving before the build like everything else.
 
 The same declaration block is the surface *everywhere* — a plain container, a best-effort endpoint, an
@@ -224,7 +224,7 @@ exactly-once endpoint — so an application's handler registrations run unchange
 
 Synchrony is part of the tessage's contract, declared like everything else by its type:
 
-- **Exactly-once kinds are async end to end.** Their doors are async — publishing an exactly-once tevent
+- **Exactly-once kinds are async end to end.** Their interfaces are async — publishing an exactly-once tevent
   or sending a tommand writes durable rows inside the caller's transaction, which is database I/O — and
   their handlers are async-only: an exactly-once handler transactionally modifies a database by
   construction, and that does not happen synchronously in 2026. Registering a synchronous handler for an
@@ -257,7 +257,7 @@ Three concepts, deliberately orthogonal:
 - **The process** is pure deployment. A domain's endpoints may span processes; one process may host
   endpoints of several domains; the choice is free — except that **an endpoint runs in exactly one
   process at a time**. Two processes claiming the same endpoint is a misconfiguration that fails loud
-  at startup (the endpoint catalog's process lock — see [the storage model](storage-model.md));
+  at startup (the endpoint catalog's process lock — see [storage](storage.md));
   tolerating it — failover, fault tolerance — is its own future design effort.
 
 A **host** (`EndpointHost`, in `Compze.Hosting`) is an optional convenience owning several endpoints'
@@ -276,7 +276,7 @@ inbox, outbox, and durable peer memory, under the endpoint's name as prefix), th
 and the endpoint catalog enforces name uniqueness and the one-process-per-endpoint rule. A best-effort
 endpoint has no database and none of the above; the law and the boundary hold for it unchanged. The whole
 story — the prefix rule, the catalog, the process lock, schema creation — is
-[the storage model](storage-model.md).
+[storage](storage.md).
 
 On SQLite, a domain database is one single-writer file: co-located busy endpoints share its write gate.
 That is the price of the domain being one database, accepted for SQLite's role; the heavier backends have
@@ -296,7 +296,7 @@ boundary guarantees:
   through the engine's executor.
 - **`ExactlyOnceEndpoint`.** Everything above, plus the durable vertical in its domain's database:
   the inbox (receiver dedup, transactional retry), the outbox (durable rows, recovery backlog, per-peer
-  exactly-once in-order delivery streams), durable peer memory, and the tommand-sending doors —
+  exactly-once in-order delivery streams), durable peer memory, and the tommand senders —
   `IUnitOfWorkTommandSender` / `IIndependentTommandSender`.
 
 Both endpoint types serve **all four message kinds, unconditionally**. What an endpoint understands is its
@@ -307,16 +307,16 @@ handler lives elsewhere crosses the boundary through the tier's machinery. Typer
 on both tiers — request/response neither queues nor persists. A send whose guarantee the composition cannot
 honor fails loud, never silently downgrades.
 
-An endpoint also extends the door set with the remote-facing doors: `IRemoteTypermediaNavigator` for
+An endpoint also extends the set with the remote-facing interfaces: `IRemoteTypermediaNavigator` for
 navigating other endpoints' typermedia, and (on the exactly-once tier) the tommand senders.
 
 The third composed shape is the **pure client** — `TypermediaClient`: a navigator and a transport client
 with no server — an external application navigating an endpoint's typermedia at a known address.
 
 Each endpoint type is a plain composition root: it openly lists its parts, and composition choices are
-parameters filled through its declaration surface (`ExactlyOnceEndpointBuilder` /
+parameters filled through its builder (`ExactlyOnceEndpointBuilder` /
 `BestEffortEndpointBuilder`) — see the composition walk-through in
-[the hosting model](../../Compze.Hosting/dev_docs/hosting-model.md).
+[Compze hosting](../../Compze.Hosting/dev_docs/hosting.md).
 
 ### One router, one advertisement
 
@@ -338,7 +338,7 @@ An endpoint remembers every peer it has ever met — identity and last advertise
 following the tier: process-lifetime on the best-effort endpoint, database-backed on the exactly-once
 endpoint. Remembered peers are what fan-out, receiver binding, queue-while-down, and waiting are computed
 against; a peer's advertisement shrinking prunes what is owed to it, loudly. The whole story is
-[the peer model](peer-model.md).
+[peers](peers.md).
 
 Administration is a first-class production surface:
 
@@ -373,7 +373,7 @@ the mirror — retract → stop sending → stop listening. An announced address
 listening, in every process topology, because the ordering is per-endpoint; there is deliberately no
 ordering *between* endpoints, co-hosted or not. Startup order is nobody's problem: readiness fronts the
 wait where an application wants it paid, waiting sends absorb the churn windows, and queue-while-down and
-`RequirePeers` hold one-way tessages for peers not yet met (see [the peer model](peer-model.md)).
+`RequirePeers` hold one-way tessages for peers not yet met (see [peers](peers.md)).
 
 **Addresses come in two deployment strategies; identity is the `EndpointId` in both:**
 
@@ -400,7 +400,7 @@ test concerns (the tessages-in-flight tracker, the pooled database, the matrix-s
 serializer) at construction. A test cannot pass while work is silently in flight: disposal awaits the
 tracker's at-rest — which covers observation queues — and rethrows background exceptions no assertion
 observed. The testing host and the pluggable-component matrix are described in
-[the hosting model](../../Compze.Hosting/dev_docs/hosting-model.md). The specs live in
+[Compze hosting](../../Compze.Hosting/dev_docs/hosting.md). The specs live in
 `test/Compze.Tessaging.Specifications` (the project's own: storage rules, typermedia navigation, the pure
 client) and `test/Compze.Tests.Integration` (the black-box conversation suite, peer-memory pins, readiness,
 same-machine real-process specs), on shared fixtures from `test/Compze.Tests.Common`.

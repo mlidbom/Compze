@@ -1,10 +1,10 @@
-# The peer model: what an endpoint remembers about the endpoints it works with
+# Peers: what an endpoint remembers about the endpoints it works with
 
 This document takes a developer who is new to the Tessaging code from zero to understanding peers — the
 endpoint's durable memory of the endpoints it converses with, and everything computed from that memory:
 tevent fan-out membership, tommand receiver binding, queue-while-down, the advertisement lifecycle,
 decommissioning, and handler availability (waiting sends and readiness). It is a companion to
-[the Tessaging model](tessaging-model.md), which explains the paradigm, and to
+[Tessaging](tessaging.md), which explains the paradigm, and to
 [the tevent delivery model](tevent-delivery-model.md), which explains the delivery guarantees peer memory
 feeds.
 

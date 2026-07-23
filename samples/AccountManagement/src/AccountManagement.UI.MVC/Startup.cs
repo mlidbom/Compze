@@ -15,7 +15,8 @@ using Compze.Tessaging.Typermedia.Client;
 using Compze.Teventive.TeventStore.MicrosoftSql.Wiring;
 using Compze.Underscore;
 using JetBrains.Annotations;
-using static AccountManagement.AccountManagementServerDomainBootstrapper;
+//ASP.NET Core's implicit usings bring Microsoft.AspNetCore.Builder.EndpointBuilder into scope; this file means Compze's.
+using EndpointBuilder = Compze.Tessaging.Endpoints.EndpointBuilder;
 
 namespace AccountManagement.UI.MVC;
 
@@ -44,26 +45,10 @@ public class Startup
          "AccountManagement",
          new DirectoryInfo(Path.Combine(Path.GetTempPath(), "AccountManagement", "EndpointRegistry"))._mutate(it => it.Create()));
 
-      _host = EndpointHost.Production.Create(CreateEndpointContainerBuilder);
+      _host = EndpointHost.Production.Create(CreateEndpointContainerBuilder, new ProductionEnvironment(_endpointRegistry));
 
-      _domainEndpoint = _host.RegisterEndpoint(container => ExactlyOnceEndpoint.Build(
-         container, DomainEndpointName, DomainEndpointId,
-         endpointBuilder =>
-         {
-            DeclareProductionEnvironment(endpointBuilder);
-            //The statistics endpoint's query models update from this endpoint's tevents. Requiring the peer makes the bus
-            //queue its tevents for it even before first contact, so traffic can open without awaiting discovery.
-            endpointBuilder.RequirePeers(StatisticsEndpointId);
-            DeclareDomainEndpoint(endpointBuilder);
-         }));
-
-      _host.RegisterEndpoint(container => ExactlyOnceEndpoint.Build(
-         container, StatisticsEndpointName, StatisticsEndpointId,
-         endpointBuilder =>
-         {
-            DeclareProductionEnvironment(endpointBuilder);
-            DeclareStatisticsEndpoint(endpointBuilder);
-         }));
+      _domainEndpoint = _host.RegisterEndpoint(new AccountManagementDomainEndpointDeclaration());
+      _host.RegisterEndpoint(new AccountManagementStatisticsEndpointDeclaration());
    }
 
    static IContainerBuilder CreateEndpointContainerBuilder()
@@ -77,18 +62,27 @@ public class Startup
    ///<summary>The environment every endpoint of this composition runs in: the ASP.NET Core endpoint transport, Newtonsoft as<br/>
    /// the endpoint's one serializer and as the stores' persisted format, the MsSql domain database with its sql layers, the<br/>
    /// same-machine registry, and the configuration file the connection string is read from.</summary>
-   void DeclareProductionEnvironment(ExactlyOnceEndpointBuilder endpointBuilder) =>
-      endpointBuilder
-         .TransportProtocol(registrar => registrar.AspNetCoreEndpointTransport())
-         .NewtonsoftSerializer()
-         .ConfigurePersistence(registrar => registrar.MsSqlDomainDatabase(DomainDatabaseConnectionStringName)
-                                                     .MsSqlTessagingSqlLayer()
-                                                     .MsSqlDocumentDbSqlLayer()
-                                                     .MsSqlTeventStoreSqlLayer())
-         .ParticipateIn(_endpointRegistry)
-         .RegisterComponents(registrar => registrar.NewtonsoftDocumentDbSerializer()
-                                                   .NewtonsoftTeventStoreSerializer()
-                                                   .JSonAppConfigFileConfigurationParameterProvider());
+   class ProductionEnvironment : IEndpointEnvironment
+   {
+      readonly InterprocessEndpointRegistry _endpointRegistry;
+
+      internal ProductionEnvironment(InterprocessEndpointRegistry endpointRegistry) => _endpointRegistry = endpointRegistry;
+
+      public void Configure(EndpointBuilder endpointBuilder) =>
+         endpointBuilder
+            .TransportProtocol(registrar => registrar.AspNetCoreEndpointTransport())
+            .NewtonsoftSerializer()
+            .ParticipateIn(_endpointRegistry)
+            .RegisterComponents(registrar => registrar.NewtonsoftDocumentDbSerializer()
+                                                      .NewtonsoftTeventStoreSerializer()
+                                                      .JSonAppConfigFileConfigurationParameterProvider());
+
+      public void ConfigureDomainDatabase(ExactlyOnceEndpointBuilder endpointBuilder) =>
+         endpointBuilder.ConfigurePersistence(registrar => registrar.MsSqlDomainDatabase(DomainDatabaseConnectionStringName)
+                                                                    .MsSqlTessagingSqlLayer()
+                                                                    .MsSqlDocumentDbSqlLayer()
+                                                                    .MsSqlTeventStoreSqlLayer());
+   }
 
    // ReSharper disable once MemberCanBePrivate.Global
    public IConfiguration Configuration { [UsedImplicitly] get; }

@@ -16,13 +16,13 @@ interface ITessagingSqlLayer
       /// Each dispatching row is assigned its <see cref="DeliveryStreamPosition"/> sequence number here, in the caller's save<br/>
       /// transaction, from the pair's counter row (<see cref="OutboxDeliveryStreamCountersSchemaStrings"/>) — whose lock<br/>
       /// serializes the pair's commits, so sequence order is commit order. Returns each receiver's assigned sequence number,<br/>
-      /// which the commit hook hands the connection's delivery stream and the wire envelope carries to the receiver's inbox door.</summary>
+      /// which the commit hook hands the connection's delivery stream and the wire envelope carries to the receiver's inbox.</summary>
       Task<IReadOnlyDictionary<EndpointId, long>> SaveTessageAsync(OutboxTessageWithReceivers tessageWithReceivers);
 
       ///<summary>The declared predecessor for a delivery attempt of the dispatching row at <paramref name="sequenceNumber"/><br/>
       /// bound to <paramref name="receiverId"/>: the pair's largest lower sequence number that is still deliverable or already<br/>
       /// received — 0 when none, meaning the tessage leads its stream. Sender-side pruning is excluded: a discarded row is<br/>
-      /// gone and an unreceived stranded row awaits explicit resolution, so neither will ever reach the receiver's door —<br/>
+      /// gone and an unreceived stranded row awaits explicit resolution, so neither will ever reach the receiver —<br/>
       /// which admits a tessage exactly when its admission high-water mark equals this declared predecessor<br/>
       /// (see <see cref="DeliveryStreamPosition"/>). Computed fresh per delivery attempt, because pruning between attempts<br/>
       /// moves it.</summary>
@@ -71,7 +71,7 @@ interface ITessagingSqlLayer
       WasAlreadyMarked
    }
 
-   ///<summary>What the inbox door decided about an arriving tessage — see <see cref="IInboxSqlLayer.SaveTessageAsync"/>.</summary>
+   ///<summary>What inbox admission decided about an arriving tessage — see <see cref="IInboxSqlLayer.SaveTessageAsync"/>.</summary>
    public enum SaveTessageResult
    {
       ///<summary>Admitted: the tessage is the next in its pair's delivery stream and is now registered, awaiting handling.</summary>
@@ -85,7 +85,7 @@ interface ITessagingSqlLayer
 
    public interface IInboxSqlLayer
    {
-      ///<summary>The inbox door: atomically admits the tessage iff it is the next in its pair's delivery stream — the pair's<br/>
+      ///<summary>Inbox admission: atomically admits the tessage iff it is the next in its pair's delivery stream — the pair's<br/>
       /// admission high-water mark (<see cref="InboxDeliveryStreamAdmissionsSchemaStrings"/>) must equal<br/>
       /// <paramref name="deliveryStreamPosition"/>'s declared predecessor — registering it durably in the same act.<br/>
       /// A tessage at or below the high-water mark is a redelivery, reported <see cref="SaveTessageResult.Duplicate"/>; one<br/>
@@ -115,7 +115,7 @@ interface ITessagingSqlLayer
    }
 
    ///<summary>The peer registry's persistence: the endpoint's durable memory of its peers and their last-known advertisements<br/>
-   /// (see <see cref="IPeerRegistry"/> and <c>src/Compze.Tessaging/dev_docs/peer-model.md</c>).</summary>
+   /// (see <see cref="IPeerRegistry"/> and <c>src/Compze.Tessaging/dev_docs/peers.md</c>).</summary>
    public interface IPeerRegistrySqlLayer
    {
       ///<summary>Replaces <paramref name="peerId"/>'s stored advertisement wholesale — creating the peer on first contact.<br/>
@@ -213,7 +213,7 @@ interface ITessagingSqlLayer
       Task InitAsync();
 
       //todo: Decommissioning an endpoint's storage = dropping its prefixed table-set and deleting its catalog entry (refused
-      //while its process lease is held). The design equation is settled (tessaging-target-design.md); the administration door
+      //while its process lease is held). The design equation is settled (tessaging-target-design.md); the administration operation
       //that performs the act - its surface, safety asserts, and report shape, mirroring PeerDecommissionReport - awaits its
       //first consumer.
    }
@@ -262,7 +262,7 @@ interface ITessagingSqlLayer
    }
 
    ///<summary>The inbox's per-sender admission high-water marks: one row per sender peer, holding the sequence number of the<br/>
-   /// last tessage admitted from that pair's delivery stream. The inbox door admits a tessage exactly when the mark equals<br/>
+   /// last tessage admitted from that pair's delivery stream. The inbox admits a tessage exactly when the mark equals<br/>
    /// the tessage's declared predecessor (see <see cref="DeliveryStreamPosition"/>), first contact starting from a declared<br/>
    /// predecessor of 0 — see <see cref="IInboxSqlLayer.SaveTessageAsync"/>.</summary>
    public static class InboxDeliveryStreamAdmissionsSchemaStrings

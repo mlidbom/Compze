@@ -7,7 +7,7 @@ using Compze.Tessaging.TessageTypes;
 
 namespace Compze.Tessaging.TessageBus;
 
-///<summary>The declaration surface for tevent observation — the deliberately transaction-ignoring watch surface, declared under<br/>
+///<summary>Registers tevent observers — observation is the deliberately transaction-ignoring watch surface, declared under<br/>
 /// its own verb (<see cref="LocalTessagingEngineBuilder.ObserveTevents"/>) so the distinct semantics are visible at the<br/>
 /// declaration site: an observer watches, never participates. Handed to the callback and existing only inside it, exactly like<br/>
 /// <see cref="TessageBusHandlerRegistrar"/>.</summary>
@@ -16,7 +16,7 @@ namespace Compze.Tessaging.TessageBus;
 /// engine's <see cref="TeventObservationDispatcher"/>). It receives a plain <see cref="IScopeResolver"/>, never a unit of<br/>
 /// work: its invocation is a fresh scope with no transaction. A throwing observer is reported through the<br/>
 /// background-exception reporter, never retried.</remarks>
-public sealed class TeventObservationRegistrar
+public sealed class TeventObservationRegistrar : ITeventObservationRegistrar
 {
    readonly TessageHandlerRegistrations _registrations;
    bool _callbackHasEnded;
@@ -28,6 +28,13 @@ public sealed class TeventObservationRegistrar
    {
       AssertUsedOnlyInsideItsCallback();
       _registrations.AddTeventObserver(observer);
+      return this;
+   }
+
+   //The minimal registrar an endpoint-declaration's ObserveTevents override receives - this registrar's one facet.
+   ITeventObservationRegistrar ITeventObservationRegistrar.ForTevent<TTevent>(Action<TTevent, IScopeResolver> observer)
+   {
+      ForTevent(observer);
       return this;
    }
 

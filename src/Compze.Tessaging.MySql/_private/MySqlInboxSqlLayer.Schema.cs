@@ -36,7 +36,7 @@ partial class MySqlInboxSqlLayer
        ENGINE = InnoDB
        DEFAULT CHARACTER SET = utf8mb4;
 
-           -- One row per sender peer: the pair's admission high-water mark. The inbox door admits only the next sequence
+           -- One row per sender peer: the pair's admission high-water mark. The inbox admits only the next sequence
            -- number, first contact starting at 1 - what makes exactly-once in-order admission hold by construction.
            CREATE TABLE IF NOT EXISTS {tables.InboxDeliveryStreamAdmissions}
            (

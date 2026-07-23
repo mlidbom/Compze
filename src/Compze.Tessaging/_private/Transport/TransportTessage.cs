@@ -17,9 +17,9 @@ static class TransportTessage
       readonly Type _tessageType;
       internal readonly TransportTessageType TessageTypeEnum;
 
-      ///<summary>The tessage's coordinates in its pair's delivery stream — what the inbox door admits on. Carried by every<br/>
+      ///<summary>The tessage's coordinates in its pair's delivery stream — what inbox admission is decided on. Carried by every<br/>
       /// exactly-once tessage arriving over the wire; null on the tiers that have no delivery stream, and on a tessage the<br/>
-      /// inbox recovery scan reloads from its own rows, which was admitted before the crash and faces no door again.</summary>
+      /// inbox recovery scan reloads from its own rows, which was admitted before the crash and faces no admission check again.</summary>
       internal readonly DeliveryStreamPosition? DeliveryStreamPosition;
 
       ITessage? _tessage;
@@ -64,7 +64,7 @@ static class TransportTessage
 
       ///<summary>The tessage's sequence number in the sender-receiver pair's delivery stream, assigned by the outbox save<br/>
       /// (see <see cref="DeliveryStreamPosition"/>): the exactly-once send queue's ordering key, and what the wire envelope<br/>
-      /// carries to the receiver's inbox door. Null on the best-effort tier, which has no delivery stream sequence.</summary>
+      /// carries to the receiver's inbox. Null on the best-effort tier, which has no delivery stream sequence.</summary>
       internal readonly long? DeliveryStreamSequenceNumber;
 
       internal static OutGoing Create(ITessage tessage, TessageId dedupId, ITypeMap typeMap, ITessagingSerializer serializer, long? deliveryStreamSequenceNumber = null)

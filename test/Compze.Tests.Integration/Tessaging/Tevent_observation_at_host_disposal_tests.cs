@@ -24,8 +24,6 @@ namespace Compze.Tests.Integration.Tessaging;
 /// observer's failure, reported to the background-exception reporter when it ran, is rethrown when the host disposes.</summary>
 public class Tevent_observation_at_host_disposal_tests : UniversalTestBase
 {
-   static readonly EndpointId ObservingEndpointId = new(Guid.Parse("2F8B5C1A-9D64-4E07-B3A2-6C815E9D40F7"));
-
 #pragma warning disable CA2213 // Disposed in DisposeAsyncInternal through the base lifecycle, which the analyzer cannot see
    TestingEndpointHost _host = null!;
 #pragma warning restore CA2213
@@ -37,11 +35,21 @@ public class Tevent_observation_at_host_disposal_tests : UniversalTestBase
    void CreateHostWithAnEndpointObserving(Action<IMyGreetingRequestedTevent> observer)
    {
       _host = TestingEndpointHost.Create();
-      _endpoint = _host.RegisterExactlyOnceEndpoint("Observing", ObservingEndpointId, it =>
-      {
-         it.RegisterComponents(registrar => registrar.RequireIntegrationTestTypeMappings());
-         it.ObserveTevents(observe => observe.ForTevent<IMyGreetingRequestedTevent>((tevent, _) => observer(tevent)));
-      });
+      _endpoint = _host.RegisterEndpoint(new ObservingEndpointDeclaration(observer));
+   }
+
+   class ObservingEndpointDeclaration : ExactlyOnceEndpointDeclaration<ObservingEndpointDeclaration>, IEndpointIdentity
+   {
+      public static string Name => "Observing";
+      public static EndpointId Id => new(Guid.Parse("2F8B5C1A-9D64-4E07-B3A2-6C815E9D40F7"));
+
+      readonly Action<IMyGreetingRequestedTevent> _observer;
+      internal ObservingEndpointDeclaration(Action<IMyGreetingRequestedTevent> observer) => _observer = observer;
+
+      protected override void RegisterComponents(IComponentRegistrar registrar) => registrar.RequireIntegrationTestTypeMappings();
+
+      protected override void ObserveTevents(ITeventObservationRegistrar observe) =>
+         observe.ForTevent<IMyGreetingRequestedTevent>((tevent, _) => _observer(tevent));
    }
 
    void PublishAnObservedTevent() =>

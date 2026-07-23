@@ -5,7 +5,7 @@ namespace Compze.DependencyInjection.Abstractions;
 ///<summary>The identity of one unit of work — one <see cref="IScope"/> paired with one ambient transaction. Value-equal exactly<br/>
 /// when it identifies the same unit of work, so it can key logs, caches, and idempotence checks on "which unit of work did this".</summary>
 ///<remarks>Backed by the transaction's <see cref="TransactionInformation.LocalIdentifier"/>: the ambient transaction IS the<br/>
-/// ambient unit-of-work tracker (see <c>src/Compze.DependencyInjection/dev_docs/unit-of-work-model.md</c>), so the transaction's<br/>
+/// ambient unit-of-work tracker (see <c>src/Compze.DependencyInjection/dev_docs/unit-of-work.md</c>), so the transaction's<br/>
 /// identity is the unit of work's identity.</remarks>
 public sealed class UnitOfWorkId : IEquatable<UnitOfWorkId>
 {

@@ -2,7 +2,7 @@ using AccountManagement.Domain.Tevents;
 using Compze.DocumentDb;
 using Compze.Abstractions;
 using Compze.DependencyInjection;
-using Compze.Tessaging.Endpoints.ExactlyOnce;
+using Compze.DependencyInjection.Abstractions;
 using Compze.Tessaging.TessageBus;
 using Compze.Teventive.TeventStore.QueryModels.SelfGeneratingQueryModels;
 using Compze.Tessaging.Typermedia;
@@ -37,7 +37,7 @@ static class AccountStatistics
    }
 
    //Account tevents are exactly-once kinds, and exactly-once kinds are async end to end - so the handler is declared async; its work is synchronous today, so it completes its task synchronously.
-   static void MaintainStatisticsWhenRelevantTeventsAreReceived(TessageBusHandlerRegistrar registrar) => registrar.ForTevent(
+   internal static void MaintainStatisticsWhenRelevantTeventsAreReceived(IExactlyOnceTeventHandlerRegistrar registrar) => registrar.ForTevent(
       (IAccountTevent tevent, ILocalTypermediaNavigatorSession navigator, StatisticsSingletonInitializer initializer) =>
       {
          initializer.EnsureInitialized(navigator);
@@ -51,11 +51,8 @@ static class AccountStatistics
          return Task.CompletedTask;
       });
 
-   internal static void Register(ExactlyOnceEndpointBuilder endpointBuilder)
-   {
-      endpointBuilder.Registrar.Register(Singleton.For<StatisticsSingletonInitializer>().CreatedBy(() => new StatisticsSingletonInitializer()));
-      endpointBuilder.RegisterTessageBusHandlers(MaintainStatisticsWhenRelevantTeventsAreReceived);
-   }
+   internal static void RegisterComponents(IComponentRegistrar registrar) =>
+      registrar.Register(Singleton.For<StatisticsSingletonInitializer>().CreatedBy(() => new StatisticsSingletonInitializer()));
 
    class StatisticsSingletonInitializer
    {

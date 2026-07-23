@@ -6,7 +6,7 @@ namespace Compze.Tessaging.TessageBus.Exceptions;
 ///<summary>Thrown when a tommand is sent whose type nothing known handles: neither this endpoint's own handlers nor any<br/>
 /// remembered peer's advertisement (see <see cref="IPeerRegistry"/>). A tommand binds to a specific receiver at send<br/>
 /// time, and an endpoint handling the type must have been met at least once to be bound to — first contact is the boundary<br/>
-/// (see <c>src/Compze.Tessaging/dev_docs/peer-model.md</c>). Exclusively the patience-exhausted failure: the send<br/>
+/// (see <c>src/Compze.Tessaging/dev_docs/peers.md</c>). Exclusively the patience-exhausted failure: the send<br/>
 /// first waited, bounded by the endpoint's handler-availability patience, for that first contact<br/>
 /// (see <c>IHandlerAvailability</c>). Public because it reaches the sending application code, which must be able to catch it.</summary>
 public class NoHandlerForTessageTypeException : Exception

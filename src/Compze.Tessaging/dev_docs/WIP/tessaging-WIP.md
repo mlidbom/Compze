@@ -36,16 +36,16 @@ the current-state docs are the living truth.
 
 ## Current-state documentation (the parent folder)
 
-- [tessaging-model.md](../tessaging-model.md) — what Tessaging is: the paradigm and its two siblings, the
+- [tessaging.md](../tessaging.md) — what Tessaging is: the paradigm and its two siblings, the
   consistency law, the engine, endpoints, storage, topology, administration.
 - [tevent-delivery-model.md](../tevent-delivery-model.md) — how tevents travel: the delivery ladder,
   publishing, subscribing, observation, ordering.
-- [peer-model.md](../peer-model.md) — the endpoint's memory of its peers and everything computed from it:
+- [peers.md](../peers.md) — the endpoint's memory of its peers and everything computed from it:
   fan-out membership, receiver binding, queue-while-down, advertisement lifecycle, decommission, waiting
   sends and readiness.
-- [storage-model.md](../storage-model.md) — the domain database: per-endpoint table-sets, the endpoint
+- [storage.md](../storage.md) — the domain database: per-endpoint table-sets, the endpoint
   catalog, the process lock, schema creation.
-- [src/Compze.Hosting/dev_docs/hosting-model.md](../../../Compze.Hosting/dev_docs/hosting-model.md) — what
+- [src/Compze.Hosting/dev_docs/hosting.md](../../../Compze.Hosting/dev_docs/hosting.md) — what
   an endpoint and a host are; production and testing hosting.
 - [src/Compze.Hosting/dev_docs/wip/same-machine-hosting.md](../../../Compze.Hosting/dev_docs/wip/same-machine-hosting.md)
   — same-machine hosting: the named-pipe transport, the interprocess registry, and the router's

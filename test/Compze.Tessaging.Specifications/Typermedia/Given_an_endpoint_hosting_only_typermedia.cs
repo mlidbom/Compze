@@ -1,4 +1,5 @@
 using Compze.Tessaging.Endpoints;
+using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Must;
 using Compze.Tessaging.Endpoints.BestEffort;
@@ -22,15 +23,21 @@ public class Given_an_endpoint_hosting_only_typermedia : UniversalTestBase
    public Given_an_endpoint_hosting_only_typermedia()
    {
       _host = TestingEndpointHost.Create();
+      _endpoint = _host.RegisterEndpoint(new TypermediaOnlyEndpointDeclaration());
+   }
 
-      _endpoint = _host.RegisterBestEffortEndpoint(
-         "TypermediaOnly",
-         new EndpointId(Guid.Parse("4A0EFCC3-49B6-4B8F-8F90-2E12B4B3A1D2")),
-         endpointBuilder => endpointBuilder
-            .RegisterComponents(registrar => registrar.RequireTypermediaHostingSpecificationTypeMappings())
-            .RegisterTypermediaHandlers(handle => handle
-                       .ForTuery((GreetingTuery tuery) => new Greeting { Message = $"Hello {tuery.Name}!" })
-                       .ForTommand((RegisterGreeterTommand tommand) => new GreeterRegistered { Name = tommand.Name })));
+   class TypermediaOnlyEndpointDeclaration : BestEffortEndpointDeclaration<TypermediaOnlyEndpointDeclaration>, IEndpointIdentity
+   {
+      public static string Name => "TypermediaOnly";
+      public static EndpointId Id => new(Guid.Parse("4A0EFCC3-49B6-4B8F-8F90-2E12B4B3A1D2"));
+
+      protected override void RegisterComponents(IComponentRegistrar registrar) => registrar.RequireTypermediaHostingSpecificationTypeMappings();
+
+      protected override void RegisterTueryHandlers(ITueryHandlerRegistrar handle) => handle
+         .ForTuery((GreetingTuery tuery) => new Greeting { Message = $"Hello {tuery.Name}!" });
+
+      protected override void RegisterTypermediaTommandHandlers(ITypermediaTommandHandlerRegistrar handle) => handle
+         .ForTommand((RegisterGreeterTommand tommand) => new GreeterRegistered { Name = tommand.Name });
    }
 
    protected override async Task InitializeAsyncInternal()

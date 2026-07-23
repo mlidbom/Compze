@@ -100,7 +100,7 @@ partial class PgSqlOutboxSqlLayer(IPgSqlConnectionPool connectionFactory, PgSqlS
                         FROM {_tables.OutboxTessageDispatching}
                         WHERE {DispatchingTable.EndpointId} = @{DispatchingTable.EndpointId}
                           AND {DispatchingTable.DeliveryStreamSequenceNumber} < @{DispatchingTable.DeliveryStreamSequenceNumber}
-                          AND NOT ({DispatchingTable.IsStranded} = true AND {DispatchingTable.IsReceived} = false); -- An unreceived stranded row awaits explicit resolution and will never reach the receiver's door.
+                          AND NOT ({DispatchingTable.IsStranded} = true AND {DispatchingTable.IsReceived} = false); -- An unreceived stranded row awaits explicit resolution and will never reach the receiver.
 
                         """)
                    .AddParameter(DispatchingTable.EndpointId, receiverId.Value)

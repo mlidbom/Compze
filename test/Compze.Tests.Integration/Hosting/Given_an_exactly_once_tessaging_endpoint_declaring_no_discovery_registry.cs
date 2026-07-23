@@ -24,14 +24,14 @@ using static Compze.Must.MustActions;
 namespace Compze.Tests.Integration.Hosting;
 
 ///<summary>
-/// An exactly-once endpoint that — deliberately — declares no discovery registry: it discovers nothing and connects to no
-/// other endpoint, but it starts, serves, and converses with itself. A tommand the endpoint sends that its own roster serves
-/// executes inline, through the engine's one executor, in the sender's execution — the consistency law: in-boundary is
-/// immediate and transactional, so the handling is exactly-once by construction (one transaction, no delivery machinery
-/// involved) and its failure fails the sender's execution. The process-manager pattern — handling one tessage sends a
-/// follow-up tommand belonging to the same endpoint — is in-boundary composition, needing no discovery and no wire. The host
-/// is the production host and the endpoint is composed explicitly (<see cref="ExactlyOnceEndpoint.Build"/>), so the
-/// composition stands entirely on what it declares.
+/// An exactly-once endpoint whose environment — deliberately — declares no discovery registry: it discovers nothing and
+/// connects to no other endpoint, but it starts, serves, and converses with itself. A tommand the endpoint sends that its own
+/// roster serves executes inline, through the engine's one executor, in the sender's execution — the consistency law:
+/// in-boundary is immediate and transactional, so the handling is exactly-once by construction (one transaction, no delivery
+/// machinery involved) and its failure fails the sender's execution. The process-manager pattern — handling one tessage sends
+/// a follow-up tommand belonging to the same endpoint — is in-boundary composition, needing no discovery and no wire. The
+/// host is the production host and the environment is the specification's own: everything the endpoint is comes from its
+/// declaration and its environment.
 ///</summary>
 public class Given_an_exactly_once_tessaging_endpoint_declaring_no_discovery_registry : UniversalTestBase
 {
@@ -45,33 +45,47 @@ public class Given_an_exactly_once_tessaging_endpoint_declaring_no_discovery_reg
    public Given_an_exactly_once_tessaging_endpoint_declaring_no_discovery_registry()
    {
       _host = EndpointHost.Production.Create(() => TestEnv.DIContainer.CreateTestingContainerBuilder()
-                                                          ._mutate(it => it.Registrar.CurrentTestsDbPoolIfNotCloneContainer()));
+                                                          ._mutate(it => it.Registrar.CurrentTestsDbPoolIfNotCloneContainer()),
+                                             new EnvironmentDeclaringNoDiscoveryRegistry());
 
-      _endpoint = _host.RegisterEndpoint(container => ExactlyOnceEndpoint.Build(
-         container,
-         "NoDiscoveryRegistry",
-         new EndpointId(Guid.Parse("5b7e2f4a-9c81-4c56-8a3d-e1f60b924d7c")),
-         endpointBuilder =>
-         {
-            endpointBuilder
-               .RegisterComponents(registrar => registrar
-                  .RequireIntegrationTestTypeMappings()
-                  ._mutate(it => it.Register(Scoped.For<ServiceResolvedIntoTheTommandHandler>().CreatedBy(() => new ServiceResolvedIntoTheTommandHandler()))))
-               .TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport())
-               .ConfigurePersistence(registrar => registrar.CurrentTestsConfiguredSqlLayer(connectionStringName: endpointBuilder.Configuration.Id.ToString()))
-               .RegisterTessageBusHandlers(handle => handle
-                       .ForTommand((TommandTheEndpointSendsItself _) =>
-                        {
-                           _inRosterTommandHandlerGate.AwaitPassThrough();
-                           return Task.CompletedTask;
-                        })
-                       .ForTommand((TommandWhoseHandlerResolvesADependency _, ServiceResolvedIntoTheTommandHandler resolved) =>
-                        {
-                           _serviceResolvedIntoTheTommandHandler = resolved;
-                           return Task.CompletedTask;
-                        })
-                       .ForTommand((TommandWhoseHandlerFails _, IUnitOfWorkResolver _) => Task.FromException(new InRosterTommandHandlerFailure())));
-         }));
+      _endpoint = _host.RegisterEndpoint(new NoDiscoveryRegistryEndpointDeclaration(this));
+   }
+
+   ///<summary>This specification's point, as an environment: no discovery registry — just the current test's transport and<br/>
+   /// the current test's domain-database binding keyed by the endpoint's id.</summary>
+   class EnvironmentDeclaringNoDiscoveryRegistry : IEndpointEnvironment
+   {
+      public void Configure(EndpointBuilder endpointBuilder) =>
+         endpointBuilder.TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport());
+
+      public void ConfigureDomainDatabase(ExactlyOnceEndpointBuilder endpointBuilder) =>
+         endpointBuilder.ConfigurePersistence(registrar => registrar.CurrentTestsConfiguredSqlLayer(connectionStringName: endpointBuilder.Configuration.Id.ToString()));
+   }
+
+   class NoDiscoveryRegistryEndpointDeclaration : ExactlyOnceEndpointDeclaration<NoDiscoveryRegistryEndpointDeclaration>, IEndpointIdentity
+   {
+      public static string Name => "NoDiscoveryRegistry";
+      public static EndpointId Id { get; } = new(Guid.Parse("5B7E2F4A-9C81-4C56-8A3D-E1F60B924D7C"));
+
+      readonly Given_an_exactly_once_tessaging_endpoint_declaring_no_discovery_registry _specification;
+      internal NoDiscoveryRegistryEndpointDeclaration(Given_an_exactly_once_tessaging_endpoint_declaring_no_discovery_registry specification) => _specification = specification;
+
+      protected override void RegisterComponents(IComponentRegistrar registrar) => registrar
+         .RequireIntegrationTestTypeMappings()
+         ._mutate(it => it.Register(Scoped.For<ServiceResolvedIntoTheTommandHandler>().CreatedBy(() => new ServiceResolvedIntoTheTommandHandler())));
+
+      protected override void RegisterExactlyOnceTommandHandlers(IExactlyOnceTommandHandlerRegistrar handle) => handle
+         .ForTommand((TommandTheEndpointSendsItself _) =>
+          {
+             _specification._inRosterTommandHandlerGate.AwaitPassThrough();
+             return Task.CompletedTask;
+          })
+         .ForTommand((TommandWhoseHandlerResolvesADependency _, ServiceResolvedIntoTheTommandHandler resolved) =>
+          {
+             _specification._serviceResolvedIntoTheTommandHandler = resolved;
+             return Task.CompletedTask;
+          })
+         .ForTommand((TommandWhoseHandlerFails _, IUnitOfWorkResolver _) => Task.FromException(new InRosterTommandHandlerFailure()));
    }
 
    protected override async Task InitializeAsyncInternal() => await _host.StartAsync().caf();

@@ -77,7 +77,7 @@ public class TessageHandlerRoster
       _tueryHandlers.TryGetValue(tueryType, out var handler) ? handler : throw new NoHandlerException(tueryType);
 
    ///<summary>Whether this roster holds a handler for the tommand type <paramref name="tommandType"/> — the question the<br/>
-   /// tommand-sender door asks to honor the consistency law: an in-roster tommand executes inline, in the sender's execution,<br/>
+   /// tommand sender asks to honor the consistency law: an in-roster tommand executes inline, in the sender's execution,<br/>
    /// and only a tommand whose handler lives elsewhere crosses the endpoint boundary through delivery machinery.</summary>
    internal bool HandlesTommand(Type tommandType) => _voidTommandHandlers.ContainsKey(tommandType) || _tommandHandlersWithResults.ContainsKey(tommandType);
 

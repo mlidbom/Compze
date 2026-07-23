@@ -175,7 +175,7 @@ class TessagingRouter : ITessagingRouter, IDisposable
       await connection.InitAsync().caf();
 
       //Peer memory is recorded on every advertisement fetch: first contact creates the peer, a re-fetch replaces its stored
-      //advertisement (see src/Compze.Tessaging/dev_docs/peer-model.md).
+      //advertisement (see src/Compze.Tessaging/dev_docs/peers.md).
       try
       {
          //A peer is another endpoint, and our own address never enters a reconciliation pass - so an answer claiming our

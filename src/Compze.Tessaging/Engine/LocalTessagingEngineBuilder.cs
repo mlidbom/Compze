@@ -6,7 +6,7 @@ using Compze.Tessaging.Typermedia;
 namespace Compze.Tessaging.Engine;
 
 ///<summary>The builder through which a LocalTessagingEngine — the tessage-conversing heart of one container — is declared, in<br/>
-/// one visible block; the declaration is the one and only way anything gets into the engine. Every declaration surface follows<br/>
+/// one visible block; the declaration is the one and only way anything gets into the engine. Every registration surface follows<br/>
 /// one idiom: a builder method takes an <see cref="Action{T}"/> over a short-lived registrar and returns the builder, so<br/>
 /// declarations chain, and the registrar exists only inside its callback — the callback's end is the registration's end, the<br/>
 /// build closes the roster, and any attempt to register afterward explodes.</summary>

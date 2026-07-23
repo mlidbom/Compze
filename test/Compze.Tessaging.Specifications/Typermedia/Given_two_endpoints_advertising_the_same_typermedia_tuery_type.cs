@@ -1,4 +1,5 @@
 using Compze.Tessaging.Endpoints;
+using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Must;
 using Compze.Tessaging.Endpoints.BestEffort;
@@ -21,9 +22,6 @@ namespace Compze.Tessaging.Specifications.Typermedia;
 /// registered by the same rebuild that saw the duplicate must work.</summary>
 public class Given_two_endpoints_advertising_the_same_typermedia_tuery_type : UniversalTestBase
 {
-   static readonly EndpointId FirstEndpointId = new(Guid.Parse("07500559-DE01-4EBA-A1C5-71B0FFBAA0C0"));
-   static readonly EndpointId SecondEndpointId = new(Guid.Parse("D5A0272D-CE21-476F-8ADE-B0AF5FB1DC01"));
-
    readonly TestingEndpointHost _host;
    readonly BestEffortEndpoint _firstEndpoint;
    readonly BestEffortEndpoint _secondEndpoint;
@@ -32,27 +30,31 @@ public class Given_two_endpoints_advertising_the_same_typermedia_tuery_type : Un
    public Given_two_endpoints_advertising_the_same_typermedia_tuery_type()
    {
       _host = TestingEndpointHost.Create();
+      _firstEndpoint = _host.RegisterEndpoint(new FirstHandlerEndpointDeclaration());
+      _secondEndpoint = _host.RegisterEndpoint(new SecondHandlerEndpointDeclaration());
+   }
 
-      _firstEndpoint = _host.RegisterBestEffortEndpoint(
-         "FirstHandler",
-         FirstEndpointId,
-         endpointBuilder =>
-         {
-            endpointBuilder.Registrar.RequireTypermediaHostingSpecificationTypeMappings();
-            endpointBuilder.RegisterTypermediaHandlers(handle => handle
-                                                      .ForTuery((TueryBothEndpointsHandle _) => new TueryAnswer { Message = "from the first endpoint" }));
-         });
+   class FirstHandlerEndpointDeclaration : BestEffortEndpointDeclaration<FirstHandlerEndpointDeclaration>, IEndpointIdentity
+   {
+      public static string Name => "FirstHandler";
+      public static EndpointId Id => new(Guid.Parse("07500559-DE01-4EBA-A1C5-71B0FFBAA0C0"));
 
-      _secondEndpoint = _host.RegisterBestEffortEndpoint(
-         "SecondHandler",
-         SecondEndpointId,
-         endpointBuilder =>
-         {
-            endpointBuilder.Registrar.RequireTypermediaHostingSpecificationTypeMappings();
-            endpointBuilder.RegisterTypermediaHandlers(handle => handle
-                                                             .ForTuery((TueryBothEndpointsHandle _) => new TueryAnswer { Message = "from the second endpoint" })
-                                                             .ForTuery((TueryOnlyTheSecondEndpointHandles _) => new TueryAnswer { Message = "only the second endpoint handles this" }));
-         });
+      protected override void RegisterComponents(IComponentRegistrar registrar) => registrar.RequireTypermediaHostingSpecificationTypeMappings();
+
+      protected override void RegisterTueryHandlers(ITueryHandlerRegistrar handle) => handle
+         .ForTuery((TueryBothEndpointsHandle _) => new TueryAnswer { Message = "from the first endpoint" });
+   }
+
+   class SecondHandlerEndpointDeclaration : BestEffortEndpointDeclaration<SecondHandlerEndpointDeclaration>, IEndpointIdentity
+   {
+      public static string Name => "SecondHandler";
+      public static EndpointId Id => new(Guid.Parse("D5A0272D-CE21-476F-8ADE-B0AF5FB1DC01"));
+
+      protected override void RegisterComponents(IComponentRegistrar registrar) => registrar.RequireTypermediaHostingSpecificationTypeMappings();
+
+      protected override void RegisterTueryHandlers(ITueryHandlerRegistrar handle) => handle
+         .ForTuery((TueryBothEndpointsHandle _) => new TueryAnswer { Message = "from the second endpoint" })
+         .ForTuery((TueryOnlyTheSecondEndpointHandles _) => new TueryAnswer { Message = "only the second endpoint handles this" });
    }
 
    protected override async Task InitializeAsyncInternal()
@@ -71,8 +73,8 @@ public class Given_two_endpoints_advertising_the_same_typermedia_tuery_type : Un
    [PCT] public void executing_the_tuery_both_advertise_fails_loud_naming_both_endpoints() =>
       Invoking(() => _client.Navigator.Get(new TueryBothEndpointsHandle()))
         .Must().Throw<MultipleHandlersForTypermediaTypeException>()
-        .Which.Message.Must().Contain(FirstEndpointId.ToString())
-        .Contain(SecondEndpointId.ToString());
+        .Which.Message.Must().Contain(FirstHandlerEndpointDeclaration.Id.ToString())
+        .Contain(SecondHandlerEndpointDeclaration.Id.ToString());
 
    [PCT] public void a_tuery_only_the_second_endpoint_advertises_still_routes_to_it() =>
       _client.Navigator.Get(new TueryOnlyTheSecondEndpointHandles()).Message.Must().Be("only the second endpoint handles this");

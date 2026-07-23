@@ -1,5 +1,6 @@
 using Compze.Tessaging.Endpoints;
 using Compze.DependencyInjection;
+using Compze.DependencyInjection.Abstractions;
 using Compze.Must;
 using Compze.Tessaging.Endpoints.ExactlyOnce;
 using Compze.Tessaging.Hosting.Testing;
@@ -25,7 +26,6 @@ namespace Compze.Tessaging.InternalSpecifications;
 /// recovery scan re-enqueues every admitted but unhandled tessage at start, and the handler runs.</summary>
 public class Given_a_domain_database_remembering_an_admitted_but_unhandled_inbox_tessage : UniversalTestBase
 {
-   static readonly EndpointId RebornEndpointId = new(Guid.Parse("6D24C9E1-8B75-4A02-9F38-52E7A1D40B96"));
    static readonly EndpointId CrashedSendersPeerEndpointId = new(Guid.Parse("A93F5B27-1E60-4D84-B7C2-08D4F6E39A15"));
 
    readonly TestingEndpointHost _host;
@@ -35,20 +35,28 @@ public class Given_a_domain_database_remembering_an_admitted_but_unhandled_inbox
    public Given_a_domain_database_remembering_an_admitted_but_unhandled_inbox_tessage()
    {
       _host = TestingEndpointHost.Create();
-      _rebornEndpoint = _host.RegisterExactlyOnceEndpoint(
-         "Reborn",
-         RebornEndpointId,
-         endpointBuilder => endpointBuilder
-            .RegisterComponents(registrar => registrar.RequireTessagingInternalSpecificationTypeMappings())
-            .RegisterTessageBusHandlers(handle => handle
-                       .ForTommand((MyExactlyOnceTommandAdmittedBeforeTheCrash _) =>
-                        {
-                           _tommandHandlerThreadGate.AwaitPassThrough();
-                           return Task.CompletedTask;
-                        })));
+      _rebornEndpoint = _host.RegisterEndpoint(new RebornEndpointDeclaration(this));
    }
 
-   //The crash is scripted through the inbox sql layer: the tessage is admitted through the door exactly as an arriving
+   class RebornEndpointDeclaration : ExactlyOnceEndpointDeclaration<RebornEndpointDeclaration>, IEndpointIdentity
+   {
+      public static string Name => "Reborn";
+      public static EndpointId Id => new(Guid.Parse("6D24C9E1-8B75-4A02-9F38-52E7A1D40B96"));
+
+      readonly Given_a_domain_database_remembering_an_admitted_but_unhandled_inbox_tessage _specification;
+      internal RebornEndpointDeclaration(Given_a_domain_database_remembering_an_admitted_but_unhandled_inbox_tessage specification) => _specification = specification;
+
+      protected override void RegisterComponents(IComponentRegistrar registrar) => registrar.RequireTessagingInternalSpecificationTypeMappings();
+
+      protected override void RegisterExactlyOnceTommandHandlers(IExactlyOnceTommandHandlerRegistrar handle) => handle
+         .ForTommand((MyExactlyOnceTommandAdmittedBeforeTheCrash _) =>
+          {
+             _specification._tommandHandlerThreadGate.AwaitPassThrough();
+             return Task.CompletedTask;
+          });
+   }
+
+   //The crash is scripted through the inbox sql layer: the tessage is admitted exactly as an arriving
    //delivery would be - acknowledged to its sender, registered UnHandled - and then no handler ever runs, which is
    //precisely what a process killed between admission and handler-commit leaves behind.
    protected override async Task InitializeAsyncInternal()

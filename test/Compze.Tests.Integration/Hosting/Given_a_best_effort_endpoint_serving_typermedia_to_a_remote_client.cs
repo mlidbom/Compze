@@ -1,8 +1,8 @@
 using Compze.Tessaging.Endpoints;
+using Compze.DependencyInjection.Abstractions;
 using Compze.Hosting;
 using Compze.Hosting.Testing;
 using Compze.Hosting.Testing.Wiring;
-using Compze.Serialization.Newtonsoft.Wiring;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Internals.Testing;
 using Compze.Must;
@@ -22,11 +22,12 @@ using static Compze.Must.MustActions;
 namespace Compze.Tests.Integration.Hosting;
 
 ///<summary>
-/// A best-effort endpoint (<see cref="BestEffortEndpoint.Build"/>) hosts everything that persists nothing: it serves
-/// remote tueries and tommands with no outbox, no inbox, and no database anywhere, and an external client application
+/// A best-effort endpoint (<see cref="BestEffortEndpointDeclaration{TIdentity}"/>) hosts everything that persists nothing: it
+/// serves remote tueries and tommands with no outbox, no inbox, and no database anywhere, and an external client application
 /// navigates its typermedia at its address. The durable vertical is exactly what such an endpoint cannot carry: an
-/// exactly-once endpoint composed without a database declaration fails loud at composition, naming the missing declaration.
-/// The host is the production host — nothing is pre-registered, so the composition stands entirely on what it declares.
+/// exactly-once declaration built in an environment binding no domain database fails loud at build, naming the missing
+/// declaration. The host is the production host and the environment is the specification's own — nothing is pre-registered:
+/// everything the endpoint is comes from its declaration and its environment.
 ///</summary>
 public class Given_a_best_effort_endpoint_serving_typermedia_to_a_remote_client : UniversalTestBase
 {
@@ -36,25 +37,29 @@ public class Given_a_best_effort_endpoint_serving_typermedia_to_a_remote_client 
 
    public Given_a_best_effort_endpoint_serving_typermedia_to_a_remote_client()
    {
-      //The endpoint's whole state: no database stands behind this endpoint, so what it serves lives in process memory.
-      var registeredUsers = new List<UserResource>();
+      _host = EndpointHost.Production.Create(() => TestEnv.DIContainer.CreateTestingContainerBuilder(), new CurrentTestsBestEffortEnvironment());
+      _endpoint = _host.RegisterEndpoint(new DatabaselessTypermediaEndpointDeclaration());
+   }
 
-      _host = EndpointHost.Production.Create(() => TestEnv.DIContainer.CreateTestingContainerBuilder());
-      _endpoint = _host.RegisterEndpoint(container => BestEffortEndpoint.Build(
-         container,
-         "DatabaselessTypermediaEndpoint",
-         new EndpointId(Guid.Parse("d2f9c1a4-6e83-4b57-9a02-8c5d41e7f6b0")),
-         endpointBuilder => endpointBuilder
-            .RegisterComponents(registrar => registrar.RequireIntegrationTestTypeMappings())
-            .TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport())
-            .NewtonsoftSerializer()
-            .RegisterTypermediaHandlers(handle => handle
-                       .ForTuery((GetUserTuery tuery) => registeredUsers.Single(user => user.Name == tuery.Name))
-                       .ForTommand((RegisterUserTypermediaTommand tommand) =>
-                        {
-                           registeredUsers.Add(new UserResource(tommand.Name));
-                           return new UserRegisteredConfirmationResource(tommand.Name);
-                        }))));
+   class DatabaselessTypermediaEndpointDeclaration : BestEffortEndpointDeclaration<DatabaselessTypermediaEndpointDeclaration>, IEndpointIdentity
+   {
+      public static string Name => "DatabaselessTypermediaEndpoint";
+      public static EndpointId Id { get; } = new(Guid.Parse("D2F9C1A4-6E83-4B57-9A02-8C5D41E7F6B0"));
+
+      ///<summary>The endpoint's whole state: no database stands behind this endpoint, so what it serves lives in process memory.</summary>
+      readonly List<UserResource> _registeredUsers = [];
+
+      protected override void RegisterComponents(IComponentRegistrar registrar) => registrar.RequireIntegrationTestTypeMappings();
+
+      protected override void RegisterTueryHandlers(ITueryHandlerRegistrar handle) => handle
+         .ForTuery((GetUserTuery tuery) => _registeredUsers.Single(user => user.Name == tuery.Name));
+
+      protected override void RegisterTypermediaTommandHandlers(ITypermediaTommandHandlerRegistrar handle) => handle
+         .ForTommand((RegisterUserTypermediaTommand tommand) =>
+          {
+             _registeredUsers.Add(new UserResource(tommand.Name));
+             return new UserRegisteredConfirmationResource(tommand.Name);
+          });
    }
 
    protected override async Task InitializeAsyncInternal()
@@ -78,16 +83,20 @@ public class Given_a_best_effort_endpoint_serving_typermedia_to_a_remote_client 
       user.Name.Must().Be("first-user");
    }
 
-   [PCT] public async Task composing_an_exactly_once_endpoint_without_a_domain_database_fails_loud_naming_the_missing_declaration()
+   [PCT] public async Task building_an_exactly_once_endpoint_without_a_domain_database_fails_loud_naming_the_missing_declaration()
    {
-      await using var host = EndpointHost.Production.Create(() => TestEnv.DIContainer.CreateTestingContainerBuilder());
-      Invoking(() => host.RegisterEndpoint(container => ExactlyOnceEndpoint.Build(
-                        container, "TessagingWithoutADatabase", new EndpointId(Guid.NewGuid()),
-                        endpointBuilder => endpointBuilder
-                           .RegisterComponents(registrar => registrar.RequireIntegrationTestTypeMappings())
-                           .TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport())
-                           .NewtonsoftSerializer())))
+      await using var host = EndpointHost.Production.Create(() => TestEnv.DIContainer.CreateTestingContainerBuilder(), new CurrentTestsBestEffortEnvironment());
+      Invoking(() => host.RegisterEndpoint(new EndpointDeclarationWithoutADomainDatabase()))
          .Must().Throw<Exception>().Which.Message.Must().Contain("The endpoint declares no domain database");
+   }
+
+   ///<summary>An exactly-once declaration whose environment (<see cref="CurrentTestsBestEffortEnvironment"/>) binds no domain database — the missing declaration this specification pins.</summary>
+   class EndpointDeclarationWithoutADomainDatabase : ExactlyOnceEndpointDeclaration<EndpointDeclarationWithoutADomainDatabase>, IEndpointIdentity
+   {
+      public static string Name => "TessagingWithoutADatabase";
+      public static EndpointId Id { get; } = new(Guid.Parse("E1FFA46C-AF3E-4B5C-A389-C9CB816AE50F"));
+
+      protected override void RegisterComponents(IComponentRegistrar registrar) => registrar.RequireIntegrationTestTypeMappings();
    }
 
    protected internal class GetUserTuery(string name) : Remotable.NonTransactional.Tueries.Tuery<UserResource>

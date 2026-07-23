@@ -19,10 +19,10 @@ public static class NamedPipeEndpointTransportRegistrar
                   .EndpointInformationQueryTransportIfNotRegistered()
                   .NamedPipeEndpointTransportServerIfNotRegistered();
 
-   extension<TConcreteBuilder>(Endpoints.EndpointBuilder<TConcreteBuilder> @this) where TConcreteBuilder : Endpoints.EndpointBuilder<TConcreteBuilder>
+   extension(Endpoints.EndpointBuilder @this)
    {
       ///<summary>Declares the endpoint's transport protocol: named pipes — the same-machine protocol, with no web stack.<br/>
       /// See <see cref="NamedPipeEndpointTransport(IComponentRegistrar)"/>, to which this delegates.</summary>
-      public TConcreteBuilder NamedPipeEndpointTransport() => @this.TransportProtocol(registrar => registrar.NamedPipeEndpointTransport());
+      public Endpoints.EndpointBuilder NamedPipeEndpointTransport() => @this.TransportProtocol(registrar => registrar.NamedPipeEndpointTransport());
    }
 }

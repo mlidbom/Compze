@@ -8,6 +8,7 @@ using Compze.Must;
 using Compze.Tessaging.TessageBus;
 using Compze.Tessaging.Endpoints.ExactlyOnce;
 using Compze.Tessaging.Hosting.Testing;
+using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Tessaging.TessageTypes;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
@@ -27,8 +28,6 @@ namespace Compze.Tests.Integration.Tessaging;
 /// endpoint, and an endpoint id never silently re-keys itself under a new name.</summary>
 public class Given_two_exactly_once_endpoints_joined_to_one_domain_database : UniversalTestBase
 {
-   static readonly EndpointId FirstNeighborEndpointId = new(Guid.Parse("6E19D4A7-3B85-4C02-9F76-D2A81B50E3C4"));
-   static readonly EndpointId SecondNeighborEndpointId = new(Guid.Parse("B75F20C8-914E-4D6B-A3E9-58C1D7F4062A"));
    const string DomainDatabaseName = "NeighborsDomainDatabase";
 
    readonly IDependencyInjectionContainer _rootContainer;
@@ -47,31 +46,75 @@ public class Given_two_exactly_once_endpoints_joined_to_one_domain_database : Un
                               .Build();
       _host = TestingEndpointHost.Create(_rootContainer);
 
-      _firstNeighbor = _host.RegisterExactlyOnceEndpointInDomainDatabase(
-         "FirstNeighbor",
-         FirstNeighborEndpointId,
-         DomainDatabaseName,
-         endpointBuilder => endpointBuilder
-            .RegisterComponents(registrar => registrar.RequireIntegrationTestTypeMappings())
-            .RegisterTessageBusHandlers(handle => handle
-                       .ForTommand((MyReplyTommandHandledByTheFirstNeighbor _) =>
-                        {
-                           _firstNeighborReplyHandlerGate.AwaitPassThrough();
-                           return Task.CompletedTask;
-                        })));
+      _firstNeighbor = _host.RegisterEndpoint(new FirstNeighborEndpointDeclaration(_firstNeighborReplyHandlerGate), new EnvironmentJoiningTheNeighborsDomainDatabase(_host.Environment));
+      _secondNeighbor = _host.RegisterEndpoint(new SecondNeighborEndpointDeclaration(_secondNeighborHandlerGate), new EnvironmentJoiningTheNeighborsDomainDatabase(_host.Environment));
+   }
 
-      _secondNeighbor = _host.RegisterExactlyOnceEndpointInDomainDatabase(
-         "SecondNeighbor",
-         SecondNeighborEndpointId,
-         DomainDatabaseName,
-         endpointBuilder => endpointBuilder
-            .RegisterComponents(registrar => registrar.RequireIntegrationTestTypeMappings())
-            .RegisterTessageBusHandlers(handle => handle
-                       .ForTommand((MyTommandHandledByTheSecondNeighbor _) =>
-                        {
-                           _secondNeighborHandlerGate.AwaitPassThrough();
-                           return Task.CompletedTask;
-                        })));
+   class FirstNeighborEndpointDeclaration : ExactlyOnceEndpointDeclaration<FirstNeighborEndpointDeclaration>, IEndpointIdentity
+   {
+      public static string Name => "FirstNeighbor";
+      public static EndpointId Id { get; } = new(Guid.Parse("6E19D4A7-3B85-4C02-9F76-D2A81B50E3C4"));
+
+      readonly IThreadGate _replyHandlerGate;
+      internal FirstNeighborEndpointDeclaration(IThreadGate replyHandlerGate) => _replyHandlerGate = replyHandlerGate;
+
+      protected override void RegisterComponents(IComponentRegistrar registrar) => registrar.RequireIntegrationTestTypeMappings();
+
+      protected override void RegisterExactlyOnceTommandHandlers(IExactlyOnceTommandHandlerRegistrar handle) => handle
+         .ForTommand((MyReplyTommandHandledByTheFirstNeighbor _) =>
+          {
+             _replyHandlerGate.AwaitPassThrough();
+             return Task.CompletedTask;
+          });
+   }
+
+   class SecondNeighborEndpointDeclaration : ExactlyOnceEndpointDeclaration<SecondNeighborEndpointDeclaration>, IEndpointIdentity
+   {
+      public static string Name => "SecondNeighbor";
+      public static EndpointId Id { get; } = new(Guid.Parse("B75F20C8-914E-4D6B-A3E9-58C1D7F4062A"));
+
+      readonly IThreadGate _handlerGate;
+      internal SecondNeighborEndpointDeclaration(IThreadGate handlerGate) => _handlerGate = handlerGate;
+
+      protected override void RegisterComponents(IComponentRegistrar registrar) => registrar.RequireIntegrationTestTypeMappings();
+
+      protected override void RegisterExactlyOnceTommandHandlers(IExactlyOnceTommandHandlerRegistrar handle) => handle
+         .ForTommand((MyTommandHandledByTheSecondNeighbor _) =>
+          {
+             _handlerGate.AwaitPassThrough();
+             return Task.CompletedTask;
+          });
+   }
+
+   class EndpointDeclarationClaimingTheFirstNeighborsName : ExactlyOnceEndpointDeclaration<EndpointDeclarationClaimingTheFirstNeighborsName>, IEndpointIdentity
+   {
+      public static string Name => FirstNeighborEndpointDeclaration.Name;
+      public static EndpointId Id { get; } = new(Guid.Parse("B088560F-C004-4640-8E60-A58503FD949D"));
+
+      protected override void RegisterComponents(IComponentRegistrar registrar) => registrar.RequireIntegrationTestTypeMappings();
+   }
+
+   class EndpointDeclarationReclaimingTheFirstNeighborsIdUnderANewName : ExactlyOnceEndpointDeclaration<EndpointDeclarationReclaimingTheFirstNeighborsIdUnderANewName>, IEndpointIdentity
+   {
+      public static string Name => "RenamedNeighbor";
+      public static EndpointId Id => FirstNeighborEndpointDeclaration.Id;
+
+      protected override void RegisterComponents(IComponentRegistrar registrar) => registrar.RequireIntegrationTestTypeMappings();
+   }
+
+   ///<summary>The wrapped <see cref="IEndpointEnvironment"/> except that the endpoint joins the neighbors' shared domain<br/>
+   /// database (<see cref="DomainDatabaseName"/>) instead of one of its own — several endpoints storing<br/>
+   /// side by side in one domain database.</summary>
+   class EnvironmentJoiningTheNeighborsDomainDatabase : IEndpointEnvironment
+   {
+      readonly IEndpointEnvironment _environment;
+      internal EnvironmentJoiningTheNeighborsDomainDatabase(IEndpointEnvironment environment) => _environment = environment;
+
+      public void Configure(EndpointBuilder endpointBuilder) =>
+         _environment.Configure(endpointBuilder);
+
+      public void ConfigureDomainDatabase(ExactlyOnceEndpointBuilder endpointBuilder) =>
+         endpointBuilder.ConfigurePersistence(registrar => registrar.CurrentTestsConfiguredSqlLayer(connectionStringName: DomainDatabaseName));
    }
 
    protected override async Task InitializeAsyncInternal() => await _host.StartAsync();
@@ -95,15 +138,11 @@ public class Given_two_exactly_once_endpoints_joined_to_one_domain_database : Un
    [PCT] public async Task a_third_endpoint_claiming_an_occupied_name_with_a_different_id_fails_loud_naming_the_collision()
    {
       var otherHost = TestingEndpointHost.Create(_rootContainer);
-      otherHost.RegisterExactlyOnceEndpointInDomainDatabase(
-         "FirstNeighbor",
-         new EndpointId(Guid.NewGuid()),
-         DomainDatabaseName,
-         endpointBuilder => endpointBuilder.RegisterComponents(registrar => registrar.RequireIntegrationTestTypeMappings()));
+      otherHost.RegisterEndpoint(new EndpointDeclarationClaimingTheFirstNeighborsName(), new EnvironmentJoiningTheNeighborsDomainDatabase(otherHost.Environment));
 
       var startFailure = (await InvokingAsync(async () => await otherHost.StartAsync()).Must().ThrowAsync<AggregateException>()).Which;
       startFailure.Flatten().InnerExceptions.Single().Message.Must()
-                  .Contain("FirstNeighbor")
+                  .Contain(FirstNeighborEndpointDeclaration.Name)
                   .Contain("taken in this domain database's endpoint catalog");
 
       await otherHost.DisposeAsync();
@@ -112,16 +151,12 @@ public class Given_two_exactly_once_endpoints_joined_to_one_domain_database : Un
    [PCT] public async Task an_endpoint_reclaiming_its_id_under_a_new_name_fails_loud_naming_the_remembered_name()
    {
       var otherHost = TestingEndpointHost.Create(_rootContainer);
-      otherHost.RegisterExactlyOnceEndpointInDomainDatabase(
-         "RenamedNeighbor",
-         FirstNeighborEndpointId,
-         DomainDatabaseName,
-         endpointBuilder => endpointBuilder.RegisterComponents(registrar => registrar.RequireIntegrationTestTypeMappings()));
+      otherHost.RegisterEndpoint(new EndpointDeclarationReclaimingTheFirstNeighborsIdUnderANewName(), new EnvironmentJoiningTheNeighborsDomainDatabase(otherHost.Environment));
 
       var startFailure = (await InvokingAsync(async () => await otherHost.StartAsync()).Must().ThrowAsync<AggregateException>()).Which;
       startFailure.Flatten().InnerExceptions.Single().Message.Must()
-                  .Contain("registered in this domain database's endpoint catalog under the name 'FirstNeighbor'")
-                  .Contain("RenamedNeighbor");
+                  .Contain($"registered in this domain database's endpoint catalog under the name '{FirstNeighborEndpointDeclaration.Name}'")
+                  .Contain(EndpointDeclarationReclaimingTheFirstNeighborsIdUnderANewName.Name);
 
       await otherHost.DisposeAsync();
    }

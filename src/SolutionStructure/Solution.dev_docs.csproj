@@ -1,8 +1,0 @@
-<!-- ReSharper disable MarkupAttributeTypo -->
-<Project Sdk="Microsoft.NET.Sdk">
-   <Import Project="solutionstructure.minimal-build-involvement.props" />
-
-   <ItemGroup>
-      <None Include="../../**/dev_docs/**/*.md" Exclude="$(CompzeExcludes);**/TODO/**;**/done/**" KeepDuplicates="false" />
-   </ItemGroup>
-</Project>

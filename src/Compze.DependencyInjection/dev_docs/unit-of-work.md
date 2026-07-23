@@ -1,4 +1,4 @@
-# The unit-of-work model
+# The unit of work
 
 > A **unit of work** is one `IScope` paired with one ambient transaction, begun and completed together, so
 > everything executed within it either commits as a whole or rolls back as a whole.
@@ -15,7 +15,7 @@ Every piece of work the framework runs falls into exactly one of three context k
 
 | Context | Mechanics | Who runs in it |
 |---|---|---|
-| **Unit of work** | fresh scope + transaction (`ExecuteUnitOfWork` / `ExecuteUnitOfWorkAsync`) | tommand handlers, exactly-once inbox processing, best-effort tevent dispatch, every independent door's mutating verb |
+| **Unit of work** | fresh scope + transaction (`ExecuteUnitOfWork` / `ExecuteUnitOfWorkAsync`) | tommand handlers, exactly-once inbox processing, best-effort tevent dispatch, every Independent* interface's mutating verb |
 | **Isolated scope** | fresh scope, no transaction of its own (`ExecuteInIsolatedScope` / `ExecuteInIsolatedScopeAsync`); an ambient transaction, if the caller has one, is left as-is so reads join its consistency | tuery handlers, discovery queries |
 | **Detached** | fresh scope on a context born transaction-free: the observation dispatch pump starts with `ExecutionContext` flow suppressed, so there is no ambient transaction to suppress — and the pump asserts that guarantee | observation handlers |
 
@@ -88,7 +88,7 @@ it:
 Context requirements stay where they were: asserted at use, and stated in signatures by
 `IUnitOfWorkResolver`.
 
-## The front-door duality: `UnitOfWork*`/`Session*` / `Independent*`
+## The `UnitOfWork*`/`Session*` / `Independent*` duality
 
 Application-facing operations come in two flavors, named by the caller's relationship to the execution
 context — the same duality `IRootResolver`/`IScopeResolver` expresses at the container level:
@@ -106,12 +106,12 @@ requires only the caller's **session** (its scope) — a tuery needs nothing mor
 execution additionally demands that the scope be paired with the ambient transaction. Naming the navigator
 `UnitOfWork*` would over-claim for tueries; naming the sender `Session*` would under-claim for everything.
 
-The independent doors exist because the unit-of-work flavors are scoped, so code outside any scope cannot
+The Independent* interfaces exist because the unit-of-work flavors are scoped, so code outside any scope cannot
 resolve them — it used to hand-build the context from container primitives
 (`ExecuteInIsolatedScope(scope => scope.Resolve<ITeventPublisher>().Publish(fact))`) to say one domain verb.
-An independent door is an ordinary constructor dependency instead.
+An Independent* interface is an ordinary constructor dependency instead.
 
-**Safety lives in asserts, not names.** Each independent door asserts `Transaction.Current == null`: called
+**Safety lives in asserts, not names.** Each Independent* interface asserts `Transaction.Current == null`: called
 from within an ambient transaction, `TransactionScopeOption.Required` would silently *join* it, making
 "independent" a lie — so it explodes and points at the unit-of-work flavor. The mirror-direction asserts
 predate this model (`TessageValidator`: `IMustBeSentTransactionally` demands a transaction,

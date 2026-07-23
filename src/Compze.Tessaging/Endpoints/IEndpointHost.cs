@@ -1,4 +1,6 @@
 using Compze.DependencyInjection.Abstractions;
+using Compze.Tessaging.Endpoints.BestEffort;
+using Compze.Tessaging.Endpoints.ExactlyOnce;
 
 namespace Compze.Tessaging.Endpoints;
 
@@ -16,11 +18,23 @@ namespace Compze.Tessaging.Endpoints;
 ///</summary>
 public interface IEndpointHost : IAsyncDisposable
 {
-    ///<summary>Registers a composed endpoint with the host, which owns it from here: the host starts it with the others and<br/>
-    /// disposes it. The callback receives a fresh container builder from the host's container factory and<br/>
-    /// returns the endpoint composed on it — e.g. <c>host.RegisterEndpoint(container => ExactlyOnceEndpoint.Compose(container, ...))</c>.<br/>
-    /// The host never knows the endpoint's tier: what the endpoint is, is decided entirely by its composition.</summary>
-    TEndpoint RegisterEndpoint<TEndpoint>(Func<IContainerBuilder, TEndpoint> composeEndpoint) where TEndpoint : IEndpoint;
+    ///<summary>Registers the endpoint an <see cref="IExactlyOnceEndpointDeclaration"/> declares, built in this host's<br/>
+    /// <see cref="IEndpointEnvironment"/> (<see cref="IExactlyOnceEndpointDeclaration.Build"/>) — the declaration brings what<br/>
+    /// the endpoint is, the host brings where it runs.</summary>
+    ExactlyOnceEndpoint RegisterEndpoint(IExactlyOnceEndpointDeclaration declaration);
+
+    ///<summary>Registers the endpoint an <see cref="IBestEffortEndpointDeclaration"/> declares, built in this host's<br/>
+    /// <see cref="IEndpointEnvironment"/> (<see cref="IBestEffortEndpointDeclaration.Build"/>).</summary>
+    BestEffortEndpoint RegisterEndpoint(IBestEffortEndpointDeclaration declaration);
+
+    ///<summary>Registers the endpoint an <see cref="IExactlyOnceEndpointDeclaration"/> declares, built in<br/>
+    /// <paramref name="environment"/> instead of this host's own — the composition for an endpoint whose environment differs<br/>
+    /// from its co-hosted neighbors', usually a decorating <see cref="IEndpointEnvironment"/> wrapping the host's with an<br/>
+    /// addition.</summary>
+    ExactlyOnceEndpoint RegisterEndpoint(IExactlyOnceEndpointDeclaration declaration, IEndpointEnvironment environment);
+
+    ///<summary>Registers the endpoint an <see cref="IBestEffortEndpointDeclaration"/> declares, built in <paramref name="environment"/> instead of this host's own.</summary>
+    BestEffortEndpoint RegisterEndpoint(IBestEffortEndpointDeclaration declaration, IEndpointEnvironment environment);
 
     ///<summary>The endpoints registered with this host so far, in registration order.</summary>
     IReadOnlyList<IEndpoint> Endpoints { get; }

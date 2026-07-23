@@ -8,17 +8,24 @@ using Compze.TypeIdentifiers;
 
 namespace Compze.Tests.SameMachine.EndpointHostProcess;
 
-///<summary>The two parties of the multi-process conversation, by identity: fixed <see cref="EndpointId"/>s known to both<br/>
-/// processes, so each can require the other (<c>RequirePeers</c>) — what makes the guarantee-free conversation deterministic:<br/>
-/// a tevent published before the peers have discovered each other is held for the required peer and delivered on first contact,<br/>
-/// instead of vanishing into the discovery race.</summary>
-public static class MultiProcessConversationEndpoints
+///<summary>The identity of the endpoint the endpoint host process hosts — an <see cref="IEndpointIdentity"/> known to both<br/>
+/// processes: the specification side requires it so a tevent published before the processes have discovered each other is<br/>
+/// held for it and delivered on first contact, and <see cref="Program"/>'s declarations build under it. A standalone identity<br/>
+/// type rather than a declaration's own identity, because the identity is shared across processes while each process declares<br/>
+/// its own composition.</summary>
+public sealed class EndpointHostProcessEndpointIdentity : IEndpointIdentity
 {
-   ///<summary>The endpoint the endpoint host process hosts.</summary>
-   public static readonly EndpointId EndpointHostProcessEndpointId = new(Guid.Parse("70b8f9be-6a66-4f8d-bd55-0c05dbcbb2c0"));
+   public static string Name => "EndpointHostProcess";
+   public static EndpointId Id { get; } = new(Guid.Parse("70B8F9BE-6A66-4F8D-BD55-0C05DBCBB2C0"));
+}
 
-   ///<summary>The endpoint the specification process registers to converse with the endpoint host process.</summary>
-   public static readonly EndpointId SpecificationProcessEndpointId = new(Guid.Parse("3e9d47b2-6c81-4f5a-a920-8d47c1e6b053"));
+///<summary>The identity of the endpoint the specification process registers to converse with the endpoint host process —<br/>
+/// known to both processes so the endpoint host process can require it, making the reply leg of the guarantee-free<br/>
+/// conversation deterministic instead of racing discovery.</summary>
+public sealed class SpecificationProcessEndpointIdentity : IEndpointIdentity
+{
+   public static string Name => "SpecificationEndpoint";
+   public static EndpointId Id { get; } = new(Guid.Parse("3E9D47B2-6C81-4F5A-A920-8D47C1E6B053"));
 }
 
 ///<summary>The tommand the specification process sends to the endpoint host process — the parent→child leg of the multi-process conversation.</summary>

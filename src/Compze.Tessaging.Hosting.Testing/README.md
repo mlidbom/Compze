@@ -10,18 +10,24 @@ Compze is a .NET framework for building expressive domains through **Teventive p
 
 The endpoint host tests use, plus the per-tier test wiring it hands each endpoint:
 
-- **`TestingEndpointHost`** — registers the concrete endpoint types with the current test's concerns handed in at construction: `RegisterExactlyOnceEndpoint` / `RegisterBestEffortEndpoint` supply the host's one tessages-in-flight tracker, the current test's transport protocol and serializers, the pooled test database keyed by the endpoint's id (exactly-once tier), and participation in the host's own interprocess registry. On dispose the host waits until no tessages are in flight and rethrows background exceptions — so tests cannot silently drop in-flight work.
+- **`TestingEndpointHost`** — builds registered endpoint-declarations in the current test's environment: the host's one tessages-in-flight tracker, the current test's transport protocol and serializers, the pooled test database keyed by the endpoint's id (exactly-once tier), and participation in the host's own interprocess registry. The same declaration class production hosts is what tests register, so production and tests host the same endpoint by construction. On dispose the host waits until no tessages are in flight and rethrows background exceptions — so tests cannot silently drop in-flight work.
 - **`TypermediaTestClient`** — the pure client composed for tests (see the Typermedia README beside this one).
 - **Persistence test wiring** — `CurrentTestsConfiguredSqlLayer()` registers the Tessaging vertical's storage stack (type-id interner, document db, tessaging inbox/outbox, tevent store) against the SQL backend the current test runs against. (The endpoint's transport protocol comes from `CurrentTestsEndpointTransport()` in `Compze.Hosting.Testing`.)
 
 ### Quick start
 
 ```csharp
-using var host = TestingEndpointHost.Create();
-var endpoint = host.RegisterExactlyOnceEndpoint("MyEndpoint", endpointId, endpoint =>
+class MyEndpointDeclaration : ExactlyOnceEndpointDeclaration<MyEndpointDeclaration>, IEndpointIdentity
 {
-   endpoint.RegisterTessageHandlers(handle => handle.ForTommand(async (MyTommand tommand, IUnitOfWorkResolver unitOfWork) => await HandleAsync(tommand)));
-});
+   public static string Name => "MyEndpoint";
+   public static EndpointId Id { get; } = new(Guid.Parse("..."));
+
+   protected override void RegisterExactlyOnceTommandHandlers(IExactlyOnceTommandHandlerRegistrar handle) =>
+      handle.ForTommand(async (MyTommand tommand, IUnitOfWorkResolver unitOfWork) => await HandleAsync(tommand));
+}
+
+using var host = TestingEndpointHost.Create();
+var endpoint = host.RegisterEndpoint(new MyEndpointDeclaration());
 await host.StartAsync();
 ```
 

@@ -3,8 +3,8 @@
 This document takes a developer who is new to Compze from zero to understanding how tevents are delivered —
 what delivery guarantees exist, where each guarantee comes from, how publishing and subscribing work, and
 what happens when a tevent crosses a process boundary. It is a companion to
-[the Tessaging model](tessaging-model.md), which explains the paradigm the delivery machinery serves, and to
-[the hosting model](../../Compze.Hosting/dev_docs/hosting-model.md), which explains what an endpoint *is*; this
+[Tessaging](tessaging.md), which explains the paradigm the delivery machinery serves, and to
+[Compze hosting](../../Compze.Hosting/dev_docs/hosting.md), which explains what an endpoint *is*; this
 document explains how tevents travel between the code that publishes them and the handlers that receive them.
 
 ## The big picture
@@ -73,7 +73,7 @@ Which rung an edge lands on:
   whatever the tevent's type.
 
 **Exactly-once membership is remembered, not live**: an exactly-once tevent's receivers are the peers whose
-remembered advertisement subscribes to it (the peer registry — see [the peer model](peer-model.md)), never
+remembered advertisement subscribes to it (the peer registry — see [peers](peers.md)), never
 the connections that happen to be live at publish time. A subscribing peer that is down when the tevent is
 published receives it on its return.
 
@@ -120,9 +120,9 @@ the dedup key.
 
 There are two ways to publish, distinguished by the caller's relationship to a **unit of work** — one scope
 paired with one ambient transaction, begun and completed together (see
-`src/Compze.DependencyInjection/dev_docs/unit-of-work-model.md`). Code inside one publishes through the
+`src/Compze.DependencyInjection/dev_docs/unit-of-work.md`). Code inside one publishes through the
 unit-of-work publisher, which joins it; code outside any publishes through the independent publisher, which
-gives each publish its own. The same duality repeats across the front doors:
+gives each publish its own. The same duality repeats across the application-facing interfaces:
 `IUnitOfWorkTommandSender`/`IIndependentTommandSender` for sending tommands, and
 `ILocalTypermediaNavigatorSession`/`IIndependentLocalTypermediaNavigator` for navigating the local
 typermedia API.
@@ -153,7 +153,7 @@ pointing at `PublishAsync` — publishing one writes durable rows inside the cal
 database I/O, async end to end by the type's contract.
 
 It requires and honors the ambient transaction. Required: publishing with none present throws — there is no
-unit of work to publish within, and the independent publisher is the door for such callers. Honored: both
+unit of work to publish within, and the independent publisher is the interface for such callers. Honored: both
 remote legs deliver on commit, so a rolled-back transaction never leaks a tevent — for the best-effort leg
 that is "sent-on-commit without durability", not "sent transactionally". It auto-wraps a tevent published
 without a publisher-identifying wrapper.
@@ -181,13 +181,13 @@ Independence is asserted, not assumed — safety lives in asserts, not names: ca
 transaction it throws, because `TransactionScopeOption.Required` would silently *join* that transaction and
 the publish would not stand alone. Inside a unit of work, publish through `IUnitOfWorkTeventPublisher`.
 
-Before this door existed, every outside-the-pipeline caller hand-built the unit of work from container
+Before this interface existed, every outside-the-pipeline caller hand-built the unit of work from container
 primitives — `ExecuteInIsolatedScope(scope => scope.Resolve<ITeventPublisher>().Publish(fact))` — forcing
 application code to speak container language to say one domain verb.
 
 ### No publish-side escape hatch, deliberately
 
-There is no "publish ignoring my transaction" door: no real consumer for one exists — the imaginable
+There is no "publish ignoring my transaction" interface: no real consumer for one exists — the imaginable
 client would be tracing/monitoring infrastructure that must emit *now* regardless of the surrounding
 transaction's fate — and without a consumer to arbitrate them, its correct semantics are contested (deliver
 in the caller's scope under suppression vs. as its own unit of work; whether an
@@ -207,7 +207,7 @@ Registering a handler (`ForTevent<TTevent>(...)`) says only "this endpoint under
 delivery guarantee comes from each arriving tevent's type — the subscriber never picks it:
 
 - a local publish → participation (synchronous, publisher's transaction);
-- an arriving `IExactlyOnceTevent` → through the inbox: admitted in stream order at the door, registered
+- an arriving `IExactlyOnceTevent` → through the inbox: admitted in stream order on arrival, registered
   durably, handled in its own transaction under a row-level handling claim, retried until handled. The
   sender is acknowledged at admission, so a hard crash between admission and handler-commit gets no
   redelivery — the inbox's recovery scan at endpoint start re-enqueues every admitted but unhandled tessage,
@@ -283,10 +283,10 @@ On the exactly-once rung the order is enforced by construction, at both ends of 
   destination, never looking past it until it is delivered and acknowledged. Pipelining (multiple in flight)
   is deliberately not implemented: it is only worth its complexity for high-latency links, and same-machine
   delivery is fast sequentially.
-- **The receiver's inbox door admits only in stream order.** Each delivery attempt declares its predecessor —
+- **The receiver's inbox admits only in stream order.** Each delivery attempt declares its predecessor —
   the pair's previous still-deliverable-or-received stream member, freshly computed from the sender's durable
   dispatching rows, so a hole punched by sender-side pruning (a discarded tevent, a stranded tommand) is
-  crossed exactly when the rows say it is real. The door admits a tessage iff the pair's admission high-water
+  crossed exactly when the rows say it is real. The inbox admits a tessage iff the pair's admission high-water
   mark equals that declared predecessor; a tessage at or below the mark is acknowledged as a redelivered
   duplicate, and anything else is refused back into the sender's retry, which heals the stream by leading
   with the missing predecessor. No sender-side path — a commit hook racing the recovery backlog load, a
@@ -296,11 +296,11 @@ Per rung:
 
 - **Exactly-once: order also survives a sender restart.** Recovery reloads the undelivered backlog into the
   sequence-keyed send queue — re-establishing head-of-line on the oldest undelivered tessage — and the inbox
-  door's admission rule holds regardless.
+  admission rule holds regardless.
 - **Best-effort: in order, across the subscriber's downtime.** Every remembered subscriber has an in-memory
   queue on the publisher that outlives connections: tevents published while the subscriber is down accumulate
   in publish order and its next connection drains them on its return — queue-while-down (see
-  [the peer model](peer-model.md)). A delivery failure *pauses* the stream whole:
+  [peers](peers.md)). A delivery failure *pauses* the stream whole:
   the one tevent in flight at the failure is dropped, loudly — without receiver dedup a re-send could
   duplicate it, and nothing on this tier is ever re-sent — while everything queued behind it stays queued in
   order, resuming when the peer answers a tessage-free probe or reconnects. There is never a silent
@@ -322,15 +322,15 @@ subscription-side election at all: an `IExactlyOnceTommand`'s type is its delive
 transactional, asynchronous), sent through `IUnitOfWorkTommandSender.SendAsync`. A tommand whose handler is
 in the sender's own roster never touches delivery machinery at all: it executes inline, in the sender's
 execution — exactly-once by construction, per the consistency law (see
-[the Tessaging model](tessaging-model.md)). A tommand whose handler lives elsewhere binds to its one
+[Tessaging](tessaging.md)). A tommand whose handler lives elsewhere binds to its one
 specific receiver at send time — the live handler when one is connected, otherwise the sole remembered peer
-whose advertisement handles the type (see [the peer model](peer-model.md)) — so a
+whose advertisement handles the type (see [peers](peers.md)) — so a
 known-but-down handler receives the tommand on its return without the send exploding, while every tessage
 between a sender and a receiver rides that pair's single ordered, receiver-deduped delivery stream:
 exactly-once in-order holds by construction. An in-flight tommand therefore never delivers to a blue/green
 successor — it waits for its own endpoint — while new sends bind to the live successor. The synchronous local ask has its own
 truthful home in Typermedia's strictly-local tommand — see
-[the hosting model](../../Compze.Hosting/dev_docs/hosting-model.md). The subscription-side opt-down and the
+[Compze hosting](../../Compze.Hosting/dev_docs/hosting.md). The subscription-side opt-down and the
 best-effort tier described in this document are tevent concepts: they exist because tevent publishing is
 decoupled 1:N fan-out, where the publisher must not decide the durability needs of subscribers it does not
 know.

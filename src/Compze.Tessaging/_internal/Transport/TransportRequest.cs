@@ -20,7 +20,7 @@ class TransportRequest
    internal string Body { get; }
 
    ///<summary>The tessage's coordinates in its sender-receiver pair's delivery stream — sender endpoint and dense sequence<br/>
-   /// number — carried by the exactly-once kinds so the receiver's inbox door can admit in stream order. Null for every<br/>
+   /// number — carried by the exactly-once kinds so the receiver's inbox can admit in stream order. Null for every<br/>
    /// other kind, which rides no delivery stream.</summary>
    internal DeliveryStreamPosition? DeliveryStreamPosition { get; }
 

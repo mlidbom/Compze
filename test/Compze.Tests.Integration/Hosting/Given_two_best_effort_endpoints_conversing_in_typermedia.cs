@@ -5,7 +5,6 @@ using Compze.DependencyInjection.Abstractions;
 using Compze.Hosting;
 using Compze.Hosting.Testing;
 using Compze.Hosting.Testing.Wiring;
-using Compze.Serialization.Newtonsoft.Wiring;
 using Compze.Internals.Testing;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Must;
@@ -23,13 +22,14 @@ using static Compze.Must.MustActions;
 namespace Compze.Tests.Integration.Hosting;
 
 ///<summary>
-/// Two best-effort endpoints (<see cref="BestEffortEndpoint.Build"/>) converse in typermedia — request/response neither
-/// queues nor persists, so the tier serves it identically to the exactly-once tier. The asking endpoint navigates the
-/// answering endpoint's tueries and tommands through its own <see cref="IRemoteTypermediaNavigator"/>, routed by its router's
-/// live reconciliation against the registry the endpoint declared it discovers through — never by a configured address. The
-/// answering endpoint declares no registry: it only serves, and navigating from it fails loud naming the missing
-/// declaration. The host is the production host — nothing is pre-registered, so the composition stands entirely on what it
-/// declares.
+/// Two best-effort endpoints (<see cref="BestEffortEndpointDeclaration{TIdentity}"/>) converse in typermedia —
+/// request/response neither queues nor persists, so the tier serves it identically to the exactly-once tier. The asking
+/// endpoint navigates the answering endpoint's tueries and tommands through its own
+/// <see cref="IRemoteTypermediaNavigator"/>, routed by its router's live reconciliation against the registry its
+/// environment declared it discovers through — never by a configured address. The answering endpoint's environment declares
+/// no registry: it only serves, and navigating from it fails loud naming the missing declaration. The host is the
+/// production host and the environment is the specification's own — nothing is pre-registered: everything each endpoint is
+/// comes from its declaration and its environment.
 ///</summary>
 public class Given_two_best_effort_endpoints_conversing_in_typermedia : UniversalTestBase
 {
@@ -39,34 +39,38 @@ public class Given_two_best_effort_endpoints_conversing_in_typermedia : Universa
 
    public Given_two_best_effort_endpoints_conversing_in_typermedia()
    {
-      _host = EndpointHost.Production.Create(() => TestEnv.DIContainer.CreateTestingContainerBuilder());
-      var endpointsOfTheHost = new AddressesOfTheHostsEndpoints(() => _host.Endpoints);
+      _host = EndpointHost.Production.Create(() => TestEnv.DIContainer.CreateTestingContainerBuilder(),
+                                             new CurrentTestsBestEffortEnvironment(new AddressesOfTheHostsEndpoints(() => _host!.Endpoints)));
 
-      _askingEndpoint = _host.RegisterEndpoint(container => BestEffortEndpoint.Build(
-         container,
-         "TypermediaAskingEndpoint",
-         new EndpointId(Guid.Parse("3f7b9c25-81d4-4a6e-b0f2-c58a17d93e46")),
-         endpointBuilder => endpointBuilder
-            .RegisterComponents(registrar => registrar.RequireIntegrationTestTypeMappings())
-            .TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport())
-            .NewtonsoftSerializer()
-            .DiscoverEndpointsThrough(endpointsOfTheHost)));
+      _askingEndpoint = _host.RegisterEndpoint(new AskingEndpointDeclaration());
+      //The answering endpoint declares no registry - it only serves - so it is built in an environment discovering nothing.
+      _answeringEndpoint = _host.RegisterEndpoint(new AnsweringEndpointDeclaration(), new CurrentTestsBestEffortEnvironment());
+   }
 
-      _answeringEndpoint = _host.RegisterEndpoint(container => BestEffortEndpoint.Build(
-         container,
-         "TypermediaAnsweringEndpoint",
-         new EndpointId(Guid.Parse("b93d40e7-2c58-4f1b-a6d9-04e8c6a25f17")),
-         endpointBuilder => endpointBuilder
-            .RegisterComponents(registrar => registrar
-               .RequireIntegrationTestTypeMappings()
-               ._mutate(it => it.Register(Scoped.For<GreetingFlourisher>().CreatedBy(() => new GreetingFlourisher()))))
-            .TransportProtocol(registrar => registrar.CurrentTestsEndpointTransport())
-            .NewtonsoftSerializer()
-            .RegisterTypermediaHandlers(handle => handle
-                .ForTuery((GetTheAnswerTuery _) => new AnswerResource(answeredBy: "TypermediaAnsweringEndpoint"))
-                .ForTommand((RegisterGreetingTypermediaTommand tommand) => new GreetingRegisteredConfirmationResource(tommand.Greeting))
-                .ForTommand((RegisterGreetingWithAResolvedFlourishTommand tommand, GreetingFlourisher flourisher) => new GreetingRegisteredConfirmationResource(flourisher.AddFlourish(tommand.Greeting)))
-                .ForTommand((RegisterGreetingThroughTheCoreAsyncVerbTommand tommand, IUnitOfWorkResolver _) => Task.FromResult(new GreetingRegisteredConfirmationResource(tommand.Greeting))))));
+   class AskingEndpointDeclaration : BestEffortEndpointDeclaration<AskingEndpointDeclaration>, IEndpointIdentity
+   {
+      public static string Name => "TypermediaAskingEndpoint";
+      public static EndpointId Id { get; } = new(Guid.Parse("3F7B9C25-81D4-4A6E-B0F2-C58A17D93E46"));
+
+      protected override void RegisterComponents(IComponentRegistrar registrar) => registrar.RequireIntegrationTestTypeMappings();
+   }
+
+   class AnsweringEndpointDeclaration : BestEffortEndpointDeclaration<AnsweringEndpointDeclaration>, IEndpointIdentity
+   {
+      public static string Name => "TypermediaAnsweringEndpoint";
+      public static EndpointId Id { get; } = new(Guid.Parse("B93D40E7-2C58-4F1B-A6D9-04E8C6A25F17"));
+
+      protected override void RegisterComponents(IComponentRegistrar registrar) => registrar
+         .RequireIntegrationTestTypeMappings()
+         ._mutate(it => it.Register(Scoped.For<GreetingFlourisher>().CreatedBy(() => new GreetingFlourisher())));
+
+      protected override void RegisterTueryHandlers(ITueryHandlerRegistrar handle) => handle
+         .ForTuery((GetTheAnswerTuery _) => new AnswerResource(answeredBy: Name));
+
+      protected override void RegisterTypermediaTommandHandlers(ITypermediaTommandHandlerRegistrar handle) => handle
+         .ForTommand((RegisterGreetingTypermediaTommand tommand) => new GreetingRegisteredConfirmationResource(tommand.Greeting))
+         .ForTommand((RegisterGreetingWithAResolvedFlourishTommand tommand, GreetingFlourisher flourisher) => new GreetingRegisteredConfirmationResource(flourisher.AddFlourish(tommand.Greeting)))
+         .ForTommand((RegisterGreetingThroughTheCoreAsyncVerbTommand tommand, IUnitOfWorkResolver _) => Task.FromResult(new GreetingRegisteredConfirmationResource(tommand.Greeting)));
    }
 
    protected override async Task InitializeAsyncInternal() => await _host.StartAsync().caf();
@@ -75,7 +79,7 @@ public class Given_two_best_effort_endpoints_conversing_in_typermedia : Universa
 
    [PCT] public void a_tuery_executed_on_one_endpoint_is_answered_by_the_endpoint_handling_its_type() =>
       NavigateFromTheAskingEndpoint(navigator => navigator.Get(new GetTheAnswerTuery()))
-        .AnsweredBy.Must().Be("TypermediaAnsweringEndpoint");
+        .AnsweredBy.Must().Be(AnsweringEndpointDeclaration.Name);
 
    [PCT] public void a_tommand_posted_on_one_endpoint_is_handled_by_the_endpoint_handling_its_type_and_its_result_comes_back() =>
       NavigateFromTheAskingEndpoint(navigator => navigator.Post(RegisterGreetingTypermediaTommand.Create("hello from the asking endpoint")))

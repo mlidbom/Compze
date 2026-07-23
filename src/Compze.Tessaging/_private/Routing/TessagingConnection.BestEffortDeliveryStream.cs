@@ -14,7 +14,7 @@ partial class TessagingConnection
    /// receiver dedup a re-send could duplicate it — while everything queued behind it stays queued in order, and draining resumes<br/>
    /// once the peer answers a tessage-free probe (or a new connection to the returned peer drains the same queue). The tier's<br/>
    /// loss surface is exactly: that single in-flight tessage, a crash of this process (memory is memory), and queue overflow<br/>
-   /// (see <c>src/Compze.Tessaging/dev_docs/peer-model.md</c>).</summary>
+   /// (see <c>src/Compze.Tessaging/dev_docs/peers.md</c>).</summary>
    internal class BestEffortDeliveryStream
    {
       ///<summary>Creates the <see cref="BestEffortDeliveryStream"/> each connection carries, binding it to the peer's queue in<br/>

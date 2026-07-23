@@ -1,4 +1,5 @@
 using Compze.Tessaging.Endpoints;
+using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Must;
 using Compze.DependencyInjection;
@@ -27,8 +28,6 @@ namespace Compze.Tessaging.InternalSpecifications;
 /// plays the router for a peer that never existed, recording its advertisement directly.</remarks>
 public class Given_an_endpoint_navigating_a_typermedia_type_only_a_remembered_down_peer_serves : UniversalTestBase
 {
-   static readonly EndpointId NavigatorEndpointId = new(Guid.Parse("A7C4E921-8D36-4F15-B2A9-63E80D1C7F54"));
-
    ///<summary>The remembered peer this specification plays the router for — known-but-down with no process behind it.</summary>
    static readonly EndpointId DownPeerId = new(Guid.Parse("D2E94B71-3C58-4A06-B8F1-7E60A5D49C23"));
 
@@ -39,13 +38,18 @@ public class Given_an_endpoint_navigating_a_typermedia_type_only_a_remembered_do
    public Given_an_endpoint_navigating_a_typermedia_type_only_a_remembered_down_peer_serves()
    {
       _host = TestingEndpointHost.Create();
-      _navigatorEndpoint = _host.RegisterBestEffortEndpoint(
-         "Navigator",
-         NavigatorEndpointId,
-         endpointBuilder => endpointBuilder
-            .RegisterComponents(registrar => registrar.RequireTessagingInternalSpecificationTypeMappings())
-            //Short deliberately: this specification pins what exhausted patience says, so waiting out the full default would only slow the suite.
-            .HandlerAvailabilityPatience(TimeSpan.FromMilliseconds(100)));
+      _navigatorEndpoint = _host.RegisterEndpoint(new NavigatorEndpointDeclaration());
+   }
+
+   class NavigatorEndpointDeclaration : BestEffortEndpointDeclaration<NavigatorEndpointDeclaration>, IEndpointIdentity
+   {
+      public static string Name => "Navigator";
+      public static EndpointId Id => new(Guid.Parse("A7C4E921-8D36-4F15-B2A9-63E80D1C7F54"));
+
+      protected override void RegisterComponents(IComponentRegistrar registrar) => registrar.RequireTessagingInternalSpecificationTypeMappings();
+
+      //Short deliberately: this specification pins what exhausted patience says, so waiting out the full default would only slow the suite.
+      protected override TimeSpan? HandlerAvailabilityPatience => TimeSpan.FromMilliseconds(100);
    }
 
    protected override async Task InitializeAsyncInternal()

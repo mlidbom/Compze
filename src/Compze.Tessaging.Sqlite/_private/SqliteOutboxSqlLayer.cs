@@ -95,7 +95,7 @@ partial class SqliteOutboxSqlLayer(ISqliteConnectionPool connectionFactory, Sqli
                         FROM {_tables.OutboxTessageDispatching}
                         WHERE {DispatchingTable.EndpointId} = @{DispatchingTable.EndpointId}
                           AND {DispatchingTable.DeliveryStreamSequenceNumber} < @{DispatchingTable.DeliveryStreamSequenceNumber}
-                          AND NOT ({DispatchingTable.IsStranded} = 1 AND {DispatchingTable.IsReceived} = 0) --An unreceived stranded row awaits explicit resolution and will never reach the receiver's door.
+                          AND NOT ({DispatchingTable.IsStranded} = 1 AND {DispatchingTable.IsReceived} = 0) --An unreceived stranded row awaits explicit resolution and will never reach the receiver.
 
                         """)
                    .AddMediumTextParameter(DispatchingTable.EndpointId, receiverId.ToString())

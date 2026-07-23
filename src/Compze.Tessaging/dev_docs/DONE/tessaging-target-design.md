@@ -2,7 +2,7 @@
 
 **Status: BUILT IN FULL — the migration's ten phases are executed, the last on 2026-07-18. This document is
 the design record; the living current-state documentation is in [the parent dev_docs folder](../)
-([tessaging-model.md](../tessaging-model.md) and kin).** The rationale and the path live in
+([tessaging.md](../tessaging.md) and kin).** The rationale and the path live in
 [style-substrate-and-hosting-evaluation.md](style-substrate-and-hosting-evaluation.md) and
 [tessaging-migration-plan.md](tessaging-migration-plan.md); this document never
 compares or narrates. Settled decisions are Magnus's (⚖); what was deliberately left open is listed at the
@@ -139,7 +139,7 @@ Application code never touches the engine directly; it injects the doors:
   tueries and tommands in the caller's session, or independently.
 
 The UnitOfWork/Independent axis is the
-[unit-of-work model](../../../../src/Compze.DependencyInjection/dev_docs/unit-of-work-model.md): the prefix
+[the unit of work](../../../../src/Compze.DependencyInjection/dev_docs/unit-of-work.md): the prefix
 names the weakest context the whole surface requires, and Independent doors assert no ambient transaction.
 
 Every published tevent gets in-boundary participation — delivery to this engine's subscribed handlers,

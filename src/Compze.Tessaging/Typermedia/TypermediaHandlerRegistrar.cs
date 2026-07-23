@@ -7,7 +7,7 @@ using Compze.Tessaging.TessageTypes;
 
 namespace Compze.Tessaging.Typermedia;
 
-///<summary>The declaration surface for an engine's Typermedia handlers — the conversational kinds a caller navigates: tueries,<br/>
+///<summary>Registers an engine's Typermedia handlers — the conversational kinds a caller navigates: tueries,<br/>
 /// tommands whose type declares a result, and the void tommands a caller executes or posts expecting no answer (strictly-local<br/>
 /// and at-most-once typermedia). The one tommand kind that is not navigated but sent — the exactly-once tommand — is the bus's,<br/>
 /// declared through <see cref="LocalTessagingEngineBuilder.RegisterTessageBusHandlers"/>, and registering one here explodes at<br/>
@@ -17,7 +17,7 @@ namespace Compze.Tessaging.Typermedia;
 ///<remarks>Synchrony follows the type here too, and no navigated tommand kind is exactly-once, so the synchronous forms are<br/>
 /// first-class; a tuery's synchrony is the caller's business, not a delivery guarantee's. Convenience overloads that resolve<br/>
 /// extra lambda parameters from the handling context live in <see cref="TypermediaHandlerRegistrarCE"/>.</remarks>
-public sealed class TypermediaHandlerRegistrar
+public sealed class TypermediaHandlerRegistrar : ITypermediaTommandHandlerRegistrar, ITueryHandlerRegistrar
 {
    readonly TessageHandlerRegistrations _registrations;
    bool _callbackHasEnded;
@@ -85,6 +85,25 @@ public sealed class TypermediaHandlerRegistrar
    {
       AssertUsedOnlyInsideItsCallback();
       _registrations.AddTueryHandler<TTuery, TResult>((tuery, scope) => Task.FromResult(handler(tuery, scope)));
+      return this;
+   }
+
+   //The minimal registrars an endpoint-declaration's overrides receive - each showing only its facet of this registrar.
+   ITypermediaTommandHandlerRegistrar ITypermediaTommandHandlerRegistrar.ForTommand<TTommand>(Func<TTommand, IUnitOfWorkResolver, Task> handler)
+   {
+      ForTommand(handler);
+      return this;
+   }
+
+   ITypermediaTommandHandlerRegistrar ITypermediaTommandHandlerRegistrar.ForTommand<TTommand, TResult>(Func<TTommand, IUnitOfWorkResolver, Task<TResult>> handler)
+   {
+      ForTommand<TTommand, TResult>(handler);
+      return this;
+   }
+
+   ITueryHandlerRegistrar ITueryHandlerRegistrar.ForTuery<TTuery, TResult>(Func<TTuery, IScopeResolver, Task<TResult>> handler)
+   {
+      ForTuery<TTuery, TResult>(handler);
       return this;
    }
 

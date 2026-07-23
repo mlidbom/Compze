@@ -18,7 +18,7 @@ nothing else:
 - **Transactional markers** — `IMustBeSentTransactionally`, `IMustBeHandledTransactionally`, `ICannotBeSentRemotelyFromWithinTransaction`
 - **Base types** — the `TessageTypes` families implementing the markers, and `TessageId`, the identity deduplication is done on
 - **Publisher-identifying tevents** — `IPublisherTevent<TTevent>` and `PublisherTevent<TTevent>`, the wrapper every tevent is routed by
-- **The door contracts** — `IUnitOfWorkTeventPublisher`/`IIndependentTeventPublisher` and `IUnitOfWorkTommandSender`/`IIndependentTommandSender`
+- **The send/publish contracts** — `IUnitOfWorkTeventPublisher`/`IIndependentTeventPublisher` and `IUnitOfWorkTommandSender`/`IIndependentTommandSender`
 - **Validation** — `TessageTypeInspector` and `TessageValidator`, which hold tessage types to the rules above
 
 ## Why it is separate from Compze.Tessaging

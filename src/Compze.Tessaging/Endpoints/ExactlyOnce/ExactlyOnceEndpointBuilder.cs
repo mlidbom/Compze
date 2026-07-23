@@ -9,13 +9,13 @@ using Compze.Tessaging.TessageBus._private;
 
 namespace Compze.Tessaging.Endpoints.ExactlyOnce;
 
-///<summary>The declaration surface an <see cref="ExactlyOnceEndpoint"/> is composed through — everything the base<br/>
-/// <see cref="EndpointBuilder{TConcreteBuilder}"/> declares, plus the domain database this endpoint joins (<see cref="ConfigurePersistence"/>): the<br/>
+///<summary>The <see cref="EndpointBuilder"/> an <see cref="ExactlyOnceEndpoint"/> is built through — everything the base<br/>
+/// declares, plus the domain database this endpoint joins (<see cref="ConfigurePersistence"/>): the<br/>
 /// durable vertical — inbox, outbox, durable peer memory — lives in it, and its atomicity <em>is</em> its co-location with<br/>
 /// the domain data the endpoint's executions touch. Declared through a database package's named extension<br/>
 /// (e.g. <c>SqliteDomainDatabase(...)</c>), which registers the engine pairing — the connection pool, the type-id<br/>
 /// interner, and Tessaging's sql layers for that engine — so the pairing is routed by the extension's target type.</summary>
-public sealed class ExactlyOnceEndpointBuilder : EndpointBuilder<ExactlyOnceEndpointBuilder>
+public sealed class ExactlyOnceEndpointBuilder : EndpointBuilder
 {
    Action<IComponentRegistrar>? _registerDomainDatabase;
 
@@ -37,16 +37,16 @@ public sealed class ExactlyOnceEndpointBuilder : EndpointBuilder<ExactlyOnceEndp
    {
       base.AssertTheFoundationIsDeclared();
       State.Assert(_registerDomainDatabase is not null,
-                   () => "The endpoint declares no domain database. An exactly-once endpoint's durable vertical — inbox, outbox, durable peer memory — lives in the domain database it joins: declare it in the composition, e.g. endpointBuilder.SqliteDomainDatabase(...). An endpoint that deliberately persists nothing is a best-effort endpoint instead (BestEffortEndpoint.Compose).");
+                   () => "The endpoint declares no domain database. An exactly-once endpoint's durable vertical — inbox, outbox, durable peer memory — lives in the domain database it joins: declare it in the environment's ConfigureDomainDatabase, e.g. endpointBuilder.SqliteDomainDatabase(...). An endpoint that deliberately persists nothing is a best-effort endpoint instead (BestEffortEndpointDeclaration).");
    }
 
    ///<summary>The durable vertical: the declared domain database, the endpoint's place in it (the table-set and the endpoint<br/>
    /// catalog's process lock), the inbox (receiver dedup, transactional retry), the outbox (durable rows, recovery backlog,<br/>
-   /// per-peer exactly-once in-order delivery streams), the tommand-sending doors, and the exactly-once request handling that<br/>
+   /// per-peer exactly-once in-order delivery streams), the tommand senders, and the exactly-once request handling that<br/>
    /// receives arriving tessages into the inbox.</summary>
    private protected override void RegisterTheTierMachinery()
    {
-      //Computed eagerly, so an endpoint name that cannot key storage fails loud at composition, not at first resolution.
+      //Computed eagerly, so an endpoint name that cannot key storage fails loud at build, not at first resolution.
       Registrar.Register(Singleton.For<EndpointTableSet>().Instance(EndpointTableSet.For(Configuration)));
       _registerDomainDatabase!(Registrar);
       Registrar.EndpointProcessLock()

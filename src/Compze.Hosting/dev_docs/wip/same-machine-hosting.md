@@ -2,7 +2,7 @@
 
 This document takes a developer who is new to Compze from zero to understanding how multiple processes on one
 machine form one application — how their endpoints find each other with zero configuration and converse with
-no web stack and no database server. It is the companion to [the hosting model](../hosting-model.md), which
+no web stack and no database server. It is the companion to [Compze hosting](../hosting.md), which
 explains what an endpoint and a host *are*, and to
 [the tevent delivery model](../../../Compze.Tessaging/dev_docs/tevent-delivery-model.md), which explains the
 guarantees that hold once the conversation flows. This document explains how the conversation reaches across
@@ -155,7 +155,7 @@ own tevent subscriptions by in-boundary participation:
   retried on the next pass.
 
 A dynamic topology implies contracts callers must know (the full story is
-[the peer model](../../../Compze.Tessaging/dev_docs/peer-model.md)):
+[peers](../../../Compze.Tessaging/dev_docs/peers.md)):
 
 - **Subscribers join from now on.** A tevent published before an endpoint was first discovered is not
   retroactively delivered to it — exactly like a subscriber that did not exist yet. The exception is a peer
@@ -183,27 +183,37 @@ endpoint, named pipes, discovery, and sqlite database *files* standing in for th
 Trimmed to its shape:
 
 ```csharp
-using var registry = InterprocessEndpointRegistry.OpenOrCreateSessionLocal("MySuite.EndpointRegistry", dataDirectory);
-var host = EndpointHost.Production.Create(() => new MicrosoftContainerBuilder(new ComponentRegistrar()));
-
-host.RegisterEndpoint(container => ExactlyOnceEndpoint.Compose(
-   container, "BackgroundWorker", new EndpointId(Guid.Parse("...")), endpoint =>
+class BackgroundWorkerEndpointDeclaration : ExactlyOnceEndpointDeclaration<BackgroundWorkerEndpointDeclaration>, IEndpointIdentity
 {
-   endpoint.RegisterComponents(registrar => registrar.RequireMappedTypesFromAssemblyContaining<MyTommand>());
-   endpoint.NamedPipeEndpointTransport();
-   endpoint.NewtonsoftSerializer();
-   endpoint.SqliteDomainDatabase("BackgroundWorker");
-   endpoint.ParticipateIn(registry);   // discover the others through it AND announce ourselves to it
+   public static string Name => "BackgroundWorker";
+   public static EndpointId Id { get; } = new(Guid.Parse("..."));
 
-   endpoint.RegisterTessageBusHandlers(handle => handle.ForTommand(async (MyTommand tommand, IUnitOfWorkResolver unitOfWork) => ...));
-}));
+   protected override void RegisterComponents(IComponentRegistrar registrar) => registrar.RequireMappedTypesFromAssemblyContaining<MyTommand>();
 
+   protected override void RegisterExactlyOnceTommandHandlers(IExactlyOnceTommandHandlerRegistrar handle) =>
+      handle.ForTommand(async (MyTommand tommand, IUnitOfWorkResolver unitOfWork) => ...);
+}
+
+class SameMachineEnvironment(InterprocessEndpointRegistry registry) : IEndpointEnvironment
+{
+   public void Configure(EndpointBuilder endpointBuilder) => endpointBuilder
+      .NamedPipeEndpointTransport()
+      .NewtonsoftSerializer()
+      .ParticipateIn(registry);   // discover the others through it AND announce ourselves to it
+
+   public void ConfigureDomainDatabase(ExactlyOnceEndpointBuilder endpointBuilder) =>
+      endpointBuilder.SqliteDomainDatabase(BackgroundWorkerEndpointDeclaration.Name);
+}
+
+using var registry = InterprocessEndpointRegistry.OpenOrCreateSessionLocal("MySuite.EndpointRegistry", dataDirectory);
+var host = EndpointHost.Production.Create(() => new MicrosoftContainerBuilder(new ComponentRegistrar()), new SameMachineEnvironment(registry));
+host.RegisterEndpoint(new BackgroundWorkerEndpointDeclaration());
 await host.StartAsync();
 ```
 
 The database declaration registers the whole engine pairing — the connection pool, the type-id interner, and
-Tessaging's sqlite inbox/outbox sql layers — through one named declaration on the exactly-once tier's
-declaration surface.
+Tessaging's sqlite inbox/outbox sql layers — through one named extension on the exactly-once tier's
+`ExactlyOnceEndpointBuilder`.
 
 `ParticipateIn` declares the registry's two faces at once: `DiscoverEndpointsThrough`, the *read* side the
 router reconciles against, and `AnnounceAddressTo`, the *write* side the endpoint's lifecycle drives — declare

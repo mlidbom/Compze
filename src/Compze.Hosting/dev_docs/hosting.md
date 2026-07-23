@@ -1,4 +1,4 @@
-# The Compze hosting model
+# Compze hosting
 
 This document takes a developer who is new to Compze from zero to understanding how hosting works — what is
 actually running when a Compze application runs, how the pieces relate, and how the same machinery hosts both
@@ -45,22 +45,22 @@ carries a tessage is chosen by reading its type.
 
 There are exactly three things an application composes, all in `Compze.Tessaging` (the paradigm itself —
 tessage kinds, the consistency law, the engine — is
-[the Tessaging model](../../Compze.Tessaging/dev_docs/tessaging-model.md)):
+[Tessaging](../../Compze.Tessaging/dev_docs/tessaging.md)):
 
 1. **The LocalTessagingEngine** — the tessage-conversing heart of one container, for the application that
    converses only with itself (see "The engine" below). Not an endpoint: no identity, no address, no wire.
 2. **An endpoint** — an engine given identity and a wire. There are exactly two endpoint types, differing
    only in what crossing the endpoint boundary guarantees: `BestEffortEndpoint` (no database; per-peer
    best-effort tevent queues) and `ExactlyOnceEndpoint` (everything the best-effort endpoint has, plus the
-   durable vertical: inbox, outbox, durable peer memory, and the tommand-sending doors). **Both serve all
+   durable vertical: inbox, outbox, durable peer memory, and the tommand senders). **Both serve all
    four tessage kinds, unconditionally.**
 3. **The pure client** — `TypermediaClient`: a navigator and a transport client with no server, for an
    external application navigating endpoints' typermedia at explicitly known addresses.
 
-An endpoint is a plain composition root: composition choices are parameters, not plugins. Its declaration
+An endpoint is a plain composition root: its choices are parameters, not plugins. Its declaration
 surface takes the transport protocol, the one serializer, the database (exactly-once tier), the topology
-declarations, and the same engine declaration block every composition speaks — and a missing declaration
-fails loud at composition, naming what is missing.
+declarations, and the same engine declaration block every endpoint and plain container speaks — and a missing
+declaration fails loud at build, naming what is missing.
 
 ## The shape of the code
 
@@ -71,46 +71,62 @@ fails loud at composition, naming what is missing.
 | **The composed shapes** | `Compze.Tessaging` (`Compze.Tessaging.Endpoints`, `Compze.Tessaging.Engine`, the Typermedia namespaces) | Yes — the endpoint types compose both siblings, always |
 
 The host mechanism implements the contracts without referencing what an endpoint speaks: it hands each
-registration a fresh container builder from its factory and receives a composed `IEndpoint` back
-(`RegisterEndpoint(container => ExactlyOnceEndpoint.Compose(container, ...))`). Composition — what each
-endpoint actually is — happens at the outermost layer: the application or the test.
+registered declaration a fresh container builder from its factory and receives the built `IEndpoint` back
+(`RegisterEndpoint(declaration)` — the declaration's `Build` runs in the host's environment). What each
+endpoint actually is — is declared at the outermost layer: the application or the test.
 
 ## Endpoints and hosts
 
-Declaring an endpoint looks like this, and is the same regardless of host:
+An endpoint is declared as a class — an endpoint-declaration — and the same declaration builds under every
+host. (This section shows the shape; the full model — identity types, environments and their decoration, the
+build template, and the reasoning behind the design — is
+[endpoint-declarations](../../Compze.Tessaging/dev_docs/endpoint-declarations.md).)
 
 ```csharp
-var host = EndpointHost.Production.Create(CreateContainerBuilder);
-var endpoint = host.RegisterEndpoint(container => ExactlyOnceEndpoint.Compose(
-   container,
-   "AccountManagement",
-   new EndpointId(Guid.Parse("...")),
-   endpoint =>
-   {
-      endpoint.AspNetCoreEndpointTransport();
-      endpoint.NewtonsoftSerializer();
-      endpoint.SqliteDomainDatabase("AccountManagement");
-      endpoint.ParticipateIn(registry);
+class AccountManagementEndpointDeclaration : ExactlyOnceEndpointDeclaration<AccountManagementEndpointDeclaration>, IEndpointIdentity
+{
+   public static string Name => "AccountManagement";
+   public static EndpointId Id { get; } = new(Guid.Parse("..."));
 
-      endpoint.RegisterComponents(registrar => registrar.RequireMyDomainTypeMappings());
-      endpoint.RegisterTessageBusHandlers(handle => handle
-         .ForTevent(async (IAccountTevent tevent, IUnitOfWorkResolver unitOfWork) => ...));
-      endpoint.RegisterTypermediaHandlers(handle => handle
-         .ForTuery((AccountTuery tuery) => ...));
-   }));
+   protected override void RegisterComponents(IComponentRegistrar registrar) => registrar.RequireMyDomainTypeMappings();
+
+   protected override void RegisterExactlyOnceTeventHandlers(IExactlyOnceTeventHandlerRegistrar handle) => handle
+      .ForTevent(async (IAccountTevent tevent, IUnitOfWorkResolver unitOfWork) => ...);
+
+   protected override void RegisterTueryHandlers(ITueryHandlerRegistrar handle) => handle
+      .ForTuery((AccountTuery tuery) => ...);
+}
+
+class ProductionEnvironment : IEndpointEnvironment
+{
+   public void Configure(EndpointBuilder endpointBuilder) => endpointBuilder
+      .TransportProtocol(registrar => registrar.AspNetCoreEndpointTransport())
+      .NewtonsoftSerializer()
+      .ParticipateIn(registry);
+
+   public void ConfigureDomainDatabase(ExactlyOnceEndpointBuilder endpointBuilder) =>
+      endpointBuilder.SqliteDomainDatabase("AccountManagement");
+}
+
+var host = EndpointHost.Production.Create(CreateContainerBuilder, new ProductionEnvironment());
+var endpoint = host.RegisterEndpoint(new AccountManagementEndpointDeclaration());
 host.Start();
 ```
 
-`Compose`'s callback receives the endpoint's declaration surface (`ExactlyOnceEndpointBuilder` /
-`BestEffortEndpointBuilder`) — everything the endpoint will be is declared before its container is built,
-and the builder exists only inside the callback: the callback's end is the declaration's end, the build
-closes the roster, and any attempt to declare afterward explodes. The named declarations come from the
-implementation packages, each filling the one parameter it names: the transport protocol
-(`NamedPipeEndpointTransport()` / `AspNetCoreEndpointTransport()`), the endpoint's one serializer
-(`NewtonsoftSerializer()`), and — on the exactly-once tier — the domain database the endpoint joins, whose
-named declaration registers the whole engine pairing (`SqliteDomainDatabase(...)` and kin: the connection
-pool, the type-id interner, and Tessaging's sql layers for that engine). Store integrations (a tevent store's `HandleTaggregate`, a
-document db's `HandleDocumentType`) plug into this same surface — handler contributors like any other.
+The declaration is what the endpoint IS — its compiler-enforced identity (the
+`IEndpointIdentity` statics the `TIdentity` type parameter reaches; usually the declaration is its own
+identity), its handler registrations, its topology stance — while the `IEndpointEnvironment` is everything a
+deployment decides: the transport protocol, the one serializer, discovery participation, and — on the
+exactly-once tier — the actual domain database. Building runs one template (`Build`): the environment
+configures first, the declaration's scalar aspects and registration overrides follow, and the tier's general
+`Declare` override receives the full `EndpointBuilder` (its tier subtype) last — store integrations (a
+tevent store's `HandleTaggregate`, a document db's `HandleDocumentType`) plug in there, handler contributors
+like any other. The build closes the roster: the builder exists only inside the build, and any attempt to
+declare afterward explodes. The named environment declarations come from the implementation packages, each
+filling the one parameter it names: the transport protocol (`NamedPipeEndpointTransport()` /
+`AspNetCoreEndpointTransport()`), the endpoint's one serializer (`NewtonsoftSerializer()`), and the domain
+database, whose named declaration registers the whole engine pairing (`SqliteDomainDatabase(...)` and kin:
+the connection pool, the type-id interner, and Tessaging's sql layers for that engine).
 
 ## The lifecycle phases
 
@@ -143,10 +159,10 @@ listening.
 An endpoint's start completes when *it* has started; whether the rest of the topology — co-hosted
 endpoints, other processes still starting, a peer restarting mid-day — has been discovered is continuous
 convergence. Two composing mechanisms make that nobody's race to lose (see
-[the peer model](../../Compze.Tessaging/dev_docs/peer-model.md)):
+[peers](../../Compze.Tessaging/dev_docs/peers.md)):
 
 - **Waiting sends** — implicit, per-call: a send whose type has no live, unambiguous route right now waits,
-  bounded by the endpoint's **handler-availability patience** (a flat 30 seconds unless the composition
+  bounded by the endpoint's **handler-availability patience** (a flat 30 seconds unless the declaration
   declares otherwise — `EndpointBuilder.HandlerAvailabilityPatience`), for the world to become right — a
   first contact, a known peer's return, an ambiguity resolving — then proceeds normally. Only exhausted
   patience fails loud, and the failure tells known-but-down (naming the remembered peer) from never-seen
@@ -167,13 +183,13 @@ An exactly-once endpoint declares the **domain database it joins** (`SqliteDomai
 never a database of its own: the database is the domain's — the domain data the endpoint's executions touch
 lives there, and the exactly-once machinery's atomicity *is* its co-location with that data. Any number of
 endpoints join one domain database (the whole story:
-[the storage model](../../Compze.Tessaging/dev_docs/storage-model.md)):
+[storage](../../Compze.Tessaging/dev_docs/storage.md)):
 
 - **Each endpoint owns a prefixed table-set** (`EndpointTableSet`): its inbox, its outbox and outbox
   dispatching, and its durable peer memory, each table prefixed with the endpoint's name
   (`Backend_InboxTessages`). The prefix is what makes an exactly-once endpoint's name identifier material —
   a letter followed by letters, digits, or underscores, at most 28 characters — asserted loud at
-  composition, never sanitized silently.
+  build, never sanitized silently.
 - **The domain-level tables are deliberately unprefixed** — the type-id interner, the tevent store, the
   document db, and the endpoint catalog are the domain's data, shared by every endpoint that joins.
 - **One shared table per domain database: the endpoint catalog** — each endpoint's name, `EndpointId`,
@@ -229,7 +245,7 @@ Three things to know:
   the engine unchanged; a taggregate's committed tevents are simply delivered only to this
   process's handlers.
 - **No type-id ceremony.** In-process dispatch routes by `System.Type`; type-id mappings exist for the wire
-  and for persistent-store serialization. The plain-container composition supplies a default type mapper
+  and for persistent-store serialization. A plain container supplies a default type mapper
   when none is registered; an application whose tevent store needs domain mappings registers its own first.
 - **Wanting guaranteed tommand delivery does not make an endpoint "in-process".** A Tessaging tommand's type
   declares its cross-boundary delivery contract — exactly-once, transactional, asynchronous. Within the
@@ -240,10 +256,13 @@ Three things to know:
 
 ## Production hosting
 
-`EndpointHost.Production.Create(containerFactory)` — the factory produces a fresh container builder per
-endpoint. How endpoints find each other is a topology declaration in each endpoint's composition:
+`EndpointHost.Production.Create(containerFactory, environment)` — the factory produces a fresh container
+builder per endpoint, and the environment is where the deployment declares how its endpoints find each other:
 `DiscoverEndpointsThrough(registry)` (the read side), `AnnounceAddressTo(announcer)` (the write side), or
-`ParticipateIn(registry)` for a registry with both faces. Declaring no registry means the endpoint
+`ParticipateIn(registry)` for a registry with both faces. An endpoint whose environment differs from its
+co-hosted neighbors' — an extra announcement target, a shared domain database — registers with its own
+environment (`RegisterEndpoint(declaration, environment)`), usually a decorating `IEndpointEnvironment`
+wrapping the host's. Declaring no registry means the endpoint
 discovers nothing and only serves: it connects to no other endpoint, and a tommand it sends that
 its own roster serves executes inline, in the sender's execution — nothing self-addressed ever crosses the
 wire, so no discovery is needed for an endpoint's conversation with itself. For processes on one
@@ -262,15 +281,12 @@ provides this as concrete per-tier wiring:
 
 ```csharp
 using var host = TestingEndpointHost.Create();
-var backend = host.RegisterExactlyOnceEndpoint("Backend", backendId, endpoint =>
-{
-   endpoint.RegisterComponents(registrar => registrar.RequireMyDomainTypeMappings());
-   endpoint.RegisterTessageBusHandlers(handle => ...);
-});
+var backend = host.RegisterEndpoint(new BackendEndpointDeclaration());
 ```
 
-`RegisterExactlyOnceEndpoint` / `RegisterBestEffortEndpoint` hand each endpoint its test concerns at
-construction — the host's one tessages-in-flight tracker, the current test's transport protocol, the pooled
+The declaration class is the same one production hosts — production and tests host the same endpoint by
+construction — and the testing host's environment hands each registered declaration its test concerns at
+build — the host's one tessages-in-flight tracker, the current test's transport protocol, the pooled
 test database keyed by the endpoint's id (exactly-once tier, so an endpoint keeps its database across host
 rebuilds and specs can script restarts), and participation in the host's endpoint registry: a real
 `InterprocessEndpointRegistry` of the host's own (in a per-host temp directory deleted with the host), so

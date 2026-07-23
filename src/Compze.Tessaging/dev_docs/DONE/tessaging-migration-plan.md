@@ -2,7 +2,7 @@
 
 **Status: EXECUTED IN FULL — all ten phases done, the last on 2026-07-18. This document is the migration's
 record; the living current-state documentation is in [the parent dev_docs folder](../)
-([tessaging-model.md](../tessaging-model.md) and kin).**
+([tessaging.md](../tessaging.md) and kin).**
 
 **Phases 1 and 2 executed 2026-07-17** (phase 1: debris, both Typermedia
 defect fixes, the record→class conversion, the stale-prose sweep, the ServiceBus vocabulary's death;
@@ -208,8 +208,8 @@ Re-home concepts before restructuring — truthful names and homes first, wiring
    remedy); `TypermediaHandlerRegistry`'s raw indexers become a proper no-handler exception, and
    `ExecuteWithRetry` stops retrying programming-error-shaped failures.
 3. `EndpointAddress` record → class.
-4. Stale-prose sweep: `hosting-model.md` (the nonexistent "scheduler", the pre-rename navigator name),
-   `unit-of-work-model.md` ("transient tevent dispatch"), and every file still pointing at the old
+4. Stale-prose sweep: `hosting.md` (the nonexistent "scheduler", the pre-rename navigator name),
+   `unit-of-work.md` ("transient tevent dispatch"), and every file still pointing at the old
    `dev_docs/TODO/durable-peer-topology.md` path.
 5. The ServiceBus-remnant renames out of the borrowed jargon: `IServiceBusSqlLayer` and the
    `ServiceBusSpecification` test folders.
@@ -314,7 +314,7 @@ and the specs that implicitly rode first-look-sees-all migrated to explicit awai
 
 ## Rolling throughout
 
-[hosting-model.md](../../../../src/Compze.Hosting/dev_docs/hosting-model.md),
+[hosting.md](../../../../src/Compze.Hosting/dev_docs/hosting.md),
 [tevent-delivery-model.md](../../../../src/Compze.Tessaging/dev_docs/tevent-delivery-model.md), and
 [same-machine-hosting.md](../../../../src/Compze.Hosting/dev_docs/wip/same-machine-hosting.md) are rewritten
 as the machinery they describe changes — never left lying — with a final coherence sweep at the end.

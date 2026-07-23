@@ -13,11 +13,12 @@ namespace Compze.Tessaging.Endpoints.ExactlyOnce;
 /// The exactly-once endpoint: the <see cref="Endpoint"/> whose TessageBus rung is exactly-once. Everything the best-effort
 /// endpoint has, plus the durable vertical in the domain database it joins: the inbox (receiver dedup, transactional retry), the outbox
 /// (durable rows, recovery backlog, per-peer exactly-once in-order delivery streams), durable peer memory, and the
-/// tommand-sending doors (<see cref="IUnitOfWorkTommandSender"/> /
+/// tommand senders (<see cref="IUnitOfWorkTommandSender"/> /
 /// <see cref="IIndependentTommandSender"/>). Serves all four tessage kinds
 /// unconditionally.
 ///
-/// Composed through <see cref="Build"/>. Which machinery carries a given tessage is decided by the tessage's type and the
+/// Built from an <see cref="ExactlyOnceEndpointDeclaration{TIdentity}"/>
+/// (<see cref="IExactlyOnceEndpointDeclaration.Build"/>). Which machinery carries a given tessage is decided by the tessage's type and the
 /// consistency law: a send whose handler is in the roster executes inline, in the sender's execution — exactly-once by
 /// construction, no delivery machinery involved — and a send whose handler lives elsewhere crosses the boundary through the
 /// durable vertical.
@@ -27,17 +28,6 @@ public class ExactlyOnceEndpoint : Endpoint
    readonly IInbox _inbox;
    readonly IOutbox _outbox;
    readonly EndpointProcessLock _processLock;
-
-   ///<summary>Composes an exactly-once endpoint: runs <paramref name="build"/> over the endpoint's declaration surface<br/>
-   /// (<see cref="ExactlyOnceEndpointBuilder"/>), builds the endpoint's container, and returns the endpoint, ready for its<br/>
-   /// lifecycle to be driven — directly, or by the <see cref="IEndpointHost"/> that owns it<br/>
-   /// (<see cref="IEndpointHost.RegisterEndpoint{TEndpoint}"/>).</summary>
-   public static ExactlyOnceEndpoint Build(IContainerBuilder containerBuilder, string name, EndpointId id, Action<ExactlyOnceEndpointBuilder> build)
-   {
-      var builder = new ExactlyOnceEndpointBuilder(containerBuilder, new EndpointConfiguration(name, id));
-      build(builder);
-      return builder.Build();
-   }
 
    internal ExactlyOnceEndpoint(IDependencyInjectionContainer container,
                                 EndpointConfiguration configuration,

@@ -8,7 +8,7 @@ using Compze.Threading;
 namespace Compze.Tests.Integration.Tessaging.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler;
 
 ///<summary>Exactly-once tevent fan-out chooses its receivers from the peer registry's remembered peers, never from who happens<br/>
-/// to be connected (see <c>src/Compze.Tessaging/dev_docs/peer-model.md</c>): a subscribing peer that is down at publish time — a<br/>
+/// to be connected (see <c>src/Compze.Tessaging/dev_docs/peers.md</c>): a subscribing peer that is down at publish time — a<br/>
 /// routine rolling restart suffices — must still receive every tevent published in its absence when it returns.</summary>
 [LongRunning]
 public class Tevent_delivery_to_peers_that_are_down_tests : EndpointHostTestBase
@@ -20,7 +20,7 @@ public class Tevent_delivery_to_peers_that_are_down_tests : EndpointHostTestBase
       await StartHostWithOnlyTheBackendEndpointAsync();
 
       //Down is not forgotten: the Backend's peer registry loaded Remote and its subscriptions from the Backend's database.
-      BackendPeerAdministration.Peers.Select(peer => peer.Id).Must().Contain(RemoteEndpointId);
+      BackendPeerAdministration.Peers.Select(peer => peer.Id).Must().Contain(RemoteEndpointDeclaration.Id);
 
       //Publishes IMyTaggregateTevent - which Remote subscribes to - exactly-once, while Remote is down.
       await Navigator.PostAsync(MyCreateTaggregateTommand.Create());

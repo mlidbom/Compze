@@ -11,7 +11,7 @@ namespace Compze.Tessaging.Engine._private;
 /// response to a tessage in one execution context. A tevent's response is every compatible handler, all within the one unit of<br/>
 /// work — the tessage is the unit of handling, so its handlers commit or retry as a whole and partial handling is<br/>
 /// unrepresentable; a tommand's is its single handler in a unit of work; a tuery's is its single handler in a scope. Every<br/>
-/// arrival path calls this one executor — the local doors, an endpoint's inbox, an endpoint's transport server — and therefore<br/>
+/// arrival path calls this one executor — the application-facing interfaces, an endpoint's inbox, an endpoint's transport server — and therefore<br/>
 /// there is exactly one policy for a missing handler: the <see cref="NoHandlerException"/> the roster's lookups raise.</summary>
 ///<remarks>Each kind comes in two forms mirroring the unit-of-work model's UnitOfWork/Independent axis: one executing within the<br/>
 /// context the caller already has (the resolver parameter says which), and one running the response in a context of its own<br/>

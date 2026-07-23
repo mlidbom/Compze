@@ -51,7 +51,7 @@ sealed class TeventObservationDispatcher : IDisposable
    public bool AnyTeventObserversFor(Type wrapperTeventType) => _observerQueues.Any(it => it.Observes(wrapperTeventType));
 
    ///<summary>Drains every observer queue — no observation is discarded at disposal. An observer can itself publish (through an<br/>
-   /// independent door), queueing further observation work on another queue, so draining runs in passes until one full pass<br/>
+   /// Independent* publisher), queueing further observation work on another queue, so draining runs in passes until one full pass<br/>
    /// finds every queue already empty. A queue that will not drain — a hanging observer — fails the disposal loud on <see cref="DrainAtDisposalTimeout"/>.</summary>
    public void Dispose()
    {

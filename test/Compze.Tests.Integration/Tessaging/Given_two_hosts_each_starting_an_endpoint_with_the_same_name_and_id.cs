@@ -24,8 +24,6 @@ namespace Compze.Tests.Integration.Tessaging;
 /// <see cref="EndpointId"/>.</summary>
 public class Given_two_hosts_each_starting_an_endpoint_with_the_same_name_and_id : UniversalTestBase
 {
-   static readonly EndpointId ContestedEndpointId = new(Guid.Parse("7D4B2E19-8A6C-4F53-9B07-E12A85C4D3F6"));
-
    readonly IDependencyInjectionContainer _rootContainer;
    readonly TestingEndpointHost _firstHost;
    readonly ExactlyOnceEndpoint _runningEndpoint;
@@ -42,10 +40,15 @@ public class Given_two_hosts_each_starting_an_endpoint_with_the_same_name_and_id
    }
 
    static ExactlyOnceEndpoint RegisterTheContestedEndpointWith(TestingEndpointHost host) =>
-      host.RegisterExactlyOnceEndpoint(
-         "Contested",
-         ContestedEndpointId,
-         endpointBuilder => endpointBuilder.RegisterComponents(registrar => registrar.RequireIntegrationTestTypeMappings()));
+      host.RegisterEndpoint(new ContestedEndpointDeclaration());
+
+   class ContestedEndpointDeclaration : ExactlyOnceEndpointDeclaration<ContestedEndpointDeclaration>, IEndpointIdentity
+   {
+      public static string Name => "Contested";
+      public static EndpointId Id => new(Guid.Parse("7D4B2E19-8A6C-4F53-9B07-E12A85C4D3F6"));
+
+      protected override void RegisterComponents(IComponentRegistrar registrar) => registrar.RequireIntegrationTestTypeMappings();
+   }
 
    protected override async Task InitializeAsyncInternal() => await _firstHost.StartAsync();
 
@@ -65,7 +68,7 @@ public class Given_two_hosts_each_starting_an_endpoint_with_the_same_name_and_id
                             .Must().ThrowAsync<AggregateException>()).Which;
       var lockRefusal = startFailure.Flatten().InnerExceptions.Single();
       (lockRefusal is EndpointAlreadyRunningInAnotherProcessException).Must().BeTrue();
-      lockRefusal.Message.Must().Contain("Contested")
+      lockRefusal.Message.Must().Contain(ContestedEndpointDeclaration.Name)
                  .Contain("already running in another process")
                  .Contain("held by process");
 

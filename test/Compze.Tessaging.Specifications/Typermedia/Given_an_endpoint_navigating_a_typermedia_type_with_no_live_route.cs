@@ -1,4 +1,5 @@
 using Compze.Tessaging.Endpoints;
+using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Must;
 using Compze.DependencyInjection;
@@ -17,13 +18,11 @@ namespace Compze.Tessaging.Specifications.Typermedia;
 
 ///<summary>The patience-exhausted half of waiting sends: the no-handler failure is never thrown immediately — the send first<br/>
 /// waits out the endpoint's handler-availability patience — and when it throws, the message names a type nothing this endpoint<br/>
-/// has ever met serves as a probable deployment or configuration error (see <c>src/Compze.Tessaging/dev_docs/peer-model.md</c>).<br/>
+/// has ever met serves as a probable deployment or configuration error (see <c>src/Compze.Tessaging/dev_docs/peers.md</c>).<br/>
 /// The known-but-down half is an internal specification, <c>Given_an_endpoint_navigating_a_typermedia_type_only_a_remembered_down_peer_serves</c>:<br/>
 /// a remembered-but-down peer is not deterministically producible through the public API today.</summary>
 public class Given_an_endpoint_navigating_a_typermedia_type_with_no_live_route : UniversalTestBase
 {
-   static readonly EndpointId NavigatorEndpointId = new(Guid.Parse("6F8D2C15-B7A9-4E30-95D6-1A4B8C7E2F90"));
-
    readonly TestingEndpointHost _host;
    readonly BestEffortEndpoint _navigatorEndpoint;
    IRemoteTypermediaNavigator _navigator = null!;
@@ -31,13 +30,18 @@ public class Given_an_endpoint_navigating_a_typermedia_type_with_no_live_route :
    public Given_an_endpoint_navigating_a_typermedia_type_with_no_live_route()
    {
       _host = TestingEndpointHost.Create();
-      _navigatorEndpoint = _host.RegisterBestEffortEndpoint(
-         "Navigator",
-         NavigatorEndpointId,
-         endpointBuilder => endpointBuilder
-            .RegisterComponents(registrar => registrar.RequireTypermediaHostingSpecificationTypeMappings())
-            //Short deliberately: these specifications pin what exhausted patience says, so waiting out the full default would only slow the suite.
-            .HandlerAvailabilityPatience(TimeSpan.FromMilliseconds(100)));
+      _navigatorEndpoint = _host.RegisterEndpoint(new NavigatorEndpointDeclaration());
+   }
+
+   class NavigatorEndpointDeclaration : BestEffortEndpointDeclaration<NavigatorEndpointDeclaration>, IEndpointIdentity
+   {
+      public static string Name => "Navigator";
+      public static EndpointId Id => new(Guid.Parse("6F8D2C15-B7A9-4E30-95D6-1A4B8C7E2F90"));
+
+      protected override void RegisterComponents(IComponentRegistrar registrar) => registrar.RequireTypermediaHostingSpecificationTypeMappings();
+
+      //Short deliberately: these specifications pin what exhausted patience says, so waiting out the full default would only slow the suite.
+      protected override TimeSpan? HandlerAvailabilityPatience => TimeSpan.FromMilliseconds(100);
    }
 
    protected override async Task InitializeAsyncInternal()

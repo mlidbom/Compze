@@ -4,7 +4,7 @@ using Compze.Tessaging.Endpoints;
 namespace Compze.Tessaging.Peers;
 
 ///<summary>The administrative operations on the endpoint's peer memory — the surface the future bus-management endpoints exist<br/>
-/// to expose (see <c>src/Compze.Tessaging/dev_docs/peer-model.md</c>). Every transport-speaking endpoint registers one, alongside its<br/>
+/// to expose (see <c>src/Compze.Tessaging/dev_docs/peers.md</c>). Every transport-speaking endpoint registers one, alongside its<br/>
 /// <see cref="IPeerRegistry"/>.</summary>
 public interface IPeerAdministration
 {

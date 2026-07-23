@@ -30,7 +30,7 @@ static class IndependentTeventPublisherRegistrar
    public void Publish(ITevent tevent)
    {
       AssertStandsOutsideAnyAmbientTransaction();
-      //The sync/async split (an exactly-once tevent is refused with a message pointing at PublishAsync) is enforced by the inner door.
+      //The sync/async split (an exactly-once tevent is refused with a message pointing at PublishAsync) is enforced by the inner publisher.
       _scopeFactory.ExecuteUnitOfWork(unitOfWork => unitOfWork.Resolve<IUnitOfWorkTeventPublisher>().Publish(tevent));
    }
 

@@ -13,7 +13,7 @@ namespace Compze.Tessaging.Peers._private;
 
 ///<summary>The <see cref="IPeerRegistry"/> of a database-less endpoint: the peers met during this process's lifetime, remembered<br/>
 /// in memory (<see cref="RememberedPeers"/>) and treated the same as a durably remembered peer for as long as the process lives<br/>
-/// (see <c>src/Compze.Tessaging/dev_docs/peer-model.md</c>). Nothing survives the process — by design: the composition that persists<br/>
+/// (see <c>src/Compze.Tessaging/dev_docs/peers.md</c>). Nothing survives the process — by design: the composition that persists<br/>
 /// nothing has nowhere to keep more.</summary>
 [UsedImplicitly] class ProcessLifetimePeerRegistry : IPeerRegistry
 {

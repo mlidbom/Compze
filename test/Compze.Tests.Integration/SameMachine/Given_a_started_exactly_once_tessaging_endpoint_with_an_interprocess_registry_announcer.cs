@@ -1,6 +1,7 @@
 using Compze.Tessaging.Endpoints;
 using Compze.Hosting.SameMachine;
 using Compze.Must;
+using Compze.Tessaging.Endpoints.Discovery;
 using Compze.Tessaging.Endpoints.ExactlyOnce;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tests.Infrastructure;
@@ -26,9 +27,35 @@ public class Given_a_started_exactly_once_tessaging_endpoint_with_an_interproces
    {
       _registry = InterprocessEndpointRegistry.OpenOrCreateSessionLocal(Guid.NewGuid().ToString(), TestDirectory);
       _host = TestingEndpointHost.Create();
-      _endpoint = _host.RegisterExactlyOnceEndpoint("AnnouncingEndpoint",
-                                                    new EndpointId(Guid.NewGuid()),
-                                                    endpointBuilder => endpointBuilder.AnnounceAddressTo(_registry));
+      _endpoint = _host.RegisterEndpoint(new AnnouncingEndpointDeclaration(), new EnvironmentAlsoAnnouncingTo(_host.Environment, _registry));
+   }
+
+   class AnnouncingEndpointDeclaration : ExactlyOnceEndpointDeclaration<AnnouncingEndpointDeclaration>, IEndpointIdentity
+   {
+      public static string Name => "AnnouncingEndpoint";
+      public static EndpointId Id { get; } = new(Guid.Parse("B25BE88A-F594-4E7A-ACA9-7D49EA8C17D8"));
+   }
+
+   ///<summary>The wrapped <see cref="IEndpointEnvironment"/> plus announcing to one more <see cref="IEndpointAddressAnnouncer"/> —<br/>
+   /// here: the testing host's environment plus the specification's own separate registry.</summary>
+   class EnvironmentAlsoAnnouncingTo : IEndpointEnvironment
+   {
+      readonly IEndpointEnvironment _environment;
+      readonly IEndpointAddressAnnouncer _additionalAnnouncementTarget;
+
+      internal EnvironmentAlsoAnnouncingTo(IEndpointEnvironment environment, IEndpointAddressAnnouncer additionalAnnouncementTarget)
+      {
+         _environment = environment;
+         _additionalAnnouncementTarget = additionalAnnouncementTarget;
+      }
+
+      public void Configure(EndpointBuilder endpointBuilder)
+      {
+         _environment.Configure(endpointBuilder);
+         endpointBuilder.AnnounceAddressTo(_additionalAnnouncementTarget);
+      }
+
+      public void ConfigureDomainDatabase(ExactlyOnceEndpointBuilder endpointBuilder) => _environment.ConfigureDomainDatabase(endpointBuilder);
    }
 
    protected override async Task InitializeAsyncInternal() => await _host.StartAsync();
