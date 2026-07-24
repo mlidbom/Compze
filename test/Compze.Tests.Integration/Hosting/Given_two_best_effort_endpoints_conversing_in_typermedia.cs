@@ -3,6 +3,8 @@ using Compze.Tessaging.Endpoints.Discovery;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Hosting;
+using Compze.Hosting.SameMachine;
+using Compze.Underscore;
 using Compze.Hosting.Testing;
 using Compze.Hosting.Testing.Wiring;
 using Compze.Internals.Testing;
@@ -33,6 +35,9 @@ namespace Compze.Tests.Integration.Hosting;
 ///</summary>
 public class Given_two_best_effort_endpoints_conversing_in_typermedia : UniversalTestBase
 {
+   static DirectoryInfo TestDirectory => new DirectoryInfo(Path.Combine(Path.GetTempPath(), "Compze", "Tests", "EndpointRegistry"))._mutate(it => it.Create());
+   readonly InterprocessEndpointRegistry _registry = InterprocessEndpointRegistry.OpenOrCreateSessionLocal(Guid.NewGuid().ToString(), TestDirectory);
+
    readonly IEndpointHost _host;
    readonly BestEffortEndpoint _askingEndpoint;
    readonly BestEffortEndpoint _answeringEndpoint;
@@ -40,11 +45,11 @@ public class Given_two_best_effort_endpoints_conversing_in_typermedia : Universa
    public Given_two_best_effort_endpoints_conversing_in_typermedia()
    {
       _host = EndpointHost.Production.Create(() => TestEnv.DIContainer.CreateTestingContainerBuilder(),
-                                             new CurrentTestsBestEffortEnvironment(new AddressesOfTheHostsEndpoints(() => _host!.Endpoints)));
+                                             CurrentTestsBestEffortEnvironment.DiscoveringEndpointsThrough(_registry));
 
       _askingEndpoint = _host.RegisterEndpoint(new AskingEndpointDeclaration());
-      //The answering endpoint declares no registry - it only serves - so it is built in an environment discovering nothing.
-      _answeringEndpoint = _host.RegisterEndpoint(new AnsweringEndpointDeclaration(), new CurrentTestsBestEffortEnvironment());
+      //The answering endpoint announces where it listens but declares no discovery: it is reachable, and navigates nowhere.
+      _answeringEndpoint = _host.RegisterEndpoint(new AnsweringEndpointDeclaration(), CurrentTestsBestEffortEnvironment.AnnouncingItsAddressTo(_registry));
    }
 
    class AskingEndpointDeclaration : BestEffortEndpointDeclaration<AskingEndpointDeclaration>, IEndpointIdentity
@@ -100,17 +105,6 @@ public class Given_two_best_effort_endpoints_conversing_in_typermedia : Universa
 
    TResult NavigateFromTheAskingEndpoint<TResult>(Func<IRemoteTypermediaNavigator, TResult> navigate) =>
       _askingEndpoint.ServiceLocator.Resolve<IScopeFactory>().ExecuteInIsolatedScope(scope => navigate(scope.Resolve<IRemoteTypermediaNavigator>()));
-
-   ///<summary>Knows the address of every endpoint in the host, so each endpoint's router connects to all of them — the<br/>
-   /// discovery a production suite gets from a shared registry, with nothing persisted anywhere.</summary>
-   class AddressesOfTheHostsEndpoints(Func<IReadOnlyList<IEndpoint>> hostEndpoints) : IEndpointRegistry
-   {
-      readonly Func<IReadOnlyList<IEndpoint>> _hostEndpoints = hostEndpoints;
-
-      public IEnumerable<EndpointAddress> ServerEndpointAddresses => [.._hostEndpoints().OfType<Endpoint>()
-                                                                                        .Where(it => it.Address is not null)
-                                                                                        .Select(it => it.Address!)];
-   }
 
    protected internal class GetTheAnswerTuery : Remotable.NonTransactional.Tueries.Tuery<AnswerResource>;
 

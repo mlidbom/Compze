@@ -4,6 +4,8 @@ using Compze.Tessaging.Endpoints.Discovery;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Hosting;
+using Compze.Hosting.SameMachine;
+using Compze.Underscore;
 using Compze.Hosting.Testing;
 using Compze.Hosting.Testing.Wiring;
 using Compze.Serialization.Newtonsoft.Wiring;
@@ -39,6 +41,9 @@ public class Given_two_best_effort_endpoints : UniversalTestBase
 {
    static readonly WaitTimeout HandlerTimeout = WaitTimeout.Seconds(30);
 
+   static DirectoryInfo TestDirectory => new DirectoryInfo(Path.Combine(Path.GetTempPath(), "Compze", "Tests", "EndpointRegistry"))._mutate(it => it.Create());
+   readonly InterprocessEndpointRegistry _registry = InterprocessEndpointRegistry.OpenOrCreateSessionLocal(Guid.NewGuid().ToString(), TestDirectory);
+
    readonly IEndpointHost _host;
    readonly BestEffortEndpoint _publisherEndpoint;
    readonly IThreadGate _subscriberBestEffortTeventHandlerGate = IThreadGate.NewOpen(HandlerTimeout, "subscriberBestEffortTeventHandler");
@@ -47,7 +52,7 @@ public class Given_two_best_effort_endpoints : UniversalTestBase
    public Given_two_best_effort_endpoints()
    {
       _host = EndpointHost.Production.Create(() => TestEnv.DIContainer.CreateTestingContainerBuilder(),
-                                             new CurrentTestsBestEffortEnvironment(new AddressesOfTheHostsEndpoints(() => _host!.Endpoints)));
+                                             CurrentTestsBestEffortEnvironment.ParticipatingIn(_registry));
 
       _publisherEndpoint = _host.RegisterEndpoint(new PublisherEndpointDeclaration());
       _host.RegisterEndpoint(new SubscriberEndpointDeclaration(this));
@@ -108,21 +113,21 @@ public class Given_two_best_effort_endpoints : UniversalTestBase
 
    [PCT] public async Task registering_a_handler_for_a_tevent_declaring_the_exactly_once_contract_fails_at_build()
    {
-      await using var host = EndpointHost.Production.Create(() => TestEnv.DIContainer.CreateTestingContainerBuilder(), new CurrentTestsBestEffortEnvironment());
+      await using var host = EndpointHost.Production.Create(() => TestEnv.DIContainer.CreateTestingContainerBuilder(), CurrentTestsBestEffortEnvironment.DeclaringNoTopology());
       Invoking(() => host.RegisterEndpoint(new EndpointDeclarationDemandingAnExactlyOnceTeventSubscription()))
         .Must().Throw<Exception>().Which.Message.Must().Contain("wires no exactly-once delivery machinery");
    }
 
    [PCT] public async Task registering_a_transaction_ignoring_handler_for_a_tevent_declaring_the_exactly_once_contract_fails_at_build()
    {
-      await using var host = EndpointHost.Production.Create(() => TestEnv.DIContainer.CreateTestingContainerBuilder(), new CurrentTestsBestEffortEnvironment());
+      await using var host = EndpointHost.Production.Create(() => TestEnv.DIContainer.CreateTestingContainerBuilder(), CurrentTestsBestEffortEnvironment.DeclaringNoTopology());
       Invoking(() => host.RegisterEndpoint(new EndpointDeclarationDemandingExactlyOnceTeventObservation()))
         .Must().Throw<Exception>().Which.Message.Must().Contain("wires no exactly-once delivery machinery");
    }
 
    [PCT] public async Task registering_a_handler_for_a_tommand_declaring_the_exactly_once_contract_fails_at_build()
    {
-      await using var host = EndpointHost.Production.Create(() => TestEnv.DIContainer.CreateTestingContainerBuilder(), new CurrentTestsBestEffortEnvironment());
+      await using var host = EndpointHost.Production.Create(() => TestEnv.DIContainer.CreateTestingContainerBuilder(), CurrentTestsBestEffortEnvironment.DeclaringNoTopology());
       Invoking(() => host.RegisterEndpoint(new EndpointDeclarationDemandingAnExactlyOnceTommandHandler()))
         .Must().Throw<Exception>().Which.Message.Must().Contain("wires no exactly-once delivery machinery");
    }
@@ -218,20 +223,6 @@ public class Given_two_best_effort_endpoints : UniversalTestBase
    async Task PublishAsyncOnThePublisherEndpointInATransaction(ITevent tevent) =>
       await _publisherEndpoint.ServiceLocator.Resolve<IScopeFactory>().ExecuteUnitOfWorkAsync(async unitOfWork =>
                                                                                                  await unitOfWork.Resolve<IUnitOfWorkTeventPublisher>().PublishAsync(tevent));
-
-   ///<summary>Knows the address of every endpoint in the host, so each endpoint's router connects to all of them — the<br/>
-   /// discovery a production suite gets from a shared registry, with nothing persisted anywhere.</summary>
-   class AddressesOfTheHostsEndpoints(Func<IReadOnlyList<IEndpoint>> hostEndpoints) : IEndpointRegistry
-   {
-      readonly Func<IReadOnlyList<IEndpoint>> _hostEndpoints = hostEndpoints;
-
-      public IEnumerable<EndpointAddress> ServerEndpointAddresses =>
-      [
-         .. _hostEndpoints().OfType<Endpoint>()
-                            .Where(it => it.Address is not null)
-                            .Select(it => it.Address!)
-      ];
-   }
 
    protected internal interface ITeventDeclaringTheExactlyOnceContract : IExactlyOnceTevent;
 

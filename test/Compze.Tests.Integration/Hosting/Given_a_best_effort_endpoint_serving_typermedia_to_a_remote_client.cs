@@ -37,7 +37,7 @@ public class Given_a_best_effort_endpoint_serving_typermedia_to_a_remote_client 
 
    public Given_a_best_effort_endpoint_serving_typermedia_to_a_remote_client()
    {
-      _host = EndpointHost.Production.Create(() => TestEnv.DIContainer.CreateTestingContainerBuilder(), new CurrentTestsBestEffortEnvironment());
+      _host = EndpointHost.Production.Create(() => TestEnv.DIContainer.CreateTestingContainerBuilder(), CurrentTestsBestEffortEnvironment.DeclaringNoTopology());
       _endpoint = _host.RegisterEndpoint(new DatabaselessTypermediaEndpointDeclaration());
    }
 
@@ -85,7 +85,7 @@ public class Given_a_best_effort_endpoint_serving_typermedia_to_a_remote_client 
 
    [PCT] public async Task building_an_exactly_once_endpoint_without_a_domain_database_fails_loud_naming_the_missing_declaration()
    {
-      await using var host = EndpointHost.Production.Create(() => TestEnv.DIContainer.CreateTestingContainerBuilder(), new CurrentTestsBestEffortEnvironment());
+      await using var host = EndpointHost.Production.Create(() => TestEnv.DIContainer.CreateTestingContainerBuilder(), CurrentTestsBestEffortEnvironment.DeclaringNoTopology());
       Invoking(() => host.RegisterEndpoint(new EndpointDeclarationWithoutADomainDatabase()))
          .Must().Throw<Exception>().Which.Message.Must().Contain("The endpoint declares no domain database");
    }
