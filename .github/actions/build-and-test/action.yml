@@ -36,9 +36,9 @@ runs:
       shell: bash
       run: |
         # Sample machine load throughout the test run, so a timeout can be checked against whether the box was actually
-        # saturated. vmstat's `r` is the run-queue depth (threads wanting a CPU); `id` is idle CPU%. On a 2-vCPU runner,
-        # sustained r>>2 with id~0 is real oversubscription; r~1-2 with id>0 is not - the timeout is then a code defect,
-        # not a starved machine. procps (vmstat) is preinstalled on ubuntu runners.
+        # saturated. vmstat's `r` is the run-queue depth (threads wanting a CPU); `id` is idle CPU%. Against the runner's
+        # logical-CPU count, sustained r far above it with id~0 is real oversubscription; r near or below it with idle to
+        # spare is not - a timeout is then a code defect, not a starved machine. procps (vmstat) is preinstalled on ubuntu.
         vmstat -t 1 > vmstat-during-tests.log 2>&1 &
         vmstat_pid=$!
 
@@ -51,11 +51,22 @@ runs:
 
         echo "===== Machine load during the test run (vmstat) ====="
         nproc | sed 's/^/logical CPUs: /'
-        # Columns: 1=r (run queue), 2=b (blocked); 15=id (idle%), 16=wa (iowait%). Skip the header (NR<=2) and the
-        # first sample (since-boot average). Report the worst contention seen and the tail so a failure is diagnosable.
-        awk 'NR>3 { if($1>maxr) maxr=$1; if(minid=="" || $15<minid) minid=$15; if($16>maxwa) maxwa=$16 }
-             END { print "peak run-queue (r): " maxr "   min idle CPU% (id): " minid "   peak iowait% (wa): " maxwa }' vmstat-during-tests.log
-        echo "----- last 15 vmstat samples -----"
-        tail -n 15 vmstat-during-tests.log
+        # Only rows whose first field is a number are samples (skips both header lines); the first such row is the
+        # since-boot average, skipped too. Column layout: 1=r (run queue), 15=id (idle%), 16=wa (iowait%). Peak/avg are
+        # over the WHOLE run - the tail alone only shows the final, lightweight assembly, not the heavy phases.
+        awk '$1 ~ /^[0-9]+$/ {
+               n++
+               if (n == 1) next
+               if ($1 > peakr) peakr = $1
+               if (minid == "" || $15 < minid) minid = $15
+               if ($16 > peakwa) peakwa = $16
+               rsum += $1; idsum += $15; c++
+             }
+             END {
+               if (c > 0) printf "run-queue r: peak=%d avg=%.1f   idle CPU%%: min=%d avg=%.0f   iowait%% peak=%d   (%d samples)\n", peakr, rsum/c, minid, idsum/c, peakwa, c
+               else print "no vmstat samples captured"
+             }' vmstat-during-tests.log
+        echo "----- busiest 10 samples by run-queue -----"
+        awk '$1 ~ /^[0-9]+$/ && NR > 3' vmstat-during-tests.log | sort -k1,1 -nr | head -n 10
 
         exit $test_exit
