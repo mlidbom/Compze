@@ -1,0 +1,17 @@
+# Diagnosing CI flakiness: read the load, don't assume it
+
+When a CI test flakes — a connect timeout, a slow query, a race that only shows on the runner — "the VM was
+overloaded" is the *last* hypothesis, not the first. That reflex has never once held up here; every instance
+hid a real code cause (a race, a lock-release ordering bug, a lock inversion) that a fix resolved.
+
+The evidence is already captured — read it before theorising. The CI `Build and Test` step
+(`.github/actions/build-and-test/action.yml`) prints a `vmstat` load summary every run, pass or fail:
+peak/avg run-queue (`r`), min idle CPU%, iowait, and the busiest samples — judge them against the printed
+`logical CPUs`. Separately, `NamedPipeTransportClient` puts the ThreadPool state (free workers, pending
+items) into the exception when a connect times out. Saturated looks like run-queue far above the CPU count
+with idle near 0, sustained; healthy looks like run-queue near/below it with idle to spare.
+
+Measured baseline (green run): **4 vCPU, idle never below 20%, run-queue ~2 avg / ~6 peak** — a comfortably
+loaded box, ~1.5× a dev machine on pure-CPU work. So a 10-second timeout there is something waiting on an
+event that isn't arriving, a code or DB cause — not the machine. (`COMPOSABLE_MACHINE_SLOWNESS=5.0` is
+conservative padding for perf-test thresholds only, not a measurement of the box.)
