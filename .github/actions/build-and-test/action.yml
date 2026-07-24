@@ -34,4 +34,28 @@ runs:
 
     - name: Test
       shell: bash
-      run: dotnet test Compze.AllProjects.slnx --configuration ${{ inputs.configuration }} --no-build -m:1
+      run: |
+        # Sample machine load throughout the test run, so a timeout can be checked against whether the box was actually
+        # saturated. vmstat's `r` is the run-queue depth (threads wanting a CPU); `id` is idle CPU%. On a 2-vCPU runner,
+        # sustained r>>2 with id~0 is real oversubscription; r~1-2 with id>0 is not - the timeout is then a code defect,
+        # not a starved machine. procps (vmstat) is preinstalled on ubuntu runners.
+        vmstat -t 1 > vmstat-during-tests.log 2>&1 &
+        vmstat_pid=$!
+
+        set +e
+        dotnet test Compze.AllProjects.slnx --configuration ${{ inputs.configuration }} --no-build -m:1
+        test_exit=$?
+        set -e
+
+        kill "$vmstat_pid" 2>/dev/null || true
+
+        echo "===== Machine load during the test run (vmstat) ====="
+        nproc | sed 's/^/logical CPUs: /'
+        # Columns: 1=r (run queue), 2=b (blocked); 15=id (idle%), 16=wa (iowait%). Skip the header (NR<=2) and the
+        # first sample (since-boot average). Report the worst contention seen and the tail so a failure is diagnosable.
+        awk 'NR>3 { if($1>maxr) maxr=$1; if(minid=="" || $15<minid) minid=$15; if($16>maxwa) maxwa=$16 }
+             END { print "peak run-queue (r): " maxr "   min idle CPU% (id): " minid "   peak iowait% (wa): " maxwa }' vmstat-during-tests.log
+        echo "----- last 15 vmstat samples -----"
+        tail -n 15 vmstat-during-tests.log
+
+        exit $test_exit

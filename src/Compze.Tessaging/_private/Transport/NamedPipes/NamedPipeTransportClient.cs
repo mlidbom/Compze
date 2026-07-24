@@ -36,8 +36,21 @@ static class NamedPipeTransportClient
                                                       Address:    {address.Uri}
                                                       Kind:       {request.Kind}
                                                       Type:       {request.PayloadTypeIdString}
+                                                      {ThreadPoolStateAtTimeout()}
                                                       {exception}
                                                       """);
+      }
+
+      static string ThreadPoolStateAtTimeout()
+      {
+         //Captured at the moment the connect timed out: a connect that waits out its whole timeout against a running server
+         //is the signature of the ThreadPool not servicing queued continuations - so 0 free worker threads with a high
+         //pending-work count says thread-pool exhaustion, and a healthy pool says the cause is elsewhere. Read alongside the
+         //CI vmstat run-queue: a low run-queue here disproves "the machine was saturated".
+         ThreadPool.GetAvailableThreads(out var freeWorkers, out var freeIoThreads);
+         ThreadPool.GetMaxThreads(out var maxWorkers, out var maxIoThreads);
+         return $"ThreadPool at timeout: {ThreadPool.ThreadCount} live thread(s), {ThreadPool.PendingWorkItemCount} pending work item(s), "
+              + $"{freeWorkers}/{maxWorkers} worker and {freeIoThreads}/{maxIoThreads} IO threads free.";
       }
 
       await NamedPipeFraming.WriteRequestAsync(pipe, request, cancellationToken).caf();
