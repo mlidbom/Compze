@@ -19,13 +19,14 @@ namespace Compze.Tessaging._private.Transport.NamedPipes;
 /// pending connects — the transport's natural backpressure.</remarks>
 sealed class NamedPipeTransportServer : IAsyncDisposable
 {
-   static readonly int ParallelListenerCount = Math.Max(Environment.ProcessorCount * 2, 8);
+   static readonly int ListeningInstanceCount = Math.Max(Environment.ProcessorCount * 2, 8);
 
    readonly Func<TransportRequest, Task<string>> _dispatchRequest;
    readonly string _pipeName = NamedPipeAddress.NewUniquePipeName();
    readonly CancellationTokenSource _cancellationSource = new();
    readonly IMonitor _monitor = IMonitor.New();
    readonly HashSet<NamedPipeServerStream> _openStreams = [];
+   readonly HashSet<Task> _connectionsBeingServed = [];
    Task[]? _listenerLoops;
 
    public NamedPipeTransportServer(Func<TransportRequest, Task<string>> dispatchRequest) => _dispatchRequest = dispatchRequest;
@@ -36,7 +37,7 @@ sealed class NamedPipeTransportServer : IAsyncDisposable
    public Task StartAsync()
    {
       State.Assert(_listenerLoops is null);
-      _listenerLoops = Enumerable.Range(0, ParallelListenerCount).Select(_ => Task.Run(ListenerLoopAsync)).ToArray();
+      _listenerLoops = Enumerable.Range(0, ListeningInstanceCount).Select(_ => Task.Run(ListenerLoopAsync)).ToArray();
       this.Log().Info($"Named-pipe transport server listening at {Address.Uri}");
       return Task.CompletedTask;
    }
@@ -46,11 +47,18 @@ sealed class NamedPipeTransportServer : IAsyncDisposable
       if(_listenerLoops is null) return;
       await _cancellationSource.CancelAsync().caf();
 
+      //Disposing the open streams interrupts both the listener instances waiting for a connection and the reads of any
+      //connections currently being served, so both the loops and the serve tasks unwind on the cancellation.
       NamedPipeServerStream[] openStreams = [];
       _monitor.Locked(() => openStreams = _openStreams.ToArray());
       foreach(var stream in openStreams) await stream.DisposeAsync().caf();
 
       await Task.WhenAll(_listenerLoops).caf();
+
+      Task[] connectionsBeingServed = [];
+      _monitor.Locked(() => connectionsBeingServed = _connectionsBeingServed.ToArray());
+      await Task.WhenAll(connectionsBeingServed).caf();
+
       _listenerLoops = null;
       this.Log().Info($"Named-pipe transport server at {Address.Uri} stopped");
    }
@@ -65,31 +73,52 @@ sealed class NamedPipeTransportServer : IAsyncDisposable
    {
       while(!_cancellationSource.IsCancellationRequested)
       {
-         NamedPipeServerStream? stream = null;
+         var stream = CreateAndTrackListeningInstance();
          try
          {
-#pragma warning disable CA2000 //Ownership is tracked: every created stream is disposed in this loop's finally or, if we are stopping, by the catch below / StopAsync.
-            stream = new NamedPipeServerStream(_pipeName, PipeDirection.InOut, NamedPipeServerStream.MaxAllowedServerInstances, PipeTransmissionMode.Byte, PipeOptions.Asynchronous | PipeOptions.CurrentUserOnly);
-#pragma warning restore CA2000
-            _monitor.Locked(() => _openStreams.Add(stream));
             await stream.WaitForConnectionAsync(_cancellationSource.Token).caf();
          }
 #pragma warning disable CA1031 //The filter makes this narrow: only while stopping — the canceled wait / disposed listener is the shutdown signal itself, not a failure.
          catch(Exception) when(_cancellationSource.IsCancellationRequested)
 #pragma warning restore CA1031
          {
-            if(stream is not null) DisposeAndUntrack(stream);
+            DisposeAndUntrack(stream);
             return;
          }
 
-         try
-         {
-            await ServeConnectionAsync(stream).caf();
-         }
-         finally
-         {
-            DisposeAndUntrack(stream);
-         }
+         //Hand the accepted connection off to be served on its own task and loop back at once to accept the next: this
+         //instance never blocks on a handler, so every listening instance stays ready to accept even under a burst of clients.
+         ServeUntilDoneThenDispose(stream);
+      }
+   }
+
+   NamedPipeServerStream CreateAndTrackListeningInstance()
+   {
+#pragma warning disable CA2000 //Ownership is tracked: the stream is disposed by ServeUntilDoneThenDispose, or, if we are stopping, by StopAsync / the loop's cancellation catch.
+      var stream = new NamedPipeServerStream(_pipeName, PipeDirection.InOut, NamedPipeServerStream.MaxAllowedServerInstances, PipeTransmissionMode.Byte, PipeOptions.Asynchronous | PipeOptions.CurrentUserOnly);
+#pragma warning restore CA2000
+      _monitor.Locked(() => _openStreams.Add(stream));
+      return stream;
+   }
+
+   void ServeUntilDoneThenDispose(NamedPipeServerStream stream)
+   {
+      var serving = ServeConnectionThenDisposeAsync(stream);
+      //Tracked so StopAsync can wait for in-flight serves to unwind; the continuation removes it whether it completed before
+      //or after this add, so the set never leaks a finished serve nor grows without bound under sustained load.
+      _monitor.Locked(() => _connectionsBeingServed.Add(serving));
+      serving.ContinueWithCE(_ => _monitor.Locked(() => _connectionsBeingServed.Remove(serving)));
+   }
+
+   async Task ServeConnectionThenDisposeAsync(NamedPipeServerStream stream)
+   {
+      try
+      {
+         await ServeConnectionAsync(stream).caf();
+      }
+      finally
+      {
+         DisposeAndUntrack(stream);
       }
    }
 
