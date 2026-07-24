@@ -45,11 +45,20 @@ partial class SqliteEndpointCatalogSqlLayer(ISqliteConnectionPool connectionFact
       var hold = await SqliteEndpointProcessLockHold.TryTakeAsync(_connectionFactory.ConnectionString, endpointName).caf();
       if(hold == null) return null;
 
-      //Stamped once the mutex is held, before the hold is handed back: the live lock and its recorded holder become one
-      //fact for any process that later reads the row after being refused this lock. Unlike the server engines, the mutex is
-      //not a database session, so the stamp cannot ride the lock's own connection - it is the next thing done while holding it.
-      await RecordLockHolderAsync(endpointName, lockHolderDescription).caf();
-      return hold;
+      try
+      {
+         //Stamped once the mutex is held, before the hold is handed back: the live lock and its recorded holder become one
+         //fact for any process that later reads the row after being refused this lock. Unlike the server engines, the mutex
+         //is not a database session, so the stamp cannot ride the lock's own connection - it is the next thing done while
+         //holding it.
+         await RecordLockHolderAsync(endpointName, lockHolderDescription).caf();
+         return hold;
+      }
+      catch //Resource cleanup, not handling: a stamp that fails must not leave the mutex held with no hold to release it.
+      {
+         await hold.DisposeAsync().caf();
+         throw;
+      }
    }
 
    async Task RecordLockHolderAsync(string endpointName, string lockHolderDescription) =>
