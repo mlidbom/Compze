@@ -14,9 +14,10 @@ namespace Compze.Tessaging._private.Transport.NamedPipes;
 /// counterpart of the endpoint transport's ASP.NET Core server.</summary>
 ///<remarks>A handler returns the serialized response payload; transport-level concerns (framing, connection lifecycle,<br/>
 /// routing exceptions back to the client) all live here, so handlers contain only "deserialize, execute, serialize".</remarks>
-///<remarks>Connections are served by a fixed pool of listener loops, each serving its accepted connection to completion before<br/>
-/// accepting the next. The pool bounds concurrent handler executions, and a connection burst beyond it queues in the clients'<br/>
-/// pending connects — the transport's natural backpressure.</remarks>
+///<remarks>A fixed set of listening instances stays ready to accept: each accepts a connection, hands it off to be served on<br/>
+/// its own task, and immediately re-arms to accept the next. A connection is served for as long as the client keeps it open —<br/>
+/// <see cref="ServeConnectionAsync"/> answers request after request until the client closes its end — so clients may hold<br/>
+/// connections open and converse over them indefinitely without reconnecting.</remarks>
 sealed class NamedPipeTransportServer : IAsyncDisposable
 {
    static readonly int ListeningInstanceCount = Math.Max(Environment.ProcessorCount * 2, 8);
@@ -37,7 +38,7 @@ sealed class NamedPipeTransportServer : IAsyncDisposable
    public Task StartAsync()
    {
       State.Assert(_listenerLoops is null);
-      _listenerLoops = Enumerable.Range(0, ListeningInstanceCount).Select(_ => Task.Run(ListenerLoopAsync)).ToArray();
+      _listenerLoops = Enumerable.Range(0, ListeningInstanceCount).Select(_ => TaskCE.Run(ListenerLoopAsync)).ToArray();
       this.Log().Info($"Named-pipe transport server listening at {Address.Uri}");
       return Task.CompletedTask;
    }
