@@ -127,3 +127,39 @@ jobs:
         with:
           configuration: Debug
           pluggable-components: "${{ matrix.persistence }}:${{ matrix.di }}:${{ matrix.serializer }}:${{ matrix.transport }}"
+
+  # Windows coverage for the container-free persistence layers. The DB engines run only on Linux because GitHub's service
+  # containers (postgres/mysql/mssql images) cannot be hosted on a Windows runner, but SqliteMemory and Sqlite need no
+  # container - so they run here to exercise the genuinely platform-divergent code CI otherwise never touches on Windows:
+  # the named-pipe transport (Win32 kernel pipes vs the Unix-domain-socket emulation on Linux), the Sqlite process lock's
+  # OS mutex, and Windows path / file-locking / line-ending handling. A separate job rather than an os matrix axis so the
+  # services block above stays off Windows entirely.
+  build-and-test-windows:
+    needs: check-duplicate-commit
+    if: needs.check-duplicate-commit.outputs.already_triggered != 'true'
+    runs-on: windows-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        persistence: [SqliteMemory, Sqlite]
+        di: [Microsoft, Autofac, DryIoc, LightInject]
+        serializer: [Newtonsoft]
+        transport: [AspNetCore, NamedPipes]
+
+    name: "Windows Test (${{ matrix.persistence }}:${{ matrix.di }}:${{ matrix.serializer }}:${{ matrix.transport }})"
+
+    env:
+      COMPOSABLE_MACHINE_SLOWNESS: "5.0"
+      COMPOSABLE_PERFORMANCE_TESTS_STRESS_TEST_ONLY: "true"
+      DOTNET_CLI_TELEMETRY_OPTOUT: "1"
+      DOTNET_NOLOGO: "true"
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Build and Test
+        uses: ./.github/actions/build-and-test
+        with:
+          configuration: Debug
+          pluggable-components: "${{ matrix.persistence }}:${{ matrix.di }}:${{ matrix.serializer }}:${{ matrix.transport }}"
