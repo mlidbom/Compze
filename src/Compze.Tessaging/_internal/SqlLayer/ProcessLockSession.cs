@@ -12,6 +12,11 @@ namespace Compze.Tessaging._internal.SqlLayer;
 /// the session dying — the domain database unreachable from this process — which it reports through<br/>
 /// <c>onLockLostWhileHeld</c>: after that, another process may legitimately claim the endpoint while this process still<br/>
 /// runs it, so the report must be loud.</remarks>
+///<remarks>Disposal releases the lock explicitly — the release command the engine supplies at construction — before closing<br/>
+/// the connection, and returns only once that has completed. Closing the connection would release the lock too, but only once<br/>
+/// the server got round to noticing the socket close: a release that returned while the server still held the lock would let<br/>
+/// the endpoint's next process be refused a lock that is logically free. The explicit release is skipped only when the<br/>
+/// session already died under a live holder — the lock went with it, and there is nothing to release on a dead connection.</remarks>
 class ProcessLockSession : ITessagingSqlLayer.IEndpointProcessLockHold
 {
    ///<summary>Well inside every common idle-session-reaping window (cloud database gateways commonly reap at several<br/>
@@ -20,13 +25,16 @@ class ProcessLockSession : ITessagingSqlLayer.IEndpointProcessLockHold
    static readonly TimeSpan KeepaliveInterval = TimeSpan.FromSeconds(30);
 
    readonly DbConnection _connection;
+   readonly Func<DbConnection, Task> _releaseLockOnSessionAsync;
    readonly Action<Exception> _onLockLostWhileHeld;
    readonly TaskCompletionSource _released = new(TaskCreationOptions.RunContinuationsAsynchronously);
    readonly Task _keepaliveLoop;
+   bool _sessionDiedUnderLiveHolder;
 
-   internal ProcessLockSession(DbConnection connection, Action<Exception> onLockLostWhileHeld)
+   internal ProcessLockSession(DbConnection connection, Func<DbConnection, Task> releaseLockOnSessionAsync, Action<Exception> onLockLostWhileHeld)
    {
       _connection = connection;
+      _releaseLockOnSessionAsync = releaseLockOnSessionAsync;
       _onLockLostWhileHeld = onLockLostWhileHeld;
       _keepaliveLoop = TaskCE.Run(KeepSessionAliveUntilReleasedAsync);
    }
@@ -49,6 +57,7 @@ class ProcessLockSession : ITessagingSqlLayer.IEndpointProcessLockHold
          catch(Exception sessionDeath)
 #pragma warning restore CA1031
          {
+            _sessionDiedUnderLiveHolder = true;
             _onLockLostWhileHeld(sessionDeath);
             return;
          }
@@ -59,7 +68,9 @@ class ProcessLockSession : ITessagingSqlLayer.IEndpointProcessLockHold
    {
       _released.TrySetResult();
       await _keepaliveLoop.caf();
-      //Closing the session is what releases the server-side session-scoped lock.
+      //Awaited after the keepalive loop has stopped, so the release command has the connection to itself. A dead session
+      //already released the lock, so there is nothing to release and the command would only throw on the dead connection.
+      if(!_sessionDiedUnderLiveHolder) await _releaseLockOnSessionAsync(_connection).caf();
       await _connection.DisposeAsync().caf();
    }
 }

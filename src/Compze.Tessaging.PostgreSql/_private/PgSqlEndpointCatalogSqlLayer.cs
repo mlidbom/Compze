@@ -1,3 +1,4 @@
+using System.Data.Common;
 using Compze.Tessaging.Endpoints;
 using Compze.Sql.Common._internal;
 using Compze.Sql.PostgreSql._internal;
@@ -62,7 +63,7 @@ partial class PgSqlEndpointCatalogSqlLayer(IPgSqlConnectionPool connectionFactor
             //recorded holder become one fact for any process that later reads the row after being refused this lock.
             await RecordLockHolderOnTheLockSessionAsync(connection, endpointName, lockHolderDescription).caf();
 
-            var session = new ProcessLockSession(connection, onLockLostWhileHeld);
+            var session = new ProcessLockSession(connection, lockSession => ReleaseAdvisoryLockOnTheLockSessionAsync(lockSession, endpointName), onLockLostWhileHeld);
             connection = null; //Ownership transferred: the session holds the lock by holding the connection.
             return session;
          }
@@ -81,6 +82,22 @@ partial class PgSqlEndpointCatalogSqlLayer(IPgSqlConnectionPool connectionFactor
          command.CommandText = $"UPDATE {Catalog.TableName} SET {Catalog.LockHolderDescription} = @holder WHERE {Catalog.EndpointName} = @name";
          command.Parameters.AddWithValue("holder", lockHolderDescription);
          command.Parameters.AddWithValue("name", endpointName);
+         await command.ExecuteNonQueryAsync().caf();
+      }
+   }
+
+   //Releases the session-scoped advisory lock explicitly, so disposal returns only once the server has released it rather than
+   //whenever it gets round to noticing the connection close. The key is recomputed from the same database and endpoint name.
+   static async Task ReleaseAdvisoryLockOnTheLockSessionAsync(DbConnection lockSession, string endpointName)
+   {
+      var command = lockSession.CreateCommand();
+      await using(command.caf())
+      {
+         command.CommandText = "SELECT pg_advisory_unlock(@LockKey)";
+         var parameter = command.CreateParameter();
+         parameter.ParameterName = "LockKey";
+         parameter.Value = ProcessLockKeys.Int64Key(lockSession.Database, endpointName);
+         command.Parameters.Add(parameter);
          await command.ExecuteNonQueryAsync().caf();
       }
    }

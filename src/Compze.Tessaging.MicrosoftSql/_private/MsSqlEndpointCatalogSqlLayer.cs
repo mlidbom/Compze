@@ -1,4 +1,5 @@
 using System.Data;
+using System.Data.Common;
 using Compze.Tessaging.Endpoints;
 using Compze.Sql.Common._internal;
 using Compze.Sql.MicrosoftSql._internal;
@@ -69,7 +70,7 @@ partial class MsSqlEndpointCatalogSqlLayer(IMsSqlConnectionPool connectionFactor
             //recorded holder become one fact for any process that later reads the row after being refused this lock.
             await RecordLockHolderOnTheLockSessionAsync(connection, endpointName, lockHolderDescription).caf();
 
-            var session = new ProcessLockSession(connection, onLockLostWhileHeld);
+            var session = new ProcessLockSession(connection, lockSession => ReleaseAppLockOnTheLockSessionAsync(lockSession, endpointName), onLockLostWhileHeld);
             connection = null; //Ownership transferred: the session holds the lock by holding the connection.
             return session;
          }
@@ -88,6 +89,21 @@ partial class MsSqlEndpointCatalogSqlLayer(IMsSqlConnectionPool connectionFactor
          command.CommandText = $"UPDATE {Catalog.TableName} SET {Catalog.LockHolderDescription} = @holder WHERE {Catalog.EndpointName} = @name";
          command.Parameters.AddWithValue("holder", lockHolderDescription);
          command.Parameters.AddWithValue("name", endpointName);
+         await command.ExecuteNonQueryAsync().caf();
+      }
+   }
+
+   //Releases the session-owned sp_getapplock explicitly, so disposal returns only once the server has released it rather than
+   //whenever it gets round to noticing the connection close. Same Resource and Session owner the lock was taken under.
+   static async Task ReleaseAppLockOnTheLockSessionAsync(DbConnection lockSession, string endpointName)
+   {
+      var command = lockSession.CreateCommand();
+      await using(command.caf())
+      {
+         command.CommandText = "sp_releaseapplock";
+         command.CommandType = CommandType.StoredProcedure;
+         command.Parameters.Add(new SqlParameter("Resource", $"CompzeEndpointProcessLock_{endpointName}"));
+         command.Parameters.Add(new SqlParameter("LockOwner", "Session"));
          await command.ExecuteNonQueryAsync().caf();
       }
    }
