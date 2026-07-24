@@ -1,17 +1,22 @@
 using System.Collections.Concurrent;
-using Compze.Tessaging.Endpoints;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Hosting;
+using Compze.Hosting.SameMachine;
 using Compze.Hosting.Testing;
 using Compze.Hosting.Testing.Wiring;
+using Compze.Internals.SystemCE.LinqCE;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
+using Compze.Underscore;
 using Compze.Internals.Testing;
+using Compze.Internals.Testing.Utilities.Awaiting;
 using Compze.Must;
-using Compze.Tessaging.TessageBus;
+using Compze.Tessaging._private.Routing;
+using Compze.Tessaging.Endpoints;
 using Compze.Tessaging.Endpoints.BestEffort;
-using Compze.Tessaging.Peers;
-using Compze.Tests.Common.Tessaging.Given_a_backend_endpoint_with_a_tommand_tevent_and_tuery_handler;
+using Compze.Tessaging.Endpoints.ExactlyOnce;
+using Compze.Tessaging.Hosting.Testing.Wiring;
+using Compze.Tessaging.TessageBus;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Threading;
@@ -20,7 +25,7 @@ using Compze.Threading.Testing;
 // ReSharper disable InconsistentNaming for testing
 #pragma warning disable IDE1006 //Reviewed OK: Test Naming Styles
 
-namespace Compze.Tests.Integration.Hosting;
+namespace Compze.Tessaging.InternalSpecifications;
 
 ///<summary>
 /// The per-peer opt-down from queue-while-down (<c>DoNotQueueTeventsFor</c> — see
@@ -29,21 +34,32 @@ namespace Compze.Tests.Integration.Hosting;
 /// for such a peer are delivered only while it is connected: published while it is down, they are dropped, and the peer resumes
 /// from tevents published after its return.
 ///</summary>
+///<remarks>An internal specification, and honestly so. Every step of it is defined by whether the publisher's router currently
+/// holds a connection to the subscriber — that is what "while it is down" means for a peer nothing is queued for — and a consumer
+/// has no way to ask that question, nor any reason to: the delivery model exists so that applications never have to. They declare
+/// what they need through waiting sends, <c>RequirePeers</c> and readiness, and the connection stays the framework's business.
+/// So this specification asks <see cref="ITessagingRouter.HasLiveConnectionTo"/> directly. Its predecessor lived among the
+/// black-box specifications and paid for the pretence: unable to ask, it waited on proxies — the peer being <em>remembered</em>,
+/// which happens before the connection exists, and a count of reads of a stand-in registry — and failed intermittently because
+/// neither proxy meant what the specification needed it to mean.</remarks>
 public class Given_a_met_distributed_tessaging_subscriber_the_publisher_does_not_queue_tevents_for : UniversalTestBase
 {
    static readonly WaitTimeout HandlerTimeout = WaitTimeout.Seconds(30);
+   static DirectoryInfo TestDirectory => new DirectoryInfo(Path.Combine(Path.GetTempPath(), "Compze", "Tests", "EndpointRegistry"))._mutate(it => it.Create());
 
+   readonly InterprocessEndpointRegistry _registry;
    readonly IEndpointHost _publisherHost;
    readonly BestEffortEndpoint _publisherEndpoint;
    IEndpointHost _subscriberHost;
-   readonly AddressesOfTheLiveHosts _registry = new();
 
    readonly IThreadGate _subscriberTeventHandlerGate = IThreadGate.NewOpen(HandlerTimeout, "notQueuedForSubscriberBestEffortTeventHandler");
-   readonly ConcurrentQueue<IMyBestEffortTevent> _teventsHandledOnTheSubscriber = new();
+   readonly ConcurrentQueue<ISequencedBestEffortTevent> _teventsHandledOnTheSubscriber = new();
 
    public Given_a_met_distributed_tessaging_subscriber_the_publisher_does_not_queue_tevents_for()
    {
-      _publisherHost = EndpointHost.Production.Create(() => TestEnv.DIContainer.CreateTestingContainerBuilder(), new CurrentTestsBestEffortEnvironment(_registry));
+      _registry = InterprocessEndpointRegistry.OpenOrCreateSessionLocal(Guid.NewGuid().ToString(), TestDirectory);
+
+      _publisherHost = EndpointHost.Production.Create(() => TestEnv.DIContainer.CreateTestingContainerBuilder(), new EnvironmentParticipatingInTheSpecificationsRegistry(_registry));
       _publisherEndpoint = _publisherHost.RegisterEndpoint(new PublisherEndpointDeclaration());
 
       _subscriberHost = CreateSubscriberHost();
@@ -51,7 +67,7 @@ public class Given_a_met_distributed_tessaging_subscriber_the_publisher_does_not
 
    IEndpointHost CreateSubscriberHost()
    {
-      var host = EndpointHost.Production.Create(() => TestEnv.DIContainer.CreateTestingContainerBuilder(), new CurrentTestsBestEffortEnvironment());
+      var host = EndpointHost.Production.Create(() => TestEnv.DIContainer.CreateTestingContainerBuilder(), new EnvironmentParticipatingInTheSpecificationsRegistry(_registry));
       host.RegisterEndpoint(new SubscriberEndpointDeclaration(this));
       return host;
    }
@@ -61,7 +77,7 @@ public class Given_a_met_distributed_tessaging_subscriber_the_publisher_does_not
       public static string Name => "NoQueueingPublisherEndpoint";
       public static EndpointId Id { get; } = new(Guid.Parse("E47B06D2-3C95-48A1-BF60-27D8C41E95B0"));
 
-      protected override void RegisterComponents(IComponentRegistrar registrar) => registrar.RequireIntegrationTestTypeMappings();
+      protected override void RegisterComponents(IComponentRegistrar registrar) => registrar.RequireTessagingInternalSpecificationTypeMappings();
 
       ///<summary>The opt-down itself: the publisher declares, peer by peer, that it keeps nothing for this one.</summary>
       protected override IReadOnlyList<EndpointId> PeersNotQueuedFor => [SubscriberEndpointDeclaration.Id];
@@ -75,10 +91,10 @@ public class Given_a_met_distributed_tessaging_subscriber_the_publisher_does_not
       readonly Given_a_met_distributed_tessaging_subscriber_the_publisher_does_not_queue_tevents_for _specification;
       internal SubscriberEndpointDeclaration(Given_a_met_distributed_tessaging_subscriber_the_publisher_does_not_queue_tevents_for specification) => _specification = specification;
 
-      protected override void RegisterComponents(IComponentRegistrar registrar) => registrar.RequireIntegrationTestTypeMappings();
+      protected override void RegisterComponents(IComponentRegistrar registrar) => registrar.RequireTessagingInternalSpecificationTypeMappings();
 
       protected override void RegisterBestEffortTeventHandlers(IBestEffortTeventHandlerRegistrar handle) => handle
-         .ForTevent((IMyBestEffortTevent tevent) =>
+         .ForTevent((ISequencedBestEffortTevent tevent) =>
           {
              _specification._teventsHandledOnTheSubscriber.Enqueue(tevent);
              _specification._subscriberTeventHandlerGate.AwaitPassThrough();
@@ -89,24 +105,25 @@ public class Given_a_met_distributed_tessaging_subscriber_the_publisher_does_not
    {
       await _publisherHost.StartAsync().caf();
       await _subscriberHost.StartAsync().caf();
-      _registry.Add(_subscriberHost);
    }
 
    protected override async Task DisposeAsyncInternal()
    {
       await _publisherHost.DisposeAsync().caf();
       await _subscriberHost.DisposeAsync().caf();
+      _registry.Delete();
+      _registry.Dispose();
    }
 
    [PCT] public async Task tevents_published_while_the_subscriber_is_down_are_dropped_and_it_resumes_from_tevents_published_after_its_return()
    {
-      AwaitThePublisherRememberingTheSubscriber();
+      AwaitThePublisherConnectedToTheSubscriber();
       PublishOnThePublisherEndpointInATransaction(sequenceNumber: 1);
       _subscriberTeventHandlerGate.AwaitPassedThroughCountEqualTo(1);
 
       //Down, cleanly: the subscriber leaves the registry while still serving, then its host goes away.
-      _registry.Remove(_subscriberHost);
-      _registry.AwaitTwoReadsCompletingAfterNow(); //A full reconciliation pass ran against the shrunk membership: the connection is dropped.
+      _registry.RetractEndpointAddress(SubscriberEndpointDeclaration.Id);
+      AwaitThePublisherDisconnectedFromTheSubscriber();
       await _subscriberHost.DisposeAsync();
 
       //The opt-down: these are dropped - the publisher declared it keeps nothing for this peer.
@@ -114,8 +131,7 @@ public class Given_a_met_distributed_tessaging_subscriber_the_publisher_does_not
 
       _subscriberHost = CreateSubscriberHost();
       await _subscriberHost.StartAsync();
-      _registry.Add(_subscriberHost);
-      _registry.AwaitTwoReadsCompletingAfterNow(); //A full reconciliation pass ran against the grown membership: the connection is up and its stream is draining.
+      AwaitThePublisherConnectedToTheSubscriber();
 
       PublishOnThePublisherEndpointInATransaction(sequenceNumber: 5);
 
@@ -125,17 +141,15 @@ public class Given_a_met_distributed_tessaging_subscriber_the_publisher_does_not
 
    void PublishOnThePublisherEndpointInATransaction(int sequenceNumber) =>
       _publisherEndpoint.ServiceLocator.Resolve<IScopeFactory>().ExecuteUnitOfWork(unitOfWork =>
-         unitOfWork.Resolve<IUnitOfWorkTeventPublisher>().Publish(new MyBestEffortTevent { SequenceNumber = sequenceNumber }));
+         unitOfWork.Resolve<IUnitOfWorkTeventPublisher>().Publish(new SequencedBestEffortTevent { SequenceNumber = sequenceNumber }));
 
-   ///<summary>Even a not-queued-for peer must be met before fan-out targets it at all, so the specification waits until the<br/>
-   /// subscriber appears in the publisher's peer registry.</summary>
-   void AwaitThePublisherRememberingTheSubscriber()
-   {
-      var deadline = DateTime.UtcNow + TimeSpan.FromSeconds(30);
-      while(!_publisherEndpoint.ServiceLocator.Resolve<IPeerAdministration>().Peers.Any(peer => peer.Id.Equals(SubscriberEndpointDeclaration.Id)))
-      {
-         if(DateTime.UtcNow > deadline) throw new TimeoutException("The publisher never met the subscriber: it never appeared in the publisher's peer registry.");
-         Thread.Sleep(20);
-      }
-   }
+   ///<summary>A tevent for a not-queued-for peer is delivered only while the connection is up, so every step of this specification
+   /// begins by waiting for the connection to be in the state the step is about.</summary>
+   void AwaitThePublisherConnectedToTheSubscriber() =>
+      PublishersRouter.PollAwait(it => it.HasLiveConnectionTo(SubscriberEndpointDeclaration.Id));
+
+   void AwaitThePublisherDisconnectedFromTheSubscriber() =>
+      PublishersRouter.PollAwait(it => !it.HasLiveConnectionTo(SubscriberEndpointDeclaration.Id));
+
+   ITessagingRouter PublishersRouter => _publisherEndpoint.ServiceLocator.Resolve<ITessagingRouter>();
 }
