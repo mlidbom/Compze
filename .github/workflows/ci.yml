@@ -46,6 +46,12 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
+          # A manual run (workflow_dispatch) is an explicit request to verify this commit again - the whole point is to
+          # re-run a SHA that has already run - so it must never be deduped away. Only push-triggered duplicates are dropped.
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "already_triggered=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
           earlier=$(gh api \
             "/repos/${{ github.repository }}/actions/runs?head_sha=${{ github.sha }}&per_page=100" \
             --jq "[.workflow_runs[] | select(.name == \"${{ github.workflow }}\" and .id < ${{ github.run_id }})] | length")
