@@ -5,6 +5,7 @@
     <explicitIncludes />
     <explicitExcludes>
       <Path>samples/AccountManagement/src/AccountManagement.UI.MVC/wwwroot/lib</Path>
+      <Path>src/Websites/Website/_site</Path>
     </explicitExcludes>
   </component>
 </project>
