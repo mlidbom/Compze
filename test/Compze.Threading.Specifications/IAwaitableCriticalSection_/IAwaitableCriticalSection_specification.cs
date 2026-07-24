@@ -102,51 +102,29 @@ public class IAwaitableCriticalSection_specification : UniversalTestBase
 
    public class An_exception_is_thrown_by_TakeUpdateLock_if_lock_is_not_acquired_within_timeout : IAwaitableCriticalSection_specification
    {
-      [IAwaitableCriticalSectionMatrix] public void Exception_is_TakeLockTimeoutException() =>
-         RunScenario(ownerThreadBlockTime: 20.Milliseconds(), LockTimeout.Milliseconds(10), WaitTimeout.Seconds(30)).Must().BeAssignableTo<TakeLockTimeoutException>();
-
-      [IAwaitableCriticalSectionMatrix] public void If_owner_thread_blocks_for_less_than_fetchStackTraceTimeout_Exception_contains_owning_threads_stack_trace() =>
-         RunScenario(ownerThreadBlockTime: 50.Milliseconds(), LockTimeout.Milliseconds(15), WaitTimeout.Seconds(30)).Message.Must().Contain(nameof(DisposeInMethodSoItWillBeInTheCapturedCallStack));
-
-      [IAwaitableCriticalSectionMatrix] public void If_owner_thread_blocks_for_more_than_fetchStackTraceTimeout_Exception_does_not_contain_owning_threads_stack_trace() =>
-         RunScenario(ownerThreadBlockTime: 60.Milliseconds(), LockTimeout.Milliseconds(5), WaitTimeout.Milliseconds(1)).Message.Must().NotContain(nameof(DisposeInMethodSoItWillBeInTheCapturedCallStack));
-
-      internal static void DisposeInMethodSoItWillBeInTheCapturedCallStack(IDisposable disposable) => disposable.Dispose();
-
-      Exception RunScenario(TimeSpan ownerThreadBlockTime, LockTimeout lockTimeout, WaitTimeout? timeToWaitForStackTrace = null)
+      [IAwaitableCriticalSectionMatrix] public void Exception_is_TakeLockTimeoutException()
       {
-         var criticalSection = _factory.Create(lockTimeout);
-         if(timeToWaitForStackTrace.HasValue)
-         {
-#pragma warning disable CS0618 // Type or member is obsolete
-            ((ILockInternals)criticalSection).SetTimeToWaitForStackTrace(timeToWaitForStackTrace.Value);
-#pragma warning restore CS0618 // Type or member is obsolete
-         }
+         var criticalSection = _factory.Create(LockTimeout.Milliseconds(10));
+         using var lockHeldByAnotherThread = new LockHeldByAnotherThreadWhileWeTimeOutTryingToTakeIt((ILockInternals)criticalSection, () => criticalSection.TakeUpdateLock());
+         lockHeldByAnotherThread.TheAcquisitionTimeoutException.Must().BeAssignableTo<TakeLockTimeoutException>();
+      }
 
-         using var threadOneHasTakenUpdateLock = new ManualResetEvent(false);
-         using var threadTwoIsAboutToTryToTakeUpdateLock = new ManualResetEvent(false);
+      [IAwaitableCriticalSectionMatrix] public void When_the_holder_disposes_the_lock_within_the_stack_trace_fetch_timeout_the_exception_message_contains_the_holders_disposal_stack_trace()
+      {
+         var criticalSection = _factory.Create(LockTimeout.Milliseconds(10));
+         using var lockHeldByAnotherThread = new LockHeldByAnotherThreadWhileWeTimeOutTryingToTakeIt((ILockInternals)criticalSection, () => criticalSection.TakeUpdateLock(), stackTraceFetchTimeout: WaitTimeout.Seconds(30));
+         lockHeldByAnotherThread.ReleaseTheHeldLock();
+         lockHeldByAnotherThread.TheAcquisitionTimeoutException.Message.Must().Contain(nameof(LockHeldByAnotherThreadWhileWeTimeOutTryingToTakeIt.DisposeInMethodSoItWillBeInTheCapturedCallStack));
+      }
 
-         TaskCE.Run(() =>
-         {
-            var takenLock = criticalSection.TakeUpdateLock();
-            threadOneHasTakenUpdateLock.Set();
-            threadTwoIsAboutToTryToTakeUpdateLock.WaitOne();
-            Thread.Sleep(ownerThreadBlockTime);
-            DisposeInMethodSoItWillBeInTheCapturedCallStack(takenLock);
-         });
-
-         threadOneHasTakenUpdateLock.WaitOne();
-
-         var thrownException = Invoking(() => TaskCE.Run(() =>
-                                                     {
-                                                        threadTwoIsAboutToTryToTakeUpdateLock.Set();
-                                                        criticalSection.TakeUpdateLock();
-                                                     })
-                                                    .Wait())
-                              .Must().Throw<AggregateException>()
-                              .Which.InnerExceptions.Single();
-
-         return thrownException;
+      [IAwaitableCriticalSectionMatrix] public void While_the_holder_still_holds_the_lock_the_exception_message_reports_it_could_not_fetch_the_holders_stack_trace()
+      {
+         var criticalSection = _factory.Create(LockTimeout.Milliseconds(10));
+         using var lockHeldByAnotherThread = new LockHeldByAnotherThreadWhileWeTimeOutTryingToTakeIt((ILockInternals)criticalSection, () => criticalSection.TakeUpdateLock(), stackTraceFetchTimeout: WaitTimeout.Milliseconds(50));
+         //Read while the holder still holds the lock (this scenario is not released until it is disposed, below this line):
+         //the fetch has no disposal stack trace to find and times out - deterministically, because the holder provably does
+         //not dispose during the fetch window.
+         lockHeldByAnotherThread.TheAcquisitionTimeoutException.Message.Must().NotContain(nameof(LockHeldByAnotherThreadWhileWeTimeOutTryingToTakeIt.DisposeInMethodSoItWillBeInTheCapturedCallStack));
       }
    }
 
