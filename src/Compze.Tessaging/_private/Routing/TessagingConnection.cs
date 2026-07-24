@@ -87,6 +87,9 @@ partial class TessagingConnection : ITessagingInboxConnection, IDisposable
 
       _deliveryRunning = false;
       this.Log().Info($"Stopping delivery to endpoint {EndpointInformation.Id}...");
+      //Before the cancellation, and before the loops are joined: this connection stops being the peer's delivery path here, so
+      //here is where its queue must stop accepting - not whenever the send loop's thread gets round to noticing it was cancelled.
+      _bestEffortStream.DetachFromThePeersQueue();
       _cancellationSource.Cancel();
       _exactlyOnceStream?.AwaitSendLoopTermination();
       _bestEffortStream.AwaitSendLoopTermination();

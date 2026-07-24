@@ -42,10 +42,27 @@ partial class BestEffortTeventQueues
       internal bool QueueingDeclined { get; }
 
       ///<summary>The peer's connection's best-effort delivery stream declares that it is draining this queue — what makes a<br/>
-      /// not-queued-for peer's tevents deliverable at all. Balanced by <see cref="DetachDrainingStream"/> when the stream stops.</summary>
-      internal void AttachDrainingStream() => _monitor.Locked(() => _drainingStreamAttached = true);
+      /// not-queued-for peer's tevents deliverable at all. Balanced by <see cref="DetachDrainingStream"/> when the connection<br/>
+      /// stops being the peer's delivery path.</summary>
+      ///<remarks>Attached by <see cref="Compze.Tessaging._private.Routing.TessagingConnection.BestEffortDeliveryStream.Start"/><br/>
+      /// and detached by <see cref="Compze.Tessaging._private.Routing.TessagingConnection.BestEffortDeliveryStream.DetachFromThePeersQueue"/> — both synchronous with the router<br/>
+      /// adding and dropping the peer's connection, neither running on the send loop's own thread. That is what gives<br/>
+      /// "this peer's connection is live" a single moment of truth: a router that routes a publish to the peer has a queue that<br/>
+      /// accepts it. Attaching from inside the send loop instead left a window — the whole scheduling delay of a freshly spawned<br/>
+      /// thread — in which <see cref="Compze.Tessaging._private.Routing.ITessagingRouter.HasLiveConnectionTo"/> answered true<br/>
+      /// while this queue silently declined every tevent published through it.</remarks>
+      internal void AttachDrainingStream() => _monitor.Locked(() =>
+      {
+         State.Assert(!_drainingStreamAttached,
+                      () => $"A peer is reached through one connection at a time, so its queue is drained by one stream at a time. A second stream attaching to the queue of {PeerId} means two live connections to one peer.");
+         _drainingStreamAttached = true;
+      });
 
-      internal void DetachDrainingStream() => _monitor.Locked(() => _drainingStreamAttached = false);
+      internal void DetachDrainingStream() => _monitor.Locked(() =>
+      {
+         State.Assert(_drainingStreamAttached, () => $"Every detach pairs with the attach its stream took when it started draining the queue of {PeerId}.");
+         _drainingStreamAttached = false;
+      });
 
       ///<summary>Whether this is a required peer's queue still awaiting its first advertisement: everything published is held<br/>
       /// for it, since which tevents it subscribes to is unknown until first contact resolves the held tevents<br/>

@@ -49,7 +49,32 @@ partial class TessagingConnection
          //The router recorded the advertisement in the peer registry before this runs (ConnectAsync), which is the ordering
          //the delivery leg's queues-before-registry read relies on.
          _peerQueue = _queues.ForConnectedPeer(_connection.EndpointInformation);
+
+         //Attached here, synchronously, before the loop's thread exists - the router adds this connection and starts its
+         //delivery under one hold of its monitor, so by the time anything can route a publish to the peer its queue accepts.
+         //Attaching from inside the loop instead made the queue start accepting only once a freshly spawned BelowNormal thread
+         //got scheduled, and a not-queued-for peer's tevents published in that window were dropped with the connection live.
+         _peerQueue.AttachDrainingStream();
          _sendLoopThread = _connection._taskRunner.RunOnNamedThread($"BestEffortDelivery-{_connection.EndpointInformation.Id.Value:N}", SendLoop, ThreadPriority.BelowNormal);
+      }
+
+      ///<summary>This connection stops being the peer's delivery path — called as delivery stops, so the queue stops accepting<br/>
+      /// the moment the connection stops being live rather than whenever the send loop's thread gets round to noticing.</summary>
+      ///<remarks>For a not-queued-for peer this also empties the queue: such a peer's tevents exist only while it is there to<br/>
+      /// receive them, so whatever the stopping stream never got to send must not survive to be delivered on the peer's return.<br/>
+      /// The same drop-stream-whole boundary a failed delivery produces (<see cref="DropTheQueuedStreamWholeForTheNotQueuedForPeer"/>),<br/>
+      /// reached by the connection ending instead of by a send failing.</remarks>
+      internal void DetachFromThePeersQueue()
+      {
+         _peerQueue.DetachDrainingStream();
+         if(!_peerQueue.QueueingDeclined) return;
+
+         var neverSent = _peerQueue.DequeueAll();
+         if(neverSent.Count == 0) return;
+
+         this.Log().Info($"Delivery to not-queued-for endpoint {_connection.EndpointInformation.Id} stopped with {neverSent.Count} tessage(s) still queued: they are dropped rather than kept for the peer's return - the composition declared this endpoint keeps nothing for it.");
+         foreach(var dropped in neverSent)
+            _connection._tessagesInFlightTracker.DroppedBeforeDelivery(dropped, _connection.EndpointInformation.Id);
       }
 
       internal void AwaitSendLoopTermination() => _sendLoopThread?.JoinCE(5.Seconds());
@@ -58,9 +83,6 @@ partial class TessagingConnection
       {
          this.Log().Info($"Started best-effort delivery loop for endpoint {_connection.EndpointInformation.Id}");
 
-         //Attached while this loop drains: what makes a not-queued-for peer's tevents deliverable at all - its queue declines
-         //tessages whenever no stream is draining it.
-         _peerQueue.AttachDrainingStream();
          try
          {
             while(!_connection._cancellationSource.IsCancellationRequested)
@@ -95,10 +117,6 @@ partial class TessagingConnection
          }
          catch(OperationCanceledException) {} // Expected during shutdown: cancellation aborted an in-flight send or probe.
          catch(ObjectDisposedException) {} // Expected during shutdown
-         finally
-         {
-            _peerQueue.DetachDrainingStream();
-         }
 
          this.Log().Info($"Stopped best-effort delivery loop for endpoint {_connection.EndpointInformation.Id}");
       }
