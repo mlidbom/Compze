@@ -42,10 +42,13 @@ runs:
         vmstat -t 1 > vmstat-during-tests.log 2>&1 &
         vmstat_pid=$!
 
+        # errexit stays OFF for the rest of the step (GitHub runs bash with -e -o pipefail): the load summary below is
+        # pure diagnostics and must never decide the step's result - only test_exit does, at the very end. In particular
+        # `... | head` closes its pipe early, which SIGPIPEs the upstream `sort` (non-zero under pipefail); under errexit
+        # that aborted the step before `exit $test_exit`, failing a passing run at random on whichever leg lost that race.
         set +e
         dotnet test Compze.AllProjects.slnx --configuration ${{ inputs.configuration }} --no-build -m:1
         test_exit=$?
-        set -e
 
         kill "$vmstat_pid" 2>/dev/null || true
 
