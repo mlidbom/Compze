@@ -1,6 +1,6 @@
 using Compze.TypeIdentifiers._private;
 
-namespace Compze.TypeIdentifiers._internal;
+namespace Compze.TypeIdentifiers._private;
 
 /// <summary>
 /// A leaf type with an explicitly assigned GUID: <c>Guid, 0</c>. Internal parse-tree node;

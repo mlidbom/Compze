@@ -10,7 +10,7 @@ using Compze.Underscore;
 using Compze.xUnitBDD;
 using Xunit;
 using static Compze.Must.MustActions;
-using Compze.Threading.Interprocess._internal;
+using Compze.Threading.Interprocess._private;
 
 // ReSharper disable InconsistentNaming
 

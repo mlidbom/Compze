@@ -1,6 +1,6 @@
 using Compze.TypeIdentifiers._private;
 
-namespace Compze.TypeIdentifiers._internal;
+namespace Compze.TypeIdentifiers._private;
 
 /// <summary>
 /// Internal parse tree for an <c>AssemblyQualifiedName</c>-format string. Each subtype represents a

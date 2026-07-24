@@ -11,6 +11,8 @@ using Compze.Tessaging._private.Routing;
 using Compze.Tessaging.TessageTypes;
 using Compze.Tessaging.Peers._private;
 
+using Compze.Tessaging._private.Transport.Advertisement;
+
 namespace Compze.Tessaging.TessageBus._private.Outbox;
 
 static class OutboxRegistrar

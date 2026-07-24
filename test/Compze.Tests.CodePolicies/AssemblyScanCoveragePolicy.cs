@@ -22,13 +22,28 @@ public static class AssemblyScanCoveragePolicy
       CompzeAssemblyLoader.EnsureAllCompzeAssembliesAreLoaded();
       var loadedAssemblyNames = AppDomain.CurrentDomain.AllCompzeAssemblies().Select(it => it.GetName().Name!).ToHashSet(StringComparer.Ordinal);
 
-      var violations = Directory.GetDirectories(Path.Combine(CompzeRepository.Root, "src"))
-                                .Select(directory => Path.GetFileName(directory)!)
-                                .Where(projectName => File.Exists(Path.Combine(CompzeRepository.Root, "src", projectName, projectName + ".csproj"))
-                                                   && !loadedAssemblyNames.Contains(projectName))
-                                .Select(projectName => $"{projectName} is not loaded for scanning")
-                                .Order(StringComparer.Ordinal)
-                                .ToList();
+      var violations = CompzeRepository.LibraryProjectNames
+                                       .Where(projectName => !loadedAssemblyNames.Contains(projectName))
+                                       .Select(projectName => $"{projectName} is not loaded for scanning")
+                                       .Order(StringComparer.Ordinal)
+                                       .ToList();
+
+      violations.Must().SequenceEqual(Array.Empty<string>());
+   }
+
+   ///<summary><see cref="ProductionComponentSubstitutionPolicy"/> inspects what the test projects themselves declare, so a test
+   /// project whose assembly is not loaded is exempt from it — and a test double is exactly the kind of thing that hides in the
+   /// project nobody wired up for scanning.</summary>
+   [XF] public static void Every_test_projects_assembly_is_loaded_for_scanning()
+   {
+      CompzeAssemblyLoader.EnsureAllCompzeAssembliesAreLoaded();
+      var loadedAssemblyNames = AppDomain.CurrentDomain.AllCompzeAssemblies().Select(it => it.GetName().Name!).ToHashSet(StringComparer.Ordinal);
+
+      var violations = CompzeRepository.TestProjectNames
+                                       .Where(projectName => !loadedAssemblyNames.Contains(projectName))
+                                       .Select(projectName => $"{projectName} is not loaded for scanning")
+                                       .Order(StringComparer.Ordinal)
+                                       .ToList();
 
       violations.Must().SequenceEqual(Array.Empty<string>());
    }

@@ -13,6 +13,8 @@ using Compze.Tessaging.TessageBus._private.TessageHandling.Dispatching;
 using Compze.Tessaging.TessageTypes;
 using Compze.Tessaging.Typermedia.Client;
 
+using Compze.Tessaging._private.Transport.Advertisement;
+
 namespace Compze.Tessaging._private.HandlerAvailability;
 
 static class HandlerAvailabilityRegistrar

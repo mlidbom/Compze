@@ -1,6 +1,6 @@
 using Compze.TypeIdentifiers._private;
 
-namespace Compze.TypeIdentifiers._internal;
+namespace Compze.TypeIdentifiers._private;
 
 /// <summary>A stable non-generic type: <c>TypeName, AssemblyName</c>.</summary>
 sealed class StableLeafTypeIdentifier(string typeName, string assemblyName) : TypeIdentifier

@@ -2,7 +2,7 @@ using Compze.Internals.SystemCE.ReflectionCE;
 using System.Collections.Concurrent;
 using Compze.TypeIdentifiers._private;
 
-namespace Compze.TypeIdentifiers._internal;
+namespace Compze.TypeIdentifiers._private;
 
 /// <summary>
 /// Transforms between .NET <see cref="Type"/> objects and <see cref="TypeIdentifier"/> values, against a fixed set of

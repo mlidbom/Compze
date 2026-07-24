@@ -4,6 +4,8 @@ using Compze.Internals.SystemCE.ReflectionCE;
 using Compze.Tessaging.TessageTypes;
 using Compze.Threading;
 
+using Compze.Tessaging.Validation._private;
+
 namespace Compze.Tessaging.Validation._internal;
 
 static class TessageTypeInspector

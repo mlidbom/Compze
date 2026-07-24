@@ -3,12 +3,14 @@ In order to make it easy for a reader to follow the structure of the code we use
 ## _internal and _private namespaces
 
 * Code that should never be used directly by a consumer of a library goes in namespaces called:
-  * _internal: For code that IS shared with other parts of compze using InternalsVisibleTo — a type no other assembly consumes does not belong here; it goes under _private.
-  * _private: For code that must never be used by any other project even if it may be technically visible due to InternalsVisibleTo.
+  * _internal: For code that IS shared with another Compze *library* using InternalsVisibleTo — a type no other library consumes does not belong here; it goes under _private.
+  * _private: For code that no other library may use, even where InternalsVisibleTo makes it technically visible.
+
+**The line both sections draw is what shipped code can see.** A white-box specification project — the `*.InternalSpecifications` and `*.Internals` families — is not shipped code, so it sits on neither side of that line: it may reach into `_private`, and reaching in never makes a type `_internal`. That matters in both directions. Without the first half, writing an honest white-box specification would force the type it specifies outward and make the section name lie about who depends on it; without the second, a type would advertise sharing that does not exist on the strength of a test alone. The rare specification that must reach past a library's public API says so by living in a project whose *name* says so — see [only-black-box-tests](005-only-black-box-tests.md) — rather than by bending the production code's shape around it.
 
 Why the lowercase underscore form: these sections are not domain concepts — they are visibility machinery, in effect language extensions making up for the access modifier C# lacks. The `_lowercase` spelling makes them look like what they are (keyword-like markers, not PascalCase domain words), keeps them visually distinct from real namespaces, and sorts them before normal namespaces in IDE project views and file explorers — the same signal `_docs` folders already carry.
 
-Both directions are enforced by Compze.Tests.CodePolicies' PrivateNamespaceIsolationPolicy, which scans the compiled assemblies' type references: no assembly may reference a type in another assembly's _private namespace, and every type in an _internal namespace must actually be referenced by another assembly. This makes the classification self-maintaining: a foreign consumer appearing forces promotion _private→_internal; the last consumer disappearing forces demotion _internal→_private.
+Both directions are enforced by Compze.Tests.CodePolicies' PrivateNamespaceIsolationPolicy, which scans the compiled assemblies' type references: no library may reference a type in another assembly's _private namespace, and every type in an _internal namespace must actually be referenced by another library. Both tests ignore white-box specification projects, per the paragraph above. This makes the classification self-maintaining: a library consumer appearing forces promotion _private→_internal; the last library consumer disappearing forces demotion _internal→_private.
 
 Where the _internal/_private section sits:
 * A concept with a public side keeps its machinery in an _internal/_private namespace nested BELOW the concept — `Compze.Tessaging.TessageBus._internal` — at whatever depth the public aspect lives.

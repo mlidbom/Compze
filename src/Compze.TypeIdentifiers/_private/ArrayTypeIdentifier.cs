@@ -1,6 +1,6 @@
 using Compze.TypeIdentifiers._private;
 
-namespace Compze.TypeIdentifiers._internal;
+namespace Compze.TypeIdentifiers._private;
 
 /// <summary>An array type wrapping an element type identifier: <c>Element[], AssemblyName</c> or <c>Element[,], AssemblyName</c>.</summary>
 sealed class ArrayTypeIdentifier(TypeIdentifier element, int rank) : TypeIdentifier

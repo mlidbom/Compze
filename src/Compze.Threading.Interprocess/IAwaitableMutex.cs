@@ -1,4 +1,4 @@
-using Compze.Threading.Interprocess._internal;
+using Compze.Threading.Interprocess._private;
 
 namespace Compze.Threading.Interprocess;
 

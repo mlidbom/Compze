@@ -1,8 +1,9 @@
 using Compze.Tessaging.Endpoints;
 using Compze.Tessaging.Peers._internal;
 using Compze.Tessaging._internal.Transport;
-using Compze.Tessaging._internal.Transport.Advertisement;
 using Compze.TypeIdentifiers;
+
+using Compze.Tessaging._private.Transport.Advertisement;
 
 namespace Compze.Tessaging._internal.SqlLayer;
 

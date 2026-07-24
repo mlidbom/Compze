@@ -1,6 +1,6 @@
 using Compze.TypeIdentifiers._private;
 
-namespace Compze.TypeIdentifiers._internal;
+namespace Compze.TypeIdentifiers._private;
 
 /// <summary>A mapped generic type identified by GUID: <c>Guid[[ arg1 ],[ arg2 ]], 0</c>.</summary>
 sealed class MappedGenericTypeIdentifier(Guid guidValue, TypeIdentifier[] typeArguments) : TypeIdentifier

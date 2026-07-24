@@ -1,10 +1,11 @@
 using Compze.Tessaging._internal.Transport;
 using Compze.DependencyInjection.Abstractions;
-using Compze.Tessaging._internal.Transport.Advertisement;
 
 using Compze.Tessaging._internal.Transport.NamedPipes;
 using Compze.Tessaging._private.Transport.NamedPipes;
 using Compze.Tessaging._private.Transport;
+
+using Compze.Tessaging._internal.Transport.Advertisement;
 
 namespace Compze.Tessaging.Transport.NamedPipes;
 

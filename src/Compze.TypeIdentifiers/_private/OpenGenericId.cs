@@ -1,4 +1,4 @@
-namespace Compze.TypeIdentifiers._internal;
+namespace Compze.TypeIdentifiers._private;
 
 /// <summary>
 /// GUID-backed identity for an open generic definition (e.g. <c>List&lt;&gt;</c>, <c>Dictionary&lt;,&gt;</c>).

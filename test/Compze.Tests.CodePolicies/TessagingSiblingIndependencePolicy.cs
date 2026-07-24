@@ -20,11 +20,11 @@ public static class TessagingSiblingIndependencePolicy
 
    static List<string> UsingDirectiveViolations(string siblingFolder, string forbiddenNamespacePrefix)
    {
-      var repositoryRoot = CompzeRepository.Root;
+      var repositoryRoot = CompzeRepository.SourceFolder();
       var siblingSourceFolders = new[]
       {
-         Path.Combine(repositoryRoot, "src", "Compze.Tessaging", siblingFolder),
-         Path.Combine(repositoryRoot, "src", "Compze.Tessaging.Abstractions", siblingFolder)
+         CompzeRepository.SourceFolder("src", "Compze.Tessaging", siblingFolder),
+         CompzeRepository.SourceFolder("src", "Compze.Tessaging.Abstractions", siblingFolder)
       };
 
       return siblingSourceFolders

@@ -1,7 +1,7 @@
 using System.IO.MemoryMappedFiles;
 using System.Runtime.CompilerServices;
 
-namespace Compze.Threading.Interprocess._internal;
+namespace Compze.Threading.Interprocess._private;
 
 class InterprocessChangeCounter : IDisposable
 {

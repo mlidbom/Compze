@@ -10,6 +10,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Compze.Tessaging._private.Transport.AspNetCore;
 
+using Compze.Tessaging._private.Transport.Advertisement;
+
 namespace Compze.Tessaging.Transport.AspNetCore._private;
 
 #pragma warning disable CA1031 //We catch all exceptions here to route them back to the client, exactly as the named-pipe transport server does.

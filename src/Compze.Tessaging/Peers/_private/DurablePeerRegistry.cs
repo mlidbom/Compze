@@ -3,12 +3,13 @@ using Compze.Contracts;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Internals.SystemCE.TransactionsCE;
 using Compze.Tessaging.Endpoints;
-using Compze.Tessaging._internal.Transport.Advertisement;
 using Compze.Tessaging._internal.SqlLayer;
 using Compze.Tessaging.TessageTypes;
 using Compze.TypeIdentifiers;
 using JetBrains.Annotations;
 using Compze.Tessaging.Peers._internal;
+
+using Compze.Tessaging._private.Transport.Advertisement;
 
 namespace Compze.Tessaging.Peers._private;
 

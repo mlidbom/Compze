@@ -4,6 +4,8 @@ using Compze.Internals.SystemCE.ReflectionCE;
 using Compze.Tessaging.TessageTypes;
 using Compze.Tessaging.Validation._internal;
 
+using Compze.Tessaging.Validation._private;
+
 namespace Compze.Tessaging.Validation;
 
 ///<summary>The design rules every tessage type must satisfy: the rules that refuse self-contradictory kind combinations — a type<br/>

@@ -1,3 +1,5 @@
+using Compze.Tessaging._private.Transport.Advertisement;
+
 namespace Compze.Tessaging._private.Transport.AspNetCore;
 
 #pragma warning disable CA1724 // Nested type names intentionally match namespace concepts

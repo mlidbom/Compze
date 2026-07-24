@@ -1,5 +1,5 @@
 using System.Reflection;
-using Compze.TypeIdentifiers._internal;
+using Compze.TypeIdentifiers._private;
 using Compze.TypeIdentifiers._private;
 
 namespace Compze.TypeIdentifiers;

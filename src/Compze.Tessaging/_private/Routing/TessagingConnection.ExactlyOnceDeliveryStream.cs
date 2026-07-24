@@ -6,6 +6,8 @@ using Compze.Tessaging.TessageBus._private.Outbox;
 using Compze.Threading.ResourceAccess;
 using Compze.Tessaging._private.Transport;
 
+using Compze.Tessaging._private.Transport.Advertisement;
+
 namespace Compze.Tessaging._private.Routing;
 
 partial class TessagingConnection

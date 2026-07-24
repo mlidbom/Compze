@@ -1,6 +1,6 @@
 using System.Reflection;
 
-namespace Compze.TypeIdentifiers._internal;
+namespace Compze.TypeIdentifiers._private;
 
 /// <summary>
 /// Collects type mappings from an <see cref="IAssemblyTypeMapper"/> and validates

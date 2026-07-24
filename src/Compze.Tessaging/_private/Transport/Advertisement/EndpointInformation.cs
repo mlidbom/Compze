@@ -5,7 +5,7 @@ using Compze.TypeIdentifiers;
 
 // ReSharper disable UnusedAutoPropertyAccessor.Global serilization requires it
 
-namespace Compze.Tessaging._internal.Transport.Advertisement;
+namespace Compze.Tessaging._private.Transport.Advertisement;
 
 ///<summary>The answer to endpoint discovery: who the endpoint is and its one advertisement — every remotable tessage type it<br/>
 /// serves, of every kind (tevent subscriptions, tommands, tueries, typermedia tommands), as canonical type-id strings.<br/>

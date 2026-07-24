@@ -12,7 +12,7 @@ using Compze.Internals.SystemCE.LinqCE;
 using Compze.Teventive.Taggregates.BaseClasses;
 using Compze.Teventive.TeventStore.Abstractions._internal;
 using Newtonsoft.Json;
-using Compze.Serialization.Newtonsoft._internal.TeventStore;
+using Compze.Serialization.Newtonsoft._private.TeventStore;
 
 namespace Compze.Tests.Performance.Internals.Serialization;
 

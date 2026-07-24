@@ -3,6 +3,8 @@ using Compze.Tessaging.Endpoints.Discovery;
 using Compze.Tessaging._internal.Transport;
 using Compze.Tessaging.Typermedia;
 
+using Compze.Tessaging._private.Transport.Advertisement;
+
 namespace Compze.Tessaging._private.Transport.AspNetCore;
 
 ///<summary>The HTTP implementation of <see cref="IEndpointTransportClient"/>: posts each request to its kind's route<br/>

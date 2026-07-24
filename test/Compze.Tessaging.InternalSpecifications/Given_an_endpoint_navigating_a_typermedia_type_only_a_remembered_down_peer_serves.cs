@@ -6,7 +6,6 @@ using Compze.DependencyInjection;
 using Compze.Tessaging.Endpoints.BestEffort;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging.Peers._internal;
-using Compze.Tessaging._internal.Transport.Advertisement;
 using Compze.Tessaging.Typermedia;
 using Compze.Tessaging.Typermedia.Client;
 using Compze.Tests.Infrastructure;
@@ -16,6 +15,8 @@ using static Compze.Must.MustActions;
 
 // ReSharper disable InconsistentNaming for testing
 #pragma warning disable IDE1006 //Reviewed OK: Test Naming Styles
+
+using Compze.Tessaging._private.Transport.Advertisement;
 
 namespace Compze.Tessaging.InternalSpecifications;
 

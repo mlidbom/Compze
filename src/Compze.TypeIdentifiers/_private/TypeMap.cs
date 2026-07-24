@@ -1,6 +1,6 @@
 using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
-using Compze.TypeIdentifiers._internal;
+using Compze.TypeIdentifiers._private;
 
 namespace Compze.TypeIdentifiers._private;
 

@@ -6,17 +6,34 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Compze.Abstractions.Specifications\Compze.Abstractions.Specifications.csproj" />
+    <ProjectReference Include="..\Compze.Contracts.Specifications\Compze.Contracts.Specifications.csproj" />
     <ProjectReference Include="..\Compze.DbPool.Tests\Compze.DbPool.Tests.csproj" />
+    <ProjectReference Include="..\Compze.DependencyInjection.MsDiCompliance\Compze.DependencyInjection.MsDiCompliance.csproj" />
+    <ProjectReference Include="..\Compze.DependencyInjection.Specifications\Compze.DependencyInjection.Specifications.csproj" />
+    <ProjectReference Include="..\Compze.Internals.Logging.Specifications\Compze.Internals.Logging.Specifications.csproj" />
+    <ProjectReference Include="..\Compze.Internals.Testing.Specifications\Compze.Internals.Testing.Specifications.csproj" />
+    <ProjectReference Include="..\Compze.Internals.SystemCE.Tests\Compze.Internals.SystemCE.Tests.csproj" />
+    <ProjectReference Include="..\Compze.InterprocessObject.Specifications\Compze.InterprocessObject.Specifications.csproj" />
+    <ProjectReference Include="..\Compze.Must.Specifications\Compze.Must.Specifications.csproj" />
     <ProjectReference Include="..\Compze.Serialization.Newtonsoft.InternalSpecifications\Compze.Serialization.Newtonsoft.InternalSpecifications.csproj" />
     <ProjectReference Include="..\Compze.Tessaging.InternalSpecifications\Compze.Tessaging.InternalSpecifications.csproj" />
+    <ProjectReference Include="..\Compze.Tessaging.Specifications\Compze.Tessaging.Specifications.csproj" />
     <ProjectReference Include="..\Compze.Tests.Common\Compze.Tests.Common.csproj" />
     <ProjectReference Include="..\Compze.Tests.Integration\Compze.Tests.Integration.csproj" />
     <ProjectReference Include="..\Compze.Tests.Performance.Internals\Compze.Tests.Performance.Internals.csproj" />
+    <ProjectReference Include="..\Compze.Tests.ScratchPad\Compze.Tests.ScratchPad.csproj" />
     <ProjectReference Include="..\Compze.Tests.Unit\Compze.Tests.Unit.csproj" />
     <ProjectReference Include="..\Compze.Teventive.TeventStore.InternalSpecifications\Compze.Teventive.TeventStore.InternalSpecifications.csproj" />
     <ProjectReference Include="..\Compze.Threading.InternalSpecifications\Compze.Threading.InternalSpecifications.csproj" />
+    <ProjectReference Include="..\Compze.Threading.Specifications\Compze.Threading.Specifications.csproj" />
+    <ProjectReference Include="..\Compze.Threading.Testing.Specifications\Compze.Threading.Testing.Specifications.csproj" />
+    <ProjectReference Include="..\Compze.Threading.Tests\Compze.Threading.Tests.csproj" />
     <ProjectReference Include="..\Compze.TypeIdentifiers.InternalSpecifications\Compze.TypeIdentifiers.InternalSpecifications.csproj" />
     <ProjectReference Include="..\Compze.TypeIdentifiers.Specifications\Compze.TypeIdentifiers.Specifications.csproj" />
+    <ProjectReference Include="..\Compze.Underscore.Specifications\Compze.Underscore.Specifications.csproj" />
+    <ProjectReference Include="..\Compze.Unit.Specifications\Compze.Unit.Specifications.csproj" />
+    <ProjectReference Include="..\Compze.xUnitBDD.Tests\Compze.xUnitBDD.Tests.csproj" />
+    <ProjectReference Include="..\Compze.xUnitMatrix.Tests\Compze.xUnitMatrix.Tests.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />

@@ -6,6 +6,8 @@ using static Compze.Must.MustActions;
 
 // ReSharper disable InconsistentNaming
 
+using Compze.Tessaging.Validation._private;
+
 namespace Compze.Tessaging.InternalSpecifications;
 
 interface INonGenericPublisherTevent : IPublisherTevent<ITevent>;

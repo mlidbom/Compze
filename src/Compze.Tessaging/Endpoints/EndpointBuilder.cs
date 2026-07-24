@@ -11,7 +11,6 @@ using Compze.Tessaging._internal.TessagesInFlight;
 using Compze.Tessaging.TessageBus._private.BestEffortDelivery;
 using Compze.Tessaging._private.HandlerAvailability;
 using Compze.Tessaging._private.Routing;
-using Compze.Tessaging._internal.Transport.Advertisement;
 using Compze.Tessaging.Typermedia;
 using Compze.Tessaging.Typermedia._internal;
 using Compze.TypeIdentifiers;

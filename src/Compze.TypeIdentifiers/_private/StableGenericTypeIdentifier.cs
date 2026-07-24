@@ -1,6 +1,6 @@
 using Compze.TypeIdentifiers._private;
 
-namespace Compze.TypeIdentifiers._internal;
+namespace Compze.TypeIdentifiers._private;
 
 /// <summary>A stable generic type: <c>TypeName[[ arg1 ],[ arg2 ]], AssemblyName</c>.</summary>
 sealed class StableGenericTypeIdentifier(string typeName, string assemblyName, TypeIdentifier[] typeArguments) : TypeIdentifier

@@ -1,5 +1,6 @@
 using Compze.Tessaging.Endpoints.Discovery;
-using Compze.Tessaging._internal.Transport.Advertisement;
+
+using Compze.Tessaging._private.Transport.Advertisement;
 
 namespace Compze.Tessaging.Typermedia.Client._private;
 
