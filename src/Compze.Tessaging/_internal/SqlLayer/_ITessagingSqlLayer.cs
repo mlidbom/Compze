@@ -195,21 +195,19 @@ interface ITessagingSqlLayer
       /// exists, including one a racing process created this instant.</summary>
       Task<bool> TryInsertEntryAsync(string endpointName, EndpointId endpointId, DateTime utcNow);
 
-      ///<summary>Takes the endpoint's process lock iff no other live process holds it. Null when another live process holds<br/>
-      /// it — the claim is refused immediately: the holder holding proves it alive, so there is nothing to wait for.<br/>
-      /// Disposing the returned hold releases the lock for the endpoint's next process; the holding process dying releases<br/>
-      /// it too, through the infrastructure. <paramref name="onLockLostWhileHeld"/> reports the one way the lock can be<br/>
-      /// lost without being released: the holding database session dying under a live holder — the domain database<br/>
-      /// unreachable from this process.</summary>
-      Task<IEndpointProcessLockHold?> TryTakeProcessLockAsync(string endpointName, Action<Exception> onLockLostWhileHeld);
-
-      ///<summary>Records who holds the endpoint's process lock — the advisory bookkeeping the loud startup refusal and<br/>
-      /// administration read; the lock itself is the enforcement.</summary>
-      Task RecordLockHolderAsync(string endpointName, string lockHolderDescription);
-
-      ///<summary>Clears the recorded lock holder — the clean-shutdown half of <see cref="RecordLockHolderAsync"/>. A crashed<br/>
-      /// process's recorded holder lingers; that is harmless, because the lock, not the bookkeeping, decides.</summary>
-      Task ClearLockHolderAsync(string endpointName);
+      ///<summary>Takes the endpoint's process lock iff no other live process holds it, stamping<br/>
+      /// <paramref name="lockHolderDescription"/> as the holder in the same act. Null when another live process holds it — the<br/>
+      /// claim is refused immediately: the holder holding proves it alive, so there is nothing to wait for. Disposing the<br/>
+      /// returned hold releases the lock for the endpoint's next process; the holding process dying releases it too, through<br/>
+      /// the infrastructure. <paramref name="onLockLostWhileHeld"/> reports the one way the lock can be lost without being<br/>
+      /// released: the holding database session dying under a live holder — the domain database unreachable from this process.</summary>
+      ///<remarks>The holder description is advisory bookkeeping the loud startup refusal reads; the lock itself is the<br/>
+      /// enforcement. It is stamped as part of taking the lock rather than in a later call so that a live lock and its recorded<br/>
+      /// holder are one fact: a claim refused by a live holder reads that holder's identity, never a blank left by a window<br/>
+      /// between taking the lock and recording who took it. It is deliberately never cleared on release — the next holder's<br/>
+      /// claim overwrites it, and a stale description lingering beside a freed lock is never read, because the description is<br/>
+      /// read only when a claim is refused, which means the lock is held.</remarks>
+      Task<IEndpointProcessLockHold?> TryTakeProcessLockAsync(string endpointName, string lockHolderDescription, Action<Exception> onLockLostWhileHeld);
 
       Task InitAsync();
 
@@ -230,8 +228,10 @@ interface ITessagingSqlLayer
       public string EndpointName { get; } = endpointName;
       internal EndpointId EndpointId { get; } = endpointId;
 
-      ///<summary>Human-readable description of the process that recorded itself as the lock holder — null after a clean<br/>
-      /// shutdown, possibly a crashed process's lingering record otherwise: the lock, not this bookkeeping, decides.</summary>
+      ///<summary>Human-readable description of the process that took the endpoint's process lock, stamped as the lock was<br/>
+      /// taken (<see cref="IEndpointCatalogSqlLayer.TryTakeProcessLockAsync"/>). It is never cleared on release, so beside a<br/>
+      /// freed lock it names the last holder rather than nobody; that is harmless because it is read only when a claim is<br/>
+      /// refused, which means the lock is held and this names its live holder. The lock, not this bookkeeping, decides.</summary>
       internal string? LockHolderDescription { get; } = lockHolderDescription;
    }
 

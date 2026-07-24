@@ -42,7 +42,7 @@ partial class MySqlEndpointCatalogSqlLayer(IMySqlConnectionPool connectionFactor
    //crashed process's lock is released when the server notices its connection die, and no pause can lose a live holder's
    //lock. GET_LOCK names are server-wide and capped at 64 characters; the database name joins the hashed lock name so
    //identical endpoint names in different domain databases on one server can never collide.
-   public async Task<ITessagingSqlLayer.IEndpointProcessLockHold?> TryTakeProcessLockAsync(string endpointName, Action<Exception> onLockLostWhileHeld)
+   public async Task<ITessagingSqlLayer.IEndpointProcessLockHold?> TryTakeProcessLockAsync(string endpointName, string lockHolderDescription, Action<Exception> onLockLostWhileHeld)
    {
       //Pooling would break the lock's session-lifetime semantics: a pooled connection's server session outlives its
       //dispose, still owning the session-scoped lock as a ghost until the pool reuses or prunes it. Unpooled, dispose
@@ -59,6 +59,10 @@ partial class MySqlEndpointCatalogSqlLayer(IMySqlConnectionPool connectionFactor
             var lockResult = await command.ExecuteScalarAsync().caf();
             if(lockResult is 1L)
             {
+               //Stamped on the very session that now holds the lock, before the hold is handed back: the live lock and its
+               //recorded holder become one fact for any process that later reads the row after being refused this lock.
+               await RecordLockHolderOnTheLockSessionAsync(connection, endpointName, lockHolderDescription).caf();
+
                var session = new ProcessLockSession(connection, onLockLostWhileHeld);
                connection = null; //Ownership transferred: the session holds the lock by holding the connection.
                return session;
@@ -77,34 +81,17 @@ partial class MySqlEndpointCatalogSqlLayer(IMySqlConnectionPool connectionFactor
       }
    }
 
-   public async Task RecordLockHolderAsync(string endpointName, string lockHolderDescription) =>
-      await _connectionFactory.UseCommandAsync(
-         async command => await command
-                   .SetCommandText(
-                       $"""
-
-                        UPDATE {Catalog.TableName}
-                            SET {Catalog.LockHolderDescription} = @{Catalog.LockHolderDescription}
-                        WHERE {Catalog.EndpointName} = @{Catalog.EndpointName}
-
-                        """)
-                   .AddMediumTextParameter(Catalog.EndpointName, endpointName)
-                   .AddMediumTextParameter(Catalog.LockHolderDescription, lockHolderDescription)
-                   .ExecuteNonQueryAsync().caf()).caf();
-
-   public async Task ClearLockHolderAsync(string endpointName) =>
-      await _connectionFactory.UseCommandAsync(
-         async command => await command
-                   .SetCommandText(
-                       $"""
-
-                        UPDATE {Catalog.TableName}
-                            SET {Catalog.LockHolderDescription} = NULL
-                        WHERE {Catalog.EndpointName} = @{Catalog.EndpointName}
-
-                        """)
-                   .AddMediumTextParameter(Catalog.EndpointName, endpointName)
-                   .ExecuteNonQueryAsync().caf()).caf();
+   static async Task RecordLockHolderOnTheLockSessionAsync(MySqlConnection lockSession, string endpointName, string lockHolderDescription)
+   {
+      var command = lockSession.CreateCommand();
+      await using(command.caf())
+      {
+         command.CommandText = $"UPDATE {Catalog.TableName} SET {Catalog.LockHolderDescription} = @holder WHERE {Catalog.EndpointName} = @name";
+         command.Parameters.AddWithValue("holder", lockHolderDescription);
+         command.Parameters.AddWithValue("name", endpointName);
+         await command.ExecuteNonQueryAsync().caf();
+      }
+   }
 
    async Task<IReadOnlyList<ITessagingSqlLayer.EndpointCatalogEntry>> EntriesAsync(string filterClause, Action<MySqlCommand> addFilterParameter) =>
       await _connectionFactory.UseCommandAsync(

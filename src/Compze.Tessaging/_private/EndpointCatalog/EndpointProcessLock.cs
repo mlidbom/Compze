@@ -57,9 +57,10 @@ class EndpointProcessLock
       {
          await _catalog.InitAsync().caf();
          await RegisterTheEndpointInTheCatalogAsync().caf();
-         _hold = await _catalog.TryTakeProcessLockAsync(_endpoint.Name, ReportTheLockLostWhileHeld).caf();
+         //Taking the lock stamps the holder in the same act, so a live lock and its recorded holder are one fact: a process
+         //refused here reads this holder's identity, never a blank left by a gap between taking the lock and recording it.
+         _hold = await _catalog.TryTakeProcessLockAsync(_endpoint.Name, LockHolderDescription, ReportTheLockLostWhileHeld).caf();
          if(_hold == null) await ThrowRefusedBecauseALiveProcessHoldsTheLockAsync().caf();
-         await _catalog.RecordLockHolderAsync(_endpoint.Name, LockHolderDescription).caf();
       }, TransactionScopeOption.Suppress).caf();
 
    public async Task ReleaseAsync()
@@ -68,9 +69,9 @@ class EndpointProcessLock
       var hold = _hold;
       _hold = null;
 
-      //Cleared while the lock is still held, so a reader never sees a recorded holder beside a free lock that a next
-      //process is already claiming.
-      await TransactionScopeCe.ExecuteAsync(() => _catalog.ClearLockHolderAsync(_endpoint.Name), TransactionScopeOption.Suppress).caf();
+      //Releasing is only ending the lock's session (or mutex): the recorded holder is deliberately left as it was, to be
+      //overwritten by the next process's claim. A reader only reads the holder after being refused the lock - so it reads
+      //it while the lock is held, never beside this freed one - which is why there is nothing to clear here.
       await hold.DisposeAsync().caf();
    }
 
@@ -99,8 +100,10 @@ class EndpointProcessLock
    async Task ThrowRefusedBecauseALiveProcessHoldsTheLockAsync()
    {
       var entry = await _catalog.GetEntryByNameAsync(_endpoint.Name).caf();
+      //The holder is stamped in the same act as taking the lock, so a live holder reads back non-null - a null here is the one
+      //remaining sliver: another process took the lock this instant and has not finished stamping itself yet. Named as that.
       throw new EndpointAlreadyRunningInAnotherProcessException(
-         $"Endpoint '{_endpoint.Name}' ({_endpoint.Id}) is already running in another process: its process lock is held by {entry?.LockHolderDescription ?? "a process that claimed it this instant"}. "
+         $"Endpoint '{_endpoint.Name}' ({_endpoint.Id}) is already running in another process: its process lock is held by {entry?.LockHolderDescription ?? "a process that took the lock this instant and is still recording itself"}. "
        + "The lock is held by a live process - a dead one's lock is released by the infrastructure - so there is nothing to wait out. "
        + "An endpoint runs in exactly one process at a time; two processes claiming it is a misconfiguration, typically a double deployment.");
    }

@@ -40,10 +40,19 @@ partial class SqliteEndpointCatalogSqlLayer(ISqliteConnectionPool connectionFact
 
    //Sqlite has no server sessions to scope a lock to, so the lock is an OS mutex keyed on the database's identity instead
    //(see SqliteEndpointProcessLockHold). A live holder cannot lose an OS mutex, so onLockLostWhileHeld can never fire.
-   public async Task<ITessagingSqlLayer.IEndpointProcessLockHold?> TryTakeProcessLockAsync(string endpointName, Action<Exception> onLockLostWhileHeld) =>
-      await SqliteEndpointProcessLockHold.TryTakeAsync(_connectionFactory.ConnectionString, endpointName).caf();
+   public async Task<ITessagingSqlLayer.IEndpointProcessLockHold?> TryTakeProcessLockAsync(string endpointName, string lockHolderDescription, Action<Exception> onLockLostWhileHeld)
+   {
+      var hold = await SqliteEndpointProcessLockHold.TryTakeAsync(_connectionFactory.ConnectionString, endpointName).caf();
+      if(hold == null) return null;
 
-   public async Task RecordLockHolderAsync(string endpointName, string lockHolderDescription) =>
+      //Stamped once the mutex is held, before the hold is handed back: the live lock and its recorded holder become one
+      //fact for any process that later reads the row after being refused this lock. Unlike the server engines, the mutex is
+      //not a database session, so the stamp cannot ride the lock's own connection - it is the next thing done while holding it.
+      await RecordLockHolderAsync(endpointName, lockHolderDescription).caf();
+      return hold;
+   }
+
+   async Task RecordLockHolderAsync(string endpointName, string lockHolderDescription) =>
       await _connectionFactory.UseCommandAsync(
          async command => await command
                    .SetCommandText(
@@ -56,20 +65,6 @@ partial class SqliteEndpointCatalogSqlLayer(ISqliteConnectionPool connectionFact
                         """)
                    .AddMediumTextParameter(Catalog.EndpointName, endpointName)
                    .AddMediumTextParameter(Catalog.LockHolderDescription, lockHolderDescription)
-                   .ExecuteNonQueryAsync().caf()).caf();
-
-   public async Task ClearLockHolderAsync(string endpointName) =>
-      await _connectionFactory.UseCommandAsync(
-         async command => await command
-                   .SetCommandText(
-                       $"""
-
-                        UPDATE {Catalog.TableName}
-                            SET {Catalog.LockHolderDescription} = NULL
-                        WHERE {Catalog.EndpointName} = @{Catalog.EndpointName}
-
-                        """)
-                   .AddMediumTextParameter(Catalog.EndpointName, endpointName)
                    .ExecuteNonQueryAsync().caf()).caf();
 
    async Task<IReadOnlyList<ITessagingSqlLayer.EndpointCatalogEntry>> EntriesAsync(string filterClause, Action<SqliteCommand> addFilterParameter) =>

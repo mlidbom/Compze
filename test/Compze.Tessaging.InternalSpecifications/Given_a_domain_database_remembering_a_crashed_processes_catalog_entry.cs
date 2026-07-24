@@ -37,14 +37,18 @@ public class Given_a_domain_database_remembering_a_crashed_processes_catalog_ent
       protected override void RegisterComponents(IComponentRegistrar registrar) => registrar.RequireTessagingInternalSpecificationTypeMappings();
    }
 
-   //The crash is scripted through the catalog sql layer: the crashed predecessor's entry with its recorded lock holder
-   //still in place - exactly what a killed process leaves behind, its lock long since released by the infrastructure.
+   //The crash is scripted through the catalog sql layer: a predecessor took the process lock - which stamps its holder into
+   //the entry - and then vanished. Disposing its hold reproduces exactly what a killed process leaves behind: the lock
+   //released by the infrastructure, but its catalog entry and recorded lock-holder description still in place.
    protected override async Task InitializeAsyncInternal()
    {
       var catalog = _rebornEndpoint.ServiceLocator.Resolve<ITessagingSqlLayer.IEndpointCatalogSqlLayer>();
       await catalog.InitAsync();
       (await catalog.TryInsertEntryAsync(RebornEndpointDeclaration.Name, RebornEndpointDeclaration.Id, utcNow: UtcTimeSource.UtcNow - TimeSpan.FromHours(1))).Must().BeTrue();
-      await catalog.RecordLockHolderAsync(RebornEndpointDeclaration.Name, "process 4242 on CrashedHost");
+
+      var crashedPredecessorHold = await catalog.TryTakeProcessLockAsync(RebornEndpointDeclaration.Name, "process 4242 on CrashedHost", _ => {});
+      crashedPredecessorHold.Must().NotBeNull();
+      await crashedPredecessorHold!.DisposeAsync();
    }
 
    protected override async Task DisposeAsyncInternal() => await _host.DisposeAsync();
