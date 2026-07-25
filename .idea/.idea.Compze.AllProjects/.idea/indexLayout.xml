@@ -5,7 +5,24 @@
     <explicitIncludes />
     <explicitExcludes>
       <Path>samples/AccountManagement/src/AccountManagement.UI.MVC/wwwroot/lib</Path>
+      <Path>samples/AccountManagement/test/AccountManagement.Tests.PerformanceInternals/obj</Path>
+      <Path>samples/AccountManagement/test/AccountManagement.Tests.Unit/obj</Path>
+      <Path>samples/AccountManagement/test/AccountManagement.Tests/obj</Path>
+      <Path>src/Compze.DependencyInjection.Extensions.Hosting/obj</Path>
+      <Path>src/Compze.DependencyInjection/obj</Path>
+      <Path>src/Compze.DocumentDb.MicrosoftSql/obj</Path>
       <Path>src/Websites/Website/_site</Path>
+      <Path>test/Compze.DependencyInjection.MsDiCompliance/obj</Path>
+      <Path>test/Compze.DependencyInjection.Specifications/obj</Path>
+      <Path>test/Compze.Must.Specifications/obj</Path>
+      <Path>test/Compze.Tests.CodePolicies/obj</Path>
+      <Path>test/Compze.Tests.Common/obj</Path>
+      <Path>test/Compze.Tests.Infrastructure/obj</Path>
+      <Path>test/Compze.Tests.Integration/obj</Path>
+      <Path>test/Compze.Tests.Performance.Internals/obj</Path>
+      <Path>test/Compze.Tests.SameMachine.EndpointHostProcess/obj</Path>
+      <Path>test/Compze.Tests.ScratchPad/obj</Path>
+      <Path>test/Compze.Tests.Unit/obj</Path>
     </explicitExcludes>
   </component>
 </project>
