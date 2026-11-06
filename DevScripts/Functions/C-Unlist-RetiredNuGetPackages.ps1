@@ -19,9 +19,9 @@ function C-Unlist-RetiredNuGetPackages {
 
     .PARAMETER ApiKey
     A nuget.org API key with the Unlist scope, defaulting to the NUGET_UNLIST_API_KEY environment
-    variable. This is deliberately not the key CI publishes with: nuget.org scopes Push and Unlist
-    separately, so a push key cannot unlist, and a key that can do both would let a broken publish run
-    hide packages.
+    variable. This is deliberately separate from how CI publishes: CI gets a short-lived key through
+    nuget.org Trusted Publishing, whose policy is scoped to publishing, and a key that could both push
+    and unlist would let a broken publish run hide packages.
 
     .EXAMPLE
     C-Unlist-RetiredNuGetPackages

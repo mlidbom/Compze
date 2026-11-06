@@ -45,14 +45,16 @@ run at all while any recorded id belongs to a project in the solution.
 nuget.org's search index takes a few minutes to catch up, so re-run the status command after that rather
 than immediately.
 
-## One-time prerequisite: an Unlist-scoped API key
+## Prerequisite: an Unlist-scoped API key
 
-nuget.org scopes API keys separately for **Push** and **Unlist**, so the key CI publishes with cannot
-unlist. Create a second key — nuget.org → your account → API Keys → Create, scope **Unlist**, glob pattern
-`Compze.*` — and put it in the `NUGET_UNLIST_API_KEY` environment variable, or pass it as `-ApiKey`.
+CI publishes through nuget.org Trusted Publishing (see `.github/workflows/publish-nuget.yml`): it gets a
+short-lived key from a policy scoped to publishing, so nothing CI holds can unlist. Create an Unlist key —
+nuget.org → your account → API Keys → Create, scope **Unlist**, glob pattern `Compze.*` — and put it in the
+`NUGET_UNLIST_API_KEY` environment variable, or pass it as `-ApiKey`. nuget.org API keys last at most 30
+days, so expect to create a fresh one each time you retire packages.
 
-Keeping the two keys separate is the point, not an inconvenience: a key that could do both would let a
-broken publish run hide packages.
+Keeping unlisting away from publishing is the point, not an inconvenience: a key that could do both would
+let a broken publish run hide packages.
 
 This is why retiring is a local, deliberate, human-initiated action rather than a CI step. The unlist key
 never needs to reach GitHub.

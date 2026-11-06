@@ -8,7 +8,7 @@
 #   3. For each new package: push to NuGet, create GitHub release, create and push git tag
 #
 # Environment variables (set by the GitHub Actions workflow):
-#   NUGET_API_KEY  — API key for nuget.org
+#   NUGET_API_KEY  — short-lived nuget.org API key from the workflow's Trusted Publishing login step
 #   GH_TOKEN       — GitHub token for gh CLI (release creation)
 #
 # Usage:

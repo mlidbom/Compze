@@ -10,6 +10,7 @@ on:
 
 permissions:
   contents: write
+  id-token: write  # lets the nuget.org Trusted Publishing step request the GitHub OIDC token that nuget.org exchanges for a short-lived API key
 
 jobs:
   publish:
@@ -38,11 +39,22 @@ jobs:
           Import-Module ./DevScripts/Compze.psm1 -DisableNameChecking
           C-Pack -CI -NoBuild
 
+      # nuget.org Trusted Publishing: a policy on nuget.org (owner MagnusLidbom) trusts repository
+      # mlidbom/Compze, workflow file publish-nuget.yml. Renaming this file or the repository stops
+      # publishing until that policy is updated. The key expires after one hour, so this step stays
+      # immediately before the push rather than before the build and test run.
+      - name: Get short-lived nuget.org API key (Trusted Publishing)
+        if: ${{ !inputs.dry-run }}
+        id: nuget-login
+        uses: NuGet/login@v1
+        with:
+          user: MagnusLidbom
+
       - name: Publish packages and create GitHub releases
         shell: pwsh
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NUGET_API_KEY: ${{ inputs.dry-run && '' || secrets.NUGET_API_KEY }}
+          NUGET_API_KEY: ${{ steps.nuget-login.outputs.NUGET_API_KEY }}  # empty on a dry run, where the login step is skipped
           DRY_RUN: ${{ inputs.dry-run }}
         run: |
           if ($env:DRY_RUN -eq 'true') {

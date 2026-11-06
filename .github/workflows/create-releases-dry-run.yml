@@ -5,6 +5,10 @@ on:
 
 jobs:
   dry-run:
+    # A called workflow cannot hold more permissions than its caller grants; publish-nuget.yml declares these.
+    permissions:
+      contents: write
+      id-token: write
     uses: ./.github/workflows/publish-nuget.yml
     with:
       dry-run: true
