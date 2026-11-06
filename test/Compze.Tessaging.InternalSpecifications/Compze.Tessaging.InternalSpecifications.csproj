@@ -26,13 +26,6 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_Hosting)' != 'true'">
     <ProjectReference Include="..\..\src\Compze.Hosting\Compze.Hosting.csproj" />
   </ItemGroup>
-  <!-- Compze.Internals.Testing — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Testing)' == 'true'">
-    <PackageReference Include="Compze.Internals.Testing" Version="*-*" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Testing)' != 'true'">
-    <ProjectReference Include="..\..\src\Compze.Internals.Testing\Compze.Internals.Testing.csproj" />
-  </ItemGroup>
   <!-- Compze.Hosting.Testing — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Hosting_Testing)' == 'true'">
     <PackageReference Include="Compze.Hosting.Testing" Version="*-*" />
@@ -46,6 +39,13 @@
   </ItemGroup>
   <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_SystemCE)' != 'true'">
     <ProjectReference Include="..\..\src\Compze.Internals.SystemCE\Compze.Internals.SystemCE.csproj" />
+  </ItemGroup>
+  <!-- Compze.Internals.Testing — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Testing)' == 'true'">
+    <PackageReference Include="Compze.Internals.Testing" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Testing)' != 'true'">
+    <ProjectReference Include="..\..\src\Compze.Internals.Testing\Compze.Internals.Testing.csproj" />
   </ItemGroup>
   <!-- Compze.Must — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Must)' == 'true'">

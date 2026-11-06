@@ -4,6 +4,11 @@ All notable changes to Compze.Internals.SystemCE will be documented in this file
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## 0.4.1-internal
+
+- Fixed `SimpleObservable` calling its subscribers while holding its lock. Subscribing from inside a notification threw "Collection was modified", and a thread subscribing or disposing a subscription waited for every subscriber of an in-progress notification on another thread to finish — up to the lock timeout, then threw. The subscribers are now an immutable list that subscribing and disposing replace (copy-on-write), and `OnNext` notifies the list that was current when it was called, with no lock held. So a subscription disposed during a notification may still receive that notification, and notifications published from different threads are no longer serialized — as with Rx's `Subject<T>`, that is the publisher's job.
+- Fixed `SimpleObservable` collapsing repeated subscriptions of the same observer into one: disposing either subscription silently ended both. Each subscription is now independent, and subscribers are notified in the order they subscribed.
+
 ## 0.4.0-internal
 
 - `TransactionScopeCe.ExecuteAsync` is public and gains a result form: a transaction scope with async flow enabled around awaited work — the core of the async unit-of-work envelope.
