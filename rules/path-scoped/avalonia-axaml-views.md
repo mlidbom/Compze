@@ -74,7 +74,6 @@ public MyDialog() { InitializeComponent(); }
 - `StackPanel`/`Grid` for sections
 - `Border` with `BorderBrush="Gray"` for visual section grouping
 - `LayoutTransformControl` with `ScaleTransform` for DPI scaling on complex dialogs
-- `WindowStartupLocation="Manual"` with `WindowPositioner.RepositionNearCursor()` in code-behind
 
 ## Resources & Styling
 - No external stylesheet files — all styling is inline
