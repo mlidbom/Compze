@@ -100,6 +100,15 @@ EOF
    chmod +x "/usr/local/bin/$tool"
 done
 
+# -- Shared Claude config submodule -----------------------------------------
+# .claude-shared is a git submodule (the shared rules and skills that
+# .claude/ symlinks into). Whether the cloud checkout recurses into
+# submodules is not verified, so initialize it here; on an already-initialized
+# checkout this is a no-op. If it is still empty at session start, the SessionStart
+# hook (.claude/verify-shared-claude-config.sessionstart-hook.sh) says so.
+log "Initializing the .claude-shared submodule..."
+git -C /home/user/Compze submodule update --init >&2
+
 # -- Restore repo-local .NET tools ------------------------------------------
 # .config/dotnet-tools.json pins flexref (used by C-FlexRef-Sync). Restoring
 # now warms the NuGet cache into the snapshot so first-session use is fast

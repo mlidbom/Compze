@@ -3,6 +3,9 @@
 ###############################################################################
 * text=auto
 
+# Shell scripts must stay LF even on Windows checkouts, or bash chokes on the CRLF.
+*.sh text eol=lf
+
 ###############################################################################
 # Symlinks into the .claude-shared catalog. Directory links need the
 # symlink=dir hint so Git for Windows creates them correctly regardless of
