@@ -1,7 +1,7 @@
 ////Nothing in this project should run in parallel
 #if !NCRUNCH
 
-[assembly: Xunit.CollectionBehavior(DisableTestParallelization = true)]
+[assembly: Xunit.v3.Parallelization(Mode = Xunit.Sdk.ParallelMode.None)]
 #endif
 
 //[assembly: NCrunch.Framework.EnableRdi(false)]

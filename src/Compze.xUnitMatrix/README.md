@@ -115,6 +115,14 @@ Pass the file name as `configurationFileName` in your attribute constructor inst
 </None>
 ```
 
+## Installation
+
+```shell
+dotnet add package Compze.xUnitMatrix
+```
+
+Requires xUnit.net v3 4.0 or later. On xUnit.net v3 3.x, use version 0.9.1-beta.
+
 ## Related packages
 
 | Package | Description |

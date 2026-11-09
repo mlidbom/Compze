@@ -131,8 +131,10 @@ The key technique: each nested class **inherits from its parent**, gaining acces
 ## Installation
 
 ```shell
-dotnet add package Compze.xUnitMatrix
+dotnet add package Compze.xUnitBDD
 ```
+
+Requires xUnit.net v3 4.0 or later. On xUnit.net v3 3.x, use version 0.5.1-beta.
 
 ## Related packages
 
