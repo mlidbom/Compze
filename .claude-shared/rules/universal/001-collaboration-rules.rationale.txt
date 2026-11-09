@@ -10,6 +10,18 @@ Assembled from three sources:
 - "Questions are just questions" and "the codebase must improve over time" were recovered the same day from
   the pre-rules-folder user-level CLAUDE.md (found unmigrated in a backup file when the user-level config was
   reconciled with the catalog).
+- "Build the tools the work will need again now, not later — and propose the big ones" (2026-11-09, JAStudio):
+  the user, after the note-diff tool was built straight away rather than postponed: "In the spirit of creating
+  the tools we will need again and again right away rather than postponing creating them. Thus speeding up long
+  term progress. This is absolutely a basic idea in how I think." And on thinking big: "I specifically want
+  you to consider and suggest major changes if required to speed up future development, not just small
+  additions to existing infrastructure. Not least tooling specifically to help YOU or other AI agents. For
+  instance. It took me FAR to long to suggest adding MCP to jastudio." Before JAStudio's MCP server, every
+  change to parsing or the corpus waited on the user to restart Anki, run a full rebuild there and report back,
+  and analyses were throwaway programs; the server's core (a headless JAStudio on the real corpus, rebuilds,
+  sentence analysis, the same server live inside Anki) took about a day, after which two data fixes each went
+  from experiment to the user's checkout in one sitting. JAStudio's own rule that Claude owns its MCP server is
+  this rule's case for that project.
 - "When given full delegation" was confirmed during the Compze typermedia–tessaging disentanglement
   (2026-06-10); the full case study is in
   `code-standards/014-rehome-concepts-before-restructuring.rationale.txt` — the working mode emerged
