@@ -13,7 +13,7 @@ public static partial class Composite_taggregate_specification
       {
          public partial class After_adding_entity_named_entity2
          {
-            public partial class After_calling_entity2_Remove : After_adding_entity_named_entity2
+            public abstract partial class After_calling_entity2_Remove : After_adding_entity_named_entity2
             {
                protected After_calling_entity2_Remove() => _entity2.Remove();
 

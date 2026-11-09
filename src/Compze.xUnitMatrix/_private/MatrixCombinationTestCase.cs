@@ -28,7 +28,10 @@ class MatrixCombinationTestCase : ConstructorArgumentForwardingTestCase, ISelfEx
       IMessageBus messageBus,
       object?[] constructorArguments,
       ExceptionAggregator aggregator,
-      CancellationTokenSource cancellationTokenSource)
+      CancellationTokenSource cancellationTokenSource,
+      ParallelMode parallelMode,
+      ExecutionScheduler scheduler,
+      FixtureMappingManager methodFixtureMappings)
    {
       return await MatrixCombination.RunInContextAsync(
                 new LazyCE<MatrixCombination>(() => Combination),
@@ -36,8 +39,11 @@ class MatrixCombinationTestCase : ConstructorArgumentForwardingTestCase, ISelfEx
                                new ArgumentDiscardingTestCase(this),
                                messageBus,
                                cancellationTokenSource,
+                               parallelMode,
+                               scheduler,
                                aggregator,
                                explicitOption,
-                               constructorArguments).caf()).caf();
+                               constructorArguments,
+                               methodFixtureMappings).caf()).caf();
    }
 }
