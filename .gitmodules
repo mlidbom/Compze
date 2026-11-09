@@ -1,0 +1,4 @@
+[submodule ".claude-shared"]
+	path = .claude-shared
+	url = https://github.com/mlidbom/copilot-code-standards-and-instructions.git
+	branch = main
