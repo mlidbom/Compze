@@ -25,6 +25,7 @@ sealed class LogBackendWritingToSerilog : ILogBackend
    internal LogBackendWritingToSerilog(Func<global::Serilog.ILogger> currentSerilogLogger) => _currentSerilogLogger = currentSerilogLogger;
 
    public void Write(LogLine line) =>
+      // ReSharper disable once TemplateIsNotCompileTimeConstantProblem Compze forwards templates its callers built; the template string is Serilog's cache key, so caching still works (as for CA2254 above).
       SerilogLoggerFor(line).Write(SerilogLevelOf(line.Level), line.Exception, line.MessageTemplate, [.. line.TemplateValues]);
 
    global::Serilog.ILogger SerilogLoggerFor(LogLine line)
