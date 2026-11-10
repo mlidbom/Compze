@@ -18,13 +18,7 @@ function C-Clear-NuGetCache {
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseApprovedVerbs', '')]
     param()
 
-    $globalPackages = & dotnet nuget locals global-packages --list 2>$null
-    if ($globalPackages -match 'global-packages:\s*(.+)') {
-        $pkgDir = $Matches[1].Trim()
-    } else {
-        Write-Error "Could not determine NuGet global-packages folder"
-        return
-    }
+    $pkgDir = Get-NuGetGlobalPackagesDirectory
 
     # Packages this repository never packs come from nuget.org, so clearing them would only force a re-download
     $keepPatterns = @(Get-PackageIdsPublishedFromOtherRepositories | ForEach-Object { $_.ToLowerInvariant() })

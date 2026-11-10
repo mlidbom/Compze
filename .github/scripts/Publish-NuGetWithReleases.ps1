@@ -28,6 +28,7 @@ $scriptDir = $PSScriptRoot
 . "$scriptDir/lib/GitTagging.ps1"
 . "$scriptDir/lib/NupkgParsing.ps1"
 . "$scriptDir/lib/ReleaseDetails.ps1"
+. "$scriptDir/lib/ReleaseSelection.ps1"
 . "$scriptDir/lib/NuGetPublishing.ps1"
 . "$scriptDir/lib/GitHubReleases.ps1"
 . "$scriptDir/lib/SummaryReport.ps1"
@@ -50,11 +51,8 @@ $nupkgsPath = "nupkgs"
 # @(...) keeps each result a collection: PowerShell unwraps an empty array to $null on assignment,
 # and under Set-StrictMode the later `.Count` access throws on $null. Forcing array context keeps
 # `.Count` valid whether 0, 1, or many packages match.
-$allPackages = @(GetPackagesFromNupkgFiles $nupkgsPath)
-# Convention: packages with version 0.0.0-not-published-to-nuget are packable for local consumption only — never publish to NuGet
-$allPackages = @($allPackages | Where-Object { $_.Version -ne '0.0.0-not-published-to-nuget' })
-$newPackages = @(PackagesWithNoMatchingReleaseTag $allPackages)
-$newPackages = @(GetAllReleaseDetails $newPackages)
+$allPackages = @(GetPublishablePackages @(GetPackagesFromNupkgFiles $nupkgsPath))
+$newPackages = @(GetPackagesToRelease $allPackages)
 
 if ($newPackages.Count -eq 0) {
     Write-Host "`nNo new packages to release."

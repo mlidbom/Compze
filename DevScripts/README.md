@@ -39,6 +39,26 @@ Then reload: `. $PROFILE`
   - `-Iterations <n>` - Run suite multiple times and show summary
   - `-WhatIf` - Preview what would be deleted by git clean (with `-FullGitReset`)
 
+### Packing & Releasing
+
+- **C-Pack** - Packs every package into the local `nupkgs/` feed that Compze's focused solutions restore from
+  - Default: timestamped dev versions (`0.6.0-alpha.dev.20261110093000`), each a fresh NuGet cache entry
+  - `-CI` - Real versions, as the release workflow packs them
+  - `-NoBuild` - Pack without building first
+
+- **C-SimulateRelease** - Packs with real versions and dry-runs the release: which packages are new, their changelog entries, pushes, GitHub releases and tags
+  - `-NoBuild`, `-NoPack`, `-NoSummary`
+
+- **C-Publish-ToPendingReleaseFeed** - Publishes the versions the next release will publish to this machine's pending-release feed (`~/.nuget/compze-pending-release-feed`), which every repository on the machine restores from: a consumer can use a new version at once, instead of after CI, the release workflow and nuget.org's validation
+  - Packs only a clean, committed tree; a published version is frozen to the code that ships
+  - `-Replace` - Replace a published version whose package source changed since (also purges the old build from the NuGet cache)
+  - `-NoBuild` - Pack without building first
+  - Push a consumer that references a published version only once nuget.org has it
+
+- **C-Clear-ReleasedLocalBuilds** - Removes every local build of a version nuget.org has released, from the pending-release feed and the NuGet global packages folder, so restores take nuget.org's build; reports versions still pending. A user-level SessionStart hook runs it in every Claude session
+
+- **C-Clear-NuGetCache** - Removes all cached Compze packages from the NuGet global packages folder, so focused solutions pick up freshly packed versions
+
 ### Code Quality & Structure
 
 - **C-Ensure-CsprojfilesExcludeCsFilesFromProjectsInSubfoldersAndDocsFolders** - Ensures .csproj files exclude .cs files from projects in subfolders and properly handle _docs folders
