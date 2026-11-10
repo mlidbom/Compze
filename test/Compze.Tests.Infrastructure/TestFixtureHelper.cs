@@ -39,7 +39,7 @@ public static class TestFixtureHelper
       Log.Logger = loggerConfig.CreateLogger();
 
       CompzeLogger.LogLevel = CompzeEnvironment.IsGithubAction ? LogLevel.Debug : LogLevel.Warning;
-      CompzeLogger.LoggerFactoryMethod = SerilogLogger.Create;
+      CompzeLogger.Backend = SerilogLogBackend.Global;
    }
 
    class ShortSourceContextEnricher : ILogEventEnricher

@@ -10,7 +10,7 @@ Compze is a .NET framework for building expressive domains through **Teventive p
 
 This package provides a Serilog adapter for Compze's logging abstractions:
 
-- **Logger adapter** — `SerilogLogger` implementing Compze's logging contracts
+- **Log backend** — `SerilogLogBackend`, which writes Compze's log lines to Serilog as structured events
 - **Preconfigured sinks** — Console and [Seq](https://datalust.co/seq) sinks included
 - **Environment enrichment** — Automatic enrichment with machine name and environment details
 - **Compact JSON formatting** — Structured logging with compact JSON output
@@ -21,11 +21,23 @@ This package provides a Serilog adapter for Compze's logging abstractions:
 dotnet add package Compze.Internals.Logging.Serilog
 ```
 
+## Usage
+
+Choose it as the process's logging backend. Compze's loggers look the backend up for each line they write, and the
+backend looks up Serilog's static `Log.Logger` for each line, so neither assignment has to come before anything else:
+
+```csharp
+Log.Logger = new LoggerConfiguration().WriteTo.Console().CreateLogger();
+CompzeLogger.Backend = SerilogLogBackend.Global;
+```
+
+To write to a Serilog logger of your own instead of `Log.Logger`, use `SerilogLogBackend.WritingTo(serilogLogger)`.
+
 ## Related packages
 
 | Package | Description |
 |---------|-------------|
-| [Compze.Utilities](https://www.nuget.org/packages/Compze.Utilities) | Core utilities and logging abstractions |
+| [Compze.Internals.Logging](https://www.nuget.org/packages/Compze.Internals.Logging) | The logging abstractions this package is a backend for |
 
 ## License
 

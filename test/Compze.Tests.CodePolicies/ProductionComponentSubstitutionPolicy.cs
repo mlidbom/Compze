@@ -60,7 +60,7 @@ public static partial class ProductionComponentSubstitutionPolicy
       typeof(DbPool.SystemCE.IStrictlyManagedResource),               // a resource whose disposal the consumer wants policed
       typeof(Threading.Interprocess.ISignalPollingPolicy),            // how often a waiter re-checks an interprocess signal
       typeof(DependencyInjection.Abstractions.IComponentSet<>),       // a set of components registered together
-      typeof(Internals.Logging.Logger),                               // the logging backend log statements are written to
+      typeof(Internals.Logging.ILogBackend),                          // the logging backend log statements are written to
       typeof(Internals.SystemCE.IStaticInstancePropertySingleton<>),  // a type reached through a static Instance property
       typeof(InterprocessObject.IInterprocessObjectSerializer<>)      // how an interprocess object crosses the process boundary
    ];

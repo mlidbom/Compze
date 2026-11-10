@@ -4,9 +4,8 @@
 
 namespace Compze.Internals.Logging.Specifications;
 
-// Tests redirect Console.Out (global state) so they must run sequentially.
-// Keeping them in a single flat class — xUnit runs tests within a class sequentially.
-public class When_logging_to_the_ConsoleLogger_backend
+// These redirect Console.Out, which the whole process shares; the assembly runs its specifications one at a time (SpecificationsShareTheProcessWideLogBackend.cs).
+public class When_logging_to_the_console_backend
 {
    static string Capture(Action<ILogger> log)
    {
@@ -15,7 +14,8 @@ public class When_logging_to_the_ConsoleLogger_backend
       Console.SetOut(capturedConsoleOutput);
       try
       {
-         log(ConsoleLogger.Create(typeof(When_logging_to_the_ConsoleLogger_backend)));
+         CompzeLogger.Backend = ILogBackend.Console;
+         log(CompzeLogger.For<When_logging_to_the_console_backend>().WithLogLevel(LogLevel.Debug));
          return capturedConsoleOutput.ToString();
       }
       finally
@@ -47,6 +47,10 @@ public class When_logging_to_the_ConsoleLogger_backend
    [XF] public void braces_in_a_plain_string_message_appear_unchanged_in_the_output()
       => Capture(log => log.Info("literal {not a hole}"))
         .Must().Contain("literal {not a hole}");
+
+   [XF] public void doubled_braces_in_an_interpolated_message_without_holes_appear_once_in_the_output()
+      => Capture(log => log.Info($"literal {{braces}}"))
+        .Must().Contain("literal {braces}");
 
    [XF] public void a_template_with_no_holes_renders_as_the_literal_text()
       // ReSharper disable once RedundantStringInterpolation The $ is deliberate: this spec verifies that a no-holes interpolated template renders as literal text via the interpolated-handler overload.
