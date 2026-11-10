@@ -23,11 +23,12 @@ namespace Compze.Tessaging.Endpoints;
 /// kinds, unconditionally.
 ///
 /// The endpoint is first-class: a plain composition root that owns its container and drives its own lifecycle —
-/// <see cref="StartAsync"/> runs the up-phases in order (listen → announce → send), disposal runs the mirror
-/// (retract → stop sending → stop listening), so an announced address is always one that is actually listening. The
-/// individual phase methods remain public for callers that script a phase deliberately — a specification stopping the
-/// listening to observe delivery waiting out downtime, a late-started endpoint. An <see cref="IEndpointHost"/> is an
-/// optional convenience starting and disposing several endpoints together; it adds nothing an endpoint cannot do alone.
+/// <see cref="StartAsync"/> runs the up-phases in order (listen → announce → send), <see cref="StopAsync"/> runs the mirror
+/// (retract → stop sending → stop listening → drain), so an announced address is always one that is actually listening,
+/// and disposal stops the endpoint unless it already stopped, then disposes its container. <see cref="StopListeningAsync"/>
+/// stays public for a caller scripting that one phase deliberately — a specification stopping the listening to observe
+/// delivery waiting out downtime. An <see cref="IEndpointHost"/> is an optional convenience starting and disposing several
+/// endpoints together; it adds nothing an endpoint cannot do alone.
 ///</summary>
 public abstract class Endpoint : IEndpoint
 {
@@ -46,6 +47,7 @@ public abstract class Endpoint : IEndpoint
    bool _isListening;
    bool _hasAnnounced;
    bool _isSending;
+   bool _hasStopped;
 
    private protected Endpoint(IDependencyInjectionContainer container,
                               EndpointConfiguration configuration,
@@ -79,6 +81,7 @@ public abstract class Endpoint : IEndpoint
 
    public async Task StartAsync()
    {
+      State.Assert(!_hasStopped, () => $"Endpoint '{_configuration.Name}' ({Id}) has stopped, and a stopped endpoint never starts again: build a new endpoint from its declaration instead.");
       await StartListeningAsync().caf();
       await AnnounceAddressAsync().caf();
       await StartSendingAsync().caf();
@@ -142,6 +145,9 @@ public abstract class Endpoint : IEndpoint
       return Task.CompletedTask;
    }
 
+   ///<summary>Stops the listening phase alone — the router stops and the transport server stops accepting — while the address<br/>
+   /// stays announced, so to its peers the endpoint is down. For a specification observing delivery waiting out a peer's<br/>
+   /// downtime; an application stops the whole endpoint with <see cref="StopAsync"/>.</summary>
    public async Task StopListeningAsync()
    {
       if(!_isListening) return;
@@ -165,8 +171,9 @@ public abstract class Endpoint : IEndpoint
    /// database, so the base does nothing.</summary>
    private protected virtual Task ClaimTheProcessLockAsync() => Task.CompletedTask;
 
-   ///<summary>The exactly-once tier releases its process lock at disposal — after the observation drain, once nothing in<br/>
-   /// this process writes to the domain database anymore. The best-effort endpoint has no database, so the base does nothing.</summary>
+   ///<summary>The exactly-once tier releases its process lock as the last act of stopping — after the observation drain,<br/>
+   /// once nothing in this process writes to the domain database anymore. The best-effort endpoint has no database, so the<br/>
+   /// base does nothing.</summary>
    private protected virtual Task ReleaseTheProcessLockAsync() => Task.CompletedTask;
 
    ///<summary>Starts the exactly-once tier's durable vertical in the listening phase — the best-effort endpoint has none, so the base does nothing.</summary>
@@ -179,34 +186,48 @@ public abstract class Endpoint : IEndpoint
    /// endpoint tears down with empty queues. The best-effort endpoint has no inbox, so the base does nothing.</summary>
    private protected virtual Task DrainTheInboxAsync() => Task.CompletedTask;
 
+   public async Task StopAsync()
+   {
+      //Set before the first phase, so a stop that throws part-way is never re-run - not by a second call, and not by disposal,
+      //which goes straight on to releasing resources.
+      if(_hasStopped) return;
+      _hasStopped = true;
+      this.Log().Info($"Endpoint '{_configuration.Name}' ({Id}) stopping");
+
+      await RetractAddressAsync().caf();
+      await StopSendingAsync().caf();
+      await StopListeningAsync().caf();
+      //After listening stops nothing new arrives, so the inbox drains to empty here - while the container still serves its
+      //handlers their scopes - before teardown. Empty queues before teardown is the graceful-shutdown property (nothing
+      //half-processed) that a rolling restart or a serialization-format change wants.
+      await DrainTheInboxAsync().caf();
+      //Drain the observation queues while the container still serves the observers their scopes: once container disposal
+      //begins, scope creation is refused, so a drain left to the container's own singleton teardown could no longer run the
+      //observers. Nothing enqueues new observation work after listening stopped - except observers themselves, which the
+      //drain's passes cover.
+      _observationDispatcher.Dispose();
+      //After the drain: nothing in this process writes to the domain database anymore, so the process lock can be freed for
+      //the endpoint's next process.
+      await ReleaseTheProcessLockAsync().caf();
+   }
+
    public async ValueTask DisposeAsync()
    {
       this.Log().Debug($"Endpoint '{_configuration.Name}' ({Id}) disposing");
       try
       {
-         await RetractAddressAsync().caf();
-         await StopSendingAsync().caf();
-         await StopListeningAsync().caf();
-         //After listening stops nothing new arrives, so the inbox drains to empty here - while the container still serves its
-         //handlers their scopes - before teardown. Empty queues before teardown is the graceful-shutdown property (nothing
-         //half-processed) that a rolling restart or a serialization-format change wants.
-         await DrainTheInboxAsync().caf();
-         //Drain the observation queues while the container still serves the observers their scopes: once container disposal
-         //begins, scope creation is refused, so a drain left to the container's own singleton teardown could no longer run the
-         //observers. Nothing enqueues new observation work after listening stopped - except observers themselves, which the
-         //drain's passes cover.
-         _observationDispatcher.Dispose();
-         //After the drain: nothing in this process writes to the domain database anymore, so the process lock can be freed for
-         //the endpoint's next process.
-         await ReleaseTheProcessLockAsync().caf();
+         //A no-op that completes synchronously when the caller stopped the endpoint first, so the container's disposal below
+         //begins on the calling thread - what a caller whose components are bound to one thread stops first for (see IEndpoint.StopAsync).
+         await StopAsync().caf();
       }
       finally
       {
-         //Resource release must run even when a quiescing step above throws - most easily a delivery thread that will not stop,
-         //whose 5s join throws out of StopSendingAsync. Disposing the container joins the router's reconcile loop, ending the
-         //peer-registry transaction a pass may hold open, and disposes every other singleton. Skipping it abandons that
-         //transaction - and its connection, released only by transaction completion and held by a process-wide static pool -
-         //open until the transaction-timeout backstop fires. The quiescing exception still propagates once the finally completes.
+         //Resource release must run even when stopping throws - most easily a delivery thread that will not stop, whose 5s join
+         //throws out of StopSendingAsync. Disposing the container joins the router's reconcile loop, ending the peer-registry
+         //transaction a pass may hold open, and disposes every other singleton. Skipping it abandons that transaction - and its
+         //connection, released only by transaction completion and held by a process-wide static pool - open until the
+         //transaction-timeout backstop fires. The stopping exception still propagates once the finally completes. A caller that
+         //called StopAsync itself and saw it throw still disposes the endpoint, as with any disposable, and the release runs here.
          await _container.DisposeAsync().caf();
          //The container also disposes the server it holds; server disposal is idempotent, and disposing what we hold keeps ownership legible.
          await _transportServer.DisposeAsync().caf();

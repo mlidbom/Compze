@@ -8,9 +8,10 @@ namespace Compze.Tessaging.Endpoints;
 /// sends on its behalf. An endpoint is a plain composition root — what it is, is decided entirely by its
 /// <see cref="EndpointDeclaration{TIdentity}"/> and the <see cref="IEndpointEnvironment"/> it is built in — and it is
 /// first-class: construct it, <see cref="StartAsync"/> it, dispose it. It drives its own lifecycle phases in order —
-/// listen → announce → send on the way up, retract → stop sending → stop listening at disposal — so an announced address is
-/// always one that is actually listening. An <see cref="IEndpointHost"/> is an optional convenience owning several
-/// endpoints' lifecycles in one process; it adds nothing an endpoint cannot do alone.
+/// listen → announce → send on the way up, retract → stop sending → stop listening on the way down (<see cref="StopAsync"/>,
+/// which disposal runs unless the endpoint already stopped) — so an announced address is always one that is actually
+/// listening. An <see cref="IEndpointHost"/> is an optional convenience owning several endpoints' lifecycles in one process;
+/// it adds nothing an endpoint cannot do alone.
 ///</summary>
 public interface IEndpoint : IAsyncDisposable
 {
@@ -27,6 +28,18 @@ public interface IEndpoint : IAsyncDisposable
    /// latency after the start — an application that wants that wait paid up front awaits <see cref="AwaitReadinessAsync"/><br/>
    /// before opening traffic.</summary>
    Task StartAsync();
+
+   ///<summary>Stops the endpoint for good, driving its lifecycle phases in the reverse order of <see cref="StartAsync"/>: retract<br/>
+   /// (the address is withdrawn from every declared announcer), stop sending, stop listening — then drains: every tessage<br/>
+   /// already received finishes handling and every queued tevent observation runs, and an exactly-once endpoint releases its<br/>
+   /// process lock, so the endpoint's next process can claim it. The container keeps serving until the endpoint is disposed.<br/>
+   /// A stopped endpoint never starts again; stopping it again does nothing.</summary>
+   ///<remarks>Disposal stops an endpoint that has not stopped yet, so most callers never call this.<br/>
+   /// It exists for a caller whose components are bound to one thread — a UI thread owning windows, say. Stopping awaits work<br/>
+   /// that resumes on thread-pool threads, so a disposal that has to stop first disposes the container on whichever thread<br/>
+   /// that work resumed on. Stopping first, then disposing from the thread that owns those components, begins the<br/>
+   /// container's disposal on that thread instead, without awaiting anything before it.</remarks>
+   Task StopAsync();
 
    ///<summary>Readiness: completes when this endpoint can reach a handler for every type in<br/>
    /// <paramref name="readinessTypes"/> — the framework-native replacement for the startup readiness probes applications<br/>

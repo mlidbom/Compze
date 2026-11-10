@@ -90,7 +90,7 @@ public class EndpointHost : IEndpointHost
          _disposed = true;
          this.Log().Info("Disposing");
          _isStarted = false;
-         //Each endpoint's disposal drives its own mirror phases - retract, stop sending, stop listening - before tearing down.
+         //Each endpoint's disposal stops it - retract, stop sending, stop listening, drain - before tearing down its container.
          await Task.WhenAll(Endpoints.Select(endpoint => endpoint.DisposeAsync().AsTask())).WithAggregateExceptions().caf();
       }
    }

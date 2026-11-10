@@ -131,7 +131,10 @@ the connection pool, the type-id interner, and Tessaging's sql layers for that e
 ## The lifecycle phases
 
 Each endpoint drives its own lifecycle: `StartAsync` runs the up-phases in order — listen → announce →
-send — and disposal runs the mirror — retract → stop sending → stop listening. The per-endpoint ordering is
+send — and `StopAsync` runs the mirror — retract → stop sending → stop listening, then the drain and the
+process lock's release. Disposal stops an endpoint not yet stopped, then disposes its container; a caller
+whose components are bound to one thread stops first, so the container's disposal begins on the thread it
+disposes from. A stopped endpoint never starts again. The per-endpoint ordering is
 what makes "an announced address is always one that is actually listening" true in every process topology,
 and the mirror keeps an address from being advertised after the endpoint goes deaf. There is deliberately
 **no ordering between endpoints** — a host starting several starts them in parallel, each running its own

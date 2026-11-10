@@ -371,8 +371,9 @@ Composition choices are parameters and strategies, not plugins:
 
 ## Lifecycle and topology
 
-Each endpoint drives its own phases: `StartAsync` runs listen → announce → send in order, and disposal runs
-the mirror — retract → stop sending → stop listening. An announced address is always one that is actually
+Each endpoint drives its own phases: `StartAsync` runs listen → announce → send in order, and `StopAsync` —
+which disposal runs unless the endpoint already stopped — runs the mirror: retract → stop sending → stop
+listening. An announced address is always one that is actually
 listening, in every process topology, because the ordering is per-endpoint; there is deliberately no
 ordering *between* endpoints, co-hosted or not. Startup order is nobody's problem: readiness fronts the
 wait where an application wants it paid, waiting sends absorb the churn windows, and queue-while-down and
