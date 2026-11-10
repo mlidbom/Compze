@@ -4,6 +4,15 @@ All notable changes to Compze.Internals.Logging.Serilog will be documented in th
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## 0.5.0-alpha
+
+### Changed
+- `SerilogLogger` is replaced by `SerilogLogBackend`, which implements the `ILogBackend` of [Compze.Internals.Logging](https://www.nuget.org/packages/Compze.Internals.Logging/) 0.5.0-alpha. Choose it with `CompzeLogger.Backend = SerilogLogBackend.Global;`, which writes to Serilog's static `Log.Logger`, or with `SerilogLogBackend.WritingTo(serilogLogger)`, which replaces `SerilogLogger.Create(Type, Serilog.ILogger)`. Released in lockstep with Compze.Internals.Logging 0.5.0-alpha: upgrade the two together.
+- Each event is written with Serilog's level-taking `Write`, so the level mapping is made in one place. Events carry the same properties as before: `SourceContext`, `CallerMember`, and `Activity` and `ActivityId` within an activity.
+
+### Fixed
+- `SerilogLogger.Create` captured Serilog's static `Log.Logger` when a logger was made, so a logger made before `Log.Logger` was assigned wrote to Serilog's silent default logger, and its lines were lost. `SerilogLogBackend.Global` reads `Log.Logger` for each line, so it makes no difference whether `Log.Logger` or `CompzeLogger.Backend` is assigned first.
+
 ## 0.4.1-alpha
 
 - Released in lockstep with [Compze.Internals.Logging](https://www.nuget.org/packages/Compze.Internals.Logging/) 0.4.1-alpha. `SerilogLogger` extends that package's abstract `Logger`, so the two must be upgraded together — a backend compiled against a different core fails to load.

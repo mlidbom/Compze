@@ -4,6 +4,21 @@ All notable changes to Compze.Internals.Logging will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## 0.5.0-alpha
+
+### Fixed
+- A logger made before the host chose its logging backend wrote to the console for good, without a word. `CompzeLogger.For<T>()` and `this.Log()` made each type's logger once, from whatever `CompzeLogger.LoggerFactoryMethod` returned at that moment, so a type touched before logging was configured — through a `static readonly` logger field, or by logging — logged to the console for the rest of the process. Loggers now hold no backend: each line goes to the `CompzeLogger.Backend` current when it is written, so a logger can be made at any time, a `static readonly` logger field included.
+- The console backend printed the doubled braces of an interpolated message with no holes as they were (`$"literal {{x}}"` printed `literal {{x}}`). It now prints single braces.
+
+### Changed
+- The logging backend is its own concept, separate from the `ILogger` code logs through: `ILogBackend`, with one method, `Write(LogLine)`. A `LogLine` carries the line's level, the type its logger was made for, the member that logged it, its message template and values, and its exception. Writing a backend means implementing `ILogBackend`; the level and suppression checks are made before a line reaches it.
+- The process's backend is `CompzeLogger.Backend`, which replaces `CompzeLogger.LoggerFactoryMethod`: `CompzeLogger.Backend = SerilogLogBackend.Global;` instead of `CompzeLogger.LoggerFactoryMethod = SerilogLogger.Create;`. It defaults to `ILogBackend.Console`.
+- A message logged as plain text reaches the backend as a message template with its braces doubled and no values, the same shape as every other line.
+
+### Removed
+- The abstract `Logger` base class, which backends used to extend: implement `ILogBackend` instead.
+- `ConsoleLogger`: the console backend is `ILogBackend.Console`.
+
 ## 0.4.1-alpha
 
 - `LevelLogger`'s implementation moves below `_private`; the logging vocabulary keeps its public shape.
