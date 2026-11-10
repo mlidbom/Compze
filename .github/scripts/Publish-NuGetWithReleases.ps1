@@ -31,6 +31,7 @@ $scriptDir = $PSScriptRoot
 . "$scriptDir/lib/ReleaseSelection.ps1"
 . "$scriptDir/lib/NuGetPublishing.ps1"
 . "$scriptDir/lib/GitHubReleases.ps1"
+. "$scriptDir/lib/NuGetOrgVersions.ps1"
 . "$scriptDir/lib/SummaryReport.ps1"
 
 # ── Main ──

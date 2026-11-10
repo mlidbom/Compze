@@ -34,28 +34,13 @@ function GetLatestTagVersion([string]$PackageName) {
 
 function GetLatestNuGetVersionMap($PackageNames) {
     # Returns a hashtable: PackageName -> latest published version (or $null if not on nuget.org).
-    # Queries in parallel; suppresses NuGet's 404 response bodies (a known stdout-noise issue
-    # we hit when querying packages that have never been published).
-    $results = $PackageNames | ForEach-Object -Parallel {
-        $name = $_
-        $id = $name.ToLowerInvariant()
-        $url = "https://api.nuget.org/v3-flatcontainer/$id/index.json"
-        $version = $null
-        try {
-            $response = Invoke-WebRequest -Uri $url -SkipHttpErrorCheck -TimeoutSec 10 -ErrorAction Stop
-            if ($response.StatusCode -eq 200) {
-                $data = $response.Content | ConvertFrom-Json
-                if ($data.versions -and $data.versions.Count -gt 0) {
-                    # NuGet returns versions in ascending semver order — last entry is the highest.
-                    $version = $data.versions[-1]
-                }
-            }
-        } catch {}
-        [PSCustomObject]@{ Name = $name; Version = $version }
-    } -ThrottleLimit 20
-
+    $versionsByPackageName = GetNuGetOrgRestorableVersionsMap $PackageNames
     $map = @{}
-    foreach ($r in $results) { $map[$r.Name] = $r.Version }
+    foreach ($name in $PackageNames) {
+        $versions = @($versionsByPackageName[$name])
+        # nuget.org lists versions in ascending semver order, so the last is the highest.
+        $map[$name] = if ($versions.Count -gt 0) { $versions[-1] } else { $null }
+    }
     return $map
 }
 
