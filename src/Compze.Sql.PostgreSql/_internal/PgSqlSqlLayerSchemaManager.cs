@@ -16,9 +16,11 @@ class PgSqlSqlLayerSchemaManager
    //scripts' IF-NOT-EXISTS guards are not concurrency-safe DDL. The engine's advisory lock serializes schema creation
    //across connections and processes; acquisition, batch, and release must share one connection, because the lock is
    //session-scoped.
-   //The key is scoped to the CURRENT database (current_database()): a PostgreSQL advisory lock is CLUSTER-GLOBAL by key, so a
-   //constant key would serialize schema creation across every unrelated database in the cluster - a needless cross-database
-   //bottleneck and a latent deadlock risk. Per-database scoping serializes only the endpoints that actually share one domain database.
+   //PostgreSQL scopes an advisory lock to the database it is taken in: the same key taken in two databases of one cluster is
+   //two locks. So this lock serializes only the endpoints that share one domain database, never unrelated databases in the
+   //cluster (verified on PostgreSQL 18, 2026-11-12).
+   //refactor: the database name (current_database()) in the key adds nothing, given that scoping; a constant key serializes
+   //   exactly the same endpoints. Drop it with the next change to this package that ships anyway.
    const string AcquireSchemaCreationLockSql = "SELECT pg_advisory_lock(hashtext('Compze.SchemaCreation:' || current_database())::bigint);";
    const string ReleaseSchemaCreationLockSql = "SELECT pg_advisory_unlock(hashtext('Compze.SchemaCreation:' || current_database())::bigint);";
 
