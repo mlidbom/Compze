@@ -76,7 +76,7 @@ Review of all types in `Compze.Internals.SystemCE` to determine whether each is 
 | Type | Visibility | Verdict | Rationale |
 |------|-----------|---------|-----------|
 | `ObservableCE` | public | **Internal** | Single `Subscribe` extension with `Action<T>`. Trivial convenience wrapper. |
-| `SimpleObservable<T>` | public | **Internal** | Lightweight `IObservable<T>` implementation for internal event infrastructure. Couples to `IThreadShared` (internal threading). Not something external users should depend on. |
+| `SimpleObservable<T>` | public | **Internal** | Lightweight `IObservable<T>` implementation for internal event infrastructure. Takes no lock (since 0.6.1-internal): it depends on nothing but the immutable collections of .NET. Not something external users should depend on. |
 | `SimpleObserver<T>` | internal | **Internal** ✓ | Already internal. Trivial `IObserver<T>` adapter. |
 
 ## ReflectionCE
