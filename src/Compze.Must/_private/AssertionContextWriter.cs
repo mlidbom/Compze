@@ -183,7 +183,7 @@ static class AssertionContextWriter
 
       public string NormalizeExpressionIndentation(string expression)
       {
-         var lines = expression.Split(Environment.NewLine);
+         var lines = expression.ReplaceLineEndings().Split(Environment.NewLine);
          if(lines.Length == 1) return expression;
 
          var minimumIndent = lines.Skip(1)

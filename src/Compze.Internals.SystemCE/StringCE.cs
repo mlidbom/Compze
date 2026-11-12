@@ -14,7 +14,13 @@ public static partial class StringCE
    /// <summary>Delegates to <see cref="string.Join(string,string[])"/> </summary>
    public static string Join(this IEnumerable<string> @this, string separator) => string.Join(separator, @this);
 
-   public static string RemoveLinesWhere(this string @this, Func<string, bool> predicate) => @this.Split(Environment.NewLine)
+   /// <summary>
+   /// The string without the lines that <paramref name="predicate"/> matches, its lines ending in <see cref="Environment.NewLine"/>.<br/>
+   /// A line ends at any line ending, whichever the string has: text from a raw string literal holds the line endings of the<br/>
+   /// source file it was compiled from, which needn't be the line endings of the operating system it runs on.
+   /// </summary>
+   public static string RemoveLinesWhere(this string @this, Func<string, bool> predicate) => @this.ReplaceLineEndings()
+                                                                                                  .Split(Environment.NewLine)
                                                                                                   .Where(it => !predicate(it))
                                                                                                   .JoinLines();
 

@@ -17,9 +17,17 @@ one call site moves the warning to another.
 
 ## How
 
-- **The receiver takes the nullable form:** `IAssertionContext<string?>`, `IAssertionContext<IEnumerable<TItem>?>`, or
-  `IAssertionContext<TCollection?>` with the constraint on `TCollection`. A reference constraint is `class?`, never
-  `class`. A receiver of an unconstrained generic `IAssertionContext<TValue>` already accepts both.
+- **The receiver takes the nullable form:** `IAssertionContext<string?>`, or `IAssertionContext<IEnumerable<TElement>?>`
+  for a collection assertion (below). A reference constraint is `class?`, never `class`. A receiver of an unconstrained
+  generic `IAssertionContext<TValue>` already accepts both.
+- **A collection assertion takes `IAssertionContext<IEnumerable<TElement>?>` and returns
+  `IAssertionContext<IEnumerable<TElement>>`,** never a `TCollection` type parameter constrained to
+  `IEnumerable<TElement>`. C# infers type arguments without looking at constraints, so with a `TCollection` the element
+  type comes from the expected values alone: `SequenceEqual(["a"])` on a `List<string?>` warns CS8631, and `[]`, values
+  of a narrower type than the subject's elements, and values of several types don't compile at all. `IAssertionContext`
+  is covariant, so the receiver form takes the element type from the subject too. Its price is the subject's own
+  collection type, which no assertion chained after a collection assertion was found to need, and struct collections
+  such as `ImmutableArray<T>`, which reach the assertions through `.AsEnumerable()`.
 - **A null subject is a value the assertion reports:** the subject is what the code under test produced, so a null one
   is that code's failure, not the test's. It fails with an `AssertionFailedException`, never with a
   `NullReferenceException` from inside the predicate, unless the assertion asks for null, as `BeNull` and
@@ -39,7 +47,7 @@ one call site moves the warning to another.
   every string, so `BeGreaterThan(null)` succeeded.
 - **No type-specific overload of a generic assertion.** It captures every call for that type, nullable ones included,
   as the string overload of `Be` did. Specialize inside the generic assertion, at run time: `Be` compares two strings
-  ordinally and shows a diff of their text.
+  ordinally and shows a diff of their text, and `Contain` asks a read-only set itself, so its own comparer decides.
 - **A nullable value type is reached through `NotBeNull()`,** which narrows `T?` to `T`. `int?` is a different type from
   `int`, so an assertion over a value type gets no second overload for its nullable form.
 - **A warning that tells the truth stays:** `Satisfy(it => it.Length == 1)` on a `string?` warns because the predicate

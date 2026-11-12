@@ -66,3 +66,43 @@ showed only a "was null:" line among the values.
 His idea did fit the expected values: a null one is the test's own mistake. 0.6.0 let .NET's own
 `ArgumentNullException` escape for some (`StartWith`, `SequenceEqual`, naming .NET's parameter) and silently passed for
 others (`"b".Must().BeGreaterThan(null)`, as null orders before every string). Now each asserts with Compze.Contracts.
+
+## Addition: collection assertions take their element type from the subject (2026-11-12, Compze.Must 0.8.0-alpha)
+
+JAStudio reported that `strings.Must().SequenceEqual(["a", "b"])` on `string?` elements warned CS8631: the signature was
+`SequenceEqual<TCollection, TElement>(this IAssertionContext<TCollection?>, IEnumerable<TElement>) where TCollection :
+IEnumerable<TElement>`, and C# infers `TElement` from the expected values alone, constraints being ignored by inference.
+
+Compiled against the three candidate signatures (consumer methods with the subject as a parameter):
+
+| Call shape | `TCollection : IEnumerable<TElement>` (0.7.0) | `TCollection : IEnumerable<TElement?>` | `IAssertionContext<IEnumerable<TElement>?>` |
+|---|---|---|---|
+| `List<string?>`, `["a", "b"]` | CS8631 | clean | clean |
+| `List<string>`, `[]` | CS0411 | CS0411 | clean |
+| `List<object>`, `["a"]` (narrower expected) | CS0311 | CS0311 | clean |
+| `List<IShape>`, `[new Circle(), new Square()]` | CS0411 | CS0411 | clean |
+| `ImmutableArray<int>` (a struct) | clean | clean | CS1929 |
+| `.Actual` still a `List<string>` | yes | yes | no |
+
+Magnus's first reaction was that losing the collection type is bad, so the question became how often anything needs it
+after a collection assertion. A script following every `.Must()` chain in Compze, JAStudio and Deskmancer found about
+1,300 collection-assertion calls: almost all end the chain, three are followed by `Contain` or `Satisfy` (which need only
+the sequence), and the only `.Actual` uses were in Compze.Must's own Nullability specifications, which pin the return
+type. FluentAssertions and AwesomeAssertions bind every collection through `Should<T>(this IEnumerable<T>)`, so their
+`Subject` is an `IEnumerable<T>` from the first call; what assertion libraries do chain on a collection is its single
+element (`ContainSingle().Which`, xUnit's `Assert.Single`, Shouldly's `ShouldHaveSingleItem`), which needs the element
+type, not the collection's. Magnus approved the receiver form for every collection assertion.
+
+Alternatives rejected:
+
+- **`where TCollection : IEnumerable<TElement?>`.** Keeps the collection type and fixes the nullable case, but the other
+  shapes still don't compile, and it can't serve an item-taking assertion: `shapes.Must().Contain(circle)` infers
+  `Circle`, and `List<IShape>` fails `IEnumerable<Circle?>`. A `ContainSingle()`, with no argument to infer from, can't
+  have a `TElement` at all.
+- **Both signatures as overloads.** Everything compiles, but the return type then depends on whether the expected
+  values settle the element type on their own: `SequenceEqual([])` returns a sequence where `SequenceEqual(["a"])`
+  returns the list.
+
+`Contain`'s overloads for `HashSet<T>`, `ISet<T>`, `IReadOnlySet<T>` and `ReadOnlyCollection<T>` went with it.
+`Enumerable.Contains` asks an `ICollection<T>` itself, which every .NET set is, so a set's comparer decided either way;
+the one gap, a read-only set that isn't an `ICollection<T>`, is asked by a run-time check in the single overload.

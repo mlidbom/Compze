@@ -9,7 +9,7 @@ static class DiffGenerator
 {
    public static string CreateDiff(string expected, string actual, string? oldFileName = null, string? newFileName = null)
    {
-      if(expected.ContainsOrdinal(Environment.NewLine) || actual.ContainsOrdinal(Environment.NewLine))
+      if(SpansSeveralLines(expected) || SpansSeveralLines(actual))
       {
          return UnidiffRenderer.GenerateUnidiff(oldText: expected, newText: actual, oldFileName: oldFileName ?? "expected", newFileName: newFileName ?? "actual");
       } else
@@ -17,6 +17,9 @@ static class DiffGenerator
          return SingleLineDiff(expected, actual);
       }
    }
+
+   /// <summary>Whether <paramref name="text"/> holds a line ending of either kind, LF or CRLF, not only <see cref="Environment.NewLine"/>.</summary>
+   static bool SpansSeveralLines(string text) => text.ContainsOrdinal("\n") || text.ContainsOrdinal("\r");
 
    static readonly char[] WordSeparators = [' '];
 

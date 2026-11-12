@@ -67,23 +67,39 @@ public abstract class When_a_consumer_compiles_an_assertion : UniversalTestBase
 
    public class on_a_list_declared_nullable() : When_a_consumer_compiles_an_assertion("List<string>? subject")
    {
-      [XF] public void HaveCount_narrows_the_context_to_a_non_nullable_list() => Compiling("List<string> narrowed = subject.Must().HaveCount(1).Actual;").WarningsAndErrors.Must().BeEmpty();
-      [XF] public void BeEmpty_narrows_the_context_to_a_non_nullable_list() => Compiling("List<string> narrowed = subject.Must().BeEmpty().Actual;").WarningsAndErrors.Must().BeEmpty();
-      [XF] public void NotBeEmpty_narrows_the_context_to_a_non_nullable_list() => Compiling("List<string> narrowed = subject.Must().NotBeEmpty().Actual;").WarningsAndErrors.Must().BeEmpty();
-      [XF] public void SequenceEqual_narrows_the_context_to_a_non_nullable_list() => Compiling("""List<string> narrowed = subject.Must().SequenceEqual(new[] { "a" }).Actual;""").WarningsAndErrors.Must().BeEmpty();
+      [XF] public void HaveCount_narrows_the_context_to_a_non_nullable_sequence() => Compiling("IEnumerable<string> narrowed = subject.Must().HaveCount(1).Actual;").WarningsAndErrors.Must().BeEmpty();
+      [XF] public void BeEmpty_narrows_the_context_to_a_non_nullable_sequence() => Compiling("IEnumerable<string> narrowed = subject.Must().BeEmpty().Actual;").WarningsAndErrors.Must().BeEmpty();
+      [XF] public void NotBeEmpty_narrows_the_context_to_a_non_nullable_sequence() => Compiling("IEnumerable<string> narrowed = subject.Must().NotBeEmpty().Actual;").WarningsAndErrors.Must().BeEmpty();
+      [XF] public void SequenceEqual_narrows_the_context_to_a_non_nullable_sequence() => Compiling("""IEnumerable<string> narrowed = subject.Must().SequenceEqual(new[] { "a" }).Actual;""").WarningsAndErrors.Must().BeEmpty();
       [XF] public void Contain_narrows_the_context_to_a_non_nullable_sequence() => Compiling("""IEnumerable<string> narrowed = subject.Must().Contain("a").Actual;""").WarningsAndErrors.Must().BeEmpty();
    }
 
    public class on_each_kind_of_set_and_read_only_collection_declared_nullable()
       : When_a_consumer_compiles_an_assertion("HashSet<string>? hashSet, ISet<string>? set, IReadOnlySet<string>? readOnlySet, ReadOnlyCollection<string>? readOnlyCollection")
    {
-      [XF] public void Contain_narrows_the_context_to_the_non_nullable_collection() =>
+      [XF] public void Contain_narrows_the_context_to_a_non_nullable_sequence() =>
          Compiling("""
-                   HashSet<string> narrowedHashSet = hashSet.Must().Contain("a").Actual;
-                   ISet<string> narrowedSet = set.Must().Contain("a").Actual;
-                   IReadOnlySet<string> narrowedReadOnlySet = readOnlySet.Must().Contain("a").Actual;
-                   ReadOnlyCollection<string> narrowedReadOnlyCollection = readOnlyCollection.Must().Contain("a").Actual;
+                   IEnumerable<string> narrowedHashSet = hashSet.Must().Contain("a").Actual;
+                   IEnumerable<string> narrowedSet = set.Must().Contain("a").Actual;
+                   IEnumerable<string> narrowedReadOnlySet = readOnlySet.Must().Contain("a").Actual;
+                   IEnumerable<string> narrowedReadOnlyCollection = readOnlyCollection.Must().Contain("a").Actual;
                    """).WarningsAndErrors.Must().BeEmpty();
+   }
+
+   /// <summary>The collection assertions take their element type from the subject, so elements declared nullable take expected values that aren't.</summary>
+   public class on_a_list_whose_elements_are_declared_nullable() : When_a_consumer_compiles_an_assertion("List<string?> subject")
+   {
+      [XF] public void SequenceEqual_with_strings_compiles_without_warnings() => Compiling("""subject.Must().SequenceEqual(["a", "b"]);""").WarningsAndErrors.Must().BeEmpty();
+      [XF] public void Contain_with_a_string_compiles_without_warnings() => Compiling("""subject.Must().Contain("a");""").WarningsAndErrors.Must().BeEmpty();
+   }
+
+   /// <summary>The collection assertions take their element type from the subject, so the expected values need no element type of their own.</summary>
+   public class on_a_list_of_IComparable() : When_a_consumer_compiles_an_assertion("List<IComparable> subject")
+   {
+      [XF] public void SequenceEqual_with_no_expected_values_compiles_without_warnings() => Compiling("subject.Must().SequenceEqual([]);").WarningsAndErrors.Must().BeEmpty();
+      [XF] public void SequenceEqual_with_values_of_a_narrower_type_than_the_elements_compiles_without_warnings() => Compiling("""subject.Must().SequenceEqual(["a"]);""").WarningsAndErrors.Must().BeEmpty();
+      [XF] public void SequenceEqual_with_values_of_several_types_compiles_without_warnings() => Compiling("""subject.Must().SequenceEqual([1, "a"]);""").WarningsAndErrors.Must().BeEmpty();
+      [XF] public void Contain_with_an_item_of_a_narrower_type_than_the_elements_compiles_without_warnings() => Compiling("""subject.Must().Contain("a");""").WarningsAndErrors.Must().BeEmpty();
    }
 
    public class on_an_int_declared_nullable() : When_a_consumer_compiles_an_assertion("int? subject")

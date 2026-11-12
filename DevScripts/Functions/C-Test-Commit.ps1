@@ -90,9 +90,10 @@ function C-Test-Commit {
     )
     
     # Validate mutually exclusive parameters
+    #bug: -MaxFailures defaults to 1, so this refuses every -FailureText call, the documented example included. Whether
+    #   the default should apply only without -FailureText ($PSBoundParameters.ContainsKey('MaxFailures')) is undecided.
     if ($FailureText -and $MaxFailures -ge 0) {
-        Write-Error "Parameters -FailureText and -MaxFailures are mutually exclusive. Use one or the other."
-        $global:LASTEXITCODE = 1
+        Write-CommandFailure -Command $PSCmdlet -Message "Parameters -FailureText and -MaxFailures are mutually exclusive. Use one or the other."
         return
     }
     
@@ -103,6 +104,9 @@ function C-Test-Commit {
     try {
         # Build and validate
         if (-not (Invoke-BuildWithValidation -NoBuild:$NoBuild -Clean:$Clean -FullGitReset:$FullGitReset)) {
+            if ($LASTEXITCODE -ne 0) {
+                Write-CommandFailure -Command $PSCmdlet -Message "The build failed, so no tests ran."
+            }
             return
         }
         
@@ -114,7 +118,9 @@ function C-Test-Commit {
             # Run tests
             $result = C-Run-TestRun -SolutionPath $script:CompzeSolutionPath
             
-            $totalFailures += $result.Failed
+            # A test process that died fails the run without reporting a failed test: count that run as one failure.
+            $failuresInThisRun = if ($result.ExitCode -ne 0 -and $result.Failed -eq 0) { 1 } else { $result.Failed }
+            $totalFailures += $failuresInThisRun
             
             # Collect failed tests from this iteration
             if ($result.FailedTests -and $result.FailedTests.Count -gt 0) {
@@ -128,8 +134,7 @@ function C-Test-Commit {
             if ($FailureText) {
                 $outputString = $result.TestOutput | Out-String
                 if ($outputString -match [regex]::Escape($FailureText)) {
-                    Write-Host "Found failure text: '$FailureText'" -ForegroundColor Red
-                    $global:LASTEXITCODE = 1
+                    Write-CommandFailure -Command $PSCmdlet -Message "Found failure text: '$FailureText'"
                     return
                 }
             }
@@ -137,9 +142,8 @@ function C-Test-Commit {
             # Check for MaxFailures if specified
             if ($MaxFailures -ge 0) {
                 if ($totalFailures -gt $MaxFailures) {
-                    Write-Host "Cumulative failures ($totalFailures) exceeded MaxFailures ($MaxFailures)" -ForegroundColor Red
                     Show-FailedTestsSummary -FailedTests $allFailedTests
-                    $global:LASTEXITCODE = 1
+                    Write-CommandFailure -Command $PSCmdlet -Message "Cumulative failures ($totalFailures) exceeded MaxFailures ($MaxFailures)"
                     return
                 }
             }

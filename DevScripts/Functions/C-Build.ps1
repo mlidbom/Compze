@@ -80,7 +80,7 @@ function C-Build {
         dotnet build $script:CompzeSolutionPath
         
         if ($LASTEXITCODE -ne 0) {
-            Write-Error "Build failed!"
+            Write-CommandFailure -Command $PSCmdlet -Message "Build failed!"
             return
         }
         
