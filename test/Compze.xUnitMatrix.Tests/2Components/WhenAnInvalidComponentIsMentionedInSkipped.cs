@@ -19,6 +19,6 @@ public class WhenAnInvalidComponentIsMentionedInSkipped
                                             .GetMethod(nameof(TheTestIsSkippedWithAnErrorTessage))._assert().NotNull(), disposalTracker).caf();
 
       testData.Must().HaveCount(1);
-      testData.Single().Skip!.Must().Contain("DIContainer");
+      testData.Single().Skip.Must().Contain("DIContainer");
    }
 }

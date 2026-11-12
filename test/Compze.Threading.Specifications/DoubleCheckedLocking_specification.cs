@@ -42,7 +42,7 @@ public class DoubleCheckedLocking_specification : UniversalTestBase
          var result = criticalSection.DoubleCheckedLocking(ref field, () => "populated");
 
          result.Must().Be("populated");
-         field!.Must().Be("populated");
+         field.Must().Be("populated");
       }
 
       [ICriticalSectionMatrix] public void returns_the_value_from_tryRead_without_calling_createUpdatedFieldValue_when_tryRead_returns_non_null()
@@ -127,8 +127,8 @@ public class DoubleCheckedLocking_specification : UniversalTestBase
          runner.Dispose();
 
          createCount.Must().Be(1);
-         resultA!.Must().Be("populated");
-         resultB!.Must().Be("populated");
+         resultA.Must().Be("populated");
+         resultB.Must().Be("populated");
       }
    }
 
@@ -157,7 +157,7 @@ public class DoubleCheckedLocking_specification : UniversalTestBase
          var result = criticalSection.DoubleCheckedLocking(ref field, () => "populated");
 
          result.Must().Be("populated");
-         field!.Must().Be("populated");
+         field.Must().Be("populated");
       }
 
       [IAwaitableCriticalSectionMatrix] public void returns_the_value_from_tryRead_without_calling_createUpdatedFieldValue_when_tryRead_returns_non_null()
@@ -242,8 +242,8 @@ public class DoubleCheckedLocking_specification : UniversalTestBase
          runner.Dispose();
 
          createCount.Must().Be(1);
-         resultA!.Must().Be("populated");
-         resultB!.Must().Be("populated");
+         resultA.Must().Be("populated");
+         resultB.Must().Be("populated");
       }
    }
 }

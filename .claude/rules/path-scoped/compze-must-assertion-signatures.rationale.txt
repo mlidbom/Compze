@@ -1,0 +1,50 @@
+# Rationale: Compze.Must assertion signatures
+
+## Provenance
+
+2026-11-12. A Deskmancer specification asserting on a `string?` registry value warned CS8620 on `TheEntry.Must().Be(…)`
+and wrote `TheEntry!.Must().Be(…)` with a `todo:compze:`. Magnus had hit the same thing several times: "How to deal
+with nullability differences has confused me several times in compze. Changing things only to get compilation warnings
+in another situation." Compze itself carried eight `!.Must()` workarounds and five `#pragma warning disable CS8620`
+files.
+
+## The evidence
+
+Compiled against Compze.Must 0.5.0-alpha with nullable enabled:
+
+| Call shape | Result |
+|---|---|
+| `string?` `.Must().Be("x")` | CS8620: the non-generic `StringEqualityAssertions.Be` won overload resolution |
+| `string` `.Must().Be(aNullableString)` | CS8604 on the expected value, same cause |
+| `string?` `.Must().Contain("x")`, `StartWith`, `EndWith`, `NotContain` | CS8620 |
+| `List<string>?` `.Must().HaveCount(0)`, `BeEmpty`, `NotBeEmpty`, `SequenceEqual` | CS8631: constraint `IEnumerable` |
+| `List<string>?` `.Must().Contain("x")` | CS8620 |
+| `int?` `.Must().NotBeNull().Actual` assigned to `int` | error: `NotBeNull` didn't narrow `Nullable<T>` |
+| `string?` `.Must().NotBeNull().Be("x")` | clean: `NotBeNull` did narrow nullable references |
+| `ReferenceEqual` with a `string?` expected | CS8634: constraint `class` |
+
+At run time, a null subject made the string and comparison assertions throw `NullReferenceException` and the collection
+ones `ArgumentNullException`, rather than fail.
+
+The generic `EqualityAssertions.Be<TValue, TExpected>` had always handled every nullability correctly; only the string
+overload, picked ahead of it by overload resolution, broke it.
+
+## Alternatives rejected
+
+- **Widening the string overload to `IAssertionContext<string?>` and a `string?` expected value.** Its return would
+  then be `IAssertionContext<string?>` for non-nullable strings too, so a `Satisfy` lambda chained after it would warn.
+  Deleting it makes the generic `Be` return the caller's own nullability.
+- **Two overloads, one for `string` and one for `string?`.** Not expressible: they differ only in annotations, which is
+  a duplicate member.
+- **Relying on `NotBeNull()` alone for reference types.** It works, but makes the consumer write a step the assertion
+  itself can perform, and leaves the warnings on every other call shape.
+- **A nullable-value-type overload of every assertion over a value type** (`BeTrue`, `BeFalse`, `BeCloseTo`,
+  `BeValidEnumValue`, six comparisons): ten more overloads for a rarer case, where the compiler gives an error, not a
+  confusing warning. `NotBeNull()` narrowing `T?` to `T` covers them all.
+
+## Why the specification compiles code
+
+The run-time specifications can't see a signature's effect on a consumer's compiler, and Compze's own specification
+projects only show it as warnings nobody is forced to read. `ConsumerCode` makes "this call shape compiles without
+warnings" a failing specification. Checked by putting the old `Contain` receiver back: exactly
+`Contain_narrows_the_context_to_a_non_nullable_string` failed.

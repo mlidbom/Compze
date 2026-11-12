@@ -4,6 +4,15 @@ All notable changes to Compze.Must will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## 0.6.0-alpha
+
+- **An assertion accepts its subject whatever nullability the subject is declared with.** On a subject declared nullable, such as a `string?` or a `List<T>?`, every assertion compiles without a nullable warning, and a `null` value simply fails it, or passes `BeNull` and `BeNullOrEmpty`. Before, `Be` with a string, `Contain`, `NotContain`, `StartWith`, `EndWith`, `HaveCount`, `BeEmpty`, `NotBeEmpty`, `SequenceEqual` and a collection's `Contain` warned on a nullable subject (CS8620 or CS8631), so specifications wrote `subject!.Must()`; and on a `null` value the string, collection and comparison assertions threw a `NullReferenceException` or an `ArgumentNullException` instead of failing.
+- **An assertion that only a non-null value can pass returns a non-nullable context**, so its `Actual` and the assertions chained after it need no `!`: `Contain`, `NotContain`, `StartWith`, `EndWith`, `HaveCount`, `BeEmpty`, `NotBeEmpty`, `SequenceEqual`, a collection's `Contain`, `BeGreaterThan`, `BeGreaterThanOrEqualTo`, `BeLessThan`, `BeLessThanOrEqualTo`, `BePositive` and `BeNegative`, as `NotBeNull`, `NotBeNullOrEmpty` and `NotBeNullOrWhiteSpace` already did. `Be` keeps the nullability the subject is declared with.
+- `NotBeNull` narrows a nullable value type to its underlying type: an `int?` becomes an `int`, which the assertions over `int` take, as in `flag.Must().NotBeNull().BeTrue()` on a `bool?`.
+- `ReferenceEqual` and `NotReferenceEqual` take values declared nullable. Two nulls are the same instance.
+- **Breaking:** `StringEqualityAssertions` is gone. `Be` on two strings is now `EqualityAssertions.Be`, which compares two strings ordinally and shows a diff of their text on failure, as the string overload did. Calls compile unchanged, but code compiled against an earlier version must be recompiled.
+- **Requires newer minor versions of other Compze packages:** Compze.Internals.SystemCE 0.6.0-internal (was 0.5.0-internal). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
+
 ## 0.5.0-alpha
 
 - **A failure message never fails.** When Must cannot serialize a value, the `AssertionFailedException` still carries the assertion's own message, and in place of the value's JSON it says what was thrown, while reading which member, at which path, and the configuration line that leaves the member out. Before, the serializer's exception replaced the assertion's message.

@@ -27,7 +27,7 @@ public class Argument_asserter
       [XF] public void the_ParamName_is_the_argument_expression() =>
          Invoking(() => Contract.Argument.NotNull(NullValue))
             .Must().Throw<ArgumentNullException>()
-            .Which.ParamName!.Must().Be(nameof(NullValue));
+            .Which.ParamName.Must().Be(nameof(NullValue));
    }
 
    public class on_NotDefault_failure : Argument_asserter

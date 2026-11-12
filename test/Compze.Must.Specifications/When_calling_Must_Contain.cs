@@ -83,4 +83,17 @@ public class When_calling_Must_Contain : UniversalTestBase
          [XF] public void it_throws() => Invoking(() => _collection.Must().Contain(40)).Must().Throw<AssertionFailedException>();
       }
    }
+
+   public class with_a_string_that : When_calling_Must_Contain
+   {
+      public class contains_the_substring : with_a_string_that
+      {
+         [XF] public void it_does_not_throw() => "hello world".Must().Contain("lo wo");
+      }
+
+      public class does_not_contain_the_substring : with_a_string_that
+      {
+         [XF] public void it_throws() => Invoking(() => "hello world".Must().Contain("xyz")).Must().Throw<AssertionFailedException>();
+      }
+   }
 }

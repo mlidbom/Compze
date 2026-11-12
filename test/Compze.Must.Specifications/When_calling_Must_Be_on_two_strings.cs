@@ -8,9 +8,9 @@
 
 namespace Compze.Must.Specifications;
 
-public class When_calling_Be_string_overload : UniversalTestBase
+public class When_calling_Must_Be_on_two_strings : UniversalTestBase
 {
-   public class with_two_multiline_strings : When_calling_Be_string_overload
+   public class with_two_multiline_strings : When_calling_Must_Be_on_two_strings
    {
       readonly string _actual = """
                                 First line
@@ -66,7 +66,7 @@ public class When_calling_Be_string_overload : UniversalTestBase
       }
    }
 
-   public class with_two_single_line_strings : When_calling_Be_string_overload
+   public class with_two_single_line_strings : When_calling_Must_Be_on_two_strings
    {
       readonly string _actual = """First Actual-Second Third""";
 

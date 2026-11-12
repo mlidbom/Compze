@@ -96,8 +96,8 @@ expectedCart was: [Full details including full json here]
 ```csharp
 public static class MyCustomAssertions
 {
-   public static IAssertionContext<string> BeAValidEmailAddress(this IAssertionContext<string> @this) => 
-      @this.RunAssertion(it => it.Contains('@') && it.Contains('.'));
+   public static IAssertionContext<string?> BeAValidEmailAddress(this IAssertionContext<string?> @this) => 
+      @this.RunAssertion(it => it is not null && it.Contains('@') && it.Contains('.'));
 }
 ```
 
@@ -138,6 +138,29 @@ the rich message; a passing one returns the context so you can keep going:
 caughtException.Must().NotBeNull().BeExactType<InvalidOperationException>();
 ```
 
+## Subjects declared nullable
+
+Assert on a `string?`, a `List<T>?` or any other subject declared nullable as on any other: no `!`, and no nullable
+warning. A `null` value fails the assertion, unless the assertion asks for null, as `BeNull` and `BeNullOrEmpty` do.
+An assertion only a non-null value can pass returns a non-nullable context, so you can keep chaining:
+
+```csharp
+string? entry = ReadTheEntry();
+entry.Must().StartWith(@"C:\Program Files\").Satisfy(it => it.EndsWith(".exe"));
+```
+
+A nullable value type, such as `int?`, is a type of its own: `NotBeNull()` narrows it to its underlying type, which
+the assertions over that type take:
+
+```csharp
+bool? accepted = form.Accepted;
+accepted.Must().NotBeNull().BeTrue();
+```
+
+Your own assertions accept nullable subjects the same way: take `IAssertionContext<string?>`, as
+`BeAValidEmailAddress` above does. To return a non-nullable context when only a non-null value passes, end the
+`RunAssertion` call with `!`, as the built-in assertions do.
+
 ## `Be` / `NotBe` — equality, checked every which way
 
 `Be` doesn't just call `Equals`. It verifies that two values agree across **every comparison mechanism the
@@ -161,6 +184,8 @@ expected was a System.Int32 with the value: 43
 the first failing equivalency test was:
    it => Equals(it, expected)
 ```
+
+Two strings are compared ordinally instead, and a failure shows a diff of their text.
 
 For reference equality rather than value equality, use `ReferenceEqual` / `NotReferenceEqual`.
 
@@ -286,7 +311,7 @@ await InvokingAsync(() => repository.SaveAsync(order))
 | Category | Assertions |
 |---|---|
 | Equality | `Be`, `NotBe`, `DeepEqual` (+ `Public`/`Internal` scopes), `ReferenceEqual`, `NotReferenceEqual` |
-| Nullability | `NotBeNull` (narrows to the non-null type), `BeNull` |
+| Nullability | `NotBeNull` (narrows to the non-null type, and an `int?` to an `int`), `BeNull` |
 | Boolean | `BeTrue`, `BeFalse` |
 | Strings | `Contain`, `NotContain`, `StartWith`, `EndWith`, `BeNullOrEmpty`, `NotBeNullOrEmpty`, `NotBeNullOrWhiteSpace` |
 | Collections | `HaveCount`, `BeEmpty`, `NotBeEmpty`, `Contain`, `SequenceEqual` |

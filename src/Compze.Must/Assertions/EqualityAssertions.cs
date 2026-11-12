@@ -9,9 +9,32 @@ namespace Compze.Must;
 /// <summary>Value-equality assertions, checked consistently across every comparison mechanism the type supports.</summary>
 public static class EqualityAssertions
 {
-   /// <summary>Asserts that the value equals <paramref name="expected"/> consistently across <see cref="object.Equals(object)"/>, <see cref="System.IEquatable{T}"/>, equality and comparison operators, <see cref="System.IComparable"/>, structural equality, and <see cref="object.GetHashCode"/>.</summary>
+   /// <summary>
+   /// Asserts that the value equals <paramref name="expected"/> consistently across <see cref="object.Equals(object)"/>, <see cref="System.IEquatable{T}"/>, equality and comparison operators, <see cref="System.IComparable"/>, structural equality, and <see cref="object.GetHashCode"/>.<br/>
+   /// Two strings are compared ordinally instead, and a failure shows a diff of their text.
+   /// </summary>
+   /// <remarks>
+   /// Whatever nullability the value is declared with, it is accepted: a <see langword="null"/> value simply fails, unless <paramref name="expected"/> is <see langword="null"/> too.<br/>
+   /// The returned context keeps the value's declared nullability.
+   /// </remarks>
    public static IAssertionContext<TValue> Be<TValue, TExpected>(this IAssertionContext<TValue> context, TExpected expected, [CallerArgumentExpression(nameof(expected))] string expectedExpression = null!) =>
-      context.Be_transitively_equal_to_according_to_every_supported_comparison_method_and_hashcode(expected, expectedExpression);
+      context.Actual is string && expected is string expectedString
+         ? context.Be_the_same_string_rendering_a_diff_of_the_text_on_failure(expectedString, expectedExpression)
+         : context.Be_transitively_equal_to_according_to_every_supported_comparison_method_and_hashcode(expected, expectedExpression);
+
+   static IAssertionContext<TValue> Be_the_same_string_rendering_a_diff_of_the_text_on_failure<TValue>(this IAssertionContext<TValue> context, string expected, string expectedExpression)
+   {
+      var stringContext = context.Cast<string>();
+      stringContext.RunAssertion(it => Equals(it, expected),
+                                 messageOverride: _ =>
+                                    $"""
+                                     {stringContext.FailingAssertionHeading(nameof(Be), [new(expectedExpression, expected)])}
+                                     {stringContext.Diff(expected, stringContext.Actual)}
+                                     {stringContext.ExpressionValue()}
+                                     {stringContext.ExpressionValue(expectedExpression, expected)}
+                                     """);
+      return context;
+   }
 
    static IAssertionContext<TValue> Be_transitively_equal_to_according_to_every_supported_comparison_method_and_hashcode<TValue, TExpected>(this IAssertionContext<TValue> context, TExpected expected, [CallerArgumentExpression(nameof(expected))] string expectedExpression = null!)
    {
