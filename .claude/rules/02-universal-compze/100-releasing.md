@@ -25,4 +25,16 @@ A release goes in this order:
 4. **Then run Create Releases,** by hand: `gh workflow run publish-nuget.yml --ref main`.
    - It runs on the branch's head, not on a commit you pick. If anything was pushed since step 3, its CI must pass too,
      or the gate stops the release.
-   - It publishes to an external service, so it runs only on Magnus's explicit go-ahead.
+   - It publishes to an external service, so it runs only on Magnus's explicit go-ahead: see below.
+
+## Who carries it out: you, on one go-ahead per release
+
+Magnus usually wants the agent that prepared a release to carry it through, not hand him steps 2–4 (Magnus,
+2026-11-12). So once a release is prepared, ask him once: *push, wait for CI, and run Create Releases?*
+
+- **A yes covers steps 2–4 for that release, and only that one.** The next release needs its own yes: publishing
+  can't be undone.
+- **Then carry it through without stopping:** push, watch the CI run to its end, run the release gate, run Create
+  Releases and watch it until it has published.
+- **If CI fails, don't release, and don't rerun CI hoping for green.** A failure is a finding, never noise: see the
+  rule on diagnosing CI flakiness. Report it to Magnus.
