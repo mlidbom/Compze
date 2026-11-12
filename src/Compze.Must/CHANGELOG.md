@@ -4,6 +4,12 @@ All notable changes to Compze.Must will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## 0.7.0-alpha
+
+- **`RunAssertionThatANullValueFails`** joins `RunAssertion` as the extension point for a custom assertion that needs a value to check, such as one about a string's text. It accepts a subject declared nullable, fails a `null` value itself, so the predicate never sees one, and returns the context narrowed to the non-nullable type. Every built-in assertion that needs a value is now built on it.
+- **A `null` subject's failure message says the assertion had no value to check:** `entry was null, so StartWith had no value to check.` Before, a `was null:` line among the values was the only sign.
+- **A `null` expected value is a bug in the test, and throws an `ArgumentNullException` naming its expression,** where null can't be what anyone expects: the string `Contain`, `NotContain`, `StartWith` and `EndWith`, `SequenceEqual`, and `BeGreaterThan`, `BeGreaterThanOrEqualTo`, `BeLessThan` and `BeLessThanOrEqualTo`. Before, the string assertions and `SequenceEqual` threw .NET's own `ArgumentNullException`, naming .NET's parameter, and the comparisons compared with it: `"b".Must().BeGreaterThan(null)` passed, as .NET orders null before every string.
+
 ## 0.6.0-alpha
 
 - **An assertion accepts its subject whatever nullability the subject is declared with.** On a subject declared nullable, such as a `string?` or a `List<T>?`, every assertion compiles without a nullable warning, and a `null` value simply fails it, or passes `BeNull` and `BeNullOrEmpty`. Before, `Be` with a string, `Contain`, `NotContain`, `StartWith`, `EndWith`, `HaveCount`, `BeEmpty`, `NotBeEmpty`, `SequenceEqual` and a collection's `Contain` warned on a nullable subject (CS8620 or CS8631), so specifications wrote `subject!.Must()`; and on a `null` value the string, collection and comparison assertions threw a `NullReferenceException` or an `ArgumentNullException` instead of failing.

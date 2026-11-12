@@ -1,11 +1,13 @@
+using System.Collections.ObjectModel;
+
 // ReSharper disable InconsistentNaming
 
 namespace Compze.Must.Specifications.Nullability;
 
 /// <summary>
 /// An assertion accepts a subject declared nullable, and a <see langword="null"/> value is just a value it reports: it fails<br/>
-/// every assertion that needs a value, with an <see cref="AssertionFailedException"/>, and passes those that ask for null.<br/>
-/// The context an assertion returns holds the subject's value, narrowed or not.
+/// every assertion that needs a value, with an <see cref="AssertionFailedException"/> saying the assertion had no value to check,<br/>
+/// and passes those that ask for null. The context an assertion returns holds the subject's value, narrowed or not.
 /// </summary>
 public class When_asserting_on_a_subject_declared_nullable : UniversalTestBase
 {
@@ -19,15 +21,34 @@ public class When_asserting_on_a_subject_declared_nullable : UniversalTestBase
       [XF] public void StartWith_throws_AssertionFailedException() => Invoking(() => _subject.Must().StartWith("x")).Must().Throw<AssertionFailedException>();
       [XF] public void EndWith_throws_AssertionFailedException() => Invoking(() => _subject.Must().EndWith("x")).Must().Throw<AssertionFailedException>();
       [XF] public void BeGreaterThan_throws_AssertionFailedException() => Invoking(() => _subject.Must().BeGreaterThan("a")).Must().Throw<AssertionFailedException>();
+      [XF] public void BeGreaterThanOrEqualTo_throws_AssertionFailedException() => Invoking(() => _subject.Must().BeGreaterThanOrEqualTo("a")).Must().Throw<AssertionFailedException>();
       [XF] public void BeLessThan_throws_AssertionFailedException() => Invoking(() => _subject.Must().BeLessThan("z")).Must().Throw<AssertionFailedException>();
+      [XF] public void BeLessThanOrEqualTo_throws_AssertionFailedException() => Invoking(() => _subject.Must().BeLessThanOrEqualTo("z")).Must().Throw<AssertionFailedException>();
+      [XF] public void BePositive_throws_AssertionFailedException() => Invoking(() => _subject.Must().BePositive()).Must().Throw<AssertionFailedException>();
+      [XF] public void BeNegative_throws_AssertionFailedException() => Invoking(() => _subject.Must().BeNegative()).Must().Throw<AssertionFailedException>();
       [XF] public void BeNull_does_not_throw() => _subject.Must().BeNull();
       [XF] public void BeNullOrEmpty_does_not_throw() => _subject.Must().BeNullOrEmpty();
 
-      [XF] public void the_message_of_a_failing_Contain_says_the_string_was_null() =>
-         Invoking(() => _subject.Must().Contain("x")).Must().Throw<AssertionFailedException>().Which.Message.Must().Contain("_subject was null");
-
       [XF] public void the_message_of_a_failing_Be_says_the_string_was_null() =>
          Invoking(() => _subject.Must().Be("text")).Must().Throw<AssertionFailedException>().Which.Message.Must().Contain("_subject was null");
+
+      [XF] public void the_message_of_a_failing_StartWith_says_the_string_was_null_so_StartWith_had_no_value_to_check() =>
+         Invoking(() => _subject.Must().StartWith(@"C:\Program Files"))
+           .Must().Throw<AssertionFailedException>()
+           .Which.Message.Must().Be("""
+
+                                    --------------------------------------------------
+                                    Failing assertion:
+                                    --------------------------------------------------
+                                    _subject.Must().StartWith(@"C:\Program Files")
+                                    --------------------------------------------------
+                                    _subject was null, so StartWith had no value to check.
+                                    --------------------------------------------------
+                                    @"C:\Program Files" was a string with the value:
+                                    --------------------------------------------------
+                                    C:\Program Files
+                                    --------------------------------------------------
+                                    """);
    }
 
    public class that_is_a_null_list : When_asserting_on_a_subject_declared_nullable
@@ -41,13 +62,34 @@ public class When_asserting_on_a_subject_declared_nullable : UniversalTestBase
       [XF] public void Contain_throws_AssertionFailedException() => Invoking(() => _subject.Must().Contain(1)).Must().Throw<AssertionFailedException>();
       [XF] public void BeNull_does_not_throw() => _subject.Must().BeNull();
 
-      [XF] public void the_message_of_a_failing_HaveCount_says_the_count_was_null() =>
-         Invoking(() => _subject.Must().HaveCount(0)).Must().Throw<AssertionFailedException>().Which.Message.Must().Contain("Expected count to be 0 but it was null");
+      [XF] public void the_message_of_a_failing_HaveCount_says_the_list_was_null_so_HaveCount_had_no_value_to_check() =>
+         Invoking(() => _subject.Must().HaveCount(0)).Must().Throw<AssertionFailedException>().Which.Message.Must().Contain("_subject was null, so HaveCount had no value to check.");
    }
 
-   public class that_is_a_null_set : When_asserting_on_a_subject_declared_nullable
+   public class that_is_a_null_HashSet_of_ints : When_asserting_on_a_subject_declared_nullable
    {
       readonly HashSet<int>? _subject = null;
+
+      [XF] public void Contain_throws_AssertionFailedException() => Invoking(() => _subject.Must().Contain(1)).Must().Throw<AssertionFailedException>();
+   }
+
+   public class that_is_a_null_ISet_of_ints : When_asserting_on_a_subject_declared_nullable
+   {
+      readonly ISet<int>? _subject = null;
+
+      [XF] public void Contain_throws_AssertionFailedException() => Invoking(() => _subject.Must().Contain(1)).Must().Throw<AssertionFailedException>();
+   }
+
+   public class that_is_a_null_IReadOnlySet_of_ints : When_asserting_on_a_subject_declared_nullable
+   {
+      readonly IReadOnlySet<int>? _subject = null;
+
+      [XF] public void Contain_throws_AssertionFailedException() => Invoking(() => _subject.Must().Contain(1)).Must().Throw<AssertionFailedException>();
+   }
+
+   public class that_is_a_null_ReadOnlyCollection_of_ints : When_asserting_on_a_subject_declared_nullable
+   {
+      readonly ReadOnlyCollection<int>? _subject = null;
 
       [XF] public void Contain_throws_AssertionFailedException() => Invoking(() => _subject.Must().Contain(1)).Must().Throw<AssertionFailedException>();
    }

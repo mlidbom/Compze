@@ -5,7 +5,10 @@ using Compze.Must._private;
 
 namespace Compze.Must;
 
-/// <summary>The primitive every built-in assertion is built on, and the extension point for authoring your own: <see cref="RunAssertion{T}"/>.</summary>
+/// <summary>
+/// The primitives every built-in assertion is built on, and the extension points for authoring your own: <see cref="RunAssertion{T}"/>,<br/>
+/// and <see cref="RunAssertionThatANullValueFails{T}"/> for an assertion that needs a value to check.
+/// </summary>
 public static class AssertionPrimitive
 {
    internal static IAssertionContext RunAssertion(this IAssertionContext context,
@@ -42,18 +45,10 @@ public static class AssertionPrimitive
                         {context.FailingAssertionHeading(caller, expressionValues)}
                         {CustomFailureMessage()}
                         {context.ExpressionValue()}
-                        {ExpressionValues()}
+                        {context.ExpressionValues(expressionValues)}
                         """.RemoveLinesWhere(it => it == AssertionContext.RemoveLine);
 
          throw new AssertionFailedException(message);
-
-         string ExpressionValues()
-         {
-            if(expressionValues == null || !expressionValues.Any())
-               return AssertionContext.RemoveLine;
-
-            return expressionValues.Select(it => context.ExpressionValue(it.Expression, it.Value)).JoinLines();
-         }
 
          string CustomFailureMessage() =>
             failureMessage != null
@@ -65,5 +60,30 @@ public static class AssertionPrimitive
       }
 
       return context;
+   }
+
+   /// <summary>
+   /// The extension point for authoring a custom assertion that needs a value to check, such as one about a string's text:<br/>
+   /// <see cref="RunAssertion{T}"/>, except that it fails a <see langword="null"/> value itself, before <paramref name="predicate"/> sees it, and<br/>
+   /// returns the context narrowed to the non-nullable type.
+   /// </summary>
+   /// <remarks>
+   /// It accepts a subject declared nullable, so the custom assertion compiles without a nullable warning on one, and its failure<br/>
+   /// message for a <see langword="null"/> value says that the assertion had no value to check. Every built-in assertion that needs<br/>
+   /// a value, such as <see cref="StringAssertions.StartWith"/>, is built on it.<br/>
+   /// <paramref name="predicate"/>, <paramref name="messageOverride"/> and <paramref name="failureMessage"/> only ever see a value.
+   /// </remarks>
+   public static IAssertionContext<T> RunAssertionThatANullValueFails<T>(this IAssertionContext<T?> context,
+                                                                         Func<T, bool> predicate,
+                                                                         [CallerArgumentExpression(nameof(predicate))] string predicateExpression = null!,
+                                                                         Func<AssertionCallInfo<T>, string>? messageOverride = null,
+                                                                         Func<T, string>? failureMessage = null,
+                                                                         ExpressionValue[]? expressionValues = null,
+                                                                         [CallerMemberName] string caller = null!)
+   {
+      if(context.Actual is null)
+         throw new AssertionFailedException(context.NullValueFailure(caller, expressionValues));
+
+      return context.Cast<T>().RunAssertion(predicate, predicateExpression, messageOverride, failureMessage, expressionValues, caller);
    }
 }

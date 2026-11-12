@@ -38,7 +38,12 @@ public abstract class When_a_consumer_compiles_an_assertion : UniversalTestBase
       [XF] public void BeGreaterThanOrEqualTo_narrows_the_context_to_a_non_nullable_string() => Compiling("""string narrowed = subject.Must().BeGreaterThanOrEqualTo("a").Actual;""").WarningsAndErrors.Must().BeEmpty();
       [XF] public void BeLessThan_narrows_the_context_to_a_non_nullable_string() => Compiling("""string narrowed = subject.Must().BeLessThan("z").Actual;""").WarningsAndErrors.Must().BeEmpty();
       [XF] public void BeLessThanOrEqualTo_narrows_the_context_to_a_non_nullable_string() => Compiling("""string narrowed = subject.Must().BeLessThanOrEqualTo("z").Actual;""").WarningsAndErrors.Must().BeEmpty();
+      [XF] public void BePositive_narrows_the_context_to_a_non_nullable_string() => Compiling("string narrowed = subject.Must().BePositive().Actual;").WarningsAndErrors.Must().BeEmpty();
+      [XF] public void BeNegative_narrows_the_context_to_a_non_nullable_string() => Compiling("string narrowed = subject.Must().BeNegative().Actual;").WarningsAndErrors.Must().BeEmpty();
       [XF] public void BeExactType_narrows_the_context_to_a_non_nullable_string() => Compiling("string narrowed = subject.Must().BeExactType<string>().Actual;").WarningsAndErrors.Must().BeEmpty();
+
+      [XF] public void RunAssertionThatANullValueFails_hands_its_predicate_a_non_nullable_string_and_narrows_the_context_to_one() =>
+         Compiling("string narrowed = subject.Must().RunAssertionThatANullValueFails(it => it.Length > 0, failureMessage: it => it.ToUpperInvariant()).Actual;").WarningsAndErrors.Must().BeEmpty();
 
       [XF] public void Satisfy_with_a_predicate_that_dereferences_the_value_warns_that_the_value_may_be_null() =>
          Compiling("subject.Must().Satisfy(it => it.Length == 1);").WarningAndErrorIds.Must().SequenceEqual(["CS8602"]);

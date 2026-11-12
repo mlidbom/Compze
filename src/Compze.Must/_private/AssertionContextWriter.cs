@@ -49,6 +49,21 @@ static class AssertionContextWriter
                  """;
       }
 
+      /// <summary>Each of <paramref name="expressionValues"/> as <see cref="ExpressionValue(IAssertionContext, string, object?)"/> shows it, or <see cref="AssertionContext.RemoveLine"/> when there are none.</summary>
+      public string ExpressionValues(ExpressionValue[]? expressionValues) =>
+         expressionValues == null || !expressionValues.Any()
+            ? AssertionContext.RemoveLine
+            : expressionValues.Select(it => @this.ExpressionValue(it.Expression, it.Value)).JoinLines();
+
+      /// <summary>The failure message of the assertion <paramref name="callerName"/>, which needs a value to check, made on a <see langword="null"/> one.</summary>
+      public string NullValueFailure(string callerName, ExpressionValue[]? expressionValues) =>
+         $"""
+          {@this.FailingAssertionHeading(callerName, expressionValues)}
+          {@this.Expression} was null, so {callerName} had no value to check.
+          {AssertionContext.Separator}
+          {@this.ExpressionValues(expressionValues)}
+          """.RemoveLinesWhere(it => it == AssertionContext.RemoveLine);
+
       public string ExpressionValue(string expression, object? value)
       {
          expression = @this.NormalizeExpressionIndentation(expression);

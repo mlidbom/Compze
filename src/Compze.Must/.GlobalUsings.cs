@@ -3,4 +3,5 @@ global using static Compze.SystemCE.UnitStatics;
 global using Compze.Underscore;
 global using Compze.Internals.SystemCE;
 global using Compze.Internals.SystemCE.LinqCE;
+global using Compze.Contracts;
 global using static Compze.Contracts.Contract;

@@ -96,8 +96,8 @@ expectedCart was: [Full details including full json here]
 ```csharp
 public static class MyCustomAssertions
 {
-   public static IAssertionContext<string?> BeAValidEmailAddress(this IAssertionContext<string?> @this) => 
-      @this.RunAssertion(it => it is not null && it.Contains('@') && it.Contains('.'));
+   public static IAssertionContext<string> BeAValidEmailAddress(this IAssertionContext<string?> @this) => 
+      @this.RunAssertionThatANullValueFails(it => it.Contains('@') && it.Contains('.'));
 }
 ```
 
@@ -111,8 +111,13 @@ ada.example.com
 ```
 
 Note the heading: the failure is automatically labelled **`BeAValidEmailAddress`** — your own method's name —
-because `RunAssertion` captures it for you. **Every built-in assertion in `Must` is written exactly this way**,
-so the assertions you add read just like the ones that ship with the library.
+because `RunAssertionThatANullValueFails` captures it for you. **Every built-in assertion in `Must` is written exactly
+this way**, on `RunAssertionThatANullValueFails` or on `RunAssertion`, so the assertions you add read just like the ones
+that ship with the library.
+
+`RunAssertionThatANullValueFails` is for an assertion that needs a value to check, as this one does. It accepts a
+subject declared nullable, fails a `null` value itself, so your predicate never sees one, and returns a non-nullable
+context. For anything else, such as an assertion over a value type, use `RunAssertion`.
 
 Assertions can also take arguments and render them in the failure message; see
 [Custom assertions with arguments](#custom-assertions-with-arguments) for that.
@@ -142,6 +147,14 @@ caughtException.Must().NotBeNull().BeExactType<InvalidOperationException>();
 
 Assert on a `string?`, a `List<T>?` or any other subject declared nullable as on any other: no `!`, and no nullable
 warning. A `null` value fails the assertion, unless the assertion asks for null, as `BeNull` and `BeNullOrEmpty` do.
+The subject is what the code under test produced, so a `null` one is that code's failure, and the message says so:
+
+```
+Failing assertion:
+entry.Must().StartWith(@"C:\Program Files\")
+entry was null, so StartWith had no value to check.
+```
+
 An assertion only a non-null value can pass returns a non-nullable context, so you can keep chaining:
 
 ```csharp
@@ -157,9 +170,12 @@ bool? accepted = form.Accepted;
 accepted.Must().NotBeNull().BeTrue();
 ```
 
-Your own assertions accept nullable subjects the same way: take `IAssertionContext<string?>`, as
-`BeAValidEmailAddress` above does. To return a non-nullable context when only a non-null value passes, end the
-`RunAssertion` call with `!`, as the built-in assertions do.
+A `null` *expected* value is different: it is a bug in the test. Where null can't be what anyone expects, as for
+`StartWith`, `Contain`, `SequenceEqual` and the comparisons, the assertion throws an `ArgumentNullException` naming the
+expected value's expression. The compiler warns about such a value first.
+
+Your own assertions accept nullable subjects the same way: build them on `RunAssertionThatANullValueFails`, as
+`BeAValidEmailAddress` above is.
 
 ## `Be` / `NotBe` — equality, checked every which way
 
@@ -347,9 +363,9 @@ minimumAge was a System.Int32 with the value: 18
 maximumAge was a System.Int32 with the value: 65
 ```
 
-`RunAssertion` is the primitive every built-in assertion is built on, and it's why a custom assertion reports
-its *own* name rather than `Satisfy`: `Satisfy` always labels failures `Satisfy`, whereas `RunAssertion`
-surfaces the calling method's name and the `expressionValues` you pass — automatically.
+`RunAssertion` and `RunAssertionThatANullValueFails` are the primitives every built-in assertion is built on, and
+they're why a custom assertion reports its *own* name rather than `Satisfy`: `Satisfy` always labels failures
+`Satisfy`, whereas they surface the calling method's name and the `expressionValues` you pass — automatically.
 
 ---
 

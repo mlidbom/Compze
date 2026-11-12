@@ -48,3 +48,21 @@ The run-time specifications can't see a signature's effect on a consumer's compi
 projects only show it as warnings nobody is forced to read. `ConsumerCode` makes "this call shape compiles without
 warnings" a failing specification. Checked by putting the old `Contain` receiver back: exactly
 `Contain_narrows_the_context_to_a_non_nullable_string` failed.
+
+## Addition: the shared primitive, and null expected values as test bugs (2026-11-12, Compze.Must 0.7.0-alpha)
+
+A Deskmancer review of 0.6.0-alpha found that the 19 narrowing assertions each wrote `it is not null &&` in the predicate
+and `!` after `RunAssertion`, with nothing tying the two, and that 7 of them had no null specification. Rather than only
+add the 7 cases, the null check and the narrowing became one public primitive, `RunAssertionThatANullValueFails`, which
+consumers' own assertions use too (the README had taught them the same unchecked pattern).
+
+Magnus asked whether a null subject should instead be asserted against, as a bug in the test. Kept a failing assertion:
+the subject is what the code under test produced (Deskmancer's case was a missing registry entry), so reporting it as a
+test bug points at the wrong code; `Be` and `NotBeNull` already fail a null as an assertion; and the defensive-coding
+rule's deciding question, "could we guarantee this state?", answers no, since Compze.Must can't guarantee what the code
+under test returns. The message was made explicit instead: "was null, so StartWith had no value to check", where 0.6.0
+showed only a "was null:" line among the values.
+
+His idea did fit the expected values: a null one is the test's own mistake. 0.6.0 let .NET's own
+`ArgumentNullException` escape for some (`StartWith`, `SequenceEqual`, naming .NET's parameter) and silently passed for
+others (`"b".Must().BeGreaterThan(null)`, as null orders before every string). Now each asserts with Compze.Contracts.
