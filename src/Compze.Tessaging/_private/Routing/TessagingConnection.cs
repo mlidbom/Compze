@@ -91,6 +91,10 @@ partial class TessagingConnection : ITessagingInboxConnection, IDisposable
       //here is where its queue must stop accepting - not whenever the send loop's thread gets round to noticing it was cancelled.
       _bestEffortStream.DetachFromThePeersQueue();
       _cancellationSource.Cancel();
+      //performance: the joins below block the calling thread - a thread-pool thread, inside the router's update lock (see
+      //   TessagingRouter.StopDelivery and DropConnection) - for up to 5 seconds per loop. Seen in the flake-hunt dumps of
+      //   2026-11-12 among the pool threads a starved test process had parked; brief there, since the loops exit promptly on
+      //   cancellation. An async stop that awaits the loops' completion would park nothing.
       _exactlyOnceStream?.AwaitSendLoopTermination();
       _bestEffortStream.AwaitSendLoopTermination();
    }

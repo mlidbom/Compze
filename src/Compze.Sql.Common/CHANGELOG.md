@@ -4,6 +4,10 @@ All notable changes to Compze.Sql.Common will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## 0.3.1-alpha
+
+- **Async sql layers prepare statements without blocking a thread.** `ExecutePreparedNonQueryAsync`, `ExecutePreparedScalarAsync` and `ExecutePreparedReaderAsync` prepare with `PrepareAsync` before executing, for the sql layers' async code, which called the synchronous `PrepareStatement`: a round trip to the server that held a thread-pool thread for its whole duration. `PrepareStatement` is for synchronous code only.
+
 ## 0.3.0-alpha
 
 - **The package sheds the `Internals` label: `Compze.Internals.Sql.Common` is `Compze.Sql.Common`.** The label told consumers not to depend on the package, which was never true of something they compose with deliberately. Previously published as [Compze.Internals.Sql.Common](https://www.nuget.org/packages/Compze.Internals.Sql.Common/) 0.2.1-alpha.

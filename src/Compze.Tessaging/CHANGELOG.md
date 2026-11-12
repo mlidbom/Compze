@@ -4,6 +4,10 @@ All notable changes to Compze.Tessaging will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## 0.6.2-alpha
+
+- **An endpoint no longer holds a thread-pool thread for its whole life.** The router's reconciliation loop waited for its registry's membership to change - up to a second at a time, pass after pass - on a thread-pool thread: one per endpoint, held almost permanently. The pool keeps about one thread per processor, so a few endpoints in one process on a small machine left almost no thread for anything else, and async work waited seconds for one; on a 4-processor machine, a peer advertisement recording timed out after 10 seconds. The wait now runs on a thread of its own.
+
 ## 0.6.1-alpha
 
 - **An endpoint logs its disposal at Info, like its other lifecycle steps.** It logged starting, announcing, sending, stopping, retracting, stopping sending and stopping listening at Info, but disposing at Debug, so a log at Info showed the stop and never the disposal. Since stopping and disposing became separate steps in 0.6.0-alpha, the order of the two in the log is what shows whether a caller stopped the endpoint before disposing it: stopped first, the log reads stopping, then disposing; disposed without stopping, disposing comes first.

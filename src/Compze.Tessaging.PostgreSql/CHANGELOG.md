@@ -4,6 +4,10 @@ All notable changes to Compze.Tessaging.PostgreSql will be documented in this fi
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## 0.3.1-alpha
+
+- **The inbox and outbox prepare their statements without blocking a thread.** They prepared each statement with a synchronous round trip to the server, from async code, holding a thread-pool thread until PostgreSQL answered. In a process short of pool threads, that read could stay blocked long after the server had answered: a peer advertisement recording hung for over 10 seconds in it on a 4-processor Linux machine.
+
 ## 0.3.0-alpha
 
 - The tessaging sql layers store in the endpoint's prefixed table-set (`EndpointTableSet`, resolved from the container): the inbox, outbox, outbox-dispatching, and peer-memory tables are per-endpoint prefixed (`«EndpointName»_InboxTessages`), so any number of endpoints store side by side in one domain database, and `SchemaCreationSql` became a function of the table-set. New: `PgSqlEndpointCatalogSqlLayer` — the domain database's one shared, deliberately unprefixed `EndpointCatalog` table recording each endpoint and the process holding its lock (insert-if-absent race-safe via `ON CONFLICT DO NOTHING`).
