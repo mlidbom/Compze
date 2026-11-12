@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 ## 0.3.1-alpha
 
 - **Async sql layers prepare statements without blocking a thread.** `ExecutePreparedNonQueryAsync`, `ExecutePreparedScalarAsync` and `ExecutePreparedReaderAsync` prepare with `PrepareAsync` before executing, for the sql layers' async code, which called the synchronous `PrepareStatement`: a round trip to the server that held a thread-pool thread for its whole duration. `PrepareStatement` is for synchronous code only.
+- **Requires newer minor versions of other Compze packages:** Compze.Internals.Logging 0.5.0-alpha (was 0.4.1-alpha), Compze.Internals.SystemCE 0.6.0-internal (was 0.4.0-internal), Compze.Threading 0.10.0-alpha (was 0.9.0-alpha). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
 
 ## 0.3.0-alpha
 

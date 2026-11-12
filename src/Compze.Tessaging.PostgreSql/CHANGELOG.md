@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 ## 0.3.1-alpha
 
 - **The inbox and outbox prepare their statements without blocking a thread.** They prepared each statement with a synchronous round trip to the server, from async code, holding a thread-pool thread until PostgreSQL answered. In a process short of pool threads, that read could stay blocked long after the server had answered: a peer advertisement recording hung for over 10 seconds in it on a 4-processor Linux machine.
+- **Requires newer minor versions of other Compze packages:** Compze.Tessaging 0.6.2-alpha (was 0.5.0-alpha). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
 
 ## 0.3.0-alpha
 

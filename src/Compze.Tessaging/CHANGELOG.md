@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 ## 0.6.2-alpha
 
 - **An endpoint no longer holds a thread-pool thread for its whole life.** The router's reconciliation loop waited for its registry's membership to change - up to a second at a time, pass after pass - on a thread-pool thread: one per endpoint, held almost permanently. The pool keeps about one thread per processor, so a few endpoints in one process on a small machine left almost no thread for anything else, and async work waited seconds for one; on a 4-processor machine, a peer advertisement recording timed out after 10 seconds. The wait now runs on a thread of its own.
+- **Requires newer minor versions of other Compze packages:** Compze.Internals.SystemCE 0.6.0-internal (was 0.5.0-internal). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
 
 ## 0.6.1-alpha
 
