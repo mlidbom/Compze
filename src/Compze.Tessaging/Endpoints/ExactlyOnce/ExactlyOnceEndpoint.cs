@@ -54,11 +54,6 @@ public class ExactlyOnceEndpoint : Endpoint
    private protected override async Task StopTheDurableVerticalAsync() => await _outbox.StopAsync().caf();
 
    ///<summary>Waits for the inbox to finish handling every received tessage before the container is torn down —<br/>
-   /// see <see cref="IInbox.AwaitAllReceivedTessagesProcessed"/>. Synchronous by nature (an in-process monitor wait), so it<br/>
-   /// completes the returned task immediately.</summary>
-   private protected override Task DrainTheInboxAsync()
-   {
-      _inbox.AwaitAllReceivedTessagesProcessed();
-      return Task.CompletedTask;
-   }
+   /// see <see cref="IInbox.AwaitAllReceivedTessagesProcessedAsync"/>.</summary>
+   private protected override async Task DrainTheInboxAsync() => await _inbox.AwaitAllReceivedTessagesProcessedAsync().caf();
 }

@@ -1,3 +1,4 @@
+using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using System.Diagnostics.CodeAnalysis;
 using Compze.Contracts;
 using Compze.DependencyInjection.Abstractions;
@@ -37,9 +38,9 @@ partial class Inbox
          /// executing — so the endpoint tears down with empty queues. Best-effort: if the inbox has not gone idle within<br/>
          /// <paramref name="patience"/> (a handler is likely hung) it logs loudly and returns, leaving teardown to proceed rather<br/>
          /// than hang. Called after the transport has stopped, so nothing new arrives and the queue only shrinks.</summary>
-         internal void AwaitAllReceivedTessagesProcessed(WaitTimeout patience)
+         internal async Task AwaitAllReceivedTessagesProcessedAsync(WaitTimeout patience)
          {
-            if(_implementation.TryAwait(implementation => implementation.IsIdle, timeout: patience)) return;
+            if(await _implementation.TryAwaitAsync(implementation => implementation.IsIdle, timeout: patience).caf()) return;
             this.Log().Warning(_implementation.Read(implementation =>
                $"Shutdown drain: the inbox did not finish processing every received tessage within {patience} (waiting to execute: {implementation.WaitingCount}, executing: {implementation.ExecutingCount}). Proceeding with teardown - a handler is likely hung."));
          }

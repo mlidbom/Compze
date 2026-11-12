@@ -20,13 +20,13 @@ partial class Inbox
       IScopeFactory scopeFactory,
       ITessageStorage storage,
       ITaskRunner taskRunner,
-      EndpointId endpointId) : IDisposable
+      EndpointId endpointId) : IDisposable, IAsyncDisposable
    {
       Task? _awaitDispatchableTessageLoop;
       readonly CancellationTokenSource _stopping = new();
 
       //todo: properly belongs to a per-handler watchdog on the engine, not to shutdown. Until that exists this is the loud, non-hanging backstop.
-      ///<summary>How long <see cref="AwaitAllReceivedTessagesProcessed"/> waits for the inbox to drain before giving up and letting<br/>
+      ///<summary>How long <see cref="AwaitAllReceivedTessagesProcessedAsync"/> waits for the inbox to drain before giving up and letting<br/>
       /// teardown proceed. Generous: a normal shutdown drains in milliseconds, so reaching this means a handler is likely hung</summary>
       static readonly WaitTimeout ShutdownDrainPatience = WaitTimeout.Seconds(30);
 
@@ -46,7 +46,7 @@ partial class Inbox
 
       ///<summary>Drains the inbox for shutdown: waits (best-effort, up to <see cref="ShutdownDrainPatience"/>) for every received<br/>
       /// tessage to finish processing, so the endpoint tears down with empty queues.</summary>
-      internal void AwaitAllReceivedTessagesProcessed() => _coordinator.AwaitAllReceivedTessagesProcessed(ShutdownDrainPatience);
+      internal Task AwaitAllReceivedTessagesProcessedAsync() => _coordinator.AwaitAllReceivedTessagesProcessedAsync(ShutdownDrainPatience);
 
       void AwaitDispatchableTessageThreadLoop()
       {
@@ -70,19 +70,23 @@ partial class Inbox
             ThreadPriority.AboveNormal);
       }
 
-      public void Dispose()
+      ///<summary>Stops the dispatch loop and awaits its thread's end, holding no thread while it does; throws a<br/>
+      /// <see cref="TimeoutException"/> if the thread takes longer than 5 seconds to end.</summary>
+      public async ValueTask DisposeAsync()
       {
          if(_awaitDispatchableTessageLoop != null)
          {
             this.Log().Info("Stopping");
-            _stopping.Cancel();
-            //performance: joins the dispatch thread synchronously, for up to 5 seconds, on whatever thread disposes the container.
-            //   An async disposal could await it, as the router now awaits the connections' send loops (TessagingConnection.AwaitDeliveryStoppedAsync).
-            _awaitDispatchableTessageLoop.WaitAsync(5.Seconds()).WaitUnwrappingException();
+            await _stopping.CancelAsync().caf();
+            await _awaitDispatchableTessageLoop.WaitAsync(5.Seconds()).caf();
             _awaitDispatchableTessageLoop = null;
             this.Log().Info("Stopped");
          }
          _stopping.Dispose();
       }
+
+      ///<summary>The backstop for a container disposed synchronously: the inbox's own disposal has stopped the loop already, so<br/>
+      /// this waits only in a composition that disposes the engine without the inbox.</summary>
+      public void Dispose() => DisposeAsync().AsTask().WaitUnwrappingException();
    }
 }

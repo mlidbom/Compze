@@ -107,12 +107,11 @@ static class InboxRegistrar
       _handlerExecutionEngine.Enqueue(tessage);
    }
 
-   public void AwaitAllReceivedTessagesProcessed() => _handlerExecutionEngine.AwaitAllReceivedTessagesProcessed();
+   public Task AwaitAllReceivedTessagesProcessedAsync() => _handlerExecutionEngine.AwaitAllReceivedTessagesProcessedAsync();
 
-   public ValueTask DisposeAsync()
+   public async ValueTask DisposeAsync()
    {
       this.Log().Debug("Disposing");
-      _handlerExecutionEngine.Dispose();
-      return ValueTask.CompletedTask;
+      await _handlerExecutionEngine.DisposeAsync().caf();
    }
 }

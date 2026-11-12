@@ -4,6 +4,11 @@ All notable changes to Compze.Tessaging will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## 0.7.0-alpha
+
+- **An endpoint's stop drains its inbox without holding a thread.** The drain waited, for up to 30 seconds, for every received tessage to be handled, blocking a thread-pool thread at every endpoint stop. It now awaits the inbox's async condition wait.
+- **Disposing an endpoint's inbox awaits its dispatch thread's end** instead of joining it for up to 5 seconds on the thread that disposes the container.
+
 ## 0.6.4-alpha
 
 - **Stopping an endpoint, or dropping the connection to a peer that left, holds no thread while the connection's send loops wind down.** Each loop was joined for up to 5 seconds, on a thread-pool thread, while holding the router's lock, so every lookup the router serves waited too. Now the loops are told to stop under the lock and awaited outside it. Replacing the connection to a peer that restarted at a new address still waits under the lock, deliberately: there the old loops must end before the new connection loads its backlog.
