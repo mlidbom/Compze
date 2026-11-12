@@ -25,6 +25,24 @@ public class When_logging_directly_through_the_ILogger_overloads
       [XF] public void the_values_are_captured() => _backend.Captured[0].TemplateValues.Must().SequenceEqual(new object?[] { 1 });
    }
 
+   public class via_Error_with_a_plain_message : When_logging_directly_through_the_ILogger_overloads
+   {
+      public via_Error_with_a_plain_message() => _logger.Error("error happened");
+
+      [XF] public void the_call_is_recorded_at_Error_level() => _backend.Captured[0].Level.Must().Be(LogLevel.Error);
+      [XF] public void the_message_is_the_template() => _backend.Captured[0].MessageTemplate.Must().Be("error happened");
+      [XF] public void no_exception_is_captured() => _backend.Captured[0].Exception.Must().BeNull();
+   }
+
+   public class via_Error_with_a_template_and_values : When_logging_directly_through_the_ILogger_overloads
+   {
+      public via_Error_with_a_template_and_values() => _logger.Error("error {0}", [7]);
+
+      [XF] public void the_call_is_recorded_at_Error_level() => _backend.Captured[0].Level.Must().Be(LogLevel.Error);
+      [XF] public void the_values_are_captured() => _backend.Captured[0].TemplateValues.Must().SequenceEqual(new object?[] { 7 });
+      [XF] public void no_exception_is_captured() => _backend.Captured[0].Exception.Must().BeNull();
+   }
+
    public class via_Error_with_an_exception_and_a_plain_message : When_logging_directly_through_the_ILogger_overloads
    {
       readonly Exception _reported = new InvalidOperationException("boom");

@@ -131,6 +131,16 @@ public class When_logging_via_an_interpolated_string_handler
          [XF] public void the_template_is_structured() => _backend.Captured[0].MessageTemplate.Must().Be("w {x}");
       }
 
+      public class via_Error : for_each_log_level
+      {
+         readonly CapturingLogBackend _backend = CapturingLogBackend.Install();
+         readonly ILogger _logger = CompzeLogger.For<When_logging_via_an_interpolated_string_handler>().WithLogLevel(LogLevel.Debug);
+         public via_Error() { var x = 8; _logger.Error($"e {x}"); }
+         [XF] public void the_captured_level_is_Error() => _backend.Captured[0].Level.Must().Be(LogLevel.Error);
+         [XF] public void the_template_is_structured() => _backend.Captured[0].MessageTemplate.Must().Be("e {x}");
+         [XF] public void no_exception_is_captured() => _backend.Captured[0].Exception.Must().BeNull();
+      }
+
       public class via_Error_with_exception : for_each_log_level
       {
          readonly CapturingLogBackend _backend = CapturingLogBackend.Install();

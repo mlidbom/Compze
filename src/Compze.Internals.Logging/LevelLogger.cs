@@ -16,9 +16,13 @@ public interface ILevelLogger
 
 public static class LevelLoggerILoggerExtensions
 {
-   public static ILevelLogger Trace(this ILogger @this) => new TraceLogger(@this);
-   public static ILevelLogger Debug(this ILogger @this) => new DebugLogger(@this);
-   public static ILevelLogger Info(this ILogger @this) => new InfoLogger(@this);
-   public static ILevelLogger Warning(this ILogger @this) => new WarningLogger(@this);
-   public static ILevelLogger Critical(this ILogger @this) => new CriticalLogger(@this);
+   extension(ILogger @this)
+   {
+      public ILevelLogger Trace() => new TraceLogger(@this);
+      public ILevelLogger Debug() => new DebugLogger(@this);
+      public ILevelLogger Info() => new InfoLogger(@this);
+      public ILevelLogger Warning() => new WarningLogger(@this);
+      public ILevelLogger Error() => new ErrorLogger(@this);
+      public ILevelLogger Critical() => new CriticalLogger(@this);
+   }
 }

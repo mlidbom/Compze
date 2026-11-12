@@ -43,8 +43,16 @@ sealed class Logger : ILogger
       return unit;
    }
 
+   public Unit Error(string message, [CallerMemberName] string caller = "") => WritePlainTextIfEnabled(LogLevel.Error, exception: null, message, caller);
+   public Unit Error(string template, object?[] values, [CallerMemberName] string caller = "") => WriteTemplateIfEnabled(LogLevel.Error, exception: null, template, values, caller);
    public Unit Error(Exception exception, string message, [CallerMemberName] string caller = "") => WritePlainTextIfEnabled(LogLevel.Error, exception, message, caller);
    public Unit Error(Exception exception, string template, object?[] values, [CallerMemberName] string caller = "") => WriteTemplateIfEnabled(LogLevel.Error, exception, template, values, caller);
+
+   public Unit Error([InterpolatedStringHandlerArgument("")] ref ErrorLogInterpolatedStringHandler handler, [CallerMemberName] string caller = "")
+   {
+      if(handler.Enabled) Write(LogLevel.Error, exception: null, handler.Build(), caller);
+      return unit;
+   }
 
    public Unit Error(Exception exception, [InterpolatedStringHandlerArgument("")] ref ErrorLogInterpolatedStringHandler handler, [CallerMemberName] string caller = "")
    {

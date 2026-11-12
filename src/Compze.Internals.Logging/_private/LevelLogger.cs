@@ -17,11 +17,10 @@ class TraceLogger(ILogger logger) : LevelLogger(logger)
    public override Unit Log(string message, [CallerMemberName] string caller = "") => Logger.Trace(message, caller);
    public override Unit Log([InterpolatedStringHandlerArgument("")] ref LevelLogInterpolatedStringHandler handler, [CallerMemberName] string caller = "")
    {
-      if(handler.Enabled)
-      {
-         var (template, values) = handler.Build();
-         Logger.Trace(template, values, caller);
-      }
+      if(!handler.Enabled) return unit;
+
+      var (template, values) = handler.Build();
+      Logger.Trace(template, values, caller);
       return unit;
    }
 }
@@ -32,11 +31,10 @@ class DebugLogger(ILogger logger) : LevelLogger(logger)
    public override Unit Log(string message, [CallerMemberName] string caller = "") => Logger.Debug(message, caller);
    public override Unit Log([InterpolatedStringHandlerArgument("")] ref LevelLogInterpolatedStringHandler handler, [CallerMemberName] string caller = "")
    {
-      if(handler.Enabled)
-      {
-         var (template, values) = handler.Build();
-         Logger.Debug(template, values, caller);
-      }
+      if(!handler.Enabled) return unit;
+
+      var (template, values) = handler.Build();
+      Logger.Debug(template, values, caller);
       return unit;
    }
 }
@@ -47,11 +45,10 @@ class InfoLogger(ILogger logger) : LevelLogger(logger)
    public override Unit Log(string message, [CallerMemberName] string caller = "") => Logger.Info(message, caller);
    public override Unit Log([InterpolatedStringHandlerArgument("")] ref LevelLogInterpolatedStringHandler handler, [CallerMemberName] string caller = "")
    {
-      if(handler.Enabled)
-      {
-         var (template, values) = handler.Build();
-         Logger.Info(template, values, caller);
-      }
+      if(!handler.Enabled) return unit;
+
+      var (template, values) = handler.Build();
+      Logger.Info(template, values, caller);
       return unit;
    }
 }
@@ -62,11 +59,24 @@ class WarningLogger(ILogger logger) : LevelLogger(logger)
    public override Unit Log(string message, [CallerMemberName] string caller = "") => Logger.Warning(message, caller);
    public override Unit Log([InterpolatedStringHandlerArgument("")] ref LevelLogInterpolatedStringHandler handler, [CallerMemberName] string caller = "")
    {
-      if(handler.Enabled)
-      {
-         var (template, values) = handler.Build();
-         Logger.Warning(template, values, caller);
-      }
+      if(!handler.Enabled) return unit;
+
+      var (template, values) = handler.Build();
+      Logger.Warning(template, values, caller);
+      return unit;
+   }
+}
+
+class ErrorLogger(ILogger logger) : LevelLogger(logger)
+{
+   public override bool IsEnabled() => Logger.IsEnabled(LogLevel.Error);
+   public override Unit Log(string message, [CallerMemberName] string caller = "") => Logger.Error(message, caller);
+   public override Unit Log([InterpolatedStringHandlerArgument("")] ref LevelLogInterpolatedStringHandler handler, [CallerMemberName] string caller = "")
+   {
+      if(!handler.Enabled) return unit;
+
+      var (template, values) = handler.Build();
+      Logger.Error(template, values, caller);
       return unit;
    }
 }
@@ -77,11 +87,10 @@ class CriticalLogger(ILogger logger) : LevelLogger(logger)
    public override Unit Log(string message, [CallerMemberName] string caller = "") => Logger.Critical(message, caller);
    public override Unit Log([InterpolatedStringHandlerArgument("")] ref LevelLogInterpolatedStringHandler handler, [CallerMemberName] string caller = "")
    {
-      if(handler.Enabled)
-      {
-         var (template, values) = handler.Build();
-         Logger.Critical(template, values, caller);
-      }
+      if(!handler.Enabled) return unit;
+
+      var (template, values) = handler.Build();
+      Logger.Critical(template, values, caller);
       return unit;
    }
 }

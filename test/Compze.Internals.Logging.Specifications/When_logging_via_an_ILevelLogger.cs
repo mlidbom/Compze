@@ -47,6 +47,16 @@ public class When_logging_via_an_ILevelLogger
       [XF] public void the_template_is_structured() => _backend.Captured[0].MessageTemplate.Must().Be("w {x}");
    }
 
+   public class via_Error : When_logging_via_an_ILevelLogger
+   {
+      readonly CapturingLogBackend _backend = CapturingLogBackend.Install();
+      readonly ILogger _logger = CompzeLogger.For<When_logging_via_an_ILevelLogger>().WithLogLevel(LogLevel.Debug);
+      public via_Error() { var x = 4; _logger.Error().Log($"e {x}"); }
+
+      [XF] public void the_call_is_recorded_at_Error_level() => _backend.Captured[0].Level.Must().Be(LogLevel.Error);
+      [XF] public void the_template_is_structured() => _backend.Captured[0].MessageTemplate.Must().Be("e {x}");
+   }
+
    public class via_Critical : When_logging_via_an_ILevelLogger
    {
       readonly CapturingLogBackend _backend = CapturingLogBackend.Install();
