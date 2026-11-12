@@ -4,6 +4,10 @@ All notable changes to Compze.Internals.SystemCE will be documented in this file
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## 0.6.1-internal
+
+- `SimpleObservable` takes no lock: subscribing and disposing a subscription swap in a new immutable array of subscribers, trying again when another thread swapped in one of its own first. An observable nobody has subscribed to is one 24-byte object instead of 416 bytes, its own `IMonitor` included, which matters to code that gives each of a great many objects one, such as every `Taggregate`. Notifying the subscribers no longer allocates.
+
 ## 0.6.0-internal
 
 - **`TaskCE.RunOnDedicatedThread`: blocking work an async caller awaits runs on a thread of its own.** For a wait on a synchronization primitive with no async form, which `TaskCE.Run` would park on a thread-pool thread. The pool keeps about one thread per processor and adds more slowly, so each parked pool thread leaves one fewer for every async continuation in the process; a few parked at once, and continuations wait seconds for a thread.

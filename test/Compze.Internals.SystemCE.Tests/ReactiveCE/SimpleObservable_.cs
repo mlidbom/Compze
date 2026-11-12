@@ -1,5 +1,6 @@
 using Compze.Contracts;
 using Compze.Internals.SystemCE.ReactiveCE;
+using Compze.Tests.Infrastructure.Diagnostics;
 using Compze.Threading;
 using Compze.Threading.Testing;
 
@@ -8,6 +9,12 @@ namespace Compze.Internals.SystemCE.Tests.ReactiveCE;
 public class SimpleObservable_
 {
    readonly SimpleObservable<string> _observable = new();
+
+   public class Creating_an_observable : SimpleObservable_
+   {
+      [XF] public void allocates_24_bytes() =>
+         ManagedAllocation.BytesAllocatedBy(() => new SimpleObservable<string>()).Must().Be(24L);
+   }
 
    public class When_a_subscriber_disposes_its_own_subscription_during_a_notification : SimpleObservable_
    {
