@@ -213,7 +213,7 @@ public abstract class Endpoint : IEndpoint
 
    public async ValueTask DisposeAsync()
    {
-      this.Log().Debug($"Endpoint '{_configuration.Name}' ({Id}) disposing");
+      this.Log().Info($"Endpoint '{_configuration.Name}' ({Id}) disposing");
       try
       {
          //A no-op that completes synchronously when the caller stopped the endpoint first, so the container's disposal below

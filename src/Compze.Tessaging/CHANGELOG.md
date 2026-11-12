@@ -4,6 +4,10 @@ All notable changes to Compze.Tessaging will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## 0.6.1-alpha
+
+- **An endpoint logs its disposal at Info, like its other lifecycle steps.** It logged starting, announcing, sending, stopping, retracting, stopping sending and stopping listening at Info, but disposing at Debug, so a log at Info showed the stop and never the disposal. Since stopping and disposing became separate steps in 0.6.0-alpha, the order of the two in the log is what shows whether a caller stopped the endpoint before disposing it: stopped first, the log reads stopping, then disposing; disposed without stopping, disposing comes first.
+
 ## 0.6.0-alpha
 
 - **`IEndpoint.StopAsync`: stopping an endpoint is a step of its own, separate from disposing it.** `StopAsync` runs the mirror of `StartAsync` — retract → stop sending → stop listening — then drains the inbox and the tevent observation queues and releases an exactly-once endpoint's process lock, so the endpoint's next process can claim it; the endpoint's container keeps serving until the endpoint is disposed. Disposal stops an endpoint that has not stopped yet, so existing callers change nothing. It exists for a caller whose components are bound to one thread, such as a UI thread owning windows: stopping awaits work that resumes on thread-pool threads, so an endpoint disposed without stopping first disposed its container on whichever thread that work resumed on. Stopping first, then disposing from the thread that owns those components, begins the container's disposal on that thread. A stopped endpoint never starts again: `StartAsync` on it fails loud.
