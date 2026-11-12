@@ -45,6 +45,11 @@ public partial interface IAwaitableMonitor
 
       ImmutableArray<TakeMonitorLockTimeoutException> _timeoutExceptionsOnOtherThreads = [];
 
+      ///<summary>The signal the next update-lock release completes, waking the async condition waits waiting for it. Null while none waits.<br/>
+      /// It is created only when an async wait needs one, so a monitor nobody awaits asynchronously pays for nothing but this field.<br/>
+      /// Guarded by the lock.</summary>
+      TaskCompletionSource? _nextUpdate;
+
       public MonitorCE(LockTimeout? lockTimeout = null, WaitTimeout? waitTimeout = null)
       {
          LockTimeout = lockTimeout ?? LockTimeout.Default;
@@ -122,6 +127,7 @@ public partial interface IAwaitableMonitor
       void ReleaseUpdateLock()
       {
          _monitor.NotifyWaitingThreadsAboutUpdates();
+         NotifyAsyncWaitsAboutUpdates();
          ReleaseLock();
       }
 

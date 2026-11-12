@@ -36,6 +36,17 @@ partial class IAwaitableCriticalSectionMatrixAttribute
          };
       }
 
+      ///<summary>Another instance of the same system mutex as <paramref name="mutex"/>, opened the way another process would open it: the same name,<br/>
+      /// scope and signal directory.</summary>
+      public IAwaitableMutex CreateAnotherInstanceOf(IAwaitableMutex mutex)
+      {
+         var nameWithoutTheScopePrefix = mutex.Name[(mutex.Name.IndexOf('\\', StringComparison.Ordinal) + 1)..];
+         return (mutex.IsGlobal
+                    ? IAwaitableMutex.Global(nameWithoutTheScopePrefix, TestDirectory, mutex.LockTimeout, mutex.WaitTimeout)
+                    : IAwaitableMutex.Local(nameWithoutTheScopePrefix, TestDirectory, mutex.LockTimeout, mutex.WaitTimeout))
+           ._tap(_disposables.Add);
+      }
+
       static string UniqueName() => $"{typeof(TTest).FullName}.P{Environment.ProcessId}.{Interlocked.Increment(ref _counter)}";
 
       public void Dispose()

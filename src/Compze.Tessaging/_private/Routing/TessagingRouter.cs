@@ -14,7 +14,6 @@ using Compze.Tessaging._private.SystemCE.ThreadingCE;
 using Compze.Tessaging.TessageBus._internal;
 using Compze.Tessaging.TessageTypes;
 using Compze.Threading;
-using Compze.Threading._internal;
 using Compze.TypeIdentifiers;
 using Compze.Tessaging._private.Transport;
 using Compze.Tessaging._private.Transport.Advertisement;
@@ -336,11 +335,11 @@ class TessagingRouter : ITessagingRouter, IDisposable
          return cached;
       });
 
-   //The condition may call this router's own lookups: the monitor is reentrant, and the condition always runs on the one
-   //thread that holds it - the calling thread for the inline first evaluation, the wait's dedicated thread thereafter - so the
-   //nested lock acquisitions are balanced re-entries, never contention.
+   //The condition may call this router's own lookups: the monitor is reentrant, and the condition always runs on the thread
+   //holding the monitor's lock - whichever thread the wait resumes on - so the nested lock acquisitions are balanced re-entries,
+   //never contention.
    public async Task<bool> TryAwaitConnectionsOrPeerMemorySatisfyingAsync(Func<bool> condition, WaitTimeout patience) =>
-      await _monitor.TryAwaitOnDedicatedThreadAsync(condition, waitTimeout: patience).caf();
+      await _monitor.TryAwaitAsync(condition, waitTimeout: patience).caf();
 
    public void Dispose()
    {

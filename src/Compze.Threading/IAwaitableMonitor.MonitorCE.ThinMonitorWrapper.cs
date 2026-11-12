@@ -33,6 +33,8 @@ public partial interface IAwaitableMonitor
             }
          }
 
+         public bool IsHeldByTheCurrentThread => Monitor.IsEntered(this);
+
          public void ReleaseLockAndReacquireItOnPulseOrTimeout(WaitTimeout timeout) => Monitor.Wait(this, timeout);
 
          public void ReleaseLock() => Monitor.Exit(this);

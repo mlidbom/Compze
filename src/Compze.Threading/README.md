@@ -105,6 +105,21 @@ class WorkTracker
 
 > **CRITICAL:** The `*When` methods (`TakeReadLockWhen`, `TakeUpdateLockWhen`, `ReadWhen`, `UpdateWhen`, `Await`, etc.) **release the lock while waiting** for a condition, just like `Monitor.Wait`. When the condition is met, the lock is reacquired before the method returns. This means that if you hold the lock and call a waiting method, other threads can acquire the lock during the wait. All `IAwaitableCriticalSection` implementations — including `IAwaitableMonitor` and `IAwaitableMutex` — share this behavior.
 
+#### Async condition waits hold no thread while they wait
+
+`TryAwaitAsync`, `ReadWhenAsync`, `UpdateWhenAsync` and `TryUpdateWhenAsync` are the condition waits for async code. While the
+condition is false nothing waits but a task, which the next update-lock release completes, so no thread is parked: a synchronous
+wait on a thread-pool thread holds that thread for as long as it waits, and enough of them starve the pool.
+
+```csharp
+public async Task<AType> AwaitValueAsync() => await _monitor.ReadWhenAsync(() => _aField != null, () => _aField);
+```
+
+Taking the lock is still synchronous, and brief: it waits only while another holder is inside a critical section. The condition and
+the function a wait runs once the condition holds run under the lock, so they are synchronous. And unlike the synchronous waits, an
+async wait can't release a lock its caller already holds, because it may resume on another thread: starting one while holding the
+lock fails at once.
+
 #### Wrap all logic in existing public methods inside calls to _monitor to quickly migrate existing classes:
 ```csharp
 class MyThreadSafe

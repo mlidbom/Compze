@@ -137,6 +137,8 @@ public partial interface IMutex
             TakeLock(timeout: timeout);
       }
 
+      public bool IsHeldByTheCurrentThread => _nestingDepth.Value > 0;
+
       IReadOnlyList<TakeMutexLockTimeoutException> _timeOutExceptionsOnOtherThreads = new List<TakeMutexLockTimeoutException>();
 
       Exception RegisterTimeoutException() => _timeoutMonitor.Locked(() =>

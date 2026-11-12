@@ -49,6 +49,13 @@ Wraps `IMutex` + `InterprocessSignal` to implement `IAwaitableCriticalSection`.
 6. If `TryAwait` returns false (chunk elapsed without a signal) → probe mutex with zero-timeout `TryTakeLock` to detect abandoned mutexes, then loop back to step 5
 7. If `TryAwait` returns true (signal detected) → reacquire to full nesting depth, go to step 2
 
+**Async condition wait (`TryAwaitAsync`, `TryUpdateWhenAsync`):** the same steps, with three differences:
+- The wait for the signal is `InterprocessSignal.TryAwaitChangeFromAsync`, which sleeps between polls with `Task.Delay`, so no thread is held while it waits. The poll schedule is the same `ISignalPollingPolicy`, and the 1-second abandoned-mutex probe is the same.
+- It can't release nesting levels its caller holds, because it may resume on another thread, and nesting depth and mutex ownership are per thread. So it asserts at the start that the calling thread doesn't hold the mutex, instead of calling `ReleaseAllNestingLevels`.
+- Only an evaluation that finds the condition true, for an update, raises the signal on release. One that finds it false releases the mutex without raising it: two waits with false conditions would otherwise keep waking each other.
+
+On expiry the async wait evaluates the condition once more before it gives up, as the in-process monitor's waits do.
+
 **Two wakeup schedules, different purposes:**
 - **`ISignalPollingPolicy`** (inside `InterprocessSignal.TryAwait`): decides each sleep between counter polls. The default backs off from 1ms at the start of a wait to a 50ms cap (a quarter of the elapsed wait, clamped), trading signal-detection latency against the power cost of frequent CPU wakeups. Detects normal `UpdateLock` releases.
 - **1s** (`AbandonedMutexCheckInterval`, inside `AwaitableMutex.TryTakeLockWhen`): abandoned-mutex safety probe. Only runs when a whole chunk passed with no signal. Probes the mutex with zero-timeout to trigger `AbandonedMutexException` if the holder died. Kept long deliberately — abandonment is a rare crash scenario, and the probe is a wakeup floor on the power cost of a long wait.

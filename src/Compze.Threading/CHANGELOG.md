@@ -4,6 +4,14 @@ All notable changes to Compze.Threading will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## 0.11.0-alpha
+
+- **Async condition waits, which hold no thread while they wait.** `IAwaitableCriticalSection` gains `TryAwaitAsync` and `TryUpdateWhenAsync`, and the default interface methods `ReadWhenAsync` and `UpdateWhenAsync` (with an action, or with a func whose result it returns). While the condition is false nothing waits but a task, which the next update-lock release completes, so no thread is parked. A synchronous condition wait on a thread-pool thread holds that thread for as long as it waits, and enough of them starve the pool: the work they wait for can't get a thread to run on. Taking the lock stays synchronous and brief, and the condition and the action or func run under the lock, on whichever thread resumes the wait. `IAwaitableMonitor` implements them, and so does `IAwaitableMutex` from Compze.Threading.Interprocess 0.6.0-alpha.
+- **A thread that holds the critical section can't start an async condition wait on it.** A synchronous wait releases its caller's lock while it waits and takes it back before it returns; an async wait may resume on another thread, which can do neither. So it fails at once with a `StateAssertionFailedException`, instead of waiting until its timeout for an update its own caller's lock prevents.
+- Breaking only for code that implements `IAwaitableCriticalSection` itself: `TryAwaitAsync` and `TryUpdateWhenAsync` are new abstract members.
+- A monitor, as `IMonitor.New` and `IAwaitableMonitor.New` create it, is 152 bytes instead of 144: the field the async waits need. What it holds is created only when an async wait waits.
+- The internal `TryAwaitOnDedicatedThreadAsync`, which parked a dedicated thread for each waiting async caller, is gone, and Compze.Tessaging no longer sees this package's internals.
+
 ## 0.10.1-alpha
 
 - A monitor, as `IMonitor.New` and `IAwaitableMonitor.New` create it, is four allocations and 144 bytes instead of nine and 384, so code can create one for each of a great many objects. The objects that release its lock call the monitor directly instead of through a delegate each, it locks on the object wrapping the .NET `Monitor` instead of on a separate object, it needs no lock to record lock timeouts, and its list of them starts out as the shared empty one. Taking and releasing a lock still allocates nothing.

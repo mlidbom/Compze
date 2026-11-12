@@ -2,7 +2,7 @@ namespace Compze.Threading.Interprocess._private;
 
 /// <summary>
 /// A cross-process signaling mechanism backed by an <see cref="InterprocessChangeCounter"/>.
-/// Call <see cref="Raise"/> to signal, and <see cref="TryAwait(TimeSpan, ref long, DateTime, CancellationToken)"/> to wait for a signal.
+/// Call <see cref="Raise"/> to signal, and <see cref="TryAwait(TimeSpan, ref long, DateTime, CancellationToken)"/>, or <see cref="TryAwaitChangeFromAsync"/> in async code, to wait for a signal.
 /// </summary>
 /// <remarks>
 /// Waiting polls the counter — each poll is a cheap memory read, but each poll also wakes the CPU, and frequent wakeups prevent it
@@ -43,18 +43,47 @@ class InterprocessSignal : IDisposable
       while(_counter.Count == baseline)
       {
          cancellationToken.ThrowIfCancellationRequested();
-         var now = DateTime.UtcNow;
-         if(now >= deadline)
+         if(SleepBeforeTheNextPoll(deadline, waitStartedAt) is not {} sleep)
             return false;
 
-         var pollInterval = _pollingPolicy.NextPollInterval(now - waitStartedAt);
-         var untilDeadline = deadline - now;
          // Wait on the cancellation token's handle rather than Thread.Sleep so cancellation wakes us instantly even mid-interval.
-         cancellationToken.WaitHandle.WaitOne(pollInterval < untilDeadline ? pollInterval : untilDeadline);
+         cancellationToken.WaitHandle.WaitOne(sleep);
       }
 
       baseline = _counter.Count;
       return true;
+   }
+
+   ///<summary>The async counterpart of <see cref="TryAwait(TimeSpan, ref long, DateTime, CancellationToken)"/>: awaits up to <paramref name="timeout"/> for the counter<br/>
+   /// to change from <paramref name="baseline"/>, polling on the same <see cref="ISignalPollingPolicy"/> schedule, but holding no thread between polls.<br/>
+   /// Returns true if a signal was detected, false on timeout.</summary>
+   public async Task<bool> TryAwaitChangeFromAsync(long baseline, TimeSpan timeout, DateTime waitStartedAt, CancellationToken cancellationToken)
+   {
+      var deadline = DateTime.UtcNow + timeout;
+
+      while(_counter.Count == baseline)
+      {
+         cancellationToken.ThrowIfCancellationRequested();
+         if(SleepBeforeTheNextPoll(deadline, waitStartedAt) is not {} sleep)
+            return false;
+
+         //Suppressed so that cancellation surfaces as the OperationCanceledException thrown above, as in the synchronous wait, not as Task.Delay's TaskCanceledException.
+         await Task.Delay(sleep, cancellationToken).ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing);
+      }
+
+      return true;
+   }
+
+   ///<summary>How long to sleep before polling the counter again: what the <see cref="ISignalPollingPolicy"/> asks for, but never past <paramref name="deadline"/>.<br/>
+   /// Null once <paramref name="deadline"/> has passed.</summary>
+   TimeSpan? SleepBeforeTheNextPoll(DateTime deadline, DateTime waitStartedAt)
+   {
+      var now = DateTime.UtcNow;
+      if(now >= deadline) return null;
+
+      var pollInterval = _pollingPolicy.NextPollInterval(now - waitStartedAt);
+      var untilDeadline = deadline - now;
+      return pollInterval < untilDeadline ? pollInterval : untilDeadline;
    }
 
    public void Dispose() => _counter.Dispose();

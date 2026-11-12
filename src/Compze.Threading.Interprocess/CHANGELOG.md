@@ -4,6 +4,10 @@ All notable changes to Compze.Threading.Interprocess will be documented in this 
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## 0.6.0-alpha
+
+- **`IAwaitableMutex` implements the async condition waits** that Compze.Threading 0.11.0-alpha adds to `IAwaitableCriticalSection`: `TryAwaitAsync`, `TryUpdateWhenAsync`, `ReadWhenAsync` and `UpdateWhenAsync`. They poll the cross-process signal on the same `ISignalPollingPolicy` schedule as the synchronous waits, but sleep between polls with `Task.Delay`, so no thread is held while they wait. They probe for an abandoned mutex once a second, as the synchronous waits do, and when the wait timeout expires they evaluate the condition once more before giving up.
+
 ## 0.5.1-alpha
 
 - The visibility sweep reaches this package: non-public machinery moves below `_internal`/`_private` namespace sections — the markers that replaced the old `Internal`/`Private` spelling — and types and members are narrowed to the least visibility that compiles.

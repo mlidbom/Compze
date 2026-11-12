@@ -34,6 +34,9 @@ using(mutex.TakeUpdateLockWhen(() => ResourceIsReady()))
 }
 ```
 
+The async condition waits — `TryAwaitAsync`, `ReadWhenAsync`, `UpdateWhenAsync`, `TryUpdateWhenAsync` — work across processes
+too, and hold no thread while they wait: between polls of the signal (see `ISignalPollingPolicy` below) nothing waits but a timer.
+
 ### `IProcessShared<T>` / `IAwaitableProcessShared<T>`
 
 Pair a shared object with a cross-process mutex to coordinate access to an external resource — a file, a port,

@@ -27,4 +27,8 @@ public partial interface IMutex : ICriticalSection, IDisposable
 
    ///<summary>Reacquires the mutex <paramref name="depth"/> times, restoring the nesting level to the state before a prior <see cref="ReleaseAllNestingLevels"/> call.</summary>
    internal void ReacquireToNestingDepth(int depth, LockTimeout? timeout = null);
+
+   ///<summary>True if the current thread holds the mutex, at any nesting depth. <see cref="IAwaitableMutex"/>'s async condition waits assert that it doesn't:<br/>
+   /// they can't release, while they wait, a lock their caller holds.</summary>
+   internal bool IsHeldByTheCurrentThread { get; }
 }
