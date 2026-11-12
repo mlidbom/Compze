@@ -15,7 +15,7 @@ public class ActionSpec(Action action, string expression)
    readonly Action _action = action;
    readonly string _expression = expression;
    /// <summary>Begins an assertion chain over the captured action, e.g. <c>.Must().Throw&lt;TException&gt;()</c>.</summary>
-   public IAssertionContext<Action> Must() => new AssertionContext<Action>(_action, _expression);
+   public IAssertionContext<Action> Must() => new AssertionContext<Action>(_action, _expression, MustSerialization.Rules);
 }
 
 /// <summary>A captured asynchronous action awaiting a throw-assertion, produced by <see cref="MustActions.InvokingAsync(System.Func{System.Threading.Tasks.Task}, string)"/>.</summary>
@@ -26,7 +26,7 @@ public class AsyncActionSpec(Func<Task> action, string expression)
    readonly Func<Task> _action = action;
    readonly string _expression = expression;
    /// <summary>Begins an assertion chain over the captured async action, e.g. <c>.Must().ThrowAsync&lt;TException&gt;()</c>.</summary>
-   public IAssertionContext<Func<Task>> Must() => new AssertionContext<Func<Task>>(_action, _expression);
+   public IAssertionContext<Func<Task>> Must() => new AssertionContext<Func<Task>>(_action, _expression, MustSerialization.Rules);
 }
 
 /// <summary>Entry points for asserting that a delegate throws (or does not throw): <see cref="Invoking(System.Action, string)"/> and <see cref="InvokingAsync(System.Func{System.Threading.Tasks.Task}, string)"/>.</summary>

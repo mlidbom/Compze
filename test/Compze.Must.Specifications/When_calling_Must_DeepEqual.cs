@@ -121,6 +121,27 @@ public class When_calling_Must_DeepEqual : UniversalTestBase
          [XF] public void DeepEqualPublic_does_not_throw() => _actual.Must().DeepEqualPublic(_expected);
       }
 
+      public class are_of_different_types_with_the_same_members : given_two_objects_that
+      {
+         readonly object _actual = new OneType("same");
+         readonly object _expected = new AnotherType("same");
+
+         class OneType(string value)
+         {
+            public string Value { get; } = value;
+         }
+
+         class AnotherType(string value)
+         {
+            public string Value { get; } = value;
+         }
+
+         [XF] public void DeepEqual_throws() => Invoking(() => _actual.Must().DeepEqual(_expected)).Must().Throw<AssertionFailedException>();
+
+         [XF] public void DeepEqual_does_not_throw_when_the_Must_call_serializes_without_type_names() =>
+            _actual.Must(serialization: it => it.WithoutTypeNames()).DeepEqual(_expected);
+      }
+
       public class have_different_Ids : given_two_objects_that
       {
          readonly TestObjectWithId _actual = new(1, "sameValue");
@@ -138,7 +159,7 @@ public class When_calling_Must_DeepEqual : UniversalTestBase
          public class and_an_exclusion_of_the_Id_property : have_different_Ids
          {
             [XF] public void DeepEqual_does_not_throw_throws()
-               => _actual.Must().DeepEqualPrivate(_expected, config => config.ExcludeMember(obj => obj.Id));
+               => _actual.Must(serialization: config => config.ExcludeMember(obj => obj.Id)).DeepEqualPrivate(_expected);
          }
       }
 
@@ -158,13 +179,13 @@ public class When_calling_Must_DeepEqual : UniversalTestBase
          public class with_an_exclusion_via_the_first_method : are_collections_with_objects_having_different_Ids
          {
             [XF] public void DeepEqual_does_not_throw()
-               => _actual.Must().DeepEqualPrivate(_expected, config => config.ExcludeMember(list => list.First().Id));
+               => _actual.Must(serialization: config => config.ExcludeMember(list => list.First().Id)).DeepEqualPrivate(_expected);
          }
 
          public class with_an_exclusion_via_the_indexer : are_collections_with_objects_having_different_Ids
          {
             [XF] public void DeepEqual_does_not_throw()
-               => _actual.Must().DeepEqualPrivate(_expected, config => config.ExcludeMember(list => list[0].Id));
+               => _actual.Must(serialization: config => config.ExcludeMember(list => list[0].Id)).DeepEqualPrivate(_expected);
          }
       }
 
@@ -178,21 +199,21 @@ public class When_calling_Must_DeepEqual : UniversalTestBase
          public class And_an_exclusion_of_the_Id_property_in_the_Inner_class : contain_nested_objects_with_differing_Id_properties_in_both_the_Inner_and_Outer_type
          {
             [XF] public void DeepEqual_throws_()
-               => Invoking(() => _actual.Must().DeepEqualPrivate(_expected, config => config.ExcludeMember(c => c.Outer.Id)))
+               => Invoking(() => _actual.Must(serialization: config => config.ExcludeMember(c => c.Outer.Id)).DeepEqualPrivate(_expected))
                  .Must().Throw<AssertionFailedException>();
          }
 
          public class And_an_exclusion_of_the_Id_property_in_the_Outer_class : contain_nested_objects_with_differing_Id_properties_in_both_the_Inner_and_Outer_type
          {
             [XF] public void DeepEqual_throws_()
-               => Invoking(() => _actual.Must().DeepEqualPrivate(_expected, config => config.ExcludeMember(c => c.Inner.Id)))
+               => Invoking(() => _actual.Must(serialization: config => config.ExcludeMember(c => c.Inner.Id)).DeepEqualPrivate(_expected))
                  .Must().Throw<AssertionFailedException>();
          }
 
          public class and_an_exclusion_the_Id_property_in_both_the_Inner_class_and_Outer_class : contain_nested_objects_with_differing_Id_properties_in_both_the_Inner_and_Outer_type
          {
             [XF] public void DeepEqual_does_not_throw_throws()
-               => _actual.Must().DeepEqualPrivate(_expected, config => config.ExcludeMember(it => it.Outer.Id).ExcludeMember(it => it.Inner.Id));
+               => _actual.Must(serialization: config => config.ExcludeMember(it => it.Outer.Id).ExcludeMember(it => it.Inner.Id)).DeepEqualPrivate(_expected);
          }
 
          class Container(Inner inner, Outer outer)

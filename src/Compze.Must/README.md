@@ -196,15 +196,65 @@ Diff:
 | `DeepEqualInternal` | internal + public members |
 | `DeepEqualPublic` | public members only |
 
-And you can tune any comparison with a config callback:
+And you can tune any comparison with serialization rules on the `Must` call (see below):
 
 ```csharp
 // Ignore noisy identity fields:
-actual.Must().DeepEqual(expected, config => config.ExcludeMember(it => it.Id));
+actual.Must(serialization: it => it.ExcludeMember(actual => actual.Id)).DeepEqual(expected);
 
 // Compare structurally, ignoring declared types:
-actual.Must().DeepEqual(expected, config => config.IgnoreTypes());
+actual.Must(serialization: it => it.WithoutTypeNames()).DeepEqual(expected);
 ```
+
+## Serialization: what failure messages show, and what `DeepEqual` compares
+
+Must serializes values with Newtonsoft.Json: every field and property, public or not, with `$type` annotations,
+dictionaries and sets in a stable order, and enums by name. A few kinds of value are written as a short description
+instead, because serializing their members can never work: exceptions (their type and message), delegates (the
+methods they call), reflection objects (what they name) and tasks (their status, and their result once they have
+one). Members nothing can read are left out: indexers, properties without a getter, and pointer, by-ref and ref-like
+members such as `Span<T>`.
+
+**When Must cannot serialize a value, the failure message is still the assertion's own.** In place of the JSON it
+says what was thrown, where, and how to leave it out:
+
+```
+order was an Order that Must could not serialize:
+System.InvalidOperationException: Not computed yet
+while reading Shop.Order.Total, at the path: Lines[2].Total
+To leave it out of this assertion, configure the Must call:
+   .Must(serialization: it => it.ExcludeMember(typeof(Shop.Order), "Total"))
+To leave it out of every assertion, once when the test assembly starts:
+   MustSerialization.ExcludeMember(typeof(Shop.Order), "Total");
+```
+
+`DeepEqual` then fails, saying why, instead of comparing what it could serialize.
+
+**Rules for one assertion chain** go on the `Must` call. They apply to its failure messages and to `DeepEqual`:
+
+```csharp
+actual.Must(serialization: it => it.ExcludeMember(actual => actual.Id)).DeepEqual(expected);
+// A private member, or one of a type the test cannot name:
+actual.Must(serialization: it => it.ExcludeMember(typeof(Order), "_cache")).Satisfy(it => it.IsValid);
+actual.Must(serialization: it => it.ExcludeType<ILogger>()).Satisfy(it => it.IsValid);
+actual.Must(serialization: it => it.SerializeAs<JsonNode>(node => node.ToJsonString())).Satisfy(it => it.IsValid);
+```
+
+**Rules for every assertion** go on `MustSerialization`, once, where your test framework runs code as the test
+assembly starts. A chain's own rules take precedence over them.
+
+```csharp
+MustSerialization.ExcludeType<NoteSubscription>();
+MustSerialization.SerializeAs<JsonNode>(node => node.ToJsonString());
+```
+
+**Long text goes to a file.** A value's JSON, its `ToString()` or a diff longer than
+`MustSerialization.LongestTextShownInFull` (100,000 characters by default) is written to a file under the test
+assembly's output folder, `MustOutput`, and the message shows its start and the file's path.
+
+**Nothing Must serializes can take the test process down.** A getter that throws, at any depth, fails the
+serialization, not the process. A graph nested deeper than the thread's stack allows (about a thousand levels per
+megabyte of stack) fails the same way, instead of overflowing the stack.
 
 ## `Satisfy` — the universal assertion
 

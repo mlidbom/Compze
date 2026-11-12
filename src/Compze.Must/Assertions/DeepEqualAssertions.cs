@@ -1,84 +1,67 @@
-using System.Linq.Expressions;
-using System.Reflection;
 using System.Runtime.CompilerServices;
-using Compze.Must._private.Serialization;
-using Newtonsoft.Json;
 using Compze.Must._private;
+using Compze.Must._private.Serialization;
 
 // ReSharper disable InconsistentNaming
 namespace Compze.Must;
 
-/// <summary>Configures a deep-equality comparison (<see cref="DeepEqualAssertions"/>): which members to exclude and whether to ignore declared types.</summary>
-public class DeepEqualConfig<TValue>
-{
-   internal HashSet<MemberInfo> ExcludedMembers { get; } = [];
-   internal bool TypesIgnored { get; private set; }
-
-   /// <summary>Excludes the member selected by <paramref name="memberExpression"/> from the comparison.</summary>
-   public DeepEqualConfig<TValue> ExcludeMember<TMember>(Expression<Func<TValue, TMember>> memberExpression) =>
-      ExcludedMembers.Add(memberExpression.ExtractFinalMemberInfo())
-                     .__(this);
-
-   /// <summary>Ignores declared type information so that values of different types compare equal when their members match.</summary>
-   public DeepEqualConfig<TValue> IgnoreTypes() => this._mutate(it => it.TypesIgnored = true);
-}
-
-/// <summary>Deep structural-equality assertions that compare two values by serializing them and diffing the results.</summary>
+/// <summary>Deep structural-equality assertions that compare two values by serializing both and diffing the results.</summary>
+/// <remarks>
+/// The method decides which members are compared: all of them, internal and public ones, or public ones. The Must call's
+/// <see cref="ISerializationConfig{TValue}"/>, and the global rules of <see cref="MustSerialization"/>, decide what is
+/// left out or written differently.<br/>
+/// When either value cannot be serialized, the assertion fails, saying why, instead of comparing what could be serialized.
+/// </remarks>
 public static class DeepEqualAssertions
 {
-   /// <summary>Asserts deep structural equality with <paramref name="expected"/>, comparing all members (public, internal, and private). Equivalent to <see cref="DeepEqualPrivate{TValue}(IAssertionContext{TValue}, TValue, System.Func{DeepEqualConfig{TValue}, DeepEqualConfig{TValue}}, string)"/>.</summary>
+   /// <summary>Asserts deep structural equality with <paramref name="expected"/>, comparing all members (public, internal, and private). Equivalent to <see cref="DeepEqualPrivate{TValue}"/>.</summary>
    public static IAssertionContext<TValue> DeepEqual<TValue>(this IAssertionContext<TValue> context,
                                                              TValue expected,
-                                                             Func<DeepEqualConfig<TValue>, DeepEqualConfig<TValue>>? config = null,
                                                              [CallerArgumentExpression(nameof(expected))] string expectedExpression = null!) =>
-      DeepEqualPrivate(context, expected, config, expectedExpression);
+      context.DeepEqualPrivate(expected, expectedExpression);
 
    /// <summary>Asserts deep structural equality with <paramref name="expected"/>, comparing all members including private ones.</summary>
    public static IAssertionContext<TValue> DeepEqualPrivate<TValue>(this IAssertionContext<TValue> context,
                                                                     TValue expected,
-                                                                    Func<DeepEqualConfig<TValue>, DeepEqualConfig<TValue>>? config = null,
                                                                     [CallerArgumentExpression(nameof(expected))] string expectedExpression = null!) =>
-      DeepEqualCore(context, expected, expectedExpression, TestingJsonSettings.AllMembers, config);
+      DeepEqualCore(context, expected, expectedExpression, MemberVisibility.AllMembers);
 
    /// <summary>Asserts deep structural equality with <paramref name="expected"/>, comparing internal and public members.</summary>
    public static IAssertionContext<TValue> DeepEqualInternal<TValue>(this IAssertionContext<TValue> context,
                                                                      TValue expected,
-                                                                     Func<DeepEqualConfig<TValue>, DeepEqualConfig<TValue>>? config = null,
                                                                      [CallerArgumentExpression(nameof(expected))] string expectedExpression = null!)
-      => DeepEqualCore(context, expected, expectedExpression, TestingJsonSettings.InternalAndPublicMembers, config);
+      => DeepEqualCore(context, expected, expectedExpression, MemberVisibility.InternalAndPublicMembers);
 
    /// <summary>Asserts deep structural equality with <paramref name="expected"/>, comparing only public members.</summary>
    public static IAssertionContext<TValue> DeepEqualPublic<TValue>(this IAssertionContext<TValue> context,
                                                                    TValue expected,
-                                                                   Func<DeepEqualConfig<TValue>, DeepEqualConfig<TValue>>? config = null,
                                                                    [CallerArgumentExpression(nameof(expected))] string expectedExpression = null!)
-      => DeepEqualCore(context, expected, expectedExpression, TestingJsonSettings.PublicMembers, config);
+      => DeepEqualCore(context, expected, expectedExpression, MemberVisibility.PublicMembers);
 
    static IAssertionContext<TValue> DeepEqualCore<TValue>(IAssertionContext<TValue> context,
                                                           TValue expected,
                                                           string expectedExpression,
-                                                          JsonSerializerSettings settings,
-                                                          Func<DeepEqualConfig<TValue>, DeepEqualConfig<TValue>>? config = null)
+                                                          MemberVisibility visibility)
    {
-      var deepEqualConfig = (config ?? (conf => conf))(new DeepEqualConfig<TValue>());
-      var serializerSettings = TestingJsonSettings.CreateSettingsWithExclusions(settings, deepEqualConfig.ExcludedMembers);
+      var actualSerialized = SerializedValue.Of(context.Actual, visibility, context.SerializationRules);
+      var expectedSerialized = SerializedValue.Of(expected, visibility, context.SerializationRules);
 
-      if(deepEqualConfig.TypesIgnored)
+      if(!actualSerialized.Succeeded || !expectedSerialized.Succeeded)
       {
-         serializerSettings = new JsonSerializerSettings(serializerSettings)
-                              {
-                                 TypeNameHandling = TypeNameHandling.None
-                              };
+         throw new AssertionFailedException($"""
+                                             {context.FailingAssertionHeading(nameof(DeepEqual), [new ExpressionValue(expectedExpression, expected)])}
+                                             DeepEqual could not compare the values, because Must could not serialize them both.
+                                             {AssertionContext.Separator}
+                                             {context.WhyItCouldNotBeSerialized(context.Expression, actualSerialized)}
+                                             {context.WhyItCouldNotBeSerialized(expectedExpression, expectedSerialized)}
+                                             """.RemoveLinesWhere(it => it == AssertionContext.RemoveLine));
       }
 
-      var actualJson = JsonConvert.SerializeObject(context.Actual, serializerSettings);
-      var expectedJson = JsonConvert.SerializeObject(expected, serializerSettings);
-
-      return context.RunAssertion(_ => actualJson == expectedJson,
+      return context.RunAssertion(_ => actualSerialized.Json == expectedSerialized.Json,
                                   messageOverride: _ =>
                                      $"""
-                                      {context.FailingAssertionHeading(nameof(DeepEqual), [new(expectedExpression, expected)])}
-                                      {context.Diff(expectedJson, actualJson)}
+                                      {context.FailingAssertionHeading(nameof(DeepEqual), [new ExpressionValue(expectedExpression, expected)])}
+                                      {context.Diff(expectedSerialized.Json, actualSerialized.Json)}
                                       {context.ExpressionValue()}
                                       {context.ExpressionValue(expectedExpression, expected)}
                                       """);

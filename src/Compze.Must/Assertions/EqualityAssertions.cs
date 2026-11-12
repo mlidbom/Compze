@@ -1,8 +1,6 @@
 using System.Collections;
 using System.Runtime.CompilerServices;
 using Compze.Internals.SystemCE.ReflectionCE;
-using Compze.Must._private.Serialization;
-using Newtonsoft.Json;
 using Compze.Must._private;
 
 namespace Compze.Must;
@@ -79,25 +77,9 @@ public static class EqualityAssertions
 
       string BuildFailureMessage(AssertionCallInfo<TValue> info)
       {
-         var actualJson = JsonConvert.SerializeObject(context.Actual, TestingJsonSettings.AllMembers);
-         var expectedJson = JsonConvert.SerializeObject(expected, TestingJsonSettings.AllMembers);
-
-         var actualToString = context.Actual?.ToString();
-         var expectedToString = expected?.ToString();
-
-         var skipDiff = actualToString == actualJson && expectedToString == expectedJson;
-
-         var diffMessage = skipDiff
-                              ? $"Expected {expectedToString} but got {actualToString}"
-                              : $"""
-                                 Diff:
-                                 {AssertionContext.Separator}
-                                 {DiffGenerator.CreateDiff(expectedJson, actualJson)}
-                                 """;
-
          return $"""
                  {context.FailingAssertionHeading(nameof(Be), expectedExpression)}
-                 {diffMessage}
+                 {DiffMessage()}
                  {AssertionContext.Separator}
                  {context.ExpressionValue()}
                  {context.ExpressionValue(expectedExpression, expected)}
@@ -105,6 +87,25 @@ public static class EqualityAssertions
                  {info.PredicateExpression.Indent()}{FailureMessage()}
                  {AssertionContext.Separator}
                  """;
+
+         string DiffMessage()
+         {
+            var actualSerialized = context.SerializedForMessages(context.Actual);
+            var expectedSerialized = context.SerializedForMessages(expected);
+            if(!actualSerialized.Succeeded || !expectedSerialized.Succeeded)
+               return AssertionContextWriter.NoDiffBecauseMustCouldNotSerializeBothValues;
+
+            var actualToString = context.Actual?.ToString();
+            var expectedToString = expected?.ToString();
+
+            return actualToString == actualSerialized.Json && expectedToString == expectedSerialized.Json
+                      ? $"Expected {expectedToString} but got {actualToString}"
+                      : $"""
+                         Diff:
+                         {AssertionContext.Separator}
+                         {DiffGenerator.CreateDiff(expectedSerialized.Json, actualSerialized.Json).ShownInAMessage($"{context.Expression}-diff", "diff")}
+                         """;
+         }
 
          string FailureMessage() =>
             info.FailureMessage != null

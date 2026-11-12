@@ -9,12 +9,11 @@ public class CartesianProductTests
    [Fact]
    public void EmptyInput_ReturnsListWithEmptyList() =>
       new List<IReadOnlyList<string>>()
-        .CartesianProduct().Must().DeepEqual(
+        .CartesianProduct().Must(serialization: it => it.WithoutTypeNames()).DeepEqual(
             new List<IReadOnlyList<string>>
             {
                Array.Empty<string>(),
-            },
-            config => config.IgnoreTypes());
+            });
 
    [Fact]
    public void SingleListWithOneItem_ReturnsThatItemAlone() =>

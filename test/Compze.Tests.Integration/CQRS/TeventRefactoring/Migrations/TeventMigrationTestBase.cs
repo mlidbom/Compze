@@ -189,8 +189,8 @@ public abstract class TeventMigrationTestBase : UniversalTestBase
    internal static void AssertStreamsAreIdenticalExceptForEventIds(IReadOnlyList<ITaggregateTevent> expected, IReadOnlyList<ITaggregateTevent> migratedHistory, string descriptionOfHistory)
    {
       Log.Info($"Comparing histories for : {descriptionOfHistory}");
-      migratedHistory.ToList().Must()
-                     .DeepEqualPrivate(expected.ToList(), config => config.ExcludeMember(it => it.First().Id));
+      migratedHistory.ToList().Must(serialization: it => it.ExcludeMember(history => history.First().Id))
+                     .DeepEqualPrivate(expected.ToList());
    }
 }
 
