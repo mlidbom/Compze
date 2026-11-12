@@ -1,0 +1,121 @@
+# Flake hunt: reproduce an intermittent CI failure on demand. Runs ONE test project in ONE pluggable-component combination over
+# and over, on several Linux runners at once, each run starting from the state of a fresh CI runner - so a failure CI shows once
+# in several pushes shows up within one push, together with the diagnostics CI collects: every dump analyzed in the log, and on
+# PostgreSQL the server's log of lock waits and slow statements, printed when the job's containers stop.
+#
+# To hunt a flake: create a branch named flake-hunt/<what is hunted>, set the hunt below - the combination in the matrix, the
+# test project and the number of runs in the env block - and push. Every push of the branch is one hunt. ci.yml ignores
+# flake-hunt/** branches, so a hunt does not also queue the full matrix ahead of its own runners.
+
+name: Flake hunt
+
+on:
+  push:
+    branches: ['flake-hunt/**']
+
+permissions:
+  contents: read
+
+jobs:
+  hunt:
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [1, 2, 3, 4, 5, 6, 7, 8]
+        persistence: [PgSql]
+        di: [LightInject]
+        serializer: [Newtonsoft]
+        transport: [AspNetCore]
+
+    name: "Hunt ${{ matrix.runner }} (${{ matrix.persistence }}:${{ matrix.di }}:${{ matrix.serializer }}:${{ matrix.transport }})"
+
+    services:
+      postgres:
+        image: ${{ matrix.persistence == 'PgSql' && 'postgres:17' || '' }}
+        env:
+          POSTGRES_PASSWORD: "Development!1"
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      HUNTED_TEST_PROJECT: test/Compze.Tessaging.InternalSpecifications/Compze.Tessaging.InternalSpecifications.csproj
+      RUNS_PER_RUNNER: "20"
+      COMPOSABLE_MACHINE_SLOWNESS: "5.0"
+      COMPOSABLE_PERFORMANCE_TESTS_STRESS_TEST_ONLY: "true"
+      DOTNET_CLI_TELEMETRY_OPTOUT: "1"
+      DOTNET_NOLOGO: "true"
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: '10.0.x'
+
+      - if: matrix.persistence == 'PgSql'
+        uses: ./.github/actions/postgresql-logs-lock-waits
+        with:
+          container-id: ${{ job.services.postgres.id }}
+
+      - name: Configure the hunted combination
+        run: |
+          echo "${{ matrix.persistence }}:${{ matrix.di }}:${{ matrix.serializer }}:${{ matrix.transport }}" > src/TestUsingPluggableComponentCombinations
+          echo "COMPZE_TEST_DIAGNOSTICS_DIRECTORY=$GITHUB_WORKSPACE/TestResults/diagnostics" >> "$GITHUB_ENV"
+
+      - name: Build the hunted test project
+        run: dotnet build "$HUNTED_TEST_PROJECT" --configuration Debug
+
+      - name: Hunt
+        env:
+          POSTGRES_CONTAINER: ${{ job.services.postgres.id }}
+        run: |
+          set +e
+          failures=0
+          for run in $(seq 1 "$RUNS_PER_RUNNER"); do
+            # The state of a fresh CI runner: no machine-wide DbPool state or test endpoint registries (Compze keeps them under
+            # ~/.local/share/Compze and the temp folder), and - on PostgreSQL - no pool databases and a freshly started server.
+            rm -rf ~/.local/share/Compze /tmp/Compze
+            if [ "${{ matrix.persistence }}" = "PgSql" ]; then
+              for database in $(docker exec "$POSTGRES_CONTAINER" psql -U postgres -At -c "SELECT datname FROM pg_database WHERE datname LIKE 'compze_dbpool_%'"); do
+                docker exec "$POSTGRES_CONTAINER" psql -U postgres -q -c "DROP DATABASE \"$database\" WITH (FORCE)"
+              done
+              docker restart "$POSTGRES_CONTAINER" > /dev/null
+              until docker exec "$POSTGRES_CONTAINER" pg_isready -U postgres -q; do sleep 1; done
+            fi
+
+            dotnet test "$HUNTED_TEST_PROJECT" --configuration Debug --no-build --results-directory "TestResults/run-$run" \
+                        --blame-hang --blame-hang-timeout 10min --blame-hang-dump-type full > "run-$run.log" 2>&1
+            if [ $? -eq 0 ]; then
+              echo "Run $run passed: $(grep -E 'Passed!' "run-$run.log")"
+            else
+              failures=$((failures + 1))
+              echo "::error::Run $run failed"
+              cat "run-$run.log"
+            fi
+          done
+          echo "$failures of $RUNS_PER_RUNNER runs failed."
+          [ "$failures" -eq 0 ]
+
+      - name: Analyze dumps
+        if: failure()
+        uses: ./.github/actions/analyze-dumps
+        with:
+          directory: TestResults
+
+      - name: Upload dumps
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dumps-hunt-${{ matrix.runner }}
+          path: TestResults/**
+          if-no-files-found: ignore
+          retention-days: 7

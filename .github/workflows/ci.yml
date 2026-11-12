@@ -7,6 +7,9 @@
 # There is deliberately no concurrency group: a push never supersedes an in-flight run of the same branch, so every pushed
 # commit is verified on its own rather than being cancelled by whatever was pushed next.
 #
+# Branches named flake-hunt/** are left out: such a branch exists to reproduce one intermittent failure with the flake-hunt
+# workflow (flake-hunt.yml), whose runners the full matrix would otherwise queue behind on every push of the hunt.
+#
 # Only the push trigger is used, deliberately: a pull_request trigger would double-verify every same-repo PR (once for
 # the push event, once for the PR event) and — because github.sha on a PR event is the ephemeral merge commit, not the
 # PR head — the SHA probe below cannot dedupe that pair. Every branch is already covered by push. Re-add pull_request
@@ -16,7 +19,7 @@ name: CI
 
 on:
   push:
-    branches: ['**']
+    branches: ['**', '!flake-hunt/**']
   workflow_dispatch:
 
 permissions:
