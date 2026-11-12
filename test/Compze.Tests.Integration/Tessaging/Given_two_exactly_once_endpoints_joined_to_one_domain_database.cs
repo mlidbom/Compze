@@ -61,11 +61,7 @@ public class Given_two_exactly_once_endpoints_joined_to_one_domain_database : Un
       protected override void RegisterComponents(IComponentRegistrar registrar) => registrar.RequireIntegrationTestTypeMappings();
 
       protected override void RegisterExactlyOnceTommandHandlers(IExactlyOnceTommandHandlerRegistrar handle) => handle
-         .ForTommand((MyReplyTommandHandledByTheFirstNeighbor _) =>
-          {
-             _replyHandlerGate.AwaitPassThrough();
-             return Task.CompletedTask;
-          });
+         .ForTommand((MyReplyTommandHandledByTheFirstNeighbor _) => _replyHandlerGate.AwaitPassThroughAsync());
    }
 
    class SecondNeighborEndpointDeclaration : ExactlyOnceEndpointDeclaration<SecondNeighborEndpointDeclaration>, IEndpointIdentity
@@ -79,11 +75,7 @@ public class Given_two_exactly_once_endpoints_joined_to_one_domain_database : Un
       protected override void RegisterComponents(IComponentRegistrar registrar) => registrar.RequireIntegrationTestTypeMappings();
 
       protected override void RegisterExactlyOnceTommandHandlers(IExactlyOnceTommandHandlerRegistrar handle) => handle
-         .ForTommand((MyTommandHandledByTheSecondNeighbor _) =>
-          {
-             _handlerGate.AwaitPassThrough();
-             return Task.CompletedTask;
-          });
+         .ForTommand((MyTommandHandledByTheSecondNeighbor _) => _handlerGate.AwaitPassThroughAsync());
    }
 
    class EndpointDeclarationClaimingTheFirstNeighborsName : ExactlyOnceEndpointDeclaration<EndpointDeclarationClaimingTheFirstNeighborsName>, IEndpointIdentity
@@ -128,10 +120,10 @@ public class Given_two_exactly_once_endpoints_joined_to_one_domain_database : Un
    [PCT] public async Task a_tommand_sent_to_the_second_neighbor_is_handled_there_and_its_reply_tommand_comes_back()
    {
       await _firstNeighbor.ServiceLocator.Resolve<IIndependentTommandSender>().SendAsync(new MyTommandHandledByTheSecondNeighbor());
-      _secondNeighborHandlerGate.AwaitPassedThroughCountEqualTo(1, WaitTimeout.Seconds(15));
+      await _secondNeighborHandlerGate.AwaitPassedThroughCountEqualToAsync(1, WaitTimeout.Seconds(15));
 
       await _secondNeighbor.ServiceLocator.Resolve<IIndependentTommandSender>().SendAsync(new MyReplyTommandHandledByTheFirstNeighbor());
-      _firstNeighborReplyHandlerGate.AwaitPassedThroughCountEqualTo(1, WaitTimeout.Seconds(15));
+      await _firstNeighborReplyHandlerGate.AwaitPassedThroughCountEqualToAsync(1, WaitTimeout.Seconds(15));
    }
 
 

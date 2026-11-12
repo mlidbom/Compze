@@ -33,28 +33,16 @@ public abstract partial class EndpointHostTestBase
       {
          if(!_withItsTommandHandler) return;
 
-         handle.ForTommand((MyExactlyOnceTommandHandledByTheRemoteEndpoint _) =>
-         {
-            _fixture.MyExactlyOnceTommandHandledByTheRemoteEndpointHandlerThreadGate.AwaitPassThrough();
-            return Task.CompletedTask;
-         });
+         handle.ForTommand((MyExactlyOnceTommandHandledByTheRemoteEndpoint _) => _fixture.MyExactlyOnceTommandHandledByTheRemoteEndpointHandlerThreadGate.AwaitPassThroughAsync());
       }
 
       protected override void RegisterExactlyOnceTeventHandlers(IExactlyOnceTeventHandlerRegistrar handle)
       {
          if(!_withItsTeventSubscriptions) return;
 
-         handle.ForTevent((IMyTaggregateTevent _) =>
-                {
-                   _fixture.MyRemoteTaggregateTeventHandlerThreadGate.AwaitPassThrough();
-                   return Task.CompletedTask;
-                })
+         handle.ForTevent((IMyTaggregateTevent _) => _fixture.MyRemoteTaggregateTeventHandlerThreadGate.AwaitPassThroughAsync())
                //Publisher-conscious subscription: subscribing to the taggregate's wrapper type receives the wrapped tevent as MyTaggregate published it.
-               .ForTevent((IMyTaggregateTevent<IMyTaggregateTevent> _) =>
-                {
-                   _fixture.MyRemotePublisherConsciousTeventHandlerThreadGate.AwaitPassThrough();
-                   return Task.CompletedTask;
-                });
+               .ForTevent((IMyTaggregateTevent<IMyTaggregateTevent> _) => _fixture.MyRemotePublisherConsciousTeventHandlerThreadGate.AwaitPassThroughAsync());
       }
 
       protected override void RegisterBestEffortTeventHandlers(IBestEffortTeventHandlerRegistrar handle)

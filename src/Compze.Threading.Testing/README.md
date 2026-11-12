@@ -214,7 +214,8 @@ section.ExitGate.AwaitPassedThroughCountEqualTo(1);
 
 ## TestingTaskRunner
 
-Runs the actors of a test and ensures they all complete successfully within a timeout. Exceptions from any task are rethrown on dispose.
+Runs the actors of a test and ensures they all complete successfully within a timeout. On dispose it rethrows the exception of the first
+actor that failed, or throws a `TimeoutException` if they don't all complete in time.
 A synchronous action runs on a dedicated thread, since it typically blocks, at a gate or in the code under test, and a blocked
 thread-pool thread is one the code under test can't run on. An async function runs on the thread pool, since it holds no thread while
 it awaits.

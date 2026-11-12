@@ -85,11 +85,7 @@ public class Given_two_hosts_sharing_an_interprocess_registry_where_the_receivin
       protected override void RegisterComponents(IComponentRegistrar registrar) => registrar.RequireIntegrationTestTypeMappings();
 
       protected override void RegisterExactlyOnceTommandHandlers(IExactlyOnceTommandHandlerRegistrar handle) => handle
-         .ForTommand((TommandDiscoveredThroughReconciliation _) =>
-          {
-             _specification._receivedTommandGate.AwaitPassThrough();
-             return Task.CompletedTask;
-          });
+         .ForTommand((TommandDiscoveredThroughReconciliation _) => _specification._receivedTommandGate.AwaitPassThroughAsync());
    }
 
    protected override async Task InitializeAsyncInternal()
@@ -126,7 +122,7 @@ public class Given_two_hosts_sharing_an_interprocess_registry_where_the_receivin
          }
       }
 
-      _receivedTommandGate.AwaitPassedThroughCountEqualTo(1, WaitTimeout.Seconds(15));
+      await _receivedTommandGate.AwaitPassedThroughCountEqualToAsync(1, WaitTimeout.Seconds(15));
    }
 
    internal class TommandDiscoveredThroughReconciliation : Remotable.ExactlyOnce.Tommand;

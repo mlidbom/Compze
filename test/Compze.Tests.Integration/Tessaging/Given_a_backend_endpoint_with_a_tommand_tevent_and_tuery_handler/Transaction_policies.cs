@@ -14,42 +14,42 @@ public class Transaction_policies : EndpointHostTestBase
    {
       await RemoteEndpoint.ServiceLocator.Resolve<IIndependentTommandSender>().SendAsync(new MyExactlyOnceTommand());
 
-      var transaction = MyExactlyOnceTommandHandlerThreadGate.AwaitPassedThroughCountEqualTo(1)
-                                                             .PassedThrough.Single().Transaction;
+      await MyExactlyOnceTommandHandlerThreadGate.AwaitPassedThroughCountEqualToAsync(1);
+      var transaction = MyExactlyOnceTommandHandlerThreadGate.PassedThrough.Single().Transaction;
       transaction.Must().NotBeNull()
                  .Actual.IsolationLevel
                  .Must().Be(IsolationLevel.ReadCommitted);
    }
 
-   [PCT] public void Tommand_handler_with_result_runs_in_transaction_with_isolation_level_ReadCommitted()
+   [PCT] public async Task Tommand_handler_with_result_runs_in_transaction_with_isolation_level_ReadCommitted()
    {
-      var tommandResult = Navigator.Post(MyAtMostOnceTypermediaTommandWithResult.Create());
+      var tommandResult = await Navigator.PostAsync(MyAtMostOnceTypermediaTommandWithResult.Create());
 
       tommandResult.Must().NotBeNull();
 
-      var transaction = TommandHandlerWithResultThreadGate.AwaitPassedThroughCountEqualTo(1)
-                                                          .PassedThrough.Single().Transaction._assert().NotNull();
+      await TommandHandlerWithResultThreadGate.AwaitPassedThroughCountEqualToAsync(1);
+      var transaction = TommandHandlerWithResultThreadGate.PassedThrough.Single().Transaction._assert().NotNull();
       transaction.Must().NotBeNull()
                  .Actual.IsolationLevel
                  .Must().Be(IsolationLevel.ReadCommitted);
    }
 
-   [PCT] public void Tevent_handler_runs_in_transaction_with_isolation_level_ReadCommitted()
+   [PCT] public async Task Tevent_handler_runs_in_transaction_with_isolation_level_ReadCommitted()
    {
-      Navigator.Post(MyCreateTaggregateTommand.Create());
+      await Navigator.PostAsync(MyCreateTaggregateTommand.Create());
 
-      var transaction = MyRemoteTaggregateTeventHandlerThreadGate.AwaitPassedThroughCountEqualTo(1)
-                                                                 .PassedThrough.Single().Transaction;
+      await MyRemoteTaggregateTeventHandlerThreadGate.AwaitPassedThroughCountEqualToAsync(1);
+      var transaction = MyRemoteTaggregateTeventHandlerThreadGate.PassedThrough.Single().Transaction;
       transaction.Must().NotBeNull()
                  .Actual.IsolationLevel
                  .Must().Be(IsolationLevel.ReadCommitted);
    }
 
-   [PCT] public void Tuery_handler_does_not_run_in_transaction()
+   [PCT] public async Task Tuery_handler_does_not_run_in_transaction()
    {
-      Navigator.Get(new MyTuery());
+      await Navigator.GetAsync(new MyTuery());
 
-      TueryHandlerThreadGate.AwaitPassedThroughCountEqualTo(1)
-                            .PassedThrough.Single().Transaction.Must().BeNull();
+      await TueryHandlerThreadGate.AwaitPassedThroughCountEqualToAsync(1);
+      TueryHandlerThreadGate.PassedThrough.Single().Transaction.Must().BeNull();
    }
 }

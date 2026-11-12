@@ -16,11 +16,11 @@ public class Outbox_retry_tests : EndpointHostTestBase
       await BackendEndPoint.StopListeningAsync();
       await RemoteEndpoint.ServiceLocator.Resolve<IIndependentTommandSender>().SendAsync(new MyExactlyOnceTommand());
 
-      MyExactlyOnceTommandHandlerThreadGate.TryAwaitPassedThroughCountEqualTo(1, WaitTimeout.Seconds(1)).Must().BeFalse();
+      (await MyExactlyOnceTommandHandlerThreadGate.TryAwaitPassedThroughCountEqualToAsync(1, WaitTimeout.Seconds(1))).Must().BeFalse();
 
       await Host.DisposeAsyncWithoutWaitingForEndpointsToBeAtRest();
       await StartHostAsync();
 
-      MyExactlyOnceTommandHandlerThreadGate.AwaitPassedThroughCountEqualTo(1, WaitTimeout.Seconds(15));
+      await MyExactlyOnceTommandHandlerThreadGate.AwaitPassedThroughCountEqualToAsync(1, WaitTimeout.Seconds(15));
    }
 }

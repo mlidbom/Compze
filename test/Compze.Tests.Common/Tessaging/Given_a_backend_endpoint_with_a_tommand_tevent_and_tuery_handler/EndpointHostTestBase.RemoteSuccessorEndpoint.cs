@@ -20,10 +20,6 @@ public abstract partial class EndpointHostTestBase
       protected override void RegisterComponents(IComponentRegistrar registrar) => registrar.RequireCommonTestTypeMappings();
 
       protected override void RegisterExactlyOnceTommandHandlers(IExactlyOnceTommandHandlerRegistrar handle) => handle
-         .ForTommand((MyExactlyOnceTommandHandledByTheRemoteEndpoint _) =>
-          {
-             _fixture.RemoteSuccessorTommandHandlerThreadGate.AwaitPassThrough();
-             return Task.CompletedTask;
-          });
+         .ForTommand((MyExactlyOnceTommandHandledByTheRemoteEndpoint _) => _fixture.RemoteSuccessorTommandHandlerThreadGate.AwaitPassThroughAsync());
    }
 }

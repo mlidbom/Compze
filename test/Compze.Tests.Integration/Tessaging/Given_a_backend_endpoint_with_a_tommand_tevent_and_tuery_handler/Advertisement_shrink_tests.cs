@@ -32,10 +32,10 @@ public class Advertisement_shrink_tests : EndpointHostTestBase
       await StartHostWithTheRemoteEndpointReturningHavingRenouncedItsTeventSubscriptionsAsync();
 
       //The kept tommand delivers...
-      MyExactlyOnceTommandHandledByTheRemoteEndpointHandlerThreadGate.AwaitPassedThroughCountEqualTo(1, WaitTimeout.Seconds(15));
+      await MyExactlyOnceTommandHandledByTheRemoteEndpointHandlerThreadGate.AwaitPassedThroughCountEqualToAsync(1, WaitTimeout.Seconds(15));
       //...while the tevent, whose subscription the returned advertisement renounced, is not delivered to an endpoint that no
       //longer subscribes.
-      MyRemoteTaggregateTeventHandlerThreadGate.TryAwaitPassedThroughCountEqualTo(1, WaitTimeout.Seconds(2)).Must().BeFalse();
+      (await MyRemoteTaggregateTeventHandlerThreadGate.TryAwaitPassedThroughCountEqualToAsync(1, WaitTimeout.Seconds(2))).Must().BeFalse();
    }
 
    [PCT] public async Task A_tommand_bound_to_a_down_handler_that_returns_no_longer_handling_its_type_is_not_delivered_to_it_while_its_kept_tevent_subscriptions_are()
@@ -53,9 +53,9 @@ public class Advertisement_shrink_tests : EndpointHostTestBase
       await StartHostWithTheRemoteEndpointReturningNoLongerHandlingItsTommandAsync();
 
       //The kept subscription's tevent delivers...
-      MyRemoteTaggregateTeventHandlerThreadGate.AwaitPassedThroughCountEqualTo(1, WaitTimeout.Seconds(15));
+      await MyRemoteTaggregateTeventHandlerThreadGate.AwaitPassedThroughCountEqualToAsync(1, WaitTimeout.Seconds(15));
       //...while the tommand, whose type the returned advertisement no longer handles, is stranded rather than delivered to an
       //endpoint that would fail it - were it delivered, the failed handling would surface when the host disposes.
-      MyExactlyOnceTommandHandledByTheRemoteEndpointHandlerThreadGate.TryAwaitPassedThroughCountEqualTo(1, WaitTimeout.Seconds(2)).Must().BeFalse();
+      (await MyExactlyOnceTommandHandledByTheRemoteEndpointHandlerThreadGate.TryAwaitPassedThroughCountEqualToAsync(1, WaitTimeout.Seconds(2))).Must().BeFalse();
    }
 }

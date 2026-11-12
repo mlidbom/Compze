@@ -56,7 +56,7 @@ public class Given_an_exactly_once_tommand_send_racing_discovery : UniversalTest
       await StartTheLateHandlerEndpointAsync();
 
       await sendTask;
-      _lateHandlerThreadGate.AwaitPassedThroughCountEqualTo(1, WaitTimeout.Seconds(15));
+      await _lateHandlerThreadGate.AwaitPassedThroughCountEqualToAsync(1, WaitTimeout.Seconds(15));
    }
 
    [PCT] public async Task A_send_while_several_remembered_peers_advertise_the_type_and_none_is_live_binds_to_the_one_that_connects_and_is_delivered()
@@ -76,7 +76,7 @@ public class Given_an_exactly_once_tommand_send_racing_discovery : UniversalTest
       await StartTheLateHandlerEndpointAsync();
 
       await sendTask;
-      _lateHandlerThreadGate.AwaitPassedThroughCountEqualTo(1, WaitTimeout.Seconds(15));
+      await _lateHandlerThreadGate.AwaitPassedThroughCountEqualToAsync(1, WaitTimeout.Seconds(15));
       _retiredPeerThreadGate.Passed.Must().Be(0);
    }
 
@@ -136,11 +136,7 @@ public class Given_an_exactly_once_tommand_send_racing_discovery : UniversalTest
       protected override void RegisterComponents(IComponentRegistrar registrar) => registrar.RequireIntegrationTestTypeMappings();
 
       protected override void RegisterExactlyOnceTommandHandlers(IExactlyOnceTommandHandlerRegistrar handle) => handle
-         .ForTommand((MyExactlyOnceTommandHandledOnlyByTheLateEndpoint _) =>
-          {
-             _handlerGate.AwaitPassThrough();
-             return Task.CompletedTask;
-          });
+         .ForTommand((MyExactlyOnceTommandHandledOnlyByTheLateEndpoint _) => _handlerGate.AwaitPassThroughAsync());
    }
 
    class RetiredPeerEndpointDeclaration : TommandHandlingEndpointDeclaration<RetiredPeerEndpointDeclaration>, IEndpointIdentity

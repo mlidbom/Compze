@@ -203,10 +203,10 @@ public partial class Given_a_container_composing_a_LocalTessagingEngine
                 _observerGate.AwaitPassThrough();
              })));
 
-      [PCT] public void publishing_one_tevent_reaches_the_observers_of_all_three_ForTevent_overloads_with_their_dependencies_resolved()
+      [PCT] public async Task publishing_one_tevent_reaches_the_observers_of_all_three_ForTevent_overloads_with_their_dependencies_resolved()
       {
          Container.ScopeFactory.ExecuteUnitOfWork(unitOfWork => unitOfWork.Resolve<IUnitOfWorkTeventPublisher>().Publish(new MySpecialGreetingRequestedTevent()));
-         _observerGate.AwaitPassedThroughCountEqualTo(3);
+         await _observerGate.AwaitPassedThroughCountEqualToAsync(3);
 
          _observingOverloads.Must().Contain("plain");
          _observingOverloads.Must().Contain("one dependency");

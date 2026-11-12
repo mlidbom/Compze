@@ -75,11 +75,7 @@ public class Given_an_exactly_once_tessaging_endpoint_declaring_no_discovery_reg
          ._mutate(it => it.Register(Scoped.For<ServiceResolvedIntoTheTommandHandler>().CreatedBy(() => new ServiceResolvedIntoTheTommandHandler())));
 
       protected override void RegisterExactlyOnceTommandHandlers(IExactlyOnceTommandHandlerRegistrar handle) => handle
-         .ForTommand((TommandTheEndpointSendsItself _) =>
-          {
-             _specification._inRosterTommandHandlerGate.AwaitPassThrough();
-             return Task.CompletedTask;
-          })
+         .ForTommand((TommandTheEndpointSendsItself _) => _specification._inRosterTommandHandlerGate.AwaitPassThroughAsync())
          .ForTommand((TommandWhoseHandlerResolvesADependency _, ServiceResolvedIntoTheTommandHandler resolved) =>
           {
              _specification._serviceResolvedIntoTheTommandHandler = resolved;

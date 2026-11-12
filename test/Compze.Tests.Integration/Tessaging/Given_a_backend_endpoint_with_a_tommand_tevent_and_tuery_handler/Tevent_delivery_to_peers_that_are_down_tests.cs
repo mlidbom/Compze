@@ -28,7 +28,7 @@ public class Tevent_delivery_to_peers_that_are_down_tests : EndpointHostTestBase
       await Host.DisposeAsyncWithoutWaitingForEndpointsToBeAtRest(); //The tevent is undelivered: awaiting rest would wait for Remote's return.
       await StartHostAsync();
 
-      MyRemoteTaggregateTeventHandlerThreadGate.AwaitPassedThroughCountEqualTo(1, WaitTimeout.Seconds(15));
+      await MyRemoteTaggregateTeventHandlerThreadGate.AwaitPassedThroughCountEqualToAsync(1, WaitTimeout.Seconds(15));
    }
 
    IPeerMemory BackendPeerMemory => BackendEndPoint.ServiceLocator.Resolve<IPeerMemory>();

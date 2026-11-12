@@ -29,7 +29,7 @@ public class Tommand_receiver_binding_tests : EndpointHostTestBase
       await Host.DisposeAsyncWithoutWaitingForEndpointsToBeAtRest(); //The tommand is undelivered: awaiting rest would wait for the handler's return.
       await StartHostAsync();
 
-      MyExactlyOnceTommandHandledByTheRemoteEndpointHandlerThreadGate.AwaitPassedThroughCountEqualTo(1, WaitTimeout.Seconds(15));
+      await MyExactlyOnceTommandHandledByTheRemoteEndpointHandlerThreadGate.AwaitPassedThroughCountEqualToAsync(1, WaitTimeout.Seconds(15));
    }
 
    [PCT] public async Task A_tommand_bound_to_its_known_receiver_waits_for_that_endpoint_and_never_delivers_to_a_successor_while_new_sends_follow_the_live_successor()
@@ -45,16 +45,16 @@ public class Tommand_receiver_binding_tests : EndpointHostTestBase
       await StartHostWithTheBackendEndpointAndASuccessorToTheRemoteEndpointAsync();
 
       //The bound tommand must not enter another endpoint's stream: the successor never receives it...
-      RemoteSuccessorTommandHandlerThreadGate.TryAwaitPassedThroughCountEqualTo(1, WaitTimeout.Seconds(2)).Must().BeFalse();
+      (await RemoteSuccessorTommandHandlerThreadGate.TryAwaitPassedThroughCountEqualToAsync(1, WaitTimeout.Seconds(2))).Must().BeFalse();
 
       //...while a NEW tommand binds to the live handler - the successor - and is delivered to it...
       await BackendEndPoint.ServiceLocator.Resolve<IIndependentTommandSender>().SendAsync(new MyExactlyOnceTommandHandledByTheRemoteEndpoint());
-      RemoteSuccessorTommandHandlerThreadGate.AwaitPassedThroughCountEqualTo(1, WaitTimeout.Seconds(15));
+      await RemoteSuccessorTommandHandlerThreadGate.AwaitPassedThroughCountEqualToAsync(1, WaitTimeout.Seconds(15));
 
       //...and the waiting tommand still reaches its own endpoint when it returns.
       await Host.DisposeAsyncWithoutWaitingForEndpointsToBeAtRest();
       await StartHostAsync();
-      MyExactlyOnceTommandHandledByTheRemoteEndpointHandlerThreadGate.AwaitPassedThroughCountEqualTo(1, WaitTimeout.Seconds(15));
+      await MyExactlyOnceTommandHandledByTheRemoteEndpointHandlerThreadGate.AwaitPassedThroughCountEqualToAsync(1, WaitTimeout.Seconds(15));
    }
 
    [PCT] public async Task Sending_a_tommand_while_multiple_remembered_peers_advertise_its_type_and_none_is_live_fails_after_patience_naming_the_type()

@@ -12,11 +12,11 @@ namespace Compze.Tests.Integration.Tessaging.Given_a_backend_endpoint_with_a_tom
 /// per-observer FIFO order, outside any transaction.</summary>
 public class Tevent_observation_tests : EndpointHostTestBase
 {
-   [PCT] public void Observer_on_the_publishing_endpoint_fires_when_a_tevent_is_published_locally()
+   [PCT] public async Task Observer_on_the_publishing_endpoint_fires_when_a_tevent_is_published_locally()
    {
-      Navigator.Post(MyCreateTaggregateTommand.Create());
+      await Navigator.PostAsync(MyCreateTaggregateTommand.Create());
 
-      MyTaggregateTeventBackendObserverThreadGate.AwaitPassedThroughCountEqualTo(1);
+      await MyTaggregateTeventBackendObserverThreadGate.AwaitPassedThroughCountEqualToAsync(1);
    }
 
    [PCT] public void Observer_on_the_publishing_endpoint_does_not_observe_tevents_published_in_a_transaction_that_rolls_back()
@@ -31,20 +31,20 @@ public class Tevent_observation_tests : EndpointHostTestBase
       MyTaggregateTeventBackendObserverThreadGate.Passed.Must().Be(0);
    }
 
-   [PCT] public void Observer_on_a_remote_endpoint_fires_when_the_exactly_once_tevent_arrives_even_while_its_transactional_handler_has_not_executed()
+   [PCT] public async Task Observer_on_a_remote_endpoint_fires_when_the_exactly_once_tevent_arrives_even_while_its_transactional_handler_has_not_executed()
    {
       MyRemoteTaggregateTeventHandlerThreadGate.Close();
 
-      Navigator.Post(MyCreateTaggregateTommand.Create());
+      await Navigator.PostAsync(MyCreateTaggregateTommand.Create());
 
-      MyTaggregateTeventRemoteObserverThreadGate.AwaitPassedThroughCountEqualTo(1);
+      await MyTaggregateTeventRemoteObserverThreadGate.AwaitPassedThroughCountEqualToAsync(1);
       MyRemoteTaggregateTeventHandlerThreadGate.Passed.Must().Be(0);
    }
 
-   [PCT] public void Observer_on_a_remote_endpoint_fires_when_a_best_effort_tevent_arrives()
+   [PCT] public async Task Observer_on_a_remote_endpoint_fires_when_a_best_effort_tevent_arrives()
    {
       PublishBestEffortTeventOnTheBackendInATransaction(sequenceNumber: 1);
 
-      MyBestEffortTeventRemoteObserverThreadGate.AwaitPassedThroughCountEqualTo(1);
+      await MyBestEffortTeventRemoteObserverThreadGate.AwaitPassedThroughCountEqualToAsync(1);
    }
 }

@@ -114,24 +114,24 @@ public class InterprocessObjectTests : UniversalTestBase
       var shared2 = CreateAndDeleteFileWhenTestCompletes(name);
       // ReSharper disable AccessToDisposedClosure
       var tasks = Task.WhenAll(
-         TaskCE.Run(() => shared1.Update(_ => { updateGate.AwaitPassThrough(); })),
-         TaskCE.Run(() => conflictingUpdateSectionSameInstance.Execute(() => shared1.Update(_ => {}))),
-         TaskCE.Run(() => conflictingGetCopySectionSameInstance.Execute(() => shared1.Read(_ => {}))),
-         TaskCE.Run(() => conflictingUpdateSectionOtherInstance.Execute(() => shared2.Update(_ => {}))),
-         TaskCE.Run(() => conflictingGetCopySectionOtherInstance.Execute(() => shared2.Read(_ => {}))));
+         TaskCE.RunOnDedicatedThread(() => shared1.Update(_ => { updateGate.AwaitPassThrough(); })),
+         TaskCE.RunOnDedicatedThread(() => conflictingUpdateSectionSameInstance.Execute(() => shared1.Update(_ => {}))),
+         TaskCE.RunOnDedicatedThread(() => conflictingGetCopySectionSameInstance.Execute(() => shared1.Read(_ => {}))),
+         TaskCE.RunOnDedicatedThread(() => conflictingUpdateSectionOtherInstance.Execute(() => shared2.Update(_ => {}))),
+         TaskCE.RunOnDedicatedThread(() => conflictingGetCopySectionOtherInstance.Execute(() => shared2.Read(_ => {}))));
 
-      updateGate.AwaitQueueLengthEqualTo(1);
-      conflictingSections.ForEach(section =>
+      await updateGate.AwaitQueueLengthEqualToAsync(1);
+      foreach(var section in conflictingSections)
       {
-         section.EntranceGate.AwaitQueueLengthEqualTo(1);
+         await section.EntranceGate.AwaitQueueLengthEqualToAsync(1);
          section.Open();
-      });
+      }
 
-      Thread.Sleep(50.Milliseconds());
+      await Task.Delay(50.Milliseconds());
 
       conflictingSections.ForEach(it => it.ExitGate.PassedThrough.Count.Must().Be(0));
       updateGate.Open();
-      conflictingSections.ForEach(it => it.ExitGate.AwaitPassedThroughCountEqualTo(1));
+      foreach(var section in conflictingSections) await section.ExitGate.AwaitPassedThroughCountEqualToAsync(1);
 
       await tasks;
       // ReSharper restore AccessToDisposedClosure

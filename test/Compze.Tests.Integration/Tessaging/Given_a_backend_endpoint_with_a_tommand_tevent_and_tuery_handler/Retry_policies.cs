@@ -20,11 +20,11 @@ public class Retry_policies_AtMostOnceTommand_when_tommand_handler_fails : Endpo
       await Task.CompletedTask;
    }
 
-   [PCT] public void ExactlyOnce_Tevent_raised_in_handler_does_not_reach_remote_handler()
+   [PCT] public async Task ExactlyOnce_Tevent_raised_in_handler_does_not_reach_remote_handler()
    {
-      MyRemoteTaggregateTeventHandlerThreadGate.TryAwaitPassedThroughCountEqualTo(count: 1, WaitTimeout.Seconds(1))
-                                             .Must()
-                                             .Be(expected: false);
+      (await MyRemoteTaggregateTeventHandlerThreadGate.TryAwaitPassedThroughCountEqualToAsync(count: 1, WaitTimeout.Seconds(1)))
+                                                    .Must()
+                                                    .Be(expected: false);
    }
 
    [PCT] public void Tommand_handler_is_tried_5_times() => MyCreateTaggregateTommandHandlerThreadGate.Passed.Must().Be(expected: 5);

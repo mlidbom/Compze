@@ -93,11 +93,11 @@ public class Given_two_best_effort_endpoints : UniversalTestBase
 
    protected override async Task DisposeAsyncInternal() => await _host.DisposeAsync().caf();
 
-   [PCT] public void a_best_effort_tevent_published_on_one_endpoint_is_handled_on_the_other()
+   [PCT] public async Task a_best_effort_tevent_published_on_one_endpoint_is_handled_on_the_other()
    {
       PublishOnThePublisherEndpointInATransaction(new MyBestEffortTevent { SequenceNumber = 1 });
 
-      _subscriberBestEffortTeventHandlerGate.AwaitPassedThroughCountEqualTo(1);
+      await _subscriberBestEffortTeventHandlerGate.AwaitPassedThroughCountEqualToAsync(1);
       _bestEffortTeventsHandledOnTheSubscriber.Single().SequenceNumber.Must().Be(1);
    }
 

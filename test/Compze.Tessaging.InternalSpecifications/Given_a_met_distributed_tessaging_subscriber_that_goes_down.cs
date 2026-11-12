@@ -11,7 +11,6 @@ using Compze.Internals.SystemCE.LinqCE;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Internals.SystemCE.TransactionsCE.Testing;
 using Compze.Internals.Testing;
-using Compze.Internals.Testing.Utilities.Awaiting;
 using Compze.Must;
 using Compze.Tessaging._private.Routing;
 using Compze.Tessaging.Endpoints;
@@ -123,7 +122,7 @@ public class Given_a_met_distributed_tessaging_subscriber_that_goes_down : Unive
       _subscriberHost = CreateSubscriberHost();
       await _subscriberHost.StartAsync();
 
-      _subscriberTeventHandlerGate.AwaitPassedThroughCountEqualTo(4);
+      await _subscriberTeventHandlerGate.AwaitPassedThroughCountEqualToAsync(4);
       _teventsHandledOnTheSubscriber.Select(it => it.SequenceNumber).SequenceEqual(1.Through(4)).Must().BeTrue();
    }
 
@@ -173,12 +172,12 @@ public class Given_a_met_distributed_tessaging_subscriber_that_goes_down : Unive
    /// delivery can be in flight at a failure moment; only then does the subscriber's host go away.</summary>
    async Task MeetTheSubscriberDeliveringTeventOneThenTakeItDownAsync()
    {
-      AwaitThePublisherConnectedToTheSubscriber();
+      await AwaitThePublisherConnectedToTheSubscriberAsync();
       PublishOnThePublisherEndpointInATransaction(sequenceNumber: 1);
-      _subscriberTeventHandlerGate.AwaitPassedThroughCountEqualTo(1);
+      await _subscriberTeventHandlerGate.AwaitPassedThroughCountEqualToAsync(1);
 
       _registry.RetractEndpointAddress(SubscriberEndpointDeclaration.Id);
-      AwaitThePublisherDisconnectedFromTheSubscriber();
+      await AwaitThePublisherDisconnectedFromTheSubscriberAsync();
       await _subscriberHost.DisposeAsync();
    }
 
@@ -188,11 +187,15 @@ public class Given_a_met_distributed_tessaging_subscriber_that_goes_down : Unive
 
    ///<summary>Queueing begins when the connection drops and draining when it returns, so each step waits for the connection to
    /// be in the state that step is about.</summary>
-   void AwaitThePublisherConnectedToTheSubscriber() =>
-      PublishersRouter.PollAwait(it => it.HasLiveConnectionTo(SubscriberEndpointDeclaration.Id));
+   async Task AwaitThePublisherConnectedToTheSubscriberAsync() =>
+      (await PublishersRouter.TryAwaitConnectionsOrPeerMemorySatisfyingAsync(() => PublishersRouter.HasLiveConnectionTo(SubscriberEndpointDeclaration.Id), PublishersRouterPatience))
+        .Must().Be(true, "the publisher's router connects to the subscriber");
 
-   void AwaitThePublisherDisconnectedFromTheSubscriber() =>
-      PublishersRouter.PollAwait(it => !it.HasLiveConnectionTo(SubscriberEndpointDeclaration.Id));
+   async Task AwaitThePublisherDisconnectedFromTheSubscriberAsync() =>
+      (await PublishersRouter.TryAwaitConnectionsOrPeerMemorySatisfyingAsync(() => !PublishersRouter.HasLiveConnectionTo(SubscriberEndpointDeclaration.Id), PublishersRouterPatience))
+        .Must().Be(true, "the publisher's router drops its connection to the subscriber");
+
+   static readonly WaitTimeout PublishersRouterPatience = WaitTimeout.Seconds(30);
 
    ITessagingRouter PublishersRouter => _publisherEndpoint.ServiceLocator.Resolve<ITessagingRouter>();
 }

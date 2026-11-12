@@ -18,20 +18,20 @@ public class Exactly_once_guarantee_tests : EndpointHostTestBase
    {
       await RemoteEndpoint.ServiceLocator.Resolve<IIndependentTommandSender>().SendAsync(new MyExactlyOnceTommand());
 
-      MyExactlyOnceTommandHandlerThreadGate.AwaitPassedThroughCountEqualTo(1);
-      MyExactlyOnceTommandHandlerThreadGate.TryAwaitPassedThroughCountEqualTo(2, WaitTimeout.Seconds(2))
-                              .Must()
-                              .Be(false, "handler should execute exactly once");
+      await MyExactlyOnceTommandHandlerThreadGate.AwaitPassedThroughCountEqualToAsync(1);
+      (await MyExactlyOnceTommandHandlerThreadGate.TryAwaitPassedThroughCountEqualToAsync(2, WaitTimeout.Seconds(2)))
+                                     .Must()
+                                     .Be(false, "handler should execute exactly once");
    }
 
-   [PCT] public void ExactlyOnceTevent_remote_handler_executes_exactly_once()
+   [PCT] public async Task ExactlyOnceTevent_remote_handler_executes_exactly_once()
    {
-      Navigator.Post(MyCreateTaggregateTommand.Create());
+      await Navigator.PostAsync(MyCreateTaggregateTommand.Create());
 
-      MyRemoteTaggregateTeventHandlerThreadGate.AwaitPassedThroughCountEqualTo(1);
-      MyRemoteTaggregateTeventHandlerThreadGate.TryAwaitPassedThroughCountEqualTo(2, WaitTimeout.Seconds(2))
-                                             .Must()
-                                             .Be(false, "remote tevent handler should execute exactly once");
+      await MyRemoteTaggregateTeventHandlerThreadGate.AwaitPassedThroughCountEqualToAsync(1);
+      (await MyRemoteTaggregateTeventHandlerThreadGate.TryAwaitPassedThroughCountEqualToAsync(2, WaitTimeout.Seconds(2)))
+                                                    .Must()
+                                                    .Be(false, "remote tevent handler should execute exactly once");
    }
 
    [PCT] public async Task ExactlyOnceTommand_handler_executes_exactly_once_even_when_handler_is_slow()
@@ -40,16 +40,16 @@ public class Exactly_once_guarantee_tests : EndpointHostTestBase
 
       await RemoteEndpoint.ServiceLocator.Resolve<IIndependentTommandSender>().SendAsync(new MyExactlyOnceTommand());
 
-      MyExactlyOnceTommandHandlerThreadGate.AwaitQueueLengthEqualTo(1);
+      await MyExactlyOnceTommandHandlerThreadGate.AwaitQueueLengthEqualToAsync(1);
 
       // Wait long enough for the retry poller to have fired multiple times (polling at 500ms, first backoff at 500ms)
-      Thread.Sleep(2.Seconds());
+      await Task.Delay(2.Seconds());
 
       MyExactlyOnceTommandHandlerThreadGate.Open();
-      MyExactlyOnceTommandHandlerThreadGate.AwaitPassedThroughCountEqualTo(1);
-      MyExactlyOnceTommandHandlerThreadGate.TryAwaitPassedThroughCountEqualTo(2, WaitTimeout.Seconds(2))
-                              .Must()
-                              .Be(false, "handler should execute exactly once even when slow");
+      await MyExactlyOnceTommandHandlerThreadGate.AwaitPassedThroughCountEqualToAsync(1);
+      (await MyExactlyOnceTommandHandlerThreadGate.TryAwaitPassedThroughCountEqualToAsync(2, WaitTimeout.Seconds(2)))
+                                     .Must()
+                                     .Be(false, "handler should execute exactly once even when slow");
    }
 
    [PCT] public async Task If_transaction_fails_after_successfully_Sending_ExactlyOnceTommand_tommand_never_reaches_tommand_handler()
@@ -61,12 +61,12 @@ public class Exactly_once_guarantee_tests : EndpointHostTestBase
                     }))
                    .Must().ThrowAsync<TransactionAbortedException>();
 
-      MyExactlyOnceTommandHandlerThreadGate.TryAwaitPassedThroughCountEqualTo(1, WaitTimeout.Seconds(1))
-                              .Must()
-                              .Be(false, "tommand should not reach handler");
+      (await MyExactlyOnceTommandHandlerThreadGate.TryAwaitPassedThroughCountEqualToAsync(1, WaitTimeout.Seconds(1)))
+                                     .Must()
+                                     .Be(false, "tommand should not reach handler");
    }
 
-   [PCT] public void If_transaction_fails_after_successfully_Publishing_ExactlyOnceTevent_tevent_never_reaches_remote_handler_but_does_reach_local_handler()
+   [PCT] public async Task If_transaction_fails_after_successfully_Publishing_ExactlyOnceTevent_tevent_never_reaches_remote_handler_but_does_reach_local_handler()
    {
       const string exceptionTessage = "82369B6E-80D4-4E64-92B6-A564A7195CC5";
       MyCreateTaggregateTommandHandlerThreadGate.FailTransactionOnPreparePostPassThrough(new Exception(exceptionTessage));
@@ -78,8 +78,8 @@ public class Exactly_once_guarantee_tests : EndpointHostTestBase
 
       MyLocalTaggregateTeventHandlerThreadGate.Passed.Must().BeGreaterThanOrEqualTo(1);
 
-      MyRemoteTaggregateTeventHandlerThreadGate.TryAwaitPassedThroughCountEqualTo(1, WaitTimeout.Seconds(1))
-                                             .Must()
-                                             .Be(false, "tevent should not reach handler");
+      (await MyRemoteTaggregateTeventHandlerThreadGate.TryAwaitPassedThroughCountEqualToAsync(1, WaitTimeout.Seconds(1)))
+                                                    .Must()
+                                                    .Be(false, "tevent should not reach handler");
    }
 }

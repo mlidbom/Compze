@@ -5,10 +5,10 @@ namespace Compze.Tests.Integration.Tessaging.Given_a_backend_endpoint_with_a_tom
 
 public class Publisher_conscious_subscription_tests : EndpointHostTestBase
 {
-   [PCT] public void Remote_subscriber_to_the_taggregates_wrapper_type_receives_the_wrapped_tevent_the_taggregate_published()
+   [PCT] public async Task Remote_subscriber_to_the_taggregates_wrapper_type_receives_the_wrapped_tevent_the_taggregate_published()
    {
-      Navigator.Post(MyCreateTaggregateTommand.Create());
+      await Navigator.PostAsync(MyCreateTaggregateTommand.Create());
 
-      MyRemotePublisherConsciousTeventHandlerThreadGate.AwaitPassedThroughCountEqualTo(1);
+      await MyRemotePublisherConsciousTeventHandlerThreadGate.AwaitPassedThroughCountEqualToAsync(1);
    }
 }

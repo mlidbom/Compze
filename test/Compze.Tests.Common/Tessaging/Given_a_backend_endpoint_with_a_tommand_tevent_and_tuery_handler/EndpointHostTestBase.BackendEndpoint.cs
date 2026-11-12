@@ -27,25 +27,13 @@ public abstract partial class EndpointHostTestBase
 
       protected override void RegisterComponents(IComponentRegistrar registrar) => registrar.RequireCommonTestTypeMappings();
 
-      //Exactly-once kinds are async end to end, so their handlers are declared async; the gates themselves are synchronous, so the bodies complete their tasks synchronously.
+      //Exactly-once kinds are async end to end, so their handlers pass their gates asynchronously, holding no thread while a gate keeps them waiting.
       protected override void RegisterExactlyOnceTommandHandlers(IExactlyOnceTommandHandlerRegistrar handle) => handle
-         .ForTommand((MyExactlyOnceTommand _) =>
-          {
-             _fixture.MyExactlyOnceTommandHandlerThreadGate.AwaitPassThrough();
-             return Task.CompletedTask;
-          });
+         .ForTommand((MyExactlyOnceTommand _) => _fixture.MyExactlyOnceTommandHandlerThreadGate.AwaitPassThroughAsync());
 
       protected override void RegisterExactlyOnceTeventHandlers(IExactlyOnceTeventHandlerRegistrar handle) => handle
-         .ForTevent((IMyExactlyOnceTevent _) =>
-          {
-             _fixture.TeventHandlerThreadGate.AwaitPassThrough();
-             return Task.CompletedTask;
-          })
-         .ForTevent((IMyTaggregateTevent _) =>
-          {
-             _fixture.MyLocalTaggregateTeventHandlerThreadGate.AwaitPassThrough();
-             return Task.CompletedTask;
-          });
+         .ForTevent((IMyExactlyOnceTevent _) => _fixture.TeventHandlerThreadGate.AwaitPassThroughAsync())
+         .ForTevent((IMyTaggregateTevent _) => _fixture.MyLocalTaggregateTeventHandlerThreadGate.AwaitPassThroughAsync());
 
       protected override void RegisterBestEffortTeventHandlers(IBestEffortTeventHandlerRegistrar handle) => handle
          .ForTevent((IMyBestEffortTevent _) => _fixture.MyBestEffortTeventLocalHandlerThreadGate.AwaitPassThrough());
@@ -67,10 +55,11 @@ public abstract partial class EndpointHostTestBase
              return new MyTommandResult();
           });
 
+      //Async, so that the specifications that keep tueries waiting at the closed gate hold no thread for each of them.
       protected override void RegisterTueryHandlers(ITueryHandlerRegistrar handle) => handle
-         .ForTuery((MyTuery _) =>
+         .ForTuery(async (MyTuery _, IScopeResolver _) =>
           {
-             _fixture.TueryHandlerThreadGate.AwaitPassThrough();
+             await _fixture.TueryHandlerThreadGate.AwaitPassThroughAsync();
              return new MyTueryResult();
           });
 

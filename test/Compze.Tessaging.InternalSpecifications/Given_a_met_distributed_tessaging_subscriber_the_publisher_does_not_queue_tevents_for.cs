@@ -9,13 +9,10 @@ using Compze.Internals.SystemCE.LinqCE;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Underscore;
 using Compze.Internals.Testing;
-using Compze.Internals.Testing.Utilities.Awaiting;
 using Compze.Must;
 using Compze.Tessaging._private.Routing;
 using Compze.Tessaging.Endpoints;
 using Compze.Tessaging.Endpoints.BestEffort;
-using Compze.Tessaging.Endpoints.ExactlyOnce;
-using Compze.Tessaging.Hosting.Testing.Wiring;
 using Compze.Tessaging.TessageBus;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
@@ -117,13 +114,13 @@ public class Given_a_met_distributed_tessaging_subscriber_the_publisher_does_not
 
    [PCT] public async Task tevents_published_while_the_subscriber_is_down_are_dropped_and_it_resumes_from_tevents_published_after_its_return()
    {
-      AwaitThePublisherConnectedToTheSubscriber();
+      await AwaitThePublisherConnectedToTheSubscriberAsync();
       PublishOnThePublisherEndpointInATransaction(sequenceNumber: 1);
-      _subscriberTeventHandlerGate.AwaitPassedThroughCountEqualTo(1);
+      await _subscriberTeventHandlerGate.AwaitPassedThroughCountEqualToAsync(1);
 
       //Down, cleanly: the subscriber leaves the registry while still serving, then its host goes away.
       _registry.RetractEndpointAddress(SubscriberEndpointDeclaration.Id);
-      AwaitThePublisherDisconnectedFromTheSubscriber();
+      await AwaitThePublisherDisconnectedFromTheSubscriberAsync();
       await _subscriberHost.DisposeAsync();
 
       //The opt-down: these are dropped - the publisher declared it keeps nothing for this peer.
@@ -131,11 +128,11 @@ public class Given_a_met_distributed_tessaging_subscriber_the_publisher_does_not
 
       _subscriberHost = CreateSubscriberHost();
       await _subscriberHost.StartAsync();
-      AwaitThePublisherConnectedToTheSubscriber();
+      await AwaitThePublisherConnectedToTheSubscriberAsync();
 
       PublishOnThePublisherEndpointInATransaction(sequenceNumber: 5);
 
-      _subscriberTeventHandlerGate.AwaitPassedThroughCountEqualTo(2);
+      await _subscriberTeventHandlerGate.AwaitPassedThroughCountEqualToAsync(2);
       _teventsHandledOnTheSubscriber.Select(it => it.SequenceNumber).SequenceEqual([1, 5]).Must().BeTrue();
    }
 
@@ -145,11 +142,15 @@ public class Given_a_met_distributed_tessaging_subscriber_the_publisher_does_not
 
    ///<summary>A tevent for a not-queued-for peer is delivered only while the connection is up, so every step of this specification
    /// begins by waiting for the connection to be in the state the step is about.</summary>
-   void AwaitThePublisherConnectedToTheSubscriber() =>
-      PublishersRouter.PollAwait(it => it.HasLiveConnectionTo(SubscriberEndpointDeclaration.Id));
+   async Task AwaitThePublisherConnectedToTheSubscriberAsync() =>
+      (await PublishersRouter.TryAwaitConnectionsOrPeerMemorySatisfyingAsync(() => PublishersRouter.HasLiveConnectionTo(SubscriberEndpointDeclaration.Id), PublishersRouterPatience))
+        .Must().Be(true, "the publisher's router connects to the subscriber");
 
-   void AwaitThePublisherDisconnectedFromTheSubscriber() =>
-      PublishersRouter.PollAwait(it => !it.HasLiveConnectionTo(SubscriberEndpointDeclaration.Id));
+   async Task AwaitThePublisherDisconnectedFromTheSubscriberAsync() =>
+      (await PublishersRouter.TryAwaitConnectionsOrPeerMemorySatisfyingAsync(() => !PublishersRouter.HasLiveConnectionTo(SubscriberEndpointDeclaration.Id), PublishersRouterPatience))
+        .Must().Be(true, "the publisher's router drops its connection to the subscriber");
+
+   static readonly WaitTimeout PublishersRouterPatience = WaitTimeout.Seconds(30);
 
    ITessagingRouter PublishersRouter => _publisherEndpoint.ServiceLocator.Resolve<ITessagingRouter>();
 }

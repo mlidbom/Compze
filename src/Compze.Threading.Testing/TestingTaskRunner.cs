@@ -4,7 +4,7 @@ namespace Compze.Threading.Testing;
 
 ///<summary>
 /// Runs and monitors the actors of a test: synchronous actions on dedicated threads, async functions on the thread pool.<br/>
-/// Throws <see cref="AggregateException"/> on dispose if any throw exceptions or do not complete within timeout. </summary>
+/// On dispose, rethrows the exception of the first actor that failed, or throws a <see cref="TimeoutException"/> if they don't all complete within the timeout.</summary>
 ///<remarks>A test's actors typically block, at a gate or in the code under test. A synchronous action that blocks on a thread-pool thread parks a thread<br/>
 /// the code under test may need to run on, so it gets a dedicated thread instead. An async function holds no thread while it awaits, so it runs on the thread pool.</remarks>
 public sealed class TestingTaskRunner(TimeSpan timeout) : IDisposable, IAsyncDisposable

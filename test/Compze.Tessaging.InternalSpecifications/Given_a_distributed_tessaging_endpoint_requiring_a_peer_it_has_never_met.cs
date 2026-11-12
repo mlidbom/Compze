@@ -99,7 +99,7 @@ public class Given_a_distributed_tessaging_endpoint_requiring_a_peer_it_has_neve
       _subscriberHost = CreateSubscriberHost();
       await _subscriberHost.StartAsync();
 
-      _subscriberTeventHandlerGate.AwaitPassedThroughCountEqualTo(3);
+      await _subscriberTeventHandlerGate.AwaitPassedThroughCountEqualToAsync(3);
       _teventsHandledOnTheSubscriber.Select(it => it.SequenceNumber).SequenceEqual(1.Through(3)).Must().BeTrue();
    }
 

@@ -150,8 +150,11 @@ public partial class Given_a_container_composing_a_LocalTessagingEngine : Univer
       readonly List<IMyGreetingRequestedTevent> _observedTevents = [];
       readonly IThreadGate _observerGate = IThreadGate.NewOpen(WaitTimeout.Seconds(10), nameof(_observerGate));
       readonly MySpecialGreetingRequestedTevent _publishedTevent = new();
-      readonly int _publishingThreadId;
-      int _observingThreadId;
+      bool _observedOnThePublishingThreadWhileItPublished;
+
+      ///<summary>True on the publishing thread for exactly as long as it publishes. Comparing thread ids instead would mistake the<br/>
+      /// thread pool reusing the publishing thread, once it is done publishing, for the observer running on it.</summary>
+      [ThreadStatic] static bool _isPublishingOnThisThread;
 
       public after_publishing_a_tevent_that_an_observer_observes()
       {
@@ -159,17 +162,25 @@ public partial class Given_a_container_composing_a_LocalTessagingEngine : Univer
             .ObserveTevents(observe => observe.ForTevent((IMyGreetingRequestedTevent tevent) =>
              {
                 _observedTevents.Add(tevent);
-                _observingThreadId = Environment.CurrentManagedThreadId;
+                _observedOnThePublishingThreadWhileItPublished = _isPublishingOnThisThread;
                 _observerGate.AwaitPassThrough();
              })));
 
-         _publishingThreadId = Environment.CurrentManagedThreadId;
-         Container.ScopeFactory.ExecuteUnitOfWork(unitOfWork => unitOfWork.Resolve<IUnitOfWorkTeventPublisher>().Publish(_publishedTevent));
-         _observerGate.AwaitPassedThroughCountEqualTo(1);
+         _isPublishingOnThisThread = true;
+         try
+         {
+            Container.ScopeFactory.ExecuteUnitOfWork(unitOfWork => unitOfWork.Resolve<IUnitOfWorkTeventPublisher>().Publish(_publishedTevent));
+         }
+         finally
+         {
+            _isPublishingOnThisThread = false;
+         }
       }
 
+      protected override async Task InitializeAsyncInternal() => await _observerGate.AwaitPassedThroughCountEqualToAsync(1);
+
       [PCT] public void the_observer_observes_the_committed_tevent() => _observedTevents.Single().Must().ReferenceEqual(_publishedTevent);
-      [PCT] public void the_observer_runs_off_the_publishing_thread() => _observingThreadId.Must().NotBe(_publishingThreadId);
+      [PCT] public void the_observer_runs_off_the_publishing_thread() => _observedOnThePublishingThreadWhileItPublished.Must().BeFalse();
    }
 
    public class after_publishing_five_numbered_tevents_in_five_consecutive_units_of_work : Given_a_container_composing_a_LocalTessagingEngine
@@ -191,9 +202,9 @@ public partial class Given_a_container_composing_a_LocalTessagingEngine : Univer
             var publishedTevent = new MyNumberedTevent(sequenceNumber);
             Container.ScopeFactory.ExecuteUnitOfWork(unitOfWork => unitOfWork.Resolve<IUnitOfWorkTeventPublisher>().Publish(publishedTevent));
          }
-
-         _observerGate.AwaitPassedThroughCountEqualTo(5);
       }
+
+      protected override async Task InitializeAsyncInternal() => await _observerGate.AwaitPassedThroughCountEqualToAsync(5);
 
       [PCT] public void the_observer_observes_them_in_publish_order_because_observation_dispatch_is_per_observer_FIFO() =>
          _observedSequenceNumbers.Must().SequenceEqual([1, 2, 3, 4, 5]);
@@ -219,8 +230,9 @@ public partial class Given_a_container_composing_a_LocalTessagingEngine : Univer
                 })));
 
          Container.ScopeFactory.ExecuteUnitOfWork(unitOfWork => unitOfWork.Resolve<IUnitOfWorkTeventPublisher>().Publish(_publishedTevent));
-         _secondObserverGate.AwaitPassedThroughCountEqualTo(1);
       }
+
+      protected override async Task InitializeAsyncInternal() => await _secondObserverGate.AwaitPassedThroughCountEqualToAsync(1);
 
       [PCT] public void the_publish_completes_and_the_subscriber_receives_the_tevent() => _receivedBySubscriber.Single().Must().ReferenceEqual(_publishedTevent);
       [PCT] public void the_second_observer_still_observes_the_tevent() => _observedBySecondObserver.Single().Must().ReferenceEqual(_publishedTevent);

@@ -2,6 +2,7 @@ using Compze.Tessaging.Endpoints;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Logging;
+using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Must;
 using Compze.Tessaging.TessageBus;
 using Compze.Tessaging.Endpoints.ExactlyOnce;
@@ -64,10 +65,10 @@ public class Tevent_observation_at_host_disposal_tests : UniversalTestBase
 
       PublishAnObservedTevent();
 
-      //The at-rest wait in DisposeAsync blocks the calling thread synchronously, so disposal runs on its own task while this
-      //thread scripts the observer through the gate.
-      var disposeTask = Task.Run(async () => await _host.DisposeAsync());
-      observerGate.TryAwait(it => it.Queued == 1).Must().BeTrue();
+      //The at-rest wait in DisposeAsync blocks the calling thread synchronously, so disposal runs on a dedicated thread while this
+      //specification scripts the observer through the gate, and blocks no thread-pool thread while it does.
+      var disposeTask = TaskCE.RunOnDedicatedThread(() => _host.DisposeAsync().AsTask()).Unwrap();
+      (await observerGate.TryAwaitAsync(it => it.Queued == 1)).Must().BeTrue();
 
       disposeTask.IsCompleted.Must().BeFalse();
 

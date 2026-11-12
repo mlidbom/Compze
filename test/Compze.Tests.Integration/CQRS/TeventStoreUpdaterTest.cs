@@ -35,7 +35,7 @@ public class TeventStoreUpdaterTest : UniversalTestBase
 {
    class TeventSpy
    {
-      public IEnumerable<IExactlyOnceTevent> DispatchedTessages => _tevents.ToList();
+      public IEnumerable<IExactlyOnceTevent> DispatchedTessages => [.._tevents];
       public void Receive(IExactlyOnceTevent tevent) => _tevents.Add(tevent);
       readonly List<IExactlyOnceTevent> _tevents = [];
    }
@@ -399,7 +399,7 @@ public class TeventStoreUpdaterTest : UniversalTestBase
 
    [PCT]
    [Skip<SqlLayer>([SqlLayer.Sqlite, SqlLayer.SqliteMemory], "We have not been able to get this to work with SQLite, and since it is testing concurrency behavior is it somewhat outside of SQLite aims anyway...")]
-   public void Concurrent_read_only_access_to_taggregate_history_can_occur_in_parallel()
+   public async Task Concurrent_read_only_access_to_taggregate_history_can_occur_in_parallel()
    {
       var user = new User();
       user.Register("email@email.se", "password", new TaggregateId());
@@ -407,11 +407,10 @@ public class TeventStoreUpdaterTest : UniversalTestBase
       UseInTransactionalScope(session => session.Save(user));
 
       var withinTransactionAfterReadGate = IThreadGate.NewClosed(WaitTimeout.Seconds(30));
-      using var runner = new TestingTaskRunner(30.Seconds());
-
+      await using var runner = new TestingTaskRunner(30.Seconds());
 
       runner.Run(ReadUserHistory, ReadUserHistory);
-      withinTransactionAfterReadGate.TryAwaitQueueLengthEqualTo(2).Must().BeTrue();
+      (await withinTransactionAfterReadGate.TryAwaitQueueLengthEqualToAsync(2)).Must().BeTrue();
       withinTransactionAfterReadGate.Open();
 
       return;
@@ -527,7 +526,7 @@ public class TeventStoreUpdaterTest : UniversalTestBase
    }
 
    [PCT]
-   public void Serializes_access_to_an_taggregate_so_that_concurrent_transactions_succeed_even_if_history_has_been_read_outside_of_modifying_transactions()
+   public async Task Serializes_access_to_an_taggregate_so_that_concurrent_transactions_succeed_even_if_history_has_been_read_outside_of_modifying_transactions()
    {
       var user = new User();
       user.Register("email@email.se", "password", new TaggregateId());
@@ -541,14 +540,14 @@ public class TeventStoreUpdaterTest : UniversalTestBase
       var changeEmailSection = IGatedCodeSection.NewClosed(WaitTimeout.Seconds(30), "changeEmailSection");
 
       const int threads = 2;
-      var tasks = 1.Through(threads).Select(_ => TaskCE.Run(UpdateEmail)).ToArray();
+      var tasks = 1.Through(threads).Select(_ => TaskCE.RunOnDedicatedThread(UpdateEmail)).ToArray();
 
-      getHistorySection.LetOneThreadPass();
-      changeEmailSection.LetOneThreadEnterAndReachExit();
+      await getHistorySection.LetOneThreadPassAsync();
+      await changeEmailSection.LetOneThreadEnterAndReachExitAsync();
       changeEmailSection.Open();
       getHistorySection.Open();
 
-      Task.WaitAll(tasks); //Sql duplicate key (TaggregateId, Version) Exception would be thrown here if history was not serialized
+      await Task.WhenAll(tasks); //Sql duplicate key (TaggregateId, Version) Exception would be thrown here if history was not serialized
 
       UseInScope(session =>
       {
@@ -577,7 +576,7 @@ public class TeventStoreUpdaterTest : UniversalTestBase
 
    [PCT]
    [Skip<SqlLayer>([SqlLayer.Sqlite, SqlLayer.SqliteMemory], "We have not been able to get this to work with SQLite, and since it is testing concurrency behavior is it somewhat outside of SQLite aims anyway...")]
-   public void Serializes_access_to_an_taggregate_so_that_concurrent_transactions_succeed()
+   public async Task Serializes_access_to_an_taggregate_so_that_concurrent_transactions_succeed()
    {
       var user = new User();
       user.Register("email@email.se", "password", new TaggregateId());
@@ -592,13 +591,13 @@ public class TeventStoreUpdaterTest : UniversalTestBase
 
       const int threads = 2;
 
-      var tasks = 1.Through(threads).Select(_ => TaskCE.Run(UpdateEmail)).ToArray();
+      var tasks = 1.Through(threads).Select(_ => TaskCE.RunOnDedicatedThread(UpdateEmail)).ToArray();
 
       changeEmailSection.EntranceGate.Open();
-      changeEmailSection.EntranceGate.AwaitPassedThroughCountEqualTo(2);
-      changeEmailSection.ExitGate.AwaitQueueLengthEqualTo(1);
+      await changeEmailSection.EntranceGate.AwaitPassedThroughCountEqualToAsync(2);
+      await changeEmailSection.ExitGate.AwaitQueueLengthEqualToAsync(1);
 
-      Thread.Sleep(100.Milliseconds());
+      await Task.Delay(100.Milliseconds());
 
       var bothTasksReadUserException = ExceptionCE.TryCatch(() => hasFetchedUser.Passed.Must().Be(1, "Only one thread should have been able to fetch the taggregate"));
 
@@ -606,7 +605,9 @@ public class TeventStoreUpdaterTest : UniversalTestBase
 
       changeEmailSection.Open();
 
-      var taskException = ExceptionCE.TryCatch(() => Task.WaitAll(tasks)) as AggregateException; //Sql duplicate key (TaggregateId, Version) Exception would be thrown here if history was not serialized. Or a deadlock will be thrown if the locking is not done correctly.
+      var allTasks = Task.WhenAll(tasks);
+      await allTasks.ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing);
+      var taskException = allTasks.Exception; //Sql duplicate key (TaggregateId, Version) Exception would be thrown here if history was not serialized. Or a deadlock will be thrown if the locking is not done correctly.
 
       if(bothTasksCompletedException != null || taskException != null || bothTasksReadUserException != null)
          throw new AggregateException(EnumerableCE.Create(bothTasksCompletedException).Append(bothTasksReadUserException).Concat(taskException?.InnerExceptions ?? new ReadOnlyCollection<Exception>([])).Where(it => it != null).Cast<Exception>());

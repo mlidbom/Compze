@@ -49,11 +49,7 @@ public class Given_a_domain_database_remembering_an_admitted_but_unhandled_inbox
       protected override void RegisterComponents(IComponentRegistrar registrar) => registrar.RequireTessagingInternalSpecificationTypeMappings();
 
       protected override void RegisterExactlyOnceTommandHandlers(IExactlyOnceTommandHandlerRegistrar handle) => handle
-         .ForTommand((MyExactlyOnceTommandAdmittedBeforeTheCrash _) =>
-          {
-             _specification._tommandHandlerThreadGate.AwaitPassThrough();
-             return Task.CompletedTask;
-          });
+         .ForTommand((MyExactlyOnceTommandAdmittedBeforeTheCrash _) => _specification._tommandHandlerThreadGate.AwaitPassThroughAsync());
    }
 
    //The crash is scripted through the inbox sql layer: the tessage is admitted exactly as an arriving
@@ -78,7 +74,7 @@ public class Given_a_domain_database_remembering_an_admitted_but_unhandled_inbox
    [PCT] public async Task the_endpoints_recovery_scan_runs_the_tessages_handler_on_start()
    {
       await _host.StartAsync();
-      _tommandHandlerThreadGate.AwaitPassedThroughCountEqualTo(1, WaitTimeout.Seconds(15));
+      await _tommandHandlerThreadGate.AwaitPassedThroughCountEqualToAsync(1, WaitTimeout.Seconds(15));
    }
 }
 

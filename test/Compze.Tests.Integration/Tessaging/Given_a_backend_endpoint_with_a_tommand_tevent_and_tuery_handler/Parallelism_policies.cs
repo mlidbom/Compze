@@ -17,7 +17,7 @@ public class Parallelism_policies : EndpointHostTestBase
       var tasks = Task.WhenAll(1.Through(5)
                                 .Select(_ => Navigator.GetAsync(new MyTuery())));
 
-      TueryHandlerThreadGate.AwaitQueueLengthEqualTo(5);
+      await TueryHandlerThreadGate.AwaitQueueLengthEqualToAsync(5);
       OpenGates();
       await tasks;
    }
@@ -25,21 +25,21 @@ public class Parallelism_policies : EndpointHostTestBase
    [PCT] public async Task Five_tuery_handlers_can_execute_in_parallel_when_using_Tuery()
    {
       TueryHandlerThreadGate.Close();
-      var tasks = 1.Through(5).Select(_ => TaskCE.Run(() => Navigator.Get(new MyTuery()))).ToList();
+      var tasks = 1.Through(5).Select(_ => TaskCE.RunOnDedicatedThread(() => Navigator.Get(new MyTuery()))).ToList();
 
-      TueryHandlerThreadGate.AwaitQueueLengthEqualTo(5);
+      await TueryHandlerThreadGate.AwaitQueueLengthEqualToAsync(5);
       TueryHandlerThreadGate.Open();
       await Task.WhenAll(tasks);
    }
 
-   [PCT] public void Two_tevent_handlers_cannot_execute_in_parallel()
+   [PCT] public async Task Two_tevent_handlers_cannot_execute_in_parallel()
    {
       MyRemoteTaggregateTeventHandlerThreadGate.Close();
-      Navigator.Post(MyCreateTaggregateTommand.Create());
-      Navigator.Post(MyCreateTaggregateTommand.Create());
+      await Navigator.PostAsync(MyCreateTaggregateTommand.Create());
+      await Navigator.PostAsync(MyCreateTaggregateTommand.Create());
 
-      MyRemoteTaggregateTeventHandlerThreadGate.AwaitQueueLengthEqualTo(1)
-                                             .TryAwaitQueueLengthEqualTo(2, WaitTimeout.Milliseconds(100)).Must().Be(false);
+      await MyRemoteTaggregateTeventHandlerThreadGate.AwaitQueueLengthEqualToAsync(1);
+      (await MyRemoteTaggregateTeventHandlerThreadGate.TryAwaitQueueLengthEqualToAsync(2, WaitTimeout.Milliseconds(100))).Must().Be(false);
    }
 
    [PCT] public async Task Two_exactly_once_tommand_handlers_cannot_execute_in_parallel()
@@ -49,7 +49,7 @@ public class Parallelism_policies : EndpointHostTestBase
       await RemoteEndpoint.ServiceLocator.Resolve<IIndependentTommandSender>().SendAsync(new MyExactlyOnceTommand());
       await RemoteEndpoint.ServiceLocator.Resolve<IIndependentTommandSender>().SendAsync(new MyExactlyOnceTommand());
 
-      MyExactlyOnceTommandHandlerThreadGate.AwaitQueueLengthEqualTo(1)
-                              .TryAwaitQueueLengthEqualTo(2, timeout: WaitTimeout.Milliseconds(100)).Must().Be(false);
+      await MyExactlyOnceTommandHandlerThreadGate.AwaitQueueLengthEqualToAsync(1);
+      (await MyExactlyOnceTommandHandlerThreadGate.TryAwaitQueueLengthEqualToAsync(2, timeout: WaitTimeout.Milliseconds(100))).Must().Be(false);
    }
 }

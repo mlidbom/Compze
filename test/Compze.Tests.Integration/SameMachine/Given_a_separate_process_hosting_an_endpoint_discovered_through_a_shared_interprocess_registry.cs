@@ -86,11 +86,7 @@ public class Given_a_separate_process_hosting_an_endpoint_discovered_through_a_s
       protected override void RegisterComponents(IComponentRegistrar registrar) => registrar.RequireMappedTypesFromAssemblyContaining<TommandSentToTheEndpointHostProcess>();
 
       protected override void RegisterExactlyOnceTommandHandlers(IExactlyOnceTommandHandlerRegistrar handle) => handle
-         .ForTommand((TommandSentBackToTheSpecificationProcess _) =>
-          {
-             _specification._replyTommandGate.AwaitPassThrough();
-             return Task.CompletedTask;
-          });
+         .ForTommand((TommandSentBackToTheSpecificationProcess _) => _specification._replyTommandGate.AwaitPassThroughAsync());
    }
 
    protected override async Task InitializeAsyncInternal()
@@ -147,7 +143,7 @@ public class Given_a_separate_process_hosting_an_endpoint_discovered_through_a_s
 
       try
       {
-         _replyTommandGate.AwaitPassedThroughCountEqualTo(1, WaitTimeout.Seconds(30));
+         await _replyTommandGate.AwaitPassedThroughCountEqualToAsync(1, WaitTimeout.Seconds(30));
       }
       catch(Exception replyNeverArrived)
       {
