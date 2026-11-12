@@ -76,6 +76,8 @@ partial class Inbox
          {
             this.Log().Info("Stopping");
             _stopping.Cancel();
+            //performance: joins the dispatch thread synchronously, for up to 5 seconds, on whatever thread disposes the container.
+            //   An async disposal could await it, as the router now awaits the connections' send loops (TessagingConnection.AwaitDeliveryStoppedAsync).
             _awaitDispatchableTessageLoop.WaitAsync(5.Seconds()).WaitUnwrappingException();
             _awaitDispatchableTessageLoop = null;
             this.Log().Info("Stopped");
