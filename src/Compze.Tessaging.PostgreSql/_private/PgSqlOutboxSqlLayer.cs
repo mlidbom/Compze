@@ -55,9 +55,8 @@ partial class PgSqlOutboxSqlLayer(IPgSqlConnectionPool connectionFactory, PgSqlS
                             .AddParameter($"{DispatchingTable.EndpointId}_{index}", endpointId.Value)
                             .AddParameter($"{DispatchingTable.DeliveryStreamSequenceNumber}_{index}", assignedSequenceNumbers[endpointId]));
 
-            return await command
-              .PrepareStatement() //Even though the count above will differ it will probably not have too many variations for preparing the statement to be quite beneficial.
-              .ExecuteNonQueryAsync().caf();
+            //Even though the count above will differ it will probably not have too many variations for preparing the statement to be quite beneficial.
+            return await command.ExecutePreparedNonQueryAsync().caf();
          }).caf();
       return assignedSequenceNumbers;
    }
@@ -84,8 +83,7 @@ partial class PgSqlOutboxSqlLayer(IPgSqlConnectionPool connectionFactory, PgSqlS
 
                            """)
                       .AddParameter(CounterTable.EndpointId, endpointId.Value)
-                      .PrepareStatement()
-                      .ExecuteScalarAsync().caf())!).caf();
+                      .ExecutePreparedScalarAsync().caf())!).caf();
       }
       return assigned;
    }
@@ -105,8 +103,7 @@ partial class PgSqlOutboxSqlLayer(IPgSqlConnectionPool connectionFactory, PgSqlS
                         """)
                    .AddParameter(DispatchingTable.EndpointId, receiverId.Value)
                    .AddParameter(DispatchingTable.DeliveryStreamSequenceNumber, sequenceNumber)
-                   .PrepareStatement()
-                   .ExecuteScalarAsync().caf())!).caf();
+                   .ExecutePreparedScalarAsync().caf())!).caf();
 
    public async Task<ITessagingSqlLayer.MarkAsReceivedResult> MarkAsReceivedAsync(TessageId tessageId, EndpointId endpointId)
    {
@@ -124,8 +121,7 @@ partial class PgSqlOutboxSqlLayer(IPgSqlConnectionPool connectionFactory, PgSqlS
                         """)
                    .AddParameter(DispatchingTable.TessageId, tessageId.Value)
                    .AddParameter(DispatchingTable.EndpointId, endpointId.Value)
-                   .PrepareStatement()
-                   .ExecuteNonQueryAsync().caf()).caf();
+                   .ExecutePreparedNonQueryAsync().caf()).caf();
 
       return affectedRows == 1
                 ? ITessagingSqlLayer.MarkAsReceivedResult.Initial
@@ -151,8 +147,7 @@ partial class PgSqlOutboxSqlLayer(IPgSqlConnectionPool connectionFactory, PgSqlS
                    .AddParameter(DispatchingTable.EndpointId, endpointId.Value)
                    .AddTimestampWithTimeZone(DispatchingTable.LastAttemptTime, DateTime.UtcNow)
                    .AddMediumTextParameter(DispatchingTable.FailureReason, failureReason)
-                   .PrepareStatement()
-                   .ExecuteNonQueryAsync().caf()).caf();
+                   .ExecutePreparedNonQueryAsync().caf()).caf();
    }
 
    public async Task<IReadOnlyList<ITessagingSqlLayer.UndeliveredTessage>> GetUndeliveredTessagesForEndpointAsync(EndpointId endpointId)
@@ -180,10 +175,9 @@ partial class PgSqlOutboxSqlLayer(IPgSqlConnectionPool connectionFactory, PgSqlS
                     ORDER BY d.{DispatchingTable.DeliveryStreamSequenceNumber}; -- The pair's stream order, which is commit order: recovery re-establishes in-order delivery.
 
                     """)
-               .AddParameter("endpointId", endpointId.Value)
-               .PrepareStatement();
+               .AddParameter("endpointId", endpointId.Value);
 
-            var reader = await command.ExecuteReaderAsync().caf();
+            var reader = await command.ExecutePreparedReaderAsync().caf();
             await using var _ = reader.caf();
             while(await reader.ReadAsync().caf())
             {

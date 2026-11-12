@@ -4,6 +4,10 @@ All notable changes to Compze.Internals.SystemCE will be documented in this file
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## 0.6.0-internal
+
+- **`TaskCE.RunOnDedicatedThread`: blocking work an async caller awaits runs on a thread of its own.** For a wait on a synchronization primitive with no async form, which `TaskCE.Run` would park on a thread-pool thread. The pool keeps about one thread per processor and adds more slowly, so each parked pool thread leaves one fewer for every async continuation in the process; a few parked at once, and continuations wait seconds for a thread.
+
 ## 0.5.0-internal
 
 - `LazyCE`: a factory that reads the value it is creating, directly or through another `LazyCE`, makes the read throw an `InvalidOperationException`, as `Lazy<T>` does. The lock lets the thread holding it enter again, so the factory ran again and again until the stack overflowed, which ends the process. Reading the value for the first time while holding a lock on the instance from outside, which the documentation forbids, throws the same exception.

@@ -102,12 +102,16 @@ class TessagingRouter : ITessagingRouter, IDisposable
    ///<remarks>The reconcile pass runs as an awaited continuation, never a thread blocked on it. A pass records peer advertisements<br/>
    /// (<see cref="IPeerRegistry"/>) inside a <see cref="System.Transactions.TransactionScope"/>; blocking a thread on that async<br/>
    /// work — the previous <c>WaitUnwrappingException</c> — stranded the ambient transaction, so its connection held its locks until<br/>
-   /// the transaction timeout. Only the registry wait blocks, offloaded off the loop so it never blocks the pass's continuations.</remarks>
+   /// the transaction timeout. Only the registry wait blocks, and it blocks on a dedicated thread: the loop waits in it for up to<br/>
+   /// <see cref="ReconcileLivenessInterval"/> on every pass, for the endpoint's whole life, so on a thread-pool thread it would hold<br/>
+   /// one of the pool's few threads (about one per processor) almost permanently, per endpoint. A few endpoints in one process on<br/>
+   /// a small machine then left no pool thread free for anything else, and every async continuation in the process waited seconds<br/>
+   /// for one: found 2026-11-12 as a peer advertisement recording that timed out on a 4-processor CI runner.</remarks>
    async Task ReconcileLoopAsync()
    {
       while(!_reconcileLoopCancellation.IsCancellationRequested)
       {
-         await TaskCE.Run(() => _endpointRegistry!.AwaitPossibleMembershipChange(ReconcileLivenessInterval, _reconcileLoopCancellation.Token)).caf();
+         await TaskCE.RunOnDedicatedThread(() => _endpointRegistry!.AwaitPossibleMembershipChange(ReconcileLivenessInterval, _reconcileLoopCancellation.Token)).caf();
          if(_reconcileLoopCancellation.IsCancellationRequested) return;
 
          try

@@ -1,0 +1,34 @@
+name: Analyze dumps
+description: Prints what every process dump under a folder shows - thread pool, threads, each thread's stack, each pending await.
+
+# A dump is evidence only once read, and downloading a several-hundred-megabyte artifact to read it is a round trip most
+# failures never get. This reads each dump on the runner that wrote it and prints the result into the job log:
+# - threadpool and clrthreads: whether the process was starved of threads, and what each managed thread is.
+# - dumpasync: every async operation still pending, as chains of awaits - for an awaited operation that never completed, the
+#   await it is suspended at, which no thread's stack shows.
+# - clrstack -all: every managed thread's stack - for a thread blocked synchronously, where it blocks.
+# It covers both kinds of dumps tests leave in the results folder: the hang dumps vstest's --blame-hang writes, and the dumps a
+# test writes when one of its own timeouts runs out (Compze.Tests.Infrastructure's TestProcessDump).
+
+inputs:
+  directory:
+    description: The folder to look for dumps in, recursively.
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Analyze dumps
+      shell: bash
+      run: |
+        dumps=$(find "${{ inputs.directory }}" -name '*.dmp' 2>/dev/null)
+        if [ -z "$dumps" ]; then
+          echo "No dumps under ${{ inputs.directory }}."
+          exit 0
+        fi
+        # Installed into a folder of its own and run from there, so it works whether or not the runner's PATH holds global tools.
+        dotnet tool install dotnet-dump --version 10.0.750501 --tool-path "$RUNNER_TEMP/dotnet-dump"
+        for dump in $dumps; do
+          echo "===================== $dump ====================="
+          "$RUNNER_TEMP/dotnet-dump/dotnet-dump" analyze "$dump" -c "threadpool" -c "clrthreads" -c "dumpasync" -c "clrstack -all" -c "exit"
+        done

@@ -22,3 +22,22 @@ is strangling itself, because the pool injects threads that slowly once its mini
 never block a pool thread. The 2026-07 case: Windows' named-pipe connect is synchronous under the hood and ran
 per-send; fixed by the transport's connection pooling. Reproduce such cases locally with
 `DOTNET_PROCESSOR_COUNT=4` — small-machine starvation is invisible on a many-core dev box.
+
+That local reproduction can fail where CI's succeeds: the 2026-11-12 case reproduced in none of ~200 local runs,
+`DOTNET_PROCESSOR_COUNT=1` included, and in 11% of Linux CI runs. When a flake won't reproduce locally, hunt it in CI
+rather than theorise further:
+
+- **The flake-hunt workflow** (`.github/workflows/flake-hunt.yml`): push a branch named `flake-hunt/<what>` with the
+  workflow's combination and test project set, and one push runs that project 20 times on each of 8 Linux runners,
+  each run from a fresh runner's state. `ci.yml` skips such branches.
+- **Make a test's own timeout leave a dump:** `WaitAsyncDumpingTheProcessOnTimeout` (Compze.Tests.Infrastructure)
+  dumps the process while the awaited work is still stuck, and names the thread pool's state in the exception.
+- **Read the dumps in the job log,** not the artifact: on failure CI prints each dump's thread pool, threads,
+  pending awaits (`dumpasync` — where a stuck async operation is suspended) and stacks. Pool workers all parked
+  in blocking waits, work items queued and the CPU idle is starvation; the parked frames name the culprits.
+- **PostgreSQL logs lock waits and statements over a second** in CI; its container log is printed when the job
+  ends. A timeout with nothing logged there was not waiting in the database.
+
+The 2026-11-12 case: an endpoint's router parked a pool thread in its registry wait for the endpoint's whole life,
+and the PostgreSQL sql layers prepared statements synchronously from async code; on a 4-processor runner the
+pool's 4–5 threads were all parked and a recording hung in a synchronous socket read for over 10 seconds.
