@@ -10,6 +10,10 @@ namespace Compze.Tessaging.TessageBus;
 public interface ITeventObservationRegistrar
 {
    ///<summary>Registers an observer for tevents compatible with <typeparamref name="TTevent"/>. The observer receives a plain<br/>
-   /// <see cref="IScopeResolver"/>, never a unit of work: its invocation is a fresh scope with no transaction.</summary>
+   /// <see cref="IScopeResolver"/>, never a unit of work: its invocation is a fresh scope with no transaction. While it awaits,<br/>
+   /// its queue holds no thread, and takes the observer's next tevent only once the returned task completes.</summary>
+   ITeventObservationRegistrar ForTevent<TTevent>(Func<TTevent, IScopeResolver, Task> observer) where TTevent : ITevent;
+
+   ///<summary>The synchronous form of <see cref="ForTevent{TTevent}(Func{TTevent,IScopeResolver,Task})"/>.</summary>
    ITeventObservationRegistrar ForTevent<TTevent>(Action<TTevent, IScopeResolver> observer) where TTevent : ITevent;
 }

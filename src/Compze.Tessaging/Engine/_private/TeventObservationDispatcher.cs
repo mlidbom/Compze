@@ -126,17 +126,19 @@ sealed class TeventObservationDispatcher : IDisposable, IAsyncDisposable
       {
          if(ExecutionContext.IsFlowSuppressed())
          {
-            _taskRunner.Run(PumpTaskName, PumpUntilEmpty);
+            _taskRunner.Run(PumpTaskName, PumpUntilEmptyAsync);
             return;
          }
 
          using(ExecutionContext.SuppressFlow())
-            _taskRunner.Run(PumpTaskName, PumpUntilEmpty);
+            _taskRunner.Run(PumpTaskName, PumpUntilEmptyAsync);
       }
 
       const string PumpTaskName = "Tevent observation dispatch";
 
-      void PumpUntilEmpty()
+      ///<summary>Dispatches the queue's tevents to the observer one at a time, in order: each observation is awaited before the<br/>
+      /// next is taken, so the queue holds no thread while an async observer awaits, and stays FIFO.</summary>
+      async Task PumpUntilEmptyAsync()
       {
          State.Assert(Transaction.Current == null,
                       () => $"The observation dispatch pump runs context-free — it is started with {nameof(ExecutionContext)} flow suppressed — yet an ambient transaction is present. An observer must never enlist in any caller's transaction.");
@@ -150,21 +152,18 @@ sealed class TeventObservationDispatcher : IDisposable, IAsyncDisposable
             });
             if(nextTevent == null) return;
 
-            DispatchToTheObserver(nextTevent);
+            await DispatchToTheObserverAsync(nextTevent).caf();
             _tessagesInFlightTracker.TeventObservationDispatched(nextTevent.GetType());
          }
       }
 
-      void DispatchToTheObserver(IPublisherTevent<ITevent> wrappedTevent)
+      async Task DispatchToTheObserverAsync(IPublisherTevent<ITevent> wrappedTevent)
       {
          try
          {
-            //review: an observer can only be synchronous, since ITeventObservationRegistrar takes an Action, so an observer that waits,
-            //   on I/O or on a test's gate, holds the thread this pump runs on for as long as it waits. Should observers get an async form,
-            //   as tessage handlers have?
             //A fresh scope per invocation: an observer's resolutions belong to no caller's session, and on the context-free pump
             //there is no transaction for them to join.
-            _scopeFactory.ExecuteInIsolatedScope(scope => _observer.Observe(wrappedTevent, scope));
+            await _scopeFactory.ExecuteInIsolatedScopeAsync(scope => _observer.ObserveAsync(wrappedTevent, scope)).caf();
          }
 #pragma warning disable CA1031 //A throwing observer is reported, never retried - and must never stop its queue from dispatching the remaining observations.
          catch(Exception exception)

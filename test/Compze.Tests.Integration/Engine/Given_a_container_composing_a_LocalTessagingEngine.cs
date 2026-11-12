@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using System.Transactions;
 using Compze.Contracts;
 using Compze.DependencyInjection;
@@ -207,6 +208,36 @@ public partial class Given_a_container_composing_a_LocalTessagingEngine : Univer
       protected override async Task InitializeAsyncInternal() => await _observerGate.AwaitPassedThroughCountEqualToAsync(5);
 
       [PCT] public void the_observer_observes_them_in_publish_order_because_observation_dispatch_is_per_observer_FIFO() =>
+         _observedSequenceNumbers.Must().SequenceEqual([1, 2, 3, 4, 5]);
+   }
+
+   public class after_publishing_five_numbered_tevents_to_an_async_observer_that_awaits_longer_the_earlier_the_tevent : Given_a_container_composing_a_LocalTessagingEngine
+   {
+      readonly ConcurrentQueue<int> _observedSequenceNumbers = [];
+      readonly IThreadGate _observerGate = IThreadGate.NewOpen(WaitTimeout.Seconds(10), nameof(_observerGate));
+
+      public after_publishing_five_numbered_tevents_to_an_async_observer_that_awaits_longer_the_earlier_the_tevent()
+      {
+         //The earlier the tevent, the longer the observer awaits before recording it, so observations that ran side by side
+         //would record the tevents in reverse.
+         ComposeContainerWithEngine(engine => engine
+            .ObserveTevents(observe => observe.ForTevent(async (IMyNumberedTevent tevent) =>
+             {
+                await Task.Delay(TimeSpan.FromMilliseconds((6 - tevent.SequenceNumber) * 20));
+                _observedSequenceNumbers.Enqueue(tevent.SequenceNumber);
+                await _observerGate.AwaitPassThroughAsync();
+             })));
+
+         for(var sequenceNumber = 1; sequenceNumber <= 5; sequenceNumber++)
+         {
+            var publishedTevent = new MyNumberedTevent(sequenceNumber);
+            Container.ScopeFactory.ExecuteUnitOfWork(unitOfWork => unitOfWork.Resolve<IUnitOfWorkTeventPublisher>().Publish(publishedTevent));
+         }
+      }
+
+      protected override async Task InitializeAsyncInternal() => await _observerGate.AwaitPassedThroughCountEqualToAsync(5);
+
+      [PCT] public void the_observer_observes_them_in_publish_order_because_its_queue_awaits_each_observation_before_taking_the_next() =>
          _observedSequenceNumbers.Must().SequenceEqual([1, 2, 3, 4, 5]);
    }
 

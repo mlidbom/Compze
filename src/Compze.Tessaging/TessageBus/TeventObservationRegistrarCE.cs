@@ -13,13 +13,25 @@ public static class TeventObservationRegistrarCE
       public TeventObservationRegistrar ForTevent<TTevent>(Action<TTevent> observer) where TTevent : ITevent
          => @this.ForTevent<TTevent>((tevent, _) => observer(tevent));
 
+      public TeventObservationRegistrar ForTevent<TTevent>(Func<TTevent, Task> observer) where TTevent : ITevent
+         => @this.ForTevent<TTevent>((tevent, _) => observer(tevent));
+
       public TeventObservationRegistrar ForTevent<TTevent, TDependency1>(Action<TTevent, TDependency1> observer) where TTevent : ITevent
                                                                                                                  where TDependency1 : class
+         => @this.ForTevent<TTevent>((tevent, scope) => observer(tevent, scope.Resolve<TDependency1>()));
+
+      public TeventObservationRegistrar ForTevent<TTevent, TDependency1>(Func<TTevent, TDependency1, Task> observer) where TTevent : ITevent
+                                                                                                                     where TDependency1 : class
          => @this.ForTevent<TTevent>((tevent, scope) => observer(tevent, scope.Resolve<TDependency1>()));
 
       public TeventObservationRegistrar ForTevent<TTevent, TDependency1, TDependency2>(Action<TTevent, TDependency1, TDependency2> observer) where TTevent : ITevent
                                                                                                                                              where TDependency1 : class
                                                                                                                                              where TDependency2 : class
+         => @this.ForTevent<TTevent>((tevent, scope) => observer(tevent, scope.Resolve<TDependency1>(), scope.Resolve<TDependency2>()));
+
+      public TeventObservationRegistrar ForTevent<TTevent, TDependency1, TDependency2>(Func<TTevent, TDependency1, TDependency2, Task> observer) where TTevent : ITevent
+                                                                                                                                                 where TDependency1 : class
+                                                                                                                                                 where TDependency2 : class
          => @this.ForTevent<TTevent>((tevent, scope) => observer(tevent, scope.Resolve<TDependency1>(), scope.Resolve<TDependency2>()));
    }
 }

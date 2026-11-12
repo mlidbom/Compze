@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 - **An endpoint's stop drains its inbox without holding a thread.** The drain waited, for up to 30 seconds, for every received tessage to be handled, blocking a thread-pool thread at every endpoint stop. It now awaits the inbox's async condition wait.
 - **Disposing an endpoint's inbox awaits its dispatch thread's end** instead of joining it for up to 5 seconds on the thread that disposes the container.
+- **Tevent observers can be async.** `ITeventObservationRegistrar` gains `ForTevent<TTevent>(Func<TTevent, IScopeResolver, Task>)` beside the synchronous form, and async versions of the convenience overloads: `Func<TTevent, Task>` and `Func<TTevent, TDependency1, Task>`, plus the two-dependency form on `TeventObservationRegistrar`, as the handler registrars have. While an async observer awaits, its queue holds no thread, and takes its next tevent only once the observer's task completes, so each observer still sees its tevents one at a time, in order. Until now an observer could only be synchronous, so one that waited, on I/O for instance, held the thread its queue ran on for as long as it waited. Breaking only for code that implements `ITeventObservationRegistrar` itself.
 
 ## 0.6.4-alpha
 

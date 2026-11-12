@@ -54,12 +54,12 @@ sealed class TessageHandlerRegistrations
    /// <see cref="TeventObservationDispatcher"/>, never by the transactional pipelines. The same registration translation as<br/>
    /// <see cref="AddTeventHandler{TTevent}"/> applies, and the subscribed type joins the advertised set exactly as a<br/>
    /// participation subscription does: an observation-only subscription must still pull the tevent across the wire.</summary>
-   internal void AddTeventObserver<TTevent>(Action<TTevent, IScopeResolver> observer) where TTevent : ITevent => _monitor.Locked(() =>
+   internal void AddTeventObserver<TTevent>(Func<TTevent, IScopeResolver, Task> observer) where TTevent : ITevent => _monitor.Locked(() =>
    {
       AssertRosterIsNotYetBuilt();
       TessageInspector.AssertValidForSubscription<TTevent>();
 
-      Action<ITevent, IScopeResolver> deliver = typeof(TTevent).Is<IPublisherTevent<ITevent>>()
+      Func<ITevent, IScopeResolver, Task> deliver = typeof(TTevent).Is<IPublisherTevent<ITevent>>()
                                                    ? (wrappedTevent, scope) => observer((TTevent)wrappedTevent, scope)
                                                    : (wrappedTevent, scope) => observer((TTevent)((IPublisherTevent<ITevent>)wrappedTevent).Tevent, scope);
 

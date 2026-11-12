@@ -216,6 +216,59 @@ public partial class Given_a_container_composing_a_LocalTessagingEngine
          _dependenciesResolvedIntoObservers.Select(it => it.GetType()).Must().Contain(typeof(ThirdServiceResolvedIntoHandlers));
       }
    }
+
+   public class with_async_tevent_observers_declared_through_every_registration_overload : Given_a_container_composing_a_LocalTessagingEngine
+   {
+      readonly ConcurrentBag<string> _observingOverloads = [];
+      readonly ConcurrentBag<object> _dependenciesResolvedIntoObservers = [];
+      readonly IThreadGate _observerGate = IThreadGate.NewOpen(WaitTimeout.Seconds(10), nameof(_observerGate));
+
+      public with_async_tevent_observers_declared_through_every_registration_overload() =>
+         ComposeContainerWithEngine(RegisterServicesResolvedIntoHandlers, engine => engine.ObserveTevents(observe => observe
+            .ForTevent(async (IMyGreetingRequestedTevent _) =>
+             {
+                await Task.Yield();
+                _observingOverloads.Add("plain");
+                await _observerGate.AwaitPassThroughAsync();
+             })
+            .ForTevent(async (IMyGreetingRequestedTevent _, FirstServiceResolvedIntoHandlers resolved) =>
+             {
+                await Task.Yield();
+                _observingOverloads.Add("one dependency");
+                _dependenciesResolvedIntoObservers.Add(resolved);
+                await _observerGate.AwaitPassThroughAsync();
+             })
+            .ForTevent(async (IMyGreetingRequestedTevent _, SecondServiceResolvedIntoHandlers second, ThirdServiceResolvedIntoHandlers third) =>
+             {
+                await Task.Yield();
+                _observingOverloads.Add("two dependencies");
+                _dependenciesResolvedIntoObservers.Add(second);
+                _dependenciesResolvedIntoObservers.Add(third);
+                await _observerGate.AwaitPassThroughAsync();
+             })
+            .ForTevent(async (IMyGreetingRequestedTevent _, IScopeResolver scope) =>
+             {
+                await Task.Yield();
+                _observingOverloads.Add("scope");
+                _dependenciesResolvedIntoObservers.Add(scope.Resolve<FourthServiceResolvedIntoHandlers>());
+                await _observerGate.AwaitPassThroughAsync();
+             })));
+
+      [PCT] public async Task publishing_one_tevent_reaches_the_async_observers_of_all_four_ForTevent_overloads_with_their_dependencies_resolved()
+      {
+         Container.ScopeFactory.ExecuteUnitOfWork(unitOfWork => unitOfWork.Resolve<IUnitOfWorkTeventPublisher>().Publish(new MySpecialGreetingRequestedTevent()));
+         await _observerGate.AwaitPassedThroughCountEqualToAsync(4);
+
+         _observingOverloads.Must().Contain("plain");
+         _observingOverloads.Must().Contain("one dependency");
+         _observingOverloads.Must().Contain("two dependencies");
+         _observingOverloads.Must().Contain("scope");
+         _dependenciesResolvedIntoObservers.Select(it => it.GetType()).Must().Contain(typeof(FirstServiceResolvedIntoHandlers));
+         _dependenciesResolvedIntoObservers.Select(it => it.GetType()).Must().Contain(typeof(SecondServiceResolvedIntoHandlers));
+         _dependenciesResolvedIntoObservers.Select(it => it.GetType()).Must().Contain(typeof(ThirdServiceResolvedIntoHandlers));
+         _dependenciesResolvedIntoObservers.Select(it => it.GetType()).Must().Contain(typeof(FourthServiceResolvedIntoHandlers));
+      }
+   }
 }
 
 class FirstServiceResolvedIntoHandlers;

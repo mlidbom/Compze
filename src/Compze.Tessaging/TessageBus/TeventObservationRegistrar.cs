@@ -14,8 +14,9 @@ namespace Compze.Tessaging.TessageBus;
 ///<remarks>An observer observes committed facts only — a tevent published within an execution is queued for its observers at<br/>
 /// commit, and an arriving tevent was committed by its publisher — and runs off-thread in per-observer FIFO order (the<br/>
 /// engine's <see cref="TeventObservationDispatcher"/>). It receives a plain <see cref="IScopeResolver"/>, never a unit of<br/>
-/// work: its invocation is a fresh scope with no transaction. A throwing observer is reported through the<br/>
-/// background-exception reporter, never retried.</remarks>
+/// work: its invocation is a fresh scope with no transaction. An observer is synchronous or async: while an async observer<br/>
+/// awaits, its queue holds no thread, and takes its next tevent only once the observer's task completes. A throwing observer is<br/>
+/// reported through the background-exception reporter, never retried.</remarks>
 public sealed class TeventObservationRegistrar : ITeventObservationRegistrar
 {
    readonly TessageHandlerRegistrations _registrations;
@@ -24,14 +25,28 @@ public sealed class TeventObservationRegistrar : ITeventObservationRegistrar
    internal TeventObservationRegistrar(TessageHandlerRegistrations registrations) => _registrations = registrations;
 
    ///<summary>Registers an observer for tevents compatible with <typeparamref name="TTevent"/>.</summary>
-   public TeventObservationRegistrar ForTevent<TTevent>(Action<TTevent, IScopeResolver> observer) where TTevent : ITevent
+   public TeventObservationRegistrar ForTevent<TTevent>(Func<TTevent, IScopeResolver, Task> observer) where TTevent : ITevent
    {
       AssertUsedOnlyInsideItsCallback();
       _registrations.AddTeventObserver(observer);
       return this;
    }
 
+   //One dispatch path: a synchronous observer is an async one whose task has completed by the time it returns.
+   public TeventObservationRegistrar ForTevent<TTevent>(Action<TTevent, IScopeResolver> observer) where TTevent : ITevent =>
+      ForTevent<TTevent>((tevent, scope) =>
+      {
+         observer(tevent, scope);
+         return Task.CompletedTask;
+      });
+
    //The minimal registrar an endpoint-declaration's ObserveTevents override receives - this registrar's one facet.
+   ITeventObservationRegistrar ITeventObservationRegistrar.ForTevent<TTevent>(Func<TTevent, IScopeResolver, Task> observer)
+   {
+      ForTevent(observer);
+      return this;
+   }
+
    ITeventObservationRegistrar ITeventObservationRegistrar.ForTevent<TTevent>(Action<TTevent, IScopeResolver> observer)
    {
       ForTevent(observer);

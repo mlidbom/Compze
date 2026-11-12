@@ -67,7 +67,8 @@ public class Tevent_observation_at_host_disposal_tests : UniversalTestBase
       var disposeTask = _host.DisposeAsync().AsTask();
       (await observerGate.TryAwaitAsync(it => it.Queued == 1)).Must().BeTrue();
 
-      disposeTask.IsCompleted.Must().BeFalse();
+      //Time enough for a disposal that did not wait for the observation to complete.
+      (await disposeTask.CompletesWithinAsync(TimeSpan.FromMilliseconds(500))).Must().BeFalse();
 
       observerGate.Open();
       await disposeTask;

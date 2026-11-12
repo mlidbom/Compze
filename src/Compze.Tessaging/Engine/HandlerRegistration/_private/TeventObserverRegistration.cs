@@ -11,10 +11,10 @@ namespace Compze.Tessaging.Engine.HandlerRegistration._private;
 /// observed tevents in order while never blocking, or being blocked by, another observer.</summary>
 sealed class TeventObserverRegistration
 {
-   internal TeventObserverRegistration(Type subscribedWrapperType, Action<ITevent, IScopeResolver> observe)
+   internal TeventObserverRegistration(Type subscribedWrapperType, Func<ITevent, IScopeResolver, Task> observeAsync)
    {
       SubscribedWrapperType = subscribedWrapperType;
-      Observe = observe;
+      ObserveAsync = observeAsync;
    }
 
    ///<summary>The wrapper type this observer's subscription matches — the routing key every dispatch site's wrapper type is<br/>
@@ -22,7 +22,7 @@ sealed class TeventObserverRegistration
    Type SubscribedWrapperType { get; }
 
    ///<summary>The observing delegate: receives the wrapped tevent and the fresh scope its invocation runs in.</summary>
-   internal Action<ITevent, IScopeResolver> Observe { get; }
+   internal Func<ITevent, IScopeResolver, Task> ObserveAsync { get; }
 
    ///<summary>Whether this observer's subscription matches <paramref name="wrapperTeventType"/> — tevent compatibility through<br/>
    /// the type hierarchy, the same rule participation routing uses.</summary>

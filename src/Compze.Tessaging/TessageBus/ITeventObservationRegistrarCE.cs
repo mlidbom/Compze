@@ -13,8 +13,15 @@ public static class ITeventObservationRegistrarCE
       public ITeventObservationRegistrar ForTevent<TTevent>(Action<TTevent> observer) where TTevent : ITevent
          => @this.ForTevent<TTevent>((tevent, _) => observer(tevent));
 
+      public ITeventObservationRegistrar ForTevent<TTevent>(Func<TTevent, Task> observer) where TTevent : ITevent
+         => @this.ForTevent<TTevent>((tevent, _) => observer(tevent));
+
       public ITeventObservationRegistrar ForTevent<TTevent, TDependency1>(Action<TTevent, TDependency1> observer) where TTevent : ITevent
                                                                                                                   where TDependency1 : class
+         => @this.ForTevent<TTevent>((tevent, scope) => observer(tevent, scope.Resolve<TDependency1>()));
+
+      public ITeventObservationRegistrar ForTevent<TTevent, TDependency1>(Func<TTevent, TDependency1, Task> observer) where TTevent : ITevent
+                                                                                                                      where TDependency1 : class
          => @this.ForTevent<TTevent>((tevent, scope) => observer(tevent, scope.Resolve<TDependency1>()));
    }
 }
