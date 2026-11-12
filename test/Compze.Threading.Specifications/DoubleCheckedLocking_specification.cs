@@ -11,7 +11,6 @@ using static Compze.Must.MustActions;
 
 // ReSharper disable InconsistentNaming
 // ReSharper disable AccessToDisposedClosure
-// ReSharper disable AccessToModifiedClosure These specs capture `field` in the tryRead/createUpdatedFieldValue lambdas while DoubleCheckedLocking exchanges it via ref — modifying the captured variable is precisely the mechanism under test.
 
 namespace Compze.Threading.Specifications;
 
@@ -53,35 +52,35 @@ public class DoubleCheckedLocking_specification : UniversalTestBase
          var dict = new Dictionary<string, string> { ["key"] = "value" };
          IReadOnlyDictionary<string, string> field = dict;
          var result = criticalSection.DoubleCheckedLocking(
-            tryRead: () => field.GetValueOrDefault("key"),
+            tryRead: it => it.GetValueOrDefault("key"),
             field: ref field,
-            createUpdatedFieldValue: () => { factoryCalled = true; return field; });
+            createUpdatedFieldValue: it => { factoryCalled = true; return it; });
 
          result.Must().Be("value");
          factoryCalled.Must().BeFalse();
       }
 
-      [ICriticalSectionMatrix] public void exchanges_the_field_and_returns_the_tryRead_value_when_tryRead_initially_returns_null()
+      [ICriticalSectionMatrix] public void updates_the_field_and_returns_what_tryRead_finds_in_it_when_tryRead_finds_nothing_in_the_field()
       {
          var criticalSection = _factory.Create();
          IReadOnlyDictionary<string, string> field = new Dictionary<string, string>();
          var result = criticalSection.DoubleCheckedLocking(
-            tryRead: () => field.GetValueOrDefault("key"),
+            tryRead: it => it.GetValueOrDefault("key"),
             field: ref field,
-            createUpdatedFieldValue: () => new Dictionary<string, string>(field) { ["key"] = "populated" });
+            createUpdatedFieldValue: it => new Dictionary<string, string>(it) { ["key"] = "populated" });
 
          result.Must().Be("populated");
       }
 
-      [ICriticalSectionMatrix] public void throws_when_tryRead_returns_null_even_after_field_exchange()
+      [ICriticalSectionMatrix] public void throws_an_ArgumentException_when_tryRead_finds_nothing_in_the_updated_field()
       {
          var criticalSection = _factory.Create();
          string? field = null;
          Invoking(() => criticalSection.DoubleCheckedLocking<string, string>(
-            tryRead: () => null,
+            tryRead: _ => null,
             field: ref field!,
-            createUpdatedFieldValue: () => "populated"))
-           .Must().Throw<Exception>();
+            createUpdatedFieldValue: _ => "populated"))
+           .Must().Throw<ArgumentException>();
       }
 
       [ICriticalSectionMatrix] public void concurrent_callers_all_get_the_same_result_and_createValue_runs_exactly_once()
@@ -168,35 +167,35 @@ public class DoubleCheckedLocking_specification : UniversalTestBase
          var dict = new Dictionary<string, string> { ["key"] = "value" };
          IReadOnlyDictionary<string, string> field = dict;
          var result = criticalSection.DoubleCheckedLocking(
-            tryRead: () => field.GetValueOrDefault("key"),
+            tryRead: it => it.GetValueOrDefault("key"),
             field: ref field,
-            createUpdatedFieldValue: () => { factoryCalled = true; return field; });
+            createUpdatedFieldValue: it => { factoryCalled = true; return it; });
 
          result.Must().Be("value");
          factoryCalled.Must().BeFalse();
       }
 
-      [IAwaitableCriticalSectionMatrix] public void exchanges_the_field_and_returns_the_tryRead_value_when_tryRead_initially_returns_null()
+      [IAwaitableCriticalSectionMatrix] public void updates_the_field_and_returns_what_tryRead_finds_in_it_when_tryRead_finds_nothing_in_the_field()
       {
          var criticalSection = _factory.Create();
          IReadOnlyDictionary<string, string> field = new Dictionary<string, string>();
          var result = criticalSection.DoubleCheckedLocking(
-            tryRead: () => field.GetValueOrDefault("key"),
+            tryRead: it => it.GetValueOrDefault("key"),
             field: ref field,
-            createUpdatedFieldValue: () => new Dictionary<string, string>(field) { ["key"] = "populated" });
+            createUpdatedFieldValue: it => new Dictionary<string, string>(it) { ["key"] = "populated" });
 
          result.Must().Be("populated");
       }
 
-      [IAwaitableCriticalSectionMatrix] public void throws_when_tryRead_returns_null_even_after_field_exchange()
+      [IAwaitableCriticalSectionMatrix] public void throws_an_ArgumentException_when_tryRead_finds_nothing_in_the_updated_field()
       {
          var criticalSection = _factory.Create();
          string? field = null;
          Invoking(() => criticalSection.DoubleCheckedLocking<string, string>(
-            tryRead: () => null,
+            tryRead: _ => null,
             field: ref field!,
-            createUpdatedFieldValue: () => "populated"))
-           .Must().Throw<Exception>();
+            createUpdatedFieldValue: _ => "populated"))
+           .Must().Throw<ArgumentException>();
       }
 
       [IAwaitableCriticalSectionMatrix] public void concurrent_callers_all_get_the_same_result_and_createValue_runs_exactly_once()

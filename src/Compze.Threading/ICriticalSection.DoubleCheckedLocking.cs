@@ -1,3 +1,6 @@
+using System.Runtime.CompilerServices;
+using Compze.Contracts;
+
 namespace Compze.Threading;
 
 ///<summary>Extension methods for <see cref="ICriticalSection"/>.</summary>
@@ -19,7 +22,11 @@ public static class CriticalSectionDoubleCheckedLocking
       ///<remarks>
       /// A thread that gets the value without taking the lock also sees everything <paramref name="createFieldValue"/> wrote before<br/>
       /// returning it, wherever it wrote it: the lock-free read of <paramref name="field"/> is an acquire, paired with the release<br/>
-      /// that publishes the value (<see cref="Volatile"/>).
+      /// that publishes the value (<see cref="Volatile"/>).<br/>
+      /// A <paramref name="createFieldValue"/> that reads the field it is creating, directly or not, runs again and again, since the lock lets<br/>
+      /// the thread holding it enter again. When the stack is nearly used up, the call throws an <see cref="InsufficientExecutionStackException"/><br/>
+      /// instead of overflowing the stack, which would end the process. The lock can't tell that apart from creating another field<br/>
+      /// guarded by the same critical section, which is legitimate.
       ///</remarks>
       public TResult DoubleCheckedLocking<TResult>(ref TResult? field, Func<TResult> createFieldValue)
          where TResult : class
@@ -27,6 +34,7 @@ public static class CriticalSectionDoubleCheckedLocking
          var result = Volatile.Read(ref field);
          if(result != null) return result;
 
+         ThrowInsteadOfOverflowingTheStackIfCreatingTheValueRecurses();
          using(@this.TakeLock())
          {
             result = field;
@@ -38,35 +46,47 @@ public static class CriticalSectionDoubleCheckedLocking
       }
 
       ///<summary>
-      /// <para>
-      /// WARNING! <paramref name="createUpdatedFieldValue"/> must not perform any visible state modifications or all thread safety guarantees are lost.<br/>
-      /// </para>
-      /// 
-      /// Performs thread-safe double-checked locking where the read operation is more complex than just reading a nullable field. <br/>
-      /// First calls <paramref name="tryRead"/> without locking. If it returns null, acquires the lock, retries
-      /// <paramref name="tryRead"/>, and if still null calls <paramref name="createUpdatedFieldValue"/> and atomically
-      /// replaces <paramref name="field"/> via <see cref="Interlocked.Exchange{T}(ref T, T)"/>.<br/>
-      /// 
-      /// Throws if <paramref name="tryRead"/> still returns null after the exchange.
+      /// Thread-safe double-checked locking for a <paramref name="field"/> holding many values, such as an immutable dictionary used as<br/>
+      /// a cache: returns what <paramref name="tryRead"/> finds in <paramref name="field"/>, and otherwise replaces <paramref name="field"/> with<br/>
+      /// what <paramref name="createUpdatedFieldValue"/> makes of it, and returns what <paramref name="tryRead"/> finds in that.<br/>
+      /// When <paramref name="tryRead"/> finds the value, no lock is taken.
       ///</summary>
-      public TResult DoubleCheckedLocking<TResult, TField>(Func<TResult?> tryRead, ref TField field, Func<TField> createUpdatedFieldValue)
+      ///<remarks>
+      /// <paramref name="createUpdatedFieldValue"/> is given the field's current value and returns the updated one. It runs while the lock is held,<br/>
+      /// after <paramref name="tryRead"/> found nothing in the field read again under the lock, so for a missing value it runs once however<br/>
+      /// many threads call this at the same moment. Since it runs under the lock, it must not wait for another thread that takes this critical<br/>
+      /// section. If it throws, <paramref name="field"/> stays as it was and the next call runs it again.
+      ///</remarks>
+      ///<remarks>
+      /// <paramref name="tryRead"/> is given the field's value read with acquire semantics, paired with the release that publishes an updated<br/>
+      /// value (<see cref="Volatile"/>), so a thread that finds the value without taking the lock also sees everything<br/>
+      /// <paramref name="createUpdatedFieldValue"/> wrote before returning it, wherever it wrote it.<br/>
+      /// A <paramref name="createUpdatedFieldValue"/> that reads the value it is creating, directly or not, runs again and again until the stack<br/>
+      /// is nearly used up, and the call then throws an <see cref="InsufficientExecutionStackException"/> instead of overflowing the stack.
+      ///</remarks>
+      ///<exception cref="ArgumentException"><paramref name="tryRead"/> finds nothing in what <paramref name="createUpdatedFieldValue"/> returned.</exception>
+      public TResult DoubleCheckedLocking<TResult, TField>(Func<TField, TResult?> tryRead, ref TField field, Func<TField, TField> createUpdatedFieldValue)
          where TResult : class
          where TField : class
       {
-         //refactor: tryRead reads field itself, with an ordinary read, so a thread that sees the value may still read stale state
-         //   that createUpdatedFieldValue wrote elsewhere: that is what the WARNING in the summary is about. The fix needs an
-         //   acquiring read before tryRead uses the field: tryRead would take the field's value as a parameter, read here with
-         //   Volatile.Read, as the single-field overload does.
-         var result = tryRead();
+         var result = tryRead(Volatile.Read(ref field));
          if(result != null) return result;
 
+         ThrowInsteadOfOverflowingTheStackIfCreatingTheValueRecurses();
          using(@this.TakeLock())
          {
-            result = tryRead();
+            var currentFieldValue = field;
+            result = tryRead(currentFieldValue);
             if(result != null) return result;
-            Interlocked.Exchange(ref field, createUpdatedFieldValue());
-            return tryRead() ?? throw new Exception($"{nameof(tryRead)} returned null even after {nameof(createUpdatedFieldValue)} was called and its result was exchanged into {nameof(field)}.");
+
+            var updatedFieldValue = createUpdatedFieldValue(currentFieldValue);
+            Volatile.Write(ref field, updatedFieldValue);
+            var resultInTheUpdatedField = tryRead(updatedFieldValue);
+            Argument.Assert(resultInTheUpdatedField != null, () => $"{nameof(tryRead)} found nothing in what {nameof(createUpdatedFieldValue)} returned.");
+            return resultInTheUpdatedField;
          }
       }
    }
+
+   static void ThrowInsteadOfOverflowingTheStackIfCreatingTheValueRecurses() => RuntimeHelpers.EnsureSufficientExecutionStack();
 }

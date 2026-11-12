@@ -4,6 +4,11 @@ All notable changes to Compze.Threading will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## 0.10.0-alpha
+
+- **Breaking:** `DoubleCheckedLocking` with `tryRead` gives its functions the field's value: `tryRead` is a `Func<TField, TResult?>` and `createUpdatedFieldValue` a `Func<TField, TField>`. `tryRead` gets the value read with acquire semantics, paired with the release that publishes an updated value (`Volatile.Write`, which replaces `Interlocked.Exchange`), so `createUpdatedFieldValue` may change other state too, and the warning against that is gone, as it went from the single-field overloads in 0.9.1-alpha. When `tryRead` finds nothing in the updated value, the call throws an `ArgumentException` instead of an `Exception`.
+- `DoubleCheckedLocking`: a value creation that reads the value it is creating, directly or not, makes the call throw an `InsufficientExecutionStackException` when the stack is nearly used up. Every critical section lets the thread holding its lock enter it again, so the creation ran again and again until the stack overflowed, which ends the process. A check whether the thread already holds the lock can't replace this: creating another field guarded by the same critical section is legitimate.
+
 ## 0.9.1-alpha
 
 - Fixed a deadlock in the condition waits of `IAwaitableCriticalSection` as implemented by `IAwaitableMonitor` (`TakeReadLockWhen`, `TakeUpdateLockWhen`, their `Try` forms, and the waits built on them) when given a cancellable token. A cancellation that landed while the waiting thread held the lock, such as while it evaluated its condition, deadlocked the waiting thread and the cancelling one permanently: the wait disposed its cancellation registration, which waits for a running callback, and the callback waited for the lock. The wait now unregisters the callback instead of waiting for it.

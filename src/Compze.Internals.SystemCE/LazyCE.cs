@@ -12,11 +12,14 @@ namespace Compze.Internals.SystemCE;
 /// Like <see cref="Lazy{T}"/> in its default thread-safety mode, with two differences.<br/>
 /// If <paramref name="factory"/> throws, the exception isn't remembered: the read throws it, and the next read runs <paramref name="factory"/> again.<br/>
 /// A thread waits for another thread's <paramref name="factory"/> at most <see cref="LockTimeout.Default"/>, then throws a <see cref="TimeoutException"/>,<br/>
-/// so a deadlock fails loud instead of hanging.
+/// so a deadlock fails loud instead of hanging.<br/>
+/// A <paramref name="factory"/> that reads the value it is creating, directly or through another <see cref="LazyCE{TValue}"/>, makes the read<br/>
+/// throw an <see cref="InvalidOperationException"/>, as <see cref="Lazy{T}"/> does, instead of running again and again until the stack overflows.
 ///</remarks>
 ///<remarks>
 /// An instance is one small object, cheap enough to create in large numbers: it allocates no lock, but locks on itself,<br/>
-/// and only while the value is still being created. So don't lock on an instance from outside: that code would share its lock.
+/// and only while the value is still being created. So don't lock on an instance from outside: that code would share its lock,<br/>
+/// and reading the value for the first time while holding it throws the same <see cref="InvalidOperationException"/>.
 ///</remarks>
 ///<param name="factory">
 /// Creates the value. It runs while the instance's lock is held, so it must not wait for another thread<br/>

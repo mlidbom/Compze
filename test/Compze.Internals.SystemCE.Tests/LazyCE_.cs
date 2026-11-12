@@ -114,4 +114,67 @@ public class LazyCE_
 
       [XF] public void both_threads_get_the_same_instance() => _valueTheSecondThreadGot.Must().ReferenceEqual(_valueTheFirstThreadGot);
    }
+
+   public class When_the_factory_reads_the_value_it_is_creating : LazyCE_
+   {
+      readonly LazyCE<object> _lazy;
+      readonly Exception _exceptionFromTheRead;
+
+      public When_the_factory_reads_the_value_it_is_creating()
+      {
+         _lazy = new LazyCE<object>(() =>
+         {
+            Interlocked.Increment(ref _factoryRuns);
+            return _lazy._assert().NotNull().Value;
+         });
+         _exceptionFromTheRead = Invoking(() => _lazy.Value).Must().Throw<Exception>().Which;
+      }
+
+      [XF] public void the_read_throws_an_InvalidOperationException() => _exceptionFromTheRead.Must().BeAssignableTo<InvalidOperationException>();
+
+      [XF] public void the_factory_runs_once() => _factoryRuns.Must().Be(1);
+
+      [XF] public void ValueIfInitialized_returns_null() => _lazy.ValueIfInitialized().Must().BeNull();
+   }
+
+   public class When_the_factories_of_two_instances_read_each_others_value : LazyCE_
+   {
+      readonly LazyCE<object> _first;
+      readonly LazyCE<object> _second;
+      readonly Exception _exceptionFromTheRead;
+
+      public When_the_factories_of_two_instances_read_each_others_value()
+      {
+         _first = new LazyCE<object>(() => _second._assert().NotNull().Value);
+         _second = new LazyCE<object>(() => _first.Value);
+         _exceptionFromTheRead = Invoking(() => _first.Value).Must().Throw<Exception>().Which;
+      }
+
+      [XF] public void the_read_throws_an_InvalidOperationException() => _exceptionFromTheRead.Must().BeAssignableTo<InvalidOperationException>();
+
+      [XF] public void the_first_instance_has_no_value() => _first.ValueIfInitialized().Must().BeNull();
+
+      [XF] public void the_second_instance_has_no_value() => _second.ValueIfInitialized().Must().BeNull();
+   }
+
+   public class When_code_that_locked_on_the_instance_from_outside_reads_the_value_for_the_first_time : LazyCE_
+   {
+      readonly Exception _exceptionFromTheRead;
+
+      public When_code_that_locked_on_the_instance_from_outside_reads_the_value_for_the_first_time()
+      {
+         var lazy = new LazyCE<object>(CreateAndCountTheRun);
+         _exceptionFromTheRead = Invoking(() => ReadWhileLockingOn(lazy)).Must().Throw<Exception>().Which;
+      }
+
+      static object ReadWhileLockingOn(LazyCE<object> lazy)
+      {
+         //rationale: A raw lock, against the locking-primitives rule: it is the outside code locking on a LazyCE that this specifies.
+         lock(lazy) return lazy.Value;
+      }
+
+      [XF] public void the_read_throws_an_InvalidOperationException() => _exceptionFromTheRead.Must().BeAssignableTo<InvalidOperationException>();
+
+      [XF] public void the_factory_does_not_run() => _factoryRuns.Must().Be(0);
+   }
 }

@@ -4,6 +4,10 @@ All notable changes to Compze.Internals.SystemCE will be documented in this file
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## 0.5.0-internal
+
+- `LazyCE`: a factory that reads the value it is creating, directly or through another `LazyCE`, makes the read throw an `InvalidOperationException`, as `Lazy<T>` does. The lock lets the thread holding it enter again, so the factory ran again and again until the stack overflowed, which ends the process. Reading the value for the first time while holding a lock on the instance from outside, which the documentation forbids, throws the same exception.
+
 ## 0.4.2-internal
 
 - `LazyCE` is cheap enough to create in large numbers: an instance is one 32-byte object instead of ten allocations and 424 bytes, and creating one and reading it once takes about 14 ns instead of 55. It no longer allocates an `IMonitor` of its own, but locks on itself, and only while the value is still being created. It still runs its factory once when threads read the value for the first time at the same moment. A thread that waits longer than `LockTimeout.Default` for another thread's factory now throws a `TimeoutException`, without the blocking thread's stack trace that `TakeLockTimeoutException` carried. `LazyCE` is sealed, since it is its own lock, and documented: don't lock on an instance from outside.

@@ -25,4 +25,7 @@ instance and reading it once took 55 ns. Locking on the instance itself costs 32
 - `LazyCE` is public, so code outside it could lock on an instance and share its lock. The documentation of `LazyCE`
   says not to. The alternative, a private lock object, is the allocation this exception exists to avoid.
 
+Its specification, `LazyCE_`, locks on a `LazyCE` with a raw `lock` too: that is the outside code it specifies, which
+reading the value for the first time while holding the lock makes fail with an `InvalidOperationException`.
+
 **Approved by:** Magnus, 2026-11-12.
