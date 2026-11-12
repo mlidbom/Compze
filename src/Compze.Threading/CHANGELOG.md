@@ -4,6 +4,11 @@ All notable changes to Compze.Threading will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## 0.10.1-alpha
+
+- A monitor, as `IMonitor.New` and `IAwaitableMonitor.New` create it, is four allocations and 144 bytes instead of nine and 384, so code can create one for each of a great many objects. The objects that release its lock call the monitor directly instead of through a delegate each, it locks on the object wrapping the .NET `Monitor` instead of on a separate object, it needs no lock to record lock timeouts, and its list of them starts out as the shared empty one. Taking and releasing a lock still allocates nothing.
+- Fixed: when taking a monitor's lock timed out, the exception's message named the monitor's default timeout, even when the call had passed a timeout of its own.
+
 ## 0.10.0-alpha
 
 - **Breaking:** `DoubleCheckedLocking` with `tryRead` gives its functions the field's value: `tryRead` is a `Func<TField, TResult?>` and `createUpdatedFieldValue` a `Func<TField, TField>`. `tryRead` gets the value read with acquire semantics, paired with the release that publishes an updated value (`Volatile.Write`, which replaces `Interlocked.Exchange`), so `createUpdatedFieldValue` may change other state too, and the warning against that is gone, as it went from the single-field overloads in 0.9.1-alpha. When `tryRead` finds nothing in the updated value, the call throws an `ArgumentException` instead of an `Exception`.
