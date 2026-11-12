@@ -17,6 +17,11 @@ public static class AwaitableCriticalSectionDoubleCheckedLocking
    public static TResult DoubleCheckedLocking<TResult>(this IAwaitableCriticalSection @this, ref TResult? field, Func<TResult> createFieldValue)
       where TResult : class
    {
+      //refactor: This ordinary read of field doesn't keep later reads from being done before it, so a thread that sees the value
+      //   may still read stale state that createFieldValue wrote elsewhere: that is what the WARNING in the summary is about.
+      //   Volatile.Read here (acquire), paired with Volatile.Write instead of Interlocked.Exchange below (release), makes
+      //   everything createFieldValue wrote visible to a thread that sees the value, and the WARNING can go.
+      //   DoubleCheckedLockingOnAnExistingObject in Compze.Internals.SystemCE does it this way.
       var result = field;
       if(result != null) return result;
 
@@ -50,6 +55,10 @@ public static class AwaitableCriticalSectionDoubleCheckedLocking
       where TResult : class
       where TField : class
    {
+      //refactor: tryRead reads field itself, with an ordinary read, so a thread that sees the value may still read stale state
+      //   that createUpdatedFieldValue wrote elsewhere: that is what the WARNING in the summary is about. The fix needs an
+      //   acquiring read before tryRead uses the field: tryRead would take the field's value as a parameter, read here with
+      //   Volatile.Read. See the other overload.
       var result = tryRead();
       if(result != null) return result;
 
