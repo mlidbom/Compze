@@ -4,6 +4,10 @@ All notable changes to Compze.Threading will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## 0.9.1-alpha
+
+- Fixed a deadlock in the condition waits of `IAwaitableCriticalSection` as implemented by `IAwaitableMonitor` (`TakeReadLockWhen`, `TakeUpdateLockWhen`, their `Try` forms, and the waits built on them) when given a cancellable token. A cancellation that landed while the waiting thread held the lock, such as while it evaluated its condition, deadlocked the waiting thread and the cancelling one permanently: the wait disposed its cancellation registration, which waits for a running callback, and the callback waited for the lock. The wait now unregisters the callback instead of waiting for it.
+
 ## 0.9.0-alpha
 
 - Internal async bridging for condition waits: `IAwaitableCriticalSection` gains the `_internal` extension `TryAwaitOnDedicatedThreadAsync`, awaiting the blocking `TryAwait` from async callers. The condition is first evaluated inline on the calling thread — in the common case it already holds, and awaiting must not cost a thread to discover that; only a wait that must actually block parks a thread, and the name says where: a dedicated thread, because a condition wait can span seconds and parked pool threads starve the pool. Internal deliberately: it belongs on the public surface once the API is declared ready for publishing; Tessaging's waiting sends consume it meanwhile (`InternalsVisibleTo`).
