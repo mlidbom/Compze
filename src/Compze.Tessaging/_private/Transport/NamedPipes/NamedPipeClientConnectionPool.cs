@@ -1,4 +1,5 @@
 using System.IO.Pipes;
+using Compze.Internals.SystemCE.ThreadingCE;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tessaging.Endpoints.Discovery;
 using Compze.Tessaging.Typermedia;
@@ -150,13 +151,7 @@ class NamedPipeClientConnectionPool : IDisposable
    ///<summary>Captured into the loud failures above at the moment they are thrown: a wait that expires against a running<br/>
    /// server is the signature of either genuine saturation or of the ThreadPool not servicing continuations — zero free<br/>
    /// workers with pending work says thread-pool starvation, a healthy pool says the peer itself is the bottleneck.</summary>
-   static string ThreadPoolStateDescription()
-   {
-      ThreadPool.GetAvailableThreads(out var freeWorkers, out var freeIoThreads);
-      ThreadPool.GetMaxThreads(out var maxWorkers, out var maxIoThreads);
-      return $"ThreadPool at timeout: {ThreadPool.ThreadCount} live thread(s), {ThreadPool.PendingWorkItemCount} pending work item(s), "
-           + $"{freeWorkers}/{maxWorkers} worker and {freeIoThreads}/{maxIoThreads} IO threads free.";
-   }
+   static string ThreadPoolStateDescription() => $"ThreadPool at timeout: {ThreadPoolCE.DescribeState()}";
 
    public void Dispose() => _monitor.Locked(() =>
    {

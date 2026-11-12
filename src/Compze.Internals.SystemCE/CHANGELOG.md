@@ -4,6 +4,10 @@ All notable changes to Compze.Internals.SystemCE will be documented in this file
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## 0.7.0-internal
+
+- `ThreadPoolCE.DescribeState()`: the thread pool's state in one line, for the message of a wait that timed out, where the question is whether the pool starved. It replaces two descriptions of the same thing, in Compze.Tessaging's named-pipe connection pool and in the test infrastructure, and Compze.Threading.Testing's gates use it in their timeouts.
+
 ## 0.6.1-internal
 
 - `SimpleObservable` takes no lock: subscribing and disposing a subscription swap in a new immutable array of subscribers, trying again when another thread swapped in one of its own first. An observable nobody has subscribed to is one 24-byte object instead of 416 bytes, its own `IMonitor` included, which matters to code that gives each of a great many objects one, such as every `Taggregate`. Notifying the subscribers no longer allocates.

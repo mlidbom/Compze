@@ -1,5 +1,7 @@
 using Compze.Contracts;
 using Compze.Internals.Logging;
+using Compze.Internals.SystemCE.ThreadingCE;
+using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Threading.Exceptions;
 using System.Runtime.CompilerServices;
 
@@ -37,22 +39,25 @@ public partial interface IThreadGate
 
       public ThreadSnapshot AwaitLetOneThreadPassThrough() => _monitor.Update(() => LogMethodEntryExit(() =>
       {
-         var passedBefore = 0;
-         _monitor.Update(() =>
-         {
-            State.Assert(!IsOpen);
-            passedBefore = _passedThreads.Count;
-            IsOpen = true;
-            _lockOnNextPass = true;
-         });
-
+         var passedBefore = _monitor.Update(OpenForOnePass);
          return _monitor.UpdateWhen(() => !IsOpen, () => _passedThreads[passedBefore]);
       }));
+
+      public Task<ThreadSnapshot> AwaitLetOneThreadPassThroughAsync() => LogMethodEntryExitAsync(async () =>
+      {
+         var passedBefore = _monitor.Update(OpenForOnePass);
+         return await _monitor.ReadWhenAsync(() => !IsOpen, () => _passedThreads[passedBefore]).caf();
+      });
 
       public bool TryAwait(Func<IThreadGate, bool> condition, WaitTimeout? timeout, [CallerArgumentExpression(nameof(condition))] string? conditionExpression = null!) =>
          _monitor.Read(() => LogMethodEntryExit(() => _monitor.TryAwait(() => condition(this), waitTimeout: timeout),
                                                 message: $"condition: '{conditionExpression}'",
                                                 logResult: true));
+
+      public Task<bool> TryAwaitAsync(Func<IThreadGate, bool> condition, WaitTimeout? timeout, [CallerArgumentExpression(nameof(condition))] string? conditionExpression = null!) =>
+         LogMethodEntryExitAsync(() => _monitor.TryAwaitAsync(() => condition(this), waitTimeout: timeout),
+                                 message: $"condition: '{conditionExpression}'",
+                                 logResult: true);
 
       public TResult ExecuteWithExclusiveLockWhen<TResult>(Func<IThreadGate, bool> condition, Func<TResult> func, WaitTimeout? timeout = null, [CallerArgumentExpression(nameof(condition))] string? conditionExpression = null!)
          => _monitor.Update(() => LogMethodEntryExit(() =>
@@ -66,39 +71,85 @@ public partial interface IThreadGate
                                                         }
                                                         catch(AwaitingConditionTimeoutException parentException)
                                                         {
-                                                           throw new AwaitingConditionTimeoutException(parentException,
-                                                                                                       $"""
-
-                                                                                                        Current state of gate: 
-                                                                                                        {this}
-                                                                                                        """);
+                                                           throw TimedOutAwaiting(conditionExpression, parentException);
                                                         }
                                                      },
                                                      message: $"condition: '{conditionExpression}'"));
 
+      public Task<TResult> ExecuteWithExclusiveLockWhenAsync<TResult>(Func<IThreadGate, bool> condition, Func<TResult> func, WaitTimeout? timeout = null, [CallerArgumentExpression(nameof(condition))] string? conditionExpression = null!)
+         => LogMethodEntryExitAsync(async () =>
+                                    {
+                                       try
+                                       {
+                                          return await _monitor.UpdateWhenAsync(() => condition(this), func, waitTimeout: timeout).caf();
+                                       }
+                                       catch(AwaitingConditionTimeoutException parentException)
+                                       {
+                                          throw TimedOutAwaiting(conditionExpression, parentException);
+                                       }
+                                    },
+                                    message: $"condition: '{conditionExpression}'");
+
       public Unit AwaitPassThrough() => _monitor.Update(() => LogMethodEntryExit(() =>
       {
-         var currentThread = new ThreadSnapshot();
-
-         _monitor.Update(() =>
-         {
-            _requestsThreads.Add(currentThread);
-            _queuedThreads.AddLast(currentThread);
-         });
-
-         using(_monitor.TakeUpdateLockWhen(() => IsOpen))
-         {
-            if(_lockOnNextPass)
-            {
-               _lockOnNextPass = false;
-               IsOpen = false;
-            }
-
-            _queuedThreads.Remove(currentThread);
-            _passedThreads.Add(currentThread);
-            _postPassThroughAction.Invoke(currentThread);
-         }
+         var passingThread = new ThreadSnapshot();
+         _monitor.Update(() => Enqueue(passingThread));
+         using(_monitor.TakeUpdateLockWhen(() => IsOpen)) PassThrough(passingThread);
       }));
+
+      public async Task AwaitPassThroughAsync()
+      {
+         //Taken before the first await, so it records the caller's state, such as its ambient transaction.
+         var passingThread = new ThreadSnapshot();
+         await LogMethodEntryExitAsync(async () =>
+         {
+            _monitor.Update(() => Enqueue(passingThread));
+            await _monitor.UpdateWhenAsync(() => IsOpen, () => PassThrough(passingThread)).caf();
+            return unit;
+         }).caf();
+      }
+
+      ///<summary>Opens the gate for exactly one pass: the passing thread closes it again. Returns how many threads had passed before, the index in<br/>
+      /// <see cref="_passedThreads"/> the one let through will have. Called holding the lock.</summary>
+      int OpenForOnePass()
+      {
+         State.Assert(!IsOpen);
+         IsOpen = true;
+         _lockOnNextPass = true;
+         return _passedThreads.Count;
+      }
+
+      ///<summary>Registers <paramref name="passingThread"/> as requesting to pass and queued at the gate. Called holding the lock.</summary>
+      void Enqueue(ThreadSnapshot passingThread)
+      {
+         _requestsThreads.Add(passingThread);
+         _queuedThreads.AddLast(passingThread);
+      }
+
+      ///<summary>Lets <paramref name="passingThread"/>, queued at the open gate, pass through it, closing the gate behind it if it was opened for one pass,<br/>
+      /// and runs the post-pass-through action. Called holding the update lock, with the gate open.</summary>
+      void PassThrough(ThreadSnapshot passingThread)
+      {
+         if(_lockOnNextPass)
+         {
+            _lockOnNextPass = false;
+            IsOpen = false;
+         }
+
+         _queuedThreads.Remove(passingThread);
+         _passedThreads.Add(passingThread);
+         _postPassThroughAction.Invoke(passingThread);
+      }
+
+      AwaitingConditionTimeoutException TimedOutAwaiting(string? conditionExpression, AwaitingConditionTimeoutException parentException) =>
+         new(parentException,
+             $"""
+
+              Condition: '{conditionExpression}'
+              Current state of gate:
+              {this}
+              Thread pool: {ThreadPoolCE.DescribeState()}
+              """);
 
       internal Implementation(WaitTimeout waitTimeout, string? name = null) : this(waitTimeout, IAwaitableMonitor.New(LockTimeout.Default, waitTimeout), name) {}
 
@@ -132,6 +183,22 @@ public partial interface IThreadGate
          try
          {
             var result = body();
+            LogMethodExit(message, logResult ? $"Result: {result}" : "", method);
+            return result;
+         }
+         catch(Exception exception)
+         {
+            LogMethodExit(message, $"Exception: {exception.GetType().Name}", method);
+            throw;
+         }
+      }
+
+      async Task<TResult> LogMethodEntryExitAsync<TResult>(Func<Task<TResult>> body, string message = "", bool logResult = false, [CallerMemberName] string method = null!)
+      {
+         LogMethodEntry(message, method);
+         try
+         {
+            var result = await body().caf();
             LogMethodExit(message, logResult ? $"Result: {result}" : "", method);
             return result;
          }

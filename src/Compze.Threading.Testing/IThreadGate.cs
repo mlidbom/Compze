@@ -15,7 +15,10 @@ namespace Compze.Threading.Testing;
 ///
 /// Test code can deterministically coordinate threads to trigger the specific race condition they wish to test by using <see cref="TryAwait"/><br/>
 /// and the various default interface methods and extension methods based on it, combined with <see cref="AwaitLetOneThreadPassThrough"/> and <see cref="Open"/> and <see cref="Close"/><br/>
-/// 
+/// <br/>
+/// Every wait has an <c>…Async</c> counterpart that holds no thread while it waits: <see cref="TryAwaitAsync"/>, <see cref="AwaitLetOneThreadPassThroughAsync"/>,<br/>
+/// <see cref="IThreadGateVisitor.AwaitPassThroughAsync"/> and the default interface methods based on them. An async test that waits synchronously<br/>
+/// parks a thread-pool thread for as long as it waits, a thread the code under test may need to run on.
 /// </summary>
 public partial interface IThreadGate : IThreadGateVisitor
 {
@@ -33,6 +36,10 @@ public partial interface IThreadGate : IThreadGateVisitor
    ///<summary>Lets a single thread exit <see cref="IThreadGateVisitor.AwaitPassThrough"/> and returns the <see cref="ThreadSnapshot"/> of that thread.</summary>
    ThreadSnapshot AwaitLetOneThreadPassThrough();
 
+   ///<summary>The async counterpart of <see cref="AwaitLetOneThreadPassThrough"/>: lets a single thread exit <see cref="IThreadGateVisitor.AwaitPassThrough"/><br/>
+   /// or <see cref="IThreadGateVisitor.AwaitPassThroughAsync"/>, holding no thread while it waits for that, and returns the <see cref="ThreadSnapshot"/> of that thread.</summary>
+   Task<ThreadSnapshot> AwaitLetOneThreadPassThroughAsync();
+
    ///<summary>Sets <see cref="IsOpen"/> to false, making all callers to <see cref="IThreadGateVisitor.AwaitPassThrough"/> block.</summary>
    IThreadGate Close();
 
@@ -47,6 +54,21 @@ public partial interface IThreadGate : IThreadGateVisitor
 
    ///<summary>Blocks until the gate is in a state which satisfies <paramref name="condition"/> or <paramref name="timeout"/> expires. Returns false if <paramref name="timeout"/> expires, else true.</summary>
    bool TryAwait(Func<IThreadGate, bool> condition, WaitTimeout? timeout = null, [CallerArgumentExpression(nameof(condition))] string? conditionExpression = null!);
+
+   ///<summary>The async counterpart of <see cref="ExecuteWithExclusiveLockWhen(Func{IThreadGate, bool}, Action, Nullable{Compze.Threading.WaitTimeout}, string)"/>: awaits, holding no thread,<br/>
+   /// until the gate is in a state which satisfies <paramref name="condition"/>, then executes <paramref name="action"/> with exclusive access to the gate's state.<br/>
+   /// Throws <exception cref="AwaitingConditionTimeoutException" /> if <paramref name="timeout"/> expires before <paramref name="condition"/> becomes true.</summary>
+   Task ExecuteWithExclusiveLockWhenAsync(Func<IThreadGate, bool> condition, Action action, WaitTimeout? timeout = null, [CallerArgumentExpression(nameof(condition))] string? conditionExpression = null!) =>
+      ExecuteWithExclusiveLockWhenAsync(condition, action.ToFunc(), timeout, conditionExpression);
+
+   ///<summary>The async counterpart of <see cref="ExecuteWithExclusiveLockWhen{TResult}"/>: awaits, holding no thread, until the gate is in a state which satisfies<br/>
+   /// <paramref name="condition"/>, then executes <paramref name="func"/> with exclusive access to the gate's state and returns its result.<br/>
+   /// Throws <exception cref="AwaitingConditionTimeoutException" /> if <paramref name="timeout"/> expires before <paramref name="condition"/> becomes true.</summary>
+   Task<TResult> ExecuteWithExclusiveLockWhenAsync<TResult>(Func<IThreadGate, bool> condition, Func<TResult> func, WaitTimeout? timeout = null, [CallerArgumentExpression(nameof(condition))] string? conditionExpression = null!);
+
+   ///<summary>The async counterpart of <see cref="TryAwait"/>: awaits, holding no thread, until the gate is in a state which satisfies <paramref name="condition"/><br/>
+   /// or <paramref name="timeout"/> expires. Returns false if <paramref name="timeout"/> expires, else true.</summary>
+   Task<bool> TryAwaitAsync(Func<IThreadGate, bool> condition, WaitTimeout? timeout = null, [CallerArgumentExpression(nameof(condition))] string? conditionExpression = null!);
 
    ///<summary>If false all callers of <see cref="IThreadGateVisitor.AwaitPassThrough"/> block, otherwise not.</summary>
    bool IsOpen { get; }

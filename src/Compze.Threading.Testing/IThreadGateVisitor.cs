@@ -15,4 +15,14 @@ public interface IThreadGateVisitor
    /// <see cref="IThreadGate.PassedThrough"/>, <see cref="IThreadGate.Passed"/> and <see cref="IThreadGate.Queued"/> (decrementing) before the thread exits the gate.
    /// </summary>
    Unit AwaitPassThrough();
+
+   ///<summary>
+   /// <see cref="AwaitPassThrough"/> for async code under test: the same pass through the gate, observed and controlled the same way,<br/>
+   /// but holding no thread while the gate keeps the caller waiting. A closed gate that parks a thread-pool thread parks a thread the code<br/>
+   /// under test may need to run on.
+   /// <br/>
+   /// The gate's post-pass-through action runs under the gate's lock on whichever thread resumes the wait, in the caller's execution context,<br/>
+   /// so an ambient transaction that flows across awaits is the caller's there too.
+   /// </summary>
+   Task AwaitPassThroughAsync();
 }

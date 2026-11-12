@@ -16,6 +16,10 @@ public partial interface IGatedCodeSection
    ///<summary>Passes through <see cref="EntranceGate"/>, executes <paramref name="func"/>, then passes through <see cref="ExitGate"/> before returning the result.</summary>
    TReturn Execute<TReturn>(Func<TReturn> func);
 
+   ///<summary>The async counterpart of <see cref="Execute{TReturn}"/>, for async code under test: passes through <see cref="EntranceGate"/>, awaits <paramref name="func"/>,<br/>
+   /// then passes through <see cref="ExitGate"/> before returning the result, holding no thread while either gate keeps it waiting.</summary>
+   Task<TReturn> ExecuteAsync<TReturn>(Func<Task<TReturn>> func);
+
    ///<summary>Executes <paramref name="action"/> while holding the shared lock that guards both gates.</summary>
    TReturn ExecuteWithExclusiveLock<TReturn>(Func<IGatedCodeSection, TReturn> action);
 }

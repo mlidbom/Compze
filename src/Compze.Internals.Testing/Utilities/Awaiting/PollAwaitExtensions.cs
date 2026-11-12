@@ -1,4 +1,5 @@
 using System.Runtime.CompilerServices;
+using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Threading;
 
 namespace Compze.Internals.Testing.Utilities.Awaiting;
@@ -51,9 +52,40 @@ public static class PollAwaitExtensions
          while(true)
          {
             if(condition(@this)) return true;                                        // always evaluated before giving up, so false means observed-false
-            if(!waitTimeout.IsInfinite && DateTime.UtcNow - waitStarted >= waitTimeout.Value) return false;
+            if(HasExpired(waitTimeout, waitStarted)) return false;
             Thread.Sleep(interval);
          }
       }
+
+      ///<summary>The async counterpart of <see cref="PollAwait{TThis}"/>: awaits until <paramref name="condition"/> is true of this object, evaluating it every<br/>
+      /// <paramref name="pollInterval"/> and holding no thread between evaluations. Throws <see cref="PollAwaitTimeoutException"/> if it has not become true<br/>
+      /// within <paramref name="timeout"/>.</summary>
+      ///<remarks>A synchronous poll in an async specification sleeps a thread-pool thread between evaluations, a thread the code under specification may need to run on.</remarks>
+      public async Task PollAwaitAsync(Func<TThis, bool> condition,
+                                       PollingInterval? pollInterval = null,
+                                       WaitTimeout? timeout = null,
+                                       [CallerArgumentExpression(nameof(condition))] string? conditionExpression = null)
+      {
+         if(!await @this.TryPollAwaitAsync(condition, pollInterval, timeout).caf())
+            throw new PollAwaitTimeoutException(@this, conditionExpression, timeout ?? DefaultPollAwaitTimeout);
+      }
+
+      ///<summary>The async counterpart of <see cref="TryPollAwait{TThis}"/>: awaits until <paramref name="condition"/> is true of this object, evaluating it every<br/>
+      /// <paramref name="pollInterval"/> and holding no thread between evaluations. Returns true as soon as it holds, or false if <paramref name="timeout"/> expires first.</summary>
+      public async Task<bool> TryPollAwaitAsync(Func<TThis, bool> condition, PollingInterval? pollInterval = null, WaitTimeout? timeout = null)
+      {
+         var interval = pollInterval ?? PollingInterval.Default;
+         var waitTimeout = timeout ?? DefaultPollAwaitTimeout;
+         var waitStarted = DateTime.UtcNow;
+
+         while(true)
+         {
+            if(condition(@this)) return true;                                        // always evaluated before giving up, so false means observed-false
+            if(HasExpired(waitTimeout, waitStarted)) return false;
+            await Task.Delay(interval).caf();
+         }
+      }
    }
+
+   static bool HasExpired(WaitTimeout waitTimeout, DateTime waitStarted) => !waitTimeout.IsInfinite && DateTime.UtcNow - waitStarted >= waitTimeout.Value;
 }

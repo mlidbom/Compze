@@ -1,7 +1,7 @@
-namespace Compze.Threading.Specifications.TestInfrastructure;
+namespace Compze.Tests.Infrastructure;
 
 ///<summary>Observing, in an async specification, whether a task completes in time, without the observation itself failing the specification.</summary>
-static class SpecificationTaskCE
+public static class SpecificationTaskCE
 {
    extension(Task @this)
    {

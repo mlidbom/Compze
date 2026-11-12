@@ -1,3 +1,5 @@
+using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
+
 namespace Compze.Threading.Testing;
 
 public partial interface IGatedCodeSection
@@ -26,6 +28,19 @@ public partial interface IGatedCodeSection
          finally
          {
             ExitGate.AwaitPassThrough();
+         }
+      }
+
+      public async Task<TReturn> ExecuteAsync<TReturn>(Func<Task<TReturn>> func)
+      {
+         await EntranceGate.AwaitPassThroughAsync().caf();
+         try
+         {
+            return await func().caf();
+         }
+         finally
+         {
+            await ExitGate.AwaitPassThroughAsync().caf();
          }
       }
 

@@ -105,6 +105,32 @@ gate.TryAwaitQueueLengthEqualTo(5, WaitTimeout.Milliseconds(50)).Must().BeTrue()
 gate.TryAwaitPassedThroughCountEqualTo(3, WaitTimeout.Milliseconds(50)).Must().BeTrue();
 ```
 
+### Async Tests and Async Code Under Test
+
+Every wait has an `…Async` counterpart that holds no thread while it waits. Use them in async tests: a synchronous wait parks the
+test's thread-pool thread for as long as it waits, a thread the code under test may need to run on, and on a machine with few
+processors a handful of such waits starve the pool.
+
+```csharp
+[XF] public async Task the_handler_runs_once_the_gate_opens()
+{
+   await gate.AwaitQueueLengthEqualToAsync(1);
+   gate.Open();
+   await gate.AwaitPassedThroughCountEqualToAsync(1);
+}
+```
+
+Async code under test passes through a gate with `AwaitPassThroughAsync()`, which holds no thread while the gate keeps it waiting:
+
+```csharp
+handlers.ForTommand(async (MyTommand _) => await gate.AwaitPassThroughAsync());
+```
+
+Sync and async passes queue at the same gate, are counted the same way, and are let through by the same `Open` and
+`AwaitLetOneThreadPassThrough`. The post-pass-through action runs in the caller's execution context, so an ambient transaction that
+flows across awaits is the caller's there too. When a wait times out, its exception names the condition, the gate's state and the
+thread pool's state, so a timeout caused by a starved pool says so.
+
 ### Post-Pass-Through Actions
 
 Inject behavior that runs immediately after a thread passes through the gate — inside the gate's lock, so it's guaranteed to execute before the next thread passes:
@@ -188,7 +214,10 @@ section.ExitGate.AwaitPassedThroughCountEqualTo(1);
 
 ## TestingTaskRunner
 
-Runs actions on background threads and ensures they all complete successfully within a timeout. Exceptions from any task are rethrown on dispose.
+Runs the actors of a test and ensures they all complete successfully within a timeout. Exceptions from any task are rethrown on dispose.
+A synchronous action runs on a dedicated thread, since it typically blocks, at a gate or in the code under test, and a blocked
+thread-pool thread is one the code under test can't run on. An async function runs on the thread pool, since it holds no thread while
+it awaits.
 
 ```csharp
 using var runner = TestingTaskRunner.WithTimeout(10.Seconds());
@@ -198,6 +227,7 @@ runner.Run(
    () => DoFirstThing(),
    () => DoSecondThing()
 );
+runner.Run(async () => await DoSomethingAsync());
 
 // On Dispose: waits for all tasks to complete within timeout,
 // throws AggregateException if any task failed or timed out

@@ -4,6 +4,10 @@ All notable changes to Compze.Internals.Testing will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## 0.2.0-alpha
+
+- `PollAwaitAsync` and `TryPollAwaitAsync`: polling for a condition in async code, holding no thread between evaluations. A synchronous poll in an async specification sleeps a thread-pool thread between evaluations, a thread the code under specification may need to run on.
+
 ## 0.1.1-alpha
 
 - The visibility sweep reaches this package: non-public machinery moves below `_internal`/`_private` namespace sections — the markers that replaced the old `Internal`/`Private` spelling — and types and members are narrowed to the least visibility that compiles.

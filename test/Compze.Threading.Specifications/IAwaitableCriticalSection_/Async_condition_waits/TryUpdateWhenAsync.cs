@@ -1,3 +1,4 @@
+using Compze.Tests.Infrastructure;
 using Compze.Contracts.Exceptions;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Must;

@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 ## 0.6.3-alpha
 
 - **A send waiting for a handler holds no thread.** A send that waits, within its endpoint's handler-availability patience, for a handler to be connected parked a dedicated thread for as long as it waited. It now waits with Compze.Threading's `TryAwaitAsync`, which holds none, so many waiting sends no longer cost a thread each.
+- A named-pipe connection's timeout describes the thread pool's state with Compze.Internals.SystemCE's `ThreadPoolCE.DescribeState()`, which also names the minimum worker threads, the completed work items and the processor count.
 
 ## 0.6.2-alpha
 

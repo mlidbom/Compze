@@ -1,3 +1,4 @@
+using Compze.Internals.SystemCE.ThreadingCE;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 
 namespace Compze.Tests.Infrastructure.Diagnostics;
@@ -19,7 +20,7 @@ public static class TaskTimeoutDiagnosticsCE
             return;
          }
 
-         var threadPoolState = DescribeThreadPoolState();
+         var threadPoolState = ThreadPoolCE.DescribeState();
          var dumpFile = TestProcessDump.Write($"timeout awaiting {whatIsAwaited}");
          throw new TimeoutException($"""
                                      {whatIsAwaited} did not complete within {timeout}.
@@ -27,14 +28,5 @@ public static class TaskTimeoutDiagnosticsCE
                                      A dump of the process, taken while it was still waiting, was written to: {dumpFile.FullName}
                                      """);
       }
-   }
-
-   static string DescribeThreadPoolState()
-   {
-      ThreadPool.GetMinThreads(out var minimumWorkerThreads, out _);
-      ThreadPool.GetAvailableThreads(out var availableWorkerThreads, out _);
-      ThreadPool.GetMaxThreads(out var maximumWorkerThreads, out _);
-      return $"{ThreadPool.ThreadCount} threads, {ThreadPool.PendingWorkItemCount} pending work items, {ThreadPool.CompletedWorkItemCount} completed work items, "
-           + $"worker threads: minimum {minimumWorkerThreads}, maximum {maximumWorkerThreads}, available {availableWorkerThreads}; processor count {Environment.ProcessorCount}";
    }
 }
