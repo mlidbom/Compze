@@ -48,6 +48,7 @@ Then reload: `. $PROFILE`
 
 - **C-SimulateRelease** - Packs with real versions and dry-runs the release: which packages are new, their changelog entries, the post-release binding check (`.github/scripts/PostReleaseBindingCheck/README.md`), pushes, GitHub releases and tags
   - `-NoBuild`, `-NoPack`, `-NoSummary`
+  - The real release is the Create Releases workflow (`.github/workflows/publish-nuget.yml`), run by hand only after CI has passed on the same commit: see `.claude/rules/02-universal-compze/100-releasing.md`
 
 - **C-Publish-ToPendingReleaseFeed** - Publishes the versions the next release will publish to this machine's pending-release feed (`~/.nuget/compze-pending-release-feed`), which every repository on the machine restores from: a consumer can use a new version at once, instead of after CI, the release workflow and nuget.org's validation
   - Packs only a clean, committed tree; a published version is frozen to the code that ships
