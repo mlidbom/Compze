@@ -337,6 +337,12 @@ await InvokingAsync(() => repository.SaveAsync(order))
 | Throwing | `Invoking(...).Must().Throw<T>()`, `InvokingAsync(...).Must().ThrowAsync<T>()` |
 | General | `Satisfy` |
 
+The collection assertions take their element type from the subject, and return the context as an `IEnumerable<T>` of
+it. So the expected values need no element type of their own: `names.Must().SequenceEqual([])` and
+`shapes.Must().Contain(circle)` compile, as does `SequenceEqual(["a", "b"])` on a `List<string?>`. The assertions
+chained after one see a sequence, not the subject's own collection type. A struct collection, such as an
+`ImmutableArray<T>`, reaches them through `.AsEnumerable()`. A set's own comparer decides what it contains.
+
 ## Custom assertions with arguments
 
 An assertion can take arguments and surface them in the failure message with their resolved values: pass them

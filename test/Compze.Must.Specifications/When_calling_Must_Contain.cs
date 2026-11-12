@@ -84,6 +84,18 @@ public class When_calling_Must_Contain : UniversalTestBase
       }
    }
 
+   public class with_a_set_whose_comparer_ignores_case : When_calling_Must_Contain
+   {
+      readonly HashSet<string> _set = new(StringComparer.OrdinalIgnoreCase) { "a" };
+      [XF] public void it_contains_an_item_that_differs_only_in_case() => _set.Must().Contain("A");
+   }
+
+   public class with_a_read_only_set_that_is_not_an_ICollection_and_whose_comparer_ignores_case : When_calling_Must_Contain
+   {
+      readonly IEnumerable<string> _set = new ReadOnlySetThatIsNotAnICollection(new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "a" });
+      [XF] public void it_contains_an_item_that_differs_only_in_case() => _set.Must().Contain("A");
+   }
+
    public class with_a_string_that : When_calling_Must_Contain
    {
       public class contains_the_substring : with_a_string_that
