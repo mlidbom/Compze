@@ -36,7 +36,7 @@ public class DoubleCheckedLocking_specification : UniversalTestBase
          factoryCalled.Must().BeFalse();
       }
 
-      [ICriticalSectionMatrix] public void creates_the_value_and_exchanges_into_field_when_field_is_null()
+      [ICriticalSectionMatrix] public void creates_the_value_and_sets_field_to_it_when_field_is_null()
       {
          var criticalSection = _factory.Create();
          string? field = null;
@@ -151,7 +151,7 @@ public class DoubleCheckedLocking_specification : UniversalTestBase
          factoryCalled.Must().BeFalse();
       }
 
-      [IAwaitableCriticalSectionMatrix] public void creates_the_value_and_exchanges_into_field_when_field_is_null()
+      [IAwaitableCriticalSectionMatrix] public void creates_the_value_and_sets_field_to_it_when_field_is_null()
       {
          var criticalSection = _factory.Create();
          string? field = null;

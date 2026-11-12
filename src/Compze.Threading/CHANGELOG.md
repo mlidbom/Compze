@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 ## 0.9.1-alpha
 
 - Fixed a deadlock in the condition waits of `IAwaitableCriticalSection` as implemented by `IAwaitableMonitor` (`TakeReadLockWhen`, `TakeUpdateLockWhen`, their `Try` forms, and the waits built on them) when given a cancellable token. A cancellation that landed while the waiting thread held the lock, such as while it evaluated its condition, deadlocked the waiting thread and the cancelling one permanently: the wait disposed its cancellation registration, which waits for a running callback, and the callback waited for the lock. The wait now unregisters the callback instead of waiting for it.
+- `DoubleCheckedLocking` on a single field no longer forbids its factory to change state other than the value it creates. A thread that got the value without taking the lock could see that other state as it was before the factory ran. The lock-free read of the field is now an acquire, paired with the release that publishes the value (`Volatile.Read` and `Volatile.Write`, which replaces `Interlocked.Exchange`), so such a thread sees everything the factory wrote before returning it. The documentation now states the guarantees: the factory runs once, under the lock, and runs again on the next call if it throws.
 
 ## 0.9.0-alpha
 
