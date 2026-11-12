@@ -7,8 +7,12 @@ function C-SimulateRelease {
     .DESCRIPTION
     Packs all projects with real versions (C-Pack -CI), then runs the publish script
     in dry-run mode. This shows exactly what would happen during a real release:
-    which packages are new, their changelog entries, NuGet pushes, GitHub releases,
-    and git tags — without actually doing any of it.
+    which packages are new, their changelog entries, the post-release binding check,
+    NuGet pushes, GitHub releases, and git tags — without actually doing any of it.
+
+    The post-release binding check (.github/scripts/PostReleaseBindingCheck/README.md)
+    stops the run, as it would stop the release, when the new packages and nuget.org's
+    newest version of the other packages would fail at runtime against each other.
 
     Release detection and the summary table are driven entirely by local git tags, so the
     run first fetches every remote's tags (git fetch --all --tags). Without this, a clone

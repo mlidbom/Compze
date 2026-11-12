@@ -17,6 +17,8 @@ function C-Publish-ToPendingReleaseFeed {
     A version published here must be the version that ships, so:
     - It packs only a clean, committed tree.
     - A version nuget.org already has is refused.
+    - So is a set of versions the release would refuse because the post-release binding check fails for it
+      (.github/scripts/Invoke-PostReleaseBindingCheck.ps1): a consumer here would get the same runtime failures.
     - A version already in the feed is republished only when its package's source (src/<PackageId>) changed since it was
       published, and only with -Replace. Without it, bump the version instead.
 
@@ -82,6 +84,17 @@ function C-Publish-ToPendingReleaseFeed {
     if ($alreadyOnNuGetOrg.Count -gt 0) {
         throw ("C-Publish-ToPendingReleaseFeed: nuget.org already has $(($alreadyOnNuGetOrg | ForEach-Object { "$($_.PackageName) $($_.Version)" }) -join ', '), " +
                "but no release tag exists for it: a release likely crashed after pushing (C-SimulateRelease's summary shows it as TAG MISSING). Nothing was published.")
+    }
+
+    Push-Location $script:CompzeRoot
+    try {
+        & (Join-Path $script:CompzeRoot ".github/scripts/Invoke-PostReleaseBindingCheck.ps1") -NupkgsPath $nupkgsDirectory
+        $bindingCheckExitCode = $LASTEXITCODE
+    } finally {
+        Pop-Location
+    }
+    if ($bindingCheckExitCode -ne 0) {
+        throw "C-Publish-ToPendingReleaseFeed: the release would refuse these versions, since Compze packages would fail at runtime against each other (see above). Nothing was published."
     }
 
     # Decide for every package before publishing any, so a refusal publishes nothing.

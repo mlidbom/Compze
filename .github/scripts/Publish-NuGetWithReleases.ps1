@@ -5,7 +5,9 @@
 # Sequence:
 #   1. Detect which packages are new by checking for existing git tags ({PackageName}/v{Version})
 #   2. Validate that every new package has a CHANGELOG.md entry for its version
-#   3. For each new package: push to NuGet, create GitHub release, create and push git tag
+#   3. Run the post-release binding check (Invoke-PostReleaseBindingCheck.ps1): the new packages and nuget.org's newest
+#      version of every other package must not fail at runtime against each other
+#   4. For each new package: push to NuGet, create GitHub release, create and push git tag
 #
 # Environment variables (set by the GitHub Actions workflow):
 #   NUGET_API_KEY  — short-lived nuget.org API key from the workflow's Trusted Publishing login step
@@ -61,6 +63,12 @@ if ($newPackages.Count -eq 0) {
     Write-Host "`nNew packages to release:"
     foreach ($pkg in $newPackages) {
         Write-Host "  $($pkg.PackageName) v$($pkg.Version)"
+    }
+
+    & "$scriptDir/Invoke-PostReleaseBindingCheck.ps1" -NupkgsPath $nupkgsPath
+    if ($LASTEXITCODE -ne 0) {
+        Write-Error "The post-release binding check failed (see above), so nothing was published."
+        exit 1
     }
 
     Write-Host ""

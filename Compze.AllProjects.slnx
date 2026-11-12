@@ -155,6 +155,10 @@
   <Folder Name="/_Websites/">
     <Project Path="src/Websites/Website/Website.csproj" />
   </Folder>
+  <Folder Name="/~Release Tooling/">
+    <Project Path=".github/scripts/PostReleaseBindingCheck/PostReleaseBindingCheck.csproj" />
+    <Project Path=".github/scripts/PostReleaseBindingCheck.Specifications/PostReleaseBindingCheck.Specifications.csproj" />
+  </Folder>
   <Folder Name="/~Solution Structure/">
     <Project Path="src/msbuild/Solution.Build.csproj" />
     <Project Path="src/SolutionStructure/Solution.Agents.csproj" />
