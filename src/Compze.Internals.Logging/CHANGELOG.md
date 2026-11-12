@@ -10,6 +10,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 - An error can be logged without an exception: `ILogger.Error(string message)`, `Error(string template, object?[] values)` and `Error($"…")`, the same overloads `Warning` and `Critical` have. Until now every `Error` overload took an exception, so code logging an error with no exception behind it had to make one up.
 - `logger.Error()`, the `ILevelLogger` for the `Error` level, which was the only level without one.
 
+### Changed
+- **Requires newer minor versions of other Compze packages:** Compze.Internals.SystemCE 0.6.1-internal (was 0.4.1-internal). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
+
 ## 0.5.0-alpha
 
 ### Fixed
