@@ -51,8 +51,7 @@ partial class PgSqlInboxSqlLayer(IPgSqlConnectionPool connectionFactory, PgSqlSq
                       .AddParameter(TessageTable.DeliveryStreamSequenceNumber, deliveryStreamPosition.SequenceNumber)
                        //performance: Like with the tevent store, keep all framework properties out of the JSON and put it into separate columns instead. For tevents. Reuse a pre-serialized instance from the persisting to the tevent store.
                       .AddMediumTextParameter(TessageTable.Body, serializedTessage)
-                      .PrepareStatement()
-                      .ExecuteNonQueryAsync().caf()).caf();
+                      .ExecutePreparedNonQueryAsync().caf()).caf();
 
          return ITessagingSqlLayer.SaveTessageResult.NewTessage;
       }).caf();
@@ -78,8 +77,7 @@ partial class PgSqlInboxSqlLayer(IPgSqlConnectionPool connectionFactory, PgSqlSq
                    .AddParameter(Admissions.SenderEndpointId, position.SenderEndpointId.Value)
                    .AddParameter(Admissions.LastAdmittedSequenceNumber, position.SequenceNumber)
                    .AddParameter("PredecessorSequenceNumber", position.PredecessorSequenceNumber)
-                   .PrepareStatement()
-                   .ExecuteNonQueryAsync().caf()).caf();
+                   .ExecutePreparedNonQueryAsync().caf()).caf();
       if(advanced == 1) return true;
 
       var admittedAsFirstContact = await _connectionFactory.UseCommandAsync(
@@ -97,8 +95,7 @@ partial class PgSqlInboxSqlLayer(IPgSqlConnectionPool connectionFactory, PgSqlSq
                    .AddParameter(Admissions.SenderEndpointId, position.SenderEndpointId.Value)
                    .AddParameter(Admissions.LastAdmittedSequenceNumber, position.SequenceNumber)
                    .AddParameter("PredecessorSequenceNumber", position.PredecessorSequenceNumber)
-                   .PrepareStatement()
-                   .ExecuteNonQueryAsync().caf()).caf();
+                   .ExecutePreparedNonQueryAsync().caf()).caf();
       return admittedAsFirstContact == 1;
    }
 
@@ -114,8 +111,7 @@ partial class PgSqlInboxSqlLayer(IPgSqlConnectionPool connectionFactory, PgSqlSq
 
                         """)
                    .AddParameter(Admissions.SenderEndpointId, position.SenderEndpointId.Value)
-                   .PrepareStatement()
-                   .ExecuteScalarAsync().caf())!).caf();
+                   .ExecutePreparedScalarAsync().caf())!).caf();
 
    //FOR UPDATE takes the row lock the claim IS - held to the end of the caller's ambient handling transaction - and
    //SKIP LOCKED makes a row another live handling transaction has claimed report unclaimable instead of blocking on it.
@@ -132,8 +128,7 @@ partial class PgSqlInboxSqlLayer(IPgSqlConnectionPool connectionFactory, PgSqlSq
 
                         """)
                    .AddParameter(TessageTable.TessageId, tessageId.Value)
-                   .PrepareStatement()
-                   .ExecuteScalarAsync().caf()).caf();
+                   .ExecutePreparedScalarAsync().caf()).caf();
 
    public async Task<IReadOnlyList<ITessagingSqlLayer.UnHandledTessage>> GetUnHandledTessagesAsync()
    {
@@ -187,8 +182,7 @@ partial class PgSqlInboxSqlLayer(IPgSqlConnectionPool connectionFactory, PgSqlSq
 
                    """)
               .AddParameter(TessageTable.TessageId, tessageId.Value)
-              .PrepareStatement()
-              .ExecuteNonQueryAsync().caf()).caf();
+              .ExecutePreparedNonQueryAsync().caf()).caf();
    }
 
    public async Task<int> RecordExceptionAsync(TessageId tessageId, string exceptionStackTrace, string exceptionTessage, string exceptionType)
@@ -211,8 +205,7 @@ partial class PgSqlInboxSqlLayer(IPgSqlConnectionPool connectionFactory, PgSqlSq
                    .AddMediumTextParameter(TessageTable.ExceptionStackTrace, exceptionStackTrace)
                    .AddMediumTextParameter(TessageTable.ExceptionTessage, exceptionTessage)
                    .AddVarcharParameter(TessageTable.ExceptionType, 500, exceptionType)
-                   .PrepareStatement()
-                   .ExecuteNonQueryAsync().caf()).caf();
+                   .ExecutePreparedNonQueryAsync().caf()).caf();
    }
 
    public async Task<int> MarkAsFailedAsync(TessageId tessageId)
@@ -228,8 +221,7 @@ partial class PgSqlInboxSqlLayer(IPgSqlConnectionPool connectionFactory, PgSqlSq
                             AND {TessageTable.Status} = {(int)InboxTessageStatus.UnHandled};
                         """)
                    .AddParameter(TessageTable.TessageId, tessageId.Value)
-                   .PrepareStatement()
-                   .ExecuteNonQueryAsync().caf()).caf();
+                   .ExecutePreparedNonQueryAsync().caf()).caf();
    }
 
    public async Task InitAsync() => await _schemaManager.EnsureSchemaInitializedAsync().caf();

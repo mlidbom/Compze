@@ -44,9 +44,15 @@ public static partial class TaskCE
 
    static readonly TaskFactory DefaultSchedulerDenyChildAttachTaskFactory = new(CancellationToken.None, TaskCreationOptions.DenyChildAttach, TaskContinuationOptions.None, TaskScheduler.Default);
 #pragma warning disable CA2008 // Do not create tasks without passing a TaskScheduler We just did. On the line above...
-   // ReSharper disable once UnusedMember.Local
-   static Task RunOnDedicatedThread(Action action) => RunOnDedicatedThread(action.ToFunc());
-   static Task<T> RunOnDedicatedThread<T>(Func<T> func) => DefaultSchedulerDenyChildAttachTaskFactory.StartNew(func, TaskCreationOptions.LongRunning);
+   ///<summary>Runs <paramref name="action"/> on a thread of its own, not a thread-pool thread: for blocking work an async caller<br/>
+   /// must await, such as a wait on a synchronization primitive that has no async form.</summary>
+   ///<remarks>The thread pool keeps only about as many threads as the machine has processors and adds more slowly, about one<br/>
+   /// or two a second, so every pool thread parked in a blocking wait leaves one fewer to run every async continuation in the<br/>
+   /// process. A few parked at once and continuations wait seconds for a thread; this costs a thread instead.</remarks>
+   public static Task RunOnDedicatedThread(Action action) => RunOnDedicatedThread(action.ToFunc());
+
+   ///<summary>Like <see cref="RunOnDedicatedThread(Action)"/>, for blocking work with a result.</summary>
+   public static Task<T> RunOnDedicatedThread<T>(Func<T> func) => DefaultSchedulerDenyChildAttachTaskFactory.StartNew(func, TaskCreationOptions.LongRunning);
 #pragma warning restore CA2008 // Do not create tasks without passing a TaskScheduler
 
    ///<summary>Task.ContinueWith may run the continuation synchronously on the calling thread, causing all kinds of subtle and hard to debug problems. This simply guarantees that that does not happen.</summary>
