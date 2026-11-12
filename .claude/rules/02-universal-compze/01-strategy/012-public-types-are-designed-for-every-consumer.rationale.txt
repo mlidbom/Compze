@@ -1,0 +1,17 @@
+# Rationale: public types are designed for every consumer
+
+Added 2026-11-12 at Magnus's request, after an agent argued that `LazyCE` could drop its run-the-factory-once
+guarantee because "nothing in Compze needs the factory to run strictly once". Magnus: "This keeps coming up again and
+again. Compze is a public library and everything public in it should be designed to that standard. NOT according to
+what compze currently uses."
+
+The argument was wrong on its face: the discussion started because JAStudio, an outside consumer, uses `LazyCE`.
+
+What pushes agents toward the mistake: the YAGNI guidance ("YAGNI withholds only behavior/members nothing yet calls")
+invites a search for callers, and an agent can only search this repository, where a public library's real callers
+never are. This rule draws the line: YAGNI decides whether a public member exists; once it does, its semantics are
+designed for every consumer.
+
+The Internals packages are included deliberately. The rule on highlighting public versus internal parts of projects
+used to say "We do not put the same effort and thought into the design of the types in these projects"; that sentence
+was reworded the same day to say only that their APIs change faster.
