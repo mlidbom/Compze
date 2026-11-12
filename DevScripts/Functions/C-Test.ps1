@@ -8,7 +8,9 @@ function C-Test {
     Runs the full Compze test suite. By default, builds the solution before running tests.
     Tests run in parallel according to assembly-level attributes by default.
     
-    Returns exit code 0 on success, 1 on failure.
+    Sets $LASTEXITCODE to 0 on success and 1 on failure, and reports a failure as an error of its own, so that
+    `pwsh -Command "...; C-Test"` exits 1 too. A test run fails when dotnet test does, which includes a test process
+    that died without reporting a failed test.
     
     .PARAMETER NoBuild
     Skip building the solution before running tests (assumes already built)
@@ -86,9 +88,12 @@ function C-Test {
     try {
         # Build and validate
         if (-not (Invoke-BuildWithValidation -NoBuild:$NoBuild -Clean:$Clean -FullGitReset:$FullGitReset)) {
+            if ($LASTEXITCODE -ne 0) {
+                Write-CommandFailure -Command $PSCmdlet -Message "The build failed, so no tests ran."
+            }
             return
         }
-        
+
         # Run tests for each iteration
         for ($i = 1; $i -le $Iterations; $i++) {
             if ($Iterations -gt 1) {
@@ -153,14 +158,14 @@ function C-Test {
             }
         }
         
-        # Set exit code based on whether any tests failed
+        # A test run fails when dotnet test does: also when a test process dies without reporting a failed test.
+        $failedRuns = @($iterationResults | Where-Object { $_.ExitCode -ne 0 })
         $totalFailedTests = ($iterationResults | Measure-Object -Property Failed -Sum).Sum
-        if ($totalFailedTests -gt 0) {
-            # For single iteration, show the failed tests
-            if ($Iterations -eq 1) {
-                Show-FailedTestsSummary -FailedTests $allFailedTests
-            }
-            $global:LASTEXITCODE = 1
+        if ($totalFailedTests -gt 0 -and $Iterations -eq 1) {
+            Show-FailedTestsSummary -FailedTests $allFailedTests
+        }
+        if ($failedRuns.Count -gt 0) {
+            Write-CommandFailure -Command $PSCmdlet -Message "$($failedRuns.Count) of $Iterations test run(s) failed, with $totalFailedTests failed test(s)."
         } else {
             $global:LASTEXITCODE = 0
         }

@@ -19,7 +19,8 @@ function Invoke-BuildWithValidation {
     Performs a full git reset before building
     
     .OUTPUTS
-    Boolean - $true if build succeeded or was skipped, $false if build failed or WhatIf preview shown
+    Boolean - $true if build succeeded or was skipped, $false if build failed or WhatIf preview shown.
+    A caller tells the two $false cases apart by $LASTEXITCODE: 1 after a failed build, 0 after a WhatIf preview.
     
     .EXAMPLE
     if (-not (Invoke-BuildWithValidation -Clean)) {
@@ -43,9 +44,8 @@ function Invoke-BuildWithValidation {
         return $false  # Signal to caller to exit early
     }
     
-    # Check if build failed
+    # Check if build failed. C-Build has reported it; the caller reports its own failure.
     if ($LASTEXITCODE -ne 0) {
-        Write-Error "Build failed!"
         $global:LASTEXITCODE = 1
         return $false
     }
