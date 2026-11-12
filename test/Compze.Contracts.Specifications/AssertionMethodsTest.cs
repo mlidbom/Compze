@@ -6,14 +6,19 @@ namespace Compze.Contracts.Specifications;
 
 public abstract class AssertionMethodsTest
 {
-   internal static readonly ContractAsserter Asserter = new("Test", tessage => new AssertionTestException(tessage),
-                                                                     tessage => new AssertionTestException(tessage));
+   internal static readonly ContractAsserter Asserter = new("Test", message => new AssertionTestException(message),
+                                                                     message => new AssertionTestException(message));
    protected class AssertionTestException(string message) : Exception(message);
 
    protected static void MustThrowContaining(Action action, string expectedExpression) =>
       Invoking(action)
         .Must().Throw<AssertionTestException>()
         .Which.Message.Must().Contain(expectedExpression);
+
+   protected static void MustThrowWithTheMessage(Action action, string expectedMessage) =>
+      Invoking(action)
+        .Must().Throw<AssertionTestException>()
+        .Which.Message.Must().Be(expectedMessage);
 
    protected static void MustThrowContainingForEach(string?[] invalidValues, Action<string?> action, string expectedExpression)
    {

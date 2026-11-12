@@ -18,6 +18,12 @@ public class ContractAsserter(string name, Func<string, Exception> createExcepti
    [EditorBrowsable(EditorBrowsableState.Never)]
    [DoesNotReturn] public void ThrowFailed(string expression, [CallerMemberName] string? callerName = null) => throw _createException($"{_name}.{callerName}({expression})");
 
+   /// <summary>
+   /// Throws the asserter's configured exception with <paramref name="message"/> as its whole message: for an assertion whose caller wrote the<br/>
+   /// failure message, which, unlike an expression, reads wrong wrapped in the <see cref="ThrowFailed"/> format.
+   /// </summary>
+   [DoesNotReturn] internal void ThrowFailedWithMessage(string message) => throw _createException(message);
+
    /// <summary>Throws the asserter's configured null exception with the raw expression as the parameter name. Use this from custom assertion extension methods.</summary>
    [EditorBrowsable(EditorBrowsableState.Never)]
    [DoesNotReturn] public void ThrowNull(string expression) => throw _createNullException(expression);

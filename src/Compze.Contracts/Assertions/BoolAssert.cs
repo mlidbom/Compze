@@ -8,12 +8,12 @@ public static class BoolAssert
 {
    extension(ContractAsserter @this)
    {
-      ///<summary>Throws if <paramref name="value"/> is false, using <paramref name="createMessage"/> to produce the failure message.</summary>
+      ///<summary>Throws if <paramref name="value"/> is false, with the message <paramref name="createMessage"/> produces as the exception's whole message.</summary>
       [MethodImpl(MethodImplOptions.AggressiveInlining)]
       public ContractAsserter Assert([DoesNotReturnIf(false)] bool value,
                                      Func<string> createMessage)
       {
-         if(!value) @this.ThrowFailed(createMessage.Invoke());
+         if(!value) @this.ThrowFailedWithMessage(createMessage.Invoke());
          return @this;
       }
 
