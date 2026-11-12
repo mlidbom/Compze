@@ -43,18 +43,18 @@ Wraps `IMutex` + `InterprocessSignal` to implement `IAwaitableCriticalSection`.
 **Condition wait (`TryTakeLockWhen`):**
 1. Acquire mutex (reentrant if caller already holds it)
 2. Check condition — if true, return lock
-3. Snapshot signal baseline (while holding the lock — ensures no signals are missed)
-4. Release ALL nesting levels via `IMutex.ReleaseAllNestingLevels()` (mirrors `Monitor.Wait()`)
-5. Wait for signal: call `_signal.TryAwait` in chunks of at most `AbandonedMutexCheckInterval` (1 second), each clamped to the remaining wait time so a finite wait timeout is honored precisely
-6. If `TryAwait` returns false (chunk elapsed without a signal) → probe mutex with zero-timeout `TryTakeLock` to detect abandoned mutexes, then loop back to step 5
-7. If `TryAwait` returns true (signal detected) → reacquire to full nesting depth, go to step 2
+3. If the wait timeout has expired → release this wait's own lock level, keeping the caller's, and return null. A wait that times out has just seen its condition false.
+4. Snapshot signal baseline (while holding the lock — ensures no signals are missed)
+5. Release ALL nesting levels via `IMutex.ReleaseAllNestingLevels()` (mirrors `Monitor.Wait()`)
+6. Wait for signal: call `_signal.TryAwait` in chunks of at most `AbandonedMutexCheckInterval` (1 second), each clamped to the remaining wait time so a finite wait timeout is honored precisely
+7. If `TryAwait` returns false (chunk elapsed without a signal) → if the wait timeout has expired, go to step 8; else probe mutex with zero-timeout `TryTakeLock` to detect abandoned mutexes, then loop back to step 6
+8. Reacquire to full nesting depth, go to step 2. So on expiry the condition is evaluated once more before the wait gives up, as the in-process monitor's waits do.
 
 **Async condition wait (`TryAwaitAsync`, `TryUpdateWhenAsync`):** the same steps, with three differences:
 - The wait for the signal is `InterprocessSignal.TryAwaitChangeFromAsync`, which sleeps between polls with `Task.Delay`, so no thread is held while it waits. The poll schedule is the same `ISignalPollingPolicy`, and the 1-second abandoned-mutex probe is the same.
 - It can't release nesting levels its caller holds, because it may resume on another thread, and nesting depth and mutex ownership are per thread. So it asserts at the start that the calling thread doesn't hold the mutex, instead of calling `ReleaseAllNestingLevels`.
 - Only an evaluation that finds the condition true, for an update, raises the signal on release. One that finds it false releases the mutex without raising it: two waits with false conditions would otherwise keep waking each other.
 
-On expiry the async wait evaluates the condition once more before it gives up, as the in-process monitor's waits do.
 
 **Two wakeup schedules, different purposes:**
 - **`ISignalPollingPolicy`** (inside `InterprocessSignal.TryAwait`): decides each sleep between counter polls. The default backs off from 1ms at the start of a wait to a 50ms cap (a quarter of the elapsed wait, clamped), trading signal-detection latency against the power cost of frequent CPU wakeups. Detects normal `UpdateLock` releases.

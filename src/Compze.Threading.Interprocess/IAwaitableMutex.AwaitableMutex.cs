@@ -79,6 +79,13 @@ public partial interface IAwaitableMutex
             {
                cancellationToken.ThrowIfCancellationRequested();
 
+               if(HasExpired(effectiveWaitTimeout, waitStartedAt))
+               {
+                  // Timeout, with the condition just evaluated false: release our lock level, keeping the caller's, and return null
+                  mutexLock.Dispose();
+                  return null;
+               }
+
                // Snapshot the signal baseline while holding the lock — any signal raised after this point will be visible to TryAwait.
                var baseline = _signal.Snapshot();
 
@@ -88,20 +95,10 @@ public partial interface IAwaitableMutex
 
                try
                {
-                  if(HasExpired(effectiveWaitTimeout, waitStartedAt))
-                  {
-                     // Timeout — restore caller's nesting state (our lock level is excluded) and return null
-                     _mutex.ReacquireToNestingDepth(depth - 1, effectiveLockTimeout);
-                     return null;
-                  }
-
                   while(!_signal.TryAwait(NextAwaitChunkTimeout(effectiveWaitTimeout, waitStartedAt), ref baseline, waitStartedAt, cancellationToken))
                   {
-                     if(HasExpired(effectiveWaitTimeout, waitStartedAt))
-                     {
-                        _mutex.ReacquireToNestingDepth(depth - 1, effectiveLockTimeout);
-                        return null;
-                     }
+                     // On expiry, go back to evaluating the condition once more before giving up, as the monitor's waits do: a wait that times out has seen its condition false.
+                     if(HasExpired(effectiveWaitTimeout, waitStartedAt)) break;
 
                      // Probe the mutex to detect abandoned-mutex scenarios (triggers AbandonedMutexException → callback raises signal)
                      _mutex.TryTakeLock(LockTimeout.Zero, cancellationToken)?.Dispose();
@@ -115,7 +112,7 @@ public partial interface IAwaitableMutex
                   throw;
                }
 
-               // Signal received — reacquire to full depth (including our level) and re-check condition
+               // Signal received, or the wait expired — reacquire to full depth (including our level) and re-check condition
                _mutex.ReacquireToNestingDepth(depth, effectiveLockTimeout);
             }
          }

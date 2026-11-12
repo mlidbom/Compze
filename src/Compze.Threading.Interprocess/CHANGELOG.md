@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 ## 0.6.0-alpha
 
 - **`IAwaitableMutex` implements the async condition waits** that Compze.Threading 0.11.0-alpha adds to `IAwaitableCriticalSection`: `TryAwaitAsync`, `TryUpdateWhenAsync`, `ReadWhenAsync` and `UpdateWhenAsync`. They poll the cross-process signal on the same `ISignalPollingPolicy` schedule as the synchronous waits, but sleep between polls with `Task.Delay`, so no thread is held while they wait. They probe for an abandoned mutex once a second, as the synchronous waits do, and when the wait timeout expires they evaluate the condition once more before giving up.
+- **Fixed: a synchronous condition wait on an `IAwaitableMutex` gave up without evaluating its condition once more when its wait timeout expired.** A condition that had become true without an update to wake the wait, such as state changed outside the update lock, was reported as a timeout. Now it evaluates the condition once more first, as the in-process monitor's waits always have, so a wait that times out has seen its condition false.
 - **`IAwaitableProcessShared<T>` implements the async condition waits** Compze.Threading 0.11.0-alpha adds to `IAwaitableShared<T>`, on its `IAwaitableMutex`.
 
 ## 0.5.1-alpha
