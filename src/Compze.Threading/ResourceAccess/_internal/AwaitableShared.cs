@@ -38,4 +38,16 @@ class AwaitableShared<TShared> : IAwaitableShared<TShared>
 
    public bool TryAwait(Func<TShared, bool> condition, CancellationToken cancellationToken = default, WaitTimeout? timeout = null) =>
       CriticalSection.TryAwait(() => condition(_shared), cancellationToken, waitTimeout: timeout);
+
+   public Task<TResult> ReadWhenAsync<TResult>(Func<TShared, bool> condition, Func<TShared, TResult> read, CancellationToken cancellationToken = default, WaitTimeout? timeout = null) =>
+      CriticalSection.ReadWhenAsync(() => condition(_shared), () => read(_shared), cancellationToken, waitTimeout: timeout);
+
+   public Task<TResult> UpdateWhenAsync<TResult>(Func<TShared, bool> condition, Func<TShared, TResult> update, CancellationToken cancellationToken = default, WaitTimeout? timeout = null) =>
+      CriticalSection.UpdateWhenAsync(() => condition(_shared), () => update(_shared), cancellationToken, waitTimeout: timeout);
+
+   public Task<bool> TryUpdateWhenAsync(Func<TShared, bool> condition, Action<TShared> update, CancellationToken cancellationToken = default, WaitTimeout? timeout = null) =>
+      CriticalSection.TryUpdateWhenAsync(() => condition(_shared), () => update(_shared), cancellationToken, waitTimeout: timeout);
+
+   public Task<bool> TryAwaitAsync(Func<TShared, bool> condition, CancellationToken cancellationToken = default, WaitTimeout? timeout = null) =>
+      CriticalSection.TryAwaitAsync(() => condition(_shared), cancellationToken, waitTimeout: timeout);
 }

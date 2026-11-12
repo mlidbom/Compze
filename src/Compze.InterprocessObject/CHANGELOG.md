@@ -4,6 +4,10 @@ All notable changes to Compze.InterprocessObject will be documented in this file
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## 0.8.0-alpha
+
+- **`IInterprocessObject<T>` implements the async condition waits** Compze.Threading 0.11.0-alpha adds to `IAwaitableShared<T>`: `ReadWhenAsync`, `UpdateWhenAsync`, `TryUpdateWhenAsync`, `TryAwaitAsync` and `AwaitAsync`. They hold no thread while they wait, and like the synchronous waits they load the object for each evaluation of the condition and save it after an update.
+
 ## 0.7.1-alpha
 
 - The visibility sweep reaches this package: non-public machinery moves below `_internal`/`_private` namespace sections — the markers that replaced the old `Internal`/`Private` spelling — and types and members are narrowed to the least visibility that compiles.

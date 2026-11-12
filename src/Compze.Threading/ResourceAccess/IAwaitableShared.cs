@@ -44,5 +44,38 @@ public interface IAwaitableShared<out TShared>
    ///<summary>Blocks until <paramref name="condition"/> returns true for the shared object or <paramref name="timeout"/> expires. Returns false if the wait times out, else true.<br/>
    /// The pure wait: unlike <see cref="TryUpdateWhen"/> nothing is written when the condition passes, so waiters observing the shared object never wake each other.</summary>
    bool TryAwait(Func<TShared, bool> condition, CancellationToken cancellationToken = default, WaitTimeout? timeout = null);
+
+   //async core
+   ///<summary>Awaits until <paramref name="condition"/> returns true for the shared object, holding no thread while it waits, then executes <paramref name="read"/><br/>
+   /// within the read lock held while evaluating <paramref name="condition"/> and returns its result. Throws <see cref="Exceptions.AwaitingConditionTimeoutException"/> if <paramref name="timeout"/> expires.<br/>
+   /// The async counterpart of <see cref="ReadWhen{TResult}"/>: see <see cref="IAwaitableCriticalSection"/> for how async condition waits work.</summary>
+   Task<TResult> ReadWhenAsync<TResult>(Func<TShared, bool> condition, Func<TShared, TResult> read, CancellationToken cancellationToken = default, WaitTimeout? timeout = null);
+
+   ///<summary>Awaits until <paramref name="condition"/> returns true for the shared object, holding no thread while it waits, then executes <paramref name="update"/><br/>
+   /// within the update lock held while evaluating <paramref name="condition"/> and returns its result. Throws <see cref="Exceptions.AwaitingConditionTimeoutException"/> if <paramref name="timeout"/> expires.<br/>
+   /// The async counterpart of <see cref="UpdateWhen{TResult}"/>: see <see cref="IAwaitableCriticalSection"/> for how async condition waits work.</summary>
+   Task<TResult> UpdateWhenAsync<TResult>(Func<TShared, bool> condition, Func<TShared, TResult> update, CancellationToken cancellationToken = default, WaitTimeout? timeout = null);
+
+   ///<summary>Awaits until <paramref name="condition"/> returns true for the shared object or <paramref name="timeout"/> expires, holding no thread while it waits.<br/>
+   /// If <paramref name="condition"/> became true, executes <paramref name="update"/> within the update lock held while evaluating it and returns true; else returns false without executing it.<br/>
+   /// The async counterpart of <see cref="TryUpdateWhen"/>: see <see cref="IAwaitableCriticalSection"/> for how async condition waits work.</summary>
+   Task<bool> TryUpdateWhenAsync(Func<TShared, bool> condition, Action<TShared> update, CancellationToken cancellationToken = default, WaitTimeout? timeout = null);
+
+   ///<summary>Awaits until <paramref name="condition"/> returns true for the shared object or <paramref name="timeout"/> expires, holding no thread while it waits.<br/>
+   /// Returns false if the wait times out, else true.<br/>
+   /// The async counterpart of <see cref="TryAwait"/>: see <see cref="IAwaitableCriticalSection"/> for how async condition waits work.</summary>
+   Task<bool> TryAwaitAsync(Func<TShared, bool> condition, CancellationToken cancellationToken = default, WaitTimeout? timeout = null);
+
+   //async default implementations
+   ///<summary>Awaits until <paramref name="condition"/> returns true for the shared object, holding no thread while it waits, then executes <paramref name="update"/><br/>
+   /// within the update lock held while evaluating <paramref name="condition"/>. Throws <see cref="Exceptions.AwaitingConditionTimeoutException"/> if <paramref name="timeout"/> expires.<br/>
+   /// The async counterpart of <see cref="UpdateWhen(Func{TShared, bool}, Action{TShared}, CancellationToken, Nullable{WaitTimeout})"/>.</summary>
+   Task UpdateWhenAsync(Func<TShared, bool> condition, Action<TShared> update, CancellationToken cancellationToken = default, WaitTimeout? timeout = null) =>
+      UpdateWhenAsync(condition, update.ToFunc(), cancellationToken, timeout);
+
+   ///<summary>Awaits until <paramref name="condition"/> returns true for the shared object, holding no thread while it waits. Throws <see cref="Exceptions.AwaitingConditionTimeoutException"/> if <paramref name="timeout"/> expires.<br/>
+   /// The async counterpart of <see cref="Await"/>.</summary>
+   Task AwaitAsync(Func<TShared, bool> condition, CancellationToken cancellationToken = default, WaitTimeout? timeout = null) =>
+      ReadWhenAsync(condition, _ => unit, cancellationToken, timeout);
 #pragma warning restore CA1068
 }

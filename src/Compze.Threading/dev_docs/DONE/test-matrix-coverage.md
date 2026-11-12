@@ -65,6 +65,7 @@ All factories use real user-facing factory methods (`IThreadShared.New()`, `IPro
 | `IThreadShared<T>` | `IThreadShared_specification` | `[XF]` | Monitor property |
 | `IProcessShared<T>` | `IProcessShared_specification` | `[XF]` Global/Local | Mutex property (IsGlobal, Name, LockTimeout) — scope-specific assertions |
 | `IAwaitableShared<T>` | `IAwaitableShared_specification` | `[IAwaitableSharedMatrix]` | Read, Update, mutual exclusion, ReadWhen, TryReadWhen, UpdateWhen, TryUpdateWhen, Await, CriticalSection property |
+| `IAwaitableShared<T>` | `Async_condition_waits` (`ReadWhenAsync`, `UpdateWhenAsync.with_a_func`/`with_an_action`, `TryUpdateWhenAsync`, `TryAwaitAsync`, `AwaitAsync`) | `[IAwaitableSharedMatrix]` | The async condition waits: waking on an update, what the read or update returns, the update persisting in the shared object, timeouts, holding no thread |
 | `IAwaitableThreadShared<T>` | `IAwaitableThreadShared_specification` | `[XF]` | Monitor property |
 | `IAwaitableThreadShared<T>` | `ContentionCount_specification` | `[XF]` | Monitor contention tracking via shared wrapper |
 | `IAwaitableProcessShared<T>` | `IAwaitableProcessShared_specification` | `[IAwaitableProcessSharedMatrix]` | Mutex property (IsGlobal, Name, LockTimeout, WaitTimeout), IDisposable |

@@ -98,6 +98,9 @@ class WorkTracker
 
     // Wait for condition to become true
     public void AwaitDone() => _state.Await(state => state.IsDone);
+
+    // Each waiting method has an async counterpart that holds no thread while it waits: see "Async condition waits" below
+    public async Task AwaitDoneAsync() => await _state.AwaitAsync(state => state.IsDone);
 }
 ```
 

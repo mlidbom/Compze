@@ -103,6 +103,40 @@ public partial interface IInterprocessObject
       public bool TryAwait(Func<TObject, bool> condition, CancellationToken cancellationToken = default, WaitTimeout? timeout = null) =>
          Mutex.TryAwait(() => condition(Load()), cancellationToken, waitTimeout: timeout);
 
+      public Task<TResult> ReadWhenAsync<TResult>(Func<TObject, bool> condition, Func<TObject, TResult> read, CancellationToken cancellationToken = default, WaitTimeout? timeout = null)
+      {
+         TObject? loaded = null;
+         return Mutex.ReadWhenAsync(() => condition(loaded = Load()), () => read(loaded!), cancellationToken, waitTimeout: timeout);
+      }
+
+      public Task<TResult> UpdateWhenAsync<TResult>(Func<TObject, bool> condition, Func<TObject, TResult> update, CancellationToken cancellationToken = default, WaitTimeout? timeout = null)
+      {
+         TObject? loaded = null;
+         return Mutex.UpdateWhenAsync(() => condition(loaded = Load()), UpdateAndSaveTheLoadedObject, cancellationToken, waitTimeout: timeout);
+
+         TResult UpdateAndSaveTheLoadedObject()
+         {
+            var result = update(loaded!);
+            Save(loaded!);
+            return result;
+         }
+      }
+
+      public Task<bool> TryUpdateWhenAsync(Func<TObject, bool> condition, Action<TObject> update, CancellationToken cancellationToken = default, WaitTimeout? timeout = null)
+      {
+         TObject? loaded = null;
+         return Mutex.TryUpdateWhenAsync(() => condition(loaded = Load()), UpdateAndSaveTheLoadedObject, cancellationToken, waitTimeout: timeout);
+
+         void UpdateAndSaveTheLoadedObject()
+         {
+            update(loaded!);
+            Save(loaded!);
+         }
+      }
+
+      public Task<bool> TryAwaitAsync(Func<TObject, bool> condition, CancellationToken cancellationToken = default, WaitTimeout? timeout = null) =>
+         Mutex.TryAwaitAsync(() => condition(Load()), cancellationToken, waitTimeout: timeout);
+
       public void Delete() => _file.Delete();
 
       public void Dispose()
