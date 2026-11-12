@@ -4,6 +4,14 @@ All notable changes to Compze.Must will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## 0.8.0-alpha
+
+- **Breaking: the collection assertions take their element type from the subject.** `HaveCount`, `BeEmpty`, `NotBeEmpty`, `SequenceEqual` and `Contain` take the subject as an `IEnumerable<T>` of its element type, and return the context as one. So the expected values need no element type of their own: `SequenceEqual(["a", "b"])` on a `List<string?>` no longer warns CS8631, and `SequenceEqual([])`, expected values of a narrower type than the subject's elements, and values of several types compile, where they gave CS0411 or CS0311. What a consumer may meet: the assertions chained after one, and its `Actual`, see an `IEnumerable<T>`, not the subject's own collection type, such as a `List<T>`; a struct collection, such as an `ImmutableArray<T>`, reaches them through `.AsEnumerable()`, and a subject that is only a non-generic `IEnumerable` through `.Cast<object>()`; and `HaveCount`, `BeEmpty` and `NotBeEmpty` on a string return its characters, so string assertions can't follow them. Code compiled against an earlier version must be recompiled.
+- **`Contain` is one assertion for every collection,** in place of its overloads for `HashSet<T>`, `ISet<T>`, `IReadOnlySet<T>` and `ReadOnlyCollection<T>`. A set's own comparer decides what it contains, as before, and now also for a read-only set that isn't an `ICollection<T>` when its static type is a plain `IEnumerable<T>`, which was searched by the default equality.
+- **Fixed: on Windows, the failure messages of the released package showed a stray `RemoveLine` line,** where an assertion had no message part to show, and mixed lines ending in LF with lines ending in CRLF. Must's own text comes from raw string literals, which hold the line endings of the source files they were compiled from, and the released package is compiled on Linux. Every line of a failure message now ends in `Environment.NewLine`, whatever line endings the text it was made of had, a custom assertion's own text included.
+- Fixed: two different multi-line strings whose lines end in LF are diffed line by line on Windows too, where they were diffed as one line of words; and a subject's expression that spans several lines loses the indentation its lines share whatever their line endings.
+- `HaveCount`'s caller-filled parameter `predicateExpression` is named `countExpression`, for what it holds.
+
 ## 0.7.0-alpha
 
 - **`RunAssertionThatANullValueFails`** joins `RunAssertion` as the extension point for a custom assertion that needs a value to check, such as one about a string's text. It accepts a subject declared nullable, fails a `null` value itself, so the predicate never sees one, and returns the context narrowed to the non-nullable type. Every built-in assertion that needs a value is now built on it.

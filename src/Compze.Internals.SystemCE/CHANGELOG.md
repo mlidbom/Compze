@@ -4,6 +4,10 @@ All notable changes to Compze.Internals.SystemCE will be documented in this file
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## 0.6.2-internal
+
+- Fixed: `StringCE.RemoveLinesWhere` and `StringIndenter.IndentToDepth` split a string at every line ending, LF and CRLF alike, and end the lines they return in `Environment.NewLine`. They split only at `Environment.NewLine`, so on Windows, text from a raw string literal in a package compiled on Linux, whose lines end in LF, was one line to them: Compze.Must's failure messages showed the placeholder for a line to leave out, `RemoveLine`, and Compze.Internals.Logging's exception messages, which indent with `IndentToDepth`, indented only their first line of such text.
+
 ## 0.6.1-internal
 
 - `SimpleObservable` takes no lock: subscribing and disposing a subscription swap in a new immutable array of subscribers, trying again when another thread swapped in one of its own first. An observable nobody has subscribed to is one 24-byte object instead of 416 bytes, its own `IMonitor` included, which matters to code that gives each of a great many objects one, such as every `Taggregate`. Notifying the subscribers no longer allocates.
