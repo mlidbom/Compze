@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 ## 0.7.0-internal
 
 - `ThreadPoolCE.DescribeState()`: the thread pool's state in one line, for the message of a wait that timed out, where the question is whether the pool starved. It replaces two descriptions of the same thing, in Compze.Tessaging's named-pipe connection pool and in the test infrastructure, and Compze.Threading.Testing's gates use it in their timeouts.
+- **Requires newer minor versions of other Compze packages:** Compze.Threading 0.11.0-alpha (was 0.10.1-alpha). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
 
 ## 0.6.2-internal
 

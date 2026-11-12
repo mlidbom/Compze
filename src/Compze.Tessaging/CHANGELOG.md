@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 - **A send waiting for a handler holds no thread.** A send that waits, within its endpoint's handler-availability patience, for a handler to be connected parked a dedicated thread for as long as it waited. It now waits with Compze.Threading's `TryAwaitAsync`, which holds none, so many waiting sends no longer cost a thread each.
 - A named-pipe connection's timeout describes the thread pool's state with Compze.Internals.SystemCE's `ThreadPoolCE.DescribeState()`, which also names the minimum worker threads, the completed work items and the processor count.
+- **Requires newer minor versions of other Compze packages:** Compze.Internals.Logging 0.6.0-alpha (was 0.5.0-alpha), Compze.Internals.SystemCE 0.7.0-internal (was 0.6.0-internal), Compze.Threading 0.11.0-alpha (was 0.10.0-alpha). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
 
 ## 0.6.2-alpha
 

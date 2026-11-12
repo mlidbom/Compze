@@ -15,7 +15,9 @@ function ConvertFromPackageManifestXml([string]$ManifestXml) {
     # Compze package this one depends on to its floor.
     [xml]$manifest = $ManifestXml
     $metadata = $manifest.package.metadata
-    $repositoryCommit = if ($metadata.repository -and $metadata.repository.commit) { $metadata.repository.commit } else { $null }
+    # Selected rather than read as properties: under Set-StrictMode a missing element or attribute read as a property throws.
+    $repository = $metadata.SelectSingleNode("*[local-name()='repository']")
+    $repositoryCommit = if ($repository -and $repository.HasAttribute('commit')) { $repository.GetAttribute('commit') } else { $null }
     return [PSCustomObject]@{
         PackageId              = $metadata.id
         Version                = $metadata.version

@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 - **`TestingTaskRunner` runs an action on a dedicated thread instead of a thread-pool thread,** since what a test runs there typically blocks, at a gate or in the code under test. It also gains `Run(Func<Task>)` for async functions, which run on the thread pool: before, an async lambda bound to `Run(Action)` and ran as an `async void` the runner could neither await nor see fail.
 - **A gate's timeout names the condition it waited for and the thread pool's state,** along with the gate's own, so a timeout caused by a starved pool says so.
 - Breaking only for code that implements `IThreadGate`, `IThreadGateVisitor` or `IGatedCodeSection` itself.
+- **Requires newer minor versions of other Compze packages:** Compze.Internals.Logging 0.6.0-alpha (was 0.2.0-alpha), Compze.Internals.SystemCE 0.7.0-internal (was 0.2.1-internal), Compze.Threading 0.11.0-alpha (was 0.5.0-alpha). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
 
 ## 0.5.0-alpha
 
