@@ -28,7 +28,9 @@ one call site moves the warning to another.
   a message saying the assertion had no value to check, hands the predicate only a value, and returns the context
   narrowed to the non-nullable type. Never write the null check and the narrowing `!` by hand: nothing ties the two
   together, so a dropped check still compiles. Where null can pass (`Be`, `ReferenceEqual`, `BeNull`), the assertion is
-  built on `RunAssertion` and its return keeps the receiver's nullability.
+  built on `RunAssertion` and its return keeps the receiver's nullability. The assertions about null itself,
+  `NotBeNull`, `NotBeNullOrEmpty` and `NotBeNullOrWhiteSpace`, narrow on their own check: their predicate is the null
+  check, and "had no value to check" would misdescribe their failure.
 - **An expected value takes null only where null is a meaningful expectation:** `Be`'s and `ReferenceEqual`'s do, and
   so does a collection `Contain`'s item. `StartWith`'s, `SequenceEqual`'s and the comparisons' don't: there the
   parameter is non-nullable, so the compiler warns about a value that may be null, and a null that arrives anyway is a
