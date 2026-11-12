@@ -1,3 +1,4 @@
+using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Internals.SystemCE.CollectionsCE.GenericCE;
 using Compze.Tessaging.Endpoints;
 using Compze.Tessaging._private.TessagesInFlight;
@@ -19,11 +20,11 @@ class TessagesInFlightTracker : ITessagesInFlightTracker
    public void SendingTessageOnTransport(TransportTessage.OutGoing transportTessage, EndpointId remoteEndpointId) =>
       _implementation.Update(it => it.SendingTessageOnTransport(transportTessage, remoteEndpointId));
 
-   public void AwaitNoTessagesInFlight(WaitTimeout? timeoutOverride)
+   public async Task AwaitNoTessagesInFlightAsync(WaitTimeout? timeoutOverride)
    {
       try
       {
-         _implementation.Await(it => it.NoTessagesInFlight(), timeout: timeoutOverride ?? WaitTimeout.Seconds(10));
+         await _implementation.AwaitAsync(it => it.NoTessagesInFlight(), timeout: timeoutOverride ?? WaitTimeout.Seconds(10)).caf();
       }
       catch(AwaitingConditionTimeoutException e)
       {

@@ -1,5 +1,4 @@
 using Compze.Internals.Logging;
-using Compze.Internals.SystemCE.ThreadingCE;
 using Compze.Tessaging.TessageBus._private.BestEffortDelivery;
 using Compze.Tessaging._private.Transport;
 using Compze.Tessaging._private.Transport.Advertisement;
@@ -32,7 +31,7 @@ partial class TessagingConnection
       readonly TessagingConnection _connection;
       readonly BestEffortTeventQueues _queues;
       BestEffortTeventQueues.PeerQueue _peerQueue = null!;
-      Thread? _sendLoopThread;
+      Task? _sendLoop;
       int _consecutiveProbeFailures;
 
       BestEffortDeliveryStream(TessagingConnection connection, BestEffortTeventQueues queues)
@@ -54,7 +53,7 @@ partial class TessagingConnection
          //Attaching from inside the loop instead made the queue start accepting only once a freshly spawned BelowNormal thread
          //got scheduled, and a not-queued-for peer's tevents published in that window were dropped with the connection live.
          _peerQueue.AttachDrainingStream();
-         _sendLoopThread = _connection._taskRunner.RunOnNamedThread($"BestEffortDelivery-{_connection.EndpointInformation.Id.Value:N}", SendLoop, ThreadPriority.BelowNormal);
+         _sendLoop = _connection._taskRunner.RunOnNamedThread($"BestEffortDelivery-{_connection.EndpointInformation.Id.Value:N}", SendLoop, ThreadPriority.BelowNormal);
       }
 
       ///<summary>This connection stops being the peer's delivery path — called as delivery stops, so the queue stops accepting<br/>
@@ -76,7 +75,8 @@ partial class TessagingConnection
             _connection._tessagesInFlightTracker.DroppedBeforeDelivery(dropped, _connection.EndpointInformation.Id);
       }
 
-      internal void AwaitSendLoopTermination() => _sendLoopThread?.JoinCE(5.Seconds());
+      ///<summary>Completes when the send loop, told to stop, has ended; throws a <see cref="TimeoutException"/> if that takes longer than 5 seconds.</summary>
+      internal Task AwaitSendLoopTerminationAsync() => _sendLoop?.WaitAsync(5.Seconds()) ?? Task.CompletedTask;
 
       void SendLoop()
       {

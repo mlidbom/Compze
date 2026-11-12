@@ -15,7 +15,8 @@ interface ITessagesInFlightTracker
     IReadOnlyList<Exception> GetExceptions();
 
     void SendingTessageOnTransport(TransportTessage.OutGoing transportTessage, EndpointId remoteEndpointId);
-    void AwaitNoTessagesInFlight(WaitTimeout? timeoutOverride);
+    ///<summary>Completes when nothing is in flight, holding no thread while it waits; throws when <paramref name="timeoutOverride"/>, or 10 seconds, passes first.</summary>
+    Task AwaitNoTessagesInFlightAsync(WaitTimeout? timeoutOverride);
     void DoneWith(TransportTessage.InComing tessage, EndpointId handlingEndpointId, Exception? exception);
     ///<summary>A queued tessage was dropped without being handled by <paramref name="remoteEndpointId"/> — on the best-effort tier,<br/>
     /// the one tessage in flight at a delivery failure (see <c>src/Compze.Tessaging/dev_docs/tevent-delivery-model.md</c>).<br/>

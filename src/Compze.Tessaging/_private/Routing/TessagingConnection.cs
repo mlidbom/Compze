@@ -12,7 +12,7 @@ using Compze.Tessaging._private.Transport.Advertisement;
 
 namespace Compze.Tessaging._private.Routing;
 
-partial class TessagingConnection : ITessagingInboxConnection, IDisposable
+partial class TessagingConnection : ITessagingInboxConnection, IDisposable, IAsyncDisposable
 {
    public EndpointInformation EndpointInformation { get; private set; } = null!;
 
@@ -81,7 +81,9 @@ partial class TessagingConnection : ITessagingInboxConnection, IDisposable
       _bestEffortStream.Start();
    }
 
-   public void StopDelivery()
+   ///<summary>Stops this connection being the peer's delivery path and tells its send loops to stop, without waiting for them to<br/>
+   /// end: brief, so the router does it while holding its monitor. <see cref="AwaitDeliveryStoppedAsync"/> waits for the loops.</summary>
+   public void BeginStoppingDelivery()
    {
       if(!_deliveryRunning) return;
 
@@ -91,17 +93,34 @@ partial class TessagingConnection : ITessagingInboxConnection, IDisposable
       //here is where its queue must stop accepting - not whenever the send loop's thread gets round to noticing it was cancelled.
       _bestEffortStream.DetachFromThePeersQueue();
       _cancellationSource.Cancel();
-      //performance: the joins below block the calling thread - a thread-pool thread, inside the router's update lock (see
-      //   TessagingRouter.StopDelivery and DropConnection) - for up to 5 seconds per loop. Seen in the flake-hunt dumps of
-      //   2026-11-12 among the pool threads a starved test process had parked; brief there, since the loops exit promptly on
-      //   cancellation. An async stop that awaits the loops' completion would park nothing.
-      _exactlyOnceStream?.AwaitSendLoopTermination();
-      _bestEffortStream.AwaitSendLoopTermination();
    }
 
+   ///<summary>Completes once the send loops <see cref="BeginStoppingDelivery"/> told to stop have ended, holding no thread while<br/>
+   /// they wind down. Throws a <see cref="TimeoutException"/> if a loop takes longer than 5 seconds to end.</summary>
+   public async Task AwaitDeliveryStoppedAsync()
+   {
+      if(_exactlyOnceStream is not null) await _exactlyOnceStream.AwaitSendLoopTerminationAsync().caf();
+      await _bestEffortStream.AwaitSendLoopTerminationAsync().caf();
+   }
+
+   public async ValueTask DisposeAsync()
+   {
+      BeginStoppingDelivery();
+      await AwaitDeliveryStoppedAsync().caf();
+      ReleaseResources();
+   }
+
+   ///<summary>For the router's paths that dispose a connection while holding its monitor: a connection whose delivery never<br/>
+   /// started, or one that already stopped, has no send loop to wait for, so only the replacement of a live connection blocks.</summary>
    public void Dispose()
    {
-      StopDelivery();
+      BeginStoppingDelivery();
+      AwaitDeliveryStoppedAsync().WaitUnwrappingException();
+      ReleaseResources();
+   }
+
+   void ReleaseResources()
+   {
       _cancellationSource.Dispose();
       _exactlyOnceStream?.Dispose();
    }

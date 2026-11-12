@@ -13,7 +13,10 @@ interface ITaskRunner
    ///<summary>Runs <paramref name="asyncAction"/> as a tracked background task: started on a thread-pool thread, tracked until<br/>
    /// the whole async work completes, its failure reported through the background-exception reporter.</summary>
    void Run(string taskName, Func<Task> asyncAction);
-   Thread RunOnNamedThread(string threadName, ThreadStart threadLoop, ThreadPriority priority = ThreadPriority.Normal);
+   ///<summary>Runs <paramref name="threadLoop"/> on a thread of its own, named <paramref name="threadName"/>, and returns a task that<br/>
+   /// completes when the thread ends, so the end can be awaited without holding a thread. A failure is reported through the<br/>
+   /// background-exception reporter, so the task always completes successfully.</summary>
+   Task RunOnNamedThread(string threadName, ThreadStart threadLoop, ThreadPriority priority = ThreadPriority.Normal);
 }
 
 static class TaskRunnerRegistrar
@@ -66,8 +69,10 @@ static class TaskRunnerRegistrar
          task.ContinueWithCE(_ => _inProgressTasks.Update(it => it.Remove(task))); //While surprising to me, completedTask and task are NOT the same object.
       }
 
-      public Thread RunOnNamedThread(string threadName, ThreadStart threadLoop, ThreadPriority priority = ThreadPriority.Normal)
+      public Task RunOnNamedThread(string threadName, ThreadStart threadLoop, ThreadPriority priority = ThreadPriority.Normal)
       {
+         //Continuations run asynchronously, so code awaiting the thread's end never runs on the ending thread itself.
+         var threadEnded = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
          var thread = new Thread(() =>
                       {
                          try
@@ -84,6 +89,10 @@ static class TaskRunnerRegistrar
 #pragma warning restore CA1031
                             _exceptionReporter.ReportException(exception);
                          }
+                         finally
+                         {
+                            threadEnded.SetResult();
+                         }
                       })
                       {
                          Name = threadName,
@@ -92,7 +101,7 @@ static class TaskRunnerRegistrar
 
          _threads.Locked(it => it.Add(thread));
          thread.Start();
-         return thread;
+         return threadEnded.Task;
       }
 
       readonly CancellationTokenSource _cancellationTokenSource = new();

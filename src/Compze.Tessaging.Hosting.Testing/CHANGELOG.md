@@ -4,6 +4,10 @@ All notable changes to Compze.Tessaging.Hosting.Testing will be documented in th
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## 0.5.1-alpha
+
+- **Disposing the host waits for its endpoints to be at rest without holding a thread.** The wait blocked the disposing thread, so a test that disposed the host while it held an observer at a gate had to dispose on a thread of its own. Requires Compze.Tessaging 0.6.4-alpha, whose at-rest wait it calls.
+
 ## 0.5.0-alpha
 
 - **Registration is by endpoint-declaration**: `RegisterEndpoint(declaration)` builds an `ExactlyOnceEndpointDeclaration` / `BestEffortEndpointDeclaration` (`Compze.Tessaging`) in the host's environment — the current test's concerns as an `IEndpointEnvironment`: the host's one tessages-in-flight tracker, the current test's transport protocol, the pooled test database keyed by the endpoint's id (exactly-once tier), and participation in the host's real interprocess endpoint registry. The host's `Environment` is public, so a test needing the shared environment plus something extra wraps it in a decorating environment and registers with `RegisterEndpoint(declaration, environment)` — which is also how several endpoints join one shared domain database. The callback registrations (`RegisterExactlyOnceEndpoint`, `RegisterExactlyOnceEndpointInDomainDatabase`, `RegisterBestEffortEndpoint`) are deleted.

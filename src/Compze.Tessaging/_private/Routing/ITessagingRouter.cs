@@ -25,7 +25,7 @@ interface ITessagingRouter
     Task StartMaintainingConnectionsAsync(IEndpointRegistry? endpointRegistry, EndpointAddress ownAddress);
     void Stop();
     void StartDelivery();
-    void StopDelivery();
+    Task StopDeliveryAsync();
     ///<summary>The live connection to the endpoint whose current advertisement handles the tommand type<br/>
     /// <paramref name="tommandType"/> — null when no connected endpoint does. Deliberately liveness-only: a tommand binds to<br/>
     /// its one specific receiver at send time, preferring the live handler and falling back to the sole remembered one<br/>

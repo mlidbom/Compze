@@ -11,7 +11,7 @@ class AwaitNoTessagesInFlightTimeoutException(AwaitingConditionTimeoutException 
    static string FormatMessage(IReadOnlyList<TessagesInFlightTracker.InFlightTessage> undeliveredTessages, IReadOnlyDictionary<string, int> pendingObservations)
    {
       var sb = new StringBuilder();
-      sb.AppendLine("AwaitNoTessagesInFlight timed out.");
+      sb.AppendLine("AwaitNoTessagesInFlightAsync timed out.");
 
       sb.Append(CultureInfo.InvariantCulture,
                 $"""

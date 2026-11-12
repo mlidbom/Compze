@@ -4,6 +4,12 @@ All notable changes to Compze.Tessaging will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## 0.6.4-alpha
+
+- **Stopping an endpoint, or dropping the connection to a peer that left, holds no thread while the connection's send loops wind down.** Each loop was joined for up to 5 seconds, on a thread-pool thread, while holding the router's lock, so every lookup the router serves waited too. Now the loops are told to stop under the lock and awaited outside it. Replacing the connection to a peer that restarted at a new address still waits under the lock, deliberately: there the old loops must end before the new connection loads its backlog.
+- **An endpoint's stop drains its observation queues without holding a thread** while the observers finish.
+- The testing host's wait for its endpoints to be at rest holds no thread. It is internal to Compze.Tessaging and Compze.Tessaging.Hosting.Testing, and Compze.Tessaging.Hosting.Testing 0.5.0-alpha calls the synchronous wait this version replaces, so a composition using the testing host upgrades both together, to Compze.Tessaging.Hosting.Testing 0.5.1-alpha.
+
 ## 0.6.3-alpha
 
 - **A send waiting for a handler holds no thread.** A send that waits, within its endpoint's handler-availability patience, for a handler to be connected parked a dedicated thread for as long as it waited. It now waits with Compze.Threading's `TryAwaitAsync`, which holds none, so many waiting sends no longer cost a thread each.

@@ -1,6 +1,6 @@
+using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Logging;
-using Compze.Internals.SystemCE.ThreadingCE;
 using Compze.Tessaging.Endpoints;
 using Compze.Tessaging.Engine._private;
 using Compze.Tessaging._internal.TessagesInFlight;
@@ -22,7 +22,7 @@ partial class Inbox
       ITaskRunner taskRunner,
       EndpointId endpointId) : IDisposable
    {
-      Thread? _awaitDispatchableTessageThread;
+      Task? _awaitDispatchableTessageLoop;
       readonly CancellationTokenSource _stopping = new();
 
       //todo: properly belongs to a per-handler watchdog on the engine, not to shutdown. Until that exists this is the loud, non-hanging backstop.
@@ -64,7 +64,7 @@ partial class Inbox
       internal void Start()
       {
          this.Log().Info("Starting");
-         _awaitDispatchableTessageThread = _taskRunner.RunOnNamedThread(
+         _awaitDispatchableTessageLoop = _taskRunner.RunOnNamedThread(
             nameof(AwaitDispatchableTessageThreadLoop),
             AwaitDispatchableTessageThreadLoop,
             ThreadPriority.AboveNormal);
@@ -72,12 +72,12 @@ partial class Inbox
 
       public void Dispose()
       {
-         if(_awaitDispatchableTessageThread != null)
+         if(_awaitDispatchableTessageLoop != null)
          {
             this.Log().Info("Stopping");
             _stopping.Cancel();
-            _awaitDispatchableTessageThread.JoinCE(5.Seconds());
-            _awaitDispatchableTessageThread = null;
+            _awaitDispatchableTessageLoop.WaitAsync(5.Seconds()).WaitUnwrappingException();
+            _awaitDispatchableTessageLoop = null;
             this.Log().Info("Stopped");
          }
          _stopping.Dispose();

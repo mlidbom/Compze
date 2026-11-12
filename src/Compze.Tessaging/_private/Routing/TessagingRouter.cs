@@ -146,7 +146,8 @@ class TessagingRouter : ITessagingRouter, IDisposable
       //An endpoint whose address left the registry is gone (stopped, or crashed and pruned by liveness). Its undelivered
       //tessages stay in the outbox's storage - exactly-once means they wait for the endpoint's return, and the connection
       //created when it returns loads them, in send order.
-      connectionsToDrop.ForEach(DropConnection);
+      foreach(var connection in connectionsToDrop)
+         await DropConnectionAsync(connection).caf();
 
       foreach(var address in addressesToConnect)
       {
@@ -163,12 +164,19 @@ class TessagingRouter : ITessagingRouter, IDisposable
       }
    }
 
-   void DropConnection(TessagingConnection connection) => _monitor.Update(() =>
+   async Task DropConnectionAsync(TessagingConnection connection)
    {
-      _connections.Remove(connection.EndpointInformation.Id);
-      RebuildRoutes();
-      connection.Dispose();
-   });
+      _monitor.Update(() =>
+      {
+         _connections.Remove(connection.EndpointInformation.Id);
+         RebuildRoutes();
+         connection.BeginStoppingDelivery();
+      });
+      //Awaited outside the monitor, so the router's lookups don't wait for the send loops to wind down, and no thread is held
+      //while they do. Awaited before the reconciliation pass connects anyone, so a connection to the same endpoint made by a
+      //later pass never delivers while this one's loops still run.
+      await connection.DisposeAsync().caf();
+   }
 
    async Task ConnectAsync(EndpointAddress remoteEndpointAddress)
    {
@@ -192,7 +200,7 @@ class TessagingRouter : ITessagingRouter, IDisposable
       catch
       {
          //The reconciliation pass retries the whole connect: an unrecorded advertisement must not leave a live connection behind, or no later pass would ever record it.
-         connection.Dispose();
+         await connection.DisposeAsync().caf();
          throw;
       }
 
@@ -210,6 +218,12 @@ class TessagingRouter : ITessagingRouter, IDisposable
             //The endpoint restarted at a new address (addresses are per-instance; identity is the EndpointId): replace the
             //connection. The new connection loads the endpoint's undelivered backlog when its delivery starts, so the
             //backlog follows the endpoint to its new address.
+            //performance: disposing the replaced connection joins its send loops here, blocking this thread - a thread-pool thread
+            //   - inside the monitor, for up to 5 seconds per loop. Deliberately, unlike the drop and the stop: the old loops end
+            //   before the new connection loads its backlog under this same hold (see below). Waiting outside the monitor would
+            //   either leave the endpoint with no connection for the wait, and best-effort tevents for a peer they are not queued
+            //   for would be dropped, or let the old and the new connection's loops deliver to the endpoint at once, which the
+            //   delivery-stream ordering has not been walked through for. Only an endpoint restarting at a new address gets here.
             existingConnection.Dispose();
             _connections[endpointId] = connection;
             RebuildRoutes();
@@ -236,21 +250,25 @@ class TessagingRouter : ITessagingRouter, IDisposable
          connection.StartDelivery();
    });
 
-   public void StopDelivery()
+   public async Task StopDeliveryAsync()
    {
-      _reconcileLoopCancellation.Cancel();
+      await _reconcileLoopCancellation.CancelAsync().caf();
       //Join the reconcile loop before returning: a pass in flight holds the peer-registry advertisement transaction open
       //(ReconcileConnectionsAsync -> ConnectAsync -> RecordAdvertisementAsync), so stopping delivery must mean that transaction
       //has reached its terminal state - not merely that the loop was signalled. Awaited outside the monitor: a pass in flight
       //takes the monitor to finish, so joining while holding it would deadlock. Ordered before the connections are stopped so
       //their delivery threads are no longer blocked behind that transaction's locks when they are joined.
-      _reconcileLoop?.WaitUnwrappingException();
-      _monitor.Update(() =>
+      if(_reconcileLoop is not null) await _reconcileLoop.caf();
+      var stoppingConnections = _monitor.Update(() =>
       {
          _deliveryStarted = false;
          foreach(var connection in _connections.Values)
-            connection.StopDelivery();
+            connection.BeginStoppingDelivery();
+         return _connections.Values.ToList();
       });
+      //Awaited outside the monitor, so the router's lookups don't wait for the send loops to wind down, and no thread is held
+      //while they do.
+      await Task.WhenAll(stoppingConnections.Select(connection => connection.AwaitDeliveryStoppedAsync())).caf();
    }
 
    ///<summary>Rebuilds the route tables from the current connections — membership changed, so routes derived from a dropped or replaced connection must not survive.</summary>

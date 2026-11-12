@@ -1,12 +1,10 @@
 using Compze.Contracts;
 using Compze.Internals.Logging;
-using Compze.Internals.SystemCE.ThreadingCE;
 using Compze.Tessaging._private.SystemCE.ThreadingCE;
 using Compze.Tessaging.TessageBus._private.Outbox;
 using Compze.Threading.ResourceAccess;
 using Compze.Tessaging._private.Transport;
 
-using Compze.Tessaging._private.Transport.Advertisement;
 
 namespace Compze.Tessaging._private.Routing;
 
@@ -42,7 +40,7 @@ partial class TessagingConnection
       //and a second offer of an already queued sequence number collapses into the existing entry.
       readonly IThreadShared<SortedDictionary<long, TransportTessage.OutGoing>> _queue = IThreadShared.New(new SortedDictionary<long, TransportTessage.OutGoing>());
       readonly AutoResetEvent _signal = new(false);
-      Thread? _sendLoopThread;
+      Task? _sendLoop;
       int _consecutiveFailures;
 
       internal ExactlyOnceDeliveryStream(TessagingConnection connection, Outbox.ITessageStorage tessageStorage)
@@ -71,10 +69,11 @@ partial class TessagingConnection
       internal void Start()
       {
          LoadUndeliveredTessages();
-         _sendLoopThread = _connection._taskRunner.RunOnNamedThread($"ExactlyOnceDelivery-{_connection.EndpointInformation.Id.Value:N}", SendLoop, ThreadPriority.BelowNormal);
+         _sendLoop = _connection._taskRunner.RunOnNamedThread($"ExactlyOnceDelivery-{_connection.EndpointInformation.Id.Value:N}", SendLoop, ThreadPriority.BelowNormal);
       }
 
-      internal void AwaitSendLoopTermination() => _sendLoopThread?.JoinCE(5.Seconds());
+      ///<summary>Completes when the send loop, told to stop, has ended; throws a <see cref="TimeoutException"/> if that takes longer than 5 seconds.</summary>
+      internal Task AwaitSendLoopTerminationAsync() => _sendLoop?.WaitAsync(5.Seconds()) ?? Task.CompletedTask;
 
       //In-order delivery survives recovery: each backlog tessage re-enters the queue at its delivery stream sequence number,
       //so the send loop leads with the oldest undelivered tessage again - the sequence-keyed queue makes the enqueue order,

@@ -1,3 +1,4 @@
+using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using System.Transactions;
 using Compze.Contracts;
 using Compze.DependencyInjection;
@@ -25,7 +26,7 @@ namespace Compze.Tessaging.Engine._private;
 /// Created with the engine, drained at disposal — no observation is discarded: an endpoint drains explicitly after its<br/>
 /// listening stops and before its container tears down, because the drain runs observers and observers need the container's<br/>
 /// scopes; the container's own disposal of this singleton is only the backstop for compositions without such a lifecycle.</remarks>
-sealed class TeventObservationDispatcher : IDisposable
+sealed class TeventObservationDispatcher : IDisposable, IAsyncDisposable
 {
    static readonly WaitTimeout DrainAtDisposalTimeout = WaitTimeout.Seconds(30);
 
@@ -50,19 +51,26 @@ sealed class TeventObservationDispatcher : IDisposable
    /// deserialized for observation's sake.</summary>
    public bool AnyTeventObserversFor(Type wrapperTeventType) => _observerQueues.Any(it => it.Observes(wrapperTeventType));
 
-   ///<summary>Drains every observer queue — no observation is discarded at disposal. An observer can itself publish (through an<br/>
-   /// Independent* publisher), queueing further observation work on another queue, so draining runs in passes until one full pass<br/>
-   /// finds every queue already empty. A queue that will not drain — a hanging observer — fails the disposal loud on <see cref="DrainAtDisposalTimeout"/>.</summary>
-   public void Dispose()
+   ///<summary>Drains every observer queue — no observation is discarded at disposal — holding no thread while it waits. An<br/>
+   /// observer can itself publish (through an Independent* publisher), queueing further observation work on another queue, so<br/>
+   /// draining runs in passes until one full pass finds every queue already empty. A queue that will not drain — a hanging<br/>
+   /// observer — fails the drain loud on <see cref="DrainAtDisposalTimeout"/>.</summary>
+   public async Task DrainAsync()
    {
       bool anyQueueHadWork;
       do
       {
          anyQueueHadWork = false;
          foreach(var queue in _observerQueues)
-            anyQueueHadWork |= queue.AwaitDrained(DrainAtDisposalTimeout);
+            anyQueueHadWork |= await queue.AwaitDrainedAsync(DrainAtDisposalTimeout).caf();
       } while(anyQueueHadWork);
    }
+
+   public async ValueTask DisposeAsync() => await DrainAsync().caf();
+
+   ///<summary>The backstop for a container disposed synchronously: an endpoint has drained already, so this waits only in a<br/>
+   /// composition without the endpoint's lifecycle.</summary>
+   public void Dispose() => DrainAsync().WaitUnwrappingException();
 
    ///<summary>One observer's FIFO dispatch queue: tevents queued for the observer, dispatched to it one at a time, in order, by<br/>
    /// a pump that runs only while there is work. The per-observer granularity is the isolation promise: a slow or failing<br/>
@@ -103,10 +111,10 @@ sealed class TeventObservationDispatcher : IDisposable
       }
 
       ///<summary>True if the queue had work to wait for; on return the queue is empty and its pump stopped (until new work arrives).</summary>
-      internal bool AwaitDrained(WaitTimeout timeout)
+      internal async Task<bool> AwaitDrainedAsync(WaitTimeout timeout)
       {
          var hadWork = _state.Read(it => it.Pumping || it.PendingTevents.Count > 0);
-         if(hadWork) _state.Await(it => it is { Pumping: false, PendingTevents.Count: 0 }, timeout: timeout);
+         if(hadWork) await _state.AwaitAsync(it => it is { Pumping: false, PendingTevents.Count: 0 }, timeout: timeout).caf();
          return hadWork;
       }
 

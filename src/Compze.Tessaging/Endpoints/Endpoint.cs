@@ -42,7 +42,6 @@ public abstract class Endpoint : IEndpoint
    readonly IPeerRegistry _peerRegistry;
    readonly IHandlerAvailability _handlerAvailability;
    readonly IBackgroundExceptionReporter _backgroundExceptionReporter;
-   readonly TeventObservationDispatcher _observationDispatcher;
 
    bool _isListening;
    bool _hasAnnounced;
@@ -64,7 +63,6 @@ public abstract class Endpoint : IEndpoint
       _peerRegistry = ServiceLocator.Resolve<IPeerRegistry>();
       _handlerAvailability = ServiceLocator.Resolve<IHandlerAvailability>();
       _backgroundExceptionReporter = ServiceLocator.Resolve<IBackgroundExceptionReporter>();
-      _observationDispatcher = ServiceLocator.Resolve<TeventObservationDispatcher>();
    }
 
    ///<summary>The endpoint's stable identity: addresses are per-instance and change across restarts; the <see cref="EndpointId"/> never does.</summary>
@@ -132,7 +130,7 @@ public abstract class Endpoint : IEndpoint
       if(!_isSending) return;
       this.Log().Info($"Endpoint '{_configuration.Name}' ({Id}) stopping sending");
       _isSending = false;
-      _router.StopDelivery();
+      await _router.StopDeliveryAsync().caf();
       await StopTheDurableVerticalAsync().caf();
    }
 
@@ -205,7 +203,7 @@ public abstract class Endpoint : IEndpoint
       //begins, scope creation is refused, so a drain left to the container's own singleton teardown could no longer run the
       //observers. Nothing enqueues new observation work after listening stopped - except observers themselves, which the
       //drain's passes cover.
-      _observationDispatcher.Dispose();
+      await ServiceLocator.Resolve<TeventObservationDispatcher>().DrainAsync().caf();
       //After the drain: nothing in this process writes to the domain database anymore, so the process lock can be freed for
       //the endpoint's next process.
       await ReleaseTheProcessLockAsync().caf();

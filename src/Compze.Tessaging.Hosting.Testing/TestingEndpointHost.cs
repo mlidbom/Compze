@@ -129,7 +129,7 @@ public class TestingEndpointHost : EndpointHost
       {
          try
          {
-            _tessagesInFlightTracker.AwaitNoTessagesInFlight(EndpointsAtRestTimeout);
+            await _tessagesInFlightTracker.AwaitNoTessagesInFlightAsync(EndpointsAtRestTimeout).caf();
          }
          catch(Exception e)
          {
