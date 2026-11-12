@@ -14,7 +14,7 @@ namespace Compze.Must._private.Serialization;
 /// Serializing a value runs code Must does not control, every getter in the object graph, so it can fail. A failure
 /// must never take the assertion's own message with it, and must never take the test process down: the
 /// <see cref="FirstSerializationError"/> handles every error where it is thrown, and the
-/// <see cref="StackGuardingJsonWriter"/> stops a graph nested too deep for the stack.
+/// <see cref="NestingLimitingJsonWriter"/> stops a graph nested too deep.
 /// </remarks>
 class SerializedValue
 {
@@ -38,7 +38,7 @@ class SerializedValue
       var firstError = new FirstSerializationError(serializer);
 
       using var json = new StringWriter(new StringBuilder(256), CultureInfo.InvariantCulture);
-      using(var writer = new StackGuardingJsonWriter(json))
+      using(var writer = new NestingLimitingJsonWriter(json))
       {
          writer.Formatting = serializer.Formatting;
          serializer.Serialize(writer, value);

@@ -8,7 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 - **A failure message never fails.** When Must cannot serialize a value, the `AssertionFailedException` still carries the assertion's own message, and in place of the value's JSON it says what was thrown, while reading which member, at which path, and the configuration line that leaves the member out. Before, the serializer's exception replaced the assertion's message.
 - **Nothing Must serializes can kill the test process any more.** Each of these did, taking every other test in the run with it:
-  - A graph nested deeper than the thread's stack allows: Must now stops before the stack overflows and reports it, about a thousand levels per megabyte of stack. The `MaxDepth = 32` setting meant to prevent this never applied to writing JSON, and is gone.
+  - A graph nested deeper than 1,000 levels: Must now stops there, or sooner where the thread's stack would run out, and reports it. The `MaxDepth = 32` setting meant to prevent this never applied to writing JSON, and is gone.
   - A getter throwing a few hundred levels down: Newtonsoft rethrew the exception at every level it unwound through, which overflowed the stack. Every error is now handled where it is thrown.
   - A delegate or a reflection object anywhere in the graph: serializing its members called the runtime's private getters, and one killed the process with a fatal CLR error (`0x80131506`). Delegates, methods, properties, fields, events, constructors, parameters, assemblies and modules are now written as a short description.
 - A task is written as its status, its result once it has one, and its exception's message if it faulted. Reading the result of a task that never completed hung the test forever.

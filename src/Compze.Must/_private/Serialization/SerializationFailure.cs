@@ -56,7 +56,7 @@ class SerializationFailure
        """;
 
    string WhatWentWrong() =>
-      _exception is SerializationStackExhaustedException
+      _exception is SerializationNestsTooDeepException
          ? _exception.Message
          : $"{_exception.GetType().FullName}: {_exception.Message}";
 

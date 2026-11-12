@@ -253,8 +253,8 @@ MustSerialization.SerializeAs<JsonNode>(node => node.ToJsonString());
 assembly's output folder, `MustOutput`, and the message shows its start and the file's path.
 
 **Nothing Must serializes can take the test process down.** A getter that throws, at any depth, fails the
-serialization, not the process. A graph nested deeper than the thread's stack allows (about a thousand levels per
-megabyte of stack) fails the same way, instead of overflowing the stack.
+serialization, not the process. A graph nested deeper than 1,000 levels, or than the thread's stack allows, fails the
+same way, instead of overflowing the stack or running out of memory.
 
 ## `Satisfy` — the universal assertion
 

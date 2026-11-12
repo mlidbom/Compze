@@ -24,8 +24,21 @@ public class ScenariosThatOnceKilledTheTestProcess
    [XF(Explicit = true)] public void a_value_holding_a_task_that_never_completes() =>
       MessageOf(() => new HoldsATaskThatNeverCompletes().Must().Satisfy(_ => false)).Must().Contain("\"Status\": \"WaitingForActivation\"");
 
-   [XF(Explicit = true)] public void a_value_nested_deeper_than_the_stack_allows() =>
-      MessageOf(() => Link.ChainOfLength(100_000).Must().Satisfy(_ => false)).Must().Contain("The object graph nests deeper than this thread's stack allows");
+   [XF(Explicit = true)] public void a_value_nested_deeper_than_Must_serializes() =>
+      MessageOf(() => Link.ChainOfLength(100_000).Must().Satisfy(_ => false)).Must().Contain("The object graph nests deeper than Must serializes");
+
+   ///<summary>The deeper a thread's stack lets serialization go, the more memory the indented JSON takes: it grows with the square<br/>
+   /// of the depth. On a large stack, stopping only where the stack runs out let it outgrow memory, and the exception that<br/>
+   /// followed overflowed the stack, as on the Linux CI runners.</summary>
+   [XF(Explicit = true)] public void a_value_nested_deeper_than_Must_serializes_on_a_thread_with_a_64_megabyte_stack()
+   {
+      string? message = null;
+      var thread = new Thread(() => message = MessageOf(() => Link.ChainOfLength(100_000).Must().Satisfy(_ => false)), maxStackSize: 64 * 1024 * 1024);
+      thread.Start();
+      thread.Join();
+
+      message.Must().NotBeNull().Contain("The object graph nests deeper than Must serializes");
+   }
 
    [XF(Explicit = true)] public void a_value_with_a_getter_that_throws_800_levels_down() =>
       MessageOf(() => Link.ChainOfLength(800, theLastOneThrows: true).Must().Satisfy(_ => false)).Must().Contain("thrown 800 levels down");

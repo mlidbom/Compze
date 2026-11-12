@@ -26,10 +26,16 @@ public class When_a_failing_assertion_shows_a_value_that_once_killed_the_test_pr
          RunInAChildProcess(nameof(ScenariosThatOnceKilledTheTestProcess.a_value_holding_a_task_that_never_completes)).Must().Contain(TheScenarioPassed);
    }
 
-   public class that_is_nested_deeper_than_the_stack_allows : When_a_failing_assertion_shows_a_value_that_once_killed_the_test_process
+   public class that_is_nested_deeper_than_Must_serializes : When_a_failing_assertion_shows_a_value_that_once_killed_the_test_process
    {
       [XF] public void the_process_survives_and_the_message_says_the_value_nests_too_deep() =>
-         RunInAChildProcess(nameof(ScenariosThatOnceKilledTheTestProcess.a_value_nested_deeper_than_the_stack_allows)).Must().Contain(TheScenarioPassed);
+         RunInAChildProcess(nameof(ScenariosThatOnceKilledTheTestProcess.a_value_nested_deeper_than_Must_serializes)).Must().Contain(TheScenarioPassed);
+   }
+
+   public class that_is_nested_deeper_than_Must_serializes_on_a_thread_with_a_64_megabyte_stack : When_a_failing_assertion_shows_a_value_that_once_killed_the_test_process
+   {
+      [XF] public void the_process_survives_and_the_message_says_the_value_nests_too_deep() =>
+         RunInAChildProcess(nameof(ScenariosThatOnceKilledTheTestProcess.a_value_nested_deeper_than_Must_serializes_on_a_thread_with_a_64_megabyte_stack)).Must().Contain(TheScenarioPassed);
    }
 
    public class with_a_getter_that_throws_800_levels_down : When_a_failing_assertion_shows_a_value_that_once_killed_the_test_process
