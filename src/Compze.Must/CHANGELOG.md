@@ -4,7 +4,7 @@ All notable changes to Compze.Must will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
-## 0.4.2-alpha
+## 0.5.0-alpha
 
 - **A failure message never fails.** When Must cannot serialize a value, the `AssertionFailedException` still carries the assertion's own message, and in place of the value's JSON it says what was thrown, while reading which member, at which path, and the configuration line that leaves the member out. Before, the serializer's exception replaced the assertion's message.
 - **Nothing Must serializes can kill the test process any more.** Each of these did, taking every other test in the run with it:
