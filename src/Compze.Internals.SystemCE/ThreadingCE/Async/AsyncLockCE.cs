@@ -85,6 +85,8 @@ public interface IAsyncLockCE : IDisposable
 
       Exception RegisterTimeoutException()
       {
+         //refactor: _timeoutLock is a raw lock, here and in UpdateAnyRegisteredTimeoutExceptions, where the locking standard asks for
+         //   Compze.Threading's primitives, such as IMonitor, which this package already builds on.
          lock(_timeoutLock)
          {
             var exception = new AsyncLockTimeoutException(_timeout, _stackTraceFetchTimeout);

@@ -11,6 +11,9 @@ public static class ITueryHandlerRegistrarCE
    extension(ITueryHandlerRegistrar @this)
    {
       public ITueryHandlerRegistrar ForTuery<TTuery, TResult>(Func<TTuery, TResult> handler) where TTuery : ITuery<TResult>
+         //refactor: this has no async counterpart taking a Func<TTuery, Task<TResult>>, so an async tuery handler that needs no dependency
+         //   must take an IScopeResolver it doesn't use, as the tests' EndpointHostTestBase.BackendEndpoint tuery handler does. Typermedia
+         //   tommand and best-effort tevent handlers have that form.
          => @this.ForTuery<TTuery, TResult>((tuery, _) => Task.FromResult(handler(tuery)));
 
       public ITueryHandlerRegistrar ForTuery<TTuery, TDependency1, TResult>(Func<TTuery, TDependency1, TResult> handler) where TTuery : ITuery<TResult>

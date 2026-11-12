@@ -151,6 +151,9 @@ sealed class TeventObservationDispatcher : IDisposable
       {
          try
          {
+            //review: an observer can only be synchronous, since ITeventObservationRegistrar takes an Action, so an observer that waits,
+            //   on I/O or on a test's gate, holds the thread this pump runs on for as long as it waits. Should observers get an async form,
+            //   as tessage handlers have?
             //A fresh scope per invocation: an observer's resolutions belong to no caller's session, and on the context-free pump
             //there is no transaction for them to join.
             _scopeFactory.ExecuteInIsolatedScope(scope => _observer.Observe(wrappedTevent, scope));

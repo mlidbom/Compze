@@ -38,5 +38,10 @@ public sealed class TestingTaskRunner(TimeSpan timeout) : IDisposable, IAsyncDis
    ///<summary>Waits for all the registered tasks to complete and throws an exception if any are failed or the timeout expires.</summary>
    public async ValueTask DisposeAsync() => await WaitForTasksToCompleteAsync().caf();
 
-   async Task WaitForTasksToCompleteAsync() => await Task.WhenAll(_monitoredTasks.ToArray()).WaitAsync(_timeout).caf();
+   async Task WaitForTasksToCompleteAsync()
+   {
+      //refactor: only the first failed actor's exception surfaces, and the other actors' failures are lost. Throwing them all, as an
+      //   AggregateException when more than one failed, would show every failure of a run.
+      await Task.WhenAll(_monitoredTasks.ToArray()).WaitAsync(_timeout).caf();
+   }
 }
