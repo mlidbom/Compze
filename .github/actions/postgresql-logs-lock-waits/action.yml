@@ -1,0 +1,28 @@
+name: PostgreSQL logs lock waits and slow statements
+description: Makes a PostgreSQL service container log every lock wait longer than a second and every statement slower than one.
+
+# A test that waits on the database leaves no trace in the server's default log: PostgreSQL logs a deadlock it detects, but
+# not a session that waits behind another session's lock, and not a statement that is merely slow. With these settings on,
+# such a wait writes "process N still waiting for <lock> ... after 1000 ms" to the container log, naming the session that
+# holds the lock and both sessions' statements, and a slow statement writes its SQL and duration. GitHub prints a service
+# container's log when the job's containers stop, so a test that timed out waiting on the database shows what it waited on,
+# and a timeout with nothing logged shows the wait was not in the database.
+#
+# Applied with ALTER SYSTEM and a configuration reload rather than server command-line options, because GitHub's service
+# containers take no command. deadlock_timeout keeps its default of one second, which is also the lock-wait reporting threshold.
+
+inputs:
+  container-id:
+    description: The PostgreSQL service container's id, from the job.services context.
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Make PostgreSQL log lock waits and slow statements
+      shell: bash
+      run: |
+        docker exec "${{ inputs.container-id }}" psql -U postgres \
+          -c "ALTER SYSTEM SET log_lock_waits = on" \
+          -c "ALTER SYSTEM SET log_min_duration_statement = '1s'" \
+          -c "SELECT pg_reload_conf()"

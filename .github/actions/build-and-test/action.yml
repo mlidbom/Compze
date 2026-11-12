@@ -22,7 +22,7 @@ runs:
     - name: Configure test pluggable components
       shell: bash
       run: |
-        # The combination also labels this job's hang-dump artifact. Artifact names must be unique within a run and may not
+        # The combination also labels this job's dumps artifact. Artifact names must be unique within a run and may not
         # contain a colon, and the matrix runs the same combinations on two operating systems - hence the dash-separated
         # combination here, and the runner OS added where the artifact is uploaded.
         if [ -n "${{ inputs.pluggable-components }}" ]; then
@@ -32,6 +32,9 @@ runs:
           cp src/TestUsingPluggableComponentCombinations.github-ci src/TestUsingPluggableComponentCombinations
           echo "COMPZE_TESTED_COMBINATION=github-ci-defaults" >> "$GITHUB_ENV"
         fi
+        # A test whose own timeout runs out writes a dump of its process here (TestProcessDump), inside the results folder the
+        # upload step below collects, so the dump is read in the log by the analysis step and kept with the job's artifacts.
+        echo "COMPZE_TEST_DIAGNOSTICS_DIRECTORY=$GITHUB_WORKSPACE/TestResults/diagnostics" >> "$GITHUB_ENV"
 
     - name: Build
       shell: bash
@@ -95,14 +98,20 @@ runs:
 
         exit $test_exit
 
-    # A hang dump is written to the runner's disk and dies with the runner, so without this the diagnostics above buy nothing.
+    - name: Analyze dumps
+      if: failure()
+      uses: ./.github/actions/analyze-dumps
+      with:
+        directory: TestResults
+
+    # A dump is written to the runner's disk and dies with the runner, so without this the diagnostics above buy nothing.
     # Uploaded only on failure, and a plain test failure writes no dump - hence if-no-files-found: ignore, which keeps a normal
     # red build from reporting a missing-artifact warning on top of its real failure.
-    - name: Upload hang dumps
+    - name: Upload dumps
       if: failure()
       uses: actions/upload-artifact@v4
       with:
-        name: hang-dump-${{ runner.os }}-${{ env.COMPZE_TESTED_COMBINATION }}
+        name: dumps-${{ runner.os }}-${{ env.COMPZE_TESTED_COMBINATION }}
         path: TestResults/**
         if-no-files-found: ignore
         retention-days: 7

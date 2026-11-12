@@ -13,6 +13,7 @@ using Compze.Tessaging._internal.SqlLayer;
 using Compze.Tessaging._internal.Transport;
 using Compze.Tessaging._private.Transport.Advertisement;
 using Compze.Tests.Infrastructure;
+using Compze.Tests.Infrastructure.Diagnostics;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.TypeIdentifiers;
 
@@ -74,7 +75,7 @@ public class Given_an_open_transaction_that_wrote_the_domain_database : Universa
          //Awaited inside the still-open scope: a recording that queued behind the domain database's write path could never
          //complete before this scope does, so it would burn the whole timeout and fail the specification.
          await peerRegistry.RecordAdvertisementAsync(new EndpointInformation("NeverMetPeer", NeverMetPeerId, []))
-                           .WaitAsync(TimeSpan.FromSeconds(10));
+                           .WaitAsyncDumpingTheProcessOnTimeout(TimeSpan.FromSeconds(10), "recording a never-met peer's advertisement inside an open transaction that wrote the domain database");
       });
 
       peerRegistry.Peers.Single().Id.Must().Be(NeverMetPeerId);
