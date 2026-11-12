@@ -59,6 +59,9 @@ Then reload: `. $PROFILE`
 
 - **C-Clear-ReleasedLocalBuilds** - Removes every local build of a version nuget.org has released, from the pending-release feed and the NuGet global packages folder, so restores take nuget.org's build; reports versions still pending. A user-level SessionStart hook runs it in every Claude session
 
+- **C-Get-CompzeUpgradeReport** - Run in a repository that uses Compze, before upgrading its Compze packages: for each Compze package its solution uses, the version it resolves and the newest (nuget.org's, or a newer one in the pending-release feed), and for each upgrade the other Compze packages it brings along (calling out a patch that brings a minor version, and the references to raise to avoid NU1605 or a runtime break) and the changelog sections in between, as released
+  - `-Solution` - The solution to report on, when the current directory doesn't hold exactly one
+
 - **C-Clear-NuGetCache** - Removes all cached Compze packages from the NuGet global packages folder, so focused solutions pick up freshly packed versions
 
 ### Code Quality & Structure
