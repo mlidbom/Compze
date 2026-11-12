@@ -3,10 +3,15 @@
 function Read-NuGetOrgPackageManifest {
     <#
     .SYNOPSIS
-    Reads the id, version and build commit of the package nuget.org serves for one version (see ConvertFrom-PackageManifestXml)
+    Reads the id, version, build commit and Compze dependency floors of the package nuget.org serves for one version
+
+    .DESCRIPTION
+    The implementation is the release scripts' own (.github/scripts/lib/PackageManifests.ps1), which says what a
+    dependency floor is.
 
     .OUTPUTS
-    Object with PackageId, Version and RepositoryCommit ($null for an older release that predates the commit stamp)
+    Object with PackageId, Version, RepositoryCommit ($null for an older release that predates the commit stamp) and
+    CompzeDependencyFloors (Compze package id to floor)
     #>
     [CmdletBinding()]
     param(
@@ -16,7 +21,6 @@ function Read-NuGetOrgPackageManifest {
         [string]$Version
     )
 
-    $id = $PackageId.ToLowerInvariant()
-    $manifestXml = (Invoke-WebRequest -Uri "https://api.nuget.org/v3-flatcontainer/$id/$($Version.ToLowerInvariant())/$id.nuspec" -TimeoutSec 30).Content
-    return ConvertFrom-PackageManifestXml -ManifestXml $manifestXml
+    . (Join-Path $script:CompzeRoot ".github/scripts/lib/PackageManifests.ps1")
+    return ReadNuGetOrgPackageManifest $PackageId $Version
 }

@@ -3,14 +3,17 @@
 function Read-PackageManifest {
     <#
     .SYNOPSIS
-    Reads a package file's id, version and the commit it was built from (see ConvertFrom-PackageManifestXml)
+    Reads a package file's id, version, the commit it was built from and its Compze dependency floors
 
     .DESCRIPTION
     For the package files this machine packs, which all record their commit: one that does not is refused, because
     whether a published build is still the code that ships rests on knowing which code it is.
 
+    The implementation is the release scripts' own (.github/scripts/lib/PackageManifests.ps1), which says what a
+    dependency floor is.
+
     .OUTPUTS
-    Object with PackageId, Version and RepositoryCommit
+    Object with PackageId, Version, RepositoryCommit and CompzeDependencyFloors (Compze package id to floor)
     #>
     [CmdletBinding()]
     param(
@@ -18,17 +21,8 @@ function Read-PackageManifest {
         [string]$NupkgPath
     )
 
-    $package = [System.IO.Compression.ZipFile]::OpenRead($NupkgPath)
-    try {
-        # The manifest is the one .nuspec at the package root.
-        $manifestEntry = $package.Entries | Where-Object { $_.FullName -notmatch '/' -and $_.Name -like '*.nuspec' } | Select-Object -First 1
-        if (-not $manifestEntry) { throw "$NupkgPath contains no .nuspec at its root, so it is not a NuGet package." }
-        $reader = [System.IO.StreamReader]::new($manifestEntry.Open())
-        try { $manifestXml = $reader.ReadToEnd() } finally { $reader.Dispose() }
-    } finally {
-        $package.Dispose()
-    }
-    $packageManifest = ConvertFrom-PackageManifestXml -ManifestXml $manifestXml
+    . (Join-Path $script:CompzeRoot ".github/scripts/lib/PackageManifests.ps1")
+    $packageManifest = ReadNupkgManifest $NupkgPath
     if (-not $packageManifest.RepositoryCommit) {
         throw "$NupkgPath records no repository commit, so nothing can tell which code it was built from."
     }

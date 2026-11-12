@@ -19,6 +19,10 @@ $ErrorActionPreference = "Stop"
 $scriptDir = $PSScriptRoot
 . "$scriptDir/lib/GitTagging.ps1"
 . "$scriptDir/lib/NupkgParsing.ps1"
+. "$scriptDir/lib/Changelogs.ps1"
+. "$scriptDir/lib/PackageManifests.ps1"
+. "$scriptDir/lib/DependencyFloors.ps1"
+. "$scriptDir/lib/NuGetOrgVersions.ps1"
 . "$scriptDir/lib/ReleaseDetails.ps1"
 . "$scriptDir/lib/ReleaseSelection.ps1"
 

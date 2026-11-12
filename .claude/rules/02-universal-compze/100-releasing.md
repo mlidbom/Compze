@@ -14,7 +14,10 @@ concludes `success`.
 
 A release goes in this order:
 
-1. **Prepare it:** bump the versions, write the changelog sections, and run `C-SimulateRelease`.
+1. **Prepare it:** bump the versions, write the changelog sections, and run `C-SimulateRelease`. It refuses a section
+   that doesn't state the Compze dependencies whose minimum version the release raises across a minor version, which
+   a consumer's upgrade brings along, and prints the exact line to add (`.github/scripts/lib/DependencyFloors.ps1`
+   says why). Each section also becomes its package's release notes on nuget.org.
 2. **Commit and push.**
 3. **Wait for CI to pass on that commit:** `gh run watch <run id>`, the id from `gh run list --workflow ci.yml --commit <sha>`.
    Run the gate yourself to check, as the workflow will:

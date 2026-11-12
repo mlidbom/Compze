@@ -1,10 +1,12 @@
 # Publishes NuGet packages and creates GitHub releases for any newly published versions.
 #
-# Prerequisites: Run C-Pack -CI first to create nupkg files in nupkgs/
+# Prerequisites: Run C-Pack -CI first to create nupkg files in nupkgs/, each with its changelog section for its version as
+# its release notes
 #
 # Sequence:
 #   1. Detect which packages are new by checking for existing git tags ({PackageName}/v{Version})
-#   2. Validate that every new package has a CHANGELOG.md entry for its version
+#   2. Validate that every new package has a CHANGELOG.md entry for its version, and that the entry states the dependency
+#      floors the version raises across a minor version over the previous version on nuget.org (lib/DependencyFloors.ps1)
 #   3. Run the post-release binding check (Invoke-PostReleaseBindingCheck.ps1): the new packages and nuget.org's newest
 #      version of every other package must not fail at runtime against each other
 #   4. For each new package: push to NuGet, create GitHub release, create and push git tag
@@ -29,6 +31,9 @@ $ErrorActionPreference = "Stop"
 $scriptDir = $PSScriptRoot
 . "$scriptDir/lib/GitTagging.ps1"
 . "$scriptDir/lib/NupkgParsing.ps1"
+. "$scriptDir/lib/Changelogs.ps1"
+. "$scriptDir/lib/PackageManifests.ps1"
+. "$scriptDir/lib/DependencyFloors.ps1"
 . "$scriptDir/lib/ReleaseDetails.ps1"
 . "$scriptDir/lib/ReleaseSelection.ps1"
 . "$scriptDir/lib/NuGetPublishing.ps1"

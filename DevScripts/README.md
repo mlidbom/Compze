@@ -43,11 +43,12 @@ Then reload: `. $PROFILE`
 
 - **C-Pack** - Packs every package into the local `nupkgs/` feed that Compze's focused solutions restore from
   - Default: timestamped dev versions (`0.6.0-alpha.dev.20261110093000`), each a fresh NuGet cache entry
-  - `-CI` - Real versions, as the release workflow packs them
+  - `-CI` - Real versions, as the release workflow packs them, each with its changelog section for its version as its release notes (what nuget.org's package page shows)
   - `-NoBuild` - Pack without building first
 
 - **C-SimulateRelease** - Packs with real versions and dry-runs the release: which packages are new, their changelog entries, the post-release binding check (`.github/scripts/PostReleaseBindingCheck/README.md`), pushes, GitHub releases and tags
   - `-NoBuild`, `-NoPack`, `-NoSummary`
+  - Refuses a changelog section that doesn't state the dependency floors its version raises across a minor version, and prints the line to add (`.github/scripts/lib/DependencyFloors.ps1` says why)
   - The real release is the Create Releases workflow (`.github/workflows/publish-nuget.yml`), run by hand only after CI has passed on the same commit: see `.claude/rules/02-universal-compze/100-releasing.md`
 
 - **C-Publish-ToPendingReleaseFeed** - Publishes the versions the next release will publish to this machine's pending-release feed (`~/.nuget/compze-pending-release-feed`), which every repository on the machine restores from: a consumer can use a new version at once, instead of after CI, the release workflow and nuget.org's validation

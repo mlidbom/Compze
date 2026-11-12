@@ -27,7 +27,7 @@ function GetPackagesFromNupkgFiles([string]$NupkgsPath) {
             Write-Error "Could not parse package name and version from filename: $($nupkg.BaseName)"
             exit 1
         }
-        $packages += $parsed
+        $packages += $parsed | Add-Member -NotePropertyName NupkgPath -NotePropertyValue $nupkg.FullName -PassThru
     }
     return $packages
 }

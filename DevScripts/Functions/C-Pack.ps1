@@ -9,7 +9,8 @@ function C-Pack {
     This avoids NuGet cache staleness — each pack gets a fresh cache entry, eliminating
     file-lock issues when overwriting cached DLLs.
 
-    CI/publish builds use the real version from each .csproj. Local dev packs append
+    CI/publish builds use the real version from each .csproj, and get their changelog section for
+    that version as their release notes (Write-ChangelogSectionsIntoPackages). Local dev packs append
     a '.dev.YYYYMMDDHHMMSS' suffix (e.g., 0.1.0-alpha.3.dev.20260223143052).
 
     .EXAMPLE
@@ -60,6 +61,8 @@ function C-Pack {
         Write-Error "C-Pack: Solution pack failed!"
         return
     }
+
+    if ($CI) { Write-ChangelogSectionsIntoPackages -NupkgsDirectory $nupkgsPath }
 
     # Summary
     $packages = Get-ChildItem $nupkgsPath -Filter "*.nupkg"
