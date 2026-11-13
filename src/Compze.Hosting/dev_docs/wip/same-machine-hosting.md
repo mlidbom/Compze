@@ -54,7 +54,8 @@ across real OS processes.
 The HTTP transport exists for the general case: endpoints on different machines, standard middleboxes,
 external clients. Same-machine conversations need none of that, and paying for it hurts exactly where an
 application suite is sensitive — an ASP.NET Core/Kestrel server in every process means dependency weight,
-per-process working set, and startup time. The named-pipe transport (`Compze.Tessaging.Internals.Transport.NamedPipes`)
+per-process working set, and startup time. The named-pipe transport (declared through
+`Compze.Tessaging.Transport.NamedPipes`, implemented in `Compze.Tessaging._private.Transport.NamedPipes`)
 replaces it with `System.IO.Pipes` from the base runtime: no web stack at all, and cross-platform — on
 Linux/macOS the same API rides Unix domain sockets.
 
@@ -69,9 +70,12 @@ Linux/macOS the same API rides Unix domain sockets.
   what lets the registry map an endpoint to a single address. (The ASP.NET Core transport has the same shape:
   one Kestrel server per endpoint, serving the very same contributed request handlers.)
 - **Framing**: length-prefixed UTF-8 strings; each connection is a lockstep request/response conversation.
-- **Concurrency**: a fixed pool of listener loops (`max(2 × processor count, 8)`), each serving its accepted
-  connection to completion before accepting the next. The pool bounds concurrent handler executions, and a
-  connection burst beyond it queues in the clients' pending connects — the transport's natural backpressure.
+- **Concurrency**: the server keeps a fixed set of listening instances (`max(2 × processor count, 8)`) ready
+  to accept. Each accepts a connection, hands it off to be served on its own task, and at once accepts the
+  next; a connection is served, request after request, for as long as the client keeps it open. The client
+  holds a bounded pool of persistent connections per peer (`NamedPipeClientConnectionPool`): at most 8
+  exchanges are in flight from one endpoint to one peer at a time, and a sender beyond that awaits a free
+  connection without holding a thread, failing loud after 10 seconds — the transport's backpressure.
 - **Security**: pipes are created `CurrentUserOnly` — only processes running as the same user can connect.
 - **Failures**: a handler exception crosses the pipe as an error response and rethrows in the client, exactly
   as the HTTP transport's controllers behave.
@@ -87,7 +91,7 @@ ASP.NET Core and over named pipes.
 
 ## Discovery: announcing into the interprocess registry
 
-Discovery is two contracts in `Compze.Abstractions`, one per direction:
+Discovery is two contracts in `Compze.Tessaging` (`Compze.Tessaging.Endpoints.Discovery`), one per direction:
 
 - **`IEndpointAddressAnnouncer`** — the write side: an endpoint announces where it listens, and retracts when
   it stops.
@@ -172,7 +176,7 @@ A dynamic topology implies contracts callers must know (the full story is
 Reconciliation is not same-machine-specific: the router converges on whatever `IEndpointRegistry` it is
 given — a fixed address list converges once and stays; the interprocess registry is what makes membership
 *live*. The testing host runs every test's endpoints on a real interprocess registry of its own
-(`TestingEndpointHost.EndpointRegistry`), so every test exercises this same announce/discover pipeline.
+(private to each `TestingEndpointHost`), so every test exercises this same announce/discover pipeline.
 
 ## The whole composition
 
