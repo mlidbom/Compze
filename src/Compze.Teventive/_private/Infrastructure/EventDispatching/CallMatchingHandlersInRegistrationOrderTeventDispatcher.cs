@@ -2,8 +2,7 @@
 
 using Compze.Tessaging.TessageBus;
 using Compze.Tessaging.TessageTypes;
-
-// ReSharper disable StaticMemberInGenericType
+using Compze.Threading.ResourceAccess;
 
 namespace Compze.Teventive._private.Infrastructure.EventDispatching;
 
@@ -11,97 +10,28 @@ namespace Compze.Teventive._private.Infrastructure.EventDispatching;
 /// Calls all matching handlers in the order they were registered when a tevent is Dispatched.<br/>
 /// Handlers are registered through the <see cref="ITeventSubscriber{TTevent}"/> that <see cref="Register"/> returns; disposing that subscriber removes every subscription made through it.
 /// </summary>
+/// <remarks>Safe to use from several threads at once. Every subscription, and the handlers each tevent type routes to, live in one <see cref="Subscriptions"/>,<br/>
+/// which nothing reaches but through the lock of <see cref="_subscriptions"/>. The handlers run outside that lock: a handler may dispatch, register or dispose<br/>
+/// a subscriber, on its own thread or any other, without deadlocking, and dispatches on several threads run their handlers at the same time.</remarks>
 partial class CallMatchingHandlersInRegistrationOrderTeventDispatcher<TTevent> : IMutableTeventDispatcher<TTevent>
    where TTevent : class, ITevent
 {
-   readonly List<RegisteredHandler> _handlers = [];
-   readonly List<RegisteredHandler> _runBeforeHandlers = [];
-   readonly List<RegisteredHandler> _runAfterHandlers = [];
-   readonly bool _ignoreAllUnhandled;
-   readonly IReadOnlySet<Type> _ignoredTevents;
-   int _registrationVersion;
-   Dictionary<Type, Action<ITevent>[]> _typeToHandlerCache = new();
-   int _cachedRegistrationVersion;
-   // ReSharper disable once StaticMemberInGenericType
-   static readonly Action<ITevent>[] NullHandlerList = [];
+   readonly IThreadShared<Subscriptions> _subscriptions;
 
-   internal CallMatchingHandlersInRegistrationOrderTeventDispatcher(TeventDispatcherConfig config)
-   {
-      _ignoreAllUnhandled = config.IgnoresAllUnhandled;
-      //Routing operates exclusively on wrapper types, so an inner tevent type in the ignore configuration is translated: ignoring a tevent type ignores every wrapping of it.
-      _ignoredTevents = config.IgnoredUnhandled.Select(PublisherTevent.WrapperTypeMatchingAllWrappingsOf).ToHashSet();
-   }
+   internal CallMatchingHandlersInRegistrationOrderTeventDispatcher(TeventDispatcherConfig config) => _subscriptions = IThreadShared.New(new Subscriptions(config));
 
-   public ITeventSubscriber<TTevent> Register() => new TeventSubscriber(this);
+   public ITeventSubscriber<TTevent> Register() => new TeventSubscriber(_subscriptions);
 
    public void Dispatch(TTevent evt) => Dispatch(PublisherTevent.WrapTevent(evt));
 
    public void Dispatch(IPublisherTevent<TTevent> wrapped)
    {
-      var handlers = GetHandlers(wrapped.GetType());
+      var handlers = _subscriptions.Locked(it => it.HandlersToCallFor(wrapped.GetType()));
       for(var i = 0; i < handlers.Length; i++)
       {
          handlers[i](wrapped);
       }
    }
 
-   public bool Handles(TTevent tevent) => GetHandlers(PublisherTevent.WrapperTypeFor(tevent.GetType()), validateHandlerExists: false).Any();
-
-   Action<ITevent>[] GetHandlers(Type wrapperTeventType, bool validateHandlerExists = true)
-   {
-      if(_cachedRegistrationVersion != _registrationVersion)
-      {
-         _cachedRegistrationVersion = _registrationVersion;
-         _typeToHandlerCache = new Dictionary<Type, Action<ITevent>[]>();
-      }
-
-      if(_typeToHandlerCache.TryGetValue(wrapperTeventType, out var arrayResult))
-      {
-         return arrayResult;
-      }
-
-      var result = new List<Action<ITevent>>();
-      var hasFoundHandler = false;
-
-      // ReSharper disable once ForeachCanBePartlyConvertedToQueryUsingAnotherGetEnumerator LINQ would enumerate through the interface instead of List's struct enumerator in this performance-sensitive path.
-      foreach(var registeredHandler in _handlers)
-      {
-         var handler = registeredHandler.TryCreateHandlerFor(wrapperTeventType);
-         if(handler == null) continue;
-
-         if(!hasFoundHandler)
-         {
-            AddMatchingHandlersFrom(_runBeforeHandlers);
-            hasFoundHandler = true;
-         }
-
-         result.Add(handler);
-      }
-
-      if(hasFoundHandler)
-      {
-         AddMatchingHandlersFrom(_runAfterHandlers);
-      } else
-      {
-         if(validateHandlerExists && !MayGoUnhandled(wrapperTeventType))
-         {
-            throw new TeventUnhandledException(GetType(), wrapperTeventType);
-         }
-
-         return _typeToHandlerCache[wrapperTeventType] = NullHandlerList;
-      }
-
-      return _typeToHandlerCache[wrapperTeventType] = result.ToArray();
-
-      void AddMatchingHandlersFrom(List<RegisteredHandler> beforeOrAfterHandlers)
-      {
-         foreach(var registeredHandler in beforeOrAfterHandlers)
-         {
-            var handler = registeredHandler.TryCreateHandlerFor(wrapperTeventType);
-            if(handler != null) result.Add(handler);
-         }
-      }
-   }
-
-   bool MayGoUnhandled(Type wrapperTeventType) => _ignoreAllUnhandled || _ignoredTevents.Any(ignoredTeventType => ignoredTeventType.IsAssignableFrom(wrapperTeventType));
+   public bool Handles(TTevent tevent) => _subscriptions.Locked(it => it.HasHandlersFor(PublisherTevent.WrapperTypeFor(tevent.GetType())));
 }

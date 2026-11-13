@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## 0.5.0-alpha
 
+- **`IMutableTeventDispatcher` and `ITeventSubscriber` are safe to use from several threads at once:** to dispatch, to register handlers and to dispose subscribers. Before, two dispatches on different threads could corrupt the dispatcher's cache of the handlers each tevent type routes to ("Operations that change non-concurrent collections must have exclusive access"), and a registration or disposal racing a dispatch could corrupt its lists of subscriptions. Handlers still run synchronously on the dispatching thread, outside the dispatcher's lock; each dispatch calls the handlers subscribed when it began.
+- `IMutableTeventDispatcher.Handles` no longer lets a later `Dispatch` of a tevent nothing handles pass silently: asking about such a tevent cached an empty list of handlers for its type, and the dispatch then skipped the `TeventUnhandledException` check.
 - **`PublisherTevent`, `PublisherTevent<TTevent>` and `WrapTevent` leave for `Compze.Tessaging.Abstractions`.** Every tevent is wrapped before routing, which makes the wrapper a tessaging routing concept rather than a Teventive one — and they already declared a namespace neither the assembly holding them nor the concept routing them pointed at.
 - `TeventDispatcherOptions` is dissolved: a single-flag enum said less than the `IgnoreUnhandled` overloads that now say it directly, including the three- and four-type forms.
 - `AllowPublicSettersAttribute` is deleted, and the unreferenced `Email`/`Password` value types with it.

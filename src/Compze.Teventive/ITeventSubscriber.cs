@@ -5,6 +5,8 @@ namespace Compze.Teventive;
 ///<summary>A party's subscribing presence on an <see cref="IMutableTeventDispatcher{TTevent}"/>, created by <see cref="IMutableTeventDispatcher{TTevent}.Register"/>.<br/>
 /// Each registration method adds one subscription: a handler the dispatcher calls for every dispatched tevent that matches the subscribed tevent type.<br/>
 /// Disposing the subscriber removes every subscription made through it; registering through a disposed subscriber throws.</summary>
+///<remarks>Safe to use from several threads at once, like the dispatcher. A dispatch already under way on another thread when <see cref="IDisposable.Dispose"/> returns<br/>
+/// may still call the handlers it removed, once: each dispatch calls the handlers subscribed when it began.</remarks>
 public interface ITeventSubscriber<in TTevent> : IDisposable
    where TTevent : class, ITevent
 {

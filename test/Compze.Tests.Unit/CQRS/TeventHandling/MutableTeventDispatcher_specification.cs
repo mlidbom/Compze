@@ -99,6 +99,21 @@ public static class MutableTeventDispatcher_specification
             _dispatcher.Invoking(it => it.Dispatch(new UnHandledUserTevent())).Must().Throw<TeventUnhandledException>();
       }
 
+      public class with_a_handler_for_IUserRegistered : Given_an_instance
+      {
+         public with_a_handler_for_IUserRegistered() => _dispatcher.Register().For<IUserTevent.IUserRegistered>(_ => {});
+
+         [XF] public void it_handles_an_IUserRegistered() => _dispatcher.Handles(new UserRegistered()).Must().BeTrue();
+
+         [XF] public void it_does_not_handle_a_tevent_without_a_handler() => _dispatcher.Handles(new UnHandledUserTevent()).Must().BeFalse();
+
+         [XF] public void dispatching_a_tevent_without_a_handler_throws_even_after_asking_whether_it_handles_it()
+         {
+            _dispatcher.Handles(new UnHandledUserTevent());
+            _dispatcher.Invoking(it => it.Dispatch(new UnHandledUserTevent())).Must().Throw<TeventUnhandledException>();
+         }
+      }
+
       public class with_2_registered_handlers_for_the_same_tevent_type_then_when_dispatching_tevent : Given_an_instance
       {
          [XF] public void handlers_are_called_in_registration_order()
