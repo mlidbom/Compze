@@ -123,7 +123,7 @@ public class Given_a_separate_process_hosting_an_endpoint_discovered_through_a_s
       }
    }
 
-   [Skip<Transport>([Transport.AspNetCore], "The endpoint host process speaks named pipes; the conversation only makes sense when the specification's endpoint does too")]
+   [Skip<Transport>([Transport.AspNetCore, Transport.Tcp], "The endpoint host process speaks named pipes; the conversation only makes sense when the specification's endpoint does too")]
    [PCT] public async Task a_tommand_sent_to_the_process_is_handled_there_and_its_reply_tommand_comes_back()
    {
       //The send is a waiting send: the tommand's handler has never been met until this endpoint's reconciliation discovers

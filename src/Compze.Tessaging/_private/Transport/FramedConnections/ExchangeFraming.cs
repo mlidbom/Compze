@@ -1,3 +1,4 @@
+using System.Buffers;
 using System.Buffers.Binary;
 using System.Text;
 using Compze.Contracts;
@@ -10,12 +11,14 @@ namespace Compze.Tessaging._private.Transport.FramedConnections;
 ///<summary>The wire format of the framed-connection transports: how a <see cref="TransportRequest"/> and its response are<br/>
 /// written to and read from a connection's byte stream. One request frame is answered by exactly one response frame, in<br/>
 /// lockstep: an exchange.</summary>
-///<remarks>A framed-connection transport is one whose connections are plain duplex byte streams, such as the named-pipe<br/>
-/// transport. The transports differ only in how a connection is listened for (<see cref="IConnectionListener"/>) and opened<br/>
-/// (<see cref="IConnectionOpener"/>); what travels over the connection is this one format.</remarks>
+///<remarks>A framed-connection transport is one whose connections are plain duplex byte streams: the named-pipe transport<br/>
+/// and the TCP transport. The transports differ only in how a connection is listened for (<see cref="IConnectionListener"/>)<br/>
+/// and opened (<see cref="IConnectionOpener"/>); what travels over the connection is this one format.</remarks>
 ///<remarks>Framing is explicit because a byte stream has no message boundaries of its own (message-mode pipes are<br/>
 /// Windows-only; on Unix .NET pipes run over domain sockets): each frame is a fixed sequence of fields, strings as<br/>
 /// little-endian int32 UTF-8 byte length + bytes.</remarks>
+///<remarks>A frame reaches the connection as one write (<see cref="Frame"/>). On a socket every write is a send of its<br/>
+/// own, so a frame written field by field would cross the network as a packet per field.</remarks>
 static class ExchangeFraming
 {
    const byte SuccessStatus = 1;
@@ -23,20 +26,21 @@ static class ExchangeFraming
 
    internal static async Task WriteRequestAsync(Stream connection, TransportRequest request, CancellationToken cancellationToken)
    {
-      await WriteByteAsync(connection, (byte)request.Kind, cancellationToken).caf();
-      await WriteStringAsync(connection, request.TessageId.ToString(), cancellationToken).caf();
-      await WriteStringAsync(connection, request.PayloadTypeIdString, cancellationToken).caf();
-      await WriteStringAsync(connection, request.Body, cancellationToken).caf();
+      var frame = new Frame().Byte((byte)request.Kind)
+                             .String(request.TessageId.ToString())
+                             .String(request.PayloadTypeIdString)
+                             .String(request.Body);
       //The exactly-once kinds always carry the tessage's delivery stream position, so its presence is decided by the kind
       //byte already written — deterministic framing, no marker byte needed.
       if(KindCarriesADeliveryStreamPosition(request.Kind))
       {
          var position = request.DeliveryStreamPosition._assert().NotNull();
-         await WriteStringAsync(connection, position.SenderEndpointId.Value.ToString(), cancellationToken).caf();
-         await WriteInt64Async(connection, position.SequenceNumber, cancellationToken).caf();
-         await WriteInt64Async(connection, position.PredecessorSequenceNumber, cancellationToken).caf();
+         frame.String(position.SenderEndpointId.Value.ToString())
+              .Int64(position.SequenceNumber)
+              .Int64(position.PredecessorSequenceNumber);
       }
-      await connection.FlushAsync(cancellationToken).caf();
+
+      await frame.WriteToAsync(connection, cancellationToken).caf();
    }
 
    ///<summary>Reads the next request frame. Throws <see cref="EndOfStreamException"/> if the client closed the connection — before the first byte that is the normal end of a connection.</summary>
@@ -57,20 +61,16 @@ static class ExchangeFraming
    static bool KindCarriesADeliveryStreamPosition(TransportRequestKind kind) =>
       kind is TransportRequestKind.ExactlyOnceTevent or TransportRequestKind.ExactlyOnceTommand;
 
-   internal static async Task WriteSuccessResponseAsync(Stream connection, string payload, CancellationToken cancellationToken)
-   {
-      await WriteByteAsync(connection, SuccessStatus, cancellationToken).caf();
-      await WriteStringAsync(connection, payload, cancellationToken).caf();
-      await connection.FlushAsync(cancellationToken).caf();
-   }
+   internal static async Task WriteSuccessResponseAsync(Stream connection, string payload, CancellationToken cancellationToken) =>
+      await new Frame().Byte(SuccessStatus)
+                       .String(payload)
+                       .WriteToAsync(connection, cancellationToken).caf();
 
-   internal static async Task WriteErrorResponseAsync(Stream connection, string exceptionType, string exceptionDetail, CancellationToken cancellationToken)
-   {
-      await WriteByteAsync(connection, ErrorStatus, cancellationToken).caf();
-      await WriteStringAsync(connection, exceptionType, cancellationToken).caf();
-      await WriteStringAsync(connection, exceptionDetail, cancellationToken).caf();
-      await connection.FlushAsync(cancellationToken).caf();
-   }
+   internal static async Task WriteErrorResponseAsync(Stream connection, string exceptionType, string exceptionDetail, CancellationToken cancellationToken) =>
+      await new Frame().Byte(ErrorStatus)
+                       .String(exceptionType)
+                       .String(exceptionDetail)
+                       .WriteToAsync(connection, cancellationToken).caf();
 
    ///<summary>Reads the response frame answering a request: the success payload, or the error the handler threw, to be rethrown client-side.</summary>
    internal static async Task<ExchangeResponse> ReadResponseAsync(Stream connection, CancellationToken cancellationToken)
@@ -84,30 +84,11 @@ static class ExchangeFraming
       return ExchangeResponse.Error(exceptionType, exceptionDetail);
    }
 
-   static async Task WriteByteAsync(Stream connection, byte value, CancellationToken cancellationToken) =>
-      await connection.WriteAsync(new[] { value }, cancellationToken).caf();
-
-   static async Task WriteInt64Async(Stream connection, long value, CancellationToken cancellationToken)
-   {
-      var bytes = new byte[8];
-      BinaryPrimitives.WriteInt64LittleEndian(bytes, value);
-      await connection.WriteAsync(bytes, cancellationToken).caf();
-   }
-
    static async Task<long> ReadInt64Async(Stream connection, CancellationToken cancellationToken)
    {
       var bytes = new byte[8];
       await connection.ReadExactlyAsync(bytes, cancellationToken).caf();
       return BinaryPrimitives.ReadInt64LittleEndian(bytes);
-   }
-
-   static async Task WriteStringAsync(Stream connection, string value, CancellationToken cancellationToken)
-   {
-      var bytes = Encoding.UTF8.GetBytes(value);
-      var lengthPrefix = new byte[4];
-      BinaryPrimitives.WriteInt32LittleEndian(lengthPrefix, bytes.Length);
-      await connection.WriteAsync(lengthPrefix, cancellationToken).caf();
-      await connection.WriteAsync(bytes, cancellationToken).caf();
    }
 
    static async Task<byte> ReadByteAsync(Stream connection, CancellationToken cancellationToken)
@@ -125,5 +106,42 @@ static class ExchangeFraming
       var bytes = new byte[length];
       await connection.ReadExactlyAsync(bytes, cancellationToken).caf();
       return Encoding.UTF8.GetString(bytes);
+   }
+
+   ///<summary>A frame being put together for sending: its fields are collected in memory, in the order they are added,<br/>
+   /// and <see cref="WriteToAsync"/> then writes the whole frame to the connection in one write.</summary>
+   sealed class Frame
+   {
+      readonly ArrayBufferWriter<byte> _fields = new();
+
+      internal Frame Byte(byte value)
+      {
+         _fields.GetSpan(1)[0] = value;
+         _fields.Advance(1);
+         return this;
+      }
+
+      internal Frame Int64(long value)
+      {
+         BinaryPrimitives.WriteInt64LittleEndian(_fields.GetSpan(sizeof(long)), value);
+         _fields.Advance(sizeof(long));
+         return this;
+      }
+
+      internal Frame String(string value)
+      {
+         var byteCount = Encoding.UTF8.GetByteCount(value);
+         BinaryPrimitives.WriteInt32LittleEndian(_fields.GetSpan(sizeof(int)), byteCount);
+         _fields.Advance(sizeof(int));
+         Encoding.UTF8.GetBytes(value, _fields.GetSpan(byteCount));
+         _fields.Advance(byteCount);
+         return this;
+      }
+
+      internal async Task WriteToAsync(Stream connection, CancellationToken cancellationToken)
+      {
+         await connection.WriteAsync(_fields.WrittenMemory, cancellationToken).caf();
+         await connection.FlushAsync(cancellationToken).caf();
+      }
    }
 }

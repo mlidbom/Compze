@@ -126,7 +126,7 @@ public class Given_a_separate_process_hosting_a_distributed_tessaging_endpoint_d
       }
    }
 
-   [Skip<Transport>([Transport.AspNetCore], "The endpoint host process speaks named pipes; the conversation only makes sense when the specification's endpoint does too")]
+   [Skip<Transport>([Transport.AspNetCore, Transport.Tcp], "The endpoint host process speaks named pipes; the conversation only makes sense when the specification's endpoint does too")]
    [PCT] public void a_best_effort_tevent_published_here_before_discovery_is_handled_there_and_its_reply_tevent_comes_back()
    {
       //ONE publish, before either process has discovered the other, and no retrying: each process requires the other's endpoint,

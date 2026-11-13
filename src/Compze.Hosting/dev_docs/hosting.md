@@ -124,7 +124,7 @@ tevent store's `HandleTaggregate`, a document db's `HandleDocumentType`) plug in
 like any other. The build closes the roster: the builder exists only inside the build, and any attempt to
 declare afterward explodes. The named environment declarations come from the implementation packages, each
 filling the one parameter it names: the transport protocol (`NamedPipeEndpointTransport()` /
-`AspNetCoreEndpointTransport()`), the endpoint's one serializer (`NewtonsoftSerializer()`), and the domain
+`TcpEndpointTransport(listenOn)` / `AspNetCoreEndpointTransport()`), the endpoint's one serializer (`NewtonsoftSerializer()`), and the domain
 database, whose named declaration registers the whole engine pairing (`SqliteDomainDatabase(...)` and kin:
 the connection pool, the type-id interner, and Tessaging's sql layers for that engine).
 
@@ -312,5 +312,5 @@ Test containers are built through `TestEnv.DIContainer.CreateTestingContainerBui
 override, it supplies one that resolves connection strings through the test database pool. This is how
 production registrars run unmodified against throwaway pooled databases, across every SQL backend, DI
 container, and serializer in the current test's `PluggableComponents` configuration. The transport itself is
-an axis of that same matrix (`TestEnv.Transport`): the same specifications run over HTTP (ASP.NET Core) and
-over named pipes (see [same-machine hosting](wip/same-machine-hosting.md)).
+an axis of that same matrix (`TestEnv.Transport`): the same specifications run over HTTP (ASP.NET Core),
+over named pipes and over TCP (see [same-machine hosting](wip/same-machine-hosting.md)).

@@ -4,6 +4,15 @@ All notable changes to Compze.Tessaging will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## 0.8.0-alpha
+
+- **A TCP transport: `TcpEndpointTransport(listenOn)`** (`Compze.Tessaging.Transport.Tcp`), declared where an endpoint would declare `NamedPipeEndpointTransport()`. It reaches endpoints on other machines and needs no web stack, only the base runtime.
+  - The endpoint listens on the one IP address the declaration names, at a port the operating system picks each time it starts, and that address and port are the address it has and announces. An address that stands for every network interface, such as `IPAddress.Any`, is refused when the endpoint is built: nothing could connect to the address the endpoint would announce.
+  - **It authenticates nobody and encrypts nothing.** Whatever can connect to the address can converse with the endpoint, and whatever sits between two endpoints can read what they say. Listen only on networks where that is acceptable.
+  - It speaks the named-pipe transport's wire format, and shares everything with that transport but how a connection is listened for and opened. A connection whose peer disappeared without closing it, such as a machine that was turned off, is ended by TCP keepalive after about ten seconds of silence.
+  - Discovery across machines is not part of it: `InterprocessEndpointRegistry` still serves one machine.
+- The named-pipe transport writes each frame to its pipe in one write, where it wrote every field with a write of its own. What crosses the pipe is unchanged.
+
 ## 0.7.0-alpha
 
 - **An endpoint's stop drains its inbox without holding a thread.** The drain waited, for up to 30 seconds, for every received tessage to be handled, blocking a thread-pool thread at every endpoint stop. It now awaits the inbox's async condition wait.

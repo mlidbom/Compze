@@ -9,7 +9,7 @@ namespace Compze.Tessaging._internal.Transport;
 /// queries endpoint discovery runs on, which every endpoint serves no matter what it speaks.</summary>
 ///<remarks>One server means one address per endpoint — which is what lets an <see cref="IEndpointRegistry"/> map an<br/>
 /// <see cref="EndpointId"/> to a single address, and lets every capability's discovery bootstrap through it.<br/>
-/// Which transport implements the server — named pipes, ASP.NET Core — is decided by the composition: each transport registers<br/>
+/// Which transport implements the server — named pipes, TCP, ASP.NET Core — is decided by the composition: each transport registers<br/>
 /// its implementation guarded (first registration wins), so every communication style's transport registration can demand a<br/>
 /// server without conflicting when an endpoint hosts several styles.</remarks>
 interface IEndpointTransportServer : IAsyncDisposable

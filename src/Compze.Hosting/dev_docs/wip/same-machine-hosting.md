@@ -57,7 +57,9 @@ application suite is sensitive — an ASP.NET Core/Kestrel server in every proce
 per-process working set, and startup time. The named-pipe transport (declared through
 `Compze.Tessaging.Transport.NamedPipes`, implemented in `Compze.Tessaging._private.Transport.NamedPipes`)
 replaces it with `System.IO.Pipes` from the base runtime: no web stack at all, and cross-platform — on
-Linux/macOS the same API rides Unix domain sockets.
+Linux/macOS the same API rides Unix domain sockets. It is one of the two framed-connection transports: everything
+but how a connection is listened for and opened it shares with the TCP transport
+(`Compze.Tessaging._private.Transport.FramedConnections`).
 
 - **Addressing** (`NamedPipeAddress`): `compze.pipe://localhost/<pipe-name>`. A pipe name is generated fresh
   per server start (`NewUniquePipeName`) — the same-machine analog of the HTTP transport's dynamically
@@ -88,7 +90,7 @@ endpoint transport client, the endpoint-discovery query transport that runs on i
 transport server. The communication styles register nothing protocol-specific: each feature registers its own
 request-handler contribution and client, and both work over whichever protocol the endpoint declared. In
 tests the choice is the `Transport` axis of the pluggable-component matrix: the same specifications run over
-ASP.NET Core and over named pipes.
+ASP.NET Core, over named pipes and over TCP.
 
 ## Discovery: announcing into the interprocess registry
 

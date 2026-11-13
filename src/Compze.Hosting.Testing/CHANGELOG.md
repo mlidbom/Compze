@@ -4,6 +4,10 @@ All notable changes to Compze.Hosting.Testing will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## 0.4.0-alpha
+
+- **`Transport.Tcp`**: a combination that names `Tcp` runs its endpoints on the TCP transport of Compze.Tessaging 0.8.0-alpha, listening on the loopback address (`CurrentTestsEndpointTransport`).
+
 ## 0.3.0-alpha
 
 - The package narrows to the pluggable-component test wiring (DI containers, serializers, database pools, `TestingComponentRegistrar`). The testing endpoint host and its `ITestingEndpointHostFeature` seam are gone: the seam died with the endpoint feature machinery, and the surviving testing host lives in `Compze.Tessaging.Hosting.Testing`, registering the concrete endpoint types with per-tier test wiring — which requires knowing the tiers.

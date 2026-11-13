@@ -3,7 +3,8 @@ namespace Compze.Tessaging._internal.Transport;
 
 ///<summary>One request sent to an endpoint's transport server (<see cref="IEndpointTransportServer"/>): the transport-level envelope<br/>
 /// (<see cref="Kind"/>, <see cref="TessageId"/>, <see cref="PayloadTypeIdString"/>) plus the serialized tessage <see cref="Body"/>.<br/>
-/// The named pipes carry it as a framed message; HTTP carries the same information in its route, headers and request body.</summary>
+/// The framed-connection transports, named pipes and TCP, carry it as a framed message; HTTP carries the same information in<br/>
+/// its route, headers and request body.</summary>
 class TransportRequest
 {
    ///<summary>Which kind of conversation this request opens; the server dispatches to the handler registered for it.</summary>

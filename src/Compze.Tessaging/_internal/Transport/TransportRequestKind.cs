@@ -2,7 +2,7 @@ using Compze.Tessaging._private.Transport.Advertisement;
 
 namespace Compze.Tessaging._internal.Transport;
 
-///<summary>Which kind of conversation a <see cref="TransportRequest"/> opens — carried by the named pipes as the request's kind field,<br/>
+///<summary>Which kind of conversation a <see cref="TransportRequest"/> opens — carried by the framed-connection transports, named pipes and TCP, as the request's kind field,<br/>
 /// and by HTTP as the per-kind route. The receiving server dispatches to the handler registered for the kind.</summary>
 enum TransportRequestKind
 {

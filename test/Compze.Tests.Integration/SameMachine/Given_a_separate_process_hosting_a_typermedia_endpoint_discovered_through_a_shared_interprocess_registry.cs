@@ -116,7 +116,7 @@ public class Given_a_separate_process_hosting_a_typermedia_endpoint_discovered_t
       }
    }
 
-   [Skip<Transport>([Transport.AspNetCore], "The endpoint host process speaks named pipes; the conversation only makes sense when the specification's endpoint does too")]
+   [Skip<Transport>([Transport.AspNetCore, Transport.Tcp], "The endpoint host process speaks named pipes; the conversation only makes sense when the specification's endpoint does too")]
    [PCT] public void a_tuery_executed_here_is_answered_there()
    {
       //The navigation is a waiting send: no route exists for the tuery's type until this endpoint's reconciliation discovers

@@ -5,6 +5,7 @@ using Compze.Hosting.Testing.Wiring;
 using Compze.Internals.SystemCE;
 using Compze.Internals.Testing;
 using Compze.Tessaging._internal.Transport.NamedPipes;
+using Compze.Tessaging._internal.Transport.Tcp;
 
 namespace Compze.Tessaging.Hosting.Testing.Typermedia.Wiring;
 
@@ -21,6 +22,8 @@ public static class TestingComponentRegistrarTypermediaTransport
                                          .HttpEndpointTransportClientIfNotRegistered(),
          Transport.NamedPipes => register.CastTo<TestingComponentRegistrar>()
                                          .NamedPipeEndpointTransportClientIfNotRegistered(),
+         Transport.Tcp => register.CastTo<TestingComponentRegistrar>()
+                                  .TcpEndpointTransportClientIfNotRegistered(),
          _ => throw new ArgumentOutOfRangeException()
       };
 }

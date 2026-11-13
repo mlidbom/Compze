@@ -1,10 +1,14 @@
-# A TCP transport and discovery across machines — todo (investigated, nothing built)
+# A TCP transport and discovery across machines — todo (the transport is built, discovery is not)
 
 ## Status
 
-Investigated 2026-11-13 by reading the code, plus two measurements. Nothing is built and nothing is decided:
-the decisions are Magnus's, and they are listed under "Open decisions". This document records what the
-investigation found, so the work can start from it instead of from a second investigation.
+Investigated 2026-11-13 by reading the code, plus two measurements. Since then, on the branch `tcp-protocol`:
+
+- **Built:** the TCP transport, as a third leg of the specification matrix, running on loopback. See "Piece 1".
+- **Not built:** discovery across machines ("Piece 3"), and the parts of the transport listed under "What is left
+  of the transport".
+- **Decided (Magnus, 2026-11-13):** build TCP and keep HTTP beside it for now, since hosting where only HTTP is
+  routed inbound is a real use of it. What is still open is listed under "Open decisions".
 
 ## Why
 
@@ -26,9 +30,9 @@ machines.
 
 ## What exists today
 
-- **The named-pipe transport** (`Compze.Tessaging._private.Transport.NamedPipes`; 662 lines in 8 files, its
-  registrars included): length-prefixed framing over a stream, one request frame answered by one response
-  frame. Both ends create their pipes `PipeOptions.CurrentUserOnly`. An address is
+- **The named-pipe transport** (when investigated: `Compze.Tessaging._private.Transport.NamedPipes`, 662 lines
+  in 8 files, its registrars included): length-prefixed framing over a stream, one request frame answered by
+  one response frame. Both ends create their pipes `PipeOptions.CurrentUserOnly`. An address is
   `compze.pipe://localhost/<pipe name>`, the name fresh for every server start.
 - **The HTTP transport.** Its client (`HttpEndpointTransportClient`) lives in `Compze.Tessaging` and needs only
   the base runtime. Its server (`AspNetCoreEndpointTransportServer`, in `Compze.Tessaging.Transport.AspNetCore`)
@@ -66,9 +70,10 @@ own listener, opener, address and registrars.
 
 ### What is new for TCP
 
-- **The address it listens on and announces.** Listen on one named local IP address, the machine's address on
-  the shared network, never on all interfaces, with a port the operating system picks. The server's `Address`
-  is then `compze.tcp://<that address>:<port>`, and it is announced as it is.
+- **The address it listens on and announces** (built: `TcpEndpointTransport(listenOn)`). Listen on one named
+  local IP address, the machine's address on the shared network, never on all interfaces, with a port the
+  operating system picks. The server's `Address` is then `compze.tcp://<that address>:<port>`, and it is
+  announced as it is. An address that stands for every network interface is refused when the endpoint is built.
   - The announced address must equal the server's `Address`, because the router removes its own address from
     the registry's list by value (`TessagingRouter.ReconcileConnectionsAsync`). If they differ, the endpoint
     connects to itself, and the assertion that a peer never answers with this endpoint's own identity fails on
@@ -97,35 +102,47 @@ is paused, saved or turned off, or the network is cut.
 - **The reconciliation pass connects to one address after another, with no cancellation**
   (`TessagingRouter.ReconcileConnectionsAsync`, `TessagingConnection.InitAsync`). One unreachable address
   delays the rest of the pass, and the endpoint's stop, by the connect timeout.
-- **Small writes.** The framing writes each field with a call of its own. On a socket that needs one buffered
-  write per frame (the framing already flushes once per frame) and Nagle's algorithm turned off, or an exchange
-  may gain tens of milliseconds. Not measured.
+- **Small writes** (handled). The framing wrote each field with a call of its own, which on a socket is a send
+  per field. A frame is now one write, and Nagle's algorithm is off. What the small writes would have cost was
+  not measured.
 - **Specifying it.** The matrix runs on loopback, where none of the above happens. A peer process's death can be
   specified with the endpoint host process (`test/Compze.Tests.SameMachine.EndpointHostProcess`). A
   silent-vanish cannot be produced on one machine without filtering packets, so only Deskmancer's Hyper-V runs
   would exercise it.
 
-### Size (estimates)
+### What is built (2026-11-13)
 
-- About 7 types renamed or generalized, with no change in behavior.
-- About 6 types added, 350–500 lines: the address, the listener, the connection opener, the public registrar
-  with its `EndpointBuilder` extension, the internal client registrar, and a value type for the address to
-  listen on.
-- No new package and no new dependency: sockets are in the base runtime, so it lives in `Compze.Tessaging`
-  beside the named-pipe transport.
+- **The transport**, in `Compze.Tessaging` beside the named-pipe transport, with no new package and no new
+  dependency: `TcpEndpointTransport(listenOn)` (public, `Compze.Tessaging.Transport.Tcp`), and behind it
+  `TcpConnectionListener`, `TcpConnectionOpener`, `TcpConnection`, `TcpAddress` and the registrars.
+- **A frame is one write** (`ExchangeFraming`), for named pipes too, so that on a socket a frame is one send.
+- **Every connection, at both ends, has Nagle's algorithm off and TCP keepalive on** (`TcpConnection`): a
+  connection whose peer vanished is failed after about ten seconds of silence. **Not verified against a real
+  silent-vanish:** that needs Deskmancer's Hyper-V runs.
+- **A connect has a timeout of its own,** the pool's 10 seconds.
+- **The Tcp leg of the matrix:** `Tcp` in the `Transport` enum, a case in `CurrentTestsEndpointTransport` and in
+  `CurrentTestsEndpointTransportClient`, the `.example` and `.github-ci` combination files, and both matrices
+  of `ci.yml`, which at the full cross product makes 60 Linux jobs (from 40) and 24 Windows jobs (from 16). On
+  the matrix the transport listens on loopback, with the testing host's `InterprocessEndpointRegistry`
+  unchanged: the registry stores address URIs and doesn't care which transport they belong to.
+- **Specified:** the whole suite passes on `SqliteMemory:Microsoft:Newtonsoft:Tcp`, and
+  `An_endpoint_declaring_the_TCP_transport` specifies the address the declaration gives an endpoint.
+- **`C-Test-Combinations`** (DevScripts) runs the built tests against combinations named on the command line,
+  from temporary copies, so a change can be checked on another transport without touching the local
+  combinations file.
 
-### Joining the Transport axis of the specification matrix
+### What is left of the transport
 
-- `Tcp` in the `Transport` enum (`Compze.Hosting.Testing`), and a case in each of the two switches:
-  `CurrentTestsEndpointTransport` and `CurrentTestsEndpointTransportClient`.
-- On the matrix it runs on loopback with the testing host's `InterprocessEndpointRegistry` unchanged. The
-  registry stores address URIs and doesn't care which transport they belong to, so **the transport can be built
-  and proven on one machine before any registry across machines exists.**
-- Lines in the `.defaults` and `.example` combination files, and `Tcp` in both matrices of `ci.yml`. At the full
-  cross product that is 40 to 60 Linux jobs and 16 to 24 Windows jobs.
-- The endpoint host process hard-codes `NamedPipeEndpointTransport()`, and the three SameMachine specifications
-  skip AspNetCore. Passing the transport as an argument would run the multi-process specifications on TCP too,
-  which is where a second process's death can be specified.
+- **A connection that died while it sat idle in the pool** is noticed only when an exchange fails on it. The
+  pool should check an idle connection before leasing it, and empty itself for that address when an exchange
+  fails. With a port per server start this bites rarely; with fixed ports it would bite at every peer restart.
+- **Specifications of a peer process's death.** The endpoint host process hard-codes
+  `NamedPipeEndpointTransport()`, and the three SameMachine specifications skip AspNetCore and Tcp. Passing the
+  transport as an argument would run the multi-process specifications on TCP too.
+- **The reconciliation pass's connects can't be cancelled** (see "What is hard").
+- **A frame-size limit,** and the rest of what is missing for production, named under "What is new for TCP".
+- **An accept that fails while the listener is not stopping** ends the accept loop: see the `review:` comment in
+  `TcpConnectionListener`.
 
 ## Piece 2: what the HTTP transport would need across machines
 
@@ -267,23 +284,28 @@ was not measured.
 
 ## Open decisions
 
-1. **TCP or HTTP.** With HTTP the worker either ships with ASP.NET Core or is tested in a form that doesn't ship.
-2. **Extract the framed-stream-transport core, or copy the six files.** Extracting is recommended, renames first.
-3. **How a process learns its address on the shared network:** a literal, a subnet to match, or an adapter's name.
-4. **Ports.** Ports the operating system picks keep the design rule and need firewall rules per program; fixed
-   ports allow rules per port.
-5. **Which registry form, and which process hosts a registry server.** Or the alternative: the router sees
+1. **How a process learns its address on the shared network.** `TcpEndpointTransport` takes the `IPAddress`
+   today; what finds it is open: a literal, a subnet to match, or an adapter's name.
+2. **Ports.** Ports the operating system picks keep the design rule and need firewall rules per program; fixed
+   ports allow rules per port. Only picked ports are built.
+3. **Which registry form, and which process hosts a registry server.** Or the alternative: the router sees
    liveness itself.
-6. **The suite boundary across machines.**
-7. **The TCP leg's share of the CI matrix:** the full cross product or a reduced set.
+4. **The suite boundary across machines.**
+5. **The shape of the CI matrix.** `Tcp` was added to the full cross product, 84 jobs from 56. The alternative
+   is one transport on the full product and the others on a reduced leg that covers every persistence layer
+   and every DI container once: about 46 jobs with three transports.
+6. **Whether the HTTP transport stays in the long run,** once TCP has carried Deskmancer's Hyper-V runs for a
+   while. It stays for now.
+7. **The CA2000 suppression in `TcpConnectionOpener`:** the analyzer cannot follow a socket's ownership into
+   the `NetworkStream` that closes it. The alternative is an analyzer option for the whole repository
+   (`dispose_ownership_transfer_at_constructor`).
 
-## Recommended order of work
+## Recommended order of what is left
 
-1. Give the framed-stream-transport core truthful names and a home of its own. No change in behavior.
-2. The TCP transport on loopback, as a third leg of the matrix, with the multi-process specifications running
-   on it and specifications for a peer process's death.
-3. Listening on a named address, keepalive and the connect timeout.
-4. The registry across machines, in the form decided.
+1. The multi-process specifications on TCP, with specifications for a peer process's death, and the pool's
+   handling of connections that died idle.
+2. The registry across machines, in the form decided.
+3. Deskmancer's Hyper-V runs, which are what can show a silent-vanish.
 
 ## Not verified
 

@@ -7,3 +7,4 @@
 SqliteMemory:Microsoft:Newtonsoft:AspNetCore
 SqliteMemory:DryIoc:Newtonsoft:AspNetCore
 SqliteMemory:Microsoft:Newtonsoft:NamedPipes
+SqliteMemory:Microsoft:Newtonsoft:Tcp

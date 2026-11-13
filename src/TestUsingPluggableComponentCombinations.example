@@ -15,6 +15,12 @@ SqliteMemory:Microsoft:Newtonsoft:AspNetCore
 #Sqlite:Microsoft:Newtonsoft:NamedPipes
 SqliteMemory:Microsoft:Newtonsoft:NamedPipes
 
+#MsSql:Microsoft:Newtonsoft:Tcp
+#PgSql:Microsoft:Newtonsoft:Tcp
+#MySql:Microsoft:Newtonsoft:Tcp
+#Sqlite:Microsoft:Newtonsoft:Tcp
+SqliteMemory:Microsoft:Newtonsoft:Tcp
+
 #MsSql:Autofac:Newtonsoft:AspNetCore
 #PgSql:Autofac:Newtonsoft:AspNetCore
 #MySql:Autofac:Newtonsoft:AspNetCore
@@ -26,6 +32,12 @@ SqliteMemory:Microsoft:Newtonsoft:NamedPipes
 #MySql:Autofac:Newtonsoft:NamedPipes
 #Sqlite:Autofac:Newtonsoft:NamedPipes
 #SqliteMemory:Autofac:Newtonsoft:NamedPipes
+
+#MsSql:Autofac:Newtonsoft:Tcp
+#PgSql:Autofac:Newtonsoft:Tcp
+#MySql:Autofac:Newtonsoft:Tcp
+#Sqlite:Autofac:Newtonsoft:Tcp
+#SqliteMemory:Autofac:Newtonsoft:Tcp
 
 #MsSql:DryIoc:Newtonsoft:AspNetCore
 #PgSql:DryIoc:Newtonsoft:AspNetCore
@@ -39,6 +51,12 @@ SqliteMemory:Microsoft:Newtonsoft:NamedPipes
 #Sqlite:DryIoc:Newtonsoft:NamedPipes
 #SqliteMemory:DryIoc:Newtonsoft:NamedPipes
 
+#MsSql:DryIoc:Newtonsoft:Tcp
+#PgSql:DryIoc:Newtonsoft:Tcp
+#MySql:DryIoc:Newtonsoft:Tcp
+#Sqlite:DryIoc:Newtonsoft:Tcp
+#SqliteMemory:DryIoc:Newtonsoft:Tcp
+
 #MsSql:LightInject:Newtonsoft:AspNetCore
 #PgSql:LightInject:Newtonsoft:AspNetCore
 #MySql:LightInject:Newtonsoft:AspNetCore
@@ -50,3 +68,9 @@ SqliteMemory:Microsoft:Newtonsoft:NamedPipes
 #MySql:LightInject:Newtonsoft:NamedPipes
 #Sqlite:LightInject:Newtonsoft:NamedPipes
 #SqliteMemory:LightInject:Newtonsoft:NamedPipes
+
+#MsSql:LightInject:Newtonsoft:Tcp
+#PgSql:LightInject:Newtonsoft:Tcp
+#MySql:LightInject:Newtonsoft:Tcp
+#Sqlite:LightInject:Newtonsoft:Tcp
+#SqliteMemory:LightInject:Newtonsoft:Tcp

@@ -82,7 +82,7 @@ jobs:
         persistence: [SqliteMemory, Sqlite, PgSql, MySql, MsSql]
         di: [Microsoft, Autofac, DryIoc, LightInject]
         serializer: [Newtonsoft]
-        transport: [AspNetCore, NamedPipes]
+        transport: [AspNetCore, NamedPipes, Tcp]
 
     name: "Test (${{ matrix.persistence }}:${{ matrix.di }}:${{ matrix.serializer }}:${{ matrix.transport }})"
 
@@ -163,7 +163,7 @@ jobs:
         persistence: [SqliteMemory, Sqlite]
         di: [Microsoft, Autofac, DryIoc, LightInject]
         serializer: [Newtonsoft]
-        transport: [AspNetCore, NamedPipes]
+        transport: [AspNetCore, NamedPipes, Tcp]
 
     name: "Windows Test (${{ matrix.persistence }}:${{ matrix.di }}:${{ matrix.serializer }}:${{ matrix.transport }})"
 

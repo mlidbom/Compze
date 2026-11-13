@@ -7,7 +7,7 @@ namespace Compze.Tessaging._private.Transport;
 ///<summary>The client side of the endpoint transport: sends one <see cref="TransportRequest"/> to the transport server<br/>
 /// (<see cref="IEndpointTransportServer"/>) of the endpoint at an <see cref="EndpointAddress"/> and returns the response payload.<br/>
 /// Every conversation with a remote endpoint — tessaging, typermedia, endpoint discovery — travels through this one client;<br/>
-/// the protocol difference between named pipes and HTTP lives entirely in its implementations.</summary>
+/// the protocol difference between named pipes, TCP and HTTP lives entirely in its implementations.</summary>
 ///<remarks>A handler exception on the serving side surfaces here as a <see cref="TessageDispatchingFailedException"/> carrying<br/>
 /// the serving side's exception type and detail, whatever the protocol.</remarks>
 interface IEndpointTransportClient

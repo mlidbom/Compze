@@ -4,6 +4,10 @@ All notable changes to Compze.Tessaging.Hosting.Testing will be documented in th
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## 0.5.2-alpha
+
+- The pure test client (`TypermediaTestClient`) speaks the TCP transport when the current test's combination names `Tcp`. Requires Compze.Tessaging 0.8.0-alpha and Compze.Hosting.Testing 0.4.0-alpha.
+
 ## 0.5.1-alpha
 
 - **Disposing the host waits for its endpoints to be at rest without holding a thread.** The wait blocked the disposing thread, so a test that disposed the host while it held an observer at a gate had to dispose on a thread of its own. Requires Compze.Tessaging 0.6.4-alpha, whose at-rest wait it calls.

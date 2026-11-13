@@ -35,7 +35,7 @@ Compze is a .NET framework for building expressive domains through:
 - **Dependency Injection**: Pluggable (Microsoft DI, Autofac)
 - **Persistence**: Pluggable (SQLite in-memory, SQL Server, PostgreSQL, MySQL)
 - **Serialization**: Pluggable (Newtonsoft)
-- **Transport**: Pluggable (AspNetCore)
+- **Transport**: Pluggable (AspNetCore, named pipes, TCP)
 - **Documentation**: DocFX (site in `src/Websites/Website/`)
 - **Development Tools**: PowerShell module (`DevScripts/Compze.psm1`)
 
