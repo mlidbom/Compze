@@ -5,6 +5,9 @@
 Investigated 2026-11-13 by reading the code, plus two measurements. Since then, on the branch `tcp-protocol`:
 
 - **Built:** the TCP transport, as a third leg of the specification matrix, running on loopback. See "Piece 1".
+- **Tried across machines:** a pure client on a Hyper-V host conversed with an endpoint in a guest whose only
+  .NET is the base runtime, while the guest was paused, disconnected, turned off and had its endpoint's process
+  killed. See "Tried across machines".
 - **Not built:** discovery across machines ("Piece 3"), and the parts of the transport listed under "What is left
   of the transport".
 - **Decided (Magnus, 2026-11-13):** build TCP and keep HTTP beside it for now, since hosting where only HTTP is
@@ -92,9 +95,11 @@ is paused, saved or turned off, or the network is cut.
 
 | Event | Named pipes today | TCP |
 |---|---|---|
-| The peer process ends while its machine stays up. This includes a sign-out. | The kernel breaks the pipe at once. | The same signal, but an idle pooled connection shows it only when it is next used. The pool must check an idle connection before leasing it, and empty itself for that address when an exchange fails. |
-| Silent-vanish | Cannot happen. | Nothing arrives. The pool has no exchange timeout, only its 10-second waits for a free connection and for a connect, so an exchange would wait indefinitely. TCP keepalive on every connection, at both ends, bounds it without bounding how long a handler may run. |
-| Nothing listens at the address. | `TimeoutException` after 10 seconds. | Refused quickly if the machine is up, otherwise the operating system's connect timeout: an explicit one is needed. A TCP connect is asynchronous, so it holds no thread. |
+| The peer process ends while its machine stays up. This includes a sign-out. | The kernel breaks the pipe at once. | The same signal: an exchange in flight fails at once, and an idle pooled connection is found ended when it is next needed, and replaced. |
+| Silent-vanish | Cannot happen. | Nothing arrives. The pool has no exchange timeout, only its 10-second waits for a free connection and for a connect. TCP keepalive on every connection, at both ends, bounds an exchange without bounding how long a handler may run. |
+| Nothing listens at the address. | `TimeoutException` after 10 seconds. | The same 10 seconds, also when the machine is up: its firewall drops the connect instead of refusing it. A TCP connect is asynchronous, so it holds no thread. |
+
+What each of these looks like to a conversation was observed, not only reasoned: see "Tried across machines".
 
 ### What is hard
 
@@ -107,8 +112,8 @@ is paused, saved or turned off, or the network is cut.
   not measured.
 - **Specifying it.** The matrix runs on loopback, where none of the above happens. A peer process's death can be
   specified with the endpoint host process (`test/Compze.Tests.SameMachine.EndpointHostProcess`). A
-  silent-vanish cannot be produced on one machine without filtering packets, so only Deskmancer's Hyper-V runs
-  would exercise it.
+  silent-vanish cannot be produced on one machine without filtering packets: the across-machines lab produces
+  it, with a person or an agent reading the outcome. See "Tried across machines".
 
 ### What is built (2026-11-13)
 
@@ -117,9 +122,14 @@ is paused, saved or turned off, or the network is cut.
   `TcpConnectionListener`, `TcpConnectionOpener`, `TcpConnection`, `TcpAddress` and the registrars.
 - **A frame is one write** (`ExchangeFraming`), for named pipes too, so that on a socket a frame is one send.
 - **Every connection, at both ends, has Nagle's algorithm off and TCP keepalive on** (`TcpConnection`): a
-  connection whose peer vanished is failed after about ten seconds of silence. **Not verified against a real
-  silent-vanish:** that needs Deskmancer's Hyper-V runs.
+  connection whose peer vanished is failed after about ten seconds of silence. Verified against a real
+  silent-vanish in the lab.
 - **A connect has a timeout of its own,** the pool's 10 seconds.
+- **An idle connection that has ended is discarded, not used** (`ClientConnection.HasEndedWhileIdle`, asked by
+  `FramedConnectionPool` before it uses an idle connection again). Before this, each connection that had died
+  idle failed one exchange after the peer was back: 6 of 8 tueries in the lab.
+- **A pure client can declare the transport's client side:** `TcpEndpointTransportClient()`, and
+  `NamedPipeEndpointTransportClient()` for named pipes. Only the HTTP transport offered that before.
 - **The Tcp leg of the matrix:** `Tcp` in the `Transport` enum, a case in `CurrentTestsEndpointTransport` and in
   `CurrentTestsEndpointTransportClient`, the `.example` and `.github-ci` combination files, and both matrices
   of `ci.yml`, which at the full cross product makes 60 Linux jobs (from 40) and 24 Windows jobs (from 16). On
@@ -131,11 +141,60 @@ is paused, saved or turned off, or the network is cut.
   from temporary copies, so a change can be checked on another transport without touching the local
   combinations file.
 
+### Tried across machines (2026-11-13)
+
+**The across-machines lab** is what tries the transport between two machines:
+
+- **The lab machine** is a Hyper-V virtual machine on the development computer, `Compze-Win11-24H2`, in
+  `C:\CompzeVMLab`: a clone of the baseline of Deskmancer's Windows 11 24H2 machine, connected to Hyper-V's
+  Default Switch. Its Windows has the host's .NET runtime and no ASP.NET Core runtime. DevScripts' `C-VM-*`
+  commands create it, start it from its `baseline` checkpoint and start the lab endpoint in it.
+- **The lab program** (`test/Compze.Tests.AcrossMachines.Lab`) is both sides. `serve` hosts the lab endpoint, a
+  best-effort endpoint over TCP that answers one tuery, in the lab machine. `converse` holds a conversation with
+  it from the host: a pure client asks the tuery round after round and writes one line for each, answered and
+  how fast, or failed, after how long and with what. A tuery orders its own answer: how large, and after how long.
+
+**What a conversation experienced** (a Debug build, one run of each):
+
+| What was done to the lab machine | A tuery on an open connection | A tuery that needs a new connection | Once the machine is back |
+|---|---|---|---|
+| Nothing | Answered in 1–2 ms | The first one: 60 ms | |
+| Paused | Fails after 9.5 s: `IOException` over a `SocketException`, "connected host has failed to respond" | Fails after 10 s: `TessageDispatchingFailedException`, "Timed out connecting" | The next tuery is answered in 2 ms |
+| Disconnected from the network | The same | The same | The same; the guest keeps its address |
+| Turned off | The same | The same | |
+| The lab program killed | Fails at once: `IOException`, "forcibly closed by the remote host" | Fails after 10 s, as for a machine that is gone: the guest's firewall drops a connect to a port nothing listens at | |
+
+- **Keepalive does what it is there for.** A tuery whose answer was ordered after 40 s was in flight, its
+  connection silent, when the machine was paused: it failed 6.7 s after the pause, 10.1 s after it was asked.
+  Without keepalive nothing would have ended it.
+- **Large answers work:** eight answers of 5 million characters at once in 60–100 ms each, and one of 100
+  million characters in 0.7 s.
+- **No ASP.NET Core runtime is needed:** the guest has none, and the lab endpoint runs there.
+
+**What the lab found that the suite could not:**
+
+- **A pure client composed as an application composes it could not connect,** over any transport: fixed, and
+  the suite's pure test client is now composed that way, so it would catch it. See the changelog of
+  Compze.Tessaging 0.8.0-alpha.
+- **Connections that died idle each failed one exchange:** fixed, above.
+- **A failure to reach the endpoint is thrown as two unrelated exceptions,** see "What is left of the transport".
+
+**What the lab is not:** a specification. Nothing asserts; someone reads the lines. See "Open decisions".
+
+**Noticed about the lab machine itself:**
+
+- Its first start of a program after a boot takes about 70 s, later starts a second or two.
+  `C-VM-StartLabEndpoint` waits for it.
+- Downloads from the internet stall in the guest (curl gives up after a minute), although it can open
+  connections. Not investigated: the lab needs no internet.
+
 ### What is left of the transport
 
-- **A connection that died while it sat idle in the pool** is noticed only when an exchange fails on it. The
-  pool should check an idle connection before leasing it, and empty itself for that address when an exchange
-  fails. With a port per server start this bites rarely; with fixed ports it would bite at every peer restart.
+- **What a conversation is told when its endpoint can't be reached.** Today it is one of two unrelated
+  exceptions, by where the failure happened: a raw `IOException` when an open connection fails, and a
+  `TessageDispatchingFailedException` when a connect times out, whose message begins "Dispatching tessage
+  failed. Remote exception tessage:" although nothing remote happened. A caller that wants to catch "the
+  endpoint could not be reached" has no one type to catch. See "Open decisions".
 - **Specifications of a peer process's death.** The endpoint host process hard-codes
   `NamedPipeEndpointTransport()`, and the three SameMachine specifications skip AspNetCore and Tcp. Passing the
   transport as an argument would run the multi-process specifications on TCP too.
@@ -299,19 +358,27 @@ was not measured.
 7. **The CA2000 suppression in `TcpConnectionOpener`:** the analyzer cannot follow a socket's ownership into
    the `NetworkStream` that closes it. The alternative is an analyzer option for the whole repository
    (`dispose_ownership_transfer_at_constructor`).
+8. **The CA1031 suppression in the lab program's `Conversation`:** it catches whatever a tuery fails with,
+   because observing that is what the lab is for.
+9. **What a conversation is told when its endpoint can't be reached** (see "What is left of the transport").
+   Recommended: one public exception that says so, thrown by every transport's client for a failed connect and
+   for a connection that fails in the middle of an exchange, with the transport's own exception inside it. A
+   caller can recover from it, by trying again later, which is what earns an exception a public type here.
+10. **Whether the across-machines lab becomes specifications.** They would run only where the lab machine
+    exists, so outside `C-Test` and CI, as Deskmancer's Hyper-V matrix does. Fixed ports (decision 2) would let
+    the normal suite specify an endpoint that comes back at the same address, which today only the lab can produce.
 
 ## Recommended order of what is left
 
-1. The multi-process specifications on TCP, with specifications for a peer process's death, and the pool's
-   handling of connections that died idle.
-2. The registry across machines, in the form decided.
-3. Deskmancer's Hyper-V runs, which are what can show a silent-vanish.
+1. The registry across machines, in the form decided, tried in the across-machines lab.
+2. What a conversation is told when its endpoint can't be reached.
+3. The multi-process specifications on TCP, with specifications for a peer process's death.
 
 ## Not verified
 
-- No timing of TCP itself: connect and retransmission timeouts, keepalive detection, the cost of small writes.
+- The cost of small writes, and how TCP's timings compare with HTTP's across machines.
 - The .NET behaviors named above (Kestrel's reported address, the HTTP defaults, `HttpListener`'s URL
-  reservations, the socket options) are from knowledge, not run.
+  reservations) are from knowledge, not run.
 - How the lab assigns addresses, and whether the worker and the test driver converse inside the guest. If they
   do, they need the local registry too, and an endpoint discovers through exactly one registry.
 - Whether a specification exists that kills a peer process in the middle of a conversation. The harness can
@@ -319,6 +386,6 @@ was not measured.
 
 ## Noticed while investigating, not changed
 
-- `NamedPipeEndpointTransportClient` keeps one `NamedPipeClientConnectionPool` per peer address until it is
+- `FramedConnectionEndpointTransportClient` keeps one `FramedConnectionPool` per peer address until it is
   disposed. A restarted peer has a new address, so the pools of addresses that are gone accumulate, each with
-  up to 8 dead connections.
+  up to 8 dead connections. Tagged `bug:` at the code.

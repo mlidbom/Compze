@@ -241,6 +241,7 @@
     <Project Path="test/Compze.Tessaging.Specifications/Compze.Tessaging.Specifications.csproj" />
   </Folder>
   <Folder Name="/_Tests/">
+    <Project Path="test/Compze.Tests.AcrossMachines.Lab/Compze.Tests.AcrossMachines.Lab.csproj" />
     <Project Path="test/Compze.Tests.CodePolicies/Compze.Tests.CodePolicies.csproj" />
     <Project Path="test/Compze.Tests.Common/Compze.Tests.Common.csproj" />
     <Project Path="test/Compze.Tests.Infrastructure/Compze.Tests.Infrastructure.csproj" />

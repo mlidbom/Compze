@@ -32,13 +32,27 @@ Then reload: `. $PROFILE`
   - `-WhatIf` - Preview what would be deleted by git clean (with `-FullGitReset`)
 
 - **C-Test** - Runs Compze tests with proper configuration (builds by default)
-- **C-Test-Combinations** - Runs the built tests against the pluggable-component combinations you name, from temporary copies, leaving your own combinations file and the build outputs alone
   - `-NoBuild` - Skip building, just run tests
   - `-Clean` - Clean and build before testing
   - `-FullGitReset` - Full git reset, build, then test (implies `-Clean`)
   - `-SingleThreadedTesting` - Run tests single-threaded for debugging
   - `-Iterations <n>` - Run suite multiple times and show summary
   - `-WhatIf` - Preview what would be deleted by git clean (with `-FullGitReset`)
+
+- **C-Test-Combinations** - Runs the built tests against the pluggable-component combinations you name, from temporary copies, leaving your own combinations file and the build outputs alone
+
+### The across-machines lab
+
+Trying Compze's endpoints across machines: the lab machine is a Hyper-V virtual machine on this computer, in `C:\CompzeVMLab`, and the lab program (`test/Compze.Tests.AcrossMachines.Lab`) hosts an endpoint over TCP in it and converses with that endpoint from the host. The commands need membership of the Hyper-V Administrators group.
+
+- **C-VM-CreateLabMachine** - Creates the lab machine as a clone of another virtual machine's checkpoint, prepares its Windows (computer name, no automatic updates, firewall, the host's .NET runtime and no ASP.NET Core runtime) and takes the `baseline` checkpoint. Run once; takes a few minutes
+  - `-SourceMachine`, `-SourceCheckpoint`, `-SourceGuestCredentialPath` - What to clone; by default the baseline of Deskmancer's Windows 11 24H2 machine
+
+- **C-VM-StartLabMachineFromBaseline** - Restores the `baseline` checkpoint, boots the lab machine and waits until its Windows is up. Whatever ran in it before is discarded
+
+- **C-VM-StartLabEndpoint** - Copies the built lab program into the lab machine and starts it there serving the lab endpoint; returns the endpoint's address, which the lab program's `converse` command on the host takes
+
+- **C-VM-RemoveLabMachine** - Removes the lab machine, its checkpoints and its disk
 
 ### Packing & Releasing
 
