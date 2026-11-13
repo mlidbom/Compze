@@ -62,8 +62,9 @@ Linux/macOS the same API rides Unix domain sockets.
 - **Addressing** (`NamedPipeAddress`): `compze.pipe://localhost/<pipe-name>`. A pipe name is generated fresh
   per server start (`NewUniquePipeName`) — the same-machine analog of the HTTP transport's dynamically
   allocated ports, and the "fresh address per start" the design rule demands.
-- **The shape**: the endpoint runs **one transport server** (`NamedPipeEndpointTransportServer`, on this
-  transport) — listening on one freshly named pipe, dispatching each request to the handler registered for
+- **The shape**: the endpoint runs **one transport server** (on this transport a
+  `FramedConnectionEndpointTransportServer` listening through a `NamedPipeConnectionListener`) — listening on
+  one freshly named pipe, dispatching each request to the handler registered for
   its request kind. Each communication style the endpoint speaks *contributes* its request handlers to that
   server, and the server itself answers endpoint-discovery queries — every
   endpoint serves discovery no matter what it speaks. One server means one address per endpoint, which is
@@ -73,7 +74,7 @@ Linux/macOS the same API rides Unix domain sockets.
 - **Concurrency**: the server keeps a fixed set of listening instances (`max(2 × processor count, 8)`) ready
   to accept. Each accepts a connection, hands it off to be served on its own task, and at once accepts the
   next; a connection is served, request after request, for as long as the client keeps it open. The client
-  holds a bounded pool of persistent connections per peer (`NamedPipeClientConnectionPool`): at most 8
+  holds a bounded pool of persistent connections per peer (`FramedConnectionPool`): at most 8
   exchanges are in flight from one endpoint to one peer at a time, and a sender beyond that awaits a free
   connection without holding a thread, failing loud after 10 seconds — the transport's backpressure.
 - **Security**: pipes are created `CurrentUserOnly` — only processes running as the same user can connect.

@@ -1,40 +1,38 @@
-using System.IO.Pipes;
 using Compze.Internals.SystemCE.ThreadingCE;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tessaging.Endpoints.Discovery;
 using Compze.Tessaging.Typermedia;
 using Compze.Threading;
 using Compze.Tessaging._internal.Transport;
+using Compze.Tessaging._private.Transport.NamedPipes;
 
-namespace Compze.Tessaging._private.Transport.NamedPipes;
+namespace Compze.Tessaging._private.Transport.FramedConnections;
 
-///<summary>The client's bounded pool of persistent connections to one peer's <see cref="NamedPipeTransportServer"/>.<br/>
+///<summary>A client's bounded pool of persistent connections to one peer's <see cref="FramedConnectionServer"/>.<br/>
 /// <see cref="ExchangeAsync"/> performs one exchange — one request frame answered by one response frame, the wire format's<br/>
 /// lockstep unit — on a connection leased exclusively for that exchange and then returned for the next sender, so a burst of<br/>
 /// concurrent sends reuses a handful of standing connections instead of opening a connection per send.</summary>
-///<remarks>The pool exists because Windows has no asynchronous named-pipe connect:<br/>
-/// <see cref="NamedPipeClientStream.ConnectAsync(int, CancellationToken)"/> runs the fully synchronous connect on a<br/>
-/// thread-pool thread and holds that thread until a server instance is available. Connect-per-send therefore turned N<br/>
-/// concurrent sends into N blocked pool threads — and the pool grows by roughly one thread per second once its minimum is<br/>
-/// busy, so on a small machine a burst starved the whole process and connects timed out against a perfectly healthy server.<br/>
-/// With the pool, a cold burst costs at most <see cref="MaximumConcurrentExchanges"/> brief connects, ever, and steady-state<br/>
-/// sends never connect at all. The server side needs nothing special: <see cref="NamedPipeTransportServer"/> serves each<br/>
-/// connection for as long as the client keeps it open.</remarks>
+///<remarks>Connections are opened by the transport's <see cref="IConnectionOpener"/>, on demand, and at most<br/>
+/// <see cref="MaximumConcurrentExchanges"/> at once. That bound is what makes the named-pipe transport's connect safe:<br/>
+/// it holds a thread-pool thread, and unbounded it starved the process (<see cref="NamedPipeConnectionOpener"/> tells the<br/>
+/// whole story). With the pool, a cold burst costs at most <see cref="MaximumConcurrentExchanges"/> brief connects, ever,<br/>
+/// and steady-state sends never connect at all. The server side needs nothing special: <see cref="FramedConnectionServer"/><br/>
+/// serves each connection for as long as the client keeps it open.</remarks>
 ///<remarks>No connection is ever handed out: the lease lives entirely inside <see cref="ExchangeAsync"/>, whose signature is<br/>
 /// tessage in, response out — there is nothing a caller could leak or forget to release. Only the wire exchange runs inside<br/>
 /// a lease, so an exception inside one means the connection's lockstep state is unknown — a half-written request, an<br/>
 /// unconsumed response that would answer the NEXT sender's request — and the connection is discarded, never returned:<br/>
 /// a pooled connection is always idle between complete exchanges, by construction. A completed exchange whose response<br/>
 /// reports a handler exception is not a wire failure: the connection is clean and returns to the pool.</remarks>
-class NamedPipeClientConnectionPool : IDisposable
+class FramedConnectionPool : IDisposable
 {
    ///<summary>Bounds both the standing connections to the peer and the exchanges in flight to it at once — a lease holds its<br/>
    /// connection for the whole round trip, including the serving endpoint's handler execution. Senders beyond the bound<br/>
    /// await a free connection without holding a thread: the pool is the transport's backpressure.</summary>
-   ///<remarks>Measured on a simulated 4-CPU machine driving 100-concurrent-tuery bursts: bounds of 2, 4, 8 and 16 were<br/>
-   /// indistinguishable, because a healthy exchange lasts well under a millisecond. 8 is chosen on qualitative grounds:<br/>
-   /// enough lanes that one slow handler cannot stall everything behind it, and never more than the<br/>
-   /// <see cref="NamedPipeTransportServer"/>'s floor of ready listening instances, so even a full cold burst of connects<br/>
+   ///<remarks>Measured over named pipes on a simulated 4-CPU machine driving 100-concurrent-tuery bursts: bounds of 2, 4, 8<br/>
+   /// and 16 were indistinguishable, because a healthy exchange lasts well under a millisecond. 8 is chosen on qualitative<br/>
+   /// grounds: enough lanes that one slow handler cannot stall everything behind it, and never more than the<br/>
+   /// <see cref="NamedPipeConnectionListener"/>'s floor of ready listening instances, so even a full cold burst of connects<br/>
    /// finds a ready instance instantly.</remarks>
    const int MaximumConcurrentExchanges = 8;
 
@@ -45,7 +43,7 @@ class NamedPipeClientConnectionPool : IDisposable
    static readonly TimeSpan ConnectTimeout = TimeSpan.FromSeconds(10);
 
    readonly EndpointAddress _address;
-   readonly string _pipeName;
+   readonly IConnectionOpener _connectionOpener;
 
    //rationale: Compze.Threading's monitors wait by blocking the calling thread. This wait must hold no thread - senders
    //parked on a saturated pool while occupying pool threads is the exact starvation this pool exists to eliminate - and
@@ -54,24 +52,24 @@ class NamedPipeClientConnectionPool : IDisposable
    readonly SemaphoreSlim _exchangeSlots = new(MaximumConcurrentExchanges, MaximumConcurrentExchanges);
 #pragma warning restore CA2213
    readonly IMonitor _monitor = IMonitor.New();
-   readonly Stack<NamedPipeClientStream> _idleConnections = new();
+   readonly Stack<Stream> _idleConnections = new();
    bool _disposed;
 
-   internal NamedPipeClientConnectionPool(EndpointAddress address)
+   internal FramedConnectionPool(EndpointAddress address, IConnectionOpener connectionOpener)
    {
       _address = address;
-      _pipeName = NamedPipeAddress.PipeNameFrom(address);
+      _connectionOpener = connectionOpener;
    }
 
    ///<summary>Performs one exchange with the peer: leases a pooled connection — awaiting a free one if all<br/>
    /// <see cref="MaximumConcurrentExchanges"/> are busy, opening one if the pool has none idle — writes the request frame,<br/>
    /// reads the response frame, and returns the connection for the next sender.</summary>
-   internal async Task<NamedPipeTransportResponse> ExchangeAsync(TransportRequest request, CancellationToken cancellationToken)
+   internal async Task<ExchangeResponse> ExchangeAsync(TransportRequest request, CancellationToken cancellationToken)
    {
       if(!await _exchangeSlots.WaitAsync(WaitForAFreeConnectionTimeout, cancellationToken).caf())
       {
          throw new TessageDispatchingFailedException($"""
-                                                      All {MaximumConcurrentExchanges} pooled connections to the named-pipe transport server stayed busy for {WaitForAFreeConnectionTimeout}.
+                                                      All {MaximumConcurrentExchanges} pooled connections to the {_connectionOpener.TransportName} transport server stayed busy for {WaitForAFreeConnectionTimeout}.
                                                       Address:    {_address.Uri}
                                                       Kind:       {request.Kind}
                                                       Type:       {request.PayloadTypeIdString}
@@ -87,8 +85,8 @@ class NamedPipeClientConnectionPool : IDisposable
 #pragma warning restore CA2000
          try
          {
-            await NamedPipeFraming.WriteRequestAsync(connection, request, cancellationToken).caf();
-            var response = await NamedPipeFraming.ReadResponseAsync(connection, cancellationToken).caf();
+            await ExchangeFraming.WriteRequestAsync(connection, request, cancellationToken).caf();
+            var response = await ExchangeFraming.ReadResponseAsync(connection, cancellationToken).caf();
             ReturnToPool(connection);
             return response;
          }
@@ -104,26 +102,20 @@ class NamedPipeClientConnectionPool : IDisposable
       }
    }
 
-   NamedPipeClientStream? TakeIdleConnection() => _monitor.Locked(() => _idleConnections.TryPop(out var connection) ? connection : null);
+   Stream? TakeIdleConnection() => _monitor.Locked(() => _idleConnections.TryPop(out var connection) ? connection : null);
 
-   ///<summary>Opens and connects a fresh connection — the pool's on-demand growth, reached only while holding an exchange<br/>
-   /// slot, which is what bounds how many connects a cold burst can attempt at once.</summary>
-   ///<remarks>The connect briefly holds a thread-pool thread — Windows named pipes have no asynchronous connect, see the<br/>
-   /// class remarks. Bounded by the slots and amortized over the connection's lifetime, that is harmless; the unbounded<br/>
-   /// connect-per-send this pool replaced is what starved the process.</remarks>
-   async Task<NamedPipeClientStream> OpenConnectionAsync(TransportRequest request, CancellationToken cancellationToken)
+   ///<summary>Opens a fresh connection — the pool's on-demand growth, reached only while holding an exchange slot, which is<br/>
+   /// what bounds how many connects a cold burst can attempt at once.</summary>
+   async Task<Stream> OpenConnectionAsync(TransportRequest request, CancellationToken cancellationToken)
    {
-      var connection = new NamedPipeClientStream(serverName: ".", _pipeName, PipeDirection.InOut, PipeOptions.Asynchronous | PipeOptions.CurrentUserOnly);
       try
       {
-         await connection.ConnectAsync((int)ConnectTimeout.TotalMilliseconds, cancellationToken).caf();
-         return connection;
+         return await _connectionOpener.OpenConnectionAsync(_address, ConnectTimeout, cancellationToken).caf();
       }
       catch(TimeoutException exception)
       {
-         await connection.DisposeAsync().caf();
          throw new TessageDispatchingFailedException($"""
-                                                      Timed out connecting to the named-pipe transport server.
+                                                      Timed out connecting to the {_connectionOpener.TransportName} transport server.
                                                       Address:    {_address.Uri}
                                                       Kind:       {request.Kind}
                                                       Type:       {request.PayloadTypeIdString}
@@ -131,16 +123,11 @@ class NamedPipeClientConnectionPool : IDisposable
                                                       {exception}
                                                       """);
       }
-      catch //Resource cleanup, not handling: the connection never joined the pool, so nothing else will dispose it.
-      {
-         await connection.DisposeAsync().caf();
-         throw;
-      }
    }
 
    ///<summary>Returns a connection whose exchange completed cleanly. After <see cref="Dispose"/> the pool declines returns:<br/>
    /// the connection is closed instead of parked where nothing would ever close it.</summary>
-   void ReturnToPool(NamedPipeClientStream connection) => _monitor.Locked(() =>
+   void ReturnToPool(Stream connection) => _monitor.Locked(() =>
    {
       if(_disposed)
          connection.Dispose();

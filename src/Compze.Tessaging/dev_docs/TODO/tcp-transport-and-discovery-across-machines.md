@@ -44,22 +44,25 @@ machines.
 
 ## Piece 1: the TCP transport
 
-### Most of the named-pipe transport needs only a stream
+### Most of the named-pipe transport needs only a stream (done 2026-11-13)
 
-Call the part of the named-pipe transport that needs nothing but a duplex `Stream` the
-**framed-stream-transport core**. A TCP transport is that core, plus a way to listen and a way to connect.
+A **framed-connection transport** is one whose connections are plain duplex byte streams, over which requests
+and responses travel as frames, one request frame answered by one response frame: an exchange. The named-pipe
+transport is one, and a TCP transport is another. What they share lives in
+`Compze.Tessaging._private.Transport.FramedConnections`, and was the named-pipe transport's own until
+2026-11-13:
 
-| Part of the named-pipe transport | Serves TCP as it is? |
-|---|---|
-| `NamedPipeFraming`, `NamedPipeTransportResponse` | Yes: it already takes `Stream`. It needs a name that doesn't say pipe, and a frame-size limit. |
-| `NamedPipeTransportServer.ServeConnectionAsync`: the request loop and the error responses | Yes in substance. |
-| `NamedPipeClientConnectionPool`: the slots, the leasing, the discarding on failure | Yes, except `OpenConnectionAsync`. |
-| `NamedPipeEndpointTransportClient`, `NamedPipeEndpointTransportServer` | Yes, except that they construct pipe types. |
-| The listening instances and `WaitForConnectionAsync`, `NamedPipeClientStream`, `CurrentUserOnly`, `NamedPipeAddress`, the registrars | Specific to pipes. |
+| Type | What it is | It was |
+|---|---|---|
+| `ExchangeFraming`, `ExchangeResponse` | The wire format | `NamedPipeFraming`, `NamedPipeTransportResponse` |
+| `FramedConnectionServer` | Serves every accepted connection: the request loop and the error responses | Most of `NamedPipeTransportServer` |
+| `FramedConnectionPool` | The client's bounded pool of persistent connections to one peer | Most of `NamedPipeClientConnectionPool` |
+| `FramedConnectionEndpointTransportClient`, `FramedConnectionEndpointTransportServer` | The `IEndpointTransportClient` and the `IEndpointTransportServer` | `NamedPipeEndpointTransportClient`, `NamedPipeEndpointTransportServer` |
+| `IConnectionListener`, `IConnectionOpener` | What a framed-connection transport supplies of its own: how a connection is listened for, and how one is opened | New |
 
-So the work starts by giving the core truthful names and a home of its own, with no change in behavior (the
-existing NamedPipes legs of the matrix guard it), and then adds TCP as its second carrier. Copying the six
-files instead would implement the same abstraction twice.
+What is left that is specific to pipes: `NamedPipeConnectionListener` (the listening instances,
+`CurrentUserOnly`), `NamedPipeConnectionOpener`, `NamedPipeAddress` and the registrars. A TCP transport is its
+own listener, opener, address and registrars.
 
 ### What is new for TCP
 
