@@ -25,7 +25,7 @@ public class Given_a_pure_client_connected_to_no_endpoint : UniversalTestBase
                                        builder =>
                                        {
                                           builder.ConfigureTransport(registrar => registrar.CurrentTestsEndpointTransportClient())
-                                                 .ConfigureSerializer(registrar => registrar.CurrentTestsSerializersIfNotClonedContainer());
+                                                 .ConfigureSerializer(registrar => registrar.CurrentTestsTypermediaSerializer());
                                        });
 
    protected override async Task DisposeAsyncInternal() => await _client.DisposeAsync();

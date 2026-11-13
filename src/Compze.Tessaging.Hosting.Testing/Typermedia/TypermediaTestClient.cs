@@ -34,7 +34,7 @@ public class TypermediaTestClient : IAsyncDisposable
                                           builder =>
                                           {
                                              builder.ConfigureTransport(registrar => registrar.CurrentTestsEndpointTransportClient())
-                                                    .ConfigureSerializer(registrar => registrar.CurrentTestsSerializersIfNotClonedContainer())
+                                                    .ConfigureSerializer(registrar => registrar.CurrentTestsTypermediaSerializer())
                                                     .DeclareRequiredTypeMappings(declareRequiredTypeMappings);
                                              builder.Registrar.JSonAppConfigFileConfigurationParameterProvider();
                                           });

@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 ## 0.4.0-alpha
 
 - **`Transport.Tcp`**: a combination that names `Tcp` runs its endpoints on the TCP transport of Compze.Tessaging 0.8.0-alpha, listening on the loopback address (`CurrentTestsEndpointTransport`).
+- **`CurrentTestsTypermediaSerializer()`** registers the typermedia serializer of the current test's serializer and no other: all that a pure client's composition declares.
 
 ## 0.3.0-alpha
 

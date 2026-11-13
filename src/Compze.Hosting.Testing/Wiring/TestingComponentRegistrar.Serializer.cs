@@ -28,4 +28,14 @@ public static class TestingComponentRegistrarSerializer
             throw new ArgumentOutOfRangeException();
       }
    }
+
+   ///<summary>Registers the typermedia serializer of the current test's <see cref="Serializer"/>, and no other serializer:<br/>
+   /// all a pure client's composition declares. A pure client composed for tests with more than an application's<br/>
+   /// composition declares would hide what such a composition lacks.</summary>
+   public static IComponentRegistrar CurrentTestsTypermediaSerializer(this IComponentRegistrar register) =>
+      TestEnv.Serializer switch
+      {
+         Serializer.Newtonsoft => register.NewtonsoftTypermediaSerializer(),
+         _                     => throw new ArgumentOutOfRangeException()
+      };
 }

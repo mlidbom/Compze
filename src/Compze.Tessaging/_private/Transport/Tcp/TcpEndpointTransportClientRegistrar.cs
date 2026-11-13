@@ -2,9 +2,8 @@ using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Tessaging._private.Transport;
 using Compze.Tessaging._private.Transport.FramedConnections;
-using Compze.Tessaging._private.Transport.Tcp;
 
-namespace Compze.Tessaging._internal.Transport.Tcp;
+namespace Compze.Tessaging._private.Transport.Tcp;
 
 static class TcpEndpointTransportClientRegistrar
 {

@@ -56,7 +56,7 @@ public sealed class TypermediaClientBuilder
    internal TypermediaClient Build()
    {
       State.Assert(_registerTransportProtocol is not null,
-                   () => "The client declares no transport protocol. Declare the transport-client strategy in the composition — e.g. client.ConfigureTransport(registrar => registrar.NamedPipeEndpointTransportClientIfNotRegistered()).");
+                   () => "The client declares no transport protocol. Declare the transport-client strategy in the composition — e.g. client.ConfigureTransport(registrar => registrar.TcpEndpointTransportClient()).");
       State.Assert(_configureSerializer is not null || Registrar.IsRegistered<ITypermediaSerializer>(),
                    () => "The client declares no serializer. Declare it in the composition — e.g. client.NewtonsoftSerializer(). (A testing container already carrying the suite's serializers declares none.)");
 
