@@ -1,18 +1,17 @@
 using Compze.Contracts;
 using Compze.Internals.SystemCE.ReflectionCE;
 using Compze.Tessaging.TessageTypes;
-using Compze.Threading.ResourceAccess;
 using TessageTypeInspector = Compze.Tessaging.Validation._internal.TessageTypeInspector;
 
 namespace Compze.Teventive._private.Infrastructure.EventDispatching;
 
 partial class CallMatchingHandlersInRegistrationOrderTeventDispatcher<TTevent> where TTevent : class, ITevent
 {
-   ///<summary>The <see cref="ITeventSubscriber{TTevent}"/> <see cref="Register"/> returns. Its own state, like the dispatcher's <see cref="Subscriptions"/>,<br/>
-   /// is used only under the dispatcher's lock, so a subscription made, or the subscriber disposed, on one thread is atomic for every other.</summary>
-   sealed class TeventSubscriber(IThreadShared<Subscriptions> dispatcherSubscriptions) : ITeventSubscriber<TTevent>
+   ///<summary>The <see cref="ITeventSubscriber{TTevent}"/> <see cref="Register"/> returns. Its own state is used only while holding the lock of the dispatcher's<br/>
+   /// <see cref="Subscriptions"/>, so a subscription made, or the subscriber disposed, on one thread is atomic for every other.</summary>
+   sealed class TeventSubscriber(Subscriptions dispatcherSubscriptions) : ITeventSubscriber<TTevent>
    {
-      readonly IThreadShared<Subscriptions> _dispatcherSubscriptions = dispatcherSubscriptions;
+      readonly Subscriptions _dispatcherSubscriptions = dispatcherSubscriptions;
       ///<summary>The subscriptions made through this subscriber: what <see cref="Dispose"/> removes from the dispatcher.</summary>
       readonly List<RegisteredHandler> _subscriptions = [];
       bool _isDisposed;
@@ -51,23 +50,29 @@ partial class CallMatchingHandlersInRegistrationOrderTeventDispatcher<TTevent> w
       }
 
       ///<summary>Removes every subscription made through this subscriber from the owning dispatcher. Disposing again does nothing.</summary>
-      public void Dispose() => _dispatcherSubscriptions.Locked(dispatcherSubscriptions =>
+      public void Dispose()
       {
-         if(_isDisposed) return;
-         _isDisposed = true;
+         using(_dispatcherSubscriptions.TakeLock())
+         {
+            if(_isDisposed) return;
+            _isDisposed = true;
 
-         dispatcherSubscriptions.Remove(_subscriptions);
-         _subscriptions.Clear();
-      });
+            _dispatcherSubscriptions.Remove(_subscriptions);
+            _subscriptions.Clear();
+         }
+      }
 
+      ///<summary>Adds <paramref name="subscription"/> to the dispatcher's subscriptions, through <paramref name="addToTheDispatchersSubscriptions"/>, and to this subscriber's.<br/>
+      /// Pass a static lambda as <paramref name="addToTheDispatchersSubscriptions"/>, so that subscribing allocates no closure.</summary>
       TeventSubscriber Subscribe(RegisteredHandler subscription, Action<Subscriptions, RegisteredHandler> addToTheDispatchersSubscriptions)
       {
-         _dispatcherSubscriptions.Locked(dispatcherSubscriptions =>
+         using(_dispatcherSubscriptions.TakeLock())
          {
             AssertNotDisposed();
-            addToTheDispatchersSubscriptions(dispatcherSubscriptions, subscription);
+            addToTheDispatchersSubscriptions(_dispatcherSubscriptions, subscription);
             _subscriptions.Add(subscription);
-         });
+         }
+
          return this;
       }
 
