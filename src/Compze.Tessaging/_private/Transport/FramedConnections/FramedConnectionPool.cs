@@ -52,7 +52,7 @@ class FramedConnectionPool : IDisposable
    readonly SemaphoreSlim _exchangeSlots = new(MaximumConcurrentExchanges, MaximumConcurrentExchanges);
 #pragma warning restore CA2213
    readonly IMonitor _monitor = IMonitor.New();
-   readonly Stack<Stream> _idleConnections = new();
+   readonly Stack<ClientConnection> _idleConnections = new();
    bool _disposed;
 
    internal FramedConnectionPool(EndpointAddress address, IConnectionOpener connectionOpener)
@@ -62,8 +62,8 @@ class FramedConnectionPool : IDisposable
    }
 
    ///<summary>Performs one exchange with the peer: leases a pooled connection — awaiting a free one if all<br/>
-   /// <see cref="MaximumConcurrentExchanges"/> are busy, opening one if the pool has none idle — writes the request frame,<br/>
-   /// reads the response frame, and returns the connection for the next sender.</summary>
+   /// <see cref="MaximumConcurrentExchanges"/> are busy, opening one if the pool has none idle that is still usable — writes<br/>
+   /// the request frame, reads the response frame, and returns the connection for the next sender.</summary>
    internal async Task<ExchangeResponse> ExchangeAsync(TransportRequest request, CancellationToken cancellationToken)
    {
       if(!await _exchangeSlots.WaitAsync(WaitForAFreeConnectionTimeout, cancellationToken).caf())
@@ -81,12 +81,12 @@ class FramedConnectionPool : IDisposable
       try
       {
 #pragma warning disable CA2000 //Ownership is tracked on every path: a clean exchange returns the connection to the pool, a failed one disposes it in the catch below.
-         var connection = TakeIdleConnection() ?? await OpenConnectionAsync(request, cancellationToken).caf();
+         var connection = TakeUsableIdleConnection() ?? await OpenConnectionAsync(request, cancellationToken).caf();
 #pragma warning restore CA2000
          try
          {
-            await ExchangeFraming.WriteRequestAsync(connection, request, cancellationToken).caf();
-            var response = await ExchangeFraming.ReadResponseAsync(connection, cancellationToken).caf();
+            await ExchangeFraming.WriteRequestAsync(connection.Stream, request, cancellationToken).caf();
+            var response = await ExchangeFraming.ReadResponseAsync(connection.Stream, cancellationToken).caf();
             ReturnToPool(connection);
             return response;
          }
@@ -102,11 +102,22 @@ class FramedConnectionPool : IDisposable
       }
    }
 
-   Stream? TakeIdleConnection() => _monitor.Locked(() => _idleConnections.TryPop(out var connection) ? connection : null);
+   ///<summary>Takes an idle connection for the next exchange, or null when the pool has none that is still usable. An<br/>
+   /// idle connection known to have ended (<see cref="ClientConnection.HasEndedWhileIdle"/>) is discarded on the way: used,<br/>
+   /// it would fail the exchange, although the peer may be reachable again on a fresh connection.</summary>
+   ClientConnection? TakeUsableIdleConnection() => _monitor.Locked(() =>
+   {
+      while(_idleConnections.TryPop(out var connection))
+      {
+         if(!connection.HasEndedWhileIdle) return connection;
+         connection.Dispose();
+      }
+      return null;
+   });
 
    ///<summary>Opens a fresh connection — the pool's on-demand growth, reached only while holding an exchange slot, which is<br/>
    /// what bounds how many connects a cold burst can attempt at once.</summary>
-   async Task<Stream> OpenConnectionAsync(TransportRequest request, CancellationToken cancellationToken)
+   async Task<ClientConnection> OpenConnectionAsync(TransportRequest request, CancellationToken cancellationToken)
    {
       try
       {
@@ -127,7 +138,7 @@ class FramedConnectionPool : IDisposable
 
    ///<summary>Returns a connection whose exchange completed cleanly. After <see cref="Dispose"/> the pool declines returns:<br/>
    /// the connection is closed instead of parked where nothing would ever close it.</summary>
-   void ReturnToPool(Stream connection) => _monitor.Locked(() =>
+   void ReturnToPool(ClientConnection connection) => _monitor.Locked(() =>
    {
       if(_disposed)
          connection.Dispose();

@@ -34,6 +34,9 @@ class FramedConnectionEndpointTransportClient : IEndpointTransportClient, IDispo
    FramedConnectionPool PoolFor(EndpointAddress address) => _monitor.Locked(() =>
    {
       State.Assert(!_disposed, () => $"A send reached the {_connectionOpener.TransportName} transport client after it was disposed. The endpoint stops sending before its container disposes this client, so a send arriving here is a lifecycle bug in the caller.");
+      //bug: A pool is kept until this client is disposed, also when its address is gone for good. A peer that restarts
+      //   listens at a new address, so every restart of a peer leaves one more pool here, holding its connections to the
+      //   old address. Nothing tells this client that an address is gone: the router knows, from the registry.
       if(!_connectionPoolsByPeerAddress.TryGetValue(address, out var pool))
          _connectionPoolsByPeerAddress.Add(address, pool = new FramedConnectionPool(address, _connectionOpener));
       return pool;

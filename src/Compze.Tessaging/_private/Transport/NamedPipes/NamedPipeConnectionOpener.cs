@@ -15,21 +15,23 @@ namespace Compze.Tessaging._private.Transport.NamedPipes;
 /// busy, so on a small machine a burst starved the whole process and connects timed out against a perfectly healthy server.<br/>
 /// <see cref="FramedConnectionPool"/> is what makes the connect harmless: it bounds how many connects run at once and<br/>
 /// amortizes each over the connection's lifetime.</remarks>
+///<remarks>A pipe that sits idle does not learn that its server is gone: it finds out when it is next used. So an idle<br/>
+/// connection is known to have ended (<see cref="ClientConnection.HasEndedWhileIdle"/>) only if an earlier use found it so.</remarks>
 class NamedPipeConnectionOpener : IConnectionOpener
 {
    public string TransportName => "named-pipe";
 
-   public async Task<Stream> OpenConnectionAsync(EndpointAddress address, TimeSpan timeout, CancellationToken cancellationToken)
+   public async Task<ClientConnection> OpenConnectionAsync(EndpointAddress address, TimeSpan timeout, CancellationToken cancellationToken)
    {
-      var connection = new NamedPipeClientStream(serverName: ".", NamedPipeAddress.PipeNameFrom(address), PipeDirection.InOut, PipeOptions.Asynchronous | PipeOptions.CurrentUserOnly);
+      var pipe = new NamedPipeClientStream(serverName: ".", NamedPipeAddress.PipeNameFrom(address), PipeDirection.InOut, PipeOptions.Asynchronous | PipeOptions.CurrentUserOnly);
       try
       {
-         await connection.ConnectAsync((int)timeout.TotalMilliseconds, cancellationToken).caf();
-         return connection;
+         await pipe.ConnectAsync((int)timeout.TotalMilliseconds, cancellationToken).caf();
+         return new ClientConnection(pipe, hasEndedWhileIdle: () => !pipe.IsConnected);
       }
-      catch //Resource cleanup, not handling: the connection was never handed to the caller, so nothing else will dispose it.
+      catch //Resource cleanup, not handling: the pipe was never handed to the caller, so nothing else will dispose it.
       {
-         await connection.DisposeAsync().caf();
+         await pipe.DisposeAsync().caf();
          throw;
       }
    }
