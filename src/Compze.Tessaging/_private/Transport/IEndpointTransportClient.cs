@@ -1,3 +1,4 @@
+using Compze.Tessaging.Endpoints;
 using Compze.Tessaging.Endpoints.Discovery;
 using Compze.Tessaging.Typermedia;
 using Compze.Tessaging._internal.Transport;
@@ -10,6 +11,8 @@ namespace Compze.Tessaging._private.Transport;
 /// the protocol difference between named pipes, TCP and HTTP lives entirely in its implementations.</summary>
 ///<remarks>A handler exception on the serving side surfaces here as a <see cref="TessageDispatchingFailedException"/> carrying<br/>
 /// the serving side's exception type and detail, whatever the protocol.</remarks>
+///<remarks>An endpoint that cannot be reached surfaces here as an <see cref="EndpointUnreachableException"/>, whatever the<br/>
+/// protocol: no connection to the address could be made, or it ended before the response arrived.</remarks>
 interface IEndpointTransportClient
 {
    Task<string> SendAsync(TransportRequest request, EndpointAddress address, CancellationToken cancellationToken = default);

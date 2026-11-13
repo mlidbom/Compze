@@ -161,10 +161,14 @@ What each of these looks like to a conversation was observed, not only reasoned:
 | What was done to the lab machine | A tuery on an open connection | A tuery that needs a new connection | Once the machine is back |
 |---|---|---|---|
 | Nothing | Answered in 1–2 ms | The first one: 60 ms | |
-| Paused | Fails after 9.5 s: `IOException` over a `SocketException`, "connected host has failed to respond" | Fails after 10 s: `TessageDispatchingFailedException`, "Timed out connecting" | The next tuery is answered in 2 ms |
+| Paused | Fails after 9.5 s: the connection ended before the answer arrived (the operating system: "connected host has failed to respond") | Fails after 10 s: no connection was made in time | The next tuery is answered in 2 ms |
 | Disconnected from the network | The same | The same | The same; the guest keeps its address |
 | Turned off | The same | The same | |
-| The lab program killed | Fails at once: `IOException`, "forcibly closed by the remote host" | Fails after 10 s, as for a machine that is gone: the guest's firewall drops a connect to a port nothing listens at | |
+| The lab program killed | Fails at once: the connection ended ("forcibly closed by the remote host") | Fails after 10 s, as for a machine that is gone: the guest's firewall drops a connect to a port nothing listens at | |
+
+Every failure in the table is an `EndpointUnreachableException` since later the same day, when the first two
+rows were run again. When the table was made the failures were a raw `IOException` on an open connection and a
+`TessageDispatchingFailedException` for a connect.
 
 - **Keepalive does what it is there for.** A tuery whose answer was ordered after 40 s was in flight, its
   connection silent, when the machine was paused: it failed 6.7 s after the pause, 10.1 s after it was asked.
@@ -179,7 +183,7 @@ What each of these looks like to a conversation was observed, not only reasoned:
   the suite's pure test client is now composed that way, so it would catch it. See the changelog of
   Compze.Tessaging 0.8.0-alpha.
 - **Connections that died idle each failed one exchange:** fixed, above.
-- **A failure to reach the endpoint is thrown as two unrelated exceptions,** see "What is left of the transport".
+- **A failure to reach the endpoint was thrown as unrelated exceptions:** fixed, with `EndpointUnreachableException`.
 
 **What the lab is not:** a specification. Nothing asserts; someone reads the lines. See "Open decisions".
 
@@ -192,11 +196,16 @@ What each of these looks like to a conversation was observed, not only reasoned:
 
 ### What is left of the transport
 
-- **What a conversation is told when its endpoint can't be reached.** Today it is one of two unrelated
-  exceptions, by where the failure happened: a raw `IOException` when an open connection fails, and a
-  `TessageDispatchingFailedException` when a connect times out, whose message begins "Dispatching tessage
-  failed. Remote exception tessage:" although nothing remote happened. A caller that wants to catch "the
-  endpoint could not be reached" has no one type to catch. See "Open decisions".
+- **What is left around `EndpointUnreachableException`** (built 2026-11-13: every transport's client throws it
+  when no connection can be made or the connection ends before the answer arrives):
+  - A sender that gives up waiting for a free pooled connection, because the peer's handlers don't keep up,
+    still gets a `TessageDispatchingFailedException` whose message speaks of a remote exception. The peer is
+    reached, and busy, so it is not this exception either: it needs one of its own. Tagged `refactor:` in
+    `FramedConnectionPool`.
+  - Over HTTP, a request that outlasts `HttpClient`'s timeout (100 seconds, never set) is not covered: it
+    arrives as a `TaskCanceledException`. Not seen, so not caught.
+  - In the normal suite a connection that ends in the middle of an exchange is specified over named pipes only:
+    over TCP only the lab can produce it, and it does.
 - **Specifications of a peer process's death.** The endpoint host process hard-codes
   `NamedPipeEndpointTransport()`, and the three SameMachine specifications skip AspNetCore and Tcp. Passing the
   transport as an argument would run the multi-process specifications on TCP too.
@@ -360,21 +369,14 @@ was not measured.
 7. **The CA2000 suppression in `TcpConnectionOpener`:** the analyzer cannot follow a socket's ownership into
    the `NetworkStream` that closes it. The alternative is an analyzer option for the whole repository
    (`dispose_ownership_transfer_at_constructor`).
-8. **The CA1031 suppression in the lab program's `Conversation`:** it catches whatever a tuery fails with,
-   because observing that is what the lab is for.
-9. **What a conversation is told when its endpoint can't be reached** (see "What is left of the transport").
-   Recommended: one public exception that says so, thrown by every transport's client for a failed connect and
-   for a connection that fails in the middle of an exchange, with the transport's own exception inside it. A
-   caller can recover from it, by trying again later, which is what earns an exception a public type here.
-10. **Whether the across-machines lab becomes specifications.** They would run only where the lab machine
+8. **Whether the across-machines lab becomes specifications.** They would run only where the lab machine
     exists, so outside `C-Test` and CI, as Deskmancer's Hyper-V matrix does. Fixed ports (decision 2) would let
     the normal suite specify an endpoint that comes back at the same address, which today only the lab can produce.
 
 ## Recommended order of what is left
 
 1. The registry across machines, in the form decided, tried in the across-machines lab.
-2. What a conversation is told when its endpoint can't be reached.
-3. The multi-process specifications on TCP, with specifications for a peer process's death.
+2. The multi-process specifications on TCP, with specifications for a peer process's death.
 
 ## Not verified
 
@@ -391,3 +393,12 @@ was not measured.
 - `FramedConnectionEndpointTransportClient` keeps one `FramedConnectionPool` per peer address until it is
   disposed. A restarted peer has a new address, so the pools of addresses that are gone accumulate, each with
   up to 8 dead connections. Tagged `bug:` at the code.
+- The AspNetCore transport offers no `AspNetCoreEndpointTransport()` on `EndpointBuilder`, as the other two
+  transports offer theirs: an endpoint declares it as
+  `TransportProtocol(registrar => registrar.AspNetCoreEndpointTransport())`. `EndpointBuilder`'s failure message
+  recommended the missing method; it now names two that exist.
+- `TcpEndpointTransportRegistrar` and `NamedPipeEndpointTransportRegistrar` each hold old-style extension
+  methods beside an extension block, which ReSharper hints at converting. Converted, a class with two extension
+  blocks trips the analyzer's CA1708, a false positive that the handler registrars suppress
+  (`TessageBusHandlerRegistrarCE`). Tried and put back: the choice between that suppression and a class for
+  each receiver is open.

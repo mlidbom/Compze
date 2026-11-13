@@ -1,5 +1,6 @@
 using System.IO.Pipes;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
+using Compze.Tessaging.Endpoints;
 using Compze.Tessaging.Endpoints.Discovery;
 using Compze.Tessaging._private.Transport.FramedConnections;
 
@@ -28,6 +29,11 @@ class NamedPipeConnectionOpener : IConnectionOpener
       {
          await pipe.ConnectAsync((int)timeout.TotalMilliseconds, cancellationToken).caf();
          return new ClientConnection(pipe, hasEndedWhileIdle: () => !pipe.IsConnected);
+      }
+      catch(TimeoutException exception) //No listening instance took the connection in time: nothing listens at the pipe, or every instance stayed busy.
+      {
+         await pipe.DisposeAsync().caf();
+         throw EndpointUnreachableException.BecauseNoConnectionWasMadeInTime(TransportName, address, timeout, exception);
       }
       catch //Resource cleanup, not handling: the pipe was never handed to the caller, so nothing else will dispose it.
       {

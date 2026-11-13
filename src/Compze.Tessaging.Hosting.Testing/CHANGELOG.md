@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 - The pure test client (`TypermediaTestClient`) speaks the TCP transport when the current test's combination names `Tcp`. Requires Compze.Tessaging 0.8.0-alpha and Compze.Hosting.Testing 0.4.0-alpha.
 - **The pure test client is composed as an application composes a pure client:** its container holds the typermedia serializer alone, where it held every feature's serializer, and its transport's client side is declared through the registration each transport offers an application (`CurrentTestsEndpointTransportClient`). The extra serializers hid that a pure client composed without them could not connect, which Compze.Tessaging 0.8.0-alpha fixes.
+- `TypermediaTestClient.ConnectTo` disposes the client it composed when connecting fails, where it left it undisposed.
 
 ## 0.5.1-alpha
 

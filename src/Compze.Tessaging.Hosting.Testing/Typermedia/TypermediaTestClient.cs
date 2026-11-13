@@ -39,9 +39,17 @@ public class TypermediaTestClient : IAsyncDisposable
                                              builder.Registrar.JSonAppConfigFileConfigurationParameterProvider();
                                           });
 
-      var testClient = new TypermediaTestClient(client);
-      await client.ConnectAsync(endpointAddress).caf();
-      return testClient;
+      try
+      {
+         await client.ConnectAsync(endpointAddress).caf();
+      }
+      catch //Resource cleanup, not handling: the client is handed to nobody when it cannot connect, so nothing else will dispose it.
+      {
+         await client.DisposeAsync().caf();
+         throw;
+      }
+
+      return new TypermediaTestClient(client);
    }
 
    ///<summary>Connects this client to one more endpoint's address — an external client navigating several known endpoints.</summary>

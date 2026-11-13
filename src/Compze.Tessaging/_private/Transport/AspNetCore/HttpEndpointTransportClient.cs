@@ -1,9 +1,8 @@
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
+using Compze.Tessaging.Endpoints;
 using Compze.Tessaging.Endpoints.Discovery;
 using Compze.Tessaging._internal.Transport;
 using Compze.Tessaging.Typermedia;
-
-using Compze.Tessaging._private.Transport.Advertisement;
 
 namespace Compze.Tessaging._private.Transport.AspNetCore;
 
@@ -31,7 +30,16 @@ class HttpEndpointTransportClient : IEndpointTransportClient
          content.Headers.Add(HttpConstants.Headers.DeliveryStreamPredecessorSequenceNumber, position.PredecessorSequenceNumber.ToString(System.Globalization.CultureInfo.InvariantCulture));
       }
 
-      var response = await httpClient.PostAsync(requestUri, content, cancellationToken).caf();
+      HttpResponseMessage response;
+      try
+      {
+         response = await httpClient.PostAsync(requestUri, content, cancellationToken).caf();
+      }
+      catch(HttpRequestException noResponse) //The request got no response, where a response of any status is returned, not thrown: no connection to the address could be made, or it ended before the response arrived.
+      {
+         throw EndpointUnreachableException.BecauseTheRequestGotNoResponse("HTTP", address, request, noResponse);
+      }
+
       if(response.IsSuccessStatusCode) return await response.Content.ReadAsStringAsync(cancellationToken).caf();
 
       var problemDetails = await ProblemDetails.FromResponse(response).caf();

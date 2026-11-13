@@ -1,6 +1,6 @@
-using System.Net;
 using System.Net.Sockets;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
+using Compze.Tessaging.Endpoints;
 using Compze.Tessaging.Endpoints.Discovery;
 using Compze.Tessaging._private.Transport.FramedConnections;
 
@@ -22,13 +22,14 @@ class TcpConnectionOpener : IConnectionOpener
    public async Task<ClientConnection> OpenConnectionAsync(EndpointAddress address, TimeSpan timeout, CancellationToken cancellationToken)
    {
 #pragma warning disable CA2000 //The socket is owned from here on by the stream StreamOver returns, which closes it when disposed, and StreamOver closes it itself if it fails: an ownership the analyzer cannot follow into NetworkStream.
-      var connectedSocket = await SocketConnectedToAsync(TcpAddress.IPEndPointFrom(address), timeout, cancellationToken).caf();
+      var connectedSocket = await SocketConnectedToAsync(address, timeout, cancellationToken).caf();
 #pragma warning restore CA2000
       return new ClientConnection(TcpConnection.StreamOver(connectedSocket), hasEndedWhileIdle: () => connectedSocket.Poll(TimeSpan.Zero, SelectMode.SelectRead));
    }
 
-   static async Task<Socket> SocketConnectedToAsync(IPEndPoint serverListensAt, TimeSpan timeout, CancellationToken cancellationToken)
+   async Task<Socket> SocketConnectedToAsync(EndpointAddress address, TimeSpan timeout, CancellationToken cancellationToken)
    {
+      var serverListensAt = TcpAddress.IPEndPointFrom(address);
       var socket = new Socket(serverListensAt.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
       try
       {
@@ -37,10 +38,15 @@ class TcpConnectionOpener : IConnectionOpener
          await socket.ConnectAsync(serverListensAt, timeoutOrCancellation.Token).caf();
          return socket;
       }
-      catch(OperationCanceledException) when(!cancellationToken.IsCancellationRequested) //Our own timeout ended the connect, not the caller: say so in the terms of IConnectionOpener's contract.
+      catch(OperationCanceledException) when(!cancellationToken.IsCancellationRequested) //Our own timeout ended the connect, not the caller: nothing answered. Seen with the server's machine paused, turned off and cut off from the network, and with a firewall dropping the connect.
       {
          socket.Dispose();
-         throw new TimeoutException($"No TCP connection to {serverListensAt} was made within {timeout}.");
+         throw EndpointUnreachableException.BecauseNoConnectionWasMadeInTime(TransportName, address, timeout);
+      }
+      catch(SocketException exception) //The connect was answered, with a failure: nothing listens at the port and the machine says so, or the network has no way to the address.
+      {
+         socket.Dispose();
+         throw EndpointUnreachableException.BecauseTheConnectionAttemptFailed(TransportName, address, exception);
       }
       catch //Resource cleanup, not handling: the socket never connected, so it is handed to nobody and nothing else will close it.
       {

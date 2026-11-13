@@ -1,3 +1,4 @@
+using Compze.Tessaging.Endpoints;
 using Compze.Tessaging.Endpoints.Discovery;
 
 namespace Compze.Tessaging._private.Transport.FramedConnections;
@@ -12,7 +13,8 @@ interface IConnectionOpener
    string TransportName { get; }
 
    ///<summary>Opens a connection to the server listening at <paramref name="address"/>, which must be an address of this<br/>
-   /// transport. Throws a <see cref="TimeoutException"/> when no connection is made within <paramref name="timeout"/>.<br/>
-   /// The caller owns the connection it gets and disposes it.</summary>
+   /// transport. Throws an <see cref="EndpointUnreachableException"/> when no connection can be made: nothing answers<br/>
+   /// within <paramref name="timeout"/>, or the attempt fails outright. The caller owns the connection it gets and<br/>
+   /// disposes it.</summary>
    Task<ClientConnection> OpenConnectionAsync(EndpointAddress address, TimeSpan timeout, CancellationToken cancellationToken);
 }

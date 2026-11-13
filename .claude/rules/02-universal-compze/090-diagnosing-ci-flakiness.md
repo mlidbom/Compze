@@ -7,8 +7,8 @@ hid a real code cause (a race, a lock-release ordering bug, a lock inversion) th
 The evidence is already captured — read it before theorising. The CI `Build and Test` step
 (`.github/actions/build-and-test/action.yml`) prints a `vmstat` load summary every run, pass or fail:
 peak/avg run-queue (`r`), min idle CPU%, iowait, and the busiest samples — judge them against the printed
-`logical CPUs`. Separately, `FramedConnectionPool` (the named-pipe transport's client side) puts the ThreadPool
-state (free workers, pending items) into the exception when a connect times out. Saturated looks like run-queue far above the CPU count
+`logical CPUs`. Separately, the `EndpointUnreachableException` thrown when a named-pipe or TCP connect times out
+carries the ThreadPool state (free workers, pending items) in its message. Saturated looks like run-queue far above the CPU count
 with idle near 0, sustained; healthy looks like run-queue near/below it with idle to spare.
 
 Measured baseline (green run): **4 vCPU, idle never below 20%, run-queue ~2 avg / ~6 peak** — a comfortably

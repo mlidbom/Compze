@@ -1,5 +1,6 @@
 using Compze.Internals.SystemCE.ThreadingCE;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
+using Compze.Tessaging.Endpoints;
 using Compze.Tessaging.Endpoints.Discovery;
 using Compze.Tessaging.Typermedia;
 using Compze.Threading;
@@ -64,10 +65,16 @@ class FramedConnectionPool : IDisposable
    ///<summary>Performs one exchange with the peer: leases a pooled connection — awaiting a free one if all<br/>
    /// <see cref="MaximumConcurrentExchanges"/> are busy, opening one if the pool has none idle that is still usable — writes<br/>
    /// the request frame, reads the response frame, and returns the connection for the next sender.</summary>
+   ///<remarks>Throws an <see cref="EndpointUnreachableException"/> when the peer cannot be reached: no connection to it can<br/>
+   /// be made, or the connection ends before the response has arrived.</remarks>
    internal async Task<ExchangeResponse> ExchangeAsync(TransportRequest request, CancellationToken cancellationToken)
    {
       if(!await _exchangeSlots.WaitAsync(WaitForAFreeConnectionTimeout, cancellationToken).caf())
       {
+         //refactor: TessageDispatchingFailedException begins its message "Dispatching tessage failed. Remote exception tessage:",
+         //   and nothing remote happened here: this endpoint gave up waiting for a free connection of its own. The condition
+         //   needs an exception whose name and message say so. It is not an EndpointUnreachableException: the peer is
+         //   reached, and busy.
          throw new TessageDispatchingFailedException($"""
                                                       All {MaximumConcurrentExchanges} pooled connections to the {_connectionOpener.TransportName} transport server stayed busy for {WaitForAFreeConnectionTimeout}.
                                                       Address:    {_address.Uri}
@@ -81,7 +88,7 @@ class FramedConnectionPool : IDisposable
       try
       {
 #pragma warning disable CA2000 //Ownership is tracked on every path: a clean exchange returns the connection to the pool, a failed one disposes it in the catch below.
-         var connection = TakeUsableIdleConnection() ?? await OpenConnectionAsync(request, cancellationToken).caf();
+         var connection = TakeUsableIdleConnection() ?? await OpenConnectionAsync(cancellationToken).caf();
 #pragma warning restore CA2000
          try
          {
@@ -89,6 +96,11 @@ class FramedConnectionPool : IDisposable
             var response = await ExchangeFraming.ReadResponseAsync(connection.Stream, cancellationToken).caf();
             ReturnToPool(connection);
             return response;
+         }
+         catch(IOException connectionEnded) //The connection ended in the middle of the exchange, which is what a failed read or write of its stream is: the peer's process ended, or its machine vanished and the operating system gave the connection up. Each was seen in the across-machines lab.
+         {
+            await connection.DisposeAsync().caf();
+            throw EndpointUnreachableException.BecauseTheConnectionEndedBeforeTheAnswerArrived(_connectionOpener.TransportName, _address, request, connectionEnded);
          }
          catch //Resource cleanup, not handling: the failure mid-exchange leaves the connection's lockstep state unknown, so it is discarded rather than returned - see the class remarks. The pool replaces it on demand.
          {
@@ -116,25 +128,10 @@ class FramedConnectionPool : IDisposable
    });
 
    ///<summary>Opens a fresh connection — the pool's on-demand growth, reached only while holding an exchange slot, which is<br/>
-   /// what bounds how many connects a cold burst can attempt at once.</summary>
-   async Task<ClientConnection> OpenConnectionAsync(TransportRequest request, CancellationToken cancellationToken)
-   {
-      try
-      {
-         return await _connectionOpener.OpenConnectionAsync(_address, ConnectTimeout, cancellationToken).caf();
-      }
-      catch(TimeoutException exception)
-      {
-         throw new TessageDispatchingFailedException($"""
-                                                      Timed out connecting to the {_connectionOpener.TransportName} transport server.
-                                                      Address:    {_address.Uri}
-                                                      Kind:       {request.Kind}
-                                                      Type:       {request.PayloadTypeIdString}
-                                                      {ThreadPoolStateDescription()}
-                                                      {exception}
-                                                      """);
-      }
-   }
+   /// what bounds how many connects a cold burst can attempt at once. Throws an <see cref="EndpointUnreachableException"/><br/>
+   /// when no connection can be made (<see cref="IConnectionOpener.OpenConnectionAsync"/>).</summary>
+   async Task<ClientConnection> OpenConnectionAsync(CancellationToken cancellationToken) =>
+      await _connectionOpener.OpenConnectionAsync(_address, ConnectTimeout, cancellationToken).caf();
 
    ///<summary>Returns a connection whose exchange completed cleanly. After <see cref="Dispose"/> the pool declines returns:<br/>
    /// the connection is closed instead of parked where nothing would ever close it.</summary>
@@ -146,7 +143,7 @@ class FramedConnectionPool : IDisposable
          _idleConnections.Push(connection);
    });
 
-   ///<summary>Captured into the loud failures above at the moment they are thrown: a wait that expires against a running<br/>
+   ///<summary>Captured into the saturation failure above at the moment it is thrown: a wait that expires against a running<br/>
    /// server is the signature of either genuine saturation or of the ThreadPool not servicing continuations — zero free<br/>
    /// workers with pending work says thread-pool starvation, a healthy pool says the peer itself is the bottleneck.</summary>
    static string ThreadPoolStateDescription() => $"ThreadPool at timeout: {ThreadPoolCE.DescribeState()}";
