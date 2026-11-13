@@ -32,6 +32,7 @@ Then reload: `. $PROFILE`
   - `-WhatIf` - Preview what would be deleted by git clean (with `-FullGitReset`)
 
 - **C-Test** - Runs Compze tests with proper configuration (builds by default)
+- **C-Test-Combinations** - Runs the built tests against the pluggable-component combinations you name, from temporary copies, leaving your own combinations file and the build outputs alone
   - `-NoBuild` - Skip building, just run tests
   - `-Clean` - Clean and build before testing
   - `-FullGitReset` - Full git reset, build, then test (implies `-Clean`)
