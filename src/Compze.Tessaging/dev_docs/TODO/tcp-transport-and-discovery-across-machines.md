@@ -148,7 +148,9 @@ What each of these looks like to a conversation was observed, not only reasoned:
 - **The lab machine** is a Hyper-V virtual machine on the development computer, `Compze-Win11-24H2`, in
   `C:\CompzeVMLab`: a clone of the baseline of Deskmancer's Windows 11 24H2 machine, connected to Hyper-V's
   Default Switch. Its Windows has the host's .NET runtime and no ASP.NET Core runtime. DevScripts' `C-VM-*`
-  commands create it, start it from its `baseline` checkpoint and start the lab endpoint in it.
+  commands create it, start it from its `baseline` checkpoint, start the lab endpoint in it, and hold a
+  conversation while it is made to vanish (`C-VM-ConverseWhileTheLabMachineVanishes`, which repeats the runs
+  behind the table below).
 - **The lab program** (`test/Compze.Tests.AcrossMachines.Lab`) is both sides. `serve` hosts the lab endpoint, a
   best-effort endpoint over TCP that answers one tuery, in the lab machine. `converse` holds a conversation with
   it from the host: a pure client asks the tuery round after round and writes one line for each, answered and

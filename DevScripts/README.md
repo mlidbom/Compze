@@ -52,6 +52,12 @@ Trying Compze's endpoints across machines: the lab machine is a Hyper-V virtual 
 
 - **C-VM-StartLabEndpoint** - Copies the built lab program into the lab machine and starts it there serving the lab endpoint; returns the endpoint's address, which the lab program's `converse` command on the host takes
 
+- **C-VM-ConverseWhileTheLabMachineVanishes** - Holds a conversation with the lab endpoint from the host while the lab machine is made to vanish and to come back, and writes one timeline: what was done to the machine, and what each tuery experienced
+  - `-LabEndpointAddress` - The address `C-VM-StartLabEndpoint` returned
+  - `-Vanish` - `Pause`, `DisconnectNetwork`, `TurnOff` or `KillLabProgram`
+  - `-ConversationOptions` - Options for the lab program's `converse` command, such as `'--tueries-per-round', '8'`
+  - `-SecondsBeforeVanishing`, `-SecondsVanished`, `-SecondsAfterComingBack`, `-FailuresInFull`
+
 - **C-VM-RemoveLabMachine** - Removes the lab machine, its checkpoints and its disk
 
 ### Packing & Releasing
