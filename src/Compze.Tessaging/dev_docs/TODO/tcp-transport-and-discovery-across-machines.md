@@ -156,6 +156,15 @@ What each of these looks like to a conversation was observed, not only reasoned:
   commands create it, start it from its `baseline` checkpoint, start the lab endpoint in it, and hold a
   conversation while it is made to vanish (`C-VM-ConverseWhileTheLabMachineVanishes`, which repeats the runs
   behind the table below).
+- **The network between the two** is the Default Switch: the guest gets an address there that the host can
+  connect to, and reaches the internet through it. Each side's firewall has a rule for the other:
+  - The guest's lets in TCP from that network. `C-VM-CreateLabMachine` adds the rule.
+  - The host's lets in everything that arrives through the Default Switch, since 2026-11-14: the rule "Hyper-V
+    guests on the Default Switch may reach this computer", added by hand from an elevated process. It is as wide
+    as Magnus wants it: "Guests have 100% network access to my workstation, any protocol, port etc." A registry
+    server on the host needs it. Before it a TCP connect from the guest to the host got no answer; with it the
+    guest connects in 15 ms. The rule names the switch's network adapter by its id; whether that id outlasts a
+    restart of the host is not verified. `C-VM-TestLabNetwork` tells.
 - **The lab program** (`test/Compze.Tests.AcrossMachines.Lab`) is both sides. `serve` hosts the lab endpoint, a
   best-effort endpoint over TCP that answers one tuery, in the lab machine. `converse` holds a conversation with
   it from the host: a pure client asks the tuery round after round and writes one line for each, answered and
@@ -196,8 +205,16 @@ rows were run again. When the table was made the failures were a raw `IOExceptio
 
 - Its first start of a program after a boot takes about 70 s, later starts a second or two.
   `C-VM-StartLabEndpoint` waits for it.
-- Downloads from the internet stall in the guest (curl gives up after a minute), although it can open
-  connections. Not investigated: the lab needs no internet.
+- The guest reaches the internet. One download stalled in it on 2026-11-13, around 03:15 at night, during a
+  fresh clone's first boot: `https://dot.net/v1/dotnet-install.ps1`, on which `Invoke-WebRequest` waited for
+  nine minutes and curl then gave up after one ("server closed abruptly"). No other site was tried then, nor
+  the same download from the host, so nothing tells where it stalled. The day after it could not be made to
+  stall: the same download took half a second from the baseline guest, and each of 38 times through the first
+  12 minutes of a fresh clone's first boot, with curl and with `Invoke-WebRequest`, and 48 MB came in a second.
+  `C-VM-TestLabNetwork` is what to run if it happens again: it downloads from the host and the guest side by side.
+- The lab downloads nothing either way. Its guest gets the host's own .NET runtime, copied in, so it runs what
+  the build's tests ran on, and has no ASP.NET Core runtime because none was copied: that is the design, not a
+  consequence of the stall.
 
 ### What is left of the transport
 

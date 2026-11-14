@@ -45,10 +45,15 @@ Then reload: `. $PROFILE`
 
 Trying Compze's endpoints across machines: the lab machine is a Hyper-V virtual machine on this computer, in `C:\CompzeVMLab`, and the lab program (`test/Compze.Tests.AcrossMachines.Lab`) hosts an endpoint over TCP in it and converses with that endpoint from the host. The commands need membership of the Hyper-V Administrators group.
 
+For the lab machine to reach this computer, this computer's firewall must let it in. A rule of its own does: "Hyper-V guests on the Default Switch may reach this computer", which lets in everything that arrives through the Default Switch's network adapter. No command adds it: adding it takes an elevated process, and how far the virtual machines may reach into this computer is its owner's decision. `C-VM-TestLabNetwork` tells whether it holds.
+
 - **C-VM-CreateLabMachine** - Creates the lab machine as a clone of another virtual machine's checkpoint, prepares its Windows (computer name, no automatic updates, firewall, the host's .NET runtime and no ASP.NET Core runtime) and takes the `baseline` checkpoint. Run once; takes a few minutes
   - `-SourceMachine`, `-SourceCheckpoint`, `-SourceGuestCredentialPath` - What to clone; by default the baseline of Deskmancer's Windows 11 24H2 machine
 
 - **C-VM-StartLabMachineFromBaseline** - Restores the `baseline` checkpoint, boots the lab machine and waits until its Windows is up. Whatever ran in it before is discarded
+
+- **C-VM-TestLabNetwork** - Tries the network between the host and the lab machine, each way, and a download from the internet from both; writes how each went. Run it when the two cannot reach each other, such as after the host restarted, or when a download in the lab machine stalls
+  - `-FileToDownload` - The address of the file both sides download
 
 - **C-VM-StartLabEndpoint** - Copies the built lab program into the lab machine and starts it there serving the lab endpoint; returns the endpoint's address, which the lab program's `converse` command on the host takes
 

@@ -107,8 +107,9 @@ function C-VM-CreateLabMachine {
     # The guest gets the host's own .NET runtime, the one the build's tests ran on, as the files an installation of only
     # the runtime consists of: dotnet.exe, the newest host resolver and the runtime's shared framework. A program's
     # executable finds it in Program Files\dotnet with nothing registered.
-    # Nothing is downloaded: the guest's downloads through the Default Switch stalled when this was written (2026-11-13:
-    # curl gave up after a minute with "server closed abruptly", and Invoke-WebRequest waited without end).
+    # Copied, not downloaded: the guest then runs the very runtime the host built and tested with, and creating the machine
+    # depends on nothing outside the host. (The guest does reach the internet. The download this replaced stalled on
+    # 2026-11-13, for a reason never found: the day after it took half a second, also on a fresh clone's first boot.)
     function Copy-HostDotNetRuntimeIntoGuest {
         $hostDotNet = Split-Path (Get-Command dotnet).Source -Parent
         $newestFirst = { [version]($_.Name -replace '-.*$') }
