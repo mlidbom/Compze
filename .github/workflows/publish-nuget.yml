@@ -1,10 +1,11 @@
 # Create Releases: publishes every package whose version has no release tag yet to nuget.org, with its GitHub release and tag.
 #
-# Run it by hand, and only after the CI workflow (ci.yml) has passed on the same commit. The Build and Test step below runs
-# only the combinations in src/TestUsingPluggableComponentCombinations.github-ci - three, all SqliteMemory, on Linux - while
-# CI runs the full pluggable-component matrix on Linux and Windows. The first step enforces it: the release gate
-# (.github/scripts/Assert-CiPassedForCommit.ps1) stops the release unless a CI run of this commit ran its test jobs and all
-# its jobs succeeded. The release procedure: .claude/rules/02-universal-compze/100-releasing.md.
+# Run it by hand, and only after the CI workflow (ci.yml) has passed on what this commit has. The Build and Test step below
+# runs only the combinations in src/TestUsingPluggableComponentCombinations.github-ci - three, all SqliteMemory, on Linux -
+# while CI runs the full pluggable-component matrix on Linux and Windows. The first step enforces it: the release gate
+# (.github/scripts/Assert-CiPassedForCommit.ps1) stops the release unless a CI run that covers this commit ran its test jobs
+# and all its jobs succeeded. A run covers the commit when it is a run of it, or of an earlier commit that differs from it
+# only in files CI doesn't test, such as documentation. The release procedure: .claude/rules/02-universal-compze/100-releasing.md.
 
 name: Create Releases
 
@@ -17,7 +18,7 @@ on:
         default: false
 
 permissions:
-  actions: read    # lets the release gate read the CI workflow's runs and jobs for this commit
+  actions: read    # lets the release gate read the CI workflow's runs and their jobs
   contents: write
   id-token: write  # lets the nuget.org Trusted Publishing step request the GitHub OIDC token that nuget.org exchanges for a short-lived API key
 
@@ -35,11 +36,11 @@ jobs:
     steps:
       - uses: actions/checkout@v7
         with:
-          fetch-depth: 0  # Full history needed for tag detection
+          fetch-depth: 0  # Full history needed for tag detection, and for the release gate to compare this commit with its ancestors
 
       # The release gate: the Build and Test step below tests only three combinations, so nothing is published from a
-      # commit the CI workflow hasn't fully tested. A dry run reports the gate's verdict and goes on.
-      - name: Require that CI passed on this commit
+      # commit unless the CI workflow has fully tested what it has. A dry run reports the gate's verdict and goes on.
+      - name: Require that a CI run that covers this commit passed
         continue-on-error: ${{ inputs.dry-run == true }}
         shell: pwsh
         env:
