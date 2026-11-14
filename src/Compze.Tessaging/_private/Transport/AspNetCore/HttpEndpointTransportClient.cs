@@ -30,6 +30,15 @@ class HttpEndpointTransportClient : IEndpointTransportClient
          content.Headers.Add(HttpConstants.Headers.DeliveryStreamPredecessorSequenceNumber, position.PredecessorSequenceNumber.ToString(System.Globalization.CultureInfo.InvariantCulture));
       }
 
+      //bug: A request that gets no response within HttpClient's timeout ends in a TaskCanceledException, which nobody asked
+      //   for and which this does not catch. The timeout is .NET's default of 100 seconds, since HttpClientFactoryCE sets none,
+      //   and it bounds two things that must be told apart: an endpoint whose machine vanished while it handled the request,
+      //   and a handler that runs for longer. Calling the first an EndpointUnreachableException here would call the second one
+      //   too. The framed-connection transports tell them apart: TCP keepalive (TcpConnection) ends a connection to a vanished
+      //   machine within about ten seconds, and a handler is waited for as long as it runs. HTTP needs the same on
+      //   HttpClientFactoryCE's handler: keepalive on its connections, a connect timeout, and no timeout on the request. A
+      //   connect that times out is then what is left to catch here: it too is a TaskCanceledException whose InnerException
+      //   is a TimeoutException.
       HttpResponseMessage response;
       try
       {

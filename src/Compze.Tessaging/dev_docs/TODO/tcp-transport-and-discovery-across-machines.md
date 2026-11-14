@@ -203,8 +203,12 @@ rows were run again. When the table was made the failures were a raw `IOExceptio
 
 - **What is left around `EndpointUnreachableException`** (built 2026-11-13: every transport's client throws it
   when no connection can be made or the connection ends before the answer arrives):
-  - Over HTTP, a request that outlasts `HttpClient`'s timeout (100 seconds, never set) is not covered: it
-    arrives as a `TaskCanceledException`. Not seen, so not caught.
+  - Over HTTP, a request that gets no response within `HttpClient`'s timeout (100 seconds, never set) ends in
+    a `TaskCanceledException`, and is deliberately not caught (2026-11-14). The timeout bounds both an endpoint
+    whose machine vanished while it handled the request and a handler that runs for longer, and nothing tells
+    them apart when it expires, so an `EndpointUnreachableException` there would be a guess. What HTTP needs is
+    what TCP has: keepalive on its connections, a connect timeout, and no timeout on the request. See "Timeouts"
+    under "Piece 2". Tagged `bug:` in `HttpEndpointTransportClient`.
   - In the normal suite a connection that ends in the middle of an exchange is specified over named pipes only:
     over TCP only the lab can produce it, and it does.
 - **Specifications of a peer process's death.** The endpoint host process hard-codes
@@ -226,6 +230,19 @@ Besides the address it listens on:
   `AspNetCoreEndpointTransportServer`) is unreachable from the guest.
 - **Timeouts.** `HttpClientFactoryCE` sets neither `Timeout` nor `ConnectTimeout`, so .NET's default of 100
   seconds bounds both a silent-vanish and every handler's run time.
+  - What would make HTTP behave as TCP does, on `HttpClientFactoryCE`'s `SocketsHttpHandler`: a `ConnectTimeout`
+    of the pool's 10 seconds, TCP keepalive on each connection through a `ConnectCallback` (as `TcpConnection`
+    turns it on), and `HttpClient.Timeout` set to infinite. About 30 lines.
+  - Run 2026-11-14 on .NET 10, against a server that accepts and never responds, and an address nothing answers
+    at: both `HttpClient.Timeout` and `ConnectTimeout` end the request in a `TaskCanceledException` whose
+    `InnerException` is a `TimeoutException`. Only the messages tell the two apart. A caller's own cancellation
+    has no `TimeoutException` inside.
+  - Not run: that keepalive ends an HTTP request to a vanished machine. The lab machine can't serve HTTP: it has
+    no ASP.NET Core runtime, by design.
+  - On Windows a request written to a vanished machine fails sooner than the 100 seconds, as an
+    `EndpointUnreachableException`: the operating system gives up resending it after about 10 seconds. (Reasoned
+    from the TCP rows of "Tried across machines", not run over HTTP.) The 100 seconds are met when the machine
+    vanishes after it received the request.
 - **The proxy.** `SocketsHttpHandler` uses the system proxy unless told otherwise. Whether that affects requests
   to the guest depends on the host's settings, which were not checked.
 
