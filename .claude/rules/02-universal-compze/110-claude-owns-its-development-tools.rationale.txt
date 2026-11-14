@@ -1,6 +1,6 @@
 # Provenance
 
-Written 2026-11-14 in Compze, in a session of Claude Fable 5.2.
+Written 2026-11-14 in Compze, in a session of Claude Fable 5.2, and cut down to its list the same day.
 
 ## What is behind it
 
@@ -9,27 +9,27 @@ this project is missing instructions for you to consider yourself the product ow
 should add them. My other projects have such instructions and it helps hugely with development speed. I would assume it
 also saves a lot of frustration for you."
 
-The other projects' instructions are JAStudio's `090-claude-owns-the-jastudio-mcp-server.md` (2026-11-09) and
-Deskmancer's `090-claude-owns-its-verification-tools.md` (2026-11-12), both in `.claude/rules/02-universal-local/` of
-their repositories. This rule follows their wording, the commit clause included.
+The rule first said in full what owning the tools means, following JAStudio's
+`090-claude-owns-the-jastudio-mcp-server.md` and Deskmancer's `090-claude-owns-its-verification-tools.md`. What the three
+rules shared then went into the shared collaboration rules ("The tools you develop with are yours, as a product", and
+"Commit and push whenever it helps"), whose sidecar has Magnus's words for it. This rule keeps what is Compze's own: the
+list, and the limit for Deskmancer.
 
-## What Magnus said to each part, the same day
+## What Magnus said to the parts that are Compze's own
 
-He was shown the list of tools, and asked what more it would help the agent to own. His answers:
+He was shown the list of tools, and asked what more it would help the agent to own:
 
-- **Pushing,** asked for as a standing approval to push the branch being worked on, never `main`: "Always OK regardless
-  of branch. Nothing push does is irreversible."
-- **The DevScripts commands' interfaces,** asked for the way Deskmancer's rule has it, where a tool is the agent's until
-  he says he uses it. He offered less: "Is it enough to be free to add to them, without changing the default behaviours,
-  and asking me if you want a tool to, for instance, become more verbose by default?" The agent said that it is.
-- **The specification harness:** "Absolutely. And this is much wider than just that project!" He meant that clearly
-  beneficial refactorings the agent discovers are its to make, public APIs of published packages excepted. That wider
-  point was left for a discussion of its own, and is not in this rule.
+- **The specification harness:** "Absolutely."
 - **The firewall rule for the Hyper-V guests,** asked for as leave to add it again if a restart loses it: "Wider. All
   hyper-v config and changes you need are yours. As long as you don't mess up things for deskmancer." And, when he
   read it back: "to be clear, that includes creating, and deleting vms".
+- **The DevScripts commands he runs himself,** asked for the way Deskmancer's rule has it, where a tool is the agent's
+  until he says he uses it. He offered less: "Is it enough to be free to add to them, without changing the default
+  behaviours, and asking me if you want a tool to, for instance, become more verbose by default?" That became the shared
+  rule's "A tool the user runs himself is his too", so this rule only says which tools those are.
 
 ## What looks removable but isn't
 
-- **"A release is not a push."** His approval of pushing says nothing about publishing packages, which can't be undone.
 - **The limit for Deskmancer.** Its virtual machines are on the same Hyper-V, and its sessions depend on them as they are.
+- **"As distinct from what the specifications claim."** The harness is the agent's. What a specification claims about
+  Compze is normal work, as the shared rule's "Not covered" says.
