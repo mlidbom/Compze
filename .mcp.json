@@ -11,9 +11,9 @@
       "type": "streamable-http",
       "url": "http://127.0.0.1:64482/stream"
     },
-    "resharper-joshua": {
+    "dotnet-analysis-and-refactoring": {
       "type": "http",
-      "url": "http://127.0.0.1:23741/"
+      "url": "http://127.0.0.1:23751/"
     },
     "sherlock": {
       "type": "stdio",
