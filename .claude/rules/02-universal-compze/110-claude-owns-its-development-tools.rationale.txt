@@ -26,7 +26,8 @@ He was shown the list of tools, and asked what more it would help the agent to o
   beneficial refactorings the agent discovers are its to make, public APIs of published packages excepted. That wider
   point was left for a discussion of its own, and is not in this rule.
 - **The firewall rule for the Hyper-V guests,** asked for as leave to add it again if a restart loses it: "Wider. All
-  hyper-v config and changes you need are yours. As long as you don't mess up things for deskmancer."
+  hyper-v config and changes you need are yours. As long as you don't mess up things for deskmancer." And, when he
+  read it back: "to be clear, that includes creating, and deleting vms".
 
 ## What looks removable but isn't
 

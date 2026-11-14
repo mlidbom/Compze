@@ -7,10 +7,10 @@ ones". Today they are:
 
 - the across-machines lab: the `C-VM-*` commands, the lab program (`test/Compze.Tests.AcrossMachines.Lab`), and the lab
   machine with its checkpoint and its folder (`C:\CompzeVMLab`);
-- Hyper-V on this computer: all its configuration, and the changes to the computer that the virtual machines need, such
-  as the firewall rule that lets them in. The one limit: nothing is messed up for Deskmancer, which has its own virtual
-  machines there. Magnus: "All hyper-v config and changes you need are yours. As long as you don't mess up things for
-  deskmancer.";
+- Hyper-V on this computer: all its configuration, creating and deleting virtual machines included, and the changes to
+  the computer that the virtual machines need, such as the firewall rule that lets them in. The one limit: nothing is
+  messed up for Deskmancer, which has its own virtual machines there. Magnus: "All hyper-v config and changes you need
+  are yours. As long as you don't mess up things for deskmancer." And: "that includes creating, and deleting vms";
 - the specification harness, as distinct from what the specifications claim: `Compze.Tests.Infrastructure`, and the
   endpoint host process of the multi-process specifications (`test/Compze.Tests.SameMachine.EndpointHostProcess`);
 - `C-Test-Combinations`, which runs the built tests against other pluggable-component combinations than those in
