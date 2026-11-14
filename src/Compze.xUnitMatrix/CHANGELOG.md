@@ -13,6 +13,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
   type that is not one of the dimensions or with no reason. A configuration that was broken before now fails the test run.
 - Each line of a configuration file must give exactly one value, or `*`, for each dimension, and each value must be the
   exact name of one of its dimension's values. The failure names the file, the line and what is wrong with it.
+- **Requires newer minor versions of other Compze packages:** Compze.Internals.SystemCE 0.7.0-internal (was 0.4.1-internal). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
 
 ### Fixed
 - A line with a value too many no longer runs as if the extra value were not there, and a line with a value too few no
