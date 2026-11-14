@@ -3,7 +3,7 @@
 The Create Releases workflow (`.github/workflows/publish-nuget.yml`) publishes to nuget.org, but it tests only the
 combinations in `src/TestUsingPluggableComponentCombinations.github-ci`: three, all SqliteMemory, on Linux. The CI
 workflow (`ci.yml`), which runs on every push, is what tests the full pluggable-component matrix: every persistence
-layer, DI container and transport on Linux (40 combinations), and the Sqlite ones on Windows (16 more). Published
+layer, DI container and transport on Linux (60 combinations), and the Sqlite ones on Windows (24 more). Published
 before CI has passed, a release can ship packages that fail on every combination the workflow didn't test, and a
 published version can never be replaced.
 
