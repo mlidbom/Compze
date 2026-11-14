@@ -20,10 +20,14 @@ stops the release unless a CI run that covers the commit ran its test jobs and e
 
 A release goes in this order:
 
-1. **Prepare it:** bump the versions, write the changelog sections, and run `C-SimulateRelease`. It refuses a section
-   that doesn't state the Compze dependencies whose minimum version the release raises across a minor version, which
-   a consumer's upgrade brings along, and prints the exact line to add (`.github/scripts/lib/DependencyFloors.ps1`
-   says why). Each section also becomes its package's release notes on nuget.org.
+1. **Prepare it:** `C-Prepare-Release` does it for every package whose changelog gained entries since its release:
+   - it bumps the versions, minor by default, patch with `-Patch`, and only the packages named with `-PackageId`;
+   - it splits each changelog's top section into the new version's section and the released one, restored from its tag;
+   - it adds the line stating the Compze dependencies whose minimum version the release raises across a minor version,
+     which a consumer's upgrade brings along (`.github/scripts/lib/DependencyFloors.ps1` says why).
+
+   Then run `C-SimulateRelease`, which checks it all as the release will. Each section also becomes its package's
+   release notes on nuget.org.
 2. **Commit and push.**
 3. **Publish the versions to the pending-release feed,** while CI runs: `C-Publish-ToPendingReleaseFeed`. The other
    repositories on Magnus's machine, such as Deskmancer, can then use them at once, instead of waiting half an hour to

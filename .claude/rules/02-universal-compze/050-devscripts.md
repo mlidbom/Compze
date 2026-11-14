@@ -22,3 +22,5 @@ Discover all commands: `C-Get-Commands` or `C-<Tab>` in PowerShell.
 | `C-Merge-Project` | Merge projects |
 | `C-FlexRef-Sync` | Sync FlexRef infrastructure after reference changes |
 | `C-Validate-SolutionStructure` | Validate solution structure |
+| `C-Prepare-Release` | Bump versions, split changelogs and add dependency floors lines for the next release |
+| `C-SimulateRelease` | Check a prepared release as the release workflow will, publishing nothing |
