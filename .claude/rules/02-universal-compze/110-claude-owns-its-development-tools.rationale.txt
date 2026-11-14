@@ -1,0 +1,23 @@
+# Provenance
+
+Written 2026-11-14 in Compze, in a session of Claude Fable 5.2.
+
+## What is behind it
+
+The agent had built `C-VM-TestLabNetwork` unasked, out of checks it had run by hand, and said so. Magnus: "Good. If
+this project is missing instructions for you to consider yourself the product owner for dev-tools that you need, we
+should add them. My other projects have such instructions and it helps hugely with development speed. I would assume it
+also saves a lot of frustration for you."
+
+The other projects' instructions are JAStudio's `090-claude-owns-the-jastudio-mcp-server.md` (2026-11-09) and
+Deskmancer's `090-claude-owns-its-verification-tools.md` (2026-11-12), both in `.claude/rules/02-universal-local/` of
+their repositories. This rule follows their wording, the commit clause included.
+
+## Not confirmed by Magnus when written
+
+- **The list of tools.** It is the agent's reading of which tools were built by agents, for agents.
+- **Which commands he runs himself.** The rule leaves the interface of every DevScripts command that is older than the
+  listed tools with him, on the assumption that he and others run them. Deskmancer's rule has it the other way round:
+  there a tool is the agent's until he says that he uses it.
+- **The last exclusion,** this computer's own settings. It is there because the lab needed a rule in the host's
+  firewall, which was added on his word.
