@@ -498,6 +498,30 @@ was not measured.
 2. The multi-process specifications on TCP and through a registry server, with specifications for a peer
    process's death.
 
+## The next merge of main: main targets .NET 11 (since 2026-11-14)
+
+Main was last merged in at fc61ab357, for the two CI changes. Since then the dotnet-11 branch is merged into main
+(be4e1cefe): `src/Directory.Build.props` sets `net11.0` for every project and no project file sets a target framework,
+runtime async is on, and `global.json` is in the repository's root and pins SDK 11.0.100. The dotnet-11 session is also
+preparing a release of every package from main. The merge has no conflicts in text (tried 2026-11-14), but it needs
+this by hand:
+
+- **The lab program's project file** (`test/Compze.Tests.AcrossMachines.Lab`) still says
+  `<TargetFramework>net10.0</TargetFramework>`: drop the line.
+- **Three DevScripts commands that exist only on this branch name the output folder `bin\Debug\net10.0`:**
+  `C-Test-Combinations`, `C-VM-StartLabEndpoint` and `C-VM-ConverseWhileTheLabMachineVanishes`. Better than renaming
+  it to `net11.0`: have them find the folder, so the next target framework breaks nothing.
+- **The lab machine has only the .NET 10 runtime,** so a lab program built for .NET 11 doesn't start in it.
+  `C-VM-CreateLabMachine` copies the host's runtime of `-DotNetChannel`, which defaults to `10.0`: make it `11.0`, then
+  remove the lab machine and create it again, which takes a few minutes.
+- **Versions.** If main's release takes a version this branch has taken, the branch moves to the next, as it did for
+  Compze.Tessaging (0.9.0-alpha here, after main released 0.8.0-alpha). Unreleased on this branch: Compze.Tessaging
+  0.9.0-alpha, Compze.Tessaging.Transport.AspNetCore 0.4.0-alpha, Compze.Hosting 0.4.0-alpha, Compze.Hosting.Testing
+  0.4.0-alpha and Compze.Tessaging.Hosting.Testing 0.5.2-alpha.
+- **Then:** build, read the warnings (.NET 11's analyzers), run the full suite, and one lab run through the registry.
+
+Merging once, after main's release of every package has landed, saves a second round of the versions.
+
 ## Not verified
 
 - The cost of small writes, and how TCP's timings compare with HTTP's across machines.
