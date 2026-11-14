@@ -6,6 +6,13 @@
 # the test jobs are skipped when it finds one. So a push that changes nothing CI tests costs one short job, and so does a
 # commit that several branches share, pushed under one after the other.
 #
+# Each test job tests one persistence layer and transport with every DI container: four combinations in its combinations
+# file, and every test that uses pluggable components runs once for each. Until 2026-11-14 there was a job for each
+# combination. Each of them built the solution and ran the whole suite for the few tests that depend on the combination,
+# about 40 seconds of a 5-minute job, and a push waited 20 to 40 minutes for its 84 jobs. The persistence layer and the
+# transport are what a job is named after because the failures of July to November 2026 followed them, and the operating
+# system, but not the DI container.
+#
 # There is deliberately no concurrency group: a push never supersedes an in-flight run of the same branch, so every pushed
 # commit is verified on its own rather than being cancelled by whatever was pushed next.
 #
@@ -73,15 +80,20 @@ jobs:
     # four to ten minutes, and a hang dump costs the ten-minute detection window plus writing the dump before the step fails.
     timeout-minutes: 30
 
+    # todo: Consider which combinations CI has to run for us to feel safe (Magnus, 2026-11-14). It runs every one: each
+    #   persistence layer with each DI container and each transport on Linux, and the Sqlite ones again on Windows. Four
+    #   to a job made the wait bearable, so this is no longer urgent, but each pluggable component added still
+    #   multiplies the work.
+    #   A place to start (Claude's suggestion, not decided): every pair of components together at least once, and the
+    #   full matrix only before a release. That is 26 combinations where three transports make 84.
     strategy:
       fail-fast: false
       matrix:
         persistence: [SqliteMemory, Sqlite, PgSql, MySql, MsSql]
-        di: [Microsoft, Autofac, DryIoc, LightInject]
         serializer: [Newtonsoft]
         transport: [AspNetCore, NamedPipes]
 
-    name: "Test (${{ matrix.persistence }}:${{ matrix.di }}:${{ matrix.serializer }}:${{ matrix.transport }})"
+    name: "Test (${{ matrix.persistence }}:every DI container:${{ matrix.serializer }}:${{ matrix.transport }})"
 
     services:
       postgres:
@@ -138,7 +150,12 @@ jobs:
         uses: ./.github/actions/build-and-test
         with:
           configuration: Debug
-          pluggable-components: "${{ matrix.persistence }}:${{ matrix.di }}:${{ matrix.serializer }}:${{ matrix.transport }}"
+          dumps-artifact-label: ${{ matrix.persistence }}-${{ matrix.serializer }}-${{ matrix.transport }}
+          pluggable-components: |
+            ${{ matrix.persistence }}:Microsoft:${{ matrix.serializer }}:${{ matrix.transport }}
+            ${{ matrix.persistence }}:Autofac:${{ matrix.serializer }}:${{ matrix.transport }}
+            ${{ matrix.persistence }}:DryIoc:${{ matrix.serializer }}:${{ matrix.transport }}
+            ${{ matrix.persistence }}:LightInject:${{ matrix.serializer }}:${{ matrix.transport }}
 
   # Windows coverage for the container-free persistence layers. The DB engines run only on Linux because GitHub's service
   # containers (postgres/mysql/mssql images) cannot be hosted on a Windows runner, but SqliteMemory and Sqlite need no
@@ -158,11 +175,10 @@ jobs:
       fail-fast: false
       matrix:
         persistence: [SqliteMemory, Sqlite]
-        di: [Microsoft, Autofac, DryIoc, LightInject]
         serializer: [Newtonsoft]
         transport: [AspNetCore, NamedPipes]
 
-    name: "Windows Test (${{ matrix.persistence }}:${{ matrix.di }}:${{ matrix.serializer }}:${{ matrix.transport }})"
+    name: "Windows Test (${{ matrix.persistence }}:every DI container:${{ matrix.serializer }}:${{ matrix.transport }})"
 
     env:
       COMPOSABLE_MACHINE_SLOWNESS: "5.0"
@@ -177,4 +193,9 @@ jobs:
         uses: ./.github/actions/build-and-test
         with:
           configuration: Debug
-          pluggable-components: "${{ matrix.persistence }}:${{ matrix.di }}:${{ matrix.serializer }}:${{ matrix.transport }}"
+          dumps-artifact-label: ${{ matrix.persistence }}-${{ matrix.serializer }}-${{ matrix.transport }}
+          pluggable-components: |
+            ${{ matrix.persistence }}:Microsoft:${{ matrix.serializer }}:${{ matrix.transport }}
+            ${{ matrix.persistence }}:Autofac:${{ matrix.serializer }}:${{ matrix.transport }}
+            ${{ matrix.persistence }}:DryIoc:${{ matrix.serializer }}:${{ matrix.transport }}
+            ${{ matrix.persistence }}:LightInject:${{ matrix.serializer }}:${{ matrix.transport }}
