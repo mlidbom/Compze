@@ -20,3 +20,11 @@ sealed class WildcardDeduplicationTestAttribute(
       configurationFileName: "TestUsingWildcardDeduplication",
       sourceFilePath: sourceFilePath,
       sourceLineNumber: sourceLineNumber);
+
+sealed class WildcardsForTwoDimensionsOfTheSameEnumTestAttribute(
+   [CallerFilePath] string? sourceFilePath = null,
+   [CallerLineNumber] int sourceLineNumber = -1)
+   : MatrixTheoryAttribute<Serializer, Serializer>(
+      configurationFileName: "TestUsingWildcardsForTwoDimensionsOfTheSameEnum",
+      sourceFilePath: sourceFilePath,
+      sourceLineNumber: sourceLineNumber);

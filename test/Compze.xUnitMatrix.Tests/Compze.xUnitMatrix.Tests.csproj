@@ -12,32 +12,10 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
+  <!-- The matrix configuration files the specifications read: copied to the output directory, where a matrix attribute
+       looks its file up. -->
   <ItemGroup>
-    <None Update="TestUsingOneComponentMatrix">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <TargetPath>%(Filename)</TargetPath>
-    </None>
-    <None Update="TestUsingTwoComponentMatrix">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <TargetPath>%(Filename)</TargetPath>
-    </None>
-    <None Update="TestUsingWildcards">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <TargetPath>%(Filename)</TargetPath>
-    </None>
-    <None Update="TestUsingMultipleWildcards">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <TargetPath>%(Filename)</TargetPath>
-    </None>
-    <None Update="TestUsingWildcardDeduplication">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <TargetPath>%(Filename)</TargetPath>
-    </None>
-    <None Update="TestUsingAnInvalidDimensionValue">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <TargetPath>%(Filename)</TargetPath>
-    </None>
-    <None Update="TestUsingNoCombinations">
+    <None Update="TestUsing*">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <TargetPath>%(Filename)</TargetPath>
     </None>

@@ -107,6 +107,8 @@ SqliteMemory:SimpleInjector
 
 The `*` on the third line expands to every `PersistenceLayer` value paired with `Microsoft` — `Sqlite:Microsoft`, `SqliteMemory:Microsoft`, `MicrosoftSql:Microsoft`, `PostgreSql:Microsoft`, `MySql:Microsoft` — for seven combinations total from three lines. Lines starting with `#` are comments.
 
+Each line gives exactly one value, or `*`, for each dimension, in the order the attribute declares the dimensions, and each value is the exact name of one of its dimension's values. A file the matrix cannot use fails the test, with a message naming the problem: a file that doesn't exist or lists no combinations, or a line with a value too many or too few, or with a name that isn't a value of its dimension. So when you add a dimension, every configuration file that lists combinations for that matrix needs a value for it on each line.
+
 Pass the file name as `configurationFileName` in your attribute constructor instead of `null`. The file is located relative to the test assembly's output directory, so configure your test project to copy it there:
 
 ```xml

@@ -1,0 +1,2 @@
+# SqlLayer defines no value 7, but Enum.Parse would accept it.
+Microsoft:7

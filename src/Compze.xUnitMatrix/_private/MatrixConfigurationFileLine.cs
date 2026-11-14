@@ -1,62 +1,57 @@
-using Compze.Underscore;
 using Compze.Internals.SystemCE.LinqCE;
 
 namespace Compze.xUnitMatrix._private;
 
+///<summary>
+/// A line of a <see cref="MatrixConfigurationFile"/> that lists combinations: a value of each of the matrix's dimensions, in
+/// dimension order and separated by <c>:</c>, such as <c>SqliteMemory:Autofac</c>.<br/>
+/// A <c>*</c> in place of a value stands for every value of its dimension, so the line lists every combination of the values
+/// it gives: <c>*:Autofac</c> pairs each persistence layer with Autofac.
+///</summary>
 class MatrixConfigurationFileLine
 {
    const string Wildcard = "*";
-   readonly IReadOnlyList<Type> _dimensionEnumTypes;
-   readonly IReadOnlyList<string> _dimensionValueNamesOrWildCards;
-   readonly IReadOnlyList<WildcardDimension> _wildCardDimensionValues;
+   readonly MatrixConfigurationFile _file;
+   readonly int _lineNumber;
+   readonly string _text;
 
-   public MatrixConfigurationFileLine(IReadOnlyList<Type> dimensionEnumTypes, string line)
+   /// <summary>
+   /// The line numbered <paramref name="lineNumber"/> in <paramref name="file"/>, whose <paramref name="text"/> lists combinations.<br/>
+   /// Throws <see cref="InvalidMatrixConfigurationException"/> when the text does not give exactly one value or <c>*</c> for
+   /// each dimension, or gives a name that is not a value of its dimension.
+   /// </summary>
+   public MatrixConfigurationFileLine(MatrixConfigurationFile file, int lineNumber, string text)
    {
-      _dimensionEnumTypes = dimensionEnumTypes;
-      _dimensionValueNamesOrWildCards = line.Split(MatrixCombination.Separator);
-      _wildCardDimensionValues = _dimensionValueNamesOrWildCards
-                           .Zip(_dimensionEnumTypes, (dimensionValueName, dimensionEnumType) => new { dimensionValueName, dimensionEnumType })
-                           .Where(it => it.dimensionValueName == Wildcard)
-                           .Select(it => new WildcardDimension(it.dimensionEnumType))
-                           .ToList();
+      _file = file;
+      _lineNumber = lineNumber;
+      _text = text;
+      Combinations = ValuesGivenForEachDimension()
+                    .CartesianProduct()
+                    .Select(MatrixCombination.FromDimensionValues)
+                    .ToList();
    }
 
-   public IReadOnlyList<MatrixCombination> ExpandWildcardsIntoConcreteCombinations()
-   {
-      if(!_wildCardDimensionValues.Any())
-         return
-         [
-            MatrixCombination.FromDimensionValues(_dimensionValueNamesOrWildCards
-                                                         .Zip(_dimensionEnumTypes, (name, type) => (Enum)Enum.Parse(type, name))
-                                                         .ToList())
-         ];
+   /// <summary>The combinations the line lists: one, or with wildcards, every combination of the values it gives.</summary>
+   public IReadOnlyList<MatrixCombination> Combinations { get; }
 
-      return _wildCardDimensionValues
-            .Select(it => it.AllDimensionValues)
-            .CartesianProduct()
-            .Select(it => new ResolvedWildcardDimensionValues(it))
-            .Select(CreateConcreteCombination)
-            .ToList();
+   IReadOnlyList<IReadOnlyList<Enum>> ValuesGivenForEachDimension()
+   {
+      var dimensions = _file.Dimensions;
+      var valueNamesOrWildcards = _text.Split(MatrixCombination.Separator).Select(it => it.Trim()).ToList();
+      if(valueNamesOrWildcards.Count != dimensions.Count)
+         throw Invalid($"has {Quantity(valueNamesOrWildcards.Count, "value")}, but the matrix has {Quantity(dimensions.Count, "dimension")}: {dimensions}.");
+
+      return valueNamesOrWildcards.Select((valueNameOrWildcard, dimensionIndex) => ValuesGivenFor(dimensions[dimensionIndex], valueNameOrWildcard))
+                                  .ToList();
    }
 
-   MatrixCombination CreateConcreteCombination(ResolvedWildcardDimensionValues wildCardReplacementValues) =>
-      _dimensionValueNamesOrWildCards
-        .Select((dimensionValueName, dimensionIndex) =>
-                   dimensionValueName == Wildcard
-                      ? wildCardReplacementValues.DimensionValueFor(_dimensionEnumTypes[dimensionIndex])
-                      : ParseDimensionValue(dimensionIndex, dimensionValueName))
-        ._(MatrixCombination.FromDimensionValues);
+   IReadOnlyList<Enum> ValuesGivenFor(MatrixDimension dimension, string valueNameOrWildcard) =>
+      valueNameOrWildcard == Wildcard
+         ? dimension.AllValues
+         : [dimension.ValueNamed(valueNameOrWildcard) ?? throw Invalid($"gives \"{valueNameOrWildcard}\" for the dimension {dimension}, which has no value of that name. Its values are {dimension.ValueNames}.")];
 
-   Enum ParseDimensionValue(int dimensionIndex, string dimensionValueName) => (Enum)Enum.Parse(_dimensionEnumTypes[dimensionIndex], dimensionValueName);
+   InvalidMatrixConfigurationException Invalid(string whatIsWrong) =>
+      new($"Line {_lineNumber} of the matrix configuration file {_file.FileName}, \"{_text}\", {whatIsWrong}");
 
-   readonly record struct WildcardDimension(Type DimensionEnumType)
-   {
-      public IReadOnlyList<Enum> AllDimensionValues => Enum.GetValues(DimensionEnumType).Cast<Enum>().ToReadOnlyList();
-   }
-
-   class ResolvedWildcardDimensionValues(IReadOnlyList<Enum> dimensionValues)
-   {
-      readonly IReadOnlyList<Enum> _dimensionValues = dimensionValues;
-      public Enum DimensionValueFor(Type dimensionEnumType) => _dimensionValues.Single(predicate: it => it.GetType() == dimensionEnumType);
-   }
+   static string Quantity(int count, string noun) => count == 1 ? $"1 {noun}" : $"{count} {noun}s";
 }

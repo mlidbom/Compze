@@ -27,6 +27,12 @@ public class WildcardExpansionTests
       "Newtonsoft:MsSql:Microsoft"
    ];
 
+   static readonly string[] TwoDimensionsOfTheSameEnum =                         // TestUsingWildcardsForTwoDimensionsOfTheSameEnum: *:*
+   [
+      "Microsoft:Microsoft", "Microsoft:Newtonsoft",
+      "Newtonsoft:Microsoft", "Newtonsoft:Newtonsoft"
+   ];
+
    [Fact] public async Task A_wildcard_expands_to_every_value_of_its_dimension() =>
       (await ExpandedCombinationsOf(new WildcardTestAttribute()))
          .Order().Must().SequenceEqual(SingleWildcardExpansion.Order());
@@ -38,6 +44,10 @@ public class WildcardExpansionTests
    [Fact] public async Task Combinations_produced_by_more_than_one_line_are_deduplicated() =>
       (await ExpandedCombinationsOf(new WildcardDeduplicationTestAttribute()))
          .Order().Must().SequenceEqual(DeduplicatedCombinations.Order());
+
+   [Fact] public async Task Wildcards_for_two_dimensions_of_the_same_enum_type_each_expand_to_every_value() =>
+      (await ExpandedCombinationsOf(new WildcardsForTwoDimensionsOfTheSameEnumTestAttribute()))
+         .Order().Must().SequenceEqual(TwoDimensionsOfTheSameEnum.Order());
 
    static async Task<IReadOnlyList<string>> ExpandedCombinationsOf(MatrixTheoryAttribute matrix) =>
       (await MatrixDiscovery.DiscoverRows(

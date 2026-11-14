@@ -6,13 +6,14 @@ class DimensionValueSkipSpecification
    readonly Enum _dimensionValue;
    readonly string _reason;
 
-   internal DimensionValueSkipSpecification(Enum dimensionValue, string reason)
+   /// <summary>Throws <see cref="InvalidMatrixConfigurationException"/> when <paramref name="reason"/> is missing or blank.</summary>
+   internal DimensionValueSkipSpecification(Enum dimensionValue, string? reason)
    {
-      _dimensionValue = dimensionValue ?? throw new ArgumentNullException(nameof(dimensionValue));
-      _reason = reason ?? throw new ArgumentNullException(nameof(reason));
-
       if(string.IsNullOrWhiteSpace(reason))
-         throw new ArgumentException("Reason cannot be empty", nameof(reason));
+         throw new InvalidMatrixConfigurationException($"Skipping {dimensionValue} takes a reason, shown in the test runner, but its {nameof(SkipAttribute<>)} gives none.");
+
+      _dimensionValue = dimensionValue;
+      _reason = reason;
    }
 
    internal Type DimensionEnumType => _dimensionValue.GetType();
