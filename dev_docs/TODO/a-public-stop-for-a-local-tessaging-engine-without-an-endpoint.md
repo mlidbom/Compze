@@ -1,6 +1,7 @@
 # A public stop for a LocalTessagingEngine without an endpoint
 
-Agreed with Magnus 2026-11-14 as a task to do later; not started.
+Agreed with Magnus 2026-11-14. Mostly done the same day, for Deskmancer, in Compze.Tessaging 0.8.0-alpha: what remains
+is the last item of the task.
 
 ## The problem
 
@@ -25,10 +26,13 @@ Agreed with Magnus 2026-11-14 as a task to do later; not started.
 
 ## The task
 
-- **Propose a public stop for a LocalTessagingEngine in a plain container,** such as a `StopAsync` on an object the
-  container resolves. It drains the observation dispatch, holding no thread, and disposes nothing.
-- **Decide what the engine does with work that arrives after the stop,** such as a publish: fail loud, most likely.
-- **Have `Endpoint` stop its engine through the same stop,** so there is one way to do it.
-- **Specifications through the public API only:**
+- **Done: a public stop for a LocalTessagingEngine in a plain container.** `ILocalTessagingEngine.StopAsync()`, resolved
+  from the container, drains the observation dispatch, holding no thread, and disposes nothing.
+- **Done: a publish after the stop fails loud.**
+- **Done: specifications through the public API,** in `Given_a_container_composing_a_LocalTessagingEngine`:
   - observations queued before the stop have all been observed when it completes;
-  - disposing a stopped engine's container doesn't wait for anything.
+  - a publish afterwards throws;
+  - a container disposed synchronously after the stop disposes its components on the calling thread. Without the stop,
+    it fails with the Microsoft adapter, as Deskmancer's test host did.
+- **Remaining: have `Endpoint` stop its engine through the same stop,** so there is one way to do it. Today
+  `IEndpoint.StopAsync` calls the dispatcher's drain itself, and a publish after an endpoint's stop isn't refused.
