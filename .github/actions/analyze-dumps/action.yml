@@ -5,7 +5,9 @@ description: Prints what every process dump under a folder shows - thread pool, 
 # failures never get. This reads each dump on the runner that wrote it and prints the result into the job log:
 # - threadpool and clrthreads: whether the process was starved of threads, and what each managed thread is.
 # - dumpasync: every async operation still pending, as chains of awaits - for an awaited operation that never completed, the
-#   await it is suspended at, which no thread's stack shows.
+#   await it is suspended at, which no thread's stack shows. Only for code compiled with the compiler's state machines: as of
+#   dotnet-dump 10.0.750501 it sees nothing compiled with runtime async, which Compze is compiled with since .NET 11. A flake
+#   hunt can compile without it: RUNTIME_ASYNC in .github/workflows/flake-hunt.yml.
 # - clrstack -all: every managed thread's stack - for a thread blocked synchronously, where it blocks.
 # It covers both kinds of dumps tests leave in the results folder: the hang dumps vstest's --blame-hang writes, and the dumps a
 # test writes when one of its own timeouts runs out (Compze.Tests.Infrastructure's TestProcessDump).

@@ -35,6 +35,8 @@ rather than theorise further:
 - **Read the dumps in the job log,** not the artifact: on failure CI prints each dump's thread pool, threads,
   pending awaits (`dumpasync` — where a stuck async operation is suspended) and stacks. Pool workers all parked
   in blocking waits, work items queued and the CPU idle is starvation; the parked frames name the culprits.
+  `dumpasync` sees only code compiled with the compiler's state machines, and Compze is compiled with runtime async
+  since .NET 11 (dotnet-dump 10.0.750501, 2026-11-14): a flake hunt that needs it sets `RUNTIME_ASYNC` to `false`.
 - **PostgreSQL logs lock waits and statements over a second** in CI; its container log is printed when the job
   ends. A timeout with nothing logged there was not waiting in the database.
 
