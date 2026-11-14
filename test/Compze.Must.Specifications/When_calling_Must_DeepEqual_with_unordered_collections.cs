@@ -26,9 +26,13 @@ public class When_calling_Must_DeepEqual_with_unordered_collections : UniversalT
 
          public class DeepEqual_throws_AssertionFailedException_ : with_on_item_different
          {
+            ///<summary>The full name of the assembly that holds <see cref="string"/> in the running .NET, version included, which the
+            /// message names in each <c>$type</c>: the message is the same on every .NET version but for this.</summary>
+            static readonly string CoreLibraryFullName = typeof(string).Assembly.FullName!;
+
             string ExceptionMessage() => Invoking(() => _expected.Must().DeepEqual(_one_differing_item)).Must().Throw<AssertionFailedException>().Which.Message;
             [XF] public void with_the_message_()
-               => ExceptionMessage().Must().Be("""
+               => ExceptionMessage().Must().Be($$"""
                                                
                                                --------------------------------------------------
                                                Failing assertion:
@@ -41,7 +45,7 @@ public class When_calling_Must_DeepEqual_with_unordered_collections : UniversalT
                                                +++ actual
                                                @@ -1,6 +1,6 @@
                                                 {
-                                                  "$type": "System.Collections.Generic.Dictionary`2[[System.String, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Int32, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]], System.Private.CoreLib",
+                                                  "$type": "System.Collections.Generic.Dictionary`2[[System.String, {{CoreLibraryFullName}}],[System.Int32, {{CoreLibraryFullName}}]], System.Private.CoreLib",
                                                -  "a": 2,
                                                +  "a": 1,
                                                   "b": 2,
@@ -54,7 +58,7 @@ public class When_calling_Must_DeepEqual_with_unordered_collections : UniversalT
                                                JSON:
                                                --------------------------------------------------
                                                {
-                                                 "$type": "System.Collections.Generic.Dictionary`2[[System.String, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Int32, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]], System.Private.CoreLib",
+                                                 "$type": "System.Collections.Generic.Dictionary`2[[System.String, {{CoreLibraryFullName}}],[System.Int32, {{CoreLibraryFullName}}]], System.Private.CoreLib",
                                                  "a": 1,
                                                  "b": 2,
                                                  "c": 3
@@ -65,7 +69,7 @@ public class When_calling_Must_DeepEqual_with_unordered_collections : UniversalT
                                                JSON:
                                                --------------------------------------------------
                                                {
-                                                 "$type": "System.Collections.Generic.Dictionary`2[[System.String, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Int32, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]], System.Private.CoreLib",
+                                                 "$type": "System.Collections.Generic.Dictionary`2[[System.String, {{CoreLibraryFullName}}],[System.Int32, {{CoreLibraryFullName}}]], System.Private.CoreLib",
                                                  "a": 2,
                                                  "b": 2,
                                                  "c": 3
