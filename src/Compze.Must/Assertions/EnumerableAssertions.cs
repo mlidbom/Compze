@@ -22,6 +22,12 @@ public static class EnumerableAssertions
 
    /// <summary>Asserts that the sequence is empty. A <see langword="null"/> sequence is not empty: it fails, so the returned context is non-nullable.</summary>
    public static IAssertionContext<IEnumerable<TElement>> BeEmpty<TElement>(this IAssertionContext<IEnumerable<TElement>?> context)
+      //bug: A subject that is a struct enumerable, such as JsonElement.ArrayEnumerator or ImmutableArray<T>, doesn't compile with
+      //   BeEmpty, NotBeEmpty, HaveCount, SequenceEqual or ContainmentAssertions.Contain (CS0411): covariance doesn't apply to a
+      //   value type, so an IAssertionContext<JsonElement.ArrayEnumerator> is no IAssertionContext<IEnumerable<JsonElement>?>.
+      //   Broken since 0.8.0-alpha took the element type from the subject; 0.7.0-alpha accepted it. Found by JAStudio
+      //   (2026-11-14), which calls ToList() meanwhile. Type inference doesn't use constraints, so an overload constrained to
+      //   IEnumerable<TElement> wouldn't infer TElement either.
       => context.RunAssertionThatANullValueFails(it => !it.Any());
 
    /// <summary>Asserts that the sequence contains at least one element. A <see langword="null"/> sequence fails, so the returned context is non-nullable.</summary>
