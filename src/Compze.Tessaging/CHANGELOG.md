@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## 0.8.0-alpha
 
+- **Targets .NET 11 (`net11.0`) instead of .NET 10, and is compiled with runtime async:** the runtime, instead of state machines the compiler generates, suspends and resumes its async methods, so live stack traces show the real call chain. An application that uses this version must target .NET 11.
 - **A plain container's LocalTessagingEngine can be stopped before the container is disposed.** `ILocalTessagingEngine`, resolved from the container, has `StopAsync()`. It waits, holding no thread, until every tevent committed so far has been observed, including what the observers publish meanwhile. It disposes nothing, and from then on the engine refuses to publish tevents, since no observer would observe them.
   - Until now the container's disposal was what finished the observers' work: disposal waited for the observers. A container that disposes through an asynchronous disposal, as the Microsoft adapter's does, could then go on disposing its other components on a thread-pool thread, instead of the thread that disposed the container.
   - Stop the engine first, and disposing the container waits for nothing.
@@ -13,7 +14,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## 0.7.0-alpha
 
-- **Targets .NET 11 (`net11.0`) instead of .NET 10, and is compiled with runtime async:** the runtime, instead of state machines the compiler generates, suspends and resumes its async methods, so live stack traces show the real call chain. An application that uses this version must target .NET 11.
 - **An endpoint's stop drains its inbox without holding a thread.** The drain waited, for up to 30 seconds, for every received tessage to be handled, blocking a thread-pool thread at every endpoint stop. It now awaits the inbox's async condition wait.
 - **Disposing an endpoint's inbox awaits its dispatch thread's end** instead of joining it for up to 5 seconds on the thread that disposes the container.
 - **Tevent observers can be async.** `ITeventObservationRegistrar` gains `ForTevent<TTevent>(Func<TTevent, IScopeResolver, Task>)` beside the synchronous form, and async versions of the convenience overloads: `Func<TTevent, Task>` and `Func<TTevent, TDependency1, Task>`, plus the two-dependency form on `TeventObservationRegistrar`, as the handler registrars have. While an async observer awaits, its queue holds no thread, and takes its next tevent only once the observer's task completes, so each observer still sees its tevents one at a time, in order. Until now an observer could only be synchronous, so one that waited, on I/O for instance, held the thread its queue ran on for as long as it waited. Breaking only for code that implements `ITeventObservationRegistrar` itself.
