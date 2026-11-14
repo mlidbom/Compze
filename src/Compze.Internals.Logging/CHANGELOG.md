@@ -4,9 +4,12 @@ All notable changes to Compze.Internals.Logging will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
-## 0.6.0-alpha
+## 0.7.0-alpha
 
 - **Targets .NET 11 (`net11.0`) instead of .NET 10, and is compiled with runtime async:** the runtime, instead of state machines the compiler generates, suspends and resumes its async methods, so live stack traces show the real call chain. An application that uses this version must target .NET 11.
+- **Requires newer minor versions of other Compze packages:** Compze.Internals.SystemCE 0.8.0-internal (was 0.6.1-internal). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
+
+## 0.6.0-alpha
 
 ### Added
 - An error can be logged without an exception: `ILogger.Error(string message)`, `Error(string template, object?[] values)` and `Error($"…")`, the same overloads `Warning` and `Critical` have. Until now every `Error` overload took an exception, so code logging an error with no exception behind it had to make one up.

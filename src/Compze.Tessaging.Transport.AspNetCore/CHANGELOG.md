@@ -4,9 +4,13 @@ All notable changes to Compze.Tessaging.Transport.AspNetCore will be documented 
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
-## 0.3.0-alpha
+## 0.4.0-alpha
 
 - **Targets .NET 11 (`net11.0`) instead of .NET 10, and is compiled with runtime async:** the runtime, instead of state machines the compiler generates, suspends and resumes its async methods, so live stack traces show the real call chain. An application that uses this version must target .NET 11.
+- **Requires newer minor versions of other Compze packages:** Compze.Abstractions 0.4.0-alpha (was 0.3.0-alpha), Compze.DependencyInjection 0.9.0-alpha (was 0.8.0-alpha), Compze.DependencyInjection.Extensions.Hosting 0.5.0-alpha (was 0.4.0-alpha), Compze.Internals.Logging 0.7.0-alpha (was 0.4.1-alpha), Compze.Tessaging 0.9.0-alpha (was 0.5.0-alpha). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
+
+## 0.3.0-alpha
+
 - **The package is `Compze.Tessaging.Transport.AspNetCore`**: the ASP.NET Core transport for Tessaging, kept as its own package so the web stack never rides into consumers that do not want it. Previously published as [Compze.Internals.Transport.AspNet](https://www.nuget.org/packages/Compze.Internals.Transport.AspNet/) 0.2.0-alpha.
 - `TransportRequestController` serves the best-effort-tevent route (`internal/tessaging/best-effort-tevent`, `TransportRequestKind.BestEffortTevent`) alongside the existing kinds.
 - The protocol declaration composes: `AspNetCoreEndpointTransport()` on an endpoint's `EndpointBuilder` fills the endpoint's transport-protocol parameter.

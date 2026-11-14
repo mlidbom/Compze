@@ -4,9 +4,12 @@ All notable changes to Compze.Internals.Logging.Serilog will be documented in th
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
-## 0.5.0-alpha
+## 0.6.0-alpha
 
 - **Targets .NET 11 (`net11.0`) instead of .NET 10, and is compiled with runtime async:** the runtime, instead of state machines the compiler generates, suspends and resumes its async methods, so live stack traces show the real call chain. An application that uses this version must target .NET 11.
+- **Requires newer minor versions of other Compze packages:** Compze.DependencyInjection 0.9.0-alpha (was 0.8.0-alpha), Compze.Internals.Logging 0.7.0-alpha (was 0.5.0-alpha), Compze.Internals.SystemCE 0.8.0-internal (was 0.4.1-internal), Compze.Threading 0.12.0-alpha (was 0.9.0-alpha). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
+
+## 0.5.0-alpha
 
 ### Changed
 - `SerilogLogger` is replaced by `SerilogLogBackend`, which implements the `ILogBackend` of [Compze.Internals.Logging](https://www.nuget.org/packages/Compze.Internals.Logging/) 0.5.0-alpha. Choose it with `CompzeLogger.Backend = SerilogLogBackend.Global;`, which writes to Serilog's static `Log.Logger`, or with `SerilogLogBackend.WritingTo(serilogLogger)`, which replaces `SerilogLogger.Create(Type, Serilog.ILogger)`. Released in lockstep with Compze.Internals.Logging 0.5.0-alpha: upgrade the two together.

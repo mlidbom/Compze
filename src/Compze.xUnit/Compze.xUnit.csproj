@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Nullable>enable</Nullable>
     <IsTestProject>false</IsTestProject>
-    <Version>0.2.0-alpha</Version>
+    <Version>0.3.0-alpha</Version>
     <Description>Internal shared xUnit extensibility foundation for the Compze framework. Not intended for direct consumption — depend on Compze.xUnitBDD or Compze.xUnit.ComponentCombinations instead.</Description>
   </PropertyGroup>
   <ItemGroup>

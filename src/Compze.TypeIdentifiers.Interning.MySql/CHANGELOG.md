@@ -4,9 +4,13 @@ All notable changes to Compze.TypeIdentifiers.Interning.MySql will be documented
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
-## 0.2.1-alpha
+## 0.3.0-alpha
 
 - **Targets .NET 11 (`net11.0`) instead of .NET 10, and is compiled with runtime async:** the runtime, instead of state machines the compiler generates, suspends and resumes its async methods, so live stack traces show the real call chain. An application that uses this version must target .NET 11.
+- **Requires newer minor versions of other Compze packages:** Compze.Abstractions 0.4.0-alpha (was 0.3.0-alpha), Compze.Sql.MySql 0.5.0-alpha (was 0.4.0-alpha), Compze.TypeIdentifiers.Interning 0.2.0-alpha (was 0.1.1-alpha). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
+
+## 0.2.1-alpha
+
 - `MySqlEndpointPersistence` is gone. The domain-database declaration (`MySqlDomainDatabase`) lives in `Compze.Sql.MySql`, and this package is purely the interner again — the sql-layer features demand `MySqlTypeIdInterner()` themselves, so interner wiring vanishes from composing layers.
 - The package shows only its registrar: every plumbing type is internal, reachable by the Compze packages granted `InternalsVisibleTo` and by nothing else.
 - The visibility sweep reaches this package: non-public machinery moves below `_internal`/`_private` namespace sections — the markers that replaced the old `Internal`/`Private` spelling — and types and members are narrowed to the least visibility that compiles.

@@ -4,9 +4,13 @@ All notable changes to Compze.Hosting will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
-## 0.3.0-alpha
+## 0.4.0-alpha
 
 - **Targets .NET 11 (`net11.0`) instead of .NET 10, and is compiled with runtime async:** the runtime, instead of state machines the compiler generates, suspends and resumes its async methods, so live stack traces show the real call chain. An application that uses this version must target .NET 11.
+- **Requires newer minor versions of other Compze packages:** Compze.Abstractions 0.4.0-alpha (was 0.3.0-alpha), Compze.DependencyInjection 0.9.0-alpha (was 0.8.0-alpha), Compze.Internals.Logging 0.7.0-alpha (was 0.4.1-alpha), Compze.Internals.SystemCE 0.8.0-internal (was 0.4.0-internal), Compze.InterprocessObject 0.9.0-alpha (was 0.7.1-alpha), Compze.Tessaging 0.9.0-alpha (was 0.5.0-alpha), Compze.Threading 0.12.0-alpha (was 0.9.0-alpha). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
+
+## 0.3.0-alpha
+
 - **Hosts build endpoint-declarations in an environment.** `EndpointHost.Production.Create(containerFactory, environment)` takes the deployment's `IEndpointEnvironment`; `RegisterEndpoint(declaration)` builds each registered declaration in it, and `RegisterEndpoint(declaration, environment)` overrides it per registration — for an endpoint whose environment differs from its co-hosted neighbors', usually a decorating environment wrapping the host's (`Environment` is public for exactly that). The callback registration (`RegisterEndpoint(container => ...)`) leaves the public surface.
 - **The Host demotion: endpoints are first-class; `EndpointHost` is a convenience.** Starting the host starts every registered endpoint — each driving its own phase ordering (`IEndpoint.StartAsync`: listen → announce → send) — and disposing it disposes them, each endpoint's disposal driving its own mirror phases. The host-wide phase barrier (every endpoint's phase N before any endpoint's phase N+1) is gone: its headline guarantee — a router's first look at the registry sees every endpoint the host announced — held only inside one process's `StartAsync` and silently degraded to reconciliation-based convergence the moment a second host existed; per-endpoint ordering keeps what is honest in every process topology (an announced address is always one that is actually listening), and startup completeness is carried by the mechanisms that already carry it cross-process — readiness, waiting sends, queue-while-down, `RequirePeers`.
 - The host never looks inside an endpoint anymore: `EndpointHost` builds registered endpoint-declarations (the concrete endpoint types live in `Compze.Tessaging`), starts them, and disposes them. The generic `Endpoint` that drove `IEndpointComponent` lists and the `ServerEndpointBuilder` behind `IEndpointBuilder` are deleted with the endpoint feature machinery.
