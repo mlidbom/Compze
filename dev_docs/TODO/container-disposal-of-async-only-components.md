@@ -2,8 +2,7 @@
 
 Decided by Magnus 2026-11-14, to be done after the .NET 11 migration. Not started.
 
-Deskmancer's shutdown should change first: once this lands, its synchronous `container.Dispose()` throws, since its
-observation endpoint is only `IAsyncDisposable` (see "Not part of it" below).
+It also fixes the failure Deskmancer hit, described below.
 
 ## Why
 
@@ -15,6 +14,13 @@ observation endpoint is only `IAsyncDisposable` (see "Not part of it" below).
 - A caller blocked on a thread that the disposal needs deadlocks.
 - Deskmancer hit it. Its UI thread blocked in `MicrosoftContainer.Dispose()`. Meanwhile Microsoft's `DisposeAsync`,
   once one disposal didn't complete synchronously, disposed the rest of the graph on the thread pool.
+  - That disposal was most likely Compze.Tessaging's `TeventObservationDispatcher`. The Deskmancer session found it, by
+    reading the code; it hasn't been run.
+  - Since 2026-11-12 (2969672b9, released in Compze.Tessaging 0.6.4 and 0.7.0) the dispatcher is `IAsyncDisposable`
+    too, and drains its observer queues asynchronously. Before, it was only `IDisposable`, and the drain blocked on the
+    calling thread.
+  - Microsoft's `DisposeAsync` prefers a component's `DisposeAsync`. So a drain with work left let the rest of the graph
+    be disposed on the pool.
 - How it came about: two specifications in `When_resolving_a_tracked_transient`,
   `async_disposable_only_instances_are_disposed_when_container_is_disposed` and
   `async_disposable_only_instances_are_disposed_when_scope_is_disposed`, pin a synchronous `Dispose` that disposes
@@ -43,6 +49,13 @@ covers it.
 
 - **A synchronous `Dispose` throws** `InvalidOperationException`, saying to use `DisposeAsync`, when any component the
   container or `IScope` would dispose is only `IAsyncDisposable`. It checks before disposing anything.
+- **Otherwise a synchronous `Dispose` is truly synchronous,** and its documentation says so: it calls each component's
+  `Dispose()` on the calling thread, in reverse creation order. The Microsoft adapter calls `ServiceProvider.Dispose()`.
+  - Deskmancer relies on this for its graph bound to the UI thread. The container is what knows the order that graph's
+    dependencies need: a teardown written by hand would drift (the Deskmancer session, 2026-11-14).
+  - A component that is both `IDisposable` and `IAsyncDisposable` gets its `Dispose()`.
+    `TeventObservationDispatcher.Dispose()` blocks the calling thread until its observers have drained, so an observer
+    that needs the calling thread would deadlock.
 - **`IScope` gains `DisposeAsync`,** and Compze's async callers use `await using`.
 - **Compze tracks the components it creates.** That is what it takes for all four adapters to behave the same: Autofac
   blocks rather than throws, and DryIoc and LightInject can't dispose async-only components at all.
@@ -57,7 +70,10 @@ covers it.
 
 ## Not part of it
 
-No container will promise which thread its disposal runs on. Neither Microsoft's nor Autofac's asynchronous disposal
-does. A consumer whose teardown is bound to a thread shuts down explicitly, on that thread, before disposing the
-container. That is Deskmancer's case: Magnus, 2026-11-14, "Deskmancer should have call Stop or something similar on
-that type of component before disposing the composion root stuff". Its session has been asked whether it agrees.
+`DisposeAsync` promises no thread: Microsoft's and Autofac's asynchronous disposal continue wherever an await completes.
+
+What has to stop on a particular thread, a consumer stops explicitly, on that thread, before disposing the container.
+Magnus, 2026-11-14: "Deskmancer should have call Stop or something similar on that type of component before disposing
+the composion root stuff". The Deskmancer session agrees for what stops: draining and stopping Tessaging, and
+`AppShell`'s steps that quiesce reactors and remove hooks, become a named shutdown before the root is disposed. The
+graph bound to the UI thread is left to the synchronous `Dispose`.
