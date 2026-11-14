@@ -19,6 +19,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 - **A pure client can declare the TCP or the named-pipe transport:** `TcpEndpointTransportClient()` and `NamedPipeEndpointTransportClient()`, for `TypermediaClientBuilder.ConfigureTransport`. Until now only the HTTP transport offered a pure client its client side.
 - **A pure client composed as an application composes it can connect.** With only the typermedia serializer in its container, `TypermediaClient.ConnectAsync` threw an `InvalidOperationException` saying that `EndpointInformationQuery` is not mapped, whatever the transport: the type mappings of the query a client discovers an endpoint's typermedia with were declared only in passing, by the tessaging serializer, which a pure client does not register. The discovery query transport now declares them itself.
 - The named-pipe transport writes each frame to its pipe in one write, where it wrote every field with a write of its own. What crosses the pipe is unchanged.
+- An endpoint that declares no transport protocol is told the three declarations there are. The message recommended `endpointBuilder.AspNetCoreEndpointTransport()` alone, which did not exist until Compze.Tessaging.Transport.AspNetCore 0.4.0-alpha.
 
 ## 0.7.0-alpha
 

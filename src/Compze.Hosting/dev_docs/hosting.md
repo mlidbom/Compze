@@ -100,7 +100,7 @@ class AccountManagementEndpointDeclaration : ExactlyOnceEndpointDeclaration<Acco
 class ProductionEnvironment : IEndpointEnvironment
 {
    public void Configure(EndpointBuilder endpointBuilder) => endpointBuilder
-      .TransportProtocol(registrar => registrar.AspNetCoreEndpointTransport())
+      .AspNetCoreEndpointTransport()
       .NewtonsoftSerializer()
       .ParticipateIn(registry);
 

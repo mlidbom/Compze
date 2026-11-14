@@ -70,7 +70,7 @@ public class Startup
 
       public void Configure(EndpointBuilder endpointBuilder) =>
          endpointBuilder
-            .TransportProtocol(registrar => registrar.AspNetCoreEndpointTransport())
+            .AspNetCoreEndpointTransport()
             .NewtonsoftSerializer()
             .ParticipateIn(_endpointRegistry)
             .RegisterComponents(registrar => registrar.NewtonsoftDocumentDbSerializer()

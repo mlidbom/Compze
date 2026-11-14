@@ -117,7 +117,8 @@ public abstract class EndpointBuilder
    //todo: This just taking an IComponentRegistrar feels iffy. Can we make setting up the protocol easier and safer to do?
    ///<summary>Declares the endpoint's transport protocol — the strategy behind the endpoint's one transport server and its<br/>
    /// transport client. Declared exactly once, through a protocol package's named extension<br/>
-   /// (e.g. <c>NamedPipeEndpointTransport()</c>, <c>TcpEndpointTransport(listenOn)</c>).</summary>
+   /// (<c>NamedPipeEndpointTransport()</c>, <c>TcpEndpointTransport(listenOn)</c>, or <c>AspNetCoreEndpointTransport()</c><br/>
+   /// from the package Compze.Tessaging.Transport.AspNetCore).</summary>
    public EndpointBuilder TransportProtocol(Action<IComponentRegistrar> registerProtocol)
    {
       AssertStillComposing();
@@ -235,7 +236,7 @@ public abstract class EndpointBuilder
    private protected virtual void AssertTheFoundationIsDeclared()
    {
       State.Assert(_registerTransportProtocol is not null,
-                   () => "The endpoint declares no transport protocol. Declare it in the environment — e.g. endpointBuilder.NamedPipeEndpointTransport() or endpointBuilder.TcpEndpointTransport(listenOn).");
+                   () => "The endpoint declares no transport protocol. Declare it in the environment: endpointBuilder.NamedPipeEndpointTransport(), endpointBuilder.TcpEndpointTransport(listenOn), or endpointBuilder.AspNetCoreEndpointTransport() from the package Compze.Tessaging.Transport.AspNetCore.");
       State.Assert(_registerSerializer is not null || (Registrar.IsRegistered<ITessagingSerializer>() && Registrar.IsRegistered<ITypermediaSerializer>()),
                    () => "The endpoint declares no serializer. Declare it in the environment — e.g. endpointBuilder.NewtonsoftSerializer() — the endpoint's one serializer parameter. (A testing container cloned from a suite root already carries the suite's serializers; only such an environment declares none.)");
    }

@@ -4,6 +4,11 @@ All notable changes to Compze.Tessaging.Transport.AspNetCore will be documented 
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## 0.4.0-alpha
+
+- **`AspNetCoreEndpointTransport()` on an endpoint's `EndpointBuilder`** declares the endpoint's transport protocol in one call, as `NamedPipeEndpointTransport()` and `TcpEndpointTransport(listenOn)` do for theirs.
+  - The notes for 0.3.0-alpha below say it exists. It did not: an endpoint had to declare `TransportProtocol(registrar => registrar.AspNetCoreEndpointTransport())`, which still works.
+
 ## 0.3.0-alpha
 
 - **The package is `Compze.Tessaging.Transport.AspNetCore`**: the ASP.NET Core transport for Tessaging, kept as its own package so the web stack never rides into consumers that do not want it. Previously published as [Compze.Internals.Transport.AspNet](https://www.nuget.org/packages/Compze.Internals.Transport.AspNet/) 0.2.0-alpha.

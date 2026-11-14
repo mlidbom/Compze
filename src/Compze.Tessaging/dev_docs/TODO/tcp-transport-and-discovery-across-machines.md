@@ -393,12 +393,8 @@ was not measured.
 - `FramedConnectionEndpointTransportClient` keeps one `FramedConnectionPool` per peer address until it is
   disposed. A restarted peer has a new address, so the pools of addresses that are gone accumulate, each with
   up to 8 dead connections. Tagged `bug:` at the code.
-- The AspNetCore transport offers no `AspNetCoreEndpointTransport()` on `EndpointBuilder`, as the other two
-  transports offer theirs: an endpoint declares it as
-  `TransportProtocol(registrar => registrar.AspNetCoreEndpointTransport())`. `EndpointBuilder`'s failure message
-  recommended the missing method; it now names two that exist.
-- `TcpEndpointTransportRegistrar` and `NamedPipeEndpointTransportRegistrar` each hold old-style extension
-  methods beside an extension block, which ReSharper hints at converting. Converted, a class with two extension
-  blocks trips the analyzer's CA1708, a false positive that the handler registrars suppress
-  (`TessageBusHandlerRegistrarCE`). Tried and put back: the choice between that suppression and a class for
-  each receiver is open.
+- `TcpEndpointTransportRegistrar`, `NamedPipeEndpointTransportRegistrar` and `AspNetCoreEndpointTransportRegistrar`
+  each hold old-style extension methods beside an extension block, which ReSharper hints at converting.
+  Converted, a class with two extension blocks trips the analyzer's CA1708, a false positive that the handler
+  registrars suppress (`TessageBusHandlerRegistrarCE`). Tried and put back: the choice between that suppression
+  and a class for each receiver is open.

@@ -24,4 +24,11 @@ public static class AspNetCoreEndpointTransportRegistrar
    /// composition declares (<see cref="TypermediaClientBuilder.ConfigureTransport"/>): a pure client speaks to endpoints, it never serves.</summary>
    public static IComponentRegistrar AspNetCoreEndpointTransportClient(this IComponentRegistrar registrar)
       => registrar.HttpEndpointTransportClientIfNotRegistered();
+
+   extension(Endpoints.EndpointBuilder @this)
+   {
+      ///<summary>Declares the endpoint's transport protocol: HTTP served by ASP.NET Core.<br/>
+      /// See <see cref="AspNetCoreEndpointTransport(IComponentRegistrar)"/>, to which this delegates.</summary>
+      public Endpoints.EndpointBuilder AspNetCoreEndpointTransport() => @this.TransportProtocol(registrar => registrar.AspNetCoreEndpointTransport());
+   }
 }
