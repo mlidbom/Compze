@@ -8,7 +8,7 @@ With the tools built into the BCL:
 
 - Nothing stops you from accessing shared state without locking. 
 - Forget once and you have an intermittent bug apt to be very hard to diagnose.
-- Deadlocks hang forever bringing production software to a permantent halt.
+- Deadlocks hang forever bringing production software to a permanent halt.
 
 Usage requires constant vigilance. Getting it disastrously wrong is all too easy.
 
@@ -19,6 +19,8 @@ Usage requires constant vigilance. Getting it disastrously wrong is all too easy
 Every lock acquisition in all the abstractions shown below use a LockTimeout internally when acquiring locks (default 2 minutes). When deadlocks occur the timeout elapses and we capture **both stack traces** in the exception thrown: the thread that was blocked and the thread that was blocking it. No more guessing which thread held the lock. 
 
 > 💡 If the "winning" thread does not promptly (within 10 seconds) release the lock after the deadlock is resolved its stacktrace will not occur in the exception.
+
+> 💡 The timeout covers taking a lock. A wait for a condition waits forever by default (`WaitTimeout.Default` is `WaitTimeout.Infinite`), since nothing says how long a wait may take in general: a worker waiting for work may rightly wait for hours. Pass a `WaitTimeout`, to the call or when creating the monitor, where a condition that never comes true should fail instead.
 
 ### `IThreadShared<T>` Make Forgetting to Lock Impossible.
 
@@ -56,7 +58,9 @@ class WorkTracker
 }
 ```
 
-> **💡 Note: Always use `Update` if you change state or are at all unsure. Waiting for conditions will never react to updates made inside `Read`**
+> **💡 `Read` declares that the code changes nothing, and `Update` that it changes the state.** That tells whoever reads the code which is which, and it lets a read skip waking the waiting conditions: only an update can make a condition true. So a change inside `Read` is forbidden: it wakes no waiting condition, which goes on waiting. Conditions must not change the state either.
+
+> **💡 All locks are exclusive, read locks included.** `Read` declares what the code does, not that it may run alongside other reads.
 
 
 ## API Overview
@@ -80,7 +84,7 @@ One operation: `Locked`. The shared state is the lambda parameter. No way to mis
 ```csharp
 class WorkTracker
 {
-    readonly IAwaitableThreadShared<MyState> _state = IAwaitableThreadShared.WithDefaultTimeouts(new MyState());
+    readonly IAwaitableThreadShared<MyState> _state = IAwaitableThreadShared.New(new MyState());
     // or: IAwaitableThreadShared.New(new MyState(), LockTimeout.Seconds(5), WaitTimeout.Seconds(30));
 
     // Read under lock. Does NOT wake waiting threads.
@@ -154,9 +158,9 @@ class MyThreadSafe
     
     public void DoStuff()
     {
-        using var lock = _monitor.TakeLock();
+        using var heldLock = _monitor.TakeLock();
         //implementation here
-    };
+    }
 }
 
 class MyAwaitableThreadSafe
@@ -165,18 +169,18 @@ class MyAwaitableThreadSafe
 
     public AType ReadAType()
     {
-        using var lock = _monitor.TakeReadLock();
+        using var readLock = _monitor.TakeReadLock();
         return _aField;
     }
 
     public void UpdateSomething(AType value)
     {
-        using var lock = _monitor.TakeUpdateLock();
+        using var updateLock = _monitor.TakeUpdateLock();
         _aField = value;
     }
     public AType AwaitValue()
     {
-        using var lock = _monitor.TakeReadLockWhen(() => _aField != null);
+        using var readLock = _monitor.TakeReadLockWhen(() => _aField != null);
         return _aField;
     }
 }

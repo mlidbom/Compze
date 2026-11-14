@@ -1,6 +1,7 @@
 namespace Compze.Threading;
 
-///<summary>An update lock for an <see cref="IAwaitableCriticalSection"/>. Calling dispose releases the lock and notifies all threads waiting on conditions to become true to reacquire the lock and reevaluate the conditions.</summary>
+///<summary>An update lock on an <see cref="IAwaitableCriticalSection"/>, held by code that changes the state the critical section protects.<br/>
+/// Disposing it releases the lock and wakes all waits for a condition, which take the lock again and evaluate their conditions.</summary>
 public interface IUpdateLock : IDisposable
 {
 }

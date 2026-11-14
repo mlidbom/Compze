@@ -1,5 +1,4 @@
 using System.Reflection;
-using Compze.Internals.SystemCE.LinqCE;
 using Xunit;
 using Xunit.Sdk;
 using Xunit.v3;
@@ -33,6 +32,11 @@ namespace Compze.xUnitMatrix;
 /// wildcards — see the package README). To keep an unsupported combination visible in the runner but un-run, mark the test
 /// with <see cref="SkipAttribute{TDimension}"/>.
 /// </para>
+/// <para>
+/// A configuration the matrix cannot use fails the test, with a message saying what is wrong: a configuration file that does
+/// not exist or lists no combination, a line in it that does not give one value or <c>*</c> for each dimension, a name that is
+/// not a value of its dimension, or a <see cref="SkipAttribute{TDimension}"/> for a type that is not one of the dimensions.
+/// </para>
 /// </remarks>
 /// <param name="configurationFileName">
 /// Name of the file listing which combinations to run, resolved relative to the test assembly's output directory; or
@@ -63,44 +67,6 @@ public abstract class MatrixTheoryAttribute(
 {
    readonly Type[] _dimensionEnumTypes = dimensionEnumTypes;
    readonly string? _configurationFileName = configurationFileName;
-   string? ValidateConfiguration()
-   {
-      if(_dimensionEnumTypes.Length == 0)
-         return "Dimension enum types may not be empty";
-
-      foreach(var type in _dimensionEnumTypes)
-      {
-         if(!type.IsEnum)
-            return $"Type {type.Name} must be an enum type";
-      }
-
-      return null;
-   }
-
-   string? ValidateSkipSpecifications(IReadOnlyList<DimensionValueSkipSpecification> skipSpecifications)
-   {
-      var invalidSkip = skipSpecifications.FirstOrDefault(it => !_dimensionEnumTypes.Contains(it.DimensionEnumType));
-      if(invalidSkip != null)
-         return $"Skipped dimension value {invalidSkip.DimensionValue} (type {invalidSkip.DimensionEnumType.Name}) is not one of the configured dimension enum types: {string.Join(", ", _dimensionEnumTypes.Select(t => t.Name))}";
-
-      return null;
-   }
-
-   static IReadOnlyList<DimensionValueSkipSpecification> CollectSkipAttributesFromMethod(MethodInfo testMethod)
-   {
-      var skipAttributeType = typeof(SkipAttribute<>);
-      return testMethod.GetCustomAttributes(inherit: true)
-                       .Where(attr => attr.GetType().IsGenericType && attr.GetType().GetGenericTypeDefinition() == skipAttributeType)
-                       .SelectMany(attr =>
-                        {
-                           var attrType = attr.GetType();
-                           const BindingFlags skipPropertyFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
-                           var values = (Array)attrType.GetProperty(nameof(SkipAttribute<>.SkippedDimensionValues), skipPropertyFlags)!.GetValue(attr)!;
-                           var reason = (string)attrType.GetProperty(nameof(SkipAttribute<>.Reason), skipPropertyFlags)!.GetValue(attr)!;
-                           return values.Cast<Enum>().Select(value => new DimensionValueSkipSpecification(value, reason));
-                        })
-                       .ToList();
-   }
 
 #pragma warning disable CA1033 // The explicit IDataAttribute implementation is deliberate: it keeps xUnit's discovery plumbing (GetData, SupportsDiscoveryEnumeration, Skip, ...) off the subclass-facing API surface, and members like Skip would otherwise collide with the inherited TheoryAttribute members.
    bool? IDataAttribute.Explicit => Explicit;
@@ -115,6 +81,8 @@ public abstract class MatrixTheoryAttribute(
 
    ValueTask<IReadOnlyCollection<ITheoryDataRow>> IDataAttribute.GetData(MethodInfo testMethod, DisposalTracker disposalTracker)
    {
+      //refactor: MatrixTheoryDiscoverer.Discover already returns no test cases for a test method a class inherits, before xUnit's
+      //   theory discovery calls GetData, so this branch looks unreachable. Delete it once that is confirmed.
       if(testMethod.DeclaringType != testMethod.ReflectedType) //Only run for the class that declares the test method.
       {
          return new ValueTask<IReadOnlyCollection<ITheoryDataRow>>(
@@ -123,65 +91,31 @@ public abstract class MatrixTheoryAttribute(
             ]);
       }
 
-      // Validate configuration first
-      var validationError = ValidateConfiguration();
-      if(validationError != null)
-      {
-         return new ValueTask<IReadOnlyCollection<ITheoryDataRow>>(
-            [
-               new TheoryDataRow() { Skip = $"Invalid attribute configuration: {validationError}" }
-            ]);
-      }
-
-      try
-      {
-         var skipSpecifications = CollectSkipAttributesFromMethod(testMethod);
-
-         var skipValidationError = ValidateSkipSpecifications(skipSpecifications);
-         if(skipValidationError != null)
-         {
-            return new ValueTask<IReadOnlyCollection<ITheoryDataRow>>(
-               [
-                  new TheoryDataRow() { Skip = $"Invalid skip configuration: {skipValidationError}" }
-               ]);
-         }
-
-         var matrixSkipSpecification = new MatrixSkipSpecification(skipSpecifications);
-         var combinations = GetCombinations()
-                           .Select(ITheoryDataRow (combination) => new TheoryDataRow(combination) // Pass combination object as argument
-                                                                   {
-                                                                      Skip = matrixSkipSpecification.SkippedDimensionValueFor(combination)?.ToString()
-                                                                   })
-                           .ToArray();
-         return new ValueTask<IReadOnlyCollection<ITheoryDataRow>>(combinations);
-      }
-#pragma warning disable CA1031 //This is the best way we've found for surfacing the failure in a way that is actually displayed in test runners
-      catch(Exception ex)
-      {
-#pragma warning restore CA1031
-         return new ValueTask<IReadOnlyCollection<ITheoryDataRow>>(
-            [
-               new TheoryDataRow() { Skip = $"Failed to read configuration: {ex.Message}" }
-            ]);
-      }
+      return new ValueTask<IReadOnlyCollection<ITheoryDataRow>>(CombinationRowsFor(testMethod));
    }
 
-   IReadOnlyList<MatrixCombination> GetCombinations() =>
-      _configurationFileName != null
-         ? MatrixConfigurationFileReader.GetCombinations(_configurationFileName, _dimensionEnumTypes)
-         : AllCombinationsFromEnumTypes(_dimensionEnumTypes);
-
-   static IReadOnlyList<MatrixCombination> AllCombinationsFromEnumTypes(Type[] dimensionEnumTypes)
+   /// <summary>
+   /// One theory data row for each combination this matrix runs <paramref name="testMethod"/> with, skipped where a
+   /// <see cref="SkipAttribute{TDimension}"/> on the method skips one of its values.<br/>
+   /// Throws <see cref="InvalidMatrixConfigurationException"/> when the matrix's configuration cannot be used.
+   /// <see cref="MatrixTheoryDiscoverer"/> asks for the rows before xUnit's theory discovery does, to turn that into a failing test.
+   /// </summary>
+   internal IReadOnlyCollection<ITheoryDataRow> CombinationRowsFor(MethodInfo testMethod)
    {
-      var allEnumValues = dimensionEnumTypes
-                         .Select(type => Enum.GetValues(type).Cast<Enum>().ToArray() as IReadOnlyList<Enum>)
-                         .ToList();
-
-      return allEnumValues
-            .CartesianProduct()
-            .Select(MatrixCombination.FromDimensionValues)
-            .ToList();
+      var dimensions = MatrixDimensions.OfEnumTypes(_dimensionEnumTypes);
+      var skipSpecification = MatrixSkipSpecification.DeclaredOn(testMethod, dimensions);
+      return CombinationsOf(dimensions)
+            .Select(ITheoryDataRow (combination) => new TheoryDataRow(combination) // Pass combination object as argument
+                                                    {
+                                                       Skip = skipSpecification.SkippedDimensionValueFor(combination)?.ToString()
+                                                    })
+            .ToArray();
    }
+
+   IReadOnlyList<MatrixCombination> CombinationsOf(MatrixDimensions dimensions) =>
+      _configurationFileName != null
+         ? MatrixConfigurationFile.CombinationsListedIn(_configurationFileName, dimensions)
+         : dimensions.AllCombinations;
 
    bool IDataAttribute.SupportsDiscoveryEnumeration() => true;
 #pragma warning restore CA1033 // explicit IDataAttribute implementation is deliberate (see disable above)

@@ -7,12 +7,13 @@ namespace Compze.Teventive._private.Infrastructure.EventDispatching;
 
 partial class CallMatchingHandlersInRegistrationOrderTeventDispatcher<TTevent> where TTevent : class, ITevent
 {
-   public sealed class TeventSubscriber(CallMatchingHandlersInRegistrationOrderTeventDispatcher<TTevent> owner) : ITeventSubscriber<TTevent>
+   ///<summary>The <see cref="ITeventSubscriber{TTevent}"/> <see cref="Register"/> returns. Its own state is used only while holding the lock of the dispatcher's<br/>
+   /// <see cref="Subscriptions"/>, so a subscription made, or the subscriber disposed, on one thread is atomic for every other.</summary>
+   sealed class TeventSubscriber(Subscriptions dispatcherSubscriptions) : ITeventSubscriber<TTevent>
    {
-      readonly CallMatchingHandlersInRegistrationOrderTeventDispatcher<TTevent> _owner = owner;
-      readonly List<RegisteredHandler> _handlerSubscriptions = [];
-      readonly List<RegisteredHandler> _beforeHandlersSubscriptions = [];
-      readonly List<RegisteredHandler> _afterHandlersSubscriptions = [];
+      readonly Subscriptions _dispatcherSubscriptions = dispatcherSubscriptions;
+      ///<summary>The subscriptions made through this subscriber: what <see cref="Dispose"/> removes from the dispatcher.</summary>
+      readonly List<RegisteredHandler> _subscriptions = [];
       bool _isDisposed;
 
       ///<summary>Registers a handler for any tevent that implements THandledTevent. All matching handlers will be called in the order they were registered.</summary>
@@ -24,58 +25,55 @@ partial class CallMatchingHandlersInRegistrationOrderTeventDispatcher<TTevent> w
       /// </summary>
       TeventSubscriber ForGenericTevent<THandledTevent>(Action<THandledTevent> handler) where THandledTevent : ITevent
       {
-         AssertNotDisposed();
          AssertValidInnerTeventSubscription<THandledTevent>();
-         AddSubscription(new RegisteredHandler<THandledTevent>(handler), _owner._handlers, _handlerSubscriptions);
-         return this;
+         return Subscribe(new RegisteredHandler<THandledTevent>(handler), static (subscriptions, subscription) => subscriptions.AddHandler(subscription));
       }
 
       TeventSubscriber ForWrapped<TWrapperTevent>(Action<TWrapperTevent> handler) where TWrapperTevent : IPublisherTevent<TTevent> => ForWrappedGeneric(handler);
 
       TeventSubscriber ForWrappedGeneric<TWrapperTevent>(Action<TWrapperTevent> handler) where TWrapperTevent : IPublisherTevent<ITevent>
       {
-         AssertNotDisposed();
          TessageTypeInspector.AssertValidForSubscription(typeof(TWrapperTevent));
-         AddSubscription(new RegisteredWrappedHandler<TWrapperTevent>(handler), _owner._handlers, _handlerSubscriptions);
-         return this;
+         return Subscribe(new RegisteredWrappedHandler<TWrapperTevent>(handler), static (subscriptions, subscription) => subscriptions.AddHandler(subscription));
       }
 
       TeventSubscriber BeforeHandlers<THandledTevent>(Action<THandledTevent> runBeforeHandlers) where THandledTevent : ITevent
       {
-         AssertNotDisposed();
          AssertValidInnerTeventSubscription<THandledTevent>();
-         AddSubscription(new RegisteredHandler<THandledTevent>(runBeforeHandlers), _owner._runBeforeHandlers, _beforeHandlersSubscriptions);
-         return this;
+         return Subscribe(new RegisteredHandler<THandledTevent>(runBeforeHandlers), static (subscriptions, subscription) => subscriptions.AddRunBeforeHandlers(subscription));
       }
 
       TeventSubscriber AfterHandlers<THandledTevent>(Action<THandledTevent> runAfterHandlers) where THandledTevent : ITevent
       {
-         AssertNotDisposed();
          AssertValidInnerTeventSubscription<THandledTevent>();
-         AddSubscription(new RegisteredHandler<THandledTevent>(runAfterHandlers), _owner._runAfterHandlers, _afterHandlersSubscriptions);
-         return this;
+         return Subscribe(new RegisteredHandler<THandledTevent>(runAfterHandlers), static (subscriptions, subscription) => subscriptions.AddRunAfterHandlers(subscription));
       }
 
       ///<summary>Removes every subscription made through this subscriber from the owning dispatcher. Disposing again does nothing.</summary>
       public void Dispose()
       {
-         if(_isDisposed) return;
-         _isDisposed = true;
+         using(_dispatcherSubscriptions.TakeLock())
+         {
+            if(_isDisposed) return;
+            _isDisposed = true;
 
-         _handlerSubscriptions.ForEach(subscription => _owner._handlers.Remove(subscription));
-         _beforeHandlersSubscriptions.ForEach(subscription => _owner._runBeforeHandlers.Remove(subscription));
-         _afterHandlersSubscriptions.ForEach(subscription => _owner._runAfterHandlers.Remove(subscription));
-         _handlerSubscriptions.Clear();
-         _beforeHandlersSubscriptions.Clear();
-         _afterHandlersSubscriptions.Clear();
-         _owner._registrationVersion++;
+            _dispatcherSubscriptions.Remove(_subscriptions);
+            _subscriptions.Clear();
+         }
       }
 
-      void AddSubscription(RegisteredHandler subscription, List<RegisteredHandler> dispatcherSubscriptions, List<RegisteredHandler> mySubscriptions)
+      ///<summary>Adds <paramref name="subscription"/> to the dispatcher's subscriptions, through <paramref name="addToTheDispatchersSubscriptions"/>, and to this subscriber's.<br/>
+      /// Pass a static lambda as <paramref name="addToTheDispatchersSubscriptions"/>, so that subscribing allocates no closure.</summary>
+      TeventSubscriber Subscribe(RegisteredHandler subscription, Action<Subscriptions, RegisteredHandler> addToTheDispatchersSubscriptions)
       {
-         dispatcherSubscriptions.Add(subscription);
-         mySubscriptions.Add(subscription);
-         _owner._registrationVersion++;
+         using(_dispatcherSubscriptions.TakeLock())
+         {
+            AssertNotDisposed();
+            addToTheDispatchersSubscriptions(_dispatcherSubscriptions, subscription);
+            _subscriptions.Add(subscription);
+         }
+
+         return this;
       }
 
       static void AssertValidInnerTeventSubscription<THandledTevent>() where THandledTevent : ITevent

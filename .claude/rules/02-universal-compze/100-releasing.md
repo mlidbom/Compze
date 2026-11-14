@@ -1,4 +1,4 @@
-# Releasing: run the Create Releases workflow only after CI has passed on the same commit
+# Releasing: run the Create Releases workflow only after a CI run that covers the commit has passed
 
 The Create Releases workflow (`.github/workflows/publish-nuget.yml`) publishes to nuget.org, but it tests only the
 combinations in `src/TestUsingPluggableComponentCombinations.github-ci`: three, all SqliteMemory, on Linux. The CI
@@ -8,9 +8,15 @@ before CI has passed, a release can ship packages that fail on every combination
 published version can never be replaced.
 
 The workflow enforces this itself: its first step, the release gate (`.github/scripts/Assert-CiPassedForCommit.ps1`),
-stops the release unless a CI run of the commit ran its test jobs and every one of its jobs succeeded. A run's
-conclusion alone proves nothing: a CI run for a commit CI already ran under another branch skips its test jobs and still
-concludes `success`.
+stops the release unless a CI run that covers the commit ran its test jobs and every one of its jobs succeeded.
+
+- **A CI run covers a commit** when it is a run of that commit, or of an earlier commit that differs from it only in
+  files CI doesn't test: documentation, the DevScripts commands, and the rules and settings of development tools.
+  `.github/scripts/lib/CiCoverage.ps1` lists them.
+- **CI skips its test jobs for a commit that an earlier run covers,** when that run has passed or is still running. So a
+  push that changes only such files starts no tests, and neither does a commit pushed under a second branch.
+- **A run's conclusion alone proves nothing:** a run that skipped its test jobs still concludes `success`. Its summary
+  names the run that covers the commit.
 
 A release goes in this order:
 
@@ -26,12 +32,13 @@ A release goes in this order:
    - It must run before Create Releases: it publishes only versions without a release tag, and Create Releases tags them.
    - It changes only this machine, so the go-ahead for the release covers it. A cloud session skips it: no other
      repository restores from its feed.
-4. **Wait for CI to pass on that commit:** `gh run watch <run id>`, the id from `gh run list --workflow ci.yml --commit <sha>`.
+4. **Wait for a CI run that covers that commit to pass:** `gh run watch <run id>`, the id from
+   `gh run list --workflow ci.yml --commit <sha>`. If that run skipped its test jobs, watch the run its summary names.
    Run the gate yourself to check, as the workflow will:
-   `& .github/scripts/Assert-CiPassedForCommit.ps1 -Repository mlidbom/Compze -CommitSha <full sha>`.
+   `& .github/scripts/Assert-CiPassedForCommit.ps1 -Repository mlidbom/Compze -CommitSha <sha>`.
 5. **Then run Create Releases,** by hand: `gh workflow run publish-nuget.yml --ref main`.
-   - It runs on the branch's head, not on a commit you pick. If anything was pushed since step 4, its CI must pass too,
-     or the gate stops the release.
+   - It runs on the branch's head, not on a commit you pick. If anything CI tests was pushed since step 4, CI must pass
+     on that too, or the gate stops the release.
    - It publishes to an external service, so it runs only on Magnus's explicit go-ahead: see below.
 
 ## Who carries it out: you, on one go-ahead per release

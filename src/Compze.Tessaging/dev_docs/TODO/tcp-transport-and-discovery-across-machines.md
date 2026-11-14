@@ -196,7 +196,7 @@ rows were run again. When the table was made the failures were a raw `IOExceptio
 
 - **A pure client composed as an application composes it could not connect,** over any transport: fixed, and
   the suite's pure test client is now composed that way, so it would catch it. See the changelog of
-  Compze.Tessaging 0.8.0-alpha.
+  Compze.Tessaging 0.9.0-alpha.
 - **Connections that died idle each failed one exchange:** fixed, above.
 - **A failure to reach the endpoint was thrown as unrelated exceptions:** fixed, with `EndpointUnreachableException`.
 

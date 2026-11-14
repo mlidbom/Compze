@@ -4,7 +4,7 @@ All notable changes to Compze.Tessaging will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
-## 0.8.0-alpha
+## 0.9.0-alpha
 
 - **A TCP transport: `TcpEndpointTransport(listenOn)`** (`Compze.Tessaging.Transport.Tcp`), declared where an endpoint would declare `NamedPipeEndpointTransport()`. It reaches endpoints on other machines and needs no web stack, only the base runtime.
   - The endpoint listens on the one IP address the declaration names, at a port the operating system picks each time it starts, and that address and port are the address it has and announces. An address that stands for every network interface, such as `IPAddress.Any`, is refused when the endpoint is built: nothing could connect to the address the endpoint would announce.
@@ -23,6 +23,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 - **A pure client composed as an application composes it can connect.** With only the typermedia serializer in its container, `TypermediaClient.ConnectAsync` threw an `InvalidOperationException` saying that `EndpointInformationQuery` is not mapped, whatever the transport: the type mappings of the query a client discovers an endpoint's typermedia with were declared only in passing, by the tessaging serializer, which a pure client does not register. The discovery query transport now declares them itself.
 - The named-pipe transport writes each frame to its pipe in one write, where it wrote every field with a write of its own. What crosses the pipe is unchanged.
 - An endpoint that declares no transport protocol is told the three declarations there are. The message recommended `endpointBuilder.AspNetCoreEndpointTransport()` alone, which did not exist until Compze.Tessaging.Transport.AspNetCore 0.4.0-alpha.
+
+## 0.8.0-alpha
+
+- **A plain container's LocalTessagingEngine can be stopped before the container is disposed.** `ILocalTessagingEngine`, resolved from the container, has `StopAsync()`. It waits, holding no thread, until every tevent committed so far has been observed, including what the observers publish meanwhile. It disposes nothing, and from then on the engine refuses to publish tevents, since no observer would observe them.
+  - Until now the container's disposal was what finished the observers' work: disposal waited for the observers. A container that disposes through an asynchronous disposal, as the Microsoft adapter's does, could then go on disposing its other components on a thread-pool thread, instead of the thread that disposed the container.
+  - Stop the engine first, and disposing the container waits for nothing.
+  - An endpoint composition has no `ILocalTessagingEngine`: the endpoint's own `StopAsync` stops its engine.
 
 ## 0.7.0-alpha
 

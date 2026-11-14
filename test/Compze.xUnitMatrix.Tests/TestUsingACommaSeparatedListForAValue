@@ -1,0 +1,2 @@
+# Enum.Parse would combine MsSql (0) and Postgre (1) bit by bit into Postgre.
+Microsoft:MsSql,Postgre

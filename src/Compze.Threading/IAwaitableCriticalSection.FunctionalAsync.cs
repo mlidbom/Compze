@@ -7,7 +7,8 @@ public partial interface IAwaitableCriticalSection
 #pragma warning disable CA1068 // Passing cancellation token around is standard practice in modern .NET while the timeout overrides are very rarely used. We don't want to force the common case to use named parameters.
    ///<summary>Awaits until <paramref name="condition"/> returns true, holding no thread while it waits, then - within the same read lock held while evaluating<br/>
    /// <paramref name="condition"/> - executes <paramref name="func"/> and returns its result. Throws <see cref="AwaitingConditionTimeoutException"/> if <paramref name="waitTimeout"/> expires.<br/>
-   /// The async counterpart of <see cref="ReadWhen{TReturn}"/>: see <see cref="IAwaitableCriticalSection"/> for how async condition waits work.</summary>
+   /// The async counterpart of <see cref="ReadWhen{TReturn}"/>: see <see cref="IAwaitableCriticalSection"/> for how async condition waits work.<br/>
+   /// <paramref name="func"/> must not change the state this critical section protects, and neither may <paramref name="condition"/>: releasing a read lock wakes no wait. <see cref="IAwaitableCriticalSection"/> tells why.</summary>
    async Task<TReturn> ReadWhenAsync<TReturn>(Func<bool> condition, Func<TReturn> func, CancellationToken cancellationToken = default, WaitTimeout? waitTimeout = null, LockTimeout? lockTimeout = null)
    {
       TReturn result = default!;

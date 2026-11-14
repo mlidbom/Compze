@@ -21,7 +21,7 @@ public class When_a_failing_assertion_shows_a_value_Must_cannot_fully_serialize 
 
    public class that_is_a_JsonElement : When_a_failing_assertion_shows_a_value_Must_cannot_fully_serialize
    {
-      readonly JsonElement _actual = JsonDocument.Parse("""{"name":"value"}""").RootElement;
+      readonly JsonElement _actual = JsonElement.Parse("""{"name":"value"}""");
 
       [XF] public void the_message_is_the_assertions_own() =>
          MessageOf(() => _actual.Must().Satisfy(_ => false)).Must().Contain("_actual.Must().Satisfy(_ => false)");

@@ -1,0 +1,17 @@
+# Rationale: Compze has only what improves on the BCL
+
+Added 2026-11-14 at Magnus's word, in Compze. An agent (Claude Opus 5.5) had recommended an async slot gate in
+Compze.Threading for the one place in Compze, JAStudio and Deskmancer that limits how many requests are in flight,
+pushed there by the shared locking rule, which then banned `SemaphoreSlim`. Asked whether the gate was worth it, it found
+that `SemaphoreSlim` does the job fully. Magnus:
+
+"If a built in tool does the job perfectly. Compze should not have it. Compze needs to improve on something awailable in
+the BCL for a Compze version to be worth it. That includes suggesting that existing stuff should be removed. I might not
+have known about the BCL support when I wrote it, or it might not have existed at that time. A better more intuitive API
+is suffient though. Look at all the *Ordinal methods and such...."
+
+The `*Ordinal` methods are the example because they are the rule's edge: an API that can do nothing new, and is worth
+having for reading better.
+
+Not tested: whether agents now recommend removals where they should, and only there. Compze hasn't been gone through for
+candidates.

@@ -43,7 +43,7 @@ class ProcessLockSession : ITessagingSqlLayer.IEndpointProcessLockHold
    {
       while(true)
       {
-         if(await Task.WhenAny(_released.Task, Task.Delay(KeepaliveInterval)).caf() == _released.Task)
+         if(await IsReleasedWithinTheKeepaliveIntervalAsync().caf())
             return;
 
          try
@@ -61,6 +61,14 @@ class ProcessLockSession : ITessagingSqlLayer.IEndpointProcessLockHold
             _onLockLostWhileHeld(sessionDeath);
             return;
          }
+      }
+
+      //WaitAsync's timeout, unlike a Task.Delay raced with Task.WhenAny, stops its timer when the release comes first. Its TimeoutException is
+      //suppressed: the interval passing is the normal case, which the loop answers with a ping.
+      async Task<bool> IsReleasedWithinTheKeepaliveIntervalAsync()
+      {
+         await _released.Task.WaitAsync(KeepaliveInterval).ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing);
+         return _released.Task.IsCompleted;
       }
    }
 

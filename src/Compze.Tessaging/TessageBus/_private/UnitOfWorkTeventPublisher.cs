@@ -4,6 +4,7 @@ using Compze.Contracts;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
+using Compze.Tessaging.Engine;
 using Compze.Tessaging.Engine._private;
 using Compze.Tessaging.TessageBus._private.BestEffortDelivery;
 using Compze.Tessaging.TessageBus._private.Outbox;
@@ -67,6 +68,8 @@ static class UnitOfWorkTeventPublisherRegistrar
    {
       State.Assert(Transaction.Current != null,
                    () => $"{nameof(IUnitOfWorkTeventPublisher)} publishes within the caller's unit of work, and there is no ambient transaction — no unit of work to publish within. Run the caller through ExecuteUnitOfWork, or publish through {nameof(IIndependentTeventPublisher)}, which runs each publish as its own unit of work.");
+      State.Assert(!_observationDispatcher.HasStopped,
+                   () => $"The LocalTessagingEngine has stopped ({nameof(ILocalTessagingEngine)}.{nameof(ILocalTessagingEngine.StopAsync)}), so it publishes no more tevents: no observer would observe {wrappedTevent.Tevent.GetType().FullName}. Publish before stopping the engine.");
       var unitOfWork = UnitOfWorkResolver.From(_scopeResolver);
       var remoteDelivery = RemoteDeliveryFor(wrappedTevent);
       TessageInspector.AssertValidToExecuteLocally(wrappedTevent);

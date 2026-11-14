@@ -1,8 +1,17 @@
-# Push CI: on every push to any branch, build and run the full pluggable-component matrix (the build-and-test job).
+# Push CI: on every push to any branch, build and run the full pluggable-component matrix (the build-and-test jobs), unless
+# an earlier CI run already covers the pushed commit.
 #
-# One de-duplication mechanism keeps interweaving branches from re-verifying the same work: the check-duplicate-commit job,
-# keyed on the commit SHA, skips this run entirely when the SAME commit has already triggered CI under another branch — the
-# common case when several branches share a head commit and are pushed in quick succession.
+# A CI run covers a commit when it is a run of that commit, or of a commit that differs from it only in files CI doesn't
+# test, such as documentation: .github/scripts/lib/CiCoverage.ps1 says which files. The first job looks for such a run, and
+# the test jobs are skipped when it finds one. So a push that changes nothing CI tests costs one short job, and so does a
+# commit that several branches share, pushed under one after the other.
+#
+# Each test job tests one persistence layer and transport with every DI container: four combinations in its combinations
+# file, and every test that uses pluggable components runs once for each. Until 2026-11-14 there was a job for each
+# combination. Each of them built the solution and ran the whole suite for the few tests that depend on the combination,
+# about 40 seconds of a 5-minute job, and a push waited 20 to 40 minutes for its 84 jobs. The persistence layer and the
+# transport are what a job is named after because the failures of July to November 2026 followed them, and the operating
+# system, but not the DI container.
 #
 # There is deliberately no concurrency group: a push never supersedes an in-flight run of the same branch, so every pushed
 # commit is verified on its own rather than being cancelled by whatever was pushed next.
@@ -12,7 +21,7 @@
 #
 # Only the push trigger is used, deliberately: a pull_request trigger would double-verify every same-repo PR (once for
 # the push event, once for the PR event) and — because github.sha on a PR event is the ephemeral merge commit, not the
-# PR head — the SHA probe below cannot dedupe that pair. Every branch is already covered by push. Re-add pull_request
+# PR head — the first job below cannot tell that the pair is one commit. Every branch is already covered by push. Re-add pull_request
 # only if CI must run on fork PRs (a fork's push fires in the fork, not here).
 
 name: CI
@@ -26,48 +35,43 @@ permissions:
   contents: read
 
 jobs:
-  # Skip this whole run when the same commit has already triggered CI under another branch. Interweaving branches often
-  # share a head commit and get pushed in quick succession, which would otherwise verify the identical tree once per
-  # branch. GitHub's concurrency feature cannot express this: its only modes are cancel-the-old-run or queue-the-new-one,
-  # never drop-the-duplicate — so we probe the Actions run history for an EARLIER run of this workflow at this exact SHA.
+  # Skips the test jobs when an earlier CI run covers this commit, and has passed or is still running. Two cases make up
+  # nearly all of it: a push that changes only files CI doesn't test, and a commit that several branches share, pushed
+  # under one after the other. .github/scripts/Find-EarlierCiRunCoveringCommit.ps1 says how it decides, and why some run
+  # always tests.
   #
-  # run_id is monotonic, so among all runs for one commit only the lowest-id (earliest-triggered) run finds no earlier
-  # run and proceeds; every later run finds it and skips. The tie-break direction is deliberately safe: the only race is
-  # an earlier run not yet visible in the API (a few seconds after trigger), which can cause an extra run but can NEVER
-  # skip every run of a commit.
+  # GitHub's own means can express neither case. A paths filter on the trigger looks at what one push changed, not at
+  # whether what the commit has was tested, and it reads at most 300 changed files. A concurrency group can cancel the
+  # old run or queue the new one, never drop the duplicate.
   #
-  # This skips on TRIGGER, not on success: a failed or flaky first run is not auto-retried by a sibling branch's push
-  # (the duplicates have already skipped). Re-run it manually, or push a new commit, to re-verify.
-  check-duplicate-commit:
-    name: Check for an earlier CI run of this commit
+  # A covering run that failed doesn't count, so a push after a failure tests again. To test a commit again without
+  # pushing, run this workflow by hand: a manual run (workflow_dispatch) is a request to test, so it looks for nothing.
+  earlier-run-covering-this-commit:
+    name: Look for an earlier CI run that covers this commit
     runs-on: ubuntu-latest
     permissions:
       actions: read
+      contents: read
     outputs:
-      already_triggered: ${{ steps.probe.outputs.already_triggered }}
+      found: ${{ steps.look.outputs.found }}
     steps:
-      - id: probe
+      - if: github.event_name != 'workflow_dispatch'
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0     # The commit is compared with its ancestors ...
+          filter: blob:none  # ... by which files differ, which takes no file contents.
+          sparse-checkout: .github/scripts
+
+      - id: look
+        if: github.event_name != 'workflow_dispatch'
+        shell: pwsh
         env:
           GH_TOKEN: ${{ github.token }}
-        run: |
-          # A manual run (workflow_dispatch) is an explicit request to verify this commit again - the whole point is to
-          # re-run a SHA that has already run - so it must never be deduped away. Only push-triggered duplicates are dropped.
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            echo "already_triggered=false" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
-          earlier=$(gh api \
-            "/repos/${{ github.repository }}/actions/runs?head_sha=${{ github.sha }}&per_page=100" \
-            --jq "[.workflow_runs[] | select(.name == \"${{ github.workflow }}\" and .id < ${{ github.run_id }})] | length")
-          if [ "$earlier" -gt 0 ]; then
-            echo "already_triggered=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "already_triggered=false" >> "$GITHUB_OUTPUT"
-          fi
+        run: .github/scripts/Find-EarlierCiRunCoveringCommit.ps1 -Repository '${{ github.repository }}' -CommitSha '${{ github.sha }}' -RunId ${{ github.run_id }}
 
   build-and-test:
-    needs: check-duplicate-commit
-    if: needs.check-duplicate-commit.outputs.already_triggered != 'true'
+    needs: earlier-run-covering-this-commit
+    if: needs.earlier-run-covering-this-commit.outputs.found != 'true'
     runs-on: ubuntu-latest
 
     # The backstop, not the hang mechanism: --blame-hang (see the build-and-test action) is what catches a hung test, dumps its
@@ -76,15 +80,20 @@ jobs:
     # four to ten minutes, and a hang dump costs the ten-minute detection window plus writing the dump before the step fails.
     timeout-minutes: 30
 
+    # todo: Consider which combinations CI has to run for us to feel safe (Magnus, 2026-11-14). It runs every one: each
+    #   persistence layer with each DI container and each transport on Linux, and the Sqlite ones again on Windows. Four
+    #   to a job made the wait bearable, so this is no longer urgent, but each pluggable component added still
+    #   multiplies the work.
+    #   A place to start (Claude's suggestion, not decided): every pair of components together at least once, and the
+    #   full matrix only before a release. That is 26 combinations where three transports make 84.
     strategy:
       fail-fast: false
       matrix:
         persistence: [SqliteMemory, Sqlite, PgSql, MySql, MsSql]
-        di: [Microsoft, Autofac, DryIoc, LightInject]
         serializer: [Newtonsoft]
         transport: [AspNetCore, NamedPipes, Tcp]
 
-    name: "Test (${{ matrix.persistence }}:${{ matrix.di }}:${{ matrix.serializer }}:${{ matrix.transport }})"
+    name: "Test (${{ matrix.persistence }}:every DI container:${{ matrix.serializer }}:${{ matrix.transport }})"
 
     services:
       postgres:
@@ -141,7 +150,12 @@ jobs:
         uses: ./.github/actions/build-and-test
         with:
           configuration: Debug
-          pluggable-components: "${{ matrix.persistence }}:${{ matrix.di }}:${{ matrix.serializer }}:${{ matrix.transport }}"
+          dumps-artifact-label: ${{ matrix.persistence }}-${{ matrix.serializer }}-${{ matrix.transport }}
+          pluggable-components: |
+            ${{ matrix.persistence }}:Microsoft:${{ matrix.serializer }}:${{ matrix.transport }}
+            ${{ matrix.persistence }}:Autofac:${{ matrix.serializer }}:${{ matrix.transport }}
+            ${{ matrix.persistence }}:DryIoc:${{ matrix.serializer }}:${{ matrix.transport }}
+            ${{ matrix.persistence }}:LightInject:${{ matrix.serializer }}:${{ matrix.transport }}
 
   # Windows coverage for the container-free persistence layers. The DB engines run only on Linux because GitHub's service
   # containers (postgres/mysql/mssql images) cannot be hosted on a Windows runner, but SqliteMemory and Sqlite need no
@@ -150,8 +164,8 @@ jobs:
   # OS mutex, and Windows path / file-locking / line-ending handling. A separate job rather than an os matrix axis so the
   # services block above stays off Windows entirely.
   build-and-test-windows:
-    needs: check-duplicate-commit
-    if: needs.check-duplicate-commit.outputs.already_triggered != 'true'
+    needs: earlier-run-covering-this-commit
+    if: needs.earlier-run-covering-this-commit.outputs.found != 'true'
     runs-on: windows-latest
 
     # Same backstop, same reasoning as the Linux job above.
@@ -161,11 +175,10 @@ jobs:
       fail-fast: false
       matrix:
         persistence: [SqliteMemory, Sqlite]
-        di: [Microsoft, Autofac, DryIoc, LightInject]
         serializer: [Newtonsoft]
         transport: [AspNetCore, NamedPipes, Tcp]
 
-    name: "Windows Test (${{ matrix.persistence }}:${{ matrix.di }}:${{ matrix.serializer }}:${{ matrix.transport }})"
+    name: "Windows Test (${{ matrix.persistence }}:every DI container:${{ matrix.serializer }}:${{ matrix.transport }})"
 
     env:
       COMPOSABLE_MACHINE_SLOWNESS: "5.0"
@@ -180,4 +193,9 @@ jobs:
         uses: ./.github/actions/build-and-test
         with:
           configuration: Debug
-          pluggable-components: "${{ matrix.persistence }}:${{ matrix.di }}:${{ matrix.serializer }}:${{ matrix.transport }}"
+          dumps-artifact-label: ${{ matrix.persistence }}-${{ matrix.serializer }}-${{ matrix.transport }}
+          pluggable-components: |
+            ${{ matrix.persistence }}:Microsoft:${{ matrix.serializer }}:${{ matrix.transport }}
+            ${{ matrix.persistence }}:Autofac:${{ matrix.serializer }}:${{ matrix.transport }}
+            ${{ matrix.persistence }}:DryIoc:${{ matrix.serializer }}:${{ matrix.transport }}
+            ${{ matrix.persistence }}:LightInject:${{ matrix.serializer }}:${{ matrix.transport }}
