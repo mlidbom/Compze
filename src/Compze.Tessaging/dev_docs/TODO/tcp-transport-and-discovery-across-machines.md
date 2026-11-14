@@ -338,6 +338,25 @@ and connect again while the address stays listed, as it does today for a failed 
 - It changes what `IEndpointRegistry` means, and it touches the router's delivery machinery, so it must be
   walked through the exactly-once in-order guarantee before anything is built.
 
+### What Deskmancer needs of it
+
+Read from Deskmancer's code on 2026-11-14:
+
+- **Deskmancer has two channels, each with a registry of its own,** two registry files in one directory that the
+  specification process makes for the run:
+  - the observation channel (registry `Deskmancer.ExternalObservation`): the worker's `ExternalObservationEndpoint`
+    and the specification process's `ExternalObservationObserver`;
+  - the real-Windows driver's channel (registry `Deskmancer.RealWindowsDriver`): the driver process's
+    `RealWindowsDriverEndpoint` and the specification process's `RealWindowsDriverClient`.
+- **The worker and the driver do not converse with each other.** The driver starts Deskmancer as a process, with
+  launch arguments, and each of the two converses only with the specification process. `RealWindowsDriverChannel`
+  says it: "the two channels share a directory and nothing else: Deskmancer's worker never meets the driver's
+  tessages."
+- **So nothing in the guest needs the local registry beside the one across machines:** every conversation there
+  crosses to the host. An endpoint discovering through exactly one registry is enough.
+- **And it needs two registries across machines that stay apart,** as the two files do today: two registry
+  servers, or one that keeps registries apart by name.
+
 ### The suite boundary
 
 Today the registry's name and directory are the suite boundary, which is what lets Deskmancer's fixed
@@ -424,8 +443,8 @@ was not measured.
 - The cost of small writes, and how TCP's timings compare with HTTP's across machines.
 - The .NET behaviors named above (Kestrel's reported address, the HTTP defaults, `HttpListener`'s URL
   reservations) are from knowledge, not run.
-- How the lab assigns addresses, and whether the worker and the test driver converse inside the guest. If they
-  do, they need the local registry too, and an endpoint discovers through exactly one registry.
+- How Deskmancer's Hyper-V runs will assign addresses. (Whether the worker and the test driver converse inside
+  the guest is answered under "What Deskmancer needs of it": they don't.)
 - Whether a specification exists that kills a peer process in the middle of a conversation. The harness can
   kill the process (`EndpointHostProcessHandle`).
 
