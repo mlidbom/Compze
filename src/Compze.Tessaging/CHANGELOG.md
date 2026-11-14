@@ -4,6 +4,13 @@ All notable changes to Compze.Tessaging will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## 0.8.0-alpha
+
+- **A plain container's LocalTessagingEngine can be stopped before the container is disposed.** `ILocalTessagingEngine`, resolved from the container, has `StopAsync()`. It waits, holding no thread, until every tevent committed so far has been observed, including what the observers publish meanwhile. It disposes nothing, and from then on the engine refuses to publish tevents, since no observer would observe them.
+  - Until now the container's disposal was what finished the observers' work: disposal waited for the observers. A container that disposes through an asynchronous disposal, as the Microsoft adapter's does, could then go on disposing its other components on a thread-pool thread, instead of the thread that disposed the container.
+  - Stop the engine first, and disposing the container waits for nothing.
+  - An endpoint composition has no `ILocalTessagingEngine`: the endpoint's own `StopAsync` stops its engine.
+
 ## 0.7.0-alpha
 
 - **Targets .NET 11 (`net11.0`) instead of .NET 10, and is compiled with runtime async:** the runtime, instead of state machines the compiler generates, suspends and resumes its async methods, so live stack traces show the real call chain. An application that uses this version must target .NET 11.

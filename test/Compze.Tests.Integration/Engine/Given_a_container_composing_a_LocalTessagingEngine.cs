@@ -241,6 +241,81 @@ public partial class Given_a_container_composing_a_LocalTessagingEngine : Univer
          _observedSequenceNumbers.Must().SequenceEqual([1, 2, 3, 4, 5]);
    }
 
+   public class after_stopping_the_engine_while_an_async_observer_still_has_published_tevents_to_observe : Given_a_container_composing_a_LocalTessagingEngine
+   {
+      readonly ConcurrentQueue<int> _observedSequenceNumbers = [];
+      int[] _observedWhenTheStopCompleted = [];
+
+      public after_stopping_the_engine_while_an_async_observer_still_has_published_tevents_to_observe()
+      {
+         ComposeContainerWithEngine(engine => engine
+            .ObserveTevents(observe => observe.ForTevent(async (IMyNumberedTevent tevent) =>
+             {
+                await Task.Delay(TimeSpan.FromMilliseconds(50));
+                _observedSequenceNumbers.Enqueue(tevent.SequenceNumber);
+             })));
+
+         for(var sequenceNumber = 1; sequenceNumber <= 5; sequenceNumber++)
+         {
+            var publishedTevent = new MyNumberedTevent(sequenceNumber);
+            Container.ScopeFactory.ExecuteUnitOfWork(unitOfWork => unitOfWork.Resolve<IUnitOfWorkTeventPublisher>().Publish(publishedTevent));
+         }
+      }
+
+      protected override async Task InitializeAsyncInternal()
+      {
+         await Container.RootResolver.Resolve<ILocalTessagingEngine>().StopAsync();
+         _observedWhenTheStopCompleted = [.._observedSequenceNumbers];
+      }
+
+      [PCT] public void every_tevent_published_before_the_stop_has_been_observed_when_the_stop_completes() =>
+         _observedWhenTheStopCompleted.Must().SequenceEqual([1, 2, 3, 4, 5]);
+
+      [PCT] public void publishing_afterwards_throws_stating_that_the_engine_has_stopped() =>
+         Invoking(() => Container.RootResolver.Resolve<IIndependentTeventPublisher>().Publish(new MyNumberedTevent(6)))
+            .Must().Throw<Exception>()
+            .Which.Message.Must().Contain("has stopped");
+   }
+
+   ///<summary>The case the stop exists for: the observers' work is done before disposal, so a synchronous disposal waits for nothing<br/>
+   /// and disposes every component on the thread that disposes the container. Left to disposal instead, the observation drain<br/>
+   /// would await the observers, and an adapter that disposes through an asynchronous disposal could go on disposing on another thread.</summary>
+   public class after_stopping_the_engine_while_an_async_observer_still_has_published_tevents_to_observe_and_then_disposing_the_container_synchronously : Given_a_container_composing_a_LocalTessagingEngine
+   {
+      readonly DisposalThreadRecorder _componentCreatedBeforeTheEngine;
+      int _disposingThreadId;
+
+      public after_stopping_the_engine_while_an_async_observer_still_has_published_tevents_to_observe_and_then_disposing_the_container_synchronously()
+      {
+         ComposeContainerWithEngine(components => components.Register(Singleton.For<DisposalThreadRecorder>().CreatedBy(() => new DisposalThreadRecorder())),
+                                    engine => engine.ObserveTevents(observe => observe.ForTevent(async (IMyNumberedTevent _) => await Task.Delay(TimeSpan.FromMilliseconds(50)))));
+
+         //Created before the engine's components, so the container disposes it after them.
+         _componentCreatedBeforeTheEngine = Container.RootResolver.Resolve<DisposalThreadRecorder>();
+         for(var sequenceNumber = 1; sequenceNumber <= 5; sequenceNumber++)
+         {
+            var publishedTevent = new MyNumberedTevent(sequenceNumber);
+            Container.ScopeFactory.ExecuteUnitOfWork(unitOfWork => unitOfWork.Resolve<IUnitOfWorkTeventPublisher>().Publish(publishedTevent));
+         }
+      }
+
+      protected override async Task InitializeAsyncInternal()
+      {
+         await Container.RootResolver.Resolve<ILocalTessagingEngine>().StopAsync();
+         _disposingThreadId = Environment.CurrentManagedThreadId;
+         Container.Dispose();
+      }
+
+      [PCT] public void the_container_disposes_a_component_created_before_the_engine_on_the_thread_that_disposes_the_container() =>
+         _componentCreatedBeforeTheEngine.DisposedOnThreadId.Must().Be(_disposingThreadId);
+
+      class DisposalThreadRecorder : IDisposable
+      {
+         public int? DisposedOnThreadId { get; private set; }
+         public void Dispose() => DisposedOnThreadId = Environment.CurrentManagedThreadId;
+      }
+   }
+
    public class after_publishing_a_tevent_when_the_first_of_two_observers_throws : Given_a_container_composing_a_LocalTessagingEngine
    {
       readonly List<IMyGreetingRequestedTevent> _receivedBySubscriber = [];

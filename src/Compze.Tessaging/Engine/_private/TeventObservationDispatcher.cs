@@ -23,14 +23,16 @@ namespace Compze.Tessaging.Engine._private;
 /// whose completion callback queues a local publish — can leak into an observer. A throwing observer is reported through the<br/>
 /// <see cref="IBackgroundExceptionReporter"/>, never retried, and never stops its queue. Queued-but-undispatched work is<br/>
 /// reported to the <see cref="ITessagesInFlightTracker"/>, so the testing host's at-rest wait covers the observation queues.<br/>
-/// Created with the engine, drained at disposal — no observation is discarded: an endpoint drains explicitly after its<br/>
-/// listening stops and before its container tears down, because the drain runs observers and observers need the container's<br/>
-/// scopes; the container's own disposal of this singleton is only the backstop for compositions without such a lifecycle.</remarks>
+/// Created with the engine, drained before the container tears down — no observation is discarded — because the drain runs<br/>
+/// observers and observers need the container's scopes: an endpoint drains explicitly after its listening stops, and a plain<br/>
+/// container's engine through <see cref="ILocalTessagingEngine.StopAsync"/>, which reaches <see cref="StopAsync"/>. The<br/>
+/// container's own disposal of this singleton is only the backstop for a composition that stops neither.</remarks>
 sealed class TeventObservationDispatcher : IDisposable, IAsyncDisposable
 {
    static readonly WaitTimeout DrainAtDisposalTimeout = WaitTimeout.Seconds(30);
 
    readonly IReadOnlyList<ObserverDispatchQueue> _observerQueues;
+   bool _hasStopped;
 
    internal TeventObservationDispatcher(TessageHandlerRoster roster, IScopeFactory scopeFactory, IBackgroundExceptionReporter backgroundExceptionReporter, ITessagesInFlightTracker tessagesInFlightTracker, ITaskRunner taskRunner)
       => _observerQueues = [..roster.TeventObserverRegistrations.Select(observer => new ObserverDispatchQueue(observer, scopeFactory, backgroundExceptionReporter, tessagesInFlightTracker, taskRunner))];
@@ -64,6 +66,17 @@ sealed class TeventObservationDispatcher : IDisposable, IAsyncDisposable
          foreach(var queue in _observerQueues)
             anyQueueHadWork |= await queue.AwaitDrainedAsync(DrainAtDisposalTimeout).caf();
       } while(anyQueueHadWork);
+   }
+
+   ///<summary>Whether <see cref="StopAsync"/> has completed: the queues are drained and the engine publishes no more tevents.</summary>
+   public bool HasStopped => _hasStopped;
+
+   ///<summary>The stop of a plain container's engine (<see cref="ILocalTessagingEngine.StopAsync"/>): drains every queue, then<br/>
+   /// marks the dispatch stopped, so a publisher refuses the tevents no observer would observe any more.</summary>
+   public async Task StopAsync()
+   {
+      await DrainAsync().caf();
+      _hasStopped = true;
    }
 
    public async ValueTask DisposeAsync() => await DrainAsync().caf();
