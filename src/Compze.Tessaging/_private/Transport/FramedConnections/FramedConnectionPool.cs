@@ -1,8 +1,6 @@
-using Compze.Internals.SystemCE.ThreadingCE;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tessaging.Endpoints;
 using Compze.Tessaging.Endpoints.Discovery;
-using Compze.Tessaging.Typermedia;
 using Compze.Threading;
 using Compze.Tessaging._internal.Transport;
 using Compze.Tessaging._private.Transport.NamedPipes;
@@ -37,8 +35,9 @@ class FramedConnectionPool : IDisposable
    /// finds a ready instance instantly.</remarks>
    const int MaximumConcurrentExchanges = 8;
 
-   ///<summary>How long a sender waits for a free connection before failing loud. Expiring means every connection stayed busy<br/>
-   /// for the whole wait: the peer's handlers are not keeping up with this endpoint's send rate.</summary>
+   ///<summary>How long a sender waits for a free connection before failing loud, with an <see cref="EndpointBusyException"/>.<br/>
+   /// Expiring means every connection stayed busy for the whole wait: the peer's handlers are not keeping up with this<br/>
+   /// endpoint's send rate.</summary>
    static readonly TimeSpan WaitForAFreeConnectionTimeout = TimeSpan.FromSeconds(10);
 
    static readonly TimeSpan ConnectTimeout = TimeSpan.FromSeconds(10);
@@ -67,23 +66,12 @@ class FramedConnectionPool : IDisposable
    /// the request frame, reads the response frame, and returns the connection for the next sender.</summary>
    ///<remarks>Throws an <see cref="EndpointUnreachableException"/> when the peer cannot be reached: no connection to it can<br/>
    /// be made, or the connection ends before the response has arrived.</remarks>
+   ///<remarks>Throws an <see cref="EndpointBusyException"/> when all <see cref="MaximumConcurrentExchanges"/> connections<br/>
+   /// stay busy for <see cref="WaitForAFreeConnectionTimeout"/>.</remarks>
    internal async Task<ExchangeResponse> ExchangeAsync(TransportRequest request, CancellationToken cancellationToken)
    {
       if(!await _exchangeSlots.WaitAsync(WaitForAFreeConnectionTimeout, cancellationToken).caf())
-      {
-         //refactor: TessageDispatchingFailedException begins its message "Dispatching tessage failed. Remote exception tessage:",
-         //   and nothing remote happened here: this endpoint gave up waiting for a free connection of its own. The condition
-         //   needs an exception whose name and message say so. It is not an EndpointUnreachableException: the peer is
-         //   reached, and busy.
-         throw new TessageDispatchingFailedException($"""
-                                                      All {MaximumConcurrentExchanges} pooled connections to the {_connectionOpener.TransportName} transport server stayed busy for {WaitForAFreeConnectionTimeout}.
-                                                      Address:    {_address.Uri}
-                                                      Kind:       {request.Kind}
-                                                      Type:       {request.PayloadTypeIdString}
-                                                      An exchange holds its connection for the whole round trip, including the serving endpoint's handler execution, so sustained saturation means the peer's handlers are not keeping up with this endpoint's send rate.
-                                                      {ThreadPoolStateDescription()}
-                                                      """);
-      }
+         throw EndpointBusyException.BecauseNoConnectionBecameFreeInTime(_connectionOpener.TransportName, _address, request, MaximumConcurrentExchanges, WaitForAFreeConnectionTimeout);
 
       try
       {
@@ -142,11 +130,6 @@ class FramedConnectionPool : IDisposable
       else
          _idleConnections.Push(connection);
    });
-
-   ///<summary>Captured into the saturation failure above at the moment it is thrown: a wait that expires against a running<br/>
-   /// server is the signature of either genuine saturation or of the ThreadPool not servicing continuations — zero free<br/>
-   /// workers with pending work says thread-pool starvation, a healthy pool says the peer itself is the bottleneck.</summary>
-   static string ThreadPoolStateDescription() => $"ThreadPool at timeout: {ThreadPoolCE.DescribeState()}";
 
    public void Dispose() => _monitor.Locked(() =>
    {

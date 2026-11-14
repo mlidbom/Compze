@@ -125,6 +125,11 @@ What each of these looks like to a conversation was observed, not only reasoned:
   connection whose peer vanished is failed after about ten seconds of silence. Verified against a real
   silent-vanish in the lab.
 - **A connect has a timeout of its own,** the pool's 10 seconds.
+- **A request that waits in vain for a free pooled connection throws `EndpointBusyException`** (2026-11-14):
+  the peer is reached, and its handlers don't keep up with what is sent to it. Until then it threw a
+  `TessageDispatchingFailedException` whose message spoke of a remote exception. Specified by
+  `Given_a_pure_client_whose_endpoint_is_busy`, and seen with the lab program on loopback: of nine tueries at
+  once, each answered after 13 seconds, the ninth failed after 10 and the other eight were answered.
 - **An idle connection that has ended is discarded, not used** (`ClientConnection.HasEndedWhileIdle`, asked by
   `FramedConnectionPool` before it uses an idle connection again). Before this, each connection that had died
   idle failed one exchange after the peer was back: 6 of 8 tueries in the lab.
@@ -198,10 +203,6 @@ rows were run again. When the table was made the failures were a raw `IOExceptio
 
 - **What is left around `EndpointUnreachableException`** (built 2026-11-13: every transport's client throws it
   when no connection can be made or the connection ends before the answer arrives):
-  - A sender that gives up waiting for a free pooled connection, because the peer's handlers don't keep up,
-    still gets a `TessageDispatchingFailedException` whose message speaks of a remote exception. The peer is
-    reached, and busy, so it is not this exception either: it needs one of its own. Tagged `refactor:` in
-    `FramedConnectionPool`.
   - Over HTTP, a request that outlasts `HttpClient`'s timeout (100 seconds, never set) is not covered: it
     arrives as a `TaskCanceledException`. Not seen, so not caught.
   - In the normal suite a connection that ends in the middle of an exchange is specified over named pipes only:

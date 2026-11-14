@@ -13,6 +13,9 @@ namespace Compze.Tessaging._private.Transport;
 /// the serving side's exception type and detail, whatever the protocol.</remarks>
 ///<remarks>An endpoint that cannot be reached surfaces here as an <see cref="EndpointUnreachableException"/>, whatever the<br/>
 /// protocol: no connection to the address could be made, or it ended before the response arrived.</remarks>
+///<remarks>An endpoint that is reached, and not answering as fast as it is sent to, surfaces here as an<br/>
+/// <see cref="EndpointBusyException"/>, over the protocols whose client bounds its connections to an endpoint: named pipes<br/>
+/// and TCP.</remarks>
 interface IEndpointTransportClient
 {
    Task<string> SendAsync(TransportRequest request, EndpointAddress address, CancellationToken cancellationToken = default);
