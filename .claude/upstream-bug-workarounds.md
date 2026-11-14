@@ -6,7 +6,7 @@ Active workarounds for upstream-tool bugs that affect this repo. Each section: t
 
 ## C# language server (csharp-ls) — cloud sessions only
 
-**Locally this path is retired.** Rider's ReSharper-backed MCPs (`resharper-joshua`, plus the built-in
+**Locally this path is retired.** Rider's ReSharper-backed MCPs (`dotnet-analysis-and-refactoring`, plus the built-in
 `jetbrains-rider` MCP) out-resolve csharp-ls in every dimension, so on dev machines the `csharp-lsp` plugin
 stays disabled and no csharp-ls runs. Cloud sessions have no Rider, so there — and only there — csharp-ls
 is provisioned as the C# intelligence fallback by [.claude/cloud-setup.sh](cloud-setup.sh).
