@@ -9,6 +9,7 @@
   </PropertyGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="Compze.Tessaging.Transport.AspNetCore" />
+    <InternalsVisibleTo Include="Compze.Hosting" />
     <InternalsVisibleTo Include="Compze.Tessaging.Hosting.Testing" />
     <InternalsVisibleTo Include="Compze.Tessaging.MicrosoftSql" />
     <InternalsVisibleTo Include="Compze.Tessaging.MySql" />

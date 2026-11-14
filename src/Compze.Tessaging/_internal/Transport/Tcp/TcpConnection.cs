@@ -1,9 +1,10 @@
 using System.Net.Sockets;
 
-namespace Compze.Tessaging._private.Transport.Tcp;
+namespace Compze.Tessaging._internal.Transport.Tcp;
 
-///<summary>A connection of the TCP transport as both of its ends set it up: the byte stream over a connected socket, with<br/>
-/// Nagle's algorithm off and TCP keepalive on.</summary>
+///<summary>A TCP connection as both of its ends set it up: the byte stream over a connected socket, with Nagle's<br/>
+/// algorithm off and TCP keepalive on. The TCP transport's connections are set up so, and so are the connections of<br/>
+/// Compze.Hosting's registry server, which is why this is shared with that library.</summary>
 ///<remarks>Nagle's algorithm holds a small send back, waiting to combine it with the next one. A frame is one send and is<br/>
 /// followed by a wait for the other side's frame, so there is never a next send to combine with: the algorithm could only<br/>
 /// delay frames.</remarks>
@@ -19,8 +20,8 @@ static class TcpConnection
    const int SecondsBetweenProbes = 1;
    const int UnansweredProbesBeforeTheConnectionFails = 5;
 
-   ///<summary>The transport's connection over <paramref name="connectedSocket"/>, which the returned stream owns: disposing<br/>
-   /// the stream closes the socket.</summary>
+   ///<summary>The connection over <paramref name="connectedSocket"/>, which the returned stream owns: disposing the<br/>
+   /// stream closes the socket.</summary>
    internal static Stream StreamOver(Socket connectedSocket)
    {
       try

@@ -3,6 +3,7 @@ using System.Net.Sockets;
 using Compze.Contracts;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tessaging.Endpoints.Discovery;
+using Compze.Tessaging._internal.Transport.Tcp;
 using Compze.Tessaging._private.Transport.FramedConnections;
 
 namespace Compze.Tessaging._private.Transport.Tcp;

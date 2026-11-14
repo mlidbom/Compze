@@ -4,6 +4,16 @@ All notable changes to Compze.Hosting will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## 0.4.0-alpha
+
+- **A registry that reaches across machines** (`Compze.Hosting.AcrossMachines`): what `InterprocessEndpointRegistry` is on one machine, for endpoints that no shared file can reach.
+  - `EndpointRegistryServer.StartListeningAt(listenAt)` starts a server that keeps registries for processes on any number of machines. It listens at an IP address and a port; port 0 has the operating system pick one, which `ListensAt` tells.
+  - `NetworkEndpointRegistry.OpenOnServerAt(registryName, registryServerListensAt)` opens a registry on it by name. It is an `IEndpointRegistry` and an `IEndpointAddressAnnouncer`, so an endpoint participates in it as in any registry: `endpointBuilder.ParticipateIn(registry)`. Nothing but the server's address is configured.
+  - **What a process announces is in the registry for as long as its connection to the server lasts.** When the process ends, its addresses leave the registry at once; when its machine vanishes without closing anything, TCP keepalive ends the connection within about ten seconds. Every other process is told as it happens, so its routers reconcile at network latency.
+  - **Registries of different names share nothing but the server.** The name, with the server's address, is the boundary of an application suite.
+  - **The server need not be up first.** A registry opened while the server is not there lists nothing, keeps trying to reach it every second, and announces what was announced to it once it does. The same goes for a server that goes away and comes back.
+  - The endpoints converse over whatever transport they declare. The server is reached over TCP, and needs no ASP.NET Core.
+
 ## 0.3.0-alpha
 
 - **Hosts build endpoint-declarations in an environment.** `EndpointHost.Production.Create(containerFactory, environment)` takes the deployment's `IEndpointEnvironment`; `RegisterEndpoint(declaration)` builds each registered declaration in it, and `RegisterEndpoint(declaration, environment)` overrides it per registration — for an endpoint whose environment differs from its co-hosted neighbors', usually a decorating environment wrapping the host's (`Environment` is public for exactly that). The callback registration (`RegisterEndpoint(container => ...)`) leaves the public surface.

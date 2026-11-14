@@ -63,6 +63,7 @@ class AssemblyTypeMapper : IAssemblyTypeMapper
          .Map<Tessaging.Navigator_specification.UserApiStartPageTuery>("c270b8eb-b4e1-4bd8-b0de-dae0e2eb14ce")
          .Map<Tessaging.Navigator_specification.UserRegisteredConfirmationResource>("4ac96e70-aff6-45d4-9240-c1f556e7bb47")
          .Map<SameMachine.Given_two_hosts_sharing_an_interprocess_registry_where_the_receiving_host_starts_last.TommandDiscoveredThroughReconciliation>("f0a1c9e4-6a4b-4a37-9b39-4dd23a2b81c7")
+         .Map<AcrossMachines.Given_two_best_effort_endpoints_in_hosts_of_their_own_each_participating_in_the_same_registry_on_a_registry_server.WhoAnswersTuery>("f35a5330-01b7-4d77-83b5-bd773f40c791")
          .Map<Hosting.Given_two_best_effort_endpoints_conversing_in_typermedia.GetTheAnswerTuery>("e94d17b6-3a82-4c05-bd61-f72a08c95e34")
          .Map<Hosting.Given_two_best_effort_endpoints_conversing_in_typermedia.RegisterGreetingTypermediaTommand>("516f8ea2-d90c-47b3-a1e8-b64d20c7f9a8")
          .Map<Hosting.Given_two_best_effort_endpoints_conversing_in_typermedia.GreetingRegisteredConfirmationResource>("07a3c5d8-fb21-4e96-8c04-9d15e7b62af3")
