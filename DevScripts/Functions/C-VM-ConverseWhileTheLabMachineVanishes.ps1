@@ -5,10 +5,18 @@ function C-VM-ConverseWhileTheLabMachineVanishes {
     Holds a conversation with the lab endpoint while the lab machine is made to vanish and to come back, and writes what each tuery experienced
 
     .DESCRIPTION
-    Starts the lab program's converse command on the host, against the lab endpoint in the lab machine. A few seconds in,
-    it makes the machine vanish in the way asked for, and later brings it back. When the conversation is over it writes
-    one timeline, in time order: what was done to the machine (the lines marked >>>>>>), and one line for each tuery,
-    answered and how fast, or failed, after how long and with what.
+    Starts one of the lab program's ways to converse on the host, against the lab endpoint in the lab machine. A few
+    seconds in, it makes the machine vanish in the way asked for, and later brings it back. When the conversation is over
+    it writes one timeline, in time order: what was done to the machine (the lines marked >>>>>>), what the conversing
+    side logged, and one line for each tuery, answered and how fast, or failed, after how long and with what.
+
+    The two ways to converse:
+
+      -LabEndpointAddress  A pure client that is told the lab endpoint's address (the lab program's converse command).
+                           The lab endpoint must be running: C-VM-StartLabEndpoint, whose result is the address to pass.
+      -ThroughRegistry     An endpoint that is told no address (converse-through-registry). It hosts the lab's registry
+                           server on the host, and finds the lab endpoint through the lab registry. This command starts
+                           the lab endpoint itself, before the registry server exists, told where the server will listen.
 
     The ways to vanish:
 
@@ -17,18 +25,26 @@ function C-VM-ConverseWhileTheLabMachineVanishes {
                          runs on, and keeps its address.
       TurnOff            The machine is turned off, as by a power cut, and stays off: start it from its baseline again.
       KillLabProgram     The lab program is killed in the guest, and stays killed: the machine is up, its endpoint gone.
+      RestartLabProgram  The lab program is killed in the guest, then started again: its endpoint comes back at a new
+                         address, as an application does that is closed and opened again. Only with -ThroughRegistry:
+                         a pure client was told the old address.
 
-    The lab endpoint must be running (C-VM-StartLabEndpoint, whose result is the address to pass) and the lab program
-    built (C-Build).
+    The guest must be up (C-VM-StartLabMachineFromBaseline) and the lab program built (C-Build).
 
     .PARAMETER LabEndpointAddress
     The lab endpoint's address, as C-VM-StartLabEndpoint returned it.
 
+    .PARAMETER ThroughRegistry
+    Converse as an endpoint that finds the lab endpoint through the lab registry.
+
+    .PARAMETER RegistryServerPort
+    The port the lab's registry server listens at on the host, with -ThroughRegistry.
+
     .PARAMETER Vanish
-    How the machine vanishes: Pause, DisconnectNetwork, TurnOff or KillLabProgram.
+    How the machine vanishes: Pause, DisconnectNetwork, TurnOff, KillLabProgram or RestartLabProgram.
 
     .PARAMETER ConversationOptions
-    Options for the lab program's converse command, as it takes them, such as '--tueries-per-round', '8'. Run the lab
+    Options for the lab program's ways to converse, as it takes them, such as '--tueries-per-round', '8'. Run the lab
     program without arguments to see them. '--for' is set by this command.
 
     .PARAMETER SecondsBeforeVanishing
@@ -47,17 +63,27 @@ function C-VM-ConverseWhileTheLabMachineVanishes {
     C-VM-ConverseWhileTheLabMachineVanishes -LabEndpointAddress (C-VM-StartLabEndpoint) -Vanish Pause
 
     .EXAMPLE
+    C-VM-ConverseWhileTheLabMachineVanishes -ThroughRegistry -Vanish RestartLabProgram
+    The lab endpoint leaves the registry when its program is killed, and is found again at its new address
+
+    .EXAMPLE
     C-VM-ConverseWhileTheLabMachineVanishes -LabEndpointAddress $address -Vanish DisconnectNetwork -ConversationOptions '--tueries-per-round', '8', '--pause-between-rounds', '20000' -SecondsBeforeVanishing 3 -SecondsVanished 14
     Eight connections sit idle in the client's pool while the machine is away, and are needed again once it is back
     #>
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = 'ToldTheAddress')]
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseApprovedVerbs', '')]
     param(
-        [Parameter(Mandatory)]
+        [Parameter(Mandatory, ParameterSetName = 'ToldTheAddress')]
         [string]$LabEndpointAddress,
 
+        [Parameter(Mandatory, ParameterSetName = 'ThroughRegistry')]
+        [switch]$ThroughRegistry,
+
+        [Parameter(ParameterSetName = 'ThroughRegistry')]
+        [int]$RegistryServerPort = 50505,
+
         [Parameter(Mandatory)]
-        [ValidateSet('Pause', 'DisconnectNetwork', 'TurnOff', 'KillLabProgram')]
+        [ValidateSet('Pause', 'DisconnectNetwork', 'TurnOff', 'KillLabProgram', 'RestartLabProgram')]
         [string]$Vanish,
 
         [string[]]$ConversationOptions = @(),
@@ -75,15 +101,31 @@ function C-VM-ConverseWhileTheLabMachineVanishes {
         Write-CommandFailure -Command $PSCmdlet -Message "The lab program is not built: $labProgram is missing. Run C-Build first."
         return
     }
+    if ($Vanish -eq 'RestartLabProgram' -and -not $ThroughRegistry) {
+        Write-CommandFailure -Command $PSCmdlet -Message "RestartLabProgram needs -ThroughRegistry: the lab endpoint comes back at a new address, which a pure client told the old one never learns."
+        return
+    }
 
     $whatWasDoneToTheMachine = [Collections.Generic.List[string]]::new()
     function Mark([string]$whatWasDone) { $whatWasDoneToTheMachine.Add(('{0:HH:mm:ss.fff} >>>>>> {1}' -f (Get-Date), $whatWasDone)) }
 
+    function Stop-LabProgramInGuest { Invoke-InLabGuest -ArgumentList $labProgramName { param($labProgram) Get-Process $labProgram | Stop-Process -Force } }
+
+    $secondsOfConversation = $SecondsBeforeVanishing + $SecondsVanished + $SecondsAfterComingBack
+    if ($ThroughRegistry) {
+        $registryServerListensAt = "$(Get-LabHostAddress):$RegistryServerPort"
+        Mark "starting the lab endpoint in the guest, told that its registry server will listen at $registryServerListensAt"
+        $startedAt = C-VM-StartLabEndpoint -RegistryServerListensAt $registryServerListensAt
+        Mark "the lab endpoint listens at $startedAt"
+        $howToConverse = @('converse-through-registry', $registryServerListensAt)
+    } else {
+        $howToConverse = @('converse', $LabEndpointAddress)
+    }
+
     $conversationOutput = Join-Path ([IO.Path]::GetTempPath()) "Compze\conversation-with-the-lab-endpoint-$([Guid]::NewGuid().ToString('N'))"
     New-Item -ItemType Directory -Path (Split-Path $conversationOutput -Parent) -Force | Out-Null
-    $secondsOfConversation = $SecondsBeforeVanishing + $SecondsVanished + $SecondsAfterComingBack
     try {
-        $conversation = Start-Process $labProgram -ArgumentList (@('converse', $LabEndpointAddress, '--for', $secondsOfConversation) + $ConversationOptions) `
+        $conversation = Start-Process $labProgram -ArgumentList ($howToConverse + @('--for', $secondsOfConversation) + $ConversationOptions) `
             -RedirectStandardOutput "$conversationOutput.log" -RedirectStandardError "$conversationOutput.errors.log" -PassThru -WindowStyle Hidden
 
         Start-Sleep -Seconds $SecondsBeforeVanishing
@@ -91,7 +133,8 @@ function C-VM-ConverseWhileTheLabMachineVanishes {
             'Pause'             { Mark 'pausing the machine'; Suspend-VM -Name $machine.Name; Mark 'the machine is paused' }
             'DisconnectNetwork' { Mark 'disconnecting the machine from the network'; Disconnect-VMNetworkAdapter -VMName $machine.Name; Mark 'the machine is disconnected' }
             'TurnOff'           { Mark 'turning the machine off'; Stop-VM -Name $machine.Name -TurnOff -Force; Mark 'the machine is off' }
-            'KillLabProgram'    { Mark 'killing the lab program in the guest'; Invoke-InLabGuest -ArgumentList $labProgramName { param($labProgram) Get-Process $labProgram | Stop-Process -Force }; Mark 'the lab program is killed' }
+            'KillLabProgram'    { Mark 'killing the lab program in the guest'; Stop-LabProgramInGuest; Mark 'the lab program is killed' }
+            'RestartLabProgram' { Mark 'killing the lab program in the guest'; Stop-LabProgramInGuest; Mark 'the lab program is killed' }
         }
         Start-Sleep -Seconds $SecondsVanished
         switch ($Vanish) {
@@ -99,6 +142,7 @@ function C-VM-ConverseWhileTheLabMachineVanishes {
             'DisconnectNetwork' { Mark 'connecting the machine to the network again'; Connect-VMNetworkAdapter -VMName $machine.Name -SwitchName $machine.Switch; Mark 'the machine is connected again' }
             'TurnOff'           { Mark 'the machine stays off' }
             'KillLabProgram'    { Mark 'the lab program stays killed' }
+            'RestartLabProgram' { Mark 'starting the lab program in the guest again'; $startedAt = C-VM-StartLabEndpoint -RegistryServerListensAt $registryServerListensAt; Mark "the lab endpoint listens at $startedAt" }
         }
 
         # A tuery asked just before the conversation's time is up may take the connect timeout to fail.

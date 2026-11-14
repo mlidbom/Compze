@@ -56,10 +56,12 @@ For the lab machine to reach this computer, this computer's firewall must let it
   - `-FileToDownload` - The address of the file both sides download
 
 - **C-VM-StartLabEndpoint** - Copies the built lab program into the lab machine and starts it there serving the lab endpoint; returns the endpoint's address, which the lab program's `converse` command on the host takes
+  - `-RegistryServerListensAt` - The address and port of the lab's registry server, such as `192.168.32.1:50505`: the lab endpoint then participates in the lab registry there, whether or not the server is up yet
 
 - **C-VM-ConverseWhileTheLabMachineVanishes** - Holds a conversation with the lab endpoint from the host while the lab machine is made to vanish and to come back, and writes one timeline: what was done to the machine, and what each tuery experienced
-  - `-LabEndpointAddress` - The address `C-VM-StartLabEndpoint` returned
-  - `-Vanish` - `Pause`, `DisconnectNetwork`, `TurnOff` or `KillLabProgram`
+  - `-LabEndpointAddress` - Converse as a pure client told the lab endpoint's address: the address `C-VM-StartLabEndpoint` returned
+  - `-ThroughRegistry` - Converse as an endpoint that is told no address: it hosts the lab's registry server on this computer and finds the lab endpoint through the lab registry. The command starts the lab endpoint itself
+  - `-Vanish` - `Pause`, `DisconnectNetwork`, `TurnOff`, `KillLabProgram`, or with `-ThroughRegistry` also `RestartLabProgram`
   - `-ConversationOptions` - Options for the lab program's `converse` command, such as `'--tueries-per-round', '8'`
   - `-SecondsBeforeVanishing`, `-SecondsVanished`, `-SecondsAfterComingBack`, `-FailuresInFull`
 

@@ -19,13 +19,24 @@ function C-VM-StartLabEndpoint {
 
     The guest must be up (C-VM-StartLabMachineFromBaseline) and the lab program built (C-Build).
 
+    .PARAMETER RegistryServerListensAt
+    The address and port of the lab's registry server, such as 192.168.32.1:50505. With it the lab endpoint participates
+    in the lab registry there, where a conversing endpoint finds it without being told its address. The server need not
+    be up yet: the lab endpoint keeps trying to reach it.
+
     .EXAMPLE
     C-VM-StartLabEndpoint
     compze.tcp://192.168.39.230:49712/
+
+    .EXAMPLE
+    C-VM-StartLabEndpoint -RegistryServerListensAt 192.168.32.1:50505
+    The lab endpoint announces itself to the registry server the host will have at that address
     #>
     [CmdletBinding()]
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseApprovedVerbs', '')]
-    param()
+    param(
+        [string]$RegistryServerListensAt
+    )
 
     $ErrorActionPreference = 'Stop'
     $labProgram = 'Compze.Tests.AcrossMachines.Lab'
@@ -50,8 +61,8 @@ function C-VM-StartLabEndpoint {
     }
     Copy-FolderIntoLabGuest -Folder $builtLabProgram -GuestFolder $guestLabProgram
 
-    $labEndpointAddress = Invoke-InLabGuest -ArgumentList $guestLabFolder, $guestLabProgram, $labProgram, (Get-LabGuestAddress) -ScriptBlock {
-        param($labFolder, $labProgramFolder, $labProgram, $listenOn)
+    $labEndpointAddress = Invoke-InLabGuest -ArgumentList $guestLabFolder, $guestLabProgram, $labProgram, (Get-LabGuestAddress), $RegistryServerListensAt -ScriptBlock {
+        param($labFolder, $labProgramFolder, $labProgram, $listenOn, $registryServerListensAt)
         $ErrorActionPreference = 'Stop'
         $addressFile = Join-Path $labFolder 'lab-endpoint-address.txt'
         $log = Join-Path $labFolder 'lab-endpoint.log'
@@ -59,7 +70,7 @@ function C-VM-StartLabEndpoint {
 
         # Started through WMI, the program is no child of this PowerShell Direct session, so it goes on running when the
         # session ends. cmd.exe is there to write the program's console output to the log.
-        $commandLine = "cmd.exe /c `"`"$labProgramFolder\$labProgram.exe`" serve $listenOn `"$addressFile`" > `"$log`" 2>&1`""
+        $commandLine = "cmd.exe /c `"`"$labProgramFolder\$labProgram.exe`" serve $listenOn `"$addressFile`" $registryServerListensAt > `"$log`" 2>&1`""
         $started = Invoke-CimMethod -ClassName Win32_Process -MethodName Create -Arguments @{ CommandLine = $commandLine; CurrentDirectory = $labProgramFolder }
         if ($started.ReturnValue -ne 0) { throw "Starting the lab program in the guest failed: Win32_Process.Create returned $($started.ReturnValue)." }
 

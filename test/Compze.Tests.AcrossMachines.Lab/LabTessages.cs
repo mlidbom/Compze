@@ -14,6 +14,14 @@ public sealed class LabEndpointIdentity : IEndpointIdentity
    public static EndpointId Id { get; } = new(Guid.Parse("0a244dfa-1bd7-47a4-ba2a-7681427d47d4"));
 }
 
+///<summary>The identity of the conversing endpoint: the endpoint that holds a <see cref="Conversation"/> with the lab<br/>
+/// endpoint after finding it through the lab registry (<see cref="ConversingEndpoint"/>).</summary>
+public sealed class ConversingEndpointIdentity : IEndpointIdentity
+{
+   public static string Name => "AcrossMachinesLabConversingEndpoint";
+   public static EndpointId Id { get; } = new(Guid.Parse("c5b7e0a3-4d19-4f6e-8a02-9e3b1d6f7c84"));
+}
+
 ///<summary>The tuery a <see cref="Conversation"/> asks the lab endpoint. It orders its own answer: how large, so that one<br/>
 /// exchange can be made to span many network packets, and after how long, so that the endpoint's machine can be made to<br/>
 /// vanish while the tuery is in flight.</summary>

@@ -46,7 +46,7 @@ function C-VM-TestLabNetwork {
     $ErrorActionPreference = 'Stop'
     $machine = Get-LabMachine
     $guestAddress = Get-LabGuestAddress
-    $hostAddress = (Get-NetIPAddress -InterfaceAlias "vEthernet ($($machine.Switch))" -AddressFamily IPv4).IPAddress
+    $hostAddress = Get-LabHostAddress
 
     function Write-WhatWasTried([string]$tried, $outcome) { [pscustomobject]@{ Tried = $tried; Worked = [bool]$outcome.Worked; How = [string]$outcome.How } }
 
