@@ -2,7 +2,7 @@
 
 ## Prerequisites
 
-- .NET SDK (version specified in `src/global.json`)
+- .NET SDK (version specified in `global.json`, at the repository root)
 - PowerShell with DevScripts module imported: `Import-Module <repo>/DevScripts/Compze.psm1 -DisableNameChecking`
 
 ## Building

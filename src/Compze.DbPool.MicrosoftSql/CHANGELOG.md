@@ -4,6 +4,11 @@ All notable changes to Compze.DbPool.MicrosoftSql will be documented in this fil
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## 0.3.0-alpha
+
+- **Targets .NET 11 (`net11.0`) instead of .NET 10, and is compiled with runtime async:** the runtime, instead of state machines the compiler generates, suspends and resumes its async methods, so live stack traces show the real call chain. An application that uses this version must target .NET 11.
+- **Requires newer minor versions of other Compze packages:** Compze.DbPool 0.3.0-alpha (was 0.2.2-alpha), Compze.Sql.MicrosoftSql 0.5.0-alpha (was 0.4.0-alpha). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
+
 ## 0.2.2-alpha
 
 - The package shows only its registrar: every plumbing type is internal, reachable by the Compze packages granted `InternalsVisibleTo` and by nothing else.

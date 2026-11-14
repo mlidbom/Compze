@@ -34,8 +34,8 @@ function C-VM-CreateLabMachine {
     guest has the same account, so the file is copied into the lab's folder.
 
     .PARAMETER DotNetChannel
-    The channel of the .NET runtime the guest gets, the one the repository's projects target: the newest runtime of
-    that channel installed on the host.
+    The channel of the .NET runtime the guest gets, such as 11.0: the newest runtime of that channel installed on the
+    host. By default the one the repository's projects target.
 
     .EXAMPLE
     C-VM-CreateLabMachine
@@ -47,7 +47,7 @@ function C-VM-CreateLabMachine {
         [string]$SourceMachine = 'Deskmancer-Win11-24H2',
         [string]$SourceCheckpoint = '24H2-baseline',
         [string]$SourceGuestCredentialPath = 'C:\VantageVMLab\guest-credential.xml',
-        [string]$DotNetChannel = '10.0'
+        [string]$DotNetChannel = (Get-TargetedDotNetChannel)
     )
 
     $ErrorActionPreference = 'Stop'

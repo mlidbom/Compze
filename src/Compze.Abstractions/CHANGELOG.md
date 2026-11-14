@@ -4,6 +4,11 @@ All notable changes to Compze.Abstractions will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## 0.4.0-alpha
+
+- **Targets .NET 11 (`net11.0`) instead of .NET 10, and is compiled with runtime async:** the runtime, instead of state machines the compiler generates, suspends and resumes its async methods, so live stack traces show the real call chain. An application that uses this version must target .NET 11.
+- **Requires newer minor versions of other Compze packages:** Compze.DependencyInjection 0.9.0-alpha (was 0.8.0-alpha), Compze.Internals.SystemCE 0.8.0-internal (was 0.4.0-internal), Compze.Threading 0.12.0-alpha (was 0.9.0-alpha), Compze.TypeIdentifiers 0.3.0-alpha (was 0.2.0-alpha). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
+
 ## 0.3.0-alpha
 
 - **The tessaging content leaves: this package is the identity, time and serialization primitives now.** The tessage type system (the `ITessage` hierarchy, the `TessageTypes` families, `TessageId`, the publisher-identifying tevent wrapper, the publisher/sender contracts, and the tessage validation) moved to the new `Compze.Tessaging.Abstractions`. The endpoint contracts — `IEndpoint`, `IEndpointHost`, `EndpointId`, `EndpointConfiguration`, `ReadinessTypes`, `EndpointNotReadyWithinPatienceException`, and the discovery trio `EndpointAddress`/`IEndpointRegistry`/`IEndpointAddressAnnouncer` — moved into `Compze.Tessaging` itself (`Compze.Tessaging.Endpoints` and `Compze.Tessaging.Endpoints.Discovery`), as did `ITessagingSerializer` and `ITypermediaSerializer`. An endpoint is a tessaging concept — the immediate-consistency boundary of the consistency law — so `Compze.Abstractions` was never its truthful home. What remains here is what the rest of the framework genuinely shares: `EntityId` and its branches, the `Entity<>` base classes, `ValueWrapper<>`, `IUtcTimeTimeSource` with its testing overrides, and `IConfigurationParameterProvider`.

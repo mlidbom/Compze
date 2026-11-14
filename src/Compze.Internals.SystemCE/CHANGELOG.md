@@ -4,6 +4,11 @@ All notable changes to Compze.Internals.SystemCE will be documented in this file
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## 0.8.0-internal
+
+- **Targets .NET 11 (`net11.0`) instead of .NET 10, and is compiled with runtime async:** the runtime, instead of state machines the compiler generates, suspends and resumes its async methods, so live stack traces show the real call chain. An application that uses this version must target .NET 11.
+- **Requires newer minor versions of other Compze packages:** Compze.Threading 0.12.0-alpha (was 0.11.0-alpha). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
+
 ## 0.7.0-internal
 
 - `ThreadPoolCE.DescribeState()`: the thread pool's state in one line, for the message of a wait that timed out, where the question is whether the pool starved. It replaces two descriptions of the same thing, in Compze.Tessaging's named-pipe connection pool and in the test infrastructure, and Compze.Threading.Testing's gates use it in their timeouts.

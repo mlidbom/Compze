@@ -7,4 +7,13 @@
     <Version Condition="$(Version.Contains('-'))">$(Version).$(CompzeLocalPackSuffix)</Version>
     <Version Condition="!$(Version.Contains('-'))">$(Version)-$(CompzeLocalPackSuffix)</Version>
   </PropertyGroup>
+  <!-- Runtime async: since .NET 11 the runtime, instead of state machines the compiler generates, can suspend and resume
+       async methods, and live stack traces then show the real call chain. Every project that targets .NET compiles that
+       way. Build with /p:CompzeRuntimeAsync=false to compile the state machines instead: dotnet-dump's dumpasync, as of
+       version 10.0.750501, sees no async operation compiled with runtime async, so a flake hunt that needs dumpasync
+       turns it off (RUNTIME_ASYNC in .github/workflows/flake-hunt.yml). This runs in .targets, where the project's target
+       framework is known: netstandard2.0 has no runtime async. -->
+  <PropertyGroup Condition="'$(CompzeRuntimeAsync)' != 'false' And '$(TargetFrameworkIdentifier)' == '.NETCoreApp'">
+    <Features>$(Features);runtime-async=on</Features>
+  </PropertyGroup>
 </Project>

@@ -12,10 +12,18 @@ peak/avg run-queue (`r`), min idle CPU%, iowait, and the busiest samples — jud
 pending items) in their messages. Saturated looks like run-queue far above the CPU count
 with idle near 0, sustained; healthy looks like run-queue near/below it with idle to spare.
 
-Measured baseline (green run): **4 vCPU, idle never below 20%, run-queue ~2 avg / ~6 peak** — a comfortably
-loaded box, ~1.5× a dev machine on pure-CPU work. So a 10-second timeout there is something waiting on an
-event that isn't arriving, a code or DB cause — not the machine. (`COMPOSABLE_MACHINE_SLOWNESS=5.0` is
-conservative padding for perf-test thresholds only, not a measurement of the box.)
+Measured baseline, 2026-11-14: the 35 Linux test jobs of three green runs, each job testing four combinations on
+**4 logical CPUs**.
+
+- **Over the whole test run, idle averaged 38–78% and the run-queue 1.2–5.1.** MySql jobs are the busiest (idle
+  38–60%), SqliteMemory jobs the calmest (62–78%).
+- **Every green job has busy seconds too:** idle touches 0–8% in each, the run-queue peaks at 11–26, and at least ten
+  of a job's 240–430 seconds have a run-queue of 7 or more. So the peak and the minimum tell nothing by themselves.
+
+Judge by the averages, and by how long the busy stretch lasted. With that much idle on average, a 10-second timeout
+is something waiting on an event that isn't arriving, a code or DB cause — not the machine. The box takes ~1.5× a
+dev machine's time on pure-CPU work, by an earlier measurement. (`COMPOSABLE_MACHINE_SLOWNESS=5.0` is conservative
+padding for perf-test thresholds only, not a measurement of the box.)
 
 A second fingerprint the instruments catch: ThreadPool **pending work draining at ~1 item/second while live
 threads climb by ~1/second** is thread-pool starvation from *blocking* code — the machine is fine; the process
@@ -36,6 +44,8 @@ rather than theorise further:
 - **Read the dumps in the job log,** not the artifact: on failure CI prints each dump's thread pool, threads,
   pending awaits (`dumpasync` — where a stuck async operation is suspended) and stacks. Pool workers all parked
   in blocking waits, work items queued and the CPU idle is starvation; the parked frames name the culprits.
+  `dumpasync` sees only code compiled with the compiler's state machines, and Compze is compiled with runtime async
+  since .NET 11 (dotnet-dump 10.0.750501, 2026-11-14): a flake hunt that needs it sets `RUNTIME_ASYNC` to `false`.
 - **PostgreSQL logs lock waits and statements over a second** in CI; its container log is printed when the job
   ends. A timeout with nothing logged there was not waiting in the database.
 

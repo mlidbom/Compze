@@ -196,7 +196,7 @@ rows were run again. When the table was made the failures were a raw `IOExceptio
 
 - **A pure client composed as an application composes it could not connect,** over any transport: fixed, and
   the suite's pure test client is now composed that way, so it would catch it. See the changelog of
-  Compze.Tessaging 0.9.0-alpha.
+  Compze.Tessaging 0.10.0-alpha.
 - **Connections that died idle each failed one exchange:** fixed, above.
 - **A failure to reach the endpoint was thrown as unrelated exceptions:** fixed, with `EndpointUnreachableException`.
 
@@ -498,29 +498,35 @@ was not measured.
 2. The multi-process specifications on TCP and through a registry server, with specifications for a peer
    process's death.
 
-## The next merge of main: main targets .NET 11 (since 2026-11-14)
+## Where the branch stands against main (2026-11-14)
 
-Main was last merged in at fc61ab357, for the two CI changes. Since then the dotnet-11 branch is merged into main
-(be4e1cefe): `src/Directory.Build.props` sets `net11.0` for every project and no project file sets a target framework,
-runtime async is on, and `global.json` is in the repository's root and pins SDK 11.0.100. The dotnet-11 session is also
-preparing a release of every package from main. The merge has no conflicts in text (tried 2026-11-14), but it needs
-this by hand:
+Main is merged in up to aa880c122, "Prepare the release of every package: .NET 11". So the branch targets .NET 11, is
+compiled with runtime async, and has main's CI: one test job per persistence layer and transport.
 
-- **The lab program's project file** (`test/Compze.Tests.AcrossMachines.Lab`) still says
-  `<TargetFramework>net10.0</TargetFramework>`: drop the line.
-- **Three DevScripts commands that exist only on this branch name the output folder `bin\Debug\net10.0`:**
-  `C-Test-Combinations`, `C-VM-StartLabEndpoint` and `C-VM-ConverseWhileTheLabMachineVanishes`. Better than renaming
-  it to `net11.0`: have them find the folder, so the next target framework breaks nothing.
-- **The lab machine has only the .NET 10 runtime,** so a lab program built for .NET 11 doesn't start in it.
-  `C-VM-CreateLabMachine` copies the host's runtime of `-DotNetChannel`, which defaults to `10.0`: make it `11.0`, then
-  remove the lab machine and create it again, which takes a few minutes.
-- **Versions.** If main's release takes a version this branch has taken, the branch moves to the next, as it did for
-  Compze.Tessaging (0.9.0-alpha here, after main released 0.8.0-alpha). Unreleased on this branch: Compze.Tessaging
-  0.9.0-alpha, Compze.Tessaging.Transport.AspNetCore 0.4.0-alpha, Compze.Hosting 0.4.0-alpha, Compze.Hosting.Testing
-  0.4.0-alpha and Compze.Tessaging.Hosting.Testing 0.5.2-alpha.
-- **Then:** build, read the warnings (.NET 11's analyzers), run the full suite, and one lab run through the registry.
+- **The versions of the five packages the branch changes are the ones after main's,** since main's release took the
+  versions the branch had: Compze.Tessaging 0.10.0-alpha (main releases 0.9.0-alpha), Compze.Tessaging.Transport.AspNetCore
+  0.5.0-alpha (0.4.0-alpha), Compze.Hosting 0.5.0-alpha (0.4.0-alpha), Compze.Hosting.Testing 0.5.0-alpha (0.4.0-alpha)
+  and Compze.Tessaging.Hosting.Testing 0.6.1-alpha (0.6.0-alpha). Each changelog has the branch's entries in a section
+  of that version, above main's section, which is as main has it.
+- **Verified on .NET 11:** the build has no warnings, and the full suite passes over the HTTP, named-pipe and TCP
+  transports (4945 passed, none failed).
+- **The lab machine was created again with the .NET 11 runtime,** and nothing more of .NET. `C-VM-CreateLabMachine`
+  now gives the guest the runtime the repository's projects target.
+- **One lab run through the registry on .NET 11:** the lab endpoint was found 1.9 to 2.1 s after the registry server
+  started. With the lab program killed and started again 12 s later, the tuery asked meanwhile waited 24.4 s and was
+  answered at the new address: 12.5 s of that was the command copying and starting the lab program. With it away for
+  30 s, the tueries asked meanwhile failed after 30 s with `NoHandlerForTypermediaTypeException`, as the
+  handler-availability patience says.
 
-Merging once, after main's release of every package has landed, saves a second round of the versions.
+## What the branch's release still needs
+
+- **The lines on dependency floors in the five changelog sections.** `C-Prepare-Release` computes them, against each
+  package's previous version on nuget.org, so run it once main's release of every package is there: before that it
+  would compare with the versions from before .NET 11. It does not split these sections again: their versions have no
+  release tag, so it takes them as prepared.
+- **`C-SimulateRelease`,** which checks the result as the release will.
+- **If main releases one of the five again before the branch is merged,** the branch's version moves to the next, as
+  twice before.
 
 ## Not verified
 

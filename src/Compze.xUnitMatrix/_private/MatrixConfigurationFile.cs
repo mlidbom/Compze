@@ -51,7 +51,7 @@ class MatrixConfigurationFile
 
       return combinations;
 
-      static bool IsBlankOrComment(string trimmedLineText) => trimmedLineText.IsNullEmptyOrWhiteSpace() || trimmedLineText.StartsWith(Comment);
+      static bool IsBlankOrComment(string trimmedLineText) => trimmedLineText.IsNullEmptyOrWhiteSpace() || trimmedLineText.StartsWith(Comment, StringComparison.Ordinal);
    }
 
    string[] ReadLines()

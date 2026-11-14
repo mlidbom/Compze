@@ -4,6 +4,11 @@ All notable changes to Compze.Tessaging.Sqlite will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## 0.4.0-alpha
+
+- **Targets .NET 11 (`net11.0`) instead of .NET 10, and is compiled with runtime async:** the runtime, instead of state machines the compiler generates, suspends and resumes its async methods, so live stack traces show the real call chain. An application that uses this version must target .NET 11.
+- **Requires newer minor versions of other Compze packages:** Compze.Sql.Sqlite 0.5.0-alpha (was 0.4.0-alpha), Compze.Tessaging 0.9.0-alpha (was 0.5.0-alpha), Compze.Threading.Interprocess 0.7.0-alpha (was 0.5.1-alpha), Compze.TypeIdentifiers.Interning 0.2.0-alpha (was 0.1.1-alpha), Compze.TypeIdentifiers.Interning.Sqlite 0.4.0-alpha (was 0.3.0-alpha). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
+
 ## 0.3.0-alpha
 
 - **The peer registry stores in an auxiliary database of its own: `«domain-database-name».PeerRegistry`.** An advertisement recording must commit while a domain transaction is open — a handler's send can be waiting, inside its open transaction, for exactly the peer knowledge the recording provides — and sqlite's per-database write gate would queue a domain-database commit behind that very transaction for the sender's whole handler-availability patience. In its own database the recording commits behind its own write gate (`ISqlitePeerRegistryConnectionPool`). A production composition configures the connection string under the derived name, exactly as with the type-id interner's `«domain-database-name».TypeIdInterner`; the testing hosts draw it from the test database pool.

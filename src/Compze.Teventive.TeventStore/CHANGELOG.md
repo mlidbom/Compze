@@ -4,6 +4,11 @@ All notable changes to Compze.Teventive.TeventStore will be documented in this f
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## 0.6.0-alpha
+
+- **Targets .NET 11 (`net11.0`) instead of .NET 10, and is compiled with runtime async:** the runtime, instead of state machines the compiler generates, suspends and resumes its async methods, so live stack traces show the real call chain. An application that uses this version must target .NET 11.
+- **Requires newer minor versions of other Compze packages:** Compze.DependencyInjection 0.9.0-alpha (was 0.8.0-alpha), Compze.DocumentDb 0.3.0-alpha (was 0.2.0-alpha), Compze.Internals.Logging 0.7.0-alpha (was 0.4.1-alpha), Compze.Internals.SystemCE 0.8.0-internal (was 0.4.0-internal), Compze.Tessaging 0.9.0-alpha (was 0.5.0-alpha), Compze.Teventive 0.6.0-alpha (was 0.5.0-alpha), Compze.Teventive.TeventStore.Abstractions 0.6.0-alpha (was 0.5.0-alpha), Compze.Threading 0.12.0-alpha (was 0.9.0-alpha), Compze.TypeIdentifiers.DependencyInjection 0.2.0-alpha (was 0.1.0-alpha). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
+
 ## 0.5.0-alpha
 
 - The tevent store forwards taggregate tevents through the exactly-once publisher's `PublishAsync`, bridging in one deliberate place: the Teventive taggregate model raises tevents synchronously — from constructors and domain methods — and the store forwards them where they are raised, inside the caller's unit of work. The alternative, an async taggregate domain model, would be a redesign of Teventive itself, not a call-site choice.

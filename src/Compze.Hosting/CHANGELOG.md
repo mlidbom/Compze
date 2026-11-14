@@ -4,7 +4,7 @@ All notable changes to Compze.Hosting will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
-## 0.4.0-alpha
+## 0.5.0-alpha
 
 - **A registry that reaches across machines** (`Compze.Hosting.AcrossMachines`): what `InterprocessEndpointRegistry` is on one machine, for endpoints that no shared file can reach.
   - `EndpointRegistryServer.StartListeningAt(listenAt)` starts a server that keeps registries for processes on any number of machines. It listens at an IP address and a port; port 0 has the operating system pick one, which `ListensAt` tells.
@@ -13,6 +13,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
   - **Registries of different names share nothing but the server.** The name, with the server's address, is the boundary of an application suite.
   - **The server need not be up first.** A registry opened while the server is not there lists nothing, keeps trying to reach it every second, and announces what was announced to it once it does. The same goes for a server that goes away and comes back.
   - The endpoints converse over whatever transport they declare. The server is reached over TCP, and needs no ASP.NET Core.
+
+## 0.4.0-alpha
+
+- **Targets .NET 11 (`net11.0`) instead of .NET 10, and is compiled with runtime async:** the runtime, instead of state machines the compiler generates, suspends and resumes its async methods, so live stack traces show the real call chain. An application that uses this version must target .NET 11.
+- **Requires newer minor versions of other Compze packages:** Compze.Abstractions 0.4.0-alpha (was 0.3.0-alpha), Compze.DependencyInjection 0.9.0-alpha (was 0.8.0-alpha), Compze.Internals.Logging 0.7.0-alpha (was 0.4.1-alpha), Compze.Internals.SystemCE 0.8.0-internal (was 0.4.0-internal), Compze.InterprocessObject 0.9.0-alpha (was 0.7.1-alpha), Compze.Tessaging 0.9.0-alpha (was 0.5.0-alpha), Compze.Threading 0.12.0-alpha (was 0.9.0-alpha). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
 
 ## 0.3.0-alpha
 

@@ -62,6 +62,12 @@ class SerializationRules
          TypeNameHandling = _omitsTypeNames ? TypeNameHandling.None : TypeNameHandling.All,
          Formatting = Formatting.Indented,
          ContractResolver = new MustContractResolver(visibility, this),
+         //todo: Write the $type annotations' type names without assembly versions (Magnus, 2026-11-14: probably, not yet). Generic
+         //   arguments are named by their assembly-qualified names: a DeepEqual failure on two dictionaries shows "System.Private.CoreLib,
+         //   Version=11.0.0.0, Culture=neutral, PublicKeyToken=..." six times, though the message's header already names the type as
+         //   Dictionary<System.String,System.Int32>. That is noise to whoever reads the message, and it made a specification's
+         //   expected message change with each .NET version. WriteOnlySerializationBinder could override BindToName to write the
+         //   names without versions, or in the form the header uses.
          SerializationBinder = new WriteOnlySerializationBinder(),
          ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
          Converters =

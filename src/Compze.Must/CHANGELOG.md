@@ -4,6 +4,11 @@ All notable changes to Compze.Must will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## 0.9.0-alpha
+
+- **Targets .NET 11 (`net11.0`) instead of .NET 10, and is compiled with runtime async:** the runtime, instead of state machines the compiler generates, suspends and resumes its async methods, so live stack traces show the real call chain. An application that uses this version must target .NET 11.
+- **Requires newer minor versions of other Compze packages:** Compze.Internals.SystemCE 0.8.0-internal (was 0.6.2-internal), Compze.Threading 0.12.0-alpha (was 0.10.1-alpha). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
+
 ## 0.8.0-alpha
 
 - **Breaking: the collection assertions take their element type from the subject.** `HaveCount`, `BeEmpty`, `NotBeEmpty`, `SequenceEqual` and `Contain` take the subject as an `IEnumerable<T>` of its element type, and return the context as one. So the expected values need no element type of their own: `SequenceEqual(["a", "b"])` on a `List<string?>` no longer warns CS8631, and `SequenceEqual([])`, expected values of a narrower type than the subject's elements, and values of several types compile, where they gave CS0411 or CS0311. What a consumer may meet: the assertions chained after one, and its `Actual`, see an `IEnumerable<T>`, not the subject's own collection type, such as a `List<T>`; a struct collection, such as an `ImmutableArray<T>`, reaches them through `.AsEnumerable()`, and a subject that is only a non-generic `IEnumerable` through `.Cast<object>()`; and `HaveCount`, `BeEmpty` and `NotBeEmpty` on a string return its characters, so string assertions can't follow them. Code compiled against an earlier version must be recompiled.

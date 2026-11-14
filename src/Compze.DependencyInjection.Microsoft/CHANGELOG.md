@@ -4,6 +4,12 @@ All notable changes to Compze.DependencyInjection.Microsoft will be documented i
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## 0.6.0-alpha
+
+- **Targets .NET 11 (`net11.0`) instead of .NET 10, and is compiled with runtime async:** the runtime, instead of state machines the compiler generates, suspends and resumes its async methods, so live stack traces show the real call chain. An application that uses this version must target .NET 11.
+- No longer references Microsoft.Extensions.DependencyInjection.Abstractions, which .NET 11's shared framework includes.
+- **Requires newer minor versions of other Compze packages:** Compze.DependencyInjection 0.9.0-alpha (was 0.8.0-alpha), Compze.Internals.Logging 0.7.0-alpha (was 0.4.1-alpha), Compze.Internals.SystemCE 0.8.0-internal (was 0.4.0-internal), Compze.Threading 0.12.0-alpha (was 0.9.0-alpha). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
+
 ## 0.5.1-alpha
 
 - `MicrosoftContainer.CreateCloneContainerBuilder` is `protected`: only the base class calls it, so it leaves the public surface. Breaking for anyone who called it directly, which the narrowing established nobody does.

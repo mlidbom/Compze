@@ -54,7 +54,7 @@ sealed class ConsoleLogBackend : ILogBackend
          if(c == '{')
          {
             if(i + 1 < template.Length && template[i + 1] == '{') { output.Append('{'); i += 2; continue; }
-            var holeEnd = template.IndexOf('}', i + 1);
+            var holeEnd = template.IndexOf('}', i + 1, StringComparison.Ordinal);
             if(holeEnd < 0) { output.Append(c); i++; continue; }
             AppendHoleValue(output, template.AsSpan(i + 1, holeEnd - i - 1), holeIndex < values.Count ? values[holeIndex] : null);
             holeIndex++;

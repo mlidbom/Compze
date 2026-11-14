@@ -4,6 +4,11 @@ All notable changes to Compze.Teventive will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## 0.6.0-alpha
+
+- **Targets .NET 11 (`net11.0`) instead of .NET 10, and is compiled with runtime async:** the runtime, instead of state machines the compiler generates, suspends and resumes its async methods, so live stack traces show the real call chain. An application that uses this version must target .NET 11.
+- **Requires newer minor versions of other Compze packages:** Compze.Abstractions 0.4.0-alpha (was 0.3.0-alpha), Compze.DependencyInjection 0.9.0-alpha (was 0.8.0-alpha), Compze.Internals.SystemCE 0.8.0-internal (was 0.7.0-internal), Compze.Tessaging.Abstractions 0.6.0-alpha (was 0.5.0-alpha), Compze.Threading 0.12.0-alpha (was 0.11.0-alpha), Compze.TypeIdentifiers 0.3.0-alpha (was 0.2.0-alpha). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
+
 ## 0.5.1-alpha
 
 - **`IMutableTeventDispatcher` and `ITeventSubscriber` are safe to use from several threads at once:** to dispatch, to register handlers and to dispose subscribers. Before, two dispatches on different threads could corrupt the dispatcher's cache of the handlers each tevent type routes to ("Operations that change non-concurrent collections must have exclusive access"), and a registration or disposal racing a dispatch could corrupt its lists of subscriptions. Handlers still run synchronously on the dispatching thread, outside the dispatcher's lock; each dispatch calls the handlers subscribed when it began. A dispatch of a tevent whose type the dispatcher has already resolved takes no lock at all, and is as fast as before.

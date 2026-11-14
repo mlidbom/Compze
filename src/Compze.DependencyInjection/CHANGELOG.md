@@ -4,6 +4,11 @@ All notable changes to Compze.DependencyInjection will be documented in this fil
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## 0.9.0-alpha
+
+- **Targets .NET 11 (`net11.0`) instead of .NET 10, and is compiled with runtime async:** the runtime, instead of state machines the compiler generates, suspends and resumes its async methods, so live stack traces show the real call chain. An application that uses this version must target .NET 11.
+- **Requires newer minor versions of other Compze packages:** Compze.Internals.Logging 0.7.0-alpha (was 0.4.1-alpha), Compze.Internals.SystemCE 0.8.0-internal (was 0.4.0-internal), Compze.Threading 0.12.0-alpha (was 0.9.0-alpha). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
+
 ## 0.8.0-alpha
 
 - **The async unit-of-work envelope**: `ExecuteUnitOfWorkAsync` (action and result forms) pairs one fresh scope with one transaction whose ambient flows across the function's awaits — one unit of work legitimately migrates across pool threads, its identity its transaction — and `ExecuteInIsolatedScopeAsync` (both forms) is its no-transaction sibling for reads. See `dev_docs/unit-of-work.md`, which now records the async-flow-safety contract and the session-affinity consequence: session usage guards assert transaction affinity, never thread affinity.

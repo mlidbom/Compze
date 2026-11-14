@@ -4,10 +4,15 @@ All notable changes to Compze.Hosting.Testing will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## 0.5.0-alpha
+
+- **`Transport.Tcp`**: a combination that names `Tcp` runs its endpoints on the TCP transport of Compze.Tessaging 0.10.0-alpha, listening on the loopback address (`CurrentTestsEndpointTransport`).
+- **`CurrentTestsTypermediaSerializer()`** registers the typermedia serializer of the current test's serializer and no other: all that a pure client's composition declares.
+
 ## 0.4.0-alpha
 
-- **`Transport.Tcp`**: a combination that names `Tcp` runs its endpoints on the TCP transport of Compze.Tessaging 0.9.0-alpha, listening on the loopback address (`CurrentTestsEndpointTransport`).
-- **`CurrentTestsTypermediaSerializer()`** registers the typermedia serializer of the current test's serializer and no other: all that a pure client's composition declares.
+- **Targets .NET 11 (`net11.0`) instead of .NET 10, and is compiled with runtime async:** the runtime, instead of state machines the compiler generates, suspends and resumes its async methods, so live stack traces show the real call chain. An application that uses this version must target .NET 11.
+- **Requires newer minor versions of other Compze packages:** Compze.Abstractions 0.4.0-alpha (was 0.3.0-alpha), Compze.DbPool 0.3.0-alpha (was 0.2.2-alpha), Compze.DbPool.MicrosoftSql 0.3.0-alpha (was 0.2.2-alpha), Compze.DbPool.MySql 0.3.0-alpha (was 0.2.2-alpha), Compze.DbPool.PostgreSql 0.3.0-alpha (was 0.2.2-alpha), Compze.DbPool.Sqlite 0.3.0-alpha (was 0.2.2-alpha), Compze.DependencyInjection 0.9.0-alpha (was 0.8.0-alpha), Compze.DependencyInjection.Autofac 0.6.0-alpha (was 0.5.1-alpha), Compze.DependencyInjection.Autofac.Extensions.Hosting 0.5.0-alpha (was 0.4.0-alpha), Compze.DependencyInjection.DryIoc 0.6.0-alpha (was 0.5.1-alpha), Compze.DependencyInjection.DryIoc.Extensions.Hosting 0.5.0-alpha (was 0.4.0-alpha), Compze.DependencyInjection.LightInject 0.6.0-alpha (was 0.5.1-alpha), Compze.DependencyInjection.LightInject.Extensions.Hosting 0.5.0-alpha (was 0.4.0-alpha), Compze.DependencyInjection.Microsoft 0.6.0-alpha (was 0.5.1-alpha), Compze.DependencyInjection.Microsoft.Extensions.Hosting 0.5.0-alpha (was 0.4.0-alpha), Compze.Hosting 0.4.0-alpha (was 0.3.0-alpha), Compze.Internals.SystemCE 0.8.0-internal (was 0.4.0-internal), Compze.Internals.Testing 0.3.0-alpha (was 0.1.1-alpha), Compze.Serialization.Newtonsoft 0.5.0-alpha (was 0.4.0-alpha), Compze.Sql.MicrosoftSql 0.5.0-alpha (was 0.4.0-alpha), Compze.Sql.MySql 0.5.0-alpha (was 0.4.0-alpha), Compze.Sql.PostgreSql 0.5.0-alpha (was 0.4.0-alpha), Compze.Sql.Sqlite 0.5.0-alpha (was 0.4.0-alpha), Compze.Tessaging 0.9.0-alpha (was 0.5.0-alpha), Compze.Tessaging.Transport.AspNetCore 0.4.0-alpha (was 0.3.0-alpha), Compze.TypeIdentifiers 0.3.0-alpha (was 0.2.0-alpha). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
 
 ## 0.3.0-alpha
 

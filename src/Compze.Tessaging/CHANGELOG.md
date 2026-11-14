@@ -4,7 +4,7 @@ All notable changes to Compze.Tessaging will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
-## 0.9.0-alpha
+## 0.10.0-alpha
 
 - **A TCP transport: `TcpEndpointTransport(listenOn)`** (`Compze.Tessaging.Transport.Tcp`), declared where an endpoint would declare `NamedPipeEndpointTransport()`. It reaches endpoints on other machines and needs no web stack, only the base runtime.
   - The endpoint listens on the one IP address the declaration names, at a port the operating system picks each time it starts, and that address and port are the address it has and announces. An address that stands for every network interface, such as `IPAddress.Any`, is refused when the endpoint is built: nothing could connect to the address the endpoint would announce.
@@ -12,7 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
   - It speaks the named-pipe transport's wire format, and shares everything with that transport but how a connection is listened for and opened. A connection whose peer disappeared without closing it, such as a machine that was turned off, is ended by TCP keepalive after about ten seconds of silence.
   - A connection that ended while it sat idle between exchanges is discarded when it is next needed, and a fresh one opened, so a peer whose machine was paused and resumed, or cut off from the network and connected again, is conversed with again at once.
   - Tried between two machines, a Hyper-V host and its guest, whose only .NET is the base runtime: with the guest paused, disconnected or turned off, a tuery fails after about ten seconds, and the first tuery after the guest is back is answered.
-  - Discovery across machines is not part of this package: `InterprocessEndpointRegistry` serves one machine. Compze.Hosting 0.4.0-alpha has a registry that reaches across machines, `NetworkEndpointRegistry` with its `EndpointRegistryServer`.
+  - Discovery across machines is not part of this package: `InterprocessEndpointRegistry` serves one machine. Compze.Hosting 0.5.0-alpha has a registry that reaches across machines, `NetworkEndpointRegistry` with its `EndpointRegistryServer`.
 - **A request to an endpoint that cannot be reached throws `EndpointUnreachableException`** (`Compze.Tessaging.Endpoints`), over every transport: no connection to the endpoint's address could be made, or the connection ended before the answer arrived. The transport's own exception, where there is one, is its `InnerException`, and its message says which of the two happened, since only in the second may the endpoint have received the request.
   - Until now the same condition surfaced as one of four unrelated exceptions, by transport and by where it happened: a `TessageDispatchingFailedException` for a connect that timed out, whose message spoke of a remote exception although nothing remote had happened, and a raw `IOException`, `SocketException` or `HttpRequestException` otherwise. Code that caught any of those for this condition catches `EndpointUnreachableException` instead.
   - `TessageDispatchingFailedException` is still what a handler's exception on the serving side arrives as.
@@ -22,7 +22,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 - **A pure client can declare the TCP or the named-pipe transport:** `TcpEndpointTransportClient()` and `NamedPipeEndpointTransportClient()`, for `TypermediaClientBuilder.ConfigureTransport`. Until now only the HTTP transport offered a pure client its client side.
 - **A pure client composed as an application composes it can connect.** With only the typermedia serializer in its container, `TypermediaClient.ConnectAsync` threw an `InvalidOperationException` saying that `EndpointInformationQuery` is not mapped, whatever the transport: the type mappings of the query a client discovers an endpoint's typermedia with were declared only in passing, by the tessaging serializer, which a pure client does not register. The discovery query transport now declares them itself.
 - The named-pipe transport writes each frame to its pipe in one write, where it wrote every field with a write of its own. What crosses the pipe is unchanged.
-- An endpoint that declares no transport protocol is told the three declarations there are. The message recommended `endpointBuilder.AspNetCoreEndpointTransport()` alone, which did not exist until Compze.Tessaging.Transport.AspNetCore 0.4.0-alpha.
+- An endpoint that declares no transport protocol is told the three declarations there are. The message recommended `endpointBuilder.AspNetCoreEndpointTransport()` alone, which did not exist until Compze.Tessaging.Transport.AspNetCore 0.5.0-alpha.
+
+## 0.9.0-alpha
+
+- **Targets .NET 11 (`net11.0`) instead of .NET 10, and is compiled with runtime async:** the runtime, instead of state machines the compiler generates, suspends and resumes its async methods, so live stack traces show the real call chain. An application that uses this version must target .NET 11.
+- **Requires newer minor versions of other Compze packages:** Compze.Abstractions 0.4.0-alpha (was 0.3.0-alpha), Compze.DependencyInjection 0.9.0-alpha (was 0.8.0-alpha), Compze.Internals.Logging 0.7.0-alpha (was 0.6.0-alpha), Compze.Internals.SystemCE 0.8.0-internal (was 0.7.0-internal), Compze.Tessaging.Abstractions 0.6.0-alpha (was 0.5.0-alpha), Compze.Threading 0.12.0-alpha (was 0.11.0-alpha), Compze.TypeIdentifiers 0.3.0-alpha (was 0.2.0-alpha), Compze.TypeIdentifiers.DependencyInjection 0.2.0-alpha (was 0.1.0-alpha). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
 
 ## 0.8.0-alpha
 

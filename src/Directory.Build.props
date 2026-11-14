@@ -8,6 +8,13 @@
 	<PropertyGroup>
       <ImplicitUsings>enable</ImplicitUsings>
 	</PropertyGroup>
+  <!-- Every project targets .NET 11, unless its own project file says otherwise, as the three netstandard2.0 libraries do:
+       Compze.Contracts, Compze.Unit and Compze.Underscore. And every project compiles with the newest C# its compiler has,
+       which is the same everywhere because global.json pins the SDK. -->
+  <PropertyGroup>
+    <TargetFramework>net11.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
   <!-- Enable latest analyzer rules for all projects -->
   <PropertyGroup>
     <AnalysisLevel>latest-all</AnalysisLevel>

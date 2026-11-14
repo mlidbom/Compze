@@ -1,7 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
     <Version>0.6.0-beta</Version>
     <Description>Plugs the hole in the BCL where Unit should be.</Description>

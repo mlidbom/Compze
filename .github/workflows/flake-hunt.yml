@@ -6,6 +6,12 @@
 # To hunt a flake: create a branch named flake-hunt/<what is hunted>, set the hunt below - the combination in the matrix, the
 # test project and the number of runs in the env block - and push. Every push of the branch is one hunt. ci.yml ignores
 # flake-hunt/** branches, so a hunt does not also queue the full matrix ahead of its own runners.
+#
+# RUNTIME_ASYNC in the env block says how the hunted code is compiled. "true", as everything is compiled since .NET 11, has
+# the runtime suspend and resume async methods. "false" has the compiler generate state machines instead, which is what
+# dumpasync needs to show where a stuck async operation is suspended: as of dotnet-dump 10.0.750501 it sees nothing compiled
+# with runtime async. A hunt with "false" runs differently compiled code, so a flake that depends on runtime async's timing
+# may not show in it.
 
 name: Flake hunt
 
@@ -48,6 +54,7 @@ jobs:
     env:
       HUNTED_TEST_PROJECT: test/Compze.Tessaging.InternalSpecifications/Compze.Tessaging.InternalSpecifications.csproj
       RUNS_PER_RUNNER: "20"
+      RUNTIME_ASYNC: "true"
       COMPOSABLE_MACHINE_SLOWNESS: "5.0"
       COMPOSABLE_PERFORMANCE_TESTS_STRESS_TEST_ONLY: "true"
       DOTNET_CLI_TELEMETRY_OPTOUT: "1"
@@ -59,7 +66,7 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v5
         with:
-          dotnet-version: '10.0.x'
+          dotnet-version: '11.0.x'
 
       - if: matrix.persistence == 'PgSql'
         uses: ./.github/actions/postgresql-logs-lock-waits
@@ -72,7 +79,7 @@ jobs:
           echo "COMPZE_TEST_DIAGNOSTICS_DIRECTORY=$GITHUB_WORKSPACE/TestResults/diagnostics" >> "$GITHUB_ENV"
 
       - name: Build the hunted test project
-        run: dotnet build "$HUNTED_TEST_PROJECT" --configuration Debug
+        run: dotnet build "$HUNTED_TEST_PROJECT" --configuration Debug -p:CompzeRuntimeAsync=$RUNTIME_ASYNC
 
       - name: Hunt
         env:

@@ -3,7 +3,7 @@
        beside the tool rather than under test/, whose projects are the tests of Compze's own libraries. -->
   <PropertyGroup>
     <RootNamespace>PostReleaseBindingCheck.Specifications</RootNamespace>
-    <TargetFramework>net10.0</TargetFramework>
+    <TargetFramework>net11.0</TargetFramework>
     <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
     <ImplicitUsings>enable</ImplicitUsings>

@@ -4,11 +4,16 @@ All notable changes to Compze.Tessaging.Hosting.Testing will be documented in th
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
-## 0.5.2-alpha
+## 0.6.1-alpha
 
-- The pure test client (`TypermediaTestClient`) speaks the TCP transport when the current test's combination names `Tcp`. Requires Compze.Tessaging 0.9.0-alpha and Compze.Hosting.Testing 0.4.0-alpha.
-- **The pure test client is composed as an application composes a pure client:** its container holds the typermedia serializer alone, where it held every feature's serializer, and its transport's client side is declared through the registration each transport offers an application (`CurrentTestsEndpointTransportClient`). The extra serializers hid that a pure client composed without them could not connect, which Compze.Tessaging 0.9.0-alpha fixes.
+- The pure test client (`TypermediaTestClient`) speaks the TCP transport when the current test's combination names `Tcp`. Requires Compze.Tessaging 0.10.0-alpha and Compze.Hosting.Testing 0.5.0-alpha.
+- **The pure test client is composed as an application composes a pure client:** its container holds the typermedia serializer alone, where it held every feature's serializer, and its transport's client side is declared through the registration each transport offers an application (`CurrentTestsEndpointTransportClient`). The extra serializers hid that a pure client composed without them could not connect, which Compze.Tessaging 0.10.0-alpha fixes.
 - `TypermediaTestClient.ConnectTo` disposes the client it composed when connecting fails, where it left it undisposed.
+
+## 0.6.0-alpha
+
+- **Targets .NET 11 (`net11.0`) instead of .NET 10, and is compiled with runtime async:** the runtime, instead of state machines the compiler generates, suspends and resumes its async methods, so live stack traces show the real call chain. An application that uses this version must target .NET 11.
+- **Requires newer minor versions of other Compze packages:** Compze.Abstractions 0.4.0-alpha (was 0.3.0-alpha), Compze.DependencyInjection 0.9.0-alpha (was 0.8.0-alpha), Compze.DocumentDb.MicrosoftSql 0.3.0-alpha (was 0.2.1-alpha), Compze.DocumentDb.MySql 0.3.0-alpha (was 0.2.1-alpha), Compze.DocumentDb.PostgreSql 0.3.0-alpha (was 0.2.1-alpha), Compze.DocumentDb.Sqlite 0.3.0-alpha (was 0.2.1-alpha), Compze.Hosting.Testing 0.4.0-alpha (was 0.3.0-alpha), Compze.Internals.SystemCE 0.8.0-internal (was 0.7.0-internal), Compze.Internals.Testing 0.3.0-alpha (was 0.2.0-alpha), Compze.Sql.MicrosoftSql 0.5.0-alpha (was 0.4.0-alpha), Compze.Sql.MySql 0.5.0-alpha (was 0.4.0-alpha), Compze.Sql.PostgreSql 0.5.0-alpha (was 0.4.0-alpha), Compze.Sql.Sqlite 0.5.0-alpha (was 0.4.0-alpha), Compze.Tessaging 0.9.0-alpha (was 0.6.4-alpha), Compze.Tessaging.MicrosoftSql 0.4.0-alpha (was 0.3.0-alpha), Compze.Tessaging.MySql 0.4.0-alpha (was 0.3.0-alpha), Compze.Tessaging.PostgreSql 0.4.0-alpha (was 0.3.1-alpha), Compze.Tessaging.Sqlite 0.4.0-alpha (was 0.3.0-alpha), Compze.Tessaging.Transport.AspNetCore 0.4.0-alpha (was 0.3.0-alpha), Compze.Teventive.TeventStore.Abstractions 0.6.0-alpha (was 0.5.0-alpha), Compze.Teventive.TeventStore.MicrosoftSql 0.3.0-alpha (was 0.2.1-alpha), Compze.Teventive.TeventStore.MySql 0.3.0-alpha (was 0.2.1-alpha), Compze.Teventive.TeventStore.PostgreSql 0.3.0-alpha (was 0.2.1-alpha), Compze.Teventive.TeventStore.Sqlite 0.3.0-alpha (was 0.2.1-alpha), Compze.Threading 0.12.0-alpha (was 0.11.0-alpha), Compze.TypeIdentifiers.Interning.MicrosoftSql 0.3.0-alpha (was 0.2.1-alpha), Compze.TypeIdentifiers.Interning.MySql 0.3.0-alpha (was 0.2.1-alpha), Compze.TypeIdentifiers.Interning.PostgreSql 0.3.0-alpha (was 0.2.1-alpha), Compze.TypeIdentifiers.Interning.Sqlite 0.4.0-alpha (was 0.3.0-alpha). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
 
 ## 0.5.1-alpha
 

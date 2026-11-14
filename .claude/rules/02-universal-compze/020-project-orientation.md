@@ -17,7 +17,7 @@ A .NET framework for building expressive domains through:
 
 ## Tech stack
 
-- **Language**: C# (.NET 10, see `src/global.json`)
+- **Language**: C# (.NET 11; `global.json` at the repository root pins the SDK)
 - **Testing**: xUnit v3 (via `Compze.xUnit`, `Compze.xUnitBDD`, `Compze.xUnitMatrix`)
 - **Build System**: MSBuild (.NET SDK), solution file: `Compze.AllProjects.slnx`
 - **References**: FlexRef — auto-switches between `ProjectReference` and `PackageReference` depending on which projects are in the current solution
