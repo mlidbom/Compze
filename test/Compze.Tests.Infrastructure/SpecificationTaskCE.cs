@@ -6,7 +6,11 @@ public static class SpecificationTaskCE
    extension(Task @this)
    {
       ///<summary>True if this task completes, however it completes, within <paramref name="patience"/>. Never throws what the task completes with.</summary>
-      public async Task<bool> CompletesWithinAsync(TimeSpan patience) => await Task.WhenAny(@this, Task.Delay(patience)) == @this;
+      public async Task<bool> CompletesWithinAsync(TimeSpan patience)
+      {
+         await @this.WaitAsync(patience).ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing);
+         return @this.IsCompleted;
+      }
 
       ///<summary>Awaits this task's completion, however it completes, within <paramref name="patience"/>: a failure or cancellation is an outcome the<br/>
       /// specification asserts on afterwards, not one this throws. Throws a <see cref="TimeoutException"/> if the task does not complete in time.</summary>

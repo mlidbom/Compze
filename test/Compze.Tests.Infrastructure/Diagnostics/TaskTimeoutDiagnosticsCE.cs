@@ -14,7 +14,8 @@ public static class TaskTimeoutDiagnosticsCE
       /// dump file and the thread pool's state at the moment the timeout ran out.</summary>
       public async Task WaitAsyncDumpingTheProcessOnTimeout(TimeSpan timeout, string whatIsAwaited)
       {
-         if(await Task.WhenAny(@this, Task.Delay(timeout)).caf() == @this)
+         await @this.WaitAsync(timeout).ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing);
+         if(@this.IsCompleted)
          {
             await @this.caf();
             return;
