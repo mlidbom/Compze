@@ -110,10 +110,10 @@ abstract class TypeIdentifier : IEquatable<TypeIdentifier>
    {
       elementTypePart = typePart;
       rank = 0;
-      if(!typePart.EndsWith(']'))
+      if(!typePart.EndsWith(']', StringComparison.Ordinal))
          return false;
 
-      var lastGroupStart = typePart.LastIndexOf('[');
+      var lastGroupStart = typePart.LastIndexOf('[', StringComparison.Ordinal);
       var insideLastGroup = typePart[(lastGroupStart + 1)..^1];
       if(insideLastGroup.Any(c => c != ','))
          return false;

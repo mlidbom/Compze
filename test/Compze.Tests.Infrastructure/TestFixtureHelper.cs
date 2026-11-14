@@ -49,7 +49,7 @@ public static class TestFixtureHelper
          if (logEvent.Properties.TryGetValue("SourceContext", out var sourceContext))
          {
             var fullName = sourceContext.ToString().Trim('"');
-            var shortName = fullName.Substring(fullName.LastIndexOf('.') + 1);
+            var shortName = fullName.Substring(fullName.LastIndexOf('.', StringComparison.Ordinal) + 1);
 
             var callerMember = "";
             if (logEvent.Properties.TryGetValue("CallerMember", out var callerProp))

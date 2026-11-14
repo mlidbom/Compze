@@ -44,7 +44,7 @@ static class LongTextFiles
    static string StartOf(string text)
    {
       var start = text[..Math.Min(CharactersShownOfALongText, MustSerialization.LongestTextShownInFull)];
-      var lastLineBreak = start.LastIndexOf('\n');
+      var lastLineBreak = start.LastIndexOf('\n', StringComparison.Ordinal);
       return lastLineBreak > 0 ? start[..lastLineBreak].TrimEnd('\r') : start;
    }
 
