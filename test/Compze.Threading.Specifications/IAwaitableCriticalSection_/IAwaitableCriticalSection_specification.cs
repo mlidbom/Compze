@@ -344,4 +344,58 @@ public class IAwaitableCriticalSection_specification : UniversalTestBase
          result.Must().Be(0);
       }
    }
+
+   public class TryUpdateWhen_with_Func : IAwaitableCriticalSection_specification
+   {
+      [IAwaitableCriticalSectionMatrix] public void Returns_true_and_the_value_when_condition_is_immediately_true()
+      {
+         var criticalSection = _factory.Create();
+         criticalSection.TryUpdateWhen(() => true, () => 42, out var result).Must().BeTrue();
+         result.Must().Be(42);
+      }
+
+      [IAwaitableCriticalSectionMatrix] public void Returns_true_and_the_value_when_condition_becomes_true_within_timeout()
+      {
+         var criticalSection = _factory.Create();
+         var conditionMet = false;
+         var updateCompleted = IThreadGate.NewOpen(WaitTimeout.Seconds(5), "updateCompleted");
+
+         _runner.Run(() =>
+         {
+            criticalSection.TryUpdateWhen(() => conditionMet, () => 99, out var value).Must().BeTrue();
+            value.Must().Be(99);
+            updateCompleted.AwaitPassThrough();
+         });
+
+         updateCompleted.TryAwaitPassedThroughCountEqualTo(1, WaitTimeout.Milliseconds(100)).Must().BeFalse();
+         criticalSection.Update(() => conditionMet = true);
+         updateCompleted.AwaitPassedThroughCountEqualTo(1);
+      }
+
+      [IAwaitableCriticalSectionMatrix] public void Returns_false_and_default_without_executing_func_when_condition_never_becomes_true_within_timeout()
+      {
+         var criticalSection = _factory.Create(WaitTimeout.Milliseconds(100));
+         var funcExecuted = false;
+         criticalSection.TryUpdateWhen(() => false, () => funcExecuted = true, out var result).Must().BeFalse();
+         result.Must().BeFalse();
+         funcExecuted.Must().BeFalse();
+      }
+
+      [IAwaitableCriticalSectionMatrix] public void Wakes_a_thread_waiting_for_a_condition_that_func_made_true()
+      {
+         var criticalSection = _factory.Create();
+         var conditionMet = false;
+         var waitCompleted = IThreadGate.NewOpen(WaitTimeout.Seconds(5), "waitCompleted");
+
+         _runner.Run(() =>
+         {
+            criticalSection.TryAwait(() => conditionMet).Must().BeTrue();
+            waitCompleted.AwaitPassThrough();
+         });
+
+         waitCompleted.TryAwaitPassedThroughCountEqualTo(1, WaitTimeout.Milliseconds(100)).Must().BeFalse();
+         criticalSection.TryUpdateWhen(() => true, () => conditionMet = true, out _).Must().BeTrue();
+         waitCompleted.AwaitPassedThroughCountEqualTo(1);
+      }
+   }
 }
