@@ -13,11 +13,22 @@ The other projects' instructions are JAStudio's `090-claude-owns-the-jastudio-mc
 Deskmancer's `090-claude-owns-its-verification-tools.md` (2026-11-12), both in `.claude/rules/02-universal-local/` of
 their repositories. This rule follows their wording, the commit clause included.
 
-## Not confirmed by Magnus when written
+## What Magnus said to each part, the same day
 
-- **The list of tools.** It is the agent's reading of which tools were built by agents, for agents.
-- **Which commands he runs himself.** The rule leaves the interface of every DevScripts command that is older than the
-  listed tools with him, on the assumption that he and others run them. Deskmancer's rule has it the other way round:
-  there a tool is the agent's until he says that he uses it.
-- **The last exclusion,** this computer's own settings. It is there because the lab needed a rule in the host's
-  firewall, which was added on his word.
+He was shown the list of tools, and asked what more it would help the agent to own. His answers:
+
+- **Pushing,** asked for as a standing approval to push the branch being worked on, never `main`: "Always OK regardless
+  of branch. Nothing push does is irreversible."
+- **The DevScripts commands' interfaces,** asked for the way Deskmancer's rule has it, where a tool is the agent's until
+  he says he uses it. He offered less: "Is it enough to be free to add to them, without changing the default behaviours,
+  and asking me if you want a tool to, for instance, become more verbose by default?" The agent said that it is.
+- **The specification harness:** "Absolutely. And this is much wider than just that project!" He meant that clearly
+  beneficial refactorings the agent discovers are its to make, public APIs of published packages excepted. That wider
+  point was left for a discussion of its own, and is not in this rule.
+- **The firewall rule for the Hyper-V guests,** asked for as leave to add it again if a restart loses it: "Wider. All
+  hyper-v config and changes you need are yours. As long as you don't mess up things for deskmancer."
+
+## What looks removable but isn't
+
+- **"A release is not a push."** His approval of pushing says nothing about publishing packages, which can't be undone.
+- **The limit for Deskmancer.** Its virtual machines are on the same Hyper-V, and its sessions depend on them as they are.

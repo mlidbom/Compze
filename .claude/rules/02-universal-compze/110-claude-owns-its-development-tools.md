@@ -7,6 +7,12 @@ ones". Today they are:
 
 - the across-machines lab: the `C-VM-*` commands, the lab program (`test/Compze.Tests.AcrossMachines.Lab`), and the lab
   machine with its checkpoint and its folder (`C:\CompzeVMLab`);
+- Hyper-V on this computer: all its configuration, and the changes to the computer that the virtual machines need, such
+  as the firewall rule that lets them in. The one limit: nothing is messed up for Deskmancer, which has its own virtual
+  machines there. Magnus: "All hyper-v config and changes you need are yours. As long as you don't mess up things for
+  deskmancer.";
+- the specification harness, as distinct from what the specifications claim: `Compze.Tests.Infrastructure`, and the
+  endpoint host process of the multi-process specifications (`test/Compze.Tests.SameMachine.EndpointHostProcess`);
 - `C-Test-Combinations`, which runs the built tests against other pluggable-component combinations than those in
   Magnus's own combinations file;
 - the instruments for hunting flakes that the rule on diagnosing CI flakiness describes: the flake-hunt workflow,
@@ -25,16 +31,20 @@ What Claude adds to develop or verify its own work joins the list.
   work that needed them, so each kind of change is easy to follow. They need no go-ahead from Magnus to be committed. The
   usual checks still come first: the build has no warnings, and what the change affects has been run.
 
+**Pushing is always fine, whatever the branch:** to have CI run the full matrix, or for any other reason. Magnus
+(2026-11-14): "Always OK regardless of branch. Nothing push does is irreversible." A release is not a push: the rule on
+releasing holds.
+
+**The DevScripts commands that Magnus and others run,** such as `C-Build`, `C-Test` and those for packing, releasing and
+managing projects, are free to add to: a new command, a new parameter, more output behind a switch. What a command does
+by default changes only after asking him, such as making one more verbose.
+
 **What the ownership covers:** the tools themselves, meaning what they do, how they're run and how they report, and the
 code behind them, wherever that code has to live. **What it doesn't cover:**
 
 - what Compze's libraries do, and their public API. A tool that would need such a change is normal work, discussed with
   Magnus first;
 - what the specifications claim about Compze. Adding or changing a specification is normal work;
-- the interface of a command that Magnus runs, or anyone else who works on Compze: `C-Build`, `C-Test`, and the
-  DevScripts commands for packing, releasing and managing projects. How they're run and what they write is agreed with
-  Magnus. What goes on inside them is yours to improve;
-- anything outside the repository and the lab: this computer's own settings, such as its firewall, and whatever the rule
-  on external environments covers, such as pushing a flake-hunt branch. Those change on Magnus's word.
+- what the rule on external environments covers, other than pushing.
 
 The tools are part of Compze's code, so the code standards and the DevScripts conventions apply to them.
