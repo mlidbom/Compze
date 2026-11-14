@@ -1,4 +1,4 @@
-# A TCP transport and discovery across machines — todo (the transport is built, discovery is not)
+# A TCP transport and discovery across machines — todo (both are built; what is left is listed)
 
 ## Status
 
@@ -8,8 +8,9 @@ Investigated 2026-11-13 by reading the code, plus two measurements. Since then, 
 - **Tried across machines:** a pure client on a Hyper-V host conversed with an endpoint in a guest whose only
   .NET is the base runtime, while the guest was paused, disconnected, turned off and had its endpoint's process
   killed. See "Tried across machines".
-- **Not built:** discovery across machines ("Piece 3"), and the parts of the transport listed under "What is left
-  of the transport".
+- **Built and tried across machines (2026-11-14):** discovery across machines, as a registry server. See "What
+  is built" and "Tried across machines" under "Piece 3".
+- **Not built:** the parts listed under "What is left of the transport" and "What is left of the registry".
 - **Decided (Magnus, 2026-11-13):** build TCP and keep HTTP beside it for now, since hosting where only HTTP is
   routed inbound is a real use of it. What is still open is listed under "Open decisions".
 
@@ -363,6 +364,64 @@ Today the registry's name and directory are the suite boundary, which is what le
 `EndpointId`s coexist across concurrent runs. Across machines the boundary becomes the registry server's
 address, or the configured address list. That matters if several guests run at once.
 
+### What is built (2026-11-14)
+
+Magnus chose the registry server form: "it is alpha, we are not promising api stability, and it is what you
+recommend."
+
+- **`EndpointRegistryServer` and `NetworkEndpointRegistry`,** in Compze.Hosting's `Compze.Hosting.AcrossMachines`,
+  beside `InterprocessEndpointRegistry`: 2 public types and 5 private ones, about 450 lines. A process opens a
+  registry on the server by name, and an endpoint participates in it as in any registry.
+- **Registries of different names share nothing but the server,** which is what Deskmancer's two channels need.
+- **An announcement is in the registry for as long as its announcer's connection to the server lasts.** The
+  connection is set up as the TCP transport's are, keepalive included (`TcpConnection`, now shared with
+  Compze.Hosting).
+- **Each end sends the other its whole state whenever it changes,** never a change to it: what the process
+  announces one way, the registry's membership the other. A reconnect needs nothing but to send again.
+- **Without a connection to the server a registry lists nothing,** and tries to connect every second. So it can
+  be opened, and announced to, before the server exists.
+- **What the router's reconciliation needs** holds: membership is read from memory,
+  `AwaitPossibleMembershipChange` wakes when the server tells of a change, and announcing does no network I/O
+  inline.
+- **Specified** by the 16 specifications in `test/Compze.Tests.Integration/AcrossMachines`: registry against
+  registry through a server on loopback, the server's absence and return, and two endpoints in hosts of their
+  own that find each other through it, over every transport of the matrix.
+
+### Tried across machines (2026-11-14)
+
+The lab program has a second way to converse, `converse-through-registry`: a conversing endpoint on the host
+that is told no address. It hosts the registry server, as a specification process would, and finds the lab
+endpoint through the lab registry. The lab endpoint in the guest is told only where the server will listen, and
+is started before the server exists. `C-VM-ConverseWhileTheLabMachineVanishes -ThroughRegistry` runs it.
+
+**What a conversation through the registry experienced** (a Debug build, one run of each):
+
+| What was done to the lab machine | The host's router dropped its route to the lab endpoint | A tuery in flight | A tuery asked while it was away | Once it was back |
+|---|---|---|---|---|
+| Nothing | | | | Found 0.5–0.7 s after the registry server started. The first tuery 110–370 ms, then 1–2 ms |
+| The lab program killed, and started again 12 s later | Within 0.8 s of the kill | | Waited, and was answered after 16.6 s, at the endpoint's new address | The next tuery in 2 ms |
+| Paused for 22 s | 5.6 s after the pause | Failed after 8 s: `EndpointUnreachableException` | Waited, and was answered after 16.9 s: 6.6 s after the resume | The next tuery in 2 ms |
+| Disconnected from the network for 22 s | 5.5 s after | Failed after 8 s, the same | Waited, and was answered after 12 s: 1.3 s after it was connected again | The next tuery in 2 ms |
+| The lab program killed, and not started again | Within 0.8 s of the kill | | Failed after 30 s: `NoHandlerForTypermediaTypeException`, which names the handler-availability patience | |
+
+- **The sign-out case behaves as wanted.** A tuery asked while the endpoint is away waits, where a client told
+  the address failed at the wire, and it is answered by the endpoint that comes back at a new address.
+- **A resumed guest takes about 6 s to rejoin:** its connection to the server ended while it was paused, which
+  it learns from keepalive after 5 s of silence. It then connects again within a second.
+- **A route is dropped faster than keepalive's 10 s** when the connection had already been silent for some
+  seconds: the silence before the first probe counts from the last frame.
+
+### What is left of the registry
+
+- **Deskmancer's use of it:** an environment for its two channels that participates in a `NetworkEndpointRegistry`
+  over the TCP transport, and how the guest's processes are told the server's address. The host's address on the
+  Default Switch changes when the host restarts.
+- **Specifications across processes.** A participant's end is specified by disposing its registry in the same
+  process, and tried for real only in the lab.
+- **No limit on the size of what is received, and no security,** as for the transport.
+- **The server keeps its registries in memory.** One that starts again knows nothing until the participants
+  have connected again, which takes them up to a second.
+
 ## TCP compared with HTTP
 
 ### Measured
@@ -417,9 +476,9 @@ was not measured.
    today; what finds it is open: a literal, a subnet to match, or an adapter's name.
 2. **Ports.** Ports the operating system picks keep the design rule and need firewall rules per program; fixed
    ports allow rules per port. Only picked ports are built.
-3. **Which registry form, and which process hosts a registry server.** Or the alternative: the router sees
-   liveness itself.
-4. **The suite boundary across machines.**
+3. **Which registry form:** decided and built, a registry server (Magnus, 2026-11-14). Which process hosts it is
+   the application's choice; for Deskmancer the specification process is the natural one.
+4. **The suite boundary across machines:** the registry's name on a registry server, as built.
 5. **The shape of the CI matrix.** `Tcp` was added to the full cross product, 84 jobs from 56. The alternative
    is one transport on the full product and the others on a reduced leg that covers every persistence layer
    and every DI container once: about 46 jobs with three transports.
@@ -435,8 +494,9 @@ was not measured.
 
 ## Recommended order of what is left
 
-1. The registry across machines, in the form decided, tried in the across-machines lab.
-2. The multi-process specifications on TCP, with specifications for a peer process's death.
+1. Deskmancer's use of the TCP transport and the registry across machines: see "What is left of the registry".
+2. The multi-process specifications on TCP and through a registry server, with specifications for a peer
+   process's death.
 
 ## Not verified
 
