@@ -225,7 +225,8 @@ rows were run again. When the table was made the failures were a raw `IOExceptio
     whose machine vanished while it handled the request and a handler that runs for longer, and nothing tells
     them apart when it expires, so an `EndpointUnreachableException` there would be a guess. What HTTP needs is
     what TCP has: keepalive on its connections, a connect timeout, and no timeout on the request. See "Timeouts"
-    under "Piece 2". Tagged `bug:` in `HttpEndpointTransportClient`.
+    under "Piece 2". Tagged `bug:` in `HttpEndpointTransportClient`, and what to change `todo:` in
+    `HttpClientFactoryCE`.
   - In the normal suite a connection that ends in the middle of an exchange is specified over named pipes only:
     over TCP only the lab can produce it, and it does.
 - **Specifications of a peer process's death.** The endpoint host process hard-codes
@@ -249,13 +250,17 @@ Besides the address it listens on:
   seconds bounds both a silent-vanish and every handler's run time.
   - What would make HTTP behave as TCP does, on `HttpClientFactoryCE`'s `SocketsHttpHandler`: a `ConnectTimeout`
     of the pool's 10 seconds, TCP keepalive on each connection through a `ConnectCallback` (as `TcpConnection`
-    turns it on), and `HttpClient.Timeout` set to infinite. About 30 lines.
+    turns it on), and `HttpClient.Timeout` set to infinite. About 30 lines. Tagged `todo:` in
+    `HttpClientFactoryCE`, with how to verify it.
   - Run 2026-11-14 on .NET 10, against a server that accepts and never responds, and an address nothing answers
     at: both `HttpClient.Timeout` and `ConnectTimeout` end the request in a `TaskCanceledException` whose
     `InnerException` is a `TimeoutException`. Only the messages tell the two apart. A caller's own cancellation
     has no `TimeoutException` inside.
-  - Not run: that keepalive ends an HTTP request to a vanished machine. The lab machine can't serve HTTP: it has
-    no ASP.NET Core runtime, by design.
+  - Not run: that keepalive ends an HTTP request to a vanished machine. The lab can't serve HTTP: its program
+    serves over TCP only, and its machine has no ASP.NET Core runtime, by design. What it would take: the lab
+    program serving over HTTP too, and a guest given the host's ASP.NET Core runtime for that run, copied in as
+    the .NET runtime is (`C-VM-CreateLabMachine`). The baseline stays without it, so a TCP run goes on proving
+    that it needs none.
   - On Windows a request written to a vanished machine fails sooner than the 100 seconds, as an
     `EndpointUnreachableException`: the operating system gives up resending it after about 10 seconds. (Reasoned
     from the TCP rows of "Tried across machines", not run over HTTP.) The 100 seconds are met when the machine
@@ -399,8 +404,9 @@ was not measured.
 5. **The shape of the CI matrix.** `Tcp` was added to the full cross product, 84 jobs from 56. The alternative
    is one transport on the full product and the others on a reduced leg that covers every persistence layer
    and every DI container once: about 46 jobs with three transports.
-6. **Whether the HTTP transport stays in the long run,** once TCP has carried Deskmancer's Hyper-V runs for a
-   while. It stays for now.
+6. **Whether the HTTP transport stays in the long run.** Most likely it does (Magnus, 2026-11-14): the only
+   major argument against it is the run time of the full matrix, which is no good argument for removing a
+   protocol. So what HTTP lacks across machines ("Piece 2") is work to do, not work that may never be needed.
 7. **The CA2000 suppression in `TcpConnectionOpener`:** the analyzer cannot follow a socket's ownership into
    the `NetworkStream` that closes it. The alternative is an analyzer option for the whole repository
    (`dispose_ownership_transfer_at_constructor`).

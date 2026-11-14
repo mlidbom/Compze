@@ -35,10 +35,9 @@ class HttpEndpointTransportClient : IEndpointTransportClient
       //   and it bounds two things that must be told apart: an endpoint whose machine vanished while it handled the request,
       //   and a handler that runs for longer. Calling the first an EndpointUnreachableException here would call the second one
       //   too. The framed-connection transports tell them apart: TCP keepalive (TcpConnection) ends a connection to a vanished
-      //   machine within about ten seconds, and a handler is waited for as long as it runs. HTTP needs the same on
-      //   HttpClientFactoryCE's handler: keepalive on its connections, a connect timeout, and no timeout on the request. A
-      //   connect that times out is then what is left to catch here: it too is a TaskCanceledException whose InnerException
-      //   is a TimeoutException.
+      //   machine within about ten seconds, and a handler is waited for as long as it runs. The todo: comment in
+      //   HttpClientFactoryCE says what gives HTTP the same. A connect that times out is then what is left to catch here: it
+      //   too is a TaskCanceledException whose InnerException is a TimeoutException.
       HttpResponseMessage response;
       try
       {
