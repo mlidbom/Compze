@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## 0.11.0-beta
 
+- **Targets .NET 11 (`net11.0`) instead of .NET 10, and is compiled with runtime async:** the runtime, instead of state machines the compiler generates, suspends and resumes its async methods, so live stack traces show the real call chain. An application that uses this version must target .NET 11.
+
 ### Changed
 - A matrix test whose configuration cannot be used now fails, with a message saying what is wrong. It used to be skipped,
   which a passing test run hides. That covers a configuration file that does not exist or lists no combinations, a line in

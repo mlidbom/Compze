@@ -6,12 +6,12 @@ namespace PostReleaseBindingCheck.Specifications.Fixtures;
 
 /// <summary>
 /// Makes the nupkgs a specification checks: compiles C# source into an assembly named after the package, and packs it with<br/>
-/// a nuspec into <c>lib/net10.0</c>, as <c>C-Pack</c> packs a Compze package. The nupkgs live in a temporary folder that<br/>
+/// a nuspec into <c>lib/net11.0</c>, as <c>C-Pack</c> packs a Compze package. The nupkgs live in a temporary folder that<br/>
 /// <see cref="Dispose"/> deletes.
 /// </summary>
 public sealed class FixturePackages : IDisposable
 {
-   const string TargetFramework = "net10.0";
+   const string TargetFramework = "net11.0";
 
    static readonly Lazy<IReadOnlyList<MetadataReference>> DotNetLibraries = new(ReferencesToTheDotNetLibraries);
 

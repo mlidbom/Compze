@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## 0.8.0-alpha
 
+- **Targets .NET 11 (`net11.0`) instead of .NET 10, and is compiled with runtime async:** the runtime, instead of state machines the compiler generates, suspends and resumes its async methods, so live stack traces show the real call chain. An application that uses this version must target .NET 11.
 - **`IInterprocessObject<T>` implements the async condition waits** Compze.Threading 0.11.0-alpha adds to `IAwaitableShared<T>`: `ReadWhenAsync`, `UpdateWhenAsync`, `TryUpdateWhenAsync`, `TryAwaitAsync` and `AwaitAsync`. They hold no thread while they wait, and like the synchronous waits they load the object for each evaluation of the condition and save it after an update.
 - **Requires newer minor versions of other Compze packages:** Compze.Internals.SystemCE 0.7.0-internal (was 0.4.0-internal), Compze.Threading 0.11.0-alpha (was 0.9.0-alpha), Compze.Threading.Interprocess 0.6.0-alpha (was 0.5.1-alpha). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
 

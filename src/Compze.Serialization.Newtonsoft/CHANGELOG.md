@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## 0.4.0-alpha
 
+- **Targets .NET 11 (`net11.0`) instead of .NET 10, and is compiled with runtime async:** the runtime, instead of state machines the compiler generates, suspends and resumes its async methods, so live stack traces show the real call chain. An application that uses this version must target .NET 11.
 - **The package sheds the `Internals` label: `Compze.Internals.Serialization.Newtonsoft` is `Compze.Serialization.Newtonsoft`.** The label told consumers not to depend on the package, which was never true of something they compose with deliberately. Previously published as [Compze.Internals.Serialization.Newtonsoft](https://www.nuget.org/packages/Compze.Internals.Serialization.Newtonsoft/) 0.3.0-alpha.
 - `NewtonsoftSerializer()`: fills the one serializer parameter an endpoint takes (`EndpointBuilder.Serializer` — registering both wire serializers in one declaration) and the pure client's (`TypermediaClientBuilder.Serializer`).
 - The registrars are the package's whole public face — `NewtonsoftEndpointSerializerRegistrar`, `NewtonsoftTypermediaClientSerializerRegistrar`, and the per-store registrars for the document db, the tevent store, tessaging and typermedia. The serializer classes behind them are internal.

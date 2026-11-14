@@ -1,6 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <!-- The project name stays provisional while the paradigm's project topology settles; the namespaces are already final. -->
     <RootNamespace>Compze.Tessaging</RootNamespace>

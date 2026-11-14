@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## 0.6.0-alpha
 
+- **Targets .NET 11 (`net11.0`) instead of .NET 10, and is compiled with runtime async:** the runtime, instead of state machines the compiler generates, suspends and resumes its async methods, so live stack traces show the real call chain. An application that uses this version must target .NET 11.
+
 ### Added
 - An error can be logged without an exception: `ILogger.Error(string message)`, `Error(string template, object?[] values)` and `Error($"…")`, the same overloads `Warning` and `Critical` have. Until now every `Error` overload took an exception, so code logging an error with no exception behind it had to make one up.
 - `logger.Error()`, the `ILevelLogger` for the `Error` level, which was the only level without one.

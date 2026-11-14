@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## 0.5.0-alpha
 
+- **Targets .NET 11 (`net11.0`) instead of .NET 10, and is compiled with runtime async:** the runtime, instead of state machines the compiler generates, suspends and resumes its async methods, so live stack traces show the real call chain. An application that uses this version must target .NET 11.
 - The tevent store forwards taggregate tevents through the exactly-once publisher's `PublishAsync`, bridging in one deliberate place: the Teventive taggregate model raises tevents synchronously — from constructors and domain methods — and the store forwards them where they are raised, inside the caller's unit of work. The alternative, an async taggregate domain model, would be a redesign of Teventive itself, not a call-site choice.
 - Session affinity is transactional, never thread-bound: `TeventStoreUpdater` keeps its `SingleTransactionUsageGuard` and sheds the thread-affinity half (an async unit of work legitimately migrates across threads), while `TeventStore` and the query-model generating reader — which only ever had thread affinity, and are legitimately used by several sequential transactions in one scope — lose their guard rather than gain a constraint they never had.
 - `TeventStoreUpdater` publishes the wrapped tevent through `IUnitOfWorkTeventPublisher` (Compze.Abstractions), the one way to publish: publisher identity survives from `Publish` in the taggregate through storage and onward publication, and the tevent's own type decides how far it travels.

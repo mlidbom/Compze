@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## 0.4.0-alpha
 
+- **Targets .NET 11 (`net11.0`) instead of .NET 10, and is compiled with runtime async:** the runtime, instead of state machines the compiler generates, suspends and resumes its async methods, so live stack traces show the real call chain. An application that uses this version must target .NET 11.
 - **The package sheds the `Internals` label: `Compze.Internals.Sql.Sqlite` is `Compze.Sql.Sqlite`.** The label told consumers not to depend on the package, which was never true of something they compose with deliberately. Previously published as [Compze.Internals.Sql.Sqlite](https://www.nuget.org/packages/Compze.Internals.Sql.Sqlite/) 0.3.0-alpha.
 - `SqliteDomainDatabase`: the declaration that the domain database an endpoint joins is sqlite. `SqliteDomainDatabase(connectionStringName)` registers the connection pool, and the declaration type carries the connection-string name the sqlite pairings derive their wiring from — e.g. the type-id interner's own database name, which on sqlite lives in a separate database file.
 - `SqliteMemoryDomainDatabase(databaseName)`: the public door to an in-memory sqlite domain database — the composition tests and samples reach for it directly instead of through test-only wiring.

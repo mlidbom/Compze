@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## 0.4.0-alpha
 
+- **Targets .NET 11 (`net11.0`) instead of .NET 10, and is compiled with runtime async:** the runtime, instead of state machines the compiler generates, suspends and resumes its async methods, so live stack traces show the real call chain. An application that uses this version must target .NET 11.
 - **`RegisterTeventStore()` extends `ExactlyOnceEndpointBuilder`**, not the deleted `IEndpointBuilder`: a tevent store belongs to an endpoint whose delivery is exactly-once, and the compiler says so now.
 - `RegisterHandlersForTaggregate<TTaggregate, TTevent>` takes the plain `TypermediaHandlerRegistrar`. The store declares through the typermedia surface alone — every store tessage is navigated — and the dependency-injection-supporting registrar wrapper it used to take is gone.
 - The visibility sweep reaches this package: non-public machinery moves below `_internal`/`_private` namespace sections — the markers that replaced the old `Internal`/`Private` spelling — and types and members are narrowed to the least visibility that compiles.

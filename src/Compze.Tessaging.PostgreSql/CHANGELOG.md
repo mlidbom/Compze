@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## 0.3.1-alpha
 
+- **Targets .NET 11 (`net11.0`) instead of .NET 10, and is compiled with runtime async:** the runtime, instead of state machines the compiler generates, suspends and resumes its async methods, so live stack traces show the real call chain. An application that uses this version must target .NET 11.
 - **The inbox and outbox prepare their statements without blocking a thread.** They prepared each statement with a synchronous round trip to the server, from async code, holding a thread-pool thread until PostgreSQL answered. In a process short of pool threads, that read could stay blocked long after the server had answered: a peer advertisement recording hung for over 10 seconds in it on a 4-processor Linux machine.
 - **Requires newer minor versions of other Compze packages:** Compze.Tessaging 0.6.2-alpha (was 0.5.0-alpha). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
 

@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## 0.11.0-alpha
 
+- **Targets .NET 11 (`net11.0`) instead of .NET 10, and is compiled with runtime async:** the runtime, instead of state machines the compiler generates, suspends and resumes its async methods, so live stack traces show the real call chain. An application that uses this version must target .NET 11.
 - **`TryUpdateWhen` can return what the update returns:** `IAwaitableCriticalSection.TryUpdateWhen(condition, func, out result, …)` and `IAwaitableShared<T>.TryUpdateWhen(condition, update, out result, …)`, the update counterparts of `TryReadWhen`. Both are default interface methods, so code that implements either interface needs no change.
 - **The documentation says why reads and updates are declared apart, and what that asks of the code.** The declaration tells whoever reads the code whether the state changes there, and only releasing an update lock wakes the waits for a condition, since only an update can make a condition true. So code under a read lock must not change the state, and neither may a condition: a change there wakes no wait. All locks are exclusive, read locks included. And a wait for a condition waits forever by default: the deadlock diagnosis covers taking a lock.
 - The README's examples that didn't compile are fixed: one called `IAwaitableThreadShared.WithDefaultTimeouts`, which doesn't exist (it is `New`), and others named a variable `lock`.

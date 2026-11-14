@@ -1,7 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
     <Version>0.6.0-beta</Version>
     <Description>Code that reads the way you would describe the algorithm in words. Powered by the pipe forward operator and friends.</Description>

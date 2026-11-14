@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## 0.5.0-alpha
 
+- **Targets .NET 11 (`net11.0`) instead of .NET 10, and is compiled with runtime async:** the runtime, instead of state machines the compiler generates, suspends and resumes its async methods, so live stack traces show the real call chain. An application that uses this version must target .NET 11.
 - **The namespaces drop the `.Abstractions` segment: the type system is `Compze.Tessaging` itself.** The
   `ITessage` hierarchy, `TessageId` and the base-class families now declare `namespace Compze.Tessaging`; the
   send/publish contracts are `Compze.Tessaging.TessageBus`; the inspectors are `Compze.Tessaging.Validation`.
