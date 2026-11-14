@@ -96,11 +96,12 @@ function C-VM-ConverseWhileTheLabMachineVanishes {
     $ErrorActionPreference = 'Stop'
     $machine = Get-LabMachine
     $labProgramName = 'Compze.Tests.AcrossMachines.Lab'
-    $labProgram = Join-Path $script:CompzeRoot "test\$labProgramName\bin\Debug\net10.0\$labProgramName.exe"
-    if (-not (Test-Path $labProgram)) {
-        Write-CommandFailure -Command $PSCmdlet -Message "The lab program is not built: $labProgram is missing. Run C-Build first."
+    $builtLabProgram = Get-BuiltOutputFolder -ProjectFile (Join-Path $script:CompzeRoot "test\$labProgramName\$labProgramName.csproj")
+    if (-not $builtLabProgram) {
+        Write-CommandFailure -Command $PSCmdlet -Message "The lab program ($labProgramName) is not built. Run C-Build first."
         return
     }
+    $labProgram = Join-Path $builtLabProgram "$labProgramName.exe"
     if ($Vanish -eq 'RestartLabProgram' -and -not $ThroughRegistry) {
         Write-CommandFailure -Command $PSCmdlet -Message "RestartLabProgram needs -ThroughRegistry: the lab endpoint comes back at a new address, which a pure client told the old one never learns."
         return

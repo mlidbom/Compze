@@ -74,8 +74,8 @@ function C-Test-Combinations {
         # Tests launch or load what the other projects in the test folders build, such as the endpoint host process, and find
         # it as the sibling of their own output: so those outputs are copied alongside, each under its project's name.
         foreach ($supportProject in @($projectsInTestFolders | Where-Object { -not (& $isATestProject) })) {
-            $builtOutput = Join-Path $supportProject.DirectoryName 'bin\Debug\net10.0'
-            if (Test-Path $builtOutput) {
+            $builtOutput = Get-BuiltOutputFolder -ProjectFile $supportProject.FullName
+            if ($builtOutput) {
                 robocopy $builtOutput (Join-Path $temporaryRoot $supportProject.BaseName) /E /NFL /NDL /NJH /NJS /NP | Out-Null
                 if ($LASTEXITCODE -ge 8) {
                     Write-CommandFailure -Command $PSCmdlet -Message "Copying $builtOutput failed: robocopy exited with $LASTEXITCODE."
@@ -85,16 +85,16 @@ function C-Test-Combinations {
         }
 
         foreach ($testProject in $testProjects) {
-            $builtOutput = Join-Path $testProject.DirectoryName 'bin\Debug\net10.0'
+            $builtOutput = Get-BuiltOutputFolder -ProjectFile $testProject.FullName
+            if (-not $builtOutput) {
+                Write-CommandFailure -Command $PSCmdlet -Message "$($testProject.BaseName) is not built. Run C-Build first."
+                return
+            }
             $executableName = "$($testProject.BaseName).exe"
             if (-not (Test-Path (Join-Path $builtOutput $executableName))) {
                 # Built, but not as a test executable this command can run from a copy: say so in the summary instead of passing over it silently.
-                if (Test-Path (Join-Path $builtOutput "$($testProject.BaseName).dll")) {
-                    $projectsWithoutATestExecutable += $testProject.BaseName
-                    continue
-                }
-                Write-CommandFailure -Command $PSCmdlet -Message "$($testProject.BaseName) is not built: $executableName is missing from $builtOutput. Run C-Build first."
-                return
+                $projectsWithoutATestExecutable += $testProject.BaseName
+                continue
             }
 
             $copy = Join-Path $temporaryRoot $testProject.BaseName

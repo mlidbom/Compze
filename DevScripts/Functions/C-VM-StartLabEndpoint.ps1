@@ -7,9 +7,10 @@ function C-VM-StartLabEndpoint {
     .DESCRIPTION
     Copies the built lab program (test/Compze.Tests.AcrossMachines.Lab, Debug) into the guest and starts it there, serving
     the lab endpoint over TCP on the guest's address on the network it shares with the host. Returns the endpoint's
-    address, which the lab program's converse command on the host takes:
+    address, which the lab program's converse command on the host takes. The lab program is in its project's output
+    folder, bin\Debug\<target framework>:
 
-        test\Compze.Tests.AcrossMachines.Lab\bin\Debug\net10.0\Compze.Tests.AcrossMachines.Lab.exe converse <address>
+        Compze.Tests.AcrossMachines.Lab.exe converse <address>
 
     A lab endpoint already running in the guest is stopped first. The program runs in the guest on its own, not as part
     of this command, so it goes on serving until it is stopped, the guest is, or the machine is started from its baseline
@@ -40,9 +41,9 @@ function C-VM-StartLabEndpoint {
 
     $ErrorActionPreference = 'Stop'
     $labProgram = 'Compze.Tests.AcrossMachines.Lab'
-    $builtLabProgram = Join-Path $script:CompzeRoot "test\$labProgram\bin\Debug\net10.0"
-    if (-not (Test-Path (Join-Path $builtLabProgram "$labProgram.exe"))) {
-        Write-CommandFailure -Command $PSCmdlet -Message "The lab program is not built: $labProgram.exe is missing from $builtLabProgram. Run C-Build first."
+    $builtLabProgram = Get-BuiltOutputFolder -ProjectFile (Join-Path $script:CompzeRoot "test\$labProgram\$labProgram.csproj")
+    if (-not $builtLabProgram) {
+        Write-CommandFailure -Command $PSCmdlet -Message "The lab program ($labProgram) is not built. Run C-Build first."
         return
     }
 
