@@ -47,10 +47,13 @@ class NamedPipeClientConnectionPool : IDisposable
    readonly EndpointAddress _address;
    readonly string _pipeName;
 
-   //rationale: Compze.Threading's monitors wait by blocking the calling thread. This wait must hold no thread - senders
-   //parked on a saturated pool while occupying pool threads is the exact starvation this pool exists to eliminate - and
-   //SemaphoreSlim.WaitAsync is the BCL's asynchronous counting wait. Same precedent as CompzeSqliteConnection's write gate.
 #pragma warning disable CA2213 //Deliberately never disposed - see the rationale at the bottom of Dispose.
+   ///<summary>The pool's <see cref="MaximumConcurrentExchanges"/> exchange slots: each exchange holds one, and a sender that finds none free<br/>
+   /// awaits one without holding a thread. Senders parked on a saturated pool while occupying pool threads would be the starvation this<br/>
+   /// pool exists to remove.</summary>
+   ///<remarks>A <see cref="SemaphoreSlim"/>, which hands a freed slot to exactly one waiting sender, first come first served. A condition wait on<br/>
+   /// an <see cref="IAwaitableMonitor"/> would wake every waiting sender for each freed slot, for one of them to win, and would let a sender<br/>
+   /// that just arrived take the slot ahead of one that has waited for nearly <see cref="WaitForAFreeConnectionTimeout"/>, which then fails.</remarks>
    readonly SemaphoreSlim _exchangeSlots = new(MaximumConcurrentExchanges, MaximumConcurrentExchanges);
 #pragma warning restore CA2213
    readonly IMonitor _monitor = IMonitor.New();
