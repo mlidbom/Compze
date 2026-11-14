@@ -72,8 +72,11 @@ covers it.
 
 `DisposeAsync` promises no thread: Microsoft's and Autofac's asynchronous disposal continue wherever an await completes.
 
-What has to stop on a particular thread, a consumer stops explicitly, on that thread, before disposing the container.
-Magnus, 2026-11-14: "Deskmancer should have call Stop or something similar on that type of component before disposing
-the composion root stuff". The Deskmancer session agrees for what stops: draining and stopping Tessaging, and
-`AppShell`'s steps that quiesce reactors and remove hooks, become a named shutdown before the root is disposed. The
-graph bound to the UI thread is left to the synchronous `Dispose`.
+Stop logic doesn't belong in disposal. Magnus, 2026-11-14: "Deskmancer should have call Stop or something similar on
+that type of component before disposing the composion root stuff". A stop "most likely disposes nothing": the point is
+"to make sure that disposal was not responsible for the Stop logic".
+
+- **Deskmancer agrees.** Draining and stopping Tessaging, and `AppShell`'s steps that quiet the reactors and remove the
+  hooks, become a named stop before the root is disposed. Disposing the graph stays with the synchronous `Dispose`.
+- **Compze's side of it is `a-public-stop-for-a-local-tessaging-engine-without-an-endpoint.md`.** Today the drain of a
+  plain container's LocalTessagingEngine runs only in disposal.
