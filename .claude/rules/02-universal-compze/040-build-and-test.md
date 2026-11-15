@@ -3,7 +3,7 @@
 ## Prerequisites
 
 - .NET SDK (version specified in `global.json`, at the repository root)
-- PowerShell with DevScripts module imported: `Import-Module <repo>/DevScripts/Compze.psm1 -DisableNameChecking`
+- PowerShell with the DevScripts module imported: see [DevScripts](050-devscripts.md)
 
 ## Building
 
@@ -36,7 +36,8 @@ dotnet test Compze.AllProjects.slnx --no-build --filter "FullyQualifiedName~MyTe
 
 ## Testing policy
 
-- **Test thoroughly**: Always run the full test suite before finalizing.
+- **Test thoroughly**: a change to code, or to anything the build or the tests read, isn't done until the full test
+  suite has passed. A change to documents alone, or to comments alone, needs none of it.
 - **Performance tests**: If they fail, rerun. Repeated failures are NOT acceptable — do not report success.
 - **`COMPOSABLE_PERFORMANCE_TESTS_STRESS_TEST_ONLY`**: Set to `true` (the default in CI and `C-Test`) to run
   performance tests as stress tests only, disabling timing assertions. Set to `false` to re-enable timing checks.
