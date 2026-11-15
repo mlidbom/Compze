@@ -19,9 +19,6 @@
 #                         Without this, `flexref` and C-FlexRef-Sync fail)
 #   - PowerShell         (DevScripts/Compze.psm1, C-Build, C-Test, etc.) —
 #                         tarball, since pwsh isn't in the default apt repos
-#   - csharp-ls          (C# language server — backs the csharp-lsp plugin
-#                         and Serena. Cloud-only: locally Rider's
-#                         ReSharper-backed MCPs are the C# intelligence path)
 #   - jb                 (JetBrains ReSharper CLI — `jb inspectcode`, used by
 #                         the shared-jetbrains-inspect and
 #                         shared-run-and-fix-resharper-inspections skills)
@@ -35,12 +32,6 @@
 #
 # What this registers (in the cloud container's user-scope config only):
 #   - Serena MCP server (.serena/project.yml drives it; uvx fetches Serena)
-#
-# The csharp-lsp plugin is a cloud-only facility: locally Rider's
-# ReSharper-backed MCPs are the C# intelligence path and the plugin stays
-# disabled, so this script enables it — and sets CSHARP_LSP_SOLUTION_REL —
-# in the cloud container's gitignored .claude/settings.local.json rather
-# than in any git-tracked settings. See .claude/upstream-bug-workarounds.md.
 #
 # This script also drops a /etc/profile.d/ entry so DOTNET_ROOT and PATH are
 # set for every shell in subsequent sessions (matching the pattern used by
@@ -79,19 +70,18 @@ chmod +x "$PWSH_DIR/pwsh"
 rm -f "$tmp_pwsh"
 ln -sf "$PWSH_DIR/pwsh" /usr/local/bin/pwsh
 
-# -- .NET global tools (csharp-ls, jb, docfx) -------------------------------
-# All three are .NET global tools — none have apt packages. Install into a
+# -- .NET global tools (jb, docfx) ------------------------------------------
+# Both are .NET global tools — neither has an apt package. Install into a
 # shared location so every session sees them.
-log "Installing .NET global tools (csharp-ls, jb, docfx) to $DOTNET_TOOLS_DIR..."
+log "Installing .NET global tools (jb, docfx) to $DOTNET_TOOLS_DIR..."
 export DOTNET_ROOT
 mkdir -p "$DOTNET_TOOLS_DIR"
-dotnet tool install --tool-path "$DOTNET_TOOLS_DIR" csharp-ls >&2
 dotnet tool install --tool-path "$DOTNET_TOOLS_DIR" JetBrains.ReSharper.GlobalTools >&2
 dotnet tool install --tool-path "$DOTNET_TOOLS_DIR" docfx >&2
 # These tools are .NET hosts that require DOTNET_ROOT at runtime — invoke
 # via shims instead of bare symlinks so callers don't have to set it.
 # (PATH already includes $DOTNET_TOOLS_DIR, but the shims pin DOTNET_ROOT.)
-for tool in csharp-ls jb docfx; do
+for tool in jb docfx; do
    cat > "/usr/local/bin/$tool" <<EOF
 #!/bin/sh
 export DOTNET_ROOT="$DOTNET_ROOT"
@@ -117,11 +107,9 @@ log "Restoring repo-local .NET tools from .config/dotnet-tools.json..."
 (cd /home/user/Compze && dotnet tool restore >&2) || log "warning: dotnet tool restore failed"
 
 # -- Restore the solution ---------------------------------------------------
-# Without this, the snapshot has no project.assets.json files, so on first
-# session start csharp-ls reports phantom missing-reference errors on every
-# test file (FactAttribute, types from other projects, etc.) until the user
-# manually builds. Doing it here bakes assets + NuGet cache into the snapshot
-# so LSP works immediately and the first cold build is fast.
+# Without this, the snapshot has no project.assets.json files. Doing it here
+# bakes the assets and the NuGet cache into the snapshot, so the first cold
+# build is fast.
 log "Restoring Compze.AllProjects.slnx..."
 (cd /home/user/Compze && dotnet restore Compze.AllProjects.slnx >&2) || log "warning: dotnet restore failed"
 
@@ -161,71 +149,28 @@ env_json=$(cat <<EOF
     "DOTNET_CLI_TELEMETRY_OPTOUT": "1",
     "DOTNET_NOLOGO": "true",
     "COMPOSABLE_PERFORMANCE_TESTS_STRESS_TEST_ONLY": "true",
-    "COMPOSABLE_MACHINE_SLOWNESS": "5.0",
-    "CSHARP_LSP_SOLUTION_REL": "Compze.AllProjects.slnx"
-  },
-  "enabledPlugins": {
-    "csharp-lsp@claude-plugins-official": true
+    "COMPOSABLE_MACHINE_SLOWNESS": "5.0"
   }
 }
 EOF
 )
 echo "$env_json" | jq -s '.[0] * .[1]' - "$PERMISSIONS_FILE" > "$SETTINGS_LOCAL"
 
-# -- Claude CLI integrations (Serena MCP + csharp-lsp plugin) ----------------
-# All `claude` writes here land in $HOME/.claude.json (and ~/.claude/plugins/)
+# -- Claude CLI integrations (Serena MCP) ------------------------------------
+# All `claude` writes here land in $HOME/.claude.json
 # inside the cloud container only. The user's laptop is never touched.
 CLAUDE_BIN="${CLAUDE_CODE_EXECPATH:-/opt/claude-code/bin/claude}"
 if [ -x "$CLAUDE_BIN" ]; then
    # Serena MCP server. uv/uvx come from the base image; Serena reads
-   # .serena/project.yml from the repo on launch (csharp; csharp-ls above
-   # satisfies the LSP dependency).
+   # .serena/project.yml from the repo on launch.
    log "Registering Serena MCP server (user scope)..."
    "$CLAUDE_BIN" mcp add --scope user serena -- \
       uvx --from git+https://github.com/oraios/serena \
       serena start-mcp-server \
       --context ide-assistant \
       --project /home/user/Compze >&2 || log "warning: serena registration failed"
-
-   # csharp-lsp plugin. `enabledPlugins` in settings.local.json (written
-   # above) is supposed to auto-install on session start, but in cloud
-   # sessions that path is unreliable (the marketplace registration races
-   # with the auto-install and the plugin ends up missing). Install it
-   # explicitly here so the snapshot always carries it.
-   #
-   # `plugin install <name>@<marketplace>` requires the marketplace to
-   # already be known — otherwise it fails with "Plugin not found in
-   # marketplace". So add the marketplace first; both commands are idempotent.
-   log "Adding claude-plugins-official marketplace (user scope)..."
-   "$CLAUDE_BIN" plugin marketplace add anthropics/claude-plugins-official >&2 \
-      || log "warning: marketplace add failed (may already be present)"
-   log "Installing csharp-lsp plugin (user scope)..."
-   "$CLAUDE_BIN" plugin install csharp-lsp@claude-plugins-official >&2 \
-      || log "warning: csharp-lsp plugin install failed"
-
-   # csharp-lsp workaround per .claude/upstream-bug-workarounds.md: until claude-code#16360
-   # ships `workspace/configuration`, the plugin can't tell csharp-ls which
-   # solution to load via env alone. Drop a `.lsp.json` in the plugin cache
-   # that pins `--solution` to ${CLAUDE_PROJECT_DIR}/${CSHARP_LSP_SOLUTION_REL}
-   # (set in settings.local.json above). Without this csharp-ls auto-discovers
-   # a subset solution and `test/` projects fail to resolve their references.
-   csharp_lsp_dir=$(find /root/.claude/plugins/cache/claude-plugins-official/csharp-lsp -mindepth 1 -maxdepth 1 -type d | head -n1)
-   if [ -n "$csharp_lsp_dir" ]; then
-      log "Writing csharp-lsp .lsp.json to $csharp_lsp_dir..."
-      cat > "$csharp_lsp_dir/.lsp.json" <<'EOF'
-{
-  "csharp": {
-    "command": "csharp-ls",
-    "args": ["--solution", "${CLAUDE_PROJECT_DIR}/${CSHARP_LSP_SOLUTION_REL}", "--loglevel", "info"],
-    "extensionToLanguage": { ".cs": "csharp", ".csx": "csharp" }
-  }
-}
-EOF
-   else
-      log "warning: csharp-lsp plugin cache dir not found — skipping .lsp.json write"
-   fi
 else
-   log "warning: claude CLI not found at $CLAUDE_BIN — skipping Serena + plugin setup"
+   log "warning: claude CLI not found at $CLAUDE_BIN — skipping Serena setup"
 fi
 
-log "Setup complete: dotnet $(dotnet --version) | pwsh $($PWSH_DIR/pwsh --version 2>/dev/null) | csharp-ls $($DOTNET_TOOLS_DIR/csharp-ls --version 2>/dev/null) | jb $($DOTNET_TOOLS_DIR/jb --version 2>/dev/null | head -1) | docfx $($DOTNET_TOOLS_DIR/docfx --version 2>/dev/null | head -1) | $(gh --version 2>/dev/null | head -1)"
+log "Setup complete: dotnet $(dotnet --version) | pwsh $($PWSH_DIR/pwsh --version 2>/dev/null) | jb $($DOTNET_TOOLS_DIR/jb --version 2>/dev/null | head -1) | docfx $($DOTNET_TOOLS_DIR/docfx --version 2>/dev/null | head -1) | $(gh --version 2>/dev/null | head -1)"

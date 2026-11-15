@@ -4,34 +4,6 @@ Active workarounds for upstream-tool bugs that affect this repo. Each section: t
 
 ---
 
-## C# language server (csharp-ls) — cloud sessions only
-
-**Locally this path is retired.** Rider's ReSharper-backed MCPs (`dotnet-analysis-and-refactoring`, plus the built-in
-`jetbrains-rider` MCP) out-resolve csharp-ls in every dimension, so on dev machines the `csharp-lsp` plugin
-stays disabled and no csharp-ls runs. Cloud sessions have no Rider, so there — and only there — csharp-ls
-is provisioned as the C# intelligence fallback by [.claude/cloud-setup.sh](cloud-setup.sh).
-
-The upstream bug still applies in cloud: [anthropics/claude-code#16360](https://github.com/anthropics/claude-code/issues/16360)
-— Claude Code's LSP client doesn't implement `workspace/configuration`, so csharp-ls can't learn which
-solution to load and falls back to heuristics, potentially indexing the wrong `.slnx` (this repo ships many
-— `Compze.Abstractions.slnx`, `Compze.Contracts.slnx`, etc.). The workaround lives entirely in
-`cloud-setup.sh`: it enables the plugin and sets `CSHARP_LSP_SOLUTION_REL` in the cloud container's
-gitignored `.claude/settings.local.json`, and drops a `.lsp.json` into the plugin cache that pins
-`--solution` to `${CLAUDE_PROJECT_DIR}/${CSHARP_LSP_SOLUTION_REL}`.
-
-### When #16360 is fixed
-
-Replace the `.lsp.json` write in `cloud-setup.sh` with `lspSettings.csharp.solutionPathOverride` in the
-cloud-written settings, and verify a cloud session resolves symbols from `Compze.AllProjects.slnx`.
-
-### Recognizing regression (cloud sessions)
-
-C# semantic probes return "No symbols found" or symbols from the wrong subset → the plugin-cache
-`.lsp.json` is missing or malformed (the auto-managed cache may clobber it on plugin updates — rebuild the
-environment snapshot so the setup script rewrites it).
-
----
-
 ## PowerShell tool in VS Code extension UI mode
 
 The PowerShell tool fails on **every** invocation in the VS Code extension's UI mode (sidebar or editor-tab webview). Returns `Exit code 1` with no output, even for `exit 0`, `Write-Output "hi"`, or `2+2`. Failure is immediate (~10 ms) — pwsh never runs the command.
