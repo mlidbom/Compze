@@ -15,7 +15,8 @@ directory symlink to the catalog's universal rules; `path-scoped/01-shared/` hol
 adopted path-scoped rules. Project-specific rules live alongside as regular files and folders. (Skills link
 flat in `.claude/skills/` with a `shared-` prefix on the link name — grouping folders break skill discovery,
 and the link folder's name becomes the skill's name, so the prefix marks shared skills both in the tree and
-at invocation; see the catalog README.) If the links look wrong, run
+at invocation; see the catalog README. Compze's own skills are regular folders beside the links, without the
+prefix, such as `releasing-compze-packages`.) If the links look wrong, run
 `.claude-shared/git-scripts/verify-claude-symlinks.ps1` — `C-Build` also runs it automatically. If
 `.claude-shared/` is empty, the submodule isn't initialized (a clone without `--recurse-submodules`, or a new
 worktree): run `git submodule update --init`. To sync with upstream, run `.claude-shared/git-scripts/pull.ps1`
