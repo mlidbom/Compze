@@ -800,7 +800,8 @@ the tevent store and the routing; the six of `IStateStore.All` now read through 
 
 **Magnus, 2026-11-17 (item 37):** `ITaggregateIndex.Lookup` returns
 `IReadOnlyCollection<ITaggregateReference<TTaggregate>>` in no particular order, as `All` does, and the index sorts
-nothing: not at load, not at commit, not in a unit of work's view. Item 35's id order goes.
+nothing: not at load, not at commit, not in a unit of work's view. Item 35's id order goes. Built as specified
+(f0ed1ccf6); the id-order specifications became specifications that the lookup gives all that is filed.
 
 **The rule behind it, in his words:** "we should not do anything that costs CPU or memory that is not pretty certain to
 be what the great majority of clients want and need. Even if it is the great majority, if they can do it themselves
@@ -820,7 +821,11 @@ the sort after the filter and then instantly the cost dropped a lot since the co
   so every lookup it makes gives today's order, its rebuild stays reproducible by construction, and no corpus file
   changes. taggregates-opus argued for keeping the promise, since the migration rests on "a full rebuild changes no
   corpus file", and an unordered lookup would hide an order dependence until an edit re-files a note. That one line
-  answers it, at a cost JAStudio can judge for its own groups.
+  answers it, at a cost JAStudio can judge for its own groups. taggregates-opus looked for a hole in that, found none,
+  and withdrew its reason. Its largest groups are sentences by particle, up to 16,346; sorting every vocab's sentences
+  in a full rebuild it estimates at 50 to 150 ms, against a rebuild of 3.5 s. It skips the sort for groups of one or
+  none, which the parsing's lookups mostly are, adds a specification that the collection's lookups give id order, and
+  measures a rebuild before and after.
 - **What JAStudio relies on the order for,** from taggregates-opus: the tokenizer's godan check takes the first vocab
   with a form (唱う is a form of 歌う, 唄う and 詠う), 3 sentences; a sentence's stored parse lists two matching vocab in
   lookup order, 1,169 sentences; possibly a splitter's loop over vocab sharing a question; display lists. The godan
