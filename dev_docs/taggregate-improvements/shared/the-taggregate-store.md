@@ -141,7 +141,7 @@ public interface ITaggregateReference<out TTaggregate> where TTaggregate : ITagg
 - **What a taggregate computes lazily and keeps must be safe for many readers,** since a committed instance is read by
   many threads at once. JAStudio's forms are such a case.
 - **A cache computed from other taggregates goes stale when they commit,** under any isolation: JAStudio's
-  `_notOwnedByOtherVocab` is one. The consumer invalidates it, from a participation handler of the tevents it depends on.
+  `_notOwnedByOtherVocab` is one. So such a value leaves the taggregate, for derived state: see "Derived state" below.
 - **The version** is kept in memory, continued by each copy, and not persisted. JAStudio would see one only as noise in
   every diff and a conflict in every merge.
 - **The session's interface is the tevent store's:** `Get` for update, `TryGet`, `Save`, `Delete`, and in both stores a
@@ -159,8 +159,8 @@ public interface ITaggregateReference<out TTaggregate> where TTaggregate : ITagg
 
 From taggregates-fable's answers and the reviews:
 - **Every edit site changes,** to get the note for update inside a unit of work: UI, MCP tools, importers, batches and
-  nearly every specification. The 51 `NoteGuard.Update` sites become units of work. The edits outside a guard aren't
-  counted.
+  nearly every specification. The 51 `NoteGuard.Update` sites, the mutating methods inside the notes' parts, become
+  publishes. The units of work go at their callers, outside the notes, and those haven't been counted.
 - **What holds a note across edits holds a taggregate-reference:** the caches' indexes, six view model classes, and the
   MCP server for one tool call. Other notes hold only ids or `WordReference`s. JAStudio already has the rule that a note
   object can be replaced (`JPCollection.ReloadFromBackend`).
@@ -238,19 +238,32 @@ the same design, which replaces the transactional map that participation handler
 - **Prototyped** (`3ac56efa8`): a rename is seen as the unit of work left it inside it, as committed outside it, and
   as renamed after the commit; a rollback leaves the index as it was; two creations for one question in one unit of work
   make one vocab; a delete is filed nowhere.
+- **What JAStudio's parsing asks of it,** measured by taggregates-fable with JAStudio's own tools on the real corpus:
+  analyzing every sentence takes 14.2 processor-seconds and allocates 4.6 GB, and makes 1.2 to 2.3 million lookups of
+  vocab by form, and 640,000 or more existence checks by prefix, which allocate nothing today. A sentence parsed inside
+  a unit of work of its own holds only that sentence while it looks up vocab.
+- **So the committed path allocates nothing,** after a first prototype at 0.65 to 0.86 µs and 576 B a lookup would have
+  added 5 to 14% to parsing's processor time and 15 to 29% to its garbage (`56474f568`):
+  - each key's committed references are an array, replaced whole at commit and returned as it is;
+  - the store keeps one reference for each taggregate;
+  - `HasAny(key)` checks a key without resolving a reference;
+  - the overlay runs only when the unit of work holds a copy of the index's taggregate type.
 - **The cost, measured in Release:**
 
   | | Time | Allocated |
   |---|---:|---:|
-  | A lookup outside any unit of work | 0.65 to 0.86 µs | 576 B |
-  | A lookup inside a unit of work holding 1 copy | 1.1 to 3.0 µs | 1.2 KB |
-  | … holding 100 copies | 6.3 to 7.6 µs | 3.5 KB |
-  | … holding 1,000 copies | 55 to 62 µs | 25 KB |
+  | A lookup outside any unit of work | 0.05 to 0.18 µs | 0 B |
+  | `HasAny` outside any unit of work | 0.05 µs | 0 B |
+  | A vocab lookup inside a unit of work holding only a sentence | 0.11 to 0.12 µs | 0 B |
+  | A lookup inside a unit of work holding 1 copy of its type | 0.6 to 0.8 µs | 0.7 KB |
+  | … holding 100 copies | 5.6 to 6.4 µs | 3.1 KB |
+  | … holding 1,000 copies | 54 to 58 µs | 25 KB |
 
-  The prototype recomputes each held copy's keys at every lookup, so a lookup costs in proportion to the copies held:
-  nothing that matters for a unit of work per note, too much for batches of thousands. The fix is the one designed:
-  keep each copy's keys, recomputed only when the copy publishes. And the committed lookup should allocate less on
-  parsing's hot path, by returning the committed set's references without building a list.
+  For JAStudio's parsing that is 0.1 to 0.4 processor-seconds for its lookups, 1 to 3%, and no garbage.
+- **Inside a unit of work that holds copies of the index's type,** the prototype recomputes each copy's keys at every
+  lookup, so a lookup costs in proportion to the copies held: nothing that matters for a unit of work per note, too
+  much for batches of thousands. The fix is the one designed: keep each copy's keys, recomputed only when it publishes.
+- **Recording reads to check their versions at prepare,** the open point from the Opus reviewer, must stay off this path.
 - **It covers every index JAStudio has:** all nine of the vocab cache's indexes, the prefix index included, are
   key-to-notes indexes with a function of keys. JAStudio's `LookupRecorder` records what lookups return, so a lookup
   must be wrappable, or sit behind JAStudio's collection classes: `ITaggregateIndex` is an interface, so either works.
@@ -269,16 +282,21 @@ the same design, which replaces the transactional map that participation handler
 
 ```csharp
 ///<summary>A taggregate whose whole state can be taken as a snapshot, and restored from one.</summary>
-public interface ISnapshotable<TSelf, TSnapshot> where TSelf : ISnapshotable<TSelf, TSnapshot>, new()
+public interface ISnapshotable<TSelf, TSnapshot> where TSelf : ISnapshotable<TSelf, TSnapshot>
 {
    TSnapshot TakeSnapshot();
    void RestoreFrom(TSnapshot snapshot);
 }
 ```
 
-- **Restoring is into a new, empty instance,** for loading and for each copy alike: the store builds it with `new()`,
-  then calls `RestoreFrom`. A part's state can then be set after the part is built, which the tevent appliers need anyway.
-  A concrete class in a hierarchy, such as a vocab under `JPNote`, restores from its own snapshot type.
+- **Restoring is into a new, empty instance,** for loading and for each copy alike: the store builds it, then calls
+  `RestoreFrom`. A part's state can then be set after the part is built, which the tevent appliers need anyway. A
+  concrete class in a hierarchy, such as a vocab under `JPNote`, restores from its own snapshot type.
+- **The consumer says how an empty instance is built,** where the class is named, with a factory or by resolving it
+  from the container: `AddTaggregate<VocabNote>(() => new VocabNote(noteServices))`. A parameterless constructor won't
+  do: JAStudio's notes reach the collection, the dictionary and the configuration through `JPNote.Services`, and
+  nothing may be static, since the specifications run several JAStudios in one process. The same holds for restoring
+  outside any store, as the MCP server does with the serializer's services. From taggregates-fable.
 - **A non-generic face for the store,** which holds taggregates of many types: default interface members that take a
   snapshot, restore from one, and copy.
 - **Each taggregate class is named once where the store is composed,** such as `AddTaggregate<VocabNote>()`, so that
@@ -387,7 +405,7 @@ Generated data can be generated again, so a failed unit of work costs little eit
 - The storage seam's error when `Commit` fails anyway.
 - A short way for specifications to run an edit as a unit of work. JAStudio's specifications edit notes directly today.
 - The ambient unit of work, so that a reference finds its session without the updater being resolved first.
-- Keeping each held copy's keys in the index's overlay, and a committed lookup that allocates less.
+- Keeping each held copy's keys in the index's overlay.
 
 **Loading everything again while running gets easier with references:** a reference outlives a reload, where today
 `JPCollection.ReloadFromBackend` replaces every note object and every holder looks it up again.
@@ -400,7 +418,8 @@ Branch `taggregate-store-opus`, commit `3dd0fbe08`, in `C:\Dev\Compze.worktrees\
   a snapshot interface simpler than the designed one, and the session as a `VolatileTransactionParticipant`.
 - **In Teventive:** a read-only mode for committed instances, a record that a publish failed, and `RestoreIdentity`, behind
   an internal `ITaggregateStoreInternals`.
-- **Taggregate-references and the index defined by state** (`3ac56efa8`), in the same folder.
+- **Taggregate-references and the index defined by state** (`3ac56efa8`), and a committed lookup that allocates
+  nothing (`56474f568`), in the same folder.
 - **The specifications,** in `test/Compze.Tests.Integration/CQRS/TaggregateStore/`: 40 behaviours on both pluggable
   component combinations, three runs. Among them:
   - a reader during a unit of work sees the committed state;

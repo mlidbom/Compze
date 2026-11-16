@@ -85,8 +85,8 @@ The numbers: [what-was-measured.md](what-was-measured.md). The bugs and the smal
    A change outside a transaction is refused, by construction.
 3. **Derived state, such as JAStudio's indexes:** defined as a function of the taggregates' state, provided by Compze,
    kept by the store at commit, and reading its own unit of work's changes at lookup. Both reviewers proposed it, and
-   it is prototyped: a lookup costs 0.65 to 0.86 µs outside a unit of work, and inside one grows with the copies it holds
-   until the overlay keeps each copy's keys.
+   it is prototyped: a committed lookup costs 0.05 to 0.18 µs and allocates nothing, and one inside a unit of work that
+   holds copies of its type grows with them until the overlay keeps each copy's keys.
 4. **Whether `IUnitOfWorkTeventPublisher` itself defers to phase 0,** so that every tevent of a unit of work is
    dispatched in one order (**recommended**). Otherwise a tevent published straight through it overtakes the deferred
    tevents of taggregates. The cost: code later in a unit of work no longer sees what participation handlers did.
@@ -137,7 +137,7 @@ they were built.
 
 | Branch | Built by | What it holds |
 |---|---|---|
-| `taggregate-store-opus` | jastudio-rep-opus | The in-memory taggregate store with deferred dispatch and the private copy (3dd0fbe08), then taggregate-references and the index defined by state (3ac56efa8), specified and measured. `Compze.Tests.Unit` passes, 417 of 417; the store's 40 behaviours pass on both combinations. |
+| `taggregate-store-opus` | jastudio-rep-opus | The in-memory taggregate store with deferred dispatch and the private copy (3dd0fbe08), then taggregate-references and the index defined by state (3ac56efa8), and a committed lookup that allocates nothing (56474f568), specified and measured. `Compze.Tests.Unit` passes, 417 of 417; the store's 40 behaviours pass on both combinations. |
 | `taggregate-experiments-opus` | jastudio-rep-opus | Routing per class in the real base classes: components, entity collections, slots, inheritance. Full suite passes. |
 | `taggregate-experiments-opus-convention` | jastudio-rep-opus | The same, by convention, for comparison. Full suite passes. |
 | `taggregates-opus/snapshot-and-hook` | taggregates-opus | The superseded snapshot of tevents and hook with its queue, both bug fixes, the assertion of one thread, and the refusal after a failed cascade (4b42470ba). Full suite passes. |

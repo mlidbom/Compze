@@ -155,6 +155,22 @@ Then, with taggregate-references and the index defined by state (`3ac56efa8`), t
 - **A lookup inside a unit of work grows with the copies it holds,** since the prototype recomputes their keys at each
   lookup. Keeping each copy's keys, recomputed when it publishes, is the fix.
 
+Then a committed lookup that allocates nothing (`56474f568`), after JAStudio's parsing was measured on the real corpus
+at 1.2 to 2.3 million vocab lookups and 640,000 or more existence checks. Three runs; the machine was at 2 to 7% load in
+the runs before, and not sampled in these:
+
+| | Time, each | Allocated, each |
+|---|---:|---:|
+| A lookup outside any unit of work | 0.05 to 0.18 µs | 0 B |
+| `HasAny` outside any unit of work | 0.05 µs | 0 B |
+| A vocab lookup inside a unit of work holding only a sentence | 0.11 to 0.12 µs | 0 B |
+| A lookup inside a unit of work holding 1 copy of its type | 0.6 to 0.8 µs | 0.7 KB |
+| … holding 100 copies | 5.6 to 6.4 µs | 3.1 KB |
+| … holding 1,000 copies | 54 to 58 µs | 25 KB |
+
+- **The low and high times of a committed lookup** come one from each DI container's run, steadily, which suggests the
+  JIT's tiering rather than the lookup. Not investigated.
+
 ## How it was measured
 
 - **Bytes kept:** `GC.GetTotalMemory(true)` before and after creating the instances, divided by their number.
