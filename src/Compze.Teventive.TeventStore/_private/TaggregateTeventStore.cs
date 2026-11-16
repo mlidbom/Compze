@@ -53,9 +53,8 @@ sealed class TaggregateTeventStore : ITaggregateStore
    ///<summary>The histories whose creation tevent is a tevent of the class, read through the ambient transaction. The tevent store writes<br/>
    /// a unit of work's tevents at each publish, and deletes a taggregate's history at once, so a unit of work sees its own saves and<br/>
    /// deletions.</summary>
-   public IReadOnlyList<ITaggregateReference<TTaggregate>> All<TTaggregate>() where TTaggregate : class, ITaggregate =>
+   public IReadOnlyCollection<ITaggregateReference<TTaggregate>> All<TTaggregate>() where TTaggregate : class, ITaggregate =>
       [..TeventStore.StreamTaggregateIdsInCreationOrder(TeventsTellingApartTheHistoriesOf(ClassToBuildAs(typeof(TTaggregate))))
-                    .InIdOrder()
                     .Select(Reference<TTaggregate>)];
 
    public ITaggregateStoreSession NewSession(TaggregateUnitOfWork unitOfWork) => new TeventStoreSession(this, unitOfWork);

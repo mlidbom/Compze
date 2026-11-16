@@ -107,9 +107,6 @@ public class Given_a_state_store_whose_storage_holds_a_vocab_and_a_sentence : Un
       }
 
       [PCT] public void the_lookup_gives_them_in_id_order() => IdsFiledUnder("kuu").Must().SequenceEqual(_inIdOrder);
-
-      [PCT] public void the_bulk_reader_gives_every_vocab_in_the_order_of_the_text_of_their_ids() =>
-         BulkReader.All<StoredVocab>().Select(it => it.Id).Must().SequenceEqual([.._inIdOrder.Append(VocabId).OrderBy(it => it.Value.ToString(), StringComparer.Ordinal)]);
    }
 
    public class when_asked_for_every_taggregate_of_a_class : Given_a_state_store_whose_storage_holds_a_vocab_and_a_sentence

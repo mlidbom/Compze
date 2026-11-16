@@ -132,19 +132,17 @@ public class Given_a_tevent_store_and_a_state_store : UniversalTestBase
       }
    }
 
-   public class after_three_units_of_work_each_register_a_user_out_of_id_order : Given_a_tevent_store_and_a_state_store
+   public class after_three_units_of_work_each_register_a_user : Given_a_tevent_store_and_a_state_store
    {
-      readonly TaggregateId[] _inIdOrder = [new(Guid.Parse("1b4e28ba-2fa1-11d2-883f-0016d3cca427")),
-                                            new(Guid.Parse("8c9d7a1e-5b3f-4e2a-9d1c-7f6e5a4b3c2d")),
-                                            new(Guid.Parse("f47ac10b-58cc-4372-a567-0e02b2c3d479"))];
+      readonly TaggregateId[] _userIds = [new(), new(), new()];
 
-      public after_three_units_of_work_each_register_a_user_out_of_id_order()
+      public after_three_units_of_work_each_register_a_user()
       {
-         foreach(var id in new[] { _inIdOrder[2], _inIdOrder[0], _inIdOrder[1] })
+         foreach(var id in _userIds)
             InUnitOfWork(taggregates => User.Register(taggregates, $"{id}@example.com", "password", id));
       }
 
-      [PCT] public void the_bulk_reader_gives_every_user_in_id_order() => BulkReader.All<User>().Select(it => it.Id).Must().SequenceEqual(_inIdOrder);
+      [PCT] public void the_bulk_reader_gives_the_three_users() => BulkReader.All<User>().Select(it => it.Id).ToList().Must().Satisfy(it => it.Count == 3 && _userIds.All(it.Contains));
    }
 
    public class after_a_unit_of_work_that_saves_a_user_and_a_vocab_fails : Given_a_tevent_store_and_a_state_store
