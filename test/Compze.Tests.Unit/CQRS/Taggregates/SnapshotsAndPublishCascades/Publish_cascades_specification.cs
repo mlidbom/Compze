@@ -67,6 +67,76 @@ public static class Publish_cascades_specification
       }
    }
 
+   ///<summary>The order the jastudio-rep-fable session showed a nested notification breaks: an edit and its tevent handler's reaction are one cascade,<br/>
+   /// and an observer marks the note when it is told of the edit. Published as edit, reaction, mark, it must be delivered in that order: the tevent<br/>
+   /// store's session saves each tevent as it is told of it, so it would otherwise save version 3 before version 2.</summary>
+   public class Given_a_note_whose_handler_reacts_to_an_edit_and_whose_observer_marks_it_when_told_of_the_edit
+   {
+      readonly Note _note = Note.Create("created");
+      readonly List<Type> _teventsObserved = [];
+
+      public Given_a_note_whose_handler_reacts_to_an_edit_and_whose_observer_marks_it_when_told_of_the_edit()
+      {
+         _note.ReactToEditsInATeventHandler();
+         ((ITaggregate)_note).TeventStream.Subscribe(it =>
+         {
+            _teventsObserved.Add(it.Tevent.GetType());
+            if(it.Tevent is INoteTevent.Edited) _note.Mark();
+         });
+         _note.Edit("edited");
+      }
+
+      [XF] public void the_observer_is_told_of_the_tevents_in_the_order_they_were_published() =>
+         _teventsObserved.Must().SequenceEqual([typeof(NoteTevent.Edited), typeof(NoteTevent.Reacted), typeof(NoteTevent.Marked)]);
+
+      [XF] public void the_tevents_are_uncommitted_in_the_order_they_were_published() =>
+         ((ITaggregate)_note).Commit(tevents => tevents.Skip(1).Select(it => it.Tevent.GetType()).Must().SequenceEqual([typeof(NoteTevent.Edited), typeof(NoteTevent.Reacted), typeof(NoteTevent.Marked)]));
+   }
+
+   public class Given_a_note_whose_hook_throws_after_an_observer_marked_it_when_told_of_an_edit
+   {
+      readonly Note _note = Note.Create("created");
+
+      public Given_a_note_whose_hook_throws_after_an_observer_marked_it_when_told_of_an_edit()
+      {
+         ((ITaggregate)_note).TeventStream.Subscribe(it =>
+         {
+            if(it.Tevent is INoteTevent.Edited) _note.Mark();
+         });
+         var hasThrown = false;
+         _note.WhenAPublishCascadeEnds(_ =>
+         {
+            if(hasThrown) return;
+            hasThrown = true;
+            throw new InvalidOperationException("The hook was told to throw once.");
+         });
+      }
+
+      [XF] public void the_edit_throws_out_of_the_hook_with_the_edit_applied()
+      {
+         Invoking(() => _note.Edit("edited")).Must().Throw<InvalidOperationException>();
+         _note.Text.Must().Be("edited");
+      }
+
+      [XF] public void the_mark_queued_before_the_hook_threw_is_handed_on_before_the_next_publish()
+      {
+         Invoking(() => _note.Edit("edited")).Must().Throw<InvalidOperationException>();
+         _note.React();
+         _note.PublishCascadesEnded.Skip(1).Select(it => it.Single().GetType()).Must().SequenceEqual([typeof(NoteTevent.Edited), typeof(NoteTevent.Marked), typeof(NoteTevent.Reacted)]);
+      }
+   }
+
+   public class Given_a_note_whose_tevent_applier_threw_from_inside_a_publish_cascade
+   {
+      readonly Note _note = Note.Create("created");
+
+      public Given_a_note_whose_tevent_applier_threw_from_inside_a_publish_cascade() =>
+         Invoking(() => _note.Edit(Note.TextTheApplierThrowsOn)).Must().Throw<InvalidOperationException>();
+
+      [XF] public void publishing_on_it_again_is_refused() => Invoking(() => _note.React()).Must().Throw<Exception>();
+      [XF] public void committing_it_is_refused() => Invoking(() => ((ITaggregate)_note).Commit(_ => {})).Must().Throw<Exception>();
+   }
+
    public class Given_a_note_that_commits_at_the_end_of_each_publish_cascade_and_then_reacts_to_an_edit_by_publishing
    {
       readonly Note _note = Note.Create("created");

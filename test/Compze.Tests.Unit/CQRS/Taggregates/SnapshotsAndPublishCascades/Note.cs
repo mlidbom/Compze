@@ -28,6 +28,9 @@ interface INoteTevent : ITaggregateTevent
    ///<summary>Published in reaction to another tevent: by a tevent handler, an observer, the per-cascade hook or a commit callback.</summary>
    interface Reacted : INoteTevent;
 
+   ///<summary>Published by an observer, in reaction to another tevent, to show where its tevent is delivered among the others.</summary>
+   interface Marked : INoteTevent;
+
    interface Sense : INoteTevent
    {
       Guid SenseId { get; }
@@ -66,6 +69,8 @@ abstract class NoteTevent : TaggregateTevent, INoteTevent
    }
 
    internal class Reacted : NoteTevent, INoteTevent.Reacted;
+
+   internal class Marked : NoteTevent, INoteTevent.Marked;
 
    internal abstract class Sense : NoteTevent, INoteTevent.Sense
    {
@@ -106,8 +111,9 @@ class Note : Taggregate<Note, INoteTevent, NoteTevent, INoteTevent<INoteTevent>,
       _senses = NoteSense.CreateSelfManagingCollection(this);
 
       RegisterTeventAppliers()
-        .For<INoteTevent.TextUpdated>(it => Text = it.Text)
-        .For<INoteTevent.Reacted>(_ => {});
+        .For<INoteTevent.TextUpdated>(it => Text = it.Text == TextTheApplierThrowsOn ? throw new InvalidOperationException("The applier was told to throw.") : it.Text)
+        .For<INoteTevent.Reacted>(_ => {})
+        .For<INoteTevent.Marked>(_ => {});
 
       RegisterTeventHandlers()
         .For<INoteTevent>(_teventsHandled.Add)
@@ -117,6 +123,9 @@ class Note : Taggregate<Note, INoteTevent, NoteTevent, INoteTevent<INoteTevent>,
             if(_reactsToEditsInATeventHandler) Publish(new NoteTevent.Reacted());
          });
    }
+
+   ///<summary>A text that the text's tevent applier throws on, as an applier with a bug would.</summary>
+   public const string TextTheApplierThrowsOn = "the applier throws on this";
 
    public string Text { get; private set; } = "";
    public IReadOnlyEntityCollection<NoteSense, Guid> Senses => _senses.Entities;
@@ -143,6 +152,7 @@ class Note : Taggregate<Note, INoteTevent, NoteTevent, INoteTevent<INoteTevent>,
 
    public void Edit(string text) => Publish(new NoteTevent.Edited(text));
    public void React() => Publish(new NoteTevent.Reacted());
+   public void Mark() => Publish(new NoteTevent.Marked());
    public NoteSense AddSense(string meaning) => _senses.AddByPublishing(new NoteTevent.Sense.Created(Guid.NewGuid(), meaning));
 
    ///<summary>From now on a tevent handler reacts to each edit by publishing a <see cref="INoteTevent.Reacted"/>, inside the edit's publish cascade.</summary>
