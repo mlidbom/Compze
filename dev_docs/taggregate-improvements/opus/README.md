@@ -19,7 +19,9 @@ JAStudio can have its notes as Compze.Teventive taggregates after three changes 
    instance builds tevent dispatchers to say how its class applies tevents. That costs 0.6 to 0.9 GB for JAStudio's
    corpus, and is the wrong abstraction regardless of the cost.
 3. **[Told once per publish cascade](3-told-once-per-publish-cascade.md):** a hook that tells the taggregate's owner
-   when a publish cascade has ended. Its design also fixes a reentrancy bug in `Taggregate.Publish`.
+   when a publish cascade has ended. Its design also fixes reentrancy bugs in `Taggregate.Publish` and
+   `ITaggregate.Commit`, allows committing from inside the hook, and asserts that one taggregate is used by one thread
+   at a time.
 
 Then, later: [the smaller and later changes](4-later.md).
 
@@ -68,17 +70,21 @@ unshippable: vocab alone would add 320 to 520 MB.
 - **Names:** the snapshot marker (`ITaggregateSnapshotTevent` or `ITaggregateRestoredTevent`), and the names in the per-class routing's
   sketch (`TeventAppliers`, `Declare`, `Extend`, `Component`, `Entities`). They're placeholders.
 
-## A bug found on the way
+## Two bugs found on the way
 
-`Taggregate.Publish` breaks when a `TeventStream` observer publishes on the same taggregate. It was reproduced with
-0.6.0-alpha. Only these documents record it: there is no `bug:` comment at the code yet, since this is design work. The
-per-cascade hook fixes it: see
-[the reentrancy bug](3-told-once-per-publish-cascade.md#the-reentrancy-bug-in-taggregatepublish).
+Both were reproduced with 0.6.0-alpha. Only these documents record them: there are no `bug:` comments at the code yet,
+since this is design work. The per-cascade hook's design fixes both: see
+[told once per publish cascade](3-told-once-per-publish-cascade.md).
+
+- **`Taggregate.Publish`:** a `TeventStream` observer that publishes on the same taggregate gets the cascade's tevents
+  twice, and the publish then throws after the state has changed.
+- **`ITaggregate.Commit`:** a publish on the same taggregate from inside the commit callback either throws or, worse,
+  is never committed: the state changes and the tevent is lost.
 
 ## How the measurements were made
 
 - **[The benchmark](benchmark/README.md)** is taggregates-opus's. It measures the bytes a taggregate instance retains
   against Compze.Teventive 0.6.0-alpha, for any number of components and properties per component.
 - **[Checks against 0.6.0-alpha](checks-against-0.6.0-alpha/README.md)** are jastudio-rep-opus's: a component typed on
-  the subclass that declares it, the reproduction of the reentrancy bug, and how a subscriber across every owner gets a
-  shared tomponent's tevents.
+  the subclass that declares it, the reproductions of the two reentrancy bugs, and how a subscriber across every owner
+  gets a shared tomponent's tevents.

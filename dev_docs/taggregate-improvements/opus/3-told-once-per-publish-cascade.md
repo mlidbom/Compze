@@ -62,7 +62,66 @@ generated data, such as its sentence counts after a reparse.
 inside the hook then starts a publish cascade of its own, with its own call to the hook. A specification pins it:
 an observer that publishes on the same taggregate sees each tevent once, in order, and nothing throws.
 
+## The same bug in `ITaggregate.Commit`
+
+Found by jastudio-rep-opus while checking that the hook may commit, and reproduced with 0.6.0-alpha on 2026-11-16 by
+[a check](checks-against-0.6.0-alpha/README.md). It's more serious than the bug in `Publish`, because one form of it
+loses a tevent without a word.
+
+`Commit` hands its callback the live list of uncommitted tevents, and clears the list after the callback returns. A
+publish on the same taggregate from inside the callback, such as a subscriber reacting while the callback dispatches
+the tevents, then goes one of two ways:
+
+- **If the callback is enumerating the tevents,** the publish adds to the list under the enumeration, and the callback
+  throws `InvalidOperationException`.
+- **If it isn't,** the publish's tevent is added to the list, and the `Clear` after the callback removes it. It's never
+  handed to any commit. In the check, the note ended at version 3 with the name the inner publish gave it, and the
+  next `Commit` handed over nothing. A tevent store would then hold a history without version 3.
+
+**The fix has the same shape:** `Commit` copies the list, clears it, then calls the callback with the copy. A publish
+from inside the callback leaves its tevents uncommitted, for a later `Commit`.
+
+Rejected: deferring a `Commit` made inside a commit callback until the outer callback returns, then committing in a
+loop. It would hand tevents to a callback other than the one their own `Commit` passed.
+
+## Committing from inside the hook
+
+JAStudio's override of the hook commits there: it refiles the note, calls `ITaggregate.Commit`, saves the note's file,
+and dispatches the tevents across the corpus. With both fixes, that is allowed and specified:
+
+- `Commit` may be called from inside the hook.
+- A publish the hook makes after committing, or that a subscriber makes while the hook dispatches, is a publish cascade
+  of its own. Its tevents stay uncommitted until its own call to the hook commits them.
+- **Each tevent is handed to exactly one commit callback, and the callbacks are entered in the order of the tevents.**
+  A nested publish's callback can finish before the outer callback does, so a callback that persists should persist
+  before it does anything that can publish.
+
+A specification pins it: commit in the hook, publish again from inside the hook, and every tevent is committed exactly
+once, in order.
+
+## Asserting that one taggregate is used by one thread at a time
+
+A taggregate isn't thread-safe, and isn't meant to be. But today, two threads publishing on one instance at the same
+time corrupt `_reentrancyLevel` and the lists without a word. JAStudio could do it: a full rebuild, on background
+threads, updates a vocab's generated data while the UI thread edits the same vocab. Today the editors are disabled
+during a reparse, by hand, for exactly that reason. (taggregates-opus raised it on 2026-11-16.)
+
+The assertion turns that silent corruption into a loud failure, as the standard on defensive coding asks, at little
+cost:
+
+- When a publish cascade starts (reentrancy level 0 to 1), record the publishing thread with
+  `Interlocked.CompareExchange` on a field, and throw if another thread holds it. When the cascade ends, release it.
+  The compare-exchange makes the check reliable when two threads start a publish cascade at the same moment, which a
+  plain read and write wouldn't be.
+- `Commit`, `LoadFromHistory` and `LoadFromSnapshot` take the same field.
+- **One at a time, not one thread for ever.** A note loaded on one thread and edited later on the UI thread is fine.
+  `Publish` is synchronous, so a publish cascade never moves to another thread midway.
+- **Cost:** a field per instance, and one compare-exchange per publish cascade.
+
+Compze's existing usage guards (`IUsageGuard`, `SingleTransactionUsageGuard` in Compze.Internals.SystemCE) don't fit:
+each is an object per guarded instance, and none means "one thread at a time".
+
 ## What it touches
 
 `Taggregate` in Compze.Teventive. The tevent store's `TeventStoreUpdater` subscribes to `TeventStream` per tracked
-taggregate, and keeps working unchanged.
+taggregate, and commits in `Save`. It keeps working unchanged.

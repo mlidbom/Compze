@@ -33,8 +33,19 @@ ForWrappedGeneric<IPublisherTevent<IPublisherTevent<IPostalAddressTevent.Changed
 ForGenericTevent<IAddressAdopted>, a marker on each owner's adopting wrappers: ShippingAddressTevent: Shipping street | BillingAddressTevent: Billing street | WarehouseAddressTevent: Warehouse street
 ```
 
+## `CommitReentrancy.cs`
+
+It checks a publish on the same taggregate from inside a commit callback. See "The same bug in `ITaggregate.Commit`" in
+[told once per publish cascade](../3-told-once-per-publish-cascade.md). Its output:
+
+```
+Publishing while the commit callback enumerates threw InvalidOperationException: Collection was modified; enumeration operation may not execute.
+First commit handed over: Created, Renamed(first)
+Second commit handed over: []  while the note's name is 'published inside the commit callback' at version 3
+```
+
 ## Running them
 
 To run one, copy it as `Program.cs` to a folder outside this repository, with the project file shown in
 [the benchmark's README](../benchmark/README.md), and `dotnet run -c Release`. Once the per-cascade hook exists, a
-specification in Compze replaces the reentrancy check.
+specification in Compze replaces each reentrancy check.
