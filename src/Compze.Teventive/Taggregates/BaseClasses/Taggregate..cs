@@ -76,10 +76,6 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
       if(_reentrancyLevel == 0)
       {
          AssertInvariantsAreMetInternal(); //It is allowed to enter a temporarily invalid state that will be corrected by new tevents published by tevent handlers. So we only check invariants once this tevent has been fully published including tevents published by handlers of the original tevent.
-         //bug: A TeventStream observer that publishes on this taggregate from inside OnNext adds to this list while the foreach enumerates it.
-         //   The inner Publish, at reentrancy level 0 itself, emits this cascade's tevents a second time, then this foreach throws InvalidOperationException
-         //   after the state has changed. Observed with Compze.Teventive 0.6.0-alpha (2026-11-16). The fix: hand the observers a copy, and clear the list
-         //   before notifying them, so a publish from inside an observer starts a cascade of its own. See dev_docs/taggregate-improvements/opus.
          foreach(var it in _teventsPublishedDuringCurrentPublishCallIncludingReentrantCallsFromTeventHandlers) _teventStream.OnNext(it);
          _teventsPublishedDuringCurrentPublishCallIncludingReentrantCallsFromTeventHandlers.Clear();
       }
