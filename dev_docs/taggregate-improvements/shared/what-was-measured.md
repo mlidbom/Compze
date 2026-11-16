@@ -1,10 +1,15 @@
 # What was measured
 
-**Status: agreed by all four sessions, who have stopped** (2026-11-16). On .NET 11, with workstation garbage collection,
+**Status: agreed by all four sessions, and reviewed by two independent agents** (2026-11-16). On .NET 11, with workstation garbage collection,
 over 10,000 to 80,000 instances. Bytes are exact and the same from run to run within a few bytes. Times are from a
 machine that other work shares, at 3 to 13% load from that work depending on the run, and the documents they come from
 say so per run.
 Each team measured with a program of its own, and where they overlap, the numbers agree.
+
+**The teams' programs referenced Debug builds of Compze.Teventive.** The independent Fable review reran them against
+Release builds: kept bytes are the same, to the byte, in either build, while bytes allocated and times differ. Its
+Release numbers are in [the Release rerun](#the-release-rerun-by-the-independent-review), below, and the README quotes
+those.
 
 ## Today: Compze.Teventive 0.6.0-alpha
 
@@ -68,8 +73,8 @@ A vocab with four components and four shared tomponents, loaded from its stored 
 | The prototype | 584 B | 2,040 B | 2.6 to 2.8 µs |
 
 - **Per teventive:** a root 168 B, a component 56 B, a shared tomponent 48 B, against 96, 40 and 24 B as plain objects.
-- **For JAStudio's notes,** with their real parts counted: about 30 MB more than plain objects, against about 1.1 GB
-  today.
+- **For JAStudio's notes,** with their real parts counted: about 27 MB more than plain objects, by the review's
+  arithmetic from JAStudio's part counts, against about 1.1 GB today.
 - **taggregates-fable's own prototype,** about 150 lines, measured the same, and found that a loaded tevent needs no
   wrapper object: an adopted tevent then loads in 232 B instead of about 350.
 
@@ -97,6 +102,27 @@ of one class in one of the components, loaded from a snapshot of five tevents, w
 - **Publishing through a slot allocates 1,032 B** in both declared styles, and keeps nothing after `Commit`, against
   1,256 B registered per instance.
 
+## The Release rerun, by the independent review
+
+The Fable reviewer reran both teams' programs against Release builds of the prototypes, with the machine at 2 to 18%
+other load:
+
+| Slot shape: a vocab of a root, four components and four shared tomponents, one load | Debug, as stated above | Release, three runs |
+|---|---:|---:|
+| Allocated, slot object per instance | 4,192 B | 3,416 B |
+| Allocated, slots of the class | 4,800 B | 3,770 to 3,800 B |
+| Allocated, registered per instance | 22,104 B | 20,027 to 20,266 B |
+| Allocated by a publish through a slot, declared | 1,032 B | 688 B |
+| Time, registered per instance | 36.6 µs | 33 to 38 µs |
+| Time, declared | 4.4 to 4.8 µs | 3.1 to 4.0 µs |
+
+- **The slot shape, the nearest to JAStudio's, loads 9 to 12 times faster** declared than registered per instance.
+- **The 15-component shape loads about 75 times faster:** 80,000 notes in 2.98 to 3.08 s registered, against 0.04 s
+  declared. One run of three rounds.
+- **Startup garbage is the largest remaining cost:** about 750 B allocated per loaded tevent in Release, so about 0.4 GB
+  of short-lived garbage for JAStudio's 570,000 tevents at each start. It comes mostly from closures and `ScopedChange` on
+  the load path, and from the wrappers, and the real implementation should avoid the closures.
+
 ## How it was measured
 
 - **Bytes kept:** `GC.GetTotalMemory(true)` before and after creating the instances, divided by their number.
@@ -107,4 +133,6 @@ of one class in one of the components, loaded from a snapshot of five tevents, w
   team's on `taggregate-experiments-fable`, under `experiments/taggregate-improvements-fable`.
 - **For a specification in Compze,** bytes kept are unreliable: `GC.GetTotalMemory` measures the whole process, and
   Compze's specifications run in parallel. Bytes allocated on the specification's own thread are not, and bound the kept
-  bytes from above: the performance specification should bound those, and the programs report the kept bytes and times.
+  bytes from above: the performance specification should bound those, in Release, naming its configuration and leaving
+  headroom, since allocated bytes depend on the build and vary a little between runs. The programs report the kept
+  bytes and times.

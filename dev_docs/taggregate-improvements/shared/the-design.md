@@ -1,6 +1,6 @@
 # The design both teams agree on
 
-**Status: agreed by all four sessions, who have stopped** (2026-11-16). Every name below is a placeholder for Magnus's pass
+**Status: agreed by all four sessions, and reviewed by two independent agents** (2026-11-16). Every name below is a placeholder for Magnus's pass
 over the names. Where the teams first differed, the section says what was settled and why.
 
 ## 1. Tevent routing decided once per class
@@ -22,12 +22,12 @@ goes.
 ```csharp
 class VocabNote : JPNote
 {
-   static readonly TeventRouting<VocabNote> VocabNoteAppliers = JPNoteAppliers.Extend<VocabNote>(it => it
+   static readonly TeventRouting<VocabNote, INoteTevent> VocabNoteAppliers = JPNoteAppliers.Extend<VocabNote>(it => it
      .For<IVocabTevent.TextUpdated>(static (vocab, tevent) => vocab._text = tevent.Text)
      .Component(static vocab => vocab.Forms)
      .SharedTomponent(SeeAlsoSlot));
 
-   protected override TeventRouting TeventAppliers => VocabNoteAppliers;
+   protected override TeventRouting<INoteTevent> TeventAppliers => VocabNoteAppliers;
 }
 ```
 
@@ -37,15 +37,33 @@ class VocabNote : JPNote
   forbids capture; the table also asserts, when declared, that no handler holds state.
 - **A part is an entry in its parent's table:** `.Component(…)`, `.Entities(…)`, `.SharedTomponent(…)`. The part's tevent
   type is inferred from what the entry's lambda returns. A part no longer registers itself on its parent.
-- **Today's verbs and rules stay:** `For`, `ForWrapped`, `ForGenericTevent`, `BeforeHandlers`, `AfterHandlers`,
-  `IgnoreUnhandled`, every matching entry called in the order declared, an unhandled tevent an error unless declared
-  otherwise. The matching rules are implemented once, and shared with `IMutableTeventDispatcher`, which stays as it is
-  for subscriptions made at run time.
+- **The table is typed on the class and on its tevent root,** so `For` keeps today's compile-time constraint to the
+  class's own tevents, and keeps `TessageTypeInspector.AssertValidForSubscription`.
+- **The verbs are what taggregates need:** `For`, `IgnoreUnhandled` and the parts, with the slot's `ForWrapped` kept
+  internal. `IgnoreAllUnhandled` becomes `IgnoreUnhandled` of the root tevent. `BeforeHandlers`, `AfterHandlers` and
+  `ForGenericTevent` stay on `IMutableTeventDispatcher` only: no taggregate needs them, so by YAGNI the new type doesn't
+  carry them. That changes what a consumer's taggregates can do, so it's on Magnus's list.
+- **The rules stay:** every matching entry is called in the order declared, and an unhandled tevent is an error unless
+  declared otherwise. Matching is built on the dispatcher's own code and its one translation rule, not a second
+  implementation of it: that is the first increment of the work. `IMutableTeventDispatcher` stays as it is, for
+  subscriptions made at run time.
 - **Inheritance:** a subclass's table starts from its base class's, through `Extend<TSubclass>`, and its entries are
   typed on the subclass. A subclass that adds nothing still declares its table, an empty `Extend`.
-- **Forgetting a subclass's table fails loudly:** on dispatch, the table asserts that the instance's class is exactly
-  the class it was declared for. Without that assertion one case would be silent: a subclass that adds an applier for a
-  tevent its base class already applies, and forgets its table, would lose that applier with no unhandled tevent.
+- **A mistake in a table is loud.** The independent review showed that a snapshot makes several mistakes silent: a
+  snapshot tevent implements every property-updated tevent, so it always matches some route, and "an unhandled tevent
+  is an error" never fires on a load. A forgotten `.Component(…)` then loads the note without the component's state,
+  and the next save loses it. So:
+  - **on dispatch, the table asserts that the instance's class is exactly the class it was declared for,** with the
+    property abstract at the root, so a subclass that forgets its table fails at its first tevent;
+  - **a class's first table comes only from a protected static factory on Compze's base class, typed on the class,** and
+    a subclass's only from `Extend`, so a subclass can't skip its base class's appliers;
+  - **a part asserts, when it's constructed, that its parent's table has an entry for its class,** and a shared
+    tomponent that its slot is entered in its owner's table. The check is per class, not per instance, since the parent's
+    field doesn't hold the part yet while the part's constructor runs;
+  - **a slot's route asserts that the shared tomponent it reaches was constructed with that slot.**
+
+  Two gaps are named, not solved: two components of one class with one entry forgotten, and `Extend` skipping an
+  intermediate class that has a table.
 - **Resolved once per class and wrapper tevent type,** published in a dictionary that is never changed afterwards and is
   read without a lock. Many threads dispatching on different instances of one class at once is safe, which JAStudio's
   full rebuild does.
@@ -77,6 +95,18 @@ reading lists in a kanji, media reference lists in every note type. So a slot mu
   owner publishes the owner's tevents. And a slot's declaration has five type arguments, which a slot type nested in the
   base class could cut to two. Both are details for the real design.
 
+### What is built, what is designed, and what isn't yet
+
+- **Built and measured** in the real base classes: the root, components, entity collections, slots per instance and
+  slots of the class, inheritance through `Extend`, and the check that a handler holds no state.
+- **Designed, not built:** the exact-class assertion and the other safeguards above, the table typed on the tevent root,
+  and matching shared with the dispatcher. The prototypes keep a fallback to per-instance registration, and their
+  `TeventRouting` has a second implementation of matching.
+- **Not designed yet,** and needed before per-instance registration can be removed: removable entities, which throw under
+  a declaring parent in the prototype; shared tentities and their collections; how Compze's own base classes, `Tentity`
+  and the rest, add their appliers to a subclass's table; and the query models, which are a decision of their own.
+- **The prototype routes tevent handlers into components,** which the design doesn't want: not to be carried over.
+
 ### Settled between the teams
 
 - **How an instance reaches its class's table:** the fable team first proposed handing it through the base constructor,
@@ -96,7 +126,13 @@ reading lists in a kanji, media reference lists in every note type. So a slot mu
   routed to; and the order of several matching appliers rests on metadata order, which C# doesn't promise.
 - **A third way, not prototyped:** instance methods marked `[TeventApplier]` and `[TeventHandler]`, found by reflection,
   with the parts still declared. It keeps plain instance methods, fails loudly on a wrong signature, and with
-  `[MeansImplicitUse]` the IDE doesn't call the methods unused. For Magnus to weigh against the declared table.
+  `[MeansImplicitUse]` the IDE doesn't call the methods unused. But several matching appliers in one class would still
+  run in metadata order, the convention's flaw, unless the attribute carries an order. For Magnus to weigh against the
+  declared table.
+- **Declaring the wrapper tevent implementation in the table:** which publisher a class is isn't tevent routing, and
+  there are two tables. Today's virtual `WrapperTeventImplementation` stays, its default from the generic argument
+  meaning a root needs nothing. One per-class declaration holding appliers, handlers and the wrapper is an option for
+  the design.
 - **Creating the per-instance dispatchers lazily:** loading runs the appliers, so every instance would create them anyway.
 - **Recording a class's first instance's registrations and reusing them:** the closures capture that first instance.
 
@@ -108,15 +144,16 @@ editing uses. It stands in for the history so far, as one step.
 ```csharp
 ///<summary>Restores this taggregate from a snapshot its own code has constructed from stored state.<br/>
 /// Nothing is published, no tevent handler runs, and nothing is left uncommitted.</summary>
-protected void LoadFromSnapshot(IEnumerable<TTaggregateTeventImplementation> snapshot)
+protected void LoadFromSnapshot(TaggregateId id, IEnumerable<TTaggregateTeventImplementation> snapshot)
 ```
 
 - **Protected, and typed on the taggregate's class.** Its caller is the class's own factory, such as a static
   `Load(storedState)` beside its `Create`. Nothing is added to `ITaggregate`: Compze makes public only what a consumer
   needs, and the tevent store has no snapshots.
-- **The first tevent carries a snapshot marker of its own,** `ITaggregateSnapshotTevent`, and no later tevent does. It
-  establishes the taggregate's identity, as a creation tevent does. `Publish` still requires `ITaggregateCreatedTevent`
-  of a taggregate's first published tevent, so a snapshot tevent can't be published as a creation.
+- **The taggregate's id is a parameter,** and no tevent of the snapshot is a creation tevent. Compze needs no marker
+  interface: it would use one only to take the id from the first tevent and to assert its place. The load asserts that
+  the snapshot isn't empty and that no tevent carries another id. `Publish` still requires `ITaggregateCreatedTevent`
+  of a taggregate's first published tevent.
 - **The whole snapshot is version 1,** with no version parameter. `Version` after a load is then 1 whatever the note's
   shape, and above 1 once it has changed. A version-taking overload, on `ITaggregate`, comes if the tevent store gains
   snapshots.
@@ -129,17 +166,20 @@ protected void LoadFromSnapshot(IEnumerable<TTaggregateTeventImplementation> sna
   entities.
 - **The thread assertion, below, covers loading too.**
 
-**Settled between the teams:** whether the first tevent is a creation tevent or carries a marker of its own, and whether
-the snapshot is numbered 1..k or given one version. JAStudio's representative decided the marker with two facts of its
-own. A note is created in several ways, by a person, from the dictionary, by cloning or by an import, and each creation
-tevent says what that creation set; one that must also carry the note's whole present state stops saying what a creation
-is. And only a snapshot tevent must be complete, so only it can be checked against every property-updated interface its
-class applies. With the marker, a snapshot isn't a history that starts with a creation, so one version, 1, fits it.
+**Settled between the teams, and then by the review:** whether the first tevent is a creation tevent, and whether the
+snapshot is numbered 1..k or given one version. JAStudio's representative ruled out the creation tevent with two facts
+of its own. A note is created in several ways, by a person, from the dictionary, by cloning or by an import, and each
+creation tevent says what that creation set; one that must also carry the note's whole present state stops saying what
+a creation is. And only a snapshot tevent must be complete, so only it can be checked against every property-updated
+interface its class applies. The teams then chose a marker interface of Compze's. The independent review showed that
+an id parameter meets both facts without a new public interface: the loaded tevents aren't creation tevents, JAStudio
+may give them a marker of its own, and completeness can be checked because the load knows which tevents are the
+snapshot. A snapshot that isn't a history beginning with a creation fits one version, 1.
 
 **A gap a snapshot can leave silently:** a property-updated tevent added later, which the snapshot tevent doesn't
 implement, leaves that property at its default on load, and the next save loses the data. A consumer's round-trip
-specification (load, save, compare) catches it. With the marker and the per-class tables, Compze could check it once per
-class, if property-updated tevents get a marker of their own.
+specification (load, save, compare) catches it. With the per-class tables, Compze could check it once per class and tevent
+type, at the first load, if property-updated tevents get a marker of their own.
 
 ## 3. Told once per publish cascade
 
@@ -154,7 +194,9 @@ protected virtual void OnTeventsPublished(IReadOnlyList<TWrapperTeventInterface>
 
 - **The consumer's taggregate class overrides it,** once: JAStudio's `JPNote` refiles the note, commits, saves the note's
   file and dispatches the tevents on its corpus-wide dispatcher. No observer per instance, and no static state.
-- **Its base implementation feeds `TeventStream`,** which is created only when someone subscribes.
+- **`Taggregate` feeds `TeventStream` itself, then calls the hook,** which is empty by default. An override that forgets
+  its base call can then not silence the tevent store's session, which saves through `TeventStream`. The stream is
+  created only when someone subscribes.
 - **Published is not committed.** The hook says what was published; `Commit` is where the consumer takes what it hasn't
   saved. `Commit` may be called from inside the hook.
 - **A queue keeps the order:** a publish from inside the hook, or from inside an observer, adds its cascade to the queue,
@@ -164,17 +206,38 @@ protected virtual void OnTeventsPublished(IReadOnlyList<TWrapperTeventInterface>
   tevent as it's handed over, would save version 3 before version 2. **Settled between the teams:** the opus prototype
   first nested the call, and the fable team's queue replaced it.
 - **`Commit` takes the list out before it calls back,** so a tevent published from inside the commit callback stays
-  uncommitted for the next `Commit`.
+  uncommitted for the next `Commit`. **`Commit` asserts it isn't called inside an unfinished cascade:** today a tevent
+  handler that commits hands over tevents whose invariants then fail.
 - **The two lists of tevents are created when first needed and handed on whole,** so a loaded taggregate that publishes
   nothing keeps neither.
-- **One thread at a time:** `Publish`, `Commit` and the loads record the thread in their outermost call with a
-  compare-exchange, and throw when another thread enters meanwhile. Not thread affinity: a note loaded on one thread and
-  edited later on another is fine. It turns a silent corruption into a loud failure, at the cost of a field and one
-  interlocked operation per publish cascade.
-- **What an exception leaves behind:** a hook or an observer that throws leaves the taggregate usable, with the tevents
-  not yet handed over still queued, in order, for the next publish. A tevent applier, a tevent handler or the invariants
-  that throw leave state that can't be trusted: the proposal, for Magnus to decide, is that the taggregate then refuses
-  publishing and committing. The combined prototype does that.
+- **One thread at a time:** `Publish`, `Commit` and the loads claim the taggregate for their thread with a compare-exchange,
+  and throw when another thread enters meanwhile. Not thread affinity: a note loaded on one thread and edited later on
+  another is fine. It catches only overlapping publishes, never a reader against a publisher. How far the claim reaches
+  depends on decision 6, since the tevent store's session blocks on the bus while a handler may continue on a pool
+  thread (`TeventStoreUpdater.OnTaggregateTevent`):
+  - **If a store handler may not change the taggregate it handles** (recommended): the claim covers the whole of
+    `Publish`, hand-over included, which is what JAStudio needs against its race between a background reparse and an
+    edit in the UI, whose window is mostly the hand-over. The tevent store asserts against the re-entry itself, and the
+    thread assertion's message names that case, since it trips first on another thread.
+  - **If it may:** the claim is released around each call out to an observer or the hook, and held while the queue is
+    taken from. JAStudio's race is then mostly uncaught.
+  - **Keying the claim on the flow of execution was rejected:** a task started inside a publish carries the same flow,
+    and could publish concurrently without being caught.
+- **What an exception leaves behind: one rule.** An exception that escapes `Publish`, from a tevent applier, a tevent
+  handler, the invariants, the hook or an observer, makes the taggregate refuse publishing and committing from then on,
+  and so does a load that throws. No tevent is then dropped silently, and none is handed over twice. Precisely:
+  - **the mark is set where the exception escapes,** at any nesting level, by a catch that rethrows or a finally on a
+    success flag. A publish from inside the hook is an outermost publish, so a flag stretched over the hand-over would
+    refuse it;
+  - **checks that run before anything changes don't set it:** the thread claim, and the refusal itself;
+  - **only what escapes counts:** a hook that catches inside itself sets the consumer's own policy for a failing
+    subscriber;
+  - **reads aren't refused,** though what they read may be half applied;
+  - **for JAStudio,** every reference to a refused note, such as indexes and view models, is to be replaced by a
+    reloaded note.
+
+  Rejected: keeping the failed cascade queued for re-delivery, which hands the tevent again to observers that may have
+  acted on it in part. Decision 5 is Magnus's.
 
 ## 4. `ITaggregateTevent` as a plain `ITevent`
 
@@ -182,12 +245,20 @@ protected virtual void OnTeventsPublished(IReadOnlyList<TWrapperTeventInterface>
 transactional. A tevent's type is to state its delivery contract (decision D6 of the routing work), and a note's tevents
 never leave the process.
 
-- **The change:** `ITaggregateTevent : ITevent`. A taggregate delivered exactly-once says so at its root:
-  `interface IAccountTevent : ITaggregateTevent, IExactlyOnceTevent`.
-- **What it touches:** the tevent store reads each tevent's `TessageId`, so it must ask for one; about five of the 24
-  taggregate hierarchies in the tests and the sample are delivered between endpoints and need the one-line declaration;
-  nothing subscribes on a bus to `ITaggregateTevent`, `ITaggregateCreatedTevent` or `ITaggregateDeletedTevent` themselves.
-- **What it saves a note:** a `TessageId` per tevent, 32 B and a Guid's creation, and a contract nothing honours.
+- **What the tevent store needs is identity, not exactly-once delivery:** it identifies every stored tevent by its
+  `TessageId`, when reading tevents back, in migrations, and in its rows. So every stored hierarchy needs
+  `ITessageWithIdentity`, whether or not it is delivered between processes.
+- **This needs design before it's a decision,** in one of two variants:
+  - **the interface only,** most simply `ITaggregateTevent : ITevent, ITessageWithIdentity`, which the tevent store needs
+    nothing new for: truthful, and saving nothing measurable;
+  - **the identity moved too,** to the tevents that need it: `TaggregateTevent` loses its `Id`, which touches every stored
+    taggregate's tevent classes and the migrations' replacement tevents, and saves JAStudio a `TessageId` per tevent,
+    about 18 MB of garbage per start.
+- **Either way, a hierarchy that forgets its delivery declaration silently stops being delivered remotely:**
+  `UnitOfWorkTeventPublisher.RemoteDeliveryFor` returns null for a tevent that declares no remotability, and nothing fails
+  at compile time. A specification, or an assertion at setup, should catch it.
+- **Nothing subscribes on a bus** to `ITaggregateTevent`, `ITaggregateCreatedTevent` or `ITaggregateDeletedTevent`
+  themselves.
 
 ## Later
 

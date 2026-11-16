@@ -1,6 +1,6 @@
 # Bugs and smaller findings
 
-**Status: agreed by all four sessions, who have stopped** (2026-11-16). Each was reproduced against Compze.Teventive
+**Status: agreed by all four sessions, and reviewed by two independent agents** (2026-11-16). Each was reproduced against Compze.Teventive
 0.6.0-alpha unless it says otherwise. None is marked at the code with a `bug:` comment: the work so far is design, with
 no change to Compze.
 
@@ -35,6 +35,18 @@ second time.
   `Commit`.
 
 Both fixes, with specifications, are on `taggregates-opus/snapshot-and-hook`.
+
+### Two bugs in the tevent store's session, found by the independent reviews, by reading
+
+- **`TeventStoreUpdater.Save` adds the taggregate to its map of tracked taggregates only after `Commit`,** and the commit
+  callback already runs the in-process tevent handlers. A handler that gets the new taggregate during the save loads a
+  second instance and adds it, and `Save`'s own add then throws on the duplicate key.
+- **With `Commit`'s fix, a tevent published from inside `Save`'s commit callback stays uncommitted for good,** and is
+  never stored: that callback is the only `Commit` a session makes, and its subscription to `TeventStream` comes after.
+
+Their fix is one fix, and it depends on decision 6 in [README.md](README.md): if a participation handler may change the
+taggregate it handles, `Save` must track and subscribe before `Commit`, and save and publish through one path, in order;
+if not, the fix is the tevent store asserting against the re-entry.
 
 ## What an exception leaves behind today
 
@@ -83,7 +95,8 @@ keeps the rule:
 - **The repository's root `README.md` says that "in memory performance overhead is entirely negligible".** That is true
   per dispatch, not per instance held.
 - **`TaggregateTypeValidator` scans whole assemblies, three times per class,** in each taggregate, component and entity
-  class's static constructor. Once per assembly would do.
+  class's static constructor, and an entity class runs two or three of those constructors, so 6 to 9 scans. Once per
+  assembly would do.
 - **`PublisherTevent.WrapIn` allocates a closure on every call,** even when the wrapper's constructor is cached:
   `Constructor.GenericTypeConstructor.WithArgument` passes `GetOrAdd` a lambda that captures the argument type
   (`src/Compze.Internals.SystemCE/ReflectionCE/Constructor..cs`). About 90 B of garbage for every tevent published or
