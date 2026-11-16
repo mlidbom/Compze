@@ -747,6 +747,9 @@ was on the store and not on the reader, and recalled why the document db has a b
 most storages, a mistake outside exceptional circumstances, so it shouldn't sit on the standard reader looking as
 ordinary as `Get`.
 
+Built as specified (79884ea33), with 11 new specifications in `Given_a_tevent_store_and_a_state_store` and
+`Given_a_state_store_whose_storage_holds_a_vocab_and_a_sentence`.
+
 - **`ITaggregateStoreBulkReader : ITaggregateStoreReader`,** in Compze.Teventive beside the reader, with
   `IReadOnlyList<ITaggregateReference<TTaggregate>> All<TTaggregate>()`: a reference to every `TTaggregate` the stores
   hold. Routed by class to the store that keeps it, as `Get` is. A singleton, as the reader is, and the same object.
@@ -759,7 +762,8 @@ ordinary as `Get`.
 - **In id order, in both stores,** as `Lookup` gives its references: the order of the ids' Guids, which is the order of
   their text. The order then doesn't depend on which store keeps the class, and a consumer that writes what it reads,
   such as JAStudio's rebuild, writes it in the same order each time. The state store sorts at each call: its committed
-  taggregates are kept by id, in no order.
+  taggregates are kept by id, in no order. **The cost, at JAStudio's size:** gathering 80,000 ids takes 1.4 ms, and
+  sorting them adds 8.5 ms and 2.9 MB at each call (Release, the machine otherwise quiet, the same in two runs).
 - **The state store:** its committed instances of the class, minus those the unit of work holds, plus the instances of
   the class it holds, as `IStateStore.All` did.
 - **The tevent store:** the ids of the histories whose creation tevent is a tevent of the class, from
