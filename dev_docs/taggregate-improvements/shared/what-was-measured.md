@@ -141,6 +141,20 @@ two DI containers of the pluggable component combinations.
   so batches of some hundreds of notes are the shape to measure.
 - **The copy includes the dispatchers each instance builds on `main`,** so routing per class would make it cheaper.
 
+Then, with taggregate-references and the index defined by state (`3ac56efa8`), three runs at 4 to 9% load:
+
+| | Time, each | Allocated, each |
+|---|---:|---:|
+| A lookup outside any unit of work | 0.65 to 0.86 µs | 576 B |
+| A reference's `Current` outside any unit of work, the check for an ambient transaction included | 0.08 µs | 0 B |
+| A lookup inside a unit of work holding 1 copy | 1.1 to 3.0 µs | 1.2 KB |
+| … holding 100 copies | 6.3 to 7.6 µs | 3.5 KB |
+| … holding 1,000 copies | 55 to 62 µs | 25 KB |
+| A unit of work that gets a vocab, changes it once and commits, now with the index kept | 9.5 to 10.8 µs | 10.4 KB |
+
+- **A lookup inside a unit of work grows with the copies it holds,** since the prototype recomputes their keys at each
+  lookup. Keeping each copy's keys, recomputed when it publishes, is the fix.
+
 ## How it was measured
 
 - **Bytes kept:** `GC.GetTotalMemory(true)` before and after creating the instances, divided by their number.

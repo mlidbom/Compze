@@ -110,6 +110,14 @@ public interface ITaggregateReference<out TTaggregate> where TTaggregate : ITagg
 - **Reading and getting for update work from the ambient transaction alone,** with no session passed down to call sites,
   as JAStudio's two sessions ask. The store finds the session of the ambient transaction.
 - **An index that holds references is touched at a commit only when the note's keys change.**
+- **Prototyped** (`3ac56efa8`): inside a unit of work the reference gives its copy, on another thread the committed
+  instance, and after the commit the same reference gives the new committed instance. `Current` outside any unit of
+  work costs 0.08 µs and allocates nothing, the check for an ambient transaction included. That meets JAStudio's
+  requirement that the committed read path takes no lock: parsing reads vocab from many threads all the time.
+- **A gap in the prototype:** the store finds a transaction's session only once the unit of work has resolved its
+  `ITaggregateStoreUpdater`, since a session needs the unit of work's scope to dispatch. The design's answer is an
+  ambient unit of work in Compze.DependencyInjection: `ExecuteUnitOfWork` makes its resolver findable from the ambient
+  transaction, and the store resolves the session itself. Not designed.
 
 ### The lock for each taggregate
 
@@ -188,9 +196,12 @@ From taggregates-fable's answers and the reviews:
   - nothing is dispatched when the body of the unit of work throws, so there is nothing to undo;
   - a participation handler may change the taggregate whose tevent it handles, since that is an ordinary cascade,
     dispatched in order. Decision 6 of the earlier conclusions dissolves.
-- **What it costs:** code later in the same unit of work doesn't see what participation handlers do. JAStudio has
-  such code: two creations of a vocab with one question in one unit of work would both miss the index. Either a limit
-  to state, or derived state that reads its own unit of work's changes: see below.
+- **What it costs:** code later in the same unit of work doesn't see what participation handlers do, since they run
+  when its body has returned. Indexes defined by state read their own writes, so two creations of a vocab with one
+  question in one unit of work don't both miss the index: see below. But a change that a participation handler makes
+  is seen only after the commit. Once JAStudio's cross-note changes are participation handlers, a vocab's perfect
+  synonyms don't have its new answer until the unit of work commits. taggregates-fable found no JAStudio code that reads
+  it in between, without searching for it.
 - **A failed publish rolls the unit of work back,** even if the consumer catches its exception: the session refuses to
   prepare, with "A publish failed on ... in this unit of work". The refusal rule of the earlier conclusions becomes a
   rollback, and JAStudio replaces no references after a throw.
@@ -224,8 +235,28 @@ the same design, which replaces the transactional map that participation handler
   of x doesn't find it and a lookup of y does, as JAStudio's two sessions ask.
 - **No order of handlers becomes a rule,** and an index is correct at any moment, also in the middle of a domain call,
   where participation handlers, deferred to the commit, would be too late.
-- **The cost:** the keys of a unit of work's changed copies, kept and recomputed when a copy changes. Nothing for an edit.
-  For a batch of thousands of copies in one unit of work, to measure.
+- **Prototyped** (`3ac56efa8`): a rename is seen as the unit of work left it inside it, as committed outside it, and
+  as renamed after the commit; a rollback leaves the index as it was; two creations for one question in one unit of work
+  make one vocab; a delete is filed nowhere.
+- **The cost, measured in Release:**
+
+  | | Time | Allocated |
+  |---|---:|---:|
+  | A lookup outside any unit of work | 0.65 to 0.86 µs | 576 B |
+  | A lookup inside a unit of work holding 1 copy | 1.1 to 3.0 µs | 1.2 KB |
+  | … holding 100 copies | 6.3 to 7.6 µs | 3.5 KB |
+  | … holding 1,000 copies | 55 to 62 µs | 25 KB |
+
+  The prototype recomputes each held copy's keys at every lookup, so a lookup costs in proportion to the copies held:
+  nothing that matters for a unit of work per note, too much for batches of thousands. The fix is the one designed:
+  keep each copy's keys, recomputed only when the copy publishes. And the committed lookup should allocate less on
+  parsing's hot path, by returning the committed set's references without building a list.
+- **It covers every index JAStudio has:** all nine of the vocab cache's indexes, the prefix index included, are
+  key-to-notes indexes with a function of keys. JAStudio's `LookupRecorder` records what lookups return, so a lookup
+  must be wrappable, or sit behind JAStudio's collection classes: `ITaggregateIndex` is an interface, so either works.
+- **What a taggregate computes lazily from other taggregates leaves it,** for derived state outside it, kept with the
+  commit, or computed at each use: a committed instance is read only and shared, so such a value on it stays stale for
+  as long as it is committed. In JAStudio, the forms of a vocab that no other vocab owns, and `RelatedVocab`'s compounds.
 - **JAStudio's `NoteIndex` nearly works so already:** its changes go to copies, and `PublishChanges` puts them in place.
 - **Effects that can't be rolled back,** such as telling Anki to delete a study note, belong after the commit and before
   the edit returns: `IUnitOfWorkResolver.OnCommittedSuccessfully`, which runs before `ExecuteUnitOfWork` returns.
@@ -260,8 +291,9 @@ public interface ISnapshotable<TSelf, TSnapshot> where TSelf : ISnapshotable<TSe
 - **Restoring works outside any store:** JAStudio's MCP server builds notes from two git versions of a file.
 - **Two ways of setting state now exist,** the tevent appliers and the restoring, which Magnus has decided for. What
   guards them: a specification helper from Compze that takes a snapshot, restores from it, takes another and compares
-  the two. Since every update goes through a snapshot, a property the snapshot misses also fails the first
-  specification that updates twice.
+  the two, for every taggregate class and every part. **It is a hard requirement under the private copy:** every get
+  for update copies through the snapshot, so a property the snapshot misses is dropped at the next edit, and the commit
+  saves the loss. From taggregates-opus.
 - **Loading at a start runs no tevents:** the 0.4 GB of garbage a start made in both teams' prototypes goes, and with it
   decision 11 of the earlier conclusions.
 
@@ -353,6 +385,12 @@ Generated data can be generated again, so a failed unit of work costs little eit
   `ILocalTessagingEngine.StopAsync` stops it. JAStudio's specifications need one.
 - A database and the JSON store in one transaction.
 - The storage seam's error when `Commit` fails anyway.
+- A short way for specifications to run an edit as a unit of work. JAStudio's specifications edit notes directly today.
+- The ambient unit of work, so that a reference finds its session without the updater being resolved first.
+- Keeping each held copy's keys in the index's overlay, and a committed lookup that allocates less.
+
+**Loading everything again while running gets easier with references:** a reference outlives a reload, where today
+`JPCollection.ReloadFromBackend` replaces every note object and every holder looks it up again.
 
 ## What the prototype is
 
@@ -362,13 +400,17 @@ Branch `taggregate-store-opus`, commit `3dd0fbe08`, in `C:\Dev\Compze.worktrees\
   a snapshot interface simpler than the designed one, and the session as a `VolatileTransactionParticipant`.
 - **In Teventive:** a read-only mode for committed instances, a record that a publish failed, and `RestoreIdentity`, behind
   an internal `ITaggregateStoreInternals`.
-- **The specifications,** in `test/Compze.Tests.Integration/CQRS/TaggregateStore/`: 23 behaviours on both pluggable
-  component combinations, among them that a reader during a unit of work sees the committed state, that a body that
-  throws runs no handler and no observer, that the copy is swapped in before `OnCommittedSuccessfully` runs, and that
-  two units of work on two threads serialize on the lock.
+- **Taggregate-references and the index defined by state** (`3ac56efa8`), in the same folder.
+- **The specifications,** in `test/Compze.Tests.Integration/CQRS/TaggregateStore/`: 40 behaviours on both pluggable
+  component combinations, three runs. Among them:
+  - a reader during a unit of work sees the committed state;
+  - a body that throws runs no handler and no observer;
+  - the copy is swapped in before `OnCommittedSuccessfully` runs;
+  - two units of work on two threads serialize on the lock;
+  - a rename, a rollback, two creations and a delete, seen through the index inside and outside the unit of work.
 - **`Compze.Tests.Unit` passes,** 417 of 417. The other test assemblies weren't run on it.
-- **Not in it:** the queue for the unit of work, the bound on rounds, the JSON store, taggregate-references, indexes
-  defined by state, and tevent routing per class.
+- **Not in it:** the queue for the unit of work, the bound on rounds, the JSON store, the ambient unit of work, the
+  overlay's kept keys, and tevent routing per class.
 
 | Measured in Release, three runs, the machine at 3 to 7% load | Time, each | Allocated, each |
 |---|---:|---:|
