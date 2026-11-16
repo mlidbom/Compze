@@ -751,19 +751,31 @@ Built as specified (79884ea33). Seven new specifications, six of them in `Given_
 the tevent store and the routing; the six of `IStateStore.All` now read through the bulk reader.
 
 - **`ITaggregateStoreBulkReader : ITaggregateStoreReader`,** in Compze.Teventive beside the reader, with
-  `IReadOnlyList<ITaggregateReference<TTaggregate>> All<TTaggregate>()`: a reference to every `TTaggregate` the stores
-  hold. Routed by class to the store that keeps it, as `Get` is. A singleton, as the reader is, and the same object.
+  `IReadOnlyCollection<ITaggregateReference<TTaggregate>> All<TTaggregate>()`: a reference to every `TTaggregate` the
+  stores hold, in no particular order. Routed by class to the store that keeps it, as `Get` is. A singleton, as the
+  reader is, and the same object. First built returning an `IReadOnlyList` in id order; changed as the bullet on its
+  order says.
 - **Why a reader of its own:** code that reads every taggregate of a class says so in what it depends on, and a grep
   finds it. For the tevent store, and for any state store whose storage isn't all in memory, it is a full scan.
 - **Why shared, and not on `IStateStore`:** code that reads taggregates doesn't depend on which store keeps a class.
   `IStateStore.All` goes.
 - **The unit of work's view, in both stores:** inside a unit of work, what it has saved is included, and what it has
   deleted is left out. Outside one, the committed taggregates. As `Get` and an index's `Lookup` are.
-- **In id order, in both stores,** as `Lookup` gives its references: the order of the ids' Guids, which is the order of
-  their text. The order then doesn't depend on which store keeps the class, and a consumer that writes what it reads,
-  such as JAStudio's rebuild, writes it in the same order each time. The state store sorts at each call: its committed
-  taggregates are kept by id, in no order. **The cost, at JAStudio's size:** gathering 80,000 ids takes 1.4 ms, and
-  sorting them adds 8.5 ms and 2.9 MB at each call (Release, the machine otherwise quiet, the same in two runs).
+- **In no particular order, as a collection: Magnus, 2026-11-17 (item 36).** It was first built in id order, as
+  `Lookup` gives its references, so that the order wouldn't depend on which store keeps the class. But the state store
+  sorts at each call, its committed taggregates being kept by id in no order, and the sort grows faster than the store:
+  - **Measured** (Release, two runs each): at 80,000 ids, gathering them takes 1.4 ms, and sorting adds 8.5 ms and
+    2.9 MB at each call. At 1,000,000, gathering takes 23 to 27 ms, and sorting adds about 137 ms and 36 MB, six times
+    the gathering. At 5,000,000, an estimate, not measured: about 0.8 s and 180 MB, all of it large-object-heap garbage.
+  - **Magnus:** a store of millions is entirely possible, in JAStudio too, and the sort may then cost more than what the
+    caller does with the taggregates. Code that doesn't care about the order shouldn't pay for it; code that does sorts
+    the collection itself, at the same cost, only where it needs it.
+  - **The type says so:** an `IReadOnlyList` has positions, which read as an order whatever its documentation says. An
+    `IReadOnlyCollection` has a count and enumeration only.
+  - **Not an `IEnumerable`,** as the document db's `GetAll` returns, which could stream without building a collection: a
+    lazy result reads the store when it is enumerated, not when `All` is called, so inside a unit of work two
+    enumerations could differ. The collection is the store as it was at the call.
+  - **The tevent store** gives the order its rows come in, creation order, which isn't promised either.
 - **The state store:** its committed instances of the class, minus those the unit of work holds, plus the instances of
   the class it holds, as `IStateStore.All` did.
 - **The tevent store:** the ids of the histories whose creation tevent is a tevent of the class, from
@@ -777,9 +789,8 @@ the tevent store and the routing; the six of `IStateStore.All` now read through 
 - **JAStudio** depends on the bulk reader where it reads every note: its searches, its tag tree and its media check.
   **Done** (JAStudio's 1eab8a810, all green): one class, `StoredNotes`, which every scan reaches through the
   collections, resolves the bulk reader instead of `IStateStore`, and so says that it scans; it uses it for its `TryGet`
-  too, since the bulk reader is a reader. Nothing else in JAStudio called `All`, nor sorted what it gave. `All` runs once
-  for each class at each search, tag tree, media check and rebuild, so the sort's 8.5 ms doesn't matter there.
-  `IStateStore` is now used in JAStudio only for `ReloadFromStorageAfter`.
+  too, since the bulk reader is a reader. Nothing else in JAStudio called `All`, nor sorted what it gave, so dropping the
+  order costs it nothing. `IStateStore` is now used in JAStudio only for `ReloadFromStorageAfter`.
 - **For the review (item 9):** the name. The document db says `GetAll`, and gives instances; `All` gives references.
 
 ## What the prototype is
