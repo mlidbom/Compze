@@ -196,6 +196,13 @@ From taggregates-fable's answers and the reviews:
 
 ## Dispatch: deferred to the commit
 
+> **Superseded: handlers run synchronously as each publish cascade ends** (Magnus, 2026-11-16, after the spike built the
+> deferral). In a unit of work that changes many taggregates, deferral had handlers run only when the commit starts, and
+> Magnus expects in-memory subscribers to cascade synchronously after a taggregate's method publishes. None of the four
+> bugs needs the deferral: see [what the spike built: synchronous dispatch](#what-the-spike-built-synchronous-dispatch).
+> And the stopped 2c prototype found that deferring tevents while exactly-once tommands are written at the send would
+> let a tommand overtake a tevent on a peer's ordered stream. What follows is kept as the record of the deferral.
+
 - **Deferred dispatch:** a tracked copy's tevents are only collected, in the order published, from its `TeventStream`.
   `Save` registers a new taggregate and takes the tevents it published before, and dispatches nothing.
 - **At phase 0** the session dispatches them through `IUnitOfWorkTeventPublisher`, so participation handlers run
@@ -531,6 +538,11 @@ a lookup inside a unit of work that rolls back gives the discarded copy.
 
 ## Step 2c, specified: every tevent of a unit of work dispatched when it commits
 
+> **Superseded, not built:** with synchronous dispatch nothing is deferred, so nothing can overtake anything. The
+> prototype was stopped unfinished, on `taggregate-store-spike-2c` (325118dfd): 11 existing specifications changed, none
+> revealing a bug, and it found the tommand-overtakes-tevent hazard, the 45-second transaction timeout covering every
+> handler, and best-effort failures moving from the publish to the commit.
+
 Decision 4, built provisionally on the spike and brought back with the count of specifications it changed. Today a tevent
 published straight through `IUnitOfWorkTeventPublisher` reaches its participation handlers at once, while a taggregate's
 tevents wait for the commit, so the straight one overtakes them. After 2c, every tevent of a unit of work is dispatched
@@ -562,6 +574,33 @@ at phase 0, in one order.
 - a handler's failure no longer comes out of `Publish`: it aborts the transaction at prepare, and the caller gets a
   `TransactionAbortedException` with the handler's exception inside, where the unit of work completes. The state store's
   tevents already behave so.
+
+## What the spike built: synchronous dispatch
+
+Item 32, Magnus, 2026-11-16. Participation handlers run synchronously when a taggregate's publish cascade ends, as Compze
+has always run them: after the taggregate's own cascade has ended and its invariants hold, inside the domain call. A
+handler's failure comes out of the domain call.
+
+- **The four bugs, fixed without deferring** ([bugs-and-findings.md](bugs-and-findings.md)):
+  1. `Taggregate` hands its tevents out through a queue: a publish an observer makes on the same taggregate during the
+     hand-out has its tevents handed out after those before them, never from inside the observer. A hand-out gives up,
+     with "without end", after the handlers it reaches have published 100 more tevents on the taggregate: the bound
+     that the deferral's 100 rounds were.
+  2. `ITaggregate.Commit` takes the tevents out before calling back, so one published from inside the callback stays
+     uncommitted for the next commit.
+  3. and 4. A store tracks a new taggregate before it publishes the tevents the taggregate published before its save,
+     and a tevent a handler publishes on it meanwhile is published after them, in the order published: in the state
+     store's `Save` and the tevent store's.
+- **The state store** dispatches each tevent as its taggregate hands it out (`TaggregateUnitOfWork.Dispatch`); at
+  prepare the sessions only prepare their writes. Private copies, the lock for each taggregate and read-only committed
+  instances are as before.
+- **`TaggregateTeventDispatchFailedException` is gone:** it named the tevent because the failure surfaced far from the
+  domain call, which it no longer does.
+- **Specifications:** 5 of the state store's changed, from the deferred timing to the synchronous one; new ones for the
+  hand-out queue and `Commit` (`Compze.Tests.Unit`, `CQRS/Taggregates/HandingOutAndCommitting`), for a handler that changes
+  a new taggregate during its save in each store.
+- **`ITaggregate.Commit` may go** (a `todo:` at it, Magnus): a store gets a new taggregate's first tevents through it only
+  because they went by on a stream nobody listened to.
 
 ## What the prototype is
 

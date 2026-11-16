@@ -121,10 +121,11 @@ The numbers: [what-was-measured.md](what-was-measured.md). The bugs and the smal
    it is prototyped: a committed lookup costs 0.05 to 0.18 µs and allocates nothing, and one inside a unit of work that
    holds copies of its type grows with them until the overlay keeps each copy's keys.
 4. **Whether `IUnitOfWorkTeventPublisher` itself defers to phase 0,** so that every tevent of a unit of work is
-   dispatched in one order (**recommended**). Otherwise a tevent published straight through it overtakes the deferred
-   tevents of taggregates. The cost: code later in a unit of work no longer sees what participation handlers did.
-5. **Whether the tevent store's session takes the same internals** (**recommended**): it dispatches at phase 0 instead
-   of as each tevent is published, which changes what its specifications may assert.
+   dispatched in one order. **Moot, Magnus, 2026-11-16:** handlers run synchronously as each publish cascade ends, so
+   nothing is deferred and nothing can overtake anything ([the-taggregate-store.md](the-taggregate-store.md#what-the-spike-built-synchronous-dispatch)).
+5. **Whether the tevent store's session takes the same internals.** **Narrowed, 2026-11-16:** with synchronous
+   dispatch, the tevent store keeps its dispatch, and has the two ordering fixes of its bugs. Joining the shared
+   updater and reader (step 2b) remains.
 6. **The lock for each taggregate:** a second writer waits, with a timeout (**recommended**), or is refused at once.
    And a Compze lock owned by a transaction, with diagnostics naming the holder, to replace `SemaphoreSlim`.
 7. **Tevent routing per class:** whether to do it. **Magnus, 2026-11-16: yes, as a design decision** (not yet the go-ahead to build it). It changes protected members of public base classes: 33
