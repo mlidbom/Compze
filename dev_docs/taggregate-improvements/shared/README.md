@@ -87,6 +87,14 @@ The numbers: [what-was-measured.md](what-was-measured.md). The bugs and the smal
      themselves work".
    - The spike's branch isn't merged. Whether it's cleaned up and merged, or the real build starts afresh from what it
      showed, is decided when it's done.
+   - JAStudio's session for the spike is taggregates-opus (Magnus).
+   - **Built provisionally, as recommended, and brought back with what the spike showed** (Magnus: "Yes to everything
+     you suggested"): after step 2, the publisher deferring every tevent to phase 0 (decision 4) and the lock's
+     waiting with a timeout (decision 6); after step 3, the table through an explicit interface implementation, static
+     slots in a nested class, and `Extend` asserting the direct base class (decision 14 and the-design.md); after step
+     4, the snapshot round-trip helper (the serialization samples belong to the tevent store, not the spike). Names not
+     yet decided stay placeholders until a naming pass after step 2. The slot bug (`SharedTomponentSlot`'s unchecked
+     wrapper) is fixed on main first.
 2. **Isolation: decided.** Magnus, 2026-11-16: a private copy for each unit of work, unless JAStudio's sessions find a
    strong reason for shared live instances. Two independent reviewers chose it for both Compze and JAStudio
    ([reviews/isolation-review-by-an-opus-agent.md](reviews/isolation-review-by-an-opus-agent.md),
