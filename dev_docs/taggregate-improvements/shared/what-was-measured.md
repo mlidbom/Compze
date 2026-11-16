@@ -124,6 +124,23 @@ other load:
   of short-lived garbage for JAStudio's 570,000 tevents at each start. It comes mostly from closures and `ScopedChange` on
   the load path, and from the wrappers, and the real implementation should avoid the closures.
 
+## The taggregate store's prototype
+
+On `taggregate-store-opus`, in memory, in Release, three runs, with the machine at 3 to 7% load. Each range covers the
+two DI containers of the pluggable component combinations.
+
+| | Time, each | Allocated, each |
+|---|---:|---:|
+| An empty unit of work | 1.2 to 1.8 µs | 1.9 KB |
+| A unit of work that gets a vocab, changes it once and commits | 8.5 to 12.5 µs | 9.5 KB |
+| A copy of a two-string vocab through its snapshot | 0.7 to 1.2 µs | 1,160 B |
+| A new vocab, through its creation tevent | 1.8 to 2.4 µs | 2,552 B |
+
+- **A transaction per edit costs nothing that matters** for edits that are rare and one at a time.
+- **A rebuild as a unit of work per note** would be about 0.8 s of one core and 0.76 GB of garbage for 80,000 notes,
+  so batches of some hundreds of notes are the shape to measure.
+- **The copy includes the dispatchers each instance builds on `main`,** so routing per class would make it cheaper.
+
 ## How it was measured
 
 - **Bytes kept:** `GC.GetTotalMemory(true)` before and after creating the instances, divided by their number.

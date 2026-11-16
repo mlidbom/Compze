@@ -44,9 +44,11 @@ Both fixes, with specifications, are on `taggregates-opus/snapshot-and-hook`.
 - **With `Commit`'s fix, a tevent published from inside `Save`'s commit callback stays uncommitted for good,** and is
   never stored: that callback is the only `Commit` a session makes, and its subscription to `TeventStream` comes after.
 
-Their fix is one fix, and it depends on decision 6 in [README.md](README.md): if a participation handler may change the
-taggregate it handles, `Save` must track and subscribe before `Commit`, and save and publish through one path, in order;
-if not, the fix is the tevent store asserting against the re-entry.
+Their fix is one fix. **With the taggregate store's design, all four bugs above are fixed by construction:** the
+tevent store's session takes the store's internals, so nothing calls out from inside `Publish` or `Commit`, and tevents
+are dispatched at the commit, in publish order, from the unit of work's queue. See
+[the-taggregate-store.md](the-taggregate-store.md). Before that design, the fix depended on whether a participation
+handler may change the taggregate it handles.
 
 ## What an exception leaves behind today
 

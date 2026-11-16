@@ -3,6 +3,11 @@
 **Status: agreed by all four sessions, then reviewed by two independent agents and revised with their agreement** (2026-11-16). Every name below is a placeholder for Magnus's pass
 over the names. Where the teams first differed, the section says what was settled and why.
 
+**The taggregate store has since replaced sections 2 and 3,** on Magnus's direction: restoring is from a snapshot type
+of the implementor's, with no tevents, and the store's session dispatches when the unit of work commits, so neither the
+hook nor its queue is needed. They are kept below as the record of what was weighed. Section 1, routing per class, stands
+as it is, and section 4 is now needed. See [the-taggregate-store.md](the-taggregate-store.md).
+
 ## 1. Tevent routing decided once per class
 
 **Tevent routing** means which tevent applier, or which tevent handler, a tevent reaches: in the taggregate itself, and
@@ -138,6 +143,8 @@ reading lists in a kanji, media reference lists in every note type. So a slot mu
 
 ## 2. Restoring a taggregate from its stored state
 
+> **Superseded by the taggregate store's snapshots,** which carry no tevents: [the-taggregate-store.md](the-taggregate-store.md).
+
 **Two ways, the consumer's choice.** Magnus has said, to JAStudio's representative, that a restore needn't go through
 the tevent appliers: one that sets state directly, at about what loading costs today, is fine.
 
@@ -193,6 +200,10 @@ specification (load, save, compare) catches it. With the per-class tables, Compz
 type, at the first load, if property-updated tevents get a marker of their own.
 
 ## 3. Told once per publish cascade
+
+> **Superseded by the taggregate store's deferred dispatch,** in which the store's session is told and dispatches at the
+> commit: [the-taggregate-store.md](the-taggregate-store.md). What an exception leaves behind becomes a rollback of the
+> unit of work, and the thread assertion gives way to the lock for each taggregate.
 
 **A publish cascade** is one call to `Publish` together with every `Publish` that tevent handlers make from inside it.
 `Taggregate` asserts the invariants at its end.
@@ -251,6 +262,9 @@ protected virtual void OnTeventsPublished(IReadOnlyList<TWrapperTeventInterface>
   acted on it in part. Decision 5 is Magnus's.
 
 ## 4. `ITaggregateTevent` as a plain `ITevent`
+
+> **Now needed, not only truthful:** Tessaging accepts only async handlers for an `IExactlyOnceTevent`, and the store's
+> consumers, such as JAStudio, are synchronous.
 
 `ITaggregateTevent : IExactlyOnceTevent` declares, for every taggregate, delivery that is remote, durable and
 transactional. A tevent's type is to state its delivery contract (decision D6 of the routing work), and a note's tevents
