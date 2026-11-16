@@ -1,5 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using Compze.Abstractions;
+using Compze.Teventive.Taggregates.Tevents;
 
 namespace Compze.Teventive.TeventStore.Abstractions;
 
@@ -9,13 +10,13 @@ namespace Compze.Teventive.TeventStore.Abstractions;
 public interface ITeventStoreUpdater : IDisposable
 {
    /// <summary>Loads a taggregate and tracks it for changes.</summary>
-   TTaggregate Get<TTaggregate>(TaggregateId taggregateId) where TTaggregate : class, ITaggregate;
+   TTaggregate Get<TTaggregate>(TaggregateId taggregateId) where TTaggregate : class, ITaggregate<ITaggregateTeventWithIdentity>;
 
    /// <summary>Saves the taggregate.</summary>
-   void Save<TTaggregate>(TTaggregate taggregate) where TTaggregate : class, ITaggregate;
+   void Save<TTaggregate>(TTaggregate taggregate) where TTaggregate : class, ITaggregate<ITaggregateTeventWithIdentity>;
 
    /// <summary>Tries to get the specified instance. Returns false and sets the result to null if the taggregate did not exist.</summary>
-   bool TryGet<TTaggregate>(TaggregateId taggregateId, [NotNullWhen(true)]out TTaggregate? result) where TTaggregate : class, ITaggregate;
+   bool TryGet<TTaggregate>(TaggregateId taggregateId, [NotNullWhen(true)]out TTaggregate? result) where TTaggregate : class, ITaggregate<ITaggregateTeventWithIdentity>;
 
    /// <summary>Deletes a taggregate from the store.</summary>
    void Delete(TaggregateId taggregateId);

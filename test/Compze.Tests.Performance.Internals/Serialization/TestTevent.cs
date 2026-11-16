@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 
 namespace Compze.Tests.Performance.Internals.Serialization;
 
-public class TestTevent : TaggregateTevent
+public class TestTevent : TaggregateTeventWithIdentity
 {
    [JsonConstructor]public TestTevent(string test1, string test2)
    {

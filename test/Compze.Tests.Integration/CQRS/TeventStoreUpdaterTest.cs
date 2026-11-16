@@ -458,7 +458,7 @@ public class TeventStoreUpdaterTest : UniversalTestBase
       {
          _teventSpy.DispatchedTessages.Count().Must().Be(18);
 
-         var dispatchedTevents = _teventSpy.DispatchedTessages.OfType<ITaggregateTevent>().ToList();
+         var dispatchedTevents = _teventSpy.DispatchedTessages.OfType<ITaggregateTeventWithIdentity>().ToList();
          dispatchedTevents.Select(e => e.Id).Distinct().Count().Must().Be(18);
 
          var allPersistedTevents = unitOfWork.TeventStore().ListAllTeventsForTestingPurposesAbsolutelyNotUsableForARealTeventStoreOfAnySize().Tevents().ToList();

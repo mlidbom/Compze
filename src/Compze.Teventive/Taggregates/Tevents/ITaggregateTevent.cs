@@ -6,7 +6,11 @@ namespace Compze.Teventive.Taggregates.Tevents;
 public interface ITaggregateTevent<out TTeventInterface> : IPublisherTevent<TTeventInterface>
    where TTeventInterface : ITaggregateTevent;
 
-public interface ITaggregateTevent : IExactlyOnceTevent
+///<summary>A tevent a taggregate publishes: it carries the taggregate's id, the version the tevent gave it, and when it was published.</summary>
+///<remarks>It declares no delivery guarantee and no identity of its own, so it is published and handled synchronously within the process.<br/>
+/// A hierarchy that a tevent store keeps declares <see cref="ITaggregateTeventWithIdentity"/>, and one that is delivered to other<br/>
+/// processes declares its guarantee, such as <see cref="IExactlyOnceTevent"/>.</remarks>
+public interface ITaggregateTevent : ITevent
 {
    int TaggregateVersion { get; }
    TaggregateId TaggregateId { get; }

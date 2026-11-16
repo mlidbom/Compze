@@ -43,10 +43,10 @@ class User : Taggregate<User, IUserTevent, UserTevent, IUserTevent<IUserTevent>,
 }
 
 interface IUserTevent<out T> : ITaggregateTevent<T> where T : IUserTevent;
-interface IUserTevent : ITaggregateTevent;
+interface IUserTevent : ITaggregateTeventWithIdentity;
 
 class UserTevent<T>(T tevent) : TaggregateTevent<T>(tevent), IUserTevent<T> where T : IUserTevent;
-abstract class UserTevent : TaggregateTevent, IUserTevent
+abstract class UserTevent : TaggregateTeventWithIdentity, IUserTevent
 {
    protected UserTevent() {}
    protected UserTevent(TaggregateId taggregateId) : base(taggregateId) {}

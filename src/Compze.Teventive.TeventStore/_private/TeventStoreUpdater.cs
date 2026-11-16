@@ -43,7 +43,7 @@ class TeventStoreUpdater : ITeventStoreReader, ITeventStoreUpdater
       _taggregateTypeValidator = taggregateTypeValidator;
    }
 
-   public TTaggregate Get<TTaggregate>(TaggregateId taggregateId) where TTaggregate : class, ITaggregate
+   public TTaggregate Get<TTaggregate>(TaggregateId taggregateId) where TTaggregate : class, ITaggregate<ITaggregateTeventWithIdentity>
    {
       _taggregateTypeValidator.AssertIsValid<TTaggregate>();
       _usageGuard.EnsureAccessValid();
@@ -55,16 +55,16 @@ class TeventStoreUpdater : ITeventStoreReader, ITeventStoreUpdater
       return result;
    }
 
-   public bool TryGet<TTaggregate>(TaggregateId taggregateId, [NotNullWhen(true)] out TTaggregate? taggregate) where TTaggregate : class, ITaggregate
+   public bool TryGet<TTaggregate>(TaggregateId taggregateId, [NotNullWhen(true)] out TTaggregate? taggregate) where TTaggregate : class, ITaggregate<ITaggregateTeventWithIdentity>
    {
       _taggregateTypeValidator.AssertIsValid<TTaggregate>();
       _usageGuard.EnsureAccessValid();
       return DoTryGet(taggregateId, out taggregate);
    }
 
-   public TTaggregate GetReadonlyCopy<TTaggregate>(TaggregateId taggregateId) where TTaggregate : class, ITaggregate => LoadSpecificVersionInternal<TTaggregate>(taggregateId, int.MaxValue, verifyVersion: false);
+   public TTaggregate GetReadonlyCopy<TTaggregate>(TaggregateId taggregateId) where TTaggregate : class, ITaggregate<ITaggregateTeventWithIdentity> => LoadSpecificVersionInternal<TTaggregate>(taggregateId, int.MaxValue, verifyVersion: false);
 
-   public TTaggregate GetReadonlyCopyOfVersion<TTaggregate>(TaggregateId taggregateId, int version) where TTaggregate : class, ITaggregate => LoadSpecificVersionInternal<TTaggregate>(taggregateId, version);
+   public TTaggregate GetReadonlyCopyOfVersion<TTaggregate>(TaggregateId taggregateId, int version) where TTaggregate : class, ITaggregate<ITaggregateTeventWithIdentity> => LoadSpecificVersionInternal<TTaggregate>(taggregateId, version);
 
    // ReSharper disable once ParameterOnlyUsedForPreconditionCheck.Local
    TTaggregate LoadSpecificVersionInternal<TTaggregate>(TaggregateId taggregateId, int version, bool verifyVersion = true) where TTaggregate : ITaggregate
@@ -94,13 +94,14 @@ class TeventStoreUpdater : ITeventStoreReader, ITeventStoreUpdater
       return taggregate;
    }
 
-   public void Save<TTaggregate>(TTaggregate taggregate) where TTaggregate : class, ITaggregate
+   public void Save<TTaggregate>(TTaggregate taggregate) where TTaggregate : class, ITaggregate<ITaggregateTeventWithIdentity>
    {
       _taggregateTypeValidator.AssertIsValid<TTaggregate>();
       _usageGuard.EnsureAccessValid();
 
-      taggregate.Commit(wrappedTevents =>
+      taggregate.Commit(committedTevents =>
       {
+         var wrappedTevents = committedTevents.Select(WithIdentity).ToList();
          if(taggregate.Version > 0 && wrappedTevents.None() || wrappedTevents.Any() && wrappedTevents.Min(it => it.Tevent.TaggregateVersion) > 1)
          {
             throw new AttemptToSaveAlreadyPersistedTaggregateException(taggregate);
@@ -125,8 +126,9 @@ class TeventStoreUpdater : ITeventStoreReader, ITeventStoreUpdater
       _disposableResources.Add(taggregate.TeventStream.Subscribe(OnTaggregateTevent));
    }
 
-   void OnTaggregateTevent(ITaggregateTevent<ITaggregateTevent> wrappedTevent)
+   void OnTaggregateTevent(ITaggregateTevent<ITaggregateTevent> publishedTevent)
    {
+      var wrappedTevent = WithIdentity(publishedTevent);
       _usageGuard.EnsureAccessValid();
       if(!_idMap.ContainsKey(wrappedTevent.Tevent.TaggregateId))
       {
@@ -151,14 +153,14 @@ class TeventStoreUpdater : ITeventStoreReader, ITeventStoreUpdater
       _store.Dispose();
    }
 
-   public IReadOnlyList<ITaggregateTevent<ITaggregateTevent>> GetHistory(TaggregateId taggregateId) => GetHistoryInternal(taggregateId, takeWriteLock: false);
+   public IReadOnlyList<ITaggregateTevent<ITaggregateTeventWithIdentity>> GetHistory(TaggregateId taggregateId) => GetHistoryInternal(taggregateId, takeWriteLock: false);
 
-   IReadOnlyList<ITaggregateTevent<ITaggregateTevent>> GetHistoryInternal(TaggregateId taggregateId, bool takeWriteLock) =>
+   IReadOnlyList<ITaggregateTevent<ITaggregateTeventWithIdentity>> GetHistoryInternal(TaggregateId taggregateId, bool takeWriteLock) =>
       takeWriteLock
          ? _store.GetTaggregateHistoryForUpdate(taggregateId)
          : _store.GetTaggregateHistory(taggregateId);
 
-   bool DoTryGet<TTaggregate>(TaggregateId taggregateId, [NotNullWhen(true)] out TTaggregate? taggregate) where TTaggregate : class, ITaggregate
+   bool DoTryGet<TTaggregate>(TaggregateId taggregateId, [NotNullWhen(true)] out TTaggregate? taggregate) where TTaggregate : class, ITaggregate<ITaggregateTeventWithIdentity>
    {
       if(_idMap.TryGetValue(taggregateId, out var teventStored))
       {
@@ -180,6 +182,12 @@ class TeventStoreUpdater : ITeventStoreReader, ITeventStoreUpdater
          return false;
       }
    }
+
+   ///<summary>A tevent a kept taggregate published, as the store keeps it: with the identity its type promises.</summary>
+   ///<remarks>The store's methods accept only taggregates whose tevents have identity, so the cast can't fail while they hold.</remarks>
+   static ITaggregateTevent<ITaggregateTeventWithIdentity> WithIdentity(ITaggregateTevent<ITaggregateTevent> publishedTevent) =>
+      publishedTevent as ITaggregateTevent<ITaggregateTeventWithIdentity>
+   ?? throw new InvalidOperationException($"{publishedTevent.Tevent.GetType().FullName} has no identity, so a tevent store can't keep it. A taggregate kept in a tevent store publishes tevents implementing {nameof(ITaggregateTeventWithIdentity)}.");
 
    static TTaggregate CreateInstance<TTaggregate>() where TTaggregate : ITaggregate
    {

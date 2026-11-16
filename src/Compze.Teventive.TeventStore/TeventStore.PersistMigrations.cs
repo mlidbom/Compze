@@ -127,7 +127,7 @@ public partial class TeventStore
 
    }
 
-   void FixManualVersions(TaggregateTeventWithRefactoringInformation[] originalHistory, ITaggregateTevent<ITaggregateTevent>[] newHistory, IReadOnlyList<List<TeventDataRow>> refactorings)
+   void FixManualVersions(TaggregateTeventWithRefactoringInformation[] originalHistory, ITaggregateTevent<ITaggregateTeventWithIdentity>[] newHistory, IReadOnlyList<List<TeventDataRow>> refactorings)
    {
       var versionUpdates = new List<VersionSpecification>();
       var replacedOrRemoved = originalHistory.Where(it => newHistory.None(wrappedTevent => wrappedTevent.Tevent.Id == it.WrappedTevent.Tevent.Id)).ToList();
@@ -142,7 +142,7 @@ public partial class TeventStore
       _sqlLayer.UpdateEffectiveVersions(versionUpdates);
    }
 
-   void AssertHistoriesAreIdentical(ITaggregateTevent<ITaggregateTevent>[] inMemoryMigratedHistory, IReadOnlyList<ITaggregateTevent<ITaggregateTevent>> loadedTaggregateHistory)
+   void AssertHistoriesAreIdentical(ITaggregateTevent<ITaggregateTeventWithIdentity>[] inMemoryMigratedHistory, IReadOnlyList<ITaggregateTevent<ITaggregateTeventWithIdentity>> loadedTaggregateHistory)
    {
       Contract.Argument.Assert(inMemoryMigratedHistory.Length == loadedTaggregateHistory.Count);
       for(var index = 0; index < inMemoryMigratedHistory.Length; ++index)

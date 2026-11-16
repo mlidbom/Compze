@@ -27,7 +27,7 @@ public class TeventStoreRegistrationBuilder
    /// contributor like any other, declaring through the same surface as the application's own handlers.</summary>
    public TeventStoreRegistrationBuilder HandleTaggregate<TTaggregate, TTevent>()
       where TTaggregate : class, ITaggregate<TTevent>
-      where TTevent : ITaggregateTevent
+      where TTevent : class, ITaggregateTeventWithIdentity
    {
       _registerTypermediaHandlers(TeventStoreApi.RegisterHandlersForTaggregate<TTaggregate, TTevent>);
       return this;

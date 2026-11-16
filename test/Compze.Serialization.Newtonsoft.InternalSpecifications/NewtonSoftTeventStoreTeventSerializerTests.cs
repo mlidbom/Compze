@@ -45,7 +45,7 @@ public class NewtonSoftTeventStoreTeventSerializerTests : SerializerTest
                   .DeepEqual(teventWithOnlySubclassValues);
    }
 
-   public class TestTevent : TaggregateTevent
+   public class TestTevent : TaggregateTeventWithIdentity
    {
       [JsonConstructor] public TestTevent(string test1, string test2)
       {

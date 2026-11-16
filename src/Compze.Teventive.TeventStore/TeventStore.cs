@@ -48,11 +48,11 @@ namespace Compze.Teventive.TeventStore;
       _sqlLayer = sqlLayer;
    }
 
-   public IReadOnlyList<ITaggregateTevent<ITaggregateTevent>> GetTaggregateHistoryForUpdate(TaggregateId id) => GetTaggregateHistoryInternal(taggregateId: id, takeWriteLock: true);
+   public IReadOnlyList<ITaggregateTevent<ITaggregateTeventWithIdentity>> GetTaggregateHistoryForUpdate(TaggregateId id) => GetTaggregateHistoryInternal(taggregateId: id, takeWriteLock: true);
 
-   public IReadOnlyList<ITaggregateTevent<ITaggregateTevent>> GetTaggregateHistory(TaggregateId id) => GetTaggregateHistoryInternal(id, takeWriteLock: false);
+   public IReadOnlyList<ITaggregateTevent<ITaggregateTeventWithIdentity>> GetTaggregateHistory(TaggregateId id) => GetTaggregateHistoryInternal(id, takeWriteLock: false);
 
-   IReadOnlyList<ITaggregateTevent<ITaggregateTevent>> GetTaggregateHistoryInternal(TaggregateId taggregateId, bool takeWriteLock)
+   IReadOnlyList<ITaggregateTevent<ITaggregateTeventWithIdentity>> GetTaggregateHistoryInternal(TaggregateId taggregateId, bool takeWriteLock)
    {
       _sqlLayer.SetupSchemaIfDatabaseUnInitialized();
 
@@ -100,13 +100,13 @@ namespace Compze.Teventive.TeventStore;
       return newTaggregateHistory;
    }
 
-   ITaggregateTevent<ITaggregateTevent> HydrateTevent(TeventDataRow teventDataRowRow)
+   ITaggregateTevent<ITaggregateTeventWithIdentity> HydrateTevent(TeventDataRow teventDataRowRow)
    {
       var wrappedTevent = _serializer.Deserialize(wrapperTeventType: teventDataRowRow.TeventType.Type, json: teventDataRowRow.TeventJson);
 #pragma warning disable CS0618 // Type or member is obsolete
       ((IMutableTaggregateTevent)wrappedTevent.Tevent).SetTaggregateIdInternal(teventDataRowRow.TaggregateId);
       ((IMutableTaggregateTevent)wrappedTevent.Tevent).SetTaggregateVersionInternal(teventDataRowRow.TaggregateVersion);
-      ((IMutableTaggregateTevent)wrappedTevent.Tevent).SetTessageIdInternal(teventDataRowRow.TeventId);
+      ((IMutableTaggregateTeventWithIdentity)wrappedTevent.Tevent).SetTessageIdInternal(teventDataRowRow.TeventId);
       ((IMutableTaggregateTevent)wrappedTevent.Tevent).SetUtcTimeStampInternal(teventDataRowRow.UtcTimeStamp);
 #pragma warning restore CS0618 // Type or member is obsolete
       return wrappedTevent;
@@ -121,13 +121,13 @@ namespace Compze.Teventive.TeventStore;
 
    static bool IsRefactoringTevent(TaggregateTeventWithRefactoringInformation tevent) => tevent.StorageInformation.RefactoringInformation != null;
 
-   IEnumerable<ITaggregateTevent<ITaggregateTevent>> StreamTevents(int batchSize)
+   IEnumerable<ITaggregateTevent<ITaggregateTeventWithIdentity>> StreamTevents(int batchSize)
    {
       var streamMutator = CompleteTeventStoreStreamMutator.Create(_migrationFactories);
       return streamMutator.Mutate(_sqlLayer.StreamTevents(batchSize).Select(HydrateTevent));
    }
 
-   public void StreamTevents(int batchSize, Action<IReadOnlyList<ITaggregateTevent<ITaggregateTevent>>> handleTevents)
+   public void StreamTevents(int batchSize, Action<IReadOnlyList<ITaggregateTevent<ITaggregateTeventWithIdentity>>> handleTevents)
    {
       _sqlLayer.SetupSchemaIfDatabaseUnInitialized();
 
@@ -140,7 +140,7 @@ namespace Compze.Teventive.TeventStore;
       }
    }
 
-   public void SaveSingleTaggregateTevents(IReadOnlyList<ITaggregateTevent<ITaggregateTevent>> wrappedTevents)
+   public void SaveSingleTaggregateTevents(IReadOnlyList<ITaggregateTevent<ITaggregateTeventWithIdentity>> wrappedTevents)
    {
       _sqlLayer.SetupSchemaIfDatabaseUnInitialized();
 
@@ -181,7 +181,7 @@ namespace Compze.Teventive.TeventStore;
 
    public IEnumerable<TaggregateId> StreamTaggregateIdsInCreationOrder(Type? teventType = null)
    {
-      Argument.Assert(teventType == null || teventType.IsInterface && (typeof(ITaggregateTevent).IsAssignableFrom(teventType) || typeof(IPublisherTevent<ITaggregateTevent>).IsAssignableFrom(teventType)));
+      Argument.Assert(teventType == null || teventType.IsInterface && (typeof(ITaggregateTeventWithIdentity).IsAssignableFrom(teventType) || typeof(IPublisherTevent<ITaggregateTeventWithIdentity>).IsAssignableFrom(teventType)));
 
       _sqlLayer.SetupSchemaIfDatabaseUnInitialized();
       //The rows store wrapper types, so an inner tevent type filter is translated: it matches every wrapping of that tevent type.
@@ -191,9 +191,9 @@ namespace Compze.Teventive.TeventStore;
                               .Select(it => it.TaggregateId);
    }
 
-   internal class TaggregateTeventWithRefactoringInformation(ITaggregateTevent<ITaggregateTevent> wrappedTevent, TaggregateTeventStorageInformation storageInformation)
+   internal class TaggregateTeventWithRefactoringInformation(ITaggregateTevent<ITaggregateTeventWithIdentity> wrappedTevent, TaggregateTeventStorageInformation storageInformation)
    {
-      internal ITaggregateTevent<ITaggregateTevent> WrappedTevent { get; } = wrappedTevent;
+      internal ITaggregateTevent<ITaggregateTeventWithIdentity> WrappedTevent { get; } = wrappedTevent;
       internal TaggregateTeventStorageInformation StorageInformation { get; } = storageInformation;
    }
 

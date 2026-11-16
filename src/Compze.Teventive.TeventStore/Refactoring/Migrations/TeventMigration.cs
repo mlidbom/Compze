@@ -5,7 +5,7 @@ using Compze.Teventive.TeventStore.Abstractions.Refactoring.Migrations;
 namespace Compze.Teventive.TeventStore.Refactoring.Migrations;
 
 public abstract class TeventMigration<TMigratedTaggregateTeventHierarchyRootInterface> : ITeventMigration
-   where TMigratedTaggregateTeventHierarchyRootInterface : ITaggregateTevent
+   where TMigratedTaggregateTeventHierarchyRootInterface : ITaggregateTeventWithIdentity
 {
    protected TeventMigration(Guid id, string name, string description)
    {

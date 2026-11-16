@@ -8,7 +8,7 @@ namespace AccountManagement.Domain.Tevents;
 
 public interface IAccountTevent<out T> : ITaggregateTevent<T> where T : IAccountTevent;
 
-public interface IAccountTevent : ITaggregateTevent
+public interface IAccountTevent : ITaggregateTeventWithIdentity
 {
 
    public interface Created : IAccountTevent, ITaggregateCreatedTevent;

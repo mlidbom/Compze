@@ -101,13 +101,13 @@ public class Experiment_with_unifying_tevents_and_tommands_test : UniversalTestB
    }
 
    public interface IUserTevent<out T> : ITaggregateTevent<T> where T : IUserTevent;
-   public interface IUserTevent : ITaggregateTevent
+   public interface IUserTevent : ITaggregateTeventWithIdentity
    {
       public interface UserRegistered : IUserTevent, ITaggregateCreatedTevent;
    }
 
    public class UserTevent<T>(T tevent) : TaggregateTevent<T>(tevent), IUserTevent<T> where T : IUserTevent;
-   public class UserTevent : TaggregateTevent, IUserTevent
+   public class UserTevent : TaggregateTeventWithIdentity, IUserTevent
    {
       UserTevent(TaggregateId taggregateId) : base(taggregateId) {}
 
@@ -127,11 +127,11 @@ public class Experiment_with_unifying_tevents_and_tommands_test : UniversalTestB
    }
 
    public interface IUserRegistrarTevent<out T> : ITaggregateTevent<T> where T : IUserRegistrarTevent;
-   public interface IUserRegistrarTevent : ITaggregateTevent;
+   public interface IUserRegistrarTevent : ITaggregateTeventWithIdentity;
 
    public class UserRegistrarTevent<T>(T tevent) : TaggregateTevent<T>(tevent), IUserRegistrarTevent<T> where T : IUserRegistrarTevent;
 
-   public class UserRegistrarTevent : TaggregateTevent, IUserRegistrarTevent
+   public class UserRegistrarTevent : TaggregateTeventWithIdentity, IUserRegistrarTevent
    {
       UserRegistrarTevent(TaggregateId taggregateId) : base(taggregateId) {}
 

@@ -1,3 +1,4 @@
+using Compze.Teventive.Taggregates.Tevents;
 using Compze.Abstractions;
 using Compze.Abstractions.Time;
 using Compze.Hosting.Testing;
@@ -42,7 +43,7 @@ public class TeventMigrationPerformanceTest : TeventMigrationTestBase
       _currentMigrations = Enumerable.Empty<ITeventMigration>().ToList();
       _container = CreateContainerForTeventStoreType(migrationsFactory: () => _currentMigrations);
 
-      _container.ExecuteUnitOfWork(unitOfWork => ((ITaggregate)_taggregate).Commit(unitOfWork.TeventStore().SaveSingleTaggregateTevents));
+      _container.ExecuteUnitOfWork(unitOfWork => ((ITaggregate)_taggregate).Commit(committed => unitOfWork.TeventStore().SaveSingleTaggregateTevents(committed.Cast<ITaggregateTevent<ITaggregateTeventWithIdentity>>().ToList())));
    }
 
    protected override async Task DisposeAsyncInternal()

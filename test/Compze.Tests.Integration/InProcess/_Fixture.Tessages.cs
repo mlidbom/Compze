@@ -53,7 +53,6 @@ class MyStrictlyLocalRegisterGreeterReturningTotalCountTommand : StrictlyLocal.T
 ///<summary>A hand-built <see cref="ITaggregateTevent"/>, for publishing through the <see cref="IUnitOfWorkTeventPublisher"/> without a taggregate or tevent store in the composition.</summary>
 class MyTaggregateTevent : ITaggregateTevent
 {
-   public TessageId Id { get; } = new();
    public int TaggregateVersion => 1;
    public TaggregateId TaggregateId { get; } = new();
    public DateTime UtcTimeStamp { get; } = DateTime.UtcNow;

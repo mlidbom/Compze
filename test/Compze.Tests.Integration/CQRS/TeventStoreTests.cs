@@ -18,9 +18,9 @@ using Compze.Teventive.TeventStore.Abstractions;
 
 namespace Compze.Tests.Integration.CQRS;
 
-interface ISomeTevent : ITaggregateTevent;
+interface ISomeTevent : ITaggregateTeventWithIdentity;
 
-class SomeTevent : TaggregateTevent, ISomeTevent
+class SomeTevent : TaggregateTeventWithIdentity, ISomeTevent
 {
    public SomeTevent(TaggregateId taggregateId, int version) : base(taggregateId)
    {
@@ -37,8 +37,11 @@ public class TeventStoreTests : UniversalTestBase
 
    protected override void DisposeInternal() => _container.Dispose();
 
-   static IReadOnlyList<ITaggregateTevent<ITaggregateTevent>> Wrapped(IEnumerable<SomeTevent> tevents) =>
-      tevents.Select(ITaggregateTevent<ITaggregateTevent> (it) => new TaggregateTevent<SomeTevent>(it)).ToList();
+   static IReadOnlyList<ITaggregateTevent<ITaggregateTeventWithIdentity>> Wrapped(IEnumerable<SomeTevent> tevents) =>
+      tevents.Select(ITaggregateTevent<ITaggregateTeventWithIdentity> (it) => new TaggregateTevent<SomeTevent>(it)).ToList();
+
+   static IReadOnlyList<ITaggregateTevent<ITaggregateTeventWithIdentity>> WithIdentity(IReadOnlyList<ITaggregateTevent<ITaggregateTevent>> committedTevents) =>
+      committedTevents.Cast<ITaggregateTevent<ITaggregateTeventWithIdentity>>().ToList();
 
    [PCT]
    public void StreamTeventsSinceReturnsWholeTeventLogWhenFromTeventIdIsNull() => _container.ExecuteInIsolatedScope(scope =>
@@ -159,7 +162,7 @@ public class TeventStoreTests : UniversalTestBase
 
       using(new TransactionScope())
       {
-         ((ITaggregate)user).Commit(teventStore.SaveSingleTaggregateTevents);
+         ((ITaggregate)user).Commit(committed => teventStore.SaveSingleTaggregateTevents(WithIdentity(committed)));
          teventStore.GetTaggregateHistory(user.Id);
          teventStore.GetTaggregateHistory(user.Id).Must().NotBeEmpty();
       }
@@ -181,7 +184,7 @@ public class TeventStoreTests : UniversalTestBase
 
          TransactionScopeCe.Execute(() =>
          {
-            ((ITaggregate)user).Commit(teventStore.SaveSingleTaggregateTevents);
+            ((ITaggregate)user).Commit(committed => teventStore.SaveSingleTaggregateTevents(WithIdentity(committed)));
             teventStore.GetTaggregateHistory(user.Id);
             teventStore.GetTaggregateHistory(user.Id).Must().NotBeEmpty();
          });

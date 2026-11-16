@@ -4,5 +4,5 @@ namespace Compze.Teventive.TeventStore.Abstractions.Refactoring.Migrations._inte
 
 interface ICompleteTeventStreamMutator
 {
-   IEnumerable<ITaggregateTevent<ITaggregateTevent>> Mutate(IEnumerable<ITaggregateTevent<ITaggregateTevent>> teventStream);
+   IEnumerable<ITaggregateTevent<ITaggregateTeventWithIdentity>> Mutate(IEnumerable<ITaggregateTevent<ITaggregateTeventWithIdentity>> teventStream);
 }

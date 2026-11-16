@@ -54,7 +54,7 @@ public abstract class TeventMigrationTestBase : UniversalTestBase
       var startingMigrations = migrations.ToList();
       migrations.Clear();
 
-      IReadOnlyList<ITaggregateTevent> teventsInStoreAtStart;
+      IReadOnlyList<ITaggregateTeventWithIdentity> teventsInStoreAtStart;
       {
          using var scope = container.BeginScope(); //Why is this needed? It fails without it but I do not understand why...
          var teventStore = scope.Resolve<ITeventStore>();
@@ -186,7 +186,7 @@ public abstract class TeventMigrationTestBase : UniversalTestBase
       return container;
    }
 
-   internal static void AssertStreamsAreIdenticalExceptForEventIds(IReadOnlyList<ITaggregateTevent> expected, IReadOnlyList<ITaggregateTevent> migratedHistory, string descriptionOfHistory)
+   internal static void AssertStreamsAreIdenticalExceptForEventIds(IReadOnlyList<ITaggregateTeventWithIdentity> expected, IReadOnlyList<ITaggregateTeventWithIdentity> migratedHistory, string descriptionOfHistory)
    {
       Log.Info($"Comparing histories for : {descriptionOfHistory}");
       migratedHistory.ToList().Must(serialization: it => it.ExcludeMember(history => history.First().Id))

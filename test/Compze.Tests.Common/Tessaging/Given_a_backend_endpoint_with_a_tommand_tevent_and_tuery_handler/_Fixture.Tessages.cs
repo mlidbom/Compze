@@ -29,8 +29,8 @@ public class MyAtMostOnceTypermediaTommandWithResult : Remotable.AtMostOnce.AtMo
 
 public class MyTueryResult;
 public class MyTuery : Remotable.NonTransactional.Tueries.Tuery<MyTueryResult>;
-class MyExactlyOnceTevent : TaggregateTevent, IMyExactlyOnceTevent;
-interface IMyExactlyOnceTevent : ITaggregateTevent;
+class MyExactlyOnceTevent : TaggregateTeventWithIdentity, IMyExactlyOnceTevent;
+interface IMyExactlyOnceTevent : ITaggregateTeventWithIdentity, IExactlyOnceTevent;
 public class MyExactlyOnceTommand : Remotable.ExactlyOnce.Tommand;
 
 ///<summary>An exactly-once tommand whose handler lives on the Remote endpoint (<see cref="MyExactlyOnceTommand"/>'s lives on the<br/>
@@ -96,7 +96,7 @@ public class MyTaggregate : Taggregate<MyTaggregate, IMyTaggregateTevent, MyTagg
 
 public interface IMyTaggregateTevent<out T> : ITaggregateTevent<T> where T : IMyTaggregateTevent;
 
-public interface IMyTaggregateTevent : ITaggregateTevent
+public interface IMyTaggregateTevent : ITaggregateTeventWithIdentity
 {
    public interface Created : IMyTaggregateTevent, ITaggregateCreatedTevent;
    public interface Updated : IMyTaggregateTevent;
@@ -104,7 +104,7 @@ public interface IMyTaggregateTevent : ITaggregateTevent
 
 public class MyTaggregateTevent<T>(T tevent) : TaggregateTevent<T>(tevent), IMyTaggregateTevent<T> where T : IMyTaggregateTevent;
 
-public class MyTaggregateTevent : TaggregateTevent, IMyTaggregateTevent
+public class MyTaggregateTevent : TaggregateTeventWithIdentity, IMyTaggregateTevent
 {
    MyTaggregateTevent() {}
    MyTaggregateTevent(TaggregateId accountId) : base(accountId) {}
