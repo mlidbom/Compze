@@ -9,6 +9,10 @@ manages JAStudio's `dev_docs/taggregates/shared/` and reports for JAStudio.
 | opus | jastudio-rep-opus | taggregates-opus | `../opus/`, and JAStudio's `dev_docs/taggregates/opus/` |
 | fable | jastudio-rep-fable | taggregates-fable | `../fable/`, and JAStudio's `dev_docs/taggregates/fable/` |
 
+**JAStudio's side** is in `C:\Dev\JAStudio.wt2\dev_docs\taggregates\shared\`, on JAStudio's branch `compze-taggretates`:
+what the notes require of Compze, what the teams found about JAStudio, and what is left on JAStudio's side. This folder
+holds the design, the order of work in Compze, and the full list of what Magnus decides.
+
 ## The question
 
 JAStudio wants its notes to be Compze.Teventive taggregates, so that every change to a note is a tevent, and whatever
