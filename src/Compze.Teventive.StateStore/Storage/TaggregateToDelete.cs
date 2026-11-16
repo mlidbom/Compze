@@ -6,7 +6,7 @@ namespace Compze.Teventive.StateStore.Storage;
 public sealed class TaggregateToDelete
 {
    ///<summary>The taggregate of <paramref name="taggregateClass"/> with the id <paramref name="id"/>.</summary>
-   internal TaggregateToDelete(Type taggregateClass, TaggregateId id)
+   public TaggregateToDelete(Type taggregateClass, TaggregateId id)
    {
       TaggregateClass = taggregateClass;
       Id = id;
