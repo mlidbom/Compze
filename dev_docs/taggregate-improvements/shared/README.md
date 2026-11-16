@@ -34,14 +34,24 @@ times faster, and a note of 15 components about 75 times faster.
 1. **Tevent routing decided once per class, not set up per instance.** Each teventive class declares its tevent
    appliers and handlers once, in a static table, and every instance uses it. That is what decides the memory, and it
    is the right model regardless: an applier never comes and goes at run time.
-2. **Loading a taggregate from a snapshot,** without a tevent store: a short list of tevents that the class constructs
-   from its stored state, applied by the same appliers that editing uses.
+2. **Restoring a taggregate from its stored state,** without a tevent store. Magnus has said, to JAStudio's
+   representative, that a restore needn't go through the tevent appliers. So there are two ways, and the consumer
+   chooses:
+   - **setting each part's state directly,** as JAStudio's constructors do today. Compze then only needs a supported,
+     protected way to give the restored taggregate its id, which today takes the `[Obsolete]` internal `Id` setter;
+   - **a snapshot:** a short list of tevents the class constructs from its stored state, applied by the same appliers
+     that editing uses, for one code path. Designed and prototyped.
 3. **A protected hook at the end of each publish cascade,** which tells the taggregate's own class what was published,
    in the order published, so the consumer needs no observer per instance. With it, the two reentrancy bugs fixed, one
    rule for what an exception leaves behind, and an assertion that one thread at a time publishes on a taggregate.
 
 And, once designed: **`ITaggregateTevent` as a plain `ITevent`,** since today every taggregate's tevents claim
 exactly-once delivery between processes, which a note's never have.
+
+**Whether JAStudio should make its notes taggregates at all is a separate question, and open.** After Magnus's own
+reviews of JAStudio's folder, JAStudio's side says that Compze can be made to carry the notes, but that adopting
+taggregates was never sized, or compared with a smaller route: see JAStudio's shared folder. The bug fixes and routing
+per class stand on their own for Compze, whose tevent store builds and loads taggregates in every unit of work.
 
 The design of each, what is built and what isn't, and why each debated point was settled the way it was:
 [the-design.md](the-design.md). The numbers: [what-was-measured.md](what-was-measured.md). The bugs and the smaller
@@ -58,8 +68,9 @@ findings: [bugs-and-findings.md](bugs-and-findings.md).
    that belong to the owner's class, inheritance through `Extend`, and the safeguards that make a mistake in a table loud.
    With it, a performance specification in Release that bounds the bytes a load allocates, and the published doc
    `Taggregates/_docs/reusable-components.md` rewritten.
-3. **Loading from a snapshot,** with the slots adopting its tevents, the thread assertion, and the lists created on first
-   use. **JAStudio can start here.** Until step 4, both styles of routing are public, one tree is all one style, and the
+3. **Restoring from stored state:** the protected member that gives a restored taggregate its id, and the snapshot
+   load, with the slots adopting its tevents, if a consumer wants one code path. With them, the thread assertion and the
+   lists created on first use. **JAStudio can start here.** Until step 4, both styles of routing are public, one tree is all one style, and the
    prototype's fallback costs roughly 13 to 25 MB for JAStudio's notes.
 4. **The rest of Compze's teventives:** entities, removable entities and shared tentities designed and moved to tables,
    the query models decided, and per-instance registration removed, with the fallback's bytes.
@@ -80,6 +91,8 @@ findings: [bugs-and-findings.md](bugs-and-findings.md).
    handler, the invariants, the hook or an observer, makes the taggregate refuse publishing and committing from then on.
    Its state can't be trusted, and today it looks usable. Both teams, both reviewers and JAStudio prefer it. For
    JAStudio it means every reference to a refused note, such as indexes and view models, is replaced by a reloaded note.
+   Only what escapes counts: a hook that catches a failing subscriber inside itself sets the consumer's own policy, and
+   for JAStudio, whose subscribers assert contracts, that decides how often a note is refused in practice.
    Prototyped on `taggregates-opus/combined`, though marking where the exception escapes, as the design says, is still
    to be built.
 6. **May a tevent store's participation handler change the taggregate whose tevent it handles,** in the same unit of
@@ -91,7 +104,8 @@ findings: [bugs-and-findings.md](bugs-and-findings.md).
 7. **Three changes to public API, to veto or accept:**
    - taggregate tables without `BeforeHandlers`, `AfterHandlers` and `ForGenericTevent`, which nothing needs, by YAGNI on
      a new type, while `IMutableTeventDispatcher` keeps them;
-   - the snapshot's shape: a protected `LoadFromSnapshot(TaggregateId id, …)` with no marker interface;
+   - restoring: a protected member that gives a restored taggregate its id, and, if wanted, a protected
+     `LoadFromSnapshot(TaggregateId id, …)` with no marker interface;
    - the thread assertion, as a change of behaviour.
 8. **`ITaggregateTevent` as a plain `ITevent`,** once designed, in one of two variants:
    - the interface only, truthful and saving nothing;

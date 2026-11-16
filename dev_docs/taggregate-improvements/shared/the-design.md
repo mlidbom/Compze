@@ -136,7 +136,18 @@ reading lists in a kanji, media reference lists in every note type. So a slot mu
 - **Creating the per-instance dispatchers lazily:** loading runs the appliers, so every instance would create them anyway.
 - **Recording a class's first instance's registrations and reusing them:** the closures capture that first instance.
 
-## 2. Loading a taggregate from a snapshot
+## 2. Restoring a taggregate from its stored state
+
+**Two ways, the consumer's choice.** Magnus has said, to JAStudio's representative, that a restore needn't go through
+the tevent appliers: one that sets state directly, at about what loading costs today, is fine.
+
+- **Setting each part's state directly,** as JAStudio's constructors do today. Compze then only needs a supported,
+  protected way to give the restored taggregate its id and version: today that takes the `[Obsolete]` internal `Id`
+  setter of `Entity`. It would also assert the invariants, and take part in the thread assertion and the refusal.
+- **A snapshot, through the appliers,** described below, for a consumer that wants one code path for loading and
+  editing. Designed and prototyped.
+
+### A snapshot
 
 **A snapshot** is the shortest list of tevents that gives a taggregate's state, each applied by the tevent appliers that
 editing uses. It stands in for the history so far, as one step.

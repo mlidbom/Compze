@@ -97,8 +97,9 @@ of one class in one of the components, loaded from a snapshot of five tevents, w
 - **About 120 B of the 640 are the prototype's scaffolding,** so a final design keeps about 520 B: some 170 B over plain
   objects for a root, four components and four shared tomponents. That agrees with the standalone prototype: its 584 B
   less its 72 B of references to the declaration in each teventive is 512 B.
-- **The static-slot row allocates 600 B more** than the slot-object row only because its adopted tevents are made through
-  `PublisherTevent.WrapIn`, which allocates a closure on every call: see [bugs-and-findings.md](bugs-and-findings.md).
+- **The static-slot row allocates 600 B more** than the slot-object row, mostly because its adopted tevents are made
+  through `PublisherTevent.WrapIn`, which allocates a closure on every call: see [bugs-and-findings.md](bugs-and-findings.md).
+  That is inferred by reading the code, not isolated; the Release rerun fits it, at 350 to 380 B more.
 - **Publishing through a slot allocates 1,032 B** in both declared styles, and keeps nothing after `Commit`, against
   1,256 B registered per instance.
 
