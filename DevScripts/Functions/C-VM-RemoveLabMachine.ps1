@@ -10,16 +10,25 @@ function C-VM-RemoveLabMachine {
 
     Asks before removing; pass -Confirm:$false to remove without asking.
 
+    .PARAMETER OnThisMachine
+    Remove the lab machine on this machine's Hyper-V, even when the lab's folder names a Hyper-V host to run it on
+    (Get-ConfiguredHyperVHost).
+
     .EXAMPLE
     C-VM-RemoveLabMachine -Confirm:$false
     #>
     [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'High')]
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseApprovedVerbs', '')]
-    param()
+    param(
+        [switch]$OnThisMachine
+    )
 
     $ErrorActionPreference = 'Stop'
     $machine = Get-LabMachine
-    if (-not $PSCmdlet.ShouldProcess($machine.Name, 'Remove the virtual machine, its checkpoints and its disk')) { return }
+    $hyperVHost = if (-not $OnThisMachine) { Get-ConfiguredHyperVHost }
+    $whichMachine = if ($hyperVHost) { "$($machine.Name) on $($hyperVHost.ComputerName)" } else { $machine.Name }
+    if (-not $PSCmdlet.ShouldProcess($whichMachine, 'Remove the virtual machine, its checkpoints and its disk')) { return }
+    if ($hyperVHost) { return Invoke-LabCommandOnHyperVHost -HyperVHost $hyperVHost -Command $PSCmdlet }
 
     $virtualMachine = Get-VM -Name $machine.Name -ErrorAction SilentlyContinue
     if ($virtualMachine) {

@@ -43,9 +43,21 @@ Then reload: `. $PROFILE`
 
 ### The across-machines lab
 
-Trying Compze's endpoints across machines: the lab machine is a Hyper-V virtual machine on this computer, in `C:\CompzeVMLab`, and the lab program (`test/Compze.Tests.AcrossMachines.Lab`) hosts an endpoint over TCP in it and converses with that endpoint from the host. The commands need membership of the Hyper-V Administrators group.
+Trying Compze's endpoints across machines: the lab machine is a Hyper-V virtual machine, in `C:\CompzeVMLab`, and the lab program (`test/Compze.Tests.AcrossMachines.Lab`) hosts an endpoint over TCP in it and converses with that endpoint from the host: the machine whose Hyper-V runs the lab machine. The commands need membership of the Hyper-V Administrators group.
 
-For the lab machine to reach this computer, this computer's firewall must let it in. A rule of its own does: "Hyper-V guests on the Default Switch may reach this computer", which lets in everything that arrives through the Default Switch's network adapter. No command adds it: adding it takes an elevated process, and how far the virtual machines may reach into this computer is its owner's decision. `C-VM-TestLabNetwork` tells whether it holds.
+For the lab machine to reach the host, the host's firewall must let it in. A rule of its own does: "Hyper-V guests on the Default Switch may reach this computer", which lets in everything that arrives through the Default Switch's network adapter. No command adds it: adding it takes an elevated process, and how far the virtual machines may reach into a computer is its owner's decision. `C-VM-TestLabNetwork` tells whether it holds.
+
+#### The lab machine on another machine's Hyper-V
+
+The host is this computer, unless `C:\CompzeVMLab\hyper-v-host.json` names another, such as a workstation nobody works at, so that the lab machine takes its memory from that machine: `{ "ComputerName": "192.168.0.11", "CredentialFile": "<a credential of an administrator there, saved here with Export-Clixml>" }`. Then every `C-VM-*` command runs there: what it reads from the repository is copied there, to `C:\CompzeVMLab\hyper-v-host-scripts\<worktree>`, the command runs there in PowerShell 7 over WinRM, what it writes is shown here, and what it returns is returned here. Both sides of a conversation run there, so an address a command returns is one only that host reaches. `-OnThisMachine`, on any `C-VM-*` command, uses a lab machine on this computer instead, which is left as it is. Deskmancer names its Hyper-V host for its build VMs in a file of the same name and fields.
+
+What the other machine needs, as threadripper was set up on 2026-11-16 (mostly for Deskmancer, whose setup notes are in its `Deskmancer.LiveDesktopSpecifications/dev_docs/hyper-v-build-matrix/overview.md`):
+
+- **WinRM** (`Enable-PSRemoting`, its network profile Private), its address in this computer's WinRM `TrustedHosts`, and its `C$` share reachable from here.
+- **PowerShell 7 and the .NET runtime the projects target.**
+- **This computer's Hyper-V guardian certificates**, imported into its `Shielded VM Local Certificates` store: the source machine's virtual TPM is sealed to them, and so is the lab machine's.
+- **Its own copy of the source machine and the guest credential** that `C-VM-CreateLabMachine` clones and copies, at the same paths, the credential saved there again: DPAPI encrypts it for one user on one machine.
+- **Its own lab machine,** made there by `C-VM-CreateLabMachine`, and its own firewall rule above.
 
 - **C-VM-CreateLabMachine** - Creates the lab machine as a clone of another virtual machine's checkpoint, prepares its Windows (computer name, no automatic updates, firewall, the host's .NET runtime and no ASP.NET Core runtime) and takes the `baseline` checkpoint. Run once; takes a few minutes
   - `-SourceMachine`, `-SourceCheckpoint`, `-SourceGuestCredentialPath` - What to clone; by default the baseline of Deskmancer's Windows 11 24H2 machine

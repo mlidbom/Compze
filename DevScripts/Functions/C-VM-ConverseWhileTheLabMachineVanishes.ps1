@@ -59,6 +59,10 @@ function C-VM-ConverseWhileTheLabMachineVanishes {
     .PARAMETER FailuresInFull
     Also write, the first time a tuery fails in each way, the whole exception. Without it a failure is its one line.
 
+    .PARAMETER OnThisMachine
+    Use the lab machine on this machine's Hyper-V, even when the lab's folder names a Hyper-V host to run it on
+    (Get-ConfiguredHyperVHost). On such a host, the host is the side that converses with the guest.
+
     .EXAMPLE
     C-VM-ConverseWhileTheLabMachineVanishes -LabEndpointAddress (C-VM-StartLabEndpoint) -Vanish Pause
 
@@ -90,7 +94,8 @@ function C-VM-ConverseWhileTheLabMachineVanishes {
         [int]$SecondsBeforeVanishing = 5,
         [int]$SecondsVanished = 30,
         [int]$SecondsAfterComingBack = 25,
-        [switch]$FailuresInFull
+        [switch]$FailuresInFull,
+        [switch]$OnThisMachine
     )
 
     $ErrorActionPreference = 'Stop'
@@ -106,6 +111,8 @@ function C-VM-ConverseWhileTheLabMachineVanishes {
         Write-CommandFailure -Command $PSCmdlet -Message "RestartLabProgram needs -ThroughRegistry: the lab endpoint comes back at a new address, which a pure client told the old one never learns."
         return
     }
+    $hyperVHost = if (-not $OnThisMachine) { Get-ConfiguredHyperVHost }
+    if ($hyperVHost) { return Invoke-LabCommandOnHyperVHost -HyperVHost $hyperVHost -Command $PSCmdlet }
 
     $whatWasDoneToTheMachine = [Collections.Generic.List[string]]::new()
     function Mark([string]$whatWasDone) { $whatWasDoneToTheMachine.Add(('{0:HH:mm:ss.fff} >>>>>> {1}' -f (Get-Date), $whatWasDone)) }
@@ -116,7 +123,7 @@ function C-VM-ConverseWhileTheLabMachineVanishes {
     if ($ThroughRegistry) {
         $registryServerListensAt = "$(Get-LabHostAddress):$RegistryServerPort"
         Mark "starting the lab endpoint in the guest, told that its registry server will listen at $registryServerListensAt"
-        $startedAt = C-VM-StartLabEndpoint -RegistryServerListensAt $registryServerListensAt
+        $startedAt = C-VM-StartLabEndpoint -RegistryServerListensAt $registryServerListensAt -OnThisMachine
         Mark "the lab endpoint listens at $startedAt"
         $howToConverse = @('converse-through-registry', $registryServerListensAt)
     } else {
@@ -143,7 +150,7 @@ function C-VM-ConverseWhileTheLabMachineVanishes {
             'DisconnectNetwork' { Mark 'connecting the machine to the network again'; Connect-VMNetworkAdapter -VMName $machine.Name -SwitchName $machine.Switch; Mark 'the machine is connected again' }
             'TurnOff'           { Mark 'the machine stays off' }
             'KillLabProgram'    { Mark 'the lab program stays killed' }
-            'RestartLabProgram' { Mark 'starting the lab program in the guest again'; $startedAt = C-VM-StartLabEndpoint -RegistryServerListensAt $registryServerListensAt; Mark "the lab endpoint listens at $startedAt" }
+            'RestartLabProgram' { Mark 'starting the lab program in the guest again'; $startedAt = C-VM-StartLabEndpoint -RegistryServerListensAt $registryServerListensAt -OnThisMachine; Mark "the lab endpoint listens at $startedAt" }
         }
 
         # A tuery asked just before the conversation's time is up may take the connect timeout to fail.

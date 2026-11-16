@@ -25,6 +25,10 @@ function C-VM-StartLabEndpoint {
     in the lab registry there, where a conversing endpoint finds it without being told its address. The server need not
     be up yet: the lab endpoint keeps trying to reach it.
 
+    .PARAMETER OnThisMachine
+    Use the lab machine on this machine's Hyper-V, even when the lab's folder names a Hyper-V host to run it on
+    (Get-ConfiguredHyperVHost). On such a host, the address returned is one only the host reaches.
+
     .EXAMPLE
     C-VM-StartLabEndpoint
     compze.tcp://192.168.39.230:49712/
@@ -36,7 +40,8 @@ function C-VM-StartLabEndpoint {
     [CmdletBinding()]
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseApprovedVerbs', '')]
     param(
-        [string]$RegistryServerListensAt
+        [string]$RegistryServerListensAt,
+        [switch]$OnThisMachine
     )
 
     $ErrorActionPreference = 'Stop'
@@ -46,6 +51,8 @@ function C-VM-StartLabEndpoint {
         Write-CommandFailure -Command $PSCmdlet -Message "The lab program ($labProgram) is not built. Run C-Build first."
         return
     }
+    $hyperVHost = if (-not $OnThisMachine) { Get-ConfiguredHyperVHost }
+    if ($hyperVHost) { return Invoke-LabCommandOnHyperVHost -HyperVHost $hyperVHost -Command $PSCmdlet }
 
     $guestLabFolder = 'C:\CompzeLab'
     $guestLabProgram = "$guestLabFolder\$labProgram"

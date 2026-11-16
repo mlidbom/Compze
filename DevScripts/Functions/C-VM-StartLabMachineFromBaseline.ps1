@@ -9,14 +9,22 @@ function C-VM-StartLabMachineFromBaseline {
     until the guest answers over PowerShell Direct and has its address on the network it shares with the host. A lab
     machine that runs is turned off first, and whatever was in its guest is discarded: every run starts from the same guest.
 
+    .PARAMETER OnThisMachine
+    Use the lab machine on this machine's Hyper-V, even when the lab's folder names a Hyper-V host to run it on
+    (Get-ConfiguredHyperVHost).
+
     .EXAMPLE
     C-VM-StartLabMachineFromBaseline
     #>
     [CmdletBinding()]
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseApprovedVerbs', '')]
-    param()
+    param(
+        [switch]$OnThisMachine
+    )
 
     $ErrorActionPreference = 'Stop'
+    $hyperVHost = if (-not $OnThisMachine) { Get-ConfiguredHyperVHost }
+    if ($hyperVHost) { return Invoke-LabCommandOnHyperVHost -HyperVHost $hyperVHost -Command $PSCmdlet }
     $machine = Get-LabMachine
 
     if ((Get-VM -Name $machine.Name).State -ne 'Off') { Stop-VM -Name $machine.Name -TurnOff -Force }

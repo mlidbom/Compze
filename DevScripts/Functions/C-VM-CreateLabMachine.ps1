@@ -37,6 +37,10 @@ function C-VM-CreateLabMachine {
     The channel of the .NET runtime the guest gets, such as 11.0: the newest runtime of that channel installed on the
     host. By default the one the repository's projects target.
 
+    .PARAMETER OnThisMachine
+    Create the lab machine on this machine's Hyper-V, even when the lab's folder names a Hyper-V host to run it on
+    (Get-ConfiguredHyperVHost). On such a host, the source machine and the credential are the host's.
+
     .EXAMPLE
     C-VM-CreateLabMachine
     Clones the baseline of Deskmancer's Windows 11 24H2 machine
@@ -47,10 +51,13 @@ function C-VM-CreateLabMachine {
         [string]$SourceMachine = 'Deskmancer-Win11-24H2',
         [string]$SourceCheckpoint = '24H2-baseline',
         [string]$SourceGuestCredentialPath = 'C:\DeskmancerVMLab\guest-credential.xml',
-        [string]$DotNetChannel = (Get-TargetedDotNetChannel)
+        [string]$DotNetChannel = (Get-TargetedDotNetChannel),
+        [switch]$OnThisMachine
     )
 
     $ErrorActionPreference = 'Stop'
+    $hyperVHost = if (-not $OnThisMachine) { Get-ConfiguredHyperVHost }
+    if ($hyperVHost) { return Invoke-LabCommandOnHyperVHost -HyperVHost $hyperVHost -Command $PSCmdlet }
     $machine = Get-LabMachine
 
     if (Get-VM -Name $machine.Name -ErrorAction SilentlyContinue) {

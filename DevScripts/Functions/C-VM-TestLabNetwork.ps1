@@ -26,6 +26,10 @@ function C-VM-TestLabNetwork {
     .PARAMETER FileToDownload
     The address of the file both sides download.
 
+    .PARAMETER OnThisMachine
+    Use the lab machine on this machine's Hyper-V, even when the lab's folder names a Hyper-V host to run it on
+    (Get-ConfiguredHyperVHost). On such a host, the host is the one whose network is tried.
+
     .EXAMPLE
     C-VM-TestLabNetwork
 
@@ -40,10 +44,13 @@ function C-VM-TestLabNetwork {
     [CmdletBinding()]
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseApprovedVerbs', '')]
     param(
-        [string]$FileToDownload = 'https://dot.net/v1/dotnet-install.ps1'
+        [string]$FileToDownload = 'https://dot.net/v1/dotnet-install.ps1',
+        [switch]$OnThisMachine
     )
 
     $ErrorActionPreference = 'Stop'
+    $hyperVHost = if (-not $OnThisMachine) { Get-ConfiguredHyperVHost }
+    if ($hyperVHost) { return Invoke-LabCommandOnHyperVHost -HyperVHost $hyperVHost -Command $PSCmdlet }
     $machine = Get-LabMachine
     $guestAddress = Get-LabGuestAddress
     $hostAddress = Get-LabHostAddress
