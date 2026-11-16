@@ -1,6 +1,6 @@
 # Bugs and smaller findings
 
-**Status: draft, under review by the four sessions** (2026-11-16). Each was reproduced against Compze.Teventive
+**Status: agreed by all four sessions, who have stopped** (2026-11-16). Each was reproduced against Compze.Teventive
 0.6.0-alpha unless it says otherwise. None is marked at the code with a `bug:` comment: the work so far is design, with
 no change to Compze.
 
@@ -45,7 +45,9 @@ tell. The proposal, for Magnus to decide, is in [the-design.md](the-design.md): 
 
 ## Eight behaviours JAStudio's notes rely on, which no specification in Compze pins
 
-Checked by taggregates-fable against 0.6.0-alpha, all holding. Each is a candidate for a specification:
+Checked by taggregates-fable against 0.6.0-alpha, all holding, and the eighth by jastudio-rep-fable too. Each is a
+candidate for a specification. The fourth, fifth and sixth are also specified for the per-class design, on
+`taggregate-experiments-fable-static-slots`:
 
 1. One tevent that two components apply, because its interface inherits an interface of each.
 2. A subscription to a meaning that several tevents share.

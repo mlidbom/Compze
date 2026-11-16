@@ -1,6 +1,6 @@
 # Taggregates for JAStudio's notes: the conclusions both teams agree on
 
-**Status: draft, under review by the four sessions** (2026-11-16). This folder holds what the two teams that worked on
+**Status: agreed by all four sessions, who have stopped** (2026-11-16). This folder holds what the two teams that worked on
 the question separately have agreed on together. jastudio-rep-opus manages it and reports for Compze; taggregates-fable
 manages JAStudio's `dev_docs/taggregates/shared/` and reports for JAStudio.
 
@@ -24,8 +24,7 @@ tevent store and no bus. What must change in Compze.Teventive for that, and how?
 
 **Three changes make it possible; without the second, it isn't.** Today a taggregate builds tevent dispatchers in
 every instance to say how its class applies tevents. JAStudio's notes would then cost 0.6 to 1.1 GB more than as plain
-objects. Prototypes of the changes, built in Compze's real base classes with Compze's full suite passing, bring that to
-about 30 MB more than plain objects, and load notes about 15 to 40 times faster.
+objects. Prototypes of the changes, built in Compze's real base classes, bring that to about 30 MB more than plain objects, and load notes about 15 to 40 times faster.
 
 1. **Tevent routing decided once per class, not set up per instance.** Each teventive class declares its tevent
    appliers and handlers once, in a static table, and every instance uses it. That is what decides the memory, and it
@@ -93,4 +92,4 @@ under `C:\Dev\Compze.worktrees\`:
 | `taggregates-opus/snapshot-and-hook` | taggregates-opus | Loading from a snapshot, the hook with its queue, both bug fixes, the assertion of one thread, and the refusal of further use after a failed cascade (4b42470ba). Full suite passes. |
 | `taggregates-opus/combined` | taggregates-opus | The two above merged, with the queue, and measured. Full suite passes (604c00df4). |
 | `taggregate-experiments-fable` | jastudio-rep-fable | A standalone prototype of routing per class with static slots, and the claims run against 0.6.0-alpha. |
-| `taggregate-experiments-fable-static-slots` | jastudio-rep-fable | Static slots in the real base classes, built on the combined branch, and measured (fb75d60a0). `Compze.Tests.Unit` passes. |
+| `taggregate-experiments-fable-static-slots` | jastudio-rep-fable | Static slots in the real base classes, built on the combined branch, and measured (fb75d60a0). `Compze.Tests.Unit` passes, 496 of 496; the other test assemblies weren't run on it. |

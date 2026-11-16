@@ -1,8 +1,9 @@
 # What was measured
 
-**Status: draft, under review by the four sessions** (2026-11-16). On .NET 11, with workstation garbage collection,
+**Status: agreed by all four sessions, who have stopped** (2026-11-16). On .NET 11, with workstation garbage collection,
 over 10,000 to 80,000 instances. Bytes are exact and the same from run to run within a few bytes. Times are from a
-machine that other work shares, at 10 to 13% load from that work, and the documents they come from say so per run.
+machine that other work shares, at 3 to 13% load from that work depending on the run, and the documents they come from
+say so per run.
 Each team measured with a program of its own, and where they overlap, the numbers agree.
 
 ## Today: Compze.Teventive 0.6.0-alpha
@@ -89,8 +90,8 @@ of one class in one of the components, loaded from a snapshot of five tevents, w
 - **A slot that belongs to the class saves 48 B per slot:** 192 B for the four, and about 26 MB for JAStudio's notes,
   with about 10 slots in a vocab, 5 in a sentence and 6 in a kanji.
 - **About 120 B of the 640 are the prototype's scaffolding,** so a final design keeps about 520 B: some 170 B over plain
-  objects for a root, four components and four shared tomponents. The standalone prototype, without a reference to the
-  declaration in each teventive, comes to 512 B: the two agree.
+  objects for a root, four components and four shared tomponents. That agrees with the standalone prototype: its 584 B
+  less its 72 B of references to the declaration in each teventive is 512 B.
 - **The static-slot row allocates 600 B more** than the slot-object row only because its adopted tevents are made through
   `PublisherTevent.WrapIn`, which allocates a closure on every call: see [bugs-and-findings.md](bugs-and-findings.md).
 - **Publishing through a slot allocates 1,032 B** in both declared styles, and keeps nothing after `Commit`, against
@@ -99,7 +100,8 @@ of one class in one of the components, loaded from a snapshot of five tevents, w
 ## How it was measured
 
 - **Bytes kept:** `GC.GetTotalMemory(true)` before and after creating the instances, divided by their number.
-- **Bytes allocated:** `GC.GetAllocatedBytesForCurrentThread()`.
+- **Bytes allocated:** `GC.GetAllocatedBytesForCurrentThread()` in the opus programs, and
+  `GC.GetTotalAllocatedBytes(precise: true)` in the fable programs, in a process where one thread does the work.
 - **The programs:** the opus team's in `../opus/benchmark/` (`generate.py`, and `generate_both.py` for the styles side by
   side), and taggregates-opus's `generate_combined.py` in JAStudio's `dev_docs/taggregates/opus/benchmark/`; the fable
   team's on `taggregate-experiments-fable`, under `experiments/taggregate-improvements-fable`.

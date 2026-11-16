@@ -1,6 +1,6 @@
 # The design both teams agree on
 
-**Status: draft, under review by the four sessions** (2026-11-16). Every name below is a placeholder for Magnus's pass
+**Status: agreed by all four sessions, who have stopped** (2026-11-16). Every name below is a placeholder for Magnus's pass
 over the names. Where the teams first differed, the section says what was settled and why.
 
 ## 1. Tevent routing decided once per class
@@ -72,6 +72,10 @@ reading lists in a kanji, media reference lists in every note type. So a slot mu
 - **A slot in a component is the same as a slot in a root.** It's JAStudio's usual case.
 - **A slot must be declared above the table that enters it,** since static fields initialize in the order written. The
   compiler warns of it under nullable reference types, and the table asserts it.
+- **What the real generics showed** (jastudio-rep-fable's static slots in the real base classes): a slot's owner can only
+  be constrained to a class, since the table's instance type has no more, so the slot asserts when it is made that its
+  owner publishes the owner's tevents. And a slot's declaration has five type arguments, which a slot type nested in the
+  base class could cut to two. Both are details for the real design.
 
 ### Settled between the teams
 
