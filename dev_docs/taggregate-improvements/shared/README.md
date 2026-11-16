@@ -87,7 +87,13 @@ The numbers: [what-was-measured.md](what-was-measured.md). The bugs and the smal
      themselves work".
    - The spike's branch isn't merged. Whether it's cleaned up and merged, or the real build starts afresh from what it
      showed, is decided when it's done.
-   - JAStudio's session for the spike is taggregates-opus (Magnus).
+   - JAStudio's session for the spike is taggregates-opus (Magnus). JAStudio builds against a Compze worktree of its own,
+     `C:\Dev\Compze.worktrees	aggregate-store-spike-for-jastudio`, moved only to pushed commits of the spike. A step that
+     adds a Compze project, or a reference between Compze projects, names it, since JAStudio's solution must list it.
+   - Agreed with JAStudio: the storage seam `ITaggregateStorage` and the store's fill from `LoadAll` at start come in step 2,
+     and JAStudio keeps its own files behind the seam, byte for byte. Typed ids: `Taggregate.Id` stays overridable by a
+     covariant return, and the store keeps the id instances it's given.
+   - **Progress:** step 1 built, `taggregate-store-spike` at a0552017d, Compze's full suite green.
    - **Built provisionally, as recommended, and brought back with what the spike showed** (Magnus: "Yes to everything
      you suggested"): after step 2, the publisher deferring every tevent to phase 0 (decision 4) and the lock's
      waiting with a timeout (decision 6); after step 3, the table through an explicit interface implementation, static
