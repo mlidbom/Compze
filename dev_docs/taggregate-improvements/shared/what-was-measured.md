@@ -74,8 +74,27 @@ A vocab with four components and four shared tomponents, loaded from its stored 
 
 ### Static slots in the real base classes (fable, `taggregate-experiments-fable-static-slots`)
 
-Pending: jastudio-rep-fable is building it on the combined branch, with a slot in a component and a measurement of a
-note with components and shared tomponents.
+Built on the combined branch (commit `fb75d60a0`, from `604c00df4`), with 16 specifications. `Compze.Tests.Unit` passes,
+496 of 496; the other test assemblies weren't run on this branch, since the change only adds to Compze.Teventive.
+80,000 vocabs, each a root with four tevent appliers, four components of two tevent appliers, and four shared tomponents
+of one class in one of the components, loaded from a snapshot of five tevents, with the machine at 3% load:
+
+| | Kept | Allocated | Time |
+|---|---:|---:|---:|
+| Plain objects | 350 B | 352 B | 0.15 µs |
+| Registered per instance, as today | 9,952 B | 22,104 B | 36.6 µs |
+| Declared per class, a slot object for each slot of each instance | 832 B | 4,192 B | 4.4 µs |
+| Declared per class, slots that belong to the class | 640 B | 4,800 B | 4.8 µs |
+
+- **A slot that belongs to the class saves 48 B per slot:** 192 B for the four, and about 26 MB for JAStudio's notes,
+  with about 10 slots in a vocab, 5 in a sentence and 6 in a kanji.
+- **About 120 B of the 640 are the prototype's scaffolding,** so a final design keeps about 520 B: some 170 B over plain
+  objects for a root, four components and four shared tomponents. The standalone prototype, without a reference to the
+  declaration in each teventive, comes to 512 B: the two agree.
+- **The static-slot row allocates 600 B more** than the slot-object row only because its adopted tevents are made through
+  `PublisherTevent.WrapIn`, which allocates a closure on every call: see [bugs-and-findings.md](bugs-and-findings.md).
+- **Publishing through a slot allocates 1,032 B** in both declared styles, and keeps nothing after `Commit`, against
+  1,256 B registered per instance.
 
 ## How it was measured
 

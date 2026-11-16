@@ -82,6 +82,18 @@ keeps the rule:
   per dispatch, not per instance held.
 - **`TaggregateTypeValidator` scans whole assemblies, three times per class,** in each taggregate, component and entity
   class's static constructor. Once per assembly would do.
+- **`PublisherTevent.WrapIn` allocates a closure on every call,** even when the wrapper's constructor is cached:
+  `Constructor.GenericTypeConstructor.WithArgument` passes `GetOrAdd` a lambda that captures the argument type
+  (`src/Compze.Internals.SystemCE/ReflectionCE/Constructor..cs`). About 90 B of garbage for every tevent published or
+  loaded, on `main` today. A `TryGetValue` before the `GetOrAdd` removes it. Found by jastudio-rep-fable from its
+  measurements, confirmed by reading.
+- **The prototypes' loading allocates about twice what it needs:** 4,192 B for a vocab of five tevents in the combined
+  prototype, against 2,040 B in the standalone one. The difference, by reading: `ScopedChange.Enter` in `ApplyTevent`
+  (two delegates and a `Disposable` per tevent), `Argument.Assert` calls in the loop whose message lambdas capture the
+  tevent (a closure and two delegates per tevent, whether or not the assertion fails), a copy of the snapshot into a
+  list, and the wrapper. For a vocab of about eleven tevents that is about 9 KB of garbage per vocab at each start. The
+  real implementation should avoid the closures, and the performance specification's bound on allocated bytes will hold
+  it to that. Found by jastudio-rep-fable.
 - **Per published tevent today:** `ScopedChange.Enter` twice, each two delegates and a `Disposable`; a new wrapper at
   each component level, through `Constructor.ForGenericType`; and a `TessageId` with two readings of the clock.
 - **A `TeventDispatcherConfig` handed to a base constructor is built again for every instance,** though it is always a

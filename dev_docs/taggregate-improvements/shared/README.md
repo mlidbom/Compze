@@ -93,4 +93,4 @@ under `C:\Dev\Compze.worktrees\`:
 | `taggregates-opus/snapshot-and-hook` | taggregates-opus | Loading from a snapshot, the hook with its queue, both bug fixes, the assertion of one thread, and the refusal of further use after a failed cascade (4b42470ba). Full suite passes. |
 | `taggregates-opus/combined` | taggregates-opus | The two above merged, with the queue, and measured. Full suite passes (604c00df4). |
 | `taggregate-experiments-fable` | jastudio-rep-fable | A standalone prototype of routing per class with static slots, and the claims run against 0.6.0-alpha. |
-| `taggregate-experiments-fable-static-slots` | jastudio-rep-fable | Static slots in the real base classes, built on the combined branch. |
+| `taggregate-experiments-fable-static-slots` | jastudio-rep-fable | Static slots in the real base classes, built on the combined branch, and measured (fb75d60a0). `Compze.Tests.Unit` passes. |
