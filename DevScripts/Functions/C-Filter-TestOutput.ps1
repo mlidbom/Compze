@@ -32,6 +32,7 @@ function C-Filter-TestOutput {
             $line -notmatch '^Starting test execution, please wait\.\.\.' -and
             $line -notmatch '^A total of \d+ test files matched the specified pattern\.' -and
             $line -notmatch '^Test run for .+\.dll \(\.NETCoreApp,Version=' -and
+            $line -notmatch '^Results File: .+\.trx$' -and
             $line -notmatch '^\s+Skipped .+\[\d+\s+\w+\]' -and
             $line -notmatch '^\[xUnit\.net \d+:\d+:\d+\.\d+\]\s+.+\[SKIP\]'
         
