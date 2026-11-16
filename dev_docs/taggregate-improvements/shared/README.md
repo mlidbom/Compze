@@ -140,6 +140,13 @@ The numbers: [what-was-measured.md](what-was-measured.md). The bugs and the smal
       tightening: the property is abstract, and abstract classes leave it so. A concrete class that forgets it then
       doesn't compile, as with the argument. Only a concrete class that inherits from another concrete class can forget
       it, and the exact-class assertion fails it at its first tevent.
+    - **Magnus's question, 2026-11-16: an explicit implementation of a Compze interface instead,** since a protected
+      member shows in every taggregate's member list. Tried in a scratch project: a subclass that lists the interface
+      again re-implements it, and the base class, calling through the interface, gets the most derived class's table,
+      over three levels. The compiler requires the interface listed with the member (CS0540). An explicit implementation
+      can't be abstract (CS0106), so forgetting it compiles, and the class gets its base class's table. The base
+      constructor can see that, and assert the exact class at every construction. The analyzer already decided could
+      report it at compile time.
     - **What a slot is:** a static of the owner's class (**recommended**), or an object in each instance, as
       `SharedTomponentSlot` is in 0.6.0-alpha: a field and two constructor lines per slot, and 48 B a slot (measured),
       about 26 MB for the corpus. Recommended with a change of jastudio-rep-opus's, not built: the slots declared in a
