@@ -59,12 +59,14 @@ from the committed one. Nothing to install: `dotnet build`, Rider and Visual Stu
   refactoring renames it with the class.
 - **`TaggregateTypeValidator` already asserts** that a taggregate's tevent interfaces and implementation classes are all
   mapped, at the taggregate's first use, so a missing mapping fails then, not at the first write.
-- **Two ways of having the generator write ids were considered and rejected:**
-  - **Deriving a class's id from its interface's GUID.** The function would become a stored and wire format that must
-    never change, for as long as any data or peer exists. Nothing stronger than a specification and a rule could
-    guarantee that. Magnus: "If there is any risk that we cannot guarantee that FOREVER we cannot use this idea."
-  - **A random GUID assigned once and kept in the checked-in file.** Renaming only the interface would look to the
-    generator like one class deleted and another added, and the "new" class would silently get a new identity.
+- **So the generator has no need to write ids.** Two ways it could were considered:
+  - **Deriving a class's id from its interface's GUID.** Not needed, so not proposed. Were it used, the function would
+    become a stored and wire format that must never change. Magnus's bar: "It must NEVER EVER happen. If there is any
+    risk that we cannot guarantee that FOREVER we cannot use this idea." A specification pinning known inputs to known
+    outputs would hold it as firmly as Compze already holds its other stored formats, such as a mapped type's
+    `"GUID, 0"` and the ids composed for generic types.
+  - **A random GUID assigned once and kept in the checked-in file.** Rejected: renaming only the interface would look
+    to the generator like one class deleted and another added, and the "new" class would silently get a new identity.
 
 ## The emitted shape is a stored format
 
