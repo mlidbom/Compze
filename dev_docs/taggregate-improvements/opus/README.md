@@ -12,7 +12,9 @@ parallel, in `../fable`.
 JAStudio can have its notes as Compze.Teventive taggregates after three changes in Compze, made in this order:
 
 1. **[Loading a taggregate from a snapshot](1-loading-a-taggregate-from-a-snapshot.md):** a supported way to restore a
-   taggregate from its stored state, without a tevent store. Small, and independent of the rest.
+   taggregate from its stored state, without a tevent store. A snapshot is the shortest history that produces the
+   state: one tevent for the taggregate and its components, plus one per entity and per shared tomponent. Every part
+   restores through the appliers editing uses. Small, and independent of the rest.
 2. **[Tevent routing decided once per class](2-tevent-routing-decided-once-per-class.md):** the big one. Today every
    instance builds tevent dispatchers to say how its class applies tevents. That costs 0.6 to 0.9 GB for JAStudio's
    corpus, and is the wrong abstraction regardless of the cost.
@@ -77,5 +79,6 @@ per-cascade hook fixes it: see
 
 - **[The benchmark](benchmark/README.md)** is taggregates-opus's. It measures the bytes a taggregate instance retains
   against Compze.Teventive 0.6.0-alpha, for any number of components and properties per component.
-- **[Two checks against 0.6.0-alpha](checks-against-0.6.0-alpha/README.md)** are jastudio-rep-opus's: a component
-  typed on the subclass that declares it, and the reproduction of the reentrancy bug.
+- **[Checks against 0.6.0-alpha](checks-against-0.6.0-alpha/README.md)** are jastudio-rep-opus's: a component typed on
+  the subclass that declares it, the reproduction of the reentrancy bug, and how a subscriber across every owner gets a
+  shared tomponent's tevents.
