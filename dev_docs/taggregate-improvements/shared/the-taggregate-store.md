@@ -696,7 +696,9 @@ Built as specified above (2a919c6b4), full suite green. The calls it made, and w
 
 ## Three gaps for JAStudio's switch, specified
 
-Asked by taggregates-opus for JAStudio's step 4, the switch to the state store, 2026-11-16. Each blocks a part of it:
+Asked by taggregates-opus for JAStudio's step 4, the switch to the state store, 2026-11-16. Each blocks a part of it.
+Built as specified (21012570a), with 14 specifications in `Given_a_state_store_whose_storage_holds_a_vocab_and_a_sentence`,
+whose storage is now a service of the container that the store is declared to be stored in:
 
 - **A storage built from a service of the container:** `StoredIn<TService>(Func<TService, ITaggregateStorage>)`, as
   `Taggregate` takes a factory with a service. JAStudio's corpus files need the corpus folder, which its host knows only
