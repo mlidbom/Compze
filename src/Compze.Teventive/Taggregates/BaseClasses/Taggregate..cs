@@ -51,6 +51,17 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
    /// published from inside it. Handed to <see cref="OnPublishCascadeEnded"/> when the cascade ends.</summary>
    List<ITaggregateTevent<TTaggregateTevent>>? _teventsOfThePublishCascadeUnderWay;
 
+   ///<summary>The publish cascades that have ended and are yet to be handed to <see cref="OnPublishCascadeEnded"/>, in the order they ended, or null<br/>
+   /// while there are none. A cascade published from inside <see cref="OnPublishCascadeEnded"/> waits here for the call under way to return.</summary>
+   Queue<IReadOnlyList<ITaggregateTevent<TTaggregateTevent>>>? _publishCascadesToHandOn;
+
+   ///<summary>Whether <see cref="OnPublishCascadeEnded"/> is being called, so that a cascade that ends meanwhile is queued instead of handed on from inside it.</summary>
+   bool _handingOnPublishCascades;
+
+   ///<summary>Whether a publish cascade has started and not completed: set when the outermost <see cref="Publish{TTevent}"/> starts, and cleared once its<br/>
+   /// invariants hold. Still set on the next use, it means a tevent applier, a tevent handler or the invariants threw from inside the cascade.</summary>
+   bool _aPublishCascadeIsIncomplete;
+
    ///<summary>Publishes <paramref name="tevent"/>: applies it, keeps it uncommitted, and calls the tevent handlers, which may publish more tevents. The tevent<br/>
    /// and those the handlers publish, from inside this call, are one publish cascade: once it has ended the invariants are asserted, and<br/>
    /// <see cref="OnPublishCascadeEnded"/> is called with its tevents.</summary>
@@ -65,6 +76,8 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
          return tevent;
       }
 
+      AssertNoPublishCascadeIsIncomplete();
+      _aPublishCascadeIsIncomplete = true;
       IReadOnlyList<ITaggregateTevent<TTaggregateTevent>> teventsOfTheCascade;
       try
       {
@@ -78,9 +91,38 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
       }
 
       AssertInvariantsAreMetInternal(); //It is allowed to enter a temporarily invalid state that will be corrected by new tevents published by tevent handlers. So we only check invariants once the whole publish cascade has been published.
-      OnPublishCascadeEnded(teventsOfTheCascade);
+      _aPublishCascadeIsIncomplete = false;
+
+      (_publishCascadesToHandOn ??= new()).Enqueue(teventsOfTheCascade);
+      HandOnThePublishCascadesUnlessHandingOnAlready();
       return tevent;
    }
+
+   ///<summary>Hands each ended publish cascade to <see cref="OnPublishCascadeEnded"/>, in the order they ended, until none is left. Called from inside<br/>
+   /// <see cref="OnPublishCascadeEnded"/>, as a publish made there is, it returns at once: the call under way hands that cascade on after those before it,<br/>
+   /// so the tevents are handed on in the order they were published, and <see cref="OnPublishCascadeEnded"/> is never called from inside itself.</summary>
+   ///<remarks>When <see cref="OnPublishCascadeEnded"/> throws, the cascades not yet handed on stay queued, and are handed on before the next publish's.</remarks>
+   void HandOnThePublishCascadesUnlessHandingOnAlready()
+   {
+      if(_handingOnPublishCascades) return;
+
+      _handingOnPublishCascades = true;
+      try
+      {
+         while(_publishCascadesToHandOn is { Count: > 0 } cascades) OnPublishCascadeEnded(cascades.Dequeue());
+         _publishCascadesToHandOn = null;
+      }
+      finally
+      {
+         _handingOnPublishCascades = false;
+      }
+   }
+
+   ///<summary>Refuses to use this taggregate after a publish cascade threw from a tevent applier, a tevent handler or the invariants: a tevent may be half<br/>
+   /// applied, or applied without its handlers' reactions, and the invariants weren't asserted. A consumer whose taggregates outlive such an exception<br/>
+   /// loads the taggregate again.</summary>
+   void AssertNoPublishCascadeIsIncomplete() =>
+      State.Assert(!_aPublishCascadeIsIncomplete, () => $"A publish cascade on this {GetType()} threw from a tevent applier, a tevent handler or the invariants, so its state may be half changed. It refuses further use: load it again.");
 
    void PublishInThePublishCascadeUnderWay(TTaggregateTeventImplementation tevent)
    {
@@ -112,9 +154,9 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
 
    ///<summary>Called once at the end of each publish cascade, after the invariants are asserted, with the cascade's tevents in the order they were<br/>
    /// published, each in its publisher's wrapper. The base implementation emits them on <see cref="ITaggregate.TeventStream"/>.</summary>
-   ///<remarks>A publish made from here, on this taggregate, starts a publish cascade of its own, which calls this again when it ends; and<br/>
-   /// <see cref="ITaggregate.Commit"/> may be called from here. A nested cascade's call can end before this one does, so an override that persists<br/>
-   /// should persist before it calls anything that may publish.</remarks>
+   ///<remarks>A publish made from here, on this taggregate, is applied at once, and its cascade is handed to this method once this call has returned,<br/>
+   /// after any cascade published before it: the tevents are handed on in the order they were published, and this is never called from inside itself.<br/>
+   /// <see cref="ITaggregate.Commit"/> may be called from here.</remarks>
    protected virtual void OnPublishCascadeEnded(IReadOnlyList<ITaggregateTevent<TTaggregateTevent>> teventsOfTheCascade)
    {
       if(_teventStream is null) return;
@@ -176,6 +218,7 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
    void ITaggregate.Commit(Action<IReadOnlyList<ITaggregateTevent<ITaggregateTevent>>> commitTevents)
    {
       using var oneThreadAtATime = OneThreadAtATime.Enter(ref _idOfTheThreadUsingIt, this);
+      if(_reentrancyLevel == 0) AssertNoPublishCascadeIsIncomplete();
       //Taken before they are handed on, so that a publish made by whatever they're handed to stays uncommitted, for a later commit, instead of changing the
       //list being handed on.
       commitTevents(TakeAll(ref _unCommittedTevents));
