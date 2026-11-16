@@ -19,7 +19,8 @@ JAStudio can have its notes as Compze.Teventive taggregates after three changes 
    instance builds tevent dispatchers to say how its class applies tevents. That costs 0.6 to 0.9 GB for JAStudio's
    corpus, and is the wrong abstraction regardless of the cost. [A prototype](5-prototype-of-per-class-routing.md)
    measured it: a note with 15 components retains 1,168 B instead of 11,256 B, against 733 B as plain objects, and
-   80,000 notes load about 40 times faster.
+   80,000 notes load about 40 times faster. [Routing by convention](6-routing-by-convention-compared.md), the
+   alternative to declaring it, was prototyped too: it costs the same, and brings a silent mistake.
 3. **[Told once per publish cascade](3-told-once-per-publish-cascade.md):** a hook that tells the taggregate's owner
    when a publish cascade has ended. Its design also fixes reentrancy bugs in `Taggregate.Publish` and
    `ITaggregate.Commit`, allows committing from inside the hook, and asserts that one taggregate is used by one thread
@@ -27,8 +28,19 @@ JAStudio can have its notes as Compze.Teventive taggregates after three changes 
 
 Then, later: [the smaller and later changes](4-later.md).
 
-Experiments run in the worktree `C:\Dev\Compze.worktrees\taggregate-experiments-opus`, on branch
-`taggregate-experiments-opus`. taggregates-opus prototypes changes 1 and 3 in a worktree of its own.
+**All three changes together** were prototyped and measured. A 15-component note would keep about 936 B, some 200 B over
+plain objects: about 75 MB for JAStudio's 80,000 notes, against about 59 MB as plain objects and 0.6 to 0.9 GB today.
+See [all three combined](5-prototype-of-per-class-routing.md#all-three-changes-combined).
+
+The experiments, none of them for merging, each on a branch of its own in `C:\Dev\Compze.worktrees\`:
+
+- `taggregate-experiments-opus`: per-class routing (jastudio-rep-opus).
+- `taggregate-experiments-opus-convention`: routing by convention, built on it (jastudio-rep-opus).
+- `taggregates-opus/snapshot-and-hook`: loading from a snapshot and the per-cascade hook (taggregates-opus). Written up
+  in JAStudio's `dev_docs/taggregates/opus/`.
+- `taggregates-opus/combined`: all three changes merged and measured (taggregates-opus).
+
+Compze's full suite passes on each.
 
 ## The use
 
@@ -71,9 +83,12 @@ unshippable: vocab alone would add 320 to 520 MB.
 
 - **The go-ahead,** and the order above.
 - **Explicit declarations or convention:** appliers declared explicitly in a table per class, as both sessions
-  recommend, or found by convention as `Apply(…)` methods. See [the per-class routing](2-tevent-routing-decided-once-per-class.md).
-- **Names:** the snapshot marker (`ITaggregateSnapshotTevent` or `ITaggregateRestoredTevent`), and the names in the per-class routing's
-  sketch (`TeventAppliers`, `Declare`, `Extend`, `Component`, `Entities`). They're placeholders.
+  recommend, or found by convention as `Apply(…)` methods. Both are prototyped and cost the same: see
+  [routing by convention, compared](6-routing-by-convention-compared.md), which also describes a third way.
+- **Names:** the snapshot marker (`ITaggregateSnapshotTevent` or `ITaggregateRestoredTevent`), and the names the per-class
+  routing's prototype uses: `TeventRouting<TInstance>`, `DeclareAppliers`, `DeclareHandlers`, `Extend`, `Component`,
+  `Entities`, `SharedTomponent`, `ITeventRoutedMember`, and the properties `TeventAppliers` and `TeventHandlers`.
+  They're placeholders.
 
 ## Two bugs found on the way
 
@@ -88,8 +103,9 @@ since this is design work. The per-cascade hook's design fixes both: see
 
 ## How the measurements were made
 
-- **[The benchmark](benchmark/README.md)** is taggregates-opus's. It measures the bytes a taggregate instance retains
-  against Compze.Teventive 0.6.0-alpha, for any number of components and properties per component.
+- **[The benchmark](benchmark/README.md):** taggregates-opus's `generate.py` measures the bytes a taggregate instance
+  retains against Compze.Teventive 0.6.0-alpha, for any number of components and properties per component.
+  jastudio-rep-opus's `generate_both.py` measures the prototypes' styles side by side, and the time to load 80,000 notes.
 - **[Checks against 0.6.0-alpha](checks-against-0.6.0-alpha/README.md)** are jastudio-rep-opus's: a component typed on
   the subclass that declares it, the reproductions of the two reentrancy bugs, and how a subscriber across every owner
   gets a shared tomponent's tevents.

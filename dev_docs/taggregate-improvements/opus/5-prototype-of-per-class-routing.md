@@ -6,6 +6,10 @@ It prototypes [tevent routing decided once per class](2-tevent-routing-decided-o
 
 ## Conclusions
 
+taggregates-opus then merged this prototype with its prototype of [loading from a snapshot](1-loading-a-taggregate-from-a-snapshot.md)
+and [the per-cascade hook](3-told-once-per-publish-cascade.md), and measured the combination: see
+[all three combined](#all-three-changes-combined), below.
+
 - **The memory problem goes away.** A loaded note with 15 components retains 1,168 B instead of 11,256 B, against 733 B
   as plain objects. About 145 B of that is the prototype's own scaffolding, below. An edit to each component then adds
   216 B instead of 6,488 B.
@@ -129,7 +133,9 @@ for `TeventStream`, under [told once per publish cascade](3-told-once-per-publis
 ### The edits still allocate
 
 The 10,312 B allocated by 15 edits is about 690 B per publish: the tevent with its `TessageId` and timestamp, the
-wrappers, and the list appends. It's garbage, not retained memory. It drops further when the routes into components are
+wrappers, and the list appends. It's garbage, not retained memory. It dropped to 8,632 B, about 575 B per publish, once
+`TeventRouting.Dispatch` stopped allocating a delegate per dispatch (commit `c70e46199`, found while comparing with
+[routing by convention](6-routing-by-convention-compared.md)). It drops further when the routes into components are
 composed once per type, and if `ITaggregateTevent` stops claiming exactly-once delivery (see [later](4-later.md)).
 
 ## For the specification of memory in the final design
@@ -139,3 +145,20 @@ instance, with a bound. Measuring retained bytes in a specification is unreliabl
 whole process, and Compze's specifications run in parallel. **The bytes allocated on the current thread by a load are a
 better measure:** `GC.GetAllocatedBytesForCurrentThread()` sees no other thread. It bounds the retained bytes from above,
 and moves with them: 1,872 B against 19,304 B at 15 components.
+
+## All three changes combined
+
+Measured on 2026-11-16 by taggregates-opus, on the branch `taggregates-opus/combined` (7dbfa74c0), in the worktree
+`C:\Dev\Compze.worktrees\taggregates-opus-combined`. It merges this prototype (529a5170e) with
+`taggregates-opus/snapshot-and-hook`. Written up in JAStudio's `dev_docs/taggregates/opus/the-prototypes-combined.md`,
+in `C:\Dev\JAStudio.wt2`, branch `compze-taggretates`.
+
+- **The two prototypes combine:** two small conflicts, both in `Taggregate`, and nothing in either had to change for the
+  other. Compze's full suite passes on the combination.
+- **A 15-component note retains 1,080 B, loaded from history or from a snapshot, and 8 B more once edited and
+  committed.** Without this prototype's 144 B of scaffolding, a final design keeps about 936 B: some 200 B over plain
+  objects, or about 75 MB for JAStudio's 80,000 notes, against about 59 MB as plain objects and 0.6 to 0.9 GB with
+  0.6.0-alpha.
+- **What each part took:** per-class routing, from 11,256 B to 1,168 B; the lazy `TeventStream`, 24 B more; creating the
+  lists of tevents only when needed, and handing them on whole, 64 B, and the 208 B their grown backing arrays kept after
+  an edit.

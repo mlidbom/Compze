@@ -3,7 +3,9 @@
 - Registered: today's per-instance registration, RegisterTeventAppliers() in the constructors.
 - Declared: the prototype's per-class TeventRouting, declared once in static fields.
 
-Usage: python generate_both.py <components> <properties per component> <output Program.cs>
+- Convention, when the fourth argument is "convention": Apply methods found by reflection, in the convention prototype.
+
+Usage: python generate_both.py <components> <properties per component> <output Program.cs> [convention]
 """
 import sys
 
@@ -132,6 +134,42 @@ for c in range(components):
     add(f"   public void SetProperty0(string value) => Publish(new NoteTevent.Part{c}.Property0Updated(value));")
     add("}")
 
+# Convention style, generated only when asked for: it needs the convention prototype's Compze.Teventive.
+if len(sys.argv) > 4 and sys.argv[4] == "convention":
+    add("[TeventRoutingByConvention]")
+    add("public class ConventionNote : Taggregate<ConventionNote, INoteTevent, NoteTevent, INoteTevent<INoteTevent>, NoteTevent<NoteTevent>>, IBenchNote")
+    add("{")
+    for c in range(components):
+        add(f"   public ConventionPart{c} Part{c} {{ get; }}")
+    add("   public ConventionNote()")
+    add("   {")
+    for c in range(components):
+        add(f"      Part{c} = new ConventionPart{c}(this);")
+    add("   }")
+    add("   void Apply(INoteTevent.Loaded _) {}")
+    add("   public static ConventionNote Load(string[] values) { var note = new ConventionNote(); ((ITaggregate)note).LoadFromHistory([Loading.LoadedTevent(values)]); return note; }")
+    add("   public void Edit()")
+    add("   {")
+    for c in range(components):
+        add(f"      Part{c}.SetProperty0(\"b\");")
+    add("      ((ITaggregate)this).Commit(_ => {});")
+    add("   }")
+    add("}")
+    for c in range(components):
+        add("[TeventRoutingByConvention]")
+        add(f"public class ConventionPart{c} : ConventionNote.Component<ConventionPart{c}, INoteTevent.Part{c}, NoteTevent.Part{c}>")
+        add("{")
+        for p in range(properties_per_component):
+            add(f"   public string Property{p} {{ get; private set; }} = \"\";")
+        add(f"   public ConventionPart{c}(ConventionNote note) : base(note) {{}}")
+        for p in range(properties_per_component):
+            add(f"   void Apply(INoteTevent.Part{c}.Property{p}Updated tevent) => Property{p} = tevent.Value;")
+        add(f"   public void SetProperty0(string value) => Publish(new NoteTevent.Part{c}.Property0Updated(value));")
+        add("}")
+    add("public static partial class Program { static void LoadConvention() => ConventionNote.Load([\"a\"]).Edit(); }")
+else:
+    add("public static partial class Program { static void LoadConvention() {} }")
+
 # Plain objects
 add("public class PlainNote")
 add("{")
@@ -146,7 +184,7 @@ for c in range(components):
     add("}")
 
 add("""
-public static class Program
+public static partial class Program
 {
    static long RetainedPerInstance(Func<object> create, int count, out List<object> kept)
    {
@@ -181,6 +219,13 @@ public static class Program
       GC.KeepAlive(notes);
    }
 
+   static string ConventionFirst()
+   {
+      var stopwatch = Stopwatch.StartNew();
+      LoadConvention();
+      return $", {stopwatch.Elapsed.TotalMilliseconds:F1} ms by convention";
+   }
+
    static double LoadSeconds(Func<IBenchNote> load, int count)
    {
       var kept = new List<IBenchNote>(count);
@@ -196,20 +241,27 @@ public static class Program
    {
       const int count = 10_000;
       string[] values = ["a"];
-      RegisteredNote.Load(values).Edit(); DeclaredNote.Load(values).Edit(); new PlainNote(); //Warm up: static constructors, the validators' assembly scans, the routing's resolution.
+      var firstLoad = Stopwatch.StartNew(); RegisteredNote.Load(values).Edit(); var registeredFirst = firstLoad.Elapsed.TotalMilliseconds;
+      firstLoad.Restart(); DeclaredNote.Load(values).Edit(); var declaredFirst = firstLoad.Elapsed.TotalMilliseconds;
+      new PlainNote(); //Warm up: static constructors, the validators' assembly scans, the routing's resolution.
+      Console.WriteLine($"first load and edit, in a fresh process: {registeredFirst:F1} ms registered, {declaredFirst:F1} ms declared FIRST_CONVENTION");
       Console.WriteLine($"COMPONENTS components, PROPERTIES properties each, {count:N0} instances");
       Console.WriteLine($"plain       retained: {RetainedPerInstance(() => new PlainNote(), count, out var plain),7:N0} B"); GC.KeepAlive(plain);
       Measure("registered", () => RegisteredNote.Load(values), count);
       Measure("declared", () => DeclaredNote.Load(values), count);
+CONVENTION_MEASURE
       if(args.Contains("--time"))
       {
          const int corpus = 80_000;
          for(var round = 1; round <= 3; round++)
-            Console.WriteLine($"round {round}: loading {corpus:N0} notes took {LoadSeconds(() => RegisteredNote.Load(values), corpus):F2} s registered, {LoadSeconds(() => DeclaredNote.Load(values), corpus):F2} s declared");
+            Console.WriteLine($"round {round}: loading {corpus:N0} notes took {LoadSeconds(() => RegisteredNote.Load(values), corpus):F2} s registered, {LoadSeconds(() => DeclaredNote.Load(values), corpus):F2} s declared CONVENTION_TIME");
       }
    }
 }
-""".replace("COMPONENTS", str(components)).replace("PROPERTIES", str(properties_per_component)))
+""".replace("COMPONENTS", str(components)).replace("PROPERTIES", str(properties_per_component))
+   .replace("FIRST_CONVENTION", "" if not (len(sys.argv) > 4 and sys.argv[4] == "convention") else "{ConventionFirst()}")
+   .replace("CONVENTION_MEASURE", '      Measure("convention", () => ConventionNote.Load(values), count); ConventionNote.Load(values).Edit();' if len(sys.argv) > 4 and sys.argv[4] == "convention" else "")
+   .replace("CONVENTION_TIME", ', {LoadSeconds(() => ConventionNote.Load(values), corpus):F2} s by convention' if len(sys.argv) > 4 and sys.argv[4] == "convention" else ""))
 
 with open(output, "w", encoding="utf-8") as file:
     file.write("\n".join(lines))
