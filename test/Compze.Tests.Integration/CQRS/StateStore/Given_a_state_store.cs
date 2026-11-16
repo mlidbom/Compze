@@ -104,7 +104,7 @@ public class Given_a_state_store : UniversalTestBase
          _thrown = Invoking(() => CommittedVocab(VocabId).ChangeMeaningWithoutATevent("to eat")).Must().Throw<Exception>().Which;
       }
 
-      [PCT] public void the_change_throws_saying_that_the_instance_is_read_only() => _thrown.Message.Must().Contain("is a committed instance, which a taggregate store serves to readers and which is read only");
+      [PCT] public void the_change_throws_saying_that_the_instance_is_read_only() => _thrown.Message.Must().Contain("is an instance a taggregate store serves to readers, which is read only");
       [PCT] public void the_vocab_the_reader_gets_keeps_the_meaning_it_had() => CommittedVocab(VocabId).Meaning.Must().Be("");
    }
 

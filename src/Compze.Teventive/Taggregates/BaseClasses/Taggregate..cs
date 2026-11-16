@@ -81,7 +81,7 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
    /// applying a tevent, such as while its parts are being moved to tevents, so that a change to a committed instance fails before<br/>
    /// it is made.</remarks>
    protected void AssertCanBeChanged() =>
-      State.Assert(!_isReadOnly, () => $"{GetType().Name} {Id} is a committed instance, which a taggregate store serves to readers and which is read only. Get it for update from an ITaggregateStoreUpdater, inside a unit of work, to change it.");
+      State.Assert(!_isReadOnly, () => $"{GetType().Name} {Id} is an instance a taggregate store serves to readers, which is read only. Get it for update from an ITaggregateStoreUpdater, inside a unit of work, to change it.");
 
    protected TTevent Publish<TTevent>(TTevent tevent) where TTevent : TTaggregateTeventImplementation
    {

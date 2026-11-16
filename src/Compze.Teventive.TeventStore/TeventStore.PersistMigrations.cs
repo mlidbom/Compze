@@ -52,7 +52,7 @@ public partial class TeventStore
                   var refactorings = new List<List<TeventDataRow>>();
 
                   var inMemoryMigratedHistory = SingleTaggregateInstanceTeventStreamMutator.MutateCompleteTaggregateHistory(
-                     _migrationFactories,
+                     _migrations(),
                      original.Select(it => it.WrappedTevent).ToArray(),
                      newTevents =>
                      {

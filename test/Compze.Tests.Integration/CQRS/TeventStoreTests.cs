@@ -150,7 +150,7 @@ public class TeventStoreTests : UniversalTestBase
    });
 
    [PCT]
-   public void Does_not_call_db_in_constructor() => _container.ExecuteInIsolatedScope(scope => scope.TeventStoreUpdater());
+   public void Does_not_call_db_in_constructor() => _container.ExecuteInIsolatedScope(scope => scope.TaggregateStoreUpdater());
 
    [PCT]
    public void ShouldNotCacheTeventsSavedDuringFailedTransactionEvenIfReadDuringSameTransaction() => _container.ExecuteInIsolatedScope(scope =>

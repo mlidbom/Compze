@@ -1,7 +1,7 @@
 using Compze.Abstractions;
 using Compze.Teventive.Taggregates.BaseClasses;
 using Compze.Teventive.Taggregates.Tevents;
-using Compze.Teventive.TeventStore.Abstractions;
+using Compze.Teventive.TaggregateStores;
 using JetBrains.Annotations;
 
 namespace Compze.Tests.Integration.CQRS;
@@ -29,7 +29,7 @@ class User : Taggregate<User, IUserTevent, UserTevent, IUserTevent<IUserTevent>,
 
    public void Register(string email, string password, TaggregateId id) => Publish(new UserRegistered(id, email, password));
 
-   public static User Register(ITeventStoreUpdater taggregates, string email, string password, TaggregateId id)
+   public static User Register(ITaggregateStoreUpdater taggregates, string email, string password, TaggregateId id)
    {
       var user = new User();
       user.Register(email, password, id);

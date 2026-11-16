@@ -69,8 +69,8 @@ sealed class TaggregateStateStore : ITaggregateStore, IStateStore
 
    ///<summary>One reference for each taggregate, made at the first request, so that index lookups allocate none.</summary>
    public ITaggregateReference<TTaggregate> Reference<TTaggregate>(TaggregateId id) where TTaggregate : class, ITaggregate =>
-      _references.GetOrAdd(id, static (theId, store) => new TaggregateReference<TTaggregate>(store, theId), this) as ITaggregateReference<TTaggregate>
-   ?? new TaggregateReference<TTaggregate>(this, id); //First asked for as another class of the hierarchy: a reference is compared by id.
+      _references.GetOrAdd(id, static (theId, store) => new TaggregateReference<TTaggregate>(store, store._unitsOfWork, theId), this) as ITaggregateReference<TTaggregate>
+   ?? new TaggregateReference<TTaggregate>(this, _unitsOfWork, id); //First asked for as another class of the hierarchy: a reference is compared by id.
 
    public ITaggregateStoreSession NewSession(TaggregateUnitOfWork unitOfWork)
    {
@@ -95,9 +95,6 @@ sealed class TaggregateStateStore : ITaggregateStore, IStateStore
    ///<summary>This store's session in the unit of work of the ambient transaction, if that unit of work has needed the store yet.<br/>
    /// Allocates nothing.</summary>
    internal StateStoreSession? AmbientSession => (StateStoreSession?)_unitsOfWork.Ambient?.ExistingSessionOf(this);
-
-   ///<summary>This store's session in the unit of work of the ambient transaction, begun now if it has none.</summary>
-   internal ITaggregateStoreSession SessionOfTheAmbientUnitOfWork() => _unitsOfWork.AmbientBeginningIt().SessionOf(this);
 
    internal ITaggregate? CommittedInstanceOf(TaggregateId id) => _committedTaggregates.GetValueOrDefault(id);
 

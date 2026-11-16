@@ -1,8 +1,8 @@
 namespace Compze.Teventive._internal;
 
-///<summary>What a store that keeps taggregates as their state needs of a taggregate beyond <see cref="ITaggregate"/>: to make the<br/>
-/// committed instance it serves to readers read only, to know whether a publish has failed on a copy a unit of work is changing,<br/>
-/// whose state then can't be trusted, and to give a copy the version of the instance it was copied from.</summary>
+///<summary>What a taggregate store needs of a taggregate beyond <see cref="ITaggregate"/>: to make an instance it serves to readers<br/>
+/// read only, to know whether a publish has failed on an instance a unit of work is changing, whose state then can't be trusted,<br/>
+/// and, for the store that keeps taggregates as their state, to give a copy the version of the instance it was copied from.</summary>
 interface ITaggregateStoreInternals
 {
    ///<summary>From now on, publishing on this instance throws.</summary>

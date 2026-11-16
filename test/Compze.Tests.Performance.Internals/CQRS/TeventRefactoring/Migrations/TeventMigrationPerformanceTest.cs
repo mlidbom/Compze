@@ -81,8 +81,8 @@ public class TeventMigrationPerformanceTest : TeventMigrationTestBase
 
       return;
 
-      void LoadWithClonedContainer(IDependencyInjectionContainer container) => container.ExecuteUnitOfWork(unitOfWork => unitOfWork.TeventStoreUpdater()
-                                                                                                                   .Get<TestTaggregate>(_taggregate.Id));
+      void LoadWithClonedContainer(IDependencyInjectionContainer container) => container.ExecuteUnitOfWork(unitOfWork => unitOfWork.TaggregateStoreUpdater()
+                                                                                                                   .GetForUpdate<TestTaggregate>(_taggregate.Id));
    }
 
    [PCT]  public async Task With_four_migrations_mutation_that_all_actually_changes_things_uncached_loading_takes_less_than_X_milliseconds_cached_less_than_Y_milliseconds()

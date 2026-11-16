@@ -16,7 +16,8 @@ sealed class TaggregateUnitsOfWork
       Transaction.Current is {} ambientTransaction ? _unitsOfWorkByTransaction.GetValueOrDefault(KeyOf(ambientTransaction)) : null;
 
    ///<summary>The taggregate unit of work of the ambient transaction, begun now if it has none yet. It belongs to the unit of work<br/>
-   /// that began the transaction, whose scope lives until the transaction completes, so that the tevents can be dispatched in it.</summary>
+   /// that began the transaction, whose scope lives until the transaction completes, so that it can dispatch tevents for as long<br/>
+   /// as taggregates can be changed in the transaction, whichever scope changes them.</summary>
    internal TaggregateUnitOfWork AmbientBeginningIt()
    {
       var ambientTransaction = Transaction.Current;
@@ -27,7 +28,7 @@ sealed class TaggregateUnitsOfWork
 
       var unitOfWork = AmbientUnitOfWork.Of(ambientTransaction);
       State.Assert(unitOfWork != null,
-                   () => "Taggregates are changed inside a unit of work that ExecuteUnitOfWork began, and the ambient transaction was begun elsewhere, such as by a TransactionScope of its own. The taggregates' tevents are dispatched when the transaction commits, in the scope of the unit of work that began it, so that unit of work must be the one ExecuteUnitOfWork runs.");
+                   () => "Taggregates are changed inside a unit of work that ExecuteUnitOfWork began, and the ambient transaction was begun elsewhere, such as by a TransactionScope of its own. The taggregates' tevents are dispatched in the scope of the unit of work that began the transaction, which lives until it completes, so that unit of work must be the one ExecuteUnitOfWork runs.");
       //todo: With two containers in one transaction, the unit of work that began it may belong to the other container. Assert that
       //   it resolves this very instance, once there is a way to ask without resolving (jastudio-rep-opus, 2026-11-16).
       var begun = new TaggregateUnitOfWork(unitOfWork, ended: () => _unitsOfWorkByTransaction.TryRemove(key, out _));

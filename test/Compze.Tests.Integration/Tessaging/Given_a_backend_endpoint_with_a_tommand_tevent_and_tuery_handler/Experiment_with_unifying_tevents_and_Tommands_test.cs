@@ -14,6 +14,7 @@ using Compze.Tessaging.TessageBus;
 using Compze.Tessaging.Typermedia;
 using Compze.Tessaging.TessageTypes;
 using Compze.Teventive;
+using Compze.Teventive.TaggregateStores;
 using Compze.Teventive.Taggregates.BaseClasses;
 using Compze.Teventive.Taggregates.Tevents;
 using Compze.Teventive.TeventStore.Abstractions;
@@ -60,7 +61,7 @@ public class Experiment_with_unifying_tevents_and_tommands_test : UniversalTestB
          .ForTuery((GetUserTuery tuery, ITeventStoreReader teventReader) => new UserResource(teventReader.GetHistory(tuery.UserId)));
 
       protected override void RegisterTypermediaTommandHandlers(ITypermediaTommandHandlerRegistrar handle) => handle
-         .ForTommand((UserRegistrarTommand.RegisterUserTypermediaTommand typermediaTommand, ITeventStoreUpdater store) =>
+         .ForTommand((UserRegistrarTommand.RegisterUserTypermediaTommand typermediaTommand, ITaggregateStoreUpdater store) =>
           {
              store.Save(UserTaggregate.Register(typermediaTommand));
              return new RegisterUserResult(typermediaTommand.UserId);
@@ -69,7 +70,7 @@ public class Experiment_with_unifying_tevents_and_tommands_test : UniversalTestB
       //The tevent store's components without its typermedia surface: this experiment reads and saves through the store
       //abstractions directly, so only the store registration itself is declared - the general Declare override's job.
       protected override void Declare(ExactlyOnceEndpointBuilder endpoint) =>
-         endpoint.Registrar.TeventStore(endpoint.Configuration.ConnectionStringName);
+         endpoint.Registrar.TeventStore(endpoint.Configuration.ConnectionStringName, store => store.Taggregate<UserTaggregate>().Taggregate<UserRegistrarTaggregate>());
    }
 
    protected override async Task InitializeAsyncInternal()
@@ -81,7 +82,7 @@ public class Experiment_with_unifying_tevents_and_tommands_test : UniversalTestB
 
       _userDomainScopeFactory = _userManagementDomainEndpoint.ServiceLocator.Resolve<IScopeFactory>();
 
-      _userDomainScopeFactory.ExecuteUnitOfWork(unitOfWork => unitOfWork.TeventStoreUpdater().Save(UserRegistrarTaggregate.Create()));
+      _userDomainScopeFactory.ExecuteUnitOfWork(unitOfWork => unitOfWork.TaggregateStoreUpdater().Save(UserRegistrarTaggregate.Create()));
    }
 
    protected override async Task DisposeAsyncInternal()

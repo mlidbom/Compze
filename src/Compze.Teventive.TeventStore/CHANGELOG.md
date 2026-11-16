@@ -7,6 +7,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 ## 0.6.0-alpha
 
 - Keeps only taggregates whose tevents implement `ITaggregateTeventWithIdentity`, as `Compze.Teventive.TeventStore.Abstractions` now requires.
+- **Declares the taggregate classes it keeps,** where it's composed: `TeventStore(connectionName, store => store.Taggregate<User>())`. The container's `ITaggregateStoreUpdater` and `ITaggregateStoreReader` route each declared class to it. A class that no store declares fails at its first use, naming the stores and their classes.
+- **A unit of work's taggregates are held for the whole transaction,** not for one scope: two scopes in one transaction get the same instance of a taggregate. The transaction must be begun by `ExecuteUnitOfWork`; getting a taggregate for update in one begun by a `TransactionScope` of its own throws.
+- **A publish that fails rolls the unit of work back,** even if the code that published caught the exception.
+- **`ITeventStore` is a singleton:** it keeps no state of its own. `TeventStoreForFlexibleTesting` calls its migrations function at each use, so the migrations may change while the container lives.
+- `GetReadonlyCopyOfVersion` throws when asked for a version past the taggregate's latest. Before, a version one past the latest returned the latest.
 - **Targets .NET 11 (`net11.0`) instead of .NET 10, and is compiled with runtime async:** the runtime, instead of state machines the compiler generates, suspends and resumes its async methods, so live stack traces show the real call chain. An application that uses this version must target .NET 11.
 - **Requires newer minor versions of other Compze packages:** Compze.DependencyInjection 0.9.0-alpha (was 0.8.0-alpha), Compze.DocumentDb 0.3.0-alpha (was 0.2.0-alpha), Compze.Internals.Logging 0.7.0-alpha (was 0.4.1-alpha), Compze.Internals.SystemCE 0.8.0-internal (was 0.4.0-internal), Compze.Tessaging 0.9.0-alpha (was 0.5.0-alpha), Compze.Teventive 0.6.0-alpha (was 0.5.0-alpha), Compze.Teventive.TeventStore.Abstractions 0.6.0-alpha (was 0.5.0-alpha), Compze.Threading 0.12.0-alpha (was 0.9.0-alpha), Compze.TypeIdentifiers.DependencyInjection 0.2.0-alpha (was 0.1.0-alpha). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
 

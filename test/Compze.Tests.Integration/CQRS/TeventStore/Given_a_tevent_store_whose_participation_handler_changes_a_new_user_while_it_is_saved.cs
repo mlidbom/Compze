@@ -9,7 +9,7 @@ using Compze.Tests.Common;
 using Compze.Tests.Common.Wiring;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
-using Compze.Teventive.TeventStore.Abstractions;
+using Compze.Teventive.TaggregateStores;
 
 // ReSharper disable InconsistentNaming for testing
 #pragma warning disable IDE1006 //Reviewed OK: Test Naming Styles
@@ -31,15 +31,16 @@ public class Given_a_tevent_store_whose_participation_handler_changes_a_new_user
    {
       _container = TestEnv.DIContainer.SetupTestingContainer(registrar => registrar.RequireIntegrationTestTypeMappings(),
                                                              composeEngine: engine => engine.RegisterTessageBusHandlers(handle => handle
-                                                                .ForTevent((IUserRegistered it, ITeventStoreUpdater taggregates) =>
+                                                                .ForTevent((IUserRegistered it, ITaggregateStoreUpdater taggregates) =>
                                                                  {
-                                                                    _userTheHandlerGot = taggregates.Get<User>(it.TaggregateId);
+                                                                    _userTheHandlerGot = taggregates.GetForUpdate<User>(it.TaggregateId);
                                                                     _userTheHandlerGot.ChangeEmail("changed@example.com");
                                                                  })
-                                                                .ForTevent((IUserTevent it) => _receivedByTheHandlers.Add(it.GetType().Name))));
+                                                                .ForTevent((IUserTevent it) => _receivedByTheHandlers.Add(it.GetType().Name))),
+                                                             declareTeventStoreTaggregates: store => store.Taggregate<User>());
 
       _userSaved.Register("registered@example.com", "password", _userId);
-      _container.ExecuteUnitOfWork(unitOfWork => unitOfWork.TeventStoreUpdater().Save(_userSaved));
+      _container.ExecuteUnitOfWork(unitOfWork => unitOfWork.TaggregateStoreUpdater().Save(_userSaved));
    }
 
    protected override async Task DisposeAsyncInternal() => await _container.DisposeAsync().AsTask();
@@ -50,5 +51,5 @@ public class Given_a_tevent_store_whose_participation_handler_changes_a_new_user
       _receivedByTheHandlers.Must().SequenceEqual([nameof(UserRegistered), nameof(UserChangedEmail)]);
 
    [PCT] public void the_user_loaded_afterwards_has_the_email_the_handler_gave_it() =>
-      _container.ExecuteUnitOfWork(unitOfWork => unitOfWork.TeventStoreUpdater().Get<User>(_userId).Email).Must().Be("changed@example.com");
+      _container.ExecuteUnitOfWork(unitOfWork => unitOfWork.TaggregateStoreUpdater().GetForUpdate<User>(_userId).Email).Must().Be("changed@example.com");
 }

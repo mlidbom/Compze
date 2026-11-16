@@ -11,7 +11,7 @@ Compze is a .NET framework for building expressive domains through **Teventive p
 This package provides the tevent store that powers Compze's teventive (type-routed event) programming model:
 
 - **Tevent persistence** — `TeventStore` for storing and retrieving taggregate tevent streams
-- **Taggregate updates** — `TeventStoreUpdater` for transactional taggregate modifications
+- **Taggregate updates** — through Compze.Teventive's `ITaggregateStoreUpdater`, one for each unit of work, which serves every taggregate store of a container; the store declares the taggregate classes it keeps
 - **Tevent caching** — `ITeventCache` for in-memory tevent stream caching
 - **Query model generation** — Self-generating query models that automatically stay in sync with tevent streams
 - **Tevent migration** — Support for tevent schema evolution and migration
