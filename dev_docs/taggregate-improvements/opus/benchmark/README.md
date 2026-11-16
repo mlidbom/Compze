@@ -69,7 +69,7 @@ the edits allocate, and, given `--time`, the time to load 80,000 notes in each s
 
 Then `python generate_both.py 15 3 Program.cs` and `dotnet run -c Release -- --time`. Given `convention` as a fourth argument, it
 adds the third style, [routing by convention](../6-routing-by-convention-compared.md): build it against the convention
-branch's `Compze.Teventive` instead, in `C:\Dev\Compze.worktrees	aggregate-experiments-opus-convention`.
+branch's `Compze.Teventive` instead, in `C:\Dev\Compze.worktrees\taggregate-experiments-opus-convention`.
 
 ## Until the redesign has a specification of its own
 
