@@ -308,10 +308,12 @@ never leave the process.
   `ITessageWithIdentity`, whether or not it is delivered between processes.
 - **This needs design before it's a decision,** in one of two variants:
   - **the interface only,** most simply `ITaggregateTevent : ITevent, ITessageWithIdentity`, which the tevent store needs
-    nothing new for: truthful, and saving nothing measurable;
-  - **the identity moved too,** to the tevents that need it: `TaggregateTevent` loses its `Id`, which touches every stored
-    taggregate's tevent classes and the migrations' replacement tevents, and saves JAStudio a `TessageId` per tevent,
-    about 18 MB of garbage per start.
+    nothing new for, and which still demands an identity of every taggregate tevent;
+  - **the identity moved too** (recommended, README decision 9), to the tevents that need it: `TaggregateTevent` loses
+    its `Id`, and a second base class has it, for the tevent store's hierarchies and the migrations' replacement
+    tevents, which declare `ITessageWithIdentity`. Only the tevent store and Tessaging's delivery guarantees read a
+    tevent's `Id`. The saving that first argued for it, about 18 MB of garbage per JAStudio start, is gone with loading
+    from snapshots; the argument now is that the API stops claiming what isn't true.
 - **Either way, a hierarchy that forgets its delivery declaration silently stops being delivered remotely:**
   `UnitOfWorkTeventPublisher.RemoteDeliveryFor` returns null for a tevent that declares no remotability, and nothing fails
   at compile time. A specification, or an assertion at setup, should catch it.

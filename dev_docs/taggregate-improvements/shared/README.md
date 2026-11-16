@@ -111,10 +111,14 @@ The numbers: [what-was-measured.md](what-was-measured.md). The bugs and the smal
    dependencies. Another the method bloat." Both teams and both reviewers had recommended the declared table, with its
    safeguards.
 9. **`ITaggregateTevent` as a plain `ITevent`:** **Magnus, 2026-11-16: yes, as a design decision.** Still open, which of two variants:
-   - the interface only, which the store needs (**recommended**);
-   - moving the tevents' identity to the tevents that need it as well, which touches every stored taggregate's tevents
-     and the migrations. Its saving, about 18 MB of garbage at each start, was from loading through tevents. Loading
-     from a snapshot type runs none, so the saving is gone.
+   - the interface only, `ITaggregateTevent : ITevent, ITessageWithIdentity`;
+   - the identity moved too (**recommended**, since Magnus's question of 2026-11-16): only the tevent store and
+     Tessaging's delivery guarantees read a tevent's `Id`, so a taggregate that is only dispatched in-process never
+     needs one, and an API that demands it of every taggregate tevent claims what isn't true. `ITessageWithIdentity`
+     already exists, and the at-least-once, at-most-once and exactly-once interfaces already extend it. The tevent
+     store's hierarchies declare it, and their classes take a base class with the `Id`. About 45 tevent classes and 28
+     root tevent interfaces in Compze's code and tests, of which only the tevent store's change. Its downsides: the
+     tevent store can check it only at a taggregate's first use, and an author picks one of two base classes.
 10. **Changes to public API, and their names, to veto or accept.** Every name is a placeholder: say which to change.
     - **Compze.Teventive:**
       - tevent routing per class (decided as design, declared tables decided): `TeventRouting<TClass, TTevent>`, made
