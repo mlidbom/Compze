@@ -1,5 +1,10 @@
 # Taggregates for JAStudio's notes: what Compze.Teventive should change
 
+> **This folder is the fable team's own record, as it stood before the two teams compared.** What both teams agree on
+> is in [../shared](../shared/README.md), which is what to read and to decide from. Where this folder and the shared
+> one differ, the shared one holds:
+> [what-changed-when-the-teams-compared.md](what-changed-when-the-teams-compared.md) lists the differences.
+
 2026-11-16. The findings and conclusions of the Compze session `jastudio-rep-fable`, from a dialog with the JAStudio
 session `taggregates-fable`. Nothing is built: this is for Magnus to decide on.
 
