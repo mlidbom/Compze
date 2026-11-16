@@ -5,13 +5,16 @@ other, kept current as the dialog goes on. The conclusions are in [README.md](RE
 
 ## Where it stands (2026-11-16)
 
-**We agree on every point raised so far.** The JAStudio session has answered my seven questions and taken my
-corrections, and I have taken its four additions. It has still to read these documents and say what it would change.
+**We have converged.** The JAStudio session has answered my seven questions, taken my corrections, read these
+documents, and would build it as they say. I have taken its additions, none of which changed a conclusion. It has
+nothing more.
 
 ## What the JAStudio session brought
 
-- **The consumer:** 79,720 notes held in memory (49,162 sentences, 28,004 vocab, 2,554 kanji), each with about 8 to 20
-  mutable parts, by its count and not measured. One JSON file for each note, holding state. Only Compze.Teventive: the
+- **The consumer:** 79,720 notes held in memory (49,162 sentences, 28,004 vocab, 2,554 kanji). Counted from the
+  constructors as they would become teventives, text values aside: a vocab has about 12 components and 10 shared
+  tomponents, a sentence about 3 and 4 to 6, a kanji about 5 and 6. Most of the shared tomponents sit in a component,
+  not in the root. One JSON file for each note, holding state. Only Compze.Teventive: the
   Taggregate base classes, and one `IMutableTeventDispatcher` for the whole collection, to which every note's tevents
   go. The full rebuild publishes from many threads at once, each thread on notes of its own.
 - **Its measurements,** in [what-a-taggregate-costs-today.md](what-a-taggregate-costs-today.md). Its program is in its
@@ -37,7 +40,7 @@ Agreed on all five in direction. Where my shape differed, the JAStudio session t
 
 | | Question | Answer | What it decides |
 |---|---|---|---|
-| a | Do a note's parts need tevent handlers of their own? | No. A part follows another in three places, each of which is one tevent that both parts apply. Whether the root needs handlers isn't known yet: the reactions it knows of reach other notes, through the collection's dispatcher. | Components get no tevent handlers. |
+| a | Do a note's parts need tevent handlers of their own? | No. A part follows another in three places, each of which is one tevent that both parts apply. A root needs one: a change to a sentence's configuration has the sentence reparsed, which uses services and publishes the new parsing result, so it is a tevent handler in `SentenceNote`. | Components get no tevent handlers. A root keeps them. |
 | b | Does a root's tevent applier need to see a part already changed by the same tevent, or the reverse? | On principle only. The one candidate can read the new value from the tevent. What it relies on: every tevent applier in the tree before any tevent handler. | The order stays what the class declares, and nothing of JAStudio's hangs on it. |
 | c | Collections of parts with identity, or only single parts? | No entities. Every list a note holds is of immutable values that its part adds, removes or replaces. | Entities aren't on JAStudio's path. Shared tomponents are, which need a list of tevents to load as well. |
 | d | Does a subscriber publish on the note whose tevent it handles, or on other notes, and across threads? | Both. On other notes, on the publishing thread: a vocab's rename renames the references to it in other notes. Back into the same note: the perfect synonyms, today always with an unchanged value, and reactive tags would be a real case. In the full rebuild each thread publishes on notes of its own, and no subscriber publishes on a note: a rule of JAStudio's, not enforced. | Both places that don't stand a publish from inside them matter to JAStudio. |
@@ -66,6 +69,33 @@ Agreed on all five in direction. Where my shape differed, the JAStudio session t
    several changes. Nothing for Compze to do, and the reason the hook and `Commit` must both stand a publish from
    inside them.
 
+## What the JAStudio session added after reading the documents
+
+1. **What a hook or an observer that throws leaves behind.** JAStudio's subscribers assert contracts, so they can
+   throw from inside the hook. What the queue and the assertion remember must be reset on the way out, or every later
+   publish is queued and never handed over. Taken, in
+   [a-taggregate-without-a-tevent-store.md](a-taggregate-without-a-tevent-store.md), with what an exception from a
+   tevent applier or a tevent handler leaves behind, which is worse and is so today.
+2. **Slots:** handing a slot to a shared tomponent allocates nothing; a slot declared below the declaration that
+   enters it is null there, which the declaration must assert; a slot in a component is JAStudio's usual case; shared
+   tomponent classes inherit and are generic. All taken, in [tevent-routing-per-class.md](tevent-routing-per-class.md).
+3. **Loading is JAStudio's start:** about 570,000 tevents, each adopted one wrapped twice. Each part's class gives its
+   share of the compacted-history from its stored data, and the root joins them. The performance specification should
+   measure loading through slots, bytes and time for each tevent, beside construction. Taken.
+4. **The order of work costs JAStudio a rewrite:** a note type built on the small additions is written against today's
+   registration, and written again for the declarations. It would still take that order: the tevent interfaces don't
+   change, and a real consumer reaches the declaration's design before it is settled. It can write a note type's
+   tevent interfaces now.
+5. **Its measurement program is in a scratch folder** that can be cleared. Copied to the branch that holds this
+   session's experiments: see [README.md](README.md).
+6. **For the generator's decision, the number to watch is what a plain property costs.** Taken, in
+   [generating-tevent-implementation-classes.md](generating-tevent-implementation-classes.md).
+
+It agrees without additions on: the declaration through the constructor argument; no second root base class;
+`ITaggregateTevent` as a plain `ITevent`, with no `TessageId` on a note's tevents; the queue, with the order across
+notes left to JAStudio's collection; the assertion; the generator as a proposal of its own. What JAStudio's own side
+needs, such as its Python stubs meeting a generic base class from Compze, it takes to Magnus itself.
+
 ## Still open between us
 
-- The JAStudio session's reading of these documents.
+Nothing.

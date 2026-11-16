@@ -44,7 +44,11 @@ The addition, a protected member of `Taggregate`:
 protected void LoadFromCompactedHistory(IEnumerable<TTaggregateTeventImplementation> compactedHistory)
 ```
 
-A taggregate's own factory calls it, such as a static `Load(storedState)` beside its `Create`.
+A taggregate's own factory calls it, such as a static `Load(storedState)` beside its `Create`. Each part's class
+gives its share of the compacted-history from its stored data, and the root joins them.
+
+**Loading is how JAStudio starts:** about 570,000 tevents for its 79,720 notes, each adopted one in two wrappers. What
+a loaded tevent costs, in bytes and time, is to be measured with what an instance costs.
 
 - **Is such a tevent a tevent, when nothing happened?** Yes when it is named for what did happen: the note was
   created, or imported, with these values. No when it is named `Restored` or `State`. It reaches only tevent appliers,
@@ -96,6 +100,23 @@ What the fixes must keep:
   them after those published before. The hook is then never called from inside itself.
 - **`Commit` takes the list out before it calls back,** so a tevent published from inside the callback is uncommitted
   for the next `Commit`.
+
+### What an exception leaves behind
+
+JAStudio's subscribers assert contracts, so they throw, and a note lives on after the exception. A taggregate from a
+tevent store is thrown away with its unit of work.
+
+- **From the hook, or from an observer of the tevent stream:** the taggregate's state is whole, since the tevent
+  appliers have run and the invariants hold. What the queue and the assertion remember, that a notification is in
+  progress and which thread is in `Publish`, must be reset on the way out. Otherwise every later publish is queued
+  and never handed over. The tevents not yet handed over stay queued, and are handed over, in order, before those of
+  the next publish. All of them are still uncommitted, so a consumer that commits loses none. A specification pins it.
+- **From a tevent applier or a tevent handler: the taggregate isn't to be trusted afterwards.** The tevent may be
+  half applied, or applied with the reaction of its tevent handler missing, and the invariants were never asserted.
+  That is so today (`Taggregate..cs:53-74`): the tevent stays in the list of uncommitted tevents, and is notified
+  with the next publish. A consumer whose taggregates live on has to load such a taggregate again, which JAStudio can
+  do from the note's file. Compze could say so itself: a taggregate that an exception has left `Publish` from the
+  tevent appliers, the tevent handlers or the invariants refuses every later use, with a message that says why.
 
 ### One thread at a time in `Publish`, asserted
 

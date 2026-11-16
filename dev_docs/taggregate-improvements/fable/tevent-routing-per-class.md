@@ -79,7 +79,7 @@ Tevent handlers, which may publish, are declared the same way, with `DeclareTeve
 | `BeforeHandlers<T>`, `AfterHandlers<T>` | as `For<T>`, when any other entry matches | as today |
 | `Component(accessor)` | the component's root tevent interface, as its `For<TComponentTevent>` on the parent does today | hands the tevent to the component, which routes it by its own class's declaration |
 | `Entities(accessor)` | the entity's root tevent interface | creates and adds the entity on its creation tevent, hands the tevent to the entity with its id, and removes a removable entity on its removal tevent, in that order |
-| `SharedTomponent(slot)` | `IPublisherTevent<TAdoptingWrapperTevent>` | opens both wrappers and hands the tevent to the shared tomponent |
+| `SharedTomponent(slot)` | the slot's adopting wrapper tevent, in a root or in a component | opens it and hands the tevent inside to the shared tomponent |
 | `IgnoreUnhandled<T>`, `IgnoreAllUnhandled` | | lets such a tevent go without a tevent applier |
 
 A component is handed the tevent without its wrapper, as today. Its declaration can be resolved by the tevent's own
@@ -101,6 +101,17 @@ instance as little as a component does. Today it costs as much as a component, a
   [a-taggregate-without-a-tevent-store.md](a-taggregate-without-a-tevent-store.md)).
 - **Each slot still has an adopting wrapper tevent of its own,** an interface and a class. That type is what tells two
   shared tomponents of one class apart, for routing and for subscribers.
+- **Handing a slot to a shared tomponent allocates nothing:** `In(this)` below is a struct of the owner and the slot.
+- **A slot in a component is the same as a slot in a root.** It is JAStudio's usual case: the sets of words are in
+  the vocab's related vocab, the lists of media references in each note's source data.
+- **A slot must be declared above the declaration that enters it.** Static fields are initialized in the order
+  written, and across the files of a partial class in no order that C# promises, so a slot declared below is null
+  where it is entered. The declaration asserts it, with a message that says what to move.
+- **A shared tomponent's class declares its tevent appliers as any teventive does.** A subclass's declaration starts
+  from its base class's, and a generic class has a declaration for each closed type, since that is what a static
+  field of a generic class is. JAStudio has both: `MutualWordRelationship` under `WordRelationship`, and
+  `AudioReferenceList` under `MediaReferenceList<AudioReference>`. `SharedTomponent<TTomponentTevent>` has no type
+  parameter for the class itself, so its declaration names the class: `DeclareTeventAppliers<PostalAddress>()`.
 
 ```csharp
 static readonly Slot<IPostalAddressTevent> ShippingAddressSlot =
@@ -180,11 +191,14 @@ It changes protected members of public base classes, so it is a change to Compze
 From the JAStudio session's answers (see
 [the-dialog-with-the-jastudio-session.md](the-dialog-with-the-jastudio-session.md)):
 
-- **Shared tomponents, about ten in a vocab,** so the slots are on its hottest path. It has no entities.
+- **Shared tomponents in every note type:** about 10 in a vocab beside its 12 components, 4 to 6 in a sentence beside
+  3, and 6 in a kanji beside 5. Most of them sit in a component. So the slots are on its hottest path. It has no
+  entities.
 - **Base classes with tevent appliers:** `JPNote`, with the note's tags, under the vocab, sentence and kanji notes, each
   with a wrapper of its own, as in the `AnimalTaggregate` specifications.
-- **No tevent handlers in components.** Where one part of a note follows another, it is one tevent that both apply.
-  Only a root has tevent handlers today, and that can stay.
+- **Tevent handlers in a root, and none in components.** A change to a sentence's configuration has the sentence
+  reparsed, and the new parsing result published: a tevent handler in `SentenceNote`. Where one part of a note follows
+  another, it is one tevent that both apply. Only a root has tevent handlers today, and that can stay.
 - **The order across a teventive and its children only on principle:** nothing in its notes depends on it. What it
   relies on is that every tevent applier in the tree runs before any tevent handler.
 

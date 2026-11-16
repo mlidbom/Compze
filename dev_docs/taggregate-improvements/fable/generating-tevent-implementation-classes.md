@@ -40,6 +40,13 @@ be sent or persisted" (`src/TODO/type-assignability-routing-and-publisher-identi
   }
   ```
 
+## The number to watch: what a plain property costs
+
+A text value in a note is one line in JAStudio today. As a tevent it is five things: the interface, the class, the
+entry in the declaration of tevent appliers, the property, and the method that publishes when the value differs.
+JAStudio has about 34 such values across its three note types. A generator of implementation classes writes one of the
+five. The JAStudio session gives the real count when one note type is written.
+
 ## What I'd do
 
 Write one note type's tevents by hand, ten to twenty pairs. That shows what a pair costs, and what a generator would

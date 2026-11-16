@@ -114,6 +114,10 @@ The rule is that all matching handlers are called in the order they were registe
   uncommitted tevents and clears the list afterwards (`Taggregate..cs:125-129`). A tevent published on the same
   taggregate while the callback runs is added to the list the callback is reading, and cleared with the rest: never
   committed, and nothing says so. Found by the JAStudio session; I confirmed it from the code.
+- **An exception from a tevent applier or a tevent handler leaves a taggregate that looks usable.** The tevent may be
+  half applied, the invariants were never asserted, and the tevent stays among the uncommitted tevents and is notified
+  with the next publish (`Taggregate..cs:53-74`). A tevent store's unit of work throws the instance away. A consumer
+  whose taggregates live on, as JAStudio's notes do, gets no sign.
 - **Two threads publishing on one taggregate corrupt it quietly:** the reentrancy level and the flag that tevents are
   being applied are plain fields.
 - **Only a root can have tevent handlers:** `RegisterTeventHandlers()` is on `Taggregate`, not on
