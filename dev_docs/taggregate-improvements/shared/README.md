@@ -76,7 +76,8 @@ The numbers: [what-was-measured.md](what-was-measured.md). The bugs and the smal
 
 ## What Magnus decides
 
-1. **The go-ahead, and the order above.**
+1. **The go-ahead to build, and the order above.** Magnus, 2026-11-16: steps 1 and 3 agreed as design decisions, which
+   is not yet the go-ahead to build them on a branch that isn't exploratory.
 2. **Isolation: decided.** Magnus, 2026-11-16: a private copy for each unit of work, unless JAStudio's sessions find a
    strong reason for shared live instances. Two independent reviewers chose it for both Compze and JAStudio
    ([reviews/isolation-review-by-an-opus-agent.md](reviews/isolation-review-by-an-opus-agent.md),
@@ -100,12 +101,17 @@ The numbers: [what-was-measured.md](what-was-measured.md). The bugs and the smal
 8. **Declared, or by convention:** both are prototyped and cost the same. Both teams and both reviewers recommend the
    declared table, with its safeguards: by convention, a misspelled tevent handler is silently never called.
 9. **`ITaggregateTevent` as a plain `ITevent`:** **Magnus, 2026-11-16: yes, as a design decision.** Still open, which of two variants:
-   - the interface only, which the store needs;
+   - the interface only, which the store needs (**recommended**);
    - moving the tevents' identity to the tevents that need it as well, which touches every stored taggregate's tevents
-     and the migrations.
+     and the migrations. Its saving, about 18 MB of garbage at each start, was from loading through tevents. Loading
+     from a snapshot type runs none, so the saving is gone.
 10. **Changes to public API, to veto or accept:**
     - taggregate tables without `BeforeHandlers`, `AfterHandlers` and `ForGenericTevent`, which nothing needs;
-    - the snapshot interface, `ISnapshotable<TSelf, TSnapshot>`, and a protected way to say a taggregate was restored;
+    - the snapshot interface, `ISnapshotable<TSelf, TSnapshot>`, a factory for an empty instance given where the class
+      is named, and a protected way to say a taggregate was restored;
+    - `ITaggregateStoreUpdater`, `ITaggregateStoreReader`, `ITaggregateReference<TTaggregate>` and
+      `ITaggregateIndex<TTaggregate, TKey>` with `Lookup` and `HasAny`;
+    - committed instances read only: publishing on one throws;
     - for a taggregate in a store, `Commit`'s callback gone, and `TeventStream` no longer public;
     - possibly one updater interface for both stores, since `ITeventStoreUpdater` has the same four members;
     - a failed publish rolls the unit of work back even when its exception is caught.
