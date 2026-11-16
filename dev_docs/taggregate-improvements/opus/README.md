@@ -1,5 +1,16 @@
 # Taggregates for JAStudio's notes: what to change in Compze, and in what order
 
+> **Superseded by [the shared conclusions](../shared/README.md),** which both teams agreed on together (2026-11-16).
+> This folder is the opus team's record. Where the shared design differs from it:
+> - **The order:** the two bugs first, then the small additions, then routing per class in increments.
+> - **Slots:** a static of the owner's class, not a slot object per instance.
+> - **The hook:** a queue hands a publish from inside the hook over after the call in progress, in the order published,
+>   instead of a nested call.
+> - **Loading:** `LoadFromSnapshot` is protected and typed on the class, with a snapshot marker of its own, the whole
+>   snapshot at version 1 with no version parameter, and the slot adopting the tevents.
+> - **No tevent handlers in components;** an exact-class assertion on dispatch makes a forgotten table loud.
+> - **`ITaggregateTevent` as a plain `ITevent`:** independent of the rest, and recommended, not "later".
+
 Agreed on 2026-11-16 by two sessions: jastudio-rep-opus, in Compze, and taggregates-opus, in JAStudio
 (`C:\Dev\JAStudio.wt2`, branch `compze-taggretates`). Nothing is implemented. What follows is for Magnus to decide.
 
