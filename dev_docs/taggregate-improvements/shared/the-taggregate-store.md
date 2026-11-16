@@ -761,7 +761,7 @@ the tevent store and the routing; the six of `IStateStore.All` now read through 
   `IStateStore.All` goes.
 - **The unit of work's view, in both stores:** inside a unit of work, what it has saved is included, and what it has
   deleted is left out. Outside one, the committed taggregates. As `Get` and an index's `Lookup` are.
-- **In no particular order, as a collection: Magnus, 2026-11-17 (item 36).** It was first built in id order, as
+- **In no particular order, as a collection: Magnus, 2026-11-17 (item 36),** built in e86642f24. It was first built in id order, as
   `Lookup` gives its references, so that the order wouldn't depend on which store keeps the class. But the state store
   sorts at each call, its committed taggregates being kept by id in no order, and the sort grows faster than the store:
   - **Measured** (Release, two runs each): at 80,000 ids, gathering them takes 1.4 ms, and sorting adds 8.5 ms and
