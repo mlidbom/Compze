@@ -459,9 +459,11 @@ built and specified; the calls it made:
   - a factory that takes a service of the container, `Taggregate((NoteServices services) => new VocabNote(services))`,
     resolved from the root each time an instance is built;
   - `IStateStore.ReloadFromStorage()`, loading everything again while running. It keeps every reference, re-files the
-    indexes, dispatches no tevent, and reports the ids added, changed and removed. A change is found by the snapshot
-    type's own `Equals`, and a snapshot type without one makes the reload throw. It waits for open units of work, and
-    holds new ones back until it's done.
+    indexes, dispatches no tevent, and reports the ids added, changed and removed. It waits for open units of work, and
+    holds new ones back until it's done. A change is found by a comparison of snapshots declared with the class,
+    `snapshotsAreEqual` (772979289), which JAStudio asked for since a hand-written `Equals` on its thirty nested DTO
+    classes fails silently when someone adds a property; it compares their serialized bytes. Without one, the snapshot
+    type's own `Equals`, and a type without one makes the reload throw.
 - **Not yet:** a second container in one transaction (a `todo:` at the code), and the overlay's kept keys (a
   `performance:` at the code).
 
