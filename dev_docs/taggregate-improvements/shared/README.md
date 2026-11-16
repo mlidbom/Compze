@@ -100,7 +100,11 @@ The numbers: [what-was-measured.md](what-was-measured.md). The bugs and the smal
      built before 2b and 2c, since JAStudio waits on it (cd3898468, full suite green): the experiment's per-class routing,
      the table found through an explicit implementation of `ITeventRouted` with the exact class asserted at construction,
      `Extend` asserting the direct base class, and static slots (`SharedTomponentSlotOfAClass`) in a nested `Slots`
-     class. Not yet: the performance specification of a copy's bytes, and the published doc on reusable components.
+     class. The performance specification of a copy's bytes, built after 2b (399f19d1f): `Allocating_a_book` bounds what an
+     empty book (1,264 B), a copy restored from its snapshot (1,712 B) and a tevent published in the book, its component and
+     its shared tomponent (768 to 936 B) allocate, at about a quarter above those. Measured in Debug, not Release as
+     planned, since the suite and CI run Debug; the bounds hold in Release too. Not yet: the published doc on reusable
+     components, which waits for the naming pass.
      Then the snapshot round-trip helper, `SnapshotRoundTrip.AssertLosesNothing`, which compares the taggregate and its
      copy themselves, since comparing their snapshots alone misses two of the three ways to lose state
      ([the-taggregate-store.md](the-taggregate-store.md#what-the-spike-built-the-snapshot-round-trip)).
