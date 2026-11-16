@@ -117,8 +117,12 @@ The numbers: [what-was-measured.md](what-was-measured.md). The bugs and the smal
      needs one, and an API that demands it of every taggregate tevent claims what isn't true. `ITessageWithIdentity`
      already exists, and the at-least-once, at-most-once and exactly-once interfaces already extend it. The tevent
      store's hierarchies declare it, and their classes take a base class with the `Id`. About 45 tevent classes and 28
-     root tevent interfaces in Compze's code and tests, of which only the tevent store's change. Its downsides: the
-     tevent store can check it only at a taggregate's first use, and an author picks one of two base classes.
+     root tevent interfaces in Compze's code and tests, of which only the tevent store's change. Placeholder names,
+     after `ITessageWithIdentity`: `ITaggregateTeventWithIdentity`, which the tevent store's internals need, and the
+     class `TaggregateTeventWithIdentity`, a `TaggregateTevent` with the `Id`, so `Taggregate`'s constraints accept
+     both. The tevent store can require it at compile time: `ITaggregate<out TTevent>` is covariant, so it can
+     constrain `TTaggregate : ITaggregate<ITaggregateTeventWithIdentity>`. Its downside: an author picks one of two
+     tevent base classes.
 10. **Changes to public API, and their names, to veto or accept.** Every name is a placeholder: say which to change.
     - **Compze.Teventive:**
       - tevent routing per class (decided as design, declared tables decided): `TeventRouting<TClass, TTevent>`, made
