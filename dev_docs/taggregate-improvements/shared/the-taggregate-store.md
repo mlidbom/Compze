@@ -529,6 +529,40 @@ a lookup inside a unit of work that rolls back gives the discarded copy.
   an application's policy, and an instance-based `ForUpdate` would invite holding instances. JAStudio keeps it as its
   own; after the migration it is a candidate for the naming and API pass.
 
+## Step 2c, specified: every tevent of a unit of work dispatched when it commits
+
+Decision 4, built provisionally on the spike and brought back with the count of specifications it changed. Today a tevent
+published straight through `IUnitOfWorkTeventPublisher` reaches its participation handlers at once, while a taggregate's
+tevents wait for the commit, so the straight one overtakes them. After 2c, every tevent of a unit of work is dispatched
+at phase 0, in one order.
+
+- **`Publish` and `PublishAsync` check at once, and dispatch at the commit.** At once, as today: that there is an ambient
+  transaction, that the engine hasn't stopped, that the tevent is valid to execute locally, and that the endpoint wires
+  the delivery leg its contract demands. So a wrong publish still fails in the domain call. Then the tevent is queued.
+- **The queue is the transaction's, in Compze.Tessaging:** one for each transaction, whichever unit of work published,
+  since a nested unit of work joins the transaction with a scope of its own. It's a phase-0 participant
+  (`EnlistDuringPrepareRequired`). At prepare it dispatches in rounds, as the taggregate unit of work does now: the
+  tevents of a round in the order published, each to its participation handlers and then to its remote delivery leg;
+  what the handlers publish is the next round's; at most 100 rounds. Handlers run in the scope of the unit of work that
+  began the transaction, which lives until the commit.
+- **The taggregate unit of work keeps no queue of its own.** It hands each tevent its taggregates publish to the publisher
+  as it's collected, and prepares the stores' sessions once the queue has dispatched everything. The seam is internal, in
+  Compze.Tessaging.Abstractions, which grants Compze.Teventive its internals already: the queue runs what is registered
+  with it once every tevent is dispatched, before any participant votes. So the order of a commit is: dispatch until no
+  tevent is left, then the stores prepare their writes, then the vote.
+- **Observers, unchanged:** a tevent is queued for its observers when the unit of work commits, in the order published.
+- **Exactly-once tevents:** their outbox rows are written at phase 0, inside the transaction, in the order published,
+  bridged synchronously, as the tevent store and the state store already do. The same transaction holds the business
+  data and the rows, so the exactly-once, in-order guarantee holds: atomic, and ordered by the one queue.
+- **`IIndependentTeventPublisher`:** each publish is its own unit of work, so its caller sees no change; the handlers run
+  when that unit of work prepares.
+
+**What it changes for code that uses Compze**, which the count of changed specifications measures:
+- code later in a unit of work no longer sees what participation handlers did;
+- a handler's failure no longer comes out of `Publish`: it aborts the transaction at prepare, and the caller gets a
+  `TransactionAbortedException` with the handler's exception inside, where the unit of work completes. The state store's
+  tevents already behave so.
+
 ## What the prototype is
 
 Branch `taggregate-store-opus`, commit `3dd0fbe08`, in `C:\Dev\Compze.worktrees\taggregate-store-opus`, based on `main`.
