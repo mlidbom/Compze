@@ -1,3 +1,4 @@
+using Compze.Teventive._private;
 using Compze.Abstractions;
 using Compze.Abstractions.Time;
 using Compze.Contracts;
@@ -34,10 +35,10 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
 
    ///<summary>The routing of this taggregate's class to its tevent appliers, when the class declares one: a <see cref="TeventRouting"/> in a static field.<br/>
    /// Null for a class that registers its appliers per instance, through <see cref="RegisterTeventAppliers"/>.</summary>
-   protected virtual TeventRouting? TeventAppliers => null;
+   protected virtual TeventRouting? TeventAppliers => ConventionTeventRouting.AppliersOf(GetType());
 
    ///<summary>The routing of this taggregate's class to its tevent handlers, when the class declares one. See <see cref="TeventAppliers"/>.</summary>
-   protected virtual TeventRouting? TeventHandlers => null;
+   protected virtual TeventRouting? TeventHandlers => ConventionTeventRouting.HandlersOf(GetType());
 
    EntityId IEntity.Id => Id;
    public override TaggregateId Id => (TaggregateId)base.Id;

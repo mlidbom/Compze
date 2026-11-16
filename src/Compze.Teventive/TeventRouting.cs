@@ -48,6 +48,9 @@ public sealed class TeventRouting<TInstance> : TeventRouting where TInstance : c
    public TeventRouting<TSubclass> Extend<TSubclass>(Action<TeventRouting<TSubclass>.Declaration> declare) where TSubclass : class, TInstance =>
       TeventRouting<TSubclass>.Declare(declare, _routesTeventHandlers, inherited: _routes, inheritedMayGoUnhandled: _wrapperTypesThatMayGoUnhandled);
 
+   ///<summary>A routing of the routes <see cref="ConventionTeventRouting"/> found by convention.</summary>
+   internal static TeventRouting<TInstance> FromRoutes(IReadOnlyList<TeventRoute> routes, bool routesTeventHandlers) => new(routes, routesTeventHandlers, []);
+
    internal static TeventRouting<TInstance> Declare(Action<Declaration> declare, bool routesTeventHandlers, IReadOnlyList<TeventRoute> inherited, IReadOnlyList<Type>? inheritedMayGoUnhandled = null)
    {
       var declaration = new Declaration(routesTeventHandlers);

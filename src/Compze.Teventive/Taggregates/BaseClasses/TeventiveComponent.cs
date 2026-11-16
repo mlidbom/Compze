@@ -1,3 +1,4 @@
+using Compze.Teventive._private;
 using Compze.Tessaging.TessageTypes;
 using Compze.Contracts;
 using Compze.Teventive._private.Implementation;
@@ -38,10 +39,10 @@ public abstract class TeventiveComponent<TParent,
     ///<summary>The routing of this component's class to its tevent appliers, when the class declares one: a <see cref="TeventRouting"/> in a static field.<br/>
     /// Its parent's routing then reaches it through <see cref="TeventRouting{TInstance}.Declaration.Component{TComponentTevent}"/>, and it does not register on its parent.<br/>
     /// Null for a class that registers its appliers per instance, through <see cref="RegisterTeventAppliers"/>.</summary>
-    protected virtual TeventRouting? TeventAppliers => null;
+    protected virtual TeventRouting? TeventAppliers => ConventionTeventRouting.AppliersOf(GetType());
 
     ///<summary>The routing of this component's class to its tevent handlers, when the class declares one. See <see cref="TeventAppliers"/>.</summary>
-    protected virtual TeventRouting? TeventHandlers => null;
+    protected virtual TeventRouting? TeventHandlers => ConventionTeventRouting.HandlersOf(GetType());
 
 #pragma warning disable CA1033 //These members should NOT clutter the public interface of this class.
     void ITeventRoutedMember<TComponentTevent>.DispatchInternal(IPublisherTevent<ITevent> wrapped, bool toTeventHandlers) =>

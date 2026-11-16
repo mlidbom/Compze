@@ -1,3 +1,4 @@
+using Compze.Teventive._private;
 using Compze.Contracts;
 using Compze.Tessaging.TessageTypes;
 
@@ -30,7 +31,7 @@ public abstract class SharedTomponent<TTomponentTevent> : ISharedTomponentIntern
 
    ///<summary>The routing of this tomponent's class to its tevent appliers, when the class declares one: a <see cref="TeventRouting"/> in a static field.<br/>
    /// Null for a class that registers its appliers per instance, through <see cref="RegisterTeventAppliers"/>.</summary>
-   protected virtual TeventRouting? TeventAppliers => null;
+   protected virtual TeventRouting? TeventAppliers => ConventionTeventRouting.AppliersOf(GetType());
 
    protected ITeventSubscriber<TTomponentTevent> RegisterTeventAppliers()
    {
