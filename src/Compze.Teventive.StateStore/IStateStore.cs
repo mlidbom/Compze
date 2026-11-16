@@ -4,8 +4,8 @@ using Compze.Teventive.TaggregateStores;
 
 namespace Compze.Teventive.StateStore;
 
-///<summary>What a state store does as a whole, beyond reading and changing its taggregates through <see cref="ITaggregateStoreReader"/><br/>
-/// and <see cref="ITaggregateStoreUpdater"/>. Resolved from the container that composes the store.</summary>
+///<summary>What a state store does as a whole, beyond reading and changing its taggregates through <see cref="ITaggregateStoreReader"/>,<br/>
+/// <see cref="ITaggregateStoreBulkReader"/> and <see cref="ITaggregateStoreUpdater"/>. Resolved from the container that composes the store.</summary>
 public interface IStateStore
 {
    ///<summary>Loads every taggregate from the storage again, as when a program other than this one has changed what the storage holds,<br/>
@@ -22,11 +22,6 @@ public interface IStateStore
    /// write a taggregate over.</summary>
    ///<remarks>If <paramref name="changeToTheStorage"/> throws, nothing is reloaded, and the exception comes out of this call.</remarks>
    ReloadedTaggregates ReloadFromStorageAfter(Action changeToTheStorage);
-
-   ///<summary>A reference to every <typeparamref name="TTaggregate"/> the store holds, as an index's lookup gives them.</summary>
-   ///<remarks>Inside a unit of work, the unit of work's view: the taggregates it has saved are included, and those it has deleted are<br/>
-   /// left out. Outside one, the committed taggregates.</remarks>
-   IReadOnlyList<ITaggregateReference<TTaggregate>> All<TTaggregate>() where TTaggregate : class, ITaggregate;
 }
 
 ///<summary>How what <see cref="ITaggregateStorage"/> held differed from what the state store held, as <see cref="IStateStore.ReloadFromStorage"/> found it.</summary>

@@ -18,12 +18,14 @@ namespace Compze.Teventive.TeventStore._private;
 sealed class TaggregateTeventStore : ITaggregateStore
 {
    readonly TaggregateUnitsOfWork _unitsOfWork;
+   readonly IReadOnlyDictionary<Type, Type> _teventsByClass;
 
    internal TaggregateTeventStore(ITeventStore teventStore, TaggregateUnitsOfWork unitsOfWork, IReadOnlyList<Type> taggregateClasses)
    {
       TeventStore = teventStore;
       _unitsOfWork = unitsOfWork;
       TaggregateClasses = taggregateClasses;
+      _teventsByClass = taggregateClasses.ToDictionary(it => it, TeventsOf);
    }
 
    public string Name => "the tevent store";
@@ -47,6 +49,14 @@ sealed class TaggregateTeventStore : ITaggregateStore
 
    public ITaggregateReference<TTaggregate> Reference<TTaggregate>(TaggregateId id) where TTaggregate : class, ITaggregate =>
       new TaggregateReference<TTaggregate>(this, _unitsOfWork, id);
+
+   ///<summary>The histories whose creation tevent is a tevent of the class, read through the ambient transaction. The tevent store writes<br/>
+   /// a unit of work's tevents at each publish, and deletes a taggregate's history at once, so a unit of work sees its own saves and<br/>
+   /// deletions.</summary>
+   public IReadOnlyList<ITaggregateReference<TTaggregate>> All<TTaggregate>() where TTaggregate : class, ITaggregate =>
+      [..TeventStore.StreamTaggregateIdsInCreationOrder(TeventsTellingApartTheHistoriesOf(ClassToBuildAs(typeof(TTaggregate))))
+                    .InIdOrder()
+                    .Select(Reference<TTaggregate>)];
 
    public ITaggregateStoreSession NewSession(TaggregateUnitOfWork unitOfWork) => new TeventStoreSession(this, unitOfWork);
 
@@ -81,6 +91,28 @@ sealed class TaggregateTeventStore : ITaggregateStore
                             ? $"The tevent store keeps no {requestedClass.FullName}: it keeps {string.Join(", ", TaggregateClasses.Select(it => it.FullName))}. Declare the class where the store is composed."
                             : $"The tevent store keeps several classes that are {requestedClass.FullName}: {string.Join(", ", candidates.Select(it => it.FullName))}. A history doesn't say which class it is the history of, so get the taggregate as its own class.");
       return candidates[0];
+   }
+
+   ///<summary>The tevents of <paramref name="taggregateClass"/>, which the creation tevent of each of its histories is. Asserts that no<br/>
+   /// other declared class's tevents are such tevents too: a history doesn't say which class it is the history of.</summary>
+   Type TeventsTellingApartTheHistoriesOf(Type taggregateClass)
+   {
+      var tevents = _teventsByClass[taggregateClass];
+      var otherClassesWithSuchTevents = _teventsByClass.Where(it => it.Key != taggregateClass && it.Value.IsAssignableTo(tevents)).Select(it => it.Key.FullName).ToList();
+      State.Assert(otherClassesWithSuchTevents.None(),
+                   () => $"The tevent store can't tell the histories of {taggregateClass.FullName} from those of {string.Join(", ", otherClassesWithSuchTevents)}: their tevents are {tevents.FullName} too, and a history doesn't say which class it is the history of.");
+      return tevents;
+   }
+
+   ///<summary>The tevent interface of <paramref name="taggregateClass"/>: the most derived of the tevent types of the<br/>
+   /// <see cref="ITaggregate{TTevent}"/>s it implements.</summary>
+   static Type TeventsOf(Type taggregateClass)
+   {
+      var teventTypes = taggregateClass.GetInterfaces()
+                                       .Where(it => it.IsGenericType && it.GetGenericTypeDefinition() == typeof(ITaggregate<>))
+                                       .Select(it => it.GetGenericArguments()[0])
+                                       .ToList();
+      return teventTypes.Single(candidate => teventTypes.All(candidate.IsAssignableTo));
    }
 
    internal static TTaggregate AsRequested<TTaggregate>(ITaggregate taggregate) where TTaggregate : class, ITaggregate

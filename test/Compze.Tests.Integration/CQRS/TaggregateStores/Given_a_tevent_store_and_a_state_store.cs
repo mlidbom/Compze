@@ -18,7 +18,8 @@ using static Compze.Must.MustActions;
 
 namespace Compze.Tests.Integration.CQRS.TaggregateStores;
 
-///<summary>A tevent store keeping users and a state store keeping vocab, in one container: one updater and one reader serve both.</summary>
+///<summary>A tevent store keeping users and a state store keeping vocab, in one container: one updater, one reader and one bulk reader<br/>
+/// serve both.</summary>
 public class Given_a_tevent_store_and_a_state_store : UniversalTestBase
 {
    readonly IDependencyInjectionContainer _container;
@@ -33,6 +34,8 @@ public class Given_a_tevent_store_and_a_state_store : UniversalTestBase
    protected override async Task DisposeAsyncInternal() => await _container.DisposeAsync().AsTask();
 
    ITaggregateStoreReader Reader => _container.RootResolver.Resolve<ITaggregateStoreReader>();
+
+   ITaggregateStoreBulkReader BulkReader => _container.RootResolver.Resolve<ITaggregateStoreBulkReader>();
 
    void InUnitOfWork(Action<ITaggregateStoreUpdater> work) => _container.ExecuteUnitOfWork(unitOfWork => work(unitOfWork.TaggregateStoreUpdater()));
 
@@ -49,6 +52,26 @@ public class Given_a_tevent_store_and_a_state_store : UniversalTestBase
       [PCT] public void the_reader_gets_the_user() => Reader.Get<User>(_userId).Email.Must().Be("registered@example.com");
       [PCT] public void the_reader_gets_the_vocab() => Reader.Get<StoredVocab>(_vocabId).Question.Must().Be("taberu");
       [PCT] public void publishing_on_the_user_the_reader_gets_throws() => Invoking(() => Reader.Get<User>(_userId).ChangeEmail("changed@example.com")).Must().Throw<InvalidOperationException>();
+      [PCT] public void the_bulk_reader_gives_every_user_as_the_saved_user() => BulkReader.All<User>().Select(it => it.Id).Must().SequenceEqual([_userId]);
+      [PCT] public void the_bulk_reader_gives_every_vocab_as_the_saved_vocab() => BulkReader.All<StoredVocab>().Select(it => it.Id).Must().SequenceEqual([_vocabId]);
+      [PCT] public void the_reference_the_bulk_reader_gives_for_the_user_gives_its_email() => BulkReader.All<User>().Single().Current.Email.Must().Be("registered@example.com");
+
+      public class and_a_second_unit_of_work_registers_another_user_deletes_the_first_and_asks_for_every_user : after_one_unit_of_work_saves_a_user_and_a_vocab
+      {
+         readonly TaggregateId _otherUserId = new();
+         IReadOnlyList<TaggregateId> _everyUserInsideTheUnitOfWork = [];
+
+         public and_a_second_unit_of_work_registers_another_user_deletes_the_first_and_asks_for_every_user() =>
+            InUnitOfWork(taggregates =>
+            {
+               User.Register(taggregates, "other@example.com", "password", _otherUserId);
+               taggregates.Delete<User>(_userId);
+               _everyUserInsideTheUnitOfWork = [..BulkReader.All<User>().Select(it => it.Id)];
+            });
+
+         [PCT] public void inside_the_unit_of_work_every_user_is_the_other_user() => _everyUserInsideTheUnitOfWork.Must().SequenceEqual([_otherUserId]);
+         [PCT] public void after_the_commit_every_user_is_the_other_user() => BulkReader.All<User>().Select(it => it.Id).Must().SequenceEqual([_otherUserId]);
+      }
 
       public class and_a_second_unit_of_work_changes_both : after_one_unit_of_work_saves_a_user_and_a_vocab
       {
@@ -107,6 +130,21 @@ public class Given_a_tevent_store_and_a_state_store : UniversalTestBase
 
          [PCT] public void the_other_scope_got_the_instance_the_unit_of_work_got_for_update() => _gotInTheOtherScope.Must().ReferenceEqual(_gotForUpdate);
       }
+   }
+
+   public class after_three_units_of_work_each_register_a_user_out_of_id_order : Given_a_tevent_store_and_a_state_store
+   {
+      readonly TaggregateId[] _inIdOrder = [new(Guid.Parse("1b4e28ba-2fa1-11d2-883f-0016d3cca427")),
+                                            new(Guid.Parse("8c9d7a1e-5b3f-4e2a-9d1c-7f6e5a4b3c2d")),
+                                            new(Guid.Parse("f47ac10b-58cc-4372-a567-0e02b2c3d479"))];
+
+      public after_three_units_of_work_each_register_a_user_out_of_id_order()
+      {
+         foreach(var id in new[] { _inIdOrder[2], _inIdOrder[0], _inIdOrder[1] })
+            InUnitOfWork(taggregates => User.Register(taggregates, $"{id}@example.com", "password", id));
+      }
+
+      [PCT] public void the_bulk_reader_gives_every_user_in_id_order() => BulkReader.All<User>().Select(it => it.Id).Must().SequenceEqual(_inIdOrder);
    }
 
    public class after_a_unit_of_work_that_saves_a_user_and_a_vocab_fails : Given_a_tevent_store_and_a_state_store

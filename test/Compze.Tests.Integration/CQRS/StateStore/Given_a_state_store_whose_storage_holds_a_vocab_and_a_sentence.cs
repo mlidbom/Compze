@@ -63,6 +63,8 @@ public class Given_a_state_store_whose_storage_holds_a_vocab_and_a_sentence : Un
 
    IStateStore StateStore => _container.RootResolver.Resolve<IStateStore>();
 
+   ITaggregateStoreBulkReader BulkReader => _container.RootResolver.Resolve<ITaggregateStoreBulkReader>();
+
    IReadOnlyList<TaggregateId> IdsFiledUnder(string question) => [.._container.RootResolver.Resolve<ITaggregateIndex<StoredVocab, string>>().Lookup(question).Select(it => it.Id)];
 
    void WaitForTheObservers() => _container.RootResolver.Resolve<ILocalTessagingEngine>().AwaitNoTeventsInFlightAsync().GetAwaiter().GetResult();
@@ -105,14 +107,17 @@ public class Given_a_state_store_whose_storage_holds_a_vocab_and_a_sentence : Un
       }
 
       [PCT] public void the_lookup_gives_them_in_id_order() => IdsFiledUnder("kuu").Must().SequenceEqual(_inIdOrder);
+
+      [PCT] public void the_bulk_reader_gives_every_vocab_in_the_order_of_the_text_of_their_ids() =>
+         BulkReader.All<StoredVocab>().Select(it => it.Id).Must().SequenceEqual([.._inIdOrder.Append(VocabId).OrderBy(it => it.Value.ToString(), StringComparer.Ordinal)]);
    }
 
    public class when_asked_for_every_taggregate_of_a_class : Given_a_state_store_whose_storage_holds_a_vocab_and_a_sentence
    {
-      [PCT] public void every_vocab_is_the_stored_vocab() => StateStore.All<StoredVocab>().Select(it => it.Id).Must().SequenceEqual([VocabId]);
-      [PCT] public void every_sentence_is_the_stored_sentence() => StateStore.All<StoredSentence>().Select(it => it.Id).Must().SequenceEqual([SentenceId]);
-      [PCT] public void every_taggregate_is_the_vocab_and_the_sentence() => StateStore.All<ITaggregate>().Select(it => it.Id).ToList().Must().Satisfy(it => it.Count == 2 && it.Contains(VocabId) && it.Contains(SentenceId));
-      [PCT] public void the_reference_to_the_stored_vocab_gives_it() => StateStore.All<StoredVocab>().Single().Current.Question.Must().Be("taberu");
+      [PCT] public void every_vocab_is_the_stored_vocab() => BulkReader.All<StoredVocab>().Select(it => it.Id).Must().SequenceEqual([VocabId]);
+      [PCT] public void every_sentence_is_the_stored_sentence() => BulkReader.All<StoredSentence>().Select(it => it.Id).Must().SequenceEqual([SentenceId]);
+      [PCT] public void every_taggregate_is_the_vocab_and_the_sentence() => BulkReader.All<ITaggregate>().Select(it => it.Id).ToList().Must().Satisfy(it => it.Count == 2 && it.Contains(VocabId) && it.Contains(SentenceId));
+      [PCT] public void the_reference_to_the_stored_vocab_gives_it() => BulkReader.All<StoredVocab>().Single().Current.Question.Must().Be("taberu");
    }
 
    public class when_a_unit_of_work_that_saved_a_new_vocab_and_deleted_the_stored_one_asks_for_every_vocab : Given_a_state_store_whose_storage_holds_a_vocab_and_a_sentence
@@ -125,11 +130,11 @@ public class Given_a_state_store_whose_storage_holds_a_vocab_and_a_sentence : Un
          {
             taggregates.Save(StoredVocab.Create(_newVocabId, "kuu"));
             taggregates.Delete<StoredVocab>(VocabId);
-            _everyVocabInsideTheUnitOfWork = [..StateStore.All<StoredVocab>().Select(it => it.Id)];
+            _everyVocabInsideTheUnitOfWork = [..BulkReader.All<StoredVocab>().Select(it => it.Id)];
          });
 
       [PCT] public void inside_the_unit_of_work_every_vocab_is_the_new_one() => _everyVocabInsideTheUnitOfWork.Must().SequenceEqual([_newVocabId]);
-      [PCT] public void after_the_commit_every_vocab_is_the_new_one() => StateStore.All<StoredVocab>().Select(it => it.Id).Must().SequenceEqual([_newVocabId]);
+      [PCT] public void after_the_commit_every_vocab_is_the_new_one() => BulkReader.All<StoredVocab>().Select(it => it.Id).Must().SequenceEqual([_newVocabId]);
    }
 
    public class after_a_unit_of_work_changes_the_vocabs_meaning : Given_a_state_store_whose_storage_holds_a_vocab_and_a_sentence

@@ -4,8 +4,9 @@ using Compze.Teventive.TaggregateStores._internal;
 
 namespace Compze.Teventive.TaggregateStores._private;
 
-///<summary>The <see cref="ITaggregateStoreReader"/> of a container: asks the store that keeps each class.</summary>
-sealed class TaggregateStoreReader : ITaggregateStoreReader
+///<summary>The <see cref="ITaggregateStoreReader"/> and <see cref="ITaggregateStoreBulkReader"/> of a container: asks the store that keeps<br/>
+/// each class.</summary>
+sealed class TaggregateStoreReader : ITaggregateStoreBulkReader
 {
    readonly TaggregateStoreRouting _routing;
 
@@ -19,4 +20,7 @@ sealed class TaggregateStoreReader : ITaggregateStoreReader
 
    public ITaggregateReference<TTaggregate> Reference<TTaggregate>(TaggregateId id) where TTaggregate : class, ITaggregate =>
       _routing.StoreKeeping(typeof(TTaggregate)).Reference<TTaggregate>(id);
+
+   public IReadOnlyList<ITaggregateReference<TTaggregate>> All<TTaggregate>() where TTaggregate : class, ITaggregate =>
+      _routing.StoreKeeping(typeof(TTaggregate)).All<TTaggregate>();
 }

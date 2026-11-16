@@ -98,6 +98,8 @@ sealed class TaggregateStateStore : ITaggregateStore, IStateStore
       });
    }
 
+   ///<summary>Inside a unit of work, as it left them: the instances of the class it holds, and the committed ones it doesn't hold.<br/>
+   /// Otherwise the committed ones. Put in id order at each call, since the committed taggregates are kept by id, in no order.</summary>
    public IReadOnlyList<ITaggregateReference<TTaggregate>> All<TTaggregate>() where TTaggregate : class, ITaggregate
    {
       EnsureLoaded();
@@ -105,7 +107,7 @@ sealed class TaggregateStateStore : ITaggregateStore, IStateStore
       var ids = AmbientSession is {} session
                    ? committedIds.Where(id => !session.Holds(id)).Concat(session.HeldInstancesOf<TTaggregate>().Select(it => it.Id))
                    : committedIds;
-      return [..ids.Select(Reference<TTaggregate>)];
+      return [..ids.InIdOrder().Select(Reference<TTaggregate>)];
    }
 
    ///<summary>This store's session in the unit of work of the ambient transaction, if that unit of work has needed the store yet.<br/>

@@ -3,8 +3,9 @@ using Compze.Abstractions;
 
 namespace Compze.Teventive.TaggregateStores._internal;
 
-///<summary>What <see cref="ITaggregateStoreReader"/> and <see cref="ITaggregateStoreUpdater"/> need of a taggregate store: the<br/>
-/// taggregate classes it keeps, so that each class is routed to its store, the reading, and a session for each unit of work.</summary>
+///<summary>What <see cref="ITaggregateStoreReader"/>, <see cref="ITaggregateStoreBulkReader"/> and <see cref="ITaggregateStoreUpdater"/> need<br/>
+/// of a taggregate store: the taggregate classes it keeps, so that each class is routed to its store, the reading, and a session for<br/>
+/// each unit of work.</summary>
 ///<remarks>Each store registers itself as a member of the component set of this interface, with
 /// <see cref="TaggregateStoresRegistrar.RegisterTaggregateStore"/>.</remarks>
 interface ITaggregateStore
@@ -20,6 +21,9 @@ interface ITaggregateStore
 
    ///<summary>As <see cref="ITaggregateStoreReader.Reference{TTaggregate}"/>, for the taggregates of this store.</summary>
    ITaggregateReference<TTaggregate> Reference<TTaggregate>(TaggregateId id) where TTaggregate : class, ITaggregate;
+
+   ///<summary>As <see cref="ITaggregateStoreBulkReader.All{TTaggregate}"/>, for the taggregates of this store.</summary>
+   IReadOnlyList<ITaggregateReference<TTaggregate>> All<TTaggregate>() where TTaggregate : class, ITaggregate;
 
    ///<summary>This store's part of <paramref name="unitOfWork"/>. Called once for each unit of work, when it first needs the store.</summary>
    ITaggregateStoreSession NewSession(TaggregateUnitOfWork unitOfWork);
