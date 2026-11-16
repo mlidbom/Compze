@@ -47,7 +47,8 @@ unshippable: vocab alone would add 320 to 520 MB.
 - **`TaggregateTypeValidator` runs in the static constructor of every taggregate, component and entity class.** It
   rejects public setters and public fields on the class, on its tevents, and on every type in the assembly assignable
   to them. It calls `Assembly.GetTypes()` three times per class: with some 50 component classes in a large assembly,
-  that's a startup cost per class, not per instance. Worth timing once.
+  that's a startup cost per class, not per instance. Worth timing once. The per-class tables add a smaller cost per
+  class of their own, when each is declared and resolved.
 - **Each published tevent reads `UtcTimeSource.UtcNow` and creates a `TessageId` (a Guid).** During a full rebuild that
   publishes on many notes, that is processor time and garbage, not retained memory.
 - **Wrapping a tevent is cheap:** `PublisherTevent.WrapIn` uses a constructor compiled once per closed wrapper type, and
@@ -69,10 +70,7 @@ unshippable: vocab alone would add 320 to 520 MB.
 
 ## How the measurements were made
 
-The benchmark is taggregates-opus's: `generate.py` writes a program for any number of components and properties per
-component. The program measures the bytes retained after full collections, for 10,000 instances. Each component has 3
-string properties and one applier per property, and the note is restored through `LoadFromHistory` from one creation
-tevent. It lives in a session scratch folder, which may be gone:
-`C:\Users\magnu\AppData\Local\Temp\claude\e3d1be1d502daaa4\e0526f5e-4215-4d16-89af-0f81da51b822\scratchpad\taggregate-memory\`.
-The bug's reproduction and the check of the typed parent are in
-`C:\Users\magnu\AppData\Local\Temp\claude\2eb3c61e8403f425\8637568c-7b58-4dd1-b55c-939a38c15f2a\scratchpad\taggregate-checks\Program.cs`.
+- **[The benchmark](benchmark/README.md)** is taggregates-opus's. It measures the bytes a taggregate instance retains
+  against Compze.Teventive 0.6.0-alpha, for any number of components and properties per component.
+- **[Two checks against 0.6.0-alpha](checks-against-0.6.0-alpha/README.md)** are jastudio-rep-opus's: a component
+  typed on the subclass that declares it, and the reproduction of the reentrancy bug.

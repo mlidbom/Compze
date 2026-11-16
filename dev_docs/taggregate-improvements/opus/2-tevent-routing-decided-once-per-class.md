@@ -87,6 +87,21 @@ The names are placeholders, for Magnus.
 - **Tevent handlers** (today's `RegisterTeventHandlers()`) get a table of their own by the same mechanism, which lets
   every tevent go unhandled, as their dispatcher does today.
 
+### New: tevent handlers in components
+
+Today only `Taggregate` has `RegisterTeventHandlers()`: a component can register appliers, nothing else. That isn't
+enough for JAStudio, whose reactions to a note's own changes live in its components. `PerfectSynonyms`, part of a
+vocab's `RelatedVocab` component, pushes the vocab's answer to its synonyms, which are other notes, whenever the answer
+shown changes. That's a tevent handler, not an applier.
+
+So the tables of tevent handlers are composed through `.Component(…)`, `.Entities(…)` and the shared-tomponent slots,
+the way the appliers' tables are. That's new behavior, not a move.
+
+A tevent handler runs inside the publish cascade, before the invariants are asserted. One that publishes on other
+taggregates changes them even if this taggregate's invariants then fail. A reaction on other taggregates can instead
+go in the [per-cascade hook](3-told-once-per-publish-cascade.md), which runs after the assertion. That choice is
+JAStudio's: Compze offers both.
+
 ### Resolving, and threads
 
 - **A class's table resolves the handlers for each wrapper tevent type once,** and caches them. It does that the way
@@ -117,7 +132,8 @@ cast. Compze's `AnimalTaggregate`/`CatTaggregate` specifications don't show it, 
 tevents of its own.
 
 **JAStudio can do this today:** derive from the top-level classes, typed on the subclass. Checked with 0.6.0-alpha, by
-compiling and running this. Its applier reads a member only `VocabNote` has, through a typed field, without a cast:
+compiling and running [this check](checks-against-0.6.0-alpha/README.md). Its applier reads a member only `VocabNote`
+has, through a typed field, without a cast:
 
 ```csharp
 class FormsComponent : TeventiveComponent<VocabNote, INoteTevent, NoteTevent, FormsComponent, IVocabTevent.Forms, VocabTevent.Forms>
@@ -134,7 +150,11 @@ component base classes get there with fewer generic arguments is a detail to set
 The taggregate's `Id`, its `Version`, two lists (the uncommitted tevents, and the tevents of the current publish
 cascade) and `TeventStream`, which [becomes lazy](3-told-once-per-publish-cascade.md). Each component holds a parent
 reference. The estimate is about 200 B per note, plus 8 B per component, over plain objects, against 11 KB plus 7 KB
-today. The benchmark should confirm it once the change exists.
+today. [The benchmark](benchmark/README.md) should confirm it once the change exists.
+
+The redesign adds a specification of the bytes a taggregate retains per instance, with a bound, both loaded and after a
+publish on each component. A regression then shows in Compze's own test run, not in JAStudio's heap. Bytes retained
+after full collections are a measure that other work on the machine can't move, unlike times.
 
 ## Rejected
 

@@ -51,8 +51,8 @@ inside `OnNext`:
 3. The outer `foreach` then throws `InvalidOperationException` ("Collection was modified"), out of the domain method
    that published, after the state has changed.
 
-In the reproduction, the observer of a rename republished on the same note. It saw `Renamed, Renamed, Updated`, and the
-rename threw.
+In [the reproduction](checks-against-0.6.0-alpha/README.md), the observer of a rename republished on the same note. It
+saw `Renamed, Renamed, Updated`, and the rename threw.
 
 JAStudio will do exactly this: a subscriber across the corpus that reacts to a vocab's change may update the vocab's
 generated data, such as its sentence counts after a reparse.

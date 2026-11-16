@@ -50,7 +50,8 @@ Magnus's call: `ITaggregateSnapshotTevent` or `ITaggregateRestoredTevent`.
 
 The number of tevents the taggregate has had since its creation, with the snapshot standing in for the first N.
 
-- **JAStudio passes 1,** so `Version` means "tevents since loaded". It doesn't store the version in a note's JSON. Its
+- **JAStudio passes 1,** so `Version` minus one is the number of tevents since the note was loaded, and a `Version`
+  above 1 means the note changed since it was loaded. JAStudio doesn't store the version in a note's JSON. Its
   "changed since saved" is already in the taggregate, as the tevents not yet committed: it saves and commits on each
   publish cascade, through the [per-cascade hook](3-told-once-per-publish-cascade.md). A stored version would change with
   every edit, which is noise in the corpus diffs Magnus reviews. It would also change the corpus format, which is
