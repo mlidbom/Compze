@@ -105,12 +105,12 @@ The numbers: [what-was-measured.md](what-was-measured.md). The bugs and the smal
    of as each tevent is published, which changes what its specifications may assert.
 6. **The lock for each taggregate:** a second writer waits, with a timeout (**recommended**), or is refused at once.
    And a Compze lock owned by a transaction, with diagnostics naming the holder, to replace `SemaphoreSlim`.
-7. **Tevent routing per class:** whether to do it. It changes protected members of public base classes: 33
+7. **Tevent routing per class:** whether to do it. **Magnus, 2026-11-16: yes, as a design decision** (not yet the go-ahead to build it). It changes protected members of public base classes: 33
    registrations in 28 files of Compze's tests and sample, all mechanical, and 13 files in `src`, 7 of them the query
    models'.
 8. **Declared, or by convention:** both are prototyped and cost the same. Both teams and both reviewers recommend the
    declared table, with its safeguards: by convention, a misspelled tevent handler is silently never called.
-9. **`ITaggregateTevent` as a plain `ITevent`,** in one of two variants:
+9. **`ITaggregateTevent` as a plain `ITevent`:** **Magnus, 2026-11-16: yes, as a design decision.** Still open, which of two variants:
    - the interface only, which the store needs;
    - moving the tevents' identity to the tevents that need it as well, which touches every stored taggregate's tevents
      and the migrations.
