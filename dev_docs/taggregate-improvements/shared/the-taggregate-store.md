@@ -775,6 +775,11 @@ the tevent store and the routing; the six of `IStateStore.All` now read through 
 - **Not on the updater:** `ITaggregateStoreUpdater` extends the reader, not the bulk reader. Code inside a unit of work
   that reads every taggregate of a class depends on both.
 - **JAStudio** depends on the bulk reader where it reads every note: its searches, its tag tree and its media check.
+  **Done** (JAStudio's 1eab8a810, all green): one class, `StoredNotes`, which every scan reaches through the
+  collections, resolves the bulk reader instead of `IStateStore`, and so says that it scans; it uses it for its `TryGet`
+  too, since the bulk reader is a reader. Nothing else in JAStudio called `All`, nor sorted what it gave. `All` runs once
+  for each class at each search, tag tree, media check and rebuild, so the sort's 8.5 ms doesn't matter there.
+  `IStateStore` is now used in JAStudio only for `ReloadFromStorageAfter`.
 - **For the review (item 9):** the name. The document db says `GetAll`, and gives instances; `All` gives references.
 
 ## What the prototype is
