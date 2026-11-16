@@ -52,7 +52,7 @@ public class Given_a_state_store : UniversalTestBase
 
    StoredVocab CommittedVocab(TaggregateId id) => Reader.Get<StoredVocab>(id);
 
-   void WaitForTheObservers() => Container.RootResolver.Resolve<ILocalTessagingEngine>().StopAsync().GetAwaiter().GetResult();
+   void WaitForTheObservers() => Container.RootResolver.Resolve<ILocalTessagingEngine>().AwaitObserversAsync().GetAwaiter().GetResult();
 
    ///<summary>Runs <paramref name="read"/> on a thread of its own, with no ambient transaction flowing to it. Not a task: waiting<br/>
    /// for a task that hasn't started may run it inline, on the waiting thread, inside the transaction.</summary>
@@ -91,6 +91,21 @@ public class Given_a_state_store : UniversalTestBase
       [PCT] public void the_participation_handler_ran_once_and_only_after_save_had_returned() => ParticipationLog.Must().SequenceEqual(["created taberu, save had returned: True"]);
       [PCT] public void the_observer_observed_the_creation() => ObservationLog.Must().SequenceEqual(["created taberu"]);
       [PCT] public void publishing_on_the_instance_the_reader_gets_throws() => Invoking(() => CommittedVocab(VocabId).ChangeMeaning("to eat")).Must().Throw<Exception>();
+   }
+
+   public class after_a_change_other_than_by_a_tevent_is_made_to_the_instance_the_reader_gets_of_a_saved_vocab : Given_a_state_store
+   {
+      readonly Exception _thrown;
+
+      public after_a_change_other_than_by_a_tevent_is_made_to_the_instance_the_reader_gets_of_a_saved_vocab()
+      {
+         Compose();
+         InUnitOfWork(taggregates => taggregates.Save(StoredVocab.Create(VocabId, "taberu")));
+         _thrown = Invoking(() => CommittedVocab(VocabId).ChangeMeaningWithoutATevent("to eat")).Must().Throw<Exception>().Which;
+      }
+
+      [PCT] public void the_change_throws_saying_that_the_instance_is_read_only() => _thrown.Message.Must().Contain("is a committed instance, which a taggregate store serves to readers and which is read only");
+      [PCT] public void the_vocab_the_reader_gets_keeps_the_meaning_it_had() => CommittedVocab(VocabId).Meaning.Must().Be("");
    }
 
    public class after_a_unit_of_work_changes_the_meaning_of_a_saved_vocab_twice : Given_a_state_store

@@ -39,6 +39,14 @@ class StoredVocab : Taggregate<StoredVocab, IStoredVocabTevent, StoredVocabTeven
 
    public void ChangeQuestion(string question) => Publish(new StoredVocabQuestionChanged(question));
 
+   ///<summary>Changes the meaning without a tevent, as a class whose state isn't all changed by tevents yet does: it asserts first<br/>
+   /// that it can be changed.</summary>
+   public void ChangeMeaningWithoutATevent(string meaning)
+   {
+      AssertCanBeChanged();
+      Meaning = meaning;
+   }
+
    public StoredVocabSnapshot TakeSnapshot() => new(Id, Question, Meaning);
 
    public void RestoreFrom(StoredVocabSnapshot snapshot)

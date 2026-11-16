@@ -65,9 +65,17 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
 
    readonly List<TWrapperTeventInterface> _teventsPublishedDuringCurrentPublishCallIncludingReentrantCallsFromTeventHandlers = [];
 
+   ///<summary>Throws unless this instance may be changed. A committed instance, which a taggregate store serves to readers, is read<br/>
+   /// only: it is changed by getting it for update, inside a unit of work.</summary>
+   ///<remarks><see cref="Publish{TTevent}"/> asserts it itself. Call it first where the class changes its state other than by<br/>
+   /// applying a tevent, such as while its parts are being moved to tevents, so that a change to a committed instance fails before<br/>
+   /// it is made.</remarks>
+   protected void AssertCanBeChanged() =>
+      State.Assert(!_isReadOnly, () => $"{GetType().Name} {Id} is a committed instance, which a taggregate store serves to readers and which is read only. Get it for update from an ITaggregateStoreUpdater, inside a unit of work, to change it.");
+
    protected TTevent Publish<TTevent>(TTevent tevent) where TTevent : TTaggregateTeventImplementation
    {
-      State.Assert(!_isReadOnly, () => $"{GetType().Name} {Id} is a committed instance, which a taggregate store serves to readers and which is read only. Get it for update from an ITaggregateStoreUpdater, inside a unit of work, to change it.");
+      AssertCanBeChanged();
       try
       {
          return PublishCore(tevent);
