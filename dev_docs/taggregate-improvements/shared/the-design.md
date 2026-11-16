@@ -111,7 +111,12 @@ reading lists in a kanji, media reference lists in every note type. So a slot mu
   the owner loads a snapshot.
 - **A slot in a component is the same as a slot in a root.** It's JAStudio's usual case.
 - **A slot must be declared above the table that enters it,** since static fields initialize in the order written. The
-  compiler warns of it under nullable reference types, and the table asserts it.
+  compiler warns of it under nullable reference types, and the table asserts it. Across the files of a partial class
+  the order isn't defined at all, and the compiler doesn't warn.
+- **Proposed by jastudio-rep-opus, not built: the slots in a nested static class,** such as `Slots.SeeAlso`, which
+  removes the rule of order. The runtime runs a class's static initializers before the first read of its static fields,
+  so the table's reference to `Slots.SeeAlso` makes the slot first, wherever either is written. Magnus, on the declared
+  table: "One killer thing is ordering dependencies."
 - **What the real generics showed** (jastudio-rep-fable's static slots in the real base classes): a slot's owner can only
   be constrained to a class, since the table's instance type has no more, so the slot asserts when it is made that its
   owner publishes the owner's tevents. And a slot's declaration has five type arguments, which a slot type nested in the
@@ -129,15 +134,18 @@ reading lists in a kanji, media reference lists in every note type. So a slot mu
   and the rest, add their appliers to a subclass's table; and the query models, which are a decision of their own.
 - **The prototype routes tevent handlers into components,** which the design doesn't want: not to be carried over.
 
-### Settled between the teams
+### Chosen by the teams, for Magnus to decide
+
+Both are README decision 14. The reviewers of JAStudio's folder objected that the teams chose without asking him.
 
 - **How an instance reaches its class's table:** the fable team first proposed handing it through the base constructor,
   which can't be forgotten but costs a reference in every instance, about 8 B per teventive, or some 200 B for a vocab of
   about 25 teventives. A per-class registry was also considered, and rejected: a lookup at every construction, for an
-  argument used once per class. Settled: the virtual property, with the exact-class assertion, which makes forgetting
-  loud at no bytes per instance.
-- **Slots:** the opus prototype kept a slot object per instance, about 48 B per slot. Settled: the fable team's static
-  slot.
+  argument used once per class. Chosen: the virtual property, with the exact-class assertion, which makes forgetting
+  loud at no bytes per instance. Recommended with it: the property abstract, and left so by abstract classes, so that a
+  concrete class that forgets it doesn't compile.
+- **Slots:** the opus prototype kept a slot object per instance, about 48 B per slot. Chosen: the fable team's static
+  slot, which jastudio-rep-opus would declare in a nested static class (above).
 
 ### Rejected
 

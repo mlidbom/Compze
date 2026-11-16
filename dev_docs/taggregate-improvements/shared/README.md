@@ -131,6 +131,22 @@ The numbers: [what-was-measured.md](what-was-measured.md). The bugs and the smal
     2026-11-16,** as work to do: `dev_docs/TODO/an-analyzer-for-tevent-classes-and-type-mappings.md`. And, decided by Magnus: a serialized name is declared on the tevent
     interface's property. See [generating-tevent-classes.md](generating-tevent-classes.md).
 13. **The names:** merged into decision 10.
+14. **Two choices inside tevent routing per class, which the teams made and Magnus hasn't.** Both teams chose the
+    variant that costs an instance nothing, and the two reviewers of JAStudio's folder objected that it was chosen over
+    the simpler-looking one without asking him. Handed over by taggregates-fable, 2026-11-16.
+    - **How an instance finds its class's table:** a virtual property, as `WrapperTeventImplementation` is found today
+      (**recommended**), or an argument of the base constructor, passed up through every abstract base class: 8 B per
+      teventive, about 9 MB for JAStudio's corpus (counted, not measured). Recommended with taggregates-fable's
+      tightening: the property is abstract, and abstract classes leave it so. A concrete class that forgets it then
+      doesn't compile, as with the argument. Only a concrete class that inherits from another concrete class can forget
+      it, and the exact-class assertion fails it at its first tevent.
+    - **What a slot is:** a static of the owner's class (**recommended**), or an object in each instance, as
+      `SharedTomponentSlot` is in 0.6.0-alpha: a field and two constructor lines per slot, and 48 B a slot (measured),
+      about 26 MB for the corpus. Recommended with a change of jastudio-rep-opus's, not built: the slots declared in a
+      nested static class, such as `Slots.SeeAlso`, which removes the static slot's rule of order. See
+      [the-design.md](the-design.md#shared-tomponents-and-their-slots).
+    - **Not for the bytes:** in the code, the chosen variants are no more than the alternatives, and a slot holds
+      nothing about one instance, so it describes the class, as the table does.
 
 **What the store makes moot from the earlier list:**
 - whether a tevent store handler may change the taggregate it handles: at phase 0 it is an ordinary cascade;
