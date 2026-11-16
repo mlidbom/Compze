@@ -41,11 +41,9 @@ public sealed class SharedTomponentSlot<TOwnerTevent, TOwnerTeventImplementation
    /// definition is closed over each published tevent's runtime type, exactly like a taggregate's declared wrapper implementation.</param>
    public SharedTomponentSlot(ITeventiveInternals<TOwnerTevent, TOwnerTeventImplementation> owner, Type adoptingWrapperTeventImplementation)
    {
-      //bug: Nothing checks that adoptingWrapperTeventImplementation implements TAdoptingWrapperTevent. Handed another
-      //   slot's wrapper by mistake, such as the billing address's for the shipping address, this slot wraps its
-      //   tomponent's tevents in the other slot's wrapper, so they are applied to the other slot's tomponent: the shipping
-      //   address's change lands in the billing address, with no error. Shown by a scratch specification on the order of
-      //   Compze.Tests.Unit's SharedTomponents (2026-11-16). Assert it here, when the slot is made.
+      Argument.Assert(adoptingWrapperTeventImplementation.IsAssignableTo(typeof(TAdoptingWrapperTevent)),
+                      () => $"The adopting wrapper tevent implementation {adoptingWrapperTeventImplementation} handed to a slot for {typeof(TAdoptingWrapperTevent)} does not implement it. " +
+                            $"Another slot's wrapper would route this slot's tevents to that slot's tomponent. Pass the implementation closed over the tomponent's tevent type, such as ShippingAddressTevent<IPostalAddressTevent> for IShippingAddressTevent<IPostalAddressTevent>.");
       _owner = owner;
       _adoptingWrapperTeventImplementation = adoptingWrapperTeventImplementation;
 #pragma warning disable CS0618 // This is just the type of infrastructure code the members are for
