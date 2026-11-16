@@ -667,6 +667,29 @@ serve both stores, so one unit of work can change a taggregate of each. The stru
   reader gets both after the commit, neither after a rollback; publishing on what the reader gets outside a unit of work
   throws, in the tevent store; a typermedia tuery run inside a tommand handler gets the handler's instance.
 
+## What the spike built in step 2b
+
+Built as specified above (2a919c6b4), full suite green. The calls it made, and where it departs from the spec:
+
+- **The classes:** `TaggregateTeventStore` (the tevent store as an `ITaggregateStore`), `TeventStoreSession` (its part of
+  a unit of work) and `TeventStoreReader` replace `TeventStoreUpdater`. `TeventStoreBuilder` declares the classes, and
+  checks each with the type validator when the store is built, so `Get` and `Save` no longer validate on each call.
+  `TaggregateReference` moved to `Compze.Teventive`, shared by both stores.
+- **A history doesn't say what class it is the history of,** so the tevent store builds the declared class that is the
+  class asked for, or the one declared class derived from it. Asked for a base class that several declared classes
+  derive from, it throws, saying to get the taggregate as its own class.
+- **The typermedia registration's `HandleTaggregate` declares on the store's builder after `TeventStore` has run:** the
+  builder is read when the container builds the store, so a declaration made until then counts.
+- **The read-only message is store-neutral:** "is an instance a taggregate store serves to readers, which is read
+  only", since the tevent store's read-only instances aren't committed instances.
+- **A fix on the way:** `GetReadonlyCopyOfVersion` returned the latest version when asked for one past it. It throws now.
+- **The typermedia tuery's spec became a direct one:** what it relied on is that two scopes in one transaction get the
+  same instance, and `Given_a_tevent_store_and_a_state_store` specifies that, with 10 more specifications for one unit of
+  work across both stores. The endpoint specifications whose tommand handler navigates the `GetForUpdate` tuery, and the
+  sample's, pass through the exactly-once inbox's new unit of work.
+- **Not changed:** `Commit`'s callback and `TeventStream` stay public, as the superseded section above proposed to remove
+  them; `ITaggregate.Commit`'s own `todo:` covers it.
+
 ## What the prototype is
 
 Branch `taggregate-store-opus`, commit `3dd0fbe08`, in `C:\Dev\Compze.worktrees\taggregate-store-opus`, based on `main`.
