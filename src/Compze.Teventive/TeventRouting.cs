@@ -18,6 +18,21 @@ public abstract class TeventRouting
 {
    ///<summary>Calls, in declaration order, every route of this class that matches <paramref name="wrapped"/>'s wrapper type, on <paramref name="instance"/>.</summary>
    internal abstract void Dispatch(object instance, IPublisherTevent<ITevent> wrapped);
+
+   ///<summary>The class this routing is declared for.</summary>
+   internal abstract Type DeclaredFor { get; }
+
+   ///<summary>Asserts that the routing <paramref name="teventive"/> reads through <see cref="ITeventRouted"/>, if any, is declared for its<br/>
+   /// exact class: a class that inherits a routing it doesn't declare for itself has forgotten its own, and would lose its appliers.</summary>
+   internal static void AssertDeclaredForTheClassOf(ITeventRouted teventive)
+   {
+      AssertDeclaredFor(teventive.TeventAppliers);
+      AssertDeclaredFor(teventive.TeventHandlers);
+
+      void AssertDeclaredFor(TeventRouting? routing) =>
+         State.Assert(routing == null || routing.DeclaredFor == teventive.GetType(),
+                      () => $"{teventive.GetType().FullName} uses the tevent routing declared for {routing!.DeclaredFor.FullName}. Every class declares its own: extend its base class's with {nameof(TeventRouting<object>.Extend)}, and implement {nameof(ITeventRouted)} explicitly, listing it again in the class's base list.");
+   }
 }
 
 ///<summary>The tevent routing of the class <typeparamref name="TInstance"/>. See <see cref="TeventRouting"/>.</summary>
@@ -29,6 +44,8 @@ public sealed class TeventRouting<TInstance> : TeventRouting where TInstance : c
 
    ///<summary>The routes each wrapper tevent type matches, resolved the first time a tevent in a wrapper of that type is dispatched to any instance of the class.</summary>
    readonly ConcurrentDictionary<Type, TeventRoute[]> _routesByWrapperTeventType = new();
+
+   internal override Type DeclaredFor => typeof(TInstance);
 
    TeventRouting(IReadOnlyList<TeventRoute> routes, bool routesTeventHandlers, IReadOnlyList<Type> wrapperTypesThatMayGoUnhandled)
    {
@@ -45,8 +62,14 @@ public sealed class TeventRouting<TInstance> : TeventRouting where TInstance : c
 
    ///<summary>The routing of <typeparamref name="TSubclass"/>: every route of this class, followed by those <paramref name="declare"/> adds.<br/>
    /// The added routes are typed on <typeparamref name="TSubclass"/>, so they reach its members without a cast.</summary>
-   public TeventRouting<TSubclass> Extend<TSubclass>(Action<TeventRouting<TSubclass>.Declaration> declare) where TSubclass : class, TInstance =>
-      TeventRouting<TSubclass>.Declare(declare, _routesTeventHandlers, inherited: _routes, inheritedMayGoUnhandled: _wrapperTypesThatMayGoUnhandled);
+   ///<remarks><typeparamref name="TSubclass"/> must derive directly from <typeparamref name="TInstance"/>, so that a chain of routings can't skip a<br/>
+   /// class, and silently lose that class's appliers, components and slots.</remarks>
+   public TeventRouting<TSubclass> Extend<TSubclass>(Action<TeventRouting<TSubclass>.Declaration> declare) where TSubclass : class, TInstance
+   {
+      Argument.Assert(typeof(TSubclass).BaseType == typeof(TInstance),
+                      () => $"The tevent routing of {typeof(TSubclass).FullName} extends that of {typeof(TInstance).FullName}, which isn't its base class: {typeof(TSubclass).BaseType?.FullName} is. Extend the routing of the direct base class, so that no class's routes are skipped; every class declares its own.");
+      return TeventRouting<TSubclass>.Declare(declare, _routesTeventHandlers, inherited: _routes, inheritedMayGoUnhandled: _wrapperTypesThatMayGoUnhandled);
+   }
 
    internal static TeventRouting<TInstance> Declare(Action<Declaration> declare, bool routesTeventHandlers, IReadOnlyList<TeventRoute> inherited, IReadOnlyList<Type>? inheritedMayGoUnhandled = null)
    {

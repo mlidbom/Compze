@@ -13,7 +13,8 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
    VersionedEntity<TTaggregate>,
    ITaggregate<TTaggregateTevent>,
    ITeventiveInternals<TTaggregateTevent, TTaggregateTeventImplementation>,
-   ITaggregateStoreInternals
+   ITaggregateStoreInternals,
+   ITeventRouted
    where TWrapperTeventImplementation : TWrapperTeventInterface
    where TWrapperTeventInterface : ITaggregateTevent<TTaggregateTevent>
    where TTaggregate : Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeventImplementation, TWrapperTeventInterface, TWrapperTeventImplementation>
@@ -32,14 +33,19 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
    {
       Argument.Assert(typeof(TTaggregateTevent).IsInterface);
       _teventAppliersDispatcherConfig = teventAppliersDispatcherConfig;
+      TeventRouting.AssertDeclaredForTheClassOf(this);
    }
 
-   ///<summary>The routing of this taggregate's class to its tevent appliers, when the class declares one: a <see cref="TeventRouting"/> in a static field.<br/>
-   /// Null for a class that registers its appliers per instance, through <see cref="RegisterTeventAppliers"/>.</summary>
-   protected virtual TeventRouting? TeventAppliers => null;
+#pragma warning disable CA1033 //A class that declares its tevent routing re-implements ITeventRouted; the base class's null means "registers per instance", which no subclass calls.
+   TeventRouting? ITeventRouted.TeventAppliers => null;
+   TeventRouting? ITeventRouted.TeventHandlers => null;
+#pragma warning restore CA1033
 
-   ///<summary>The routing of this taggregate's class to its tevent handlers, when the class declares one. See <see cref="TeventAppliers"/>.</summary>
-   protected virtual TeventRouting? TeventHandlers => null;
+   ///<summary>The routing of this taggregate's class to its tevent appliers, when the class declares one, read through <see cref="ITeventRouted"/>.</summary>
+   TeventRouting? TeventAppliers => ((ITeventRouted)this).TeventAppliers;
+
+   ///<summary>The routing of this taggregate's class to its tevent handlers, when the class declares one, read through <see cref="ITeventRouted"/>.</summary>
+   TeventRouting? TeventHandlers => ((ITeventRouted)this).TeventHandlers;
 
    EntityId IEntity.Id => Id;
    public override TaggregateId Id => (TaggregateId)base.Id;

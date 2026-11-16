@@ -100,13 +100,13 @@ interface IVocabAudioTevent<out T> : IVocabTevent, IPublisherTevent<T> where T :
 class VocabAudioTevent<T>(T tevent) : VocabTevent, IVocabAudioTevent<T> where T : IAudioListTevent { public T Tevent { get; } = tevent; }
 
 ///<summary>The root of an inheritance hierarchy of taggregates, as JAStudio's JPNote is: it closes the <see cref="Taggregate{TTaggregate,TTaggregateTevent,TTaggregateTeventImplementation,TWrapperTeventInterface,TWrapperTeventImplementation}"/> generic.</summary>
-class Note : Taggregate<Note, INoteTevent, NoteTevent, INoteTevent<INoteTevent>, NoteTevent<NoteTevent>>
+class Note : Taggregate<Note, INoteTevent, NoteTevent, INoteTevent<INoteTevent>, NoteTevent<NoteTevent>>, ITeventRouted
 {
    protected static readonly TeventRouting<Note> NoteAppliers = TeventRouting<Note>.DeclareAppliers(it => it
      .For<INoteTevent.Created>(static (_, _) => {})
      .For<INoteTevent.Renamed>(static (note, tevent) => note.Name = tevent.Name));
 
-   protected override TeventRouting TeventAppliers => NoteAppliers;
+   TeventRouting ITeventRouted.TeventAppliers => NoteAppliers;
 
    protected Note() {}
 
@@ -118,7 +118,7 @@ class Note : Taggregate<Note, INoteTevent, NoteTevent, INoteTevent<INoteTevent>,
 }
 
 ///<summary>A subclass with a component of its own, as JAStudio's VocabNote is.</summary>
-class VocabNote : Note
+class VocabNote : Note, ITeventRouted
 {
    static readonly TeventRouting<VocabNote> VocabNoteAppliers = NoteAppliers.Extend<VocabNote>(it => it
      .Component(static vocab => vocab.Forms)
@@ -128,8 +128,8 @@ class VocabNote : Note
    static readonly TeventRouting<VocabNote> VocabNoteHandlers = TeventRouting<VocabNote>.DeclareHandlers(it => it
      .Component(static vocab => vocab.Forms));
 
-   protected override TeventRouting TeventAppliers => VocabNoteAppliers;
-   protected override TeventRouting TeventHandlers => VocabNoteHandlers;
+   TeventRouting ITeventRouted.TeventAppliers => VocabNoteAppliers;
+   TeventRouting ITeventRouted.TeventHandlers => VocabNoteHandlers;
    protected override Type WrapperTeventImplementation => typeof(VocabTevent<VocabTevent>);
 
    readonly VocabSense.ICollectionManager _senses;
@@ -169,7 +169,7 @@ class VocabNote : Note
 
 ///<summary>A component typed on the subclass that declares it, through the top-level <see cref="TeventiveComponent{TParent,TParentTevent,TParentTeventImplementation,TComponent,TComponentTevent,TComponentTeventImplementation}"/>,<br/>
 /// with tevent appliers and tevent handlers of its own.</summary>
-class FormsComponent : TeventiveComponent<VocabNote, INoteTevent, NoteTevent, FormsComponent, IVocabTevent.Forms, VocabTevent.Forms>
+class FormsComponent : TeventiveComponent<VocabNote, INoteTevent, NoteTevent, FormsComponent, IVocabTevent.Forms, VocabTevent.Forms>, ITeventRouted
 {
    static readonly TeventRouting<FormsComponent> FormsAppliers = TeventRouting<FormsComponent>.DeclareAppliers(it => it
      .For<IVocabTevent.Forms.Updated>(static (forms, tevent) =>
@@ -182,8 +182,8 @@ class FormsComponent : TeventiveComponent<VocabNote, INoteTevent, NoteTevent, Fo
    static readonly TeventRouting<FormsComponent> FormsHandlers = TeventRouting<FormsComponent>.DeclareHandlers(it => it
      .For<IVocabTevent.Forms.Updated>(static (forms, _) => forms.Publish(new VocabTevent.Forms.Counted(forms.All.Count))));
 
-   protected override TeventRouting TeventAppliers => FormsAppliers;
-   protected override TeventRouting TeventHandlers => FormsHandlers;
+   TeventRouting ITeventRouted.TeventAppliers => FormsAppliers;
+   TeventRouting ITeventRouted.TeventHandlers => FormsHandlers;
 
    readonly VocabNote _vocab;
 
@@ -198,12 +198,12 @@ class FormsComponent : TeventiveComponent<VocabNote, INoteTevent, NoteTevent, Fo
 }
 
 ///<summary>An entity of a vocab, in a collection the vocab's routing routes to, with a routing of its own.</summary>
-class VocabSense : Tentity<VocabNote, INoteTevent, NoteTevent, VocabSense, Guid, VocabTevent.Sense, IVocabTevent.Sense, IVocabTevent.Sense.Added, VocabTevent.Sense.IdGetterSetter>
+class VocabSense : Tentity<VocabNote, INoteTevent, NoteTevent, VocabSense, Guid, VocabTevent.Sense, IVocabTevent.Sense, IVocabTevent.Sense.Added, VocabTevent.Sense.IdGetterSetter>, ITeventRouted
 {
    static readonly TeventRouting<VocabSense> SenseAppliers = TeventRouting<VocabSense>.DeclareAppliers(it => it
      .For<IVocabTevent.Sense.Defined>(static (sense, tevent) => sense.Gloss = tevent.Gloss));
 
-   protected override TeventRouting TeventAppliers => SenseAppliers;
+   TeventRouting ITeventRouted.TeventAppliers => SenseAppliers;
 
    public VocabSense(VocabNote vocab) : base(vocab) {}
 
@@ -213,12 +213,12 @@ class VocabSense : Tentity<VocabNote, INoteTevent, NoteTevent, VocabSense, Guid,
 }
 
 ///<summary>A shared tomponent with a routing of its own.</summary>
-class AudioList : SharedTomponent<IAudioListTevent>
+class AudioList : SharedTomponent<IAudioListTevent>, ITeventRouted
 {
    static readonly TeventRouting<AudioList> AudioListAppliers = TeventRouting<AudioList>.DeclareAppliers(it => it
      .For<IAudioListTevent.Added>(static (audio, tevent) => audio._files.Add(tevent.File)));
 
-   protected override TeventRouting TeventAppliers => AudioListAppliers;
+   TeventRouting ITeventRouted.TeventAppliers => AudioListAppliers;
 
    readonly List<string> _files = [];
 

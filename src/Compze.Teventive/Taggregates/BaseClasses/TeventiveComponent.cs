@@ -11,7 +11,7 @@ public abstract class TeventiveComponent<TParent,
                                         TComponent,
                                         TComponentTevent,
                                         TComponentTeventImplementation>
-    : ITeventiveInternals<TComponentTevent, TComponentTeventImplementation>, ITeventRoutedMember<TComponentTevent>
+    : ITeventiveInternals<TComponentTevent, TComponentTeventImplementation>, ITeventRoutedMember<TComponentTevent>, ITeventRouted
     where TParent : ITeventiveInternals<TParentTevent, TParentTeventImplementation>
     where TParentTevent : class, ITaggregateTevent
     where TParentTeventImplementation : TaggregateTevent, TParentTevent
@@ -35,13 +35,17 @@ public abstract class TeventiveComponent<TParent,
 
    void ApplyTevent(TComponentTevent tevent) => _teventAppliersDispatcher._assert().NotNull().Dispatch(tevent);
 
-    ///<summary>The routing of this component's class to its tevent appliers, when the class declares one: a <see cref="TeventRouting"/> in a static field.<br/>
-    /// Its parent's routing then reaches it through <see cref="TeventRouting{TInstance}.Declaration.Component{TComponentTevent}"/>, and it does not register on its parent.<br/>
-    /// Null for a class that registers its appliers per instance, through <see cref="RegisterTeventAppliers"/>.</summary>
-    protected virtual TeventRouting? TeventAppliers => null;
+#pragma warning disable CA1033 //A class that declares its tevent routing re-implements ITeventRouted; the base class's null means "registers per instance", which no subclass calls.
+    TeventRouting? ITeventRouted.TeventAppliers => null;
+    TeventRouting? ITeventRouted.TeventHandlers => null;
+#pragma warning restore CA1033
 
-    ///<summary>The routing of this component's class to its tevent handlers, when the class declares one. See <see cref="TeventAppliers"/>.</summary>
-    protected virtual TeventRouting? TeventHandlers => null;
+    ///<summary>The routing of this component's class to its tevent appliers, when the class declares one, read through <see cref="ITeventRouted"/>.<br/>
+    /// Its parent's routing then reaches it through <see cref="TeventRouting{TInstance}.Declaration.Component{TComponentTevent}"/>, and it does not register on its parent.</summary>
+    private protected TeventRouting? TeventAppliers => ((ITeventRouted)this).TeventAppliers;
+
+    ///<summary>The routing of this component's class to its tevent handlers, when the class declares one, read through <see cref="ITeventRouted"/>.</summary>
+    TeventRouting? TeventHandlers => ((ITeventRouted)this).TeventHandlers;
 
 #pragma warning disable CA1033 //These members should NOT clutter the public interface of this class.
     void ITeventRoutedMember<TComponentTevent>.DispatchInternal(IPublisherTevent<ITevent> wrapped, bool toTeventHandlers) =>
@@ -51,6 +55,7 @@ public abstract class TeventiveComponent<TParent,
     protected TeventiveComponent(TParent parent, bool registerTeventAppliers = true, TeventDispatcherConfig? teventAppliersDispatcherConfig = null)
     {
         _parent = parent;
+        TeventRouting.AssertDeclaredForTheClassOf(this);
         if(TeventAppliers is not null) return;
 
         _teventAppliersDispatcher = IMutableTeventDispatcher<TComponentTevent>.New(teventAppliersDispatcherConfig);

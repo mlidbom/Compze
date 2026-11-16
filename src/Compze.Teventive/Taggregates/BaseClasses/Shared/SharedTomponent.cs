@@ -12,7 +12,7 @@ namespace Compze.Teventive.Taggregates.BaseClasses.Shared;
 /// whose tevents slot into exactly one taggregate's tevent hierarchy: an owned component's tevent types already identify their publisher completely,<br/>
 /// so they need no wrapping. A shared tomponent's tevent types identify no owner at all - the adopting wrapper is what says<br/>
 /// "this happened in THIS member of THIS taggregate".</remarks>
-public abstract class SharedTomponent<TTomponentTevent> : ISharedTomponentInternals<TTomponentTevent>
+public abstract class SharedTomponent<TTomponentTevent> : ISharedTomponentInternals<TTomponentTevent>, ITeventRouted
    where TTomponentTevent : class, ITevent
 {
    //wip: taggregate-experiments-opus keeps the per-instance dispatcher for the classes that declare no TeventRouting. Null for those that do.
@@ -21,6 +21,7 @@ public abstract class SharedTomponent<TTomponentTevent> : ISharedTomponentIntern
 
    protected SharedTomponent(ISharedTomponentSlot<TTomponentTevent> slot, TeventDispatcherConfig? teventAppliersDispatcherConfig = null)
    {
+      TeventRouting.AssertDeclaredForTheClassOf(this);
       if(TeventAppliers is null) _teventAppliersDispatcher = IMutableTeventDispatcher<TTomponentTevent>.New(teventAppliersDispatcherConfig);
       _slot = slot;
 #pragma warning disable CS0618 // This is just the type of infrastructure code the member is for
@@ -28,9 +29,13 @@ public abstract class SharedTomponent<TTomponentTevent> : ISharedTomponentIntern
 #pragma warning restore CS0618
    }
 
-   ///<summary>The routing of this tomponent's class to its tevent appliers, when the class declares one: a <see cref="TeventRouting"/> in a static field.<br/>
-   /// Null for a class that registers its appliers per instance, through <see cref="RegisterTeventAppliers"/>.</summary>
-   protected virtual TeventRouting? TeventAppliers => null;
+#pragma warning disable CA1033 //A class that declares its tevent routing re-implements ITeventRouted; the base class's null means "registers per instance", which no subclass calls.
+   TeventRouting? ITeventRouted.TeventAppliers => null;
+   TeventRouting? ITeventRouted.TeventHandlers => null; //A shared tomponent has no tevent handlers.
+#pragma warning restore CA1033
+
+   ///<summary>The routing of this tomponent's class to its tevent appliers, when the class declares one, read through <see cref="ITeventRouted"/>.</summary>
+   TeventRouting? TeventAppliers => ((ITeventRouted)this).TeventAppliers;
 
    protected ITeventSubscriber<TTomponentTevent> RegisterTeventAppliers()
    {
