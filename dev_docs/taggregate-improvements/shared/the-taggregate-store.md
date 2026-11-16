@@ -334,6 +334,13 @@ public interface ISnapshotable<TSelf, TSnapshot> where TSelf : ISnapshotable<TSe
 - **A snapshot holds the taggregate's whole state,** not only what is stored, since every copy is made from it. A
   component's and a shared tomponent's state are nested in the root's, as in JAStudio's DTOs. A snapshot can share every
   immutable value with the committed instance.
+- **A snapshot holds only what the taggregate owns.** An object several taggregates share, changed in place, changes
+  what each stores without a tevent: every instance, copy and committed instance alike, takes a snapshot holding the
+  change, so the store finds nothing to write, and the committed instance isn't read only through it. Shared state
+  belongs in a taggregate of its own, referred to by id, or is changed by a tevent on each taggregate that holds it. The
+  round trip can't catch it, since the copy refers to the same object. Found by taggregates-opus at JAStudio's switch: a
+  shared condition renamed in place left the edit's copy unchanged, so nothing was written; JAStudio now publishes for
+  that edit outright. In `ISnapshotable`'s documentation too.
 - **Restoring works outside any store:** JAStudio's MCP server builds notes from two git versions of a file.
 - **Two ways of setting state now exist,** the tevent appliers and the restoring, which Magnus has decided for. What
   guards them: a specification helper from Compze that takes a snapshot, restores from it, takes another and compares
