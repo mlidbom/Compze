@@ -159,6 +159,9 @@ in `C:\Dev\JAStudio.wt2`, branch `compze-taggretates`.
   committed.** Without this prototype's 144 B of scaffolding, a final design keeps about 936 B: some 200 B over plain
   objects, or about 75 MB for JAStudio's 80,000 notes, against about 59 MB as plain objects and 0.6 to 0.9 GB with
   0.6.0-alpha.
+- **After the fix to `TeventRouting.Dispatch`** (c70e46199, merged into the combination at af602bd0e): a load allocates
+  1,728 B from history and 1,984 B from a snapshot, and fifteen edits and a commit allocate 9,928 B, about 660 B an edit.
+  Still 1,080 B retained, and +8 B after the edits.
 - **What each part took:** per-class routing, from 11,256 B to 1,168 B; the lazy `TeventStream`, 24 B more; creating the
   lists of tevents only when needed, and handing them on whole, 64 B, and the 208 B their grown backing arrays kept after
   an edit.
