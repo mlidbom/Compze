@@ -715,7 +715,7 @@ whose storage is now a service of the container that the store is declared to be
   as an index's lookup gives. Inside a unit of work, the unit of work's view: what it saved included, what it deleted
   left out. JAStudio's searches, its tag tree and its check of whether a media file is used go through every note. On
   `IStateStore`, not on the shared reader: the state store holds everything in memory, where a tevent store would load
-  every history.
+  every history. **Moved to a bulk reader that both stores implement:** see the next section but one.
 - **Reloading around a change to the storage:** `IStateStore.ReloadFromStorageAfter(Action changeToTheStorage)` runs the
   change once the open units of work have completed, while new ones wait, then reloads, as `ReloadFromStorage` does.
   JAStudio fast-forwards its corpus checkout there, so that no unit of work can write a note over the change. If the
@@ -738,6 +738,40 @@ notes lose nothing.
 - **A unit of work for each note costs more than JAStudio's old saving:** a full rebuild takes 53 processor-seconds,
   against 36 before. That covers the scope, the transaction, the copy, two snapshots, hashing, and the keys of ten vocab
   indexes. JAStudio's step 12 measures it properly.
+
+## Every taggregate of a class: the bulk reader, specified
+
+**Magnus, 2026-11-17 (item 34):** every taggregate of a class moves from `IStateStore.All` to a reader of its own, which
+extends the shared reader, as the document db's `IDocumentDbBulkReader` extends `IDocumentDbReader`. He asked why `All`
+was on the store and not on the reader, and recalled why the document db has a bulk reader: reading everything is, for
+most storages, a mistake outside exceptional circumstances, so it shouldn't sit on the standard reader looking as
+ordinary as `Get`.
+
+- **`ITaggregateStoreBulkReader : ITaggregateStoreReader`,** in Compze.Teventive beside the reader, with
+  `IReadOnlyList<ITaggregateReference<TTaggregate>> All<TTaggregate>()`: a reference to every `TTaggregate` the stores
+  hold. Routed by class to the store that keeps it, as `Get` is. A singleton, as the reader is, and the same object.
+- **Why a reader of its own:** code that reads every taggregate of a class says so in what it depends on, and a grep
+  finds it. For the tevent store, and for any state store whose storage isn't all in memory, it is a full scan.
+- **Why shared, and not on `IStateStore`:** code that reads taggregates doesn't depend on which store keeps a class.
+  `IStateStore.All` goes.
+- **The unit of work's view, in both stores:** inside a unit of work, what it has saved is included, and what it has
+  deleted is left out. Outside one, the committed taggregates. As `Get` and an index's `Lookup` are.
+- **In id order, in both stores,** as `Lookup` gives its references: the order of the ids' Guids, which is the order of
+  their text. The order then doesn't depend on which store keeps the class, and a consumer that writes what it reads,
+  such as JAStudio's rebuild, writes it in the same order each time. The state store sorts at each call: its committed
+  taggregates are kept by id, in no order.
+- **The state store:** its committed instances of the class, minus those the unit of work holds, plus the instances of
+  the class it holds, as `IStateStore.All` did.
+- **The tevent store:** the ids of the histories whose creation tevent is a tevent of the class, from
+  `StreamTaggregateIdsInCreationOrder` with the class's tevent interface. It reads through the ambient transaction, so it
+  sees what the unit of work has written, which the tevent store writes at each publish, and has deleted. The references
+  load nothing until `Current` is read. The class is the one declared class that is a `TTaggregate`, as for `Get`. When
+  another declared class's tevents are also tevents of that class, the two classes' histories can't be told apart by
+  their creation tevents, so `All` throws and says so.
+- **Not on the updater:** `ITaggregateStoreUpdater` extends the reader, not the bulk reader. Code inside a unit of work
+  that reads every taggregate of a class depends on both.
+- **JAStudio** depends on the bulk reader where it reads every note: its searches, its tag tree and its media check.
+- **For the review (item 9):** the name. The document db says `GetAll`, and gives instances; `All` gives references.
 
 ## What the prototype is
 
