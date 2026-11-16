@@ -729,7 +729,10 @@ notes lose nothing.
 
 - **An index lookup has no defined order:** the store's own, by hash at load and by commit after. A JAStudio lookup that
   takes the first of several vocab changed 1,172 sentences in a rebuild until JAStudio sorted each lookup by id, the
-  order its old caches gave. Whether the index promises id order is Magnus's to decide.
+  order its old caches gave. **Specified, Magnus, 2026-11-16 (item 35): `Lookup` returns its references in id order,**
+  the order of the ids' Guids, which is the order of their text. That holds at load, after each commit, and inside a
+  unit of work for its own view. Each key's array is already replaced whole when a commit changes it, so it is kept
+  sorted as it is replaced, and loading sorts each key's references once. JAStudio's sort can then go.
 - **Loading restores every taggregate on one thread:** 80,000 notes in 5.0 s. JAStudio's old cache filled its three
   classes in parallel.
 - **A unit of work for each note costs more than JAStudio's old saving:** a full rebuild takes 53 processor-seconds,
