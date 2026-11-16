@@ -92,6 +92,21 @@ public class Given_a_tevent_store_and_a_state_store : UniversalTestBase
 
          [PCT] public void the_reader_got_the_instance_the_unit_of_work_got_for_update() => _read.Must().ReferenceEqual(_gotForUpdate);
       }
+
+      public class and_a_second_unit_of_work_gets_the_user_for_update_and_then_gets_it_for_update_in_a_scope_of_its_own : after_one_unit_of_work_saves_a_user_and_a_vocab
+      {
+         User? _gotForUpdate;
+         User? _gotInTheOtherScope;
+
+         public and_a_second_unit_of_work_gets_the_user_for_update_and_then_gets_it_for_update_in_a_scope_of_its_own() =>
+            InUnitOfWork(taggregates =>
+            {
+               _gotForUpdate = taggregates.GetForUpdate<User>(_userId);
+               _gotInTheOtherScope = _container.ExecuteInIsolatedScope(scope => scope.TaggregateStoreUpdater().GetForUpdate<User>(_userId));
+            });
+
+         [PCT] public void the_other_scope_got_the_instance_the_unit_of_work_got_for_update() => _gotInTheOtherScope.Must().ReferenceEqual(_gotForUpdate);
+      }
    }
 
    public class after_a_unit_of_work_that_saves_a_user_and_a_vocab_fails : Given_a_tevent_store_and_a_state_store
