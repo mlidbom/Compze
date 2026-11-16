@@ -17,6 +17,34 @@ what the notes require of Compze, what the teams found about JAStudio, its answe
 (`answers-about-jastudio-for-the-taggregate-store.md`), and what is left on JAStudio's side. This folder holds the
 design, the order of work in Compze, and the full list of what Magnus decides.
 
+## Before the spike ends: review every public API change, for its design as much as its names
+
+**Magnus, 2026-11-16:** "we need to go through all public API changes very carefully at the end of this with an eye
+towards whether this is good API design or kitchen sink style types and/or methods crammed in to make JAStudio's life a
+bit easier, or even just to prevent refactorings in JAStudio that would actually result in better code than the
+shortcuts our added stuff gave them."
+
+For each public type and member the spike added or changed, the review asks: would Compze have it for any consumer, as
+an abstraction of its own? Or does it exist because it spared JAStudio a refactoring, and would JAStudio's code be better
+had it made that refactoring instead? The names are reviewed in the same pass (Magnus's item 9).
+
+What JAStudio asked for, the first to look at:
+
+| API | Asked for | Why JAStudio needed it | The question for the review |
+|---|---|---|---|
+| `Taggregate.AssertCanBeChanged()` | increment 3 | Its classes change some state other than by tevents while their parts move to tevents. | A transitional API. Does it go once JAStudio's classes change state only by tevents? |
+| `StateStoreBuilder.Taggregate(...)` with a service | step 2a's blockers | Every note is built with the services it uses. | Is a factory with a service the right way for a taggregate to get its services? |
+| `IStateStore.ReloadFromStorage()`, `snapshotsAreEqual` | step 2a's blockers | It loads the notes again around a git fast-forward of the corpus. | Is reloading everything a store's job? Or should a consumer whose storage another program changes compose a new store? |
+| `IStateStore.ReloadFromStorageAfter(change)` | the switch | The fast-forward must run while no unit of work can write a note. | Every change goes through JAStudio's own `Edit`. Could JAStudio hold its own edits back around the fast-forward, and call `ReloadFromStorage`? |
+| `IStateStore.All<TTaggregate>()` | the switch | Its searches, tag tree and media check go through every note. | Is every taggregate of a class the store's to give, or an index's, such as one with a single key? |
+| `StateStoreBuilder.StoredIn<TService>(...)` | the switch | The corpus folder is known only once the host has started. | Built the way DI factory registrations and `Taggregate(...)` with a service are. Or should JAStudio's host know its paths when it composes the container? |
+| `SnapshotRoundTrip.DifferencesOf` | the corpus check | A tool that checks every note lists the differences, instead of throwing at the first. | |
+| `ILocalTessagingEngine.AwaitNoTeventsInFlightAsync()` | JAStudio's specifications | They assert on what observers did, and go on. | |
+| `TaggregateToDelete`'s public constructor | JAStudio's storage specifications | They make the values the store hands a storage. | |
+
+The rest, such as the shared updater and reader, snapshots, the storage seam and tevent routing per class, came from the
+design, but are reviewed all the same. The full list of names is item 9 in jastudio-rep-opus's unanswered list.
+
 ## The question
 
 JAStudio wants its notes to be Compze.Teventive taggregates, so that every change to a note is a tevent, and whatever
