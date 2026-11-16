@@ -12,5 +12,5 @@ sealed class LocalTessagingEngine : ILocalTessagingEngine
 
    public async Task StopAsync() => await _observationDispatcher.StopAsync().caf();
 
-   public async Task AwaitObserversAsync() => await _observationDispatcher.DrainAsync().caf();
+   public async Task AwaitNoTeventsInFlightAsync() => await _observationDispatcher.DrainAsync().caf();
 }

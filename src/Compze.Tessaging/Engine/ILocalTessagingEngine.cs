@@ -18,9 +18,8 @@ public interface ILocalTessagingEngine
    /// Stopping a stopped engine does nothing more.</summary>
    Task StopAsync();
 
-   ///<summary>Waits, holding no thread, until every tevent committed so far has been observed by every observer that observes it,<br/>
-   /// including what the observers themselves publish meanwhile, and leaves the engine running: such as for a specification that<br/>
-   /// asserts on what an observer did, and goes on.</summary>
-   ///<remarks>review-naming: AwaitObserversAsync, chosen on the taggregate store spike.</remarks>
-   Task AwaitObserversAsync();
+   ///<summary>Waits, holding no thread, until no tevent is in flight: until every tevent committed so far has been observed by every<br/>
+   /// observer that observes it, including what the observers themselves publish meanwhile. Leaves the engine running: such as for<br/>
+   /// a specification that asserts on what an observer did, and goes on.</summary>
+   Task AwaitNoTeventsInFlightAsync();
 }

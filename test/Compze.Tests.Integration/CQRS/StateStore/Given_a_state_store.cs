@@ -52,7 +52,7 @@ public class Given_a_state_store : UniversalTestBase
 
    StoredVocab CommittedVocab(TaggregateId id) => Reader.Get<StoredVocab>(id);
 
-   void WaitForTheObservers() => Container.RootResolver.Resolve<ILocalTessagingEngine>().AwaitObserversAsync().GetAwaiter().GetResult();
+   void WaitForTheObservers() => Container.RootResolver.Resolve<ILocalTessagingEngine>().AwaitNoTeventsInFlightAsync().GetAwaiter().GetResult();
 
    ///<summary>Runs <paramref name="read"/> on a thread of its own, with no ambient transaction flowing to it. Not a task: waiting<br/>
    /// for a task that hasn't started may run it inline, on the waiting thread, inside the transaction.</summary>
