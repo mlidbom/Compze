@@ -825,7 +825,9 @@ the sort after the filter and then instantly the cost dropped a lot since the co
   and withdrew its reason. Its largest groups are sentences by particle, up to 16,346; sorting every vocab's sentences
   in a full rebuild it estimates at 50 to 150 ms, against a rebuild of 3.5 s. It skips the sort for groups of one or
   none, which the parsing's lookups mostly are, adds a specification that the collection's lookups give id order, and
-  measures a rebuild before and after.
+  measures a rebuild before and after. **Done** (JAStudio's 700d57b81, green): the specification files eight vocab
+  under one form with random ids, and failed before the sort went in; the rebuild changes no corpus file; a warm
+  rebuild's processor time is the same within noise, 38 to 44 processor-seconds before and after.
 - **What JAStudio relies on the order for,** from taggregates-opus: the tokenizer's godan check takes the first vocab
   with a form (唱う is a form of 歌う, 唄う and 詠う), 3 sentences; a sentence's stored parse lists two matching vocab in
   lookup order, 1,169 sentences; possibly a splitter's loop over vocab sharing a question; display lists. The godan
