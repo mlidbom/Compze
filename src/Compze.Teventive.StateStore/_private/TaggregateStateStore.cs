@@ -2,10 +2,11 @@ using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
 using Compze.Abstractions;
 using Compze.Contracts;
-using Compze.Teventive._internal;
 using Compze.Teventive.StateStore.Storage;
 using Compze.Teventive.TaggregateStores;
 using Compze.Teventive.TaggregateStores._internal;
+using Compze.Teventive.Taggregates._internal;
+using Compze.Teventive._internal;
 using Compze.Threading;
 using static Compze.Contracts.Contract;
 
@@ -17,7 +18,7 @@ namespace Compze.Teventive.StateStore._private;
 sealed class TaggregateStateStore : ITaggregateStore, IStateStore
 {
    readonly TaggregateUnitsOfWork _unitsOfWork;
-   readonly IReadOnlyDictionary<Type, DeclaredTaggregateClass> _declaredClasses;
+   readonly IReadOnlyDictionary<Type, SnapshotableTaggregateClass> _declaredClasses;
    readonly ConcurrentDictionary<TaggregateId, object> _references = new();
    readonly IMonitor _loadingMonitor = IMonitor.New();
    readonly UnitsOfWorkAndReloadsGate _gate = new();
@@ -27,7 +28,7 @@ sealed class TaggregateStateStore : ITaggregateStore, IStateStore
    volatile bool _hasLoaded;
 
    internal TaggregateStateStore(TaggregateUnitsOfWork unitsOfWork,
-                                 IEnumerable<DeclaredTaggregateClass> declaredClasses,
+                                 IEnumerable<SnapshotableTaggregateClass> declaredClasses,
                                  IEnumerable<Func<TaggregateStateStore, ITaggregateIndexMaintenance>> indexes,
                                  ITaggregateStorage storage)
    {
@@ -100,7 +101,7 @@ sealed class TaggregateStateStore : ITaggregateStore, IStateStore
 
    internal ITaggregate? CommittedInstanceOf(TaggregateId id) => _committedTaggregates.GetValueOrDefault(id);
 
-   internal DeclaredTaggregateClass DeclaredClassOf(Type taggregateClass)
+   internal SnapshotableTaggregateClass DeclaredClassOf(Type taggregateClass)
    {
       State.Assert(_declaredClasses.ContainsKey(taggregateClass),
                    () => $"The state store keeps no {taggregateClass.FullName}: it keeps {string.Join(", ", TaggregateClasses.Select(it => it.FullName))}. Declare the class where the store is composed.");

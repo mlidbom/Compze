@@ -1,21 +1,22 @@
 using Compze.Abstractions;
 using Compze.Contracts;
 using Compze.Teventive._internal;
-using Compze.Teventive.Taggregates;
-using static Compze.Contracts.Contract;
 
-namespace Compze.Teventive.StateStore._private;
+namespace Compze.Teventive.Taggregates._internal;
 
-///<summary>A taggregate class a state store is declared to keep, as the store works with every class alike: it builds empty<br/>
-/// instances of it, takes snapshots of them, and restores them from snapshots, whatever its snapshot type.</summary>
-sealed class DeclaredTaggregateClass
+///<summary>A taggregate class whose instances are <see cref="ISnapshotable{TSelf,TSnapshot}"/>, as code that works with every such class<br/>
+/// alike sees it: it builds empty instances of the class, takes snapshots of them, restores them from snapshots, copies them<br/>
+/// through one, and tells whether two hold the same state, whatever the class's snapshot type.</summary>
+///<remarks>A state store holds one for each class it's declared to keep. <see cref="SnapshotRoundTrip"/> checks a class through one,<br/>
+/// so that what it checks is the copy the store makes.</remarks>
+sealed class SnapshotableTaggregateClass
 {
    readonly Func<ITaggregate> _createEmpty;
    readonly Func<ITaggregate, object> _takeSnapshot;
    readonly Action<ITaggregate, object> _restoreFrom;
    readonly Func<object, object, bool>? _snapshotsAreEqual;
 
-   DeclaredTaggregateClass(Type taggregateClass,
+   SnapshotableTaggregateClass(Type taggregateClass,
                            Func<ITaggregate> createEmpty,
                            Func<ITaggregate, object> takeSnapshot,
                            Action<ITaggregate, object> restoreFrom,
@@ -28,7 +29,7 @@ sealed class DeclaredTaggregateClass
       _snapshotsAreEqual = snapshotsAreEqual;
    }
 
-   internal static DeclaredTaggregateClass For<TTaggregate, TSnapshot>(Func<ISnapshotable<TTaggregate, TSnapshot>> createEmpty, Func<TSnapshot, TSnapshot, bool>? snapshotsAreEqual)
+   internal static SnapshotableTaggregateClass For<TTaggregate, TSnapshot>(Func<ISnapshotable<TTaggregate, TSnapshot>> createEmpty, Func<TSnapshot, TSnapshot, bool>? snapshotsAreEqual)
       where TTaggregate : class, ITaggregate, ISnapshotable<TTaggregate, TSnapshot> =>
       new(typeof(TTaggregate),
           () => (TTaggregate)createEmpty(),
