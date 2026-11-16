@@ -128,3 +128,24 @@ tells, and take the public stream away.
 3. Tevent routing per class, with slots.
 4. The snapshot API and the storage seam, with the JSON store.
 5. The rest of the teventives, and the removal of registration per instance.
+
+## Corrected after jastudio-rep-opus's reply
+
+jastudio-rep-opus built the session with deferred dispatch and an in-memory store (branch `taggregate-store-opus`,
+commit `3dd0fbe08`), and disagreed with four things here. It was right on each:
+
+- **Derived state:** no way gives "a reader never sees a note and its index disagree", since the swap of several
+  notes isn't atomic for readers either. What can be given is that notes and indexes both reflect the commit when the
+  unit of work returns. Its fourth way is better than the call from the store: derived state that is itself
+  transactional, written by a participation handler, buffered for the transaction, applied at commit and dropped at
+  rollback.
+- **The lock:** the locking standard gives a gate held across awaits, or released on another thread, to
+  `SemaphoreSlim`. So this is no stop-and-tell case. A Compze lock owned by a transaction is a recommendation.
+- **The version:** a private copy continues the committed instance's version, set by the store after the restoring.
+  Nothing is persisted.
+- **The snapshot API** needs a face without type parameters for the store, as a default interface member. And
+  "nothing is registered" holds for copying only: to load, the store is told once which class restores from which
+  snapshot type.
+
+Its prototype pins what I had from memory: the transaction's completed event fires after the participant's swap. It
+measured an edit as its own unit of work at 8.5 to 12.5 µs and about 9.5 KB.
