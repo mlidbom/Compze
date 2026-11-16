@@ -161,11 +161,22 @@ public class Given_an_in_memory_taggregate_store_with_an_index_by_question : Uni
          if(reportFile == null) return;
 
          var reference = ReferenceTo(VocabId);
+         var byQuestion = ByQuestion; //Resolved once: resolving from the container allocates, and is no part of a lookup.
          var report = new List<string>
          {
-            Measure("a lookup outside any unit of work", 20_000, () => ByQuestion.Lookup("taberu")),
+            Measure("a lookup outside any unit of work", 20_000, () => byQuestion.Lookup("taberu")),
+            Measure("a check that a key has any taggregate, outside any unit of work", 20_000, () => byQuestion.HasAny("taberu")),
             Measure("a reference's Current outside any unit of work", 20_000, () => _ = reference.Current)
          };
+
+         var sentenceId = new TaggregateId(Guid.NewGuid());
+         InUnitOfWork(taggregates => taggregates.Save(StoredSentence.Create(sentenceId, "taberu")));
+         InUnitOfWork(taggregates =>
+         {
+            taggregates.Get<StoredSentence>(sentenceId);
+            report.Add(Measure("a lookup of vocab inside a unit of work holding only a sentence", 20_000, () => byQuestion.Lookup("taberu")));
+            report.Add(Measure("a check that a key has any vocab inside a unit of work holding only a sentence", 20_000, () => byQuestion.HasAny("taberu")));
+         });
 
          foreach(var copiesHeld in (int[])[1, 100, 1_000])
          {
@@ -174,7 +185,7 @@ public class Given_an_in_memory_taggregate_store_with_an_index_by_question : Uni
             InUnitOfWork(taggregates =>
             {
                ids.ForEach(id => taggregates.Get<StoredVocab>(id));
-               report.Add(Measure($"a lookup inside a unit of work holding {copiesHeld.ToString(CultureInfo.InvariantCulture)} copies", 2_000, () => ByQuestion.Lookup("taberu")));
+               report.Add(Measure($"a lookup inside a unit of work holding {copiesHeld.ToString(CultureInfo.InvariantCulture)} copies", 2_000, () => byQuestion.Lookup("taberu")));
             });
          }
 

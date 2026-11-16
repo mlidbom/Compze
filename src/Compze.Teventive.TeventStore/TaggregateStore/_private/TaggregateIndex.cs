@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using System.Collections.Immutable;
 using Compze.Abstractions;
 using Compze.Threading;
@@ -22,21 +23,28 @@ sealed class TaggregateIndex<TTaggregate, TKey>(InMemoryTaggregateStore store, F
 {
    readonly IMonitor _monitor = IMonitor.New(LockTimeout.Seconds(30));
 
-   //Read without a lock: each is replaced whole, under the monitor, when a commit changes it.
-   volatile ImmutableDictionary<TKey, ImmutableHashSet<TaggregateId>> _committedIdsByKey = ImmutableDictionary<TKey, ImmutableHashSet<TaggregateId>>.Empty;
-   ImmutableDictionary<TaggregateId, ImmutableHashSet<TKey>> _committedKeysById = ImmutableDictionary<TaggregateId, ImmutableHashSet<TKey>>.Empty;
+   //Read without a lock: a key's array is replaced whole when a commit changes it, never changed in place, so a lookup
+   //outside a unit of work returns it as it is, allocating nothing.
+   readonly ConcurrentDictionary<TKey, ITaggregateReference<TTaggregate>[]> _committedReferencesByKey = new();
+   readonly Dictionary<TaggregateId, ImmutableHashSet<TKey>> _committedKeysById = new(); //Only under the monitor.
 
    public IReadOnlyList<ITaggregateReference<TTaggregate>> Lookup(TKey key)
    {
-      var committedIds = _committedIdsByKey.GetValueOrDefault(key) ?? ImmutableHashSet<TaggregateId>.Empty;
-      var session = store.AmbientSession;
-      if(session is not { HoldsAnyTaggregate: true })
-         return [..committedIds.Select(store.Reference<TTaggregate>)];
+      if(!_committedReferencesByKey.TryGetValue(key, out var committed)) committed = [];
+      if(store.AmbientSession is not {} session || !session.HoldsAnyCopyOf<TTaggregate>()) return committed;
+      return AsTheUnitOfWorkLeftThem(committed, key, session);
+   }
 
-      //Read your own writes: what the unit of work holds is filed as its copies now are, not as they were committed.
-      var idsAsTheUnitOfWorkLeftThem = committedIds.Where(id => !session.Holds(id))
-                                                   .Concat(session.HeldInstancesOf<TTaggregate>().Where(it => keysOf(it).Contains(key)).Select(it => it.Id));
-      return [..idsAsTheUnitOfWorkLeftThem.Select(store.Reference<TTaggregate>)];
+   ///<summary>Read your own writes: what the unit of work holds is filed as its copies now are, not as they were committed.<br/>
+   /// A method of its own, since its lambdas' closure would otherwise be allocated on every lookup, overlay or not.</summary>
+   ITaggregateReference<TTaggregate>[] AsTheUnitOfWorkLeftThem(ITaggregateReference<TTaggregate>[] committed, TKey key, TaggregateStoreUpdater session) =>
+      [..committed.Where(it => !session.Holds(it.Id)),
+       ..session.HeldInstancesOf<TTaggregate>().Where(it => keysOf(it).Contains(key)).Select(it => store.Reference<TTaggregate>(it.Id))];
+
+   public bool HasAny(TKey key)
+   {
+      if(store.AmbientSession is {} session && session.HoldsAnyCopyOf<TTaggregate>()) return Lookup(key).Count > 0;
+      return _committedReferencesByKey.TryGetValue(key, out var committed) && committed.Length > 0;
    }
 
    public IPreparedIndexChange Prepare(IReadOnlyList<(TaggregateId Id, ISnapshotTaggregate? NewState)> changedTaggregates)
@@ -49,27 +57,22 @@ sealed class TaggregateIndex<TTaggregate, TKey>(InMemoryTaggregateStore store, F
 
    void Apply(IReadOnlyList<(TaggregateId Id, ImmutableHashSet<TKey> NewKeys)> newKeysById) => _monitor.Locked(() =>
    {
-      var idsByKey = _committedIdsByKey.ToBuilder();
-      var keysById = _committedKeysById.ToBuilder();
       foreach(var (id, newKeys) in newKeysById)
       {
-         var oldKeys = keysById.GetValueOrDefault(id) ?? [];
+         var oldKeys = _committedKeysById.GetValueOrDefault(id) ?? [];
          foreach(var removedKey in oldKeys.Except(newKeys))
          {
-            var remaining = idsByKey[removedKey].Remove(id);
-            if(remaining.IsEmpty) idsByKey.Remove(removedKey);
-            else idsByKey[removedKey] = remaining;
+            ITaggregateReference<TTaggregate>[] remaining = [.._committedReferencesByKey[removedKey].Where(it => it.Id != id)];
+            if(remaining.Length == 0) _committedReferencesByKey.TryRemove(removedKey, out _);
+            else _committedReferencesByKey[removedKey] = remaining;
          }
 
          foreach(var addedKey in newKeys.Except(oldKeys))
-            idsByKey[addedKey] = (idsByKey.GetValueOrDefault(addedKey) ?? []).Add(id);
+            _committedReferencesByKey[addedKey] = [..(_committedReferencesByKey.GetValueOrDefault(addedKey) ?? []), store.Reference<TTaggregate>(id)];
 
-         if(newKeys.IsEmpty) keysById.Remove(id);
-         else keysById[id] = newKeys;
+         if(newKeys.IsEmpty) _committedKeysById.Remove(id);
+         else _committedKeysById[id] = newKeys;
       }
-
-      _committedKeysById = keysById.ToImmutable();
-      _committedIdsByKey = idsByKey.ToImmutable();
    });
 
    sealed class PreparedChange(TaggregateIndex<TTaggregate, TKey> index, IReadOnlyList<(TaggregateId Id, ImmutableHashSet<TKey> NewKeys)> newKeysById) : IPreparedIndexChange

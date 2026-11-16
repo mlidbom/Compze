@@ -7,4 +7,8 @@ public interface ITaggregateIndex<TTaggregate, in TKey> where TTaggregate : clas
    ///<summary>The taggregates filed under <paramref name="key"/>: the committed ones, or, inside a unit of work, as its own<br/>
    /// changes have left them.</summary>
    IReadOnlyList<ITaggregateReference<TTaggregate>> Lookup(TKey key);
+
+   ///<summary>Whether any taggregate is filed under <paramref name="key"/>, as <see cref="Lookup"/> would find it. Outside a unit<br/>
+   /// of work, or in one that holds no <typeparamref name="TTaggregate"/>, it allocates nothing.</summary>
+   bool HasAny(TKey key);
 }

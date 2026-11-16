@@ -26,6 +26,7 @@ sealed class TaggregateStoreUpdater : VolatileTransactionParticipant, ITaggregat
    readonly List<SemaphoreSlim> _heldUpdateLocks = [];
    readonly List<IDisposable> _teventStreamSubscriptions = [];
    IReadOnlyList<IPreparedIndexChange> _preparedIndexChanges = [];
+   readonly HashSet<Type> _typesHeld = [];
 
    internal TaggregateStoreUpdater(InMemoryTaggregateStore store, IUnitOfWorkTeventPublisher teventPublisher) : base(EnlistmentOptions.EnlistDuringPrepareRequired)
    {
@@ -35,7 +36,13 @@ sealed class TaggregateStoreUpdater : VolatileTransactionParticipant, ITaggregat
       if(Transaction.Current != null) EnsureEnlistedInAnyAmbientTransaction();
    }
 
-   internal bool HoldsAnyTaggregate => _trackedTaggregates.Count > 0;
+   ///<summary>Whether this unit of work holds a copy, or a deletion, of any <typeparamref name="TTaggregate"/>. Allocates nothing.</summary>
+   internal bool HoldsAnyCopyOf<TTaggregate>()
+   {
+      foreach(var type in _typesHeld)
+         if(type.IsAssignableTo(typeof(TTaggregate))) return true;
+      return false;
+   }
 
    internal bool Holds(TaggregateId id) => _trackedTaggregates.ContainsKey(id);
 
@@ -98,6 +105,7 @@ sealed class TaggregateStoreUpdater : VolatileTransactionParticipant, ITaggregat
    void Track(ISnapshotTaggregate taggregate)
    {
       _trackedTaggregates.Add(taggregate.Id, new TrackedTaggregate(taggregate));
+      _typesHeld.Add(taggregate.GetType());
       //Only collected here, never dispatched: nothing runs while a domain method of the taggregate is still on the stack.
       _teventStreamSubscriptions.Add(taggregate.TeventStream.Subscribe(_teventsToDispatch.Enqueue));
    }

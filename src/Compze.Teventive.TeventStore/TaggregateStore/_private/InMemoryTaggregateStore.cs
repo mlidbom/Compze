@@ -17,6 +17,7 @@ sealed class InMemoryTaggregateStore : ITaggregateStoreReader
    readonly ConcurrentDictionary<TaggregateId, SemaphoreSlim> _updateLocks = new();
    readonly ConcurrentDictionary<string, TaggregateStoreUpdater> _sessionsByTransaction = new();
    readonly List<ITaggregateIndexMaintenance> _indexes = [];
+   readonly ConcurrentDictionary<TaggregateId, object> _references = new();
 
    public TTaggregate Get<TTaggregate>(TaggregateId id) where TTaggregate : class, ISnapshotTaggregate =>
       TryGet(id, out TTaggregate? taggregate) ? taggregate : throw new TaggregateNotFoundException(id);
@@ -27,8 +28,10 @@ sealed class InMemoryTaggregateStore : ITaggregateStoreReader
       return taggregate != null;
    }
 
+   ///<summary>One reference for each taggregate, made at the first request, so that lookups allocate none.</summary>
    public ITaggregateReference<TTaggregate> Reference<TTaggregate>(TaggregateId id) where TTaggregate : class, ISnapshotTaggregate =>
-      new TaggregateReference<TTaggregate>(this, id);
+      _references.GetOrAdd(id, static (theId, store) => new TaggregateReference<TTaggregate>(store, theId), this) as ITaggregateReference<TTaggregate>
+   ?? new TaggregateReference<TTaggregate>(this, id); //First asked for as another type: a reference is a value, compared by id.
 
    internal ISnapshotTaggregate? CommittedInstanceOf(TaggregateId id) => _committedTaggregates.GetValueOrDefault(id);
 
