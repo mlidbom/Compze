@@ -57,7 +57,8 @@ public sealed class TeventRouting<TInstance> : TeventRouting where TInstance : c
 
    internal override void Dispatch(object instance, IPublisherTevent<ITevent> wrapped)
    {
-      var routes = _routesByWrapperTeventType.GetOrAdd(wrapped.GetType(), ResolveTeventRoutesFor);
+      var wrapperTeventType = wrapped.GetType();
+      if(!_routesByWrapperTeventType.TryGetValue(wrapperTeventType, out var routes)) routes = _routesByWrapperTeventType.GetOrAdd(wrapperTeventType, ResolveTeventRoutesFor); //TryGetValue first: passing the method group allocates a delegate on every call.
       for(var index = 0; index < routes.Length; index++) routes[index].Deliver(instance, wrapped);
    }
 
