@@ -100,6 +100,9 @@ The numbers: [what-was-measured.md](what-was-measured.md). The bugs and the smal
      the table found through an explicit implementation of `ITeventRouted` with the exact class asserted at construction,
      `Extend` asserting the direct base class, and static slots (`SharedTomponentSlotOfAClass`) in a nested `Slots`
      class. Not yet: the performance specification of a copy's bytes, and the published doc on reusable components.
+     Then the snapshot round-trip helper, `SnapshotRoundTrip.AssertLosesNothing`, which compares the taggregate and its
+     copy themselves, since comparing their snapshots alone misses two of the three ways to lose state
+     ([the-taggregate-store.md](the-taggregate-store.md#what-the-spike-built-the-snapshot-round-trip)).
    - **Built provisionally, as recommended, and brought back with what the spike showed** (Magnus: "Yes to everything
      you suggested"): after step 2, the publisher deferring every tevent to phase 0 (decision 4) and the lock's
      waiting with a timeout (decision 6); after step 3, the table through an explicit interface implementation, static

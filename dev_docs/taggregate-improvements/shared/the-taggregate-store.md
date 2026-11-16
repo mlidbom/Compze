@@ -328,7 +328,8 @@ public interface ISnapshotable<TSelf, TSnapshot> where TSelf : ISnapshotable<TSe
   guards them: a specification helper from Compze that takes a snapshot, restores from it, takes another and compares
   the two, for every taggregate class and every part. **It is a hard requirement under the private copy:** every get
   for update copies through the snapshot, so a property the snapshot misses is dropped at the next edit, and the commit
-  saves the loss. From taggregates-opus.
+  saves the loss. From taggregates-opus. **As built, it compares the taggregate and the copy themselves, not only their
+  snapshots:** see [what the spike built: the snapshot round trip](#what-the-spike-built-the-snapshot-round-trip).
 - **Loading at a start runs no tevents:** the 0.4 GB of garbage a start made in both teams' prototypes goes, and with it
   decision 11 of the earlier conclusions.
 
@@ -388,6 +389,10 @@ public interface IPreparedWrite
   notes, such as a rename with its word references, can be left half written today too, and git shows and reverts it.
 - **Not settled:** a transaction with a database in it too. The JSON store is a volatile participant, so the database
   can commit and the process die before the journal is written. JAStudio has no database.
+- **What writing under a temporary name costs, measured by taggregates-opus on Windows** (JAStudio's `CorpusNoteFiles`,
+  increment 2, which writes each file as `<id>.being-written` at prepare and renames it into place at commit): about
+  0.6 ms a file, against 0.15 ms for overwriting in place. Rewriting the whole corpus takes about 50 s instead of 12. An
+  edit writes one file, so JAStudio accepts it; the JSON store, written the same way, costs the same.
 
 ## The tevent store takes the same internals
 
@@ -466,6 +471,37 @@ built and specified; the calls it made:
     type's own `Equals`, and a type without one makes the reload throw.
 - **Not yet:** a second container in one transaction (a `todo:` at the code), and the overlay's kept keys (a
   `performance:` at the code).
+
+## What the spike built: the snapshot round trip
+
+Built after step 3's core, since JAStudio's every get for update copies through a snapshot. In `Compze.Teventive`,
+namespace `Compze.Teventive.Taggregates`:
+
+```csharp
+SnapshotRoundTrip.AssertLosesNothing(vocab, () => new VocabNote(services), VocabSnapshot.HoldTheSameState);
+```
+
+- **It makes the store's own copy,** through the class the store keeps for each taggregate class, which moved from the
+  store to `Compze.Teventive` for it (`SnapshotableTaggregateClass`, internal): what it checks is what a unit of work
+  gets.
+- **It compares the taggregate and the copy, not only their snapshots.** The design said to take a snapshot, restore,
+  take another and compare the two. That catches one of the three mistakes that lose state: a field `RestoreFrom` leaves
+  out. A field the snapshot type has no place for, and one `TakeSnapshot` leaves out, give two equal snapshots, both
+  without it. Comparing the instances catches all three.
+- **What is compared:** every field of the taggregate's own classes, and of every object reached from them, parts
+  included, field by field; collections item by item, in order for lists and arrays, in any order for sets and
+  dictionaries. Strings, numbers and .NET's other simple values by their own equality. An object both refer to, such
+  as the services the taggregates are built with, is the same state. Not compared: the fields of Compze.Teventive's
+  types, which publish and apply the tevents, and delegates. A reference back, such as a component's to its taggregate,
+  is followed once.
+- **Then the snapshots,** as a reload compares them, by the declared comparison or the snapshot type's `Equals`: a copy
+  whose snapshot doesn't equal the original's would make every reload report the class as changed.
+- **It throws naming each difference,** with the path from the taggregate: `Book.Chapters._chapters[0]: "first" in the
+  original, "second" in the copy`.
+- **Specified** with a book that has state in itself, in a component and in a shared tomponent in a slot of its class,
+  and a mistake for each: `Compze.Tests.Unit`, `CQRS/Taggregates/SnapshotRoundTrips`.
+- **Not handled yet:** a field that isn't state, such as a cache filled on first use, is reported as lost. If JAStudio's
+  notes hold any, the check needs a way to leave fields out.
 
 ## What the prototype is
 
