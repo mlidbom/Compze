@@ -14,6 +14,7 @@ interface IOrderTevent : ITaggregateTevent
 {
 #pragma warning disable CA1715 // Nested tevent interface follows semantic events naming convention (compze.net/paradigms/semantic-events/event-naming.html)
    interface Created : IOrderTevent, ITaggregateCreatedTevent;
+   interface Snapshot : IOrderTevent, ITaggregateSnapshotTevent;
 #pragma warning restore CA1715
 }
 
@@ -25,6 +26,7 @@ class OrderTevent : TaggregateTevent, IOrderTevent
    OrderTevent(TaggregateId taggregateId) : base(taggregateId) {}
 
    internal class Created(TaggregateId taggregateId) : OrderTevent(taggregateId), IOrderTevent.Created;
+   internal class Snapshot(TaggregateId taggregateId) : OrderTevent(taggregateId), IOrderTevent.Snapshot;
 }
 
 class OrderTevent<T>(T tevent) : TaggregateTevent<T>(tevent), IOrderTevent<T> where T : IOrderTevent;
@@ -54,7 +56,9 @@ class OrderTaggregate : Taggregate<OrderTaggregate, IOrderTevent, OrderTevent, I
 
    OrderTaggregate()
    {
-      RegisterTeventAppliers().For<IOrderTevent.Created>(_ => {}); //The base class applies the taggregate id and version; the order has no state of its own from creation.
+      RegisterTeventAppliers()
+        .For<IOrderTevent.Created>(_ => {}) //The base class applies the taggregate id and version; the order has no state of its own from creation.
+        .For<IOrderTevent.Snapshot>(_ => {});
       ShippingAddress = new PostalAddress(new SharedTomponentSlot<IOrderTevent, OrderTevent, IPostalAddressTevent, IShippingAddressTevent<IPostalAddressTevent>>(this, typeof(ShippingAddressTevent<IPostalAddressTevent>)));
       BillingAddress = new PostalAddress(new SharedTomponentSlot<IOrderTevent, OrderTevent, IPostalAddressTevent, IBillingAddressTevent<IPostalAddressTevent>>(this, typeof(BillingAddressTevent<IPostalAddressTevent>)));
    }
@@ -63,6 +67,13 @@ class OrderTaggregate : Taggregate<OrderTaggregate, IOrderTevent, OrderTevent, I
    {
       var order = new OrderTaggregate();
       order.Publish(new OrderTevent.Created(new TaggregateId()));
+      return order;
+   }
+
+   public static OrderTaggregate LoadFromSnapshot(IEnumerable<ITaggregateTevent> snapshot)
+   {
+      var order = new OrderTaggregate();
+      ((ITaggregate)order).LoadFromSnapshot(snapshot, 1);
       return order;
    }
 

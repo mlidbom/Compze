@@ -14,6 +14,7 @@ interface IProjectTevent : ITaggregateTevent
 {
 #pragma warning disable CA1715 // Nested tevent interface follows semantic events naming convention (compze.net/paradigms/semantic-events/event-naming.html)
    interface Created : IProjectTevent, ITaggregateCreatedTevent;
+   interface Snapshot : IProjectTevent, ITaggregateSnapshotTevent;
 #pragma warning restore CA1715
 }
 
@@ -25,6 +26,7 @@ class ProjectTevent : TaggregateTevent, IProjectTevent
    ProjectTevent(TaggregateId taggregateId) : base(taggregateId) {}
 
    internal class Created(TaggregateId taggregateId) : ProjectTevent(taggregateId), IProjectTevent.Created;
+   internal class Snapshot(TaggregateId taggregateId) : ProjectTevent(taggregateId), IProjectTevent.Snapshot;
 }
 
 class ProjectTevent<T>(T tevent) : TaggregateTevent<T>(tevent), IProjectTevent<T> where T : IProjectTevent;
@@ -46,7 +48,9 @@ class ProjectTaggregate : Taggregate<ProjectTaggregate, IProjectTevent, ProjectT
 
    ProjectTaggregate()
    {
-      RegisterTeventAppliers().For<IProjectTevent.Created>(_ => {}); //The base class applies the taggregate id and version; the project has no state of its own from creation.
+      RegisterTeventAppliers()
+        .For<IProjectTevent.Created>(_ => {}) //The base class applies the taggregate id and version; the project has no state of its own from creation.
+        .For<IProjectTevent.Snapshot>(_ => {});
       Checklist = new SharedTentityCollection<ChecklistItem, ChecklistItemId, IChecklistItemTevent, IChecklistItemTevent.Added>(
          new SharedTomponentSlot<IProjectTevent, ProjectTevent, IChecklistItemTevent, IChecklistTevent<IChecklistItemTevent>>(this, typeof(ChecklistTevent<IChecklistItemTevent>)));
    }
@@ -57,6 +61,13 @@ class ProjectTaggregate : Taggregate<ProjectTaggregate, IProjectTevent, ProjectT
    {
       var project = new ProjectTaggregate();
       project.Publish(new ProjectTevent.Created(new TaggregateId()));
+      return project;
+   }
+
+   public static ProjectTaggregate LoadFromSnapshot(IEnumerable<ITaggregateTevent> snapshot)
+   {
+      var project = new ProjectTaggregate();
+      ((ITaggregate)project).LoadFromSnapshot(snapshot, 1);
       return project;
    }
 
