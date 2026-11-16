@@ -149,9 +149,11 @@ The numbers: [what-was-measured.md](what-was-measured.md). The bugs and the smal
 
 ## Where the work is
 
-Nothing is merged, and nothing in Compze's `main` is changed. The prototypes are experiments, each on a branch and
-worktree of its own under `C:\Dev\Compze.worktrees\`. Their API isn't the designed one where the design changed after
-they were built.
+These documents and a few todo comments are merged to Compze's `main`; no prototype is. The prototypes are
+experiments, each on a branch of its own, all pushed to origin. Their worktrees were removed on 2026-11-16, except
+`taggregate-store-opus`'s, in `C:\Dev\Compze.worktrees\taggregate-store-opus`. The worktree folders that the
+documents name are where the branches were checked out; `git worktree add <folder> <branch>` checks one out again.
+Their API isn't the designed one where the design changed after they were built.
 
 | Branch | Built by | What it holds |
 |---|---|---|
@@ -162,5 +164,5 @@ they were built.
 | `taggregates-opus/combined` | taggregates-opus | The two above merged, and measured. Full suite passes (604c00df4). |
 | `taggregate-experiments-fable` | jastudio-rep-fable | A standalone prototype of routing per class with static slots, and the claims run against 0.6.0-alpha. |
 | `taggregate-experiments-fable-static-slots` | jastudio-rep-fable | Static slots in the real base classes, built on the combined branch, and measured (fb75d60a0). `Compze.Tests.Unit` passes, 496 of 496; the other test assemblies weren't run on it. |
-| `review-taggregate-improvements` | the Opus reviewer | Two specifications showing the thread assertion and the hook's base call against the tevent store (861474504). In `C:\Dev\Compze\.claude\worktrees\agent-a5042660ba8c7b64c`. |
-| `review-taggregate-conclusions` | the Fable reviewer | Seven checks against a Release build of the static-slots prototype (a440911a7). In `C:\Dev\Compze\.claude\worktrees\agent-ad538039c7b0a5f4e`. |
+| `review-taggregate-improvements` | the Opus reviewer | Two specifications showing the thread assertion and the hook's base call against the tevent store (861474504). |
+| `review-taggregate-conclusions` | the Fable reviewer | Seven checks against a Release build of the static-slots prototype (a440911a7). |

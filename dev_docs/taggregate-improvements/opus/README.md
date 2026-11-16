@@ -43,7 +43,8 @@ Then, later: [the smaller and later changes](4-later.md).
 plain objects: about 75 MB for JAStudio's 80,000 notes, against about 59 MB as plain objects and 0.6 to 0.9 GB today.
 See [all three combined](5-prototype-of-per-class-routing.md#all-three-changes-combined).
 
-The experiments, none of them for merging, each on a branch of its own in `C:\Dev\Compze.worktrees\`:
+The experiments, none of them for merging, each on a branch of its own, pushed to origin. Their worktrees, in
+`C:\Dev\Compze.worktrees\`, were removed on 2026-11-16:
 
 - `taggregate-experiments-opus`: per-class routing (jastudio-rep-opus).
 - `taggregate-experiments-opus-convention`: routing by convention, built on it (jastudio-rep-opus).
