@@ -90,18 +90,22 @@ public sealed class TeventRouting<TInstance> : TeventRouting where TInstance : c
 
       ///<summary>Routes every tevent of the component <paramref name="component"/> returns to that component's own appliers, or tevent handlers,<br/>
       /// as this routing routes. The component's tevent type is inferred from what <paramref name="component"/> returns.</summary>
-      public Declaration Component<TComponentTevent>(Func<TInstance, ITeventRouted<TComponentTevent>> component) where TComponentTevent : ITevent
+      public Declaration Component<TComponentTevent>(Func<TInstance, ITeventRoutedMember<TComponentTevent>> component) where TComponentTevent : ITevent => Member(component);
+
+      ///<summary>Routes every tevent of the entities in the collection <paramref name="entities"/> returns to that collection: a created tevent adds an<br/>
+      /// entity, and every tevent reaches the entity whose id it carries.</summary>
+      public Declaration Entities<TEntityTevent>(Func<TInstance, ITeventRoutedMember<TEntityTevent>> entities) where TEntityTevent : ITevent => Member(entities);
+
+      ///<summary>Routes every tevent wrapped in the adopting wrapper tevent of the shared-tomponent slot <paramref name="slot"/> returns to that slot's tomponent.</summary>
+      public Declaration SharedTomponent<TAdoptingWrapperTevent>(Func<TInstance, ITeventRoutedMember<TAdoptingWrapperTevent>> slot) where TAdoptingWrapperTevent : ITevent => Member(slot);
+
+      Declaration Member<TMemberTevent>(Func<TInstance, ITeventRoutedMember<TMemberTevent>> member) where TMemberTevent : ITevent
       {
-         AssertHoldsNoState(component);
-         var routesTeventHandlers = _routesTeventHandlers;
-         TeventRoutes.Add(new TeventRoute(typeof(IPublisherTevent<TComponentTevent>), (instance, wrapped) =>
-         {
-            var routed = component((TInstance)instance);
-#pragma warning disable CS0618 // This is just the type of infrastructure code the members are for
-            var routing = routesTeventHandlers ? routed.TeventHandlersRoutingInternal : routed.TeventAppliersRoutingInternal;
+         AssertHoldsNoState(member);
+         var toTeventHandlers = _routesTeventHandlers;
+#pragma warning disable CS0618 // This is just the type of infrastructure code the member is for
+         TeventRoutes.Add(new TeventRoute(typeof(IPublisherTevent<TMemberTevent>), (instance, wrapped) => member((TInstance)instance).DispatchInternal(wrapped, toTeventHandlers)));
 #pragma warning restore CS0618
-            routing?.Dispatch(routed, wrapped);
-         }));
          return this;
       }
 

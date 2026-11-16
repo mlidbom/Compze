@@ -1,3 +1,4 @@
+using Compze.Tessaging.TessageTypes;
 using Compze.Contracts;
 using Compze.Teventive._private.Implementation;
 using Compze.Teventive.Taggregates.Tevents;
@@ -10,7 +11,7 @@ public abstract class TeventiveComponent<TParent,
                                         TComponent,
                                         TComponentTevent,
                                         TComponentTeventImplementation>
-    : ITeventiveInternals<TComponentTevent, TComponentTeventImplementation>, ITeventRouted<TComponentTevent>
+    : ITeventiveInternals<TComponentTevent, TComponentTeventImplementation>, ITeventRoutedMember<TComponentTevent>
     where TParent : ITeventiveInternals<TParentTevent, TParentTeventImplementation>
     where TParentTevent : class, ITaggregateTevent
     where TParentTeventImplementation : TaggregateTevent, TParentTevent
@@ -29,6 +30,7 @@ public abstract class TeventiveComponent<TParent,
     void ITeventiveInternals<TComponentTevent, TComponentTeventImplementation>.ApplyTeventInternal(TComponentTevent tevent) => ApplyTevent(tevent);
     void ITeventiveInternals<TComponentTevent, TComponentTeventImplementation>.PublishInternal(TComponentTeventImplementation tevent) => Publish(tevent);
     ITeventSubscriber<TComponentTevent> ITeventiveInternals<TComponentTevent, TComponentTeventImplementation>.RegisterTeventAppliersInternal() => RegisterTeventAppliers();
+    bool ITeventiveInternals<TComponentTevent, TComponentTeventImplementation>.DeclaresTeventAppliersInternal => TeventAppliers is not null;
 #pragma warning restore CA1033 //These method should NOT clutter the public interface of this class they are unsafe.
 
    void ApplyTevent(TComponentTevent tevent) => _teventAppliersDispatcher._assert().NotNull().Dispatch(tevent);
@@ -42,8 +44,8 @@ public abstract class TeventiveComponent<TParent,
     protected virtual TeventRouting? TeventHandlers => null;
 
 #pragma warning disable CA1033 //These members should NOT clutter the public interface of this class.
-    TeventRouting? ITeventRouted<TComponentTevent>.TeventAppliersRoutingInternal => TeventAppliers;
-    TeventRouting? ITeventRouted<TComponentTevent>.TeventHandlersRoutingInternal => TeventHandlers;
+    void ITeventRoutedMember<TComponentTevent>.DispatchInternal(IPublisherTevent<ITevent> wrapped, bool toTeventHandlers) =>
+       (toTeventHandlers ? TeventHandlers : TeventAppliers._assert().NotNull())?.Dispatch(this, wrapped);
 #pragma warning restore CA1033
 
     protected TeventiveComponent(TParent parent, bool registerTeventAppliers = true, TeventDispatcherConfig? teventAppliersDispatcherConfig = null)
