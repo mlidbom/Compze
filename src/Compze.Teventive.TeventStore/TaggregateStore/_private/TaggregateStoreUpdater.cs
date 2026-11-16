@@ -25,12 +25,30 @@ sealed class TaggregateStoreUpdater : VolatileTransactionParticipant, ITaggregat
    readonly Queue<ITaggregateTevent<ITaggregateTevent>> _teventsToDispatch = new();
    readonly List<SemaphoreSlim> _heldUpdateLocks = [];
    readonly List<IDisposable> _teventStreamSubscriptions = [];
+   IReadOnlyList<IPreparedIndexChange> _preparedIndexChanges = [];
 
    internal TaggregateStoreUpdater(InMemoryTaggregateStore store, IUnitOfWorkTeventPublisher teventPublisher) : base(EnlistmentOptions.EnlistDuringPrepareRequired)
    {
       _store = store;
       _teventPublisher = teventPublisher;
+      //Enlisted at once, so that references and indexes find this session from the ambient transaction alone.
+      if(Transaction.Current != null) EnsureEnlistedInAnyAmbientTransaction();
    }
+
+   internal bool HoldsAnyTaggregate => _trackedTaggregates.Count > 0;
+
+   internal bool Holds(TaggregateId id) => _trackedTaggregates.ContainsKey(id);
+
+   ///<summary>Whether this unit of work holds the taggregate <paramref name="id"/>, and if so its copy, or null when it deleted it.</summary>
+   internal bool TryGetHeld(TaggregateId id, out ISnapshotTaggregate? heldInstance)
+   {
+      var holds = _trackedTaggregates.TryGetValue(id, out var tracked);
+      heldInstance = holds && !tracked!.IsDeleted ? tracked.Taggregate : null;
+      return holds;
+   }
+
+   internal IEnumerable<TTaggregate> HeldInstancesOf<TTaggregate>() where TTaggregate : class, ISnapshotTaggregate =>
+      _trackedTaggregates.Values.Where(it => !it.IsDeleted).Select(it => it.Taggregate).OfType<TTaggregate>();
 
    public TTaggregate Get<TTaggregate>(TaggregateId id) where TTaggregate : class, ISnapshotTaggregate =>
       TryGet(id, out TTaggregate? taggregate) ? taggregate : throw new TaggregateNotFoundException(id);
@@ -92,9 +110,17 @@ sealed class TaggregateStoreUpdater : VolatileTransactionParticipant, ITaggregat
       EnsureEnlistedInAnyAmbientTransaction();
    }
 
-   protected override void OnEnlist() =>
+   protected override void OnEnlist()
+   {
+      var transaction = Transaction.Current!;
+      _store.RegisterSession(transaction, this);
       //Completion comes after the commit or rollback notification, so the next unit of work to take a lock finds the committed instance.
-      Transaction.Current!.TransactionCompleted += (_, _) => ReleaseUpdateLocks();
+      transaction.TransactionCompleted += (_, _) =>
+      {
+         _store.UnregisterSession(transaction);
+         ReleaseUpdateLocks();
+      };
+   }
 
    protected override void OnPrepare()
    {
@@ -105,6 +131,13 @@ sealed class TaggregateStoreUpdater : VolatileTransactionParticipant, ITaggregat
          _teventPublisher.PublishAsync(tevent).GetAwaiter().GetResult();
       }
       AssertNoPublishHasFailed();
+      PrepareTheIndexChanges();
+   }
+
+   void PrepareTheIndexChanges()
+   {
+      var changedTaggregates = _trackedTaggregates.Values.Select(it => (it.Taggregate.Id, NewState: it.IsDeleted ? null : it.Taggregate)).ToList();
+      _preparedIndexChanges = [.._store.Indexes.Select(index => index.Prepare(changedTaggregates))];
    }
 
    void AssertNoPublishHasFailed() =>
@@ -124,6 +157,8 @@ sealed class TaggregateStoreUpdater : VolatileTransactionParticipant, ITaggregat
             _store.MakeCommitted(tracked.Taggregate);
          }
       }
+
+      _preparedIndexChanges.ForEach(it => it.Apply());
    }
 
    protected override void OnRollback() {} //The copies, and the new taggregates, are simply never committed.

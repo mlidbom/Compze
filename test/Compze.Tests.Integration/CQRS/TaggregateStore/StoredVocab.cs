@@ -18,6 +18,7 @@ class StoredVocab : Taggregate<StoredVocab, IStoredVocabTevent, StoredVocabTeven
    {
       RegisterTeventAppliers()
         .For<IStoredVocabCreated>(it => Question = it.Question)
+        .For<IStoredVocabQuestionChanged>(it => Question = it.Question)
         .For<IStoredVocabMeaningChanged>(it =>
          {
             if(it.Meaning == MeaningThatFailsToApply) throw new InvalidOperationException("This meaning fails to apply.");
@@ -33,6 +34,8 @@ class StoredVocab : Taggregate<StoredVocab, IStoredVocabTevent, StoredVocabTeven
    }
 
    public void ChangeMeaning(string meaning) => Publish(new StoredVocabMeaningChanged(meaning));
+
+   public void ChangeQuestion(string question) => Publish(new StoredVocabQuestionChanged(question));
 
    public ITaggregateSnapshot TakeSnapshot() => new StoredVocabSnapshot(Question, Meaning);
 
@@ -70,6 +73,16 @@ interface IStoredVocabCreated : IStoredVocabTevent, ITaggregateCreatedTevent
 }
 
 class StoredVocabCreated(TaggregateId id, string question) : StoredVocabTevent(id), IStoredVocabCreated
+{
+   public string Question { get; private set; } = question;
+}
+
+interface IStoredVocabQuestionChanged : IStoredVocabTevent
+{
+   string Question { get; }
+}
+
+class StoredVocabQuestionChanged(string question) : StoredVocabTevent, IStoredVocabQuestionChanged
 {
    public string Question { get; private set; } = question;
 }

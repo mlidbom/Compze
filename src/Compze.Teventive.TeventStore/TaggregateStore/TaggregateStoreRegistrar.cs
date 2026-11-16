@@ -9,11 +9,13 @@ namespace Compze.Teventive.TaggregateStore;
 public static class TaggregateStoreRegistrar
 {
    ///<summary>Composes a taggregate store that keeps its committed taggregates in memory only: an <see cref="ITaggregateStoreReader"/><br/>
-   /// for the container, and an <see cref="ITaggregateStoreUpdater"/> for each unit of work.</summary>
-   public static IComponentRegistrar InMemoryTaggregateStore(this IComponentRegistrar @this)
+   /// for the container, an <see cref="ITaggregateStoreUpdater"/> for each unit of work, and what <paramref name="build"/> declares.</summary>
+   public static IComponentRegistrar InMemoryTaggregateStore(this IComponentRegistrar @this, Action<TaggregateStoreBuilder>? build = null)
    {
-      @this.Register(Singleton.For<ITaggregateStoreReader, InMemoryTaggregateStore>().CreatedBy(() => new InMemoryTaggregateStore()));
-      @this.Register(Scoped.For<ITaggregateStoreUpdater>().CreatedBy((InMemoryTaggregateStore store, IUnitOfWorkTeventPublisher teventPublisher) => new TaggregateStoreUpdater(store, teventPublisher)));
+      var store = new InMemoryTaggregateStore();
+      build?.Invoke(new TaggregateStoreBuilder(store, @this));
+      @this.Register(Singleton.For<ITaggregateStoreReader, InMemoryTaggregateStore>().Instance(store));
+      @this.Register(Scoped.For<ITaggregateStoreUpdater>().CreatedBy((InMemoryTaggregateStore theStore, IUnitOfWorkTeventPublisher teventPublisher) => new TaggregateStoreUpdater(theStore, teventPublisher)));
       return @this;
    }
 }

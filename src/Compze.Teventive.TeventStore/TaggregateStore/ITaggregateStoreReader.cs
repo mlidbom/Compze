@@ -12,4 +12,7 @@ public interface ITaggregateStoreReader
 
    ///<summary>As <see cref="Get{TTaggregate}"/>, or false if the store holds no taggregate <paramref name="id"/>.</summary>
    bool TryGet<TTaggregate>(TaggregateId id, [NotNullWhen(true)] out TTaggregate? taggregate) where TTaggregate : class, ISnapshotTaggregate;
+
+   ///<summary>The reference that stands for the taggregate <paramref name="id"/>: what to hold across units of work.</summary>
+   ITaggregateReference<TTaggregate> Reference<TTaggregate>(TaggregateId id) where TTaggregate : class, ISnapshotTaggregate;
 }
