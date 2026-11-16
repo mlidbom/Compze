@@ -128,7 +128,8 @@ The numbers: [what-was-measured.md](what-was-measured.md). The bugs and the smal
     - **Gone:** `LoadFromSnapshot` and its snapshot marker, the end-of-cascade hook, and the one-thread assertion.
 11. **The query models:** move them to tables in step 5, or keep their per-instance registration.
 12. **The source generator for tevent implementation classes:** an effort of its own, after JAStudio has written one
-    note type's tevents by hand.
+    note type's tevents by hand. What it would take, and how it must treat type ids and stored tevents:
+    [generating-tevent-classes.md](generating-tevent-classes.md).
 13. **The names:** merged into decision 10.
 
 **What the store makes moot from the earlier list:**
