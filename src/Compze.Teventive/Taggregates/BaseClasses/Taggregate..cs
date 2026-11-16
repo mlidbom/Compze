@@ -63,7 +63,17 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
    bool _isReadOnly;
    bool _aPublishHasFailed;
 
-   readonly List<TWrapperTeventInterface> _teventsPublishedDuringCurrentPublishCallIncludingReentrantCallsFromTeventHandlers = [];
+   ///<summary>The tevents of publish cascades that have ended, yet to be handed to the observers of <see cref="ITaggregate.TeventStream"/>,<br/>
+   /// in the order published.</summary>
+   readonly Queue<TWrapperTeventInterface> _teventsToHandOut = new();
+
+   ///<summary>Whether tevents are being handed to the observers of <see cref="ITaggregate.TeventStream"/>, so that a publish an observer<br/>
+   /// makes meanwhile, on this taggregate, has its tevents handed out after those before them, not from inside the observer.</summary>
+   bool _handingOutTevents;
+
+   ///<summary>How many tevents the handlers that one hand-out reaches may publish on this taggregate before it gives up: two handlers<br/>
+   /// that cause each other's tevents would otherwise hand out tevents without end.</summary>
+   const int MaximumTeventsPublishedWhileHandingOut = 100;
 
    ///<summary>Throws unless this instance may be changed. A committed instance, which a taggregate store serves to readers, is read<br/>
    /// only: it is changed by getting it for update, inside a unit of work.</summary>
@@ -123,7 +133,7 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
 #pragma warning restore CS0618 // Type or member is obsolete
          ApplyTevent(tevent, wrapped);
          _unCommittedTevents.Add(wrapped);
-         _teventsPublishedDuringCurrentPublishCallIncludingReentrantCallsFromTeventHandlers.Add(wrapped);
+         _teventsToHandOut.Enqueue(wrapped);
          TeventHandlers?.Dispatch(this, wrapped);
          _teventHandlersDispatcher?.Dispatch(wrapped);
       }
@@ -131,11 +141,28 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
       if(_reentrancyLevel == 0)
       {
          AssertInvariantsAreMetInternal(); //It is allowed to enter a temporarily invalid state that will be corrected by new tevents published by tevent handlers. So we only check invariants once this tevent has been fully published including tevents published by handlers of the original tevent.
-         foreach(var it in _teventsPublishedDuringCurrentPublishCallIncludingReentrantCallsFromTeventHandlers) _teventStream.OnNext(it);
-         _teventsPublishedDuringCurrentPublishCallIncludingReentrantCallsFromTeventHandlers.Clear();
+         HandOutTheTeventsUnlessHandingOutAlready();
       }
 
       return tevent;
+   }
+
+   ///<summary>Hands the tevents of the ended publish cascades to the observers of <see cref="ITaggregate.TeventStream"/>, one at a time, in<br/>
+   /// the order published, until none is left. Called by a publish that an observer makes on this taggregate, it returns at once: the<br/>
+   /// hand-out under way hands that publish's tevents out after those before them.</summary>
+   ///<remarks>When an observer throws, the tevents not yet handed out stay queued, and go out before the next publish's.</remarks>
+   void HandOutTheTeventsUnlessHandingOutAlready()
+   {
+      if(_handingOutTevents) return;
+
+      var maximumToHandOut = _teventsToHandOut.Count + MaximumTeventsPublishedWhileHandingOut;
+      using(ScopedChange.Enter(() => _handingOutTevents = true, () => _handingOutTevents = false))
+         for(var handedOut = 1; _teventsToHandOut.TryDequeue(out var next); handedOut++)
+         {
+            State.Assert(handedOut <= maximumToHandOut,
+                         () => $"While {GetType().Name} {Id} handed out its tevents, the handlers they reached published {MaximumTeventsPublishedWhileHandingOut} more on it, so handlers seem to cause each other's tevents without end. The last: {next.Tevent.GetType().FullName}.");
+            _teventStream.OnNext(next);
+         }
    }
 
    protected ITeventSubscriber<TTaggregateTevent> RegisterTeventAppliers()
@@ -193,8 +220,11 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
 
    void ITaggregate.Commit(Action<IReadOnlyList<ITaggregateTevent<ITaggregateTevent>>> commitTevents)
    {
-      commitTevents(_unCommittedTevents);
+      //Taken out before they're handed over, so that a tevent published by whatever they're handed to stays uncommitted, for a
+      //later commit, instead of being forgotten with them.
+      List<ITaggregateTevent<ITaggregateTevent>> tevents = [.._unCommittedTevents];
       _unCommittedTevents.Clear();
+      commitTevents(tevents);
    }
 
    void ITaggregate.LoadFromHistory(IEnumerable<ITaggregateTevent<ITaggregateTevent>> history)

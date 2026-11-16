@@ -6,6 +6,7 @@ using Compze.Internals.SystemCE.ReactiveCE;
 using Compze.Teventive._internal;
 using Compze.Teventive.StateStore.Storage;
 using Compze.Teventive.TaggregateStores._internal;
+using Compze.Teventive.Taggregates.Tevents;
 using static Compze.Contracts.Contract;
 
 namespace Compze.Teventive.StateStore._private;
@@ -88,9 +89,19 @@ sealed class StateStoreSession : ITaggregateStoreSession
       HoldUpdateLock(taggregate.Id);
       State.Assert(_store.CommittedInstanceOf(taggregate.Id) == null, () => $"The state store already holds a taggregate {taggregate.Id}.");
 
-      //Saving dispatches nothing: the tevents the new taggregate published before it was saved wait, with all others, for the commit.
-      taggregate.Commit(tevents => tevents.ForEach(_unitOfWork.Collect));
-      Hold(new HeldTaggregate(taggregate, isNew: true));
+      //Held before the tevents it published before it was saved are dispatched, so that a handler that gets it meanwhile gets this
+      //instance. A tevent a handler publishes on it meanwhile stays uncommitted, and is dispatched after those, in the order published.
+      var held = new HeldTaggregate(taggregate, isNew: true);
+      Hold(held, followingItsTeventStream: false);
+      while(TakeTheUncommittedTeventsOf(taggregate) is { Count: > 0 } tevents) tevents.ForEach(_unitOfWork.Dispatch);
+      FollowTheTeventStreamOf(held);
+   }
+
+   static IReadOnlyList<ITaggregateTevent<ITaggregateTevent>> TakeTheUncommittedTeventsOf(ITaggregate taggregate)
+   {
+      IReadOnlyList<ITaggregateTevent<ITaggregateTevent>> taken = [];
+      taggregate.Commit(tevents => taken = tevents);
+      return taken;
    }
 
    public void Delete<TTaggregate>(TaggregateId id) where TTaggregate : class, ITaggregate
@@ -99,17 +110,20 @@ sealed class StateStoreSession : ITaggregateStoreSession
       _heldTaggregates[id].IsDeleted = true;
    }
 
-   void Hold(HeldTaggregate held)
+   void Hold(HeldTaggregate held, bool followingItsTeventStream = true)
    {
       _heldTaggregates.Add(held.Taggregate.Id, held);
       _classesHeld.Add(held.Taggregate.GetType());
-      //Only collected here, never dispatched: nothing runs while a domain method of the taggregate is still on the stack.
+      if(followingItsTeventStream) FollowTheTeventStreamOf(held);
+   }
+
+   ///<summary>Dispatches each tevent <paramref name="held"/> publishes from now on, as its taggregate hands it out.</summary>
+   void FollowTheTeventStreamOf(HeldTaggregate held) =>
       _teventStreamSubscriptions.Add(held.Taggregate.TeventStream.Subscribe(tevent =>
       {
          held.HasPublished = true;
-         _unitOfWork.Collect(tevent);
+         _unitOfWork.Dispatch(tevent);
       }));
-   }
 
    void HoldUpdateLock(TaggregateId id) => _heldUpdateLocks.Add(_store.UpdateLocks.Take(id));
 
@@ -147,7 +161,7 @@ sealed class StateStoreSession : ITaggregateStoreSession
             _store.Remove(held.Taggregate.Id);
          } else
          {
-            held.Taggregate.Commit(_ => {}); //Its tevents were collected from its tevent stream: this only forgets them.
+            held.Taggregate.Commit(_ => {}); //Its tevents were dispatched from its tevent stream: this only forgets them.
             _store.MakeCommitted(held.Taggregate);
          }
       }

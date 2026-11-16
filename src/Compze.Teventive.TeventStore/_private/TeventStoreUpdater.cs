@@ -99,31 +99,41 @@ class TeventStoreUpdater : ITeventStoreReader, ITeventStoreUpdater
       _taggregateTypeValidator.AssertIsValid<TTaggregate>();
       _usageGuard.EnsureAccessValid();
 
-      taggregate.Commit(committedTevents =>
+      var wrappedTevents = TakeTheUncommittedTeventsOf(taggregate);
+      if(taggregate.Version > 0 && wrappedTevents.None() || wrappedTevents.Any() && wrappedTevents.Min(it => it.Tevent.TaggregateVersion) > 1)
       {
-         var wrappedTevents = committedTevents.Select(WithIdentity).ToList();
-         if(taggregate.Version > 0 && wrappedTevents.None() || wrappedTevents.Any() && wrappedTevents.Min(it => it.Tevent.TaggregateVersion) > 1)
-         {
-            throw new AttemptToSaveAlreadyPersistedTaggregateException(taggregate);
-         }
+         throw new AttemptToSaveAlreadyPersistedTaggregateException(taggregate);
+      }
 
-         if(taggregate.Version == 0 && wrappedTevents.None())
-         {
-            throw new AttemptToSaveEmptyTaggregateException(taggregate);
-         }
+      if(taggregate.Version == 0 && wrappedTevents.None())
+      {
+         throw new AttemptToSaveEmptyTaggregateException(taggregate);
+      }
 
-         _store.SaveSingleTaggregateTevents(wrappedTevents);
-
-         //The Teventive taggregate model raises tevents synchronously - from constructors and domain methods - and this session
-         //forwards them where they are raised, inside the caller's unit of work. That synchronous context meets the exactly-once
-         //publisher's async-only contract here, in this one deliberate bridge; the alternative - an async taggregate domain
-         //model - would be a redesign of Teventive itself, not a call-site choice.
-         wrappedTevents.ForEach(wrappedTevent => _teventPublisher.PublishAsync(wrappedTevent).GetAwaiter().GetResult());
-      });
-
+      //Tracked before its tevents are published, so that a handler that gets it meanwhile gets this instance. A tevent a handler
+      //publishes on it meanwhile stays uncommitted, and is saved and published after those, in the order published.
       _idMap.Add(taggregate.Id, taggregate);
+      for(; wrappedTevents.Any(); wrappedTevents = TakeTheUncommittedTeventsOf(taggregate)) SaveAndPublish(wrappedTevents);
 
       _disposableResources.Add(taggregate.TeventStream.Subscribe(OnTaggregateTevent));
+   }
+
+   static List<ITaggregateTevent<ITaggregateTeventWithIdentity>> TakeTheUncommittedTeventsOf(ITaggregate taggregate)
+   {
+      List<ITaggregateTevent<ITaggregateTeventWithIdentity>> taken = [];
+      taggregate.Commit(committedTevents => taken = [.. committedTevents.Select(WithIdentity)]);
+      return taken;
+   }
+
+   void SaveAndPublish(IReadOnlyList<ITaggregateTevent<ITaggregateTeventWithIdentity>> wrappedTevents)
+   {
+      _store.SaveSingleTaggregateTevents(wrappedTevents);
+
+      //The Teventive taggregate model raises tevents synchronously - from constructors and domain methods - and this session
+      //forwards them where they are raised, inside the caller's unit of work. That synchronous context meets the exactly-once
+      //publisher's async-only contract here, in this one deliberate bridge; the alternative - an async taggregate domain
+      //model - would be a redesign of Teventive itself, not a call-site choice.
+      foreach(var wrappedTevent in wrappedTevents) _teventPublisher.PublishAsync(wrappedTevent).GetAwaiter().GetResult();
    }
 
    void OnTaggregateTevent(ITaggregateTevent<ITaggregateTevent> publishedTevent)
@@ -135,9 +145,7 @@ class TeventStoreUpdater : ITeventStoreReader, ITeventStoreUpdater
          throw new Exception($"Got tevent from taggregate that is not tracked! Id: {wrappedTevent.Tevent.TaggregateId}");
       }
 
-      _store.SaveSingleTaggregateTevents([wrappedTevent]);
-      //The same deliberate sync-context bridge as in Save: the taggregate's tevent stream raises synchronously mid-domain-call.
-      _teventPublisher.PublishAsync(wrappedTevent).GetAwaiter().GetResult();
+      SaveAndPublish([wrappedTevent]);
    }
 
    public void Delete(TaggregateId taggregateId)

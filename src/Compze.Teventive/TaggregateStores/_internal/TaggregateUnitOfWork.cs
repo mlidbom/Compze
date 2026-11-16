@@ -6,30 +6,20 @@ using Compze.Tessaging.TessageBus;
 using Compze.Tessaging.TessageTypes;
 using Compze.Teventive.Taggregates.Tevents;
 using Compze.Contracts;
-using Compze.Teventive.TaggregateStores._private;
 
 namespace Compze.Teventive.TaggregateStores._internal;
 
 ///<summary>What the taggregate stores do together in one unit of work: there is one for each transaction that gets a taggregate<br/>
-/// for update. It holds each store's <see cref="ITaggregateStoreSession"/>, and collects the tevents their taggregates publish, in<br/>
-/// the order published.<br/>
-/// When the transaction prepares, before any participant has voted, it dispatches them through<br/>
-/// <see cref="IUnitOfWorkTeventPublisher"/>, so participation handlers run inside the transaction; what they publish in turn is<br/>
-/// dispatched in the same pass. Then each session prepares its write, and when the transaction commits, each makes it.</summary>
-///<remarks>The tevents are dispatched at the commit, not as they are published, so that nothing runs while a domain method of a<br/>
-/// taggregate is on the stack: a participation handler that ran between two publishes of one domain method would see the<br/>
-/// method half done. And a unit of work whose body throws dispatches nothing, so there is nothing to undo.<br/>
-/// The queue belongs to the unit of work, not to a store's session, so that a handler that changes a taggregate of one store while<br/>
-/// another store's tevents are dispatched has its tevents dispatched too, before any store writes.</remarks>
+/// for update. It holds each store's <see cref="ITaggregateStoreSession"/>, and dispatches the tevents their taggregates publish<br/>
+/// through <see cref="IUnitOfWorkTeventPublisher"/> as each publish cascade ends, so participation handlers run synchronously,<br/>
+/// inside the transaction, and what they publish is dispatched as it's published. When the transaction prepares, each session<br/>
+/// prepares its write, and when the transaction commits, each makes it.</summary>
+///<remarks>A tevent reaches the handlers once its taggregate is at rest: its own cascade has ended and its invariants hold. A tevent<br/>
+/// a handler publishes on the same taggregate goes out after those before it, in the order published.</remarks>
 sealed class TaggregateUnitOfWork : VolatileTransactionParticipant
 {
-   ///<summary>How many rounds of tevents caused by tevents one commit dispatches before it gives up: two handlers that cause<br/>
-   /// each other's tevents would otherwise hang the commit.</summary>
-   const int MaximumDispatchRounds = 100;
-
    readonly IUnitOfWorkResolver _unitOfWork;
    readonly Dictionary<ITaggregateStore, ITaggregateStoreSession> _sessions = new();
-   readonly Queue<ITaggregateTevent<ITaggregateTevent>> _teventsToDispatch = new();
    bool _hasPrepared;
 
    ///<summary>Begins the taggregate unit of work of the ambient transaction, which <paramref name="unitOfWork"/> began.<br/>
@@ -61,12 +51,20 @@ sealed class TaggregateUnitOfWork : VolatileTransactionParticipant
       return session;
    }
 
-   ///<summary>Collects a tevent that a taggregate of this unit of work published, to be dispatched when the transaction prepares.<br/>
-   /// Dispatches nothing now: the domain method that published it may still be on the stack.</summary>
-   internal void Collect(ITaggregateTevent<ITaggregateTevent> tevent)
+   ///<summary>Dispatches a tevent that a taggregate of this unit of work published to the participation handlers, synchronously.</summary>
+   internal void Dispatch(ITaggregateTevent<ITaggregateTevent> tevent)
    {
       AssertHasNotPrepared();
-      _teventsToDispatch.Enqueue(tevent);
+      var publisher = _unitOfWork.Resolve<IUnitOfWorkTeventPublisher>();
+      if(tevent.Tevent is IExactlyOnceTevent)
+      {
+         //Exactly-once tevents are published only asynchronously, and a taggregate publishes synchronously: the one deliberate
+         //bridge, as in the tevent store.
+         publisher.PublishAsync(tevent).GetAwaiter().GetResult();
+      } else
+      {
+         publisher.Publish(tevent);
+      }
    }
 
    void AssertHasNotPrepared() =>
@@ -75,8 +73,6 @@ sealed class TaggregateUnitOfWork : VolatileTransactionParticipant
    protected override void OnPrepare()
    {
       AssertNoPublishHasFailed();
-      DispatchTheCollectedTevents();
-      AssertNoPublishHasFailed();
       foreach(var session in _sessions.Values) session.Prepare();
       _hasPrepared = true;
    }
@@ -84,41 +80,6 @@ sealed class TaggregateUnitOfWork : VolatileTransactionParticipant
    void AssertNoPublishHasFailed()
    {
       foreach(var session in _sessions.Values) session.AssertNoPublishHasFailed();
-   }
-
-   ///<summary>Dispatches in rounds: the tevents collected when the round began, in the order published, during which handlers may<br/>
-   /// publish more, which the next round dispatches. So cause comes before consequence.</summary>
-   void DispatchTheCollectedTevents()
-   {
-      var publisher = _unitOfWork.Resolve<IUnitOfWorkTeventPublisher>();
-      for(var round = 1; _teventsToDispatch.Count > 0; round++)
-      {
-         State.Assert(round <= MaximumDispatchRounds,
-                      () => $"After {MaximumDispatchRounds} rounds of tevents caused by tevents, this unit of work still has tevents to dispatch, so handlers seem to cause each other's tevents without end. The tevents of the last round: {string.Join(", ", _teventsToDispatch.Select(it => it.Tevent.GetType().FullName).Distinct())}.");
-         var thisRound = _teventsToDispatch.ToList();
-         _teventsToDispatch.Clear();
-         foreach(var tevent in thisRound) Dispatch(tevent, publisher);
-      }
-   }
-
-   static void Dispatch(ITaggregateTevent<ITaggregateTevent> tevent, IUnitOfWorkTeventPublisher publisher)
-   {
-      try
-      {
-         if(tevent.Tevent is IExactlyOnceTevent)
-         {
-            //Exactly-once tevents are published only asynchronously, and the transaction prepares synchronously: the one deliberate
-            //bridge, as in the tevent store.
-            publisher.PublishAsync(tevent).GetAwaiter().GetResult();
-         } else
-         {
-            publisher.Publish(tevent);
-         }
-      }
-      catch(Exception exception)
-      {
-         throw new TaggregateTeventDispatchFailedException(tevent, exception);
-      }
    }
 
    protected override void OnCommit()

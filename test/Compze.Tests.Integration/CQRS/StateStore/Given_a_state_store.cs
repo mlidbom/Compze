@@ -88,7 +88,7 @@ public class Given_a_state_store : UniversalTestBase
       }
 
       [PCT] public void the_reader_gets_the_vocab() => CommittedVocab(VocabId).Question.Must().Be("taberu");
-      [PCT] public void the_participation_handler_ran_once_and_only_after_save_had_returned() => ParticipationLog.Must().SequenceEqual(["created taberu, save had returned: True"]);
+      [PCT] public void the_participation_handler_ran_once_during_the_save() => ParticipationLog.Must().SequenceEqual(["created taberu, save had returned: False"]);
       [PCT] public void the_observer_observed_the_creation() => ObservationLog.Must().SequenceEqual(["created taberu"]);
       [PCT] public void publishing_on_the_instance_the_reader_gets_throws() => Invoking(() => CommittedVocab(VocabId).ChangeMeaning("to eat")).Must().Throw<Exception>();
    }
@@ -137,9 +137,9 @@ public class Given_a_state_store : UniversalTestBase
          (_meaningTheReaderGotInsideTheUnitOfWork, _meaningTheReaderGotOutsideTheUnitOfWork) = (inside, outside);
       }
 
-      [PCT] public void the_participation_handler_ran_for_each_change_in_order_after_both_domain_calls_had_returned() =>
-         ParticipationLog.Must().SequenceEqual(["to eat; both domain calls had returned: True; the copy's meaning: to eat, to consume",
-                                                "to eat, to consume; both domain calls had returned: True; the copy's meaning: to eat, to consume"]);
+      [PCT] public void the_participation_handler_ran_for_each_change_in_order_as_each_domain_call_published_it() =>
+         ParticipationLog.Must().SequenceEqual(["to eat; both domain calls had returned: False; the copy's meaning: to eat",
+                                                "to eat, to consume; both domain calls had returned: False; the copy's meaning: to eat, to consume"]);
 
       [PCT] public void inside_the_unit_of_work_the_reader_got_its_copys_meaning() => _meaningTheReaderGotInsideTheUnitOfWork.Must().Be("to eat");
       [PCT] public void outside_the_unit_of_work_the_reader_got_the_committed_meaning() => _meaningTheReaderGotOutsideTheUnitOfWork.Must().Be("");
@@ -182,7 +182,7 @@ public class Given_a_state_store : UniversalTestBase
       }
 
       [PCT] public void the_reader_gets_the_meaning_committed_before() => CommittedVocab(VocabId).Meaning.Must().Be("");
-      [PCT] public void no_participation_handler_ran() => ParticipationLog.Must().BeEmpty();
+      [PCT] public void the_participation_handler_ran_inside_the_unit_of_work_that_rolled_back() => ParticipationLog.Must().SequenceEqual(["to eat"]);
       [PCT] public void no_observer_observed_the_change() => ObservationLog.Must().BeEmpty();
    }
 
@@ -259,21 +259,20 @@ public class Given_a_state_store : UniversalTestBase
       [PCT] public void the_reader_gets_the_meaning_committed_before() => CommittedVocab(VocabId).Meaning.Must().Be("");
    }
 
-   public class after_a_participation_handler_throws_when_the_unit_of_work_commits : Given_a_state_store
+   public class after_a_participation_handler_throws_when_a_vocab_changes_its_meaning : Given_a_state_store
    {
       readonly Exception _exception;
 
-      public after_a_participation_handler_throws_when_the_unit_of_work_commits()
+      public after_a_participation_handler_throws_when_a_vocab_changes_its_meaning()
       {
          Compose(participation: handle => handle.ForTevent((IStoredVocabMeaningChanged _) => throw new InvalidOperationException("The handler fails.")));
          InUnitOfWork(taggregates => taggregates.Save(StoredVocab.Create(VocabId, "taberu")));
 
          _exception = Invoking(() => InUnitOfWork(taggregates => taggregates.GetForUpdate<StoredVocab>(VocabId).ChangeMeaning("to eat")))
-                     .Must().Throw<TransactionAbortedException>().Which;
+                     .Must().Throw<InvalidOperationException>().Which;
       }
 
-      [PCT] public void the_exception_names_the_tevent() => _exception.InnerException!.Message.Must().Contain(nameof(StoredVocabMeaningChanged));
-      [PCT] public void the_exception_names_the_taggregate() => _exception.InnerException!.Message.Must().Contain(VocabId.ToString());
+      [PCT] public void the_domain_call_throws_the_handlers_exception() => _exception.Message.Must().Be("The handler fails.");
       [PCT] public void the_reader_gets_the_meaning_committed_before() => CommittedVocab(VocabId).Meaning.Must().Be("");
    }
 
@@ -294,12 +293,26 @@ public class Given_a_state_store : UniversalTestBase
          });
 
          _exception = Invoking(() => InUnitOfWork(taggregates => taggregates.GetForUpdate<StoredVocab>(VocabId).ChangeMeaning("to eat")))
-                     .Must().Throw<TransactionAbortedException>().Which;
+                     .Must().Throw<Exception>().Which;
       }
 
-      [PCT] public void the_exception_says_the_tevents_seem_to_cause_each_other_without_end() => _exception.InnerException!.Message.Must().Contain("without end");
-      [PCT] public void the_exception_names_the_tevents_of_the_last_round() => _exception.InnerException!.Message.Must().Contain(nameof(StoredVocabMeaningChanged));
+      [PCT] public void the_exception_says_the_tevents_seem_to_cause_each_other_without_end() => _exception.Message.Must().Contain("without end");
+      [PCT] public void the_exception_names_the_last_tevent() => _exception.Message.Must().Contain(nameof(StoredVocabMeaningChanged));
       [PCT] public void the_reader_gets_the_meaning_committed_before() => CommittedVocab(VocabId).Meaning.Must().Be("");
+   }
+
+   public class after_a_participation_handler_changes_a_new_vocab_while_it_is_saved : Given_a_state_store
+   {
+      public after_a_participation_handler_changes_a_new_vocab_while_it_is_saved()
+      {
+         Compose(participation: handle => handle
+                   .ForTevent((IStoredVocabCreated it, ITaggregateStoreUpdater taggregates) => taggregates.GetForUpdate<StoredVocab>(it.TaggregateId).ChangeMeaning("to eat"))
+                   .ForTevent((IStoredVocabTevent it) => ParticipationLog.Enqueue(it.GetType().Name)));
+         InUnitOfWork(taggregates => taggregates.Save(StoredVocab.Create(VocabId, "taberu")));
+      }
+
+      [PCT] public void the_handler_got_the_vocab_being_saved_so_the_reader_gets_its_change() => CommittedVocab(VocabId).Meaning.Must().Be("to eat");
+      [PCT] public void the_handlers_received_its_tevents_once_each_in_the_order_published() => ParticipationLog.Must().SequenceEqual([nameof(StoredVocabCreated), nameof(StoredVocabMeaningChanged)]);
    }
 
    public class after_a_unit_of_work_deletes_a_vocab : Given_a_state_store
