@@ -95,7 +95,8 @@ The numbers: [what-was-measured.md](what-was-measured.md). The bugs and the smal
      covariant return, and the store keeps the id instances it's given.
    - **Progress:** step 1 built (a0552017d). Step 2 split in three: 2a, the state store, built and specified
      (3f1c611b6), Compze's full suite green, its calls in [the-taggregate-store.md](the-taggregate-store.md#what-the-spike-built-in-step-2a);
-     2b, the tevent store joining the shared updater and reader; 2c, the publisher deferring every tevent. Step 3's core
+     2b, the tevent store joining the shared updater and reader, specified ([the-taggregate-store.md](the-taggregate-store.md#step-2b-specified-the-tevent-store-joins-the-shared-updater-and-reader));
+     2c, the publisher deferring every tevent, superseded by synchronous dispatch. Step 3's core
      built before 2b and 2c, since JAStudio waits on it (cd3898468, full suite green): the experiment's per-class routing,
      the table found through an explicit implementation of `ITeventRouted` with the exact class asserted at construction,
      `Extend` asserting the direct base class, and static slots (`SharedTomponentSlotOfAClass`) in a nested `Slots`

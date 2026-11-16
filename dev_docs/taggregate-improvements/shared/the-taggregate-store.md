@@ -403,6 +403,10 @@ public interface IPreparedWrite
 
 ## The tevent store takes the same internals
 
+> **Superseded by [step 2b, specified](#step-2b-specified-the-tevent-store-joins-the-shared-updater-and-reader):** with
+> synchronous dispatch nothing is deferred, so the tevent store keeps dispatching as each tevent is published. What
+> follows is kept as the record of the deferred design.
+
 - **Its session would dispatch at phase 0 too,** from the unit of work's queue, and stop calling out from `Commit`'s
   callback and from `TeventStream`. Both of its bugs found by the reviews are then fixed by construction.
 - **It changes what code later in a unit of work sees:** today participation handlers run as each tevent is published.
@@ -601,6 +605,67 @@ handler's failure comes out of the domain call.
   a new taggregate during its save in each store.
 - **`ITaggregate.Commit` may go** (a `todo:` at it, Magnus): a store gets a new taggregate's first tevents through it only
   because they went by on a stream nobody listened to.
+
+## Step 2b, specified: the tevent store joins the shared updater and reader
+
+jastudio-rep-opus, 2026-11-16, after synchronous dispatch. One `ITaggregateStoreUpdater` and one `ITaggregateStoreReader`
+serve both stores, so one unit of work can change a taggregate of each. The structure is the one Magnus decided (item
+22): it was built for the state store in 2a, and 2b brings the tevent store in.
+
+**What changes for a consumer of the tevent store:**
+
+- **`ITeventStoreUpdater` goes;** `ITaggregateStoreUpdater` replaces it. `Get` becomes `GetForUpdate`, `TryGet` becomes
+  `TryGetForUpdate`, `Save` stays, and `Delete(id)` becomes `Delete<TTaggregate>(id)`, since the updater routes by class.
+  `IDisposable` goes with it, which settles the `urgent:` at the interface.
+- **`ITeventStoreReader : ITaggregateStoreReader`,** a singleton like the shared reader. `GetHistory` and
+  `GetReadonlyCopyOfVersion` stay; `GetReadonlyCopy` goes, and the reader's `Get` replaces it. Outside a unit of work,
+  `Get` builds the taggregate from its history, read only: publishing on it throws, as on the state store's committed
+  instances. So does publishing on what `GetReadonlyCopyOfVersion` returns. That settles the `urgent:` at the tevent
+  store's readonly copy.
+- **The tevent store declares the classes it keeps:** `TeventStore(connectionName, store => store.Taggregate<User>())`,
+  each a `ITaggregate<ITaggregateTeventWithIdentity>`. A class declared for no store fails at its first `Get`, naming the
+  stores and their classes, as it already does for the state store. The typermedia registration's
+  `HandleTaggregate<TTaggregate, TTevent>()` also declares its class, so an endpoint that uses it declares nothing more.
+- **References work for the tevent store's taggregates too:** `Current` is the unit of work's instance if it holds one,
+  else a read-only instance built from the history. The tevent store keeps no instances in memory, so each `Current`
+  outside a unit of work builds one; its history cache spares the database.
+- **One `TaggregateNotFoundException` for both stores.** It keeps the tevent store's base class,
+  `ArgumentOutOfRangeException`, which is what a consumer can catch, since the exception itself is internal.
+
+**What stays as it is:**
+
+- **Dispatch,** synchronous: each tevent is saved, then dispatched, as its taggregate hands it out. A new taggregate's
+  tevents are saved and dispatched at `Save`, with the ordering fixes of item 32.
+- **The writes,** made at the publish through the transaction's database connection, so the database commits or rolls
+  them back with the transaction. The session has nothing to prepare or commit.
+- **The locking,** the database's: `GetForUpdate` reads the history with the update lock. No lock in memory.
+
+**What changes in how it works:**
+
+- **The tevent store's session belongs to the transaction's `TaggregateUnitOfWork`,** not to a scope. Two scopes in one
+  transaction get the same instance of a taggregate, where today each scope's updater loads its own. A typermedia tuery
+  `GetForUpdate` run inside a tommand handler's transaction gets the handler's instance.
+- **A failed publish rolls the unit of work back,** even if the code that published caught the exception: new for the
+  tevent store, as the state store does.
+- **A transaction must be begun by `ExecuteUnitOfWork`,** as for the state store: one begun by a `TransactionScope` of its
+  own is refused, loudly, when a taggregate is got for update in it.
+- **The exactly-once inbox begins each handler's transaction through `ExecuteUnitOfWorkAsync`.** Today it begins a scope,
+  then a transaction, itself: the same two things in the same order, but unrecorded, so the shared updater refuses a
+  remote exactly-once handler. That is already so for the state store, and would be for the tevent store after 2b.
+- **`ITeventStore` becomes a singleton.** It is stateless, and the shared reader is a singleton that needs it. It reads
+  its migrations through the function it is registered with at each use, so the migration specifications that change
+  them while a container lives still can.
+
+**Specifications:**
+
+- **Renamed calls:** the tevent store's specifications move to `GetForUpdate`, `TryGetForUpdate` and
+  `Delete<TTaggregate>`, and to units of work begun by `ExecuteUnitOfWork` where they begin transactions themselves.
+- **Two go:** `ThrowsIfUsedByMultipleTransactions` and `If_an_updater_is_used_in_two_transactions_an_exception_is_thrown`.
+  The updater no longer holds a unit of work, so using one in two transactions is no misuse. The misuse left, a
+  transaction not begun by `ExecuteUnitOfWork`, is specified for the state store already.
+- **New, in BDD style:** one unit of work saves a user in the tevent store and a vocab in the state store, and the
+  reader gets both after the commit, neither after a rollback; publishing on what the reader gets outside a unit of work
+  throws, in the tevent store; a typermedia tuery run inside a tommand handler gets the handler's instance.
 
 ## What the prototype is
 
