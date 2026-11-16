@@ -22,21 +22,25 @@ using static Compze.Must.MustActions;
 
 namespace Compze.Tests.Integration.CQRS.StateStore;
 
-///<summary>A state store whose storage, the consumer's, holds one vocab, "taberu", when the container is built. The storage keeps<br/>
-/// the snapshots it is given, as a consumer's files would, and records what the store asks of it.</summary>
-public class Given_a_state_store_whose_storage_holds_a_vocab : UniversalTestBase
+///<summary>A state store whose storage, the consumer's, holds one vocab, "taberu", and one sentence, when the container is built.<br/>
+/// The storage keeps the snapshots it is given, as a consumer's files would, and records what the store asks of it. Sentences are<br/>
+/// declared with a comparison of their snapshots, which have no Equals of their own.</summary>
+public class Given_a_state_store_whose_storage_holds_a_vocab_and_a_sentence : UniversalTestBase
 {
    readonly IDependencyInjectionContainer _container;
    TaggregateId VocabId { get; } = new(Guid.NewGuid());
+   TaggregateId SentenceId { get; } = new(Guid.NewGuid());
    RecordingStorage Storage { get; }
    ConcurrentQueue<string> ObservationLog { get; } = new();
 
-   protected Given_a_state_store_whose_storage_holds_a_vocab()
+   protected Given_a_state_store_whose_storage_holds_a_vocab_and_a_sentence()
    {
-      Storage = new RecordingStorage(new TaggregateSnapshot(typeof(StoredVocab), VocabId, new StoredVocabSnapshot(VocabId, "taberu", "to eat")));
+      Storage = new RecordingStorage(new TaggregateSnapshot(typeof(StoredVocab), VocabId, new StoredVocabSnapshot(VocabId, "taberu", "to eat")),
+                                     new TaggregateSnapshot(typeof(StoredSentence), SentenceId, new StoredSentenceSnapshot(SentenceId, "taberu yo")));
       var builder = TestEnv.DIContainer.CreateTestingContainerBuilder();
       builder.Registrar.StateStore(store => store.StoredIn(Storage)
                                                  .Taggregate(() => new StoredVocab())
+                                                 .Taggregate(() => new StoredSentence(), snapshotsAreEqual: (StoredSentenceSnapshot one, StoredSentenceSnapshot other) => one.Text == other.Text)
                                                  .Index<StoredVocab, string>(vocab => [vocab.Question]));
       builder.Registrar.LocalTessagingEngine(engine => engine.ObserveTevents(observe => observe.ForTevent((IStoredVocabTevent it) => ObservationLog.Enqueue(it.GetType().Name))));
       _container = builder.Build();
@@ -57,7 +61,7 @@ public class Given_a_state_store_whose_storage_holds_a_vocab : UniversalTestBase
 
    protected override async Task DisposeAsyncInternal() => await _container.DisposeAsync();
 
-   public class when_the_store_is_first_used : Given_a_state_store_whose_storage_holds_a_vocab
+   public class when_the_store_is_first_used : Given_a_state_store_whose_storage_holds_a_vocab_and_a_sentence
    {
       public when_the_store_is_first_used()
       {
@@ -71,7 +75,7 @@ public class Given_a_state_store_whose_storage_holds_a_vocab : UniversalTestBase
       [PCT] public void the_storage_was_loaded_once() => Storage.LoadCount.Must().Be(1);
    }
 
-   public class after_a_unit_of_work_changes_the_vocabs_meaning : Given_a_state_store_whose_storage_holds_a_vocab
+   public class after_a_unit_of_work_changes_the_vocabs_meaning : Given_a_state_store_whose_storage_holds_a_vocab_and_a_sentence
    {
       public after_a_unit_of_work_changes_the_vocabs_meaning() => InUnitOfWork(taggregates => taggregates.GetForUpdate<StoredVocab>(VocabId).ChangeMeaning("to dine"));
 
@@ -79,14 +83,14 @@ public class Given_a_state_store_whose_storage_holds_a_vocab : UniversalTestBase
       [PCT] public void the_storage_was_asked_to_write_the_vocab_and_delete_nothing() => Storage.Writes.Must().SequenceEqual(["committed: save StoredVocab"]);
    }
 
-   public class after_a_unit_of_work_saves_a_new_vocab : Given_a_state_store_whose_storage_holds_a_vocab
+   public class after_a_unit_of_work_saves_a_new_vocab : Given_a_state_store_whose_storage_holds_a_vocab_and_a_sentence
    {
       public after_a_unit_of_work_saves_a_new_vocab() => InUnitOfWork(taggregates => taggregates.Save(StoredVocab.Create(new TaggregateId(Guid.NewGuid()), "kuu")));
 
       [PCT] public void the_storage_holds_both_vocabs() => Storage.StoredVocabs.Select(it => it.Question).Order().Must().SequenceEqual(["kuu", "taberu"]);
    }
 
-   public class after_a_unit_of_work_deletes_the_vocab : Given_a_state_store_whose_storage_holds_a_vocab
+   public class after_a_unit_of_work_deletes_the_vocab : Given_a_state_store_whose_storage_holds_a_vocab_and_a_sentence
    {
       public after_a_unit_of_work_deletes_the_vocab() => InUnitOfWork(taggregates => taggregates.Delete<StoredVocab>(VocabId));
 
@@ -94,14 +98,14 @@ public class Given_a_state_store_whose_storage_holds_a_vocab : UniversalTestBase
       [PCT] public void the_storage_was_asked_to_delete_the_vocab() => Storage.Writes.Must().SequenceEqual(["committed: delete StoredVocab"]);
    }
 
-   public class after_a_unit_of_work_gets_the_vocab_for_update_and_changes_nothing : Given_a_state_store_whose_storage_holds_a_vocab
+   public class after_a_unit_of_work_gets_the_vocab_for_update_and_changes_nothing : Given_a_state_store_whose_storage_holds_a_vocab_and_a_sentence
    {
       public after_a_unit_of_work_gets_the_vocab_for_update_and_changes_nothing() => InUnitOfWork(taggregates => taggregates.GetForUpdate<StoredVocab>(VocabId));
 
       [PCT] public void the_storage_was_asked_to_write_nothing() => Storage.Writes.Must().SequenceEqual(["committed: nothing"]);
    }
 
-   public class when_the_storage_fails_to_prepare_the_write_of_a_change : Given_a_state_store_whose_storage_holds_a_vocab
+   public class when_the_storage_fails_to_prepare_the_write_of_a_change : Given_a_state_store_whose_storage_holds_a_vocab_and_a_sentence
    {
       readonly Exception _exception;
 
@@ -117,7 +121,7 @@ public class Given_a_state_store_whose_storage_holds_a_vocab : UniversalTestBase
       [PCT] public void the_storage_still_holds_the_meaning_committed_before() => Storage.StoredVocabs.Select(it => it.Meaning).Must().SequenceEqual(["to eat"]);
    }
 
-   public class when_another_participant_of_the_transaction_rolls_it_back_after_the_store_has_prepared : Given_a_state_store_whose_storage_holds_a_vocab
+   public class when_another_participant_of_the_transaction_rolls_it_back_after_the_store_has_prepared : Given_a_state_store_whose_storage_holds_a_vocab_and_a_sentence
    {
       public when_another_participant_of_the_transaction_rolls_it_back_after_the_store_has_prepared() =>
          Invoking(() => InUnitOfWork(taggregates =>
@@ -131,7 +135,7 @@ public class Given_a_state_store_whose_storage_holds_a_vocab : UniversalTestBase
       [PCT] public void the_reader_gets_the_meaning_committed_before() => CommittedVocab.Meaning.Must().Be("to eat");
    }
 
-   public class after_the_storage_changes_the_vocab_and_gets_another_and_the_store_reloads : Given_a_state_store_whose_storage_holds_a_vocab
+   public class after_the_storage_changes_the_vocab_and_gets_another_and_the_store_reloads : Given_a_state_store_whose_storage_holds_a_vocab_and_a_sentence
    {
       readonly TaggregateId _addedVocabId = new(Guid.NewGuid());
       readonly ITaggregateReference<StoredVocab> _referenceHeldThroughout;
@@ -157,7 +161,21 @@ public class Given_a_state_store_whose_storage_holds_a_vocab : UniversalTestBase
       [PCT] public void no_tevent_was_dispatched() => ObservationLog.Must().BeEmpty();
    }
 
-   public class after_the_storage_drops_the_vocab_and_the_store_reloads : Given_a_state_store_whose_storage_holds_a_vocab
+   public class after_the_storage_changes_the_sentence_and_the_store_reloads : Given_a_state_store_whose_storage_holds_a_vocab_and_a_sentence
+   {
+      readonly ReloadedTaggregates _reloaded;
+
+      public after_the_storage_changes_the_sentence_and_the_store_reloads()
+      {
+         _ = CommittedVocab;
+         Storage.Hold(new TaggregateSnapshot(typeof(StoredSentence), SentenceId, new StoredSentenceSnapshot(SentenceId, "taberu ne")));
+         _reloaded = StateStore.ReloadFromStorage();
+      }
+
+      [PCT] public void the_reload_reports_the_sentence_as_changed_by_the_comparison_declared_with_its_class() => _reloaded.Changed.Must().SequenceEqual([SentenceId]);
+   }
+
+   public class after_the_storage_drops_the_vocab_and_the_store_reloads : Given_a_state_store_whose_storage_holds_a_vocab_and_a_sentence
    {
       readonly ReloadedTaggregates _reloaded;
 
@@ -173,7 +191,7 @@ public class Given_a_state_store_whose_storage_holds_a_vocab : UniversalTestBase
       [PCT] public void the_index_files_nothing_under_its_question() => IdsFiledUnder("taberu").Must().BeEmpty();
    }
 
-   public class when_the_store_reloads_while_a_unit_of_work_on_another_thread_changes_the_vocab : Given_a_state_store_whose_storage_holds_a_vocab
+   public class when_the_store_reloads_while_a_unit_of_work_on_another_thread_changes_the_vocab : Given_a_state_store_whose_storage_holds_a_vocab_and_a_sentence
    {
       readonly ManualResetEventSlim _theUnitOfWorkHasTheVocab = new();
       readonly ReloadedTaggregates _reloaded;
@@ -196,7 +214,7 @@ public class Given_a_state_store_whose_storage_holds_a_vocab : UniversalTestBase
       [PCT] public void the_reader_gets_what_the_unit_of_work_committed() => CommittedVocab.Meaning.Must().Be("to dine");
    }
 
-   public class when_a_unit_of_work_that_changed_the_vocab_reloads_the_store : Given_a_state_store_whose_storage_holds_a_vocab
+   public class when_a_unit_of_work_that_changed_the_vocab_reloads_the_store : Given_a_state_store_whose_storage_holds_a_vocab_and_a_sentence
    {
       [PCT] public void the_reload_throws() =>
          Invoking(() => InUnitOfWork(taggregates =>

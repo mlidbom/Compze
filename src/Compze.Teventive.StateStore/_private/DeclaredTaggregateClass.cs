@@ -13,21 +13,28 @@ sealed class DeclaredTaggregateClass
    readonly Func<ITaggregate> _createEmpty;
    readonly Func<ITaggregate, object> _takeSnapshot;
    readonly Action<ITaggregate, object> _restoreFrom;
+   readonly Func<object, object, bool>? _snapshotsAreEqual;
 
-   DeclaredTaggregateClass(Type taggregateClass, Func<ITaggregate> createEmpty, Func<ITaggregate, object> takeSnapshot, Action<ITaggregate, object> restoreFrom)
+   DeclaredTaggregateClass(Type taggregateClass,
+                           Func<ITaggregate> createEmpty,
+                           Func<ITaggregate, object> takeSnapshot,
+                           Action<ITaggregate, object> restoreFrom,
+                           Func<object, object, bool>? snapshotsAreEqual)
    {
       Class = taggregateClass;
       _createEmpty = createEmpty;
       _takeSnapshot = takeSnapshot;
       _restoreFrom = restoreFrom;
+      _snapshotsAreEqual = snapshotsAreEqual;
    }
 
-   internal static DeclaredTaggregateClass For<TTaggregate, TSnapshot>(Func<ISnapshotable<TTaggregate, TSnapshot>> createEmpty)
+   internal static DeclaredTaggregateClass For<TTaggregate, TSnapshot>(Func<ISnapshotable<TTaggregate, TSnapshot>> createEmpty, Func<TSnapshot, TSnapshot, bool>? snapshotsAreEqual)
       where TTaggregate : class, ITaggregate, ISnapshotable<TTaggregate, TSnapshot> =>
       new(typeof(TTaggregate),
           () => (TTaggregate)createEmpty(),
           taggregate => ((TTaggregate)taggregate).TakeSnapshot()._assert().NotNull(),
-          (taggregate, snapshot) => ((TTaggregate)taggregate).RestoreFrom((TSnapshot)snapshot));
+          (taggregate, snapshot) => ((TTaggregate)taggregate).RestoreFrom((TSnapshot)snapshot),
+          snapshotsAreEqual == null ? null : (one, other) => snapshotsAreEqual((TSnapshot)one, (TSnapshot)other));
 
    ///<summary>The class itself: a taggregate is of this exact class, never of a subclass of it.</summary>
    internal Type Class { get; }
@@ -46,14 +53,17 @@ sealed class DeclaredTaggregateClass
    }
 
    ///<summary>Whether <paramref name="held"/> and <paramref name="loaded"/>, two instances of one taggregate, hold different states:<br/>
-   /// whether their snapshots differ, by the snapshot type's own equality.</summary>
+   /// whether their snapshots differ, by the comparison declared with the class, or else by the snapshot type's own equality.</summary>
    internal bool StatesDiffer(ITaggregate held, ITaggregate loaded)
    {
       if(held.GetType() != loaded.GetType()) return true;
       var heldSnapshot = TakeSnapshot(held);
+      var loadedSnapshot = TakeSnapshot(loaded);
+      if(_snapshotsAreEqual != null) return !_snapshotsAreEqual(heldSnapshot, loadedSnapshot);
+
       State.Assert(HasValueEquality(heldSnapshot.GetType()),
-                   () => $"{heldSnapshot.GetType().FullName}, the snapshot type of {Class.FullName}, doesn't override Equals, so a reload can't tell whether the state of a {Class.Name} changed. Give it value equality.");
-      return !heldSnapshot.Equals(TakeSnapshot(loaded));
+                   () => $"{heldSnapshot.GetType().FullName}, the snapshot type of {Class.FullName}, doesn't override Equals, so a reload can't tell whether the state of a {Class.Name} changed. Override Equals, or declare the class with a comparison of its snapshots.");
+      return !heldSnapshot.Equals(loadedSnapshot);
 
       static bool HasValueEquality(Type snapshotType) => snapshotType.GetMethod(nameof(Equals), [typeof(object)])!.DeclaringType != typeof(object);
    }

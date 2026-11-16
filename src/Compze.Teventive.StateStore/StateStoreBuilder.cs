@@ -22,17 +22,20 @@ public sealed class StateStoreBuilder
    ///<summary>Declares that the store keeps the taggregate class that <paramref name="createEmpty"/> builds new, empty instances of,<br/>
    /// for the store to restore from snapshots. The class and its snapshot type are inferred from the instances it builds.</summary>
    ///<remarks>A factory, not a parameterless constructor, so that the taggregates can be handed what they need. To hand them a<br/>
-   /// service of the container, use <see cref="Taggregate{TTaggregate,TSnapshot,TService}"/>.</remarks>
-   public StateStoreBuilder Taggregate<TTaggregate, TSnapshot>(Func<ISnapshotable<TTaggregate, TSnapshot>> createEmpty)
+   /// service of the container, use <see cref="Taggregate{TTaggregate,TSnapshot,TService}"/>.<br/>
+   /// <paramref name="snapshotsAreEqual"/> tells whether two snapshots hold the same state, for
+   /// <see cref="IStateStore.ReloadFromStorage"/> to report what changed. Without it, the snapshot type's own Equals does, and must<br/>
+   /// be overridden.</remarks>
+   public StateStoreBuilder Taggregate<TTaggregate, TSnapshot>(Func<ISnapshotable<TTaggregate, TSnapshot>> createEmpty, Func<TSnapshot, TSnapshot, bool>? snapshotsAreEqual = null)
       where TTaggregate : class, ITaggregate, ISnapshotable<TTaggregate, TSnapshot> =>
-      Declare<TTaggregate>(_ => DeclaredTaggregateClass.For(createEmpty));
+      Declare<TTaggregate>(_ => DeclaredTaggregateClass.For(createEmpty, snapshotsAreEqual));
 
    ///<summary>As <see cref="Taggregate{TTaggregate,TSnapshot}"/>, for a factory that builds the empty instances with a service of the<br/>
    /// container, such as the services every note is built with: <c>store.Taggregate((NoteServices services) => new VocabNote(services))</c>.</summary>
    ///<remarks>The service is resolved from the container's root each time an instance is built.</remarks>
-   public StateStoreBuilder Taggregate<TTaggregate, TSnapshot, TService>(Func<TService, ISnapshotable<TTaggregate, TSnapshot>> createEmpty)
+   public StateStoreBuilder Taggregate<TTaggregate, TSnapshot, TService>(Func<TService, ISnapshotable<TTaggregate, TSnapshot>> createEmpty, Func<TSnapshot, TSnapshot, bool>? snapshotsAreEqual = null)
       where TTaggregate : class, ITaggregate, ISnapshotable<TTaggregate, TSnapshot> where TService : class =>
-      Declare<TTaggregate>(resolver => DeclaredTaggregateClass.For(() => createEmpty(resolver.Resolve<TService>())));
+      Declare<TTaggregate>(resolver => DeclaredTaggregateClass.For(() => createEmpty(resolver.Resolve<TService>()), snapshotsAreEqual));
 
    StateStoreBuilder Declare<TTaggregate>(Func<IRootResolver, DeclaredTaggregateClass> declare)
    {
