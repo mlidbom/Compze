@@ -413,7 +413,6 @@ Generated data can be generated again, so a failed unit of work costs little eit
 
 ## What isn't designed yet
 
-- Loading everything again while running.
 - A second session of one transaction getting a taggregate another session of it holds: it waits for its own
   transaction until the timeout. It should be refused at once, or both sessions share the instance.
 - A wait for observers to be at rest that needs neither a testing host nor stopping the engine:
@@ -456,8 +455,15 @@ built and specified; the calls it made:
 - **A copy that published nothing changes nothing:** it isn't written, and the committed instance stays, as agreed with
   taggregates-opus.
 - **The lock table keeps only the locks held or waited for,** not one for each taggregate ever updated.
-- **Not yet:** a second container in one transaction (a `todo:` at the code), the overlay's kept keys (a `performance:` at
-  the code), and reloading while running.
+- **JAStudio's two blockers, built after it moved to 2a (82d8b420d):**
+  - a factory that takes a service of the container, `Taggregate((NoteServices services) => new VocabNote(services))`,
+    resolved from the root each time an instance is built;
+  - `IStateStore.ReloadFromStorage()`, loading everything again while running. It keeps every reference, re-files the
+    indexes, dispatches no tevent, and reports the ids added, changed and removed. A change is found by the snapshot
+    type's own `Equals`, and a snapshot type without one makes the reload throw. It waits for open units of work, and
+    holds new ones back until it's done.
+- **Not yet:** a second container in one transaction (a `todo:` at the code), and the overlay's kept keys (a
+  `performance:` at the code).
 
 ## What the prototype is
 
