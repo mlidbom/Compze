@@ -25,6 +25,17 @@ goes.
 ### The shape
 
 ```csharp
+//The root of the hierarchy closes Taggregate's type arguments, exactly as a taggregate hierarchy is declared today.
+abstract class JPNote : Taggregate<JPNote, INoteTevent, NoteTevent, INoteTevent<INoteTevent>, NoteTevent<NoteTevent>>
+{
+   protected static readonly TeventRouting<JPNote, INoteTevent> JPNoteAppliers = TeventRouting<JPNote, INoteTevent>.DeclareAppliers(it => it
+     .For<INoteTevent.TagsChanged>(static (note, tevent) => note._tags = tevent.Tags));
+
+   protected override TeventRouting<INoteTevent> TeventAppliers => JPNoteAppliers;
+}
+
+//A subclass inherits with no type arguments, and names its wrapper tevent, as today. What is new is its table, typed on
+//the subclass through Extend, so that its appliers take a VocabNote.
 class VocabNote : JPNote
 {
    static readonly TeventRouting<VocabNote, INoteTevent> VocabNoteAppliers = JPNoteAppliers.Extend<VocabNote>(it => it
@@ -33,8 +44,13 @@ class VocabNote : JPNote
      .SharedTomponent(SeeAlsoSlot));
 
    protected override TeventRouting<INoteTevent> TeventAppliers => VocabNoteAppliers;
+   protected override Type WrapperTeventImplementation => typeof(VocabTevent<VocabTevent>);
 }
 ```
+
+- **How taggregates are declared and inherited doesn't change.** The root closes `Taggregate`'s five type arguments, a
+  subclass inherits with none and overrides `WrapperTeventImplementation`, as `AnimalTaggregate` and `CatTaggregate` in
+  Compze's specifications do today. Only the routing moves from the constructor to the table.
 
 - **A static table per class,** reached by the base class through a virtual property, as it already reaches
   `WrapperTeventImplementation`. An instance keeps nothing of it.
@@ -76,7 +92,8 @@ class VocabNote : JPNote
   subclass as its parent, not the root that closes the `Taggregate` generic. That works today through the top-level
   `TeventiveComponent<…>`, and should be the normal path.
 - **Tevent handlers stay on roots only.** JAStudio needs none in components: one part follows another through one tevent
-  that both apply, and reactions that reach other notes go to subscribers on the corpus's dispatcher, after the cascade.
+  that both apply, and reactions that reach other notes go to participation handlers, dispatched by the taggregate
+  store when the unit of work commits: see [the-taggregate-store.md](the-taggregate-store.md).
 - **The query models** (`SelfGeneratingQueryModel` and its families) move to the same tables, so that one abstraction is
   implemented once.
 
