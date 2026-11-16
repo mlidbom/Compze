@@ -503,6 +503,27 @@ SnapshotRoundTrip.AssertLosesNothing(vocab, () => new VocabNote(services), Vocab
 - **Not handled yet:** a field that isn't state, such as a cache filled on first use, is reported as lost. If JAStudio's
   notes hold any, the check needs a way to leave fields out.
 
+## What the spike built for JAStudio's increments 3 and 4
+
+JAStudio's increments 3 and 4 are one step: once the store keeps the notes, every edit runs in a unit of work.
+taggregates-opus's proposal for how JAStudio code edits a note is `JAStudio/dev_docs/taggregates/shared/how-jastudio-edits-a-note.md`:
+`note.Edit(it => ...)` at each edit, joining the running unit of work or beginning one, and getting the copy by the
+note's id; lookups that give the note, and holders that hold references. jastudio-rep-opus reviewed it and agreed, with
+four points: inside `Edit`, read only `it`, since a stale outer instance gives a lost update; cross-note edits in the
+parallel rebuild can deadlock until the lock's timeout; `NoteUpdated`'s UI subscribers must marshal to the UI thread;
+a lookup inside a unit of work that rolls back gives the discarded copy.
+
+- **`Taggregate.AssertCanBeChanged()`** (protected, 3d3410a5d): until JAStudio's last part is moved to tevents, a part's
+  change is made before the interim tevent is published, so `Publish`'s assertion came after a committed note was
+  changed. The guard now asserts first. `Publish` asserts through it too.
+- **`ILocalTessagingEngine.AwaitObserversAsync()`** (26990b991): waits for the observers as `StopAsync` does, and leaves
+  the engine running, for specifications that assert on what an observer did and go on.
+- **`TaggregateToDelete`'s constructor is public** (6767165c2), as `TaggregateSnapshot`'s is, so a storage's own
+  specifications can make one.
+- **Not in Compze, for now:** `Edit` and `ForUpdate` from an instance. `Edit` decides where units of work begin, which is
+  an application's policy, and an instance-based `ForUpdate` would invite holding instances. JAStudio keeps it as its
+  own; after the migration it is a candidate for the naming and API pass.
+
 ## What the prototype is
 
 Branch `taggregate-store-opus`, commit `3dd0fbe08`, in `C:\Dev\Compze.worktrees\taggregate-store-opus`, based on `main`.
