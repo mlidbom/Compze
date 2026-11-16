@@ -79,17 +79,33 @@ sealed class TaggregateStateStore : ITaggregateStore, IStateStore
       return new StateStoreSession(this, unitOfWork, leaveTheGate: _gate.LeaveUnitOfWork);
    }
 
-   public ReloadedTaggregates ReloadFromStorage()
+   public ReloadedTaggregates ReloadFromStorage() => ReloadFromStorageAfter(changeToTheStorage: () => {});
+
+   public ReloadedTaggregates ReloadFromStorageAfter(Action changeToTheStorage)
    {
       State.Assert(AmbientSession == null, () => "A unit of work that has changed taggregates of the state store can't reload it: the reload waits for every such unit of work to complete, this one included.");
-      return _gate.Reload(() => _loadingMonitor.Locked(() =>
+      return _gate.Reload(() =>
       {
-         var before = _hasLoaded ? _committedTaggregates : new ConcurrentDictionary<TaggregateId, ITaggregate>();
-         var loaded = LoadEverything();
-         return new ReloadedTaggregates(added: [..loaded.Keys.Where(id => !before.ContainsKey(id))],
-                                        changed: [..loaded.Values.Where(it => before.TryGetValue(it.Id, out var held) && DeclaredClassOf(it.GetType()).StatesDiffer(held, it)).Select(it => it.Id)],
-                                        removed: [..before.Keys.Where(id => !loaded.ContainsKey(id))]);
-      }));
+         changeToTheStorage();
+         return _loadingMonitor.Locked(() =>
+         {
+            var before = _hasLoaded ? _committedTaggregates : new ConcurrentDictionary<TaggregateId, ITaggregate>();
+            var loaded = LoadEverything();
+            return new ReloadedTaggregates(added: [..loaded.Keys.Where(id => !before.ContainsKey(id))],
+                                           changed: [..loaded.Values.Where(it => before.TryGetValue(it.Id, out var held) && DeclaredClassOf(it.GetType()).StatesDiffer(held, it)).Select(it => it.Id)],
+                                           removed: [..before.Keys.Where(id => !loaded.ContainsKey(id))]);
+         });
+      });
+   }
+
+   public IReadOnlyList<ITaggregateReference<TTaggregate>> All<TTaggregate>() where TTaggregate : class, ITaggregate
+   {
+      EnsureLoaded();
+      var committedIds = _committedTaggregates.Values.OfType<TTaggregate>().Select(it => it.Id);
+      var ids = AmbientSession is {} session
+                   ? committedIds.Where(id => !session.Holds(id)).Concat(session.HeldInstancesOf<TTaggregate>().Select(it => it.Id))
+                   : committedIds;
+      return [..ids.Select(Reference<TTaggregate>)];
    }
 
    ///<summary>This store's session in the unit of work of the ambient transaction, if that unit of work has needed the store yet.<br/>

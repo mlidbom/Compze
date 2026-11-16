@@ -16,7 +16,7 @@ public sealed class StateStoreBuilder
    readonly IComponentRegistrar _registrar;
    readonly Dictionary<Type, Func<IRootResolver, SnapshotableTaggregateClass>> _taggregateClasses = new();
    readonly List<Func<TaggregateStateStore, ITaggregateIndexMaintenance>> _indexes = [];
-   ITaggregateStorage? _storage;
+   Func<IRootResolver, ITaggregateStorage>? _storage;
 
    internal StateStoreBuilder(IComponentRegistrar registrar) => _registrar = registrar;
 
@@ -55,7 +55,16 @@ public sealed class StateStoreBuilder
    }
 
    ///<summary>Declares where the store keeps what it commits. Without it, the store keeps its taggregates in memory only.</summary>
-   public StateStoreBuilder StoredIn(ITaggregateStorage storage)
+   public StateStoreBuilder StoredIn(ITaggregateStorage storage) => DeclareStorage(_ => storage);
+
+   ///<summary>As <see cref="StoredIn(ITaggregateStorage)"/>, for a storage built with a service of the container, such as one that<br/>
+   /// knows where the consumer's files are: <c>store.StoredIn((CorpusPaths paths) => new CorpusFiles(paths))</c>.</summary>
+   ///<remarks>The service is resolved from the container's root when the store is built, at its first use, so a service that a<br/>
+   /// host can only give once it has started is there.</remarks>
+   public StateStoreBuilder StoredIn<TService>(Func<TService, ITaggregateStorage> storageWith) where TService : class =>
+      DeclareStorage(resolver => storageWith(resolver.Resolve<TService>()));
+
+   StateStoreBuilder DeclareStorage(Func<IRootResolver, ITaggregateStorage> storage)
    {
       State.Assert(_storage == null, () => "The state store's storage is declared twice.");
       _storage = storage;
@@ -63,5 +72,5 @@ public sealed class StateStoreBuilder
    }
 
    internal TaggregateStateStore Build(TaggregateUnitsOfWork unitsOfWork, IRootResolver resolver) =>
-      new(unitsOfWork, _taggregateClasses.Values.Select(declare => declare(resolver)), _indexes, _storage ?? new NoStorage());
+      new(unitsOfWork, _taggregateClasses.Values.Select(declare => declare(resolver)), _indexes, _storage?.Invoke(resolver) ?? new NoStorage());
 }
