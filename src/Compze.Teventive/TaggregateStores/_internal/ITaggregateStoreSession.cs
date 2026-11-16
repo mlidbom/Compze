@@ -5,7 +5,7 @@ namespace Compze.Teventive.TaggregateStores._internal;
 
 ///<summary>One store's part of a <see cref="TaggregateUnitOfWork"/>: the taggregates of that store the unit of work changes, and<br/>
 /// what the store writes when the unit of work commits. The tevents its taggregates publish go to the unit of work, with<br/>
-/// <see cref="TaggregateUnitOfWork.Collect"/>, which dispatches them.</summary>
+/// <see cref="TaggregateUnitOfWork.Publish"/>, which publishes them to be dispatched when the transaction prepares.</summary>
 interface ITaggregateStoreSession
 {
    ///<summary>As <see cref="ITaggregateStoreUpdater.TryGetForUpdate{TTaggregate}"/>, for the taggregates of this store.</summary>

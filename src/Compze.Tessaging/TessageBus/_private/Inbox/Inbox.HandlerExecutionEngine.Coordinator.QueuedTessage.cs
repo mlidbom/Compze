@@ -1,4 +1,5 @@
 using Compze.DependencyInjection;
+using Compze.DependencyInjection._internal;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Logging;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
@@ -74,7 +75,7 @@ partial class Inbox
                            claimed = false;
                            return null;
                         }
-                        var innerResult = await _tessageTask(tessage, UnitOfWorkResolver.From(scope.Resolver)).caf();
+                        var innerResult = await _tessageTask(tessage, HandlingUnitOfWork(scope)).caf();
                         await _tessageStorage.MarkAsSucceededAsync(TransportTessage).caf();
                         return innerResult;
                      }).caf();
@@ -132,6 +133,16 @@ partial class Inbox
                _scopeFactory = scopeFactory;
                _executor = executor;
                _tessageTask = CreateTessageTask();
+            }
+
+            ///<summary>The unit of work the handling runs in: <paramref name="scope"/> and the handling transaction, which it began,<br/>
+            /// so it is recorded as the one that began the transaction, as ExecuteUnitOfWork records itself: the tevents the handlers<br/>
+            /// publish are dispatched in its scope when the transaction commits.</summary>
+            static IUnitOfWorkResolver HandlingUnitOfWork(IScope scope)
+            {
+               var unitOfWork = UnitOfWorkResolver.From(scope.Resolver);
+               AmbientUnitOfWork.Began(unitOfWork);
+               return unitOfWork;
             }
 
             //Refactor: Switching should not be necessary. See also inbox.

@@ -2,7 +2,6 @@ using Compze.Abstractions;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Hosting.Testing;
-using Compze.Internals.SystemCE.TransactionsCE;
 using Compze.Internals.Testing;
 using Compze.Must;
 using Compze.Tests.Common.Wiring;
@@ -46,8 +45,7 @@ public class When_asked_for_a_query_model_by_key : UniversalTestBase
    [PCT] public void TryGet_returns_true_and_the_generated_model_once_the_account_taggregate_is_registered()
    {
       using var scope = _container.BeginScope();
-      var taggregates = scope.Resolve<ITeventStoreUpdater>();
-      var registered = TransactionScopeCe.Execute(() => MyAccount.Register(taggregates, new TaggregateId(), "email", "password"));
+      var registered = _container.ScopeFactory.ExecuteUnitOfWork(unitOfWork => MyAccount.Register(unitOfWork.Resolve<ITeventStoreUpdater>(), new TaggregateId(), "email", "password"));
 
       scope.Resolve<IQueryModelReader>().TryGet<MyAccountQueryModel>(registered.Id, out var model).Must().BeTrue();
       model!.Email.Must().Be("email");
@@ -61,17 +59,8 @@ public class When_asked_for_a_query_model_by_key : UniversalTestBase
 
    [PCT] public void TryGetVersion_returns_the_model_as_of_the_requested_taggregate_version()
    {
-      MyAccount registered;
-      {
-         using var registerScope = _container.BeginScope();
-         var taggregates = registerScope.Resolve<ITeventStoreUpdater>();
-         registered = TransactionScopeCe.Execute(() => MyAccount.Register(taggregates, new TaggregateId(), "originalEmail", "password"));
-      }
-
-      {
-         using var changeScope = _container.BeginScope();
-         TransactionScopeCe.Execute(() => changeScope.Resolve<ITeventStoreUpdater>().Get<MyAccount>(registered.Id).ChangeEmail("newEmail"));
-      }
+      var registered = _container.ScopeFactory.ExecuteUnitOfWork(unitOfWork => MyAccount.Register(unitOfWork.Resolve<ITeventStoreUpdater>(), new TaggregateId(), "originalEmail", "password"));
+      _container.ScopeFactory.ExecuteUnitOfWork(unitOfWork => unitOfWork.Resolve<ITeventStoreUpdater>().Get<MyAccount>(registered.Id).ChangeEmail("newEmail"));
 
       using var readScope = _container.BeginScope();
       var reader = readScope.Resolve<IVersioningQueryModelReader>();

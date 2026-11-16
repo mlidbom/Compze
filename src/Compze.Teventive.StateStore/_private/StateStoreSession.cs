@@ -11,9 +11,9 @@ using static Compze.Contracts.Contract;
 namespace Compze.Teventive.StateStore._private;
 
 ///<summary>The state store's part of one unit of work: the private copies of the taggregates it got for update, the new ones it<br/>
-/// saved, the ones it deleted, and the locks of all of them. The tevents the copies publish go to the unit of work, which dispatches<br/>
-/// them when its transaction prepares. Then this session prepares the storage's write and the indexes' changes, and at the commit it<br/>
-/// makes the copies the committed instances.</summary>
+/// saved, the ones it deleted, and the locks of all of them. The tevents the copies publish go to the unit of work, which publishes<br/>
+/// them to be dispatched when its transaction prepares. Then this session prepares the storage's write and the indexes' changes, and<br/>
+/// at the commit it makes the copies the committed instances.</summary>
 sealed class StateStoreSession : ITaggregateStoreSession
 {
    readonly TaggregateStateStore _store;
@@ -89,7 +89,7 @@ sealed class StateStoreSession : ITaggregateStoreSession
       State.Assert(_store.CommittedInstanceOf(taggregate.Id) == null, () => $"The state store already holds a taggregate {taggregate.Id}.");
 
       //Saving dispatches nothing: the tevents the new taggregate published before it was saved wait, with all others, for the commit.
-      taggregate.Commit(tevents => tevents.ForEach(_unitOfWork.Collect));
+      taggregate.Commit(tevents => tevents.ForEach(_unitOfWork.Publish));
       Hold(new HeldTaggregate(taggregate, isNew: true));
    }
 
@@ -103,11 +103,11 @@ sealed class StateStoreSession : ITaggregateStoreSession
    {
       _heldTaggregates.Add(held.Taggregate.Id, held);
       _classesHeld.Add(held.Taggregate.GetType());
-      //Only collected here, never dispatched: nothing runs while a domain method of the taggregate is still on the stack.
+      //Only queued for the commit here, never dispatched: nothing runs while a domain method of the taggregate is still on the stack.
       _teventStreamSubscriptions.Add(held.Taggregate.TeventStream.Subscribe(tevent =>
       {
          held.HasPublished = true;
-         _unitOfWork.Collect(tevent);
+         _unitOfWork.Publish(tevent);
       }));
    }
 

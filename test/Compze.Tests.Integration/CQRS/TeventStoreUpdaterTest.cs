@@ -303,7 +303,7 @@ public class TeventStoreUpdaterTest : UniversalTestBase
    }
 
    [PCT]
-   public void Tevents_should_be_published_immediately()
+   public void Tevents_are_dispatched_when_the_unit_of_work_commits_in_the_order_published()
    {
       UseInTransactionalScope(session =>
       {
@@ -311,16 +311,12 @@ public class TeventStoreUpdaterTest : UniversalTestBase
          user1.Register("email1@email.se", "password", new TaggregateId());
          session.Save(user1);
 
-         _teventSpy.DispatchedTessages.Last()
-                  .Must()
-                  .BeExactType<UserRegistered>();
-
          user1 = session.Get<User>(user1.Id);
          user1.ChangeEmail("new_email");
-         _teventSpy.DispatchedTessages.Last()
-                  .Must()
-                  .BeExactType<UserChangedEmail>();
+         _teventSpy.DispatchedTessages.Must().BeEmpty();
       });
+
+      _teventSpy.DispatchedTessages.Select(it => it.GetType()).Must().SequenceEqual([typeof(UserRegistered), typeof(UserChangedEmail)]);
    }
 
    [PCT]
@@ -420,7 +416,7 @@ public class TeventStoreUpdaterTest : UniversalTestBase
    }
 
    [PCT]
-   public void TeventsArePublishedImmediatelyOnTaggregateChanges()
+   public void TeventsOfTaggregateChangesAreDispatchedWhenTheUnitOfWorkCommits()
    {
       var users = 1.Through(9).Select(i =>
       {
@@ -433,21 +429,23 @@ public class TeventStoreUpdaterTest : UniversalTestBase
       UseInTransactionalScope(session =>
       {
          users.Take(3).ForEach(session.Save);
-         _teventSpy.DispatchedTessages.Count().Must().Be(6);
+         _teventSpy.DispatchedTessages.Count().Must().Be(0);
       });
+      _teventSpy.DispatchedTessages.Count().Must().Be(6);
 
       UseInTransactionalScope(session =>
       {
          _teventSpy.DispatchedTessages.Count().Must().Be(6);
          users.Skip(3).Take(3).ForEach(session.Save);
-         _teventSpy.DispatchedTessages.Count().Must().Be(12);
+         _teventSpy.DispatchedTessages.Count().Must().Be(6);
       });
+      _teventSpy.DispatchedTessages.Count().Must().Be(12);
 
       UseInTransactionalScope(session =>
       {
          _teventSpy.DispatchedTessages.Count().Must().Be(12);
          users.Skip(6).Take(3).ForEach(session.Save);
-         _teventSpy.DispatchedTessages.Count().Must().Be(18);
+         _teventSpy.DispatchedTessages.Count().Must().Be(12);
       });
 
       _container.ExecuteUnitOfWork(unitOfWork =>
@@ -559,7 +557,8 @@ public class TeventStoreUpdaterTest : UniversalTestBase
          {
             getHistorySection.Execute(() => ((ITeventStoreReader)session).GetHistory(user.Id));
 
-            TransactionScopeCe.Execute(() =>
+            //The unit of work begins the transaction, and the session of the scope, which read the history outside it, changes the user in it.
+            _container.ExecuteUnitOfWork(_ =>
             {
                changeEmailSection.Execute(() =>
                {
@@ -637,8 +636,8 @@ public class TeventStoreUpdaterTest : UniversalTestBase
       var user = new User();
       user.Register("email@email.se", "password", new TaggregateId());
 
-      TransactionScopeCe.Execute(() => updater.Save(user));
-      MustActions.Invoking(() => TransactionScopeCe.Execute(() => updater.Get<User>(user.Id)))
+      _container.ExecuteUnitOfWork(_ => updater.Save(user));
+      MustActions.Invoking(() => _container.ExecuteUnitOfWork(_ => updater.Get<User>(user.Id)))
                    .Must().Throw<InvalidOperationException>();
    }
 }

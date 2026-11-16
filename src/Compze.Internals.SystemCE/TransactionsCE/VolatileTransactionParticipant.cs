@@ -43,7 +43,9 @@ public abstract class VolatileTransactionParticipant(EnlistmentOptions enlistmen
       {
          if(_enlistmentOptions.HasFlag(EnlistmentOptions.EnlistDuringPrepareRequired))
          {
-            using var transactionScope = new TransactionScope(_enlistedIn!);
+            //The transaction flows across awaits, so work that a participant bridges synchronously, such as async handlers, still
+            //runs in it after an await that resumes on another thread.
+            using var transactionScope = new TransactionScope(_enlistedIn!, TransactionScopeAsyncFlowOption.Enabled);
             OnPrepare();
             transactionScope.Complete();
          } else
