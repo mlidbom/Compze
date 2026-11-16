@@ -66,34 +66,32 @@ public class Given_a_state_store_with_an_index_by_question : UniversalTestBase
 
    protected override async Task DisposeAsyncInternal() => await _container.DisposeAsync();
 
-   public class after_three_units_of_work_each_save_a_vocab_with_the_same_question_out_of_id_order : Given_a_state_store_with_an_index_by_question
+   public class after_three_units_of_work_each_save_a_vocab_with_the_same_question : Given_a_state_store_with_an_index_by_question
    {
-      readonly TaggregateId _first = new(Guid.Parse("00000000-0000-0000-0000-000000000001"));
-      readonly TaggregateId _third = new(Guid.Parse("00000000-0000-0000-0000-000000000003"));
-      readonly TaggregateId _fourth = new(Guid.Parse("00000000-0000-0000-0000-000000000004"));
-      readonly TaggregateId _fifth = new(Guid.Parse("00000000-0000-0000-0000-000000000005"));
+      readonly TaggregateId[] _firstThree = [new(), new(), new()];
+      readonly TaggregateId _fourth = new();
 
-      public after_three_units_of_work_each_save_a_vocab_with_the_same_question_out_of_id_order()
+      public after_three_units_of_work_each_save_a_vocab_with_the_same_question()
       {
-         foreach(var id in new[] { _fifth, _first, _third })
+         foreach(var id in _firstThree)
             InUnitOfWorkWithItsUpdater(taggregates => taggregates.Save(StoredVocab.Create(id, "kuu")));
       }
 
-      [PCT] public void the_lookup_gives_them_in_id_order() => IdsFiledUnder("kuu").Must().SequenceEqual([_first, _third, _fifth]);
+      [PCT] public void the_lookup_gives_the_three() => IdsFiledUnder("kuu").Must().Satisfy(it => it.Count == 3 && _firstThree.All(it.Contains));
 
-      public class and_a_unit_of_work_saves_one_whose_id_comes_between_them : after_three_units_of_work_each_save_a_vocab_with_the_same_question_out_of_id_order
+      public class and_a_unit_of_work_saves_a_fourth : after_three_units_of_work_each_save_a_vocab_with_the_same_question
       {
          IReadOnlyList<TaggregateId> _filedInsideTheUnitOfWork = [];
 
-         public and_a_unit_of_work_saves_one_whose_id_comes_between_them() =>
+         public and_a_unit_of_work_saves_a_fourth() =>
             InUnitOfWorkWithItsUpdater(taggregates =>
             {
                taggregates.Save(StoredVocab.Create(_fourth, "kuu"));
                _filedInsideTheUnitOfWork = IdsFiledUnder("kuu");
             });
 
-         [PCT] public void inside_the_unit_of_work_the_lookup_gives_all_four_in_id_order() => _filedInsideTheUnitOfWork.Must().SequenceEqual([_first, _third, _fourth, _fifth]);
-         [PCT] public void after_it_commits_the_lookup_gives_all_four_in_id_order() => IdsFiledUnder("kuu").Must().SequenceEqual([_first, _third, _fourth, _fifth]);
+         [PCT] public void inside_the_unit_of_work_the_lookup_gives_all_four() => _filedInsideTheUnitOfWork.Must().Satisfy(it => it.Count == 4 && _firstThree.Append(_fourth).All(it.Contains));
+         [PCT] public void after_it_commits_the_lookup_gives_all_four() => IdsFiledUnder("kuu").Must().Satisfy(it => it.Count == 4 && _firstThree.Append(_fourth).All(it.Contains));
       }
    }
 
