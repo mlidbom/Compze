@@ -127,8 +127,8 @@ The numbers: [what-was-measured.md](what-was-measured.md). The bugs and the smal
       `ITaggregateStorage` with `IPreparedWrite`; and its composition, `AddTaggregate<T>(factory)` and `Index<T, TKey>`.
     - **Gone:** `LoadFromSnapshot` and its snapshot marker, the end-of-cascade hook, and the one-thread assertion.
 11. **The query models:** move them to tables in step 5, or keep their per-instance registration.
-12. **Tevent implementation classes: an analyzer with a code fix that adds only what is missing** (recommended), rather
-    than a generator that owns its output. And, decided by Magnus: a serialized name is declared on the tevent
+12. **Tevent implementation classes: an analyzer with a code fix that adds only what is missing. Decided by Magnus,
+    2026-11-16,** as work to do: `dev_docs/TODO/tevent-classes-an-analyzer-with-a-code-fix.md`. And, decided by Magnus: a serialized name is declared on the tevent
     interface's property. See [generating-tevent-classes.md](generating-tevent-classes.md).
 13. **The names:** merged into decision 10.
 

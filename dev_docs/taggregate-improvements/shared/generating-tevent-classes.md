@@ -6,8 +6,8 @@ its own, after JAStudio has written one note type's tevents by hand.
 
 ## The headline
 
-**Recommended (jastudio-rep-opus, after Magnus's questions): a Roslyn analyzer with a code fix, which adds only what is
-missing.** It reports a tevent interface with no implementing class, a class missing members, and a property shaped so
+**Decided by Magnus, 2026-11-16, as work to do: a Roslyn analyzer with a code fix, which adds only what is missing.**
+The task: `dev_docs/TODO/tevent-classes-an-analyzer-with-a-code-fix.md`. It reports a tevent interface with no implementing class, a class missing members, and a property shaped so
 that it won't survive being read back. Its code fix adds exactly what is missing, from one tested template, and touches
 nothing else. It never writes a type id. Magnus asked for something that "outputs a certain to be correct class
 hierarchy to match existing event interfaces", "clever enough to be able to add only what is missing and not mess in any
@@ -139,6 +139,5 @@ mode for CI, packaging, and FlexRef's handling of the generator within Compze's 
 
 ## Open
 
-- Whether to build the analyzer: README decision 12.
 - The round-trip check and the serialization samples: decided only for the attribute so far.
 - Not verified: how Rider and ReSharper treat a rename that involves source-generated code.
