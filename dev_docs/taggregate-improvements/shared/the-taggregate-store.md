@@ -721,6 +721,21 @@ whose storage is now a service of the container that the store is declared to be
   JAStudio fast-forwards its corpus checkout there, so that no unit of work can write a note over the change. If the
   change throws, nothing is reloaded and the exception comes out. `ReloadFromStorage()` is the same with no change.
 
+## What JAStudio's switch found
+
+taggregates-opus, 2026-11-16: JAStudio's notes are in the state store (JAStudio's 49cae1b8a, on the spike's 21012570a).
+Its whole suite passes. On the real corpus, a full rebuild and saving every note change no file, and copies of all 79,896
+notes lose nothing.
+
+- **An index lookup has no defined order:** the store's own, by hash at load and by commit after. A JAStudio lookup that
+  takes the first of several vocab changed 1,172 sentences in a rebuild until JAStudio sorted each lookup by id, the
+  order its old caches gave. Whether the index promises id order is Magnus's to decide.
+- **Loading restores every taggregate on one thread:** 80,000 notes in 5.0 s. JAStudio's old cache filled its three
+  classes in parallel.
+- **A unit of work for each note costs more than JAStudio's old saving:** a full rebuild takes 53 processor-seconds,
+  against 36 before. That covers the scope, the transaction, the copy, two snapshots, hashing, and the keys of ten vocab
+  indexes. JAStudio's step 12 measures it properly.
+
 ## What the prototype is
 
 Branch `taggregate-store-opus`, commit `3dd0fbe08`, in `C:\Dev\Compze.worktrees\taggregate-store-opus`, based on `main`.
