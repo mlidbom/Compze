@@ -146,7 +146,7 @@ taggregates, not their callers. taggregates-fable's point.
 - **What readers on other threads see, plainly:**
   - changes before they are committed, and some that are then rolled back;
   - with deferred dispatch, changed notes whose participation handlers haven't run yet, for as long as the unit of work
-    lasts, so notes and derived state disagree meanwhile.
+    lasts. Derived state itself follows the live notes: see "Derived state" below.
 
   JAStudio has both today, in a rebuild.
 - **What a writer reads before its first change isn't covered by the lock.** A second unit of work's method reads the
@@ -218,30 +218,51 @@ taggregates, not their callers. taggregates-fable's point.
 ### Derived state, such as JAStudio's indexes
 
 Derived state is what a consumer keeps in memory beside its taggregates and computes from them. JAStudio needs its
-indexes changed with the commit, before the edit returns. Nothing short of a lock for readers makes several notes and
-their indexes change at one instant for every reader, since the notes themselves are swapped one at a time. What can be
-given is that when `ExecuteUnitOfWork` returns, notes and indexes both show the commit.
+indexes to agree with the notes its readers see, and changed before the edit returns. **What derived state should follow
+depends on the isolation:** the committed instances under (a), the live instances under (b). Otherwise readers get two
+kinds of read at once: under (b), uncommitted notes through committed indexes, so that during a rename a lookup of x
+finds the vocab whose question is already y. taggregates-opus's point.
 
 | Way | When it changes | What it costs |
 |---|---|---|
-| A participation handler writing plain memory | At phase 0, before the commit | A rollback doesn't undo it |
+| A participation handler writing plain memory | At phase 0, before the commit | A rollback doesn't undo it, and it lags the changes of the unit of work's body |
 | An observer | After the commit, off the publishing thread | Readers see new notes with old indexes until it has run |
 | A call from the store when it commits, on the committing thread | With the commit | Consumer code runs at commit, and must not fail |
-| **Derived state that is itself transactional** (recommended) | Written by a participation handler at phase 0, applied at commit | It must be built: a small transactional in-memory map from Compze, or the consumer's own `VolatileTransactionParticipant` |
+| **Derived state that is itself transactional** (recommended under (a)) | Written by a participation handler at phase 0, applied at commit | It must be built: a small transactional in-memory map from Compze, or the consumer's own `VolatileTransactionParticipant` |
+| **Derived state that follows the live instances** (recommended under (b)) | At the end of each settled cascade, and again after a rollback | A narrow notification from the session, which must change no taggregate |
 
-- **The fourth way keeps Magnus's premise,** transactions as the unit of work: a rollback undoes it, and no consumer code
+### Under (b): derived state follows the live instances
+
+- **The session tells the consumer at the end of each settled cascade** which taggregates changed, and the consumer
+  files them again under its own lock, one change at a time, as `NoteGuard.Update` does today. Participation handlers
+  can't do it: with deferred dispatch they run at phase 0, so the indexes would lag the body of the unit of work.
+- **The notification must change no taggregate,** which the session asserts. It is not domain code and causes no
+  tevents, so the reentrancy behind both bugs can't arise from it. It is the one call made from inside `Publish`,
+  narrowed to what can't do harm.
+- **After a rollback,** the store restores each instance in place, then tells the consumer which instances it restored,
+  so it computes their derived state again.
+- **Readers then see notes and indexes that agree,** both uncommitted, and briefly what is later rolled back: (b)'s
+  premise, and JAStudio's today.
+- **No lookup needs to read its own writes,** and the session needn't list its taggregates for this.
+
+### Under (a): derived state that is itself transactional
+
+- **It keeps Magnus's premise,** transactions as the unit of work: a rollback undoes it, and no consumer code
   runs at commit.
 - **Its changes are kept as differences and applied at commit,** not as copies prepared ahead. Two units of work that
   each prepare a copy of one index set would otherwise lose each other's change.
-- **A lookup inside a unit of work reads its own writes,** which removes the limit above. JAStudio's two sessions ask for
+- **A lookup inside a unit of work reads its own writes,** which removes the limit stated under deferred dispatch. JAStudio's two sessions ask for
   it: after a vocab is renamed from x to y, a lookup of x must not find it and a lookup of y must. A lookup takes the
   committed index's entries for the key, drops the notes the unit of work has changed that no longer have the key, and
   adds those it has changed that have it. For that, **the session lists the taggregates it holds, by type:** those got for
   update, those created, and those deleted. JAStudio's `NoteIndex` can then do the rest itself.
 - **JAStudio's `NoteIndex` nearly works so already:** its changes go to copies, and `PublishChanges` puts them in place.
-- **Under (a), an index entry must follow the swap:** the copy becomes the committed instance, but entries under keys
-  that didn't change still point at the old one. An index holds handles or ids, or files the whole note again, as
-  JAStudio does today. Under (b) the entries stay right.
+- **An index entry must follow the swap:** the copy becomes the committed instance, but entries under keys that didn't
+  change still point at the old one. An index holds handles or ids, or files the whole note again, as JAStudio does
+  today.
+
+### Under either
+
 - **Effects that can't be rolled back,** such as telling Anki to delete a study note, belong after the commit and before
   the edit returns: `IUnitOfWorkResolver.OnCommittedSuccessfully`, which runs before `ExecuteUnitOfWork` returns.
 

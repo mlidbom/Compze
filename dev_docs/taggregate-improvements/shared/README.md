@@ -93,8 +93,11 @@ The numbers: [what-was-measured.md](what-was-measured.md). The bugs and the smal
      state as an immutable value. That changes how every taggregate is written, and is not designed.
 
    The comparison is in [the-taggregate-store.md](the-taggregate-store.md).
-3. **Derived state, such as JAStudio's indexes:** state that is itself transactional, written by participation
-   handlers and applied at commit (**recommended**), or a call from the store at the swap, on the committing thread.
+3. **Derived state, such as JAStudio's indexes,** follows what readers see. Under (b), the recommended isolation, it
+   follows the live instances: the session tells the consumer at the end of each settled cascade, by a notification
+   that must change no taggregate, and again after a rollback. That notification is the one call from inside `Publish`
+   that the design keeps. Under (a), derived state is itself transactional: written by participation handlers and
+   applied at commit.
 4. **Whether `IUnitOfWorkTeventPublisher` itself defers to phase 0,** so that every tevent of a unit of work is
    dispatched in one order (**recommended**). Otherwise a tevent published straight through it overtakes the deferred
    tevents of taggregates. The cost: code later in a unit of work no longer sees what participation handlers did.
