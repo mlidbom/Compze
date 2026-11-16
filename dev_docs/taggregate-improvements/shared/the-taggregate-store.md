@@ -789,8 +789,10 @@ the tevent store and the routing; the six of `IStateStore.All` now read through 
 - **JAStudio** depends on the bulk reader where it reads every note: its searches, its tag tree and its media check.
   **Done** (JAStudio's 1eab8a810, all green): one class, `StoredNotes`, which every scan reaches through the
   collections, resolves the bulk reader instead of `IStateStore`, and so says that it scans; it uses it for its `TryGet`
-  too, since the bulk reader is a reader. Nothing else in JAStudio called `All`, nor sorted what it gave, so dropping the
-  order costs it nothing. `IStateStore` is now used in JAStudio only for `ReloadFromStorageAfter`.
+  too, since the bulk reader is a reader. Nothing else in JAStudio called `All`. `IStateStore` is now used in JAStudio only
+  for `ReloadFromStorageAfter`. **With no order** (JAStudio's 933b8bb54, green): one caller had taken an order from
+  `All` after all, `KanjiNote.PopulateRadicalsFromMnemonicTags`, which stored the names of a kanji's `<rad>` tags in
+  `All`'s order. It sorts them by their characters now, one line, and a full rebuild still changes no corpus file.
 - **For the review (item 9):** the name. The document db says `GetAll`, and gives instances; `All` gives references.
 
 ## What the prototype is
