@@ -12,6 +12,9 @@ public interface ITaggregateReference<out TTaggregate> where TTaggregate : class
    TaggregateId Id { get; }
 
    ///<summary>Inside a unit of work that holds a copy of the taggregate, that copy; otherwise the committed instance.</summary>
+   ///<remarks>Throws once the taggregate's deletion is committed: a reference to a deleted taggregate has nothing to give. So a view<br/>
+   /// that may outlive a deletion, such as a row a UI reads between the commit and the notification that reaches it, keeps the last<br/>
+   /// instance it got, and refreshes it when notified.</remarks>
    TTaggregate Current { get; }
 
    ///<summary>The ambient unit of work's copy of the taggregate, which it may change, as <see cref="ITaggregateStoreUpdater.GetForUpdate{TTaggregate}"/><br/>
