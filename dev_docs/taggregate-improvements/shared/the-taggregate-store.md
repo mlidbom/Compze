@@ -113,6 +113,16 @@ each update, no second corpus in memory during a rebuild, and no handles.
   is none. So JAStudio's call sites stay as written. That needs the instance to reach its store: a reference in the
   instance, never anything static, since specifications run several JAStudios in one process. The same field can say
   whether the instance is new, tracked or committed.
+- **A unit of work of its own spans one publish cascade only,** since nothing tells the store where a domain method
+  ends. A domain method that publishes twice, called outside a unit of work, is committed after its first publish, with
+  its participation handlers run between the two on a half-done operation, and if the second publish fails the first
+  stays committed. That is the argument for deferred dispatch, returning at every call site that opens no unit of work.
+  So Magnus chooses, within decision 2, between:
+  - **the automatic unit of work, with that limit stated:** an operation that publishes more than once must be run in a
+    unit of work;
+  - **refusing a change outside any unit of work,** as (a) refuses it. JAStudio already scopes its edits explicitly, with
+    `NoteGuard.Update` at the 51 sites counted, which would become units of work, so refusing may cost it less than it
+    sounds. The edits outside a guard aren't counted.
 - **At the first change in a unit of work,** the store takes the lock and a snapshot of the instance.
 - **A rollback restores the live instance in place from that snapshot,** keeping the identity of every part callers
   hold, such as `vocab.Question`.
@@ -126,6 +136,11 @@ each update, no second corpus in memory during a rebuild, and no handles.
     lasts, so notes and derived state disagree meanwhile.
 
   JAStudio has both today, in a rebuild.
+- **What a writer reads before its first change isn't covered by the lock.** A second unit of work's method reads the
+  note, uncommitted changes of the first included, decides, and only then reaches its first publish and waits for the
+  lock. Once it has the lock, it applies a decision made from state that has since changed, or was rolled back in place.
+  So under (b), **code that decides from a taggregate's state before changing it gets it for update first,** which takes
+  the lock before the reading.
 - **Lookups inside a unit of work see its changes,** since they are on the live instances. Only derived state keyed by
   what changed must still read its own writes: see below.
 

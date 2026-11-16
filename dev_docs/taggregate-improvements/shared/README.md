@@ -44,8 +44,8 @@ how?
    The design: [the-taggregate-store.md](the-taggregate-store.md).
 2. **Tevent routing decided once per class, not set up per instance.** Without it, 80,000 notes cost 0.6 to 1.1 GB
    more than as plain objects. The prototypes bring that to about 27 MB, and load a note with components and shared
-   tomponents 9 to 12 times faster in Release. Every get for update constructs a copy of a note, so it matters more with
-   the store: [the-design.md](the-design.md), section 1.
+   tomponents 9 to 12 times faster in Release. Under the private copy, every get for update constructs a copy of a
+   note, so it would matter more: [the-design.md](the-design.md), section 1.
 3. **`ITaggregateTevent` as a plain `ITevent`.** Today every taggregate tevent is an `IExactlyOnceTevent`, and Tessaging
    accepts only async handlers for those. A synchronous application such as JAStudio needs synchronous handlers.
 
@@ -61,8 +61,8 @@ The numbers: [what-was-measured.md](what-was-measured.md). The bugs and the smal
 
 1. **`ITaggregateTevent` as a plain `ITevent`,** at least the interface, since the store's dispatch and JAStudio's
    handlers need it.
-2. **The unit of work's queue, and the in-memory taggregate store.** Deferred dispatch at phase 0, the private copy, the
-   lock for each taggregate, the rollback after a failed publish. The tevent store's session takes the same internals,
+2. **The unit of work's queue, and the in-memory taggregate store.** Deferred dispatch at phase 0, the isolation Magnus
+   decides, the lock for each taggregate, the rollback after a failed publish. The tevent store's session takes the same internals,
    which fixes both its bugs and Teventive's two.
 3. **Tevent routing per class:** the table built on the dispatcher's own matching code, the root and its components,
    slots that belong to the owner's class, inheritance through `Extend`, and the safeguards. With it, a performance
@@ -84,6 +84,10 @@ The numbers: [what-was-measured.md](what-was-measured.md). The bugs and the smal
      no session in hand joins the ambient unit of work, and JAStudio's edit sites stay as written. Readers on other
      threads see changes before the commit, and some that are rolled back, as JAStudio's do today during a rebuild. Its
      price in Compze is restoring the live instance in place at a rollback, which the implementor writes for every part.
+     Within (b), a change made outside any unit of work is either a unit of work of its own, which spans one publish
+     cascade only, so an operation that publishes twice must be run in a unit of work, or it is refused, as under (a).
+     And code that decides from a taggregate's state before changing it gets it for update first, since the lock taken
+     at the first change doesn't cover what was read before it.
    - **(c) stable objects whose state is versioned per transaction,** which would give both, by holding a taggregate's
      state as an immutable value. That changes how every taggregate is written, and is not designed.
 
