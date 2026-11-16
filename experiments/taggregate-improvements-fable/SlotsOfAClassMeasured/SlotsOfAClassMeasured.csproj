@@ -7,9 +7,10 @@
     <ServerGarbageCollection>false</ServerGarbageCollection>
     <ConcurrentGarbageCollection>false</ConcurrentGarbageCollection>
     <TieredPGO>true</TieredPGO>
+    <CompzeConfiguration Condition="'$(CompzeConfiguration)' == ''">Debug</CompzeConfiguration>
     <NoWarn>CS0108;CS0618;CA1715</NoWarn>
     <!-- Built against this worktree's Compze.Teventive, as a build of src/Compze.Teventive leaves it. -->
-    <CompzeBin>$(MSBuildThisFileDirectory)..\..\..\src\Compze.Teventive\bin\Debug\net11.0</CompzeBin>
+    <CompzeBin>$(MSBuildThisFileDirectory)..\..\..\src\Compze.Teventive\bin\$(CompzeConfiguration)\net11.0</CompzeBin>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="$(CompzeBin)\Compze.*.dll" />
