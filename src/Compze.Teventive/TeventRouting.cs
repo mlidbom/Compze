@@ -5,6 +5,8 @@ using Compze.Abstractions;
 using Compze.Tessaging.TessageTypes;
 using Compze.Teventive._private;
 using Compze.Teventive.Taggregates.BaseClasses;
+using Compze.Teventive.Taggregates.BaseClasses.Shared;
+using Compze.Teventive.Taggregates.Tevents;
 
 namespace Compze.Teventive;
 
@@ -99,6 +101,27 @@ public sealed class TeventRouting<TInstance> : TeventRouting where TInstance : c
 
       ///<summary>Routes every tevent wrapped in the adopting wrapper tevent of the shared-tomponent slot <paramref name="slot"/> returns to that slot's tomponent.</summary>
       public Declaration SharedTomponent<TAdoptingWrapperTevent>(Func<TInstance, ITeventRoutedMember<TAdoptingWrapperTevent>> slot) where TAdoptingWrapperTevent : ITevent => Member(slot);
+
+      ///<summary>Routes every tevent wrapped in the adopting wrapper tevent of <paramref name="slot"/>, a slot that belongs to this class, to the shared tomponent<br/>
+      /// in that slot of the instance. The slot is a static field of the class, declared above this routing.</summary>
+      ///<remarks>An experiment (taggregate-experiments-fable-static-slots): the instance keeps no slot object, and the route gets the shared tomponent from it.</remarks>
+      public Declaration SharedTomponent<TOwnerTevent, TOwnerTeventImplementation, TTomponentTevent, TAdoptingWrapperTevent>(
+         SharedTomponentSlotOfAClass<TInstance, TOwnerTevent, TOwnerTeventImplementation, TTomponentTevent, TAdoptingWrapperTevent> slot)
+         where TOwnerTevent : class, ITaggregateTevent
+         where TOwnerTeventImplementation : TaggregateTevent, TOwnerTevent
+         where TTomponentTevent : class, ITevent
+         where TAdoptingWrapperTevent : class, TOwnerTevent, IPublisherTevent<TTomponentTevent>
+      {
+         // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract A slot declared below the routing that enters it is null here, whatever its type says.
+         Argument.Assert(slot is not null, () => $"A slot entered in the tevent routing of {typeof(TInstance)} is null. Static fields are initialized in the order written: declare the slot above the routing, in the same file.");
+         if(_routesTeventHandlers) return this; //Shared tomponents have no tevent handlers.
+
+#pragma warning disable CS0618 // This is just the type of infrastructure code the member is for
+         TeventRoutes.Add(new TeventRoute(typeof(IPublisherTevent<TAdoptingWrapperTevent>),
+                                          (instance, wrapped) => slot.TomponentOf((TInstance)instance).ApplyAdoptedTeventInternal((IPublisherTevent<TTomponentTevent>)wrapped.Tevent)));
+#pragma warning restore CS0618
+         return this;
+      }
 
       Declaration Member<TMemberTevent>(Func<TInstance, ITeventRoutedMember<TMemberTevent>> member) where TMemberTevent : ITevent
       {
