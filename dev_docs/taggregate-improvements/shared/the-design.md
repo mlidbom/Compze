@@ -84,7 +84,10 @@ class VocabNote : JPNote
   - **a slot's route asserts that the shared tomponent it reaches was constructed with that slot.**
 
   Two gaps are named, not solved: two components of one class with one entry forgotten, and `Extend` skipping an
-  intermediate class that has a table.
+  intermediate class that has a table. Proposed by jastudio-rep-opus for the second, not built: every class declares
+  its table, abstract classes included, with an empty `Extend` if it adds nothing; and `Extend<TSubclass>` asserts
+  that the class whose table it extends is `TSubclass`'s direct base class. A chain of tables then can't skip a class.
+  It is checked once per class, when the subclass's table is made.
 - **Resolved once per class and wrapper tevent type,** published in a dictionary that is never changed afterwards and is
   read without a lock. Many threads dispatching on different instances of one class at once is safe, which JAStudio's
   full rebuild does.
@@ -110,6 +113,11 @@ reading lists in a kanji, media reference lists in every note type. So a slot mu
 - **The slot is the one place that wraps** a tevent in its adopting wrapper tevent: when the tomponent publishes, and when
   the owner loads a snapshot.
 - **A slot in a component is the same as a slot in a root.** It's JAStudio's usual case.
+- **A slot declared in a base class reaches every subclass's instances** through `Extend`, as the base class's appliers
+  do: its route is one of the base table's routes, which `Extend` copies first. The route holds the base class's static
+  slot and treats the instance as the base class, which a subclass's instance is. No prototype specifies it: the
+  inheritance specification's base table has appliers only, and the specifications of static slots have no
+  inheritance. A specification of it belongs to building step 3.
 - **A slot must be declared above the table that enters it,** since static fields initialize in the order written. The
   compiler warns of it under nullable reference types, and the table asserts it. Across the files of a partial class
   the order isn't defined at all, and the compiler doesn't warn.
