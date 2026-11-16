@@ -136,14 +136,15 @@ The numbers: [what-was-measured.md](what-was-measured.md). The bugs and the smal
       - `ITaggregateTevent` as a plain `ITevent` (decision 9);
       - for a taggregate in a store, `Commit`'s callback gone, and `TeventStream` no longer public;
       - committed instances read only, and a failed publish rolling the unit of work back even when caught.
-    - **Shared by every store,** in Compze.Teventive itself or an abstractions package of their own (Magnus agreed):
+    - **Shared by every store,** in Compze.Teventive itself or an abstractions package of their own (Magnus agreed),
+      **structured as Magnus decided, 2026-11-16 (item 22),** in
+      [the-taggregate-store.md](the-taggregate-store.md#the-programming-model):
       - `ITaggregateStoreUpdater`, the renamed `ITeventStoreUpdater`, without `IDisposable`, extending the reader, with
-        `GetForUpdate` and `TryGetForUpdate` where it has `Get` and `TryGet` today (item 22, proposed). Its `Save` only
+        `GetForUpdate` and `TryGetForUpdate` where it has `Get` and `TryGet` today, and `Delete` naming the class. Its `Save` only
         adds a new taggregate, which `Add` would say truthfully (jastudio-rep-opus, 2026-11-16, for the naming pass);
       - `ITaggregateStoreReader` (`Get`, `TryGet`, `Reference`), with `ITeventStoreReader` extending it by the history;
       - `ITaggregateReference<TTaggregate>` (`Id`, `Current`, `ForUpdate`).
-    - **The store that keeps taggregates as their state,** which needs a name of its own, such as "state store", since
-      the tevent store is a taggregate store too: `ITaggregateIndex<TTaggregate, TKey>` with `Lookup` and `HasAny`;
+    - **The state store** (named in item 22), which keeps taggregates as their state: `ITaggregateIndex<TTaggregate, TKey>` with `Lookup` and `HasAny`;
       `ITaggregateStorage` with `IPreparedWrite`; and its composition, `AddTaggregate<T>(factory)` and `Index<T, TKey>`.
     - **Gone:** `LoadFromSnapshot` and its snapshot marker, the end-of-cascade hook, and the one-thread assertion.
 11. **The query models:** move them to tables in step 5, or keep their per-instance registration.

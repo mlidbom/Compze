@@ -49,26 +49,43 @@ notes' state and read their own unit of work's changes.
 ## The programming model
 
 ```csharp
-builder.Registrar.InMemoryTaggregateStore();   // or the JSON store
+//The composition is a sketch, designed in the spike: each store declares the taggregate classes it keeps.
+builder.Registrar.StateStore(store => store.Taggregate<VocabNote>(VocabNote.CreateEmpty).Index<VocabNote, string>(it => it.Forms));
 builder.Registrar.LocalTessagingEngine(engine => engine
    .RegisterTessageBusHandlers(handle => handle.ForTevent((IVocabMeaningChanged it, ITaggregateStoreUpdater taggregates) => ...))
    .ObserveTevents(observe => observe.ForTevent((IVocabMeaningChanged it) => ...)));
 
 container.ScopeFactory.ExecuteUnitOfWork(unitOfWork =>
-   unitOfWork.Resolve<ITaggregateStoreUpdater>().Get<VocabNote>(id).ChangeMeaning("to eat"));
+   unitOfWork.Resolve<ITaggregateStoreUpdater>().GetForUpdate<VocabNote>(id).ChangeMeaning("to eat"));
 
 var vocab = container.RootResolver.Resolve<ITaggregateStoreReader>().Get<VocabNote>(id);
 ```
 
-- **`ITaggregateStoreUpdater`,** scoped, one for each unit of work: `Get`, `TryGet`, `Save` and `Delete`, as
-  `ITeventStoreUpdater` has.
-- **`ITaggregateStoreReader`,** for the container: the committed instance itself, at no cost, read only.
-- **`ITaggregateReference<TTaggregate>`,** what code holds across units of work: see the isolation below.
+**The structure, decided by Magnus, 2026-11-16** (his item 22, after asking why the updater didn't implement the reader,
+and why getting for update had become a plain `Get`):
+
+- **`ITaggregateStoreReader`, shared by every store:** `Get`, `TryGet` and `Reference`. Inside a unit of work, `Get`
+  returns what a reference's `Current` does: the unit of work's copy if it holds one, else the committed instance. So a
+  unit of work reads its own writes. Outside one, the committed instance, read only, at no cost.
+- **`ITaggregateStoreUpdater : ITaggregateStoreReader`,** scoped, one for each unit of work, for every store:
+  `GetForUpdate` and `TryGetForUpdate`, which make the unit of work's private copy and take the taggregate's lock until
+  it completes, `Save`, and `Delete<TTaggregate>(id)`. No `IDisposable`. The name says what a read must never cost, a
+  lock and a copy, and matches `ITaggregateReference.ForUpdate()` and the Typermedia tuery `GetForUpdate`.
+- **`ITeventStoreReader : ITaggregateStoreReader`** adds `GetHistory` and `GetReadonlyCopyOfVersion`. Its
+  `GetReadonlyCopy` becomes the reader's `Get`.
+- **Each store declares the taggregate classes it keeps,** and the updater routes each class to its store. A store's
+  requirements are compile-time constraints there: the state store's classes are snapshotable, with a factory; the
+  tevent store's have tevents with identity (`ITaggregate<ITaggregateTeventWithIdentity>`). New for the tevent store,
+  which takes any taggregate today. A class declared for no store fails at its first `Get`, naming the stores.
+  `Delete` names the class, since the updater routes by class.
+- **Public:** `ITaggregateReference<TTaggregate>`, what code holds across units of work (see the isolation below), and
+  `ITaggregateIndex<TTaggregate, TKey>`, with their implementations private. Internal: the ambient unit of work, in
+  `Compze.DependencyInjection`. The persistence seams stay separate.
+- **Where:** the shared interfaces in `Compze.Teventive` for the spike; whether they get a package of their own is
+  decided after it.
+- **The new store's name: the state store,** beside the tevent store.
 - **`LocalTessagingEngine`** is all of Tessaging a consumer like JAStudio composes: no endpoint, no network, and no type
   mappings for tevent types that never leave the process. The prototype maps none.
-- **Possibly one interface for both stores:** `ITeventStoreUpdater` has the same four members, so it could be
-  `ITaggregateStoreUpdater` with the tevent store as its other implementation. A naming and structure question for
-  Magnus.
 
 ## Isolation: a private copy for each unit of work
 
