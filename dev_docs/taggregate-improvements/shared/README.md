@@ -137,7 +137,9 @@ The numbers: [what-was-measured.md](what-was-measured.md). The bugs and the smal
       - for a taggregate in a store, `Commit`'s callback gone, and `TeventStream` no longer public;
       - committed instances read only, and a failed publish rolling the unit of work back even when caught.
     - **Shared by every store,** in Compze.Teventive itself or an abstractions package of their own (Magnus agreed):
-      - `ITaggregateStoreUpdater`, the renamed `ITeventStoreUpdater`, without `IDisposable`;
+      - `ITaggregateStoreUpdater`, the renamed `ITeventStoreUpdater`, without `IDisposable`, extending the reader, with
+        `GetForUpdate` and `TryGetForUpdate` where it has `Get` and `TryGet` today (item 22, proposed). Its `Save` only
+        adds a new taggregate, which `Add` would say truthfully (jastudio-rep-opus, 2026-11-16, for the naming pass);
       - `ITaggregateStoreReader` (`Get`, `TryGet`, `Reference`), with `ITeventStoreReader` extending it by the history;
       - `ITaggregateReference<TTaggregate>` (`Id`, `Current`, `ForUpdate`).
     - **The store that keeps taggregates as their state,** which needs a name of its own, such as "state store", since
