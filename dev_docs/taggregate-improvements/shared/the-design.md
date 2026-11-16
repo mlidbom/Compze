@@ -306,10 +306,11 @@ never leave the process.
 - **What the tevent store needs is identity, not exactly-once delivery:** it identifies every stored tevent by its
   `TessageId`, when reading tevents back, in migrations, and in its rows. So every stored hierarchy needs
   `ITessageWithIdentity`, whether or not it is delivered between processes.
-- **This needs design before it's a decision,** in one of two variants:
+- **Decided by Magnus, 2026-11-16: the identity moved** (README decision 9). The two variants:
   - **the interface only,** most simply `ITaggregateTevent : ITevent, ITessageWithIdentity`, which the tevent store needs
     nothing new for, and which still demands an identity of every taggregate tevent;
-  - **the identity moved too** (recommended, README decision 9), to the tevents that need it: `TaggregateTevent` loses
+  - **the identity moved too** (decided), to the tevents that need it, as `ITaggregateTeventWithIdentity` and
+    `TaggregateTeventWithIdentity`: `TaggregateTevent` loses
     its `Id`, and a second base class has it, for the tevent store's hierarchies and the migrations' replacement
     tevents, which declare `ITessageWithIdentity`. Only the tevent store and Tessaging's delivery guarantees read a
     tevent's `Id`. The saving that first argued for it, about 18 MB of garbage per JAStudio start, is gone with loading

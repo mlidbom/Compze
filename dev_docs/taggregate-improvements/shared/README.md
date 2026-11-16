@@ -110,14 +110,15 @@ The numbers: [what-was-measured.md](what-was-measured.md). The bugs and the smal
 8. **Declared, or by convention: decided.** Magnus, 2026-11-16: "Definitely tables. One killer thing is ordering
    dependencies. Another the method bloat." Both teams and both reviewers had recommended the declared table, with its
    safeguards.
-9. **`ITaggregateTevent` as a plain `ITevent`:** **Magnus, 2026-11-16: yes, as a design decision.** Still open, which of two variants:
+9. **`ITaggregateTevent` as a plain `ITevent`:** **Magnus, 2026-11-16: yes, as a design decision. The variant decided the same day: the identity moved,
+   with the names below:** "Yes move it and go with your naming."
    - the interface only, `ITaggregateTevent : ITevent, ITessageWithIdentity`;
-   - the identity moved too (**recommended**, since Magnus's question of 2026-11-16): only the tevent store and
+   - **the identity moved too (decided),** after Magnus's question: only the tevent store and
      Tessaging's delivery guarantees read a tevent's `Id`, so a taggregate that is only dispatched in-process never
      needs one, and an API that demands it of every taggregate tevent claims what isn't true. `ITessageWithIdentity`
      already exists, and the at-least-once, at-most-once and exactly-once interfaces already extend it. The tevent
      store's hierarchies declare it, and their classes take a base class with the `Id`. About 45 tevent classes and 28
-     root tevent interfaces in Compze's code and tests, of which only the tevent store's change. Placeholder names,
+     root tevent interfaces in Compze's code and tests, of which only the tevent store's change. The names, decided,
      after `ITessageWithIdentity`: `ITaggregateTeventWithIdentity`, which the tevent store's internals need, and the
      class `TaggregateTeventWithIdentity`, a `TaggregateTevent` with the `Id`, so `Taggregate`'s constraints accept
      both. The tevent store can require it at compile time: `ITaggregate<out TTevent>` is covariant, so it can
