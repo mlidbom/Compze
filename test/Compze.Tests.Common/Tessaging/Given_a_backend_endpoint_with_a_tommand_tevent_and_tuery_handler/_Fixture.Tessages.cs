@@ -96,7 +96,7 @@ public class MyTaggregate : Taggregate<MyTaggregate, IMyTaggregateTevent, MyTagg
 
 public interface IMyTaggregateTevent<out T> : ITaggregateTevent<T> where T : IMyTaggregateTevent;
 
-public interface IMyTaggregateTevent : ITaggregateTeventWithIdentity
+public interface IMyTaggregateTevent : ITaggregateTeventWithIdentity, IExactlyOnceTevent
 {
    public interface Created : IMyTaggregateTevent, ITaggregateCreatedTevent;
    public interface Updated : IMyTaggregateTevent;

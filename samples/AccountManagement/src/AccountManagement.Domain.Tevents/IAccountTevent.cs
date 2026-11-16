@@ -1,3 +1,4 @@
+using Compze.Tessaging.TessageTypes;
 using Compze.Teventive.Taggregates.Tevents;
 
 // ReSharper disable MemberHidesStaticFromOuterClass
@@ -8,7 +9,7 @@ namespace AccountManagement.Domain.Tevents;
 
 public interface IAccountTevent<out T> : ITaggregateTevent<T> where T : IAccountTevent;
 
-public interface IAccountTevent : ITaggregateTeventWithIdentity
+public interface IAccountTevent : ITaggregateTeventWithIdentity, IExactlyOnceTevent
 {
 
    public interface Created : IAccountTevent, ITaggregateCreatedTevent;

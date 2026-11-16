@@ -35,9 +35,9 @@ public class TeventStoreUpdaterTest : UniversalTestBase
 {
    class TeventSpy
    {
-      public IEnumerable<IExactlyOnceTevent> DispatchedTessages => [.._tevents];
-      public void Receive(IExactlyOnceTevent tevent) => _tevents.Add(tevent);
-      readonly List<IExactlyOnceTevent> _tevents = [];
+      public IEnumerable<ITaggregateTevent> DispatchedTessages => [.._tevents];
+      public void Receive(ITaggregateTevent tevent) => _tevents.Add(tevent);
+      readonly List<ITaggregateTevent> _tevents = [];
    }
 
    readonly TeventSpy _teventSpy;
@@ -47,13 +47,9 @@ public class TeventStoreUpdaterTest : UniversalTestBase
    {
       _teventSpy = new TeventSpy();
 
-      //Exactly-once kinds are async end to end, so the spy subscription is declared async; the spy is synchronous, so it completes its task synchronously.
+      //The user's tevents declare no delivery guarantee, so the spy subscribes synchronously to every taggregate tevent.
       _container = TestEnv.DIContainer.SetupTestingContainer(registrar => registrar.RequireIntegrationTestTypeMappings(),
-                                                             composeEngine: engine => engine.RegisterTessageBusHandlers(handle => handle.ForTevent((IExactlyOnceTevent tevent) =>
-                                                             {
-                                                                _teventSpy.Receive(tevent);
-                                                                return Task.CompletedTask;
-                                                             })));
+                                                             composeEngine: engine => engine.RegisterTessageBusHandlers(handle => handle.ForTevent((ITaggregateTevent tevent) => _teventSpy.Receive(tevent))));
    }
 
    protected override async Task DisposeAsyncInternal() => await _container.DisposeAsync().AsTask();
