@@ -23,10 +23,11 @@ What the prototype shows:
   both pluggable component combinations.
 - **The two reentrancy bugs can't arise,** since nothing calls out from inside `Publish` or `Commit`.
 
-**The cost JAStudio's answers show is the private copy.** Under the isolation Magnus chose, the committed instance is
-read only, and every commit swaps in a new one. Few things hold a note across edits. But every place that edits one
-changes: today an edit is a call on the note one has, and with the store it is a call on the copy the unit of work
-gets for update. That reopens the choice of isolation, which is decision 1 below.
+**JAStudio's answers reopen one choice Magnus made: isolation.** He chose a private copy for each unit of work. Under
+it every commit swaps in a new instance, so the note object JAStudio's code holds can't stay the same, and every place
+that edits a note changes. JAStudio's two sessions say that this decides the cost for JAStudio. **We recommend shared
+live instances instead, "read uncommitted",** as Magnus's decision, with the trade shown below. The prototype implements
+the private copy; the rest of the design holds for either.
 
 ## What Magnus set
 
@@ -52,27 +53,44 @@ builder.Registrar.LocalTessagingEngine(engine => engine
 container.ScopeFactory.ExecuteUnitOfWork(unitOfWork =>
    unitOfWork.Resolve<ITaggregateStoreUpdater>().Get<VocabNote>(id).ChangeMeaning("to eat"));
 
-var vocab = container.RootResolver.Resolve<ITaggregateStoreReader>().Get<VocabNote>(id);   // committed, read only
+var vocab = container.RootResolver.Resolve<ITaggregateStoreReader>().Get<VocabNote>(id);
 ```
 
 - **`ITaggregateStoreUpdater`,** scoped, one for each unit of work: `Get`, `TryGet`, `Save` and `Delete`, as
   `ITeventStoreUpdater` has.
-- **`ITaggregateStoreReader`,** for the container: the committed instance itself, at no cost.
+- **`ITaggregateStoreReader`,** for the container: the instance itself, at no cost. Under isolation (a) it is the
+  committed instance, read only; under (b), the live instance.
 - **`LocalTessagingEngine`** is all of Tessaging a consumer like JAStudio composes: no endpoint, no network, and no type
   mappings for tevent types that never leave the process. The prototype maps none.
 - **Possibly one interface for both stores:** `ITeventStoreUpdater` has the same four members, so it could be
   `ITaggregateStoreUpdater` with the tevent store as its other implementation. A naming and structure question for
   Magnus.
 
-## Isolation: a private copy for each unit of work
+## Isolation: Magnus's decision, reopened by JAStudio's answers
 
-- **A private copy** is the instance one unit of work changes: `Get` builds it from the committed instance through the
-  taggregate's snapshot, in 0.7 to 1.2 µs for the prototype's small note, and less once tevent routing is decided per
-  class, since on `main` each new instance still builds its dispatchers.
-- **The committed instance** is what readers get. Publishing on it throws. The commit makes the copy the committed
-  instance; a rollback discards the copy, and the committed instance was never touched.
-- **A lock for each taggregate makes writers wait for each other.** It is owned by the unit of work's transaction:
-  taken at the first get for update and released when the transaction completes, possibly on another thread.
+**Three ways for a store to keep a unit of work's changes from other code.** Magnus chose (a) before JAStudio's answers
+were known. We recommend (b). (c) would give both, and is a redesign.
+
+| | (a) A private copy for each unit of work | (b) Shared live instances: "read uncommitted" | (c) Stable objects, state versioned per transaction |
+|---|---|---|---|
+| Edit sites in JAStudio | Every one changes, to get the copy | Unchanged: `vocab.Question.SetText("x")` | Unchanged |
+| The note object code holds | Replaced at every commit: holders keep handles or ids | The same object for good | The same object for good |
+| What readers on other threads see | Committed state only | Changes not yet committed, and some later rolled back | Committed state only |
+| A rollback | Discards the copy | Restores the live instance in place | Discards the transaction's state |
+| A rebuild in memory | A second copy of every note it changes | No copy | A second state of every note it changes |
+| Same model as the tevent store | Yes | The session reads the same, the isolation differs | Yes |
+| In Compze | Prototyped | Designed, not built | A taggregate's state held as an immutable value, its snapshot type, with appliers as transitions: how every taggregate is written changes. Not designed |
+
+**Why we recommend (b):** the store exists for a consumer that holds live objects for good. Its only consumer says that
+keeping the object it holds decides the cost. (a) is the cleaner model, but it is the tevent store's model for code that
+never keeps a taggregate across units of work, which is the opposite of JAStudio. (b) also costs less to run: no copy for
+each update, no second corpus in memory during a rebuild, and no handles.
+
+### What every way shares
+
+- **A lock for each taggregate makes writers wait for each other.** It is owned by the unit of work's transaction: taken
+  at the first get for update, or the first change, and released when the transaction completes, possibly on another
+  thread.
   - **It is a `SemaphoreSlim`** with a timeout that names the taggregate. The locking standard gives `SemaphoreSlim`
     exactly this job: "a gate held across awaits, or released on another thread".
   - **A Compze lock owned by a transaction,** with diagnostics naming the holding transaction and where it took the
@@ -80,51 +98,54 @@ var vocab = container.RootResolver.Resolve<ITaggregateStoreReader>().Get<VocabNo
   - **Only held locks are kept,** in a table of the taggregates being updated, not a lock for each of 80,000 notes. The
     prototype keeps one for each taggregate ever updated.
   - **JAStudio's race between a background reparse and a UI edit** then serializes, instead of corrupting the vocab or
-    throwing.
-- **A committed instance is read by many threads at once,** so what a taggregate computes lazily and keeps must be
-  safe for that. JAStudio's forms are such a case.
-- **The version:** the copy continues the committed instance's version, which the store sets after restoring, and no
-  version is persisted. JAStudio would see one only as noise in every diff and a conflict in every merge.
+    throwing. The thread assertion of the earlier conclusions isn't needed.
+- **A taggregate is read by many threads at once,** so what it computes lazily and keeps must be safe for that.
+  JAStudio's forms are such a case.
+- **The version** is kept in memory and not persisted. JAStudio would see one only as noise in every diff and a conflict
+  in every merge.
+- **The session's interface stays the tevent store's:** `Get` for update, `TryGet`, `Save`, `Delete`. Code that uses
+  sessions reads the same against either store. What differs is the isolation each store gives, stated on each.
 
-### What the private copy costs JAStudio, from taggregates-fable's answers
+### (b): shared live instances, read uncommitted
 
-- **Every edit site changes.** UI, MCP tools, importers, batches and nearly every specification edit by calling a
-  method on the note they hold. With read-only committed instances, each edit gets the unit of work's copy instead. Not
-  counted, and larger than the 51 `NoteGuard.Update` sites counted so far.
-- **What holds a note across edits must follow the swap:** the caches' indexes, six view model classes, and the MCP
-  server for one tool call. Other notes hold only ids or `WordReference`s. JAStudio already has the rule that a note
-  object can be replaced (`JPCollection.ReloadFromBackend`), so the UI's holders follow it today.
-- **The indexes are the costly holder.** Their sets are `HashSet<TNote>`, copied to be changed, since lookups take no
-  lock. A new instance at each commit would copy every set the note is in, and a common word's set holds thousands of
-  sentences.
-- **A taggregate handle,** a small object the store keeps for each taggregate, is taggregates-fable's recommendation
-  over bare ids:
-  - indexes and view models hold handles, which never change;
-  - inside a unit of work, a handle resolves to that unit of work's copy if it has one, and to the committed instance
-    otherwise.
-  - An edit in JAStudio reads, in its middle, notes it has already changed: `PerfectSynonyms` walks its web through
-    lookups. A handle gives it its own changes in one place.
-- **What the notes hold that isn't stored,** what Anki says of their cards, would leave the notes: taggregates-fable
-  would move it out, rather than have it in a snapshot.
+- **`Get` for update returns the live instance,** locked for the unit of work.
+- **A change made with no session in hand joins the ambient unit of work,** and is a unit of work of its own when there
+  is none. So JAStudio's call sites stay as written. That needs the instance to reach its store: a reference in the
+  instance, never anything static, since specifications run several JAStudios in one process. The same field can say
+  whether the instance is new, tracked or committed.
+- **At the first change in a unit of work,** the store takes the lock and a snapshot of the instance.
+- **A rollback restores the live instance in place from that snapshot,** keeping the identity of every part callers
+  hold, such as `vocab.Question`.
+- **(b)'s real price in Compze:** restoring in place is a second and harder kind of restoring than loading needs. The
+  implementor writes it for every part, and it runs rarely, exactly when something has already gone wrong. So:
+  - the specification helper covers it: take a snapshot, change, restore in place, take another, compare;
+  - a restoring in place that throws stops the process, as a failed commit does.
+- **What readers on other threads see, plainly:**
+  - changes before they are committed, and some that are then rolled back;
+  - with deferred dispatch, changed notes whose participation handlers haven't run yet, for as long as the unit of work
+    lasts, so notes and derived state disagree meanwhile.
 
-### The alternative: shared live instances, locked, rolled back from a snapshot
+  JAStudio has both today, in a rebuild.
+- **Lookups inside a unit of work see its changes,** since they are on the live instances. Only derived state keyed by
+  what changed must still read its own writes: see below.
 
-Magnus's option (b), set aside before these facts were known. **Get for update** returns the live instance, locked for
-the unit of work, and takes a snapshot of it at the first change. **A rollback** restores the instance from that
-snapshot. **A change made outside any unit of work** becomes a unit of work of its own, which taggregates-fable asks for.
+### (a): a private copy for each unit of work, as prototyped
 
-| | Private copy (a) | Shared live instances (b) |
-|---|---|---|
-| Edit sites in JAStudio | Every one changes, to get the copy | Unchanged |
-| References to notes | Handles, or ids | Unchanged, and the indexes keep their sets |
-| What readers see | Committed state only | Changes not yet committed, as today, and changes that are then rolled back |
-| A rollback | Discards the copy | Restores the shared instance in place, while other threads may read it |
-| Committed instances | Never change, so reading them is safe on any thread | Change under readers, as today |
-| Same model as the tevent store | Yes: each session has instances of its own | No: `Get` returns the instance every session shares |
-
-**Our recommendation stays (a), with handles,** because it is the tevent store's model and the only one in which a
-reader never sees state that is rolled back. But its cost to JAStudio is the larger one. Whether that cost is worth
-paying is part of the open question of whether JAStudio adopts taggregates at all: see JAStudio's shared folder.
+- **A private copy** is the instance one unit of work changes. `Get` builds it from the committed instance through the
+  taggregate's snapshot, in 0.7 to 1.2 µs for the prototype's small note.
+- **The committed instance** is what readers get, and publishing on it throws. The commit makes the copy the committed
+  instance; a rollback discards the copy.
+- **What it costs JAStudio,** from taggregates-fable's answers:
+  - **every edit site changes.** UI, MCP tools, importers, batches and nearly every specification edit by calling a
+    method on the note they hold. Not counted, and larger than the 51 `NoteGuard.Update` sites counted so far;
+  - **what holds a note must follow the swap:** the caches' indexes, six view model classes, and the MCP server for one
+    tool call. Other notes hold only ids or `WordReference`s;
+  - **the indexes are the costly holder:** their sets are copied to be changed, since lookups take no lock, and a new
+    instance at each commit would copy every set the note is in;
+  - **a taggregate handle** for each taggregate, which resolves to the unit of work's copy if it has one and to the
+    committed instance otherwise, is how JAStudio would hold notes under (a).
+- **What the notes hold that isn't stored,** what Anki says of their cards, would leave the notes, rather than be in a
+  snapshot. That holds under (b) too, where the rollback restores from a snapshot.
 
 ## Dispatch: deferred to the commit
 
@@ -143,14 +164,14 @@ paying is part of the open question of whether JAStudio adopts taggregates at al
 - **What it gives:**
   - nothing runs while a domain method is on the stack;
   - nothing is dispatched when the body of the unit of work throws, so there is nothing to undo;
-  - a participation handler may change the taggregate whose tevent it handles, since that is an ordinary cascade on
-    the copy, dispatched in order. Decision 6 of the earlier conclusions dissolves.
+  - a participation handler may change the taggregate whose tevent it handles, since that is an ordinary cascade,
+    dispatched in order. Decision 6 of the earlier conclusions dissolves.
 - **What it costs:** code later in the same unit of work doesn't see what participation handlers do. JAStudio has
   such code: two creations of a vocab with one question in one unit of work would both miss the index. Either a limit
   to state, or derived state that reads its own unit of work's changes: see below.
 - **A failed publish rolls the unit of work back,** even if the consumer catches its exception: the session refuses to
-  prepare, with "A publish failed on ... in this unit of work". The refusal rule of the earlier conclusions shrinks to the
-  private copy, and JAStudio replaces no references after a throw.
+  prepare, with "A publish failed on ... in this unit of work". The refusal rule of the earlier conclusions becomes a
+  rollback, and JAStudio replaces no references after a throw.
 
 ### What the deferred dispatch must also do, from jastudio-rep-fable's adversarial read
 
@@ -175,9 +196,9 @@ given is that when `ExecuteUnitOfWork` returns, notes and indexes both show the 
 
 | Way | When it changes | What it costs |
 |---|---|---|
-| A participation handler writing plain memory | At phase 0, before the swap | A rollback doesn't undo it |
+| A participation handler writing plain memory | At phase 0, before the commit | A rollback doesn't undo it |
 | An observer | After the commit, off the publishing thread | Readers see new notes with old indexes until it has run |
-| A call from the store at the swap, on the committing thread | With the swap | Consumer code runs at commit, and must not fail |
+| A call from the store when it commits, on the committing thread | With the commit | Consumer code runs at commit, and must not fail |
 | **Derived state that is itself transactional** (recommended) | Written by a participation handler at phase 0, applied at commit | It must be built: a small transactional in-memory map from Compze, or the consumer's own `VolatileTransactionParticipant` |
 
 - **The fourth way keeps Magnus's premise,** transactions as the unit of work: a rollback undoes it, and no consumer code
@@ -186,12 +207,13 @@ given is that when `ExecuteUnitOfWork` returns, notes and indexes both show the 
   each prepare a copy of one index set would otherwise lose each other's change.
 - **A lookup inside a unit of work reads its own writes,** which removes the limit above. JAStudio's two sessions ask for
   it: after a vocab is renamed from x to y, a lookup of x must not find it and a lookup of y must. A lookup takes the
-  committed index's entries for the key, drops the notes whose unit-of-work copy no longer has the key, and adds that
-  unit of work's copies that have it. For that, **the session lists the taggregates it holds, by type:** those got for
+  committed index's entries for the key, drops the notes the unit of work has changed that no longer have the key, and
+  adds those it has changed that have it. For that, **the session lists the taggregates it holds, by type:** those got for
   update, those created, and those deleted. JAStudio's `NoteIndex` can then do the rest itself.
 - **JAStudio's `NoteIndex` nearly works so already:** its changes go to copies, and `PublishChanges` puts them in place.
-- **An index entry must follow the swap:** the copy becomes the committed instance, but entries under keys that didn't
-  change still point at the old one. An index holds handles or ids, or files the whole note again, as JAStudio does today.
+- **Under (a), an index entry must follow the swap:** the copy becomes the committed instance, but entries under keys
+  that didn't change still point at the old one. An index holds handles or ids, or files the whole note again, as
+  JAStudio does today. Under (b) the entries stay right.
 - **Effects that can't be rolled back,** such as telling Anki to delete a study note, belong after the commit and before
   the edit returns: `IUnitOfWorkResolver.OnCommittedSuccessfully`, which runs before `ExecuteUnitOfWork` returns.
 
@@ -214,7 +236,8 @@ public interface ISnapshotable<TSelf, TSnapshot> where TSelf : ISnapshotable<TSe
   loading knows which class restores from which snapshot type.
 - **`Taggregate` gets a protected way to say it was restored,** with its id. Today that needs the `[Obsolete]` internal
   `Id` setter of `Entity`. The prototype's is `RestoreIdentity(id, version)`.
-- **A snapshot holds the taggregate's whole state,** not only what is stored, since every copy is made from it. A
+- **A snapshot holds the taggregate's whole state,** not only what is stored, since every copy under (a), and every
+  rollback under (b), is made from it. A
   component's and a shared tomponent's state are nested in the root's, as in JAStudio's DTOs. A snapshot can share every
   immutable value with the committed instance.
 - **Restoring works outside any store:** JAStudio's MCP server builds notes from two git versions of a file.
@@ -247,7 +270,7 @@ public interface IPreparedWrite
 
 - **Two steps, because a transaction has two:**
   - the session calls `Prepare` at phase 0, once the unit of work's queue is empty and it has taken its copies' snapshots;
-  - it calls `Commit` when the transaction commits, then swaps in the copies, then releases the locks;
+  - it calls `Commit` when the transaction commits, then, under (a), swaps in the copies, then releases the locks;
   - it calls `Discard` at a rollback.
 - **Everything that can fail belongs in `Prepare`:** serializing, writing, a full disk, a file another program holds.
 - **In memory, `Prepare` does nothing.**
@@ -292,8 +315,8 @@ public interface IPreparedWrite
 
 ## A rebuild
 
-One transaction for a whole rebuild means a copy and a lock for every note until the commit, and every handler run on
-one thread at the end. A unit of work for each note costs about 10 µs and 9.5 KB, so about 0.8 s of one core and 0.76 GB
+One transaction for a whole rebuild means a lock for every note until the commit, under (a) a copy of every note too,
+and every handler run on one thread at the end. A unit of work for each note costs about 10 µs and 9.5 KB, so about 0.8 s of one core and 0.76 GB
 of garbage for 80,000. **We'd take batches,** of some hundreds of notes for each unit of work, on many threads, and
 measure that shape. Generated data can be generated again, so a failed batch costs little.
 
@@ -301,7 +324,7 @@ measure that shape. Generated data can be generated again, so a failed batch cos
 
 - Loading everything again while running.
 - A second session of one transaction getting a taggregate another session of it holds: it waits for its own
-  transaction until the timeout. It should be refused at once, or both sessions share the copy.
+  transaction until the timeout. It should be refused at once, or both sessions share the instance.
 - A wait for observers to be at rest that needs neither a testing host nor stopping the engine:
   `ILocalTessagingEngine.StopAsync` stops it. JAStudio's specifications need one.
 - A database and the JSON store in one transaction.
@@ -320,8 +343,8 @@ Branch `taggregate-store-opus`, commit `3dd0fbe08`, in `C:\Dev\Compze.worktrees\
   throws runs no handler and no observer, that the copy is swapped in before `OnCommittedSuccessfully` runs, and that
   two units of work on two threads serialize on the lock.
 - **`Compze.Tests.Unit` passes,** 417 of 417. The other test assemblies weren't run on it.
-- **Not in it:** the queue for the unit of work, the bound on rounds, the JSON store, handles, transactional derived
-  state, and tevent routing per class.
+- **Not in it:** isolation (b), the queue for the unit of work, the bound on rounds, the JSON store, handles,
+  transactional derived state, and tevent routing per class.
 
 | Measured in Release, three runs, the machine at 3 to 7% load | Time, each | Allocated, each |
 |---|---:|---:|

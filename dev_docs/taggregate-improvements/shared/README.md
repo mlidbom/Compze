@@ -37,7 +37,9 @@ how?
      8.5 to 12.5 µs in Release.
    - **The two reentrancy bugs in Teventive, and the two in the tevent store's session,** can't arise: nothing calls out
      from inside `Publish` or `Commit`.
-   - **Its cost to JAStudio is the private copy:** every edit site changes. Decision 2.
+   - **JAStudio's answers reopen the isolation Magnus chose,** a private copy for each unit of work: under it every
+     place in JAStudio that edits a note changes. We recommend shared live instances, "read uncommitted", instead.
+     Decision 2.
 
    The design: [the-taggregate-store.md](the-taggregate-store.md).
 2. **Tevent routing decided once per class, not set up per instance.** Without it, 80,000 notes cost 0.6 to 1.1 GB
@@ -49,8 +51,8 @@ how?
 
 **Whether JAStudio should make its notes taggregates at all is a separate question, and still open.** JAStudio's side
 says Compze can be made to carry the notes, but adopting taggregates was never sized, or compared with a smaller route.
-The store's private copy adds to the size: every place in JAStudio that edits a note changes. See JAStudio's shared
-folder. Routing per class and the store stand on their own for Compze.
+Under the private copy, the size grows by every place in JAStudio that edits a note. See JAStudio's shared folder.
+Routing per class and the store stand on their own for Compze.
 
 The numbers: [what-was-measured.md](what-was-measured.md). The bugs and the smaller findings:
 [bugs-and-findings.md](bugs-and-findings.md).
@@ -74,12 +76,18 @@ The numbers: [what-was-measured.md](what-was-measured.md). The bugs and the smal
 ## What Magnus decides
 
 1. **The go-ahead, and the order above.**
-2. **Isolation: a private copy for each unit of work, or shared live instances.** Magnus chose the private copy before
-   JAStudio's answers showed its cost there. Every edit site in JAStudio changes to get the copy, and what holds notes
-   holds handles the store keeps for each taggregate. Shared live instances keep JAStudio's edit sites and references
-   as they are, at the price of readers seeing changes that are later rolled back, and of a model unlike the tevent
-   store's. **We recommend the private copy, with handles.** The comparison is in
-   [the-taggregate-store.md](the-taggregate-store.md).
+2. **Isolation, which Magnus chose before JAStudio's answers were known:**
+   - **(a) a private copy for each unit of work,** his choice, and prototyped. Readers see committed state only, as in
+     the tevent store. But every commit replaces the note object, so every place in JAStudio that edits a note changes,
+     and what holds notes holds handles. JAStudio's two sessions say that this decides the cost for JAStudio.
+   - **(b) shared live instances, "read uncommitted"** (**recommended**). The note object stays for good, a change with
+     no session in hand joins the ambient unit of work, and JAStudio's edit sites stay as written. Readers on other
+     threads see changes before the commit, and some that are rolled back, as JAStudio's do today during a rebuild. Its
+     price in Compze is restoring the live instance in place at a rollback, which the implementor writes for every part.
+   - **(c) stable objects whose state is versioned per transaction,** which would give both, by holding a taggregate's
+     state as an immutable value. That changes how every taggregate is written, and is not designed.
+
+   The comparison is in [the-taggregate-store.md](the-taggregate-store.md).
 3. **Derived state, such as JAStudio's indexes:** state that is itself transactional, written by participation
    handlers and applied at commit (**recommended**), or a call from the store at the swap, on the committing thread.
 4. **Whether `IUnitOfWorkTeventPublisher` itself defers to phase 0,** so that every tevent of a unit of work is
