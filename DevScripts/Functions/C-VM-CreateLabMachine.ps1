@@ -46,7 +46,7 @@ function C-VM-CreateLabMachine {
     param(
         [string]$SourceMachine = 'Deskmancer-Win11-24H2',
         [string]$SourceCheckpoint = '24H2-baseline',
-        [string]$SourceGuestCredentialPath = 'C:\VantageVMLab\guest-credential.xml',
+        [string]$SourceGuestCredentialPath = 'C:\DeskmancerVMLab\guest-credential.xml',
         [string]$DotNetChannel = (Get-TargetedDotNetChannel)
     )
 
