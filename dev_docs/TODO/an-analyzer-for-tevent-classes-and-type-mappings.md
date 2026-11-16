@@ -1,7 +1,8 @@
-# Tevent classes: an analyzer with a code fix that adds only what is missing
+# An analyzer with code fixes: tevent classes and type mappings
 
 Decided by Magnus, 2026-11-16: "I think that is the best available solution. Record it as an accepted todo. Something we
-will do." Not yet started. When is not decided: proposed as an effort of its own, after the taggregate store.
+will do." The type mappings were added the same day: "that analyzer is also on the todo list. I assume it goes together
+with the other one." Not yet started. When is not decided: proposed as an effort of its own, after the taggregate store.
 
 The design, and the alternatives weighed on the way to it, are in
 `dev_docs/taggregate-improvements/shared/generating-tevent-classes.md`.
@@ -32,6 +33,17 @@ The design, and the alternatives weighed on the way to it, are in
   demand: in Rider or Visual Studio, by an agent through the dotnet-analysis-and-refactoring MCP's quick fixes, or with
   `dotnet format analyzers` (believed, not checked).
 - **In CI its diagnostics are errors.**
+
+## Missing type mappings
+
+- **A diagnostic for a type that needs a type id mapping and has none:** a tevent interface or class, or any other type
+  Compze persists or transmits, in an assembly with an `IAssemblyTypeMapper`. At compile time and as you type, instead
+  of `ITypeMap.AssertMappingsExistFor`'s "Missing type mappings for: ..." at a taggregate's first use or at composition.
+- **A code fix that adds `.Map<T>("...")` to the assembly's mapper,** with a fresh GUID made once, when the fix is
+  applied. From then on the GUID is ordinary code, which a refactoring carries along.
+- **It replaces what Compze once had at run time:** `MissingMappingReporter` put code with fresh GUIDs to paste into the
+  exception's message, and `TypeMapperSourceCodeGenerator` wrote a mapping file. Both were removed in `70e50b757`,
+  "Cruft.", on 2026-03-21.
 
 ## What it needs that Compze doesn't have yet
 

@@ -7,7 +7,7 @@ its own, after JAStudio has written one note type's tevents by hand.
 ## The headline
 
 **Decided by Magnus, 2026-11-16, as work to do: a Roslyn analyzer with a code fix, which adds only what is missing.**
-The task: `dev_docs/TODO/tevent-classes-an-analyzer-with-a-code-fix.md`. It reports a tevent interface with no implementing class, a class missing members, and a property shaped so
+The task: `dev_docs/TODO/an-analyzer-for-tevent-classes-and-type-mappings.md`, which also covers missing type mappings. It reports a tevent interface with no implementing class, a class missing members, and a property shaped so
 that it won't survive being read back. Its code fix adds exactly what is missing, from one tested template, and touches
 nothing else. It never writes a type id. Magnus asked for something that "outputs a certain to be correct class
 hierarchy to match existing event interfaces", "clever enough to be able to add only what is missing and not mess in any
