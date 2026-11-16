@@ -240,10 +240,14 @@ finds the vocab whose question is already y. taggregates-opus's point.
   tevents, so the reentrancy behind both bugs can't arise from it. It is the one call made from inside `Publish`,
   narrowed to what can't do harm.
 - **After a rollback,** the store restores each instance in place, then tells the consumer which instances it restored,
-  so it computes their derived state again.
+  which taggregates created in the unit of work are gone again, and which deleted in it are back, so it computes their
+  derived state again. That call must not fail, as restoring in place must not.
 - **Readers then see notes and indexes that agree,** both uncommitted, and briefly what is later rolled back: (b)'s
   premise, and JAStudio's today.
 - **No lookup needs to read its own writes,** and the session needn't list its taggregates for this.
+- **What would speak for the transactional way under (b) too:** the indexes never show a key that is later rolled back,
+  and no consumer code runs at a rollback. Both JAStudio sessions and both Compze sessions prefer following the live
+  instances.
 
 ### Under (a): derived state that is itself transactional
 
