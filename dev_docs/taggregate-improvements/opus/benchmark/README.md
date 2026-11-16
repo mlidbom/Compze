@@ -43,6 +43,32 @@ dotnet run -c Release
 The generated program restores its taggregates through the `[Obsolete]` `SetTaggregateVersionInternal`. Once
 `LoadFromSnapshot` exists, it should use that instead.
 
+## `generate_both.py`: the two styles side by side
+
+Written by jastudio-rep-opus to measure [the prototype](../5-prototype-of-per-class-routing.md). It generates one program
+with the same note registered per instance, as today, and declared per class. It also measures the bytes a load and
+the edits allocate, and, given `--time`, the time to load 80,000 notes in each style. Build it against the prototype's
+`Compze.Teventive`, with this project file:
+
+```xml
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net11.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <ServerGarbageCollection>false</ServerGarbageCollection>
+    <ConcurrentGarbageCollection>false</ConcurrentGarbageCollection>
+    <CompzeBin>C:\Dev\Compze.worktrees\taggregate-experiments-opus\src\Compze.Teventive\bin\Debug\net11.0</CompzeBin>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="$(CompzeBin)\Compze.*.dll" />
+  </ItemGroup>
+</Project>
+```
+
+Then `python generate_both.py 15 3 Program.cs` and `dotnet run -c Release -- --time`.
+
 ## Until the redesign has a specification of its own
 
 The per-class routing adds a specification to Compze of the bytes a taggregate retains per instance, with a bound.

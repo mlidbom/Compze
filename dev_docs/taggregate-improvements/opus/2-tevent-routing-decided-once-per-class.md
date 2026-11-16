@@ -156,12 +156,13 @@ component base classes get there with fewer generic arguments is a detail to set
 
 The taggregate's `Id`, its `Version`, two lists (the uncommitted tevents, and the tevents of the current publish
 cascade) and `TeventStream`, which [becomes lazy](3-told-once-per-publish-cascade.md). Each component holds a parent
-reference. The estimate is about 200 B per note, plus 8 B per component, over plain objects, against 11 KB plus 7 KB
-today. [The benchmark](benchmark/README.md) should confirm it once the change exists.
+reference. [The prototype](5-prototype-of-per-class-routing.md) measured it: about 290 B per note over plain objects
+at 15 components, once its own scaffolding is subtracted, against 10.5 KB today.
 
-The redesign adds a specification of the bytes a taggregate retains per instance, with a bound, both loaded and after a
-publish on each component. A regression then shows in Compze's own test run, not in JAStudio's heap. Bytes retained
-after full collections are a measure that other work on the machine can't move, unlike times.
+The redesign adds a specification of the bytes a load allocates per instance, with a bound. A regression then shows in
+Compze's own test run, not in JAStudio's heap. It measures the bytes allocated on the current thread, not those
+retained: specifications run in parallel, and only the former are a measure that other work can't move. See
+[the prototype](5-prototype-of-per-class-routing.md#for-the-specification-of-memory-in-the-final-design).
 
 ## Rejected
 

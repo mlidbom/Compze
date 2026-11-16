@@ -17,13 +17,18 @@ JAStudio can have its notes as Compze.Teventive taggregates after three changes 
    restores through the appliers editing uses. Small, and independent of the rest.
 2. **[Tevent routing decided once per class](2-tevent-routing-decided-once-per-class.md):** the big one. Today every
    instance builds tevent dispatchers to say how its class applies tevents. That costs 0.6 to 0.9 GB for JAStudio's
-   corpus, and is the wrong abstraction regardless of the cost.
+   corpus, and is the wrong abstraction regardless of the cost. [A prototype](5-prototype-of-per-class-routing.md)
+   measured it: a note with 15 components retains 1,168 B instead of 11,256 B, against 733 B as plain objects, and
+   80,000 notes load about 40 times faster.
 3. **[Told once per publish cascade](3-told-once-per-publish-cascade.md):** a hook that tells the taggregate's owner
    when a publish cascade has ended. Its design also fixes reentrancy bugs in `Taggregate.Publish` and
    `ITaggregate.Commit`, allows committing from inside the hook, and asserts that one taggregate is used by one thread
    at a time.
 
 Then, later: [the smaller and later changes](4-later.md).
+
+Experiments run in the worktree `C:\Dev\Compze.worktrees\taggregate-experiments-opus`, on branch
+`taggregate-experiments-opus`. taggregates-opus prototypes changes 1 and 3 in a worktree of its own.
 
 ## The use
 
