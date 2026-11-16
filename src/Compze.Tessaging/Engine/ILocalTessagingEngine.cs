@@ -3,7 +3,8 @@ using Compze.Tessaging.Engine.Wiring;
 namespace Compze.Tessaging.Engine;
 
 ///<summary>The LocalTessagingEngine of a plain container, composed by <see cref="LocalTessagingEngineRegistrar.LocalTessagingEngine"/>:<br/>
-/// the object its lifecycle is driven through. Resolve it from the container to stop the engine before disposing the container.</summary>
+/// the object its lifecycle is driven through. Resolve it from the container to stop the engine before disposing the container,<br/>
+/// or to wait for its observers.</summary>
 ///<remarks>The engine's one piece of background work is dispatching committed tevents to their observers, off the publishing<br/>
 /// thread. Unless the engine is stopped first, the container's disposal finishes that work: disposal then does a stop's job,<br/>
 /// waits for the observers, and, disposed asynchronously, may go on disposing the rest of the container on whichever thread the<br/>
@@ -16,4 +17,10 @@ public interface ILocalTessagingEngine
    /// to publish tevents, since no observer would observe them. Disposes nothing: dispose the container afterwards as usual.<br/>
    /// Stopping a stopped engine does nothing more.</summary>
    Task StopAsync();
+
+   ///<summary>Waits, holding no thread, until every tevent committed so far has been observed by every observer that observes it,<br/>
+   /// including what the observers themselves publish meanwhile, and leaves the engine running: such as for a specification that<br/>
+   /// asserts on what an observer did, and goes on.</summary>
+   ///<remarks>review-naming: AwaitObserversAsync, chosen on the taggregate store spike.</remarks>
+   Task AwaitObserversAsync();
 }

@@ -57,7 +57,7 @@ public class Given_a_state_store_whose_storage_holds_a_vocab_and_a_sentence : Un
 
    IReadOnlyList<TaggregateId> IdsFiledUnder(string question) => [.._container.RootResolver.Resolve<ITaggregateIndex<StoredVocab, string>>().Lookup(question).Select(it => it.Id)];
 
-   void WaitForTheObservers() => _container.RootResolver.Resolve<ILocalTessagingEngine>().StopAsync().GetAwaiter().GetResult();
+   void WaitForTheObservers() => _container.RootResolver.Resolve<ILocalTessagingEngine>().AwaitObserversAsync().GetAwaiter().GetResult();
 
    protected override async Task DisposeAsyncInternal() => await _container.DisposeAsync();
 
