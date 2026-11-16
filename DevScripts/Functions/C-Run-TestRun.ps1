@@ -67,6 +67,10 @@ function C-Run-TestRun {
     $skipped = 0
     $executed = 0
     
+    # urgent: When a test assembly's host crashes, a stack overflow for instance, its summary line can still read "Passed!",
+    #   with fewer tests in it than the assembly has. C-Test fails the run on dotnet test's exit code, but the counts summed
+    #   here, and the lines a reader sees, look like a pass. Detect an aborted or crashed test host, name the assembly in the
+    #   failure, and report it as failed (Magnus, 2026-11-16).
     $summaryLines = $testOutput | Where-Object { $_ -match '(Passed!|Failed!)\s+-\s+Failed:' }
     
     if ($summaryLines) {
