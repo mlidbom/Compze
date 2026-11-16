@@ -1,4 +1,4 @@
-# Generating tevent implementation classes
+# Tevent implementation classes: generating or completing them
 
 **Status: exploration, 2026-11-16.** What jastudio-rep-opus found in answering Magnus's questions about README decision
 12, a generator for tevent implementation classes. Nothing is decided or built. Both teams proposed it as an effort of
@@ -6,10 +6,34 @@ its own, after JAStudio has written one note type's tevents by hand.
 
 ## The headline
 
-**If a generator is built, it should be a build step that writes ordinary source files, which are checked in, and it
-should never write a type id.** The tevent classes are then ordinary code to every tool, refactoring works as it does
-today, every change in what is generated is a reviewed diff, and type ids stay what they are today: GUIDs declared by
-hand.
+**Recommended (jastudio-rep-opus, after Magnus's questions): a Roslyn analyzer with a code fix, which adds only what is
+missing.** It reports a tevent interface with no implementing class, a class missing members, and a property shaped so
+that it won't survive being read back. Its code fix adds exactly what is missing, from one tested template, and touches
+nothing else. It never writes a type id. Magnus asked for something that "outputs a certain to be correct class
+hierarchy to match existing event interfaces", "clever enough to be able to add only what is missing and not mess in any
+way with existing code, serialization attributes etc." The generators considered first, further down, own their output
+and regenerate it, which is where their risks came from.
+
+## An analyzer with a code fix
+
+- **It runs inside the compiler,** at every build and as you type, incrementally, at almost no cost, and writes nothing
+  on its own. With nothing missing it reports nothing.
+- **The code fix is applied on demand:** Alt+Enter or "fix all in solution" in Rider and Visual Studio; an agent's
+  quick fix through the dotnet-analysis-and-refactoring MCP; `dotnet format analyzers` from the command line (believed,
+  not checked here).
+- **A class it creates is ordinary code from then on,** edited freely, attributes included. No change to the analyzer
+  reshapes an existing class, so no change to it reshapes stored tevents.
+- **It matches a class to an interface by the class implementing it, not by name,** so renaming only the interface is
+  harmless: the refactoring renames the reference in the class's base list, and nothing is missing.
+- **In CI its diagnostics are errors.**
+- **It is also the round-trip check** of a tevent class's shape, at compile time.
+- **No type ids:** mappings stay hand-written, and `TaggregateTypeValidator` catches a missing one at the taggregate's
+  first use.
+- **What it needs:** an analyzer project, packaged in NuGet, which Compze doesn't have yet, and FlexRef's handling of an
+  analyzer reference within Compze's own build. Likely less work than a build step writing files. Not estimated more
+  closely.
+
+## The generators considered first
 
 ## What it generates
 
@@ -87,8 +111,10 @@ carry the old name. Newtonsoft ignores a member it doesn't know, and the renamed
 fix today is Newtonsoft's `[JsonProperty("OldName")]` on the class, which no tevent in Compze uses, and nothing reminds
 anyone to add it.
 
-**A generated class can't carry the attribute,** since the next build overwrites it. So the serialized name belongs on
-the interface, the generator's input. What we'd propose:
+**Decided by Magnus, 2026-11-16: the serialized name goes on the interface.** "Without it a ton of implementing classes
+might have to set it to get a renamed PropertyEvent's property to serialize correctly. On the interface you need one, and
+it is specified in the place where one should be looking when developing, the interfaces, not the classes." What it
+looks like:
 
 - **A Compze attribute on the interface's property** that fixes the property's serialized name, such as
   `[SerializedAs("Question")]`. It fixes the name for writing as well as reading, so that peers that still have the old
@@ -113,6 +139,6 @@ mode for CI, packaging, and FlexRef's handling of the generator within Compze's 
 
 ## Open
 
-- Whether to build it: README decision 12.
-- Whether Compze adopts the attribute for serialized names, and serialization samples, regardless of a generator.
+- Whether to build the analyzer: README decision 12.
+- The round-trip check and the serialization samples: decided only for the attribute so far.
 - Not verified: how Rider and ReSharper treat a rename that involves source-generated code.

@@ -127,9 +127,9 @@ The numbers: [what-was-measured.md](what-was-measured.md). The bugs and the smal
       `ITaggregateStorage` with `IPreparedWrite`; and its composition, `AddTaggregate<T>(factory)` and `Index<T, TKey>`.
     - **Gone:** `LoadFromSnapshot` and its snapshot marker, the end-of-cascade hook, and the one-thread assertion.
 11. **The query models:** move them to tables in step 5, or keep their per-instance registration.
-12. **The source generator for tevent implementation classes:** an effort of its own, after JAStudio has written one
-    note type's tevents by hand. What it would take, and how it must treat type ids and stored tevents:
-    [generating-tevent-classes.md](generating-tevent-classes.md).
+12. **Tevent implementation classes: an analyzer with a code fix that adds only what is missing** (recommended), rather
+    than a generator that owns its output. And, decided by Magnus: a serialized name is declared on the tevent
+    interface's property. See [generating-tevent-classes.md](generating-tevent-classes.md).
 13. **The names:** merged into decision 10.
 
 **What the store makes moot from the earlier list:**
