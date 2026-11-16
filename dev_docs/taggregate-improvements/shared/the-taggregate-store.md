@@ -500,8 +500,12 @@ SnapshotRoundTrip.AssertLosesNothing(vocab, () => new VocabNote(services), Vocab
   original, "second" in the copy`.
 - **Specified** with a book that has state in itself, in a component and in a shared tomponent in a slot of its class,
   and a mistake for each: `Compze.Tests.Unit`, `CQRS/Taggregates/SnapshotRoundTrips`.
-- **Not handled yet:** a field that isn't state, such as a cache filled on first use, is reported as lost. If JAStudio's
-  notes hold any, the check needs a way to leave fields out.
+- **A value created on its first read,** a `LazyCE` or a `Lazy<T>`, is compared by its value, read in both: JAStudio's
+  `VocabNoteForms` holds six. Stronger than leaving such fields out, which taggregates-opus proposed instead: a derived
+  value that comes out different is a real difference.
+- **`SnapshotRoundTrip.DifferencesOf`** returns the differences instead of throwing, for a tool that checks many
+  taggregates, such as JAStudio's MCP tool `find_what_copies_of_the_notes_lose`, which checks all 79,896 notes in 1.3 s.
+  Its first run found a real loss: JPNote's flushing bookkeeping, which a copy restored from a snapshot doesn't have.
 
 ## What the spike built for JAStudio's increments 3 and 4
 
@@ -516,8 +520,9 @@ a lookup inside a unit of work that rolls back gives the discarded copy.
 - **`Taggregate.AssertCanBeChanged()`** (protected, 3d3410a5d): until JAStudio's last part is moved to tevents, a part's
   change is made before the interim tevent is published, so `Publish`'s assertion came after a committed note was
   changed. The guard now asserts first. `Publish` asserts through it too.
-- **`ILocalTessagingEngine.AwaitObserversAsync()`** (26990b991): waits for the observers as `StopAsync` does, and leaves
-  the engine running, for specifications that assert on what an observer did and go on.
+- **`ILocalTessagingEngine.AwaitNoTeventsInFlightAsync()`** (named by Magnus; built as `AwaitObserversAsync` in 26990b991):
+  waits for the observers as `StopAsync` does, and leaves the engine running, for specifications that assert on what an
+  observer did and go on. "In flight" is the term the tracker of tessages in flight already uses for this condition.
 - **`TaggregateToDelete`'s constructor is public** (6767165c2), as `TaggregateSnapshot`'s is, so a storage's own
   specifications can make one.
 - **Not in Compze, for now:** `Edit` and `ForUpdate` from an instance. `Edit` decides where units of work begin, which is
