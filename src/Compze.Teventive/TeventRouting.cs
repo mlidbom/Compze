@@ -5,6 +5,8 @@ using Compze.Abstractions;
 using Compze.Tessaging.TessageTypes;
 using Compze.Teventive._private;
 using Compze.Teventive.Taggregates.BaseClasses;
+using Compze.Teventive.Taggregates.BaseClasses.Shared;
+using Compze.Teventive.Taggregates.Tevents;
 
 namespace Compze.Teventive;
 
@@ -20,7 +22,7 @@ public abstract class TeventRouting
    internal abstract void Dispatch(object instance, IPublisherTevent<ITevent> wrapped);
 
    ///<summary>The class this routing is declared for.</summary>
-   internal abstract Type DeclaredFor { get; }
+   private protected abstract Type DeclaredFor { get; }
 
    ///<summary>Asserts that the routing <paramref name="teventive"/> reads through <see cref="ITeventRouted"/>, if any, is declared for its<br/>
    /// exact class: a class that inherits a routing it doesn't declare for itself has forgotten its own, and would lose its appliers.</summary>
@@ -45,7 +47,7 @@ public sealed class TeventRouting<TInstance> : TeventRouting where TInstance : c
    ///<summary>The routes each wrapper tevent type matches, resolved the first time a tevent in a wrapper of that type is dispatched to any instance of the class.</summary>
    readonly ConcurrentDictionary<Type, TeventRoute[]> _routesByWrapperTeventType = new();
 
-   internal override Type DeclaredFor => typeof(TInstance);
+   private protected override Type DeclaredFor => typeof(TInstance);
 
    TeventRouting(IReadOnlyList<TeventRoute> routes, bool routesTeventHandlers, IReadOnlyList<Type> wrapperTypesThatMayGoUnhandled)
    {
@@ -71,7 +73,7 @@ public sealed class TeventRouting<TInstance> : TeventRouting where TInstance : c
       return TeventRouting<TSubclass>.Declare(declare, _routesTeventHandlers, inherited: _routes, inheritedMayGoUnhandled: _wrapperTypesThatMayGoUnhandled);
    }
 
-   internal static TeventRouting<TInstance> Declare(Action<Declaration> declare, bool routesTeventHandlers, IReadOnlyList<TeventRoute> inherited, IReadOnlyList<Type>? inheritedMayGoUnhandled = null)
+   static TeventRouting<TInstance> Declare(Action<Declaration> declare, bool routesTeventHandlers, IReadOnlyList<TeventRoute> inherited, IReadOnlyList<Type>? inheritedMayGoUnhandled = null)
    {
       var declaration = new Declaration(routesTeventHandlers);
       declare(declaration);
@@ -122,6 +124,26 @@ public sealed class TeventRouting<TInstance> : TeventRouting where TInstance : c
 
       ///<summary>Routes every tevent wrapped in the adopting wrapper tevent of the shared-tomponent slot <paramref name="slot"/> returns to that slot's tomponent.</summary>
       public Declaration SharedTomponent<TAdoptingWrapperTevent>(Func<TInstance, ITeventRoutedMember<TAdoptingWrapperTevent>> slot) where TAdoptingWrapperTevent : ITevent => Member(slot);
+
+      ///<summary>Routes every tevent wrapped in the adopting wrapper tevent of <paramref name="slot"/>, a slot that belongs to this class, to the<br/>
+      /// shared tomponent in that slot of the instance. The instance keeps no slot object: the route gets the shared tomponent from it.</summary>
+      public Declaration SharedTomponent<TOwnerTevent, TOwnerTeventImplementation, TTomponentTevent, TAdoptingWrapperTevent>(
+         SharedTomponentSlotOfAClass<TInstance, TOwnerTevent, TOwnerTeventImplementation, TTomponentTevent, TAdoptingWrapperTevent> slot)
+         where TOwnerTevent : class, ITaggregateTevent
+         where TOwnerTeventImplementation : TaggregateTevent, TOwnerTevent
+         where TTomponentTevent : class, ITevent
+         where TAdoptingWrapperTevent : class, TOwnerTevent, IPublisherTevent<TTomponentTevent>
+      {
+         // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract A slot declared below the routing in the same class is null here, whatever its type says.
+         Argument.Assert(slot is not null, () => $"A slot entered in the tevent routing of {typeof(TInstance)} is null: static fields are initialized in the order written. Declare the slots in a nested static class, such as Slots, or above the routing.");
+         if(_routesTeventHandlers) return this; //Shared tomponents have no tevent handlers.
+
+#pragma warning disable CS0618 // This is just the type of infrastructure code the member is for
+         TeventRoutes.Add(new TeventRoute(typeof(IPublisherTevent<TAdoptingWrapperTevent>),
+                                          (instance, wrapped) => slot.TomponentOf((TInstance)instance).ApplyAdoptedTeventInternal((IPublisherTevent<TTomponentTevent>)wrapped.Tevent)));
+#pragma warning restore CS0618
+         return this;
+      }
 
       Declaration Member<TMemberTevent>(Func<TInstance, ITeventRoutedMember<TMemberTevent>> member) where TMemberTevent : ITevent
       {

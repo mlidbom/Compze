@@ -83,6 +83,15 @@ public class Given_a_vocab_note_whose_classes_declare_their_tevent_routing
       }
    }
 
+   public class after_it_is_created_and_archived_which_no_applier_handles_and_the_notes_routing_lets_go_unhandled : Given_a_vocab_note_whose_classes_declare_their_tevent_routing
+   {
+      readonly VocabNote _vocab = VocabNote.Create();
+
+      public after_it_is_created_and_archived_which_no_applier_handles_and_the_notes_routing_lets_go_unhandled() => _vocab.Archive();
+
+      [XF] public void the_archiving_is_published_without_an_applier() => _vocab.Version.Must().Be(2);
+   }
+
    public class a_routing_declaration
    {
       [XF] public void with_a_handler_that_captures_a_local_throws() => Invoking(DeclareAHandlerThatCapturesALocal).Must().Throw<ArgumentAssertionFailedException>();
@@ -90,8 +99,8 @@ public class Given_a_vocab_note_whose_classes_declare_their_tevent_routing
 
       static void DeclareAHandlerThatCapturesALocal()
       {
-         var renames = 0;
-         TeventRouting<Note>.DeclareAppliers(it => it.For<INoteTevent.Renamed>((_, _) => renames++));
+         var namesRenamedTo = new List<string>();
+         TeventRouting<Note>.DeclareAppliers(it => it.For<INoteTevent.Renamed>((_, tevent) => namesRenamedTo.Add(tevent.Name)));
       }
 
       static TeventRouting<Note> DeclareHandlersThatCaptureNothing() => TeventRouting<Note>.DeclareAppliers(it => it.For<INoteTevent.Renamed>(static (_, _) => {}));

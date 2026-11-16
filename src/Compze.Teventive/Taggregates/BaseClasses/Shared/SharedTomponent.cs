@@ -1,4 +1,5 @@
 using Compze.Contracts;
+using Compze.Teventive.Taggregates.BaseClasses.Shared._private;
 using Compze.Tessaging.TessageTypes;
 
 namespace Compze.Teventive.Taggregates.BaseClasses.Shared;
@@ -17,7 +18,22 @@ public abstract class SharedTomponent<TTomponentTevent> : ISharedTomponentIntern
 {
    //wip: taggregate-experiments-opus keeps the per-instance dispatcher for the classes that declare no TeventRouting. Null for those that do.
    readonly IMutableTeventDispatcher<TTomponentTevent>? _teventAppliersDispatcher;
-   readonly ISharedTomponentSlot<TTomponentTevent> _slot;
+   readonly ISharedTomponentSlot<TTomponentTevent>? _slot;
+
+   //wip: a tomponent whose slot belongs to its owner's class keeps its owner and that slot, and has no slot object of its own. The
+   //   final design has only these two fields: _slot and the dispatcher above are the per-instance style's.
+   readonly object? _owner;
+   readonly ISharedTomponentSlotOfAClass<TTomponentTevent>? _slotOfItsOwnersClass;
+
+   ///<summary>For a shared tomponent in a slot that belongs to its owner's class: <paramref name="slot"/> is what <c>Slots.TheSlot.In(owner)</c><br/>
+   /// returns. Its class declares its tevent appliers in a <see cref="TeventRouting"/>.</summary>
+   protected SharedTomponent(SharedTomponentSlotInAnOwner<TTomponentTevent> slot)
+   {
+      TeventRouting.AssertDeclaredForTheClassOf(this);
+      State.Assert(TeventAppliers is not null, () => $"{GetType()} is in a slot that belongs to its owner's class, so it declares its tevent appliers in a {nameof(TeventRouting)}.");
+      _owner = slot.Owner;
+      _slotOfItsOwnersClass = slot.Slot;
+   }
 
    protected SharedTomponent(ISharedTomponentSlot<TTomponentTevent> slot, TeventDispatcherConfig? teventAppliersDispatcherConfig = null)
    {
@@ -49,7 +65,8 @@ public abstract class SharedTomponent<TTomponentTevent> : ISharedTomponentIntern
    protected void Publish(TTomponentTevent tevent)
    {
 #pragma warning disable CS0618 // This is just the type of infrastructure code the member is for
-      _slot.PublishInternal(tevent);
+      if(_slotOfItsOwnersClass is {} slotOfItsOwnersClass) slotOfItsOwnersClass.PublishInternal(_owner._assert().NotNull(), tevent);
+      else _slot._assert().NotNull().PublishInternal(tevent);
 #pragma warning restore CS0618
    }
 

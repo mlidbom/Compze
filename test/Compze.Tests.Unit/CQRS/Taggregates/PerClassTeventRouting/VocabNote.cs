@@ -15,6 +15,7 @@ interface INoteTevent : ITaggregateTevent
 {
    interface Created : INoteTevent, ITaggregateCreatedTevent;
    interface Renamed : INoteTevent { string Name { get; } }
+   interface Archived : INoteTevent;
 }
 
 interface INoteTevent<out T> : ITaggregateTevent<T> where T : INoteTevent;
@@ -27,6 +28,7 @@ class NoteTevent : TaggregateTevent, INoteTevent
 
    internal class Created(TaggregateId taggregateId) : NoteTevent(taggregateId), INoteTevent.Created;
    internal class Renamed(string name) : NoteTevent, INoteTevent.Renamed { public string Name { get; } = name; }
+   internal class Archived : NoteTevent, INoteTevent.Archived;
 }
 
 interface IVocabTevent : INoteTevent
@@ -104,7 +106,8 @@ class Note : Taggregate<Note, INoteTevent, NoteTevent, INoteTevent<INoteTevent>,
 {
    protected static readonly TeventRouting<Note> NoteAppliers = TeventRouting<Note>.DeclareAppliers(it => it
      .For<INoteTevent.Created>(static (_, _) => {})
-     .For<INoteTevent.Renamed>(static (note, tevent) => note.Name = tevent.Name));
+     .For<INoteTevent.Renamed>(static (note, tevent) => note.Name = tevent.Name)
+     .IgnoreUnhandled<INoteTevent.Archived>());
 
    TeventRouting ITeventRouted.TeventAppliers => NoteAppliers;
 
@@ -113,6 +116,8 @@ class Note : Taggregate<Note, INoteTevent, NoteTevent, INoteTevent<INoteTevent>,
    public string Name { get; private set; } = "";
 
    public void Rename(string name) => Publish(new NoteTevent.Renamed(name));
+
+   public void Archive() => Publish(new NoteTevent.Archived());
 
    protected void PublishCreated() => Publish(new NoteTevent.Created(new TaggregateId()));
 }
