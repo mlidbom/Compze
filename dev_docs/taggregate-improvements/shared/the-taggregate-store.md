@@ -747,8 +747,8 @@ was on the store and not on the reader, and recalled why the document db has a b
 most storages, a mistake outside exceptional circumstances, so it shouldn't sit on the standard reader looking as
 ordinary as `Get`.
 
-Built as specified (79884ea33), with 11 new specifications in `Given_a_tevent_store_and_a_state_store` and
-`Given_a_state_store_whose_storage_holds_a_vocab_and_a_sentence`.
+Built as specified (79884ea33). Seven new specifications, six of them in `Given_a_tevent_store_and_a_state_store`, for
+the tevent store and the routing; the six of `IStateStore.All` now read through the bulk reader.
 
 - **`ITaggregateStoreBulkReader : ITaggregateStoreReader`,** in Compze.Teventive beside the reader, with
   `IReadOnlyList<ITaggregateReference<TTaggregate>> All<TTaggregate>()`: a reference to every `TTaggregate` the stores
