@@ -35,7 +35,9 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
    EntityId IEntity.Id => Id;
    public override TaggregateId Id => (TaggregateId)base.Id;
 
-   readonly List<ITaggregateTevent<TTaggregateTevent>> _unCommittedTevents = [];
+   ///<summary>The tevents published since the last <see cref="ITaggregate.Commit"/>, or null while there are none: created by the first, and handed on whole<br/>
+   /// by the commit, so that a taggregate without uncommitted tevents keeps no list.</summary>
+   List<ITaggregateTevent<TTaggregateTevent>>? _unCommittedTevents;
    readonly IMutableTeventDispatcher<TTaggregateTevent> _teventAppliersDispatcher;
    readonly IMutableTeventDispatcher<TTaggregateTevent> _teventHandlersDispatcher = IMutableTeventDispatcher<TTaggregateTevent>.New(TeventDispatcherConfig.IgnoreAllUnhandled); //Registering tevent handlers is optional, unlike tevent appliers.
 
@@ -47,7 +49,7 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
 
    ///<summary>The tevents of the publish cascade under way: the tevent <see cref="Publish{TTevent}"/> was called with, and every tevent that tevent handlers<br/>
    /// published from inside it. Handed to <see cref="OnPublishCascadeEnded"/> when the cascade ends.</summary>
-   readonly List<ITaggregateTevent<TTaggregateTevent>> _teventsOfThePublishCascadeUnderWay = [];
+   List<ITaggregateTevent<TTaggregateTevent>>? _teventsOfThePublishCascadeUnderWay;
 
    ///<summary>Publishes <paramref name="tevent"/>: applies it, keeps it uncommitted, and calls the tevent handlers, which may publish more tevents. The tevent<br/>
    /// and those the handlers publish, from inside this call, are one publish cascade: once it has ended the invariants are asserted, and<br/>
@@ -72,7 +74,7 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
       {
          //Taken before the cascade is handed on, so that a publish made by whatever it's handed to starts a publish cascade of its own instead of changing
          //this one; and taken when the cascade failed too, so that its tevents don't go out with the next one.
-         teventsOfTheCascade = TakeAll(_teventsOfThePublishCascadeUnderWay);
+         teventsOfTheCascade = TakeAll(ref _teventsOfThePublishCascadeUnderWay);
       }
 
       AssertInvariantsAreMetInternal(); //It is allowed to enter a temporarily invalid state that will be corrected by new tevents published by tevent handlers. So we only check invariants once the whole publish cascade has been published.
@@ -102,8 +104,8 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
          }
 #pragma warning restore CS0618 // Type or member is obsolete
          ApplyTevent(tevent, wrapped);
-         _unCommittedTevents.Add(wrapped);
-         _teventsOfThePublishCascadeUnderWay.Add(wrapped);
+         (_unCommittedTevents ??= []).Add(wrapped);
+         (_teventsOfThePublishCascadeUnderWay ??= []).Add(wrapped);
          _teventHandlersDispatcher.Dispatch(wrapped);
       }
    }
@@ -154,12 +156,12 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
 
    SimpleObservable<ITaggregateTevent<TTaggregateTevent>> TeventStreamCreatedWhenFirstUsed => LazyInitializer.EnsureInitialized(ref _teventStream);
 
-   ///<summary>Empties <paramref name="tevents"/>, and returns what it held, in order.</summary>
-   static ITaggregateTevent<TTaggregateTevent>[] TakeAll(List<ITaggregateTevent<TTaggregateTevent>> tevents)
+   ///<summary>Hands on the list <paramref name="tevents"/> refers to, whole, and leaves it referring to none: the next tevent starts a new list, so that no<br/>
+   /// one changes the list that is handed on.</summary>
+   static IReadOnlyList<ITaggregateTevent<TTaggregateTevent>> TakeAll(ref List<ITaggregateTevent<TTaggregateTevent>>? tevents)
    {
-      if(tevents.Count == 0) return [];
-      var taken = tevents.ToArray();
-      tevents.Clear();
+      IReadOnlyList<ITaggregateTevent<TTaggregateTevent>> taken = tevents ?? [];
+      tevents = null;
       return taken;
    }
 
@@ -176,7 +178,7 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
       using var oneThreadAtATime = OneThreadAtATime.Enter(ref _idOfTheThreadUsingIt, this);
       //Taken before they are handed on, so that a publish made by whatever they're handed to stays uncommitted, for a later commit, instead of changing the
       //list being handed on.
-      commitTevents(TakeAll(_unCommittedTevents));
+      commitTevents(TakeAll(ref _unCommittedTevents));
    }
 
    void ITaggregate.LoadFromHistory(IEnumerable<ITaggregateTevent<ITaggregateTevent>> history)
