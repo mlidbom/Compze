@@ -106,20 +106,30 @@ The numbers: [what-was-measured.md](what-was-measured.md). The bugs and the smal
    - moving the tevents' identity to the tevents that need it as well, which touches every stored taggregate's tevents
      and the migrations. Its saving, about 18 MB of garbage at each start, was from loading through tevents. Loading
      from a snapshot type runs none, so the saving is gone.
-10. **Changes to public API, to veto or accept:**
-    - taggregate tables without `BeforeHandlers`, `AfterHandlers` and `ForGenericTevent`, which nothing needs;
-    - the snapshot interface, `ISnapshotable<TSelf, TSnapshot>`, a factory for an empty instance given where the class
-      is named, and a protected way to say a taggregate was restored;
-    - `ITaggregateStoreUpdater`, `ITaggregateStoreReader`, `ITaggregateReference<TTaggregate>` and
-      `ITaggregateIndex<TTaggregate, TKey>` with `Lookup` and `HasAny`;
-    - committed instances read only: publishing on one throws;
-    - for a taggregate in a store, `Commit`'s callback gone, and `TeventStream` no longer public;
-    - possibly one updater interface for both stores, since `ITeventStoreUpdater` has the same four members;
-    - a failed publish rolls the unit of work back even when its exception is caught.
+10. **Changes to public API, and their names, to veto or accept.** Every name is a placeholder: say which to change.
+    - **Compze.Teventive:**
+      - tevent routing per class (decided as design, declared tables decided): `TeventRouting<TClass, TTevent>`, made
+        by `DeclareAppliers` / `DeclareHandlers` and `Extend<TSubclass>`, with the entries `For`, `IgnoreUnhandled`,
+        `Component`, `Entities` and `SharedTomponent`; the protected virtual `TeventAppliers` and `TeventHandlers`
+        replace `RegisterTeventAppliers()` and `RegisterTeventHandlers()`; no `BeforeHandlers`, `AfterHandlers` or
+        `ForGenericTevent` on the tables, which `IMutableTeventDispatcher` keeps;
+      - `ISnapshotable<TSelf, TSnapshot>` with `TakeSnapshot` and `RestoreFrom`, a factory for an empty instance given
+        where the class is named, and the protected `RestoreIdentity`;
+      - `ITaggregateTevent` as a plain `ITevent` (decision 9);
+      - for a taggregate in a store, `Commit`'s callback gone, and `TeventStream` no longer public;
+      - committed instances read only, and a failed publish rolling the unit of work back even when caught.
+    - **Shared by every store,** in Compze.Teventive itself or an abstractions package of their own (Magnus agreed):
+      - `ITaggregateStoreUpdater`, the renamed `ITeventStoreUpdater`, without `IDisposable`;
+      - `ITaggregateStoreReader` (`Get`, `TryGet`, `Reference`), with `ITeventStoreReader` extending it by the history;
+      - `ITaggregateReference<TTaggregate>` (`Id`, `Current`, `ForUpdate`).
+    - **The store that keeps taggregates as their state,** which needs a name of its own, such as "state store", since
+      the tevent store is a taggregate store too: `ITaggregateIndex<TTaggregate, TKey>` with `Lookup` and `HasAny`;
+      `ITaggregateStorage` with `IPreparedWrite`; and its composition, `AddTaggregate<T>(factory)` and `Index<T, TKey>`.
+    - **Gone:** `LoadFromSnapshot` and its snapshot marker, the end-of-cascade hook, and the one-thread assertion.
 11. **The query models:** move them to tables in step 5, or keep their per-instance registration.
 12. **The source generator for tevent implementation classes:** an effort of its own, after JAStudio has written one
     note type's tevents by hand.
-13. **The names:** every name in the design documents is a placeholder.
+13. **The names:** merged into decision 10.
 
 **What the store makes moot from the earlier list:**
 - whether a tevent store handler may change the taggregate it handles: at phase 0 it is an ordinary cascade;
