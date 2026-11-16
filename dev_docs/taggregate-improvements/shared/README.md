@@ -80,7 +80,8 @@ The numbers: [what-was-measured.md](what-was-measured.md). The bugs and the smal
    is not yet the go-ahead to build them on a branch that isn't exploratory. **Then, the same day: a spike, decided.**
    - Steps 1 to 4, through the JSON store, on an exploratory branch in Compze's main checkout, `C:\Dev\Compze`, each
      step specified before it's built. Every branch worked on is pushed as it goes: "I don't want to lose any work if
-     my machine burns".
+     my machine burns". Alternatives may be tried on as many branches as helps, kept as a record of the results, and an
+     agent or two may build alternative versions in worktrees of their own, minding the subscription's cost.
    - JAStudio migrates on its own branch, referencing the spike's projects directly. Not one part only: jastudio-rep-opus
      supports JAStudio's agents "until they have completed the entire migration and everything they can test
      themselves work".
