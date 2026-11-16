@@ -26,7 +26,7 @@ public interface ISharedTomponentSlot<TTomponentTevent>
 ///<remarks>Route-back subscribes to <see cref="IPublisherTevent{TTevent}"/> of <typeparamref name="TAdoptingWrapperTevent"/>: by the time an<br/>
 /// adopted tevent reaches the owner's appliers it is wrapped once more, in the owner's own publisher-identifying wrapper, and routing matches the<br/>
 /// outermost type only. The slot unwraps both layers by hand - the routing model auto-unwraps exactly one.</remarks>
-public sealed class SharedTomponentSlot<TOwnerTevent, TOwnerTeventImplementation, TTomponentTevent, TAdoptingWrapperTevent> : ISharedTomponentSlot<TTomponentTevent>
+public sealed class SharedTomponentSlot<TOwnerTevent, TOwnerTeventImplementation, TTomponentTevent, TAdoptingWrapperTevent> : ISharedTomponentSlot<TTomponentTevent>, ITeventRoutedMember<TAdoptingWrapperTevent>
    where TOwnerTevent : class, ITaggregateTevent
    where TOwnerTeventImplementation : TaggregateTevent, TOwnerTevent
    where TTomponentTevent : class, ITevent
@@ -47,6 +47,8 @@ public sealed class SharedTomponentSlot<TOwnerTevent, TOwnerTeventImplementation
       _owner = owner;
       _adoptingWrapperTeventImplementation = adoptingWrapperTeventImplementation;
 #pragma warning disable CS0618 // This is just the type of infrastructure code the members are for
+      if(owner.DeclaresTeventAppliersInternal) return;
+
       owner.RegisterTeventAppliersInternal()
            .ForWrapped<IPublisherTevent<TAdoptingWrapperTevent>>(
                ownerWrappedTevent => _tomponent._assert().NotNull().ApplyTeventInternal(ownerWrappedTevent.Tevent.Tevent));
@@ -57,6 +59,16 @@ public sealed class SharedTomponentSlot<TOwnerTevent, TOwnerTeventImplementation
    void ISharedTomponentSlot<TTomponentTevent>.PublishInternal(TTomponentTevent tevent) =>
       _owner.PublishInternal((TOwnerTeventImplementation)PublisherTevent.WrapIn(_adoptingWrapperTeventImplementation, tevent));
 #pragma warning restore CS0618
+
+   ///<summary>What the routing of an owner that declares it delivers: the owner's wrapper, around the adopting wrapper, around the tomponent's tevent.<br/>
+   /// The adopting wrapper is itself an <see cref="IPublisherTevent{TTevent}"/> of the tomponent's tevent, so it goes to the tomponent unopened.</summary>
+   void ITeventRoutedMember<TAdoptingWrapperTevent>.DispatchInternal(IPublisherTevent<ITevent> wrapped, bool toTeventHandlers)
+   {
+      if(toTeventHandlers) return; //Shared tomponents have no tevent handlers.
+#pragma warning disable CS0618 // This is just the type of infrastructure code the member is for
+      _tomponent._assert().NotNull().ApplyAdoptedTeventInternal((IPublisherTevent<TTomponentTevent>)wrapped.Tevent);
+#pragma warning restore CS0618
+   }
 
    void ISharedTomponentSlot<TTomponentTevent>.AttachTomponentInternal(ISharedTomponentInternals<TTomponentTevent> tomponent)
    {

@@ -1,3 +1,4 @@
+using Compze.Contracts;
 using Compze.Tessaging.TessageTypes;
 
 namespace Compze.Teventive.Taggregates.BaseClasses.Shared;
@@ -14,19 +15,28 @@ namespace Compze.Teventive.Taggregates.BaseClasses.Shared;
 public abstract class SharedTomponent<TTomponentTevent> : ISharedTomponentInternals<TTomponentTevent>
    where TTomponentTevent : class, ITevent
 {
-   readonly IMutableTeventDispatcher<TTomponentTevent> _teventAppliersDispatcher;
+   //wip: taggregate-experiments-opus keeps the per-instance dispatcher for the classes that declare no TeventRouting. Null for those that do.
+   readonly IMutableTeventDispatcher<TTomponentTevent>? _teventAppliersDispatcher;
    readonly ISharedTomponentSlot<TTomponentTevent> _slot;
 
    protected SharedTomponent(ISharedTomponentSlot<TTomponentTevent> slot, TeventDispatcherConfig? teventAppliersDispatcherConfig = null)
    {
-      _teventAppliersDispatcher = IMutableTeventDispatcher<TTomponentTevent>.New(teventAppliersDispatcherConfig);
+      if(TeventAppliers is null) _teventAppliersDispatcher = IMutableTeventDispatcher<TTomponentTevent>.New(teventAppliersDispatcherConfig);
       _slot = slot;
 #pragma warning disable CS0618 // This is just the type of infrastructure code the member is for
       slot.AttachTomponentInternal(this);
 #pragma warning restore CS0618
    }
 
-   protected ITeventSubscriber<TTomponentTevent> RegisterTeventAppliers() => _teventAppliersDispatcher.Register();
+   ///<summary>The routing of this tomponent's class to its tevent appliers, when the class declares one: a <see cref="TeventRouting"/> in a static field.<br/>
+   /// Null for a class that registers its appliers per instance, through <see cref="RegisterTeventAppliers"/>.</summary>
+   protected virtual TeventRouting? TeventAppliers => null;
+
+   protected ITeventSubscriber<TTomponentTevent> RegisterTeventAppliers()
+   {
+      State.Assert(TeventAppliers is null, () => $"{GetType()} declares its tevent appliers in a {nameof(TeventRouting)}, so it cannot also register appliers per instance.");
+      return _teventAppliersDispatcher._assert().NotNull().Register();
+   }
 
    ///<summary>Publishes <paramref name="tevent"/> through the tomponent's <see cref="ISharedTomponentSlot{TTomponentTevent}"/>: the slot wraps it in the<br/>
    /// owner's adopting wrapper tevent and publishes it as an owner tevent, and the owner's publishing routes it back through the slot to this<br/>
@@ -39,7 +49,13 @@ public abstract class SharedTomponent<TTomponentTevent> : ISharedTomponentIntern
    }
 
 #pragma warning disable CA1033 //These methods should NOT clutter the public interface of shared tomponents.
-   void ISharedTomponentInternals<TTomponentTevent>.ApplyTeventInternal(TTomponentTevent tevent) => _teventAppliersDispatcher.Dispatch(tevent);
+   void ISharedTomponentInternals<TTomponentTevent>.ApplyTeventInternal(TTomponentTevent tevent) => _teventAppliersDispatcher._assert().NotNull().Dispatch(tevent);
+
+   void ISharedTomponentInternals<TTomponentTevent>.ApplyAdoptedTeventInternal(IPublisherTevent<TTomponentTevent> adopted)
+   {
+      if(TeventAppliers is {} appliers) appliers.Dispatch(this, adopted);
+      else _teventAppliersDispatcher._assert().NotNull().Dispatch(adopted.Tevent);
+   }
    void ISharedTomponentInternals<TTomponentTevent>.PublishInternal(TTomponentTevent tevent) => Publish(tevent);
 #pragma warning restore CA1033
 }

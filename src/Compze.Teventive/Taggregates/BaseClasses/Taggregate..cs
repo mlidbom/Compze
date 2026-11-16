@@ -168,6 +168,7 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
    void ITeventiveInternals<TTaggregateTevent, TTaggregateTeventImplementation>.ApplyTeventInternal(TTaggregateTevent theTevent) => ApplyTevent(theTevent);
    void ITeventiveInternals<TTaggregateTevent, TTaggregateTeventImplementation>.PublishInternal(TTaggregateTeventImplementation theTevent) => Publish(theTevent);
    ITeventSubscriber<TTaggregateTevent> ITeventiveInternals<TTaggregateTevent, TTaggregateTeventImplementation>.RegisterTeventAppliersInternal() => RegisterTeventAppliers();
+   bool ITeventiveInternals<TTaggregateTevent, TTaggregateTeventImplementation>.DeclaresTeventAppliersInternal => TeventAppliers is not null;
 
    void ITaggregateStoreInternals.MakeReadOnly() => _isReadOnly = true;
    bool ITaggregateStoreInternals.APublishHasFailed => _aPublishHasFailed;
