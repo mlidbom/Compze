@@ -32,9 +32,10 @@ public class Given_a_state_store : UniversalTestBase
    ConcurrentQueue<string> ParticipationLog { get; } = new();
    ConcurrentQueue<string> ObservationLog { get; } = new();
 
-   void Compose(Action<TessageBusHandlerRegistrar>? participation = null, Action<TeventObservationRegistrar>? observation = null, Action<StateStoreBuilder>? declare = null)
+   void Compose(Action<TessageBusHandlerRegistrar>? participation = null, Action<TeventObservationRegistrar>? observation = null, Action<StateStoreBuilder>? declare = null, Action<IComponentRegistrar>? register = null)
    {
       var builder = TestEnv.DIContainer.CreateTestingContainerBuilder();
+      register?.Invoke(builder.Registrar);
       builder.Registrar.StateStore(declare ?? (store => store.Taggregate(() => new StoredVocab()).Taggregate(() => new StoredSentence())));
       builder.Registrar.LocalTessagingEngine(engine =>
       {
@@ -323,6 +324,35 @@ public class Given_a_state_store : UniversalTestBase
 
       [PCT] public void the_exception_names_the_class() => _exception.Message.Must().Contain($"No taggregate store keeps {typeof(StoredSentence).FullName}");
       [PCT] public void the_exception_names_the_classes_the_store_keeps() => _exception.Message.Must().Contain($"the state store: {typeof(StoredVocab).FullName}");
+   }
+
+   public class when_the_vocab_class_is_declared_with_a_factory_that_takes_a_service_of_the_container : Given_a_state_store
+   {
+      readonly VocabBuildingLog _theContainersLog;
+
+      public when_the_vocab_class_is_declared_with_a_factory_that_takes_a_service_of_the_container()
+      {
+         Compose(register: registrar => registrar.Register(Singleton.For<VocabBuildingLog>().CreatedBy(() => new VocabBuildingLog())),
+                 declare: store => store.Taggregate((VocabBuildingLog log) => log.Built(new StoredVocab())));
+         InUnitOfWork(taggregates => taggregates.Save(StoredVocab.Create(VocabId, "taberu")));
+         InUnitOfWork(taggregates => taggregates.GetForUpdate<StoredVocab>(VocabId).ChangeMeaning("to eat"));
+         _theContainersLog = Container.RootResolver.Resolve<VocabBuildingLog>();
+      }
+
+      [PCT] public void the_copy_the_unit_of_work_changed_was_built_by_the_factory_with_the_containers_service() => _theContainersLog.VocabBuilt.Must().Be(1);
+      [PCT] public void the_reader_gets_the_change() => CommittedVocab(VocabId).Meaning.Must().Be("to eat");
+
+      ///<summary>A service of the container, which counts the vocab built with it.</summary>
+      class VocabBuildingLog
+      {
+         public int VocabBuilt { get; private set; }
+
+         public StoredVocab Built(StoredVocab vocab)
+         {
+            VocabBuilt++;
+            return vocab;
+         }
+      }
    }
 
    public class when_two_units_of_work_on_two_threads_change_one_vocab : Given_a_state_store

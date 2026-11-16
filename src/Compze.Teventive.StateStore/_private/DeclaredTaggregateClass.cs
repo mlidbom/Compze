@@ -45,6 +45,19 @@ sealed class DeclaredTaggregateClass
       return restored;
    }
 
+   ///<summary>Whether <paramref name="held"/> and <paramref name="loaded"/>, two instances of one taggregate, hold different states:<br/>
+   /// whether their snapshots differ, by the snapshot type's own equality.</summary>
+   internal bool StatesDiffer(ITaggregate held, ITaggregate loaded)
+   {
+      if(held.GetType() != loaded.GetType()) return true;
+      var heldSnapshot = TakeSnapshot(held);
+      State.Assert(HasValueEquality(heldSnapshot.GetType()),
+                   () => $"{heldSnapshot.GetType().FullName}, the snapshot type of {Class.FullName}, doesn't override Equals, so a reload can't tell whether the state of a {Class.Name} changed. Give it value equality.");
+      return !heldSnapshot.Equals(TakeSnapshot(loaded));
+
+      static bool HasValueEquality(Type snapshotType) => snapshotType.GetMethod(nameof(Equals), [typeof(object)])!.DeclaringType != typeof(object);
+   }
+
    ///<summary>A private copy of <paramref name="committed"/> for one unit of work, made through a snapshot: an instance of its own,<br/>
    /// with the same state and version.</summary>
    internal ITaggregate CopyOf(ITaggregate committed)

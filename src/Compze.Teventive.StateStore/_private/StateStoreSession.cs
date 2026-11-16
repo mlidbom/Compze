@@ -22,13 +22,17 @@ sealed class StateStoreSession : ITaggregateStoreSession
    readonly HashSet<Type> _classesHeld = [];
    readonly List<TaggregateUpdateLocks.UpdateLock> _heldUpdateLocks = [];
    readonly List<IDisposable> _teventStreamSubscriptions = [];
+   readonly Action _leaveTheGate;
    IPreparedWrite? _preparedWrite;
    IReadOnlyList<IPreparedIndexChange> _preparedIndexChanges = [];
 
-   internal StateStoreSession(TaggregateStateStore store, TaggregateUnitOfWork unitOfWork)
+   ///<summary>The session of <paramref name="unitOfWork"/> in <paramref name="store"/>. <paramref name="leaveTheGate"/> runs when the<br/>
+   /// unit of work completes, so that a reload waiting for it may begin.</summary>
+   internal StateStoreSession(TaggregateStateStore store, TaggregateUnitOfWork unitOfWork, Action leaveTheGate)
    {
       _store = store;
       _unitOfWork = unitOfWork;
+      _leaveTheGate = leaveTheGate;
    }
 
    ///<summary>Whether this unit of work holds a copy or a deletion of any <typeparamref name="TTaggregate"/>. Allocates nothing.</summary>
@@ -158,6 +162,7 @@ sealed class StateStoreSession : ITaggregateStoreSession
       _teventStreamSubscriptions.ForEach(it => it.Dispose());
       _heldUpdateLocks.ForEach(it => it.Release());
       _heldUpdateLocks.Clear();
+      _leaveTheGate();
    }
 
    ///<summary>A taggregate this unit of work holds: a copy got for update, or a new one saved.</summary>

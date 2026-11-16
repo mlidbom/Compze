@@ -5,7 +5,6 @@ using Compze.Teventive.StateStore.Storage;
 using Compze.Teventive.Taggregates;
 using Compze.Teventive.TaggregateStores._internal;
 using Compze.Contracts;
-using Compze.Internals.SystemCE.LinqCE;
 using static Compze.Contracts.Contract;
 
 namespace Compze.Teventive.StateStore;
@@ -14,7 +13,7 @@ namespace Compze.Teventive.StateStore;
 public sealed class StateStoreBuilder
 {
    readonly IComponentRegistrar _registrar;
-   readonly List<DeclaredTaggregateClass> _taggregateClasses = [];
+   readonly Dictionary<Type, Func<IRootResolver, DeclaredTaggregateClass>> _taggregateClasses = new();
    readonly List<Func<TaggregateStateStore, ITaggregateIndexMaintenance>> _indexes = [];
    ITaggregateStorage? _storage;
 
@@ -22,12 +21,23 @@ public sealed class StateStoreBuilder
 
    ///<summary>Declares that the store keeps the taggregate class that <paramref name="createEmpty"/> builds new, empty instances of,<br/>
    /// for the store to restore from snapshots. The class and its snapshot type are inferred from the instances it builds.</summary>
-   ///<remarks>A factory, not a parameterless constructor, so that the taggregates can be handed the services they need.</remarks>
+   ///<remarks>A factory, not a parameterless constructor, so that the taggregates can be handed what they need. To hand them a<br/>
+   /// service of the container, use <see cref="Taggregate{TTaggregate,TSnapshot,TService}"/>.</remarks>
    public StateStoreBuilder Taggregate<TTaggregate, TSnapshot>(Func<ISnapshotable<TTaggregate, TSnapshot>> createEmpty)
-      where TTaggregate : class, ITaggregate, ISnapshotable<TTaggregate, TSnapshot>
+      where TTaggregate : class, ITaggregate, ISnapshotable<TTaggregate, TSnapshot> =>
+      Declare<TTaggregate>(_ => DeclaredTaggregateClass.For(createEmpty));
+
+   ///<summary>As <see cref="Taggregate{TTaggregate,TSnapshot}"/>, for a factory that builds the empty instances with a service of the<br/>
+   /// container, such as the services every note is built with: <c>store.Taggregate((NoteServices services) => new VocabNote(services))</c>.</summary>
+   ///<remarks>The service is resolved from the container's root each time an instance is built.</remarks>
+   public StateStoreBuilder Taggregate<TTaggregate, TSnapshot, TService>(Func<TService, ISnapshotable<TTaggregate, TSnapshot>> createEmpty)
+      where TTaggregate : class, ITaggregate, ISnapshotable<TTaggregate, TSnapshot> where TService : class =>
+      Declare<TTaggregate>(resolver => DeclaredTaggregateClass.For(() => createEmpty(resolver.Resolve<TService>())));
+
+   StateStoreBuilder Declare<TTaggregate>(Func<IRootResolver, DeclaredTaggregateClass> declare)
    {
-      State.Assert(_taggregateClasses.None(it => it.Class == typeof(TTaggregate)), () => $"{typeof(TTaggregate).FullName} is declared twice for the state store.");
-      _taggregateClasses.Add(DeclaredTaggregateClass.For(createEmpty));
+      State.Assert(!_taggregateClasses.ContainsKey(typeof(TTaggregate)), () => $"{typeof(TTaggregate).FullName} is declared twice for the state store.");
+      _taggregateClasses.Add(typeof(TTaggregate), declare);
       return this;
    }
 
@@ -48,5 +58,6 @@ public sealed class StateStoreBuilder
       return this;
    }
 
-   internal TaggregateStateStore Build(TaggregateUnitsOfWork unitsOfWork) => new(unitsOfWork, _taggregateClasses, _indexes, _storage ?? new NoStorage());
+   internal TaggregateStateStore Build(TaggregateUnitsOfWork unitsOfWork, IRootResolver resolver) =>
+      new(unitsOfWork, _taggregateClasses.Values.Select(declare => declare(resolver)), _indexes, _storage ?? new NoStorage());
 }

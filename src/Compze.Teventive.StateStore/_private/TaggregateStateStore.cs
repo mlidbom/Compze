@@ -14,13 +14,16 @@ namespace Compze.Teventive.StateStore._private;
 ///<summary>The state store: the committed taggregates, as read only instances that any thread reads without a lock, their indexes,<br/>
 /// the lock each one is changed under, and the storage that keeps what is committed. What one unit of work changes is in its<br/>
 /// <see cref="StateStoreSession"/>, until the unit of work commits.</summary>
-sealed class TaggregateStateStore : ITaggregateStore
+sealed class TaggregateStateStore : ITaggregateStore, IStateStore
 {
    readonly TaggregateUnitsOfWork _unitsOfWork;
    readonly IReadOnlyDictionary<Type, DeclaredTaggregateClass> _declaredClasses;
-   readonly ConcurrentDictionary<TaggregateId, ITaggregate> _committedTaggregates = new();
    readonly ConcurrentDictionary<TaggregateId, object> _references = new();
    readonly IMonitor _loadingMonitor = IMonitor.New();
+   readonly UnitsOfWorkAndReloadsGate _gate = new();
+
+   //Replaced whole by a reload, so that a reader sees either what was committed before it or what it loaded.
+   volatile ConcurrentDictionary<TaggregateId, ITaggregate> _committedTaggregates = new();
    volatile bool _hasLoaded;
 
    internal TaggregateStateStore(TaggregateUnitsOfWork unitsOfWork,
@@ -71,7 +74,21 @@ sealed class TaggregateStateStore : ITaggregateStore
    public ITaggregateStoreSession NewSession(TaggregateUnitOfWork unitOfWork)
    {
       EnsureLoaded();
-      return new StateStoreSession(this, unitOfWork);
+      _gate.EnterUnitOfWork();
+      return new StateStoreSession(this, unitOfWork, leaveTheGate: _gate.LeaveUnitOfWork);
+   }
+
+   public ReloadedTaggregates ReloadFromStorage()
+   {
+      State.Assert(AmbientSession == null, () => "A unit of work that has changed taggregates of the state store can't reload it: the reload waits for every such unit of work to complete, this one included.");
+      return _gate.Reload(() => _loadingMonitor.Locked(() =>
+      {
+         var before = _hasLoaded ? _committedTaggregates : new ConcurrentDictionary<TaggregateId, ITaggregate>();
+         var loaded = LoadEverything();
+         return new ReloadedTaggregates(added: [..loaded.Keys.Where(id => !before.ContainsKey(id))],
+                                        changed: [..loaded.Values.Where(it => before.TryGetValue(it.Id, out var held) && DeclaredClassOf(it.GetType()).StatesDiffer(held, it)).Select(it => it.Id)],
+                                        removed: [..before.Keys.Where(id => !loaded.ContainsKey(id))]);
+      }));
    }
 
    ///<summary>This store's session in the unit of work of the ambient transaction, if that unit of work has needed the store yet.<br/>
@@ -105,11 +122,20 @@ sealed class TaggregateStateStore : ITaggregateStore
       if(_hasLoaded) return;
       _loadingMonitor.Locked(() =>
       {
-         if(_hasLoaded) return;
-         var loaded = Storage.LoadAll().Select(stored => DeclaredClassOf(stored.TaggregateClass).Restore(stored.Id, stored.Snapshot)).ToList();
-         loaded.ForEach(MakeCommitted);
-         foreach(var index in Indexes) index.Fill(loaded);
-         _hasLoaded = true;
+         if(!_hasLoaded) LoadEverything();
       });
+   }
+
+   ///<summary>Replaces the committed taggregates, and what the indexes file, with what the storage holds.</summary>
+   ConcurrentDictionary<TaggregateId, ITaggregate> LoadEverything()
+   {
+      var loaded = new ConcurrentDictionary<TaggregateId, ITaggregate>(
+         Storage.LoadAll().Select(stored => DeclaredClassOf(stored.TaggregateClass).Restore(stored.Id, stored.Snapshot))
+                .Select(it => KeyValuePair.Create(it.Id, it)));
+      foreach(var taggregate in loaded.Values) ((ITaggregateStoreInternals)taggregate).MakeReadOnly();
+      foreach(var index in Indexes) index.FileExactly(loaded.Values);
+      _committedTaggregates = loaded;
+      _hasLoaded = true;
+      return loaded;
    }
 }

@@ -49,6 +49,10 @@ public class Given_a_state_store_whose_storage_holds_a_vocab : UniversalTestBase
 
    StoredVocab CommittedVocab => Reader.Get<StoredVocab>(VocabId);
 
+   IStateStore StateStore => _container.RootResolver.Resolve<IStateStore>();
+
+   IReadOnlyList<TaggregateId> IdsFiledUnder(string question) => [.._container.RootResolver.Resolve<ITaggregateIndex<StoredVocab, string>>().Lookup(question).Select(it => it.Id)];
+
    void WaitForTheObservers() => _container.RootResolver.Resolve<ILocalTessagingEngine>().StopAsync().GetAwaiter().GetResult();
 
    protected override async Task DisposeAsyncInternal() => await _container.DisposeAsync();
@@ -127,6 +131,81 @@ public class Given_a_state_store_whose_storage_holds_a_vocab : UniversalTestBase
       [PCT] public void the_reader_gets_the_meaning_committed_before() => CommittedVocab.Meaning.Must().Be("to eat");
    }
 
+   public class after_the_storage_changes_the_vocab_and_gets_another_and_the_store_reloads : Given_a_state_store_whose_storage_holds_a_vocab
+   {
+      readonly TaggregateId _addedVocabId = new(Guid.NewGuid());
+      readonly ITaggregateReference<StoredVocab> _referenceHeldThroughout;
+      readonly ReloadedTaggregates _reloaded;
+
+      public after_the_storage_changes_the_vocab_and_gets_another_and_the_store_reloads()
+      {
+         _referenceHeldThroughout = Reader.Reference<StoredVocab>(VocabId);
+         _ = _referenceHeldThroughout.Current;
+         Storage.Hold(new TaggregateSnapshot(typeof(StoredVocab), VocabId, new StoredVocabSnapshot(VocabId, "kuu", "to eat, rudely")));
+         Storage.Hold(new TaggregateSnapshot(typeof(StoredVocab), _addedVocabId, new StoredVocabSnapshot(_addedVocabId, "nomu", "to drink")));
+         _reloaded = StateStore.ReloadFromStorage();
+         WaitForTheObservers();
+      }
+
+      [PCT] public void the_reload_reports_the_vocab_as_changed() => _reloaded.Changed.Must().SequenceEqual([VocabId]);
+      [PCT] public void the_reload_reports_the_other_vocab_as_added() => _reloaded.Added.Must().SequenceEqual([_addedVocabId]);
+      [PCT] public void the_reload_reports_none_removed() => _reloaded.Removed.Must().BeEmpty();
+      [PCT] public void the_reader_gets_the_changed_vocab() => new { CommittedVocab.Question, CommittedVocab.Meaning }.Must().DeepEqual(new { Question = "kuu", Meaning = "to eat, rudely" });
+      [PCT] public void the_reference_held_throughout_gives_the_changed_vocab() => _referenceHeldThroughout.Current.Question.Must().Be("kuu");
+      [PCT] public void the_index_files_the_vocab_under_its_new_question() => IdsFiledUnder("kuu").Must().SequenceEqual([VocabId]);
+      [PCT] public void the_index_files_nothing_under_its_old_question() => IdsFiledUnder("taberu").Must().BeEmpty();
+      [PCT] public void no_tevent_was_dispatched() => ObservationLog.Must().BeEmpty();
+   }
+
+   public class after_the_storage_drops_the_vocab_and_the_store_reloads : Given_a_state_store_whose_storage_holds_a_vocab
+   {
+      readonly ReloadedTaggregates _reloaded;
+
+      public after_the_storage_drops_the_vocab_and_the_store_reloads()
+      {
+         _ = CommittedVocab;
+         Storage.Drop(VocabId);
+         _reloaded = StateStore.ReloadFromStorage();
+      }
+
+      [PCT] public void the_reload_reports_the_vocab_as_removed() => _reloaded.Removed.Must().SequenceEqual([VocabId]);
+      [PCT] public void the_reader_finds_no_vocab() => Reader.TryGet(VocabId, out StoredVocab? _).Must().BeFalse();
+      [PCT] public void the_index_files_nothing_under_its_question() => IdsFiledUnder("taberu").Must().BeEmpty();
+   }
+
+   public class when_the_store_reloads_while_a_unit_of_work_on_another_thread_changes_the_vocab : Given_a_state_store_whose_storage_holds_a_vocab
+   {
+      readonly ManualResetEventSlim _theUnitOfWorkHasTheVocab = new();
+      readonly ReloadedTaggregates _reloaded;
+
+      public when_the_store_reloads_while_a_unit_of_work_on_another_thread_changes_the_vocab()
+      {
+         var unitOfWork = Task.Run(() => InUnitOfWork(taggregates =>
+         {
+            var vocab = taggregates.GetForUpdate<StoredVocab>(VocabId);
+            _theUnitOfWorkHasTheVocab.Set();
+            Thread.Sleep(200); //Gives the reload time to begin waiting while the unit of work is open.
+            vocab.ChangeMeaning("to dine");
+         }));
+         _theUnitOfWorkHasTheVocab.Wait();
+         _reloaded = StateStore.ReloadFromStorage();
+         unitOfWork.Wait();
+      }
+
+      [PCT] public void the_reload_waited_for_the_unit_of_work_so_it_reports_no_change() => _reloaded.Changed.Must().BeEmpty();
+      [PCT] public void the_reader_gets_what_the_unit_of_work_committed() => CommittedVocab.Meaning.Must().Be("to dine");
+   }
+
+   public class when_a_unit_of_work_that_changed_the_vocab_reloads_the_store : Given_a_state_store_whose_storage_holds_a_vocab
+   {
+      [PCT] public void the_reload_throws() =>
+         Invoking(() => InUnitOfWork(taggregates =>
+         {
+            taggregates.GetForUpdate<StoredVocab>(VocabId).ChangeMeaning("to dine");
+            StateStore.ReloadFromStorage();
+         })).Must().Throw<Exception>();
+   }
+
    ///<summary>A transaction participant that votes to roll back. It prepares after the store, which prepares in the transaction's<br/>
    /// first phase.</summary>
    class ParticipantThatRollsBack : IEnlistmentNotification
@@ -150,6 +229,12 @@ public class Given_a_state_store_whose_storage_holds_a_vocab : UniversalTestBase
       public int LoadCount { get; private set; }
       public IReadOnlyList<string> Writes => [.._writes];
       public IReadOnlyList<StoredVocabSnapshot> StoredVocabs => [.._stored.Values.Select(it => it.Snapshot).OfType<StoredVocabSnapshot>()];
+
+      ///<summary>Holds <paramref name="snapshot"/>, as when another program writes a taggregate's file.</summary>
+      public void Hold(TaggregateSnapshot snapshot) => _stored[snapshot.Id] = snapshot;
+
+      ///<summary>Holds the taggregate <paramref name="id"/> no longer, as when another program deletes its file.</summary>
+      public void Drop(TaggregateId id) => _stored.TryRemove(id, out _);
 
       public IReadOnlyList<TaggregateSnapshot> LoadAll()
       {

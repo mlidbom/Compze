@@ -11,7 +11,8 @@ namespace Compze.Teventive.StateStore._private;
 /// apply that when the unit of work commits, which can't fail.</summary>
 interface ITaggregateIndexMaintenance
 {
-   void Fill(IEnumerable<ITaggregate> committedTaggregates);
+   ///<summary>Files exactly <paramref name="committedTaggregates"/>, and nothing filed before: when the store loads everything.</summary>
+   void FileExactly(IEnumerable<ITaggregate> committedTaggregates);
    IPreparedIndexChange Prepare(IReadOnlyList<(TaggregateId Id, ITaggregate? NewState)> changedTaggregates);
 }
 
@@ -29,7 +30,7 @@ sealed class TaggregateIndex<TTaggregate, TKey> : ITaggregateIndex<TTaggregate, 
 
    //Read without a lock: a key's array is replaced whole when a commit changes it, never changed in place, so a lookup outside a
    //unit of work returns it as it is, allocating nothing.
-   readonly ConcurrentDictionary<TKey, ITaggregateReference<TTaggregate>[]> _committedReferencesByKey = new();
+   volatile ConcurrentDictionary<TKey, ITaggregateReference<TTaggregate>[]> _committedReferencesByKey = new(); //Replaced whole when the store loads everything.
    readonly IThreadShared<Dictionary<TaggregateId, ImmutableHashSet<TKey>>> _committedKeysById = IThreadShared.New(new Dictionary<TaggregateId, ImmutableHashSet<TKey>>());
 
    internal TaggregateIndex(TaggregateStateStore store, Func<TTaggregate, IEnumerable<TKey>> keysOf)
@@ -61,8 +62,20 @@ sealed class TaggregateIndex<TTaggregate, TKey> : ITaggregateIndex<TTaggregate, 
       return _committedReferencesByKey.TryGetValue(key, out var committed) && committed.Length > 0;
    }
 
-   public void Fill(IEnumerable<ITaggregate> committedTaggregates) =>
-      Apply([..committedTaggregates.OfType<TTaggregate>().Select(it => (it.Id, NewKeys: _keysOf(it).ToImmutableHashSet()))]);
+   public void FileExactly(IEnumerable<ITaggregate> committedTaggregates)
+   {
+      var keysById = committedTaggregates.OfType<TTaggregate>().Select(it => (it.Id, Keys: _keysOf(it).ToImmutableHashSet())).ToList();
+      var referencesByKey = new ConcurrentDictionary<TKey, ITaggregateReference<TTaggregate>[]>(
+         keysById.SelectMany(it => it.Keys.Select(key => (Key: key, it.Id)))
+                 .GroupBy(it => it.Key, it => _store.Reference<TTaggregate>(it.Id))
+                 .Select(group => KeyValuePair.Create(group.Key, group.ToArray())));
+      _committedKeysById.Locked(committedKeysById =>
+      {
+         committedKeysById.Clear();
+         foreach(var (id, keys) in keysById.Where(it => !it.Keys.IsEmpty)) committedKeysById[id] = keys;
+         _committedReferencesByKey = referencesByKey;
+      });
+   }
 
    public IPreparedIndexChange Prepare(IReadOnlyList<(TaggregateId Id, ITaggregate? NewState)> changedTaggregates)
    {

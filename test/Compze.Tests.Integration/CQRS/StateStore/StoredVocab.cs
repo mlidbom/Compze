@@ -49,12 +49,17 @@ class StoredVocab : Taggregate<StoredVocab, IStoredVocabTevent, StoredVocabTeven
    }
 }
 
-///<summary>A vocab's whole state, as a state store's storage keeps it.</summary>
-class StoredVocabSnapshot(TaggregateId id, string question, string meaning)
+///<summary>A vocab's whole state, as a state store's storage keeps it. Equal to another holding the same state, so that a reload<br/>
+/// can tell which vocab changed.</summary>
+class StoredVocabSnapshot(TaggregateId id, string question, string meaning) : IEquatable<StoredVocabSnapshot>
 {
    public TaggregateId Id { get; } = id;
    public string Question { get; } = question;
    public string Meaning { get; } = meaning;
+
+   public bool Equals(StoredVocabSnapshot? other) => other != null && other.Id == Id && other.Question == Question && other.Meaning == Meaning;
+   public override bool Equals(object? other) => Equals(other as StoredVocabSnapshot);
+   public override int GetHashCode() => HashCode.Combine(Id, Question, Meaning);
 }
 
 interface IStoredVocabTevent<out T> : ITaggregateTevent<T> where T : IStoredVocabTevent;
