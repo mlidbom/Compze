@@ -83,7 +83,8 @@ The numbers: [what-was-measured.md](what-was-measured.md). The bugs and the smal
    - **(b) shared live instances, "read uncommitted"** (**recommended**). The note object stays for good, a change with
      no session in hand joins the ambient unit of work, and JAStudio's edit sites stay as written. Readers on other
      threads see changes before the commit, and some that are rolled back, as JAStudio's do today during a rebuild. Its
-     price in Compze is restoring the live instance in place at a rollback, which the implementor writes for every part.
+     price in Compze is restoring the live instance in place at a rollback, which becomes the only restoring, loading
+     included, so it is written once for each part and run at every start. It also keeps (c) open, which (a) doesn't.
      Within (b), a change made outside any unit of work is either a unit of work of its own, which spans one publish
      cascade only, so an operation that publishes twice must be run in a unit of work, or it is refused, as under (a).
      And code that decides from a taggregate's state before changing it gets it for update first, since the lock taken

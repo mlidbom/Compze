@@ -84,7 +84,9 @@ were known. We recommend (b). (c) would give both, and is a redesign.
 **Why we recommend (b):** the store exists for a consumer that holds live objects for good. Its only consumer says that
 keeping the object it holds decides the cost. (a) is the cleaner model, but it is the tevent store's model for code that
 never keeps a taggregate across units of work, which is the opposite of JAStudio. (b) also costs less to run: no copy for
-each update, no second corpus in memory during a rebuild, and no handles.
+each update, no second corpus in memory during a rebuild, and no handles. **And (b) keeps (c) open, which (a) doesn't:**
+under both the note object and the edit sites stay, so going from (b) to (c) later changes Compze and the insides of the
+taggregates, not their callers. taggregates-fable's point.
 
 ### What every way shares
 
@@ -99,6 +101,10 @@ each update, no second corpus in memory during a rebuild, and no handles.
     prototype keeps one for each taggregate ever updated.
   - **JAStudio's race between a background reparse and a UI edit** then serializes, instead of corrupting the vocab or
     throwing. The thread assertion of the earlier conclusions isn't needed.
+  - **A unit of work must not wait for the UI thread while it holds a taggregate's lock:** with the UI thread waiting
+    for that taggregate, both stand still until the timeout. JAStudio's progress presenters call
+    `InvokeSynchronouslyOnUIThread` when a task or a batch starts. Today's batches start their progress before they
+    touch a note, so a unit of work for each note is safe, and a whole rebuild as one transaction is not.
 - **A taggregate is read by many threads at once,** so what it computes lazily and keeps must be safe for that.
   JAStudio's forms are such a case.
 - **The version** is kept in memory and not persisted. JAStudio would see one only as noise in every diff and a conflict
@@ -126,9 +132,16 @@ each update, no second corpus in memory during a rebuild, and no handles.
 - **At the first change in a unit of work,** the store takes the lock and a snapshot of the instance.
 - **A rollback restores the live instance in place from that snapshot,** keeping the identity of every part callers
   hold, such as `vocab.Question`.
-- **(b)'s real price in Compze:** restoring in place is a second and harder kind of restoring than loading needs. The
-  implementor writes it for every part, and it runs rarely, exactly when something has already gone wrong. So:
+- **(b)'s price in Compze is restoring in place:** a rollback restores the live instance, keeping the identity of every
+  part. It would be a second, harder restoring, run rarely, exactly when something has already gone wrong, unless it is
+  the only restoring there is. So **loading restores in place too:** it builds the taggregate empty, then restores it in
+  place from its snapshot. That restoring is then written once for each part, and every start runs it for every note. It
+  asks that a part's state can be set after the part is built, which the tevent appliers need anyway.
+  taggregates-fable's point. Further:
   - the specification helper covers it: take a snapshot, change, restore in place, take another, compare;
+  - **restoring in place resets what the taggregate computed lazily and kept,** which the helper can't see: JAStudio has
+    seven such values in `VocabNoteForms` and one in `RelatedVocab`. A rule to state, and the consumer's specifications
+    to guard it;
   - a restoring in place that throws stops the process, as a failed commit does.
 - **What readers on other threads see, plainly:**
   - changes before they are committed, and some that are then rolled back;
@@ -236,17 +249,20 @@ given is that when `ExecuteUnitOfWork` returns, notes and indexes both show the 
 
 ```csharp
 ///<summary>A taggregate whose whole state can be taken as a snapshot, and restored from one.</summary>
-public interface ISnapshotable<TSelf, TSnapshot> where TSelf : ISnapshotable<TSelf, TSnapshot>
+public interface ISnapshotable<TSelf, TSnapshot> where TSelf : ISnapshotable<TSelf, TSnapshot>, new()
 {
    TSnapshot TakeSnapshot();
-   static abstract TSelf RestoreFrom(TSnapshot snapshot);
+   void RestoreFrom(TSnapshot snapshot);
 }
 ```
 
-- **The restoring is a static member of the class,** so a concrete class in a hierarchy, such as a vocab under
-  `JPNote`, restores from its own snapshot type.
-- **A non-generic face for the store,** which holds taggregates of many types: a default interface member that copies,
-  as `TSelf.RestoreFrom(TakeSnapshot())`.
+- **One restoring, in place,** under isolation (b): loading builds the taggregate empty, then restores it from its
+  snapshot, and a rollback restores the live instance from the snapshot taken at its first change. Under (a), with no
+  rollback in place, it could be a static member, `static abstract TSelf RestoreFrom(TSnapshot)`, which builds the
+  instance. Either way a concrete class in a hierarchy, such as a vocab under `JPNote`, restores from its own snapshot
+  type.
+- **A non-generic face for the store,** which holds taggregates of many types: default interface members that take a
+  snapshot, restore from one, and under (a) copy.
 - **Each taggregate class is named once where the store is composed,** such as `AddTaggregate<VocabNote>()`, so that
   loading knows which class restores from which snapshot type.
 - **`Taggregate` gets a protected way to say it was restored,** with its id. Today that needs the `[Obsolete]` internal
@@ -331,9 +347,15 @@ public interface IPreparedWrite
 ## A rebuild
 
 One transaction for a whole rebuild means a lock for every note until the commit, under (a) a copy of every note too,
-and every handler run on one thread at the end. A unit of work for each note costs about 10 µs and 9.5 KB, so about 0.8 s of one core and 0.76 GB
-of garbage for 80,000. **We'd take batches,** of some hundreds of notes for each unit of work, on many threads, and
-measure that shape. Generated data can be generated again, so a failed batch costs little.
+and every handler run on one thread at the end. Two shapes remain, JAStudio's to measure and choose:
+
+- **A unit of work for each note** costs about 10 µs and 9.5 KB, so about 0.8 s of one core and 0.76 GB of garbage for
+  80,000. It never waits for a lock while it holds one. taggregates-fable would take it first.
+- **Batches of some hundreds of notes** make less garbage. But a batch holds every note it changed until it commits, so
+  a UI edit that needs two notes can wait for a batch that waits for it, until the timeout. Meanwhile, other threads
+  look the batch's notes up by their old keys.
+
+Generated data can be generated again, so a failed unit of work costs little either way.
 
 ## What isn't designed yet
 
