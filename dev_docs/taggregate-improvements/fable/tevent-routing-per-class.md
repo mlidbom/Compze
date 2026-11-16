@@ -1,7 +1,9 @@
 # Tevent routing decided once for each teventive class
 
-A proposal, 2026-11-16. Nothing is built. The names in the code below are placeholders for Magnus's pass over the names.
-What it replaces, and what that costs, is in [what-a-taggregate-costs-today.md](what-a-taggregate-costs-today.md).
+A proposal, 2026-11-16. Nothing is built in Compze. A prototype of it is built and measured: what it costs, and what
+writing it showed about the declaration, is in [what-was-run-and-measured.md](what-was-run-and-measured.md). The
+names in the code below are placeholders for Magnus's pass over the names. What it replaces, and what that costs, is
+in [what-a-taggregate-costs-today.md](what-a-taggregate-costs-today.md).
 
 ## The proposal
 
@@ -63,6 +65,9 @@ Tevent handlers, which may publish, are declared the same way, with `DeclareTeve
   `TeventUnhandledException` unless the declaration lets it go unhandled, as today.
 - **Applying a tevent** is then one dictionary lookup for each teventive the tevent reaches, and a call for each entry
   with the instance as argument.
+- **The wrapper object is made only for what receives it.** Matching stays on the type of the wrapper. For a tevent
+  the class itself publishes or loads, that type follows from the class and the tevent's own type, so it is resolved
+  once for each tevent type, and loading makes no wrapper at all unless a `ForWrapped` entry receives one.
 - **What an instance keeps:** one reference to its class's declaration. No dispatcher, no subscriptions, no closures.
   A component still holds its parent, to publish through. A collection still holds its entities. A slot still holds its
   shared tomponent.
@@ -114,8 +119,8 @@ instance as little as a component does. Today it costs as much as a component, a
   parameter for the class itself, so its declaration names the class: `DeclareTeventAppliers<PostalAddress>()`.
 
 ```csharp
-static readonly Slot<IPostalAddressTevent> ShippingAddressSlot =
-   DeclareSlot<IPostalAddressTevent, IShippingAddressTevent<IPostalAddressTevent>>(typeof(ShippingAddressTevent<>), order => order.ShippingAddress);
+static readonly Slot<IPostalAddressTevent, IShippingAddressTevent<IPostalAddressTevent>> ShippingAddressSlot =
+   new(typeof(ShippingAddressTevent<>), order => order.ShippingAddress);
 
 static readonly TeventAppliers Appliers = DeclareTeventAppliers()
   .For<IOrderTevent.Created>((_, _) => {})
@@ -209,4 +214,4 @@ From the JAStudio session's answers (see
   saves the argument, and brings a virtual call from a constructor and a lambda that can capture that first instance by
   mistake. I'd take the argument.
 - **A lambda in a declaration must capture nothing,** since every instance shares it. `static` lambdas make the
-  compiler check it; the declaration can assert it for the rest.
+  compiler check it; the declaration asserts it for the rest, as the prototype does.

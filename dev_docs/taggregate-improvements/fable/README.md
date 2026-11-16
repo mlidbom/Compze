@@ -9,9 +9,11 @@ follows a change subscribes to exactly the tevents it concerns (Magnus, 2026-11-
 would use only Compze.Teventive: no tevent store and no bus. A note's file keeps holding the note's state, not its
 history. What must change in Compze.Teventive for that, and how?
 
-**What this rests on.** Reading the code on `main` at `a6317da47`, where Compze.Teventive is 0.6.0-alpha, the version
-the JAStudio session measured. I ran nothing and measured nothing. Every measured number here is the JAStudio
-session's.
+**What this rests on.** Reading the code on `main` at `a6317da47`, where Compze.Teventive is 0.6.0-alpha, and then
+running it: every claim made from reading was run against the released package, and the central proposal was built as
+a prototype and measured beside today's Taggregate. The results are in
+[what-was-run-and-measured.md](what-was-run-and-measured.md). Nothing in Compze is changed: the experiments are on a
+branch of their own, `taggregate-experiments-fable`.
 
 ## Conclusions
 
@@ -21,6 +23,10 @@ session's.
    Compze needs it for itself too: the tevent store constructs and hydrates a taggregate on every load, in every unit
    of work. The shape: a static declaration per class, with the verbs and the ordering rule of today, in which the
    lambdas take the instance and a component or a collection is an entry like any tevent applier.
+   **Measured on a prototype:** a vocab with four components and four shared tomponents keeps 584 bytes where today's
+   Taggregate keeps 10,204 and plain objects 350, and loads in under 3 µs instead of 35. For JAStudio's notes that is
+   about 30 MB more than plain objects, where today's Taggregate would be about 1.1 GB. The JAStudio session built a
+   prototype of its own, and measured the same.
    See [tevent-routing-per-class.md](tevent-routing-per-class.md), and for what the cost is made of,
    [what-a-taggregate-costs-today.md](what-a-taggregate-costs-today.md).
 2. **Let a taggregate load from tevents its own code constructs.** A note's stored state, read back, is a
@@ -30,13 +36,15 @@ session's.
 3. **Tell a taggregate's own class when it has published tevents,** through a protected hook, so that a consumer
    needs no observer per instance; and create a taggregate's two lists and its tevent stream on first use. With it:
    - **Two bugs to fix, whatever JAStudio does.** A publish from inside an observer of the tevent stream notifies
-     tevents twice and then throws, and a tevent published from inside `Commit`'s callback is lost without a word. The
-     fix of the first must keep the tevents in the order they were published.
+     tevents twice and then throws, or ends the process with a stack overflow when the observer reacts every time. And
+     a tevent published from inside `Commit`'s callback is lost without a word. The fix of the first must keep the
+     tevents in the order they were published.
    - **An assertion that one thread at a time is in `Publish`,** so that a race fails at its cause.
 4. **Make `ITaggregateTevent` a plain `ITevent`,** and let each taggregate's root tevent interface say how its tevents
    are delivered. Today the base interface says exactly-once for every taggregate there is, which a note's tevents
-   are not. Nothing breaks structurally. Every taggregate that is delivered exactly-once has to say so, and the tevent
-   store has to ask for the `TessageId` it stores, which a note's tevents then needn't have.
+   are not. Nothing breaks structurally. Every taggregate that is delivered exactly-once has to say so, which is about
+   five of the tests' and the sample's taggregates, and the tevent store has to ask for the `TessageId` it stores,
+   which a note's tevents then needn't have.
 5. **A source generator that writes tevent implementation classes is a proposal of its own,** to decide after JAStudio
    has written one note type's tevents by hand. It would be the first Roslyn generator in Compze.
 6. **Not recommended: a second root base class, a Taggregate without what the tevent store needs of it.** JAStudio
@@ -58,26 +66,49 @@ Conclusions 2 to 4 and 6 are in
    collections, then the query models, then the removal of registration per instance.
 4. **`ITaggregateTevent` as a plain `ITevent`** (conclusion 4): independent of the others, whenever Magnus has decided.
 
-With it, a performance specification in Compze that constructs and hydrates many taggregates and reports the bytes kept
-and allocated for each, so that the cost is measured where it is caused. The JAStudio session's program is the start of
-it.
+With it, a performance specification in Compze that loads many taggregates, through slots too, and publishes on them,
+and reports the bytes kept and allocated and the time for each, so that the cost is measured where it is caused. The
+program that measured the prototype is the start of it.
 
 ## What is verified, and what is not
 
-- **Read in the code, by me:** everything said about how Compze.Teventive, the tevent store's session and the
-  publisher work, with the files named where it is said.
-- **Measured by the JAStudio session, not rerun by me:** the bytes and times. Counting by hand what the constructors
-  allocate gives numbers of the same size, which is as far as my check goes.
-- **Not read:** all 41 files that register tevent appliers (I read the base classes and about ten of them); the tests'
-  endpoints that subscribe to taggregate tevents, which conclusion 4 changes; `TaggregateHistoryValidator`.
+- **Read in the code, and then run:** the two bugs, what an exception leaves behind, loading a tevent constructed
+  outside `Publish`, a slot in a component, and what a subscriber can subscribe to. All came out as read.
+- **Measured:** what today's Taggregate costs, by the JAStudio session and again by me with the same numbers, and
+  what a prototype of the proposal costs, by each of us on a prototype of our own. The bytes are exact. The times are
+  from a few runs on a machine that other work shares.
+- **Run on the prototype:** the queue that hands over published tevents in order, `Commit`, loading from a
+  compacted-history, the assertion of one thread in `Publish`, and many threads through shared declarations.
+- **Read in the code only:** how the tevent store's session and the publisher work, and so what `ITaggregateTevent`
+  as a plain `ITevent` changes. Which of the tests' and the sample's taggregates it touches is from searching them.
+- **Not read:** all 41 files that register tevent appliers (I read the base classes and about ten of them), and
+  `TaggregateHistoryValidator`.
 - **From the JAStudio session, not checked by me:** how JAStudio's notes are built. Its answers to my questions, and
   where we stand, are in [the-dialog-with-the-jastudio-session.md](the-dialog-with-the-jastudio-session.md).
 
 ## What Magnus has to decide
 
-- **Tevent routing for each class:** whether to do it, and the names. It changes protected members of public base
-  classes, and so how every taggregate is written.
-- **`ITaggregateTevent` as a plain `ITevent`:** a change to a public interface.
-- **The small additions to `Taggregate`,** and their names: loading from a compacted-history, the hook, the assertion.
-  The two bugs need no decision.
-- **The generator:** now, later or never.
+1. **Tevent routing for each class:** whether to do it, and the names. It changes protected members of public base
+   classes, and so how every taggregate is written.
+2. **The two bugs:** to fix them needs no decision, only his word to start, since nothing was to be built.
+3. **The small additions to `Taggregate`,** and their names: loading from a compacted-history, the hook, the assertion
+   of one thread in `Publish`, the lists on first use.
+4. **`ITaggregateTevent` as a plain `ITevent`:** a change to a public interface.
+5. **The generator:** now, later or never.
+6. **Specifications for what JAStudio's notes rely on and no specification pins:** a slot in a component, a
+   subscription to an owner's interface that an adopting wrapper tevent implements, and the rest of the eight
+   behaviours in [the-dialog-with-the-jastudio-session.md](the-dialog-with-the-jastudio-session.md).
+7. **`TaggregateTypeValidator`'s scans** of whole assemblies, several for each class: make it one for each assembly.
+8. **A taggregate that an exception has left `Publish` from a tevent applier or a tevent handler:** whether it should
+   refuse every later use, since its state isn't to be trusted. Today it looks usable.
+
+## The files
+
+| File | What is in it |
+|---|---|
+| [what-a-taggregate-costs-today.md](what-a-taggregate-costs-today.md) | Where the bytes go today, what depends on the order of registration, and the smaller findings |
+| [tevent-routing-per-class.md](tevent-routing-per-class.md) | The proposal for conclusion 1 |
+| [a-taggregate-without-a-tevent-store.md](a-taggregate-without-a-tevent-store.md) | Conclusions 2 to 4 and 6 |
+| [generating-tevent-implementation-classes.md](generating-tevent-implementation-classes.md) | Conclusion 5 |
+| [what-was-run-and-measured.md](what-was-run-and-measured.md) | The experiments, their numbers, and where they are |
+| [the-dialog-with-the-jastudio-session.md](the-dialog-with-the-jastudio-session.md) | What the JAStudio session and I asked and answered each other |

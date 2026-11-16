@@ -96,6 +96,30 @@ It agrees without additions on: the declaration through the constructor argument
 notes left to JAStudio's collection; the assertion; the generator as a proposal of its own. What JAStudio's own side
 needs, such as its Python stubs meeting a generic base class from Compze, it takes to Magnus itself.
 
+## What each of us then ran
+
+- **The JAStudio session** ran, against Compze.Teventive 0.6.0-alpha, what we had only read. All of it held, and one
+  flaw is worse than read: an observer of the tevent stream that publishes every time it is notified of the tevent it
+  reacts to ends the process with a stack overflow. It measured a shared tomponent, 552 bytes kept before its first
+  tevent and 971 after, and with the parts counted puts JAStudio's notes as today's Taggregates at about 1.1 GB. It
+  checked eight behaviours its notes rely on, each a candidate for a specification in Compze:
+  - one tevent that two components apply, because its interface inherits an interface of each;
+  - a subscription to a meaning that several tevents share;
+  - a base class's tevent applier in a subclass, its tevent told apart by the subclass's wrapper;
+  - two shared tomponents of one class in a component, told apart by their slots, one of them of a subclass;
+  - a subscription to an owner's interface that a slot's adopting wrapper tevent implements;
+  - a subscription to the shared tomponent's own tevent type, which gets nothing of what is adopted;
+  - a generic shared tomponent with generic tevents, in a slot of the root;
+  - a generic tevent interface that isn't a wrapper, matched by covariance.
+- **I** ran the same claims, with the same results, and built and measured a prototype of the routing proposal.
+- **The JAStudio session then built a prototype of its own,** whose numbers agree with mine, and which gave the
+  design one thing mine didn't have: a loaded tevent needs no wrapper object.
+
+All of it is in [what-was-run-and-measured.md](what-was-run-and-measured.md). The JAStudio session's programs are on
+JAStudio's branch `taggregates-fable-experiments`, in the worktree
+`C:\Dev\JAStudio.worktrees\taggregates-fable-experiments`, and its documents in
+`C:\Dev\JAStudio.wt2\dev_docs\taggregates\fable`.
+
 ## Still open between us
 
-Nothing.
+Nothing. Both of us have stopped.

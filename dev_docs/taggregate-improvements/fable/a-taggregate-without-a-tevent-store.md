@@ -1,7 +1,8 @@
 # A Taggregate without a tevent store
 
-Findings and proposals, 2026-11-16. Nothing is built. The names in the code are placeholders for Magnus's pass over the
-names.
+Findings and proposals, 2026-11-16. Nothing is built in Compze. What sections 1 and 2 propose is built in a prototype,
+and its behaviour run: see [what-was-run-and-measured.md](what-was-run-and-measured.md). The names in the code are
+placeholders for Magnus's pass over the names.
 
 ## The headline
 
@@ -39,7 +40,7 @@ The addition, a protected member of `Taggregate`:
 
 ```csharp
 ///<summary>Rebuilds this taggregate's state from a compacted-history that its own code has constructed:
-/// each tevent is wrapped as Publish would wrap it, given this taggregate's id and the next version, and applied.
+/// each tevent is given this taggregate's id and the next version, and applied as if Publish had wrapped it.
 /// Nothing is published, and nothing is left uncommitted.</summary>
 protected void LoadFromCompactedHistory(IEnumerable<TTaggregateTeventImplementation> compactedHistory)
 ```
@@ -49,6 +50,13 @@ gives its share of the compacted-history from its stored data, and the root join
 
 **Loading is how JAStudio starts:** about 570,000 tevents for its 79,720 notes, each adopted one in two wrappers. What
 a loaded tevent costs, in bytes and time, is to be measured with what an instance costs.
+
+**A loaded tevent needs no wrapper object** (the JAStudio session, from its prototype). Which tevent appliers a tevent
+reaches is decided by the type of its wrapper, and for a tevent the class itself publishes or loads, that type follows
+from the class and the tevent's own type. So a class resolves it once for each tevent type, and the wrapper object is
+made only for what receives it: a `ForWrapped` entry, and whoever the published tevent is committed and handed to. The
+JAStudio session's prototype loads an adopted tevent that way in 232 bytes and 0.2 µs, where 0.6.0-alpha takes
+1,220 bytes and 1.2 µs. A history from the tevent store comes with its wrappers, and is routed by them, as today.
 
 - **Is such a tevent a tevent, when nothing happened?** Yes when it is named for what did happen: the note was
   created, or imported, with these values. No when it is named `Restored` or `State`. It reaches only tevent appliers,
@@ -85,8 +93,10 @@ tevent that the tevent handlers published in response have been applied, and the
 JAStudio's subscribers will publish from inside both: a subscriber to a note's tevent may change that same note.
 
 - **The notification of the tevent stream.** An observer that publishes on the same taggregate from `OnNext` makes the
-  inner `Publish` notify the outer call's tevents a second time, after which the outer `foreach` throws. The hook
-  would be called at the same place and have the same bug.
+  inner `Publish` notify the outer call's tevents a second time, after which the outer `foreach` throws. An observer
+  that publishes every time it is notified of the tevent it reacts to never gets that far: each inner `Publish`
+  notifies it of the same tevent again, and the process dies of a stack overflow. The hook would be called at the same
+  place and have the same bug.
 - **`Commit`.** It hands the callback the live list and clears it afterwards (`Taggregate..cs:125-129`). A tevent
   published on the same taggregate from inside the callback is cleared with the rest, uncommitted.
 
@@ -159,10 +169,13 @@ What I found by reading:
   `TessageHandlerRoster`). Every subscription to a taggregate's tevents demands it today, through the base interface.
   After the change, one whose hierarchy doesn't declare it fails its assert in `RegisterExactlyOnceTeventHandlers`, at
   setup. Each taggregate hierarchy in the tests and the sample that is delivered between endpoints needs the
-  declaration: mechanical.
+  declaration: mechanical. By a search of them: 24 hierarchies have `ITaggregateTevent` as their root, none says
+  `IExactlyOnceTevent` itself, and five endpoint declarations register exactly-once tevent handlers, three in the
+  tests and two in the sample, for about five of the hierarchies. The rest are published in one process, or only
+  dispatched, and need nothing.
 - **A subscription to `ITaggregateTevent`, `ITaggregateCreatedTevent` or `ITaggregateDeletedTevent` itself** would no
-  longer demand exactly-once delivery. In `src`, only `SingleTaggregateQueryModelGenerator` subscribes to them, on a
-  dispatcher of its own, which is unaffected. I haven't traced the tests' endpoints.
+  longer demand exactly-once delivery. Nothing in `src`, the tests or the sample subscribes to them on a bus: only
+  `SingleTaggregateQueryModelGenerator` does, on a dispatcher of its own, which is unaffected.
 
 It is a change to a public interface: Magnus's to decide. I recommend it whatever JAStudio does.
 

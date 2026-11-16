@@ -1,8 +1,9 @@
 # What a Taggregate costs today, and why
 
-Findings from reading Compze.Teventive on `main` at `a6317da47` (0.6.0-alpha), 2026-11-16. The measured numbers are the
-JAStudio session's, from 80,000 instances built against the package from nuget.org. The byte counts by hand are mine,
-for x64, and rough.
+Findings from reading Compze.Teventive on `main` at `a6317da47` (0.6.0-alpha), 2026-11-16. The measured numbers in the
+table are the JAStudio session's, from 80,000 instances built against the package from nuget.org. Run again by me they
+came out the same, and more is measured in [what-was-run-and-measured.md](what-was-run-and-measured.md). The byte
+counts by hand are mine, for x64, and rough.
 
 ## The headline
 
@@ -45,7 +46,8 @@ dispatcher (`TeventiveComponent.cs:34-45`). About 0.9 KB, and about 0.4 KB more 
 more, with a closure registered on the owner (`SharedTomponentSlot.cs:42-51`). JAStudio's vocab would have about ten.
 
 **The first tevent of a new type** copies the dictionary of resolved handlers with one more entry, on the appliers'
-dispatcher and on the handlers', and adds an array and the closures: `Subscriptions.PublishResolvedHandlers`.
+dispatcher and on the handlers', and adds an array and the closures: `Subscriptions.PublishResolvedHandlers`. So an
+instance keeps about 400 bytes more for every tevent type it meets, for as long as it lives.
 
 A `TeventDispatcherConfig` given to the base constructor, such as
 `Account() : base(TeventDispatcherConfig.Default.IgnoreUnhandled<...>())`, is also built again for every instance.
@@ -107,13 +109,16 @@ The rule is that all matching handlers are called in the order they were registe
   `foreach` over the list of the call's tevents, at reentrancy level 0 (`Taggregate..cs:76-81`). An observer that
   publishes on the same taggregate from `OnNext` adds to that list. The inner `Publish`, at level 0 itself, notifies
   the whole list again, the outer call's tevents included, and clears it; then the outer `foreach` throws
-  `InvalidOperationException`, after the state has changed. Found by the other session working on this question, whose
-  `//bug:` comment is in `Taggregate..cs`; I confirmed it from the code and ran nothing. What the fix must keep is in
+  `InvalidOperationException`, after the state has changed. An observer that publishes every time it is notified of
+  the tevent it reacts to is notified of that tevent again by each inner `Publish`, without end: the process dies of a
+  stack overflow, which nothing can catch. The first was found by the other team working on this question, whose
+  `//bug:` comment was in `Taggregate..cs` for a while, the second by the JAStudio session. Both are confirmed by
+  running. What the fix must keep is in
   [a-taggregate-without-a-tevent-store.md](a-taggregate-without-a-tevent-store.md).
 - **`ITaggregate.Commit` loses a tevent published from inside its callback.** It hands the callback the live list of
   uncommitted tevents and clears the list afterwards (`Taggregate..cs:125-129`). A tevent published on the same
   taggregate while the callback runs is added to the list the callback is reading, and cleared with the rest: never
-  committed, and nothing says so. Found by the JAStudio session; I confirmed it from the code.
+  committed, and nothing says so. Found by the JAStudio session, and confirmed by running.
 - **An exception from a tevent applier or a tevent handler leaves a taggregate that looks usable.** The tevent may be
   half applied, the invariants were never asserted, and the tevent stays among the uncommitted tevents and is notified
   with the next publish (`Taggregate..cs:53-74`). A tevent store's unit of work throws the instance away. A consumer
