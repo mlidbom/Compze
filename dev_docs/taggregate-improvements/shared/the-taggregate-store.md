@@ -732,7 +732,8 @@ notes lose nothing.
   order its old caches gave. **Specified, Magnus, 2026-11-16 (item 35): `Lookup` returns its references in id order,**
   the order of the ids' Guids, which is the order of their text. That holds at load, after each commit, and inside a
   unit of work for its own view. Each key's array is already replaced whole when a commit changes it, so it is kept
-  sorted as it is replaced, and loading sorts each key's references once. JAStudio's sort can then go.
+  sorted as it is replaced, and loading sorts each key's references once. JAStudio's sort can then go. **Undone by
+  Magnus, 2026-11-17 (item 37):** see "Neither read gives an order", below.
 - **Loading restores every taggregate on one thread:** 80,000 notes in 5.0 s. JAStudio's old cache filled its three
   classes in parallel.
 - **A unit of work for each note costs more than JAStudio's old saving:** a full rebuild takes 53 processor-seconds,
@@ -794,6 +795,36 @@ the tevent store and the routing; the six of `IStateStore.All` now read through 
   `All` after all, `KanjiNote.PopulateRadicalsFromMnemonicTags`, which stored the names of a kanji's `<rad>` tags in
   `All`'s order. It sorts them by their characters now, one line, and a full rebuild still changes no corpus file.
 - **For the review (item 9):** the name. The document db says `GetAll`, and gives instances; `All` gives references.
+
+## Neither read gives an order: `Lookup` too, specified
+
+**Magnus, 2026-11-17 (item 37):** `ITaggregateIndex.Lookup` returns
+`IReadOnlyCollection<ITaggregateReference<TTaggregate>>` in no particular order, as `All` does, and the index sorts
+nothing: not at load, not at commit, not in a unit of work's view. Item 35's id order goes.
+
+**The rule behind it, in his words:** "we should not do anything that costs CPU or memory that is not pretty certain to
+be what the great majority of clients want and need. Even if it is the great majority, if they can do it themselves
+with the same performance with a single call to a sort.... Then they should... And if it is for a search, they would do
+the sort after the filter and then instantly the cost dropped a lot since the collection is smaller."
+
+- **What the order cost:** nothing outside a unit of work. But nothing keeps a key's group small: an index by a tag or a
+  note type may file most of a store under one key. Inside a unit of work that holds any taggregate of the class, even
+  one got for update and not changed, every lookup built the key's whole group anew and sorted it, about 137 ms and
+  36 MB on top at a million. Each commit compared what it filed with the whole group, and each load sorted every group.
+- **What stays, being the index's design and not the order's:** inside such a unit of work, each lookup still builds the
+  key's group anew (about 25 ms and 8 MB at a million), and each commit that changes a key still copies its array
+  (8 MB at a million).
+- **The order meant nothing in the domain.** It made JAStudio's rebuild reproducible, but which vocab a sentence takes
+  when several are filed under one form was still an arbitrary choice, fixed by random Guids.
+- **JAStudio keeps the order it needs** in its one call of `Lookup`, `NoteIndex.NotesWith`: one line, ordering by id,
+  so every lookup it makes gives today's order, its rebuild stays reproducible by construction, and no corpus file
+  changes. taggregates-opus argued for keeping the promise, since the migration rests on "a full rebuild changes no
+  corpus file", and an unordered lookup would hide an order dependence until an edit re-files a note. That one line
+  answers it, at a cost JAStudio can judge for its own groups.
+- **What JAStudio relies on the order for,** from taggregates-opus: the tokenizer's godan check takes the first vocab
+  with a form (唱う is a form of 歌う, 唄う and 詠う), 3 sentences; a sentence's stored parse lists two matching vocab in
+  lookup order, 1,169 sentences; possibly a splitter's loop over vocab sharing a question; display lists. The godan
+  check wants a grammar rule over all of them whatever the order, which is Magnus's call, in a `review:` comment there.
 
 ## What the prototype is
 
