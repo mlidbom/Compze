@@ -72,8 +72,15 @@ The names are placeholders, for Magnus.
 
 - **An applier gets the instance as a parameter instead of capturing `this`.** That's the main change for whoever
   writes a taggregate. A lambda declared `static` can't capture anything, which the compiler enforces. The table can
-  also assert, when it's declared, that no handler holds state. A delegate whose target is `this`, or a closure over
-  locals, has a target with instance fields; a lambda that captures nothing has a target with none.
+  also assert, when it's declared, that no handler holds state: its delegate's `Target` must be null or have no
+  instance fields. Checked on .NET 11, 2026-11-16:
+
+  | Handler | `Target` | Instance fields |
+  |---|---|---:|
+  | a `static` lambda, or a lambda that captures nothing | the compiler's cached `<>c` | 0 |
+  | a static method | null | – |
+  | a lambda that captures `this` or a local | a closure class, or the instance itself | 1 or more |
+  | an instance method | the instance | 1 or more |
 - **Private members stay private:** a lambda declared inside the class can reach the private members of the instance
   it's given.
 - **Inheritance:** `Extend<TSubclass>` adds a subclass's entries to its base class's table. Each level's lambdas are

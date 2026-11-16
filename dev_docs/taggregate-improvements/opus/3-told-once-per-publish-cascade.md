@@ -37,8 +37,9 @@ instance.
 
 ## The reentrancy bug in `Taggregate.Publish`
 
-Found by taggregates-opus, and reproduced with Compze.Teventive 0.6.0-alpha on 2026-11-16. A `bug:` comment marks it at
-the code.
+Found by taggregates-opus, and reproduced with Compze.Teventive 0.6.0-alpha on 2026-11-16. This document is its only
+record: the work is design for now, with no change to the code, so the `bug:` comment goes at the code when the fix is
+made, or before if Magnus wants it there now.
 
 At the end of a publish cascade, `Publish` enumerates
 `_teventsPublishedDuringCurrentPublishCallIncludingReentrantCallsFromTeventHandlers` with a `foreach`, calls

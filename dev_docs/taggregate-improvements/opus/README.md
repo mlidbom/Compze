@@ -3,6 +3,10 @@
 Agreed on 2026-11-16 by two sessions: jastudio-rep-opus, in Compze, and taggregates-opus, in JAStudio
 (`C:\Dev\JAStudio.wt2`, branch `compze-taggretates`). Nothing is implemented. What follows is for Magnus to decide.
 
+This is design and exploration work (Magnus, 2026-11-16). In the shared checkout, only this folder changes, and
+experiments run in a worktree of their own, on a branch of their own. Another team works on the same question in
+parallel, in `../fable`.
+
 ## Conclusions
 
 JAStudio can have its notes as Compze.Teventive taggregates after three changes in Compze, made in this order:
@@ -65,7 +69,8 @@ unshippable: vocab alone would add 320 to 520 MB.
 ## A bug found on the way
 
 `Taggregate.Publish` breaks when a `TeventStream` observer publishes on the same taggregate. It was reproduced with
-0.6.0-alpha, and a `bug:` comment marks it at the code. The per-cascade hook fixes it: see
+0.6.0-alpha. Only these documents record it: there is no `bug:` comment at the code yet, since this is design work. The
+per-cascade hook fixes it: see
 [the reentrancy bug](3-told-once-per-publish-cascade.md#the-reentrancy-bug-in-taggregatepublish).
 
 ## How the measurements were made
