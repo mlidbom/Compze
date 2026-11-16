@@ -427,6 +427,38 @@ Generated data can be generated again, so a failed unit of work costs little eit
 **Loading everything again while running gets easier with references:** a reference outlives a reload, where today
 `JPCollection.ReloadFromBackend` replaces every note object and every holder looks it up again.
 
+## What the spike built in step 2a
+
+Branch `taggregate-store-spike`. Step 2 is split in three: 2a, the state store, which is what JAStudio needs; 2b, the tevent
+store joining the shared updater and reader; 2c, `IUnitOfWorkTeventPublisher` deferring every tevent (decision 4). 2a is
+built and specified; the calls it made:
+
+- **The new project `Compze.Teventive.StateStore`**, beside `Compze.Teventive.TeventStore`. The shared interfaces are in
+  `Compze.Teventive`, namespace `Compze.Teventive.TaggregateStores`, and `ISnapshotable<TSelf, TSnapshot>` in
+  `Compze.Teventive.Taggregates`.
+- **One taggregate unit of work for each transaction** (`TaggregateUnitOfWork`, internal), not one for each store's session.
+  It holds each store's session and the one queue of tevents, and is the transaction's only participant for the stores:
+  at phase 0 it dispatches in rounds, cause before consequence, then has each session prepare. The bound on rounds is 100.
+  A handler's failure is wrapped in an exception naming the tevent, its version and its taggregate.
+- **The ambient unit of work** is in `Compze.DependencyInjection`, internal: `ExecuteUnitOfWork` records itself for the
+  transaction when it begins it, not when it joins one, since a joining unit of work's scope ends before the commit. So
+  references, indexes and the updater all find the unit of work from the ambient transaction, and a transaction begun
+  outside `ExecuteUnitOfWork` is refused, loudly, when a taggregate is got for update in it.
+- **Routing by class:** each store declares its classes, and the reader and updater route a class to the one store that
+  keeps it or its subclasses, so `Get<JPNote>` finds a vocab. A class no store keeps fails naming each store and its classes.
+- **The composition:** `StateStore(store => store.StoredIn(storage).Taggregate(() => new VocabNote(services)).Index<VocabNote, string>(...))`.
+  `Taggregate` infers the class and its snapshot type from what the factory builds: no type arguments.
+- **Snapshots:** `RestoreFrom` calls the protected `RestoreIdentity(id)` first, which also sets the version to 1. The store
+  checks that it did, and that the id is the one asked for, and continues a copy's version from the committed instance.
+- **Storage:** `LoadAll` runs at the store's first use, not when the container is built. The seam passes snapshots as
+  `object`, with the taggregate's class and id (`TaggregateSnapshot`, `TaggregateToDelete`). Without a storage the store
+  keeps its taggregates in memory only.
+- **A copy that published nothing changes nothing:** it isn't written, and the committed instance stays, as agreed with
+  taggregates-opus.
+- **The lock table keeps only the locks held or waited for,** not one for each taggregate ever updated.
+- **Not yet:** a second container in one transaction (a `todo:` at the code), the overlay's kept keys (a `performance:` at
+  the code), and reloading while running.
+
 ## What the prototype is
 
 Branch `taggregate-store-opus`, commit `3dd0fbe08`, in `C:\Dev\Compze.worktrees\taggregate-store-opus`, based on `main`.

@@ -93,7 +93,9 @@ The numbers: [what-was-measured.md](what-was-measured.md). The bugs and the smal
    - Agreed with JAStudio: the storage seam `ITaggregateStorage` and the store's fill from `LoadAll` at start come in step 2,
      and JAStudio keeps its own files behind the seam, byte for byte. Typed ids: `Taggregate.Id` stays overridable by a
      covariant return, and the store keeps the id instances it's given.
-   - **Progress:** step 1 built, `taggregate-store-spike` at a0552017d, Compze's full suite green.
+   - **Progress:** step 1 built (a0552017d). Step 2 split in three: 2a, the state store, built and specified
+     (3f1c611b6), Compze's full suite green, its calls in [the-taggregate-store.md](the-taggregate-store.md#what-the-spike-built-in-step-2a);
+     2b, the tevent store joining the shared updater and reader; 2c, the publisher deferring every tevent.
    - **Built provisionally, as recommended, and brought back with what the spike showed** (Magnus: "Yes to everything
      you suggested"): after step 2, the publisher deferring every tevent to phase 0 (decision 4) and the lock's
      waiting with a timeout (decision 6); after step 3, the table through an explicit interface implementation, static
