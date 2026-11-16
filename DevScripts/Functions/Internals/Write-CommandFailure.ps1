@@ -31,5 +31,9 @@ function Write-CommandFailure {
     )
 
     $global:LASTEXITCODE = 1
+    # bug: the error is terminating, not as the description says, when the failing command has set
+    #   $ErrorActionPreference = 'Stop', as the C-VM-* commands and many others do: WriteError then throws, and the
+    #   caller's next statement doesn't run. The exit code is still 1. Seen 2026-11-16, and reproduced with an advanced
+    #   function that sets 'Stop' and calls $PSCmdlet.WriteError. Either the description or the behavior is to change.
     $Command.WriteError([System.Management.Automation.ErrorRecord]::new([Exception]::new($Message), 'CommandFailed', [System.Management.Automation.ErrorCategory]::NotSpecified, $null))
 }
