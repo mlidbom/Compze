@@ -1,4 +1,5 @@
 using Compze.Abstractions;
+using Compze.Internals.SystemCE;
 using Compze.Teventive;
 using Compze.Teventive.Taggregates;
 using Compze.Teventive.Taggregates.BaseClasses;
@@ -30,13 +31,18 @@ class Book : Taggregate<Book, IBookTevent, BookTevent, IBookTevent<IBookTevent>,
 
    readonly BookServices _services;
    readonly Dictionary<string, int> _starsByReader = [];
+   readonly LazyCE<string> _heading;
 
    public Book(BookServices services)
    {
       _services = services;
       Chapters = new BookChapters(this);
       Tags = new TagSet(Slots.Tags.In(this));
+      _heading = new LazyCE<string>(() => $"{Title}, by {Author}");
    }
+
+   ///<summary>Derived from the book's state on its first read: no state of its own, and no part of the snapshot.</summary>
+   public string Heading => _heading.Value;
 
    public string Title { get; private set; } = "";
    public string? Author { get; private set; }

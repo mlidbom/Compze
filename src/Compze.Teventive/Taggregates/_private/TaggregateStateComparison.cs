@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using Compze.Contracts;
+using Compze.Internals.SystemCE;
 
 namespace Compze.Teventive.Taggregates._private;
 
@@ -42,6 +44,12 @@ sealed class TaggregateStateComparison
       }
 
       if(original is Delegate) return; //Delegates aren't state.
+
+      if(IsCreatedOnFirstRead(original.GetType()))
+      {
+         Compare(ValueOf(original), ValueOf(copy), path);
+         return;
+      }
 
       var pair = new ComparedPair(original, copy);
       if(!_beingCompared.Add(pair)) return;
@@ -110,6 +118,16 @@ sealed class TaggregateStateComparison
 
    ///<summary>A field's name as the code declares it: a property's, for the field the compiler generates behind it.</summary>
    static string NameOf(FieldInfo field) => field.Name.StartsWithOrdinal("<") ? field.Name[1..field.Name.IndexOfOrdinal('>')] : field.Name;
+
+   ///<summary>Whether <paramref name="type"/> is a value created on its first read, a <see cref="LazyCE{TValue}"/> or a <see cref="Lazy{T}"/>:<br/>
+   /// its state is its value, which the comparison reads in both instances, creating it where no read has yet. Whether a read has<br/>
+   /// created it is no state of the taggregate's, and a value derived from the state that comes out different is a real difference.</summary>
+   static bool IsCreatedOnFirstRead(Type type) => type.IsGenericType && ValuesCreatedOnFirstRead.Contains(type.GetGenericTypeDefinition());
+
+   static readonly HashSet<Type> ValuesCreatedOnFirstRead = [typeof(LazyCE<>), typeof(Lazy<>)];
+
+   static object? ValueOf(object createdOnFirstRead) =>
+      createdOnFirstRead.GetType().GetProperty(nameof(Lazy<object>.Value))._assert().NotNull().GetValue(createdOnFirstRead);
 
    static bool IsComparedByItsOwnEquality(Type type) => type.IsPrimitive || type.IsEnum || SimpleValueTypes.Contains(type) || typeof(MemberInfo).IsAssignableFrom(type);
 
