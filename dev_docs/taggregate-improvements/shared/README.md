@@ -77,7 +77,15 @@ The numbers: [what-was-measured.md](what-was-measured.md). The bugs and the smal
 ## What Magnus decides
 
 1. **The go-ahead to build, and the order above.** Magnus, 2026-11-16: steps 1 and 3 agreed as design decisions, which
-   is not yet the go-ahead to build them on a branch that isn't exploratory.
+   is not yet the go-ahead to build them on a branch that isn't exploratory. **Then, the same day: a spike, decided.**
+   - Steps 1 to 4, through the JSON store, on an exploratory branch in Compze's main checkout, `C:\Dev\Compze`, each
+     step specified before it's built. Every branch worked on is pushed as it goes: "I don't want to lose any work if
+     my machine burns".
+   - JAStudio migrates on its own branch, referencing the spike's projects directly. Not one part only: jastudio-rep-opus
+     supports JAStudio's agents "until they have completed the entire migration and everything they can test
+     themselves work".
+   - The spike's branch isn't merged. Whether it's cleaned up and merged, or the real build starts afresh from what it
+     showed, is decided when it's done.
 2. **Isolation: decided.** Magnus, 2026-11-16: a private copy for each unit of work, unless JAStudio's sessions find a
    strong reason for shared live instances. Two independent reviewers chose it for both Compze and JAStudio
    ([reviews/isolation-review-by-an-opus-agent.md](reviews/isolation-review-by-an-opus-agent.md),
