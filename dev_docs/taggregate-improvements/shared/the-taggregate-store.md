@@ -127,6 +127,10 @@ public interface ITaggregateReference<out TTaggregate> where TTaggregate : ITagg
 - **Reading and getting for update work from the ambient transaction alone,** with no session passed down to call sites,
   as JAStudio's two sessions ask. The store finds the session of the ambient transaction.
 - **An index that holds references is touched at a commit only when the note's keys change.**
+- **A reference to a deleted taggregate has nothing to give:** `Current` throws once the deletion is committed. So a view
+  that may outlive a deletion, such as a UI row read between the commit and the notification that reaches it, keeps the
+  last instance it got and refreshes it when notified. Found by taggregates-opus in JAStudio's step 3: its search rows,
+  and two specifications that delete their note, do so.
 - **Prototyped** (`3ac56efa8`): inside a unit of work the reference gives its copy, on another thread the committed
   instance, and after the commit the same reference gives the new committed instance. `Current` outside any unit of
   work costs 0.08 µs and allocates nothing, the check for an ambient transaction included. That meets JAStudio's
