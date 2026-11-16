@@ -694,6 +694,24 @@ Built as specified above (2a919c6b4), full suite green. The calls it made, and w
 - **Not changed:** `Commit`'s callback and `TeventStream` stay public, as the superseded section above proposed to remove
   them; `ITaggregate.Commit`'s own `todo:` covers it.
 
+## Three gaps for JAStudio's switch, specified
+
+Asked by taggregates-opus for JAStudio's step 4, the switch to the state store, 2026-11-16. Each blocks a part of it:
+
+- **A storage built from a service of the container:** `StoredIn<TService>(Func<TService, ITaggregateStorage>)`, as
+  `Taggregate` takes a factory with a service. JAStudio's corpus files need the corpus folder, which its host knows only
+  once another service has started. The service is resolved from the container's root when the store is built, at its
+  first use.
+- **Every taggregate of a class:** `IStateStore.All<TTaggregate>()`, references to every `TTaggregate` the store holds,
+  as an index's lookup gives. Inside a unit of work, the unit of work's view: what it saved included, what it deleted
+  left out. JAStudio's searches, its tag tree and its check of whether a media file is used go through every note. On
+  `IStateStore`, not on the shared reader: the state store holds everything in memory, where a tevent store would load
+  every history.
+- **Reloading around a change to the storage:** `IStateStore.ReloadFromStorageAfter(Action changeToTheStorage)` runs the
+  change once the open units of work have completed, while new ones wait, then reloads, as `ReloadFromStorage` does.
+  JAStudio fast-forwards its corpus checkout there, so that no unit of work can write a note over the change. If the
+  change throws, nothing is reloaded and the exception comes out. `ReloadFromStorage()` is the same with no change.
+
 ## What the prototype is
 
 Branch `taggregate-store-opus`, commit `3dd0fbe08`, in `C:\Dev\Compze.worktrees\taggregate-store-opus`, based on `main`.
