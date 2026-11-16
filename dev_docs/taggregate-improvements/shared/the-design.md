@@ -1,6 +1,6 @@
 # The design both teams agree on
 
-**Status: agreed by all four sessions, and reviewed by two independent agents** (2026-11-16). Every name below is a placeholder for Magnus's pass
+**Status: agreed by all four sessions, then reviewed by two independent agents and revised with their agreement** (2026-11-16). Every name below is a placeholder for Magnus's pass
 over the names. Where the teams first differed, the section says what was settled and why.
 
 ## 1. Tevent routing decided once per class

@@ -1,6 +1,6 @@
 # What was measured
 
-**Status: agreed by all four sessions, and reviewed by two independent agents** (2026-11-16). On .NET 11, with workstation garbage collection,
+**Status: agreed by all four sessions, then reviewed by two independent agents and revised with their agreement** (2026-11-16). On .NET 11, with workstation garbage collection,
 over 10,000 to 80,000 instances. Bytes are exact and the same from run to run within a few bytes. Times are from a
 machine that other work shares, at 3 to 13% load from that work depending on the run, and the documents they come from
 say so per run.

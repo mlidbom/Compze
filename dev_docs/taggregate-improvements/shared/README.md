@@ -1,7 +1,7 @@
 # Taggregates for JAStudio's notes: the conclusions both teams agree on
 
-**Status: agreed by all four sessions, and reviewed by two independent agents, whose findings are folded in**
-(2026-11-16). jastudio-rep-opus manages this folder and reports for Compze; taggregates-fable manages JAStudio's
+**Status: agreed by all four sessions, then reviewed by two independent agents and revised with their agreement**
+(2026-11-16). What the review changed is listed in [reviews/discussion.md](reviews/discussion.md). jastudio-rep-opus manages this folder and reports for Compze; taggregates-fable manages JAStudio's
 `dev_docs/taggregates/shared/` and reports for JAStudio.
 
 | Team | Compze session | JAStudio session | Their own records |

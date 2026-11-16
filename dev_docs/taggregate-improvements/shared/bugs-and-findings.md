@@ -1,6 +1,6 @@
 # Bugs and smaller findings
 
-**Status: agreed by all four sessions, and reviewed by two independent agents** (2026-11-16). Each was reproduced against Compze.Teventive
+**Status: agreed by all four sessions, then reviewed by two independent agents and revised with their agreement** (2026-11-16). Each was reproduced against Compze.Teventive
 0.6.0-alpha unless it says otherwise. None is marked at the code with a `bug:` comment: the work so far is design, with
 no change to Compze.
 
