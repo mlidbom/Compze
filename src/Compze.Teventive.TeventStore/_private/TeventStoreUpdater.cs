@@ -85,6 +85,10 @@ class TeventStoreUpdater : ITeventStoreReader, ITeventStoreUpdater
          throw new Exception($"Requested version: {version} not found. Current version: {history.Count}");
       }
 
+      //urgent: The "readonly copy" this returns is only untracked: publishing on it changes it, and nothing says that the
+      //   change isn't saved. Make it read only, so that publishing on it throws, as the committed instances of the store
+      //   that keeps taggregates as their state do (dev_docs/taggregate-improvements/shared/the-taggregate-store.md)
+      //   (Magnus, 2026-11-16).
       var taggregate = CreateInstance<TTaggregate>();
       taggregate.LoadFromHistory(history.Where(it => it.Tevent.TaggregateVersion <= version));
       return taggregate;
