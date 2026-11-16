@@ -7,7 +7,12 @@ namespace Compze.Teventive.Taggregates;
 /// tevents: <see cref="RestoreFrom"/> sets the state directly, and first gives the instance its id with the protected<br/>
 /// <c>RestoreIdentity</c> of the taggregate base class.<br/>
 /// A snapshot holds the taggregate's whole state, not only what is stored: every copy is made from it, so what it misses is lost at<br/>
-/// the next change.</remarks>
+/// the next change.<br/>
+/// It holds only what the taggregate owns. An object several taggregates share, such as a condition they all refer to, changed in<br/>
+/// place, changes what each of them stores without a tevent on any: every instance, its copy and its committed instance alike,<br/>
+/// then takes a snapshot holding the change, so a store finds nothing changed to write, and the committed instance isn't read only<br/>
+/// through it. State that is shared belongs in a taggregate of its own, referred to by id, or is changed by a tevent on each<br/>
+/// taggregate that holds it. A round trip through the snapshot can't catch this: the copy refers to the same object.</remarks>
 public interface ISnapshotable<TSelf, TSnapshot> where TSelf : ISnapshotable<TSelf, TSnapshot>
 {
    ///<summary>The taggregate's whole state, as it is now.</summary>
