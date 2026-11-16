@@ -29,15 +29,26 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
    protected Taggregate(TeventDispatcherConfig? teventAppliersDispatcherConfig = null) : base(null!)
    {
       Argument.Assert(typeof(TTaggregateTevent).IsInterface);
-      _teventAppliersDispatcher = IMutableTeventDispatcher<TTaggregateTevent>.New(teventAppliersDispatcherConfig);
+      _teventAppliersDispatcherConfig = teventAppliersDispatcherConfig;
    }
+
+   ///<summary>The routing of this taggregate's class to its tevent appliers, when the class declares one: a <see cref="TeventRouting"/> in a static field.<br/>
+   /// Null for a class that registers its appliers per instance, through <see cref="RegisterTeventAppliers"/>.</summary>
+   protected virtual TeventRouting? TeventAppliers => null;
+
+   ///<summary>The routing of this taggregate's class to its tevent handlers, when the class declares one. See <see cref="TeventAppliers"/>.</summary>
+   protected virtual TeventRouting? TeventHandlers => null;
 
    EntityId IEntity.Id => Id;
    public override TaggregateId Id => (TaggregateId)base.Id;
 
    readonly List<ITaggregateTevent<TTaggregateTevent>> _unCommittedTevents = [];
-   readonly IMutableTeventDispatcher<TTaggregateTevent> _teventAppliersDispatcher;
-   readonly IMutableTeventDispatcher<TTaggregateTevent> _teventHandlersDispatcher = IMutableTeventDispatcher<TTaggregateTevent>.New(TeventDispatcherConfig.IgnoreAllUnhandled); //Registering tevent handlers is optional, unlike tevent appliers.
+   //wip: taggregate-experiments-opus keeps the per-instance dispatchers for the classes that declare no TeventRouting, created when first registered on.
+   readonly TeventDispatcherConfig? _teventAppliersDispatcherConfig;
+   IMutableTeventDispatcher<TTaggregateTevent>? _teventAppliersDispatcher;
+   IMutableTeventDispatcher<TTaggregateTevent>? _teventHandlersDispatcher;
+
+   IMutableTeventDispatcher<TTaggregateTevent> TeventAppliersDispatcher => _teventAppliersDispatcher ??= IMutableTeventDispatcher<TTaggregateTevent>.New(_teventAppliersDispatcherConfig);
 
    int _reentrancyLevel;
    bool _applyingTevents;
@@ -104,7 +115,8 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
          ApplyTevent(tevent, wrapped);
          _unCommittedTevents.Add(wrapped);
          _teventsOfThePublishCascadeUnderWay.Add(wrapped);
-         _teventHandlersDispatcher.Dispatch(wrapped);
+         TeventHandlers?.Dispatch(this, wrapped);
+         _teventHandlersDispatcher?.Dispatch(wrapped);
       }
    }
 
@@ -119,9 +131,17 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
       foreach(var it in teventsOfTheCascade) _teventStream.OnNext(it);
    }
 
-   protected ITeventSubscriber<TTaggregateTevent> RegisterTeventAppliers() => _teventAppliersDispatcher.Register();
+   protected ITeventSubscriber<TTaggregateTevent> RegisterTeventAppliers()
+   {
+      State.Assert(TeventAppliers is null, () => $"{GetType()} declares its tevent appliers in a {nameof(TeventRouting)}, so it cannot also register appliers per instance.");
+      return TeventAppliersDispatcher.Register();
+   }
 
-   protected ITeventSubscriber<TTaggregateTevent> RegisterTeventHandlers() => _teventHandlersDispatcher.Register();
+   protected ITeventSubscriber<TTaggregateTevent> RegisterTeventHandlers()
+   {
+      State.Assert(TeventHandlers is null, () => $"{GetType()} declares its tevent handlers in a {nameof(TeventRouting)}, so it cannot also register handlers per instance.");
+      return (_teventHandlersDispatcher ??= IMutableTeventDispatcher<TTaggregateTevent>.New(TeventDispatcherConfig.IgnoreAllUnhandled)).Register(); //Registering tevent handlers is optional, unlike tevent appliers.
+   }
 
    void ApplyTevent(TTaggregateTevent theTevent) => ApplyTevent(theTevent, WrapTevent(theTevent));
 
@@ -137,7 +157,8 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
          }
 
          Version = theTevent.TaggregateVersion;
-         _teventAppliersDispatcher.Dispatch(wrapped);
+         if(TeventAppliers is {} appliers) appliers.Dispatch(this, wrapped);
+         else TeventAppliersDispatcher.Dispatch(wrapped);
       }
    }
 
@@ -167,6 +188,7 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
    void ITeventiveInternals<TTaggregateTevent, TTaggregateTeventImplementation>.ApplyTeventInternal(TTaggregateTevent theTevent) => ApplyTevent(theTevent);
    void ITeventiveInternals<TTaggregateTevent, TTaggregateTeventImplementation>.PublishInternal(TTaggregateTeventImplementation theTevent) => Publish(theTevent);
    ITeventSubscriber<TTaggregateTevent> ITeventiveInternals<TTaggregateTevent, TTaggregateTeventImplementation>.RegisterTeventAppliersInternal() => RegisterTeventAppliers();
+   bool ITeventiveInternals<TTaggregateTevent, TTaggregateTeventImplementation>.DeclaresTeventAppliersInternal => TeventAppliers is not null;
 
    IObservable<ITaggregateTevent<ITaggregateTevent>> ITaggregate.TeventStream => TeventStreamCreatedWhenFirstUsed;
    IObservable<ITaggregateTevent<TTaggregateTevent>> ITaggregate<TTaggregateTevent>.TeventStream => TeventStreamCreatedWhenFirstUsed;

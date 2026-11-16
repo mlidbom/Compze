@@ -21,6 +21,7 @@ readonly ref struct OneThreadAtATime
    }
 
    ///<summary>Enters the taggregate whose thread field is <paramref name="idOfTheThreadUsingIt"/> on this thread, or fails if another thread is using it.</summary>
+   ///<param name="idOfTheThreadUsingIt">The taggregate's field holding the managed thread id of the thread using it, 0 while none is.</param>
    ///<param name="taggregate">The taggregate entered, for the message when it fails.</param>
    internal static OneThreadAtATime Enter(ref int idOfTheThreadUsingIt, object taggregate)
    {
