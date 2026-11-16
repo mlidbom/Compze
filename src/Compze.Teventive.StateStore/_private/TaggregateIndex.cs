@@ -52,8 +52,9 @@ sealed class TaggregateIndex<TTaggregate, TKey> : ITaggregateIndex<TTaggregate, 
    ///<remarks>performance: Recomputes the keys of every copy the unit of work holds at each lookup, so a lookup costs in proportion<br/>
    /// to the copies held: 54 to 58 µs with 1,000. Keep each copy's keys, recomputed only when it publishes (the-taggregate-store.md).</remarks>
    ITaggregateReference<TTaggregate>[] AsTheUnitOfWorkLeftThem(ITaggregateReference<TTaggregate>[] committed, TKey key, StateStoreSession session) =>
-      [..committed.Where(it => !session.Holds(it.Id)),
-       ..session.HeldInstancesOf<TTaggregate>().Where(it => _keysOf(it).Contains(key)).Select(it => _store.Reference<TTaggregate>(it.Id))];
+      [..committed.Where(it => !session.Holds(it.Id))
+                  .Concat(session.HeldInstancesOf<TTaggregate>().Where(it => _keysOf(it).Contains(key)).Select(it => _store.Reference<TTaggregate>(it.Id)))
+                  .OrderBy(IdOrder)];
 
    public bool HasAny(TKey key)
    {
@@ -68,7 +69,7 @@ sealed class TaggregateIndex<TTaggregate, TKey> : ITaggregateIndex<TTaggregate, 
       var referencesByKey = new ConcurrentDictionary<TKey, ITaggregateReference<TTaggregate>[]>(
          keysById.SelectMany(it => it.Keys.Select(key => (Key: key, it.Id)))
                  .GroupBy(it => it.Key, it => _store.Reference<TTaggregate>(it.Id))
-                 .Select(group => KeyValuePair.Create(group.Key, group.ToArray())));
+                 .Select(group => KeyValuePair.Create(group.Key, group.OrderBy(IdOrder).ToArray())));
       _committedKeysById.Locked(committedKeysById =>
       {
          committedKeysById.Clear();
@@ -98,12 +99,19 @@ sealed class TaggregateIndex<TTaggregate, TKey> : ITaggregateIndex<TTaggregate, 
          }
 
          foreach(var addedKey in newKeys.Except(oldKeys))
-            _committedReferencesByKey[addedKey] = [..(_committedReferencesByKey.GetValueOrDefault(addedKey) ?? []), _store.Reference<TTaggregate>(id)];
+            _committedReferencesByKey[addedKey] = InIdOrderWith(_committedReferencesByKey.GetValueOrDefault(addedKey) ?? [], _store.Reference<TTaggregate>(id));
 
          if(newKeys.IsEmpty) committedKeysById.Remove(id);
          else committedKeysById[id] = newKeys;
       }
    });
+
+   ///<summary>What a lookup's references are ordered by: their ids' <see cref="Guid"/>s, whose order is the order of their text.</summary>
+   static Guid IdOrder(ITaggregateReference<TTaggregate> reference) => reference.Id.Value;
+
+   ///<summary><paramref name="filed"/>, in id order, with <paramref name="added"/> in its place among them.</summary>
+   static ITaggregateReference<TTaggregate>[] InIdOrderWith(ITaggregateReference<TTaggregate>[] filed, ITaggregateReference<TTaggregate> added) =>
+      [..filed.Where(it => IdOrder(it).CompareTo(IdOrder(added)) < 0), added, ..filed.Where(it => IdOrder(it).CompareTo(IdOrder(added)) > 0)];
 
    sealed class PreparedChange : IPreparedIndexChange
    {

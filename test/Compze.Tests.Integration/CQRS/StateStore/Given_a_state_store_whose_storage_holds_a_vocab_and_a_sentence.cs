@@ -89,6 +89,24 @@ public class Given_a_state_store_whose_storage_holds_a_vocab_and_a_sentence : Un
       [PCT] public void the_storage_has_been_resolved() => StorageWasResolved.Must().BeTrue();
    }
 
+   public class when_the_storage_also_holds_vocabs_with_one_question_out_of_id_order_and_the_store_is_first_used : Given_a_state_store_whose_storage_holds_a_vocab_and_a_sentence
+   {
+      //Five, held in an order that is neither theirs nor, in all likelihood, the order of their hashes.
+      readonly TaggregateId[] _inIdOrder = [new(Guid.Parse("1b4e28ba-2fa1-11d2-883f-0016d3cca427")),
+                                            new(Guid.Parse("3f2504e0-4f89-11d3-9a0c-0305e82c3301")),
+                                            new(Guid.Parse("8c9d7a1e-5b3f-4e2a-9d1c-7f6e5a4b3c2d")),
+                                            new(Guid.Parse("c0ffee00-1234-4abc-8def-0123456789ab")),
+                                            new(Guid.Parse("f47ac10b-58cc-4372-a567-0e02b2c3d479"))];
+
+      public when_the_storage_also_holds_vocabs_with_one_question_out_of_id_order_and_the_store_is_first_used()
+      {
+         foreach(var id in new[] { _inIdOrder[2], _inIdOrder[4], _inIdOrder[0], _inIdOrder[3], _inIdOrder[1] })
+            Storage.Hold(new TaggregateSnapshot(typeof(StoredVocab), id, new StoredVocabSnapshot(id, "kuu", "to eat, rudely")));
+      }
+
+      [PCT] public void the_lookup_gives_them_in_id_order() => IdsFiledUnder("kuu").Must().SequenceEqual(_inIdOrder);
+   }
+
    public class when_asked_for_every_taggregate_of_a_class : Given_a_state_store_whose_storage_holds_a_vocab_and_a_sentence
    {
       [PCT] public void every_vocab_is_the_stored_vocab() => StateStore.All<StoredVocab>().Select(it => it.Id).Must().SequenceEqual([VocabId]);

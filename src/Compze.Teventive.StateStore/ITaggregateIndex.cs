@@ -8,7 +8,9 @@ namespace Compze.Teventive.StateStore;
 /// unit of work's own changes: a taggregate it holds a copy of is filed as the copy now is, not as it was committed.</remarks>
 public interface ITaggregateIndex<out TTaggregate, in TKey> where TTaggregate : class, ITaggregate
 {
-   ///<summary>The taggregates filed under <paramref name="key"/>.</summary>
+   ///<summary>The taggregates filed under <paramref name="key"/>, in the order of their ids.</summary>
+   ///<remarks>The order of the ids' <see cref="Guid"/>s, which is the order of their text, so that a lookup gives the same order<br/>
+   /// whenever the same taggregates are filed under the key, whatever order they were filed in.</remarks>
    IReadOnlyList<ITaggregateReference<TTaggregate>> Lookup(TKey key);
 
    ///<summary>Whether any taggregate is filed under <paramref name="key"/>, as <see cref="Lookup"/> would find it.</summary>
