@@ -1,0 +1,18 @@
+namespace Compze.Teventive.Taggregates;
+
+///<summary>A taggregate whose whole state can be taken as a snapshot, of a type of its own class's choosing, and restored from one.<br/>
+/// A store that keeps taggregates as their state, not their history, stores the snapshots, and makes each unit of work's private<br/>
+/// copy of a taggregate through one.</summary>
+///<remarks>Restoring is into a new, empty instance, which the code that composes the store says how to build. It applies no<br/>
+/// tevents: <see cref="RestoreFrom"/> sets the state directly, and first gives the instance its id with the protected<br/>
+/// <c>RestoreIdentity</c> of the taggregate base class.<br/>
+/// A snapshot holds the taggregate's whole state, not only what is stored: every copy is made from it, so what it misses is lost at<br/>
+/// the next change.</remarks>
+public interface ISnapshotable<TSelf, TSnapshot> where TSelf : ISnapshotable<TSelf, TSnapshot>
+{
+   ///<summary>The taggregate's whole state, as it is now.</summary>
+   TSnapshot TakeSnapshot();
+
+   ///<summary>Gives this new, empty instance the state <paramref name="snapshot"/> holds, its id first.</summary>
+   void RestoreFrom(TSnapshot snapshot);
+}

@@ -3,6 +3,7 @@ using Compze.Abstractions.Time;
 using Compze.Contracts;
 using Compze.Internals.SystemCE.ReactiveCE;
 using Compze.Tessaging.TessageTypes;
+using Compze.Teventive._internal;
 using Compze.Teventive._private.Implementation;
 using Compze.Teventive.Taggregates.Tevents;
 
@@ -11,7 +12,8 @@ namespace Compze.Teventive.Taggregates.BaseClasses;
 public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeventImplementation, TWrapperTeventInterface, TWrapperTeventImplementation> :
    VersionedEntity<TTaggregate>,
    ITaggregate<TTaggregateTevent>,
-   ITeventiveInternals<TTaggregateTevent, TTaggregateTeventImplementation>
+   ITeventiveInternals<TTaggregateTevent, TTaggregateTeventImplementation>,
+   ITaggregateStoreInternals
    where TWrapperTeventImplementation : TWrapperTeventInterface
    where TWrapperTeventInterface : ITaggregateTevent<TTaggregateTevent>
    where TTaggregate : Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeventImplementation, TWrapperTeventInterface, TWrapperTeventImplementation>
@@ -41,10 +43,37 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
 
    int _reentrancyLevel;
    bool _applyingTevents;
+   bool _isReadOnly;
+   bool _aPublishHasFailed;
 
    readonly List<TWrapperTeventInterface> _teventsPublishedDuringCurrentPublishCallIncludingReentrantCallsFromTeventHandlers = [];
 
    protected TTevent Publish<TTevent>(TTevent tevent) where TTevent : TTaggregateTeventImplementation
+   {
+      State.Assert(!_isReadOnly, () => $"{GetType().Name} {Id} is a committed instance, which a taggregate store serves to readers and which is read only. Get it for update from an ITaggregateStoreUpdater, inside a unit of work, to change it.");
+      try
+      {
+         return PublishCore(tevent);
+      }
+      catch
+      {
+         _aPublishHasFailed = true;
+         throw;
+      }
+   }
+
+   ///<summary>Gives a new, empty instance, being restored from a snapshot of a taggregate's state, the taggregate's id. The<br/>
+   /// restoring code calls it first, before it sets any other state. A restored taggregate exists, so its version is at least 1.</summary>
+   protected void RestoreIdentity(TaggregateId id)
+   {
+      State.Assert(Version == 0, () => $"{nameof(RestoreIdentity)} restores a new, empty instance, and this {GetType().Name} has version {Version}.");
+#pragma warning disable CS0618 // Type or member is obsolete
+      base.Id = id;
+#pragma warning restore CS0618 // Type or member is obsolete
+      Version = 1;
+   }
+
+   TTevent PublishCore<TTevent>(TTevent tevent) where TTevent : TTaggregateTeventImplementation
    {
       State.Assert(!_applyingTevents, () => "You cannot raise tevents from within tevent appliers");
 
@@ -118,6 +147,10 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
    void ITeventiveInternals<TTaggregateTevent, TTaggregateTeventImplementation>.ApplyTeventInternal(TTaggregateTevent theTevent) => ApplyTevent(theTevent);
    void ITeventiveInternals<TTaggregateTevent, TTaggregateTeventImplementation>.PublishInternal(TTaggregateTeventImplementation theTevent) => Publish(theTevent);
    ITeventSubscriber<TTaggregateTevent> ITeventiveInternals<TTaggregateTevent, TTaggregateTeventImplementation>.RegisterTeventAppliersInternal() => RegisterTeventAppliers();
+
+   void ITaggregateStoreInternals.MakeReadOnly() => _isReadOnly = true;
+   bool ITaggregateStoreInternals.APublishHasFailed => _aPublishHasFailed;
+   void ITaggregateStoreInternals.ContinueVersion(int version) => Version = version;
 
    IObservable<ITaggregateTevent<ITaggregateTevent>> ITaggregate.TeventStream => _teventStream;
    IObservable<ITaggregateTevent<TTaggregateTevent>> ITaggregate<TTaggregateTevent>.TeventStream => _teventStream;
