@@ -17,6 +17,7 @@ public static class StateStoreRegistrar
    {
       var builder = new StateStoreBuilder(@this);
       declare(builder);
+      builder.AssertDeclarationsFitTogether();
       @this.Register(Singleton.For<IStateStore, TaggregateStateStore>().CreatedBy((TaggregateUnitsOfWork unitsOfWork, IRootResolver resolver) => builder.Build(unitsOfWork, resolver)));
       @this.RegisterTaggregateStore<TaggregateStateStore>();
       return @this;
