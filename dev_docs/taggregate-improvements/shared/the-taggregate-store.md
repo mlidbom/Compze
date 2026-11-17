@@ -1205,7 +1205,26 @@ files.ReadAllText(path); files.WriteAllText(path, json); files.Delete(path); fil
   every note, changed or not, to see in git that loading and saving changes no file, after a change to the snapshot
   types, the serializer options or a format migration. JAStudio does it with five lines of its own that must agree
   with the store's layout and format (marked `todo:compze:`). A candidate for the end review: something such as
-  `IStateStore.WriteEverythingAnew()`.
+  `IStateStore.WriteEverythingAnew()`. taggregates-opus adds: if one public interface for the store's files were
+  resolvable however they're kept, on disk or in memory, as the internal `IFileSystem` already is, JAStudio's write
+  would go through it in every environment, instead of to the disk even in a specification whose files are in memory.
+
+### JAStudio's specifications on the files in memory: measured
+
+JAStudio's specifications run on `KeptInMemory()` (JAStudio 062e9bfff), composed as the hosts compose the store,
+MemoryPack cache included; `NotesStoredInMemory` is deleted. Only the corpus repository's MCP specifications, which run
+git, keep files on disk. The mini corpus is made once per test process for each data set, by an app that creates the
+notes, and its files are written into each specification's app before a reload, as a start loads them (Magnus: "The
+tests should load their mini corpus the same way as the real app if possible"). JAStudio no longer uses the storage
+seam. The whole suite, measured by taggregates-opus, alternating runs:
+
+| Suite | Total | Web | Core | Mcp |
+|---|---|---|---|---|
+| `NotesStoredInMemory` | 68.7 s, 59.9 s | 34, 30 s | 19, 19 s | 66, 57 s |
+| Files in memory | 67.0 s, 58.1 s | 22, 18 s | 21, 17 s | 62, 55 s |
+
+The total is unchanged, since the MCP specifications, which don't use the mini corpus, set the wall time. Web's are
+about 40% faster.
 
 
 ## What the prototype is
