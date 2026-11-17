@@ -74,6 +74,7 @@ What JAStudio asked for, the first to look at:
 | `TeventApplyingRoot<TRoot, TTevent>`, `TeventApplyingComponent<TComponent, TComponentTevent>` | Magnus, option B of step 5 | The query models and taggregates share their code. | Names are placeholders. Magnus: "a taggregate is not a view model". |
 | The query models' parts keep no parent; their entities take no constructor argument | step 5 | A query model publishes nothing. | Their nested `NestedComponent`, `NestedEntity` and `RemovableNestedEntity`, and their own collection types, are gone. |
 | Removed: registration per instance, `ISharedTomponentSlot`, `SharedTomponentSlot`, three members of `ITeventiveInternals` | step 5 | Every class routes through its table. | `IMutableTeventDispatcher` stays, for subscriptions made at run time. |
+| `AddRestored(id)` on `IEntityCollectionManager` and `SharedTentityCollection` | Magnus's bug, 2026-11-17 | A taggregate with entities can be restored from a snapshot. | Name a placeholder. Allowed only while the taggregate is being restored, from `RestoreIdentity` until its first publish. |
 
 The rest, such as the shared updater and reader, snapshots, the storage seam and tevent routing per class, came from the
 design, but are reviewed all the same. The full list of names is item 9 in jastudio-rep-opus's unanswered list.
@@ -294,7 +295,7 @@ The numbers: [what-was-measured.md](what-was-measured.md). The bugs and the smal
 
 ## Soon, after the end review
 
-- **Bug: snapshots of taggregates of any shape, entities and shared tentities included.** Magnus, 2026-11-17: "we should
+- **Done (46cc881a6): bug: snapshots of taggregates of any shape, entities and shared tentities included.** Magnus, 2026-11-17: "we should
   be able to use snapshotting with any taggregate barring something exceptional about it", and "This is not really adding
   API it is fixing a broken one": refactoring a part into entities makes a taggregate unusable with a state store. A
   `bug:` comment at `ISnapshotable` points here (0d857fa4d). **To be fixed before the end review** (Magnus, OK, 2026-11-18),

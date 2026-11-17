@@ -43,3 +43,9 @@ And:
   after its first publish.
 
 The integer-id composite taggregate has the same shape as the Guid one, so it isn't specified again.
+
+## Built (46cc881a6)
+
+As specified, the full suite green (4,519 passing). Both failing checks name the collection's path, such as
+`CompositeTaggregate._entities: 2 items in the original, 0 in the copy`. The one addition: the collections' routing hooks
+became protected, which the inspections asked for. A consumer that doesn't use entities, such as JAStudio, is untouched.
