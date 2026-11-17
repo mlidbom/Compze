@@ -1096,6 +1096,33 @@ The cold start is Anki's case after every reboot. So the cache is needed, as Mag
   with other fields is not used; the cache file is replaced whole.
 - **Then JAStudio switches to it,** and taggregates-opus measures the start, warm and cold, against `snapshot.bin`.
 
+#### Built (962a05221)
+
+`Compze.Teventive.StateStore.MemoryPack` 0.1.0-alpha.1, in the `/Compze.Teventive/StateStore/` solution folder, and
+`files.Of<T>(folder).CachedWithMemoryPack()`. 9 specifications, the suite green on the local MsSql combination. Where
+it went beyond the specification:
+
+- **The store owns the cache's file; the cache only turns content into snapshots and back.** The internal seam
+  (`Compze.Teventive.StateStore._internal`: `ITaggregateFilesLoadCache`, `ICachedFilesOfAClass`, `ListedFile`,
+  `LoadedSnapshot`) hands the cache the bytes it last wrote, and takes back the bytes to write, or none. So the store
+  writes it whole with the same temporary name and retried rename as a commit's files, and the start after a crash
+  deletes a half-written cache as it deletes a commit's temporary files. The cache is
+  `.state-store/<class folder>.load-cache`.
+- **The cache's content:** the length of a listing part in four bytes, the listing part (the fingerprint, then each
+  file's path, length and last write time in ticks), then the snapshots as one MemoryPack list in the same order. The
+  fingerprint is read before any snapshot.
+- **The fingerprint's rules:** a SHA-256 of a description of the snapshot type. A type of the base class library
+  (namespace `System` or `System.*`) is described by its name, with a generic one's type arguments described, so a
+  collection's elements are. An enum by its name, underlying type, and each name with its value. An array by its rank
+  and element type. Any other type by its name, its instance fields, public or not, from the base class down, each
+  class's in declaration order, each with its name and its type described, and the types of its `[MemoryPackUnion]`s.
+  A type met again is named, not described again, which also ends a cycle. Names hold no assembly version.
+- **"MemoryPack serializes it"** is checked as: the type is `[MemoryPackable]` (implements
+  `IMemoryPackFormatterRegister`), or MemoryPack has a formatter registered for it.
+- **FlexRef excludes `.claude/worktrees`** (61641024b): `C-FlexRef-Sync` found the projects of an isolated agent's
+  worktree there a second time, and wrote references into the other checkout into about 130 csproj files, in both
+  checkouts. Reverted, and excluded in `FlexRef.config.xml`.
+
 ### Not yet decided: the storage for consumers' specifications
 
 JAStudio's specifications, run on `StoredInFiles` with a fresh folder each, took 150 to 186 s against 56 to 59 s in
