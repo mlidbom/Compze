@@ -12,6 +12,7 @@ using Compze.Must;
 using Compze.Tessaging.Engine;
 using Compze.Tessaging.Engine.Wiring;
 using Compze.Tessaging.TessageBus;
+using Compze.Teventive;
 using Compze.Teventive.StateStore;
 using Compze.Teventive.TaggregateStores;
 using Compze.Tests.Infrastructure;
@@ -415,6 +416,27 @@ public class Given_a_state_store : UniversalTestBase
 
       [PCT] public void the_second_waited_for_the_first_to_commit() => _meaningTheSecondUnitOfWorkGot.Must().Be("first");
       [PCT] public void both_changes_are_committed_in_order() => CommittedVocab(VocabId).Meaning.Must().Be("first, second");
+   }
+
+   ///<summary>References stand for a taggregate, whatever class they were asked for as: code holds them in sets and dictionaries.</summary>
+   public class when_one_vocab_is_referred_to_as_a_taggregate_and_then_as_a_vocab : Given_a_state_store
+   {
+      readonly ITaggregateReference<ITaggregate> _asATaggregate;
+      readonly ITaggregateReference<StoredVocab> _asAVocab;
+
+      public when_one_vocab_is_referred_to_as_a_taggregate_and_then_as_a_vocab()
+      {
+         Compose();
+         InUnitOfWork(taggregates => taggregates.Save(StoredVocab.Create(VocabId, "taberu")));
+         _asATaggregate = Reader.Reference<ITaggregate>(VocabId);
+         _asAVocab = Reader.Reference<StoredVocab>(VocabId);
+      }
+
+      [PCT] public void the_two_references_are_equal() => _asATaggregate.Equals(_asAVocab).Must().BeTrue();
+      [PCT] public void the_reference_as_a_vocab_equals_the_reference_as_a_taggregate() => _asAVocab.Equals(_asATaggregate).Must().BeTrue();
+      [PCT] public void their_hash_codes_are_equal() => _asATaggregate.GetHashCode().Must().Be(_asAVocab.GetHashCode());
+      [PCT] public void a_set_of_references_holds_the_vocab_once() => new HashSet<ITaggregateReference<ITaggregate>> { _asATaggregate, _asAVocab }.Count.Must().Be(1);
+      [PCT] public void a_reference_to_another_vocab_is_not_equal() => _asAVocab.Equals(Reader.Reference<StoredVocab>(new TaggregateId(Guid.NewGuid()))).Must().BeFalse();
    }
 
    public class when_measuring : Given_a_state_store

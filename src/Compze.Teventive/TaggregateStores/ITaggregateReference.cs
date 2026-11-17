@@ -5,7 +5,9 @@ namespace Compze.Teventive.TaggregateStores;
 ///<summary>Stands for one taggregate of a store for as long as it exists: what code holds across units of work, never an instance.<br/>
 /// An instance is one version of the taggregate's state, and a commit that changes the taggregate replaces it.</summary>
 ///<remarks>A reference finds the ambient unit of work from the ambient transaction alone, so code that holds one needs no session<br/>
-/// passed down to it.</remarks>
+/// passed down to it.<br/>
+/// Two references are equal when they stand for the same taggregate of the same store, whatever class each was asked for as, so<br/>
+/// they can be kept in sets and used as keys.</remarks>
 public interface ITaggregateReference<out TTaggregate> where TTaggregate : class, ITaggregate
 {
    ///<summary>The id of the taggregate this reference stands for.</summary>

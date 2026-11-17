@@ -2,26 +2,33 @@ using Compze.Abstractions;
 
 namespace Compze.Teventive.TaggregateStores._internal;
 
-///<summary>The <see cref="ITaggregateReference{TTaggregate}"/> of a taggregate of one store: asks the store for <see cref="Current"/>,<br/>
-/// and the store's session in the ambient unit of work for <see cref="ForUpdate"/>. Two references to one taggregate are equal.</summary>
-sealed class TaggregateReference<TTaggregate> : ITaggregateReference<TTaggregate> where TTaggregate : class, ITaggregate
+///<summary>What every <see cref="TaggregateReference{TTaggregate}"/> is, whatever class it was asked for as: a reference to one taggregate<br/>
+/// of one store. Two references are equal when they stand for the same taggregate of the same store.</summary>
+abstract class TaggregateReference
 {
-   readonly ITaggregateStore _store;
-   readonly TaggregateUnitsOfWork _unitsOfWork;
-
-   internal TaggregateReference(ITaggregateStore store, TaggregateUnitsOfWork unitsOfWork, TaggregateId id)
+   private protected TaggregateReference(ITaggregateStore store, TaggregateId id)
    {
-      _store = store;
-      _unitsOfWork = unitsOfWork;
+      Store = store;
       Id = id;
    }
 
+   private protected ITaggregateStore Store { get; }
+
    public TaggregateId Id { get; }
 
-   public TTaggregate Current => _store.TryGet(Id, out TTaggregate? taggregate) ? taggregate : throw new TaggregateNotFoundException(Id);
+   public sealed override bool Equals(object? other) => other is TaggregateReference reference && ReferenceEquals(reference.Store, Store) && reference.Id == Id;
+   public sealed override int GetHashCode() => Id.GetHashCode();
+}
 
-   public TTaggregate ForUpdate() => _unitsOfWork.AmbientBeginningIt().SessionOf(_store).TryGetForUpdate(Id, out TTaggregate? taggregate) ? taggregate : throw new TaggregateNotFoundException(Id);
+///<summary>The <see cref="ITaggregateReference{TTaggregate}"/> of a taggregate of one store: asks the store for <see cref="Current"/>,<br/>
+/// and the store's session in the ambient unit of work for <see cref="ForUpdate"/>.</summary>
+sealed class TaggregateReference<TTaggregate> : TaggregateReference, ITaggregateReference<TTaggregate> where TTaggregate : class, ITaggregate
+{
+   readonly TaggregateUnitsOfWork _unitsOfWork;
 
-   public override bool Equals(object? other) => other is TaggregateReference<TTaggregate> reference && reference.Id == Id;
-   public override int GetHashCode() => Id.GetHashCode();
+   internal TaggregateReference(ITaggregateStore store, TaggregateUnitsOfWork unitsOfWork, TaggregateId id) : base(store, id) => _unitsOfWork = unitsOfWork;
+
+   public TTaggregate Current => Store.TryGet(Id, out TTaggregate? taggregate) ? taggregate : throw new TaggregateNotFoundException(Id);
+
+   public TTaggregate ForUpdate() => _unitsOfWork.AmbientBeginningIt().SessionOf(Store).TryGetForUpdate(Id, out TTaggregate? taggregate) ? taggregate : throw new TaggregateNotFoundException(Id);
 }

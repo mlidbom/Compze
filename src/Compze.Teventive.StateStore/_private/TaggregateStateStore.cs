@@ -67,10 +67,11 @@ sealed class TaggregateStateStore : ITaggregateStore, IStateStore
       return true;
    }
 
-   ///<summary>One reference for each taggregate, made at the first request, so that index lookups allocate none.</summary>
+   ///<summary>One reference for each taggregate, made at the first request, so that index lookups allocate none. A request for it as<br/>
+   /// a class the first reference can't be cast to gets a new one, which is equal to it.</summary>
    public ITaggregateReference<TTaggregate> Reference<TTaggregate>(TaggregateId id) where TTaggregate : class, ITaggregate =>
       _references.GetOrAdd(id, static (theId, store) => new TaggregateReference<TTaggregate>(store, store._unitsOfWork, theId), this) as ITaggregateReference<TTaggregate>
-   ?? new TaggregateReference<TTaggregate>(this, _unitsOfWork, id); //First asked for as another class of the hierarchy: a reference is compared by id.
+   ?? new TaggregateReference<TTaggregate>(this, _unitsOfWork, id);
 
    public ITaggregateStoreSession NewSession(TaggregateUnitOfWork unitOfWork)
    {
