@@ -51,6 +51,14 @@ isolation (Magnus, 2026-11-17): taggregate-references, indexes defined by state,
 the tevent store taking the same internals, the bulk reader. jastudio-rep-opus consolidates their findings for the pass
 with Magnus.
 
+**Started 2026-11-18, on the spike at 46cc881a6.** Both reviewers got the same brief,
+[reviews/end-review-brief.md](reviews/end-review-brief.md), and the same list of facts,
+[reviews/public-api-changes-of-the-spike.md](reviews/public-api-changes-of-the-spike.md): every public type and member
+the spike added, removed or changed, from comparing the built assemblies of the spike's merge-base with `main`
+(e29fd6673) and of the spike. The brief withholds the builders' views, the last column of the table below, until a
+reviewer has written its own verdicts. Their reviews go to `reviews/end-review-by-an-opus-agent.md` and
+`reviews/end-review-by-a-fable-agent.md`.
+
 What JAStudio asked for, the first to look at:
 
 | API | Asked for | Why JAStudio needed it | The question for the review |
