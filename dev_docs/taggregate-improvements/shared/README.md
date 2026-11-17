@@ -32,7 +32,10 @@ had it made that refactoring instead? The names are reviewed in the same pass (M
 front of mind. Both opus and fable." One Opus and one Fable reviewer, each on its own, review every public API change of
 the spike, with Compze's rules 011, 012 and 013 in front of them: the frameworks keep their public surface minimal,
 public types are designed for every consumer and weigh what one asks for, and an API spends nothing on what callers can
-do as well themselves. jastudio-rep-opus consolidates their findings for the pass with Magnus.
+do as well themselves. The same two review the store design as a whole, which has had no independent review beyond
+isolation (Magnus, 2026-11-17): taggregate-references, indexes defined by state, the storage seam, synchronous dispatch,
+the tevent store taking the same internals, the bulk reader. jastudio-rep-opus consolidates their findings for the pass
+with Magnus.
 
 What JAStudio asked for, the first to look at:
 
