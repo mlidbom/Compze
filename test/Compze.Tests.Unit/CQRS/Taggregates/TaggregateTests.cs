@@ -13,6 +13,11 @@ namespace Compze.Tests.Unit.CQRS.Taggregates;
 
 public class TaggregateTests : UniversalTestBase
 {
+   ///<summary>Only a taggregate class constructs its base class: code outside one can't write <c>new Taggregate&lt;...&gt;()</c>.</summary>
+   [XF]
+   public void The_taggregate_base_class_has_no_public_constructor() =>
+      typeof(Taggregate<User, IUserTevent, UserTevent, IUserTevent<IUserTevent>, UserTevent<UserTevent>>).GetConstructors().Must().BeEmpty();
+
    [XF]
    public void VersionIncreasesWithEachAppliedTevent()
    {

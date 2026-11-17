@@ -24,6 +24,9 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
 {
    static Taggregate() => TaggregateTypeValidator<TTaggregate, TTaggregateTeventImplementation, TTaggregateTevent>.AssertStaticStructureIsValid();
 
+   ///<summary>Only <typeparamref name="TTaggregate"/> constructs its base class.</summary>
+   protected Taggregate() {}
+
    protected virtual Type WrapperTeventImplementation => typeof(TWrapperTeventImplementation);
 
    TWrapperTeventInterface WrapTevent(TTaggregateTevent tevent) =>
