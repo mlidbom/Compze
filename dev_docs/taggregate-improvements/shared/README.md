@@ -70,6 +70,10 @@ What JAStudio asked for, the first to look at:
 | `TeventObservationRegistrar.AtRuntime<TTevent>()`, and the rule that every runtime observer's types are declared with it | Deskmancer's remote awaits | An endpoint receives a remote tevent only of the types it declared at composition. | Approved by Magnus (item 46), the rule jastudio-rep-opus's call. **Magnus deferred the rule to this review, as unclear to him (2026-11-17): explain it plainly here.** Without the rule, a runtime observer of a type no one declared would get the tevents published in its own process and silently none from other endpoints. With it, `ObserveTevents` fails at once for such a type, and what can get into the engine is still all declared at composition. The cost: a line at composition, such as `observe.AtRuntime<INoteTevent>()` in JAStudio, even in a plain container that has no other endpoints. |
 | `StateStoreBuilder.StoredInFiles(...)`, `TaggregateFiles.Of<TTaggregate>(folder, fileOf)` | Magnus (item 33), JAStudio the first consumer | Compze's own JSON store replaces JAStudio's `CorpusNoteFiles`. | Once JAStudio uses it, the storage seam (`ITaggregateStorage`, `IPreparedWrite`, `TaggregateSnapshot`, `TaggregateToDelete`, `StoredIn`) goes internal, leaving the rows above about it moot. Done in c5c910e06. |
 | `ITaggregateStoreUpdater.Delete` removed | taggregates-opus (item 42) | A deletion is the taggregate's own Deleted tevent. | Done. |
+| `TeventRouting<TClass, TTevent>`, made only by the base classes' protected `DeclareAppliers` and `DeclareHandlers` | step 5 | A class's first table starts with its base class's routes, such as `Tentity`'s id, and can't skip them. | Typed on the tevent root, so a route to another hierarchy's tevent doesn't compile. Is a factory on each base class, hidden with `new` by the subclasses that add routes, the right shape? `SharedTomponent`'s takes the class as a type argument, `DeclareAppliers<TagSet>`, having no self type. |
+| `TeventApplyingRoot<TRoot, TTevent>`, `TeventApplyingComponent<TComponent, TComponentTevent>` | Magnus, option B of step 5 | The query models and taggregates share their code. | Names are placeholders. Magnus: "a taggregate is not a view model". |
+| The query models' parts keep no parent; their entities take no constructor argument | step 5 | A query model publishes nothing. | Their nested `NestedComponent`, `NestedEntity` and `RemovableNestedEntity`, and their own collection types, are gone. |
+| Removed: registration per instance, `ISharedTomponentSlot`, `SharedTomponentSlot`, three members of `ITeventiveInternals` | step 5 | Every class routes through its table. | `IMutableTeventDispatcher` stays, for subscriptions made at run time. |
 
 The rest, such as the shared updater and reader, snapshots, the storage seam and tevent routing per class, came from the
 design, but are reviewed all the same. The full list of names is item 9 in jastudio-rep-opus's unanswered list.
@@ -131,6 +135,8 @@ The numbers: [what-was-measured.md](what-was-measured.md). The bugs and the smal
 5. **The rest of Compze's teventives:** entities, removable entities and shared tentities designed and moved to tables,
    the query models decided, and per-instance registration removed. Specified in
    [step-5-the-rest-of-the-teventives.md](step-5-the-rest-of-the-teventives.md), approved by Magnus, 2026-11-17.
+   **Built** (37731c854 to 628f05c1e), the full suite green at each increment; the query models share taggregates' code
+   through base classes that apply tevents (option B, Magnus).
 
 ## What Magnus decides
 

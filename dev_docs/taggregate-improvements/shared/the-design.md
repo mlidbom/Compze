@@ -92,10 +92,12 @@ class VocabNote : JPNote
 - **How an instance finds its class's table (decided by Magnus, 2026-11-17, item 24):** the class implements the public
   interface `ITeventRouted` (`TeventAppliers`, `TeventHandlers`) explicitly, listed again in the base list of every class
   that declares a table, so nothing shows in a taggregate's member list. Compze's base classes implement it to return
-  null, meaning registration per instance, so classes that don't opt in are untouched. The base constructor asserts that
-  the table is declared for the exact class, so a class that forgets its own fails at its first construction, naming
-  both classes. The cost: CA1033 on the base classes' explicit implementations, suppressed with its reason as the
-  codebase does for its other explicit implementations. Its names and shape are reviewed again in the end review.
+  null, which since step 5 means the class declares no table, refused at its first construction. The base constructor
+  also asserts that the table is declared for the exact class, so a class that forgets its own fails at its first
+  construction, naming both classes. The cost: CA1033 on the base classes' explicit implementations, suppressed with its
+  reason as the codebase does for its other explicit implementations, and, found in step 5, on every public unsealed
+  consumer class that implements it (Compze's sealed its four public test taggregates). Its names and shape are reviewed
+  again in the end review.
 - **Resolved once per class and wrapper tevent type,** published in a dictionary that is never changed afterwards and is
   read without a lock. Many threads dispatching on different instances of one class at once is safe, which JAStudio's
   full rebuild does.
@@ -144,15 +146,12 @@ reading lists in a kanji, media reference lists in every note type. So a slot mu
 
 ### What is built, what is designed, and what isn't yet
 
-- **Built and measured** in the real base classes: the root, components, entity collections, slots per instance and
-  slots of the class, inheritance through `Extend`, and the check that a handler holds no state.
-- **Designed, not built:** the exact-class assertion and the other safeguards above, the table typed on the tevent root,
-  and matching shared with the dispatcher. The prototypes keep a fallback to per-instance registration, and their
-  `TeventRouting` has a second implementation of matching.
-- **Not designed yet,** and needed before per-instance registration can be removed: removable entities, which throw under
-  a declaring parent in the prototype; shared tentities and their collections; how Compze's own base classes, `Tentity`
-  and the rest, add their appliers to a subclass's table; and the query models, which are a decision of their own.
-- **The prototype routes tevent handlers into components,** which the design doesn't want: not to be carried over.
+- **Built, in steps 3 and 5,** and registration per instance removed: every teventive class of Compze's routes through
+  its table, the query models included. The safeguards above are built, except that matching is not shared with the
+  dispatcher: the table's matching is the dispatcher's own rule for `For`, a line, and the dispatcher's translation of an
+  ignored wrapper type would be wrong in a table. See
+  [step-5-the-rest-of-the-teventives.md](step-5-the-rest-of-the-teventives.md#built).
+- **Tevent handlers are on roots only,** as designed: a routing of tevent handlers that routes to a part throws.
 
 ### Chosen by the teams, for Magnus to decide
 

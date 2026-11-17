@@ -217,6 +217,49 @@ Each builds clean, passes the full suite, and is pushed.
    tevent handlers in components removed, the parts' assertions of their parents' entries.
 7. **The-design.md's "what is built" brought up to date.**
 
+## Built
+
+Step 5 is built, in commits 37731c854 to 628f05c1e on `taggregate-store-spike`, each increment green on the full suite
+(4,510 passing at the end) and pushed. JAStudio moved to increment 2 the same day, with no change beyond the edit
+described in 1 and 2 (taggregates-opus, JAStudio 5c787c93c). Where it differs from the specification above:
+
+- **Increment 1 was dropped.** The table's matching of `For` is the dispatcher's own rule, assignability to
+  `IPublisherTevent<T>`: one line. The dispatcher's translation of an ignored wrapper type would be wrong in a table: there
+  an adopting wrapper tevent is an owner tevent, which a table ignores in the owner's wrapper, as `IgnoreUnhandled` does
+  now.
+- **Tevent handler tables start at the root, as applier tables do.** `DeclareHandlers` is only on `Taggregate`, typed on
+  the class that closes its generics. A subclass with tevent handlers extends its root's, so a root whose subclasses have
+  handlers declares an empty table for them. Compze's per-class specification does so; no other class has tevent
+  handlers on a subclass.
+- **The base classes for option B:** `TeventApplyingRoot<TRoot, TTevent>`, under `Taggregate` and
+  `SelfGeneratingQueryModel`, and `TeventApplyingComponent<TComponent, TComponentTevent>`, under `TeventiveComponent` and
+  the query models' `Component`. Only Compze can derive from them: their constructors are internal. One entity
+  collection routing, `RoutedEntityCollection`, under both families' collections, with `EntityCollection` moved to
+  `_internal`. A consumer's taggregate classes are declared as before.
+- **The query models' parts:** a component is constructed with its parent, as `ITeventRouted`, only for the assertion
+  below, and keeps nothing of it. An entity is created by its parameterless constructor, since its parent's type isn't
+  known to the collection without the nested classes, which went.
+- **The parent's entry is asserted for every part, in both families:** a component or entity at construction, and an
+  entity collection when made. The check is by tevent type, so two parts of one type with one entry forgotten is still
+  not caught.
+- **A slot asserts both ways that a shared tomponent is in the member it was constructed for:** on publishing, that the
+  owner keeps the publisher in the slot's member, beyond the routing check the specification had. The routing check alone
+  missed the commonest mistake: a tomponent constructed with another slot of its class publishes as that slot's, whose
+  route finds that slot's own tomponent, and the change lands on it silently.
+- **`ITeventiveInternals` now extends `ITeventRouted`,** so a part's check needs no cast.
+
+### Found while building, for Magnus
+
+- **A snapshot can't restore entities or shared tentities.** Their collections add an entity only by publishing its
+  created tevent, and a taggregate restored from a snapshot publishes nothing. So a snapshotable taggregate in the state
+  store can't have entities today. Nobody needs it yet: JAStudio has none. When a consumer does, the collections need a
+  way to add a restored entity, which is public API. Not built, by the rule that the frameworks keep their public surface
+  minimal.
+- **CA1033 fires on a consumer's public, unsealed class that implements `ITeventRouted` explicitly,** as decided in item
+  24. The docs had counted the cost on Compze's base classes only. Compze's own four public test taggregates are sealed
+  now. A consumer's base class, such as JAStudio's `JPNote`, can't be. For the end review, with the explicit interface's
+  shape.
+
 ## Not in step 5
 
 - **`ITaggregate.Commit`'s callback and the public `TeventStream`,** which decision 10 removes for a taggregate in a store.
