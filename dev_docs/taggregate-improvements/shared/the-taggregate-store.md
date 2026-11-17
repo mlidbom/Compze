@@ -914,9 +914,10 @@ with tevents: a note's own `Delete` published `INoteTevent.Deleted`, and the cod
   `TaggregateNotFoundException`. What such a handler needs goes on the Deleted tevent, as tevent sourcing has it. Found
   by taggregates-opus (2026-11-17): JAStudio's handler that takes a deleted vocab out of its web of perfect synonyms
   read the vocab, and now reads its name from `IVocabTevent.Deleted`. Before, the updater's `Delete` came after the
-  publish, so the handlers could still read it, by accident of order. Kept as built (jastudio-rep-opus): a unit of work
-  sees its own changes at once, its deletions included, and a taggregate readable after its own deletion would be the
-  exception. For the end review, which weighs what a unit of work sees.
+  publish, so the handlers could still read it, by accident of order. Kept as built: a unit of work sees its own
+  changes at once, its deletions included. Decided by Magnus, 2026-11-17, after weighing keeping it readable until
+  prepare: "That might make sense for the subscriber to the deleted tevent, but anyone that has no clue that happened
+  and gets that instance served up is working with some seriously messed up data."
 - **Specifications:** every specification that deleted through the updater deletes through a domain method that
   publishes a Deleted tevent. New ones, in both stores: the deletion hides the taggregate inside the unit of work, a
   publish after it fails the unit of work, a rolled-back deletion leaves the taggregate, and `All` leaves a deleted one

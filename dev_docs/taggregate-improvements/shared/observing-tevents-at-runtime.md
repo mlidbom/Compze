@@ -61,13 +61,34 @@ public interface ITeventObservation   //review-naming: a placeholder
 - **The list of declared handlers stays closed at build,** as `LocalTessagingEngineBuilder` says it is. Runtime observers
   are kept in a list of their own, so nothing checked at build changes.
 
-### Remote tevents: not in this step
+### What may be observed at runtime is declared at composition
 
 An endpoint receives a remote tevent only of the types it declared handlers for at composition: it tells its peers what
-to send it. So in this step a runtime observer in an endpoint observes the tevents committed in its own process, and
-the remote ones that arrive anyway because a declared handler subscribes to their types. Deskmancer needs remote
-tevents. Its need is put to Magnus separately: a declaration at composition of the tevent types that may be observed at
-runtime.
+to send it. Deskmancer needs remote tevents: its black-box specifications register an await for one analytics tevent
+before a keystroke, and the application under test runs in another process. Approved by Magnus, 2026-11-17, built after
+the rest of this document:
+
+```csharp
+.ObserveTevents(observe => observe.AtRuntime<IAnalyticsEvent>())   //review-naming: a placeholder
+```
+
+- **`AtRuntime<TTevent>()` declares that tevents compatible with `TTevent` may be observed at runtime,** subtypes
+  included. It is a member of `TeventObservationRegistrar` and of `ITeventObservationRegistrar`, used only at
+  composition: in a runtime registration it fails.
+- **An endpoint subscribes with its peers to the declared types from the start,** as it does for a declared observer.
+  A runtime observer is in effect the moment `ObserveTevents` returns, with no round trip, so an await registered
+  before a trigger can't miss a tevent published right after it. Deskmancer's agent-rep: the register-before-trigger
+  requirement is what this must meet.
+- **An arriving tevent of a declared type that no runtime observer observes is dropped.**
+- **Every runtime observer's types must be covered by an `AtRuntime` declaration,** in a plain container too, asserted
+  when `ObserveTevents` is called. The rule is the same in every composition, as the engine builder's principle has it:
+  "an application's handler registrations run unchanged under any composition". A runtime observer then never silently
+  misses the remote tevents of a type nobody declared. So what may get into the engine is still all declared at
+  composition, and only the observers come and go. (jastudio-rep-opus's call: JAStudio declares
+  `observe.AtRuntime<INoteTevent>()`, a line.)
+- **Specifications, across two endpoints:** a runtime observer in one endpoint observes a tevent published in the other,
+  of a declared type, and stops when disposed; one registered before the publish observes it however soon the publish
+  follows; a runtime observer of an undeclared type is refused; `AtRuntime` in a runtime registration fails.
 
 ## Unit-of-work batches
 
