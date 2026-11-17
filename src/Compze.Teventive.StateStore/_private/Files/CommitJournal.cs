@@ -113,14 +113,14 @@ sealed class CommitJournal
    ///<summary>What a journal file holds.</summary>
    sealed class Content
    {
-      public List<Rename> Renames { get; set; } = [];
-      public List<string> Deletions { get; set; } = [];
+      public List<Rename> Renames { get; init; } = [];
+      public List<string> Deletions { get; init; } = [];
    }
 
    ///<summary>A temporary file, and the file it becomes, each relative to the store's folder.</summary>
    sealed class Rename
    {
-      public string From { get; set; } = "";
-      public string To { get; set; } = "";
+      public string From { get; init; } = "";
+      public string To { get; init; } = "";
    }
 }

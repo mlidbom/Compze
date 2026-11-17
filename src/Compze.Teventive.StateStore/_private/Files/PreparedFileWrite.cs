@@ -46,7 +46,7 @@ sealed class PreparedFileWrite : IPreparedWrite
    {
       var file = _storedFiles.Locked(it => it.FileOf(id));
       State.Assert(file != null, () => $"Taggregate {id} is to be deleted, and the store knows no file of it.");
-      _deleted.Add((id, file!));
+      _deleted.Add((id, file));
    }
 
    bool WritesNothing => _saved.Count == 0 && _deleted.Count == 0;

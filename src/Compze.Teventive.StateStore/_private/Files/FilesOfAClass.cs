@@ -20,7 +20,7 @@ sealed class FilesOfAClass
 
    internal SnapshotableTaggregateClass TaggregateClass { get; }
 
-   internal DirectoryInfo Folder { get; }
+   DirectoryInfo Folder { get; }
 
    ///<summary>The full path of <paramref name="taggregate"/>'s file. Asserts that it is under the class's folder and ends in .json.</summary>
    internal string FileOf(ITaggregate taggregate)

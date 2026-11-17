@@ -30,6 +30,7 @@ public class Given_a_state_store_kept_in_files : UniversalTestBase
    readonly List<IDependencyInjectionContainer> _containers = [];
    readonly DirectoryInfo _folder = new(Path.Combine(Path.GetTempPath(), "compze-state-store-in-files", Guid.NewGuid().ToString("N")));
    Func<StoredVocab, DirectoryInfo, FileInfo>? _vocabFileOf;
+   bool _folderGivenByAService;
    IDependencyInjectionContainer? _store;
 
    TaggregateId VocabId { get; } = new(Guid.NewGuid());
@@ -49,15 +50,22 @@ public class Given_a_state_store_kept_in_files : UniversalTestBase
    IDependencyInjectionContainer StartAStore()
    {
       var builder = TestEnv.DIContainer.CreateTestingContainerBuilder();
-      builder.Registrar.StateStore(store => store.Taggregate(() => new StoredVocab())
-                                                 .Taggregate(() => new StoredSentence())
-                                                 .StoredInFiles(_folder, Options, files => files.Of<StoredVocab>("vocab", _vocabFileOf)
-                                                                                                .Of<StoredSentence>("sentences")));
+      builder.Registrar.Register(Singleton.For<TheStoresFolder>().CreatedBy(() => new TheStoresFolder(_folder)));
+      builder.Registrar.StateStore(store =>
+      {
+         store.Taggregate(() => new StoredVocab())
+              .Taggregate(() => new StoredSentence());
+         if(_folderGivenByAService) store.StoredInFiles((TheStoresFolder it) => it.Folder, Options, DeclareFiles);
+         else store.StoredInFiles(_folder, Options, DeclareFiles);
+      });
       builder.Registrar.LocalTessagingEngine(_ => {});
       var container = builder.Build();
       _containers.Add(container);
       return _store = container;
    }
+
+   void DeclareFiles(TaggregateFiles files) => files.Of("vocab", _vocabFileOf)
+                                                   .Of<StoredSentence>("sentences");
 
    void InUnitOfWork(Action<ITaggregateStoreUpdater> work) =>
       Store.ScopeFactory.ExecuteUnitOfWork(unitOfWork => work(unitOfWork.Resolve<ITaggregateStoreUpdater>()));
@@ -132,9 +140,22 @@ public class Given_a_state_store_kept_in_files : UniversalTestBase
       }
    }
 
+   public class whose_folder_a_service_of_the_container_gives : Given_a_state_store_kept_in_files
+   {
+      protected whose_folder_a_service_of_the_container_gives() => _folderGivenByAService = true;
+
+      public class after_a_unit_of_work_saves_a_vocab_there : whose_folder_a_service_of_the_container_gives
+      {
+         public after_a_unit_of_work_saves_a_vocab_there() => SaveTheVocab("taberu");
+
+         [PCT] public void the_vocab_is_in_its_file_under_the_folder_the_service_gives() =>
+            VocabFiles.Must().SequenceEqual([Path.GetRelativePath(VocabFolder.FullName, VocabFileByDefault)]);
+      }
+   }
+
    public class whose_vocabs_files_are_named_by_their_question : Given_a_state_store_kept_in_files
    {
-      public whose_vocabs_files_are_named_by_their_question() => _vocabFileOf = (vocab, folder) => new FileInfo(Path.Combine(folder.FullName, $"{vocab.Question}.json"));
+      protected whose_vocabs_files_are_named_by_their_question() => _vocabFileOf = (vocab, folder) => new FileInfo(Path.Combine(folder.FullName, $"{vocab.Question}.json"));
 
       public class after_a_unit_of_work_saves_the_vocab_taberu : whose_vocabs_files_are_named_by_their_question
       {
@@ -311,6 +332,14 @@ public class Given_a_state_store_kept_in_files : UniversalTestBase
    }
 
    ///<summary>Serializes a <see cref="TaggregateId"/> as the GUID it wraps, as a consumer's options would.</summary>
+   ///<summary>A service of the container that knows the store's folder, as a host that learns its paths once it has started does.</summary>
+   sealed class TheStoresFolder
+   {
+      internal TheStoresFolder(DirectoryInfo folder) => Folder = folder;
+
+      internal DirectoryInfo Folder { get; }
+   }
+
    sealed class TaggregateIdAsAGuid : JsonConverter<TaggregateId>
    {
       public override TaggregateId Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) => new(reader.GetGuid());
