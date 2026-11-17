@@ -144,7 +144,7 @@ sealed class StateStoreSession : ITaggregateStoreSession
       _preparedIndexChanges = [.._store.Indexes.Select(index => index.Prepare(changedStates))];
 
       TaggregateSnapshot SnapshotOf(HeldTaggregate held) =>
-         new(held.Taggregate.GetType(), held.Taggregate.Id, _store.DeclaredClassOf(held.Taggregate.GetType()).TakeSnapshot(held.Taggregate));
+         new(held.Taggregate.GetType(), held.Taggregate.Id, _store.DeclaredClassOf(held.Taggregate.GetType()).TakeSnapshot(held.Taggregate)) { Taggregate = held.Taggregate };
    }
 
    public void Commit()

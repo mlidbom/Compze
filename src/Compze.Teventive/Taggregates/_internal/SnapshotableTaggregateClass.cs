@@ -17,12 +17,14 @@ sealed class SnapshotableTaggregateClass
    readonly Func<object, object, bool>? _snapshotsAreEqual;
 
    SnapshotableTaggregateClass(Type taggregateClass,
+                           Type snapshotType,
                            Func<ITaggregate> createEmpty,
                            Func<ITaggregate, object> takeSnapshot,
                            Action<ITaggregate, object> restoreFrom,
                            Func<object, object, bool>? snapshotsAreEqual)
    {
       Class = taggregateClass;
+      SnapshotType = snapshotType;
       _createEmpty = createEmpty;
       _takeSnapshot = takeSnapshot;
       _restoreFrom = restoreFrom;
@@ -32,6 +34,7 @@ sealed class SnapshotableTaggregateClass
    internal static SnapshotableTaggregateClass For<TTaggregate, TSnapshot>(Func<ISnapshotable<TTaggregate, TSnapshot>> createEmpty, Func<TSnapshot, TSnapshot, bool>? snapshotsAreEqual)
       where TTaggregate : class, ITaggregate, ISnapshotable<TTaggregate, TSnapshot> =>
       new(typeof(TTaggregate),
+          typeof(TSnapshot),
           () => (TTaggregate)createEmpty(),
           taggregate => ((TTaggregate)taggregate).TakeSnapshot()._assert().NotNull(),
           (taggregate, snapshot) => ((TTaggregate)taggregate).RestoreFrom((TSnapshot)snapshot),
@@ -40,16 +43,27 @@ sealed class SnapshotableTaggregateClass
    ///<summary>The class itself: a taggregate is of this exact class, never of a subclass of it.</summary>
    internal Type Class { get; }
 
+   ///<summary>The type of the class's snapshots, which its instances take and are restored from.</summary>
+   internal Type SnapshotType { get; }
+
    internal object TakeSnapshot(ITaggregate taggregate) => _takeSnapshot(taggregate);
 
    ///<summary>A new instance, holding the state <paramref name="snapshot"/> holds of the taggregate <paramref name="id"/>.</summary>
    internal ITaggregate Restore(TaggregateId id, object snapshot)
    {
+      var restored = Restore(snapshot);
+      State.Assert(restored.Id == id, () => $"{Class.FullName}.{nameof(ISnapshotable<,>.RestoreFrom)} restored taggregate {restored.Id} from a snapshot of taggregate {id}.");
+      return restored;
+   }
+
+   ///<summary>A new instance, holding the state <paramref name="snapshot"/> holds, whichever taggregate that is: for a storage that<br/>
+   /// learns a taggregate's id only from its snapshot.</summary>
+   internal ITaggregate Restore(object snapshot)
+   {
       var restored = _createEmpty();
       State.Assert(restored.GetType() == Class, () => $"The factory declared for {Class.FullName} built a {restored.GetType().FullName}. Declare each taggregate class with a factory of its own.");
       _restoreFrom(restored, snapshot);
       State.Assert(restored.Version > 0, () => $"{Class.FullName}.{nameof(ISnapshotable<,>.RestoreFrom)} gave the instance no id. It must call RestoreIdentity first.");
-      State.Assert(restored.Id == id, () => $"{Class.FullName}.{nameof(ISnapshotable<,>.RestoreFrom)} restored taggregate {restored.Id} from a snapshot of taggregate {id}.");
       return restored;
    }
 
