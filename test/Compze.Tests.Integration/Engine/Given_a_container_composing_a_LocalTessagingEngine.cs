@@ -268,13 +268,13 @@ public partial class Given_a_container_composing_a_LocalTessagingEngine : Univer
             .Which.Message.Must().Contain("has stopped");
    }
 
-   public class after_awaiting_no_tevents_in_flight_while_an_async_observer_still_has_published_tevents_to_observe : Given_a_container_composing_a_LocalTessagingEngine
+   public class after_awaiting_no_tessages_in_flight_while_an_async_observer_still_has_published_tevents_to_observe : Given_a_container_composing_a_LocalTessagingEngine
    {
       readonly ConcurrentQueue<int> _observedSequenceNumbers = [];
       int[] _observedWhenTheWaitCompleted = [];
       int[] _observedWhenASecondWaitCompleted = [];
 
-      public after_awaiting_no_tevents_in_flight_while_an_async_observer_still_has_published_tevents_to_observe()
+      public after_awaiting_no_tessages_in_flight_while_an_async_observer_still_has_published_tevents_to_observe()
       {
          ComposeContainerWithEngine(engine => engine
             .ObserveTevents(observe => observe.ForTevent(async (IMyNumberedTevent tevent) =>
@@ -289,11 +289,11 @@ public partial class Given_a_container_composing_a_LocalTessagingEngine : Univer
       protected override async Task InitializeAsyncInternal()
       {
          var engine = Container.RootResolver.Resolve<ILocalTessagingEngine>();
-         await engine.AwaitNoTeventsInFlightAsync();
+         await engine.AwaitNoTessagesInFlightAsync();
          _observedWhenTheWaitCompleted = [.._observedSequenceNumbers];
 
          Publish(new MyNumberedTevent(6));
-         await engine.AwaitNoTeventsInFlightAsync();
+         await engine.AwaitNoTessagesInFlightAsync();
          _observedWhenASecondWaitCompleted = [.._observedSequenceNumbers];
       }
 
