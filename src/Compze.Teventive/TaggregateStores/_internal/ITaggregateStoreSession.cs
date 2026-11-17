@@ -5,7 +5,9 @@ namespace Compze.Teventive.TaggregateStores._internal;
 
 ///<summary>One store's part of a <see cref="TaggregateUnitOfWork"/>: the taggregates of that store the unit of work changes, and<br/>
 /// what the store writes when the unit of work commits. The tevents its taggregates publish go to the unit of work, with<br/>
-/// <see cref="TaggregateUnitOfWork.Dispatch"/>, which dispatches them.</summary>
+/// <see cref="TaggregateUnitOfWork.Dispatch"/>, which dispatches them. A taggregate that publishes an<br/>
+/// <see cref="Taggregates.Tevents.ITaggregateDeletedTevent"/> is deleted: the session no longer finds it, fails a tevent published<br/>
+/// on it after that one, and takes it out of the store when the unit of work commits.</summary>
 interface ITaggregateStoreSession
 {
    ///<summary>As <see cref="ITaggregateStoreUpdater.TryGetForUpdate{TTaggregate}"/>, for the taggregates of this store.</summary>
@@ -13,9 +15,6 @@ interface ITaggregateStoreSession
 
    ///<summary>As <see cref="ITaggregateStoreUpdater.Save{TTaggregate}"/>, for a taggregate of a class this store keeps.</summary>
    void Save(ITaggregate taggregate);
-
-   ///<summary>As <see cref="ITaggregateStoreUpdater.Delete{TTaggregate}"/>, for the taggregates of this store.</summary>
-   void Delete<TTaggregate>(TaggregateId id) where TTaggregate : class, ITaggregate;
 
    ///<summary>Throws if a publish has failed on a taggregate of this session, whose state then can't be trusted: the unit of work<br/>
    /// rolls back, even if the code that published caught the exception.</summary>

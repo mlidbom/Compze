@@ -24,7 +24,8 @@ class User : Taggregate<User, IUserTevent, UserTevent, IUserTevent<IUserTevent>,
         .For<IMigratedBeforeUserRegisteredTevent>(_ => {})
         .For<IMigratedAfterUserChangedEmailTevent>(_ => {})
         .For<IMigratedReplaceUserChangedPasswordTevent>(_ => {})
-        .For<IUserChangedPassword>(e => Password = e.Password);
+        .For<IUserChangedPassword>(e => Password = e.Password)
+        .For<IUserDeleted>(_ => {});
    }
 
    public void Register(string email, string password, TaggregateId id) => Publish(new UserRegistered(id, email, password));
@@ -40,6 +41,8 @@ class User : Taggregate<User, IUserTevent, UserTevent, IUserTevent<IUserTevent>,
    public void ChangePassword(string password) => Publish(new UserChangedPassword(password));
 
    public void ChangeEmail(string email) => Publish(new UserChangedEmail(email));
+
+   public void Delete() => Publish(new UserDeleted());
 }
 
 interface IUserTevent<out T> : ITaggregateTevent<T> where T : IUserTevent;
@@ -82,6 +85,10 @@ class UserRegistered(TaggregateId userId, string email, string password) : UserT
    public string Email { get; private set; } = email;
    public string Password { get; private set; } = password;
 }
+
+interface IUserDeleted : IUserTevent, ITaggregateDeletedTevent;
+
+class UserDeleted : UserTevent, IUserDeleted;
 
 #pragma warning disable CA1812
 interface IMigratedBeforeUserRegisteredTevent : IUserTevent, ITaggregateCreatedTevent;

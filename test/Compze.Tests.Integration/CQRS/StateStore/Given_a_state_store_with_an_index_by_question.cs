@@ -174,7 +174,7 @@ public class Given_a_state_store_with_an_index_by_question : UniversalTestBase
          IReadOnlyList<TaggregateId> inside = [];
          Container.ScopeFactory.ExecuteUnitOfWork(unitOfWork =>
          {
-            unitOfWork.Resolve<ITaggregateStoreUpdater>().Delete<StoredVocab>(VocabId);
+            unitOfWork.Resolve<ITaggregateStoreUpdater>().GetForUpdate<StoredVocab>(VocabId).Delete();
             inside = IdsFiledUnder("taberu");
          });
          _filedUnderItsQuestionInside = inside;

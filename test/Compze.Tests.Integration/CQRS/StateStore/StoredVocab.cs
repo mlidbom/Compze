@@ -25,7 +25,8 @@ class StoredVocab : Taggregate<StoredVocab, IStoredVocabTevent, StoredVocabTeven
          {
             if(it.Meaning == MeaningThatFailsToApply) throw new InvalidOperationException("This meaning fails to apply.");
             Meaning = it.Meaning;
-         });
+         })
+        .For<IStoredVocabDeleted>(_ => {});
    }
 
    public static StoredVocab Create(TaggregateId id, string question)
@@ -38,6 +39,8 @@ class StoredVocab : Taggregate<StoredVocab, IStoredVocabTevent, StoredVocabTeven
    public void ChangeMeaning(string meaning) => Publish(new StoredVocabMeaningChanged(meaning));
 
    public void ChangeQuestion(string question) => Publish(new StoredVocabQuestionChanged(question));
+
+   public void Delete() => Publish(new StoredVocabDeleted());
 
    ///<summary>Changes the meaning without a tevent, as a class whose state isn't all changed by tevents yet does: it asserts first<br/>
    /// that it can be changed.</summary>
@@ -110,3 +113,7 @@ class StoredVocabMeaningChanged(string meaning) : StoredVocabTevent, IStoredVoca
 {
    public string Meaning { get; private set; } = meaning;
 }
+
+interface IStoredVocabDeleted : IStoredVocabTevent, ITaggregateDeletedTevent;
+
+class StoredVocabDeleted : StoredVocabTevent, IStoredVocabDeleted;

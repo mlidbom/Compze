@@ -328,7 +328,7 @@ public class Given_a_state_store : UniversalTestBase
          bool inside = true, outside = false;
          InUnitOfWork(taggregates =>
          {
-            taggregates.Delete<StoredVocab>(VocabId);
+            taggregates.GetForUpdate<StoredVocab>(VocabId).Delete();
             inside = Reader.TryGet(VocabId, out StoredVocab? _);
             outside = OnAThreadOutsideTheUnitOfWork(() => Reader.TryGet(VocabId, out StoredVocab? _));
          });

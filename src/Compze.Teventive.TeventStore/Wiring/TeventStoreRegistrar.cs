@@ -44,7 +44,7 @@ public static class TeventStoreRegistrar
       registrar.Register(TaggregateTypeValidator.RegisterWith, TeventCache.RegisterWith);
       registrar.Register(
          Singleton.For<TaggregateTeventStore>()
-                  .CreatedBy((ITeventStore teventStore, TaggregateUnitsOfWork unitsOfWork, ITaggregateTypeValidator validator) => builder.Build(teventStore, unitsOfWork, validator)),
+                  .CreatedBy((TeventStore teventStore, TaggregateUnitsOfWork unitsOfWork, ITaggregateTypeValidator validator) => builder.Build(teventStore, unitsOfWork, validator)),
          Singleton.For<ITeventStoreReader>()
                   .CreatedBy((ITaggregateStoreReader taggregates, TaggregateTeventStore store) => new TeventStoreReader(taggregates, store)));
       registrar.RegisterTaggregateStore<TaggregateTeventStore>();

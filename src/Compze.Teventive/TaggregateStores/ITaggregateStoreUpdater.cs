@@ -10,6 +10,9 @@ namespace Compze.Teventive.TaggregateStores;
 /// The tevents published on the copies are dispatched as each publish cascade ends, so participation handlers run synchronously,<br/>
 /// inside the unit of work's transaction. When it commits, the copies become the committed instances that<br/>
 /// <see cref="ITaggregateStoreReader"/> gets.</summary>
+///<remarks>A taggregate is deleted by publishing a tevent that implements <see cref="Taggregates.Tevents.ITaggregateDeletedTevent"/>,<br/>
+/// from one of its own methods, as any other change is made. From then on the unit of work no longer finds it, and when the unit of<br/>
+/// work commits it leaves its store.</remarks>
 ///<remarks>A store that keeps taggregates as their history, the tevent store, makes no copy: it loads the taggregate from its<br/>
 /// history for the unit of work, and the database's lock stands for the taggregate's.</remarks>
 public interface ITaggregateStoreUpdater : ITaggregateStoreReader
@@ -26,8 +29,4 @@ public interface ITaggregateStoreUpdater : ITaggregateStoreReader
    /// of work commits. The tevents it has published are dispatched now, in the order published.</summary>
    ///<remarks>review-naming: Save only adds, so Add would tell the truth. For the naming pass (jastudio-rep-opus, 2026-11-16).</remarks>
    void Save<TTaggregate>(TTaggregate taggregate) where TTaggregate : class, ITaggregate;
-
-   ///<summary>Removes the taggregate <paramref name="id"/> from the store that keeps <typeparamref name="TTaggregate"/> when this unit<br/>
-   /// of work commits.</summary>
-   void Delete<TTaggregate>(TaggregateId id) where TTaggregate : class, ITaggregate;
 }

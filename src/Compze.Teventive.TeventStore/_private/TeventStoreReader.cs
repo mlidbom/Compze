@@ -38,6 +38,6 @@ sealed class TeventStoreReader : ITeventStoreReader
       if(history.Count == 0) throw new TaggregateNotFoundException(taggregateId);
       Argument.Assert(version <= history.Count, () => $"Taggregate {taggregateId} has no version {version}: its latest is {history.Count}.");
 
-      return _store.ReadOnlyInstanceFrom<TTaggregate>(history.Where(it => it.Tevent.TaggregateVersion <= version))._assert().NotNull();
+      return _store.ReadOnlyVersionFrom<TTaggregate>([..history.Where(it => it.Tevent.TaggregateVersion <= version)]);
    }
 }

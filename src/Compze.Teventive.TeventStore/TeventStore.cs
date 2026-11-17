@@ -31,9 +31,10 @@ namespace Compze.Teventive.TeventStore;
    readonly TeventCache _cache;
    readonly Func<IReadOnlyList<ITeventMigration>> _migrations;
 
-   ///<summary>A singleton: the store keeps no state of its own, and a store's reader, which is a singleton, needs it.</summary>
+   ///<summary>A singleton: the store keeps no state of its own, and a store's reader, which is a singleton, needs it. Registered as<br/>
+   /// itself too, for the taggregate store that keeps taggregates in it, which asks it what only this class answers.</summary>
    internal static void RegisterWith(IComponentRegistrar registrar, Func<IReadOnlyList<ITeventMigration>> migrations)
-      => registrar.Register(Singleton.For<ITeventStore>()
+      => registrar.Register(Singleton.For<ITeventStore, TeventStore>()
                                      .CreatedBy((ITeventStoreSqlLayer sqlLayer, ITypeMap typeMap, ITeventStoreSerializer serializer, TeventCache cache) =>
                                                    new TeventStore(sqlLayer, typeMap, serializer, cache, migrations)));
 
@@ -193,6 +194,19 @@ namespace Compze.Teventive.TeventStore;
       return _sqlLayer.ListTaggregateIdsInCreationOrder()
                               .Where(it => wrapperTypeToMatch == null || wrapperTypeToMatch.IsAssignableFrom(it.TypeId.Type))
                               .Select(it => it.TaggregateId);
+   }
+
+   ///<summary>The ids of the deleted taggregates: those whose history ends with an <see cref="ITaggregateDeletedTevent"/>. The store keeps<br/>
+   /// their histories. Read through the ambient transaction, so it includes a deletion the transaction has written.</summary>
+   ///<remarks>One row a taggregate is read, the type of its last effective tevent: a scan, as <see cref="StreamTaggregateIdsInCreationOrder"/> is.</remarks>
+   internal IReadOnlySet<TaggregateId> IdsOfDeletedTaggregates()
+   {
+      _sqlLayer.SetupSchemaIfDatabaseUnInitialized();
+      var deletingTevents = PublisherTevent.WrapperTypeMatchingAllWrappingsOf(typeof(ITaggregateDeletedTevent));
+      return _sqlLayer.ListTheLastTeventOfEachTaggregate()
+                      .Where(it => deletingTevents.IsAssignableFrom(it.TypeId.Type))
+                      .Select(it => it.TaggregateId)
+                      .ToHashSet();
    }
 
    internal class TaggregateTeventWithRefactoringInformation(ITaggregateTevent<ITaggregateTeventWithIdentity> wrappedTevent, TaggregateTeventStorageInformation storageInformation)

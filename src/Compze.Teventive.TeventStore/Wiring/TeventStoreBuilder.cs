@@ -2,7 +2,6 @@ using Compze.Contracts;
 using Compze.Teventive._internal;
 using Compze.Teventive.TaggregateStores._internal;
 using Compze.Teventive.Taggregates.Tevents;
-using Compze.Teventive.TeventStore.Abstractions;
 using Compze.Teventive.TeventStore._private;
 using static Compze.Contracts.Contract;
 
@@ -27,7 +26,7 @@ public sealed class TeventStoreBuilder
    }
 
    ///<summary>The store, keeping the classes declared by now, each of them checked by <paramref name="validator"/>.</summary>
-   internal TaggregateTeventStore Build(ITeventStore teventStore, TaggregateUnitsOfWork unitsOfWork, ITaggregateTypeValidator validator)
+   internal TaggregateTeventStore Build(TeventStore teventStore, TaggregateUnitsOfWork unitsOfWork, ITaggregateTypeValidator validator)
    {
       foreach(var assertIsValid in _taggregateClasses.Values) assertIsValid(validator);
       return new TaggregateTeventStore(teventStore, unitsOfWork, [.._taggregateClasses.Keys]);

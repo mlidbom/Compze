@@ -242,7 +242,7 @@ public class TeventStoreUpdaterTest : UniversalTestBase
 
       UseInTransactionalScope(session =>
       {
-         session.Delete<User>(user1.Id);
+         session.GetForUpdate<User>(user1.Id).Delete();
 
          var loadedUser2 = session.GetForUpdate<User>(user2.Id);
          loadedUser2.Id.Must().Be(user2.Id);
@@ -276,14 +276,10 @@ public class TeventStoreUpdaterTest : UniversalTestBase
 
          user1.ChangeEmail("new_email");
 
-         session.Delete<User>(user1.Id);
+         user1.Delete();
       });
 
-      var published = _teventSpy.DispatchedTessages.ToList();
-      _teventSpy.DispatchedTessages.Count()
-               .Must()
-               .Be(3);
-      published.Last().Must().BeExactType<UserChangedEmail>();
+      _teventSpy.DispatchedTessages.Skip(2).Select(it => it.GetType().Name).Must().SequenceEqual([nameof(UserChangedEmail), nameof(UserDeleted)]);
    }
 
    [PCT]
@@ -328,7 +324,7 @@ public class TeventStoreUpdaterTest : UniversalTestBase
    }
 
    [PCT]
-   public void When_deleting_and_then_fetching_an_taggregates_history_the_history_should_be_gone()
+   public void When_a_taggregate_saved_in_one_unit_of_work_is_deleted_in_the_next_its_history_is_kept_ending_with_the_deleted_tevent_and_the_store_holds_no_such_taggregate()
    {
       var userId = new TaggregateId();
 
@@ -339,13 +335,14 @@ public class TeventStoreUpdaterTest : UniversalTestBase
          session.Save(user);
       });
 
-      UseInTransactionalScope(session => session.Delete<User>(userId));
+      UseInTransactionalScope(session => session.GetForUpdate<User>(userId).Delete());
 
-      Reader.GetHistory(userId).Count.Must().Be(0);
+      Reader.GetHistory(userId).Select(it => it.Tevent.GetType().Name).Must().SequenceEqual([nameof(UserRegistered), nameof(UserDeleted)]);
+      Reader.TryGet(userId, out User? _).Must().BeFalse();
    }
 
    [PCT]
-   public void When_fetching_and_deleting_an_taggregate_then_fetching_history_again_the_history_should_be_gone()
+   public void When_a_taggregate_is_saved_and_deleted_in_one_unit_of_work_its_history_is_kept_ending_with_the_deleted_tevent_and_the_store_holds_no_such_taggregate()
    {
       var userId = new TaggregateId();
 
@@ -354,15 +351,11 @@ public class TeventStoreUpdaterTest : UniversalTestBase
          var user = new User();
          user.Register("test@email.com", "Password1", userId);
          session.Save(user);
+         user.Delete();
       });
 
-      UseInTransactionalScope(session =>
-      {
-         session.GetForUpdate<User>(userId);
-         session.Delete<User>(userId);
-      });
-
-      Reader.GetHistory(userId).Count.Must().Be(0);
+      Reader.GetHistory(userId).Select(it => it.Tevent.GetType().Name).Must().SequenceEqual([nameof(UserRegistered), nameof(UserDeleted)]);
+      Reader.TryGet(userId, out User? _).Must().BeFalse();
    }
 
    [PCT]

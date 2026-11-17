@@ -34,7 +34,5 @@ sealed class TaggregateStoreUpdater : ITaggregateStoreUpdater
 
    public void Save<TTaggregate>(TTaggregate taggregate) where TTaggregate : class, ITaggregate => SessionKeeping(taggregate.GetType()).Save(taggregate);
 
-   public void Delete<TTaggregate>(TaggregateId id) where TTaggregate : class, ITaggregate => SessionKeeping(typeof(TTaggregate)).Delete<TTaggregate>(id);
-
    ITaggregateStoreSession SessionKeeping(Type taggregateClass) => _unitsOfWork.AmbientBeginningIt().SessionOf(_routing.StoreKeeping(taggregateClass));
 }

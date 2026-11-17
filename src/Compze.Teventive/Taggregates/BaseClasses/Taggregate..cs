@@ -63,6 +63,9 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
    bool _isReadOnly;
    bool _aPublishHasFailed;
 
+   ///<summary>Whether this taggregate has published, or been loaded with, a tevent that deletes it, an <see cref="ITaggregateDeletedTevent"/>.</summary>
+   bool _isDeleted;
+
    ///<summary>The tevents of publish cascades that have ended, yet to be handed to the observers of <see cref="ITaggregate.TeventStream"/>,<br/>
    /// in the order published.</summary>
    readonly Queue<TWrapperTeventInterface> _teventsToHandOut = new();
@@ -111,6 +114,7 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
    TTevent PublishCore<TTevent>(TTevent tevent) where TTevent : TTaggregateTeventImplementation
    {
       State.Assert(!_applyingTevents, () => "You cannot raise tevents from within tevent appliers");
+      State.Assert(!_isDeleted, () => $"{GetType().Name} {Id} is deleted: it has published an {nameof(ITaggregateDeletedTevent)}, so it can publish nothing more, such as {tevent.GetType().FullName}.");
 
       var wrapped = WrapTevent(tevent);
 
@@ -189,6 +193,8 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
             base.Id = theTevent.TaggregateId;
 #pragma warning restore CS0618 // Type or member is obsolete
          }
+
+         if(theTevent is ITaggregateDeletedTevent) _isDeleted = true;
 
          Version = theTevent.TaggregateVersion;
          if(TeventAppliers is {} appliers) appliers.Dispatch(this, wrapped);

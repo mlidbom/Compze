@@ -6,6 +6,7 @@ using Compze.Internals.Testing;
 using Compze.Must;
 using Compze.Teventive.StateStore;
 using Compze.Teventive.TaggregateStores;
+using Compze.Teventive.TeventStore.Abstractions;
 using Compze.Tests.Common;
 using Compze.Tests.Common.Wiring;
 using Compze.Tests.Infrastructure;
@@ -37,6 +38,8 @@ public class Given_a_tevent_store_and_a_state_store : UniversalTestBase
 
    ITaggregateStoreBulkReader BulkReader => _container.RootResolver.Resolve<ITaggregateStoreBulkReader>();
 
+   ITeventStoreReader TeventStoreReader => _container.RootResolver.Resolve<ITeventStoreReader>();
+
    void InUnitOfWork(Action<ITaggregateStoreUpdater> work) => _container.ExecuteUnitOfWork(unitOfWork => work(unitOfWork.TaggregateStoreUpdater()));
 
    void SaveAUserAndAVocab(ITaggregateStoreUpdater taggregates)
@@ -65,12 +68,93 @@ public class Given_a_tevent_store_and_a_state_store : UniversalTestBase
             InUnitOfWork(taggregates =>
             {
                User.Register(taggregates, "other@example.com", "password", _otherUserId);
-               taggregates.Delete<User>(_userId);
+               taggregates.GetForUpdate<User>(_userId).Delete();
                _everyUserInsideTheUnitOfWork = [..BulkReader.All<User>().Select(it => it.Id)];
             });
 
          [PCT] public void inside_the_unit_of_work_every_user_is_the_other_user() => _everyUserInsideTheUnitOfWork.Must().SequenceEqual([_otherUserId]);
          [PCT] public void after_the_commit_every_user_is_the_other_user() => BulkReader.All<User>().Select(it => it.Id).Must().SequenceEqual([_otherUserId]);
+      }
+
+      public class and_a_second_unit_of_work_deletes_both : after_one_unit_of_work_saves_a_user_and_a_vocab
+      {
+         bool _insideTheReaderFoundTheUser = true, _insideTheReaderFoundTheVocab = true;
+         bool _insideGettingTheUserForUpdateFoundIt = true, _insideGettingTheVocabForUpdateFoundIt = true;
+         IReadOnlyList<TaggregateId> _insideEveryUser = [], _insideEveryVocab = [];
+
+         public and_a_second_unit_of_work_deletes_both() =>
+            InUnitOfWork(taggregates =>
+            {
+               taggregates.GetForUpdate<User>(_userId).Delete();
+               taggregates.GetForUpdate<StoredVocab>(_vocabId).Delete();
+               _insideTheReaderFoundTheUser = Reader.TryGet(_userId, out User? _);
+               _insideTheReaderFoundTheVocab = Reader.TryGet(_vocabId, out StoredVocab? _);
+               _insideGettingTheUserForUpdateFoundIt = taggregates.TryGetForUpdate(_userId, out User? _);
+               _insideGettingTheVocabForUpdateFoundIt = taggregates.TryGetForUpdate(_vocabId, out StoredVocab? _);
+               _insideEveryUser = [..BulkReader.All<User>().Select(it => it.Id)];
+               _insideEveryVocab = [..BulkReader.All<StoredVocab>().Select(it => it.Id)];
+            });
+
+         [PCT] public void inside_the_unit_of_work_the_reader_found_no_user() => _insideTheReaderFoundTheUser.Must().BeFalse();
+         [PCT] public void inside_the_unit_of_work_the_reader_found_no_vocab() => _insideTheReaderFoundTheVocab.Must().BeFalse();
+         [PCT] public void inside_the_unit_of_work_getting_the_user_for_update_found_nothing() => _insideGettingTheUserForUpdateFoundIt.Must().BeFalse();
+         [PCT] public void inside_the_unit_of_work_getting_the_vocab_for_update_found_nothing() => _insideGettingTheVocabForUpdateFoundIt.Must().BeFalse();
+         [PCT] public void inside_the_unit_of_work_every_user_was_none() => _insideEveryUser.Must().BeEmpty();
+         [PCT] public void inside_the_unit_of_work_every_vocab_was_none() => _insideEveryVocab.Must().BeEmpty();
+         [PCT] public void the_reader_gets_no_user() => Reader.TryGet(_userId, out User? _).Must().BeFalse();
+         [PCT] public void the_reader_gets_no_vocab() => Reader.TryGet(_vocabId, out StoredVocab? _).Must().BeFalse();
+         [PCT] public void getting_the_user_throws() => Invoking(() => Reader.Get<User>(_userId)).Must().Throw<Exception>();
+         [PCT] public void the_bulk_reader_gives_no_user() => BulkReader.All<User>().Must().BeEmpty();
+         [PCT] public void the_bulk_reader_gives_no_vocab() => BulkReader.All<StoredVocab>().Must().BeEmpty();
+         [PCT] public void the_tevent_store_keeps_the_users_history_ending_with_the_deleted_tevent() => TeventStoreReader.GetHistory(_userId).Select(it => it.Tevent.GetType().Name).Must().SequenceEqual([nameof(UserRegistered), nameof(UserDeleted)]);
+         [PCT] public void the_tevent_store_gives_the_users_version_before_the_deletion() => TeventStoreReader.GetReadonlyCopyOfVersion<User>(_userId, 1).Email.Must().Be("registered@example.com");
+      }
+
+      public class and_a_second_unit_of_work_deletes_both_and_then_fails : after_one_unit_of_work_saves_a_user_and_a_vocab
+      {
+         public and_a_second_unit_of_work_deletes_both_and_then_fails() =>
+            Invoking(() => InUnitOfWork(taggregates =>
+            {
+               taggregates.GetForUpdate<User>(_userId).Delete();
+               taggregates.GetForUpdate<StoredVocab>(_vocabId).Delete();
+               throw new InvalidOperationException("The unit of work fails.");
+            })).Must().Throw<InvalidOperationException>();
+
+         [PCT] public void the_reader_still_gets_the_user() => Reader.Get<User>(_userId).Email.Must().Be("registered@example.com");
+         [PCT] public void the_reader_still_gets_the_vocab() => Reader.Get<StoredVocab>(_vocabId).Question.Must().Be("taberu");
+         [PCT] public void the_tevent_store_keeps_the_users_history_without_the_deleted_tevent() => TeventStoreReader.GetHistory(_userId).Select(it => it.Tevent.GetType().Name).Must().SequenceEqual([nameof(UserRegistered)]);
+      }
+
+      public class and_a_second_unit_of_work_deletes_the_user_and_then_changes_its_email : after_one_unit_of_work_saves_a_user_and_a_vocab
+      {
+         readonly Exception _exception;
+
+         public and_a_second_unit_of_work_deletes_the_user_and_then_changes_its_email() =>
+            _exception = Invoking(() => InUnitOfWork(taggregates =>
+            {
+               var user = taggregates.GetForUpdate<User>(_userId);
+               user.Delete();
+               user.ChangeEmail("changed@example.com");
+            })).Must().Throw<Exception>().Which;
+
+         [PCT] public void the_exception_names_the_user_and_the_tevent() => _exception.Message.Must().Satisfy(it => it.Contains(_userId.ToString(), StringComparison.Ordinal) && it.Contains(nameof(UserChangedEmail), StringComparison.Ordinal));
+         [PCT] public void the_reader_gets_the_user_as_it_was() => Reader.Get<User>(_userId).Email.Must().Be("registered@example.com");
+      }
+
+      public class and_a_second_unit_of_work_deletes_the_vocab_and_then_changes_its_meaning : after_one_unit_of_work_saves_a_user_and_a_vocab
+      {
+         readonly Exception _exception;
+
+         public and_a_second_unit_of_work_deletes_the_vocab_and_then_changes_its_meaning() =>
+            _exception = Invoking(() => InUnitOfWork(taggregates =>
+            {
+               var vocab = taggregates.GetForUpdate<StoredVocab>(_vocabId);
+               vocab.Delete();
+               vocab.ChangeMeaning("to eat");
+            })).Must().Throw<Exception>().Which;
+
+         [PCT] public void the_exception_names_the_vocab_and_the_tevent() => _exception.Message.Must().Satisfy(it => it.Contains(_vocabId.ToString(), StringComparison.Ordinal) && it.Contains(nameof(StoredVocabMeaningChanged), StringComparison.Ordinal));
+         [PCT] public void the_reader_gets_the_vocab_as_it_was() => Reader.Get<StoredVocab>(_vocabId).Question.Must().Be("taberu");
       }
 
       public class and_a_second_unit_of_work_changes_both : after_one_unit_of_work_saves_a_user_and_a_vocab

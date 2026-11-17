@@ -15,12 +15,14 @@ namespace Compze.Teventive.TeventStore._private;
 ///<summary>The tevent store as one of a container's taggregate stores: it keeps each taggregate as its history, in the<br/>
 /// <see cref="ITeventStore"/>, and builds an instance from that history whenever one is asked for. What one unit of work changes is<br/>
 /// in its <see cref="TeventStoreSession"/>.</summary>
+///<remarks>A deleted taggregate's history is kept, ending with its <see cref="ITaggregateDeletedTevent"/>, and is no taggregate: it is<br/>
+/// neither got nor in <see cref="All{TTaggregate}"/>.</remarks>
 sealed class TaggregateTeventStore : ITaggregateStore
 {
    readonly TaggregateUnitsOfWork _unitsOfWork;
    readonly IReadOnlyDictionary<Type, Type> _teventsByClass;
 
-   internal TaggregateTeventStore(ITeventStore teventStore, TaggregateUnitsOfWork unitsOfWork, IReadOnlyList<Type> taggregateClasses)
+   internal TaggregateTeventStore(TeventStore teventStore, TaggregateUnitsOfWork unitsOfWork, IReadOnlyList<Type> taggregateClasses)
    {
       TeventStore = teventStore;
       _unitsOfWork = unitsOfWork;
@@ -32,15 +34,15 @@ sealed class TaggregateTeventStore : ITaggregateStore
 
    public IReadOnlyList<Type> TaggregateClasses { get; }
 
-   internal ITeventStore TeventStore { get; }
+   internal TeventStore TeventStore { get; }
 
    ///<summary>Inside a unit of work that holds the taggregate, its instance. Otherwise one built from its history, read only.</summary>
    public bool TryGet<TTaggregate>(TaggregateId id, [NotNullWhen(true)] out TTaggregate? taggregate) where TTaggregate : class, ITaggregate
    {
       if(AmbientSession is {} session && session.TryGetHeld(id, out var held))
       {
-         taggregate = AsRequested<TTaggregate>(held);
-         return true;
+         taggregate = held == null ? null : AsRequested<TTaggregate>(held);
+         return taggregate != null;
       }
 
       taggregate = ReadOnlyInstanceFrom<TTaggregate>(TeventStore.GetTaggregateHistory(id));
@@ -50,18 +52,22 @@ sealed class TaggregateTeventStore : ITaggregateStore
    public ITaggregateReference<TTaggregate> Reference<TTaggregate>(TaggregateId id) where TTaggregate : class, ITaggregate =>
       new TaggregateReference<TTaggregate>(this, _unitsOfWork, id);
 
-   ///<summary>The histories whose creation tevent is a tevent of the class, read through the ambient transaction. The tevent store writes<br/>
-   /// a unit of work's tevents at each publish, and deletes a taggregate's history at once, so a unit of work sees its own saves and<br/>
+   ///<summary>The histories whose creation tevent is a tevent of the class, but for the deleted ones, read through the ambient<br/>
+   /// transaction. The tevent store writes a unit of work's tevents at each publish, so a unit of work sees its own saves and<br/>
    /// deletions.</summary>
-   public IReadOnlyCollection<ITaggregateReference<TTaggregate>> All<TTaggregate>() where TTaggregate : class, ITaggregate =>
-      [..TeventStore.StreamTaggregateIdsInCreationOrder(TeventsTellingApartTheHistoriesOf(ClassToBuildAs(typeof(TTaggregate))))
-                    .Select(Reference<TTaggregate>)];
+   public IReadOnlyCollection<ITaggregateReference<TTaggregate>> All<TTaggregate>() where TTaggregate : class, ITaggregate
+   {
+      var deleted = TeventStore.IdsOfDeletedTaggregates();
+      return [..TeventStore.StreamTaggregateIdsInCreationOrder(TeventsTellingApartTheHistoriesOf(ClassToBuildAs(typeof(TTaggregate))))
+                           .Where(id => !deleted.Contains(id))
+                           .Select(Reference<TTaggregate>)];
+   }
 
    public ITaggregateStoreSession NewSession(TaggregateUnitOfWork unitOfWork) => new TeventStoreSession(this, unitOfWork);
 
    ///<summary>The taggregate <paramref name="history"/> is the history of, as a <typeparamref name="TTaggregate"/>, read only. Null if<br/>
-   /// the history is empty, since the store holds no such taggregate.</summary>
-   internal TTaggregate? ReadOnlyInstanceFrom<TTaggregate>(IEnumerable<ITaggregateTevent<ITaggregateTeventWithIdentity>> history) where TTaggregate : class, ITaggregate
+   /// the history is empty or ends with a deletion, since the store then holds no such taggregate.</summary>
+   TTaggregate? ReadOnlyInstanceFrom<TTaggregate>(IReadOnlyList<ITaggregateTevent<ITaggregateTeventWithIdentity>> history) where TTaggregate : class, ITaggregate
    {
       var taggregate = InstanceFrom<TTaggregate>(history);
       if(taggregate != null) ((ITaggregateStoreInternals)taggregate).MakeReadOnly();
@@ -69,14 +75,24 @@ sealed class TaggregateTeventStore : ITaggregateStore
    }
 
    ///<summary>The taggregate <paramref name="history"/> is the history of, as a <typeparamref name="TTaggregate"/>, which may be changed.<br/>
-   /// Null if the history is empty, since the store holds no such taggregate.</summary>
-   internal TTaggregate? InstanceFrom<TTaggregate>(IEnumerable<ITaggregateTevent<ITaggregateTeventWithIdentity>> history) where TTaggregate : class, ITaggregate
-   {
-      var tevents = history.ToList();
-      if(tevents.None()) return null;
+   /// Null if the history is empty or ends with a deletion, since the store then holds no such taggregate.</summary>
+   internal TTaggregate? InstanceFrom<TTaggregate>(IReadOnlyList<ITaggregateTevent<ITaggregateTeventWithIdentity>> history) where TTaggregate : class, ITaggregate =>
+      history.None() || history[^1].Tevent is ITaggregateDeletedTevent ? null : Built<TTaggregate>(history);
 
+   ///<summary>The taggregate as it was after the tevents of <paramref name="history"/>, a deletion included, read only: a version of<br/>
+   /// it, for a reader of its history.</summary>
+   internal TTaggregate ReadOnlyVersionFrom<TTaggregate>(IReadOnlyList<ITaggregateTevent<ITaggregateTeventWithIdentity>> history) where TTaggregate : class, ITaggregate
+   {
+      State.Assert(history.Any(), () => "A version of a taggregate is built from one tevent of its history at least.");
+      var taggregate = Built<TTaggregate>(history);
+      ((ITaggregateStoreInternals)taggregate).MakeReadOnly();
+      return taggregate;
+   }
+
+   TTaggregate Built<TTaggregate>(IReadOnlyList<ITaggregateTevent<ITaggregateTeventWithIdentity>> history) where TTaggregate : class, ITaggregate
+   {
       var taggregate = (TTaggregate)Constructor.CreateInstance(ClassToBuildAs(typeof(TTaggregate)));
-      taggregate.LoadFromHistory(tevents);
+      taggregate.LoadFromHistory(history);
       return taggregate;
    }
 

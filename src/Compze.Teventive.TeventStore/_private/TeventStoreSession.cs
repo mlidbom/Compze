@@ -14,12 +14,14 @@ namespace Compze.Teventive.TeventStore._private;
 ///<summary>The tevent store's part of one unit of work: the taggregates it got for update or saved, each built from its history once<br/>
 /// for the unit of work. Each tevent they publish is written to the tevent store as its taggregate hands it out, inside the unit of<br/>
 /// work's transaction, and then dispatched. The database commits or rolls back the writes with the transaction, so this session has<br/>
-/// nothing to prepare or commit itself.</summary>
+/// nothing to prepare or commit itself. A taggregate that publishes an <see cref="ITaggregateDeletedTevent"/> is deleted: its history,<br/>
+/// which ends with that tevent, is kept, and the unit of work no longer finds it.</summary>
 sealed class TeventStoreSession : ITaggregateStoreSession
 {
    readonly TaggregateTeventStore _store;
    readonly TaggregateUnitOfWork _unitOfWork;
    readonly Dictionary<TaggregateId, ITaggregate> _heldTaggregates = new();
+   readonly HashSet<TaggregateId> _deletedTaggregates = [];
    readonly List<IDisposable> _teventStreamSubscriptions = [];
 
    internal TeventStoreSession(TaggregateTeventStore store, TaggregateUnitOfWork unitOfWork)
@@ -28,14 +30,20 @@ sealed class TeventStoreSession : ITaggregateStoreSession
       _unitOfWork = unitOfWork;
    }
 
-   internal bool TryGetHeld(TaggregateId id, [NotNullWhen(true)] out ITaggregate? held) => _heldTaggregates.TryGetValue(id, out held);
+   ///<summary>Whether this unit of work holds the taggregate <paramref name="id"/>, and if so its instance, or null when it is deleted.</summary>
+   internal bool TryGetHeld(TaggregateId id, out ITaggregate? held)
+   {
+      var holds = _heldTaggregates.TryGetValue(id, out held);
+      if(_deletedTaggregates.Contains(id)) held = null;
+      return holds;
+   }
 
    public bool TryGetForUpdate<TTaggregate>(TaggregateId id, [NotNullWhen(true)] out TTaggregate? taggregate) where TTaggregate : class, ITaggregate
    {
-      if(_heldTaggregates.TryGetValue(id, out var held))
+      if(TryGetHeld(id, out var held))
       {
-         taggregate = TaggregateTeventStore.AsRequested<TTaggregate>(held);
-         return true;
+         taggregate = held == null ? null : TaggregateTeventStore.AsRequested<TTaggregate>(held);
+         return taggregate != null;
       }
 
       //Read with the database's update lock, which the transaction holds until it completes.
@@ -67,12 +75,6 @@ sealed class TeventStoreSession : ITaggregateStoreSession
       FollowTheTeventStreamOf(taggregate);
    }
 
-   public void Delete<TTaggregate>(TaggregateId id) where TTaggregate : class, ITaggregate
-   {
-      _store.TeventStore.DeleteTaggregate(id);
-      _heldTaggregates.Remove(id);
-   }
-
    ///<summary>Writes and dispatches each tevent <paramref name="taggregate"/> publishes from now on, as it hands it out.</summary>
    void FollowTheTeventStreamOf(ITaggregate taggregate) =>
       _teventStreamSubscriptions.Add(taggregate.TeventStream.Subscribe(tevent => WriteAndDispatch([WithIdentity(tevent)])));
@@ -80,7 +82,11 @@ sealed class TeventStoreSession : ITaggregateStoreSession
    void WriteAndDispatch(IReadOnlyList<ITaggregateTevent<ITaggregateTeventWithIdentity>> tevents)
    {
       _store.TeventStore.SaveSingleTaggregateTevents(tevents);
-      foreach(var tevent in tevents) _unitOfWork.Dispatch(tevent);
+      foreach(var tevent in tevents)
+      {
+         if(tevent.Tevent is ITaggregateDeletedTevent) _deletedTaggregates.Add(tevent.Tevent.TaggregateId);
+         _unitOfWork.Dispatch(tevent);
+      }
    }
 
    static List<ITaggregateTevent<ITaggregateTeventWithIdentity>> TakeTheUncommittedTeventsOf(ITaggregate taggregate)
