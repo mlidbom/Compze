@@ -13,8 +13,8 @@ namespace Compze.Teventive.StateStore._private;
 
 ///<summary>The state store's part of one unit of work: the private copies of the taggregates it got for update, the new ones it<br/>
 /// saved, the ones it deleted, and the locks of all of them. The tevents the copies publish go to the unit of work, which dispatches<br/>
-/// them when its transaction prepares. Then this session prepares the storage's write and the indexes' changes, and at the commit it<br/>
-/// makes the copies the committed instances.</summary>
+/// them as each publish cascade ends, inside the transaction. When the transaction prepares, this session prepares the storage's<br/>
+/// write and the indexes' changes, and at the commit it makes the copies the committed instances.</summary>
 sealed class StateStoreSession : ITaggregateStoreSession
 {
    readonly TaggregateStateStore _store;
