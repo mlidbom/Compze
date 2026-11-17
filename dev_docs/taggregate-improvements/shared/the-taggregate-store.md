@@ -555,7 +555,7 @@ a lookup inside a unit of work that rolls back gives the discarded copy.
   waiting for their observers; the broader name holds if other things are ever in flight (Magnus, 2026-11-17: "Who knows
   one day there might be other things in flight.").
 - **`TaggregateToDelete`'s constructor is public** (6767165c2), as `TaggregateSnapshot`'s is, so a storage's own
-  specifications can make one.
+  specifications can make one. Moot since c5c910e06: the seam is internal, and `TaggregateToDelete` is gone.
 - **Not in Compze, for now:** `Edit` and `ForUpdate` from an instance. `Edit` decides where units of work begin, which is
   an application's policy, and an instance-based `ForUpdate` would invite holding instances. JAStudio keeps it as its
   own; after the migration it is a candidate for the naming and API pass.
@@ -1196,6 +1196,20 @@ files.ReadAllText(path); files.WriteAllText(path, json); files.Delete(path); fil
     the cache.
   - **"A second load reads no unchanged file" is pinned on the disk only:** in memory, a specification can't keep a
     file's time while changing it, so it can't tell a cached snapshot from a read one. The code path is the same.
+- **The seam made internal (c5c910e06),** once JAStudio no longer used it (JAStudio 062e9bfff):
+  - `ITaggregateStorage`, `IPreparedWrite` and `TaggregateSnapshot` are in `Compze.Teventive.StateStore._private.Storage`,
+    with `NoStorage`; no other library uses them, so `_private`. Both `StoredIn` overloads are gone.
+  - **`TaggregateToDelete` is gone too:** with no consumer's storage to describe a deletion to, only its id was read, so
+    the storage takes the deleted ids.
+  - **Every specification of the seam is said through the public API, so no `InternalSpecifications` project was
+    needed.** The old storage's specifications are now `Given_a_state_store_whose_files_hold_a_vocab_and_a_sentence`, on
+    the files in memory: another program's changes are files written or deleted behind the store, and what the old
+    storage recorded of each write is what the files hold. A store that writes only what changed leaves a file another
+    program rewrote as that program wrote it. The failure to prepare a write is a real disk's, in
+    `Given_a_state_store_kept_in_files`: a file stands where the store's own folder goes. 81 specifications before, 82
+    after: the discarded write's became two, the file as before and no temporary file left.
+  - **What can no longer be specified:** a storage that hands back the snapshots it was given, the trap d248ebd66 fixed.
+    Only Compze's own storages exist now, so it can't be built from outside.
 
 ### Noticed, for later
 
