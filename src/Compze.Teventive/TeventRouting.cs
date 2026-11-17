@@ -1,7 +1,6 @@
 using Compze.Contracts;
 using System.Collections.Concurrent;
 using System.Reflection;
-using Compze.Abstractions;
 using Compze.Tessaging.TessageTypes;
 using Compze.Teventive._private;
 using Compze.Teventive.Taggregates.BaseClasses;
@@ -15,7 +14,15 @@ namespace Compze.Teventive;
 ///<remarks>A prototype (taggregate-experiments-opus): it replaces the per-instance <see cref="IMutableTeventDispatcher{TTevent}"/>s of<br/>
 /// <see cref="Taggregates.BaseClasses.Taggregate{TTaggregate,TTaggregateTevent,TTaggregateTeventImplementation,TWrapperTeventInterface,TWrapperTeventImplementation}"/><br/>
 /// and <see cref="TeventiveComponent{TParent,TParentTevent,TParentTeventImplementation,TComponent,TComponentTevent,TComponentTeventImplementation}"/><br/>
-/// for the classes that declare one. See dev_docs/taggregate-improvements/opus on the taggregate-improvements branch.</remarks>
+/// for the classes that declare one. See dev_docs/taggregate-improvements/opus on the taggregate-improvements branch.<br/>
+/// urgent: the order in which a tevent reaches the routes it matches is a guarantee Compze maintains (Magnus, 2026-11-17): one after<br/>
+/// another, in the order declared, a base class's routes before a subclass's. Make sure every public description of routing states<br/>
+/// it: the published docs under Compze.Teventive/Taggregates/_docs, which don't describe per-class routing yet (introduction.md<br/>
+/// states the order for handlers registered per instance; step 3 of the spike rewrites reusable-components.md), and the doc comments<br/>
+/// of <see cref="TeventRouting{TInstance}.DeclareAppliers"/>, <see cref="TeventRouting{TInstance}.DeclareHandlers"/>,<br/>
+/// <see cref="TeventRouting{TInstance}.Extend{TSubclass}"/> and <see cref="TeventRouting{TInstance}.Declaration.For{TTevent}"/>.<br/>
+/// <see cref="TeventRouting{TInstance}.Declaration"/>'s remarks state it, and<br/>
+/// <c>Given_a_vocab_note_whose_classes_declare_their_tevent_routing</c> specifies it.</remarks>
 public abstract class TeventRouting
 {
    ///<summary>Calls, in declaration order, every route of this class that matches <paramref name="wrapped"/>'s wrapper type, on <paramref name="instance"/>.</summary>
@@ -97,6 +104,9 @@ public sealed class TeventRouting<TInstance> : TeventRouting where TInstance : c
    bool MayGoUnhandled(Type wrapperTeventType) => _routesTeventHandlers || _wrapperTypesThatMayGoUnhandled.Any(it => it.IsAssignableFrom(wrapperTeventType));
 
    ///<summary>What a class's routing is declared through: its appliers or tevent handlers, and the routes to the components it owns.</summary>
+   ///<remarks>A tevent reaches every route it matches, one after another, in the order they were declared: a base class's routes first,<br/>
+   /// as <see cref="TeventRouting{TInstance}.Extend{TSubclass}"/> adds a subclass's after them. So an applier may rely on those declared before<br/>
+   /// it having applied the same tevent.</remarks>
    public sealed class Declaration
    {
       readonly bool _routesTeventHandlers;

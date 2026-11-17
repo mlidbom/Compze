@@ -107,6 +107,7 @@ class Note : Taggregate<Note, INoteTevent, NoteTevent, INoteTevent<INoteTevent>,
    protected static readonly TeventRouting<Note> NoteAppliers = TeventRouting<Note>.DeclareAppliers(it => it
      .For<INoteTevent.Created>(static (_, _) => {})
      .For<INoteTevent.Renamed>(static (note, tevent) => note.Name = tevent.Name)
+     .For<INoteTevent.Renamed>(static (note, _) => note.NameAsTheLaterRenamedApplierFoundIt = note.Name)
      .IgnoreUnhandled<INoteTevent.Archived>());
 
    TeventRouting ITeventRouted.TeventAppliers => NoteAppliers;
@@ -114,6 +115,9 @@ class Note : Taggregate<Note, INoteTevent, NoteTevent, INoteTevent<INoteTevent>,
    protected Note() {}
 
    public string Name { get; private set; } = "";
+
+   ///<summary>The name as the second applier of a renaming found it: the new name, if the first, declared before it, ran first.</summary>
+   public string NameAsTheLaterRenamedApplierFoundIt { get; private set; } = "";
 
    public void Rename(string name) => Publish(new NoteTevent.Renamed(name));
 
@@ -126,6 +130,7 @@ class Note : Taggregate<Note, INoteTevent, NoteTevent, INoteTevent<INoteTevent>,
 class VocabNote : Note, ITeventRouted
 {
    static readonly TeventRouting<VocabNote> VocabNoteAppliers = NoteAppliers.Extend<VocabNote>(it => it
+     .For<INoteTevent.Renamed>(static (vocab, _) => vocab.QuestionAsTheVocabsRenamedApplierFoundIt = vocab.Question)
      .Component(static vocab => vocab.Forms)
      .Entities(static vocab => vocab._senses)
      .SharedTomponent(static vocab => vocab._audioSlot));
@@ -156,6 +161,9 @@ class VocabNote : Note, ITeventRouted
 
    ///<summary>A member only a vocab has, for the component to read through its typed parent.</summary>
    public string Question => $"{Name}?";
+
+   ///<summary>The question as the vocab's own applier of a renaming found it: the new name's, if the note's appliers ran first.</summary>
+   public string QuestionAsTheVocabsRenamedApplierFoundIt { get; private set; } = "";
 
    public static VocabNote Create()
    {

@@ -25,6 +25,8 @@ public class Given_a_vocab_note_whose_classes_declare_their_tevent_routing
       }
 
       [XF] public void the_name_is_applied_by_the_routing_the_vocab_inherits_from_the_note() => _vocab.Name.Must().Be("taberu");
+      [XF] public void of_two_appliers_of_the_renaming_the_one_declared_later_ran_after_the_one_declared_before_it() => _vocab.NameAsTheLaterRenamedApplierFoundIt.Must().Be("taberu");
+      [XF] public void the_vocabs_own_applier_of_the_renaming_ran_after_those_of_the_note_whose_routing_it_extends() => _vocab.QuestionAsTheVocabsRenamedApplierFoundIt.Must().Be("taberu?");
       [XF] public void the_forms_are_applied_by_the_components_own_routing() => _vocab.Forms.All.Must().SequenceEqual(["食べる", "たべる"]);
       [XF] public void the_components_applier_reads_a_member_only_the_vocab_has_through_its_typed_parent() => _vocab.Forms.Summary.Must().Be("taberu? 食べる,たべる");
       [XF] public void the_components_own_tevent_handler_published_the_count_of_the_forms() => _vocab.Forms.Count.Must().Be(2);
