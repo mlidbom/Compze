@@ -89,6 +89,14 @@ the rest of this document:
 - **Specifications, across two endpoints:** a runtime observer in one endpoint observes a tevent published in the other,
   of a declared type, and stops when disposed; one registered before the publish observes it however soon the publish
   follows; a runtime observer of an undeclared type is refused; `AtRuntime` in a runtime registration fails.
+- **Built as specified (92baea8eb),** the suite green on the local MsSql combination, 4437 passing. How: the declared
+  type joins the roster's subscribed tevent types, the set an endpoint advertises to its peers, exactly as an observer's
+  subscription does, so nothing new was needed in routing or on the wire; the roster also keeps the declared types, which
+  `ObserveTevents` checks each runtime observer against. Specified across two exactly-once endpoints with a best-effort
+  tevent, Deskmancer's kind: the observing endpoint declares only `AtRuntime<IMyBestEffortTevent>()`, so the tevent
+  reaching it at all shows the declaration routes it; the observer is created and the tevent published with no wait
+  between. The refusals are specified in a plain container, since the check doesn't depend on the composition. The
+  runtime observation specs declare what they observe.
 
 ## Unit-of-work batches
 
