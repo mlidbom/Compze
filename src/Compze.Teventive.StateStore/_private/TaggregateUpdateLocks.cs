@@ -7,7 +7,9 @@ namespace Compze.Teventive.StateStore._private;
 /// wait for the first to complete. Only the locks held or waited for are kept, not one for each taggregate of the store.</summary>
 ///<remarks>A lock is held from a unit of work's first get for update until its transaction completes, possibly on another thread,<br/>
 /// so it is a <see cref="SemaphoreSlim"/>, the tool the locking standard gives that job.<br/>
-/// A Compze lock owned by a transaction, whose timeout names the transaction holding it and where it took it, would be better.</remarks>
+/// todo: (Magnus, 2026-11-17) replace it with a Compze.Threading lock owned by a transaction, whose timeout names the transaction<br/>
+/// holding it and where it took the lock, as the other Compze.Threading locks' timeouts do. An effort of its own after the spike;<br/>
+/// until then the 30-second wait and its TimeoutException naming the taggregate stay as they are.</remarks>
 sealed class TaggregateUpdateLocks
 {
    static readonly TimeSpan Timeout = TimeSpan.FromSeconds(30);
