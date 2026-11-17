@@ -3,6 +3,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using Compze.Contracts;
 using Compze.Internals.SystemCE;
+using Compze.Teventive.Taggregates.BaseClasses._private;
 
 namespace Compze.Teventive.Taggregates._private;
 
@@ -44,6 +45,12 @@ sealed class TaggregateStateComparison
       }
 
       if(original is Delegate) return; //Delegates aren't state.
+
+      if(original is IEntityCollectionState originalEntities)
+      {
+         Compare(originalEntities.EntitiesWithTheirIdsInCreationOrder, ((IEntityCollectionState)copy).EntitiesWithTheirIdsInCreationOrder, path);
+         return;
+      }
 
       if(IsCreatedOnFirstRead(original.GetType()))
       {

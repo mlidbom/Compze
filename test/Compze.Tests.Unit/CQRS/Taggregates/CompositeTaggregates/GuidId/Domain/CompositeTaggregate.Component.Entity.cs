@@ -30,6 +30,9 @@ partial class Component
         public Entity(Component parent) : base(parent) {}
 
         public void Rename(string name) => Publish(new CompositeTaggregateTevent.Component.Entity.Renamed(name));
+
+        internal NamedEntitySnapshot TakeSnapshot() => new(Id, Name);
+        internal void RestoreFrom(NamedEntitySnapshot snapshot) => Name = snapshot.Name;
         public void Remove() => Publish(new CompositeTaggregateTevent.Component.Entity.Removed());
     }
 }

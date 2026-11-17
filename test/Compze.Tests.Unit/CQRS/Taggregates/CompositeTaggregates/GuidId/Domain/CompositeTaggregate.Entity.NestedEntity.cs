@@ -31,5 +31,8 @@ namespace Compze.Tests.Unit.CQRS.Taggregates.CompositeTaggregates.GuidId.Domain;
 
         public void Rename(string name) => Publish(new CompositeTaggregateTevent.Entity.NestedEntity.Renamed(name: name));
         public void Remove() => Publish(new CompositeTaggregateTevent.Entity.NestedEntity.Removed());
+
+        internal NamedEntitySnapshot TakeSnapshot() => new(Id, Name);
+        internal void RestoreFrom(NamedEntitySnapshot snapshot) => Name = snapshot.Name;
     }
 }

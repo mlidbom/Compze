@@ -23,6 +23,17 @@ class EntityCollection<TEntity, TEntityId> : IReadOnlyEntityCollection<TEntity, 
       _entitiesInCreationOrder.Remove(toRemove);
    }
 
+   ///<summary>Each entity, paired with its id, in the order the entities were created.</summary>
+   internal IReadOnlyList<KeyValuePair<TEntityId, TEntity>> InCreationOrderWithTheirIds
+   {
+      get
+      {
+         var idOf = new Dictionary<TEntity, TEntityId>(ReferenceEqualityComparer.Instance);
+         foreach(var (id, entity) in _entities) idOf.Add(entity, id);
+         return [.._entitiesInCreationOrder.Select(entity => new KeyValuePair<TEntityId, TEntity>(idOf[entity], entity))];
+      }
+   }
+
    public void Add(TEntity entity, TEntityId id)
    {
       _entities.Add(id, entity);

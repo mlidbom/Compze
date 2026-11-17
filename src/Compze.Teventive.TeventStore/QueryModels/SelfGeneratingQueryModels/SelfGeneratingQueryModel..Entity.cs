@@ -57,9 +57,9 @@ public abstract partial class SelfGeneratingQueryModel<TQueryModel, TTaggregateT
 
          public IReadOnlyEntityCollection<TEntity, TEntityId> Entities => ManagedEntities;
 
-         internal override TEntityId IdOf(TEntityTevent tevent) => IdGetter.GetId(tevent);
-         internal override bool Creates(TEntityTevent tevent) => tevent is TEntityCreatedTevent;
-         internal override TEntity CreateEntity() => Constructor.For<TEntity>.DefaultConstructor.Instance();
+         protected override TEntityId IdOf(TEntityTevent tevent) => IdGetter.GetId(tevent);
+         protected override bool Creates(TEntityTevent tevent) => tevent is TEntityCreatedTevent;
+         protected override TEntity CreateEntity() => Constructor.For<TEntity>.DefaultConstructor.Instance();
       }
    }
 }

@@ -32,6 +32,16 @@ partial class Component : CompositeTaggregate.Component<Component, ICompositeTag
     public IReadOnlyEntityCollection<Entity, Guid> Entities => _entities.Entities;
     public IReadOnlyEntityCollection<NonRemovableEntity, Guid> NonRemovableEntities => _nonRemovableEntities.Entities;
     public void Rename(string name) => Publish(new CompositeTaggregateTevent.Component.Renamed(name));
+
+    internal ComponentSnapshot TakeSnapshot() => new(Name, [..Entities.Select(it => it.TakeSnapshot())], [..NonRemovableEntities.Select(it => it.TakeSnapshot())], CComponent.Name);
+
+    internal void RestoreFrom(ComponentSnapshot snapshot)
+    {
+        Name = snapshot.Name;
+        foreach(var entity in snapshot.Entities) _entities.AddRestored(entity.Id).RestoreFrom(entity);
+        foreach(var entity in snapshot.NonRemovableEntities) _nonRemovableEntities.AddRestored(entity.Id).RestoreFrom(entity);
+        CComponent.RestoreFrom(snapshot.NestedComponentName);
+    }
     public Component.Entity AddEntity(string name, Guid id) => _entities.AddByPublishing(new CompositeTaggregateTevent.Component.Entity.Created(id, name));
     public Component.NonRemovableEntity AddNonRemovableEntity(string name, Guid id) => _nonRemovableEntities.AddByPublishing(new CompositeTaggregateTevent.Component.NonRemovableEntity.Created(id, name));
 }

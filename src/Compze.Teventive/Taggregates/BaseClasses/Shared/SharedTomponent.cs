@@ -1,4 +1,5 @@
 using Compze.Contracts;
+using Compze.Teventive.Taggregates.BaseClasses._private;
 using Compze.Teventive.Taggregates.BaseClasses.Shared._private;
 using Compze.Tessaging.TessageTypes;
 
@@ -46,6 +47,9 @@ public abstract class SharedTomponent<TTomponentTevent> : ISharedTomponentIntern
    protected static TeventRouting<TTomponent, TTomponentTevent> DeclareAppliers<TTomponent>(Action<TeventRouting<TTomponent, TTomponentTevent>.Declaration> declare)
       where TTomponent : SharedTomponent<TTomponentTevent> =>
       TeventRouting<TTomponent, TTomponentTevent>.DeclareAppliers(declare);
+
+   ///<summary>Whether the taggregate this tomponent is in is being restored from a snapshot, as its owner tells.</summary>
+   private protected bool ItsTaggregateIsBeingRestored => ((ITeventiveInATaggregate)_owner).ItsTaggregateIsBeingRestored;
 
    ///<summary>Whether this tomponent was constructed with <paramref name="slot"/>: what a slot's route asserts of the tomponent it gets from an owner.</summary>
    internal bool IsIn(ISharedTomponentSlotOfAClass<TTomponentTevent> slot) => ReferenceEquals(_slot, slot);

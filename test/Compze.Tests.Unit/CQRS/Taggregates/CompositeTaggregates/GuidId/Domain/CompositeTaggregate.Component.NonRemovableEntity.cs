@@ -29,5 +29,8 @@ partial class Component
         public NonRemovableEntity(Component parent) : base(parent) {}
 
         public void Rename(string name) => Publish(new CompositeTaggregateTevent.Component.NonRemovableEntity.Renamed(name));
+
+        internal NamedEntitySnapshot TakeSnapshot() => new(Id, Name);
+        internal void RestoreFrom(NamedEntitySnapshot snapshot) => Name = snapshot.Name;
     }
 }

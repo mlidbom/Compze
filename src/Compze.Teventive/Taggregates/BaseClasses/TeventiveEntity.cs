@@ -5,6 +5,7 @@ using Compze.Teventive._private.Implementation;
 using Compze.Teventive.Taggregates.Tevents;
 using JetBrains.Annotations;
 using Compze.Teventive.Taggregates.BaseClasses._internal;
+using Compze.Teventive.Taggregates.BaseClasses._private;
 
 namespace Compze.Teventive.Taggregates.BaseClasses;
 
@@ -82,13 +83,23 @@ public abstract class Tentity<TParent,
          TeventRouting.AssertRoutesToAPart<TTentityTevent>(parent, this);
       }
 
-      internal override TTentityId IdOf(TTentityTevent tevent) => IdGetter.GetId(tevent);
-      internal override bool Creates(TTentityTevent tevent) => tevent is TTentityCreatedTevent;
+      protected override TTentityId IdOf(TTentityTevent tevent) => IdGetter.GetId(tevent);
+      protected override bool Creates(TTentityTevent tevent) => tevent is TTentityCreatedTevent;
 
       ///<summary>A new entity of the parent. It applies its created tevent itself, which gives it its id.</summary>
-      internal override TTentity CreateEntity() => Constructor.For<TTentity>.WithArguments<TParent>.Instance(_parent);
+      protected override TTentity CreateEntity() => Constructor.For<TTentity>.WithArguments<TParent>.Instance(_parent);
 
       public IReadOnlyEntityCollection<TTentity, TTentityId> Entities => ManagedEntities;
+
+      public TTentity AddRestored(TTentityId id)
+      {
+         State.Assert(((ITeventiveInATaggregate)_parent).ItsTaggregateIsBeingRestored,
+                      () => $"A {typeof(TTentity).Name} is added without its created tevent only while its taggregate is being restored from a snapshot: from RestoreIdentity until its first publish. Add it by publishing its created tevent, with {nameof(AddByPublishing)}.");
+         var entity = CreateEntity();
+         entity._id = id;
+         ManagedEntities.Add(entity, id);
+         return entity;
+      }
 
       public TTentity AddByPublishing<TCreationTevent>(TCreationTevent creationTevent) where TCreationTevent : TTentityTeventImplementation, TTentityCreatedTevent
       {

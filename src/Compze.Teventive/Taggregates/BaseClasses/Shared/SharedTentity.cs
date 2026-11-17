@@ -67,6 +67,9 @@ public abstract class SharedTentity<TTentity, TTentityId, TTentityTevent, TTenti
 #pragma warning restore CS0618
    }
 
+   ///<summary>Gives this new tentity, being restored with its owner from a snapshot, its id, as its created tevent would.</summary>
+   internal void RestoreId(TTentityId id) => _id = id;
+
    ///<summary>Applies a tevent the collection routes to this tentity, still in its slot's adopting wrapper tevent.</summary>
    internal void ApplyAdopted(IPublisherTevent<TTentityTevent> adopted) => TeventAppliers._assert().NotNull().Dispatch(this, adopted);
 }

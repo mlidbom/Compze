@@ -1,5 +1,6 @@
 using Compze.Abstractions;
 using Compze.Teventive;
+using Compze.Teventive.Taggregates;
 using Compze.Teventive.Taggregates.BaseClasses;
 using Compze.Teventive.Taggregates.Tevents;
 
@@ -20,12 +21,20 @@ class AnimalTaggregate : Taggregate<AnimalTaggregate, IAnimalTevent, AnimalTeven
 
    protected AnimalTaggregate() {}
 
-   public DateTime TimeOfBirth { get; private set; }
+   DateTime TimeOfBirth { get; set; }
 
    protected void RegisterBirthProtected() => Publish(new AnimalTevent.Born(new TaggregateId()));
+
+   protected AnimalSnapshot TakeAnimalSnapshot() => new(Id, TimeOfBirth);
+
+   protected void RestoreAnimalFrom(AnimalSnapshot snapshot)
+   {
+      RestoreIdentity(snapshot.Id);
+      TimeOfBirth = snapshot.TimeOfBirth;
+   }
 }
 
-class CatTaggregate : AnimalTaggregate, ITeventRouted
+class CatTaggregate : AnimalTaggregate, ITeventRouted, ISnapshotable<CatTaggregate, AnimalSnapshot>
 {
    static readonly TeventRouting<CatTaggregate, IAnimalTevent> CatAppliers = AnimalAppliers.Extend<CatTaggregate>(_ => {});
 
@@ -40,6 +49,12 @@ class CatTaggregate : AnimalTaggregate, ITeventRouted
       cat.RegisterBirthProtected();
       return cat;
    }
+
+   ///<summary>A new, empty instance, to restore from a snapshot.</summary>
+   internal static CatTaggregate Empty() => new();
+
+   public AnimalSnapshot TakeSnapshot() => TakeAnimalSnapshot();
+   public void RestoreFrom(AnimalSnapshot snapshot) => RestoreAnimalFrom(snapshot);
 }
 
 class DogTaggregate : AnimalTaggregate, ITeventRouted

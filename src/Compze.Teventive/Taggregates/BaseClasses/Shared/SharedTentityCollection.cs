@@ -1,7 +1,9 @@
 using System.Collections;
 using Compze.Internals.SystemCE.ReflectionCE;
 using Compze.Tessaging.TessageTypes;
+using Compze.Contracts;
 using Compze.Teventive.Taggregates.BaseClasses._internal;
+using Compze.Teventive.Taggregates.BaseClasses._private;
 
 namespace Compze.Teventive.Taggregates.BaseClasses.Shared;
 
@@ -9,7 +11,7 @@ namespace Compze.Teventive.Taggregates.BaseClasses.Shared;
 /// a <see cref="SharedTomponent{TTomponentTevent}"/>: it occupies one slot of its owner's class, so every tentity in it publishes through the same adopting<br/>
 /// wrapper tevent type. It routes what its slot delivers itself: a <typeparamref name="TTentityCreatedTevent"/> creates and adds a new tentity, and every<br/>
 /// tevent reaches the tentity whose <see cref="ISharedTentityTevent{TTentityId}.EntityId"/> it carries - during live publishing and history replay alike.</summary>
-public sealed class SharedTentityCollection<TTentity, TTentityId, TTentityTevent, TTentityCreatedTevent> : SharedTomponent<TTentityTevent>, IEnumerable<TTentity>
+public sealed class SharedTentityCollection<TTentity, TTentityId, TTentityTevent, TTentityCreatedTevent> : SharedTomponent<TTentityTevent>, IEnumerable<TTentity>, IEntityCollectionState
    where TTentity : SharedTentity<TTentity, TTentityId, TTentityTevent, TTentityCreatedTevent>
    where TTentityId : struct
    where TTentityTevent : class, ISharedTentityTevent<TTentityId>
@@ -29,6 +31,22 @@ public sealed class SharedTentityCollection<TTentity, TTentityId, TTentityTevent
       Publish(creationTevent);
       return _entities.InCreationOrder[^1];
    }
+
+   ///<summary>Adds a new tentity with the id <paramref name="id"/>, publishing nothing, for the restore of its owner's taggregate from a snapshot to give<br/>
+   /// the rest of its state. Only while the taggregate is being restored: from its <c>RestoreIdentity</c> until its first publish. At any other time a<br/>
+   /// tentity is added by publishing its created tevent, with <see cref="AddByPublishing"/>.</summary>
+   ///<remarks>review-naming: a placeholder (jastudio-rep-opus, 2026-11-18), as on the entity collections.</remarks>
+   public TTentity AddRestored(TTentityId id)
+   {
+      State.Assert(ItsTaggregateIsBeingRestored,
+                   () => $"A {typeof(TTentity).Name} is added without its created tevent only while its owner's taggregate is being restored from a snapshot: from RestoreIdentity until its first publish. Add it by publishing its created tevent, with {nameof(AddByPublishing)}.");
+      var tentity = CreateTentity();
+      tentity.RestoreId(id);
+      _entities.Add(tentity, id);
+      return tentity;
+   }
+
+   IEnumerable IEntityCollectionState.EntitiesWithTheirIdsInCreationOrder => _entities.InCreationOrderWithTheirIds;
 
    private protected override void ApplyAdopted(IPublisherTevent<TTentityTevent> adopted)
    {

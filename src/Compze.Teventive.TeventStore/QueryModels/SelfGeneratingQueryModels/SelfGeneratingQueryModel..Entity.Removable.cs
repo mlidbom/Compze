@@ -31,7 +31,7 @@ public abstract partial class SelfGeneratingQueryModel<TQueryModel, TTaggregateT
 
       new class CollectionManager(ITeventRouted parent) : Entity<TEntity, TEntityId, TEntityTevent, TEntityCreatedTevent, TTeventEntityIdGetter>.CollectionManager(parent)
       {
-         internal override bool Removes(TEntityTevent tevent) => tevent is TEntityRemovedTevent;
+         protected override bool Removes(TEntityTevent tevent) => tevent is TEntityRemovedTevent;
       }
    }
 }

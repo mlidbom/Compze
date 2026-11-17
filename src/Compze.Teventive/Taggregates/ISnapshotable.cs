@@ -13,10 +13,8 @@ namespace Compze.Teventive.Taggregates;
 /// then takes a snapshot holding the change, so a store finds nothing changed to write, and the committed instance isn't read only<br/>
 /// through it. State that is shared belongs in a taggregate of its own, referred to by id, or is changed by a tevent on each<br/>
 /// taggregate that holds it. A round trip through the snapshot can't catch this: the copy refers to the same object.</remarks>
-///<remarks>bug: a taggregate with entities or shared tentities can't implement <see cref="RestoreFrom"/>: their collections, Tentity's and<br/>
-/// SharedTentityCollection, add an entity only by publishing its created tevent, and an instance being restored publishes nothing. So<br/>
-/// refactoring a part of a taggregate into entities makes it unusable with a state store (Magnus, 2026-11-17: "fixing a broken one").<br/>
-/// Next after the spike's end review: dev_docs/taggregate-improvements/shared/README.md, "Soon, after the end review".</remarks>
+///<remarks>A collection of entities, or of shared tentities, is restored by adding each entity with its collection's <c>AddRestored</c>, which<br/>
+/// gives it its id and publishes nothing, and then giving it the rest of its state, as a component is given its.</remarks>
 public interface ISnapshotable<TSelf, TSnapshot> where TSelf : ISnapshotable<TSelf, TSnapshot>
 {
    ///<summary>The taggregate's whole state, as it is now.</summary>

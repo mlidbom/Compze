@@ -22,5 +22,7 @@ partial class Component
         public string Name { get; private set; } = string.Empty;
 
         public void Rename(string name) => Publish(new CompositeTaggregateTevent.Component.NestedComponent.Renamed(name));
+
+        internal void RestoreFrom(string name) => Name = name;
     }
 }

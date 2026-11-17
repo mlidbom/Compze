@@ -58,4 +58,12 @@ class ChecklistItem : SharedTentity<ChecklistItem, ChecklistItemId, IChecklistIt
    public bool IsCompleted { get; private set; }
 
    public void Complete() => Publish(new ChecklistItemTevent.Completed(Id));
+
+   internal ChecklistItemSnapshot TakeSnapshot() => new(Id, Title, IsCompleted);
+
+   internal void RestoreFrom(ChecklistItemSnapshot snapshot)
+   {
+      Title = snapshot.Title;
+      IsCompleted = snapshot.IsCompleted;
+   }
 }

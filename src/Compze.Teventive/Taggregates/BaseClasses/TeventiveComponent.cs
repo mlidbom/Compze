@@ -1,6 +1,7 @@
 using Compze.Tessaging.TessageTypes;
 using Compze.Contracts;
 using Compze.Teventive._private.Implementation;
+using Compze.Teventive.Taggregates.BaseClasses._private;
 using Compze.Teventive.Taggregates.Tevents;
 
 namespace Compze.Teventive.Taggregates.BaseClasses;
@@ -11,7 +12,7 @@ public abstract class TeventiveComponent<TParent,
                                         TComponent,
                                         TComponentTevent,
                                         TComponentTeventImplementation>
-    : TeventApplyingComponent<TComponent, TComponentTevent>, ITeventiveInternals<TComponentTevent, TComponentTeventImplementation>
+    : TeventApplyingComponent<TComponent, TComponentTevent>, ITeventiveInternals<TComponentTevent, TComponentTeventImplementation>, ITeventiveInATaggregate
     where TParent : ITeventiveInternals<TParentTevent, TParentTeventImplementation>
     where TParentTevent : class, ITaggregateTevent
     where TParentTeventImplementation : TaggregateTevent, TParentTevent
@@ -26,6 +27,8 @@ public abstract class TeventiveComponent<TParent,
 #pragma warning disable CA1033 //These method should NOT clutter the public interface of this class they are unsafe.
     void ITeventiveInternals<TComponentTevent, TComponentTeventImplementation>.PublishInternal(TComponentTeventImplementation tevent) => Publish(tevent);
 #pragma warning restore CA1033 //These method should NOT clutter the public interface of this class they are unsafe.
+
+    bool ITeventiveInATaggregate.ItsTaggregateIsBeingRestored => ((ITeventiveInATaggregate)_parent).ItsTaggregateIsBeingRestored;
 
     ///<summary>A component, or an entity, of <paramref name="parent"/>, whose routing is asserted to route this component's tevents to a part.</summary>
     protected TeventiveComponent(TParent parent) : base(parent) => _parent = parent;

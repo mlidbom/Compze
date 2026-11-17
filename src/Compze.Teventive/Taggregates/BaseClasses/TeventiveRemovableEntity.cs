@@ -45,6 +45,6 @@ public abstract class TeventiveRemovableEntity<TParent,
     {
         public CollectionManager(TParent parent): base(parent) {}
 
-        internal override bool Removes(TEntityTevent tevent) => tevent is TEntityRemovedTevent;
+        protected override bool Removes(TEntityTevent tevent) => tevent is TEntityRemovedTevent;
     }
 }

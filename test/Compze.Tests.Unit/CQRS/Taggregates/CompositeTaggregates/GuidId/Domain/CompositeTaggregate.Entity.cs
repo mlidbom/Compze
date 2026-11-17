@@ -33,6 +33,14 @@ partial class RemovableEntity :
     public void Rename(string name) => Publish(new CompositeTaggregateTevent.Entity.Renamed(name));
     public void Remove() => Publish(new CompositeTaggregateTevent.Entity.Removed());
 
+    internal EntitySnapshot TakeSnapshot() => new(Id, Name, [..Entities.Select(it => it.TakeSnapshot())]);
+
+    internal void RestoreFrom(EntitySnapshot snapshot)
+    {
+        Name = snapshot.Name;
+        foreach(var entity in snapshot.NestedEntities) _entities.AddRestored(entity.Id).RestoreFrom(entity);
+    }
+
     public RemovableNestedEntity AddEntity(string name, Guid id)
         => _entities.AddByPublishing(new CompositeTaggregateTevent.Entity.NestedEntity.Created(id: id, name: name));
 }

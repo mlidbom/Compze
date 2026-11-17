@@ -5,6 +5,7 @@ using Compze.Internals.SystemCE.ReactiveCE;
 using Compze.Tessaging.TessageTypes;
 using Compze.Teventive._internal;
 using Compze.Teventive._private.Implementation;
+using Compze.Teventive.Taggregates.BaseClasses._private;
 using Compze.Teventive.Taggregates.Tevents;
 
 namespace Compze.Teventive.Taggregates.BaseClasses;
@@ -13,7 +14,8 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
    TeventApplyingRoot<TTaggregate, TTaggregateTevent>,
    ITaggregate<TTaggregateTevent>,
    ITeventiveInternals<TTaggregateTevent, TTaggregateTeventImplementation>,
-   ITaggregateStoreInternals
+   ITaggregateStoreInternals,
+   ITeventiveInATaggregate
    where TWrapperTeventImplementation : TWrapperTeventInterface
    where TWrapperTeventInterface : ITaggregateTevent<TTaggregateTevent>
    where TTaggregate : Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeventImplementation, TWrapperTeventInterface, TWrapperTeventImplementation>
@@ -43,6 +45,9 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
    int _reentrancyLevel;
    bool _applyingTevents;
    bool _isReadOnly;
+
+   ///<summary>Whether this instance is being restored from a snapshot: from <see cref="RestoreIdentity"/> until its first publish.</summary>
+   bool _isBeingRestored;
    bool _aPublishHasFailed;
 
    ///<summary>Whether this taggregate has published, or been loaded with, a tevent that deletes it, an <see cref="ITaggregateDeletedTevent"/>.</summary>
@@ -83,7 +88,8 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
    }
 
    ///<summary>Gives a new, empty instance, being restored from a snapshot of a taggregate's state, the taggregate's id. The<br/>
-   /// restoring code calls it first, before it sets any other state. A restored taggregate exists, so its version is at least 1.</summary>
+   /// restoring code calls it first, before it sets any other state. A restored taggregate exists, so its version is at least 1.<br/>
+   /// From then until its first publish, its entity collections take restored entities, through <c>AddRestored</c>.</summary>
    protected void RestoreIdentity(TaggregateId id)
    {
       State.Assert(Version == 0, () => $"{nameof(RestoreIdentity)} restores a new, empty instance, and this {GetType().Name} has version {Version}.");
@@ -91,11 +97,13 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
       base.Id = id;
 #pragma warning restore CS0618 // Type or member is obsolete
       Version = 1;
+      _isBeingRestored = true;
    }
 
    TTevent PublishCore<TTevent>(TTevent tevent) where TTevent : TTaggregateTeventImplementation
    {
       State.Assert(!_applyingTevents, () => "You cannot raise tevents from within tevent appliers");
+      _isBeingRestored = false;
       State.Assert(!_isDeleted, () => $"{GetType().Name} {Id} is deleted: it has published an {nameof(ITaggregateDeletedTevent)}, so it can publish nothing more, such as {tevent.GetType().FullName}.");
 
       var wrapped = WrapTevent(tevent);
@@ -171,6 +179,7 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
    void ITeventiveInternals<TTaggregateTevent, TTaggregateTeventImplementation>.PublishInternal(TTaggregateTeventImplementation theTevent) => Publish(theTevent);
 
    void ITaggregateStoreInternals.MakeReadOnly() => _isReadOnly = true;
+   bool ITeventiveInATaggregate.ItsTaggregateIsBeingRestored => _isBeingRestored && !_isReadOnly;
    bool ITaggregateStoreInternals.APublishHasFailed => _aPublishHasFailed;
    void ITaggregateStoreInternals.ContinueVersion(int version) => Version = version;
 
