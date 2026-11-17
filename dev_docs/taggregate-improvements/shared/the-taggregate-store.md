@@ -1123,6 +1123,22 @@ it went beyond the specification:
   worktree there a second time, and wrote references into the other checkout into about 130 csproj files, in both
   checkouts. Reverted, and excluded in `FlexRef.config.xml`.
 
+### JAStudio on the MemoryPack cache: measured
+
+JAStudio runs on the cache (JAStudio 819834ea4, against 962a05221), all its suites green. Its start, measured by
+taggregates-opus as before, with other processes at 0.5 to 0.8 cores of 32:
+
+| Start | Seconds |
+|---|---|
+| From the cache | 3.95, 4.06, 4.13 |
+| From `snapshot.bin`, before | 4.01, 4.16, 4.45 |
+| The start that wrote the cache, from warm files | 10.09 (other processes at 1.6 cores) |
+
+Cold with the cache wasn't measured: emptying the system's file cache takes administrator rights. It reads what
+`snapshot.bin`'s start read: 80 MB of MemoryPack across the three classes, against 74 MB, plus the folder listings.
+JAStudio's own `JsonFilesystemObjectRepository` and `snapshot.bin` are gone; the corpus's `.gitignore` gets
+`/.state-store/` in their place when JAStudio's branch is merged.
+
 ### Not yet decided: the storage for consumers' specifications
 
 JAStudio's specifications, run on `StoredInFiles` with a fresh folder each, took 150 to 186 s against 56 to 59 s in
