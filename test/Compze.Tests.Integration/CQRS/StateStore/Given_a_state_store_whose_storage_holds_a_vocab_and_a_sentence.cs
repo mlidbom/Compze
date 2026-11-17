@@ -135,6 +135,19 @@ public class Given_a_state_store_whose_storage_holds_a_vocab_and_a_sentence : Un
 
       [PCT] public void the_storage_holds_the_new_meaning() => Storage.StoredVocabs.Select(it => it.Meaning).Must().SequenceEqual(["to dine"]);
       [PCT] public void the_storage_was_asked_to_write_the_vocab_and_delete_nothing() => Storage.Writes.Must().SequenceEqual(["committed: save StoredVocab"]);
+
+      public class and_the_store_reloads_from_the_storage_which_kept_the_snapshot_it_was_given : after_a_unit_of_work_changes_the_vocabs_meaning
+      {
+         readonly StoredVocab _committedBeforeTheReload;
+
+         public and_the_store_reloads_from_the_storage_which_kept_the_snapshot_it_was_given()
+         {
+            _committedBeforeTheReload = CommittedVocab;
+            StateStore.ReloadFromStorage();
+         }
+
+         [PCT] public void the_reader_gets_a_vocab_restored_from_the_snapshot_not_the_instance_committed_before() => CommittedVocab.Must().NotReferenceEqual(_committedBeforeTheReload);
+      }
    }
 
    public class after_a_unit_of_work_saves_a_new_vocab : Given_a_state_store_whose_storage_holds_a_vocab_and_a_sentence

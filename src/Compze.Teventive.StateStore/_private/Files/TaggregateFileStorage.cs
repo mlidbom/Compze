@@ -43,7 +43,7 @@ sealed class TaggregateFileStorage : ITaggregateStorage
       try
       {
          foreach(var saved in toSave)
-            write.Save(saved.Id.Value, _classes[saved.TaggregateClass].FileOf(saved.Taggregate!), JsonSerializer.Serialize(saved.Snapshot, _classes[saved.TaggregateClass].TaggregateClass.SnapshotType, _options));
+            write.Save(saved.Id.Value, _classes[saved.TaggregateClass].FileOf(saved.TaggregateToWrite!), JsonSerializer.Serialize(saved.Snapshot, _classes[saved.TaggregateClass].TaggregateClass.SnapshotType, _options));
          foreach(var deleted in toDelete) write.Delete(deleted.Id.Value);
          return write;
       }
@@ -63,7 +63,7 @@ sealed class TaggregateFileStorage : ITaggregateStorage
          var snapshot = JsonSerializer.Deserialize(File.ReadAllText(file), files.TaggregateClass.SnapshotType, _options)
                      ?? throw new JsonException("The file holds null.");
          var taggregate = files.TaggregateClass.Restore(snapshot);
-         return new LoadedFile(file, new TaggregateSnapshot(files.TaggregateClass.Class, taggregate.Id, snapshot) { Taggregate = taggregate });
+         return new LoadedFile(file, new TaggregateSnapshot(files.TaggregateClass.Class, taggregate.Id, snapshot) { RestoredTaggregate = taggregate });
       }
       catch(Exception exception)
       {
@@ -75,6 +75,6 @@ sealed class TaggregateFileStorage : ITaggregateStorage
    {
       internal string File { get; } = file;
       internal TaggregateSnapshot Snapshot { get; } = snapshot;
-      internal ITaggregate? Taggregate => Snapshot.Taggregate;
+      internal ITaggregate? Taggregate => Snapshot.RestoredTaggregate;
    }
 }
