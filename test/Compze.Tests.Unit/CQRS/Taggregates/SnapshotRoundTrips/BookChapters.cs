@@ -6,7 +6,7 @@ namespace Compze.Tests.Unit.CQRS.Taggregates.SnapshotRoundTrips;
 ///<summary>A book's chapters: a component of the book, which holds a reference back to it.</summary>
 class BookChapters : TeventiveComponent<Book, IBookTevent, BookTevent, BookChapters, IBookTevent.OfTheChapters, BookTevent.OfTheChapters>, ITeventRouted
 {
-   static readonly TeventRouting<BookChapters> Appliers = TeventRouting<BookChapters>.DeclareAppliers(it => it
+   static readonly TeventRouting<BookChapters, IBookTevent.OfTheChapters> Appliers = DeclareAppliers(it => it
      .For<IBookTevent.OfTheChapters.Added>(static (chapters, tevent) => chapters._chapters.Add(tevent.Chapter)));
 
    TeventRouting ITeventRouted.TeventAppliers => Appliers;

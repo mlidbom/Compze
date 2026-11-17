@@ -8,7 +8,7 @@ namespace Compze.Teventive;
 /// A base class reading the routing through this interface then gets the most derived class's. The base classes implement it to<br/>
 /// return null, which means the class registers its appliers and tevent handlers per instance instead.<br/>
 /// A class that inherits a routing it doesn't declare for itself is refused when it is constructed: every class declares its own,<br/>
-/// extending its base class's with <see cref="TeventRouting{TInstance}.Extend{TSubclass}"/>.</remarks>
+/// extending its base class's with <see cref="TeventRouting{TInstance,TTevent}.Extend{TSubclass}"/>.</remarks>
 public interface ITeventRouted
 {
    ///<summary>The routing of the class's tevents to its tevent appliers, or null when the class registers them per instance.</summary>

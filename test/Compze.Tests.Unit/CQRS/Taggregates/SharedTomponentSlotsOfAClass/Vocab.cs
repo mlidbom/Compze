@@ -68,7 +68,7 @@ class Vocab : Taggregate<Vocab, IVocabTevent, VocabTevent, IVocabTevent<IVocabTe
          new(typeof(SeeAlsoTevent<>), static vocab => vocab.SeeAlso);
    }
 
-   static readonly TeventRouting<Vocab> Appliers = TeventRouting<Vocab>.DeclareAppliers(it => it
+   static readonly TeventRouting<Vocab, IVocabTevent> Appliers = DeclareAppliers(it => it
      .For<IVocabTevent.QuestionUpdated>(static (vocab, tevent) => vocab.Question = tevent.Question)
      .Component(static vocab => vocab.Related)
      .SharedTomponent(Slots.SeeAlso));
@@ -104,7 +104,7 @@ class Vocab : Taggregate<Vocab, IVocabTevent, VocabTevent, IVocabTevent<IVocabTe
 /// declared above its slots, which the nested class makes fine.</summary>
 class RelatedVocab : TeventiveComponent<Vocab, IVocabTevent, VocabTevent, RelatedVocab, IVocabTevent.Related, VocabTevent.Related>, ITeventRouted
 {
-   static readonly TeventRouting<RelatedVocab> Appliers = TeventRouting<RelatedVocab>.DeclareAppliers(it => it
+   static readonly TeventRouting<RelatedVocab, IVocabTevent.Related> Appliers = DeclareAppliers(it => it
      .SharedTomponent(Slots.Synonyms)
      .SharedTomponent(Slots.Antonyms));
 
@@ -132,7 +132,7 @@ class RelatedVocab : TeventiveComponent<Vocab, IVocabTevent, VocabTevent, Relate
 ///<summary>A shared tomponent that is constructed with a slot of its owner's class and that owner.</summary>
 class WordSet : SharedTomponent<IWordSetTevent>, ITeventRouted
 {
-   static readonly TeventRouting<WordSet> Appliers = TeventRouting<WordSet>.DeclareAppliers(it => it
+   static readonly TeventRouting<WordSet, IWordSetTevent> Appliers = DeclareAppliers<WordSet>(it => it
      .For<IWordSetTevent.Added>(static (words, tevent) => words._words.Add(tevent.Word)));
 
    TeventRouting ITeventRouted.TeventAppliers => Appliers;

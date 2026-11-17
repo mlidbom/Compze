@@ -9,7 +9,7 @@ namespace Compze.Tests.Unit.CQRS.Taggregates.SnapshotRoundTrips;
 ///<summary>A set of tags: a shared tomponent, in a slot that belongs to its owner's class.</summary>
 class TagSet : SharedTomponent<ITagSetTevent>, ITeventRouted
 {
-   static readonly TeventRouting<TagSet> Appliers = TeventRouting<TagSet>.DeclareAppliers(it => it
+   static readonly TeventRouting<TagSet, ITagSetTevent> Appliers = DeclareAppliers<TagSet>(it => it
      .For<ITagSetTevent.Added>(static (tags, tevent) => tags._tags.Add(tevent.Tag)));
 
    TeventRouting ITeventRouted.TeventAppliers => Appliers;

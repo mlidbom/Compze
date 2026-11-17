@@ -1,5 +1,4 @@
 using Compze.Must;
-using Compze.Teventive;
 using Compze.xUnitBDD;
 using static Compze.Must.MustActions;
 
@@ -21,14 +20,17 @@ public static class Declaring_tevent_routing
    public static class Extending_the_routing_of_a_class_that_is_not_the_direct_base_class
    {
       [XF] public static void throws_naming_the_direct_base_class() =>
-         Invoking(() => TeventRouting<Animal>.DeclareAppliers(_ => {}).Extend<Dog>(_ => {})).Must().Throw<ArgumentException>()
-                                                                                             .Which.Message.Must().Contain($"{typeof(Mammal).FullName} is");
+         Invoking(SkippingNote.ExtendTheNotesRoutingSkippingItsBaseClass).Must().Throw<ArgumentException>()
+                                                                     .Which.Message.Must().Contain($"{typeof(NoteBetween).FullName} is");
    }
 
    ///<summary>A note class that declares no routing of its own, and so inherits <see cref="Note"/>'s.</summary>
    class NoteWithoutARoutingOfItsOwn : Note;
 
-   abstract class Animal;
-   abstract class Mammal : Animal;
-   abstract class Dog : Mammal;
+   abstract class NoteBetween : Note;
+
+   abstract class SkippingNote : NoteBetween
+   {
+      internal static void ExtendTheNotesRoutingSkippingItsBaseClass() => NoteAppliers.Extend<SkippingNote>(_ => {});
+   }
 }

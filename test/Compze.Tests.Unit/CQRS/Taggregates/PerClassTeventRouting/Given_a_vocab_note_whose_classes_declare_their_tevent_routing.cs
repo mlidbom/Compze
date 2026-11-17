@@ -1,4 +1,3 @@
-using Compze.Contracts;
 using Compze.Contracts.Exceptions;
 using Compze.Must;
 using Compze.Teventive;
@@ -29,7 +28,7 @@ public class Given_a_vocab_note_whose_classes_declare_their_tevent_routing
       [XF] public void the_vocabs_own_applier_of_the_renaming_ran_after_those_of_the_note_whose_routing_it_extends() => _vocab.QuestionAsTheVocabsRenamedApplierFoundIt.Must().Be("taberu?");
       [XF] public void the_forms_are_applied_by_the_components_own_routing() => _vocab.Forms.All.Must().SequenceEqual(["食べる", "たべる"]);
       [XF] public void the_components_applier_reads_a_member_only_the_vocab_has_through_its_typed_parent() => _vocab.Forms.Summary.Must().Be("taberu? 食べる,たべる");
-      [XF] public void the_components_own_tevent_handler_published_the_count_of_the_forms() => _vocab.Forms.Count.Must().Be(2);
+      [XF] public void the_vocabs_tevent_handler_published_the_count_of_the_forms_through_the_component() => _vocab.Forms.Count.Must().Be(2);
       [XF] public void the_version_counts_the_created_renamed_updated_and_counted_tevents() => _vocab.Version.Must().Be(4);
       [XF] public void a_tevent_that_no_applier_handles_throws_TeventUnhandledException() => Invoking(() => _vocab.Forms.PublishATeventNoApplierHandles()).Must().Throw<TeventUnhandledException>();
 
@@ -96,15 +95,25 @@ public class Given_a_vocab_note_whose_classes_declare_their_tevent_routing
 
    public class a_routing_declaration
    {
-      [XF] public void with_a_handler_that_captures_a_local_throws() => Invoking(DeclareAHandlerThatCapturesALocal).Must().Throw<ArgumentAssertionFailedException>();
-      [XF] public void with_handlers_that_capture_nothing_is_accepted() => DeclareHandlersThatCaptureNothing().Must().NotBeNull();
+      [XF] public void with_a_handler_that_captures_a_local_throws() => Invoking(() => NoteDeclaringRoutings.DeclareAHandlerThatCapturesALocal()).Must().Throw<ArgumentAssertionFailedException>();
+      [XF] public void with_handlers_that_capture_nothing_is_accepted() => NoteDeclaringRoutings.DeclareHandlersThatCaptureNothing().Must().NotBeNull();
+      [XF] public void of_tevent_handlers_that_routes_to_a_component_throws() => Invoking(NoteDeclaringRoutings.DeclareTeventHandlersThatRouteToAComponent).Must().Throw<ArgumentAssertionFailedException>();
 
-      static void DeclareAHandlerThatCapturesALocal()
+      ///<summary>A note class, since a routing is declared through the base class of the class it routes.</summary>
+      abstract class NoteDeclaringRoutings : Note
       {
-         var namesRenamedTo = new List<string>();
-         TeventRouting<Note>.DeclareAppliers(it => it.For<INoteTevent.Renamed>((_, tevent) => namesRenamedTo.Add(tevent.Name)));
-      }
+         internal static List<string> DeclareAHandlerThatCapturesALocal()
+         {
+            var namesRenamedTo = new List<string>();
+            NoteAppliers.Extend<NoteDeclaringRoutings>(it => it.For<INoteTevent.Renamed>((_, tevent) => namesRenamedTo.Add(tevent.Name)));
+            return namesRenamedTo;
+         }
 
-      static TeventRouting<Note> DeclareHandlersThatCaptureNothing() => TeventRouting<Note>.DeclareAppliers(it => it.For<INoteTevent.Renamed>(static (_, _) => {}));
+         internal static TeventRouting<NoteDeclaringRoutings, INoteTevent> DeclareHandlersThatCaptureNothing() => NoteAppliers.Extend<NoteDeclaringRoutings>(it => it.For<INoteTevent.Renamed>(static (_, _) => {}));
+
+         internal static void DeclareTeventHandlersThatRouteToAComponent() => NoteHandlers.Extend<NoteDeclaringRoutings>(it => it.Component(static note => note.Forms));
+
+         protected abstract FormsComponent Forms { get; }
+      }
    }
 }

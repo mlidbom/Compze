@@ -8,6 +8,6 @@ namespace Compze.Teventive;
 /// What lets the parent's declaration infer the tevent type from what its lambda returns.</summary>
 public interface ITeventRoutedMember<TTevent> where TTevent : ITevent
 {
-   ///<summary>Dispatches <paramref name="wrapped"/> to this part's tevent appliers, or to its tevent handlers when <paramref name="toTeventHandlers"/> is true.</summary>
-   [Obsolete(ObsoleteMessage.ForInternalUseOnly)] void DispatchInternal(IPublisherTevent<ITevent> wrapped, bool toTeventHandlers);
+   ///<summary>Dispatches <paramref name="wrapped"/> to this part's tevent appliers.</summary>
+   [Obsolete(ObsoleteMessage.ForInternalUseOnly)] void DispatchInternal(IPublisherTevent<ITevent> wrapped);
 }

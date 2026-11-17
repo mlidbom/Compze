@@ -1,5 +1,4 @@
 using Compze.Abstractions;
-using Compze.Internals.SystemCE;
 using Compze.Teventive;
 using Compze.Teventive.Taggregates;
 using Compze.Teventive.Taggregates.BaseClasses;
@@ -17,7 +16,7 @@ class Book : Taggregate<Book, IBookTevent, BookTevent, IBookTevent<IBookTevent>,
          new(typeof(BookTagsTevent<>), static book => book.Tags);
    }
 
-   static readonly TeventRouting<Book> Appliers = TeventRouting<Book>.DeclareAppliers(it => it
+   static readonly TeventRouting<Book, IBookTevent> Appliers = DeclareAppliers(it => it
      .For<IBookTevent.Created>(static (book, tevent) =>
       {
          book.Title = tevent.Title;

@@ -47,6 +47,17 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
    ///<summary>The routing of this taggregate's class to its tevent handlers, when the class declares one, read through <see cref="ITeventRouted"/>.</summary>
    TeventRouting? TeventHandlers => ((ITeventRouted)this).TeventHandlers;
 
+   ///<summary>Declares the tevent appliers of <typeparamref name="TTaggregate"/>, for it to keep in a static field and return from its explicit<br/>
+   /// implementation of <see cref="ITeventRouted.TeventAppliers"/>. Every tevent the taggregate publishes or loads must reach at least one of them.<br/>
+   /// A subclass of <typeparamref name="TTaggregate"/> extends that routing with <see cref="TeventRouting{TInstance,TTevent}.Extend{TSubclass}"/>.</summary>
+   protected static TeventRouting<TTaggregate, TTaggregateTevent> DeclareAppliers(Action<TeventRouting<TTaggregate, TTaggregateTevent>.Declaration> declare) =>
+      TeventRouting<TTaggregate, TTaggregateTevent>.DeclareAppliers(declare);
+
+   ///<summary>Declares the tevent handlers of <typeparamref name="TTaggregate"/>, for it to keep in a static field and return from its explicit<br/>
+   /// implementation of <see cref="ITeventRouted.TeventHandlers"/>. They run after every applier has applied the tevent, and a tevent may reach none.</summary>
+   protected static TeventRouting<TTaggregate, TTaggregateTevent> DeclareHandlers(Action<TeventRouting<TTaggregate, TTaggregateTevent>.Declaration> declare) =>
+      TeventRouting<TTaggregate, TTaggregateTevent>.DeclareHandlers(declare);
+
    EntityId IEntity.Id => Id;
    public override TaggregateId Id => (TaggregateId)base.Id;
 

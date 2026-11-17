@@ -53,6 +53,12 @@ public abstract class SharedTomponent<TTomponentTevent> : ISharedTomponentIntern
    ///<summary>The routing of this tomponent's class to its tevent appliers, when the class declares one, read through <see cref="ITeventRouted"/>.</summary>
    TeventRouting? TeventAppliers => ((ITeventRouted)this).TeventAppliers;
 
+   ///<summary>Declares the tevent appliers of <typeparamref name="TTomponent"/>, the shared tomponent class calling it, for it to keep in a static field<br/>
+   /// and return from its explicit implementation of <see cref="ITeventRouted.TeventAppliers"/>. Every tevent the tomponent publishes must reach at least one of them.</summary>
+   protected static TeventRouting<TTomponent, TTomponentTevent> DeclareAppliers<TTomponent>(Action<TeventRouting<TTomponent, TTomponentTevent>.Declaration> declare)
+      where TTomponent : SharedTomponent<TTomponentTevent> =>
+      TeventRouting<TTomponent, TTomponentTevent>.DeclareAppliers(declare);
+
    protected ITeventSubscriber<TTomponentTevent> RegisterTeventAppliers()
    {
       State.Assert(TeventAppliers is null, () => $"{GetType()} declares its tevent appliers in a {nameof(TeventRouting)}, so it cannot also register appliers per instance.");

@@ -1,4 +1,3 @@
-using Compze.Abstractions;
 using Compze.Contracts;
 using Compze.Tessaging.TessageBus;
 using Compze.Tessaging.TessageTypes;
@@ -28,7 +27,7 @@ public readonly ref struct SharedTomponentSlotInAnOwner<TTomponentTevent>
 ///<remarks>Beside <see cref="SharedTomponentSlot{TOwnerTevent,TOwnerTeventImplementation,TTomponentTevent,TAdoptingWrapperTevent}"/>, which is an object<br/>
 /// for each owner. With the slot in a static field, a shared tomponent keeps its owner and its slot, and its owner keeps nothing for the slot.<br/>
 /// Built on the spike provisionally, from taggregate-experiments-fable-static-slots: see dev_docs/taggregate-improvements.</remarks>
-///<remarks>The class's <see cref="TeventRouting"/> enters the slot with <see cref="TeventRouting{TInstance}.Declaration.SharedTomponent{TOwnerTevent,TOwnerTeventImplementation,TTomponentTevent,TAdoptingWrapperTevent}"/>.<br/>
+///<remarks>The class's <see cref="TeventRouting"/> enters the slot with <see cref="TeventRouting{TInstance,TTevent}.Declaration.SharedTomponent{TOwnerTevent,TOwnerTeventImplementation,TTomponentTevent,TAdoptingWrapperTevent}"/>.<br/>
 /// Declare the slots in a nested static class, such as <c>Slots</c>: the runtime initializes a class's static fields before the first<br/>
 /// read of any of them, so the routing may be declared above or below the slots. Declared beside the routing in the owner's class<br/>
 /// itself, a slot must be above it, since static fields are initialized in the order written.</remarks>

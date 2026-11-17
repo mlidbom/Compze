@@ -90,11 +90,11 @@ public abstract class Tentity<TParent,
       ITeventiveInternals<TTentityTevent, TTentityTeventImplementation> GetEntityAsTeventiveInternals(TTentityTevent e) => ManagedEntities[IdGetter.GetId(e)];
 
       ///<summary>What the routing of a parent that declares it delivers: a created tevent adds the entity, and every tevent reaches the entity whose id it carries.</summary>
-      void ITeventRoutedMember<TTentityTevent>.DispatchInternal(IPublisherTevent<ITevent> wrapped, bool toTeventHandlers)
+      void ITeventRoutedMember<TTentityTevent>.DispatchInternal(IPublisherTevent<ITevent> wrapped)
       {
          var tevent = (TTentityTevent)wrapped.Tevent;
          var id = IdGetter.GetId(tevent);
-         if(!toTeventHandlers && tevent is TTentityCreatedTevent)
+         if(tevent is TTentityCreatedTevent)
          {
             var created = Constructor.For<TTentity>.WithArguments<TParent>.Instance(_parent);
             created._id = id;
@@ -102,7 +102,7 @@ public abstract class Tentity<TParent,
          }
 
 #pragma warning disable CS0618 // This is just the type of infrastructure code the member is for
-         ((ITeventRoutedMember<TTentityTevent>)ManagedEntities[id]).DispatchInternal(wrapped, toTeventHandlers);
+         ((ITeventRoutedMember<TTentityTevent>)ManagedEntities[id]).DispatchInternal(wrapped);
 #pragma warning restore CS0618
       }
 
