@@ -255,8 +255,9 @@ rebuilds unchanged (JAStudio 51df4cc89). Where it differs from the specification
 - **A snapshot can't restore entities or shared tentities.** Their collections add an entity only by publishing its
   created tevent, and a taggregate restored from a snapshot publishes nothing. So a snapshotable taggregate in the state
   store can't have entities today. Nobody needs it yet: JAStudio has none. When a consumer does, the collections need a
-  way to add a restored entity, which is public API. Not built, by the rule that the frameworks keep their public surface
-  minimal.
+  way to add a restored entity, which is public API. **Magnus, 2026-11-17:** any taggregate should be snapshottable, barring
+  something exceptional about it; deferred behind the end review, on the README's
+  [soon list](README.md#soon-after-the-end-review).
 - **CA1033 fires on a consumer's public, unsealed class that implements `ITeventRouted` explicitly,** as decided in item
   24. The docs had counted the cost on Compze's base classes only. Compze's own four public test taggregates are sealed
   now. A consumer's base class, such as JAStudio's `JPNote`, can't be. JAStudio doesn't see it only because it runs the

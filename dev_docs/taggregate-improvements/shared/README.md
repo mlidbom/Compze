@@ -292,6 +292,19 @@ The numbers: [what-was-measured.md](what-was-measured.md). The bugs and the smal
 - a stale doc comment;
 - the root README's claim that in-memory overhead is "entirely negligible".
 
+## Soon, after the end review
+
+- **Snapshots of taggregates of any shape, entities and shared tentities included.** Magnus, 2026-11-17: "we should be
+  able to use snapshotting with any taggregate barring something exceptional about it." Today a taggregate restored from
+  a snapshot can't have entities or shared tentities, since their collections add one only by publishing its created
+  tevent ([step 5, found while building](step-5-the-rest-of-the-teventives.md#found-while-building-for-magnus)). What it
+  needs:
+  - a way for a class's `RestoreFrom` to add a restored entity to `Tentity`'s collection, and a shared tentity to
+    `SharedTentityCollection`, with its id and without publishing: public API, specified before it's built;
+  - snapshot round-trip specifications (`SnapshotRoundTrip.AssertLosesNothing`) of the shapes Compze's specifications
+    already have: the composite taggregates (components, nested components, entities, removable and nested entities,
+    integer and Guid ids), the project with its checklist of shared tentities, and the inheriting animals.
+
 ## Where the work is
 
 These documents and a few todo comments are merged to Compze's `main`; no prototype is. The prototypes are
