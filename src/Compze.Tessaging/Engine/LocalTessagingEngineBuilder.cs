@@ -9,7 +9,8 @@ namespace Compze.Tessaging.Engine;
 /// one visible block; the declaration is the one and only way anything gets into the engine. Every registration surface follows<br/>
 /// one idiom: a builder method takes an <see cref="Action{T}"/> over a short-lived registrar and returns the builder, so<br/>
 /// declarations chain, and the registrar exists only inside its callback — the callback's end is the registration's end, the<br/>
-/// build closes the roster, and any attempt to register afterward explodes.</summary>
+/// build closes the roster, and any attempt to register afterward explodes. The one exception is observation:<br/>
+/// <see cref="ITeventObservation"/> creates observers at runtime, kept apart from the roster, which stays closed.</summary>
 ///<remarks>Type mappings are not declared here: a component declares the assemblies whose type identity it needs where it is<br/>
 /// registered, through <c>Registrar.RequireMappedTypesFromAssemblyContaining&lt;T&gt;()</c>. The same declaration block is the<br/>
 /// surface everywhere — a plain container (<see cref="LocalTessagingEngineRegistrar.LocalTessagingEngine"/>) or an endpoint —<br/>
@@ -44,7 +45,7 @@ public sealed class LocalTessagingEngineBuilder
    /// transaction-ignoring watch surface, under its own verb so the distinct semantics are visible at the declaration site.</summary>
    public LocalTessagingEngineBuilder ObserveTevents(Action<TeventObservationRegistrar> observe)
    {
-      var registrar = new TeventObservationRegistrar(HandlerRegistrations);
+      var registrar = new TeventObservationRegistrar(HandlerRegistrations.AddTeventObserver);
       observe(registrar);
       registrar.EndCallback();
       return this;

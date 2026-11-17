@@ -33,5 +33,29 @@ public static class TeventObservationRegistrarCE
                                                                                                                                                  where TDependency1 : class
                                                                                                                                                  where TDependency2 : class
          => @this.ForTevent<TTevent>((tevent, scope) => observer(tevent, scope.Resolve<TDependency1>(), scope.Resolve<TDependency2>()));
+
+      public TeventObservationRegistrar ForEachUnitOfWork<TTevent>(Action<IReadOnlyList<TTevent>> observer) where TTevent : ITevent
+         => @this.ForEachUnitOfWork<TTevent>((tevents, _) => observer(tevents));
+
+      public TeventObservationRegistrar ForEachUnitOfWork<TTevent>(Func<IReadOnlyList<TTevent>, Task> observer) where TTevent : ITevent
+         => @this.ForEachUnitOfWork<TTevent>((tevents, _) => observer(tevents));
+
+      public TeventObservationRegistrar ForEachUnitOfWork<TTevent, TDependency1>(Action<IReadOnlyList<TTevent>, TDependency1> observer) where TTevent : ITevent
+                                                                                                                                      where TDependency1 : class
+         => @this.ForEachUnitOfWork<TTevent>((tevents, scope) => observer(tevents, scope.Resolve<TDependency1>()));
+
+      public TeventObservationRegistrar ForEachUnitOfWork<TTevent, TDependency1>(Func<IReadOnlyList<TTevent>, TDependency1, Task> observer) where TTevent : ITevent
+                                                                                                                                          where TDependency1 : class
+         => @this.ForEachUnitOfWork<TTevent>((tevents, scope) => observer(tevents, scope.Resolve<TDependency1>()));
+
+      public TeventObservationRegistrar ForEachUnitOfWork<TTevent, TDependency1, TDependency2>(Action<IReadOnlyList<TTevent>, TDependency1, TDependency2> observer) where TTevent : ITevent
+                                                                                                                                                                  where TDependency1 : class
+                                                                                                                                                                  where TDependency2 : class
+         => @this.ForEachUnitOfWork<TTevent>((tevents, scope) => observer(tevents, scope.Resolve<TDependency1>(), scope.Resolve<TDependency2>()));
+
+      public TeventObservationRegistrar ForEachUnitOfWork<TTevent, TDependency1, TDependency2>(Func<IReadOnlyList<TTevent>, TDependency1, TDependency2, Task> observer) where TTevent : ITevent
+                                                                                                                                                                      where TDependency1 : class
+                                                                                                                                                                      where TDependency2 : class
+         => @this.ForEachUnitOfWork<TTevent>((tevents, scope) => observer(tevents, scope.Resolve<TDependency1>(), scope.Resolve<TDependency2>()));
    }
 }

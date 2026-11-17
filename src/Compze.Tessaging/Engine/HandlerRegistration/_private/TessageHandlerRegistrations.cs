@@ -49,22 +49,15 @@ sealed class TessageHandlerRegistrations
       _subscribedTeventTypes.Add(typeof(TTevent));
    });
 
-   ///<summary>Registers an observer for tevents compatible with <typeparamref name="TTevent"/> — observation, the deliberately<br/>
-   /// transaction-ignoring watch surface: committed facts only, dispatched off-thread by the engine's<br/>
-   /// <see cref="TeventObservationDispatcher"/>, never by the transactional pipelines. The same registration translation as<br/>
-   /// <see cref="AddTeventHandler{TTevent}"/> applies, and the subscribed type joins the advertised set exactly as a<br/>
-   /// participation subscription does: an observation-only subscription must still pull the tevent across the wire.</summary>
-   internal void AddTeventObserver<TTevent>(Func<TTevent, IScopeResolver, Task> observer) where TTevent : ITevent => _monitor.Locked(() =>
+   ///<summary>Registers <paramref name="observer"/> — observation, the deliberately transaction-ignoring watch surface: committed<br/>
+   /// facts only, dispatched off-thread by the engine's <see cref="TeventObservationDispatcher"/>, never by the transactional<br/>
+   /// pipelines. The subscribed type joins the advertised set exactly as a participation subscription does: an observation-only<br/>
+   /// subscription must still pull the tevent across the wire.</summary>
+   internal void AddTeventObserver(TeventObserverRegistration observer) => _monitor.Locked(() =>
    {
       AssertRosterIsNotYetBuilt();
-      TessageInspector.AssertValidForSubscription<TTevent>();
-
-      Func<ITevent, IScopeResolver, Task> deliver = typeof(TTevent).Is<IPublisherTevent<ITevent>>()
-                                                   ? (wrappedTevent, scope) => observer((TTevent)wrappedTevent, scope)
-                                                   : (wrappedTevent, scope) => observer((TTevent)((IPublisherTevent<ITevent>)wrappedTevent).Tevent, scope);
-
-      _teventObservers.Add(new TeventObserverRegistration(PublisherTevent.WrapperTypeMatchingAllWrappingsOf(typeof(TTevent)), deliver));
-      _subscribedTeventTypes.Add(typeof(TTevent));
+      _teventObservers.Add(observer);
+      _subscribedTeventTypes.Add(observer.SubscribedTeventType);
    });
 
    ///<summary>Registers the handler for <typeparamref name="TTommand"/> — a tommand whose type declares no result. The handler<br/>
