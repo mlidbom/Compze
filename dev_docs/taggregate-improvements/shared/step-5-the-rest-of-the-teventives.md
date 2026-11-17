@@ -221,7 +221,9 @@ Each builds clean, passes the full suite, and is pushed.
 
 Step 5 is built, in commits 37731c854 to 628f05c1e on `taggregate-store-spike`, each increment green on the full suite
 (4,510 passing at the end) and pushed. JAStudio moved to increment 2 the same day, with no change beyond the edit
-described in 1 and 2 (taggregates-opus, JAStudio 5c787c93c). Where it differs from the specification above:
+described in 1 and 2 (taggregates-opus, JAStudio 5c787c93c), and then to 628f05c1e with no change at all: neither new
+assertion fires, its 2,960 .NET specifications and pytest pass, and the real corpus of about 80,000 notes loads and
+rebuilds unchanged (JAStudio 51df4cc89). Where it differs from the specification above:
 
 - **Increment 1 was dropped.** The table's matching of `For` is the dispatcher's own rule, assignability to
   `IPublisherTevent<T>`: one line. The dispatcher's translation of an ignored wrapper type would be wrong in a table: there
@@ -257,8 +259,9 @@ described in 1 and 2 (taggregates-opus, JAStudio 5c787c93c). Where it differs fr
   minimal.
 - **CA1033 fires on a consumer's public, unsealed class that implements `ITeventRouted` explicitly,** as decided in item
   24. The docs had counted the cost on Compze's base classes only. Compze's own four public test taggregates are sealed
-  now. A consumer's base class, such as JAStudio's `JPNote`, can't be. For the end review, with the explicit interface's
-  shape.
+  now. A consumer's base class, such as JAStudio's `JPNote`, can't be. JAStudio doesn't see it only because it runs the
+  .NET analyzers in their default mode, where CA1033 is off; with it on, all 17 of its classes would report it, since
+  every one is public and unsealed (taggregates-opus). For the end review, with the explicit interface's shape.
 
 ## Not in step 5
 
