@@ -104,6 +104,18 @@ public class Given_a_state_store_kept_in_files : UniversalTestBase
          [PCT] public void it_has_the_vocab_with_its_question() => Reader.Get<StoredVocab>(VocabId).Question.Must().Be("taberu");
       }
 
+      ///<summary>The store started on an empty folder, so the vocab folder didn't exist when it first loaded.</summary>
+      public class and_the_store_reloads_from_its_files : after_a_unit_of_work_saves_a_vocab
+      {
+         readonly ReloadedTaggregates _reloaded;
+
+         public and_the_store_reloads_from_its_files() => _reloaded = Store.RootResolver.Resolve<IStateStore>().ReloadFromStorage();
+
+         [PCT] public void the_reload_reports_nothing_removed() => _reloaded.Removed.Must().BeEmpty();
+
+         [PCT] public void the_store_still_has_the_vocab() => Reader.Get<StoredVocab>(VocabId).Question.Must().Be("taberu");
+      }
+
       public class and_a_unit_of_work_changes_its_meaning : after_a_unit_of_work_saves_a_vocab
       {
          public and_a_unit_of_work_changes_its_meaning() => InUnitOfWork(taggregates => taggregates.GetForUpdate<StoredVocab>(VocabId).ChangeMeaning("to eat"));

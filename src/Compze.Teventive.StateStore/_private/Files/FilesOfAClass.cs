@@ -31,9 +31,11 @@ sealed class FilesOfAClass
       return file;
    }
 
-   ///<summary>Every file of the class: each .json file under its folder, at any depth.</summary>
+   ///<summary>Every file of the class: each .json file under its folder, at any depth, as the disk holds them now.</summary>
+   ///<remarks>Asks the disk by the folder's path: a <see cref="DirectoryInfo"/> keeps what it first learned of the folder, so the<br/>
+   /// folder a commit created after the store's first load would stay missing to it.</remarks>
    internal IEnumerable<string> Files() =>
-      Folder.Exists ? Directory.EnumerateFiles(Folder.FullName, $"*{FileExtension}", SearchOption.AllDirectories) : [];
+      Directory.Exists(Folder.FullName) ? Directory.EnumerateFiles(Folder.FullName, $"*{FileExtension}", SearchOption.AllDirectories) : [];
 
    bool IsUnderTheFolder(string file) => file.StartsWith(Path.TrimEndingDirectorySeparator(Folder.FullName) + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase);
 
