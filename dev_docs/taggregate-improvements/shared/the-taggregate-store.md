@@ -1142,10 +1142,16 @@ JAStudio's own `JsonFilesystemObjectRepository` and `snapshot.bin` are gone; the
 ### The storage for consumers' specifications: the JSON store with its files in memory, specified
 
 JAStudio's specifications, run on `StoredInFiles` with a fresh folder each, took 150 to 186 s against 56 to 59 s in
-memory (other processes at 2.6 to 3.9 cores against 1.2 to 1.4). Most start with about 900 notes, each created in its
-own unit of work, and each commit makes about five file operations. So JAStudio keeps its specifications on its own
+memory (other processes at 2.6 to 3.9 cores against 1.2 to 1.4). Most of the slowdown came from 74 of about 2,500
+specifications, which start with the specifications' full collection of 1,035 notes, built anew for each, each note
+added in a unit of work of its own: about 5,000 file operations each, since each commit makes about five. The other
+2,400 or so start with no notes and create the few they need. (Corrected by taggregates-opus, JAStudio a60ef2c23: it
+first said most start with about 900. The 230 parsing cases parse against the stripped-down corpus, files extracted
+from the real one, loaded once for all of them, as Magnus remembered.) So JAStudio keeps its specifications on its own
 in-memory storage, `NotesStoredInMemory`, and only those about files on files. That storage implements the seam, which
-is to go internal.
+is to go internal. taggregates-opus has proposed to Magnus preparing the full collection once per test process as
+files, which each specification then loads as a start does; with the files in memory, a specification can write them
+before the store's first use.
 
 Decided by Magnus, 2026-11-17: the JSON store with its files kept in memory. "Then go with that. We can always refactor
 if it turns out not to work well." (He also asked taggregates-opus how JAStudio's specifications get their notes: he
