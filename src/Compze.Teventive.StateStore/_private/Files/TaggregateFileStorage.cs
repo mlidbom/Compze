@@ -22,10 +22,14 @@ sealed class TaggregateFileStorage : ITaggregateStorage
    readonly JsonSerializerOptions _options;
    readonly IReadOnlyDictionary<Type, FilesOfAClass> _classes;
    readonly ITaggregateFilesLoadCache? _loadCache;
+   readonly IFileSystem _files;
    readonly IThreadShared<StoredFiles> _storedFiles = IThreadShared.New(new StoredFiles());
 
-   internal TaggregateFileStorage(DirectoryInfo folder, JsonSerializerOptions options, IEnumerable<FilesOfAClass> classes, ITaggregateFilesLoadCache? loadCache)
+   ///<summary>The storage in <paramref name="folder"/>, whose files are those of <paramref name="files"/>: the disk, or files kept in<br/>
+   /// memory for specifications.</summary>
+   internal TaggregateFileStorage(DirectoryInfo folder, JsonSerializerOptions options, IEnumerable<FilesOfAClass> classes, ITaggregateFilesLoadCache? loadCache, IFileSystem files)
    {
+      _files = files;
       _folder = Path.GetFullPath(folder.FullName);
       _ownFolder = Path.Combine(_folder, OwnFolderName);
       _options = options;
@@ -37,7 +41,7 @@ sealed class TaggregateFileStorage : ITaggregateStorage
    /// file unchanged, by reading the file otherwise.</summary>
    public IReadOnlyList<TaggregateSnapshot> LoadAll()
    {
-      CommitJournal.FinishInterruptedCommits(_folder, _ownFolder);
+      CommitJournal.FinishInterruptedCommits(_files, _folder, _ownFolder);
       var loaded = _classes.Values.SelectMany(LoadTheFilesOf).ToList();
       _storedFiles.Locked(it => it.ReplaceWith(loaded.Select(load => (load.Taggregate!.Id.Value, load.File.FullPath))));
       return [..loaded.Select(it => it.Snapshot)];
@@ -45,11 +49,11 @@ sealed class TaggregateFileStorage : ITaggregateStorage
 
    IReadOnlyList<LoadedFile> LoadTheFilesOf(FilesOfAClass files)
    {
-      if(_loadCache == null) return [..files.Files().Select(file => Load(files, file, cachedSnapshot: null))];
+      if(_loadCache == null) return [..files.Files(_files).Select(file => Load(files, file, cachedSnapshot: null))];
 
       var cacheFile = LoadCacheFileOf(files);
       var cached = OpenTheLoadCache(cacheFile, files);
-      var loaded = files.Files().Select(file => Load(files, file, cached.SnapshotOf(file))).ToList();
+      var loaded = files.Files(_files).Select(file => Load(files, file, cached.SnapshotOf(file))).ToList();
       if(cached.ContentAfter([..loaded.Select(it => new LoadedSnapshot(it.File, it.Snapshot.Snapshot))]) is {} content) WriteWhole(cacheFile, content);
       return loaded;
    }
@@ -58,7 +62,7 @@ sealed class TaggregateFileStorage : ITaggregateStorage
    {
       try
       {
-         return _loadCache!.Open(File.Exists(cacheFile) ? File.ReadAllBytes(cacheFile) : null, files.TaggregateClass.SnapshotType);
+         return _loadCache!.Open(_files.FileExists(cacheFile) ? _files.ReadAllBytes(cacheFile) : null, files.TaggregateClass.SnapshotType);
       }
       catch(Exception exception)
       {
@@ -72,17 +76,17 @@ sealed class TaggregateFileStorage : ITaggregateStorage
 
    ///<summary>Writes <paramref name="content"/> to <paramref name="file"/> whole: under a temporary name first, then renamed, so a crash<br/>
    /// leaves the file as it was or as it is to be. The start after a crash deletes the temporary file, as it deletes a commit's.</summary>
-   static void WriteWhole(string file, byte[] content)
+   void WriteWhole(string file, byte[] content)
    {
       var temporaryFile = file + CommitJournal.TemporaryFileExtension;
-      Directory.CreateDirectory(Path.GetDirectoryName(file)!);
-      File.WriteAllBytes(temporaryFile, content);
-      CommitJournal.RetriedWhileAnotherProgramHoldsTheFile(() => File.Move(temporaryFile, file, overwrite: true));
+      _files.CreateFolder(Path.GetDirectoryName(file)!);
+      _files.WriteAllBytes(temporaryFile, content);
+      CommitJournal.RetriedWhileAnotherProgramHoldsTheFile(() => _files.Move(temporaryFile, file, overwrite: true));
    }
 
    public IPreparedWrite Prepare(IReadOnlyList<TaggregateSnapshot> toSave, IReadOnlyList<TaggregateToDelete> toDelete)
    {
-      var write = new PreparedFileWrite(_folder, _ownFolder, _storedFiles);
+      var write = new PreparedFileWrite(_files, _folder, _ownFolder, _storedFiles);
       try
       {
          foreach(var saved in toSave)
@@ -105,7 +109,7 @@ sealed class TaggregateFileStorage : ITaggregateStorage
       try
       {
          var snapshot = cachedSnapshot
-                     ?? JsonSerializer.Deserialize(File.ReadAllText(file.FullPath), files.TaggregateClass.SnapshotType, _options)
+                     ?? JsonSerializer.Deserialize(_files.ReadAllText(file.FullPath), files.TaggregateClass.SnapshotType, _options)
                      ?? throw new JsonException("The file holds null.");
          var taggregate = files.TaggregateClass.Restore(snapshot);
          return new LoadedFile(file, new TaggregateSnapshot(files.TaggregateClass.Class, taggregate.Id, snapshot) { RestoredTaggregate = taggregate });

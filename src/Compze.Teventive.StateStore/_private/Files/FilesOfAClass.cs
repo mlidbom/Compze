@@ -36,14 +36,13 @@ sealed class FilesOfAClass
       return file;
    }
 
-   ///<summary>Every file of the class: each .json file under its folder, at any depth, as the disk holds them now, with the length<br/>
-   /// and last write time that listing the folder gives without opening the files.</summary>
-   ///<remarks>Asks the disk by the folder's path: a <see cref="DirectoryInfo"/> keeps what it first learned of the folder, so the<br/>
-   /// folder a commit created after the store's first load would stay missing to it.</remarks>
-   internal IReadOnlyList<ListedFile> Files() =>
-      Directory.Exists(Folder.FullName)
-         ? [..new DirectoryInfo(Folder.FullName).EnumerateFiles($"*{FileExtension}", SearchOption.AllDirectories)
-                                                .Select(it => new ListedFile(it.FullName, Path.GetRelativePath(Folder.FullName, it.FullName), it.Length, it.LastWriteTimeUtc))]
+   ///<summary>Every file of the class: each .json file under its folder, at any depth, as <paramref name="files"/> hold them now, with<br/>
+   /// the length and last write time that listing the folder gives without opening the files.</summary>
+   ///<remarks>Asks by the folder's path: a <see cref="DirectoryInfo"/> keeps what it first learned of the folder, so the folder a<br/>
+   /// commit created after the store's first load would stay missing to it.</remarks>
+   internal IReadOnlyList<ListedFile> Files(IFileSystem files) =>
+      files.FolderExists(Folder.FullName)
+         ? [..files.FilesIn(Folder.FullName, includingSubfolders: true).Where(it => it.FullPath.EndsWith(FileExtension, StringComparison.OrdinalIgnoreCase))]
          : [];
 
    bool IsUnderTheFolder(string file) => file.StartsWith(Path.TrimEndingDirectorySeparator(Folder.FullName) + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase);

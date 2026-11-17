@@ -31,6 +31,23 @@ public sealed class TaggregateFiles
       return this;
    }
 
+   ///<summary>Keeps the files in memory instead of on the disk, for specifications: the store works as it does on the disk, with the<br/>
+   /// same layout, the consumer's JSON options, the journal and any cache, and touches no file on the disk. The folder the store is<br/>
+   /// composed with is then only where the files' paths begin. A specification reads and changes the files through<br/>
+   /// <see cref="ITaggregateFilesInMemory"/>, which the container then resolves.</summary>
+   ///<remarks>The files live as long as the container, one set of them for each container: a second container is a second store with<br/>
+   /// files of its own, not a store started again on the same files.<br/>
+   /// review-naming: KeptInMemory, a placeholder for the naming pass (jastudio-rep-opus's fork, 2026-11-17).</remarks>
+   public TaggregateFiles KeptInMemory()
+   {
+      State.Assert(!IsKeptInMemory, () => "That the files are kept in memory is declared twice.");
+      IsKeptInMemory = true;
+      return this;
+   }
+
+   ///<summary>Whether <see cref="KeptInMemory"/> is declared.</summary>
+   internal bool IsKeptInMemory { get; private set; }
+
    internal IReadOnlyCollection<FilesOfAClass.Declaration> Declarations => _declarations.Values;
 
    ///<summary>The cache the store starts from, if a package of its own plugged one in, such as Compze.Teventive.StateStore.MemoryPack.</summary>

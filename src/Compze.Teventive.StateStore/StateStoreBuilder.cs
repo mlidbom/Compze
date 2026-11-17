@@ -90,10 +90,15 @@ public sealed class StateStoreBuilder
       var files = new TaggregateFiles();
       declare(files);
       _files = files;
+      if(files.IsKeptInMemory) _registrar.Register(Singleton.For<ITaggregateFilesInMemory, FilesInMemory>().CreatedBy(() => new FilesInMemory()));
       return DeclareStorage((resolver, classes) =>
       {
          var folder = folderWith(resolver);
-         return new TaggregateFileStorage(folder, options, files.Declarations.Select(it => it.For(classes.Single(declared => declared.Class == it.TaggregateClass), folder)), files.LoadCache);
+         return new TaggregateFileStorage(folder,
+                                          options,
+                                          files.Declarations.Select(it => it.For(classes.Single(declared => declared.Class == it.TaggregateClass), folder)),
+                                          files.LoadCache,
+                                          files.IsKeptInMemory ? resolver.Resolve<FilesInMemory>() : FilesOnDisk.Instance);
       });
    }
 

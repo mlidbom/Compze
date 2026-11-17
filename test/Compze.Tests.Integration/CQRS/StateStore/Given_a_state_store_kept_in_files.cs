@@ -1,6 +1,5 @@
 using System.Text;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Transactions;
 using Compze.Abstractions;
 using Compze.DependencyInjection;
@@ -343,18 +342,11 @@ public class Given_a_state_store_kept_in_files : UniversalTestBase
       public void InDoubt(Enlistment enlistment) => enlistment.Done();
    }
 
-   ///<summary>Serializes a <see cref="TaggregateId"/> as the GUID it wraps, as a consumer's options would.</summary>
    ///<summary>A service of the container that knows the store's folder, as a host that learns its paths once it has started does.</summary>
    sealed class TheStoresFolder
    {
       internal TheStoresFolder(DirectoryInfo folder) => Folder = folder;
 
       internal DirectoryInfo Folder { get; }
-   }
-
-   sealed class TaggregateIdAsAGuid : JsonConverter<TaggregateId>
-   {
-      public override TaggregateId Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) => new(reader.GetGuid());
-      public override void Write(Utf8JsonWriter writer, TaggregateId value, JsonSerializerOptions options) => writer.WriteStringValue(value.Value);
    }
 }

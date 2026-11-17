@@ -17,19 +17,22 @@ sealed class CommitJournal
    const int AttemptsAtAFileAnotherProgramHolds = 20;
    static readonly TimeSpan PauseBetweenAttempts = TimeSpan.FromMilliseconds(100);
 
+   readonly IFileSystem _files;
    readonly string _storesFolder;
    readonly Content _content;
 
-   CommitJournal(string storesFolder, Content content)
+   CommitJournal(IFileSystem files, string storesFolder, Content content)
    {
+      _files = files;
       _storesFolder = storesFolder;
       _content = content;
    }
 
    ///<summary>A journal of renaming each of <paramref name="renames"/>, a temporary file and the file it becomes, and of deleting<br/>
-   /// each of <paramref name="deletions"/>, all full paths under <paramref name="storesFolder"/>.</summary>
-   internal CommitJournal(string storesFolder, IEnumerable<(string TemporaryFile, string File)> renames, IEnumerable<string> deletions)
-      : this(storesFolder,
+   /// each of <paramref name="deletions"/>, all full paths under <paramref name="storesFolder"/>, in <paramref name="files"/>.</summary>
+   internal CommitJournal(IFileSystem files, string storesFolder, IEnumerable<(string TemporaryFile, string File)> renames, IEnumerable<string> deletions)
+      : this(files,
+             storesFolder,
              new Content
              {
                 Renames = [..renames.Select(it => new Rename { From = Relative(storesFolder, it.TemporaryFile), To = Relative(storesFolder, it.File) })],
@@ -41,25 +44,25 @@ sealed class CommitJournal
    {
       var journalBeingWritten = Path.Combine(ownFolder, $"{Guid.NewGuid():N}{JournalBeingWrittenExtension}");
       var journal = Path.ChangeExtension(journalBeingWritten, JournalExtension);
-      File.WriteAllText(journalBeingWritten, JsonSerializer.Serialize(_content));
-      File.Move(journalBeingWritten, journal);
+      _files.WriteAllText(journalBeingWritten, JsonSerializer.Serialize(_content));
+      _files.Move(journalBeingWritten, journal, overwrite: false);
       CarryOut();
-      File.Delete(journal);
+      _files.Delete(journal);
    }
 
    ///<summary>Finishes each commit whose journal a crash left in <paramref name="ownFolder"/>, then deletes the temporary files of<br/>
-   /// commits that never wrote one.</summary>
-   internal static void FinishInterruptedCommits(string storesFolder, string ownFolder)
+   /// commits that never wrote one, in <paramref name="files"/>.</summary>
+   internal static void FinishInterruptedCommits(IFileSystem files, string storesFolder, string ownFolder)
    {
-      if(!Directory.Exists(ownFolder)) return;
-      foreach(var journal in Directory.EnumerateFiles(ownFolder, $"*{JournalExtension}").ToList())
+      if(!files.FolderExists(ownFolder)) return;
+      foreach(var journal in files.FilesIn(ownFolder, includingSubfolders: false).Select(it => it.FullPath).Where(it => it.EndsWith(JournalExtension, StringComparison.OrdinalIgnoreCase)))
       {
-         var content = JsonSerializer.Deserialize<Content>(File.ReadAllText(journal))._assert().NotNull();
-         new CommitJournal(storesFolder, content).CarryOut();
-         File.Delete(journal);
+         var content = JsonSerializer.Deserialize<Content>(files.ReadAllText(journal))._assert().NotNull();
+         new CommitJournal(files, storesFolder, content).CarryOut();
+         files.Delete(journal);
       }
 
-      foreach(var leftOver in Directory.EnumerateFiles(ownFolder).Where(IsLeftOverByACommitThatNeverHappened).ToList()) File.Delete(leftOver);
+      foreach(var leftOver in files.FilesIn(ownFolder, includingSubfolders: false).Select(it => it.FullPath).Where(IsLeftOverByACommitThatNeverHappened)) files.Delete(leftOver);
 
       static bool IsLeftOverByACommitThatNeverHappened(string file) =>
          file.EndsWith(TemporaryFileExtension, StringComparison.OrdinalIgnoreCase) || file.EndsWith(JournalBeingWrittenExtension, StringComparison.OrdinalIgnoreCase);
@@ -72,14 +75,14 @@ sealed class CommitJournal
       foreach(var rename in _content.Renames)
       {
          var from = Full(rename.From);
-         if(!File.Exists(from)) continue;
+         if(!_files.FileExists(from)) continue;
          var to = Full(rename.To);
-         Directory.CreateDirectory(Path.GetDirectoryName(to)!);
-         RetriedWhileAnotherProgramHoldsTheFile(() => File.Move(from, to, overwrite: true));
+         _files.CreateFolder(Path.GetDirectoryName(to)!);
+         RetriedWhileAnotherProgramHoldsTheFile(() => _files.Move(from, to, overwrite: true));
       }
 
-      foreach(var deletion in _content.Deletions.Select(Full).Where(File.Exists))
-         RetriedWhileAnotherProgramHoldsTheFile(() => File.Delete(deletion));
+      foreach(var deletion in _content.Deletions.Select(Full).Where(_files.FileExists))
+         RetriedWhileAnotherProgramHoldsTheFile(() => _files.Delete(deletion));
    }
 
    string Full(string relative) => Path.GetFullPath(Path.Combine(_storesFolder, relative));

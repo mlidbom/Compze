@@ -11,14 +11,16 @@ namespace Compze.Teventive.StateStore._private.Files;
 /// and writing, has happened when the write is prepared.</summary>
 sealed class PreparedFileWrite : IPreparedWrite
 {
+   readonly IFileSystem _files;
    readonly string _storesFolder;
    readonly string _ownFolder;
    readonly IThreadShared<StoredFiles> _storedFiles;
    readonly List<(Guid Id, string TemporaryFile, string File)> _saved = [];
    readonly List<(Guid? Id, string File)> _deleted = [];
 
-   internal PreparedFileWrite(string storesFolder, string ownFolder, IThreadShared<StoredFiles> storedFiles)
+   internal PreparedFileWrite(IFileSystem files, string storesFolder, string ownFolder, IThreadShared<StoredFiles> storedFiles)
    {
+      _files = files;
       _storesFolder = storesFolder;
       _ownFolder = ownFolder;
       _storedFiles = storedFiles;
@@ -33,11 +35,11 @@ sealed class PreparedFileWrite : IPreparedWrite
       var (oldFile, taggregateInTheFile) = _storedFiles.Locked(it => (it.FileOf(id), it.TaggregateIn(file)));
       State.Assert(taggregateInTheFile == null || taggregateInTheFile == id, () => $"Taggregate {id} has the file of taggregate {taggregateInTheFile}, {file}.");
 
-      Directory.CreateDirectory(_ownFolder);
-      Directory.CreateDirectory(Path.GetDirectoryName(file)!);
+      _files.CreateFolder(_ownFolder);
+      _files.CreateFolder(Path.GetDirectoryName(file)!);
       var temporaryFile = Path.Combine(_ownFolder, $"{Guid.NewGuid():N}{CommitJournal.TemporaryFileExtension}");
       _saved.Add((id, temporaryFile, file));
-      File.WriteAllText(temporaryFile, content);
+      _files.WriteAllText(temporaryFile, content);
       if(oldFile != null && !string.Equals(oldFile, file, StringComparison.OrdinalIgnoreCase)) _deleted.Add((Id: null, oldFile));
    }
 
@@ -60,7 +62,7 @@ sealed class PreparedFileWrite : IPreparedWrite
       if(WritesNothing) return;
       try
       {
-         new CommitJournal(_storesFolder, _saved.Select(it => (it.TemporaryFile, it.File)), _deleted.Select(it => it.File)).WriteAndCarryOut(_ownFolder);
+         new CommitJournal(_files, _storesFolder, _saved.Select(it => (it.TemporaryFile, it.File)), _deleted.Select(it => it.File)).WriteAndCarryOut(_ownFolder);
          _storedFiles.Locked(it =>
          {
             foreach(var saved in _saved) it.Record(saved.Id, saved.File);
@@ -78,6 +80,6 @@ sealed class PreparedFileWrite : IPreparedWrite
    ///<summary>Deletes the temporary files: the unit of work rolled back.</summary>
    public void Discard()
    {
-      foreach(var saved in _saved) File.Delete(saved.TemporaryFile);
+      foreach(var saved in _saved) _files.Delete(saved.TemporaryFile);
    }
 }
