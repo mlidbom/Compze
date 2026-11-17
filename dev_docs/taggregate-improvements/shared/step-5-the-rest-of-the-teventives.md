@@ -99,9 +99,12 @@ their `TeventHandlers`.
 
 ## 6. The query models: how much they share with taggregates
 
-Decided (decision 11): they move to the tables, and apply tevents and hold state as taggregates do. **What is open, and
-put to Magnus: how much of the code the two share.** Magnus: "The only thing that taggregates add is the ability to
-publish tevents."
+Decided (decision 11): they move to the tables, and apply tevents and hold state as taggregates do. **How much of the
+code the two share: option B, decided by Magnus, 2026-11-17,** on one condition: "If you can do it without client code
+getting more complicated that is just great". He had hoped for it, and found the type constraints of these classes too
+much of a jungle to redesign himself. The base classes' names are for the naming pass: "a taggregate is not a view
+model", so they are named for applying tevents, not for query models. Magnus: "The only thing that taggregates add is
+the ability to publish tevents."
 
 With the tables, most of what each family has today goes: the dispatchers, the registrations, the parts subscribing to
 their parents. What is left in each is small:
@@ -117,8 +120,8 @@ and the same collection routing. Their copies go: `QueryModelEntityCollection` i
 side by side, each thin. The duplicates left are the root's apply, a component's dispatch and an entity's id, about 40
 lines in all. Taggregate's classes don't change.
 
-**Option B, a taggregate is a query model that publishes (recommended):** base classes that apply tevents and hold state,
-which both families derive from:
+**Option B, base classes that apply tevents and hold state, which both families derive from (decided):** the query
+models and taggregates are siblings, and a taggregate is the one that also publishes:
 
 ```
 TeventApplyingRoot<TSelf, TTevent>              apply, load from history, invariants   //review-naming: placeholders
@@ -136,8 +139,10 @@ TeventApplyingComponent<TComponent, TTevent>    dispatch, the assertions
 - **What it doesn't share:** an entity's id field and created route, about 5 lines. `Tentity` derives from
   `TeventiveComponent`, so it can't also derive from an applying entity. The entity collection and its routing are
   shared, as in A.
-- **Why recommended:** it is Magnus's own model of the two, written into the types, and it shares all of the logic except
-  an id field.
+- **Why:** it is Magnus's own model of the two, written into the types, and it shares all of the logic except an id
+  field.
+- **The condition, as built:** a consumer's taggregate, component and entity classes are declared exactly as before;
+  only Compze's base classes gain a base class.
 
 **Either way:**
 
