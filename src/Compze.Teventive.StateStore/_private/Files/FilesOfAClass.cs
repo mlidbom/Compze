@@ -1,4 +1,5 @@
 using Compze.Contracts;
+using Compze.Teventive.StateStore._internal;
 using Compze.Teventive.Taggregates._internal;
 using static Compze.Contracts.Contract;
 
@@ -11,16 +12,20 @@ sealed class FilesOfAClass
    const string FileExtension = ".json";
    readonly Func<ITaggregate, DirectoryInfo, FileInfo> _fileOf;
 
-   FilesOfAClass(SnapshotableTaggregateClass taggregateClass, DirectoryInfo folder, Func<ITaggregate, DirectoryInfo, FileInfo> fileOf)
+   FilesOfAClass(SnapshotableTaggregateClass taggregateClass, DirectoryInfo folder, string relativeFolder, Func<ITaggregate, DirectoryInfo, FileInfo> fileOf)
    {
       TaggregateClass = taggregateClass;
       Folder = folder;
+      RelativeFolder = relativeFolder;
       _fileOf = fileOf;
    }
 
    internal SnapshotableTaggregateClass TaggregateClass { get; }
 
    DirectoryInfo Folder { get; }
+
+   ///<summary>The class's folder, relative to the store's folder, as it is declared.</summary>
+   internal string RelativeFolder { get; }
 
    ///<summary>The full path of <paramref name="taggregate"/>'s file. Asserts that it is under the class's folder and ends in .json.</summary>
    internal string FileOf(ITaggregate taggregate)
@@ -31,11 +36,15 @@ sealed class FilesOfAClass
       return file;
    }
 
-   ///<summary>Every file of the class: each .json file under its folder, at any depth, as the disk holds them now.</summary>
+   ///<summary>Every file of the class: each .json file under its folder, at any depth, as the disk holds them now, with the length<br/>
+   /// and last write time that listing the folder gives without opening the files.</summary>
    ///<remarks>Asks the disk by the folder's path: a <see cref="DirectoryInfo"/> keeps what it first learned of the folder, so the<br/>
    /// folder a commit created after the store's first load would stay missing to it.</remarks>
-   internal IEnumerable<string> Files() =>
-      Directory.Exists(Folder.FullName) ? Directory.EnumerateFiles(Folder.FullName, $"*{FileExtension}", SearchOption.AllDirectories) : [];
+   internal IReadOnlyList<ListedFile> Files() =>
+      Directory.Exists(Folder.FullName)
+         ? [..new DirectoryInfo(Folder.FullName).EnumerateFiles($"*{FileExtension}", SearchOption.AllDirectories)
+                                                .Select(it => new ListedFile(it.FullName, Path.GetRelativePath(Folder.FullName, it.FullName), it.Length, it.LastWriteTimeUtc))]
+         : [];
 
    bool IsUnderTheFolder(string file) => file.StartsWith(Path.TrimEndingDirectorySeparator(Folder.FullName) + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase);
 
@@ -72,7 +81,7 @@ sealed class FilesOfAClass
       internal bool SharesFilesWith(Declaration other) => IsTheSameOrInside(Folder, other.Folder) || IsTheSameOrInside(other.Folder, Folder);
 
       internal FilesOfAClass For(SnapshotableTaggregateClass taggregateClass, DirectoryInfo storesFolder) =>
-         new(taggregateClass, new DirectoryInfo(Path.Combine(storesFolder.FullName, Folder)), _fileOf ?? InBucketsById);
+         new(taggregateClass, new DirectoryInfo(Path.Combine(storesFolder.FullName, Folder)), Folder, _fileOf ?? InBucketsById);
 
       static bool IsTheSameOrInside(string folder, string other) =>
          string.Equals(folder, other, StringComparison.OrdinalIgnoreCase) || folder.StartsWith(other + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase);

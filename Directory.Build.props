@@ -99,6 +99,8 @@
     <UsePackageReference_Compze_Teventive Condition="'$(UsePackageReference_Compze_Teventive)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Teventive.csproj|'))">true</UsePackageReference_Compze_Teventive>
     <!-- Compze.Teventive.StateStore -->
     <UsePackageReference_Compze_Teventive_StateStore Condition="'$(UsePackageReference_Compze_Teventive_StateStore)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Teventive.StateStore.csproj|'))">true</UsePackageReference_Compze_Teventive_StateStore>
+    <!-- Compze.Teventive.StateStore.MemoryPack -->
+    <UsePackageReference_Compze_Teventive_StateStore_MemoryPack Condition="'$(UsePackageReference_Compze_Teventive_StateStore_MemoryPack)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Teventive.StateStore.MemoryPack.csproj|'))">true</UsePackageReference_Compze_Teventive_StateStore_MemoryPack>
     <!-- Compze.Teventive.TeventStore -->
     <UsePackageReference_Compze_Teventive_TeventStore Condition="'$(UsePackageReference_Compze_Teventive_TeventStore)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Teventive.TeventStore.csproj|'))">true</UsePackageReference_Compze_Teventive_TeventStore>
     <!-- Compze.Teventive.TeventStore.Abstractions -->

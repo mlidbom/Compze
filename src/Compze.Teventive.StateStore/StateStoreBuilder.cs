@@ -18,6 +18,7 @@ public sealed class StateStoreBuilder
 {
    readonly IComponentRegistrar _registrar;
    readonly Dictionary<Type, Func<IRootResolver, SnapshotableTaggregateClass>> _taggregateClasses = new();
+   readonly Dictionary<Type, Type> _snapshotTypes = new();
    readonly List<Func<TaggregateStateStore, ITaggregateIndexMaintenance>> _indexes = [];
    Func<IRootResolver, IReadOnlyList<SnapshotableTaggregateClass>, ITaggregateStorage>? _storage;
    TaggregateFiles? _files;
@@ -33,19 +34,20 @@ public sealed class StateStoreBuilder
    /// be overridden.</remarks>
    public StateStoreBuilder Taggregate<TTaggregate, TSnapshot>(Func<ISnapshotable<TTaggregate, TSnapshot>> createEmpty, Func<TSnapshot, TSnapshot, bool>? snapshotsAreEqual = null)
       where TTaggregate : class, ITaggregate, ISnapshotable<TTaggregate, TSnapshot> =>
-      Declare<TTaggregate>(_ => SnapshotableTaggregateClass.For(createEmpty, snapshotsAreEqual));
+      Declare<TTaggregate, TSnapshot>(_ => SnapshotableTaggregateClass.For(createEmpty, snapshotsAreEqual));
 
    ///<summary>As <see cref="Taggregate{TTaggregate,TSnapshot}"/>, for a factory that builds the empty instances with a service of the<br/>
    /// container, such as the services every note is built with: <c>store.Taggregate((NoteServices services) => new VocabNote(services))</c>.</summary>
    ///<remarks>The service is resolved from the container's root each time an instance is built.</remarks>
    public StateStoreBuilder Taggregate<TTaggregate, TSnapshot, TService>(Func<TService, ISnapshotable<TTaggregate, TSnapshot>> createEmpty, Func<TSnapshot, TSnapshot, bool>? snapshotsAreEqual = null)
       where TTaggregate : class, ITaggregate, ISnapshotable<TTaggregate, TSnapshot> where TService : class =>
-      Declare<TTaggregate>(resolver => SnapshotableTaggregateClass.For(() => createEmpty(resolver.Resolve<TService>()), snapshotsAreEqual));
+      Declare<TTaggregate, TSnapshot>(resolver => SnapshotableTaggregateClass.For(() => createEmpty(resolver.Resolve<TService>()), snapshotsAreEqual));
 
-   StateStoreBuilder Declare<TTaggregate>(Func<IRootResolver, SnapshotableTaggregateClass> declare)
+   StateStoreBuilder Declare<TTaggregate, TSnapshot>(Func<IRootResolver, SnapshotableTaggregateClass> declare)
    {
       State.Assert(!_taggregateClasses.ContainsKey(typeof(TTaggregate)), () => $"{typeof(TTaggregate).FullName} is declared twice for the state store.");
       _taggregateClasses.Add(typeof(TTaggregate), declare);
+      _snapshotTypes.Add(typeof(TTaggregate), typeof(TSnapshot));
       return this;
    }
 
@@ -91,7 +93,7 @@ public sealed class StateStoreBuilder
       return DeclareStorage((resolver, classes) =>
       {
          var folder = folderWith(resolver);
-         return new TaggregateFileStorage(folder, options, files.Declarations.Select(it => it.For(classes.Single(declared => declared.Class == it.TaggregateClass), folder)));
+         return new TaggregateFileStorage(folder, options, files.Declarations.Select(it => it.For(classes.Single(declared => declared.Class == it.TaggregateClass), folder)), files.LoadCache);
       });
    }
 
@@ -103,7 +105,8 @@ public sealed class StateStoreBuilder
    }
 
    ///<summary>Asserts, once everything is declared, that the declarations fit together: that a store kept in files declares the files<br/>
-   /// of each class it keeps, and of no other, and that no two classes share a folder.</summary>
+   /// of each class it keeps, and of no other, that no two classes share a folder, and that the cache it starts from, if any, can<br/>
+   /// hold each class's snapshots.</summary>
    internal void AssertDeclarationsFitTogether()
    {
       if(_files == null) return;
@@ -115,6 +118,8 @@ public sealed class StateStoreBuilder
       var sharingAFolder = filesDeclared.SelectMany(one => filesDeclared.Where(other => other != one && one.SharesFilesWith(other)).Select(other => new[] { one, other })).FirstOrDefault();
       State.Assert(sharingAFolder == null,
                    () => $"The files of {sharingAFolder![0].TaggregateClass.FullName}, in \"{sharingAFolder[0].Folder}\", and of {sharingAFolder[1].TaggregateClass.FullName}, in \"{sharingAFolder[1].Folder}\", share a folder. Each class's files need a folder of their own.");
+      if(_files.LoadCache is {} cache)
+         foreach(var snapshotType in _snapshotTypes.Values) cache.AssertCanHold(snapshotType);
    }
 
    internal TaggregateStateStore Build(TaggregateUnitsOfWork unitsOfWork, IRootResolver resolver)

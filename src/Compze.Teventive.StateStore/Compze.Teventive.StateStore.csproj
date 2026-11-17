@@ -5,6 +5,9 @@
     <Description>A taggregate store that keeps taggregates as their state, not their history: in memory, and stored in JSON files or behind a narrow seam for durable storage.</Description>
   </PropertyGroup>
   <ItemGroup>
+    <InternalsVisibleTo Include="Compze.Teventive.StateStore.MemoryPack" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="JetBrains.Annotations.Sources" Version="2025.2.4" PrivateAssets="all" />
   </ItemGroup>
   <!-- Compze.Abstractions — flex reference -->

@@ -1,4 +1,5 @@
 using Compze.Contracts;
+using Compze.Teventive.StateStore._internal;
 using Compze.Teventive.StateStore._private.Files;
 using static Compze.Contracts.Contract;
 
@@ -31,4 +32,15 @@ public sealed class TaggregateFiles
    }
 
    internal IReadOnlyCollection<FilesOfAClass.Declaration> Declarations => _declarations.Values;
+
+   ///<summary>The cache the store starts from, if a package of its own plugged one in, such as Compze.Teventive.StateStore.MemoryPack.</summary>
+   internal ITaggregateFilesLoadCache? LoadCache { get; private set; }
+
+   ///<summary>Has the store start from <paramref name="cache"/>, reading only the files that changed since it was written.</summary>
+   internal TaggregateFiles StartFrom(ITaggregateFilesLoadCache cache)
+   {
+      State.Assert(LoadCache == null, () => "A cache for the store's start is declared twice.");
+      LoadCache = cache;
+      return this;
+   }
 }

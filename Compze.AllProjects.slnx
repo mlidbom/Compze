@@ -27,6 +27,7 @@
   </Folder>
   <Folder Name="/Compze.Teventive/StateStore/">
     <Project Path="src/Compze.Teventive.StateStore/Compze.Teventive.StateStore.csproj" />
+    <Project Path="src/Compze.Teventive.StateStore.MemoryPack/Compze.Teventive.StateStore.MemoryPack.csproj" />
   </Folder>
   <Folder Name="/Compze.Teventive/TeventStore/">
     <Project Path="src/Compze.Teventive.TeventStore.Abstractions/Compze.Teventive.TeventStore.Abstractions.csproj" />

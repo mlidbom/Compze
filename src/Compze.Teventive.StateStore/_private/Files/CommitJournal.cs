@@ -88,7 +88,7 @@ sealed class CommitJournal
 
    ///<summary>Runs <paramref name="fileOperation"/>, trying again for about two seconds while another program holds the file: on<br/>
    /// Windows a virus scanner, an indexer or an editor can open a file just written.</summary>
-   static void RetriedWhileAnotherProgramHoldsTheFile(Action fileOperation)
+   internal static void RetriedWhileAnotherProgramHoldsTheFile(Action fileOperation)
    {
       for(var attempt = 1;; attempt++)
       {
