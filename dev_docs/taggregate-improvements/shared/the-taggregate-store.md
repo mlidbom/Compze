@@ -1020,6 +1020,23 @@ don't think you can."
 - A journal left by a crash is carried out at the next start. Temporary files left without a journal are deleted.
 - A file outside its class's folder, two taggregates with one file, and an unreadable file each fail, naming the file.
 
+### Built: the simple version, without a cache
+
+Built as specified on branch `json-store` (830fca831), not yet merged into the spike; 29 specifications, the suite green
+on the local MsSql combination. Where it went beyond the specification:
+
+- **The storage gets the taggregate, not only its snapshot:** `TaggregateSnapshot` carries it internally, set by the
+  session when it hands over a unit of work's changes, since a file may depend on the taggregate. At load, the storage
+  restores each taggregate to learn its id, and the store uses that instance instead of restoring it again.
+- **A journal is written under a temporary name and renamed,** so a crash while writing it leaves no journal and the
+  commit didn't happen. A failure anywhere in the commit, before the journal or after, stops the process: the
+  transaction can no longer fail.
+- **The journal holds paths relative to the store's folder,** so it still works if the folder moved since the crash.
+- **A class's folder may not be the store's own, and no class's folder may lie inside another's,** asserted at
+  composition, since loading reads a class's folder at any depth.
+- **Not guarded:** two units of work committing at the same time whose taggregates get the same new file. Each checks
+  the files committed before it, not the other's pending write. Only a declared layout can produce it.
+
 ## What the prototype is
 
 Branch `taggregate-store-opus`, commit `3dd0fbe08`, in `C:\Dev\Compze.worktrees\taggregate-store-opus`, based on `main`.
