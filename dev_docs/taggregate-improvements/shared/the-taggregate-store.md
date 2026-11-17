@@ -1185,6 +1185,17 @@ files.ReadAllText(path); files.WriteAllText(path, json); files.Delete(path); fil
   it, and nothing is on the disk; a file written before the store's first use is loaded; a file changed behind the
   store is what a reload gives; a deletion removes the file; with the cache too, a second load reads no unchanged file.
 - **Then taggregates-opus replaces `NotesStoredInMemory` with it, and times JAStudio's suite** against today's.
+- **Built as specified (77c3cdaf8),** 16 specifications, the suite green on the local MsSql combination, the seam still
+  public. Where it went beyond the specification:
+  - **The internal seam is `IFileSystem`,** with `FilesOnDisk` and `FilesInMemory`. Every file operation of the store, its
+    journal and the MemoryPack cache's file goes through it; what is left outside builds paths only.
+  - **`ITaggregateFilesInMemory` takes full paths as strings,** compared ignoring case, as `File`'s methods do. Its
+    `ReadAllText`, `WriteAllText` and `Delete` behave as theirs, missing files included.
+  - **The memory clock is strictly increasing:** a write within the same tick as the last gets a time one tick later. A
+    specification pins it: a file changed behind the store to text of the same length, at once, is read anew despite
+    the cache.
+  - **"A second load reads no unchanged file" is pinned on the disk only:** in memory, a specification can't keep a
+    file's time while changing it, so it can't tell a cached snapshot from a read one. The code path is the same.
 
 ### Noticed, for later
 
