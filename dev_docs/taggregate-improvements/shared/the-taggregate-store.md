@@ -863,6 +863,13 @@ each taggregate's keys: an `ImmutableHashSet` for each, about 105 MB for 1.6 mil
   `Given_a_state_store_whose_index_key_function_reads_more_than_the_vocabs_state`. It catches a key that the committed
   state gives and the index doesn't file; one the index files and the state no longer gives can't be seen without a
   record.
+- **Measured in JAStudio at 53d24b46c** (taggregates-opus, headless JAStudio in Debug, alternating with JAStudio's main
+  on the same corpus): the warm load is 4.31 to 4.38 s against main's 2.63 to 2.67 s, about 1.7 s slower, from 2.35 s
+  slower before. The managed heap is 730 MB, against 850 MB before and main's 878 MB, so about 15% less than main. 138 MB
+  went, more than the sets' 105 MB, since 1.6 million key objects only the sets held went with them. The index's largest
+  structures left are about 42 MB in all: the dictionaries' nodes and buckets, and the arrays of references. Every check
+  passes, and the new assertion never fired through edits that change keys of five indexes: JAStudio's key functions
+  read only their note's own state.
 - **Weighed by the rules on consumers' requests:** no public API changes and nothing is promised anew. The gain grows
   with how much any consumer stores, the cost with how much it changes. JAStudio's other suggestions, presizing the
   dictionaries and filing the indexes in parallel, are tuning for its load, and not taken.
