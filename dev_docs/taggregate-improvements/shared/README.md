@@ -28,6 +28,12 @@ For each public type and member the spike added or changed, the review asks: wou
 an abstraction of its own? Or does it exist because it spared JAStudio a refactoring, and would JAStudio's code be better
 had it made that refactoring instead? The names are reviewed in the same pass (Magnus's item 9).
 
+**First, independent reviews (Magnus, 2026-11-17):** "I absolutely want that on the public API, with the new rules in
+front of mind. Both opus and fable." One Opus and one Fable reviewer, each on its own, review every public API change of
+the spike, with Compze's rules 011, 012 and 013 in front of them: the frameworks keep their public surface minimal,
+public types are designed for every consumer and weigh what one asks for, and an API spends nothing on what callers can
+do as well themselves. jastudio-rep-opus consolidates their findings for the pass with Magnus.
+
 What JAStudio asked for, the first to look at:
 
 | API | Asked for | Why JAStudio needed it | The question for the review |
