@@ -36,6 +36,7 @@ sealed partial class TeventObservationDispatcher : IDisposable, IAsyncDisposable
    static readonly WaitTimeout DrainAtDisposalTimeout = WaitTimeout.Seconds(30);
 
    readonly IReadOnlyList<ObserverDispatchQueue> _declaredObserverQueues;
+   readonly IReadOnlyList<Type> _teventTypesObservableAtRuntime;
    readonly IScopeFactory _scopeFactory;
    readonly IBackgroundExceptionReporter _backgroundExceptionReporter;
    readonly ITessagesInFlightTracker _tessagesInFlightTracker;
@@ -52,6 +53,7 @@ sealed partial class TeventObservationDispatcher : IDisposable, IAsyncDisposable
       _tessagesInFlightTracker = tessagesInFlightTracker;
       _taskRunner = taskRunner;
       _declaredObserverQueues = [..roster.TeventObserverRegistrations.Select(NewQueueFor)];
+      _teventTypesObservableAtRuntime = roster.TeventTypesObservableAtRuntime;
    }
 
    ///<summary>Collects <paramref name="wrappedTevent"/>, published in <paramref name="unitOfWork"/>, for its observers: the unit of<br/>
@@ -104,14 +106,21 @@ sealed partial class TeventObservationDispatcher : IDisposable, IAsyncDisposable
    {
       State.Assert(!_hasStopped, () => $"The LocalTessagingEngine has stopped ({nameof(ILocalTessagingEngine)}.{nameof(ILocalTessagingEngine.StopAsync)}), so it publishes no more tevents: an observer created now would observe nothing. Create observers before stopping the engine.");
       List<TeventObserverRegistration> observers = [];
-      var registrar = new TeventObservationRegistrar(observers.Add);
+      var registrar = new TeventObservationRegistrar(observers.Add, declareObservableAtRuntime: null);
       observe(registrar);
       registrar.EndCallback();
+      observers.ForEach(AssertDeclaredObservableAtRuntime);
 
       IReadOnlyList<ObserverDispatchQueue> queues = [..observers.Select(NewQueueFor)];
       _runtimeObserversMonitor.Locked(() => _runtimeObserverQueues = [.._runtimeObserverQueues, ..queues]);
       return new RuntimeObservation(this, queues);
    }
+
+   ///<summary>Asserts that <paramref name="observer"/>, created at runtime, observes only tevents declared observable at runtime with<br/>
+   /// <see cref="TeventObservationRegistrar.AtRuntime{TTevent}"/>: in an endpoint, only those are sent to it by its peers.</summary>
+   void AssertDeclaredObservableAtRuntime(TeventObserverRegistration observer) =>
+      State.Assert(_teventTypesObservableAtRuntime.Any(observer.ObservesOnlyTeventsCompatibleWith),
+                   () => $"{observer.SubscribedTeventType.FullName} isn't declared observable at runtime, so an observer of it created at runtime could miss the tevents that arrive from other endpoints. Declare it, or a tevent type it is compatible with, where the engine is composed: ObserveTevents(observe => observe.{nameof(TeventObservationRegistrar.AtRuntime)}<{observer.SubscribedTeventType.Name}>()).");
 
    ///<summary>Ends the runtime observers of <paramref name="queues"/>: no tevent is queued for them any more, and what was queued and<br/>
    /// not yet taken is dropped. Doesn't wait for a call already running.</summary>

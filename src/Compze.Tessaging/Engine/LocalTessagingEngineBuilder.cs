@@ -45,7 +45,7 @@ public sealed class LocalTessagingEngineBuilder
    /// transaction-ignoring watch surface, under its own verb so the distinct semantics are visible at the declaration site.</summary>
    public LocalTessagingEngineBuilder ObserveTevents(Action<TeventObservationRegistrar> observe)
    {
-      var registrar = new TeventObservationRegistrar(HandlerRegistrations.AddTeventObserver);
+      var registrar = new TeventObservationRegistrar(HandlerRegistrations.AddTeventObserver, HandlerRegistrations.DeclareObservableAtRuntime);
       observe(registrar);
       registrar.EndCallback();
       return this;

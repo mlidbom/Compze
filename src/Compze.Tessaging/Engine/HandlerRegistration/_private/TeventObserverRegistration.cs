@@ -50,6 +50,11 @@ abstract partial class TeventObserverRegistration
    /// type hierarchy, the same rule participation routing uses.</summary>
    internal bool Observes(Type wrapperTeventType) => SubscribedWrapperType.IsAssignableFrom(wrapperTeventType);
 
+   ///<summary>Whether every tevent this observer observes is compatible with <paramref name="teventType"/>, such as a tevent type<br/>
+   /// declared observable at runtime: its subscription is to that type or to one compatible with it.</summary>
+   internal bool ObservesOnlyTeventsCompatibleWith(Type teventType) =>
+      PublisherTevent.WrapperTypeMatchingAllWrappingsOf(teventType).IsAssignableFrom(SubscribedWrapperType);
+
    ///<summary>The observations that <paramref name="committedTevents"/>, the tevents one unit of work committed, in publish order,<br/>
    /// give this observer.</summary>
    internal abstract IEnumerable<IReadOnlyList<IPublisherTevent<ITevent>>> ObservationsOf(IReadOnlyList<IPublisherTevent<ITevent>> committedTevents);
@@ -58,7 +63,7 @@ abstract partial class TeventObserverRegistration
    internal abstract Task ObserveAsync(IReadOnlyList<IPublisherTevent<ITevent>> observation, IScopeResolver scope);
 
    ///<summary>The tevents of <paramref name="committedTevents"/> this observer's subscription matches, in publish order.</summary>
-   protected IEnumerable<IPublisherTevent<ITevent>> ObservedOf(IReadOnlyList<IPublisherTevent<ITevent>> committedTevents) =>
+   IEnumerable<IPublisherTevent<ITevent>> ObservedOf(IReadOnlyList<IPublisherTevent<ITevent>> committedTevents) =>
       committedTevents.Where(it => Observes(it.GetType()));
 
    static TTevent AsSubscribed<TTevent>(IPublisherTevent<ITevent> wrappedTevent) where TTevent : ITevent =>

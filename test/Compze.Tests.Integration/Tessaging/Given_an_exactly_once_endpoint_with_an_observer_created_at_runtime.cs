@@ -32,7 +32,7 @@ public class Given_an_exactly_once_endpoint_with_an_observer_created_at_runtime 
    public Given_an_exactly_once_endpoint_with_an_observer_created_at_runtime()
    {
       _host = TestingEndpointHost.Create();
-      _endpoint = _host.RegisterEndpoint(new EndpointWithNoHandlersDeclaration());
+      _endpoint = _host.RegisterEndpoint(new EndpointDeclaringGreetingsObservableAtRuntime());
    }
 
    protected override async Task InitializeAsyncInternal()
@@ -51,11 +51,13 @@ public class Given_an_exactly_once_endpoint_with_an_observer_created_at_runtime 
 
    [PCT] public void the_observer_observes_a_tevent_committed_in_the_endpoint() => _observedTevents.Single().Must().ReferenceEqual(_publishedTevent);
 
-   class EndpointWithNoHandlersDeclaration : ExactlyOnceEndpointDeclaration<EndpointWithNoHandlersDeclaration>, IEndpointIdentity
+   class EndpointDeclaringGreetingsObservableAtRuntime : ExactlyOnceEndpointDeclaration<EndpointDeclaringGreetingsObservableAtRuntime>, IEndpointIdentity
    {
       public static string Name => "RuntimeObserving";
       public static EndpointId Id => new(Guid.Parse("7C3E91B4-5A28-4F6D-9E17-2B84D0C6A953"));
 
       protected override void RegisterComponents(IComponentRegistrar registrar) => registrar.RequireIntegrationTestTypeMappings();
+
+      protected override void ObserveTevents(ITeventObservationRegistrar observe) => observe.AtRuntime<IMyGreetingRequestedTevent>();
    }
 }

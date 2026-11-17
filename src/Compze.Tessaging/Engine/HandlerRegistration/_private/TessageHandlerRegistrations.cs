@@ -30,6 +30,7 @@ sealed class TessageHandlerRegistrations
    readonly Dictionary<Type, TessageHandlerRoster.TommandHandlerWithResult> _tommandHandlersWithResults = new();
    readonly Dictionary<Type, Func<ITuery, IScopeResolver, Task<object>>> _tueryHandlers = new();
    readonly List<Type> _subscribedTeventTypes = [];
+   readonly List<Type> _teventTypesObservableAtRuntime = [];
 
    ///<summary>Registers a participation handler for tevents compatible with <typeparamref name="TTevent"/>. The one registration<br/>
    /// translation of the routing model: routing operates exclusively on wrapper types, so a subscription to an inner tevent type<br/>
@@ -58,6 +59,16 @@ sealed class TessageHandlerRegistrations
       AssertRosterIsNotYetBuilt();
       _teventObservers.Add(observer);
       _subscribedTeventTypes.Add(observer.SubscribedTeventType);
+   });
+
+   ///<summary>Declares that tevents compatible with <paramref name="teventType"/> may be observed by observers created at runtime.<br/>
+   /// The type joins the advertised set exactly as an observer's subscription does, so an endpoint's peers send it such tevents<br/>
+   /// from the start, and a runtime observer of them is in effect the moment it is created.</summary>
+   internal void DeclareObservableAtRuntime(Type teventType) => _monitor.Locked(() =>
+   {
+      AssertRosterIsNotYetBuilt();
+      _teventTypesObservableAtRuntime.Add(teventType);
+      _subscribedTeventTypes.Add(teventType);
    });
 
    ///<summary>Registers the handler for <typeparamref name="TTommand"/> — a tommand whose type declares no result. The handler<br/>
@@ -106,6 +117,7 @@ sealed class TessageHandlerRegistrations
       _rosterIsBuilt = true;
       return new TessageHandlerRoster(teventHandlers: _teventHandlers.ToDictionary(it => it.Key, IReadOnlyList<Func<ITevent, IUnitOfWorkResolver, Task>> (it) => [..it.Value]),
                                       teventObservers: [.._teventObservers],
+                                      teventTypesObservableAtRuntime: [.._teventTypesObservableAtRuntime],
                                       voidTommandHandlers: new Dictionary<Type, Func<ITommand, IUnitOfWorkResolver, Task>>(_voidTommandHandlers),
                                       tommandHandlersWithResults: new Dictionary<Type, TessageHandlerRoster.TommandHandlerWithResult>(_tommandHandlersWithResults),
                                       tueryHandlers: new Dictionary<Type, Func<ITuery, IScopeResolver, Task<object>>>(_tueryHandlers),

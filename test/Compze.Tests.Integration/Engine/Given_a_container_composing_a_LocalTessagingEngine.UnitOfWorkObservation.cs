@@ -15,9 +15,9 @@ public partial class Given_a_container_composing_a_LocalTessagingEngine
 {
    public class with_an_observer_of_each_unit_of_works_numbered_tevents_declared_at_composition : Given_a_container_composing_a_LocalTessagingEngine
    {
-      protected ConcurrentQueue<int[]> ObservedLists { get; } = [];
+      ConcurrentQueue<int[]> ObservedLists { get; } = [];
 
-      public with_an_observer_of_each_unit_of_works_numbered_tevents_declared_at_composition() =>
+      protected with_an_observer_of_each_unit_of_works_numbered_tevents_declared_at_composition() =>
          ComposeContainerWithEngine(engine => engine.ObserveTevents(observe => observe.ForEachUnitOfWork((IReadOnlyList<IMyNumberedTevent> tevents) =>
                                                                                                           ObservedLists.Enqueue([..tevents.Select(it => it.SequenceNumber)]))));
 
@@ -62,7 +62,7 @@ public partial class Given_a_container_composing_a_LocalTessagingEngine
 
       public with_an_observer_of_each_unit_of_works_numbered_tevents_created_at_runtime()
       {
-         ComposeContainerWithEngine(_ => {});
+         ComposeContainerWithEngine(engine => engine.ObserveTevents(observe => observe.AtRuntime<IMyNumberedTevent>()));
          TeventObservation.ObserveTevents(observe => observe.ForEachUnitOfWork((IReadOnlyList<IMyNumberedTevent> tevents) =>
                                                                                   _observedLists.Enqueue([..tevents.Select(it => it.SequenceNumber)])));
          PublishInAUnitOfWork(new MyNumberedTevent(1), new MyNumberedTevent(2));

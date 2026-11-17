@@ -23,4 +23,9 @@ public interface ITeventObservationRegistrar
 
    ///<summary>The synchronous form of <see cref="ForEachUnitOfWork{TTevent}(Func{IReadOnlyList{TTevent},IScopeResolver,Task})"/>.</summary>
    ITeventObservationRegistrar ForEachUnitOfWork<TTevent>(Action<IReadOnlyList<TTevent>, IScopeResolver> observer) where TTevent : ITevent;
+
+   ///<summary>Declares that tevents compatible with <typeparamref name="TTevent"/> may be observed by observers created at runtime,<br/>
+   /// subtypes included, and makes the endpoint subscribe with its peers to them from the start. See<br/>
+   /// <see cref="TeventObservationRegistrar.AtRuntime{TTevent}"/>.</summary>
+   ITeventObservationRegistrar AtRuntime<TTevent>() where TTevent : ITevent;
 }

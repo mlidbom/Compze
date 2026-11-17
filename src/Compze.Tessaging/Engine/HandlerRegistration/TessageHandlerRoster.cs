@@ -33,6 +33,7 @@ public class TessageHandlerRoster
 
    internal TessageHandlerRoster(IReadOnlyDictionary<Type, IReadOnlyList<Func<ITevent, IUnitOfWorkResolver, Task>>> teventHandlers,
                                  IReadOnlyList<TeventObserverRegistration> teventObservers,
+                                 IReadOnlyList<Type> teventTypesObservableAtRuntime,
                                  IReadOnlyDictionary<Type, Func<ITommand, IUnitOfWorkResolver, Task>> voidTommandHandlers,
                                  IReadOnlyDictionary<Type, TommandHandlerWithResult> tommandHandlersWithResults,
                                  IReadOnlyDictionary<Type, Func<ITuery, IScopeResolver, Task<object>>> tueryHandlers,
@@ -41,6 +42,7 @@ public class TessageHandlerRoster
    {
       _teventHandlers = teventHandlers;
       TeventObserverRegistrations = teventObservers;
+      TeventTypesObservableAtRuntime = teventTypesObservableAtRuntime;
       _voidTommandHandlers = voidTommandHandlers;
       _tommandHandlersWithResults = tommandHandlersWithResults;
       _tueryHandlers = tueryHandlers;
@@ -63,6 +65,10 @@ public class TessageHandlerRoster
    /// transaction-ignoring watch surface. The engine's <see cref="TeventObservationDispatcher"/> builds its per-observer FIFO<br/>
    /// dispatch queues from these; the transactional pipelines never touch them.</summary>
    internal IReadOnlyList<TeventObserverRegistration> TeventObserverRegistrations { get; }
+
+   ///<summary>The tevent types declared observable at runtime with <see cref="TeventObservationRegistrar.AtRuntime{TTevent}"/>: an<br/>
+   /// observer created at runtime may observe only tevents compatible with one of them.</summary>
+   internal IReadOnlyList<Type> TeventTypesObservableAtRuntime { get; }
 
    ///<summary>The one handler for the tommand type <paramref name="tommandType"/>, whose type declares no result.</summary>
    public Func<ITommand, IUnitOfWorkResolver, Task> GetVoidTommandHandler(Type tommandType) =>
