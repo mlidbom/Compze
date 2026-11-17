@@ -131,3 +131,17 @@ observe.ForEachUnitOfWork<INoteTevent>(tevents => ...)   //review-naming: a plac
   - isn't called for a unit of work with no compatible tevent;
   - gets two units of work as two lists.
 - **The engine refuses a runtime observer once stopped.**
+
+## Built (8695d4608)
+
+As specified, 15 specifications more, the suite green on the local MsSql combination. Where it differs:
+
+- **"No call starts after `Dispose` returns" holds for what `Dispose` drops,** not for the one observation the queue had
+  already taken when `Dispose` ran: that call may start a moment after. Making it exact would need `Dispose` to wait for
+  the queue, which the specification rules out so a view disposed on its UI thread can't deadlock. The doc comment of
+  `ITeventObservation.ObserveTevents` says so.
+- **A unit of work is its transaction:** the tevents of every scope that publishes in the same transaction come as one
+  list, keyed by `UnitOfWorkId`.
+- **One specification in an endpoint** (`Given_an_exactly_once_endpoint_with_an_observer_created_at_runtime`): the
+  interface resolves from an endpoint's container, and its observer observes a tevent committed in the endpoint.
+- **`LocalTessagingEngineBuilder`'s summary** now names the one exception to "the build closes the roster".
