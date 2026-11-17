@@ -1,8 +1,9 @@
 using System.Collections.Concurrent;
-using System.Collections.Immutable;
 using Compze.Abstractions;
+using Compze.Contracts;
 using Compze.Teventive.TaggregateStores;
-using Compze.Threading.ResourceAccess;
+using Compze.Threading;
+using static Compze.Contracts.Contract;
 
 namespace Compze.Teventive.StateStore._private;
 
@@ -31,7 +32,7 @@ sealed class TaggregateIndex<TTaggregate, TKey> : ITaggregateIndex<TTaggregate, 
    //Read without a lock: a key's array is replaced whole when a commit changes it, never changed in place, so a lookup outside a
    //unit of work returns it as it is, allocating nothing.
    volatile ConcurrentDictionary<TKey, ITaggregateReference<TTaggregate>[]> _committedReferencesByKey = new(); //Replaced whole when the store loads everything.
-   readonly IThreadShared<Dictionary<TaggregateId, ImmutableHashSet<TKey>>> _committedKeysById = IThreadShared.New(new Dictionary<TaggregateId, ImmutableHashSet<TKey>>());
+   readonly IMonitor _filingMonitor = IMonitor.New(); //Serializes the commits' changes to the arrays, each of which reads a key's array and replaces it.
 
    internal TaggregateIndex(TaggregateStateStore store, Func<TTaggregate, IEnumerable<TKey>> keysOf)
    {
@@ -64,58 +65,85 @@ sealed class TaggregateIndex<TTaggregate, TKey> : ITaggregateIndex<TTaggregate, 
 
    public void FileExactly(IEnumerable<ITaggregate> committedTaggregates)
    {
-      var keysById = committedTaggregates.OfType<TTaggregate>().Select(it => (it.Id, Keys: _keysOf(it).ToImmutableHashSet())).ToList();
       var referencesByKey = new ConcurrentDictionary<TKey, ITaggregateReference<TTaggregate>[]>(
-         keysById.SelectMany(it => it.Keys.Select(key => (Key: key, it.Id)))
-                 .GroupBy(it => it.Key, it => _store.Reference<TTaggregate>(it.Id))
-                 .Select(group => KeyValuePair.Create(group.Key, group.ToArray())));
-      _committedKeysById.Locked(committedKeysById =>
-      {
-         committedKeysById.Clear();
-         foreach(var (id, keys) in keysById.Where(it => !it.Keys.IsEmpty)) committedKeysById[id] = keys;
-         _committedReferencesByKey = referencesByKey;
-      });
+         committedTaggregates.OfType<TTaggregate>()
+                             .SelectMany(taggregate => KeysOf(taggregate).Select(key => (Key: key, taggregate.Id)))
+                             .GroupBy(it => it.Key, it => _store.Reference<TTaggregate>(it.Id))
+                             .Select(group => KeyValuePair.Create(group.Key, group.ToArray())));
+      _filingMonitor.Locked(() => _committedReferencesByKey = referencesByKey);
    }
 
+   ///<summary>The keys each changed taggregate leaves and gains. The index keeps no record of a taggregate's keys: those it leaves are<br/>
+   /// the keys of its committed instance, which stays the old one until the commit, and which no other unit of work can commit<br/>
+   /// meanwhile, since this one holds the taggregate's lock.</summary>
    public IPreparedIndexChange Prepare(IReadOnlyList<(TaggregateId Id, ITaggregate? NewState)> changedTaggregates)
    {
-      var newKeysById = changedTaggregates.Where(it => it.NewState is null or TTaggregate)
-                                          .Select(it => (it.Id, NewKeys: it.NewState is TTaggregate taggregate ? _keysOf(taggregate).ToImmutableHashSet() : []))
-                                          .ToList();
-      return new PreparedChange(this, newKeysById);
+      var refilings = changedTaggregates.Select(it => new Refiling(it.Id,
+                                                                   oldKeys: KeysOf(_store.CommittedInstanceOf(it.Id) as TTaggregate),
+                                                                   newKeys: KeysOf(it.NewState as TTaggregate)))
+                                        .Where(it => it.ChangesTheIndex)
+                                        .ToList();
+      refilings.ForEach(AssertFiledUnderItsOldKeys);
+      return new PreparedChange(this, refilings);
    }
 
-   void Apply(IReadOnlyList<(TaggregateId Id, ImmutableHashSet<TKey> NewKeys)> newKeysById) => _committedKeysById.Locked(committedKeysById =>
+   ///<summary>The keys <see cref="_keysOf"/> gives <paramref name="taggregate"/>, each once; none for no taggregate.</summary>
+   TKey[] KeysOf(TTaggregate? taggregate) => taggregate == null ? [] : [.._keysOf(taggregate).Distinct()];
+
+   ///<summary>Fails the unit of work, while it can still roll back, if the key function gives the committed instance a key it isn't<br/>
+   /// filed under: a key function that reads anything but the taggregate's own state, which the committed index can't follow.</summary>
+   void AssertFiledUnderItsOldKeys(Refiling refiling)
    {
-      foreach(var (id, newKeys) in newKeysById)
+      foreach(var oldKey in refiling.OldKeys)
+         State.Assert(_committedReferencesByKey.TryGetValue(oldKey, out var filed) && filed.Any(it => it.Id == refiling.Id),
+                      () => $"The index of {typeof(TTaggregate).FullName} by {typeof(TKey).FullName} gives taggregate {refiling.Id}'s committed state the key {oldKey}, but doesn't file it there. An index's key function must give keys from the taggregate's own state alone, the same each time.");
+   }
+
+   void Apply(IReadOnlyList<Refiling> refilings) => _filingMonitor.Locked(() =>
+   {
+      foreach(var refiling in refilings)
       {
-         var oldKeys = committedKeysById.GetValueOrDefault(id) ?? [];
-         foreach(var removedKey in oldKeys.Except(newKeys))
+         foreach(var leftKey in refiling.OldKeys.Except(refiling.NewKeys))
          {
-            ITaggregateReference<TTaggregate>[] remaining = [.._committedReferencesByKey[removedKey].Where(it => it.Id != id)];
-            if(remaining.Length == 0) _committedReferencesByKey.TryRemove(removedKey, out _);
-            else _committedReferencesByKey[removedKey] = remaining;
+            ITaggregateReference<TTaggregate>[] remaining = [.._committedReferencesByKey[leftKey].Where(it => it.Id != refiling.Id)];
+            if(remaining.Length == 0) _committedReferencesByKey.TryRemove(leftKey, out _);
+            else _committedReferencesByKey[leftKey] = remaining;
          }
 
-         foreach(var addedKey in newKeys.Except(oldKeys))
-            _committedReferencesByKey[addedKey] = [..(_committedReferencesByKey.GetValueOrDefault(addedKey) ?? []), _store.Reference<TTaggregate>(id)];
-
-         if(newKeys.IsEmpty) committedKeysById.Remove(id);
-         else committedKeysById[id] = newKeys;
+         foreach(var gainedKey in refiling.NewKeys.Except(refiling.OldKeys))
+            _committedReferencesByKey[gainedKey] = [..(_committedReferencesByKey.GetValueOrDefault(gainedKey) ?? []), _store.Reference<TTaggregate>(refiling.Id)];
       }
    });
+
+   ///<summary>How a unit of work's commit refiles one taggregate: from the keys of its committed instance to those of its new state.</summary>
+   sealed class Refiling
+   {
+      internal Refiling(TaggregateId id, TKey[] oldKeys, TKey[] newKeys)
+      {
+         Id = id;
+         OldKeys = oldKeys;
+         NewKeys = newKeys;
+      }
+
+      internal TaggregateId Id { get; }
+      internal TKey[] OldKeys { get; }
+      internal TKey[] NewKeys { get; }
+
+      ///<summary>Whether the taggregate is filed, or to be filed, under any key of this index at all.</summary>
+      internal bool ChangesTheIndex => OldKeys.Length > 0 || NewKeys.Length > 0;
+   }
 
    sealed class PreparedChange : IPreparedIndexChange
    {
       readonly TaggregateIndex<TTaggregate, TKey> _index;
-      readonly IReadOnlyList<(TaggregateId Id, ImmutableHashSet<TKey> NewKeys)> _newKeysById;
+      readonly IReadOnlyList<Refiling> _refilings;
 
-      internal PreparedChange(TaggregateIndex<TTaggregate, TKey> index, IReadOnlyList<(TaggregateId Id, ImmutableHashSet<TKey> NewKeys)> newKeysById)
+      internal PreparedChange(TaggregateIndex<TTaggregate, TKey> index, IReadOnlyList<Refiling> refilings)
       {
          _index = index;
-         _newKeysById = newKeysById;
+         _refilings = refilings;
       }
 
-      public void Apply() => _index.Apply(_newKeysById);
+      public void Apply() => _index.Apply(_refilings);
    }
 }
