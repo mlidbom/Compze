@@ -1036,6 +1036,84 @@ on the local MsSql combination. Where it went beyond the specification:
   composition, since loading reads a class's folder at any depth.
 - **Not guarded:** two units of work committing at the same time whose taggregates get the same new file. Each checks
   the files committed before it, not the other's pending write. Only a declared layout can produce it.
+- **Merged into the spike** as 1b4864ffc and 679775f97, then the inspections fixed and a spec of the overload with a
+  folder a service gives (3ff814272).
+- **Two bugs, found by taggregates-opus switching JAStudio:**
+  - **A storage that handed back the snapshots it was given handed back live taggregates** (fixed in d248ebd66): the
+    taggregate a snapshot carried went both ways, so a reload from JAStudio's in-memory spec storage took back the
+    committed instances, never restored, and saw no change. Now `TaggregateToWrite` goes out, and `RestoredTaggregate`,
+    which only Compze's file storage sets, comes in.
+  - **A reload dropped every taggregate whose class folder didn't exist at the store's first load** (fixed in
+    4ccdfb6b7): a `DirectoryInfo` keeps what it first learned, so a store started on an empty folder kept reading no
+    folder. It now asks the disk by path.
+
+### JAStudio on the JSON store: measured
+
+JAStudio runs on `StoredInFiles` (JAStudio 1fecefad5): a full rebuild changes no file, `save_every_note` changes none
+of the 79,896, and an edit undone leaves its file byte for byte as before. Its start, headless, "Loading the notes",
+measured by taggregates-opus with the machine otherwise near idle (32 cores):
+
+| Start | Seconds |
+|---|---|
+| Today's `snapshot.bin` | 4.01, 4.16, 4.45 |
+| JSON files, warm | 7.69, 7.81 |
+| JSON files, cold, the first read after a reboot | 37.65 (other processes at 2 cores) |
+
+The cold start is Anki's case after every reboot. So the cache is needed, as Magnus expected.
+
+### The MemoryPack cache, specified
+
+```csharp
+.StoredInFiles(folder, options, files => files.Of<VocabNote>("vocab")
+                                               .CachedWithMemoryPack())   //review-naming: a placeholder
+```
+
+- **A project of its own, `Compze.Teventive.StateStore.MemoryPack`,** depending on MemoryPack (1.21.4, JAStudio's
+  version). `CachedWithMemoryPack()` is an extension of `TaggregateFiles` in it. It plugs into an internal seam of the
+  store, shared through `InternalsVisibleTo`. Each declared class's snapshot type must be MemoryPack-serializable:
+  asserted at composition, naming the type.
+- **A cache file for each class, in the store's own folder.** For each file of the class, it holds the file's path
+  relative to the class's folder, its length, its last write time and the snapshot it held.
+- **At load:** the class's files are listed with their lengths and times, which the folder listing gives without
+  opening them. A file whose length and time are those in the cache takes its snapshot from the cache. Any other file
+  is read as JSON, as without the cache. A file the cache has and the folder doesn't is gone. Then each snapshot is
+  restored, as without the cache.
+- **The cache is written after a load that read any file, or found one gone.** It is written under a temporary name and
+  renamed, so a crash leaves the old cache or the new. Commits don't write it: a file a commit wrote has another length
+  or time at the next start, and is read then.
+- **A changed snapshot type makes the cache unusable:** MemoryPack reads by position, and a cache written for the type
+  before a change may read back wrong values without failing. So the cache records a fingerprint of each class's
+  snapshot type: every instance field of the type, and of each type reachable through them, collections' elements
+  included, with their names, types and order. A cache whose fingerprint differs is not read, and is written anew
+  after the load. Fields catch properties through their backing fields; a change that doesn't matter to MemoryPack
+  costs one slow start, never wrong data.
+- **A cache that can't be read is a failure, not a fallback.** It is renamed into place whole, and a changed type is
+  caught by the fingerprint, so an unreadable one means something is wrong, and the load fails, naming it. Deleting
+  it gives a slow start.
+- **Specifications:** a store started a second time with the cache reads no file whose length and time are unchanged
+  (shown by a spec that changes a file's content behind the store while keeping its length and time, so it must load
+  the cached snapshot); it reads a changed file, a new file, and drops a gone one; a cache written for a snapshot type
+  with other fields is not used; the cache file is replaced whole.
+- **Then JAStudio switches to it,** and taggregates-opus measures the start, warm and cold, against `snapshot.bin`.
+
+### Not yet decided: the storage for consumers' specifications
+
+JAStudio's specifications, run on `StoredInFiles` with a fresh folder each, took 150 to 186 s against 56 to 59 s in
+memory (other processes at 2.6 to 3.9 cores against 1.2 to 1.4). Most start with about 900 notes, each created in its
+own unit of work, and each commit makes about five file operations. So JAStudio keeps its specifications on its own
+in-memory storage, `NotesStoredInMemory`, and only those about files on files. That storage implements the seam, which
+is to go internal. Put to Magnus: what replaces it.
+
+### Noticed, for later
+
+- **A commit of a single file needs no journal:** writing it under a temporary name and renaming it is already all or
+  nothing. Most commits write one file, and it would take them from about five file operations to two.
+- **Writing every taggregate anew:** JAStudio's `save_every_note`, and Magnus's "Write file system repository", write
+  every note, changed or not, to see in git that loading and saving changes no file, after a change to the snapshot
+  types, the serializer options or a format migration. JAStudio does it with five lines of its own that must agree
+  with the store's layout and format (marked `todo:compze:`). A candidate for the end review: something such as
+  `IStateStore.WriteEverythingAnew()`.
+
 
 ## What the prototype is
 
