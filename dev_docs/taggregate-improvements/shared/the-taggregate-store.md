@@ -838,6 +838,31 @@ the sort after the filter and then instantly the cost dropped a lot since the co
   lookup order, 1,169 sentences; possibly a splitter's loop over vocab sharing a question; display lists. The godan
   check wants a grammar rule over all of them whatever the order, which is Magnus's call, in a `review:` comment there.
 
+## The index keeps no keys of its own, specified
+
+**Magnus, 2026-11-17 (item 41),** after JAStudio's step 12 measured its load 2.4 s slower than its main branch's, 2.8 s
+of the store's 4.2 s in filing its ~20 indexes, and found the largest new thing in its heap to be the index's record of
+each taggregate's keys: an `ImmutableHashSet` for each, about 105 MB for 1.6 million keys, 0.8 s to build at load.
+
+- **What the record was for:** when a unit of work commits a changed taggregate, the index takes it out from under the
+  keys it no longer has. It read the old keys from the record.
+- **Now:** the index keeps only, for each key, the references filed under it. When the unit of work prepares, the old
+  keys come from the key function run on the taggregate's committed instance, and the new ones, as before, from its copy;
+  at the commit the index files by their difference. A new taggregate has no committed instance, and a deleted one no
+  copy.
+- **Why that is sound:** the committed instance stays the old one until the commit, and the unit of work holds the
+  taggregate's lock, so no other unit of work commits it in between; a reload waits for open units of work. It relies
+  only on what `StateStoreBuilder.Index` documents, keys given "from its state", which a lookup inside a unit of work
+  already relies on when it computes the keys of the copies it holds.
+- **What it costs:** the key function runs once more for each changed taggregate at each commit. A key function that
+  isn't a function of the taggregate's own state already gives inconsistent lookups inside a unit of work; it would now
+  leave the committed index wrong as well.
+- **Weighed by the rules on consumers' requests:** no public API changes and nothing is promised anew. The gain grows
+  with how much any consumer stores, the cost with how much it changes. JAStudio's other suggestions, presizing the
+  dictionaries and filing the indexes in parallel, are tuning for its load, and not taken.
+- **Specifications:** the index's as they are, which cover a renamed key, a deletion and a creation, inside and outside
+  the unit of work, after a load and after commits. taggregates-opus measures JAStudio's load and heap again.
+
 ## What the prototype is
 
 Branch `taggregate-store-opus`, commit `3dd0fbe08`, in `C:\Dev\Compze.worktrees\taggregate-store-opus`, based on `main`.
