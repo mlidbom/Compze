@@ -4,7 +4,7 @@ using Compze.Contracts;
 using Compze.Internals.SystemCE.LinqCE;
 using Compze.Internals.SystemCE.ReactiveCE;
 using Compze.Teventive._internal;
-using Compze.Teventive.StateStore.Storage;
+using Compze.Teventive.StateStore._private.Storage;
 using Compze.Teventive.TaggregateStores._internal;
 using Compze.Teventive.Taggregates.Tevents;
 using static Compze.Contracts.Contract;
@@ -139,7 +139,7 @@ sealed class StateStoreSession : ITaggregateStoreSession
    {
       var changed = _heldTaggregates.Values.Where(it => it.IsChanged).ToList();
       _preparedWrite = _store.Storage.Prepare([..changed.Where(it => !it.IsDeleted).Select(SnapshotOf)],
-                                              [..changed.Where(it => it is { IsDeleted: true, IsNew: false }).Select(it => new TaggregateToDelete(it.Taggregate.GetType(), it.Taggregate.Id))]);
+                                              [..changed.Where(it => it is { IsDeleted: true, IsNew: false }).Select(it => it.Taggregate.Id)]);
       var changedStates = changed.Select(it => (it.Taggregate.Id, NewState: it.IsDeleted ? null : it.Taggregate)).ToList();
       _preparedIndexChanges = [.._store.Indexes.Select(index => index.Prepare(changedStates))];
 

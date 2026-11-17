@@ -1,10 +1,10 @@
 using Compze.Abstractions;
 
-namespace Compze.Teventive.StateStore.Storage;
+namespace Compze.Teventive.StateStore._private.Storage;
 
 ///<summary>The state of one taggregate as a state store hands it to its storage and gets it back: a snapshot of the type the<br/>
 /// taggregate's class chooses, with what the storage needs to know of the taggregate to keep it, such as where its file is.</summary>
-public sealed class TaggregateSnapshot
+sealed class TaggregateSnapshot
 {
    ///<summary>The snapshot of a taggregate of <paramref name="taggregateClass"/> with the id <paramref name="id"/>.</summary>
    public TaggregateSnapshot(Type taggregateClass, TaggregateId id, object snapshot)

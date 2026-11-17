@@ -1,5 +1,4 @@
 using Compze.Abstractions;
-using Compze.Teventive.StateStore.Storage;
 using Compze.Teventive.TaggregateStores;
 
 namespace Compze.Teventive.StateStore;
@@ -24,7 +23,7 @@ public interface IStateStore
    ReloadedTaggregates ReloadFromStorageAfter(Action changeToTheStorage);
 }
 
-///<summary>How what <see cref="ITaggregateStorage"/> held differed from what the state store held, as <see cref="IStateStore.ReloadFromStorage"/> found it.</summary>
+///<summary>How what the store's storage, such as its files, held differed from what the state store held, as <see cref="IStateStore.ReloadFromStorage"/> found it.</summary>
 public sealed class ReloadedTaggregates
 {
    internal ReloadedTaggregates(IReadOnlyList<TaggregateId> added, IReadOnlyList<TaggregateId> changed, IReadOnlyList<TaggregateId> removed)

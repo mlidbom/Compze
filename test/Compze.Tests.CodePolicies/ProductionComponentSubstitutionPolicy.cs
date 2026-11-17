@@ -62,9 +62,7 @@ public static partial class ProductionComponentSubstitutionPolicy
       typeof(DependencyInjection.Abstractions.IComponentSet<>),       // a set of components registered together
       typeof(Internals.Logging.ILogBackend),                          // the logging backend log statements are written to
       typeof(Internals.SystemCE.IStaticInstancePropertySingleton<>),  // a type reached through a static Instance property
-      typeof(InterprocessObject.IInterprocessObjectSerializer<>),     // how an interprocess object crosses the process boundary
-      typeof(Teventive.StateStore.Storage.ITaggregateStorage),        // where a state store keeps what it commits, in the consumer's own form
-      typeof(Teventive.StateStore.Storage.IPreparedWrite)             // a write that such a storage has prepared
+      typeof(InterprocessObject.IInterprocessObjectSerializer<>)      // how an interprocess object crosses the process boundary
    ];
 
    static IEnumerable<string> SubstitutedComponentsOf(Type testType, Dictionary<Type, Type> abstractionsCompzeImplements)

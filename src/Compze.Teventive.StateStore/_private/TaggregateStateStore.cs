@@ -2,11 +2,11 @@ using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
 using Compze.Abstractions;
 using Compze.Contracts;
-using Compze.Teventive.StateStore.Storage;
 using Compze.Teventive.TaggregateStores;
 using Compze.Teventive.TaggregateStores._internal;
 using Compze.Teventive.Taggregates._internal;
 using Compze.Teventive._internal;
+using Compze.Teventive.StateStore._private.Storage;
 using Compze.Threading;
 using static Compze.Contracts.Contract;
 

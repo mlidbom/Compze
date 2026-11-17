@@ -1,6 +1,7 @@
 using System.Text.Json;
-using Compze.Teventive.StateStore.Storage;
+using Compze.Abstractions;
 using Compze.Teventive.StateStore._internal;
+using Compze.Teventive.StateStore._private.Storage;
 using Compze.Threading.ResourceAccess;
 
 namespace Compze.Teventive.StateStore._private.Files;
@@ -84,14 +85,14 @@ sealed class TaggregateFileStorage : ITaggregateStorage
       CommitJournal.RetriedWhileAnotherProgramHoldsTheFile(() => _files.Move(temporaryFile, file, overwrite: true));
    }
 
-   public IPreparedWrite Prepare(IReadOnlyList<TaggregateSnapshot> toSave, IReadOnlyList<TaggregateToDelete> toDelete)
+   public IPreparedWrite Prepare(IReadOnlyList<TaggregateSnapshot> toSave, IReadOnlyList<TaggregateId> toDelete)
    {
       var write = new PreparedFileWrite(_files, _folder, _ownFolder, _storedFiles);
       try
       {
          foreach(var saved in toSave)
             write.Save(saved.Id.Value, _classes[saved.TaggregateClass].FileOf(saved.TaggregateToWrite!), JsonSerializer.Serialize(saved.Snapshot, _classes[saved.TaggregateClass].TaggregateClass.SnapshotType, _options));
-         foreach(var deleted in toDelete) write.Delete(deleted.Id.Value);
+         foreach(var deleted in toDelete) write.Delete(deleted.Value);
          return write;
       }
       catch

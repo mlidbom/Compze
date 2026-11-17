@@ -149,6 +149,27 @@ public class Given_a_state_store_kept_in_files : UniversalTestBase
 
          [PCT] public void the_stores_own_folder_holds_no_temporary_file() => FilesInTheStoresOwnFolder.Must().BeEmpty();
       }
+
+      ///<summary>A file stands where the store's own folder goes, as it can on a consumer's disk, so the store can't write the<br/>
+      /// temporary file of a change when the unit of work prepares.</summary>
+      public class and_a_file_is_where_the_stores_own_folder_goes_so_a_unit_of_work_changing_it_fails_to_prepare_its_write : after_a_unit_of_work_saves_a_vocab
+      {
+         readonly Exception _exception;
+
+         public and_a_file_is_where_the_stores_own_folder_goes_so_a_unit_of_work_changing_it_fails_to_prepare_its_write()
+         {
+            if(Directory.Exists(StoresOwnFolder)) Directory.Delete(StoresOwnFolder, recursive: true);
+            File.WriteAllText(StoresOwnFolder, "");
+            _exception = Invoking(() => InUnitOfWork(taggregates => taggregates.GetForUpdate<StoredVocab>(VocabId).ChangeMeaning("to eat")))
+                        .Must().Throw<TransactionAbortedException>().Which;
+         }
+
+         [PCT] public void the_unit_of_work_rolls_back_with_the_disks_exception() => _exception.InnerException.Must().BeAssignableTo<IOException>();
+
+         [PCT] public void the_reader_gets_the_meaning_committed_before() => Reader.Get<StoredVocab>(VocabId).Meaning.Must().Be("");
+
+         [PCT] public void the_file_still_holds_the_meaning_committed_before() => File.ReadAllText(VocabFileByDefault).Must().Be(SerializedVocab(VocabId, "taberu", ""));
+      }
    }
 
    public class whose_folder_a_service_of_the_container_gives : Given_a_state_store_kept_in_files

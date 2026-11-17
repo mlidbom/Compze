@@ -3,9 +3,9 @@ using Compze.Contracts;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.LinqCE;
-using Compze.Teventive.StateStore.Storage;
 using Compze.Teventive.StateStore._private;
 using Compze.Teventive.StateStore._private.Files;
+using Compze.Teventive.StateStore._private.Storage;
 using Compze.Teventive.TaggregateStores._internal;
 using Compze.Teventive.Taggregates;
 using Compze.Teventive.Taggregates._internal;
@@ -59,16 +59,6 @@ public sealed class StateStoreBuilder
       _registrar.Register(Singleton.For<ITaggregateIndex<TTaggregate, TKey>>().CreatedBy((TaggregateStateStore store) => store.Index<ITaggregateIndex<TTaggregate, TKey>>()));
       return this;
    }
-
-   ///<summary>Declares where the store keeps what it commits. Without it, the store keeps its taggregates in memory only.</summary>
-   public StateStoreBuilder StoredIn(ITaggregateStorage storage) => DeclareStorage((_, _) => storage);
-
-   ///<summary>As <see cref="StoredIn(ITaggregateStorage)"/>, for a storage built with a service of the container, such as one that<br/>
-   /// knows where the consumer's files are: <c>store.StoredIn((CorpusPaths paths) => new CorpusFiles(paths))</c>.</summary>
-   ///<remarks>The service is resolved from the container's root when the store is built, at its first use, so a service that a<br/>
-   /// host can only give once it has started is there.</remarks>
-   public StateStoreBuilder StoredIn<TService>(Func<TService, ITaggregateStorage> storageWith) where TService : class =>
-      DeclareStorage((resolver, _) => storageWith(resolver.Resolve<TService>()));
 
    ///<summary>Declares that the store keeps what it commits in JSON files, in <paramref name="folder"/>: a file for each taggregate, in a<br/>
    /// folder for each class, which <paramref name="declare"/> declares, holding exactly what <paramref name="options"/> make of the<br/>

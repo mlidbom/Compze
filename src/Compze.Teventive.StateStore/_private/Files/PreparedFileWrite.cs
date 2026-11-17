@@ -1,6 +1,6 @@
 using Compze.Contracts;
 using Compze.Internals.SystemCE.LinqCE;
-using Compze.Teventive.StateStore.Storage;
+using Compze.Teventive.StateStore._private.Storage;
 using Compze.Threading.ResourceAccess;
 using static Compze.Contracts.Contract;
 
