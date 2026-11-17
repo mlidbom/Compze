@@ -129,7 +129,8 @@ The numbers: [what-was-measured.md](what-was-measured.md). The bugs and the smal
 4. **The snapshot API and the storage seam, with the JSON store,** and the specification helper that round-trips a
    snapshot. **JAStudio can start here.**
 5. **The rest of Compze's teventives:** entities, removable entities and shared tentities designed and moved to tables,
-   the query models decided, and per-instance registration removed.
+   the query models decided, and per-instance registration removed. Specified in
+   [step-5-the-rest-of-the-teventives.md](step-5-the-rest-of-the-teventives.md), approved by Magnus, 2026-11-17.
 
 ## What Magnus decides
 
