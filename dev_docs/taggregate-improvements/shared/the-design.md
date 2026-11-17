@@ -98,7 +98,10 @@ class VocabNote : JPNote
   that both apply, and reactions that reach other notes go to participation handlers, dispatched by the taggregate
   store when the unit of work commits: see [the-taggregate-store.md](the-taggregate-store.md).
 - **The query models** (`SelfGeneratingQueryModel` and its families) move to the same tables, so that one abstraction is
-  implemented once.
+  implemented once. **Decided by Magnus, 2026-11-17,** for step 5: they apply tevents and hold their state the way
+  taggregates do. A taggregate adds only that it publishes tevents, and he would like the two to share most of their
+  code, if a way can be found that doesn't make the types more complex than they are: see decision 11 in the
+  [README](README.md).
 
 ### Shared tomponents and their slots
 

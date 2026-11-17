@@ -205,7 +205,15 @@ The numbers: [what-was-measured.md](what-was-measured.md). The bugs and the smal
     - **The state store** (named in item 22), which keeps taggregates as their state: `ITaggregateIndex<TTaggregate, TKey>` with `Lookup` and `HasAny`;
       `ITaggregateStorage` with `IPreparedWrite`; and its composition, `AddTaggregate<T>(factory)` and `Index<T, TKey>`.
     - **Gone:** `LoadFromSnapshot` and its snapshot marker, the end-of-cascade hook, and the one-thread assertion.
-11. **The query models:** move them to tables in step 5, or keep their per-instance registration.
+11. **The query models move to the tables, in step 5. Decided by Magnus, 2026-11-17:** `SelfGeneratingQueryModel` and
+   its family apply tevents and hold their state the way taggregates do. "Taggregates and self generated view models share virtually all logical requirements. The only thing that
+   taggregates add is the ability to publish tevents. The fact that, as far as I can remember, they share hardly any code
+   beyond the event dispatcher is very frustrating to me. If possible I would love for them to share the great majority
+   of their code. But I'm not aware of any way to achieve that without making the types even more complex than they
+   already are... Yes, they should implement tevent appliers and state management from tevents in the same way that
+   taggregates do."
+   Sharing most of the code between the two, without making the types more complex, is for step 5's design to look
+   for. Their users today: the AccountManagement sample and Compze's own specifications.
 12. **Tevent implementation classes: an analyzer with a code fix that adds only what is missing. Decided by Magnus,
     2026-11-16,** as work to do: `dev_docs/TODO/an-analyzer-for-tevent-classes-and-type-mappings.md`. And, decided by Magnus: a serialized name is declared on the tevent
     interface's property. See [generating-tevent-classes.md](generating-tevent-classes.md).
