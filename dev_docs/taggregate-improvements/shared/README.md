@@ -34,6 +34,14 @@ on. Its guarantees: what it promises a caller, such as an order, what a unit of 
 at each call, what it does when it fails. The spike's own examples: `All` was first on `IStateStore`, not on a reader;
 it and `Lookup` returned an `IReadOnlyList` in id order, which promised an order that cost every call a sort.
 
+**Is the state store designed for an application that keeps its whole database in memory? (Magnus, 2026-11-17)** "If
+so that does not make the need or the implementation bad, but it means that we should consider things like naming
+and/or whether it should be a specific mode for a store that does not always work like that. For instance, I would
+assume that having all-in-memory indexes would not play well unless all the objects are loaded." As built, it is: it
+loads every taggregate at its first use and holds them all, and its indexes and `All` work over what it holds. The
+review, the agents' included, weighs what that means for its name, its public surface and its documentation, and
+whether an all-in-memory store is a mode of something more general or a store of its own.
+
 **First, independent reviews (Magnus, 2026-11-17):** "I absolutely want that on the public API, with the new rules in
 front of mind. Both opus and fable." One Opus and one Fable reviewer, each on its own, review every public API change of
 the spike, with Compze's rules 011, 012 and 013 in front of them: the frameworks keep their public surface minimal,
