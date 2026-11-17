@@ -922,6 +922,95 @@ with tevents: a note's own `Delete` published `INoteTevent.Deleted`, and the cod
   - **The query of each taggregate's last tevent** is the same portable SQL in the four layers, a join on each
     taggregate's highest effective version. Only MsSql runs locally: CI runs the others.
 
+## Compze's JSON store, specified
+
+Magnus, 2026-11-17, approving it now instead of deferring it: "It feels like we now have half of a json backend, we build
+half and JAStudio the other half... I'm also not too sure that implementing the storage part in JAStudio is how we want
+things in the long run." The storage seam was shaped by JAStudio's existing files, not by a store of Compze's own. Once
+Compze's store covers JAStudio, the seam goes internal: `ITaggregateStorage`, `IPreparedWrite`, `TaggregateSnapshot`
+and `TaggregateToDelete`, four public types fewer, and `StateStoreBuilder.StoredIn` with them.
+
+The order: specify it here, build it in Compze.Teventive.StateStore, have taggregates-opus switch JAStudio to it,
+measure JAStudio's start against its `snapshot.bin`, build the cache below if it is needed, then make the seam internal.
+
+### The composition
+
+```csharp
+registrar.StateStore(store => store
+   .Taggregate(() => new VocabNote(services))
+   .Taggregate(() => new KanjiNote(services))
+   .StoredInFiles(corpusFolder, NoteSerializer.JsonOptions, files => files
+      .Of<VocabNote>("vocab")                                    //<corpus>/vocab/<first two hex digits of the id>/<id>.json
+      .Of<KanjiNote>("kanji", fileOf: (note, folder) => ...)));  //any file under <corpus>/kanji
+```
+
+All names are placeholders for the naming pass.
+
+- **`StoredInFiles(DirectoryInfo folder, JsonSerializerOptions options, Action<TaggregateFiles> declare)`:** the store's
+  folder, the consumer's JSON options, and each class's files.
+- **`Of<TTaggregate>(string folder, Func<TTaggregate, DirectoryInfo, FileInfo>? fileOf = null)`:** the class's folder,
+  under the store's folder, and the file of each instance, given the instance and the class's folder. Declared for each
+  class, computed for each instance, as Magnus put it: "specified per note type but built per note." The default is
+  `<first two hex digits of the id>/<id>.json`, JAStudio's layout. Each class the store keeps is declared, and two
+  classes don't share a folder: both asserted when the container is built.
+- **The file of an instance:**
+  - It may depend on more than the id. When a change gives it another file, the commit writes the new file and deletes
+    the old one, in the same journal. For now JAStudio needs only the id.
+  - It must lie under its class's folder, and its name must end in `.json`. Two taggregates may not have the same file.
+    All three are asserted where the write is prepared, so the unit of work fails.
+
+### What it writes, and how
+
+- **A file holds exactly what `JsonSerializer.Serialize(snapshot, options)` gives,** in UTF-8 without a byte order
+  mark: the bytes JAStudio writes today, so the corpus's files in git stay as they are.
+- **All or nothing across the files of one commit,** as designed above under "The JSON store":
+  - temporary files at prepare, in the store's own folder;
+  - at commit, a journal first, then the renames and deletions, then the journal is deleted;
+  - at start, a journal that exists is carried out, and temporary files without one are deleted.
+- **The store's own folder is `<folder>/.state-store`,** on the same volume as the files, so a rename moves no data. A
+  consumer whose files are in version control ignores it.
+- **Each commit has a journal of its own,** named uniquely, so units of work on different taggregates can commit at the
+  same time. Their files never overlap: a taggregate's lock is held until its unit of work completes.
+- **A failure after the journal is written stops the process** with `Environment.FailFast`. The next start finishes the
+  write. A rename that fails because another program holds the file is retried first.
+- **Not flushed to the disk.** A setting to flush waits for a consumer that needs it.
+
+### What it loads
+
+- **Every `*.json` file under each class's folder,** recursively, read as the class's snapshot type with the consumer's
+  options. The taggregate is then restored from it, and its id is the restored taggregate's. Other files, such as
+  JAStudio's `snapshot.bin`, are ignored.
+- **A file that can't be read or restored fails the load, naming the file.** So do two files that hold the same id.
+- **`IStateStore.ReloadFromStorage` reads the files again** in the same way.
+
+### Starting fast: a cache, as a package of its own
+
+JAStudio starts from a MemoryPack binary cache of all its notes, then reads only the files changed since. Any store
+that loads thousands of files at its start needs such a cache, so it belongs to the store. MemoryPack is a third-party
+library, and it requires `[MemoryPackable]` on the consumer's snapshot types, so it goes in a project of its own that a
+consumer plugs in. Magnus: "I don't think I have a problem with a new project with that dependency that a consumer can
+plug in if they want this type of cache... Assuming that you cannot match its performance with that serializer, and I
+don't think you can."
+
+- **The simple version first:** the store reads every file. JAStudio's start is measured with it against today's.
+- **Then, if it's needed,** `Compze.Teventive.StateStore.MemoryPack` with `files.CachedWithMemoryPack()`:
+  - a cache file for each class in the store's own folder, written after a load;
+  - it records each file's length and last write time, and at the next start only the files whose length or time
+    differs, and new files, are read; files that are gone are dropped;
+  - JAStudio's cache compares each file's time with the cache file's, and misses a file restored with an older time.
+    Comparing each file's own length and time doesn't.
+  - The seam it plugs into is internal, shared with the plug through `InternalsVisibleTo`.
+
+### Specifications
+
+- A taggregate saved is in its file, under its class's folder, with the default layout and with a declared one.
+- The file holds exactly what the serializer gives with the consumer's options.
+- A store started on a folder loads what an earlier store wrote.
+- A deletion deletes the file. A change that gives the taggregate another file moves it.
+- A rolled-back unit of work writes nothing, and leaves no temporary file.
+- A journal left by a crash is carried out at the next start. Temporary files left without a journal are deleted.
+- A file outside its class's folder, two taggregates with one file, and an unreadable file each fail, naming the file.
+
 ## What the prototype is
 
 Branch `taggregate-store-opus`, commit `3dd0fbe08`, in `C:\Dev\Compze.worktrees\taggregate-store-opus`, based on `main`.
