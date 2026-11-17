@@ -445,15 +445,14 @@ Generated data can be generated again, so a failed unit of work costs little eit
 
 ## What isn't designed yet
 
-- A second session of one transaction getting a taggregate another session of it holds: it waits for its own
-  transaction until the timeout. It should be refused at once, or both sessions share the instance.
-- A wait for observers to be at rest that needs neither a testing host nor stopping the engine:
-  `ILocalTessagingEngine.StopAsync` stops it. JAStudio's specifications need one.
 - A database and the JSON store in one transaction.
 - The storage seam's error when `Commit` fails anyway.
-- A short way for specifications to run an edit as a unit of work. JAStudio's specifications edit notes directly today.
-- The ambient unit of work, so that a reference finds its session without the updater being resolved first.
 - Keeping each held copy's keys in the index's overlay.
+
+Designed and built since (2026-11-17): two sessions of one transaction share the unit of work's instance, since the
+unit of work belongs to the transaction; `ILocalTessagingEngine.AwaitNoTeventsInFlightAsync` waits for the observers
+and leaves the engine running; JAStudio's specifications run an edit with its own `note.Edit(...)`; and the ambient unit
+of work lets a reference find its session from the ambient transaction alone.
 
 **Loading everything again while running gets easier with references:** a reference outlives a reload, where today
 `JPCollection.ReloadFromBackend` replaces every note object and every holder looks it up again.
