@@ -913,6 +913,14 @@ with tevents: a note's own `Delete` published `INoteTevent.Deleted`, and the cod
   publishes a Deleted tevent. New ones, in both stores: the deletion hides the taggregate inside the unit of work, a
   publish after it fails the unit of work, a rolled-back deletion leaves the taggregate, and `All` leaves a deleted one
   out; in the tevent store, the history is kept and ends with the Deleted tevent.
+- **Built as specified (5e9f293e4),** 23 specifications more, the suite green on the local MsSql combination. Where it
+  went beyond the specification:
+  - **The refusal to publish after a deletion is the taggregate's own:** `Taggregate` asserts it in `Publish`, for both
+    stores and outside any store, before the tevent changes the state. So the sessions only mark the taggregate deleted.
+  - **`TryGetForUpdate` of a taggregate deleted in the same unit of work returns false** in both stores. The state
+    store's session used to throw "deleted in this unit of work" there.
+  - **The query of each taggregate's last tevent** is the same portable SQL in the four layers, a join on each
+    taggregate's highest effective version. Only MsSql runs locally: CI runs the others.
 
 ## What the prototype is
 
