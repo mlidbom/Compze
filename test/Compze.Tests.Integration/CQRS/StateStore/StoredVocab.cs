@@ -1,4 +1,5 @@
 using Compze.Abstractions;
+using Compze.Teventive;
 using Compze.Teventive.Taggregates;
 using Compze.Teventive.Taggregates.BaseClasses;
 using Compze.Teventive.Taggregates.Tevents;
@@ -9,25 +10,25 @@ namespace Compze.Tests.Integration.CQRS.StateStore;
 
 ///<summary>A vocab note, much reduced: a taggregate that a state store keeps as its state.</summary>
 class StoredVocab : Taggregate<StoredVocab, IStoredVocabTevent, StoredVocabTevent, IStoredVocabTevent<IStoredVocabTevent>, StoredVocabTevent<StoredVocabTevent>>,
-                    ISnapshotable<StoredVocab, StoredVocabSnapshot>
+                    ISnapshotable<StoredVocab, StoredVocabSnapshot>, ITeventRouted
 {
+   static readonly TeventRouting<StoredVocab, IStoredVocabTevent> Appliers = DeclareAppliers(it => it
+     .For<IStoredVocabCreated>(static (vocab, tevent) => vocab.Question = tevent.Question)
+     .For<IStoredVocabQuestionChanged>(static (vocab, tevent) => vocab.Question = tevent.Question)
+     .For<IStoredVocabMeaningChanged>(static (vocab, tevent) =>
+      {
+         if(tevent.Meaning == MeaningThatFailsToApply) throw new InvalidOperationException("This meaning fails to apply.");
+         vocab.Meaning = tevent.Meaning;
+      })
+     .For<IStoredVocabDeleted>(static (_, _) => {}));
+
+   TeventRouting ITeventRouted.TeventAppliers => Appliers;
+
    public const string MeaningThatFailsToApply = "a meaning that fails to apply";
 
    public string Question { get; private set; } = "";
    public string Meaning { get; private set; } = "";
 
-   public StoredVocab()
-   {
-      RegisterTeventAppliers()
-        .For<IStoredVocabCreated>(it => Question = it.Question)
-        .For<IStoredVocabQuestionChanged>(it => Question = it.Question)
-        .For<IStoredVocabMeaningChanged>(it =>
-         {
-            if(it.Meaning == MeaningThatFailsToApply) throw new InvalidOperationException("This meaning fails to apply.");
-            Meaning = it.Meaning;
-         })
-        .For<IStoredVocabDeleted>(_ => {});
-   }
 
    public static StoredVocab Create(TaggregateId id, string question)
    {

@@ -40,13 +40,20 @@ public abstract class TeventRouting
    ///<summary>Whether this routing routes the tevents of <paramref name="partTevent"/> to a part, a component or an entity collection.</summary>
    private protected abstract bool RoutesToAPartWhoseTeventsAre(Type partTevent);
 
+   ///<summary>Asserts that <paramref name="teventive"/>'s class declares its tevent appliers, for its own exact class: a class that declares none<br/>
+   /// would apply no tevent, and one that inherits its base class's routing would lose its own appliers. Checked when it is constructed.</summary>
+   internal static void AssertDeclaresItsTeventAppliers(ITeventRouted teventive)
+   {
+      State.Assert(teventive.TeventAppliers is not null,
+                   () => $"{teventive.GetType().FullName} declares no tevent appliers. Declare them with its base class's DeclareAppliers, keep them in a static field, and return them from an explicit implementation of {nameof(ITeventRouted)}.{nameof(ITeventRouted.TeventAppliers)}, listing {nameof(ITeventRouted)} again in the class's base list.");
+      AssertDeclaredForTheClassOf(teventive);
+   }
+
    ///<summary>Asserts that <paramref name="parent"/>'s routing routes <typeparamref name="TPartTevent"/>s to a part, as it must to reach <paramref name="part"/>:<br/>
    /// a part whose entry its parent's routing forgot would silently never apply a tevent. Checked when the part is constructed.</summary>
    internal static void AssertRoutesToAPart<TPartTevent>(ITeventRouted parent, object part) where TPartTevent : ITevent
    {
-      //wip: step 5 of the taggregate spike: a parent that registers its appliers per instance has no routing to check.
-      if(parent.TeventAppliers is not {} routing) return;
-      State.Assert(routing.RoutesToAPartWhoseTeventsAre(typeof(TPartTevent)),
+      State.Assert(parent.TeventAppliers._assert().NotNull().RoutesToAPartWhoseTeventsAre(typeof(TPartTevent)),
                    () => $"A {part.GetType().FullName} is constructed as a part of a {parent.GetType().FullName}, whose tevent routing routes no {typeof(TPartTevent).FullName} to a part. Enter the part in the routing: Component(...) for a component, Entities(...) for an entity collection.");
    }
 

@@ -36,12 +36,7 @@ public abstract class Tentity<TParent,
    TTentityId _id;
    public TTentityId Id => _id._assert().NotDefault();
 
-   protected Tentity(TParent taggregate, TeventDispatcherConfig? teventAppliersDispatcherConfig = null) : base(taggregate, false, teventAppliersDispatcherConfig)
-   {
-      if(TeventAppliers is null)
-         RegisterTeventAppliers()
-           .For<TTentityCreatedTevent>(e => _id = IdGetterSetter.GetId(e));
-   }
+   protected Tentity(TParent taggregate) : base(taggregate) {}
 
    ///<summary>Declares the tevent appliers of <typeparamref name="TTentity"/>, for it to keep in a static field and return from its explicit<br/>
    /// implementation of <see cref="ITeventRouted.TeventAppliers"/>. Every tevent dispatched to the entity must reach at least one of them.<br/>
@@ -77,28 +72,15 @@ public abstract class Tentity<TParent,
 
    internal class CollectionManager : RoutedEntityCollection<TTentity, TTentityId, TTentityTevent>, ICollectionManager
    {
-      protected static readonly TTentityTeventIdGetterSetter IdGetter = Constructor.For<TTentityTeventIdGetterSetter>.DefaultConstructor.Instance();
+      static readonly TTentityTeventIdGetterSetter IdGetter = Constructor.For<TTentityTeventIdGetterSetter>.DefaultConstructor.Instance();
 
       readonly TParent _parent;
 
       public CollectionManager(TParent parent)
       {
          _parent = parent;
-         TeventRouting.AssertRoutesToAPart<TTentityTevent>((ITeventRouted)parent, this);
-#pragma warning disable CS0618 // This is just the type of infrastructure code the methods are for
-         if(parent.DeclaresTeventAppliersInternal) return;
-
-         parent.RegisterTeventAppliersInternal()
-               .For<TTentityCreatedTevent>(e =>
-                {
-                   var entity = Constructor.For<TTentity>.WithArguments<TParent>.Instance(parent);
-                   ManagedEntities.Add(entity, IdGetter.GetId(e));
-                })
-               .For<TTentityTevent>(e => GetEntityAsTeventiveInternals(e).ApplyTeventInternal(e));
-#pragma warning restore CS0618
+         TeventRouting.AssertRoutesToAPart<TTentityTevent>(parent, this);
       }
-
-      ITeventiveInternals<TTentityTevent, TTentityTeventImplementation> GetEntityAsTeventiveInternals(TTentityTevent e) => ManagedEntities[IdGetter.GetId(e)];
 
       internal override TTentityId IdOf(TTentityTevent tevent) => IdGetter.GetId(tevent);
       internal override bool Creates(TTentityTevent tevent) => tevent is TTentityCreatedTevent;

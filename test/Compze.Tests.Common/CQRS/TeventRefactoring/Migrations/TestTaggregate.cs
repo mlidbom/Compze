@@ -39,17 +39,16 @@ namespace Compze.Tests.Common.CQRS.TeventRefactoring.Migrations
       // ReSharper restore ClassNeverInstantiated.Global
    }
 
-   public class TestTaggregate : Taggregate<TestTaggregate, ITestTaggregateTevent, TestTaggregateTevent, ITestTaggregateTevent<ITestTaggregateTevent>, TestTaggregateTevent<TestTaggregateTevent>>
+   public sealed class TestTaggregate : Taggregate<TestTaggregate, ITestTaggregateTevent, TestTaggregateTevent, ITestTaggregateTevent<ITestTaggregateTevent>, TestTaggregateTevent<TestTaggregateTevent>>, ITeventRouted
    {
+      static readonly TeventRouting<TestTaggregate, ITestTaggregateTevent> Appliers = DeclareAppliers(it => it
+        .For<ITestTaggregateTevent>(static (taggregate, tevent) => taggregate._history.Add(tevent)));
+
+      TeventRouting ITeventRouted.TeventAppliers => Appliers;
+
       public void Publish(params TestTaggregateTevent[] tevents) => tevents.ForEach(base.Publish);
 
-      TestTaggregate() => SetupAppliers();
-
-      void SetupAppliers()
-      {
-         RegisterTeventAppliers()
-           .For<ITestTaggregateTevent>(e => _history.Add(e));
-      }
+      TestTaggregate() {}
 
       TestTaggregate(params TestTaggregateTevent[] tevents) : this()
       {

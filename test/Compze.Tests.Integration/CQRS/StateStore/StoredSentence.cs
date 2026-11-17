@@ -1,4 +1,5 @@
 using Compze.Abstractions;
+using Compze.Teventive;
 using Compze.Teventive.Taggregates;
 using Compze.Teventive.Taggregates.BaseClasses;
 using Compze.Teventive.Taggregates.Tevents;
@@ -9,11 +10,15 @@ namespace Compze.Tests.Integration.CQRS.StateStore;
 
 ///<summary>A sentence note, much reduced: a second taggregate class, for a unit of work that holds one class and looks up another.</summary>
 class StoredSentence : Taggregate<StoredSentence, IStoredSentenceTevent, StoredSentenceTevent, IStoredSentenceTevent<IStoredSentenceTevent>, StoredSentenceTevent<StoredSentenceTevent>>,
-                       ISnapshotable<StoredSentence, StoredSentenceSnapshot>
+                       ISnapshotable<StoredSentence, StoredSentenceSnapshot>, ITeventRouted
 {
+   static readonly TeventRouting<StoredSentence, IStoredSentenceTevent> Appliers = DeclareAppliers(it => it
+     .For<IStoredSentenceCreated>(static (sentence, tevent) => sentence.Text = tevent.Text));
+
+   TeventRouting ITeventRouted.TeventAppliers => Appliers;
+
    string Text { get; set; } = "";
 
-   public StoredSentence() => RegisterTeventAppliers().For<IStoredSentenceCreated>(it => Text = it.Text);
 
    public static StoredSentence Create(TaggregateId id, string text)
    {

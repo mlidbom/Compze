@@ -139,8 +139,13 @@ public class Experiment_with_unifying_tevents_and_tommands_test : UniversalTestB
       public class Created() : UserRegistrarTevent(UserRegistrarTaggregate.SingletonId), ITaggregateCreatedTevent;
    }
 
-   public class UserRegistrarTaggregate : Taggregate<UserRegistrarTaggregate, IUserRegistrarTevent, UserRegistrarTevent, IUserRegistrarTevent<IUserRegistrarTevent>, UserRegistrarTevent<UserRegistrarTevent>>
+   public sealed class UserRegistrarTaggregate : Taggregate<UserRegistrarTaggregate, IUserRegistrarTevent, UserRegistrarTevent, IUserRegistrarTevent<IUserRegistrarTevent>, UserRegistrarTevent<UserRegistrarTevent>>, ITeventRouted
    {
+      //This test taggregate maintains no state, so no tevent has an applier.
+      static readonly TeventRouting<UserRegistrarTaggregate, IUserRegistrarTevent> Appliers = DeclareAppliers(it => it.IgnoreUnhandled<IUserRegistrarTevent>());
+
+      TeventRouting ITeventRouted.TeventAppliers => Appliers;
+
       internal static readonly TaggregateId SingletonId = new(Guid.Parse("5C400DD9-50FB-40C7-8A13-265005588AED"));
 
       internal static UserRegistrarTaggregate Create()
@@ -150,14 +155,19 @@ public class Experiment_with_unifying_tevents_and_tommands_test : UniversalTestB
          return registrar;
       }
 
-      UserRegistrarTaggregate() : base(TeventDispatcherConfig.IgnoreAllUnhandled) {} //This test taggregate maintains no state, so no tevent has an applier.
+      UserRegistrarTaggregate() {}
 
       internal static RegisterUserResult RegisterUser(IRemoteTypermediaNavigator navigator) => UserRegistrarTommand.RegisterUserTypermediaTommand.Create().PostOn(navigator);
    }
 
-   public class UserTaggregate : Taggregate<UserTaggregate, IUserTevent, UserTevent, IUserTevent<IUserTevent>, UserTevent<UserTevent>>
+   public sealed class UserTaggregate : Taggregate<UserTaggregate, IUserTevent, UserTevent, IUserTevent<IUserTevent>, UserTevent<UserTevent>>, ITeventRouted
    {
-      UserTaggregate() : base(TeventDispatcherConfig.IgnoreAllUnhandled) {} //This test taggregate maintains no state, so no tevent has an applier.
+      //This test taggregate maintains no state, so no tevent has an applier.
+      static readonly TeventRouting<UserTaggregate, IUserTevent> Appliers = DeclareAppliers(it => it.IgnoreUnhandled<IUserTevent>());
+
+      TeventRouting ITeventRouted.TeventAppliers => Appliers;
+
+      UserTaggregate() {}
 
       internal static UserTaggregate Register(UserRegistrarTommand.RegisterUserTypermediaTommand typermediaTommand)
       {

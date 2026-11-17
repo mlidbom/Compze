@@ -21,36 +21,14 @@ public abstract class TeventiveComponent<TParent,
 {
     static TeventiveComponent() => TaggregateTypeValidator<TComponent, TComponentTeventImplementation, TComponentTevent>.AssertStaticStructureIsValid();
 
-    //wip: taggregate-experiments-opus keeps the per-instance dispatcher for the classes that declare no TeventRouting. Null for those that do.
-    readonly IMutableTeventDispatcher<TComponentTevent>? _teventAppliersDispatcher;
-
-    TParent _parent;
+    readonly TParent _parent;
 
 #pragma warning disable CA1033 //These method should NOT clutter the public interface of this class they are unsafe.
-    void ITeventiveInternals<TComponentTevent, TComponentTeventImplementation>.ApplyTeventInternal(TComponentTevent tevent) => ApplyTevent(tevent);
     void ITeventiveInternals<TComponentTevent, TComponentTeventImplementation>.PublishInternal(TComponentTeventImplementation tevent) => Publish(tevent);
-    ITeventSubscriber<TComponentTevent> ITeventiveInternals<TComponentTevent, TComponentTeventImplementation>.RegisterTeventAppliersInternal() => RegisterTeventAppliers();
-    bool ITeventiveInternals<TComponentTevent, TComponentTeventImplementation>.DeclaresTeventAppliersInternal => TeventAppliers is not null;
 #pragma warning restore CA1033 //These method should NOT clutter the public interface of this class they are unsafe.
 
-   void ApplyTevent(TComponentTevent tevent) => _teventAppliersDispatcher._assert().NotNull().Dispatch(tevent);
-
-    protected TeventiveComponent(TParent parent, bool registerTeventAppliers = true, TeventDispatcherConfig? teventAppliersDispatcherConfig = null)
-    {
-        _parent = parent;
-        //wip: step 5 of the taggregate spike: registerTeventAppliers is false only for an entity, whose collection asserts its entry, until registration per instance is removed.
-        if(registerTeventAppliers) TeventRouting.AssertRoutesToAPart<TComponentTevent>((ITeventRouted)parent, this);
-        if(TeventAppliers is not null) return;
-
-        _teventAppliersDispatcher = IMutableTeventDispatcher<TComponentTevent>.New(teventAppliersDispatcherConfig);
-        if(registerTeventAppliers)
-        {
-#pragma warning disable CS0618 // This is just the type of infrastructure code the method is for
-            parent.RegisterTeventAppliersInternal()
-#pragma warning restore CS0618
-                  .For<TComponentTevent>(ApplyTevent);
-        }
-    }
+    ///<summary>A component, or an entity, of <paramref name="parent"/>, whose routing is asserted to route this component's tevents to a part.</summary>
+    protected TeventiveComponent(TParent parent) : base(parent) => _parent = parent;
 
 #pragma warning disable CS0618 // This is just the type of infrastructure code the method is for
     protected virtual void Publish(TComponentTeventImplementation tevent) => _parent.PublishInternal(tevent);
@@ -68,12 +46,6 @@ public abstract class TeventiveComponent<TParent,
        where TEcComponentTevent : class, TComponentTevent
        where TEcComponentTeventImplementation : TComponentTeventImplementation, TEcComponentTevent
        where TEcComponent : Component<TEcComponent, TEcComponentTeventImplementation, TEcComponentTevent>;
-
-    protected ITeventSubscriber<TComponentTevent> RegisterTeventAppliers()
-    {
-        State.Assert(TeventAppliers is null, () => $"{GetType()} declares its tevent appliers in a {nameof(TeventRouting)}, so it cannot also register appliers per instance.");
-        return _teventAppliersDispatcher._assert().NotNull().Register();
-    }
 
     public abstract class Entity<TEntity,
                                  TEntityId,

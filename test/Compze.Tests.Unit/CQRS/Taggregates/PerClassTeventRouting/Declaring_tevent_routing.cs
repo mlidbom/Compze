@@ -27,12 +27,22 @@ public static class Declaring_tevent_routing
                                                                      .Which.Message.Must().Contain($"{typeof(NoteBetween).FullName} is");
    }
 
+   public static class A_taggregate_class_that_declares_no_tevent_appliers
+   {
+      [XF] public static void throws_when_constructed_naming_the_class() =>
+         Invoking(() => new NoteWithoutTeventAppliers()).Must().Throw<StateAssertionFailedException>()
+                                                        .Which.Message.Must().Contain($"{typeof(NoteWithoutTeventAppliers).FullName} declares no tevent appliers");
+   }
+
    public static class A_component_whose_parents_routing_has_no_entry_for_it
    {
       [XF] public static void throws_when_constructed_naming_the_component() =>
          Invoking(() => new NoteThatForgetsItsComponent()).Must().Throw<StateAssertionFailedException>()
                                                           .Which.Message.Must().Contain(typeof(ForgottenComponent).FullName!);
    }
+
+   ///<summary>A taggregate class that implements no <see cref="ITeventRouted"/> of its own, so its base class's says it declares no tevent appliers.</summary>
+   class NoteWithoutTeventAppliers : Taggregate<NoteWithoutTeventAppliers, INoteTevent, NoteTevent, INoteTevent<INoteTevent>, NoteTevent<NoteTevent>>;
 
    ///<summary>A note class that declares no routing of its own, and so inherits <see cref="Note"/>'s.</summary>
    class NoteWithoutARoutingOfItsOwn : Note;

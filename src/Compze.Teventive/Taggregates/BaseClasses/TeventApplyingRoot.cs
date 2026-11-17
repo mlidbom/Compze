@@ -20,7 +20,7 @@ public abstract class TeventApplyingRoot<TRoot, TTevent> : VersionedEntity<TRoot
    internal TeventApplyingRoot() : base(null!)
    {
       Argument.Assert(typeof(TTevent).IsInterface);
-      TeventRouting.AssertDeclaredForTheClassOf(this);
+      TeventRouting.AssertDeclaresItsTeventAppliers(this);
    }
 
 #pragma warning disable CA1033 //A class that declares its tevent routing re-implements ITeventRouted; the base class's null means it declares none.
@@ -28,8 +28,8 @@ public abstract class TeventApplyingRoot<TRoot, TTevent> : VersionedEntity<TRoot
    TeventRouting? ITeventRouted.TeventHandlers => null;
 #pragma warning restore CA1033
 
-   ///<summary>The routing of this root's class to its tevent appliers, read through <see cref="ITeventRouted"/>.</summary>
-   private protected TeventRouting? TeventAppliers => ((ITeventRouted)this).TeventAppliers;
+   ///<summary>The routing of this root's class to its tevent appliers, read through <see cref="ITeventRouted"/>: declared, as construction asserted.</summary>
+   TeventRouting TeventAppliers => ((ITeventRouted)this).TeventAppliers!;
 
    ///<summary>Declares the tevent appliers of <typeparamref name="TRoot"/>, for it to keep in a static field and return from its explicit<br/>
    /// implementation of <see cref="ITeventRouted.TeventAppliers"/>. Every tevent the root applies must reach at least one of them.<br/>
@@ -50,11 +50,8 @@ public abstract class TeventApplyingRoot<TRoot, TTevent> : VersionedEntity<TRoot
       }
 
       Version = tevent.TaggregateVersion;
-      DispatchToTeventAppliers(wrapped);
+      TeventAppliers.Dispatch(this, wrapped);
    }
-
-   ///<summary>Routes <paramref name="wrapped"/> to the tevent appliers of this root's class.</summary>
-   private protected virtual void DispatchToTeventAppliers(IPublisherTevent<TTevent> wrapped) => TeventAppliers._assert().NotNull().Dispatch(this, wrapped);
 
    ///<summary>Applies <paramref name="history"/>, in order, to this new instance, then asserts its invariants.</summary>
    private protected void ApplyHistory(IEnumerable<ITaggregateTevent<ITaggregateTevent>> history)
@@ -66,7 +63,7 @@ public abstract class TeventApplyingRoot<TRoot, TTevent> : VersionedEntity<TRoot
    }
 
    ///<summary>Whether <paramref name="tevent"/>, published by a publisher that declares no wrapper of its own, would reach any of the appliers of this root's class.</summary>
-   private protected bool HasAnApplierOf(TTevent tevent) => TeventAppliers._assert().NotNull().HasRoutesFor(PublisherTevent.WrapperTypeFor(tevent.GetType()));
+   private protected bool HasAnApplierOf(TTevent tevent) => TeventAppliers.HasRoutesFor(PublisherTevent.WrapperTypeFor(tevent.GetType()));
 
    ///<summary>Asserts every invariant of this root: those of <see cref="AssertInvariantsAreMet"/>, and those its base class adds.</summary>
    private protected virtual void AssertInvariants() => AssertInvariantsAreMet();

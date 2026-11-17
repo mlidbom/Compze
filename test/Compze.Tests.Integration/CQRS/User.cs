@@ -1,4 +1,5 @@
 using Compze.Abstractions;
+using Compze.Teventive;
 using Compze.Teventive.Taggregates.BaseClasses;
 using Compze.Teventive.Taggregates.Tevents;
 using Compze.Teventive.TaggregateStores;
@@ -7,26 +8,25 @@ using JetBrains.Annotations;
 namespace Compze.Tests.Integration.CQRS;
 #pragma warning disable CA1812 //Uninstantiated class (used via reflection)
 
-class User : Taggregate<User, IUserTevent, UserTevent, IUserTevent<IUserTevent>, UserTevent<UserTevent>>
+class User : Taggregate<User, IUserTevent, UserTevent, IUserTevent<IUserTevent>, UserTevent<UserTevent>>, ITeventRouted
 {
+   static readonly TeventRouting<User, IUserTevent> Appliers = DeclareAppliers(it => it
+     .For<IUserRegistered>(static (user, tevent) =>
+      {
+         user.Email = tevent.Email;
+         user.Password = tevent.Password;
+      })
+     .For<IUserChangedEmail>(static (user, tevent) => user.Email = tevent.Email)
+     .For<IMigratedBeforeUserRegisteredTevent>(static (_, _) => {})
+     .For<IMigratedAfterUserChangedEmailTevent>(static (_, _) => {})
+     .For<IMigratedReplaceUserChangedPasswordTevent>(static (_, _) => {})
+     .For<IUserChangedPassword>(static (user, tevent) => user.Password = tevent.Password)
+     .For<IUserDeleted>(static (_, _) => {}));
+
+   TeventRouting ITeventRouted.TeventAppliers => Appliers;
+
    public string Email { get; private set; } = "";
    public string Password { get; private set; } = "";
-
-   public User()
-   {
-      RegisterTeventAppliers()
-        .For<IUserRegistered>(e =>
-         {
-            Email = e.Email;
-            Password = e.Password;
-         })
-        .For<IUserChangedEmail>(e => Email = e.Email)
-        .For<IMigratedBeforeUserRegisteredTevent>(_ => {})
-        .For<IMigratedAfterUserChangedEmailTevent>(_ => {})
-        .For<IMigratedReplaceUserChangedPasswordTevent>(_ => {})
-        .For<IUserChangedPassword>(e => Password = e.Password)
-        .For<IUserDeleted>(_ => {});
-   }
 
    public void Register(string email, string password, TaggregateId id) => Publish(new UserRegistered(id, email, password));
 

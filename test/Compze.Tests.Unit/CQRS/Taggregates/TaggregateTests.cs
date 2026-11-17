@@ -74,17 +74,17 @@ public class TaggregateTests : UniversalTestBase
       });
    }
 
-   class CascadingTeventsTaggregate : Taggregate<CascadingTeventsTaggregate, ITaggregateTevent, TaggregateTevent, ITaggregateTevent<ITaggregateTevent>, TaggregateTevent<TaggregateTevent>>
+   class CascadingTeventsTaggregate : Taggregate<CascadingTeventsTaggregate, ITaggregateTevent, TaggregateTevent, ITaggregateTevent<ITaggregateTevent>, TaggregateTevent<TaggregateTevent>>, ITeventRouted
    {
-      public CascadingTeventsTaggregate()
-      {
-         RegisterTeventHandlers()
-           .For<ITriggeringTevent>(_ => Publish(new TriggeredTevent()));
+      static readonly TeventRouting<CascadingTeventsTaggregate, ITaggregateTevent> Appliers = DeclareAppliers(it => it
+        .For<ITriggeringTevent>(static (taggregate, _) => taggregate.TriggeringTeventApplied = true)
+        .For<ITriggeredTevent>(static (taggregate, _) => taggregate.TriggeredTeventApplied = true));
 
-         RegisterTeventAppliers()
-           .For<ITriggeringTevent>(_ => TriggeringTeventApplied = true)
-           .For<ITriggeredTevent>(_ => TriggeredTeventApplied = true);
-      }
+      static readonly TeventRouting<CascadingTeventsTaggregate, ITaggregateTevent> Handlers = DeclareHandlers(it => it
+        .For<ITriggeringTevent>(static (taggregate, _) => taggregate.Publish(new TriggeredTevent())));
+
+      TeventRouting ITeventRouted.TeventAppliers => Appliers;
+      TeventRouting ITeventRouted.TeventHandlers => Handlers;
 
       public bool TriggeredTeventApplied { get; private set; }
       public bool TriggeringTeventApplied { get; private set; }
