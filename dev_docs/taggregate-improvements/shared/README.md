@@ -59,6 +59,14 @@ the spike added, removed or changed, from comparing the built assemblies of the 
 reviewer has written its own verdicts. Their reviews go to `reviews/end-review-by-an-opus-agent.md` and
 `reviews/end-review-by-a-fable-agent.md`.
 
+**A second list, from `C-Compare-PublicApi`,**
+[reviews/public-api-changes-of-the-spike-from-C-Compare-PublicApi.md](reviews/public-api-changes-of-the-spike-from-C-Compare-PublicApi.md),
+made after the reviewers started by the DevScripts command written for it (428de3b9c). It compares DocFX's declarations
+instead of the built assemblies, and each list has what the other misses. It has the changed constraints of seven
+methods in `Compze.Teventive.TeventStore.Typermedia`, which the first list misses. It lacks the members of C# 14
+extension blocks, which DocFX skips: for those, such as the `ForEachUnitOfWork` overloads in
+`TeventObservationRegistrarCE`, the first list has them.
+
 What JAStudio asked for, the first to look at:
 
 | API | Asked for | Why JAStudio needed it | The question for the review |
