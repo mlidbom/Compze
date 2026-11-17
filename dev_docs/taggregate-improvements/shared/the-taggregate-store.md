@@ -148,9 +148,11 @@ public interface ITaggregateReference<out TTaggregate> where TTaggregate : ITagg
 - **It makes writers wait for each other.** It is owned by the unit of work's transaction: taken at the first get for
   update and released when the transaction completes, possibly on another thread.
 - **It is a `SemaphoreSlim`** with a timeout that names the taggregate. The locking standard gives `SemaphoreSlim`
-  exactly this job: "a gate held across awaits, or released on another thread". A Compze lock owned by a transaction,
-  with diagnostics naming the holding transaction and where it took the lock, would be better: a recommendation, not a
-  blocker.
+  exactly this job: "a gate held across awaits, or released on another thread". A second writer waits 30 seconds, then
+  gets a `TimeoutException` naming the taggregate. **Decided by Magnus, 2026-11-17 (item 17): kept as built.** A
+  Compze lock owned by a transaction, whose timeout names the holding transaction and where it took the lock, is an
+  effort of its own after the spike, in Compze.Threading: the diagnostics Compze.Threading's other locks give, for a
+  lock that a transaction holds across threads.
 - **Only held locks are kept,** in a table of the taggregates being updated, not a lock for each of 80,000 notes. The
   prototype keeps one for each taggregate ever updated.
 - **JAStudio's race between a background reparse and a UI edit** then serializes, instead of corrupting the vocab or
