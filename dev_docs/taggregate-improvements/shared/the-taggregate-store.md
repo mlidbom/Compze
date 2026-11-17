@@ -340,7 +340,9 @@ public interface ISnapshotable<TSelf, TSnapshot> where TSelf : ISnapshotable<TSe
   belongs in a taggregate of its own, referred to by id, or is changed by a tevent on each taggregate that holds it. The
   round trip can't catch it, since the copy refers to the same object. Found by taggregates-opus at JAStudio's switch: a
   shared condition renamed in place left the edit's copy unchanged, so nothing was written; JAStudio now publishes for
-  that edit outright. In `ISnapshotable`'s documentation too.
+  that edit outright. In `ISnapshotable`'s documentation too. Since JAStudio's step 10 (its 9c82dbd67), the second way:
+  renaming a shared condition publishes `MatchingConfiguration.SharedConditionRenamed`, a tevent that sets nothing, on
+  each vocab that uses the condition by name, so the store writes each of them.
 - **Restoring works outside any store:** JAStudio's MCP server builds notes from two git versions of a file.
 - **Two ways of setting state now exist,** the tevent appliers and the restoring, which Magnus has decided for. What
   guards them: a specification helper from Compze that takes a snapshot, restores from it, takes another and compares
