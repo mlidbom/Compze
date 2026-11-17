@@ -112,6 +112,10 @@ Then reload: `. $PROFILE`
   - Convenience switches: `-AllSqlLayers`, `-AllContainers`, `-AllPermutations`
   - `-SetAsDefaults` - Save configuration as default
 
+- **C-Set-TestDatabaseServers** - Chooses the machine whose SQL Server, PostgreSQL and MySQL the tests use, through the DbPool's three `COMPOSABLE_*_DATABASE_POOL_MASTER_CONNECTIONSTRING` user environment variables. Without a switch, shows the current choice. Restart Rider (NCrunch) and terminals afterwards
+  - `-Computer` - Another machine on the network, such as `threadripper`: changes nothing unless all three servers answer there
+  - `-ThisMachine` - This machine's servers
+
 ### Utility
 
 - **C-Get-Commands** - Lists all Compze module commands with their syntax
