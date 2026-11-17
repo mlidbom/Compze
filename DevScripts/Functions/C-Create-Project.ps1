@@ -9,7 +9,10 @@ function C-Create-Project {
     - Library projects: src/<ProjectName>/<ProjectName>.csproj
     - Test projects: test/<ProjectName>/<ProjectName>.csproj
     - Creates a basic .csproj file
-    - Adds the project to the .slnx solution file in the appropriate folder structure
+    - Adds it to every .slnx that holds its neighbour, the project whose name shares the most leading parts with its
+      name, in the neighbour's solution folder: Compze.Teventive.StateStore.MemoryPack goes beside
+      Compze.Teventive.StateStore. A project no solution holds is restored as a NuGet package, which a new one has not.
+    - Runs C-FlexRef-Sync, so FlexRef's properties, conditions and NCrunch solutions include the new project
     
     Test projects are detected by name: contains ".Tests." or ends with ".Tests", "Specifications" (which covers ".Specifications" and ".InternalSpecifications")
     
@@ -80,6 +83,9 @@ function C-Create-Project {
     
     Set-Content -Path $csprojPath -Value $csprojContent -NoNewline -Encoding UTF8
     
-    # Step 4: Add project to solution (at solution root — arrange in folders manually)
-    Ensure-ProjectIsInSolution -ProjectName $ProjectName -SolutionPath $SolutionPath
+    # Step 4: Add the project beside its neighbour in every solution that holds it
+    Add-ProjectBesideItsNeighbour -ProjectName $ProjectName -ProjectPath ([System.IO.Path]::GetRelativePath($script:CompzeRoot, $csprojPath))
+
+    # Step 5: Sync FlexRef, which the new project's references and the solutions' NCrunch files need
+    C-FlexRef-Sync | Out-Null
 }
