@@ -22,4 +22,9 @@ public sealed class TaggregateSnapshot
 
    ///<summary>The snapshot, of the type the taggregate's class takes and restores from.</summary>
    public object Snapshot { get; }
+
+   ///<summary>The taggregate this is a snapshot of, where the one handing it over has it: the state store, when it hands a unit of<br/>
+   /// work's changes to be written, and Compze's own storage, when it has restored the taggregate to learn its id. A file's place<br/>
+   /// may depend on the taggregate, and a load then restores each taggregate once.</summary>
+   internal ITaggregate? Taggregate { get; init; }
 }

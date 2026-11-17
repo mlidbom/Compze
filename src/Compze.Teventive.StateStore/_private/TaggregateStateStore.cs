@@ -146,7 +146,7 @@ sealed class TaggregateStateStore : ITaggregateStore, IStateStore
    ConcurrentDictionary<TaggregateId, ITaggregate> LoadEverything()
    {
       var loaded = new ConcurrentDictionary<TaggregateId, ITaggregate>(
-         Storage.LoadAll().Select(stored => DeclaredClassOf(stored.TaggregateClass).Restore(stored.Id, stored.Snapshot))
+         Storage.LoadAll().Select(stored => stored.Taggregate ?? DeclaredClassOf(stored.TaggregateClass).Restore(stored.Id, stored.Snapshot))
                 .Select(it => KeyValuePair.Create(it.Id, it)));
       foreach(var taggregate in loaded.Values) ((ITaggregateStoreInternals)taggregate).MakeReadOnly();
       foreach(var index in Indexes) index.FileExactly(loaded.Values);
