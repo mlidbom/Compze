@@ -450,7 +450,7 @@ Generated data can be generated again, so a failed unit of work costs little eit
 - Keeping each held copy's keys in the index's overlay.
 
 Designed and built since (2026-11-17): two sessions of one transaction share the unit of work's instance, since the
-unit of work belongs to the transaction; `ILocalTessagingEngine.AwaitNoTeventsInFlightAsync` waits for the observers
+unit of work belongs to the transaction; `ILocalTessagingEngine.AwaitNoTessagesInFlightAsync` waits for the observers
 and leaves the engine running; JAStudio's specifications run an edit with its own `note.Edit(...)`; and the ambient unit
 of work lets a reference find its session from the ambient transaction alone.
 
@@ -546,9 +546,12 @@ a lookup inside a unit of work that rolls back gives the discarded copy.
 - **`Taggregate.AssertCanBeChanged()`** (protected, 3d3410a5d): until JAStudio's last part is moved to tevents, a part's
   change is made before the interim tevent is published, so `Publish`'s assertion came after a committed note was
   changed. The guard now asserts first. `Publish` asserts through it too.
-- **`ILocalTessagingEngine.AwaitNoTeventsInFlightAsync()`** (named by Magnus; built as `AwaitObserversAsync` in 26990b991):
-  waits for the observers as `StopAsync` does, and leaves the engine running, for specifications that assert on what an
-  observer did and go on. "In flight" is the term the tracker of tessages in flight already uses for this condition.
+- **`ILocalTessagingEngine.AwaitNoTessagesInFlightAsync()`** (named by Magnus; built as `AwaitObserversAsync` in 26990b991,
+  then `AwaitNoTeventsInFlightAsync`, renamed in 3df5ee7f8): waits for the observers as `StopAsync` does, and leaves the
+  engine running, for specifications that assert on what an observer did and go on. "In flight" is the term the tracker of
+  tessages in flight already uses for this condition. In the local engine the only tessages in flight are committed tevents
+  waiting for their observers; the broader name holds if other things are ever in flight (Magnus, 2026-11-17: "Who knows
+  one day there might be other things in flight.").
 - **`TaggregateToDelete`'s constructor is public** (6767165c2), as `TaggregateSnapshot`'s is, so a storage's own
   specifications can make one.
 - **Not in Compze, for now:** `Edit` and `ForUpdate` from an instance. `Edit` decides where units of work begin, which is

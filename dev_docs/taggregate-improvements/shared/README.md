@@ -63,7 +63,7 @@ What JAStudio asked for, the first to look at:
 | `StateStoreBuilder.StoredIn<TService>(...)` | the switch | The corpus folder is known only once the host has started. | Built the way DI factory registrations and `Taggregate(...)` with a service are. Or should JAStudio's host know its paths when it composes the container? taggregates-opus: it can't, since the standalone host gets the corpus folder from the Anki beside it once that has started. Without it: a storage wrapper in JAStudio that resolves the paths at its first load, about 20 lines, a second laziness beside the store's own. |
 | `ITaggregateIndex.Lookup` in id order | the switch, as data | A lookup that takes the first of several vocab changed 1,172 sentences in a rebuild while the order was the store's own. | Done (item 37): Magnus dropped it, and `Lookup` returns an `IReadOnlyCollection` in no particular order, as `All` does. JAStudio orders in its one call of `Lookup`. |
 | `SnapshotRoundTrip.DifferencesOf` | the corpus check | A tool that checks every note lists the differences, instead of throwing at the first. | |
-| `ILocalTessagingEngine.AwaitNoTeventsInFlightAsync()` | JAStudio's specifications | They assert on what observers did, and go on. | |
+| `ILocalTessagingEngine.AwaitNoTessagesInFlightAsync()` | JAStudio's specifications | They assert on what observers did, and go on. | |
 | `TaggregateToDelete`'s public constructor | JAStudio's storage specifications | They make the values the store hands a storage. | |
 
 The rest, such as the shared updater and reader, snapshots, the storage seam and tevent routing per class, came from the
