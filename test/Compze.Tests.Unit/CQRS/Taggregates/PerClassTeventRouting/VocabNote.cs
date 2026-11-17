@@ -47,6 +47,15 @@ interface IVocabTevent : INoteTevent
       interface Added : Defined;
       interface Redefined : Defined;
    }
+
+   ///<summary>The tevents of a vocab's examples: removable entities. Adding one carries nothing but its id.</summary>
+   interface Example : IVocabTevent
+   {
+      Guid ExampleId { get; }
+      interface Added : Example;
+      interface Edited : Example { string Text { get; } }
+      interface Removed : Example;
+   }
 }
 
 interface IVocabTevent<out T> : INoteTevent<T> where T : INoteTevent;
@@ -83,6 +92,25 @@ class VocabTevent : NoteTevent, IVocabTevent
       }
 
       internal class Redefined(string gloss) : Sense, IVocabTevent.Sense.Redefined { public string Gloss { get; } = gloss; }
+   }
+
+   internal abstract class Example : VocabTevent, IVocabTevent.Example
+   {
+      public Guid ExampleId { get; private set; }
+
+      internal class IdGetterSetter : IGetSetTaggregateEntityTeventEntityId<Guid, Example, IVocabTevent.Example>
+      {
+         public void SetEntityId(Example tevent, Guid id) => tevent.ExampleId = id;
+         public Guid GetId(IVocabTevent.Example tevent) => tevent.ExampleId;
+      }
+
+      internal class Added : Example, IVocabTevent.Example.Added
+      {
+         public Added(Guid exampleId) => ExampleId = exampleId;
+      }
+
+      internal class Edited(string text) : Example, IVocabTevent.Example.Edited { public string Text { get; } = text; }
+      internal class Removed : Example, IVocabTevent.Example.Removed;
    }
 }
 
@@ -137,6 +165,7 @@ class VocabNote : Note, ITeventRouted
      .For<INoteTevent.Renamed>(static (vocab, _) => vocab.QuestionAsTheVocabsRenamedApplierFoundIt = vocab.Question)
      .Component(static vocab => vocab.Forms)
      .Entities(static vocab => vocab._senses)
+     .Entities(static vocab => vocab._examples)
      .SharedTomponent(static vocab => vocab._audioSlot));
 
    static readonly TeventRouting<VocabNote, INoteTevent> VocabNoteHandlers = NoteHandlers.Extend<VocabNote>(it => it
@@ -147,12 +176,14 @@ class VocabNote : Note, ITeventRouted
    protected override Type WrapperTeventImplementation => typeof(VocabTevent<VocabTevent>);
 
    readonly VocabSense.ICollectionManager _senses;
+   readonly VocabExample.ICollectionManager _examples;
    readonly SharedTomponentSlot<INoteTevent, NoteTevent, IAudioListTevent, IVocabAudioTevent<IAudioListTevent>> _audioSlot;
 
    VocabNote()
    {
       Forms = new FormsComponent(this);
       _senses = VocabSense.CreateSelfManagingCollection(this);
+      _examples = VocabExample.CreateSelfManagingCollection(this);
       _audioSlot = new SharedTomponentSlot<INoteTevent, NoteTevent, IAudioListTevent, IVocabAudioTevent<IAudioListTevent>>(this, typeof(VocabAudioTevent<IAudioListTevent>));
       Audio = new AudioList(_audioSlot);
    }
@@ -160,8 +191,10 @@ class VocabNote : Note, ITeventRouted
    public FormsComponent Forms { get; }
    public AudioList Audio { get; }
    public IReadOnlyEntityCollection<VocabSense, Guid> Senses => _senses.Entities;
+   public IReadOnlyEntityCollection<VocabExample, Guid> Examples => _examples.Entities;
 
    public VocabSense AddSense(Guid senseId, string gloss) => _senses.AddByPublishing(new VocabTevent.Sense.Added(senseId, gloss));
+   public VocabExample AddExample(Guid exampleId) => _examples.AddByPublishing(new VocabTevent.Example.Added(exampleId));
 
    ///<summary>A member only a vocab has, for the component to read through its typed parent.</summary>
    public string Question => $"{Name}?";
@@ -224,6 +257,27 @@ class VocabSense : Tentity<VocabNote, INoteTevent, NoteTevent, VocabSense, Guid,
    public string Gloss { get; private set; } = "";
 
    public void Redefine(string gloss) => Publish(new VocabTevent.Sense.Redefined(gloss));
+}
+
+///<summary>A removable entity of a vocab. Its routing has no applier of its created tevent, which gives it its id all the same, and one of its<br/>
+/// removal, which records whether it was still in the vocab's collection then.</summary>
+class VocabExample : TeventiveRemovableEntity<VocabNote, INoteTevent, NoteTevent, VocabExample, Guid, IVocabTevent.Example, VocabTevent.Example, IVocabTevent.Example.Added, IVocabTevent.Example.Removed, VocabTevent.Example.IdGetterSetter>, ITeventRouted
+{
+   static readonly TeventRouting<VocabExample, IVocabTevent.Example> ExampleAppliers = DeclareAppliers(it => it
+     .For<IVocabTevent.Example.Edited>(static (example, tevent) => example.Text = tevent.Text)
+     .For<IVocabTevent.Example.Removed>(static (example, _) => example.WasInTheVocabsExamplesWhenItAppliedItsRemoval = example._vocab.Examples.Contains(example.Id)));
+
+   TeventRouting ITeventRouted.TeventAppliers => ExampleAppliers;
+
+   readonly VocabNote _vocab;
+
+   public VocabExample(VocabNote vocab) : base(vocab) => _vocab = vocab;
+
+   public string Text { get; private set; } = "";
+   public bool WasInTheVocabsExamplesWhenItAppliedItsRemoval { get; private set; }
+
+   public void Edit(string text) => Publish(new VocabTevent.Example.Edited(text));
+   public void Remove() => Publish(new VocabTevent.Example.Removed());
 }
 
 ///<summary>A shared tomponent with a routing of its own.</summary>

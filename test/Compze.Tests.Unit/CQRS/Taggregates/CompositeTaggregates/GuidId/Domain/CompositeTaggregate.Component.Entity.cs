@@ -1,4 +1,5 @@
 using Compze.Tests.Unit.CQRS.Taggregates.CompositeTaggregates.GuidId.Domain.Tevents;
+using Compze.Teventive;
 using JetBrains.Annotations;
 
 // ReSharper disable RedundantNameQualifier
@@ -17,15 +18,16 @@ partial class Component
             CompositeTaggregateTevent.Component.Entity,
             ICompositeTaggregateTevent.Component.Entity.Created,
             ICompositeTaggregateTevent.Component.Entity.Removed,
-            CompositeTaggregateTevent.Component.Entity.IdGetterSetter>
+            CompositeTaggregateTevent.Component.Entity.IdGetterSetter>, ITeventRouted
     {
+        static readonly TeventRouting<Entity, ICompositeTaggregateTevent.Component.Entity> EntityAppliers = DeclareAppliers(it => it
+           .For<ICompositeTaggregateTevent.Component.Entity.PropertyUpdated.Name>(static (entity, tevent) => entity.Name = tevent.Name));
+
+        TeventRouting ITeventRouted.TeventAppliers => EntityAppliers;
+
         public string Name { get; private set; } = string.Empty;
 
-        public Entity(Component parent) : base(parent)
-        {
-            RegisterTeventAppliers()
-               .For<ICompositeTaggregateTevent.Component.Entity.PropertyUpdated.Name>(e => Name = e.Name);
-        }
+        public Entity(Component parent) : base(parent) {}
 
         public void Rename(string name) => Publish(new CompositeTaggregateTevent.Component.Entity.Renamed(name));
         public void Remove() => Publish(new CompositeTaggregateTevent.Component.Entity.Removed());

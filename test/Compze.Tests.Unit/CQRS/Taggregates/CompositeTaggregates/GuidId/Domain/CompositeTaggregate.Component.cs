@@ -1,19 +1,26 @@
 using Compze.Tests.Unit.CQRS.Taggregates.CompositeTaggregates.GuidId.Domain.Tevents;
+using Compze.Teventive;
 using Compze.Teventive.Taggregates.BaseClasses;
 
 // ReSharper disable RedundantNameQualifier
 
 namespace Compze.Tests.Unit.CQRS.Taggregates.CompositeTaggregates.GuidId.Domain;
 
-partial class Component : CompositeTaggregate.Component<Component, ICompositeTaggregateTevent.Component, CompositeTaggregateTevent.Component>
+partial class Component : CompositeTaggregate.Component<Component, ICompositeTaggregateTevent.Component, CompositeTaggregateTevent.Component>, ITeventRouted
 {
+    static readonly TeventRouting<Component, ICompositeTaggregateTevent.Component> Appliers = DeclareAppliers(it => it
+       .Entities(static component => component._entities)
+       .Entities(static component => component._nonRemovableEntities)
+       .Component(static component => component.CComponent)
+       .For<ICompositeTaggregateTevent.Component.PropertyUpdated.Name>(static (component, tevent) => component.Name = tevent.Name));
+
+    TeventRouting ITeventRouted.TeventAppliers => Appliers;
+
     public Component(CompositeTaggregate parent) : base(parent)
     {
         _entities = Component.Entity.CreateSelfManagingCollection(this);
         _nonRemovableEntities = Component.NonRemovableEntity.CreateSelfManagingCollection(this);
         CComponent = new NestedComponent(this);
-        RegisterTeventAppliers()
-           .For<ICompositeTaggregateTevent.Component.PropertyUpdated.Name>(e => Name = e.Name);
     }
 
     readonly Component.Entity.ICollectionManager _entities;

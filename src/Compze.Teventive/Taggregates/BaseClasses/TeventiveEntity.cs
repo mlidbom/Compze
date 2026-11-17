@@ -38,11 +38,24 @@ public abstract class Tentity<TParent,
 
    protected Tentity(TParent taggregate, TeventDispatcherConfig? teventAppliersDispatcherConfig = null) : base(taggregate, false, teventAppliersDispatcherConfig)
    {
-      //wip: taggregate-experiments-opus: a tentity that declares its routing gets its id from its collection, which knows it.
       if(TeventAppliers is null)
          RegisterTeventAppliers()
            .For<TTentityCreatedTevent>(e => _id = IdGetterSetter.GetId(e));
    }
+
+   ///<summary>Declares the tevent appliers of <typeparamref name="TTentity"/>, for it to keep in a static field and return from its explicit<br/>
+   /// implementation of <see cref="ITeventRouted.TeventAppliers"/>. Every tevent dispatched to the entity must reach at least one of them.<br/>
+   /// The routing starts with the entity's own applier of its created tevent, which gives it its <see cref="Id"/>.</summary>
+   protected new static TeventRouting<TTentity, TTentityTevent> DeclareAppliers(Action<TeventRouting<TTentity, TTentityTevent>.Declaration> declare) => DeclareTentityAppliers(declare);
+
+   ///<summary>What <see cref="DeclareAppliers"/> declares, for the subclasses of <see cref="Tentity{TParent,TParentTevent,TParentTeventImplementation,TTentity,TTentityId,TTentityTeventImplementation,TTentityTevent,TTentityCreatedTevent,TTentityTeventIdGetterSetter}"/><br/>
+   /// whose own <c>DeclareAppliers</c> adds routes of theirs after the entity's.</summary>
+   private protected static TeventRouting<TTentity, TTentityTevent> DeclareTentityAppliers(Action<TeventRouting<TTentity, TTentityTevent>.Declaration> declare) =>
+      TeventRouting<TTentity, TTentityTevent>.DeclareAppliers(it =>
+      {
+         it.For<TTentityCreatedTevent>(static (entity, created) => entity._id = IdGetterSetter.GetId(created));
+         declare(it);
+      });
 
    protected override void Publish(TTentityTeventImplementation tevent)
    {
@@ -89,22 +102,22 @@ public abstract class Tentity<TParent,
 
       ITeventiveInternals<TTentityTevent, TTentityTeventImplementation> GetEntityAsTeventiveInternals(TTentityTevent e) => ManagedEntities[IdGetter.GetId(e)];
 
-      ///<summary>What the routing of a parent that declares it delivers: a created tevent adds the entity, and every tevent reaches the entity whose id it carries.</summary>
+      ///<summary>What the routing of a parent that declares it delivers: a created tevent adds the entity, every tevent reaches the entity whose id<br/>
+      /// it carries, and then <see cref="AfterTheEntityApplied"/> runs. The entity applies its created tevent itself, which gives it its id.</summary>
       void ITeventRoutedMember<TTentityTevent>.DispatchInternal(IPublisherTevent<ITevent> wrapped)
       {
          var tevent = (TTentityTevent)wrapped.Tevent;
          var id = IdGetter.GetId(tevent);
-         if(tevent is TTentityCreatedTevent)
-         {
-            var created = Constructor.For<TTentity>.WithArguments<TParent>.Instance(_parent);
-            created._id = id;
-            ManagedEntities.Add(created, id);
-         }
+         if(tevent is TTentityCreatedTevent) ManagedEntities.Add(Constructor.For<TTentity>.WithArguments<TParent>.Instance(_parent), id);
 
 #pragma warning disable CS0618 // This is just the type of infrastructure code the member is for
          ((ITeventRoutedMember<TTentityTevent>)ManagedEntities[id]).DispatchInternal(wrapped);
 #pragma warning restore CS0618
+         AfterTheEntityApplied(tevent, id);
       }
+
+      ///<summary>Called after the entity whose id <paramref name="tevent"/> carries has applied it: a removable entity's collection removes the entity here.</summary>
+      private protected virtual void AfterTheEntityApplied(TTentityTevent tevent, TTentityId id) {}
 
       public IReadOnlyEntityCollection<TTentity, TTentityId> Entities => ManagedEntities;
 

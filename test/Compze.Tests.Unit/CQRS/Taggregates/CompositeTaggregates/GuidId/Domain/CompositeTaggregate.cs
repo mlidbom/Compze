@@ -1,11 +1,19 @@
 using Compze.Abstractions;
 using Compze.Tests.Unit.CQRS.Taggregates.CompositeTaggregates.GuidId.Domain.Tevents;
+using Compze.Teventive;
 using Compze.Teventive.Taggregates.BaseClasses;
 
 namespace Compze.Tests.Unit.CQRS.Taggregates.CompositeTaggregates.GuidId.Domain;
 
-class CompositeTaggregate : Taggregate<CompositeTaggregate, ICompositeTaggregateTevent, CompositeTaggregateTevent, ICompositeTaggregateTevent<ICompositeTaggregateTevent>, CompositeTaggregateTevent<CompositeTaggregateTevent>>
+class CompositeTaggregate : Taggregate<CompositeTaggregate, ICompositeTaggregateTevent, CompositeTaggregateTevent, ICompositeTaggregateTevent<ICompositeTaggregateTevent>, CompositeTaggregateTevent<CompositeTaggregateTevent>>, ITeventRouted
 {
+   static readonly TeventRouting<CompositeTaggregate, ICompositeTaggregateTevent> Appliers = DeclareAppliers(it => it
+     .Component(static taggregate => taggregate.Component)
+     .Entities(static taggregate => taggregate._entities)
+     .For<ICompositeTaggregateTevent.PropertyUpdated.Name>(static (taggregate, tevent) => taggregate.Name = tevent.Name));
+
+   TeventRouting ITeventRouted.TeventAppliers => Appliers;
+
    public string Name { get; private set; } = string.Empty;
    readonly RemovableEntity.ICollectionManager _entities;
    public Component Component { get; private set; }
@@ -14,9 +22,6 @@ class CompositeTaggregate : Taggregate<CompositeTaggregate, ICompositeTaggregate
    {
       Component = new Component(this);
       _entities = RemovableEntity.CreateSelfManagingCollection(this);
-
-      RegisterTeventAppliers()
-        .For<ICompositeTaggregateTevent.PropertyUpdated.Name>(e => Name = e.Name);
 
       Publish(new CompositeTaggregateTevent.Created(id, name));
    }

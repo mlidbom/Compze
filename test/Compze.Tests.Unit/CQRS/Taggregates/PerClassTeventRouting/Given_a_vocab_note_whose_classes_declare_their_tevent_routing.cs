@@ -84,6 +84,25 @@ public class Given_a_vocab_note_whose_classes_declare_their_tevent_routing
       }
    }
 
+   public class after_it_is_created_and_given_an_example_that_is_edited_then_removed : Given_a_vocab_note_whose_classes_declare_their_tevent_routing
+   {
+      static readonly Guid ExampleId = Guid.NewGuid();
+      readonly VocabNote _vocab = VocabNote.Create();
+      readonly VocabExample _example;
+
+      public after_it_is_created_and_given_an_example_that_is_edited_then_removed()
+      {
+         _example = _vocab.AddExample(ExampleId);
+         _example.Edit("I eat sushi.");
+         _example.Remove();
+      }
+
+      [XF] public void the_example_has_the_id_of_its_created_tevent_which_its_routing_has_no_applier_of() => _example.Id.Must().Be(ExampleId);
+      [XF] public void the_example_applied_its_edit() => _example.Text.Must().Be("I eat sushi.");
+      [XF] public void the_examples_applier_of_its_removal_found_it_still_in_the_vocabs_examples() => _example.WasInTheVocabsExamplesWhenItAppliedItsRemoval.Must().BeTrue();
+      [XF] public void the_example_is_no_longer_in_the_vocabs_examples() => _vocab.Examples.Must().BeEmpty();
+   }
+
    public class after_it_is_created_and_archived_which_no_applier_handles_and_the_notes_routing_lets_go_unhandled : Given_a_vocab_note_whose_classes_declare_their_tevent_routing
    {
       readonly VocabNote _vocab = VocabNote.Create();

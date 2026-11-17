@@ -30,6 +30,15 @@ public abstract class TeventiveRemovableEntity<TParent,
     protected TeventiveRemovableEntity(TParent taggregate)
        : base(taggregate, TeventDispatcherConfig.Default.IgnoreUnhandled<TEntityRemovedTevent>()) {}
 
+    ///<summary>Declares the tevent appliers of <typeparamref name="TEntity"/>, as <see cref="Tentity{TParent,TParentTevent,TParentTeventImplementation,TTentity,TTentityId,TTentityTeventImplementation,TTentityTevent,TTentityCreatedTevent,TTentityTeventIdGetterSetter}.DeclareAppliers"/> does,<br/>
+    /// letting its <typeparamref name="TEntityRemovedTevent"/> reach no applier: its collection removes it once the tevent has reached any it has.</summary>
+    protected new static TeventRouting<TEntity, TEntityTevent> DeclareAppliers(Action<TeventRouting<TEntity, TEntityTevent>.Declaration> declare) =>
+       DeclareTentityAppliers(it =>
+       {
+          it.IgnoreUnhandled<TEntityRemovedTevent>();
+          declare(it);
+       });
+
     public new static ICollectionManager CreateSelfManagingCollection(TParent parent)
         => new CollectionManager(parent);
 
@@ -37,13 +46,21 @@ public abstract class TeventiveRemovableEntity<TParent,
     {
         public CollectionManager(TParent parent): base(parent)
         {
-#pragma warning disable 618 //Reviewed OK: This test class is allowed to use these "obsolete" methods.
+#pragma warning disable 618 //Reviewed OK: This is just the type of infrastructure code the members are for.
+            if(parent.DeclaresTeventAppliersInternal) return;
+
             parent.RegisterTeventAppliersInternal().For<TEntityRemovedTevent>(e =>
             {
 #pragma warning restore 618
                 var id = IdGetter.GetId(e);
                 ManagedEntities.Remove(id);
             });
+        }
+
+        ///<summary>Removes the entity once its removed tevent has reached its appliers, so that they find it in its collection.</summary>
+        private protected override void AfterTheEntityApplied(TEntityTevent tevent, TEntityId id)
+        {
+            if(tevent is TEntityRemovedTevent) ManagedEntities.Remove(id);
         }
     }
 }
