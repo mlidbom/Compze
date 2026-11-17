@@ -1139,13 +1139,44 @@ Cold with the cache wasn't measured: emptying the system's file cache takes admi
 JAStudio's own `JsonFilesystemObjectRepository` and `snapshot.bin` are gone; the corpus's `.gitignore` gets
 `/.state-store/` in their place when JAStudio's branch is merged.
 
-### Not yet decided: the storage for consumers' specifications
+### The storage for consumers' specifications: the JSON store with its files in memory, specified
 
 JAStudio's specifications, run on `StoredInFiles` with a fresh folder each, took 150 to 186 s against 56 to 59 s in
 memory (other processes at 2.6 to 3.9 cores against 1.2 to 1.4). Most start with about 900 notes, each created in its
 own unit of work, and each commit makes about five file operations. So JAStudio keeps its specifications on its own
 in-memory storage, `NotesStoredInMemory`, and only those about files on files. That storage implements the seam, which
-is to go internal. Put to Magnus: what replaces it.
+is to go internal.
+
+Decided by Magnus, 2026-11-17: the JSON store with its files kept in memory. "Then go with that. We can always refactor
+if it turns out not to work well." (He also asked taggregates-opus how JAStudio's specifications get their notes: he
+thought most parsing specifications ran on a subset extracted from the corpus.)
+
+```csharp
+.StoredInFiles(folder, options, files => files.Of<VocabNote>("vocab")
+                                               .KeptInMemory())          //review-naming: a placeholder
+
+var files = container.RootResolver.Resolve<ITaggregateFilesInMemory>();  //review-naming: a placeholder
+files.ReadAllText(path); files.WriteAllText(path, json); files.Delete(path); files.Paths;
+```
+
+- **The same store, with its file operations behind an internal seam:** writing, renaming, deleting, listing a folder's
+  files with their lengths and last write times, and reading. The disk implements it, and so does a file system kept in
+  memory, one for each container. With `KeptInMemory()`, the store, its layout, the consumer's JSON options, the
+  journal and the MemoryPack cache all work as on disk, and nothing touches the disk. `folder` is then only where the
+  paths begin.
+- **`ITaggregateFilesInMemory`, resolvable only with `KeptInMemory()`:** a specification reads what the store wrote by
+  path, and changes the files behind the store's back, as a program changing the files on disk would, to specify
+  reloads: `Paths`, `ReadAllText`, `WriteAllText`, `Delete`. A write sets the file's last write time, so the cache sees
+  it changed. Files written before the store's first use are what it loads.
+- **Then the seam goes internal:** `ITaggregateStorage`, `IPreparedWrite`, `TaggregateSnapshot`, `TaggregateToDelete`
+  and `StoredIn`, as Magnus approved with the JSON store. Compze's own specifications that use the seam move to the
+  files in memory where they can. Those that need a storage to fail, such as a write that fails at prepare, go to an
+  `*.InternalSpecifications` project, the rule's last resort, unless the files in memory can fail in a way a consumer's
+  disk can too.
+- **Specifications:** a taggregate saved is in its file, read back by path, holding exactly what the options make of
+  it, and nothing is on the disk; a file written before the store's first use is loaded; a file changed behind the
+  store is what a reload gives; a deletion removes the file; with the cache too, a second load reads no unchanged file.
+- **Then taggregates-opus replaces `NotesStoredInMemory` with it, and times JAStudio's suite** against today's.
 
 ### Noticed, for later
 
