@@ -72,7 +72,8 @@ and why getting for update had become a plain `Get`):
   unit of work reads its own writes. Outside one, the committed instance, read only, at no cost.
 - **`ITaggregateStoreUpdater : ITaggregateStoreReader`,** scoped, one for each unit of work, for every store:
   `GetForUpdate` and `TryGetForUpdate`, which make the unit of work's private copy and take the taggregate's lock until
-  it completes, `Save`, and `Delete<TTaggregate>(id)`. No `IDisposable`. The name says what a read must never cost, a
+  it completes, and `Save`. `Delete<TTaggregate>(id)` was built here and went: a deletion is a tevent (see "Deletion is a
+  tevent" below). No `IDisposable`. The name says what a read must never cost, a
   lock and a copy, and matches `ITaggregateReference.ForUpdate()` and the Typermedia tuery `GetForUpdate`.
 - **`ITeventStoreReader : ITaggregateStoreReader`** adds `GetHistory` and `GetReadonlyCopyOfVersion`. Its
   `GetReadonlyCopy` becomes the reader's `Get`.
@@ -80,7 +81,6 @@ and why getting for update had become a plain `Get`):
   requirements are compile-time constraints there: the state store's classes are snapshotable, with a factory; the
   tevent store's have tevents with identity (`ITaggregate<ITaggregateTeventWithIdentity>`). New for the tevent store,
   which takes any taggregate today. A class declared for no store fails at its first `Get`, naming the stores.
-  `Delete` names the class, since the updater routes by class.
 - **Public:** `ITaggregateReference<TTaggregate>`, what code holds across units of work (see the isolation below), and
   `ITaggregateIndex<TTaggregate, TKey>`, with their implementations private. Internal: the ambient unit of work, in
   `Compze.DependencyInjection`. The persistence seams stay separate.
@@ -877,6 +877,42 @@ each taggregate's keys: an `ImmutableHashSet` for each, about 105 MB for 1.6 mil
   dictionaries and filing the indexes in parallel, are tuning for its load, and not taken.
 - **Specifications:** the index's as they are, which cover a renamed key, a deletion and a creation, inside and outside
   the unit of work, after a load and after commits. taggregates-opus measures JAStudio's load and heap again.
+
+## Deletion is a tevent, specified
+
+**Magnus, 2026-11-17 (item 42):** "When thinking in tevent sourcing terms, a delete is just another tevent." And: "Unless
+it turns out to be problematic somehow, Delete goes away." Found by taggregates-opus replacing JAStudio's `NoteUpdated`
+with tevents: a note's own `Delete` published `INoteTevent.Deleted`, and the code then called the updater's
+`Delete<TTaggregate>(id)`, one fact said twice.
+
+- **`ITaggregateStoreUpdater.Delete<TTaggregate>(id)` goes.** A taggregate leaves its store when it publishes a tevent
+  that implements `ITaggregateDeletedTevent`, effective when the unit of work commits, as `Delete` was. A deletion is then a
+  domain method that publishes, like every other change, and observers and participation handlers see it as the tevent.
+- **Inside the unit of work, in both stores:** from the Deleted tevent on, the taggregate is gone: `Get` and
+  `GetForUpdate` throw as for one no store holds, `TryGet` and `TryGetForUpdate` return false, and `All` and the indexes
+  leave it out. A tevent published on it after its Deleted tevent fails the unit of work, naming the taggregate and the
+  tevent. A rolled-back unit of work leaves the taggregate as it was.
+- **The state store** keeps no history, so it removes the taggregate at the commit, from its committed taggregates, its
+  indexes and its storage, as `Delete` did. A taggregate created and deleted in the same unit of work writes nothing.
+- **The tevent store keeps the history,** as tevent sourcing does: the Deleted tevent is appended like any other, and a
+  history whose last tevent is a Deleted tevent is no taggregate. `Get`, `TryGet`, `GetForUpdate` and `All` treat it as
+  absent; `ITeventStoreReader.GetHistory` and `GetReadonlyCopyOfVersion` still give the whole history, its last version
+  included. This is what Compze's query model generator already assumed: `SingleTaggregateQueryModelGenerator` reads a
+  history that ends in a Deleted tevent as no model. Before, the tevent store wrote a Deleted tevent and went on serving
+  the taggregate, while the updater's `Delete` erased the history.
+- **Erasing a history stays possible,** for what must not be kept, such as personal data the law says to erase:
+  `ITeventStore.DeleteTaggregate(id)`, as before. It is no longer what a domain deletion does.
+- **The tevent store's `All`** leaves out deleted histories with one more query in each of the four SQL layers: the type
+  of each taggregate's last effective tevent, one row a taggregate. `All` was already a scan of every taggregate's
+  creation tevent. `StreamTaggregateIdsInCreationOrder` stays as it is, since persisting migrations needs every id.
+- **An id once used stays used:** saving a new taggregate with a deleted one's id fails in the tevent store, as for any
+  id it holds. The state store forgets a deleted id.
+- **For JAStudio:** a note's `Delete` publishes `INoteTevent.Deleted`, which implements `ITaggregateDeletedTevent`, and
+  the call to the updater's `Delete` after it goes.
+- **Specifications:** every specification that deleted through the updater deletes through a domain method that
+  publishes a Deleted tevent. New ones, in both stores: the deletion hides the taggregate inside the unit of work, a
+  publish after it fails the unit of work, a rolled-back deletion leaves the taggregate, and `All` leaves a deleted one
+  out; in the tevent store, the history is kept and ends with the Deleted tevent.
 
 ## What the prototype is
 
