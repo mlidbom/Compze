@@ -33,6 +33,23 @@ public abstract class TeventRouting
    ///<summary>The class this routing is declared for.</summary>
    private protected abstract Type DeclaredFor { get; }
 
+   ///<summary>Whether a tevent dispatched in a wrapper of <paramref name="wrapperTeventType"/> matches any route. Resolves nothing it would cache, so a<br/>
+   /// later dispatch of a tevent that may not go unhandled still throws.</summary>
+   internal abstract bool HasRoutesFor(Type wrapperTeventType);
+
+   ///<summary>Whether this routing routes the tevents of <paramref name="partTevent"/> to a part, a component or an entity collection.</summary>
+   private protected abstract bool RoutesToAPartWhoseTeventsAre(Type partTevent);
+
+   ///<summary>Asserts that <paramref name="parent"/>'s routing routes <typeparamref name="TPartTevent"/>s to a part, as it must to reach <paramref name="part"/>:<br/>
+   /// a part whose entry its parent's routing forgot would silently never apply a tevent. Checked when the part is constructed.</summary>
+   internal static void AssertRoutesToAPart<TPartTevent>(ITeventRouted parent, object part) where TPartTevent : ITevent
+   {
+      //wip: step 5 of the taggregate spike: a parent that registers its appliers per instance has no routing to check.
+      if(parent.TeventAppliers is not {} routing) return;
+      State.Assert(routing.RoutesToAPartWhoseTeventsAre(typeof(TPartTevent)),
+                   () => $"A {part.GetType().FullName} is constructed as a part of a {parent.GetType().FullName}, whose tevent routing routes no {typeof(TPartTevent).FullName} to a part. Enter the part in the routing: Component(...) for a component, Entities(...) for an entity collection.");
+   }
+
    ///<summary>Asserts that the routing <paramref name="teventive"/> reads through <see cref="ITeventRouted"/>, if any, is declared for its<br/>
    /// exact class: a class that inherits a routing it doesn't declare for itself has forgotten its own, and would lose its appliers.</summary>
    internal static void AssertDeclaredForTheClassOf(ITeventRouted teventive)
@@ -90,6 +107,11 @@ public sealed class TeventRouting<TInstance, TTevent> : TeventRouting where TIns
       declare(declaration);
       return new TeventRouting<TInstance, TTevent>([..inherited, ..declaration.TeventRoutes], routesTeventHandlers, [..inheritedMayGoUnhandled ?? [], ..declaration.WrapperTypesThatMayGoUnhandled]);
    }
+
+   internal override bool HasRoutesFor(Type wrapperTeventType) =>
+      _routesByWrapperTeventType.TryGetValue(wrapperTeventType, out var resolved) ? resolved.Length > 0 : _routes.Any(route => route.Matches(wrapperTeventType));
+
+   private protected override bool RoutesToAPartWhoseTeventsAre(Type partTevent) => _routes.Any(route => route.PartTevent == partTevent);
 
    internal override void Dispatch(object instance, IPublisherTevent<ITevent> wrapped)
    {
@@ -162,7 +184,7 @@ public sealed class TeventRouting<TInstance, TTevent> : TeventRouting where TIns
          AssertRoutesTeventAppliers();
          AssertHoldsNoState(member);
 #pragma warning disable CS0618 // This is just the type of infrastructure code the member is for
-         TeventRoutes.Add(new TeventRoute(typeof(IPublisherTevent<TMemberTevent>), (instance, wrapped) => member((TInstance)instance).DispatchInternal(wrapped)));
+         TeventRoutes.Add(new TeventRoute(typeof(IPublisherTevent<TMemberTevent>), (instance, wrapped) => member((TInstance)instance).DispatchInternal(wrapped), partTevent: typeof(TMemberTevent)));
 #pragma warning restore CS0618
          return this;
       }

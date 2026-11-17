@@ -1,5 +1,7 @@
 using Compze.Contracts;
 using Compze.Internals.SystemCE.ReflectionCE;
+using Compze.Teventive.Taggregates.BaseClasses;
+using Compze.Teventive.Taggregates.BaseClasses._internal;
 using Compze.Teventive.Taggregates.Tevents;
 using JetBrains.Annotations;
 
@@ -9,6 +11,10 @@ public abstract partial class SelfGeneratingQueryModel<TQueryModel, TTaggregateT
    where TQueryModel : SelfGeneratingQueryModel<TQueryModel, TTaggregateTevent>
    where TTaggregateTevent : class, ITaggregateTevent
 {
+   ///<summary>An entity of a query model, or of one of its components: one of a collection of parts with ids, which its parent keeps in the collection<br/>
+   /// <see cref="CreateSelfManagingCollection"/> creates, and its parent's routing routes to with <c>Entities(...)</c>. A <typeparamref name="TEntityCreatedTevent"/><br/>
+   /// adds an entity to the collection, and every tevent of <typeparamref name="TEntityTevent"/> reaches the entity whose id it carries.</summary>
+   ///<remarks>The collection creates an entity with its parameterless constructor.</remarks>
    [UsedImplicitly(ImplicitUseKindFlags.InstantiatedWithFixedConstructorSignature)]
    public abstract class Entity<TEntity, TEntityId, TEntityTevent, TEntityCreatedTevent, TTeventEntityIdGetter> : Component<TEntity, TEntityTevent>
       where TEntityId : struct
@@ -22,21 +28,38 @@ public abstract partial class SelfGeneratingQueryModel<TQueryModel, TTaggregateT
       TEntityId _id;
       public TEntityId Id => _id._assert().NotDefault();
 
-      protected Entity(TQueryModel queryModel, TeventDispatcherConfig? teventAppliersDispatcherConfig = null) : this(queryModel.RegisterTeventAppliers(), teventAppliersDispatcherConfig) {}
+      ///<summary>Declares the tevent appliers of <typeparamref name="TEntity"/>, for it to keep in a static field and return from its explicit<br/>
+      /// implementation of <see cref="ITeventRouted.TeventAppliers"/>. Every tevent dispatched to the entity must reach at least one of them.<br/>
+      /// The routing starts with the entity's own applier of its created tevent, which gives it its <see cref="Id"/>.</summary>
+      protected new static TeventRouting<TEntity, TEntityTevent> DeclareAppliers(Action<TeventRouting<TEntity, TEntityTevent>.Declaration> declare) => DeclareEntityAppliers(declare);
 
-#pragma warning disable CS8618 //Reviewed OK-ish: We guarantee that we never deliver out a null or default value from the public property.
-      Entity(ITeventSubscriber<TEntityTevent> appliersSubscriber, TeventDispatcherConfig? teventAppliersDispatcherConfig = null) : base(appliersSubscriber, registerTeventAppliers: false, teventAppliersDispatcherConfig)
-#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
+      ///<summary>What <see cref="DeclareAppliers"/> declares, for the removable entity, whose own adds its routes after the entity's.</summary>
+      private protected static TeventRouting<TEntity, TEntityTevent> DeclareEntityAppliers(Action<TeventRouting<TEntity, TEntityTevent>.Declaration> declare) =>
+         TeventRouting<TEntity, TEntityTevent>.DeclareAppliers(it =>
+         {
+            it.For<TEntityCreatedTevent>(static (entity, created) => entity._id = IdGetter.GetId(created));
+            declare(it);
+         });
+
+      ///<summary>The collection that keeps a parent's entities, which the parent's routing routes to with <c>Entities(...)</c>.</summary>
+      public interface ICollectionManager : ITeventRoutedMember<TEntityTevent>
       {
-         RegisterTeventAppliers()
-           .For<TEntityCreatedTevent>(e => _id = IdGetter.GetId(e));
+         ///<summary>The entities, by id and in the order they were created.</summary>
+         IReadOnlyEntityCollection<TEntity, TEntityId> Entities { get; }
       }
 
-      public static CollectionManager CreateSelfManagingCollection(TQueryModel parent) => new(parent, parent.RegisterTeventAppliers());
+      ///<summary>A collection of the entities of <paramref name="parent"/>, the query model or component whose routing routes their tevents to it.</summary>
+      public static ICollectionManager CreateSelfManagingCollection(ITeventRouted parent) => new CollectionManager(parent);
 
-      public class CollectionManager : QueryModelEntityCollectionManager<TQueryModel,TEntity, TEntityId, TEntityTevent, TEntityCreatedTevent, TTeventEntityIdGetter>
+      internal class CollectionManager : RoutedEntityCollection<TEntity, TEntityId, TEntityTevent>, ICollectionManager
       {
-         internal CollectionManager(TQueryModel parent, ITeventSubscriber<TEntityTevent> appliersSubscriber) : base(parent, appliersSubscriber) {}
+         internal CollectionManager(ITeventRouted parent) => TeventRouting.AssertRoutesToAPart<TEntityTevent>(parent, this);
+
+         public IReadOnlyEntityCollection<TEntity, TEntityId> Entities => ManagedEntities;
+
+         internal override TEntityId IdOf(TEntityTevent tevent) => IdGetter.GetId(tevent);
+         internal override bool Creates(TEntityTevent tevent) => tevent is TEntityCreatedTevent;
+         internal override TEntity CreateEntity() => Constructor.For<TEntity>.DefaultConstructor.Instance();
       }
    }
 }

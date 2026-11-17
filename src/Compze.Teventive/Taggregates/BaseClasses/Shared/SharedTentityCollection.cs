@@ -1,7 +1,7 @@
 using System.Collections;
 using Compze.Internals.SystemCE.ReflectionCE;
 using Compze.Tessaging.TessageTypes;
-using Compze.Teventive.Taggregates.BaseClasses._private;
+using Compze.Teventive.Taggregates.BaseClasses._internal;
 
 namespace Compze.Teventive.Taggregates.BaseClasses.Shared;
 

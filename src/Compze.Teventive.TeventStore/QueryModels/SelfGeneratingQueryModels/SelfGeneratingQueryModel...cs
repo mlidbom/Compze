@@ -1,52 +1,27 @@
-using Compze.Abstractions;
-using Compze.Contracts;
-using Compze.Internals.SystemCE.LinqCE;
 using Compze.Tessaging.TessageBus;
 using Compze.Tessaging.TessageTypes;
+using Compze.Teventive.Taggregates.BaseClasses;
 using Compze.Teventive.Taggregates.Tevents;
 
 namespace Compze.Teventive.TeventStore.QueryModels.SelfGeneratingQueryModels;
 
-public partial class SelfGeneratingQueryModel<TQueryModel, TTaggregateTevent> : VersionedEntity<TQueryModel>
+///<summary>A query model that builds its state by applying a taggregate's tevents, exactly as the taggregate's own state is built: through the tevent appliers<br/>
+/// its class declares with <see cref="TeventApplyingRoot{TRoot,TTevent}.DeclareAppliers"/>, and those of its components and entities. Unlike a taggregate,<br/>
+/// it publishes nothing: the tevents are given to it, from a taggregate's history or as they are published.</summary>
+public abstract partial class SelfGeneratingQueryModel<TQueryModel, TTaggregateTevent> : TeventApplyingRoot<TQueryModel, TTaggregateTevent>
    where TQueryModel : SelfGeneratingQueryModel<TQueryModel, TTaggregateTevent>
    where TTaggregateTevent : class, ITaggregateTevent
 {
-   //Yes null id passed to base. Id should be assigned by an action, and it should be obvious that the taggregate in invalid until that happens
-   protected SelfGeneratingQueryModel(TeventDispatcherConfig? teventAppliersDispatcherConfig = null) : base(null!)
-   {
-      Contract.Argument.Assert(typeof(TTaggregateTevent).IsInterface);
-      _teventAppliersDispatcher = IMutableTeventDispatcher<TTaggregateTevent>.New(teventAppliersDispatcherConfig);
-   }
-
-   readonly IMutableTeventDispatcher<TTaggregateTevent> _teventAppliersDispatcher;
-
-   protected ITeventSubscriber<TTaggregateTevent> RegisterTeventAppliers() => _teventAppliersDispatcher.Register();
-
    ///<summary>Applies a tevent that arrives without a publisher-identifying wrapper - such as one delivered to an inner-typed bus subscription - by wrapping it<br/>
-   /// in a <see cref="PublisherTevent{TTevent}"/> closed over its runtime type, mirroring <see cref="ITeventDispatcher{TTevent}.Dispatch(TTevent)"/>.</summary>
+   /// in a <see cref="PublisherTevent{TTevent}"/> closed over its runtime type, as a dispatcher does.</summary>
    public void ApplyTevent(TTaggregateTevent tevent) => ApplyTevent(PublisherTevent.WrapTevent(tevent));
 
-   public void ApplyTevent(IPublisherTevent<TTaggregateTevent> wrappedTevent)
-   {
-      if(wrappedTevent.Tevent is ITaggregateCreatedTevent)
-      {
-#pragma warning disable CS0618 // Type or member is obsolete
-         Id = wrappedTevent.Tevent.TaggregateId;
-#pragma warning restore CS0618 // Type or member is obsolete
-      }
+   ///<summary>Applies <paramref name="wrappedTevent"/>: a created tevent gives the query model its id, every tevent its version, and the tevent reaches its appliers.</summary>
+   public void ApplyTevent(IPublisherTevent<TTaggregateTevent> wrappedTevent) => Apply(wrappedTevent);
 
-      Version = wrappedTevent.Tevent.TaggregateVersion;
-      _teventAppliersDispatcher.Dispatch(wrappedTevent);
-   }
+   ///<summary>Whether <paramref name="tevent"/> would reach any applier of this query model's class: a tevent it applies nothing for changes nothing in it.</summary>
+   public bool HandlesTevent(TTaggregateTevent tevent) => HasAnApplierOf(tevent);
 
-   public bool HandlesTevent(TTaggregateTevent tevent) => _teventAppliersDispatcher.Handles(tevent);
-
-   public void LoadFromHistory(IEnumerable<ITaggregateTevent<ITaggregateTevent>> history)
-   {
-      Contract.State.Assert(Version == 0);
-      history.ForEach(wrappedTevent => ApplyTevent((IPublisherTevent<TTaggregateTevent>)wrappedTevent));
-      AssertInvariantsAreMet();
-   }
-
-   protected virtual void AssertInvariantsAreMet(){}
+   ///<summary>Applies <paramref name="history"/>, in order, to this new query model, then asserts its invariants.</summary>
+   public void LoadFromHistory(IEnumerable<ITaggregateTevent<ITaggregateTevent>> history) => ApplyHistory(history);
 }

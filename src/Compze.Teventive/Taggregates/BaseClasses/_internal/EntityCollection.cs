@@ -1,9 +1,9 @@
 using System.Collections;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Compze.Teventive.TeventStore.QueryModels.SelfGeneratingQueryModels;
+namespace Compze.Teventive.Taggregates.BaseClasses._internal;
 
-public class QueryModelEntityCollection<TEntity, TEntityId> : IReadonlyQueryModelEntityCollection<TEntity, TEntityId> where TEntity : class where TEntityId : notnull
+class EntityCollection<TEntity, TEntityId> : IReadOnlyEntityCollection<TEntity, TEntityId> where TEntity : class where TEntityId : notnull
 {
    readonly Dictionary<TEntityId, TEntity> _entities = new();
    readonly List<TEntity> _entitiesInCreationOrder = [];
@@ -16,14 +16,14 @@ public class QueryModelEntityCollection<TEntity, TEntityId> : IReadonlyQueryMode
    public TEntity Get(TEntityId id) => _entities[id];
    public TEntity this[TEntityId id] => _entities[id];
 
-   internal void Remove(TEntityId id)
+   public void Remove(TEntityId id)
    {
       var toRemove = _entities[id];
       _entities.Remove(id);
       _entitiesInCreationOrder.Remove(toRemove);
    }
 
-   internal void Add(TEntity entity, TEntityId id)
+   public void Add(TEntity entity, TEntityId id)
    {
       _entities.Add(id, entity);
       _entitiesInCreationOrder.Add(entity);

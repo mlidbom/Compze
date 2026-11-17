@@ -4,6 +4,7 @@ using Compze.Abstractions;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Tessaging.TessageBus;
+using Compze.Teventive;
 using Compze.Teventive.TeventStore.QueryModels.SelfGeneratingQueryModels;
 using Compze.Tessaging.Typermedia;
 
@@ -15,16 +16,15 @@ static class AccountStatistics
    /// Note that we use a <see cref="SelfGeneratingQueryModel{TQueryModel,TTaggregateTevent}"/> even though we will store it in a document database.
    /// Doing so lets the tuery model cleanly encapsulate how it maintains its own state when it receives tevents.
    /// </summary>
-   public class SingletonStatisticsQueryModel : SelfGeneratingQueryModel<SingletonStatisticsQueryModel, IAccountTevent>
+   public class SingletonStatisticsQueryModel : SelfGeneratingQueryModel<SingletonStatisticsQueryModel, IAccountTevent>, ITeventRouted
    {
-      public SingletonStatisticsQueryModel()
-      {
-         RegisterTeventAppliers()
-           .For<IAccountTevent.Created>(_ => NumberOfAccounts++)
-           .For<IAccountTevent.LoginAttempted>(_ => NumberOfLoginsAttempts++)
-           .For<IAccountTevent.LoggedIn>(_ => NumberOfSuccessfulLogins++)
-           .For<IAccountTevent.LoginFailed>(_ => NumberOfFailedLogins++);
-      }
+      static readonly TeventRouting<SingletonStatisticsQueryModel, IAccountTevent> Appliers = DeclareAppliers(it => it
+        .For<IAccountTevent.Created>(static (statistics, _) => statistics.NumberOfAccounts++)
+        .For<IAccountTevent.LoginAttempted>(static (statistics, _) => statistics.NumberOfLoginsAttempts++)
+        .For<IAccountTevent.LoggedIn>(static (statistics, _) => statistics.NumberOfSuccessfulLogins++)
+        .For<IAccountTevent.LoginFailed>(static (statistics, _) => statistics.NumberOfFailedLogins++));
+
+      TeventRouting ITeventRouted.TeventAppliers => Appliers;
 
       int NumberOfAccounts { get; set; }
       int NumberOfLoginsAttempts { get; set; }

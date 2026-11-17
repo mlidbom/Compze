@@ -10,11 +10,10 @@ using Compze.Teventive.Taggregates.Tevents;
 namespace Compze.Teventive.Taggregates.BaseClasses;
 
 public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeventImplementation, TWrapperTeventInterface, TWrapperTeventImplementation> :
-   VersionedEntity<TTaggregate>,
+   TeventApplyingRoot<TTaggregate, TTaggregateTevent>,
    ITaggregate<TTaggregateTevent>,
    ITeventiveInternals<TTaggregateTevent, TTaggregateTeventImplementation>,
-   ITaggregateStoreInternals,
-   ITeventRouted
+   ITaggregateStoreInternals
    where TWrapperTeventImplementation : TWrapperTeventInterface
    where TWrapperTeventInterface : ITaggregateTevent<TTaggregateTevent>
    where TTaggregate : Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeventImplementation, TWrapperTeventInterface, TWrapperTeventImplementation>
@@ -28,30 +27,10 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
    TWrapperTeventInterface WrapTevent(TTaggregateTevent tevent) =>
       (TWrapperTeventInterface)TaggregateIdentifyingTevent.WrapIn(WrapperTeventImplementation, tevent);
 
-   //Yes null id passed to base. Id should be assigned by an action, and it should be obvious that the taggregate in invalid until that happens. It's a bit ugly to declare Id as non-null, but a null value will never escape the property due to contract validation
-   protected Taggregate(TeventDispatcherConfig? teventAppliersDispatcherConfig = null) : base(null!)
-   {
-      Argument.Assert(typeof(TTaggregateTevent).IsInterface);
-      _teventAppliersDispatcherConfig = teventAppliersDispatcherConfig;
-      TeventRouting.AssertDeclaredForTheClassOf(this);
-   }
-
-#pragma warning disable CA1033 //A class that declares its tevent routing re-implements ITeventRouted; the base class's null means "registers per instance", which no subclass calls.
-   TeventRouting? ITeventRouted.TeventAppliers => null;
-   TeventRouting? ITeventRouted.TeventHandlers => null;
-#pragma warning restore CA1033
-
-   ///<summary>The routing of this taggregate's class to its tevent appliers, when the class declares one, read through <see cref="ITeventRouted"/>.</summary>
-   TeventRouting? TeventAppliers => ((ITeventRouted)this).TeventAppliers;
+   protected Taggregate(TeventDispatcherConfig? teventAppliersDispatcherConfig = null) => _teventAppliersDispatcherConfig = teventAppliersDispatcherConfig;
 
    ///<summary>The routing of this taggregate's class to its tevent handlers, when the class declares one, read through <see cref="ITeventRouted"/>.</summary>
    TeventRouting? TeventHandlers => ((ITeventRouted)this).TeventHandlers;
-
-   ///<summary>Declares the tevent appliers of <typeparamref name="TTaggregate"/>, for it to keep in a static field and return from its explicit<br/>
-   /// implementation of <see cref="ITeventRouted.TeventAppliers"/>. Every tevent the taggregate publishes or loads must reach at least one of them.<br/>
-   /// A subclass of <typeparamref name="TTaggregate"/> extends that routing with <see cref="TeventRouting{TInstance,TTevent}.Extend{TSubclass}"/>.</summary>
-   protected static TeventRouting<TTaggregate, TTaggregateTevent> DeclareAppliers(Action<TeventRouting<TTaggregate, TTaggregateTevent>.Declaration> declare) =>
-      TeventRouting<TTaggregate, TTaggregateTevent>.DeclareAppliers(declare);
 
    ///<summary>Declares the tevent handlers of <typeparamref name="TTaggregate"/>, for it to keep in a static field and return from its explicit<br/>
    /// implementation of <see cref="ITeventRouted.TeventHandlers"/>. They run after every applier has applied the tevent, and a tevent may reach none.</summary>
@@ -146,7 +125,7 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
             ((IMutableTaggregateTevent)tevent).SetTaggregateIdInternal(Id);
          }
 #pragma warning restore CS0618 // Type or member is obsolete
-         ApplyTevent(tevent, wrapped);
+         Apply(wrapped);
          _unCommittedTevents.Add(wrapped);
          _teventsToHandOut.Enqueue(wrapped);
          TeventHandlers?.Dispatch(this, wrapped);
@@ -155,7 +134,7 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
 
       if(_reentrancyLevel == 0)
       {
-         AssertInvariantsAreMetInternal(); //It is allowed to enter a temporarily invalid state that will be corrected by new tevents published by tevent handlers. So we only check invariants once this tevent has been fully published including tevents published by handlers of the original tevent.
+         AssertInvariants(); //It is allowed to enter a temporarily invalid state that will be corrected by new tevents published by tevent handlers. So we only check invariants once this tevent has been fully published including tevents published by handlers of the original tevent.
          HandOutTheTeventsUnlessHandingOutAlready();
       }
 
@@ -192,38 +171,32 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
       return (_teventHandlersDispatcher ??= IMutableTeventDispatcher<TTaggregateTevent>.New(TeventDispatcherConfig.IgnoreAllUnhandled)).Register(); //Registering tevent handlers is optional, unlike tevent appliers.
    }
 
-   void ApplyTevent(TTaggregateTevent theTevent) => ApplyTevent(theTevent, WrapTevent(theTevent));
-
-   void ApplyTevent(TTaggregateTevent theTevent, IPublisherTevent<TTaggregateTevent> wrapped)
+   ///<summary>Applies <paramref name="wrapped"/>, as any root does, refusing a publish from inside an applier, and noting a deletion.</summary>
+   private protected override void Apply(IPublisherTevent<TTaggregateTevent> wrapped)
    {
       using(ScopedChange.Enter(() => _applyingTevents = true, () => _applyingTevents = false))
       {
-         if(theTevent is ITaggregateCreatedTevent)
-         {
-#pragma warning disable CS0618 // Type or member is obsolete
-            base.Id = theTevent.TaggregateId;
-#pragma warning restore CS0618 // Type or member is obsolete
-         }
-
-         if(theTevent is ITaggregateDeletedTevent) _isDeleted = true;
-
-         Version = theTevent.TaggregateVersion;
-         if(TeventAppliers is {} appliers) appliers.Dispatch(this, wrapped);
-         else TeventAppliersDispatcher.Dispatch(wrapped);
+         if(wrapped.Tevent is ITaggregateDeletedTevent) _isDeleted = true;
+         base.Apply(wrapped);
       }
    }
 
-   void AssertInvariantsAreMetInternal()
+   //wip: step 5 of the taggregate spike: a class that registers its tevent appliers per instance has its own dispatcher, until registration per instance is removed.
+   private protected override void DispatchToTeventAppliers(IPublisherTevent<TTaggregateTevent> wrapped)
    {
-      Invariant.Assert(Id != null, Id.Value != Guid.Empty);
-      AssertInvariantsAreMet();
+      if(TeventAppliers is not null) base.DispatchToTeventAppliers(wrapped);
+      else TeventAppliersDispatcher.Dispatch(wrapped);
    }
 
-   protected virtual void AssertInvariantsAreMet() {}
+   private protected override void AssertInvariants()
+   {
+      Invariant.Assert(Id != null, Id.Value != Guid.Empty);
+      base.AssertInvariants();
+   }
 
    readonly SimpleObservable<ITaggregateTevent<TTaggregateTevent>> _teventStream = new();
 #pragma warning disable CA1033 //These method should NOT clutter the public interface of Taggregates.
-   void ITeventiveInternals<TTaggregateTevent, TTaggregateTeventImplementation>.ApplyTeventInternal(TTaggregateTevent theTevent) => ApplyTevent(theTevent);
+   void ITeventiveInternals<TTaggregateTevent, TTaggregateTeventImplementation>.ApplyTeventInternal(TTaggregateTevent theTevent) => Apply(WrapTevent(theTevent));
    void ITeventiveInternals<TTaggregateTevent, TTaggregateTeventImplementation>.PublishInternal(TTaggregateTeventImplementation theTevent) => Publish(theTevent);
    ITeventSubscriber<TTaggregateTevent> ITeventiveInternals<TTaggregateTevent, TTaggregateTeventImplementation>.RegisterTeventAppliersInternal() => RegisterTeventAppliers();
    bool ITeventiveInternals<TTaggregateTevent, TTaggregateTeventImplementation>.DeclaresTeventAppliersInternal => TeventAppliers is not null;
@@ -244,12 +217,6 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
       commitTevents(tevents);
    }
 
-   void ITaggregate.LoadFromHistory(IEnumerable<ITaggregateTevent<ITaggregateTevent>> history)
-   {
-      State.Assert(Version == 0, () => $"You can only call {nameof(ITaggregate.LoadFromHistory)} on an empty Taggregate with {nameof(Version)} == 0");
-      //The stored wrapper is applied as it stands: after a migration has rewritten history the stored wrapper is the truth, not what this taggregate would wrap today.
-      history.ForEach(wrappedTevent => ApplyTevent((TTaggregateTevent)wrappedTevent.Tevent, (IPublisherTevent<TTaggregateTevent>)wrappedTevent));
-      AssertInvariantsAreMetInternal();
-   }
+   void ITaggregate.LoadFromHistory(IEnumerable<ITaggregateTevent<ITaggregateTevent>> history) => ApplyHistory(history);
 #pragma warning restore CA1033
 }

@@ -57,10 +57,6 @@ public abstract class TeventiveRemovableEntity<TParent,
             });
         }
 
-        ///<summary>Removes the entity once its removed tevent has reached its appliers, so that they find it in its collection.</summary>
-        private protected override void AfterTheEntityApplied(TEntityTevent tevent, TEntityId id)
-        {
-            if(tevent is TEntityRemovedTevent) ManagedEntities.Remove(id);
-        }
+        internal override bool Removes(TEntityTevent tevent) => tevent is TEntityRemovedTevent;
     }
 }

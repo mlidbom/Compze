@@ -1,21 +1,24 @@
 using Compze.Tests.Unit.CQRS.Taggregates.CompositeTaggregates.GuidId.Domain.Tevents;
-using Compze.Teventive.TeventStore.QueryModels.SelfGeneratingQueryModels;
+using Compze.Teventive;
+using Compze.Teventive.Taggregates.BaseClasses;
 using JetBrains.Annotations;
 
 namespace Compze.Tests.Unit.CQRS.Taggregates.CompositeTaggregates.GuidId.QueryModels;
 
 #pragma warning disable CA1812 // Used via reflection in tuery model infrastructure
-[UsedImplicitly] partial class Entity : RootQueryModel.Entity<Entity, Guid, ICompositeTaggregateTevent.Entity, ICompositeTaggregateTevent.Entity.Created, ICompositeTaggregateTevent.Entity.Removed, CompositeTaggregateTevent.Entity.IdGetterSetter>
+[UsedImplicitly] partial class Entity : RootQueryModel.Entity<Entity, Guid, ICompositeTaggregateTevent.Entity, ICompositeTaggregateTevent.Entity.Created, ICompositeTaggregateTevent.Entity.Removed, CompositeTaggregateTevent.Entity.IdGetterSetter>, ITeventRouted
 #pragma warning restore CA1812
 {
-   public string Name { get; private set; } = string.Empty;
-   public Entity(RootQueryModel root) : base(root)
-   {
-      _entities = RemovableNestedEntity.CreateSelfManagingCollection(this);
-      RegisterTeventAppliers()
-        .For<ICompositeTaggregateTevent.Entity.PropertyUpdated.Name>(e => Name = e.Name);
-   }
+   static readonly TeventRouting<Entity, ICompositeTaggregateTevent.Entity> Appliers = DeclareAppliers(it => it
+     .Entities(static entity => entity._entities)
+     .For<ICompositeTaggregateTevent.Entity.PropertyUpdated.Name>(static (entity, tevent) => entity.Name = tevent.Name));
 
-   public IReadonlyQueryModelEntityCollection<RemovableNestedEntity, Guid> Entities => _entities.Entities;
+   TeventRouting ITeventRouted.TeventAppliers => Appliers;
+
+   public string Name { get; private set; } = string.Empty;
+
+   public Entity() => _entities = RemovableNestedEntity.CreateSelfManagingCollection(this);
+
+   public IReadOnlyEntityCollection<RemovableNestedEntity, Guid> Entities => _entities.Entities;
    readonly RemovableNestedEntity.ICollectionManager _entities;
 }

@@ -11,7 +11,7 @@ public abstract class TeventiveComponent<TParent,
                                         TComponent,
                                         TComponentTevent,
                                         TComponentTeventImplementation>
-    : ITeventiveInternals<TComponentTevent, TComponentTeventImplementation>, ITeventRoutedMember<TComponentTevent>, ITeventRouted
+    : TeventApplyingComponent<TComponent, TComponentTevent>, ITeventiveInternals<TComponentTevent, TComponentTeventImplementation>
     where TParent : ITeventiveInternals<TParentTevent, TParentTeventImplementation>
     where TParentTevent : class, ITaggregateTevent
     where TParentTeventImplementation : TaggregateTevent, TParentTevent
@@ -35,29 +35,11 @@ public abstract class TeventiveComponent<TParent,
 
    void ApplyTevent(TComponentTevent tevent) => _teventAppliersDispatcher._assert().NotNull().Dispatch(tevent);
 
-#pragma warning disable CA1033 //A class that declares its tevent routing re-implements ITeventRouted; the base class's null means "registers per instance", which no subclass calls.
-    TeventRouting? ITeventRouted.TeventAppliers => null;
-    TeventRouting? ITeventRouted.TeventHandlers => null; //A component has no tevent handlers: they are declared on the taggregate.
-#pragma warning restore CA1033
-
-    ///<summary>The routing of this component's class to its tevent appliers, when the class declares one, read through <see cref="ITeventRouted"/>.<br/>
-    /// Its parent's routing then reaches it through <see cref="TeventRouting{TInstance,TTevent}.Declaration.Component{TComponentTevent}"/>, and it does not register on its parent.</summary>
-    private protected TeventRouting? TeventAppliers => ((ITeventRouted)this).TeventAppliers;
-
-    ///<summary>Declares the tevent appliers of <typeparamref name="TComponent"/>, for it to keep in a static field and return from its explicit<br/>
-    /// implementation of <see cref="ITeventRouted.TeventAppliers"/>. Every tevent dispatched to the component must reach at least one of them.<br/>
-    /// A subclass of <typeparamref name="TComponent"/> extends that routing with <see cref="TeventRouting{TInstance,TTevent}.Extend{TSubclass}"/>.</summary>
-    protected static TeventRouting<TComponent, TComponentTevent> DeclareAppliers(Action<TeventRouting<TComponent, TComponentTevent>.Declaration> declare) =>
-       TeventRouting<TComponent, TComponentTevent>.DeclareAppliers(declare);
-
-#pragma warning disable CA1033 //These members should NOT clutter the public interface of this class.
-    void ITeventRoutedMember<TComponentTevent>.DispatchInternal(IPublisherTevent<ITevent> wrapped) => TeventAppliers._assert().NotNull().Dispatch(this, wrapped);
-#pragma warning restore CA1033
-
     protected TeventiveComponent(TParent parent, bool registerTeventAppliers = true, TeventDispatcherConfig? teventAppliersDispatcherConfig = null)
     {
         _parent = parent;
-        TeventRouting.AssertDeclaredForTheClassOf(this);
+        //wip: step 5 of the taggregate spike: registerTeventAppliers is false only for an entity, whose collection asserts its entry, until registration per instance is removed.
+        if(registerTeventAppliers) TeventRouting.AssertRoutesToAPart<TComponentTevent>((ITeventRouted)parent, this);
         if(TeventAppliers is not null) return;
 
         _teventAppliersDispatcher = IMutableTeventDispatcher<TComponentTevent>.New(teventAppliersDispatcherConfig);

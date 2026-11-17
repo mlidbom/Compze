@@ -4,7 +4,7 @@ using Compze.Internals.SystemCE.ReflectionCE;
 using Compze.Teventive._private.Implementation;
 using Compze.Teventive.Taggregates.Tevents;
 using JetBrains.Annotations;
-using Compze.Teventive.Taggregates.BaseClasses._private;
+using Compze.Teventive.Taggregates.BaseClasses._internal;
 
 namespace Compze.Teventive.Taggregates.BaseClasses;
 
@@ -75,18 +75,16 @@ public abstract class Tentity<TParent,
 
    public static ICollectionManager CreateSelfManagingCollection(TParent parent) => new CollectionManager(parent);
 
-   internal class CollectionManager : ICollectionManager
+   internal class CollectionManager : RoutedEntityCollection<TTentity, TTentityId, TTentityTevent>, ICollectionManager
    {
       protected static readonly TTentityTeventIdGetterSetter IdGetter = Constructor.For<TTentityTeventIdGetterSetter>.DefaultConstructor.Instance();
 
-      protected EntityCollection<TTentity, TTentityId> ManagedEntities { get; }
-
-      TParent _parent;
+      readonly TParent _parent;
 
       public CollectionManager(TParent parent)
       {
-         ManagedEntities = [];
          _parent = parent;
+         TeventRouting.AssertRoutesToAPart<TTentityTevent>((ITeventRouted)parent, this);
 #pragma warning disable CS0618 // This is just the type of infrastructure code the methods are for
          if(parent.DeclaresTeventAppliersInternal) return;
 
@@ -102,22 +100,11 @@ public abstract class Tentity<TParent,
 
       ITeventiveInternals<TTentityTevent, TTentityTeventImplementation> GetEntityAsTeventiveInternals(TTentityTevent e) => ManagedEntities[IdGetter.GetId(e)];
 
-      ///<summary>What the routing of a parent that declares it delivers: a created tevent adds the entity, every tevent reaches the entity whose id<br/>
-      /// it carries, and then <see cref="AfterTheEntityApplied"/> runs. The entity applies its created tevent itself, which gives it its id.</summary>
-      void ITeventRoutedMember<TTentityTevent>.DispatchInternal(IPublisherTevent<ITevent> wrapped)
-      {
-         var tevent = (TTentityTevent)wrapped.Tevent;
-         var id = IdGetter.GetId(tevent);
-         if(tevent is TTentityCreatedTevent) ManagedEntities.Add(Constructor.For<TTentity>.WithArguments<TParent>.Instance(_parent), id);
+      internal override TTentityId IdOf(TTentityTevent tevent) => IdGetter.GetId(tevent);
+      internal override bool Creates(TTentityTevent tevent) => tevent is TTentityCreatedTevent;
 
-#pragma warning disable CS0618 // This is just the type of infrastructure code the member is for
-         ((ITeventRoutedMember<TTentityTevent>)ManagedEntities[id]).DispatchInternal(wrapped);
-#pragma warning restore CS0618
-         AfterTheEntityApplied(tevent, id);
-      }
-
-      ///<summary>Called after the entity whose id <paramref name="tevent"/> carries has applied it: a removable entity's collection removes the entity here.</summary>
-      private protected virtual void AfterTheEntityApplied(TTentityTevent tevent, TTentityId id) {}
+      ///<summary>A new entity of the parent. It applies its created tevent itself, which gives it its id.</summary>
+      internal override TTentity CreateEntity() => Constructor.For<TTentity>.WithArguments<TParent>.Instance(_parent);
 
       public IReadOnlyEntityCollection<TTentity, TTentityId> Entities => ManagedEntities;
 
