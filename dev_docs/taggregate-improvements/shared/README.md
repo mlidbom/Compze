@@ -297,7 +297,8 @@ The numbers: [what-was-measured.md](what-was-measured.md). The bugs and the smal
 - **Bug: snapshots of taggregates of any shape, entities and shared tentities included.** Magnus, 2026-11-17: "we should
   be able to use snapshotting with any taggregate barring something exceptional about it", and "This is not really adding
   API it is fixing a broken one": refactoring a part into entities makes a taggregate unusable with a state store. A
-  `bug:` comment at `ISnapshotable` points here (0d857fa4d). Today a taggregate restored from
+  `bug:` comment at `ISnapshotable` points here (0d857fa4d). **To be fixed before the end review** (Magnus, OK, 2026-11-18),
+  specified in [snapshots-of-every-taggregate-shape.md](snapshots-of-every-taggregate-shape.md). Today a taggregate restored from
   a snapshot can't have entities or shared tentities, since their collections add one only by publishing its created
   tevent ([step 5, found while building](step-5-the-rest-of-the-teventives.md#found-while-building-for-magnus)). What it
   needs:
