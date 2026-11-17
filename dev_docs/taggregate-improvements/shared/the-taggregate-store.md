@@ -855,8 +855,14 @@ each taggregate's keys: an `ImmutableHashSet` for each, about 105 MB for 1.6 mil
   only on what `StateStoreBuilder.Index` documents, keys given "from its state", which a lookup inside a unit of work
   already relies on when it computes the keys of the copies it holds.
 - **What it costs:** the key function runs once more for each changed taggregate at each commit. A key function that
-  isn't a function of the taggregate's own state already gives inconsistent lookups inside a unit of work; it would now
-  leave the committed index wrong as well.
+  isn't a function of the taggregate's own state already gives inconsistent lookups inside a unit of work.
+- **Built (53d24b46c), with one thing beyond this:** at prepare, the index asserts that the taggregate is filed under
+  each old key it computes. A key function that breaks the contract then fails the unit of work while it can still roll
+  back, with a message saying what a key function must be, instead of leaving the committed index wrong or failing
+  after the storage has committed. Specified in
+  `Given_a_state_store_whose_index_key_function_reads_more_than_the_vocabs_state`. It catches a key that the committed
+  state gives and the index doesn't file; one the index files and the state no longer gives can't be seen without a
+  record.
 - **Weighed by the rules on consumers' requests:** no public API changes and nothing is promised anew. The gain grows
   with how much any consumer stores, the cost with how much it changes. JAStudio's other suggestions, presizing the
   dictionaries and filing the indexes in parallel, are tuning for its load, and not taken.
