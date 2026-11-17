@@ -1,4 +1,5 @@
 using Compze.Tessaging.TessageTypes;
+using Compze.Teventive;
 using Compze.Teventive.Taggregates.BaseClasses.Shared;
 
 // ReSharper disable ClassNeverInstantiated.Global
@@ -27,10 +28,14 @@ class PostalAddressTevent : IPostalAddressTevent
    }
 }
 
-class PostalAddress : SharedTomponent<IPostalAddressTevent>
+class PostalAddress : SharedTomponent<IPostalAddressTevent>, ITeventRouted
 {
-   public PostalAddress(ISharedTomponentSlot<IPostalAddressTevent> slot) : base(slot) =>
-      RegisterTeventAppliers().For<IPostalAddressTevent.Changed>(tevent => Street = tevent.Street);
+   static readonly TeventRouting<PostalAddress, IPostalAddressTevent> Appliers = DeclareAppliers<PostalAddress>(it => it
+     .For<IPostalAddressTevent.Changed>(static (address, tevent) => address.Street = tevent.Street));
+
+   TeventRouting ITeventRouted.TeventAppliers => Appliers;
+
+   public PostalAddress(SharedTomponentSlotInAnOwner<IPostalAddressTevent> slot) : base(slot) {}
 
    public string? Street { get; private set; }
 

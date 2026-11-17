@@ -7,5 +7,6 @@ namespace Compze.Teventive.Taggregates.BaseClasses.Shared._private;
 interface ISharedTomponentSlotOfAClass<in TTomponentTevent>
    where TTomponentTevent : class, ITevent
 {
-   void PublishInternal(object owner, TTomponentTevent tevent);
+   ///<summary>Publishes <paramref name="tevent"/>, which <paramref name="publisher"/>, the shared tomponent in this slot of <paramref name="owner"/>, publishes.</summary>
+   void PublishInternal(object owner, object publisher, TTomponentTevent tevent);
 }

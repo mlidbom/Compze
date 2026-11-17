@@ -161,12 +161,18 @@ class Note : Taggregate<Note, INoteTevent, NoteTevent, INoteTevent<INoteTevent>,
 ///<summary>A subclass with a component of its own, as JAStudio's VocabNote is.</summary>
 class VocabNote : Note, ITeventRouted
 {
+   static class Slots
+   {
+      internal static readonly SharedTomponentSlotOfAClass<VocabNote, INoteTevent, NoteTevent, IAudioListTevent, IVocabAudioTevent<IAudioListTevent>> Audio =
+         new(typeof(VocabAudioTevent<>), static vocab => vocab.Audio);
+   }
+
    static readonly TeventRouting<VocabNote, INoteTevent> VocabNoteAppliers = NoteAppliers.Extend<VocabNote>(it => it
      .For<INoteTevent.Renamed>(static (vocab, _) => vocab.QuestionAsTheVocabsRenamedApplierFoundIt = vocab.Question)
      .Component(static vocab => vocab.Forms)
      .Entities(static vocab => vocab._senses)
      .Entities(static vocab => vocab._examples)
-     .SharedTomponent(static vocab => vocab._audioSlot));
+     .SharedTomponent(Slots.Audio));
 
    static readonly TeventRouting<VocabNote, INoteTevent> VocabNoteHandlers = NoteHandlers.Extend<VocabNote>(it => it
      .For<IVocabTevent.Forms.Updated>(static (vocab, _) => vocab.Forms.PublishTheCount()));
@@ -177,15 +183,13 @@ class VocabNote : Note, ITeventRouted
 
    readonly VocabSense.ICollectionManager _senses;
    readonly VocabExample.ICollectionManager _examples;
-   readonly SharedTomponentSlot<INoteTevent, NoteTevent, IAudioListTevent, IVocabAudioTevent<IAudioListTevent>> _audioSlot;
 
    VocabNote()
    {
       Forms = new FormsComponent(this);
       _senses = VocabSense.CreateSelfManagingCollection(this);
       _examples = VocabExample.CreateSelfManagingCollection(this);
-      _audioSlot = new SharedTomponentSlot<INoteTevent, NoteTevent, IAudioListTevent, IVocabAudioTevent<IAudioListTevent>>(this, typeof(VocabAudioTevent<IAudioListTevent>));
-      Audio = new AudioList(_audioSlot);
+      Audio = new AudioList(Slots.Audio.In(this));
    }
 
    public FormsComponent Forms { get; }
@@ -290,7 +294,7 @@ class AudioList : SharedTomponent<IAudioListTevent>, ITeventRouted
 
    readonly List<string> _files = [];
 
-   public AudioList(ISharedTomponentSlot<IAudioListTevent> slot) : base(slot) {}
+   public AudioList(SharedTomponentSlotInAnOwner<IAudioListTevent> slot) : base(slot) {}
 
    public IReadOnlyList<string> Files => _files;
 

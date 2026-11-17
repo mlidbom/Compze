@@ -1,3 +1,4 @@
+using Compze.Teventive;
 using Compze.Teventive.Taggregates.BaseClasses.Shared;
 
 // ReSharper disable ClassNeverInstantiated.Global
@@ -43,12 +44,15 @@ class ChecklistItemTevent(ChecklistItemId entityId) : IChecklistItemTevent
    internal class Completed(ChecklistItemId entityId) : ChecklistItemTevent(entityId), IChecklistItemTevent.Completed;
 }
 
-class ChecklistItem : SharedTentity<ChecklistItem, ChecklistItemId, IChecklistItemTevent, IChecklistItemTevent.Added>
+class ChecklistItem : SharedTentity<ChecklistItem, ChecklistItemId, IChecklistItemTevent, IChecklistItemTevent.Added>, ITeventRouted
 {
-   public ChecklistItem(SharedTentityCollection<ChecklistItem, ChecklistItemId, IChecklistItemTevent, IChecklistItemTevent.Added> checklist) : base(checklist) =>
-      RegisterTeventAppliers()
-        .For<IChecklistItemTevent.Added>(tevent => Title = tevent.Title)
-        .For<IChecklistItemTevent.Completed>(_ => IsCompleted = true);
+   static readonly TeventRouting<ChecklistItem, IChecklistItemTevent> Appliers = DeclareAppliers(it => it
+     .For<IChecklistItemTevent.Added>(static (item, tevent) => item.Title = tevent.Title)
+     .For<IChecklistItemTevent.Completed>(static (item, _) => item.IsCompleted = true));
+
+   TeventRouting ITeventRouted.TeventAppliers => Appliers;
+
+   public ChecklistItem(SharedTentityCollection<ChecklistItem, ChecklistItemId, IChecklistItemTevent, IChecklistItemTevent.Added> checklist) : base(checklist) {}
 
    public string? Title { get; private set; }
    public bool IsCompleted { get; private set; }

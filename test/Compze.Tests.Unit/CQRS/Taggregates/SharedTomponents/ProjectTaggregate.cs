@@ -40,16 +40,23 @@ class ChecklistTevent<T>(T tevent) : ProjectTevent, IChecklistTevent<T> where T 
 }
 
 ///<summary>The owner side of the shared tentity fixture: a project with a checklist of <see cref="ChecklistItem"/> shared tentities.</summary>
-class ProjectTaggregate : Taggregate<ProjectTaggregate, IProjectTevent, ProjectTevent, IProjectTevent<IProjectTevent>, ProjectTevent<ProjectTevent>>
+class ProjectTaggregate : Taggregate<ProjectTaggregate, IProjectTevent, ProjectTevent, IProjectTevent<IProjectTevent>, ProjectTevent<ProjectTevent>>, ITeventRouted
 {
+   static class Slots
+   {
+      internal static readonly SharedTomponentSlotOfAClass<ProjectTaggregate, IProjectTevent, ProjectTevent, IChecklistItemTevent, IChecklistTevent<IChecklistItemTevent>> Checklist =
+         new(typeof(ChecklistTevent<>), static project => project.Checklist);
+   }
+
+   static readonly TeventRouting<ProjectTaggregate, IProjectTevent> Appliers = DeclareAppliers(it => it
+     .For<IProjectTevent.Created>(static (_, _) => {}) //The base class applies the taggregate id and version; the project has no state of its own from creation.
+     .SharedTomponent(Slots.Checklist));
+
+   TeventRouting ITeventRouted.TeventAppliers => Appliers;
+
    public SharedTentityCollection<ChecklistItem, ChecklistItemId, IChecklistItemTevent, IChecklistItemTevent.Added> Checklist { get; }
 
-   ProjectTaggregate()
-   {
-      RegisterTeventAppliers().For<IProjectTevent.Created>(_ => {}); //The base class applies the taggregate id and version; the project has no state of its own from creation.
-      Checklist = new SharedTentityCollection<ChecklistItem, ChecklistItemId, IChecklistItemTevent, IChecklistItemTevent.Added>(
-         new SharedTomponentSlot<IProjectTevent, ProjectTevent, IChecklistItemTevent, IChecklistTevent<IChecklistItemTevent>>(this, typeof(ChecklistTevent<IChecklistItemTevent>)));
-   }
+   ProjectTaggregate() => Checklist = new SharedTentityCollection<ChecklistItem, ChecklistItemId, IChecklistItemTevent, IChecklistItemTevent.Added>(Slots.Checklist.In(this));
 
    public ChecklistItem AddChecklistItem(string title) => Checklist.AddByPublishing(new ChecklistItemTevent.Added(ChecklistItemId.New(), title));
 
