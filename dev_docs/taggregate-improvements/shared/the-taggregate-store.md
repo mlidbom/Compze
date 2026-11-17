@@ -21,10 +21,13 @@ What the prototype shows:
 - **The programming model holds without storage.** A unit of work that gets a taggregate for update, changes it and
   commits costs 8.5 to 12.5 µs in Release, of which the transaction and scope are 1.2 to 1.8 µs. That is nothing for
   JAStudio's edits, which are rare and one at a time.
-- **Deferred dispatch works as designed.** Participation handlers run once the unit of work commits, never inside a
-  domain method, and what they cause is dispatched in the same pass, in publish order. 23 specified behaviours pass on
-  both pluggable component combinations.
-- **The two reentrancy bugs can't arise,** since nothing calls out from inside `Publish` or `Commit`.
+- **Dispatch is synchronous, as each publish cascade ends** (item 32, Magnus, 2026-11-16), as Compze has always run
+  participation handlers: inside the domain call, once the taggregate's own cascade has ended and its invariants hold,
+  so a handler's failure comes out of the domain call. The prototype first deferred them to the commit; that design is
+  superseded, and kept below as its record.
+- **The reentrancy bugs are fixed without deferring:** a taggregate hands its tevents out through a queue, `Commit`
+  takes them out before calling back, and a store tracks a new taggregate before publishing what it published before
+  its save. See [what the spike built: synchronous dispatch](#what-the-spike-built-synchronous-dispatch).
 
 **Isolation is by a private copy for each unit of work, Magnus's choice, confirmed after two independent reviews.** The
 teams had recommended shared live instances, "read uncommitted", to spare JAStudio changing every place that edits a
