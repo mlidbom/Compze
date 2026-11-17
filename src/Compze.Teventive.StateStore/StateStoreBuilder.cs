@@ -1,8 +1,11 @@
+using System.Text.Json;
 using Compze.Contracts;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
+using Compze.Internals.SystemCE.LinqCE;
 using Compze.Teventive.StateStore.Storage;
 using Compze.Teventive.StateStore._private;
+using Compze.Teventive.StateStore._private.Files;
 using Compze.Teventive.TaggregateStores._internal;
 using Compze.Teventive.Taggregates;
 using Compze.Teventive.Taggregates._internal;
@@ -16,7 +19,8 @@ public sealed class StateStoreBuilder
    readonly IComponentRegistrar _registrar;
    readonly Dictionary<Type, Func<IRootResolver, SnapshotableTaggregateClass>> _taggregateClasses = new();
    readonly List<Func<TaggregateStateStore, ITaggregateIndexMaintenance>> _indexes = [];
-   Func<IRootResolver, ITaggregateStorage>? _storage;
+   Func<IRootResolver, IReadOnlyList<SnapshotableTaggregateClass>, ITaggregateStorage>? _storage;
+   TaggregateFiles? _files;
 
    internal StateStoreBuilder(IComponentRegistrar registrar) => _registrar = registrar;
 
@@ -55,22 +59,67 @@ public sealed class StateStoreBuilder
    }
 
    ///<summary>Declares where the store keeps what it commits. Without it, the store keeps its taggregates in memory only.</summary>
-   public StateStoreBuilder StoredIn(ITaggregateStorage storage) => DeclareStorage(_ => storage);
+   public StateStoreBuilder StoredIn(ITaggregateStorage storage) => DeclareStorage((_, _) => storage);
 
    ///<summary>As <see cref="StoredIn(ITaggregateStorage)"/>, for a storage built with a service of the container, such as one that<br/>
    /// knows where the consumer's files are: <c>store.StoredIn((CorpusPaths paths) => new CorpusFiles(paths))</c>.</summary>
    ///<remarks>The service is resolved from the container's root when the store is built, at its first use, so a service that a<br/>
    /// host can only give once it has started is there.</remarks>
    public StateStoreBuilder StoredIn<TService>(Func<TService, ITaggregateStorage> storageWith) where TService : class =>
-      DeclareStorage(resolver => storageWith(resolver.Resolve<TService>()));
+      DeclareStorage((resolver, _) => storageWith(resolver.Resolve<TService>()));
 
-   StateStoreBuilder DeclareStorage(Func<IRootResolver, ITaggregateStorage> storage)
+   ///<summary>Declares that the store keeps what it commits in JSON files, in <paramref name="folder"/>: a file for each taggregate, in a<br/>
+   /// folder for each class, which <paramref name="declare"/> declares, holding exactly what <paramref name="options"/> make of the<br/>
+   /// taggregate's snapshot. A unit of work's files are written all or none.</summary>
+   ///<remarks>The store keeps its own files, its journals and temporary files, in <c>.state-store</c> under <paramref name="folder"/>.<br/>
+   /// A consumer whose files are in version control ignores that folder.<br/>
+   /// review-naming: StoredInFiles, a placeholder for the naming pass (jastudio-rep-opus's fork, 2026-11-17).</remarks>
+   public StateStoreBuilder StoredInFiles(DirectoryInfo folder, JsonSerializerOptions options, Action<TaggregateFiles> declare) =>
+      DeclareFiles(_ => folder, options, declare);
+
+   ///<summary>As <see cref="StoredInFiles(DirectoryInfo,JsonSerializerOptions,Action{TaggregateFiles})"/>, for a folder that a service of<br/>
+   /// the container knows: <c>store.StoredInFiles((CorpusPaths paths) => paths.Corpus, options, files => ...)</c>.</summary>
+   ///<remarks>The service is resolved from the container's root when the store is built, at its first use.</remarks>
+   public StateStoreBuilder StoredInFiles<TService>(Func<TService, DirectoryInfo> folderWith, JsonSerializerOptions options, Action<TaggregateFiles> declare) where TService : class =>
+      DeclareFiles(resolver => folderWith(resolver.Resolve<TService>()), options, declare);
+
+   StateStoreBuilder DeclareFiles(Func<IRootResolver, DirectoryInfo> folderWith, JsonSerializerOptions options, Action<TaggregateFiles> declare)
+   {
+      var files = new TaggregateFiles();
+      declare(files);
+      _files = files;
+      return DeclareStorage((resolver, classes) =>
+      {
+         var folder = folderWith(resolver);
+         return new TaggregateFileStorage(folder, options, files.Declarations.Select(it => it.For(classes.Single(declared => declared.Class == it.TaggregateClass), folder)));
+      });
+   }
+
+   StateStoreBuilder DeclareStorage(Func<IRootResolver, IReadOnlyList<SnapshotableTaggregateClass>, ITaggregateStorage> storage)
    {
       State.Assert(_storage == null, () => "The state store's storage is declared twice.");
       _storage = storage;
       return this;
    }
 
-   internal TaggregateStateStore Build(TaggregateUnitsOfWork unitsOfWork, IRootResolver resolver) =>
-      new(unitsOfWork, _taggregateClasses.Values.Select(declare => declare(resolver)), _indexes, _storage?.Invoke(resolver) ?? new NoStorage());
+   ///<summary>Asserts, once everything is declared, that the declarations fit together: that a store kept in files declares the files<br/>
+   /// of each class it keeps, and of no other, and that no two classes share a folder.</summary>
+   internal void AssertDeclarationsFitTogether()
+   {
+      if(_files == null) return;
+      var filesDeclared = _files.Declarations.ToList();
+      var keptWithoutFiles = _taggregateClasses.Keys.Where(kept => filesDeclared.None(it => it.TaggregateClass == kept)).Select(it => it.FullName).ToList();
+      State.Assert(keptWithoutFiles.None(), () => $"The state store is kept in files, and no files are declared for {string.Join(", ", keptWithoutFiles)}. Declare each class's files where the store is composed.");
+      var filesOfClassesNotKept = filesDeclared.Where(it => !_taggregateClasses.ContainsKey(it.TaggregateClass)).Select(it => it.TaggregateClass.FullName).ToList();
+      State.Assert(filesOfClassesNotKept.None(), () => $"Files are declared for {string.Join(", ", filesOfClassesNotKept)}, which the state store isn't declared to keep.");
+      var sharingAFolder = filesDeclared.SelectMany(one => filesDeclared.Where(other => other != one && one.SharesFilesWith(other)).Select(other => new[] { one, other })).FirstOrDefault();
+      State.Assert(sharingAFolder == null,
+                   () => $"The files of {sharingAFolder![0].TaggregateClass.FullName}, in \"{sharingAFolder[0].Folder}\", and of {sharingAFolder[1].TaggregateClass.FullName}, in \"{sharingAFolder[1].Folder}\", share a folder. Each class's files need a folder of their own.");
+   }
+
+   internal TaggregateStateStore Build(TaggregateUnitsOfWork unitsOfWork, IRootResolver resolver)
+   {
+      var classes = _taggregateClasses.Values.Select(declare => declare(resolver)).ToList();
+      return new(unitsOfWork, classes, _indexes, _storage?.Invoke(resolver, classes) ?? new NoStorage());
+   }
 }
