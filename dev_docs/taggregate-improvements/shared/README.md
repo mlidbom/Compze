@@ -28,6 +28,12 @@ For each public type and member the spike added or changed, the review asks: wou
 an abstraction of its own? Or does it exist because it spared JAStudio a refactoring, and would JAStudio's code be better
 had it made that refactoring instead? The names are reviewed in the same pass (Magnus's item 9).
 
+**Not only whether each type and member should exist, but whether its shape and its guarantees are what they should be
+(Magnus, 2026-11-17).** Its shape: the signature, the parameter and return types, where it lives, which interface it is
+on. Its guarantees: what it promises a caller, such as an order, what a unit of work sees, when it loads, what it costs
+at each call, what it does when it fails. The spike's own examples: `All` was first on `IStateStore`, not on a reader;
+it and `Lookup` returned an `IReadOnlyList` in id order, which promised an order that cost every call a sort.
+
 **First, independent reviews (Magnus, 2026-11-17):** "I absolutely want that on the public API, with the new rules in
 front of mind. Both opus and fable." One Opus and one Fable reviewer, each on its own, review every public API change of
 the spike, with Compze's rules 011, 012 and 013 in front of them: the frameworks keep their public surface minimal,
