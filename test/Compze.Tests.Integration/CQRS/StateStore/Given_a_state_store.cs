@@ -439,6 +439,39 @@ public class Given_a_state_store : UniversalTestBase
       [PCT] public void a_reference_to_another_vocab_is_not_equal() => _asAVocab.Equals(Reader.Reference<StoredVocab>(new TaggregateId(Guid.NewGuid()))).Must().BeFalse();
    }
 
+   ///<summary>A restore adds entities without their tevents, and only a restore: once the store has restored the copy a unit of work<br/>
+   /// gets for update, the copy adds an entity only by publishing its created tevent.</summary>
+   public class when_a_unit_of_work_adds_a_card_without_its_tevent_to_a_deck_it_got_for_update : Given_a_state_store
+   {
+      readonly TaggregateId _deckId = new(Guid.NewGuid());
+      readonly int _cardsTheCopyHeld;
+      readonly Exception _thrown;
+
+      public when_a_unit_of_work_adds_a_card_without_its_tevent_to_a_deck_it_got_for_update()
+      {
+         Compose(declare: store => store.Taggregate(StoredDeck.Empty));
+         InUnitOfWork(taggregates =>
+         {
+            var deck = StoredDeck.Create(_deckId);
+            deck.AddCard("the first card");
+            taggregates.Save(deck);
+         });
+
+         var cardsTheCopyHeld = 0;
+         _thrown = Invoking(() => InUnitOfWork(taggregates =>
+         {
+            var copy = taggregates.GetForUpdate<StoredDeck>(_deckId);
+            cardsTheCopyHeld = copy.Cards.InCreationOrder.Count;
+            copy.AddARestoredCard();
+         })).Must().Throw<Exception>().Which;
+         _cardsTheCopyHeld = cardsTheCopyHeld;
+      }
+
+      [PCT] public void the_copy_was_restored_with_the_decks_card() => _cardsTheCopyHeld.Must().Be(1);
+      [PCT] public void the_addition_is_refused_saying_that_only_a_restore_adds_an_entity_without_its_tevent() => _thrown.Message.Must().Contain("is added without its created tevent only while its taggregate is being restored");
+      [PCT] public void the_deck_holds_only_its_first_card() => Reader.Get<StoredDeck>(_deckId).Cards.InCreationOrder.Select(it => it.Text).Must().SequenceEqual(["the first card"]);
+   }
+
    public class when_measuring : Given_a_state_store
    {
       const int Iterations = 20_000;

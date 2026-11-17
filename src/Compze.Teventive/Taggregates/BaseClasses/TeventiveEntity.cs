@@ -94,7 +94,7 @@ public abstract class Tentity<TParent,
       public TTentity AddRestored(TTentityId id)
       {
          State.Assert(((ITeventiveInATaggregate)_parent).ItsTaggregateIsBeingRestored,
-                      () => $"A {typeof(TTentity).Name} is added without its created tevent only while its taggregate is being restored from a snapshot: from RestoreIdentity until its first publish. Add it by publishing its created tevent, with {nameof(AddByPublishing)}.");
+                      () => $"A {typeof(TTentity).Name} is added without its created tevent only while its taggregate is being restored from a snapshot, by its RestoreFrom. Add it by publishing its created tevent, with {nameof(AddByPublishing)}.");
          var entity = CreateEntity();
          entity._id = id;
          ManagedEntities.Add(entity, id);

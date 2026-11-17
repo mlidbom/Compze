@@ -57,13 +57,15 @@ sealed class SnapshotableTaggregateClass
    }
 
    ///<summary>A new instance, holding the state <paramref name="snapshot"/> holds, whichever taggregate that is: for a storage that<br/>
-   /// learns a taggregate's id only from its snapshot.</summary>
+   /// learns a taggregate's id only from its snapshot. Its restore is over when this returns, so that code handed the instance, such<br/>
+   /// as a unit of work's, can't add entities to it without their tevents.</summary>
    internal ITaggregate Restore(object snapshot)
    {
       var restored = _createEmpty();
       State.Assert(restored.GetType() == Class, () => $"The factory declared for {Class.FullName} built a {restored.GetType().FullName}. Declare each taggregate class with a factory of its own.");
       _restoreFrom(restored, snapshot);
       State.Assert(restored.Version > 0, () => $"{Class.FullName}.{nameof(ISnapshotable<,>.RestoreFrom)} gave the instance no id. It must call RestoreIdentity first.");
+      ((ITaggregateStoreInternals)restored).EndTheRestore();
       return restored;
    }
 

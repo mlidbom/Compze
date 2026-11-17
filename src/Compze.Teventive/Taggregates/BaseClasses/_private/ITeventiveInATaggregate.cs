@@ -4,7 +4,7 @@ namespace Compze.Teventive.Taggregates.BaseClasses._private;
 /// add a restored entity without a tevent, then and only then.</summary>
 interface ITeventiveInATaggregate
 {
-   ///<summary>Whether the taggregate is being restored from a snapshot: from its <c>RestoreIdentity</c> until its first publish, and never once it<br/>
-   /// is a committed instance, which is read only.</summary>
+   ///<summary>Whether the taggregate is being restored from a snapshot: from its <c>RestoreIdentity</c> until its restoring code returns to the<br/>
+   /// taggregate store restoring it, or else until its first publish; never once it is a committed instance, which is read only.</summary>
    bool ItsTaggregateIsBeingRestored { get; }
 }
