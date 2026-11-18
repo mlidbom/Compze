@@ -31,7 +31,10 @@ stops the release unless a CI run that covers the commit ran its test jobs and e
 
 A release goes in this order:
 
-1. **Prepare it:** `C-Prepare-Release` does it for every package whose changelog gained entries since its release:
+1. **Prepare it.** First find what changed without entries: `C-Get-PackagesChangedSinceTheirRelease` lists each package
+   whose shipped files changed since its release tag, with whether its version is bumped and its changelog changed. A
+   package that changed needs its entries before the preparation, which takes only what changelogs gained.
+   `C-Prepare-Release` does it for every package whose changelog gained entries since its release:
    - it bumps the versions, minor by default, patch with `-Patch`, and only the packages named with `-PackageId`;
    - it splits each changelog's top section into the new version's section and the released one, restored from its tag;
    - it adds the line stating the Compze dependencies whose minimum version the release raises across a minor version,

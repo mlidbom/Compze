@@ -56,6 +56,9 @@ Then reload: `. $PROFILE`
   - A type that moved to another namespace or project, or was renamed, is listed once, with its member changes, when evidence pairs it with what it was: its file (git's rename detection, or the file of a type already paired), or its namespace's move (a project's rename, or a type already paired); the report says what each pairing rests on
   - DocFX skips the members of C# 14 extension blocks: the report names the changed files that hold them, to compare with git diff
 
+- **C-Get-PackagesChangedSinceTheirRelease** - Lists the packages whose shipped files changed since their last release tag, and those never released: for each, whether its version is bumped and its changelog changed since the tag, and the files that changed. For checking, before a release, that no package changed without changelog entries and a bump
+  - `-PackageId` to limit the list
+
 - **C-SimulateRelease** - Packs with real versions and dry-runs the release: which packages are new, their changelog entries, the post-release binding check (`.github/scripts/PostReleaseBindingCheck/README.md`), pushes, GitHub releases and tags
   - `-NoBuild`, `-NoPack`, `-NoSummary`
   - Refuses a changelog section that doesn't state the dependency floors its version raises across a minor version, and prints the line to add (`.github/scripts/lib/DependencyFloors.ps1` says why)
