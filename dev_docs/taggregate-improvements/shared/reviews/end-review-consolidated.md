@@ -64,6 +64,9 @@ read-only wrapper per key costs an object per key held, which the spike measured
   transactions must be begun by `ExecuteUnitOfWork`; a failed publish rolls the unit of work back even when caught.
 - **Stale after Q11:** nearly every design document in `shared/` uses names the naming pass changed; the documentation pass
   after the questions updates them all.
+- **Stale after Q2:** documents naming the store by its old names, `StateStore` and `Compze.Teventive.StateStore.*`,
+  such as `the-taggregate-store.md` (about lines 1007, 1073 and 1103, the last with the MemoryPack package's old version
+  0.1.0-alpha.1; both packages went to the pending-release feed as 0.1.0-alpha).
 - **Stale after Q10:** in `shared/`, the README, `bugs-and-findings.md`, `snapshots-of-every-taggregate-shape.md`,
   `step-5-the-rest-of-the-teventives.md`, `the-design.md`, `the-files-of-a-state-store.md`, `the-taggregate-store.md`
   and `what-was-measured.md`; in `opus/`, the README, `1-loading-a-taggregate-from-a-snapshot.md`,
