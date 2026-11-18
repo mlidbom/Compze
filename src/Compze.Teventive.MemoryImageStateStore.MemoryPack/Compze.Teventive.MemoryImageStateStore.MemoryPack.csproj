@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <Nullable>enable</Nullable>
-    <Version>0.1.0-alpha.1</Version>
+    <Version>0.1.0-alpha</Version>
     <Description>A MemoryPack cache for Compze.Teventive.MemoryImageStateStore's JSON files, so a memory image state store kept in files starts from the cache and reads only the files changed since.</Description>
   </PropertyGroup>
   <ItemGroup>

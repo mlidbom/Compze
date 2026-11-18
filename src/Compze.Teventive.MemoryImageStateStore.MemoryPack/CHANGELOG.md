@@ -4,7 +4,7 @@ All notable changes to Compze.Teventive.MemoryImageStateStore.MemoryPack will be
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
-## 0.1.0-alpha.1
+## 0.1.0-alpha
 
 - **A MemoryPack cache for a memory image state store kept in JSON files,** declared with `files.StartingFromAMemoryPackCache().FolderOf<TTaggregate>(folder)`, so the store starts without reading every file.
   - A cache file for each class, in the store's own folder, holds each file's path, length and last write time with the snapshot it held. At the next start, a file whose length and last write time are unchanged takes its snapshot from the cache. A new or changed file is read, and a gone one is dropped.

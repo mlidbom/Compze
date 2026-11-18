@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## 0.5.0-alpha
 
+- **Internal support for Compze.Teventive's tevents with identity; nothing public changes:** the tevent store's serializer reads and writes `ITaggregateTeventWithIdentity` tevents, and still leaves out of a tevent's JSON the properties the tevent store keeps in columns of their own, which `TaggregateTeventWithIdentity` now declares. An application that upgrades Compze.Teventive.TeventStore.Abstractions to 0.7.0-alpha must upgrade this package too: the earlier version fails against it at runtime.
 - **Targets .NET 11 (`net11.0`) instead of .NET 10, and is compiled with runtime async:** the runtime, instead of state machines the compiler generates, suspends and resumes its async methods, so live stack traces show the real call chain. An application that uses this version must target .NET 11.
 - **Requires newer minor versions of other Compze packages:** Compze.Tessaging 0.9.0-alpha (was 0.5.0-alpha), Compze.Teventive 0.6.0-alpha (was 0.5.0-alpha), Compze.Teventive.TeventStore.Abstractions 0.6.0-alpha (was 0.5.0-alpha). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
 
