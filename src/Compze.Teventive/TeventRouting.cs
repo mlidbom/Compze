@@ -158,8 +158,8 @@ public sealed class TeventRouting<TInstance, TTevent> : TeventRouting where TIns
          return this;
       }
 
-      ///<summary>Routes every tevent of the component <paramref name="component"/> returns to that component's own appliers, or tevent handlers,<br/>
-      /// as this routing routes. The component's tevent type is inferred from what <paramref name="component"/> returns.</summary>
+      ///<summary>Routes every tevent of the component <paramref name="component"/> returns to that component's own appliers. The component's<br/>
+      /// tevent type is inferred from what <paramref name="component"/> returns.</summary>
       public Declaration Component<TComponentTevent>(Func<TInstance, ITeventRoutedMember<TComponentTevent>> component) where TComponentTevent : TTevent => Member(component);
 
       ///<summary>Routes every tevent of the entities in the collection <paramref name="entities"/> returns to that collection: a created tevent adds an<br/>
