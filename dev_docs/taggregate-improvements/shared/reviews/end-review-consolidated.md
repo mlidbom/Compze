@@ -99,7 +99,9 @@ read-only wrapper per key costs an object per key held, which the spike measured
 taggregate (the tevent store's, the migrations', the serializer's performance) set their identity through
 `TaggregateTeventCE` in Compze.Tests.Common, by reflection on private setters, since Q10 made the mutable tevent
 interfaces internal. That is a hole into the library the black-box rule doesn't allow: they should publish their tevents
-on taggregates, or move to an internal specifications project.
+on taggregates, or move to an internal specifications project. **Done, 5bcfc84ff:** every one now goes through the
+public API, its tevents published by a `TestTaggregate` and saved through the tevent store; `TaggregateTeventCE` is
+deleted, no `InternalsVisibleTo` was added, and the suite's count is unchanged.
 
 ## 3. The questions for Magnus, one at a time, most important first
 
