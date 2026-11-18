@@ -8,6 +8,7 @@ using Compze.Internals.Testing;
 using Compze.Must;
 using Compze.Tessaging.Engine.Wiring;
 using Compze.Teventive.MemoryImageStateStore;
+using Compze.Teventive.MemoryImageStateStore.Testing;
 using Compze.Teventive.TaggregateStores;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
@@ -17,7 +18,7 @@ using Compze.Tests.Infrastructure.XUnit;
 
 namespace Compze.Tests.Integration.CQRS.MemoryImageStateStore;
 
-///<summary>A memory image state store keeping vocabs in files kept in memory, its vocab class declared with a registration of the container whose<br/>
+///<summary>A memory image state store keeping vocabs in files on a file system in memory, its vocab class declared with a registration of the container whose<br/>
 /// factory takes two singleton services: the store builds every vocab it restores through the container.</summary>
 public class Given_a_state_store_keeping_vocabs_built_with_two_services_of_the_container : UniversalTestBase
 {
@@ -31,7 +32,7 @@ public class Given_a_state_store_keeping_vocabs_built_with_two_services_of_the_c
       builder.Registrar.Register(Singleton.For<VocabDictionary>().CreatedBy(() => new VocabDictionary()),
                                  Singleton.For<VocabReadings>().CreatedBy(() => new VocabReadings()));
       builder.Registrar.MemoryImageStateStore(store => store.Taggregate(TrackedTransient.For<StoredVocab>().CreatedBy((VocabDictionary dictionary, VocabReadings readings) => new StoredVocab(dictionary, readings)))
-                                                 .StoredInJsonFiles(_folder, Options, files => files.KeptInMemory().FolderOf<StoredVocab>("vocab")));
+                                                 .StoredInJsonFiles(_folder, Options, files => files.OnAFileSystemInMemory().FolderOf<StoredVocab>("vocab")));
       builder.Registrar.LocalTessagingEngine(_ => {});
       _container = builder.Build();
       InUnitOfWork(taggregates => taggregates.Add(StoredVocab.Create(VocabId, "taberu")));

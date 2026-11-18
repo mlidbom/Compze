@@ -8,6 +8,7 @@ using Compze.Internals.Testing;
 using Compze.Must;
 using Compze.Tessaging.Engine.Wiring;
 using Compze.Teventive.MemoryImageStateStore;
+using Compze.Teventive.MemoryImageStateStore.Testing;
 using Compze.Teventive.TaggregateStores;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
@@ -18,7 +19,7 @@ using static Compze.Must.MustActions;
 
 namespace Compze.Tests.Integration.CQRS.MemoryImageStateStore;
 
-///<summary>A memory image state store kept in JSON files in memory, whose files hold two vocabs, "taberu" and "nomu", and which has been used once.<br/>
+///<summary>A memory image state store kept in JSON files on a file system in memory, whose files hold two vocabs, "taberu" and "nomu", and which has been used once.<br/>
 /// The consumer's JSON options serialize taggregate ids with a <see cref="WatchedTaggregateIdConverter"/>, so a specification sees whose<br/>
 /// snapshots the store serializes, and can have one refused, as a snapshot that can't be serialized.</summary>
 public class Given_a_state_store_whose_files_hold_two_vocabs_written_with_a_watched_serializer : UniversalTestBase
@@ -35,7 +36,7 @@ public class Given_a_state_store_whose_files_hold_two_vocabs_written_with_a_watc
       _options = new JsonSerializerOptions { WriteIndented = true, Converters = { _converter } };
       var builder = TestEnv.DIContainer.CreateTestingContainerBuilder();
       builder.Registrar.MemoryImageStateStore(store => store.Taggregate(() => new StoredVocab())
-                                                 .StoredInJsonFiles(_folder, _options, files => files.KeptInMemory().FolderOf<StoredVocab>("vocab")));
+                                                 .StoredInJsonFiles(_folder, _options, files => files.OnAFileSystemInMemory().FolderOf<StoredVocab>("vocab")));
       builder.Registrar.LocalTessagingEngine(_ => {});
       _container = builder.Build();
       WriteTheVocabsFile(TaberuId, "taberu", "to eat");
@@ -48,7 +49,7 @@ public class Given_a_state_store_whose_files_hold_two_vocabs_written_with_a_watc
 
    IMemoryImageStateStore MemoryImageStateStore => _container.RootResolver.Resolve<IMemoryImageStateStore>();
 
-   ITaggregateFilesInMemory Files => _container.RootResolver.Resolve<ITaggregateFilesInMemory>();
+   IFileSystemInMemory Files => _container.RootResolver.Resolve<IFileSystemInMemory>();
 
    void InUnitOfWork(Action<ITaggregateStoreUpdater> work) =>
       _container.ScopeFactory.ExecuteUnitOfWork(unitOfWork => work(unitOfWork.Resolve<ITaggregateStoreUpdater>()));

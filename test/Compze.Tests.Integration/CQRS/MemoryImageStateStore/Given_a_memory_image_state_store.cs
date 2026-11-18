@@ -30,6 +30,7 @@ namespace Compze.Tests.Integration.CQRS.MemoryImageStateStore;
 public class Given_a_state_store : UniversalTestBase
 {
    IDependencyInjectionContainer? _container;
+   IComponentRegistrar? _registrar;
    IDependencyInjectionContainer Container => _container!;
    TaggregateId VocabId { get; } = new(Guid.NewGuid());
    ConcurrentQueue<string> ParticipationLog { get; } = new();
@@ -38,6 +39,7 @@ public class Given_a_state_store : UniversalTestBase
    void Compose(Action<TessageBusHandlerRegistrar>? participation = null, Action<TeventObservationRegistrar>? observation = null, Action<MemoryImageStateStoreBuilder>? declare = null, Action<IComponentRegistrar>? register = null)
    {
       var builder = TestEnv.DIContainer.CreateTestingContainerBuilder();
+      _registrar = builder.Registrar;
       register?.Invoke(builder.Registrar);
       builder.Registrar.MemoryImageStateStore(declare ?? (store => store.Taggregate(() => new StoredVocab()).Taggregate(() => new StoredSentence())));
       builder.Registrar.LocalTessagingEngine(engine =>
@@ -341,6 +343,13 @@ public class Given_a_state_store : UniversalTestBase
       [PCT] public void inside_the_unit_of_work_the_reader_found_nothing() => _theReaderFoundItInsideTheUnitOfWork.Must().BeFalse();
       [PCT] public void outside_the_unit_of_work_the_reader_found_the_committed_vocab() => _theReaderFoundItOutsideTheUnitOfWork.Must().BeTrue();
       [PCT] public void the_reader_now_finds_nothing() => Reader.TryGet(VocabId, out StoredVocab? _).Must().BeFalse();
+   }
+
+   public class composed_without_JSON_files : Given_a_state_store
+   {
+      public composed_without_JSON_files() => Compose();
+
+      [PCT] public void ITaggregateJsonFiles_is_not_registered() => _registrar!.IsRegistered<ITaggregateJsonFiles>().Must().BeFalse();
    }
 
    public class when_a_unit_of_work_gets_for_update_a_class_no_store_keeps : Given_a_state_store

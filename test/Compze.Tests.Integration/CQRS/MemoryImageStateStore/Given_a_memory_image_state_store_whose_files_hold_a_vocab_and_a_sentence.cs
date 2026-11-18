@@ -13,6 +13,7 @@ using Compze.Tessaging.Engine.Wiring;
 using Compze.Tessaging.TessageBus;
 using Compze.Teventive;
 using Compze.Teventive.MemoryImageStateStore;
+using Compze.Teventive.MemoryImageStateStore.Testing;
 using Compze.Teventive.TaggregateStores;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
@@ -23,9 +24,9 @@ using static Compze.Must.MustActions;
 
 namespace Compze.Tests.Integration.CQRS.MemoryImageStateStore;
 
-///<summary>A memory image state store kept in JSON files in memory, whose files hold one vocab, "taberu", and one sentence, when the container is<br/>
+///<summary>A memory image state store kept in JSON files on a file system in memory, whose files hold one vocab, "taberu", and one sentence, when the container is<br/>
 /// built. The files' folder is given by a service of the container. Another program's changes to the files are files written or<br/>
-/// deleted behind the store's back, through <see cref="ITaggregateFilesInMemory"/>. A sentence's snapshot type has no Equals of its<br/>
+/// deleted behind the store's back, through <see cref="IFileSystemInMemory"/>. A sentence's snapshot type has no Equals of its<br/>
 /// own, which a reload doesn't need.</summary>
 public class Given_a_state_store_whose_files_hold_a_vocab_and_a_sentence : UniversalTestBase
 {
@@ -49,7 +50,7 @@ public class Given_a_state_store_whose_files_hold_a_vocab_and_a_sentence : Unive
       builder.Registrar.MemoryImageStateStore(store => store.Taggregate(() => new StoredVocab())
                                                  .Taggregate(() => new StoredSentence())
                                                  .Index<StoredVocab, string>(vocab => [vocab.Question])
-                                                 .StoredInJsonFiles((TheFilesFolder it) => it.Folder, Options, files => files.KeptInMemory()
+                                                 .StoredInJsonFiles((TheFilesFolder it) => it.Folder, Options, files => files.OnAFileSystemInMemory()
                                                                                                                          .FolderOf<StoredVocab>("vocab")
                                                                                                                          .FolderOf<StoredSentence>("sentences")));
       builder.Registrar.LocalTessagingEngine(engine => engine.ObserveTevents(observe => observe.ForTevent((IStoredVocabTevent it) => ObservationLog.Enqueue(it.GetType().Name))));
@@ -69,7 +70,7 @@ public class Given_a_state_store_whose_files_hold_a_vocab_and_a_sentence : Unive
 
    ITaggregateStoreBulkReader BulkReader => _container.RootResolver.Resolve<ITaggregateStoreBulkReader>();
 
-   ITaggregateFilesInMemory Files => _container.RootResolver.Resolve<ITaggregateFilesInMemory>();
+   IFileSystemInMemory Files => _container.RootResolver.Resolve<IFileSystemInMemory>();
 
    IReadOnlyList<TaggregateId> IdsFiledUnder(string question) => [.._container.RootResolver.Resolve<ITaggregateIndex<StoredVocab, string>>().Lookup(question).Select(it => it.Id)];
 

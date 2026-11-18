@@ -7,6 +7,7 @@ using Compze.Internals.SystemCE.LinqCE;
 using Compze.Teventive.MemoryImageStateStore._private;
 using Compze.Teventive.MemoryImageStateStore._private.Files;
 using Compze.Teventive.MemoryImageStateStore._private.Storage;
+using Compze.Teventive.MemoryImageStateStore.Testing;
 using Compze.Teventive.TaggregateStores._internal;
 using Compze.Teventive.Taggregates;
 using Compze.Teventive.Taggregates._internal;
@@ -107,7 +108,8 @@ public sealed class MemoryImageStateStoreBuilder
 
    ///<summary>Declares that the store keeps what it commits in JSON files, in <paramref name="folder"/>: a file for each taggregate, in a<br/>
    /// folder for each class, which <paramref name="declare"/> declares, holding exactly what <paramref name="options"/> make of the<br/>
-   /// taggregate's snapshot. A unit of work's files are written all or none.</summary>
+   /// taggregate's snapshot. A unit of work's files are written all or none. The container then resolves <see cref="ITaggregateJsonFiles"/>,<br/>
+   /// which gives the path of each taggregate's file, and the taggregate each file is the file of.</summary>
    ///<remarks>The store keeps its own files, its journals and temporary files, in <c>.state-store</c> under <paramref name="folder"/>.<br/>
    /// A consumer whose files are in version control ignores that folder.<br/>
    /// <b>A unit of work that writes the files can't also hold a database connection,</b> by default. The files and a database commit<br/>
@@ -137,17 +139,15 @@ public sealed class MemoryImageStateStoreBuilder
       var files = new TaggregateFilesBuilder();
       declare(files);
       _files = files;
-      if(files.IsKeptInMemory) _registrar.Register(Singleton.For<ITaggregateFilesInMemory, FilesInMemory>().CreatedBy(() => new FilesInMemory()));
-      return DeclareStorage((resolver, classes) =>
-      {
-         var folder = folderWith(resolver);
-         return new TaggregateFileStorage(folder,
-                                          options,
-                                          files.Declarations.Select(it => it.For(classes.Single(declared => declared.Class == it.TaggregateClass), folder)),
-                                          files.LoadCache,
-                                          files.IsKeptInMemory ? resolver.Resolve<FilesInMemory>() : FilesOnDisk.Instance,
-                                          files.IsAcceptingNonAtomicCommitsWithADatabase);
-      });
+      DeclareStorage((resolver, classes) => new TaggregateFileStorage(resolver.Resolve<TaggregateJsonFiles>(),
+                                                                      options,
+                                                                      classes,
+                                                                      files.LoadCache,
+                                                                      files.IsOnAFileSystemInMemory ? resolver.Resolve<FileSystemInMemory>() : FilesOnDisk.Instance,
+                                                                      files.IsAcceptingNonAtomicCommitsWithADatabase));
+      _registrar.Register(Singleton.For<ITaggregateJsonFiles, TaggregateJsonFiles>().CreatedBy((IRootResolver resolver) => new TaggregateJsonFiles(folderWith(resolver), files.Declarations)));
+      if(files.IsOnAFileSystemInMemory) _registrar.Register(Singleton.For<IFileSystemInMemory, FileSystemInMemory>().CreatedBy(() => new FileSystemInMemory()));
+      return this;
    }
 
    MemoryImageStateStoreBuilder DeclareStorage(Func<IRootResolver, IReadOnlyList<SnapshotableTaggregateClass>, ITaggregateStorage> storage)

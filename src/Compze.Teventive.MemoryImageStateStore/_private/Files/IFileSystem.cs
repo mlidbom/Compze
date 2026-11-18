@@ -2,8 +2,8 @@ using Compze.Teventive.MemoryImageStateStore._internal;
 
 namespace Compze.Teventive.MemoryImageStateStore._private.Files;
 
-///<summary>The file operations a memory image state store kept in files makes: on the disk (<see cref="FilesOnDisk"/>), or on files kept in memory<br/>
-/// for specifications (<see cref="FilesInMemory"/>). Every path is a full path.</summary>
+///<summary>The file operations a memory image state store kept in files makes: on the disk (<see cref="FilesOnDisk"/>), or on a file system in memory<br/>
+/// for specifications (<see cref="FileSystemInMemory"/>). Every path is a full path.</summary>
 ///<remarks>Each operation does what the <see cref="File"/> or <see cref="Directory"/> method of the same name does on the disk, so the<br/>
 /// store works the same on either.</remarks>
 interface IFileSystem

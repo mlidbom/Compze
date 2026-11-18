@@ -1,25 +1,25 @@
 using Compze.Abstractions;
 using Compze.Contracts;
 using Compze.Teventive.MemoryImageStateStore._internal;
-using Compze.Teventive.Taggregates._internal;
 using static Compze.Contracts.Contract;
 
 namespace Compze.Teventive.MemoryImageStateStore._private.Files;
 
 ///<summary>Where a memory image state store kept in files keeps the taggregates of one class: the class's folder, and the file of each taggregate<br/>
-/// in it, which its id gives. Also how its files are read: as the class's snapshot type.</summary>
+/// in it, which its id gives.</summary>
 sealed class FilesOfAClass
 {
    const string FileExtension = ".json";
 
-   FilesOfAClass(SnapshotableTaggregateClass taggregateClass, DirectoryInfo folder, string relativeFolder)
+   FilesOfAClass(Type taggregateClass, DirectoryInfo folder, string relativeFolder)
    {
       TaggregateClass = taggregateClass;
       Folder = folder;
       RelativeFolder = relativeFolder;
    }
 
-   internal SnapshotableTaggregateClass TaggregateClass { get; }
+   ///<summary>The class whose files these are: a taggregate is of this exact class, never of a subclass of it.</summary>
+   internal Type TaggregateClass { get; }
 
    DirectoryInfo Folder { get; }
 
@@ -29,6 +29,16 @@ sealed class FilesOfAClass
    ///<summary>The full path of the file of the taggregate <paramref name="id"/>: <c>&lt;first two hex digits of the id&gt;/&lt;id&gt;.json</c><br/>
    /// under the class's folder, so that no folder holds more than a few thousand files of a store with hundreds of thousands.</summary>
    internal string FileOf(TaggregateId id) => Path.GetFullPath(Path.Combine(Folder.FullName, id.Value.ToString("N")[..2], $"{id.Value}{FileExtension}"));
+
+   ///<summary>The taggregate whose file <paramref name="fullPath"/> is, or null when it is no taggregate's file of the class: the id its<br/>
+   /// name gives, if <see cref="FileOf"/> gives that id's file as <paramref name="fullPath"/>, ignoring case, so that the layout is<br/>
+   /// written once, in <see cref="FileOf"/>. A name that is the empty id is no taggregate's: no taggregate has that id.</summary>
+   internal TaggregateOfAFile? TaggregateWhoseFileIs(string fullPath) =>
+      Guid.TryParse(Path.GetFileNameWithoutExtension(fullPath), out var id)
+   && id != Guid.Empty
+   && string.Equals(FileOf(new TaggregateId(id)), fullPath, StringComparison.OrdinalIgnoreCase)
+         ? new TaggregateOfAFile(TaggregateClass, new TaggregateId(id))
+         : null;
 
    ///<summary>Every file of the class: each .json file under its folder, at any depth, as <paramref name="files"/> hold them now, with<br/>
    /// the length and last write time that listing the folder gives without opening the files.</summary>
@@ -42,7 +52,7 @@ sealed class FilesOfAClass
    ///<summary>The files of one class as <see cref="TaggregateFilesBuilder.FolderOf{TTaggregate}"/> declares them, before the store's folder is known.</summary>
    internal sealed class Declaration
    {
-      const string StoresOwnFolderName = TaggregateFileStorage.OwnFolderName;
+      const string StoresOwnFolderName = TaggregateJsonFiles.OwnFolderName;
 
       internal Declaration(Type taggregateClass, string folder)
       {
@@ -61,8 +71,8 @@ sealed class FilesOfAClass
       /// folder would read the other's files.</summary>
       internal bool SharesFilesWith(Declaration other) => IsTheSameOrInside(Folder, other.Folder) || IsTheSameOrInside(other.Folder, Folder);
 
-      internal FilesOfAClass For(SnapshotableTaggregateClass taggregateClass, DirectoryInfo storesFolder) =>
-         new(taggregateClass, new DirectoryInfo(Path.Combine(storesFolder.FullName, Folder)), Folder);
+      ///<summary>The class's files under <paramref name="storesFolder"/>, the full path of the store's folder.</summary>
+      internal FilesOfAClass In(string storesFolder) => new(TaggregateClass, new DirectoryInfo(Path.Combine(storesFolder, Folder)), Folder);
 
       static bool IsTheSameOrInside(string folder, string other) =>
          string.Equals(folder, other, StringComparison.OrdinalIgnoreCase) || folder.StartsWith(other + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase);

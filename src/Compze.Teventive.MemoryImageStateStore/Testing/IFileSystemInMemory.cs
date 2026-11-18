@@ -1,13 +1,13 @@
-namespace Compze.Teventive.MemoryImageStateStore;
+namespace Compze.Teventive.MemoryImageStateStore.Testing;
 
-///<summary>The files of a memory image state store whose files are kept in memory (<see cref="TaggregateFilesBuilder.KeptInMemory"/>), for a specification:<br/>
-/// to read what the store wrote, and to change the files behind the store's back, as another program changing them on the disk would,<br/>
-/// such as to specify what a reload does.</summary>
-///<remarks>Resolvable from the container when the store's files are kept in memory. Each path is a full path, under the folder the<br/>
-/// store was composed with, such as <c>Path.Combine(folder.FullName, "vocab", ...)</c>, and paths are compared ignoring case, as on<br/>
-/// Windows. A folder exists only as the paths of the files in it. The files written before the store's first use are what it loads.<br/>
-/// review-naming: ITaggregateFilesInMemory, a placeholder for the naming pass (jastudio-rep-opus's fork, 2026-11-17).</remarks>
-public interface ITaggregateFilesInMemory
+///<summary>The file system in memory of a memory image state store whose files are on one (<see cref="TaggregateFilesBuilderTestingCE.OnAFileSystemInMemory"/>),<br/>
+/// for a specification: to read what the store wrote, and to change the files behind the store's back, as another program changing<br/>
+/// them on the disk would, such as to specify what a reload does.</summary>
+///<remarks>Resolvable from the container when the store's files are on a file system in memory. Each path is a full path, under the<br/>
+/// folder the store was composed with, as <see cref="ITaggregateJsonFiles.PathOf{TTaggregate}"/> gives a taggregate's, and paths<br/>
+/// are compared ignoring case, as on Windows. A folder exists only as the paths of the files in it. The files written before the<br/>
+/// store's first use are what it loads.</remarks>
+public interface IFileSystemInMemory
 {
    ///<summary>The full path of every file, the store's own files in its <c>.state-store</c> folder included, in no particular order.</summary>
    IReadOnlyCollection<string> Paths { get; }

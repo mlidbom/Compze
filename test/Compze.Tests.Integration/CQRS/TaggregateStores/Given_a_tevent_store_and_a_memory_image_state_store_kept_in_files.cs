@@ -7,6 +7,7 @@ using Compze.Hosting.Testing;
 using Compze.Internals.Testing;
 using Compze.Must;
 using Compze.Teventive.MemoryImageStateStore;
+using Compze.Teventive.MemoryImageStateStore.Testing;
 using Compze.Teventive.TaggregateStores;
 using Compze.Teventive.TeventStore.Abstractions;
 using Compze.Tests.Common;
@@ -41,7 +42,7 @@ public class Given_a_tevent_store_and_a_state_store_kept_in_files : UniversalTes
 
    void DeclareFiles(TaggregateFilesBuilder files)
    {
-      files.KeptInMemory();
+      files.OnAFileSystemInMemory();
       if(_filesAreAcceptingNonAtomicCommitsWithADatabase) files.AcceptingNonAtomicCommitsWithADatabase();
       files.FolderOf<StoredVocab>("vocab");
    }
@@ -53,7 +54,7 @@ public class Given_a_tevent_store_and_a_state_store_kept_in_files : UniversalTes
 
    ITaggregateStoreReader Reader => Container.RootResolver.Resolve<ITaggregateStoreReader>();
 
-   ITaggregateFilesInMemory Files => Container.RootResolver.Resolve<ITaggregateFilesInMemory>();
+   IFileSystemInMemory Files => Container.RootResolver.Resolve<IFileSystemInMemory>();
 
    ///<summary>The vocab's file in the default layout: &lt;first two hex digits of the id&gt;/&lt;id&gt;.json under the vocab folder.</summary>
    string VocabFile => Path.Combine(_folder.FullName, "vocab", _vocabId.Value.ToString("N")[..2], $"{_vocabId.Value}.json");

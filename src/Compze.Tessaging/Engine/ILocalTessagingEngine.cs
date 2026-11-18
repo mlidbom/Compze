@@ -19,9 +19,15 @@ public interface ILocalTessagingEngine
    Task StopAsync();
 
    ///<summary>Waits, holding no thread, until no tessage is in flight in the engine. Leaves the engine running: such as for<br/>
-   /// a specification that asserts on what an observer did, and goes on.</summary>
+   /// a specification that asserts on what an observer did, and goes on, or for a batch step or a tool of an application that waits<br/>
+   /// until the observers have caught up before it reports, exports or backs up.</summary>
    ///<remarks>The tessages in flight in this engine are the committed tevents its observers have yet to observe, so it waits until every<br/>
    /// tevent committed so far has been observed by every observer that observes it, including what the observers themselves publish<br/>
-   /// meanwhile.</remarks>
+   /// meanwhile.<br/>
+   /// <b>No tessage is in flight only while nothing else publishes.</b> A tevent committed during the wait, by code other than the<br/>
+   /// observers, may or may not be waited for, and one committed after it returns is in flight again. So it is for code that controls<br/>
+   /// what runs, such as a specification or a batch step that has finished its own changes.<br/>
+   /// It waits at most 30 seconds for each observer's queue, and throws <see cref="Compze.Threading.Exceptions.AwaitingConditionTimeoutException"/><br/>
+   /// when one hasn't emptied by then, such as behind an observer that hangs.</remarks>
    Task AwaitNoTessagesInFlightAsync();
 }

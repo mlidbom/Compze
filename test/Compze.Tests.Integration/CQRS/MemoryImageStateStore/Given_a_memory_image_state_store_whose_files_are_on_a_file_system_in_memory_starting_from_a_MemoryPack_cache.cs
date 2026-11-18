@@ -8,6 +8,7 @@ using Compze.Internals.Testing;
 using Compze.Must;
 using Compze.Tessaging.Engine.Wiring;
 using Compze.Teventive.MemoryImageStateStore;
+using Compze.Teventive.MemoryImageStateStore.Testing;
 using Compze.Teventive.MemoryImageStateStore.MemoryPack;
 using Compze.Teventive.TaggregateStores;
 using Compze.Tests.Infrastructure;
@@ -18,20 +19,20 @@ using Compze.Tests.Infrastructure.XUnit;
 
 namespace Compze.Tests.Integration.CQRS.MemoryImageStateStore;
 
-///<summary>A memory image state store keeping vocabs in JSON files kept in memory, starting from a MemoryPack cache that is kept in memory too, under<br/>
+///<summary>A memory image state store keeping vocabs in JSON files on a file system in memory, starting from a MemoryPack cache that is on it too, under<br/>
 /// a folder that doesn't exist on the disk and must never come to.</summary>
-public class Given_a_state_store_whose_files_are_kept_in_memory_starting_from_a_MemoryPack_cache : UniversalTestBase
+public class Given_a_state_store_whose_files_are_on_a_file_system_in_memory_starting_from_a_MemoryPack_cache : UniversalTestBase
 {
    static readonly JsonSerializerOptions Options = new() { WriteIndented = true };
    readonly DirectoryInfo _folder = new(Path.Combine(Path.GetTempPath(), "compze-state-store-files-in-memory-cached", Guid.NewGuid().ToString("N")));
    readonly IDependencyInjectionContainer _store;
 
-   protected Given_a_state_store_whose_files_are_kept_in_memory_starting_from_a_MemoryPack_cache()
+   protected Given_a_state_store_whose_files_are_on_a_file_system_in_memory_starting_from_a_MemoryPack_cache()
    {
       var builder = TestEnv.DIContainer.CreateTestingContainerBuilder();
       builder.Registrar.MemoryImageStateStore(store => store.Taggregate(() => new CachedVocab())
                                                  .StoredInJsonFiles(_folder, Options, files => files.StartingFromAMemoryPackCache()
-                                                                                                .KeptInMemory()
+                                                                                                .OnAFileSystemInMemory()
                                                                                                 .FolderOf<CachedVocab>("vocab")));
       builder.Registrar.LocalTessagingEngine(_ => {});
       _store = builder.Build();
@@ -43,7 +44,7 @@ public class Given_a_state_store_whose_files_are_kept_in_memory_starting_from_a_
 
    string CacheFile => Path.Combine(_folder.FullName, ".state-store", "vocab.load-cache");
 
-   ITaggregateFilesInMemory Files => _store.RootResolver.Resolve<ITaggregateFilesInMemory>();
+   IFileSystemInMemory Files => _store.RootResolver.Resolve<IFileSystemInMemory>();
 
    ITaggregateStoreReader Reader => _store.RootResolver.Resolve<ITaggregateStoreReader>();
 
@@ -51,7 +52,7 @@ public class Given_a_state_store_whose_files_are_kept_in_memory_starting_from_a_
 
    protected override async Task DisposeAsyncInternal() => await _store.DisposeAsync();
 
-   public class after_a_unit_of_work_adds_a_vocab_and_the_store_reloads_reading_its_file : Given_a_state_store_whose_files_are_kept_in_memory_starting_from_a_MemoryPack_cache
+   public class after_a_unit_of_work_adds_a_vocab_and_the_store_reloads_reading_its_file : Given_a_state_store_whose_files_are_on_a_file_system_in_memory_starting_from_a_MemoryPack_cache
    {
       public after_a_unit_of_work_adds_a_vocab_and_the_store_reloads_reading_its_file()
       {

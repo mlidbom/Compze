@@ -8,6 +8,7 @@ using Compze.Internals.Testing;
 using Compze.Must;
 using Compze.Tessaging.Engine.Wiring;
 using Compze.Teventive.MemoryImageStateStore;
+using Compze.Teventive.MemoryImageStateStore.Testing;
 using Compze.Teventive.TaggregateStores;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
@@ -17,20 +18,20 @@ using Compze.Tests.Infrastructure.XUnit;
 
 namespace Compze.Tests.Integration.CQRS.MemoryImageStateStore;
 
-///<summary>A memory image state store keeping vocabs and sentences in JSON files kept in memory, under a folder that doesn't exist on the disk and<br/>
+///<summary>A memory image state store keeping vocabs and sentences in JSON files on a file system in memory, under a folder that doesn't exist on the disk and<br/>
 /// must never come to: vocabs in "vocab", sentences in "sentences", each in the default layout.</summary>
-public class Given_a_state_store_whose_files_are_kept_in_memory : UniversalTestBase
+public class Given_a_state_store_whose_files_are_on_a_file_system_in_memory : UniversalTestBase
 {
    static readonly JsonSerializerOptions Options = new() { WriteIndented = true, Converters = { new TaggregateIdAsAGuid() } };
    readonly DirectoryInfo _folder = new(Path.Combine(Path.GetTempPath(), "compze-state-store-files-in-memory", Guid.NewGuid().ToString("N")));
    readonly IDependencyInjectionContainer _store;
 
-   protected Given_a_state_store_whose_files_are_kept_in_memory()
+   protected Given_a_state_store_whose_files_are_on_a_file_system_in_memory()
    {
       var builder = TestEnv.DIContainer.CreateTestingContainerBuilder();
       builder.Registrar.MemoryImageStateStore(store => store.Taggregate(() => new StoredVocab())
                                                  .Taggregate(() => new StoredSentence())
-                                                 .StoredInJsonFiles(_folder, Options, files => files.KeptInMemory()
+                                                 .StoredInJsonFiles(_folder, Options, files => files.OnAFileSystemInMemory()
                                                                                                 .FolderOf<StoredVocab>("vocab")
                                                                                                 .FolderOf<StoredSentence>("sentences")));
       builder.Registrar.LocalTessagingEngine(_ => {});
@@ -42,7 +43,7 @@ public class Given_a_state_store_whose_files_are_kept_in_memory : UniversalTestB
    ///<summary>The vocab's file in the default layout: &lt;first two hex digits of the id&gt;/&lt;id&gt;.json under the vocab folder.</summary>
    string VocabFile => Path.Combine(_folder.FullName, "vocab", VocabId.Value.ToString("N")[..2], $"{VocabId.Value}.json");
 
-   ITaggregateFilesInMemory Files => _store.RootResolver.Resolve<ITaggregateFilesInMemory>();
+   IFileSystemInMemory Files => _store.RootResolver.Resolve<IFileSystemInMemory>();
 
    ITaggregateStoreReader Reader => _store.RootResolver.Resolve<ITaggregateStoreReader>();
 
@@ -55,7 +56,7 @@ public class Given_a_state_store_whose_files_are_kept_in_memory : UniversalTestB
 
    protected override async Task DisposeAsyncInternal() => await _store.DisposeAsync();
 
-   public class after_a_unit_of_work_adds_a_vocab : Given_a_state_store_whose_files_are_kept_in_memory
+   public class after_a_unit_of_work_adds_a_vocab : Given_a_state_store_whose_files_are_on_a_file_system_in_memory
    {
       public after_a_unit_of_work_adds_a_vocab() => InUnitOfWork(taggregates => taggregates.Add(StoredVocab.Create(VocabId, "taberu")));
 
@@ -114,7 +115,7 @@ public class Given_a_state_store_whose_files_are_kept_in_memory : UniversalTestB
       }
    }
 
-   public class whose_files_hold_a_vocab_written_before_the_stores_first_use_which_then_gets_it : Given_a_state_store_whose_files_are_kept_in_memory
+   public class whose_files_hold_a_vocab_written_before_the_stores_first_use_which_then_gets_it : Given_a_state_store_whose_files_are_on_a_file_system_in_memory
    {
       readonly StoredVocab _gotten;
 
