@@ -12,7 +12,8 @@ namespace Compze.Tests.Integration.CQRS.MemoryImageStateStore;
 class StoredVocab : Taggregate<StoredVocab, IStoredVocabTevent, StoredVocabTevent, IStoredVocabTevent<IStoredVocabTevent>, StoredVocabTevent<StoredVocabTevent>>,
                     ISnapshotable<StoredVocab, StoredVocabSnapshot>
 {
-   static readonly TeventRouting<StoredVocab, IStoredVocabTevent> Appliers = DeclareAppliers(it => it
+   ///<summary>The vocab's routing, for a class derived from the vocab to extend.</summary>
+   protected static readonly TeventRouting<StoredVocab, IStoredVocabTevent> Appliers = DeclareAppliers(it => it
      .For<IStoredVocabCreated>(static (vocab, tevent) => vocab.Question = tevent.Question)
      .For<IStoredVocabQuestionChanged>(static (vocab, tevent) => vocab.Question = tevent.Question)
      .For<IStoredVocabMeaningChanged>(static (vocab, tevent) =>

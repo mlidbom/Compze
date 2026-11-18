@@ -191,8 +191,31 @@ public abstract class Given_a_memory_image_state_store_stored_in_json_files_afte
       [PCT] public void PathOf_a_taggregate_passed_as_an_ITaggregate_of_a_class_the_store_does_not_keep_throws_naming_the_class() =>
          Invoking(() => JsonFiles.PathOf(ADeckAsATaggregate)).Must().Throw<Exception>().Which.Message.Must().Contain(typeof(StoredDeck).FullName!);
 
+      [PCT] public void PathOf_a_taggregate_passed_as_an_ITaggregate_of_a_class_derived_from_a_class_the_store_keeps_throws_naming_the_class() =>
+         Invoking(() => JsonFiles.PathOf(ADerivedVocabAsATaggregate)).Must().Throw<Exception>().Which.Message.Must().Contain(typeof(DerivedStoredVocab).FullName!);
+
       ///<summary>A new <see cref="StoredDeck"/>, a class the store doesn't keep, as an <see cref="ITaggregate"/>.</summary>
       static ITaggregate ADeckAsATaggregate => StoredDeck.Create(new TaggregateId(Guid.NewGuid()));
+
+      ///<summary>A new <see cref="DerivedStoredVocab"/>, of a class derived from <see cref="StoredVocab"/>, which the store keeps, as an<br/>
+      /// <see cref="ITaggregate"/>.</summary>
+      static ITaggregate ADerivedVocabAsATaggregate => DerivedStoredVocab.Create(new TaggregateId(Guid.NewGuid()));
+
+      ///<summary>A vocab of a class derived from <see cref="StoredVocab"/>: a store keeps exactly the classes declared for it, so a store<br/>
+      /// that keeps <see cref="StoredVocab"/> doesn't keep this one.</summary>
+      sealed class DerivedStoredVocab : StoredVocab
+      {
+         static readonly TeventRouting<DerivedStoredVocab, IStoredVocabTevent> DerivedAppliers = Appliers.Extend<DerivedStoredVocab>(_ => {});
+
+         protected override TeventRouting TeventAppliers => DerivedAppliers;
+
+         internal static DerivedStoredVocab Create(TaggregateId id)
+         {
+            var vocab = new DerivedStoredVocab();
+            vocab.Publish(new StoredVocabCreated(id, "taberu"));
+            return vocab;
+         }
+      }
 
       public sealed class and_a_unit_of_work_deletes_the_vocab : on_a_file_system_in_memory
       {
