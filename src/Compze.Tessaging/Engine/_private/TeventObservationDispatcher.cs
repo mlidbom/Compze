@@ -27,23 +27,23 @@ namespace Compze.Tessaging.Engine._private;
 /// observers and observers need the container's scopes: an endpoint drains explicitly after its listening stops, and a plain<br/>
 /// container's engine through <see cref="ILocalTessagingEngine.StopAsync"/>, which reaches <see cref="StopAsync"/>. The<br/>
 /// container's own disposal of this singleton is only the backstop for a composition that stops neither.</remarks>
-///<remarks>Two kinds of observer have queues here: those declared at composition, from the <see cref="TessageHandlerRoster"/>,<br/>
-/// whose list never changes, and those created at runtime through <see cref="ObserveTevents"/>, whose list changes as they are<br/>
-/// created and disposed. The runtime list is replaced whole under <see cref="_runtimeObserversMonitor"/>, and read without it, so<br/>
+///<remarks>Two kinds of observer have queues here: composed observers, declared at composition, from the<br/>
+/// <see cref="TessageHandlerRoster"/>, whose list never changes, and dynamic observers, created through <see cref="ObserveTevents"/>,<br/>
+/// whose list changes as they are created and disposed. The dynamic list is replaced whole under <see cref="_dynamicObserversMonitor"/>, and read without it, so<br/>
 /// queueing a tevent never waits for an observer being created or disposed.</remarks>
 sealed partial class TeventObservationDispatcher : IDisposable, IAsyncDisposable
 {
    static readonly WaitTimeout DrainAtDisposalTimeout = WaitTimeout.Seconds(30);
 
-   readonly IReadOnlyList<ObserverDispatchQueue> _declaredObserverQueues;
+   readonly IReadOnlyList<ObserverDispatchQueue> _composedObserverQueues;
    readonly bool _isTheEngineOfAnEndpoint;
-   readonly IReadOnlyList<Type> _teventTypesObservedFromOtherEndpoints;
+   readonly IReadOnlyList<Type> _teventTypesSubscribedForDynamicObservers;
    readonly IScopeFactory _scopeFactory;
    readonly IBackgroundExceptionReporter _backgroundExceptionReporter;
    readonly ITessagesInFlightTracker _tessagesInFlightTracker;
    readonly ITaskRunner _taskRunner;
-   readonly IMonitor _runtimeObserversMonitor = IMonitor.New();
-   volatile IReadOnlyList<ObserverDispatchQueue> _runtimeObserverQueues = [];
+   readonly IMonitor _dynamicObserversMonitor = IMonitor.New();
+   volatile IReadOnlyList<ObserverDispatchQueue> _dynamicObserverQueues = [];
    readonly IThreadShared<Dictionary<UnitOfWorkId, List<IPublisherTevent<ITevent>>>> _teventsOfUncommittedUnitsOfWork = IThreadShared.New(new Dictionary<UnitOfWorkId, List<IPublisherTevent<ITevent>>>());
    bool _hasStopped;
 
@@ -53,9 +53,9 @@ sealed partial class TeventObservationDispatcher : IDisposable, IAsyncDisposable
       _backgroundExceptionReporter = backgroundExceptionReporter;
       _tessagesInFlightTracker = tessagesInFlightTracker;
       _taskRunner = taskRunner;
-      _declaredObserverQueues = [..roster.TeventObserverRegistrations.Select(NewQueueFor)];
+      _composedObserverQueues = [..roster.TeventObserverRegistrations.Select(NewQueueFor)];
       _isTheEngineOfAnEndpoint = roster.IsTheEngineOfAnEndpoint;
-      _teventTypesObservedFromOtherEndpoints = roster.TeventTypesObservedFromOtherEndpoints;
+      _teventTypesSubscribedForDynamicObservers = roster.TeventTypesSubscribedForDynamicObservers;
    }
 
    ///<summary>Collects <paramref name="wrappedTevent"/>, published in <paramref name="unitOfWork"/>, for its observers: the unit of<br/>
@@ -92,15 +92,15 @@ sealed partial class TeventObservationDispatcher : IDisposable, IAsyncDisposable
    /// one list for an observer of each unit of work. Returns immediately: dispatch is off-thread, per-observer FIFO.</summary>
    void QueueCommittedTevents(IReadOnlyList<IPublisherTevent<ITevent>> committedTevents)
    {
-      foreach(var queue in _declaredObserverQueues) queue.EnqueueObservationsOf(committedTevents);
-      foreach(var queue in _runtimeObserverQueues) queue.EnqueueObservationsOf(committedTevents);
+      foreach(var queue in _composedObserverQueues) queue.EnqueueObservationsOf(committedTevents);
+      foreach(var queue in _dynamicObserverQueues) queue.EnqueueObservationsOf(committedTevents);
    }
 
    ///<summary>Whether any observer's subscription matches <paramref name="wrapperTeventType"/> — the deserialization-frugal<br/>
    /// question an arrival site asks from the envelope's type alone, so an arriving tessage nothing observes is never<br/>
    /// deserialized for observation's sake.</summary>
    public bool AnyTeventObserversFor(Type wrapperTeventType) =>
-      _declaredObserverQueues.Any(it => it.Observes(wrapperTeventType)) || _runtimeObserverQueues.Any(it => it.Observes(wrapperTeventType));
+      _composedObserverQueues.Any(it => it.Observes(wrapperTeventType)) || _dynamicObserverQueues.Any(it => it.Observes(wrapperTeventType));
 
    ///<summary>Creates the observers <paramref name="observe"/> declares, observing from now on, until the returned object is<br/>
    /// disposed: <see cref="ITeventObservation.ObserveTevents"/>.</summary>
@@ -111,25 +111,26 @@ sealed partial class TeventObservationDispatcher : IDisposable, IAsyncDisposable
       var registrar = new TeventObservationRegistrar(observers.Add);
       observe(registrar);
       registrar.EndCallback();
-      if(_isTheEngineOfAnEndpoint) observers.ForEach(AssertDeclaredObservedFromOtherEndpoints);
+      if(_isTheEngineOfAnEndpoint) observers.ForEach(AssertSubscribedForDynamicObservers);
 
       IReadOnlyList<ObserverDispatchQueue> queues = [..observers.Select(NewQueueFor)];
-      _runtimeObserversMonitor.Locked(() => _runtimeObserverQueues = [.._runtimeObserverQueues, ..queues]);
-      return new RuntimeObservation(this, queues);
+      _dynamicObserversMonitor.Locked(() => _dynamicObserverQueues = [.._dynamicObserverQueues, ..queues]);
+      return new DynamicObservation(this, queues);
    }
 
-   ///<summary>Asserts that <paramref name="observer"/>, created at runtime in an endpoint, observes only tevents the endpoint declared<br/>
-   /// with <see cref="Endpoints.EndpointBuilder.ObserveFromOtherEndpoints{TTevent}"/>: of what no handler or declared observer<br/>
-   /// subscribes to, its peers send it only those. A plain container has no other endpoints, and asserts nothing.</summary>
-   void AssertDeclaredObservedFromOtherEndpoints(TeventObserverRegistration observer) =>
-      State.Assert(_teventTypesObservedFromOtherEndpoints.Any(observer.ObservesOnlyTeventsCompatibleWith),
-                   () => $"{observer.SubscribedTeventType.FullName} isn't declared to be observed from other endpoints, so an observer of it created at runtime in this endpoint would observe the tevents published in its own process and none of those other endpoints publish: an endpoint asks its peers, when it starts, only for the tevent types it declares. Declare it, or a tevent type it is compatible with, where the endpoint is composed: endpoint.{nameof(Endpoints.EndpointBuilder.ObserveFromOtherEndpoints)}<{observer.SubscribedTeventType.Name}>().");
+   ///<summary>Asserts that <paramref name="observer"/>, a dynamic observer in an endpoint, observes only tevents the endpoint<br/>
+   /// subscribed to for its dynamic observers with <see cref="Endpoints.EndpointBuilder.SubscribeForDynamicObservers{TTevent}"/>:<br/>
+   /// of what no handler or composed observer subscribes to, its peers send it only those. A plain container has no other<br/>
+   /// endpoints, and asserts nothing.</summary>
+   void AssertSubscribedForDynamicObservers(TeventObserverRegistration observer) =>
+      State.Assert(_teventTypesSubscribedForDynamicObservers.Any(observer.ObservesOnlyTeventsCompatibleWith),
+                   () => $"{observer.SubscribedTeventType.FullName} isn't subscribed to for dynamic observers in this endpoint, so a dynamic observer of it is refused, even if only this endpoint's own process publishes it. An endpoint asks its peers for the tevent types it subscribes to only when it starts, and nothing can tell that no peer publishes this one: the observer would observe the tevents published in its own process and, silently, none of those other endpoints publish. Subscribe to it, or to a tevent type it is compatible with, where the endpoint is composed: endpoint.{nameof(Endpoints.EndpointBuilder.SubscribeForDynamicObservers)}<{observer.SubscribedTeventType.Name}>().");
 
-   ///<summary>Ends the runtime observers of <paramref name="queues"/>: no tevent is queued for them any more, and what was queued and<br/>
+   ///<summary>Ends the dynamic observers of <paramref name="queues"/>: no tevent is queued for them any more, and what was queued and<br/>
    /// not yet taken is dropped. Doesn't wait for a call already running.</summary>
-   void EndRuntimeObservation(IReadOnlyList<ObserverDispatchQueue> queues)
+   void EndDynamicObservation(IReadOnlyList<ObserverDispatchQueue> queues)
    {
-      _runtimeObserversMonitor.Locked(() => _runtimeObserverQueues = [.._runtimeObserverQueues.Except(queues)]);
+      _dynamicObserversMonitor.Locked(() => _dynamicObserverQueues = [.._dynamicObserverQueues.Except(queues)]);
       foreach(var queue in queues) queue.End();
    }
 
@@ -146,7 +147,7 @@ sealed partial class TeventObservationDispatcher : IDisposable, IAsyncDisposable
       do
       {
          anyQueueHadWork = false;
-         foreach(var queue in (IEnumerable<ObserverDispatchQueue>)[.._declaredObserverQueues, .._runtimeObserverQueues])
+         foreach(var queue in (IEnumerable<ObserverDispatchQueue>)[.._composedObserverQueues, .._dynamicObserverQueues])
             anyQueueHadWork |= await queue.AwaitDrainedAsync(DrainAtDisposalTimeout).caf();
       } while(anyQueueHadWork);
    }

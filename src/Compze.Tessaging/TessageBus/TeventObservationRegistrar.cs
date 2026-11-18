@@ -9,8 +9,9 @@ namespace Compze.Tessaging.TessageBus;
 
 ///<summary>Registers tevent observers — observation is the deliberately transaction-ignoring watch surface, declared under<br/>
 /// its own verb so the distinct semantics are visible at the declaration site: an observer watches, never participates.<br/>
-/// Handed to the callback of <see cref="LocalTessagingEngineBuilder.ObserveTevents"/> at composition, or of<br/>
-/// <see cref="ITeventObservation.ObserveTevents"/> at runtime, and existing only inside it, exactly like<br/>
+/// Handed to the callback of <see cref="LocalTessagingEngineBuilder.ObserveTevents"/> at composition, for composed observers, or<br/>
+/// of <see cref="ITeventObservation.ObserveTevents"/> while the engine runs, for dynamic observers, and existing only inside it,<br/>
+/// exactly like<br/>
 /// <see cref="TessageBusHandlerRegistrar"/>.</summary>
 ///<remarks>An observer observes committed facts only — a tevent published within an execution is queued for its observers at<br/>
 /// commit, and an arriving tevent was committed by its publisher — and runs off-thread in per-observer FIFO order (the<br/>
@@ -23,7 +24,8 @@ public sealed class TeventObservationRegistrar : ITeventObservationRegistrar
    readonly Action<TeventObserverRegistration> _addObserver;
    bool _callbackHasEnded;
 
-   ///<summary>A registrar that adds each observer through <paramref name="addObserver"/>: at composition, or at runtime.</summary>
+   ///<summary>A registrar that adds each observer through <paramref name="addObserver"/>: composed observers at composition, or<br/>
+   /// dynamic observers while the engine runs.</summary>
    internal TeventObservationRegistrar(Action<TeventObserverRegistration> addObserver) => _addObserver = addObserver;
 
    ///<summary>Registers an observer for tevents compatible with <typeparamref name="TTevent"/>.</summary>

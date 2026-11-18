@@ -34,7 +34,7 @@ public class TessageHandlerRoster
    internal TessageHandlerRoster(IReadOnlyDictionary<Type, IReadOnlyList<Func<ITevent, IUnitOfWorkResolver, Task>>> teventHandlers,
                                  IReadOnlyList<TeventObserverRegistration> teventObservers,
                                  bool isTheEngineOfAnEndpoint,
-                                 IReadOnlyList<Type> teventTypesObservedFromOtherEndpoints,
+                                 IReadOnlyList<Type> teventTypesSubscribedForDynamicObservers,
                                  IReadOnlyDictionary<Type, Func<ITommand, IUnitOfWorkResolver, Task>> voidTommandHandlers,
                                  IReadOnlyDictionary<Type, TommandHandlerWithResult> tommandHandlersWithResults,
                                  IReadOnlyDictionary<Type, Func<ITuery, IScopeResolver, Task<object>>> tueryHandlers,
@@ -44,7 +44,7 @@ public class TessageHandlerRoster
       _teventHandlers = teventHandlers;
       TeventObserverRegistrations = teventObservers;
       IsTheEngineOfAnEndpoint = isTheEngineOfAnEndpoint;
-      TeventTypesObservedFromOtherEndpoints = teventTypesObservedFromOtherEndpoints;
+      TeventTypesSubscribedForDynamicObservers = teventTypesSubscribedForDynamicObservers;
       _voidTommandHandlers = voidTommandHandlers;
       _tommandHandlersWithResults = tommandHandlersWithResults;
       _tueryHandlers = tueryHandlers;
@@ -63,7 +63,7 @@ public class TessageHandlerRoster
    public IReadOnlyList<Func<ITevent, IUnitOfWorkResolver, Task>> GetTeventHandlers(Type wrapperTeventType) =>
       [.._teventHandlers.Where(it => it.Key.IsAssignableFrom(wrapperTeventType)).SelectMany(it => it.Value)];
 
-   ///<summary>Every declared tevent observer with its subscribed wrapper type — observation, the deliberately<br/>
+   ///<summary>Every composed tevent observer with its subscribed wrapper type — observation, the deliberately<br/>
    /// transaction-ignoring watch surface. The engine's <see cref="TeventObservationDispatcher"/> builds its per-observer FIFO<br/>
    /// dispatch queues from these; the transactional pipelines never touch them.</summary>
    internal IReadOnlyList<TeventObserverRegistration> TeventObserverRegistrations { get; }
@@ -72,9 +72,9 @@ public class TessageHandlerRoster
    /// plain container's, which has no other endpoints.</summary>
    internal bool IsTheEngineOfAnEndpoint { get; }
 
-   ///<summary>The tevent types an endpoint declared with <see cref="Endpoints.EndpointBuilder.ObserveFromOtherEndpoints{TTevent}"/>:<br/>
-   /// in an endpoint, an observer created at runtime may observe only tevents compatible with one of them.</summary>
-   internal IReadOnlyList<Type> TeventTypesObservedFromOtherEndpoints { get; }
+   ///<summary>The tevent types an endpoint subscribed to with <see cref="Endpoints.EndpointBuilder.SubscribeForDynamicObservers{TTevent}"/>:<br/>
+   /// in an endpoint, a dynamic observer may observe only tevents compatible with one of them.</summary>
+   internal IReadOnlyList<Type> TeventTypesSubscribedForDynamicObservers { get; }
 
    ///<summary>The one handler for the tommand type <paramref name="tommandType"/>, whose type declares no result.</summary>
    public Func<ITommand, IUnitOfWorkResolver, Task> GetVoidTommandHandler(Type tommandType) =>

@@ -107,7 +107,7 @@ public abstract class EndpointBuilder
       return this;
    }
 
-   ///<summary>Declares tevent observers — observation, the deliberately transaction-ignoring watch surface, under its own verb<br/>
+   ///<summary>Declares composed tevent observers — observation, the deliberately transaction-ignoring watch surface, under its own verb<br/>
    /// so the distinct semantics are visible at the declaration site — see <see cref="LocalTessagingEngineBuilder.ObserveTevents"/>.</summary>
    public EndpointBuilder ObserveTevents(Action<TeventObservationRegistrar> registerObservations)
    {
@@ -116,22 +116,25 @@ public abstract class EndpointBuilder
       return this;
    }
 
-   ///<summary>Has this endpoint ask its peers, from its start, for tevents compatible with <typeparamref name="TTevent"/>, subtypes<br/>
-   /// included, so that observers created at runtime through <see cref="ITeventObservation.ObserveTevents"/> observe those that<br/>
-   /// other endpoints publish too. It registers no observer itself.</summary>
-   ///<remarks>An endpoint asks its peers, once, when it starts, for the tevent types its composition declares: its handlers' and<br/>
-   /// its declared observers' types, and these. An observer created later can't add to that without a round trip to every peer,<br/>
-   /// during which tevents would be missed. So in an endpoint, an observer created at runtime is refused unless each of its tevent<br/>
-   /// types is compatible with one declared here: refused at once, rather than observing its own process's tevents and silently<br/>
-   /// none of the others'. A runtime observer is then in effect the moment <see cref="ITeventObservation.ObserveTevents"/> returns,<br/>
-   /// with no round trip: one created before a trigger can't miss a tevent published right after it. A declared tevent that<br/>
-   /// arrives while no runtime observer observes it is dropped. A plain container has no other endpoints, and declares nothing<br/>
-   /// for its runtime observers. An endpoint declaration declares it in its tier's <c>Declare</c> override.</remarks>
-   public EndpointBuilder ObserveFromOtherEndpoints<TTevent>() where TTevent : ITevent
+   ///<summary>Subscribes this endpoint, from its start, to tevents compatible with <typeparamref name="TTevent"/>, subtypes<br/>
+   /// included, for its dynamic observers: those created through <see cref="ITeventObservation.ObserveTevents"/>, which come<br/>
+   /// and go while the endpoint runs. They then observe such tevents wherever they are published, in this endpoint's process or<br/>
+   /// another endpoint's. It registers no observer itself.</summary>
+   ///<remarks>An endpoint asks its peers, once, when it starts, for the tevent types it subscribes to: its handlers' and its<br/>
+   /// composed observers' types, and these. A dynamic observer, created later, can't add to that without a round trip to every<br/>
+   /// peer, during which tevents would be missed. So in an endpoint, a dynamic observer is refused unless each of its tevent<br/>
+   /// types is compatible with one subscribed here, even when the tevents it wants are only ever published in the endpoint's own<br/>
+   /// process: when it is created, nothing can tell that no peer publishes them. It is refused at once, rather than observing its<br/>
+   /// own process's tevents and silently none of the others'. A dynamic observer is then in effect the moment<br/>
+   /// <see cref="ITeventObservation.ObserveTevents"/> returns, with no round trip: one created before a trigger can't miss a<br/>
+   /// tevent published right after it. A subscribed tevent that arrives while no dynamic observer observes it is dropped. A plain<br/>
+   /// container has no other endpoints, and subscribes nothing for its dynamic observers. An endpoint declaration subscribes in<br/>
+   /// its tier's <c>Declare</c> override.</remarks>
+   public EndpointBuilder SubscribeForDynamicObservers<TTevent>() where TTevent : ITevent
    {
       AssertStillComposing();
       TessageInspector.AssertValidForSubscription<TTevent>();
-      _engine.HandlerRegistrations.ObserveFromOtherEndpoints(typeof(TTevent));
+      _engine.HandlerRegistrations.SubscribeForDynamicObservers(typeof(TTevent));
       return this;
    }
 

@@ -31,7 +31,7 @@ sealed class TessageHandlerRegistrations
    readonly Dictionary<Type, TessageHandlerRoster.TommandHandlerWithResult> _tommandHandlersWithResults = new();
    readonly Dictionary<Type, Func<ITuery, IScopeResolver, Task<object>>> _tueryHandlers = new();
    readonly List<Type> _subscribedTeventTypes = [];
-   readonly List<Type> _teventTypesObservedFromOtherEndpoints = [];
+   readonly List<Type> _teventTypesSubscribedForDynamicObservers = [];
 
    ///<summary>The registrations of a plain container's engine, or, if <paramref name="isTheEngineOfAnEndpoint"/>, of an endpoint's:<br/>
    /// an engine given identity and a wire, which receives tevents from other endpoints.</summary>
@@ -66,14 +66,14 @@ sealed class TessageHandlerRegistrations
       _subscribedTeventTypes.Add(observer.SubscribedTeventType);
    });
 
-   ///<summary>Declares that the endpoint receives tevents compatible with <paramref name="teventType"/> from other endpoints, for<br/>
-   /// observers created at runtime: <see cref="Endpoints.EndpointBuilder.ObserveFromOtherEndpoints{TTevent}"/>. The type joins the<br/>
-   /// advertised set exactly as an observer's subscription does, so the endpoint's peers send it such tevents from the start,<br/>
-   /// and a runtime observer of them is in effect the moment it is created.</summary>
-   internal void ObserveFromOtherEndpoints(Type teventType) => _monitor.Locked(() =>
+   ///<summary>Subscribes the endpoint to tevents compatible with <paramref name="teventType"/> for its dynamic observers:<br/>
+   /// <see cref="Endpoints.EndpointBuilder.SubscribeForDynamicObservers{TTevent}"/>. The type joins the advertised set exactly as<br/>
+   /// a composed observer's subscription does, so the endpoint's peers send it such tevents from the start, and a dynamic<br/>
+   /// observer of them is in effect the moment it is created.</summary>
+   internal void SubscribeForDynamicObservers(Type teventType) => _monitor.Locked(() =>
    {
       AssertRosterIsNotYetBuilt();
-      _teventTypesObservedFromOtherEndpoints.Add(teventType);
+      _teventTypesSubscribedForDynamicObservers.Add(teventType);
       _subscribedTeventTypes.Add(teventType);
    });
 
@@ -124,7 +124,7 @@ sealed class TessageHandlerRegistrations
       return new TessageHandlerRoster(teventHandlers: _teventHandlers.ToDictionary(it => it.Key, IReadOnlyList<Func<ITevent, IUnitOfWorkResolver, Task>> (it) => [..it.Value]),
                                       teventObservers: [.._teventObservers],
                                       isTheEngineOfAnEndpoint: _isTheEngineOfAnEndpoint,
-                                      teventTypesObservedFromOtherEndpoints: [.._teventTypesObservedFromOtherEndpoints],
+                                      teventTypesSubscribedForDynamicObservers: [.._teventTypesSubscribedForDynamicObservers],
                                       voidTommandHandlers: new Dictionary<Type, Func<ITommand, IUnitOfWorkResolver, Task>>(_voidTommandHandlers),
                                       tommandHandlersWithResults: new Dictionary<Type, TessageHandlerRoster.TommandHandlerWithResult>(_tommandHandlersWithResults),
                                       tueryHandlers: new Dictionary<Type, Func<ITuery, IScopeResolver, Task<object>>>(_tueryHandlers),

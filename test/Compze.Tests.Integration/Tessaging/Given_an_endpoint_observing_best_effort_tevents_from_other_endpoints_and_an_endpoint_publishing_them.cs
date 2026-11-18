@@ -17,9 +17,9 @@ using Compze.Threading.Testing;
 
 namespace Compze.Tests.Integration.Tessaging;
 
-///<summary>What an endpoint's runtime observers observe from other endpoints is declared where it is composed, with<br/>
-/// <see cref="EndpointBuilder.ObserveFromOtherEndpoints{TTevent}"/>: the observing endpoint declares nothing else, and its peer<br/>
-/// routes the declared tevents to it from the start. So a runtime observer created right before a publish on the other<br/>
+///<summary>What an endpoint's dynamic observers observe from other endpoints is subscribed to where it is composed, with<br/>
+/// <see cref="EndpointBuilder.SubscribeForDynamicObservers{TTevent}"/>: the observing endpoint declares nothing else, and its peer<br/>
+/// routes the subscribed tevents to it from the start. So a dynamic observer created right before a publish on the other<br/>
 /// endpoint observes it, with no round trip between.</summary>
 public class Given_an_endpoint_observing_best_effort_tevents_from_other_endpoints_and_an_endpoint_publishing_them : UniversalTestBase
 {
@@ -44,7 +44,7 @@ public class Given_an_endpoint_observing_best_effort_tevents_from_other_endpoint
 
    protected override async Task DisposeAsyncInternal() => await _host.DisposeAsync();
 
-   ///<summary>An observer created at runtime on the observing endpoint, which records the sequence number of each tevent it observes<br/>
+   ///<summary>A dynamic observer on the observing endpoint, which records the sequence number of each tevent it observes<br/>
    /// and passes through <paramref name="gate"/>.</summary>
    IDisposable ObserveOnTheObservingEndpoint(ConcurrentQueue<int> observedSequenceNumbers, IThreadGate gate) =>
       _observingEndpoint.ServiceLocator.Resolve<ITeventObservation>().ObserveTevents(observe => observe.ForTevent((IMyBestEffortTevent tevent) =>
@@ -57,7 +57,7 @@ public class Given_an_endpoint_observing_best_effort_tevents_from_other_endpoint
       _publishingEndpoint.ServiceLocator.Resolve<IScopeFactory>().ExecuteUnitOfWork(unitOfWork =>
          unitOfWork.Resolve<IUnitOfWorkTeventPublisher>().Publish(new MyBestEffortTevent { SequenceNumber = sequenceNumber }));
 
-   public class with_a_runtime_observer_created_right_before_tevent_1_is_published : Given_an_endpoint_observing_best_effort_tevents_from_other_endpoints_and_an_endpoint_publishing_them
+   public class with_a_dynamic_observer_created_right_before_tevent_1_is_published : Given_an_endpoint_observing_best_effort_tevents_from_other_endpoints_and_an_endpoint_publishing_them
    {
       ConcurrentQueue<int> ObservedSequenceNumbers { get; } = [];
       protected IThreadGate ObserverGate { get; } = IThreadGate.NewOpen(WaitTimeout.Seconds(10), nameof(ObserverGate));
@@ -66,7 +66,7 @@ public class Given_an_endpoint_observing_best_effort_tevents_from_other_endpoint
       protected override async Task InitializeAsyncInternal()
       {
          await base.InitializeAsyncInternal();
-         //No wait between creating the observer and publishing: the observing endpoint's peer already routes the declared tevents to it.
+         //No wait between creating the observer and publishing: the observing endpoint's peer already routes the subscribed tevents to it.
          Observation = ObserveOnTheObservingEndpoint(ObservedSequenceNumbers, ObserverGate);
          PublishOnThePublishingEndpoint(1);
          await ObserverGate.AwaitPassedThroughCountEqualToAsync(1);
@@ -74,7 +74,7 @@ public class Given_an_endpoint_observing_best_effort_tevents_from_other_endpoint
 
       [PCT] public void it_observes_tevent_1() => ObservedSequenceNumbers.Must().SequenceEqual([1]);
 
-      public class after_it_is_disposed_and_a_second_runtime_observer_observes_tevent_2 : with_a_runtime_observer_created_right_before_tevent_1_is_published
+      public class after_it_is_disposed_and_a_second_dynamic_observer_observes_tevent_2 : with_a_dynamic_observer_created_right_before_tevent_1_is_published
       {
          readonly ConcurrentQueue<int> _observedBySecondObserver = [];
          readonly IThreadGate _secondObserverGate = IThreadGate.NewOpen(WaitTimeout.Seconds(10), nameof(_secondObserverGate));
@@ -85,7 +85,7 @@ public class Given_an_endpoint_observing_best_effort_tevents_from_other_endpoint
             Observation.Dispose();
             ObserveOnTheObservingEndpoint(_observedBySecondObserver, _secondObserverGate);
             PublishOnThePublishingEndpoint(2);
-            //Tevent 2 is queued for the runtime observers as it arrives, so once the second observer has observed it, the disposed
+            //Tevent 2 is queued for the dynamic observers as it arrives, so once the second observer has observed it, the disposed
             //one had been left out of the arrival's queueing.
             await _secondObserverGate.AwaitPassedThroughCountEqualToAsync(1);
          }
@@ -111,6 +111,6 @@ public class Given_an_endpoint_observing_best_effort_tevents_from_other_endpoint
 
       protected override void RegisterComponents(IComponentRegistrar registrar) => registrar.RequireIntegrationTestTypeMappings();
 
-      protected override void Declare(ExactlyOnceEndpointBuilder endpoint) => endpoint.ObserveFromOtherEndpoints<IMyBestEffortTevent>();
+      protected override void Declare(ExactlyOnceEndpointBuilder endpoint) => endpoint.SubscribeForDynamicObservers<IMyBestEffortTevent>();
    }
 }
