@@ -4,10 +4,14 @@ All notable changes to Compze.Sql.MySql will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
-## 0.5.0-alpha
+## 0.6.0-alpha
 
 - **Compze's MySQL transactions are plain local transactions, no longer XA transactions:** every connection opens with MySqlConnector's `UseXaTransactions=false`, whatever the configured connection string says. Before, MySqlConnector's default made each ambient transaction an XA transaction, with an `XA PREPARE` before each commit, and a process that died between the prepare and the commit left a prepared transaction on the server, holding its locks until it was resolved by hand. Compze never uses distributed transactions, so XA bought nothing.
 - **Transactions on MySQL run at the isolation level they ask for:** READ COMMITTED for Compze's own, as on the other databases. MySqlConnector's XA path ignored it, so they ran at the server's default, REPEATABLE READ.
+- **Requires newer minor versions of other Compze packages:** Compze.Sql.Common 0.5.0-alpha (was 0.4.0-alpha). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
+
+## 0.5.0-alpha
+
 - **Targets .NET 11 (`net11.0`) instead of .NET 10, and is compiled with runtime async:** the runtime, instead of state machines the compiler generates, suspends and resumes its async methods, so live stack traces show the real call chain. An application that uses this version must target .NET 11.
 - **Requires newer minor versions of other Compze packages:** Compze.Abstractions 0.4.0-alpha (was 0.3.0-alpha), Compze.Sql.Common 0.4.0-alpha (was 0.3.0-alpha). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
 

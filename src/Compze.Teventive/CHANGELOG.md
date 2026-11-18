@@ -4,7 +4,7 @@ All notable changes to Compze.Teventive will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
-## 0.6.0-alpha
+## 0.7.0-alpha
 
 - **A teventive class declares its tevent routing once, for the class,** in a `TeventRouting` kept in a static field, and returns it from its override of the protected abstract `TeventAppliers` (and, for a taggregate's tevent handlers, of the protected virtual `TeventHandlers`): `protected override TeventRouting TeventAppliers => Appliers;`. This replaces registering appliers and handlers in every instance's constructor (`RegisterTeventAppliers()`, `RegisterTeventHandlers()`), so an instance holds none of its routing. A class's routing starts with its Compze base class's `DeclareAppliers`, a subclass's extends its base class's with `Extend`, and a class that inherits its base class's routing without declaring its own is refused when it is constructed. `Taggregate` is abstract.
 - **Taggregate stores share one programming model:** `ITaggregateStoreReader` (`Get`, `TryGet`, `Reference`) reads the taggregates of whichever store keeps each class, and returns a unit of work's own copy inside it; `ITaggregateStoreUpdater` (`GetForUpdate`, `TryGetForUpdate`, and `Add` for a new taggregate) changes them, one for each unit of work; `ITaggregateReference<TTaggregate>` is what code holds across units of work, and only reads: a unit of work gets the taggregate it stands for for update by its `Id`. Compze.Teventive.MemoryImageStateStore and Compze.Teventive.TeventStore both implement them, so one unit of work can change taggregates of both. Asking for a taggregate that no store holds throws an `ArgumentOutOfRangeException`.
@@ -18,6 +18,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 - `TaggregateIdentifyingTevent.WrapIn` has an overload for a tevent with identity, returning the wrapped form a tevent migration hands to the tevent store.
 - **A `SharedTomponentSlot` belongs to the owner's class:** declared once, in a static field, and shared by every instance, it takes the adopting wrapper tevent implementation and a `Func<TOwner, SharedTomponent<TTomponentTevent>>` that gets the shared tomponent from an owner, and a shared tomponent is constructed with `slot.In(owner)`. The owner keeps no slot object.
 - **A `SharedTomponentSlot` refuses an adopting wrapper tevent implementation that doesn't implement its adopting wrapper tevent:** constructing it with another slot's wrapper, such as the billing address's for the shipping address, throws an `ArgumentException` naming the implementation. Before, the slot's tevents were wrapped as the other slot's and applied to that slot's tomponent, with no error.
+- **Requires newer minor versions of other Compze packages:** Compze.DependencyInjection 0.10.0-alpha (was 0.9.0-alpha), Compze.Internals.SystemCE 0.9.0-internal (was 0.8.0-internal). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
+
+## 0.6.0-alpha
+
 - **Targets .NET 11 (`net11.0`) instead of .NET 10, and is compiled with runtime async:** the runtime, instead of state machines the compiler generates, suspends and resumes its async methods, so live stack traces show the real call chain. An application that uses this version must target .NET 11.
 - **Requires newer minor versions of other Compze packages:** Compze.Abstractions 0.4.0-alpha (was 0.3.0-alpha), Compze.DependencyInjection 0.9.0-alpha (was 0.8.0-alpha), Compze.Internals.SystemCE 0.8.0-internal (was 0.7.0-internal), Compze.Tessaging.Abstractions 0.6.0-alpha (was 0.5.0-alpha), Compze.Threading 0.12.0-alpha (was 0.11.0-alpha), Compze.TypeIdentifiers 0.3.0-alpha (was 0.2.0-alpha). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
 
