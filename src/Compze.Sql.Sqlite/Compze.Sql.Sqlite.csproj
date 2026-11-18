@@ -13,6 +13,7 @@
     <InternalsVisibleTo Include="Compze.TypeIdentifiers.Interning.Sqlite" />
     <InternalsVisibleTo Include="Compze.Hosting.Testing" />
     <InternalsVisibleTo Include="Compze.Tessaging.Hosting.Testing" />
+    <InternalsVisibleTo Include="Compze.Sql.InternalSpecifications" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.Data.Sqlite" Version="9.0.1" />

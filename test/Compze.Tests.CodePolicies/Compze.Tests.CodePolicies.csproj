@@ -15,6 +15,7 @@
     <ProjectReference Include="..\Compze.InterprocessObject.Specifications\Compze.InterprocessObject.Specifications.csproj" />
     <ProjectReference Include="..\Compze.Must.Specifications\Compze.Must.Specifications.csproj" />
     <ProjectReference Include="..\Compze.Serialization.Newtonsoft.InternalSpecifications\Compze.Serialization.Newtonsoft.InternalSpecifications.csproj" />
+    <ProjectReference Include="..\Compze.Sql.InternalSpecifications\Compze.Sql.InternalSpecifications.csproj" />
     <ProjectReference Include="..\Compze.Tessaging.InternalSpecifications\Compze.Tessaging.InternalSpecifications.csproj" />
     <ProjectReference Include="..\Compze.Tessaging.Specifications\Compze.Tessaging.Specifications.csproj" />
     <ProjectReference Include="..\Compze.Tests.Common\Compze.Tests.Common.csproj" />
