@@ -88,13 +88,18 @@ sealed class StateStoreSession : ITaggregateStoreSession
       State.Assert(!_heldTaggregates.ContainsKey(taggregate.Id), () => $"Taggregate {taggregate.Id} is already in this unit of work.");
       HoldUpdateLock(taggregate.Id);
       State.Assert(_store.CommittedInstanceOf(taggregate.Id) == null, () => $"The state store already holds a taggregate {taggregate.Id}.");
+      var tevents = TakeTheUncommittedTeventsOf(taggregate);
+      State.Assert(IsFromItsCreationOn(tevents),
+                   () => $"{taggregate.GetType().Name} {taggregate.Id} doesn't have the tevents it published from its creation on, so saving it would dispatch none of them: an earlier save took them, as in a unit of work that then rolled back. Create it again.");
 
       //Held before the tevents it published before it was saved are dispatched, so that a handler that gets it meanwhile gets this
       //instance. A tevent a handler publishes on it meanwhile stays uncommitted, and is dispatched after those, in the order published.
       var held = new HeldTaggregate(taggregate, isNew: true);
       Hold(held, followingItsTeventStream: false);
-      while(TakeTheUncommittedTeventsOf(taggregate) is { Count: > 0 } tevents) tevents.ForEach(tevent => Dispatch(tevent, publishedBy: held));
+      for(; tevents.Count > 0; tevents = TakeTheUncommittedTeventsOf(taggregate)) tevents.ForEach(tevent => Dispatch(tevent, publishedBy: held));
       FollowTheTeventStreamOf(held);
+
+      static bool IsFromItsCreationOn(IReadOnlyList<ITaggregateTevent<ITaggregateTevent>> tevents) => tevents.Count > 0 && tevents[0].Tevent.TaggregateVersion == 1;
    }
 
    static IReadOnlyList<ITaggregateTevent<ITaggregateTevent>> TakeTheUncommittedTeventsOf(ITaggregate taggregate)

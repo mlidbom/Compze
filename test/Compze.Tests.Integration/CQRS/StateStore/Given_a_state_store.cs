@@ -506,6 +506,29 @@ public class Given_a_state_store : UniversalTestBase
       [PCT] public void the_second_try_finds_none_either() => _theSecondTryFoundIt.Must().BeFalse();
    }
 
+   ///<summary>A new taggregate is saved with the tevents it published from its creation on. A unit of work that saved it and rolled back<br/>
+   /// took them, so a retry that saves the same instance again would commit a taggregate whose creation no handler or observer heard of.</summary>
+   public class when_a_new_vocab_is_saved_again_after_the_unit_of_work_that_saved_it_rolled_back : Given_a_state_store
+   {
+      readonly Exception _thrownByTheSecondSave;
+
+      public when_a_new_vocab_is_saved_again_after_the_unit_of_work_that_saved_it_rolled_back()
+      {
+         Compose();
+         var vocab = StoredVocab.Create(VocabId, "taberu");
+         Invoking(() => InUnitOfWork(taggregates =>
+         {
+            taggregates.Save(vocab);
+            throw new InvalidOperationException("The unit of work fails.");
+         })).Must().Throw<InvalidOperationException>();
+
+         _thrownByTheSecondSave = Invoking(() => InUnitOfWork(taggregates => taggregates.Save(vocab))).Must().Throw<Exception>().Which;
+      }
+
+      [PCT] public void the_second_save_is_refused_saying_the_vocab_must_be_created_again() => _thrownByTheSecondSave.Message.Must().Contain("Create it again");
+      [PCT] public void the_store_holds_no_such_vocab() => Reader.TryGet(VocabId, out StoredVocab? _).Must().BeFalse();
+   }
+
    public class when_measuring : Given_a_state_store
    {
       const int Iterations = 20_000;
