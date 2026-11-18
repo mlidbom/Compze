@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## 0.6.0-alpha
 
+- **Changed without a signature changing:** the `GetForUpdate` tuery and the `Add` tommand change taggregates through Compze.Teventive's `ITaggregateStoreUpdater`, so they need a unit of work that `ExecuteUnitOfWork` began, as Compze.Teventive.TeventStore's changelog says.
 - The tevent store's typermedia API constrains its taggregates to `ITaggregate<ITaggregateTeventWithIdentity>`, and `HandleTaggregate` its tevent type to `ITaggregateTeventWithIdentity`.
 - **`HandleTaggregate` also declares that the tevent store keeps the class.** Its handlers use Compze.Teventive's `ITaggregateStoreUpdater` and `ITaggregateStoreReader`: the `GetForUpdate` tuery gets the taggregate in the caller's unit of work, which gets the instance it already holds, if it holds one.
 - **Requires newer minor versions of other Compze packages:** Compze.DependencyInjection 0.10.0-alpha (was 0.9.0-alpha), Compze.Tessaging 0.10.0-alpha (was 0.9.0-alpha), Compze.Teventive 0.7.0-alpha (was 0.6.0-alpha), Compze.Teventive.TeventStore 0.7.0-alpha (was 0.6.0-alpha), Compze.Teventive.TeventStore.Abstractions 0.7.0-alpha (was 0.6.0-alpha). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
