@@ -5,7 +5,7 @@ and how to turn the refusal off. "That will do. Until the mythical day of legend
 can participate in distributed transactions." Specified here before it was built.
 
 **Built, 0ecee1268,** with all seven specifications; the full suite passes, 5175, and the integration CQRS
-specifications on SQL Server, MySQL and PostgreSQL. Two findings while building:
+specifications on SQL Server, MySQL and PostgreSQL. Found while building:
 - **Specification 2 as written can't happen through the tevent store:** it writes each tevent as it is published, so its
   connection is always in the transaction before the files join at the prepare. The specification makes a database
   connection join after the files with a participant that reads a history at its own prepare.
