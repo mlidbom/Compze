@@ -100,7 +100,7 @@ public abstract class Given_a_memory_image_state_store_stored_in_json_files_afte
 
       [PCT] public void TaggregateWhoseFileIs_each_file_in_the_sentences_folder_gives_the_sentence_alone() => FilesIn("sentences").Select(TaggregateWhoseFileIs).Must().SequenceEqual([TheSentence]);
 
-      public class and_a_unit_of_work_deletes_the_vocab : on_the_disk
+      public sealed class and_a_unit_of_work_deletes_the_vocab : on_the_disk
       {
          readonly string _vocabsFile;
 
@@ -172,7 +172,7 @@ public abstract class Given_a_memory_image_state_store_stored_in_json_files_afte
       [PCT] public void PathOf_a_class_the_store_does_not_keep_throws_naming_the_class() =>
          Invoking(() => JsonFiles.PathOf<StoredDeck>(new TaggregateId())).Must().Throw<Exception>().Which.Message.Must().Contain(typeof(StoredDeck).FullName!);
 
-      public class and_a_unit_of_work_deletes_the_vocab : on_a_file_system_in_memory
+      public sealed class and_a_unit_of_work_deletes_the_vocab : on_a_file_system_in_memory
       {
          readonly string _vocabsFile;
 
