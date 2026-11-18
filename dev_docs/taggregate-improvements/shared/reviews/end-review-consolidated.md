@@ -126,9 +126,12 @@ from the others).
     note as a `JPNote`, so with the generic one alone its `CorpusNoteFiles.FileOf` switches over the three classes the
     store keeps, which the store already knows, and a new class of note would throw at runtime. **Decided by Magnus,
     2026-11-18: yes,** [specified here](../the-testing-namespace-and-the-json-files.md).
-  - **Q14, `SelfGeneratingQueryModel<,>.IParent`** (d53f30a0d): a public interface whose one member,
-    `TeventAppliersInternal`, is `[Obsolete(ObsoleteMessage.ForInternalUseOnly)]`, so that a query model's components can
-    read their parent's protected routing. An internal interface member would do the same without anything public.
+- **Not covered, and kept on a second look, so no Q14:** `SelfGeneratingQueryModel<,>.IParent` (d53f30a0d), a public
+  interface whose one member, `TeventAppliersInternal`, is `[Obsolete(ObsoleteMessage.ForInternalUseOnly)]`, so that a
+  query model's parts can read their parent's protected routing. It is the query model's counterpart of
+  `ITeventiveInternals<,>.TeventAppliersInternal`, with the same name and the same pattern. The pattern is Compze's
+  deliberate one, in eight places: `ForInternalUseOnly` says the member is "for building infrastructure code, usually
+  within the framework itself", which an internal member would rule out for a consumer extending the base classes.
 - **Leftovers of the naming pass,** fixed without asking: the MemoryPack cache's doc comment still showed `Of`;
   `TeventApplyingPart`'s type parameters were still `TComponent` and `TComponentTevent`; the message of
   `AttemptToAddEmptyTaggregateException` still said "save".
