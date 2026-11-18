@@ -90,7 +90,7 @@ What JAStudio asked for, the first to look at:
 | `TeventApplyingRoot<TRoot, TTevent>`, `TeventApplyingComponent<TComponent, TComponentTevent>` | Magnus, option B of step 5 | The query models and taggregates share their code. | Names are placeholders. Magnus: "a taggregate is not a view model". |
 | The query models' parts keep no parent; their entities take no constructor argument | step 5 | A query model publishes nothing. | Their nested `NestedComponent`, `NestedEntity` and `RemovableNestedEntity`, and their own collection types, are gone. |
 | Removed: registration per instance, `ISharedTomponentSlot`, `SharedTomponentSlot`, three members of `ITeventiveInternals` | step 5 | Every class routes through its table. | `IMutableTeventDispatcher` stays, for subscriptions made at run time. |
-| `AddRestored(id)` on `IEntityCollectionManager` and `SharedTentityCollection` | Magnus's bug, 2026-11-17 | A taggregate with entities can be restored from a snapshot. | Name a placeholder. Allowed only while the taggregate is being restored, from `RestoreIdentity` until its first publish. |
+| `AddRestored(id)` on `IEntityCollectionManager` and `SharedTentityCollection` | Magnus's bug, 2026-11-17 | A taggregate with entities can be restored from a snapshot. | Name a placeholder. Allowed only while the taggregate is being restored: from `RestoreIdentity` until a store's restore returns, or until the first publish when a consumer calls `RestoreFrom` itself (end review, c68b42137). |
 
 The rest, such as the shared updater and reader, snapshots, the storage seam and tevent routing per class, came from the
 design, but are reviewed all the same. The full list of names is item 9 in jastudio-rep-opus's unanswered list.
