@@ -30,7 +30,9 @@ dotnet test Compze.AllProjects.slnx --no-build --filter "FullyQualifiedName~MyTe
 
 ## Test configuration
 
-- Config file: `src/TestUsingPluggableComponentCombinations` (auto-created from `.defaults` on first build)
+- Config file: `src/TestUsingPluggableComponentCombinations` (auto-created from `.defaults` on first build). The build
+  copies it into each test project's output, which is what the tests read: after editing it, build again. A run with
+  `-NoBuild` or `--no-build` silently uses the combinations of the last build.
 - Format: `PersistenceLayer:DIContainer:Serializer:Transport` (one combination per line, `#` to comment out)
 - Default active combination: `SqliteMemory:Microsoft:Newtonsoft:AspNetCore`
 
