@@ -472,6 +472,40 @@ public class Given_a_state_store : UniversalTestBase
       [PCT] public void the_deck_holds_only_its_first_card() => Reader.Get<StoredDeck>(_deckId).Cards.InCreationOrder.Select(it => it.Text).Must().SequenceEqual(["the first card"]);
    }
 
+   ///<summary>A unit of work that finds no vocab to get for update holds that id's lock, so no other unit of work adds one before it<br/>
+   /// completes. It adds one itself, as a get-or-create does.</summary>
+   public class after_a_unit_of_work_finds_no_vocab_to_get_for_update_and_then_saves_a_new_vocab_with_that_id : Given_a_state_store
+   {
+      public after_a_unit_of_work_finds_no_vocab_to_get_for_update_and_then_saves_a_new_vocab_with_that_id()
+      {
+         Compose();
+         InUnitOfWork(taggregates =>
+         {
+            taggregates.TryGetForUpdate(VocabId, out StoredVocab? _).Must().BeFalse();
+            taggregates.Save(StoredVocab.Create(VocabId, "taberu"));
+         });
+      }
+
+      [PCT] public void the_reader_gets_the_vocab() => CommittedVocab(VocabId).Question.Must().Be("taberu");
+   }
+
+   public class after_a_unit_of_work_tries_twice_to_get_for_update_a_vocab_the_store_does_not_hold : Given_a_state_store
+   {
+      bool _theSecondTryFoundIt = true;
+
+      public after_a_unit_of_work_tries_twice_to_get_for_update_a_vocab_the_store_does_not_hold()
+      {
+         Compose();
+         InUnitOfWork(taggregates =>
+         {
+            taggregates.TryGetForUpdate(VocabId, out StoredVocab? _);
+            _theSecondTryFoundIt = taggregates.TryGetForUpdate(VocabId, out StoredVocab? _);
+         });
+      }
+
+      [PCT] public void the_second_try_finds_none_either() => _theSecondTryFoundIt.Must().BeFalse();
+   }
+
    public class when_measuring : Given_a_state_store
    {
       const int Iterations = 20_000;

@@ -22,7 +22,7 @@ sealed class StateStoreSession : ITaggregateStoreSession
    readonly TaggregateUnitOfWork _unitOfWork;
    readonly Dictionary<TaggregateId, HeldTaggregate> _heldTaggregates = new();
    readonly HashSet<Type> _classesHeld = [];
-   readonly List<TaggregateUpdateLocks.UpdateLock> _heldUpdateLocks = [];
+   readonly Dictionary<TaggregateId, TaggregateUpdateLocks.UpdateLock> _heldUpdateLocks = new();
    readonly List<IDisposable> _teventStreamSubscriptions = [];
    readonly Action _leaveTheGate;
    IPreparedWrite? _preparedWrite;
@@ -121,7 +121,12 @@ sealed class StateStoreSession : ITaggregateStoreSession
       _unitOfWork.Dispatch(tevent);
    }
 
-   void HoldUpdateLock(TaggregateId id) => _heldUpdateLocks.Add(_store.UpdateLocks.Take(id));
+   ///<summary>Takes the lock of the taggregate <paramref name="id"/> unless this unit of work holds it already, as it does after trying to<br/>
+   /// get for update a taggregate the store doesn't hold: a lock can't be taken twice, even by its holder.</summary>
+   void HoldUpdateLock(TaggregateId id)
+   {
+      if(!_heldUpdateLocks.ContainsKey(id)) _heldUpdateLocks.Add(id, _store.UpdateLocks.Take(id));
+   }
 
    static TTaggregate AsRequested<TTaggregate>(ITaggregate taggregate) where TTaggregate : class, ITaggregate
    {
@@ -170,7 +175,7 @@ sealed class StateStoreSession : ITaggregateStoreSession
    public void Complete()
    {
       _teventStreamSubscriptions.ForEach(it => it.Dispose());
-      _heldUpdateLocks.ForEach(it => it.Release());
+      _heldUpdateLocks.Values.ForEach(it => it.Release());
       _heldUpdateLocks.Clear();
       _leaveTheGate();
    }
