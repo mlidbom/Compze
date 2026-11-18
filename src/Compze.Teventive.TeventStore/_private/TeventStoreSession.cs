@@ -60,12 +60,12 @@ sealed class TeventStoreSession : ITaggregateStoreSession
       var tevents = TakeTheUncommittedTeventsOf(taggregate);
       if(taggregate.Version > 0 && tevents.None() || tevents.Any() && tevents.Min(it => it.Tevent.TaggregateVersion) > 1)
       {
-         throw new AttemptToSaveAlreadyPersistedTaggregateException(taggregate);
+         throw new AttemptToAddAlreadyPersistedTaggregateException(taggregate);
       }
 
       if(taggregate.Version == 0 && tevents.None())
       {
-         throw new AttemptToSaveEmptyTaggregateException(taggregate);
+         throw new AttemptToAddEmptyTaggregateException(taggregate);
       }
 
       //Held before its tevents are written and dispatched, so that a handler that gets it meanwhile gets this instance. A tevent a

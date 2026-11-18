@@ -98,7 +98,7 @@ public abstract partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggre
 
    ///<summary>Gives a new, empty instance, being restored from a snapshot of a taggregate's state, the taggregate's id. The<br/>
    /// restoring code calls it first, before it sets any other state. A restored taggregate exists, so its version is at least 1.<br/>
-   /// From then until the restore is over, its entity collections take restored entities, through <c>AddRestored</c>. A restore by a<br/>
+   /// From then until the restore is over, its entity collections take restored entities, through <c>AddWhileRestoring</c>. A restore by a<br/>
    /// taggregate store is over when the restoring code returns; any other, at the instance's first publish.</summary>
    protected void RestoreIdentity(TaggregateId id)
    {

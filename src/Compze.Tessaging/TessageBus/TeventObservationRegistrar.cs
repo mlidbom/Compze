@@ -10,7 +10,7 @@ namespace Compze.Tessaging.TessageBus;
 ///<summary>Registers tevent observers — observation is the deliberately transaction-ignoring watch surface, declared under<br/>
 /// its own verb so the distinct semantics are visible at the declaration site: an observer watches, never participates.<br/>
 /// Handed to the callback of <see cref="LocalTessagingEngineBuilder.ObserveTevents"/> at composition, for composed observers, or<br/>
-/// of <see cref="ITeventObservation.ObserveTevents"/> while the engine runs, for dynamic observers, and existing only inside it,<br/>
+/// of <see cref="IDynamicTeventObservers.ObserveTevents"/> while the engine runs, for dynamic observers, and existing only inside it,<br/>
 /// exactly like<br/>
 /// <see cref="TessageBusHandlerRegistrar"/>.</summary>
 ///<remarks>An observer observes committed facts only — a tevent published within an execution is queued for its observers at<br/>
@@ -46,14 +46,13 @@ public sealed class TeventObservationRegistrar : ITeventObservationRegistrar
    /// an empty list.</summary>
    ///<remarks>A tevent with no unit of work known to this process comes as a list of its own: one published through<br/>
    /// <see cref="IIndependentTeventPublisher"/>, which is its own unit of work, and one that arrives from another endpoint, since<br/>
-   /// nothing on it marks its sender's unit of work.<br/>
-   /// review-naming: ForEachUnitOfWork is a placeholder name, for the naming pass (jastudio-rep-opus, 2026-11-17).</remarks>
-   public TeventObservationRegistrar ForEachUnitOfWork<TTevent>(Func<IReadOnlyList<TTevent>, IScopeResolver, Task> observer) where TTevent : ITevent =>
-      Add(TeventObserverRegistration.ForEachUnitOfWork(observer));
+   /// nothing on it marks its sender's unit of work.</remarks>
+   public TeventObservationRegistrar ForTeventsOfEachUnitOfWork<TTevent>(Func<IReadOnlyList<TTevent>, IScopeResolver, Task> observer) where TTevent : ITevent =>
+      Add(TeventObserverRegistration.ForTeventsOfEachUnitOfWork(observer));
 
    //One dispatch path, as for ForTevent.
-   public TeventObservationRegistrar ForEachUnitOfWork<TTevent>(Action<IReadOnlyList<TTevent>, IScopeResolver> observer) where TTevent : ITevent =>
-      ForEachUnitOfWork<TTevent>((tevents, scope) =>
+   public TeventObservationRegistrar ForTeventsOfEachUnitOfWork<TTevent>(Action<IReadOnlyList<TTevent>, IScopeResolver> observer) where TTevent : ITevent =>
+      ForTeventsOfEachUnitOfWork<TTevent>((tevents, scope) =>
       {
          observer(tevents, scope);
          return Task.CompletedTask;
@@ -64,9 +63,9 @@ public sealed class TeventObservationRegistrar : ITeventObservationRegistrar
 
    ITeventObservationRegistrar ITeventObservationRegistrar.ForTevent<TTevent>(Action<TTevent, IScopeResolver> observer) => ForTevent(observer);
 
-   ITeventObservationRegistrar ITeventObservationRegistrar.ForEachUnitOfWork<TTevent>(Func<IReadOnlyList<TTevent>, IScopeResolver, Task> observer) => ForEachUnitOfWork(observer);
+   ITeventObservationRegistrar ITeventObservationRegistrar.ForTeventsOfEachUnitOfWork<TTevent>(Func<IReadOnlyList<TTevent>, IScopeResolver, Task> observer) => ForTeventsOfEachUnitOfWork(observer);
 
-   ITeventObservationRegistrar ITeventObservationRegistrar.ForEachUnitOfWork<TTevent>(Action<IReadOnlyList<TTevent>, IScopeResolver> observer) => ForEachUnitOfWork(observer);
+   ITeventObservationRegistrar ITeventObservationRegistrar.ForTeventsOfEachUnitOfWork<TTevent>(Action<IReadOnlyList<TTevent>, IScopeResolver> observer) => ForTeventsOfEachUnitOfWork(observer);
 
    internal void EndCallback() => _callbackHasEnded = true;
 

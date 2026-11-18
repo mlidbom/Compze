@@ -22,8 +22,8 @@ interface ITaggregateStore
    ///<summary>As <see cref="ITaggregateStoreReader.Reference{TTaggregate}"/>, for the taggregates of this store.</summary>
    ITaggregateReference<TTaggregate> Reference<TTaggregate>(TaggregateId id) where TTaggregate : class, ITaggregate;
 
-   ///<summary>As <see cref="ITaggregateStoreBulkReader.All{TTaggregate}"/>, for the taggregates of this store.</summary>
-   IReadOnlyCollection<ITaggregateReference<TTaggregate>> All<TTaggregate>() where TTaggregate : class, ITaggregate;
+   ///<summary>As <see cref="ITaggregateStoreBulkReader.ReferencesToAll{TTaggregate}"/>, for the taggregates of this store.</summary>
+   IReadOnlyCollection<ITaggregateReference<TTaggregate>> ReferencesToAll<TTaggregate>() where TTaggregate : class, ITaggregate;
 
    ///<summary>This store's part of <paramref name="unitOfWork"/>. Called once for each unit of work, when it first needs the store.</summary>
    ITaggregateStoreSession NewSession(TaggregateUnitOfWork unitOfWork);

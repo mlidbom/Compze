@@ -16,7 +16,7 @@ namespace Compze.Teventive.TeventStore._private;
 /// <see cref="ITeventStore"/>, and builds an instance from that history whenever one is asked for. What one unit of work changes is<br/>
 /// in its <see cref="TeventStoreSession"/>.</summary>
 ///<remarks>A deleted taggregate's history is kept, ending with its <see cref="ITaggregateDeletedTevent"/>, and is no taggregate: it is<br/>
-/// neither got nor in <see cref="All{TTaggregate}"/>.</remarks>
+/// neither got nor in <see cref="ReferencesToAll{TTaggregate}"/>.</remarks>
 sealed class TaggregateTeventStore : ITaggregateStore
 {
    readonly TaggregateUnitsOfWork _unitsOfWork;
@@ -55,7 +55,7 @@ sealed class TaggregateTeventStore : ITaggregateStore
    ///<summary>The histories whose creation tevent is a tevent of the class, but for the deleted ones, read through the ambient<br/>
    /// transaction. The tevent store writes a unit of work's tevents at each publish, so a unit of work sees its own additions and<br/>
    /// deletions.</summary>
-   public IReadOnlyCollection<ITaggregateReference<TTaggregate>> All<TTaggregate>() where TTaggregate : class, ITaggregate
+   public IReadOnlyCollection<ITaggregateReference<TTaggregate>> ReferencesToAll<TTaggregate>() where TTaggregate : class, ITaggregate
    {
       var deleted = TeventStore.IdsOfDeletedTaggregates();
       return [..TeventStore.StreamTaggregateIdsInCreationOrder(TeventsTellingApartTheHistoriesOf(ClassToBuildAs(typeof(TTaggregate))))

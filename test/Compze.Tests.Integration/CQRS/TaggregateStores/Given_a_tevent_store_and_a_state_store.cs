@@ -55,9 +55,9 @@ public class Given_a_tevent_store_and_a_state_store : UniversalTestBase
       [PCT] public void the_reader_gets_the_user() => Reader.Get<User>(_userId).Email.Must().Be("registered@example.com");
       [PCT] public void the_reader_gets_the_vocab() => Reader.Get<StoredVocab>(_vocabId).Question.Must().Be("taberu");
       [PCT] public void publishing_on_the_user_the_reader_gets_throws() => Invoking(() => Reader.Get<User>(_userId).ChangeEmail("changed@example.com")).Must().Throw<InvalidOperationException>();
-      [PCT] public void the_bulk_reader_gives_every_user_as_the_added_user() => BulkReader.All<User>().Select(it => it.Id).Must().SequenceEqual([_userId]);
-      [PCT] public void the_bulk_reader_gives_every_vocab_as_the_added_vocab() => BulkReader.All<StoredVocab>().Select(it => it.Id).Must().SequenceEqual([_vocabId]);
-      [PCT] public void the_reference_the_bulk_reader_gives_for_the_user_gives_its_email() => BulkReader.All<User>().Single().Current.Email.Must().Be("registered@example.com");
+      [PCT] public void the_bulk_reader_gives_every_user_as_the_added_user() => BulkReader.ReferencesToAll<User>().Select(it => it.Id).Must().SequenceEqual([_userId]);
+      [PCT] public void the_bulk_reader_gives_every_vocab_as_the_added_vocab() => BulkReader.ReferencesToAll<StoredVocab>().Select(it => it.Id).Must().SequenceEqual([_vocabId]);
+      [PCT] public void the_reference_the_bulk_reader_gives_for_the_user_gives_its_email() => BulkReader.ReferencesToAll<User>().Single().Current.Email.Must().Be("registered@example.com");
 
       public class and_a_second_unit_of_work_registers_another_user_deletes_the_first_and_asks_for_every_user : after_one_unit_of_work_adds_a_user_and_a_vocab
       {
@@ -69,11 +69,11 @@ public class Given_a_tevent_store_and_a_state_store : UniversalTestBase
             {
                User.Register(taggregates, "other@example.com", "password", _otherUserId);
                taggregates.GetForUpdate<User>(_userId).Delete();
-               _everyUserInsideTheUnitOfWork = [..BulkReader.All<User>().Select(it => it.Id)];
+               _everyUserInsideTheUnitOfWork = [..BulkReader.ReferencesToAll<User>().Select(it => it.Id)];
             });
 
          [PCT] public void inside_the_unit_of_work_every_user_is_the_other_user() => _everyUserInsideTheUnitOfWork.Must().SequenceEqual([_otherUserId]);
-         [PCT] public void after_the_commit_every_user_is_the_other_user() => BulkReader.All<User>().Select(it => it.Id).Must().SequenceEqual([_otherUserId]);
+         [PCT] public void after_the_commit_every_user_is_the_other_user() => BulkReader.ReferencesToAll<User>().Select(it => it.Id).Must().SequenceEqual([_otherUserId]);
       }
 
       public class and_a_second_unit_of_work_deletes_both : after_one_unit_of_work_adds_a_user_and_a_vocab
@@ -91,8 +91,8 @@ public class Given_a_tevent_store_and_a_state_store : UniversalTestBase
                _insideTheReaderFoundTheVocab = Reader.TryGet(_vocabId, out StoredVocab? _);
                _insideGettingTheUserForUpdateFoundIt = taggregates.TryGetForUpdate(_userId, out User? _);
                _insideGettingTheVocabForUpdateFoundIt = taggregates.TryGetForUpdate(_vocabId, out StoredVocab? _);
-               _insideEveryUser = [..BulkReader.All<User>().Select(it => it.Id)];
-               _insideEveryVocab = [..BulkReader.All<StoredVocab>().Select(it => it.Id)];
+               _insideEveryUser = [..BulkReader.ReferencesToAll<User>().Select(it => it.Id)];
+               _insideEveryVocab = [..BulkReader.ReferencesToAll<StoredVocab>().Select(it => it.Id)];
             });
 
          [PCT] public void inside_the_unit_of_work_the_reader_found_no_user() => _insideTheReaderFoundTheUser.Must().BeFalse();
@@ -104,8 +104,8 @@ public class Given_a_tevent_store_and_a_state_store : UniversalTestBase
          [PCT] public void the_reader_gets_no_user() => Reader.TryGet(_userId, out User? _).Must().BeFalse();
          [PCT] public void the_reader_gets_no_vocab() => Reader.TryGet(_vocabId, out StoredVocab? _).Must().BeFalse();
          [PCT] public void getting_the_user_throws() => Invoking(() => Reader.Get<User>(_userId)).Must().Throw<Exception>();
-         [PCT] public void the_bulk_reader_gives_no_user() => BulkReader.All<User>().Must().BeEmpty();
-         [PCT] public void the_bulk_reader_gives_no_vocab() => BulkReader.All<StoredVocab>().Must().BeEmpty();
+         [PCT] public void the_bulk_reader_gives_no_user() => BulkReader.ReferencesToAll<User>().Must().BeEmpty();
+         [PCT] public void the_bulk_reader_gives_no_vocab() => BulkReader.ReferencesToAll<StoredVocab>().Must().BeEmpty();
          [PCT] public void the_tevent_store_keeps_the_users_history_ending_with_the_deleted_tevent() => TeventStoreReader.GetHistory(_userId).Select(it => it.Tevent.GetType().Name).Must().SequenceEqual([nameof(UserRegistered), nameof(UserDeleted)]);
          [PCT] public void the_tevent_store_gives_the_users_version_before_the_deletion() => TeventStoreReader.GetReadonlyCopyOfVersion<User>(_userId, 1).Email.Must().Be("registered@example.com");
       }
@@ -226,7 +226,7 @@ public class Given_a_tevent_store_and_a_state_store : UniversalTestBase
             InUnitOfWork(taggregates => User.Register(taggregates, $"{id}@example.com", "password", id));
       }
 
-      [PCT] public void the_bulk_reader_gives_the_three_users() => BulkReader.All<User>().Select(it => it.Id).ToList().Must().Satisfy(it => it.Count == 3 && _userIds.All(it.Contains));
+      [PCT] public void the_bulk_reader_gives_the_three_users() => BulkReader.ReferencesToAll<User>().Select(it => it.Id).ToList().Must().Satisfy(it => it.Count == 3 && _userIds.All(it.Contains));
    }
 
    public class after_a_unit_of_work_that_adds_a_user_and_a_vocab_fails : Given_a_tevent_store_and_a_state_store

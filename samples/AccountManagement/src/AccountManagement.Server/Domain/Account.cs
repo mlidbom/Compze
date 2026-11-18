@@ -67,7 +67,7 @@ class Account : Taggregate<Account, IAccountTevent, AccountTevent, IAccountTeven
       var newAccount = new Account();
       newAccount.Publish(new AccountTevent.UserRegistered(accountId: accountId, email: email, password: password));
 
-      navigator.Execute(InternalApi.Tommands.Save(newAccount));
+      navigator.Execute(InternalApi.Tommands.Add(newAccount));
 
       return (RegistrationAttemptStatus.Successful, newAccount);
    }

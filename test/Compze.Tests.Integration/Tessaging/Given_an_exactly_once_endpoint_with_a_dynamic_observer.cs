@@ -18,7 +18,7 @@ using static Compze.Must.MustActions;
 
 namespace Compze.Tests.Integration.Tessaging;
 
-///<summary><see cref="ITeventObservation"/> in an endpoint's composition: resolved from the endpoint's container, it creates<br/>
+///<summary><see cref="IDynamicTeventObservers"/> in an endpoint's composition: resolved from the endpoint's container, it creates<br/>
 /// dynamic observers as it does in a plain container's, of the tevent types the endpoint subscribed to for them with<br/>
 /// <see cref="EndpointBuilder.SubscribeForDynamicObservers{TTevent}"/>, and refuses an observer of any other type, even of<br/>
 /// tevents the endpoint itself publishes.</summary>
@@ -41,7 +41,7 @@ public class Given_an_exactly_once_endpoint_with_a_dynamic_observer : UniversalT
    protected override async Task InitializeAsyncInternal()
    {
       await _host.StartAsync();
-      _endpoint.ServiceLocator.Resolve<ITeventObservation>().ObserveTevents(observe => observe.ForTevent((IMyGreetingRequestedTevent tevent) =>
+      _endpoint.ServiceLocator.Resolve<IDynamicTeventObservers>().ObserveTevents(observe => observe.ForTevent((IMyGreetingRequestedTevent tevent) =>
       {
          _observedTevents.Enqueue(tevent);
          _observerGate.AwaitPassThrough();
@@ -65,11 +65,11 @@ public class Given_an_exactly_once_endpoint_with_a_dynamic_observer : UniversalT
          .Which.Message.Must().Contain($"endpoint.{nameof(EndpointBuilder.SubscribeForDynamicObservers)}<{nameof(IMyNumberedTevent)}>()");
 
    [PCT] public void creating_a_dynamic_observer_of_each_unit_of_work_of_a_tevent_type_the_endpoint_did_not_subscribe_for_dynamic_observers_throws_naming_the_type() =>
-      Invoking(() => CreateDynamicObservers(observe => observe.ForEachUnitOfWork((IReadOnlyList<IMyNumberedTevent> _) => {})))
+      Invoking(() => CreateDynamicObservers(observe => observe.ForTeventsOfEachUnitOfWork((IReadOnlyList<IMyNumberedTevent> _) => {})))
          .Must().Throw<Exception>()
          .Which.Message.Must().Contain(nameof(IMyNumberedTevent));
 
-   IDisposable CreateDynamicObservers(Action<TeventObservationRegistrar> observe) => _endpoint.ServiceLocator.Resolve<ITeventObservation>().ObserveTevents(observe);
+   IDisposable CreateDynamicObservers(Action<TeventObservationRegistrar> observe) => _endpoint.ServiceLocator.Resolve<IDynamicTeventObservers>().ObserveTevents(observe);
 
    class EndpointSubscribingToGreetingsForDynamicObservers : ExactlyOnceEndpointDeclaration<EndpointSubscribingToGreetingsForDynamicObservers>, IEndpointIdentity
    {

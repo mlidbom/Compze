@@ -9,7 +9,7 @@ using Compze.Tests.Integration.InProcess;
 
 namespace Compze.Tests.Integration.Engine;
 
-///<summary>Observers of each committed unit of work's tevents as one list, declared with <c>ForEachUnitOfWork</c>: composed<br/>
+///<summary>Observers of each committed unit of work's tevents as one list, declared with <c>ForTeventsOfEachUnitOfWork</c>: composed<br/>
 /// observers and dynamic observers.</summary>
 public partial class Given_a_container_composing_a_LocalTessagingEngine
 {
@@ -18,7 +18,7 @@ public partial class Given_a_container_composing_a_LocalTessagingEngine
       ConcurrentQueue<int[]> ObservedLists { get; } = [];
 
       protected with_a_composed_observer_of_each_unit_of_works_numbered_tevents() =>
-         ComposeContainerWithEngine(engine => engine.ObserveTevents(observe => observe.ForEachUnitOfWork((IReadOnlyList<IMyNumberedTevent> tevents) =>
+         ComposeContainerWithEngine(engine => engine.ObserveTevents(observe => observe.ForTeventsOfEachUnitOfWork((IReadOnlyList<IMyNumberedTevent> tevents) =>
                                                                                                           ObservedLists.Enqueue([..tevents.Select(it => it.SequenceNumber)]))));
 
       protected override async Task InitializeAsyncInternal() => await Engine.AwaitNoTessagesInFlightAsync();
@@ -63,7 +63,7 @@ public partial class Given_a_container_composing_a_LocalTessagingEngine
       public with_a_dynamic_observer_of_each_unit_of_works_numbered_tevents()
       {
          ComposeContainerWithEngine(_ => {});
-         TeventObservation.ObserveTevents(observe => observe.ForEachUnitOfWork((IReadOnlyList<IMyNumberedTevent> tevents) =>
+         DynamicTeventObservers.ObserveTevents(observe => observe.ForTeventsOfEachUnitOfWork((IReadOnlyList<IMyNumberedTevent> tevents) =>
                                                                                   _observedLists.Enqueue([..tevents.Select(it => it.SequenceNumber)])));
          PublishInAUnitOfWork(new MyNumberedTevent(1), new MyNumberedTevent(2));
          PublishInAUnitOfWork(new MyNumberedTevent(3));

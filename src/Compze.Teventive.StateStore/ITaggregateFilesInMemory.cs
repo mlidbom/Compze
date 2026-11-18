@@ -1,6 +1,6 @@
 namespace Compze.Teventive.StateStore;
 
-///<summary>The files of a state store whose files are kept in memory (<see cref="TaggregateFiles.KeptInMemory"/>), for a specification:<br/>
+///<summary>The files of a state store whose files are kept in memory (<see cref="TaggregateFilesBuilder.KeptInMemory"/>), for a specification:<br/>
 /// to read what the store wrote, and to change the files behind the store's back, as another program changing them on the disk would,<br/>
 /// such as to specify what a reload does.</summary>
 ///<remarks>Resolvable from the container when the store's files are kept in memory. Each path is a full path, under the folder the<br/>

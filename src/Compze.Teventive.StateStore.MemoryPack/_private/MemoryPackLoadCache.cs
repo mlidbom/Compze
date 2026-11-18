@@ -6,7 +6,7 @@ using static Compze.Contracts.Contract;
 
 namespace Compze.Teventive.StateStore.MemoryPack._private;
 
-///<summary>The load cache <see cref="TaggregateFilesMemoryPackCE.CachedWithMemoryPack"/> plugs in: each class's snapshots, kept with<br/>
+///<summary>The load cache <see cref="TaggregateFilesBuilderMemoryPackCE.StartingFromAMemoryPackCache"/> plugs in: each class's snapshots, kept with<br/>
 /// MemoryPack, which reads them back far faster than the JSON files they come from.</summary>
 sealed class MemoryPackLoadCache : ITaggregateFilesLoadCache
 {

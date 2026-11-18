@@ -18,9 +18,8 @@ namespace Compze.Tessaging.TessageBus;
 /// <see cref="Endpoints.EndpointBuilder.SubscribeForDynamicObservers{TTevent}"/>: a dynamic observer's types must each be<br/>
 /// compatible with a type subscribed to for them, even for tevents only the endpoint's own process publishes. The endpoint asks<br/>
 /// its peers for those types from its start, so a dynamic observer observes such tevents committed in its own process and those<br/>
-/// that arrive from other endpoints, from the moment <see cref="ObserveTevents"/> returns, with no round trip.<br/>
-/// review-naming: ITeventObservation is a placeholder name, for the naming pass (jastudio-rep-opus, 2026-11-17).</remarks>
-public interface ITeventObservation
+/// that arrive from other endpoints, from the moment <see cref="ObserveTevents"/> returns, with no round trip.</remarks>
+public interface IDynamicTeventObservers
 {
    ///<summary>Creates the dynamic observers <paramref name="observe"/> declares. They observe every tevent queued for observation<br/>
    /// after this returns; a unit of work that commits while it runs may or may not be observed.<br/>

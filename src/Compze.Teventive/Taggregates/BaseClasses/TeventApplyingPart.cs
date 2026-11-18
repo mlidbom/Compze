@@ -6,18 +6,17 @@ namespace Compze.Teventive.Taggregates.BaseClasses;
 /// a component or an entity of a taggregate, which also publishes them, or of a query model. Its parent's <see cref="TeventRouting"/> routes those tevents to it,<br/>
 /// and it routes them on to its tevent appliers, and its own parts', through the routing its class declares with <see cref="DeclareAppliers"/>.</summary>
 ///<remarks>Only Compze's own base classes derive from it.</remarks>
-///<remarks>review-naming: a placeholder (jastudio-rep-opus, 2026-11-17), for the naming pass of the spike's end review, with <see cref="TeventApplyingRoot{TRoot,TTevent}"/>.</remarks>
-public abstract class TeventApplyingComponent<TComponent, TComponentTevent> : ITeventRoutedPart<TComponentTevent>
-   where TComponent : TeventApplyingComponent<TComponent, TComponentTevent>
+public abstract class TeventApplyingPart<TComponent, TComponentTevent> : ITeventRoutedPart<TComponentTevent>
+   where TComponent : TeventApplyingPart<TComponent, TComponentTevent>
    where TComponentTevent : class, ITevent
 {
    ///<summary>A component of <paramref name="parent"/>, whose routing, <paramref name="parentAppliers"/>, is asserted to route this component's<br/>
    /// tevents to a part.</summary>
-   internal TeventApplyingComponent(object parent, TeventRouting parentAppliers) : this() => parentAppliers.AssertRoutesToAPart<TComponentTevent>(parent, this);
+   internal TeventApplyingPart(object parent, TeventRouting parentAppliers) : this() => parentAppliers.AssertRoutesToAPart<TComponentTevent>(parent, this);
 
    ///<summary>An entity of a query model, which the collection its parent's routing routes to creates: the collection is what that routing's entry<br/>
    /// is for, and it asserts the entry when it is created.</summary>
-   internal TeventApplyingComponent()
+   internal TeventApplyingPart()
    {
       // ReSharper disable once VirtualMemberCallInConstructor The routing is a table in a static field, and the assertion that the class declares its own must run at construction.
       TeventRouting.AssertDeclaresItsTeventAppliers(this, TeventAppliers);

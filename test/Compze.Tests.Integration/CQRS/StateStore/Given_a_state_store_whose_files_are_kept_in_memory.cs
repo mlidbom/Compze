@@ -30,9 +30,9 @@ public class Given_a_state_store_whose_files_are_kept_in_memory : UniversalTestB
       var builder = TestEnv.DIContainer.CreateTestingContainerBuilder();
       builder.Registrar.StateStore(store => store.Taggregate(() => new StoredVocab())
                                                  .Taggregate(() => new StoredSentence())
-                                                 .StoredInFiles(_folder, Options, files => files.Of<StoredVocab>("vocab")
-                                                                                                .Of<StoredSentence>("sentences")
-                                                                                                .KeptInMemory()));
+                                                 .StoredInJsonFiles(_folder, Options, files => files.KeptInMemory()
+                                                                                                .FolderOf<StoredVocab>("vocab")
+                                                                                                .FolderOf<StoredSentence>("sentences")));
       builder.Registrar.LocalTessagingEngine(_ => {});
       _store = builder.Build();
    }
@@ -46,7 +46,7 @@ public class Given_a_state_store_whose_files_are_kept_in_memory : UniversalTestB
 
    ITaggregateStoreReader Reader => _store.RootResolver.Resolve<ITaggregateStoreReader>();
 
-   ReloadedTaggregates Reload() => _store.RootResolver.Resolve<IStateStore>().ReloadFromStorage();
+   ChangesFoundInStorage Reload() => _store.RootResolver.Resolve<IStateStore>().LoadFromStorage();
 
    void InUnitOfWork(Action<ITaggregateStoreUpdater> work) =>
       _store.ScopeFactory.ExecuteUnitOfWork(unitOfWork => work(unitOfWork.Resolve<ITaggregateStoreUpdater>()));
@@ -67,7 +67,7 @@ public class Given_a_state_store_whose_files_are_kept_in_memory : UniversalTestB
 
       public class and_the_store_reloads : after_a_unit_of_work_adds_a_vocab
       {
-         readonly ReloadedTaggregates _reloaded;
+         readonly ChangesFoundInStorage _reloaded;
 
          public and_the_store_reloads() => _reloaded = Reload();
 
@@ -80,7 +80,7 @@ public class Given_a_state_store_whose_files_are_kept_in_memory : UniversalTestB
 
       public class and_its_file_is_changed_behind_the_store_and_the_store_reloads : after_a_unit_of_work_adds_a_vocab
       {
-         readonly ReloadedTaggregates _reloaded;
+         readonly ChangesFoundInStorage _reloaded;
 
          public and_its_file_is_changed_behind_the_store_and_the_store_reloads()
          {
@@ -95,7 +95,7 @@ public class Given_a_state_store_whose_files_are_kept_in_memory : UniversalTestB
 
       public class and_its_file_is_deleted_behind_the_store_and_the_store_reloads : after_a_unit_of_work_adds_a_vocab
       {
-         readonly ReloadedTaggregates _reloaded;
+         readonly ChangesFoundInStorage _reloaded;
 
          public and_its_file_is_deleted_behind_the_store_and_the_store_reloads()
          {

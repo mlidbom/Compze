@@ -10,7 +10,7 @@ public abstract class TeventiveComponent<TParent,
                                         TComponent,
                                         TComponentTevent,
                                         TComponentTeventImplementation>
-    : TeventApplyingComponent<TComponent, TComponentTevent>, ITeventiveInternals<TComponentTevent, TComponentTeventImplementation>, ITeventiveInATaggregate
+    : TeventApplyingPart<TComponent, TComponentTevent>, ITeventiveInternals<TComponentTevent, TComponentTeventImplementation>, ITeventiveInATaggregate
     where TParent : ITeventiveInternals<TParentTevent, TParentTeventImplementation>
     where TParentTevent : class, ITaggregateTevent
     where TParentTeventImplementation : TaggregateTevent, TParentTevent

@@ -8,7 +8,7 @@ Compze is a .NET framework for building expressive domains through **Teventive p
 
 ## What's in this package?
 
-- **`CachedWithMemoryPack()`** — declared with a store's files, `files.Of<VocabNote>("vocab").CachedWithMemoryPack()`, it has the store start from a cache of the snapshots its files held at an earlier start. The store then reads only the files that are new, or whose length or last write time changed since, and drops those that are gone.
+- **`StartingFromAMemoryPackCache()`** — declared with a store's files, `files.StartingFromAMemoryPackCache().FolderOf<VocabNote>("vocab")`, it has the store start from a cache of the snapshots its files held at an earlier start. The store then reads only the files that are new, or whose length or last write time changed since, and drops those that are gone.
 - **A cache for each class**, kept in the store's own folder and written whole after a start that read any file or found one gone.
 - **A changed snapshot type is caught:** the cache records a fingerprint of the snapshot type's fields, and a cache written for another shape of the type is not used.
 

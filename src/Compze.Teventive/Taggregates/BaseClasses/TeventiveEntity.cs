@@ -39,7 +39,7 @@ public abstract class Tentity<TParent,
    protected Tentity(TParent taggregate) : base(taggregate) {}
 
    ///<summary>Declares the tevent appliers of <typeparamref name="TTentity"/>, for it to keep in a static field and return from its override of<br/>
-   /// <see cref="TeventApplyingComponent{TComponent,TComponentTevent}.TeventAppliers"/>. Every tevent dispatched to the entity must reach at least one of them.<br/>
+   /// <see cref="TeventApplyingPart{TComponent,TComponentTevent}.TeventAppliers"/>. Every tevent dispatched to the entity must reach at least one of them.<br/>
    /// The routing starts with the entity's own applier of its created tevent, which gives it its <see cref="Id"/>.</summary>
    protected new static TeventRouting<TTentity, TTentityTevent> DeclareAppliers(Action<TeventRouting<TTentity, TTentityTevent>.Declaration> declare) => DeclareTentityAppliers(declare);
 
@@ -92,7 +92,7 @@ public abstract class Tentity<TParent,
 
       public IReadOnlyEntityCollection<TTentity, TTentityId> Entities => ManagedEntities;
 
-      public TTentity AddRestored(TTentityId id)
+      public TTentity AddWhileRestoring(TTentityId id)
       {
          State.Assert(((ITeventiveInATaggregate)_parent).ItsTaggregateIsBeingRestored,
                       () => $"A {typeof(TTentity).Name} is added without its created tevent only while its taggregate is being restored from a snapshot, by its RestoreFrom. Add it by publishing its created tevent, with {nameof(AddByPublishing)}.");

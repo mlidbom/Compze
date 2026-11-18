@@ -49,9 +49,9 @@ public class Given_a_state_store_whose_files_hold_a_vocab_and_a_sentence : Unive
       builder.Registrar.StateStore(store => store.Taggregate(() => new StoredVocab())
                                                  .Taggregate(() => new StoredSentence())
                                                  .Index<StoredVocab, string>(vocab => [vocab.Question])
-                                                 .StoredInFiles((TheFilesFolder it) => it.Folder, Options, files => files.Of<StoredVocab>("vocab")
-                                                                                                                         .Of<StoredSentence>("sentences")
-                                                                                                                         .KeptInMemory()));
+                                                 .StoredInJsonFiles((TheFilesFolder it) => it.Folder, Options, files => files.KeptInMemory()
+                                                                                                                         .FolderOf<StoredVocab>("vocab")
+                                                                                                                         .FolderOf<StoredSentence>("sentences")));
       builder.Registrar.LocalTessagingEngine(engine => engine.ObserveTevents(observe => observe.ForTevent((IStoredVocabTevent it) => ObservationLog.Enqueue(it.GetType().Name))));
       _container = builder.Build();
       WriteTheVocabsFile(VocabId, "taberu", "to eat");
@@ -150,10 +150,10 @@ public class Given_a_state_store_whose_files_hold_a_vocab_and_a_sentence : Unive
 
    public class when_asked_for_every_taggregate_of_a_class : Given_a_state_store_whose_files_hold_a_vocab_and_a_sentence
    {
-      [PCT] public void every_vocab_is_the_stored_vocab() => BulkReader.All<StoredVocab>().Select(it => it.Id).Must().SequenceEqual([VocabId]);
-      [PCT] public void every_sentence_is_the_stored_sentence() => BulkReader.All<StoredSentence>().Select(it => it.Id).Must().SequenceEqual([SentenceId]);
-      [PCT] public void every_taggregate_is_the_vocab_and_the_sentence() => BulkReader.All<ITaggregate>().Select(it => it.Id).ToList().Must().Satisfy(it => it.Count == 2 && it.Contains(VocabId) && it.Contains(SentenceId));
-      [PCT] public void the_reference_to_the_stored_vocab_gives_it() => BulkReader.All<StoredVocab>().Single().Current.Question.Must().Be("taberu");
+      [PCT] public void every_vocab_is_the_stored_vocab() => BulkReader.ReferencesToAll<StoredVocab>().Select(it => it.Id).Must().SequenceEqual([VocabId]);
+      [PCT] public void every_sentence_is_the_stored_sentence() => BulkReader.ReferencesToAll<StoredSentence>().Select(it => it.Id).Must().SequenceEqual([SentenceId]);
+      [PCT] public void every_taggregate_is_the_vocab_and_the_sentence() => BulkReader.ReferencesToAll<ITaggregate>().Select(it => it.Id).ToList().Must().Satisfy(it => it.Count == 2 && it.Contains(VocabId) && it.Contains(SentenceId));
+      [PCT] public void the_reference_to_the_stored_vocab_gives_it() => BulkReader.ReferencesToAll<StoredVocab>().Single().Current.Question.Must().Be("taberu");
    }
 
    public class when_a_unit_of_work_that_added_a_new_vocab_and_deleted_the_stored_one_asks_for_every_vocab : Given_a_state_store_whose_files_hold_a_vocab_and_a_sentence
@@ -166,11 +166,11 @@ public class Given_a_state_store_whose_files_hold_a_vocab_and_a_sentence : Unive
          {
             taggregates.Add(StoredVocab.Create(_newVocabId, "kuu"));
             taggregates.GetForUpdate<StoredVocab>(VocabId).Delete();
-            _everyVocabInsideTheUnitOfWork = [..BulkReader.All<StoredVocab>().Select(it => it.Id)];
+            _everyVocabInsideTheUnitOfWork = [..BulkReader.ReferencesToAll<StoredVocab>().Select(it => it.Id)];
          });
 
       [PCT] public void inside_the_unit_of_work_every_vocab_is_the_new_one() => _everyVocabInsideTheUnitOfWork.Must().SequenceEqual([_newVocabId]);
-      [PCT] public void after_the_commit_every_vocab_is_the_new_one() => BulkReader.All<StoredVocab>().Select(it => it.Id).Must().SequenceEqual([_newVocabId]);
+      [PCT] public void after_the_commit_every_vocab_is_the_new_one() => BulkReader.ReferencesToAll<StoredVocab>().Select(it => it.Id).Must().SequenceEqual([_newVocabId]);
    }
 
    ///<summary>Another program rewrites the sentence's file after the store's first use, so a write of the sentence by the store would<br/>
@@ -194,7 +194,7 @@ public class Given_a_state_store_whose_files_hold_a_vocab_and_a_sentence : Unive
          public and_the_store_reloads()
          {
             _committedBeforeTheReload = CommittedVocab;
-            StateStore.ReloadFromStorage();
+            StateStore.LoadFromStorage();
          }
 
          [PCT] public void the_reader_gets_a_vocab_restored_from_its_file_not_the_instance_committed_before() => CommittedVocab.Must().NotReferenceEqual(_committedBeforeTheReload);
@@ -266,7 +266,7 @@ public class Given_a_state_store_whose_files_hold_a_vocab_and_a_sentence : Unive
    {
       readonly TaggregateId _addedVocabId = new(Guid.NewGuid());
       readonly ITaggregateReference<StoredVocab> _referenceHeldThroughout;
-      readonly ReloadedTaggregates _reloaded;
+      readonly ChangesFoundInStorage _reloaded;
 
       public after_another_program_changes_the_vocabs_file_and_writes_another_and_the_store_reloads()
       {
@@ -274,7 +274,7 @@ public class Given_a_state_store_whose_files_hold_a_vocab_and_a_sentence : Unive
          _ = _referenceHeldThroughout.Current;
          WriteTheVocabsFile(VocabId, "kuu", "to eat, rudely");
          WriteTheVocabsFile(_addedVocabId, "nomu", "to drink");
-         _reloaded = StateStore.ReloadFromStorage();
+         _reloaded = StateStore.LoadFromStorage();
          WaitForTheObservers();
       }
 
@@ -290,13 +290,13 @@ public class Given_a_state_store_whose_files_hold_a_vocab_and_a_sentence : Unive
 
    public class after_another_program_changes_the_sentences_file_and_the_store_reloads : Given_a_state_store_whose_files_hold_a_vocab_and_a_sentence
    {
-      readonly ReloadedTaggregates _reloaded;
+      readonly ChangesFoundInStorage _reloaded;
 
       public after_another_program_changes_the_sentences_file_and_the_store_reloads()
       {
          _ = CommittedVocab;
          WriteTheSentencesFile("taberu ne");
-         _reloaded = StateStore.ReloadFromStorage();
+         _reloaded = StateStore.LoadFromStorage();
       }
 
       [PCT] public void the_reload_reports_the_sentence_as_changed_though_its_snapshot_type_has_no_Equals() => _reloaded.Changed.Must().SequenceEqual([SentenceId]);
@@ -304,13 +304,13 @@ public class Given_a_state_store_whose_files_hold_a_vocab_and_a_sentence : Unive
 
    public class after_another_program_rewrites_the_sentences_file_with_the_text_it_held_and_the_store_reloads : Given_a_state_store_whose_files_hold_a_vocab_and_a_sentence
    {
-      readonly ReloadedTaggregates _reloaded;
+      readonly ChangesFoundInStorage _reloaded;
 
       public after_another_program_rewrites_the_sentences_file_with_the_text_it_held_and_the_store_reloads()
       {
          _ = CommittedVocab;
          WriteTheSentencesFile("taberu yo");
-         _reloaded = StateStore.ReloadFromStorage();
+         _reloaded = StateStore.LoadFromStorage();
       }
 
       [PCT] public void the_reload_reports_nothing_changed_though_the_sentences_snapshot_type_has_no_Equals() => _reloaded.Changed.Must().BeEmpty();
@@ -318,13 +318,13 @@ public class Given_a_state_store_whose_files_hold_a_vocab_and_a_sentence : Unive
 
    public class after_another_program_rewrites_the_vocabs_file_with_the_state_the_store_holds_and_the_store_reloads : Given_a_state_store_whose_files_hold_a_vocab_and_a_sentence
    {
-      readonly ReloadedTaggregates _reloaded;
+      readonly ChangesFoundInStorage _reloaded;
 
       public after_another_program_rewrites_the_vocabs_file_with_the_state_the_store_holds_and_the_store_reloads()
       {
          _ = CommittedVocab;
          WriteTheVocabsFile(VocabId, "taberu", "to eat");
-         _reloaded = StateStore.ReloadFromStorage();
+         _reloaded = StateStore.LoadFromStorage();
       }
 
       [PCT] public void the_reload_reports_nothing_changed() => _reloaded.Changed.Must().BeEmpty();
@@ -333,13 +333,13 @@ public class Given_a_state_store_whose_files_hold_a_vocab_and_a_sentence : Unive
 
    public class after_another_program_writes_the_state_the_store_holds_in_the_vocabs_file_otherwise_and_the_store_reloads : Given_a_state_store_whose_files_hold_a_vocab_and_a_sentence
    {
-      readonly ReloadedTaggregates _reloaded;
+      readonly ChangesFoundInStorage _reloaded;
 
       public after_another_program_writes_the_state_the_store_holds_in_the_vocabs_file_otherwise_and_the_store_reloads()
       {
          _ = CommittedVocab;
          WriteTheVocabsFileOtherwise(VocabId, "taberu", "to eat");
-         _reloaded = StateStore.ReloadFromStorage();
+         _reloaded = StateStore.LoadFromStorage();
       }
 
       [PCT] public void the_file_holds_other_text_than_the_store_writes() => Files.ReadAllText(VocabFile(VocabId)).Must().NotBe(AsTheStoreWrites(new StoredVocabSnapshot(VocabId, "taberu", "to eat")));
@@ -354,7 +354,7 @@ public class Given_a_state_store_whose_files_hold_a_vocab_and_a_sentence : Unive
       {
          _versionBefore = CommittedVocab.Version;
          WriteTheVocabsFileOtherwise(VocabId, "taberu", "to eat");
-         StateStore.WriteEverythingAnew();
+         StateStore.WriteAllToStorage();
          WaitForTheObservers();
       }
 
@@ -371,9 +371,9 @@ public class Given_a_state_store_whose_files_hold_a_vocab_and_a_sentence : Unive
 
       public class and_the_store_then_reloads : after_another_program_writes_the_vocabs_file_otherwise_and_the_store_writes_every_taggregate_anew
       {
-         readonly ReloadedTaggregates _reloaded;
+         readonly ChangesFoundInStorage _reloaded;
 
-         public and_the_store_then_reloads() => _reloaded = StateStore.ReloadFromStorage();
+         public and_the_store_then_reloads() => _reloaded = StateStore.LoadFromStorage();
 
          [PCT] public void the_reload_reports_nothing_changed() => _reloaded.Changed.Must().BeEmpty();
          [PCT] public void the_reload_reports_nothing_added_or_removed() => _reloaded.Added.Concat(_reloaded.Removed).Must().BeEmpty();
@@ -400,7 +400,7 @@ public class Given_a_state_store_whose_files_hold_a_vocab_and_a_sentence : Unive
             _theWriteHadReturnedWhenTheUnitOfWorkFinishedChangingTheVocab = _theWriteHasReturned;
          }));
          _theUnitOfWorkHasTheVocab.Wait();
-         StateStore.WriteEverythingAnew();
+         StateStore.WriteAllToStorage();
          _theWriteHasReturned = true;
          unitOfWork.Wait();
       }
@@ -415,19 +415,19 @@ public class Given_a_state_store_whose_files_hold_a_vocab_and_a_sentence : Unive
          Invoking(() => InUnitOfWork(taggregates =>
          {
             taggregates.GetForUpdate<StoredVocab>(VocabId).ChangeMeaning("to dine");
-            StateStore.WriteEverythingAnew();
+            StateStore.WriteAllToStorage();
          })).Must().Throw<Exception>().Which.Message.Must().Contain("can't have it write every taggregate anew");
    }
 
    public class after_another_program_deletes_the_vocabs_file_and_the_store_reloads : Given_a_state_store_whose_files_hold_a_vocab_and_a_sentence
    {
-      readonly ReloadedTaggregates _reloaded;
+      readonly ChangesFoundInStorage _reloaded;
 
       public after_another_program_deletes_the_vocabs_file_and_the_store_reloads()
       {
          _ = CommittedVocab;
          Files.Delete(VocabFile(VocabId));
-         _reloaded = StateStore.ReloadFromStorage();
+         _reloaded = StateStore.LoadFromStorage();
       }
 
       [PCT] public void the_reload_reports_the_vocab_as_removed() => _reloaded.Removed.Must().SequenceEqual([VocabId]);
@@ -438,7 +438,7 @@ public class Given_a_state_store_whose_files_hold_a_vocab_and_a_sentence : Unive
    public class when_the_store_reloads_while_a_unit_of_work_on_another_thread_changes_the_vocab : Given_a_state_store_whose_files_hold_a_vocab_and_a_sentence
    {
       readonly ManualResetEventSlim _theUnitOfWorkHasTheVocab = new();
-      readonly ReloadedTaggregates _reloaded;
+      readonly ChangesFoundInStorage _reloaded;
 
       public when_the_store_reloads_while_a_unit_of_work_on_another_thread_changes_the_vocab()
       {
@@ -450,7 +450,7 @@ public class Given_a_state_store_whose_files_hold_a_vocab_and_a_sentence : Unive
             vocab.ChangeMeaning("to dine");
          }));
          _theUnitOfWorkHasTheVocab.Wait();
-         _reloaded = StateStore.ReloadFromStorage();
+         _reloaded = StateStore.LoadFromStorage();
          unitOfWork.Wait();
       }
 
@@ -460,12 +460,12 @@ public class Given_a_state_store_whose_files_hold_a_vocab_and_a_sentence : Unive
 
    public class after_the_store_reloads_after_a_change_that_rewrites_the_vocabs_file : Given_a_state_store_whose_files_hold_a_vocab_and_a_sentence
    {
-      readonly ReloadedTaggregates _reloaded;
+      readonly ChangesFoundInStorage _reloaded;
 
       public after_the_store_reloads_after_a_change_that_rewrites_the_vocabs_file()
       {
          _ = CommittedVocab;
-         _reloaded = StateStore.ReloadFromStorage(() => WriteTheVocabsFile(VocabId, "kuu", "to eat, rudely"));
+         _reloaded = StateStore.LoadFromStorage(() => WriteTheVocabsFile(VocabId, "kuu", "to eat, rudely"));
       }
 
       [PCT] public void the_reload_reports_the_vocab_as_changed() => _reloaded.Changed.Must().SequenceEqual([VocabId]);
@@ -478,7 +478,7 @@ public class Given_a_state_store_whose_files_hold_a_vocab_and_a_sentence : Unive
       {
          _ = CommittedVocab;
          Task? unitOfWork = null;
-         StateStore.ReloadFromStorage(() =>
+         StateStore.LoadFromStorage(() =>
          {
             WriteTheVocabsFile(VocabId, "kuu", "to eat, rudely");
             unitOfWork = Task.Run(() => InUnitOfWork(taggregates => taggregates.GetForUpdate<StoredVocab>(VocabId).ChangeMeaning("to dine")));
@@ -498,7 +498,7 @@ public class Given_a_state_store_whose_files_hold_a_vocab_and_a_sentence : Unive
       public when_the_change_before_a_reload_throws()
       {
          _ = CommittedVocab;
-         _exception = Invoking(() => StateStore.ReloadFromStorage(() =>
+         _exception = Invoking(() => StateStore.LoadFromStorage(() =>
                                     {
                                        WriteTheVocabsFile(VocabId, "kuu", "to eat, rudely");
                                        throw new InvalidOperationException("The change fails.");
@@ -523,7 +523,7 @@ public class Given_a_state_store_whose_files_hold_a_vocab_and_a_sentence : Unive
          Invoking(() => InUnitOfWork(taggregates =>
          {
             taggregates.GetForUpdate<StoredVocab>(VocabId).ChangeMeaning("to dine");
-            StateStore.ReloadFromStorage();
+            StateStore.LoadFromStorage();
          })).Must().Throw<Exception>();
    }
 

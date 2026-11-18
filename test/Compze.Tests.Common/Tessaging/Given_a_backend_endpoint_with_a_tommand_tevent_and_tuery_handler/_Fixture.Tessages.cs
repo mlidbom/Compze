@@ -95,7 +95,7 @@ public sealed class MyTaggregate : Taggregate<MyTaggregate, IMyTaggregateTevent,
    {
       var created = new MyTaggregate();
       created.Publish(new MyTaggregateTevent.Created(id));
-      bus.Execute(new TeventStoreApi().Tommands.Save(created));
+      bus.Execute(new TeventStoreApi().Tommands.Add(created));
    }
 }
 

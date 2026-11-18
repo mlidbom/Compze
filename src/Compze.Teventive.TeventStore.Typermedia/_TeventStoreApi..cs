@@ -15,7 +15,7 @@ public partial class TeventStoreApi
       public TaggregateLink<TTaggregate> GetForUpdate<TTaggregate>(TaggregateId id) where TTaggregate : class, ITaggregate<ITaggregateTeventWithIdentity> =>
          new(id);
 
-      public GetReadonlyCopyOfTaggregate<TTaggregate> GetReadOnlyCopy<TTaggregate>(TaggregateId id) where TTaggregate : class, ITaggregate<ITaggregateTeventWithIdentity> =>
+      public GetTaggregate<TTaggregate> Get<TTaggregate>(TaggregateId id) where TTaggregate : class, ITaggregate<ITaggregateTeventWithIdentity> =>
          new(id);
 
       public GetReadonlyCopyOfTaggregateVersion<TTaggregate> GetReadOnlyCopyOfVersion<TTaggregate>(TaggregateId id, int version) where TTaggregate : class, ITaggregate<ITaggregateTeventWithIdentity> =>
@@ -27,7 +27,7 @@ public partial class TeventStoreApi
 
    public partial class TommandApi
    {
-      public SaveTaggregate<TTaggregate> Save<TTaggregate>(TTaggregate taggregate) where TTaggregate : class, ITaggregate<ITaggregateTeventWithIdentity> =>
+      public AddTaggregate<TTaggregate> Add<TTaggregate>(TTaggregate taggregate) where TTaggregate : class, ITaggregate<ITaggregateTeventWithIdentity> =>
          new(taggregate);
    }
 }

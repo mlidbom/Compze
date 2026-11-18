@@ -9,7 +9,7 @@ public abstract partial class SelfGeneratingQueryModel<TQueryModel, TTaggregateT
 {
    ///<summary>A component of a query model, or of one of its components: a part with state of its own, built by applying the tevents of<br/>
    /// <typeparamref name="TComponentTevent"/>, which its parent's routing routes to it with <c>Component(...)</c>.</summary>
-   public abstract class Component<TComponent, TComponentTevent> : TeventApplyingComponent<TComponent, TComponentTevent>, IParent
+   public abstract class Component<TComponent, TComponentTevent> : TeventApplyingPart<TComponent, TComponentTevent>, IParent
       where TComponentTevent : class, TTaggregateTevent
       where TComponent : Component<TComponent, TComponentTevent>
    {

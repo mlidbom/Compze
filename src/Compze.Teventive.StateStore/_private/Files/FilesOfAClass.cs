@@ -39,7 +39,7 @@ sealed class FilesOfAClass
          ? [..files.FilesIn(Folder.FullName, includingSubfolders: true).Where(it => it.FullPath.EndsWith(FileExtension, StringComparison.OrdinalIgnoreCase))]
          : [];
 
-   ///<summary>The files of one class as <see cref="TaggregateFiles.Of{TTaggregate}"/> declares them, before the store's folder is known.</summary>
+   ///<summary>The files of one class as <see cref="TaggregateFilesBuilder.FolderOf{TTaggregate}"/> declares them, before the store's folder is known.</summary>
    internal sealed class Declaration
    {
       const string StoresOwnFolderName = TaggregateFileStorage.OwnFolderName;

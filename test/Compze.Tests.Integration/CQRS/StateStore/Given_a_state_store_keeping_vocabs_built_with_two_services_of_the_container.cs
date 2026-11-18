@@ -31,7 +31,7 @@ public class Given_a_state_store_keeping_vocabs_built_with_two_services_of_the_c
       builder.Registrar.Register(Singleton.For<VocabDictionary>().CreatedBy(() => new VocabDictionary()),
                                  Singleton.For<VocabReadings>().CreatedBy(() => new VocabReadings()));
       builder.Registrar.StateStore(store => store.Taggregate(TrackedTransient.For<StoredVocab>().CreatedBy((VocabDictionary dictionary, VocabReadings readings) => new StoredVocab(dictionary, readings)))
-                                                 .StoredInFiles(_folder, Options, files => files.Of<StoredVocab>("vocab").KeptInMemory()));
+                                                 .StoredInJsonFiles(_folder, Options, files => files.KeptInMemory().FolderOf<StoredVocab>("vocab")));
       builder.Registrar.LocalTessagingEngine(_ => {});
       _container = builder.Build();
       InUnitOfWork(taggregates => taggregates.Add(StoredVocab.Create(VocabId, "taberu")));
@@ -73,7 +73,7 @@ public class Given_a_state_store_keeping_vocabs_built_with_two_services_of_the_c
 
    public class when_the_store_reloads_its_files : Given_a_state_store_keeping_vocabs_built_with_two_services_of_the_container
    {
-      public when_the_store_reloads_its_files() => _container.RootResolver.Resolve<IStateStore>().ReloadFromStorage();
+      public when_the_store_reloads_its_files() => _container.RootResolver.Resolve<IStateStore>().LoadFromStorage();
 
       [PCT] public void the_vocab_the_store_restored_was_built_with_the_containers_two_services() =>
          WasBuiltWithTheContainersServices(Reader.Get<StoredVocab>(VocabId)).Must().BeTrue();

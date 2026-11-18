@@ -38,7 +38,7 @@ partial class RemovableEntity :
     internal void RestoreFrom(EntitySnapshot snapshot)
     {
         Name = snapshot.Name;
-        foreach(var entity in snapshot.NestedEntities) _entities.AddRestored(entity.Id).RestoreFrom(entity);
+        foreach(var entity in snapshot.NestedEntities) _entities.AddWhileRestoring(entity.Id).RestoreFrom(entity);
     }
 
     public RemovableNestedEntity AddEntity(string name, Guid id)

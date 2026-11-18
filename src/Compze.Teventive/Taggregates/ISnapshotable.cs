@@ -13,9 +13,9 @@ namespace Compze.Teventive.Taggregates;
 /// then takes a snapshot holding the change, so a store finds nothing changed to write, and the committed instance isn't read only<br/>
 /// through it. State that is shared belongs in a taggregate of its own, referred to by id, or is changed by a tevent on each<br/>
 /// taggregate that holds it. A round trip through the snapshot can't catch this: the copy refers to the same object.</remarks>
-///<remarks>A collection of entities, or of shared tentities, is restored by adding each entity with its collection's <c>AddRestored</c>, which<br/>
+///<remarks>A collection of entities, or of shared tentities, is restored by adding each entity with its collection's <c>AddWhileRestoring</c>, which<br/>
 /// gives it its id and publishes nothing, and then giving it the rest of its state, as a component is given its. Only <see cref="RestoreFrom"/><br/>
-/// may: when a taggregate store restores an instance, such as the copy a unit of work gets for update, <c>AddRestored</c> refuses once<br/>
+/// may: when a taggregate store restores an instance, such as the copy a unit of work gets for update, <c>AddWhileRestoring</c> refuses once<br/>
 /// <see cref="RestoreFrom"/> has returned.</remarks>
 public interface ISnapshotable<TSelf, TSnapshot> where TSelf : ISnapshotable<TSelf, TSnapshot>
 {

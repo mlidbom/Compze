@@ -24,6 +24,6 @@ interface ITaggregateStorage
    IPreparedWrite Prepare(IReadOnlyList<TaggregateSnapshot> toSave, IReadOnlyList<TaggregateId> toDelete);
 
    ///<summary>Writes <paramref name="everything"/>, a snapshot of every taggregate the store holds, anew, as one commit, outside any<br/>
-   /// transaction: <see cref="IStateStore.WriteEverythingAnew"/>.</summary>
-   void WriteEverythingAnew(IReadOnlyList<TaggregateSnapshot> everything);
+   /// transaction: <see cref="IStateStore.WriteAllToStorage"/>.</summary>
+   void WriteAll(IReadOnlyList<TaggregateSnapshot> everything);
 }

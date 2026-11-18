@@ -30,19 +30,20 @@ public class Given_a_tevent_store_and_a_state_store_kept_in_files : UniversalTes
    readonly DirectoryInfo _folder = new(Path.Combine(Path.GetTempPath(), "compze-tevent-store-and-state-store-in-files", Guid.NewGuid().ToString("N")));
    readonly TaggregateId _userId = new();
    readonly TaggregateId _vocabId = new(Guid.NewGuid());
-   bool _filesAreAllowedInTransactionsThatAlsoWriteADatabase;
+   bool _filesAreAcceptingNonAtomicCommitsWithADatabase;
    IDependencyInjectionContainer? _container;
 
    IDependencyInjectionContainer Container => _container ??= TestEnv.DIContainer.SetupTestingContainer(
                                                  registrar => registrar.RequireIntegrationTestTypeMappings(),
                                                  configureContainer: register => register.StateStore(store => store.Taggregate(() => new StoredVocab())
-                                                                                                                    .StoredInFiles(_folder, Options, DeclareFiles)),
+                                                                                                                    .StoredInJsonFiles(_folder, Options, DeclareFiles)),
                                                  declareTeventStoreTaggregates: store => store.Taggregate<User>());
 
-   void DeclareFiles(TaggregateFiles files)
+   void DeclareFiles(TaggregateFilesBuilder files)
    {
-      files.Of<StoredVocab>("vocab").KeptInMemory();
-      if(_filesAreAllowedInTransactionsThatAlsoWriteADatabase) files.AllowedInTransactionsThatAlsoWriteADatabase();
+      files.KeptInMemory();
+      if(_filesAreAcceptingNonAtomicCommitsWithADatabase) files.AcceptingNonAtomicCommitsWithADatabase();
+      files.FolderOf<StoredVocab>("vocab");
    }
 
    protected override async Task DisposeAsyncInternal()
@@ -95,7 +96,7 @@ public class Given_a_tevent_store_and_a_state_store_kept_in_files : UniversalTes
             _exception.InnerException!.Message.Must().Satisfy(it => it.Contains(_folder.FullName, StringComparison.Ordinal) && it.Contains("a database connection", StringComparison.Ordinal));
 
          [PCT] public void the_refusal_names_the_declaration_that_allows_it() =>
-            _exception.InnerException!.Message.Must().Contain(nameof(TaggregateFiles.AllowedInTransactionsThatAlsoWriteADatabase));
+            _exception.InnerException!.Message.Must().Contain(nameof(TaggregateFilesBuilder.AcceptingNonAtomicCommitsWithADatabase));
 
          [PCT] public void the_reader_gets_the_vocabs_meaning_committed_before() => Reader.Get<StoredVocab>(_vocabId).Meaning.Must().Be("");
 
@@ -141,7 +142,7 @@ public class Given_a_tevent_store_and_a_state_store_kept_in_files : UniversalTes
 
    public class whose_files_are_allowed_in_transactions_that_also_write_a_database : Given_a_tevent_store_and_a_state_store_kept_in_files
    {
-      protected whose_files_are_allowed_in_transactions_that_also_write_a_database() => _filesAreAllowedInTransactionsThatAlsoWriteADatabase = true;
+      protected whose_files_are_allowed_in_transactions_that_also_write_a_database() => _filesAreAcceptingNonAtomicCommitsWithADatabase = true;
 
       public class after_a_unit_of_work_adds_a_user_and_a_vocab_and_another_changes_both : whose_files_are_allowed_in_transactions_that_also_write_a_database
       {

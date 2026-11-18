@@ -10,8 +10,6 @@ namespace Compze.Teventive.Taggregates.BaseClasses;
 /// which also publishes them, or a query model, which applies the tevents a taggregate published. A tevent gives the root its id and version, and<br/>
 /// reaches its tevent appliers, and its parts', through the <see cref="TeventRouting"/> its class declares with <see cref="DeclareAppliers"/>.</summary>
 ///<remarks>Only Compze's own base classes derive from it.</remarks>
-///<remarks>review-naming: a placeholder (jastudio-rep-opus, 2026-11-17), for the naming pass of the spike's end review. Magnus: "a taggregate is not a<br/>
-/// view model", so the name is for applying tevents, not for query models.</remarks>
 public abstract class TeventApplyingRoot<TRoot, TTevent> : VersionedEntity<TRoot>
    where TRoot : TeventApplyingRoot<TRoot, TTevent>
    where TTevent : class, ITaggregateTevent

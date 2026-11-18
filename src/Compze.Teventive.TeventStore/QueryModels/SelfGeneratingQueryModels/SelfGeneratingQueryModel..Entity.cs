@@ -29,7 +29,7 @@ public abstract partial class SelfGeneratingQueryModel<TQueryModel, TTaggregateT
       public TEntityId Id => _id._assert().NotDefault();
 
       ///<summary>Declares the tevent appliers of <typeparamref name="TEntity"/>, for it to keep in a static field and return from its override of<br/>
-      /// <see cref="TeventApplyingComponent{TComponent,TComponentTevent}.TeventAppliers"/>. Every tevent dispatched to the entity must reach at least one of them.<br/>
+      /// <see cref="TeventApplyingPart{TComponent,TComponentTevent}.TeventAppliers"/>. Every tevent dispatched to the entity must reach at least one of them.<br/>
       /// The routing starts with the entity's own applier of its created tevent, which gives it its <see cref="Id"/>.</summary>
       protected new static TeventRouting<TEntity, TEntityTevent> DeclareAppliers(Action<TeventRouting<TEntity, TEntityTevent>.Declaration> declare) => DeclareEntityAppliers(declare);
 

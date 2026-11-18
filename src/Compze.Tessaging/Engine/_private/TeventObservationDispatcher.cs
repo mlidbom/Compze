@@ -103,7 +103,7 @@ sealed partial class TeventObservationDispatcher : IDisposable, IAsyncDisposable
       _composedObserverQueues.Any(it => it.Observes(wrapperTeventType)) || _dynamicObserverQueues.Any(it => it.Observes(wrapperTeventType));
 
    ///<summary>Creates the observers <paramref name="observe"/> declares, observing from now on, until the returned object is<br/>
-   /// disposed: <see cref="ITeventObservation.ObserveTevents"/>.</summary>
+   /// disposed: <see cref="IDynamicTeventObservers.ObserveTevents"/>.</summary>
    public IDisposable ObserveTevents(Action<TeventObservationRegistrar> observe)
    {
       State.Assert(!_hasStopped, () => $"The LocalTessagingEngine has stopped ({nameof(ILocalTessagingEngine)}.{nameof(ILocalTessagingEngine.StopAsync)}), so it publishes no more tevents: an observer created now would observe nothing. Create observers before stopping the engine.");

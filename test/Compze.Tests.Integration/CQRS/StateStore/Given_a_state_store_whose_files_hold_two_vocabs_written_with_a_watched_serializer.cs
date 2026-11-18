@@ -35,7 +35,7 @@ public class Given_a_state_store_whose_files_hold_two_vocabs_written_with_a_watc
       _options = new JsonSerializerOptions { WriteIndented = true, Converters = { _converter } };
       var builder = TestEnv.DIContainer.CreateTestingContainerBuilder();
       builder.Registrar.StateStore(store => store.Taggregate(() => new StoredVocab())
-                                                 .StoredInFiles(_folder, _options, files => files.Of<StoredVocab>("vocab").KeptInMemory()));
+                                                 .StoredInJsonFiles(_folder, _options, files => files.KeptInMemory().FolderOf<StoredVocab>("vocab")));
       builder.Registrar.LocalTessagingEngine(_ => {});
       _container = builder.Build();
       WriteTheVocabsFile(TaberuId, "taberu", "to eat");
@@ -69,9 +69,9 @@ public class Given_a_state_store_whose_files_hold_two_vocabs_written_with_a_watc
 
    public class when_the_store_reloads_files_that_no_other_program_has_changed : Given_a_state_store_whose_files_hold_two_vocabs_written_with_a_watched_serializer
    {
-      readonly ReloadedTaggregates _reloaded;
+      readonly ChangesFoundInStorage _reloaded;
 
-      public when_the_store_reloads_files_that_no_other_program_has_changed() => _reloaded = StateStore.ReloadFromStorage();
+      public when_the_store_reloads_files_that_no_other_program_has_changed() => _reloaded = StateStore.LoadFromStorage();
 
       [PCT] public void the_reload_serializes_no_snapshot() => _converter.Written.Must().BeEmpty();
       [PCT] public void the_reload_reports_nothing_changed() => _reloaded.Changed.Must().BeEmpty();
@@ -79,13 +79,13 @@ public class Given_a_state_store_whose_files_hold_two_vocabs_written_with_a_watc
 
    public class after_a_unit_of_work_changes_a_vocab_and_the_store_reloads : Given_a_state_store_whose_files_hold_two_vocabs_written_with_a_watched_serializer
    {
-      readonly ReloadedTaggregates _reloaded;
+      readonly ChangesFoundInStorage _reloaded;
 
       public after_a_unit_of_work_changes_a_vocab_and_the_store_reloads()
       {
          InUnitOfWork(taggregates => taggregates.GetForUpdate<StoredVocab>(TaberuId).ChangeMeaning("to dine"));
          _converter.ForgetWhatWasWritten();
-         _reloaded = StateStore.ReloadFromStorage();
+         _reloaded = StateStore.LoadFromStorage();
       }
 
       [PCT] public void the_reload_serializes_no_snapshot_since_the_store_wrote_the_file_itself() => _converter.Written.Must().BeEmpty();
@@ -94,12 +94,12 @@ public class Given_a_state_store_whose_files_hold_two_vocabs_written_with_a_watc
 
    public class after_another_program_changes_one_vocabs_file_and_the_store_reloads : Given_a_state_store_whose_files_hold_two_vocabs_written_with_a_watched_serializer
    {
-      readonly ReloadedTaggregates _reloaded;
+      readonly ChangesFoundInStorage _reloaded;
 
       public after_another_program_changes_one_vocabs_file_and_the_store_reloads()
       {
          WriteTheVocabsFile(TaberuId, "taberu", "to eat, quickly");
-         _reloaded = StateStore.ReloadFromStorage();
+         _reloaded = StateStore.LoadFromStorage();
       }
 
       [PCT] public void the_reload_serializes_the_changed_vocabs_snapshots_alone() => _converter.Written.Distinct().Must().SequenceEqual([TaberuId]);
@@ -115,7 +115,7 @@ public class Given_a_state_store_whose_files_hold_two_vocabs_written_with_a_watc
       {
          _filesBefore = EveryFileAndItsText;
          _converter.RefuseToWrite(NomuId);
-         _thrown = Invoking(() => StateStore.WriteEverythingAnew()).Must().Throw<Exception>().Which;
+         _thrown = Invoking(() => StateStore.WriteAllToStorage()).Must().Throw<Exception>().Which;
       }
 
       [PCT] public void the_serializers_failure_comes_out() => _thrown.Message.Must().Contain($"refuses to have taggregate {NomuId} written");

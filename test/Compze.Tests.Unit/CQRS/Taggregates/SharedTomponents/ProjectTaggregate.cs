@@ -86,7 +86,7 @@ class ProjectTaggregate : Taggregate<ProjectTaggregate, IProjectTevent, ProjectT
    {
       RestoreIdentity(snapshot.Id);
       if(_restoreLeavesOutTheChecklist) return;
-      foreach(var item in snapshot.Checklist) Checklist.AddRestored(item.Id).RestoreFrom(item);
+      foreach(var item in snapshot.Checklist) Checklist.AddWhileRestoring(item.Id).RestoreFrom(item);
    }
 
    public ChecklistItem AddChecklistItem(string title) => Checklist.AddByPublishing(new ChecklistItemTevent.Added(ChecklistItemId.New(), title));

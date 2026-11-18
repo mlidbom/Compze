@@ -18,9 +18,9 @@ public interface ITeventObservationRegistrar
    ITeventObservationRegistrar ForTevent<TTevent>(Action<TTevent, IScopeResolver> observer) where TTevent : ITevent;
 
    ///<summary>Registers an observer of each committed unit of work's tevents compatible with <typeparamref name="TTevent"/>, as one<br/>
-   /// list in the order they were published. See <see cref="TeventObservationRegistrar.ForEachUnitOfWork{TTevent}(Func{IReadOnlyList{TTevent},IScopeResolver,Task})"/>.</summary>
-   ITeventObservationRegistrar ForEachUnitOfWork<TTevent>(Func<IReadOnlyList<TTevent>, IScopeResolver, Task> observer) where TTevent : ITevent;
+   /// list in the order they were published. See <see cref="TeventObservationRegistrar.ForTeventsOfEachUnitOfWork{TTevent}(Func{IReadOnlyList{TTevent},IScopeResolver,Task})"/>.</summary>
+   ITeventObservationRegistrar ForTeventsOfEachUnitOfWork<TTevent>(Func<IReadOnlyList<TTevent>, IScopeResolver, Task> observer) where TTevent : ITevent;
 
-   ///<summary>The synchronous form of <see cref="ForEachUnitOfWork{TTevent}(Func{IReadOnlyList{TTevent},IScopeResolver,Task})"/>.</summary>
-   ITeventObservationRegistrar ForEachUnitOfWork<TTevent>(Action<IReadOnlyList<TTevent>, IScopeResolver> observer) where TTevent : ITevent;
+   ///<summary>The synchronous form of <see cref="ForTeventsOfEachUnitOfWork{TTevent}(Func{IReadOnlyList{TTevent},IScopeResolver,Task})"/>.</summary>
+   ITeventObservationRegistrar ForTeventsOfEachUnitOfWork<TTevent>(Action<IReadOnlyList<TTevent>, IScopeResolver> observer) where TTevent : ITevent;
 }

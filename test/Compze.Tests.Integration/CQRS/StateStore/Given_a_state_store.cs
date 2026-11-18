@@ -567,7 +567,7 @@ public class Given_a_state_store : UniversalTestBase
       {
          Compose();
          InUnitOfWork(taggregates => taggregates.Add(StoredVocab.Create(VocabId, "taberu")));
-         _thrown = Invoking(() => Container.RootResolver.Resolve<IStateStore>().ReloadFromStorage()).Must().Throw<Exception>().Which;
+         _thrown = Invoking(() => Container.RootResolver.Resolve<IStateStore>().LoadFromStorage()).Must().Throw<Exception>().Which;
       }
 
       [PCT] public void the_reload_is_refused_saying_the_store_has_no_storage() => _thrown.Message.Must().Contain("has no storage to reload from");
@@ -583,7 +583,7 @@ public class Given_a_state_store : UniversalTestBase
       {
          Compose();
          InUnitOfWork(taggregates => taggregates.Add(StoredVocab.Create(VocabId, "taberu")));
-         _thrown = Invoking(() => Container.RootResolver.Resolve<IStateStore>().WriteEverythingAnew()).Must().Throw<Exception>().Which;
+         _thrown = Invoking(() => Container.RootResolver.Resolve<IStateStore>().WriteAllToStorage()).Must().Throw<Exception>().Which;
       }
 
       [PCT] public void it_is_refused_saying_the_store_has_no_storage() => _thrown.Message.Must().Contain("has no storage to write its taggregates to");

@@ -83,20 +83,20 @@ sealed class TaggregateStateStore : ITaggregateStore, IStateStore
       return new StateStoreSession(this, unitOfWork, leaveTheGate: _gate.LeaveUnitOfWork);
    }
 
-   public ReloadedTaggregates ReloadFromStorage(Action? changeToTheStorage = null)
+   public ChangesFoundInStorage LoadFromStorage(Action? changeTheStorageFirst = null)
    {
       State.Assert(Storage is not NoStorage,
-                   () => "This state store has no storage to reload from: it was composed without one, such as StoredInFiles, so it keeps its taggregates in memory only, and a reload would remove every one of them.");
+                   () => "This state store has no storage to reload from: it was composed without one, such as StoredInJsonFiles, so it keeps its taggregates in memory only, and a reload would remove every one of them.");
       State.Assert(AmbientSession == null, () => "A unit of work that has changed taggregates of the state store can't reload it: the reload waits for every such unit of work to complete, this one included.");
       return _gate.WhileNoUnitOfWorkIsOpen(() =>
       {
-         changeToTheStorage?.Invoke();
+         changeTheStorageFirst?.Invoke();
          return _loadingMonitor.Locked(() =>
          {
             var before = _hasLoaded ? _committedTaggregates : new ConcurrentDictionary<TaggregateId, ITaggregate>();
             var stored = Storage.LoadAll();
             var loaded = Install(stored);
-            return new ReloadedTaggregates(added: [..loaded.Keys.Where(id => !before.ContainsKey(id))],
+            return new ChangesFoundInStorage(added: [..loaded.Keys.Where(id => !before.ContainsKey(id))],
                                            changed: [..stored.Where(it => before.TryGetValue(it.Id, out var held) && HoldsAnotherState(it, held)).Select(it => it.Id)],
                                            removed: [..before.Keys.Where(id => !loaded.ContainsKey(id))]);
          });
@@ -110,15 +110,15 @@ sealed class TaggregateStateStore : ITaggregateStore, IStateStore
       loaded.TaggregateClass != held.GetType()
    || !loaded.IsUnchangedSinceTheStoreLastReadOrWroteIt && !Storage.HoldTheSameState(loaded, DeclaredClassOf(held.GetType()).TakeSnapshot(held));
 
-   public void WriteEverythingAnew()
+   public void WriteAllToStorage()
    {
       State.Assert(Storage is not NoStorage,
-                   () => "This state store has no storage to write its taggregates to: it was composed without one, such as StoredInFiles, so it keeps its taggregates in memory only.");
+                   () => "This state store has no storage to write its taggregates to: it was composed without one, such as StoredInJsonFiles, so it keeps its taggregates in memory only.");
       State.Assert(AmbientSession == null, () => "A unit of work that has changed taggregates of the state store can't have it write every taggregate anew: that waits for every such unit of work to complete, this one included.");
       _gate.WhileNoUnitOfWorkIsOpen(() => _loadingMonitor.Locked(() =>
       {
          if(!_hasLoaded) LoadEverything();
-         Storage.WriteEverythingAnew([.._committedTaggregates.Select(it => SnapshotOf(it.Value))]);
+         Storage.WriteAll([.._committedTaggregates.Select(it => SnapshotOf(it.Value))]);
       }));
    }
 
@@ -126,7 +126,7 @@ sealed class TaggregateStateStore : ITaggregateStore, IStateStore
 
    ///<summary>Inside a unit of work, as it left them: the instances of the class it holds, and the committed ones it doesn't hold.<br/>
    /// Otherwise the committed ones.</summary>
-   public IReadOnlyCollection<ITaggregateReference<TTaggregate>> All<TTaggregate>() where TTaggregate : class, ITaggregate
+   public IReadOnlyCollection<ITaggregateReference<TTaggregate>> ReferencesToAll<TTaggregate>() where TTaggregate : class, ITaggregate
    {
       EnsureLoaded();
       //Enumerated, not read through Values, which takes every lock of the dictionary and copies every taggregate of every class.

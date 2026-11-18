@@ -53,11 +53,11 @@ class CompositeTaggregate : Taggregate<CompositeTaggregate, ICompositeTaggregate
       Name = snapshot.Name;
       Component.RestoreFrom(snapshot.Component);
       if(_restoreLeavesOutTheEntities) return;
-      foreach(var entity in snapshot.Entities) _entities.AddRestored(entity.Id).RestoreFrom(entity);
+      foreach(var entity in snapshot.Entities) _entities.AddWhileRestoring(entity.Id).RestoreFrom(entity);
    }
 
    ///<summary>Adds an entity as a restore does, though this taggregate isn't being restored: for the specification that it is refused.</summary>
-   internal RemovableEntity AddARestoredEntityOutsideARestore() => _entities.AddRestored(Guid.NewGuid());
+   internal RemovableEntity AddARestoredEntityOutsideARestore() => _entities.AddWhileRestoring(Guid.NewGuid());
 
    public IReadOnlyEntityCollection<RemovableEntity, Guid> Entities => _entities.Entities;
    public RemovableEntity AddEntity(string name) => _entities.AddByPublishing(new CompositeTaggregateTevent.Entity.Created(Guid.NewGuid(), name));

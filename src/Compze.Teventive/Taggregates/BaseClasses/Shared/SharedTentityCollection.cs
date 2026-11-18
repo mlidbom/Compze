@@ -39,8 +39,7 @@ public sealed class SharedTentityCollection<TTentity, TTentityId, TTentityTevent
    /// the rest of its state. Only while the taggregate is being restored: from its <c>RestoreIdentity</c> until its restoring code returns to the<br/>
    /// taggregate store restoring it, or else until its first publish. At any other time a tentity is added by publishing its created tevent, with<br/>
    /// <see cref="AddByPublishing"/>.</summary>
-   ///<remarks>review-naming: a placeholder (jastudio-rep-opus, 2026-11-18), as on the entity collections.</remarks>
-   public TTentity AddRestored(TTentityId id)
+   public TTentity AddWhileRestoring(TTentityId id)
    {
       State.Assert(ItsTaggregateIsBeingRestored,
                    () => $"A {typeof(TTentity).Name} is added without its created tevent only while its owner's taggregate is being restored from a snapshot, by its RestoreFrom. Add it by publishing its created tevent, with {nameof(AddByPublishing)}.");

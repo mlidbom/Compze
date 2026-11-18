@@ -37,14 +37,14 @@ class StoredDeck : Taggregate<StoredDeck, IStoredDeckTevent, StoredDeckTevent, I
    public StoredCard AddCard(string text) => _cards.AddByPublishing(new StoredDeckTevent.Card.Added(Guid.NewGuid(), text));
 
    ///<summary>Adds a card without its tevent, as a restore does: for the specification that only a restore may.</summary>
-   internal StoredCard AddARestoredCard() => _cards.AddRestored(Guid.NewGuid());
+   internal StoredCard AddARestoredCard() => _cards.AddWhileRestoring(Guid.NewGuid());
 
    public StoredDeckSnapshot TakeSnapshot() => new(Id, [..Cards.InCreationOrder.Select(it => it.TakeSnapshot())]);
 
    public void RestoreFrom(StoredDeckSnapshot snapshot)
    {
       RestoreIdentity(snapshot.Id);
-      foreach(var card in snapshot.Cards) _cards.AddRestored(card.Id).RestoreFrom(card);
+      foreach(var card in snapshot.Cards) _cards.AddWhileRestoring(card.Id).RestoreFrom(card);
    }
 }
 

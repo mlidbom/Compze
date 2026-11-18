@@ -15,12 +15,12 @@ using static Compze.Must.MustActions;
 
 namespace Compze.Tests.Integration.Engine;
 
-///<summary>Dynamic observers, created through <see cref="ITeventObservation"/>: they observe as composed observers do, from<br/>
+///<summary>Dynamic observers, created through <see cref="IDynamicTeventObservers"/>: they observe as composed observers do, from<br/>
 /// their creation until they are disposed. A plain container has no other endpoints, so nothing is subscribed to for them: they<br/>
 /// may observe any tevent type.</summary>
 public partial class Given_a_container_composing_a_LocalTessagingEngine
 {
-   ITeventObservation TeventObservation => Container.RootResolver.Resolve<ITeventObservation>();
+   IDynamicTeventObservers DynamicTeventObservers => Container.RootResolver.Resolve<IDynamicTeventObservers>();
 
    ILocalTessagingEngine Engine => Container.RootResolver.Resolve<ILocalTessagingEngine>();
 
@@ -39,7 +39,7 @@ public partial class Given_a_container_composing_a_LocalTessagingEngine
       protected with_a_dynamic_observer_of_numbered_tevents()
       {
          ComposeContainerWithEngine(_ => {});
-         Observation = TeventObservation.ObserveTevents(observe => observe.ForTevent((IMyNumberedTevent tevent) => ObservedSequenceNumbers.Enqueue(tevent.SequenceNumber)));
+         Observation = DynamicTeventObservers.ObserveTevents(observe => observe.ForTevent((IMyNumberedTevent tevent) => ObservedSequenceNumbers.Enqueue(tevent.SequenceNumber)));
       }
 
       public class after_a_unit_of_work_that_rolls_back_publishes_tevent_1_and_one_that_commits_publishes_tevent_2 : with_a_dynamic_observer_of_numbered_tevents
@@ -85,7 +85,7 @@ public partial class Given_a_container_composing_a_LocalTessagingEngine
       public with_an_async_dynamic_observer_that_awaits_before_recording_each_tevent()
       {
          ComposeContainerWithEngine(_ => {});
-         TeventObservation.ObserveTevents(observe => observe.ForTevent(async (IMyNumberedTevent tevent) =>
+         DynamicTeventObservers.ObserveTevents(observe => observe.ForTevent(async (IMyNumberedTevent tevent) =>
          {
             await Task.Delay(TimeSpan.FromMilliseconds(50));
             _observedSequenceNumbers.Enqueue(tevent.SequenceNumber);
@@ -112,7 +112,7 @@ public partial class Given_a_container_composing_a_LocalTessagingEngine
       public with_a_dynamic_observer_that_disposes_its_own_observation_when_it_observes_a_tevent()
       {
          ComposeContainerWithEngine(_ => {});
-         _observation = TeventObservation.ObserveTevents(observe => observe.ForTevent((IMyNumberedTevent tevent) =>
+         _observation = DynamicTeventObservers.ObserveTevents(observe => observe.ForTevent((IMyNumberedTevent tevent) =>
          {
             _observedSequenceNumbers.Enqueue(tevent.SequenceNumber);
             _observation!.Dispose(); //Assigned before the tevent it observes is published.
@@ -141,7 +141,7 @@ public partial class Given_a_container_composing_a_LocalTessagingEngine
       public with_dynamic_observers_of_a_tevents_base_interface_and_of_an_unrelated_interface()
       {
          ComposeContainerWithEngine(_ => {});
-         TeventObservation.ObserveTevents(observe => observe
+         DynamicTeventObservers.ObserveTevents(observe => observe
                                             .ForTevent((IMyGreetingRequestedTevent tevent) => _observedByTheObserverOfTheBaseInterface.Enqueue(tevent))
                                             .ForTevent((IMyUnrelatedTevent tevent) => _observedByTheObserverOfTheUnrelatedInterface.Enqueue(tevent)));
          PublishInAUnitOfWork(_publishedTevent);
@@ -160,7 +160,7 @@ public partial class Given_a_container_composing_a_LocalTessagingEngine
       public with_a_dynamic_observer_that_throws_when_it_observes_tevent_1()
       {
          ComposeContainerWithEngine(_ => {});
-         TeventObservation.ObserveTevents(observe => observe.ForTevent((IMyNumberedTevent tevent) =>
+         DynamicTeventObservers.ObserveTevents(observe => observe.ForTevent((IMyNumberedTevent tevent) =>
          {
             if(tevent.SequenceNumber == 1) throw new Exception("thrown by the dynamic observer");
             _observedSequenceNumbers.Enqueue(tevent.SequenceNumber);
@@ -183,9 +183,9 @@ public partial class Given_a_container_composing_a_LocalTessagingEngine
       public with_dynamic_observers_of_each_unit_of_works_tevents_and_of_each_tevent_and_nothing_subscribed_for_them()
       {
          ComposeContainerWithEngine(_ => {});
-         TeventObservation.ObserveTevents(observe => observe
+         DynamicTeventObservers.ObserveTevents(observe => observe
                                             .ForTevent((IMySpecialGreetingRequestedTevent tevent) => _observedTevents.Enqueue(tevent))
-                                            .ForEachUnitOfWork((IReadOnlyList<IMyGreetingRequestedTevent> tevents) => _observedLists.Enqueue(tevents)));
+                                            .ForTeventsOfEachUnitOfWork((IReadOnlyList<IMyGreetingRequestedTevent> tevents) => _observedLists.Enqueue(tevents)));
          PublishInAUnitOfWork(_publishedTevent);
       }
 
@@ -202,7 +202,7 @@ public partial class Given_a_container_composing_a_LocalTessagingEngine
       protected override async Task InitializeAsyncInternal() => await Engine.StopAsync();
 
       [PCT] public void creating_a_dynamic_observer_throws_stating_that_the_engine_has_stopped() =>
-         Invoking(() => TeventObservation.ObserveTevents(observe => observe.ForTevent((IMyNumberedTevent _) => {})))
+         Invoking(() => DynamicTeventObservers.ObserveTevents(observe => observe.ForTevent((IMyNumberedTevent _) => {})))
             .Must().Throw<Exception>()
             .Which.Message.Must().Contain("has stopped");
    }

@@ -4,7 +4,7 @@ using Compze.Threading.ResourceAccess;
 
 namespace Compze.Teventive.StateStore._private.Files;
 
-///<summary>Files kept in memory, for specifications: a state store composed with <see cref="TaggregateFiles.KeptInMemory"/> writes and<br/>
+///<summary>Files kept in memory, for specifications: a state store composed with <see cref="TaggregateFilesBuilder.KeptInMemory"/> writes and<br/>
 /// reads its files here instead of on the disk, one such file system for each container. It is also the<br/>
 /// <see cref="ITaggregateFilesInMemory"/> through which a specification reads and changes them.</summary>
 ///<remarks>A folder exists only as the paths of the files in it. Paths are compared as full paths, ignoring case, as on Windows.<br/>

@@ -23,7 +23,7 @@ public sealed class StateStoreBuilder
    readonly List<Func<TaggregateStateStore, ITaggregateIndexMaintenance>> _indexes = [];
    readonly HashSet<(Type TaggregateClass, Type KeyType)> _indexTypes = [];
    Func<IRootResolver, IReadOnlyList<SnapshotableTaggregateClass>, ITaggregateStorage>? _storage;
-   TaggregateFiles? _files;
+   TaggregateFilesBuilder? _files;
 
    internal StateStoreBuilder(IComponentRegistrar registrar) => _registrar = registrar;
 
@@ -115,25 +115,24 @@ public sealed class StateStoreBuilder
    /// exactly-once outbox's and inbox's are; by .NET itself for a SQL Server connection opened outside Compze. A PostgreSQL, MySQL or<br/>
    /// SQLite connection opened outside Compze isn't seen. A unit of work that only reads the store is never refused, and a container<br/>
    /// may hold this store and the tevent store: only one transaction holding both is refused. A consumer to whom that loss is<br/>
-   /// acceptable declares <see cref="TaggregateFiles.AllowedInTransactionsThatAlsoWriteADatabase"/>.<br/>
+   /// acceptable declares <see cref="TaggregateFilesBuilder.AcceptingNonAtomicCommitsWithADatabase"/>.<br/>
    /// The files commit as their transaction's one durable participant, in a single phase, so they never commit as part of a<br/>
    /// distributed transaction. A failure while writing a commit's journal rolls the unit of work back. <b>A failure after the journal<br/>
    /// is written stops the process</b> (<see cref="Environment.FailFast(string)"/>), such as a file another program holds for more<br/>
    /// than about two seconds: the commit has happened, and the next start finishes it from its journal. The files are written, not<br/>
-   /// flushed to the disk: a commit outlives the process, not the machine losing its power.<br/>
-   /// review-naming: StoredInFiles, a placeholder for the naming pass (jastudio-rep-opus's fork, 2026-11-17).</remarks>
-   public StateStoreBuilder StoredInFiles(DirectoryInfo folder, JsonSerializerOptions options, Action<TaggregateFiles> declare) =>
+   /// flushed to the disk: a commit outlives the process, not the machine losing its power.</remarks>
+   public StateStoreBuilder StoredInJsonFiles(DirectoryInfo folder, JsonSerializerOptions options, Action<TaggregateFilesBuilder> declare) =>
       DeclareFiles(_ => folder, options, declare);
 
-   ///<summary>As <see cref="StoredInFiles(DirectoryInfo,JsonSerializerOptions,Action{TaggregateFiles})"/>, for a folder that a service of<br/>
-   /// the container knows: <c>store.StoredInFiles((CorpusPaths paths) => paths.Corpus, options, files => ...)</c>.</summary>
+   ///<summary>As <see cref="StoredInJsonFiles(DirectoryInfo,JsonSerializerOptions,Action{TaggregateFilesBuilder})"/>, for a folder that a service of<br/>
+   /// the container knows: <c>store.StoredInJsonFiles((CorpusPaths paths) => paths.Corpus, options, files => ...)</c>.</summary>
    ///<remarks>The service is resolved from the container's root when the store is built, at its first use.</remarks>
-   public StateStoreBuilder StoredInFiles<TService>(Func<TService, DirectoryInfo> folderWith, JsonSerializerOptions options, Action<TaggregateFiles> declare) where TService : class =>
+   public StateStoreBuilder StoredInJsonFiles<TService>(Func<TService, DirectoryInfo> folderWith, JsonSerializerOptions options, Action<TaggregateFilesBuilder> declare) where TService : class =>
       DeclareFiles(resolver => folderWith(resolver.Resolve<TService>()), options, declare);
 
-   StateStoreBuilder DeclareFiles(Func<IRootResolver, DirectoryInfo> folderWith, JsonSerializerOptions options, Action<TaggregateFiles> declare)
+   StateStoreBuilder DeclareFiles(Func<IRootResolver, DirectoryInfo> folderWith, JsonSerializerOptions options, Action<TaggregateFilesBuilder> declare)
    {
-      var files = new TaggregateFiles();
+      var files = new TaggregateFilesBuilder();
       declare(files);
       _files = files;
       if(files.IsKeptInMemory) _registrar.Register(Singleton.For<ITaggregateFilesInMemory, FilesInMemory>().CreatedBy(() => new FilesInMemory()));
@@ -145,7 +144,7 @@ public sealed class StateStoreBuilder
                                           files.Declarations.Select(it => it.For(classes.Single(declared => declared.Class == it.TaggregateClass), folder)),
                                           files.LoadCache,
                                           files.IsKeptInMemory ? resolver.Resolve<FilesInMemory>() : FilesOnDisk.Instance,
-                                          files.IsAllowedInTransactionsThatAlsoWriteADatabase);
+                                          files.IsAcceptingNonAtomicCommitsWithADatabase);
       });
    }
 

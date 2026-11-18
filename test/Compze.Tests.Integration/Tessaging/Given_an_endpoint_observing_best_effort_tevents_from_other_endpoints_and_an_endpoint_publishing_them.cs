@@ -47,7 +47,7 @@ public class Given_an_endpoint_observing_best_effort_tevents_from_other_endpoint
    ///<summary>A dynamic observer on the observing endpoint, which records the sequence number of each tevent it observes<br/>
    /// and passes through <paramref name="gate"/>.</summary>
    IDisposable ObserveOnTheObservingEndpoint(ConcurrentQueue<int> observedSequenceNumbers, IThreadGate gate) =>
-      _observingEndpoint.ServiceLocator.Resolve<ITeventObservation>().ObserveTevents(observe => observe.ForTevent((IMyBestEffortTevent tevent) =>
+      _observingEndpoint.ServiceLocator.Resolve<IDynamicTeventObservers>().ObserveTevents(observe => observe.ForTevent((IMyBestEffortTevent tevent) =>
       {
          observedSequenceNumbers.Enqueue(tevent.SequenceNumber);
          gate.AwaitPassThrough();

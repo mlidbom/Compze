@@ -11,8 +11,6 @@ public interface ITaggregateStoreBulkReader : ITaggregateStoreReader
    /// read. A caller that needs an order sorts the collection itself.</remarks>
    ///<remarks>The store as it was at the call. Inside a unit of work, the unit of work's view: the taggregates it has added are included,<br/>
    /// and those it has deleted are left out. Outside one, the committed taggregates. A reference loads nothing until its<br/>
-   /// <see cref="ITaggregateReference{TTaggregate}.Current"/> is read.<br/>
-   /// review-naming: the document db's bulk reader says GetAll, and gives instances, where this gives references. For the naming pass<br/>
-   /// (jastudio-rep-opus, 2026-11-17).</remarks>
-   IReadOnlyCollection<ITaggregateReference<TTaggregate>> All<TTaggregate>() where TTaggregate : class, ITaggregate;
+   /// <see cref="ITaggregateReference{TTaggregate}.Current"/> is read.</remarks>
+   IReadOnlyCollection<ITaggregateReference<TTaggregate>> ReferencesToAll<TTaggregate>() where TTaggregate : class, ITaggregate;
 }

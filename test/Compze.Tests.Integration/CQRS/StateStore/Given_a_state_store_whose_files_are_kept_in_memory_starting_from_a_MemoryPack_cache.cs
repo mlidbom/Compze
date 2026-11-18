@@ -30,9 +30,9 @@ public class Given_a_state_store_whose_files_are_kept_in_memory_starting_from_a_
    {
       var builder = TestEnv.DIContainer.CreateTestingContainerBuilder();
       builder.Registrar.StateStore(store => store.Taggregate(() => new CachedVocab())
-                                                 .StoredInFiles(_folder, Options, files => files.Of<CachedVocab>("vocab")
-                                                                                                .CachedWithMemoryPack()
-                                                                                                .KeptInMemory()));
+                                                 .StoredInJsonFiles(_folder, Options, files => files.StartingFromAMemoryPackCache()
+                                                                                                .KeptInMemory()
+                                                                                                .FolderOf<CachedVocab>("vocab")));
       builder.Registrar.LocalTessagingEngine(_ => {});
       _store = builder.Build();
    }
@@ -47,7 +47,7 @@ public class Given_a_state_store_whose_files_are_kept_in_memory_starting_from_a_
 
    ITaggregateStoreReader Reader => _store.RootResolver.Resolve<ITaggregateStoreReader>();
 
-   void Reload() => _store.RootResolver.Resolve<IStateStore>().ReloadFromStorage();
+   void Reload() => _store.RootResolver.Resolve<IStateStore>().LoadFromStorage();
 
    protected override async Task DisposeAsyncInternal() => await _store.DisposeAsync();
 

@@ -11,8 +11,8 @@ namespace Compze.Teventive.StateStore._private.Files;
 ///<remarks>A unit of work's write commits in one of two ways. By default the files take part in the transaction as its one durable<br/>
 /// participant, <see cref="FilesAsADurableParticipant"/>, and the write commits as the transaction's decision, before the unit of<br/>
 /// work commits: <see cref="CommitAsTheTransactionsDecision"/>. Where the consumer has allowed the files in transactions that also<br/>
-/// write a database (<see cref="TaggregateFiles.AllowedInTransactionsThatAlsoWriteADatabase"/>), it commits when the unit of work<br/>
-/// commits: <see cref="Commit"/>. A write of every taggregate anew (<see cref="IStateStore.WriteEverythingAnew"/>) commits outside<br/>
+/// write a database (<see cref="TaggregateFilesBuilder.AcceptingNonAtomicCommitsWithADatabase"/>), it commits when the unit of work<br/>
+/// commits: <see cref="Commit"/>. A write of every taggregate anew (<see cref="IStateStore.WriteAllToStorage"/>) commits outside<br/>
 /// any transaction: <see cref="CommitOutsideATransaction"/>.</remarks>
 sealed class PreparedFileWrite : IPreparedWrite
 {

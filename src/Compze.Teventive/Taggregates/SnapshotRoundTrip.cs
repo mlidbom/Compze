@@ -23,8 +23,7 @@ public static class SnapshotRoundTrip
    /// so a specification asserts that the list is empty, and a tool that checks many taggregates reports what it finds.</summary>
    ///<param name="taggregate">An instance of the class to check, with state in every field it has, and in every part.</param>
    ///<param name="createEmpty">Builds a new, empty instance of the class, as the store that keeps it is told to.</param>
-   ///<remarks>review-naming: SnapshotRoundTrip.DifferencesOf is a placeholder until the naming pass.</remarks>
-   public static IReadOnlyList<string> DifferencesOf<TTaggregate, TSnapshot>(TTaggregate taggregate,
+   public static IReadOnlyList<string> DifferencesBetweenItAndItsCopy<TTaggregate, TSnapshot>(TTaggregate taggregate,
                                                                              Func<ISnapshotable<TTaggregate, TSnapshot>> createEmpty)
       where TTaggregate : class, ITaggregate, ISnapshotable<TTaggregate, TSnapshot> =>
       TaggregateStateComparison.DifferencesBetween(taggregate, SnapshotableTaggregateClass.For(createEmpty).CopyOf(taggregate));

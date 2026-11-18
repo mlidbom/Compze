@@ -54,8 +54,8 @@ public class Given_a_state_store_kept_in_files : UniversalTestBase
       {
          store.Taggregate(() => new StoredVocab())
               .Taggregate(() => new StoredSentence());
-         if(_folderGivenByAService) store.StoredInFiles((TheStoresFolder it) => it.Folder, Options, DeclareFiles);
-         else store.StoredInFiles(_folder, Options, DeclareFiles);
+         if(_folderGivenByAService) store.StoredInJsonFiles((TheStoresFolder it) => it.Folder, Options, DeclareFiles);
+         else store.StoredInJsonFiles(_folder, Options, DeclareFiles);
       });
       builder.Registrar.LocalTessagingEngine(_ => {});
       var container = builder.Build();
@@ -63,8 +63,8 @@ public class Given_a_state_store_kept_in_files : UniversalTestBase
       return _store = container;
    }
 
-   static void DeclareFiles(TaggregateFiles files) => files.Of<StoredVocab>("vocab")
-                                                          .Of<StoredSentence>("sentences");
+   static void DeclareFiles(TaggregateFilesBuilder files) => files.FolderOf<StoredVocab>("vocab")
+                                                          .FolderOf<StoredSentence>("sentences");
 
    void InUnitOfWork(Action<ITaggregateStoreUpdater> work) =>
       Store.ScopeFactory.ExecuteUnitOfWork(unitOfWork => work(unitOfWork.Resolve<ITaggregateStoreUpdater>()));
@@ -106,9 +106,9 @@ public class Given_a_state_store_kept_in_files : UniversalTestBase
       ///<summary>The store started on an empty folder, so the vocab folder didn't exist when it first loaded.</summary>
       public class and_the_store_reloads_from_its_files : after_a_unit_of_work_adds_a_vocab
       {
-         readonly ReloadedTaggregates _reloaded;
+         readonly ChangesFoundInStorage _reloaded;
 
-         public and_the_store_reloads_from_its_files() => _reloaded = Store.RootResolver.Resolve<IStateStore>().ReloadFromStorage();
+         public and_the_store_reloads_from_its_files() => _reloaded = Store.RootResolver.Resolve<IStateStore>().LoadFromStorage();
 
          [PCT] public void the_reload_reports_nothing_removed() => _reloaded.Removed.Must().BeEmpty();
 
@@ -123,9 +123,9 @@ public class Given_a_state_store_kept_in_files : UniversalTestBase
 
          public class and_the_store_then_reloads_from_its_files : and_a_unit_of_work_changes_its_meaning
          {
-            readonly ReloadedTaggregates _reloaded;
+            readonly ChangesFoundInStorage _reloaded;
 
-            public and_the_store_then_reloads_from_its_files() => _reloaded = Store.RootResolver.Resolve<IStateStore>().ReloadFromStorage();
+            public and_the_store_then_reloads_from_its_files() => _reloaded = Store.RootResolver.Resolve<IStateStore>().LoadFromStorage();
 
             [PCT] public void the_reload_reports_nothing_changed() => _reloaded.Changed.Must().BeEmpty();
          }
@@ -136,7 +136,7 @@ public class Given_a_state_store_kept_in_files : UniversalTestBase
          public and_another_program_writes_its_file_otherwise_and_the_store_writes_every_taggregate_anew()
          {
             File.WriteAllText(VocabFileByDefault, JsonSerializer.Serialize(new StoredVocabSnapshot(VocabId, "taberu", ""), OptionsOfAnotherProgram));
-            Store.RootResolver.Resolve<IStateStore>().WriteEverythingAnew();
+            Store.RootResolver.Resolve<IStateStore>().WriteAllToStorage();
          }
 
          [PCT] public void the_file_again_holds_exactly_what_the_consumers_serializer_options_make_of_the_vocabs_snapshot_in_utf8_without_a_byte_order_mark() =>
@@ -343,24 +343,24 @@ public class Given_a_state_store_kept_in_files : UniversalTestBase
       [PCT] public void without_the_files_of_a_class_it_keeps_fails_naming_the_class() =>
          Invoking(() => Compose(store => store.Taggregate(() => new StoredVocab())
                                               .Taggregate(() => new StoredSentence())
-                                              .StoredInFiles(_folder, Options, files => files.Of<StoredVocab>("vocab"))))
+                                              .StoredInJsonFiles(_folder, Options, files => files.FolderOf<StoredVocab>("vocab"))))
            .Must().Throw<InvalidOperationException>().Which.Message.Must().Contain(nameof(StoredSentence));
 
       [PCT] public void with_two_classes_in_one_folder_fails() =>
          Invoking(() => Compose(store => store.Taggregate(() => new StoredVocab())
                                               .Taggregate(() => new StoredSentence())
-                                              .StoredInFiles(_folder, Options, files => files.Of<StoredVocab>("notes").Of<StoredSentence>("notes"))))
+                                              .StoredInJsonFiles(_folder, Options, files => files.FolderOf<StoredVocab>("notes").FolderOf<StoredSentence>("notes"))))
            .Must().Throw<InvalidOperationException>();
 
       [PCT] public void with_a_classs_folder_inside_another_classs_fails() =>
          Invoking(() => Compose(store => store.Taggregate(() => new StoredVocab())
                                               .Taggregate(() => new StoredSentence())
-                                              .StoredInFiles(_folder, Options, files => files.Of<StoredVocab>("notes").Of<StoredSentence>("notes/sentences"))))
+                                              .StoredInJsonFiles(_folder, Options, files => files.FolderOf<StoredVocab>("notes").FolderOf<StoredSentence>("notes/sentences"))))
            .Must().Throw<InvalidOperationException>();
 
       [PCT] public void with_the_stores_own_folder_as_a_classs_folder_fails() =>
          Invoking(() => Compose(store => store.Taggregate(() => new StoredVocab())
-                                              .StoredInFiles(_folder, Options, files => files.Of<StoredVocab>(".state-store"))))
+                                              .StoredInJsonFiles(_folder, Options, files => files.FolderOf<StoredVocab>(".state-store"))))
            .Must().Throw<ArgumentException>();
    }
 

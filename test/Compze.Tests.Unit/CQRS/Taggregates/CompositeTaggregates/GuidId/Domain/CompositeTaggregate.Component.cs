@@ -38,8 +38,8 @@ partial class Component : CompositeTaggregate.Component<Component, ICompositeTag
     internal void RestoreFrom(ComponentSnapshot snapshot)
     {
         Name = snapshot.Name;
-        foreach(var entity in snapshot.Entities) _entities.AddRestored(entity.Id).RestoreFrom(entity);
-        foreach(var entity in snapshot.NonRemovableEntities) _nonRemovableEntities.AddRestored(entity.Id).RestoreFrom(entity);
+        foreach(var entity in snapshot.Entities) _entities.AddWhileRestoring(entity.Id).RestoreFrom(entity);
+        foreach(var entity in snapshot.NonRemovableEntities) _nonRemovableEntities.AddWhileRestoring(entity.Id).RestoreFrom(entity);
         CComponent.RestoreFrom(snapshot.NestedComponentName);
     }
     public Component.Entity AddEntity(string name, Guid id) => _entities.AddByPublishing(new CompositeTaggregateTevent.Component.Entity.Created(id, name));

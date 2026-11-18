@@ -24,18 +24,18 @@ public static class ITeventObservationRegistrarCE
                                                                                                                       where TDependency1 : class
          => @this.ForTevent<TTevent>((tevent, scope) => observer(tevent, scope.Resolve<TDependency1>()));
 
-      public ITeventObservationRegistrar ForEachUnitOfWork<TTevent>(Action<IReadOnlyList<TTevent>> observer) where TTevent : ITevent
-         => @this.ForEachUnitOfWork<TTevent>((tevents, _) => observer(tevents));
+      public ITeventObservationRegistrar ForTeventsOfEachUnitOfWork<TTevent>(Action<IReadOnlyList<TTevent>> observer) where TTevent : ITevent
+         => @this.ForTeventsOfEachUnitOfWork<TTevent>((tevents, _) => observer(tevents));
 
-      public ITeventObservationRegistrar ForEachUnitOfWork<TTevent>(Func<IReadOnlyList<TTevent>, Task> observer) where TTevent : ITevent
-         => @this.ForEachUnitOfWork<TTevent>((tevents, _) => observer(tevents));
+      public ITeventObservationRegistrar ForTeventsOfEachUnitOfWork<TTevent>(Func<IReadOnlyList<TTevent>, Task> observer) where TTevent : ITevent
+         => @this.ForTeventsOfEachUnitOfWork<TTevent>((tevents, _) => observer(tevents));
 
-      public ITeventObservationRegistrar ForEachUnitOfWork<TTevent, TDependency1>(Action<IReadOnlyList<TTevent>, TDependency1> observer) where TTevent : ITevent
+      public ITeventObservationRegistrar ForTeventsOfEachUnitOfWork<TTevent, TDependency1>(Action<IReadOnlyList<TTevent>, TDependency1> observer) where TTevent : ITevent
                                                                                                                                        where TDependency1 : class
-         => @this.ForEachUnitOfWork<TTevent>((tevents, scope) => observer(tevents, scope.Resolve<TDependency1>()));
+         => @this.ForTeventsOfEachUnitOfWork<TTevent>((tevents, scope) => observer(tevents, scope.Resolve<TDependency1>()));
 
-      public ITeventObservationRegistrar ForEachUnitOfWork<TTevent, TDependency1>(Func<IReadOnlyList<TTevent>, TDependency1, Task> observer) where TTevent : ITevent
+      public ITeventObservationRegistrar ForTeventsOfEachUnitOfWork<TTevent, TDependency1>(Func<IReadOnlyList<TTevent>, TDependency1, Task> observer) where TTevent : ITevent
                                                                                                                                            where TDependency1 : class
-         => @this.ForEachUnitOfWork<TTevent>((tevents, scope) => observer(tevents, scope.Resolve<TDependency1>()));
+         => @this.ForTeventsOfEachUnitOfWork<TTevent>((tevents, scope) => observer(tevents, scope.Resolve<TDependency1>()));
    }
 }

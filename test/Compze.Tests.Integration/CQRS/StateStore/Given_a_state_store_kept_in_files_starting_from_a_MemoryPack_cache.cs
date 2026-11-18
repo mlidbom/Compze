@@ -42,7 +42,7 @@ public class Given_a_state_store_kept_in_files_starting_from_a_MemoryPack_cache 
 
    ITaggregateStoreReader Reader => Store.RootResolver.Resolve<ITaggregateStoreReader>();
 
-   IReadOnlyList<Guid> IdsOfAllVocabs => [..Store.RootResolver.Resolve<ITaggregateStoreBulkReader>().All<CachedVocab>().Select(it => it.Id.Value).Order()];
+   IReadOnlyList<Guid> IdsOfAllVocabs => [..Store.RootResolver.Resolve<ITaggregateStoreBulkReader>().ReferencesToAll<CachedVocab>().Select(it => it.Id.Value).Order()];
 
    ///<summary>Starts a store on the folder, and has it load the files, as its first use does.</summary>
    void StartAStore()
@@ -52,10 +52,10 @@ public class Given_a_state_store_kept_in_files_starting_from_a_MemoryPack_cache 
       {
          if(_keepsVocabsWithTags)
             store.Taggregate(() => new CachedVocabWithTags())
-                 .StoredInFiles(_folder, Options, files => files.Of<CachedVocabWithTags>("vocab").CachedWithMemoryPack());
+                 .StoredInJsonFiles(_folder, Options, files => files.StartingFromAMemoryPackCache().FolderOf<CachedVocabWithTags>("vocab"));
          else
             store.Taggregate(() => new CachedVocab())
-                 .StoredInFiles(_folder, Options, files => files.Of<CachedVocab>("vocab").CachedWithMemoryPack());
+                 .StoredInJsonFiles(_folder, Options, files => files.StartingFromAMemoryPackCache().FolderOf<CachedVocab>("vocab"));
       });
       builder.Registrar.LocalTessagingEngine(_ => {});
       _store = builder.Build();
@@ -65,7 +65,7 @@ public class Given_a_state_store_kept_in_files_starting_from_a_MemoryPack_cache 
       void LoadTheFiles()
       {
          var bulkReader = Store.RootResolver.Resolve<ITaggregateStoreBulkReader>();
-         _ = _keepsVocabsWithTags ? bulkReader.All<CachedVocabWithTags>().Count : bulkReader.All<CachedVocab>().Count;
+         _ = _keepsVocabsWithTags ? bulkReader.ReferencesToAll<CachedVocabWithTags>().Count : bulkReader.ReferencesToAll<CachedVocab>().Count;
       }
    }
 
@@ -167,7 +167,7 @@ public class Given_a_state_store_kept_in_files_starting_from_a_MemoryPack_cache 
       [PCT] public void fails_naming_the_snapshot_type() =>
          Invoking(() => TestEnv.DIContainer.CreateTestingContainerBuilder()
                                .Registrar.StateStore(store => store.Taggregate(() => new StoredVocab())
-                                                                   .StoredInFiles(_folder, Options, files => files.Of<StoredVocab>("vocab").CachedWithMemoryPack())))
+                                                                   .StoredInJsonFiles(_folder, Options, files => files.StartingFromAMemoryPackCache().FolderOf<StoredVocab>("vocab"))))
            .Must().Throw<InvalidOperationException>()
            .Which.Message.Must().Contain(nameof(StoredVocabSnapshot));
    }

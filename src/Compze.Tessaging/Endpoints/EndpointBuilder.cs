@@ -117,7 +117,7 @@ public abstract class EndpointBuilder
    }
 
    ///<summary>Subscribes this endpoint, from its start, to tevents compatible with <typeparamref name="TTevent"/>, subtypes<br/>
-   /// included, for its dynamic observers: those created through <see cref="ITeventObservation.ObserveTevents"/>, which come<br/>
+   /// included, for its dynamic observers: those created through <see cref="IDynamicTeventObservers.ObserveTevents"/>, which come<br/>
    /// and go while the endpoint runs. They then observe such tevents wherever they are published, in this endpoint's process or<br/>
    /// another endpoint's. It registers no observer itself.</summary>
    ///<remarks>An endpoint asks its peers, once, when it starts, for the tevent types it subscribes to: its handlers' and its<br/>
@@ -126,7 +126,7 @@ public abstract class EndpointBuilder
    /// types is compatible with one subscribed here, even when the tevents it wants are only ever published in the endpoint's own<br/>
    /// process: when it is created, nothing can tell that no peer publishes them. It is refused at once, rather than observing its<br/>
    /// own process's tevents and silently none of the others'. A dynamic observer is then in effect the moment<br/>
-   /// <see cref="ITeventObservation.ObserveTevents"/> returns, with no round trip: one created before a trigger can't miss a<br/>
+   /// <see cref="IDynamicTeventObservers.ObserveTevents"/> returns, with no round trip: one created before a trigger can't miss a<br/>
    /// tevent published right after it. A subscribed tevent that arrives while no dynamic observer observes it is dropped. A plain<br/>
    /// container has no other endpoints, and subscribes nothing for its dynamic observers. An endpoint declaration subscribes in<br/>
    /// its tier's <c>Declare</c> override.</remarks>

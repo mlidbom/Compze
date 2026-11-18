@@ -40,7 +40,7 @@ sealed class FilesAsADurableParticipant : ISinglePhaseNotification
       $"This transaction holds a state store kept in files, in {storesFolder}, and {other.Description}. A crash between their commits would lose the files' change, "
     + "or, in an endpoint with exactly-once delivery, deliver a tevent about a change that was lost, or count a tessage as handled while its change was lost. "
     + "Compze can't make them commit as one. Keep them in separate units of work, or, if that loss is acceptable, declare it on the store's files: "
-    + $"files => files.{nameof(TaggregateFiles.AllowedInTransactionsThatAlsoWriteADatabase)}().";
+    + $"files => files.{nameof(TaggregateFilesBuilder.AcceptingNonAtomicCommitsWithADatabase)}().";
 
    ///<summary>The transaction's decision, made by the files as its one durable participant: the write commits, or, if it fails before its<br/>
    /// journal is written, the transaction rolls back with the failure.</summary>

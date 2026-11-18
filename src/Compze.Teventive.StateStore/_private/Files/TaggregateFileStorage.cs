@@ -11,7 +11,7 @@ namespace Compze.Teventive.StateStore._private.Files;
 ///<summary>Compze's own storage for a state store: a JSON file for each taggregate, in a folder for each class, each file holding<br/>
 /// exactly what the consumer's <see cref="JsonSerializerOptions"/> make of the taggregate's snapshot. A commit writes all its files or<br/>
 /// none: see <see cref="CommitJournal"/>.</summary>
-///<remarks>Composed with <see cref="StateStoreBuilder.StoredInFiles(DirectoryInfo,JsonSerializerOptions,Action{TaggregateFiles})"/>.<br/>
+///<remarks>Composed with <see cref="StateStoreBuilder.StoredInJsonFiles(DirectoryInfo,JsonSerializerOptions,Action{TaggregateFilesBuilder})"/>.<br/>
 /// The store's own files, the journals, the temporary files and the caches of a <see cref="ITaggregateFilesLoadCache"/>, are in<br/>
 /// <see cref="OwnFolderName"/> under the store's folder, on the same volume as the taggregates' files, so renaming a temporary file<br/>
 /// moves no data.</remarks>
@@ -26,16 +26,16 @@ sealed class TaggregateFileStorage : ITaggregateStorage
    readonly IReadOnlyDictionary<Type, FilesOfAClass> _classes;
    readonly ITaggregateFilesLoadCache? _loadCache;
    readonly IFileSystem _files;
-   readonly bool _isAllowedInTransactionsThatAlsoWriteADatabase;
+   readonly bool _isAcceptingNonAtomicCommitsWithADatabase;
    readonly IThreadShared<StoredFiles> _storedFiles = IThreadShared.New(new StoredFiles());
 
    ///<summary>The storage in <paramref name="folder"/>, whose files are those of <paramref name="files"/>: the disk, or files kept in<br/>
-   /// memory for specifications. <paramref name="isAllowedInTransactionsThatAlsoWriteADatabase"/>: as<br/>
-   /// <see cref="TaggregateFiles.AllowedInTransactionsThatAlsoWriteADatabase"/> declares.</summary>
-   internal TaggregateFileStorage(DirectoryInfo folder, JsonSerializerOptions options, IEnumerable<FilesOfAClass> classes, ITaggregateFilesLoadCache? loadCache, IFileSystem files, bool isAllowedInTransactionsThatAlsoWriteADatabase)
+   /// memory for specifications. <paramref name="isAcceptingNonAtomicCommitsWithADatabase"/>: as<br/>
+   /// <see cref="TaggregateFilesBuilder.AcceptingNonAtomicCommitsWithADatabase"/> declares.</summary>
+   internal TaggregateFileStorage(DirectoryInfo folder, JsonSerializerOptions options, IEnumerable<FilesOfAClass> classes, ITaggregateFilesLoadCache? loadCache, IFileSystem files, bool isAcceptingNonAtomicCommitsWithADatabase)
    {
       _files = files;
-      _isAllowedInTransactionsThatAlsoWriteADatabase = isAllowedInTransactionsThatAlsoWriteADatabase;
+      _isAcceptingNonAtomicCommitsWithADatabase = isAcceptingNonAtomicCommitsWithADatabase;
       _folder = Path.GetFullPath(folder.FullName);
       _ownFolder = Path.Combine(_folder, OwnFolderName);
       _options = options;
@@ -104,12 +104,12 @@ sealed class TaggregateFileStorage : ITaggregateStorage
    }
 
    ///<remarks>A write that writes or deletes a file takes part in the unit of work's transaction as its one durable participant, before<br/>
-   /// anything is written, unless the files are allowed in transactions that also write a database: see<br/>
+   /// anything is written, unless the files accept commits that aren't atomic with a database's: see<br/>
    /// <see cref="FilesAsADurableParticipant"/>.</remarks>
    public IPreparedWrite Prepare(IReadOnlyList<TaggregateSnapshot> toSave, IReadOnlyList<TaggregateId> toDelete)
    {
       var write = new PreparedFileWrite(_files, _folder, _ownFolder, _storedFiles);
-      if(!_isAllowedInTransactionsThatAlsoWriteADatabase && (toSave.Count > 0 || toDelete.Count > 0))
+      if(!_isAcceptingNonAtomicCommitsWithADatabase && (toSave.Count > 0 || toDelete.Count > 0))
          FilesAsADurableParticipant.TakePartIn(Transaction.Current._assert().NotNull(), write, _folder);
       Write(write, toSave, toDelete);
       return write;
@@ -117,7 +117,7 @@ sealed class TaggregateFileStorage : ITaggregateStorage
 
    ///<summary>Writes every file of <paramref name="everything"/> under a temporary name, then commits them as one, through the journal,<br/>
    /// with no transaction: a failure before the journal is written writes nothing, and comes out of this call.</summary>
-   public void WriteEverythingAnew(IReadOnlyList<TaggregateSnapshot> everything)
+   public void WriteAll(IReadOnlyList<TaggregateSnapshot> everything)
    {
       var write = new PreparedFileWrite(_files, _folder, _ownFolder, _storedFiles);
       Write(write, everything, toDelete: []);

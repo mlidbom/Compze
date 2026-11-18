@@ -8,7 +8,7 @@ using Compze.Tessaging.Validation._internal;
 namespace Compze.Tessaging.Engine.HandlerRegistration._private;
 
 ///<summary>One tevent observer, as the engine holds it: a composed observer, declared at composition, in the<br/>
-/// <see cref="TessageHandlerRoster"/>, or a dynamic observer, created through <see cref="ITeventObservation"/> while the engine<br/>
+/// <see cref="TessageHandlerRoster"/>, or a dynamic observer, created through <see cref="IDynamicTeventObservers"/> while the engine<br/>
 /// runs, which ends when what creating it returned is disposed. It pairs the wrapper routing key its subscription translates to<br/>
 /// with the observing delegate. The engine's <see cref="TeventObservationDispatcher"/> builds one FIFO dispatch queue for each,<br/>
 /// so each observer sees its observed tevents in order while never blocking, or being blocked by, another observer.</summary>
@@ -33,7 +33,7 @@ abstract partial class TeventObserverRegistration
 
    ///<summary>An observer called once for each committed unit of work that published tevents compatible with<br/>
    /// <typeparamref name="TTevent"/>, with those tevents as one list, in publish order.</summary>
-   internal static TeventObserverRegistration ForEachUnitOfWork<TTevent>(Func<IReadOnlyList<TTevent>, IScopeResolver, Task> observer) where TTevent : ITevent
+   internal static TeventObserverRegistration ForTeventsOfEachUnitOfWork<TTevent>(Func<IReadOnlyList<TTevent>, IScopeResolver, Task> observer) where TTevent : ITevent
    {
       TessageInspector.AssertValidForSubscription<TTevent>();
       return new EachUnitOfWork(typeof(TTevent), (wrappedTevents, scope) => observer([..wrappedTevents.Select(AsSubscribed<TTevent>)], scope));
