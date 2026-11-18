@@ -62,6 +62,11 @@ read-only wrapper per key costs an object per key held, which the spike measured
   consumer has. And they should lead with what changed without a signature changing: a taggregate's tevents are no
   longer delivered to other processes unless their hierarchy says so; a tevent store keeps only its declared classes;
   transactions must be begun by `ExecuteUnitOfWork`; a failed publish rolls the unit of work back even when caught.
+- **Stale after Q10:** in `shared/`, the README, `bugs-and-findings.md`, `snapshots-of-every-taggregate-shape.md`,
+  `step-5-the-rest-of-the-teventives.md`, `the-design.md`, `the-files-of-a-state-store.md`, `the-taggregate-store.md`
+  and `what-was-measured.md`; in `opus/`, the README, `1-loading-a-taggregate-from-a-snapshot.md`,
+  `3-told-once-per-publish-cascade.md` and `6-routing-by-convention-compared.md`; and
+  `fable/a-taggregate-without-a-tevent-store.md`.
 - **Stale after Q9:** the README, `step-5-the-rest-of-the-teventives.md`, `the-design.md` and
   `opus/5-prototype-of-per-class-routing.md` still show the explicit `ITeventRouted`.
 - **Stale after Q5:** the README, `the-taggregate-store.md` and `taggregates-with-dependencies.md` still show `fileOf`,
@@ -83,7 +88,7 @@ read-only wrapper per key costs an object per key held, which the spike measured
 | Q7 | A state store's taggregate restarts at version 1 at every load. `RestoreIdentity(id, version)` for a consumer that stores it? | Fable, run | **later:** Magnus, 2026-11-18, with the all-in-memory store's naming and design and how it relates to other ways of storing taggregates: "this goes to the end as well". Recommended: document it |
 | Q8 | `ITeventStoreReader` extends the shared reader, so its `Get` gives any store's taggregates. Make it an interface of only `GetHistory` and `GetReadonlyCopyOfVersion`? (Item 22 decided the inheritance.) | both: don't extend | **later,** with Q2 and Q7: it is how the stores relate (jastudio-rep-opus's call, 2026-11-18) |
 | Q9 | `ITeventRouted`: CA1033 on every public unsealed consumer class (17 in JAStudio), and a forgotten routing fails at first construction. Revisit item 24, or keep? | Fable: a second opinion for the constructor argument; Opus: keep | **decided by Magnus, 2026-11-18: a protected abstract `TeventAppliers` property replaces the explicit `ITeventRouted`; built, d53f30a0d,** [specified here](../tevent-routing-as-a-protected-property.md) |
-| Q10 | Small trims, as a batch: `AssertCanBeChanged` private; `Save` → `Add` without its type parameter; `HasAny` removed; `ITaggregateReference.ForUpdate()` removed; `AssertLosesNothing` removed or kept; `IMutableTaggregateTeventWithIdentity` internal; `ITeventRoutedMember` → `ITeventRoutedPart` with its member internal; `SharedTomponentSlotOfAClass` → `SharedTomponentSlot` taking `Func<TOwner, SharedTomponent<…>>`; `ReloadedTaggregates` as collections; one reload member or two. | mostly both || **decided by Magnus, 2026-11-18: "OK to all";** being built, [specified here](../ten-trims-of-the-public-api.md) |
+| Q10 | Small trims, as a batch: `AssertCanBeChanged` private; `Save` → `Add` without its type parameter; `HasAny` removed; `ITaggregateReference.ForUpdate()` removed; `AssertLosesNothing` removed or kept; `IMutableTaggregateTeventWithIdentity` internal; `ITeventRoutedMember` → `ITeventRoutedPart` with its member internal; `SharedTomponentSlotOfAClass` → `SharedTomponentSlot` taking `Func<TOwner, SharedTomponent<…>>`; `ReloadedTaggregates` as collections; one reload member or two. | mostly both || **decided by Magnus, 2026-11-18: "OK to all"; built, 843a7bebc,** [specified here](../ten-trims-of-the-public-api.md) |
 | Q11 | The naming pass: the rest of the two reviews' name tables. | | |
 | Q12 | `SubscribeForDynamicObservers` on `LocalTessagingEngineBuilder` too, doing nothing there, so that declarations shared by a plain container and an endpoint run unchanged in both, as the builder's documentation promises: today a dynamic observer that works in a plain container is refused once the same declarations compose an endpoint. | raised by the naming agent without our rules, 2026-11-18 | **asked** |
 
