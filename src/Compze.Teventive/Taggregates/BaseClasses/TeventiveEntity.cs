@@ -39,8 +39,8 @@ public abstract class Tentity<TParent,
 
    protected Tentity(TParent taggregate) : base(taggregate) {}
 
-   ///<summary>Declares the tevent appliers of <typeparamref name="TTentity"/>, for it to keep in a static field and return from its explicit<br/>
-   /// implementation of <see cref="ITeventRouted.TeventAppliers"/>. Every tevent dispatched to the entity must reach at least one of them.<br/>
+   ///<summary>Declares the tevent appliers of <typeparamref name="TTentity"/>, for it to keep in a static field and return from its override of<br/>
+   /// <see cref="TeventApplyingComponent{TComponent,TComponentTevent}.TeventAppliers"/>. Every tevent dispatched to the entity must reach at least one of them.<br/>
    /// The routing starts with the entity's own applier of its created tevent, which gives it its <see cref="Id"/>.</summary>
    protected new static TeventRouting<TTentity, TTentityTevent> DeclareAppliers(Action<TeventRouting<TTentity, TTentityTevent>.Declaration> declare) => DeclareTentityAppliers(declare);
 
@@ -80,7 +80,9 @@ public abstract class Tentity<TParent,
       public CollectionManager(TParent parent)
       {
          _parent = parent;
-         TeventRouting.AssertRoutesToAPart<TTentityTevent>(parent, this);
+#pragma warning disable CS0618 // This is just the type of infrastructure code the member is for
+         parent.TeventAppliersInternal.AssertRoutesToAPart<TTentityTevent>(parent, this);
+#pragma warning restore CS0618
       }
 
       protected override TTentityId IdOf(TTentityTevent tevent) => IdGetter.GetId(tevent);

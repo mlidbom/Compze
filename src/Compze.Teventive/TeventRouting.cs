@@ -40,34 +40,27 @@ public abstract class TeventRouting
    ///<summary>Whether this routing routes the tevents of <paramref name="partTevent"/> to a part, a component or an entity collection.</summary>
    private protected abstract bool RoutesToAPartWhoseTeventsAre(Type partTevent);
 
-   ///<summary>Asserts that <paramref name="teventive"/>'s class declares its tevent appliers, for its own exact class: a class that declares none<br/>
-   /// would apply no tevent, and one that inherits its base class's routing would lose its own appliers. Checked when it is constructed.</summary>
-   internal static void AssertDeclaresItsTeventAppliers(ITeventRouted teventive)
+   ///<summary>Asserts that <paramref name="appliers"/>, the routing <paramref name="teventive"/>'s class gives as its <c>TeventAppliers</c>, is<br/>
+   /// declared, for its own exact class: a class that declares none would apply no tevent, and one that inherits its base class's routing<br/>
+   /// would lose its own appliers. Checked when it is constructed.</summary>
+   internal static void AssertDeclaresItsTeventAppliers(object teventive, TeventRouting? appliers)
    {
-      State.Assert(teventive.TeventAppliers is not null,
-                   () => $"{teventive.GetType().FullName} declares no tevent appliers. Declare them with its base class's DeclareAppliers, keep them in a static field, and return them from an explicit implementation of {nameof(ITeventRouted)}.{nameof(ITeventRouted.TeventAppliers)}, listing {nameof(ITeventRouted)} again in the class's base list.");
-      AssertDeclaredForTheClassOf(teventive);
+      State.Assert(appliers is not null,
+                   () => $"{teventive.GetType().FullName} declares no tevent appliers: its TeventAppliers returns none. Declare them with its base class's DeclareAppliers, keep them in a static field, and return them from the class's override: protected override TeventRouting TeventAppliers => Appliers;");
+      appliers!.AssertDeclaredForTheClassOf(teventive);
    }
 
-   ///<summary>Asserts that <paramref name="parent"/>'s routing routes <typeparamref name="TPartTevent"/>s to a part, as it must to reach <paramref name="part"/>:<br/>
-   /// a part whose entry its parent's routing forgot would silently never apply a tevent. Checked when the part is constructed.</summary>
-   internal static void AssertRoutesToAPart<TPartTevent>(ITeventRouted parent, object part) where TPartTevent : ITevent
-   {
-      State.Assert(parent.TeventAppliers._assert().NotNull().RoutesToAPartWhoseTeventsAre(typeof(TPartTevent)),
+   ///<summary>Asserts that this routing, of <paramref name="parent"/>'s class, routes <typeparamref name="TPartTevent"/>s to a part, as it must to reach<br/>
+   /// <paramref name="part"/>: a part whose entry its parent's routing forgot would silently never apply a tevent. Checked when the part is constructed.</summary>
+   internal void AssertRoutesToAPart<TPartTevent>(object parent, object part) where TPartTevent : ITevent =>
+      State.Assert(RoutesToAPartWhoseTeventsAre(typeof(TPartTevent)),
                    () => $"A {part.GetType().FullName} is constructed as a part of a {parent.GetType().FullName}, whose tevent routing routes no {typeof(TPartTevent).FullName} to a part. Enter the part in the routing: Component(...) for a component, Entities(...) for an entity collection.");
-   }
 
-   ///<summary>Asserts that the routing <paramref name="teventive"/> reads through <see cref="ITeventRouted"/>, if any, is declared for its<br/>
-   /// exact class: a class that inherits a routing it doesn't declare for itself has forgotten its own, and would lose its appliers.</summary>
-   internal static void AssertDeclaredForTheClassOf(ITeventRouted teventive)
-   {
-      AssertDeclaredFor(teventive.TeventAppliers);
-      AssertDeclaredFor(teventive.TeventHandlers);
-
-      void AssertDeclaredFor(TeventRouting? routing) =>
-         State.Assert(routing == null || routing.DeclaredFor == teventive.GetType(),
-                      () => $"{teventive.GetType().FullName} uses the tevent routing declared for {routing!.DeclaredFor.FullName}. Every class declares its own: extend its base class's with {nameof(TeventRouting<,>.Extend)}, and implement {nameof(ITeventRouted)} explicitly, listing it again in the class's base list.");
-   }
+   ///<summary>Asserts that this routing, which <paramref name="teventive"/>'s class gives, is declared for its exact class: a class that inherits<br/>
+   /// a routing it doesn't declare for itself has forgotten its own, and would lose its appliers.</summary>
+   internal void AssertDeclaredForTheClassOf(object teventive) =>
+      State.Assert(DeclaredFor == teventive.GetType(),
+                   () => $"{teventive.GetType().FullName} uses the tevent routing declared for {DeclaredFor.FullName}. Every class declares its own: extend its base class's with {nameof(TeventRouting<,>.Extend)}, keep it in a static field, and return it from the class's own override of TeventAppliers, or of TeventHandlers for tevent handlers.");
 }
 
 ///<summary>The tevent routing of the class <typeparamref name="TInstance"/>, whose tevents are <typeparamref name="TTevent"/>s. See <see cref="TeventRouting"/>.</summary>

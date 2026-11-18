@@ -381,11 +381,11 @@ public class Given_a_state_store : UniversalTestBase
       ///<summary>A taggregate class that is <see cref="IDisposable"/>, which a state store refuses to build through the container. It is<br/>
       /// never built: the refusal comes where the store is declared.</summary>
       sealed class DisposableVocab : Taggregate<DisposableVocab, IStoredVocabTevent, StoredVocabTevent, IStoredVocabTevent<IStoredVocabTevent>, StoredVocabTevent<StoredVocabTevent>>,
-                                     ISnapshotable<DisposableVocab, StoredVocabSnapshot>, ITeventRouted, IDisposable
+                                     ISnapshotable<DisposableVocab, StoredVocabSnapshot>, IDisposable
       {
          static readonly TeventRouting<DisposableVocab, IStoredVocabTevent> Appliers = DeclareAppliers(it => it.IgnoreUnhandled<IStoredVocabTevent>());
 
-         TeventRouting ITeventRouted.TeventAppliers => Appliers;
+         protected override TeventRouting TeventAppliers => Appliers;
 
          public void Dispose() {}
 

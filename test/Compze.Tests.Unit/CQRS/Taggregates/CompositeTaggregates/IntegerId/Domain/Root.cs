@@ -5,14 +5,14 @@ using JetBrains.Annotations;
 
 namespace Compze.Tests.Unit.CQRS.Taggregates.CompositeTaggregates.IntegerId.Domain;
 
-class Root : Taggregate<Root, IRootTevent, RootTevent, IRootTevent<IRootTevent>, RootTevent<RootTevent>>, ITeventRouted
+class Root : Taggregate<Root, IRootTevent, RootTevent, IRootTevent<IRootTevent>, RootTevent<RootTevent>>
 {
    static readonly TeventRouting<Root, IRootTevent> Appliers = DeclareAppliers(it => it
      .Component(static root => root.Component)
      .Entities(static root => root._entities)
      .For<IRootTevent.PropertyUpdated.Name>(static (root, tevent) => root.Name = tevent.Name));
 
-   TeventRouting ITeventRouted.TeventAppliers => Appliers;
+   protected override TeventRouting TeventAppliers => Appliers;
 
    static int _instances;
    public string Name { get; private set; } = string.Empty;
@@ -31,13 +31,13 @@ class Root : Taggregate<Root, IRootTevent, RootTevent, IRootTevent<IRootTevent>,
    public RemovableEntity AddEntity(string name) => _entities.AddByPublishing(new RootTevent.Entity.Created(++_instances, name));
 }
 
-class Component : Root.Component<Component, IRootTevent.Component, RootTevent.Component>, ITeventRouted
+class Component : Root.Component<Component, IRootTevent.Component, RootTevent.Component>
 {
    static readonly TeventRouting<Component, IRootTevent.Component> Appliers = DeclareAppliers(it => it
      .Entities(static component => component._entities)
      .For<IRootTevent.Component.PropertyUpdated.Name>(static (component, tevent) => component.Name = tevent.Name));
 
-   TeventRouting ITeventRouted.TeventAppliers => Appliers;
+   protected override TeventRouting TeventAppliers => Appliers;
 
    static int _instances;
    public string? Name { get; private set; } = string.Empty;
@@ -58,12 +58,12 @@ class Component : Root.Component<Component, IRootTevent.Component, RootTevent.Co
       RootTevent.Component.Entity,
       IRootTevent.Component.Entity.Created,
       IRootTevent.Component.Entity.Removed,
-      RootTevent.Component.Entity.IdGetterSetter>, ITeventRouted
+      RootTevent.Component.Entity.IdGetterSetter>
    {
       static readonly TeventRouting<Entity, IRootTevent.Component.Entity> EntityAppliers = DeclareAppliers(it => it
         .For<IRootTevent.Component.Entity.PropertyUpdated.Name>(static (entity, tevent) => entity.Name = tevent.Name));
 
-      TeventRouting ITeventRouted.TeventAppliers => EntityAppliers;
+      protected override TeventRouting TeventAppliers => EntityAppliers;
 
       public string Name { get; private set; } = string.Empty;
       public Entity(Component parent) : base(parent) {}
@@ -81,13 +81,13 @@ class Component : Root.Component<Component, IRootTevent.Component, RootTevent.Co
    RootTevent.Entity,
    IRootTevent.Entity.Created,
    IRootTevent.Entity.Removed,
-   RootTevent.Entity.IdGetterSetter>, ITeventRouted
+   RootTevent.Entity.IdGetterSetter>
 {
    static readonly TeventRouting<RemovableEntity, IRootTevent.Entity> Appliers = DeclareAppliers(it => it
      .Entities(static entity => entity._entities)
      .For<IRootTevent.Entity.PropertyUpdated.Name>(static (entity, tevent) => entity.Name = tevent.Name));
 
-   TeventRouting ITeventRouted.TeventAppliers => Appliers;
+   protected override TeventRouting TeventAppliers => Appliers;
 
    static int _instances;
    public string Name { get; private set; } = string.Empty;
@@ -108,12 +108,12 @@ class Component : Root.Component<Component, IRootTevent.Component, RootTevent.Co
       RootTevent.Entity.NestedEntity,
       IRootTevent.Entity.NestedEntity.Created,
       IRootTevent.Entity.NestedEntity.Removed,
-      RootTevent.Entity.NestedEntity.IdGetterSetter>, ITeventRouted
+      RootTevent.Entity.NestedEntity.IdGetterSetter>
    {
       static readonly TeventRouting<RemovableNestedEntity, IRootTevent.Entity.NestedEntity> NestedEntityAppliers = DeclareAppliers(it => it
         .For<IRootTevent.Entity.NestedEntity.PropertyUpdated.Name>(static (entity, tevent) => entity.Name = tevent.Name));
 
-      TeventRouting ITeventRouted.TeventAppliers => NestedEntityAppliers;
+      protected override TeventRouting TeventAppliers => NestedEntityAppliers;
 
       public string Name { get; private set; } = string.Empty;
       public RemovableNestedEntity(RemovableEntity removableEntity) : base(removableEntity) {}

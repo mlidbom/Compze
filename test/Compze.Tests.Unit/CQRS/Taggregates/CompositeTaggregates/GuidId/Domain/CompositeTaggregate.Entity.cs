@@ -14,13 +14,13 @@ partial class RemovableEntity :
         CompositeTaggregateTevent.Entity,
         ICompositeTaggregateTevent.Entity.Created,
         ICompositeTaggregateTevent.Entity.Removed,
-        CompositeTaggregateTevent.Entity.IdGetterSetter>, ITeventRouted
+        CompositeTaggregateTevent.Entity.IdGetterSetter>
 {
     static readonly TeventRouting<RemovableEntity, ICompositeTaggregateTevent.Entity> Appliers = DeclareAppliers(it => it
        .Entities(static entity => entity._entities)
        .For<ICompositeTaggregateTevent.Entity.PropertyUpdated.Name>(static (entity, tevent) => entity.Name = tevent.Name));
 
-    TeventRouting ITeventRouted.TeventAppliers => Appliers;
+    protected override TeventRouting TeventAppliers => Appliers;
 
     public string Name { get; private set; } = string.Empty;
 

@@ -12,14 +12,14 @@ namespace Compze.Tests.Integration.CQRS.StateStore;
 ///<summary>A vocab note, much reduced, whose snapshot MemoryPack serializes: for a state store kept in files that starts from a<br/>
 /// MemoryPack cache.</summary>
 class CachedVocab : Taggregate<CachedVocab, ICachedVocabTevent, CachedVocabTevent, ICachedVocabTevent<ICachedVocabTevent>, CachedVocabTevent<CachedVocabTevent>>,
-                    ISnapshotable<CachedVocab, CachedVocabSnapshot>, ITeventRouted
+                    ISnapshotable<CachedVocab, CachedVocabSnapshot>
 {
    static readonly TeventRouting<CachedVocab, ICachedVocabTevent> Appliers = DeclareAppliers(it => it
      .For<ICachedVocabCreated>(static (vocab, tevent) => vocab.Question = tevent.Question)
      .For<ICachedVocabMeaningChanged>(static (vocab, tevent) => vocab.Meaning = tevent.Meaning)
      .For<ICachedVocabDeleted>(static (_, _) => {}));
 
-   TeventRouting ITeventRouted.TeventAppliers => Appliers;
+   protected override TeventRouting TeventAppliers => Appliers;
 
    string Question { get; set; } = "";
    public string Meaning { get; private set; } = "";
@@ -58,14 +58,14 @@ partial class CachedVocabSnapshot
 ///<summary>The same vocab note, as a later version of the program keeps it: its snapshot has one field more, so a cache written for<br/>
 /// <see cref="CachedVocabSnapshot"/> doesn't fit it, while the JSON files still do.</summary>
 class CachedVocabWithTags : Taggregate<CachedVocabWithTags, ICachedVocabTevent, CachedVocabTevent, ICachedVocabTevent<ICachedVocabTevent>, CachedVocabTevent<CachedVocabTevent>>,
-                            ISnapshotable<CachedVocabWithTags, CachedVocabWithTagsSnapshot>, ITeventRouted
+                            ISnapshotable<CachedVocabWithTags, CachedVocabWithTagsSnapshot>
 {
    static readonly TeventRouting<CachedVocabWithTags, ICachedVocabTevent> Appliers = DeclareAppliers(it => it
      .For<ICachedVocabCreated>(static (vocab, tevent) => vocab.Question = tevent.Question)
      .For<ICachedVocabMeaningChanged>(static (vocab, tevent) => vocab.Meaning = tevent.Meaning)
      .For<ICachedVocabDeleted>(static (_, _) => {}));
 
-   TeventRouting ITeventRouted.TeventAppliers => Appliers;
+   protected override TeventRouting TeventAppliers => Appliers;
 
    string Question { get; set; } = "";
    public string Meaning { get; private set; } = "";

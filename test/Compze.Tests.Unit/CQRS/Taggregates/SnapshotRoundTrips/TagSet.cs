@@ -7,12 +7,12 @@ using Compze.Teventive.Taggregates.BaseClasses.Shared;
 namespace Compze.Tests.Unit.CQRS.Taggregates.SnapshotRoundTrips;
 
 ///<summary>A set of tags: a shared tomponent, in a slot that belongs to its owner's class.</summary>
-class TagSet : SharedTomponent<ITagSetTevent>, ITeventRouted
+class TagSet : SharedTomponent<ITagSetTevent>
 {
    static readonly TeventRouting<TagSet, ITagSetTevent> Appliers = DeclareAppliers<TagSet>(it => it
      .For<ITagSetTevent.Added>(static (tags, tevent) => tags._tags.Add(tevent.Tag)));
 
-   TeventRouting ITeventRouted.TeventAppliers => Appliers;
+   protected override TeventRouting TeventAppliers => Appliers;
 
    readonly HashSet<string> _tags = [];
 

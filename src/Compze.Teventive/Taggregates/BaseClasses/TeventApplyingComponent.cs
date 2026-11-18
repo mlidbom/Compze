@@ -8,28 +8,31 @@ namespace Compze.Teventive.Taggregates.BaseClasses;
 /// and it routes them on to its tevent appliers, and its own parts', through the routing its class declares with <see cref="DeclareAppliers"/>.</summary>
 ///<remarks>Only Compze's own base classes derive from it.</remarks>
 ///<remarks>review-naming: a placeholder (jastudio-rep-opus, 2026-11-17), for the naming pass of the spike's end review, with <see cref="TeventApplyingRoot{TRoot,TTevent}"/>.</remarks>
-public abstract class TeventApplyingComponent<TComponent, TComponentTevent> : ITeventRoutedMember<TComponentTevent>, ITeventRouted
+public abstract class TeventApplyingComponent<TComponent, TComponentTevent> : ITeventRoutedMember<TComponentTevent>
    where TComponent : TeventApplyingComponent<TComponent, TComponentTevent>
    where TComponentTevent : class, ITevent
 {
-   ///<summary>A component of <paramref name="parent"/>, whose routing is asserted to route this component's tevents to a part.</summary>
-   internal TeventApplyingComponent(ITeventRouted parent) : this() => TeventRouting.AssertRoutesToAPart<TComponentTevent>(parent, this);
+   ///<summary>A component of <paramref name="parent"/>, whose routing, <paramref name="parentAppliers"/>, is asserted to route this component's<br/>
+   /// tevents to a part.</summary>
+   internal TeventApplyingComponent(object parent, TeventRouting parentAppliers) : this() => parentAppliers.AssertRoutesToAPart<TComponentTevent>(parent, this);
 
    ///<summary>An entity of a query model, which the collection its parent's routing routes to creates: the collection is what that routing's entry<br/>
    /// is for, and it asserts the entry when it is created.</summary>
-   internal TeventApplyingComponent() => TeventRouting.AssertDeclaresItsTeventAppliers(this);
+   internal TeventApplyingComponent()
+   {
+      // ReSharper disable once VirtualMemberCallInConstructor The routing is a table in a static field, and the assertion that the class declares its own must run at construction.
+      TeventRouting.AssertDeclaresItsTeventAppliers(this, TeventAppliers);
+   }
 
-#pragma warning disable CA1033 //A class that declares its tevent routing re-implements ITeventRouted; the base class's null means it declares none.
-   TeventRouting? ITeventRouted.TeventAppliers => null;
-   TeventRouting? ITeventRouted.TeventHandlers => null; //A component has no tevent handlers: they are declared on the taggregate.
-#pragma warning restore CA1033
+   ///<summary>The routing of this component's class to its tevent appliers: the table the class declares with <see cref="DeclareAppliers"/>, or a<br/>
+   /// subclass with <see cref="TeventRouting{TInstance,TTevent}.Extend{TSubclass}"/>, keeps in a static field, and returns from its override:<br/>
+   /// <c>protected override TeventRouting TeventAppliers => Appliers;</c><br/>
+   /// Every class overrides it with its own: one that inherits its base class's is refused when it is constructed. Its parent's routing<br/>
+   /// reaches it through <see cref="TeventRouting{TInstance,TTevent}.Declaration.Component{TComponentTevent}"/>.</summary>
+   protected abstract TeventRouting TeventAppliers { get; }
 
-   ///<summary>The routing of this component's class to its tevent appliers, read through <see cref="ITeventRouted"/>: declared, as construction asserted.<br/>
-   /// Its parent's routing reaches it through <see cref="TeventRouting{TInstance,TTevent}.Declaration.Component{TComponentTevent}"/>.</summary>
-   TeventRouting TeventAppliers => ((ITeventRouted)this).TeventAppliers!;
-
-   ///<summary>Declares the tevent appliers of <typeparamref name="TComponent"/>, for it to keep in a static field and return from its explicit<br/>
-   /// implementation of <see cref="ITeventRouted.TeventAppliers"/>. Every tevent dispatched to the component must reach at least one of them.<br/>
+   ///<summary>Declares the tevent appliers of <typeparamref name="TComponent"/>, for it to keep in a static field and return from its override of<br/>
+   /// <see cref="TeventAppliers"/>. Every tevent dispatched to the component must reach at least one of them.<br/>
    /// A subclass of <typeparamref name="TComponent"/> extends that routing with <see cref="TeventRouting{TInstance,TTevent}.Extend{TSubclass}"/>.</summary>
    protected static TeventRouting<TComponent, TComponentTevent> DeclareAppliers(Action<TeventRouting<TComponent, TComponentTevent>.Declaration> declare) =>
       TeventRouting<TComponent, TComponentTevent>.DeclareAppliers(declare);

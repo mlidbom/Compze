@@ -10,7 +10,7 @@ using Compze.Teventive.Taggregates.Tevents;
 
 namespace Compze.Teventive.Taggregates.BaseClasses;
 
-public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeventImplementation, TWrapperTeventInterface, TWrapperTeventImplementation> :
+public abstract partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeventImplementation, TWrapperTeventInterface, TWrapperTeventImplementation> :
    TeventApplyingRoot<TTaggregate, TTaggregateTevent>,
    ITaggregate<TTaggregateTevent>,
    ITeventiveInternals<TTaggregateTevent, TTaggregateTeventImplementation>,
@@ -25,18 +25,25 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
    static Taggregate() => TaggregateTypeValidator<TTaggregate, TTaggregateTeventImplementation, TTaggregateTevent>.AssertStaticStructureIsValid();
 
    ///<summary>Only <typeparamref name="TTaggregate"/> constructs its base class.</summary>
-   protected Taggregate() {}
+   protected Taggregate()
+   {
+      // ReSharper disable once VirtualMemberCallInConstructor The routing is a table in a static field, and the assertion that the class declares its own must run at construction.
+      TeventHandlers?.AssertDeclaredForTheClassOf(this);
+   }
 
    protected virtual Type WrapperTeventImplementation => typeof(TWrapperTeventImplementation);
 
    TWrapperTeventInterface WrapTevent(TTaggregateTevent tevent) =>
       (TWrapperTeventInterface)TaggregateIdentifyingTevent.WrapIn(WrapperTeventImplementation, tevent);
 
-   ///<summary>The routing of this taggregate's class to its tevent handlers, when the class declares one, read through <see cref="ITeventRouted"/>.</summary>
-   TeventRouting? TeventHandlers => ((ITeventRouted)this).TeventHandlers;
+   ///<summary>The routing of this taggregate's class to its tevent handlers, when the class declares one: the table the class declares with<br/>
+   /// <see cref="DeclareHandlers"/>, or a subclass with <see cref="TeventRouting{TInstance,TTevent}.Extend{TSubclass}"/>, keeps in a static field, and<br/>
+   /// returns from its override: <c>protected override TeventRouting TeventHandlers => Handlers;</c> None unless overridden. A class that<br/>
+   /// inherits its base class's is refused when it is constructed: every class with tevent handlers overrides it with its own.</summary>
+   protected virtual TeventRouting? TeventHandlers => null;
 
-   ///<summary>Declares the tevent handlers of <typeparamref name="TTaggregate"/>, for it to keep in a static field and return from its explicit<br/>
-   /// implementation of <see cref="ITeventRouted.TeventHandlers"/>. They run after every applier has applied the tevent, and a tevent may reach none.</summary>
+   ///<summary>Declares the tevent handlers of <typeparamref name="TTaggregate"/>, for it to keep in a static field and return from its override of<br/>
+   /// <see cref="TeventHandlers"/>. They run after every applier has applied the tevent, and a tevent may reach none.</summary>
    protected static TeventRouting<TTaggregate, TTaggregateTevent> DeclareHandlers(Action<TeventRouting<TTaggregate, TTaggregateTevent>.Declaration> declare) =>
       TeventRouting<TTaggregate, TTaggregateTevent>.DeclareHandlers(declare);
 
@@ -182,6 +189,7 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
    readonly SimpleObservable<ITaggregateTevent<TTaggregateTevent>> _teventStream = new();
 #pragma warning disable CA1033 //These method should NOT clutter the public interface of Taggregates.
    void ITeventiveInternals<TTaggregateTevent, TTaggregateTeventImplementation>.PublishInternal(TTaggregateTeventImplementation theTevent) => Publish(theTevent);
+   TeventRouting ITeventiveInternals<TTaggregateTevent, TTaggregateTeventImplementation>.TeventAppliersInternal => TeventAppliers;
 
    void ITaggregateStoreInternals.MakeReadOnly() => _isReadOnly = true;
    void ITaggregateStoreInternals.EndTheRestore() => _isBeingRestored = false;

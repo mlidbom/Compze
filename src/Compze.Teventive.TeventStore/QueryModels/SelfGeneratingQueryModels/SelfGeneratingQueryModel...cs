@@ -8,7 +8,8 @@ namespace Compze.Teventive.TeventStore.QueryModels.SelfGeneratingQueryModels;
 ///<summary>A query model that builds its state by applying a taggregate's tevents, exactly as the taggregate's own state is built: through the tevent appliers<br/>
 /// its class declares with <see cref="TeventApplyingRoot{TRoot,TTevent}.DeclareAppliers"/>, and those of its components and entities. Unlike a taggregate,<br/>
 /// it publishes nothing: the tevents are given to it, from a taggregate's history or as they are published.</summary>
-public abstract partial class SelfGeneratingQueryModel<TQueryModel, TTaggregateTevent> : TeventApplyingRoot<TQueryModel, TTaggregateTevent>
+public abstract partial class SelfGeneratingQueryModel<TQueryModel, TTaggregateTevent> : TeventApplyingRoot<TQueryModel, TTaggregateTevent>,
+                                                                                      SelfGeneratingQueryModel<TQueryModel, TTaggregateTevent>.IParent
    where TQueryModel : SelfGeneratingQueryModel<TQueryModel, TTaggregateTevent>
    where TTaggregateTevent : class, ITaggregateTevent
 {

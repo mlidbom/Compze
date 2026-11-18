@@ -10,13 +10,13 @@ namespace Compze.Tests.Integration.CQRS.StateStore;
 
 ///<summary>A deck of cards: a taggregate with entities, which its restore from a snapshot adds without their tevents.</summary>
 class StoredDeck : Taggregate<StoredDeck, IStoredDeckTevent, StoredDeckTevent, IStoredDeckTevent<IStoredDeckTevent>, StoredDeckTevent<StoredDeckTevent>>,
-                   ISnapshotable<StoredDeck, StoredDeckSnapshot>, ITeventRouted
+                   ISnapshotable<StoredDeck, StoredDeckSnapshot>
 {
    static readonly TeventRouting<StoredDeck, IStoredDeckTevent> Appliers = DeclareAppliers(it => it
      .IgnoreUnhandled<IStoredDeckTevent.Created>()
      .Entities(static deck => deck._cards));
 
-   TeventRouting ITeventRouted.TeventAppliers => Appliers;
+   protected override TeventRouting TeventAppliers => Appliers;
 
    readonly StoredCard.ICollectionManager _cards;
 
@@ -49,12 +49,12 @@ class StoredDeck : Taggregate<StoredDeck, IStoredDeckTevent, StoredDeckTevent, I
 }
 
 ///<summary>A card of a <see cref="StoredDeck"/>.</summary>
-class StoredCard : StoredDeck.Entity<StoredCard, Guid, IStoredDeckTevent.Card, StoredDeckTevent.Card, IStoredDeckTevent.Card.Added, StoredDeckTevent.Card.IdGetterSetter>, ITeventRouted
+class StoredCard : StoredDeck.Entity<StoredCard, Guid, IStoredDeckTevent.Card, StoredDeckTevent.Card, IStoredDeckTevent.Card.Added, StoredDeckTevent.Card.IdGetterSetter>
 {
    static readonly TeventRouting<StoredCard, IStoredDeckTevent.Card> CardAppliers = DeclareAppliers(it => it
      .For<IStoredDeckTevent.Card.Added>(static (card, tevent) => card.Text = tevent.Text));
 
-   TeventRouting ITeventRouted.TeventAppliers => CardAppliers;
+   protected override TeventRouting TeventAppliers => CardAppliers;
 
    public StoredCard(StoredDeck deck) : base(deck) {}
 

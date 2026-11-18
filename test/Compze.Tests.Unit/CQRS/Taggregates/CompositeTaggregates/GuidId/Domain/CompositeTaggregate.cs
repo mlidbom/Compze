@@ -6,7 +6,7 @@ using Compze.Teventive.Taggregates.BaseClasses;
 
 namespace Compze.Tests.Unit.CQRS.Taggregates.CompositeTaggregates.GuidId.Domain;
 
-class CompositeTaggregate : Taggregate<CompositeTaggregate, ICompositeTaggregateTevent, CompositeTaggregateTevent, ICompositeTaggregateTevent<ICompositeTaggregateTevent>, CompositeTaggregateTevent<CompositeTaggregateTevent>>, ITeventRouted,
+class CompositeTaggregate : Taggregate<CompositeTaggregate, ICompositeTaggregateTevent, CompositeTaggregateTevent, ICompositeTaggregateTevent<ICompositeTaggregateTevent>, CompositeTaggregateTevent<CompositeTaggregateTevent>>,
                             ISnapshotable<CompositeTaggregate, CompositeTaggregateSnapshot>
 {
    static readonly TeventRouting<CompositeTaggregate, ICompositeTaggregateTevent> Appliers = DeclareAppliers(it => it
@@ -14,7 +14,7 @@ class CompositeTaggregate : Taggregate<CompositeTaggregate, ICompositeTaggregate
      .Entities(static taggregate => taggregate._entities)
      .For<ICompositeTaggregateTevent.PropertyUpdated.Name>(static (taggregate, tevent) => taggregate.Name = tevent.Name));
 
-   TeventRouting ITeventRouted.TeventAppliers => Appliers;
+   protected override TeventRouting TeventAppliers => Appliers;
 
    public string Name { get; private set; } = string.Empty;
    readonly RemovableEntity.ICollectionManager _entities;

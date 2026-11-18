@@ -10,7 +10,7 @@ namespace Compze.Tests.Integration.CQRS.StateStore;
 
 ///<summary>A vocab note, much reduced: a taggregate that a state store keeps as its state.</summary>
 class StoredVocab : Taggregate<StoredVocab, IStoredVocabTevent, StoredVocabTevent, IStoredVocabTevent<IStoredVocabTevent>, StoredVocabTevent<StoredVocabTevent>>,
-                    ISnapshotable<StoredVocab, StoredVocabSnapshot>, ITeventRouted
+                    ISnapshotable<StoredVocab, StoredVocabSnapshot>
 {
    static readonly TeventRouting<StoredVocab, IStoredVocabTevent> Appliers = DeclareAppliers(it => it
      .For<IStoredVocabCreated>(static (vocab, tevent) => vocab.Question = tevent.Question)
@@ -22,7 +22,7 @@ class StoredVocab : Taggregate<StoredVocab, IStoredVocabTevent, StoredVocabTeven
       })
      .For<IStoredVocabDeleted>(static (_, _) => {}));
 
-   TeventRouting ITeventRouted.TeventAppliers => Appliers;
+   protected override TeventRouting TeventAppliers => Appliers;
 
    public const string MeaningThatFailsToApply = "a meaning that fails to apply";
 

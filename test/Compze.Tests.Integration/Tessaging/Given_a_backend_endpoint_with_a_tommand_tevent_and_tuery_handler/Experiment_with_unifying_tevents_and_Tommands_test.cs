@@ -139,12 +139,12 @@ public class Experiment_with_unifying_tevents_and_tommands_test : UniversalTestB
       public class Created() : UserRegistrarTevent(UserRegistrarTaggregate.SingletonId), ITaggregateCreatedTevent;
    }
 
-   public sealed class UserRegistrarTaggregate : Taggregate<UserRegistrarTaggregate, IUserRegistrarTevent, UserRegistrarTevent, IUserRegistrarTevent<IUserRegistrarTevent>, UserRegistrarTevent<UserRegistrarTevent>>, ITeventRouted
+   public sealed class UserRegistrarTaggregate : Taggregate<UserRegistrarTaggregate, IUserRegistrarTevent, UserRegistrarTevent, IUserRegistrarTevent<IUserRegistrarTevent>, UserRegistrarTevent<UserRegistrarTevent>>
    {
       //This test taggregate maintains no state, so no tevent has an applier.
       static readonly TeventRouting<UserRegistrarTaggregate, IUserRegistrarTevent> Appliers = DeclareAppliers(it => it.IgnoreUnhandled<IUserRegistrarTevent>());
 
-      TeventRouting ITeventRouted.TeventAppliers => Appliers;
+      protected override TeventRouting TeventAppliers => Appliers;
 
       internal static readonly TaggregateId SingletonId = new(Guid.Parse("5C400DD9-50FB-40C7-8A13-265005588AED"));
 
@@ -160,12 +160,12 @@ public class Experiment_with_unifying_tevents_and_tommands_test : UniversalTestB
       internal static RegisterUserResult RegisterUser(IRemoteTypermediaNavigator navigator) => UserRegistrarTommand.RegisterUserTypermediaTommand.Create().PostOn(navigator);
    }
 
-   public sealed class UserTaggregate : Taggregate<UserTaggregate, IUserTevent, UserTevent, IUserTevent<IUserTevent>, UserTevent<UserTevent>>, ITeventRouted
+   public sealed class UserTaggregate : Taggregate<UserTaggregate, IUserTevent, UserTevent, IUserTevent<IUserTevent>, UserTevent<UserTevent>>
    {
       //This test taggregate maintains no state, so no tevent has an applier.
       static readonly TeventRouting<UserTaggregate, IUserTevent> Appliers = DeclareAppliers(it => it.IgnoreUnhandled<IUserTevent>());
 
-      TeventRouting ITeventRouted.TeventAppliers => Appliers;
+      protected override TeventRouting TeventAppliers => Appliers;
 
       UserTaggregate() {}
 

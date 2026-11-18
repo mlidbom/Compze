@@ -17,12 +17,12 @@ partial class Component
             ICompositeTaggregateTevent.Component.NonRemovableEntity,
             CompositeTaggregateTevent.Component.NonRemovableEntity,
             ICompositeTaggregateTevent.Component.NonRemovableEntity.Created,
-            CompositeTaggregateTevent.Component.NonRemovableEntity.IdGetterSetter>, ITeventRouted
+            CompositeTaggregateTevent.Component.NonRemovableEntity.IdGetterSetter>
     {
         static readonly TeventRouting<NonRemovableEntity, ICompositeTaggregateTevent.Component.NonRemovableEntity> NonRemovableEntityAppliers = DeclareAppliers(it => it
            .For<ICompositeTaggregateTevent.Component.NonRemovableEntity.PropertyUpdated.Name>(static (entity, tevent) => entity.Name = tevent.Name));
 
-        TeventRouting ITeventRouted.TeventAppliers => NonRemovableEntityAppliers;
+        protected override TeventRouting TeventAppliers => NonRemovableEntityAppliers;
 
         public string Name { get; private set; } = string.Empty;
 

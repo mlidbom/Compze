@@ -10,12 +10,12 @@ namespace Compze.Tests.Integration.CQRS.StateStore;
 
 ///<summary>A sentence note, much reduced: a second taggregate class, for a unit of work that holds one class and looks up another.</summary>
 class StoredSentence : Taggregate<StoredSentence, IStoredSentenceTevent, StoredSentenceTevent, IStoredSentenceTevent<IStoredSentenceTevent>, StoredSentenceTevent<StoredSentenceTevent>>,
-                       ISnapshotable<StoredSentence, StoredSentenceSnapshot>, ITeventRouted
+                       ISnapshotable<StoredSentence, StoredSentenceSnapshot>
 {
    static readonly TeventRouting<StoredSentence, IStoredSentenceTevent> Appliers = DeclareAppliers(it => it
      .For<IStoredSentenceCreated>(static (sentence, tevent) => sentence.Text = tevent.Text));
 
-   TeventRouting ITeventRouted.TeventAppliers => Appliers;
+   protected override TeventRouting TeventAppliers => Appliers;
 
    string Text { get; set; } = "";
 

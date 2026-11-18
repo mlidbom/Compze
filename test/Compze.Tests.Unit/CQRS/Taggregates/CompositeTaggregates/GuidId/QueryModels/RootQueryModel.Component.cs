@@ -6,7 +6,7 @@ using Compze.Teventive.Taggregates.BaseClasses;
 
 namespace Compze.Tests.Unit.CQRS.Taggregates.CompositeTaggregates.GuidId.QueryModels;
 
-partial class Component : RootQueryModel.Component<Component, ICompositeTaggregateTevent.Component>, ITeventRouted
+partial class Component : RootQueryModel.Component<Component, ICompositeTaggregateTevent.Component>
 {
    static readonly TeventRouting<Component, ICompositeTaggregateTevent.Component> Appliers = DeclareAppliers(it => it
      .Entities(static component => component._entities)
@@ -14,7 +14,7 @@ partial class Component : RootQueryModel.Component<Component, ICompositeTaggrega
      .Component(static component => component.CComponent)
      .For<ICompositeTaggregateTevent.Component.PropertyUpdated.Name>(static (component, tevent) => component.Name = tevent.Name));
 
-   TeventRouting ITeventRouted.TeventAppliers => Appliers;
+   protected override TeventRouting TeventAppliers => Appliers;
 
    public Component(RootQueryModel root) : base(root)
    {
