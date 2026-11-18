@@ -11,14 +11,14 @@ namespace Compze.Teventive.Taggregates.BaseClasses.Shared;
 public readonly ref struct SharedTomponentSlotInAnOwner<TTomponentTevent>
    where TTomponentTevent : class, ITevent
 {
-   internal SharedTomponentSlotInAnOwner(object owner, ISharedTomponentSlotOfAClass<TTomponentTevent> slot)
+   internal SharedTomponentSlotInAnOwner(object owner, ISharedTomponentSlot<TTomponentTevent> slot)
    {
       Owner = owner;
       Slot = slot;
    }
 
    internal object Owner { get; }
-   internal ISharedTomponentSlotOfAClass<TTomponentTevent> Slot { get; }
+   internal ISharedTomponentSlot<TTomponentTevent> Slot { get; }
 }
 
 ///<summary>A slot for a shared tomponent in the class <typeparamref name="TOwner"/>: declared once, in a static field of that class, and shared by every instance of it.<br/>
@@ -30,7 +30,7 @@ public readonly ref struct SharedTomponentSlotInAnOwner<TTomponentTevent>
 /// Declare the slots in a nested static class, such as <c>Slots</c>: the runtime initializes a class's static fields before the first<br/>
 /// read of any of them, so the routing may be declared above or below the slots. Declared beside the routing in the owner's class<br/>
 /// itself, a slot must be above it, since static fields are initialized in the order written.</remarks>
-public sealed class SharedTomponentSlotOfAClass<TOwner, TOwnerTevent, TOwnerTeventImplementation, TTomponentTevent, TAdoptingWrapperTevent> : ISharedTomponentSlotOfAClass<TTomponentTevent>
+public sealed class SharedTomponentSlot<TOwner, TOwnerTevent, TOwnerTeventImplementation, TTomponentTevent, TAdoptingWrapperTevent> : ISharedTomponentSlot<TTomponentTevent>
    where TOwner : class
    where TOwnerTevent : class, ITaggregateTevent
    where TOwnerTeventImplementation : TaggregateTevent, TOwnerTevent
@@ -38,14 +38,14 @@ public sealed class SharedTomponentSlotOfAClass<TOwner, TOwnerTevent, TOwnerTeve
    where TAdoptingWrapperTevent : class, TOwnerTevent, IPublisherTevent<TTomponentTevent>
 {
    readonly Type _adoptingWrapperTeventImplementation;
-   readonly Func<TOwner, ISharedTomponentInternals<TTomponentTevent>> _tomponentOf;
+   readonly Func<TOwner, SharedTomponent<TTomponentTevent>> _tomponentOf;
 
    ///<param name="adoptingWrapperTeventImplementation">The implementation class of <typeparamref name="TAdoptingWrapperTevent"/>, such as <c>typeof(SeeAlsoTevent&lt;&gt;)</c>.<br/>
    /// Its generic type definition is closed over each tevent's own type, as a taggregate's wrapper tevent implementation is.</param>
    ///<param name="tomponentOf">Gets the shared tomponent in this slot from an owner. It must hold no state: every owner of the class shares it.</param>
    ///<exception cref="ArgumentException"><paramref name="adoptingWrapperTeventImplementation"/> doesn't implement <typeparamref name="TAdoptingWrapperTevent"/>, such as another slot's:<br/>
    /// this slot's tevents would then be routed to the other slot's tomponent.</exception>
-   public SharedTomponentSlotOfAClass(Type adoptingWrapperTeventImplementation, Func<TOwner, ISharedTomponentInternals<TTomponentTevent>> tomponentOf)
+   public SharedTomponentSlot(Type adoptingWrapperTeventImplementation, Func<TOwner, SharedTomponent<TTomponentTevent>> tomponentOf)
    {
       Argument.Assert(typeof(ITeventiveInternals<TOwnerTevent, TOwnerTeventImplementation>).IsAssignableFrom(typeof(TOwner)),
                       () => $"A slot's owner publishes the tevents adopted through it, so {typeof(TOwner)} must be a taggregate or a component whose tevents are {typeof(TOwnerTevent)}.");
@@ -68,7 +68,7 @@ public sealed class SharedTomponentSlotOfAClass<TOwner, TOwnerTevent, TOwnerTeve
    internal ISharedTomponentInternals<TTomponentTevent> TomponentOf(TOwner owner)
    {
       var tomponent = _tomponentOf(owner);
-      State.Assert(tomponent is SharedTomponent<TTomponentTevent> shared && shared.IsIn(this),
+      State.Assert(tomponent.IsIn(this),
                    () => $"The shared tomponent the slot for {typeof(TAdoptingWrapperTevent)} gets from a {typeof(TOwner)} was not constructed with that slot. Construct it with this slot's In(owner).");
       return tomponent;
    }
@@ -81,7 +81,7 @@ public sealed class SharedTomponentSlotOfAClass<TOwner, TOwnerTevent, TOwnerTeve
    ///<summary>Publishes <paramref name="tevent"/> as the owner's tevent, in this slot's adopting wrapper tevent, once asserted to come from the shared tomponent<br/>
    /// the owner keeps in this slot's member: a tomponent constructed with this slot and kept in another slot's member would have its tevents applied<br/>
    /// to this slot's tomponent.</summary>
-   void ISharedTomponentSlotOfAClass<TTomponentTevent>.PublishInternal(object owner, object publisher, TTomponentTevent tevent)
+   void ISharedTomponentSlot<TTomponentTevent>.PublishInternal(object owner, object publisher, TTomponentTevent tevent)
    {
       State.Assert(ReferenceEquals(_tomponentOf((TOwner)owner), publisher),
                    () => $"A shared tomponent constructed with the slot for {typeof(TAdoptingWrapperTevent)} publishes, but its {typeof(TOwner)} keeps another tomponent in that slot's member. Construct each shared tomponent with the slot of the member it is kept in.");

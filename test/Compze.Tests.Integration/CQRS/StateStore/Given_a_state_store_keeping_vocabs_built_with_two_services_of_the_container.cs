@@ -34,7 +34,7 @@ public class Given_a_state_store_keeping_vocabs_built_with_two_services_of_the_c
                                                  .StoredInFiles(_folder, Options, files => files.Of<StoredVocab>("vocab").KeptInMemory()));
       builder.Registrar.LocalTessagingEngine(_ => {});
       _container = builder.Build();
-      InUnitOfWork(taggregates => taggregates.Save(StoredVocab.Create(VocabId, "taberu")));
+      InUnitOfWork(taggregates => taggregates.Add(StoredVocab.Create(VocabId, "taberu")));
    }
 
    TaggregateId VocabId { get; } = new(Guid.NewGuid());

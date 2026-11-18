@@ -34,7 +34,7 @@ class User : Taggregate<User, IUserTevent, UserTevent, IUserTevent<IUserTevent>,
    {
       var user = new User();
       user.Register(email, password, id);
-      taggregates.Save(user);
+      taggregates.Add(user);
       return user;
    }
 

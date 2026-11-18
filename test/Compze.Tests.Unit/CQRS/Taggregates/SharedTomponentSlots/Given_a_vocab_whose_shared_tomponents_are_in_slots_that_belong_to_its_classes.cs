@@ -7,7 +7,7 @@ using Compze.xUnitBDD;
 // ReSharper disable InconsistentNaming for testing
 #pragma warning disable IDE1006 //Reviewed OK: Test Naming Styles
 
-namespace Compze.Tests.Unit.CQRS.Taggregates.SharedTomponentSlotsOfAClass;
+namespace Compze.Tests.Unit.CQRS.Taggregates.SharedTomponentSlots;
 
 ///<summary>Slots for shared tomponents that belong to their owner's class, as static fields of a nested class, instead of a slot object in<br/>
 /// each owner. The vocab has one such slot itself, and its component has two of one class, declared below the component's routing.</summary>

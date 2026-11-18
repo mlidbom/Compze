@@ -13,7 +13,4 @@ public interface ITaggregateIndex<out TTaggregate, in TKey> where TTaggregate : 
    /// many callers spend on what they find. A caller that needs an order, or one of several by a rule of its own, sorts or chooses<br/>
    /// itself, after it has filtered.</remarks>
    IReadOnlyCollection<ITaggregateReference<TTaggregate>> Lookup(TKey key);
-
-   ///<summary>Whether any taggregate is filed under <paramref name="key"/>, as <see cref="Lookup"/> would find it.</summary>
-   bool HasAny(TKey key);
 }

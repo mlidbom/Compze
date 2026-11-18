@@ -1,5 +1,5 @@
 >[!Note]
-> The taggregate base classes now contain built-in support for this: a shared tomponent is written once as a `SharedTomponent`, and its owner's class declares a slot for it, a `SharedTomponentSlotOfAClass`, which performs the wrapping described below for you. This page has not yet caught up with teaching that support.
+> The taggregate base classes now contain built-in support for this: a shared tomponent is written once as a `SharedTomponent`, and its owner's class declares a slot for it, a `SharedTomponentSlot`, which performs the wrapping described below for you. This page has not yet caught up with teaching that support.
 
 >[!NOTE]
 > Taggregate specific nested components and entities are fully supported already. We've already [shown examples](tevent-naming.md) of how tevents for them look. You just nest component/entity tevent interfaces within your root tevent interface. Simple. What we are discussing on this page is how to create tevent based components and entities that can be used in multiple different tevent based taggregates without code duplication. That is another ballgame.

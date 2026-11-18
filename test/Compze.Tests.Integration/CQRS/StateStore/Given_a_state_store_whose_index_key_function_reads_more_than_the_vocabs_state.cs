@@ -33,7 +33,7 @@ public class Given_a_state_store_whose_index_key_function_reads_more_than_the_vo
                                                  .Index<StoredVocab, string>(vocab => [_prefixOutsideTheVocab + vocab.Question]));
       builder.Registrar.LocalTessagingEngine(_ => {});
       _container = builder.Build();
-      InUnitOfWork(taggregates => taggregates.Save(StoredVocab.Create(_vocabId, "taberu")));
+      InUnitOfWork(taggregates => taggregates.Add(StoredVocab.Create(_vocabId, "taberu")));
    }
 
    void InUnitOfWork(Action<ITaggregateStoreUpdater> work) =>

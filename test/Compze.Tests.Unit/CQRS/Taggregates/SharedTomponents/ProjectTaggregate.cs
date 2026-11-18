@@ -46,7 +46,7 @@ class ProjectTaggregate : Taggregate<ProjectTaggregate, IProjectTevent, ProjectT
 {
    static class Slots
    {
-      internal static readonly SharedTomponentSlotOfAClass<ProjectTaggregate, IProjectTevent, ProjectTevent, IChecklistItemTevent, IChecklistTevent<IChecklistItemTevent>> Checklist =
+      internal static readonly SharedTomponentSlot<ProjectTaggregate, IProjectTevent, ProjectTevent, IChecklistItemTevent, IChecklistTevent<IChecklistItemTevent>> Checklist =
          new(typeof(ChecklistTevent<>), static project => project.Checklist);
    }
 

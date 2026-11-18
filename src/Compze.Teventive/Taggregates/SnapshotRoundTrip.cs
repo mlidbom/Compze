@@ -18,21 +18,11 @@ namespace Compze.Teventive.Taggregates;
 /// tevents, aren't state, nor are delegates.</remarks>
 public static class SnapshotRoundTrip
 {
-   ///<summary>Throws, naming each difference, unless a copy of <paramref name="taggregate"/> made through a snapshot, as a state store<br/>
-   /// makes a unit of work's copy, holds the state <paramref name="taggregate"/> holds.</summary>
+   ///<summary>Each difference between <paramref name="taggregate"/> and a copy of it made through a snapshot, as a state store makes a<br/>
+   /// unit of work's copy: a line naming its path from the taggregate, and its value in each. None when the snapshot loses nothing,<br/>
+   /// so a specification asserts that the list is empty, and a tool that checks many taggregates reports what it finds.</summary>
    ///<param name="taggregate">An instance of the class to check, with state in every field it has, and in every part.</param>
    ///<param name="createEmpty">Builds a new, empty instance of the class, as the store that keeps it is told to.</param>
-   ///<remarks>review-naming: SnapshotRoundTrip.AssertLosesNothing is a placeholder until the naming pass.</remarks>
-   public static void AssertLosesNothing<TTaggregate, TSnapshot>(TTaggregate taggregate,
-                                                                Func<ISnapshotable<TTaggregate, TSnapshot>> createEmpty)
-      where TTaggregate : class, ITaggregate, ISnapshotable<TTaggregate, TSnapshot>
-   {
-      var differences = DifferencesOf(taggregate, createEmpty);
-      if(differences.Count > 0) throw new SnapshotRoundTripFailedException(typeof(TTaggregate), differences);
-   }
-
-   ///<summary>Each difference that <see cref="AssertLosesNothing{TTaggregate,TSnapshot}"/> finds, as a line naming its path from the<br/>
-   /// taggregate, and none when the snapshot loses nothing: for a tool that checks many taggregates and reports what it finds.</summary>
    ///<remarks>review-naming: SnapshotRoundTrip.DifferencesOf is a placeholder until the naming pass.</remarks>
    public static IReadOnlyList<string> DifferencesOf<TTaggregate, TSnapshot>(TTaggregate taggregate,
                                                                              Func<ISnapshotable<TTaggregate, TSnapshot>> createEmpty)

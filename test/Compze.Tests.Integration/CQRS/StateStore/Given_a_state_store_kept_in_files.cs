@@ -69,7 +69,7 @@ public class Given_a_state_store_kept_in_files : UniversalTestBase
    void InUnitOfWork(Action<ITaggregateStoreUpdater> work) =>
       Store.ScopeFactory.ExecuteUnitOfWork(unitOfWork => work(unitOfWork.Resolve<ITaggregateStoreUpdater>()));
 
-   void SaveTheVocab(string question) => InUnitOfWork(taggregates => taggregates.Save(StoredVocab.Create(VocabId, question)));
+   void AddTheVocab(string question) => InUnitOfWork(taggregates => taggregates.Add(StoredVocab.Create(VocabId, question)));
 
    ///<summary>Every file under the vocab folder, at any depth, as paths relative to it.</summary>
    IReadOnlyList<string> VocabFiles => VocabFolder.Exists ? [..Directory.EnumerateFiles(VocabFolder.FullName, "*", SearchOption.AllDirectories).Select(it => Path.GetRelativePath(VocabFolder.FullName, it))] : [];
@@ -84,9 +84,9 @@ public class Given_a_state_store_kept_in_files : UniversalTestBase
       if(_folder.Exists) _folder.Delete(recursive: true);
    }
 
-   public class after_a_unit_of_work_saves_a_vocab : Given_a_state_store_kept_in_files
+   public class after_a_unit_of_work_adds_a_vocab : Given_a_state_store_kept_in_files
    {
-      public after_a_unit_of_work_saves_a_vocab() => SaveTheVocab("taberu");
+      public after_a_unit_of_work_adds_a_vocab() => AddTheVocab("taberu");
 
       [PCT] public void the_vocab_folder_holds_one_file_named_by_the_vocabs_id_in_a_folder_named_by_its_first_two_hex_digits() =>
          VocabFiles.Must().SequenceEqual([Path.GetRelativePath(VocabFolder.FullName, VocabFileByDefault)]);
@@ -96,7 +96,7 @@ public class Given_a_state_store_kept_in_files : UniversalTestBase
 
       [PCT] public void the_stores_own_folder_holds_no_temporary_file_or_journal() => FilesInTheStoresOwnFolder.Must().BeEmpty();
 
-      public class and_another_store_is_started_on_the_folder : after_a_unit_of_work_saves_a_vocab
+      public class and_another_store_is_started_on_the_folder : after_a_unit_of_work_adds_a_vocab
       {
          public and_another_store_is_started_on_the_folder() => StartAStore();
 
@@ -104,7 +104,7 @@ public class Given_a_state_store_kept_in_files : UniversalTestBase
       }
 
       ///<summary>The store started on an empty folder, so the vocab folder didn't exist when it first loaded.</summary>
-      public class and_the_store_reloads_from_its_files : after_a_unit_of_work_saves_a_vocab
+      public class and_the_store_reloads_from_its_files : after_a_unit_of_work_adds_a_vocab
       {
          readonly ReloadedTaggregates _reloaded;
 
@@ -115,7 +115,7 @@ public class Given_a_state_store_kept_in_files : UniversalTestBase
          [PCT] public void the_store_still_has_the_vocab() => Reader.Get<StoredVocab>(VocabId).Question.Must().Be("taberu");
       }
 
-      public class and_a_unit_of_work_changes_its_meaning : after_a_unit_of_work_saves_a_vocab
+      public class and_a_unit_of_work_changes_its_meaning : after_a_unit_of_work_adds_a_vocab
       {
          public and_a_unit_of_work_changes_its_meaning() => InUnitOfWork(taggregates => taggregates.GetForUpdate<StoredVocab>(VocabId).ChangeMeaning("to eat"));
 
@@ -131,7 +131,7 @@ public class Given_a_state_store_kept_in_files : UniversalTestBase
          }
       }
 
-      public class and_another_program_writes_its_file_otherwise_and_the_store_writes_every_taggregate_anew : after_a_unit_of_work_saves_a_vocab
+      public class and_another_program_writes_its_file_otherwise_and_the_store_writes_every_taggregate_anew : after_a_unit_of_work_adds_a_vocab
       {
          public and_another_program_writes_its_file_otherwise_and_the_store_writes_every_taggregate_anew()
          {
@@ -151,7 +151,7 @@ public class Given_a_state_store_kept_in_files : UniversalTestBase
          }
       }
 
-      public class and_a_unit_of_work_deletes_it : after_a_unit_of_work_saves_a_vocab
+      public class and_a_unit_of_work_deletes_it : after_a_unit_of_work_adds_a_vocab
       {
          public and_a_unit_of_work_deletes_it() => InUnitOfWork(taggregates => taggregates.GetForUpdate<StoredVocab>(VocabId).Delete());
 
@@ -164,7 +164,7 @@ public class Given_a_state_store_kept_in_files : UniversalTestBase
          }
       }
 
-      public class and_a_unit_of_work_changing_it_rolls_back_after_the_store_has_prepared_its_write : after_a_unit_of_work_saves_a_vocab
+      public class and_a_unit_of_work_changing_it_rolls_back_after_the_store_has_prepared_its_write : after_a_unit_of_work_adds_a_vocab
       {
          public and_a_unit_of_work_changing_it_rolls_back_after_the_store_has_prepared_its_write() =>
             Invoking(() => InUnitOfWork(taggregates =>
@@ -181,7 +181,7 @@ public class Given_a_state_store_kept_in_files : UniversalTestBase
 
       ///<summary>A file stands where the store's own folder goes, as it can on a consumer's disk, so the store can't write the<br/>
       /// temporary file of a change when the unit of work prepares.</summary>
-      public class and_a_file_is_where_the_stores_own_folder_goes_so_a_unit_of_work_changing_it_fails_to_prepare_its_write : after_a_unit_of_work_saves_a_vocab
+      public class and_a_file_is_where_the_stores_own_folder_goes_so_a_unit_of_work_changing_it_fails_to_prepare_its_write : after_a_unit_of_work_adds_a_vocab
       {
          readonly Exception _exception;
 
@@ -202,7 +202,7 @@ public class Given_a_state_store_kept_in_files : UniversalTestBase
 
       ///<summary>The files are a transaction's one durable participant, so a transaction that has another, as a SQL Server connection<br/>
       /// is, would have to become distributed, which .NET refuses.</summary>
-      public class and_a_unit_of_work_changing_it_holds_another_durable_participant_as_a_SQL_Server_connection_would_be : after_a_unit_of_work_saves_a_vocab
+      public class and_a_unit_of_work_changing_it_holds_another_durable_participant_as_a_SQL_Server_connection_would_be : after_a_unit_of_work_adds_a_vocab
       {
          readonly Exception _exception;
 
@@ -225,7 +225,7 @@ public class Given_a_state_store_kept_in_files : UniversalTestBase
 
       ///<summary>Another program puts a file where the store's own folder is, after the unit of work's write has prepared and before its<br/>
       /// commit, so the commit can't write its journal: the commit hasn't happened, and the unit of work can still roll back.</summary>
-      public class and_a_unit_of_work_changing_it_fails_to_write_its_journal : after_a_unit_of_work_saves_a_vocab
+      public class and_a_unit_of_work_changing_it_fails_to_write_its_journal : after_a_unit_of_work_adds_a_vocab
       {
          readonly Exception _exception;
 
@@ -256,9 +256,9 @@ public class Given_a_state_store_kept_in_files : UniversalTestBase
    {
       protected whose_folder_a_service_of_the_container_gives() => _folderGivenByAService = true;
 
-      public class after_a_unit_of_work_saves_a_vocab_there : whose_folder_a_service_of_the_container_gives
+      public class after_a_unit_of_work_adds_a_vocab_there : whose_folder_a_service_of_the_container_gives
       {
-         public after_a_unit_of_work_saves_a_vocab_there() => SaveTheVocab("taberu");
+         public after_a_unit_of_work_adds_a_vocab_there() => AddTheVocab("taberu");
 
          [PCT] public void the_vocab_is_in_its_file_under_the_folder_the_service_gives() =>
             VocabFiles.Must().SequenceEqual([Path.GetRelativePath(VocabFolder.FullName, VocabFileByDefault)]);

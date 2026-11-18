@@ -3,6 +3,7 @@ using Compze.Teventive;
 using Compze.Teventive.Taggregates.Tevents;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
+using Compze.Tests.Common.CQRS;
 
 namespace Compze.Tests.Performance.Internals.Serialization;
 
@@ -24,10 +25,8 @@ public class TestTevent : TaggregateTeventWithIdentity
       Test1 = test1;
       Test2 = test2;
 
-#pragma warning disable CS0618 // Type or member is obsolete
-      ((IMutableTaggregateTevent)this).SetTaggregateVersionInternal(taggregateVersion);
-      ((IMutableTaggregateTevent)this).SetUtcTimeStampInternal(utcTimeStamp);
-#pragma warning restore CS0618 // Type or member is obsolete
+      this.SetTaggregateVersion(taggregateVersion);
+      this.SetUtcTimeStamp(utcTimeStamp);
    }
 
    // ReSharper disable once MemberCanBePrivate.Local

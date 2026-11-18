@@ -12,10 +12,10 @@ class OrderWithItsShippingAddressInTheBillingSlot : Taggregate<OrderWithItsShipp
 {
    static class Slots
    {
-      internal static readonly SharedTomponentSlotOfAClass<OrderWithItsShippingAddressInTheBillingSlot, IOrderTevent, OrderTevent, IPostalAddressTevent, IShippingAddressTevent<IPostalAddressTevent>> Shipping =
+      internal static readonly SharedTomponentSlot<OrderWithItsShippingAddressInTheBillingSlot, IOrderTevent, OrderTevent, IPostalAddressTevent, IShippingAddressTevent<IPostalAddressTevent>> Shipping =
          new(typeof(ShippingAddressTevent<>), static order => order.ShippingAddress);
 
-      internal static readonly SharedTomponentSlotOfAClass<OrderWithItsShippingAddressInTheBillingSlot, IOrderTevent, OrderTevent, IPostalAddressTevent, IBillingAddressTevent<IPostalAddressTevent>> Billing =
+      internal static readonly SharedTomponentSlot<OrderWithItsShippingAddressInTheBillingSlot, IOrderTevent, OrderTevent, IPostalAddressTevent, IBillingAddressTevent<IPostalAddressTevent>> Billing =
          new(typeof(BillingAddressTevent<>), static order => order.BillingAddress);
    }
 

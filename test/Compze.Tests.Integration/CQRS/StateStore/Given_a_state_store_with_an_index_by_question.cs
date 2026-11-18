@@ -20,8 +20,8 @@ using static Compze.Must.MustActions;
 namespace Compze.Tests.Integration.CQRS.StateStore;
 
 ///<summary>Taggregate-references, and an index defined by the taggregates' state that reads its own unit of work's changes, in a<br/>
-/// state store holding one vocab, "taberu". The units of work here resolve nothing: references find their unit of work from the<br/>
-/// ambient transaction alone.</summary>
+/// state store holding one vocab, "taberu". References and the index find their unit of work from the ambient transaction alone:<br/>
+/// the units of work here resolve only the updater they change the vocab through.</summary>
 public class Given_a_state_store_with_an_index_by_question : UniversalTestBase
 {
    readonly IDependencyInjectionContainer _container;
@@ -36,11 +36,8 @@ public class Given_a_state_store_with_an_index_by_question : UniversalTestBase
                                                  .Index<StoredVocab, string>(vocab => [vocab.Question]));
       builder.Registrar.LocalTessagingEngine(_ => {});
       _container = builder.Build();
-      InUnitOfWorkWithItsUpdater(taggregates => taggregates.Save(StoredVocab.Create(VocabId, "taberu")));
+      InUnitOfWorkWithItsUpdater(taggregates => taggregates.Add(StoredVocab.Create(VocabId, "taberu")));
    }
-
-   ///<summary>Runs <paramref name="work"/> as a unit of work that resolves nothing from its scope.</summary>
-   void InUnitOfWork(Action work) => Container.ScopeFactory.ExecuteUnitOfWork(_ => work());
 
    void InUnitOfWorkWithItsUpdater(Action<ITaggregateStoreUpdater> work) =>
       Container.ScopeFactory.ExecuteUnitOfWork(unitOfWork => work(unitOfWork.Resolve<ITaggregateStoreUpdater>()));
@@ -66,27 +63,27 @@ public class Given_a_state_store_with_an_index_by_question : UniversalTestBase
 
    protected override async Task DisposeAsyncInternal() => await _container.DisposeAsync();
 
-   public class after_three_units_of_work_each_save_a_vocab_with_the_same_question : Given_a_state_store_with_an_index_by_question
+   public class after_three_units_of_work_each_add_a_vocab_with_the_same_question : Given_a_state_store_with_an_index_by_question
    {
       readonly TaggregateId[] _firstThree = [new(), new(), new()];
       readonly TaggregateId _fourth = new();
 
-      public after_three_units_of_work_each_save_a_vocab_with_the_same_question()
+      public after_three_units_of_work_each_add_a_vocab_with_the_same_question()
       {
          foreach(var id in _firstThree)
-            InUnitOfWorkWithItsUpdater(taggregates => taggregates.Save(StoredVocab.Create(id, "kuu")));
+            InUnitOfWorkWithItsUpdater(taggregates => taggregates.Add(StoredVocab.Create(id, "kuu")));
       }
 
       [PCT] public void the_lookup_gives_the_three() => IdsFiledUnder("kuu").Must().Satisfy(it => it.Count == 3 && _firstThree.All(it.Contains));
 
-      public class and_a_unit_of_work_saves_a_fourth : after_three_units_of_work_each_save_a_vocab_with_the_same_question
+      public class and_a_unit_of_work_adds_a_fourth : after_three_units_of_work_each_add_a_vocab_with_the_same_question
       {
          IReadOnlyList<TaggregateId> _filedInsideTheUnitOfWork = [];
 
-         public and_a_unit_of_work_saves_a_fourth() =>
+         public and_a_unit_of_work_adds_a_fourth() =>
             InUnitOfWorkWithItsUpdater(taggregates =>
             {
-               taggregates.Save(StoredVocab.Create(_fourth, "kuu"));
+               taggregates.Add(StoredVocab.Create(_fourth, "kuu"));
                _filedInsideTheUnitOfWork = IdsFiledUnder("kuu");
             });
 
@@ -95,7 +92,7 @@ public class Given_a_state_store_with_an_index_by_question : UniversalTestBase
       }
    }
 
-   public class while_a_unit_of_work_renames_the_vocab_through_a_reference_and_after_it_commits : Given_a_state_store_with_an_index_by_question
+   public class while_a_unit_of_work_renames_the_vocab_and_after_it_commits : Given_a_state_store_with_an_index_by_question
    {
       readonly ITaggregateReference<StoredVocab> _referenceHeldThroughout;
       readonly IReadOnlyList<TaggregateId> _filedUnderTheOldQuestionInside;
@@ -104,14 +101,14 @@ public class Given_a_state_store_with_an_index_by_question : UniversalTestBase
       readonly string _questionTheReferenceGaveInside;
       readonly string _questionTheReferenceGaveOutside;
 
-      public while_a_unit_of_work_renames_the_vocab_through_a_reference_and_after_it_commits()
+      public while_a_unit_of_work_renames_the_vocab_and_after_it_commits()
       {
          _referenceHeldThroughout = ReferenceTo(VocabId);
          IReadOnlyList<TaggregateId> oldInside = [], newInside = [], oldOutside = [];
          string referenceInside = "", referenceOutside = "";
-         InUnitOfWork(() =>
+         InUnitOfWorkWithItsUpdater(taggregates =>
          {
-            _referenceHeldThroughout.ForUpdate().ChangeQuestion("kuu");
+            taggregates.GetForUpdate<StoredVocab>(_referenceHeldThroughout.Id).ChangeQuestion("kuu");
             oldInside = IdsFiledUnder("taberu");
             newInside = IdsFiledUnder("kuu");
             oldOutside = OnAThreadOutsideTheUnitOfWork(() => IdsFiledUnder("taberu"));
@@ -135,9 +132,9 @@ public class Given_a_state_store_with_an_index_by_question : UniversalTestBase
    public class after_a_unit_of_work_that_renamed_the_vocab_throws : Given_a_state_store_with_an_index_by_question
    {
       public after_a_unit_of_work_that_renamed_the_vocab_throws() =>
-         Invoking(() => InUnitOfWork(() =>
+         Invoking(() => InUnitOfWorkWithItsUpdater(taggregates =>
                  {
-                    ReferenceTo(VocabId).ForUpdate().ChangeQuestion("kuu");
+                    taggregates.GetForUpdate<StoredVocab>(VocabId).ChangeQuestion("kuu");
                     throw new InvalidOperationException("The unit of work fails.");
                  }))
            .Must().Throw<InvalidOperationException>();
@@ -158,7 +155,7 @@ public class Given_a_state_store_with_an_index_by_question : UniversalTestBase
 
             void CreateUnlessOneIsFiledUnder(string question)
             {
-               if(!ByQuestion.HasAny(question)) taggregates.Save(StoredVocab.Create(new TaggregateId(Guid.NewGuid()), question));
+               if(ByQuestion.Lookup(question).Count == 0) taggregates.Add(StoredVocab.Create(new TaggregateId(Guid.NewGuid()), question));
             }
          });
 
@@ -187,7 +184,8 @@ public class Given_a_state_store_with_an_index_by_question : UniversalTestBase
 
    public class outside_any_unit_of_work : Given_a_state_store_with_an_index_by_question
    {
-      [PCT] public void getting_the_vocab_for_update_through_its_reference_throws() => Invoking(() => ReferenceTo(VocabId).ForUpdate()).Must().Throw<Exception>();
+      [PCT] public void getting_the_vocab_for_update_through_an_updater_resolved_in_a_scope_throws() =>
+         Invoking(() => Container.ExecuteInIsolatedScope(scope => scope.Resolve<ITaggregateStoreUpdater>().GetForUpdate<StoredVocab>(VocabId))).Must().Throw<Exception>();
    }
 
    public class when_measuring : Given_a_state_store_with_an_index_by_question
@@ -202,23 +200,21 @@ public class Given_a_state_store_with_an_index_by_question : UniversalTestBase
          var report = new List<string>
          {
             Measure("a lookup outside any unit of work", 20_000, () => byQuestion.Lookup("taberu")),
-            Measure("a check that a key has any taggregate, outside any unit of work", 20_000, () => byQuestion.HasAny("taberu")),
             Measure("a reference's Current outside any unit of work", 20_000, () => _ = reference.Current)
          };
 
          var sentenceId = new TaggregateId(Guid.NewGuid());
-         InUnitOfWorkWithItsUpdater(taggregates => taggregates.Save(StoredSentence.Create(sentenceId, "taberu")));
+         InUnitOfWorkWithItsUpdater(taggregates => taggregates.Add(StoredSentence.Create(sentenceId, "taberu")));
          InUnitOfWorkWithItsUpdater(taggregates =>
          {
             taggregates.GetForUpdate<StoredSentence>(sentenceId);
             report.Add(Measure("a lookup of vocab inside a unit of work holding only a sentence", 20_000, () => byQuestion.Lookup("taberu")));
-            report.Add(Measure("a check that a key has any vocab inside a unit of work holding only a sentence", 20_000, () => byQuestion.HasAny("taberu")));
          });
 
          foreach(var copiesHeld in (int[])[1, 100, 1_000])
          {
             var ids = Enumerable.Range(0, copiesHeld).Select(_ => new TaggregateId(Guid.NewGuid())).ToList();
-            InUnitOfWorkWithItsUpdater(taggregates => ids.ForEach(id => taggregates.Save(StoredVocab.Create(id, id.ToString()))));
+            InUnitOfWorkWithItsUpdater(taggregates => ids.ForEach(id => taggregates.Add(StoredVocab.Create(id, id.ToString()))));
             InUnitOfWorkWithItsUpdater(taggregates =>
             {
                ids.ForEach(id => taggregates.GetForUpdate<StoredVocab>(id));

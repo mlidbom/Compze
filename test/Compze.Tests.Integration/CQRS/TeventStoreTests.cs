@@ -15,6 +15,7 @@ using Compze.Teventive;
 using Compze.Teventive.Taggregates.BaseClasses;
 using Compze.Teventive.Taggregates.Tevents;
 using Compze.Teventive.TeventStore.Abstractions;
+using Compze.Tests.Common.CQRS;
 
 namespace Compze.Tests.Integration.CQRS;
 
@@ -24,10 +25,8 @@ class SomeTevent : TaggregateTeventWithIdentity, ISomeTevent
 {
    public SomeTevent(TaggregateId taggregateId, int version) : base(taggregateId)
    {
-#pragma warning disable CS0618 // Type or member is obsolete
-      ((IMutableTaggregateTevent)this).SetTaggregateVersionInternal(version);
-      ((IMutableTaggregateTevent)this).SetUtcTimeStampInternal(new DateTime(UtcTimeStamp.Year, UtcTimeStamp.Month, UtcTimeStamp.Day, UtcTimeStamp.Hour, UtcTimeStamp.Minute, UtcTimeStamp.Second, DateTimeKind.Utc));
-#pragma warning restore CS0618 // Type or member is obsolete
+      this.SetTaggregateVersion(version);
+      this.SetUtcTimeStamp(new DateTime(UtcTimeStamp.Year, UtcTimeStamp.Month, UtcTimeStamp.Day, UtcTimeStamp.Hour, UtcTimeStamp.Minute, UtcTimeStamp.Second, DateTimeKind.Utc));
    }
 }
 

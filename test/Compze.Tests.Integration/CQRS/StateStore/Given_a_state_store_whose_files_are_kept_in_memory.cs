@@ -55,9 +55,9 @@ public class Given_a_state_store_whose_files_are_kept_in_memory : UniversalTestB
 
    protected override async Task DisposeAsyncInternal() => await _store.DisposeAsync();
 
-   public class after_a_unit_of_work_saves_a_vocab : Given_a_state_store_whose_files_are_kept_in_memory
+   public class after_a_unit_of_work_adds_a_vocab : Given_a_state_store_whose_files_are_kept_in_memory
    {
-      public after_a_unit_of_work_saves_a_vocab() => InUnitOfWork(taggregates => taggregates.Save(StoredVocab.Create(VocabId, "taberu")));
+      public after_a_unit_of_work_adds_a_vocab() => InUnitOfWork(taggregates => taggregates.Add(StoredVocab.Create(VocabId, "taberu")));
 
       [PCT] public void the_files_are_the_vocabs_file_alone_in_the_default_layout() => Files.Paths.Must().SequenceEqual([VocabFile]);
 
@@ -65,7 +65,7 @@ public class Given_a_state_store_whose_files_are_kept_in_memory : UniversalTestB
 
       [PCT] public void nothing_is_written_to_the_disk() => Directory.Exists(_folder.FullName).Must().BeFalse();
 
-      public class and_the_store_reloads : after_a_unit_of_work_saves_a_vocab
+      public class and_the_store_reloads : after_a_unit_of_work_adds_a_vocab
       {
          readonly ReloadedTaggregates _reloaded;
 
@@ -78,7 +78,7 @@ public class Given_a_state_store_whose_files_are_kept_in_memory : UniversalTestB
          [PCT] public void the_store_has_the_vocab() => Reader.Get<StoredVocab>(VocabId).Question.Must().Be("taberu");
       }
 
-      public class and_its_file_is_changed_behind_the_store_and_the_store_reloads : after_a_unit_of_work_saves_a_vocab
+      public class and_its_file_is_changed_behind_the_store_and_the_store_reloads : after_a_unit_of_work_adds_a_vocab
       {
          readonly ReloadedTaggregates _reloaded;
 
@@ -93,7 +93,7 @@ public class Given_a_state_store_whose_files_are_kept_in_memory : UniversalTestB
          [PCT] public void the_store_has_the_meaning_written_behind_it() => Reader.Get<StoredVocab>(VocabId).Meaning.Must().Be("to eat");
       }
 
-      public class and_its_file_is_deleted_behind_the_store_and_the_store_reloads : after_a_unit_of_work_saves_a_vocab
+      public class and_its_file_is_deleted_behind_the_store_and_the_store_reloads : after_a_unit_of_work_adds_a_vocab
       {
          readonly ReloadedTaggregates _reloaded;
 
@@ -106,7 +106,7 @@ public class Given_a_state_store_whose_files_are_kept_in_memory : UniversalTestB
          [PCT] public void the_reload_reports_the_vocab_removed() => _reloaded.Removed.Must().SequenceEqual([VocabId]);
       }
 
-      public class and_a_unit_of_work_deletes_it : after_a_unit_of_work_saves_a_vocab
+      public class and_a_unit_of_work_deletes_it : after_a_unit_of_work_adds_a_vocab
       {
          public and_a_unit_of_work_deletes_it() => InUnitOfWork(taggregates => taggregates.GetForUpdate<StoredVocab>(VocabId).Delete());
 

@@ -63,23 +63,23 @@ public class Given_a_tevent_store_and_a_state_store_kept_in_files : UniversalTes
 
    void InUnitOfWork(Action<ITaggregateStoreUpdater> work) => Container.ExecuteUnitOfWork(unitOfWork => work(unitOfWork.TaggregateStoreUpdater()));
 
-   void SaveAUserAndAVocabInUnitsOfWorkOfTheirOwn()
+   void AddAUserAndAVocabInUnitsOfWorkOfTheirOwn()
    {
       InUnitOfWork(taggregates => User.Register(taggregates, "registered@example.com", "password", _userId));
-      InUnitOfWork(taggregates => taggregates.Save(StoredVocab.Create(_vocabId, "taberu")));
+      InUnitOfWork(taggregates => taggregates.Add(StoredVocab.Create(_vocabId, "taberu")));
    }
 
    static string SerializedVocab(TaggregateId id, string question, string meaning) => JsonSerializer.Serialize(new StoredVocabSnapshot(id, question, meaning), Options);
 
-   public class after_a_user_and_a_vocab_are_saved_in_units_of_work_of_their_own : Given_a_tevent_store_and_a_state_store_kept_in_files
+   public class after_a_user_and_a_vocab_are_added_in_units_of_work_of_their_own : Given_a_tevent_store_and_a_state_store_kept_in_files
    {
-      public after_a_user_and_a_vocab_are_saved_in_units_of_work_of_their_own() => SaveAUserAndAVocabInUnitsOfWorkOfTheirOwn();
+      public after_a_user_and_a_vocab_are_added_in_units_of_work_of_their_own() => AddAUserAndAVocabInUnitsOfWorkOfTheirOwn();
 
       [PCT] public void the_reader_gets_the_user() => Reader.Get<User>(_userId).Email.Must().Be("registered@example.com");
 
       [PCT] public void the_reader_gets_the_vocab() => Reader.Get<StoredVocab>(_vocabId).Question.Must().Be("taberu");
 
-      public class and_a_unit_of_work_gets_the_user_for_update_and_changes_the_vocabs_meaning : after_a_user_and_a_vocab_are_saved_in_units_of_work_of_their_own
+      public class and_a_unit_of_work_gets_the_user_for_update_and_changes_the_vocabs_meaning : after_a_user_and_a_vocab_are_added_in_units_of_work_of_their_own
       {
          readonly Exception _exception;
 
@@ -106,7 +106,7 @@ public class Given_a_tevent_store_and_a_state_store_kept_in_files : UniversalTes
 
       ///<summary>The tevent store writes each tevent as it is published, so its connection is in a unit of work's transaction before the<br/>
       /// files join it at the prepare. A participant that opens a connection of Compze's at its own prepare joins after them.</summary>
-      public class and_a_unit_of_work_changes_the_vocabs_meaning_and_then_a_connection_to_the_tevent_store_joins_at_its_prepare : after_a_user_and_a_vocab_are_saved_in_units_of_work_of_their_own
+      public class and_a_unit_of_work_changes_the_vocabs_meaning_and_then_a_connection_to_the_tevent_store_joins_at_its_prepare : after_a_user_and_a_vocab_are_added_in_units_of_work_of_their_own
       {
          readonly Exception _exception;
 
@@ -126,7 +126,7 @@ public class Given_a_tevent_store_and_a_state_store_kept_in_files : UniversalTes
          [PCT] public void the_reader_gets_the_vocabs_meaning_committed_before() => Reader.Get<StoredVocab>(_vocabId).Meaning.Must().Be("");
       }
 
-      public class and_a_unit_of_work_gets_the_vocab_for_update_without_changing_it_and_changes_the_users_email : after_a_user_and_a_vocab_are_saved_in_units_of_work_of_their_own
+      public class and_a_unit_of_work_gets_the_vocab_for_update_without_changing_it_and_changes_the_users_email : after_a_user_and_a_vocab_are_added_in_units_of_work_of_their_own
       {
          public and_a_unit_of_work_gets_the_vocab_for_update_without_changing_it_and_changes_the_users_email() =>
             InUnitOfWork(taggregates =>
@@ -143,14 +143,14 @@ public class Given_a_tevent_store_and_a_state_store_kept_in_files : UniversalTes
    {
       protected whose_files_are_allowed_in_transactions_that_also_write_a_database() => _filesAreAllowedInTransactionsThatAlsoWriteADatabase = true;
 
-      public class after_a_unit_of_work_saves_a_user_and_a_vocab_and_another_changes_both : whose_files_are_allowed_in_transactions_that_also_write_a_database
+      public class after_a_unit_of_work_adds_a_user_and_a_vocab_and_another_changes_both : whose_files_are_allowed_in_transactions_that_also_write_a_database
       {
-         public after_a_unit_of_work_saves_a_user_and_a_vocab_and_another_changes_both()
+         public after_a_unit_of_work_adds_a_user_and_a_vocab_and_another_changes_both()
          {
             InUnitOfWork(taggregates =>
             {
                User.Register(taggregates, "registered@example.com", "password", _userId);
-               taggregates.Save(StoredVocab.Create(_vocabId, "taberu"));
+               taggregates.Add(StoredVocab.Create(_vocabId, "taberu"));
             });
             InUnitOfWork(taggregates =>
             {

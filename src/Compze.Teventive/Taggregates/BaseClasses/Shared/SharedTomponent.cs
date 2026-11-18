@@ -9,7 +9,7 @@ namespace Compze.Teventive.Taggregates.BaseClasses.Shared;
 /// taggregate (or teventive component). A shared tomponent's tevents are bare <see cref="ITevent"/>s rooted in the tomponent's own tevent<br/>
 /// interface hierarchy - they carry no taggregate identity of their own. The owner adopts each published tevent into its own tevent hierarchy<br/>
 /// by wrapping it in an owner-declared adopting wrapper tevent; that wrapping, and routing adopted tevents back here for applying, is the job<br/>
-/// of the <see cref="SharedTomponentSlotOfAClass{TOwner,TOwnerTevent,TOwnerTeventImplementation,TTomponentTevent,TAdoptingWrapperTevent}"/> the tomponent is in.</summary>
+/// of the <see cref="SharedTomponentSlot{TOwner,TOwnerTevent,TOwnerTeventImplementation,TTomponentTevent,TAdoptingWrapperTevent}"/> the tomponent is in.</summary>
 ///<remarks>Contrast with <see cref="TeventiveComponent{TParent,TParentTevent,TParentTeventImplementation,TComponent,TComponentTevent,TComponentTeventImplementation}"/>,<br/>
 /// whose tevents slot into exactly one taggregate's tevent hierarchy: an owned component's tevent types already identify their publisher completely,<br/>
 /// so they need no wrapping. A shared tomponent's tevent types identify no owner at all - the adopting wrapper is what says<br/>
@@ -19,7 +19,7 @@ public abstract class SharedTomponent<TTomponentTevent> : ISharedTomponentIntern
    where TTomponentTevent : class, ITevent
 {
    readonly object _owner;
-   readonly ISharedTomponentSlotOfAClass<TTomponentTevent> _slot;
+   readonly ISharedTomponentSlot<TTomponentTevent> _slot;
 
    ///<summary>A shared tomponent in <paramref name="slot"/>, which is what <c>Slots.TheSlot.In(owner)</c> returns. Its class declares its tevent appliers<br/>
    /// with <see cref="DeclareAppliers{TTomponent}"/>.</summary>
@@ -30,7 +30,7 @@ public abstract class SharedTomponent<TTomponentTevent> : ISharedTomponentIntern
    }
 
    ///<summary>For a shared tomponent that routes the tevents its slot delivers in code of its own, instead of through a <see cref="TeventRouting"/>.</summary>
-   private protected SharedTomponent(object owner, ISharedTomponentSlotOfAClass<TTomponentTevent> slot)
+   private protected SharedTomponent(object owner, ISharedTomponentSlot<TTomponentTevent> slot)
    {
       _owner = owner;
       _slot = slot;
@@ -54,7 +54,7 @@ public abstract class SharedTomponent<TTomponentTevent> : ISharedTomponentIntern
    private protected bool ItsTaggregateIsBeingRestored => ((ITeventiveInATaggregate)_owner).ItsTaggregateIsBeingRestored;
 
    ///<summary>Whether this tomponent was constructed with <paramref name="slot"/>: what a slot's route asserts of the tomponent it gets from an owner.</summary>
-   internal bool IsIn(ISharedTomponentSlotOfAClass<TTomponentTevent> slot) => ReferenceEquals(_slot, slot);
+   internal bool IsIn(ISharedTomponentSlot<TTomponentTevent> slot) => ReferenceEquals(_slot, slot);
 
    ///<summary>Publishes <paramref name="tevent"/> through the tomponent's slot: the slot wraps it in the owner's adopting wrapper tevent and publishes it<br/>
    /// as an owner tevent, and the owner's routing routes it back through the slot to this tomponent's tevent appliers. State changes only in the<br/>

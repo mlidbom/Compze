@@ -12,6 +12,7 @@
   <ItemGroup>
     <InternalsVisibleTo Include="Compze.Teventive.TeventStore" />
     <InternalsVisibleTo Include="Compze.Teventive.StateStore" />
+    <InternalsVisibleTo Include="Compze.Serialization.Newtonsoft.InternalSpecifications" />
   </ItemGroup>
   <!-- Exclude _docs files from compilation but keep them visible.
        This section is automatically maintained by DevScripts\C-Ensure-CsprojfilesExcludeCsFilesFromProjectsInSubfoldersAndDocsFolders.ps1 -->

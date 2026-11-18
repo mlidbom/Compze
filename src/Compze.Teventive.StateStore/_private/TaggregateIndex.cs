@@ -56,13 +56,6 @@ sealed class TaggregateIndex<TTaggregate, TKey> : ITaggregateIndex<TTaggregate, 
       [..committed.Where(it => !session.Holds(it.Id)),
        ..session.HeldInstancesOf<TTaggregate>().Where(it => _keysOf(it).Contains(key)).Select(it => _store.Reference<TTaggregate>(it.Id))];
 
-   public bool HasAny(TKey key)
-   {
-      _store.EnsureLoaded();
-      if(_store.AmbientSession is {} session && session.HoldsAny<TTaggregate>()) return Lookup(key).Count > 0;
-      return _committedReferencesByKey.TryGetValue(key, out var committed) && committed.Length > 0;
-   }
-
    public void FileExactly(IEnumerable<ITaggregate> committedTaggregates)
    {
       var referencesByKey = new ConcurrentDictionary<TKey, ITaggregateReference<TTaggregate>[]>(

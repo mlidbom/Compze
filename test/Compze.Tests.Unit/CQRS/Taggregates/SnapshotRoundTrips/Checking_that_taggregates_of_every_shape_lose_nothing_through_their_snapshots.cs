@@ -21,41 +21,39 @@ public static class Checking_that_taggregates_of_every_shape_lose_nothing_throug
    {
       readonly CompositeTaggregate _taggregate = WithStateInEveryPart(new CompositeTaggregate("the root", new TaggregateId()));
 
-      [XF] public void loses_nothing() => SnapshotRoundTrip.AssertLosesNothing(_taggregate, CompositeTaggregate.Empty);
+      [XF] public void loses_nothing() => SnapshotRoundTrip.DifferencesOf(_taggregate, CompositeTaggregate.Empty).Must().BeEmpty();
    }
 
    public class a_composite_taggregate_whose_restore_leaves_out_its_entities
    {
       readonly CompositeTaggregate _taggregate = WithStateInEveryPart(CompositeTaggregate.CreateWhoseRestoreLeavesOutItsEntities("the root", new TaggregateId()));
 
-      [XF] public void fails_the_check_naming_the_entity_collection_and_how_many_entities_each_holds() =>
-         Invoking(() => SnapshotRoundTrip.AssertLosesNothing(_taggregate, CompositeTaggregate.EmptyWhoseRestoreLeavesOutItsEntities))
-           .Must().Throw<Exception>()
-           .Which.Message.Must().Contain("CompositeTaggregate._entities: 2 items in the original, 0 in the copy");
+      [XF] public void the_differences_name_the_entity_collection_and_how_many_entities_each_holds() =>
+         SnapshotRoundTrip.DifferencesOf(_taggregate, CompositeTaggregate.EmptyWhoseRestoreLeavesOutItsEntities)
+                          .Must().Contain("CompositeTaggregate._entities: 2 items in the original, 0 in the copy");
    }
 
    public class a_project_with_a_checklist_of_shared_tentities
    {
       readonly ProjectTaggregate _project = WithTwoChecklistItemsOneCompleted(ProjectTaggregate.Create());
 
-      [XF] public void loses_nothing() => SnapshotRoundTrip.AssertLosesNothing(_project, ProjectTaggregate.Empty);
+      [XF] public void loses_nothing() => SnapshotRoundTrip.DifferencesOf(_project, ProjectTaggregate.Empty).Must().BeEmpty();
    }
 
    public class a_project_whose_restore_leaves_out_its_checklist
    {
       readonly ProjectTaggregate _project = WithTwoChecklistItemsOneCompleted(ProjectTaggregate.CreateWhoseRestoreLeavesOutItsChecklist());
 
-      [XF] public void fails_the_check_naming_the_checklist_and_how_many_items_each_holds() =>
-         Invoking(() => SnapshotRoundTrip.AssertLosesNothing(_project, ProjectTaggregate.EmptyWhoseRestoreLeavesOutItsChecklist))
-           .Must().Throw<Exception>()
-           .Which.Message.Must().Contain("ProjectTaggregate.Checklist: 2 items in the original, 0 in the copy");
+      [XF] public void the_differences_name_the_checklist_and_how_many_items_each_holds() =>
+         SnapshotRoundTrip.DifferencesOf(_project, ProjectTaggregate.EmptyWhoseRestoreLeavesOutItsChecklist)
+                          .Must().Contain("ProjectTaggregate.Checklist: 2 items in the original, 0 in the copy");
    }
 
    public class a_cat_whose_class_extends_the_animals
    {
       readonly CatTaggregate _cat = CatTaggregate.RegisterBirth();
 
-      [XF] public void loses_nothing() => SnapshotRoundTrip.AssertLosesNothing(_cat, CatTaggregate.Empty);
+      [XF] public void loses_nothing() => SnapshotRoundTrip.DifferencesOf(_cat, CatTaggregate.Empty).Must().BeEmpty();
    }
 
    public static class adding_a_restored_entity

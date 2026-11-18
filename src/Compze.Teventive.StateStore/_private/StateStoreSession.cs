@@ -12,7 +12,7 @@ using static Compze.Contracts.Contract;
 namespace Compze.Teventive.StateStore._private;
 
 ///<summary>The state store's part of one unit of work: the private copies of the taggregates it got for update, the new ones it<br/>
-/// saved, and the locks of all of them. The tevents the copies publish go to the unit of work, which dispatches them as each<br/>
+/// added, and the locks of all of them. The tevents the copies publish go to the unit of work, which dispatches them as each<br/>
 /// publish cascade ends, inside the transaction. A copy that publishes an <see cref="ITaggregateDeletedTevent"/> is deleted: the<br/>
 /// unit of work no longer finds it, and the commit takes it out of the store. When the transaction prepares, this session prepares the storage's<br/>
 /// write and the indexes' changes, and at the commit it makes the copies the committed instances.</summary>
@@ -81,18 +81,18 @@ sealed class StateStoreSession : ITaggregateStoreSession
       return true;
    }
 
-   public void Save(ITaggregate taggregate)
+   public void Add(ITaggregate taggregate)
    {
       _store.DeclaredClassOf(taggregate.GetType());
-      State.Assert(taggregate.Version > 0, () => $"{taggregate.GetType().Name} has published no tevent, so it has no id: there is nothing to save.");
+      State.Assert(taggregate.Version > 0, () => $"{taggregate.GetType().Name} has published no tevent, so it has no id: there is nothing to add.");
       State.Assert(!_heldTaggregates.ContainsKey(taggregate.Id), () => $"Taggregate {taggregate.Id} is already in this unit of work.");
       HoldUpdateLock(taggregate.Id);
       State.Assert(_store.CommittedInstanceOf(taggregate.Id) == null, () => $"The state store already holds a taggregate {taggregate.Id}.");
       var tevents = TakeTheUncommittedTeventsOf(taggregate);
       State.Assert(IsFromItsCreationOn(tevents),
-                   () => $"{taggregate.GetType().Name} {taggregate.Id} doesn't have the tevents it published from its creation on, so saving it would dispatch none of them: an earlier save took them, as in a unit of work that then rolled back. Create it again.");
+                   () => $"{taggregate.GetType().Name} {taggregate.Id} doesn't have the tevents it published from its creation on, so adding it would dispatch none of them: an earlier add took them, as in a unit of work that then rolled back. Create it again.");
 
-      //Held before the tevents it published before it was saved are dispatched, so that a handler that gets it meanwhile gets this
+      //Held before the tevents it published before it was added are dispatched, so that a handler that gets it meanwhile gets this
       //instance. A tevent a handler publishes on it meanwhile stays uncommitted, and is dispatched after those, in the order published.
       var held = new HeldTaggregate(taggregate, isNew: true);
       Hold(held, followingItsTeventStream: false);
@@ -185,7 +185,7 @@ sealed class StateStoreSession : ITaggregateStoreSession
       _leaveTheGate();
    }
 
-   ///<summary>A taggregate this unit of work holds: a copy got for update, or a new one saved.</summary>
+   ///<summary>A taggregate this unit of work holds: a copy got for update, or a new one added.</summary>
    sealed class HeldTaggregate
    {
       internal HeldTaggregate(ITaggregate taggregate, bool isNew)

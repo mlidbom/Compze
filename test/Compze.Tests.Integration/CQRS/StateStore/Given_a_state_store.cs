@@ -73,45 +73,45 @@ public class Given_a_state_store : UniversalTestBase
       if(_container != null) await _container.DisposeAsync();
    }
 
-   public class after_a_unit_of_work_saves_a_new_vocab : Given_a_state_store
+   public class after_a_unit_of_work_adds_a_new_vocab : Given_a_state_store
    {
-      bool _saveHasReturned;
+      bool _addHasReturned;
 
-      public after_a_unit_of_work_saves_a_new_vocab()
+      public after_a_unit_of_work_adds_a_new_vocab()
       {
-         Compose(participation: handle => handle.ForTevent((IStoredVocabCreated it) => ParticipationLog.Enqueue($"created {it.Question}, save had returned: {_saveHasReturned}")),
+         Compose(participation: handle => handle.ForTevent((IStoredVocabCreated it) => ParticipationLog.Enqueue($"created {it.Question}, add had returned: {_addHasReturned}")),
                  observation: observe => observe.ForTevent((IStoredVocabCreated it) => ObservationLog.Enqueue($"created {it.Question}")));
 
          InUnitOfWork(taggregates =>
          {
-            taggregates.Save(StoredVocab.Create(VocabId, "taberu"));
-            _saveHasReturned = true;
+            taggregates.Add(StoredVocab.Create(VocabId, "taberu"));
+            _addHasReturned = true;
          });
          WaitForTheObservers();
       }
 
       [PCT] public void the_reader_gets_the_vocab() => CommittedVocab(VocabId).Question.Must().Be("taberu");
-      [PCT] public void the_participation_handler_ran_once_during_the_save() => ParticipationLog.Must().SequenceEqual(["created taberu, save had returned: False"]);
+      [PCT] public void the_participation_handler_ran_once_during_the_add() => ParticipationLog.Must().SequenceEqual(["created taberu, add had returned: False"]);
       [PCT] public void the_observer_observed_the_creation() => ObservationLog.Must().SequenceEqual(["created taberu"]);
       [PCT] public void publishing_on_the_instance_the_reader_gets_throws() => Invoking(() => CommittedVocab(VocabId).ChangeMeaning("to eat")).Must().Throw<Exception>();
    }
 
-   public class after_a_change_other_than_by_a_tevent_is_made_to_the_instance_the_reader_gets_of_a_saved_vocab : Given_a_state_store
+   public class after_a_tevent_is_published_on_the_instance_the_reader_gets_of_an_added_vocab : Given_a_state_store
    {
       readonly Exception _thrown;
 
-      public after_a_change_other_than_by_a_tevent_is_made_to_the_instance_the_reader_gets_of_a_saved_vocab()
+      public after_a_tevent_is_published_on_the_instance_the_reader_gets_of_an_added_vocab()
       {
          Compose();
-         InUnitOfWork(taggregates => taggregates.Save(StoredVocab.Create(VocabId, "taberu")));
-         _thrown = Invoking(() => CommittedVocab(VocabId).ChangeMeaningWithoutATevent("to eat")).Must().Throw<Exception>().Which;
+         InUnitOfWork(taggregates => taggregates.Add(StoredVocab.Create(VocabId, "taberu")));
+         _thrown = Invoking(() => CommittedVocab(VocabId).ChangeMeaning("to eat")).Must().Throw<Exception>().Which;
       }
 
-      [PCT] public void the_change_throws_saying_that_the_instance_is_read_only() => _thrown.Message.Must().Contain("is an instance a taggregate store serves to readers, which is read only");
+      [PCT] public void the_publish_throws_saying_that_the_instance_is_read_only() => _thrown.Message.Must().Contain("is an instance a taggregate store serves to readers, which is read only");
       [PCT] public void the_vocab_the_reader_gets_keeps_the_meaning_it_had() => CommittedVocab(VocabId).Meaning.Must().Be("");
    }
 
-   public class after_a_unit_of_work_changes_the_meaning_of_a_saved_vocab_twice : Given_a_state_store
+   public class after_a_unit_of_work_changes_the_meaning_of_an_added_vocab_twice : Given_a_state_store
    {
       bool _bothDomainCallsHaveReturned;
       readonly StoredVocab _instanceCommittedBefore;
@@ -119,11 +119,11 @@ public class Given_a_state_store : UniversalTestBase
       readonly string _meaningTheReaderGotOutsideTheUnitOfWork;
       string? _meaningTheReaderGotWhenTheUnitOfWorkHadCommitted;
 
-      public after_a_unit_of_work_changes_the_meaning_of_a_saved_vocab_twice()
+      public after_a_unit_of_work_changes_the_meaning_of_an_added_vocab_twice()
       {
          Compose(participation: handle => handle.ForTevent((IStoredVocabMeaningChanged it, ITaggregateStoreUpdater taggregates) =>
             ParticipationLog.Enqueue($"{it.Meaning}; both domain calls had returned: {_bothDomainCallsHaveReturned}; the copy's meaning: {taggregates.GetForUpdate<StoredVocab>(VocabId).Meaning}")));
-         InUnitOfWork(taggregates => taggregates.Save(StoredVocab.Create(VocabId, "taberu")));
+         InUnitOfWork(taggregates => taggregates.Add(StoredVocab.Create(VocabId, "taberu")));
          _instanceCommittedBefore = CommittedVocab(VocabId);
 
          string inside = "", outside = "";
@@ -159,7 +159,7 @@ public class Given_a_state_store : UniversalTestBase
       public after_a_unit_of_work_gets_a_vocab_for_update_and_changes_nothing()
       {
          Compose();
-         InUnitOfWork(taggregates => taggregates.Save(StoredVocab.Create(VocabId, "taberu")));
+         InUnitOfWork(taggregates => taggregates.Add(StoredVocab.Create(VocabId, "taberu")));
          _instanceCommittedBefore = CommittedVocab(VocabId);
          InUnitOfWork(taggregates => taggregates.GetForUpdate<StoredVocab>(VocabId));
       }
@@ -173,7 +173,7 @@ public class Given_a_state_store : UniversalTestBase
       {
          Compose(participation: handle => handle.ForTevent((IStoredVocabMeaningChanged it) => ParticipationLog.Enqueue(it.Meaning)),
                  observation: observe => observe.ForTevent((IStoredVocabMeaningChanged it) => ObservationLog.Enqueue(it.Meaning)));
-         InUnitOfWork(taggregates => taggregates.Save(StoredVocab.Create(VocabId, "taberu")));
+         InUnitOfWork(taggregates => taggregates.Add(StoredVocab.Create(VocabId, "taberu")));
 
          Invoking(() => InUnitOfWork(taggregates =>
                  {
@@ -202,8 +202,8 @@ public class Given_a_state_store : UniversalTestBase
                  observation: observe => observe.ForTevent((IStoredVocabMeaningChanged it) => ObservationLog.Enqueue(it.Meaning)));
          InUnitOfWork(taggregates =>
          {
-            taggregates.Save(StoredVocab.Create(VocabId, "taberu"));
-            taggregates.Save(StoredVocab.Create(_followingVocabId, "kuu"));
+            taggregates.Add(StoredVocab.Create(VocabId, "taberu"));
+            taggregates.Add(StoredVocab.Create(_followingVocabId, "kuu"));
          });
 
          InUnitOfWork(taggregates => taggregates.GetForUpdate<StoredVocab>(VocabId).ChangeMeaning("to eat"));
@@ -225,7 +225,7 @@ public class Given_a_state_store : UniversalTestBase
                                           })
                                          .ForTevent((IStoredVocabMeaningChanged it) => ParticipationLog.Enqueue(it.Meaning)),
                  observation: observe => observe.ForTevent((IStoredVocabMeaningChanged it) => ObservationLog.Enqueue(it.Meaning)));
-         InUnitOfWork(taggregates => taggregates.Save(StoredVocab.Create(VocabId, "taberu")));
+         InUnitOfWork(taggregates => taggregates.Add(StoredVocab.Create(VocabId, "taberu")));
 
          InUnitOfWork(taggregates => taggregates.GetForUpdate<StoredVocab>(VocabId).ChangeMeaning("  to eat  "));
          WaitForTheObservers();
@@ -243,7 +243,7 @@ public class Given_a_state_store : UniversalTestBase
       public after_code_catches_the_exception_of_a_failing_publish_and_completes_the_unit_of_work()
       {
          Compose();
-         InUnitOfWork(taggregates => taggregates.Save(StoredVocab.Create(VocabId, "taberu")));
+         InUnitOfWork(taggregates => taggregates.Add(StoredVocab.Create(VocabId, "taberu")));
 
          _exception = Invoking(() => InUnitOfWork(taggregates =>
                                 {
@@ -269,7 +269,7 @@ public class Given_a_state_store : UniversalTestBase
       public after_a_participation_handler_throws_when_a_vocab_changes_its_meaning()
       {
          Compose(participation: handle => handle.ForTevent((IStoredVocabMeaningChanged _) => throw new InvalidOperationException("The handler fails.")));
-         InUnitOfWork(taggregates => taggregates.Save(StoredVocab.Create(VocabId, "taberu")));
+         InUnitOfWork(taggregates => taggregates.Add(StoredVocab.Create(VocabId, "taberu")));
 
          _exception = Invoking(() => InUnitOfWork(taggregates => taggregates.GetForUpdate<StoredVocab>(VocabId).ChangeMeaning("to eat")))
                      .Must().Throw<InvalidOperationException>().Which;
@@ -291,8 +291,8 @@ public class Given_a_state_store : UniversalTestBase
             taggregates.GetForUpdate<StoredVocab>(it.TaggregateId == VocabId ? _otherVocabId : VocabId).ChangeMeaning($"change {++_changes}")));
          InUnitOfWork(taggregates =>
          {
-            taggregates.Save(StoredVocab.Create(VocabId, "taberu"));
-            taggregates.Save(StoredVocab.Create(_otherVocabId, "kuu"));
+            taggregates.Add(StoredVocab.Create(VocabId, "taberu"));
+            taggregates.Add(StoredVocab.Create(_otherVocabId, "kuu"));
          });
 
          _exception = Invoking(() => InUnitOfWork(taggregates => taggregates.GetForUpdate<StoredVocab>(VocabId).ChangeMeaning("to eat")))
@@ -304,17 +304,17 @@ public class Given_a_state_store : UniversalTestBase
       [PCT] public void the_reader_gets_the_meaning_committed_before() => CommittedVocab(VocabId).Meaning.Must().Be("");
    }
 
-   public class after_a_participation_handler_changes_a_new_vocab_while_it_is_saved : Given_a_state_store
+   public class after_a_participation_handler_changes_a_new_vocab_while_it_is_added : Given_a_state_store
    {
-      public after_a_participation_handler_changes_a_new_vocab_while_it_is_saved()
+      public after_a_participation_handler_changes_a_new_vocab_while_it_is_added()
       {
          Compose(participation: handle => handle
                    .ForTevent((IStoredVocabCreated it, ITaggregateStoreUpdater taggregates) => taggregates.GetForUpdate<StoredVocab>(it.TaggregateId).ChangeMeaning("to eat"))
                    .ForTevent((IStoredVocabTevent it) => ParticipationLog.Enqueue(it.GetType().Name)));
-         InUnitOfWork(taggregates => taggregates.Save(StoredVocab.Create(VocabId, "taberu")));
+         InUnitOfWork(taggregates => taggregates.Add(StoredVocab.Create(VocabId, "taberu")));
       }
 
-      [PCT] public void the_handler_got_the_vocab_being_saved_so_the_reader_gets_its_change() => CommittedVocab(VocabId).Meaning.Must().Be("to eat");
+      [PCT] public void the_handler_got_the_vocab_being_added_so_the_reader_gets_its_change() => CommittedVocab(VocabId).Meaning.Must().Be("to eat");
       [PCT] public void the_handlers_received_its_tevents_once_each_in_the_order_published() => ParticipationLog.Must().SequenceEqual([nameof(StoredVocabCreated), nameof(StoredVocabMeaningChanged)]);
    }
 
@@ -326,7 +326,7 @@ public class Given_a_state_store : UniversalTestBase
       public after_a_unit_of_work_deletes_a_vocab()
       {
          Compose();
-         InUnitOfWork(taggregates => taggregates.Save(StoredVocab.Create(VocabId, "taberu")));
+         InUnitOfWork(taggregates => taggregates.Add(StoredVocab.Create(VocabId, "taberu")));
 
          bool inside = true, outside = false;
          InUnitOfWork(taggregates =>
@@ -404,7 +404,7 @@ public class Given_a_state_store : UniversalTestBase
          Compose(register: registrar => registrar.Register(Scoped.For<VocabDictionary>().CreatedBy(() => new VocabDictionary()),
                                                          Singleton.For<VocabReadings>().CreatedBy(() => new VocabReadings())),
                  declare: store => store.Taggregate(TrackedTransient.For<StoredVocab>().CreatedBy((VocabDictionary dictionary, VocabReadings readings) => new StoredVocab(dictionary, readings))));
-         InUnitOfWork(taggregates => taggregates.Save(StoredVocab.Create(VocabId, "taberu")));
+         InUnitOfWork(taggregates => taggregates.Add(StoredVocab.Create(VocabId, "taberu")));
          _thrown = Invoking(() => InUnitOfWork(taggregates => taggregates.GetForUpdate<StoredVocab>(VocabId))).Must().Throw<Exception>().Which;
       }
 
@@ -421,7 +421,7 @@ public class Given_a_state_store : UniversalTestBase
       public when_two_units_of_work_on_two_threads_change_one_vocab()
       {
          Compose();
-         InUnitOfWork(taggregates => taggregates.Save(StoredVocab.Create(VocabId, "taberu")));
+         InUnitOfWork(taggregates => taggregates.Add(StoredVocab.Create(VocabId, "taberu")));
 
          var first = Task.Run(() => InUnitOfWork(taggregates =>
          {
@@ -456,7 +456,7 @@ public class Given_a_state_store : UniversalTestBase
       public when_one_vocab_is_referred_to_as_a_taggregate_and_then_as_a_vocab()
       {
          Compose();
-         InUnitOfWork(taggregates => taggregates.Save(StoredVocab.Create(VocabId, "taberu")));
+         InUnitOfWork(taggregates => taggregates.Add(StoredVocab.Create(VocabId, "taberu")));
          _asATaggregate = Reader.Reference<ITaggregate>(VocabId);
          _asAVocab = Reader.Reference<StoredVocab>(VocabId);
       }
@@ -483,7 +483,7 @@ public class Given_a_state_store : UniversalTestBase
          {
             var deck = StoredDeck.Create(_deckId);
             deck.AddCard("the first card");
-            taggregates.Save(deck);
+            taggregates.Add(deck);
          });
 
          var cardsTheCopyHeld = 0;
@@ -503,15 +503,15 @@ public class Given_a_state_store : UniversalTestBase
 
    ///<summary>A unit of work that finds no vocab to get for update holds that id's lock, so no other unit of work adds one before it<br/>
    /// completes. It adds one itself, as a get-or-create does.</summary>
-   public class after_a_unit_of_work_finds_no_vocab_to_get_for_update_and_then_saves_a_new_vocab_with_that_id : Given_a_state_store
+   public class after_a_unit_of_work_finds_no_vocab_to_get_for_update_and_then_adds_a_new_vocab_with_that_id : Given_a_state_store
    {
-      public after_a_unit_of_work_finds_no_vocab_to_get_for_update_and_then_saves_a_new_vocab_with_that_id()
+      public after_a_unit_of_work_finds_no_vocab_to_get_for_update_and_then_adds_a_new_vocab_with_that_id()
       {
          Compose();
          InUnitOfWork(taggregates =>
          {
             taggregates.TryGetForUpdate(VocabId, out StoredVocab? _).Must().BeFalse();
-            taggregates.Save(StoredVocab.Create(VocabId, "taberu"));
+            taggregates.Add(StoredVocab.Create(VocabId, "taberu"));
          });
       }
 
@@ -535,26 +535,26 @@ public class Given_a_state_store : UniversalTestBase
       [PCT] public void the_second_try_finds_none_either() => _theSecondTryFoundIt.Must().BeFalse();
    }
 
-   ///<summary>A new taggregate is saved with the tevents it published from its creation on. A unit of work that saved it and rolled back<br/>
-   /// took them, so a retry that saves the same instance again would commit a taggregate whose creation no handler or observer heard of.</summary>
-   public class when_a_new_vocab_is_saved_again_after_the_unit_of_work_that_saved_it_rolled_back : Given_a_state_store
+   ///<summary>A new taggregate is added with the tevents it published from its creation on. A unit of work that added it and rolled back<br/>
+   /// took them, so a retry that adds the same instance again would commit a taggregate whose creation no handler or observer heard of.</summary>
+   public class when_a_new_vocab_is_added_again_after_the_unit_of_work_that_added_it_rolled_back : Given_a_state_store
    {
-      readonly Exception _thrownByTheSecondSave;
+      readonly Exception _thrownByTheSecondAdd;
 
-      public when_a_new_vocab_is_saved_again_after_the_unit_of_work_that_saved_it_rolled_back()
+      public when_a_new_vocab_is_added_again_after_the_unit_of_work_that_added_it_rolled_back()
       {
          Compose();
          var vocab = StoredVocab.Create(VocabId, "taberu");
          Invoking(() => InUnitOfWork(taggregates =>
          {
-            taggregates.Save(vocab);
+            taggregates.Add(vocab);
             throw new InvalidOperationException("The unit of work fails.");
          })).Must().Throw<InvalidOperationException>();
 
-         _thrownByTheSecondSave = Invoking(() => InUnitOfWork(taggregates => taggregates.Save(vocab))).Must().Throw<Exception>().Which;
+         _thrownByTheSecondAdd = Invoking(() => InUnitOfWork(taggregates => taggregates.Add(vocab))).Must().Throw<Exception>().Which;
       }
 
-      [PCT] public void the_second_save_is_refused_saying_the_vocab_must_be_created_again() => _thrownByTheSecondSave.Message.Must().Contain("Create it again");
+      [PCT] public void the_second_add_is_refused_saying_the_vocab_must_be_created_again() => _thrownByTheSecondAdd.Message.Must().Contain("Create it again");
       [PCT] public void the_store_holds_no_such_vocab() => Reader.TryGet(VocabId, out StoredVocab? _).Must().BeFalse();
    }
 
@@ -566,7 +566,7 @@ public class Given_a_state_store : UniversalTestBase
       public when_a_store_with_no_storage_is_reloaded_from_its_storage()
       {
          Compose();
-         InUnitOfWork(taggregates => taggregates.Save(StoredVocab.Create(VocabId, "taberu")));
+         InUnitOfWork(taggregates => taggregates.Add(StoredVocab.Create(VocabId, "taberu")));
          _thrown = Invoking(() => Container.RootResolver.Resolve<IStateStore>().ReloadFromStorage()).Must().Throw<Exception>().Which;
       }
 
@@ -582,7 +582,7 @@ public class Given_a_state_store : UniversalTestBase
       public when_a_store_with_no_storage_is_to_write_every_taggregate_anew()
       {
          Compose();
-         InUnitOfWork(taggregates => taggregates.Save(StoredVocab.Create(VocabId, "taberu")));
+         InUnitOfWork(taggregates => taggregates.Add(StoredVocab.Create(VocabId, "taberu")));
          _thrown = Invoking(() => Container.RootResolver.Resolve<IStateStore>().WriteEverythingAnew()).Must().Throw<Exception>().Which;
       }
 
@@ -600,7 +600,7 @@ public class Given_a_state_store : UniversalTestBase
                                         .Taggregate(() => new StoredSentence())
                                         .Index<ITaggregate, string>(taggregate => [taggregate.GetType().Name])
                                         .Index<StoredVocab, string>(vocab => [vocab.Question]));
-         InUnitOfWork(taggregates => taggregates.Save(StoredVocab.Create(VocabId, "taberu")));
+         InUnitOfWork(taggregates => taggregates.Add(StoredVocab.Create(VocabId, "taberu")));
       }
 
       [PCT] public void the_index_of_every_taggregate_files_the_vocab_under_its_class() =>
@@ -633,7 +633,7 @@ public class Given_a_state_store : UniversalTestBase
          if(reportFile == null) return;
 
          Compose(participation: handle => handle.ForTevent((IStoredVocabMeaningChanged _) => {}));
-         InUnitOfWork(taggregates => taggregates.Save(StoredVocab.Create(VocabId, "taberu")));
+         InUnitOfWork(taggregates => taggregates.Add(StoredVocab.Create(VocabId, "taberu")));
          var committed = CommittedVocab(VocabId);
 
          var report = new List<string>

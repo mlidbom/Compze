@@ -51,11 +51,11 @@ public class Given_a_state_store_whose_files_are_kept_in_memory_starting_from_a_
 
    protected override async Task DisposeAsyncInternal() => await _store.DisposeAsync();
 
-   public class after_a_unit_of_work_saves_a_vocab_and_the_store_reloads_reading_its_file : Given_a_state_store_whose_files_are_kept_in_memory_starting_from_a_MemoryPack_cache
+   public class after_a_unit_of_work_adds_a_vocab_and_the_store_reloads_reading_its_file : Given_a_state_store_whose_files_are_kept_in_memory_starting_from_a_MemoryPack_cache
    {
-      public after_a_unit_of_work_saves_a_vocab_and_the_store_reloads_reading_its_file()
+      public after_a_unit_of_work_adds_a_vocab_and_the_store_reloads_reading_its_file()
       {
-         _store.ScopeFactory.ExecuteUnitOfWork(unitOfWork => unitOfWork.Resolve<ITaggregateStoreUpdater>().Save(CachedVocab.Create(VocabId, "taberu", "to eat")));
+         _store.ScopeFactory.ExecuteUnitOfWork(unitOfWork => unitOfWork.Resolve<ITaggregateStoreUpdater>().Add(CachedVocab.Create(VocabId, "taberu", "to eat")));
          Reload();
       }
 
@@ -63,7 +63,7 @@ public class Given_a_state_store_whose_files_are_kept_in_memory_starting_from_a_
 
       [PCT] public void nothing_is_written_to_the_disk() => Directory.Exists(_folder.FullName).Must().BeFalse();
 
-      public class and_the_store_reloads_with_nothing_changed : after_a_unit_of_work_saves_a_vocab_and_the_store_reloads_reading_its_file
+      public class and_the_store_reloads_with_nothing_changed : after_a_unit_of_work_adds_a_vocab_and_the_store_reloads_reading_its_file
       {
          public and_the_store_reloads_with_nothing_changed() => Reload();
 
@@ -71,7 +71,7 @@ public class Given_a_state_store_whose_files_are_kept_in_memory_starting_from_a_
       }
 
       ///<summary>Written behind the store at once, so possibly within the same tick of the system's clock as the store's own write.</summary>
-      public class and_its_file_is_changed_behind_the_store_to_text_of_the_same_length_and_the_store_reloads : after_a_unit_of_work_saves_a_vocab_and_the_store_reloads_reading_its_file
+      public class and_its_file_is_changed_behind_the_store_to_text_of_the_same_length_and_the_store_reloads : after_a_unit_of_work_adds_a_vocab_and_the_store_reloads_reading_its_file
       {
          public and_its_file_is_changed_behind_the_store_to_text_of_the_same_length_and_the_store_reloads()
          {

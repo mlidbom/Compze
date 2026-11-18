@@ -83,7 +83,7 @@ public abstract class TeventMigrationTestBase : UniversalTestBase
       await UtcTimeSource.Test.FrozenAtUtc(UtcTimeSource.UtcNow + 1.Hours()).RunAsync(async () =>
       {
          container.ExecuteUnitOfWork(unitOfWork => unitOfWork.TaggregateStoreUpdater()
-                                                                              .Save(initialTaggregate));
+                                                                              .Add(initialTaggregate));
          startingMigrations.ForEach(migrations.Add);
          ClearCache(container);
 

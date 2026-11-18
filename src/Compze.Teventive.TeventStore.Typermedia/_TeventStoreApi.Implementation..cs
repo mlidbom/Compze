@@ -85,7 +85,7 @@ public partial class TeventStoreApi
          internal SaveTaggregate(TTaggregate entity) => Entity = entity;
          public TTaggregate Entity { get; private set; }
 
-         internal static void RegisterHandler(TypermediaHandlerRegistrar registrar) => registrar.ForTommand((SaveTaggregate<TTaggregate> tommand, ITaggregateStoreUpdater updater) => updater.Save(tommand.Entity));
+         internal static void RegisterHandler(TypermediaHandlerRegistrar registrar) => registrar.ForTommand((SaveTaggregate<TTaggregate> tommand, ITaggregateStoreUpdater updater) => updater.Add(tommand.Entity));
       }
    }
 

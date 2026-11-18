@@ -42,7 +42,7 @@ public abstract partial class SelfGeneratingQueryModel<TQueryModel, TTaggregateT
          });
 
       ///<summary>The collection that keeps a parent's entities, which the parent's routing routes to with <c>Entities(...)</c>.</summary>
-      public interface ICollectionManager : ITeventRoutedMember<TEntityTevent>
+      public interface ICollectionManager : ITeventRoutedPart<TEntityTevent>
       {
          ///<summary>The entities, by id and in the order they were created.</summary>
          IReadOnlyEntityCollection<TEntity, TEntityId> Entities { get; }

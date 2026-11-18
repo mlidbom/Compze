@@ -63,7 +63,7 @@ public class Experiment_with_unifying_tevents_and_tommands_test : UniversalTestB
       protected override void RegisterTypermediaTommandHandlers(ITypermediaTommandHandlerRegistrar handle) => handle
          .ForTommand((UserRegistrarTommand.RegisterUserTypermediaTommand typermediaTommand, ITaggregateStoreUpdater store) =>
           {
-             store.Save(UserTaggregate.Register(typermediaTommand));
+             store.Add(UserTaggregate.Register(typermediaTommand));
              return new RegisterUserResult(typermediaTommand.UserId);
           });
 
@@ -82,7 +82,7 @@ public class Experiment_with_unifying_tevents_and_tommands_test : UniversalTestB
 
       _userDomainScopeFactory = _userManagementDomainEndpoint.ServiceLocator.Resolve<IScopeFactory>();
 
-      _userDomainScopeFactory.ExecuteUnitOfWork(unitOfWork => unitOfWork.TaggregateStoreUpdater().Save(UserRegistrarTaggregate.Create()));
+      _userDomainScopeFactory.ExecuteUnitOfWork(unitOfWork => unitOfWork.TaggregateStoreUpdater().Add(UserRegistrarTaggregate.Create()));
    }
 
    protected override async Task DisposeAsyncInternal()

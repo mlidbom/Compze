@@ -50,10 +50,10 @@ sealed class TaggregateTeventStore : ITaggregateStore
    }
 
    public ITaggregateReference<TTaggregate> Reference<TTaggregate>(TaggregateId id) where TTaggregate : class, ITaggregate =>
-      new TaggregateReference<TTaggregate>(this, _unitsOfWork, id);
+      new TaggregateReference<TTaggregate>(this, id);
 
    ///<summary>The histories whose creation tevent is a tevent of the class, but for the deleted ones, read through the ambient<br/>
-   /// transaction. The tevent store writes a unit of work's tevents at each publish, so a unit of work sees its own saves and<br/>
+   /// transaction. The tevent store writes a unit of work's tevents at each publish, so a unit of work sees its own additions and<br/>
    /// deletions.</summary>
    public IReadOnlyCollection<ITaggregateReference<TTaggregate>> All<TTaggregate>() where TTaggregate : class, ITaggregate
    {

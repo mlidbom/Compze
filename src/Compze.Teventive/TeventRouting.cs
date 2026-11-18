@@ -153,16 +153,16 @@ public sealed class TeventRouting<TInstance, TTevent> : TeventRouting where TIns
 
       ///<summary>Routes every tevent of the component <paramref name="component"/> returns to that component's own appliers. The component's<br/>
       /// tevent type is inferred from what <paramref name="component"/> returns.</summary>
-      public Declaration Component<TComponentTevent>(Func<TInstance, ITeventRoutedMember<TComponentTevent>> component) where TComponentTevent : TTevent => Member(component);
+      public Declaration Component<TComponentTevent>(Func<TInstance, ITeventRoutedPart<TComponentTevent>> component) where TComponentTevent : TTevent => Part(component);
 
       ///<summary>Routes every tevent of the entities in the collection <paramref name="entities"/> returns to that collection: a created tevent adds an<br/>
       /// entity, and every tevent reaches the entity whose id it carries.</summary>
-      public Declaration Entities<TEntityTevent>(Func<TInstance, ITeventRoutedMember<TEntityTevent>> entities) where TEntityTevent : TTevent => Member(entities);
+      public Declaration Entities<TEntityTevent>(Func<TInstance, ITeventRoutedPart<TEntityTevent>> entities) where TEntityTevent : TTevent => Part(entities);
 
       ///<summary>Routes every tevent wrapped in the adopting wrapper tevent of <paramref name="slot"/>, a slot that belongs to this class, to the<br/>
       /// shared tomponent in that slot of the instance. The instance keeps no slot object: the route gets the shared tomponent from it.</summary>
       public Declaration SharedTomponent<TOwnerTevent, TOwnerTeventImplementation, TTomponentTevent, TAdoptingWrapperTevent>(
-         SharedTomponentSlotOfAClass<TInstance, TOwnerTevent, TOwnerTeventImplementation, TTomponentTevent, TAdoptingWrapperTevent> slot)
+         SharedTomponentSlot<TInstance, TOwnerTevent, TOwnerTeventImplementation, TTomponentTevent, TAdoptingWrapperTevent> slot)
          where TOwnerTevent : class, ITaggregateTevent
          where TOwnerTeventImplementation : TaggregateTevent, TOwnerTevent
          where TTomponentTevent : class, ITevent
@@ -179,12 +179,12 @@ public sealed class TeventRouting<TInstance, TTevent> : TeventRouting where TIns
          return this;
       }
 
-      Declaration Member<TMemberTevent>(Func<TInstance, ITeventRoutedMember<TMemberTevent>> member) where TMemberTevent : ITevent
+      Declaration Part<TPartTevent>(Func<TInstance, ITeventRoutedPart<TPartTevent>> part) where TPartTevent : ITevent
       {
          AssertRoutesTeventAppliers();
-         AssertHoldsNoState(member);
+         AssertHoldsNoState(part);
 #pragma warning disable CS0618 // This is just the type of infrastructure code the member is for
-         TeventRoutes.Add(new TeventRoute(typeof(IPublisherTevent<TMemberTevent>), (instance, wrapped) => member((TInstance)instance).DispatchInternal(wrapped), partTevent: typeof(TMemberTevent)));
+         TeventRoutes.Add(new TeventRoute(typeof(IPublisherTevent<TPartTevent>), (instance, wrapped) => part((TInstance)instance).DispatchInternal(wrapped), partTevent: typeof(TPartTevent)));
 #pragma warning restore CS0618
          return this;
       }

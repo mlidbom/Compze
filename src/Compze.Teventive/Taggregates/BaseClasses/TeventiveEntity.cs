@@ -66,7 +66,7 @@ public abstract class Tentity<TParent,
       base.Publish(tevent);
    }
 
-   public interface ICollectionManager : IEntityCollectionManager<TTentity, TTentityId, TTentityTevent, TTentityTeventImplementation, TTentityCreatedTevent>, ITeventRoutedMember<TTentityTevent>;
+   public interface ICollectionManager : IEntityCollectionManager<TTentity, TTentityId, TTentityTevent, TTentityTeventImplementation, TTentityCreatedTevent>, ITeventRoutedPart<TTentityTevent>;
 
    public static ICollectionManager CreateSelfManagingCollection(TParent parent) => new CollectionManager(parent);
 

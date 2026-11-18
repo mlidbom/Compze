@@ -7,8 +7,8 @@ namespace Compze.Teventive.Taggregates.BaseClasses._internal;
 ///<summary>What every collection of entities that a <see cref="TeventRouting"/> routes to does with a tevent of its entities: a created tevent adds a<br/>
 /// new entity, every tevent reaches the entity whose id it carries, and a removed tevent then takes the entity out, once it has reached the<br/>
 /// entity's appliers. The order is load-bearing: an entity's appliers find it in its collection, and a removed entity has applied its removal.</summary>
-abstract class RoutedEntityCollection<TEntity, TEntityId, TEntityTevent> : ITeventRoutedMember<TEntityTevent>, IEntityCollectionState
-   where TEntity : class, ITeventRoutedMember<TEntityTevent>
+abstract class RoutedEntityCollection<TEntity, TEntityId, TEntityTevent> : ITeventRoutedPart<TEntityTevent>, IEntityCollectionState
+   where TEntity : class, ITeventRoutedPart<TEntityTevent>
    where TEntityId : struct
    where TEntityTevent : class, ITevent
 {
@@ -30,7 +30,7 @@ abstract class RoutedEntityCollection<TEntity, TEntityId, TEntityTevent> : ITeve
    protected virtual bool Removes(TEntityTevent tevent) => false;
 
 #pragma warning disable CS0618 // This is just the type of infrastructure code the member is for
-   void ITeventRoutedMember<TEntityTevent>.DispatchInternal(IPublisherTevent<ITevent> wrapped)
+   void ITeventRoutedPart<TEntityTevent>.DispatchInternal(IPublisherTevent<ITevent> wrapped)
    {
       var tevent = (TEntityTevent)wrapped.Tevent;
       var id = IdOf(tevent);

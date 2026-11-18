@@ -7,6 +7,7 @@ using Compze.Teventive._internal;
 using Compze.Teventive._private.Implementation;
 using Compze.Teventive.Taggregates.BaseClasses._private;
 using Compze.Teventive.Taggregates.Tevents;
+using Compze.Teventive.Taggregates.Tevents._internal;
 
 namespace Compze.Teventive.Taggregates.BaseClasses;
 
@@ -78,10 +79,7 @@ public abstract partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggre
 
    ///<summary>Throws unless this instance may be changed. A committed instance, which a taggregate store serves to readers, is read<br/>
    /// only: it is changed by getting it for update, inside a unit of work.</summary>
-   ///<remarks><see cref="Publish{TTevent}"/> asserts it itself. Call it first where the class changes its state other than by<br/>
-   /// applying a tevent, such as while its parts are being moved to tevents, so that a change to a committed instance fails before<br/>
-   /// it is made.</remarks>
-   protected void AssertCanBeChanged() =>
+   void AssertCanBeChanged() =>
       State.Assert(!_isReadOnly, () => $"{GetType().Name} {Id} is an instance a taggregate store serves to readers, which is read only. Get it for update from an ITaggregateStoreUpdater, inside a unit of work, to change it.");
 
    protected TTevent Publish<TTevent>(TTevent tevent) where TTevent : TTaggregateTeventImplementation
@@ -122,7 +120,6 @@ public abstract partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggre
 
       using(ScopedChange.Enter(() => _reentrancyLevel++, () => _reentrancyLevel--))
       {
-#pragma warning disable CS0618 // Type or member is obsolete
          ((IMutableTaggregateTevent)tevent).SetTaggregateVersionInternal(Version + 1);
          ((IMutableTaggregateTevent)tevent).SetUtcTimeStampInternal(UtcTimeSource.UtcNow);
          if(Version == 0)
@@ -136,7 +133,6 @@ public abstract partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggre
             if(tevent.TaggregateId is not null && tevent.TaggregateId != Id) throw new ArgumentOutOfRangeException($"Tried to raise tevent for Taggregated: {tevent.TaggregateId} from Taggregate with Id: {Id}.");
             ((IMutableTaggregateTevent)tevent).SetTaggregateIdInternal(Id);
          }
-#pragma warning restore CS0618 // Type or member is obsolete
          Apply(wrapped);
          _unCommittedTevents.Add(wrapped);
          _teventsToHandOut.Enqueue(wrapped);

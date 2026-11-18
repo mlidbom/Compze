@@ -11,7 +11,7 @@ using static Compze.Contracts.Contract;
 
 namespace Compze.Teventive.TeventStore._private;
 
-///<summary>The tevent store's part of one unit of work: the taggregates it got for update or saved, each built from its history once<br/>
+///<summary>The tevent store's part of one unit of work: the taggregates it got for update or added, each built from its history once<br/>
 /// for the unit of work. Each tevent they publish is written to the tevent store as its taggregate hands it out, inside the unit of<br/>
 /// work's transaction, and then dispatched. The database commits or rolls back the writes with the transaction, so this session has<br/>
 /// nothing to prepare or commit itself. A taggregate that publishes an <see cref="ITaggregateDeletedTevent"/> is deleted: its history,<br/>
@@ -55,7 +55,7 @@ sealed class TeventStoreSession : ITaggregateStoreSession
       return true;
    }
 
-   public void Save(ITaggregate taggregate)
+   public void Add(ITaggregate taggregate)
    {
       var tevents = TakeTheUncommittedTeventsOf(taggregate);
       if(taggregate.Version > 0 && tevents.None() || tevents.Any() && tevents.Min(it => it.Tevent.TaggregateVersion) > 1)

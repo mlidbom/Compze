@@ -13,8 +13,8 @@ interface ITaggregateStoreSession
    ///<summary>As <see cref="ITaggregateStoreUpdater.TryGetForUpdate{TTaggregate}"/>, for the taggregates of this store.</summary>
    bool TryGetForUpdate<TTaggregate>(TaggregateId id, [NotNullWhen(true)] out TTaggregate? taggregate) where TTaggregate : class, ITaggregate;
 
-   ///<summary>As <see cref="ITaggregateStoreUpdater.Save{TTaggregate}"/>, for a taggregate of a class this store keeps.</summary>
-   void Save(ITaggregate taggregate);
+   ///<summary>As <see cref="ITaggregateStoreUpdater.Add"/>, for a taggregate of a class this store keeps.</summary>
+   void Add(ITaggregate taggregate);
 
    ///<summary>Throws if a publish has failed on a taggregate of this session, whose state then can't be trusted: the unit of work<br/>
    /// rolls back, even if the code that published caught the exception.</summary>

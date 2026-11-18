@@ -86,12 +86,12 @@ public class Given_a_state_store_kept_in_files_starting_from_a_MemoryPack_cache 
       if(_folder.Exists) _folder.Delete(recursive: true);
    }
 
-   public class after_a_store_saves_a_vocab_and_a_second_store_starts_on_the_folder : Given_a_state_store_kept_in_files_starting_from_a_MemoryPack_cache
+   public class after_a_store_adds_a_vocab_and_a_second_store_starts_on_the_folder : Given_a_state_store_kept_in_files_starting_from_a_MemoryPack_cache
    {
-      public after_a_store_saves_a_vocab_and_a_second_store_starts_on_the_folder()
+      public after_a_store_adds_a_vocab_and_a_second_store_starts_on_the_folder()
       {
          StartAStore();
-         InUnitOfWork(taggregates => taggregates.Save(CachedVocab.Create(VocabId, "taberu", "to eat")));
+         InUnitOfWork(taggregates => taggregates.Add(CachedVocab.Create(VocabId, "taberu", "to eat")));
          StartAStore();
       }
 
@@ -100,7 +100,7 @@ public class Given_a_state_store_kept_in_files_starting_from_a_MemoryPack_cache 
       [PCT] public void the_stores_own_folder_holds_one_cache_file_and_no_temporary_file() =>
          FilesInTheStoresOwnFolder.Must().Satisfy(it => it.Count == 1 && !it[0].EndsWith(".being-written", StringComparison.Ordinal));
 
-      public class and_the_vocabs_file_changes_behind_the_stores_keeping_its_length_and_last_write_time : after_a_store_saves_a_vocab_and_a_second_store_starts_on_the_folder
+      public class and_the_vocabs_file_changes_behind_the_stores_keeping_its_length_and_last_write_time : after_a_store_adds_a_vocab_and_a_second_store_starts_on_the_folder
       {
          public and_the_vocabs_file_changes_behind_the_stores_keeping_its_length_and_last_write_time()
          {
@@ -111,7 +111,7 @@ public class Given_a_state_store_kept_in_files_starting_from_a_MemoryPack_cache 
          [PCT] public void a_third_store_has_the_meaning_the_cache_holds_since_it_didnt_read_the_file() => Reader.Get<CachedVocab>(VocabId).Meaning.Must().Be("to eat");
       }
 
-      public class and_the_vocabs_file_changes_behind_the_stores_with_a_new_last_write_time : after_a_store_saves_a_vocab_and_a_second_store_starts_on_the_folder
+      public class and_the_vocabs_file_changes_behind_the_stores_with_a_new_last_write_time : after_a_store_adds_a_vocab_and_a_second_store_starts_on_the_folder
       {
          public and_the_vocabs_file_changes_behind_the_stores_with_a_new_last_write_time()
          {
@@ -122,20 +122,20 @@ public class Given_a_state_store_kept_in_files_starting_from_a_MemoryPack_cache 
          [PCT] public void a_third_store_reads_the_changed_file() => Reader.Get<CachedVocab>(VocabId).Meaning.Must().Be("to EAT");
       }
 
-      public class and_the_second_store_saves_another_vocab : after_a_store_saves_a_vocab_and_a_second_store_starts_on_the_folder
+      public class and_the_second_store_adds_another_vocab : after_a_store_adds_a_vocab_and_a_second_store_starts_on_the_folder
       {
          readonly TaggregateId _otherVocabId = new(Guid.NewGuid());
 
-         public and_the_second_store_saves_another_vocab()
+         public and_the_second_store_adds_another_vocab()
          {
-            InUnitOfWork(taggregates => taggregates.Save(CachedVocab.Create(_otherVocabId, "nomu", "to drink")));
+            InUnitOfWork(taggregates => taggregates.Add(CachedVocab.Create(_otherVocabId, "nomu", "to drink")));
             StartAStore();
          }
 
          [PCT] public void a_third_store_has_both_vocabs() => IdsOfAllVocabs.Must().SequenceEqual(new[] { VocabId.Value, _otherVocabId.Value }.Order());
       }
 
-      public class and_the_second_store_deletes_the_vocab : after_a_store_saves_a_vocab_and_a_second_store_starts_on_the_folder
+      public class and_the_second_store_deletes_the_vocab : after_a_store_adds_a_vocab_and_a_second_store_starts_on_the_folder
       {
          public and_the_second_store_deletes_the_vocab()
          {
@@ -147,7 +147,7 @@ public class Given_a_state_store_kept_in_files_starting_from_a_MemoryPack_cache 
       }
 
       public class and_the_vocabs_file_changes_behind_the_stores_keeping_its_length_and_last_write_time_and_a_store_keeping_vocabs_with_tags_starts
-         : after_a_store_saves_a_vocab_and_a_second_store_starts_on_the_folder
+         : after_a_store_adds_a_vocab_and_a_second_store_starts_on_the_folder
       {
          public and_the_vocabs_file_changes_behind_the_stores_keeping_its_length_and_last_write_time_and_a_store_keeping_vocabs_with_tags_starts()
          {

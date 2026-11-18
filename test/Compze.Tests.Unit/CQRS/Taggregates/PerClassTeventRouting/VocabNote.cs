@@ -163,7 +163,7 @@ class VocabNote : Note
 {
    static class Slots
    {
-      internal static readonly SharedTomponentSlotOfAClass<VocabNote, INoteTevent, NoteTevent, IAudioListTevent, IVocabAudioTevent<IAudioListTevent>> Audio =
+      internal static readonly SharedTomponentSlot<VocabNote, INoteTevent, NoteTevent, IAudioListTevent, IVocabAudioTevent<IAudioListTevent>> Audio =
          new(typeof(VocabAudioTevent<>), static vocab => vocab.Audio);
    }
 

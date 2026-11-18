@@ -32,6 +32,5 @@ public interface ITaggregateStoreUpdater : ITaggregateStoreReader
 
    ///<summary>Adds <paramref name="taggregate"/>, new and not yet in any store, to the store that keeps its class when this unit<br/>
    /// of work commits. The tevents it has published are dispatched now, in the order published.</summary>
-   ///<remarks>review-naming: Save only adds, so Add would tell the truth. For the naming pass (jastudio-rep-opus, 2026-11-16).</remarks>
-   void Save<TTaggregate>(TTaggregate taggregate) where TTaggregate : class, ITaggregate;
+   void Add(ITaggregate taggregate);
 }

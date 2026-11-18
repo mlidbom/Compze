@@ -4,6 +4,7 @@ using Compze.Internals.SystemCE.ReflectionCE;
 using Compze.Teventive;
 using Compze.Teventive.Taggregates.BaseClasses;
 using Compze.Teventive.Taggregates.Tevents;
+using Compze.Tests.Common.CQRS;
 
 // ReSharper disable ClassNeverInstantiated.Global
 #pragma warning  disable CA1812 // Avoid uninstantiated internal classes # used via reflection
@@ -60,9 +61,7 @@ namespace Compze.Tests.Common.CQRS.TeventRefactoring.Migrations
       public static TestTaggregate FromTevents(TaggregateId? id, IEnumerable<Type> tevents)
       {
          var rootTevents = tevents.ToTevents();
-#pragma warning disable CS0618 // Type or member is obsolete
-         rootTevents.Cast<IMutableTaggregateTevent>().First().SetTaggregateIdInternal(id ?? new TaggregateId());
-#pragma warning restore CS0618 // Type or member is obsolete
+         rootTevents.First().SetTaggregateId(id ?? new TaggregateId());
          return new TestTaggregate(rootTevents);
       }
 

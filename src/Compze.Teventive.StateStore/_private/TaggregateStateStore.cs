@@ -73,8 +73,8 @@ sealed class TaggregateStateStore : ITaggregateStore, IStateStore
    ///<summary>One reference for each taggregate, made at the first request, so that index lookups allocate none. A request for it as<br/>
    /// a class the first reference can't be cast to gets a new one, which is equal to it.</summary>
    public ITaggregateReference<TTaggregate> Reference<TTaggregate>(TaggregateId id) where TTaggregate : class, ITaggregate =>
-      _references.GetOrAdd(id, static (theId, store) => new TaggregateReference<TTaggregate>(store, store._unitsOfWork, theId), this) as ITaggregateReference<TTaggregate>
-   ?? new TaggregateReference<TTaggregate>(this, _unitsOfWork, id);
+      _references.GetOrAdd(id, static (theId, store) => new TaggregateReference<TTaggregate>(store, theId), this) as ITaggregateReference<TTaggregate>
+   ?? new TaggregateReference<TTaggregate>(this, id);
 
    public ITaggregateStoreSession NewSession(TaggregateUnitOfWork unitOfWork)
    {
@@ -83,16 +83,14 @@ sealed class TaggregateStateStore : ITaggregateStore, IStateStore
       return new StateStoreSession(this, unitOfWork, leaveTheGate: _gate.LeaveUnitOfWork);
    }
 
-   public ReloadedTaggregates ReloadFromStorage() => ReloadFromStorageAfter(changeToTheStorage: () => {});
-
-   public ReloadedTaggregates ReloadFromStorageAfter(Action changeToTheStorage)
+   public ReloadedTaggregates ReloadFromStorage(Action? changeToTheStorage = null)
    {
       State.Assert(Storage is not NoStorage,
                    () => "This state store has no storage to reload from: it was composed without one, such as StoredInFiles, so it keeps its taggregates in memory only, and a reload would remove every one of them.");
       State.Assert(AmbientSession == null, () => "A unit of work that has changed taggregates of the state store can't reload it: the reload waits for every such unit of work to complete, this one included.");
       return _gate.WhileNoUnitOfWorkIsOpen(() =>
       {
-         changeToTheStorage();
+         changeToTheStorage?.Invoke();
          return _loadingMonitor.Locked(() =>
          {
             var before = _hasLoaded ? _committedTaggregates : new ConcurrentDictionary<TaggregateId, ITaggregate>();

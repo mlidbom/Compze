@@ -16,18 +16,18 @@ using Compze.Teventive.TaggregateStores;
 
 namespace Compze.Tests.Integration.CQRS.TeventStore;
 
-///<summary>A participation handler that gets a new user while the tevent store saves it, and changes it: the store tracks the user<br/>
-/// before it publishes its tevents, so the handler gets the very instance being saved, and the change it makes is stored and<br/>
+///<summary>A participation handler that gets a new user while the tevent store adds it, and changes it: the store tracks the user<br/>
+/// before it publishes its tevents, so the handler gets the very instance being added, and the change it makes is stored and<br/>
 /// published after the user's first tevent, in the order published.</summary>
-public class Given_a_tevent_store_whose_participation_handler_changes_a_new_user_while_it_is_saved : UniversalTestBase
+public class Given_a_tevent_store_whose_participation_handler_changes_a_new_user_while_it_is_added : UniversalTestBase
 {
    readonly IDependencyInjectionContainer _container;
    readonly TaggregateId _userId = new();
    readonly List<string> _receivedByTheHandlers = [];
-   readonly User _userSaved = new();
+   readonly User _userAdded = new();
    User? _userTheHandlerGot;
 
-   public Given_a_tevent_store_whose_participation_handler_changes_a_new_user_while_it_is_saved()
+   public Given_a_tevent_store_whose_participation_handler_changes_a_new_user_while_it_is_added()
    {
       _container = TestEnv.DIContainer.SetupTestingContainer(registrar => registrar.RequireIntegrationTestTypeMappings(),
                                                              composeEngine: engine => engine.RegisterTessageBusHandlers(handle => handle
@@ -39,13 +39,13 @@ public class Given_a_tevent_store_whose_participation_handler_changes_a_new_user
                                                                 .ForTevent((IUserTevent it) => _receivedByTheHandlers.Add(it.GetType().Name))),
                                                              declareTeventStoreTaggregates: store => store.Taggregate<User>());
 
-      _userSaved.Register("registered@example.com", "password", _userId);
-      _container.ExecuteUnitOfWork(unitOfWork => unitOfWork.TaggregateStoreUpdater().Save(_userSaved));
+      _userAdded.Register("registered@example.com", "password", _userId);
+      _container.ExecuteUnitOfWork(unitOfWork => unitOfWork.TaggregateStoreUpdater().Add(_userAdded));
    }
 
    protected override async Task DisposeAsyncInternal() => await _container.DisposeAsync().AsTask();
 
-   [PCT] public void the_handler_got_the_very_user_being_saved() => _userTheHandlerGot.Must().ReferenceEqual(_userSaved);
+   [PCT] public void the_handler_got_the_very_user_being_added() => _userTheHandlerGot.Must().ReferenceEqual(_userAdded);
 
    [PCT] public void the_handlers_received_its_tevents_once_each_in_the_order_published() =>
       _receivedByTheHandlers.Must().SequenceEqual([nameof(UserRegistered), nameof(UserChangedEmail)]);

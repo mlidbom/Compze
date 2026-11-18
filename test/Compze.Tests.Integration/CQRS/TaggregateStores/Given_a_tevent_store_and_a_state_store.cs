@@ -42,24 +42,24 @@ public class Given_a_tevent_store_and_a_state_store : UniversalTestBase
 
    void InUnitOfWork(Action<ITaggregateStoreUpdater> work) => _container.ExecuteUnitOfWork(unitOfWork => work(unitOfWork.TaggregateStoreUpdater()));
 
-   void SaveAUserAndAVocab(ITaggregateStoreUpdater taggregates)
+   void AddAUserAndAVocab(ITaggregateStoreUpdater taggregates)
    {
       User.Register(taggregates, "registered@example.com", "password", _userId);
-      taggregates.Save(StoredVocab.Create(_vocabId, "taberu"));
+      taggregates.Add(StoredVocab.Create(_vocabId, "taberu"));
    }
 
-   public class after_one_unit_of_work_saves_a_user_and_a_vocab : Given_a_tevent_store_and_a_state_store
+   public class after_one_unit_of_work_adds_a_user_and_a_vocab : Given_a_tevent_store_and_a_state_store
    {
-      public after_one_unit_of_work_saves_a_user_and_a_vocab() => InUnitOfWork(SaveAUserAndAVocab);
+      public after_one_unit_of_work_adds_a_user_and_a_vocab() => InUnitOfWork(AddAUserAndAVocab);
 
       [PCT] public void the_reader_gets_the_user() => Reader.Get<User>(_userId).Email.Must().Be("registered@example.com");
       [PCT] public void the_reader_gets_the_vocab() => Reader.Get<StoredVocab>(_vocabId).Question.Must().Be("taberu");
       [PCT] public void publishing_on_the_user_the_reader_gets_throws() => Invoking(() => Reader.Get<User>(_userId).ChangeEmail("changed@example.com")).Must().Throw<InvalidOperationException>();
-      [PCT] public void the_bulk_reader_gives_every_user_as_the_saved_user() => BulkReader.All<User>().Select(it => it.Id).Must().SequenceEqual([_userId]);
-      [PCT] public void the_bulk_reader_gives_every_vocab_as_the_saved_vocab() => BulkReader.All<StoredVocab>().Select(it => it.Id).Must().SequenceEqual([_vocabId]);
+      [PCT] public void the_bulk_reader_gives_every_user_as_the_added_user() => BulkReader.All<User>().Select(it => it.Id).Must().SequenceEqual([_userId]);
+      [PCT] public void the_bulk_reader_gives_every_vocab_as_the_added_vocab() => BulkReader.All<StoredVocab>().Select(it => it.Id).Must().SequenceEqual([_vocabId]);
       [PCT] public void the_reference_the_bulk_reader_gives_for_the_user_gives_its_email() => BulkReader.All<User>().Single().Current.Email.Must().Be("registered@example.com");
 
-      public class and_a_second_unit_of_work_registers_another_user_deletes_the_first_and_asks_for_every_user : after_one_unit_of_work_saves_a_user_and_a_vocab
+      public class and_a_second_unit_of_work_registers_another_user_deletes_the_first_and_asks_for_every_user : after_one_unit_of_work_adds_a_user_and_a_vocab
       {
          readonly TaggregateId _otherUserId = new();
          IReadOnlyList<TaggregateId> _everyUserInsideTheUnitOfWork = [];
@@ -76,7 +76,7 @@ public class Given_a_tevent_store_and_a_state_store : UniversalTestBase
          [PCT] public void after_the_commit_every_user_is_the_other_user() => BulkReader.All<User>().Select(it => it.Id).Must().SequenceEqual([_otherUserId]);
       }
 
-      public class and_a_second_unit_of_work_deletes_both : after_one_unit_of_work_saves_a_user_and_a_vocab
+      public class and_a_second_unit_of_work_deletes_both : after_one_unit_of_work_adds_a_user_and_a_vocab
       {
          bool _insideTheReaderFoundTheUser = true, _insideTheReaderFoundTheVocab = true;
          bool _insideGettingTheUserForUpdateFoundIt = true, _insideGettingTheVocabForUpdateFoundIt = true;
@@ -110,7 +110,7 @@ public class Given_a_tevent_store_and_a_state_store : UniversalTestBase
          [PCT] public void the_tevent_store_gives_the_users_version_before_the_deletion() => TeventStoreReader.GetReadonlyCopyOfVersion<User>(_userId, 1).Email.Must().Be("registered@example.com");
       }
 
-      public class and_a_second_unit_of_work_deletes_both_and_then_fails : after_one_unit_of_work_saves_a_user_and_a_vocab
+      public class and_a_second_unit_of_work_deletes_both_and_then_fails : after_one_unit_of_work_adds_a_user_and_a_vocab
       {
          public and_a_second_unit_of_work_deletes_both_and_then_fails() =>
             Invoking(() => InUnitOfWork(taggregates =>
@@ -125,7 +125,7 @@ public class Given_a_tevent_store_and_a_state_store : UniversalTestBase
          [PCT] public void the_tevent_store_keeps_the_users_history_without_the_deleted_tevent() => TeventStoreReader.GetHistory(_userId).Select(it => it.Tevent.GetType().Name).Must().SequenceEqual([nameof(UserRegistered)]);
       }
 
-      public class and_a_second_unit_of_work_deletes_the_user_and_then_changes_its_email : after_one_unit_of_work_saves_a_user_and_a_vocab
+      public class and_a_second_unit_of_work_deletes_the_user_and_then_changes_its_email : after_one_unit_of_work_adds_a_user_and_a_vocab
       {
          readonly Exception _exception;
 
@@ -141,7 +141,7 @@ public class Given_a_tevent_store_and_a_state_store : UniversalTestBase
          [PCT] public void the_reader_gets_the_user_as_it_was() => Reader.Get<User>(_userId).Email.Must().Be("registered@example.com");
       }
 
-      public class and_a_second_unit_of_work_deletes_the_vocab_and_then_changes_its_meaning : after_one_unit_of_work_saves_a_user_and_a_vocab
+      public class and_a_second_unit_of_work_deletes_the_vocab_and_then_changes_its_meaning : after_one_unit_of_work_adds_a_user_and_a_vocab
       {
          readonly Exception _exception;
 
@@ -157,7 +157,7 @@ public class Given_a_tevent_store_and_a_state_store : UniversalTestBase
          [PCT] public void the_reader_gets_the_vocab_as_it_was() => Reader.Get<StoredVocab>(_vocabId).Question.Must().Be("taberu");
       }
 
-      public class and_a_second_unit_of_work_changes_both : after_one_unit_of_work_saves_a_user_and_a_vocab
+      public class and_a_second_unit_of_work_changes_both : after_one_unit_of_work_adds_a_user_and_a_vocab
       {
          public and_a_second_unit_of_work_changes_both() =>
             InUnitOfWork(taggregates =>
@@ -170,7 +170,7 @@ public class Given_a_tevent_store_and_a_state_store : UniversalTestBase
          [PCT] public void the_reader_gets_the_vocabs_new_meaning() => Reader.Get<StoredVocab>(_vocabId).Meaning.Must().Be("to eat");
       }
 
-      public class and_a_second_unit_of_work_changes_both_and_then_fails : after_one_unit_of_work_saves_a_user_and_a_vocab
+      public class and_a_second_unit_of_work_changes_both_and_then_fails : after_one_unit_of_work_adds_a_user_and_a_vocab
       {
          public and_a_second_unit_of_work_changes_both_and_then_fails() =>
             Invoking(() => InUnitOfWork(taggregates =>
@@ -184,7 +184,7 @@ public class Given_a_tevent_store_and_a_state_store : UniversalTestBase
          [PCT] public void the_reader_gets_the_vocabs_meaning_from_before() => Reader.Get<StoredVocab>(_vocabId).Meaning.Must().Be("");
       }
 
-      public class and_a_second_unit_of_work_gets_the_user_for_update_and_then_reads_it : after_one_unit_of_work_saves_a_user_and_a_vocab
+      public class and_a_second_unit_of_work_gets_the_user_for_update_and_then_reads_it : after_one_unit_of_work_adds_a_user_and_a_vocab
       {
          User? _gotForUpdate;
          User? _read;
@@ -200,7 +200,7 @@ public class Given_a_tevent_store_and_a_state_store : UniversalTestBase
          [PCT] public void the_reader_got_the_instance_the_unit_of_work_got_for_update() => _read.Must().ReferenceEqual(_gotForUpdate);
       }
 
-      public class and_a_second_unit_of_work_gets_the_user_for_update_and_then_gets_it_for_update_in_a_scope_of_its_own : after_one_unit_of_work_saves_a_user_and_a_vocab
+      public class and_a_second_unit_of_work_gets_the_user_for_update_and_then_gets_it_for_update_in_a_scope_of_its_own : after_one_unit_of_work_adds_a_user_and_a_vocab
       {
          User? _gotForUpdate;
          User? _gotInTheOtherScope;
@@ -229,12 +229,12 @@ public class Given_a_tevent_store_and_a_state_store : UniversalTestBase
       [PCT] public void the_bulk_reader_gives_the_three_users() => BulkReader.All<User>().Select(it => it.Id).ToList().Must().Satisfy(it => it.Count == 3 && _userIds.All(it.Contains));
    }
 
-   public class after_a_unit_of_work_that_saves_a_user_and_a_vocab_fails : Given_a_tevent_store_and_a_state_store
+   public class after_a_unit_of_work_that_adds_a_user_and_a_vocab_fails : Given_a_tevent_store_and_a_state_store
    {
-      public after_a_unit_of_work_that_saves_a_user_and_a_vocab_fails() =>
+      public after_a_unit_of_work_that_adds_a_user_and_a_vocab_fails() =>
          Invoking(() => InUnitOfWork(taggregates =>
          {
-            SaveAUserAndAVocab(taggregates);
+            AddAUserAndAVocab(taggregates);
             throw new InvalidOperationException("The unit of work fails.");
          })).Must().Throw<InvalidOperationException>();
 

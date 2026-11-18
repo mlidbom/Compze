@@ -9,7 +9,7 @@ using Compze.Teventive.Taggregates.Tevents;
 #pragma warning disable CA1812 // Avoid uninstantiated internal classes # used via reflection
 #pragma warning disable CA1715 // Nested tevent interfaces follow the semantic events naming convention
 
-namespace Compze.Tests.Unit.CQRS.Taggregates.SharedTomponentSlotsOfAClass;
+namespace Compze.Tests.Unit.CQRS.Taggregates.SharedTomponentSlots;
 
 interface IVocabTevent : ITaggregateTevent
 {
@@ -64,7 +64,7 @@ class Vocab : Taggregate<Vocab, IVocabTevent, VocabTevent, IVocabTevent<IVocabTe
 {
    static class Slots
    {
-      internal static readonly SharedTomponentSlotOfAClass<Vocab, IVocabTevent, VocabTevent, IWordSetTevent, ISeeAlsoTevent<IWordSetTevent>> SeeAlso =
+      internal static readonly SharedTomponentSlot<Vocab, IVocabTevent, VocabTevent, IWordSetTevent, ISeeAlsoTevent<IWordSetTevent>> SeeAlso =
          new(typeof(SeeAlsoTevent<>), static vocab => vocab.SeeAlso);
    }
 
@@ -110,10 +110,10 @@ class RelatedVocab : TeventiveComponent<Vocab, IVocabTevent, VocabTevent, Relate
 
    static class Slots
    {
-      internal static readonly SharedTomponentSlotOfAClass<RelatedVocab, IVocabTevent.Related, VocabTevent.Related, IWordSetTevent, ISynonymsTevent<IWordSetTevent>> Synonyms =
+      internal static readonly SharedTomponentSlot<RelatedVocab, IVocabTevent.Related, VocabTevent.Related, IWordSetTevent, ISynonymsTevent<IWordSetTevent>> Synonyms =
          new(typeof(SynonymsTevent<>), static related => related.Synonyms);
 
-      internal static readonly SharedTomponentSlotOfAClass<RelatedVocab, IVocabTevent.Related, VocabTevent.Related, IWordSetTevent, IAntonymsTevent<IWordSetTevent>> Antonyms =
+      internal static readonly SharedTomponentSlot<RelatedVocab, IVocabTevent.Related, VocabTevent.Related, IWordSetTevent, IAntonymsTevent<IWordSetTevent>> Antonyms =
          new(typeof(AntonymsTevent<>), static related => related.Antonyms);
    }
 

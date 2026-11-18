@@ -16,6 +16,7 @@ using JetBrains.Annotations;
 using static Compze.Contracts.Contract;
 using Compze.Teventive.TeventStore._private;
 using Compze.Teventive.TeventStore.Refactoring.Migrations._private;
+using Compze.Teventive.Taggregates.Tevents._internal;
 
 namespace Compze.Teventive.TeventStore;
 
@@ -106,12 +107,10 @@ namespace Compze.Teventive.TeventStore;
    ITaggregateTevent<ITaggregateTeventWithIdentity> HydrateTevent(TeventDataRow teventDataRowRow)
    {
       var wrappedTevent = _serializer.Deserialize(wrapperTeventType: teventDataRowRow.TeventType.Type, json: teventDataRowRow.TeventJson);
-#pragma warning disable CS0618 // Type or member is obsolete
       ((IMutableTaggregateTevent)wrappedTevent.Tevent).SetTaggregateIdInternal(teventDataRowRow.TaggregateId);
       ((IMutableTaggregateTevent)wrappedTevent.Tevent).SetTaggregateVersionInternal(teventDataRowRow.TaggregateVersion);
       ((IMutableTaggregateTeventWithIdentity)wrappedTevent.Tevent).SetTessageIdInternal(teventDataRowRow.TeventId);
       ((IMutableTaggregateTevent)wrappedTevent.Tevent).SetUtcTimeStampInternal(teventDataRowRow.UtcTimeStamp);
-#pragma warning restore CS0618 // Type or member is obsolete
       return wrappedTevent;
    }
 

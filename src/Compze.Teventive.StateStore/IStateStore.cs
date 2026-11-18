@@ -8,7 +8,9 @@ namespace Compze.Teventive.StateStore;
 public interface IStateStore
 {
    ///<summary>Loads every taggregate from the storage again, as when a program other than this one has changed what the storage holds,<br/>
-   /// and replaces the committed taggregates with what it loaded. Dispatches no tevent.</summary>
+   /// and replaces the committed taggregates with what it loaded. Dispatches no tevent.<br/>
+   /// With <paramref name="changeToTheStorage"/>, runs it first, once the open units of work have completed, while new ones wait:<br/>
+   /// such as a fast-forward of the checkout that holds the consumer's files, which no unit of work may write a taggregate over.</summary>
    ///<remarks>Waits for the units of work open in the store to complete, and keeps new ones from starting until it is done. Every<br/>
    /// <see cref="ITaggregateReference{TTaggregate}"/> is kept, and gives the reloaded state; the indexes file the reloaded state.<br/>
    /// Throws for a store composed with no storage, which keeps its taggregates in memory only.</remarks>
@@ -22,14 +24,9 @@ public interface IStateStore
    /// same length and gives it back its last write time isn't seen. And it compares what the serializer writes: where equal states can<br/>
    /// serialize differently, such as a <see cref="HashSet{T}"/> whose order depends on the order its items were added in, a taggregate<br/>
    /// may be reported changed whose state is the same, never the other way round.</remarks>
-   ///<returns>Which taggregates the storage held that the store didn't, which it held with another state, and which it no longer holds.</returns>
-   ReloadedTaggregates ReloadFromStorage();
-
-   ///<summary>As <see cref="ReloadFromStorage"/>, after running <paramref name="changeToTheStorage"/> once the open units of work have<br/>
-   /// completed, while new ones wait: such as a fast-forward of the checkout that holds the consumer's files, which no unit of work may<br/>
-   /// write a taggregate over.</summary>
    ///<remarks>If <paramref name="changeToTheStorage"/> throws, nothing is reloaded, and the exception comes out of this call.</remarks>
-   ReloadedTaggregates ReloadFromStorageAfter(Action changeToTheStorage);
+   ///<returns>Which taggregates the storage held that the store didn't, which it held with another state, and which it no longer holds.</returns>
+   ReloadedTaggregates ReloadFromStorage(Action? changeToTheStorage = null);
 
    ///<summary>Writes every taggregate's file anew, as the store's serializer and the consumer's options write its snapshot now, whether<br/>
    /// it changed or not: after a change to the snapshot types or to the serializer's options, so that the files don't stay a mix of the<br/>
@@ -49,19 +46,20 @@ public interface IStateStore
 ///<summary>How what the store's storage, such as its files, held differed from what the state store held, as <see cref="IStateStore.ReloadFromStorage"/> found it.</summary>
 public sealed class ReloadedTaggregates
 {
-   internal ReloadedTaggregates(IReadOnlyList<TaggregateId> added, IReadOnlyList<TaggregateId> changed, IReadOnlyList<TaggregateId> removed)
+   internal ReloadedTaggregates(IReadOnlyCollection<TaggregateId> added, IReadOnlyCollection<TaggregateId> changed, IReadOnlyCollection<TaggregateId> removed)
    {
       Added = added;
       Changed = changed;
       Removed = removed;
    }
 
-   ///<summary>The taggregates the storage held that the store didn't.</summary>
-   public IReadOnlyList<TaggregateId> Added { get; }
+   ///<summary>The taggregates the storage held that the store didn't, in no particular order.</summary>
+   public IReadOnlyCollection<TaggregateId> Added { get; }
 
-   ///<summary>The taggregates the storage held with another state than the store did: see <see cref="IStateStore.ReloadFromStorage"/>.</summary>
-   public IReadOnlyList<TaggregateId> Changed { get; }
+   ///<summary>The taggregates the storage held with another state than the store did: see <see cref="IStateStore.ReloadFromStorage"/>.<br/>
+   /// In no particular order.</summary>
+   public IReadOnlyCollection<TaggregateId> Changed { get; }
 
-   ///<summary>The taggregates the store held that the storage no longer did.</summary>
-   public IReadOnlyList<TaggregateId> Removed { get; }
+   ///<summary>The taggregates the store held that the storage no longer did, in no particular order.</summary>
+   public IReadOnlyCollection<TaggregateId> Removed { get; }
 }

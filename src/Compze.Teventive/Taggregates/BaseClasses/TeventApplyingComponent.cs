@@ -7,7 +7,7 @@ namespace Compze.Teventive.Taggregates.BaseClasses;
 /// and it routes them on to its tevent appliers, and its own parts', through the routing its class declares with <see cref="DeclareAppliers"/>.</summary>
 ///<remarks>Only Compze's own base classes derive from it.</remarks>
 ///<remarks>review-naming: a placeholder (jastudio-rep-opus, 2026-11-17), for the naming pass of the spike's end review, with <see cref="TeventApplyingRoot{TRoot,TTevent}"/>.</remarks>
-public abstract class TeventApplyingComponent<TComponent, TComponentTevent> : ITeventRoutedMember<TComponentTevent>
+public abstract class TeventApplyingComponent<TComponent, TComponentTevent> : ITeventRoutedPart<TComponentTevent>
    where TComponent : TeventApplyingComponent<TComponent, TComponentTevent>
    where TComponentTevent : class, ITevent
 {
@@ -37,6 +37,6 @@ public abstract class TeventApplyingComponent<TComponent, TComponentTevent> : IT
       TeventRouting<TComponent, TComponentTevent>.DeclareAppliers(declare);
 
 #pragma warning disable CA1033 //These members should NOT clutter the public interface of this class.
-   void ITeventRoutedMember<TComponentTevent>.DispatchInternal(IPublisherTevent<ITevent> wrapped) => TeventAppliers.Dispatch(this, wrapped);
+   void ITeventRoutedPart<TComponentTevent>.DispatchInternal(IPublisherTevent<ITevent> wrapped) => TeventAppliers.Dispatch(this, wrapped);
 #pragma warning restore CA1033
 }

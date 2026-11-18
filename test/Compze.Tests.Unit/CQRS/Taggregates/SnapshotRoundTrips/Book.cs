@@ -12,7 +12,7 @@ class Book : Taggregate<Book, IBookTevent, BookTevent, IBookTevent<IBookTevent>,
 {
    static class Slots
    {
-      internal static readonly SharedTomponentSlotOfAClass<Book, IBookTevent, BookTevent, ITagSetTevent, IBookTagsTevent<ITagSetTevent>> Tags =
+      internal static readonly SharedTomponentSlot<Book, IBookTevent, BookTevent, ITagSetTevent, IBookTagsTevent<ITagSetTevent>> Tags =
          new(typeof(BookTagsTevent<>), static book => book.Tags);
    }
 
