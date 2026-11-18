@@ -1,11 +1,13 @@
 # The design both teams agree on
 
-**Status: agreed by all four sessions, then reviewed by two independent agents and revised with their agreement** (2026-11-16). Every name below is a placeholder for Magnus's pass
-over the names. Where the teams first differed, the section says what was settled and why.
+**Status: agreed by all four sessions, then reviewed by two independent agents and revised with their agreement** (2026-11-16). Section 1 is
+built, and speaks the names the spike's end review decided, 2026-11-18 ([the-naming-pass.md](the-naming-pass.md),
+[reviews/end-review-consolidated.md](reviews/end-review-consolidated.md)); the superseded sections keep the names they
+were weighed with. Where the teams first differed, the section says what was settled and why.
 
 **The taggregate store has since replaced sections 2 and 3,** on Magnus's direction: restoring is from a snapshot type
-of the implementor's, with no tevents, and the store's session dispatches when the unit of work commits, so neither the
-hook nor its queue is needed. They are kept below as the record of what was weighed. Section 1, routing per class, stands
+of the implementor's, with no tevents, and a store dispatches each tevent synchronously as its taggregate hands it out,
+once the publish cascade has ended, so no hook is needed. They are kept below as the record of what was weighed. Section 1, routing per class, stands
 as it is, and section 4 is now needed. See [the-taggregate-store.md](the-taggregate-store.md).
 
 ## 1. Tevent routing decided once per class
@@ -28,22 +30,28 @@ goes.
 //The root of the hierarchy closes Taggregate's type arguments, exactly as a taggregate hierarchy is declared today.
 abstract class JPNote : Taggregate<JPNote, INoteTevent, NoteTevent, INoteTevent<INoteTevent>, NoteTevent<NoteTevent>>
 {
-   protected static readonly TeventRouting<JPNote, INoteTevent> JPNoteAppliers = TeventRouting<JPNote, INoteTevent>.DeclareAppliers(it => it
+   protected static readonly TeventRouting<JPNote, INoteTevent> JPNoteAppliers = DeclareAppliers(it => it
      .For<INoteTevent.TagsChanged>(static (note, tevent) => note._tags = tevent.Tags));
 
-   protected override TeventRouting<INoteTevent> TeventAppliers => JPNoteAppliers;
+   protected override TeventRouting TeventAppliers => JPNoteAppliers;
 }
 
 //A subclass inherits with no type arguments, and names its wrapper tevent, as today. What is new is its table, typed on
 //the subclass through Extend, so that its appliers take a VocabNote.
 class VocabNote : JPNote
 {
+   static class Slots
+   {
+      internal static readonly SharedTomponentSlot<VocabNote, INoteTevent, NoteTevent, ISeeAlsoTevent, IVocabSeeAlsoTevent<ISeeAlsoTevent>> SeeAlso =
+         new(typeof(VocabSeeAlsoTevent<>), static vocab => vocab.SeeAlso);
+   }
+
    static readonly TeventRouting<VocabNote, INoteTevent> VocabNoteAppliers = JPNoteAppliers.Extend<VocabNote>(it => it
      .For<IVocabTevent.TextUpdated>(static (vocab, tevent) => vocab._text = tevent.Text)
      .Component(static vocab => vocab.Forms)
-     .SharedTomponent(SeeAlsoSlot));
+     .SharedTomponent(Slots.SeeAlso));
 
-   protected override TeventRouting<INoteTevent> TeventAppliers => VocabNoteAppliers;
+   protected override TeventRouting TeventAppliers => VocabNoteAppliers;
    protected override Type WrapperTeventImplementation => typeof(VocabTevent<VocabTevent>);
 }
 ```
@@ -52,8 +60,8 @@ class VocabNote : JPNote
   subclass inherits with none and overrides `WrapperTeventImplementation`, as `AnimalTaggregate` and `CatTaggregate` in
   Compze's specifications do today. Only the routing moves from the constructor to the table.
 
-- **A static table per class,** reached by the base class through a virtual property, as it already reaches
-  `WrapperTeventImplementation`. An instance keeps nothing of it.
+- **A static table per class,** reached by the base class through a protected property the class overrides,
+  `TeventAppliers`, as it already reaches `WrapperTeventImplementation`. An instance keeps nothing of it.
 - **A tevent applier takes the instance as a parameter,** instead of capturing `this`. Declared `static`, the compiler
   forbids capture; the table also asserts, when declared, that no handler holds state.
 - **A part is an entry in its parent's table:** `.Component(…)`, `.Entities(…)`, `.SharedTomponent(…)`. The part's tevent
@@ -74,8 +82,9 @@ class VocabNote : JPNote
   snapshot tevent implements every property-updated tevent, so it always matches some route, and "an unhandled tevent
   is an error" never fires on a load. A forgotten `.Component(…)` then loads the note without the component's state,
   and the next save loses it. So:
-  - **on dispatch, the table asserts that the instance's class is exactly the class it was declared for,** with the
-    property abstract at the root, so a subclass that forgets its table fails at its first tevent;
+  - **at construction, the base class asserts that the table is declared for exactly the instance's class,** with the
+    property abstract in Compze's base classes, so a subclass that forgets its table fails at its first construction
+    (designed as an assertion at dispatch, and built at construction);
   - **a class's first table comes only from a protected static factory on Compze's base class, typed on the class,** and
     a subclass's only from `Extend`, so a subclass can't skip its base class's appliers;
   - **a part asserts, when it's constructed, that its parent's table has an entry for its class,** and a shared
@@ -89,15 +98,17 @@ class VocabNote : JPNote
   exact-class assertion at construction; and `Extend<TSubclass>` asserts that the class whose table it extends is
   `TSubclass`'s direct base class, throwing an `ArgumentException` naming that class. A chain of tables then can't skip
   a class. It is checked once per class, when the subclass's table is made.
-- **How an instance finds its class's table (decided by Magnus, 2026-11-17, item 24):** the class implements the public
-  interface `ITeventRouted` (`TeventAppliers`, `TeventHandlers`) explicitly, listed again in the base list of every class
-  that declares a table, so nothing shows in a taggregate's member list. Compze's base classes implement it to return
-  null, which since step 5 means the class declares no table, refused at its first construction. The base constructor
-  also asserts that the table is declared for the exact class, so a class that forgets its own fails at its first
-  construction, naming both classes. The cost: CA1033 on the base classes' explicit implementations, suppressed with its
-  reason as the codebase does for its other explicit implementations, and, found in step 5, on every public unsealed
-  consumer class that implements it (Compze's sealed its four public test taggregates). Its names and shape are reviewed
-  again in the end review.
+- **How an instance finds its class's table (decided by Magnus in the end review, 2026-11-18, Q9):** the class
+  overrides the protected abstract property `TeventAppliers` of Compze's base classes, returning its table from a static
+  field: `protected override TeventRouting TeventAppliers => Appliers;`. A taggregate that declares tevent handlers also
+  overrides the protected virtual `TeventHandlers`, which returns none unless overridden. A class that derives directly
+  from a Compze base class and overrides nothing doesn't compile. The base constructor asserts that the table is
+  declared for the exact class, so a subclass that forgets its own, and so inherits its base class's, fails at its first
+  construction, naming both classes and the override to write. Nothing public exists only for Compze to read, so no
+  CA1033 fires in a consumer's classes. This replaced item 24's choice (Magnus, 2026-11-17): an explicit implementation
+  of a public interface, `ITeventRouted`, listed again in the base list of every class that declared a table, which put
+  CA1033 on every public unsealed consumer class. See
+  [tevent-routing-as-a-protected-property.md](tevent-routing-as-a-protected-property.md).
 - **Resolved once per class and wrapper tevent type,** published in a dictionary that is never changed afterwards and is
   read without a lock. Many threads dispatching on different instances of one class at once is safe, which JAStudio's
   full rebuild does.
@@ -105,8 +116,8 @@ class VocabNote : JPNote
   subclass as its parent, not the root that closes the `Taggregate` generic. That works today through the top-level
   `TeventiveComponent<…>`, and should be the normal path.
 - **Tevent handlers stay on roots only.** JAStudio needs none in components: one part follows another through one tevent
-  that both apply, and reactions that reach other notes go to participation handlers, dispatched by the taggregate
-  store when the unit of work commits: see [the-taggregate-store.md](the-taggregate-store.md).
+  that both apply, and reactions that reach other notes go to participation handlers, which the taggregate store
+  dispatches as each publish cascade ends: see [the-taggregate-store.md](the-taggregate-store.md).
 - **The query models** (`SelfGeneratingQueryModel` and its families) move to the same tables, so that one abstraction is
   implemented once. **Decided by Magnus, 2026-11-17,** for step 5: they apply tevents and hold their state the way
   taggregates do. A taggregate adds only that it publishes tevents, and he would like the two to share most of their
@@ -134,9 +145,10 @@ reading lists in a kanji, media reference lists in every note type. So a slot mu
 - **A slot must be declared above the table that enters it,** since static fields initialize in the order written. The
   compiler warns of it under nullable reference types, and the table asserts it. Across the files of a partial class
   the order isn't defined at all, and the compiler doesn't warn.
-- **The slots in a nested static class, `SharedTomponentSlotOfAClass` (built in step 3; decided by Magnus, 2026-11-17,
-  item 24),** such as `Slots.SeeAlso`, reached with `Slots.SeeAlso.In(this)`, a readonly ref struct of owner and slot,
-  which removes the rule of order. The runtime runs a class's static initializers before the first read of its static fields,
+- **The slots in a nested static class, `SharedTomponentSlot` (built in step 3 as `SharedTomponentSlotOfAClass`;
+  decided by Magnus, 2026-11-17, item 24; named so by the end review, Q10),** such as `Slots.SeeAlso`, reached with
+  `Slots.SeeAlso.In(this)`, a readonly ref struct of owner and slot, which removes the rule of order. Its constructor
+  takes the adopting wrapper tevent's implementation and a `Func<TOwner, SharedTomponent<TTomponentTevent>>`. The runtime runs a class's static initializers before the first read of its static fields,
   so the table's reference to `Slots.SeeAlso` makes the slot first, wherever either is written. Magnus, on the declared
   table: "One killer thing is ordering dependencies."
 - **What the real generics showed** (jastudio-rep-fable's static slots in the real base classes): a slot's owner can only
@@ -156,6 +168,8 @@ reading lists in a kanji, media reference lists in every note type. So a slot mu
 ### Chosen by the teams, for Magnus to decide
 
 Both are README decision 14. The reviewers of JAStudio's folder objected that the teams chose without asking him.
+**Decided since:** the property, protected and abstract, in the end review (Q9), and the static slot in a nested
+`Slots` class (item 24).
 
 - **How an instance reaches its class's table:** the fable team first proposed handing it through the base constructor,
   which can't be forgotten but costs a reference in every instance, about 8 B per teventive, or some 200 B for a vocab of

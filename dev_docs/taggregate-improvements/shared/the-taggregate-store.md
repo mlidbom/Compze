@@ -3,9 +3,12 @@
 **Status: designed by jastudio-rep-opus and jastudio-rep-fable on Magnus's direction, 2026-11-16, with JAStudio's facts
 from taggregates-fable.** Isolation by a private copy for each unit of work was chosen by Magnus after two independent
 reviews ([reviews/isolation-review-by-an-opus-agent.md](reviews/isolation-review-by-an-opus-agent.md),
-[reviews/isolation-review-by-a-fable-agent.md](reviews/isolation-review-by-a-fable-agent.md)). The in-memory store is
-prototyped and specified on the branch `taggregate-store-opus`. The JSON store and the snapshot API are designed, not
-built. Every name is a placeholder for Magnus's pass over the names.
+[reviews/isolation-review-by-a-fable-agent.md](reviews/isolation-review-by-a-fable-agent.md)). First prototyped on the
+branch `taggregate-store-opus`, then built on the spike, `taggregate-store-spike`, as the memory image state store, with
+its JSON files, its MemoryPack cache and the snapshot API. The sections that say what a step specified or built are the
+record of that step, with the names of the time, and today's beside them where a reader would otherwise be lost. The
+names are those the spike's end review decided, 2026-11-18: [the-naming-pass.md](the-naming-pass.md) and
+[reviews/end-review-consolidated.md](reviews/end-review-consolidated.md).
 
 ## The headline
 
@@ -27,7 +30,7 @@ What the prototype shows:
   superseded, and kept below as its record.
 - **The reentrancy bugs are fixed without deferring:** a taggregate hands its tevents out through a queue, `Commit`
   takes them out before calling back, and a store tracks a new taggregate before publishing what it published before
-  its save. See [what the spike built: synchronous dispatch](#what-the-spike-built-synchronous-dispatch).
+  it was added. See [what the spike built: synchronous dispatch](#what-the-spike-built-synchronous-dispatch).
 
 **Isolation is by a private copy for each unit of work, Magnus's choice, confirmed after two independent reviews.** The
 teams had recommended shared live instances, "read uncommitted", to spare JAStudio changing every place that edits a
@@ -44,7 +47,8 @@ notes' state and read their own unit of work's changes.
   the same programming model, implemented in memory and backed by JSON, with the storage behind a narrow interface.
 - **Transactions as the unit of work even with no storage:** "The .NET machinery is super battle tested."
 - **Tevents escape a taggregate only once its cascade is settled.**
-- **`Commit` never runs domain code; `Save` is not a domain mutation,** and causes no tevents.
+- **`Commit` never runs domain code; `Save` is not a domain mutation,** and causes no tevents. (`Save` is the updater's
+  `Add` since the end review.)
 - **Snapshots carry no tevents:** the implementor writes its own serializable snapshot type, and its own restoring.
 - **Isolation by a private copy for each unit of work** (his option (a)), JSON as the durable truth, and a full rebuild
   allowed as one transaction, since it takes 1 to 2 s.
@@ -52,8 +56,8 @@ notes' state and read their own unit of work's changes.
 ## The programming model
 
 ```csharp
-//The composition is a sketch, designed in the spike: each store declares the taggregate classes it keeps.
-builder.Registrar.StateStore(store => store.Taggregate<VocabNote>(VocabNote.CreateEmpty).Index<VocabNote, string>(it => it.Forms));
+//Each store declares the taggregate classes it keeps.
+builder.Registrar.MemoryImageStateStore(store => store.Taggregate(() => VocabNote.CreateEmpty()).Index<VocabNote, string>(it => it.Forms));
 builder.Registrar.LocalTessagingEngine(engine => engine
    .RegisterTessageBusHandlers(handle => handle.ForTevent((IVocabMeaningChanged it, ITaggregateStoreUpdater taggregates) => ...))
    .ObserveTevents(observe => observe.ForTevent((IVocabMeaningChanged it) => ...)));
@@ -72,21 +76,30 @@ and why getting for update had become a plain `Get`):
   unit of work reads its own writes. Outside one, the committed instance, read only, at no cost.
 - **`ITaggregateStoreUpdater : ITaggregateStoreReader`,** scoped, one for each unit of work, for every store:
   `GetForUpdate` and `TryGetForUpdate`, which make the unit of work's private copy and take the taggregate's lock until
-  it completes, and `Save`. `Delete<TTaggregate>(id)` was built here and went: a deletion is a tevent (see "Deletion is a
-  tevent" below). No `IDisposable`. The name says what a read must never cost, a
-  lock and a copy, and matches `ITaggregateReference.ForUpdate()` and the Typermedia tuery `GetForUpdate`.
-- **`ITeventStoreReader : ITaggregateStoreReader`** adds `GetHistory` and `GetReadonlyCopyOfVersion`. Its
-  `GetReadonlyCopy` becomes the reader's `Get`.
+  it completes, and `Add`, which adds a new taggregate (`Save` until the end review's trims, Q10).
+  `Delete<TTaggregate>(id)` was built here and went: a deletion is a tevent (see "Deletion is a tevent" below). No
+  `IDisposable`. The name `GetForUpdate` says what a read must never cost, a lock and a copy, and matches the Typermedia
+  tuery `GetForUpdate`.
+- **`ITeventStoreReader`** has only what the tevent store adds, the history: `GetHistory` and
+  `GetReadonlyCopyOfVersion`. Its `GetReadonlyCopy` became the shared reader's `Get`. Item 22 had it extend
+  `ITaggregateStoreReader`; the end review took that back, since its `Get` then read every store
+  (Q8, [the-tevent-store-reader-alone.md](the-tevent-store-reader-alone.md)).
 - **Each store declares the taggregate classes it keeps,** and the updater routes each class to its store. A store's
-  requirements are compile-time constraints there: the state store's classes are snapshotable, with a factory; the
+  requirements are compile-time constraints there: the memory image state store's classes are snapshotable, with a factory; the
   tevent store's have tevents with identity (`ITaggregate<ITaggregateTeventWithIdentity>`). New for the tevent store,
   which takes any taggregate today. A class declared for no store fails at its first `Get`, naming the stores.
 - **Public:** `ITaggregateReference<TTaggregate>`, what code holds across units of work (see the isolation below), and
   `ITaggregateIndex<TTaggregate, TKey>`, with their implementations private. Internal: the ambient unit of work, in
   `Compze.DependencyInjection`. The persistence seams stay separate.
-- **Where:** the shared interfaces in `Compze.Teventive` for the spike; whether they get a package of their own is
-  decided after it.
-- **The new store's name: the state store,** beside the tevent store.
+- **Where:** the shared interfaces in `Compze.Teventive`, namespace `Compze.Teventive.TaggregateStores`, with the bulk
+  reader, `ITaggregateStoreBulkReader`, beside the reader; whether they get a package of their own is decided after the
+  spike.
+- **The new store's name: the state store,** beside the tevent store, in item 22. **The memory image state store since
+  the end review** (Q2, [the-memory-image-state-store.md](the-memory-image-state-store.md)): it holds every taggregate in
+  memory for the container's life, rebuilt at its start from a snapshot of each. Its package is
+  `Compze.Teventive.MemoryImageStateStore`, and its types `IMemoryImageStateStore`, `MemoryImageStateStoreBuilder` and
+  the registrar's `MemoryImageStateStore(...)`. "State store" stays the word for the kind of store, state rather than
+  history.
 - **`LocalTessagingEngine`** is all of Tessaging a consumer like JAStudio composes: no endpoint, no network, and no type
   mappings for tevent types that never leave the process. The prototype maps none.
 
@@ -113,17 +126,17 @@ Fable reviewer.
 
 ```csharp
 ///<summary>Stands for one taggregate of a store, for as long as it exists: hold this, never an instance, across units of work.</summary>
-public interface ITaggregateReference<out TTaggregate> where TTaggregate : ITaggregate
+public interface ITaggregateReference<out TTaggregate> where TTaggregate : class, ITaggregate
 {
    TaggregateId Id { get; }
 
    ///<summary>Inside a unit of work that holds a copy, that copy; otherwise the committed instance.</summary>
    TTaggregate Current { get; }
-
-   ///<summary>The ambient unit of work's copy, which it may change. Throws when there is no ambient transaction.</summary>
-   TTaggregate ForUpdate();
 }
 ```
+
+- **A reference only reads.** It had a `ForUpdate()`, the ambient unit of work's copy; the end review removed it (Q10),
+  so the unit of work's updater is the one way to change a taggregate: `updater.GetForUpdate<TTaggregate>(reference.Id)`.
 
 - **Lookups and indexes return references,** so the types say "don't hold an instance across units of work". A stale
   instance is at worst old and consistent, and throws on publish.
@@ -170,8 +183,8 @@ public interface ITaggregateReference<out TTaggregate> where TTaggregate : ITagg
   `_notOwnedByOtherVocab` is one. So such a value leaves the taggregate, for derived state: see "Derived state" below.
 - **The version** is kept in memory, continued by each copy, and not persisted. JAStudio would see one only as noise in
   every diff and a conflict in every merge.
-- **The session's interface is the tevent store's:** `Get` for update, `TryGet`, `Save`, `Delete`, and in both stores a
-  unit of work's instances are its own.
+- **The session's interface is the tevent store's:** `GetForUpdate`, `TryGetForUpdate` and `Add`, in the one
+  `ITaggregateStoreUpdater` both stores share, and in both stores a unit of work's instances are its own.
 
 ### Open
 
@@ -260,7 +273,7 @@ the same design, which replaces the transactional map that participation handler
 
 - **An index is defined as a function of a taggregate's state:** which keys it is filed under, as `NoteIndex`'s
   `keysOf(snapshot)` already is. Compze provides it, registered with the store, and it returns taggregate-references.
-- **The store keeps the committed index:** at prepare, once the queue is empty, it computes the keys of each taggregate
+- **The store keeps the committed index:** at prepare, it computes the keys of each taggregate
   the unit of work changed, created or deleted, which runs consumer code and may fail; at commit, with the swap, it
   applies the differences, which can't fail.
 - **Inside a unit of work, a lookup reads its own writes:** the committed entries for the key, minus the taggregates the
@@ -278,15 +291,18 @@ the same design, which replaces the transactional map that participation handler
 - **So the committed path allocates nothing,** after a first prototype at 0.65 to 0.86 µs and 576 B a lookup would have
   added 5 to 14% to parsing's processor time and 15 to 29% to its garbage (`56474f568`):
   - each key's committed references are an array, replaced whole at commit and returned as it is;
-  - the store keeps one reference for each taggregate;
-  - `HasAny(key)` checks a key without resolving a reference;
+  - the store keeps one reference for each taggregate, made at the first request for it; a request for it as a class
+    that reference can't be cast to gets a new one, equal to it (defect D2 of the end review);
   - the overlay runs only when the unit of work holds a copy of the index's taggregate type.
-- **The cost, measured in Release:**
+
+  The prototype also had `HasAny(key)`, which checked a key without resolving a reference. The end review removed it
+  (Q10): it is `Lookup(key).Count > 0`, at the same cost.
+- **The cost, measured in Release, on the prototype:**
 
   | | Time | Allocated |
   |---|---:|---:|
   | A lookup outside any unit of work | 0.05 to 0.18 µs | 0 B |
-  | `HasAny` outside any unit of work | 0.05 µs | 0 B |
+  | `HasAny`, since removed, outside any unit of work | 0.05 µs | 0 B |
   | A vocab lookup inside a unit of work holding only a sentence | 0.11 to 0.12 µs | 0 B |
   | A lookup inside a unit of work holding 1 copy of its type | 0.6 to 0.8 µs | 0.7 KB |
   | … holding 100 copies | 5.6 to 6.4 µs | 3.1 KB |
@@ -325,17 +341,24 @@ public interface ISnapshotable<TSelf, TSnapshot> where TSelf : ISnapshotable<TSe
 - **Restoring is into a new, empty instance,** for loading and for each copy alike: the store builds it, then calls
   `RestoreFrom`. A part's state can then be set after the part is built, which the tevent appliers need anyway. A
   concrete class in a hierarchy, such as a vocab under `JPNote`, restores from its own snapshot type.
-- **The consumer says how an empty instance is built,** where the class is named, with a factory or by resolving it
-  from the container: `AddTaggregate<VocabNote>(() => new VocabNote(noteServices))`. A parameterless constructor won't
-  do: JAStudio's notes reach the collection, the dictionary and the configuration through `JPNote.Services`, and
+- **The consumer says how an empty instance is built,** where the class is named, with a factory, or with a registration
+  of the container for a class whose instances need services (Q3,
+  [taggregates-with-dependencies.md](taggregates-with-dependencies.md)): `store.Taggregate(() => new VocabNote())`, or
+  `store.Taggregate(TrackedTransient.For<VocabNote>().CreatedBy((NoteServices services) => new VocabNote(services)))`.
+  A parameterless constructor won't do: JAStudio's notes reach the collection, the dictionary and the configuration through `JPNote.Services`, and
   nothing may be static, since the specifications run several JAStudios in one process. The same holds for restoring
   outside any store, as the MCP server does with the serializer's services. From taggregates-fable.
 - **A non-generic face for the store,** which holds taggregates of many types: default interface members that take a
   snapshot, restore from one, and copy.
-- **Each taggregate class is named once where the store is composed,** such as `AddTaggregate<VocabNote>()`, so that
-  loading knows which class restores from which snapshot type.
-- **`Taggregate` gets a protected way to say it was restored,** with its id. Today that needs the `[Obsolete]` internal
-  `Id` setter of `Entity`. The prototype's is `RestoreIdentity(id, version)`.
+- **Each taggregate class is named once where the store is composed,** with `store.Taggregate(...)`, so that loading
+  knows which class restores from which snapshot type: the store finds it from the class's
+  `ISnapshotable<TTaggregate, TSnapshot>`.
+- **`Taggregate` gets a protected way to say it was restored,** with its id. Before, that needed the `[Obsolete]`
+  internal `Id` setter of `Entity`. The prototype's was `RestoreIdentity(id, version)`; as built, `RestoreIdentity(id)`,
+  which sets the version to 1, so a memory image state store's taggregate restarts at version 1 at every load (Q7,
+  documented on `ITaggregate.Version`).
+- **A restored taggregate's entities** are added by its `RestoreFrom` with `AddWhileRestoring(id)` on their collection,
+  publishing nothing: [snapshots-of-every-taggregate-shape.md](snapshots-of-every-taggregate-shape.md).
 - **A snapshot holds the taggregate's whole state,** not only what is stored, since every copy is made from it. A
   component's and a shared tomponent's state are nested in the root's, as in JAStudio's DTOs. A snapshot can share every
   immutable value with the committed instance.
@@ -365,18 +388,25 @@ public interface ISnapshotable<TSelf, TSnapshot> where TSelf : ISnapshotable<TSe
 
 ```csharp
 ///<summary>Where a taggregate store keeps what it has committed. Narrow: it knows snapshots, not taggregates.</summary>
-public interface ITaggregateStorage
+interface ITaggregateStorage
 {
-   IReadOnlyList<StoredSnapshot> LoadAll();
-   IPreparedWrite Prepare(IReadOnlyList<SnapshotToSave> toSave, IReadOnlyList<TaggregateId> toDelete);
+   IReadOnlyList<TaggregateSnapshot> LoadAll();
+   bool HoldTheSameState(TaggregateSnapshot loaded, object heldSnapshot);
+   IPreparedWrite Prepare(IReadOnlyList<TaggregateSnapshot> toSave, IReadOnlyList<TaggregateId> toDelete);
+   void WriteAll(IReadOnlyList<TaggregateSnapshot> everything);
 }
 
-public interface IPreparedWrite
+interface IPreparedWrite
 {
    void Commit();   // must not fail for a reason Prepare could have found
    void Discard();
 }
 ```
+
+- **Internal, as built:** designed public, so that a consumer could keep its own storage behind it, then made internal
+  once Compze's own JSON files covered JAStudio (c5c910e06), in `Compze.Teventive.MemoryImageStateStore._private.Storage`.
+  The JSON files and a store with no storage are its two implementations. `HoldTheSameState` and `WriteAll` came with
+  the end review's fifth question, for a load that tells what changed and for `WriteAllToStorage`.
 
 - **Two steps, because a transaction has two:**
   - the session calls `Prepare` at phase 0, once the unit of work's queue is empty and it has taken its copies' snapshots;
@@ -385,10 +415,13 @@ public interface IPreparedWrite
   - it calls `Discard` at a rollback.
 - **Everything that can fail belongs in `Prepare`:** serializing, writing, a full disk, a file another program holds.
 - **In memory, `Prepare` does nothing.**
-- **`LoadAll` is the consumer's** where it has its own way to start fast. JAStudio's `snapshot.bin`, a cache of all
-  notes, is read first, then only the files written since.
+- **`LoadAll` was to be the consumer's** where it has its own way to start fast. JAStudio's `snapshot.bin`, a cache of
+  all notes, was read first, then only the files written since. As built, the store starts fast from a MemoryPack cache
+  of its own, `StartingFromAMemoryPackCache()`: see "The MemoryPack cache" below.
 - **Loading everything again while running,** as JAStudio does around a git fast-forward, needs a store operation of its
-  own: no tevent describes such a change. Not designed yet.
+  own: no tevent describes such a change. Built as `IMemoryImageStateStore.LoadFromStorage(changeTheStorageFirst)`,
+  which reports the `ChangesFoundInStorage`: see "Three gaps for JAStudio's switch" and
+  [the-files-of-a-state-store.md](the-files-of-a-state-store.md).
 
 ### The JSON store
 
@@ -412,8 +445,13 @@ public interface IPreparedWrite
 - **For JAStudio** a single file written whole is already a gain: today `File.WriteAllText` writes in place, and a
   truncated file makes the next start fail. All or nothing across notes matters less: what a person entered across
   notes, such as a rename with its word references, can be left half written today too, and git shows and reverts it.
-- **Not settled:** a transaction with a database in it too. The JSON store is a volatile participant, so the database
-  can commit and the process die before the journal is written. JAStudio has no database.
+- **A transaction with a database in it too: refused by default** (Q1, Magnus, 2026-11-18,
+  [a-state-store-in-files-and-a-database-in-one-transaction.md](a-state-store-in-files-and-a-database-in-one-transaction.md)).
+  The two aren't atomic across a crash: the database can commit and the process die before the files' journal is
+  written. So a unit of work in which the store writes files and a database connection of Compze's takes part is
+  refused, by whichever joins second. The files are a durable participant that commits in a single phase. The opt-out,
+  `files => files.AcceptingNonAtomicCommitsWithADatabase()`, makes them a volatile participant, as first built, and a
+  crash between the commits then loses the files' change. JAStudio has no database.
 - **What writing under a temporary name costs, measured by taggregates-opus on Windows** (JAStudio's `CorpusNoteFiles`,
   increment 2, which writes each file as `<id>.being-written` at prepare and renames it into place at commit): about
   0.6 ms a file, against 0.15 ms for overwriting in place. Rewriting the whole corpus takes about 50 s instead of 12. An
@@ -447,9 +485,12 @@ Generated data can be generated again, so a failed unit of work costs little eit
 
 ## What isn't designed yet
 
-- A database and the JSON store in one transaction.
-- The storage seam's error when `Commit` fails anyway.
-- Keeping each held copy's keys in the index's overlay.
+- Keeping each held copy's keys in the index's overlay (a `performance:` remark at `TaggregateIndex.Lookup`).
+
+Designed and built since: a failure of a storage's commit, which stops the process with `Environment.FailFast` once
+the commit's journal is written, the next start finishing the commit from the journal, and since Q1 rolls the unit of
+work back when writing the journal fails; and a database and the JSON files in one transaction, refused by default
+(Q1, above under "The JSON store").
 
 Designed and built since (2026-11-17): two sessions of one transaction share the unit of work's instance, since the
 unit of work belongs to the transaction; `ILocalTessagingEngine.AwaitNoTessagesInFlightAsync` waits for the observers
@@ -465,7 +506,8 @@ Branch `taggregate-store-spike`. Step 2 is split in three: 2a, the state store, 
 store joining the shared updater and reader; 2c, `IUnitOfWorkTeventPublisher` deferring every tevent (decision 4). 2a is
 built and specified; the calls it made:
 
-- **The new project `Compze.Teventive.StateStore`**, beside `Compze.Teventive.TeventStore`. The shared interfaces are in
+- **The new project `Compze.Teventive.StateStore`** (`Compze.Teventive.MemoryImageStateStore` since Q2), beside
+  `Compze.Teventive.TeventStore`. The shared interfaces are in
   `Compze.Teventive`, namespace `Compze.Teventive.TaggregateStores`, and `ISnapshotable<TSelf, TSnapshot>` in
   `Compze.Teventive.Taggregates`.
 - **One taggregate unit of work for each transaction** (`TaggregateUnitOfWork`, internal), not one for each store's session.
@@ -479,7 +521,9 @@ built and specified; the calls it made:
 - **Routing by class:** each store declares its classes, and the reader and updater route a class to the one store that
   keeps it or its subclasses, so `Get<JPNote>` finds a vocab. A class no store keeps fails naming each store and its classes.
 - **The composition:** `StateStore(store => store.StoredIn(storage).Taggregate(() => new VocabNote(services)).Index<VocabNote, string>(...))`.
-  `Taggregate` infers the class and its snapshot type from what the factory builds: no type arguments.
+  `Taggregate` infers the class and its snapshot type from what the factory builds: no type arguments. Today:
+  `MemoryImageStateStore(store => store.Taggregate(...).Index<VocabNote, string>(...).StoredInJsonFiles(...))`, since
+  `StoredIn` went with the storage seam.
 - **Snapshots:** `RestoreFrom` calls the protected `RestoreIdentity(id)` first, which also sets the version to 1. The store
   checks that it did, and that the id is the one asked for, and continues a copy's version from the committed instance.
 - **Storage:** `LoadAll` runs at the store's first use, not when the container is built. The seam passes snapshots as
@@ -490,13 +534,17 @@ built and specified; the calls it made:
 - **The lock table keeps only the locks held or waited for,** not one for each taggregate ever updated.
 - **JAStudio's two blockers, built after it moved to 2a (82d8b420d):**
   - a factory that takes a service of the container, `Taggregate((NoteServices services) => new VocabNote(services))`,
-    resolved from the root each time an instance is built;
-  - `IStateStore.ReloadFromStorage()`, loading everything again while running. It keeps every reference, re-files the
-    indexes, dispatches no tevent, and reports the ids added, changed and removed. It waits for open units of work, and
-    holds new ones back until it's done. A change is found by a comparison of snapshots declared with the class,
-    `snapshotsAreEqual` (772979289), which JAStudio asked for since a hand-written `Equals` on its thirty nested DTO
-    classes fails silently when someone adds a property; it compares their serialized bytes. Without one, the snapshot
-    type's own `Equals`, and a type without one makes the reload throw.
+    resolved from the root each time an instance is built. Replaced in the end review by a registration of the
+    container, for any number of services (Q3);
+  - `IStateStore.ReloadFromStorage()`, loading everything again while running, `IMemoryImageStateStore.LoadFromStorage()`
+    today (Q2, Q11). It keeps every reference, re-files the indexes, dispatches no tevent, and reports the ids added,
+    changed and removed. It waits for open units of work, and holds new ones back until it's done. A change was found by
+    a comparison of snapshots declared with the class, `snapshotsAreEqual` (772979289), which JAStudio asked for since a
+    hand-written `Equals` on its thirty nested DTO classes fails silently when someone adds a property; it compares
+    their serialized bytes. Without one, the snapshot type's own `Equals`, and a type without one made the reload throw.
+    The end review removed the comparison (Q5): a load compares only the taggregates whose files changed since the store
+    last read or wrote them, by what the store's serializer writes, so a snapshot type needs no `Equals`
+    ([the-files-of-a-state-store.md](the-files-of-a-state-store.md)).
 - **Not yet:** a second container in one transaction (a `todo:` at the code), and the overlay's kept keys (a
   `performance:` at the code).
 
@@ -506,8 +554,13 @@ Built after step 3's core, since JAStudio's every get for update copies through 
 namespace `Compze.Teventive.Taggregates`:
 
 ```csharp
-SnapshotRoundTrip.AssertLosesNothing(vocab, () => new VocabNote(services), VocabSnapshot.HoldTheSameState);
+SnapshotRoundTrip.DifferencesBetweenItAndItsCopy(vocab, () => new VocabNote(services)).Must().BeEmpty();
 ```
+
+Built as `SnapshotRoundTrip.AssertLosesNothing(vocab, createEmpty, VocabSnapshot.HoldTheSameState)`, which threw, and
+`DifferencesOf`, which returned the differences. The end review kept only the second, as
+`DifferencesBetweenItAndItsCopy` (Q10, Q11), and took the snapshot comparison out with `snapshotsAreEqual` (Q5): a
+specification asserts with its own assertions that the differences are none.
 
 - **It makes the store's own copy,** through the class the store keeps for each taggregate class, which moved from the
   store to `Compze.Teventive` for it (`SnapshotableTaggregateClass`, internal): what it checks is what a unit of work
@@ -522,17 +575,18 @@ SnapshotRoundTrip.AssertLosesNothing(vocab, () => new VocabNote(services), Vocab
   as the services the taggregates are built with, is the same state. Not compared: the fields of Compze.Teventive's
   types, which publish and apply the tevents, and delegates. A reference back, such as a component's to its taggregate,
   is followed once.
-- **Then the snapshots,** as a reload compares them, by the declared comparison or the snapshot type's `Equals`: a copy
-  whose snapshot doesn't equal the original's would make every reload report the class as changed.
-- **It throws naming each difference,** with the path from the taggregate: `Book.Chapters._chapters[0]: "first" in the
-  original, "second" in the copy`.
+- **Then the snapshots,** as a reload compared them, by the declared comparison or the snapshot type's `Equals`: a copy
+  whose snapshot didn't equal the original's would have made every reload report the class as changed. Gone with the
+  comparison (Q5).
+- **Each difference names its path** from the taggregate: `Book.Chapters._chapters[0]: "first" in the original,
+  "second" in the copy`.
 - **Specified** with a book that has state in itself, in a component and in a shared tomponent in a slot of its class,
   and a mistake for each: `Compze.Tests.Unit`, `CQRS/Taggregates/SnapshotRoundTrips`.
 - **A value created on its first read,** a `LazyCE` or a `Lazy<T>`, is compared by its value, read in both: JAStudio's
   `VocabNoteForms` holds six. Stronger than leaving such fields out, which taggregates-opus proposed instead: a derived
   value that comes out different is a real difference.
-- **`SnapshotRoundTrip.DifferencesOf`** returns the differences instead of throwing, for a tool that checks many
-  taggregates, such as JAStudio's MCP tool `find_what_copies_of_the_notes_lose`, which checks all 79,896 notes in 1.3 s.
+- **`SnapshotRoundTrip.DifferencesOf`** (`DifferencesBetweenItAndItsCopy` today) returns the differences instead of
+  throwing, for a tool that checks many taggregates, such as JAStudio's MCP tool `find_what_copies_of_the_notes_lose`, which checks all 79,896 notes in 1.3 s.
   Its first run found a real loss: JPNote's flushing bookkeeping, which a copy restored from a snapshot doesn't have.
 
 ## What the spike built for JAStudio's increments 3 and 4
@@ -547,7 +601,8 @@ a lookup inside a unit of work that rolls back gives the discarded copy.
 
 - **`Taggregate.AssertCanBeChanged()`** (protected, 3d3410a5d): until JAStudio's last part is moved to tevents, a part's
   change is made before the interim tevent is published, so `Publish`'s assertion came after a committed note was
-  changed. The guard now asserts first. `Publish` asserts through it too.
+  changed. The guard now asserts first. `Publish` asserts through it too. Private since the end review (Q10), once
+  JAStudio's classes changed their state only by tevents.
 - **`ILocalTessagingEngine.AwaitNoTessagesInFlightAsync()`** (named by Magnus; built as `AwaitObserversAsync` in 26990b991,
   then `AwaitNoTeventsInFlightAsync`, renamed in 3df5ee7f8): waits for the observers as `StopAsync` does, and leaves the
   engine running, for specifications that assert on what an observer did and go on. "In flight" is the term the tracker of
@@ -558,7 +613,8 @@ a lookup inside a unit of work that rolls back gives the discarded copy.
   specifications can make one. Moot since c5c910e06: the seam is internal, and `TaggregateToDelete` is gone.
 - **Not in Compze, for now:** `Edit` and `ForUpdate` from an instance. `Edit` decides where units of work begin, which is
   an application's policy, and an instance-based `ForUpdate` would invite holding instances. JAStudio keeps it as its
-  own; after the migration it is a candidate for the naming and API pass.
+  own; after the migration it is a candidate for the naming and API pass. The end review added nothing for it, and
+  removed `ITaggregateReference.ForUpdate()` too (Q10).
 
 ## Step 2c, specified: every tevent of a unit of work dispatched when it commits
 
@@ -614,7 +670,7 @@ handler's failure comes out of the domain call.
      uncommitted for the next commit.
   3. and 4. A store tracks a new taggregate before it publishes the tevents the taggregate published before its save,
      and a tevent a handler publishes on it meanwhile is published after them, in the order published: in the state
-     store's `Save` and the tevent store's.
+     store's `Save` and the tevent store's, the updater's `Add` since Q10.
 - **The state store** dispatches each tevent as its taggregate hands it out (`TaggregateUnitOfWork.Dispatch`); at
   prepare the sessions only prepare their writes. Private copies, the lock for each taggregate and read-only committed
   instances are as before.
@@ -636,9 +692,11 @@ serve both stores, so one unit of work can change a taggregate of each. The stru
 
 - **`ITeventStoreUpdater` goes;** `ITaggregateStoreUpdater` replaces it. `Get` becomes `GetForUpdate`, `TryGet` becomes
   `TryGetForUpdate`, `Save` stays, and `Delete(id)` becomes `Delete<TTaggregate>(id)`, since the updater routes by class.
-  `IDisposable` goes with it, which settles the `urgent:` at the interface.
+  `IDisposable` goes with it, which settles the `urgent:` at the interface. (Since then `Delete` went, a deletion being
+  a tevent, and `Save` became `Add`, Q10.)
 - **`ITeventStoreReader : ITaggregateStoreReader`,** a singleton like the shared reader. `GetHistory` and
-  `GetReadonlyCopyOfVersion` stay; `GetReadonlyCopy` goes, and the reader's `Get` replaces it. Outside a unit of work,
+  `GetReadonlyCopyOfVersion` stay; `GetReadonlyCopy` goes, and the reader's `Get` replaces it. (Since the end review,
+  `ITeventStoreReader` no longer extends the shared reader, Q8.) Outside a unit of work,
   `Get` builds the taggregate from its history, read only: publishing on it throws, as on the state store's committed
   instances. So does publishing on what `GetReadonlyCopyOfVersion` returns. That settles the `urgent:` at the tevent
   store's readonly copy.
@@ -719,7 +777,8 @@ whose storage is now a service of the container that the store is declared to be
 - **A storage built from a service of the container:** `StoredIn<TService>(Func<TService, ITaggregateStorage>)`, as
   `Taggregate` takes a factory with a service. JAStudio's corpus files need the corpus folder, which its host knows only
   once another service has started. The service is resolved from the container's root when the store is built, at its
-  first use.
+  first use. Gone with the seam (c5c910e06): `StoredInJsonFiles<TService>(folderWith, ...)` takes the folder from a
+  service instead.
 - **Every taggregate of a class:** `IStateStore.All<TTaggregate>()`, references to every `TTaggregate` the store holds,
   as an index's lookup gives. Inside a unit of work, the unit of work's view: what it saved included, what it deleted
   left out. JAStudio's searches, its tag tree and its check of whether a media file is used go through every note. On
@@ -729,6 +788,8 @@ whose storage is now a service of the container that the store is declared to be
   change once the open units of work have completed, while new ones wait, then reloads, as `ReloadFromStorage` does.
   JAStudio fast-forwards its corpus checkout there, so that no unit of work can write a note over the change. If the
   change throws, nothing is reloaded and the exception comes out. `ReloadFromStorage()` is the same with no change.
+  Since the end review, the two are one member, `IMemoryImageStateStore.LoadFromStorage(Action? changeTheStorageFirst = null)`
+  (Q10, Q11).
 
 ## What JAStudio's switch found
 
@@ -761,8 +822,8 @@ Built as specified (79884ea33). Seven new specifications, six of them in `Given_
 the tevent store and the routing; the six of `IStateStore.All` now read through the bulk reader.
 
 - **`ITaggregateStoreBulkReader : ITaggregateStoreReader`,** in Compze.Teventive beside the reader, with
-  `IReadOnlyCollection<ITaggregateReference<TTaggregate>> All<TTaggregate>()`: a reference to every `TTaggregate` the
-  stores hold, in no particular order. Routed by class to the store that keeps it, as `Get` is. A singleton, as the
+  `IReadOnlyCollection<ITaggregateReference<TTaggregate>> All<TTaggregate>()`, `ReferencesToAll<TTaggregate>()` since
+  the naming pass: a reference to every `TTaggregate` the stores hold, in no particular order. Routed by class to the store that keeps it, as `Get` is. A singleton, as the
   reader is, and the same object. First built returning an `IReadOnlyList` in id order; changed as the bullet on its
   order says.
 - **Why a reader of its own:** code that reads every taggregate of a class says so in what it depends on, and a grep
@@ -804,6 +865,7 @@ the tevent store and the routing; the six of `IStateStore.All` now read through 
   `All` after all, `KanjiNote.PopulateRadicalsFromMnemonicTags`, which stored the names of a kanji's `<rad>` tags in
   `All`'s order. It sorts them by their characters now, one line, and a full rebuild still changes no corpus file.
 - **For the review (item 9):** the name. The document db says `GetAll`, and gives instances; `All` gives references.
+  **Decided in the naming pass:** `ReferencesToAll`, which says that it gives references.
 
 ## Neither read gives an order: `Lookup` too, specified
 
@@ -856,8 +918,8 @@ each taggregate's keys: an `ImmutableHashSet` for each, about 105 MB for 1.6 mil
   copy.
 - **Why that is sound:** the committed instance stays the old one until the commit, and the unit of work holds the
   taggregate's lock, so no other unit of work commits it in between; a reload waits for open units of work. It relies
-  only on what `StateStoreBuilder.Index` documents, keys given "from its state", which a lookup inside a unit of work
-  already relies on when it computes the keys of the copies it holds.
+  only on what `MemoryImageStateStoreBuilder.Index` documents, keys given "from its state", which a lookup inside a
+  unit of work already relies on when it computes the keys of the copies it holds.
 - **What it costs:** the key function runs once more for each changed taggregate at each commit. A key function that
   isn't a function of the taggregate's own state already gives inconsistent lookups inside a unit of work.
 - **Built (53d24b46c), with one thing beyond this:** at prepare, the index asserts that the taggregate is filed under
@@ -891,7 +953,8 @@ with tevents: a note's own `Delete` published `INoteTevent.Deleted`, and the cod
   that implements `ITaggregateDeletedTevent`, effective when the unit of work commits, as `Delete` was. A deletion is then a
   domain method that publishes, like every other change, and observers and participation handlers see it as the tevent.
 - **Inside the unit of work, in both stores:** from the Deleted tevent on, the taggregate is gone: `Get` and
-  `GetForUpdate` throw as for one no store holds, `TryGet` and `TryGetForUpdate` return false, and `All` and the indexes
+  `GetForUpdate` throw as for one no store holds, `TryGet` and `TryGetForUpdate` return false, and `All` (the bulk
+  reader's `ReferencesToAll` today) and the indexes
   leave it out. A tevent published on it after its Deleted tevent fails the unit of work, naming the taggregate and the
   tevent. A rolled-back unit of work leaves the taggregate as it was.
 - **The state store** keeps no history, so it removes the taggregate at the commit, from its committed taggregates, its
@@ -947,28 +1010,31 @@ measure JAStudio's start against its `snapshot.bin`, build the cache below if it
 ### The composition
 
 ```csharp
-registrar.StateStore(store => store
-   .Taggregate(() => new VocabNote(services))
-   .Taggregate(() => new KanjiNote(services))
-   .StoredInFiles(corpusFolder, NoteSerializer.JsonOptions, files => files
-      .Of<VocabNote>("vocab")                                    //<corpus>/vocab/<first two hex digits of the id>/<id>.json
-      .Of<KanjiNote>("kanji", fileOf: (note, folder) => ...)));  //any file under <corpus>/kanji
+registrar.MemoryImageStateStore(store => store
+   .Taggregate(() => new VocabNote())
+   .Taggregate(() => new KanjiNote())
+   .StoredInJsonFiles(corpusFolder, NoteSerializer.JsonOptions, files => files
+      .FolderOf<VocabNote>("vocab")     //<corpus>/vocab/<first two hex digits of the id>/<id>.json
+      .FolderOf<KanjiNote>("kanji")));  //<corpus>/kanji/<first two hex digits of the id>/<id>.json
 ```
 
-All names are placeholders for the naming pass.
+Specified with placeholder names, `StateStore`, `StoredInFiles` and `TaggregateFiles.Of`, and with a file of each
+instance that the consumer could compute, `fileOf`. The names are the naming pass's and Q2's; `fileOf` went in the end
+review (Q5, [the-files-of-a-state-store.md](the-files-of-a-state-store.md)).
 
-- **`StoredInFiles(DirectoryInfo folder, JsonSerializerOptions options, Action<TaggregateFiles> declare)`:** the store's
-  folder, the consumer's JSON options, and each class's files.
-- **`Of<TTaggregate>(string folder, Func<TTaggregate, DirectoryInfo, FileInfo>? fileOf = null)`:** the class's folder,
-  under the store's folder, and the file of each instance, given the instance and the class's folder. Declared for each
-  class, computed for each instance, as Magnus put it: "specified per note type but built per note." The default is
-  `<first two hex digits of the id>/<id>.json`, JAStudio's layout. Each class the store keeps is declared, and two
-  classes don't share a folder: both asserted when the container is built.
-- **The file of an instance:**
-  - It may depend on more than the id. When a change gives it another file, the commit writes the new file and deletes
-    the old one, in the same journal. For now JAStudio needs only the id.
-  - It must lie under its class's folder, and its name must end in `.json`. Two taggregates may not have the same file.
-    All three are asserted where the write is prepared, so the unit of work fails.
+- **`StoredInJsonFiles(DirectoryInfo folder, JsonSerializerOptions options, Action<TaggregateFilesBuilder> declare)`:**
+  the store's folder, the consumer's JSON options, and each class's files. An overload takes the folder from a service
+  of the container, for a host that knows its folder only once another service has started.
+- **`FolderOf<TTaggregate>(string folder)`:** the class's folder, under the store's folder. Each class the store keeps is
+  declared, and two classes don't share a folder: both asserted when the container is built.
+- **The file of a taggregate is its class's folder and its id:** `<first two hex digits of the id>/<id>.json`,
+  JAStudio's layout. A taggregate keeps its file for its whole life, so a commit never moves one.
+  `ITaggregateJsonFiles`, which the container resolves whenever the store is composed with `StoredInJsonFiles`, gives
+  the path of a taggregate's file, `PathOf`, and the taggregate whose file a path is, `TaggregateWhoseFileIs`, from the
+  path alone (Q6, Q13, [the-testing-namespace-and-the-json-files.md](the-testing-namespace-and-the-json-files.md)).
+- **The options for all the files** are declared in the same chain, and written first in every example, so that none
+  reads as an option of the class declared before it: `StartingFromAMemoryPackCache()`,
+  `AcceptingNonAtomicCommitsWithADatabase()`, and, in the `Testing` namespace, `OnAFileSystemInMemory()`.
 
 ### What it writes, and how
 
@@ -992,7 +1058,11 @@ All names are placeholders for the naming pass.
   options. The taggregate is then restored from it, and its id is the restored taggregate's. Other files, such as
   JAStudio's `snapshot.bin`, are ignored.
 - **A file that can't be read or restored fails the load, naming the file.** So do two files that hold the same id.
-- **`IStateStore.ReloadFromStorage` reads the files again** in the same way.
+- **`IMemoryImageStateStore.LoadFromStorage` reads the files again** in the same way, and tells what changed by
+  comparing only the files whose length or last write time changed since the store last read or wrote them (Q5).
+- **`IMemoryImageStateStore.WriteAllToStorage()` writes every file anew,** as the serializer and the consumer's options
+  write its snapshot now, in one commit through the journal: for a consumer that has changed its snapshot types or its
+  options (Q5, named by the naming pass).
 
 ### Starting fast: a cache, as a package of its own
 
@@ -1004,7 +1074,8 @@ plug in if they want this type of cache... Assuming that you cannot match its pe
 don't think you can."
 
 - **The simple version first:** the store reads every file. JAStudio's start is measured with it against today's.
-- **Then, if it's needed,** `Compze.Teventive.StateStore.MemoryPack` with `files.CachedWithMemoryPack()`:
+- **Then, if it's needed,** `Compze.Teventive.StateStore.MemoryPack` with `files.CachedWithMemoryPack()`, today
+  `Compze.Teventive.MemoryImageStateStore.MemoryPack` with `files.StartingFromAMemoryPackCache()` (Q2, Q11):
   - a cache file for each class in the store's own folder, written after a load;
   - it records each file's length and last write time, and at the next start only the files whose length or time
     differs, and new files, are read; files that are gone are dropped;
@@ -1014,10 +1085,11 @@ don't think you can."
 
 ### Specifications
 
-- A taggregate saved is in its file, under its class's folder, with the default layout and with a declared one.
+- A taggregate saved is in its file, under its class's folder, with the default layout and with a declared one (the
+  declared layout went with `fileOf`, Q5).
 - The file holds exactly what the serializer gives with the consumer's options.
 - A store started on a folder loads what an earlier store wrote.
-- A deletion deletes the file. A change that gives the taggregate another file moves it.
+- A deletion deletes the file. A change that gives the taggregate another file moves it (gone with `fileOf`).
 - A rolled-back unit of work writes nothing, and leaves no temporary file.
 - A journal left by a crash is carried out at the next start. Temporary files left without a journal are deleted.
 - A file outside its class's folder, two taggregates with one file, and an unreadable file each fail, naming the file.
@@ -1029,15 +1101,17 @@ on the local MsSql combination. Where it went beyond the specification:
 
 - **The storage gets the taggregate, not only its snapshot:** `TaggregateSnapshot` carries it internally, set by the
   session when it hands over a unit of work's changes, since a file may depend on the taggregate. At load, the storage
-  restores each taggregate to learn its id, and the store uses that instance instead of restoring it again.
+  restores each taggregate to learn its id, and the store uses that instance instead of restoring it again. (The
+  taggregate going out went with `fileOf`, Q5: a file depends on the id alone.)
 - **A journal is written under a temporary name and renamed,** so a crash while writing it leaves no journal and the
   commit didn't happen. A failure anywhere in the commit, before the journal or after, stops the process: the
-  transaction can no longer fail.
+  transaction can no longer fail. (Since Q1, a failure writing the journal rolls the unit of work back instead.)
 - **The journal holds paths relative to the store's folder,** so it still works if the folder moved since the crash.
 - **A class's folder may not be the store's own, and no class's folder may lie inside another's,** asserted at
   composition, since loading reads a class's folder at any depth.
 - **Not guarded:** two units of work committing at the same time whose taggregates get the same new file. Each checks
-  the files committed before it, not the other's pending write. Only a declared layout can produce it.
+  the files committed before it, not the other's pending write. Only a declared layout can produce it, and none can
+  since `fileOf` went (Q5).
 - **Merged into the spike** as 1b4864ffc and 679775f97, then the inspections fixed and a spec of the overload with a
   folder a service gives (3ff814272).
 - **Two bugs, found by taggregates-opus switching JAStudio:**
@@ -1066,12 +1140,16 @@ The cold start is Anki's case after every reboot. So the cache is needed, as Mag
 ### The MemoryPack cache, specified
 
 ```csharp
-.StoredInFiles(folder, options, files => files.Of<VocabNote>("vocab")
-                                               .CachedWithMemoryPack())   //review-naming: a placeholder
+.StoredInJsonFiles(folder, options, files => files.StartingFromAMemoryPackCache()
+                                                   .FolderOf<VocabNote>("vocab"))
 ```
 
-- **A project of its own, `Compze.Teventive.StateStore.MemoryPack`,** depending on MemoryPack (1.21.4, JAStudio's
-  version). `CachedWithMemoryPack()` is an extension of `TaggregateFiles` in it. It plugs into an internal seam of the
+Specified as `.StoredInFiles(folder, options, files => files.Of<VocabNote>("vocab").CachedWithMemoryPack())`, its
+names placeholders, in a package `Compze.Teventive.StateStore.MemoryPack`; the names above are the naming pass's and
+Q2's.
+
+- **A project of its own, `Compze.Teventive.MemoryImageStateStore.MemoryPack`,** depending on MemoryPack (1.21.4,
+  JAStudio's version). `StartingFromAMemoryPackCache()` is an extension of `TaggregateFilesBuilder` in it. It plugs into an internal seam of the
   store, shared through `InternalsVisibleTo`. Each declared class's snapshot type must be MemoryPack-serializable:
   asserted at composition, naming the type.
 - **A cache file for each class, in the store's own folder.** For each file of the class, it holds the file's path
@@ -1101,12 +1179,14 @@ The cold start is Anki's case after every reboot. So the cache is needed, as Mag
 #### Built (962a05221)
 
 `Compze.Teventive.StateStore.MemoryPack` 0.1.0-alpha.1, in the `/Compze.Teventive/StateStore/` solution folder, and
-`files.Of<T>(folder).CachedWithMemoryPack()`. 9 specifications, the suite green on the local MsSql combination. Where
-it went beyond the specification:
+`files.Of<T>(folder).CachedWithMemoryPack()`. Today `Compze.Teventive.MemoryImageStateStore.MemoryPack`, in the
+`/Compze.Teventive/MemoryImageStateStore/` solution folder, at 0.1.0-alpha, which went to the pending-release feed with
+the store's own package, and `files.StartingFromAMemoryPackCache()` (Q2, Q11). 9 specifications, the suite green on the
+local MsSql combination. Where it went beyond the specification:
 
 - **The store owns the cache's file; the cache only turns content into snapshots and back.** The internal seam
-  (`Compze.Teventive.StateStore._internal`: `ITaggregateFilesLoadCache`, `ICachedFilesOfAClass`, `ListedFile`,
-  `LoadedSnapshot`) hands the cache the bytes it last wrote, and takes back the bytes to write, or none. So the store
+  (`Compze.Teventive.StateStore._internal`, `Compze.Teventive.MemoryImageStateStore._internal` today:
+  `ITaggregateFilesLoadCache`, `ICachedFilesOfAClass`, `ListedFile`, `LoadedSnapshot`) hands the cache the bytes it last wrote, and takes back the bytes to write, or none. So the store
   writes it whole with the same temporary name and retried rename as a commit's files, and the start after a crash
   deletes a half-written cache as it deletes a commit's temporary files. The cache is
   `.state-store/<class folder>.load-cache`.
@@ -1160,19 +1240,28 @@ if it turns out not to work well." (He also asked taggregates-opus how JAStudio'
 thought most parsing specifications ran on a subset extracted from the corpus.)
 
 ```csharp
-.StoredInFiles(folder, options, files => files.Of<VocabNote>("vocab")
-                                               .KeptInMemory())          //review-naming: a placeholder
+using Compze.Teventive.MemoryImageStateStore.Testing;
 
-var files = container.RootResolver.Resolve<ITaggregateFilesInMemory>();  //review-naming: a placeholder
+.StoredInJsonFiles(folder, options, files => files.OnAFileSystemInMemory()
+                                                   .FolderOf<VocabNote>("vocab"))
+
+var files = container.RootResolver.Resolve<IFileSystemInMemory>();
+var path = container.RootResolver.Resolve<ITaggregateJsonFiles>().PathOf<VocabNote>(id);
 files.ReadAllText(path); files.WriteAllText(path, json); files.Delete(path); files.Paths;
 ```
 
+Specified as `KeptInMemory()` and `ITaggregateFilesInMemory`, placeholders; since the end review (Q6,
+[the-testing-namespace-and-the-json-files.md](the-testing-namespace-and-the-json-files.md)) they are
+`OnAFileSystemInMemory()` and `IFileSystemInMemory`, in the package's `Testing` namespace, seen only where it is
+imported. "Kept in memory" would read as what a memory image state store does with every taggregate; what these give
+is a file system that isn't the disk.
+
 - **The same store, with its file operations behind an internal seam:** writing, renaming, deleting, listing a folder's
   files with their lengths and last write times, and reading. The disk implements it, and so does a file system kept in
-  memory, one for each container. With `KeptInMemory()`, the store, its layout, the consumer's JSON options, the
-  journal and the MemoryPack cache all work as on disk, and nothing touches the disk. `folder` is then only where the
-  paths begin.
-- **`ITaggregateFilesInMemory`, resolvable only with `KeptInMemory()`:** a specification reads what the store wrote by
+  memory, one for each container. With `OnAFileSystemInMemory()`, the store, its layout, the consumer's JSON options,
+  the journal and the MemoryPack cache all work as on disk, and nothing touches the disk. `folder` is then only where
+  the paths begin.
+- **`IFileSystemInMemory`, resolvable only with `OnAFileSystemInMemory()`:** a specification reads what the store wrote by
   path, and changes the files behind the store's back, as a program changing the files on disk would, to specify
   reloads: `Paths`, `ReadAllText`, `WriteAllText`, `Delete`. A write sets the file's last write time, so the cache sees
   it changed. Files written before the store's first use are what it loads.
@@ -1187,18 +1276,20 @@ files.ReadAllText(path); files.WriteAllText(path, json); files.Delete(path); fil
 - **Then taggregates-opus replaces `NotesStoredInMemory` with it, and times JAStudio's suite** against today's.
 - **Built as specified (77c3cdaf8),** 16 specifications, the suite green on the local MsSql combination, the seam still
   public. Where it went beyond the specification:
-  - **The internal seam is `IFileSystem`,** with `FilesOnDisk` and `FilesInMemory`. Every file operation of the store, its
-    journal and the MemoryPack cache's file goes through it; what is left outside builds paths only.
-  - **`ITaggregateFilesInMemory` takes full paths as strings,** compared ignoring case, as `File`'s methods do. Its
-    `ReadAllText`, `WriteAllText` and `Delete` behave as theirs, missing files included.
+  - **The internal seam is `IFileSystem`,** with `FilesOnDisk` and `FilesInMemory` (`FileSystemInMemory` since Q6).
+    Every file operation of the store, its journal and the MemoryPack cache's file goes through it; what is left
+    outside builds paths only.
+  - **`ITaggregateFilesInMemory` (`IFileSystemInMemory`) takes full paths as strings,** compared ignoring case, as
+    `File`'s methods do. Its `ReadAllText`, `WriteAllText` and `Delete` behave as theirs, missing files included.
   - **The memory clock is strictly increasing:** a write within the same tick as the last gets a time one tick later. A
     specification pins it: a file changed behind the store to text of the same length, at once, is read anew despite
     the cache.
   - **"A second load reads no unchanged file" is pinned on the disk only:** in memory, a specification can't keep a
     file's time while changing it, so it can't tell a cached snapshot from a read one. The code path is the same.
 - **The seam made internal (c5c910e06),** once JAStudio no longer used it (JAStudio 062e9bfff):
-  - `ITaggregateStorage`, `IPreparedWrite` and `TaggregateSnapshot` are in `Compze.Teventive.StateStore._private.Storage`,
-    with `NoStorage`; no other library uses them, so `_private`. Both `StoredIn` overloads are gone.
+  - `ITaggregateStorage`, `IPreparedWrite` and `TaggregateSnapshot` are in `Compze.Teventive.StateStore._private.Storage`
+    (`Compze.Teventive.MemoryImageStateStore._private.Storage` today), with `NoStorage`; no other library uses them, so
+    `_private`. Both `StoredIn` overloads are gone.
   - **`TaggregateToDelete` is gone too:** with no consumer's storage to describe a deletion to, only its id was read, so
     the storage takes the deleted ids.
   - **Every specification of the seam is said through the public API, so no `InternalSpecifications` project was
@@ -1222,6 +1313,9 @@ files.ReadAllText(path); files.WriteAllText(path, json); files.Delete(path); fil
   `IStateStore.WriteEverythingAnew()`. taggregates-opus adds: if one public interface for the store's files were
   resolvable however they're kept, on disk or in memory, as the internal `IFileSystem` already is, JAStudio's write
   would go through it in every environment, instead of to the disk even in a specification whose files are in memory.
+  **Built in the end review:** `IMemoryImageStateStore.WriteAllToStorage()` (Q5, named by the naming pass), which
+  writes through the store's own file system, on the disk or on a file system in memory; and `ITaggregateJsonFiles`, for
+  code that needs the path of a taggregate's file (Q6).
 
 ### JAStudio's specifications on the files in memory: measured
 
