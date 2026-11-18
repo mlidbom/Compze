@@ -30,5 +30,8 @@ sealed class FilesOnDisk : IFileSystem
 
    public void Move(string from, string to, bool overwrite) => File.Move(from, to, overwrite);
 
-   public void Delete(string file) => File.Delete(file);
+   public void Delete(string file)
+   {
+      if(File.Exists(file)) File.Delete(file); //File.Delete throws when the file's folder is gone, which counts as no such file here.
+   }
 }

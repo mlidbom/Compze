@@ -1,5 +1,7 @@
 using System.Text.Json;
+using System.Transactions;
 using Compze.Abstractions;
+using Compze.Contracts;
 using Compze.Teventive.StateStore._internal;
 using Compze.Teventive.StateStore._private.Storage;
 using Compze.Threading.ResourceAccess;
@@ -24,13 +26,16 @@ sealed class TaggregateFileStorage : ITaggregateStorage
    readonly IReadOnlyDictionary<Type, FilesOfAClass> _classes;
    readonly ITaggregateFilesLoadCache? _loadCache;
    readonly IFileSystem _files;
+   readonly bool _isAllowedInTransactionsThatAlsoWriteADatabase;
    readonly IThreadShared<StoredFiles> _storedFiles = IThreadShared.New(new StoredFiles());
 
    ///<summary>The storage in <paramref name="folder"/>, whose files are those of <paramref name="files"/>: the disk, or files kept in<br/>
-   /// memory for specifications.</summary>
-   internal TaggregateFileStorage(DirectoryInfo folder, JsonSerializerOptions options, IEnumerable<FilesOfAClass> classes, ITaggregateFilesLoadCache? loadCache, IFileSystem files)
+   /// memory for specifications. <paramref name="isAllowedInTransactionsThatAlsoWriteADatabase"/>: as<br/>
+   /// <see cref="TaggregateFiles.AllowedInTransactionsThatAlsoWriteADatabase"/> declares.</summary>
+   internal TaggregateFileStorage(DirectoryInfo folder, JsonSerializerOptions options, IEnumerable<FilesOfAClass> classes, ITaggregateFilesLoadCache? loadCache, IFileSystem files, bool isAllowedInTransactionsThatAlsoWriteADatabase)
    {
       _files = files;
+      _isAllowedInTransactionsThatAlsoWriteADatabase = isAllowedInTransactionsThatAlsoWriteADatabase;
       _folder = Path.GetFullPath(folder.FullName);
       _ownFolder = Path.Combine(_folder, OwnFolderName);
       _options = options;
@@ -85,9 +90,14 @@ sealed class TaggregateFileStorage : ITaggregateStorage
       CommitJournal.RetriedWhileAnotherProgramHoldsTheFile(() => _files.Move(temporaryFile, file, overwrite: true));
    }
 
+   ///<remarks>A write that writes or deletes a file takes part in the unit of work's transaction as its one durable participant, before<br/>
+   /// anything is written, unless the files are allowed in transactions that also write a database: see<br/>
+   /// <see cref="FilesAsADurableParticipant"/>.</remarks>
    public IPreparedWrite Prepare(IReadOnlyList<TaggregateSnapshot> toSave, IReadOnlyList<TaggregateId> toDelete)
    {
       var write = new PreparedFileWrite(_files, _folder, _ownFolder, _storedFiles);
+      if(!_isAllowedInTransactionsThatAlsoWriteADatabase && (toSave.Count > 0 || toDelete.Count > 0))
+         FilesAsADurableParticipant.TakePartIn(Transaction.Current._assert().NotNull(), write, _folder);
       try
       {
          foreach(var saved in toSave)

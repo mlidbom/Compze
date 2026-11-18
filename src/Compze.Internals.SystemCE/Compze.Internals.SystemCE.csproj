@@ -9,6 +9,10 @@
   <ItemGroup>
     <PackageReference Include="JetBrains.Annotations.Sources" Version="2025.2.4" PrivateAssets="all" />
   </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="Compze.Sql.Common" />
+    <InternalsVisibleTo Include="Compze.Teventive.StateStore" />
+  </ItemGroup>
   <!-- Compze.Contracts — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Contracts)' == 'true'">
     <PackageReference Include="Compze.Contracts" Version="*-*" />

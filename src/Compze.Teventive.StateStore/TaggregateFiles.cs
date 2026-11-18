@@ -48,6 +48,24 @@ public sealed class TaggregateFiles
    ///<summary>Whether <see cref="KeptInMemory"/> is declared.</summary>
    internal bool IsKeptInMemory { get; private set; }
 
+   ///<summary>Allows a unit of work that writes the files to hold a database connection too, accepting that a crash between their<br/>
+   /// commits loses the files' change, or, in an endpoint with exactly-once delivery, delivers a tevent about a change that was lost,<br/>
+   /// or counts a tessage as handled while its change was lost. Without it such a unit of work is refused: see<br/>
+   /// <see cref="StateStoreBuilder.StoredInFiles(DirectoryInfo,System.Text.Json.JsonSerializerOptions,Action{TaggregateFiles})"/>.</summary>
+   ///<remarks>The files then take part in each transaction as a volatile participant: they commit after a SQL Server connection, and in<br/>
+   /// the order they joined with the others, and a failure committing them stops the process<br/>
+   /// (<see cref="Environment.FailFast(string)"/>), since the transaction can no longer roll back by then.<br/>
+   /// review-naming: AllowedInTransactionsThatAlsoWriteADatabase, a placeholder for the naming pass (jastudio-rep-opus's fork, 2026-11-18).</remarks>
+   public TaggregateFiles AllowedInTransactionsThatAlsoWriteADatabase()
+   {
+      State.Assert(!IsAllowedInTransactionsThatAlsoWriteADatabase, () => "That the files are allowed in transactions that also write a database is declared twice.");
+      IsAllowedInTransactionsThatAlsoWriteADatabase = true;
+      return this;
+   }
+
+   ///<summary>Whether <see cref="AllowedInTransactionsThatAlsoWriteADatabase"/> is declared.</summary>
+   internal bool IsAllowedInTransactionsThatAlsoWriteADatabase { get; private set; }
+
    internal IReadOnlyCollection<FilesOfAClass.Declaration> Declarations => _declarations.Values;
 
    ///<summary>The cache the store starts from, if a package of its own plugged one in, such as Compze.Teventive.StateStore.MemoryPack.</summary>

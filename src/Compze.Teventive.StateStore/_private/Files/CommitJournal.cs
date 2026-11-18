@@ -40,12 +40,22 @@ sealed class CommitJournal
              }) {}
 
    ///<summary>Writes the journal into <paramref name="ownFolder"/>, carries it out, then deletes it.</summary>
-   internal void WriteAndCarryOut(string ownFolder)
+   internal void WriteAndCarryOut(string ownFolder) => CarryOutAndDelete(Write(ownFolder));
+
+   ///<summary>Writes the journal into <paramref name="ownFolder"/>, and gives its file: once it returns, the commit has happened, and<br/>
+   /// <see cref="CarryOutAndDelete"/>, or the next start after a crash, makes it.</summary>
+   internal string Write(string ownFolder)
    {
       var journalBeingWritten = Path.Combine(ownFolder, $"{Guid.NewGuid():N}{JournalBeingWrittenExtension}");
       var journal = Path.ChangeExtension(journalBeingWritten, JournalExtension);
       _files.WriteAllText(journalBeingWritten, JsonSerializer.Serialize(_content));
       _files.Move(journalBeingWritten, journal, overwrite: false);
+      return journal;
+   }
+
+   ///<summary>Carries out the journal <see cref="Write"/> wrote as <paramref name="journal"/>, then deletes it.</summary>
+   internal void CarryOutAndDelete(string journal)
+   {
       CarryOut();
       _files.Delete(journal);
    }

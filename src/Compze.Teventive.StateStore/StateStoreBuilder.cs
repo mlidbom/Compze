@@ -70,6 +70,19 @@ public sealed class StateStoreBuilder
    /// taggregate's snapshot. A unit of work's files are written all or none.</summary>
    ///<remarks>The store keeps its own files, its journals and temporary files, in <c>.state-store</c> under <paramref name="folder"/>.<br/>
    /// A consumer whose files are in version control ignores that folder.<br/>
+   /// <b>A unit of work that writes the files can't also hold a database connection,</b> by default. The files and a database commit<br/>
+   /// one after the other, and a crash between their commits would lose the files' change, or, in an endpoint with exactly-once<br/>
+   /// delivery, deliver a tevent about a change that was lost, or count a tessage as handled while its change was lost. So such a unit<br/>
+   /// of work is refused, and rolls back: with a message naming both when the connection is Compze's, as the tevent store's and the<br/>
+   /// exactly-once outbox's and inbox's are; by .NET itself for a SQL Server connection opened outside Compze. A PostgreSQL, MySQL or<br/>
+   /// SQLite connection opened outside Compze isn't seen. A unit of work that only reads the store is never refused, and a container<br/>
+   /// may hold this store and the tevent store: only one transaction holding both is refused. A consumer to whom that loss is<br/>
+   /// acceptable declares <see cref="TaggregateFiles.AllowedInTransactionsThatAlsoWriteADatabase"/>.<br/>
+   /// The files commit as their transaction's one durable participant, in a single phase, so they never commit as part of a<br/>
+   /// distributed transaction. A failure while writing a commit's journal rolls the unit of work back. <b>A failure after the journal<br/>
+   /// is written stops the process</b> (<see cref="Environment.FailFast(string)"/>), such as a file another program holds for more<br/>
+   /// than about two seconds: the commit has happened, and the next start finishes it from its journal. The files are written, not<br/>
+   /// flushed to the disk: a commit outlives the process, not the machine losing its power.<br/>
    /// review-naming: StoredInFiles, a placeholder for the naming pass (jastudio-rep-opus's fork, 2026-11-17).</remarks>
    public StateStoreBuilder StoredInFiles(DirectoryInfo folder, JsonSerializerOptions options, Action<TaggregateFiles> declare) =>
       DeclareFiles(_ => folder, options, declare);
@@ -93,7 +106,8 @@ public sealed class StateStoreBuilder
                                           options,
                                           files.Declarations.Select(it => it.For(classes.Single(declared => declared.Class == it.TaggregateClass), folder)),
                                           files.LoadCache,
-                                          files.IsKeptInMemory ? resolver.Resolve<FilesInMemory>() : FilesOnDisk.Instance);
+                                          files.IsKeptInMemory ? resolver.Resolve<FilesInMemory>() : FilesOnDisk.Instance,
+                                          files.IsAllowedInTransactionsThatAlsoWriteADatabase);
       });
    }
 

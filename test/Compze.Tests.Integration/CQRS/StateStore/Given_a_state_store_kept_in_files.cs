@@ -170,6 +170,57 @@ public class Given_a_state_store_kept_in_files : UniversalTestBase
 
          [PCT] public void the_file_still_holds_the_meaning_committed_before() => File.ReadAllText(VocabFileByDefault).Must().Be(SerializedVocab(VocabId, "taberu", ""));
       }
+
+      ///<summary>The files are a transaction's one durable participant, so a transaction that has another, as a SQL Server connection<br/>
+      /// is, would have to become distributed, which .NET refuses.</summary>
+      public class and_a_unit_of_work_changing_it_holds_another_durable_participant_as_a_SQL_Server_connection_would_be : after_a_unit_of_work_saves_a_vocab
+      {
+         readonly Exception _exception;
+
+         public and_a_unit_of_work_changing_it_holds_another_durable_participant_as_a_SQL_Server_connection_would_be() =>
+            _exception = Invoking(() => InUnitOfWork(taggregates =>
+                         {
+                            Transaction.Current!.EnlistDurable(Guid.NewGuid(), new DurableParticipantStandingForADatabase(), EnlistmentOptions.None);
+                            taggregates.GetForUpdate<StoredVocab>(VocabId).ChangeMeaning("to eat");
+                         }))
+                        .Must().Throw<TransactionAbortedException>().Which;
+
+         [PCT] public void the_unit_of_work_rolls_back_because_dotnet_refuses_a_distributed_transaction() => _exception.InnerException.Must().BeAssignableTo<NotSupportedException>();
+
+         [PCT] public void the_reader_gets_the_meaning_committed_before() => Reader.Get<StoredVocab>(VocabId).Meaning.Must().Be("");
+
+         [PCT] public void the_file_still_holds_the_meaning_committed_before() => File.ReadAllText(VocabFileByDefault).Must().Be(SerializedVocab(VocabId, "taberu", ""));
+
+         [PCT] public void the_stores_own_folder_holds_no_temporary_file() => FilesInTheStoresOwnFolder.Must().BeEmpty();
+      }
+
+      ///<summary>Another program puts a file where the store's own folder is, after the unit of work's write has prepared and before its<br/>
+      /// commit, so the commit can't write its journal: the commit hasn't happened, and the unit of work can still roll back.</summary>
+      public class and_a_unit_of_work_changing_it_fails_to_write_its_journal : after_a_unit_of_work_saves_a_vocab
+      {
+         readonly Exception _exception;
+
+         public and_a_unit_of_work_changing_it_fails_to_write_its_journal() =>
+            _exception = Invoking(() => InUnitOfWork(taggregates =>
+                         {
+                            taggregates.GetForUpdate<StoredVocab>(VocabId).ChangeMeaning("to eat");
+                            Transaction.Current!.EnlistVolatile(new ParticipantThatPutsAFileWhereAFolderIs(StoresOwnFolder), EnlistmentOptions.None);
+                         }))
+                        .Must().Throw<TransactionAbortedException>().Which;
+
+         [PCT] public void the_unit_of_work_rolls_back_with_the_disks_exception() => _exception.InnerException.Must().BeAssignableTo<IOException>();
+
+         [PCT] public void the_reader_gets_the_meaning_committed_before() => Reader.Get<StoredVocab>(VocabId).Meaning.Must().Be("");
+
+         [PCT] public void the_file_still_holds_the_meaning_committed_before() => File.ReadAllText(VocabFileByDefault).Must().Be(SerializedVocab(VocabId, "taberu", ""));
+
+         [PCT] public void once_the_file_is_gone_a_unit_of_work_changing_it_commits()
+         {
+            File.Delete(StoresOwnFolder);
+            InUnitOfWork(taggregates => taggregates.GetForUpdate<StoredVocab>(VocabId).ChangeMeaning("to drink"));
+            File.ReadAllText(VocabFileByDefault).Must().Be(SerializedVocab(VocabId, "taberu", "to drink"));
+         }
+      }
    }
 
    public class whose_folder_a_service_of_the_container_gives : Given_a_state_store_kept_in_files
@@ -358,6 +409,34 @@ public class Given_a_state_store_kept_in_files : UniversalTestBase
    sealed class ParticipantThatRollsBack : IEnlistmentNotification
    {
       public void Prepare(PreparingEnlistment preparingEnlistment) => preparingEnlistment.ForceRollback();
+      public void Commit(Enlistment enlistment) => enlistment.Done();
+      public void Rollback(Enlistment enlistment) => enlistment.Done();
+      public void InDoubt(Enlistment enlistment) => enlistment.Done();
+   }
+
+   ///<summary>A durable participant of a transaction, as a SQL Server connection is: it commits in a single phase when it is the<br/>
+   /// transaction's one durable participant, and votes to commit otherwise.</summary>
+   sealed class DurableParticipantStandingForADatabase : ISinglePhaseNotification
+   {
+      public void SinglePhaseCommit(SinglePhaseEnlistment singlePhaseEnlistment) => singlePhaseEnlistment.Committed();
+      public void Prepare(PreparingEnlistment preparingEnlistment) => preparingEnlistment.Prepared();
+      public void Commit(Enlistment enlistment) => enlistment.Done();
+      public void Rollback(Enlistment enlistment) => enlistment.Done();
+      public void InDoubt(Enlistment enlistment) => enlistment.Done();
+   }
+
+   ///<summary>Another program, which, when the transaction prepares, replaces the folder <paramref name="folder"/> with a file of the same name.</summary>
+   sealed class ParticipantThatPutsAFileWhereAFolderIs(string folder) : IEnlistmentNotification
+   {
+      readonly string _folder = folder;
+
+      public void Prepare(PreparingEnlistment preparingEnlistment)
+      {
+         Directory.Delete(_folder, recursive: true);
+         File.WriteAllText(_folder, "");
+         preparingEnlistment.Prepared();
+      }
+
       public void Commit(Enlistment enlistment) => enlistment.Done();
       public void Rollback(Enlistment enlistment) => enlistment.Done();
       public void InDoubt(Enlistment enlistment) => enlistment.Done();
