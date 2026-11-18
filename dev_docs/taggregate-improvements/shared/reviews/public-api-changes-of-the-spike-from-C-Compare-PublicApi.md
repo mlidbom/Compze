@@ -1,5 +1,9 @@
 # Public API changes: taggregate-store-spike (46cc881a6), against its merge-base with e29fd667327ff451e0ea74297992df1d205eb58d (e29fd6673)
 
+> Written at the start of the end review (2026-11-18), on the spike at 46cc881a6: some names and API here have changed
+> since, by its decisions; see [../the-naming-pass.md](../the-naming-pass.md) and
+> [end-review-consolidated.md](end-review-consolidated.md).
+
 Made by C-Compare-PublicApi, from the declarations DocFX's metadata step gives each public and protected type and member. A method whose parameter types changed is listed as one removed and one added.
 
 **Not in this report: the members of C# 14 extension blocks.** DocFX skips them (its pull request 10943 made it skip them rather than fail), so compare them with git diff. These changed files hold extension blocks:

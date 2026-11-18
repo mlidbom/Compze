@@ -11,6 +11,7 @@
     <InternalsVisibleTo Include="Compze.Sql.MySql" />
     <InternalsVisibleTo Include="Compze.Sql.PostgreSql" />
     <InternalsVisibleTo Include="Compze.Sql.Sqlite" />
+    <InternalsVisibleTo Include="Compze.Sql.InternalSpecifications" />
     <InternalsVisibleTo Include="Compze.DbPool.MicrosoftSql" />
     <InternalsVisibleTo Include="Compze.DbPool.MySql" />
     <InternalsVisibleTo Include="Compze.DbPool.PostgreSql" />

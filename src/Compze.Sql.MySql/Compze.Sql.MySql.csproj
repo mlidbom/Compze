@@ -14,15 +14,10 @@
     <InternalsVisibleTo Include="Compze.TypeIdentifiers.Interning.MySql" />
     <InternalsVisibleTo Include="Compze.Hosting.Testing" />
     <InternalsVisibleTo Include="Compze.Tessaging.Hosting.Testing" />
+    <InternalsVisibleTo Include="Compze.Sql.InternalSpecifications" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="MySqlConnector" Version="2.6.1" />
-  </ItemGroup>
-  <ItemGroup>
-    <InternalsVisibleTo Include="Compze.TypeIdentifiers.Interning.MySql" />
-    <InternalsVisibleTo Include="Compze.DocumentDb.MySql" />
-    <InternalsVisibleTo Include="Compze.Tessaging.MySql" />
-    <InternalsVisibleTo Include="Compze.Teventive.TeventStore.MySql" />
   </ItemGroup>
   <!-- Compze.Internals.Sql.Common — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Sql_Common)' == 'true'">

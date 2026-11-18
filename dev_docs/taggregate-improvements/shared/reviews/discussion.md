@@ -1,5 +1,8 @@
 # The discussion of the two reviews
 
+> Written before the end review (2026-11-18): some names and API here have changed since; see
+> [../the-naming-pass.md](../the-naming-pass.md) and [end-review-consolidated.md](end-review-consolidated.md).
+
 2026-11-16. jastudio-rep-opus's proposed resolution of each finding of the
 [Opus review](review-by-an-opus-agent.md) and the [Fable review](review-by-a-fable-agent.md), for the three of us to settle.
 The outcome is recorded at the end, and the shared conclusions are changed to match.

@@ -1,5 +1,9 @@
 # Taggregates for JAStudio's notes: what to change in Compze, and in what order
 
+> Written before the end review (2026-11-18): some names and API here have changed since; see
+> [../shared/the-naming-pass.md](../shared/the-naming-pass.md) and
+> [../shared/reviews/end-review-consolidated.md](../shared/reviews/end-review-consolidated.md).
+
 > **Superseded by [the shared conclusions](../shared/README.md),** which both teams agreed on together (2026-11-16).
 > This folder is the opus team's record. Where the shared design differs from it:
 > - **The order:** the two bugs first, then the small additions, then routing per class in increments.

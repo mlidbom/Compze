@@ -1,5 +1,12 @@
 # Observing tevents at runtime, and a unit of work's tevents as one list: specified
 
+> Written before the end review (2026-11-18): some names and API here have changed since; see
+> [the-naming-pass.md](the-naming-pass.md) and [reviews/end-review-consolidated.md](reviews/end-review-consolidated.md).
+
+**Renamed since (Magnus, 2026-11-18, built in e01905b14):** runtime observers are dynamic observers, and observers
+declared at composition are composed observers: see [dynamic-and-composed-observers.md](dynamic-and-composed-observers.md).
+This document keeps the names it was written with.
+
 Two additions to Compze.Tessaging's observation, approved by Magnus on 2026-11-17. They came from JAStudio's move from
 its `NoteUpdated` observable to tevents, and from the same need in Deskmancer.
 
@@ -62,6 +69,12 @@ public interface ITeventObservation   //review-naming: a placeholder
   are kept in a list of their own, so nothing checked at build changes.
 
 ### What may be observed at runtime is declared at composition
+
+**Superseded (Magnus, end review Q4, 2026-11-18; built in 0255c7231):** see
+[observing-tevents-from-other-endpoints.md](observing-tevents-from-other-endpoints.md). The declaration is
+`EndpointBuilder.ObserveFromOtherEndpoints<TTevent>()`, the rule holds only in endpoints, a plain container's runtime
+observers declare nothing, and JAStudio's `observe.AtRuntime<INoteTevent>()` lines go. What follows is the rule as it
+was first built.
 
 An endpoint receives a remote tevent only of the types it declared handlers for at composition: it tells its peers what
 to send it. Deskmancer needs remote tevents: its black-box specifications register an await for one analytics tevent

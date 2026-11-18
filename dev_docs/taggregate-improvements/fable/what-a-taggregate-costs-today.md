@@ -1,5 +1,9 @@
 # What a Taggregate costs today, and why
 
+> Written before the end review (2026-11-18): some names and API here have changed since; see
+> [../shared/the-naming-pass.md](../shared/the-naming-pass.md) and
+> [../shared/reviews/end-review-consolidated.md](../shared/reviews/end-review-consolidated.md).
+
 Findings from reading Compze.Teventive on `main` at `a6317da47` (0.6.0-alpha), 2026-11-16. The measured numbers in the
 table are the JAStudio session's, from 80,000 instances built against the package from nuget.org. Run again by me they
 came out the same, and more is measured in [what-was-run-and-measured.md](what-was-run-and-measured.md). The byte

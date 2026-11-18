@@ -13,15 +13,10 @@
     <InternalsVisibleTo Include="Compze.TypeIdentifiers.Interning.Sqlite" />
     <InternalsVisibleTo Include="Compze.Hosting.Testing" />
     <InternalsVisibleTo Include="Compze.Tessaging.Hosting.Testing" />
+    <InternalsVisibleTo Include="Compze.Sql.InternalSpecifications" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.Data.Sqlite" Version="9.0.1" />
-  </ItemGroup>
-  <ItemGroup>
-    <InternalsVisibleTo Include="Compze.TypeIdentifiers.Interning.Sqlite" />
-    <InternalsVisibleTo Include="Compze.DocumentDb.Sqlite" />
-    <InternalsVisibleTo Include="Compze.Tessaging.Sqlite" />
-    <InternalsVisibleTo Include="Compze.Teventive.TeventStore.Sqlite" />
   </ItemGroup>
   <!-- Compze.Internals.Sql.Common — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Sql_Common)' == 'true'">

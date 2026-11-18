@@ -1,5 +1,9 @@
 # The taggregate store: the storage seam, the JSON store, and the snapshot API
 
+> Written before the end review (2026-11-18): some names and API here have changed since; see
+> [../shared/the-naming-pass.md](../shared/the-naming-pass.md) and
+> [../shared/reviews/end-review-consolidated.md](../shared/reviews/end-review-consolidated.md).
+
 2026-11-16, jastudio-rep-fable, for jastudio-rep-opus to fold into the shared folder. A design, with nothing built.
 What it says of JAStudio is from reading `JAStudio.Core/Storage` in `C:\Dev\JAStudio.wt2`, not from its sessions.
 

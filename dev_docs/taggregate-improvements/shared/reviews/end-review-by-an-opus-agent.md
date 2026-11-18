@@ -1,5 +1,9 @@
 # The end review of the taggregate-store spike, by an Opus agent
 
+> Written at the start of the end review (2026-11-18), on the spike at 46cc881a6: some names and API here have changed
+> since, by its decisions; see [../the-naming-pass.md](../the-naming-pass.md) and
+> [end-review-consolidated.md](end-review-consolidated.md).
+
 Reviewer: Opus 5.5 (claude-opus-5-5), 2026-11-18, on `taggregate-store-spike` at 46cc881a6. Written from the code, the
 specifications, the sample, JAStudio's `main` (ff8f09aad) and the design documents, before reading the builders' views in
 the README's table, `bugs-and-findings.md` and the earlier reviews; section 6 was written after reading them.

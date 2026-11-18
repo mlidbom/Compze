@@ -1,5 +1,8 @@
 # Snapshots of taggregates of every shape: specified
 
+> Written before the end review (2026-11-18): some names and API here have changed since; see
+> [the-naming-pass.md](the-naming-pass.md) and [reviews/end-review-consolidated.md](reviews/end-review-consolidated.md).
+
 The bug Magnus filed on 2026-11-17: a taggregate with entities or shared tentities can't be restored from a snapshot, so
 refactoring a part of a taggregate into entities makes it unusable with a state store. Magnus: "This is not really adding
 API it is fixing a broken one." Fixed before the spike's end review, on his OK, so that the review judges the fixed API.

@@ -1,5 +1,8 @@
 # Step 5: the rest of Compze's teventives on the tables, and registration per instance removed: specified
 
+> Written before the end review (2026-11-18): some names and API here have changed since; see
+> [the-naming-pass.md](the-naming-pass.md) and [reviews/end-review-consolidated.md](reviews/end-review-consolidated.md).
+
 Step 5 of [the order](README.md#the-order-we-propose), approved by Magnus on 2026-11-17 ("let's try step 5 whatever that
 may mean"). Written from a survey of the code at c5c910e06. Every name is a placeholder for the naming pass of the
 spike's end review.

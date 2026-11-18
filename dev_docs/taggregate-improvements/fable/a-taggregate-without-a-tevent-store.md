@@ -1,5 +1,9 @@
 # A Taggregate without a tevent store
 
+> Written before the end review (2026-11-18): some names and API here have changed since; see
+> [../shared/the-naming-pass.md](../shared/the-naming-pass.md) and
+> [../shared/reviews/end-review-consolidated.md](../shared/reviews/end-review-consolidated.md).
+
 Findings and proposals, 2026-11-16. Nothing is built in Compze. What sections 1 and 2 propose is built in a prototype,
 and its behaviour run: see [what-was-run-and-measured.md](what-was-run-and-measured.md). The names in the code are
 placeholders for Magnus's pass over the names.
