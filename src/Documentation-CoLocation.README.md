@@ -165,7 +165,6 @@ To verify the setup works:
 # Production projects do NOT compile _docs example files; the Website project DOES — and fails on rotted examples:
 dotnet build Compze.AllProjects.slnx
 
-# The website builds and every DocFX include and link resolves (0 warnings expected):
-cd src/Websites/Website
-npm run build-site-only   # or: docfx build docfx-site-only.json
+# The website builds and every DocFX include and link resolves: fails, listing them, on any warning:
+C-Build-Website           # the DevScripts command; or, in src/Websites/Website: npm run build-site-only
 ```

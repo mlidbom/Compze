@@ -11,7 +11,11 @@
 C-Build                  # Build the solution (preferred)
 C-Build -Clean           # Deep clean then build
 dotnet build Compze.AllProjects.slnx  # Alternative: direct .NET CLI
+C-Build-Website          # Build the website with DocFX: fails, listing them, on any warning
 ```
+
+A change to a published page (`_docs/`) is checked with `C-Build-Website`, and, when the page's example code
+(`_docs/*.cs`) changed, with `C-Build`, which compiles it.
 
 ## Running tests
 
