@@ -59,7 +59,9 @@ public class TeventStoreUpdaterTest : UniversalTestBase
    protected TResult UseInTransactionalScope<TResult>([InstantHandle] Func<ITaggregateStoreUpdater, TResult> useSession)
       => _container.ExecuteUnitOfWork(unitOfWork => useSession(unitOfWork.TaggregateStoreUpdater()));
 
-   ITeventStoreReader Reader => _container.RootResolver.Resolve<ITeventStoreReader>();
+   ITaggregateStoreReader Reader => _container.RootResolver.Resolve<ITaggregateStoreReader>();
+
+   ITeventStoreReader TeventStoreReader => _container.RootResolver.Resolve<ITeventStoreReader>();
 
    [PCT]
    public void WhenFetchingTaggregateThatDoesNotExistNoSuchAggregateExceptionIsThrown()
@@ -320,7 +322,7 @@ public class TeventStoreUpdaterTest : UniversalTestBase
          user.ChangeEmail("new_email@email.com");
       });
 
-      Reader.GetHistory(userId).Count.Must().Be(2);
+      TeventStoreReader.GetHistory(userId).Count.Must().Be(2);
    }
 
    [PCT]
@@ -337,7 +339,7 @@ public class TeventStoreUpdaterTest : UniversalTestBase
 
       UseInTransactionalScope(session => session.GetForUpdate<User>(userId).Delete());
 
-      Reader.GetHistory(userId).Select(it => it.Tevent.GetType().Name).Must().SequenceEqual([nameof(UserRegistered), nameof(UserDeleted)]);
+      TeventStoreReader.GetHistory(userId).Select(it => it.Tevent.GetType().Name).Must().SequenceEqual([nameof(UserRegistered), nameof(UserDeleted)]);
       Reader.TryGet(userId, out User? _).Must().BeFalse();
    }
 
@@ -354,7 +356,7 @@ public class TeventStoreUpdaterTest : UniversalTestBase
          user.Delete();
       });
 
-      Reader.GetHistory(userId).Select(it => it.Tevent.GetType().Name).Must().SequenceEqual([nameof(UserRegistered), nameof(UserDeleted)]);
+      TeventStoreReader.GetHistory(userId).Select(it => it.Tevent.GetType().Name).Must().SequenceEqual([nameof(UserRegistered), nameof(UserDeleted)]);
       Reader.TryGet(userId, out User? _).Must().BeFalse();
    }
 
@@ -379,7 +381,7 @@ public class TeventStoreUpdaterTest : UniversalTestBase
       void ReadUserHistory() =>
          UseInTransactionalScope(_ =>
          {
-            Reader.GetHistory(user.Id);
+            TeventStoreReader.GetHistory(user.Id);
             withinTransactionAfterReadGate.AwaitPassThrough();
          });
    }
@@ -511,8 +513,8 @@ public class TeventStoreUpdaterTest : UniversalTestBase
       await Task.WhenAll(tasks); //Sql duplicate key (TaggregateId, Version) Exception would be thrown here if history was not serialized
 
       {
-         var userHistory = Reader.GetHistory(user.Id)
-                                 .ToArray(); //Reading the taggregate will throw an exception if the history is invalid.
+         var userHistory = TeventStoreReader.GetHistory(user.Id)
+                                            .ToArray(); //Reading the taggregate will throw an exception if the history is invalid.
          userHistory.Length.Must()
                     .Be(threads + 2); //Make sure that all of the transactions completed
       }
@@ -520,7 +522,7 @@ public class TeventStoreUpdaterTest : UniversalTestBase
 
       void UpdateEmail()
       {
-         getHistorySection.Execute(() => Reader.GetHistory(user.Id));
+         getHistorySection.Execute(() => TeventStoreReader.GetHistory(user.Id));
 
          UseInTransactionalScope(session =>
          {
@@ -608,8 +610,8 @@ public class TeventStoreUpdaterTest : UniversalTestBase
          throw new AggregateException(EnumerableCE.Create(bothTasksCompletedException).Append(bothTasksReadUserException).Concat(taskException?.InnerExceptions ?? new ReadOnlyCollection<Exception>([])).Where(it => it != null).Cast<Exception>());
 
       {
-         var userHistory = Reader.GetHistory(user.Id)
-                                 .ToArray(); //Reading the taggregate will throw an exception if the history is invalid.
+         var userHistory = TeventStoreReader.GetHistory(user.Id)
+                                            .ToArray(); //Reading the taggregate will throw an exception if the history is invalid.
          userHistory.Length.Must()
                     .Be(threads + 2); //Make sure that all the transactions completed
       }

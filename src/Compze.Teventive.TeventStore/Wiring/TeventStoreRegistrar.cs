@@ -18,8 +18,8 @@ public static class TeventStoreRegistrar
    static readonly ITeventMigration[] EmptyMigrationsArray = [];
 
    ///<summary>Composes a tevent store, which keeps taggregates as their history: the taggregate classes <paramref name="declare"/><br/>
-   /// declares. Its taggregates are read through the container's <see cref="ITaggregateStoreReader"/>, or its<br/>
-   /// <see cref="ITeventStoreReader"/>, which also reads their histories, and changed through each unit of work's<br/>
+   /// declares. Its taggregates are read through the container's <see cref="ITaggregateStoreReader"/>, their histories<br/>
+   /// through its <see cref="ITeventStoreReader"/>, and they are changed through each unit of work's<br/>
    /// <see cref="ITaggregateStoreUpdater"/>.</summary>
    public static IComponentRegistrar TeventStore(this IComponentRegistrar registrar, string connectionName, Action<TeventStoreBuilder>? declare = null) =>
       registrar.TeventStoreForFlexibleTesting(connectionName, () => EmptyMigrationsArray, declare);
@@ -46,7 +46,7 @@ public static class TeventStoreRegistrar
          Singleton.For<TaggregateTeventStore>()
                   .CreatedBy((TeventStore teventStore, TaggregateUnitsOfWork unitsOfWork, ITaggregateTypeValidator validator) => builder.Build(teventStore, unitsOfWork, validator)),
          Singleton.For<ITeventStoreReader>()
-                  .CreatedBy((ITaggregateStoreReader taggregates, TaggregateTeventStore store) => new TeventStoreReader(taggregates, store)));
+                  .CreatedBy((TaggregateTeventStore store) => new TeventStoreReader(store)));
       registrar.RegisterTaggregateStore<TaggregateTeventStore>();
       return registrar;
    }

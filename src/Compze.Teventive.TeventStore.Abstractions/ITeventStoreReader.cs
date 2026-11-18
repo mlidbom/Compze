@@ -4,11 +4,10 @@ using Compze.Teventive.Taggregates.Tevents;
 
 namespace Compze.Teventive.TeventStore.Abstractions;
 
-///<summary>The <see cref="ITaggregateStoreReader"/>, with what only a store that keeps taggregates as their history can read: a<br/>
-/// taggregate's history, and the taggregate as it was at a version of it.</summary>
-///<remarks>Its <see cref="ITaggregateStoreReader.Get{TTaggregate}"/> reads every store, as the <see cref="ITaggregateStoreReader"/> does.<br/>
-/// Outside a unit of work, a taggregate of the tevent store comes back built from its history, read only: publishing on it throws.</remarks>
-public interface ITeventStoreReader : ITaggregateStoreReader
+///<summary>Reads what only the tevent store can, since it keeps each taggregate as its history: a taggregate's history, and the<br/>
+/// taggregate as it was at a version of it.</summary>
+///<remarks>A taggregate as it is now is read through the <see cref="ITaggregateStoreReader"/>, which reads every store.</remarks>
+public interface ITeventStoreReader
 {
    ///<summary>The taggregate's persisted history: its wrapped tevents exactly as published and stored, publisher identity included.</summary>
    IReadOnlyList<ITaggregateTevent<ITaggregateTeventWithIdentity>> GetHistory(TaggregateId taggregateId);

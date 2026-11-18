@@ -39,7 +39,7 @@ public partial class TeventStoreApi
          internal static void RegisterHandler(TypermediaHandlerRegistrar registrar) => registrar.ForTuery((GetTaggregateHistory<TTevent> tuery, ITeventStoreReader reader) => reader.GetHistory(tuery.Id).Cast<ITaggregateTevent<TTevent>>());
       }
 
-      ///<summary>Gets the taggregate as <see cref="ITeventStoreReader"/> gets it.</summary>
+      ///<summary>Gets the taggregate as <see cref="ITaggregateStoreReader"/> gets it.</summary>
       public class GetTaggregate<TTaggregate> : StrictlyLocal.Tueries.StrictlyLocalTuery<GetTaggregate<TTaggregate>, TTaggregate> where TTaggregate : class, ITaggregate<ITaggregateTeventWithIdentity>
       {
          [Obsolete("Used by serializer", error:true)]
@@ -51,7 +51,7 @@ public partial class TeventStoreApi
          internal GetTaggregate(TaggregateId id) => Id = id;
          public TaggregateId Id { get; private set; }
 
-         internal static void RegisterHandler(TypermediaHandlerRegistrar registrar) => registrar.ForTuery((GetTaggregate<TTaggregate> tuery, ITeventStoreReader reader) => reader.Get<TTaggregate>(tuery.Id));
+         internal static void RegisterHandler(TypermediaHandlerRegistrar registrar) => registrar.ForTuery((GetTaggregate<TTaggregate> tuery, ITaggregateStoreReader reader) => reader.Get<TTaggregate>(tuery.Id));
       }
 
       public class GetReadonlyCopyOfTaggregateVersion<TTaggregate> : StrictlyLocal.Tueries.StrictlyLocalTuery<GetReadonlyCopyOfTaggregateVersion<TTaggregate>, TTaggregate> where TTaggregate : class, ITaggregate<ITaggregateTeventWithIdentity>
