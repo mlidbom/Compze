@@ -17,6 +17,10 @@ partial class MySqlTeventStoreSqlLayer(MySqlTeventStoreConnectionManager connect
 
    static string CreateSelectClause() => InternalSelect();
 
+   //bug: FOR UPDATE at read committed locks no row that doesn't exist, so a read for update of a taggregate with no history holds no lock,
+   //   and ITaggregateStoreUpdater.TryGetForUpdate's promise, that no other unit of work adds it meanwhile, doesn't hold on MySQL (end
+   //   review, D10, 2026-11-18). SQL Server takes sp_getapplock and PostgreSQL pg_advisory_xact_lock on the id; GET_LOCK, which isn't
+   //   transactional, would need releasing at the transaction's end. TeventStoreUpdaterTest's specification of the promise is skipped on MySQL.
    static string CreateLockHint(bool takeWriteLock) => takeWriteLock ? "FOR UPDATE" : "";
    // ReSharper disable once UnusedParameter.Local
    static string InternalSelect(int? top = null)

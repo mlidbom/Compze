@@ -533,6 +533,46 @@ public class TeventStoreUpdaterTest : UniversalTestBase
       }
    }
 
+   ///<summary>ITaggregateStoreUpdater.TryGetForUpdate promises that a unit of work that finds no taggregate holds its id's lock all the<br/>
+   /// same, so that no other unit of work adds one before it completes: what makes a get-or-create safe.</summary>
+   ///<remarks>bug: on MySQL the promise doesn't hold: the second unit of work isn't held, and finds no user while the first is still<br/>
+   /// open (end review, D10, 2026-11-18). MySqlTeventStoreSqlLayer reads with FOR UPDATE, which at read committed locks no row that<br/>
+   /// doesn't exist, where SQL Server takes an application lock and PostgreSQL an advisory lock on the id. Skipped on MySQL until fixed:<br/>
+   /// two units of work adding one id then fail on the duplicate version instead of waiting.</remarks>
+   [PCT]
+   [Skip<SqlLayer>([SqlLayer.Sqlite, SqlLayer.SqliteMemory, SqlLayer.MySql], "SQLite serializes every write transaction, so it can't show a lock on one id. MySQL fails it: see the bug at the specification.")]
+   public async Task A_unit_of_work_that_finds_no_taggregate_to_get_for_update_keeps_another_from_getting_it_for_update_until_it_completes()
+   {
+      var userId = new TaggregateId();
+      var firstHasLookedForTheUser = IThreadGate.NewOpen(WaitTimeout.Seconds(30), "firstHasLookedForTheUser");
+      var firstMayAddTheUser = IThreadGate.NewClosed(WaitTimeout.Seconds(30), "firstMayAddTheUser");
+      var firstIsCompleting = false;
+      var firstWasCompletingWhenTheSecondGotItsAnswer = false;
+      var secondFoundTheUser = false;
+
+      var first = TaskCE.RunOnDedicatedThread(() => UseInTransactionalScope(session =>
+      {
+         session.TryGetForUpdate(userId, out User? _).Must().BeFalse();
+         firstHasLookedForTheUser.AwaitPassThrough();
+         firstMayAddTheUser.AwaitPassThrough();
+         User.Register(session, "added@example.com", "password", userId);
+         Volatile.Write(ref firstIsCompleting, true);
+      }));
+      await firstHasLookedForTheUser.AwaitPassedThroughCountEqualToAsync(1);
+
+      var second = TaskCE.RunOnDedicatedThread(() => UseInTransactionalScope(session =>
+      {
+         secondFoundTheUser = session.TryGetForUpdate(userId, out User? _);
+         firstWasCompletingWhenTheSecondGotItsAnswer = Volatile.Read(ref firstIsCompleting);
+      }));
+      await Task.Delay(500.Milliseconds());
+      firstMayAddTheUser.Open();
+      await Task.WhenAll(first, second);
+
+      firstWasCompletingWhenTheSecondGotItsAnswer.Must().BeTrue("the second unit of work should have waited for the first to complete");
+      secondFoundTheUser.Must().BeTrue("the second unit of work should have found the user the first added");
+   }
+
    [PCT]
    [Skip<SqlLayer>([SqlLayer.Sqlite, SqlLayer.SqliteMemory], "We have not been able to get this to work with SQLite, and since it is testing concurrency behavior is it somewhat outside of SQLite aims anyway...")]
    public async Task Serializes_access_to_an_taggregate_so_that_concurrent_transactions_succeed()
