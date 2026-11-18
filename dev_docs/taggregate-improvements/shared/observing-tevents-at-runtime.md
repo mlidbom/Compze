@@ -63,6 +63,12 @@ public interface ITeventObservation   //review-naming: a placeholder
 
 ### What may be observed at runtime is declared at composition
 
+**Superseded (Magnus, end review Q4, 2026-11-18; built in 0255c7231):** see
+[observing-tevents-from-other-endpoints.md](observing-tevents-from-other-endpoints.md). The declaration is
+`EndpointBuilder.ObserveFromOtherEndpoints<TTevent>()`, the rule holds only in endpoints, a plain container's runtime
+observers declare nothing, and JAStudio's `observe.AtRuntime<INoteTevent>()` lines go. What follows is the rule as it
+was first built.
+
 An endpoint receives a remote tevent only of the types it declared handlers for at composition: it tells its peers what
 to send it. Deskmancer needs remote tevents: its black-box specifications register an await for one analytics tevent
 before a keystroke, and the application under test runs in another process. Approved by Magnus, 2026-11-17, built after
