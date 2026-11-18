@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using System.Transactions;
 using Compze.Abstractions;
+using Compze.Abstractions.Time;
 using Compze.xUnitMatrix;
 using JetBrains.Annotations;
 using Compze.Hosting.Testing;
@@ -389,13 +390,14 @@ public class TeventStoreUpdaterTest : UniversalTestBase
    [PCT]
    public void TeventsArePublishedImmediatelyOnTaggregateChanges()
    {
-      var users = 1.Through(9).Select(i =>
+      //Published with the time frozen, so that their time stamps have the microsecond precision that every supported database keeps.
+      var users = UtcTimeSource.Test.FrozenAtUtcNow().Run(() => 1.Through(9).Select(i =>
       {
          var u = new User();
          u.Register(i + "@test.com", "abcd", new TaggregateId());
          u.ChangeEmail("new" + i + "@test.com");
          return u;
-      }).ToList();
+      }).ToList());
 
       UseInTransactionalScope(session =>
       {
@@ -425,8 +427,6 @@ public class TeventStoreUpdaterTest : UniversalTestBase
          dispatchedTevents.Select(e => e.Id).Distinct().Count().Must().Be(18);
 
          var allPersistedTevents = unitOfWork.TeventStore().ListAllTeventsForTestingPurposesAbsolutelyNotUsableForARealTeventStoreOfAnySize().Tevents().ToList();
-         TeventStorageTestHelper.StripSteventhDecimalPointFromSecondFractionOnUtcUpdateTime(dispatchedTevents);
-         TeventStorageTestHelper.StripSteventhDecimalPointFromSecondFractionOnUtcUpdateTime(allPersistedTevents);
 
          allPersistedTevents.Must().DeepEqual(dispatchedTevents);
       });

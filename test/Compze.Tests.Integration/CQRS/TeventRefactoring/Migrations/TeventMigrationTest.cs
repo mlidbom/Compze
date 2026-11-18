@@ -559,9 +559,10 @@ public class TeventMigrationTest : TeventMigrationTestBase
 
       var id = new TaggregateId();
 
-      var taggregate = TestTaggregate.FromTevents(
+      //Published with the time frozen, so that their time stamps have the microsecond precision that every supported database keeps.
+      var taggregate = UtcTimeSource.Test.FrozenAtUtcNow().Run(() => TestTaggregate.FromTevents(
          id,
-         EnumerableCE.OfTypes<Ec1, E1, E2, E3, E4>());
+         EnumerableCE.OfTypes<Ec1, E1, E2, E3, E4>()));
 
       otherProcessContainer.ExecuteUnitOfWork(unitOfWork => unitOfWork.TaggregateStoreUpdater().Add(taggregate));
       migrations = actualMigrations;
@@ -572,13 +573,10 @@ public class TeventMigrationTest : TeventMigrationTestBase
 
       container.ExecuteInIsolatedScope(scope => scope.TeventStore().PersistMigrations());
 
-      otherProcessContainer.ExecuteUnitOfWork(unitOfWork => unitOfWork.TaggregateStoreUpdater().GetForUpdate<TestTaggregate>(id).Publish(new E3()));
+      UtcTimeSource.Test.FrozenAtUtcNow().Run(() => otherProcessContainer.ExecuteUnitOfWork(unitOfWork => unitOfWork.TaggregateStoreUpdater().GetForUpdate<TestTaggregate>(id).Publish(new E3())));
 
       var firstProcessHistory = container.ExecuteUnitOfWork(unitOfWork => unitOfWork.TeventStore().GetTaggregateHistory(id).Tevents().ToList());
       var secondProcessHistory = otherProcessContainer.ExecuteUnitOfWork(unitOfWork => unitOfWork.TeventStore().GetTaggregateHistory(id).Tevents().ToList());
-
-      TeventStorageTestHelper.StripSteventhDecimalPointFromSecondFractionOnUtcUpdateTime(firstProcessHistory);
-      TeventStorageTestHelper.StripSteventhDecimalPointFromSecondFractionOnUtcUpdateTime(secondProcessHistory);
 
       AssertStreamsAreIdenticalExceptForEventIds(firstProcessHistory, secondProcessHistory, "Both process histories should be identical");
    }
