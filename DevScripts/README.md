@@ -39,6 +39,8 @@ Then reload: `. $PROFILE`
   - `-FullGitReset` - Full git reset, build, then test (implies `-Clean`)
   - `-SingleThreadedTesting` - Run tests single-threaded for debugging
   - `-Iterations <n>` - Run suite multiple times and show summary
+  - `-Combinations <combination>, ...` - Run on these combinations of pluggable components instead of those in `src/TestUsingPluggableComponentCombinations`, such as `'PgSql:Microsoft:Newtonsoft:AspNetCore'`. Writes them into each test project's copy of the file after the build, and restores every copy to exactly what it was once the run is over, also when it fails or is interrupted; the file itself is never changed. Works with `-NoBuild`
+  - `-Filter <filter>` - Run only the tests that match, passed to `dotnet test --filter`, such as `"FullyQualifiedName~CQRS.TaggregateStores"`. A filter that matches no test fails the run
   - `-WhatIf` - Preview what would be deleted by git clean (with `-FullGitReset`)
 
 ### Packing & Releasing

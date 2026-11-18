@@ -6,6 +6,8 @@ $script:CompzeRoot = Split-Path -Parent $PSScriptRoot
 # Common paths used across multiple functions
 $script:CompzeSrcRoot = Join-Path $script:CompzeRoot "src"
 $script:CompzeSolutionPath = Join-Path $script:CompzeRoot "Compze.AllProjects.slnx"
+# Where Set-CombinationsFileCopies records the copies it changes, for Restore-CombinationsFileCopies. An obj folder, which git ignores.
+$script:CombinationsFileCopiesRecordPath = Join-Path $script:CompzeRoot "obj\combinations-file-copies-to-restore.json"
 
 # Import all function files from the Functions directory and collect function names
 $functionFiles = @()

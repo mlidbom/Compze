@@ -14,6 +14,9 @@ function C-Run-TestRun {
     .PARAMETER SingleThreaded
     Run tests single-threaded (forces sequential test execution)
     
+    .PARAMETER Filter
+    Runs only the tests that match this filter, passed to dotnet test --filter, such as "FullyQualifiedName~CQRS.TaggregateStores"
+
     .PARAMETER DisplayOutput
     Whether to display the test output to the console (default: $true)
     
@@ -42,19 +45,23 @@ function C-Run-TestRun {
         [string]$SolutionPath,
         
         [switch]$SingleThreaded,
-        
+
+        [string]$Filter,
+
         [bool]$DisplayOutput = $true
     )
-    
+
     # Run tests and capture output. Each test assembly also writes its results to a TRX file, which the counts are read from:
     # test hosts running side by side can write their summaries onto one console line, which a count from the console misses.
     $resultsDirectory = Join-Path ([IO.Path]::GetTempPath()) "compze-test-results-$([guid]::NewGuid())"
-    $stopwatch = [System.Diagnostics.Stopwatch]::StartNew()
-    if ($SingleThreaded) {
-        $testOutput = dotnet test $SolutionPath --no-build --logger trx --results-directory $resultsDirectory 2>&1
-    } else {
-        $testOutput = dotnet test $SolutionPath --no-build --logger trx --results-directory $resultsDirectory 2>&1
+    $testArguments = @('test', $SolutionPath, '--no-build', '--logger', 'trx', '--results-directory', $resultsDirectory)
+    if ($Filter) {
+        $testArguments += @('--filter', $Filter)
     }
+    # bug: -SingleThreaded changes nothing, so C-Test -SingleThreadedTesting runs the tests in parallel as usual. Until the move
+    #   to xUnit (d12566079, 2025-10-16) it passed NUnit.NumberOfTestWorkers=0, and since then nothing in its place.
+    $stopwatch = [System.Diagnostics.Stopwatch]::StartNew()
+    $testOutput = dotnet @testArguments 2>&1
     $stopwatch.Stop()
     $exitCode = $LASTEXITCODE
 

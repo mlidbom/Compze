@@ -28,9 +28,15 @@ C-Test -Iterations 5           # Run suite 5 times, show summary
 C-Test -Clean                  # Deep clean + build + test
 C-Test -FullGitReset           # Full git clean + build + test
 
-# Running a subset of tests (no DevScripts support, use dotnet directly)
-dotnet test Compze.AllProjects.slnx --no-build --filter "FullyQualifiedName~MyTestClass"
+# A subset of the tests, on chosen combinations of pluggable components, or both
+C-Test -Filter "FullyQualifiedName~MyTestClass"
+C-Test -Combinations 'PgSql:Microsoft:Newtonsoft:AspNetCore', 'MySql:Microsoft:Newtonsoft:AspNetCore'
+C-Test -Combinations 'MsSql:Microsoft:Newtonsoft:AspNetCore' -Filter "FullyQualifiedName~CQRS.TaggregateStores"
 ```
+
+`-Combinations` runs the tests on those combinations, and leaves the configuration file and its copies (below) as they
+were, also when the run fails or is interrupted. Use it rather than editing the file, which needs a rebuild, and whose
+copies a restored file doesn't overwrite.
 
 ## Test configuration
 
