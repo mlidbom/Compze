@@ -11,6 +11,7 @@ public interface IStateStore
    /// and replaces the committed taggregates with what it loaded. Dispatches no tevent.</summary>
    ///<remarks>Waits for the units of work open in the store to complete, and keeps new ones from starting until it is done. Every<br/>
    /// <see cref="ITaggregateReference{TTaggregate}"/> is kept, and gives the reloaded state; the indexes file the reloaded state.<br/>
+   /// Throws for a store composed with no storage, which keeps its taggregates in memory only.<br/>
    /// A taggregate counts as changed when the snapshot loaded doesn't equal the snapshot of the instance it replaces, so snapshot types<br/>
    /// need value equality: an override of <see cref="object.Equals(object)"/>.</remarks>
    ///<returns>Which taggregates the storage held that the store didn't, which it held with another state, and which it no longer holds.</returns>

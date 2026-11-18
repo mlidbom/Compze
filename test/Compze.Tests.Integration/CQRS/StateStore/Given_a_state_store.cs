@@ -529,6 +529,22 @@ public class Given_a_state_store : UniversalTestBase
       [PCT] public void the_store_holds_no_such_vocab() => Reader.TryGet(VocabId, out StoredVocab? _).Must().BeFalse();
    }
 
+   ///<summary>A store composed with no storage keeps its taggregates in memory only: there is nothing to reload them from.</summary>
+   public class when_a_store_with_no_storage_is_reloaded_from_its_storage : Given_a_state_store
+   {
+      readonly Exception _thrown;
+
+      public when_a_store_with_no_storage_is_reloaded_from_its_storage()
+      {
+         Compose();
+         InUnitOfWork(taggregates => taggregates.Save(StoredVocab.Create(VocabId, "taberu")));
+         _thrown = Invoking(() => Container.RootResolver.Resolve<IStateStore>().ReloadFromStorage()).Must().Throw<Exception>().Which;
+      }
+
+      [PCT] public void the_reload_is_refused_saying_the_store_has_no_storage() => _thrown.Message.Must().Contain("has no storage to reload from");
+      [PCT] public void the_reader_still_gets_the_vocab() => CommittedVocab(VocabId).Question.Must().Be("taberu");
+   }
+
    public class when_measuring : Given_a_state_store
    {
       const int Iterations = 20_000;

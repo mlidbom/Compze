@@ -84,6 +84,8 @@ sealed class TaggregateStateStore : ITaggregateStore, IStateStore
 
    public ReloadedTaggregates ReloadFromStorageAfter(Action changeToTheStorage)
    {
+      State.Assert(Storage is not NoStorage,
+                   () => "This state store has no storage to reload from: it was composed without one, such as StoredInFiles, so it keeps its taggregates in memory only, and a reload would remove every one of them.");
       State.Assert(AmbientSession == null, () => "A unit of work that has changed taggregates of the state store can't reload it: the reload waits for every such unit of work to complete, this one included.");
       return _gate.Reload(() =>
       {
