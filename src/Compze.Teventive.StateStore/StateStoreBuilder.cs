@@ -20,6 +20,7 @@ public sealed class StateStoreBuilder
    readonly Dictionary<Type, Func<IRootResolver, SnapshotableTaggregateClass>> _taggregateClasses = new();
    readonly Dictionary<Type, Type> _snapshotTypes = new();
    readonly List<Func<TaggregateStateStore, ITaggregateIndexMaintenance>> _indexes = [];
+   readonly HashSet<(Type TaggregateClass, Type KeyType)> _indexTypes = [];
    Func<IRootResolver, IReadOnlyList<SnapshotableTaggregateClass>, ITaggregateStorage>? _storage;
    TaggregateFiles? _files;
 
@@ -53,10 +54,14 @@ public sealed class StateStoreBuilder
 
    ///<summary>Declares an <see cref="ITaggregateIndex{TTaggregate,TKey}"/>, which files each <typeparamref name="TTaggregate"/> under the<br/>
    /// keys <paramref name="keysOf"/> gives from its state. The container then resolves it.</summary>
+   ///<remarks>An index is known by its taggregate class and key type, as the container resolves it, so a class has at most one index<br/>
+   /// by each key type: two indexes of one class need key types of their own.</remarks>
    public StateStoreBuilder Index<TTaggregate, TKey>(Func<TTaggregate, IEnumerable<TKey>> keysOf) where TTaggregate : class, ITaggregate where TKey : notnull
    {
+      State.Assert(_indexTypes.Add((typeof(TTaggregate), typeof(TKey))),
+                   () => $"The state store already has an index of {typeof(TTaggregate).FullName} by {typeof(TKey).FullName}, and an index is known by its taggregate class and key type alone. Give each index a key type of its own.");
       _indexes.Add(store => new TaggregateIndex<TTaggregate, TKey>(store, keysOf));
-      _registrar.Register(Singleton.For<ITaggregateIndex<TTaggregate, TKey>>().CreatedBy((TaggregateStateStore store) => store.Index<ITaggregateIndex<TTaggregate, TKey>>()));
+      _registrar.Register(Singleton.For<ITaggregateIndex<TTaggregate, TKey>>().CreatedBy((TaggregateStateStore store) => store.Index<TTaggregate, TKey>()));
       return this;
    }
 

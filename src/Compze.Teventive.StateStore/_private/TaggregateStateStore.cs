@@ -49,7 +49,10 @@ sealed class TaggregateStateStore : ITaggregateStore, IStateStore
 
    internal TaggregateUpdateLocks UpdateLocks { get; } = new();
 
-   internal TIndex Index<TIndex>() => Indexes.OfType<TIndex>().Single();
+   ///<summary>The index of exactly <typeparamref name="TTaggregate"/> by exactly <typeparamref name="TKey"/>: not one whose interface is<br/>
+   /// merely assignable to it, such as an index of a subclass beside one of its base class.</summary>
+   internal ITaggregateIndex<TTaggregate, TKey> Index<TTaggregate, TKey>() where TTaggregate : class, ITaggregate where TKey : notnull =>
+      Indexes.OfType<TaggregateIndex<TTaggregate, TKey>>().Single();
 
    ///<summary>Inside a unit of work, the taggregate as it left it: its copy, or none when it deleted it. Otherwise the committed instance.</summary>
    public bool TryGet<TTaggregate>(TaggregateId id, [NotNullWhen(true)] out TTaggregate? taggregate) where TTaggregate : class, ITaggregate

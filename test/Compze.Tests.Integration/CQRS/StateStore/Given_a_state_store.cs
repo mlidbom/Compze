@@ -545,6 +545,39 @@ public class Given_a_state_store : UniversalTestBase
       [PCT] public void the_reader_still_gets_the_vocab() => CommittedVocab(VocabId).Question.Must().Be("taberu");
    }
 
+   ///<summary>An index is known by its taggregate class and key type, exactly: one of every taggregate and one of the vocabs, under keys<br/>
+   /// of one type, are two indexes, though the vocab index's interface is assignable to the other's.</summary>
+   public class when_the_store_has_an_index_of_every_taggregate_and_an_index_of_the_vocabs_by_keys_of_one_type : Given_a_state_store
+   {
+      public when_the_store_has_an_index_of_every_taggregate_and_an_index_of_the_vocabs_by_keys_of_one_type()
+      {
+         Compose(declare: store => store.Taggregate(() => new StoredVocab())
+                                        .Taggregate(() => new StoredSentence())
+                                        .Index<ITaggregate, string>(taggregate => [taggregate.GetType().Name])
+                                        .Index<StoredVocab, string>(vocab => [vocab.Question]));
+         InUnitOfWork(taggregates => taggregates.Save(StoredVocab.Create(VocabId, "taberu")));
+      }
+
+      [PCT] public void the_index_of_every_taggregate_files_the_vocab_under_its_class() =>
+         Container.RootResolver.Resolve<ITaggregateIndex<ITaggregate, string>>().Lookup(nameof(StoredVocab)).Single().Id.Must().Be(VocabId);
+
+      [PCT] public void the_index_of_the_vocabs_files_it_under_its_question() =>
+         Container.RootResolver.Resolve<ITaggregateIndex<StoredVocab, string>>().Lookup("taberu").Single().Id.Must().Be(VocabId);
+   }
+
+   public class when_the_store_is_declared_with_two_indexes_of_the_vocabs_by_keys_of_one_type : Given_a_state_store
+   {
+      readonly Exception _thrown;
+
+      public when_the_store_is_declared_with_two_indexes_of_the_vocabs_by_keys_of_one_type() =>
+         _thrown = Invoking(() => Compose(declare: store => store.Taggregate(() => new StoredVocab())
+                                                                 .Index<StoredVocab, string>(vocab => [vocab.Question])
+                                                                 .Index<StoredVocab, string>(vocab => [vocab.Meaning])))
+                  .Must().Throw<Exception>().Which;
+
+      [PCT] public void composing_fails_saying_that_each_index_needs_a_key_type_of_its_own() => _thrown.Message.Must().Contain("Give each index a key type of its own");
+   }
+
    public class when_measuring : Given_a_state_store
    {
       const int Iterations = 20_000;
