@@ -33,7 +33,11 @@ suite passes, 5131 specifications, and the integration CQRS specifications on My
 also refuses, at declaration, a second index of one class and key type. **D10 is confirmed by running:** on MySQL a
 second unit of work isn't held by the first's `TryGetForUpdate` of an id with no history, so two units of work adding one
 id fail on the duplicate version instead of waiting. SQL Server and PostgreSQL keep the promise. Its specification is
-skipped on MySQL, with `bug:` comments at it and at `MySqlTeventStoreSqlLayer.CreateLockHint`. **D11, open: fix it.**
+skipped on MySQL, with `bug:` comments at it and at `MySqlTeventStoreSqlLayer.CreateLockHint`. **D11: fix it,** with a
+lock table in the MySQL tevent store's schema (jastudio-rep-opus's call, 2026-11-18: internal, and Compze is greenfield):
+`INSERT … ON DUPLICATE KEY UPDATE` on the id at a read for update takes a row lock InnoDB releases at commit or rollback,
+under either isolation level. Rejected: `GET_LOCK`, which lasts for the session and outlives the transaction in the
+pool; and documenting the weaker promise.
 
 **Not a defect, documented instead:** `Lookup` outside a unit of work returns the index's own array, which a caller can
 cast back and write to (both, run). A caller that casts a read-only collection to write to it is misbehaving, and a
@@ -64,8 +68,8 @@ read-only wrapper per key costs an object per key held, which the spike measured
 
 | # | Question | The reviewers | Status |
 |---|---|---|---|
-| Q1 | A unit of work across a state store kept in files and a database isn't atomic across a crash. That breaks exactly-once delivery when the state store is in an exactly-once endpoint. Refuse what can be detected and document the rest, or make it atomic? | both, read: refuse and document now | **asked** |
-| Q2 | The all-in-memory store: its name. `MemoryResidentStateStore`, `InMemoryStateStore`, or keep `StateStore` and say it in every first line? | both: a store of its own; Opus `MemoryResident…`, Fable `InMemory…`, each unsure | |
+| Q1 | A unit of work across a state store kept in files and a database isn't atomic across a crash. That breaks exactly-once delivery when the state store is in an exactly-once endpoint. Refuse what can be detected and document the rest, or make it atomic? | both, read: refuse and document now | **decided by Magnus: refused by default, with an opt-out the exception names; built, 0ecee1268,** [specified here](../a-state-store-in-files-and-a-database-in-one-transaction.md) |
+| Q2 | The all-in-memory store: its name. `MemoryResidentStateStore`, `InMemoryStateStore`, or keep `StateStore` and say it in every first line? | both: a store of its own; Opus `MemoryResident…`, Fable `InMemory…`, each unsure | **asked** |
 | Q3 | `StateStoreBuilder.Taggregate(…)` with a service: it spares JAStudio the refactoring of notes that reach other notes through `NoteServices`, 31 times. Keep, and say what Compze recommends? | both: keep and document; Fable: JAStudio's notes would be better for the refactoring | |
 | Q4 | `AtRuntime` and its rule (explained plainly in both reviews). Keep the rule; rename it `ObservableAtRuntime`; and take it out of the registrar runtime code gets, where it always throws: onto the builder (Fable) or the runtime gets a smaller registrar type (Opus)? | both: keep the rule, rename, move | |
 | Q5 | The storage seam's shape: remove `snapshotsAreEqual` (the storage knows what changed) and `fileOf` (no user; brings a race), and add an operation that rewrites every taggregate's storage, which JAStudio does today with a copy of Compze's private layout? | Fable: remove both; Opus: narrow `fileOf` to the id, keep `snapshotsAreEqual`; both: the rewrite | |

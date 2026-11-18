@@ -2,7 +2,18 @@
 
 **Decided by Magnus, 2026-11-18** (the end review's first question): strict by default, with an exception that says why
 and how to turn the refusal off. "That will do. Until the mythical day of legend when we implement proper recovery and
-can participate in distributed transactions." Specified here before it is built.
+can participate in distributed transactions." Specified here before it was built.
+
+**Built, 0ecee1268,** with all seven specifications; the full suite passes, 5175, and the integration CQRS
+specifications on SQL Server, MySQL and PostgreSQL. Two findings while building:
+- **Specification 2 as written can't happen through the tevent store:** it writes each tevent as it is published, so its
+  connection is always in the transaction before the files join at the prepare. The specification makes a database
+  connection join after the files with a participant that reads a history at its own prepare.
+- **Any durable participant that shares a transaction with nothing else must commit in a single phase:** .NET escalates
+  at once for a durable participant that doesn't implement `ISinglePhaseNotification`, the first one included. That is
+  also why the files' participant implements it.
+- And `FilesOnDisk.Delete` threw for a file whose folder was gone, though `IFileSystem.Delete` promises nothing happens
+  for a missing file; it now keeps the promise.
 
 ## The problem
 
