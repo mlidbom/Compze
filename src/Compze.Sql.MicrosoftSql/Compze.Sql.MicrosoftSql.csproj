@@ -14,6 +14,7 @@
     <InternalsVisibleTo Include="Compze.TypeIdentifiers.Interning.MicrosoftSql" />
     <InternalsVisibleTo Include="Compze.Hosting.Testing" />
     <InternalsVisibleTo Include="Compze.Tessaging.Hosting.Testing" />
+    <InternalsVisibleTo Include="Compze.Sql.InternalSpecifications" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.Data.SqlClient" Version="6.1.3" />
