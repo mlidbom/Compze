@@ -535,12 +535,8 @@ public class TeventStoreUpdaterTest : UniversalTestBase
 
    ///<summary>ITaggregateStoreUpdater.TryGetForUpdate promises that a unit of work that finds no taggregate holds its id's lock all the<br/>
    /// same, so that no other unit of work adds one before it completes: what makes a get-or-create safe.</summary>
-   ///<remarks>bug: on MySQL the promise doesn't hold: the second unit of work isn't held, and finds no user while the first is still<br/>
-   /// open (end review, D10, 2026-11-18). MySqlTeventStoreSqlLayer reads with FOR UPDATE, which at read committed locks no row that<br/>
-   /// doesn't exist, where SQL Server takes an application lock and PostgreSQL an advisory lock on the id. Skipped on MySQL until fixed:<br/>
-   /// two units of work adding one id then fail on the duplicate version instead of waiting.</remarks>
    [PCT]
-   [Skip<SqlLayer>([SqlLayer.Sqlite, SqlLayer.SqliteMemory, SqlLayer.MySql], "SQLite serializes every write transaction, so it can't show a lock on one id. MySQL fails it: see the bug at the specification.")]
+   [Skip<SqlLayer>([SqlLayer.Sqlite, SqlLayer.SqliteMemory], "SQLite serializes every write transaction, so it can't show a lock on one id.")]
    public async Task A_unit_of_work_that_finds_no_taggregate_to_get_for_update_keeps_another_from_getting_it_for_update_until_it_completes()
    {
       var userId = new TaggregateId();
