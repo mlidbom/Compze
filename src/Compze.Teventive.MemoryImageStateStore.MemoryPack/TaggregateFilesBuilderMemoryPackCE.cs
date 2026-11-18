@@ -2,7 +2,7 @@ using Compze.Teventive.MemoryImageStateStore.MemoryPack._private;
 
 namespace Compze.Teventive.MemoryImageStateStore.MemoryPack;
 
-///<summary>Has a memory image state store kept in files start from a MemoryPack cache: <c>files.Of&lt;VocabNote&gt;("vocab").StartingFromAMemoryPackCache()</c>.</summary>
+///<summary>Has a memory image state store kept in files start from a MemoryPack cache: <c>files.StartingFromAMemoryPackCache().FolderOf&lt;VocabNote&gt;("vocab")</c>.</summary>
 public static class TaggregateFilesBuilderMemoryPackCE
 {
    extension(TaggregateFilesBuilder @this)

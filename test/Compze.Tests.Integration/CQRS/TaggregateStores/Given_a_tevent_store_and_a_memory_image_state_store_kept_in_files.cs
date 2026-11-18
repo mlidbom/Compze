@@ -25,7 +25,7 @@ namespace Compze.Tests.Integration.CQRS.TaggregateStores;
 ///<summary>A tevent store keeping users and a memory image state store keeping vocab in files, in one container. A unit of work that writes the files<br/>
 /// can't also hold the tevent store's database connection, unless the files allow it: a crash between the two commits would lose one of<br/>
 /// them.</summary>
-public class Given_a_tevent_store_and_a_state_store_kept_in_files : UniversalTestBase
+public class Given_a_tevent_store_and_a_memory_image_state_store_kept_in_files : UniversalTestBase
 {
    static readonly JsonSerializerOptions Options = new() { Converters = { new TaggregateIdAsAGuid() } };
    readonly DirectoryInfo _folder = new(Path.Combine(Path.GetTempPath(), "compze-tevent-store-and-state-store-in-files", Guid.NewGuid().ToString("N")));
@@ -73,7 +73,7 @@ public class Given_a_tevent_store_and_a_state_store_kept_in_files : UniversalTes
 
    static string SerializedVocab(TaggregateId id, string question, string meaning) => JsonSerializer.Serialize(new StoredVocabSnapshot(id, question, meaning), Options);
 
-   public class after_a_user_and_a_vocab_are_added_in_units_of_work_of_their_own : Given_a_tevent_store_and_a_state_store_kept_in_files
+   public class after_a_user_and_a_vocab_are_added_in_units_of_work_of_their_own : Given_a_tevent_store_and_a_memory_image_state_store_kept_in_files
    {
       public after_a_user_and_a_vocab_are_added_in_units_of_work_of_their_own() => AddAUserAndAVocabInUnitsOfWorkOfTheirOwn();
 
@@ -93,7 +93,7 @@ public class Given_a_tevent_store_and_a_state_store_kept_in_files : UniversalTes
                          }))
                         .Must().Throw<TransactionAbortedException>().Which;
 
-         [PCT] public void the_unit_of_work_is_refused_naming_the_state_stores_folder_and_the_database_connection() =>
+         [PCT] public void the_unit_of_work_is_refused_naming_the_memory_image_state_stores_folder_and_the_database_connection() =>
             _exception.InnerException!.Message.Must().Satisfy(it => it.Contains(_folder.FullName, StringComparison.Ordinal) && it.Contains("a database connection", StringComparison.Ordinal));
 
          [PCT] public void the_refusal_names_the_declaration_that_allows_it() =>
@@ -122,7 +122,7 @@ public class Given_a_tevent_store_and_a_state_store_kept_in_files : UniversalTes
                          }))
                         .Must().Throw<TransactionAbortedException>().Which;
 
-         [PCT] public void the_unit_of_work_is_refused_naming_the_state_stores_folder_and_the_database_connection() =>
+         [PCT] public void the_unit_of_work_is_refused_naming_the_memory_image_state_stores_folder_and_the_database_connection() =>
             _exception.InnerException!.Message.Must().Satisfy(it => it.Contains(_folder.FullName, StringComparison.Ordinal) && it.Contains("a database connection", StringComparison.Ordinal));
 
          [PCT] public void the_reader_gets_the_vocabs_meaning_committed_before() => Reader.Get<StoredVocab>(_vocabId).Meaning.Must().Be("");
@@ -141,11 +141,11 @@ public class Given_a_tevent_store_and_a_state_store_kept_in_files : UniversalTes
       }
    }
 
-   public class whose_files_are_allowed_in_transactions_that_also_write_a_database : Given_a_tevent_store_and_a_state_store_kept_in_files
+   public class whose_files_accept_non_atomic_commits_with_a_database : Given_a_tevent_store_and_a_memory_image_state_store_kept_in_files
    {
-      protected whose_files_are_allowed_in_transactions_that_also_write_a_database() => _filesAreAcceptingNonAtomicCommitsWithADatabase = true;
+      protected whose_files_accept_non_atomic_commits_with_a_database() => _filesAreAcceptingNonAtomicCommitsWithADatabase = true;
 
-      public class after_a_unit_of_work_adds_a_user_and_a_vocab_and_another_changes_both : whose_files_are_allowed_in_transactions_that_also_write_a_database
+      public class after_a_unit_of_work_adds_a_user_and_a_vocab_and_another_changes_both : whose_files_accept_non_atomic_commits_with_a_database
       {
          public after_a_unit_of_work_adds_a_user_and_a_vocab_and_another_changes_both()
          {

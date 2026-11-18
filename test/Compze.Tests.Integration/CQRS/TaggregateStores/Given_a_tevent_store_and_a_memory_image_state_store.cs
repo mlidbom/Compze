@@ -21,13 +21,13 @@ namespace Compze.Tests.Integration.CQRS.TaggregateStores;
 
 ///<summary>A tevent store keeping users and a memory image state store keeping vocab, in one container: one updater, one reader and one bulk reader<br/>
 /// serve both.</summary>
-public class Given_a_tevent_store_and_a_state_store : UniversalTestBase
+public class Given_a_tevent_store_and_a_memory_image_state_store : UniversalTestBase
 {
    readonly IDependencyInjectionContainer _container;
    readonly TaggregateId _userId = new();
    readonly TaggregateId _vocabId = new(Guid.NewGuid());
 
-   public Given_a_tevent_store_and_a_state_store() =>
+   protected Given_a_tevent_store_and_a_memory_image_state_store() =>
       _container = TestEnv.DIContainer.SetupTestingContainer(registrar => registrar.RequireIntegrationTestTypeMappings(),
                                                              configureContainer: register => register.MemoryImageStateStore(store => store.Taggregate(() => new StoredVocab())),
                                                              declareTeventStoreTaggregates: store => store.Taggregate<User>());
@@ -48,7 +48,7 @@ public class Given_a_tevent_store_and_a_state_store : UniversalTestBase
       taggregates.Add(StoredVocab.Create(_vocabId, "taberu"));
    }
 
-   public class after_one_unit_of_work_adds_a_user_and_a_vocab : Given_a_tevent_store_and_a_state_store
+   public class after_one_unit_of_work_adds_a_user_and_a_vocab : Given_a_tevent_store_and_a_memory_image_state_store
    {
       public after_one_unit_of_work_adds_a_user_and_a_vocab() => InUnitOfWork(AddAUserAndAVocab);
 
@@ -216,7 +216,7 @@ public class Given_a_tevent_store_and_a_state_store : UniversalTestBase
       }
    }
 
-   public class after_three_units_of_work_each_register_a_user : Given_a_tevent_store_and_a_state_store
+   public class after_three_units_of_work_each_register_a_user : Given_a_tevent_store_and_a_memory_image_state_store
    {
       readonly TaggregateId[] _userIds = [new(), new(), new()];
 
@@ -229,7 +229,7 @@ public class Given_a_tevent_store_and_a_state_store : UniversalTestBase
       [PCT] public void the_bulk_reader_gives_the_three_users() => BulkReader.ReferencesToAll<User>().Select(it => it.Id).ToList().Must().Satisfy(it => it.Count == 3 && _userIds.All(it.Contains));
    }
 
-   public class after_a_unit_of_work_that_adds_a_user_and_a_vocab_fails : Given_a_tevent_store_and_a_state_store
+   public class after_a_unit_of_work_that_adds_a_user_and_a_vocab_fails : Given_a_tevent_store_and_a_memory_image_state_store
    {
       public after_a_unit_of_work_that_adds_a_user_and_a_vocab_fails() =>
          Invoking(() => InUnitOfWork(taggregates =>
