@@ -107,3 +107,27 @@ on taggregates, or move to an internal specifications project.
 references in no order, indexes defined by state, the snapshot round trip comparing instances, tevent routing declared
 per class and its shape with `DeclareAppliers` hidden by subclasses, `ForEachUnitOfWork`, runtime observation, the
 storage seam internal, the MemoryPack cache as its own package, `TeventApplyingRoot`, `AddRestored`.
+
+## 4. The final check of the public API, 2026-11-18
+
+`C-Compare-PublicApi -Base 46cc881a6 -Head c4fd9d532`: every public API change since the two reviews, each checked
+against the decisions above. All but these are what a decision's specification says (the naming pass 48, the ten trims
+28, tevent routing as a protected property 17, the memory image state store 8, the files of a state store 7, and a few
+from the others).
+
+- **Not covered, and no question:**
+  - `Taggregate`'s protected constructor (8a68e51e0): defect D1's fix, which puts back the constructor the released
+    `Taggregate` has.
+  - `TaggregateOfAFile`'s `==` and `!=` (fcae6aa85), beyond its specification's `IEquatable`: kept, since a type with
+    value equality whose `==` compared references would surprise.
+- **Not covered, put to Magnus:**
+  - **Q13, `ITaggregateJsonFiles.PathOf(ITaggregate taggregate)`,** asked for by JAStudio's agent: the path of a
+    taggregate's file by its class at runtime and its id, beside the generic `PathOf<TTaggregate>(id)`. JAStudio holds a
+    note as a `JPNote`, so with the generic one alone its `CorpusNoteFiles.FileOf` switches over the three classes the
+    store keeps, which the store already knows, and a new class of note would throw at runtime.
+  - **Q14, `SelfGeneratingQueryModel<,>.IParent`** (d53f30a0d): a public interface whose one member,
+    `TeventAppliersInternal`, is `[Obsolete(ObsoleteMessage.ForInternalUseOnly)]`, so that a query model's components can
+    read their parent's protected routing. An internal interface member would do the same without anything public.
+- **Leftovers of the naming pass,** fixed without asking: the MemoryPack cache's doc comment still showed `Of`;
+  `TeventApplyingPart`'s type parameters were still `TComponent` and `TComponentTevent`; the message of
+  `AttemptToAddEmptyTaggregateException` still said "save".
