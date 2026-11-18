@@ -37,7 +37,9 @@ skipped on MySQL, with `bug:` comments at it and at `MySqlTeventStoreSqlLayer.Cr
 lock table in the MySQL tevent store's schema (jastudio-rep-opus's call, 2026-11-18: internal, and Compze is greenfield):
 `INSERT … ON DUPLICATE KEY UPDATE` on the id at a read for update takes a row lock InnoDB releases at commit or rollback,
 under either isolation level. Rejected: `GET_LOCK`, which lasts for the session and outlives the transaction in the
-pool; and documenting the weaker promise.
+pool; and documenting the weaker promise. **Done, 899546156:** the D10 specification passes on MySQL; the integration
+CQRS specifications pass on MySQL, SQL Server and PostgreSQL, 960. The lock table keeps a row for each taggregate ever
+got for update.
 
 **Not a defect, documented instead:** `Lookup` outside a unit of work returns the index's own array, which a caller can
 cast back and write to (both, run). A caller that casts a read-only collection to write to it is misbehaving, and a
