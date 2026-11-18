@@ -16,7 +16,7 @@ public abstract partial class SelfGeneratingQueryModel<TQueryModel, TTaggregateT
       where TEntity : Entity<TEntity, TEntityId, TEntityTevent, TEntityCreatedTevent, TEntityRemovedTevent, TTeventEntityIdGetter>
       where TTeventEntityIdGetter : IGetTaggregateEntityTeventEntityId<TEntityTevent, TEntityId>
    {
-      ///<summary>Declares the tevent appliers of <typeparamref name="TEntity"/>, as the entity's do, letting its <typeparamref name="TEntityRemovedTevent"/> reach no applier:<br/>
+      ///<summary>Declares the tevent appliers of <typeparamref name="TEntity"/>, as the entity's do, with the routes in the same order, letting its <typeparamref name="TEntityRemovedTevent"/> reach no applier:<br/>
       /// its collection removes it once the tevent has reached any it has.</summary>
       protected new static TeventRouting<TEntity, TEntityTevent> DeclareAppliers(Action<TeventRouting<TEntity, TEntityTevent>.Declaration> declare) =>
          DeclareEntityAppliers(it =>

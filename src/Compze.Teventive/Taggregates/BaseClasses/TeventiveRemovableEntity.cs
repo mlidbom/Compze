@@ -30,7 +30,7 @@ public abstract class TeventiveRemovableEntity<TParent,
     protected TeventiveRemovableEntity(TParent taggregate) : base(taggregate) {}
 
     ///<summary>Declares the tevent appliers of <typeparamref name="TEntity"/>, as <see cref="Tentity{TParent,TParentTevent,TParentTeventImplementation,TTentity,TTentityId,TTentityTeventImplementation,TTentityTevent,TTentityCreatedTevent,TTentityTeventIdGetterSetter}.DeclareAppliers"/> does,<br/>
-    /// letting its <typeparamref name="TEntityRemovedTevent"/> reach no applier: its collection removes it once the tevent has reached any it has.</summary>
+    /// with the routes in the same order, and letting its <typeparamref name="TEntityRemovedTevent"/> reach no applier: its collection removes it once the tevent has reached any it has.</summary>
     protected new static TeventRouting<TEntity, TEntityTevent> DeclareAppliers(Action<TeventRouting<TEntity, TEntityTevent>.Declaration> declare) =>
        DeclareTentityAppliers(it =>
        {

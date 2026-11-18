@@ -30,7 +30,8 @@ public abstract partial class SelfGeneratingQueryModel<TQueryModel, TTaggregateT
 
       ///<summary>Declares the tevent appliers of <typeparamref name="TEntity"/>, for it to keep in a static field and return from its override of<br/>
       /// <see cref="TeventApplyingPart{TPart,TPartTevent}.TeventAppliers"/>. Every tevent dispatched to the entity must reach at least one of them.<br/>
-      /// The routing starts with the entity's own applier of its created tevent, which gives it its <see cref="Id"/>.</summary>
+      /// The routing starts with the entity's own applier of its created tevent, which gives it its <see cref="Id"/>. A tevent reaches every route<br/>
+      /// it matches, one after another: that applier first, then those <paramref name="declare"/> declares, in the order declared.</summary>
       protected new static TeventRouting<TEntity, TEntityTevent> DeclareAppliers(Action<TeventRouting<TEntity, TEntityTevent>.Declaration> declare) => DeclareEntityAppliers(declare);
 
       ///<summary>What <see cref="DeclareAppliers"/> declares, for the removable entity, whose own adds its routes after the entity's.</summary>

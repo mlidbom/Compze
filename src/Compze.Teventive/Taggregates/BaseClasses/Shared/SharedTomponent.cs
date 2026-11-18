@@ -45,7 +45,9 @@ public abstract class SharedTomponent<TTomponentTevent> : ISharedTomponentIntern
    protected abstract TeventRouting? TeventAppliers { get; }
 
    ///<summary>Declares the tevent appliers of <typeparamref name="TTomponent"/>, the shared tomponent class calling it, for it to keep in a static field<br/>
-   /// and return from its override of <see cref="TeventAppliers"/>. Every tevent the tomponent publishes must reach at least one of them.</summary>
+   /// and return from its override of <see cref="TeventAppliers"/>. Every tevent the tomponent publishes must reach at least one of them.<br/>
+   /// A tevent reaches every route it matches, one after another, in the order <paramref name="declare"/> declares them.<br/>
+   /// A subclass of <typeparamref name="TTomponent"/> extends that routing with <see cref="TeventRouting{TInstance,TTevent}.Extend{TSubclass}"/>, whose routes come after these.</summary>
    protected static TeventRouting<TTomponent, TTomponentTevent> DeclareAppliers<TTomponent>(Action<TeventRouting<TTomponent, TTomponentTevent>.Declaration> declare)
       where TTomponent : SharedTomponent<TTomponentTevent> =>
       TeventRouting<TTomponent, TTomponentTevent>.DeclareAppliers(declare);

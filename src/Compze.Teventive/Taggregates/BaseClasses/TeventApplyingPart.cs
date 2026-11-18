@@ -32,7 +32,8 @@ public abstract class TeventApplyingPart<TPart, TPartTevent> : ITeventRoutedPart
 
    ///<summary>Declares the tevent appliers of <typeparamref name="TPart"/>, for it to keep in a static field and return from its override of<br/>
    /// <see cref="TeventAppliers"/>. Every tevent dispatched to the part must reach at least one of them.<br/>
-   /// A subclass of <typeparamref name="TPart"/> extends that routing with <see cref="TeventRouting{TInstance,TTevent}.Extend{TSubclass}"/>.</summary>
+   /// A tevent reaches every route it matches, one after another, in the order <paramref name="declare"/> declares them.<br/>
+   /// A subclass of <typeparamref name="TPart"/> extends that routing with <see cref="TeventRouting{TInstance,TTevent}.Extend{TSubclass}"/>, whose routes come after these.</summary>
    protected static TeventRouting<TPart, TPartTevent> DeclareAppliers(Action<TeventRouting<TPart, TPartTevent>.Declaration> declare) =>
       TeventRouting<TPart, TPartTevent>.DeclareAppliers(declare);
 

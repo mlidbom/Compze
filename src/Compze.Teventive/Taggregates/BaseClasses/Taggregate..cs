@@ -44,7 +44,9 @@ public abstract partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggre
    protected virtual TeventRouting? TeventHandlers => null;
 
    ///<summary>Declares the tevent handlers of <typeparamref name="TTaggregate"/>, for it to keep in a static field and return from its override of<br/>
-   /// <see cref="TeventHandlers"/>. They run after every applier has applied the tevent, and a tevent may reach none.</summary>
+   /// <see cref="TeventHandlers"/>. They run after every applier has applied the tevent, and a tevent may reach none.<br/>
+   /// A tevent reaches every handler it matches, one after another, in the order <paramref name="declare"/> declares them.<br/>
+   /// A subclass of <typeparamref name="TTaggregate"/> extends that routing with <see cref="TeventRouting{TInstance,TTevent}.Extend{TSubclass}"/>, whose handlers come after these.</summary>
    protected static TeventRouting<TTaggregate, TTaggregateTevent> DeclareHandlers(Action<TeventRouting<TTaggregate, TTaggregateTevent>.Declaration> declare) =>
       TeventRouting<TTaggregate, TTaggregateTevent>.DeclareHandlers(declare);
 

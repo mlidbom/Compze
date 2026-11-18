@@ -40,7 +40,8 @@ public abstract class Tentity<TParent,
 
    ///<summary>Declares the tevent appliers of <typeparamref name="TTentity"/>, for it to keep in a static field and return from its override of<br/>
    /// <see cref="TeventApplyingPart{TPart,TPartTevent}.TeventAppliers"/>. Every tevent dispatched to the entity must reach at least one of them.<br/>
-   /// The routing starts with the entity's own applier of its created tevent, which gives it its <see cref="Id"/>.</summary>
+   /// The routing starts with the entity's own applier of its created tevent, which gives it its <see cref="Id"/>. A tevent reaches every route<br/>
+   /// it matches, one after another: that applier first, then those <paramref name="declare"/> declares, in the order declared.</summary>
    protected new static TeventRouting<TTentity, TTentityTevent> DeclareAppliers(Action<TeventRouting<TTentity, TTentityTevent>.Declaration> declare) => DeclareTentityAppliers(declare);
 
    ///<summary>What <see cref="DeclareAppliers"/> declares, for the subclasses of <see cref="Tentity{TParent,TParentTevent,TParentTeventImplementation,TTentity,TTentityId,TTentityTeventImplementation,TTentityTevent,TTentityCreatedTevent,TTentityTeventIdGetterSetter}"/><br/>

@@ -30,7 +30,8 @@ public abstract class TeventApplyingRoot<TRoot, TTevent> : VersionedEntity<TRoot
 
    ///<summary>Declares the tevent appliers of <typeparamref name="TRoot"/>, for it to keep in a static field and return from its override of<br/>
    /// <see cref="TeventAppliers"/>. Every tevent the root applies must reach at least one of them.<br/>
-   /// A subclass of <typeparamref name="TRoot"/> extends that routing with <see cref="TeventRouting{TInstance,TTevent}.Extend{TSubclass}"/>.</summary>
+   /// A tevent reaches every route it matches, one after another, in the order <paramref name="declare"/> declares them.<br/>
+   /// A subclass of <typeparamref name="TRoot"/> extends that routing with <see cref="TeventRouting{TInstance,TTevent}.Extend{TSubclass}"/>, whose routes come after these.</summary>
    protected static TeventRouting<TRoot, TTevent> DeclareAppliers(Action<TeventRouting<TRoot, TTevent>.Declaration> declare) =>
       TeventRouting<TRoot, TTevent>.DeclareAppliers(declare);
 
