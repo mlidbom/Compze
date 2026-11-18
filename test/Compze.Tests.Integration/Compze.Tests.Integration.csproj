@@ -91,19 +91,19 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_Teventive)' != 'true'">
     <ProjectReference Include="..\..\src\Compze.Teventive\Compze.Teventive.csproj" />
   </ItemGroup>
-  <!-- Compze.Teventive.StateStore — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Teventive_StateStore)' == 'true'">
-    <PackageReference Include="Compze.Teventive.StateStore" Version="*-*" />
+  <!-- Compze.Teventive.MemoryImageStateStore — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Teventive_MemoryImageStateStore)' == 'true'">
+    <PackageReference Include="Compze.Teventive.MemoryImageStateStore" Version="*-*" />
   </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Teventive_StateStore)' != 'true'">
-    <ProjectReference Include="..\..\src\Compze.Teventive.StateStore\Compze.Teventive.StateStore.csproj" />
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Teventive_MemoryImageStateStore)' != 'true'">
+    <ProjectReference Include="..\..\src\Compze.Teventive.MemoryImageStateStore\Compze.Teventive.MemoryImageStateStore.csproj" />
   </ItemGroup>
-  <!-- Compze.Teventive.StateStore.MemoryPack — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Teventive_StateStore_MemoryPack)' == 'true'">
-    <PackageReference Include="Compze.Teventive.StateStore.MemoryPack" Version="*-*" />
+  <!-- Compze.Teventive.MemoryImageStateStore.MemoryPack — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Teventive_MemoryImageStateStore_MemoryPack)' == 'true'">
+    <PackageReference Include="Compze.Teventive.MemoryImageStateStore.MemoryPack" Version="*-*" />
   </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Teventive_StateStore_MemoryPack)' != 'true'">
-    <ProjectReference Include="..\..\src\Compze.Teventive.StateStore.MemoryPack\Compze.Teventive.StateStore.MemoryPack.csproj" />
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Teventive_MemoryImageStateStore_MemoryPack)' != 'true'">
+    <ProjectReference Include="..\..\src\Compze.Teventive.MemoryImageStateStore.MemoryPack\Compze.Teventive.MemoryImageStateStore.MemoryPack.csproj" />
   </ItemGroup>
   <!-- Compze.Teventive.TeventStore.Abstractions — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Teventive_TeventStore_Abstractions)' == 'true'">

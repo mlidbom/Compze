@@ -18,8 +18,8 @@ namespace Compze.Teventive.TaggregateStores;
 ///<remarks>One unit of work may change taggregates of several stores, and they commit together. But the stores commit one after the<br/>
 /// other, and Compze can't recover what a crash between two commits leaves. So a unit of work that writes a state store kept in files<br/>
 /// can't also hold a database connection, such as the tevent store's, unless the store's files allow it: see<br/>
-/// <c>StateStoreBuilder.StoredInJsonFiles</c> and <c>TaggregateFilesBuilder.AcceptingNonAtomicCommitsWithADatabase</c>, in<br/>
-/// Compze.Teventive.StateStore.</remarks>
+/// <c>MemoryImageStateStoreBuilder.StoredInJsonFiles</c> and <c>TaggregateFilesBuilder.AcceptingNonAtomicCommitsWithADatabase</c>, in<br/>
+/// Compze.Teventive.MemoryImageStateStore.</remarks>
 public interface ITaggregateStoreUpdater : ITaggregateStoreReader
 {
    ///<summary>This unit of work's copy of the taggregate <paramref name="id"/>, which it may change. Waits while another unit of<br/>

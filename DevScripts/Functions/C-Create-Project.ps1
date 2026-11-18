@@ -10,8 +10,8 @@ function C-Create-Project {
     - Test projects: test/<ProjectName>/<ProjectName>.csproj
     - Creates a basic .csproj file
     - Adds it to every .slnx that holds its neighbour, the project whose name shares the most leading parts with its
-      name, in the neighbour's solution folder: Compze.Teventive.StateStore.MemoryPack goes beside
-      Compze.Teventive.StateStore. A project no solution holds is restored as a NuGet package, which a new one has not.
+      name, in the neighbour's solution folder: Compze.Teventive.MemoryImageStateStore.MemoryPack goes beside
+      Compze.Teventive.MemoryImageStateStore. A project no solution holds is restored as a NuGet package, which a new one has not.
     - Runs C-FlexRef-Sync, so FlexRef's properties, conditions and NCrunch solutions include the new project
     
     Test projects are detected by name: contains ".Tests." or ends with ".Tests", "Specifications" (which covers ".Specifications" and ".InternalSpecifications")

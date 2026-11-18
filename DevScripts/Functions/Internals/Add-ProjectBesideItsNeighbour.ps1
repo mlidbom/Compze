@@ -7,7 +7,7 @@ function Add-ProjectBesideItsNeighbour {
 
     .DESCRIPTION
     The neighbour is the project in Compze.AllProjects.slnx whose name shares the most leading dot-separated segments
-    with the project's name, at least two: Compze.Teventive.StateStore.MemoryPack's is Compze.Teventive.StateStore.
+    with the project's name, at least two: Compze.Teventive.MemoryImageStateStore.MemoryPack's is Compze.Teventive.MemoryImageStateStore.
     Among equals, a project of the same kind, test or library, wins, then the first in the solution.
 
     The project is written on the line after its neighbour's, in each .slnx at the repository root that holds the
@@ -18,7 +18,7 @@ function Add-ProjectBesideItsNeighbour {
     A project with no neighbour goes at the root of Compze.AllProjects.slnx, with a warning to arrange it.
 
     .PARAMETER ProjectName
-    The name of the project, such as Compze.Teventive.StateStore.MemoryPack
+    The name of the project, such as Compze.Teventive.MemoryImageStateStore.MemoryPack
 
     .PARAMETER ProjectPath
     The project file's path relative to the repository root, such as src/Compze.X/Compze.X.csproj

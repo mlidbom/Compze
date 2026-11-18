@@ -11,7 +11,7 @@
   </ItemGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="Compze.Teventive.TeventStore" />
-    <InternalsVisibleTo Include="Compze.Teventive.StateStore" />
+    <InternalsVisibleTo Include="Compze.Teventive.MemoryImageStateStore" />
     <InternalsVisibleTo Include="Compze.Serialization.Newtonsoft.InternalSpecifications" />
   </ItemGroup>
   <!-- Exclude _docs files from compilation but keep them visible.

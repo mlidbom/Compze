@@ -10,7 +10,7 @@ namespace Compze.Teventive.TaggregateStores._internal;
 /// <see cref="TaggregateStoresRegistrar.RegisterTaggregateStore"/>.</remarks>
 interface ITaggregateStore
 {
-   ///<summary>The store's name, for messages, such as "the state store".</summary>
+   ///<summary>The store's name, for messages, such as "the memory image state store".</summary>
    string Name { get; }
 
    ///<summary>The taggregate classes this store keeps, each declared where the store is composed.</summary>

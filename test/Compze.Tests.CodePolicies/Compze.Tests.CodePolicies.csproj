@@ -197,12 +197,12 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_Tests_Infrastructure)' != 'true'">
     <ProjectReference Include="..\Compze.Tests.Infrastructure\Compze.Tests.Infrastructure.csproj" />
   </ItemGroup>
-  <!-- Compze.Teventive.StateStore — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Teventive_StateStore)' == 'true'">
-    <PackageReference Include="Compze.Teventive.StateStore" Version="*-*" />
+  <!-- Compze.Teventive.MemoryImageStateStore — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Teventive_MemoryImageStateStore)' == 'true'">
+    <PackageReference Include="Compze.Teventive.MemoryImageStateStore" Version="*-*" />
   </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_Teventive_StateStore)' != 'true'">
-    <ProjectReference Include="..\..\src\Compze.Teventive.StateStore\Compze.Teventive.StateStore.csproj" />
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Teventive_MemoryImageStateStore)' != 'true'">
+    <ProjectReference Include="..\..\src\Compze.Teventive.MemoryImageStateStore\Compze.Teventive.MemoryImageStateStore.csproj" />
   </ItemGroup>
   <!-- Compze.Teventive.TeventStore — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Teventive_TeventStore)' == 'true'">

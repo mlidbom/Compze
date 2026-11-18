@@ -11,7 +11,7 @@
   </ItemGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="Compze.Sql.Common" />
-    <InternalsVisibleTo Include="Compze.Teventive.StateStore" />
+    <InternalsVisibleTo Include="Compze.Teventive.MemoryImageStateStore" />
   </ItemGroup>
   <!-- Compze.Contracts — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Contracts)' == 'true'">
