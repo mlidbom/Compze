@@ -257,6 +257,13 @@ public abstract class ContainerBuilder : IContainerBuilder
          {
             Lifestyle.Singleton => false,
             Lifestyle.Scoped    => true,
+            //bug: A singleton that takes a tracked transient marked AllowSingletonDependent, which takes a scoped service, passes Build():
+            //   this checks only what the singleton takes directly. The root resolves the tracked transient for the singleton, so it fails
+            //   at the singleton's first resolve, differently on each container: Microsoft's error names the scoped service, DryIoc's and
+            //   Autofac's outer one don't, and LightInject, asked inside a scope, resolves it without complaint, so the singleton keeps a
+            //   scoped instance past its scope. FromTheRootToAScopedService, the search AssertTheRootCanResolveTheServicesResolvedFromIt
+            //   runs for each DependencyTypesResolvedFromTheRoot, would catch it if Build() also ran it for each singleton's
+            //   DependencyTypes. Fixing it changes what Build() accepts, which is Magnus's call.
             _                   => !dependency.AllowSingletonDependent
          };
 
