@@ -12,7 +12,9 @@ function C-Run-TestRun {
     Path to the solution file to test
     
     .PARAMETER SingleThreaded
-    Run tests single-threaded (forces sequential test execution)
+    Runs one test at a time: the test assemblies one after another (MSBuild's -m:1), and within each, no test collections in
+    parallel (xUnit's ParallelizeTestCollections=false, as a RunSettings argument, which the VSTest runner honours). Slower
+    to start too: MSBuild then goes through the solution's projects one at a time.
     
     .PARAMETER Filter
     Runs only the tests that match this filter, passed to dotnet test --filter, such as "FullyQualifiedName~CQRS.TaggregateStores"
@@ -58,8 +60,10 @@ function C-Run-TestRun {
     if ($Filter) {
         $testArguments += @('--filter', $Filter)
     }
-    # bug: -SingleThreaded changes nothing, so C-Test -SingleThreadedTesting runs the tests in parallel as usual. Until the move
-    #   to xUnit (d12566079, 2025-10-16) it passed NUnit.NumberOfTestWorkers=0, and since then nothing in its place.
+    # RunSettings arguments go last, after --.
+    if ($SingleThreaded) {
+        $testArguments += @('-m:1', '--', 'xUnit.ParallelizeTestCollections=false')
+    }
     $stopwatch = [System.Diagnostics.Stopwatch]::StartNew()
     $testOutput = dotnet @testArguments 2>&1
     $stopwatch.Stop()
