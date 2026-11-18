@@ -28,6 +28,13 @@ signature but the first, which undoes an accident.
 | D9 | Two sentences that are false: `Declaration.Component`'s summary says it routes to tevent handlers, which the code refuses; the state store's package description offers "a narrow seam for durable storage", which is internal. | Fable; both | Corrected. |
 | D10 | Unverified: `TryGetForUpdate` of an id with no history, in the tevent store on MySQL, may lock nothing, since InnoDB at read committed locks no gap. | Opus, read | Checked with a specification on MySQL; reported, not fixed. |
 
+**Done, 2026-11-18, on the spike (8a68e51e0 to 6433580ca, 11 commits):** D1 to D9, each with a specification; the full
+suite passes, 5131 specifications, and the integration CQRS specifications on MySQL, SQL Server and PostgreSQL too. D7
+also refuses, at declaration, a second index of one class and key type. **D10 is confirmed by running:** on MySQL a
+second unit of work isn't held by the first's `TryGetForUpdate` of an id with no history, so two units of work adding one
+id fail on the duplicate version instead of waiting. SQL Server and PostgreSQL keep the promise. Its specification is
+skipped on MySQL, with `bug:` comments at it and at `MySqlTeventStoreSqlLayer.CreateLockHint`. **D11, open: fix it.**
+
 **Not a defect, documented instead:** `Lookup` outside a unit of work returns the index's own array, which a caller can
 cast back and write to (both, run). A caller that casts a read-only collection to write to it is misbehaving, and a
 read-only wrapper per key costs an object per key held, which the spike measured its way out of.
