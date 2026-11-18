@@ -408,18 +408,29 @@ public class Given_a_memory_image_state_store : UniversalTestBase
    {
       readonly Exception _thrown;
 
-      public when_the_vocab_class_is_declared_with_a_registration_whose_factory_takes_a_scoped_service()
-      {
-         Compose(register: registrar => registrar.Register(Scoped.For<VocabDictionary>().CreatedBy(() => new VocabDictionary()),
-                                                         Singleton.For<VocabReadings>().CreatedBy(() => new VocabReadings())),
-                 declare: store => store.Taggregate(TrackedTransient.For<StoredVocab>().CreatedBy((VocabDictionary dictionary, VocabReadings readings) => new StoredVocab(dictionary, readings))));
-         InUnitOfWork(taggregates => taggregates.Add(StoredVocab.Create(VocabId, "taberu")));
-         _thrown = Invoking(() => InUnitOfWork(taggregates => taggregates.GetForUpdate<StoredVocab>(VocabId))).Must().Throw<Exception>().Which;
-      }
+      public when_the_vocab_class_is_declared_with_a_registration_whose_factory_takes_a_scoped_service() =>
+         _thrown = Invoking(() => Compose(register: registrar => registrar.Register(Scoped.For<VocabDictionary>().CreatedBy(() => new VocabDictionary()),
+                                                                                  Singleton.For<VocabReadings>().CreatedBy(() => new VocabReadings())),
+                                          declare: store => store.Taggregate(TrackedTransient.For<StoredVocab>().CreatedBy((VocabDictionary dictionary, VocabReadings readings) => new StoredVocab(dictionary, readings)))))
+                  .Must().Throw<Exception>().Which;
 
-      [PCT] public void getting_the_vocab_for_update_fails_naming_the_scoped_service() => MessagesOf(_thrown).Must().Contain(typeof(VocabDictionary).FullName!);
+      [PCT] public void building_the_container_fails_naming_the_scoped_service() => _thrown.Message.Must().Contain($"takes {typeof(VocabDictionary).FullName}, which is Scoped");
+      [PCT] public void the_failure_names_the_vocab_class() => _thrown.Message.Must().Contain($"resolves {typeof(StoredVocab).FullName} from the container's root");
+   }
 
-      static string MessagesOf(Exception exception) => exception.InnerException == null ? exception.Message : $"{exception.Message} {MessagesOf(exception.InnerException)}";
+   public class when_the_vocab_class_is_declared_with_a_registration_whose_factory_takes_a_tracked_transient_that_takes_a_scoped_service : Given_a_memory_image_state_store
+   {
+      readonly Exception _thrown;
+
+      public when_the_vocab_class_is_declared_with_a_registration_whose_factory_takes_a_tracked_transient_that_takes_a_scoped_service() =>
+         _thrown = Invoking(() => Compose(register: registrar => registrar.Register(Scoped.For<VocabDictionary>().CreatedBy(() => new VocabDictionary()),
+                                                                                  TrackedTransient.For<VocabReadings>().CreatedBy((VocabDictionary _) => new VocabReadings())),
+                                          declare: store => store.Taggregate(TrackedTransient.For<StoredVocab>().CreatedBy((VocabReadings readings) => new StoredVocab(new VocabDictionary(), readings)))))
+                  .Must().Throw<Exception>().Which;
+
+      [PCT] public void building_the_container_fails_naming_the_tracked_transient_and_the_scoped_service_it_takes() =>
+         _thrown.Message.Must().Contain($"takes {typeof(VocabReadings).FullName}, a TrackedTransient that takes {typeof(VocabDictionary).FullName}, which is Scoped");
+      [PCT] public void the_failure_names_the_vocab_class() => _thrown.Message.Must().Contain($"resolves {typeof(StoredVocab).FullName} from the container's root");
    }
 
    public class when_two_units_of_work_on_two_threads_change_one_vocab : Given_a_memory_image_state_store

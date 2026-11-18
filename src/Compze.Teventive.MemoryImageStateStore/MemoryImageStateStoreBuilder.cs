@@ -23,6 +23,7 @@ public sealed class MemoryImageStateStoreBuilder
    readonly IComponentRegistrar _registrar;
    readonly Dictionary<Type, Func<IRootResolver, SnapshotableTaggregateClass>> _taggregateClasses = new();
    readonly Dictionary<Type, Type> _snapshotTypes = new();
+   readonly List<Type> _classesResolvedFromTheRoot = [];
    readonly List<Func<TaggregateMemoryImageStateStore, ITaggregateIndexMaintenance>> _indexes = [];
    readonly HashSet<(Type TaggregateClass, Type KeyType)> _indexTypes = [];
    Func<IRootResolver, IReadOnlyList<SnapshotableTaggregateClass>, ITaggregateStorage>? _storage;
@@ -44,7 +45,9 @@ public sealed class MemoryImageStateStoreBuilder
    /// The snapshot type is found from the class's <see cref="ISnapshotable{TSelf,TSnapshot}"/>.</summary>
    ///<remarks>The store registers <paramref name="registration"/>, and resolves a new instance from the container's root each time it<br/>
    /// restores one: each taggregate at the load and at a reload, and each copy a unit of work gets for update. So the services are the<br/>
-   /// root's, and must be singletons, since a taggregate outlives every scope: a scoped one fails at the first resolve. The registration<br/>
+   /// root's, and must be singletons, since a taggregate outlives every scope. A registration that takes a scoped service, directly or<br/>
+   /// through a tracked transient it takes, is refused when the container is built, with a message naming the class and the scoped<br/>
+   /// service, the same whichever container Compze builds on. The registration<br/>
    /// must be a <see cref="Lifestyle.TrackedTransient"/>, so that each instance is new, and the class mustn't be <see cref="IDisposable"/>:<br/>
    /// the root disposes a tracked transient only with the container, so it would hold every instance the store built.<br/>
    /// <b>A taggregate's state must be its own.</b> Its services are for what it does with its own state. Reaching other taggregates<br/>
@@ -62,10 +65,16 @@ public sealed class MemoryImageStateStoreBuilder
    MemoryImageStateStoreBuilder DeclareRegistered<TTaggregate, TSnapshot>(ComponentRegistration<TTaggregate> registration)
       where TTaggregate : class, ITaggregate, ISnapshotable<TTaggregate, TSnapshot>
    {
-      var declared = Declare<TTaggregate, TSnapshot>(resolver => SnapshotableTaggregateClass.For(() => resolver.Resolve<TTaggregate>()));
+      var declared = Declare<TTaggregate, TSnapshot>(resolver => SnapshotableTaggregateClass.For(resolver.Resolve<TTaggregate>));
       _registrar.Register(registration);
+      _classesResolvedFromTheRoot.Add(typeof(TTaggregate));
       return declared;
    }
+
+   ///<summary>The taggregate classes declared with a registration of the container, whose instances the store resolves from the<br/>
+   /// container's root, which the store's own registration declares, so that building the container refuses one whose registration<br/>
+   /// takes a scoped service.</summary>
+   internal IReadOnlyList<Type> ClassesResolvedFromTheRoot => _classesResolvedFromTheRoot;
 
    static void AssertBuildsInstancesTheStoreCanKeep<TTaggregate>(ComponentRegistration<TTaggregate> registration) where TTaggregate : class
    {

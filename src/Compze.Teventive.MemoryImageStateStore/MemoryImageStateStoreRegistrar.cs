@@ -36,12 +36,17 @@ public static class MemoryImageStateStoreRegistrar
    /// <see cref="MemoryImageStateStoreBuilder.StoredInJsonFiles(DirectoryInfo,System.Text.Json.JsonSerializerOptions,Action{TaggregateFilesBuilder})"/>'s.</remarks>
    ///<remarks>A taggregate's <see cref="ITaggregate.Version"/> counts the changes since the store loaded it, not its whole history: each<br/>
    /// load restores it at version 1, so the <see cref="ITaggregateTevent.TaggregateVersion"/> of its tevents repeats across loads.</remarks>
+   ///<remarks><b>Declarations that can't work are refused before anything runs:</b> most here, where the store is composed, and a<br/>
+   /// taggregate class whose registration takes a scoped service when the container is built, since the store resolves its instances<br/>
+   /// from the container's root: see <see cref="MemoryImageStateStoreBuilder.Taggregate{TTaggregate}(ComponentRegistration{TTaggregate})"/>.</remarks>
    public static IComponentRegistrar MemoryImageStateStore(this IComponentRegistrar @this, Action<MemoryImageStateStoreBuilder> declare)
    {
       var builder = new MemoryImageStateStoreBuilder(@this);
       declare(builder);
       builder.AssertDeclarationsFitTogether();
-      @this.Register(Singleton.For<IMemoryImageStateStore, TaggregateMemoryImageStateStore>().CreatedBy((TaggregateUnitsOfWork unitsOfWork, IRootResolver resolver) => builder.Build(unitsOfWork, resolver)));
+      @this.Register(Singleton.For<IMemoryImageStateStore, TaggregateMemoryImageStateStore>()
+                              .ResolvingFromTheRoot(builder.ClassesResolvedFromTheRoot)
+                              .CreatedBy((TaggregateUnitsOfWork unitsOfWork, IRootResolver resolver) => builder.Build(unitsOfWork, resolver)));
       @this.RegisterTaggregateStore<TaggregateMemoryImageStateStore>();
       return @this;
    }
