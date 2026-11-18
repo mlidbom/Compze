@@ -63,8 +63,8 @@ public class Given_a_state_store_kept_in_files : UniversalTestBase
       return _store = container;
    }
 
-   void DeclareFiles(TaggregateFiles files) => files.Of<StoredVocab>("vocab")
-                                                   .Of<StoredSentence>("sentences");
+   static void DeclareFiles(TaggregateFiles files) => files.Of<StoredVocab>("vocab")
+                                                          .Of<StoredSentence>("sentences");
 
    void InUnitOfWork(Action<ITaggregateStoreUpdater> work) =>
       Store.ScopeFactory.ExecuteUnitOfWork(unitOfWork => work(unitOfWork.Resolve<ITaggregateStoreUpdater>()));
