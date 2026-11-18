@@ -92,6 +92,10 @@ sealed class TaggregateTeventStore : ITaggregateStore
    TTaggregate Built<TTaggregate>(IReadOnlyList<ITaggregateTevent<ITaggregateTeventWithIdentity>> history) where TTaggregate : class, ITaggregate
    {
       var taggregate = (TTaggregate)Constructor.CreateInstance(ClassToBuildAs(typeof(TTaggregate)));
+      //review: A history of another declared class, such as a vocab's id asked for as a sentence, fails here with the replay's
+      //   InvalidCastException, which names neither class, where the memory image state store's message names both. Read, not run
+      //   (2026-11-18): assert that the history's tevents are the class's, with a message naming both, as the documentation of
+      //   ITaggregateStoreReader.Get promises a throw.
       taggregate.LoadFromHistory(history);
       return taggregate;
    }

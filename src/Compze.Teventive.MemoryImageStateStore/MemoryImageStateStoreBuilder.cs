@@ -96,7 +96,10 @@ public sealed class MemoryImageStateStoreBuilder
    ///<summary>Declares an <see cref="ITaggregateIndex{TTaggregate,TKey}"/>, which files each <typeparamref name="TTaggregate"/> under the<br/>
    /// keys <paramref name="keysOf"/> gives from its state. The container then resolves it.</summary>
    ///<remarks>An index is known by its taggregate class and key type, as the container resolves it, so a class has at most one index<br/>
-   /// by each key type: two indexes of one class need key types of their own.</remarks>
+   /// by each key type: two indexes of one class need key types of their own. Declaring a second throws.<br/>
+   /// <paramref name="keysOf"/> gives keys from the taggregate's own state alone, the same each time for the same state, and changes<br/>
+   /// nothing, since it runs on instances other threads read at the same time. What a lookup costs, and what a lookup during a commit<br/>
+   /// can find, is in <see cref="ITaggregateIndex{TTaggregate,TKey}"/>'s documentation.</remarks>
    public MemoryImageStateStoreBuilder Index<TTaggregate, TKey>(Func<TTaggregate, IEnumerable<TKey>> keysOf) where TTaggregate : class, ITaggregate where TKey : notnull
    {
       State.Assert(_indexTypes.Add((typeof(TTaggregate), typeof(TKey))),
