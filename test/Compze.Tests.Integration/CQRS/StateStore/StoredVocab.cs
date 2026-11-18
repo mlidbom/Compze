@@ -29,6 +29,22 @@ class StoredVocab : Taggregate<StoredVocab, IStoredVocabTevent, StoredVocabTeven
    public string Question { get; private set; } = "";
    public string Meaning { get; private set; } = "";
 
+   ///<summary>The dictionary the container built this vocab with, if it built it: for the specifications of taggregates with dependencies.</summary>
+   public VocabDictionary? Dictionary { get; }
+
+   ///<summary>The readings the container built this vocab with, if it built it.</summary>
+   public VocabReadings? Readings { get; }
+
+   ///<summary>A vocab with nothing of the container in it, as the domain makes a new one.</summary>
+   public StoredVocab() {}
+
+   ///<summary>A vocab built with two services of the container, as a state store declared with a registration builds one.</summary>
+   public StoredVocab(VocabDictionary dictionary, VocabReadings readings)
+   {
+      Dictionary = dictionary;
+      Readings = readings;
+   }
+
 
    public static StoredVocab Create(TaggregateId id, string question)
    {

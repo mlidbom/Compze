@@ -15,6 +15,8 @@ using Compze.Tessaging.TessageBus;
 using Compze.Teventive;
 using Compze.Teventive.StateStore;
 using Compze.Teventive.TaggregateStores;
+using Compze.Teventive.Taggregates;
+using Compze.Teventive.Taggregates.BaseClasses;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
 using static Compze.Must.MustActions;
@@ -355,33 +357,60 @@ public class Given_a_state_store : UniversalTestBase
       [PCT] public void the_exception_names_the_classes_the_store_keeps() => _exception.Message.Must().Contain($"the state store: {typeof(StoredVocab).FullName}");
    }
 
-   public class when_the_vocab_class_is_declared_with_a_factory_that_takes_a_service_of_the_container : Given_a_state_store
+   public class when_the_vocab_class_is_declared_with_a_registration_that_is_a_singleton : Given_a_state_store
    {
-      readonly VocabBuildingLog _theContainersLog;
+      readonly Exception _thrown;
 
-      public when_the_vocab_class_is_declared_with_a_factory_that_takes_a_service_of_the_container()
+      public when_the_vocab_class_is_declared_with_a_registration_that_is_a_singleton() =>
+         _thrown = Invoking(() => Compose(declare: store => store.Taggregate(Singleton.For<StoredVocab>().CreatedBy(() => new StoredVocab())))).Must().Throw<Exception>().Which;
+
+      [PCT] public void the_exception_names_the_class() => _thrown.Message.Must().Contain(typeof(StoredVocab).FullName!);
+      [PCT] public void the_exception_says_the_registration_must_be_a_tracked_transient() => _thrown.Message.Must().Contain("the registration must be a TrackedTransient");
+   }
+
+   public class when_a_class_that_is_IDisposable_is_declared_with_a_registration : Given_a_state_store
+   {
+      readonly Exception _thrown;
+
+      public when_a_class_that_is_IDisposable_is_declared_with_a_registration() =>
+         _thrown = Invoking(() => Compose(declare: store => store.Taggregate(TrackedTransient.For<DisposableVocab>().CreatedBy(() => new DisposableVocab())))).Must().Throw<Exception>().Which;
+
+      [PCT] public void the_exception_names_the_class() => _thrown.Message.Must().Contain(typeof(DisposableVocab).FullName!);
+      [PCT] public void the_exception_says_it_is_IDisposable() => _thrown.Message.Must().Contain("is IDisposable");
+
+      ///<summary>A taggregate class that is <see cref="IDisposable"/>, which a state store refuses to build through the container. It is<br/>
+      /// never built: the refusal comes where the store is declared.</summary>
+      sealed class DisposableVocab : Taggregate<DisposableVocab, IStoredVocabTevent, StoredVocabTevent, IStoredVocabTevent<IStoredVocabTevent>, StoredVocabTevent<StoredVocabTevent>>,
+                                     ISnapshotable<DisposableVocab, StoredVocabSnapshot>, ITeventRouted, IDisposable
       {
-         Compose(register: registrar => registrar.Register(Singleton.For<VocabBuildingLog>().CreatedBy(() => new VocabBuildingLog())),
-                 declare: store => store.Taggregate((VocabBuildingLog log) => log.Built(new StoredVocab())));
+         static readonly TeventRouting<DisposableVocab, IStoredVocabTevent> Appliers = DeclareAppliers(it => it.IgnoreUnhandled<IStoredVocabTevent>());
+
+         TeventRouting ITeventRouted.TeventAppliers => Appliers;
+
+         public void Dispose() {}
+
+         public StoredVocabSnapshot TakeSnapshot() => throw new NotSupportedException();
+
+         public void RestoreFrom(StoredVocabSnapshot snapshot) => throw new NotSupportedException();
+      }
+   }
+
+   public class when_the_vocab_class_is_declared_with_a_registration_whose_factory_takes_a_scoped_service : Given_a_state_store
+   {
+      readonly Exception _thrown;
+
+      public when_the_vocab_class_is_declared_with_a_registration_whose_factory_takes_a_scoped_service()
+      {
+         Compose(register: registrar => registrar.Register(Scoped.For<VocabDictionary>().CreatedBy(() => new VocabDictionary()),
+                                                         Singleton.For<VocabReadings>().CreatedBy(() => new VocabReadings())),
+                 declare: store => store.Taggregate(TrackedTransient.For<StoredVocab>().CreatedBy((VocabDictionary dictionary, VocabReadings readings) => new StoredVocab(dictionary, readings))));
          InUnitOfWork(taggregates => taggregates.Save(StoredVocab.Create(VocabId, "taberu")));
-         InUnitOfWork(taggregates => taggregates.GetForUpdate<StoredVocab>(VocabId).ChangeMeaning("to eat"));
-         _theContainersLog = Container.RootResolver.Resolve<VocabBuildingLog>();
+         _thrown = Invoking(() => InUnitOfWork(taggregates => taggregates.GetForUpdate<StoredVocab>(VocabId))).Must().Throw<Exception>().Which;
       }
 
-      [PCT] public void the_copy_the_unit_of_work_changed_was_built_by_the_factory_with_the_containers_service() => _theContainersLog.VocabBuilt.Must().Be(1);
-      [PCT] public void the_reader_gets_the_change() => CommittedVocab(VocabId).Meaning.Must().Be("to eat");
+      [PCT] public void getting_the_vocab_for_update_fails_naming_the_scoped_service() => MessagesOf(_thrown).Must().Contain(typeof(VocabDictionary).FullName!);
 
-      ///<summary>A service of the container, which counts the vocab built with it.</summary>
-      class VocabBuildingLog
-      {
-         public int VocabBuilt { get; private set; }
-
-         public StoredVocab Built(StoredVocab vocab)
-         {
-            VocabBuilt++;
-            return vocab;
-         }
-      }
+      static string MessagesOf(Exception exception) => exception.InnerException == null ? exception.Message : $"{exception.Message} {MessagesOf(exception.InnerException)}";
    }
 
    public class when_two_units_of_work_on_two_threads_change_one_vocab : Given_a_state_store
