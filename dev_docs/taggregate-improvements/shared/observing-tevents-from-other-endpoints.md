@@ -1,5 +1,8 @@
 # Observing tevents from other endpoints: declared on endpoints only, as ObserveFromOtherEndpoints
 
+> Some names and API here were changed by later decisions of the end review (2026-11-18): see
+> [the-naming-pass.md](the-naming-pass.md) and [reviews/end-review-consolidated.md](reviews/end-review-consolidated.md).
+
 **Renamed since (Magnus, 2026-11-18, built in e01905b14):** `ObserveFromOtherEndpoints` is
 `SubscribeForDynamicObservers`, and runtime observers are dynamic observers: see
 [dynamic-and-composed-observers.md](dynamic-and-composed-observers.md). The rule and the routing specified here stand.

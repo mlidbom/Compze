@@ -1,5 +1,8 @@
 # A state store kept in files and a database in one transaction: refused by default
 
+> Some names and API here were changed by later decisions of the end review (2026-11-18): see
+> [the-naming-pass.md](the-naming-pass.md) and [reviews/end-review-consolidated.md](reviews/end-review-consolidated.md).
+
 **Decided by Magnus, 2026-11-18** (the end review's first question): strict by default, with an exception that says why
 and how to turn the refusal off. "That will do. Until the mythical day of legend when we implement proper recovery and
 can participate in distributed transactions." Specified here before it was built.

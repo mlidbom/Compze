@@ -1,5 +1,8 @@
 # The files of a state store: no fileOf, no snapshotsAreEqual, and WriteEverythingAnew
 
+> Some names and API here were changed by later decisions of the end review (2026-11-18): see
+> [the-naming-pass.md](the-naming-pass.md) and [reviews/end-review-consolidated.md](reviews/end-review-consolidated.md).
+
 **Decided by Magnus, 2026-11-18** (the end review's fifth question, item 70), in three parts:
 
 - **`fileOf` is removed.** Magnus asked whether a taggregate's file computed by the consumer would let a store spread its

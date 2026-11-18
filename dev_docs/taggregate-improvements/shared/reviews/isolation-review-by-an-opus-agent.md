@@ -1,5 +1,8 @@
 # The store's isolation: review by an independent Opus agent
 
+> Written before the end review (2026-11-18): some names and API here have changed since; see
+> [../the-naming-pass.md](../the-naming-pass.md) and [end-review-consolidated.md](end-review-consolidated.md).
+
 2026-11-16. Magnus asked whether the recommended isolation, (b) "read uncommitted", was the best design for Compze and
 for JAStudio, or a choice that minimized JAStudio's refactoring, and asked for subagents with no prior bias to answer. This
 Opus subagent was given the three options neutrally, without the teams' recommendation, and told not to read either team's

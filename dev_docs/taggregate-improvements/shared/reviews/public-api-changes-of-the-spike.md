@@ -1,5 +1,9 @@
 # Public API changes of the taggregate-store-spike branch
 
+> Written at the start of the end review (2026-11-18), on the spike at 46cc881a6: some names and API here have changed
+> since, by its decisions; see [../the-naming-pass.md](../the-naming-pass.md) and
+> [end-review-consolidated.md](end-review-consolidated.md).
+
 Only what changed; no opinions.
 
 - **Old side:** the merge-base of `taggregate-store-spike` with `main`, commit `e29fd6673`, built in the worktree `C:\Dev\Compze.worktrees\api-base-e29fd66`: `src\<Project>\bin\Debug\net11.0\<Project>.dll`.

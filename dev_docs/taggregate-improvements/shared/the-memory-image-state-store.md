@@ -1,5 +1,9 @@
 # The memory image state store: the state store's name, and its package's
 
+> Renamed since by a later decision of the end review (Q6): `KeptInMemory` and `ITaggregateFilesInMemory`, left here for
+> it, are `OnAFileSystemInMemory` and `IFileSystemInMemory`: see
+> [the-testing-namespace-and-the-json-files.md](the-testing-namespace-and-the-json-files.md).
+
 **Decided by Magnus, 2026-11-18** (the end review's second question, item 78). Both reviewers had found that the state
 store holds every taggregate in memory by construction, and that it is a store of its own, not a mode of a more general
 one. Asked for its name, Magnus first reached for an intuition: "It is not strictly the same thing, but memory mapped files

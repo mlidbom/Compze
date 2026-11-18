@@ -1,5 +1,10 @@
 # The naming pass: the spike's placeholder names, and the names both reviewers proposed
 
+> Some names here were changed again by later decisions of the end review (2026-11-18): the store's own names by Q2,
+> [the-memory-image-state-store.md](the-memory-image-state-store.md), and `KeptInMemory` and `ITaggregateFilesInMemory`
+> by Q6, [the-testing-namespace-and-the-json-files.md](the-testing-namespace-and-the-json-files.md); see
+> [reviews/end-review-consolidated.md](reviews/end-review-consolidated.md).
+
 **Decided by Magnus, 2026-11-18** (the end review's eleventh question, item 77). He approved jastudio-rep-opus's picks,
 with one change: `SnapshotRoundTrip.DifferencesOf` becomes `DifferencesBetweenItAndItsCopy`. His words: "Use that. It is
 truthful and I don't need to read the doc comment to understand what in the world is meant by Of here. All others

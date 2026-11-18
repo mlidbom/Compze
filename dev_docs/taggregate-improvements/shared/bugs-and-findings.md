@@ -1,5 +1,8 @@
 # Bugs and smaller findings
 
+> Written before the end review (2026-11-18): some names and API here have changed since; see
+> [the-naming-pass.md](the-naming-pass.md) and [reviews/end-review-consolidated.md](reviews/end-review-consolidated.md).
+
 **Status: agreed by all four sessions, then reviewed by two independent agents and revised with their agreement** (2026-11-16). Each was reproduced against Compze.Teventive
 0.6.0-alpha unless it says otherwise. None is marked at the code with a `bug:` comment: the work so far is design, with
 no change to Compze.
@@ -44,11 +47,14 @@ Both fixes, with specifications, are on `taggregates-opus/snapshot-and-hook`.
 - **With `Commit`'s fix, a tevent published from inside `Save`'s commit callback stays uncommitted for good,** and is
   never stored: that callback is the only `Commit` a session makes, and its subscription to `TeventStream` comes after.
 
-Their fix is one fix. **With the taggregate store's design, all four bugs above are fixed by construction:** the
-tevent store's session takes the store's internals, so nothing calls out from inside `Publish` or `Commit`, and tevents
-are dispatched at the commit, in publish order, from the unit of work's queue. See
-[the-taggregate-store.md](the-taggregate-store.md). Before that design, the fix depended on whether a participation
-handler may change the taggregate it handles.
+Their fix is one fix. **All four bugs above are fixed on the spike, without deferring dispatch** (item 32): a taggregate
+hands its tevents out through a queue, so a publish an observer makes during the hand-out is handed out after the
+tevents before it; `Commit` takes the tevents out before calling back; and a store tracks a new taggregate before it
+publishes what the taggregate published before it was added. Tevents are dispatched synchronously, as each publish
+cascade ends. See [the-taggregate-store.md](the-taggregate-store.md#what-the-spike-built-synchronous-dispatch). The
+store's first design dispatched at the commit instead, from the unit of work's queue, so that nothing called out from
+inside `Publish` or `Commit`; before that design, the fix depended on whether a participation handler may change the
+taggregate it handles.
 
 ## What an exception leaves behind today
 

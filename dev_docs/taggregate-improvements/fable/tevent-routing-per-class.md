@@ -1,5 +1,9 @@
 # Tevent routing decided once for each teventive class
 
+> Written before the end review (2026-11-18): some names and API here have changed since; see
+> [../shared/the-naming-pass.md](../shared/the-naming-pass.md) and
+> [../shared/reviews/end-review-consolidated.md](../shared/reviews/end-review-consolidated.md).
+
 A proposal, 2026-11-16. Nothing is built in Compze. A prototype of it is built and measured: what it costs, and what
 writing it showed about the declaration, is in [what-was-run-and-measured.md](what-was-run-and-measured.md). The
 names in the code below are placeholders for Magnus's pass over the names. What it replaces, and what that costs, is

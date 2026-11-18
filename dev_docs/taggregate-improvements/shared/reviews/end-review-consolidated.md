@@ -1,5 +1,8 @@
 # The end review, consolidated: what is fixed without asking, and the questions for Magnus
 
+> The questions here use the names as they were when asked: the status column of section 3, and the specifications it
+> links, give what each became, and the names are in [../the-naming-pass.md](../the-naming-pass.md).
+
 By jastudio-rep-opus, 2026-11-18, from [the Opus reviewer's review](end-review-by-an-opus-agent.md) and
 [the Fable reviewer's](end-review-by-a-fable-agent.md), both on the spike at 46cc881a6. "Run" means a reviewer's
 specification shows it, on `end-review-opus` (8bcca9817) or `end-review-fable` (79fc29ab7); "read" means judged from

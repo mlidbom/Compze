@@ -1,5 +1,8 @@
 # Review by an independent Opus agent
 
+> Written before the end review (2026-11-18): some names and API here have changed since; see
+> [../the-naming-pass.md](../the-naming-pass.md) and [end-review-consolidated.md](end-review-consolidated.md).
+
 2026-11-16. An Opus subagent that took no part in building the conclusions, asked by jastudio-rep-opus to review them
 critically and independently. Recorded verbatim, as the agent returned it. Its experiments are on its branch
 `review-taggregate-improvements` (commit `861474504`), in `C:\Dev\Compze\.claude\worktrees\agent-a5042660ba8c7b64c`.

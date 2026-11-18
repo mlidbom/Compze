@@ -1,5 +1,9 @@
 # Tevent routing decided once per class, not set up per instance
 
+> Written before the end review (2026-11-18): some names and API here have changed since; see
+> [../shared/the-naming-pass.md](../shared/the-naming-pass.md) and
+> [../shared/reviews/end-review-consolidated.md](../shared/reviews/end-review-consolidated.md).
+
 Proposed 2026-11-16 and agreed by both sessions. Not started.
 
 A coined term, used throughout: **tevent routing** means which applier, or which tevent handler, a tevent of a given

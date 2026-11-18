@@ -1,5 +1,8 @@
 # Tevent routing handed over through a protected property, not an explicit ITeventRouted
 
+> Some names and API here were changed by later decisions of the end review (2026-11-18): see
+> [the-naming-pass.md](the-naming-pass.md) and [reviews/end-review-consolidated.md](reviews/end-review-consolidated.md).
+
 **Decided by Magnus, 2026-11-18** (the end review's ninth question, item 74). Put to him: item 24 had chosen an explicit
 implementation of the public interface `ITeventRouted`, listed again in the base list of every class that declares a
 routing, without weighing that CA1033 fires on consumers' classes too, nor the alternatives. Recommended: a protected

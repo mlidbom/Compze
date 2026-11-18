@@ -1,5 +1,8 @@
 # Dynamic and composed observers, and SubscribeForDynamicObservers
 
+> Some names and API here were changed by later decisions of the end review (2026-11-18): see
+> [the-naming-pass.md](the-naming-pass.md) and [reviews/end-review-consolidated.md](reviews/end-review-consolidated.md).
+
 **Decided by Magnus, 2026-11-18** (the end review's fourth question, reopened for its names, item 71). He kept the
 refusal: in an endpoint, an observer created after composition of a tevent type the endpoint didn't declare is refused.
 He doubted the word "runtime": "Doesn't that go for all observers, that they are runtime? … To me, dynamic, or maybe

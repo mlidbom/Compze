@@ -1,5 +1,8 @@
 # Taggregates with dependencies: declared to the state store through a registration of the container
 
+> Some names and API here were changed by later decisions of the end review (2026-11-18): see
+> [the-naming-pass.md](the-naming-pass.md) and [reviews/end-review-consolidated.md](reviews/end-review-consolidated.md).
+
 **Decided by Magnus, 2026-11-18** (the end review's third question, item 68). The state store's overload that built a
 taggregate with one service of the container wasn't general enough: "If we support DI for taggregate creation it must
 support any shape of constructor regardless of number of services it needs." He asked whether to reuse the DI

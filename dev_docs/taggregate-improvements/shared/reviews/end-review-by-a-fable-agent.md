@@ -1,5 +1,9 @@
 # End review of the taggregate-store spike, by a Fable agent
 
+> Written at the start of the end review (2026-11-18), on the spike at 46cc881a6: some names and API here have changed
+> since, by its decisions; see [../the-naming-pass.md](../the-naming-pass.md) and
+> [end-review-consolidated.md](end-review-consolidated.md).
+
 **What was reviewed:** `taggregate-store-spike` at 46cc881a6 against `main`, every public type and member in
 `public-api-changes-of-the-spike.md`, the stores' private code behind them, the specifications, the sample, and
 JAStudio's use of each on its `main` (ff8f09aad). Sections 1 to 5 and 7 were written before I read the builders' column

@@ -1,5 +1,8 @@
 # Ten trims of the public API: the end review's tenth question, specified
 
+> Some names and API here were changed by later decisions of the end review (2026-11-18): see
+> [the-naming-pass.md](the-naming-pass.md) and [reviews/end-review-consolidated.md](reviews/end-review-consolidated.md).
+
 **Decided by Magnus, 2026-11-18: OK to all.** The end review's tenth question (item 75) put ten small trims to him as a
 batch, each recommended by one reviewer or both: [the consolidation](reviews/end-review-consolidated.md), Q10. Specified
 here before it is built, on the spike after the routing change of the ninth question.
