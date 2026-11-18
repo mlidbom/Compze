@@ -20,6 +20,9 @@ interface IFileSystem
    /// <paramref name="folder"/>.</summary>
    IReadOnlyList<ListedFile> FilesIn(string folder, bool includingSubfolders);
 
+   ///<summary>The length and last write time of <paramref name="file"/>, as listing its folder gives them.</summary>
+   FileStamp StampOf(string file);
+
    string ReadAllText(string file);
 
    byte[] ReadAllBytes(string file);

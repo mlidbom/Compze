@@ -20,6 +20,12 @@ sealed class FilesOnDisk : IFileSystem
       [..new DirectoryInfo(folder).EnumerateFiles("*", includingSubfolders ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly)
                                   .Select(it => new ListedFile(it.FullName, Path.GetRelativePath(folder, it.FullName), it.Length, it.LastWriteTimeUtc))];
 
+   public FileStamp StampOf(string file)
+   {
+      var info = new FileInfo(file);
+      return new FileStamp(info.Length, info.LastWriteTimeUtc);
+   }
+
    public string ReadAllText(string file) => File.ReadAllText(file);
 
    public byte[] ReadAllBytes(string file) => File.ReadAllBytes(file);

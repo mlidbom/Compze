@@ -1,27 +1,27 @@
 using Compze.Contracts;
-using Compze.Internals.SystemCE.LinqCE;
 using Compze.Teventive.StateStore._private.Storage;
 using Compze.Threading.ResourceAccess;
 using static Compze.Contracts.Contract;
 
 namespace Compze.Teventive.StateStore._private.Files;
 
-///<summary>One unit of work's write to a state store kept in files, prepared: each changed taggregate's file written whole under a<br/>
-/// temporary name in the store's own folder, waiting for the commit to rename it, and the files to delete. What can fail, serializing<br/>
-/// and writing, has happened when the write is prepared.</summary>
-///<remarks>It commits in one of two ways. By default the files take part in the transaction as its one durable participant,<br/>
-/// <see cref="FilesAsADurableParticipant"/>, and the write commits as the transaction's decision, before the unit of work commits:<br/>
-/// <see cref="CommitAsTheTransactionsDecision"/>. Where the consumer has allowed the files in transactions that also write a<br/>
-/// database (<see cref="TaggregateFiles.AllowedInTransactionsThatAlsoWriteADatabase"/>), it commits when the unit of work commits:<br/>
-/// <see cref="Commit"/>.</remarks>
+///<summary>One write to a state store kept in files, prepared: each taggregate's file written whole under a temporary name in the<br/>
+/// store's own folder, waiting for the commit to rename it, and the files to delete. What can fail, serializing and writing, has<br/>
+/// happened when the write is prepared.</summary>
+///<remarks>A unit of work's write commits in one of two ways. By default the files take part in the transaction as its one durable<br/>
+/// participant, <see cref="FilesAsADurableParticipant"/>, and the write commits as the transaction's decision, before the unit of<br/>
+/// work commits: <see cref="CommitAsTheTransactionsDecision"/>. Where the consumer has allowed the files in transactions that also<br/>
+/// write a database (<see cref="TaggregateFiles.AllowedInTransactionsThatAlsoWriteADatabase"/>), it commits when the unit of work<br/>
+/// commits: <see cref="Commit"/>. A write of every taggregate anew (<see cref="IStateStore.WriteEverythingAnew"/>) commits outside<br/>
+/// any transaction: <see cref="CommitOutsideATransaction"/>.</remarks>
 sealed class PreparedFileWrite : IPreparedWrite
 {
    readonly IFileSystem _files;
    readonly string _storesFolder;
    readonly string _ownFolder;
    readonly IThreadShared<StoredFiles> _storedFiles;
-   readonly List<(Guid Id, string TemporaryFile, string File)> _saved = [];
-   readonly List<(Guid? Id, string File)> _deleted = [];
+   readonly List<SavedFile> _saved = [];
+   readonly List<(Guid Id, string File)> _deleted = [];
    bool _commitsAsTheTransactionsDecision;
    bool _hasCommitted;
 
@@ -34,20 +34,15 @@ sealed class PreparedFileWrite : IPreparedWrite
    }
 
    ///<summary>Writes <paramref name="content"/> under a temporary name, to become <paramref name="file"/>, the file of the taggregate<br/>
-   /// <paramref name="id"/>, at the commit. The taggregate's old file is deleted then, if it had another.</summary>
+   /// <paramref name="id"/>, at the commit.</summary>
    internal void Save(Guid id, string file, string content)
    {
-      State.Assert(_saved.None(it => string.Equals(it.File, file, StringComparison.OrdinalIgnoreCase)),
-                   () => $"Two taggregates of one unit of work have the same file, {file}: {_saved.First(it => string.Equals(it.File, file, StringComparison.OrdinalIgnoreCase)).Id} and {id}.");
-      var (oldFile, taggregateInTheFile) = _storedFiles.Locked(it => (it.FileOf(id), it.TaggregateIn(file)));
-      State.Assert(taggregateInTheFile == null || taggregateInTheFile == id, () => $"Taggregate {id} has the file of taggregate {taggregateInTheFile}, {file}.");
-
       _files.CreateFolder(_ownFolder);
       _files.CreateFolder(Path.GetDirectoryName(file)!);
-      var temporaryFile = Path.Combine(_ownFolder, $"{Guid.NewGuid():N}{CommitJournal.TemporaryFileExtension}");
-      _saved.Add((id, temporaryFile, file));
-      _files.WriteAllText(temporaryFile, content);
-      if(oldFile != null && !string.Equals(oldFile, file, StringComparison.OrdinalIgnoreCase)) _deleted.Add((Id: null, oldFile));
+      var saved = new SavedFile(id, Path.Combine(_ownFolder, $"{Guid.NewGuid():N}{CommitJournal.TemporaryFileExtension}"), file);
+      _saved.Add(saved);
+      _files.WriteAllText(saved.TemporaryFile, content);
+      saved.Stamp = _files.StampOf(saved.TemporaryFile);
    }
 
    ///<summary>Deletes the file of the taggregate <paramref name="id"/> at the commit.</summary>
@@ -90,11 +85,25 @@ sealed class PreparedFileWrite : IPreparedWrite
       }
    }
 
-   ///<summary>Commits the write as its transaction's decision: writes the journal, which is the commit, then carries it out.</summary>
-   ///<remarks>A failure before the journal is written deletes the temporary files and throws, so the transaction rolls back. A failure<br/>
-   /// after it stops the process, as in <see cref="Commit"/>: the journal is written, so the write has happened, and only the next<br/>
-   /// start can finish it.</remarks>
+   ///<summary>Commits the write as its transaction's decision: <see cref="WriteTheJournalThenCarryItOut"/>.</summary>
    internal void CommitAsTheTransactionsDecision()
+   {
+      WriteTheJournalThenCarryItOut();
+      _hasCommitted = true;
+   }
+
+   ///<summary>Commits the write by itself, with no transaction to decide: <see cref="WriteTheJournalThenCarryItOut"/>.</summary>
+   internal void CommitOutsideATransaction()
+   {
+      if(WritesNothing) return;
+      WriteTheJournalThenCarryItOut();
+   }
+
+   ///<summary>Writes the journal, which is the commit, then carries it out.</summary>
+   ///<remarks>A failure before the journal is written deletes the temporary files and throws, so nothing is written. A failure after<br/>
+   /// it stops the process, as in <see cref="Commit"/>: the journal is written, so the write has happened, and only the next start can<br/>
+   /// finish it.</remarks>
+   void WriteTheJournalThenCarryItOut()
    {
       string journalFile;
       var journal = Journal();
@@ -112,7 +121,6 @@ sealed class PreparedFileWrite : IPreparedWrite
       {
          journal.CarryOutAndDelete(journalFile);
          RecordTheCommit();
-         _hasCommitted = true;
       }
 #pragma warning disable CA1031 //A failure after the journal is written is surfaced by stopping the process: the write has happened, and only the next start can finish it.
       catch(Exception exception)
@@ -124,19 +132,32 @@ sealed class PreparedFileWrite : IPreparedWrite
 
    CommitJournal Journal() => new(_files, _storesFolder, _saved.Select(it => (it.TemporaryFile, it.File)), _deleted.Select(it => it.File));
 
+   ///<summary>Records each file the commit wrote, with the length and last write time its temporary file had, which renaming keeps,<br/>
+   /// and forgets each it deleted.</summary>
    void RecordTheCommit() =>
       _storedFiles.Locked(it =>
       {
-         foreach(var saved in _saved) it.Record(saved.Id, saved.File);
-         foreach(var deleted in _deleted) if(deleted.Id is {} id) it.Forget(id);
+         foreach(var saved in _saved) it.Record(saved.Id, saved.File, saved.Stamp._assert().NotNull());
+         foreach(var deleted in _deleted) it.Forget(deleted.Id);
       });
 
    void StopTheProcess(Exception exception) =>
-      Environment.FailFast($"A state store kept in files failed to commit a unit of work's files in {_storesFolder}. The process stops so that the next start can finish the write from its journal, or discard it if no journal was written.", exception);
+      Environment.FailFast($"A state store kept in files failed to commit a write of its files in {_storesFolder}. The process stops so that the next start can finish the write from its journal, or discard it if no journal was written.", exception);
 
-   ///<summary>Deletes the temporary files: the unit of work rolled back.</summary>
+   ///<summary>Deletes the temporary files: the unit of work rolled back, or the write failed before its journal was written.</summary>
    public void Discard()
    {
       foreach(var saved in _saved) _files.Delete(saved.TemporaryFile);
+   }
+
+   ///<summary>A taggregate's file, written under a temporary name until the commit renames it.</summary>
+   sealed class SavedFile(Guid id, string temporaryFile, string file)
+   {
+      internal Guid Id { get; } = id;
+      internal string TemporaryFile { get; } = temporaryFile;
+      internal string File { get; } = file;
+
+      ///<summary>The temporary file's length and last write time once it is written, which the file keeps when it is renamed.</summary>
+      internal FileStamp? Stamp { get; set; }
    }
 }

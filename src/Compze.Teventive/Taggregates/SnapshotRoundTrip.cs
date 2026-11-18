@@ -15,24 +15,19 @@ namespace Compze.Teventive.Taggregates;
 /// .NET's other simple values are compared by their own equality. An object that both refer to, such as a service the taggregates are<br/>
 /// built with, is the same state. A value created on its first read, a <see cref="Compze.Internals.SystemCE.LazyCE{TValue}"/> or a<br/>
 /// <see cref="Lazy{T}"/>, is compared by its value, read in both. The fields of Compze's base classes, which publish and apply the<br/>
-/// tevents, aren't state, nor are delegates. The check then compares the snapshots of the two, as a state store's reload does to tell<br/>
-/// what changed.</remarks>
+/// tevents, aren't state, nor are delegates.</remarks>
 public static class SnapshotRoundTrip
 {
    ///<summary>Throws, naming each difference, unless a copy of <paramref name="taggregate"/> made through a snapshot, as a state store<br/>
-   /// makes a unit of work's copy, holds the state <paramref name="taggregate"/> holds, and a snapshot of the copy equals one of<br/>
-   /// <paramref name="taggregate"/>.</summary>
+   /// makes a unit of work's copy, holds the state <paramref name="taggregate"/> holds.</summary>
    ///<param name="taggregate">An instance of the class to check, with state in every field it has, and in every part.</param>
    ///<param name="createEmpty">Builds a new, empty instance of the class, as the store that keeps it is told to.</param>
-   ///<param name="snapshotsAreEqual">The comparison of the class's snapshots, as declared with the class to the store. Without it, the<br/>
-   /// snapshot type's own Equals compares them, and must override <see cref="object.Equals(object)"/>.</param>
    ///<remarks>review-naming: SnapshotRoundTrip.AssertLosesNothing is a placeholder until the naming pass.</remarks>
    public static void AssertLosesNothing<TTaggregate, TSnapshot>(TTaggregate taggregate,
-                                                                Func<ISnapshotable<TTaggregate, TSnapshot>> createEmpty,
-                                                                Func<TSnapshot, TSnapshot, bool>? snapshotsAreEqual = null)
+                                                                Func<ISnapshotable<TTaggregate, TSnapshot>> createEmpty)
       where TTaggregate : class, ITaggregate, ISnapshotable<TTaggregate, TSnapshot>
    {
-      var differences = DifferencesOf(taggregate, createEmpty, snapshotsAreEqual);
+      var differences = DifferencesOf(taggregate, createEmpty);
       if(differences.Count > 0) throw new SnapshotRoundTripFailedException(typeof(TTaggregate), differences);
    }
 
@@ -40,18 +35,7 @@ public static class SnapshotRoundTrip
    /// taggregate, and none when the snapshot loses nothing: for a tool that checks many taggregates and reports what it finds.</summary>
    ///<remarks>review-naming: SnapshotRoundTrip.DifferencesOf is a placeholder until the naming pass.</remarks>
    public static IReadOnlyList<string> DifferencesOf<TTaggregate, TSnapshot>(TTaggregate taggregate,
-                                                                             Func<ISnapshotable<TTaggregate, TSnapshot>> createEmpty,
-                                                                             Func<TSnapshot, TSnapshot, bool>? snapshotsAreEqual = null)
-      where TTaggregate : class, ITaggregate, ISnapshotable<TTaggregate, TSnapshot>
-   {
-      var taggregateClass = SnapshotableTaggregateClass.For(createEmpty, snapshotsAreEqual);
-      var copy = taggregateClass.CopyOf(taggregate);
-
-      var differences = TaggregateStateComparison.DifferencesBetween(taggregate, copy);
-      return taggregateClass.StatesDiffer(taggregate, copy)
-                ? [..differences, $"A snapshot of the copy doesn't equal a snapshot of the original, by {DescriptionOfTheComparison()}, so a state store's reload would take every {typeof(TTaggregate).Name} for changed."]
-                : differences;
-
-      string DescriptionOfTheComparison() => snapshotsAreEqual != null ? "the comparison of its snapshots given" : $"{typeof(TSnapshot).Name}'s own Equals";
-   }
+                                                                             Func<ISnapshotable<TTaggregate, TSnapshot>> createEmpty)
+      where TTaggregate : class, ITaggregate, ISnapshotable<TTaggregate, TSnapshot> =>
+      TaggregateStateComparison.DifferencesBetween(taggregate, SnapshotableTaggregateClass.For(createEmpty).CopyOf(taggregate));
 }

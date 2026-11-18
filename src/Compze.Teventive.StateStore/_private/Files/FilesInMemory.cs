@@ -9,7 +9,7 @@ namespace Compze.Teventive.StateStore._private.Files;
 /// <see cref="ITaggregateFilesInMemory"/> through which a specification reads and changes them.</summary>
 ///<remarks>A folder exists only as the paths of the files in it. Paths are compared as full paths, ignoring case, as on Windows.<br/>
 /// Each write gives the file a last write time later than any given before, so that two writes within one tick of the system's<br/>
-/// clock still differ, as a cache of the store's start needs to tell a changed file.</remarks>
+/// clock still differ, as the store needs to tell a changed file, at a reload and from a cache of its start.</remarks>
 sealed class FilesInMemory : IFileSystem, ITaggregateFilesInMemory
 {
    static readonly UTF8Encoding Utf8WithoutByteOrderMark = new(encoderShouldEmitUTF8Identifier: false);
@@ -27,6 +27,9 @@ sealed class FilesInMemory : IFileSystem, ITaggregateFilesInMemory
       _files.Locked(IReadOnlyList<ListedFile> (it) =>
                        [..it.ByPath.Where(file => IsIn(file.Key, folder, includingSubfolders))
                             .Select(file => new ListedFile(file.Key, Path.GetRelativePath(Full(folder), file.Key), file.Value.Content.Length, file.Value.LastWriteTimeUtc))]);
+
+   public FileStamp StampOf(string file) =>
+      _files.Locked(it => it.ByPath.TryGetValue(Full(file), out var stored) ? new FileStamp(stored.Content.Length, stored.LastWriteTimeUtc) : throw NoSuchFile(file));
 
    public string ReadAllText(string file)
    {

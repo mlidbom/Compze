@@ -6,7 +6,7 @@ using static Compze.Contracts.Contract;
 namespace Compze.Teventive.StateStore;
 
 ///<summary>Declares, for a state store kept in files (<see cref="StateStoreBuilder.StoredInFiles(DirectoryInfo,System.Text.Json.JsonSerializerOptions,Action{TaggregateFiles})"/>),<br/>
-/// the folder each taggregate class's files are in, and the file of each taggregate.</summary>
+/// the folder each taggregate class's files are in.</summary>
 ///<remarks>review-naming: TaggregateFiles, a placeholder for the naming pass (jastudio-rep-opus's fork, 2026-11-17).</remarks>
 public sealed class TaggregateFiles
 {
@@ -15,19 +15,12 @@ public sealed class TaggregateFiles
    internal TaggregateFiles() {}
 
    ///<summary>Declares that the files of <typeparamref name="TTaggregate"/> are in <paramref name="folder"/>, a folder under the store's<br/>
-   /// folder, and that the file of each is the one <paramref name="fileOf"/> gives, from the taggregate and the class's folder.<br/>
-   /// Without <paramref name="fileOf"/>, the file of each is <c>&lt;first two hex digits of the id&gt;/&lt;id&gt;.json</c>.</summary>
-   ///<remarks>The file of a taggregate may depend on more than its id: when a change gives it another file, the commit writes the<br/>
-   /// new file and deletes the old one. The file must be under the class's folder, and end in <c>.json</c>, and no two taggregates may<br/>
-   /// have the same file: a unit of work that breaks one of these fails.<br/>
-   /// review-naming: Of and fileOf, placeholders for the naming pass (jastudio-rep-opus's fork, 2026-11-17).</remarks>
-   public TaggregateFiles Of<TTaggregate>(string folder, Func<TTaggregate, DirectoryInfo, FileInfo>? fileOf = null) where TTaggregate : class, ITaggregate
+   /// folder. The file of each is <c>&lt;first two hex digits of the id&gt;/&lt;id&gt;.json</c> in it, for the taggregate's whole life.</summary>
+   ///<remarks>review-naming: Of, a placeholder for the naming pass (jastudio-rep-opus's fork, 2026-11-17).</remarks>
+   public TaggregateFiles Of<TTaggregate>(string folder) where TTaggregate : class, ITaggregate
    {
       State.Assert(!_declarations.ContainsKey(typeof(TTaggregate)), () => $"The files of {typeof(TTaggregate).FullName} are declared twice.");
-      _declarations.Add(typeof(TTaggregate),
-                        new FilesOfAClass.Declaration(typeof(TTaggregate),
-                                                      folder,
-                                                      fileOf == null ? null : (taggregate, classFolder) => fileOf((TTaggregate)taggregate, classFolder)));
+      _declarations.Add(typeof(TTaggregate), new FilesOfAClass.Declaration(typeof(TTaggregate), folder));
       return this;
    }
 

@@ -30,13 +30,10 @@ public sealed class StateStoreBuilder
    ///<summary>Declares that the store keeps the taggregate class that <paramref name="createEmpty"/> builds new, empty instances of,<br/>
    /// for the store to restore from snapshots. The class and its snapshot type are inferred from the instances it builds.</summary>
    ///<remarks>A factory, not a parameterless constructor, so that the taggregates can be handed what they need. To hand them services<br/>
-   /// of the container, use <see cref="Taggregate{TTaggregate}(ComponentRegistration{TTaggregate})"/>.<br/>
-   /// <paramref name="snapshotsAreEqual"/> tells whether two snapshots hold the same state, for
-   /// <see cref="IStateStore.ReloadFromStorage"/> to report what changed. Without it, the snapshot type's own Equals does, and must<br/>
-   /// be overridden.</remarks>
-   public StateStoreBuilder Taggregate<TTaggregate, TSnapshot>(Func<ISnapshotable<TTaggregate, TSnapshot>> createEmpty, Func<TSnapshot, TSnapshot, bool>? snapshotsAreEqual = null)
+   /// of the container, use <see cref="Taggregate{TTaggregate}(ComponentRegistration{TTaggregate})"/>.</remarks>
+   public StateStoreBuilder Taggregate<TTaggregate, TSnapshot>(Func<ISnapshotable<TTaggregate, TSnapshot>> createEmpty)
       where TTaggregate : class, ITaggregate, ISnapshotable<TTaggregate, TSnapshot> =>
-      Declare<TTaggregate, TSnapshot>(_ => SnapshotableTaggregateClass.For(createEmpty, snapshotsAreEqual));
+      Declare<TTaggregate, TSnapshot>(_ => SnapshotableTaggregateClass.For(createEmpty));
 
    ///<summary>Declares that the store keeps the taggregate class that <paramref name="registration"/>, a registration of the container,<br/>
    /// builds new, empty instances of: for a class whose instances need services of the container, as many as its constructor takes,<br/>
@@ -49,33 +46,20 @@ public sealed class StateStoreBuilder
    /// the root disposes a tracked transient only with the container, so it would hold every instance the store built.<br/>
    /// <b>A taggregate's state must be its own.</b> Its services are for what it does with its own state. Reaching other taggregates<br/>
    /// through a service is what Compze doesn't recommend: a unit of work changes a private copy, so what a taggregate computes from<br/>
-   /// other taggregates goes stale.<br/>
-   /// <see cref="IStateStore.ReloadFromStorage"/> tells whether a snapshot changed with the snapshot type's own Equals. To compare<br/>
-   /// snapshots otherwise, use <see cref="Taggregate{TTaggregate,TSnapshot}(ComponentRegistration{TTaggregate},Func{TSnapshot,TSnapshot,bool})"/>.</remarks>
+   /// other taggregates goes stale.</remarks>
    public StateStoreBuilder Taggregate<TTaggregate>(ComponentRegistration<TTaggregate> registration) where TTaggregate : class, ITaggregate
    {
       AssertBuildsInstancesTheStoreCanKeep(registration);
       return (StateStoreBuilder)DeclareRegisteredMethod.MakeGenericMethod(typeof(TTaggregate), SnapshotTypeOf<TTaggregate>())
-                                                       .Invoke(this, BindingFlags.DoNotWrapExceptions, binder: null, [registration, null], culture: null)!;
-   }
-
-   ///<summary>As <see cref="Taggregate{TTaggregate}(ComponentRegistration{TTaggregate})"/>, with <paramref name="snapshotsAreEqual"/>, which<br/>
-   /// tells whether two snapshots hold the same state, for <see cref="IStateStore.ReloadFromStorage"/> to report what changed:<br/>
-   /// <c>store.Taggregate&lt;VocabNote, VocabDto&gt;(registration, CorpusNoteDto.HoldTheSameState)</c>. The snapshot type is written,<br/>
-   /// since a comparison that is a method group can't infer it.</summary>
-   public StateStoreBuilder Taggregate<TTaggregate, TSnapshot>(ComponentRegistration<TTaggregate> registration, Func<TSnapshot, TSnapshot, bool> snapshotsAreEqual)
-      where TTaggregate : class, ITaggregate, ISnapshotable<TTaggregate, TSnapshot>
-   {
-      AssertBuildsInstancesTheStoreCanKeep(registration);
-      return DeclareRegistered(registration, snapshotsAreEqual);
+                                                       .Invoke(this, BindingFlags.DoNotWrapExceptions, binder: null, [registration], culture: null)!;
    }
 
    static readonly MethodInfo DeclareRegisteredMethod = typeof(StateStoreBuilder).GetMethod(nameof(DeclareRegistered), BindingFlags.NonPublic | BindingFlags.Instance)!;
 
-   StateStoreBuilder DeclareRegistered<TTaggregate, TSnapshot>(ComponentRegistration<TTaggregate> registration, Func<TSnapshot, TSnapshot, bool>? snapshotsAreEqual)
+   StateStoreBuilder DeclareRegistered<TTaggregate, TSnapshot>(ComponentRegistration<TTaggregate> registration)
       where TTaggregate : class, ITaggregate, ISnapshotable<TTaggregate, TSnapshot>
    {
-      var declared = Declare<TTaggregate, TSnapshot>(resolver => SnapshotableTaggregateClass.For<TTaggregate, TSnapshot>(() => resolver.Resolve<TTaggregate>(), snapshotsAreEqual));
+      var declared = Declare<TTaggregate, TSnapshot>(resolver => SnapshotableTaggregateClass.For<TTaggregate, TSnapshot>(() => resolver.Resolve<TTaggregate>()));
       _registrar.Register(registration);
       return declared;
    }

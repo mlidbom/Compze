@@ -21,14 +21,14 @@ using static Compze.Must.MustActions;
 namespace Compze.Tests.Integration.CQRS.StateStore;
 
 ///<summary>A state store keeping vocabs and sentences in JSON files, in a fresh folder of its own: vocabs in "vocab", sentences in<br/>
-/// "sentences", each in the default layout unless a context declares the vocabs' files. Each store started is a container of its own<br/>
-/// on the same folder, as each start of an application is.</summary>
+/// "sentences", each taggregate's file &lt;first two hex digits of the id&gt;/&lt;id&gt;.json in its class's folder. Each store started is a<br/>
+/// container of its own on the same folder, as each start of an application is.</summary>
 public class Given_a_state_store_kept_in_files : UniversalTestBase
 {
    static readonly JsonSerializerOptions Options = new() { WriteIndented = true, Converters = { new TaggregateIdAsAGuid() } };
+   static readonly JsonSerializerOptions OptionsOfAnotherProgram = new() { WriteIndented = false, Converters = { new TaggregateIdAsAGuid() } };
    readonly List<IDependencyInjectionContainer> _containers = [];
    readonly DirectoryInfo _folder = new(Path.Combine(Path.GetTempPath(), "compze-state-store-in-files", Guid.NewGuid().ToString("N")));
-   Func<StoredVocab, DirectoryInfo, FileInfo>? _vocabFileOf;
    bool _folderGivenByAService;
    IDependencyInjectionContainer? _store;
 
@@ -38,7 +38,7 @@ public class Given_a_state_store_kept_in_files : UniversalTestBase
 
    string StoresOwnFolder => Path.Combine(_folder.FullName, ".state-store");
 
-   ///<summary>The vocab's file in the default layout: &lt;first two hex digits of the id&gt;/&lt;id&gt;.json under the vocab folder.</summary>
+   ///<summary>The vocab's file: &lt;first two hex digits of the id&gt;/&lt;id&gt;.json under the vocab folder.</summary>
    string VocabFileByDefault => Path.Combine(VocabFolder.FullName, VocabId.Value.ToString("N")[..2], $"{VocabId.Value}.json");
 
    ///<summary>The store last started, starting one if none is.</summary>
@@ -63,7 +63,7 @@ public class Given_a_state_store_kept_in_files : UniversalTestBase
       return _store = container;
    }
 
-   void DeclareFiles(TaggregateFiles files) => files.Of("vocab", _vocabFileOf)
+   void DeclareFiles(TaggregateFiles files) => files.Of<StoredVocab>("vocab")
                                                    .Of<StoredSentence>("sentences");
 
    void InUnitOfWork(Action<ITaggregateStoreUpdater> work) =>
@@ -120,6 +120,35 @@ public class Given_a_state_store_kept_in_files : UniversalTestBase
          public and_a_unit_of_work_changes_its_meaning() => InUnitOfWork(taggregates => taggregates.GetForUpdate<StoredVocab>(VocabId).ChangeMeaning("to eat"));
 
          [PCT] public void the_file_holds_the_new_meaning() => File.ReadAllText(VocabFileByDefault).Must().Be(SerializedVocab(VocabId, "taberu", "to eat"));
+
+         public class and_the_store_then_reloads_from_its_files : and_a_unit_of_work_changes_its_meaning
+         {
+            readonly ReloadedTaggregates _reloaded;
+
+            public and_the_store_then_reloads_from_its_files() => _reloaded = Store.RootResolver.Resolve<IStateStore>().ReloadFromStorage();
+
+            [PCT] public void the_reload_reports_nothing_changed() => _reloaded.Changed.Must().BeEmpty();
+         }
+      }
+
+      public class and_another_program_writes_its_file_otherwise_and_the_store_writes_every_taggregate_anew : after_a_unit_of_work_saves_a_vocab
+      {
+         public and_another_program_writes_its_file_otherwise_and_the_store_writes_every_taggregate_anew()
+         {
+            File.WriteAllText(VocabFileByDefault, JsonSerializer.Serialize(new StoredVocabSnapshot(VocabId, "taberu", ""), OptionsOfAnotherProgram));
+            Store.RootResolver.Resolve<IStateStore>().WriteEverythingAnew();
+         }
+
+         [PCT] public void the_file_again_holds_exactly_what_the_consumers_serializer_options_make_of_the_vocabs_snapshot_in_utf8_without_a_byte_order_mark() =>
+            File.ReadAllBytes(VocabFileByDefault).Must().SequenceEqual(Encoding.UTF8.GetBytes(SerializedVocab(VocabId, "taberu", "")));
+
+         [PCT] public void the_stores_own_folder_again_holds_no_temporary_file_or_journal() => FilesInTheStoresOwnFolder.Must().BeEmpty();
+
+         [PCT] public void another_store_started_on_the_folder_has_the_vocab_as_before()
+         {
+            StartAStore();
+            Reader.Get<StoredVocab>(VocabId).Question.Must().Be("taberu");
+         }
       }
 
       public class and_a_unit_of_work_deletes_it : after_a_unit_of_work_saves_a_vocab
@@ -234,76 +263,6 @@ public class Given_a_state_store_kept_in_files : UniversalTestBase
          [PCT] public void the_vocab_is_in_its_file_under_the_folder_the_service_gives() =>
             VocabFiles.Must().SequenceEqual([Path.GetRelativePath(VocabFolder.FullName, VocabFileByDefault)]);
       }
-   }
-
-   public class whose_vocabs_files_are_named_by_their_question : Given_a_state_store_kept_in_files
-   {
-      protected whose_vocabs_files_are_named_by_their_question() => _vocabFileOf = (vocab, folder) => new FileInfo(Path.Combine(folder.FullName, $"{vocab.Question}.json"));
-
-      public class after_a_unit_of_work_saves_the_vocab_taberu : whose_vocabs_files_are_named_by_their_question
-      {
-         public after_a_unit_of_work_saves_the_vocab_taberu() => SaveTheVocab("taberu");
-
-         [PCT] public void the_vocab_folder_holds_the_file_named_by_its_question() => VocabFiles.Must().SequenceEqual(["taberu.json"]);
-
-         [PCT] public void another_store_started_on_the_folder_has_the_vocab()
-         {
-            StartAStore();
-            Reader.Get<StoredVocab>(VocabId).Question.Must().Be("taberu");
-         }
-
-         public class and_a_unit_of_work_changes_its_question : after_a_unit_of_work_saves_the_vocab_taberu
-         {
-            public and_a_unit_of_work_changes_its_question() => InUnitOfWork(taggregates => taggregates.GetForUpdate<StoredVocab>(VocabId).ChangeQuestion("nomu"));
-
-            [PCT] public void the_file_moves_to_the_name_of_the_new_question() => VocabFiles.Must().SequenceEqual(["nomu.json"]);
-         }
-
-         public class and_a_unit_of_work_saves_another_vocab_with_the_same_question : after_a_unit_of_work_saves_the_vocab_taberu
-         {
-            readonly Exception _exception;
-
-            public and_a_unit_of_work_saves_another_vocab_with_the_same_question() =>
-               _exception = Invoking(() => InUnitOfWork(taggregates => taggregates.Save(StoredVocab.Create(new TaggregateId(Guid.NewGuid()), "taberu"))))
-                           .Must().Throw<TransactionAbortedException>().Which;
-
-            [PCT] public void the_unit_of_work_fails_naming_the_file() => _exception.InnerException!.Message.Must().Contain("taberu.json");
-
-            [PCT] public void the_vocab_folder_still_holds_only_the_first_vocabs_file() => VocabFiles.Must().SequenceEqual(["taberu.json"]);
-
-            [PCT] public void the_stores_own_folder_holds_no_temporary_file() => FilesInTheStoresOwnFolder.Must().BeEmpty();
-         }
-      }
-
-      public class when_a_unit_of_work_saves_two_vocabs_with_the_same_question : whose_vocabs_files_are_named_by_their_question
-      {
-         readonly Exception _exception;
-
-         public when_a_unit_of_work_saves_two_vocabs_with_the_same_question() =>
-            _exception = Invoking(() => InUnitOfWork(taggregates =>
-                         {
-                            taggregates.Save(StoredVocab.Create(VocabId, "taberu"));
-                            taggregates.Save(StoredVocab.Create(new TaggregateId(Guid.NewGuid()), "taberu"));
-                         }))
-                        .Must().Throw<TransactionAbortedException>().Which;
-
-         [PCT] public void the_unit_of_work_fails_naming_the_file() => _exception.InnerException!.Message.Must().Contain("taberu.json");
-
-         [PCT] public void nothing_is_written() => VocabFiles.Must().BeEmpty();
-      }
-   }
-
-   public class whose_vocabs_file_is_declared_outside_the_vocab_folder : Given_a_state_store_kept_in_files
-   {
-      readonly Exception _exception;
-
-      public whose_vocabs_file_is_declared_outside_the_vocab_folder()
-      {
-         _vocabFileOf = (vocab, folder) => new FileInfo(Path.Combine(folder.Parent!.FullName, $"{vocab.Question}.json"));
-         _exception = Invoking(() => SaveTheVocab("taberu")).Must().Throw<TransactionAbortedException>().Which;
-      }
-
-      [PCT] public void saving_a_vocab_fails_naming_the_file() => _exception.InnerException!.Message.Must().Contain("taberu.json");
    }
 
    public class when_a_crash_left_a_journal_and_the_temporary_file_it_renames : Given_a_state_store_kept_in_files

@@ -10,10 +10,20 @@ namespace Compze.Teventive.StateStore._private.Storage;
 /// serializing, writing, a full disk, a file another program holds.</remarks>
 interface ITaggregateStorage
 {
-   ///<summary>Every taggregate stored, read once, when the store is first used.</summary>
+   ///<summary>Every taggregate stored, read when the store is first used, and at each reload.</summary>
    IReadOnlyList<TaggregateSnapshot> LoadAll();
+
+   ///<summary>Whether <paramref name="loaded"/>, a snapshot <see cref="LoadAll"/> has just given of a taggregate the store held,<br/>
+   /// holds the state that <paramref name="heldSnapshot"/>, a snapshot of the instance the store held, holds: as the storage writes<br/>
+   /// state, so that snapshot types need no equality. Asked by a reload, of a snapshot whose class is the held instance's, and that<br/>
+   /// isn't <see cref="TaggregateSnapshot.IsUnchangedSinceTheStoreLastReadOrWroteIt"/>.</summary>
+   bool HoldTheSameState(TaggregateSnapshot loaded, object heldSnapshot);
 
    ///<summary>Prepares writing <paramref name="toSave"/>, the new and changed taggregates of a unit of work, and removing<br/>
    /// the taggregates whose ids are <paramref name="toDelete"/>, so that committing the write can't fail.</summary>
    IPreparedWrite Prepare(IReadOnlyList<TaggregateSnapshot> toSave, IReadOnlyList<TaggregateId> toDelete);
+
+   ///<summary>Writes <paramref name="everything"/>, a snapshot of every taggregate the store holds, anew, as one commit, outside any<br/>
+   /// transaction: <see cref="IStateStore.WriteEverythingAnew"/>.</summary>
+   void WriteEverythingAnew(IReadOnlyList<TaggregateSnapshot> everything);
 }

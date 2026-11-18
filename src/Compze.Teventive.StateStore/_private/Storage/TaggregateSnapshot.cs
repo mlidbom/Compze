@@ -3,7 +3,7 @@ using Compze.Abstractions;
 namespace Compze.Teventive.StateStore._private.Storage;
 
 ///<summary>The state of one taggregate as a state store hands it to its storage and gets it back: a snapshot of the type the<br/>
-/// taggregate's class chooses, with what the storage needs to know of the taggregate to keep it, such as where its file is.</summary>
+/// taggregate's class chooses, with what the storage knows of it when it loads it.</summary>
 sealed class TaggregateSnapshot
 {
    ///<summary>The snapshot of a taggregate of <paramref name="taggregateClass"/> with the id <paramref name="id"/>.</summary>
@@ -23,13 +23,15 @@ sealed class TaggregateSnapshot
    ///<summary>The snapshot, of the type the taggregate's class takes and restores from.</summary>
    public object Snapshot { get; }
 
-   ///<summary>The taggregate this is a snapshot of, as the state store hands a unit of work's changes to be written: a file's place<br/>
-   /// may depend on the taggregate.</summary>
-   internal ITaggregate? TaggregateToWrite { get; init; }
-
    ///<summary>The taggregate restored from this snapshot, where Compze's own storage restored it to learn its id, so that a load<br/>
    /// restores each taggregate once.</summary>
-   ///<remarks>Apart from <see cref="TaggregateToWrite"/>, so that a storage that hands back the snapshots it was given to write<br/>
-   /// hands back no live taggregate: the store restores from the snapshot, as from any other.</remarks>
    internal ITaggregate? RestoredTaggregate { get; init; }
+
+   ///<summary>Whether the storage knows, as it loads this snapshot, that it holds the state it held when the store last read or wrote<br/>
+   /// the taggregate: such as a file that no other program has changed since. A reload compares such a snapshot with nothing.</summary>
+   internal bool IsUnchangedSinceTheStoreLastReadOrWroteIt { get; init; }
+
+   ///<summary>The text the storage read this snapshot from, as it loads it, where it read it from a file that may hold another state<br/>
+   /// than the store held: what a reload compares first, with what the storage would write for the taggregate the store held.</summary>
+   internal string? TextReadFrom { get; init; }
 }

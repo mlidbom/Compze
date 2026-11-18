@@ -90,19 +90,41 @@ sealed class TaggregateStateStore : ITaggregateStore, IStateStore
       State.Assert(Storage is not NoStorage,
                    () => "This state store has no storage to reload from: it was composed without one, such as StoredInFiles, so it keeps its taggregates in memory only, and a reload would remove every one of them.");
       State.Assert(AmbientSession == null, () => "A unit of work that has changed taggregates of the state store can't reload it: the reload waits for every such unit of work to complete, this one included.");
-      return _gate.Reload(() =>
+      return _gate.WhileNoUnitOfWorkIsOpen(() =>
       {
          changeToTheStorage();
          return _loadingMonitor.Locked(() =>
          {
             var before = _hasLoaded ? _committedTaggregates : new ConcurrentDictionary<TaggregateId, ITaggregate>();
-            var loaded = LoadEverything();
+            var stored = Storage.LoadAll();
+            var loaded = Install(stored);
             return new ReloadedTaggregates(added: [..loaded.Keys.Where(id => !before.ContainsKey(id))],
-                                           changed: [..loaded.Values.Where(it => before.TryGetValue(it.Id, out var held) && DeclaredClassOf(it.GetType()).StatesDiffer(held, it)).Select(it => it.Id)],
+                                           changed: [..stored.Where(it => before.TryGetValue(it.Id, out var held) && HoldsAnotherState(it, held)).Select(it => it.Id)],
                                            removed: [..before.Keys.Where(id => !loaded.ContainsKey(id))]);
          });
       });
    }
+
+   ///<summary>Whether <paramref name="loaded"/> holds another state than <paramref name="held"/>, the instance the store held of the<br/>
+   /// taggregate: another class, or another state as the storage writes state. A snapshot of <paramref name="held"/> is taken only<br/>
+   /// when the storage doesn't know the state unchanged since the store last read or wrote it.</summary>
+   bool HoldsAnotherState(TaggregateSnapshot loaded, ITaggregate held) =>
+      loaded.TaggregateClass != held.GetType()
+   || !loaded.IsUnchangedSinceTheStoreLastReadOrWroteIt && !Storage.HoldTheSameState(loaded, DeclaredClassOf(held.GetType()).TakeSnapshot(held));
+
+   public void WriteEverythingAnew()
+   {
+      State.Assert(Storage is not NoStorage,
+                   () => "This state store has no storage to write its taggregates to: it was composed without one, such as StoredInFiles, so it keeps its taggregates in memory only.");
+      State.Assert(AmbientSession == null, () => "A unit of work that has changed taggregates of the state store can't have it write every taggregate anew: that waits for every such unit of work to complete, this one included.");
+      _gate.WhileNoUnitOfWorkIsOpen(() => _loadingMonitor.Locked(() =>
+      {
+         if(!_hasLoaded) LoadEverything();
+         Storage.WriteEverythingAnew([.._committedTaggregates.Select(it => SnapshotOf(it.Value))]);
+      }));
+   }
+
+   TaggregateSnapshot SnapshotOf(ITaggregate taggregate) => new(taggregate.GetType(), taggregate.Id, DeclaredClassOf(taggregate.GetType()).TakeSnapshot(taggregate));
 
    ///<summary>Inside a unit of work, as it left them: the instances of the class it holds, and the committed ones it doesn't hold.<br/>
    /// Otherwise the committed ones.</summary>
@@ -150,11 +172,15 @@ sealed class TaggregateStateStore : ITaggregateStore, IStateStore
    }
 
    ///<summary>Replaces the committed taggregates, and what the indexes file, with what the storage holds.</summary>
-   ConcurrentDictionary<TaggregateId, ITaggregate> LoadEverything()
+   void LoadEverything() => Install(Storage.LoadAll());
+
+   ///<summary>Replaces the committed taggregates, and what the indexes file, with the taggregates of <paramref name="stored"/>, what<br/>
+   /// the storage has just loaded.</summary>
+   ConcurrentDictionary<TaggregateId, ITaggregate> Install(IReadOnlyList<TaggregateSnapshot> stored)
    {
       var loaded = new ConcurrentDictionary<TaggregateId, ITaggregate>(
-         Storage.LoadAll().Select(stored => stored.RestoredTaggregate ?? DeclaredClassOf(stored.TaggregateClass).Restore(stored.Id, stored.Snapshot))
-                .Select(it => KeyValuePair.Create(it.Id, it)));
+         stored.Select(it => it.RestoredTaggregate ?? DeclaredClassOf(it.TaggregateClass).Restore(it.Id, it.Snapshot))
+               .Select(it => KeyValuePair.Create(it.Id, it)));
       foreach(var taggregate in loaded.Values) ((ITaggregateStoreInternals)taggregate).MakeReadOnly();
       foreach(var index in Indexes) index.FileExactly(loaded.Values);
       _committedTaggregates = loaded;

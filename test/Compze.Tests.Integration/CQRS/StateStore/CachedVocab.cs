@@ -48,15 +48,11 @@ class CachedVocab : Taggregate<CachedVocab, ICachedVocabTevent, CachedVocabTeven
 
 ///<summary>A <see cref="CachedVocab"/>'s whole state, as its JSON file and the MemoryPack cache hold it.</summary>
 [MemoryPackable]
-partial class CachedVocabSnapshot : IEquatable<CachedVocabSnapshot>
+partial class CachedVocabSnapshot
 {
    public Guid Id { get; init; }
    public string Question { get; init; } = "";
    public string Meaning { get; init; } = "";
-
-   public bool Equals(CachedVocabSnapshot? other) => other != null && other.Id == Id && other.Question == Question && other.Meaning == Meaning;
-   public override bool Equals(object? other) => Equals(other as CachedVocabSnapshot);
-   public override int GetHashCode() => HashCode.Combine(Id, Question, Meaning);
 }
 
 ///<summary>The same vocab note, as a later version of the program keeps it: its snapshot has one field more, so a cache written for<br/>
@@ -88,16 +84,12 @@ class CachedVocabWithTags : Taggregate<CachedVocabWithTags, ICachedVocabTevent, 
 
 ///<summary>A <see cref="CachedVocabWithTags"/>'s whole state: a <see cref="CachedVocabSnapshot"/> with tags.</summary>
 [MemoryPackable]
-partial class CachedVocabWithTagsSnapshot : IEquatable<CachedVocabWithTagsSnapshot>
+partial class CachedVocabWithTagsSnapshot
 {
    public Guid Id { get; init; }
    public string Question { get; init; } = "";
    public string Meaning { get; init; } = "";
    public List<string> Tags { get; init; } = [];
-
-   public bool Equals(CachedVocabWithTagsSnapshot? other) => other != null && other.Id == Id && other.Question == Question && other.Meaning == Meaning && other.Tags.SequenceEqual(Tags);
-   public override bool Equals(object? other) => Equals(other as CachedVocabWithTagsSnapshot);
-   public override int GetHashCode() => HashCode.Combine(Id, Question, Meaning);
 }
 
 interface ICachedVocabTevent<out T> : ITaggregateTevent<T> where T : ICachedVocabTevent;

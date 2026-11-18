@@ -49,9 +49,22 @@ sealed class TaggregateFileStorage : ITaggregateStorage
    {
       CommitJournal.FinishInterruptedCommits(_files, _folder, _ownFolder);
       var loaded = _classes.Values.SelectMany(LoadTheFilesOf).ToList();
-      _storedFiles.Locked(it => it.ReplaceWith(loaded.Select(load => (load.Taggregate!.Id.Value, load.File.FullPath))));
+      _storedFiles.Locked(it => it.ReplaceWith(loaded.Select(load => (load.Taggregate!.Id.Value, load.File))));
       return [..loaded.Select(it => it.Snapshot)];
    }
+
+   ///<summary>Whether <paramref name="loaded"/> holds the state <paramref name="heldSnapshot"/> holds, as this storage writes state: if<br/>
+   /// the text its file holds is what the store would write for <paramref name="heldSnapshot"/>, or else if <paramref name="loaded"/>'s<br/>
+   /// snapshot serializes to that text too, the file holding the same state written otherwise, such as indented differently.</summary>
+   public bool HoldTheSameState(TaggregateSnapshot loaded, object heldSnapshot)
+   {
+      var held = Serialized(loaded.TaggregateClass, heldSnapshot);
+      return loaded.TextReadFrom == held || Serialized(loaded.TaggregateClass, loaded.Snapshot) == held;
+   }
+
+   ///<summary>What <see cref="_options"/> make of <paramref name="snapshot"/>, a snapshot of a <paramref name="taggregateClass"/>: what<br/>
+   /// the taggregate's file holds.</summary>
+   string Serialized(Type taggregateClass, object snapshot) => JsonSerializer.Serialize(snapshot, _classes[taggregateClass].TaggregateClass.SnapshotType, _options);
 
    IReadOnlyList<LoadedFile> LoadTheFilesOf(FilesOfAClass files)
    {
@@ -98,12 +111,27 @@ sealed class TaggregateFileStorage : ITaggregateStorage
       var write = new PreparedFileWrite(_files, _folder, _ownFolder, _storedFiles);
       if(!_isAllowedInTransactionsThatAlsoWriteADatabase && (toSave.Count > 0 || toDelete.Count > 0))
          FilesAsADurableParticipant.TakePartIn(Transaction.Current._assert().NotNull(), write, _folder);
+      Write(write, toSave, toDelete);
+      return write;
+   }
+
+   ///<summary>Writes every file of <paramref name="everything"/> under a temporary name, then commits them as one, through the journal,<br/>
+   /// with no transaction: a failure before the journal is written writes nothing, and comes out of this call.</summary>
+   public void WriteEverythingAnew(IReadOnlyList<TaggregateSnapshot> everything)
+   {
+      var write = new PreparedFileWrite(_files, _folder, _ownFolder, _storedFiles);
+      Write(write, everything, toDelete: []);
+      write.CommitOutsideATransaction();
+   }
+
+   ///<summary>Prepares <paramref name="write"/>: writes the file of each of <paramref name="toSave"/> under a temporary name, and notes<br/>
+   /// each of <paramref name="toDelete"/> to delete. Discards what it wrote if any of it fails.</summary>
+   void Write(PreparedFileWrite write, IReadOnlyList<TaggregateSnapshot> toSave, IReadOnlyList<TaggregateId> toDelete)
+   {
       try
       {
-         foreach(var saved in toSave)
-            write.Save(saved.Id.Value, _classes[saved.TaggregateClass].FileOf(saved.TaggregateToWrite!), JsonSerializer.Serialize(saved.Snapshot, _classes[saved.TaggregateClass].TaggregateClass.SnapshotType, _options));
+         foreach(var saved in toSave) write.Save(saved.Id.Value, _classes[saved.TaggregateClass].FileOf(saved.Id), Serialized(saved.TaggregateClass, saved.Snapshot));
          foreach(var deleted in toDelete) write.Delete(deleted.Value);
-         return write;
       }
       catch
       {
@@ -115,15 +143,25 @@ sealed class TaggregateFileStorage : ITaggregateStorage
    ///<summary><paramref name="file"/>'s snapshot, <paramref name="cachedSnapshot"/> where the load cache held it unchanged, else read<br/>
    /// from the file as a snapshot of the class <paramref name="files"/> are of, and the taggregate restored from it, which tells its<br/>
    /// id. Whatever fails is rethrown naming the file.</summary>
+   ///<remarks>The snapshot tells whether the file is as the store last read or wrote it, and, where it isn't and the store held the<br/>
+   /// taggregate, the text read from it, for a reload to compare. It keeps no other text, so a load holds no file's text it needn't.</remarks>
    LoadedFile Load(FilesOfAClass files, ListedFile file, object? cachedSnapshot)
    {
       try
       {
+         var text = cachedSnapshot == null ? _files.ReadAllText(file.FullPath) : null;
          var snapshot = cachedSnapshot
-                     ?? JsonSerializer.Deserialize(_files.ReadAllText(file.FullPath), files.TaggregateClass.SnapshotType, _options)
+                     ?? JsonSerializer.Deserialize(text!, files.TaggregateClass.SnapshotType, _options)
                      ?? throw new JsonException("The file holds null.");
          var taggregate = files.TaggregateClass.Restore(snapshot);
-         return new LoadedFile(file, new TaggregateSnapshot(files.TaggregateClass.Class, taggregate.Id, snapshot) { RestoredTaggregate = taggregate });
+         var (isAsLastReadOrWritten, theStoreHeldIt) = _storedFiles.Locked(it => (it.IsAsLastReadOrWritten(taggregate.Id.Value, file), it.Holds(taggregate.Id.Value)));
+         return new LoadedFile(file,
+                               new TaggregateSnapshot(files.TaggregateClass.Class, taggregate.Id, snapshot)
+                               {
+                                  RestoredTaggregate = taggregate,
+                                  IsUnchangedSinceTheStoreLastReadOrWroteIt = isAsLastReadOrWritten,
+                                  TextReadFrom = !isAsLastReadOrWritten && theStoreHeldIt ? text : null
+                               });
       }
       catch(Exception exception)
       {

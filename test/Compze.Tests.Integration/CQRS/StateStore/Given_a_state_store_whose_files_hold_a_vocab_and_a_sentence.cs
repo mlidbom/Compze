@@ -25,11 +25,12 @@ namespace Compze.Tests.Integration.CQRS.StateStore;
 
 ///<summary>A state store kept in JSON files in memory, whose files hold one vocab, "taberu", and one sentence, when the container is<br/>
 /// built. The files' folder is given by a service of the container. Another program's changes to the files are files written or<br/>
-/// deleted behind the store's back, through <see cref="ITaggregateFilesInMemory"/>. Sentences are declared with a comparison of<br/>
-/// their snapshots, which have no Equals of their own.</summary>
+/// deleted behind the store's back, through <see cref="ITaggregateFilesInMemory"/>. A sentence's snapshot type has no Equals of its<br/>
+/// own, which a reload doesn't need.</summary>
 public class Given_a_state_store_whose_files_hold_a_vocab_and_a_sentence : UniversalTestBase
 {
    static readonly JsonSerializerOptions Options = new() { WriteIndented = true, Converters = { new TaggregateIdAsAGuid() } };
+   static readonly JsonSerializerOptions OptionsOfAnotherProgram = new() { WriteIndented = false, Converters = { new TaggregateIdAsAGuid() } };
    readonly DirectoryInfo _folder = new(Path.Combine(Path.GetTempPath(), "compze-state-store-files-in-memory", Guid.NewGuid().ToString("N")));
    readonly IDependencyInjectionContainer _container;
    TaggregateId VocabId { get; } = new(Guid.NewGuid());
@@ -46,7 +47,7 @@ public class Given_a_state_store_whose_files_hold_a_vocab_and_a_sentence : Unive
          return new TheFilesFolder(_folder);
       }));
       builder.Registrar.StateStore(store => store.Taggregate(() => new StoredVocab())
-                                                 .Taggregate(() => new StoredSentence(), snapshotsAreEqual: (one, other) => one.Text == other.Text)
+                                                 .Taggregate(() => new StoredSentence())
                                                  .Index<StoredVocab, string>(vocab => [vocab.Question])
                                                  .StoredInFiles((TheFilesFolder it) => it.Folder, Options, files => files.Of<StoredVocab>("vocab")
                                                                                                                          .Of<StoredSentence>("sentences")
@@ -85,6 +86,13 @@ public class Given_a_state_store_whose_files_hold_a_vocab_and_a_sentence : Unive
    void WriteTheVocabsFile(TaggregateId id, string question, string meaning) => Files.WriteAllText(VocabFile(id), JsonSerializer.Serialize(new StoredVocabSnapshot(id, question, meaning), Options));
 
    void WriteTheSentencesFile(string text) => Files.WriteAllText(SentenceFile, JsonSerializer.Serialize(new StoredSentenceSnapshot(SentenceId, text), Options));
+
+   ///<summary>Writes a vocab's file as another program would, not indented: the same state as <see cref="WriteTheVocabsFile"/> writes,<br/>
+   /// written otherwise.</summary>
+   void WriteTheVocabsFileOtherwise(TaggregateId id, string question, string meaning) =>
+      Files.WriteAllText(VocabFile(id), JsonSerializer.Serialize(new StoredVocabSnapshot(id, question, meaning), OptionsOfAnotherProgram));
+
+   static string AsTheStoreWrites(StoredVocabSnapshot snapshot) => JsonSerializer.Serialize(snapshot, Options);
 
    ///<summary>The vocabs the vocab files hold.</summary>
    IReadOnlyList<StoredVocabSnapshot> StoredVocabs =>
@@ -291,7 +299,119 @@ public class Given_a_state_store_whose_files_hold_a_vocab_and_a_sentence : Unive
          _reloaded = StateStore.ReloadFromStorage();
       }
 
-      [PCT] public void the_reload_reports_the_sentence_as_changed_by_the_comparison_declared_with_its_class() => _reloaded.Changed.Must().SequenceEqual([SentenceId]);
+      [PCT] public void the_reload_reports_the_sentence_as_changed_though_its_snapshot_type_has_no_Equals() => _reloaded.Changed.Must().SequenceEqual([SentenceId]);
+   }
+
+   public class after_another_program_rewrites_the_sentences_file_with_the_text_it_held_and_the_store_reloads : Given_a_state_store_whose_files_hold_a_vocab_and_a_sentence
+   {
+      readonly ReloadedTaggregates _reloaded;
+
+      public after_another_program_rewrites_the_sentences_file_with_the_text_it_held_and_the_store_reloads()
+      {
+         _ = CommittedVocab;
+         WriteTheSentencesFile("taberu yo");
+         _reloaded = StateStore.ReloadFromStorage();
+      }
+
+      [PCT] public void the_reload_reports_nothing_changed_though_the_sentences_snapshot_type_has_no_Equals() => _reloaded.Changed.Must().BeEmpty();
+   }
+
+   public class after_another_program_rewrites_the_vocabs_file_with_the_state_the_store_holds_and_the_store_reloads : Given_a_state_store_whose_files_hold_a_vocab_and_a_sentence
+   {
+      readonly ReloadedTaggregates _reloaded;
+
+      public after_another_program_rewrites_the_vocabs_file_with_the_state_the_store_holds_and_the_store_reloads()
+      {
+         _ = CommittedVocab;
+         WriteTheVocabsFile(VocabId, "taberu", "to eat");
+         _reloaded = StateStore.ReloadFromStorage();
+      }
+
+      [PCT] public void the_reload_reports_nothing_changed() => _reloaded.Changed.Must().BeEmpty();
+      [PCT] public void the_reader_gets_the_vocab() => new { CommittedVocab.Question, CommittedVocab.Meaning }.Must().DeepEqual(new { Question = "taberu", Meaning = "to eat" });
+   }
+
+   public class after_another_program_writes_the_state_the_store_holds_in_the_vocabs_file_otherwise_and_the_store_reloads : Given_a_state_store_whose_files_hold_a_vocab_and_a_sentence
+   {
+      readonly ReloadedTaggregates _reloaded;
+
+      public after_another_program_writes_the_state_the_store_holds_in_the_vocabs_file_otherwise_and_the_store_reloads()
+      {
+         _ = CommittedVocab;
+         WriteTheVocabsFileOtherwise(VocabId, "taberu", "to eat");
+         _reloaded = StateStore.ReloadFromStorage();
+      }
+
+      [PCT] public void the_file_holds_other_text_than_the_store_writes() => Files.ReadAllText(VocabFile(VocabId)).Must().NotBe(AsTheStoreWrites(new StoredVocabSnapshot(VocabId, "taberu", "to eat")));
+      [PCT] public void the_reload_reports_nothing_changed() => _reloaded.Changed.Must().BeEmpty();
+   }
+
+   public class after_another_program_writes_the_vocabs_file_otherwise_and_the_store_writes_every_taggregate_anew : Given_a_state_store_whose_files_hold_a_vocab_and_a_sentence
+   {
+      readonly int _versionBefore;
+
+      public after_another_program_writes_the_vocabs_file_otherwise_and_the_store_writes_every_taggregate_anew()
+      {
+         _versionBefore = CommittedVocab.Version;
+         WriteTheVocabsFileOtherwise(VocabId, "taberu", "to eat");
+         StateStore.WriteEverythingAnew();
+         WaitForTheObservers();
+      }
+
+      [PCT] public void the_vocabs_file_holds_exactly_what_the_consumers_options_make_of_its_snapshot() =>
+         Files.ReadAllText(VocabFile(VocabId)).Must().Be(AsTheStoreWrites(new StoredVocabSnapshot(VocabId, "taberu", "to eat")));
+
+      [PCT] public void the_sentences_file_holds_exactly_what_the_consumers_options_make_of_its_snapshot() =>
+         Files.ReadAllText(SentenceFile).Must().Be(JsonSerializer.Serialize(new StoredSentenceSnapshot(SentenceId, "taberu yo"), Options));
+
+      [PCT] public void no_file_but_the_vocabs_and_the_sentences_is_left() => SortedPaths.Must().SequenceEqual(Sorted(VocabFile(VocabId), SentenceFile));
+      [PCT] public void the_reader_gets_the_vocab_as_before() => new { CommittedVocab.Question, CommittedVocab.Meaning }.Must().DeepEqual(new { Question = "taberu", Meaning = "to eat" });
+      [PCT] public void the_vocabs_version_is_as_before() => CommittedVocab.Version.Must().Be(_versionBefore);
+      [PCT] public void no_tevent_was_dispatched() => ObservationLog.Must().BeEmpty();
+
+      public class and_the_store_then_reloads : after_another_program_writes_the_vocabs_file_otherwise_and_the_store_writes_every_taggregate_anew
+      {
+         readonly ReloadedTaggregates _reloaded;
+
+         public and_the_store_then_reloads() => _reloaded = StateStore.ReloadFromStorage();
+
+         [PCT] public void the_reload_reports_nothing_changed() => _reloaded.Changed.Must().BeEmpty();
+         [PCT] public void the_reload_reports_nothing_added_or_removed() => _reloaded.Added.Concat(_reloaded.Removed).Must().BeEmpty();
+      }
+   }
+
+   public class when_the_store_writes_every_taggregate_anew_while_a_unit_of_work_on_another_thread_changes_the_vocab : Given_a_state_store_whose_files_hold_a_vocab_and_a_sentence
+   {
+      readonly ManualResetEventSlim _theUnitOfWorkHasTheVocab = new();
+      readonly bool _theUnitOfWorkHadCompletedWhenTheWriteReturned;
+
+      public when_the_store_writes_every_taggregate_anew_while_a_unit_of_work_on_another_thread_changes_the_vocab()
+      {
+         var unitOfWork = Task.Run(() => InUnitOfWork(taggregates =>
+         {
+            var vocab = taggregates.GetForUpdate<StoredVocab>(VocabId);
+            _theUnitOfWorkHasTheVocab.Set();
+            Thread.Sleep(200); //Gives the write time to begin waiting while the unit of work is open.
+            vocab.ChangeMeaning("to dine");
+         }));
+         _theUnitOfWorkHasTheVocab.Wait();
+         StateStore.WriteEverythingAnew();
+         _theUnitOfWorkHadCompletedWhenTheWriteReturned = unitOfWork.IsCompleted;
+         unitOfWork.Wait();
+      }
+
+      [PCT] public void the_write_waited_for_the_unit_of_work_to_complete() => _theUnitOfWorkHadCompletedWhenTheWriteReturned.Must().BeTrue();
+      [PCT] public void the_vocabs_file_holds_what_the_unit_of_work_committed() => StoredVocabs.Select(it => it.Meaning).Must().SequenceEqual(["to dine"]);
+   }
+
+   public class when_a_unit_of_work_that_changed_the_vocab_has_the_store_write_every_taggregate_anew : Given_a_state_store_whose_files_hold_a_vocab_and_a_sentence
+   {
+      [PCT] public void it_is_refused() =>
+         Invoking(() => InUnitOfWork(taggregates =>
+         {
+            taggregates.GetForUpdate<StoredVocab>(VocabId).ChangeMeaning("to dine");
+            StateStore.WriteEverythingAnew();
+         })).Must().Throw<Exception>().Which.Message.Must().Contain("can't have it write every taggregate anew");
    }
 
    public class after_another_program_deletes_the_vocabs_file_and_the_store_reloads : Given_a_state_store_whose_files_hold_a_vocab_and_a_sentence

@@ -574,6 +574,22 @@ public class Given_a_state_store : UniversalTestBase
       [PCT] public void the_reader_still_gets_the_vocab() => CommittedVocab(VocabId).Question.Must().Be("taberu");
    }
 
+   ///<summary>A store composed with no storage keeps its taggregates in memory only: there are no files to write anew.</summary>
+   public class when_a_store_with_no_storage_is_to_write_every_taggregate_anew : Given_a_state_store
+   {
+      readonly Exception _thrown;
+
+      public when_a_store_with_no_storage_is_to_write_every_taggregate_anew()
+      {
+         Compose();
+         InUnitOfWork(taggregates => taggregates.Save(StoredVocab.Create(VocabId, "taberu")));
+         _thrown = Invoking(() => Container.RootResolver.Resolve<IStateStore>().WriteEverythingAnew()).Must().Throw<Exception>().Which;
+      }
+
+      [PCT] public void it_is_refused_saying_the_store_has_no_storage() => _thrown.Message.Must().Contain("has no storage to write its taggregates to");
+      [PCT] public void the_reader_still_gets_the_vocab() => CommittedVocab(VocabId).Question.Must().Be("taberu");
+   }
+
    ///<summary>An index is known by its taggregate class and key type, exactly: one of every taggregate and one of the vocabs, under keys<br/>
    /// of one type, are two indexes, though the vocab index's interface is assignable to the other's.</summary>
    public class when_the_store_has_an_index_of_every_taggregate_and_an_index_of_the_vocabs_by_keys_of_one_type : Given_a_state_store
