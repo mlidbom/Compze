@@ -109,7 +109,8 @@ sealed class TaggregateStateStore : ITaggregateStore, IStateStore
    public IReadOnlyCollection<ITaggregateReference<TTaggregate>> All<TTaggregate>() where TTaggregate : class, ITaggregate
    {
       EnsureLoaded();
-      var committedIds = _committedTaggregates.Values.OfType<TTaggregate>().Select(it => it.Id);
+      //Enumerated, not read through Values, which takes every lock of the dictionary and copies every taggregate of every class.
+      var committedIds = _committedTaggregates.Where(it => it.Value is TTaggregate).Select(it => it.Key);
       var ids = AmbientSession is {} session
                    ? committedIds.Where(id => !session.Holds(id)).Concat(session.HeldInstancesOf<TTaggregate>().Select(it => it.Id))
                    : committedIds;
