@@ -37,3 +37,30 @@ Specification 5 of Q3, for every DI container (`[PCT]`): a vocab class declared 
 scoped service fails, at composition or at the first resolve as built, with a message naming the vocab class and the
 scoped service. The full suite passes, and the store's specifications pass with each DI container: Microsoft, Autofac
 and DryIoc.
+
+## What was built (7045d000e)
+
+**Refused when the container is built,** the earlier of the two points: Compze's container abstraction knows each
+registration's dependencies and their lifestyles, so it needed only to be told what the store resolves from the root.
+
+- **Compze.DependencyInjection** (internal, nothing public changes): a component can declare the services it resolves
+  from the container's root while it runs, through the `IRootResolver` it takes, with `ResolvingFromTheRoot(...)` on its
+  registration. The registration keeps them as `DependencyTypesResolvedFromTheRoot`, and its copies in clone and child
+  containers keep them too. `ContainerBuilder.Build()` refuses one that is scoped, or takes a scoped service directly or
+  through the tracked transients it takes, before any container is asked. The search ends at a singleton, whose own
+  dependencies the existing lifestyle validation checks.
+- **The memory image state store's** registration declares the classes declared with a registration.
+- **The message** is an `InvalidLifeStyleCombinationException`, the same for every container:
+
+  > Invalid lifestyle combination: Singleton: Compze.Teventive.MemoryImageStateStore._private.TaggregateMemoryImageStateStore
+  > resolves Compze.Tests.Integration.CQRS.MemoryImageStateStore.StoredVocab from the container's root, which can't resolve
+  > a Scoped service, and its TrackedTransient registration takes
+  > Compze.Tests.Integration.CQRS.MemoryImageStateStore.VocabDictionary, which is Scoped.
+
+  Through a tracked transient, the chain is named: "takes ...VocabReadings, a TrackedTransient that takes
+  ...VocabDictionary, which is Scoped".
+- **Specifications:** `when_the_vocab_class_is_declared_with_a_registration_whose_factory_takes_a_scoped_service` now
+  says `building_the_container_fails_naming_the_scoped_service` and `the_failure_names_the_vocab_class`, and a new
+  `..._whose_factory_takes_a_tracked_transient_that_takes_a_scoped_service` specifies the chain. They pass, with the
+  store's other specifications and Compze.DependencyInjection's, on Microsoft, Autofac, DryIoc and LightInject; the full
+  suite passes.

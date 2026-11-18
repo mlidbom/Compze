@@ -22,8 +22,10 @@ built.
   has no overloads of its own for them.
 - **The store registers it, and resolves a new, empty instance from the container's root** each time it restores one:
   each taggregate at the load and at a reload, and each copy a unit of work gets for update. The dependencies are those of
-  the root, so they must be singletons: a taggregate outlives every scope. A scoped one fails loudly at the first
-  resolve.
+  the root, so they must be singletons: a taggregate outlives every scope. A scoped one, taken directly or through a
+  tracked transient, is refused when the container is built, with a message naming the class and the scoped service, the
+  same with every DI container (end review defect D13:
+  [a-taggregate-class-with-a-scoped-dependency.md](a-taggregate-class-with-a-scoped-dependency.md)).
 - **Refused at composition, when the store is declared:**
   - a registration whose lifestyle isn't `TrackedTransient`: each instance must be new;
   - a class that is `IDisposable`: a tracked transient resolved from the root is disposed with the container, so the
@@ -46,6 +48,9 @@ built.
   that the class isn't `IDisposable`, registers the registration with the builder's registrar, finds the snapshot type by
   reflection, and declares the class with a factory that resolves `TTaggregate` from the root resolver the store is built
   with.
+- The store's own registration declares the classes it resolves from the root, with Compze.DependencyInjection's internal
+  `ResolvingFromTheRoot(...)`, so that the container builder refuses, at `Build()`, a class whose registration takes a
+  scoped service (D13).
 - `StateStoreBuilder.Taggregate<TTaggregate, TSnapshot>(ComponentRegistration<TTaggregate> registration,
   Func<TSnapshot, TSnapshot, bool> snapshotsAreEqual)`: the same, with the consumer's comparison.
 - The existing assertion that a factory builds instances of exactly the declared class covers a registration whose
@@ -61,5 +66,7 @@ built.
 3. A registration that isn't a `TrackedTransient` is refused where the store is declared, with a message naming the class
    and the lifestyle.
 4. A class that is `IDisposable` is refused where the store is declared, with a message naming the class.
-5. A registration whose factory takes a scoped service fails loudly at the first resolve.
+5. A registration whose factory takes a scoped service is refused when the container is built, with a message naming the
+   class and the scoped service, on every DI container; and so is one whose factory takes a tracked transient that takes
+   a scoped service (D13).
 6. Everything the factory overloads specified before still holds.
