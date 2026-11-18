@@ -75,6 +75,12 @@ read-only wrapper per key costs an object per key held, which the spike measured
   `the-taggregate-store.md` says the store keeps one reference per taggregate, and that `HasAny` avoids resolving a
   reference.
 
+**Code left by the builds, to clean up with the documentation:** the specifications that build taggregate tevents without a
+taggregate (the tevent store's, the migrations', the serializer's performance) set their identity through
+`TaggregateTeventCE` in Compze.Tests.Common, by reflection on private setters, since Q10 made the mutable tevent
+interfaces internal. That is a hole into the library the black-box rule doesn't allow: they should publish their tevents
+on taggregates, or move to an internal specifications project.
+
 ## 3. The questions for Magnus, one at a time, most important first
 
 | # | Question | The reviewers | Status |
