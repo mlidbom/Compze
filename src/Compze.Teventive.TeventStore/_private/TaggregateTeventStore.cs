@@ -91,13 +91,32 @@ sealed class TaggregateTeventStore : ITaggregateStore
 
    TTaggregate Built<TTaggregate>(IReadOnlyList<ITaggregateTevent<ITaggregateTeventWithIdentity>> history) where TTaggregate : class, ITaggregate
    {
-      var taggregate = (TTaggregate)Constructor.CreateInstance(ClassToBuildAs(typeof(TTaggregate)));
-      //review: A history of another declared class, such as a vocab's id asked for as a sentence, fails here with the replay's
-      //   InvalidCastException, which names neither class, where the memory image state store's message names both. Read, not run
-      //   (2026-11-18): assert that the history's tevents are the class's, with a message naming both, as the documentation of
-      //   ITaggregateStoreReader.Get promises a throw.
+      var taggregateClass = ClassToBuildAs(typeof(TTaggregate));
+      AssertIsAHistoryOf(taggregateClass, typeof(TTaggregate), history);
+      var taggregate = (TTaggregate)Constructor.CreateInstance(taggregateClass);
       taggregate.LoadFromHistory(history);
       return taggregate;
+   }
+
+   ///<summary>Asserts that <paramref name="history"/> begins with a tevent of <paramref name="taggregateClass"/>, the class a taggregate<br/>
+   /// asked for as <paramref name="requestedClass"/> is built as. A history of another class, such as a vocab's asked for as a sentence,<br/>
+   /// would otherwise fail in the replay, with an exception that names neither the taggregate nor either class.</summary>
+   ///<remarks>It checks the history the store has already read, so it costs no further read.</remarks>
+   void AssertIsAHistoryOf(Type taggregateClass, Type requestedClass, IReadOnlyList<ITaggregateTevent<ITaggregateTeventWithIdentity>> history)
+   {
+      var firstTevent = history[0].Tevent;
+      State.Assert(_teventsByClass[taggregateClass].IsInstanceOfType(firstTevent), () => WhyItIsNotA(requestedClass, taggregateClass, firstTevent));
+   }
+
+   ///<summary>Why the taggregate whose history begins with <paramref name="firstTevent"/> is not a <paramref name="requestedClass"/>: it is<br/>
+   /// the one declared class whose tevents the history holds, or, when the declared classes don't tell it apart, its history begins<br/>
+   /// with a tevent that is not one of <paramref name="taggregateClass"/>'s.</summary>
+   string WhyItIsNotA(Type requestedClass, Type taggregateClass, ITaggregateTeventWithIdentity firstTevent)
+   {
+      var classesWithSuchTevents = _teventsByClass.Where(it => it.Value.IsInstanceOfType(firstTevent)).Select(it => it.Key).ToList();
+      return classesWithSuchTevents.Count == 1
+                ? $"Taggregate {firstTevent.TaggregateId} is a {classesWithSuchTevents[0].FullName}, not a {requestedClass.FullName}."
+                : $"Taggregate {firstTevent.TaggregateId} is not a {requestedClass.FullName}: its history begins with a {firstTevent.GetType().FullName}, which is not one of the tevents of {taggregateClass.FullName}.";
    }
 
    ///<summary>The class this store declares that a taggregate asked for as <paramref name="requestedClass"/> is: that class itself, or<br/>

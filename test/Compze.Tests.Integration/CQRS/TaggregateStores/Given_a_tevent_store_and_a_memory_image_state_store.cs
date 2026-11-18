@@ -8,6 +8,7 @@ using Compze.Teventive.MemoryImageStateStore;
 using Compze.Teventive.TaggregateStores;
 using Compze.Teventive.TeventStore.Abstractions;
 using Compze.Tests.Common;
+using Compze.Tests.Common.CQRS.TeventRefactoring.Migrations;
 using Compze.Tests.Common.Wiring;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
@@ -19,8 +20,9 @@ using static Compze.Must.MustActions;
 
 namespace Compze.Tests.Integration.CQRS.TaggregateStores;
 
-///<summary>A tevent store keeping users and a memory image state store keeping vocab, in one container: one updater, one reader and one bulk reader<br/>
-/// serve both.</summary>
+///<summary>A tevent store keeping users and <see cref="TestTaggregate"/>s, and a memory image state store keeping vocab and sentences, in one<br/>
+/// container: one updater, one reader and one bulk reader serve both. Each store keeps a second class, for asking for a taggregate as<br/>
+/// another class its store keeps.</summary>
 public class Given_a_tevent_store_and_a_memory_image_state_store : UniversalTestBase
 {
    readonly IDependencyInjectionContainer _container;
@@ -29,8 +31,8 @@ public class Given_a_tevent_store_and_a_memory_image_state_store : UniversalTest
 
    protected Given_a_tevent_store_and_a_memory_image_state_store() =>
       _container = TestEnv.DIContainer.SetupTestingContainer(registrar => registrar.RequireIntegrationTestTypeMappings(),
-                                                             configureContainer: register => register.MemoryImageStateStore(store => store.Taggregate(() => new StoredVocab())),
-                                                             declareTeventStoreTaggregates: store => store.Taggregate<User>());
+                                                             configureContainer: register => register.MemoryImageStateStore(store => store.Taggregate(() => new StoredVocab()).Taggregate(() => new StoredSentence())),
+                                                             declareTeventStoreTaggregates: store => store.Taggregate<User>().Taggregate<TestTaggregate>());
 
    protected override async Task DisposeAsyncInternal() => await _container.DisposeAsync().AsTask();
 
@@ -48,6 +50,15 @@ public class Given_a_tevent_store_and_a_memory_image_state_store : UniversalTest
       taggregates.Add(StoredVocab.Create(_vocabId, "taberu"));
    }
 
+   static string MessageOfTheInvalidOperationExceptionThrownBy(Action action) => Invoking(action).Must().Throw<InvalidOperationException>().Which.Message;
+
+   ///<summary>Whether <paramref name="message"/> names the taggregate <paramref name="id"/>, the <paramref name="heldClass"/> its store holds<br/>
+   /// it as, and the <paramref name="requestedClass"/> it was asked for as.</summary>
+   static bool NamesTheTaggregateAndBothClasses(string message, TaggregateId id, Type heldClass, Type requestedClass) =>
+      message.Contains(id.ToString(), StringComparison.Ordinal)
+   && message.Contains(heldClass.FullName!, StringComparison.Ordinal)
+   && message.Contains(requestedClass.FullName!, StringComparison.Ordinal);
+
    public class after_one_unit_of_work_adds_a_user_and_a_vocab : Given_a_tevent_store_and_a_memory_image_state_store
    {
       public after_one_unit_of_work_adds_a_user_and_a_vocab() => InUnitOfWork(AddAUserAndAVocab);
@@ -58,6 +69,38 @@ public class Given_a_tevent_store_and_a_memory_image_state_store : UniversalTest
       [PCT] public void the_bulk_reader_gives_every_user_as_the_added_user() => BulkReader.ReferencesToAll<User>().Select(it => it.Id).Must().SequenceEqual([_userId]);
       [PCT] public void the_bulk_reader_gives_every_vocab_as_the_added_vocab() => BulkReader.ReferencesToAll<StoredVocab>().Select(it => it.Id).Must().SequenceEqual([_vocabId]);
       [PCT] public void the_reference_the_bulk_reader_gives_for_the_user_gives_its_email() => BulkReader.ReferencesToAll<User>().Single().Current.Email.Must().Be("registered@example.com");
+
+      [PCT] public void getting_the_user_as_another_class_its_store_keeps_throws_naming_the_user_and_both_classes() =>
+         MessageOfTheInvalidOperationExceptionThrownBy(() => Reader.Get<TestTaggregate>(_userId))
+           .Must().Satisfy(it => NamesTheTaggregateAndBothClasses(it, _userId, typeof(User), typeof(TestTaggregate)));
+
+      [PCT] public void inside_a_unit_of_work_trying_to_get_the_user_as_another_class_its_store_keeps_throws_naming_the_user_and_both_classes() =>
+         MessageOfTheInvalidOperationExceptionThrownBy(() => InUnitOfWork(_ => Reader.TryGet(_userId, out TestTaggregate? _)))
+           .Must().Satisfy(it => NamesTheTaggregateAndBothClasses(it, _userId, typeof(User), typeof(TestTaggregate)));
+
+      [PCT] public void getting_the_user_for_update_as_another_class_its_store_keeps_throws_naming_the_user_and_both_classes() =>
+         MessageOfTheInvalidOperationExceptionThrownBy(() => InUnitOfWork(taggregates => taggregates.GetForUpdate<TestTaggregate>(_userId)))
+           .Must().Satisfy(it => NamesTheTaggregateAndBothClasses(it, _userId, typeof(User), typeof(TestTaggregate)));
+
+      [PCT] public void trying_to_get_the_user_for_update_as_another_class_its_store_keeps_throws_naming_the_user_and_both_classes() =>
+         MessageOfTheInvalidOperationExceptionThrownBy(() => InUnitOfWork(taggregates => taggregates.TryGetForUpdate(_userId, out TestTaggregate? _)))
+           .Must().Satisfy(it => NamesTheTaggregateAndBothClasses(it, _userId, typeof(User), typeof(TestTaggregate)));
+
+      [PCT] public void getting_the_vocab_as_another_class_its_store_keeps_throws_naming_the_vocab_and_both_classes() =>
+         MessageOfTheInvalidOperationExceptionThrownBy(() => Reader.Get<StoredSentence>(_vocabId))
+           .Must().Satisfy(it => NamesTheTaggregateAndBothClasses(it, _vocabId, typeof(StoredVocab), typeof(StoredSentence)));
+
+      [PCT] public void inside_a_unit_of_work_trying_to_get_the_vocab_as_another_class_its_store_keeps_throws_naming_the_vocab_and_both_classes() =>
+         MessageOfTheInvalidOperationExceptionThrownBy(() => InUnitOfWork(_ => Reader.TryGet(_vocabId, out StoredSentence? _)))
+           .Must().Satisfy(it => NamesTheTaggregateAndBothClasses(it, _vocabId, typeof(StoredVocab), typeof(StoredSentence)));
+
+      [PCT] public void getting_the_vocab_for_update_as_another_class_its_store_keeps_throws_naming_the_vocab_and_both_classes() =>
+         MessageOfTheInvalidOperationExceptionThrownBy(() => InUnitOfWork(taggregates => taggregates.GetForUpdate<StoredSentence>(_vocabId)))
+           .Must().Satisfy(it => NamesTheTaggregateAndBothClasses(it, _vocabId, typeof(StoredVocab), typeof(StoredSentence)));
+
+      [PCT] public void trying_to_get_the_vocab_for_update_as_another_class_its_store_keeps_throws_naming_the_vocab_and_both_classes() =>
+         MessageOfTheInvalidOperationExceptionThrownBy(() => InUnitOfWork(taggregates => taggregates.TryGetForUpdate(_vocabId, out StoredSentence? _)))
+           .Must().Satisfy(it => NamesTheTaggregateAndBothClasses(it, _vocabId, typeof(StoredVocab), typeof(StoredSentence)));
 
       public class and_a_second_unit_of_work_registers_another_user_deletes_the_first_and_asks_for_every_user : after_one_unit_of_work_adds_a_user_and_a_vocab
       {
