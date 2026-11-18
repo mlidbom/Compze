@@ -21,7 +21,7 @@ namespace Compze.Tests.Integration.CQRS.MemoryImageStateStore;
 
 ///<summary>A memory image state store keeping vocabs in JSON files, in a fresh folder of its own, starting from a MemoryPack cache. Each store<br/>
 /// started is a container of its own on the same folder, as each start of an application is.</summary>
-public class Given_a_state_store_kept_in_files_starting_from_a_MemoryPack_cache : UniversalTestBase
+public class Given_a_memory_image_state_store_kept_in_files_starting_from_a_MemoryPack_cache : UniversalTestBase
 {
    static readonly JsonSerializerOptions Options = new() { WriteIndented = true };
    readonly List<IDependencyInjectionContainer> _containers = [];
@@ -86,7 +86,7 @@ public class Given_a_state_store_kept_in_files_starting_from_a_MemoryPack_cache 
       if(_folder.Exists) _folder.Delete(recursive: true);
    }
 
-   public class after_a_store_adds_a_vocab_and_a_second_store_starts_on_the_folder : Given_a_state_store_kept_in_files_starting_from_a_MemoryPack_cache
+   public class after_a_store_adds_a_vocab_and_a_second_store_starts_on_the_folder : Given_a_memory_image_state_store_kept_in_files_starting_from_a_MemoryPack_cache
    {
       public after_a_store_adds_a_vocab_and_a_second_store_starts_on_the_folder()
       {
@@ -162,7 +162,7 @@ public class Given_a_state_store_kept_in_files_starting_from_a_MemoryPack_cache 
       }
    }
 
-   public class composed_to_keep_a_class_whose_snapshot_type_MemoryPack_doesnt_serialize : Given_a_state_store_kept_in_files_starting_from_a_MemoryPack_cache
+   public class composed_to_keep_a_class_whose_snapshot_type_MemoryPack_doesnt_serialize : Given_a_memory_image_state_store_kept_in_files_starting_from_a_MemoryPack_cache
    {
       [PCT] public void fails_naming_the_snapshot_type() =>
          Invoking(() => TestEnv.DIContainer.CreateTestingContainerBuilder()

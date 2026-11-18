@@ -20,13 +20,13 @@ namespace Compze.Tests.Integration.CQRS.MemoryImageStateStore;
 
 ///<summary>A memory image state store keeping vocabs in files on a file system in memory, its vocab class declared with a registration of the container whose<br/>
 /// factory takes two singleton services: the store builds every vocab it restores through the container.</summary>
-public class Given_a_state_store_keeping_vocabs_built_with_two_services_of_the_container : UniversalTestBase
+public class Given_a_memory_image_state_store_keeping_vocabs_built_with_two_services_of_the_container : UniversalTestBase
 {
    static readonly JsonSerializerOptions Options = new() { Converters = { new TaggregateIdAsAGuid() } };
    readonly DirectoryInfo _folder = new(Path.Combine(Path.GetTempPath(), "compze-state-store-with-dependencies", Guid.NewGuid().ToString("N")));
    readonly IDependencyInjectionContainer _container;
 
-   protected Given_a_state_store_keeping_vocabs_built_with_two_services_of_the_container()
+   protected Given_a_memory_image_state_store_keeping_vocabs_built_with_two_services_of_the_container()
    {
       var builder = TestEnv.DIContainer.CreateTestingContainerBuilder();
       builder.Registrar.Register(Singleton.For<VocabDictionary>().CreatedBy(() => new VocabDictionary()),
@@ -51,7 +51,7 @@ public class Given_a_state_store_keeping_vocabs_built_with_two_services_of_the_c
 
    protected override async Task DisposeAsyncInternal() => await _container.DisposeAsync();
 
-   public class when_a_unit_of_work_changes_the_vocab : Given_a_state_store_keeping_vocabs_built_with_two_services_of_the_container
+   public class when_a_unit_of_work_changes_the_vocab : Given_a_memory_image_state_store_keeping_vocabs_built_with_two_services_of_the_container
    {
       readonly StoredVocab _theCopyTheUnitOfWorkChanged;
 
@@ -72,7 +72,7 @@ public class Given_a_state_store_keeping_vocabs_built_with_two_services_of_the_c
       [PCT] public void the_reader_gets_the_change() => Reader.Get<StoredVocab>(VocabId).Meaning.Must().Be("to eat");
    }
 
-   public class when_the_store_reloads_its_files : Given_a_state_store_keeping_vocabs_built_with_two_services_of_the_container
+   public class when_the_store_reloads_its_files : Given_a_memory_image_state_store_keeping_vocabs_built_with_two_services_of_the_container
    {
       public when_the_store_reloads_its_files() => _container.RootResolver.Resolve<IMemoryImageStateStore>().LoadFromStorage();
 

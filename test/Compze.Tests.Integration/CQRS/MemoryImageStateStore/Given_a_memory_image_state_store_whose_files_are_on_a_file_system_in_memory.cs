@@ -20,13 +20,13 @@ namespace Compze.Tests.Integration.CQRS.MemoryImageStateStore;
 
 ///<summary>A memory image state store keeping vocabs and sentences in JSON files on a file system in memory, under a folder that doesn't exist on the disk and<br/>
 /// must never come to: vocabs in "vocab", sentences in "sentences", each in the default layout.</summary>
-public class Given_a_state_store_whose_files_are_on_a_file_system_in_memory : UniversalTestBase
+public class Given_a_memory_image_state_store_whose_files_are_on_a_file_system_in_memory : UniversalTestBase
 {
    static readonly JsonSerializerOptions Options = new() { WriteIndented = true, Converters = { new TaggregateIdAsAGuid() } };
    readonly DirectoryInfo _folder = new(Path.Combine(Path.GetTempPath(), "compze-state-store-files-in-memory", Guid.NewGuid().ToString("N")));
    readonly IDependencyInjectionContainer _store;
 
-   protected Given_a_state_store_whose_files_are_on_a_file_system_in_memory()
+   protected Given_a_memory_image_state_store_whose_files_are_on_a_file_system_in_memory()
    {
       var builder = TestEnv.DIContainer.CreateTestingContainerBuilder();
       builder.Registrar.MemoryImageStateStore(store => store.Taggregate(() => new StoredVocab())
@@ -56,7 +56,7 @@ public class Given_a_state_store_whose_files_are_on_a_file_system_in_memory : Un
 
    protected override async Task DisposeAsyncInternal() => await _store.DisposeAsync();
 
-   public class after_a_unit_of_work_adds_a_vocab : Given_a_state_store_whose_files_are_on_a_file_system_in_memory
+   public class after_a_unit_of_work_adds_a_vocab : Given_a_memory_image_state_store_whose_files_are_on_a_file_system_in_memory
    {
       public after_a_unit_of_work_adds_a_vocab() => InUnitOfWork(taggregates => taggregates.Add(StoredVocab.Create(VocabId, "taberu")));
 
@@ -115,7 +115,7 @@ public class Given_a_state_store_whose_files_are_on_a_file_system_in_memory : Un
       }
    }
 
-   public class whose_files_hold_a_vocab_written_before_the_stores_first_use_which_then_gets_it : Given_a_state_store_whose_files_are_on_a_file_system_in_memory
+   public class whose_files_hold_a_vocab_written_before_the_stores_first_use_which_then_gets_it : Given_a_memory_image_state_store_whose_files_are_on_a_file_system_in_memory
    {
       readonly StoredVocab _gotten;
 

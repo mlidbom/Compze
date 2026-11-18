@@ -22,7 +22,7 @@ namespace Compze.Tests.Integration.CQRS.MemoryImageStateStore;
 ///<summary>A memory image state store kept in JSON files on a file system in memory, whose files hold two vocabs, "taberu" and "nomu", and which has been used once.<br/>
 /// The consumer's JSON options serialize taggregate ids with a <see cref="WatchedTaggregateIdConverter"/>, so a specification sees whose<br/>
 /// snapshots the store serializes, and can have one refused, as a snapshot that can't be serialized.</summary>
-public class Given_a_state_store_whose_files_hold_two_vocabs_written_with_a_watched_serializer : UniversalTestBase
+public class Given_a_memory_image_state_store_whose_files_hold_two_vocabs_written_with_a_watched_serializer : UniversalTestBase
 {
    readonly DirectoryInfo _folder = new(Path.Combine(Path.GetTempPath(), "compze-state-store-files-in-memory", Guid.NewGuid().ToString("N")));
    readonly WatchedTaggregateIdConverter _converter = new();
@@ -31,7 +31,7 @@ public class Given_a_state_store_whose_files_hold_two_vocabs_written_with_a_watc
    TaggregateId TaberuId { get; } = new(Guid.NewGuid());
    TaggregateId NomuId { get; } = new(Guid.NewGuid());
 
-   protected Given_a_state_store_whose_files_hold_two_vocabs_written_with_a_watched_serializer()
+   protected Given_a_memory_image_state_store_whose_files_hold_two_vocabs_written_with_a_watched_serializer()
    {
       _options = new JsonSerializerOptions { WriteIndented = true, Converters = { _converter } };
       var builder = TestEnv.DIContainer.CreateTestingContainerBuilder();
@@ -68,7 +68,7 @@ public class Given_a_state_store_whose_files_hold_two_vocabs_written_with_a_watc
 
    protected override async Task DisposeAsyncInternal() => await _container.DisposeAsync();
 
-   public class when_the_store_reloads_files_that_no_other_program_has_changed : Given_a_state_store_whose_files_hold_two_vocabs_written_with_a_watched_serializer
+   public class when_the_store_reloads_files_that_no_other_program_has_changed : Given_a_memory_image_state_store_whose_files_hold_two_vocabs_written_with_a_watched_serializer
    {
       readonly ChangesFoundInStorage _reloaded;
 
@@ -78,7 +78,7 @@ public class Given_a_state_store_whose_files_hold_two_vocabs_written_with_a_watc
       [PCT] public void the_reload_reports_nothing_changed() => _reloaded.Changed.Must().BeEmpty();
    }
 
-   public class after_a_unit_of_work_changes_a_vocab_and_the_store_reloads : Given_a_state_store_whose_files_hold_two_vocabs_written_with_a_watched_serializer
+   public class after_a_unit_of_work_changes_a_vocab_and_the_store_reloads : Given_a_memory_image_state_store_whose_files_hold_two_vocabs_written_with_a_watched_serializer
    {
       readonly ChangesFoundInStorage _reloaded;
 
@@ -93,7 +93,7 @@ public class Given_a_state_store_whose_files_hold_two_vocabs_written_with_a_watc
       [PCT] public void the_reload_reports_nothing_changed() => _reloaded.Changed.Must().BeEmpty();
    }
 
-   public class after_another_program_changes_one_vocabs_file_and_the_store_reloads : Given_a_state_store_whose_files_hold_two_vocabs_written_with_a_watched_serializer
+   public class after_another_program_changes_one_vocabs_file_and_the_store_reloads : Given_a_memory_image_state_store_whose_files_hold_two_vocabs_written_with_a_watched_serializer
    {
       readonly ChangesFoundInStorage _reloaded;
 
@@ -107,7 +107,7 @@ public class Given_a_state_store_whose_files_hold_two_vocabs_written_with_a_watc
       [PCT] public void the_reload_reports_exactly_that_vocab_changed() => _reloaded.Changed.Must().SequenceEqual([TaberuId]);
    }
 
-   public class when_a_snapshot_cant_be_serialized_as_the_store_writes_every_taggregate_anew : Given_a_state_store_whose_files_hold_two_vocabs_written_with_a_watched_serializer
+   public class when_a_snapshot_cant_be_serialized_as_the_store_writes_every_taggregate_anew : Given_a_memory_image_state_store_whose_files_hold_two_vocabs_written_with_a_watched_serializer
    {
       readonly IReadOnlyList<(string Path, string Text)> _filesBefore;
       readonly Exception _thrown;

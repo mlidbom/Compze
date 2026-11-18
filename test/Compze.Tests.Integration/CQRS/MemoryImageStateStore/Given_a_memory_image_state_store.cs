@@ -27,7 +27,7 @@ using static Compze.Must.MustActions;
 namespace Compze.Tests.Integration.CQRS.MemoryImageStateStore;
 
 ///<summary>A memory image state store keeping vocab and sentences in memory, with a LocalTessagingEngine dispatching what they publish.</summary>
-public class Given_a_state_store : UniversalTestBase
+public class Given_a_memory_image_state_store : UniversalTestBase
 {
    IDependencyInjectionContainer? _container;
    IComponentRegistrar? _registrar;
@@ -75,7 +75,7 @@ public class Given_a_state_store : UniversalTestBase
       if(_container != null) await _container.DisposeAsync();
    }
 
-   public class after_a_unit_of_work_adds_a_new_vocab : Given_a_state_store
+   public class after_a_unit_of_work_adds_a_new_vocab : Given_a_memory_image_state_store
    {
       bool _addHasReturned;
 
@@ -98,7 +98,7 @@ public class Given_a_state_store : UniversalTestBase
       [PCT] public void publishing_on_the_instance_the_reader_gets_throws() => Invoking(() => CommittedVocab(VocabId).ChangeMeaning("to eat")).Must().Throw<Exception>();
    }
 
-   public class after_a_tevent_is_published_on_the_instance_the_reader_gets_of_an_added_vocab : Given_a_state_store
+   public class after_a_tevent_is_published_on_the_instance_the_reader_gets_of_an_added_vocab : Given_a_memory_image_state_store
    {
       readonly Exception _thrown;
 
@@ -113,7 +113,7 @@ public class Given_a_state_store : UniversalTestBase
       [PCT] public void the_vocab_the_reader_gets_keeps_the_meaning_it_had() => CommittedVocab(VocabId).Meaning.Must().Be("");
    }
 
-   public class after_a_unit_of_work_changes_the_meaning_of_an_added_vocab_twice : Given_a_state_store
+   public class after_a_unit_of_work_changes_the_meaning_of_an_added_vocab_twice : Given_a_memory_image_state_store
    {
       bool _bothDomainCallsHaveReturned;
       readonly StoredVocab _instanceCommittedBefore;
@@ -154,7 +154,7 @@ public class Given_a_state_store : UniversalTestBase
       [PCT] public void the_instance_committed_before_still_has_the_meaning_it_had() => _instanceCommittedBefore.Meaning.Must().Be("");
    }
 
-   public class after_a_unit_of_work_gets_a_vocab_for_update_and_changes_nothing : Given_a_state_store
+   public class after_a_unit_of_work_gets_a_vocab_for_update_and_changes_nothing : Given_a_memory_image_state_store
    {
       readonly StoredVocab _instanceCommittedBefore;
 
@@ -169,7 +169,7 @@ public class Given_a_state_store : UniversalTestBase
       [PCT] public void the_reader_gets_the_instance_committed_before() => ReferenceEquals(CommittedVocab(VocabId), _instanceCommittedBefore).Must().BeTrue();
    }
 
-   public class after_a_unit_of_work_that_changed_a_vocab_throws_before_it_completes : Given_a_state_store
+   public class after_a_unit_of_work_that_changed_a_vocab_throws_before_it_completes : Given_a_memory_image_state_store
    {
       public after_a_unit_of_work_that_changed_a_vocab_throws_before_it_completes()
       {
@@ -191,7 +191,7 @@ public class Given_a_state_store : UniversalTestBase
       [PCT] public void no_observer_observed_the_change() => ObservationLog.Must().BeEmpty();
    }
 
-   public class after_a_participation_handler_changes_another_vocab : Given_a_state_store
+   public class after_a_participation_handler_changes_another_vocab : Given_a_memory_image_state_store
    {
       readonly TaggregateId _followingVocabId = new(Guid.NewGuid());
 
@@ -216,7 +216,7 @@ public class Given_a_state_store : UniversalTestBase
       [PCT] public void the_observer_observed_the_cause_before_the_consequence() => ObservationLog.Must().SequenceEqual(["to eat", "follows: to eat"]);
    }
 
-   public class after_a_participation_handler_changes_the_vocab_whose_tevent_it_handles : Given_a_state_store
+   public class after_a_participation_handler_changes_the_vocab_whose_tevent_it_handles : Given_a_memory_image_state_store
    {
       public after_a_participation_handler_changes_the_vocab_whose_tevent_it_handles()
       {
@@ -238,7 +238,7 @@ public class Given_a_state_store : UniversalTestBase
       [PCT] public void the_observer_observed_both_tevents_in_the_order_published() => ObservationLog.Must().SequenceEqual(["  to eat  ", "to eat"]);
    }
 
-   public class after_code_catches_the_exception_of_a_failing_publish_and_completes_the_unit_of_work : Given_a_state_store
+   public class after_code_catches_the_exception_of_a_failing_publish_and_completes_the_unit_of_work : Given_a_memory_image_state_store
    {
       readonly Exception _exception;
 
@@ -264,7 +264,7 @@ public class Given_a_state_store : UniversalTestBase
       [PCT] public void the_reader_gets_the_meaning_committed_before() => CommittedVocab(VocabId).Meaning.Must().Be("");
    }
 
-   public class after_a_participation_handler_throws_when_a_vocab_changes_its_meaning : Given_a_state_store
+   public class after_a_participation_handler_throws_when_a_vocab_changes_its_meaning : Given_a_memory_image_state_store
    {
       readonly Exception _exception;
 
@@ -281,7 +281,7 @@ public class Given_a_state_store : UniversalTestBase
       [PCT] public void the_reader_gets_the_meaning_committed_before() => CommittedVocab(VocabId).Meaning.Must().Be("");
    }
 
-   public class after_two_participation_handlers_cause_each_others_tevents_without_end : Given_a_state_store
+   public class after_two_participation_handlers_cause_each_others_tevents_without_end : Given_a_memory_image_state_store
    {
       readonly TaggregateId _otherVocabId = new(Guid.NewGuid());
       readonly Exception _exception;
@@ -306,7 +306,7 @@ public class Given_a_state_store : UniversalTestBase
       [PCT] public void the_reader_gets_the_meaning_committed_before() => CommittedVocab(VocabId).Meaning.Must().Be("");
    }
 
-   public class after_a_participation_handler_changes_a_new_vocab_while_it_is_added : Given_a_state_store
+   public class after_a_participation_handler_changes_a_new_vocab_while_it_is_added : Given_a_memory_image_state_store
    {
       public after_a_participation_handler_changes_a_new_vocab_while_it_is_added()
       {
@@ -320,7 +320,7 @@ public class Given_a_state_store : UniversalTestBase
       [PCT] public void the_handlers_received_its_tevents_once_each_in_the_order_published() => ParticipationLog.Must().SequenceEqual([nameof(StoredVocabCreated), nameof(StoredVocabMeaningChanged)]);
    }
 
-   public class after_a_unit_of_work_deletes_a_vocab : Given_a_state_store
+   public class after_a_unit_of_work_deletes_a_vocab : Given_a_memory_image_state_store
    {
       readonly bool _theReaderFoundItInsideTheUnitOfWork;
       readonly bool _theReaderFoundItOutsideTheUnitOfWork;
@@ -345,14 +345,14 @@ public class Given_a_state_store : UniversalTestBase
       [PCT] public void the_reader_now_finds_nothing() => Reader.TryGet(VocabId, out StoredVocab? _).Must().BeFalse();
    }
 
-   public class composed_without_JSON_files : Given_a_state_store
+   public class composed_without_JSON_files : Given_a_memory_image_state_store
    {
       public composed_without_JSON_files() => Compose();
 
       [PCT] public void ITaggregateJsonFiles_is_not_registered() => _registrar!.IsRegistered<ITaggregateJsonFiles>().Must().BeFalse();
    }
 
-   public class when_a_unit_of_work_gets_for_update_a_class_no_store_keeps : Given_a_state_store
+   public class when_a_unit_of_work_gets_for_update_a_class_no_store_keeps : Given_a_memory_image_state_store
    {
       readonly Exception _exception;
 
@@ -366,7 +366,7 @@ public class Given_a_state_store : UniversalTestBase
       [PCT] public void the_exception_names_the_classes_the_store_keeps() => _exception.Message.Must().Contain($"the memory image state store: {typeof(StoredVocab).FullName}");
    }
 
-   public class when_the_vocab_class_is_declared_with_a_registration_that_is_a_singleton : Given_a_state_store
+   public class when_the_vocab_class_is_declared_with_a_registration_that_is_a_singleton : Given_a_memory_image_state_store
    {
       readonly Exception _thrown;
 
@@ -377,7 +377,7 @@ public class Given_a_state_store : UniversalTestBase
       [PCT] public void the_exception_says_the_registration_must_be_a_tracked_transient() => _thrown.Message.Must().Contain("the registration must be a TrackedTransient");
    }
 
-   public class when_a_class_that_is_IDisposable_is_declared_with_a_registration : Given_a_state_store
+   public class when_a_class_that_is_IDisposable_is_declared_with_a_registration : Given_a_memory_image_state_store
    {
       readonly Exception _thrown;
 
@@ -404,7 +404,7 @@ public class Given_a_state_store : UniversalTestBase
       }
    }
 
-   public class when_the_vocab_class_is_declared_with_a_registration_whose_factory_takes_a_scoped_service : Given_a_state_store
+   public class when_the_vocab_class_is_declared_with_a_registration_whose_factory_takes_a_scoped_service : Given_a_memory_image_state_store
    {
       readonly Exception _thrown;
 
@@ -422,7 +422,7 @@ public class Given_a_state_store : UniversalTestBase
       static string MessagesOf(Exception exception) => exception.InnerException == null ? exception.Message : $"{exception.Message} {MessagesOf(exception.InnerException)}";
    }
 
-   public class when_two_units_of_work_on_two_threads_change_one_vocab : Given_a_state_store
+   public class when_two_units_of_work_on_two_threads_change_one_vocab : Given_a_memory_image_state_store
    {
       readonly ManualResetEventSlim _theFirstUnitOfWorkHasTheVocab = new();
       readonly string _meaningTheSecondUnitOfWorkGot;
@@ -457,7 +457,7 @@ public class Given_a_state_store : UniversalTestBase
    }
 
    ///<summary>References stand for a taggregate, whatever class they were asked for as: code holds them in sets and dictionaries.</summary>
-   public class when_one_vocab_is_referred_to_as_a_taggregate_and_then_as_a_vocab : Given_a_state_store
+   public class when_one_vocab_is_referred_to_as_a_taggregate_and_then_as_a_vocab : Given_a_memory_image_state_store
    {
       readonly ITaggregateReference<ITaggregate> _asATaggregate;
       readonly ITaggregateReference<StoredVocab> _asAVocab;
@@ -479,7 +479,7 @@ public class Given_a_state_store : UniversalTestBase
 
    ///<summary>A restore adds entities without their tevents, and only a restore: once the store has restored the copy a unit of work<br/>
    /// gets for update, the copy adds an entity only by publishing its created tevent.</summary>
-   public class when_a_unit_of_work_adds_a_card_without_its_tevent_to_a_deck_it_got_for_update : Given_a_state_store
+   public class when_a_unit_of_work_adds_a_card_without_its_tevent_to_a_deck_it_got_for_update : Given_a_memory_image_state_store
    {
       readonly TaggregateId _deckId = new(Guid.NewGuid());
       readonly int _cardsTheCopyHeld;
@@ -512,7 +512,7 @@ public class Given_a_state_store : UniversalTestBase
 
    ///<summary>A unit of work that finds no vocab to get for update holds that id's lock, so no other unit of work adds one before it<br/>
    /// completes. It adds one itself, as a get-or-create does.</summary>
-   public class after_a_unit_of_work_finds_no_vocab_to_get_for_update_and_then_adds_a_new_vocab_with_that_id : Given_a_state_store
+   public class after_a_unit_of_work_finds_no_vocab_to_get_for_update_and_then_adds_a_new_vocab_with_that_id : Given_a_memory_image_state_store
    {
       public after_a_unit_of_work_finds_no_vocab_to_get_for_update_and_then_adds_a_new_vocab_with_that_id()
       {
@@ -527,7 +527,7 @@ public class Given_a_state_store : UniversalTestBase
       [PCT] public void the_reader_gets_the_vocab() => CommittedVocab(VocabId).Question.Must().Be("taberu");
    }
 
-   public class after_a_unit_of_work_tries_twice_to_get_for_update_a_vocab_the_store_does_not_hold : Given_a_state_store
+   public class after_a_unit_of_work_tries_twice_to_get_for_update_a_vocab_the_store_does_not_hold : Given_a_memory_image_state_store
    {
       bool _theSecondTryFoundIt = true;
 
@@ -546,7 +546,7 @@ public class Given_a_state_store : UniversalTestBase
 
    ///<summary>A new taggregate is added with the tevents it published from its creation on. A unit of work that added it and rolled back<br/>
    /// took them, so a retry that adds the same instance again would commit a taggregate whose creation no handler or observer heard of.</summary>
-   public class when_a_new_vocab_is_added_again_after_the_unit_of_work_that_added_it_rolled_back : Given_a_state_store
+   public class when_a_new_vocab_is_added_again_after_the_unit_of_work_that_added_it_rolled_back : Given_a_memory_image_state_store
    {
       readonly Exception _thrownByTheSecondAdd;
 
@@ -568,7 +568,7 @@ public class Given_a_state_store : UniversalTestBase
    }
 
    ///<summary>A store composed with no storage keeps its taggregates in memory only: there is nothing to reload them from.</summary>
-   public class when_a_store_with_no_storage_is_reloaded_from_its_storage : Given_a_state_store
+   public class when_a_store_with_no_storage_is_reloaded_from_its_storage : Given_a_memory_image_state_store
    {
       readonly Exception _thrown;
 
@@ -584,7 +584,7 @@ public class Given_a_state_store : UniversalTestBase
    }
 
    ///<summary>A store composed with no storage keeps its taggregates in memory only: there are no files to write anew.</summary>
-   public class when_a_store_with_no_storage_is_to_write_every_taggregate_anew : Given_a_state_store
+   public class when_a_store_with_no_storage_is_to_write_every_taggregate_anew : Given_a_memory_image_state_store
    {
       readonly Exception _thrown;
 
@@ -601,7 +601,7 @@ public class Given_a_state_store : UniversalTestBase
 
    ///<summary>An index is known by its taggregate class and key type, exactly: one of every taggregate and one of the vocabs, under keys<br/>
    /// of one type, are two indexes, though the vocab index's interface is assignable to the other's.</summary>
-   public class when_the_store_has_an_index_of_every_taggregate_and_an_index_of_the_vocabs_by_keys_of_one_type : Given_a_state_store
+   public class when_the_store_has_an_index_of_every_taggregate_and_an_index_of_the_vocabs_by_keys_of_one_type : Given_a_memory_image_state_store
    {
       public when_the_store_has_an_index_of_every_taggregate_and_an_index_of_the_vocabs_by_keys_of_one_type()
       {
@@ -619,7 +619,7 @@ public class Given_a_state_store : UniversalTestBase
          Container.RootResolver.Resolve<ITaggregateIndex<StoredVocab, string>>().Lookup("taberu").Single().Id.Must().Be(VocabId);
    }
 
-   public class when_the_store_is_declared_with_two_indexes_of_the_vocabs_by_keys_of_one_type : Given_a_state_store
+   public class when_the_store_is_declared_with_two_indexes_of_the_vocabs_by_keys_of_one_type : Given_a_memory_image_state_store
    {
       readonly Exception _thrown;
 
@@ -632,7 +632,7 @@ public class Given_a_state_store : UniversalTestBase
       [PCT] public void composing_fails_saying_that_each_index_needs_a_key_type_of_its_own() => _thrown.Message.Must().Contain("Give each index a key type of its own");
    }
 
-   public class when_measuring : Given_a_state_store
+   public class when_measuring : Given_a_memory_image_state_store
    {
       const int Iterations = 20_000;
 

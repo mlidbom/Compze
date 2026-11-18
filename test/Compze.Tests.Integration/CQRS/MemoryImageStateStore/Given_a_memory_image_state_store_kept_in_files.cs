@@ -23,7 +23,7 @@ namespace Compze.Tests.Integration.CQRS.MemoryImageStateStore;
 ///<summary>A memory image state store keeping vocabs and sentences in JSON files, in a fresh folder of its own: vocabs in "vocab", sentences in<br/>
 /// "sentences", each taggregate's file &lt;first two hex digits of the id&gt;/&lt;id&gt;.json in its class's folder. Each store started is a<br/>
 /// container of its own on the same folder, as each start of an application is.</summary>
-public class Given_a_state_store_kept_in_files : UniversalTestBase
+public class Given_a_memory_image_state_store_kept_in_files : UniversalTestBase
 {
    static readonly JsonSerializerOptions Options = new() { WriteIndented = true, Converters = { new TaggregateIdAsAGuid() } };
    static readonly JsonSerializerOptions OptionsOfAnotherProgram = new() { WriteIndented = false, Converters = { new TaggregateIdAsAGuid() } };
@@ -84,7 +84,7 @@ public class Given_a_state_store_kept_in_files : UniversalTestBase
       if(_folder.Exists) _folder.Delete(recursive: true);
    }
 
-   public class after_a_unit_of_work_adds_a_vocab : Given_a_state_store_kept_in_files
+   public class after_a_unit_of_work_adds_a_vocab : Given_a_memory_image_state_store_kept_in_files
    {
       public after_a_unit_of_work_adds_a_vocab() => AddTheVocab("taberu");
 
@@ -252,7 +252,7 @@ public class Given_a_state_store_kept_in_files : UniversalTestBase
       }
    }
 
-   public class whose_folder_a_service_of_the_container_gives : Given_a_state_store_kept_in_files
+   public class whose_folder_a_service_of_the_container_gives : Given_a_memory_image_state_store_kept_in_files
    {
       protected whose_folder_a_service_of_the_container_gives() => _folderGivenByAService = true;
 
@@ -265,7 +265,7 @@ public class Given_a_state_store_kept_in_files : UniversalTestBase
       }
    }
 
-   public class when_a_crash_left_a_journal_and_the_temporary_file_it_renames : Given_a_state_store_kept_in_files
+   public class when_a_crash_left_a_journal_and_the_temporary_file_it_renames : Given_a_memory_image_state_store_kept_in_files
    {
       public when_a_crash_left_a_journal_and_the_temporary_file_it_renames()
       {
@@ -290,7 +290,7 @@ public class Given_a_state_store_kept_in_files : UniversalTestBase
       }
    }
 
-   public class when_a_crash_left_temporary_files_and_no_journal : Given_a_state_store_kept_in_files
+   public class when_a_crash_left_temporary_files_and_no_journal : Given_a_memory_image_state_store_kept_in_files
    {
       public when_a_crash_left_temporary_files_and_no_journal()
       {
@@ -308,7 +308,7 @@ public class Given_a_state_store_kept_in_files : UniversalTestBase
       }
    }
 
-   public class when_a_vocabs_file_isnt_json : Given_a_state_store_kept_in_files
+   public class when_a_vocabs_file_isnt_json : Given_a_memory_image_state_store_kept_in_files
    {
       public when_a_vocabs_file_isnt_json()
       {
@@ -320,7 +320,7 @@ public class Given_a_state_store_kept_in_files : UniversalTestBase
          Invoking(() => Reader.TryGet(VocabId, out StoredVocab? _)).Must().Throw<InvalidOperationException>().Which.Message.Must().Contain(VocabFileByDefault);
    }
 
-   public class when_two_files_hold_one_vocab : Given_a_state_store_kept_in_files
+   public class when_two_files_hold_one_vocab : Given_a_memory_image_state_store_kept_in_files
    {
       readonly string _otherFile;
 
@@ -336,7 +336,7 @@ public class Given_a_state_store_kept_in_files : UniversalTestBase
          Invoking(() => Reader.TryGet(VocabId, out StoredVocab? _)).Must().Throw<InvalidOperationException>().Which.Message.Must().Satisfy(it => it.Contains(VocabFileByDefault, StringComparison.Ordinal) && it.Contains(_otherFile, StringComparison.Ordinal));
    }
 
-   public class when_composed : Given_a_state_store_kept_in_files
+   public class when_composed : Given_a_memory_image_state_store_kept_in_files
    {
       static void Compose(Action<MemoryImageStateStoreBuilder> declare) => TestEnv.DIContainer.CreateTestingContainerBuilder().Registrar.MemoryImageStateStore(declare);
 

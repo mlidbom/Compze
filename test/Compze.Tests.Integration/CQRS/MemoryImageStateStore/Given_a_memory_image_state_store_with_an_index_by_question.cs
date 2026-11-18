@@ -22,13 +22,13 @@ namespace Compze.Tests.Integration.CQRS.MemoryImageStateStore;
 ///<summary>Taggregate-references, and an index defined by the taggregates' state that reads its own unit of work's changes, in a<br/>
 /// memory image state store holding one vocab, "taberu". References and the index find their unit of work from the ambient transaction alone:<br/>
 /// the units of work here resolve only the updater they change the vocab through.</summary>
-public class Given_a_state_store_with_an_index_by_question : UniversalTestBase
+public class Given_a_memory_image_state_store_with_an_index_by_question : UniversalTestBase
 {
    readonly IDependencyInjectionContainer _container;
    IDependencyInjectionContainer Container => _container;
    TaggregateId VocabId { get; } = new(Guid.NewGuid());
 
-   protected Given_a_state_store_with_an_index_by_question()
+   protected Given_a_memory_image_state_store_with_an_index_by_question()
    {
       var builder = TestEnv.DIContainer.CreateTestingContainerBuilder();
       builder.Registrar.MemoryImageStateStore(store => store.Taggregate(() => new StoredVocab())
@@ -63,7 +63,7 @@ public class Given_a_state_store_with_an_index_by_question : UniversalTestBase
 
    protected override async Task DisposeAsyncInternal() => await _container.DisposeAsync();
 
-   public class after_three_units_of_work_each_add_a_vocab_with_the_same_question : Given_a_state_store_with_an_index_by_question
+   public class after_three_units_of_work_each_add_a_vocab_with_the_same_question : Given_a_memory_image_state_store_with_an_index_by_question
    {
       readonly TaggregateId[] _firstThree = [new(), new(), new()];
       readonly TaggregateId _fourth = new();
@@ -92,7 +92,7 @@ public class Given_a_state_store_with_an_index_by_question : UniversalTestBase
       }
    }
 
-   public class while_a_unit_of_work_renames_the_vocab_and_after_it_commits : Given_a_state_store_with_an_index_by_question
+   public class while_a_unit_of_work_renames_the_vocab_and_after_it_commits : Given_a_memory_image_state_store_with_an_index_by_question
    {
       readonly ITaggregateReference<StoredVocab> _referenceHeldThroughout;
       readonly IReadOnlyList<TaggregateId> _filedUnderTheOldQuestionInside;
@@ -129,7 +129,7 @@ public class Given_a_state_store_with_an_index_by_question : UniversalTestBase
       [PCT] public void after_the_commit_the_reference_held_throughout_gives_the_new_committed_instance() => _referenceHeldThroughout.Current.Question.Must().Be("kuu");
    }
 
-   public class after_a_unit_of_work_that_renamed_the_vocab_throws : Given_a_state_store_with_an_index_by_question
+   public class after_a_unit_of_work_that_renamed_the_vocab_throws : Given_a_memory_image_state_store_with_an_index_by_question
    {
       public after_a_unit_of_work_that_renamed_the_vocab_throws() =>
          Invoking(() => InUnitOfWorkWithItsUpdater(taggregates =>
@@ -144,7 +144,7 @@ public class Given_a_state_store_with_an_index_by_question : UniversalTestBase
       [PCT] public void the_reference_gives_the_old_question() => ReferenceTo(VocabId).Current.Question.Must().Be("taberu");
    }
 
-   public class after_a_unit_of_work_twice_creates_a_vocab_for_a_question_unless_one_is_filed_under_it : Given_a_state_store_with_an_index_by_question
+   public class after_a_unit_of_work_twice_creates_a_vocab_for_a_question_unless_one_is_filed_under_it : Given_a_memory_image_state_store_with_an_index_by_question
    {
       public after_a_unit_of_work_twice_creates_a_vocab_for_a_question_unless_one_is_filed_under_it() =>
          Container.ScopeFactory.ExecuteUnitOfWork(unitOfWork =>
@@ -162,7 +162,7 @@ public class Given_a_state_store_with_an_index_by_question : UniversalTestBase
       [PCT] public void one_vocab_is_filed_under_the_question() => IdsFiledUnder("kuu").Must().HaveCount(1);
    }
 
-   public class after_a_unit_of_work_deletes_the_vocab : Given_a_state_store_with_an_index_by_question
+   public class after_a_unit_of_work_deletes_the_vocab : Given_a_memory_image_state_store_with_an_index_by_question
    {
       readonly IReadOnlyList<TaggregateId> _filedUnderItsQuestionInside;
 
@@ -182,13 +182,13 @@ public class Given_a_state_store_with_an_index_by_question : UniversalTestBase
       [PCT] public void its_reference_throws() => Invoking(() => ReferenceTo(VocabId).Current).Must().Throw<Exception>();
    }
 
-   public class outside_any_unit_of_work : Given_a_state_store_with_an_index_by_question
+   public class outside_any_unit_of_work : Given_a_memory_image_state_store_with_an_index_by_question
    {
       [PCT] public void getting_the_vocab_for_update_through_an_updater_resolved_in_a_scope_throws() =>
          Invoking(() => Container.ExecuteInIsolatedScope(scope => scope.Resolve<ITaggregateStoreUpdater>().GetForUpdate<StoredVocab>(VocabId))).Must().Throw<Exception>();
    }
 
-   public class when_measuring : Given_a_state_store_with_an_index_by_question
+   public class when_measuring : Given_a_memory_image_state_store_with_an_index_by_question
    {
       [PCT] public void what_a_lookup_costs()
       {

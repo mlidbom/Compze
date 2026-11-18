@@ -21,13 +21,13 @@ namespace Compze.Tests.Integration.CQRS.MemoryImageStateStore;
 
 ///<summary>A memory image state store keeping vocabs in JSON files on a file system in memory, starting from a MemoryPack cache that is on it too, under<br/>
 /// a folder that doesn't exist on the disk and must never come to.</summary>
-public class Given_a_state_store_whose_files_are_on_a_file_system_in_memory_starting_from_a_MemoryPack_cache : UniversalTestBase
+public class Given_a_memory_image_state_store_whose_files_are_on_a_file_system_in_memory_starting_from_a_MemoryPack_cache : UniversalTestBase
 {
    static readonly JsonSerializerOptions Options = new() { WriteIndented = true };
    readonly DirectoryInfo _folder = new(Path.Combine(Path.GetTempPath(), "compze-state-store-files-in-memory-cached", Guid.NewGuid().ToString("N")));
    readonly IDependencyInjectionContainer _store;
 
-   protected Given_a_state_store_whose_files_are_on_a_file_system_in_memory_starting_from_a_MemoryPack_cache()
+   protected Given_a_memory_image_state_store_whose_files_are_on_a_file_system_in_memory_starting_from_a_MemoryPack_cache()
    {
       var builder = TestEnv.DIContainer.CreateTestingContainerBuilder();
       builder.Registrar.MemoryImageStateStore(store => store.Taggregate(() => new CachedVocab())
@@ -52,7 +52,7 @@ public class Given_a_state_store_whose_files_are_on_a_file_system_in_memory_star
 
    protected override async Task DisposeAsyncInternal() => await _store.DisposeAsync();
 
-   public class after_a_unit_of_work_adds_a_vocab_and_the_store_reloads_reading_its_file : Given_a_state_store_whose_files_are_on_a_file_system_in_memory_starting_from_a_MemoryPack_cache
+   public class after_a_unit_of_work_adds_a_vocab_and_the_store_reloads_reading_its_file : Given_a_memory_image_state_store_whose_files_are_on_a_file_system_in_memory_starting_from_a_MemoryPack_cache
    {
       public after_a_unit_of_work_adds_a_vocab_and_the_store_reloads_reading_its_file()
       {

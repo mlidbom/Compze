@@ -20,13 +20,13 @@ namespace Compze.Tests.Integration.CQRS.MemoryImageStateStore;
 
 ///<summary>A memory image state store holding one vocab, "taberu", with an index whose key function breaks its contract: the keys it gives start<br/>
 /// with a prefix that isn't the vocab's state, and that the specifications change between units of work.</summary>
-public class Given_a_state_store_whose_index_key_function_reads_more_than_the_vocabs_state : UniversalTestBase
+public class Given_a_memory_image_state_store_whose_index_key_function_reads_more_than_the_vocabs_state : UniversalTestBase
 {
    readonly IDependencyInjectionContainer _container;
    readonly TaggregateId _vocabId = new(Guid.NewGuid());
    string _prefixOutsideTheVocab = "first:";
 
-   protected Given_a_state_store_whose_index_key_function_reads_more_than_the_vocabs_state()
+   protected Given_a_memory_image_state_store_whose_index_key_function_reads_more_than_the_vocabs_state()
    {
       var builder = TestEnv.DIContainer.CreateTestingContainerBuilder();
       builder.Registrar.MemoryImageStateStore(store => store.Taggregate(() => new StoredVocab())
@@ -45,7 +45,7 @@ public class Given_a_state_store_whose_index_key_function_reads_more_than_the_vo
 
    protected override async Task DisposeAsyncInternal() => await _container.DisposeAsync();
 
-   public class when_the_prefix_changes_and_a_unit_of_work_then_changes_the_vocab : Given_a_state_store_whose_index_key_function_reads_more_than_the_vocabs_state
+   public class when_the_prefix_changes_and_a_unit_of_work_then_changes_the_vocab : Given_a_memory_image_state_store_whose_index_key_function_reads_more_than_the_vocabs_state
    {
       readonly Exception _exception;
 
