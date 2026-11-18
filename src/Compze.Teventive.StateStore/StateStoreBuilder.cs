@@ -59,7 +59,7 @@ public sealed class StateStoreBuilder
    StateStoreBuilder DeclareRegistered<TTaggregate, TSnapshot>(ComponentRegistration<TTaggregate> registration)
       where TTaggregate : class, ITaggregate, ISnapshotable<TTaggregate, TSnapshot>
    {
-      var declared = Declare<TTaggregate, TSnapshot>(resolver => SnapshotableTaggregateClass.For<TTaggregate, TSnapshot>(() => resolver.Resolve<TTaggregate>()));
+      var declared = Declare<TTaggregate, TSnapshot>(resolver => SnapshotableTaggregateClass.For(() => resolver.Resolve<TTaggregate>()));
       _registrar.Register(registration);
       return declared;
    }
