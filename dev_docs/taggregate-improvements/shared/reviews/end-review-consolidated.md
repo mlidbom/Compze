@@ -66,22 +66,33 @@ read-only wrapper per key costs an object per key held, which the spike measured
   longer delivered to other processes unless their hierarchy says so; a tevent store keeps only its declared classes;
   transactions must be begun by `ExecuteUnitOfWork`; a failed publish rolls the unit of work back even when caught.
 - **Stale after Q11:** nearly every design document in `shared/` uses names the naming pass changed; the documentation pass
-  after the questions updates them all.
+  after the questions updates them all. **Done:** the living documents, the README, `the-design.md` and
+  `the-taggregate-store.md`, speak the new names (9a66d94cb); each record that uses the old ones has a note under its
+  title (b0232184d).
 - **Stale after Q2:** documents naming the store by its old names, `StateStore` and `Compze.Teventive.StateStore.*`,
   such as `the-taggregate-store.md` (about lines 1007, 1073 and 1103, the last with the MemoryPack package's old version
-  0.1.0-alpha.1; both packages went to the pending-release feed as 0.1.0-alpha).
+  0.1.0-alpha.1; both packages went to the pending-release feed as 0.1.0-alpha). **Done:** the memory image state store
+  and its packages in the living documents, the old names kept beside them where a passage says what a step built
+  (9a66d94cb); a note on the records (b0232184d).
 - **Stale after Q10:** in `shared/`, the README, `bugs-and-findings.md`, `snapshots-of-every-taggregate-shape.md`,
   `step-5-the-rest-of-the-teventives.md`, `the-design.md`, `the-files-of-a-state-store.md`, `the-taggregate-store.md`
   and `what-was-measured.md`; in `opus/`, the README, `1-loading-a-taggregate-from-a-snapshot.md`,
   `3-told-once-per-publish-cascade.md` and `6-routing-by-convention-compared.md`; and
-  `fable/a-taggregate-without-a-tevent-store.md`.
+  `fable/a-taggregate-without-a-tevent-store.md`. **Done:** the README, `the-design.md` and `the-taggregate-store.md`
+  updated (9a66d94cb); the others are records, and have a note (b0232184d).
 - **Stale after Q9:** the README, `step-5-the-rest-of-the-teventives.md`, `the-design.md` and
-  `opus/5-prototype-of-per-class-routing.md` still show the explicit `ITeventRouted`.
+  `opus/5-prototype-of-per-class-routing.md` still show the explicit `ITeventRouted`. **Done:** the README and
+  `the-design.md` show the protected `TeventAppliers` (9a66d94cb); the step plan and the prototype's report have a note
+  (b0232184d).
 - **Stale after Q5:** the README, `the-taggregate-store.md` and `taggregates-with-dependencies.md` still show `fileOf`,
-  `snapshotsAreEqual` or the overload that took it.
+  `snapshotsAreEqual` or the overload that took it. **Done:** the README and `the-taggregate-store.md` say they're gone
+  (9a66d94cb); `taggregates-with-dependencies.md`, Q3's specification, has a note (b0232184d).
 - **Stale design documents:** the README's "The answer" and `bugs-and-findings.md` still describe dispatch at the commit;
   `the-taggregate-store.md` says the store keeps one reference per taggregate, and that `HasAny` avoids resolving a
-  reference.
+  reference. **Done:** the README's answer (9a66d94cb) and `bugs-and-findings.md` (b0232184d) describe dispatch as each
+  publish cascade ends; `the-taggregate-store.md` says the store keeps one reference per taggregate, made at the first
+  request, with an equal new one for a request as a class it can't be cast to (D2), and that `HasAny` is gone
+  (9a66d94cb).
 
 **Code left by the builds, to clean up with the documentation:** the specifications that build taggregate tevents without a
 taggregate (the tevent store's, the migrations', the serializer's performance) set their identity through
