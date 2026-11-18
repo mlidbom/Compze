@@ -62,7 +62,7 @@ public partial class Given_a_container_composing_a_LocalTessagingEngine
 
       public with_an_observer_of_each_unit_of_works_numbered_tevents_created_at_runtime()
       {
-         ComposeContainerWithEngine(engine => engine.ObserveTevents(observe => observe.AtRuntime<IMyNumberedTevent>()));
+         ComposeContainerWithEngine(_ => {});
          TeventObservation.ObserveTevents(observe => observe.ForEachUnitOfWork((IReadOnlyList<IMyNumberedTevent> tevents) =>
                                                                                   _observedLists.Enqueue([..tevents.Select(it => it.SequenceNumber)])));
          PublishInAUnitOfWork(new MyNumberedTevent(1), new MyNumberedTevent(2));

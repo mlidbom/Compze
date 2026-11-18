@@ -17,9 +17,10 @@ namespace Compze.Tessaging.Engine;
 /// so an application's handler registrations run unchanged under any composition.</remarks>
 public sealed class LocalTessagingEngineBuilder
 {
-   internal TessageHandlerRegistrations HandlerRegistrations { get; } = new();
+   internal TessageHandlerRegistrations HandlerRegistrations { get; }
 
-   internal LocalTessagingEngineBuilder() {}
+   ///<summary>The builder of a plain container's engine, or, if <paramref name="isTheEngineOfAnEndpoint"/>, of an endpoint's.</summary>
+   internal LocalTessagingEngineBuilder(bool isTheEngineOfAnEndpoint = false) => HandlerRegistrations = new TessageHandlerRegistrations(isTheEngineOfAnEndpoint);
 
    ///<summary>Declares handlers for the TessageBus kinds — tevents and tommands whose type declares no result — through the<br/>
    /// <see cref="TessageBusHandlerRegistrar"/>; the tessage's own type carries its guarantee, locality, and synchrony.</summary>
@@ -45,7 +46,7 @@ public sealed class LocalTessagingEngineBuilder
    /// transaction-ignoring watch surface, under its own verb so the distinct semantics are visible at the declaration site.</summary>
    public LocalTessagingEngineBuilder ObserveTevents(Action<TeventObservationRegistrar> observe)
    {
-      var registrar = new TeventObservationRegistrar(HandlerRegistrations.AddTeventObserver, HandlerRegistrations.DeclareObservableAtRuntime);
+      var registrar = new TeventObservationRegistrar(HandlerRegistrations.AddTeventObserver);
       observe(registrar);
       registrar.EndCallback();
       return this;

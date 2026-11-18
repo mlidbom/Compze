@@ -11,6 +11,7 @@ using Compze.Tests.Infrastructure.XUnit;
 using Compze.Tests.Integration.InProcess;
 using Compze.Threading;
 using Compze.Threading.Testing;
+using static Compze.Must.MustActions;
 
 // ReSharper disable InconsistentNaming for testing
 #pragma warning disable IDE1006 //Reviewed OK: Test Naming Styles
@@ -18,7 +19,8 @@ using Compze.Threading.Testing;
 namespace Compze.Tests.Integration.Tessaging;
 
 ///<summary><see cref="ITeventObservation"/> in an endpoint's composition: resolved from the endpoint's container, it creates<br/>
-/// observers at runtime as it does in a plain container's.</summary>
+/// observers at runtime as it does in a plain container's, of the tevent types the endpoint declared with<br/>
+/// <see cref="EndpointBuilder.ObserveFromOtherEndpoints{TTevent}"/>, and refuses an observer of any other type.</summary>
 public class Given_an_exactly_once_endpoint_with_an_observer_created_at_runtime : UniversalTestBase
 {
 #pragma warning disable CA2213 // Disposed in DisposeAsyncInternal through the base lifecycle, which the analyzer cannot see
@@ -32,7 +34,7 @@ public class Given_an_exactly_once_endpoint_with_an_observer_created_at_runtime 
    public Given_an_exactly_once_endpoint_with_an_observer_created_at_runtime()
    {
       _host = TestingEndpointHost.Create();
-      _endpoint = _host.RegisterEndpoint(new EndpointDeclaringGreetingsObservableAtRuntime());
+      _endpoint = _host.RegisterEndpoint(new EndpointObservingGreetingsFromOtherEndpoints());
    }
 
    protected override async Task InitializeAsyncInternal()
@@ -51,13 +53,30 @@ public class Given_an_exactly_once_endpoint_with_an_observer_created_at_runtime 
 
    [PCT] public void the_observer_observes_a_tevent_committed_in_the_endpoint() => _observedTevents.Single().Must().ReferenceEqual(_publishedTevent);
 
-   class EndpointDeclaringGreetingsObservableAtRuntime : ExactlyOnceEndpointDeclaration<EndpointDeclaringGreetingsObservableAtRuntime>, IEndpointIdentity
+   [PCT] public void creating_an_observer_at_runtime_of_a_tevent_type_the_endpoint_did_not_declare_throws_naming_the_type() =>
+      Invoking(() => ObserveAtRuntime(observe => observe.ForTevent((IMyNumberedTevent _) => {})))
+         .Must().Throw<Exception>()
+         .Which.Message.Must().Contain(nameof(IMyNumberedTevent));
+
+   [PCT] public void creating_an_observer_at_runtime_of_a_tevent_type_the_endpoint_did_not_declare_throws_saying_how_to_declare_it_with_ObserveFromOtherEndpoints() =>
+      Invoking(() => ObserveAtRuntime(observe => observe.ForTevent((IMyNumberedTevent _) => {})))
+         .Must().Throw<Exception>()
+         .Which.Message.Must().Contain($"endpoint.{nameof(EndpointBuilder.ObserveFromOtherEndpoints)}<{nameof(IMyNumberedTevent)}>()");
+
+   [PCT] public void creating_an_observer_of_each_unit_of_work_at_runtime_of_a_tevent_type_the_endpoint_did_not_declare_throws_naming_the_type() =>
+      Invoking(() => ObserveAtRuntime(observe => observe.ForEachUnitOfWork((IReadOnlyList<IMyNumberedTevent> _) => {})))
+         .Must().Throw<Exception>()
+         .Which.Message.Must().Contain(nameof(IMyNumberedTevent));
+
+   IDisposable ObserveAtRuntime(Action<TeventObservationRegistrar> observe) => _endpoint.ServiceLocator.Resolve<ITeventObservation>().ObserveTevents(observe);
+
+   class EndpointObservingGreetingsFromOtherEndpoints : ExactlyOnceEndpointDeclaration<EndpointObservingGreetingsFromOtherEndpoints>, IEndpointIdentity
    {
       public static string Name => "RuntimeObserving";
       public static EndpointId Id => new(Guid.Parse("7C3E91B4-5A28-4F6D-9E17-2B84D0C6A953"));
 
       protected override void RegisterComponents(IComponentRegistrar registrar) => registrar.RequireIntegrationTestTypeMappings();
 
-      protected override void ObserveTevents(ITeventObservationRegistrar observe) => observe.AtRuntime<IMyGreetingRequestedTevent>();
+      protected override void Declare(ExactlyOnceEndpointBuilder endpoint) => endpoint.ObserveFromOtherEndpoints<IMyGreetingRequestedTevent>();
    }
 }

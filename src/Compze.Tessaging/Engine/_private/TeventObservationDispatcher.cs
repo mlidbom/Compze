@@ -36,7 +36,8 @@ sealed partial class TeventObservationDispatcher : IDisposable, IAsyncDisposable
    static readonly WaitTimeout DrainAtDisposalTimeout = WaitTimeout.Seconds(30);
 
    readonly IReadOnlyList<ObserverDispatchQueue> _declaredObserverQueues;
-   readonly IReadOnlyList<Type> _teventTypesObservableAtRuntime;
+   readonly bool _isTheEngineOfAnEndpoint;
+   readonly IReadOnlyList<Type> _teventTypesObservedFromOtherEndpoints;
    readonly IScopeFactory _scopeFactory;
    readonly IBackgroundExceptionReporter _backgroundExceptionReporter;
    readonly ITessagesInFlightTracker _tessagesInFlightTracker;
@@ -53,7 +54,8 @@ sealed partial class TeventObservationDispatcher : IDisposable, IAsyncDisposable
       _tessagesInFlightTracker = tessagesInFlightTracker;
       _taskRunner = taskRunner;
       _declaredObserverQueues = [..roster.TeventObserverRegistrations.Select(NewQueueFor)];
-      _teventTypesObservableAtRuntime = roster.TeventTypesObservableAtRuntime;
+      _isTheEngineOfAnEndpoint = roster.IsTheEngineOfAnEndpoint;
+      _teventTypesObservedFromOtherEndpoints = roster.TeventTypesObservedFromOtherEndpoints;
    }
 
    ///<summary>Collects <paramref name="wrappedTevent"/>, published in <paramref name="unitOfWork"/>, for its observers: the unit of<br/>
@@ -106,21 +108,22 @@ sealed partial class TeventObservationDispatcher : IDisposable, IAsyncDisposable
    {
       State.Assert(!_hasStopped, () => $"The LocalTessagingEngine has stopped ({nameof(ILocalTessagingEngine)}.{nameof(ILocalTessagingEngine.StopAsync)}), so it publishes no more tevents: an observer created now would observe nothing. Create observers before stopping the engine.");
       List<TeventObserverRegistration> observers = [];
-      var registrar = new TeventObservationRegistrar(observers.Add, declareObservableAtRuntime: null);
+      var registrar = new TeventObservationRegistrar(observers.Add);
       observe(registrar);
       registrar.EndCallback();
-      observers.ForEach(AssertDeclaredObservableAtRuntime);
+      if(_isTheEngineOfAnEndpoint) observers.ForEach(AssertDeclaredObservedFromOtherEndpoints);
 
       IReadOnlyList<ObserverDispatchQueue> queues = [..observers.Select(NewQueueFor)];
       _runtimeObserversMonitor.Locked(() => _runtimeObserverQueues = [.._runtimeObserverQueues, ..queues]);
       return new RuntimeObservation(this, queues);
    }
 
-   ///<summary>Asserts that <paramref name="observer"/>, created at runtime, observes only tevents declared observable at runtime with<br/>
-   /// <see cref="TeventObservationRegistrar.AtRuntime{TTevent}"/>: in an endpoint, only those are sent to it by its peers.</summary>
-   void AssertDeclaredObservableAtRuntime(TeventObserverRegistration observer) =>
-      State.Assert(_teventTypesObservableAtRuntime.Any(observer.ObservesOnlyTeventsCompatibleWith),
-                   () => $"{observer.SubscribedTeventType.FullName} isn't declared observable at runtime, so an observer of it created at runtime could miss the tevents that arrive from other endpoints. Declare it, or a tevent type it is compatible with, where the engine is composed: ObserveTevents(observe => observe.{nameof(TeventObservationRegistrar.AtRuntime)}<{observer.SubscribedTeventType.Name}>()).");
+   ///<summary>Asserts that <paramref name="observer"/>, created at runtime in an endpoint, observes only tevents the endpoint declared<br/>
+   /// with <see cref="Endpoints.EndpointBuilder.ObserveFromOtherEndpoints{TTevent}"/>: of what no handler or declared observer<br/>
+   /// subscribes to, its peers send it only those. A plain container has no other endpoints, and asserts nothing.</summary>
+   void AssertDeclaredObservedFromOtherEndpoints(TeventObserverRegistration observer) =>
+      State.Assert(_teventTypesObservedFromOtherEndpoints.Any(observer.ObservesOnlyTeventsCompatibleWith),
+                   () => $"{observer.SubscribedTeventType.FullName} isn't declared to be observed from other endpoints, so an observer of it created at runtime in this endpoint would observe the tevents published in its own process and none of those other endpoints publish: an endpoint asks its peers, when it starts, only for the tevent types it declares. Declare it, or a tevent type it is compatible with, where the endpoint is composed: endpoint.{nameof(Endpoints.EndpointBuilder.ObserveFromOtherEndpoints)}<{observer.SubscribedTeventType.Name}>().");
 
    ///<summary>Ends the runtime observers of <paramref name="queues"/>: no tevent is queued for them any more, and what was queued and<br/>
    /// not yet taken is dropped. Doesn't wait for a call already running.</summary>

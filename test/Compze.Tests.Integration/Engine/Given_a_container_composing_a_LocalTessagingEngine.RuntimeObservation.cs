@@ -16,7 +16,8 @@ using static Compze.Must.MustActions;
 namespace Compze.Tests.Integration.Engine;
 
 ///<summary>Observers created at runtime through <see cref="ITeventObservation"/>: they observe as declared observers do, from<br/>
-/// their creation until they are disposed.</summary>
+/// their creation until they are disposed. A plain container has no other endpoints, so nothing is declared for them: they may<br/>
+/// observe any tevent type.</summary>
 public partial class Given_a_container_composing_a_LocalTessagingEngine
 {
    ITeventObservation TeventObservation => Container.RootResolver.Resolve<ITeventObservation>();
@@ -37,7 +38,7 @@ public partial class Given_a_container_composing_a_LocalTessagingEngine
 
       protected with_an_observer_of_numbered_tevents_created_at_runtime()
       {
-         ComposeContainerWithEngine(engine => engine.ObserveTevents(observe => observe.AtRuntime<IMyNumberedTevent>()));
+         ComposeContainerWithEngine(_ => {});
          Observation = TeventObservation.ObserveTevents(observe => observe.ForTevent((IMyNumberedTevent tevent) => ObservedSequenceNumbers.Enqueue(tevent.SequenceNumber)));
       }
 
@@ -83,7 +84,7 @@ public partial class Given_a_container_composing_a_LocalTessagingEngine
 
       public with_an_async_observer_created_at_runtime_that_awaits_before_recording_each_tevent()
       {
-         ComposeContainerWithEngine(engine => engine.ObserveTevents(observe => observe.AtRuntime<IMyNumberedTevent>()));
+         ComposeContainerWithEngine(_ => {});
          TeventObservation.ObserveTevents(observe => observe.ForTevent(async (IMyNumberedTevent tevent) =>
          {
             await Task.Delay(TimeSpan.FromMilliseconds(50));
@@ -110,7 +111,7 @@ public partial class Given_a_container_composing_a_LocalTessagingEngine
 
       public with_an_observer_created_at_runtime_that_disposes_its_own_observation_when_it_observes_a_tevent()
       {
-         ComposeContainerWithEngine(engine => engine.ObserveTevents(observe => observe.AtRuntime<IMyNumberedTevent>()));
+         ComposeContainerWithEngine(_ => {});
          _observation = TeventObservation.ObserveTevents(observe => observe.ForTevent((IMyNumberedTevent tevent) =>
          {
             _observedSequenceNumbers.Enqueue(tevent.SequenceNumber);
@@ -139,7 +140,7 @@ public partial class Given_a_container_composing_a_LocalTessagingEngine
 
       public with_observers_of_a_tevents_base_interface_and_of_an_unrelated_interface_created_at_runtime()
       {
-         ComposeContainerWithEngine(engine => engine.ObserveTevents(observe => observe.AtRuntime<IMyGreetingRequestedTevent>().AtRuntime<IMyUnrelatedTevent>()));
+         ComposeContainerWithEngine(_ => {});
          TeventObservation.ObserveTevents(observe => observe
                                             .ForTevent((IMyGreetingRequestedTevent tevent) => _observedByTheObserverOfTheBaseInterface.Enqueue(tevent))
                                             .ForTevent((IMyUnrelatedTevent tevent) => _observedByTheObserverOfTheUnrelatedInterface.Enqueue(tevent)));
@@ -158,7 +159,7 @@ public partial class Given_a_container_composing_a_LocalTessagingEngine
 
       public with_an_observer_created_at_runtime_that_throws_when_it_observes_tevent_1()
       {
-         ComposeContainerWithEngine(engine => engine.ObserveTevents(observe => observe.AtRuntime<IMyNumberedTevent>()));
+         ComposeContainerWithEngine(_ => {});
          TeventObservation.ObserveTevents(observe => observe.ForTevent((IMyNumberedTevent tevent) =>
          {
             if(tevent.SequenceNumber == 1) throw new Exception("thrown by the observer created at runtime");
@@ -173,46 +174,25 @@ public partial class Given_a_container_composing_a_LocalTessagingEngine
       [PCT] public void it_still_observes_tevent_2() => _observedSequenceNumbers.Must().SequenceEqual([2]);
    }
 
-   public class with_greeting_tevents_declared_observable_at_runtime : Given_a_container_composing_a_LocalTessagingEngine
+   public class with_an_observer_of_each_unit_of_works_tevents_and_one_of_each_tevent_created_at_runtime_and_nothing_declared_for_them : Given_a_container_composing_a_LocalTessagingEngine
    {
-      public with_greeting_tevents_declared_observable_at_runtime() =>
-         ComposeContainerWithEngine(engine => engine.ObserveTevents(observe => observe.AtRuntime<IMyGreetingRequestedTevent>()));
+      readonly ConcurrentQueue<IMySpecialGreetingRequestedTevent> _observedTevents = [];
+      readonly ConcurrentQueue<IReadOnlyList<IMyGreetingRequestedTevent>> _observedLists = [];
+      readonly MySpecialGreetingRequestedTevent _publishedTevent = new();
 
-      [PCT] public void creating_an_observer_of_an_undeclared_tevent_type_at_runtime_throws_naming_the_type() =>
-         Invoking(() => TeventObservation.ObserveTevents(observe => observe.ForTevent((IMyNumberedTevent _) => {})))
-            .Must().Throw<Exception>()
-            .Which.Message.Must().Contain(nameof(IMyNumberedTevent));
-
-      [PCT] public void creating_an_observer_of_an_undeclared_tevent_type_at_runtime_throws_saying_how_to_declare_it_with_AtRuntime() =>
-         Invoking(() => TeventObservation.ObserveTevents(observe => observe.ForTevent((IMyNumberedTevent _) => {})))
-            .Must().Throw<Exception>()
-            .Which.Message.Must().Contain($"observe.{nameof(TeventObservationRegistrar.AtRuntime)}<{nameof(IMyNumberedTevent)}>()");
-
-      [PCT] public void creating_an_observer_of_each_unit_of_work_of_an_undeclared_tevent_type_at_runtime_throws_naming_the_type() =>
-         Invoking(() => TeventObservation.ObserveTevents(observe => observe.ForEachUnitOfWork((IReadOnlyList<IMyNumberedTevent> _) => {})))
-            .Must().Throw<Exception>()
-            .Which.Message.Must().Contain(nameof(IMyNumberedTevent));
-
-      [PCT] public void declaring_a_tevent_type_observable_at_runtime_inside_an_observation_created_at_runtime_throws() =>
-         Invoking(() => TeventObservation.ObserveTevents(observe => observe.AtRuntime<IMyGreetingRequestedTevent>()))
-            .Must().Throw<Exception>()
-            .Which.Message.Must().Contain("means nothing in an observation created at runtime");
-
-      public class with_an_observer_of_a_subtype_of_the_declared_type_created_at_runtime : with_greeting_tevents_declared_observable_at_runtime
+      public with_an_observer_of_each_unit_of_works_tevents_and_one_of_each_tevent_created_at_runtime_and_nothing_declared_for_them()
       {
-         readonly ConcurrentQueue<IMySpecialGreetingRequestedTevent> _observedTevents = [];
-         readonly MySpecialGreetingRequestedTevent _publishedTevent = new();
-
-         public with_an_observer_of_a_subtype_of_the_declared_type_created_at_runtime()
-         {
-            TeventObservation.ObserveTevents(observe => observe.ForTevent((IMySpecialGreetingRequestedTevent tevent) => _observedTevents.Enqueue(tevent)));
-            PublishInAUnitOfWork(_publishedTevent);
-         }
-
-         protected override async Task InitializeAsyncInternal() => await Engine.AwaitNoTessagesInFlightAsync();
-
-         [PCT] public void it_observes_the_published_tevent() => _observedTevents.Single().Must().ReferenceEqual(_publishedTevent);
+         ComposeContainerWithEngine(_ => {});
+         TeventObservation.ObserveTevents(observe => observe
+                                            .ForTevent((IMySpecialGreetingRequestedTevent tevent) => _observedTevents.Enqueue(tevent))
+                                            .ForEachUnitOfWork((IReadOnlyList<IMyGreetingRequestedTevent> tevents) => _observedLists.Enqueue(tevents)));
+         PublishInAUnitOfWork(_publishedTevent);
       }
+
+      protected override async Task InitializeAsyncInternal() => await Engine.AwaitNoTessagesInFlightAsync();
+
+      [PCT] public void the_observer_of_each_tevent_observes_the_published_tevent() => _observedTevents.Single().Must().ReferenceEqual(_publishedTevent);
+      [PCT] public void the_observer_of_each_unit_of_works_tevents_observes_it_in_a_list_of_its_own() => _observedLists.Single().Single().Must().ReferenceEqual(_publishedTevent);
    }
 
    public class after_stopping_the_engine : Given_a_container_composing_a_LocalTessagingEngine

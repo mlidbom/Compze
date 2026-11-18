@@ -17,10 +17,11 @@ using Compze.Threading.Testing;
 
 namespace Compze.Tests.Integration.Tessaging;
 
-///<summary>What may be observed at runtime is declared at composition, with <see cref="TeventObservationRegistrar.AtRuntime{TTevent}"/>:<br/>
-/// the observing endpoint declares nothing else, and its peer routes the declared tevents to it from the start. So a runtime<br/>
-/// observer created right before a publish on the other endpoint observes it, with no round trip between.</summary>
-public class Given_an_endpoint_declaring_best_effort_tevents_observable_at_runtime_and_an_endpoint_publishing_them : UniversalTestBase
+///<summary>What an endpoint's runtime observers observe from other endpoints is declared where it is composed, with<br/>
+/// <see cref="EndpointBuilder.ObserveFromOtherEndpoints{TTevent}"/>: the observing endpoint declares nothing else, and its peer<br/>
+/// routes the declared tevents to it from the start. So a runtime observer created right before a publish on the other<br/>
+/// endpoint observes it, with no round trip between.</summary>
+public class Given_an_endpoint_observing_best_effort_tevents_from_other_endpoints_and_an_endpoint_publishing_them : UniversalTestBase
 {
 #pragma warning disable CA2213 // Disposed in DisposeAsyncInternal through the base lifecycle, which the analyzer cannot see
    readonly TestingEndpointHost _host;
@@ -28,7 +29,7 @@ public class Given_an_endpoint_declaring_best_effort_tevents_observable_at_runti
    readonly ExactlyOnceEndpoint _publishingEndpoint;
    readonly ExactlyOnceEndpoint _observingEndpoint;
 
-   protected Given_an_endpoint_declaring_best_effort_tevents_observable_at_runtime_and_an_endpoint_publishing_them()
+   protected Given_an_endpoint_observing_best_effort_tevents_from_other_endpoints_and_an_endpoint_publishing_them()
    {
       _host = TestingEndpointHost.Create();
       _publishingEndpoint = _host.RegisterEndpoint(new PublishingEndpointDeclaration());
@@ -56,7 +57,7 @@ public class Given_an_endpoint_declaring_best_effort_tevents_observable_at_runti
       _publishingEndpoint.ServiceLocator.Resolve<IScopeFactory>().ExecuteUnitOfWork(unitOfWork =>
          unitOfWork.Resolve<IUnitOfWorkTeventPublisher>().Publish(new MyBestEffortTevent { SequenceNumber = sequenceNumber }));
 
-   public class with_a_runtime_observer_created_right_before_tevent_1_is_published : Given_an_endpoint_declaring_best_effort_tevents_observable_at_runtime_and_an_endpoint_publishing_them
+   public class with_a_runtime_observer_created_right_before_tevent_1_is_published : Given_an_endpoint_observing_best_effort_tevents_from_other_endpoints_and_an_endpoint_publishing_them
    {
       ConcurrentQueue<int> ObservedSequenceNumbers { get; } = [];
       protected IThreadGate ObserverGate { get; } = IThreadGate.NewOpen(WaitTimeout.Seconds(10), nameof(ObserverGate));
@@ -105,11 +106,11 @@ public class Given_an_endpoint_declaring_best_effort_tevents_observable_at_runti
 
    class ObservingEndpointDeclaration : ExactlyOnceEndpointDeclaration<ObservingEndpointDeclaration>, IEndpointIdentity
    {
-      public static string Name => "ObservingAtRuntime";
+      public static string Name => "ObservingFromOtherEndpoints";
       public static EndpointId Id => new(Guid.Parse("D61F2A84-3B7E-4C95-8E0A-41B6C27F935D"));
 
       protected override void RegisterComponents(IComponentRegistrar registrar) => registrar.RequireIntegrationTestTypeMappings();
 
-      protected override void ObserveTevents(ITeventObservationRegistrar observe) => observe.AtRuntime<IMyBestEffortTevent>();
+      protected override void Declare(ExactlyOnceEndpointBuilder endpoint) => endpoint.ObserveFromOtherEndpoints<IMyBestEffortTevent>();
    }
 }

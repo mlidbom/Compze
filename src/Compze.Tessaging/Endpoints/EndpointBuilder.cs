@@ -20,6 +20,8 @@ using Compze.Tessaging.TessageBus._private;
 using Compze.Tessaging.Peers._private;
 using Compze.Tessaging.Typermedia._private;
 using Compze.Tessaging._private.Transport;
+using Compze.Tessaging.TessageTypes;
+using Compze.Tessaging.Validation._internal;
 
 namespace Compze.Tessaging.Endpoints;
 
@@ -50,7 +52,7 @@ namespace Compze.Tessaging.Endpoints;
 public abstract class EndpointBuilder
 {
    readonly IContainerBuilder _containerBuilder;
-   readonly LocalTessagingEngineBuilder _engine = new();
+   readonly LocalTessagingEngineBuilder _engine = new(isTheEngineOfAnEndpoint: true);
 
    readonly List<IEndpointAddressAnnouncer> _addressAnnouncers = [];
    readonly List<EndpointId> _requiredPeers = [];
@@ -111,6 +113,25 @@ public abstract class EndpointBuilder
    {
       AssertStillComposing();
       _engine.ObserveTevents(registerObservations);
+      return this;
+   }
+
+   ///<summary>Has this endpoint ask its peers, from its start, for tevents compatible with <typeparamref name="TTevent"/>, subtypes<br/>
+   /// included, so that observers created at runtime through <see cref="ITeventObservation.ObserveTevents"/> observe those that<br/>
+   /// other endpoints publish too. It registers no observer itself.</summary>
+   ///<remarks>An endpoint asks its peers, once, when it starts, for the tevent types its composition declares: its handlers' and<br/>
+   /// its declared observers' types, and these. An observer created later can't add to that without a round trip to every peer,<br/>
+   /// during which tevents would be missed. So in an endpoint, an observer created at runtime is refused unless each of its tevent<br/>
+   /// types is compatible with one declared here: refused at once, rather than observing its own process's tevents and silently<br/>
+   /// none of the others'. A runtime observer is then in effect the moment <see cref="ITeventObservation.ObserveTevents"/> returns,<br/>
+   /// with no round trip: one created before a trigger can't miss a tevent published right after it. A declared tevent that<br/>
+   /// arrives while no runtime observer observes it is dropped. A plain container has no other endpoints, and declares nothing<br/>
+   /// for its runtime observers. An endpoint declaration declares it in its tier's <c>Declare</c> override.</remarks>
+   public EndpointBuilder ObserveFromOtherEndpoints<TTevent>() where TTevent : ITevent
+   {
+      AssertStillComposing();
+      TessageInspector.AssertValidForSubscription<TTevent>();
+      _engine.HandlerRegistrations.ObserveFromOtherEndpoints(typeof(TTevent));
       return this;
    }
 
