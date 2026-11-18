@@ -383,24 +383,29 @@ public class Given_a_state_store_whose_files_hold_a_vocab_and_a_sentence : Unive
    public class when_the_store_writes_every_taggregate_anew_while_a_unit_of_work_on_another_thread_changes_the_vocab : Given_a_state_store_whose_files_hold_a_vocab_and_a_sentence
    {
       readonly ManualResetEventSlim _theUnitOfWorkHasTheVocab = new();
-      readonly bool _theUnitOfWorkHadCompletedWhenTheWriteReturned;
+      volatile bool _theWriteHasReturned;
+      bool _theWriteHadReturnedWhenTheUnitOfWorkFinishedChangingTheVocab;
 
       public when_the_store_writes_every_taggregate_anew_while_a_unit_of_work_on_another_thread_changes_the_vocab()
       {
+         //The unit of work records, as the last thing it does before it commits, whether the write has returned: a write that
+         //waits for it can't have. Whether its task has completed when the write returns can't tell: the write may return between
+         //the unit of work leaving the store and its task being marked completed.
          var unitOfWork = Task.Run(() => InUnitOfWork(taggregates =>
          {
             var vocab = taggregates.GetForUpdate<StoredVocab>(VocabId);
             _theUnitOfWorkHasTheVocab.Set();
             Thread.Sleep(200); //Gives the write time to begin waiting while the unit of work is open.
             vocab.ChangeMeaning("to dine");
+            _theWriteHadReturnedWhenTheUnitOfWorkFinishedChangingTheVocab = _theWriteHasReturned;
          }));
          _theUnitOfWorkHasTheVocab.Wait();
          StateStore.WriteEverythingAnew();
-         _theUnitOfWorkHadCompletedWhenTheWriteReturned = unitOfWork.IsCompleted;
+         _theWriteHasReturned = true;
          unitOfWork.Wait();
       }
 
-      [PCT] public void the_write_waited_for_the_unit_of_work_to_complete() => _theUnitOfWorkHadCompletedWhenTheWriteReturned.Must().BeTrue();
+      [PCT] public void the_write_waited_for_the_unit_of_work_to_complete() => _theWriteHadReturnedWhenTheUnitOfWorkFinishedChangingTheVocab.Must().BeFalse();
       [PCT] public void the_vocabs_file_holds_what_the_unit_of_work_committed() => StoredVocabs.Select(it => it.Meaning).Must().SequenceEqual(["to dine"]);
    }
 
