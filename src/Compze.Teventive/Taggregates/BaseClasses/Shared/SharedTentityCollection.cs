@@ -22,6 +22,9 @@ public sealed class SharedTentityCollection<TTentity, TTentityId, TTentityTevent
    ///<param name="slot">What <c>Slots.TheSlot.In(owner)</c> returns, for the slot of the owner's class the collection is in.</param>
    public SharedTentityCollection(SharedTomponentSlotInAnOwner<TTentityTevent> slot) : base(slot.Owner, slot.Slot) {}
 
+   ///<summary>None: the collection routes the tevents its slot delivers to the tentity whose id each carries, in code of its own.</summary>
+   protected override TeventRouting? TeventAppliers => null;
+
    public IReadOnlyEntityCollection<TTentity, TTentityId> Entities => _entities;
 
    ///<summary>Creates a tentity by publishing its <typeparamref name="TTentityCreatedTevent"/> and returns the created instance once the tevent<br/>

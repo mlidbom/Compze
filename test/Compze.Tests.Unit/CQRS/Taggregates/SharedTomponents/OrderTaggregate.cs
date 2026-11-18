@@ -47,7 +47,7 @@ class BillingAddressTevent<T>(T tevent) : OrderTevent, IBillingAddressTevent<T> 
 
 ///<summary>The owner side of the shared tomponent fixture: an order with TWO members of the same shared tomponent type.<br/>
 /// Only the slots' adopting wrapper tevent types tell the two apart - the inner tevent types are identical.</summary>
-class OrderTaggregate : Taggregate<OrderTaggregate, IOrderTevent, OrderTevent, IOrderTevent<IOrderTevent>, OrderTevent<OrderTevent>>, ITeventRouted
+class OrderTaggregate : Taggregate<OrderTaggregate, IOrderTevent, OrderTevent, IOrderTevent<IOrderTevent>, OrderTevent<OrderTevent>>
 {
    static class Slots
    {
@@ -63,7 +63,7 @@ class OrderTaggregate : Taggregate<OrderTaggregate, IOrderTevent, OrderTevent, I
      .SharedTomponent(Slots.Shipping)
      .SharedTomponent(Slots.Billing));
 
-   TeventRouting ITeventRouted.TeventAppliers => Appliers;
+   protected override TeventRouting TeventAppliers => Appliers;
 
    public PostalAddress ShippingAddress { get; }
    public PostalAddress BillingAddress { get; }

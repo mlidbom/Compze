@@ -15,7 +15,7 @@ namespace Compze.Teventive.Taggregates.BaseClasses.Shared;
 /// so they need no wrapping. A shared tomponent's tevent types identify no owner at all - the adopting wrapper is what says<br/>
 /// "this happened in THIS member of THIS taggregate".</remarks>
 ///<remarks>A shared tomponent keeps its owner and its slot, which belongs to the owner's class, and its owner keeps nothing for it.</remarks>
-public abstract class SharedTomponent<TTomponentTevent> : ISharedTomponentInternals<TTomponentTevent>, ITeventRouted
+public abstract class SharedTomponent<TTomponentTevent> : ISharedTomponentInternals<TTomponentTevent>
    where TTomponentTevent : class, ITevent
 {
    readonly object _owner;
@@ -23,27 +23,29 @@ public abstract class SharedTomponent<TTomponentTevent> : ISharedTomponentIntern
 
    ///<summary>A shared tomponent in <paramref name="slot"/>, which is what <c>Slots.TheSlot.In(owner)</c> returns. Its class declares its tevent appliers<br/>
    /// with <see cref="DeclareAppliers{TTomponent}"/>.</summary>
-   protected SharedTomponent(SharedTomponentSlotInAnOwner<TTomponentTevent> slot) : this(slot.Owner, slot.Slot) =>
-      State.Assert(TeventAppliers is not null, () => $"{GetType()} declares no tevent appliers. Declare them with {nameof(DeclareAppliers)}, keep them in a static field, and return them from an explicit implementation of {nameof(ITeventRouted)}.{nameof(ITeventRouted.TeventAppliers)}.");
+   protected SharedTomponent(SharedTomponentSlotInAnOwner<TTomponentTevent> slot) : this(slot.Owner, slot.Slot)
+   {
+      // ReSharper disable once VirtualMemberCallInConstructor The routing is a table in a static field, and the assertion that the class declares its own must run at construction.
+      TeventRouting.AssertDeclaresItsTeventAppliers(this, TeventAppliers);
+   }
 
    ///<summary>For a shared tomponent that routes the tevents its slot delivers in code of its own, instead of through a <see cref="TeventRouting"/>.</summary>
    private protected SharedTomponent(object owner, ISharedTomponentSlotOfAClass<TTomponentTevent> slot)
    {
-      TeventRouting.AssertDeclaredForTheClassOf(this);
       _owner = owner;
       _slot = slot;
    }
 
-#pragma warning disable CA1033 //A class that declares its tevent routing re-implements ITeventRouted; the base class's null means it declares none.
-   TeventRouting? ITeventRouted.TeventAppliers => null;
-   TeventRouting? ITeventRouted.TeventHandlers => null; //A shared tomponent has no tevent handlers.
-#pragma warning restore CA1033
-
-   ///<summary>The routing of this tomponent's class to its tevent appliers, read through <see cref="ITeventRouted"/>.</summary>
-   TeventRouting? TeventAppliers => ((ITeventRouted)this).TeventAppliers;
+   ///<summary>The routing of this tomponent's class to its tevent appliers: the table the class declares with <see cref="DeclareAppliers{TTomponent}"/>,<br/>
+   /// or a subclass with <see cref="TeventRouting{TInstance,TTevent}.Extend{TSubclass}"/>, keeps in a static field, and returns from its override:<br/>
+   /// <c>protected override TeventRouting TeventAppliers => Appliers;</c><br/>
+   /// Every class overrides it with its own: one that returns none, or inherits its base class's, is refused when it is constructed. None only in<br/>
+   /// Compze's own <see cref="SharedTentityCollection{TTentity,TTentityId,TTentityTevent,TTentityCreatedTevent}"/>, which routes its tentities'<br/>
+   /// tevents in code of its own. A shared tomponent has no tevent handlers.</summary>
+   protected abstract TeventRouting? TeventAppliers { get; }
 
    ///<summary>Declares the tevent appliers of <typeparamref name="TTomponent"/>, the shared tomponent class calling it, for it to keep in a static field<br/>
-   /// and return from its explicit implementation of <see cref="ITeventRouted.TeventAppliers"/>. Every tevent the tomponent publishes must reach at least one of them.</summary>
+   /// and return from its override of <see cref="TeventAppliers"/>. Every tevent the tomponent publishes must reach at least one of them.</summary>
    protected static TeventRouting<TTomponent, TTomponentTevent> DeclareAppliers<TTomponent>(Action<TeventRouting<TTomponent, TTomponentTevent>.Declaration> declare)
       where TTomponent : SharedTomponent<TTomponentTevent> =>
       TeventRouting<TTomponent, TTomponentTevent>.DeclareAppliers(declare);

@@ -39,31 +39,31 @@ public class Given_a_query_model_of_vocab_notes
                                                                   .Which.Message.Must().Contain(typeof(VocabQueryModelThatForgetsItsComponent.FormsComponent).FullName!);
    }
 
-   class VocabQueryModel : SelfGeneratingQueryModel<VocabQueryModel, INoteTevent>, ITeventRouted
+   class VocabQueryModel : SelfGeneratingQueryModel<VocabQueryModel, INoteTevent>
    {
       static readonly TeventRouting<VocabQueryModel, INoteTevent> Appliers = DeclareAppliers(it => it
         .For<INoteTevent.Renamed>(static (vocab, tevent) => vocab.Name = tevent.Name)
         .IgnoreUnhandled<INoteTevent.Archived>());
 
-      TeventRouting ITeventRouted.TeventAppliers => Appliers;
+      protected override TeventRouting TeventAppliers => Appliers;
 
       public string Name { get; private set; } = "";
    }
 
-   class VocabQueryModelThatForgetsItsComponent : SelfGeneratingQueryModel<VocabQueryModelThatForgetsItsComponent, INoteTevent>, ITeventRouted
+   class VocabQueryModelThatForgetsItsComponent : SelfGeneratingQueryModel<VocabQueryModelThatForgetsItsComponent, INoteTevent>
    {
       static readonly TeventRouting<VocabQueryModelThatForgetsItsComponent, INoteTevent> Appliers = DeclareAppliers(_ => {});
 
-      TeventRouting ITeventRouted.TeventAppliers => Appliers;
+      protected override TeventRouting TeventAppliers => Appliers;
 
       ///<summary>Constructs its component, as a query model does, and is refused there: the component isn't kept.</summary>
       public VocabQueryModelThatForgetsItsComponent() => _ = new FormsComponent(this);
 
-      internal class FormsComponent : Component<FormsComponent, IVocabTevent.Forms>, ITeventRouted
+      internal class FormsComponent : Component<FormsComponent, IVocabTevent.Forms>
       {
          static readonly TeventRouting<FormsComponent, IVocabTevent.Forms> FormsAppliers = DeclareAppliers(_ => {});
 
-         TeventRouting ITeventRouted.TeventAppliers => FormsAppliers;
+         protected override TeventRouting TeventAppliers => FormsAppliers;
 
          public FormsComponent(VocabQueryModelThatForgetsItsComponent parent) : base(parent) {}
       }

@@ -12,7 +12,7 @@ namespace Compze.Teventive.Taggregates.BaseClasses;
 ///<remarks>Only Compze's own base classes derive from it.</remarks>
 ///<remarks>review-naming: a placeholder (jastudio-rep-opus, 2026-11-17), for the naming pass of the spike's end review. Magnus: "a taggregate is not a<br/>
 /// view model", so the name is for applying tevents, not for query models.</remarks>
-public abstract class TeventApplyingRoot<TRoot, TTevent> : VersionedEntity<TRoot>, ITeventRouted
+public abstract class TeventApplyingRoot<TRoot, TTevent> : VersionedEntity<TRoot>
    where TRoot : TeventApplyingRoot<TRoot, TTevent>
    where TTevent : class, ITaggregateTevent
 {
@@ -20,19 +20,18 @@ public abstract class TeventApplyingRoot<TRoot, TTevent> : VersionedEntity<TRoot
    internal TeventApplyingRoot() : base(null!)
    {
       Argument.Assert(typeof(TTevent).IsInterface);
-      TeventRouting.AssertDeclaresItsTeventAppliers(this);
+      // ReSharper disable once VirtualMemberCallInConstructor The routing is a table in a static field, and the assertion that the class declares its own must run at construction.
+      TeventRouting.AssertDeclaresItsTeventAppliers(this, TeventAppliers);
    }
 
-#pragma warning disable CA1033 //A class that declares its tevent routing re-implements ITeventRouted; the base class's null means it declares none.
-   TeventRouting? ITeventRouted.TeventAppliers => null;
-   TeventRouting? ITeventRouted.TeventHandlers => null;
-#pragma warning restore CA1033
+   ///<summary>The routing of this root's class to its tevent appliers: the table the class declares with <see cref="DeclareAppliers"/>, or a subclass<br/>
+   /// with <see cref="TeventRouting{TInstance,TTevent}.Extend{TSubclass}"/>, keeps in a static field, and returns from its override:<br/>
+   /// <c>protected override TeventRouting TeventAppliers => Appliers;</c><br/>
+   /// Every class overrides it with its own: one that inherits its base class's is refused when it is constructed.</summary>
+   protected abstract TeventRouting TeventAppliers { get; }
 
-   ///<summary>The routing of this root's class to its tevent appliers, read through <see cref="ITeventRouted"/>: declared, as construction asserted.</summary>
-   TeventRouting TeventAppliers => ((ITeventRouted)this).TeventAppliers!;
-
-   ///<summary>Declares the tevent appliers of <typeparamref name="TRoot"/>, for it to keep in a static field and return from its explicit<br/>
-   /// implementation of <see cref="ITeventRouted.TeventAppliers"/>. Every tevent the root applies must reach at least one of them.<br/>
+   ///<summary>Declares the tevent appliers of <typeparamref name="TRoot"/>, for it to keep in a static field and return from its override of<br/>
+   /// <see cref="TeventAppliers"/>. Every tevent the root applies must reach at least one of them.<br/>
    /// A subclass of <typeparamref name="TRoot"/> extends that routing with <see cref="TeventRouting{TInstance,TTevent}.Extend{TSubclass}"/>.</summary>
    protected static TeventRouting<TRoot, TTevent> DeclareAppliers(Action<TeventRouting<TRoot, TTevent>.Declaration> declare) =>
       TeventRouting<TRoot, TTevent>.DeclareAppliers(declare);

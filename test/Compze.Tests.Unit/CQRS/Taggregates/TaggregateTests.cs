@@ -79,7 +79,7 @@ public class TaggregateTests : UniversalTestBase
       });
    }
 
-   class CascadingTeventsTaggregate : Taggregate<CascadingTeventsTaggregate, ITaggregateTevent, TaggregateTevent, ITaggregateTevent<ITaggregateTevent>, TaggregateTevent<TaggregateTevent>>, ITeventRouted
+   class CascadingTeventsTaggregate : Taggregate<CascadingTeventsTaggregate, ITaggregateTevent, TaggregateTevent, ITaggregateTevent<ITaggregateTevent>, TaggregateTevent<TaggregateTevent>>
    {
       static readonly TeventRouting<CascadingTeventsTaggregate, ITaggregateTevent> Appliers = DeclareAppliers(it => it
         .For<ITriggeringTevent>(static (taggregate, _) => taggregate.TriggeringTeventApplied = true)
@@ -88,8 +88,8 @@ public class TaggregateTests : UniversalTestBase
       static readonly TeventRouting<CascadingTeventsTaggregate, ITaggregateTevent> Handlers = DeclareHandlers(it => it
         .For<ITriggeringTevent>(static (taggregate, _) => taggregate.Publish(new TriggeredTevent())));
 
-      TeventRouting ITeventRouted.TeventAppliers => Appliers;
-      TeventRouting ITeventRouted.TeventHandlers => Handlers;
+      protected override TeventRouting TeventAppliers => Appliers;
+      protected override TeventRouting TeventHandlers => Handlers;
 
       public bool TriggeredTeventApplied { get; private set; }
       public bool TriggeringTeventApplied { get; private set; }

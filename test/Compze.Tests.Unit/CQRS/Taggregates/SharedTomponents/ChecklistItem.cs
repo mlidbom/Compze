@@ -44,13 +44,13 @@ class ChecklistItemTevent(ChecklistItemId entityId) : IChecklistItemTevent
    internal class Completed(ChecklistItemId entityId) : ChecklistItemTevent(entityId), IChecklistItemTevent.Completed;
 }
 
-class ChecklistItem : SharedTentity<ChecklistItem, ChecklistItemId, IChecklistItemTevent, IChecklistItemTevent.Added>, ITeventRouted
+class ChecklistItem : SharedTentity<ChecklistItem, ChecklistItemId, IChecklistItemTevent, IChecklistItemTevent.Added>
 {
    static readonly TeventRouting<ChecklistItem, IChecklistItemTevent> Appliers = DeclareAppliers(it => it
      .For<IChecklistItemTevent.Added>(static (item, tevent) => item.Title = tevent.Title)
      .For<IChecklistItemTevent.Completed>(static (item, _) => item.IsCompleted = true));
 
-   TeventRouting ITeventRouted.TeventAppliers => Appliers;
+   protected override TeventRouting TeventAppliers => Appliers;
 
    public ChecklistItem(SharedTentityCollection<ChecklistItem, ChecklistItemId, IChecklistItemTevent, IChecklistItemTevent.Added> checklist) : base(checklist) {}
 

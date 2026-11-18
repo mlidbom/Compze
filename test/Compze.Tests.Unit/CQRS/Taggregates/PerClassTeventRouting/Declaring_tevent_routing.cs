@@ -27,7 +27,7 @@ public static class Declaring_tevent_routing
                                                                      .Which.Message.Must().Contain($"{typeof(NoteBetween).FullName} is");
    }
 
-   public static class A_taggregate_class_that_declares_no_tevent_appliers
+   public static class A_taggregate_class_whose_TeventAppliers_returns_none
    {
       [XF] public static void throws_when_constructed_naming_the_class() =>
          Invoking(() => new NoteWithoutTeventAppliers()).Must().Throw<StateAssertionFailedException>()
@@ -41,30 +41,33 @@ public static class Declaring_tevent_routing
                                                           .Which.Message.Must().Contain(typeof(ForgottenComponent).FullName!);
    }
 
-   ///<summary>A taggregate class that implements no <see cref="ITeventRouted"/> of its own, so its base class's says it declares no tevent appliers.</summary>
-   class NoteWithoutTeventAppliers : Taggregate<NoteWithoutTeventAppliers, INoteTevent, NoteTevent, INoteTevent<INoteTevent>, NoteTevent<NoteTevent>>;
+   ///<summary>A taggregate class whose override of <c>TeventAppliers</c> returns no routing.</summary>
+   class NoteWithoutTeventAppliers : Taggregate<NoteWithoutTeventAppliers, INoteTevent, NoteTevent, INoteTevent<INoteTevent>, NoteTevent<NoteTevent>>
+   {
+      protected override TeventRouting TeventAppliers => null!;
+   }
 
    ///<summary>A note class that declares no routing of its own, and so inherits <see cref="Note"/>'s.</summary>
    class NoteWithoutARoutingOfItsOwn : Note;
 
    ///<summary>A note class with a component whose entry its routing forgot.</summary>
-   class NoteThatForgetsItsComponent : Note, ITeventRouted
+   class NoteThatForgetsItsComponent : Note
    {
       static readonly TeventRouting<NoteThatForgetsItsComponent, INoteTevent> Appliers = NoteAppliers.Extend<NoteThatForgetsItsComponent>(_ => {});
       static readonly TeventRouting<NoteThatForgetsItsComponent, INoteTevent> Handlers = NoteHandlers.Extend<NoteThatForgetsItsComponent>(_ => {});
 
-      TeventRouting ITeventRouted.TeventAppliers => Appliers;
-      TeventRouting ITeventRouted.TeventHandlers => Handlers;
+      protected override TeventRouting TeventAppliers => Appliers;
+      protected override TeventRouting TeventHandlers => Handlers;
 
       ///<summary>Constructs its component, as a note does, and is refused there: the component isn't kept.</summary>
       internal NoteThatForgetsItsComponent() => _ = new ForgottenComponent(this);
    }
 
-   class ForgottenComponent : TeventiveComponent<NoteThatForgetsItsComponent, INoteTevent, NoteTevent, ForgottenComponent, IVocabTevent.Forms, VocabTevent.Forms>, ITeventRouted
+   class ForgottenComponent : TeventiveComponent<NoteThatForgetsItsComponent, INoteTevent, NoteTevent, ForgottenComponent, IVocabTevent.Forms, VocabTevent.Forms>
    {
       static readonly TeventRouting<ForgottenComponent, IVocabTevent.Forms> Appliers = DeclareAppliers(_ => {});
 
-      TeventRouting ITeventRouted.TeventAppliers => Appliers;
+      protected override TeventRouting TeventAppliers => Appliers;
 
       public ForgottenComponent(NoteThatForgetsItsComponent note) : base(note) {}
    }

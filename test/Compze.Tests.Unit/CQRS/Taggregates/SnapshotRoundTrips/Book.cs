@@ -8,7 +8,7 @@ namespace Compze.Tests.Unit.CQRS.Taggregates.SnapshotRoundTrips;
 
 ///<summary>A taggregate with state in itself, in a component and in a shared tomponent, for the specifications of<br/>
 /// <see cref="SnapshotRoundTrip"/>. How it takes and restores its snapshots, mistakes included, is up to the services it's built with.</summary>
-class Book : Taggregate<Book, IBookTevent, BookTevent, IBookTevent<IBookTevent>, BookTevent<BookTevent>>, ITeventRouted, ISnapshotable<Book, BookSnapshot>
+class Book : Taggregate<Book, IBookTevent, BookTevent, IBookTevent<IBookTevent>, BookTevent<BookTevent>>, ISnapshotable<Book, BookSnapshot>
 {
    static class Slots
    {
@@ -26,7 +26,7 @@ class Book : Taggregate<Book, IBookTevent, BookTevent, IBookTevent<IBookTevent>,
      .Component(static book => book.Chapters)
      .SharedTomponent(Slots.Tags));
 
-   TeventRouting ITeventRouted.TeventAppliers => Appliers;
+   protected override TeventRouting TeventAppliers => Appliers;
 
    readonly BookServices _services;
    readonly Dictionary<string, int> _starsByReader = [];

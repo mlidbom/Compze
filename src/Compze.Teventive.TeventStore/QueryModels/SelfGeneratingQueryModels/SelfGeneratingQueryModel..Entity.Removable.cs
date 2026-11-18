@@ -27,9 +27,9 @@ public abstract partial class SelfGeneratingQueryModel<TQueryModel, TTaggregateT
          });
 
       ///<summary>A collection of the entities of <paramref name="parent"/>, the query model or component whose routing routes their tevents to it.</summary>
-      public new static ICollectionManager CreateSelfManagingCollection(ITeventRouted parent) => new CollectionManager(parent);
+      public new static ICollectionManager CreateSelfManagingCollection(IParent parent) => new CollectionManager(parent);
 
-      new class CollectionManager(ITeventRouted parent) : Entity<TEntity, TEntityId, TEntityTevent, TEntityCreatedTevent, TTeventEntityIdGetter>.CollectionManager(parent)
+      new class CollectionManager(IParent parent) : Entity<TEntity, TEntityId, TEntityTevent, TEntityCreatedTevent, TTeventEntityIdGetter>.CollectionManager(parent)
       {
          protected override bool Removes(TEntityTevent tevent) => tevent is TEntityRemovedTevent;
       }

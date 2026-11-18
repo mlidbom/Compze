@@ -60,7 +60,7 @@ class SeeAlsoTevent<T>(T tevent) : VocabTevent, ISeeAlsoTevent<T> where T : IWor
 
 ///<summary>A taggregate whose shared tomponents are in slots that belong to its classes: one slot in the vocab itself, and two of one class in its<br/>
 /// component, as most of the shared tomponents of JAStudio's notes are. Each class declares its slots in a nested static class.</summary>
-class Vocab : Taggregate<Vocab, IVocabTevent, VocabTevent, IVocabTevent<IVocabTevent>, VocabTevent<VocabTevent>>, ITeventRouted
+class Vocab : Taggregate<Vocab, IVocabTevent, VocabTevent, IVocabTevent<IVocabTevent>, VocabTevent<VocabTevent>>
 {
    static class Slots
    {
@@ -73,7 +73,7 @@ class Vocab : Taggregate<Vocab, IVocabTevent, VocabTevent, IVocabTevent<IVocabTe
      .Component(static vocab => vocab.Related)
      .SharedTomponent(Slots.SeeAlso));
 
-   TeventRouting ITeventRouted.TeventAppliers => Appliers;
+   protected override TeventRouting TeventAppliers => Appliers;
 
    Vocab()
    {
@@ -102,7 +102,7 @@ class Vocab : Taggregate<Vocab, IVocabTevent, VocabTevent, IVocabTevent<IVocabTe
 
 ///<summary>A component with two shared tomponents of one class, each in a slot that belongs to the component's class. Its routing is<br/>
 /// declared above its slots, which the nested class makes fine.</summary>
-class RelatedVocab : TeventiveComponent<Vocab, IVocabTevent, VocabTevent, RelatedVocab, IVocabTevent.Related, VocabTevent.Related>, ITeventRouted
+class RelatedVocab : TeventiveComponent<Vocab, IVocabTevent, VocabTevent, RelatedVocab, IVocabTevent.Related, VocabTevent.Related>
 {
    static readonly TeventRouting<RelatedVocab, IVocabTevent.Related> Appliers = DeclareAppliers(it => it
      .SharedTomponent(Slots.Synonyms)
@@ -117,7 +117,7 @@ class RelatedVocab : TeventiveComponent<Vocab, IVocabTevent, VocabTevent, Relate
          new(typeof(AntonymsTevent<>), static related => related.Antonyms);
    }
 
-   TeventRouting ITeventRouted.TeventAppliers => Appliers;
+   protected override TeventRouting TeventAppliers => Appliers;
 
    public RelatedVocab(Vocab vocab) : base(vocab)
    {
@@ -130,12 +130,12 @@ class RelatedVocab : TeventiveComponent<Vocab, IVocabTevent, VocabTevent, Relate
 }
 
 ///<summary>A shared tomponent that is constructed with a slot of its owner's class and that owner.</summary>
-class WordSet : SharedTomponent<IWordSetTevent>, ITeventRouted
+class WordSet : SharedTomponent<IWordSetTevent>
 {
    static readonly TeventRouting<WordSet, IWordSetTevent> Appliers = DeclareAppliers<WordSet>(it => it
      .For<IWordSetTevent.Added>(static (words, tevent) => words._words.Add(tevent.Word)));
 
-   TeventRouting ITeventRouted.TeventAppliers => Appliers;
+   protected override TeventRouting TeventAppliers => Appliers;
 
    readonly List<string> _words = [];
 
