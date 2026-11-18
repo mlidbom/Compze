@@ -1,6 +1,7 @@
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Teventive.MemoryImageStateStore._private;
+using Compze.Teventive.Taggregates.Tevents;
 using Compze.Teventive.TaggregateStores;
 using Compze.Teventive.TaggregateStores._internal;
 
@@ -15,6 +16,8 @@ public static class MemoryImageStateStoreRegistrar
    /// keeps taggregates as their state, not their history. Its taggregates are read through the container's <see cref="ITaggregateStoreReader"/>,<br/>
    /// and changed through each unit of work's <see cref="ITaggregateStoreUpdater"/>. The tevents they publish are dispatched through<br/>
    /// the container's Tessaging engine, such as a LocalTessagingEngine, as each publish cascade ends.</summary>
+   ///<remarks>A taggregate's <see cref="ITaggregate.Version"/> counts the changes since the store loaded it, not its whole history: each<br/>
+   /// load restores it at version 1, so the <see cref="ITaggregateTevent.TaggregateVersion"/> of its tevents repeats across loads.</remarks>
    public static IComponentRegistrar MemoryImageStateStore(this IComponentRegistrar @this, Action<MemoryImageStateStoreBuilder> declare)
    {
       var builder = new MemoryImageStateStoreBuilder(@this);

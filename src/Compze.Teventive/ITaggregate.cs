@@ -7,6 +7,12 @@ public interface ITaggregate : ITentity
 {
    EntityId IEntity.Id => Id;
    new TaggregateId Id { get; }
+
+   ///<summary>How many changes the taggregate has been through: at least 1 once it exists, and one more for each tevent it publishes.</summary>
+   ///<remarks>What it counts from depends on the store that keeps the taggregate. A tevent store rebuilds a taggregate from its whole<br/>
+   /// history, so the version counts every tevent the taggregate has ever published. A memory image state store keeps a taggregate's<br/>
+   /// state, not its history, and restores it at version 1 each time it loads it: the version counts the changes since that load, and<br/>
+   /// two of the taggregate's tevents over its life can carry the same <see cref="ITaggregateTevent.TaggregateVersion"/>.</remarks>
    int Version { get; }
 
    ///<summary>Hands the not-yet-persisted tevents to <paramref name="commitTevents"/> and forgets them: exactly the wrapped tevents publishing created,<br/>
