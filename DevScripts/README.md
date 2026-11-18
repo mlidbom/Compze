@@ -49,6 +49,7 @@ Then reload: `. $PROFILE`
 - **C-Compare-PublicApi** - Lists the public API changes between two commits, project by project: every public and protected type and member added, removed or changed, from the declarations DocFX's metadata step gives them. For a review of a branch's public API, and for a release's changelog
   - Default: the working tree against its merge-base with `main`, the projects under `src` with changed files
   - `-Base`, `-Head` (a commit, checked out in a temporary worktree), `-Projects` (names, wildcards allowed), `-OutFile` (markdown)
+  - A type that moved to another namespace or project, or was renamed, is listed once, with its member changes, when evidence pairs it with what it was: its file (git's rename detection, or the file of a type already paired), or its namespace's move (a project's rename, or a type already paired); the report says what each pairing rests on
   - DocFX skips the members of C# 14 extension blocks: the report names the changed files that hold them, to compare with git diff
 
 - **C-SimulateRelease** - Packs with real versions and dry-runs the release: which packages are new, their changelog entries, the post-release binding check (`.github/scripts/PostReleaseBindingCheck/README.md`), pushes, GitHub releases and tags
