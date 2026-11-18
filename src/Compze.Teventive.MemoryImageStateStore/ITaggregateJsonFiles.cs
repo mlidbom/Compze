@@ -18,6 +18,14 @@ public interface ITaggregateJsonFiles
    /// Throws if the store keeps no <typeparamref name="TTaggregate"/>.</summary>
    string PathOf<TTaggregate>(TaggregateId id) where TTaggregate : class, ITaggregate;
 
+   ///<summary>The full path of the file of <paramref name="taggregate"/>, whether it exists yet or not: the path<br/>
+   /// <see cref="PathOf{TTaggregate}(TaggregateId)"/> gives for its class at runtime and its <see cref="ITaggregate.Id"/>.<br/>
+   /// For code that holds taggregates of several classes through a type they share, such as a base class of theirs, and so can't<br/>
+   /// name the class: it needs no switch over the classes the store keeps.<br/>
+   /// Throws if the store keeps no taggregate of <paramref name="taggregate"/>'s own class. The store keeps exactly the classes<br/>
+   /// declared for it, so an instance of a class derived from a class the store keeps throws too.</summary>
+   string PathOf(ITaggregate taggregate);
+
    ///<summary>The taggregate whose file <paramref name="path"/> is, or null when it is no taggregate's file: a path outside the folders<br/>
    /// of the store's classes, the store's own files under <c>.state-store</c>, or anything but a taggregate's .json file.</summary>
    ///<remarks>It reads only the path, not the file, so it answers for a file that is gone, such as one version control lists as<br/>

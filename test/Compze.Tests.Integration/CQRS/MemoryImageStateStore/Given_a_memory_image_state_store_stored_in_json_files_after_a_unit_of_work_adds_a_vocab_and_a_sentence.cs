@@ -7,6 +7,7 @@ using Compze.Hosting.Testing.Wiring;
 using Compze.Internals.Testing;
 using Compze.Must;
 using Compze.Tessaging.Engine.Wiring;
+using Compze.Teventive;
 using Compze.Teventive.MemoryImageStateStore;
 using Compze.Teventive.MemoryImageStateStore.Testing;
 using Compze.Teventive.TaggregateStores;
@@ -29,7 +30,7 @@ public abstract class Given_a_memory_image_state_store_stored_in_json_files_afte
    readonly IComponentRegistrar _registrar;
    readonly IDependencyInjectionContainer _container;
 
-   protected Given_a_memory_image_state_store_stored_in_json_files_after_a_unit_of_work_adds_a_vocab_and_a_sentence(bool onAFileSystemInMemory)
+   Given_a_memory_image_state_store_stored_in_json_files_after_a_unit_of_work_adds_a_vocab_and_a_sentence(bool onAFileSystemInMemory)
    {
       var builder = TestEnv.DIContainer.CreateTestingContainerBuilder();
       builder.Registrar.MemoryImageStateStore(store => store.Taggregate(() => new StoredVocab())
@@ -55,6 +56,15 @@ public abstract class Given_a_memory_image_state_store_stored_in_json_files_afte
    TaggregateId SentenceId { get; } = new(Guid.NewGuid());
 
    ITaggregateJsonFiles JsonFiles => _container.RootResolver.Resolve<ITaggregateJsonFiles>();
+
+   ITaggregateStoreReader Reader => _container.RootResolver.Resolve<ITaggregateStoreReader>();
+
+   ///<summary>The vocab and the sentence the store holds, each as an <see cref="ITaggregate"/>, as code that holds taggregates of several<br/>
+   /// classes through a type they share holds them.</summary>
+   IReadOnlyList<ITaggregate> TheVocabAndTheSentenceAsTaggregates => [Reader.Get<StoredVocab>(VocabId), Reader.Get<StoredSentence>(SentenceId)];
+
+   ///<summary>The paths <see cref="ITaggregateJsonFiles.PathOf{TTaggregate}(TaggregateId)"/> gives the vocab's class and id, and the sentence's.</summary>
+   IReadOnlyList<string> PathsOfTheVocabAndTheSentenceByClassAndId => [JsonFiles.PathOf<StoredVocab>(VocabId), JsonFiles.PathOf<StoredSentence>(SentenceId)];
 
    void InUnitOfWork(Action<ITaggregateStoreUpdater> work) =>
       _container.ScopeFactory.ExecuteUnitOfWork(unitOfWork => work(unitOfWork.Resolve<ITaggregateStoreUpdater>()));
@@ -100,6 +110,9 @@ public abstract class Given_a_memory_image_state_store_stored_in_json_files_afte
 
       [PCT] public void TaggregateWhoseFileIs_each_file_in_the_sentences_folder_gives_the_sentence_alone() => FilesIn("sentences").Select(TaggregateWhoseFileIs).Must().SequenceEqual([TheSentence]);
 
+      [PCT] public void PathOf_the_vocab_and_the_sentence_each_passed_as_an_ITaggregate_is_PathOf_its_class_and_id() =>
+         TheVocabAndTheSentenceAsTaggregates.Select(it => JsonFiles.PathOf(it)).Must().SequenceEqual(PathsOfTheVocabAndTheSentenceByClassAndId);
+
       public sealed class and_a_unit_of_work_deletes_the_vocab : on_the_disk
       {
          readonly string _vocabsFile;
@@ -136,6 +149,9 @@ public abstract class Given_a_memory_image_state_store_stored_in_json_files_afte
 
       [PCT] public void TaggregateWhoseFileIs_each_file_in_the_sentences_folder_gives_the_sentence_alone() => FilesIn("sentences").Select(TaggregateWhoseFileIs).Must().SequenceEqual([TheSentence]);
 
+      [PCT] public void PathOf_the_vocab_and_the_sentence_each_passed_as_an_ITaggregate_is_PathOf_its_class_and_id() =>
+         TheVocabAndTheSentenceAsTaggregates.Select(it => JsonFiles.PathOf(it)).Must().SequenceEqual(PathsOfTheVocabAndTheSentenceByClassAndId);
+
       [PCT] public void nothing_is_written_to_the_disk() => Directory.Exists(_folder.FullName).Must().BeFalse();
 
       [PCT] public void PathOf_a_vocab_the_store_does_not_hold_is_its_file_in_the_layout_under_the_vocab_folder() =>
@@ -171,6 +187,12 @@ public abstract class Given_a_memory_image_state_store_stored_in_json_files_afte
 
       [PCT] public void PathOf_a_class_the_store_does_not_keep_throws_naming_the_class() =>
          Invoking(() => JsonFiles.PathOf<StoredDeck>(new TaggregateId())).Must().Throw<Exception>().Which.Message.Must().Contain(typeof(StoredDeck).FullName!);
+
+      [PCT] public void PathOf_a_taggregate_passed_as_an_ITaggregate_of_a_class_the_store_does_not_keep_throws_naming_the_class() =>
+         Invoking(() => JsonFiles.PathOf(ADeckAsATaggregate)).Must().Throw<Exception>().Which.Message.Must().Contain(typeof(StoredDeck).FullName!);
+
+      ///<summary>A new <see cref="StoredDeck"/>, a class the store doesn't keep, as an <see cref="ITaggregate"/>.</summary>
+      static ITaggregate ADeckAsATaggregate => StoredDeck.Create(new TaggregateId(Guid.NewGuid()));
 
       public sealed class and_a_unit_of_work_deletes_the_vocab : on_a_file_system_in_memory
       {

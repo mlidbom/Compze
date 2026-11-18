@@ -35,11 +35,17 @@ sealed class TaggregateJsonFiles : ITaggregateJsonFiles
    ///<summary>The files of <paramref name="taggregateClass"/>, which the store keeps.</summary>
    internal FilesOfAClass Of(Type taggregateClass) => _classes[taggregateClass];
 
-   public string PathOf<TTaggregate>(TaggregateId id) where TTaggregate : class, ITaggregate
+   public string PathOf<TTaggregate>(TaggregateId id) where TTaggregate : class, ITaggregate => PathOf(typeof(TTaggregate), id);
+
+   public string PathOf(ITaggregate taggregate) => PathOf(taggregate.GetType(), taggregate.Id);
+
+   ///<summary>The full path of the file of the <paramref name="taggregateClass"/> <paramref name="id"/>. Throws, naming<br/>
+   /// <paramref name="taggregateClass"/> and the classes the store keeps, if the store keeps no <paramref name="taggregateClass"/>.</summary>
+   string PathOf(Type taggregateClass, TaggregateId id)
    {
-      Argument.Assert(_classes.ContainsKey(typeof(TTaggregate)),
-                      () => $"The memory image state store keeps no {typeof(TTaggregate).FullName}, so it has no file of one: it keeps {string.Join(", ", _classes.Keys.Select(it => it.FullName))}.");
-      return Of(typeof(TTaggregate)).FileOf(id);
+      Argument.Assert(_classes.ContainsKey(taggregateClass),
+                      () => $"The memory image state store keeps no {taggregateClass.FullName}, so it has no file of one: it keeps {string.Join(", ", _classes.Keys.Select(it => it.FullName))}.");
+      return Of(taggregateClass).FileOf(id);
    }
 
    public TaggregateOfAFile? TaggregateWhoseFileIs(string path)
