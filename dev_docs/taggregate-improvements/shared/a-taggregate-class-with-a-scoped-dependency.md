@@ -64,3 +64,8 @@ registration's dependencies and their lifestyles, so it needed only to be told w
   `..._whose_factory_takes_a_tracked_transient_that_takes_a_scoped_service` specifies the chain. They pass, with the
   store's other specifications and Compze.DependencyInjection's, on Microsoft, Autofac, DryIoc and LightInject; the full
   suite passes.
+- **The same gap in `StoredInJsonFiles<TService>(...)`, closed the same way (097caf102):** it resolves `TService` from
+  the root, for the files' folder, so the registration of `ITaggregateJsonFiles` declares it with
+  `ResolvingFromTheRoot(...)`, and `Build()` refuses a scoped one, naming it. Specified by
+  `when_the_store_is_stored_in_json_files_in_the_folder_a_scoped_service_gives.building_the_container_fails_naming_the_scoped_service`,
+  on all four containers.
