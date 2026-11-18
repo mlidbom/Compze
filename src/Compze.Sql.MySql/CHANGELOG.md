@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 - **Compze's MySQL transactions are plain local transactions, no longer XA transactions:** every connection opens with MySqlConnector's `UseXaTransactions=false`, whatever the configured connection string says. Before, MySqlConnector's default made each ambient transaction an XA transaction, with an `XA PREPARE` before each commit, and a process that died between the prepare and the commit left a prepared transaction on the server, holding its locks until it was resolved by hand. Compze never uses distributed transactions, so XA bought nothing.
 - **Transactions on MySQL run at the isolation level they ask for:** READ COMMITTED for Compze's own, as on the other databases. MySqlConnector's XA path ignored it, so they ran at the server's default, REPEATABLE READ.
+- **Internal: its internals are visible to Compze.Sql.InternalSpecifications,** Compze's own white-box specifications of the SQL layers, and each assembly they are visible to is listed once. Nothing public changes, and nothing a consumer sees.
 - **Requires newer minor versions of other Compze packages:** Compze.Sql.Common 0.5.0-alpha (was 0.4.0-alpha). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
 
 ## 0.5.0-alpha

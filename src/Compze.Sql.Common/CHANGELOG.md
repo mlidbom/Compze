@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 ## 0.5.0-alpha
 
 - **A database connection that Compze opens in a transaction takes part in it as a durable resource,** so a durable resource that can't share its transaction with one refuses it, with a message naming both: by default, a Compze.Teventive.MemoryImageStateStore kept in files, in a unit of work that writes its files, since a crash between their commits would lose one of them. Nothing public changes. With an earlier version, such a unit of work on PostgreSQL, MySQL or SQLite isn't refused: use this one with Compze.Teventive.MemoryImageStateStore.
+- **Internal: its internals are visible to Compze.Sql.InternalSpecifications,** Compze's own white-box specifications of the SQL layers. Nothing public changes, and nothing a consumer sees.
 - **Requires newer minor versions of other Compze packages:** Compze.DependencyInjection 0.10.0-alpha (was 0.9.0-alpha), Compze.Internals.SystemCE 0.9.0-internal (was 0.8.0-internal). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
 
 ## 0.4.0-alpha
