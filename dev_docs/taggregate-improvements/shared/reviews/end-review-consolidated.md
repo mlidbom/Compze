@@ -124,7 +124,8 @@ from the others).
   - **Q13, `ITaggregateJsonFiles.PathOf(ITaggregate taggregate)`,** asked for by JAStudio's agent: the path of a
     taggregate's file by its class at runtime and its id, beside the generic `PathOf<TTaggregate>(id)`. JAStudio holds a
     note as a `JPNote`, so with the generic one alone its `CorpusNoteFiles.FileOf` switches over the three classes the
-    store keeps, which the store already knows, and a new class of note would throw at runtime.
+    store keeps, which the store already knows, and a new class of note would throw at runtime. **Decided by Magnus,
+    2026-11-18: yes,** [specified here](../the-testing-namespace-and-the-json-files.md).
   - **Q14, `SelfGeneratingQueryModel<,>.IParent`** (d53f30a0d): a public interface whose one member,
     `TeventAppliersInternal`, is `[Obsolete(ObsoleteMessage.ForInternalUseOnly)]`, so that a query model's components can
     read their parent's protected routing. An internal interface member would do the same without anything public.

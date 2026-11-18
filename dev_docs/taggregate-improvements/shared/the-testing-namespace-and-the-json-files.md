@@ -38,6 +38,8 @@ public interface ITaggregateJsonFiles
 {
    string PathOf<TTaggregate>(TaggregateId id) where TTaggregate : class, ITaggregate;
 
+   string PathOf(ITaggregate taggregate);
+
    TaggregateOfAFile? TaggregateWhoseFileIs(string path);
 }
 
@@ -53,6 +55,13 @@ public sealed class TaggregateOfAFile : IEquatable<TaggregateOfAFile>
   in memory. A store composed without files doesn't register it.
 - **`PathOf` gives the full path of a taggregate's file, whether it exists yet or not.** It throws for a class the store
   doesn't keep.
+- **`PathOf(taggregate)` gives it for a taggregate in hand,** by the taggregate's class at runtime and its id: the same
+  path as `PathOf<TTaggregate>(id)` for that class. It is for code that holds taggregates of several classes through a
+  type they share, as JAStudio holds its notes as `JPNote`: with only the generic one, such code switches over the
+  classes the store keeps, repeating what the store knows, and a class added to the store throws there at runtime. The
+  class is the taggregate's own, as the store keeps each class it declares: an instance of a class derived from a kept
+  one is of a class the store doesn't keep, and throws. Decided by Magnus, 2026-11-18 (end review Q13), asked for by
+  JAStudio's agent.
 - **`TaggregateWhoseFileIs` gives the class and the id of the taggregate whose file a path is, or null.** Null for a path
   outside the folders of the store's classes, for the store's own files under `.state-store`, and for anything but a
   taggregate's .json file in a class's folder.
@@ -150,6 +159,10 @@ The package has never been released, so the top section of its changelog, 0.1.0-
 `KeptInMemory()` says `OnAFileSystemInMemory()` and `IFileSystemInMemory`, and a line says what `ITaggregateJsonFiles`
 gives. Its README says the same. Compze.Tessaging's public API doesn't change.
 
+For Q13, that line also names `PathOf(taggregate)`. The versions already on the pending-release feed are replaced, with
+`C-Publish-ToPendingReleaseFeed -Replace`, which purges the old builds from the package cache: a version on the feed
+must be the code that ships, and none of them has reached nuget.org yet.
+
 ## Specifications
 
 Beside the store's specifications, in `CQRS/MemoryImageStateStore`, through the public API.
@@ -177,6 +190,12 @@ How the paths are read is the same on either, so these are specified once, on a 
 And for a store composed without files:
 
 13. `ITaggregateJsonFiles` is not registered.
+
+For `PathOf(taggregate)`, Q13:
+
+14. `PathOf` the vocab and the sentence of 1 to 3, each passed as an `ITaggregate`, is the same path as `PathOf` its
+    class and id, on the disk and on a file system in memory alike.
+15. `PathOf` a taggregate, passed as an `ITaggregate`, of a class the store doesn't keep throws, naming the class.
 
 The renamed members' specifications are the existing ones, under the new names: the specifications whose files were
 "kept in memory" are those whose files are "on a file system in memory". The full suite passes.
