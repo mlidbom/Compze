@@ -30,6 +30,7 @@ signature but the first, which undoes an accident.
 | D8 | `All` reads `ConcurrentDictionary.Values`, which takes every lock of the dictionary and copies every taggregate of every class before filtering. | both, read | Enumerate the dictionary. |
 | D9 | Two sentences that are false: `Declaration.Component`'s summary says it routes to tevent handlers, which the code refuses; the state store's package description offers "a narrow seam for durable storage", which is internal. | Fable; both | Corrected. |
 | D10 | Unverified: `TryGetForUpdate` of an id with no history, in the tevent store on MySQL, may lock nothing, since InnoDB at read committed locks no gap. | Opus, read | Checked with a specification on MySQL; reported, not fixed. |
+| D12 | Asked for an id it holds as another declared class, the tevent store throws an `InvalidCastException` from the replay of the history, naming neither class. Found in the documentation pass, 2026-11-18. | jastudio-rep-opus's doc pass, read | It throws before the replay, naming the id and both classes. **Done, f0b37654d,** [specified here](../a-taggregate-asked-for-as-another-class.md), with eight specifications for both stores; on MySQL, SQL Server and PostgreSQL too. |
 
 **Done, 2026-11-18, on the spike (8a68e51e0 to 6433580ca, 11 commits):** D1 to D9, each with a specification; the full
 suite passes, 5131 specifications, and the integration CQRS specifications on MySQL, SQL Server and PostgreSQL too. D7

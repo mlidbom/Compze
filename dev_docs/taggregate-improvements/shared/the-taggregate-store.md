@@ -849,7 +849,9 @@ registrar.TeventStore(connectionName, store => store.Taggregate<User>());
   the store.
 - **A history doesn't say what class it is the history of,** so the tevent store builds the declared class that is the
   class asked for, or the one declared class derived from it. Asked for a base class that several declared classes
-  derive from, it throws, saying to get the taggregate as its own class.
+  derive from, it throws, saying to get the taggregate as its own class. Asked for an id whose history is of another
+  declared class, it throws before applying the history, naming the id and both classes, as the memory image state store
+  does (D12, [a-taggregate-asked-for-as-another-class.md](a-taggregate-asked-for-as-another-class.md)).
 - **Outside a unit of work, `Get` builds the taggregate from its history, read only:** publishing on it throws, as on the
   memory image state store's committed instances, and so does publishing on what `GetReadonlyCopyOfVersion` returns. The
   message is store-neutral: "is an instance a taggregate store serves to readers, which is read only".
