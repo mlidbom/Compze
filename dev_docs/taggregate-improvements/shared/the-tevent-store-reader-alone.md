@@ -5,7 +5,8 @@
 store's included. Recommended by both: an interface of only what the tevent store adds. Specified here before it is built.
 
 **This supersedes the part of item 22 (2026-11-16) that made `ITeventStoreReader` extend the shared reader,** and what
-[the-taggregate-store.md](the-taggregate-store.md) and [the README](README.md) say of that inheritance. The rest of item
+[the-taggregate-store-build-log.md](the-taggregate-store-build-log.md#step-2b-specified-the-tevent-store-joins-the-shared-updater-and-reader)
+and [the README](README.md) say of that inheritance. The rest of item
 22's structure stands: one `ITaggregateStoreReader` and one `ITaggregateStoreUpdater` for every store of a container.
 
 ## Why it stops extending the shared reader

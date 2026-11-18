@@ -260,7 +260,7 @@ type, at the first load, if property-updated tevents get a marker of their own.
 ## 3. Told once per publish cascade
 
 > **Superseded by the taggregate store's deferred dispatch,** in which the store's session is told and dispatches at the
-> commit: [the-taggregate-store.md](the-taggregate-store.md). What an exception leaves behind becomes a rollback of the
+> commit: [the-taggregate-store-build-log.md](the-taggregate-store-build-log.md#dispatch-deferred-to-the-commit). What an exception leaves behind becomes a rollback of the
 > unit of work, and the thread assertion gives way to the lock for each taggregate.
 
 **A publish cascade** is one call to `Publish` together with every `Publish` that tevent handlers make from inside it.

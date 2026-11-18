@@ -51,7 +51,7 @@ Their fix is one fix. **All four bugs above are fixed on the spike, without defe
 hands its tevents out through a queue, so a publish an observer makes during the hand-out is handed out after the
 tevents before it; `Commit` takes the tevents out before calling back; and a store tracks a new taggregate before it
 publishes what the taggregate published before it was added. Tevents are dispatched synchronously, as each publish
-cascade ends. See [the-taggregate-store.md](the-taggregate-store.md#what-the-spike-built-synchronous-dispatch). The
+cascade ends. See [the-taggregate-store.md](the-taggregate-store.md#dispatch-synchronous-as-each-publish-cascade-ends). The
 store's first design dispatched at the commit instead, from the unit of work's queue, so that nothing called out from
 inside `Publish` or `Commit`; before that design, the fix depended on whether a participation handler may change the
 taggregate it handles.

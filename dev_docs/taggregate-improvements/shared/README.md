@@ -128,7 +128,7 @@ how?
    - **The two reentrancy bugs in Teventive, and the two in the tevent store's session,** are fixed without deferring
      anything: a taggregate hands its tevents out through a queue, `Commit` takes them out before calling back, and a
      store tracks a new taggregate before it publishes what the taggregate published before it was added
-     ([the-taggregate-store.md](the-taggregate-store.md#what-the-spike-built-synchronous-dispatch)).
+     ([the-taggregate-store.md](the-taggregate-store.md#dispatch-synchronous-as-each-publish-cascade-ends)).
    - **Isolation by a private copy for each unit of work,** Magnus's choice, confirmed after two independent reviews
      chose it for Compze and JAStudio alike. Code holds taggregate-references across units of work, and indexes are
      defined by the taggregates' state and read their own unit of work's changes. Its cost to JAStudio: every place that
@@ -189,8 +189,8 @@ The numbers: [what-was-measured.md](what-was-measured.md). The bugs and the smal
      and JAStudio keeps its own files behind the seam, byte for byte. Typed ids: `Taggregate.Id` stays overridable by a
      covariant return, and the store keeps the id instances it's given.
    - **Progress:** step 1 built (a0552017d). Step 2 split in three: 2a, the state store (the memory image state store since Q2), built and specified
-     (3f1c611b6), Compze's full suite green, its calls in [the-taggregate-store.md](the-taggregate-store.md#what-the-spike-built-in-step-2a);
-     2b, the tevent store joining the shared updater and reader, specified and built (2a919c6b4, [the-taggregate-store.md](the-taggregate-store.md#what-the-spike-built-in-step-2b));
+     (3f1c611b6), Compze's full suite green, its calls in [the-taggregate-store-build-log.md](the-taggregate-store-build-log.md#what-the-spike-built-in-step-2a);
+     2b, the tevent store joining the shared updater and reader, specified and built (2a919c6b4, [the-taggregate-store-build-log.md](the-taggregate-store-build-log.md#what-the-spike-built-in-step-2b));
      2c, the publisher deferring every tevent, superseded by synchronous dispatch. Step 3's core
      built before 2b and 2c, since JAStudio waits on it (cd3898468, full suite green): the experiment's per-class routing,
      the table found through an explicit implementation of `ITeventRouted` with the exact class asserted at construction,
@@ -204,7 +204,7 @@ The numbers: [what-was-measured.md](what-was-measured.md). The bugs and the smal
      `SharedTomponentSlot`.
      Then the snapshot round-trip helper, `SnapshotRoundTrip.AssertLosesNothing`, which compares the taggregate and its
      copy themselves, since comparing their snapshots alone misses two of the three ways to lose state
-     ([the-taggregate-store.md](the-taggregate-store.md#what-the-spike-built-the-snapshot-round-trip)). Since the end
+     ([the-taggregate-store-build-log.md](the-taggregate-store-build-log.md#what-the-spike-built-the-snapshot-round-trip)). Since the end
      review, `SnapshotRoundTrip.DifferencesBetweenItAndItsCopy` alone, which returns the differences (Q10, Q11).
    - **Built provisionally, as recommended, and brought back with what the spike showed** (Magnus: "Yes to everything
      you suggested"): after step 2, the publisher deferring every tevent to phase 0 (decision 4) and the lock's
@@ -226,7 +226,7 @@ The numbers: [what-was-measured.md](what-was-measured.md). The bugs and the smal
    holds copies of its type grows with them until the overlay keeps each copy's keys.
 4. **Whether `IUnitOfWorkTeventPublisher` itself defers to phase 0,** so that every tevent of a unit of work is
    dispatched in one order. **Moot, Magnus, 2026-11-16:** handlers run synchronously as each publish cascade ends, so
-   nothing is deferred and nothing can overtake anything ([the-taggregate-store.md](the-taggregate-store.md#what-the-spike-built-synchronous-dispatch)).
+   nothing is deferred and nothing can overtake anything ([the-taggregate-store.md](the-taggregate-store.md#dispatch-synchronous-as-each-publish-cascade-ends)).
 5. **Whether the tevent store's session takes the same internals.** **Narrowed, 2026-11-16:** with synchronous
    dispatch, the tevent store keeps its dispatch, and has the two ordering fixes of its bugs. Joining the shared
    updater and reader (step 2b) remains.
