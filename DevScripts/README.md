@@ -58,9 +58,8 @@ Then reload: `. $PROFILE`
   - The real release is the Create Releases workflow (`.github/workflows/publish-nuget.yml`), run by hand only after a CI run that covers the commit has passed: see `.claude/rules/02-universal-compze/100-releasing.md`
 
 - **C-Publish-ToPendingReleaseFeed** - Publishes the versions the next release will publish to this machine's pending-release feed (`~/.nuget/compze-pending-release-feed`), which every repository on the machine restores from: a consumer can use a new version at once, instead of after CI, the release workflow and nuget.org's validation
-  - Packs only a clean, committed tree; a published version is frozen to the code that ships
+  - Packs what HEAD holds, in a temporary clean worktree of HEAD, so a published version is frozen to the code that ships; uncommitted changes in the checkout don't stop it, and are not published
   - `-Replace` - Replace a published version whose package source changed since (also purges the old build from the NuGet cache)
-  - `-NoBuild` - Pack without building first
   - Push a consumer that references a published version only once nuget.org has it
 
 - **C-Clear-ReleasedLocalBuilds** - Removes every local build of a version nuget.org has released, from the pending-release feed and the NuGet global packages folder, so restores take nuget.org's build; reports versions still pending. A user-level SessionStart hook runs it in every Claude session
