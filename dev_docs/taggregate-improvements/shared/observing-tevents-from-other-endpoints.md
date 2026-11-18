@@ -1,5 +1,9 @@
 # Observing tevents from other endpoints: declared on endpoints only, as ObserveFromOtherEndpoints
 
+**Renamed since (Magnus, 2026-11-18, built in e01905b14):** `ObserveFromOtherEndpoints` is
+`SubscribeForDynamicObservers`, and runtime observers are dynamic observers: see
+[dynamic-and-composed-observers.md](dynamic-and-composed-observers.md). The rule and the routing specified here stand.
+
 **Decided by Magnus, 2026-11-18** (the end review's fourth question, item 69). He questioned the name and the rule of
 `AtRuntime<TTevent>()`: "It is about enabling observation of tevents from other endpoints. It is not really about
 allowing runtime observation to my mind, it is about ensuring that we get these tevents from another endpoint. The setup

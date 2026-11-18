@@ -1,5 +1,9 @@
 # Observing tevents at runtime, and a unit of work's tevents as one list: specified
 
+**Renamed since (Magnus, 2026-11-18, built in e01905b14):** runtime observers are dynamic observers, and observers
+declared at composition are composed observers: see [dynamic-and-composed-observers.md](dynamic-and-composed-observers.md).
+This document keeps the names it was written with.
+
 Two additions to Compze.Tessaging's observation, approved by Magnus on 2026-11-17. They came from JAStudio's move from
 its `NoteUpdated` observable to tevents, and from the same need in Deskmancer.
 
