@@ -1,4 +1,3 @@
-using Compze.Teventive.Taggregates.BaseClasses;
 using Compze.Teventive.Taggregates.Tevents;
 
 namespace Compze.Teventive.TeventStore.QueryModels.SelfGeneratingQueryModels;

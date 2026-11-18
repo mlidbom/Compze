@@ -1,4 +1,3 @@
-using Compze.Contracts;
 using Compze.Tessaging.TessageTypes;
 
 namespace Compze.Teventive.Taggregates.BaseClasses;

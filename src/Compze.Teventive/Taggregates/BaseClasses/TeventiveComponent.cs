@@ -1,5 +1,3 @@
-using Compze.Tessaging.TessageTypes;
-using Compze.Contracts;
 using Compze.Teventive._private.Implementation;
 using Compze.Teventive.Taggregates.BaseClasses._private;
 using Compze.Teventive.Taggregates.Tevents;

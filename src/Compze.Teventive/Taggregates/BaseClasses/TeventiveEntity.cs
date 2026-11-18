@@ -1,4 +1,3 @@
-using Compze.Tessaging.TessageTypes;
 using Compze.Contracts;
 using Compze.Internals.SystemCE.ReflectionCE;
 using Compze.Teventive._private.Implementation;

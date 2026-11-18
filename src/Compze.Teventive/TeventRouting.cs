@@ -47,7 +47,7 @@ public abstract class TeventRouting
    {
       State.Assert(appliers is not null,
                    () => $"{teventive.GetType().FullName} declares no tevent appliers: its TeventAppliers returns none. Declare them with its base class's DeclareAppliers, keep them in a static field, and return them from the class's override: protected override TeventRouting TeventAppliers => Appliers;");
-      appliers!.AssertDeclaredForTheClassOf(teventive);
+      appliers.AssertDeclaredForTheClassOf(teventive);
    }
 
    ///<summary>Asserts that this routing, of <paramref name="parent"/>'s class, routes <typeparamref name="TPartTevent"/>s to a part, as it must to reach<br/>
