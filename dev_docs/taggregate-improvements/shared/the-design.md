@@ -83,11 +83,21 @@ class VocabNote : JPNote
     field doesn't hold the part yet while the part's constructor runs;
   - **a slot's route asserts that the shared tomponent it reaches was constructed with that slot.**
 
-  Two gaps are named, not solved: two components of one class with one entry forgotten, and `Extend` skipping an
-  intermediate class that has a table. Proposed by jastudio-rep-opus for the second, not built: every class declares
-  its table, abstract classes included, with an empty `Extend` if it adds nothing; and `Extend<TSubclass>` asserts
-  that the class whose table it extends is `TSubclass`'s direct base class. A chain of tables then can't skip a class.
-  It is checked once per class, when the subclass's table is made.
+  One gap is named, not solved: two components of one class with one entry forgotten. The other, `Extend` skipping an
+  intermediate class that has a table, is closed (built in step 3, e74020483; **decided by Magnus, 2026-11-17, item
+  25**): every concrete class declares its table, with an empty `Extend` if it adds nothing, enforced by the
+  exact-class assertion at construction; and `Extend<TSubclass>` asserts that the class whose table it extends is
+  `TSubclass`'s direct base class, throwing an `ArgumentException` naming that class. A chain of tables then can't skip
+  a class. It is checked once per class, when the subclass's table is made.
+- **How an instance finds its class's table (decided by Magnus, 2026-11-17, item 24):** the class implements the public
+  interface `ITeventRouted` (`TeventAppliers`, `TeventHandlers`) explicitly, listed again in the base list of every class
+  that declares a table, so nothing shows in a taggregate's member list. Compze's base classes implement it to return
+  null, which since step 5 means the class declares no table, refused at its first construction. The base constructor
+  also asserts that the table is declared for the exact class, so a class that forgets its own fails at its first
+  construction, naming both classes. The cost: CA1033 on the base classes' explicit implementations, suppressed with its
+  reason as the codebase does for its other explicit implementations, and, found in step 5, on every public unsealed
+  consumer class that implements it (Compze's sealed its four public test taggregates). Its names and shape are reviewed
+  again in the end review.
 - **Resolved once per class and wrapper tevent type,** published in a dictionary that is never changed afterwards and is
   read without a lock. Many threads dispatching on different instances of one class at once is safe, which JAStudio's
   full rebuild does.
@@ -98,7 +108,10 @@ class VocabNote : JPNote
   that both apply, and reactions that reach other notes go to participation handlers, dispatched by the taggregate
   store when the unit of work commits: see [the-taggregate-store.md](the-taggregate-store.md).
 - **The query models** (`SelfGeneratingQueryModel` and its families) move to the same tables, so that one abstraction is
-  implemented once.
+  implemented once. **Decided by Magnus, 2026-11-17,** for step 5: they apply tevents and hold their state the way
+  taggregates do. A taggregate adds only that it publishes tevents, and he would like the two to share most of their
+  code, if a way can be found that doesn't make the types more complex than they are: see decision 11 in the
+  [README](README.md).
 
 ### Shared tomponents and their slots
 
@@ -121,8 +134,9 @@ reading lists in a kanji, media reference lists in every note type. So a slot mu
 - **A slot must be declared above the table that enters it,** since static fields initialize in the order written. The
   compiler warns of it under nullable reference types, and the table asserts it. Across the files of a partial class
   the order isn't defined at all, and the compiler doesn't warn.
-- **Proposed by jastudio-rep-opus, not built: the slots in a nested static class,** such as `Slots.SeeAlso`, which
-  removes the rule of order. The runtime runs a class's static initializers before the first read of its static fields,
+- **The slots in a nested static class, `SharedTomponentSlotOfAClass` (built in step 3; decided by Magnus, 2026-11-17,
+  item 24),** such as `Slots.SeeAlso`, reached with `Slots.SeeAlso.In(this)`, a readonly ref struct of owner and slot,
+  which removes the rule of order. The runtime runs a class's static initializers before the first read of its static fields,
   so the table's reference to `Slots.SeeAlso` makes the slot first, wherever either is written. Magnus, on the declared
   table: "One killer thing is ordering dependencies."
 - **What the real generics showed** (jastudio-rep-fable's static slots in the real base classes): a slot's owner can only
@@ -132,15 +146,12 @@ reading lists in a kanji, media reference lists in every note type. So a slot mu
 
 ### What is built, what is designed, and what isn't yet
 
-- **Built and measured** in the real base classes: the root, components, entity collections, slots per instance and
-  slots of the class, inheritance through `Extend`, and the check that a handler holds no state.
-- **Designed, not built:** the exact-class assertion and the other safeguards above, the table typed on the tevent root,
-  and matching shared with the dispatcher. The prototypes keep a fallback to per-instance registration, and their
-  `TeventRouting` has a second implementation of matching.
-- **Not designed yet,** and needed before per-instance registration can be removed: removable entities, which throw under
-  a declaring parent in the prototype; shared tentities and their collections; how Compze's own base classes, `Tentity`
-  and the rest, add their appliers to a subclass's table; and the query models, which are a decision of their own.
-- **The prototype routes tevent handlers into components,** which the design doesn't want: not to be carried over.
+- **Built, in steps 3 and 5,** and registration per instance removed: every teventive class of Compze's routes through
+  its table, the query models included. The safeguards above are built, except that matching is not shared with the
+  dispatcher: the table's matching is the dispatcher's own rule for `For`, a line, and the dispatcher's translation of an
+  ignored wrapper type would be wrong in a table. See
+  [step-5-the-rest-of-the-teventives.md](step-5-the-rest-of-the-teventives.md#built).
+- **Tevent handlers are on roots only,** as designed: a routing of tevent handlers that routes to a part throws.
 
 ### Chosen by the teams, for Magnus to decide
 

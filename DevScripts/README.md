@@ -46,6 +46,11 @@ Then reload: `. $PROFILE`
   - `-CI` - Real versions, as the release workflow packs them, each with its changelog section for its version as its release notes (what nuget.org's package page shows)
   - `-NoBuild` - Pack without building first
 
+- **C-Compare-PublicApi** - Lists the public API changes between two commits, project by project: every public and protected type and member added, removed or changed, from the declarations DocFX's metadata step gives them. For a review of a branch's public API, and for a release's changelog
+  - Default: the working tree against its merge-base with `main`, the projects under `src` with changed files
+  - `-Base`, `-Head` (a commit, checked out in a temporary worktree), `-Projects` (names, wildcards allowed), `-OutFile` (markdown)
+  - DocFX skips the members of C# 14 extension blocks: the report names the changed files that hold them, to compare with git diff
+
 - **C-SimulateRelease** - Packs with real versions and dry-runs the release: which packages are new, their changelog entries, the post-release binding check (`.github/scripts/PostReleaseBindingCheck/README.md`), pushes, GitHub releases and tags
   - `-NoBuild`, `-NoPack`, `-NoSummary`
   - Refuses a changelog section that doesn't state the dependency floors its version raises across a minor version, and prints the line to add (`.github/scripts/lib/DependencyFloors.ps1` says why)
@@ -111,6 +116,10 @@ Then reload: `. $PROFILE`
   - Container switches: `-Microsoft`, `-Autofac`
   - Convenience switches: `-AllSqlLayers`, `-AllContainers`, `-AllPermutations`
   - `-SetAsDefaults` - Save configuration as default
+
+- **C-Set-TestDatabaseServers** - Chooses the machine whose SQL Server, PostgreSQL and MySQL the tests use, through the DbPool's three `COMPOSABLE_*_DATABASE_POOL_MASTER_CONNECTIONSTRING` user environment variables. Without a switch, shows the current choice. Restart Rider (NCrunch) and terminals afterwards
+  - `-Computer` - Another machine on the network, such as `threadripper`: changes nothing unless all three servers answer there
+  - `-ThisMachine` - This machine's servers
 
 ### Utility
 
