@@ -1,6 +1,7 @@
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Globalization;
+using System.Text.Json;
 using System.Transactions;
 using Compze.Abstractions;
 using Compze.DependencyInjection;
@@ -431,6 +432,25 @@ public class Given_a_memory_image_state_store : UniversalTestBase
       [PCT] public void building_the_container_fails_naming_the_tracked_transient_and_the_scoped_service_it_takes() =>
          _thrown.Message.Must().Contain($"takes {typeof(VocabReadings).FullName}, a TrackedTransient that takes {typeof(VocabDictionary).FullName}, which is Scoped");
       [PCT] public void the_failure_names_the_vocab_class() => _thrown.Message.Must().Contain($"resolves {typeof(StoredVocab).FullName} from the container's root");
+   }
+
+   public class when_the_store_is_stored_in_json_files_in_the_folder_a_scoped_service_gives : Given_a_memory_image_state_store
+   {
+      readonly Exception _thrown;
+
+      public when_the_store_is_stored_in_json_files_in_the_folder_a_scoped_service_gives() =>
+         _thrown = Invoking(() => Compose(register: registrar => registrar.Register(Scoped.For<TheFilesFolder>().CreatedBy(() => new TheFilesFolder())),
+                                          declare: store => store.Taggregate(() => new StoredVocab())
+                                                                 .StoredInJsonFiles((TheFilesFolder it) => it.Folder, new JsonSerializerOptions(), files => files.FolderOf<StoredVocab>("vocab"))))
+                  .Must().Throw<Exception>().Which;
+
+      [PCT] public void building_the_container_fails_naming_the_scoped_service() =>
+         _thrown.Message.Must().Contain($"resolves {typeof(TheFilesFolder).FullName} from the container's root, which can't resolve a Scoped service, and it is registered as Scoped");
+
+      sealed class TheFilesFolder
+      {
+         internal DirectoryInfo Folder { get; } = new(Path.Combine(Path.GetTempPath(), "compze-state-store-in-files", Guid.NewGuid().ToString("N")));
+      }
    }
 
    public class when_two_units_of_work_on_two_threads_change_one_vocab : Given_a_memory_image_state_store

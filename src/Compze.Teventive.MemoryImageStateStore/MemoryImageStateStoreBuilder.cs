@@ -138,15 +138,21 @@ public sealed class MemoryImageStateStoreBuilder
    /// than about two seconds: the commit has happened, and the next start finishes it from its journal. The files are written, not<br/>
    /// flushed to the disk: a commit outlives the process, not the machine losing its power.</remarks>
    public MemoryImageStateStoreBuilder StoredInJsonFiles(DirectoryInfo folder, JsonSerializerOptions options, Action<TaggregateFilesBuilder> declare) =>
-      DeclareFiles(_ => folder, options, declare);
+      DeclareFiles(_ => folder, servicesTheFolderIsFoundWith: [], options, declare);
 
    ///<summary>As <see cref="StoredInJsonFiles(DirectoryInfo,JsonSerializerOptions,Action{TaggregateFilesBuilder})"/>, for a folder that a service of<br/>
    /// the container knows: <c>store.StoredInJsonFiles((CorpusPaths paths) => paths.Corpus, options, files => ...)</c>.</summary>
-   ///<remarks>The service is resolved from the container's root when the store is built, at its first use.</remarks>
+   ///<remarks>The service is resolved from the container's root when the store is built, at its first use, or when<br/>
+   /// <see cref="ITaggregateJsonFiles"/> is first resolved. So it can't be scoped: a <typeparamref name="TService"/> that is scoped, or takes<br/>
+   /// a scoped service, directly or through a tracked transient it takes, is refused when the container is built, with a message naming<br/>
+   /// the scoped service, the same whichever container Compze builds on.</remarks>
    public MemoryImageStateStoreBuilder StoredInJsonFiles<TService>(Func<TService, DirectoryInfo> folderWith, JsonSerializerOptions options, Action<TaggregateFilesBuilder> declare) where TService : class =>
-      DeclareFiles(resolver => folderWith(resolver.Resolve<TService>()), options, declare);
+      DeclareFiles(resolver => folderWith(resolver.Resolve<TService>()), servicesTheFolderIsFoundWith: [typeof(TService)], options, declare);
 
-   MemoryImageStateStoreBuilder DeclareFiles(Func<IRootResolver, DirectoryInfo> folderWith, JsonSerializerOptions options, Action<TaggregateFilesBuilder> declare)
+   ///<summary>Declares the store's JSON files, in the folder <paramref name="folderWith"/> finds with the<br/>
+   /// <paramref name="servicesTheFolderIsFoundWith"/>, which it resolves from the container's root: the registration of<br/>
+   /// <see cref="ITaggregateJsonFiles"/> declares them, so that building the container refuses a scoped one.</summary>
+   MemoryImageStateStoreBuilder DeclareFiles(Func<IRootResolver, DirectoryInfo> folderWith, IReadOnlyList<Type> servicesTheFolderIsFoundWith, JsonSerializerOptions options, Action<TaggregateFilesBuilder> declare)
    {
       var files = new TaggregateFilesBuilder();
       declare(files);
@@ -157,7 +163,9 @@ public sealed class MemoryImageStateStoreBuilder
                                                                       files.LoadCache,
                                                                       files.IsOnAFileSystemInMemory ? resolver.Resolve<FileSystemInMemory>() : FilesOnDisk.Instance,
                                                                       files.IsAcceptingNonAtomicCommitsWithADatabase));
-      _registrar.Register(Singleton.For<ITaggregateJsonFiles, TaggregateJsonFiles>().CreatedBy((IRootResolver resolver) => new TaggregateJsonFiles(folderWith(resolver), files.Declarations)));
+      _registrar.Register(Singleton.For<ITaggregateJsonFiles, TaggregateJsonFiles>()
+                                   .ResolvingFromTheRoot(servicesTheFolderIsFoundWith)
+                                   .CreatedBy((IRootResolver resolver) => new TaggregateJsonFiles(folderWith(resolver), files.Declarations)));
       if(files.IsOnAFileSystemInMemory) _registrar.Register(Singleton.For<IFileSystemInMemory, FileSystemInMemory>().CreatedBy(() => new FileSystemInMemory()));
       return this;
    }
