@@ -29,8 +29,8 @@ public class MyAtMostOnceTypermediaTommandWithResult : Remotable.AtMostOnce.AtMo
 
 public class MyTueryResult;
 public class MyTuery : Remotable.NonTransactional.Tueries.Tuery<MyTueryResult>;
-class MyExactlyOnceTevent : TaggregateTevent, IMyExactlyOnceTevent;
-interface IMyExactlyOnceTevent : ITaggregateTevent;
+class MyExactlyOnceTevent : TaggregateTeventWithIdentity, IMyExactlyOnceTevent;
+interface IMyExactlyOnceTevent : ITaggregateTeventWithIdentity, IExactlyOnceTevent;
 public class MyExactlyOnceTommand : Remotable.ExactlyOnce.Tommand;
 
 ///<summary>An exactly-once tommand whose handler lives on the Remote endpoint (<see cref="MyExactlyOnceTommand"/>'s lives on the<br/>
@@ -80,9 +80,14 @@ public class MyCreateTaggregateTommand : Remotable.AtMostOnce.AtMostOnceTypermed
    public TaggregateId TaggregateId { get; set; }
 }
 
-public class MyTaggregate : Taggregate<MyTaggregate, IMyTaggregateTevent, MyTaggregateTevent, IMyTaggregateTevent<IMyTaggregateTevent>, MyTaggregateTevent<MyTaggregateTevent>>
+public sealed class MyTaggregate : Taggregate<MyTaggregate, IMyTaggregateTevent, MyTaggregateTevent, IMyTaggregateTevent<IMyTaggregateTevent>, MyTaggregateTevent<MyTaggregateTevent>>
 {
-   MyTaggregate() : base(TeventDispatcherConfig.IgnoreAllUnhandled) {} //This test taggregate maintains no state, so no tevent has an applier.
+   //This test taggregate maintains no state, so no tevent has an applier.
+   static readonly TeventRouting<MyTaggregate, IMyTaggregateTevent> Appliers = DeclareAppliers(it => it.IgnoreUnhandled<IMyTaggregateTevent>());
+
+   protected override TeventRouting TeventAppliers => Appliers;
+
+   MyTaggregate() {}
 
    internal void Update() => Publish(new MyTaggregateTevent.Updated());
 
@@ -90,13 +95,13 @@ public class MyTaggregate : Taggregate<MyTaggregate, IMyTaggregateTevent, MyTagg
    {
       var created = new MyTaggregate();
       created.Publish(new MyTaggregateTevent.Created(id));
-      bus.Execute(new TeventStoreApi().Tommands.Save(created));
+      bus.Execute(new TeventStoreApi().Tommands.Add(created));
    }
 }
 
 public interface IMyTaggregateTevent<out T> : ITaggregateTevent<T> where T : IMyTaggregateTevent;
 
-public interface IMyTaggregateTevent : ITaggregateTevent
+public interface IMyTaggregateTevent : ITaggregateTeventWithIdentity, IExactlyOnceTevent
 {
    public interface Created : IMyTaggregateTevent, ITaggregateCreatedTevent;
    public interface Updated : IMyTaggregateTevent;
@@ -104,7 +109,7 @@ public interface IMyTaggregateTevent : ITaggregateTevent
 
 public class MyTaggregateTevent<T>(T tevent) : TaggregateTevent<T>(tevent), IMyTaggregateTevent<T> where T : IMyTaggregateTevent;
 
-public class MyTaggregateTevent : TaggregateTevent, IMyTaggregateTevent
+public class MyTaggregateTevent : TaggregateTeventWithIdentity, IMyTaggregateTevent
 {
    MyTaggregateTevent() {}
    MyTaggregateTevent(TaggregateId accountId) : base(accountId) {}

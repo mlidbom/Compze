@@ -21,7 +21,7 @@ public class Before<TTevent> : TeventMigration<ITestTaggregateTevent>
       readonly IEnumerable<Type> _insert = insert;
       Type? _lastSeenTeventType;
 
-      public void MigrateTevent(ITaggregateTevent<ITaggregateTevent> wrappedTevent, ITeventModifier modifier)
+      public void MigrateTevent(ITaggregateTevent<ITaggregateTeventWithIdentity> wrappedTevent, ITeventModifier modifier)
       {
          if (wrappedTevent.Tevent.GetType() == typeof(TTevent) && _lastSeenTeventType != _insert.Last())
          {

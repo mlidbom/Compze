@@ -1,0 +1,34 @@
+# Why this is a skill, and how to test that it gets loaded
+
+Until 2026-11-15 this how-to was most of the always-loaded rule
+`.claude/rules/02-universal-compze/090-diagnosing-ci-flakiness.md`: 688 words in every Compze session. Finding the cause
+of a flake is a task that announces itself, so the how-to moved here.
+
+**The rule kept the trap,** which can come up in the middle of other work, such as a release whose CI run fails: that
+"the VM was overloaded" is the last hypothesis, and that a failed run isn't rerun in the hope of green. Its heading
+names this skill.
+
+**What makes a session load it,** as far as tested: the rule's heading "When a CI test flakes or a CI run fails: load
+the skill `diagnosing-ci-flakiness`", together with the description in `SKILL.md`. Neither was tested without the other.
+
+## The test
+
+`test-tasks` holds three tasks the skill is for and one it is not for, as Magnus would write them:
+
+    python .claude-shared/rule-testing/see-which-skills-a-task-loads.py .claude/skills/diagnosing-ci-flakiness/test-tasks --runs 2 --model claude-opus-5-5
+
+2026-11-15, each session in plan mode in the main checkout, stopped after 8 tool calls:
+
+| | the three tasks it is for | the task it is not for |
+|---|---|---|
+| Opus 5.5 | loaded in 6 sessions of 6 | in none of 2 |
+| Claude Fable 5.2 | loaded in 3 of 3 | not in the 1 |
+
+Every session that loaded it did so with its first tool call. Asked whether the runners were simply overloaded and the
+run should be rerun, the one answer of Opus 5.5 that I read said no, and gave the rule as a reason.
+
+**Not tested:**
+
+- a session that meets a failed CI run in the middle of other work: every test session got the task as its first
+  message;
+- whether a session that has loaded it finds a flake's cause: the test sessions had no shell, so none could read a run.

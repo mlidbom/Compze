@@ -16,7 +16,10 @@ public class InterprocessChangeCounter_specification : UniversalTestBase
 {
    static readonly DirectoryInfo TestDirectory = new DirectoryInfo(Path.Combine(Path.GetTempPath(), "Compze", "Tests", "Signals"))._mutate(it => it.Create());
 
-   static FileInfo TestFile(string name) => new(Path.Combine(TestDirectory.FullName, name));
+   ///<summary>The counter file a specification uses, named for this test process alone. The folder is shared by every checkout<br/>
+   /// on the machine, so with a fixed name the same specification running in another checkout at the same moment would<br/>
+   /// count into the same counter, and a count assertion would fail with the other run's increments added.</summary>
+   static FileInfo TestFile(string name) => new(Path.Combine(TestDirectory.FullName, $"{name}.P{Environment.ProcessId}"));
 
    public class Construction : InterprocessChangeCounter_specification
    {

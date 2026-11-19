@@ -1,0 +1,34 @@
+# Why this is a skill, and how to test that it gets loaded
+
+Until 2026-11-15 this procedure was the always-loaded rule `.claude/rules/02-universal-compze/100-releasing.md`: 725
+words in every Compze session. It is a how-to for a task that announces itself, so it moved here. The rule kept what
+must be known before the skill loads: that Create Releases waits for a CI run that covers the commit, that a published
+version can't be replaced, and that one go-ahead of Magnus's covers one release.
+
+**What makes a session load it,** as far as tested: the rule's heading "Before preparing or making a release: load the
+skill `releasing-compze-packages`", together with the description in `SKILL.md`. Neither was tested without the other.
+
+**The release gate and the Create Releases workflow point at the rule,** not at this skill, for the release procedure
+(`.github/scripts/Assert-CiPassedForCommit.ps1`, `.github/workflows/publish-nuget.yml`). The rule names the skill, so
+they were left as they are: changing them would start a full CI run for a comment.
+
+## The test
+
+`test-tasks` holds three tasks the skill is for and one it is not for, as Magnus would write them:
+
+    python .claude-shared/rule-testing/see-which-skills-a-task-loads.py .claude/skills/releasing-compze-packages/test-tasks --runs 2 --model claude-opus-5-5
+
+2026-11-15, each session in plan mode in the main checkout, stopped after 8 tool calls:
+
+| | the three tasks it is for | the task it is not for |
+|---|---|---|
+| Opus 5.5 | loaded in 6 sessions of 6 | in none of 2 |
+| Claude Fable 5.2 | loaded in 3 of 3 | not in the 1 |
+
+Every session that loaded it did so with its first tool call.
+
+**Not tested:**
+
+- a session that comes to a release in the middle of other work, such as after finishing a change a consumer waits for:
+  every test session got the task as its first message;
+- whether a session that has loaded it carries a release through correctly: the test sessions planned, and were stopped.

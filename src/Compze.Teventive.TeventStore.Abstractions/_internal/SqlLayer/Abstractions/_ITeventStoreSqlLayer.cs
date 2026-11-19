@@ -9,7 +9,10 @@ interface ITeventStoreSqlLayer
 
    IReadOnlyList<TeventDataRow> GetTaggregateHistory(TaggregateId taggregateId, bool takeWriteLock, int startAfterInsertedVersion = 0);
    IEnumerable<TeventDataRow> StreamTevents(int batchSize);
-   IReadOnlyList<CreationTeventRow> ListTaggregateIdsInCreationOrder();
+   IReadOnlyList<TaggregateTeventTypeRow> ListTaggregateIdsInCreationOrder();
+
+   ///<summary>The type of each taggregate's last effective tevent, one row a taggregate, in no particular order.</summary>
+   IReadOnlyList<TaggregateTeventTypeRow> ListTheLastTeventOfEachTaggregate();
    void InsertSingleTaggregateTevents(IReadOnlyList<TeventDataRow> tevents);
    void DeleteTaggregate(TaggregateId taggregateId);
    void UpdateEffectiveVersions(IReadOnlyList<VersionSpecification> versions);

@@ -16,6 +16,7 @@ using JetBrains.Annotations;
 using static Compze.Contracts.Contract;
 using Compze.Teventive.TeventStore._private;
 using Compze.Teventive.TeventStore.Refactoring.Migrations._private;
+using Compze.Teventive.Taggregates.Tevents._internal;
 
 namespace Compze.Teventive.TeventStore;
 
@@ -29,30 +30,34 @@ namespace Compze.Teventive.TeventStore;
    readonly ITeventStoreSqlLayer _sqlLayer;
 
    readonly TeventCache _cache;
-   readonly IReadOnlyList<ITeventMigration> _migrationFactories;
+   readonly Func<IReadOnlyList<ITeventMigration>> _migrations;
 
+   ///<summary>A singleton: the store keeps no state of its own, and a store's reader, which is a singleton, needs it. Registered as<br/>
+   /// itself too, for the taggregate store that keeps taggregates in it, which asks it what only this class answers.</summary>
    internal static void RegisterWith(IComponentRegistrar registrar, Func<IReadOnlyList<ITeventMigration>> migrations)
-      => registrar.Register(Scoped.For<ITeventStore>()
-                                  .CreatedBy((ITeventStoreSqlLayer sqlLayer, ITypeMap typeMap, ITeventStoreSerializer serializer, TeventCache cache) =>
-                                                new TeventStore(sqlLayer, typeMap, serializer, cache, migrations())));
+      => registrar.Register(Singleton.For<ITeventStore, TeventStore>()
+                                     .CreatedBy((ITeventStoreSqlLayer sqlLayer, ITypeMap typeMap, ITeventStoreSerializer serializer, TeventCache cache) =>
+                                                   new TeventStore(sqlLayer, typeMap, serializer, cache, migrations)));
 
-   internal TeventStore(ITeventStoreSqlLayer sqlLayer, ITypeMap typeMap, ITeventStoreSerializer serializer, TeventCache cache, IEnumerable<ITeventMigration> migrations)
+   ///<summary><paramref name="migrations"/> is called at each use, so that the migrations may change while the store lives, as<br/>
+   /// the migration specifications change them.</summary>
+   TeventStore(ITeventStoreSqlLayer sqlLayer, ITypeMap typeMap, ITeventStoreSerializer serializer, TeventCache cache, Func<IReadOnlyList<ITeventMigration>> migrations)
    {
       _typeMap = typeMap;
       _serializer = serializer;
       Log.Debug("Constructor called");
 
-      _migrationFactories = migrations.ToList();
+      _migrations = migrations;
 
       _cache = cache;
       _sqlLayer = sqlLayer;
    }
 
-   public IReadOnlyList<ITaggregateTevent<ITaggregateTevent>> GetTaggregateHistoryForUpdate(TaggregateId id) => GetTaggregateHistoryInternal(taggregateId: id, takeWriteLock: true);
+   public IReadOnlyList<ITaggregateTevent<ITaggregateTeventWithIdentity>> GetTaggregateHistoryForUpdate(TaggregateId id) => GetTaggregateHistoryInternal(taggregateId: id, takeWriteLock: true);
 
-   public IReadOnlyList<ITaggregateTevent<ITaggregateTevent>> GetTaggregateHistory(TaggregateId id) => GetTaggregateHistoryInternal(id, takeWriteLock: false);
+   public IReadOnlyList<ITaggregateTevent<ITaggregateTeventWithIdentity>> GetTaggregateHistory(TaggregateId id) => GetTaggregateHistoryInternal(id, takeWriteLock: false);
 
-   IReadOnlyList<ITaggregateTevent<ITaggregateTevent>> GetTaggregateHistoryInternal(TaggregateId taggregateId, bool takeWriteLock)
+   IReadOnlyList<ITaggregateTevent<ITaggregateTeventWithIdentity>> GetTaggregateHistoryInternal(TaggregateId taggregateId, bool takeWriteLock)
    {
       _sqlLayer.SetupSchemaIfDatabaseUnInitialized();
 
@@ -84,13 +89,12 @@ namespace Compze.Teventive.TeventStore;
       }
 
       var newTaggregateHistory = cachedTaggregateHistory.WrappedTevents.Count == 0
-                                   ? SingleTaggregateInstanceTeventStreamMutator.MutateCompleteTaggregateHistory(_migrationFactories, newTeventsFromSqlLayer)
-                                   : cachedTaggregateHistory.WrappedTevents.Concat(newTeventsFromSqlLayer)
-                                                           .ToArray();
+                                   ? SingleTaggregateInstanceTeventStreamMutator.MutateCompleteTaggregateHistory(_migrations(), newTeventsFromSqlLayer)
+                                   : [.. cachedTaggregateHistory.WrappedTevents, .. newTeventsFromSqlLayer];
 
       if(cachedMigratedHistoryExists)
       {
-         SingleTaggregateInstanceTeventStreamMutator.AssertMigrationsAreIdempotent(_migrationFactories, newTaggregateHistory);
+         SingleTaggregateInstanceTeventStreamMutator.AssertMigrationsAreIdempotent(_migrations(), newTaggregateHistory);
       }
 
       var maxSeenInsertedVersion = newHistoryFromSqlLayer.Max(tevent => tevent.StorageInformation.InsertedVersion);
@@ -100,34 +104,34 @@ namespace Compze.Teventive.TeventStore;
       return newTaggregateHistory;
    }
 
-   ITaggregateTevent<ITaggregateTevent> HydrateTevent(TeventDataRow teventDataRowRow)
+   ITaggregateTevent<ITaggregateTeventWithIdentity> HydrateTevent(TeventDataRow teventDataRowRow)
    {
       var wrappedTevent = _serializer.Deserialize(wrapperTeventType: teventDataRowRow.TeventType.Type, json: teventDataRowRow.TeventJson);
-#pragma warning disable CS0618 // Type or member is obsolete
       ((IMutableTaggregateTevent)wrappedTevent.Tevent).SetTaggregateIdInternal(teventDataRowRow.TaggregateId);
       ((IMutableTaggregateTevent)wrappedTevent.Tevent).SetTaggregateVersionInternal(teventDataRowRow.TaggregateVersion);
-      ((IMutableTaggregateTevent)wrappedTevent.Tevent).SetTessageIdInternal(teventDataRowRow.TeventId);
+      ((IMutableTaggregateTeventWithIdentity)wrappedTevent.Tevent).SetTessageIdInternal(teventDataRowRow.TeventId);
       ((IMutableTaggregateTevent)wrappedTevent.Tevent).SetUtcTimeStampInternal(teventDataRowRow.UtcTimeStamp);
-#pragma warning restore CS0618 // Type or member is obsolete
       return wrappedTevent;
    }
 
    TaggregateTeventWithRefactoringInformation[] GetTaggregateTeventsFromSqlLayer(TaggregateId taggregateId, bool takeWriteLock, int startAfterInsertedVersion = 0)
-      => _sqlLayer.GetTaggregateHistory(taggregateId: taggregateId,
-                                               startAfterInsertedVersion: startAfterInsertedVersion,
-                                               takeWriteLock: takeWriteLock)
-                          .Select(it => new TaggregateTeventWithRefactoringInformation(HydrateTevent(it), it.StorageInformation))
-                          .ToArray();
+      =>
+      [
+         .. _sqlLayer.GetTaggregateHistory(taggregateId: taggregateId,
+                                           startAfterInsertedVersion: startAfterInsertedVersion,
+                                           takeWriteLock: takeWriteLock)
+                     .Select(it => new TaggregateTeventWithRefactoringInformation(HydrateTevent(it), it.StorageInformation))
+      ];
 
    static bool IsRefactoringTevent(TaggregateTeventWithRefactoringInformation tevent) => tevent.StorageInformation.RefactoringInformation != null;
 
-   IEnumerable<ITaggregateTevent<ITaggregateTevent>> StreamTevents(int batchSize)
+   IEnumerable<ITaggregateTevent<ITaggregateTeventWithIdentity>> StreamTevents(int batchSize)
    {
-      var streamMutator = CompleteTeventStoreStreamMutator.Create(_migrationFactories);
+      var streamMutator = CompleteTeventStoreStreamMutator.Create(_migrations());
       return streamMutator.Mutate(_sqlLayer.StreamTevents(batchSize).Select(HydrateTevent));
    }
 
-   public void StreamTevents(int batchSize, Action<IReadOnlyList<ITaggregateTevent<ITaggregateTevent>>> handleTevents)
+   public void StreamTevents(int batchSize, Action<IReadOnlyList<ITaggregateTevent<ITaggregateTeventWithIdentity>>> handleTevents)
    {
       _sqlLayer.SetupSchemaIfDatabaseUnInitialized();
 
@@ -140,7 +144,7 @@ namespace Compze.Teventive.TeventStore;
       }
    }
 
-   public void SaveSingleTaggregateTevents(IReadOnlyList<ITaggregateTevent<ITaggregateTevent>> wrappedTevents)
+   public void SaveSingleTaggregateTevents(IReadOnlyList<ITaggregateTevent<ITaggregateTeventWithIdentity>> wrappedTevents)
    {
       _sqlLayer.SetupSchemaIfDatabaseUnInitialized();
 
@@ -164,7 +168,7 @@ namespace Compze.Teventive.TeventStore;
       var completeTaggregateHistory = cacheEntry
                                     .WrappedTevents.Concat(wrappedTevents)
                                     .ToArray();
-      SingleTaggregateInstanceTeventStreamMutator.AssertMigrationsAreIdempotent(_migrationFactories, completeTaggregateHistory);
+      SingleTaggregateInstanceTeventStreamMutator.AssertMigrationsAreIdempotent(_migrations(), completeTaggregateHistory);
       TaggregateHistoryValidator.ValidateHistory(taggregateId, completeTaggregateHistory);
 
       _cache.Store(taggregateId,
@@ -181,7 +185,7 @@ namespace Compze.Teventive.TeventStore;
 
    public IEnumerable<TaggregateId> StreamTaggregateIdsInCreationOrder(Type? teventType = null)
    {
-      Argument.Assert(teventType == null || teventType.IsInterface && (typeof(ITaggregateTevent).IsAssignableFrom(teventType) || typeof(IPublisherTevent<ITaggregateTevent>).IsAssignableFrom(teventType)));
+      Argument.Assert(teventType == null || teventType.IsInterface && (typeof(ITaggregateTeventWithIdentity).IsAssignableFrom(teventType) || typeof(IPublisherTevent<ITaggregateTeventWithIdentity>).IsAssignableFrom(teventType)));
 
       _sqlLayer.SetupSchemaIfDatabaseUnInitialized();
       //The rows store wrapper types, so an inner tevent type filter is translated: it matches every wrapping of that tevent type.
@@ -191,9 +195,22 @@ namespace Compze.Teventive.TeventStore;
                               .Select(it => it.TaggregateId);
    }
 
-   internal class TaggregateTeventWithRefactoringInformation(ITaggregateTevent<ITaggregateTevent> wrappedTevent, TaggregateTeventStorageInformation storageInformation)
+   ///<summary>The ids of the deleted taggregates: those whose history ends with an <see cref="ITaggregateDeletedTevent"/>. The store keeps<br/>
+   /// their histories. Read through the ambient transaction, so it includes a deletion the transaction has written.</summary>
+   ///<remarks>One row a taggregate is read, the type of its last effective tevent: a scan, as <see cref="StreamTaggregateIdsInCreationOrder"/> is.</remarks>
+   internal IReadOnlySet<TaggregateId> IdsOfDeletedTaggregates()
    {
-      internal ITaggregateTevent<ITaggregateTevent> WrappedTevent { get; } = wrappedTevent;
+      _sqlLayer.SetupSchemaIfDatabaseUnInitialized();
+      var deletingTevents = PublisherTevent.WrapperTypeMatchingAllWrappingsOf(typeof(ITaggregateDeletedTevent));
+      return _sqlLayer.ListTheLastTeventOfEachTaggregate()
+                      .Where(it => deletingTevents.IsAssignableFrom(it.TypeId.Type))
+                      .Select(it => it.TaggregateId)
+                      .ToHashSet();
+   }
+
+   internal class TaggregateTeventWithRefactoringInformation(ITaggregateTevent<ITaggregateTeventWithIdentity> wrappedTevent, TaggregateTeventStorageInformation storageInformation)
+   {
+      internal ITaggregateTevent<ITaggregateTeventWithIdentity> WrappedTevent { get; } = wrappedTevent;
       internal TaggregateTeventStorageInformation StorageInformation { get; } = storageInformation;
    }
 

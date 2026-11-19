@@ -32,6 +32,7 @@ public abstract class ContainerBuilder : IContainerBuilder
       AddAssociatedRegistrations();
       AddComponentSetRegistrations();
       AssertLifeStyleCombinationsAreValid();
+      AssertTheRootCanResolveTheServicesResolvedFromIt();
       AssertNoSingularDependenciesOnComponentSetTypes();
       RegisterInContainer(_registeredComponents.ToArray());
       return BuildInternal();
@@ -123,6 +124,45 @@ public abstract class ContainerBuilder : IContainerBuilder
               .ForEach(invalidDependency => throw new InvalidLifeStyleCombinationException(consumer, invalidDependency, dependencyType));
          }
       });
+
+   /// <summary>
+   /// The root can't resolve a <see cref="Lifestyle.Scoped"/> service, so each of a component's<br/>
+   /// <see cref="ComponentRegistration.DependencyTypesResolvedFromTheRoot"/> is refused when it is scoped, or takes a scoped service,<br/>
+   /// directly or through the <see cref="Lifestyle.TrackedTransient"/>s it takes: what a tracked transient takes, the root resolves<br/>
+   /// for it from the root too.
+   /// </summary>
+   /// <remarks>
+   /// The search ends at a <see cref="Lifestyle.Singleton"/>: the root resolves it, whoever takes it, and<br/>
+   /// <see cref="AssertLifeStyleCombinationsAreValid"/> checks what it takes.
+   /// </remarks>
+   void AssertTheRootCanResolveTheServicesResolvedFromIt() =>
+      _registeredComponents.ForEach(consumer =>
+      {
+         foreach(var dependencyType in consumer.DependencyTypesResolvedFromTheRoot)
+         {
+            if(FromTheRootToAScopedService(dependencyType, alreadySearched: []) is {} fromTheRootToTheScopedService)
+               throw InvalidLifeStyleCombinationException.ResolvingAScopedServiceFromTheRoot(consumer, fromTheRootToTheScopedService);
+         }
+      });
+
+   /// <summary>The services the root would resolve, from <paramref name="serviceType"/> to the first scoped service among them, or<br/>
+   /// <see langword="null"/> when there is none: see <see cref="AssertTheRootCanResolveTheServicesResolvedFromIt"/>.</summary>
+   IReadOnlyList<(Type ServiceType, ComponentRegistration Registration)>? FromTheRootToAScopedService(Type serviceType, HashSet<ComponentRegistration> alreadySearched)
+   {
+      foreach(var registration in _registeredComponents.Where(it => it.ProvidesService(serviceType)))
+      {
+         if(!alreadySearched.Add(registration)) continue;
+         if(registration.Lifestyle == Lifestyle.Scoped) return [(serviceType, registration)];
+         if(registration.Lifestyle != Lifestyle.TrackedTransient) continue;
+         foreach(var dependencyType in registration.DependencyTypes)
+         {
+            if(FromTheRootToAScopedService(dependencyType, alreadySearched) is {} fromTheDependencyToTheScopedService)
+               return [(serviceType, registration), ..fromTheDependencyToTheScopedService];
+         }
+      }
+
+      return null;
+   }
 
    /// <summary>
    /// A <c>CreatedBy(...)</c> constructor dependency is always resolved singularly (see the generated overloads in
@@ -217,6 +257,13 @@ public abstract class ContainerBuilder : IContainerBuilder
          {
             Lifestyle.Singleton => false,
             Lifestyle.Scoped    => true,
+            //bug: A singleton that takes a tracked transient marked AllowSingletonDependent, which takes a scoped service, passes Build():
+            //   this checks only what the singleton takes directly. The root resolves the tracked transient for the singleton, so it fails
+            //   at the singleton's first resolve, differently on each container: Microsoft's error names the scoped service, DryIoc's and
+            //   Autofac's outer one don't, and LightInject, asked inside a scope, resolves it without complaint, so the singleton keeps a
+            //   scoped instance past its scope. FromTheRootToAScopedService, the search AssertTheRootCanResolveTheServicesResolvedFromIt
+            //   runs for each DependencyTypesResolvedFromTheRoot, would catch it if Build() also ran it for each singleton's
+            //   DependencyTypes. Fixing it changes what Build() accepts, which is Magnus's call.
             _                   => !dependency.AllowSingletonDependent
          };
 

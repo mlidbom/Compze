@@ -73,10 +73,11 @@ static class UnitOfWorkTeventPublisherRegistrar
       var unitOfWork = UnitOfWorkResolver.From(_scopeResolver);
       var remoteDelivery = RemoteDeliveryFor(wrappedTevent);
       TessageInspector.AssertValidToExecuteLocally(wrappedTevent);
-      //Observation observes committed facts only: the tevent is queued for its observers when this unit of work commits - a
-      //rolled-back publish is never observed - and dispatched off-thread. The hook registers before participation runs, so a
-      //tevent a participation handler publishes in response queues after this one: observers see cause before consequence.
-      unitOfWork.OnCommittedSuccessfully(() => _observationDispatcher.QueueForObservers(wrappedTevent));
+      //Observation observes committed facts only: the tevent is queued for its observers, with the rest of this unit of work's
+      //tevents, when it commits - a rolled-back publish is never observed - and dispatched off-thread. It is collected before
+      //participation runs, so a tevent a participation handler publishes in response comes after this one: observers see cause
+      //before consequence.
+      _observationDispatcher.QueueAtTheCommitOf(unitOfWork, wrappedTevent);
       await _executor.ExecuteTeventHandlers(wrappedTevent, unitOfWork).caf();
       if(remoteDelivery != null) await remoteDelivery().caf();
    }

@@ -4,6 +4,10 @@ All notable changes to Compze.Internals.SystemCE will be documented in this file
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## 0.9.0-internal
+
+- **Internal support for keeping a memory image state store's files and a database connection out of one transaction; nothing public changes:** a record of the durable resources taking part in each transaction, through which a resource that can't share its transaction with another refuses it. The new versions of Compze.Sql.Common and Compze.Teventive.MemoryImageStateStore require this one.
+
 ## 0.8.0-internal
 
 - **Targets .NET 11 (`net11.0`) instead of .NET 10, and is compiled with runtime async:** the runtime, instead of state machines the compiler generates, suspends and resumes its async methods, so live stack traces show the real call chain. An application that uses this version must target .NET 11.

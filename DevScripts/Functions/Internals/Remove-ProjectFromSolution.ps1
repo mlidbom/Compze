@@ -3,15 +3,16 @@
 function Remove-ProjectFromSolution {
     <#
     .SYNOPSIS
-    Removes a project from the solution file
-    
+    Removes a project from a solution file
+
     .DESCRIPTION
-    Removes a Project element from the solution XML file if it exists.
-    Also cleans up empty folders.
-    
+    Removes the project's line from the .slnx, and the solution folders it leaves empty, if the solution holds it.
+    The project is found by its file name, <ProjectName>.csproj, wherever it lies: src/ or test/ in the flat layout.
+    The file is edited as text, so it keeps its own formatting, such as its indentation.
+
     .PARAMETER ProjectName
     The name of the project to remove from the solution
-    
+
     .PARAMETER SolutionPath
     Path to the solution file
     #>
@@ -20,49 +21,35 @@ function Remove-ProjectFromSolution {
     param(
         [Parameter(Mandatory = $true)]
         [string]$ProjectName,
-        
+
         [Parameter(Mandatory = $true)]
         [string]$SolutionPath
     )
-    
+
     if (-not (Test-Path $SolutionPath)) {
         Write-Error "Solution file not found: $SolutionPath"
         return
     }
-    
-    [xml]$xml = Get-Content $SolutionPath
-    
-    # Calculate the expected project path
-    $solutionProjectPath = $ProjectName -replace '\.', '/'
-    $solutionProjectPath = "$solutionProjectPath/$ProjectName.csproj"
-    
-    # Find the project element
-    $projectElement = $xml.SelectNodes("//Project[@Path]") | 
-        Where-Object { $_.Path -eq $solutionProjectPath } | 
-        Select-Object -First 1
-    
-    if (-not $projectElement) {
-        return # Project not in solution
+
+    $text = [System.IO.File]::ReadAllText($SolutionPath)
+    $lineEnding = if ($text.Contains("`r`n")) { "`r`n" } else { "`n" }
+    $lines = [System.Collections.Generic.List[string]]::new([string[]]$text.Split($lineEnding))
+    $projectLinePattern = '<Project Path="([^"]*/)?' + [regex]::Escape($ProjectName) + '\.csproj"'
+    $index = $lines.FindIndex([Predicate[string]] { param($line) $line -match $projectLinePattern })
+    if ($index -lt 0) { return } # Project not in solution
+
+    # A project with elements of its own inside it ends at its closing tag.
+    $end = $index
+    if (-not $lines[$index].TrimEnd().EndsWith('/>')) {
+        while ($lines[$end] -notmatch '</Project>') { $end++ }
     }
-    
-    # Remove the project
-    $parentFolder = $projectElement.ParentNode
-    $parentFolder.RemoveChild($projectElement) | Out-Null
-    
-    # Clean up empty folders recursively
-    while ($parentFolder -and $parentFolder.Name -eq "Folder") {
-        # Check if folder is now empty (no Project or Folder children)
-        $hasChildren = ($parentFolder.SelectNodes("Project").Count -gt 0) -or 
-                       ($parentFolder.SelectNodes("Folder").Count -gt 0)
-        
-        if (-not $hasChildren) {
-            $grandparent = $parentFolder.ParentNode
-            $grandparent.RemoveChild($parentFolder) | Out-Null
-            $parentFolder = $grandparent
-        } else {
-            break
-        }
+    $lines.RemoveRange($index, $end - $index + 1)
+
+    # Remove the solution folders the project leaves empty, innermost first.
+    while ($index -gt 0 -and $index -lt $lines.Count -and $lines[$index - 1] -match '^\s*<Folder\b[^>]*[^/]>\s*$' -and $lines[$index] -match '^\s*</Folder>\s*$') {
+        $lines.RemoveRange($index - 1, 2)
+        $index--
     }
-    
-    $xml.Save($SolutionPath)
+
+    [System.IO.File]::WriteAllText($SolutionPath, ($lines -join $lineEnding), [System.Text.UTF8Encoding]::new($false))
 }

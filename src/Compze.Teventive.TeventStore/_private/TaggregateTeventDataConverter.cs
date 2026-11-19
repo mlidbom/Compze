@@ -5,5 +5,5 @@ namespace Compze.Teventive.TeventStore._private;
 
 static class TaggregateTeventDataConverter
 {
-   public static TaggregateTeventData ToTaggregateTeventData(this ITaggregateTevent @this) => new(@this.Id, @this.TaggregateVersion, @this.TaggregateId, @this.UtcTimeStamp);
+   public static TaggregateTeventData ToTaggregateTeventData(this ITaggregateTeventWithIdentity @this) => new(@this.Id, @this.TaggregateVersion, @this.TaggregateId, @this.UtcTimeStamp);
 }

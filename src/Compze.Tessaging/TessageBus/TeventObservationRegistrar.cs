@@ -8,8 +8,10 @@ using Compze.Tessaging.TessageTypes;
 namespace Compze.Tessaging.TessageBus;
 
 ///<summary>Registers tevent observers — observation is the deliberately transaction-ignoring watch surface, declared under<br/>
-/// its own verb (<see cref="LocalTessagingEngineBuilder.ObserveTevents"/>) so the distinct semantics are visible at the<br/>
-/// declaration site: an observer watches, never participates. Handed to the callback and existing only inside it, exactly like<br/>
+/// its own verb so the distinct semantics are visible at the declaration site: an observer watches, never participates.<br/>
+/// Handed to the callback of <see cref="LocalTessagingEngineBuilder.ObserveTevents"/> at composition, for composed observers, or<br/>
+/// of <see cref="IDynamicTeventObservers.ObserveTevents"/> while the engine runs, for dynamic observers, and existing only inside it,<br/>
+/// exactly like<br/>
 /// <see cref="TessageBusHandlerRegistrar"/>.</summary>
 ///<remarks>An observer observes committed facts only — a tevent published within an execution is queued for its observers at<br/>
 /// commit, and an arriving tevent was committed by its publisher — and runs off-thread in per-observer FIFO order (the<br/>
@@ -19,18 +21,16 @@ namespace Compze.Tessaging.TessageBus;
 /// reported through the background-exception reporter, never retried.</remarks>
 public sealed class TeventObservationRegistrar : ITeventObservationRegistrar
 {
-   readonly TessageHandlerRegistrations _registrations;
+   readonly Action<TeventObserverRegistration> _addObserver;
    bool _callbackHasEnded;
 
-   internal TeventObservationRegistrar(TessageHandlerRegistrations registrations) => _registrations = registrations;
+   ///<summary>A registrar that adds each observer through <paramref name="addObserver"/>: composed observers at composition, or<br/>
+   /// dynamic observers while the engine runs.</summary>
+   internal TeventObservationRegistrar(Action<TeventObserverRegistration> addObserver) => _addObserver = addObserver;
 
    ///<summary>Registers an observer for tevents compatible with <typeparamref name="TTevent"/>.</summary>
-   public TeventObservationRegistrar ForTevent<TTevent>(Func<TTevent, IScopeResolver, Task> observer) where TTevent : ITevent
-   {
-      AssertUsedOnlyInsideItsCallback();
-      _registrations.AddTeventObserver(observer);
-      return this;
-   }
+   public TeventObservationRegistrar ForTevent<TTevent>(Func<TTevent, IScopeResolver, Task> observer) where TTevent : ITevent =>
+      Add(TeventObserverRegistration.ForEachTevent(observer));
 
    //One dispatch path: a synchronous observer is an async one whose task has completed by the time it returns.
    public TeventObservationRegistrar ForTevent<TTevent>(Action<TTevent, IScopeResolver> observer) where TTevent : ITevent =>
@@ -40,22 +40,43 @@ public sealed class TeventObservationRegistrar : ITeventObservationRegistrar
          return Task.CompletedTask;
       });
 
-   //The minimal registrar an endpoint-declaration's ObserveTevents override receives - this registrar's one facet.
-   ITeventObservationRegistrar ITeventObservationRegistrar.ForTevent<TTevent>(Func<TTevent, IScopeResolver, Task> observer)
-   {
-      ForTevent(observer);
-      return this;
-   }
+   ///<summary>Registers an observer of each committed unit of work's tevents compatible with <typeparamref name="TTevent"/>, as one<br/>
+   /// list in the order they were published: for a reaction that is costly for each call, such as a view refreshing, or a read<br/>
+   /// model writing to a database. It is called once for each committed unit of work that published any such tevent, never with<br/>
+   /// an empty list.</summary>
+   ///<remarks>A tevent with no unit of work known to this process comes as a list of its own: one published through<br/>
+   /// <see cref="IIndependentTeventPublisher"/>, which is its own unit of work, and one that arrives from another endpoint, since<br/>
+   /// nothing on it marks its sender's unit of work.</remarks>
+   public TeventObservationRegistrar ForTeventsOfEachUnitOfWork<TTevent>(Func<IReadOnlyList<TTevent>, IScopeResolver, Task> observer) where TTevent : ITevent =>
+      Add(TeventObserverRegistration.ForTeventsOfEachUnitOfWork(observer));
 
-   ITeventObservationRegistrar ITeventObservationRegistrar.ForTevent<TTevent>(Action<TTevent, IScopeResolver> observer)
-   {
-      ForTevent(observer);
-      return this;
-   }
+   //One dispatch path, as for ForTevent.
+   public TeventObservationRegistrar ForTeventsOfEachUnitOfWork<TTevent>(Action<IReadOnlyList<TTevent>, IScopeResolver> observer) where TTevent : ITevent =>
+      ForTeventsOfEachUnitOfWork<TTevent>((tevents, scope) =>
+      {
+         observer(tevents, scope);
+         return Task.CompletedTask;
+      });
+
+   //The minimal registrar an endpoint-declaration's ObserveTevents override receives - this registrar's one facet.
+   ITeventObservationRegistrar ITeventObservationRegistrar.ForTevent<TTevent>(Func<TTevent, IScopeResolver, Task> observer) => ForTevent(observer);
+
+   ITeventObservationRegistrar ITeventObservationRegistrar.ForTevent<TTevent>(Action<TTevent, IScopeResolver> observer) => ForTevent(observer);
+
+   ITeventObservationRegistrar ITeventObservationRegistrar.ForTeventsOfEachUnitOfWork<TTevent>(Func<IReadOnlyList<TTevent>, IScopeResolver, Task> observer) => ForTeventsOfEachUnitOfWork(observer);
+
+   ITeventObservationRegistrar ITeventObservationRegistrar.ForTeventsOfEachUnitOfWork<TTevent>(Action<IReadOnlyList<TTevent>, IScopeResolver> observer) => ForTeventsOfEachUnitOfWork(observer);
 
    internal void EndCallback() => _callbackHasEnded = true;
 
+   TeventObservationRegistrar Add(TeventObserverRegistration observer)
+   {
+      AssertUsedOnlyInsideItsCallback();
+      _addObserver(observer);
+      return this;
+   }
+
    void AssertUsedOnlyInsideItsCallback() =>
       State.Assert(!_callbackHasEnded,
-                   () => $"This {nameof(TeventObservationRegistrar)}'s declaration callback has ended, and the registrar exists only inside it: the callback's end is the registration's end, so nothing can hold a registrar and mutate the engine later. Declare every observer inside the {nameof(LocalTessagingEngineBuilder.ObserveTevents)} callback.");
+                   () => $"This {nameof(TeventObservationRegistrar)}'s declaration callback has ended, and the registrar exists only inside it: the callback's end is the registration's end, so nothing can hold a registrar and add observers later. Declare every observer inside the ObserveTevents callback.");
 }

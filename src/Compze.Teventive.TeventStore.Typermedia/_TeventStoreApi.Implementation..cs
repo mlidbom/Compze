@@ -1,4 +1,5 @@
 using Compze.Abstractions;
+using Compze.Teventive.TaggregateStores;
 using Compze.Teventive.Taggregates.Tevents;
 using Compze.Teventive.TeventStore.Abstractions;
 using Compze.Tessaging.Typermedia;
@@ -12,7 +13,7 @@ public partial class TeventStoreApi
 {
    public partial class TueryApi
    {
-      public class TaggregateLink<TTaggregate> : StrictlyLocal.Tueries.StrictlyLocalTuery<TaggregateLink<TTaggregate>, TTaggregate> where TTaggregate : class, ITaggregate
+      public class TaggregateLink<TTaggregate> : StrictlyLocal.Tueries.StrictlyLocalTuery<TaggregateLink<TTaggregate>, TTaggregate> where TTaggregate : class, ITaggregate<ITaggregateTeventWithIdentity>
       {
          [Obsolete("Used by serializer", error:true)]
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
@@ -23,10 +24,10 @@ public partial class TeventStoreApi
          internal TaggregateLink(TaggregateId id) => Id = id;
          public TaggregateId Id { get; private set; }
 
-         internal static void RegisterHandler(TypermediaHandlerRegistrar registrar) => registrar.ForTuery((TaggregateLink<TTaggregate> tuery, ITeventStoreUpdater updater) => updater.Get<TTaggregate>(tuery.Id));
+         internal static void RegisterHandler(TypermediaHandlerRegistrar registrar) => registrar.ForTuery((TaggregateLink<TTaggregate> tuery, ITaggregateStoreUpdater updater) => updater.GetForUpdate<TTaggregate>(tuery.Id));
       }
 
-      public class GetTaggregateHistory<TTevent> : StrictlyLocal.Tueries.StrictlyLocalTuery<GetTaggregateHistory<TTevent>, IEnumerable<ITaggregateTevent<TTevent>>> where TTevent : ITaggregateTevent
+      public class GetTaggregateHistory<TTevent> : StrictlyLocal.Tueries.StrictlyLocalTuery<GetTaggregateHistory<TTevent>, IEnumerable<ITaggregateTevent<TTevent>>> where TTevent : class, ITaggregateTeventWithIdentity
       {
          [Obsolete("for serializer", error: true)]
          // ReSharper disable once UnusedMember.Global
@@ -38,21 +39,22 @@ public partial class TeventStoreApi
          internal static void RegisterHandler(TypermediaHandlerRegistrar registrar) => registrar.ForTuery((GetTaggregateHistory<TTevent> tuery, ITeventStoreReader reader) => reader.GetHistory(tuery.Id).Cast<ITaggregateTevent<TTevent>>());
       }
 
-      public class GetReadonlyCopyOfTaggregate<TTaggregate> : StrictlyLocal.Tueries.StrictlyLocalTuery<GetReadonlyCopyOfTaggregate<TTaggregate>, TTaggregate> where TTaggregate : class, ITaggregate
+      ///<summary>Gets the taggregate as <see cref="ITaggregateStoreReader"/> gets it.</summary>
+      public class GetTaggregate<TTaggregate> : StrictlyLocal.Tueries.StrictlyLocalTuery<GetTaggregate<TTaggregate>, TTaggregate> where TTaggregate : class, ITaggregate<ITaggregateTeventWithIdentity>
       {
          [Obsolete("Used by serializer", error:true)]
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
          // ReSharper disable once UnusedMember.Global
-         public GetReadonlyCopyOfTaggregate() {}
+         public GetTaggregate() {}
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
 
-         internal GetReadonlyCopyOfTaggregate(TaggregateId id) => Id = id;
+         internal GetTaggregate(TaggregateId id) => Id = id;
          public TaggregateId Id { get; private set; }
 
-         internal static void RegisterHandler(TypermediaHandlerRegistrar registrar) => registrar.ForTuery((GetReadonlyCopyOfTaggregate<TTaggregate> tuery, ITeventStoreReader reader) => reader.GetReadonlyCopy<TTaggregate>(tuery.Id));
+         internal static void RegisterHandler(TypermediaHandlerRegistrar registrar) => registrar.ForTuery((GetTaggregate<TTaggregate> tuery, ITaggregateStoreReader reader) => reader.Get<TTaggregate>(tuery.Id));
       }
 
-      public class GetReadonlyCopyOfTaggregateVersion<TTaggregate> : StrictlyLocal.Tueries.StrictlyLocalTuery<GetReadonlyCopyOfTaggregateVersion<TTaggregate>, TTaggregate> where TTaggregate : class, ITaggregate
+      public class GetReadonlyCopyOfTaggregateVersion<TTaggregate> : StrictlyLocal.Tueries.StrictlyLocalTuery<GetReadonlyCopyOfTaggregateVersion<TTaggregate>, TTaggregate> where TTaggregate : class, ITaggregate<ITaggregateTeventWithIdentity>
       {
          [Obsolete("Used by serializer", error:true)]
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
@@ -75,23 +77,23 @@ public partial class TeventStoreApi
 
    public partial class TommandApi
    {
-      public class SaveTaggregate<TTaggregate> : StrictlyLocal.Tommands.StrictlyLocalTommand
-         where TTaggregate : class, ITaggregate
+      public class AddTaggregate<TTaggregate> : StrictlyLocal.Tommands.StrictlyLocalTommand
+         where TTaggregate : class, ITaggregate<ITaggregateTeventWithIdentity>
       {
-         internal SaveTaggregate(TTaggregate entity) => Entity = entity;
+         internal AddTaggregate(TTaggregate entity) => Entity = entity;
          public TTaggregate Entity { get; private set; }
 
-         internal static void RegisterHandler(TypermediaHandlerRegistrar registrar) => registrar.ForTommand((SaveTaggregate<TTaggregate> tommand, ITeventStoreUpdater updater) => updater.Save(tommand.Entity));
+         internal static void RegisterHandler(TypermediaHandlerRegistrar registrar) => registrar.ForTommand((AddTaggregate<TTaggregate> tommand, ITaggregateStoreUpdater updater) => updater.Add(tommand.Entity));
       }
    }
 
    public static void RegisterHandlersForTaggregate<TTaggregate, TTevent>(TypermediaHandlerRegistrar registrar)
       where TTaggregate : class, ITaggregate<TTevent>
-      where TTevent : ITaggregateTevent
+      where TTevent : class, ITaggregateTeventWithIdentity
    {
-      TommandApi.SaveTaggregate<TTaggregate>.RegisterHandler(registrar);
+      TommandApi.AddTaggregate<TTaggregate>.RegisterHandler(registrar);
       TueryApi.TaggregateLink<TTaggregate>.RegisterHandler(registrar);
-      TueryApi.GetReadonlyCopyOfTaggregate<TTaggregate>.RegisterHandler(registrar);
+      TueryApi.GetTaggregate<TTaggregate>.RegisterHandler(registrar);
       TueryApi.GetReadonlyCopyOfTaggregateVersion<TTaggregate>.RegisterHandler(registrar);
       TueryApi.GetTaggregateHistory<TTevent>.RegisterHandler(registrar);
    }

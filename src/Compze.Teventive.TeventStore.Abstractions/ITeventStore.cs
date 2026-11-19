@@ -7,11 +7,11 @@ namespace Compze.Teventive.TeventStore.Abstractions;
 /// inside its publisher's <see cref="ITaggregateTevent{TTeventInterface}"/> wrapper - persisted under the wrapper type's identity with zero information loss.</summary>
 public interface ITeventStore : IDisposable
 {
-   IReadOnlyList<ITaggregateTevent<ITaggregateTevent>> GetTaggregateHistoryForUpdate(TaggregateId id);
-   IReadOnlyList<ITaggregateTevent<ITaggregateTevent>> GetTaggregateHistory(TaggregateId id);
-   void SaveSingleTaggregateTevents(IReadOnlyList<ITaggregateTevent<ITaggregateTevent>> wrappedTevents);
+   IReadOnlyList<ITaggregateTevent<ITaggregateTeventWithIdentity>> GetTaggregateHistoryForUpdate(TaggregateId id);
+   IReadOnlyList<ITaggregateTevent<ITaggregateTeventWithIdentity>> GetTaggregateHistory(TaggregateId id);
+   void SaveSingleTaggregateTevents(IReadOnlyList<ITaggregateTevent<ITaggregateTeventWithIdentity>> wrappedTevents);
    //todo: Utilize C# 8 asynchronous streams.
-   void StreamTevents(int batchSize, Action<IReadOnlyList<ITaggregateTevent<ITaggregateTevent>>> handleTevents);
+   void StreamTevents(int batchSize, Action<IReadOnlyList<ITaggregateTevent<ITaggregateTeventWithIdentity>>> handleTevents);
    void DeleteTaggregate(TaggregateId taggregateId);
    void PersistMigrations();
 
@@ -27,9 +27,9 @@ public static class TeventStoreExtensions
 
 public static class TeventStoreTestingExtensions
 {
-   public static IReadOnlyList<ITaggregateTevent<ITaggregateTevent>> ListAllTeventsForTestingPurposesAbsolutelyNotUsableForARealTeventStoreOfAnySize(this ITeventStore @this, int batchSize = 10000)
+   public static IReadOnlyList<ITaggregateTevent<ITaggregateTeventWithIdentity>> ListAllTeventsForTestingPurposesAbsolutelyNotUsableForARealTeventStoreOfAnySize(this ITeventStore @this, int batchSize = 10000)
    {
-      var wrappedTevents = new List<ITaggregateTevent<ITaggregateTevent>>();
+      var wrappedTevents = new List<ITaggregateTevent<ITaggregateTeventWithIdentity>>();
       @this.StreamTevents(batchSize, wrappedTevents.AddRange);
       return wrappedTevents;
    }

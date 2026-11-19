@@ -3,7 +3,7 @@
 ## Prerequisites
 
 - .NET SDK (version specified in `global.json`, at the repository root)
-- PowerShell with DevScripts module imported: `Import-Module <repo>/DevScripts/Compze.psm1 -DisableNameChecking`
+- PowerShell with the DevScripts module imported: see [DevScripts](050-devscripts.md)
 
 ## Building
 
@@ -11,7 +11,11 @@
 C-Build                  # Build the solution (preferred)
 C-Build -Clean           # Deep clean then build
 dotnet build Compze.AllProjects.slnx  # Alternative: direct .NET CLI
+C-Build-Website          # Build the website with DocFX: fails, listing them, on any warning
 ```
+
+A change to a published page (`_docs/`) is checked with `C-Build-Website`, and, when the page's example code
+(`_docs/*.cs`) changed, with `C-Build`, which compiles it.
 
 ## Running tests
 
@@ -24,19 +28,28 @@ C-Test -Iterations 5           # Run suite 5 times, show summary
 C-Test -Clean                  # Deep clean + build + test
 C-Test -FullGitReset           # Full git clean + build + test
 
-# Running a subset of tests (no DevScripts support, use dotnet directly)
-dotnet test Compze.AllProjects.slnx --no-build --filter "FullyQualifiedName~MyTestClass"
+# A subset of the tests, on chosen combinations of pluggable components, or both
+C-Test -Filter "FullyQualifiedName~MyTestClass"
+C-Test -Combinations 'PgSql:Microsoft:Newtonsoft:AspNetCore', 'MySql:Microsoft:Newtonsoft:AspNetCore'
+C-Test -Combinations 'MsSql:Microsoft:Newtonsoft:AspNetCore' -Filter "FullyQualifiedName~CQRS.TaggregateStores"
 ```
+
+`-Combinations` runs the tests on those combinations, and leaves the configuration file and its copies (below) as they
+were, also when the run fails or is interrupted. Use it rather than editing the file, which needs a rebuild, and whose
+copies a restored file doesn't overwrite.
 
 ## Test configuration
 
-- Config file: `src/TestUsingPluggableComponentCombinations` (auto-created from `.defaults` on first build)
+- Config file: `src/TestUsingPluggableComponentCombinations` (auto-created from `.defaults` on first build). The build
+  copies it into each test project's output, which is what the tests read: after editing it, build again. A run with
+  `-NoBuild` or `--no-build` silently uses the combinations of the last build.
 - Format: `PersistenceLayer:DIContainer:Serializer:Transport` (one combination per line, `#` to comment out)
 - Default active combination: `SqliteMemory:Microsoft:Newtonsoft:AspNetCore`
 
 ## Testing policy
 
-- **Test thoroughly**: Always run the full test suite before finalizing.
+- **Test thoroughly**: a change to code, or to anything the build or the tests read, isn't done until the full test
+  suite has passed. A change to documents alone, or to comments alone, needs none of it.
 - **Performance tests**: If they fail, rerun. Repeated failures are NOT acceptable — do not report success.
 - **`COMPOSABLE_PERFORMANCE_TESTS_STRESS_TEST_ONLY`**: Set to `true` (the default in CI and `C-Test`) to run
   performance tests as stress tests only, disabling timing assertions. Set to `false` to re-enable timing checks.

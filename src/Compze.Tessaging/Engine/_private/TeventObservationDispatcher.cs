@@ -1,12 +1,11 @@
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
-using System.Transactions;
 using Compze.Contracts;
-using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Tessaging.Engine.HandlerRegistration;
 using Compze.Tessaging.Engine.HandlerRegistration._private;
 using Compze.Tessaging._internal.TessagesInFlight;
 using Compze.Tessaging._private.SystemCE.ThreadingCE;
+using Compze.Tessaging.TessageBus;
 using Compze.Tessaging.TessageTypes;
 using Compze.Threading;
 using Compze.Threading.ResourceAccess;
@@ -14,10 +13,11 @@ using Compze.Threading.ResourceAccess;
 namespace Compze.Tessaging.Engine._private;
 
 ///<summary>The engine's tevent observation dispatch — its only background machinery: observers observe committed facts only,<br/>
-/// off-thread, in per-observer FIFO order. A dispatch site queues a wrapped tevent through <see cref="QueueForObservers"/> —<br/>
-/// the local publisher when its unit of work commits, an endpoint's arrival paths as an already-committed fact arrives — and<br/>
-/// each matching observer's queue dispatches it in its own time: an observer's failure never fails the publisher, and an<br/>
-/// observer's latency never blocks it, while an observing read model still sees the tevents in order.</summary>
+/// off-thread, in per-observer FIFO order. A dispatch site queues committed tevents through <see cref="QueueCommittedTevents"/> —<br/>
+/// the local publisher's unit of work when it commits, through <see cref="QueueAtTheCommitOf"/>, and an endpoint's arrival paths<br/>
+/// as an already-committed fact arrives — and each matching observer's queue dispatches it in its own time: an observer's<br/>
+/// failure never fails the publisher, and an observer's latency never blocks it, while an observing read model still sees the<br/>
+/// tevents in order.</summary>
 ///<remarks>Each observer invocation runs in a fresh scope with no transaction: the dispatch pump is started with<br/>
 /// <see cref="ExecutionContext"/> flow suppressed, so no caller's ambient transaction — least of all the just-committed one<br/>
 /// whose completion callback queues a local publish — can leak into an observer. A throwing observer is reported through the<br/>
@@ -27,31 +27,115 @@ namespace Compze.Tessaging.Engine._private;
 /// observers and observers need the container's scopes: an endpoint drains explicitly after its listening stops, and a plain<br/>
 /// container's engine through <see cref="ILocalTessagingEngine.StopAsync"/>, which reaches <see cref="StopAsync"/>. The<br/>
 /// container's own disposal of this singleton is only the backstop for a composition that stops neither.</remarks>
-sealed class TeventObservationDispatcher : IDisposable, IAsyncDisposable
+///<remarks>Two kinds of observer have queues here: composed observers, declared at composition, from the<br/>
+/// <see cref="TessageHandlerRoster"/>, whose list never changes, and dynamic observers, created through <see cref="ObserveTevents"/>,<br/>
+/// whose list changes as they are created and disposed. The dynamic list is replaced whole under <see cref="_dynamicObserversMonitor"/>, and read without it, so<br/>
+/// queueing a tevent never waits for an observer being created or disposed.</remarks>
+sealed partial class TeventObservationDispatcher : IDisposable, IAsyncDisposable
 {
    static readonly WaitTimeout DrainAtDisposalTimeout = WaitTimeout.Seconds(30);
 
-   readonly IReadOnlyList<ObserverDispatchQueue> _observerQueues;
+   readonly IReadOnlyList<ObserverDispatchQueue> _composedObserverQueues;
+   readonly bool _isTheEngineOfAnEndpoint;
+   readonly IReadOnlyList<Type> _teventTypesSubscribedForDynamicObservers;
+   readonly IScopeFactory _scopeFactory;
+   readonly IBackgroundExceptionReporter _backgroundExceptionReporter;
+   readonly ITessagesInFlightTracker _tessagesInFlightTracker;
+   readonly ITaskRunner _taskRunner;
+   readonly IMonitor _dynamicObserversMonitor = IMonitor.New();
+   volatile IReadOnlyList<ObserverDispatchQueue> _dynamicObserverQueues = [];
+   readonly IThreadShared<Dictionary<UnitOfWorkId, List<IPublisherTevent<ITevent>>>> _teventsOfUncommittedUnitsOfWork = IThreadShared.New(new Dictionary<UnitOfWorkId, List<IPublisherTevent<ITevent>>>());
    bool _hasStopped;
 
    internal TeventObservationDispatcher(TessageHandlerRoster roster, IScopeFactory scopeFactory, IBackgroundExceptionReporter backgroundExceptionReporter, ITessagesInFlightTracker tessagesInFlightTracker, ITaskRunner taskRunner)
-      => _observerQueues = [..roster.TeventObserverRegistrations.Select(observer => new ObserverDispatchQueue(observer, scopeFactory, backgroundExceptionReporter, tessagesInFlightTracker, taskRunner))];
-
-   ///<summary>Queues <paramref name="wrappedTevent"/> — a committed fact — for every observer whose subscription matches it.<br/>
-   /// Returns immediately: dispatch is off-thread, per-observer FIFO.</summary>
-   public void QueueForObservers(IPublisherTevent<ITevent> wrappedTevent)
    {
-      foreach(var queue in _observerQueues)
+      _scopeFactory = scopeFactory;
+      _backgroundExceptionReporter = backgroundExceptionReporter;
+      _tessagesInFlightTracker = tessagesInFlightTracker;
+      _taskRunner = taskRunner;
+      _composedObserverQueues = [..roster.TeventObserverRegistrations.Select(NewQueueFor)];
+      _isTheEngineOfAnEndpoint = roster.IsTheEngineOfAnEndpoint;
+      _teventTypesSubscribedForDynamicObservers = roster.TeventTypesSubscribedForDynamicObservers;
+   }
+
+   ///<summary>Collects <paramref name="wrappedTevent"/>, published in <paramref name="unitOfWork"/>, for its observers: the unit of<br/>
+   /// work's tevents are queued together, in the order published, when it commits, so an observer of each unit of work gets them<br/>
+   /// as one list. A unit of work that rolls back queues nothing.</summary>
+   ///<remarks>Keyed by the unit of work's <see cref="UnitOfWorkId"/>, its transaction, so the tevents of every scope that publishes<br/>
+   /// in the same transaction are one unit of work's.</remarks>
+   public void QueueAtTheCommitOf(IUnitOfWorkResolver unitOfWork, IPublisherTevent<ITevent> wrappedTevent)
+   {
+      var teventsOfANewUnitOfWork = _teventsOfUncommittedUnitsOfWork.Locked(List<IPublisherTevent<ITevent>>? (teventsByUnitOfWork) =>
       {
-         if(queue.Observes(wrappedTevent.GetType()))
-            queue.Enqueue(wrappedTevent);
-      }
+         if(teventsByUnitOfWork.TryGetValue(unitOfWork.Id, out var tevents))
+         {
+            tevents.Add(wrappedTevent);
+            return null;
+         }
+
+         teventsByUnitOfWork.Add(unitOfWork.Id, tevents = [wrappedTevent]);
+         return tevents;
+      });
+
+      if(teventsOfANewUnitOfWork == null) return;
+      //The list is captured, not looked up, so the order in which the two completion callbacks run doesn't matter.
+      unitOfWork.OnCommittedSuccessfully(() => QueueCommittedTevents(teventsOfANewUnitOfWork));
+      unitOfWork.OnCompleted(() => _teventsOfUncommittedUnitsOfWork.Locked(it => it.Remove(unitOfWork.Id)));
+   }
+
+   ///<summary>Queues <paramref name="wrappedTevent"/> — a committed fact that arrived alone, with no unit of work known to this<br/>
+   /// process — for every observer whose subscription matches it. Returns immediately: dispatch is off-thread, per-observer FIFO.</summary>
+   public void QueueForObservers(IPublisherTevent<ITevent> wrappedTevent) => QueueCommittedTevents([wrappedTevent]);
+
+   ///<summary>Queues <paramref name="committedTevents"/>, the tevents of one committed unit of work in the order published, for<br/>
+   /// every observer whose subscription matches any: each matching tevent for an observer of each tevent, and the matching ones as<br/>
+   /// one list for an observer of each unit of work. Returns immediately: dispatch is off-thread, per-observer FIFO.</summary>
+   void QueueCommittedTevents(IReadOnlyList<IPublisherTevent<ITevent>> committedTevents)
+   {
+      foreach(var queue in _composedObserverQueues) queue.EnqueueObservationsOf(committedTevents);
+      foreach(var queue in _dynamicObserverQueues) queue.EnqueueObservationsOf(committedTevents);
    }
 
    ///<summary>Whether any observer's subscription matches <paramref name="wrapperTeventType"/> — the deserialization-frugal<br/>
    /// question an arrival site asks from the envelope's type alone, so an arriving tessage nothing observes is never<br/>
    /// deserialized for observation's sake.</summary>
-   public bool AnyTeventObserversFor(Type wrapperTeventType) => _observerQueues.Any(it => it.Observes(wrapperTeventType));
+   public bool AnyTeventObserversFor(Type wrapperTeventType) =>
+      _composedObserverQueues.Any(it => it.Observes(wrapperTeventType)) || _dynamicObserverQueues.Any(it => it.Observes(wrapperTeventType));
+
+   ///<summary>Creates the observers <paramref name="observe"/> declares, observing from now on, until the returned object is<br/>
+   /// disposed: <see cref="IDynamicTeventObservers.ObserveTevents"/>.</summary>
+   public IDisposable ObserveTevents(Action<TeventObservationRegistrar> observe)
+   {
+      State.Assert(!_hasStopped, () => $"The LocalTessagingEngine has stopped ({nameof(ILocalTessagingEngine)}.{nameof(ILocalTessagingEngine.StopAsync)}), so it publishes no more tevents: an observer created now would observe nothing. Create observers before stopping the engine.");
+      List<TeventObserverRegistration> observers = [];
+      var registrar = new TeventObservationRegistrar(observers.Add);
+      observe(registrar);
+      registrar.EndCallback();
+      if(_isTheEngineOfAnEndpoint) observers.ForEach(AssertSubscribedForDynamicObservers);
+
+      IReadOnlyList<ObserverDispatchQueue> queues = [..observers.Select(NewQueueFor)];
+      _dynamicObserversMonitor.Locked(() => _dynamicObserverQueues = [.._dynamicObserverQueues, ..queues]);
+      return new DynamicObservation(this, queues);
+   }
+
+   ///<summary>Asserts that <paramref name="observer"/>, a dynamic observer in an endpoint, observes only tevents the endpoint<br/>
+   /// subscribed to for its dynamic observers with <see cref="Endpoints.EndpointBuilder.SubscribeForDynamicObservers{TTevent}"/>:<br/>
+   /// of what no handler or composed observer subscribes to, its peers send it only those. A plain container has no other<br/>
+   /// endpoints, and asserts nothing.</summary>
+   void AssertSubscribedForDynamicObservers(TeventObserverRegistration observer) =>
+      State.Assert(_teventTypesSubscribedForDynamicObservers.Any(observer.ObservesOnlyTeventsCompatibleWith),
+                   () => $"{observer.SubscribedTeventType.FullName} isn't subscribed to for dynamic observers in this endpoint, so a dynamic observer of it is refused, even if only this endpoint's own process publishes it. An endpoint asks its peers for the tevent types it subscribes to only when it starts, and nothing can tell that no peer publishes this one: the observer would observe the tevents published in its own process and, silently, none of those other endpoints publish. Subscribe to it, or to a tevent type it is compatible with, where the endpoint is composed: endpoint.{nameof(Endpoints.EndpointBuilder.SubscribeForDynamicObservers)}<{observer.SubscribedTeventType.Name}>().");
+
+   ///<summary>Ends the dynamic observers of <paramref name="queues"/>: no tevent is queued for them any more, and what was queued and<br/>
+   /// not yet taken is dropped. Doesn't wait for a call already running.</summary>
+   void EndDynamicObservation(IReadOnlyList<ObserverDispatchQueue> queues)
+   {
+      _dynamicObserversMonitor.Locked(() => _dynamicObserverQueues = [.._dynamicObserverQueues.Except(queues)]);
+      foreach(var queue in queues) queue.End();
+   }
+
+   ObserverDispatchQueue NewQueueFor(TeventObserverRegistration observer) =>
+      new(observer, _scopeFactory, _backgroundExceptionReporter, _tessagesInFlightTracker, _taskRunner);
 
    ///<summary>Drains every observer queue — no observation is discarded at disposal — holding no thread while it waits. An<br/>
    /// observer can itself publish (through an Independent* publisher), queueing further observation work on another queue, so<br/>
@@ -63,7 +147,7 @@ sealed class TeventObservationDispatcher : IDisposable, IAsyncDisposable
       do
       {
          anyQueueHadWork = false;
-         foreach(var queue in _observerQueues)
+         foreach(var queue in (IEnumerable<ObserverDispatchQueue>)[.._composedObserverQueues, .._dynamicObserverQueues])
             anyQueueHadWork |= await queue.AwaitDrainedAsync(DrainAtDisposalTimeout).caf();
       } while(anyQueueHadWork);
    }
@@ -84,112 +168,4 @@ sealed class TeventObservationDispatcher : IDisposable, IAsyncDisposable
    ///<summary>The backstop for a container disposed synchronously: an endpoint has drained already, so this waits only in a<br/>
    /// composition without the endpoint's lifecycle.</summary>
    public void Dispose() => DrainAsync().WaitUnwrappingException();
-
-   ///<summary>One observer's FIFO dispatch queue: tevents queued for the observer, dispatched to it one at a time, in order, by<br/>
-   /// a pump that runs only while there is work. The per-observer granularity is the isolation promise: a slow or failing<br/>
-   /// observer delays only its own queue.</summary>
-   sealed class ObserverDispatchQueue
-   {
-      readonly TeventObserverRegistration _observer;
-      readonly IScopeFactory _scopeFactory;
-      readonly IBackgroundExceptionReporter _backgroundExceptionReporter;
-      readonly ITessagesInFlightTracker _tessagesInFlightTracker;
-      readonly ITaskRunner _taskRunner;
-      readonly IAwaitableThreadShared<NonThreadSafeState> _state = IAwaitableThreadShared.New(new NonThreadSafeState());
-
-      internal ObserverDispatchQueue(TeventObserverRegistration observer, IScopeFactory scopeFactory, IBackgroundExceptionReporter backgroundExceptionReporter, ITessagesInFlightTracker tessagesInFlightTracker, ITaskRunner taskRunner)
-      {
-         _observer = observer;
-         _scopeFactory = scopeFactory;
-         _backgroundExceptionReporter = backgroundExceptionReporter;
-         _tessagesInFlightTracker = tessagesInFlightTracker;
-         _taskRunner = taskRunner;
-      }
-
-      internal bool Observes(Type wrapperTeventType) => _observer.Observes(wrapperTeventType);
-
-      internal void Enqueue(IPublisherTevent<ITevent> wrappedTevent)
-      {
-         //Queued is reported before the enqueuing work item completes, so the tracker can never see a momentary at-rest between
-         //a tessage finishing and its observation work becoming visible.
-         _tessagesInFlightTracker.TeventObservationQueued(wrappedTevent.GetType());
-         var mustStartPump = _state.Update(it =>
-         {
-            it.PendingTevents.Enqueue(wrappedTevent);
-            if(it.Pumping) return false;
-            it.Pumping = true;
-            return true;
-         });
-         if(mustStartPump) StartPumpWithNoFlowingExecutionContext();
-      }
-
-      ///<summary>True if the queue had work to wait for; on return the queue is empty and its pump stopped (until new work arrives).</summary>
-      internal async Task<bool> AwaitDrainedAsync(WaitTimeout timeout)
-      {
-         var hadWork = _state.Read(it => it.Pumping || it.PendingTevents.Count > 0);
-         if(hadWork) await _state.AwaitAsync(it => it is { Pumping: false, PendingTevents.Count: 0 }, timeout: timeout).caf();
-         return hadWork;
-      }
-
-      ///<summary>The pump must not inherit the enqueuing caller's execution context: observation is isolated from the caller in<br/>
-      /// both directions, and a local publish enqueues from within the just-committed transaction's completion callback, whose<br/>
-      /// ambient transaction would otherwise flow into the pump and enlist every observer's database work. Suppressing<br/>
-      /// <see cref="ExecutionContext"/> flow starts the pump context-free; the pump asserts the resulting guarantee.</summary>
-      void StartPumpWithNoFlowingExecutionContext()
-      {
-         if(ExecutionContext.IsFlowSuppressed())
-         {
-            _taskRunner.Run(PumpTaskName, PumpUntilEmptyAsync);
-            return;
-         }
-
-         using(ExecutionContext.SuppressFlow())
-            _taskRunner.Run(PumpTaskName, PumpUntilEmptyAsync);
-      }
-
-      const string PumpTaskName = "Tevent observation dispatch";
-
-      ///<summary>Dispatches the queue's tevents to the observer one at a time, in order: each observation is awaited before the<br/>
-      /// next is taken, so the queue holds no thread while an async observer awaits, and stays FIFO.</summary>
-      async Task PumpUntilEmptyAsync()
-      {
-         State.Assert(Transaction.Current == null,
-                      () => $"The observation dispatch pump runs context-free — it is started with {nameof(ExecutionContext)} flow suppressed — yet an ambient transaction is present. An observer must never enlist in any caller's transaction.");
-         while(true)
-         {
-            var nextTevent = _state.Update(IPublisherTevent<ITevent>? (it) =>
-            {
-               if(it.PendingTevents.Count > 0) return it.PendingTevents.Dequeue();
-               it.Pumping = false;
-               return null;
-            });
-            if(nextTevent == null) return;
-
-            await DispatchToTheObserverAsync(nextTevent).caf();
-            _tessagesInFlightTracker.TeventObservationDispatched(nextTevent.GetType());
-         }
-      }
-
-      async Task DispatchToTheObserverAsync(IPublisherTevent<ITevent> wrappedTevent)
-      {
-         try
-         {
-            //A fresh scope per invocation: an observer's resolutions belong to no caller's session, and on the context-free pump
-            //there is no transaction for them to join.
-            await _scopeFactory.ExecuteInIsolatedScopeAsync(scope => _observer.ObserveAsync(wrappedTevent, scope)).caf();
-         }
-#pragma warning disable CA1031 //A throwing observer is reported, never retried - and must never stop its queue from dispatching the remaining observations.
-         catch(Exception exception)
-#pragma warning restore CA1031
-         {
-            _backgroundExceptionReporter.ReportException(exception);
-         }
-      }
-
-      class NonThreadSafeState
-      {
-         internal readonly Queue<IPublisherTevent<ITevent>> PendingTevents = new();
-         internal bool Pumping;
-      }
-   }
 }

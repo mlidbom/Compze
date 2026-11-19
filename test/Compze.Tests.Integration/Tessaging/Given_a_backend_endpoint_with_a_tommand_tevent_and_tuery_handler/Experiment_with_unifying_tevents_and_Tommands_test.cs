@@ -14,6 +14,7 @@ using Compze.Tessaging.TessageBus;
 using Compze.Tessaging.Typermedia;
 using Compze.Tessaging.TessageTypes;
 using Compze.Teventive;
+using Compze.Teventive.TaggregateStores;
 using Compze.Teventive.Taggregates.BaseClasses;
 using Compze.Teventive.Taggregates.Tevents;
 using Compze.Teventive.TeventStore.Abstractions;
@@ -60,16 +61,16 @@ public class Experiment_with_unifying_tevents_and_tommands_test : UniversalTestB
          .ForTuery((GetUserTuery tuery, ITeventStoreReader teventReader) => new UserResource(teventReader.GetHistory(tuery.UserId)));
 
       protected override void RegisterTypermediaTommandHandlers(ITypermediaTommandHandlerRegistrar handle) => handle
-         .ForTommand((UserRegistrarTommand.RegisterUserTypermediaTommand typermediaTommand, ITeventStoreUpdater store) =>
+         .ForTommand((UserRegistrarTommand.RegisterUserTypermediaTommand typermediaTommand, ITaggregateStoreUpdater store) =>
           {
-             store.Save(UserTaggregate.Register(typermediaTommand));
+             store.Add(UserTaggregate.Register(typermediaTommand));
              return new RegisterUserResult(typermediaTommand.UserId);
           });
 
       //The tevent store's components without its typermedia surface: this experiment reads and saves through the store
       //abstractions directly, so only the store registration itself is declared - the general Declare override's job.
       protected override void Declare(ExactlyOnceEndpointBuilder endpoint) =>
-         endpoint.Registrar.TeventStore(endpoint.Configuration.ConnectionStringName);
+         endpoint.Registrar.TeventStore(endpoint.Configuration.ConnectionStringName, store => store.Taggregate<UserTaggregate>().Taggregate<UserRegistrarTaggregate>());
    }
 
    protected override async Task InitializeAsyncInternal()
@@ -81,7 +82,7 @@ public class Experiment_with_unifying_tevents_and_tommands_test : UniversalTestB
 
       _userDomainScopeFactory = _userManagementDomainEndpoint.ServiceLocator.Resolve<IScopeFactory>();
 
-      _userDomainScopeFactory.ExecuteUnitOfWork(unitOfWork => unitOfWork.TeventStoreUpdater().Save(UserRegistrarTaggregate.Create()));
+      _userDomainScopeFactory.ExecuteUnitOfWork(unitOfWork => unitOfWork.TaggregateStoreUpdater().Add(UserRegistrarTaggregate.Create()));
    }
 
    protected override async Task DisposeAsyncInternal()
@@ -101,13 +102,13 @@ public class Experiment_with_unifying_tevents_and_tommands_test : UniversalTestB
    }
 
    public interface IUserTevent<out T> : ITaggregateTevent<T> where T : IUserTevent;
-   public interface IUserTevent : ITaggregateTevent
+   public interface IUserTevent : ITaggregateTeventWithIdentity, IExactlyOnceTevent
    {
       public interface UserRegistered : IUserTevent, ITaggregateCreatedTevent;
    }
 
    public class UserTevent<T>(T tevent) : TaggregateTevent<T>(tevent), IUserTevent<T> where T : IUserTevent;
-   public class UserTevent : TaggregateTevent, IUserTevent
+   public class UserTevent : TaggregateTeventWithIdentity, IUserTevent
    {
       UserTevent(TaggregateId taggregateId) : base(taggregateId) {}
 
@@ -127,19 +128,24 @@ public class Experiment_with_unifying_tevents_and_tommands_test : UniversalTestB
    }
 
    public interface IUserRegistrarTevent<out T> : ITaggregateTevent<T> where T : IUserRegistrarTevent;
-   public interface IUserRegistrarTevent : ITaggregateTevent;
+   public interface IUserRegistrarTevent : ITaggregateTeventWithIdentity;
 
    public class UserRegistrarTevent<T>(T tevent) : TaggregateTevent<T>(tevent), IUserRegistrarTevent<T> where T : IUserRegistrarTevent;
 
-   public class UserRegistrarTevent : TaggregateTevent, IUserRegistrarTevent
+   public class UserRegistrarTevent : TaggregateTeventWithIdentity, IUserRegistrarTevent
    {
       UserRegistrarTevent(TaggregateId taggregateId) : base(taggregateId) {}
 
       public class Created() : UserRegistrarTevent(UserRegistrarTaggregate.SingletonId), ITaggregateCreatedTevent;
    }
 
-   public class UserRegistrarTaggregate : Taggregate<UserRegistrarTaggregate, IUserRegistrarTevent, UserRegistrarTevent, IUserRegistrarTevent<IUserRegistrarTevent>, UserRegistrarTevent<UserRegistrarTevent>>
+   public sealed class UserRegistrarTaggregate : Taggregate<UserRegistrarTaggregate, IUserRegistrarTevent, UserRegistrarTevent, IUserRegistrarTevent<IUserRegistrarTevent>, UserRegistrarTevent<UserRegistrarTevent>>
    {
+      //This test taggregate maintains no state, so no tevent has an applier.
+      static readonly TeventRouting<UserRegistrarTaggregate, IUserRegistrarTevent> Appliers = DeclareAppliers(it => it.IgnoreUnhandled<IUserRegistrarTevent>());
+
+      protected override TeventRouting TeventAppliers => Appliers;
+
       internal static readonly TaggregateId SingletonId = new(Guid.Parse("5C400DD9-50FB-40C7-8A13-265005588AED"));
 
       internal static UserRegistrarTaggregate Create()
@@ -149,14 +155,19 @@ public class Experiment_with_unifying_tevents_and_tommands_test : UniversalTestB
          return registrar;
       }
 
-      UserRegistrarTaggregate() : base(TeventDispatcherConfig.IgnoreAllUnhandled) {} //This test taggregate maintains no state, so no tevent has an applier.
+      UserRegistrarTaggregate() {}
 
       internal static RegisterUserResult RegisterUser(IRemoteTypermediaNavigator navigator) => UserRegistrarTommand.RegisterUserTypermediaTommand.Create().PostOn(navigator);
    }
 
-   public class UserTaggregate : Taggregate<UserTaggregate, IUserTevent, UserTevent, IUserTevent<IUserTevent>, UserTevent<UserTevent>>
+   public sealed class UserTaggregate : Taggregate<UserTaggregate, IUserTevent, UserTevent, IUserTevent<IUserTevent>, UserTevent<UserTevent>>
    {
-      UserTaggregate() : base(TeventDispatcherConfig.IgnoreAllUnhandled) {} //This test taggregate maintains no state, so no tevent has an applier.
+      //This test taggregate maintains no state, so no tevent has an applier.
+      static readonly TeventRouting<UserTaggregate, IUserTevent> Appliers = DeclareAppliers(it => it.IgnoreUnhandled<IUserTevent>());
+
+      protected override TeventRouting TeventAppliers => Appliers;
+
+      UserTaggregate() {}
 
       internal static UserTaggregate Register(UserRegistrarTommand.RegisterUserTypermediaTommand typermediaTommand)
       {

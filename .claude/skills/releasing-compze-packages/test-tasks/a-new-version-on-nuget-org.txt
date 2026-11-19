@@ -1,0 +1,1 @@
+Get Compze.Contracts as it now is on main out on nuget.org, as its next minor version. Go ahead.
