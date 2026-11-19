@@ -10,3 +10,15 @@
 # changes are acknowledged. C-Prepare-Release or C-SimulateRelease -Acknowledge <PackageId> -Reason '<why>' writes the
 # line for HEAD, and C-Prepare-Release removes it when it prepares the package's release. Comments go here, above the
 # lines. .github/scripts/lib/UnreleasedChanges.ps1 reads the file.
+
+Compze.Contracts aa4c3394e946f54d8e96128296dfc5d699a1e1f5 LangVersion moved to src/Directory.Build.props, with the same value: latest.
+Compze.DbPool aa4c3394e946f54d8e96128296dfc5d699a1e1f5 Comments only.
+Compze.DocumentDb.MySql aa4c3394e946f54d8e96128296dfc5d699a1e1f5 Comments only.
+Compze.DocumentDb.PostgreSql aa4c3394e946f54d8e96128296dfc5d699a1e1f5 Comments only.
+Compze.Must aa4c3394e946f54d8e96128296dfc5d699a1e1f5 Comments only.
+Compze.Sql.MicrosoftSql aa4c3394e946f54d8e96128296dfc5d699a1e1f5 An InternalsVisibleTo for the test project Compze.Sql.InternalSpecifications, and duplicate InternalsVisibleTo grants removed.
+Compze.Sql.PostgreSql aa4c3394e946f54d8e96128296dfc5d699a1e1f5 An InternalsVisibleTo for the test project Compze.Sql.InternalSpecifications, and duplicate InternalsVisibleTo grants removed.
+Compze.Sql.Sqlite aa4c3394e946f54d8e96128296dfc5d699a1e1f5 An InternalsVisibleTo for the test project Compze.Sql.InternalSpecifications, and duplicate InternalsVisibleTo grants removed.
+Compze.TypeIdentifiers aa4c3394e946f54d8e96128296dfc5d699a1e1f5 Comments only.
+Compze.Underscore aa4c3394e946f54d8e96128296dfc5d699a1e1f5 LangVersion moved to src/Directory.Build.props, with the same value: latest. And NoWarn CS1591 dropped, which changes only the build's warnings.
+Compze.Unit aa4c3394e946f54d8e96128296dfc5d699a1e1f5 LangVersion moved to src/Directory.Build.props, with the same value: latest.
