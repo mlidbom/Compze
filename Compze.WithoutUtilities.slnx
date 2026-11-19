@@ -9,8 +9,8 @@
   <Folder Name="/Compze.Tessaging/">
     <Project Path="src/Compze.Tessaging.Hosting.Testing/Compze.Tessaging.Hosting.Testing.csproj" />
     <Project Path="src/Compze.Teventive/Compze.Teventive.csproj" />
-    <Project Path="src/Compze.Teventive.StateStore/Compze.Teventive.StateStore.csproj" />
-    <Project Path="src/Compze.Teventive.StateStore.MemoryPack/Compze.Teventive.StateStore.MemoryPack.csproj" />
+    <Project Path="src/Compze.Teventive.MemoryImageStateStore/Compze.Teventive.MemoryImageStateStore.csproj" />
+    <Project Path="src/Compze.Teventive.MemoryImageStateStore.MemoryPack/Compze.Teventive.MemoryImageStateStore.MemoryPack.csproj" />
     <Project Path="src/Compze.Teventive.TeventStore.Abstractions/Compze.Teventive.TeventStore.Abstractions.csproj" />
     <Project Path="src/Compze.Teventive.TeventStore/Compze.Teventive.TeventStore.csproj" />
     <Project Path="src/Compze.Tessaging/Compze.Tessaging.csproj" />

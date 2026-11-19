@@ -18,12 +18,12 @@ partial class Component
             CompositeTaggregateTevent.Component.Entity,
             ICompositeTaggregateTevent.Component.Entity.Created,
             ICompositeTaggregateTevent.Component.Entity.Removed,
-            CompositeTaggregateTevent.Component.Entity.IdGetterSetter>, ITeventRouted
+            CompositeTaggregateTevent.Component.Entity.IdGetterSetter>
     {
         static readonly TeventRouting<Entity, ICompositeTaggregateTevent.Component.Entity> EntityAppliers = DeclareAppliers(it => it
            .For<ICompositeTaggregateTevent.Component.Entity.PropertyUpdated.Name>(static (entity, tevent) => entity.Name = tevent.Name));
 
-        TeventRouting ITeventRouted.TeventAppliers => EntityAppliers;
+        protected override TeventRouting TeventAppliers => EntityAppliers;
 
         public string Name { get; private set; } = string.Empty;
 

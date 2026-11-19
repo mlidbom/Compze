@@ -13,6 +13,11 @@ namespace Compze.Tests.Unit.CQRS.Taggregates;
 
 public class TaggregateTests : UniversalTestBase
 {
+   ///<summary>Only a taggregate class constructs its base class: code outside one can't write <c>new Taggregate&lt;...&gt;()</c>.</summary>
+   [XF]
+   public void The_taggregate_base_class_has_no_public_constructor() =>
+      typeof(Taggregate<User, IUserTevent, UserTevent, IUserTevent<IUserTevent>, UserTevent<UserTevent>>).GetConstructors().Must().BeEmpty();
+
    [XF]
    public void VersionIncreasesWithEachAppliedTevent()
    {
@@ -74,7 +79,7 @@ public class TaggregateTests : UniversalTestBase
       });
    }
 
-   class CascadingTeventsTaggregate : Taggregate<CascadingTeventsTaggregate, ITaggregateTevent, TaggregateTevent, ITaggregateTevent<ITaggregateTevent>, TaggregateTevent<TaggregateTevent>>, ITeventRouted
+   class CascadingTeventsTaggregate : Taggregate<CascadingTeventsTaggregate, ITaggregateTevent, TaggregateTevent, ITaggregateTevent<ITaggregateTevent>, TaggregateTevent<TaggregateTevent>>
    {
       static readonly TeventRouting<CascadingTeventsTaggregate, ITaggregateTevent> Appliers = DeclareAppliers(it => it
         .For<ITriggeringTevent>(static (taggregate, _) => taggregate.TriggeringTeventApplied = true)
@@ -83,8 +88,8 @@ public class TaggregateTests : UniversalTestBase
       static readonly TeventRouting<CascadingTeventsTaggregate, ITaggregateTevent> Handlers = DeclareHandlers(it => it
         .For<ITriggeringTevent>(static (taggregate, _) => taggregate.Publish(new TriggeredTevent())));
 
-      TeventRouting ITeventRouted.TeventAppliers => Appliers;
-      TeventRouting ITeventRouted.TeventHandlers => Handlers;
+      protected override TeventRouting TeventAppliers => Appliers;
+      protected override TeventRouting TeventHandlers => Handlers;
 
       public bool TriggeredTeventApplied { get; private set; }
       public bool TriggeringTeventApplied { get; private set; }

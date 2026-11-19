@@ -7,12 +7,12 @@ namespace Compze.Tests.Unit.CQRS.Taggregates.CompositeTaggregates.GuidId.QueryMo
 
 partial class Component
 {
-   public class NestedComponent : RootQueryModel.Component<NestedComponent, ICompositeTaggregateTevent.Component.NestedComponent>, ITeventRouted
+   public class NestedComponent : RootQueryModel.Component<NestedComponent, ICompositeTaggregateTevent.Component.NestedComponent>
    {
       static readonly TeventRouting<NestedComponent, ICompositeTaggregateTevent.Component.NestedComponent> NestedComponentAppliers = DeclareAppliers(it => it
         .For<ICompositeTaggregateTevent.Component.NestedComponent.PropertyUpdated.Name>(static (component, tevent) => component.Name = tevent.Name));
 
-      TeventRouting ITeventRouted.TeventAppliers => NestedComponentAppliers;
+      protected override TeventRouting TeventAppliers => NestedComponentAppliers;
 
       public NestedComponent(Component parent) : base(parent) {}
 

@@ -7,8 +7,9 @@ using Compze.Tessaging.Validation._internal;
 
 namespace Compze.Tessaging.Engine.HandlerRegistration._private;
 
-///<summary>One tevent observer, as the engine holds it: declared at composition, in the <see cref="TessageHandlerRoster"/>, or<br/>
-/// created at runtime through <see cref="ITeventObservation"/>. It pairs the wrapper routing key its subscription translates to<br/>
+///<summary>One tevent observer, as the engine holds it: a composed observer, declared at composition, in the<br/>
+/// <see cref="TessageHandlerRoster"/>, or a dynamic observer, created through <see cref="IDynamicTeventObservers"/> while the engine<br/>
+/// runs, which ends when what creating it returned is disposed. It pairs the wrapper routing key its subscription translates to<br/>
 /// with the observing delegate. The engine's <see cref="TeventObservationDispatcher"/> builds one FIFO dispatch queue for each,<br/>
 /// so each observer sees its observed tevents in order while never blocking, or being blocked by, another observer.</summary>
 ///<remarks>An observer observes either each tevent alone (<see cref="EachTevent"/>) or the tevents of each committed unit of work<br/>
@@ -32,13 +33,13 @@ abstract partial class TeventObserverRegistration
 
    ///<summary>An observer called once for each committed unit of work that published tevents compatible with<br/>
    /// <typeparamref name="TTevent"/>, with those tevents as one list, in publish order.</summary>
-   internal static TeventObserverRegistration ForEachUnitOfWork<TTevent>(Func<IReadOnlyList<TTevent>, IScopeResolver, Task> observer) where TTevent : ITevent
+   internal static TeventObserverRegistration ForTeventsOfEachUnitOfWork<TTevent>(Func<IReadOnlyList<TTevent>, IScopeResolver, Task> observer) where TTevent : ITevent
    {
       TessageInspector.AssertValidForSubscription<TTevent>();
       return new EachUnitOfWork(typeof(TTevent), (wrappedTevents, scope) => observer([..wrappedTevents.Select(AsSubscribed<TTevent>)], scope));
    }
 
-   ///<summary>The tevent type the subscription names. Declared at composition, it joins the types the endpoint advertises to its<br/>
+   ///<summary>The tevent type the subscription names. A composed observer's joins the types the endpoint advertises to its<br/>
    /// peers, so that an observation-only subscription still pulls the tevent across the wire.</summary>
    internal Type SubscribedTeventType { get; }
 
@@ -51,7 +52,7 @@ abstract partial class TeventObserverRegistration
    internal bool Observes(Type wrapperTeventType) => SubscribedWrapperType.IsAssignableFrom(wrapperTeventType);
 
    ///<summary>Whether every tevent this observer observes is compatible with <paramref name="teventType"/>, such as a tevent type<br/>
-   /// declared observable at runtime: its subscription is to that type or to one compatible with it.</summary>
+   /// an endpoint subscribed to for its dynamic observers: its subscription is to that type or to one compatible with it.</summary>
    internal bool ObservesOnlyTeventsCompatibleWith(Type teventType) =>
       PublisherTevent.WrapperTypeMatchingAllWrappingsOf(teventType).IsAssignableFrom(SubscribedWrapperType);
 

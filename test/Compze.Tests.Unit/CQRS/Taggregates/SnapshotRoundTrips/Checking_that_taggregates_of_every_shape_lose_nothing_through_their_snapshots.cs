@@ -21,41 +21,39 @@ public static class Checking_that_taggregates_of_every_shape_lose_nothing_throug
    {
       readonly CompositeTaggregate _taggregate = WithStateInEveryPart(new CompositeTaggregate("the root", new TaggregateId()));
 
-      [XF] public void loses_nothing() => SnapshotRoundTrip.AssertLosesNothing(_taggregate, CompositeTaggregate.Empty, CompositeTaggregateSnapshot.HoldTheSameState);
+      [XF] public void loses_nothing() => SnapshotRoundTrip.DifferencesBetweenItAndItsCopy(_taggregate, CompositeTaggregate.Empty).Must().BeEmpty();
    }
 
    public class a_composite_taggregate_whose_restore_leaves_out_its_entities
    {
       readonly CompositeTaggregate _taggregate = WithStateInEveryPart(CompositeTaggregate.CreateWhoseRestoreLeavesOutItsEntities("the root", new TaggregateId()));
 
-      [XF] public void fails_the_check_naming_the_entity_collection_and_how_many_entities_each_holds() =>
-         Invoking(() => SnapshotRoundTrip.AssertLosesNothing(_taggregate, CompositeTaggregate.EmptyWhoseRestoreLeavesOutItsEntities, CompositeTaggregateSnapshot.HoldTheSameState))
-           .Must().Throw<Exception>()
-           .Which.Message.Must().Contain("CompositeTaggregate._entities: 2 items in the original, 0 in the copy");
+      [XF] public void the_differences_name_the_entity_collection_and_how_many_entities_each_holds() =>
+         SnapshotRoundTrip.DifferencesBetweenItAndItsCopy(_taggregate, CompositeTaggregate.EmptyWhoseRestoreLeavesOutItsEntities)
+                          .Must().Contain("CompositeTaggregate._entities: 2 items in the original, 0 in the copy");
    }
 
    public class a_project_with_a_checklist_of_shared_tentities
    {
       readonly ProjectTaggregate _project = WithTwoChecklistItemsOneCompleted(ProjectTaggregate.Create());
 
-      [XF] public void loses_nothing() => SnapshotRoundTrip.AssertLosesNothing(_project, ProjectTaggregate.Empty, ProjectSnapshot.HoldTheSameState);
+      [XF] public void loses_nothing() => SnapshotRoundTrip.DifferencesBetweenItAndItsCopy(_project, ProjectTaggregate.Empty).Must().BeEmpty();
    }
 
    public class a_project_whose_restore_leaves_out_its_checklist
    {
       readonly ProjectTaggregate _project = WithTwoChecklistItemsOneCompleted(ProjectTaggregate.CreateWhoseRestoreLeavesOutItsChecklist());
 
-      [XF] public void fails_the_check_naming_the_checklist_and_how_many_items_each_holds() =>
-         Invoking(() => SnapshotRoundTrip.AssertLosesNothing(_project, ProjectTaggregate.EmptyWhoseRestoreLeavesOutItsChecklist, ProjectSnapshot.HoldTheSameState))
-           .Must().Throw<Exception>()
-           .Which.Message.Must().Contain("ProjectTaggregate.Checklist: 2 items in the original, 0 in the copy");
+      [XF] public void the_differences_name_the_checklist_and_how_many_items_each_holds() =>
+         SnapshotRoundTrip.DifferencesBetweenItAndItsCopy(_project, ProjectTaggregate.EmptyWhoseRestoreLeavesOutItsChecklist)
+                          .Must().Contain("ProjectTaggregate.Checklist: 2 items in the original, 0 in the copy");
    }
 
    public class a_cat_whose_class_extends_the_animals
    {
       readonly CatTaggregate _cat = CatTaggregate.RegisterBirth();
 
-      [XF] public void loses_nothing() => SnapshotRoundTrip.AssertLosesNothing(_cat, CatTaggregate.Empty, AnimalSnapshot.HoldTheSameState);
+      [XF] public void loses_nothing() => SnapshotRoundTrip.DifferencesBetweenItAndItsCopy(_cat, CatTaggregate.Empty).Must().BeEmpty();
    }
 
    public static class adding_a_restored_entity
@@ -64,7 +62,7 @@ public static class Checking_that_taggregates_of_every_shape_lose_nothing_throug
          Invoking(() => new CompositeTaggregate("the root", new TaggregateId()).AddARestoredEntityOutsideARestore()).Must().Throw<StateAssertionFailedException>();
 
       [XF] public static void to_a_shared_tentity_collection_of_a_taggregate_created_by_publishing_throws() =>
-         Invoking(() => ProjectTaggregate.Create().Checklist.AddRestored(ChecklistItemId.New())).Must().Throw<StateAssertionFailedException>();
+         Invoking(() => ProjectTaggregate.Create().Checklist.AddWhileRestoring(ChecklistItemId.New())).Must().Throw<StateAssertionFailedException>();
 
       [XF] public static void to_a_restored_taggregate_after_its_first_publish_throws()
       {
@@ -72,7 +70,7 @@ public static class Checking_that_taggregates_of_every_shape_lose_nothing_throug
          project.RestoreFrom(ProjectTaggregate.Create().TakeSnapshot());
          project.AddChecklistItem("written after the restore");
 
-         Invoking(() => project.Checklist.AddRestored(ChecklistItemId.New())).Must().Throw<StateAssertionFailedException>();
+         Invoking(() => project.Checklist.AddWhileRestoring(ChecklistItemId.New())).Must().Throw<StateAssertionFailedException>();
       }
    }
 

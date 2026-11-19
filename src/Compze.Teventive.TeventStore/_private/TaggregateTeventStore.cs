@@ -16,7 +16,7 @@ namespace Compze.Teventive.TeventStore._private;
 /// <see cref="ITeventStore"/>, and builds an instance from that history whenever one is asked for. What one unit of work changes is<br/>
 /// in its <see cref="TeventStoreSession"/>.</summary>
 ///<remarks>A deleted taggregate's history is kept, ending with its <see cref="ITaggregateDeletedTevent"/>, and is no taggregate: it is<br/>
-/// neither got nor in <see cref="All{TTaggregate}"/>.</remarks>
+/// neither got nor in <see cref="ReferencesToAll{TTaggregate}"/>.</remarks>
 sealed class TaggregateTeventStore : ITaggregateStore
 {
    readonly TaggregateUnitsOfWork _unitsOfWork;
@@ -50,12 +50,12 @@ sealed class TaggregateTeventStore : ITaggregateStore
    }
 
    public ITaggregateReference<TTaggregate> Reference<TTaggregate>(TaggregateId id) where TTaggregate : class, ITaggregate =>
-      new TaggregateReference<TTaggregate>(this, _unitsOfWork, id);
+      new TaggregateReference<TTaggregate>(this, id);
 
    ///<summary>The histories whose creation tevent is a tevent of the class, but for the deleted ones, read through the ambient<br/>
-   /// transaction. The tevent store writes a unit of work's tevents at each publish, so a unit of work sees its own saves and<br/>
+   /// transaction. The tevent store writes a unit of work's tevents at each publish, so a unit of work sees its own additions and<br/>
    /// deletions.</summary>
-   public IReadOnlyCollection<ITaggregateReference<TTaggregate>> All<TTaggregate>() where TTaggregate : class, ITaggregate
+   public IReadOnlyCollection<ITaggregateReference<TTaggregate>> ReferencesToAll<TTaggregate>() where TTaggregate : class, ITaggregate
    {
       var deleted = TeventStore.IdsOfDeletedTaggregates();
       return [..TeventStore.StreamTaggregateIdsInCreationOrder(TeventsTellingApartTheHistoriesOf(ClassToBuildAs(typeof(TTaggregate))))
@@ -91,9 +91,32 @@ sealed class TaggregateTeventStore : ITaggregateStore
 
    TTaggregate Built<TTaggregate>(IReadOnlyList<ITaggregateTevent<ITaggregateTeventWithIdentity>> history) where TTaggregate : class, ITaggregate
    {
-      var taggregate = (TTaggregate)Constructor.CreateInstance(ClassToBuildAs(typeof(TTaggregate)));
+      var taggregateClass = ClassToBuildAs(typeof(TTaggregate));
+      AssertIsAHistoryOf(taggregateClass, typeof(TTaggregate), history);
+      var taggregate = (TTaggregate)Constructor.CreateInstance(taggregateClass);
       taggregate.LoadFromHistory(history);
       return taggregate;
+   }
+
+   ///<summary>Asserts that <paramref name="history"/> begins with a tevent of <paramref name="taggregateClass"/>, the class a taggregate<br/>
+   /// asked for as <paramref name="requestedClass"/> is built as. A history of another class, such as a vocab's asked for as a sentence,<br/>
+   /// would otherwise fail in the replay, with an exception that names neither the taggregate nor either class.</summary>
+   ///<remarks>It checks the history the store has already read, so it costs no further read.</remarks>
+   void AssertIsAHistoryOf(Type taggregateClass, Type requestedClass, IReadOnlyList<ITaggregateTevent<ITaggregateTeventWithIdentity>> history)
+   {
+      var firstTevent = history[0].Tevent;
+      State.Assert(_teventsByClass[taggregateClass].IsInstanceOfType(firstTevent), () => WhyItIsNotA(requestedClass, taggregateClass, firstTevent));
+   }
+
+   ///<summary>Why the taggregate whose history begins with <paramref name="firstTevent"/> is not a <paramref name="requestedClass"/>: it is<br/>
+   /// the one declared class whose tevents the history holds, or, when the declared classes don't tell it apart, its history begins<br/>
+   /// with a tevent that is not one of <paramref name="taggregateClass"/>'s.</summary>
+   string WhyItIsNotA(Type requestedClass, Type taggregateClass, ITaggregateTeventWithIdentity firstTevent)
+   {
+      var classesWithSuchTevents = _teventsByClass.Where(it => it.Value.IsInstanceOfType(firstTevent)).Select(it => it.Key).ToList();
+      return classesWithSuchTevents.Count == 1
+                ? $"Taggregate {firstTevent.TaggregateId} is a {classesWithSuchTevents[0].FullName}, not a {requestedClass.FullName}."
+                : $"Taggregate {firstTevent.TaggregateId} is not a {requestedClass.FullName}: its history begins with a {firstTevent.GetType().FullName}, which is not one of the tevents of {taggregateClass.FullName}.";
    }
 
    ///<summary>The class this store declares that a taggregate asked for as <paramref name="requestedClass"/> is: that class itself, or<br/>

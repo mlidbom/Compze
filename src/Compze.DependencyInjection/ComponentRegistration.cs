@@ -21,6 +21,19 @@ public abstract class ComponentRegistration
    public bool IsComponentSetMember { get; }
 
    internal IReadOnlyList<Type> DependencyTypes { get; }
+
+   /// <summary>
+   /// The service types the component resolves from the container's root while it runs, through the <see cref="IRootResolver"/> it<br/>
+   /// takes, rather than taking them through <c>CreatedBy(...)</c>: such as a store that builds a new instance of a class each time it<br/>
+   /// needs one. Declared with <see cref="ComponentRegistrationWithoutInstantiationSpecCE"/>'s <c>ResolvingFromTheRoot(...)</c>.
+   /// </summary>
+   /// <remarks>
+   /// The root can't resolve a <see cref="Lifestyle.Scoped"/> service, so <see cref="ContainerBuilder.Build"/> refuses one of them<br/>
+   /// that is scoped, or takes a scoped service, directly or through the <see cref="Lifestyle.TrackedTransient"/>s it takes. Without<br/>
+   /// the declaration, the container would find it only when the component first resolved one, with an error of its own.
+   /// </remarks>
+   internal IReadOnlyList<Type> DependencyTypesResolvedFromTheRoot { get; init; } = [];
+
    internal bool AllowSingletonDependent { get; }
    internal bool AllowScopedDependent { get; }
    internal bool ProvidesService(Type service) => ServiceTypes.Contains(service);
@@ -96,7 +109,7 @@ public class ComponentRegistration<TService> : ComponentRegistration where TServ
    {
       if(!_shouldDelegateToParentWhenCloning)
       {
-         return new ComponentRegistration<TService>(Lifestyle, ServiceTypes, InstantiationSpec, DependencyTypes, IsComponentSetMember, AllowSingletonDependent, AllowScopedDependent);
+         return new ComponentRegistration<TService>(Lifestyle, ServiceTypes, InstantiationSpec, DependencyTypes, IsComponentSetMember, AllowSingletonDependent, AllowScopedDependent) { DependencyTypesResolvedFromTheRoot = DependencyTypesResolvedFromTheRoot };
       }
 
       return new ComponentRegistration<TService>(////Instance registrations are not disposed.
@@ -107,7 +120,7 @@ public class ComponentRegistration<TService> : ComponentRegistration where TServ
          isComponentSetMember: IsComponentSetMember,
          allowSingletonDependent: AllowSingletonDependent,
          allowScopedDependent: AllowScopedDependent
-      );
+      ) { DependencyTypesResolvedFromTheRoot = DependencyTypesResolvedFromTheRoot };
    }
 
    internal override ComponentRegistration CreateChildRegistration(IRootResolver parentRootResolver)
@@ -126,11 +139,11 @@ public class ComponentRegistration<TService> : ComponentRegistration where TServ
             isComponentSetMember: IsComponentSetMember,
             allowSingletonDependent: AllowSingletonDependent,
             allowScopedDependent: AllowScopedDependent
-         );
+         ) { DependencyTypesResolvedFromTheRoot = DependencyTypesResolvedFromTheRoot };
       }
 
       // Scoped and transient registrations are copied — fresh instances in child scopes.
-      return new ComponentRegistration<TService>(Lifestyle, ServiceTypes, InstantiationSpec, DependencyTypes, IsComponentSetMember, AllowSingletonDependent, AllowScopedDependent);
+      return new ComponentRegistration<TService>(Lifestyle, ServiceTypes, InstantiationSpec, DependencyTypes, IsComponentSetMember, AllowSingletonDependent, AllowScopedDependent) { DependencyTypesResolvedFromTheRoot = DependencyTypesResolvedFromTheRoot };
    }
 
    internal override ComponentRegistration CreateChildRegistrationDelegatingToParentInstance(object parentInstance)
@@ -146,7 +159,7 @@ public class ComponentRegistration<TService> : ComponentRegistration where TServ
          isComponentSetMember: IsComponentSetMember,
          allowSingletonDependent: AllowSingletonDependent,
          allowScopedDependent: AllowScopedDependent
-      );
+      ) { DependencyTypesResolvedFromTheRoot = DependencyTypesResolvedFromTheRoot };
    }
 
    internal ComponentRegistration(Lifestyle lifestyle,

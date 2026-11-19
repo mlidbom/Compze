@@ -1,5 +1,9 @@
 # Told once per publish cascade
 
+> Written before the end review (2026-11-18): some names and API here have changed since; see
+> [../shared/the-naming-pass.md](../shared/the-naming-pass.md) and
+> [../shared/reviews/end-review-consolidated.md](../shared/reviews/end-review-consolidated.md).
+
 Proposed 2026-11-16 and agreed by both sessions. Not started.
 
 A coined term, used throughout: a **publish cascade** is one call to `Taggregate.Publish` together with every `Publish`

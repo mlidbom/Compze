@@ -10,12 +10,12 @@ using Compze.Teventive.Taggregates.Tevents;
 
 namespace Compze.Tests.Unit.CQRS.Taggregates.InheritingTaggregate;
 
-class AnimalTaggregate : Taggregate<AnimalTaggregate, IAnimalTevent, AnimalTevent, IAnimalTevent<IAnimalTevent>, AnimalTevent<AnimalTevent>>, ITeventRouted
+class AnimalTaggregate : Taggregate<AnimalTaggregate, IAnimalTevent, AnimalTevent, IAnimalTevent<IAnimalTevent>, AnimalTevent<AnimalTevent>>
 {
    protected static readonly TeventRouting<AnimalTaggregate, IAnimalTevent> AnimalAppliers = DeclareAppliers(it => it
      .For<IAnimalTevent.Born>(static (animal, tevent) => animal.TimeOfBirth = tevent.UtcTimeStamp));
 
-   TeventRouting ITeventRouted.TeventAppliers => AnimalAppliers;
+   protected override TeventRouting TeventAppliers => AnimalAppliers;
 
    protected override Type WrapperTeventImplementation => typeof(AnimalTevent<AnimalTevent>);
 
@@ -34,11 +34,11 @@ class AnimalTaggregate : Taggregate<AnimalTaggregate, IAnimalTevent, AnimalTeven
    }
 }
 
-class CatTaggregate : AnimalTaggregate, ITeventRouted, ISnapshotable<CatTaggregate, AnimalSnapshot>
+class CatTaggregate : AnimalTaggregate, ISnapshotable<CatTaggregate, AnimalSnapshot>
 {
    static readonly TeventRouting<CatTaggregate, IAnimalTevent> CatAppliers = AnimalAppliers.Extend<CatTaggregate>(_ => {});
 
-   TeventRouting ITeventRouted.TeventAppliers => CatAppliers;
+   protected override TeventRouting TeventAppliers => CatAppliers;
 
    CatTaggregate(){}
    protected override Type WrapperTeventImplementation => typeof(CatTevent<CatTevent>);
@@ -57,11 +57,11 @@ class CatTaggregate : AnimalTaggregate, ITeventRouted, ISnapshotable<CatTaggrega
    public void RestoreFrom(AnimalSnapshot snapshot) => RestoreAnimalFrom(snapshot);
 }
 
-class DogTaggregate : AnimalTaggregate, ITeventRouted
+class DogTaggregate : AnimalTaggregate
 {
    static readonly TeventRouting<DogTaggregate, IAnimalTevent> DogAppliers = AnimalAppliers.Extend<DogTaggregate>(_ => {});
 
-   TeventRouting ITeventRouted.TeventAppliers => DogAppliers;
+   protected override TeventRouting TeventAppliers => DogAppliers;
 
    DogTaggregate(){}
    protected override Type WrapperTeventImplementation => typeof(DogTevent<DogTevent>);

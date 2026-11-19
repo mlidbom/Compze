@@ -11,7 +11,7 @@ using Compze.Tessaging.Typermedia;
 namespace AccountManagement.Domain;
 
 ///Completely encapsulates all the business logic for an account.  Should make it impossible for clients to use the class incorrectly.
-class Account : Taggregate<Account, IAccountTevent, AccountTevent, IAccountTevent<IAccountTevent>, AccountTevent<AccountTevent>>, IAccountResourceData, ITeventRouted
+class Account : Taggregate<Account, IAccountTevent, AccountTevent, IAccountTevent<IAccountTevent>, AccountTevent<AccountTevent>>, IAccountResourceData
 {
    //Maintain correct state as tevents are raised or read from the store.
    //Use property updated tevents whenever possible. Changes to public state should be represented by property updated tevents.
@@ -21,7 +21,7 @@ class Account : Taggregate<Account, IAccountTevent, AccountTevent, IAccountTeven
      .IgnoreUnhandled<IAccountTevent.LoggedIn>() //Login tevents change no account state, so they have no appliers.
      .IgnoreUnhandled<IAccountTevent.LoginFailed>());
 
-   TeventRouting ITeventRouted.TeventAppliers => Appliers;
+   protected override TeventRouting TeventAppliers => Appliers;
 
    static readonly ILogger Log = CompzeLogger.For<Account>();
    public Email Email { get; private set; } = null!;       //Never public setters on an taggregate. AssertInvariantsAreMet guarantees not null status.
@@ -67,7 +67,7 @@ class Account : Taggregate<Account, IAccountTevent, AccountTevent, IAccountTeven
       var newAccount = new Account();
       newAccount.Publish(new AccountTevent.UserRegistered(accountId: accountId, email: email, password: password));
 
-      navigator.Execute(InternalApi.Tommands.Save(newAccount));
+      navigator.Execute(InternalApi.Tommands.Add(newAccount));
 
       return (RegistrationAttemptStatus.Successful, newAccount);
    }

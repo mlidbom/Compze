@@ -14,15 +14,10 @@
     <InternalsVisibleTo Include="Compze.TypeIdentifiers.Interning.MicrosoftSql" />
     <InternalsVisibleTo Include="Compze.Hosting.Testing" />
     <InternalsVisibleTo Include="Compze.Tessaging.Hosting.Testing" />
+    <InternalsVisibleTo Include="Compze.Sql.InternalSpecifications" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.Data.SqlClient" Version="6.1.3" />
-  </ItemGroup>
-  <ItemGroup>
-    <InternalsVisibleTo Include="Compze.TypeIdentifiers.Interning.MicrosoftSql" />
-    <InternalsVisibleTo Include="Compze.DocumentDb.MicrosoftSql" />
-    <InternalsVisibleTo Include="Compze.Tessaging.MicrosoftSql" />
-    <InternalsVisibleTo Include="Compze.Teventive.TeventStore.MicrosoftSql" />
   </ItemGroup>
   <!-- Compze.Internals.Sql.Common — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Sql_Common)' == 'true'">

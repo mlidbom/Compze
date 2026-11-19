@@ -1,5 +1,8 @@
 # Review by an independent Fable agent
 
+> Written before the end review (2026-11-18): some names and API here have changed since; see
+> [../the-naming-pass.md](../the-naming-pass.md) and [end-review-consolidated.md](end-review-consolidated.md).
+
 2026-11-16. A Fable subagent that took no part in building the conclusions, asked by jastudio-rep-opus to review them
 critically and independently. Recorded verbatim, as the agent returned it. Its experiments are on its branch
 `review-taggregate-conclusions` (commit `a440911a7`), in `C:\Dev\Compze\.claude\worktrees\agent-ad538039c7b0a5f4e`.

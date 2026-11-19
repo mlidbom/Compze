@@ -4,6 +4,7 @@ using Compze.Internals.SystemCE.LinqCE;
 using Compze.Teventive.Taggregates.Tevents;
 using Compze.Teventive.TeventStore.Abstractions._internal.SqlLayer.Abstractions;
 using Compze.Teventive.TeventStore.Abstractions.Refactoring.Migrations;
+using Compze.Teventive.Taggregates.Tevents._internal;
 
 #pragma warning disable CS0618 // Type or member is obsolete
 

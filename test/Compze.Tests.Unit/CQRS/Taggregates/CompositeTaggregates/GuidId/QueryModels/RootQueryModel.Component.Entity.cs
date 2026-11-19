@@ -9,13 +9,13 @@ namespace Compze.Tests.Unit.CQRS.Taggregates.CompositeTaggregates.GuidId.QueryMo
 partial class Component
 {
 #pragma warning disable CA1812 // Used via reflection in tuery model infrastructure
-   [UsedImplicitly]public class Entity : RootQueryModel.Entity<Entity, Guid, ICompositeTaggregateTevent.Component.Entity, ICompositeTaggregateTevent.Component.Entity.Created, ICompositeTaggregateTevent.Component.Entity.Removed, CompositeTaggregateTevent.Component.Entity.IdGetterSetter>, ITeventRouted
+   [UsedImplicitly]public class Entity : RootQueryModel.Entity<Entity, Guid, ICompositeTaggregateTevent.Component.Entity, ICompositeTaggregateTevent.Component.Entity.Created, ICompositeTaggregateTevent.Component.Entity.Removed, CompositeTaggregateTevent.Component.Entity.IdGetterSetter>
 #pragma warning restore CA1812
    {
       static readonly TeventRouting<Entity, ICompositeTaggregateTevent.Component.Entity> EntityAppliers = DeclareAppliers(it => it
         .For<ICompositeTaggregateTevent.Component.Entity.PropertyUpdated.Name>(static (entity, tevent) => entity.Name = tevent.Name));
 
-      TeventRouting ITeventRouted.TeventAppliers => EntityAppliers;
+      protected override TeventRouting TeventAppliers => EntityAppliers;
 
       public string Name { get; private set; } = string.Empty;
    }

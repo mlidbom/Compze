@@ -12,24 +12,13 @@ using Compze.Tests.Infrastructure.XUnit;
 using Compze.Must;
 using Compze.Tessaging.TessageBus;
 using Compze.Teventive;
-using Compze.Teventive.Taggregates.BaseClasses;
 using Compze.Teventive.Taggregates.Tevents;
 using Compze.Teventive.TeventStore.Abstractions;
+using Compze.Abstractions.Time;
+using Compze.Tests.Common.CQRS.TeventRefactoring.Migrations;
+using Compze.Tests.Common.CQRS.TeventRefactoring.Migrations.Tevents;
 
 namespace Compze.Tests.Integration.CQRS;
-
-interface ISomeTevent : ITaggregateTeventWithIdentity;
-
-class SomeTevent : TaggregateTeventWithIdentity, ISomeTevent
-{
-   public SomeTevent(TaggregateId taggregateId, int version) : base(taggregateId)
-   {
-#pragma warning disable CS0618 // Type or member is obsolete
-      ((IMutableTaggregateTevent)this).SetTaggregateVersionInternal(version);
-      ((IMutableTaggregateTevent)this).SetUtcTimeStampInternal(new DateTime(UtcTimeStamp.Year, UtcTimeStamp.Month, UtcTimeStamp.Day, UtcTimeStamp.Hour, UtcTimeStamp.Minute, UtcTimeStamp.Second, DateTimeKind.Utc));
-#pragma warning restore CS0618 // Type or member is obsolete
-   }
-}
 
 public class TeventStoreTests : UniversalTestBase
 {
@@ -37,28 +26,27 @@ public class TeventStoreTests : UniversalTestBase
 
    protected override void DisposeInternal() => _container.Dispose();
 
-   static IReadOnlyList<ITaggregateTevent<ITaggregateTeventWithIdentity>> Wrapped(IEnumerable<SomeTevent> tevents) =>
-      tevents.Select(ITaggregateTevent<ITaggregateTeventWithIdentity> (it) => new TaggregateTevent<SomeTevent>(it)).ToList();
-
    static IReadOnlyList<ITaggregateTevent<ITaggregateTeventWithIdentity>> WithIdentity(IReadOnlyList<ITaggregateTevent<ITaggregateTevent>> committedTevents) =>
-      committedTevents.Cast<ITaggregateTevent<ITaggregateTeventWithIdentity>>().ToList();
+      [.. committedTevents.Cast<ITaggregateTevent<ITaggregateTeventWithIdentity>>()];
+
+   ///<summary>A new <see cref="TestTaggregate"/> that has published <paramref name="teventCount"/> tevents: the <see cref="Ec1"/> that creates it, then<br/>
+   /// <see cref="E1"/>s. Published with the time frozen, so that their time stamps have the microsecond precision that every supported database keeps.</summary>
+   static TestTaggregate ATaggregateThatPublished(int teventCount) =>
+      UtcTimeSource.Test.FrozenAtUtcNow().Run(() => TestTaggregate.FromTevents(null, [typeof(Ec1), .. Enumerable.Repeat(typeof(E1), teventCount - 1)]));
+
+   static void SaveTheTeventsOf(ITaggregate taggregate, ITeventStore teventStore) =>
+      taggregate.Commit(committed => teventStore.SaveSingleTaggregateTevents(WithIdentity(committed)));
 
    [PCT]
    public void StreamTeventsSinceReturnsWholeTeventLogWhenFromTeventIdIsNull() => _container.ExecuteInIsolatedScope(scope =>
    {
-      var taggregateId = new TaggregateId();
-      var savedEvents = 1.Through(10)
-                         .Select(i => new SomeTevent(taggregateId, i))
-                         .ToList();
-      TransactionScopeCe.Execute(() =>
-      {
-         scope.TeventStore().SaveSingleTaggregateTevents(Wrapped(savedEvents));
-      });
+      var taggregate = ATaggregateThatPublished(10);
+      TransactionScopeCe.Execute(() => SaveTheTeventsOf(taggregate, scope.TeventStore()));
 
-      scope.TeventStore().ListAllTeventsForTestingPurposesAbsolutelyNotUsableForARealTeventStoreOfAnySize().Tevents().Cast<SomeTevent>()
+      scope.TeventStore().ListAllTeventsForTestingPurposesAbsolutelyNotUsableForARealTeventStoreOfAnySize().Tevents()
                  .ToList()
                  .Must()
-                 .DeepEqual(savedEvents);
+                 .DeepEqual([.. taggregate.History]);
    });
 
    [PCT]
@@ -66,41 +54,30 @@ public class TeventStoreTests : UniversalTestBase
    {
       const int batchSize = 100;
       const int moreTeventsThanTheBatchSizeForStreamingTevents = batchSize + 10;
-      var taggregateId = new TaggregateId();
-      var savedEvents = 1.Through(moreTeventsThanTheBatchSizeForStreamingTevents)
-                         .Select(i => new SomeTevent(taggregateId, i)).ToList();
+      var taggregate = ATaggregateThatPublished(moreTeventsThanTheBatchSizeForStreamingTevents);
 
-      TransactionScopeCe.Execute(() => scope.TeventStore().SaveSingleTaggregateTevents(Wrapped(savedEvents)));
+      TransactionScopeCe.Execute(() => SaveTheTeventsOf(taggregate, scope.TeventStore()));
 
       scope.TeventStore().ListAllTeventsForTestingPurposesAbsolutelyNotUsableForARealTeventStoreOfAnySize(batchSize: batchSize)
                  .Tevents()
-                 .Cast<SomeTevent>()
                  .ToList()
                  .Must()
-                 .DeepEqual(savedEvents);
+                 .DeepEqual([.. taggregate.History]);
    });
 
    [PCT]
    public void DeleteTeventsDeletesTheTeventsForOnlyTheSpecifiedTaggregate() => _container.ExecuteInIsolatedScope(scope =>
    {
-      var taggregatesWithTevents = 1.Through(10)
-                                    .ToDictionary(i => i,
-                                                  _ =>
-                                                  {
-                                                     var taggregateId = new TaggregateId();
-                                                     return 1.Through(10)
-                                                             .Select(j => new SomeTevent(taggregateId, j))
-                                                             .ToList();
-                                                  });
+      var taggregates = 1.Through(10).ToDictionary(i => i, _ => ATaggregateThatPublished(10));
 
-      TransactionScopeCe.Execute(() => taggregatesWithTevents.ForEach(it => scope.TeventStore().SaveSingleTaggregateTevents(Wrapped(it.Value))));
-      var toRemove = taggregatesWithTevents[2][0].TaggregateId;
-      taggregatesWithTevents.Remove(2);
+      TransactionScopeCe.Execute(() => taggregates.Values.ForEach(it => SaveTheTeventsOf(it, scope.TeventStore())));
+      var toRemove = taggregates[2].Id;
+      taggregates.Remove(2);
 
       TransactionScopeCe.Execute(() => scope.TeventStore().DeleteTaggregate(toRemove));
 
-      taggregatesWithTevents.Select(kvp => scope.TeventStore().GetTaggregateHistory(kvp.Value[0].TaggregateId))
-                            .ForEach(stream => stream.Must().HaveCount(10));
+      taggregates.Values.Select(it => scope.TeventStore().GetTaggregateHistory(it.Id))
+                 .ForEach(stream => stream.Must().HaveCount(10));
 
       scope.TeventStore().GetTaggregateHistory(toRemove)
                  .Must()
@@ -110,43 +87,26 @@ public class TeventStoreTests : UniversalTestBase
    [PCT]
    public void GetListOfTaggregateIds() => _container.ExecuteInIsolatedScope(scope =>
    {
-      var taggregateIds = 1.Through(10).Select(_ => new TaggregateId()).ToList();
-      var taggregatesWithTevents = taggregateIds
-                                    .ToDictionary(i => i,
-                                                  taggregateId =>
-                                                  {
-                                                     return 1.Through(10)
-                                                             .Select(j => new SomeTevent(taggregateId, j))
-                                                             .ToList();
-                                                  });
+      var taggregates = 1.Through(10).Select(_ => ATaggregateThatPublished(10)).ToList();
 
-      TransactionScopeCe.Execute(() => taggregatesWithTevents.ForEach(it => scope.TeventStore().SaveSingleTaggregateTevents(Wrapped(it.Value))));
+      TransactionScopeCe.Execute(() => taggregates.ForEach(it => SaveTheTeventsOf(it, scope.TeventStore())));
 
       var allTaggregateIds = scope.TeventStore().StreamTaggregateIdsInCreationOrder()
                                         .ToList();
-      allTaggregateIds.Must().DeepEqual(taggregateIds);
+      allTaggregateIds.Must().DeepEqual([.. taggregates.Select(it => it.Id)]);
    });
 
-   //Todo: This does not check that only taggregates of the correct type are returned since there are only tevents of type SomeTevent in the store..
+   //todo: This does not check that only taggregates of the correct type are returned, since the store holds only the tevents of TestTaggregates.
    [PCT]
    public void GetListOfTaggregateIdsUsingTeventType() => _container.ExecuteInIsolatedScope(scope =>
    {
-      var taggregateIds = 1.Through(10).Select(_ => new TaggregateId()).ToList();
+      var taggregates = 1.Through(10).Select(_ => ATaggregateThatPublished(10)).ToList();
 
-      var taggregatesWithTevents = taggregateIds
-                                    .ToDictionary(i => i,
-                                                  taggregateId =>
-                                                  {
-                                                     return 1.Through(10)
-                                                             .Select(j => new SomeTevent(taggregateId, j))
-                                                             .ToList();
-                                                  });
-
-      TransactionScopeCe.Execute(() => taggregatesWithTevents.ForEach(it => scope.TeventStore().SaveSingleTaggregateTevents(Wrapped(it.Value))));
-      var allTaggregateIds = scope.TeventStore().StreamTaggregateIdsInCreationOrder<ISomeTevent>()
+      TransactionScopeCe.Execute(() => taggregates.ForEach(it => SaveTheTeventsOf(it, scope.TeventStore())));
+      var allTaggregateIds = scope.TeventStore().StreamTaggregateIdsInCreationOrder<ITestTaggregateTevent>()
                                         .ToList();
 
-      allTaggregateIds.Must().DeepEqual(taggregateIds);
+      allTaggregateIds.Must().DeepEqual([.. taggregates.Select(it => it.Id)]);
    });
 
    [PCT]

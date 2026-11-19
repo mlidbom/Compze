@@ -8,14 +8,14 @@ namespace Compze.Tests.Unit.CQRS.Taggregates.SharedTomponents;
 
 ///<summary>An order whose shipping address is constructed with the BILLING slot by mistake, the copy-and-paste error the slots must refuse:<br/>
 /// the shipping address would publish as the billing address, and its changes would be applied to the billing address.</summary>
-class OrderWithItsShippingAddressInTheBillingSlot : Taggregate<OrderWithItsShippingAddressInTheBillingSlot, IOrderTevent, OrderTevent, IOrderTevent<IOrderTevent>, OrderTevent<OrderTevent>>, ITeventRouted
+class OrderWithItsShippingAddressInTheBillingSlot : Taggregate<OrderWithItsShippingAddressInTheBillingSlot, IOrderTevent, OrderTevent, IOrderTevent<IOrderTevent>, OrderTevent<OrderTevent>>
 {
    static class Slots
    {
-      internal static readonly SharedTomponentSlotOfAClass<OrderWithItsShippingAddressInTheBillingSlot, IOrderTevent, OrderTevent, IPostalAddressTevent, IShippingAddressTevent<IPostalAddressTevent>> Shipping =
+      internal static readonly SharedTomponentSlot<OrderWithItsShippingAddressInTheBillingSlot, IOrderTevent, OrderTevent, IPostalAddressTevent, IShippingAddressTevent<IPostalAddressTevent>> Shipping =
          new(typeof(ShippingAddressTevent<>), static order => order.ShippingAddress);
 
-      internal static readonly SharedTomponentSlotOfAClass<OrderWithItsShippingAddressInTheBillingSlot, IOrderTevent, OrderTevent, IPostalAddressTevent, IBillingAddressTevent<IPostalAddressTevent>> Billing =
+      internal static readonly SharedTomponentSlot<OrderWithItsShippingAddressInTheBillingSlot, IOrderTevent, OrderTevent, IPostalAddressTevent, IBillingAddressTevent<IPostalAddressTevent>> Billing =
          new(typeof(BillingAddressTevent<>), static order => order.BillingAddress);
    }
 
@@ -24,7 +24,7 @@ class OrderWithItsShippingAddressInTheBillingSlot : Taggregate<OrderWithItsShipp
      .SharedTomponent(Slots.Shipping)
      .SharedTomponent(Slots.Billing));
 
-   TeventRouting ITeventRouted.TeventAppliers => Appliers;
+   protected override TeventRouting TeventAppliers => Appliers;
 
    public PostalAddress ShippingAddress { get; }
    public PostalAddress BillingAddress { get; }

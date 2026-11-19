@@ -32,7 +32,7 @@ sealed class TaggregateStoreUpdater : ITaggregateStoreUpdater
    public bool TryGetForUpdate<TTaggregate>(TaggregateId id, [NotNullWhen(true)] out TTaggregate? taggregate) where TTaggregate : class, ITaggregate =>
       SessionKeeping(typeof(TTaggregate)).TryGetForUpdate(id, out taggregate);
 
-   public void Save<TTaggregate>(TTaggregate taggregate) where TTaggregate : class, ITaggregate => SessionKeeping(taggregate.GetType()).Save(taggregate);
+   public void Add(ITaggregate taggregate) => SessionKeeping(taggregate.GetType()).Add(taggregate);
 
    ITaggregateStoreSession SessionKeeping(Type taggregateClass) => _unitsOfWork.AmbientBeginningIt().SessionOf(_routing.StoreKeeping(taggregateClass));
 }

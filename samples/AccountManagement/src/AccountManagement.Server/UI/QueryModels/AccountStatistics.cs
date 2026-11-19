@@ -16,7 +16,7 @@ static class AccountStatistics
    /// Note that we use a <see cref="SelfGeneratingQueryModel{TQueryModel,TTaggregateTevent}"/> even though we will store it in a document database.
    /// Doing so lets the tuery model cleanly encapsulate how it maintains its own state when it receives tevents.
    /// </summary>
-   public class SingletonStatisticsQueryModel : SelfGeneratingQueryModel<SingletonStatisticsQueryModel, IAccountTevent>, ITeventRouted
+   public class SingletonStatisticsQueryModel : SelfGeneratingQueryModel<SingletonStatisticsQueryModel, IAccountTevent>
    {
       static readonly TeventRouting<SingletonStatisticsQueryModel, IAccountTevent> Appliers = DeclareAppliers(it => it
         .For<IAccountTevent.Created>(static (statistics, _) => statistics.NumberOfAccounts++)
@@ -24,7 +24,7 @@ static class AccountStatistics
         .For<IAccountTevent.LoggedIn>(static (statistics, _) => statistics.NumberOfSuccessfulLogins++)
         .For<IAccountTevent.LoginFailed>(static (statistics, _) => statistics.NumberOfFailedLogins++));
 
-      TeventRouting ITeventRouted.TeventAppliers => Appliers;
+      protected override TeventRouting TeventAppliers => Appliers;
 
       int NumberOfAccounts { get; set; }
       int NumberOfLoginsAttempts { get; set; }

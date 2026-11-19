@@ -1,5 +1,6 @@
 using Compze.Abstractions;
 using Compze.Tessaging;
+using Compze.Teventive.Taggregates.Tevents._internal;
 
 namespace Compze.Teventive.Taggregates.Tevents;
 
@@ -13,7 +14,5 @@ public abstract class TaggregateTeventWithIdentity : TaggregateTevent, IMutableT
    ///<summary>Identifies this tevent: made when the tevent is created, and restored when a tevent store reads it back.</summary>
    public TessageId Id { get; private set; } = new();
 
-#pragma warning disable CA1033 // We do not want this method as part of the public interface of TaggregateTeventWithIdentity.
    void IMutableTaggregateTeventWithIdentity.SetTessageIdInternal(TessageId tessageId) => Id = tessageId;
-#pragma warning restore CA1033
 }

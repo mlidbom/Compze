@@ -1,0 +1,25 @@
+# Rationale: Compze's frameworks keep their public surface minimal; its utility libraries may be generous
+
+Added 2026-11-17 on Magnus's word, while the taggregate store spike kept adding public API at JAStudio's request (see the
+sidecar of 012, public types are designed for every consumer). The agents had treated the frameworks the way
+Compze.Internals.SystemCE is meant to be treated, and the rules said nothing to tell the two apart.
+
+Magnus's words:
+
+- On Compze.Internals.SystemCE: "a swiss army knife of tiny convenience functions with almost universally zero API
+  dependencies between each other. The maintenance burden is near zero and surprising the consumer is very unlikely too."
+- On the frameworks: "Teventive, Tessaging, TeventStore etc.... Very very complex frameworks that revolutionizes how it
+  is possible to build systems. Start treating that like you tread SystemCE and it will become eventually become a
+  nightmare to maintain. Imagine if it had thousands or even millions of users when we realized that sorting in these
+  methods were a really bad idea.... Not Fun(TM). Same thing for adding a ton of convenient methods that the consumer can
+  build themselves. Removing them is No Fun(TM)."
+- "So many of our libraries very much go by the principle of less is more. Build the hard stuff and expose it in a way
+  that the consumers can easily do the easy stuff without us getting in the way. Keep the interfaces minimal, and keep
+  the interfaces C# Interfaces so that we can change anything behind them since the consumer does not even know the
+  implementing types...."
+
+The sorting he refers to: the bulk reader's All and an index's Lookup gave their references in id order, about 137 ms and
+36 MB a call at a million ids, until both were dropped (see 013, an API spends nothing on what callers can do as well).
+
+Untested beyond the replay `a-consumer-asking-for-an-api-it-could-build-itself` in the catalog's rule-testing, which was
+run with 011, 012 and the catalog's 004 changed together.

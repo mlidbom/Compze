@@ -1,9 +1,11 @@
 using Compze.Abstractions;
+using Compze.Contracts;
 using Compze.Internals.SystemCE.LinqCE;
 using Compze.Internals.SystemCE.ReflectionCE;
 using Compze.Teventive;
 using Compze.Teventive.Taggregates.BaseClasses;
 using Compze.Teventive.Taggregates.Tevents;
+using JetBrains.Annotations;
 
 // ReSharper disable ClassNeverInstantiated.Global
 #pragma warning  disable CA1812 // Avoid uninstantiated internal classes # used via reflection
@@ -15,14 +17,28 @@ namespace Compze.Tests.Common.CQRS.TeventRefactoring.Migrations
 
    public class TestTaggregateTevent<T>(T tevent) : TaggregateTevent<T>(tevent), ITestTaggregateTevent<T> where T : ITestTaggregateTevent;
 
-   public abstract class TestTaggregateTevent : TaggregateTeventWithIdentity, ITestTaggregateTevent;
+   public abstract class TestTaggregateTevent : TaggregateTeventWithIdentity, ITestTaggregateTevent
+   {
+      protected TestTaggregateTevent() {}
+      protected TestTaggregateTevent(TaggregateId taggregateId) : base(taggregateId) {}
+   }
 
    namespace Tevents
    {
-      public abstract class EcAbstract : TestTaggregateTevent, ITaggregateCreatedTevent;
+      ///<summary>A tevent that creates a <see cref="TestTaggregate"/>: the first in its history, carrying the id of the taggregate it creates.</summary>
+      public abstract class EcAbstract : TestTaggregateTevent, ITaggregateCreatedTevent
+      {
+         protected EcAbstract() {}
+         protected EcAbstract(TaggregateId taggregateId) : base(taggregateId) {}
+      }
+
+      public class Ec1 : EcAbstract
+      {
+         [UsedImplicitly] public Ec1() {}
+         [UsedImplicitly] public Ec1(TaggregateId taggregateId) : base(taggregateId) {}
+      }
 
       // ReSharper disable ClassNeverInstantiated.Global
-      public class Ec1 : EcAbstract;
       class Ec2 : EcAbstract;
       class Ec3 : EcAbstract;
       public class E1 : TestTaggregateTevent;
@@ -39,12 +55,12 @@ namespace Compze.Tests.Common.CQRS.TeventRefactoring.Migrations
       // ReSharper restore ClassNeverInstantiated.Global
    }
 
-   public sealed class TestTaggregate : Taggregate<TestTaggregate, ITestTaggregateTevent, TestTaggregateTevent, ITestTaggregateTevent<ITestTaggregateTevent>, TestTaggregateTevent<TestTaggregateTevent>>, ITeventRouted
+   public sealed class TestTaggregate : Taggregate<TestTaggregate, ITestTaggregateTevent, TestTaggregateTevent, ITestTaggregateTevent<ITestTaggregateTevent>, TestTaggregateTevent<TestTaggregateTevent>>
    {
       static readonly TeventRouting<TestTaggregate, ITestTaggregateTevent> Appliers = DeclareAppliers(it => it
         .For<ITestTaggregateTevent>(static (taggregate, tevent) => taggregate._history.Add(tevent)));
 
-      TeventRouting ITeventRouted.TeventAppliers => Appliers;
+      protected override TeventRouting TeventAppliers => Appliers;
 
       public void Publish(params TestTaggregateTevent[] tevents) => tevents.ForEach(base.Publish);
 
@@ -57,13 +73,13 @@ namespace Compze.Tests.Common.CQRS.TeventRefactoring.Migrations
          Publish(tevents);
       }
 
+      ///<summary>A new taggregate that has published a tevent of each of the <paramref name="tevents"/> types, in order. The first type is the<br/>
+      /// <see cref="ITaggregateCreatedTevent"/> that creates it with the id <paramref name="id"/>, or a new id when that is null.</summary>
       public static TestTaggregate FromTevents(TaggregateId? id, IEnumerable<Type> tevents)
       {
-         var rootTevents = tevents.ToTevents();
-#pragma warning disable CS0618 // Type or member is obsolete
-         rootTevents.Cast<IMutableTaggregateTevent>().First().SetTaggregateIdInternal(id ?? new TaggregateId());
-#pragma warning restore CS0618 // Type or member is obsolete
-         return new TestTaggregate(rootTevents);
+         var types = tevents.ToList();
+         var created = (TestTaggregateTevent)Activator.CreateInstance(types.First(), id ?? new TaggregateId())._assert().NotNull();
+         return new TestTaggregate([created, ..types.Skip(1).ToTevents()]);
       }
 
       readonly List<ITestTaggregateTevent> _history = [];
@@ -72,7 +88,7 @@ namespace Compze.Tests.Common.CQRS.TeventRefactoring.Migrations
 
    public static class TeventSequenceGenerator
    {
-      public static TestTaggregateTevent[] ToTevents(this IEnumerable<Type> types) => types.Select(Constructor.CreateInstance).Cast<TestTaggregateTevent>().ToArray();
+      internal static TestTaggregateTevent[] ToTevents(this IEnumerable<Type> types) => types.Select(Constructor.CreateInstance).Cast<TestTaggregateTevent>().ToArray();
 
       ///<summary>Instantiates each tevent type and wraps it in <see cref="TestTaggregateTevent{T}"/> - the wrapped form a tevent migration hands to <c>ITeventModifier</c>.</summary>
       public static ITaggregateTevent<ITaggregateTeventWithIdentity>[] ToWrappedTevents(this IEnumerable<Type> types) =>

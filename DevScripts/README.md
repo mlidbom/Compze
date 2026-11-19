@@ -31,12 +31,16 @@ Then reload: `. $PROFILE`
   - `-FullGitReset` - Full git reset before building (implies `-Clean`)
   - `-WhatIf` - Preview what would be deleted by git clean (with `-FullGitReset`)
 
+- **C-Build-Website** - Builds the website (`src/Websites/Website`) with DocFX, as `npm run build-site-only` does but without Node.js, and fails, listing them, when DocFX reports any warning: a link, a code include or a table of contents entry that leads nowhere. For checking a docs change in one step. Silent on success; the site is in `src/Websites/Website/_site`. It doesn't compile the pages' example code: `C-Build` does, in the Website project
+
 - **C-Test** - Runs Compze tests with proper configuration (builds by default)
   - `-NoBuild` - Skip building, just run tests
   - `-Clean` - Clean and build before testing
   - `-FullGitReset` - Full git reset, build, then test (implies `-Clean`)
   - `-SingleThreadedTesting` - Run tests single-threaded for debugging
   - `-Iterations <n>` - Run suite multiple times and show summary
+  - `-Combinations <combination>, ...` - Run on these combinations of pluggable components instead of those in `src/TestUsingPluggableComponentCombinations`, such as `'PgSql:Microsoft:Newtonsoft:AspNetCore'`. Writes them into each test project's copy of the file after the build, and restores every copy to exactly what it was once the run is over, also when it fails or is interrupted; the file itself is never changed. Works with `-NoBuild`
+  - `-Filter <filter>` - Run only the tests that match, passed to `dotnet test --filter`, such as `"FullyQualifiedName~CQRS.TaggregateStores"`. A filter that matches no test fails the run
   - `-WhatIf` - Preview what would be deleted by git clean (with `-FullGitReset`)
 
 ### Packing & Releasing
@@ -46,15 +50,23 @@ Then reload: `. $PROFILE`
   - `-CI` - Real versions, as the release workflow packs them, each with its changelog section for its version as its release notes (what nuget.org's package page shows)
   - `-NoBuild` - Pack without building first
 
+- **C-Compare-PublicApi** - Lists the public API changes between two commits, project by project: every public and protected type and member added, removed or changed, from the declarations DocFX's metadata step gives them. For a review of a branch's public API, and for a release's changelog
+  - Default: the working tree against its merge-base with `main`, the projects under `src` with changed files
+  - `-Base`, `-Head` (a commit, checked out in a temporary worktree), `-Projects` (names, wildcards allowed), `-OutFile` (markdown)
+  - A type that moved to another namespace or project, or was renamed, is listed once, with its member changes, when evidence pairs it with what it was: its file (git's rename detection, or the file of a type already paired), or its namespace's move (a project's rename, or a type already paired); the report says what each pairing rests on
+  - DocFX skips the members of C# 14 extension blocks: the report names the changed files that hold them, to compare with git diff
+
+- **C-Get-PackagesChangedSinceTheirRelease** - Lists the packages whose shipped files changed since their last release tag, and those never released: for each, whether its version is bumped and its changelog changed since the tag, and the files that changed. For checking, before a release, that no package changed without changelog entries and a bump
+  - `-PackageId` to limit the list
+
 - **C-SimulateRelease** - Packs with real versions and dry-runs the release: which packages are new, their changelog entries, the post-release binding check (`.github/scripts/PostReleaseBindingCheck/README.md`), pushes, GitHub releases and tags
   - `-NoBuild`, `-NoPack`, `-NoSummary`
   - Refuses a changelog section that doesn't state the dependency floors its version raises across a minor version, and prints the line to add (`.github/scripts/lib/DependencyFloors.ps1` says why)
   - The real release is the Create Releases workflow (`.github/workflows/publish-nuget.yml`), run by hand only after a CI run that covers the commit has passed: see `.claude/rules/02-universal-compze/100-releasing.md`
 
 - **C-Publish-ToPendingReleaseFeed** - Publishes the versions the next release will publish to this machine's pending-release feed (`~/.nuget/compze-pending-release-feed`), which every repository on the machine restores from: a consumer can use a new version at once, instead of after CI, the release workflow and nuget.org's validation
-  - Packs only a clean, committed tree; a published version is frozen to the code that ships
+  - Packs what HEAD holds, in a temporary clean worktree of HEAD, so a published version is frozen to the code that ships; uncommitted changes in the checkout don't stop it, and are not published
   - `-Replace` - Replace a published version whose package source changed since (also purges the old build from the NuGet cache)
-  - `-NoBuild` - Pack without building first
   - Push a consumer that references a published version only once nuget.org has it
 
 - **C-Clear-ReleasedLocalBuilds** - Removes every local build of a version nuget.org has released, from the pending-release feed and the NuGet global packages folder, so restores take nuget.org's build; reports versions still pending. A user-level SessionStart hook runs it in every Claude session
@@ -111,6 +123,10 @@ Then reload: `. $PROFILE`
   - Container switches: `-Microsoft`, `-Autofac`
   - Convenience switches: `-AllSqlLayers`, `-AllContainers`, `-AllPermutations`
   - `-SetAsDefaults` - Save configuration as default
+
+- **C-Set-TestDatabaseServers** - Chooses the machine whose SQL Server, PostgreSQL and MySQL the tests use, through the DbPool's three `COMPOSABLE_*_DATABASE_POOL_MASTER_CONNECTIONSTRING` user environment variables. Without a switch, shows the current choice. Restart Rider (NCrunch) and terminals afterwards
+  - `-Computer` - Another machine on the network, such as `threadripper`: changes nothing unless all three servers answer there
+  - `-ThisMachine` - This machine's servers
 
 ### Utility
 

@@ -3,6 +3,7 @@ using Compze.Internals.SystemCE.CollectionsCE.GenericCE;
 using Compze.Teventive.Taggregates.Tevents;
 using Compze.Teventive.TeventStore.Abstractions.Refactoring.Migrations._internal;
 using Compze.Teventive.TeventStore.Abstractions.Refactoring.Migrations;
+using Compze.Teventive.Taggregates.Tevents._internal;
 
 namespace Compze.Teventive.TeventStore.Refactoring.Migrations._private;
 
@@ -22,9 +23,7 @@ abstract class CompleteTeventStoreStreamMutator
          {
             var version = _taggregateVersions.GetOrAddDefault(wrappedTevent.Tevent.TaggregateId) + 1;
             _taggregateVersions[wrappedTevent.Tevent.TaggregateId] = version;
-#pragma warning disable CS0618 // Type or member is obsolete
             ((IMutableTaggregateTevent)wrappedTevent.Tevent).SetTaggregateVersionInternal(version);
-#pragma warning restore CS0618 // Type or member is obsolete
             yield return wrappedTevent;
          }
       }

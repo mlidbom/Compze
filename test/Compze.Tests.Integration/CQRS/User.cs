@@ -8,7 +8,7 @@ using JetBrains.Annotations;
 namespace Compze.Tests.Integration.CQRS;
 #pragma warning disable CA1812 //Uninstantiated class (used via reflection)
 
-class User : Taggregate<User, IUserTevent, UserTevent, IUserTevent<IUserTevent>, UserTevent<UserTevent>>, ITeventRouted
+class User : Taggregate<User, IUserTevent, UserTevent, IUserTevent<IUserTevent>, UserTevent<UserTevent>>
 {
    static readonly TeventRouting<User, IUserTevent> Appliers = DeclareAppliers(it => it
      .For<IUserRegistered>(static (user, tevent) =>
@@ -23,7 +23,7 @@ class User : Taggregate<User, IUserTevent, UserTevent, IUserTevent<IUserTevent>,
      .For<IUserChangedPassword>(static (user, tevent) => user.Password = tevent.Password)
      .For<IUserDeleted>(static (_, _) => {}));
 
-   TeventRouting ITeventRouted.TeventAppliers => Appliers;
+   protected override TeventRouting TeventAppliers => Appliers;
 
    public string Email { get; private set; } = "";
    public string Password { get; private set; } = "";
@@ -34,7 +34,7 @@ class User : Taggregate<User, IUserTevent, UserTevent, IUserTevent<IUserTevent>,
    {
       var user = new User();
       user.Register(email, password, id);
-      taggregates.Save(user);
+      taggregates.Add(user);
       return user;
    }
 

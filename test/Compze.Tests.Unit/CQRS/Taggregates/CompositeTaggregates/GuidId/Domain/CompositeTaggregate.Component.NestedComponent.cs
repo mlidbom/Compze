@@ -10,12 +10,12 @@ partial class Component
         Component.Component<
             NestedComponent,
             CompositeTaggregateTevent.Component.NestedComponent,
-            ICompositeTaggregateTevent.Component.NestedComponent>, ITeventRouted
+            ICompositeTaggregateTevent.Component.NestedComponent>
     {
         static readonly TeventRouting<NestedComponent, ICompositeTaggregateTevent.Component.NestedComponent> NestedComponentAppliers = DeclareAppliers(it => it
            .For<ICompositeTaggregateTevent.Component.NestedComponent.PropertyUpdated.Name>(static (component, tevent) => component.Name = tevent.Name));
 
-        TeventRouting ITeventRouted.TeventAppliers => NestedComponentAppliers;
+        protected override TeventRouting TeventAppliers => NestedComponentAppliers;
 
         public NestedComponent(Component parent) : base(parent) {}
 

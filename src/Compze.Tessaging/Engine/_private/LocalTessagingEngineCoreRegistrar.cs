@@ -15,7 +15,7 @@ namespace Compze.Tessaging.Engine._private;
 ///<summary>Registers the engine's core into a container: the gathered <see cref="TessageHandlerRegistrations"/>, the<br/>
 /// <see cref="TessageHandlerRoster"/> built from them when the container's singletons materialize, the one<br/>
 /// <see cref="TessageHandlerExecutor"/>, the <see cref="TeventObservationDispatcher"/> — the engine's only background<br/>
-/// machinery — with the <see cref="ITeventObservation"/> that creates observers at runtime, and the task runner and background-exception reporter it dispatches through. The one wiring home both the<br/>
+/// machinery — with the <see cref="IDynamicTeventObservers"/> that creates dynamic observers, and the task runner and background-exception reporter it dispatches through. The one wiring home both the<br/>
 /// plain-container composition (<see cref="LocalTessagingEngineRegistrar.LocalTessagingEngine"/>) and the endpoint<br/>
 /// compositions (<c>EndpointBuilder</c> in Compze.Tessaging.Endpoints) compose.</summary>
 ///<remarks>The composition must already have declared its <see cref="ITessagesInFlightTracker"/> when this registers: an<br/>
@@ -33,7 +33,7 @@ static class LocalTessagingEngineCoreRegistrar
                       Singleton.For<TessageHandlerExecutor>().CreatedBy((TessageHandlerRoster roster, IScopeFactory scopeFactory) => new TessageHandlerExecutor(roster, scopeFactory)),
                       Singleton.For<TeventObservationDispatcher>().CreatedBy((TessageHandlerRoster roster, IScopeFactory scopeFactory, IBackgroundExceptionReporter backgroundExceptionReporter, ITessagesInFlightTracker tessagesInFlightTracker, ITaskRunner taskRunner)
                                                                                 => new TeventObservationDispatcher(roster, scopeFactory, backgroundExceptionReporter, tessagesInFlightTracker, taskRunner)),
-                      Singleton.For<ITeventObservation>().CreatedBy((TeventObservationDispatcher observationDispatcher) => new TeventObservation(observationDispatcher)))
+                      Singleton.For<IDynamicTeventObservers>().CreatedBy((TeventObservationDispatcher observationDispatcher) => new DynamicTeventObservers(observationDispatcher)))
             .TaskRunner()
             .BackgroundExceptionReporter();
    }

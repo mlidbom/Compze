@@ -28,12 +28,12 @@ class PostalAddressTevent : IPostalAddressTevent
    }
 }
 
-class PostalAddress : SharedTomponent<IPostalAddressTevent>, ITeventRouted
+class PostalAddress : SharedTomponent<IPostalAddressTevent>
 {
    static readonly TeventRouting<PostalAddress, IPostalAddressTevent> Appliers = DeclareAppliers<PostalAddress>(it => it
      .For<IPostalAddressTevent.Changed>(static (address, tevent) => address.Street = tevent.Street));
 
-   TeventRouting ITeventRouted.TeventAppliers => Appliers;
+   protected override TeventRouting TeventAppliers => Appliers;
 
    public PostalAddress(SharedTomponentSlotInAnOwner<IPostalAddressTevent> slot) : base(slot) {}
 

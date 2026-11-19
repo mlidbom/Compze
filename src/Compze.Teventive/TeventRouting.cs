@@ -12,19 +12,13 @@ namespace Compze.Teventive;
 
 ///<summary>The tevent routing of one class: which applier, or which tevent handler, each tevent reaches in an instance of the class.<br/>
 /// Declared once per class, kept in a static field, and shared by every instance, so an instance holds none of it.</summary>
+///<remarks>A tevent reaches every route it matches, one after another, in the order the routes were declared, and a base class's routes come<br/>
+/// before a subclass's. So an applier may rely on the appliers declared before it having applied the same tevent.</remarks>
 ///<remarks>A class's first routing comes from the protected <c>DeclareAppliers</c> of the Compze base class it derives from, such as<br/>
 /// <see cref="Taggregates.BaseClasses.Taggregate{TTaggregate,TTaggregateTevent,TTaggregateTeventImplementation,TWrapperTeventInterface,TWrapperTeventImplementation}"/><br/>
-/// or <see cref="TeventiveComponent{TParent,TParentTevent,TParentTeventImplementation,TComponent,TComponentTevent,TComponentTeventImplementation}"/>, which starts it with<br/>
-/// the base class's own routes; a subclass's from <see cref="TeventRouting{TInstance,TTevent}.Extend{TSubclass}"/>. So no class can skip its base classes' routes.<br/>
-/// See dev_docs/taggregate-improvements on the taggregate-improvements branch.<br/>
-/// urgent: the order in which a tevent reaches the routes it matches is a guarantee Compze maintains (Magnus, 2026-11-17): one after<br/>
-/// another, in the order declared, a base class's routes before a subclass's. Make sure every public description of routing states<br/>
-/// it: the published docs under Compze.Teventive/Taggregates/_docs, which don't describe per-class routing yet (introduction.md<br/>
-/// states the order for handlers registered per instance; step 3 of the spike rewrites reusable-components.md), and the doc comments<br/>
-/// of the base classes' <c>DeclareAppliers</c> and <c>DeclareHandlers</c>,<br/>
-/// <see cref="TeventRouting{TInstance,TTevent}.Extend{TSubclass}"/> and <see cref="TeventRouting{TInstance,TTevent}.Declaration.For{THandledTevent}"/>.<br/>
-/// <see cref="TeventRouting{TInstance,TTevent}.Declaration"/>'s remarks state it, and<br/>
-/// <c>Given_a_vocab_note_whose_classes_declare_their_tevent_routing</c> specifies it.</remarks>
+/// or <see cref="TeventiveComponent{TParent,TParentTevent,TParentTeventImplementation,TComponent,TComponentTevent,TComponentTeventImplementation}"/>, which puts<br/>
+/// the base class's own routes, if it has any, first; a subclass's from <see cref="TeventRouting{TInstance,TTevent}.Extend{TSubclass}"/>, which puts its base<br/>
+/// class's routes before its own. So no class can skip its base classes' routes.</remarks>
 public abstract class TeventRouting
 {
    ///<summary>Calls, in declaration order, every route of this class that matches <paramref name="wrapped"/>'s wrapper type, on <paramref name="instance"/>.</summary>
@@ -40,34 +34,27 @@ public abstract class TeventRouting
    ///<summary>Whether this routing routes the tevents of <paramref name="partTevent"/> to a part, a component or an entity collection.</summary>
    private protected abstract bool RoutesToAPartWhoseTeventsAre(Type partTevent);
 
-   ///<summary>Asserts that <paramref name="teventive"/>'s class declares its tevent appliers, for its own exact class: a class that declares none<br/>
-   /// would apply no tevent, and one that inherits its base class's routing would lose its own appliers. Checked when it is constructed.</summary>
-   internal static void AssertDeclaresItsTeventAppliers(ITeventRouted teventive)
+   ///<summary>Asserts that <paramref name="appliers"/>, the routing <paramref name="teventive"/>'s class gives as its <c>TeventAppliers</c>, is<br/>
+   /// declared, for its own exact class: a class that declares none would apply no tevent, and one that inherits its base class's routing<br/>
+   /// would lose its own appliers. Checked when it is constructed.</summary>
+   internal static void AssertDeclaresItsTeventAppliers(object teventive, TeventRouting? appliers)
    {
-      State.Assert(teventive.TeventAppliers is not null,
-                   () => $"{teventive.GetType().FullName} declares no tevent appliers. Declare them with its base class's DeclareAppliers, keep them in a static field, and return them from an explicit implementation of {nameof(ITeventRouted)}.{nameof(ITeventRouted.TeventAppliers)}, listing {nameof(ITeventRouted)} again in the class's base list.");
-      AssertDeclaredForTheClassOf(teventive);
+      State.Assert(appliers is not null,
+                   () => $"{teventive.GetType().FullName} declares no tevent appliers: its TeventAppliers returns none. Declare them with its base class's DeclareAppliers, keep them in a static field, and return them from the class's override: protected override TeventRouting TeventAppliers => Appliers;");
+      appliers.AssertDeclaredForTheClassOf(teventive);
    }
 
-   ///<summary>Asserts that <paramref name="parent"/>'s routing routes <typeparamref name="TPartTevent"/>s to a part, as it must to reach <paramref name="part"/>:<br/>
-   /// a part whose entry its parent's routing forgot would silently never apply a tevent. Checked when the part is constructed.</summary>
-   internal static void AssertRoutesToAPart<TPartTevent>(ITeventRouted parent, object part) where TPartTevent : ITevent
-   {
-      State.Assert(parent.TeventAppliers._assert().NotNull().RoutesToAPartWhoseTeventsAre(typeof(TPartTevent)),
+   ///<summary>Asserts that this routing, of <paramref name="parent"/>'s class, routes <typeparamref name="TPartTevent"/>s to a part, as it must to reach<br/>
+   /// <paramref name="part"/>: a part whose entry its parent's routing forgot would silently never apply a tevent. Checked when the part is constructed.</summary>
+   internal void AssertRoutesToAPart<TPartTevent>(object parent, object part) where TPartTevent : ITevent =>
+      State.Assert(RoutesToAPartWhoseTeventsAre(typeof(TPartTevent)),
                    () => $"A {part.GetType().FullName} is constructed as a part of a {parent.GetType().FullName}, whose tevent routing routes no {typeof(TPartTevent).FullName} to a part. Enter the part in the routing: Component(...) for a component, Entities(...) for an entity collection.");
-   }
 
-   ///<summary>Asserts that the routing <paramref name="teventive"/> reads through <see cref="ITeventRouted"/>, if any, is declared for its<br/>
-   /// exact class: a class that inherits a routing it doesn't declare for itself has forgotten its own, and would lose its appliers.</summary>
-   internal static void AssertDeclaredForTheClassOf(ITeventRouted teventive)
-   {
-      AssertDeclaredFor(teventive.TeventAppliers);
-      AssertDeclaredFor(teventive.TeventHandlers);
-
-      void AssertDeclaredFor(TeventRouting? routing) =>
-         State.Assert(routing == null || routing.DeclaredFor == teventive.GetType(),
-                      () => $"{teventive.GetType().FullName} uses the tevent routing declared for {routing!.DeclaredFor.FullName}. Every class declares its own: extend its base class's with {nameof(TeventRouting<,>.Extend)}, and implement {nameof(ITeventRouted)} explicitly, listing it again in the class's base list.");
-   }
+   ///<summary>Asserts that this routing, which <paramref name="teventive"/>'s class gives, is declared for its exact class: a class that inherits<br/>
+   /// a routing it doesn't declare for itself has forgotten its own, and would lose its appliers.</summary>
+   internal void AssertDeclaredForTheClassOf(object teventive) =>
+      State.Assert(DeclaredFor == teventive.GetType(),
+                   () => $"{teventive.GetType().FullName} uses the tevent routing declared for {DeclaredFor.FullName}. Every class declares its own: extend its base class's with {nameof(TeventRouting<,>.Extend)}, keep it in a static field, and return it from the class's own override of TeventAppliers, or of TeventHandlers for tevent handlers.");
 }
 
 ///<summary>The tevent routing of the class <typeparamref name="TInstance"/>, whose tevents are <typeparamref name="TTevent"/>s. See <see cref="TeventRouting"/>.</summary>
@@ -98,6 +85,7 @@ public sealed class TeventRouting<TInstance, TTevent> : TeventRouting where TIns
    internal static TeventRouting<TInstance, TTevent> DeclareHandlers(Action<Declaration> declare) => Declare(declare, routesTeventHandlers: true, inherited: []);
 
    ///<summary>The routing of <typeparamref name="TSubclass"/>: every route of this class, followed by those <paramref name="declare"/> adds.<br/>
+   /// A tevent reaches the routes it matches in that order, one after another: this class's first, then the subclass's, each in the order declared.<br/>
    /// The added routes are typed on <typeparamref name="TSubclass"/>, so they reach its members without a cast.</summary>
    ///<remarks><typeparamref name="TSubclass"/> must derive directly from <typeparamref name="TInstance"/>, so that a chain of routings can't skip a<br/>
    /// class, and silently lose that class's appliers, components and slots.</remarks>
@@ -149,6 +137,8 @@ public sealed class TeventRouting<TInstance, TTevent> : TeventRouting where TIns
       internal Declaration(bool routesTeventHandlers) => _routesTeventHandlers = routesTeventHandlers;
 
       ///<summary>Calls <paramref name="handler"/> with the instance for every tevent assignable to <typeparamref name="THandledTevent"/>.<br/>
+      /// A tevent reaches the routes it matches one after another, in the order declared: <paramref name="handler"/> after the routes declared<br/>
+      /// before it, those of the base classes included, and before those declared after it.<br/>
       /// The handler must hold no state of its own: declare it <see langword="static"/>, and reach the instance through its first parameter.</summary>
       public Declaration For<THandledTevent>(Action<TInstance, THandledTevent> handler) where THandledTevent : TTevent
       {
@@ -158,18 +148,18 @@ public sealed class TeventRouting<TInstance, TTevent> : TeventRouting where TIns
          return this;
       }
 
-      ///<summary>Routes every tevent of the component <paramref name="component"/> returns to that component's own appliers, or tevent handlers,<br/>
-      /// as this routing routes. The component's tevent type is inferred from what <paramref name="component"/> returns.</summary>
-      public Declaration Component<TComponentTevent>(Func<TInstance, ITeventRoutedMember<TComponentTevent>> component) where TComponentTevent : TTevent => Member(component);
+      ///<summary>Routes every tevent of the component <paramref name="component"/> returns to that component's own appliers. The component's<br/>
+      /// tevent type is inferred from what <paramref name="component"/> returns.</summary>
+      public Declaration Component<TComponentTevent>(Func<TInstance, ITeventRoutedPart<TComponentTevent>> component) where TComponentTevent : TTevent => Part(component);
 
       ///<summary>Routes every tevent of the entities in the collection <paramref name="entities"/> returns to that collection: a created tevent adds an<br/>
       /// entity, and every tevent reaches the entity whose id it carries.</summary>
-      public Declaration Entities<TEntityTevent>(Func<TInstance, ITeventRoutedMember<TEntityTevent>> entities) where TEntityTevent : TTevent => Member(entities);
+      public Declaration Entities<TEntityTevent>(Func<TInstance, ITeventRoutedPart<TEntityTevent>> entities) where TEntityTevent : TTevent => Part(entities);
 
       ///<summary>Routes every tevent wrapped in the adopting wrapper tevent of <paramref name="slot"/>, a slot that belongs to this class, to the<br/>
       /// shared tomponent in that slot of the instance. The instance keeps no slot object: the route gets the shared tomponent from it.</summary>
       public Declaration SharedTomponent<TOwnerTevent, TOwnerTeventImplementation, TTomponentTevent, TAdoptingWrapperTevent>(
-         SharedTomponentSlotOfAClass<TInstance, TOwnerTevent, TOwnerTeventImplementation, TTomponentTevent, TAdoptingWrapperTevent> slot)
+         SharedTomponentSlot<TInstance, TOwnerTevent, TOwnerTeventImplementation, TTomponentTevent, TAdoptingWrapperTevent> slot)
          where TOwnerTevent : class, ITaggregateTevent
          where TOwnerTeventImplementation : TaggregateTevent, TOwnerTevent
          where TTomponentTevent : class, ITevent
@@ -186,12 +176,12 @@ public sealed class TeventRouting<TInstance, TTevent> : TeventRouting where TIns
          return this;
       }
 
-      Declaration Member<TMemberTevent>(Func<TInstance, ITeventRoutedMember<TMemberTevent>> member) where TMemberTevent : ITevent
+      Declaration Part<TPartTevent>(Func<TInstance, ITeventRoutedPart<TPartTevent>> part) where TPartTevent : ITevent
       {
          AssertRoutesTeventAppliers();
-         AssertHoldsNoState(member);
+         AssertHoldsNoState(part);
 #pragma warning disable CS0618 // This is just the type of infrastructure code the member is for
-         TeventRoutes.Add(new TeventRoute(typeof(IPublisherTevent<TMemberTevent>), (instance, wrapped) => member((TInstance)instance).DispatchInternal(wrapped), partTevent: typeof(TMemberTevent)));
+         TeventRoutes.Add(new TeventRoute(typeof(IPublisherTevent<TPartTevent>), (instance, wrapped) => part((TInstance)instance).DispatchInternal(wrapped), partTevent: typeof(TPartTevent)));
 #pragma warning restore CS0618
          return this;
       }

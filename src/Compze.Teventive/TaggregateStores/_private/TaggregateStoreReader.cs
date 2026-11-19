@@ -21,6 +21,6 @@ sealed class TaggregateStoreReader : ITaggregateStoreBulkReader
    public ITaggregateReference<TTaggregate> Reference<TTaggregate>(TaggregateId id) where TTaggregate : class, ITaggregate =>
       _routing.StoreKeeping(typeof(TTaggregate)).Reference<TTaggregate>(id);
 
-   public IReadOnlyCollection<ITaggregateReference<TTaggregate>> All<TTaggregate>() where TTaggregate : class, ITaggregate =>
-      _routing.StoreKeeping(typeof(TTaggregate)).All<TTaggregate>();
+   public IReadOnlyCollection<ITaggregateReference<TTaggregate>> ReferencesToAll<TTaggregate>() where TTaggregate : class, ITaggregate =>
+      _routing.StoreKeeping(typeof(TTaggregate)).ReferencesToAll<TTaggregate>();
 }

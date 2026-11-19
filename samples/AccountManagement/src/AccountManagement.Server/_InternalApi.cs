@@ -38,6 +38,6 @@ static class InternalApi
 
    internal class Tommand
    {
-      internal TeventStoreApi.TommandApi.SaveTaggregate<Account> Save(Account account) => TeventStore.Tommands.Save(account);
+      internal TeventStoreApi.TommandApi.AddTaggregate<Account> Add(Account account) => TeventStore.Tommands.Add(account);
    }
 }

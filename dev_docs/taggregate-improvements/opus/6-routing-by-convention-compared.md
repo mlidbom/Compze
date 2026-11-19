@@ -1,5 +1,9 @@
 # Routing by convention, compared with declaring it: the same cost, a different risk
 
+> Written before the end review (2026-11-18): some names and API here have changed since; see
+> [../shared/the-naming-pass.md](../shared/the-naming-pass.md) and
+> [../shared/reviews/end-review-consolidated.md](../shared/reviews/end-review-consolidated.md).
+
 Built and measured on 2026-11-16 by jastudio-rep-opus. An experiment, not for merging: branch
 `taggregate-experiments-opus-convention`, in the worktree `C:\Dev\Compze.worktrees\taggregate-experiments-opus-convention`.
 It's built on [the prototype of per-class routing](5-prototype-of-per-class-routing.md), so both ways run in one build.

@@ -52,8 +52,8 @@
       <Value>UsePackageReference_Compze_Tessaging_Transport_AspNetCore = true</Value>
       <Value>UsePackageReference_Compze_Tests_Infrastructure = true</Value>
       <Value>UsePackageReference_Compze_Teventive = true</Value>
-      <Value>UsePackageReference_Compze_Teventive_StateStore = true</Value>
-      <Value>UsePackageReference_Compze_Teventive_StateStore_MemoryPack = true</Value>
+      <Value>UsePackageReference_Compze_Teventive_MemoryImageStateStore = true</Value>
+      <Value>UsePackageReference_Compze_Teventive_MemoryImageStateStore_MemoryPack = true</Value>
       <Value>UsePackageReference_Compze_Teventive_TeventStore = true</Value>
       <Value>UsePackageReference_Compze_Teventive_TeventStore_Abstractions = true</Value>
       <Value>UsePackageReference_Compze_Teventive_TeventStore_MicrosoftSql = true</Value>

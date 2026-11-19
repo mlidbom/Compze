@@ -18,12 +18,12 @@ namespace Compze.Tests.Unit.CQRS.Taggregates.CompositeTaggregates.GuidId.Domain;
             CompositeTaggregateTevent.Entity.NestedEntity,
             ICompositeTaggregateTevent.Entity.NestedEntity.Created,
             ICompositeTaggregateTevent.Entity.NestedEntity.Removed,
-            CompositeTaggregateTevent.Entity.NestedEntity.IdGetterSetter>, ITeventRouted
+            CompositeTaggregateTevent.Entity.NestedEntity.IdGetterSetter>
     {
         static readonly TeventRouting<RemovableNestedEntity, ICompositeTaggregateTevent.Entity.NestedEntity> NestedEntityAppliers = DeclareAppliers(it => it
            .For<ICompositeTaggregateTevent.Entity.NestedEntity.PropertyUpdated.Name>(static (entity, tevent) => entity.Name = tevent.Name));
 
-        TeventRouting ITeventRouted.TeventAppliers => NestedEntityAppliers;
+        protected override TeventRouting TeventAppliers => NestedEntityAppliers;
 
         public string Name { get; private set; } = string.Empty;
 

@@ -28,9 +28,10 @@ public abstract partial class SelfGeneratingQueryModel<TQueryModel, TTaggregateT
       TEntityId _id;
       public TEntityId Id => _id._assert().NotDefault();
 
-      ///<summary>Declares the tevent appliers of <typeparamref name="TEntity"/>, for it to keep in a static field and return from its explicit<br/>
-      /// implementation of <see cref="ITeventRouted.TeventAppliers"/>. Every tevent dispatched to the entity must reach at least one of them.<br/>
-      /// The routing starts with the entity's own applier of its created tevent, which gives it its <see cref="Id"/>.</summary>
+      ///<summary>Declares the tevent appliers of <typeparamref name="TEntity"/>, for it to keep in a static field and return from its override of<br/>
+      /// <see cref="TeventApplyingPart{TPart,TPartTevent}.TeventAppliers"/>. Every tevent dispatched to the entity must reach at least one of them.<br/>
+      /// The routing starts with the entity's own applier of its created tevent, which gives it its <see cref="Id"/>. A tevent reaches every route<br/>
+      /// it matches, one after another: that applier first, then those <paramref name="declare"/> declares, in the order declared.</summary>
       protected new static TeventRouting<TEntity, TEntityTevent> DeclareAppliers(Action<TeventRouting<TEntity, TEntityTevent>.Declaration> declare) => DeclareEntityAppliers(declare);
 
       ///<summary>What <see cref="DeclareAppliers"/> declares, for the removable entity, whose own adds its routes after the entity's.</summary>
@@ -42,18 +43,20 @@ public abstract partial class SelfGeneratingQueryModel<TQueryModel, TTaggregateT
          });
 
       ///<summary>The collection that keeps a parent's entities, which the parent's routing routes to with <c>Entities(...)</c>.</summary>
-      public interface ICollectionManager : ITeventRoutedMember<TEntityTevent>
+      public interface ICollectionManager : ITeventRoutedPart<TEntityTevent>
       {
          ///<summary>The entities, by id and in the order they were created.</summary>
          IReadOnlyEntityCollection<TEntity, TEntityId> Entities { get; }
       }
 
       ///<summary>A collection of the entities of <paramref name="parent"/>, the query model or component whose routing routes their tevents to it.</summary>
-      public static ICollectionManager CreateSelfManagingCollection(ITeventRouted parent) => new CollectionManager(parent);
+      public static ICollectionManager CreateSelfManagingCollection(IParent parent) => new CollectionManager(parent);
 
       internal class CollectionManager : RoutedEntityCollection<TEntity, TEntityId, TEntityTevent>, ICollectionManager
       {
-         internal CollectionManager(ITeventRouted parent) => TeventRouting.AssertRoutesToAPart<TEntityTevent>(parent, this);
+#pragma warning disable CS0618 // This is just the type of infrastructure code the member is for
+         internal CollectionManager(IParent parent) => parent.TeventAppliersInternal.AssertRoutesToAPart<TEntityTevent>(parent, this);
+#pragma warning restore CS0618
 
          public IReadOnlyEntityCollection<TEntity, TEntityId> Entities => ManagedEntities;
 

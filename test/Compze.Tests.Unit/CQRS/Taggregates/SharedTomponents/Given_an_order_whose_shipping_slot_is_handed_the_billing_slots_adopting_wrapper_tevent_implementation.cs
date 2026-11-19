@@ -13,7 +13,7 @@ namespace Compze.Tests.Unit.CQRS.Taggregates.SharedTomponents;
 public class Given_an_order_whose_shipping_slot_is_handed_the_billing_slots_adopting_wrapper_tevent_implementation
 {
    [XF] public void making_the_slot_throws_an_ArgumentException_naming_the_wrong_implementation() =>
-      Invoking(() => new SharedTomponentSlotOfAClass<OrderTaggregate, IOrderTevent, OrderTevent, IPostalAddressTevent, IShippingAddressTevent<IPostalAddressTevent>>(
+      Invoking(() => new SharedTomponentSlot<OrderTaggregate, IOrderTevent, OrderTevent, IPostalAddressTevent, IShippingAddressTevent<IPostalAddressTevent>>(
                   typeof(BillingAddressTevent<>), static order => order.ShippingAddress))
         .Must().Throw<ArgumentException>()
         .Which.Message.Must().Contain(nameof(BillingAddressTevent<>));

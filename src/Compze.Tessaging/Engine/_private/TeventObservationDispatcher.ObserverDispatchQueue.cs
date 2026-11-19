@@ -67,7 +67,7 @@ sealed partial class TeventObservationDispatcher
          }
       }
 
-      ///<summary>Ends this queue, for a runtime observer that was disposed: nothing is queued from now on, and what is queued and<br/>
+      ///<summary>Ends this queue, for a dynamic observer that was disposed: nothing is queued from now on, and what is queued and<br/>
       /// not yet taken is dropped, no longer counting as in flight. A call already taken from the queue isn't waited for. Ending an<br/>
       /// ended queue does nothing more.</summary>
       internal void End()

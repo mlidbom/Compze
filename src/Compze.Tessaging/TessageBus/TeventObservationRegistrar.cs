@@ -4,14 +4,14 @@ using Compze.Tessaging.Engine;
 using Compze.Tessaging.Engine.HandlerRegistration._private;
 using Compze.Tessaging.Engine._private;
 using Compze.Tessaging.TessageTypes;
-using Compze.Tessaging.Validation._internal;
 
 namespace Compze.Tessaging.TessageBus;
 
 ///<summary>Registers tevent observers — observation is the deliberately transaction-ignoring watch surface, declared under<br/>
 /// its own verb so the distinct semantics are visible at the declaration site: an observer watches, never participates.<br/>
-/// Handed to the callback of <see cref="LocalTessagingEngineBuilder.ObserveTevents"/> at composition, or of<br/>
-/// <see cref="ITeventObservation.ObserveTevents"/> at runtime, and existing only inside it, exactly like<br/>
+/// Handed to the callback of <see cref="LocalTessagingEngineBuilder.ObserveTevents"/> at composition, for composed observers, or<br/>
+/// of <see cref="IDynamicTeventObservers.ObserveTevents"/> while the engine runs, for dynamic observers, and existing only inside it,<br/>
+/// exactly like<br/>
 /// <see cref="TessageBusHandlerRegistrar"/>.</summary>
 ///<remarks>An observer observes committed facts only — a tevent published within an execution is queued for its observers at<br/>
 /// commit, and an arriving tevent was committed by its publisher — and runs off-thread in per-observer FIFO order (the<br/>
@@ -22,17 +22,11 @@ namespace Compze.Tessaging.TessageBus;
 public sealed class TeventObservationRegistrar : ITeventObservationRegistrar
 {
    readonly Action<TeventObserverRegistration> _addObserver;
-   readonly Action<Type>? _declareObservableAtRuntime;
    bool _callbackHasEnded;
 
-   ///<summary>A registrar that adds each observer through <paramref name="addObserver"/>, and declares what may be observed at<br/>
-   /// runtime through <paramref name="declareObservableAtRuntime"/>: at composition. Null for an observation created at runtime,<br/>
-   /// where nothing more can be declared observable.</summary>
-   internal TeventObservationRegistrar(Action<TeventObserverRegistration> addObserver, Action<Type>? declareObservableAtRuntime)
-   {
-      _addObserver = addObserver;
-      _declareObservableAtRuntime = declareObservableAtRuntime;
-   }
+   ///<summary>A registrar that adds each observer through <paramref name="addObserver"/>: composed observers at composition, or<br/>
+   /// dynamic observers while the engine runs.</summary>
+   internal TeventObservationRegistrar(Action<TeventObserverRegistration> addObserver) => _addObserver = addObserver;
 
    ///<summary>Registers an observer for tevents compatible with <typeparamref name="TTevent"/>.</summary>
    public TeventObservationRegistrar ForTevent<TTevent>(Func<TTevent, IScopeResolver, Task> observer) where TTevent : ITevent =>
@@ -52,50 +46,26 @@ public sealed class TeventObservationRegistrar : ITeventObservationRegistrar
    /// an empty list.</summary>
    ///<remarks>A tevent with no unit of work known to this process comes as a list of its own: one published through<br/>
    /// <see cref="IIndependentTeventPublisher"/>, which is its own unit of work, and one that arrives from another endpoint, since<br/>
-   /// nothing on it marks its sender's unit of work.<br/>
-   /// review-naming: ForEachUnitOfWork is a placeholder name, for the naming pass (jastudio-rep-opus, 2026-11-17).</remarks>
-   public TeventObservationRegistrar ForEachUnitOfWork<TTevent>(Func<IReadOnlyList<TTevent>, IScopeResolver, Task> observer) where TTevent : ITevent =>
-      Add(TeventObserverRegistration.ForEachUnitOfWork(observer));
+   /// nothing on it marks its sender's unit of work.</remarks>
+   public TeventObservationRegistrar ForTeventsOfEachUnitOfWork<TTevent>(Func<IReadOnlyList<TTevent>, IScopeResolver, Task> observer) where TTevent : ITevent =>
+      Add(TeventObserverRegistration.ForTeventsOfEachUnitOfWork(observer));
 
    //One dispatch path, as for ForTevent.
-   public TeventObservationRegistrar ForEachUnitOfWork<TTevent>(Action<IReadOnlyList<TTevent>, IScopeResolver> observer) where TTevent : ITevent =>
-      ForEachUnitOfWork<TTevent>((tevents, scope) =>
+   public TeventObservationRegistrar ForTeventsOfEachUnitOfWork<TTevent>(Action<IReadOnlyList<TTevent>, IScopeResolver> observer) where TTevent : ITevent =>
+      ForTeventsOfEachUnitOfWork<TTevent>((tevents, scope) =>
       {
          observer(tevents, scope);
          return Task.CompletedTask;
       });
-
-   ///<summary>Declares, at composition, that tevents compatible with <typeparamref name="TTevent"/> may be observed by observers<br/>
-   /// created at runtime through <see cref="ITeventObservation"/>, subtypes included. Every runtime observer's types must be<br/>
-   /// covered by such a declaration.</summary>
-   ///<remarks>An endpoint subscribes with its peers to the declared types from the start, as it does for an observer declared at<br/>
-   /// composition. So a runtime observer is in effect the moment <see cref="ITeventObservation.ObserveTevents"/> returns, with no<br/>
-   /// round trip: one created before a trigger can't miss a tevent published right after it. A tevent of a declared type that<br/>
-   /// arrives while no runtime observer observes it is dropped. The declaration is required in every composition, a plain<br/>
-   /// container's too, so that the same registrations run unchanged under any composition, and a runtime observer never silently<br/>
-   /// misses the remote tevents of a type nobody declared.<br/>
-   /// review-naming: AtRuntime is a placeholder name, for the naming pass (jastudio-rep-opus, 2026-11-17).</remarks>
-   public TeventObservationRegistrar AtRuntime<TTevent>() where TTevent : ITevent
-   {
-      AssertUsedOnlyInsideItsCallback();
-      var declareObservableAtRuntime = _declareObservableAtRuntime;
-      State.Assert(declareObservableAtRuntime != null,
-                   () => $"{nameof(AtRuntime)} declares at composition which tevents may be observed at runtime, and means nothing in an observation created at runtime. Declare {typeof(TTevent).FullName} in the composition's ObserveTevents, and observe it here with {nameof(ForTevent)} or {nameof(ForEachUnitOfWork)}.");
-      TessageInspector.AssertValidForSubscription<TTevent>();
-      declareObservableAtRuntime(typeof(TTevent));
-      return this;
-   }
 
    //The minimal registrar an endpoint-declaration's ObserveTevents override receives - this registrar's one facet.
    ITeventObservationRegistrar ITeventObservationRegistrar.ForTevent<TTevent>(Func<TTevent, IScopeResolver, Task> observer) => ForTevent(observer);
 
    ITeventObservationRegistrar ITeventObservationRegistrar.ForTevent<TTevent>(Action<TTevent, IScopeResolver> observer) => ForTevent(observer);
 
-   ITeventObservationRegistrar ITeventObservationRegistrar.ForEachUnitOfWork<TTevent>(Func<IReadOnlyList<TTevent>, IScopeResolver, Task> observer) => ForEachUnitOfWork(observer);
+   ITeventObservationRegistrar ITeventObservationRegistrar.ForTeventsOfEachUnitOfWork<TTevent>(Func<IReadOnlyList<TTevent>, IScopeResolver, Task> observer) => ForTeventsOfEachUnitOfWork(observer);
 
-   ITeventObservationRegistrar ITeventObservationRegistrar.ForEachUnitOfWork<TTevent>(Action<IReadOnlyList<TTevent>, IScopeResolver> observer) => ForEachUnitOfWork(observer);
-
-   ITeventObservationRegistrar ITeventObservationRegistrar.AtRuntime<TTevent>() => AtRuntime<TTevent>();
+   ITeventObservationRegistrar ITeventObservationRegistrar.ForTeventsOfEachUnitOfWork<TTevent>(Action<IReadOnlyList<TTevent>, IScopeResolver> observer) => ForTeventsOfEachUnitOfWork(observer);
 
    internal void EndCallback() => _callbackHasEnded = true;
 

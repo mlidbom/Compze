@@ -6,6 +6,7 @@ using Compze.Teventive.Taggregates.BaseClasses;
 using Compze.Teventive.Taggregates.Tevents;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
+using Compze.Teventive.Taggregates.Tevents._internal;
 
 namespace Compze.Serialization.Newtonsoft.InternalSpecifications;
 
@@ -22,9 +23,7 @@ public class NewtonSoftTeventStoreTeventSerializerTests : SerializerTest
          utcTimeStamp: DateTime.UtcNow + 1.Minutes());
 
       var teventWithOnlySubclassValues = new TestTevent("Test1", "Test2");
-#pragma warning disable CS0618 // Type or member is obsolete
       ((IMutableTaggregateTevent)teventWithOnlySubclassValues).SetUtcTimeStampInternal(DateTime.MinValue);
-#pragma warning restore CS0618 // Type or member is obsolete
 
       var teventWithAllValuesJson = TeventSerializer.Serialize(new TaggregateTevent<TestTevent>(teventWithAllValuesSet));
       var teventWithOnlySubclassValuesJson = TeventSerializer.Serialize(new TaggregateTevent<TestTevent>(teventWithOnlySubclassValues));
@@ -63,10 +62,8 @@ public class NewtonSoftTeventStoreTeventSerializerTests : SerializerTest
          Test1 = test1;
          Test2 = test2;
 
-#pragma warning disable CS0618 // Type or member is obsolete
          ((IMutableTaggregateTevent)this).SetTaggregateVersionInternal(taggregateVersion);
          ((IMutableTaggregateTevent)this).SetUtcTimeStampInternal(utcTimeStamp);
-#pragma warning restore CS0618 // Type or member is obsolete
       }
 
       // ReSharper disable once MemberCanBePrivate.Local

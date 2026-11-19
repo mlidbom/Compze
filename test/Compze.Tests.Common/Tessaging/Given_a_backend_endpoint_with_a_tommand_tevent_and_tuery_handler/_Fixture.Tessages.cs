@@ -80,12 +80,12 @@ public class MyCreateTaggregateTommand : Remotable.AtMostOnce.AtMostOnceTypermed
    public TaggregateId TaggregateId { get; set; }
 }
 
-public sealed class MyTaggregate : Taggregate<MyTaggregate, IMyTaggregateTevent, MyTaggregateTevent, IMyTaggregateTevent<IMyTaggregateTevent>, MyTaggregateTevent<MyTaggregateTevent>>, ITeventRouted
+public sealed class MyTaggregate : Taggregate<MyTaggregate, IMyTaggregateTevent, MyTaggregateTevent, IMyTaggregateTevent<IMyTaggregateTevent>, MyTaggregateTevent<MyTaggregateTevent>>
 {
    //This test taggregate maintains no state, so no tevent has an applier.
    static readonly TeventRouting<MyTaggregate, IMyTaggregateTevent> Appliers = DeclareAppliers(it => it.IgnoreUnhandled<IMyTaggregateTevent>());
 
-   TeventRouting ITeventRouted.TeventAppliers => Appliers;
+   protected override TeventRouting TeventAppliers => Appliers;
 
    MyTaggregate() {}
 
@@ -95,7 +95,7 @@ public sealed class MyTaggregate : Taggregate<MyTaggregate, IMyTaggregateTevent,
    {
       var created = new MyTaggregate();
       created.Publish(new MyTaggregateTevent.Created(id));
-      bus.Execute(new TeventStoreApi().Tommands.Save(created));
+      bus.Execute(new TeventStoreApi().Tommands.Add(created));
    }
 }
 

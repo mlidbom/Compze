@@ -60,6 +60,9 @@ function C-Build {
     # Ensure pluggable component configuration files exist before building
     C-Set-PluggableComponents -EnsureValid
 
+    # A killed C-Test -Combinations run leaves the test projects' copies of the configuration changed, with a record of what they were
+    Restore-CombinationsFileCopies -WarnIfAnyAreRestored
+
     # Fail loudly if the .claude/ symlinks into .claude-shared/ have degraded into plain files
     C-Verify-ClaudeConfigSymlinks
     

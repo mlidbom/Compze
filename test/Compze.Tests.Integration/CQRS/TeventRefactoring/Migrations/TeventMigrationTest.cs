@@ -269,7 +269,7 @@ public class TeventMigrationTest : TeventMigrationTestBase
 
             var firstSavedHistory = container.ExecuteUnitOfWork(unitOfWork =>
             {
-               unitOfWork.TaggregateStoreUpdater().Save(taggregate);
+               unitOfWork.TaggregateStoreUpdater().Add(taggregate);
                return unitOfWork.TaggregateStoreUpdater().GetForUpdate<TestTaggregate>(id).History;
             });
 
@@ -340,7 +340,7 @@ public class TeventMigrationTest : TeventMigrationTestBase
 
             var firstSavedHistory = container.ExecuteUnitOfWork(unitOfWork =>
             {
-               unitOfWork.TaggregateStoreUpdater().Save(taggregate);
+               unitOfWork.TaggregateStoreUpdater().Add(taggregate);
                return unitOfWork.TaggregateStoreUpdater().GetForUpdate<TestTaggregate>(id).History;
             });
 
@@ -414,7 +414,7 @@ public class TeventMigrationTest : TeventMigrationTestBase
          {
             var initialTaggregate = TestTaggregate.FromTevents(id, EnumerableCE.OfTypes<Ec1, E1>());
 
-            container.ExecuteUnitOfWork(unitOfWork => unitOfWork.TaggregateStoreUpdater().Save(initialTaggregate));
+            container.ExecuteUnitOfWork(unitOfWork => unitOfWork.TaggregateStoreUpdater().Add(initialTaggregate));
 
             migrations = [Replace<E1>.With<E5>()];
 
@@ -463,7 +463,7 @@ public class TeventMigrationTest : TeventMigrationTestBase
             var expectedHistoryAfterFirstMigration = TestTaggregate.FromTevents(id, EnumerableCE.OfTypes<Ec1, E2, E1>()).History;
             var expectedHistoryAfterSecondMigration = TestTaggregate.FromTevents(id, EnumerableCE.OfTypes<Ec1, E2, E3, E1>()).History;
 
-            container.ExecuteUnitOfWork(unitOfWork => unitOfWork.TaggregateStoreUpdater().Save(initialTaggregate));
+            container.ExecuteUnitOfWork(unitOfWork => unitOfWork.TaggregateStoreUpdater().Add(initialTaggregate));
             migrations = firstMigration;
             ClearCache(container);
             var historyWithFirstMigrationUnPersisted = container.ExecuteUnitOfWork(unitOfWork => unitOfWork.TaggregateStoreUpdater().GetForUpdate<TestTaggregate>(id).History);
@@ -508,7 +508,7 @@ public class TeventMigrationTest : TeventMigrationTestBase
             var expectedHistoryAfterFirstMigration = TestTaggregate.FromTevents(id, EnumerableCE.OfTypes<Ec1, E1, E2>()).History;
             var expectedHistoryAfterSecondMigration = TestTaggregate.FromTevents(id, EnumerableCE.OfTypes<Ec1, E1, E3, E2>()).History;
 
-            container.ExecuteUnitOfWork(unitOfWork => unitOfWork.TaggregateStoreUpdater().Save(initialTaggregate));
+            container.ExecuteUnitOfWork(unitOfWork => unitOfWork.TaggregateStoreUpdater().Add(initialTaggregate));
             migrations = firstMigration;
             ClearCache(container);
             var historyWithFirstMigrationUnPersisted = container.ExecuteUnitOfWork(unitOfWork => unitOfWork.TaggregateStoreUpdater().GetForUpdate<TestTaggregate>(id).History);
@@ -559,11 +559,12 @@ public class TeventMigrationTest : TeventMigrationTestBase
 
       var id = new TaggregateId();
 
-      var taggregate = TestTaggregate.FromTevents(
+      //Published with the time frozen, so that their time stamps have the microsecond precision that every supported database keeps.
+      var taggregate = UtcTimeSource.Test.FrozenAtUtcNow().Run(() => TestTaggregate.FromTevents(
          id,
-         EnumerableCE.OfTypes<Ec1, E1, E2, E3, E4>());
+         EnumerableCE.OfTypes<Ec1, E1, E2, E3, E4>()));
 
-      otherProcessContainer.ExecuteUnitOfWork(unitOfWork => unitOfWork.TaggregateStoreUpdater().Save(taggregate));
+      otherProcessContainer.ExecuteUnitOfWork(unitOfWork => unitOfWork.TaggregateStoreUpdater().Add(taggregate));
       migrations = actualMigrations;
       otherProcessContainer.ExecuteUnitOfWork(unitOfWork => unitOfWork.TaggregateStoreUpdater().GetForUpdate<TestTaggregate>(id));
 
@@ -572,13 +573,10 @@ public class TeventMigrationTest : TeventMigrationTestBase
 
       container.ExecuteInIsolatedScope(scope => scope.TeventStore().PersistMigrations());
 
-      otherProcessContainer.ExecuteUnitOfWork(unitOfWork => unitOfWork.TaggregateStoreUpdater().GetForUpdate<TestTaggregate>(id).Publish(new E3()));
+      UtcTimeSource.Test.FrozenAtUtcNow().Run(() => otherProcessContainer.ExecuteUnitOfWork(unitOfWork => unitOfWork.TaggregateStoreUpdater().GetForUpdate<TestTaggregate>(id).Publish(new E3())));
 
       var firstProcessHistory = container.ExecuteUnitOfWork(unitOfWork => unitOfWork.TeventStore().GetTaggregateHistory(id).Tevents().ToList());
       var secondProcessHistory = otherProcessContainer.ExecuteUnitOfWork(unitOfWork => unitOfWork.TeventStore().GetTaggregateHistory(id).Tevents().ToList());
-
-      TeventStorageTestHelper.StripSteventhDecimalPointFromSecondFractionOnUtcUpdateTime(firstProcessHistory);
-      TeventStorageTestHelper.StripSteventhDecimalPointFromSecondFractionOnUtcUpdateTime(secondProcessHistory);
 
       AssertStreamsAreIdenticalExceptForEventIds(firstProcessHistory, secondProcessHistory, "Both process histories should be identical");
    }

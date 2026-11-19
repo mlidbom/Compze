@@ -1,4 +1,3 @@
-using Compze.Tessaging.TessageTypes;
 using Compze.Contracts;
 using Compze.Internals.SystemCE.ReflectionCE;
 using Compze.Teventive._private.Implementation;
@@ -39,9 +38,10 @@ public abstract class Tentity<TParent,
 
    protected Tentity(TParent taggregate) : base(taggregate) {}
 
-   ///<summary>Declares the tevent appliers of <typeparamref name="TTentity"/>, for it to keep in a static field and return from its explicit<br/>
-   /// implementation of <see cref="ITeventRouted.TeventAppliers"/>. Every tevent dispatched to the entity must reach at least one of them.<br/>
-   /// The routing starts with the entity's own applier of its created tevent, which gives it its <see cref="Id"/>.</summary>
+   ///<summary>Declares the tevent appliers of <typeparamref name="TTentity"/>, for it to keep in a static field and return from its override of<br/>
+   /// <see cref="TeventApplyingPart{TPart,TPartTevent}.TeventAppliers"/>. Every tevent dispatched to the entity must reach at least one of them.<br/>
+   /// The routing starts with the entity's own applier of its created tevent, which gives it its <see cref="Id"/>. A tevent reaches every route<br/>
+   /// it matches, one after another: that applier first, then those <paramref name="declare"/> declares, in the order declared.</summary>
    protected new static TeventRouting<TTentity, TTentityTevent> DeclareAppliers(Action<TeventRouting<TTentity, TTentityTevent>.Declaration> declare) => DeclareTentityAppliers(declare);
 
    ///<summary>What <see cref="DeclareAppliers"/> declares, for the subclasses of <see cref="Tentity{TParent,TParentTevent,TParentTeventImplementation,TTentity,TTentityId,TTentityTeventImplementation,TTentityTevent,TTentityCreatedTevent,TTentityTeventIdGetterSetter}"/><br/>
@@ -67,7 +67,7 @@ public abstract class Tentity<TParent,
       base.Publish(tevent);
    }
 
-   public interface ICollectionManager : IEntityCollectionManager<TTentity, TTentityId, TTentityTevent, TTentityTeventImplementation, TTentityCreatedTevent>, ITeventRoutedMember<TTentityTevent>;
+   public interface ICollectionManager : IEntityCollectionManager<TTentity, TTentityId, TTentityTevent, TTentityTeventImplementation, TTentityCreatedTevent>, ITeventRoutedPart<TTentityTevent>;
 
    public static ICollectionManager CreateSelfManagingCollection(TParent parent) => new CollectionManager(parent);
 
@@ -80,7 +80,9 @@ public abstract class Tentity<TParent,
       public CollectionManager(TParent parent)
       {
          _parent = parent;
-         TeventRouting.AssertRoutesToAPart<TTentityTevent>(parent, this);
+#pragma warning disable CS0618 // This is just the type of infrastructure code the member is for
+         parent.TeventAppliersInternal.AssertRoutesToAPart<TTentityTevent>(parent, this);
+#pragma warning restore CS0618
       }
 
       protected override TTentityId IdOf(TTentityTevent tevent) => IdGetter.GetId(tevent);
@@ -91,10 +93,10 @@ public abstract class Tentity<TParent,
 
       public IReadOnlyEntityCollection<TTentity, TTentityId> Entities => ManagedEntities;
 
-      public TTentity AddRestored(TTentityId id)
+      public TTentity AddWhileRestoring(TTentityId id)
       {
          State.Assert(((ITeventiveInATaggregate)_parent).ItsTaggregateIsBeingRestored,
-                      () => $"A {typeof(TTentity).Name} is added without its created tevent only while its taggregate is being restored from a snapshot: from RestoreIdentity until its first publish. Add it by publishing its created tevent, with {nameof(AddByPublishing)}.");
+                      () => $"A {typeof(TTentity).Name} is added without its created tevent only while its taggregate is being restored from a snapshot, by its RestoreFrom. Add it by publishing its created tevent, with {nameof(AddByPublishing)}.");
          var entity = CreateEntity();
          entity._id = id;
          ManagedEntities.Add(entity, id);

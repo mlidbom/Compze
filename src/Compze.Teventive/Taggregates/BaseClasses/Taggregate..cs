@@ -7,10 +7,11 @@ using Compze.Teventive._internal;
 using Compze.Teventive._private.Implementation;
 using Compze.Teventive.Taggregates.BaseClasses._private;
 using Compze.Teventive.Taggregates.Tevents;
+using Compze.Teventive.Taggregates.Tevents._internal;
 
 namespace Compze.Teventive.Taggregates.BaseClasses;
 
-public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeventImplementation, TWrapperTeventInterface, TWrapperTeventImplementation> :
+public abstract partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeventImplementation, TWrapperTeventInterface, TWrapperTeventImplementation> :
    TeventApplyingRoot<TTaggregate, TTaggregateTevent>,
    ITaggregate<TTaggregateTevent>,
    ITeventiveInternals<TTaggregateTevent, TTaggregateTeventImplementation>,
@@ -24,16 +25,28 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
 {
    static Taggregate() => TaggregateTypeValidator<TTaggregate, TTaggregateTeventImplementation, TTaggregateTevent>.AssertStaticStructureIsValid();
 
+   ///<summary>Only <typeparamref name="TTaggregate"/> constructs its base class.</summary>
+   protected Taggregate()
+   {
+      // ReSharper disable once VirtualMemberCallInConstructor The routing is a table in a static field, and the assertion that the class declares its own must run at construction.
+      TeventHandlers?.AssertDeclaredForTheClassOf(this);
+   }
+
    protected virtual Type WrapperTeventImplementation => typeof(TWrapperTeventImplementation);
 
    TWrapperTeventInterface WrapTevent(TTaggregateTevent tevent) =>
       (TWrapperTeventInterface)TaggregateIdentifyingTevent.WrapIn(WrapperTeventImplementation, tevent);
 
-   ///<summary>The routing of this taggregate's class to its tevent handlers, when the class declares one, read through <see cref="ITeventRouted"/>.</summary>
-   TeventRouting? TeventHandlers => ((ITeventRouted)this).TeventHandlers;
+   ///<summary>The routing of this taggregate's class to its tevent handlers, when the class declares one: the table the class declares with<br/>
+   /// <see cref="DeclareHandlers"/>, or a subclass with <see cref="TeventRouting{TInstance,TTevent}.Extend{TSubclass}"/>, keeps in a static field, and<br/>
+   /// returns from its override: <c>protected override TeventRouting TeventHandlers => Handlers;</c> None unless overridden. A class that<br/>
+   /// inherits its base class's is refused when it is constructed: every class with tevent handlers overrides it with its own.</summary>
+   protected virtual TeventRouting? TeventHandlers => null;
 
-   ///<summary>Declares the tevent handlers of <typeparamref name="TTaggregate"/>, for it to keep in a static field and return from its explicit<br/>
-   /// implementation of <see cref="ITeventRouted.TeventHandlers"/>. They run after every applier has applied the tevent, and a tevent may reach none.</summary>
+   ///<summary>Declares the tevent handlers of <typeparamref name="TTaggregate"/>, for it to keep in a static field and return from its override of<br/>
+   /// <see cref="TeventHandlers"/>. They run after every applier has applied the tevent, and a tevent may reach none.<br/>
+   /// A tevent reaches every handler it matches, one after another, in the order <paramref name="declare"/> declares them.<br/>
+   /// A subclass of <typeparamref name="TTaggregate"/> extends that routing with <see cref="TeventRouting{TInstance,TTevent}.Extend{TSubclass}"/>, whose handlers come after these.</summary>
    protected static TeventRouting<TTaggregate, TTaggregateTevent> DeclareHandlers(Action<TeventRouting<TTaggregate, TTaggregateTevent>.Declaration> declare) =>
       TeventRouting<TTaggregate, TTaggregateTevent>.DeclareHandlers(declare);
 
@@ -46,7 +59,8 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
    bool _applyingTevents;
    bool _isReadOnly;
 
-   ///<summary>Whether this instance is being restored from a snapshot: from <see cref="RestoreIdentity"/> until its first publish.</summary>
+   ///<summary>Whether this instance is being restored from a snapshot: from <see cref="RestoreIdentity"/> until the store that restores it<br/>
+   /// has its restoring code return, or else until its first publish.</summary>
    bool _isBeingRestored;
    bool _aPublishHasFailed;
 
@@ -67,10 +81,7 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
 
    ///<summary>Throws unless this instance may be changed. A committed instance, which a taggregate store serves to readers, is read<br/>
    /// only: it is changed by getting it for update, inside a unit of work.</summary>
-   ///<remarks><see cref="Publish{TTevent}"/> asserts it itself. Call it first where the class changes its state other than by<br/>
-   /// applying a tevent, such as while its parts are being moved to tevents, so that a change to a committed instance fails before<br/>
-   /// it is made.</remarks>
-   protected void AssertCanBeChanged() =>
+   void AssertCanBeChanged() =>
       State.Assert(!_isReadOnly, () => $"{GetType().Name} {Id} is an instance a taggregate store serves to readers, which is read only. Get it for update from an ITaggregateStoreUpdater, inside a unit of work, to change it.");
 
    protected TTevent Publish<TTevent>(TTevent tevent) where TTevent : TTaggregateTeventImplementation
@@ -89,7 +100,8 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
 
    ///<summary>Gives a new, empty instance, being restored from a snapshot of a taggregate's state, the taggregate's id. The<br/>
    /// restoring code calls it first, before it sets any other state. A restored taggregate exists, so its version is at least 1.<br/>
-   /// From then until its first publish, its entity collections take restored entities, through <c>AddRestored</c>.</summary>
+   /// From then until the restore is over, its entity collections take restored entities, through <c>AddWhileRestoring</c>. A restore by a<br/>
+   /// taggregate store is over when the restoring code returns; any other, at the instance's first publish.</summary>
    protected void RestoreIdentity(TaggregateId id)
    {
       State.Assert(Version == 0, () => $"{nameof(RestoreIdentity)} restores a new, empty instance, and this {GetType().Name} has version {Version}.");
@@ -110,7 +122,6 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
 
       using(ScopedChange.Enter(() => _reentrancyLevel++, () => _reentrancyLevel--))
       {
-#pragma warning disable CS0618 // Type or member is obsolete
          ((IMutableTaggregateTevent)tevent).SetTaggregateVersionInternal(Version + 1);
          ((IMutableTaggregateTevent)tevent).SetUtcTimeStampInternal(UtcTimeSource.UtcNow);
          if(Version == 0)
@@ -124,7 +135,6 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
             if(tevent.TaggregateId is not null && tevent.TaggregateId != Id) throw new ArgumentOutOfRangeException($"Tried to raise tevent for Taggregated: {tevent.TaggregateId} from Taggregate with Id: {Id}.");
             ((IMutableTaggregateTevent)tevent).SetTaggregateIdInternal(Id);
          }
-#pragma warning restore CS0618 // Type or member is obsolete
          Apply(wrapped);
          _unCommittedTevents.Add(wrapped);
          _teventsToHandOut.Enqueue(wrapped);
@@ -177,8 +187,10 @@ public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeven
    readonly SimpleObservable<ITaggregateTevent<TTaggregateTevent>> _teventStream = new();
 #pragma warning disable CA1033 //These method should NOT clutter the public interface of Taggregates.
    void ITeventiveInternals<TTaggregateTevent, TTaggregateTeventImplementation>.PublishInternal(TTaggregateTeventImplementation theTevent) => Publish(theTevent);
+   TeventRouting ITeventiveInternals<TTaggregateTevent, TTaggregateTeventImplementation>.TeventAppliersInternal => TeventAppliers;
 
    void ITaggregateStoreInternals.MakeReadOnly() => _isReadOnly = true;
+   void ITaggregateStoreInternals.EndTheRestore() => _isBeingRestored = false;
    bool ITeventiveInATaggregate.ItsTaggregateIsBeingRestored => _isBeingRestored && !_isReadOnly;
    bool ITaggregateStoreInternals.APublishHasFailed => _aPublishHasFailed;
    void ITaggregateStoreInternals.ContinueVersion(int version) => Version = version;

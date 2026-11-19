@@ -6,6 +6,7 @@ using Compze.Teventive.Taggregates.Tevents;
 using Compze.Teventive.TeventStore.Abstractions.Refactoring.Migrations._internal;
 using Compze.Teventive.TeventStore.Abstractions.Refactoring.Migrations;
 using Compze.Teventive.TeventStore._private;
+using Compze.Teventive.Taggregates.Tevents._internal;
 
 // ReSharper disable ForCanBeConvertedToForeach
 
@@ -47,9 +48,7 @@ class SingleTaggregateInstanceTeventStreamMutator : ISingleTaggregateInstanceTev
          return SingleTeventSequence(wrappedTevent);
       }
 
-#pragma warning disable CS0618 // Type or member is obsolete
       ((IMutableTaggregateTevent)wrappedTevent.Tevent).SetTaggregateVersionInternal(_taggregateVersion);
-#pragma warning restore CS0618 // Type or member is obsolete
       _teventModifier.Reset(wrappedTevent);
 
       for(var index = 0; index < _teventMigrators.Length; index++)
@@ -132,7 +131,5 @@ class SingleTaggregateInstanceTeventStreamMutator : ISingleTaggregateInstanceTev
 }
 
 sealed class EndOfTaggregateHistoryTeventPlaceHolder : TaggregateTeventWithIdentity {
-#pragma warning disable CS0618 // Type or member is obsolete
     public EndOfTaggregateHistoryTeventPlaceHolder(TaggregateId taggregateId, int i):base(taggregateId) => ((IMutableTaggregateTevent)this).SetTaggregateVersionInternal(i);
-#pragma warning restore CS0618 // Type or member is obsolete
 }

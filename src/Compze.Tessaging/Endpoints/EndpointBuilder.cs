@@ -20,6 +20,8 @@ using Compze.Tessaging.TessageBus._private;
 using Compze.Tessaging.Peers._private;
 using Compze.Tessaging.Typermedia._private;
 using Compze.Tessaging._private.Transport;
+using Compze.Tessaging.TessageTypes;
+using Compze.Tessaging.Validation._internal;
 
 namespace Compze.Tessaging.Endpoints;
 
@@ -50,7 +52,7 @@ namespace Compze.Tessaging.Endpoints;
 public abstract class EndpointBuilder
 {
    readonly IContainerBuilder _containerBuilder;
-   readonly LocalTessagingEngineBuilder _engine = new();
+   readonly LocalTessagingEngineBuilder _engine = new(isTheEngineOfAnEndpoint: true);
 
    readonly List<IEndpointAddressAnnouncer> _addressAnnouncers = [];
    readonly List<EndpointId> _requiredPeers = [];
@@ -105,12 +107,34 @@ public abstract class EndpointBuilder
       return this;
    }
 
-   ///<summary>Declares tevent observers — observation, the deliberately transaction-ignoring watch surface, under its own verb<br/>
+   ///<summary>Declares composed tevent observers — observation, the deliberately transaction-ignoring watch surface, under its own verb<br/>
    /// so the distinct semantics are visible at the declaration site — see <see cref="LocalTessagingEngineBuilder.ObserveTevents"/>.</summary>
    public EndpointBuilder ObserveTevents(Action<TeventObservationRegistrar> registerObservations)
    {
       AssertStillComposing();
       _engine.ObserveTevents(registerObservations);
+      return this;
+   }
+
+   ///<summary>Subscribes this endpoint, from its start, to tevents compatible with <typeparamref name="TTevent"/>, subtypes<br/>
+   /// included, for its dynamic observers: those created through <see cref="IDynamicTeventObservers.ObserveTevents"/>, which come<br/>
+   /// and go while the endpoint runs. They then observe such tevents wherever they are published, in this endpoint's process or<br/>
+   /// another endpoint's. It registers no observer itself.</summary>
+   ///<remarks>An endpoint asks its peers, once, when it starts, for the tevent types it subscribes to: its handlers' and its<br/>
+   /// composed observers' types, and these. A dynamic observer, created later, can't add to that without a round trip to every<br/>
+   /// peer, during which tevents would be missed. So in an endpoint, a dynamic observer is refused unless each of its tevent<br/>
+   /// types is compatible with one subscribed here, even when the tevents it wants are only ever published in the endpoint's own<br/>
+   /// process: when it is created, nothing can tell that no peer publishes them. It is refused at once, rather than observing its<br/>
+   /// own process's tevents and silently none of the others'. A dynamic observer is then in effect the moment<br/>
+   /// <see cref="IDynamicTeventObservers.ObserveTevents"/> returns, with no round trip: one created before a trigger can't miss a<br/>
+   /// tevent published right after it. A subscribed tevent that arrives while no dynamic observer observes it is dropped. A plain<br/>
+   /// container has no other endpoints, and subscribes nothing for its dynamic observers. An endpoint declaration subscribes in<br/>
+   /// its tier's <c>Declare</c> override.</remarks>
+   public EndpointBuilder SubscribeForDynamicObservers<TTevent>() where TTevent : ITevent
+   {
+      AssertStillComposing();
+      TessageInspector.AssertValidForSubscription<TTevent>();
+      _engine.HandlerRegistrations.SubscribeForDynamicObservers(typeof(TTevent));
       return this;
    }
 

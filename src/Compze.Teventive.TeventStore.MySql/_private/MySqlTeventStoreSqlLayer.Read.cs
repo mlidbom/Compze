@@ -17,7 +17,19 @@ partial class MySqlTeventStoreSqlLayer(MySqlTeventStoreConnectionManager connect
 
    static string CreateSelectClause() => InternalSelect();
 
+   ///<summary>A read for update reads with FOR UPDATE, a locking read, which sees the latest committed tevents whatever snapshot the<br/>
+   /// transaction's earlier reads have at REPEATABLE READ. The lock that serializes the units of work is the taggregate's row in the lock<br/>
+   /// table, <see cref="TakeTheTaggregatesLock"/>: FOR UPDATE locks no row of a taggregate with no history.</summary>
    static string CreateLockHint(bool takeWriteLock) => takeWriteLock ? "FOR UPDATE" : "";
+
+   ///<summary>Takes the taggregate's lock for the transaction: its row in the lock table, inserted if it has none. InnoDB holds the row's<br/>
+   /// lock until the transaction commits or rolls back, at any isolation level, and a transaction that asks for it meanwhile waits. So<br/>
+   /// a unit of work that finds no taggregate to get for update keeps another from adding it until it completes, as SQL Server's<br/>
+   /// application lock and PostgreSQL's advisory lock on the id do. The table keeps a row for every taggregate ever got for update.</summary>
+   void TakeTheTaggregatesLock(TaggregateId taggregateId) =>
+      _connectionManager.UseCommand(command => command.SetCommandText($"INSERT INTO {TaggregateLockTableName} ({Tevent.TaggregateId}) VALUES (@{Tevent.TaggregateId}) ON DUPLICATE KEY UPDATE {Tevent.TaggregateId} = {Tevent.TaggregateId};")
+                                                      .AddParameter(Tevent.TaggregateId, taggregateId.Value)
+                                                      .ExecuteNonQuery());
    // ReSharper disable once UnusedParameter.Local
    static string InternalSelect(int? top = null)
    {
@@ -65,6 +77,8 @@ partial class MySqlTeventStoreSqlLayer(MySqlTeventStoreConnectionManager connect
 
    public IReadOnlyList<TeventDataRow> GetTaggregateHistory(TaggregateId taggregateId, bool takeWriteLock, int startAfterInsertedVersion = 0)
    {
+      if(takeWriteLock) TakeTheTaggregatesLock(taggregateId);
+
       var raw = _connectionManager.UseCommand(suppressTransactionWarning: !takeWriteLock,
                                     command => command.SetCommandText($"""
 

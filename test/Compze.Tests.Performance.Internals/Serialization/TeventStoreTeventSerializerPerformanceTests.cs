@@ -1,4 +1,3 @@
-using Compze.Abstractions;
 using Compze.DependencyInjection;
 using Compze.Hosting.Testing;
 using Compze.Internals.Testing;
@@ -33,12 +32,7 @@ public class TeventStoreTeventSerializerPerformanceTests : UniversalTestBase
 
    [PCT] public void Should_roundtrip_simple_tevent_1000_times_in_50_milliseconds()
    {
-      var wrappedTevent = new TaggregateTevent<TestTevent>(new TestTevent(
-         test1: "Test1",
-         test2: "Test2",
-         taggregateId: new TaggregateId(),
-         taggregateVersion: 2,
-         utcTimeStamp: DateTime.UtcNow + 1.Minutes()));
+      var wrappedTevent = new TaggregateTevent<TestTevent>(new TestTevent(test1: "Test1", test2: "Test2"));
 
       //Warmup
       _teventSerializer.Deserialize(typeof(TaggregateTevent<TestTevent>), _teventSerializer.Serialize(wrappedTevent));
@@ -59,12 +53,7 @@ public class TeventStoreTeventSerializerPerformanceTests : UniversalTestBase
       const int iterations = 1000;
       const double allowedSlowdown = 1.8;
 
-      var wrappedTevents = 1.Through(iterations).Select(_ => new TaggregateTevent<TestTevent>(new TestTevent(
-                                                    test1: "Test1",
-                                                    test2: "Test2",
-                                                    taggregateId: new TaggregateId(),
-                                                    taggregateVersion: 2,
-                                                    utcTimeStamp: DateTime.UtcNow + 1.Minutes()))).ToList();
+      var wrappedTevents = 1.Through(iterations).Select(_ => new TaggregateTevent<TestTevent>(new TestTevent(test1: "Test1", test2: "Test2"))).ToList();
 
       var settings = NewtonsoftTeventStoreSerializer.JsonSettings;
 

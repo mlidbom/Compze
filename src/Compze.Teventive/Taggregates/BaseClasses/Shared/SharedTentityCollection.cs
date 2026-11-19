@@ -22,6 +22,9 @@ public sealed class SharedTentityCollection<TTentity, TTentityId, TTentityTevent
    ///<param name="slot">What <c>Slots.TheSlot.In(owner)</c> returns, for the slot of the owner's class the collection is in.</param>
    public SharedTentityCollection(SharedTomponentSlotInAnOwner<TTentityTevent> slot) : base(slot.Owner, slot.Slot) {}
 
+   ///<summary>None: the collection routes the tevents its slot delivers to the tentity whose id each carries, in code of its own.</summary>
+   protected override TeventRouting? TeventAppliers => null;
+
    public IReadOnlyEntityCollection<TTentity, TTentityId> Entities => _entities;
 
    ///<summary>Creates a tentity by publishing its <typeparamref name="TTentityCreatedTevent"/> and returns the created instance once the tevent<br/>
@@ -33,13 +36,13 @@ public sealed class SharedTentityCollection<TTentity, TTentityId, TTentityTevent
    }
 
    ///<summary>Adds a new tentity with the id <paramref name="id"/>, publishing nothing, for the restore of its owner's taggregate from a snapshot to give<br/>
-   /// the rest of its state. Only while the taggregate is being restored: from its <c>RestoreIdentity</c> until its first publish. At any other time a<br/>
-   /// tentity is added by publishing its created tevent, with <see cref="AddByPublishing"/>.</summary>
-   ///<remarks>review-naming: a placeholder (jastudio-rep-opus, 2026-11-18), as on the entity collections.</remarks>
-   public TTentity AddRestored(TTentityId id)
+   /// the rest of its state. Only while the taggregate is being restored: from its <c>RestoreIdentity</c> until its restoring code returns to the<br/>
+   /// taggregate store restoring it, or else until its first publish. At any other time a tentity is added by publishing its created tevent, with<br/>
+   /// <see cref="AddByPublishing"/>.</summary>
+   public TTentity AddWhileRestoring(TTentityId id)
    {
       State.Assert(ItsTaggregateIsBeingRestored,
-                   () => $"A {typeof(TTentity).Name} is added without its created tevent only while its owner's taggregate is being restored from a snapshot: from RestoreIdentity until its first publish. Add it by publishing its created tevent, with {nameof(AddByPublishing)}.");
+                   () => $"A {typeof(TTentity).Name} is added without its created tevent only while its owner's taggregate is being restored from a snapshot, by its RestoreFrom. Add it by publishing its created tevent, with {nameof(AddByPublishing)}.");
       var tentity = CreateTentity();
       tentity.RestoreId(id);
       _entities.Add(tentity, id);

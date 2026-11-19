@@ -25,9 +25,9 @@
   <Folder Name="/Compze.Teventive/">
     <Project Path="src/Compze.Teventive/Compze.Teventive.csproj" />
   </Folder>
-  <Folder Name="/Compze.Teventive/StateStore/">
-    <Project Path="src/Compze.Teventive.StateStore/Compze.Teventive.StateStore.csproj" />
-    <Project Path="src/Compze.Teventive.StateStore.MemoryPack/Compze.Teventive.StateStore.MemoryPack.csproj" />
+  <Folder Name="/Compze.Teventive/MemoryImageStateStore/">
+    <Project Path="src/Compze.Teventive.MemoryImageStateStore/Compze.Teventive.MemoryImageStateStore.csproj" />
+    <Project Path="src/Compze.Teventive.MemoryImageStateStore.MemoryPack/Compze.Teventive.MemoryImageStateStore.MemoryPack.csproj" />
   </Folder>
   <Folder Name="/Compze.Teventive/TeventStore/">
     <Project Path="src/Compze.Teventive.TeventStore.Abstractions/Compze.Teventive.TeventStore.Abstractions.csproj" />
@@ -228,6 +228,9 @@
     <Project Path="src/Compze.Sql.MySql/Compze.Sql.MySql.csproj" />
     <Project Path="src/Compze.Sql.PostgreSql/Compze.Sql.PostgreSql.csproj" />
     <Project Path="src/Compze.Sql.Sqlite/Compze.Sql.Sqlite.csproj" />
+  </Folder>
+  <Folder Name="/Compze.Internals/Sql/Specifications/">
+    <Project Path="test/Compze.Sql.InternalSpecifications/Compze.Sql.InternalSpecifications.csproj" />
   </Folder>
   <Folder Name="/Compze.Internals/SystemCE/">
     <Project Path="src/Compze.Internals.SystemCE/Compze.Internals.SystemCE.csproj" />

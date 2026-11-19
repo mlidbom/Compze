@@ -41,12 +41,12 @@ class ChecklistTevent<T>(T tevent) : ProjectTevent, IChecklistTevent<T> where T 
 }
 
 ///<summary>The owner side of the shared tentity fixture: a project with a checklist of <see cref="ChecklistItem"/> shared tentities.</summary>
-class ProjectTaggregate : Taggregate<ProjectTaggregate, IProjectTevent, ProjectTevent, IProjectTevent<IProjectTevent>, ProjectTevent<ProjectTevent>>, ITeventRouted,
+class ProjectTaggregate : Taggregate<ProjectTaggregate, IProjectTevent, ProjectTevent, IProjectTevent<IProjectTevent>, ProjectTevent<ProjectTevent>>,
                           ISnapshotable<ProjectTaggregate, ProjectSnapshot>
 {
    static class Slots
    {
-      internal static readonly SharedTomponentSlotOfAClass<ProjectTaggregate, IProjectTevent, ProjectTevent, IChecklistItemTevent, IChecklistTevent<IChecklistItemTevent>> Checklist =
+      internal static readonly SharedTomponentSlot<ProjectTaggregate, IProjectTevent, ProjectTevent, IChecklistItemTevent, IChecklistTevent<IChecklistItemTevent>> Checklist =
          new(typeof(ChecklistTevent<>), static project => project.Checklist);
    }
 
@@ -54,7 +54,7 @@ class ProjectTaggregate : Taggregate<ProjectTaggregate, IProjectTevent, ProjectT
      .For<IProjectTevent.Created>(static (_, _) => {}) //The base class applies the taggregate id and version; the project has no state of its own from creation.
      .SharedTomponent(Slots.Checklist));
 
-   TeventRouting ITeventRouted.TeventAppliers => Appliers;
+   protected override TeventRouting TeventAppliers => Appliers;
 
    public SharedTentityCollection<ChecklistItem, ChecklistItemId, IChecklistItemTevent, IChecklistItemTevent.Added> Checklist { get; }
 
@@ -86,7 +86,7 @@ class ProjectTaggregate : Taggregate<ProjectTaggregate, IProjectTevent, ProjectT
    {
       RestoreIdentity(snapshot.Id);
       if(_restoreLeavesOutTheChecklist) return;
-      foreach(var item in snapshot.Checklist) Checklist.AddRestored(item.Id).RestoreFrom(item);
+      foreach(var item in snapshot.Checklist) Checklist.AddWhileRestoring(item.Id).RestoreFrom(item);
    }
 
    public ChecklistItem AddChecklistItem(string title) => Checklist.AddByPublishing(new ChecklistItemTevent.Added(ChecklistItemId.New(), title));
