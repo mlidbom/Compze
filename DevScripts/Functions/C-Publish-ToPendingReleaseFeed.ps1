@@ -21,6 +21,8 @@ function C-Publish-ToPendingReleaseFeed {
     - A version nuget.org already has is refused.
     - So is a set of versions the release would refuse because the post-release binding check fails for it
       (.github/scripts/Invoke-PostReleaseBindingCheck.ps1): a consumer here would get the same runtime failures.
+    - So is a set the release would refuse because it leaves behind a package whose shipped files changed since its
+      release, unacknowledged (.github/scripts/lib/UnreleasedChanges.ps1): the release would never publish that set.
     - A version already in the feed is republished only when its package's source (src/<PackageId>) changed since it was
       published, and only with -Replace. Without it, bump the version instead.
 
@@ -59,6 +61,12 @@ function C-Publish-ToPendingReleaseFeed {
     }
 
     Invoke-InCleanWorktreeOfHead {
+        . (Join-Path $script:CompzeRoot ".github/scripts/lib/UnreleasedChanges.ps1")
+        $unacknowledgedUnreleasedChanges = @(GetUnacknowledgedUnreleasedChanges)
+        if ($unacknowledgedUnreleasedChanges.Count -gt 0) {
+            throw "C-Publish-ToPendingReleaseFeed refuses, and published nothing: $(FormatUnreleasedChangesRefusal $unacknowledgedUnreleasedChanges)"
+        }
+
         C-Pack -CI
 
         $nupkgsDirectory = Join-Path $script:CompzeRoot "nupkgs"
