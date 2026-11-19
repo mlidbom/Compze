@@ -18,9 +18,18 @@ function C-Prepare-Release {
       computes it, against the package's previous version on nuget.org. A version prepared before its dependencies were
       gets its line then, so running the command again is safe.
 
-    A package whose top section gained nothing isn't prepared, whatever else changed in it: a change no changelog entry
-    describes isn't one to release. Neither is a package without a release tag at its version: a new package, or one
-    already prepared.
+    A package whose top section gained nothing isn't prepared: a change no changelog entry describes isn't one to release.
+    Neither is a package without a release tag at its version: a new package, or one already prepared.
+
+    So before changing anything, it refuses, as C-SimulateRelease and the release do, when a package it doesn't prepare,
+    whose version has a release tag, has shipped files that changed since that tag: its project folder's files but its
+    CHANGELOG.md and its _docs and dev_docs folders. The release would leave such a package at its released version, and a
+    package released beside it that needs what changed would fail against it. The refusal names each package and its
+    changed files. Either give the package a changelog entry, so that it is prepared, or, when its changes ship nothing a
+    consumer sees, acknowledge them with -Acknowledge and -Reason. The acknowledgement is recorded in
+    .github/scripts/AcknowledgedUnreleasedChanges.txt, which must be committed with the release, and lasts until the
+    package is next released: only the changes after the commit it names count. Preparing a package's release removes its
+    acknowledgement, which the release makes moot. With nothing to release, it reports that and refuses nothing.
 
     Returns what it prepared in this run: each package, and its version before and after. Review the changes with git diff, then run
     C-SimulateRelease, which checks them as the release will.
@@ -31,8 +40,19 @@ function C-Prepare-Release {
     .PARAMETER Patch
     Bump the patch version instead of the minor version: for releases whose changes no consumer meets.
 
+    .PARAMETER Acknowledge
+    Packages whose changes since their release, up to HEAD, ship nothing a consumer sees, such as comments only, or build
+    settings that produce the same result: records them in .github/scripts/AcknowledgedUnreleasedChanges.txt, with -Reason,
+    before preparing.
+
+    .PARAMETER Reason
+    Why the changes of the -Acknowledge packages ship nothing a consumer sees: one line.
+
     .EXAMPLE
     C-Prepare-Release
+
+    .EXAMPLE
+    C-Prepare-Release -Acknowledge Compze.Sql.Sqlite -Reason 'An InternalsVisibleTo for a test project.'
 
     .EXAMPLE
     C-Prepare-Release -PackageId Compze.Tessaging -Patch
@@ -41,7 +61,9 @@ function C-Prepare-Release {
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseApprovedVerbs', '')]
     param(
         [string[]]$PackageId,
-        [switch]$Patch
+        [switch]$Patch,
+        [string[]]$Acknowledge,
+        [string]$Reason
     )
 
     $ErrorActionPreference = 'Stop'
@@ -67,6 +89,11 @@ function C-Prepare-Release {
                 IsReleased    = $tags -contains "$($project.Name)/v$version"
             }
         }
+    }
+
+    function Get-PackagesAwaitingRelease([string[]]$PackageId) {
+        # The packages whose version has no release tag, and has its changelog section: prepared, now or before.
+        Get-PackagesWithAChangelog $PackageId | Where-Object { -not $_.IsReleased -and (Get-TopChangelogSection (Read-TextFile $_.Changelog).Lines).Version -eq $_.Version }
     }
 
     function Get-ChangelogLinesGainedSinceTheRelease($Package) {
@@ -176,26 +203,35 @@ function C-Prepare-Release {
 
     . (Join-Path $script:CompzeRoot ".github/scripts/lib/DependencyFloors.ps1")
     . (Join-Path $script:CompzeRoot ".github/scripts/lib/PackageManifests.ps1")
+    . (Join-Path $script:CompzeRoot ".github/scripts/lib/UnreleasedChanges.ps1")
+
+    if ($Acknowledge -or $Reason) { AcknowledgeUnreleasedChanges $Acknowledge $Reason }
 
     $fetchResult = git -C $script:CompzeRoot fetch --all --tags --quiet 2>&1
     if ($LASTEXITCODE -ne 0) {
         Write-Warning "Could not fetch the latest tags, so packages released elsewhere may be prepared again.`n$fetchResult"
     }
 
-    $prepared = @(foreach ($package in @(Get-PackagesWithAChangelog $PackageId | Where-Object IsReleased)) {
+    $toPrepare = @(foreach ($package in @(Get-PackagesWithAChangelog $PackageId | Where-Object IsReleased)) {
         $gainedLines = @(Get-ChangelogLinesGainedSinceTheRelease $package)
-        if (-not ($gainedLines | Where-Object { $_.Trim() })) { continue }
-
-        $newVersion = Get-BumpedVersion $package.Version -Patch:$Patch
-        Set-ProjectVersion $package $newVersion
-        Split-ReleasedChangelogSection $package $newVersion $gainedLines
-        [PSCustomObject]@{ PackageId = $package.PackageId; From = $package.Version; To = $newVersion }
+        if ($gainedLines | Where-Object { $_.Trim() }) { [PSCustomObject]@{ Package = $package; GainedLines = $gainedLines } }
     })
-    $awaitingRelease = @(Get-PackagesWithAChangelog $PackageId | Where-Object { -not $_.IsReleased -and (Get-TopChangelogSection (Read-TextFile $_.Changelog).Lines).Version -eq $_.Version })
-    if ($awaitingRelease.Count -eq 0) {
+    if ($toPrepare.Count -eq 0 -and @(Get-PackagesAwaitingRelease $PackageId).Count -eq 0) {
         Write-Host "Nothing to prepare: no released package's changelog has gained entries since its release."
         return
     }
+
+    $unacknowledgedUnreleasedChanges = @(GetUnacknowledgedUnreleasedChanges -PackagesBeingPrepared @($toPrepare | ForEach-Object { $_.Package.PackageId }))
+    if ($unacknowledgedUnreleasedChanges.Count -gt 0) { throw "C-Prepare-Release refuses, and prepared nothing: $(FormatUnreleasedChangesRefusal $unacknowledgedUnreleasedChanges)" }
+
+    $prepared = @(foreach ($preparation in $toPrepare) {
+        $newVersion = Get-BumpedVersion $preparation.Package.Version -Patch:$Patch
+        Set-ProjectVersion $preparation.Package $newVersion
+        Split-ReleasedChangelogSection $preparation.Package $newVersion $preparation.GainedLines
+        [PSCustomObject]@{ PackageId = $preparation.Package.PackageId; From = $preparation.Package.Version; To = $newVersion }
+    })
+    if ($prepared.Count -gt 0) { RemoveUnreleasedChangeAcknowledgements @($prepared | ForEach-Object { $_.PackageId }) }
+    $awaitingRelease = @(Get-PackagesAwaitingRelease $PackageId)
 
     C-Pack -CI
     if ($global:LASTEXITCODE -ne 0) { throw "C-Prepare-Release: packing failed (see above), so the dependency floors lines weren't checked." }

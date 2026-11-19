@@ -18,8 +18,8 @@ public interface ISharedTentityTevent<out TTentityId> : ITevent
 
 ///<summary>Base class for shared tentities: tevent-sourced entities-with-identity that, like a <see cref="SharedTomponent{TTomponentTevent}"/>, are NOT<br/>
 /// tied to one specific taggregate. Shared tentities live in a <see cref="SharedTentityCollection{TTentity,TTentityId,TTentityTevent,TTentityCreatedTevent}"/>,<br/>
-/// which occupies one <see cref="ISharedTomponentSlot{TTomponentTevent}"/> on the owner: the whole collection publishes through one adopting wrapper<br/>
-/// tevent type, and individual tentities are told apart by the <see cref="ISharedTentityTevent{TTentityId}.EntityId"/> their tevents carry.</summary>
+/// which occupies one slot of its owner's class: the whole collection publishes through one adopting wrapper tevent type, and individual tentities<br/>
+/// are told apart by the <see cref="ISharedTentityTevent{TTentityId}.EntityId"/> their tevents carry.</summary>
 [UsedImplicitly(ImplicitUseKindFlags.InstantiatedWithFixedConstructorSignature)]
 public abstract class SharedTentity<TTentity, TTentityId, TTentityTevent, TTentityCreatedTevent>
    where TTentity : SharedTentity<TTentity, TTentityId, TTentityTevent, TTentityCreatedTevent>
@@ -27,7 +27,6 @@ public abstract class SharedTentity<TTentity, TTentityId, TTentityTevent, TTenti
    where TTentityTevent : class, ISharedTentityTevent<TTentityId>
    where TTentityCreatedTevent : class, TTentityTevent
 {
-   readonly IMutableTeventDispatcher<TTentityTevent> _teventAppliersDispatcher = IMutableTeventDispatcher<TTentityTevent>.New();
    readonly ISharedTomponentInternals<TTentityTevent> _collection;
 
    TTentityId _id;
@@ -35,11 +34,28 @@ public abstract class SharedTentity<TTentity, TTentityId, TTentityTevent, TTenti
 
    protected SharedTentity(SharedTentityCollection<TTentity, TTentityId, TTentityTevent, TTentityCreatedTevent> collection)
    {
+      // ReSharper disable once VirtualMemberCallInConstructor The routing is a table in a static field, and the assertion that the class declares its own must run at construction.
+      TeventRouting.AssertDeclaresItsTeventAppliers(this, TeventAppliers);
       _collection = collection;
-      RegisterTeventAppliers().For<TTentityCreatedTevent>(tevent => _id = tevent.EntityId);
    }
 
-   protected ITeventSubscriber<TTentityTevent> RegisterTeventAppliers() => _teventAppliersDispatcher.Register();
+   ///<summary>The routing of this tentity's class to its tevent appliers: the table the class declares with <see cref="DeclareAppliers"/>, or a<br/>
+   /// subclass with <see cref="TeventRouting{TInstance,TTevent}.Extend{TSubclass}"/>, keeps in a static field, and returns from its override:<br/>
+   /// <c>protected override TeventRouting TeventAppliers => Appliers;</c><br/>
+   /// Every class overrides it with its own: one that inherits its base class's is refused when it is constructed. A shared tentity has no<br/>
+   /// tevent handlers.</summary>
+   protected abstract TeventRouting TeventAppliers { get; }
+
+   ///<summary>Declares the tevent appliers of <typeparamref name="TTentity"/>, for it to keep in a static field and return from its override of<br/>
+   /// <see cref="TeventAppliers"/>. Every tevent the tentity publishes must reach at least one of them.<br/>
+   /// The routing starts with the tentity's own applier of its created tevent, which gives it its <see cref="Id"/>. A tevent reaches every route<br/>
+   /// it matches, one after another: that applier first, then those <paramref name="declare"/> declares, in the order declared.</summary>
+   protected static TeventRouting<TTentity, TTentityTevent> DeclareAppliers(Action<TeventRouting<TTentity, TTentityTevent>.Declaration> declare) =>
+      TeventRouting<TTentity, TTentityTevent>.DeclareAppliers(it =>
+      {
+         it.For<TTentityCreatedTevent>(static (tentity, created) => tentity._id = created.EntityId);
+         declare(it);
+      });
 
    ///<summary>Publishes <paramref name="tevent"/> through the collection's slot. The tevent must carry this tentity's <see cref="Id"/> -<br/>
    /// a shared tentity's tevents state their <see cref="ISharedTentityTevent{TTentityId}.EntityId"/> explicitly at creation; nothing stamps it in later.</summary>
@@ -51,5 +67,9 @@ public abstract class SharedTentity<TTentity, TTentityId, TTentityTevent, TTenti
 #pragma warning restore CS0618
    }
 
-   internal void ApplyTevent(TTentityTevent tevent) => _teventAppliersDispatcher.Dispatch(tevent);
+   ///<summary>Gives this new tentity, being restored with its owner from a snapshot, its id, as its created tevent would.</summary>
+   internal void RestoreId(TTentityId id) => _id = id;
+
+   ///<summary>Applies a tevent the collection routes to this tentity, still in its slot's adopting wrapper tevent.</summary>
+   internal void ApplyAdopted(IPublisherTevent<TTentityTevent> adopted) => TeventAppliers.Dispatch(this, adopted);
 }

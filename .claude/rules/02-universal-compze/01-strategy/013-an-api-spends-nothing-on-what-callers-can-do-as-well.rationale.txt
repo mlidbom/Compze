@@ -1,7 +1,7 @@
 # Rationale: a Compze API spends nothing on what its callers can do as well themselves
 
 Added 2026-11-17 on Magnus's word, after a case in the taggregate store spike (items 34 to 37 of jastudio-rep-opus's
-list, dev_docs/taggregate-improvements/shared/the-taggregate-store.md).
+list, dev_docs/taggregate-improvements/shared/the-taggregate-store-build-log.md).
 
 What the agent did: Opus 5.5 (claude-opus-5-5) gave two reads an order. An index's `Lookup` returned its references in
 id order, after JAStudio's rebuild changed 1,172 sentences because a lookup that took the first of several vocab got

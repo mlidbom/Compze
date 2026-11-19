@@ -12,22 +12,22 @@ public partial class TeventStoreApi
 
    public partial class TueryApi
    {
-      public TaggregateLink<TTaggregate> GetForUpdate<TTaggregate>(TaggregateId id) where TTaggregate : class, ITaggregate =>
+      public TaggregateLink<TTaggregate> GetForUpdate<TTaggregate>(TaggregateId id) where TTaggregate : class, ITaggregate<ITaggregateTeventWithIdentity> =>
          new(id);
 
-      public GetReadonlyCopyOfTaggregate<TTaggregate> GetReadOnlyCopy<TTaggregate>(TaggregateId id) where TTaggregate : class, ITaggregate =>
+      public GetTaggregate<TTaggregate> Get<TTaggregate>(TaggregateId id) where TTaggregate : class, ITaggregate<ITaggregateTeventWithIdentity> =>
          new(id);
 
-      public GetReadonlyCopyOfTaggregateVersion<TTaggregate> GetReadOnlyCopyOfVersion<TTaggregate>(TaggregateId id, int version) where TTaggregate : class, ITaggregate =>
+      public GetReadonlyCopyOfTaggregateVersion<TTaggregate> GetReadOnlyCopyOfVersion<TTaggregate>(TaggregateId id, int version) where TTaggregate : class, ITaggregate<ITaggregateTeventWithIdentity> =>
          new(id, version);
 
-      public GetTaggregateHistory<TTevent> GetHistory<TTevent>(TaggregateId id) where TTevent : ITaggregateTevent =>
+      public GetTaggregateHistory<TTevent> GetHistory<TTevent>(TaggregateId id) where TTevent : class, ITaggregateTeventWithIdentity =>
          new(id);
    }
 
    public partial class TommandApi
    {
-      public SaveTaggregate<TTaggregate> Save<TTaggregate>(TTaggregate taggregate) where TTaggregate : class, ITaggregate =>
+      public AddTaggregate<TTaggregate> Add<TTaggregate>(TTaggregate taggregate) where TTaggregate : class, ITaggregate<ITaggregateTeventWithIdentity> =>
          new(taggregate);
    }
 }

@@ -6,4 +6,7 @@
        without this exclusion project discovery would find every junctioned project a second time and
        corrupt its references. Genuine symbolic links / junctions elsewhere stay fully scannable. -->
   <ExcludeDirectory Path="src/Websites/Website/Compze" />
+  <!-- Claude Code's isolated agents work in full checkouts of the repository under .claude/worktrees. Discovered, each one's
+       projects would be found a second time, and sync would write references into the other checkout into every csproj. -->
+  <ExcludeDirectory Path=".claude/worktrees" />
 </FlexRef>

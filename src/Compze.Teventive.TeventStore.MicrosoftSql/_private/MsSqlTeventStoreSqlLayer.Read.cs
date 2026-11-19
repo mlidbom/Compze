@@ -120,7 +120,7 @@ partial class MsSqlTeventStoreSqlLayer(MsSqlTeventStoreConnectionManager connect
       } while(!(fetchedInThisBatch < batchSize));
    }
 
-   public IReadOnlyList<CreationTeventRow> ListTaggregateIdsInCreationOrder()
+   public IReadOnlyList<TaggregateTeventTypeRow> ListTaggregateIdsInCreationOrder()
    {
       var raw = _connectionManager.UseCommand(suppressTransactionWarning: true,
                                            action: command => command.SetCommandText($"""
@@ -131,6 +131,23 @@ partial class MsSqlTeventStoreSqlLayer(MsSqlTeventStoreConnectionManager connect
                                                                                       ORDER BY {Tevent.ReadOrder} ASC
                                                                                       """)
                                                                      .ExecuteReaderAndSelect(reader => (TaggregateId: new TaggregateId(reader.GetGuid(0)), TeventTypeId: reader.GetInt32(1))));
-      return raw.Select(it => new CreationTeventRow(it.TaggregateId, _typeIdInterner.GetTypeId(it.TeventTypeId))).ToList();
+      return raw.Select(it => new TaggregateTeventTypeRow(it.TaggregateId, _typeIdInterner.GetTypeId(it.TeventTypeId))).ToList();
+   }
+
+   public IReadOnlyList<TaggregateTeventTypeRow> ListTheLastTeventOfEachTaggregate()
+   {
+      var raw = _connectionManager.UseCommand(suppressTransactionWarning: true,
+                                           action: command => command.SetCommandText($"""
+
+                                                                                      SELECT lastRow.{Tevent.TaggregateId}, lastRow.{Tevent.TeventType}
+                                                                                      FROM {Tevent.TableName} lastRow
+                                                                                      INNER JOIN (SELECT {Tevent.TaggregateId}, MAX({Tevent.EffectiveVersion}) AS LastVersion
+                                                                                                  FROM {Tevent.TableName}
+                                                                                                  GROUP BY {Tevent.TaggregateId}) lastVersions
+                                                                                              ON lastVersions.{Tevent.TaggregateId} = lastRow.{Tevent.TaggregateId}
+                                                                                             AND lastVersions.LastVersion = lastRow.{Tevent.EffectiveVersion}
+                                                                                      """)
+                                                                     .ExecuteReaderAndSelect(reader => (TaggregateId: new TaggregateId(reader.GetGuid(0)), TeventTypeId: reader.GetInt32(1))));
+      return raw.Select(it => new TaggregateTeventTypeRow(it.TaggregateId, _typeIdInterner.GetTypeId(it.TeventTypeId))).ToList();
    }
 }

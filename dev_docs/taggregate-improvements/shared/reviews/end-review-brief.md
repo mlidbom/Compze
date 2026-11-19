@@ -1,5 +1,9 @@
 # The end review of Compze's taggregate-store spike: every public API change, and the store design
 
+> Written at the start of the end review (2026-11-18), on the spike at 46cc881a6: some names and API here have changed
+> since, by its decisions; see [../the-naming-pass.md](../the-naming-pass.md) and
+> [end-review-consolidated.md](end-review-consolidated.md).
+
 You are one of two independent reviewers, one Opus and one Fable. You don't see each other's work, and neither of you
 sees the builders' conclusions until you have written your own. jastudio-rep-opus, the Compze session that built most
 of the spike, consolidates both reviews for Magnus, who owns Compze and decides. The value of your review is a view

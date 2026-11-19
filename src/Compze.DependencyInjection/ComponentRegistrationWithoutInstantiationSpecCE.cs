@@ -37,5 +37,16 @@ public static class ComponentRegistrationWithoutInstantiationSpecCE
          @this.AddAssociatedRegistrationsCreatedWhenBuilt(createAssociatedRegistrations);
          return @this;
       }
+
+      /// <summary>
+      /// Declares that the component resolves <paramref name="serviceTypes"/> from the container's root while it runs, through the<br/>
+      /// <see cref="Abstractions.IRootResolver"/> it takes, so that <see cref="ContainerBuilder.Build"/> refuses one that is scoped or<br/>
+      /// takes a scoped service: see <see cref="ComponentRegistration.DependencyTypesResolvedFromTheRoot"/>.
+      /// </summary>
+      internal TSpec ResolvingFromTheRoot(IEnumerable<Type> serviceTypes)
+      {
+         @this.AddDependencyTypesResolvedFromTheRoot(serviceTypes);
+         return @this;
+      }
    }
 }

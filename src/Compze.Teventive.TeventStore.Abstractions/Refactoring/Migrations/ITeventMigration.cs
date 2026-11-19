@@ -32,5 +32,5 @@ public interface ISingleTaggregateInstanceHandlingTeventMigrator
    /// <para>Called once for each tevent in the taggregate's history. </para>
    /// <para>Then it is called once with an instance wrapping <c>EndOfTaggregateHistoryTeventPlaceHolder</c>. </para>
    /// </summary>
-   void MigrateTevent(ITaggregateTevent<ITaggregateTevent> wrappedTevent, ITeventModifier modifier);
+   void MigrateTevent(ITaggregateTevent<ITaggregateTeventWithIdentity> wrappedTevent, ITeventModifier modifier);
 }

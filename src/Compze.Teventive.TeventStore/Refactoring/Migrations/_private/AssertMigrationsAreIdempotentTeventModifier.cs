@@ -9,7 +9,7 @@ class AssertMigrationsAreIdempotentTeventModifier : ITeventModifier, IStaticInst
    public static ITeventModifier Instance { get; } = new AssertMigrationsAreIdempotentTeventModifier();
    AssertMigrationsAreIdempotentTeventModifier() { }
 
-   public void Replace(params ITaggregateTevent<ITaggregateTevent>[] wrappedTevents) => throw new NonIdempotentMigrationDetectedException();
+   public void Replace(params ITaggregateTevent<ITaggregateTeventWithIdentity>[] wrappedTevents) => throw new NonIdempotentMigrationDetectedException();
 
-   public void InsertBefore(params ITaggregateTevent<ITaggregateTevent>[] insert) => throw new NonIdempotentMigrationDetectedException();
+   public void InsertBefore(params ITaggregateTevent<ITaggregateTeventWithIdentity>[] insert) => throw new NonIdempotentMigrationDetectedException();
 }

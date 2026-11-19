@@ -5,7 +5,8 @@ function C-Test {
     Runs Compze tests with proper configuration
     
     .DESCRIPTION
-    Runs the full Compze test suite. By default, builds the solution before running tests.
+    Runs the full Compze test suite, or with -Filter the tests that match, on the combinations of pluggable components in
+    src/TestUsingPluggableComponentCombinations, or with -Combinations on those. By default, builds the solution before running tests.
     Tests run in parallel according to assembly-level attributes by default.
     
     Sets $LASTEXITCODE to 0 on success and 1 on failure, and reports a failure as an error of its own, so that
@@ -28,7 +29,21 @@ function C-Test {
     
     .PARAMETER Iterations
     Run the test suite multiple times and display a summary of results across all iterations
-    
+
+    .PARAMETER Combinations
+    Runs the tests on these combinations of pluggable components instead of those in
+    src/TestUsingPluggableComponentCombinations: one or more, each written as a line of that file, such as
+    'MsSql:Microsoft:Newtonsoft:AspNetCore'. A * stands for every value of its dimension: '*:Microsoft:Newtonsoft:AspNetCore'.
+
+    The tests read the copy of that file that the build puts in each test project's output folder. So after building, it
+    writes the combinations into every copy, and once the run is over restores each copy to exactly what it was, also when
+    the run fails or is interrupted. The file itself is never changed, and it works with -NoBuild too. A run killed before
+    it restores the copies leaves a record of them, and the next C-Test or C-Build restores them from it.
+
+    .PARAMETER Filter
+    Runs only the tests that match this filter, passed to dotnet test --filter, such as "FullyQualifiedName~CQRS.TaggregateStores".
+    A filter that matches no test fails the run.
+
     .PARAMETER WhatIf
     Shows what would be deleted by git clean without actually deleting anything (only applies with -FullGitReset).
     
@@ -63,6 +78,14 @@ function C-Test {
     .EXAMPLE
     C-Test -Iterations 10
     Runs the test suite 10 times and displays a summary of results
+
+    .EXAMPLE
+    C-Test -Combinations 'PgSql:Microsoft:Newtonsoft:AspNetCore' -Filter "FullyQualifiedName~CQRS.TaggregateStores"
+    Builds, then runs the taggregate store tests on PostgreSQL only
+
+    .EXAMPLE
+    C-Test -NoBuild -Combinations 'MsSql:Microsoft:Newtonsoft:AspNetCore', 'MySql:Microsoft:Newtonsoft:AspNetCore'
+    Runs all tests, without building, on SQL Server and on MySQL
     #>
     [CmdletBinding()]
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseApprovedVerbs', '')]
@@ -72,7 +95,9 @@ function C-Test {
         [switch]$Clean,
         [switch]$FullGitReset,
         [switch]$SingleThreadedTesting,
-        [int]$Iterations = 1
+        [int]$Iterations = 1,
+        [string[]]$Combinations,
+        [string]$Filter
     )
     
     # Array to store results from each iteration
@@ -86,12 +111,18 @@ function C-Test {
 
     Push-Location $script:CompzeSrcRoot
     try {
+        Restore-CombinationsFileCopies -WarnIfAnyAreRestored
+
         # Build and validate
         if (-not (Invoke-BuildWithValidation -NoBuild:$NoBuild -Clean:$Clean -FullGitReset:$FullGitReset)) {
             if ($LASTEXITCODE -ne 0) {
                 Write-CommandFailure -Command $PSCmdlet -Message "The build failed, so no tests ran."
             }
             return
+        }
+
+        if ($Combinations) {
+            Set-CombinationsFileCopies -Combinations $Combinations
         }
 
         # Run tests for each iteration
@@ -101,7 +132,7 @@ function C-Test {
             }
             
             # Run tests
-            $testRunResult = C-Run-TestRun -SolutionPath $script:CompzeSolutionPath -SingleThreaded:$SingleThreadedTesting
+            $testRunResult = C-Run-TestRun -SolutionPath $script:CompzeSolutionPath -SingleThreaded:$SingleThreadedTesting -Filter $Filter
             
             # Collect failed tests from this iteration
             if ($testRunResult.FailedTests -and $testRunResult.FailedTests.Count -gt 0) {
@@ -164,12 +195,16 @@ function C-Test {
         if ($totalFailedTests -gt 0 -and $Iterations -eq 1) {
             Show-FailedTestsSummary -FailedTests $allFailedTests
         }
-        if ($failedRuns.Count -gt 0) {
+        if ($Filter -and ($iterationResults | Measure-Object -Property Executed -Sum).Sum -eq 0) {
+            Write-CommandFailure -Command $PSCmdlet -Message "The filter $Filter matched no test."
+        } elseif ($failedRuns.Count -gt 0) {
             Write-CommandFailure -Command $PSCmdlet -Message "$($failedRuns.Count) of $Iterations test run(s) failed, with $totalFailedTests failed test(s)."
         } else {
             $global:LASTEXITCODE = 0
         }
     } finally {
+        # Also when the run failed, or was interrupted with Ctrl+C. A killed run leaves the record for the next C-Test or C-Build.
+        Restore-CombinationsFileCopies
         Pop-Location
     }
 }

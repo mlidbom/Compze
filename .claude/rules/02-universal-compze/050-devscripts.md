@@ -12,8 +12,9 @@ Discover all commands: `C-Get-Commands` or `C-<Tab>` in PowerShell.
 
 | Command | Purpose |
 |---------|---------|
-| `C-Test` | Build + run full test suite |
+| `C-Test` | Build + run full test suite; `-Filter` for a subset, `-Combinations` for chosen pluggable components |
 | `C-Build` | Build the solution |
+| `C-Build-Website` | Build the website with DocFX; fails, listing them, on any DocFX warning |
 | `C-Clean` | Deep clean the solution |
 | `C-Create-Project` | Create new projects with proper structure |
 | `C-Delete-Project` | Delete a project |

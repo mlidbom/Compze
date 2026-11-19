@@ -1,5 +1,8 @@
 # What was measured
 
+> Written before the end review (2026-11-18): some names and API here have changed since; see
+> [the-naming-pass.md](the-naming-pass.md) and [reviews/end-review-consolidated.md](reviews/end-review-consolidated.md).
+
 **Status: agreed by all four sessions, then reviewed by two independent agents and revised with their agreement** (2026-11-16). On .NET 11, with workstation garbage collection,
 over 10,000 to 80,000 instances. Bytes are exact and the same from run to run within a few bytes. Times are from a
 machine that other work shares, at 3 to 13% load from that work depending on the run, and the documents they come from

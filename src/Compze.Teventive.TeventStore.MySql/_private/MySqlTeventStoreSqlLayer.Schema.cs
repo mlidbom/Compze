@@ -6,6 +6,9 @@ partial class MySqlTeventStoreSqlLayer
 {
    const string MySqlGuidType = "CHAR(36)";
 
+   ///<summary>The table of the taggregates' locks, a row for each taggregate ever got for update: see <see cref="TakeTheTaggregatesLock"/>.</summary>
+   const string TaggregateLockTableName = "TaggregateLock";
+
    public const string SchemaCreationSql = $"""
 
                                               CREATE TABLE IF NOT EXISTS {Tevent.TableName}
@@ -41,6 +44,15 @@ partial class MySqlTeventStoreSqlLayer
                                                     ({Tevent.ReadOrder} ASC, {Tevent.EffectiveVersion} ASC)
                                                     /*INCLUDE ({Tevent.TeventType}, {Tevent.InsertionOrder})*/
 
+                                              )
+                                              ENGINE = InnoDB
+                                              DEFAULT CHARACTER SET = utf8mb4;
+
+                                              CREATE TABLE IF NOT EXISTS {TaggregateLockTableName}
+                                              (
+                                                {Tevent.TaggregateId}          {MySqlGuidType}            NOT NULL,
+
+                                                PRIMARY KEY ({Tevent.TaggregateId})
                                               )
                                               ENGINE = InnoDB
                                               DEFAULT CHARACTER SET = utf8mb4;

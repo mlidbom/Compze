@@ -8,7 +8,7 @@ namespace Compze.Teventive.TeventStore._private;
 
 static class TaggregateHistoryValidator
 {
-   public static void ValidateHistory(TaggregateId taggregateId, IReadOnlyList<ITaggregateTevent<ITaggregateTevent>> history)
+   public static void ValidateHistory(TaggregateId taggregateId, IReadOnlyList<ITaggregateTevent<ITaggregateTeventWithIdentity>> history)
    {
       var version = 1;
       foreach(var wrappedTevent in history)

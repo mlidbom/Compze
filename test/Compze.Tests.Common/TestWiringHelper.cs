@@ -1,6 +1,7 @@
 using Compze.DocumentDb;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
+using Compze.Teventive.TaggregateStores;
 using Compze.Teventive.TeventStore.Abstractions;
 
 namespace Compze.Tests.Common;
@@ -14,8 +15,8 @@ public static class TestWiringHelper
    public static IDocumentDb DocumentDb(this IScopeResolver @this) =>
       @this.Resolve<IDocumentDb>();
 
-   public static ITeventStoreUpdater TeventStoreUpdater(this IScopeResolver @this) =>
-      @this.Resolve<ITeventStoreUpdater>();
+   public static ITaggregateStoreUpdater TaggregateStoreUpdater(this IScopeResolver @this) =>
+      @this.Resolve<ITaggregateStoreUpdater>();
 
    public static ITeventStoreReader TeventStoreReader(this IScopeResolver @this) =>
       @this.Resolve<ITeventStoreReader>();

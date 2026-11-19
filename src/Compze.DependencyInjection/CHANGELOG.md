@@ -4,6 +4,12 @@ All notable changes to Compze.DependencyInjection will be documented in this fil
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## 0.10.0-alpha
+
+- **Internal support for Compze.Teventive's units of work; nothing public changes:** a unit of work that `ExecuteUnitOfWork` begins a transaction for can be found from that transaction until it completes, so that a taggregate store reached through a reference a caller holds works in the unit of work's scope. Compze.Teventive's new version requires this one.
+- **Internal support for Compze.Teventive.MemoryImageStateStore; nothing public changes:** a component can declare the services it resolves from the container's root while it runs, and `Build()` refuses one that is scoped, or takes a scoped service directly or through the tracked transients it takes, with an `InvalidLifeStyleCombinationException` naming the component, the service and the scoped service, the same with every container. The memory image state store declares the taggregate classes it builds through the container. Compze.Teventive.MemoryImageStateStore requires this version.
+- **Requires newer minor versions of other Compze packages:** Compze.Internals.SystemCE 0.9.0-internal (was 0.8.0-internal). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
+
 ## 0.9.0-alpha
 
 - **Targets .NET 11 (`net11.0`) instead of .NET 10, and is compiled with runtime async:** the runtime, instead of state machines the compiler generates, suspends and resumes its async methods, so live stack traces show the real call chain. An application that uses this version must target .NET 11.

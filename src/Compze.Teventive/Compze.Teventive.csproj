@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <Nullable>enable</Nullable>
-    <Version>0.6.0-alpha</Version>
+    <Version>0.7.0-alpha</Version>
     <!-- TODO:docs: Remove once all public API members have XML documentation comments -->
     <NoWarn>CS1591</NoWarn>
     <Description>The Teventive programming model for the Compze framework: taggregates, tevents and tevent dispatching.</Description>
@@ -11,6 +11,8 @@
   </ItemGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="Compze.Teventive.TeventStore" />
+    <InternalsVisibleTo Include="Compze.Teventive.MemoryImageStateStore" />
+    <InternalsVisibleTo Include="Compze.Serialization.Newtonsoft.InternalSpecifications" />
   </ItemGroup>
   <!-- Exclude _docs files from compilation but keep them visible.
        This section is automatically maintained by DevScripts\C-Ensure-CsprojfilesExcludeCsFilesFromProjectsInSubfoldersAndDocsFolders.ps1 -->

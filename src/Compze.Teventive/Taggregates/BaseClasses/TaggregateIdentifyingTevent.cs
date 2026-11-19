@@ -11,6 +11,11 @@ public static class TaggregateIdentifyingTevent
    /// This is how a tevent migration author wraps a replacement tevent in the publisher's wrapper.</summary>
    public static ITaggregateTevent<ITaggregateTevent> WrapIn(Type wrapperTeventImplementation, ITaggregateTevent tevent) =>
       (ITaggregateTevent<ITaggregateTevent>)PublisherTevent.WrapIn(wrapperTeventImplementation, tevent);
+
+   ///<summary>Wraps a tevent with identity as <see cref="WrapIn(Type, ITaggregateTevent)"/> does, typed as a tevent store keeps it:<br/>
+   /// the form a tevent migration hands to the tevent store's modifier.</summary>
+   public static ITaggregateTevent<ITaggregateTeventWithIdentity> WrapIn(Type wrapperTeventImplementation, ITaggregateTeventWithIdentity tevent) =>
+      (ITaggregateTevent<ITaggregateTeventWithIdentity>)PublisherTevent.WrapIn(wrapperTeventImplementation, tevent);
 }
 
 // ReSharper disable once ClassNeverInstantiated.Global

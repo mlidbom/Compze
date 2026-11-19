@@ -4,12 +4,14 @@
 # its release notes
 #
 # Sequence:
-#   1. Detect which packages are new by checking for existing git tags ({PackageName}/v{Version})
-#   2. Validate that every new package has a CHANGELOG.md entry for its version, and that the entry states the dependency
+#   1. Refuse when a package that the release doesn't release has shipped files that changed since its release tag, and the
+#      changes aren't acknowledged in AcknowledgedUnreleasedChanges.txt (lib/UnreleasedChanges.ps1)
+#   2. Detect which packages are new by checking for existing git tags ({PackageName}/v{Version})
+#   3. Validate that every new package has a CHANGELOG.md entry for its version, and that the entry states the dependency
 #      floors the version raises across a minor version over the previous version on nuget.org (lib/DependencyFloors.ps1)
-#   3. Run the post-release binding check (Invoke-PostReleaseBindingCheck.ps1): the new packages and nuget.org's newest
+#   4. Run the post-release binding check (Invoke-PostReleaseBindingCheck.ps1): the new packages and nuget.org's newest
 #      version of every other package must not fail at runtime against each other
-#   4. For each new package: push to NuGet, create GitHub release, create and push git tag
+#   5. For each new package: push to NuGet, create GitHub release, create and push git tag
 #
 # Environment variables (set by the GitHub Actions workflow):
 #   NUGET_API_KEY  — short-lived nuget.org API key from the workflow's Trusted Publishing login step
@@ -40,6 +42,7 @@ $scriptDir = $PSScriptRoot
 . "$scriptDir/lib/GitHubReleases.ps1"
 . "$scriptDir/lib/NuGetOrgVersions.ps1"
 . "$scriptDir/lib/SummaryReport.ps1"
+. "$scriptDir/lib/UnreleasedChanges.ps1"
 
 # ── Main ──
 
@@ -52,6 +55,13 @@ if (-not $DryRun) {
         Write-Error "GH_TOKEN environment variable is not set"
         exit 1
     }
+}
+
+$unacknowledgedUnreleasedChanges = @(GetUnacknowledgedUnreleasedChanges)
+if ($unacknowledgedUnreleasedChanges.Count -gt 0) {
+    Write-Host "`n::error::Unreleased changes: packages the release doesn't release changed since their release." -ForegroundColor Red
+    Write-Host (FormatUnreleasedChangesRefusal $unacknowledgedUnreleasedChanges) -ForegroundColor Red
+    exit 1
 }
 
 $nupkgsPath = "nupkgs"

@@ -1,5 +1,9 @@
 # The taggregate store: the session proposal read adversarially, and what becomes of the decisions
 
+> Written before the end review (2026-11-18): some names and API here have changed since; see
+> [../shared/the-naming-pass.md](../shared/the-naming-pass.md) and
+> [../shared/reviews/end-review-consolidated.md](../shared/reviews/end-review-consolidated.md).
+
 2026-11-16, jastudio-rep-fable, for jastudio-rep-opus, who designs the session and keeps the shared folder. Magnus
 has decided that a Compze component, an `ITaggregateStore` with an `ITaggregateStoreUpdater` session for each unit of
 work, manages a process's taggregates and routes their tevents through Tessaging. This reads jastudio-rep-opus's
