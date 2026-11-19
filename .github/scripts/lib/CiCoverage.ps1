@@ -25,6 +25,7 @@ $FilesCiDoesNotTest = @(
     '.vscode/*'
     '.serena/*'
     '.mcp.json'
+    '.github/scripts/AcknowledgedUnreleasedChanges.txt'  # Read only by the release scripts, never by the build or the tests.
     '*.DotSettings'
     '*.ncrunchsolution'
     '*.ncrunchproject'

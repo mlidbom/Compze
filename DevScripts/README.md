@@ -56,12 +56,19 @@ Then reload: `. $PROFILE`
   - A type that moved to another namespace or project, or was renamed, is listed once, with its member changes, when evidence pairs it with what it was: its file (git's rename detection, or the file of a type already paired), or its namespace's move (a project's rename, or a type already paired); the report says what each pairing rests on
   - DocFX skips the members of C# 14 extension blocks: the report names the changed files that hold them, to compare with git diff
 
-- **C-Get-PackagesChangedSinceTheirRelease** - Lists the packages whose shipped files changed since their last release tag, and those never released: for each, whether its version is bumped and its changelog changed since the tag, and the files that changed. For checking, before a release, that no package changed without changelog entries and a bump
+- **C-Get-PackagesChangedSinceTheirRelease** - Lists the packages whose shipped files changed since their last release tag, and those never released: for each, whether its version is bumped and its changelog changed since the tag, and the files that changed. For checking, before a release, that no package changed without changelog entries and a bump. Changes acknowledged in `.github/scripts/AcknowledgedUnreleasedChanges.txt` (see C-Prepare-Release) aren't listed
   - `-PackageId` to limit the list
+
+- **C-Prepare-Release** - Prepares the next release of every package whose changelog gained entries since its release: bumps its version (minor, or patch with `-Patch`), splits its changelog's top section into the new version's section and the released one, then packs and adds the line stating the dependency floors the version raises across a minor version
+  - `-PackageId` to prepare only these packages
+  - Refuses, changing nothing, when a package it doesn't prepare has shipped files that changed since its release tag: the release would leave it at its released version. The refusal names each package and its changed files. Either give the package a changelog entry, so that it is prepared, or, when its changes ship nothing a consumer sees (comments only, build settings that produce the same result), acknowledge them
+  - `-Acknowledge <PackageId>, ... -Reason '<why>'` - Records the acknowledgement in `.github/scripts/AcknowledgedUnreleasedChanges.txt`: the package, HEAD's commit, and the reason. It lasts until the package is next released, since only the changes after that commit count. Commit the file with the release. Preparing a package's release removes its line
+  - With nothing to release, it says so and refuses nothing
 
 - **C-SimulateRelease** - Packs with real versions and dry-runs the release: which packages are new, their changelog entries, the post-release binding check (`.github/scripts/PostReleaseBindingCheck/README.md`), pushes, GitHub releases and tags
   - `-NoBuild`, `-NoPack`, `-NoSummary`
   - Refuses a changelog section that doesn't state the dependency floors its version raises across a minor version, and prints the line to add (`.github/scripts/lib/DependencyFloors.ps1` says why)
+  - Refuses, before packing, a package the release doesn't release whose shipped files changed since its release tag, unless the changes are acknowledged, as C-Prepare-Release does; the Create Releases workflow refuses it too. `-Acknowledge <PackageId>, ... -Reason '<why>'` records an acknowledgement, as for C-Prepare-Release
   - The real release is the Create Releases workflow (`.github/workflows/publish-nuget.yml`), run by hand only after a CI run that covers the commit has passed: see `.claude/rules/02-universal-compze/100-releasing.md`
 
 - **C-Publish-ToPendingReleaseFeed** - Publishes the versions the next release will publish to this machine's pending-release feed (`~/.nuget/compze-pending-release-feed`), which every repository on the machine restores from: a consumer can use a new version at once, instead of after CI, the release workflow and nuget.org's validation

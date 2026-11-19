@@ -34,7 +34,16 @@ A release goes in this order:
 1. **Prepare it.** First find what changed without entries: `C-Get-PackagesChangedSinceTheirRelease` lists each package
    whose shipped files changed since its release tag, with whether its version is bumped and its changelog changed. A
    package that changed needs its entries before the preparation, which takes only what changelogs gained.
-   `C-Prepare-Release` does it for every package whose changelog gained entries since its release:
+   - **A change that ships nothing a consumer sees** needs no release: comments only, or build settings that produce the
+     same result. Check it against `git diff <release tag> HEAD -- src/<PackageId>`, then acknowledge it:
+     `C-Prepare-Release -Acknowledge <PackageId>, ... -Reason '<why>'`. That records it in
+     `.github/scripts/AcknowledgedUnreleasedChanges.txt`, to commit with the release, and it lasts until the package is
+     next released.
+   - **Otherwise `C-Prepare-Release` refuses,** changing nothing, as `C-SimulateRelease` and Create Releases do: a package
+     the release leaves at its released version must not have unacknowledged changes since its release tag. The refusal
+     names each package and its changed files.
+
+   `C-Prepare-Release` prepares every package whose changelog gained entries since its release:
    - it bumps the versions, minor by default, patch with `-Patch`, and only the packages named with `-PackageId`;
    - it splits each changelog's top section into the new version's section and the released one, restored from its tag;
    - it adds the line stating the Compze dependencies whose minimum version the release raises across a minor version,
