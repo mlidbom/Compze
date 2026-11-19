@@ -370,20 +370,25 @@ The numbers: [what-was-measured.md](what-was-measured.md). The bugs and the smal
 
 ## Where the work is
 
-These documents and a few todo comments are merged to Compze's `main`; no prototype is. The prototypes are
-experiments, each on a branch of its own, all pushed to origin. Their worktrees were removed on 2026-11-16, except
-`taggregate-store-opus`'s, in `C:\Dev\Compze.worktrees\taggregate-store-opus`. The worktree folders that the
-documents name are where the branches were checked out; `git worktree add <folder> <branch>` checks one out again.
-Their API isn't the designed one where the design changed after they were built.
+These documents and a few todo comments are merged to Compze's `main`; no prototype is. What was built and released
+is the store spike, merged to `main` (022aa32bb). The prototypes were experiments, each on a branch of its own. The
+branches were deleted on 2026-11-19, and their tips are kept as the parents of one commit, tagged
+`archive/taggregate-effort-2026-11` and pushed, so every commit the documents cite stays reachable. The worktree
+folders that the documents name are where the branches were checked out; `git worktree add <folder> <tip>` checks
+one out again, and `git log <tip>` shows its history. Their API isn't the designed one where the design changed after
+they were built.
 
-| Branch | Built by | What it holds |
-|---|---|---|
-| `taggregate-store-opus` | jastudio-rep-opus | The in-memory taggregate store with deferred dispatch and the private copy (3dd0fbe08), then taggregate-references and the index defined by state (3ac56efa8), and a committed lookup that allocates nothing (56474f568), specified and measured. `Compze.Tests.Unit` passes, 417 of 417; the store's 40 behaviours pass on both combinations. |
-| `taggregate-experiments-opus` | jastudio-rep-opus | Routing per class in the real base classes: components, entity collections, slots, inheritance. Full suite passes. |
-| `taggregate-experiments-opus-convention` | jastudio-rep-opus | The same, by convention, for comparison. Full suite passes. |
-| `taggregates-opus/snapshot-and-hook` | taggregates-opus | The superseded snapshot of tevents and hook with its queue, both bug fixes, the assertion of one thread, and the refusal after a failed cascade (4b42470ba). Full suite passes. |
-| `taggregates-opus/combined` | taggregates-opus | The two above merged, and measured. Full suite passes (604c00df4). |
-| `taggregate-experiments-fable` | jastudio-rep-fable | A standalone prototype of routing per class with static slots, and the claims run against 0.6.0-alpha. |
-| `taggregate-experiments-fable-static-slots` | jastudio-rep-fable | Static slots in the real base classes, built on the combined branch, and measured (fb75d60a0). `Compze.Tests.Unit` passes, 496 of 496; the other test assemblies weren't run on it. |
-| `review-taggregate-improvements` | the Opus reviewer | Two specifications showing the thread assertion and the hook's base call against the tevent store (861474504). |
-| `review-taggregate-conclusions` | the Fable reviewer | Seven checks against a Release build of the static-slots prototype (a440911a7). |
+| Branch, until 2026-11-19 | Tip | Built by | What it holds |
+|---|---|---|---|
+| `taggregate-store-opus` | 56474f568 | jastudio-rep-opus | The in-memory taggregate store with deferred dispatch and the private copy (3dd0fbe08), then taggregate-references and the index defined by state (3ac56efa8), and a committed lookup that allocates nothing (56474f568), specified and measured. `Compze.Tests.Unit` passes, 417 of 417; the store's 40 behaviours pass on both combinations. |
+| `taggregate-experiments-opus` | c70e46199 | jastudio-rep-opus | Routing per class in the real base classes: components, entity collections, slots, inheritance. Full suite passes. |
+| `taggregate-experiments-opus-convention` | 93697bb9d | jastudio-rep-opus | The same, by convention, for comparison. Full suite passes. |
+| `taggregates-opus/snapshot-and-hook` | 4b42470ba | taggregates-opus | The superseded snapshot of tevents and hook with its queue, both bug fixes, the assertion of one thread, and the refusal after a failed cascade (4b42470ba). Full suite passes. |
+| `taggregates-opus/combined` | 604c00df4 | taggregates-opus | The two above merged, and measured. Full suite passes (604c00df4). |
+| `taggregate-experiments-fable` | b5422a950 | jastudio-rep-fable | A standalone prototype of routing per class with static slots, and the claims run against 0.6.0-alpha. |
+| `taggregate-experiments-fable-static-slots` | fb75d60a0 | jastudio-rep-fable | Static slots in the real base classes, built on the combined branch, and measured (fb75d60a0). `Compze.Tests.Unit` passes, 496 of 496; the other test assemblies weren't run on it. |
+| `review-taggregate-improvements` | 861474504 | the Opus reviewer | Two specifications showing the thread assertion and the hook's base call against the tevent store (861474504). |
+| `review-taggregate-conclusions` | a440911a7 | the Fable reviewer | Seven checks against a Release build of the static-slots prototype (a440911a7). |
+| `taggregate-store-spike-2c` | 325118dfd | jastudio-rep-opus | Step 2c's prototype, every tevent of a unit of work dispatched at the commit, stopped unfinished and superseded ([the build log](the-taggregate-store-build-log.md#step-2c-specified-every-tevent-of-a-unit-of-work-dispatched-when-it-commits)). |
+| `end-review-opus` | 8bcca9817 | the Opus end reviewer | Specifications that demonstrate five findings ([its review](reviews/end-review-by-an-opus-agent.md)). |
+| `end-review-fable` | 79fc29ab7 | the Fable end reviewer | What running the spike's code found, as specifications ([its review](reviews/end-review-by-a-fable-agent.md)). |
