@@ -3,88 +3,95 @@ function C-Set-PluggableComponents {
     <#
     .SYNOPSIS
     Configures the TestUsingPluggableComponentCombinations file with selected pluggable components
-    
+
     .DESCRIPTION
-    Sets the TestUsingPluggableComponentCombinations file to contain the cross join of all selected
-    SQL persistence layers and DI containers. This controls which component combinations will be tested.
-    
-    If only SQL layers (or only containers) are specified, the missing component type will be loaded
-    from the defaults file. This allows you to easily vary one dimension while keeping the other constant.
-    
+    Sets the TestUsingPluggableComponentCombinations file, which says which combinations of pluggable components the
+    tests run with, one per line: SqlLayer:DIContainer:Serializer:Transport, such as
+    SqliteMemory:Microsoft:Newtonsoft:AspNetCore.
+
+    The combinations start from the defaults file's. The SQL layers and DI containers you select replace those of each
+    default combination, and what you don't select stays as the defaults have it: with defaults of
+    SqliteMemory:Microsoft:Newtonsoft:AspNetCore and SqliteMemory:Microsoft:Newtonsoft:NamedPipes, -MySql gives
+    MySql:Microsoft:Newtonsoft:AspNetCore and MySql:Microsoft:Newtonsoft:NamedPipes.
+
+    Each test project's build copies the file into its output folder, which is where the tests read it. So run the tests
+    with a build after changing it, as C-Test does by default, not with --no-build.
+
     .PARAMETER MicrosoftSqlServer
-    Include Microsoft SQL Server persistence layer
-    
+    Include the Microsoft SQL Server persistence layer (MsSql)
+
     .PARAMETER MySql
-    Include MySQL persistence layer
-    
+    Include the MySQL persistence layer
+
     .PARAMETER PostgreSql
-    Include PostgreSQL persistence layer
-    
+    Include the PostgreSQL persistence layer (PgSql)
+
     .PARAMETER Sqlite
-    Include SQLite (file-based) persistence layer
-    
+    Include the SQLite (file-based) persistence layer
+
     .PARAMETER SqliteMemory
-    Include SQLite in-memory persistence layer
-    
+    Include the SQLite in-memory persistence layer
+
     .PARAMETER AllSqlLayers
     Include all SQL persistence layers. Mutually exclusive with individual SQL layer switches.
-    
+
     .PARAMETER Microsoft
-    Include Microsoft DI container
-    
+    Include the Microsoft DI container
+
     .PARAMETER Autofac
-    Include Autofac DI container
-    
+    Include the Autofac DI container
+
+    .PARAMETER DryIoc
+    Include the DryIoc DI container
+
+    .PARAMETER LightInject
+    Include the LightInject DI container
+
     .PARAMETER AllContainers
     Include all DI containers. Mutually exclusive with individual container switches.
-    
+
     .PARAMETER AllPermutations
     Include all SQL layers and all DI containers (equivalent to -AllSqlLayers -AllContainers)
-    
+
     .PARAMETER SetAsDefaults
-    Save the current configuration as the default. The configuration will be saved to both
-    TestUsingPluggableComponentCombinations and TestUsingPluggableComponentCombinations.defaults.
-    When no switches are provided, the defaults file will be used.
-    
+    Save the configuration as the default too: to both TestUsingPluggableComponentCombinations and
+    TestUsingPluggableComponentCombinations.defaults. When no switches are given, the defaults file is used.
+
     .PARAMETER EnsureValid
-    Ensures that required configuration files exist without making changes. Creates missing files from defaults/example.
-    Incompatible with all other switches. Useful for ensuring valid state before builds.
-    
+    Ensures that the configuration files exist, without changing them. Creates missing files from the defaults or the
+    example. Incompatible with all other switches. Useful for ensuring a valid state before builds.
+
     .EXAMPLE
     C-Set-PluggableComponents
-    Configures tests using saved defaults (or creates defaults from .example file if none exist)
-    
+    Configures the tests with the saved defaults (or creates the defaults from the .example file if there are none)
+
     .EXAMPLE
     C-Set-PluggableComponents -EnsureValid
-    Ensures configuration and defaults files exist, creating them if needed. Makes no changes if files exist.
-    
+    Ensures the configuration and defaults files exist, creating them if needed. Changes nothing if they exist.
+
+    .EXAMPLE
+    C-Set-PluggableComponents -MySql
+    Configures the tests to run with MySQL, keeping the defaults' containers, serializers and transports
+
     .EXAMPLE
     C-Set-PluggableComponents -SqliteMemory -Microsoft
-    Configures tests to run only with SqliteMemory and Microsoft DI container
-    
+    Configures the tests to run only with SqliteMemory and the Microsoft DI container, keeping the defaults' transports
+
     .EXAMPLE
     C-Set-PluggableComponents -AllSqlLayers
-    Configures tests to run with all SQL layers and the containers from the defaults file
-    
-    .EXAMPLE
-    C-Set-PluggableComponents -AllSqlLayers -Microsoft
-    Configures tests to run with all SQL layers but only Microsoft DI container
-    
+    Configures the tests to run with all SQL layers and the rest of each default combination
+
     .EXAMPLE
     C-Set-PluggableComponents -MicrosoftSqlServer -MySql -AllContainers
-    Configures tests to run with MicrosoftSqlServer and MySql against both DI containers
-    
-    .EXAMPLE
-    C-Set-PluggableComponents -AllSqlLayers -AllContainers
-    Configures tests to run with all possible combinations
-    
+    Configures the tests to run with MsSql and MySql against every DI container
+
     .EXAMPLE
     C-Set-PluggableComponents -AllPermutations
-    Configures tests to run with all possible combinations (shorthand for -AllSqlLayers -AllContainers)
-    
+    Configures the tests to run with every SQL layer and every DI container (shorthand for -AllSqlLayers -AllContainers)
+
     .EXAMPLE
     C-Set-PluggableComponents -SqliteMemory -Microsoft -SetAsDefaults
-    Sets SqliteMemory + Microsoft as the default configuration for future calls with no parameters
+    Sets SqliteMemory with the Microsoft container as the default configuration for later calls with no switches
     #>
     [CmdletBinding(SupportsShouldProcess)]
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseApprovedVerbs', '')]
@@ -96,239 +103,143 @@ function C-Set-PluggableComponents {
         [switch]$Sqlite,
         [switch]$SqliteMemory,
         [switch]$AllSqlLayers,
-        
+
         # Container switches
         [switch]$Microsoft,
         [switch]$Autofac,
+        [switch]$DryIoc,
+        [switch]$LightInject,
         [switch]$AllContainers,
-        
+
         # Convenience switch for all combinations
         [switch]$AllPermutations,
-        
+
         # Save as defaults switch
         [switch]$SetAsDefaults,
-        
+
         # Ensure valid configuration exists switch
         [switch]$EnsureValid
     )
-    
+
+    # The names the tests read, Compze.Hosting.Testing's SqlLayer and DIContainer enums, for each switch.
+    $sqlLayerNames = [ordered]@{ MicrosoftSqlServer = 'MsSql'; MySql = 'MySql'; PostgreSql = 'PgSql'; Sqlite = 'Sqlite'; SqliteMemory = 'SqliteMemory' }
+    $containerNames = [ordered]@{ Microsoft = 'Microsoft'; Autofac = 'Autofac'; DryIoc = 'DryIoc'; LightInject = 'LightInject' }
+
     $testConfigPath = Join-Path $script:CompzeRoot "src\TestUsingPluggableComponentCombinations"
     $testConfigDefaultsPath = Join-Path $script:CompzeRoot "src\TestUsingPluggableComponentCombinations.defaults"
     $testConfigExamplePath = Join-Path $script:CompzeRoot "src\TestUsingPluggableComponentCombinations.example"
-    
+
+    # The helpers come first: PowerShell knows a function only once its definition has run.
+
+    # Copies the file with the time of the copy as its last write time. Copy-Item keeps the source's, and a build copies
+    # the configuration into the test projects' output folders only when it is newer than their copies.
+    function CopyAsWrittenNow([string]$source, [string]$destination) {
+        Copy-Item -Path $source -Destination $destination -Force
+        (Get-Item $destination).LastWriteTime = Get-Date
+    }
+
+    function ActiveCombinationsIn([string]$path) {
+        @(Get-Content $path | Where-Object { $_ -match '^\s*[^#\s]' } | ForEach-Object { $_.Trim() })
+    }
+
+    $selectedSqlLayers = @($sqlLayerNames.Keys | Where-Object { (Get-Variable -Name $_ -ValueOnly).IsPresent } | ForEach-Object { $sqlLayerNames[$_] })
+    $selectedContainers = @($containerNames.Keys | Where-Object { (Get-Variable -Name $_ -ValueOnly).IsPresent } | ForEach-Object { $containerNames[$_] })
+
     # Handle -EnsureValid (must be first and exclusive)
     if ($EnsureValid) {
-        # Check if any other switches are specified
-        $sqlLayerSwitches = @($MicrosoftSqlServer, $MySql, $PostgreSql, $Sqlite, $SqliteMemory, $AllSqlLayers)
-        $containerSwitches = @($Microsoft, $Autofac, $AllContainers)
-        $otherSwitches = @($AllPermutations, $SetAsDefaults)
-        
-        if (($sqlLayerSwitches -contains $true) -or ($containerSwitches -contains $true) -or ($otherSwitches -contains $true)) {
+        if ($selectedSqlLayers.Count -gt 0 -or $selectedContainers.Count -gt 0 -or $AllSqlLayers -or $AllContainers -or $AllPermutations -or $SetAsDefaults) {
             Write-Error "-EnsureValid is incompatible with all other switches"
             return
         }
-        
-        $filesCreated = @()
-        
-        # Ensure defaults file exists (create from example if needed)
+
         if (-not (Test-Path $testConfigDefaultsPath)) {
-            if (Test-Path $testConfigExamplePath) {
-                Copy-Item -Path $testConfigExamplePath -Destination $testConfigDefaultsPath -Force
-                $filesCreated += "TestUsingPluggableComponentCombinations.defaults (from .example)"
-            } else {
+            if (-not (Test-Path $testConfigExamplePath)) {
                 Write-Error "Cannot create defaults file: example file not found at $testConfigExamplePath"
                 return
             }
+            CopyAsWrittenNow $testConfigExamplePath $testConfigDefaultsPath
         }
-        
-        # Ensure active config file exists (create from defaults)
-        if (-not (Test-Path $testConfigPath)) {
-            if (Test-Path $testConfigDefaultsPath) {
-                Copy-Item -Path $testConfigDefaultsPath -Destination $testConfigPath -Force
-                $filesCreated += "TestUsingPluggableComponentCombinations (from .defaults)"
-            } else {
-                Write-Error "Cannot create config file: defaults file not found"
-                return
-            }
-        }
-        
-        # Only output on errors - silent success
-        
+
+        if (-not (Test-Path $testConfigPath)) { CopyAsWrittenNow $testConfigDefaultsPath $testConfigPath }
         return
     }
-    
-    # Handle -AllPermutations shorthand
+
     if ($AllPermutations) {
-        $AllSqlLayers = $true
-        $AllContainers = $true
+        $AllSqlLayers = [switch]$true
+        $AllContainers = [switch]$true
     }
-    
-    # Check if any parameters were specified
-    $sqlLayerSwitches = @($MicrosoftSqlServer, $MySql, $PostgreSql, $Sqlite, $SqliteMemory)
-    $containerSwitches = @($Microsoft, $Autofac)
-    $anySqlLayerSpecified = $sqlLayerSwitches -contains $true
-    $anyContainerSpecified = $containerSwitches -contains $true
-    $sqlLayerSpecifiedOrAll = $AllSqlLayers -or $anySqlLayerSpecified
-    $containerSpecifiedOrAll = $AllContainers -or $anyContainerSpecified
-    $anyParameterSpecified = $sqlLayerSpecifiedOrAll -or $containerSpecifiedOrAll
-    
-    # If no parameters specified, use defaults file
-    if (-not $anyParameterSpecified) {
-        # Ensure defaults file exists
-        if (-not (Test-Path $testConfigDefaultsPath)) {
-            if (Test-Path $testConfigExamplePath) {
-                Write-Host "No defaults file found. Creating from example file..." -ForegroundColor Yellow
-                Copy-Item -Path $testConfigExamplePath -Destination $testConfigDefaultsPath -Force
-            } else {
-                Write-Error "No defaults file and no example file found at $testConfigExamplePath"
-                return
-            }
-        }
-        
-        # Copy defaults to active config
-        if ($PSCmdlet.ShouldProcess($testConfigPath, "Apply default pluggable component combinations")) {
-            Copy-Item -Path $testConfigDefaultsPath -Destination $testConfigPath -Force
-            
-            # Read and display the resulting combinations
-            $appliedCombinations = Get-Content $testConfigPath | Where-Object { $_ -match '^\s*[^#]' -and $_ -notmatch '^\s*$' }
-            foreach ($combination in $appliedCombinations) {
-                Write-Host "  $combination" -ForegroundColor Cyan
-            }
-        }
-        return
-    }
-    
-    # Validate mutually exclusive options for SQL layers
-    if ($AllSqlLayers -and $anySqlLayerSpecified) {
+
+    if ($AllSqlLayers -and $selectedSqlLayers.Count -gt 0) {
         Write-Error "Cannot specify both -AllSqlLayers and individual SQL layer switches"
         return
     }
-    
-    # Validate mutually exclusive options for containers
-    if ($AllContainers -and $anyContainerSpecified) {
+    if ($AllContainers -and $selectedContainers.Count -gt 0) {
         Write-Error "Cannot specify both -AllContainers and individual container switches"
         return
     }
-    
-    # If only SQL layers or only containers are specified, load the missing part from defaults
-    if ($sqlLayerSpecifiedOrAll -and -not $containerSpecifiedOrAll) {
-        # Load containers from defaults
-        if (-not (Test-Path $testConfigDefaultsPath)) {
-            Write-Error "Cannot load default containers: defaults file not found at $testConfigDefaultsPath"
+    if ($AllSqlLayers) { $selectedSqlLayers = @($sqlLayerNames.Values) }
+    if ($AllContainers) { $selectedContainers = @($containerNames.Values) }
+
+    if (-not (Test-Path $testConfigDefaultsPath)) {
+        if (-not (Test-Path $testConfigExamplePath)) {
+            Write-Error "No defaults file and no example file found at $testConfigExamplePath"
             return
         }
-        
-        $defaultCombinations = Get-Content $testConfigDefaultsPath | Where-Object { $_ -match '^\s*[^#]' -and $_ -notmatch '^\s*$' }
-        $defaultContainers = $defaultCombinations | ForEach-Object { 
-            if ($_ -match ':(.+)$') { $matches[1].Trim() }
-        } | Select-Object -Unique
-        
-        if ($defaultContainers.Count -eq 0) {
-            Write-Error "No containers found in defaults file"
+        Write-Host "No defaults file found. Creating from example file..." -ForegroundColor Yellow
+        CopyAsWrittenNow $testConfigExamplePath $testConfigDefaultsPath
+    }
+
+    # No switches: the defaults as they are.
+    if ($selectedSqlLayers.Count -eq 0 -and $selectedContainers.Count -eq 0) {
+        if ($PSCmdlet.ShouldProcess($testConfigPath, "Apply default pluggable component combinations")) {
+            CopyAsWrittenNow $testConfigDefaultsPath $testConfigPath
+            foreach ($combination in (ActiveCombinationsIn $testConfigPath)) { Write-Host "  $combination" -ForegroundColor Cyan }
+        }
+        return
+    }
+
+    $defaultCombinations = ActiveCombinationsIn $testConfigDefaultsPath
+    if ($defaultCombinations.Count -eq 0) {
+        Write-Error "The defaults file, $testConfigDefaultsPath, has no combination that isn't commented out"
+        return
+    }
+
+    $combinations = [System.Collections.Generic.List[string]]::new()
+    foreach ($defaultCombination in $defaultCombinations) {
+        $parts = $defaultCombination -split ':'
+        if ($parts.Count -ne 4) {
+            Write-Error "The defaults file's combination '$defaultCombination' isn't SqlLayer:DIContainer:Serializer:Transport"
             return
         }
-        
-        # Set the container switches based on defaults
-        foreach ($container in $defaultContainers) {
-            switch ($container) {
-                'Microsoft' { $Microsoft = $true }
-                'Autofac' { $Autofac = $true }
+        $sqlLayers = if ($selectedSqlLayers.Count -gt 0) { $selectedSqlLayers } else { @($parts[0]) }
+        $containers = if ($selectedContainers.Count -gt 0) { $selectedContainers } else { @($parts[1]) }
+        foreach ($sqlLayer in $sqlLayers) {
+            foreach ($container in $containers) {
+                $combination = "${sqlLayer}:${container}:$($parts[2]):$($parts[3])"
+                if (-not $combinations.Contains($combination)) { $combinations.Add($combination) }
             }
         }
-        $anyContainerSpecified = $true
     }
-    elseif ($containerSpecifiedOrAll -and -not $sqlLayerSpecifiedOrAll) {
-        # Load SQL layers from defaults
-        if (-not (Test-Path $testConfigDefaultsPath)) {
-            Write-Error "Cannot load default SQL layers: defaults file not found at $testConfigDefaultsPath"
-            return
-        }
-        
-        $defaultCombinations = Get-Content $testConfigDefaultsPath | Where-Object { $_ -match '^\s*[^#]' -and $_ -notmatch '^\s*$' }
-        $defaultSqlLayers = $defaultCombinations | ForEach-Object {
-            if ($_ -match '^(.+?):') { $matches[1].Trim() }
-        } | Select-Object -Unique
-        
-        if ($defaultSqlLayers.Count -eq 0) {
-            Write-Error "No SQL layers found in defaults file"
-            return
-        }
-        
-        # Set the SQL layer switches based on defaults
-        foreach ($sqlLayer in $defaultSqlLayers) {
-            switch ($sqlLayer) {
-                'MicrosoftSqlServer' { $MicrosoftSqlServer = $true }
-                'MySql' { $MySql = $true }
-                'PostgreSql' { $PostgreSql = $true }
-                'Sqlite' { $Sqlite = $true }
-                'SqliteMemory' { $SqliteMemory = $true }
-            }
-        }
-        $anySqlLayerSpecified = $true
-    }
-    
-    # Build list of SQL layers
-    $sqlLayers = @()
-    if ($AllSqlLayers) {
-        $sqlLayers = @(
-            'MicrosoftSqlServer',
-            'MySql',
-            'PostgreSql',
-            'Sqlite',
-            'SqliteMemory'
-        )
-    } else {
-        if ($MicrosoftSqlServer) { $sqlLayers += 'MicrosoftSqlServer' }
-        if ($MySql) { $sqlLayers += 'MySql' }
-        if ($PostgreSql) { $sqlLayers += 'PostgreSql' }
-        if ($Sqlite) { $sqlLayers += 'Sqlite' }
-        if ($SqliteMemory) { $sqlLayers += 'SqliteMemory' }
-    }
-    
-    # Build list of DI containers
-    $containers = @()
-    if ($AllContainers) {
-        $containers = @(
-            'Microsoft',
-            'Autofac'
-        )
-    } else {
-        if ($Microsoft) { $containers += 'Microsoft' }
-        if ($Autofac) { $containers += 'Autofac' }
-    }
-    
-    # Generate cross join of all combinations
-    $combinations = @()
-    foreach ($sqlLayer in $sqlLayers) {
-        foreach ($container in $containers) {
-            $combinations += "${sqlLayer}:${container}"
-        }
-    }
-    
-    # Build the configuration file content
+
     $header = @"
-#When running tests, all tests that uses dependency injection and persistence will 
+#When running tests, all tests that uses dependency injection and persistence will
 #be executed once for every configured combination of components in this file.
-#Format is PersistenceLayer:DIContainer. Comment out the ones you do not want with #. 
+#Format is SqlLayer:DIContainer:Serializer:Transport. Comment out the ones you do not want with #.
 #Empty/Whitespace lines are ignored
 
 "@
-    
     $content = $header + ($combinations -join "`n") + "`n"
-    
-    # Write to the configuration file(s)
+
     if ($PSCmdlet.ShouldProcess($testConfigPath, "Update pluggable component combinations")) {
         Set-Content -Path $testConfigPath -Value $content -NoNewline
-        
+
         if ($SetAsDefaults) {
             Set-Content -Path $testConfigDefaultsPath -Value $content -NoNewline
             Write-Host "Saved as defaults to:" -ForegroundColor Green
             Write-Host "  $testConfigDefaultsPath" -ForegroundColor Cyan
         }
-        
+
         Write-Host "Updated $testConfigPath with $($combinations.Count) combination(s):" -ForegroundColor Green
-        foreach ($combination in $combinations) {
-            Write-Host "  $combination" -ForegroundColor Cyan
-        }
+        foreach ($combination in $combinations) { Write-Host "  $combination" -ForegroundColor Cyan }
     }
 }

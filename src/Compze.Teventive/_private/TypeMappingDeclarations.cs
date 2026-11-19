@@ -2,6 +2,7 @@ using Compze.Teventive.Taggregates.BaseClasses;
 using Compze.Teventive.Taggregates.Tevents;
 using Compze.Teventive._private;
 using Compze.TypeIdentifiers;
+using Compze.Teventive.Taggregates.Tevents._internal;
 
 [assembly: AssemblyTypeMapper(typeof(AssemblyTypeMapper))]
 
@@ -17,6 +18,9 @@ class AssemblyTypeMapper : IAssemblyTypeMapper
          .Map<ITaggregateDeletedTevent>("bc662519-21b4-41b8-bce6-3714da82b1cc")
          .Map<ITaggregateTevent>("a1503d7d-51c0-4fff-ad3b-c7090f1e4905")
          .Map<IMutableTaggregateTevent>("befc4021-9e9c-4d40-842c-9878ce2c9ee3")
+         .Map<TaggregateTeventWithIdentity>("fc376259-7948-4b1e-9e7d-a4b683d80cba")
+         .Map<ITaggregateTeventWithIdentity>("1e185c92-d22e-4b6b-8b28-6ffe447c0163")
+         .Map<IMutableTaggregateTeventWithIdentity>("3cb61ebc-cedf-4967-993f-91eb59879bc3")
          .MapOpenGeneric(typeof(Taggregate<,,,,>), "e1f2a3b4-c5d6-4e7f-8091-a2b3c4d5e6f7")
          .MapOpenGeneric(typeof(TaggregateTevent<>), "063c6df4-48ec-4860-8c74-d0466a7858c3")
          .MapOpenGeneric(typeof(ITaggregateTevent<>), "9c783976-357f-466b-adaa-42812c3e0a65");

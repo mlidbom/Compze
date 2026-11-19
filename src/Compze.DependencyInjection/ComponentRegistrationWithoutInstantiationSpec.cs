@@ -22,6 +22,7 @@ public abstract class ComponentRegistrationWithoutInstantiationSpec
    internal bool SingletonDependentAllowed { get; private protected set; }
    internal bool ScopedDependentAllowed { get; private protected set; }
    internal bool ShouldDelegateToParentWhenCloning { get; private protected set; }
+   internal IReadOnlyList<Type> DependencyTypesResolvedFromTheRoot { get; private set; } = [];
 
    readonly List<ComponentRegistration> _associatedRegistrations = [];
    readonly List<Func<ComponentRegistration, IEnumerable<ComponentRegistration>>> _createAssociatedRegistrationsWhenBuilt = [];
@@ -35,6 +36,7 @@ public abstract class ComponentRegistrationWithoutInstantiationSpec
 
    internal void AddAssociatedRegistrations(IEnumerable<ComponentRegistration> registrations) => _associatedRegistrations.AddRange(registrations);
    internal void AddAssociatedRegistrationsCreatedWhenBuilt(Func<ComponentRegistration, IEnumerable<ComponentRegistration>> createAssociatedRegistrations) => _createAssociatedRegistrationsWhenBuilt.Add(createAssociatedRegistrations);
+   internal void AddDependencyTypesResolvedFromTheRoot(IEnumerable<Type> serviceTypes) => DependencyTypesResolvedFromTheRoot = [..DependencyTypesResolvedFromTheRoot, ..serviceTypes];
 
    private protected void AttachAssociatedRegistrations(ComponentRegistration builtRegistration)
    {
@@ -70,7 +72,7 @@ public class ComponentRegistrationWithoutInstantiationSpec<TService> : Component
                                                              IsComponentSetMember,
                                                              SingletonDependentAllowed,
                                                              ScopedDependentAllowed,
-                                                             ShouldDelegateToParentWhenCloning);
+                                                             ShouldDelegateToParentWhenCloning) { DependencyTypesResolvedFromTheRoot = DependencyTypesResolvedFromTheRoot };
       AttachAssociatedRegistrations(registration);
       return registration;
    }

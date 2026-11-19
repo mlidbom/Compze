@@ -1,13 +1,17 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <Nullable>enable</Nullable>
-    <Version>0.8.0-internal</Version>
+    <Version>0.9.0-internal</Version>
     <!-- TODO:docs: Remove once all public API members have XML documentation comments -->
     <Description>For Compze internal use only. Do not take a direct dependency on this package.</Description>
     <NoWarn>CS1591</NoWarn>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="JetBrains.Annotations.Sources" Version="2025.2.4" PrivateAssets="all" />
+  </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="Compze.Sql.Common" />
+    <InternalsVisibleTo Include="Compze.Teventive.MemoryImageStateStore" />
   </ItemGroup>
   <!-- Compze.Contracts — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Contracts)' == 'true'">

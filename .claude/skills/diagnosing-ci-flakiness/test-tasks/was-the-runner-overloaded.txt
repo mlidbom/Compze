@@ -1,0 +1,1 @@
+Two MySql jobs in today's CI run took twice as long as usual, and three specifications timed out in them. I think the runners were just overloaded. Should we simply rerun it?

@@ -1,6 +1,7 @@
 using Compze.Tests.Infrastructure;
 using Compze.Must;
 
+using Compze.Teventive;
 using Compze.Teventive.Taggregates.BaseClasses;
 using Compze.Teventive.Taggregates.Tevents;
 using Compze.xUnitBDD;
@@ -88,22 +89,37 @@ public class PublicSettersAndFieldsAreDisallowedTests : UniversalTestBase
 
    class Root : Taggregate<Root, IRootTevent, RootTevent, IRootTevent<IRootTevent>, RootTevent<RootTevent>>
    {
+      ///<summary>Never read: the type validator refuses the class before any instance of it is constructed.</summary>
+      protected override TeventRouting TeventAppliers => null!;
+
       public class AggComponent(Root parent) : Root.Component<AggComponent, IRootTevent.Component, RootTevent.Component>(parent)
       {
+         ///<summary>Never read: the type validator refuses the class before any instance of it is constructed.</summary>
+         protected override TeventRouting TeventAppliers => null!;
+
          public string Public { get; set; } = string.Empty;
 
          public class NestedAggComponent(AggComponent parent) : AggComponent.Component<NestedAggComponent, RootTevent.Component.NestedComponent, IRootTevent.Component.NestedComponent>(parent)
          {
+            ///<summary>Never read: the type validator refuses the class before any instance of it is constructed.</summary>
+            protected override TeventRouting TeventAppliers => null!;
+
             public string Public { get; set; } = string.Empty;
          }
       }
 
       public class AggEntity(Root taggregate) : Root.Entity<AggEntity, Guid, IRootTevent.Entity, RootTevent.Entity, IRootTevent.Entity, RootTevent.Entity.GetterSetter>(taggregate)
       {
+         ///<summary>Never read: the type validator refuses the class before any instance of it is constructed.</summary>
+         protected override TeventRouting TeventAppliers => null!;
+
          public string Public { get; set; } = string.Empty;
 
          public class EntNestedComp(AggEntity parent) : AggEntity.Component<EntNestedComp, RootTevent.Entity.Component, IRootTevent.Entity.Component>(parent)
          {
+            ///<summary>Never read: the type validator refuses the class before any instance of it is constructed.</summary>
+            protected override TeventRouting TeventAppliers => null!;
+
             public string Public2 { get; set; } = string.Empty;
          }
       }

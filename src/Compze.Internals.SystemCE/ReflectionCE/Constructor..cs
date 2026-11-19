@@ -29,6 +29,9 @@ public static partial class Constructor
       //Per instance, NOT static: each instance compiles constructors for its own generic type, so a shared cache keyed only by argument type would hand one generic type's constructor to another.
       readonly ConcurrentDictionary<Type, Func<object, object>> _argumentTypeConstructorCache = new();
 
+      //urgent: The lambda passed to GetOrAdd captures argumentType, so every call allocates a closure, about 90 B, even when
+      //   the constructor is already cached. PublisherTevent.WrapIn calls this for every tevent a taggregate publishes or loads.
+      //   Look the cache up with TryGetValue first, and call GetOrAdd only on a miss (Magnus, 2026-11-16).
       public Func<object, object> WithArgument(Type argumentType) =>
          _argumentTypeConstructorCache.GetOrAdd(argumentType,
                         _ => Compile.ForGenericType(_genericType).WithArgument(argumentType)

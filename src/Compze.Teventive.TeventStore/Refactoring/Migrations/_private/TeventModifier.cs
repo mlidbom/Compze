@@ -4,6 +4,7 @@ using Compze.Internals.SystemCE.LinqCE;
 using Compze.Teventive.Taggregates.Tevents;
 using Compze.Teventive.TeventStore.Abstractions._internal.SqlLayer.Abstractions;
 using Compze.Teventive.TeventStore.Abstractions.Refactoring.Migrations;
+using Compze.Teventive.Taggregates.Tevents._internal;
 
 #pragma warning disable CS0618 // Type or member is obsolete
 
@@ -17,23 +18,23 @@ namespace Compze.Teventive.TeventStore.Refactoring.Migrations._private;
 //Performance: Consider whether using the new stackalloc and Range types might allow us to improve performance of migrations.
 class TeventModifier(Action<IReadOnlyList<TeventModifier.RefactoredTevent>> teventsAddedCallback) : ITeventModifier
 {
-   internal class RefactoredTevent(ITaggregateTevent<ITaggregateTevent> newWrappedTevent, TaggregateTeventStorageInformation storageInformation)
+   internal class RefactoredTevent(ITaggregateTevent<ITaggregateTeventWithIdentity> newWrappedTevent, TaggregateTeventStorageInformation storageInformation)
    {
-      internal ITaggregateTevent<ITaggregateTevent> NewWrappedTevent { get; private set; } = newWrappedTevent;
+      internal ITaggregateTevent<ITaggregateTeventWithIdentity> NewWrappedTevent { get; private set; } = newWrappedTevent;
       internal TaggregateTeventStorageInformation StorageInformation { get; private set; } = storageInformation;
    }
 
    readonly Action<IReadOnlyList<RefactoredTevent>> _teventsAddedCallback = teventsAddedCallback;
-   internal LinkedList<ITaggregateTevent<ITaggregateTevent>>? WrappedTevents;
+   internal LinkedList<ITaggregateTevent<ITaggregateTeventWithIdentity>>? WrappedTevents;
    RefactoredTevent[]? _replacementTevents;
    RefactoredTevent[]? _insertedTevents;
 
-   ITaggregateTevent<ITaggregateTevent>? _inspectedWrappedTevent;
+   ITaggregateTevent<ITaggregateTeventWithIdentity>? _inspectedWrappedTevent;
 
-   LinkedListNode<ITaggregateTevent<ITaggregateTevent>>? _currentNode;
-   ITaggregateTevent<ITaggregateTevent>? _lastWrappedTeventInActualStream;
+   LinkedListNode<ITaggregateTevent<ITaggregateTeventWithIdentity>>? _currentNode;
+   ITaggregateTevent<ITaggregateTeventWithIdentity>? _lastWrappedTeventInActualStream;
 
-   LinkedListNode<ITaggregateTevent<ITaggregateTevent>> CurrentNode
+   LinkedListNode<ITaggregateTevent<ITaggregateTeventWithIdentity>> CurrentNode
    {
       get
       {
@@ -60,7 +61,7 @@ class TeventModifier(Action<IReadOnlyList<TeventModifier.RefactoredTevent>> teve
 
    }
 
-   public void Replace(params ITaggregateTevent<ITaggregateTevent>[] wrappedTevents)
+   public void Replace(params ITaggregateTevent<ITaggregateTeventWithIdentity>[] wrappedTevents)
    {
       AssertNoPriorModificationsHaveBeenMade();
       if(_inspectedWrappedTevent?.Tevent is EndOfTaggregateHistoryTeventPlaceHolder)
@@ -89,7 +90,7 @@ class TeventModifier(Action<IReadOnlyList<TeventModifier.RefactoredTevent>> teve
       _teventsAddedCallback.Invoke(_replacementTevents);
    }
 
-   public void Reset(ITaggregateTevent<ITaggregateTevent> wrappedTevent)
+   public void Reset(ITaggregateTevent<ITaggregateTeventWithIdentity> wrappedTevent)
    {
       if(wrappedTevent.Tevent is EndOfTaggregateHistoryTeventPlaceHolder && _inspectedWrappedTevent?.Tevent is not EndOfTaggregateHistoryTeventPlaceHolder)
       {
@@ -102,7 +103,7 @@ class TeventModifier(Action<IReadOnlyList<TeventModifier.RefactoredTevent>> teve
       _replacementTevents = null;
    }
 
-   public void MoveTo(LinkedListNode<ITaggregateTevent<ITaggregateTevent>> current)
+   public void MoveTo(LinkedListNode<ITaggregateTevent<ITaggregateTeventWithIdentity>> current)
    {
       if (current.Value.Tevent is EndOfTaggregateHistoryTeventPlaceHolder && _inspectedWrappedTevent?.Tevent is not EndOfTaggregateHistoryTeventPlaceHolder)
       {
@@ -113,7 +114,7 @@ class TeventModifier(Action<IReadOnlyList<TeventModifier.RefactoredTevent>> teve
       _replacementTevents = null;
    }
 
-   public void InsertBefore(params ITaggregateTevent<ITaggregateTevent>[] insert)
+   public void InsertBefore(params ITaggregateTevent<ITaggregateTeventWithIdentity>[] insert)
    {
       AssertNoPriorModificationsHaveBeenMade();
 
@@ -156,6 +157,6 @@ class TeventModifier(Action<IReadOnlyList<TeventModifier.RefactoredTevent>> teve
     }
 
 #pragma warning disable CA1819 // Array property needed for migration tevent history
-    public ITaggregateTevent<ITaggregateTevent>[] MutatedHistory => WrappedTevents?.ToArray() ?? [_inspectedWrappedTevent._assert().NotNull()];
+    public ITaggregateTevent<ITaggregateTeventWithIdentity>[] MutatedHistory => WrappedTevents?.ToArray() ?? [_inspectedWrappedTevent._assert().NotNull()];
 #pragma warning restore CA1819
 }

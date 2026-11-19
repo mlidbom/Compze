@@ -7,7 +7,8 @@ function C-Filter-TestOutput {
     .DESCRIPTION
     Helper function to filter out unwanted VSTest messages from test output,
     making test results more readable. This includes version information,
-    startup messages, and skipped test notifications.
+    startup messages, skipped test notifications, and, for a run with a filter, the line for each test assembly
+    with no test that matches it.
     
     .PARAMETER InputObject
     The test output line to filter
@@ -32,8 +33,10 @@ function C-Filter-TestOutput {
             $line -notmatch '^Starting test execution, please wait\.\.\.' -and
             $line -notmatch '^A total of \d+ test files matched the specified pattern\.' -and
             $line -notmatch '^Test run for .+\.dll \(\.NETCoreApp,Version=' -and
+            $line -notmatch '^Results File: .+\.trx$' -and
             $line -notmatch '^\s+Skipped .+\[\d+\s+\w+\]' -and
-            $line -notmatch '^\[xUnit\.net \d+:\d+:\d+\.\d+\]\s+.+\[SKIP\]'
+            $line -notmatch '^\[xUnit\.net \d+:\d+:\d+\.\d+\]\s+.+\[SKIP\]' -and
+            $line -notmatch '^No test matches the given testcase filter '
         
         if ($shouldDisplay) {
             $InputObject

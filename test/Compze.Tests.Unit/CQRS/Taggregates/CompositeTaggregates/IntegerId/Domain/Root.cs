@@ -1,4 +1,5 @@
 using Compze.Abstractions;
+using Compze.Teventive;
 using Compze.Teventive.Taggregates.BaseClasses;
 using JetBrains.Annotations;
 
@@ -6,6 +7,13 @@ namespace Compze.Tests.Unit.CQRS.Taggregates.CompositeTaggregates.IntegerId.Doma
 
 class Root : Taggregate<Root, IRootTevent, RootTevent, IRootTevent<IRootTevent>, RootTevent<RootTevent>>
 {
+   static readonly TeventRouting<Root, IRootTevent> Appliers = DeclareAppliers(it => it
+     .Component(static root => root.Component)
+     .Entities(static root => root._entities)
+     .For<IRootTevent.PropertyUpdated.Name>(static (root, tevent) => root.Name = tevent.Name));
+
+   protected override TeventRouting TeventAppliers => Appliers;
+
    static int _instances;
    public string Name { get; private set; } = string.Empty;
    readonly RemovableEntity.ICollectionManager _entities;
@@ -16,9 +24,6 @@ class Root : Taggregate<Root, IRootTevent, RootTevent, IRootTevent<IRootTevent>,
       Component = new Component(this);
       _entities = RemovableEntity.CreateSelfManagingCollection(this);
 
-      RegisterTeventAppliers()
-        .For<IRootTevent.PropertyUpdated.Name>(e => Name = e.Name);
-
       Publish(new RootTevent.Created(new TaggregateId(), name));
    }
 
@@ -28,16 +33,16 @@ class Root : Taggregate<Root, IRootTevent, RootTevent, IRootTevent<IRootTevent>,
 
 class Component : Root.Component<Component, IRootTevent.Component, RootTevent.Component>
 {
+   static readonly TeventRouting<Component, IRootTevent.Component> Appliers = DeclareAppliers(it => it
+     .Entities(static component => component._entities)
+     .For<IRootTevent.Component.PropertyUpdated.Name>(static (component, tevent) => component.Name = tevent.Name));
+
+   protected override TeventRouting TeventAppliers => Appliers;
+
    static int _instances;
    public string? Name { get; private set; } = string.Empty;
 
-   public Component(Root parent): base(parent)
-   {
-       _entities = Entity.CreateSelfManagingCollection(this);
-
-       RegisterTeventAppliers()
-          .For<IRootTevent.Component.PropertyUpdated.Name>(e => Name = e.Name);
-   }
+   public Component(Root parent): base(parent) => _entities = Entity.CreateSelfManagingCollection(this);
 
    public IReadOnlyEntityCollection<Entity, int> Entities => _entities.Entities;
    readonly Entity.ICollectionManager _entities;
@@ -55,12 +60,13 @@ class Component : Root.Component<Component, IRootTevent.Component, RootTevent.Co
       IRootTevent.Component.Entity.Removed,
       RootTevent.Component.Entity.IdGetterSetter>
    {
+      static readonly TeventRouting<Entity, IRootTevent.Component.Entity> EntityAppliers = DeclareAppliers(it => it
+        .For<IRootTevent.Component.Entity.PropertyUpdated.Name>(static (entity, tevent) => entity.Name = tevent.Name));
+
+      protected override TeventRouting TeventAppliers => EntityAppliers;
+
       public string Name { get; private set; } = string.Empty;
-      public Entity(Component parent) : base(parent)
-      {
-         RegisterTeventAppliers()
-           .For<IRootTevent.Component.Entity.PropertyUpdated.Name>(e => Name = e.Name);
-      }
+      public Entity(Component parent) : base(parent) {}
 
       public void Rename(string name) => Publish(new RootTevent.Component.Entity.Renamed(name));
       public void Remove() => Publish(new RootTevent.Component.Entity.Removed());
@@ -77,14 +83,15 @@ class Component : Root.Component<Component, IRootTevent.Component, RootTevent.Co
    IRootTevent.Entity.Removed,
    RootTevent.Entity.IdGetterSetter>
 {
+   static readonly TeventRouting<RemovableEntity, IRootTevent.Entity> Appliers = DeclareAppliers(it => it
+     .Entities(static entity => entity._entities)
+     .For<IRootTevent.Entity.PropertyUpdated.Name>(static (entity, tevent) => entity.Name = tevent.Name));
+
+   protected override TeventRouting TeventAppliers => Appliers;
+
    static int _instances;
    public string Name { get; private set; } = string.Empty;
-   public RemovableEntity(Root root) : base(root)
-   {
-      _entities = RemovableNestedEntity.CreateSelfManagingCollection(this);
-      RegisterTeventAppliers()
-        .For<IRootTevent.Entity.PropertyUpdated.Name>(e => Name = e.Name);
-   }
+   public RemovableEntity(Root root) : base(root) => _entities = RemovableNestedEntity.CreateSelfManagingCollection(this);
 
    public IReadOnlyEntityCollection<RemovableNestedEntity, int> Entities => _entities.Entities;
    readonly RemovableNestedEntity.ICollectionManager _entities;
@@ -103,12 +110,13 @@ class Component : Root.Component<Component, IRootTevent.Component, RootTevent.Co
       IRootTevent.Entity.NestedEntity.Removed,
       RootTevent.Entity.NestedEntity.IdGetterSetter>
    {
+      static readonly TeventRouting<RemovableNestedEntity, IRootTevent.Entity.NestedEntity> NestedEntityAppliers = DeclareAppliers(it => it
+        .For<IRootTevent.Entity.NestedEntity.PropertyUpdated.Name>(static (entity, tevent) => entity.Name = tevent.Name));
+
+      protected override TeventRouting TeventAppliers => NestedEntityAppliers;
+
       public string Name { get; private set; } = string.Empty;
-      public RemovableNestedEntity(RemovableEntity removableEntity) : base(removableEntity)
-      {
-         RegisterTeventAppliers()
-           .For<IRootTevent.Entity.NestedEntity.PropertyUpdated.Name>(e => Name = e.Name);
-      }
+      public RemovableNestedEntity(RemovableEntity removableEntity) : base(removableEntity) {}
 
       public void Rename(string name) => Publish(new RootTevent.Entity.NestedEntity.Renamed(name: name));
       public void Remove() => Publish(new RootTevent.Entity.NestedEntity.Removed());

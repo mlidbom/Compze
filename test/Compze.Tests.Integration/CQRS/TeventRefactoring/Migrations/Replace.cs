@@ -20,7 +20,7 @@ class Replace<TTevent> : TeventMigration<ITestTaggregateTevent>
    {
       readonly IEnumerable<Type> _replaceWith = replaceWith;
 
-      public void MigrateTevent(ITaggregateTevent<ITaggregateTevent> wrappedTevent, ITeventModifier modifier)
+      public void MigrateTevent(ITaggregateTevent<ITaggregateTeventWithIdentity> wrappedTevent, ITeventModifier modifier)
       {
          if (wrappedTevent.Tevent.GetType() == typeof(TTevent))
          {

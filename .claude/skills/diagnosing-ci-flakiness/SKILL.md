@@ -1,0 +1,62 @@
+---
+name: diagnosing-ci-flakiness
+description: >-
+  How to find the cause of a test that flakes or fails in CI: reading the load summary and the thread pool state a CI
+  run records, what a healthy runner measures, the fingerprint of thread-pool starvation, hunting a flake that won't
+  reproduce locally with the flake-hunt workflow, and reading the dumps and the PostgreSQL log in the job log. Use it
+  when a CI run fails, or a test times out, runs slowly or fails only sometimes, on the runner or locally: before
+  concluding anything about the runner's load, and before rerunning CI to get it green.
+---
+
+# Diagnosing CI flakiness: read what the run recorded, then hunt the flake in CI
+
+A CI test that flakes has a cause in the code, and the runner being overloaded is the last hypothesis: the
+always-loaded rule on diagnosing CI flakiness says why. This is how to find the cause.
+
+The evidence is already captured — read it before theorising. The CI `Build and Test` step
+(`.github/actions/build-and-test/action.yml`) prints a `vmstat` load summary every run, pass or fail:
+peak/avg run-queue (`r`), min idle CPU%, iowait, and the busiest samples — judge them against the printed
+`logical CPUs`. Separately, `NamedPipeTransportClient` puts the ThreadPool state (free workers, pending
+items) into the exception when a connect times out. Saturated looks like run-queue far above the CPU count
+with idle near 0, sustained; healthy looks like run-queue near/below it with idle to spare.
+
+Measured baseline, 2026-11-14: the 35 Linux test jobs of three green runs, each job testing four combinations on
+**4 logical CPUs**.
+
+- **Over the whole test run, idle averaged 38–78% and the run-queue 1.2–5.1.** MySql jobs are the busiest (idle
+  38–60%), SqliteMemory jobs the calmest (62–78%).
+- **Every green job has busy seconds too:** idle touches 0–8% in each, the run-queue peaks at 11–26, and at least ten
+  of a job's 240–430 seconds have a run-queue of 7 or more. So the peak and the minimum tell nothing by themselves.
+
+Judge by the averages, and by how long the busy stretch lasted. With that much idle on average, a 10-second timeout
+is something waiting on an event that isn't arriving, a code or DB cause — not the machine. The box takes ~1.5× a
+dev machine's time on pure-CPU work, by an earlier measurement. (`COMPOSABLE_MACHINE_SLOWNESS=5.0` is conservative
+padding for perf-test thresholds only, not a measurement of the box.)
+
+A second fingerprint the instruments catch: ThreadPool **pending work draining at ~1 item/second while live
+threads climb by ~1/second** is thread-pool starvation from *blocking* code — the machine is fine; the process
+is strangling itself, because the pool injects threads that slowly once its minimum is busy. Async code must
+never block a pool thread. The 2026-07 case: Windows' named-pipe connect is synchronous under the hood and ran
+per-send; fixed by the transport's connection pooling. Reproduce such cases locally with
+`DOTNET_PROCESSOR_COUNT=4` — small-machine starvation is invisible on a many-core dev box.
+
+That local reproduction can fail where CI's succeeds: the 2026-11-12 case reproduced in none of ~200 local runs,
+`DOTNET_PROCESSOR_COUNT=1` included, and in 11% of Linux CI runs. When a flake won't reproduce locally, hunt it in CI
+rather than theorise further:
+
+- **The flake-hunt workflow** (`.github/workflows/flake-hunt.yml`): push a branch named `flake-hunt/<what>` with the
+  workflow's combination and test project set, and one push runs that project 20 times on each of 8 Linux runners,
+  each run from a fresh runner's state. `ci.yml` skips such branches.
+- **Make a test's own timeout leave a dump:** `WaitAsyncDumpingTheProcessOnTimeout` (Compze.Tests.Infrastructure)
+  dumps the process while the awaited work is still stuck, and names the thread pool's state in the exception.
+- **Read the dumps in the job log,** not the artifact: on failure CI prints each dump's thread pool, threads,
+  pending awaits (`dumpasync` — where a stuck async operation is suspended) and stacks. Pool workers all parked
+  in blocking waits, work items queued and the CPU idle is starvation; the parked frames name the culprits.
+  `dumpasync` sees only code compiled with the compiler's state machines, and Compze is compiled with runtime async
+  since .NET 11 (dotnet-dump 10.0.750501, 2026-11-14): a flake hunt that needs it sets `RUNTIME_ASYNC` to `false`.
+- **PostgreSQL logs lock waits and statements over a second** in CI; its container log is printed when the job
+  ends. A timeout with nothing logged there was not waiting in the database.
+
+The 2026-11-12 case: an endpoint's router parked a pool thread in its registry wait for the endpoint's whole life,
+and the PostgreSQL sql layers prepared statements synchronously from async code; on a 4-processor runner the
+pool's 4–5 threads were all parked and a recording hung in a synchronous socket read for over 10 seconds.

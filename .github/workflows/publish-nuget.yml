@@ -1,4 +1,6 @@
 # Create Releases: publishes every package whose version has no release tag yet to nuget.org, with its GitHub release and tag.
+# It refuses when a package that it doesn't release has shipped files that changed since its release tag, unless the changes
+# are acknowledged in .github/scripts/AcknowledgedUnreleasedChanges.txt (.github/scripts/lib/UnreleasedChanges.ps1).
 #
 # Run it by hand, and only after the CI workflow (ci.yml) has passed on what this commit has. The Build and Test step below
 # runs only the combinations in src/TestUsingPluggableComponentCombinations.github-ci - three, all SqliteMemory, on Linux -

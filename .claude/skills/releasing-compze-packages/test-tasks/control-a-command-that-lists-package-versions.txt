@@ -1,0 +1,1 @@
+Add a DevScripts command, C-Get-PackageVersions, that lists each packable project with the version in its project file. Go ahead.

@@ -43,12 +43,14 @@ public static class CombinedTestingContainers
 
    public const string TeventStoreConnectionStringName = "Fake_connectionstring_for_database_testing";
 
-   public static IDependencyInjectionContainer SetupTestingContainer(this DIContainer @this, Action<IComponentRegistrar> declareRequiredDomainTypeMappings, [InstantHandle] Action<IComponentRegistrar>? configureContainer = null, Action<LocalTessagingEngineBuilder>? composeEngine = null) =>
+   ///<summary>A container with a document db, a tevent store keeping the classes <paramref name="declareTeventStoreTaggregates"/> declares, and a<br/>
+   /// LocalTessagingEngine, on the current test's pluggable components.</summary>
+   public static IDependencyInjectionContainer SetupTestingContainer(this DIContainer @this, Action<IComponentRegistrar> declareRequiredDomainTypeMappings, [InstantHandle] Action<IComponentRegistrar>? configureContainer = null, Action<LocalTessagingEngineBuilder>? composeEngine = null, Action<TeventStoreBuilder>? declareTeventStoreTaggregates = null) =>
       CompzeLogger.For(typeof(CombinedTestingContainers)).ExceptionsAndRethrow(() =>
                                                                               @this.CreateContainerForTesting(declareRequiredDomainTypeMappings, register =>
                                                                               {
                                                                                  register.DocumentDb();
-                                                                                 register.TeventStore(TeventStoreConnectionStringName);
+                                                                                 register.TeventStore(TeventStoreConnectionStringName, declareTeventStoreTaggregates);
                                                                                  configureContainer?.Invoke(register);
                                                                               }, composeEngine));
 }

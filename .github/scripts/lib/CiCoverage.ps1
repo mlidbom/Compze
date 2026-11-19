@@ -18,13 +18,13 @@
 $FilesCiDoesNotTest = @(
     '*.md'               # Documentation. A package's README.md and CHANGELOG.md are read when it is packed, and CI packs nothing.
     '.claude/*'          # Claude's rules, skills and settings.
-    '.claude-shared'     # The pin of the catalog they are shared through, which is a submodule.
     'DevScripts/*.ps1'   # The DevScripts commands, none of which CI runs. The project file beside them is in the solution, so it is tested.
     'DevScripts/*.psm1'
     '.idea/*'            # The settings of editors and other development tools.
     '.vscode/*'
     '.serena/*'
     '.mcp.json'
+    '.github/scripts/AcknowledgedUnreleasedChanges.txt'  # Read only by the release scripts, never by the build or the tests.
     '*.DotSettings'
     '*.ncrunchsolution'
     '*.ncrunchproject'

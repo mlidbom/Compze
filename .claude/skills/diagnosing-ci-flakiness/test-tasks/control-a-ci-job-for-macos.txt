@@ -1,0 +1,1 @@
+Add a job to ci.yml that runs the Sqlite combinations on macOS too. Go ahead.

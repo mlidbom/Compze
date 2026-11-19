@@ -19,6 +19,12 @@ namespace Compze.Threading.Specifications.IMutex_;
 [Collection(nameof(NonParallelCollection))]
 public class MutexCE_specification : UniversalTestBase
 {
+   ///<summary>The mutex name for a specification that takes the lock, made unique to this test process. Global names are<br/>
+   /// machine-wide and Local ones are shared by the whole logon session, so with a fixed name the same specification running<br/>
+   /// in another checkout at the same moment would contend for the same mutex.<br/>
+   /// review-naming: UniqueToThisProcess is my choice (compze-performance-rep, 2026-11-18).</summary>
+   static string UniqueToThisProcess(string name) => $"{name}.P{Environment.ProcessId}";
+
    public class Global : MutexCE_specification
    {
       [XF] public void throws_ArgumentException_when_name_contains_backslash() =>
@@ -96,7 +102,7 @@ public class MutexCE_specification : UniversalTestBase
       [XF] public void does_not_invoke_callback_when_mutex_is_not_abandoned()
       {
          var callbackInvoked = false;
-         using var mutex = IMutex.Global("MutexCE_specification.onAbandoned.not_invoked", onAbandonedMutex: () => callbackInvoked = true);
+         using var mutex = IMutex.Global(UniqueToThisProcess("MutexCE_specification.onAbandoned.not_invoked"), onAbandonedMutex: () => callbackInvoked = true);
          mutex.Locked(() => 0);
          callbackInvoked.Must().BeFalse();
       }
@@ -104,7 +110,7 @@ public class MutexCE_specification : UniversalTestBase
       [XF] public void invokes_callback_when_acquiring_an_abandoned_mutex()
       {
          var callbackInvoked = false;
-         using var mutex = IMutex.Global("MutexCE_specification.onAbandoned.invoked", onAbandonedMutex: () => callbackInvoked = true);
+         using var mutex = IMutex.Global(UniqueToThisProcess("MutexCE_specification.onAbandoned.invoked"), onAbandonedMutex: () => callbackInvoked = true);
 
          mutex.Abandon();
          mutex.TakeLock().Dispose();
@@ -114,7 +120,7 @@ public class MutexCE_specification : UniversalTestBase
 
       [XF] public void acquires_the_lock_successfully_after_abandonment()
       {
-         using var mutex = IMutex.Global("MutexCE_specification.onAbandoned.acquires_lock");
+         using var mutex = IMutex.Global(UniqueToThisProcess("MutexCE_specification.onAbandoned.acquires_lock"));
 
          mutex.Abandon();
 
@@ -126,7 +132,7 @@ public class MutexCE_specification : UniversalTestBase
       [XF] public void invokes_callback_when_mutex_is_abandoned_while_waiting_for_it()
       {
          var callbackInvoked = false;
-         using var mutex = IMutex.Global("MutexCE_specification.onAbandoned.invoked_while_waiting", onAbandonedMutex: () => callbackInvoked = true);
+         using var mutex = IMutex.Global(UniqueToThisProcess("MutexCE_specification.onAbandoned.invoked_while_waiting"), onAbandonedMutex: () => callbackInvoked = true);
 
          var triggerAbandonment = mutex.HoldLockUntilAbandoned();
 
@@ -146,7 +152,7 @@ public class MutexCE_specification : UniversalTestBase
    {
       [XF] public void returns_a_lock_immediately_when_the_mutex_is_free()
       {
-         using var mutex = IMutex.Global("MutexCE_specification.TryTakeLock.free");
+         using var mutex = IMutex.Global(UniqueToThisProcess("MutexCE_specification.TryTakeLock.free"));
          var lockHandle = mutex.TryTakeLock(LockTimeout.Zero);
          lockHandle.Must().NotBeNull();
          lockHandle!.Dispose();
@@ -154,7 +160,7 @@ public class MutexCE_specification : UniversalTestBase
 
       [XF] public void returns_null_immediately_while_another_instance_holds_the_mutex_and_a_lock_once_it_is_released()
       {
-         const string name = "MutexCE_specification.TryTakeLock.held";
+         var name = UniqueToThisProcess("MutexCE_specification.TryTakeLock.held");
          using var holdingMutex = IMutex.Global(name);
          using var tryingMutex = IMutex.Global(name);
 
@@ -194,7 +200,7 @@ public class MutexCE_specification : UniversalTestBase
    {
       [XF] public void synchronize_with_each_other()
       {
-         const string name = "MutexCE_specification.SameName.synchronize";
+         var name = UniqueToThisProcess("MutexCE_specification.SameName.synchronize");
          using var mutex1 = IMutex.Global(name);
          using var mutex2 = IMutex.Global(name);
 
@@ -220,7 +226,7 @@ public class MutexCE_specification : UniversalTestBase
    {
       [XF] public void synchronize_with_each_other()
       {
-         const string name = "MutexCE_specification.SameName.Local.synchronize";
+         var name = UniqueToThisProcess("MutexCE_specification.SameName.Local.synchronize");
          using var mutex1 = IMutex.Local(name);
          using var mutex2 = IMutex.Local(name);
 

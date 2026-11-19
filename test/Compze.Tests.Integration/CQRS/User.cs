@@ -1,7 +1,8 @@
 using Compze.Abstractions;
+using Compze.Teventive;
 using Compze.Teventive.Taggregates.BaseClasses;
 using Compze.Teventive.Taggregates.Tevents;
-using Compze.Teventive.TeventStore.Abstractions;
+using Compze.Teventive.TaggregateStores;
 using JetBrains.Annotations;
 
 namespace Compze.Tests.Integration.CQRS;
@@ -9,44 +10,46 @@ namespace Compze.Tests.Integration.CQRS;
 
 class User : Taggregate<User, IUserTevent, UserTevent, IUserTevent<IUserTevent>, UserTevent<UserTevent>>
 {
+   static readonly TeventRouting<User, IUserTevent> Appliers = DeclareAppliers(it => it
+     .For<IUserRegistered>(static (user, tevent) =>
+      {
+         user.Email = tevent.Email;
+         user.Password = tevent.Password;
+      })
+     .For<IUserChangedEmail>(static (user, tevent) => user.Email = tevent.Email)
+     .For<IMigratedBeforeUserRegisteredTevent>(static (_, _) => {})
+     .For<IMigratedAfterUserChangedEmailTevent>(static (_, _) => {})
+     .For<IMigratedReplaceUserChangedPasswordTevent>(static (_, _) => {})
+     .For<IUserChangedPassword>(static (user, tevent) => user.Password = tevent.Password)
+     .For<IUserDeleted>(static (_, _) => {}));
+
+   protected override TeventRouting TeventAppliers => Appliers;
+
    public string Email { get; private set; } = "";
    public string Password { get; private set; } = "";
 
-   public User()
-   {
-      RegisterTeventAppliers()
-        .For<IUserRegistered>(e =>
-         {
-            Email = e.Email;
-            Password = e.Password;
-         })
-        .For<IUserChangedEmail>(e => Email = e.Email)
-        .For<IMigratedBeforeUserRegisteredTevent>(_ => {})
-        .For<IMigratedAfterUserChangedEmailTevent>(_ => {})
-        .For<IMigratedReplaceUserChangedPasswordTevent>(_ => {})
-        .For<IUserChangedPassword>(e => Password = e.Password);
-   }
-
    public void Register(string email, string password, TaggregateId id) => Publish(new UserRegistered(id, email, password));
 
-   public static User Register(ITeventStoreUpdater taggregates, string email, string password, TaggregateId id)
+   public static User Register(ITaggregateStoreUpdater taggregates, string email, string password, TaggregateId id)
    {
       var user = new User();
       user.Register(email, password, id);
-      taggregates.Save(user);
+      taggregates.Add(user);
       return user;
    }
 
    public void ChangePassword(string password) => Publish(new UserChangedPassword(password));
 
    public void ChangeEmail(string email) => Publish(new UserChangedEmail(email));
+
+   public void Delete() => Publish(new UserDeleted());
 }
 
 interface IUserTevent<out T> : ITaggregateTevent<T> where T : IUserTevent;
-interface IUserTevent : ITaggregateTevent;
+interface IUserTevent : ITaggregateTeventWithIdentity;
 
 class UserTevent<T>(T tevent) : TaggregateTevent<T>(tevent), IUserTevent<T> where T : IUserTevent;
-abstract class UserTevent : TaggregateTevent, IUserTevent
+abstract class UserTevent : TaggregateTeventWithIdentity, IUserTevent
 {
    protected UserTevent() {}
    protected UserTevent(TaggregateId taggregateId) : base(taggregateId) {}
@@ -82,6 +85,10 @@ class UserRegistered(TaggregateId userId, string email, string password) : UserT
    public string Email { get; private set; } = email;
    public string Password { get; private set; } = password;
 }
+
+interface IUserDeleted : IUserTevent, ITaggregateDeletedTevent;
+
+class UserDeleted : UserTevent, IUserDeleted;
 
 #pragma warning disable CA1812
 interface IMigratedBeforeUserRegisteredTevent : IUserTevent, ITaggregateCreatedTevent;

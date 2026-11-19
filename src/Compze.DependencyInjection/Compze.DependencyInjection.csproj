@@ -1,12 +1,16 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <Nullable>enable</Nullable>
-    <Version>0.9.0-alpha</Version>
+    <Version>0.10.0-alpha</Version>
     <!-- TODO:docs: Remove once all public API members have XML documentation comments -->
     <NoWarn>CS1591</NoWarn>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="JetBrains.Annotations.Sources" Version="2025.2.4" PrivateAssets="all" />
+  </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="Compze.Teventive" />
+    <InternalsVisibleTo Include="Compze.Teventive.MemoryImageStateStore" />
   </ItemGroup>
   <!-- Compze.Contracts — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Contracts)' == 'true'">

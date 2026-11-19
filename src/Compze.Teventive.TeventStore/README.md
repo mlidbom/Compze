@@ -11,7 +11,7 @@ Compze is a .NET framework for building expressive domains through **Teventive p
 This package provides the tevent store that powers Compze's teventive (type-routed event) programming model:
 
 - **Tevent persistence** — `TeventStore` for storing and retrieving taggregate tevent streams
-- **Taggregate updates** — `TeventStoreUpdater` for transactional taggregate modifications
+- **Taggregate updates** — through Compze.Teventive's `ITaggregateStoreUpdater`, one for each unit of work, which serves every taggregate store of a container; the store declares the taggregate classes it keeps
 - **Tevent caching** — `ITeventCache` for in-memory tevent stream caching
 - **Query model generation** — Self-generating query models that automatically stay in sync with tevent streams
 - **Tevent migration** — Support for tevent schema evolution and migration
@@ -22,12 +22,14 @@ This package provides the tevent store that powers Compze's teventive (type-rout
 Tevents use the .NET type system to declare their meaning:
 
 ```csharp
-interface IUserTevent : ITaggregateTevent;
+interface IUserTevent : ITaggregateTeventWithIdentity;
 interface IUserRegistered : IUserTevent, ITaggregateCreatedTevent;
 interface IUserImported : IUserRegistered;
 ```
 
 The tevent store routes and stores these tevents based on type compatibility, enabling expressive domain modeling without manual routing.
+
+A tevent store keeps a taggregate's tevents by their identity, so their root interface declares `ITaggregateTeventWithIdentity`, and it keeps only the taggregate classes declared for it, where it's composed: `TeventStore(connectionName, store => store.Taggregate<User>())`. The tevents are published within the process only, unless their root interface also declares a delivery guarantee, such as `IExactlyOnceTevent`, for other processes to receive them.
 
 ## Installation
 
