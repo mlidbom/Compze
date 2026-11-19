@@ -57,3 +57,7 @@ repomix*.xml
 **/.idea/claudeCodeTabState.xml
 /.claude/scheduled_tasks.lock
 **_NCrunchResults/
+
+# The shared Claude config: a git worktree of the machine's one clone of it, ~/.claude/.claude-shared, which the
+# SessionStart hook makes and keeps up to date
+/.claude-shared
