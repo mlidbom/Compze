@@ -20,7 +20,7 @@ function C-Verify-ClaudeConfigSymlinks {
 
     $verifier = Join-Path $script:CompzeRoot ".claude-shared\git-scripts\verify-claude-symlinks.ps1"
     if (-not (Test-Path $verifier)) {
-        throw "This checkout has no .claude-shared, so the shared Claude rules and skills are missing. Start a Claude Code session in it, or run: sh .claude/verify-shared-claude-config.sessionstart-hook.sh"
+        throw "This checkout has no .claude-shared, so the shared Claude rules and skills are missing. Start a Claude Code session in it, or run: sh .claude/attach-shared-claude-config.sessionstart-hook.sh"
     }
     & $verifier
 }

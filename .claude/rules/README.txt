@@ -18,7 +18,7 @@ and the link folder's name becomes the skill's name, so the prefix marks shared 
 at invocation; see the catalog README. Compze's own skills are regular folders beside the links, without the
 prefix, such as `releasing-compze-packages`.) If the links look wrong, run
 `.claude-shared/git-scripts/verify-claude-symlinks.ps1` — `C-Build` also runs it automatically. If `.claude-shared/` is
-missing, the next session start makes it, or run `sh .claude/verify-shared-claude-config.sessionstart-hook.sh`.
+missing, the next session start makes it, or run `sh .claude/attach-shared-claude-config.sessionstart-hook.sh`.
 To sync with upstream, run `sh .claude-shared/git-scripts/pull.sh` or `push.sh`.
 
 (This README is `.txt` on purpose — a `README.md` with no frontmatter would inject into every session. Like

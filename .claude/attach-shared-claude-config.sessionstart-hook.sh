@@ -3,11 +3,12 @@
 # catalog's own session-start hook, which attaches the catalog to this checkout, brings it up to date, and verifies
 # every .claude/ symlink into it.
 #
-# A copy of this file lives in each consuming repository at .claude/verify-shared-claude-config.sessionstart-hook.sh;
-# the canonical version is in the catalog under git-scripts/copy-into-consuming-repository/. Each machine has one
-# clone of the catalog, at ~/.claude/.claude-shared, and each other checkout's .claude-shared is a git worktree of
-# it. The catalog's own scripts do all of that but make the clone, which holds them: this file clones it when the
-# machine has none, as in a cloud session or on a new machine.
+# A copy of this file lives in each consuming repository at .claude/attach-shared-claude-config.sessionstart-hook.sh;
+# the canonical version is in the catalog under git-scripts/copy-into-consuming-repository/. Until 2026-11-19 it was
+# named verify-shared-claude-config.sessionstart-hook.sh. Each machine has one clone of the catalog, at
+# ~/.claude/.claude-shared, and each other checkout's .claude-shared is a git worktree of it. The catalog's own scripts
+# do all of that but make the clone, which holds them: this file clones it when the machine has none, as in a cloud
+# session or on a new machine.
 #
 # A SessionStart hook reaches the agent only through stdout on exit 0, so the warning goes to stdout.
 checkout=$(git -C "$(dirname -- "$0")" rev-parse --show-toplevel)
