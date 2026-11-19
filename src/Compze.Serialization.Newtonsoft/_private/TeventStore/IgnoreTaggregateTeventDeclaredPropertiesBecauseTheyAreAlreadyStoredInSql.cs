@@ -9,7 +9,7 @@ class IgnoreTaggregateTeventDeclaredPropertiesBecauseTheyAreAlreadyStoredInSql :
 {
    public void ModifyProperty(JsonProperty property, MemberInfo memberInfo, MemberSerialization memberSerialization)
    {
-      if(property.DeclaringType == typeof(TaggregateTevent))
+      if(property.DeclaringType == typeof(TaggregateTevent) || property.DeclaringType == typeof(TaggregateTeventWithIdentity))
       {
          property.Ignored = true;
       }

@@ -19,4 +19,10 @@ public interface IEntityCollectionManager<TEntity, in TEntityId,in TEntityTevent
 {
    IReadOnlyEntityCollection<TEntity, TEntityId> Entities { get; }
    TEntity AddByPublishing<TCreationTevent>(TCreationTevent creationTevent) where TCreationTevent : TEntityTeventImplementation, TEntityCreatedTevent;
+
+   ///<summary>Adds a new entity with the id <paramref name="id"/>, publishing nothing, for the restore of its taggregate from a snapshot to give<br/>
+   /// the rest of its state, as that restore does a component's. Only while the taggregate is being restored: from its <c>RestoreIdentity</c><br/>
+   /// until its restoring code returns to the taggregate store restoring it, or else until its first publish. At any other time an entity is<br/>
+   /// added by publishing its created tevent, with <see cref="AddByPublishing{TCreationTevent}"/>.</summary>
+   TEntity AddWhileRestoring(TEntityId id);
 }

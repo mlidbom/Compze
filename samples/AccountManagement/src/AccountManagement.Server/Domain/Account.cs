@@ -13,6 +13,16 @@ namespace AccountManagement.Domain;
 ///Completely encapsulates all the business logic for an account.  Should make it impossible for clients to use the class incorrectly.
 class Account : Taggregate<Account, IAccountTevent, AccountTevent, IAccountTevent<IAccountTevent>, AccountTevent<AccountTevent>>, IAccountResourceData
 {
+   //Maintain correct state as tevents are raised or read from the store.
+   //Use property updated tevents whenever possible. Changes to public state should be represented by property updated tevents.
+   static readonly TeventRouting<Account, IAccountTevent> Appliers = DeclareAppliers(it => it
+     .For<IAccountTevent.PropertyUpdated.Email>(static (account, tevent) => account.Email = tevent.Email)
+     .For<IAccountTevent.PropertyUpdated.Password>(static (account, tevent) => account.Password = tevent.Password)
+     .IgnoreUnhandled<IAccountTevent.LoggedIn>() //Login tevents change no account state, so they have no appliers.
+     .IgnoreUnhandled<IAccountTevent.LoginFailed>());
+
+   protected override TeventRouting TeventAppliers => Appliers;
+
    static readonly ILogger Log = CompzeLogger.For<Account>();
    public Email Email { get; private set; } = null!;       //Never public setters on an taggregate. AssertInvariantsAreMet guarantees not null status.
    public Password Password { get; private set; } = null!; //Never public setters on an taggregate. AssertInvariantsAreMet guarantees not null status.
@@ -21,14 +31,7 @@ class Account : Taggregate<Account, IAccountTevent, AccountTevent, IAccountTeven
 
    //No public constructors please. Taggregates are created through domain verbs.
    //Expose named factory methods that ensure the instance is valid instead. See register method below.
-   Account() : base(TeventDispatcherConfig.Default.IgnoreUnhandled<IAccountTevent.LoggedIn, IAccountTevent.LoginFailed>()) //Login tevents change no account state, so they have no appliers.
-   {
-      //Maintain correct state as tevents are raised or read from the store.
-      //Use property updated tevents whenever possible. Changes to public state should be represented by property updated tevents.
-      RegisterTeventAppliers()
-        .For<IAccountTevent.PropertyUpdated.Email>(e => Email = e.Email)
-        .For<IAccountTevent.PropertyUpdated.Password>(e => Password = e.Password);
-   }
+   Account() {}
 
    //Ensure that the state of the instance is sane. If not throw an exception.
    //Called after every call to Publish.
@@ -64,7 +67,7 @@ class Account : Taggregate<Account, IAccountTevent, AccountTevent, IAccountTeven
       var newAccount = new Account();
       newAccount.Publish(new AccountTevent.UserRegistered(accountId: accountId, email: email, password: password));
 
-      navigator.Execute(InternalApi.Tommands.Save(newAccount));
+      navigator.Execute(InternalApi.Tommands.Add(newAccount));
 
       return (RegistrationAttemptStatus.Successful, newAccount);
    }

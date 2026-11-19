@@ -11,4 +11,6 @@ sealed class LocalTessagingEngine : ILocalTessagingEngine
    internal LocalTessagingEngine(TeventObservationDispatcher observationDispatcher) => _observationDispatcher = observationDispatcher;
 
    public async Task StopAsync() => await _observationDispatcher.StopAsync().caf();
+
+   public async Task AwaitNoTessagesInFlightAsync() => await _observationDispatcher.DrainAsync().caf();
 }

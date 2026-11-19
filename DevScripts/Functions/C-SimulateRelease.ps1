@@ -14,6 +14,18 @@ function C-SimulateRelease {
     stops the run, as it would stop the release, when the new packages and nuget.org's
     newest version of the other packages would fail at runtime against each other.
 
+    It refuses, before packing, as the release refuses, when a package that the release
+    doesn't release, its version having a release tag, has shipped files that changed since
+    that tag: its project folder's files but its CHANGELOG.md and its _docs and dev_docs
+    folders. The release would leave such a package at its released version, and a package
+    released beside it that needs what changed would fail against it. The refusal names each
+    package and its changed files. Either give the package a changelog entry and run
+    C-Prepare-Release, so that it is released, or, when its changes ship nothing a consumer
+    sees, acknowledge them with -Acknowledge and -Reason. The acknowledgement is recorded in
+    .github/scripts/AcknowledgedUnreleasedChanges.txt, which must be committed with the
+    release, and lasts until the package is next released: only the changes after the
+    commit it names count.
+
     Release detection and the summary table are driven entirely by local git tags, so the
     run first fetches every remote's tags (git fetch --all --tags). Without this, a clone
     whose tags lag behind the remote reports already-released packages as pending. If the
@@ -23,14 +35,27 @@ function C-SimulateRelease {
     Use -NoPack to skip both building and packing, using existing nupkg files.
     Use -NoSummary to skip the end-of-run summary table (which queries nuget.org).
     Use -Verbose to show all details (NuGet push, assets, tags).
+    Use -Acknowledge and -Reason to acknowledge a package's unreleased changes (see above).
 
     The run ends with a summary table listing every package whose local version
     differs from its latest git tag or its latest version on nuget.org — useful
     for spotting failed publishes (TAG MISSING / NUGET MISSING) as well as the
     normal PENDING set.
 
+    .PARAMETER Acknowledge
+    Packages whose changes since their release, up to HEAD, ship nothing a consumer sees, such
+    as comments only, or build settings that produce the same result: records them in
+    .github/scripts/AcknowledgedUnreleasedChanges.txt, with -Reason, before the run.
+
+    .PARAMETER Reason
+    Why the changes of the -Acknowledge packages ship nothing a consumer sees: one line.
+
     .EXAMPLE
     C-SimulateRelease
+
+    .EXAMPLE
+    C-SimulateRelease -Acknowledge Compze.Must, Compze.DbPool -Reason 'Comments only.'
+    Records the acknowledgement, then simulates the release.
 
     .EXAMPLE
     C-SimulateRelease -NoBuild
@@ -54,8 +79,13 @@ function C-SimulateRelease {
     param(
         [switch]$NoBuild,
         [switch]$NoPack,
-        [switch]$NoSummary
+        [switch]$NoSummary,
+        [string[]]$Acknowledge,
+        [string]$Reason
     )
+
+    . (Join-Path $script:CompzeRoot ".github/scripts/lib/UnreleasedChanges.ps1")
+    if ($Acknowledge -or $Reason) { AcknowledgeUnreleasedChanges $Acknowledge $Reason }
 
     # Release detection (PackagesWithNoMatchingReleaseTag) and the summary table
     # (GetLatestTagVersion) read only local tags, so a clone that lags the remote reports
@@ -67,6 +97,9 @@ function C-SimulateRelease {
     if ($LASTEXITCODE -ne 0) {
         Write-Warning "Could not fetch the latest tags — the release simulation may be based on stale tags.`n$fetchResult"
     }
+
+    $unacknowledgedUnreleasedChanges = @(GetUnacknowledgedUnreleasedChanges)
+    if ($unacknowledgedUnreleasedChanges.Count -gt 0) { throw "C-SimulateRelease refuses: $(FormatUnreleasedChangesRefusal $unacknowledgedUnreleasedChanges)" }
 
     if (-not $NoPack) {
         C-Pack -CI -NoBuild:$NoBuild

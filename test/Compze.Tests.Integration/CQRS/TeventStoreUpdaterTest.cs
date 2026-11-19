@@ -1,9 +1,9 @@
 using System.Collections.ObjectModel;
 using System.Transactions;
 using Compze.Abstractions;
+using Compze.Abstractions.Time;
 using Compze.xUnitMatrix;
 using JetBrains.Annotations;
-using Compze.Internals.SystemCE.TransactionsCE;
 using Compze.Hosting.Testing;
 using Compze.Hosting.Testing.Wiring;
 using Compze.Internals.Testing;
@@ -18,11 +18,10 @@ using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Threading;
 using Compze.Threading.Testing;
-using Compze.Internals.SystemCE.UsageGuards;
 using Compze.Must;
 using Compze.Tessaging.TessageBus;
-using Compze.Tessaging.TessageTypes;
 using Compze.Teventive;
+using Compze.Teventive.TaggregateStores;
 using Compze.Teventive.Taggregates.Tevents;
 using Compze.Teventive.TeventStore.Abstractions;
 using EnumerableCE = Compze.Internals.SystemCE.LinqCE.EnumerableCE;
@@ -35,9 +34,9 @@ public class TeventStoreUpdaterTest : UniversalTestBase
 {
    class TeventSpy
    {
-      public IEnumerable<IExactlyOnceTevent> DispatchedTessages => [.._tevents];
-      public void Receive(IExactlyOnceTevent tevent) => _tevents.Add(tevent);
-      readonly List<IExactlyOnceTevent> _tevents = [];
+      public IEnumerable<ITaggregateTevent> DispatchedTessages => [.._tevents];
+      public void Receive(ITaggregateTevent tevent) => _tevents.Add(tevent);
+      readonly List<ITaggregateTevent> _tevents = [];
    }
 
    readonly TeventSpy _teventSpy;
@@ -47,30 +46,28 @@ public class TeventStoreUpdaterTest : UniversalTestBase
    {
       _teventSpy = new TeventSpy();
 
-      //Exactly-once kinds are async end to end, so the spy subscription is declared async; the spy is synchronous, so it completes its task synchronously.
+      //The user's tevents declare no delivery guarantee, so the spy subscribes synchronously to every taggregate tevent.
       _container = TestEnv.DIContainer.SetupTestingContainer(registrar => registrar.RequireIntegrationTestTypeMappings(),
-                                                             composeEngine: engine => engine.RegisterTessageBusHandlers(handle => handle.ForTevent((IExactlyOnceTevent tevent) =>
-                                                             {
-                                                                _teventSpy.Receive(tevent);
-                                                                return Task.CompletedTask;
-                                                             })));
+                                                             composeEngine: engine => engine.RegisterTessageBusHandlers(handle => handle.ForTevent((ITaggregateTevent tevent) => _teventSpy.Receive(tevent))),
+                                                             declareTeventStoreTaggregates: store => store.Taggregate<User>());
    }
 
    protected override async Task DisposeAsyncInternal() => await _container.DisposeAsync().AsTask();
 
-   protected void UseInTransactionalScope([InstantHandle] Action<ITeventStoreUpdater> useSession)
-      => _container.ExecuteUnitOfWork(unitOfWork => useSession(unitOfWork.TeventStoreUpdater()));
+   protected void UseInTransactionalScope([InstantHandle] Action<ITaggregateStoreUpdater> useSession)
+      => _container.ExecuteUnitOfWork(unitOfWork => useSession(unitOfWork.TaggregateStoreUpdater()));
 
-   protected TResult UseInTransactionalScope<TResult>([InstantHandle] Func<ITeventStoreUpdater, TResult> useSession)
-      => _container.ExecuteUnitOfWork(unitOfWork => useSession(unitOfWork.TeventStoreUpdater()));
+   protected TResult UseInTransactionalScope<TResult>([InstantHandle] Func<ITaggregateStoreUpdater, TResult> useSession)
+      => _container.ExecuteUnitOfWork(unitOfWork => useSession(unitOfWork.TaggregateStoreUpdater()));
 
-   public void UseInScope([InstantHandle] Action<ITeventStoreUpdater> useSession)
-      => _container.ExecuteInIsolatedScope(scope => useSession(scope.TeventStoreUpdater()));
+   ITaggregateStoreReader Reader => _container.RootResolver.Resolve<ITaggregateStoreReader>();
+
+   ITeventStoreReader TeventStoreReader => _container.RootResolver.Resolve<ITeventStoreReader>();
 
    [PCT]
    public void WhenFetchingTaggregateThatDoesNotExistNoSuchAggregateExceptionIsThrown()
    {
-      UseInTransactionalScope(session => MustActions.Invoking(() => session.Get<User>(new TaggregateId()))
+      UseInTransactionalScope(session => MustActions.Invoking(() => session.GetForUpdate<User>(new TaggregateId()))
                                                       .Must().Throw<ArgumentOutOfRangeException>());
    }
 
@@ -82,29 +79,15 @@ public class TeventStoreUpdaterTest : UniversalTestBase
       user.ChangePassword("NewPassword");
       user.ChangeEmail("NewEmail");
 
-      UseInTransactionalScope(session => session.Save(user));
+      UseInTransactionalScope(session => session.Add(user));
 
       UseInTransactionalScope(session =>
       {
-         var loadedUser = session.Get<User>(user.Id);
+         var loadedUser = session.GetForUpdate<User>(user.Id);
 
          loadedUser.Id.Must().Be(user.Id);
          loadedUser.Email.Must().Be(user.Email);
          loadedUser.Password.Must().Be(user.Password);
-      });
-   }
-
-   [PCT]
-   public void ThrowsIfUsedByMultipleTransactions()
-   {
-      //The session's affinity is its transaction, never a thread: an async unit of work legitimately migrates across threads,
-      //while one session serving two transactions is the misuse that must fail loud.
-      _container.ExecuteInIsolatedScope(scope =>
-      {
-         var updater = scope.TeventStoreUpdater();
-         TransactionScopeCe.Execute(() => updater.TryGet(new TaggregateId(), out User? _));
-         TransactionScopeCe.Execute(() => MustActions.Invoking(() => updater.TryGet(new TaggregateId(), out User? _))
-                                                     .Must().Throw<ComponentUsedByMultipleTransactionsException>());
       });
    }
 
@@ -116,7 +99,7 @@ public class TeventStoreUpdaterTest : UniversalTestBase
       user.ChangePassword("NewPassword");
       user.ChangeEmail("NewEmail");
 
-      UseInTransactionalScope(session => session.Save(user));
+      UseInTransactionalScope(session => session.Add(user));
 
       _container.ExecuteInIsolatedScope(scope =>
       {
@@ -144,12 +127,12 @@ public class TeventStoreUpdaterTest : UniversalTestBase
       var user = new User();
       user.Register("email@email.se", "password", new TaggregateId());
 
-      UseInTransactionalScope(session => session.Save(user));
+      UseInTransactionalScope(session => session.Add(user));
 
       UseInTransactionalScope(session =>
       {
-         var loaded1 = session.Get<User>(user.Id);
-         var loaded2 = session.Get<User>(user.Id);
+         var loaded1 = session.GetForUpdate<User>(user.Id);
+         var loaded2 = session.GetForUpdate<User>(user.Id);
          loaded1.Must().ReferenceEqual(loaded2);
       });
    }
@@ -162,10 +145,10 @@ public class TeventStoreUpdaterTest : UniversalTestBase
 
       UseInTransactionalScope(session =>
       {
-         session.Save(user);
+         session.Add(user);
 
-         var loaded1 = session.Get<User>(user.Id);
-         var loaded2 = session.Get<User>(user.Id);
+         var loaded1 = session.GetForUpdate<User>(user.Id);
+         var loaded2 = session.GetForUpdate<User>(user.Id);
          loaded1.Must().ReferenceEqual(loaded2);
          loaded1.Must().ReferenceEqual(user);
       });
@@ -177,38 +160,38 @@ public class TeventStoreUpdaterTest : UniversalTestBase
       var user = new User();
       user.Register("email@email.se", "password", new TaggregateId());
 
-      UseInTransactionalScope(session => session.Save(user));
+      UseInTransactionalScope(session => session.Add(user));
 
       UseInTransactionalScope(session =>
       {
-         var loadedUser = session.Get<User>(user.Id);
+         var loadedUser = session.GetForUpdate<User>(user.Id);
          loadedUser.ChangePassword("NewPassword");
       });
 
       UseInTransactionalScope(session =>
       {
-         var loadedUser = session.Get<User>(user.Id);
+         var loadedUser = session.GetForUpdate<User>(user.Id);
          loadedUser.Password.Must().Be("NewPassword");
       });
    }
 
    [PCT]
-   public void DoesNotUpdateTaggregatesLoadedViaSpecificVersion()
+   public void RefusesChangesToTaggregatesLoadedViaSpecificVersion()
    {
       var user = new User();
       user.Register("OriginalEmail", "password", new TaggregateId());
 
-      UseInTransactionalScope(session => session.Save(user));
+      UseInTransactionalScope(session => session.Add(user));
 
       _container.ExecuteUnitOfWork(unitOfWork =>
       {
          var loadedUser = unitOfWork.TeventStoreReader().GetReadonlyCopyOfVersion<User>(user.Id, 1);
-         loadedUser.ChangeEmail("NewEmail");
+         MustActions.Invoking(() => loadedUser.ChangeEmail("NewEmail")).Must().Throw<InvalidOperationException>();
       });
 
       UseInTransactionalScope(session =>
       {
-         var loadedUser = session.Get<User>(user.Id);
+         var loadedUser = session.GetForUpdate<User>(user.Id);
          loadedUser.Email.Must().Be("OriginalEmail");
       });
    }
@@ -219,7 +202,7 @@ public class TeventStoreUpdaterTest : UniversalTestBase
       var user = new User();
       user.Register("OriginalEmail", "password", new TaggregateId());
 
-      UseInTransactionalScope(session => session.Save(user));
+      UseInTransactionalScope(session => session.Add(user));
       ((ITaggregate)user).Commit(tevents => tevents.Must().BeEmpty());
    }
 
@@ -229,9 +212,9 @@ public class TeventStoreUpdaterTest : UniversalTestBase
       var user = new User();
       user.Register("OriginalEmail", "password", new TaggregateId());
 
-      UseInTransactionalScope(session => session.Save(user));
+      UseInTransactionalScope(session => session.Add(user));
 
-      UseInTransactionalScope(session => MustActions.Invoking(() => session.Save(user))
+      UseInTransactionalScope(session => MustActions.Invoking(() => session.Add(user))
                                                       .Must().Throw<InvalidOperationException>());
    }
 
@@ -242,7 +225,7 @@ public class TeventStoreUpdaterTest : UniversalTestBase
       user.Register("OriginalEmail", "password", new TaggregateId());
       1.Through(100).ForEach(index => user.ChangeEmail("email" + index));
 
-      UseInTransactionalScope(session => session.Save(user));
+      UseInTransactionalScope(session => session.Add(user));
    }
 
    [PCT]
@@ -256,21 +239,21 @@ public class TeventStoreUpdaterTest : UniversalTestBase
 
       UseInTransactionalScope(session =>
       {
-         session.Save(user1);
-         session.Save(user2);
+         session.Add(user1);
+         session.Add(user2);
       });
 
       UseInTransactionalScope(session =>
       {
-         session.Delete(user1.Id);
+         session.GetForUpdate<User>(user1.Id).Delete();
 
-         var loadedUser2 = session.Get<User>(user2.Id);
+         var loadedUser2 = session.GetForUpdate<User>(user2.Id);
          loadedUser2.Id.Must().Be(user2.Id);
          loadedUser2.Email.Must().Be(user2.Email);
          loadedUser2.Password.Must().Be(user2.Password);
       });
 
-      UseInTransactionalScope(session => session.TryGet(user1.Id, out User? _).Must().BeFalse());
+      UseInTransactionalScope(session => session.TryGetForUpdate(user1.Id, out User? _).Must().BeFalse());
    }
 
    [PCT]
@@ -284,26 +267,22 @@ public class TeventStoreUpdaterTest : UniversalTestBase
 
       UseInTransactionalScope(session =>
       {
-         session.Save(user1);
-         session.Save(user2);
+         session.Add(user1);
+         session.Add(user2);
       });
 
       _teventSpy.DispatchedTessages.Count().Must().Be(2);
 
       UseInTransactionalScope(session =>
       {
-         user1 = session.Get<User>(user1.Id);
+         user1 = session.GetForUpdate<User>(user1.Id);
 
          user1.ChangeEmail("new_email");
 
-         session.Delete(user1.Id);
+         user1.Delete();
       });
 
-      var published = _teventSpy.DispatchedTessages.ToList();
-      _teventSpy.DispatchedTessages.Count()
-               .Must()
-               .Be(3);
-      published.Last().Must().BeExactType<UserChangedEmail>();
+      _teventSpy.DispatchedTessages.Skip(2).Select(it => it.GetType().Name).Must().SequenceEqual([nameof(UserChangedEmail), nameof(UserDeleted)]);
    }
 
    [PCT]
@@ -313,13 +292,13 @@ public class TeventStoreUpdaterTest : UniversalTestBase
       {
          var user1 = new User();
          user1.Register("email1@email.se", "password", new TaggregateId());
-         session.Save(user1);
+         session.Add(user1);
 
          _teventSpy.DispatchedTessages.Last()
                   .Must()
                   .BeExactType<UserRegistered>();
 
-         user1 = session.Get<User>(user1.Id);
+         user1 = session.GetForUpdate<User>(user1.Id);
          user1.ChangeEmail("new_email");
          _teventSpy.DispatchedTessages.Last()
                   .Must()
@@ -335,24 +314,20 @@ public class TeventStoreUpdaterTest : UniversalTestBase
       {
          var user = new User();
          user.Register("test@email.com", "Password1", userId);
-         session.Save(user);
+         session.Add(user);
       });
 
       UseInTransactionalScope(session =>
       {
-         var user = session.Get<User>(userId);
+         var user = session.GetForUpdate<User>(userId);
          user.ChangeEmail("new_email@email.com");
       });
 
-      UseInScope(session =>
-      {
-         var history = ((ITeventStoreReader)session).GetHistory(userId);
-         history.Count.Must().Be(2);
-      });
+      TeventStoreReader.GetHistory(userId).Count.Must().Be(2);
    }
 
    [PCT]
-   public void When_deleting_and_then_fetching_an_taggregates_history_the_history_should_be_gone()
+   public void When_a_taggregate_saved_in_one_unit_of_work_is_deleted_in_the_next_its_history_is_kept_ending_with_the_deleted_tevent_and_the_store_holds_no_such_taggregate()
    {
       var userId = new TaggregateId();
 
@@ -360,20 +335,17 @@ public class TeventStoreUpdaterTest : UniversalTestBase
       {
          var user = new User();
          user.Register("test@email.com", "Password1", userId);
-         session.Save(user);
+         session.Add(user);
       });
 
-      UseInTransactionalScope(session => session.Delete(userId));
+      UseInTransactionalScope(session => session.GetForUpdate<User>(userId).Delete());
 
-      UseInScope(session =>
-      {
-         var history = ((ITeventStoreReader)session).GetHistory(userId);
-         history.Count.Must().Be(0);
-      });
+      TeventStoreReader.GetHistory(userId).Select(it => it.Tevent.GetType().Name).Must().SequenceEqual([nameof(UserRegistered), nameof(UserDeleted)]);
+      Reader.TryGet(userId, out User? _).Must().BeFalse();
    }
 
    [PCT]
-   public void When_fetching_and_deleting_an_taggregate_then_fetching_history_again_the_history_should_be_gone()
+   public void When_a_taggregate_is_saved_and_deleted_in_one_unit_of_work_its_history_is_kept_ending_with_the_deleted_tevent_and_the_store_holds_no_such_taggregate()
    {
       var userId = new TaggregateId();
 
@@ -381,20 +353,12 @@ public class TeventStoreUpdaterTest : UniversalTestBase
       {
          var user = new User();
          user.Register("test@email.com", "Password1", userId);
-         session.Save(user);
+         session.Add(user);
+         user.Delete();
       });
 
-      UseInTransactionalScope(session =>
-      {
-         session.Get<User>(userId);
-         session.Delete(userId);
-      });
-
-      UseInScope(session =>
-      {
-         var history = ((ITeventStoreReader)session).GetHistory(userId);
-         history.Count.Must().Be(0);
-      });
+      TeventStoreReader.GetHistory(userId).Select(it => it.Tevent.GetType().Name).Must().SequenceEqual([nameof(UserRegistered), nameof(UserDeleted)]);
+      Reader.TryGet(userId, out User? _).Must().BeFalse();
    }
 
    [PCT]
@@ -404,7 +368,7 @@ public class TeventStoreUpdaterTest : UniversalTestBase
       var user = new User();
       user.Register("email@email.se", "password", new TaggregateId());
 
-      UseInTransactionalScope(session => session.Save(user));
+      UseInTransactionalScope(session => session.Add(user));
 
       var withinTransactionAfterReadGate = IThreadGate.NewClosed(WaitTimeout.Seconds(30));
       await using var runner = new TestingTaskRunner(30.Seconds());
@@ -416,9 +380,9 @@ public class TeventStoreUpdaterTest : UniversalTestBase
       return;
 
       void ReadUserHistory() =>
-         UseInTransactionalScope(session =>
+         UseInTransactionalScope(_ =>
          {
-            ((ITeventStoreReader)session).GetHistory(user.Id);
+            TeventStoreReader.GetHistory(user.Id);
             withinTransactionAfterReadGate.AwaitPassThrough();
          });
    }
@@ -426,31 +390,32 @@ public class TeventStoreUpdaterTest : UniversalTestBase
    [PCT]
    public void TeventsArePublishedImmediatelyOnTaggregateChanges()
    {
-      var users = 1.Through(9).Select(i =>
+      //Published with the time frozen, so that their time stamps have the microsecond precision that every supported database keeps.
+      var users = UtcTimeSource.Test.FrozenAtUtcNow().Run(() => 1.Through(9).Select(i =>
       {
          var u = new User();
          u.Register(i + "@test.com", "abcd", new TaggregateId());
          u.ChangeEmail("new" + i + "@test.com");
          return u;
-      }).ToList();
+      }).ToList());
 
       UseInTransactionalScope(session =>
       {
-         users.Take(3).ForEach(session.Save);
+         users.Take(3).ForEach(session.Add);
          _teventSpy.DispatchedTessages.Count().Must().Be(6);
       });
 
       UseInTransactionalScope(session =>
       {
          _teventSpy.DispatchedTessages.Count().Must().Be(6);
-         users.Skip(3).Take(3).ForEach(session.Save);
+         users.Skip(3).Take(3).ForEach(session.Add);
          _teventSpy.DispatchedTessages.Count().Must().Be(12);
       });
 
       UseInTransactionalScope(session =>
       {
          _teventSpy.DispatchedTessages.Count().Must().Be(12);
-         users.Skip(6).Take(3).ForEach(session.Save);
+         users.Skip(6).Take(3).ForEach(session.Add);
          _teventSpy.DispatchedTessages.Count().Must().Be(18);
       });
 
@@ -458,12 +423,10 @@ public class TeventStoreUpdaterTest : UniversalTestBase
       {
          _teventSpy.DispatchedTessages.Count().Must().Be(18);
 
-         var dispatchedTevents = _teventSpy.DispatchedTessages.OfType<ITaggregateTevent>().ToList();
+         var dispatchedTevents = _teventSpy.DispatchedTessages.OfType<ITaggregateTeventWithIdentity>().ToList();
          dispatchedTevents.Select(e => e.Id).Distinct().Count().Must().Be(18);
 
          var allPersistedTevents = unitOfWork.TeventStore().ListAllTeventsForTestingPurposesAbsolutelyNotUsableForARealTeventStoreOfAnySize().Tevents().ToList();
-         TeventStorageTestHelper.StripSteventhDecimalPointFromSecondFractionOnUtcUpdateTime(dispatchedTevents);
-         TeventStorageTestHelper.StripSteventhDecimalPointFromSecondFractionOnUtcUpdateTime(allPersistedTevents);
 
          allPersistedTevents.Must().DeepEqual(dispatchedTevents);
       });
@@ -475,7 +438,7 @@ public class TeventStoreUpdaterTest : UniversalTestBase
       var user = UseInTransactionalScope(session => User.Register(session, "email@email.se", "password", new TaggregateId()));
       var otherUser = await ChangeAnotherUsersEmailInOtherInstance();
 
-      UseInTransactionalScope(session => session.Get<User>(otherUser.Id).Email.Must().Be("otheruser@email.new"));
+      UseInTransactionalScope(session => session.GetForUpdate<User>(otherUser.Id).Email.Must().Be("otheruser@email.new"));
 
       UseInTransactionalScope(_ => user.ChangeEmail("some@email.new"));
       return;
@@ -487,7 +450,7 @@ public class TeventStoreUpdaterTest : UniversalTestBase
          return clonedContainer.ExecuteUnitOfWork(unitOfWork =>
          {
             // ReSharper disable once AccessToDisposedClosure
-            var session = unitOfWork.TeventStoreUpdater();
+            var session = unitOfWork.TaggregateStoreUpdater();
             var another = User.Register(session,
                                         "email@email.se",
                                         "password",
@@ -504,7 +467,7 @@ public class TeventStoreUpdaterTest : UniversalTestBase
       var user = new User();
       user.Register("email@email.se", "password", new TaggregateId());
 
-      UseInTransactionalScope(session => session.Save(user));
+      UseInTransactionalScope(session => session.Add(user));
 
       MustActions.Invoking(() => ChangeUserEmail(failOnPrepare: true))
                    .Must().Throw<Exception>();
@@ -520,7 +483,7 @@ public class TeventStoreUpdaterTest : UniversalTestBase
                Transaction.Current!.FailOnPrepare();
             }
 
-            var loadedUser = session.Get<User>(user.Id);
+            var loadedUser = session.GetForUpdate<User>(user.Id);
             loadedUser.ChangeEmail("new@email.com");
          });
    }
@@ -532,7 +495,7 @@ public class TeventStoreUpdaterTest : UniversalTestBase
       user.Register("email@email.se", "password", new TaggregateId());
       UseInTransactionalScope(session =>
       {
-         session.Save(user);
+         session.Add(user);
          user.ChangeEmail("newemail@somewhere.not");
       });
 
@@ -549,29 +512,63 @@ public class TeventStoreUpdaterTest : UniversalTestBase
 
       await Task.WhenAll(tasks); //Sql duplicate key (TaggregateId, Version) Exception would be thrown here if history was not serialized
 
-      UseInScope(session =>
       {
-         var userHistory = ((ITeventStoreReader)session).GetHistory(user.Id)
-                                                       .ToArray(); //Reading the taggregate will throw an exception if the history is invalid.
+         var userHistory = TeventStoreReader.GetHistory(user.Id)
+                                            .ToArray(); //Reading the taggregate will throw an exception if the history is invalid.
          userHistory.Length.Must()
                     .Be(threads + 2); //Make sure that all of the transactions completed
-      });
+      }
       return;
 
-      void UpdateEmail() =>
-         UseInScope(session =>
-         {
-            getHistorySection.Execute(() => ((ITeventStoreReader)session).GetHistory(user.Id));
+      void UpdateEmail()
+      {
+         getHistorySection.Execute(() => TeventStoreReader.GetHistory(user.Id));
 
-            TransactionScopeCe.Execute(() =>
+         UseInTransactionalScope(session =>
+         {
+            changeEmailSection.Execute(() =>
             {
-               changeEmailSection.Execute(() =>
-               {
-                  var userToUpdate = session.Get<User>(user.Id);
-                  userToUpdate.ChangeEmail($"newemail_{userToUpdate.Version}@somewhere.not");
-               });
+               var userToUpdate = session.GetForUpdate<User>(user.Id);
+               userToUpdate.ChangeEmail($"newemail_{userToUpdate.Version}@somewhere.not");
             });
          });
+      }
+   }
+
+   ///<summary>ITaggregateStoreUpdater.TryGetForUpdate promises that a unit of work that finds no taggregate holds its id's lock all the<br/>
+   /// same, so that no other unit of work adds one before it completes: what makes a get-or-create safe.</summary>
+   [PCT]
+   [Skip<SqlLayer>([SqlLayer.Sqlite, SqlLayer.SqliteMemory], "SQLite serializes every write transaction, so it can't show a lock on one id.")]
+   public async Task A_unit_of_work_that_finds_no_taggregate_to_get_for_update_keeps_another_from_getting_it_for_update_until_it_completes()
+   {
+      var userId = new TaggregateId();
+      var firstHasLookedForTheUser = IThreadGate.NewOpen(WaitTimeout.Seconds(30), "firstHasLookedForTheUser");
+      var firstMayAddTheUser = IThreadGate.NewClosed(WaitTimeout.Seconds(30), "firstMayAddTheUser");
+      var firstIsCompleting = false;
+      var firstWasCompletingWhenTheSecondGotItsAnswer = false;
+      var secondFoundTheUser = false;
+
+      var first = TaskCE.RunOnDedicatedThread(() => UseInTransactionalScope(session =>
+      {
+         session.TryGetForUpdate(userId, out User? _).Must().BeFalse();
+         firstHasLookedForTheUser.AwaitPassThrough();
+         firstMayAddTheUser.AwaitPassThrough();
+         User.Register(session, "added@example.com", "password", userId);
+         Volatile.Write(ref firstIsCompleting, true);
+      }));
+      await firstHasLookedForTheUser.AwaitPassedThroughCountEqualToAsync(1);
+
+      var second = TaskCE.RunOnDedicatedThread(() => UseInTransactionalScope(session =>
+      {
+         secondFoundTheUser = session.TryGetForUpdate(userId, out User? _);
+         firstWasCompletingWhenTheSecondGotItsAnswer = Volatile.Read(ref firstIsCompleting);
+      }));
+      await Task.Delay(500.Milliseconds());
+      firstMayAddTheUser.Open();
+      await Task.WhenAll(first, second);
+
+      firstWasCompletingWhenTheSecondGotItsAnswer.Must().BeTrue("the second unit of work should have waited for the first to complete");
+      secondFoundTheUser.Must().BeTrue("the second unit of work should have found the user the first added");
    }
 
    [PCT]
@@ -582,7 +579,7 @@ public class TeventStoreUpdaterTest : UniversalTestBase
       user.Register("email@email.se", "password", new TaggregateId());
       UseInTransactionalScope(session =>
       {
-         session.Save(user);
+         session.Add(user);
          user.ChangeEmail("newemail@somewhere.not");
       });
 
@@ -612,13 +609,12 @@ public class TeventStoreUpdaterTest : UniversalTestBase
       if(bothTasksCompletedException != null || taskException != null || bothTasksReadUserException != null)
          throw new AggregateException(EnumerableCE.Create(bothTasksCompletedException).Append(bothTasksReadUserException).Concat(taskException?.InnerExceptions ?? new ReadOnlyCollection<Exception>([])).Where(it => it != null).Cast<Exception>());
 
-      UseInScope(session =>
       {
-         var userHistory = ((ITeventStoreReader)session).GetHistory(user.Id)
-                                                       .ToArray(); //Reading the taggregate will throw an exception if the history is invalid.
+         var userHistory = TeventStoreReader.GetHistory(user.Id)
+                                            .ToArray(); //Reading the taggregate will throw an exception if the history is invalid.
          userHistory.Length.Must()
                     .Be(threads + 2); //Make sure that all the transactions completed
-      });
+      }
       return;
 
       void UpdateEmail() =>
@@ -626,23 +622,10 @@ public class TeventStoreUpdaterTest : UniversalTestBase
          {
             changeEmailSection.Execute(() =>
             {
-               var userToUpdate = session.Get<User>(user.Id);
+               var userToUpdate = session.GetForUpdate<User>(user.Id);
                hasFetchedUser.AwaitPassThrough();
                userToUpdate.ChangeEmail($"newemail_{userToUpdate.Version}@somewhere.not");
             });
          });
-   }
-
-   [PCT]
-   public void If_an_updater_is_used_in_two_transactions_an_exception_is_thrown()
-   {
-      using var scope = _container.BeginScope();
-      using var updater = scope.Resolve<ITeventStoreUpdater>();
-      var user = new User();
-      user.Register("email@email.se", "password", new TaggregateId());
-
-      TransactionScopeCe.Execute(() => updater.Save(user));
-      MustActions.Invoking(() => TransactionScopeCe.Execute(() => updater.Get<User>(user.Id)))
-                   .Must().Throw<InvalidOperationException>();
    }
 }

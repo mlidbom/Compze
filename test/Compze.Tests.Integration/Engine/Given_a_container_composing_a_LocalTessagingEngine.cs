@@ -100,21 +100,12 @@ public partial class Given_a_container_composing_a_LocalTessagingEngine : Univer
 
       public after_publishing_a_wrapped_taggregate_tevent_through_the_unit_of_work_tevent_publisher()
       {
-         //Taggregate tevents are exactly-once kinds, and exactly-once kinds are async end to end - so these subscriptions declare async handlers.
+         //A taggregate tevent declares no delivery guarantee of its own, so synchronous handlers subscribe to it and the synchronous Publish publishes it.
          ComposeContainerWithEngine(engine => engine.RegisterTessageBusHandlers(handle => handle
-            .ForTevent((ITaggregateTevent tevent) =>
-             {
-                _receivedBySubscriberToTheInnerTeventType.Add(tevent);
-                return Task.CompletedTask;
-             })
-            .ForTevent((ITaggregateTevent<ITaggregateTevent> wrappedTevent) =>
-             {
-                _receivedBySubscriberToTheWrapperType.Add(wrappedTevent);
-                return Task.CompletedTask;
-             })));
+            .ForTevent((ITaggregateTevent tevent) => _receivedBySubscriberToTheInnerTeventType.Add(tevent))
+            .ForTevent((ITaggregateTevent<ITaggregateTevent> wrappedTevent) => _receivedBySubscriberToTheWrapperType.Add(wrappedTevent))));
 
-         //Taggregate tevents are exactly-once kinds, so they publish through PublishAsync - bridged here because a specification context's act is its constructor.
-         Container.ScopeFactory.ExecuteUnitOfWorkAsync(async unitOfWork => await unitOfWork.Resolve<IUnitOfWorkTeventPublisher>().PublishAsync(_publishedWrappedTevent)).GetAwaiter().GetResult();
+         Container.ScopeFactory.ExecuteUnitOfWork(unitOfWork => unitOfWork.Resolve<IUnitOfWorkTeventPublisher>().Publish(_publishedWrappedTevent));
       }
 
       [PCT] public void the_subscriber_to_the_inner_tevent_type_receives_the_inner_tevent() => _receivedBySubscriberToTheInnerTeventType.Single().Must().ReferenceEqual(_publishedWrappedTevent.Tevent);
@@ -277,6 +268,44 @@ public partial class Given_a_container_composing_a_LocalTessagingEngine : Univer
             .Which.Message.Must().Contain("has stopped");
    }
 
+   public class after_awaiting_no_tessages_in_flight_while_an_async_observer_still_has_published_tevents_to_observe : Given_a_container_composing_a_LocalTessagingEngine
+   {
+      readonly ConcurrentQueue<int> _observedSequenceNumbers = [];
+      int[] _observedWhenTheWaitCompleted = [];
+      int[] _observedWhenASecondWaitCompleted = [];
+
+      public after_awaiting_no_tessages_in_flight_while_an_async_observer_still_has_published_tevents_to_observe()
+      {
+         ComposeContainerWithEngine(engine => engine
+            .ObserveTevents(observe => observe.ForTevent(async (IMyNumberedTevent tevent) =>
+             {
+                await Task.Delay(TimeSpan.FromMilliseconds(50));
+                _observedSequenceNumbers.Enqueue(tevent.SequenceNumber);
+             })));
+
+         for(var sequenceNumber = 1; sequenceNumber <= 5; sequenceNumber++) Publish(new MyNumberedTevent(sequenceNumber));
+      }
+
+      protected override async Task InitializeAsyncInternal()
+      {
+         var engine = Container.RootResolver.Resolve<ILocalTessagingEngine>();
+         await engine.AwaitNoTessagesInFlightAsync();
+         _observedWhenTheWaitCompleted = [.._observedSequenceNumbers];
+
+         Publish(new MyNumberedTevent(6));
+         await engine.AwaitNoTessagesInFlightAsync();
+         _observedWhenASecondWaitCompleted = [.._observedSequenceNumbers];
+      }
+
+      void Publish(MyNumberedTevent tevent) => Container.ScopeFactory.ExecuteUnitOfWork(unitOfWork => unitOfWork.Resolve<IUnitOfWorkTeventPublisher>().Publish(tevent));
+
+      [PCT] public void every_tevent_published_before_the_wait_has_been_observed_when_the_wait_completes() =>
+         _observedWhenTheWaitCompleted.Must().SequenceEqual([1, 2, 3, 4, 5]);
+
+      [PCT] public void the_engine_goes_on_running_so_a_tevent_published_afterwards_is_observed_too() =>
+         _observedWhenASecondWaitCompleted.Must().SequenceEqual([1, 2, 3, 4, 5, 6]);
+   }
+
    ///<summary>The case the stop exists for: the observers' work is done before disposal, so a synchronous disposal waits for nothing<br/>
    /// and disposes every component on the thread that disposes the container. Left to disposal instead, the observation drain<br/>
    /// would await the observers, and an adapter that disposes through an asynchronous disposal could go on disposing on another thread.</summary>
@@ -358,23 +387,18 @@ public partial class Given_a_container_composing_a_LocalTessagingEngine : Univer
       [PCT] public void the_subscriber_receives_the_published_tevent() => _receivedBySubscriber.Single().Must().ReferenceEqual(_publishedTevent);
    }
 
-   public class after_publishing_a_wrapped_taggregate_tevent_through_the_independent_tevent_publishers_async_door : Given_a_container_composing_a_LocalTessagingEngine
+   public class after_publishing_a_wrapped_taggregate_tevent_through_the_independent_tevent_publishers_synchronous_door : Given_a_container_composing_a_LocalTessagingEngine
    {
       readonly List<ITaggregateTevent> _receivedBySubscriber = [];
       readonly TaggregateTevent<MyTaggregateTevent> _publishedWrappedTevent = new(new MyTaggregateTevent());
 
-      public after_publishing_a_wrapped_taggregate_tevent_through_the_independent_tevent_publishers_async_door()
+      public after_publishing_a_wrapped_taggregate_tevent_through_the_independent_tevent_publishers_synchronous_door()
       {
-         //Taggregate tevents are exactly-once kinds, and exactly-once kinds are async end to end - so the subscription declares an async handler.
+         //A taggregate tevent declares no delivery guarantee of its own, so a synchronous handler subscribes to it and the synchronous Publish publishes it.
          ComposeContainerWithEngine(engine => engine.RegisterTessageBusHandlers(handle => handle
-            .ForTevent((ITaggregateTevent tevent) =>
-             {
-                _receivedBySubscriber.Add(tevent);
-                return Task.CompletedTask;
-             })));
+            .ForTevent((ITaggregateTevent tevent) => _receivedBySubscriber.Add(tevent))));
 
-         //An exactly-once tevent publishes through PublishAsync - the sync Publish refuses it - bridged here because a specification context's act is its constructor.
-         Container.RootResolver.Resolve<IIndependentTeventPublisher>().PublishAsync(_publishedWrappedTevent).GetAwaiter().GetResult();
+         Container.RootResolver.Resolve<IIndependentTeventPublisher>().Publish(_publishedWrappedTevent);
       }
 
       [PCT] public void the_subscriber_receives_the_inner_tevent() => _receivedBySubscriber.Single().Must().ReferenceEqual(_publishedWrappedTevent.Tevent);

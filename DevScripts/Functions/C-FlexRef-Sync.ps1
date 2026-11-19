@@ -16,5 +16,10 @@ function C-FlexRef-Sync {
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseApprovedVerbs', '')]
     param()
 
-    dotnet flexref sync $script:CompzeRoot
+    # The tool is built for an older runtime, and on it MSBuildLocator finds no SDK as new as the one global.json pins
+    # ("No instances of MSBuild could be detected"). Rolling it forward to the newest runtime lets it load that SDK.
+    $previousRollForward = $env:DOTNET_ROLL_FORWARD
+    $env:DOTNET_ROLL_FORWARD = 'LatestMajor'
+    try { dotnet flexref sync $script:CompzeRoot }
+    finally { $env:DOTNET_ROLL_FORWARD = $previousRollForward }
 }

@@ -1,0 +1,1 @@
+A specification in Compze.Threading.Specifications fails in about one CI run in ten on the Linux runners, and never on my machine in 200 runs. Hunt it down.

@@ -6,9 +6,7 @@ In order to make it easy for a reader to follow the structure of the code we use
   * _internal: For code that IS shared with another Compze *library* using InternalsVisibleTo — a type no other library consumes does not belong here; it goes under _private.
   * _private: For code that no other library may use, even where InternalsVisibleTo makes it technically visible.
 
-**The line both sections draw is what shipped code can see.** A white-box specification project — the `*.InternalSpecifications` and `*.Internals` families — is not shipped code, so it sits on neither side of that line: it may reach into `_private`, and reaching in never makes a type `_internal`. That matters in both directions. Without the first half, writing an honest white-box specification would force the type it specifies outward and make the section name lie about who depends on it; without the second, a type would advertise sharing that does not exist on the strength of a test alone. The rare specification that must reach past a library's public API says so by living in a project whose *name* says so — see [only-black-box-tests](005-only-black-box-tests.md) — rather than by bending the production code's shape around it.
-
-Why the lowercase underscore form: these sections are not domain concepts — they are visibility machinery, in effect language extensions making up for the access modifier C# lacks. The `_lowercase` spelling makes them look like what they are (keyword-like markers, not PascalCase domain words), keeps them visually distinct from real namespaces, and sorts them before normal namespaces in IDE project views and file explorers — the same signal `_docs` folders already carry.
+**The line both sections draw is what shipped code can see.** A white-box specification project — the `*.InternalSpecifications` and `*.Internals` families — is not shipped code, so it sits on neither side of that line: it may reach into `_private`, and reaching in never makes a type `_internal`. The rare specification that must reach past a library's public API says so by living in a project whose *name* says so — see [only-black-box-tests](005-only-black-box-tests.md) — rather than by bending the production code's shape around it.
 
 Both directions are enforced by Compze.Tests.CodePolicies' PrivateNamespaceIsolationPolicy, which scans the compiled assemblies' type references: no library may reference a type in another assembly's _private namespace, and every type in an _internal namespace must actually be referenced by another library. Both tests ignore white-box specification projects, per the paragraph above. This makes the classification self-maintaining: a library consumer appearing forces promotion _private→_internal; the last library consumer disappearing forces demotion _internal→_private.
 
@@ -20,7 +18,7 @@ These namespaces are obligatory. A project that has only _internal and/or _priva
 
 For many of our project, most of the code in our projects should be in _internal or _private namespaces. 
 
-It is FORBIDDEN to have ANY public types in any namespace where a section of the namespace is named _internal or _private. The inverse also holds: no top-level internal type lives outside an _internal/_private namespace section. Both invariants are enforced by Compze.Tests.CodePolicies (the allowlists have burned to zero and stay there).
+It is FORBIDDEN to have ANY public types in any namespace where a section of the namespace is named _internal or _private. The inverse also holds: no top-level internal type lives outside an _internal/_private namespace section. Both invariants are enforced by Compze.Tests.CodePolicies.
 
 
 ## Internals projects and namespaces
@@ -31,9 +29,5 @@ Internals is a signal that while these projects may expose public types, these a
 
 It is both possible and natural for an Internals project to have _internal and/or _private sections within it.
 
-Note: The Internals projects were reviewed 2026-07-21. SystemCE and Logging (+Logging.Serilog) are deliberately publishing-worthy — external consumers use them accepting the churn. Serialization.Newtonsoft and the Sql family were found to be consumer-facing backend packages wearing the wrong label and were promoted to Compze.Serialization.Newtonsoft and Compze.Sql.* (Sql.Common fully dark behind InternalsVisibleTo). Compze.Internals.Testing's fate (promote the performance-testing harness vs go dark) is still an open decision.
-
-Note: The name Internals is also up for debate and may well be changed to make the meaning clearer.
-
-## Public namespaces are gone — public is the default face
-An old strategy marked the public side with namespaces named Public. That is inverted now: what you see in a project's root namespace is expected to be public, with the non-public implementation details hidden below _internal/_private sections or nested as private/internal types inside the public types. No namespace may contain a Public section — enforced by Compze.Tests.CodePolicies' NamespaceVisibilityPolicy, tests included.
+## Public is the default face
+What you see in a project's root namespace is expected to be public, with the non-public implementation details hidden below _internal/_private sections or nested as private/internal types inside the public types. No namespace may contain a Public section — enforced by Compze.Tests.CodePolicies' NamespaceVisibilityPolicy, tests included.

@@ -1,4 +1,5 @@
 using Compze.Teventive._private.Implementation;
+using Compze.Teventive.Taggregates.BaseClasses._private;
 using Compze.Teventive.Taggregates.Tevents;
 
 namespace Compze.Teventive.Taggregates.BaseClasses;
@@ -9,7 +10,7 @@ public abstract class TeventiveComponent<TParent,
                                         TComponent,
                                         TComponentTevent,
                                         TComponentTeventImplementation>
-    : ITeventiveInternals<TComponentTevent, TComponentTeventImplementation>
+    : TeventApplyingPart<TComponent, TComponentTevent>, ITeventiveInternals<TComponentTevent, TComponentTeventImplementation>, ITeventiveInATaggregate
     where TParent : ITeventiveInternals<TParentTevent, TParentTeventImplementation>
     where TParentTevent : class, ITaggregateTevent
     where TParentTeventImplementation : TaggregateTevent, TParentTevent
@@ -19,30 +20,19 @@ public abstract class TeventiveComponent<TParent,
 {
     static TeventiveComponent() => TaggregateTypeValidator<TComponent, TComponentTeventImplementation, TComponentTevent>.AssertStaticStructureIsValid();
 
-    readonly IMutableTeventDispatcher<TComponentTevent> _teventAppliersDispatcher;
-
-    TParent _parent;
+    readonly TParent _parent;
 
 #pragma warning disable CA1033 //These method should NOT clutter the public interface of this class they are unsafe.
-    void ITeventiveInternals<TComponentTevent, TComponentTeventImplementation>.ApplyTeventInternal(TComponentTevent tevent) => ApplyTevent(tevent);
     void ITeventiveInternals<TComponentTevent, TComponentTeventImplementation>.PublishInternal(TComponentTeventImplementation tevent) => Publish(tevent);
-    ITeventSubscriber<TComponentTevent> ITeventiveInternals<TComponentTevent, TComponentTeventImplementation>.RegisterTeventAppliersInternal() => RegisterTeventAppliers();
+    TeventRouting ITeventiveInternals<TComponentTevent, TComponentTeventImplementation>.TeventAppliersInternal => TeventAppliers;
 #pragma warning restore CA1033 //These method should NOT clutter the public interface of this class they are unsafe.
 
-   void ApplyTevent(TComponentTevent tevent) => _teventAppliersDispatcher.Dispatch(tevent);
+    bool ITeventiveInATaggregate.ItsTaggregateIsBeingRestored => ((ITeventiveInATaggregate)_parent).ItsTaggregateIsBeingRestored;
 
-    protected TeventiveComponent(TParent parent, bool registerTeventAppliers = true, TeventDispatcherConfig? teventAppliersDispatcherConfig = null)
-    {
-        _teventAppliersDispatcher = IMutableTeventDispatcher<TComponentTevent>.New(teventAppliersDispatcherConfig);
-        _parent = parent;
-        if(registerTeventAppliers)
-        {
-#pragma warning disable CS0618 // This is just the type of infrastructure code the method is for
-            parent.RegisterTeventAppliersInternal()
+    ///<summary>A component, or an entity, of <paramref name="parent"/>, whose routing is asserted to route this component's tevents to a part.</summary>
+#pragma warning disable CS0618 // This is just the type of infrastructure code the member is for
+    protected TeventiveComponent(TParent parent) : base(parent, parent.TeventAppliersInternal) => _parent = parent;
 #pragma warning restore CS0618
-                  .For<TComponentTevent>(ApplyTevent);
-        }
-    }
 
 #pragma warning disable CS0618 // This is just the type of infrastructure code the method is for
     protected virtual void Publish(TComponentTeventImplementation tevent) => _parent.PublishInternal(tevent);
@@ -60,8 +50,6 @@ public abstract class TeventiveComponent<TParent,
        where TEcComponentTevent : class, TComponentTevent
        where TEcComponentTeventImplementation : TComponentTeventImplementation, TEcComponentTevent
        where TEcComponent : Component<TEcComponent, TEcComponentTeventImplementation, TEcComponentTevent>;
-
-    protected ITeventSubscriber<TComponentTevent> RegisterTeventAppliers() => _teventAppliersDispatcher.Register();
 
     public abstract class Entity<TEntity,
                                  TEntityId,

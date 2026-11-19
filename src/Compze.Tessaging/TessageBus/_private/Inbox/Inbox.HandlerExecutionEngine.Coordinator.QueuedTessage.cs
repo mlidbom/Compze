@@ -2,7 +2,6 @@ using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Logging;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
-using Compze.Internals.SystemCE.TransactionsCE;
 using Compze.Tessaging.Engine._private;
 using Compze.Tessaging._private.SystemCE.ThreadingCE;
 using Compze.Tessaging.TessageBus._private.TessageHandling;
@@ -64,8 +63,9 @@ partial class Inbox
                   object? result = null;
                   try
                   {
-                     using var scope = _scopeFactory.BeginScope();
-                     result = await TransactionScopeCe.ExecuteAsync(async () =>
+                     //A unit of work, so that what the handler's work finds from the transaction alone, such as the taggregate
+                     //stores' unit of work, finds this one.
+                     result = await _scopeFactory.ExecuteUnitOfWorkAsync(async unitOfWork =>
                      {
                         //The claim rides this handling transaction, so it and the handler's work commit or roll back as one:
                         //a second execution of the same tessage - whatever produced it - skips before running any handler.
@@ -74,7 +74,7 @@ partial class Inbox
                            claimed = false;
                            return null;
                         }
-                        var innerResult = await _tessageTask(tessage, UnitOfWorkResolver.From(scope.Resolver)).caf();
+                        var innerResult = await _tessageTask(tessage, unitOfWork).caf();
                         await _tessageStorage.MarkAsSucceededAsync(TransportTessage).caf();
                         return innerResult;
                      }).caf();

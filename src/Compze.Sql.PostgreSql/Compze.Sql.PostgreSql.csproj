@@ -14,15 +14,10 @@
     <InternalsVisibleTo Include="Compze.TypeIdentifiers.Interning.PostgreSql" />
     <InternalsVisibleTo Include="Compze.Hosting.Testing" />
     <InternalsVisibleTo Include="Compze.Tessaging.Hosting.Testing" />
+    <InternalsVisibleTo Include="Compze.Sql.InternalSpecifications" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Npgsql" Version="9.0.4" />
-  </ItemGroup>
-  <ItemGroup>
-    <InternalsVisibleTo Include="Compze.TypeIdentifiers.Interning.PostgreSql" />
-    <InternalsVisibleTo Include="Compze.DocumentDb.PostgreSql" />
-    <InternalsVisibleTo Include="Compze.Tessaging.PostgreSql" />
-    <InternalsVisibleTo Include="Compze.Teventive.TeventStore.PostgreSql" />
   </ItemGroup>
   <!-- Compze.Internals.Sql.Common — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_Sql_Common)' == 'true'">

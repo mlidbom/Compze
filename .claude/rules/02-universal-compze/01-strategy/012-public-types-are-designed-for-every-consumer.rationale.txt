@@ -15,3 +15,23 @@ designed for every consumer.
 The Internals packages are included deliberately. The rule on highlighting public versus internal parts of projects
 used to say "We do not put the same effort and thought into the design of the types in these projects"; that sentence
 was reworded the same day to say only that their APIs change faster.
+
+## The consumer asking, 2026-11-17
+
+The rule spoke only of Compze's own call sites, so it didn't stop the opposite mistake: shaping public API to the call
+sites of the consumer that asks. In the taggregate store spike, Opus 5.5 (claude-opus-5-5) added API at JAStudio's
+request because it suited JAStudio's code at the time: `StoredIn<TService>`, `All` on `IStateStore`,
+`ReloadFromStorageAfter`, an id order on `Lookup` and `All`, `AssertCanBeChanged`; and earlier it recommended shared live
+instances because they spared JAStudio a refactoring. The YAGNI bullet even argued for each: a consumer's call site is
+"something that calls it". A memory written for it the day before (weigh a consumer's API request) didn't stop the
+next one.
+
+Magnus: "that is consistently the trigger for the problems we've seen since starting this whole work, and I've seen it
+time after time before. The rules may say that we define public API's for unknown users, but that don't seem to stop us
+from defaulting to doing whatever is convenient for some bit of code/system at this very moment in time". And on the
+first wording, which said never to shape API to the asking consumer: "I don't think we should say never to do what they
+ask. But always going through a serious consideration of whether this is something that belongs in a library for general
+consumption is definitely appropriate."
+
+The replay `a-consumer-asking-for-an-api-it-could-build-itself`, in the catalog's rule-testing, is this bullet's test,
+run together with 011 and the catalog's 004.

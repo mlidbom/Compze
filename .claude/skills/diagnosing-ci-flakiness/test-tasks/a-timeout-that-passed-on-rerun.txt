@@ -1,0 +1,1 @@
+The Linux PgSql job of last night's CI run on main failed: a specification in Compze.Tessaging.Specifications timed out after 10 seconds waiting for a tessage to arrive. I reran the job and it passed. Find out what happened.

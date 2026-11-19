@@ -2,7 +2,6 @@ using Compze.Abstractions;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Hosting.Testing;
-using Compze.Internals.SystemCE.TransactionsCE;
 using Compze.Internals.Testing;
 using Compze.Must;
 using Compze.Tests.Common.Wiring;
@@ -14,6 +13,7 @@ using Compze.Teventive.TeventStore.Abstractions;
 using Compze.Teventive.TeventStore.Abstractions.QueryModels.Generators;
 using Compze.Teventive.TeventStore.QueryModels.Generators;
 using Compze.Teventive.TeventStore.Wiring;
+using Compze.Tests.Common;
 
 // ReSharper disable InconsistentNaming
 
@@ -27,7 +27,7 @@ public class When_asked_for_a_query_model_by_key : UniversalTestBase
    {
       _container = TestEnv.DIContainer.CreateContainerForTesting(registrar => registrar.RequireIntegrationTestTypeMappings(), register =>
       {
-         register.TeventStore("nonsense");
+         register.TeventStore("nonsense", store => store.Taggregate<MyAccount>());
          register.Register(
             Scoped.For<IQueryModelReader, IVersioningQueryModelReader>().CreatedBy((AccountQueryModelGenerator queryModelGenerator) => new QueryModelGeneratingQueryModelReader([queryModelGenerator])),
             Scoped.For<AccountQueryModelGenerator>().CreatedBy((ITeventStoreReader teventStoreReader) => new AccountQueryModelGenerator(teventStoreReader))
@@ -46,8 +46,7 @@ public class When_asked_for_a_query_model_by_key : UniversalTestBase
    [PCT] public void TryGet_returns_true_and_the_generated_model_once_the_account_taggregate_is_registered()
    {
       using var scope = _container.BeginScope();
-      var taggregates = scope.Resolve<ITeventStoreUpdater>();
-      var registered = TransactionScopeCe.Execute(() => MyAccount.Register(taggregates, new TaggregateId(), "email", "password"));
+      var registered = _container.ExecuteUnitOfWork(unitOfWork => MyAccount.Register(unitOfWork.TaggregateStoreUpdater(), new TaggregateId(), "email", "password"));
 
       scope.Resolve<IQueryModelReader>().TryGet<MyAccountQueryModel>(registered.Id, out var model).Must().BeTrue();
       model!.Email.Must().Be("email");
@@ -64,13 +63,11 @@ public class When_asked_for_a_query_model_by_key : UniversalTestBase
       MyAccount registered;
       {
          using var registerScope = _container.BeginScope();
-         var taggregates = registerScope.Resolve<ITeventStoreUpdater>();
-         registered = TransactionScopeCe.Execute(() => MyAccount.Register(taggregates, new TaggregateId(), "originalEmail", "password"));
+         registered = _container.ExecuteUnitOfWork(unitOfWork => MyAccount.Register(unitOfWork.TaggregateStoreUpdater(), new TaggregateId(), "originalEmail", "password"));
       }
 
       {
-         using var changeScope = _container.BeginScope();
-         TransactionScopeCe.Execute(() => changeScope.Resolve<ITeventStoreUpdater>().Get<MyAccount>(registered.Id).ChangeEmail("newEmail"));
+         _container.ExecuteUnitOfWork(unitOfWork => unitOfWork.TaggregateStoreUpdater().GetForUpdate<MyAccount>(registered.Id).ChangeEmail("newEmail"));
       }
 
       using var readScope = _container.BeginScope();

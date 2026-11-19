@@ -6,6 +6,7 @@ using Compze.Teventive.Taggregates.Tevents;
 using Compze.Teventive.TeventStore.Abstractions.Refactoring.Migrations._internal;
 using Compze.Teventive.TeventStore.Abstractions.Refactoring.Migrations;
 using Compze.Teventive.TeventStore._private;
+using Compze.Teventive.Taggregates.Tevents._internal;
 
 // ReSharper disable ForCanBeConvertedToForeach
 
@@ -24,11 +25,11 @@ class SingleTaggregateInstanceTeventStreamMutator : ISingleTaggregateInstanceTev
 
    int _taggregateVersion = 1;
 
-   public static ISingleTaggregateInstanceTeventStreamMutator Create(ITaggregateTevent<ITaggregateTevent> creationTevent, IReadOnlyList<ITeventMigration> teventMigrations, Action<IReadOnlyList<TeventModifier.RefactoredTevent>>? teventsAddedCallback = null)
+   public static ISingleTaggregateInstanceTeventStreamMutator Create(ITaggregateTevent<ITaggregateTeventWithIdentity> creationTevent, IReadOnlyList<ITeventMigration> teventMigrations, Action<IReadOnlyList<TeventModifier.RefactoredTevent>>? teventsAddedCallback = null)
       => new SingleTaggregateInstanceTeventStreamMutator(creationTevent, teventMigrations, teventsAddedCallback);
 
    SingleTaggregateInstanceTeventStreamMutator
-      (ITaggregateTevent<ITaggregateTevent> creationTevent, IEnumerable<ITeventMigration> teventMigrations, Action<IReadOnlyList<TeventModifier.RefactoredTevent>>? teventsAddedCallback)
+      (ITaggregateTevent<ITaggregateTeventWithIdentity> creationTevent, IEnumerable<ITeventMigration> teventMigrations, Action<IReadOnlyList<TeventModifier.RefactoredTevent>>? teventsAddedCallback)
    {
       _teventModifier = new TeventModifier(teventsAddedCallback ?? (_ => { }));
       _taggregateId = creationTevent.Tevent.TaggregateId;
@@ -38,8 +39,8 @@ class SingleTaggregateInstanceTeventStreamMutator : ISingleTaggregateInstanceTev
                        .ToArray();
    }
 
-   static IEnumerable<ITaggregateTevent<ITaggregateTevent>> SingleTeventSequence(ITaggregateTevent<ITaggregateTevent> wrappedTevent) { yield return wrappedTevent; }
-   public IEnumerable<ITaggregateTevent<ITaggregateTevent>> Mutate(ITaggregateTevent<ITaggregateTevent> wrappedTevent)
+   static IEnumerable<ITaggregateTevent<ITaggregateTeventWithIdentity>> SingleTeventSequence(ITaggregateTevent<ITaggregateTeventWithIdentity> wrappedTevent) { yield return wrappedTevent; }
+   public IEnumerable<ITaggregateTevent<ITaggregateTeventWithIdentity>> Mutate(ITaggregateTevent<ITaggregateTeventWithIdentity> wrappedTevent)
    {
       Contract.Argument.Assert(_taggregateId == wrappedTevent.Tevent.TaggregateId);
       if (_teventMigrators.Length == 0)
@@ -47,9 +48,7 @@ class SingleTaggregateInstanceTeventStreamMutator : ISingleTaggregateInstanceTev
          return SingleTeventSequence(wrappedTevent);
       }
 
-#pragma warning disable CS0618 // Type or member is obsolete
       ((IMutableTaggregateTevent)wrappedTevent.Tevent).SetTaggregateVersionInternal(_taggregateVersion);
-#pragma warning restore CS0618 // Type or member is obsolete
       _teventModifier.Reset(wrappedTevent);
 
       for(var index = 0; index < _teventMigrators.Length; index++)
@@ -75,17 +74,17 @@ class SingleTaggregateInstanceTeventStreamMutator : ISingleTaggregateInstanceTev
       return newHistory;
    }
 
-   public IEnumerable<ITaggregateTevent<ITaggregateTevent>> EndOfTaggregate()
+   public IEnumerable<ITaggregateTevent<ITaggregateTeventWithIdentity>> EndOfTaggregate()
    {
-      ITaggregateTevent<ITaggregateTevent> endOfHistoryPlaceHolder = new TaggregateTevent<EndOfTaggregateHistoryTeventPlaceHolder>(new EndOfTaggregateHistoryTeventPlaceHolder(_taggregateId, _taggregateVersion));
+      ITaggregateTevent<ITaggregateTeventWithIdentity> endOfHistoryPlaceHolder = new TaggregateTevent<EndOfTaggregateHistoryTeventPlaceHolder>(new EndOfTaggregateHistoryTeventPlaceHolder(_taggregateId, _taggregateVersion));
       return EnumerableCE.Create(endOfHistoryPlaceHolder)
                          .SelectMany(Mutate)
                          .Where(wrappedTevent => wrappedTevent.Tevent.GetType() != typeof(EndOfTaggregateHistoryTeventPlaceHolder));
    }
 
-   public static ITaggregateTevent<ITaggregateTevent>[] MutateCompleteTaggregateHistory
+   public static ITaggregateTevent<ITaggregateTeventWithIdentity>[] MutateCompleteTaggregateHistory
    (IReadOnlyList<ITeventMigration> teventMigrations,
-    ITaggregateTevent<ITaggregateTevent>[] wrappedTevents,
+    ITaggregateTevent<ITaggregateTeventWithIdentity>[] wrappedTevents,
     Action<IReadOnlyList<TeventModifier.RefactoredTevent>>? teventsAddedCallback = null)
    {
       if (teventMigrations.None())
@@ -95,7 +94,7 @@ class SingleTaggregateInstanceTeventStreamMutator : ISingleTaggregateInstanceTev
 
       if(wrappedTevents.None())
       {
-         return Enumerable.Empty<ITaggregateTevent<ITaggregateTevent>>().ToArray();
+         return Enumerable.Empty<ITaggregateTevent<ITaggregateTeventWithIdentity>>().ToArray();
       }
 
       var mutator = Create(wrappedTevents.First(), teventMigrations, teventsAddedCallback);
@@ -111,7 +110,7 @@ class SingleTaggregateInstanceTeventStreamMutator : ISingleTaggregateInstanceTev
       return result;
    }
 
-   public static void AssertMigrationsAreIdempotent(IReadOnlyList<ITeventMigration> teventMigrations, ITaggregateTevent<ITaggregateTevent>[] wrappedTevents)
+   public static void AssertMigrationsAreIdempotent(IReadOnlyList<ITeventMigration> teventMigrations, ITaggregateTevent<ITaggregateTeventWithIdentity>[] wrappedTevents)
    {
       var creationTevent = wrappedTevents.First();
 
@@ -131,8 +130,6 @@ class SingleTaggregateInstanceTeventStreamMutator : ISingleTaggregateInstanceTev
    }
 }
 
-sealed class EndOfTaggregateHistoryTeventPlaceHolder : TaggregateTevent {
-#pragma warning disable CS0618 // Type or member is obsolete
+sealed class EndOfTaggregateHistoryTeventPlaceHolder : TaggregateTeventWithIdentity {
     public EndOfTaggregateHistoryTeventPlaceHolder(TaggregateId taggregateId, int i):base(taggregateId) => ((IMutableTaggregateTevent)this).SetTaggregateVersionInternal(i);
-#pragma warning restore CS0618 // Type or member is obsolete
 }

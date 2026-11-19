@@ -11,6 +11,7 @@ function C-Delete-Project {
     2. Removes all references to the project from other projects (or replaces them if -ReplaceReferencesWith is specified)
     3. Deletes the entire project directory
     4. Runs C-Ensure-CsprojfilesExcludeCsFilesFromProjectsInSubfoldersAndDocsFolders to clean up exclusions
+    5. Runs C-FlexRef-Sync, so FlexRef's properties, conditions and NCrunch solutions no longer name the project
     
     WARNING: This is a destructive operation that deletes all files in the project directory.
     
@@ -111,7 +112,10 @@ function C-Delete-Project {
     # This will clean up any exclusions in parent projects that are no longer needed
     C-Ensure-CsprojfilesExcludeCsFilesFromProjectsInSubfoldersAndDocsFolders
     
-    # Step 6: Run C-Clean to remove all build artifacts
+    # Step 6: Sync FlexRef, so its properties, conditions and NCrunch solutions no longer name the project
+    C-FlexRef-Sync | Out-Null
+    
+    # Step 7: Run C-Clean to remove all build artifacts
     # This prevents duplicate assembly attribute errors from stale obj/bin folders
     C-Clean
 }

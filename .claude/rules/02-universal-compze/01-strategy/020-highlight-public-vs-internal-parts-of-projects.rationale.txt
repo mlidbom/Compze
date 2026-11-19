@@ -1,0 +1,39 @@
+# Why the rule is as it is, and what is still open
+
+What is needed only when changing the rule. The passages below stood in the rule itself until 2026-11-15, and are
+unchanged.
+
+## Why white-box specification projects sit on neither side of the line
+
+That matters in both directions. Without the first half, writing an honest white-box specification would force the type
+it specifies outward and make the section name lie about who depends on it; without the second, a type would advertise
+sharing that does not exist on the strength of a test alone.
+
+## Why the lowercase underscore form
+
+These sections are not domain concepts — they are visibility machinery, in effect language extensions making up for the
+access modifier C# lacks. The `_lowercase` spelling makes them look like what they are (keyword-like markers, not
+PascalCase domain words), keeps them visually distinct from real namespaces, and sorts them before normal namespaces in
+IDE project views and file explorers — the same signal `_docs` folders already carry.
+
+## The code policies have no exceptions left
+
+The allowlists of the two invariants on public types in `_internal`/`_private` sections, and on top-level internal types
+outside them, have burned to zero and stay there.
+
+## The Internals projects, reviewed 2026-07-21
+
+SystemCE and Logging (+Logging.Serilog) are deliberately publishing-worthy — external consumers use them accepting the
+churn. Serialization.Newtonsoft and the Sql family were found to be consumer-facing backend packages wearing the wrong
+label and were promoted to Compze.Serialization.Newtonsoft and Compze.Sql.* (Sql.Common fully dark behind
+InternalsVisibleTo).
+
+## Still open
+
+- Compze.Internals.Testing's fate: promote the performance-testing harness, or go dark.
+- The name Internals is up for debate and may well be changed to make the meaning clearer.
+
+## The Public namespaces that are gone
+
+An old strategy marked the public side with namespaces named Public. That is inverted now: the root namespace is the
+public face.

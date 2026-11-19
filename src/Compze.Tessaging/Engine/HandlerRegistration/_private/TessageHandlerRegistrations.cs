@@ -21,6 +21,7 @@ namespace Compze.Tessaging.Engine.HandlerRegistration._private;
 sealed class TessageHandlerRegistrations
 {
    readonly IMonitor _monitor = IMonitor.New();
+   readonly bool _isTheEngineOfAnEndpoint;
    bool _rosterIsBuilt;
 
    //Tevent subscriptions are keyed by the wrapper routing key their subscribed type translates to - see AddTeventHandler.
@@ -30,6 +31,11 @@ sealed class TessageHandlerRegistrations
    readonly Dictionary<Type, TessageHandlerRoster.TommandHandlerWithResult> _tommandHandlersWithResults = new();
    readonly Dictionary<Type, Func<ITuery, IScopeResolver, Task<object>>> _tueryHandlers = new();
    readonly List<Type> _subscribedTeventTypes = [];
+   readonly List<Type> _teventTypesSubscribedForDynamicObservers = [];
+
+   ///<summary>The registrations of a plain container's engine, or, if <paramref name="isTheEngineOfAnEndpoint"/>, of an endpoint's:<br/>
+   /// an engine given identity and a wire, which receives tevents from other endpoints.</summary>
+   internal TessageHandlerRegistrations(bool isTheEngineOfAnEndpoint) => _isTheEngineOfAnEndpoint = isTheEngineOfAnEndpoint;
 
    ///<summary>Registers a participation handler for tevents compatible with <typeparamref name="TTevent"/>. The one registration<br/>
    /// translation of the routing model: routing operates exclusively on wrapper types, so a subscription to an inner tevent type<br/>
@@ -49,22 +55,26 @@ sealed class TessageHandlerRegistrations
       _subscribedTeventTypes.Add(typeof(TTevent));
    });
 
-   ///<summary>Registers an observer for tevents compatible with <typeparamref name="TTevent"/> — observation, the deliberately<br/>
-   /// transaction-ignoring watch surface: committed facts only, dispatched off-thread by the engine's<br/>
-   /// <see cref="TeventObservationDispatcher"/>, never by the transactional pipelines. The same registration translation as<br/>
-   /// <see cref="AddTeventHandler{TTevent}"/> applies, and the subscribed type joins the advertised set exactly as a<br/>
-   /// participation subscription does: an observation-only subscription must still pull the tevent across the wire.</summary>
-   internal void AddTeventObserver<TTevent>(Func<TTevent, IScopeResolver, Task> observer) where TTevent : ITevent => _monitor.Locked(() =>
+   ///<summary>Registers <paramref name="observer"/> — observation, the deliberately transaction-ignoring watch surface: committed<br/>
+   /// facts only, dispatched off-thread by the engine's <see cref="TeventObservationDispatcher"/>, never by the transactional<br/>
+   /// pipelines. The subscribed type joins the advertised set exactly as a participation subscription does: an observation-only<br/>
+   /// subscription must still pull the tevent across the wire.</summary>
+   internal void AddTeventObserver(TeventObserverRegistration observer) => _monitor.Locked(() =>
    {
       AssertRosterIsNotYetBuilt();
-      TessageInspector.AssertValidForSubscription<TTevent>();
+      _teventObservers.Add(observer);
+      _subscribedTeventTypes.Add(observer.SubscribedTeventType);
+   });
 
-      Func<ITevent, IScopeResolver, Task> deliver = typeof(TTevent).Is<IPublisherTevent<ITevent>>()
-                                                   ? (wrappedTevent, scope) => observer((TTevent)wrappedTevent, scope)
-                                                   : (wrappedTevent, scope) => observer((TTevent)((IPublisherTevent<ITevent>)wrappedTevent).Tevent, scope);
-
-      _teventObservers.Add(new TeventObserverRegistration(PublisherTevent.WrapperTypeMatchingAllWrappingsOf(typeof(TTevent)), deliver));
-      _subscribedTeventTypes.Add(typeof(TTevent));
+   ///<summary>Subscribes the endpoint to tevents compatible with <paramref name="teventType"/> for its dynamic observers:<br/>
+   /// <see cref="Endpoints.EndpointBuilder.SubscribeForDynamicObservers{TTevent}"/>. The type joins the advertised set exactly as<br/>
+   /// a composed observer's subscription does, so the endpoint's peers send it such tevents from the start, and a dynamic<br/>
+   /// observer of them is in effect the moment it is created.</summary>
+   internal void SubscribeForDynamicObservers(Type teventType) => _monitor.Locked(() =>
+   {
+      AssertRosterIsNotYetBuilt();
+      _teventTypesSubscribedForDynamicObservers.Add(teventType);
+      _subscribedTeventTypes.Add(teventType);
    });
 
    ///<summary>Registers the handler for <typeparamref name="TTommand"/> — a tommand whose type declares no result. The handler<br/>
@@ -113,6 +123,8 @@ sealed class TessageHandlerRegistrations
       _rosterIsBuilt = true;
       return new TessageHandlerRoster(teventHandlers: _teventHandlers.ToDictionary(it => it.Key, IReadOnlyList<Func<ITevent, IUnitOfWorkResolver, Task>> (it) => [..it.Value]),
                                       teventObservers: [.._teventObservers],
+                                      isTheEngineOfAnEndpoint: _isTheEngineOfAnEndpoint,
+                                      teventTypesSubscribedForDynamicObservers: [.._teventTypesSubscribedForDynamicObservers],
                                       voidTommandHandlers: new Dictionary<Type, Func<ITommand, IUnitOfWorkResolver, Task>>(_voidTommandHandlers),
                                       tommandHandlersWithResults: new Dictionary<Type, TessageHandlerRoster.TommandHandlerWithResult>(_tommandHandlersWithResults),
                                       tueryHandlers: new Dictionary<Type, Func<ITuery, IScopeResolver, Task<object>>>(_tueryHandlers),

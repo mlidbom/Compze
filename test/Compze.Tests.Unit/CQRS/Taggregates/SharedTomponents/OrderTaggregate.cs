@@ -49,14 +49,29 @@ class BillingAddressTevent<T>(T tevent) : OrderTevent, IBillingAddressTevent<T> 
 /// Only the slots' adopting wrapper tevent types tell the two apart - the inner tevent types are identical.</summary>
 class OrderTaggregate : Taggregate<OrderTaggregate, IOrderTevent, OrderTevent, IOrderTevent<IOrderTevent>, OrderTevent<OrderTevent>>
 {
+   static class Slots
+   {
+      internal static readonly SharedTomponentSlot<OrderTaggregate, IOrderTevent, OrderTevent, IPostalAddressTevent, IShippingAddressTevent<IPostalAddressTevent>> Shipping =
+         new(typeof(ShippingAddressTevent<>), static order => order.ShippingAddress);
+
+      internal static readonly SharedTomponentSlot<OrderTaggregate, IOrderTevent, OrderTevent, IPostalAddressTevent, IBillingAddressTevent<IPostalAddressTevent>> Billing =
+         new(typeof(BillingAddressTevent<>), static order => order.BillingAddress);
+   }
+
+   static readonly TeventRouting<OrderTaggregate, IOrderTevent> Appliers = DeclareAppliers(it => it
+     .For<IOrderTevent.Created>(static (_, _) => {}) //The base class applies the taggregate id and version; the order has no state of its own from creation.
+     .SharedTomponent(Slots.Shipping)
+     .SharedTomponent(Slots.Billing));
+
+   protected override TeventRouting TeventAppliers => Appliers;
+
    public PostalAddress ShippingAddress { get; }
    public PostalAddress BillingAddress { get; }
 
    OrderTaggregate()
    {
-      RegisterTeventAppliers().For<IOrderTevent.Created>(_ => {}); //The base class applies the taggregate id and version; the order has no state of its own from creation.
-      ShippingAddress = new PostalAddress(new SharedTomponentSlot<IOrderTevent, OrderTevent, IPostalAddressTevent, IShippingAddressTevent<IPostalAddressTevent>>(this, typeof(ShippingAddressTevent<IPostalAddressTevent>)));
-      BillingAddress = new PostalAddress(new SharedTomponentSlot<IOrderTevent, OrderTevent, IPostalAddressTevent, IBillingAddressTevent<IPostalAddressTevent>>(this, typeof(BillingAddressTevent<IPostalAddressTevent>)));
+      ShippingAddress = new PostalAddress(Slots.Shipping.In(this));
+      BillingAddress = new PostalAddress(Slots.Billing.In(this));
    }
 
    public static OrderTaggregate Create()

@@ -13,7 +13,8 @@ interface IMySqlConnectionPool : IDbConnectionPool<ICompzeMySqlConnection, MySql
 
    ///<summary>The connection string identifying the database this pool serves — what a caller needs to open a dedicated,<br/>
    /// long-held session against the same database, outside the pool's fresh-connection-per-operation model (the endpoint<br/>
-   /// catalog's process lock is such a session).</summary>
+   /// catalog's process lock is such a session). It is the <see cref="CompzeMySqlConnectionString"/>, so such a session<br/>
+   /// gets the settings the pool's own connections have.</summary>
    string ConnectionString { get; }
 
    public class MySqlConnectionPool : IMySqlConnectionPool
@@ -21,8 +22,9 @@ interface IMySqlConnectionPool : IDbConnectionPool<ICompzeMySqlConnection, MySql
       readonly LazyCE<IDbConnectionPool<ICompzeMySqlConnection, MySqlCommand>> _pool;
       readonly Func<string> _getConnectionString;
 
-      internal MySqlConnectionPool(Func<string> getConnectionString)
+      internal MySqlConnectionPool(Func<string> getConfiguredConnectionString)
       {
+         var getConnectionString = () => CompzeMySqlConnectionString.From(getConfiguredConnectionString());
          _getConnectionString = getConnectionString;
          _pool = new LazyCE<IDbConnectionPool<ICompzeMySqlConnection, MySqlCommand>>(
             () =>

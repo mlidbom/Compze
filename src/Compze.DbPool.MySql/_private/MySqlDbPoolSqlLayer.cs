@@ -52,7 +52,7 @@ sealed class MySqlDbPoolSqlLayer : IDbPoolSqlLayer
 
    void ResetConnectionPool(DbPoolDatabase db)
    {
-      using var connection = new MySqlConnection(ConnectionStringFor(db));
+      using var connection = new MySqlConnection(CompzeMySqlConnectionString.From(ConnectionStringFor(db)));
       MySqlConnection.ClearPool(connection);
    }
 }

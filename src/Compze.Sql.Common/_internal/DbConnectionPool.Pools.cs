@@ -5,6 +5,7 @@ using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Threading;
 using Compze.Threading.ResourceAccess;
 using Compze.Internals.SystemCE.TransactionsCE;
+using Compze.Internals.SystemCE.TransactionsCE._internal;
 
 // ReSharper disable StaticMemberInGenericType
 
@@ -120,6 +121,7 @@ partial class DbConnectionPool<TConnection, TCommand> : IDbConnectionPool<TConne
             transactionLocalIdentifier,
             constructor: () =>
             {
+               DurableResourcesOfTransactions.TakesPart(Transaction.Current!, DurableResource.ThatCanShareItsTransaction($"a database connection, {typeof(TConnection).Name}"));
                var sharedConnection = IAsyncShared.New(openConnection());
                Transaction.Current!.OnCompleted(action: () => _transactionConnections.Locked(transactionConnectionsAfterTransaction =>
                {

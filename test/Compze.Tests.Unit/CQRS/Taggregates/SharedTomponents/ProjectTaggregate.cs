@@ -1,6 +1,7 @@
 using Compze.Abstractions;
 using Compze.Tessaging.TessageTypes;
 using Compze.Teventive;
+using Compze.Teventive.Taggregates;
 using Compze.Teventive.Taggregates.BaseClasses;
 using Compze.Teventive.Taggregates.BaseClasses.Shared;
 using Compze.Teventive.Taggregates.Tevents;
@@ -40,15 +41,52 @@ class ChecklistTevent<T>(T tevent) : ProjectTevent, IChecklistTevent<T> where T 
 }
 
 ///<summary>The owner side of the shared tentity fixture: a project with a checklist of <see cref="ChecklistItem"/> shared tentities.</summary>
-class ProjectTaggregate : Taggregate<ProjectTaggregate, IProjectTevent, ProjectTevent, IProjectTevent<IProjectTevent>, ProjectTevent<ProjectTevent>>
+class ProjectTaggregate : Taggregate<ProjectTaggregate, IProjectTevent, ProjectTevent, IProjectTevent<IProjectTevent>, ProjectTevent<ProjectTevent>>,
+                          ISnapshotable<ProjectTaggregate, ProjectSnapshot>
 {
+   static class Slots
+   {
+      internal static readonly SharedTomponentSlot<ProjectTaggregate, IProjectTevent, ProjectTevent, IChecklistItemTevent, IChecklistTevent<IChecklistItemTevent>> Checklist =
+         new(typeof(ChecklistTevent<>), static project => project.Checklist);
+   }
+
+   static readonly TeventRouting<ProjectTaggregate, IProjectTevent> Appliers = DeclareAppliers(it => it
+     .For<IProjectTevent.Created>(static (_, _) => {}) //The base class applies the taggregate id and version; the project has no state of its own from creation.
+     .SharedTomponent(Slots.Checklist));
+
+   protected override TeventRouting TeventAppliers => Appliers;
+
    public SharedTentityCollection<ChecklistItem, ChecklistItemId, IChecklistItemTevent, IChecklistItemTevent.Added> Checklist { get; }
 
-   ProjectTaggregate()
+   ///<summary>Whether <see cref="RestoreFrom"/> leaves out the checklist, as a mistaken restore would: for the specifications of the check that a<br/>
+   /// snapshot loses nothing.</summary>
+   readonly bool _restoreLeavesOutTheChecklist;
+
+   ProjectTaggregate(bool restoreLeavesOutTheChecklist = false)
    {
-      RegisterTeventAppliers().For<IProjectTevent.Created>(_ => {}); //The base class applies the taggregate id and version; the project has no state of its own from creation.
-      Checklist = new SharedTentityCollection<ChecklistItem, ChecklistItemId, IChecklistItemTevent, IChecklistItemTevent.Added>(
-         new SharedTomponentSlot<IProjectTevent, ProjectTevent, IChecklistItemTevent, IChecklistTevent<IChecklistItemTevent>>(this, typeof(ChecklistTevent<IChecklistItemTevent>)));
+      _restoreLeavesOutTheChecklist = restoreLeavesOutTheChecklist;
+      Checklist = new SharedTentityCollection<ChecklistItem, ChecklistItemId, IChecklistItemTevent, IChecklistItemTevent.Added>(Slots.Checklist.In(this));
+   }
+
+   ///<summary>A new, empty instance, to restore from a snapshot.</summary>
+   internal static ProjectTaggregate Empty() => new();
+
+   internal static ProjectTaggregate CreateWhoseRestoreLeavesOutItsChecklist()
+   {
+      var project = new ProjectTaggregate(restoreLeavesOutTheChecklist: true);
+      project.Publish(new ProjectTevent.Created(new TaggregateId()));
+      return project;
+   }
+
+   internal static ProjectTaggregate EmptyWhoseRestoreLeavesOutItsChecklist() => new(restoreLeavesOutTheChecklist: true);
+
+   public ProjectSnapshot TakeSnapshot() => new(Id, [..Checklist.Select(it => it.TakeSnapshot())]);
+
+   public void RestoreFrom(ProjectSnapshot snapshot)
+   {
+      RestoreIdentity(snapshot.Id);
+      if(_restoreLeavesOutTheChecklist) return;
+      foreach(var item in snapshot.Checklist) Checklist.AddWhileRestoring(item.Id).RestoreFrom(item);
    }
 
    public ChecklistItem AddChecklistItem(string title) => Checklist.AddByPublishing(new ChecklistItemTevent.Added(ChecklistItemId.New(), title));

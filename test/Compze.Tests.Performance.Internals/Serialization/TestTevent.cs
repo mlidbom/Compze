@@ -1,33 +1,17 @@
-using Compze.Abstractions;
-using Compze.Teventive;
 using Compze.Teventive.Taggregates.Tevents;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
 
 namespace Compze.Tests.Performance.Internals.Serialization;
 
-public class TestTevent : TaggregateTevent
+///<summary>The tevent the serializer's performance specifications roundtrip. Its <see cref="TaggregateTevent"/> values are left as constructed:<br/>
+/// the serializer leaves them out, so they make no difference to the work measured.</summary>
+public class TestTevent : TaggregateTeventWithIdentity
 {
    [JsonConstructor]public TestTevent(string test1, string test2)
    {
       Test1 = test1;
       Test2 = test2;
-   }
-
-   public TestTevent(
-      string test1,
-      string test2,
-      int taggregateVersion,
-      TaggregateId taggregateId,
-      DateTime utcTimeStamp):base(taggregateId)
-   {
-      Test1 = test1;
-      Test2 = test2;
-
-#pragma warning disable CS0618 // Type or member is obsolete
-      ((IMutableTaggregateTevent)this).SetTaggregateVersionInternal(taggregateVersion);
-      ((IMutableTaggregateTevent)this).SetUtcTimeStampInternal(utcTimeStamp);
-#pragma warning restore CS0618 // Type or member is obsolete
    }
 
    // ReSharper disable once MemberCanBePrivate.Local

@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <Nullable>enable</Nullable>
+    <Version>0.1.0-alpha</Version>
+    <Description>A MemoryPack cache for Compze.Teventive.MemoryImageStateStore's JSON files, so a memory image state store kept in files starts from the cache and reads only the files changed since.</Description>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="MemoryPack" Version="1.21.4" />
+  </ItemGroup>
+  <!-- Compze.Contracts — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Contracts)' == 'true'">
+    <PackageReference Include="Compze.Contracts" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Contracts)' != 'true'">
+    <ProjectReference Include="..\Compze.Contracts\Compze.Contracts.csproj" />
+  </ItemGroup>
+  <!-- Compze.Teventive.MemoryImageStateStore — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Teventive_MemoryImageStateStore)' == 'true'">
+    <PackageReference Include="Compze.Teventive.MemoryImageStateStore" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Teventive_MemoryImageStateStore)' != 'true'">
+    <ProjectReference Include="..\Compze.Teventive.MemoryImageStateStore\Compze.Teventive.MemoryImageStateStore.csproj" />
+  </ItemGroup>
+</Project>

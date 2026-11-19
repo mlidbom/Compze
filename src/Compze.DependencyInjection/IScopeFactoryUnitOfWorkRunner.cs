@@ -1,3 +1,5 @@
+using System.Transactions;
+using Compze.DependencyInjection._internal;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Internals.SystemCE.TransactionsCE;
@@ -16,14 +18,16 @@ public static class IScopeFactoryUnitOfWorkRunner
       public TResult ExecuteUnitOfWork<TResult>([InstantHandle]Func<IUnitOfWorkResolver, TResult> function)
       {
          using var scope = @this.BeginScope();
-         return TransactionScopeCe.Execute(() => function(UnitOfWorkResolver.From(scope.Resolver)));
+         var beginsATransaction = Transaction.Current == null;
+         return TransactionScopeCe.Execute(() => function(UnitOfWorkIn(scope, beginsATransaction)));
       }
 
       ///<summary>Runs <paramref name="action"/> as its own unit of work — see <see cref="ExecuteUnitOfWork{TResult}"/>.</summary>
       public void ExecuteUnitOfWork([InstantHandle]Action<IUnitOfWorkResolver> action)
       {
          using var scope = @this.BeginScope();
-         TransactionScopeCe.Execute(() => action(UnitOfWorkResolver.From(scope.Resolver)));
+         var beginsATransaction = Transaction.Current == null;
+         TransactionScopeCe.Execute(() => action(UnitOfWorkIn(scope, beginsATransaction)));
       }
 
       ///<summary>Runs <paramref name="function"/> as its own unit of work — the async form of <see cref="ExecuteUnitOfWork{TResult}"/>:<br/>
@@ -31,14 +35,16 @@ public static class IScopeFactoryUnitOfWorkRunner
       public async Task<TResult> ExecuteUnitOfWorkAsync<TResult>([InstantHandle]Func<IUnitOfWorkResolver, Task<TResult>> function)
       {
          using var scope = @this.BeginScope();
-         return await TransactionScopeCe.ExecuteAsync(async () => await function(UnitOfWorkResolver.From(scope.Resolver)).caf()).caf();
+         var beginsATransaction = Transaction.Current == null;
+         return await TransactionScopeCe.ExecuteAsync(async () => await function(UnitOfWorkIn(scope, beginsATransaction)).caf()).caf();
       }
 
       ///<summary>Runs <paramref name="action"/> as its own unit of work — see <see cref="ExecuteUnitOfWorkAsync{TResult}"/>.</summary>
       public async Task ExecuteUnitOfWorkAsync([InstantHandle]Func<IUnitOfWorkResolver, Task> action)
       {
          using var scope = @this.BeginScope();
-         await TransactionScopeCe.ExecuteAsync(async () => await action(UnitOfWorkResolver.From(scope.Resolver)).caf()).caf();
+         var beginsATransaction = Transaction.Current == null;
+         await TransactionScopeCe.ExecuteAsync(async () => await action(UnitOfWorkIn(scope, beginsATransaction)).caf()).caf();
       }
 
       ///<summary>Runs <paramref name="function"/> in a fresh <see cref="IScope"/> with no transaction of its own — the async<br/>
@@ -72,5 +78,14 @@ public static class IScopeFactoryUnitOfWorkRunner
          using var scope = @this.BeginScope();
          action(scope.Resolver);
       }
+   }
+
+   ///<summary>The unit of work of <paramref name="scope"/> and the ambient transaction. When it began the transaction, it is found<br/>
+   /// from the transaction alone until the transaction completes: see <see cref="AmbientUnitOfWork"/>.</summary>
+   static IUnitOfWorkResolver UnitOfWorkIn(IScope scope, bool beganTheTransaction)
+   {
+      var unitOfWork = UnitOfWorkResolver.From(scope.Resolver);
+      if(beganTheTransaction) AmbientUnitOfWork.Began(unitOfWork);
+      return unitOfWork;
    }
 }

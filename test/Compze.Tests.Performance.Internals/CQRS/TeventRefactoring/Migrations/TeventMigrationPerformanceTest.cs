@@ -1,3 +1,4 @@
+using Compze.Teventive.Taggregates.Tevents;
 using Compze.Abstractions;
 using Compze.Abstractions.Time;
 using Compze.Hosting.Testing;
@@ -42,7 +43,7 @@ public class TeventMigrationPerformanceTest : TeventMigrationTestBase
       _currentMigrations = Enumerable.Empty<ITeventMigration>().ToList();
       _container = CreateContainerForTeventStoreType(migrationsFactory: () => _currentMigrations);
 
-      _container.ExecuteUnitOfWork(unitOfWork => ((ITaggregate)_taggregate).Commit(unitOfWork.TeventStore().SaveSingleTaggregateTevents));
+      _container.ExecuteUnitOfWork(unitOfWork => ((ITaggregate)_taggregate).Commit(committed => unitOfWork.TeventStore().SaveSingleTaggregateTevents(committed.Cast<ITaggregateTevent<ITaggregateTeventWithIdentity>>().ToList())));
    }
 
    protected override async Task DisposeAsyncInternal()
@@ -80,8 +81,8 @@ public class TeventMigrationPerformanceTest : TeventMigrationTestBase
 
       return;
 
-      void LoadWithClonedContainer(IDependencyInjectionContainer container) => container.ExecuteUnitOfWork(unitOfWork => unitOfWork.TeventStoreUpdater()
-                                                                                                                   .Get<TestTaggregate>(_taggregate.Id));
+      void LoadWithClonedContainer(IDependencyInjectionContainer container) => container.ExecuteUnitOfWork(unitOfWork => unitOfWork.TaggregateStoreUpdater()
+                                                                                                                   .GetForUpdate<TestTaggregate>(_taggregate.Id));
    }
 
    [PCT]  public async Task With_four_migrations_mutation_that_all_actually_changes_things_uncached_loading_takes_less_than_X_milliseconds_cached_less_than_Y_milliseconds()

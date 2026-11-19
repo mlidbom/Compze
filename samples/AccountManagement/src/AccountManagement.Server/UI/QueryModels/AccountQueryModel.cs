@@ -15,17 +15,17 @@ namespace AccountManagement.UI.QueryModels;
 
 class AccountQueryModel : SelfGeneratingQueryModel<AccountQueryModel, IAccountTevent>, IAccountResourceData
 {
+   static readonly TeventRouting<AccountQueryModel, IAccountTevent> Appliers = DeclareAppliers(it => it
+     .For<IAccountTevent.PropertyUpdated.Email>(static (account, tevent) => account.Email = tevent.Email)
+     .For<IAccountTevent.PropertyUpdated.Password>(static (account, tevent) => account.Password = tevent.Password)
+     .IgnoreUnhandled<IAccountTevent.LoginAttempted>()); //Login tevents change no account state, so they have no appliers.
+
+   protected override TeventRouting TeventAppliers => Appliers;
+
    public Password Password { get; private set; } = null!; //Nullable status guaranteed by AssertInvariantsAreMet
    public Email Email { get; private set; } = null!;       //Nullable status guaranteed by AssertInvariantsAreMet
 
-   AccountQueryModel(IEnumerable<ITaggregateTevent<IAccountTevent>> tevents) : base(TeventDispatcherConfig.Default.IgnoreUnhandled<IAccountTevent.LoginAttempted>()) //Login tevents change no account state, so they have no appliers.
-   {
-      RegisterTeventAppliers()
-        .For<IAccountTevent.PropertyUpdated.Email>(tevent => Email = tevent.Email)
-        .For<IAccountTevent.PropertyUpdated.Password>(tevent => Password = tevent.Password);
-
-      LoadFromHistory(tevents);
-   }
+   AccountQueryModel(IEnumerable<ITaggregateTevent<IAccountTevent>> tevents) => LoadFromHistory(tevents);
 
    AccountId IAccountResourceData.Id => (AccountId)base.Id;
 

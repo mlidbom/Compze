@@ -12,7 +12,7 @@ namespace AccountManagement.Domain.Tevents;
 // ReSharper disable once ClassNeverInstantiated.Global
 public class AccountTevent<T>(T tevent) : TaggregateTevent<T>(tevent), IAccountTevent<T> where T : IAccountTevent;
 
-public class AccountTevent : TaggregateTevent, IAccountTevent
+public class AccountTevent : TaggregateTeventWithIdentity, IAccountTevent
 {
    protected AccountTevent() {}
    AccountTevent(AccountId accountId) : base(accountId) {}

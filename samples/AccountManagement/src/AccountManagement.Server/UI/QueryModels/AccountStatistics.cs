@@ -4,6 +4,7 @@ using Compze.Abstractions;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Tessaging.TessageBus;
+using Compze.Teventive;
 using Compze.Teventive.TeventStore.QueryModels.SelfGeneratingQueryModels;
 using Compze.Tessaging.Typermedia;
 
@@ -17,14 +18,13 @@ static class AccountStatistics
    /// </summary>
    public class SingletonStatisticsQueryModel : SelfGeneratingQueryModel<SingletonStatisticsQueryModel, IAccountTevent>
    {
-      public SingletonStatisticsQueryModel()
-      {
-         RegisterTeventAppliers()
-           .For<IAccountTevent.Created>(_ => NumberOfAccounts++)
-           .For<IAccountTevent.LoginAttempted>(_ => NumberOfLoginsAttempts++)
-           .For<IAccountTevent.LoggedIn>(_ => NumberOfSuccessfulLogins++)
-           .For<IAccountTevent.LoginFailed>(_ => NumberOfFailedLogins++);
-      }
+      static readonly TeventRouting<SingletonStatisticsQueryModel, IAccountTevent> Appliers = DeclareAppliers(it => it
+        .For<IAccountTevent.Created>(static (statistics, _) => statistics.NumberOfAccounts++)
+        .For<IAccountTevent.LoginAttempted>(static (statistics, _) => statistics.NumberOfLoginsAttempts++)
+        .For<IAccountTevent.LoggedIn>(static (statistics, _) => statistics.NumberOfSuccessfulLogins++)
+        .For<IAccountTevent.LoginFailed>(static (statistics, _) => statistics.NumberOfFailedLogins++));
+
+      protected override TeventRouting TeventAppliers => Appliers;
 
       int NumberOfAccounts { get; set; }
       int NumberOfLoginsAttempts { get; set; }

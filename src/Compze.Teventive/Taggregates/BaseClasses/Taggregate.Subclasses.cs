@@ -3,7 +3,7 @@ using JetBrains.Annotations;
 
 namespace Compze.Teventive.Taggregates.BaseClasses;
 
-public partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeventImplementation, TWrapperTeventInterface, TWrapperTeventImplementation>
+public abstract partial class Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeventImplementation, TWrapperTeventInterface, TWrapperTeventImplementation>
     where TWrapperTeventImplementation : TWrapperTeventInterface
     where TWrapperTeventInterface : ITaggregateTevent<TTaggregateTevent>
     where TTaggregate : Taggregate<TTaggregate, TTaggregateTevent, TTaggregateTeventImplementation, TWrapperTeventInterface, TWrapperTeventImplementation>
