@@ -32,5 +32,5 @@ A .NET framework for building expressive domains through:
 
 - Docs are co-located: they live in `_docs/` folders next to the code they document. See
   `src/Documentation-CoLocation.README.md`.
-- Claude config: shared standards arrive via the `.claude-shared/` submodule, selected per project by
-  symlinks under `.claude/` — start at [.claude/rules/README.txt](../README.txt).
+- Claude config: shared standards arrive via `.claude-shared/`, a git worktree of the machine's one clone of
+  the catalog, selected per project by symlinks under `.claude/` — start at [.claude/rules/README.txt](../README.txt).
