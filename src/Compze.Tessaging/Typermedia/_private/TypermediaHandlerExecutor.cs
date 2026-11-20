@@ -52,6 +52,11 @@ class TypermediaHandlerExecutor
          {
             return await action().caf();
          }
+         //review: at most once holds here only for what the handler does inside its unit of work. This retry runs a handler that
+         //   threw again, up to MaxAttempts times, so whatever it did outside the transaction happens again, such as typing into a
+         //   console or restarting a process; an endpoint without a database has nothing the transaction rolls back. And
+         //   IAtMostOnceTessage promises deduplication, while nothing deduplicates a typermedia tommand by its TessageId. Retry
+         //   only failures known to be transient, or none? Found by reading, for the Claude tooling's Cloyd (Claude, 2026-11-20).
          //Todo:review: Should we have some sort of retryable exception test here perhaps? And/or a backoff delay? Rather than hammering away instantly regardless of the error?
          catch(Exception ex) when(ex is not NoHandlerException && --remainingAttempts > 0) //A missing handler is a programming error, not a transient failure to retry.
          {
