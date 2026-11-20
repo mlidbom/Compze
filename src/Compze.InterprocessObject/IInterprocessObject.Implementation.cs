@@ -21,6 +21,10 @@ public partial interface IInterprocessObject
          _createDefault = createDefault;
          _corruptionAction = corruptionAction;
          var fileName = PathCE.ReplaceInvalidCharactersWith(name, '_');
+         //review: the mutex is named by the name alone, while the file and the signal live in the directory. Two objects of one name in
+         //   different directories, such as a sandbox's endpoint registry beside the real one, are separate files but share one lock,
+         //   so each waits on the other's updates. Name the mutex by the directory too? Found by reading, for the Claude tooling's Cloyd
+         //   (Claude, 2026-11-20).
          Mutex = isGlobal
             ? IAwaitableMutex.Global(fileName, directory, lockTimeout, waitTimeout, signalPollingPolicy)
             : IAwaitableMutex.Local(fileName, directory, lockTimeout, waitTimeout, signalPollingPolicy);
