@@ -134,7 +134,8 @@ busiest, about 5 hours on a busy day. See the ephemeral subscriber under "Open d
 
 ## Gaps in Compze found on the way
 
-compze-rep found most of these by reading:
+compze-rep found most of these by reading. Five of them, from the missing deadline to the retries, are written up in
+[remote typermedia calls: deadlines, cancellation and stopping](remote-typermedia-calls-deadlines-cancellation-and-stopping.md):
 
 - **No way to address one endpoint among several:** [its own document](addressing-one-endpoint-among-several.md).
   Magnus: it "probably needs to change no matter what we decide here".
@@ -150,8 +151,12 @@ compze-rep found most of these by reading:
   `InterprocessEndpointRegistry.RetractEndpointAddress`, commit 1913b8935.
 - **Nothing forgets a peer,** so a departed subscriber's best-effort queue fills (above). `DoNotQueueTeventsFor` needs
   the peers' `EndpointId`s at the publisher's composition.
-- **No Native AOT.**
-- **The registry's mutex is named by the registry name alone,** not its directory.
+- **No Native AOT:** [its own document](native-aot.md).
+- **The registry's mutex is named by the registry name alone,** not its directory. The mutex belongs to the
+  interprocess object: a `review:` comment in `src/Compze.InterprocessObject/IInterprocessObject.Implementation.cs`,
+  commit a4f9204c0.
+- **The roster delivers a tevent's handlers grouped by subscribed type,** not in registration order: a `review:`
+  comment on `TessageHandlerRoster.GetTeventHandlers`, commit 0c812bcff.
 
 ## Open decisions
 
