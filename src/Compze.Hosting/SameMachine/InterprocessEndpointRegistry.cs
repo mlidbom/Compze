@@ -72,6 +72,10 @@ public class InterprocessEndpointRegistry : IEndpointRegistryAndAnnouncer, IDisp
       });
 
    ///<summary>Retracts the endpoint's announced address — what an endpoint does when it stops listening.</summary>
+   ///<remarks>review: this removes every entry of <paramref name="endpointId"/>, whichever process announced it. When a process that runs an endpoint<br/>
+   /// starts its successor, which announces under the same id before the old one stops, as the Claude tooling's hub does at each republish, the old<br/>
+   /// process's stop removes the successor's announcement, and nothing announces it again. The exactly-once tier's process lock rules the overlap out;<br/>
+   /// the best-effort tier has no lock. Remove only this process's own entry? (Claude, 2026-11-20, found by reading.)</remarks>
    public void RetractEndpointAddress(EndpointId endpointId) =>
       _sharedState.Update(state => state.Entries.RemoveAll(entry => entry.EndpointId == endpointId.Value));
 
