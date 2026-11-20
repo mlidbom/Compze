@@ -59,6 +59,10 @@ public class TessageHandlerRoster
    ///<summary>The participation tevent handlers whose subscriptions match <paramref name="wrapperTeventType"/>. Every dispatch<br/>
    /// site invokes them inside a unit of work — the publisher's own for a local publish, the inbox processing's own for an<br/>
    /// exactly-once arrival, the direct dispatch's own for a best-effort arrival.</summary>
+   ///<remarks>review: the handlers come grouped by subscribed type, each type's in registration order, the types in the order each was first<br/>
+   /// registered: registering for IUserTevent, then IUserRegistered, then IUserTevent again delivers an IUserImported to the first, the third, then<br/>
+   /// the second. Teventive's introduction.md promises delivery "in the order that the handlers were registered". Which should change, this or the<br/>
+   /// page? Found by reading, not run (Claude, 2026-11-20).</remarks>
    //performance: Use static caching trick.
    public IReadOnlyList<Func<ITevent, IUnitOfWorkResolver, Task>> GetTeventHandlers(Type wrapperTeventType) =>
       [.._teventHandlers.Where(it => it.Key.IsAssignableFrom(wrapperTeventType)).SelectMany(it => it.Value)];
