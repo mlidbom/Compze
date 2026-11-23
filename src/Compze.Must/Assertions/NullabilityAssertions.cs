@@ -2,7 +2,11 @@
 
 namespace Compze.Must;
 
-/// <summary>Null assertions.</summary>
+/// <summary>
+/// Null assertions.<br/>
+/// For a check that no Compze.Must assertion makes, use <see cref="SatisfyAssertions.Satisfy{T}(IAssertionContext{T}, Func{T, bool}, Func{T, string}, string)"/>:<br/>
+/// it takes any predicate, and its failure shows the predicate and the value.
+/// </summary>
 public static class NullabilityAssertions
 {
    /// <summary>Asserts that the value is not <see langword="null"/>, narrowing the context to the non-nullable type.</summary>

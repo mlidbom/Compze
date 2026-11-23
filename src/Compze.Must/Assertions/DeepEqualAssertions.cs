@@ -5,7 +5,11 @@ using Compze.Must._private.Serialization;
 // ReSharper disable InconsistentNaming
 namespace Compze.Must;
 
-/// <summary>Deep structural-equality assertions that compare two values by serializing both and diffing the results.</summary>
+/// <summary>
+/// Deep structural-equality assertions that compare two values by serializing both and diffing the results.<br/>
+/// For a check that no Compze.Must assertion makes, use <see cref="SatisfyAssertions.Satisfy{T}(IAssertionContext{T}, Func{T, bool}, Func{T, string}, string)"/>:<br/>
+/// it takes any predicate, and its failure shows the predicate and the value.
+/// </summary>
 /// <remarks>
 /// The method decides which members are compared: all of them, internal and public ones, or public ones. The Must call's
 /// <see cref="ISerializationConfig{TValue}"/>, and the global rules of <see cref="MustSerialization"/>, decide what is

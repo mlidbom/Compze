@@ -2,7 +2,11 @@ using System.Runtime.CompilerServices;
 
 namespace Compze.Must;
 // ReSharper disable InconsistentNaming
-/// <summary>Reference-identity assertions. Either value may be <see langword="null"/>: two nulls are the same instance, and a null is not the same instance as any object.</summary>
+/// <summary>
+/// Reference-identity assertions. Either value may be <see langword="null"/>: two nulls are the same instance, and a null is not the same instance as any object.<br/>
+/// For a check that no Compze.Must assertion makes, use <see cref="SatisfyAssertions.Satisfy{T}(IAssertionContext{T}, Func{T, bool}, Func{T, string}, string)"/>:<br/>
+/// it takes any predicate, and its failure shows the predicate and the value.
+/// </summary>
 public static class ReferenceEqualityAssertions
 {
    /// <summary>Asserts that the value is the same instance as <paramref name="expected"/>.</summary>

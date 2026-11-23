@@ -6,7 +6,11 @@ using Compze.Must._private;
 namespace Compze.Must;
 
 // ReSharper disable InconsistentNaming
-/// <summary>Value-equality assertions, checked consistently across every comparison mechanism the type supports.</summary>
+/// <summary>
+/// Value-equality assertions, checked consistently across every comparison mechanism the type supports.<br/>
+/// For a check that no Compze.Must assertion makes, use <see cref="SatisfyAssertions.Satisfy{T}(IAssertionContext{T}, Func{T, bool}, Func{T, string}, string)"/>:<br/>
+/// it takes any predicate, and its failure shows the predicate and the value.
+/// </summary>
 public static class EqualityAssertions
 {
    /// <summary>

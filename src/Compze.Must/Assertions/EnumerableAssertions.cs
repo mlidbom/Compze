@@ -5,7 +5,11 @@ using Compze.Must._private;
 
 namespace Compze.Must;
 
-/// <summary>Assertions over enumerable sequences.</summary>
+/// <summary>
+/// Assertions over enumerable sequences.<br/>
+/// For a check that no Compze.Must assertion makes, use <see cref="SatisfyAssertions.Satisfy{T}(IAssertionContext{T}, Func{T, bool}, Func{T, string}, string)"/>:<br/>
+/// it takes any predicate, and its failure shows the predicate and the value.
+/// </summary>
 /// <remarks>
 /// Each takes the subject as an <see cref="IEnumerable{T}"/> of its element type and returns the context as one, as<br/>
 /// <see cref="ContainmentAssertions.Contain{TItem}"/> does. The element type comes from the subject, so the expected values<br/>

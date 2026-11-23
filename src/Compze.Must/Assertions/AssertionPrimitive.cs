@@ -7,7 +7,9 @@ namespace Compze.Must;
 
 /// <summary>
 /// The primitives every built-in assertion is built on, and the extension points for authoring your own: <see cref="RunAssertion{T}"/>,<br/>
-/// and <see cref="RunAssertionThatANullValueFails{T}"/> for an assertion that needs a value to check.
+/// and <see cref="RunAssertionThatANullValueFails{T}"/> for an assertion that needs a value to check.<br/>
+/// A one-off check needs no assertion of its own: <see cref="SatisfyAssertions.Satisfy{T}(IAssertionContext{T}, Func{T, bool}, Func{T, string}, string)"/><br/>
+/// takes any predicate, and its failure shows the predicate and the value.
 /// </summary>
 public static class AssertionPrimitive
 {

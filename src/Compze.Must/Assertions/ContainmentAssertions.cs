@@ -4,7 +4,11 @@ using System.Runtime.CompilerServices;
 
 namespace Compze.Must;
 
-/// <summary>The assertion that a collection contains an item. A <see langword="null"/> collection fails, so it returns a non-nullable context.</summary>
+/// <summary>
+/// The assertion that a collection contains an item. A <see langword="null"/> collection fails, so it returns a non-nullable context.<br/>
+/// For a check that no Compze.Must assertion makes, use <see cref="SatisfyAssertions.Satisfy{T}(IAssertionContext{T}, Func{T, bool}, Func{T, string}, string)"/>:<br/>
+/// it takes any predicate, and its failure shows the predicate and the value.
+/// </summary>
 /// <remarks>
 /// It takes the subject as an <see cref="IEnumerable{T}"/> of its element type and returns the context as one, as<br/>
 /// <see cref="EnumerableAssertions"/> do: the element type comes from the subject, so an item of a narrower type compiles.

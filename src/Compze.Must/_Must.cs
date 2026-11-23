@@ -13,7 +13,11 @@ public interface IAssertionContext
    internal SerializationRules SerializationRules { get; }
 }
 
-/// <summary>The context for a <see cref="MustExtensions.Must{T}(T, string)"/> assertion chain over a value of type <typeparamref name="T"/>. Assertions are extension methods on this interface.</summary>
+/// <summary>
+/// The context for a <see cref="MustExtensions.Must{T}(T, string)"/> assertion chain over a value of type <typeparamref name="T"/>. Assertions are extension methods on this interface.<br/>
+/// For a check that no Compze.Must assertion makes, use <see cref="SatisfyAssertions.Satisfy{T}(IAssertionContext{T}, Func{T, bool}, Func{T, string}, string)"/>:<br/>
+/// it takes any predicate, and its failure shows the predicate and the value.
+/// </summary>
 public interface IAssertionContext<out T> : IAssertionContext
 {
    /// <summary>The value under assertion.</summary>

@@ -143,6 +143,9 @@ the rich message; a passing one returns the context so you can keep going:
 caughtException.Must().NotBeNull().BeExactType<InvalidOperationException>();
 ```
 
+For a check that no assertion here makes, use `Satisfy`: `items.Must().Satisfy(it => !it.Contains(item))` takes any
+predicate, and its failure shows the predicate and the value. See [`Satisfy` — the universal assertion](#satisfy--the-universal-assertion).
+
 ## Subjects declared nullable
 
 Assert on a `string?`, a `List<T>?` or any other subject declared nullable as on any other: no `!`, and no nullable
@@ -335,7 +338,7 @@ await InvokingAsync(() => repository.SaveAsync(order))
 | Type | `BeExactType<T>`, `BeAssignableTo<T>` (both narrow the context to `T`) |
 | Value sets | `BeOneOf`, `BeValidEnumValue` |
 | Throwing | `Invoking(...).Must().Throw<T>()`, `InvokingAsync(...).Must().ThrowAsync<T>()` |
-| General | `Satisfy` |
+| General | `Satisfy`, for any check the others don't make |
 
 The collection assertions take their element type from the subject, and return the context as an `IEnumerable<T>` of
 it. So the expected values need no element type of their own: `names.Must().SequenceEqual([])` and

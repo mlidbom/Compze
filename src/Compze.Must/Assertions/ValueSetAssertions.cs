@@ -7,7 +7,11 @@ using System.Runtime.CompilerServices;
 
 namespace Compze.Must;
 
-/// <summary>Assertions that a value is among a set of allowed values.</summary>
+/// <summary>
+/// Assertions that a value is among a set of allowed values.<br/>
+/// For a check that no Compze.Must assertion makes, use <see cref="SatisfyAssertions.Satisfy{T}(IAssertionContext{T}, Func{T, bool}, Func{T, string}, string)"/>:<br/>
+/// it takes any predicate, and its failure shows the predicate and the value.
+/// </summary>
 public static class ValueSetAssertions
 {
    /// <summary>Asserts that the value equals one of <paramref name="validValues"/>.</summary>

@@ -4,7 +4,11 @@ using System.Runtime.CompilerServices;
 
 namespace Compze.Must;
 
-/// <summary>Assertions over <see cref="IComparable{T}"/> values. A <see langword="null"/> value fails each of them, so each returns a non-nullable context.</summary>
+/// <summary>
+/// Assertions over <see cref="IComparable{T}"/> values. A <see langword="null"/> value fails each of them, so each returns a non-nullable context.<br/>
+/// For a check that no Compze.Must assertion makes, use <see cref="SatisfyAssertions.Satisfy{T}(IAssertionContext{T}, Func{T, bool}, Func{T, string}, string)"/>:<br/>
+/// it takes any predicate, and its failure shows the predicate and the value.
+/// </summary>
 public static class ComparableAssertions
 {
    /// <summary>Asserts that the value is greater than <paramref name="expected"/>. A <see langword="null"/> <paramref name="expected"/> is a bug in the test: it throws an <see cref="ArgumentNullException"/>.</summary>

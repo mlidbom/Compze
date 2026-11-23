@@ -2,7 +2,11 @@ using Compze.Must._private;
 
 namespace Compze.Must;
 // ReSharper disable InconsistentNaming
-/// <summary>Assertions about the runtime type of the value.</summary>
+/// <summary>
+/// Assertions about the runtime type of the value.<br/>
+/// For a check that no Compze.Must assertion makes, use <see cref="SatisfyAssertions.Satisfy{T}(IAssertionContext{T}, Func{T, bool}, Func{T, string}, string)"/>:<br/>
+/// it takes any predicate, and its failure shows the predicate and the value.
+/// </summary>
 public static class TypeAssertions
 {
    /// <summary>Asserts that the value's runtime type is exactly <typeparamref name="TExpected"/>, narrowing the context to it.</summary>
