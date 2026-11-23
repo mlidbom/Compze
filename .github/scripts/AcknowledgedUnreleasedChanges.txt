@@ -15,10 +15,12 @@ Compze.Contracts aa4c3394e946f54d8e96128296dfc5d699a1e1f5 LangVersion moved to s
 Compze.DbPool aa4c3394e946f54d8e96128296dfc5d699a1e1f5 Comments only.
 Compze.DocumentDb.MySql aa4c3394e946f54d8e96128296dfc5d699a1e1f5 Comments only.
 Compze.DocumentDb.PostgreSql aa4c3394e946f54d8e96128296dfc5d699a1e1f5 Comments only.
-Compze.Must aa4c3394e946f54d8e96128296dfc5d699a1e1f5 Comments only.
+Compze.Hosting a499c03ef91252113ffe73467e0c34434cde6093 Review comments only.
+Compze.InterprocessObject a499c03ef91252113ffe73467e0c34434cde6093 Review comments only.
 Compze.Sql.MicrosoftSql aa4c3394e946f54d8e96128296dfc5d699a1e1f5 An InternalsVisibleTo for the test project Compze.Sql.InternalSpecifications, and duplicate InternalsVisibleTo grants removed.
 Compze.Sql.PostgreSql aa4c3394e946f54d8e96128296dfc5d699a1e1f5 An InternalsVisibleTo for the test project Compze.Sql.InternalSpecifications, and duplicate InternalsVisibleTo grants removed.
 Compze.Sql.Sqlite aa4c3394e946f54d8e96128296dfc5d699a1e1f5 An InternalsVisibleTo for the test project Compze.Sql.InternalSpecifications, and duplicate InternalsVisibleTo grants removed.
+Compze.Tessaging a499c03ef91252113ffe73467e0c34434cde6093 Review comments only.
 Compze.TypeIdentifiers aa4c3394e946f54d8e96128296dfc5d699a1e1f5 Comments only.
 Compze.Underscore aa4c3394e946f54d8e96128296dfc5d699a1e1f5 LangVersion moved to src/Directory.Build.props, with the same value: latest. And NoWarn CS1591 dropped, which changes only the build's warnings.
 Compze.Unit aa4c3394e946f54d8e96128296dfc5d699a1e1f5 LangVersion moved to src/Directory.Build.props, with the same value: latest.
