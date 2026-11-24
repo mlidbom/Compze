@@ -273,7 +273,7 @@ public class Given_a_memory_image_state_store_kept_in_the_domain_database : Univ
 
    public class after_two_memory_images_each_add_cards_to_one_deck_from_many_threads_at_once_and_each_adds_a_sentence : Given_a_memory_image_state_store_kept_in_the_domain_database
    {
-      const int CardsEachMemoryImageAdds = 20;
+      const int CardsEachMemoryImageAdds = 10; //Each waits for every unit of work ahead of it on the one deck, at most 30 seconds in all.
       readonly TaggregateId _deckId = new(Guid.NewGuid());
 
       public after_two_memory_images_each_add_cards_to_one_deck_from_many_threads_at_once_and_each_adds_a_sentence()

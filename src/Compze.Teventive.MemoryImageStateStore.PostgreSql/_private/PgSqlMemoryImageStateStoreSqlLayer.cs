@@ -3,7 +3,6 @@ using Compze.Sql.Common._internal;
 using Compze.Sql.PostgreSql._internal;
 using Compze.Teventive.MemoryImageStateStore._internal;
 using Compze.Teventive.MemoryImageStateStore._internal.SqlLayer;
-using NpgsqlTypes;
 using Schema = Compze.Teventive.MemoryImageStateStore._internal.SqlLayer.IMemoryImageStateStoreSqlLayer.TableSchemaStrings;
 
 namespace Compze.Teventive.MemoryImageStateStore.PostgreSql._private;
@@ -40,7 +39,7 @@ partial class PgSqlMemoryImageStateStoreSqlLayer : IMemoryImageStateStoreSqlLaye
                                  SELECT {Schema.Id}, {Schema.ClassName}, {Schema.Snapshot}, {Schema.CommitNumber} FROM {Schema.TaggregateTable}
                                  WHERE {Schema.ClassName} = ANY(@ClassNames){(committedAfter == null ? "" : $" AND {Schema.CommitNumber} > @{Schema.CommitNumber}")};
                                  """)
-                .AddParameter("ClassNames", NpgsqlDbType.Array | NpgsqlDbType.Varchar, classNames.ToArray());
+                .Parameters.AddWithValue("ClassNames", classNames.ToArray()); //A string array, which Npgsql sends as text[].
          if(committedAfter is {} lastSeen) command.AddParameter(Schema.CommitNumber, lastSeen.Value);
          using var reader = command.ExecuteReader();
          reader.Read();
