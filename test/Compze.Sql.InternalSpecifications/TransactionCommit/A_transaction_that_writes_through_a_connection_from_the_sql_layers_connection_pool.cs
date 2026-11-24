@@ -5,10 +5,10 @@ using Compze.Hosting.Testing;
 using Compze.Internals.SystemCE.TransactionsCE;
 using Compze.Internals.Testing;
 using Compze.Must;
+using Compze.Sql.Common._internal;
 using Compze.Sql.Sqlite._internal;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
-using Compze.xUnitMatrix;
 using SQLitePCL;
 using static Compze.Must.MustActions;
 
@@ -24,8 +24,6 @@ namespace Compze.Sql.InternalSpecifications.TransactionCommit;
 public class A_transaction_that_writes_through_a_connection_from_the_sql_layers_connection_pool : UniversalTestBase
 {
    const string DomainDatabaseName = "TransactionCommitDatabase";
-
-   const string NpgsqlPreparesWithAnotherParticipant = "Npgsql commits as the transaction's decision only as its one participant enlisted with no options: with another, it prepares a two-phase commit, PREPARE TRANSACTION, which a server refuses unless its max_prepared_transactions allows it.";
 
    readonly DomainDatabaseOnTheCurrentSqlLayer _database = DomainDatabaseOnTheCurrentSqlLayer.Named(DomainDatabaseName);
 
@@ -80,12 +78,33 @@ public class A_transaction_that_writes_through_a_connection_from_the_sql_layers_
                return participant;
             });
 
-         [PCT, Skip<SqlLayer>([SqlLayer.PgSql], NpgsqlPreparesWithAnotherParticipant)]
-         public void the_participant_is_told_that_it_committed() => _participant.ToldOutcome.Must().Be(TransactionStatus.Committed);
+         [PCT] public void the_participant_is_told_that_it_committed() => _participant.ToldOutcome.Must().Be(TransactionStatus.Committed);
 
-         [PCT, Skip<SqlLayer>([SqlLayer.PgSql], NpgsqlPreparesWithAnotherParticipant)]
-         public void the_participant_is_told_only_once_the_database_has_committed() => _participant.RowsTheDatabaseHeldWhenToldItCommitted.Must().Be(1L);
+         [PCT] public void the_participant_is_told_only_once_the_database_has_committed() => _participant.RowsTheDatabaseHeldWhenToldItCommitted.Must().Be(1L);
       }
+   }
+
+   ///<summary>A durable resource of the transaction's own, as a consumer's own resource manager would be, takes part in it before the<br/>
+   /// connection: the connection can't take part as the transaction's one durable resource.</summary>
+   public class that_holds_a_durable_resource_of_its_own : A_transaction_that_writes_through_a_connection_from_the_sql_layers_connection_pool
+   {
+      readonly Exception _thrownWriting;
+
+      public that_holds_a_durable_resource_of_its_own() =>
+         _thrownWriting = Invoking(() => TransactionScopeCe.Execute(() =>
+                          {
+                             DurableResourceOfItsOwn.TakesPartInTheAmbientTransaction();
+                             WriteARow();
+                          }))
+                         .Must().Throw<Exception>().Which;
+
+      [PCT] public void writing_throws_that_the_transaction_holds_a_durable_resource_already() =>
+         _thrownWriting.Must().Satisfy(it => it is DurableResourceAlreadyInTheTransactionException);
+
+      [PCT] public void what_it_throws_holds_the_refusal_by_dotnet_to_make_the_transaction_distributed() =>
+         _thrownWriting.InnerException.Must().Satisfy(it => it is NotSupportedException);
+
+      [PCT] public void the_database_holds_no_row_the_transaction_wrote() => RowsWritten().Must().Be(0L);
    }
 
    ///<summary>The database fails the commit, as a full disk, a lost connection or a deferred constraint can make it: each sql layer is made<br/>

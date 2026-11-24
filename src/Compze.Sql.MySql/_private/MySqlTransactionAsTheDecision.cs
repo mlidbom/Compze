@@ -10,6 +10,10 @@ namespace Compze.Sql.MySql._private;
 /// decision (<see cref="DatabaseTransactionAsTheDecision"/>), at the ambient transaction's isolation level.</summary>
 ///<remarks>Compze begins it, rather than letting MySqlConnector enlist the connection, which <see cref="CompzeMySqlConnectionString"/><br/>
 /// turns off: MySqlConnector's enlistment commits only when it is told the outcome, after the participants told before it.</remarks>
+///<remarks>Why not XA, with which MySQL could truly prepare a commit, and take part in a distributed transaction: a prepared XA<br/>
+/// transaction outlives a crash of the process, holding its locks on the server until something recovers it, with XA RECOVER and XA<br/>
+/// COMMIT or XA ROLLBACK. Compze has no such recovery, and keeps each database in transactions of its own anyway, so a crash between<br/>
+/// the two phases would leave locked rows for someone to resolve by hand (weighed 2026-11-24, with Magnus's agreement).</remarks>
 sealed class MySqlTransactionAsTheDecision : DatabaseTransactionAsTheDecision
 {
    ///<summary>Has <paramref name="databaseTransaction"/>, which <see cref="BeginDatabaseTransaction"/> or <see cref="BeginDatabaseTransactionAsync"/> began, take part in<br/>
@@ -28,15 +32,4 @@ sealed class MySqlTransactionAsTheDecision : DatabaseTransactionAsTheDecision
    ///<summary>An error the server answered the commit with carries a SQL state, and means that it didn't commit. Any other failure, such<br/>
    /// as a connection that broke, which MySqlConnector reports with no SQL state, leaves unknown whether the commit reached the server.</summary>
    protected override bool CertainlyDidNotCommitAfter(Exception commitFailure) => commitFailure is MySqlException { SqlState: not null };
-
-   static System.Data.IsolationLevel IsolationLevelOf(Transaction transaction) =>
-      transaction.IsolationLevel switch
-      {
-         IsolationLevel.ReadCommitted   => System.Data.IsolationLevel.ReadCommitted,
-         IsolationLevel.ReadUncommitted => System.Data.IsolationLevel.ReadUncommitted,
-         IsolationLevel.RepeatableRead  => System.Data.IsolationLevel.RepeatableRead,
-         IsolationLevel.Serializable    => System.Data.IsolationLevel.Serializable,
-         IsolationLevel.Snapshot        => System.Data.IsolationLevel.Snapshot,
-         _                              => throw new NotSupportedException($"A MySQL connection can't take part in a transaction at the isolation level {transaction.IsolationLevel}.")
-      };
 }

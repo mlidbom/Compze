@@ -13,7 +13,8 @@ interface IPgSqlConnectionPool : IDbConnectionPool<ICompzeNpgsqlConnection, Npgs
 
    ///<summary>The connection string identifying the database this pool serves — what a caller needs to open a dedicated,<br/>
    /// long-held session against the same database, outside the pool's fresh-connection-per-operation model (the endpoint<br/>
-   /// catalog's process lock is such a session).</summary>
+   /// catalog's process lock is such a session). It is the <see cref="CompzePgSqlConnectionString"/>, so such a session<br/>
+   /// gets the settings the pool's own connections have.</summary>
    string ConnectionString { get; }
 
    public class PgSqlConnectionPool : IPgSqlConnectionPool
@@ -23,8 +24,9 @@ interface IPgSqlConnectionPool : IDbConnectionPool<ICompzeNpgsqlConnection, Npgs
 
       internal PgSqlConnectionPool(string connectionString) : this(() => connectionString) {}
 
-      internal PgSqlConnectionPool(Func<string> getConnectionString)
+      internal PgSqlConnectionPool(Func<string> getConfiguredConnectionString)
       {
+         var getConnectionString = () => CompzePgSqlConnectionString.From(getConfiguredConnectionString());
          _getConnectionString = getConnectionString;
          _pool = new LazyCE<IDbConnectionPool<ICompzeNpgsqlConnection, NpgsqlCommand>>(
             () =>

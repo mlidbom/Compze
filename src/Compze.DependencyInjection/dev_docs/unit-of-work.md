@@ -130,9 +130,10 @@ tracking exists or is planned; a considered AsyncLocal design was dropped in its
 - **Enlistment notifications stay where they are needed.** Some participants genuinely need full
   `IEnlistmentNotification` semantics and no callback API can replace them. DocumentDb's flush-on-prepare, a
   `VolatileTransactionParticipant`, issues new writes during prepare (`EnlistDuringPrepareRequired`) and votes
-  the whole transaction down on failure. Compze's SQLite and MySQL connections *are* resource managers: each
-  begins the real DB transaction and takes part as the transaction's durable participant, committing it as
-  the transaction's decision (`DatabaseTransactionAsTheDecision`); SQLite's also takes the write gate.
+  the whole transaction down on failure. Compze's SQLite, MySQL and PostgreSQL connections *are* resource
+  managers: each begins the real DB transaction and takes part as the transaction's durable participant,
+  committing it as the transaction's decision (`DatabaseTransactionAsTheDecision`); SQLite's also takes the
+  write gate. SQL Server's does the same through SqlClient's own enlistment.
 - The transport edge's `ExecutionContext.SuppressFlow` (TransportRequestController) is protective: it
   guarantees a remote-arriving handler never inherits its sender's ambient transaction, even for
   same-process loopback.
