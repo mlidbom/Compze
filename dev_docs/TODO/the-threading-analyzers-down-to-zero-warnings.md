@@ -21,16 +21,38 @@ of 2026-11-24, and the starvation of 2026-11-12.
   specify. A public name that deliberately breaks it, such as Compze.Must's `InvokingAsync`, gets a same-line
   suppression with its reason; an override of a framework's method, which can't be renamed, too.
 
-## What remains, 2026-11-24 (a3464550c)
+## Done
 
-132 warnings from the analyzers, and main's own CA2213 in `DbConnectionPool.TransactionSpecificConnection`, reported to
-commit-as-the-decision.
+- **VSTHRD110, an awaitable result not observed:** none left. The inbox's handler executions returned a task no one
+  awaited, which is gone (b1e7f0120). `TestingTaskRunner.Run` is `Start`, returning nothing, and `RunAsync` returns the
+  task for a test that awaits one actor (ba7cb7891). Two `ContinueWithAsync` bookkeeping tasks are discarded with `_ =`.
+- **VSTHRD200, the Async suffix in library code:** none left (7f7bda5a5). Public renames, in their changelogs:
+  Compze.Internals.SystemCE's `TaskCE.RunAsync`, `RunOnDedicatedThreadAsync`, `ContinueWithAsync`,
+  `WithAggregateExceptionsAsync` and `ToCompletedTaskFunc`; Compze.Tessaging.Hosting.Testing's `ConnectToAsync`,
+  `AlsoConnectToAsync` and `DisposeWithoutWaitingForEndpointsToBeAtRestAsync`. Compze.Must's `InvokingAsync` keeps its
+  name, with its suppression.
+- **VSTHRD002 in specifications that could await:** the logging, Must, RunOnce, thread-pool tevent store and memory
+  image state store specifications await, in `IAsyncLifetime` or `InitializeAsyncInternal` (185a3a0fb, 79f60e94e).
 
-- **VSTHRD200, 39, all in library code:** rename. Compze.Internals.SystemCE 11 (TaskCE), Compze.Tessaging 10,
-  Compze.Tessaging.Transport.AspNetCore 8 (the transport controller's actions), Compze.Threading.Testing 3,
-  Compze.Tessaging.Hosting.Testing 3, Compze.Must 2, Compze.xUnitBDD 1, Compze.Threading 1.
-- **VSTHRD110, 35, an awaitable result not observed:** Compze.Tessaging 3, to read one by one; the rest in the Threading
-  specifications, mostly tasks started on purpose and left running, which a discard states.
-- **VSTHRD002, 58, the synchronous waits:** in library code 24 (Compze.Tessaging 11, Compze.Internals.SystemCE 3, the DI
-  containers' synchronous disposals 4, which `container-disposal-of-async-only-components.md` covers, and others), each
-  fixed or, where deliberate, suppressed with its reason; in specifications 34, made asynchronous where they can be.
+## What remains, 2026-11-24 (79f60e94e): 37 synchronous waits (VSTHRD002), and main's CA2213
+
+A non-incremental build counts them: an incremental one repeats only the warnings of the projects it rebuilds.
+
+- **On threads of their own, on purpose, 9:** the tessaging delivery streams, 7, on named threads
+  (`RunOnNamedThreadAsync`), so they hold no pool thread; `SqliteEndpointProcessLockHold`, whose thread took the mutex
+  and must release it; `ThreadPoolCE` in Compze.Internals.Testing, which holds pool threads on purpose.
+- **A synchronous API over asynchronous work, 14:** publishing tevents synchronously, 2 (`TaggregateUnitOfWork`,
+  `UnitOfWorkTeventPublisher`); `LocalTypermediaNavigatorSession`, 3; `IAsyncShared.Locked`; `TaskCE`'s
+  `WaitUnwrappingException` and `ResultUnwrappingException`, 2; the DI containers' synchronous disposals, 4
+  (`container-disposal-of-async-only-components.md`); the memory image state store's `Dispose`, 2. These are what
+  `synchronous-paths-that-need-a-free-thread-pool-thread.md` is for.
+- **Hidden from VSTHRD002, 14 more:** the callers of `WaitUnwrappingException` and `ResultUnwrappingException`, such as
+  `EndpointHost.Start`, `NavigationSpecification.NavigateOn`, `RemoteTypermediaNavigator.Post` and `Get`, and
+  `TeventObservationDispatcher.Dispose`. The analyzer sees only `.Wait()`, `.Result` and `GetAwaiter().GetResult()`,
+  and has no setting for other blocking methods. `GetAwaiter().GetResult()` rethrows a single exception as they do.
+- **Specifications whose subject is a synchronous wait, 11:** the locks' owning thread holds the lock while another
+  thread's attempt is waited for, 8 (`ICriticalSection`, `IAwaitableCriticalSection`,
+  `LockHeldByAnotherThreadWhileWeTimeOutTryingToTakeIt`); `AsyncLockCE`'s synchronous reentry; the endpoint disposed
+  synchronously to record the thread it disposes on; `ThreadGateTestFixture`, whose entrants block at the gate.
+- **The AccountManagement sample's startup, 3:** under its `todo:urgent` on restructuring how it creates, starts and
+  connects its endpoints.
