@@ -26,7 +26,7 @@ Then reload: `. $PROFILE`
   - `-Verbose` - Show detailed output
   - `-WhatIf` - Preview what would be deleted by git clean (with `-FullGitReset`)
 
-- **C-Build** - Builds the Compze solution
+- **C-Build** - Builds the Compze solution, after bringing the project files' generated exclusions of `_docs` example code and nested projects up to date (C-Ensure-CsprojfilesExcludeCsFilesFromProjectsInSubfoldersAndDocsFolders)
   - `-Clean` - Deep clean before building
   - `-FullGitReset` - Full git reset before building (implies `-Clean`)
   - `-WhatIf` - Preview what would be deleted by git clean (with `-FullGitReset`)
