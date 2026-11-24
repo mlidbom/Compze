@@ -617,6 +617,13 @@ registrar.MemoryImageStateStore(store => store
 - **The store waits 30 seconds,** for a taggregate's lock, for a load, and for the units of work open during one, then
   throws.
 
+### Kept in a database's tables
+
+`StoredInTheDomainDatabase(options, rows => rows.ClassNamed<VocabNote>("vocab"))` keeps the store in tables of the domain
+database, which several memory images share: a row for each taggregate, its lock taken in the database at a get for
+update, commits numbered in the order they commit, and each memory image catching up with the others by number. Designed
+and built 2026-11-24: [the-memory-image-state-store-in-tables.md](the-memory-image-state-store-in-tables.md).
+
 ### Storage: an internal seam
 
 ```csharp

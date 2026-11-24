@@ -72,7 +72,7 @@ sealed class TaggregateIndex<TTaggregate, TKey> : ITaggregateIndex<TTaggregate, 
    public IPreparedIndexChange Prepare(IReadOnlyList<(TaggregateId Id, ITaggregate? NewState)> changedTaggregates)
    {
       var refilings = changedTaggregates.Select(it => new Refiling(it.Id,
-                                                                   oldKeys: KeysOf(_store.CommittedInstanceOf(it.Id) as TTaggregate),
+                                                                   oldKeys: KeysOf(_store.Committed.InstanceOf(it.Id) as TTaggregate),
                                                                    newKeys: KeysOf(it.NewState as TTaggregate)))
                                         .Where(it => it.ChangesTheIndex)
                                         .ToList();

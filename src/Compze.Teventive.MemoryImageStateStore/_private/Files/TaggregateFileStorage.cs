@@ -43,19 +43,28 @@ sealed class TaggregateFileStorage : ITaggregateStorage
 
    ///<summary>Finishes any commit a crash interrupted, then loads every file of every class: from the load cache where it holds the<br/>
    /// file unchanged, by reading the file otherwise.</summary>
-   public IReadOnlyList<TaggregateSnapshot> LoadAll()
+   public LoadedTaggregates LoadAll()
    {
-      //review: this takes every journal and temporary file in the store's own folder for a crash's leftovers, so the store assumes it is
+      //bug: this takes every journal and temporary file in the store's own folder for a crash's leftovers, so the store assumes it is
       //   the only process using its folder, and nothing guards that or says so. A second process loading the same folder, such as the
-      //   successor of a process that hands over to it, carries out the first one's journal while it commits, or deletes the temporary
-      //   files of a commit it is preparing, whose rename then fails after its journal is written, stopping it with FailFast. And each
-      //   process writes over the other's files unseen. Take an interprocess lock on the folder for the store's life, and say so in
-      //   StoredInJsonFiles' documentation? Found by reading, for the Claude tooling's hub (Claude, 2026-11-24).
+      //   successor of a process that hands over to it, deletes the temporary files of a commit the first is preparing. That commit then
+      //   writes its journal, and CommitJournal.CarryOut skips each temporary file that no longer exists: the commit silently writes
+      //   nothing, while the first process's memory, and its StoredFiles, hold the new state. Only when the two carry out the same journal
+      //   at once does one of them fail a rename after its journal is written, and stop with FailFast. And each process writes over the
+      //   other's files unseen. Proposed: a lock file held for the store's life, so that a second process's first load fails, naming the
+      //   holder. Found by reading, for the Claude tooling's hub (Claude, 2026-11-24).
       CommitJournal.FinishInterruptedCommits(_files, _jsonFiles.Folder, _jsonFiles.OwnFolder);
       var loaded = _jsonFiles.Classes.SelectMany(LoadTheFilesOf).ToList();
       _storedFiles.Locked(it => it.ReplaceWith(loaded.Select(load => (load.Taggregate!.Id.Value, load.File))));
-      return [..loaded.Select(it => it.Snapshot)];
+      return new LoadedTaggregates([..loaded.Select(it => it.Snapshot)], holdingEveryCommitThrough: null);
    }
+
+   ///<summary>No other memory image shares the files: a second process on the same folder isn't supported. So there is no lock to<br/>
+   /// take, and nothing newer to find.</summary>
+   public StoredTaggregate? LockForUpdate(TaggregateId id, CommitNumber? heldAs) => null;
+
+   ///<summary>Nothing, as for <see cref="LockForUpdate"/>.</summary>
+   public TaggregatesCommittedAfter CommittedAfter(CommitNumber lastSeen) => TaggregatesCommittedAfter.None(lastSeen);
 
    ///<summary>Whether <paramref name="loaded"/> holds the state <paramref name="heldSnapshot"/> holds, as this storage writes state: if<br/>
    /// the text its file holds is what the store would write for <paramref name="heldSnapshot"/>, or else if <paramref name="loaded"/>'s<br/>
@@ -120,13 +129,15 @@ sealed class TaggregateFileStorage : ITaggregateStorage
       return write;
    }
 
-   ///<summary>Writes every file of <paramref name="everything"/> under a temporary name, then commits them as one, through the journal,<br/>
-   /// with no transaction: a failure before the journal is written writes nothing, and comes out of this call.</summary>
-   public void WriteAll(IReadOnlyList<TaggregateSnapshot> everything)
+   ///<summary>Writes the file of every taggregate <paramref name="everythingOnceCaughtUpWith"/> gives under a temporary name, then commits<br/>
+   /// them as one, through the journal, with no transaction: a failure before the journal is written writes nothing, and comes out of<br/>
+   /// this call. No other memory image shares the files, so there is nothing to catch up with.</summary>
+   public CommitNumber? WriteAll(CommitNumber lastSeen, Func<IReadOnlyList<StoredTaggregate>, IReadOnlyList<TaggregateSnapshot>> everythingOnceCaughtUpWith)
    {
       var write = new PreparedFileWrite(_files, _jsonFiles.Folder, _jsonFiles.OwnFolder, _storedFiles);
-      Write(write, everything, toDelete: []);
+      Write(write, everythingOnceCaughtUpWith([]), toDelete: []);
       write.CommitOutsideATransaction();
+      return null;
    }
 
    ///<summary>Prepares <paramref name="write"/>: writes the file of each of <paramref name="toSave"/> under a temporary name, and notes<br/>
@@ -173,6 +184,9 @@ sealed class TaggregateFileStorage : ITaggregateStorage
          throw new InvalidOperationException($"The memory image state store can't load {file.FullPath} as a {taggregateClass.Class.Name}: {exception.Message}", exception);
       }
    }
+
+   ///<summary>Holds nothing that needs releasing.</summary>
+   public void Dispose() {}
 
    sealed class LoadedFile(ListedFile file, TaggregateSnapshot snapshot)
    {

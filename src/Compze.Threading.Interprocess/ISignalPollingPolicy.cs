@@ -1,6 +1,6 @@
 using Compze.Contracts;
 
-using Compze.Threading.Interprocess._private;
+using Compze.Threading.Interprocess._internal;
 
 namespace Compze.Threading.Interprocess;
 

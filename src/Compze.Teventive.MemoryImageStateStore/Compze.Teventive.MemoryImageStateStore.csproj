@@ -2,10 +2,14 @@
   <PropertyGroup>
     <Nullable>enable</Nullable>
     <Version>0.1.0-alpha</Version>
-    <Description>A memory image of taggregates: every taggregate held in memory for the container's life, rebuilt at its start from a snapshot of each, which JSON files keep. A taggregate store that keeps taggregates as their state, not their history.</Description>
+    <Description>A memory image of taggregates: every taggregate held in memory for the container's life, rebuilt at its start from a snapshot of each, which JSON files, or a database's tables, keep. A taggregate store that keeps taggregates as their state, not their history.</Description>
   </PropertyGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="Compze.Teventive.MemoryImageStateStore.MemoryPack" />
+    <InternalsVisibleTo Include="Compze.Teventive.MemoryImageStateStore.MicrosoftSql" />
+    <InternalsVisibleTo Include="Compze.Teventive.MemoryImageStateStore.MySql" />
+    <InternalsVisibleTo Include="Compze.Teventive.MemoryImageStateStore.PostgreSql" />
+    <InternalsVisibleTo Include="Compze.Teventive.MemoryImageStateStore.Sqlite" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="JetBrains.Annotations.Sources" Version="2025.2.4" PrivateAssets="all" />
@@ -58,5 +62,12 @@
   </ItemGroup>
   <ItemGroup Condition="'$(UsePackageReference_Compze_Threading)' != 'true'">
     <ProjectReference Include="..\Compze.Threading\Compze.Threading.csproj" />
+  </ItemGroup>
+  <!-- Compze.Threading.Interprocess — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Threading_Interprocess)' == 'true'">
+    <PackageReference Include="Compze.Threading.Interprocess" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Threading_Interprocess)' != 'true'">
+    <ProjectReference Include="..\Compze.Threading.Interprocess\Compze.Threading.Interprocess.csproj" />
   </ItemGroup>
 </Project>

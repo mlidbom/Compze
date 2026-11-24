@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <Nullable>enable</Nullable>
+    <Version>0.1.0-alpha</Version>
+    <Description>The SQL Server tables of Compze's memory image state store: MsSqlMemoryImageStateStoreSqlLayer(), for a memory image state store kept in the tables of a SQL Server domain database, which several memory images, in other processes or other containers, share.</Description>
+    <PackageTags>compze;teventive;taggregates;memory-image;sqlserver</PackageTags>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="6.1.3" />
+  </ItemGroup>
+  <!-- Compze.Sql.MicrosoftSql — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Sql_MicrosoftSql)' == 'true'">
+    <PackageReference Include="Compze.Sql.MicrosoftSql" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Sql_MicrosoftSql)' != 'true'">
+    <ProjectReference Include="..\Compze.Sql.MicrosoftSql\Compze.Sql.MicrosoftSql.csproj" />
+  </ItemGroup>
+  <!-- Compze.Teventive.MemoryImageStateStore — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Teventive_MemoryImageStateStore)' == 'true'">
+    <PackageReference Include="Compze.Teventive.MemoryImageStateStore" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Teventive_MemoryImageStateStore)' != 'true'">
+    <ProjectReference Include="..\Compze.Teventive.MemoryImageStateStore\Compze.Teventive.MemoryImageStateStore.csproj" />
+  </ItemGroup>
+</Project>

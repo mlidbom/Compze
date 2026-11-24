@@ -6,7 +6,9 @@ using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.SystemCE.LinqCE;
 using Compze.Teventive.MemoryImageStateStore._private;
 using Compze.Teventive.MemoryImageStateStore._private.Files;
+using Compze.Teventive.MemoryImageStateStore._internal.SqlLayer;
 using Compze.Teventive.MemoryImageStateStore._private.Storage;
+using Compze.Teventive.MemoryImageStateStore._private.Tables;
 using Compze.Teventive.MemoryImageStateStore.Testing;
 using Compze.Teventive.TaggregateStores._internal;
 using Compze.Teventive.Taggregates;
@@ -28,6 +30,7 @@ public sealed class MemoryImageStateStoreBuilder
    readonly HashSet<(Type TaggregateClass, Type KeyType)> _indexTypes = [];
    Func<IRootResolver, IReadOnlyList<SnapshotableTaggregateClass>, ITaggregateStorage>? _storage;
    TaggregateFilesBuilder? _files;
+   TaggregateRowsBuilder? _rows;
 
    internal MemoryImageStateStoreBuilder(IComponentRegistrar registrar) => _registrar = registrar;
 
@@ -170,6 +173,28 @@ public sealed class MemoryImageStateStoreBuilder
       return this;
    }
 
+   ///<summary>Declares that the store keeps what it commits in tables of the domain database: the database the container declares, such as<br/>
+   /// with <c>SqliteDomainDatabase(...)</c>, beside the store's SQL layer for it, such as <c>SqliteMemoryImageStateStoreSqlLayer()</c>,<br/>
+   /// of the package Compze.Teventive.MemoryImageStateStore.Sqlite or its siblings for SQL Server, PostgreSQL and MySQL. A row for each<br/>
+   /// taggregate holds the name <paramref name="declare"/> declares for its class, and exactly what <paramref name="options"/> make of<br/>
+   /// its snapshot. A unit of work commits as one database transaction, which also holds whatever else the unit of work writes to the<br/>
+   /// domain database, such as an exactly-once endpoint's inbox and outbox.</summary>
+   ///<remarks><b>Several memory images may share the tables:</b> other processes, and other containers of the same process, such as two<br/>
+   /// exactly-once endpoints, each with a memory image of its own. Getting a taggregate for update, or adding one, takes the<br/>
+   /// taggregate's lock in the database as well as in memory, and takes its state from its row if another memory image has committed<br/>
+   /// it since. And a memory image catches up with what the others committed at each unit of work's first get for update or add.<br/>
+   /// Reads outside a unit of work read what the memory image last caught up with, with no round trip to the database.</remarks>
+   ///<remarks>Each memory image holds every taggregate. Commits that write the store's rows take their numbers from a counter in the<br/>
+   /// database, whose lock they hold until they commit, so they commit one at a time while they write their rows. On SQLite, every<br/>
+   /// transaction that writes the database runs alone, across processes too, as everything Compze does on SQLite does.</remarks>
+   public MemoryImageStateStoreBuilder StoredInTheDomainDatabase(JsonSerializerOptions options, Action<TaggregateRowsBuilder> declare)
+   {
+      var rows = new TaggregateRowsBuilder();
+      declare(rows);
+      _rows = rows;
+      return DeclareStorage((resolver, classes) => new TaggregateTableStorage(resolver.Resolve<IMemoryImageStateStoreSqlLayer>(), options, new TaggregateClassNames(rows.NamesByClass, classes)));
+   }
+
    MemoryImageStateStoreBuilder DeclareStorage(Func<IRootResolver, IReadOnlyList<SnapshotableTaggregateClass>, ITaggregateStorage> storage)
    {
       State.Assert(_storage == null, () => "The memory image state store's storage is declared twice.");
@@ -182,6 +207,7 @@ public sealed class MemoryImageStateStoreBuilder
    /// hold each class's snapshots.</summary>
    internal void AssertDeclarationsFitTogether()
    {
+      AssertEveryClassKeptInTablesIsNamed();
       if(_files == null) return;
       var filesDeclared = _files.Declarations.ToList();
       var keptWithoutFiles = _taggregateClasses.Keys.Where(kept => filesDeclared.None(it => it.TaggregateClass == kept)).Select(it => it.FullName).ToList();
@@ -195,9 +221,21 @@ public sealed class MemoryImageStateStoreBuilder
          foreach(var snapshotType in _snapshotTypes.Values) cache.AssertCanHold(snapshotType);
    }
 
+   ///<summary>Asserts, for a store kept in tables, that each class it keeps is named, and no class it doesn't keep.</summary>
+   void AssertEveryClassKeptInTablesIsNamed()
+   {
+      if(_rows == null) return;
+      var keptWithoutAName = _taggregateClasses.Keys.Where(kept => !_rows.NamesByClass.ContainsKey(kept)).Select(it => it.FullName).ToList();
+      State.Assert(keptWithoutAName.None(), () => $"The memory image state store is kept in tables, and no name in the rows is declared for {string.Join(", ", keptWithoutAName)}. Declare each class's name where the store is composed: rows => rows.ClassNamed<TTaggregate>(name).");
+      var namedButNotKept = _rows.NamesByClass.Keys.Where(it => !_taggregateClasses.ContainsKey(it)).Select(it => it.FullName).ToList();
+      State.Assert(namedButNotKept.None(), () => $"Names in the rows are declared for {string.Join(", ", namedButNotKept)}, which the memory image state store isn't declared to keep.");
+   }
+
    internal TaggregateMemoryImageStateStore Build(TaggregateUnitsOfWork unitsOfWork, IRootResolver resolver)
    {
       var classes = _taggregateClasses.Values.Select(declare => declare(resolver)).ToList();
-      return new(unitsOfWork, classes, _indexes, _storage?.Invoke(resolver, classes) ?? new NoStorage());
+      var storage = _storage?.Invoke(resolver, classes) ?? NoStorage.Instance;
+      var catchingUpOn = storage is TaggregateTableStorage tables && _rows is { IsCatchingUpAsOtherMemoryImagesOnThisMachineCommit: true } ? tables.CommitSignal : null;
+      return new(unitsOfWork, classes, _indexes, storage, catchingUpOn);
    }
 }
