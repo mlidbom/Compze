@@ -119,6 +119,8 @@ The key technique: each nested class **inherits from its parent**, gaining acces
 
 `[ExclusiveFact]` / `[XF]` is an xUnit v3 `[Fact]` with a custom discoverer. During discovery it compares the declaring type of the test method against the current test class. If they differ (i.e. the test was inherited), the test case is simply not emitted. No reflection hacks, no runtime skipping — just clean xUnit extensibility.
 
+Put `[XF]` only on classes that aren't abstract. xUnit never runs an abstract class, so an `[XF]` declared on one would run nowhere. Instead, each class derived from it lists the fact as a test that fails, saying so. A fact meant to run in every derived class is a `[Fact]`.
+
 ## Key benefits
 
 - **Reads like a specification** — class names are the context ("Given…", "When…", "And…"), method names are the assertions
