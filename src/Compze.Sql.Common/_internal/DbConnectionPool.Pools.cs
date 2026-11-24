@@ -1,6 +1,5 @@
 using System.Transactions;
 using Compze.Internals.SystemCE.CollectionsCE.GenericCE;
-using Compze.Internals.SystemCE.ThreadingCE.Async;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Threading;
 using Compze.Threading.ResourceAccess;
@@ -12,11 +11,8 @@ using Compze.Internals.SystemCE.TransactionsCE._internal;
 namespace Compze.Sql.Common._internal;
 
 ///<summary>Every operation under one transaction runs on ONE shared connection, and a connection does exactly one thing at a<br/>
-/// time. Outside a transaction each operation opens its own fresh connection; inside a transaction the connection is held as an<br/>
-/// <see cref="IAsyncShared{TConnection}"/>, so concurrent operations under one transaction — several async calls awaited together,<br/>
-/// say — serialize onto the connection instead of colliding on it: a collision no provider actually supports and that MySQL<br/>
-/// rejects outright ("already an open DataReader"). The serialization is re-entrant per async flow, so a nested<br/>
-/// <see cref="UseConnection{TResult}"/> on the same flow does not deadlock while independent flows serialize.</summary>
+/// time. Outside a transaction each operation opens its own fresh connection; inside a transaction it runs on the transaction's<br/>
+/// <see cref="TransactionSpecificConnection"/>, which serializes the transaction's operations on it.</summary>
 ///<remarks>One connection per transaction is the only correct model, so there is no per-backend variation — every backend uses<br/>
 /// this pool. Two connections in one transaction is a distributed transaction — a separate database session each — which every<br/>
 /// supported database refuses without a coordinator (SQL Server's, MySQL's and SQLite's connections are each a transaction's durable<br/>
@@ -29,8 +25,10 @@ partial class DbConnectionPool<TConnection, TCommand> : IDbConnectionPool<TConne
    readonly string _connectionString;
    readonly Func<string, TConnection> _createConnection;
 
-   readonly IThreadShared<Dictionary<string, IAsyncShared<TConnection>>> _transactionConnections =
-      IThreadShared.New(new Dictionary<string, IAsyncShared<TConnection>>());
+   ///<summary>The connection of each transaction using the pool, by the transaction's local identifier. Its lock guards the dictionary<br/>
+   /// only: no connection opens or is disposed under it (see <see cref="TransactionSpecificConnection"/>).</summary>
+   readonly IThreadShared<Dictionary<string, TransactionSpecificConnection>> _transactionConnections =
+      IThreadShared.New(new Dictionary<string, TransactionSpecificConnection>());
 
    static readonly RunOnce RunOnce = new();
 
@@ -40,31 +38,15 @@ partial class DbConnectionPool<TConnection, TCommand> : IDbConnectionPool<TConne
       _createConnection = createConnection;
    }
 
-   public TResult UseConnection<TResult>(Func<TConnection, TResult> func)
-   {
-      var transactionLocalIdentifier = Transaction.Current?.TransactionInformation.LocalIdentifier;
+   public TResult UseConnection<TResult>(Func<TConnection, TResult> func) =>
+      Transaction.Current is {} transaction
+         ? ConnectionOf(transaction).Locked(func)
+         : UseOwnFreshConnection(func);
 
-      if(transactionLocalIdentifier == null)
-      {
-         return UseOwnFreshConnection(func);
-      }
-
-#pragma warning disable CA1849 // The synchronous UseConnection path must open synchronously; Task.FromResult bridges that sync open into the Task-backed IAsyncShared the async path also feeds.
-      return GetOrOpenTransactionSpecificConnection(transactionLocalIdentifier, () => Task.FromResult(OpenConnection())).Locked(func);
-#pragma warning restore CA1849
-   }
-
-   public async Task<TResult> UseConnectionAsync<TResult>(Func<TConnection, Task<TResult>> func)
-   {
-      var transactionLocalIdentifier = Transaction.Current?.TransactionInformation.LocalIdentifier;
-
-      if(transactionLocalIdentifier == null)
-      {
-         return await UseOwnFreshConnectionAsync(func).caf();
-      }
-
-      return await GetOrOpenTransactionSpecificConnection(transactionLocalIdentifier, OpenConnectionAsync).LockedAsync(func).caf();
-   }
+   public async Task<TResult> UseConnectionAsync<TResult>(Func<TConnection, Task<TResult>> func) =>
+      Transaction.Current is {} transaction
+         ? await ConnectionOf(transaction).LockedAsync(func).caf()
+         : await UseOwnFreshConnectionAsync(func).caf();
 
    TResult UseOwnFreshConnection<TResult>(Func<TConnection, TResult> func)
    {
@@ -132,28 +114,26 @@ partial class DbConnectionPool<TConnection, TCommand> : IDbConnectionPool<TConne
       return connection;
    }
 
-   IAsyncShared<TConnection> GetOrOpenTransactionSpecificConnection(string transactionLocalIdentifier, Func<Task<TConnection>> openConnection) =>
-      _transactionConnections.Locked(
-         transactionConnections => transactionConnections.GetOrAdd(
-            transactionLocalIdentifier,
-            constructor: () =>
-            {
-               DurableResourcesOfTransactions.TakesPart(Transaction.Current!, DurableResource.ThatCanShareItsTransaction($"a database connection, {typeof(TConnection).Name}"));
-               //bug: an asynchronous open that fails, such as a server that doesn't answer, or a MySQL transaction the ambient transaction
-               //   refuses, is kept as the transaction's connection: each later use in the transaction rethrows its exception, and so does
-               //   disposing it when the transaction completes, inside the transaction's TransactionCompleted event, where it may keep the
-               //   handlers after it from running. Forget a connection that failed to open, and dispose only one that opened.
-               var sharedConnection = IAsyncShared.New(openConnection());
-               Transaction.Current!.OnCompleted(action: () => _transactionConnections.Locked(transactionConnectionsAfterTransaction =>
-               {
-                  if(transactionConnectionsAfterTransaction.Remove(transactionLocalIdentifier, out var completed))
-                  {
-                     completed.Locked(connection => connection.Dispose());
-                     completed.Dispose();
-                  }
-               }));
-               return sharedConnection;
-            }));
+   ///<summary>The connection of <paramref name="transaction"/>, which the pool registers for it on its first use, and removes and<br/>
+   /// disposes as it completes.</summary>
+   TransactionSpecificConnection ConnectionOf(Transaction transaction)
+   {
+      var transactionLocalIdentifier = transaction.TransactionInformation.LocalIdentifier;
+      return _transactionConnections.Locked(transactionConnections => transactionConnections.GetOrAdd(
+                                                transactionLocalIdentifier,
+                                                constructor: () =>
+                                                {
+                                                   DurableResourcesOfTransactions.TakesPart(transaction, DurableResource.ThatCanShareItsTransaction($"a database connection, {typeof(TConnection).Name}"));
+                                                   transaction.OnCompleted(action: () => DisposeTheConnectionOfTheCompletedTransaction(transactionLocalIdentifier));
+                                                   return new TransactionSpecificConnection(this);
+                                                }));
+   }
+
+   ///<summary>Removes the connection of the transaction that <paramref name="transactionLocalIdentifier"/> identifies, which has completed,<br/>
+   /// and disposes it once the pool's lock is released.</summary>
+   void DisposeTheConnectionOfTheCompletedTransaction(string transactionLocalIdentifier) =>
+      _transactionConnections.Locked(transactionConnections => transactionConnections.Remove(transactionLocalIdentifier, out var completed) ? completed : null)
+                            ?.Dispose();
 
    public override string ToString() => _connectionString;
 }
