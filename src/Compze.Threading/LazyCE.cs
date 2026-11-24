@@ -1,7 +1,6 @@
-using Compze.Internals.SystemCE._private;
-using Compze.Threading;
+using Compze.Threading._private;
 
-namespace Compze.Internals.SystemCE;
+namespace Compze.Threading;
 
 ///<summary>
 /// A value that <paramref name="factory"/> creates the first time it is read. Every later read returns that same value.<br/>

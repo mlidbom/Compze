@@ -3,6 +3,7 @@ using Compze.Teventive;
 using Compze.Teventive.Taggregates;
 using Compze.Teventive.Taggregates.BaseClasses;
 using Compze.Teventive.Taggregates.BaseClasses.Shared;
+using Compze.Threading;
 
 namespace Compze.Tests.Unit.CQRS.Taggregates.SnapshotRoundTrips;
 

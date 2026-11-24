@@ -13,7 +13,7 @@ namespace Compze.Teventive.Taggregates;
 ///<remarks>The state compared is the value of every field of the taggregate's own classes, and of every object reached from them:<br/>
 /// field by field, and item by item, in order for lists and arrays and in any order for sets and dictionaries. Strings, numbers and<br/>
 /// .NET's other simple values are compared by their own equality. An object that both refer to, such as a service the taggregates are<br/>
-/// built with, is the same state. A value created on its first read, a <see cref="Compze.Internals.SystemCE.LazyCE{TValue}"/> or a<br/>
+/// built with, is the same state. A value created on its first read, a <see cref="Compze.Threading.LazyCE{TValue}"/> or a<br/>
 /// <see cref="Lazy{T}"/>, is compared by its value, read in both. The fields of Compze's base classes, which publish and apply the<br/>
 /// tevents, aren't state, nor are delegates.</remarks>
 public static class SnapshotRoundTrip

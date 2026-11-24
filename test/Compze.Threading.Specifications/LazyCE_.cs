@@ -1,9 +1,10 @@
 using Compze.Contracts;
-using Compze.Threading;
+using Compze.Must;
 using Compze.Threading.Testing;
+using Compze.xUnitBDD;
 using static Compze.Must.MustActions;
 
-namespace Compze.Internals.SystemCE.Tests;
+namespace Compze.Threading.Specifications;
 
 public class LazyCE_
 {

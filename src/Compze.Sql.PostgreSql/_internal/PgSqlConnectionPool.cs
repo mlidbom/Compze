@@ -1,6 +1,6 @@
 using Compze.Sql.Common._internal;
 using Compze.Sql.Common._internal.Abstractions;
-using Compze.Internals.SystemCE;
+using Compze.Threading;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Npgsql;
 

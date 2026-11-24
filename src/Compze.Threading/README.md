@@ -218,3 +218,21 @@ class RiskyExample
 ```
 
 > **💡 WARNING: Think carefully before doing this. Much of the problems with BCL primitives come right back. Profile before you assume that more granular locking is needed for performance. It is far more rare than you may think.** 
+
+## Lazy Initialization — `LazyCE<TValue>`
+
+A value that its factory creates the first time it is read, like `Lazy<T>` in its default thread-safety mode: the factory runs once, however many threads read the value for the first time at the same moment, and the others wait for it and get the value it created. It differs from `Lazy<T>` where `Lazy<T>` gets in the way:
+
+- **A factory that throws runs again on the next read,** instead of its exception being cached for good.
+- **A deadlock between factories throws** a `TimeoutException` after `LockTimeout.Default`, instead of hanging.
+- **A factory that reads the value it is creating throws** an `InvalidOperationException`, as `Lazy<T>` does.
+- **An instance is one 32-byte object,** cheap enough to create by the million: it allocates no lock, but locks on itself, and only while the value is being created. So don't lock on an instance from outside: that code would share its lock.
+
+```csharp
+public class Settings
+{
+    readonly LazyCE<IConfigurationSection> _section = new(() => LoadTheSection());
+
+    public IConfigurationSection Section => _section.Value;
+}
+```

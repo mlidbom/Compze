@@ -2,6 +2,7 @@ using Compze.Abstractions.Configuration;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Microsoft.Extensions.Configuration;
+using Compze.Threading;
 
 namespace Compze.Hosting.Configuration;
 

@@ -1,6 +1,6 @@
 using System.Text.RegularExpressions;
 using Compze.TypeIdentifiers;
-using Compze.Internals.SystemCE;
+using Compze.Threading;
 
 namespace Compze.Serialization.Newtonsoft._private;
 

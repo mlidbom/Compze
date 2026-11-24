@@ -3,7 +3,7 @@
 **The rule set aside:** "Always use the locking primitives in Compze.Threading. IMonitor, IAwaitableMonitor, IMutex etc.
 NEVER raw lock, Monitor, Mutex etc."
 
-**Where:** `DoubleCheckedLockingOnAnExistingObject` in Compze.Internals.SystemCE (`_private`), which is what
+**Where:** `DoubleCheckedLockingOnAnExistingObject` in Compze.Threading (`_private`), which is what
 `LazyCE<TValue>` uses. Nowhere else.
 
 **What it does instead:** double-checked locking that locks, with `Monitor.TryEnter` and `LockTimeout.Default`, on an

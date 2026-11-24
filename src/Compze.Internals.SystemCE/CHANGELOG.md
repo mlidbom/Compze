@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## 0.9.0-internal
 
+- **Breaking: `LazyCE<TValue>` moves to Compze.Threading,** in the namespace `Compze.Threading`, unchanged, so that applications can use it from a package meant to be referenced. Code that used it from here adds `using Compze.Threading;`. Compze.Threading is already a dependency of this package.
 - **Internal support for keeping a memory image state store's files and a database connection out of one transaction; nothing public changes:** a record of the durable resources taking part in each transaction, through which a resource that can't share its transaction with another refuses it. The new versions of Compze.Sql.Common and Compze.Teventive.MemoryImageStateStore require this one.
 
 ## 0.8.0-internal

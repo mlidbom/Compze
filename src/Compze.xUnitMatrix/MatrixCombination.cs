@@ -1,4 +1,4 @@
-using Compze.Internals.SystemCE;
+using Compze.Threading;
 using System.ComponentModel;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Xunit.Sdk;

@@ -1,7 +1,6 @@
 using Compze.Contracts;
-using Compze.Threading;
 
-namespace Compze.Internals.SystemCE._private;
+namespace Compze.Threading._private;
 
 ///<summary>
 /// Lazy initialization of a field by double-checked locking that locks on an object the caller already has,<br/>

@@ -2,7 +2,7 @@ using System.Collections;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using Compze.Contracts;
-using Compze.Internals.SystemCE;
+using Compze.Threading;
 using Compze.Teventive.Taggregates.BaseClasses._private;
 
 namespace Compze.Teventive.Taggregates._private;
