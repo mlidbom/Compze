@@ -69,7 +69,7 @@ partial class TessagingConnection
       internal void Start()
       {
          LoadUndeliveredTessages();
-         _sendLoop = _connection._taskRunner.RunOnNamedThread($"ExactlyOnceDelivery-{_connection.EndpointInformation.Id.Value:N}", SendLoop, ThreadPriority.BelowNormal);
+         _sendLoop = _connection._taskRunner.RunOnNamedThreadAsync($"ExactlyOnceDelivery-{_connection.EndpointInformation.Id.Value:N}", SendLoop, ThreadPriority.BelowNormal);
       }
 
       ///<summary>Completes when the send loop, told to stop, has ended; throws a <see cref="TimeoutException"/> if that takes longer than 5 seconds.</summary>

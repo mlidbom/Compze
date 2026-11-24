@@ -7,7 +7,7 @@ static class ThreadPoolCE
    public static void TryToEnsureSufficientIdleThreadsToRunTasksConcurrently(int concurrentTaskCount)
    {
       using var waitForAllThreadsToStart = new CountdownEvent(concurrentTaskCount);
-      Task.WaitAll(Enumerable.Range(1, concurrentTaskCount).Select(_ => TaskCE.Run(() =>
+      Task.WaitAll(Enumerable.Range(1, concurrentTaskCount).Select(_ => TaskCE.RunAsync(() =>
       {
          // ReSharper disable AccessToDisposedClosure
          waitForAllThreadsToStart.Signal(1);

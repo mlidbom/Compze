@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## 0.9.0-internal
 
+- **Breaking: renamed for Microsoft.VisualStudio.Threading.Analyzers' VSTHRD200,** which asks a method that returns a task to end in Async, and one that doesn't not to: `TaskCE.Run` is `TaskCE.RunAsync`, `TaskCE.RunOnDedicatedThread` is `TaskCE.RunOnDedicatedThreadAsync`, `ContinueWithCE` is `ContinueWithAsync`, `WithAggregateExceptions` is `WithAggregateExceptionsAsync`, and `SyncOrAsyncCE.AsAsync`, which returns a function, is `ToCompletedTaskFunc`.
 - **Breaking: `LazyCE<TValue>` moves to Compze.Threading,** in the namespace `Compze.Threading`, unchanged, so that applications can use it from a package meant to be referenced. Code that used it from here adds `using Compze.Threading;`. Compze.Threading is already a dependency of this package.
 - **Files that other processes have open meanwhile, in `Compze.Internals.SystemCE.IOCE`:**
   - `FileReplacement.Replace(file, by)` puts a file written beside another in that one's place in one step, so that a reader finds the old file or the new one whole. On Windows it renames with POSIX semantics, which succeeds while readers have the old file open, where `File.Move` fails with "Access to the path is denied"; elsewhere it is `File.Move`, whose rename already does so.

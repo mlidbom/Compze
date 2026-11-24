@@ -183,5 +183,5 @@ public class TestingEndpointHost : EndpointHost
 #pragma warning restore CA1031
 
    ///<summary>Disposes without first waiting for the endpoints to come to rest — for tests that deliberately leave work in flight, such as queued tessages that must never be delivered.</summary>
-   public async Task DisposeAsyncWithoutWaitingForEndpointsToBeAtRest() => await DisposeAsync(true, waitForEndpointsToBeAtRest: false).caf();
+   public async Task DisposeWithoutWaitingForEndpointsToBeAtRestAsync() => await DisposeAsync(true, waitForEndpointsToBeAtRest: false).caf();
 }

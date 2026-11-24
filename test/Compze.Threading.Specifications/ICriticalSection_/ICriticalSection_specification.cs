@@ -95,7 +95,7 @@ public class ICriticalSection_specification : UniversalTestBase
          try { criticalSection.Locked<int>(() => throw new InvalidOperationException()); }
          catch(InvalidOperationException) {}
 
-         TaskCE.Run(() => criticalSection.Locked(() => {})).Wait();
+         TaskCE.RunAsync(() => criticalSection.Locked(() => {})).Wait();
       }
 
       [ICriticalSectionMatrix] public void owning_thread_can_reenter_and_lock_is_only_released_when_outermost_lock_is_disposed()
@@ -105,11 +105,11 @@ public class ICriticalSection_specification : UniversalTestBase
          {
             using(criticalSection.TakeLock()) {}
 
-            Invoking(() => TaskCE.Run(() => criticalSection.TakeLock(timeout: LockTimeout.Seconds(.1))).Wait())
+            Invoking(() => TaskCE.RunAsync(() => criticalSection.TakeLock(timeout: LockTimeout.Seconds(.1))).Wait())
               .Must().Throw<Exception>();
          }
 
-         TaskCE.Run(() => criticalSection.TakeLock(timeout: LockTimeout.Milliseconds(0))).Wait();
+         TaskCE.RunAsync(() => criticalSection.TakeLock(timeout: LockTimeout.Milliseconds(0))).Wait();
       }
    }
 

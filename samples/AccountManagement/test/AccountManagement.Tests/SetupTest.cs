@@ -14,7 +14,7 @@ public class SetupTest : UniversalTestBase
       var endpoint = host.RegisterEndpoint(new AccountManagementDomainEndpointDeclaration());
       host.RegisterEndpoint(new AccountManagementStatisticsEndpointDeclaration());
       await host.StartAsync().caf();
-      await using var client = await TypermediaTestClient.ConnectTo(endpoint.Address!, registrar => registrar.RequireAccountManagementTypeMappings()).caf();
+      await using var client = await TypermediaTestClient.ConnectToAsync(endpoint.Address!, registrar => registrar.RequireAccountManagementTypeMappings()).caf();
       await host.DisposeAsync().caf();
    }
 }

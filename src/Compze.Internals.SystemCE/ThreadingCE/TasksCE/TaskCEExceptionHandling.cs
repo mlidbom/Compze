@@ -8,11 +8,11 @@ public static class TaskCEExceptionHandling
    /// Ensures that if this task fails, the thrown exception is an AggregateException
    /// That way catching code does not need to first figure out whether the exception is an AggregateException or not
    /// </summary>
-   public static async Task WithAggregateExceptions(this Task task)
+   public static async Task WithAggregateExceptionsAsync(this Task task)
    {
       try
       {
-         await task.AsUnit().caf();
+         await task.AsUnitAsync().caf();
       }
       catch(Exception exception)
       {
@@ -28,5 +28,5 @@ public static class TaskCEExceptionHandling
    /// Ensures that if this task fails, the thrown exception is an AggregateException
    /// That way catching code does not need to first figure out whether the exception is an AggregateException or not
    /// </summary>
-   public static async Task WithAggregateExceptions(this ValueTask valueTask) => await valueTask.AsTask().WithAggregateExceptions().caf();
+   public static async Task WithAggregateExceptionsAsync(this ValueTask valueTask) => await valueTask.AsTask().WithAggregateExceptionsAsync().caf();
 }

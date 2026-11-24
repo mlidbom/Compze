@@ -18,7 +18,7 @@ public class Outbox_retry_tests : EndpointHostTestBase
 
       (await MyExactlyOnceTommandHandlerThreadGate.TryAwaitPassedThroughCountEqualToAsync(1, WaitTimeout.Seconds(1))).Must().BeFalse();
 
-      await Host.DisposeAsyncWithoutWaitingForEndpointsToBeAtRest();
+      await Host.DisposeWithoutWaitingForEndpointsToBeAtRestAsync();
       await StartHostAsync();
 
       await MyExactlyOnceTommandHandlerThreadGate.AwaitPassedThroughCountEqualToAsync(1, WaitTimeout.Seconds(15));

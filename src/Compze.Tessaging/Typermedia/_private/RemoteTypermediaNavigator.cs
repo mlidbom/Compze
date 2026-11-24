@@ -45,10 +45,10 @@ static class RemoteTypermediaNavigatorRegistrar
       if(tuery is ICreateMyOwnResultTuery<TResult> selfCreating)
          return await Task.FromResult(selfCreating.CreateResult()).caf();
 
-      return await GetAsyncAfterFastPathOptimization(tuery).caf();
+      return await GetAfterFastPathOptimizationAsync(tuery).caf();
    }
 
-   async Task<TResult> GetAsyncAfterFastPathOptimization<TResult>(IRemotableTuery<TResult> tuery) => await _typermediaRouting.GetAsync(tuery).caf();
+   async Task<TResult> GetAfterFastPathOptimizationAsync<TResult>(IRemotableTuery<TResult> tuery) => await _typermediaRouting.GetAsync(tuery).caf();
 
    TResult IRemoteTypermediaNavigator.Get<TResult>(IRemotableTuery<TResult> tuery) => GetAsync(tuery).ResultUnwrappingException();
 }

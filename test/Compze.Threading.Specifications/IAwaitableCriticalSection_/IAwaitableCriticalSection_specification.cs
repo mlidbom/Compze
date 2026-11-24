@@ -62,11 +62,11 @@ public class IAwaitableCriticalSection_specification : UniversalTestBase
          {
             using(criticalSection.TakeUpdateLock()) {}
 
-            Invoking(() => TaskCE.Run(() => criticalSection.TakeUpdateLock(timeout: LockTimeout.Seconds(.1))).Wait())
+            Invoking(() => TaskCE.RunAsync(() => criticalSection.TakeUpdateLock(timeout: LockTimeout.Seconds(.1))).Wait())
               .Must().Throw<Exception>();
          }
 
-         TaskCE.Run(() => criticalSection.TakeUpdateLock(timeout: LockTimeout.Milliseconds(0))).Wait();
+         TaskCE.RunAsync(() => criticalSection.TakeUpdateLock(timeout: LockTimeout.Milliseconds(0))).Wait();
       }
    }
 

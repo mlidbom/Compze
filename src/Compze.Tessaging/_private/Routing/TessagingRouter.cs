@@ -93,7 +93,7 @@ class TessagingRouter : ITessagingRouter, IDisposable
       await ReconcileConnectionsAsync().caf();
       //With no registry declared there is no membership to converge on - the endpoint connects to no other endpoint - so there is nothing to keep reconciling.
       if(endpointRegistry is not null)
-         _reconcileLoop = TaskCE.Run(ReconcileLoopAsync);
+         _reconcileLoop = TaskCE.RunAsync(ReconcileLoopAsync);
    }
 
    ///<summary>Waits until the registry signals that membership may have changed — or <see cref="ReconcileLivenessInterval"/><br/>
@@ -110,7 +110,7 @@ class TessagingRouter : ITessagingRouter, IDisposable
    {
       while(!_reconcileLoopCancellation.IsCancellationRequested)
       {
-         await TaskCE.RunOnDedicatedThread(() => _endpointRegistry!.AwaitPossibleMembershipChange(ReconcileLivenessInterval, _reconcileLoopCancellation.Token)).caf();
+         await TaskCE.RunOnDedicatedThreadAsync(() => _endpointRegistry!.AwaitPossibleMembershipChange(ReconcileLivenessInterval, _reconcileLoopCancellation.Token)).caf();
          if(_reconcileLoopCancellation.IsCancellationRequested) return;
 
          try

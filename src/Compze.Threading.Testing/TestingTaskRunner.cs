@@ -23,7 +23,7 @@ public sealed class TestingTaskRunner(TimeSpan timeout) : IDisposable, IAsyncDis
    ///<summary>Like <see cref="Start(Action)"/>, and returns the action's <see cref="Task"/>, for a test that awaits it.</summary>
    public Task RunAsync(Action action)
    {
-      var actor = TaskCE.RunOnDedicatedThread(action);
+      var actor = TaskCE.RunOnDedicatedThreadAsync(action);
       _monitoredTasks.Add(actor);
       return actor;
    }
@@ -40,7 +40,7 @@ public sealed class TestingTaskRunner(TimeSpan timeout) : IDisposable, IAsyncDis
    ///<summary>Like <see cref="Start(Func{Task})"/>, and returns the function's <see cref="Task"/>, for a test that awaits it.</summary>
    public Task RunAsync(Func<Task> asyncFunction)
    {
-      var actor = TaskCE.Run(asyncFunction);
+      var actor = TaskCE.RunAsync(asyncFunction);
       _monitoredTasks.Add(actor);
       return actor;
    }

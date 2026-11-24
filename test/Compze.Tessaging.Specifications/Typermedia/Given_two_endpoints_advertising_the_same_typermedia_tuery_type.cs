@@ -60,8 +60,8 @@ public class Given_two_endpoints_advertising_the_same_typermedia_tuery_type : Un
    protected override async Task InitializeAsyncInternal()
    {
       await _host.StartAsync().caf();
-      _client = await TypermediaTestClient.ConnectTo(_firstEndpoint.Address!, registrar => registrar.RequireTypermediaHostingSpecificationTypeMappings()).caf();
-      await _client.AlsoConnectTo(_secondEndpoint.Address!).caf();
+      _client = await TypermediaTestClient.ConnectToAsync(_firstEndpoint.Address!, registrar => registrar.RequireTypermediaHostingSpecificationTypeMappings()).caf();
+      await _client.AlsoConnectToAsync(_secondEndpoint.Address!).caf();
    }
 
    protected override async Task DisposeAsyncInternal()

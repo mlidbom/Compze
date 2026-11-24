@@ -27,7 +27,7 @@ sealed class LockHeldByAnotherThreadWhileWeTimeOutTryingToTakeIt : IDisposable
       if(stackTraceFetchTimeout.HasValue) lockDiagnostics.SetTimeToWaitForStackTrace(stackTraceFetchTimeout.Value);
 
       using var theLockIsHeld = new ManualResetEvent(false);
-      _holder = TaskCE.Run(() =>
+      _holder = TaskCE.RunAsync(() =>
       {
          var heldLock = takeLock();
          theLockIsHeld.Set();
@@ -38,7 +38,7 @@ sealed class LockHeldByAnotherThreadWhileWeTimeOutTryingToTakeIt : IDisposable
 
       //The lock is genuinely held and is not released until we say so, so this acquisition MUST time out. No race: the
       //timeout fires against a lock that is provably unavailable for its entire duration, whatever the timer resolution.
-      TheAcquisitionTimeoutException = Invoking(() => TaskCE.Run(takeLock).Wait())
+      TheAcquisitionTimeoutException = Invoking(() => TaskCE.RunAsync(takeLock).Wait())
                                       .Must().Throw<AggregateException>()
                                       .Which.InnerExceptions.Single();
    }

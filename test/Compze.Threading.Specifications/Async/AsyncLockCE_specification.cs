@@ -133,11 +133,11 @@ public class AsyncLockCE_specification : UniversalTestBase
          var task1TookLockGate = IThreadGate.NewClosed(WaitTimeout.Seconds(30), "task1TookLock");
          var task2TookLockGate = IThreadGate.NewOpen(WaitTimeout.Seconds(30), "task2TookLock");
 
-         var task1 = TaskCE.RunOnDedicatedThread(() => asyncLock.Locked(task1TookLockGate.AwaitPassThrough));
+         var task1 = TaskCE.RunOnDedicatedThreadAsync(() => asyncLock.Locked(task1TookLockGate.AwaitPassThrough));
 
          await task1TookLockGate.AwaitQueueLengthEqualToAsync(1);
 
-         var task2 = TaskCE.RunOnDedicatedThread(() => asyncLock.Locked(task2TookLockGate.AwaitPassThrough));
+         var task2 = TaskCE.RunOnDedicatedThreadAsync(() => asyncLock.Locked(task2TookLockGate.AwaitPassThrough));
 
          (await task2TookLockGate.TryAwaitPassedThroughCountEqualToAsync(1, WaitTimeout.Milliseconds(10))).Must().Be(false);
          task1TookLockGate.Open();
@@ -169,7 +169,7 @@ public class AsyncLockCE_specification : UniversalTestBase
          var secondTaskStartedGate = IThreadGate.NewOpen(WaitTimeout.Seconds(30), "secondTaskStarted");
          var secondTaskGotLockGate = IThreadGate.NewOpen(WaitTimeout.Seconds(30), "secondTaskGotLock");
          var nestedTask = Task.CompletedTask;
-         var firstTask = TaskCE.RunOnDedicatedThread(() => asyncLock.Locked(() =>
+         var firstTask = TaskCE.RunOnDedicatedThreadAsync(() => asyncLock.Locked(() =>
          {
             firstTaskTookLockGate.AwaitPassThrough();
             nestedTask = Task.Run(() => asyncLock.Locked(firstTaskNestedTaskTookLockGate.AwaitPassThrough));
@@ -177,7 +177,7 @@ public class AsyncLockCE_specification : UniversalTestBase
 
          await firstTaskTookLockGate.AwaitQueueLengthEqualToAsync(1);
 
-         var secondTask = TaskCE.RunOnDedicatedThread(() =>
+         var secondTask = TaskCE.RunOnDedicatedThreadAsync(() =>
          {
             secondTaskStartedGate.AwaitPassThrough();
             asyncLock.Locked(() => {});
@@ -210,11 +210,11 @@ public class AsyncLockCE_specification : UniversalTestBase
          var task1TookLockGate = IThreadGate.NewClosed(WaitTimeout.Seconds(30), "task1TookLock");
          var task2TookLockGate = IThreadGate.NewOpen(WaitTimeout.Seconds(30), "task2TookLock");
 
-         var task1 = TaskCE.RunOnDedicatedThread(() => asyncLock.Locked(task1TookLockGate.AwaitPassThrough));
+         var task1 = TaskCE.RunOnDedicatedThreadAsync(() => asyncLock.Locked(task1TookLockGate.AwaitPassThrough));
 
          await task1TookLockGate.AwaitQueueLengthEqualToAsync(1);
 
-         var task2 = TaskCE.RunOnDedicatedThread(() => asyncLock.Locked(task2TookLockGate.AwaitPassThrough));
+         var task2 = TaskCE.RunOnDedicatedThreadAsync(() => asyncLock.Locked(task2TookLockGate.AwaitPassThrough));
 
          (await task2TookLockGate.TryAwaitPassedThroughCountEqualToAsync(1, WaitTimeout.Milliseconds(10))).Must().Be(false);
          task1TookLockGate.Open();
@@ -249,7 +249,7 @@ public class AsyncLockCE_specification : UniversalTestBase
          using var asyncLock = IAsyncLockCE.WithDefaultTimeout();
 
          // The synchronous wait for the async call is what this specifies, so it blocks a dedicated thread, not one the async call may need to complete on
-         await TaskCE.RunOnDedicatedThread(() => asyncLock.Locked(() =>
+         await TaskCE.RunOnDedicatedThreadAsync(() => asyncLock.Locked(() =>
          {
             asyncLock.LockedAsync(async () =>
             {
@@ -337,7 +337,7 @@ public class AsyncLockCE_specification : UniversalTestBase
          using var asyncLock = IAsyncLockCE.New(LockTimeout.Milliseconds(50));
          var firstTaskTookLockGate = IThreadGate.NewClosed(WaitTimeout.Seconds(30), "firstTaskTookLockGate");
 
-         var firstTask = TaskCE.RunOnDedicatedThread(() => asyncLock.Locked(firstTaskTookLockGate.AwaitPassThrough));
+         var firstTask = TaskCE.RunOnDedicatedThreadAsync(() => asyncLock.Locked(firstTaskTookLockGate.AwaitPassThrough));
 
          await firstTaskTookLockGate.AwaitQueueLengthEqualToAsync(1);
 
@@ -366,7 +366,7 @@ public class AsyncLockCE_specification : UniversalTestBase
          asyncLock.SetTimeToWaitForStackTrace(WaitTimeout.Seconds(.5));
          var firstTaskTookLockGate = IThreadGate.NewClosed(WaitTimeout.Seconds(30), "firstTaskTookLockGate");
 
-         var firstTask = TaskCE.RunOnDedicatedThread(() => HoldLockInMethodSoItWillBeInTheCapturedCallStack(asyncLock, firstTaskTookLockGate));
+         var firstTask = TaskCE.RunOnDedicatedThreadAsync(() => HoldLockInMethodSoItWillBeInTheCapturedCallStack(asyncLock, firstTaskTookLockGate));
 
          await firstTaskTookLockGate.AwaitQueueLengthEqualToAsync(1);
 

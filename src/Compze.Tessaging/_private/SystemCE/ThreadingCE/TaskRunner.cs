@@ -16,7 +16,7 @@ interface ITaskRunner
    ///<summary>Runs <paramref name="threadLoop"/> on a thread of its own, named <paramref name="threadName"/>, and returns a task that<br/>
    /// completes when the thread ends, so the end can be awaited without holding a thread. A failure is reported through the<br/>
    /// background-exception reporter, so the task always completes successfully.</summary>
-   Task RunOnNamedThread(string threadName, ThreadStart threadLoop, ThreadPriority priority = ThreadPriority.Normal);
+   Task RunOnNamedThreadAsync(string threadName, ThreadStart threadLoop, ThreadPriority priority = ThreadPriority.Normal);
 }
 
 static class TaskRunnerRegistrar
@@ -43,7 +43,7 @@ static class TaskRunnerRegistrar
 
       public void Run(string taskName, Func<Task> asyncAction)
       {
-         var task = TaskCE.Run(async () =>
+         var task = TaskCE.RunAsync(async () =>
          {
             try
             {
@@ -66,10 +66,10 @@ static class TaskRunnerRegistrar
          });
 
          _inProgressTasks.Update(it => it.Add(task));
-         _ = task.ContinueWithCE(_ => _inProgressTasks.Update(it => it.Remove(task))); //While surprising to me, completedTask and task are NOT the same object.
+         _ = task.ContinueWithAsync(_ => _inProgressTasks.Update(it => it.Remove(task))); //While surprising to me, completedTask and task are NOT the same object.
       }
 
-      public Task RunOnNamedThread(string threadName, ThreadStart threadLoop, ThreadPriority priority = ThreadPriority.Normal)
+      public Task RunOnNamedThreadAsync(string threadName, ThreadStart threadLoop, ThreadPriority priority = ThreadPriority.Normal)
       {
          //Continuations run asynchronously, so code awaiting the thread's end never runs on the ending thread itself.
          var threadEnded = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);

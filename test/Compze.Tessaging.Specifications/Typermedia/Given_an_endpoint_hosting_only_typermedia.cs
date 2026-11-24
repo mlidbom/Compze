@@ -43,7 +43,7 @@ public class Given_an_endpoint_hosting_only_typermedia : UniversalTestBase
    protected override async Task InitializeAsyncInternal()
    {
       await _host.StartAsync().caf();
-      _client = await TypermediaTestClient.ConnectTo(_endpoint.Address!, registrar => registrar.RequireTypermediaHostingSpecificationTypeMappings()).caf();
+      _client = await TypermediaTestClient.ConnectToAsync(_endpoint.Address!, registrar => registrar.RequireTypermediaHostingSpecificationTypeMappings()).caf();
    }
 
    protected override async Task DisposeAsyncInternal()

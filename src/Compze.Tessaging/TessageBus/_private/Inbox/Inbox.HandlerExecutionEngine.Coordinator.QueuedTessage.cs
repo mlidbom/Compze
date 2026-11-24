@@ -130,8 +130,8 @@ partial class Inbox
                TransportTessage.TessageTypeEnum switch
                {
                   //The whole wrapped tevent travels the wire, so a received tevent arrives already wrapped; Wrapped normalizes and passes it through unchanged.
-                  TransportTessageType.ExactlyOnceTevent  => (tessage, unitOfWork) => _executor.ExecuteTeventHandlers(PublisherTevent.Wrapped((ITevent)tessage), unitOfWork),
-                  TransportTessageType.ExactlyOnceTommand => (tessage, unitOfWork) => _executor.ExecuteTommandHandler((IExactlyOnceTommand)tessage, unitOfWork),
+                  TransportTessageType.ExactlyOnceTevent  => (tessage, unitOfWork) => _executor.ExecuteTeventHandlersAsync(PublisherTevent.Wrapped((ITevent)tessage), unitOfWork),
+                  TransportTessageType.ExactlyOnceTommand => (tessage, unitOfWork) => _executor.ExecuteTommandHandlerAsync((IExactlyOnceTommand)tessage, unitOfWork),
                   TransportTessageType.BestEffortTevent => throw new ArgumentOutOfRangeException(),
                   _                                     => throw new ArgumentOutOfRangeException()
                };

@@ -47,7 +47,7 @@ public class A_condition_that_becomes_true_without_an_update_before_the_wait_tim
 
       public awaited_synchronously()
       {
-         _wait = TaskCE.RunOnDedicatedThread(() => _criticalSection.TryAwait(TheCondition, waitTimeout: TheWaitTimeout));
+         _wait = TaskCE.RunOnDedicatedThreadAsync(() => _criticalSection.TryAwait(TheCondition, waitTimeout: TheWaitTimeout));
          MakeTheConditionTrueWithoutAnUpdate();
       }
 

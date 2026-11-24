@@ -64,7 +64,7 @@ partial class Inbox
       internal void Start()
       {
          this.Log().Info("Starting");
-         _awaitDispatchableTessageLoop = _taskRunner.RunOnNamedThread(
+         _awaitDispatchableTessageLoop = _taskRunner.RunOnNamedThreadAsync(
             nameof(AwaitDispatchableTessageThreadLoop),
             AwaitDispatchableTessageThreadLoop,
             ThreadPriority.AboveNormal);

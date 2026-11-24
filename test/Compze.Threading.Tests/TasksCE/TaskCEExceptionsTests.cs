@@ -16,7 +16,7 @@ public class TaskCEExceptionsTests : UniversalTestBase
    }
 
    [XF] public async Task WithAggregateExceptions_throws_taggregate_exception_containing_all_exceptions() =>
-      (await InvokingAsync(async () => await Task.WhenAll(Enumerable.Repeat(1, 10).Select(_ => FailingMethod())).WithAggregateExceptions())
+      (await InvokingAsync(async () => await Task.WhenAll(Enumerable.Repeat(1, 10).Select(_ => FailingMethod())).WithAggregateExceptionsAsync())
             .Must().ThrowAsync<AggregateException>())
      .Which.InnerExceptions.Must().HaveCount(10);
 }

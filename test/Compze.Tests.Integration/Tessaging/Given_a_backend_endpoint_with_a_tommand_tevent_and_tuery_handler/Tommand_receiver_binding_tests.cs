@@ -26,7 +26,7 @@ public class Tommand_receiver_binding_tests : EndpointHostTestBase
       //The send succeeds inside the caller's unit of work, bound to the remembered Remote endpoint.
       await BackendEndPoint.ServiceLocator.Resolve<IIndependentTommandSender>().SendAsync(new MyExactlyOnceTommandHandledByTheRemoteEndpoint());
 
-      await Host.DisposeAsyncWithoutWaitingForEndpointsToBeAtRest(); //The tommand is undelivered: awaiting rest would wait for the handler's return.
+      await Host.DisposeWithoutWaitingForEndpointsToBeAtRestAsync(); //The tommand is undelivered: awaiting rest would wait for the handler's return.
       await StartHostAsync();
 
       await MyExactlyOnceTommandHandledByTheRemoteEndpointHandlerThreadGate.AwaitPassedThroughCountEqualToAsync(1, WaitTimeout.Seconds(15));
@@ -41,7 +41,7 @@ public class Tommand_receiver_binding_tests : EndpointHostTestBase
       await BackendEndPoint.ServiceLocator.Resolve<IIndependentTommandSender>().SendAsync(new MyExactlyOnceTommandHandledByTheRemoteEndpoint());
 
       //A successor - a NEW endpoint identity advertising the same tommand type - arrives while the Remote endpoint is still down.
-      await Host.DisposeAsyncWithoutWaitingForEndpointsToBeAtRest();
+      await Host.DisposeWithoutWaitingForEndpointsToBeAtRestAsync();
       await StartHostWithTheBackendEndpointAndASuccessorToTheRemoteEndpointAsync();
 
       //The bound tommand must not enter another endpoint's stream: the successor never receives it...
@@ -52,7 +52,7 @@ public class Tommand_receiver_binding_tests : EndpointHostTestBase
       await RemoteSuccessorTommandHandlerThreadGate.AwaitPassedThroughCountEqualToAsync(1, WaitTimeout.Seconds(15));
 
       //...and the waiting tommand still reaches its own endpoint when it returns.
-      await Host.DisposeAsyncWithoutWaitingForEndpointsToBeAtRest();
+      await Host.DisposeWithoutWaitingForEndpointsToBeAtRestAsync();
       await StartHostAsync();
       await MyExactlyOnceTommandHandledByTheRemoteEndpointHandlerThreadGate.AwaitPassedThroughCountEqualToAsync(1, WaitTimeout.Seconds(15));
    }

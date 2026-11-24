@@ -54,7 +54,7 @@ public class Navigator_specification : UniversalTestBase
    protected override async Task InitializeAsyncInternal()
    {
       await _host.StartAsync().caf();
-      _client = await TypermediaTestClient.ConnectTo(_endpoint.Address!, registrar => registrar.RequireIntegrationTestTypeMappings()).caf();
+      _client = await TypermediaTestClient.ConnectToAsync(_endpoint.Address!, registrar => registrar.RequireIntegrationTestTypeMappings()).caf();
    }
 
    protected override async Task DisposeAsyncInternal()

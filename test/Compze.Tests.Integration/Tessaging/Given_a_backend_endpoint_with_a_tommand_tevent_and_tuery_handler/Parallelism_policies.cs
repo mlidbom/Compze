@@ -25,7 +25,7 @@ public class Parallelism_policies : EndpointHostTestBase
    [PCT] public async Task Five_tuery_handlers_can_execute_in_parallel_when_using_Tuery()
    {
       TueryHandlerThreadGate.Close();
-      var tasks = 1.Through(5).Select(_ => TaskCE.RunOnDedicatedThread(() => Navigator.Get(new MyTuery()))).ToList();
+      var tasks = 1.Through(5).Select(_ => TaskCE.RunOnDedicatedThreadAsync(() => Navigator.Get(new MyTuery()))).ToList();
 
       await TueryHandlerThreadGate.AwaitQueueLengthEqualToAsync(5);
       TueryHandlerThreadGate.Open();

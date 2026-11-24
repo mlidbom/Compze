@@ -37,13 +37,13 @@ class BestEffortTessagingRequestHandlers : ITransportRequestHandlerContribution
    {
       RequestHandlers = new Dictionary<TransportRequestKind, Func<TransportRequest, Task<string>>>
       {
-         [TransportRequestKind.BestEffortTevent] = DispatchDirectly
+         [TransportRequestKind.BestEffortTevent] = DispatchDirectlyAsync
       };
 
       return;
 
       //The acknowledgement is written after the handlers have executed, so one-tessage-in-flight-per-destination keeps handling in send order.
-      async Task<string> DispatchDirectly(TransportRequest request)
+      async Task<string> DispatchDirectlyAsync(TransportRequest request)
       {
          await bestEffortTeventDirectDispatcher.DispatchAsync(new TransportTessage.InComing(request.Body, request.PayloadTypeIdString, request.TessageId, typeMap, serializer)).caf();
          return "";

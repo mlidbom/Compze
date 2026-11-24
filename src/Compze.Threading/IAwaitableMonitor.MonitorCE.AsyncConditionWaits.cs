@@ -43,7 +43,7 @@ public partial interface IAwaitableMonitor
 
                cancellationToken.ThrowIfCancellationRequested();
                if(HasExpired()) return false;
-               nextUpdate = NextUpdate();
+               nextUpdate = NextUpdateAsync();
             }
             finally
             {
@@ -62,7 +62,7 @@ public partial interface IAwaitableMonitor
 
       ///<summary>The task the next update-lock release completes. Called while holding the lock, so no update can come between an evaluation of<br/>
       /// a condition that found it false and the wait for the next update.</summary>
-      Task NextUpdate() => (_nextUpdate ??= new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously)).Task;
+      Task NextUpdateAsync() => (_nextUpdate ??= new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously)).Task;
 
       ///<summary>Wakes the async condition waits, so they evaluate their conditions again. Called by <see cref="ReleaseUpdateLock"/> while it still holds the lock.<br/>
       /// The woken waits continue on the thread pool, never inline on the releasing thread, which holds the lock: <see cref="TaskCreationOptions.RunContinuationsAsynchronously"/>.</summary>

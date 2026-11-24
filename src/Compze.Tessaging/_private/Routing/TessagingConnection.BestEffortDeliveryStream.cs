@@ -53,7 +53,7 @@ partial class TessagingConnection
          //Attaching from inside the loop instead made the queue start accepting only once a freshly spawned BelowNormal thread
          //got scheduled, and a not-queued-for peer's tevents published in that window were dropped with the connection live.
          _peerQueue.AttachDrainingStream();
-         _sendLoop = _connection._taskRunner.RunOnNamedThread($"BestEffortDelivery-{_connection.EndpointInformation.Id.Value:N}", SendLoop, ThreadPriority.BelowNormal);
+         _sendLoop = _connection._taskRunner.RunOnNamedThreadAsync($"BestEffortDelivery-{_connection.EndpointInformation.Id.Value:N}", SendLoop, ThreadPriority.BelowNormal);
       }
 
       ///<summary>This connection stops being the peer's delivery path — called as delivery stops, so the queue stops accepting<br/>

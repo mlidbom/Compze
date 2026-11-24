@@ -34,7 +34,7 @@ using var host = TestingEndpointHost.Create();
 var endpoint = host.RegisterEndpoint(new MyEndpointDeclaration());
 await host.StartAsync();
 
-await using var client = await TypermediaTestClient.ConnectTo(endpoint.Address!, mapper => mapper.RegisterMyDomainTypeMappings());
+await using var client = await TypermediaTestClient.ConnectToAsync(endpoint.Address!, mapper => mapper.RegisterMyDomainTypeMappings());
 var result = client.Navigator.Get(new MyTuery());
 ```
 

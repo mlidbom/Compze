@@ -19,18 +19,18 @@ class ExclusiveFactDiscoverer : IXunitTestCaseDiscoverer
 
       //xUnit never runs an abstract class, so the fact would silently run nowhere. It fails loudly instead (Magnus, 2026-11-24).
       if(isInherited && declaringType.IsAbstract)
-         return TestCases(ErrorThatTheFactWouldNeverRun());
+         return TestCasesAsync(ErrorThatTheFactWouldNeverRun());
 
       if(isInherited) //We only run these tests for the classes that declares them.
-         return TestCases();
+         return TestCasesAsync();
 
       #pragma warning disable CA2000// We are passing this disposable into a constructor of an object we don't own
-      return TestCases(new ExclusiveFactTestCase(
+      return TestCasesAsync(new ExclusiveFactTestCase(
                           details: Details(),
                           traits: testMethod.Traits.ToReadWrite(StringComparer.OrdinalIgnoreCase)));
       #pragma warning restore CA2000
 
-      static ValueTask<IReadOnlyCollection<IXunitTestCase>> TestCases(params IXunitTestCase[] testCases) => new(testCases);
+      static ValueTask<IReadOnlyCollection<IXunitTestCase>> TestCasesAsync(params IXunitTestCase[] testCases) => new(testCases);
 
       TestCaseDetails Details() => new(TestIntrospectionHelper.GetTestCaseDetails(discoveryOptions, testMethod, factAttribute));
 

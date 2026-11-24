@@ -38,7 +38,7 @@ public abstract class PerformanceTestBase : UniversalTestBase
    protected override async Task InitializeAsyncInternal()
    {
       await Host.StartAsync().caf();
-      Client = await TypermediaTestClient.ConnectTo(ServerEndpoint.Address!, registrar => registrar.RequirePerformanceTestTypeMappings()).caf();
+      Client = await TypermediaTestClient.ConnectToAsync(ServerEndpoint.Address!, registrar => registrar.RequirePerformanceTestTypeMappings()).caf();
    }
 
    protected override async Task DisposeAsyncInternal()

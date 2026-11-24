@@ -38,7 +38,7 @@ sealed class NamedPipeTransportServer : IAsyncDisposable
    public Task StartAsync()
    {
       State.Assert(_listenerLoops is null);
-      _listenerLoops = Enumerable.Range(0, ListeningInstanceCount).Select(_ => TaskCE.Run(ListenerLoopAsync)).ToArray();
+      _listenerLoops = Enumerable.Range(0, ListeningInstanceCount).Select(_ => TaskCE.RunAsync(ListenerLoopAsync)).ToArray();
       this.Log().Info($"Named-pipe transport server listening at {Address.Uri}");
       return Task.CompletedTask;
    }
@@ -108,7 +108,7 @@ sealed class NamedPipeTransportServer : IAsyncDisposable
       //Tracked so StopAsync can wait for in-flight serves to unwind; the continuation removes it whether it completed before
       //or after this add, so the set never leaks a finished serve nor grows without bound under sustained load.
       _monitor.Locked(() => _connectionsBeingServed.Add(serving));
-      _ = serving.ContinueWithCE(_ => _monitor.Locked(() => _connectionsBeingServed.Remove(serving)));
+      _ = serving.ContinueWithAsync(_ => _monitor.Locked(() => _connectionsBeingServed.Remove(serving)));
    }
 
    async Task ServeConnectionThenDisposeAsync(NamedPipeServerStream stream)

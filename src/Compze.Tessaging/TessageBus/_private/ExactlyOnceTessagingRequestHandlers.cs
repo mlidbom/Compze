@@ -36,13 +36,13 @@ class ExactlyOnceTessagingRequestHandlers : ITransportRequestHandlerContribution
    {
       RequestHandlers = new Dictionary<TransportRequestKind, Func<TransportRequest, Task<string>>>
       {
-         [TransportRequestKind.ExactlyOnceTevent] = ReceiveIntoInbox,
-         [TransportRequestKind.ExactlyOnceTommand] = ReceiveIntoInbox
+         [TransportRequestKind.ExactlyOnceTevent] = ReceiveIntoInboxAsync,
+         [TransportRequestKind.ExactlyOnceTommand] = ReceiveIntoInboxAsync
       };
 
       return;
 
-      async Task<string> ReceiveIntoInbox(TransportRequest request)
+      async Task<string> ReceiveIntoInboxAsync(TransportRequest request)
       {
          await inbox.ReceiveAsync(new TransportTessage.InComing(request.Body, request.PayloadTypeIdString, request.TessageId, typeMap, serializer, request.DeliveryStreamPosition._assert().NotNull())).caf();
          return "";

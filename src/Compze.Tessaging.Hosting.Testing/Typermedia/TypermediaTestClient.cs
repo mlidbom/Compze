@@ -28,7 +28,7 @@ public class TypermediaTestClient : IAsyncDisposable
    //todo: With registries implemented, should this just have a single hardcoded address to connect to?
    /// <param name="endpointAddress">The endpoint to connect to</param>
    /// <param name="declareRequiredTypeMappings">Used to configure the domain assemblies whose type identity this client needs</param>
-   public static async Task<TypermediaTestClient> ConnectTo(EndpointAddress endpointAddress, Action<IComponentRegistrar> declareRequiredTypeMappings)
+   public static async Task<TypermediaTestClient> ConnectToAsync(EndpointAddress endpointAddress, Action<IComponentRegistrar> declareRequiredTypeMappings)
    {
       var client = TypermediaClient.Build(TestEnv.DIContainer.CreateTestingContainerBuilder(),
                                           builder =>
@@ -45,7 +45,7 @@ public class TypermediaTestClient : IAsyncDisposable
    }
 
    ///<summary>Connects this client to one more endpoint's address — an external client navigating several known endpoints.</summary>
-   public async Task AlsoConnectTo(EndpointAddress endpointAddress) => await _client.ConnectAsync(endpointAddress).caf();
+   public async Task AlsoConnectToAsync(EndpointAddress endpointAddress) => await _client.ConnectAsync(endpointAddress).caf();
 
    public async ValueTask DisposeAsync() => await _client.DisposeAsync().caf();
 }
