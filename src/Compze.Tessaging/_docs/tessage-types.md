@@ -67,7 +67,8 @@ It is sent through `IUnitOfWorkTommandSender` or `IIndependentTommandSender`, wh
 [Endpoints](endpoints.md).
 
 Typermedia has tommands of its own, whose callers wait for them to be handled, and may get a result: strictly-local
-tommands, executed in-process, and at-most-once typermedia tommands, which may be executed by another endpoint.
+tommands, executed in-process, and at-most-once typermedia tommands, executed by another endpoint: see
+[Typermedia](~/Compze/Tessaging/Typermedia/_docs/introduction.md).
 
 ## Tueries: a question with one answer
 
