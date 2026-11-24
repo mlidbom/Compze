@@ -90,7 +90,7 @@ sealed class PgSqlDbPoolSqlLayer : IDbPoolSqlLayer
 
    void ResetConnectionPool(DbPoolDatabase db)
    {
-      using var connection = new NpgsqlConnection(ConnectionStringFor(db));
+      using var connection = new NpgsqlConnection(CompzePgSqlConnectionString.From(ConnectionStringFor(db)));
       NpgsqlConnection.ClearPool(connection);
    }
 }

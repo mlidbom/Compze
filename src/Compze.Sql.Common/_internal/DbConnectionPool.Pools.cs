@@ -15,9 +15,9 @@ namespace Compze.Sql.Common._internal;
 /// <see cref="TransactionSpecificConnection"/>, which serializes the transaction's operations on it.</summary>
 ///<remarks>One connection per transaction is the only correct model, so there is no per-backend variation — every backend uses<br/>
 /// this pool. Two connections in one transaction is a distributed transaction — a separate database session each — which every<br/>
-/// supported database refuses without a coordinator (SQL Server's, MySQL's and SQLite's connections are each a transaction's durable<br/>
-/// participant, of which .NET allows one unless implicit distributed transactions are enabled; Npgsql can't prepare a commit unless<br/>
-/// the server allows prepared transactions), and a coordinator (MSDTC) is Windows-only and defeats the cross-platform goal.</remarks>
+/// supported database refuses without a coordinator (each of Compze's connections is a transaction's durable participant, of which<br/>
+/// .NET allows one unless implicit distributed transactions are enabled), and a coordinator (MSDTC) is Windows-only and defeats the<br/>
+/// cross-platform goal.</remarks>
 partial class DbConnectionPool<TConnection, TCommand> : IDbConnectionPool<TConnection, TCommand>
    where TConnection : IPoolableConnection, ICompzeDbConnection<TCommand>
    where TCommand : DbCommand
