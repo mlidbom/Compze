@@ -8,23 +8,24 @@ partial class PgSqlPeerRegistrySqlLayer
 {
    const string PgSqlGuidType = "UUID";
 
-   public static string SchemaCreationSql(EndpointTableSet tables) =>
+   public static IReadOnlyList<string> SchemaCreationStatements(EndpointTableSet tables) =>
+   [
       $"""
-
        CREATE TABLE IF NOT EXISTS {tables.Peers}
        (
          {PeersSchema.EndpointId} {PgSqlGuidType} NOT NULL,
 
          PRIMARY KEY ( {PeersSchema.EndpointId} )
-       );
-
+       )
+       """,
+      $"""
        CREATE TABLE IF NOT EXISTS {tables.PeerHandledTessageTypes}
        (
         {Types.EndpointId}         {PgSqlGuidType} NOT NULL,
         {Types.HandledTessageType} TEXT            NOT NULL,
 
         FOREIGN KEY ({Types.EndpointId}) REFERENCES {tables.Peers} ({PeersSchema.EndpointId})
-       );
-
-       """;
+       )
+       """
+   ];
 }

@@ -78,5 +78,9 @@ partial class PgSqlPeerRegistrySqlLayer(IPgSqlConnectionPool connectionFactory, 
                                peer.Where(row => row.HandledTessageType != null).Select(row => row.HandledTessageType!).ToHashSet()))];
    }
 
-   public async Task InitAsync() => await _schemaManager.EnsureSchemaInitializedAsync().caf();
+   public Task InitAsync()
+   {
+      _schemaManager.EnsureSchemaInitialized();
+      return Task.CompletedTask;
+   }
 }

@@ -14,7 +14,7 @@ public static class PgSqlTeventStoreRegistrar
 {
    public static IComponentRegistrar PgSqlTeventStoreSqlLayer(this IComponentRegistrar registrar) =>
       registrar.PgSqlTypeIdInterner()
-               .PgSqlSchemaContribution(Layer.SchemaCreationSql)
+               .PgSqlSchemaContribution(Layer.SchemaCreationStatements)
                .Register(
          Singleton.For<PgSqlTeventStoreConnectionManager>()
                   .CreatedBy((IPgSqlConnectionPool sqlConnectionProvider) => new PgSqlTeventStoreConnectionManager(sqlConnectionProvider)),

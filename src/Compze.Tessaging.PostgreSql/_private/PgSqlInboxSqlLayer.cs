@@ -224,5 +224,9 @@ partial class PgSqlInboxSqlLayer(IPgSqlConnectionPool connectionFactory, PgSqlSq
                    .ExecutePreparedNonQueryAsync().caf()).caf();
    }
 
-   public async Task InitAsync() => await _schemaManager.EnsureSchemaInitializedAsync().caf();
+   public Task InitAsync()
+   {
+      _schemaManager.EnsureSchemaInitialized();
+      return Task.CompletedTask;
+   }
 }
