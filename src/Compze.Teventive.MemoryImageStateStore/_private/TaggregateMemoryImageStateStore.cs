@@ -87,7 +87,11 @@ sealed class TaggregateMemoryImageStateStore : ITaggregateStore, IMemoryImageSta
    {
       if(Interlocked.Exchange(ref _disposed, 1) == 1) return;
       _stopping.Cancel();
+      //todo:urgent: blocks until a thread-pool task ends, so the disposal stalls while the pool is busy. The store
+      //   becomes IAsyncDisposable with dev_docs/TODO/container-disposal-of-async-only-components.md (Magnus, 2026-11-24).
+#pragma warning disable VSTHRD002 // The store's synchronous Dispose waits for its background task to end.
       _catchingUpAsOthersCommit.Wait();
+#pragma warning restore VSTHRD002
       _changesCommittedByOtherMemoryImages.Stop();
       Storage.Dispose();
       _stopping.Dispose();

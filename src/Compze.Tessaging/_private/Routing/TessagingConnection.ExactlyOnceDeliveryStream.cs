@@ -82,7 +82,11 @@ partial class TessagingConnection
       {
          //The stream is a dedicated-thread head-of-line pump, deliberately synchronous - it bridges its storage's async calls
          //the same way it already bridges the transport post below.
+         //todo:urgent: a synchronous wait on database I/O on the thread that starts delivery, not the stream's own thread: it
+         //   stalls while the thread pool is busy. Load the backlog on the send loop's thread, or asynchronously (Magnus, 2026-11-24).
+#pragma warning disable VSTHRD002 // Synchronous as the send loop is, but on the thread that calls StartDelivery, not the stream's own.
          var undelivered = _tessageStorage.GetUndeliveredTessagesForEndpointAsync(_connection.EndpointInformation.Id).GetAwaiter().GetResult();
+#pragma warning restore VSTHRD002
          if(undelivered.Count == 0) return;
 
          this.Log().Info($"Loading {undelivered.Count} undelivered tessage(s) for recovery to endpoint {_connection.EndpointInformation.Id}");
@@ -137,11 +141,15 @@ partial class TessagingConnection
          {
             //Freshly computed per attempt: sender-side stranding can punch a hole below the pending tessage
             //between attempts, and a refused attempt heals exactly by redeclaring the predecessor the durable rows now name.
+#pragma warning disable VSTHRD002 // On the delivery stream's own named thread (RunOnNamedThreadAsync): the wait holds no thread-pool thread.
             var predecessorSequenceNumber = _tessageStorage.GetDeliveryStreamPredecessorSequenceNumberAsync(_connection.EndpointInformation.Id, pending.DeliveryStreamSequenceNumber._assert().NotNull().Value).GetAwaiter().GetResult();
             _connection._transportMessagePoster.PostAsync(pending, _connection.RemoteAddress, predecessorSequenceNumber, _connection._cancellationSource.Token).GetAwaiter().GetResult();
+#pragma warning restore VSTHRD002
 
             this.Log().Debug($"Delivered tessage {pending.TessageId} to endpoint {_connection.EndpointInformation.Id}");
+#pragma warning disable VSTHRD002 // On the delivery stream's own named thread (RunOnNamedThreadAsync): the wait holds no thread-pool thread.
             _connection._exceptionReporter.RunSwallowingAndReportingAnyExceptions(() => _tessageStorage.MarkAsReceivedAsync(pending.TessageId, _connection.EndpointInformation.Id).GetAwaiter().GetResult());
+#pragma warning restore VSTHRD002
             return true;
          }
 #pragma warning disable CA1031 // Background thread — must catch all to keep the send loop running
@@ -152,7 +160,9 @@ partial class TessagingConnection
             //redelivers on the next start (deduplicated by the receiver), so let the cancellation propagate and end the loop.
             _connection._cancellationSource.Token.ThrowIfCancellationRequested();
             this.Log().Warning(exception, $"Delivery failed for tessage {pending.TessageId} to endpoint {_connection.EndpointInformation.Id}");
+#pragma warning disable VSTHRD002 // On the delivery stream's own named thread (RunOnNamedThreadAsync): the wait holds no thread-pool thread.
             _connection._exceptionReporter.RunSwallowingAndReportingAnyExceptions(() => _tessageStorage.RecordDeliveryFailureAsync(pending.TessageId, _connection.EndpointInformation.Id, exception).GetAwaiter().GetResult());
+#pragma warning restore VSTHRD002
             return false;
          }
       }

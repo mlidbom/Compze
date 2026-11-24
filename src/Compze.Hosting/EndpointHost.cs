@@ -79,7 +79,13 @@ public class EndpointHost : IEndpointHost
       _isStarted = true;
    }
 
-   public void Start() => StartAsync().WaitUnwrappingException();
+   public void Start()
+   {
+      //todo:urgent: a synchronous wait on asynchronous work, through WaitUnwrappingException, which VSTHRD002 can't see: it
+      //   holds this thread, and stalls while the thread pool is busy. See
+      //   dev_docs/TODO/synchronous-paths-that-need-a-free-thread-pool-thread.md (Magnus, 2026-11-24).
+      StartAsync().WaitUnwrappingException();
+   }
 
    bool _disposed;
 

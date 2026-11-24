@@ -58,7 +58,11 @@ static class UnitOfWorkTeventPublisherRegistrar
       //kind excluded, the bridge below bridges only participation - the handlers of the kinds whose contract keeps sync first-class.
       State.Assert(wrappedTevent is not IPublisherTevent<IExactlyOnceTevent>,
                    () => $"{tevent.GetType().FullName} declares the exactly-once contract, and exactly-once kinds are async end to end: publishing one writes durable rows inside the caller's transaction — database I/O. Publish it through {nameof(IUnitOfWorkTeventPublisher.PublishAsync)}.");
+      //todo:urgent: a synchronous wait on asynchronous handlers, inside the caller's unit of work: it stalls while the thread
+      //   pool is busy. See dev_docs/TODO/synchronous-paths-that-need-a-free-thread-pool-thread.md (Magnus, 2026-11-24).
+#pragma warning disable VSTHRD002 // The synchronous Publish, over participation's handlers, which may be asynchronous.
       PublishCoreAsync(wrappedTevent).GetAwaiter().GetResult();
+#pragma warning restore VSTHRD002
    }
 
    public async Task PublishAsync(ITevent tevent) => await PublishCoreAsync(PublisherTevent.Wrapped(tevent)).caf();

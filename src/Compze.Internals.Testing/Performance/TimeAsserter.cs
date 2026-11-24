@@ -78,12 +78,22 @@ public static class TimeAsserter
                                                                       [InstantHandle] Action? tearDown,
                                                                       uint maxTries,
                                                                       [InstantHandle] Func<Task>? tearDownAsync) where TReturnValue : StopwatchCE.TimedExecutionSummary =>
+      //todo:urgent: a synchronous wait on asynchronous work, through ResultUnwrappingException, which VSTHRD002 can't see: it
+      //   holds this thread, and stalls while the thread pool is busy. See
+      //   dev_docs/TODO/synchronous-paths-that-need-a-free-thread-pool-thread.md (Magnus, 2026-11-24).
       await Task.Run(() => Mutex.Locked(() => RunScenarioWithRetries(() => runScenario().ResultUnwrappingException(), iterations, maxAverage, maxTotal, description, setup, () =>
       {
          if(tearDownAsync != null)
+         {
+            //todo:urgent: a synchronous wait on asynchronous work, through WaitUnwrappingException, which VSTHRD002 can't see: it
+            //   holds this thread, and stalls while the thread pool is busy. See
+            //   dev_docs/TODO/synchronous-paths-that-need-a-free-thread-pool-thread.md (Magnus, 2026-11-24).
             tearDownAsync().WaitUnwrappingException();
+         }
          else
+         {
             tearDown?.Invoke();
+         }
       }, maxTries))).caf();
 
    static TReturnValue RunScenarioWithRetries<TReturnValue>([InstantHandle] Func<TReturnValue> runScenario,

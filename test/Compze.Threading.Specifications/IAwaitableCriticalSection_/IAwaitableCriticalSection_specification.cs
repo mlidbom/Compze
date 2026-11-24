@@ -62,11 +62,15 @@ public class IAwaitableCriticalSection_specification : UniversalTestBase
          {
             using(criticalSection.TakeUpdateLock()) {}
 
+#pragma warning disable VSTHRD002 // The lock under specification is thread-affine: this thread waits for another thread's attempt, which is what this specifies.
             Invoking(() => TaskCE.RunAsync(() => criticalSection.TakeUpdateLock(timeout: LockTimeout.Seconds(.1))).Wait())
               .Must().Throw<Exception>();
+#pragma warning restore VSTHRD002
          }
 
+#pragma warning disable VSTHRD002 // The lock under specification is thread-affine: this thread waits for another thread's attempt, which is what this specifies.
          TaskCE.RunAsync(() => criticalSection.TakeUpdateLock(timeout: LockTimeout.Milliseconds(0))).Wait();
+#pragma warning restore VSTHRD002
       }
    }
 

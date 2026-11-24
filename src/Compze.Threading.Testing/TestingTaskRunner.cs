@@ -52,7 +52,13 @@ public sealed class TestingTaskRunner(TimeSpan timeout) : IDisposable, IAsyncDis
    }
 
    ///<summary>Waits for all the registered tasks to complete and throws an exception if any are failed or the timeout expires.</summary>
-   public void Dispose() => DisposeAsync().WaitUnwrappingException();
+   public void Dispose()
+   {
+      //todo:urgent: a synchronous wait on asynchronous work, through WaitUnwrappingException, which VSTHRD002 can't see: it
+      //   holds this thread, and stalls while the thread pool is busy. See
+      //   dev_docs/TODO/synchronous-paths-that-need-a-free-thread-pool-thread.md (Magnus, 2026-11-24).
+      DisposeAsync().WaitUnwrappingException();
+   }
    ///<summary>Waits for all the registered tasks to complete and throws an exception if any are failed or the timeout expires.</summary>
    public async ValueTask DisposeAsync() => await WaitForTasksToCompleteAsync().caf();
 

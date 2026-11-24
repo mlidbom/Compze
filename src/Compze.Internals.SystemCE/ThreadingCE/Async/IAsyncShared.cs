@@ -47,7 +47,11 @@ public interface IAsyncShared
       }
 
       public TResult Locked<TResult>(Func<TShared, TResult> func) =>
+         //todo:urgent: a synchronous wait on the shared object's task, while the asynchronous path still opens it: it holds the
+         //   calling thread, and stalls while the thread pool is busy. See dev_docs/TODO/synchronous-paths-that-need-a-free-thread-pool-thread.md (Magnus, 2026-11-24).
+#pragma warning disable VSTHRD002 // The synchronous access: the shared object's task is complete, except while the asynchronous path still opens it.
          _serializedAccess.Locked(() => func(_shared.GetAwaiter().GetResult()));
+#pragma warning restore VSTHRD002
 
       public void Dispose() => _serializedAccess.Dispose();
    }

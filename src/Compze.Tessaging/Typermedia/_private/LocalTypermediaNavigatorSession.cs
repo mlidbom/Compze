@@ -25,14 +25,22 @@ class LocalTypermediaNavigatorSession : ILocalTypermediaNavigatorSession
       CommonAssertion(tommand);
 
       //CommonAssertion has asserted the caller's ambient transaction (an IStrictlyLocalTommand must be sent transactionally), so the caller's scope IS a unit of work - From certifies exactly that.
+      //todo:urgent: a synchronous wait on an asynchronous handler: it holds the calling thread, and stalls while every
+      //   thread-pool thread is busy. See dev_docs/TODO/synchronous-paths-that-need-a-free-thread-pool-thread.md (Magnus, 2026-11-24).
+#pragma warning disable VSTHRD002 // The navigator session's synchronous API, over the executor's asynchronous handlers.
       return _executor.ExecuteTommandHandlerAsync(tommand, UnitOfWorkResolver.From(_scopeResolver)).GetAwaiter().GetResult();
+#pragma warning restore VSTHRD002
    }
 
    public void Execute(IStrictlyLocalTommand tommand)
    {
       CommonAssertion(tommand);
 
+      //todo:urgent: a synchronous wait on an asynchronous handler: it holds the calling thread, and stalls while every
+      //   thread-pool thread is busy. See dev_docs/TODO/synchronous-paths-that-need-a-free-thread-pool-thread.md (Magnus, 2026-11-24).
+#pragma warning disable VSTHRD002 // The navigator session's synchronous API, over the executor's asynchronous handlers.
       _executor.ExecuteTommandHandlerAsync(tommand, UnitOfWorkResolver.From(_scopeResolver)).GetAwaiter().GetResult();
+#pragma warning restore VSTHRD002
    }
 
    public TResult Execute<TTuery, TResult>(IStrictlyLocalTuery<TTuery, TResult> tuery) where TTuery : IStrictlyLocalTuery<TTuery, TResult>
@@ -44,7 +52,11 @@ class LocalTypermediaNavigatorSession : ILocalTypermediaNavigatorSession
       if(tuery is ICreateMyOwnResultTuery<TResult> selfCreating)
          return selfCreating.CreateResult();
 
+      //todo:urgent: a synchronous wait on an asynchronous handler: it holds the calling thread, and stalls while every
+      //   thread-pool thread is busy. See dev_docs/TODO/synchronous-paths-that-need-a-free-thread-pool-thread.md (Magnus, 2026-11-24).
+#pragma warning disable VSTHRD002 // The navigator session's synchronous API, over the executor's asynchronous handlers.
       return _executor.ExecuteTueryHandlerAsync(tuery, _scopeResolver).GetAwaiter().GetResult();
+#pragma warning restore VSTHRD002
    }
 
    void CommonAssertion(ITessage tessage)

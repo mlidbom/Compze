@@ -95,7 +95,9 @@ public class ICriticalSection_specification : UniversalTestBase
          try { criticalSection.Locked<int>(() => throw new InvalidOperationException()); }
          catch(InvalidOperationException) {}
 
+#pragma warning disable VSTHRD002 // The lock under specification is thread-affine: this thread waits for another thread's attempt, which is what this specifies.
          TaskCE.RunAsync(() => criticalSection.Locked(() => {})).Wait();
+#pragma warning restore VSTHRD002
       }
 
       [ICriticalSectionMatrix] public void owning_thread_can_reenter_and_lock_is_only_released_when_outermost_lock_is_disposed()
@@ -105,11 +107,15 @@ public class ICriticalSection_specification : UniversalTestBase
          {
             using(criticalSection.TakeLock()) {}
 
+#pragma warning disable VSTHRD002 // The lock under specification is thread-affine: this thread waits for another thread's attempt, which is what this specifies.
             Invoking(() => TaskCE.RunAsync(() => criticalSection.TakeLock(timeout: LockTimeout.Seconds(.1))).Wait())
               .Must().Throw<Exception>();
+#pragma warning restore VSTHRD002
          }
 
+#pragma warning disable VSTHRD002 // The lock under specification is thread-affine: this thread waits for another thread's attempt, which is what this specifies.
          TaskCE.RunAsync(() => criticalSection.TakeLock(timeout: LockTimeout.Milliseconds(0))).Wait();
+#pragma warning restore VSTHRD002
       }
    }
 

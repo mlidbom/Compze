@@ -254,7 +254,9 @@ public class AsyncLockCE_specification : UniversalTestBase
             asyncLock.LockedAsync(async () =>
             {
                await Task.Yield();
+#pragma warning disable VSTHRD002 // The synchronous wait for the async call is what this specifies, on a thread of its own.
             }).Wait();
+#pragma warning restore VSTHRD002
          }));
       }
    }

@@ -60,7 +60,11 @@ sealed class TaggregateUnitOfWork : VolatileTransactionParticipant
       {
          //Exactly-once tevents are published only asynchronously, and a taggregate publishes synchronously: the one deliberate
          //bridge, as in the tevent store.
+         //todo:urgent: a synchronous wait on asynchronous publishing, inside the caller's unit of work: it stalls while the
+         //   thread pool is busy. See dev_docs/TODO/synchronous-paths-that-need-a-free-thread-pool-thread.md (Magnus, 2026-11-24).
+#pragma warning disable VSTHRD002 // The one deliberate bridge: a taggregate publishes synchronously, and exactly-once tevents publish only asynchronously.
          publisher.PublishAsync(tevent).GetAwaiter().GetResult();
+#pragma warning restore VSTHRD002
       } else
       {
          publisher.Publish(tevent);

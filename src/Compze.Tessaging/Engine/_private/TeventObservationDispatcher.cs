@@ -167,5 +167,11 @@ sealed partial class TeventObservationDispatcher : IDisposable, IAsyncDisposable
 
    ///<summary>The backstop for a container disposed synchronously: an endpoint has drained already, so this waits only in a<br/>
    /// composition without the endpoint's lifecycle.</summary>
-   public void Dispose() => DrainAsync().WaitUnwrappingException();
+   public void Dispose()
+   {
+      //todo:urgent: a synchronous wait on asynchronous work, through WaitUnwrappingException, which VSTHRD002 can't see: it
+      //   holds this thread, and stalls while the thread pool is busy. See
+      //   dev_docs/TODO/synchronous-paths-that-need-a-free-thread-pool-thread.md (Magnus, 2026-11-24).
+      DrainAsync().WaitUnwrappingException();
+   }
 }

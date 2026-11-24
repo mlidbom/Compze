@@ -44,6 +44,10 @@ sealed class ChangesCommittedByOtherMemoryImagesNotifier : IObservable<ChangesFo
    internal void Stop()
    {
       _found.Writer.TryComplete();
+      //todo:urgent: blocks until a thread-pool task ends, so the disposal stalls while the pool is busy. The store
+      //   becomes IAsyncDisposable with dev_docs/TODO/container-disposal-of-async-only-components.md (Magnus, 2026-11-24).
+#pragma warning disable VSTHRD002 // The store's synchronous Dispose waits for its background task to end.
       _telling.Wait();
+#pragma warning restore VSTHRD002
    }
 }

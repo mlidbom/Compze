@@ -103,7 +103,11 @@ public class Startup
                                                        .DeclareRequiredTypeMappings(registrar => registrar.RequireAccountManagementTypeMappings());
                                           clientBuilder.NewtonsoftSerializer();
                                        });
+      //todo:urgent: a synchronous wait in the startup or shutdown of a sample others copy: part of the restructuring
+      //   the todo:urgent on Startup asks for (Magnus, 2026-11-24).
+#pragma warning disable VSTHRD002 // The sample's synchronous composition, which the class's todo:urgent asks to restructure.
       _client.ConnectAsync(_domainEndpoint.Address!).GetAwaiter().GetResult();
+#pragma warning restore VSTHRD002
 
       services.AddHttpContextAccessor();
       services.AddScoped(_ => _client.Navigator);
@@ -139,8 +143,12 @@ public class Startup
       //driving its own retract, stop-sending, stop-listening phases - and the registry closes after the retractions.
       app.ApplicationServices.GetRequiredService<IHostApplicationLifetime>().ApplicationStopping.Register(() =>
       {
+         //todo:urgent: a synchronous wait in the startup or shutdown of a sample others copy: part of the restructuring
+         //   the todo:urgent on Startup asks for (Magnus, 2026-11-24).
+#pragma warning disable VSTHRD002 // The sample's synchronous composition, which the class's todo:urgent asks to restructure.
          _client.DisposeAsync().AsTask().GetAwaiter().GetResult();
          _host.DisposeAsync().AsTask().GetAwaiter().GetResult();
+#pragma warning restore VSTHRD002
          _endpointRegistry.Dispose();
       });
    }
