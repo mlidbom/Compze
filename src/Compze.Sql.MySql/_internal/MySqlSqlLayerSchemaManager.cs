@@ -51,5 +51,9 @@ class MySqlSqlLayerSchemaManager
             }
          }).caf()).caf()).caf();
 
+   ///<summary>The synchronous form of <see cref="EnsureSchemaInitializedAsync"/>, for synchronous SQL layers.</summary>
+   ///<remarks>bug: it blocks the calling thread on the asynchronous form, whose continuations need thread-pool threads: at the first call,<br/>
+   /// with every pool thread busy, as under many units of work at once, it waits until one comes free. Found 2026-11-24, by the memory<br/>
+   /// image state store's specification of two memory images adding cards to one deck from many threads at once.</remarks>
    public void EnsureSchemaInitialized() => EnsureSchemaInitializedAsync().Wait();
 }

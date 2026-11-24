@@ -26,6 +26,9 @@ partial class PgSqlTeventStoreSqlLayer
          {
             try
             {
+               //bug: a synchronous command of two statements, the INSERT and the UPDATE. Npgsql 9 sends the second, and flushes the whole
+               //   command, from the thread pool, while this thread waits for the answer: with every pool thread busy, the server receives
+               //   nothing until one comes free. Make each statement a command of its own, as PgSqlMemoryImageStateStoreSqlLayer does.
                connection.UseCommand(
                   command => command.SetCommandText(
                                         $"""
