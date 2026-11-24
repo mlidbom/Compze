@@ -100,6 +100,10 @@ partial class Inbox
 
                      await _tessageStorage.RecordExceptionAsync(TransportTessage, exception).caf();
 
+                     //bug: An exactly-once tessage whose handler throws five times in a row is given up on for good. DefaultRetryPolicy allows
+                     //   five tries, run at once with no delay between them, so any failure that outlasts them exhausts them all. MarkAsFailedAsync
+                     //   then records the tessage as failed: nothing handles it again, not even after a restart, and nothing shows it or retries it.
+                     //   The intended behavior, which IAtLeastOnceTessage's documentation and the dev_docs state, is retrying until handled. (website-and-docs, 2026-11-24)
                      if(!retryPolicy.TryAwaitNextRetryTimeForException(exception))
                      {
                         this.Log().Warning(exception, $"Transactional tessage {TessageId} failed after exhausting retries.");

@@ -1,4 +1,7 @@
-﻿#### Adding properties to our tevents
+﻿---
+title: Property updated tevents
+---
+#### Adding properties to our tevents
 You may have noticed that the tevents on the last page were missing a little something, namely properties.\
 Now the natural expectation would be for a slightly more realistic version of something like this:
 

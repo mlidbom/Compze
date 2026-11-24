@@ -12,7 +12,7 @@ namespace Compze.Tests.Unit.CQRS.Taggregates.SharedTomponents;
 
 interface IOrderTevent : ITaggregateTevent
 {
-#pragma warning disable CA1715 // Nested tevent interface follows semantic events naming convention (compze.net/paradigms/semantic-events/event-naming.html)
+#pragma warning disable CA1715 // Nested tevent interface follows semantic events naming convention (compze.net/Compze/Teventive/Taggregates/_docs/tevent-naming.html)
    interface Created : IOrderTevent, ITaggregateCreatedTevent;
 #pragma warning restore CA1715
 }

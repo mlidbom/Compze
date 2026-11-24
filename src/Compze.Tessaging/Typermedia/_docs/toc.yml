@@ -1,2 +1,8 @@
-- name: Typermedia
+- name: Typermedia APIs
   href: introduction.md
+- name: Declaring a typermedia API
+  href: declaring-an-api.md
+- name: Navigating a typermedia API
+  href: navigating.md
+- name: Typermedia in one process
+  href: in-one-process.md

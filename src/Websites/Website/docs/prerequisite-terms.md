@@ -1,4 +1,7 @@
-﻿### Domain Driven Design Terms
+﻿---
+title: Prerequisite terms
+---
+### Domain Driven Design Terms
 Terms from [the best software design book of all time](https://www.goodreads.com/en/book/show/179133.Domain_Driven_Design).
 
 #### Domain Driven Design / DDD

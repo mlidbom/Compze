@@ -88,6 +88,9 @@ public abstract class Endpoint : IEndpoint
    async Task StartListeningAsync()
    {
       State.Assert(!_isListening);
+      //refactor: Every lifecycle step of every endpoint, here and in the other start and stop phases, is logged at Information,
+      //   which a console logger shows by default: a process hosting a few endpoints prints a dozen lines at each start and stop.
+      //   Debug would suit steps that go as planned. (website-and-docs, 2026-11-24)
       this.Log().Info($"Endpoint '{_configuration.Name}' ({Id}) starting to listen");
 
       //Whether this process may run the endpoint at all is decided before the endpoint touches anything else: a refused claim

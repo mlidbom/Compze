@@ -1,4 +1,7 @@
-﻿### So what does all of that mean in practice?
+﻿---
+title: Introduction to tevents
+---
+### So what does all of that mean in practice?
 Let's dive right in to some code illustrating semantic tevents.
 
 This is the root of the tevent inheritance hierarchy. By some level of indirection, every tevent implements it:

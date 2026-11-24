@@ -1,4 +1,7 @@
-﻿#### How to name tevents
+﻿---
+title: Tevent naming
+---
+#### How to name tevents
 
 On the last page we were starting to run into some slightly unwieldy tevent names. Like `IUserEmailPropertyUpdatedTevent`. Now that it still reasonably readable and mostly unambiguous. That will not hold true as things get more complicated though if we keep naming tevents like that.
 

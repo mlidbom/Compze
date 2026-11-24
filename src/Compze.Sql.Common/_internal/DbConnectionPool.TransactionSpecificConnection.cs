@@ -33,10 +33,6 @@ partial class DbConnectionPool<TConnection, TCommand>
          await _serializedAccess.LockedAsync(async () => await func(_connection ??= await _pool.OpenConnectionAsync().caf()).caf()).caf();
 
       ///<summary>Disposes the connection, if one opened, once the operations using it have released the lock.</summary>
-      ///<remarks>It leaves the lock undisposed: the pool disposes this as its transaction completes, which can happen during a use of it, on<br/>
-      /// the same flow, such as when the transaction aborts as the connection's own transaction fails to take part in it. The lock,<br/>
-      /// re-entrant, lets this in, and the use then releases the lock, which would throw had this disposed it, hiding why the use failed.<br/>
-      /// The lock's semaphore holds nothing that needs disposing.</remarks>
       public void Dispose() => _serializedAccess.Locked(() => _connection?.Dispose());
    }
 }

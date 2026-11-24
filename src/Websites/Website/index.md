@@ -1,5 +1,7 @@
 ---
 _layout: landing
+title: Compze
+_appTitle: ''
 ---
 
 <div id="start-page">

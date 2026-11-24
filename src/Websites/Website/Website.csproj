@@ -6,22 +6,17 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="_site\**" />
-    <Compile Remove="api\**" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Remove="_site\**" />
-    <EmbeddedResource Remove="api\**" />
   </ItemGroup>
   <ItemGroup>
     <Content Remove="_site\**" />
-    <Content Remove="api\**" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="_site\**" />
-    <None Remove="api\**" />
   </ItemGroup>
   <ItemGroup>
-    <_ContentIncludedByDefault Remove="_site\api\toc.json" />
     <_ContentIncludedByDefault Remove="_site\docs\toc.json" />
     <_ContentIncludedByDefault Remove="_site\index.json" />
     <_ContentIncludedByDefault Remove="_site\manifest.json" />
@@ -53,12 +48,33 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_Abstractions)' != 'true'">
     <ProjectReference Include="..\..\Compze.Abstractions\Compze.Abstractions.csproj" />
   </ItemGroup>
+  <!-- Compze.DependencyInjection.Microsoft — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_DependencyInjection_Microsoft)' == 'true'">
+    <PackageReference Include="Compze.DependencyInjection.Microsoft" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_DependencyInjection_Microsoft)' != 'true'">
+    <ProjectReference Include="..\..\Compze.DependencyInjection.Microsoft\Compze.DependencyInjection.Microsoft.csproj" />
+  </ItemGroup>
+  <!-- Compze.Hosting — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Hosting)' == 'true'">
+    <PackageReference Include="Compze.Hosting" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Hosting)' != 'true'">
+    <ProjectReference Include="..\..\Compze.Hosting\Compze.Hosting.csproj" />
+  </ItemGroup>
   <!-- Compze.Internals.SystemCE — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_SystemCE)' == 'true'">
     <PackageReference Include="Compze.Internals.SystemCE" Version="*-*" />
   </ItemGroup>
   <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_SystemCE)' != 'true'">
     <ProjectReference Include="..\..\Compze.Internals.SystemCE\Compze.Internals.SystemCE.csproj" />
+  </ItemGroup>
+  <!-- Compze.Serialization.Newtonsoft — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Serialization_Newtonsoft)' == 'true'">
+    <PackageReference Include="Compze.Serialization.Newtonsoft" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Serialization_Newtonsoft)' != 'true'">
+    <ProjectReference Include="..\..\Compze.Serialization.Newtonsoft\Compze.Serialization.Newtonsoft.csproj" />
   </ItemGroup>
   <!-- Compze.Tessaging — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging)' == 'true'">
@@ -67,11 +83,25 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging)' != 'true'">
     <ProjectReference Include="..\..\Compze.Tessaging\Compze.Tessaging.csproj" />
   </ItemGroup>
+  <!-- Compze.Tessaging.Sqlite — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging_Sqlite)' == 'true'">
+    <PackageReference Include="Compze.Tessaging.Sqlite" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Tessaging_Sqlite)' != 'true'">
+    <ProjectReference Include="..\..\Compze.Tessaging.Sqlite\Compze.Tessaging.Sqlite.csproj" />
+  </ItemGroup>
   <!-- Compze.Teventive — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Teventive)' == 'true'">
     <PackageReference Include="Compze.Teventive" Version="*-*" />
   </ItemGroup>
   <ItemGroup Condition="'$(UsePackageReference_Compze_Teventive)' != 'true'">
     <ProjectReference Include="..\..\Compze.Teventive\Compze.Teventive.csproj" />
+  </ItemGroup>
+  <!-- Compze.TypeIdentifiers.DependencyInjection — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_TypeIdentifiers_DependencyInjection)' == 'true'">
+    <PackageReference Include="Compze.TypeIdentifiers.DependencyInjection" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_TypeIdentifiers_DependencyInjection)' != 'true'">
+    <ProjectReference Include="..\..\Compze.TypeIdentifiers.DependencyInjection\Compze.TypeIdentifiers.DependencyInjection.csproj" />
   </ItemGroup>
 </Project>

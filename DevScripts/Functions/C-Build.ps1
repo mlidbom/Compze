@@ -6,6 +6,10 @@ function C-Build {
     
     .DESCRIPTION
     Builds the Compze solution. Optionally performs a deep clean before building.
+
+    Before building it brings the project files' generated exclusions up to date
+    (C-Ensure-CsprojfilesExcludeCsFilesFromProjectsInSubfoldersAndDocsFolders), so that a new _docs folder's example code
+    is compiled only by the Website project, never into the project it documents.
     
     .PARAMETER NoBuild
     Skip building entirely. Useful when called from scripts that may or may not need to build.
@@ -65,6 +69,9 @@ function C-Build {
 
     # Fail loudly if the .claude/ symlinks into .claude-shared/ have degraded into plain files
     C-Verify-ClaudeConfigSymlinks
+
+    # A new _docs folder, or a new nested project, gets its exclusion before it can be compiled into the wrong assembly
+    C-Ensure-CsprojfilesExcludeCsFilesFromProjectsInSubfoldersAndDocsFolders
     
     Push-Location $script:CompzeSrcRoot
     try {

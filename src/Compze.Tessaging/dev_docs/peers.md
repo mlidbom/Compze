@@ -74,6 +74,8 @@ stream: **exactly-once in-order holds by construction**. Consequences:
   is still remembered): the send waits — the moment one of them connects, binding to the live one is
   correct, so waiting legitimately resolves the ambiguity — and only exhausted patience throws
   `MultipleHandlersForTessageTypeException`, naming the peers and the remedy: bring the current handler up.
+  The exception is internal on purpose: it reports a deployment to fix, not a condition for callers to catch
+  and recover from.
 - A tommand whose handler is in the sender's own roster never reaches binding at all: it executes inline,
   in the sender's execution, per the consistency law.
 
@@ -156,7 +158,7 @@ window with no route, and calls in that window wait it out.
   composition declares otherwise (`EndpointBuilder.HandlerAvailabilityPatience`).
 - **The no-handler exception family is exclusively the patience-exhausted failure**
   (`NoHandlerForTessageTypeException` / `NoHandlerForTypermediaTypeException` /
-  `MultipleHandlersForTessageTypeException`) — never thrown immediately — and the failure is classified
+  `MultipleHandlersForTessageTypeException`, the last internal on purpose) — never thrown immediately — and the failure is classified
   from the same snapshot whose check exhausted the patience, telling **known-but-down** (naming the
   remembered peer that serves the type and is down) from **never-seen** (nothing this endpoint has ever met
   serves the type — naming the probable deployment error).

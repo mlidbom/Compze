@@ -1,3 +1,6 @@
+---
+title: FAQ (old)
+---
 ## How stable is Compze?
 The event store and the document database have been proven in production for a number of years. The current code has only minor changes. The service bus is new, under development, and untried in production. Of course all the components have test suites. No component has known bugs. We normally prioritize bug fixes over all feature development.
 

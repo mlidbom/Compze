@@ -19,6 +19,10 @@ static class BackgroundExceptionReporterRegistrar
 
       public void ReportException(Exception exception)
       {
+         //refactor: This is where an observer's or a best-effort handler's failure ends up, and an application has no public way
+         //   to learn of it as it happens: it goes to Compze's internal log, and is thrown as an AggregateException only when an
+         //   endpoint is disposed; a container with the LocalTessagingEngine alone never throws it. A public hook, such as an
+         //   injectable reporter, would let an application alert on them. (website-and-docs, 2026-11-24)
          _collectedExceptions.Locked(it => it.Add(exception));
          try
          {

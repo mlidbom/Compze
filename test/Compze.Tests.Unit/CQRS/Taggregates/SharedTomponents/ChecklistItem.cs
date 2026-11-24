@@ -22,7 +22,7 @@ readonly struct ChecklistItemId(Guid value) : IEquatable<ChecklistItemId>
 /// Every tevent states the <see cref="ISharedTentityTevent{TTentityId}.EntityId"/> of the item it belongs to as ordinary domain data.</summary>
 interface IChecklistItemTevent : ISharedTentityTevent<ChecklistItemId>
 {
-#pragma warning disable CA1715 // Nested tevent interface follows semantic events naming convention (compze.net/paradigms/semantic-events/event-naming.html)
+#pragma warning disable CA1715 // Nested tevent interface follows semantic events naming convention (compze.net/Compze/Teventive/Taggregates/_docs/tevent-naming.html)
    interface Added : IChecklistItemTevent
    {
       string Title { get; }

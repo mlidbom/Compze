@@ -191,29 +191,35 @@ only way anything gets into the engine.
 registrar and returns the builder —
 
 ```csharp
-LocalTessagingEngineBuilder RegisterTessageHandlers(Action<TessageHandlerRegistrar> register);
+LocalTessagingEngineBuilder RegisterTessageBusHandlers(Action<TessageBusHandlerRegistrar> register);
+LocalTessagingEngineBuilder RegisterTypermediaHandlers(Action<TypermediaHandlerRegistrar> register);
+LocalTessagingEngineBuilder ObserveTevents(Action<TeventObservationRegistrar> observe);
 ```
 
 The registrar exists only inside the callback. Nothing can hold a registrar and mutate the engine later:
 the callback's end is the registration's end, the build closes the roster, and any attempt to register
 afterward explodes. Encapsulation and chainability come from the same shape.
 
-One handler registrar covers all four message kinds — the tessage's own type carries its kind, guarantee,
-and synchrony, so the verbs differ only by handler shape:
+There is one handler registrar per communication style: the TessageBus's takes tevents and exactly-once
+tommands, Typermedia's takes tueries and typermedia tommands. Within each, the tessage's own type carries its
+kind, guarantee, and synchrony, so the verbs differ only by handler shape:
 
 ```csharp
 container.Registrar.LocalTessagingEngine(engine => engine
-   .RegisterTessageHandlers(handle => handle
+   .RegisterTessageBusHandlers(handle => handle
       .ForTevent(async (IAccountTevent tevent, IUnitOfWorkResolver unitOfWork) => ...)   //exactly-once kind: async handler
+      .ForTommand(async (DeactivateAccount tommand, IUnitOfWorkResolver unitOfWork) => ...))
+   .RegisterTypermediaHandlers(handle => handle
       .ForTuery((AccountTuery tuery, IScopeResolver scope) => ...)                       //strictly-local kind: sync stays first-class
-      .ForTommand(async (DeactivateAccount tommand, IUnitOfWorkResolver unitOfWork) => ...)
       .ForTommand((Register tommand, IUnitOfWorkResolver unitOfWork) => new RegistrationResult(...)))
    .ObserveTevents(observe => observe
       .ForTevent((IAccountTevent tevent) => ...)));
 ```
 
-Type mappings are declared on the same builder — they serve persistent stores and, when an endpoint wraps
-the engine, the wire. Store integrations (a tevent store's `HandleTaggregate`, a document db's
+Type mappings are not declared on the engine builder: a component declares the assemblies whose type
+identities it needs where it is registered, through the registrar
+(`registrar.RequireMappedTypesFromAssemblyContaining<T>()`), and the container composes one type map from every
+such declaration — serving persistent stores and, when an endpoint wraps the engine, the wire. Store integrations (a tevent store's `HandleTaggregate`, a document db's
 `HandleDocumentType`) plug into this same registration surface: they are handler contributors like any
 other, arriving before the build like everything else.
 
@@ -386,7 +392,9 @@ wait where an application wants it paid, waiting sends absorb the churn windows,
   restarts move it; discovery follows.
 - **Configured** — the network deployment: the endpoint listens where it is told — a stable hostname and
   port, DNS, a load balancer — and discovery is a fixed address list or whatever registry the environment
-  provides. No firewall rule ever chases a random port.
+  provides. No firewall rule ever chases a random port. **Not built yet** (2026-11-24): every transport on main
+  listens on a generated address, the ASP.NET Core one on `http://127.0.0.1:0`; the work toward it is
+  [TCP transport and discovery across machines](TODO/tcp-transport-and-discovery-across-machines.md).
 
 Topology is continuous convergence either way: every router continuously reconciles its connections
 against what its registry says now, so endpoints appearing, disappearing, and restarting are followed — at

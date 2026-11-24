@@ -1,3 +1,6 @@
+---
+title: Primary architectural choices
+---
 ## Primary architectural choices
 
 We require you to learn a "new" modelling paradigm, semantic events::

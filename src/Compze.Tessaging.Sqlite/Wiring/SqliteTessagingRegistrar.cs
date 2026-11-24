@@ -19,6 +19,10 @@ public static class SqliteTessagingRegistrar
       ///<summary>Declares the domain database this endpoint joins: sqlite, reached through <paramref name="connectionStringName"/> —<br/>
       /// filling the exactly-once endpoint's one domain-database parameter with the whole engine pairing: the connection pool,<br/>
       /// the sqlite type-id interner Tessaging's sql layers share (derived from the declaration), and Tessaging's sqlite sql layers.</summary>
+      ///<remarks>refactor: A SQLite domain database named X takes three connection strings, X, X.PeerRegistry and X.TypeIdInterner, which<br/>
+      /// the application supplies through an <c>IConfigurationParameterProvider</c> it writes itself, giving each name a file. The<br/>
+      /// reference composition and the public docs' example both hand-write that provider. An overload taking a directory, or a<br/>
+      /// shipped provider of files in a directory, would spare every application that knowledge. (website-and-docs, 2026-11-24)</remarks>
       public ExactlyOnceEndpointBuilder SqliteDomainDatabase(string connectionStringName)
       {
          var domainDatabase = new SqliteDomainDatabase(connectionStringName);
