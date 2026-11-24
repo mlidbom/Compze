@@ -11,6 +11,7 @@ using Compze.Tessaging.Engine.Wiring;
 using Compze.Teventive.MemoryImageStateStore;
 using Compze.Teventive.TaggregateStores;
 using Compze.Tests.Infrastructure;
+using Compze.Tests.Infrastructure.Diagnostics;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.Threading;
 using Compze.Threading.ResourceAccess;
@@ -59,10 +60,12 @@ public class Given_two_memory_images_catching_up_as_other_memory_images_on_this_
    static ITaggregateStoreReader ReaderOf(IDependencyInjectionContainer memoryImage) => memoryImage.RootResolver.Resolve<ITaggregateStoreReader>();
 
    ///<summary>The ids of every taggregate the first has been told changed elsewhere, once it has been told of <paramref name="id"/>,<br/>
-   /// or what it has been told when it hasn't within the time catching up could take.</summary>
+   /// or what it has been told when it hasn't within the time catching up could take: then a dump of the process, taken while the<br/>
+   /// first still hasn't caught up, shows what its catching up waits for.</summary>
    IReadOnlyList<TaggregateId> IdsTheFirstIsToldChangedOnceToldOf(TaggregateId id)
    {
-      _toldTheFirst.TryAwait(it => it.Any(changes => changes.Changed.Contains(id)), timeout: LongerThanCatchingUpCouldTake);
+      if(!_toldTheFirst.TryAwait(it => it.Any(changes => changes.Changed.Contains(id)), timeout: LongerThanCatchingUpCouldTake))
+         TestProcessDump.Write($"the first memory image wasn't told within {LongerThanCatchingUpCouldTake} that {id} changed elsewhere");
       return _toldTheFirst.Read(it => it.SelectMany(changes => changes.Changed).ToList());
    }
 
