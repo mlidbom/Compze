@@ -51,7 +51,7 @@ choose none of it:
 |---|---|---|
 | `ITevent` | Within the process that publishes it. | Its handlers there run within the publisher's transaction. |
 | `IRemotableTevent` | Also to the endpoints that subscribe to it. | Best-effort: no store, no deduplication, no retries. |
-| `IExactlyOnceTevent` | Also to the endpoints that subscribe to it. | Exactly once: stored in the publisher's transaction, deduplicated by its `Id`, retried until handled. |
+| `IExactlyOnceTevent` | Also to the endpoints that subscribe to it. | Exactly once: stored in the publisher's transaction, deduplicated by its `Id`, its handling retried when it fails. |
 
 [Delivery guarantees](delivery-guarantees.md) says what each guarantee means in full.
 

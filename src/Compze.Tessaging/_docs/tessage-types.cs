@@ -96,7 +96,7 @@ public interface IAccountsOnlineCountChanged : IRemotableTevent
    int AccountsOnline { get; }
 }
 
-//Crosses to other endpoints exactly once: stored, deduplicated, retried until handled.
+//Crosses to other endpoints exactly once: stored, deduplicated, its handling retried when it fails.
 public interface IAccountClosed : IExactlyOnceTevent
 {
    Guid AccountId { get; }
