@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Endpoints | Compze </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Endpoints | Compze ">
+      
+      
+      <link rel="icon" href="../../../favicon.ico">
+      <link rel="stylesheet" href="../../../public/docfx.min.css">
+      <link rel="stylesheet" href="../../../public/main.css">
+      <meta name="docfx:navrel" content="../../../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../../../">
+      
+      
+      
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../../../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../../../index.html">
+            <img id="logo" class="svg" src="../../../logo.svg" alt="Compze">
+            Compze
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="">
+<h1 id="endpoints">Endpoints</h1>
+
+<p>An <em>endpoint</em> is what lets tessages cross between parts of a system that don't share a container. It is the engine of
+<a href="in-one-process.html">one process</a> given an identity and a wire: a container of its own, the handlers its declaration
+declares, and a transport server through which the other endpoints reach it. One process may host one endpoint or
+several. Endpoints in the same process converse through their transport, exactly as endpoints in different processes
+do, so moving an endpoint to a process of its own changes nothing about how it converses.</p>
+<h2 id="two-kinds-of-endpoint">Two kinds of endpoint</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Best-effort endpoint</th>
+<th>Exactly-once endpoint</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Declared by inheriting</td>
+<td><code>BestEffortEndpointDeclaration&lt;TIdentity&gt;</code></td>
+<td><code>ExactlyOnceEndpointDeclaration&lt;TIdentity&gt;</code></td>
+</tr>
+<tr>
+<td>Needs a database</td>
+<td>No.</td>
+<td>Yes: it joins a domain database.</td>
+</tr>
+<tr>
+<td>Tevents it publishes</td>
+<td>Local ones (<code>ITevent</code>) and best-effort ones (<code>IRemotableTevent</code>).</td>
+<td>Every kind, exactly-once ones (<code>IExactlyOnceTevent</code>) included.</td>
+</tr>
+<tr>
+<td>Tevents it receives</td>
+<td>Best-effort ones.</td>
+<td>Best-effort ones and exactly-once ones.</td>
+</tr>
+<tr>
+<td>Tommands it sends and handles</td>
+<td>None of the TessageBus's.</td>
+<td>Exactly-once tommands.</td>
+</tr>
+<tr>
+<td>What it remembers about other endpoints</td>
+<td>For as long as its process runs.</td>
+<td>In its database, across restarts.</td>
+</tr>
+</tbody>
+</table>
+<p>Both serve tueries and typermedia tommands. An exactly-once endpoint keeps an inbox and an outbox in its domain
+database: they are what make its deliveries exactly-once. A best-effort endpoint asked to publish an exactly-once tevent
+refuses: a guarantee is never silently weakened.</p>
+<h2 id="declaring-an-endpoint">Declaring an endpoint</h2>
+<p>An endpoint is declared as a class. These declare two endpoints that converse with each other through these tessages:</p>
+<pre><code class="lang-csharp">public class RegisterAccount(Guid accountId, string email) : Remotable.ExactlyOnce.Tommand
+{
+   public Guid AccountId { get; private set; } = accountId;
+   public string Email { get; private set; } = email;
+}
+
+public interface IAccountRegistered : IExactlyOnceTevent
+{
+   Guid AccountId { get; }
+   string Email { get; }
+}
+
+public class AccountRegistered(Guid accountId, string email) : IAccountRegistered
+{
+   public TessageId Id { get; private set; } = new();
+   public Guid AccountId { get; private set; } = accountId;
+   public string Email { get; private set; } = email;
+}
+
+public class RecordWelcomeEmailSent(Guid accountId) : Remotable.ExactlyOnce.Tommand
+{
+   public Guid AccountId { get; private set; } = accountId;
+}
+</code></pre>
+<p>The Accounts endpoint registers accounts, and records that their welcome emails were sent:</p>
+<pre><code class="lang-csharp">class AccountsEndpoint : ExactlyOnceEndpointDeclaration&lt;AccountsEndpoint&gt;, IEndpointIdentity
+{
+   public static string Name =&gt; &quot;Accounts&quot;;
+   public static EndpointId Id { get; } = new(Guid.Parse(&quot;0E4C7B3A-5D21-4F8E-9A6B-2C1D8E7F3A95&quot;));
+
+   protected override void RegisterComponents(IComponentRegistrar registrar) =&gt; registrar
+      .RequireMappedTypesFromAssemblyContaining&lt;RegisterAccount&gt;()
+      .Register(Singleton.For&lt;AccountRecords&gt;().CreatedBy(() =&gt; new AccountRecords()));
+
+   protected override void RegisterExactlyOnceTommandHandlers(IExactlyOnceTommandHandlerRegistrar handle) =&gt; handle
+      .ForTommand((RegisterAccount tommand, IUnitOfWorkTeventPublisher publisher) =&gt;
+                     publisher.PublishAsync(new AccountRegistered(tommand.AccountId, tommand.Email)))
+      .ForTommand((RecordWelcomeEmailSent tommand, AccountRecords records) =&gt;
+                     records.RecordWelcomeEmailSentAsync(tommand.AccountId));
+}
+</code></pre>
+<p>The WelcomeEmails endpoint sends a welcome email for each registered account, and tells the Accounts endpoint that it
+did:</p>
+<pre><code class="lang-csharp">class WelcomeEmailsEndpoint : ExactlyOnceEndpointDeclaration&lt;WelcomeEmailsEndpoint&gt;, IEndpointIdentity
+{
+   public static string Name =&gt; &quot;WelcomeEmails&quot;;
+   public static EndpointId Id { get; } = new(Guid.Parse(&quot;7A2F9C14-8B3E-4D6A-B105-E94C2D6F8B37&quot;));
+
+   protected override void RegisterComponents(IComponentRegistrar registrar) =&gt; registrar
+      .RequireMappedTypesFromAssemblyContaining&lt;RegisterAccount&gt;()
+      .Register(Singleton.For&lt;IEmailSender&gt;().CreatedBy(() =&gt; new ConsoleEmailSender()));
+
+   protected override void RegisterExactlyOnceTeventHandlers(IExactlyOnceTeventHandlerRegistrar handle) =&gt; handle
+      .ForTevent(async (IAccountRegistered registered, IEmailSender emailSender, IUnitOfWorkTommandSender tommandSender) =&gt;
+       {
+          await emailSender.SendWelcomeEmailAsync(registered.Email);
+          await tommandSender.SendAsync(new RecordWelcomeEmailSent(registered.AccountId));
+       });
+}
+</code></pre><h3 id="identity">Identity</h3>
+<p>A declaration usually is its own identity: it implements <code>IEndpointIdentity</code>, whose static <code>Name</code> and <code>Id</code> it builds
+under. The <code>Name</code> is for humans. The <code>EndpointId</code> is the endpoint's identity across processes and restarts, so it is a
+fixed <code>Guid</code>, written once and never changed. Code that refers to another endpoint refers to its identity type, such as
+<code>AccountsEndpoint.Id</code>, and the compiler checks the reference.</p>
+<p>When several processes must refer to an endpoint that only one of them declares, its identity can be a type of its own,
+in an assembly they share: see <a href="on-one-machine.html">Processes on one machine</a>.</p>
+<p>An exactly-once endpoint's name prefixes its tables in the domain database, so it is a letter followed by letters,
+digits and underscores, at most 28 characters long.</p>
+<h3 id="what-a-declaration-overrides">What a declaration overrides</h3>
+<p>A declaration overrides only what its endpoint uses. Each kind of handler has its override, which gets a registrar
+that can register only that kind, so a handler of the wrong kind can't be registered:</p>
+<table>
+<thead>
+<tr>
+<th>Override</th>
+<th>Registers</th>
+<th>Endpoint</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>RegisterExactlyOnceTommandHandlers</code></td>
+<td>handlers of exactly-once tommands</td>
+<td>exactly-once</td>
+</tr>
+<tr>
+<td><code>RegisterExactlyOnceTeventHandlers</code></td>
+<td>handlers of exactly-once tevents</td>
+<td>exactly-once</td>
+</tr>
+<tr>
+<td><code>RegisterBestEffortTeventHandlers</code></td>
+<td>handlers of the other tevents</td>
+<td>both</td>
+</tr>
+<tr>
+<td><code>ObserveTevents</code></td>
+<td><a href="observing-tevents.html">observers</a></td>
+<td>both</td>
+</tr>
+<tr>
+<td><code>RegisterTueryHandlers</code>, <code>RegisterTypermediaTommandHandlers</code></td>
+<td>Typermedia's handlers</td>
+<td>both</td>
+</tr>
+<tr>
+<td><code>RegisterComponents</code></td>
+<td>the endpoint's other components, and the type identities it needs</td>
+<td>both</td>
+</tr>
+<tr>
+<td><code>RequiredPeers</code>, <code>PeersNotQueuedFor</code>, <code>HandlerAvailabilityPatience</code></td>
+<td>how it treats other endpoints: see <a href="delivery-guarantees.html">Delivery guarantees</a> and <a href="readiness-and-waiting-sends.html">Readiness and waiting sends</a></td>
+<td>both</td>
+</tr>
+<tr>
+<td><code>Declare</code></td>
+<td>anything else, on the endpoint's whole builder, such as a tevent store</td>
+<td>both</td>
+</tr>
+</tbody>
+</table>
+<p>A best-effort endpoint's declaration has no overrides for exactly-once handlers: it has no database to deliver them
+exactly once with. A subscription in the wrong override fails when the endpoint is built, naming the override it
+belongs in.</p>
+<div class="NOTE">
+<h5>Note</h5>
+<p>An exactly-once handler's effects within its transaction happen exactly once. A side effect outside the transaction,
+such as the email above, happens again if the handler fails after it and is retried.</p>
+</div>
+<h2 id="type-identities">Type identities</h2>
+<p>A tessage that crosses between endpoints carries the identity of its type, and that identity must survive renaming and
+moving the type. So every type that crosses is mapped to a <code>Guid</code>, in a class its assembly declares:</p>
+<pre><code class="lang-csharp">using Compze.TypeIdentifiers;
+using Compze.Tessaging.Documentation.DeclaringEndpoints;
+using Compze.Tessaging.Documentation.OnOneMachine;
+using Compze.Tessaging.Typermedia.Documentation.DeclaringAnApi;
+
+[assembly: AssemblyTypeMapper(typeof(Compze.Tessaging.Documentation.TessageTypeMappings))]
+
+namespace Compze.Tessaging.Documentation;
+
+class TessageTypeMappings : IAssemblyTypeMapper
+{
+   public void Map(IAssemblyTypeMappingRegistrar map) =&gt; map
+      .Map&lt;RegisterAccount&gt;(&quot;632b961b-1b64-4747-bb5e-a76a9b46b58f&quot;)
+      .Map&lt;IAccountRegistered&gt;(&quot;cb849aa3-e951-4334-9118-9dd55003378c&quot;)
+      .Map&lt;AccountRegistered&gt;(&quot;eefb3f2d-256f-4a00-a280-07a62239959d&quot;)
+      .Map&lt;RecordWelcomeEmailSent&gt;(&quot;d95c7d8d-bc07-41f1-91cd-bccb24704497&quot;)
+      .Map&lt;IIndexingProgressed&gt;(&quot;599d64e1-18e7-4384-90be-d70609045d4d&quot;)
+      .Map&lt;IndexingProgressed&gt;(&quot;1579d6ff-cc6d-4112-891f-51240ea20bba&quot;)
+      .Map&lt;AccountLink&gt;(&quot;bd50a225-57bf-47bc-9908-62a28e270103&quot;)
+      .Map&lt;OpenAccount&gt;(&quot;7b462fba-4035-4d12-b3d9-80954eaa7417&quot;)
+      .Map&lt;ChangeEmail&gt;(&quot;b4d311a4-1214-4e33-a81c-3d36043d0980&quot;);
+}
+</code></pre>
+<p>Map the tommands sent, the tevent interfaces subscribed to, and the tevent classes published. Each endpoint then
+declares, in <code>RegisterComponents</code>, the assemblies whose types it needs, with
+<code>RequireMappedTypesFromAssemblyContaining&lt;T&gt;()</code>: those of the types it sends, publishes, handles and subscribes to, and
+those of every type that the endpoints it converses with handle or subscribe to. An endpoint that handles or subscribes
+to a type it can't map fails when it is built, naming the type.</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>An endpoint connects to another only if it can map every type the other handles and subscribes to. When it can't, it
+logs a warning at each attempt to connect, and its sends to that endpoint wait, then fail as if nothing handled their
+tessages.</p>
+</div>
+<h2 id="the-environment">The environment</h2>
+<p>What a declaration doesn't say is where its endpoint runs: the transport, the serializer, how it finds the other
+endpoints, and, for an exactly-once endpoint, the domain database it joins. An <code>IEndpointEnvironment</code> says that, once
+for every endpoint of a deployment:</p>
+<pre><code class="lang-csharp">class SameMachineEnvironment : IEndpointEnvironment
+{
+   readonly InterprocessEndpointRegistry _registry;
+   readonly DirectoryInfo _dataDirectory;
+
+   public SameMachineEnvironment(InterprocessEndpointRegistry registry, DirectoryInfo dataDirectory)
+   {
+      _registry = registry;
+      _dataDirectory = dataDirectory;
+   }
+
+   public void Configure(EndpointBuilder endpointBuilder) =&gt; endpointBuilder
+      .NamedPipeEndpointTransport()
+      .NewtonsoftSerializer()
+      .ParticipateIn(_registry);
+
+   public void ConfigureDomainDatabase(ExactlyOnceEndpointBuilder endpointBuilder)
+   {
+      endpointBuilder.Registrar.Register(Singleton.For&lt;IConfigurationParameterProvider&gt;()
+                                                  .CreatedBy(() =&gt; new SqliteFilesIn(_dataDirectory)));
+      endpointBuilder.SqliteDomainDatabase(&quot;Accounts&quot;);
+   }
+}
+
+//Gives every connection string name a sqlite database file of its own in the data directory.
+class SqliteFilesIn(DirectoryInfo dataDirectory) : IConfigurationParameterProvider
+{
+   readonly DirectoryInfo _dataDirectory = dataDirectory;
+
+   public string GetString(string parameterName, string? valueIfMissing = null) =&gt;
+      $&quot;Data Source={Path.Combine(_dataDirectory.FullName, parameterName + &quot;.sqlite&quot;)}&quot;;
+}
+</code></pre>
+<div class="NOTE">
+<h5>Note</h5>
+<p>In an ASP.NET Core project, whose implicit usings include <code>Microsoft.AspNetCore.Builder</code>, the name <code>EndpointBuilder</code> is
+ambiguous. <code>using EndpointBuilder = Compze.Tessaging.Endpoints.EndpointBuilder;</code> resolves it.</p>
+</div>
+<p>The same declaration builds in any environment, so production and tests host the same endpoint, in different
+environments.</p>
+<p>The domain database is the domain's, not the endpoint's: any number of exactly-once endpoints join one, each with tables
+of its own, and the database holds the domain's own data too, so that an endpoint's handlers change the domain and
+record their tessages in one transaction. The domain database is reached through connection strings, by name, from the
+container's <code>IConfigurationParameterProvider</code>. On SQLite, an endpoint whose domain database is named <code>Accounts</code> uses
+three databases: <code>Accounts</code>, <code>Accounts.PeerRegistry</code> and <code>Accounts.TypeIdInterner</code>. The environment above gives each a
+file of its own in a data directory.</p>
+<h2 id="hosting">Hosting</h2>
+<p>An <code>EndpointHost</code> builds each registered declaration in its environment, on a new container builder from the factory
+it was given, and starts and disposes them together:</p>
+<pre><code class="lang-csharp">using var registry = InterprocessEndpointRegistry.OpenOrCreateSessionLocal(&quot;AccountsExample.EndpointRegistry&quot;, dataDirectory);
+
+await using var host = EndpointHost.Production.Create(() =&gt; new MicrosoftContainerBuilder(),
+                                                      new SameMachineEnvironment(registry, dataDirectory));
+var accounts = host.RegisterEndpoint(new AccountsEndpoint());
+host.RegisterEndpoint(new WelcomeEmailsEndpoint());
+await host.StartAsync();
+
+var tommandSender = accounts.ServiceLocator.Resolve&lt;IIndependentTommandSender&gt;();
+await tommandSender.SendAsync(new RegisterAccount(Guid.NewGuid(), &quot;ada@example.com&quot;));
+</code></pre>
+<p>The sent <code>RegisterAccount</code> is handled at once, within the send's own unit of work, since its handler is in the sending
+endpoint; the <code>AccountRegistered</code> that its handler publishes crosses to the WelcomeEmails endpoint, and the
+<code>RecordWelcomeEmailSent</code> that WelcomeEmails sends crosses back. <a href="delivery-guarantees.html">Delivery guarantees</a> explains why the first stays and the
+others cross.</p>
+<p>Application code outside any handler reaches an endpoint's components through its <code>ServiceLocator</code>, as the sending code
+above does. The host is a convenience: an endpoint's declaration can build it without one, with
+<code>Build(containerBuilder, environment)</code>, and the endpoint starts and stops itself.</p>
+<h2 id="the-lifecycle">The lifecycle</h2>
+<ul>
+<li><strong>Starting</strong> runs three phases in order: the endpoint <em>listens</em> on a new address, <em>announces</em> the address, and starts
+<em>sending</em>. An announced address is therefore always one that is listening. When <code>StartAsync</code> completes the endpoint
+has started; finding the other endpoints goes on from there, and
+<a href="readiness-and-waiting-sends.html">readiness</a> awaits it.</li>
+<li><strong>Stopping</strong> runs the phases in reverse: it retracts the address, stops sending and stops listening, then lets what
+was already received finish. Disposing an endpoint stops it first. A stopped endpoint never starts again.</li>
+<li><strong>One process at a time.</strong> An exactly-once endpoint runs in one process at a time: starting it in a second process
+fails with <code>EndpointAlreadyRunningInAnotherProcessException</code>. The lock that ensures it dies with its process, so after
+a crash the endpoint can start again at once.</li>
+</ul>
+
+</article>
+
+        <div class="contribution d-print-none">
+        </div>
+
+        <div class="next-article d-print-none border-top" id="nextArticle"></div>
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

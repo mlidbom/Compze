@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Tevent naming | Compze </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Tevent naming | Compze ">
+      
+      
+      <link rel="icon" href="../../../../favicon.ico">
+      <link rel="stylesheet" href="../../../../public/docfx.min.css">
+      <link rel="stylesheet" href="../../../../public/main.css">
+      <meta name="docfx:navrel" content="../../../../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../../../../">
+      
+      
+      
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../../../../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../../../../index.html">
+            <img id="logo" class="svg" src="../../../../logo.svg" alt="Compze">
+            Compze
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="">
+
+<h4 id="how-to-name-tevents">How to name tevents</h4>
+<p>On the last page we were starting to run into some slightly unwieldy tevent names. Like <code>IUserEmailPropertyUpdatedTevent</code>. Now that it still reasonably readable and mostly unambiguous. That will not hold true as things get more complicated though if we keep naming tevents like that.</p>
+<p>Take this slightly more complicated tevent name for instance: <code>IUserProfileNamePropertyUpdatedTevent</code>. Is this a tevent published by a <code>UserProfile</code> taggregate? Or is it a tevent published by a <code>Profile</code> component within a <code>User</code> taggregate? Or is it a <code>PropertyUpdatedTevent</code> from the <code>ProfileName</code> component of the <code>User</code> taggregate? Imagine trying to untangle such questions when you have four or more levels of nested composition in your taggregate....</p>
+<p>We've tried a number of different ways of dealing with tevent naming. One is using namespaces, which sounds like it should work. <code>User.Tevents.ProfileComponent.PropertyUpdatedTevents.IName</code>. Not too bad, right? Except when searching for types, or after your IDE helpfully simplifies references for you, you end up looking at just <code>IName</code>, which is unhelpful...</p>
+<pre><code class="lang-csharp">registrar.ForTevent&lt;IName&gt;(nameTevent =&gt; { WriteLine(&quot;Uhmm... What is happening here?&quot;); return Task.CompletedTask; });
+</code></pre>
+<p>The best structure we've found to deal with tevent naming is this:</p>
+<pre><code class="lang-csharp">interface IUserTevent : ITaggregateTevent
+{
+   internal interface IProfile : IUserTevent
+   {
+      internal interface IPropertyUpdated : IProfile
+      {
+         internal interface IName : IPropertyUpdated
+         {
+            string Name { get; }
+         }
+      }
+   }
+}
+</code></pre>
+<p>Nice and structured with each level of nesting inheriting from the previous level.</p>
+<p>Giving us:</p>
+<pre><code class="lang-csharp">registrar
+  .ForTevent&lt;IUserTevent.IProfile.IPropertyUpdated.IName&gt;(clarity =&gt; { WriteLine($&quot;Ahh: {clarity.Name}&quot;); return Task.CompletedTask; });
+</code></pre>
+<p>Readable and unambiguous. Not bad.</p>
+<div class="NOTE">
+<h5>Note</h5>
+<p>We do not repeat <code>Tevent</code> for every level of nesting. And should you dislike the repeated <code>I</code> we do not condemn doing this: <code>IUserTevent.Profile.PropertyUpdated.Name</code> 😉</p>
+</div>
+
+</article>
+
+        <div class="contribution d-print-none">
+        </div>
+
+        <div class="next-article d-print-none border-top" id="nextArticle"></div>
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

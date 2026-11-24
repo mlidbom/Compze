@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Declaring a typermedia API | Compze </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Declaring a typermedia API | Compze ">
+      
+      
+      <link rel="icon" href="../../../../favicon.ico">
+      <link rel="stylesheet" href="../../../../public/docfx.min.css">
+      <link rel="stylesheet" href="../../../../public/main.css">
+      <meta name="docfx:navrel" content="../../../../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../../../../">
+      
+      
+      
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../../../../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../../../../index.html">
+            <img id="logo" class="svg" src="../../../../logo.svg" alt="Compze">
+            Compze
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="">
+<h1 id="declaring-a-typermedia-api">Declaring a typermedia API</h1>
+
+<p>A typermedia API is made of <em>resources</em>: the .NET types its tueries answer with and its tommands return. A resource
+carries its data, and also what a caller can do next: the tueries that get related resources, its <em>links</em>, and the
+tommands that act on it, its <em>forms</em>. A caller never assembles a request from an identifier and a URL template: it takes
+the link or the form from the resource it holds, and the compiler checks that it exists.</p>
+<h2 id="links-and-forms">Links and forms</h2>
+<p>An account resource, the link that gets it, and the tommands that act on accounts:</p>
+<pre><code class="lang-csharp">public class AccountLink(Guid accountId) : Remotable.NonTransactional.Tueries.Tuery&lt;AccountResource&gt;
+{
+   public Guid AccountId { get; private set; } = accountId;
+}
+
+public class AccountResource(Guid accountId, string email)
+{
+   public Guid AccountId { get; private set; } = accountId;
+   public string Email { get; private set; } = email;
+
+   //A form the account hands out already filled in with its own id: the caller supplies only the new email.
+   public ChangeEmail ChangeEmail(string newEmail) =&gt; new(AccountId, newEmail);
+}
+</code></pre><pre><code class="lang-csharp">public class OpenAccount(string email) : Remotable.AtMostOnce.AtMostOnceTypermediaTommand&lt;AccountResource&gt;
+{
+   public string Email { get; private set; } = email;
+}
+
+public class ChangeEmail(Guid accountId, string newEmail) : Remotable.AtMostOnce.AtMostOnceTypermediaTommand&lt;AccountResource&gt;
+{
+   public Guid AccountId { get; private set; } = accountId;
+   public string NewEmail { get; private set; } = newEmail;
+}
+</code></pre>
+<p><code>AccountResource.ChangeEmail</code> is a form handed out already filled in with what the resource knows, the account's id: the
+caller supplies only what is its to supply. A tommand that declares a result, as both of these do, answers its caller
+with it; one that declares none returns nothing.</p>
+<p>A resource crosses between endpoints serialized, so its state is properties the serializer can set, as in the
+tessages above. Its links and forms can be methods, which create them from that state.</p>
+<h2 id="the-kinds-of-typermedia-tessage">The kinds of typermedia tessage</h2>
+<p>A typermedia tessage is executed: its caller waits for the handler to run and gets its result. Each kind is declared by
+inheriting a base class, from <code>Compze.Tessaging.TessageTypes</code>:</p>
+<table>
+<thead>
+<tr>
+<th>Kind</th>
+<th>Declared by inheriting</th>
+<th>Executed</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Remotable tuery</td>
+<td><code>Remotable.NonTransactional.Tueries.Tuery&lt;TResult&gt;</code></td>
+<td>By the endpoint that serves it, for code in other endpoints.</td>
+</tr>
+<tr>
+<td>At-most-once typermedia tommand</td>
+<td><code>Remotable.AtMostOnce.AtMostOnceTypermediaTommand</code>, or <code>...AtMostOnceTypermediaTommand&lt;TResult&gt;</code></td>
+<td>By the endpoint that serves it, for code in other endpoints.</td>
+</tr>
+<tr>
+<td>Strictly-local tuery</td>
+<td><code>StrictlyLocal.Tueries.StrictlyLocalTuery&lt;TTuery, TResult&gt;</code></td>
+<td>In its own process: see <a href="in-one-process.html">Typermedia in one process</a>.</td>
+</tr>
+<tr>
+<td>Strictly-local tommand</td>
+<td><code>StrictlyLocal.Tommands.StrictlyLocalTommand</code>, or <code>...StrictlyLocalTommand&lt;TResult&gt;</code></td>
+<td>In its own process.</td>
+</tr>
+</tbody>
+</table>
+<p>The TessageBus's exactly-once tommand is not among them: it is sent, and its sender doesn't wait for it to be handled,
+see <a href="../../_docs/tessage-types.html">Tessage types</a>.</p>
+<h2 id="the-start">The start</h2>
+<p>Every API has a front door, the resource a caller starts from. A <code>NewableResultLink&lt;TResult&gt;</code> is a tuery that creates its
+result itself, with the result type's parameterless constructor, so getting the start takes no round trip:</p>
+<pre><code class="lang-csharp">//The API's front door. Getting it takes no round trip: the caller creates the start resource itself.
+public static class AccountsApi
+{
+   public static Remotable.NonTransactional.Tueries.NewableResultLink&lt;AccountsStart&gt; Start =&gt; new();
+}
+
+public class AccountsStart
+{
+   //A link: the tuery that gets an account.
+   public AccountLink Account(Guid accountId) =&gt; new(accountId);
+
+   //A form: the tommand that opens an account.
+   public OpenAccount OpenAccount(string email) =&gt; new(email);
+}
+</code></pre>
+<p>The start's links and forms lead to everything else the API offers, so a caller that knows <code>AccountsApi.Start</code> can reach
+all of it.</p>
+<h2 id="serving-the-api">Serving the API</h2>
+<p>An endpoint serves an API by handling its tueries and tommands, each kind in an override of its declaration:</p>
+<pre><code class="lang-csharp">class AccountsApiEndpoint : BestEffortEndpointDeclaration&lt;AccountsApiEndpoint&gt;, IEndpointIdentity
+{
+   public static string Name =&gt; &quot;AccountsApi&quot;;
+   public static EndpointId Id { get; } = new(Guid.Parse(&quot;2F6B9E1D-7C43-4A85-B0D2-93E1C8A54F07&quot;));
+
+   protected override void RegisterComponents(IComponentRegistrar registrar) =&gt; registrar
+      .RequireMappedTypesFromAssemblyContaining&lt;AccountLink&gt;()
+      .Register(Singleton.For&lt;Accounts&gt;().CreatedBy(() =&gt; new Accounts()));
+
+   protected override void RegisterTueryHandlers(ITueryHandlerRegistrar handle) =&gt; handle
+      .ForTuery((AccountLink link, Accounts accounts) =&gt; accounts.Get(link.AccountId));
+
+   protected override void RegisterTypermediaTommandHandlers(ITypermediaTommandHandlerRegistrar handle) =&gt; handle
+      .ForTommand((OpenAccount tommand, Accounts accounts) =&gt; accounts.Open(tommand.Email))
+      .ForTommand((ChangeEmail tommand, Accounts accounts) =&gt; accounts.ChangeEmail(tommand.AccountId, tommand.NewEmail));
+}
+</code></pre>
+<ul>
+<li><strong>A tuery handler gets a scope, and no transaction:</strong> a tuery changes nothing.</li>
+<li><strong>A tommand handler runs in a unit of work of its own:</strong> its transactional effects commit when it returns, and roll
+back if it throws.</li>
+<li><strong>Dependencies are parameters,</strong> resolved from the handler's scope: up to two for a tuery handler and one for a tommand
+handler. A handler that needs more takes the scope itself, an <code>IScopeResolver</code> or an <code>IUnitOfWorkResolver</code>, and resolves
+them from it.</li>
+<li><strong>Exactly one handler for each type.</strong> Declaring a second one fails when it is declared. Across endpoints, when two
+connected endpoints serve the same type, navigating to it waits for that to resolve, and fails, naming both, when it
+doesn't within the navigating endpoint's patience.</li>
+</ul>
+<p>Best-effort and exactly-once endpoints serve typermedia alike. A tuery or tommand crosses between endpoints like any
+tessage, so the API's tueries and tommands are mapped to type identities, and both the serving endpoint and the endpoints
+that navigate it require those mappings: see <a href="../../_docs/endpoints.html#type-identities">type identities</a>.
+The resources need no mapping.</p>
+<p><a href="navigating.html">Navigating a typermedia API</a> shows how other endpoints use it.</p>
+
+</article>
+
+        <div class="contribution d-print-none">
+        </div>
+
+        <div class="next-article d-print-none border-top" id="nextArticle"></div>
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

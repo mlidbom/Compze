@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Processes on one machine | Compze </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Processes on one machine | Compze ">
+      
+      
+      <link rel="icon" href="../../../favicon.ico">
+      <link rel="stylesheet" href="../../../public/docfx.min.css">
+      <link rel="stylesheet" href="../../../public/main.css">
+      <meta name="docfx:navrel" content="../../../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../../../">
+      
+      
+      
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../../../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../../../index.html">
+            <img id="logo" class="svg" src="../../../logo.svg" alt="Compze">
+            Compze
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="">
+<h1 id="processes-on-one-machine">Processes on one machine</h1>
+
+<p>An application may be several processes on one machine: say a desktop application, a background indexer and a tray
+helper, each hosting endpoints that converse with the others'. Tessaging connects them with no web server, no ports or
+addresses to configure, and no database server: each process declares its endpoints and names the registry the
+application's processes share.</p>
+<h2 id="named-pipes-and-an-address-for-each-start">Named pipes, and an address for each start</h2>
+<p>The named-pipe transport is part of Compze.Tessaging, built on .NET's own pipes, so a process loads no web stack for
+it. An endpoint declares it in its environment with <code>NamedPipeEndpointTransport()</code>.</p>
+<ul>
+<li><strong>A new address each time an endpoint starts.</strong> Addresses are never configured, nor written down anywhere: the
+endpoint's <code>EndpointId</code> is what identifies it, and discovery finds where it listens now.</li>
+<li><strong>Only the same user.</strong> A pipe accepts connections only from processes that run as the user that created it.</li>
+<li><strong>Windows, Linux and macOS.</strong> On Linux and macOS, .NET's pipes are Unix domain sockets.</li>
+</ul>
+<h2 id="the-interprocess-registry">The interprocess registry</h2>
+<p>Endpoints announce their addresses to an <code>InterprocessEndpointRegistry</code>, and find each other's there. Its state is a
+memory-mapped file, so it needs no server, and what one process announces is visible at once to the others:</p>
+<ul>
+<li><strong>Its name and directory make the application.</strong> The processes that open the registry of the same name, in the same
+directory, in the same login session, find each other's endpoints. Another application opens a registry of its own.</li>
+<li><strong><code>ParticipateIn(registry)</code> declares both sides,</strong> finding the others through it and announcing the endpoint to it.
+<code>DiscoverEndpointsThrough</code> and <code>AnnounceAddressTo</code> declare one side each.</li>
+<li><strong>A crashed process's addresses disappear.</strong> Each announcement records the process that made it, and an address
+whose process no longer runs is never listed.</li>
+</ul>
+<p>An endpoint doesn't connect once and assume the result. It keeps its connections in line with what the registry lists
+now: an endpoint that appears is connected to, one that leaves is dropped, and one that restarts at a new address is
+reconnected, with what was waiting for it. An announcement wakes the other processes at once; a crash, which announces
+nothing, is noticed within a second.</p>
+<h2 id="an-application-of-two-processes">An application of two processes</h2>
+<p>This application's indexer process reports its progress to its desktop process, with best-effort tevents: neither
+process stores anything, so neither needs a database.</p>
+<p>The tevents, and the identities of the two endpoints, are in an assembly both processes reference. An endpoint's
+identity is a type of its own here, rather than its declaration, because the indexer refers to the desktop's endpoint,
+which only the desktop process declares:</p>
+<pre><code class="lang-csharp">//In an assembly both processes reference.
+public sealed class DesktopEndpoint : IEndpointIdentity
+{
+   public static string Name =&gt; &quot;Desktop&quot;;
+   public static EndpointId Id { get; } = new(Guid.Parse(&quot;3B8E1F42-C6D9-4A57-8E20-F1A93C5D7B64&quot;));
+}
+
+public sealed class IndexerEndpoint : IEndpointIdentity
+{
+   public static string Name =&gt; &quot;Indexer&quot;;
+   public static EndpointId Id { get; } = new(Guid.Parse(&quot;C5A04D93-17E2-4B8F-A639-0D72E8B4F1C6&quot;));
+}
+
+public interface IIndexingProgressed : IRemotableTevent
+{
+   int FilesIndexed { get; }
+}
+
+public class IndexingProgressed(int filesIndexed) : IIndexingProgressed
+{
+   public int FilesIndexed { get; private set; } = filesIndexed;
+}
+</code></pre>
+<p>Both processes run their endpoints in the same environment:</p>
+<pre><code class="lang-csharp">class DesktopSuiteEnvironment : IEndpointEnvironment
+{
+   readonly InterprocessEndpointRegistry _registry;
+
+   public DesktopSuiteEnvironment(InterprocessEndpointRegistry registry) =&gt; _registry = registry;
+
+   public void Configure(EndpointBuilder endpointBuilder) =&gt; endpointBuilder
+      .NamedPipeEndpointTransport()
+      .NewtonsoftSerializer()
+      .ParticipateIn(_registry);
+
+   //Called only for exactly-once endpoints, and this suite has none: nothing in it is stored anywhere.
+   public void ConfigureDomainDatabase(ExactlyOnceEndpointBuilder endpointBuilder) =&gt;
+      throw new NotSupportedException(&quot;The desktop suite's endpoints are all best-effort endpoints.&quot;);
+}
+</code></pre>
+<p>The desktop process handles the indexer's tevents:</p>
+<pre><code class="lang-csharp">class DesktopEndpointDeclaration : BestEffortEndpointDeclaration&lt;DesktopEndpoint&gt;
+{
+   protected override void RegisterComponents(IComponentRegistrar registrar) =&gt; registrar
+      .RequireMappedTypesFromAssemblyContaining&lt;IIndexingProgressed&gt;();
+
+   protected override void RegisterBestEffortTeventHandlers(IBestEffortTeventHandlerRegistrar handle) =&gt; handle
+      .ForTevent((IIndexingProgressed progressed) =&gt; Console.WriteLine($&quot;{progressed.FilesIndexed} files indexed&quot;));
+}
+
+static class DesktopProcess
+{
+   internal static async Task RunAsync(DirectoryInfo suiteDirectory, Task applicationExit)
+   {
+      using var registry = InterprocessEndpointRegistry.OpenOrCreateSessionLocal(&quot;DesktopSuite.EndpointRegistry&quot;, suiteDirectory);
+      await using var host = EndpointHost.Production.Create(() =&gt; new MicrosoftContainerBuilder(), new DesktopSuiteEnvironment(registry));
+      host.RegisterEndpoint(new DesktopEndpointDeclaration());
+      await host.StartAsync();
+
+      await applicationExit;
+   }
+}
+</code></pre>
+<p>The indexer process publishes them:</p>
+<pre><code class="lang-csharp">class IndexerEndpointDeclaration : BestEffortEndpointDeclaration&lt;IndexerEndpoint&gt;
+{
+   //Tevents published before the desktop is discovered are held for it, not lost.
+   protected override IReadOnlyList&lt;EndpointId&gt; RequiredPeers =&gt; [DesktopEndpoint.Id];
+
+   protected override void RegisterComponents(IComponentRegistrar registrar) =&gt; registrar
+      .RequireMappedTypesFromAssemblyContaining&lt;IIndexingProgressed&gt;();
+}
+
+static class IndexerProcess
+{
+   internal static async Task RunAsync(DirectoryInfo suiteDirectory, Task applicationExit)
+   {
+      using var registry = InterprocessEndpointRegistry.OpenOrCreateSessionLocal(&quot;DesktopSuite.EndpointRegistry&quot;, suiteDirectory);
+      await using var host = EndpointHost.Production.Create(() =&gt; new MicrosoftContainerBuilder(), new DesktopSuiteEnvironment(registry));
+      var indexer = host.RegisterEndpoint(new IndexerEndpointDeclaration());
+      await host.StartAsync();
+
+      var publisher = indexer.ServiceLocator.Resolve&lt;IIndependentTeventPublisher&gt;();
+      foreach(var filesIndexed in new[] { 100, 200, 300 })
+         publisher.Publish(new IndexingProgressed(filesIndexed));
+
+      await applicationExit;
+   }
+}
+</code></pre>
+<p>The two processes start in either order. The indexer requires the desktop's endpoint, so the tevents it publishes
+before the two have found each other are held for the desktop, and delivered once they have. For tommands and tueries
+sent before their handlers are found, see <a href="readiness-and-waiting-sends.html">Readiness and waiting sends</a>.</p>
+<h2 id="exactly-once-across-processes">Exactly-once across processes</h2>
+<p>Exactly-once endpoints need a domain database, and on one machine SQLite database files do with nothing to install:
+the <a href="endpoints.html#the-environment">environment on the Endpoints page</a> gives each its file in a data directory. An
+exactly-once endpoint runs in one process at a time, so two processes that share a domain database host different
+endpoints of it.</p>
+<h2 id="across-machines">Across machines</h2>
+<p>Compze's transports reach endpoints on the same machine today: named pipes, and HTTP through ASP.NET Core
+(Compze.Tessaging.Transport.AspNetCore), which listens on the loopback interface. Endpoints on different machines can't
+converse yet.</p>
+
+</article>
+
+        <div class="contribution d-print-none">
+        </div>
+
+        <div class="next-article d-print-none border-top" id="nextArticle"></div>
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

@@ -2,9 +2,9 @@
 <html>
   <head>
     <meta charset="utf-8">
-      <title> | Compze </title>
+      <title>Compze </title>
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <meta name="title" content=" | Compze ">
+      <meta name="title" content="Compze ">
       
       
       <link rel="icon" href="favicon.ico">
@@ -16,7 +16,7 @@
       <meta name="docfx:rel" content="">
       
       
-      <meta name="docfx:docurl" content="https://github.com/mlidbom/Compze/blob/new_website_structure/Website/index.md/#L1">
+      
       <meta name="loc:inThisArticle" content="In this article">
       <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
       <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
@@ -75,38 +75,41 @@
 <div id="start-page">
 <div>
 <h3 id="ushering-in-paradigm-shifts">Ushering in paradigm shifts</h3>
-<p>There are two areas where it seems to us like the industry has been stuck in old models for more than a decade. Failing to realize and leverage the potential of paradigms that are already here. Paradigms which can fundamentally transform how we build systems for the better. Compze aims to help make these paradigms widely understood, accessible, and popular through developing tooling and writing documentation:</p>
+<p>There are two areas where it seems to us like the industry has been stuck in old models for more than a decade.
+Failing to realize and leverage the potential of paradigms that are already here.
+Paradigms which can fundamentally transform how we build systems for the better.
+Compze aims to help make these paradigms widely understood, accessible, and popular through developing tooling and writing documentation:</p>
 </div>
 <div class="grid">
 <div>
-<h4 id="semantic-events"><a href="paradigms/semantic-events/definition.html">Semantic Events</a></h4>
-<p>Leveraging well established and understood C# features enables an event modeling paradigm which</p>
+<h4 id="teventive"><a href="Compze/Teventive/Taggregates/_docs/definition.html">Teventive</a></h4>
+<p>Leveraging .NET type compatibility, teventive programming enables an event modeling paradigm which</p>
 <ul>
 <li>Gives an unprecedented ability to understand domains in terms of how the events that can occur relate to each other.</li>
 <li>Eliminates all need for manual event routing and type checking.</li>
 <li>Dramatically reduces the number of event subscriptions needed.</li>
 <li>Enables modeling inheritance and composition of event based <a href="docs/prerequisite-terms.html#aggregate">aggregates</a> with elegant precision.</li>
-<li><a href="paradigms/semantic-events/property-updated-events.html">Unifies</a> fine-grained property-updated style events and coarse-grained domain events.</li>
+<li><a href="Compze/Teventive/Taggregates/_docs/property-updated-tevents.html">Unifies</a> fine-grained property-updated style events and coarse-grained domain events.</li>
 <li>Enables subscribing to precisely the event you need, while being guaranteed that when new events are added, inheriting the current event, you will receive those too without needing to change anything in your subscriber code.</li>
 </ul>
 <p>In spite of this, to this day, countless event driven applications are shock full of code that leverages none of these possibilities. Resulting in what can only be described as maintenance nightmares.</p>
 <p>It's essentially the event equivalent of working in C# while completely refusing to use generics and object-oriented programming. Surely we should not even need to argue that this is ill-advised?</p>
 </div>
 <div>
-<h4 id="browsable-apis"><a href="paradigms/hypermedia-apis/introduction.html">Browsable APIs</a></h4>
+<h4 id="typermedia-apis"><a href="Compze/Tessaging/Typermedia/_docs/introduction.html">Typermedia APIs</a></h4>
 <p>The most popular API in the world is a Browsable API (REST to be exact). You are using it right now. It's called the world wide web. Can you imagine trying to use it without links and forms? Imagine reading this page and instead of a link you are presented with: 4375.</p>
 <p>That is actually how we build most APIs today. Why?</p>
-<p>What if we designed Browsable APIs instead? APIs which:</p>
+<p>Typermedia expands on hypermedia thinking by leveraging the .NET type system to create APIs which:</p>
 <ul>
-<li>Can be fully explored using a <code>Navigator</code>, browsed much like a website, by
+<li>Can be fully explored using a navigator, browsed much like a website, by
 <ul>
-<li><code>Get</code>ting <code>Link</code>s</li>
-<li><code>Post</code>ing <code>Command</code>s</li>
+<li>Getting links: tueries</li>
+<li>Posting forms: tommands</li>
 <li>All with full type safety and autocomplete in your IDE</li>
 </ul>
 </li>
-<li>Can be in-memory, or remote</li>
-<li>Routes messages by .Net types giving
+<li>Can be in-process, or remote</li>
+<li>Routes tueries and tommands by their .NET types giving
 <ul>
 <li>Zero configuration routing</li>
 <li>A simple already well known programming model.</li>
@@ -115,7 +118,7 @@
 <li>Further encapsulates your domain, exposing less implementation details than traditional services.</li>
 <li>Are excellently suited for building a Just-Beneath-The-UI-Rendering-Layer layer, ideal for black box testing.</li>
 </ul>
-<p>Once you used APIs like that, how would you feel about an API that gives you an <code>int</code> instead of an <code>ILink&lt;User&gt;</code>?</p>
+<p>Once you've used APIs like that, how would you feel about an API that gives you an <code>int</code> instead of a link to the user?</p>
 </div>
 </div>
 </div>
@@ -123,7 +126,6 @@
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/mlidbom/Compze/blob/new_website_structure/Website/index.md/#L1" class="edit-link">Edit this page</a>
         </div>
 
         <div class="next-article d-print-none border-top" id="nextArticle"></div>

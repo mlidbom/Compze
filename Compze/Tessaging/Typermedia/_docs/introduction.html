@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Typermedia APIs | Compze </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Typermedia APIs | Compze ">
+      
+      
+      <link rel="icon" href="../../../../favicon.ico">
+      <link rel="stylesheet" href="../../../../public/docfx.min.css">
+      <link rel="stylesheet" href="../../../../public/main.css">
+      <meta name="docfx:navrel" content="../../../../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../../../../">
+      
+      
+      
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../../../../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../../../../index.html">
+            <img id="logo" class="svg" src="../../../../logo.svg" alt="Compze">
+            Compze
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="">
+<h1 id="typermedia-apis">Typermedia APIs</h1>
+
+<p>The most popular API in the world is a hypermedia API. You're using it right now - it's called the World Wide Web. Can
+you imagine trying to use it without links and forms? Instead being given an int or a string? Why do we build APIs like
+that?</p>
+<p>Compze extends hypermedia into Typermedia which:</p>
+<ul>
+<li><strong>Routes tueries and tommands by their .NET types</strong>, giving:
+<ul>
+<li>Zero configuration routing</li>
+<li>A simple, already well-known programming model</li>
+</ul>
+</li>
+<li><strong>Can be fully explored</strong>, browsed much like a website, by:
+<ul>
+<li>Getting links: tueries</li>
+<li>Posting forms: tommands</li>
+<li>All with full type safety and autocomplete in your IDE</li>
+</ul>
+</li>
+<li><strong>Further encapsulates your domain</strong>, exposing less implementation details than traditional APIs
+<ul>
+<li>All domain logic, validation, and available actions can be encapsulated in the .NET types returned by the API</li>
+<li>The UI need only bind these types to UI components without implementing any domain logic</li>
+<li>Application behavior can be fully tested without any UI framework</li>
+<li>Changing the UI becomes far less burdensome and does not risk changing domain logic</li>
+</ul>
+</li>
+</ul>
+<div class="NOTE">
+<h5>Note</h5>
+<p>Typermedia doesn't require distribution. An API whose tueries and tommands are strictly local is executed in its own
+process, synchronously, on the caller's thread: see <a href="in-one-process.html">Typermedia in one process</a>. Distribution and
+asynchronous communication are optional, not a requirement.</p>
+</div>
+<div class="NOTE">
+<h5>Note</h5>
+<p>In-process, the performance overhead is negligible in the great majority of systems: dispatching essentially comes
+down to a lookup in a dictionary, with the tessage's type as the key.</p>
+</div>
+<h2 id="a-first-taste">A first taste</h2>
+<p>An account, as an accounts API returns it, carries its data and a form for changing it:</p>
+<pre><code class="lang-csharp">public class AccountLink(Guid accountId) : Remotable.NonTransactional.Tueries.Tuery&lt;AccountResource&gt;
+{
+   public Guid AccountId { get; private set; } = accountId;
+}
+
+public class AccountResource(Guid accountId, string email)
+{
+   public Guid AccountId { get; private set; } = accountId;
+   public string Email { get; private set; } = email;
+
+   //A form the account hands out already filled in with its own id: the caller supplies only the new email.
+   public ChangeEmail ChangeEmail(string newEmail) =&gt; new(AccountId, newEmail);
+}
+</code></pre>
+<p>A client navigates from the API's start, opening an account and then changing its email, each step taking its tommand
+from the resource the step before returned:</p>
+<pre><code class="lang-csharp">var openAndChangeEmail = NavigationSpecification.Get(AccountsApi.Start)
+                                                .Post(start =&gt; start.OpenAccount(&quot;grace@example.com&quot;))
+                                                .Post(account =&gt; account.ChangeEmail(&quot;grace.hopper@example.com&quot;));
+
+var grace = await navigator.NavigateAsync(openAndChangeEmail);
+</code></pre>
+<p>A developer could write all of that without ever leaving their IDE. Autocomplete in the IDE makes the API browsable, not
+just at runtime, but as part of writing code. The same goes for all of the functionality of a domain exposed through a
+Typermedia API, not just the simple example above.</p>
+<p>Once you've used APIs like this, how would you feel about an API that gives you an <code>int</code> instead of an <code>AccountLink</code>?</p>
+<h2 id="the-pages-in-reading-order">The pages, in reading order</h2>
+<p>Typermedia is one of the two communication styles of <a href="../../_docs/introduction.html">Tessaging</a>, and these
+pages build on Tessaging's: tueries and tommands are tessages, and remote APIs are served and navigated by
+<a href="../../_docs/endpoints.html">endpoints</a>.</p>
+<ol>
+<li><a href="declaring-an-api.html">Declaring a typermedia API</a>: resources, their links and forms, the start, and the endpoint
+that serves them.</li>
+<li><a href="navigating.html">Navigating a typermedia API</a>: the remote navigator, navigation specifications, and what a navigation
+guarantees.</li>
+<li><a href="in-one-process.html">Typermedia in one process</a>: strictly-local tueries and tommands, and the navigators that execute
+them.</li>
+</ol>
+<p>Typermedia is part of the Compze.Tessaging package; its tessage types are in Compze.Tessaging.Abstractions.</p>
+
+</article>
+
+        <div class="contribution d-print-none">
+        </div>
+
+        <div class="next-article d-print-none border-top" id="nextArticle"></div>
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
