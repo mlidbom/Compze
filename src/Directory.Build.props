@@ -21,6 +21,13 @@
     <RunAnalyzersDuringLiveAnalysis>False</RunAnalyzersDuringLiveAnalysis>
     <NuGetAuditMode>direct</NuGetAuditMode>
   </PropertyGroup>
+  <!-- The threading analyzers, in every project. Among them, VSTHRD002 flags a synchronous wait on a task (.Wait(), .Result,
+       GetAwaiter().GetResult()) wherever it is: no rule of AnalysisLevel latest-all does, as CA1849 flags one only inside a
+       method that returns a task. Such a wait needs a free thread-pool thread, and stalls while the pool is busy. Private
+       assets, so that no Compze package depends on it. -->
+  <ItemGroup>
+    <PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers" Version="18.12.1" PrivateAssets="all" IncludeAssets="runtime; build; native; contentfiles; analyzers; buildtransitive" />
+  </ItemGroup>
   <Import Project="msbuild\IncludeTestConfigurationFiles.props" Condition="'$(IsTestProject)' == 'true'" />
   <Import Project="msbuild\IncludeTestAppSettings.props" Condition="'$(IsTestProject)' == 'true'" />
   <!-- NuGet package metadata for library projects -->
