@@ -3,6 +3,8 @@
     <Nullable>enable</Nullable>
     <OutputType>Exe</OutputType>
     <IsPackable>false</IsPackable>
+    <!-- A console program BenchmarkDotNet runs, not tests: test/Directory.Build.props marks every project under test/ as tests, and `dotnet test` on the solution would abort on this one. -->
+    <IsTestProject>false</IsTestProject>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="BenchmarkDotNet" Version="0.15.8" />
