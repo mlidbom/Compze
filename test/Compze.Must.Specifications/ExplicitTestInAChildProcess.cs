@@ -14,7 +14,7 @@ static class ExplicitTestInAChildProcess
    /// Everything the child process wrote while running <paramref name="testMethod"/> of <paramref name="testClass"/>: the
    /// runner's summary when the process survived, and what killed it when it did not.
    /// </summary>
-   public static string Run(Type testClass, string testMethod)
+   public static async Task<string> RunAsync(Type testClass, string testMethod)
    {
       var startInfo = new ProcessStartInfo("dotnet")
                       {
@@ -27,13 +27,18 @@ static class ExplicitTestInAChildProcess
       var standardOutput = process.StandardOutput.ReadToEndAsync();
       var standardError = process.StandardError.ReadToEndAsync();
 
-      if(!process.WaitForExit(Timeout))
+      using var timeout = new CancellationTokenSource(Timeout);
+      try
+      {
+         await process.WaitForExitAsync(timeout.Token);
+      }
+      catch(OperationCanceledException) when(timeout.IsCancellationRequested)
       {
          process.Kill(entireProcessTree: true);
-         process.WaitForExit();
-         return $"The child process was killed after running for {Timeout}:{Environment.NewLine}{standardOutput.Result}{standardError.Result}";
+         await process.WaitForExitAsync();
+         return $"The child process was killed after running for {Timeout}:{Environment.NewLine}{await standardOutput}{await standardError}";
       }
 
-      return $"{standardOutput.Result}{standardError.Result}{Environment.NewLine}Exit code: {process.ExitCode}";
+      return $"{await standardOutput}{await standardError}{Environment.NewLine}Exit code: {process.ExitCode}";
    }
 }

@@ -9,7 +9,7 @@ sealed class AsyncDisposable : IAsyncDisposable
 {
    readonly Func<Task> _dispose;
 
-   public AsyncDisposable(Action dispose) => _dispose = dispose.AsAsync();
+   public AsyncDisposable(Action dispose) => _dispose = dispose.ToCompletedTaskFunc();
 
    public async ValueTask DisposeAsync() => await _dispose().caf();
 }

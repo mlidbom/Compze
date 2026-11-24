@@ -164,10 +164,10 @@ public class LazyCE_
          object? valueTheSecondThreadGot = null;
          using(var taskRunner = TestingTaskRunner.WithTimeout(TimeSpan.FromSeconds(10)))
          {
-            taskRunner.Run(() => valueTheFirstThreadGot = lazy.Value);
+            taskRunner.Start(() => valueTheFirstThreadGot = lazy.Value);
             insideTheFactory.AwaitQueueLengthEqualTo(1);
 
-            taskRunner.Run(() => valueTheSecondThreadGot = lazy.Value);
+            taskRunner.Start(() => valueTheSecondThreadGot = lazy.Value);
             _theSecondThreadStartedTheFactoryToo = insideTheFactory.TryAwaitQueueLengthEqualTo(2, WaitTimeout.Milliseconds(100));
 
             insideTheFactory.Open();

@@ -36,7 +36,7 @@ class ProcessLockSession : ITessagingSqlLayer.IEndpointProcessLockHold
       _connection = connection;
       _releaseLockOnSessionAsync = releaseLockOnSessionAsync;
       _onLockLostWhileHeld = onLockLostWhileHeld;
-      _keepaliveLoop = TaskCE.Run(KeepSessionAliveUntilReleasedAsync);
+      _keepaliveLoop = TaskCE.RunAsync(KeepSessionAliveUntilReleasedAsync);
    }
 
    async Task KeepSessionAliveUntilReleasedAsync()

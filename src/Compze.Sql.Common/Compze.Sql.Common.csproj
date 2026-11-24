@@ -31,6 +31,10 @@
     <InternalsVisibleTo Include="Compze.TypeIdentifiers.Interning.MySql" />
     <InternalsVisibleTo Include="Compze.TypeIdentifiers.Interning.PostgreSql" />
     <InternalsVisibleTo Include="Compze.TypeIdentifiers.Interning.Sqlite" />
+    <InternalsVisibleTo Include="Compze.Teventive.MemoryImageStateStore.MicrosoftSql" />
+    <InternalsVisibleTo Include="Compze.Teventive.MemoryImageStateStore.MySql" />
+    <InternalsVisibleTo Include="Compze.Teventive.MemoryImageStateStore.PostgreSql" />
+    <InternalsVisibleTo Include="Compze.Teventive.MemoryImageStateStore.Sqlite" />
   </ItemGroup>
   <!-- Compze.Contracts — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Contracts)' == 'true'">

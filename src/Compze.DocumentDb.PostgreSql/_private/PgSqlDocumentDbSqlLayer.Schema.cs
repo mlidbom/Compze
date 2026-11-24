@@ -4,10 +4,10 @@ namespace Compze.DocumentDb.PostgreSql._private;
 
 partial class PgSqlDocumentDbSqlLayer
 {
-   public const string SchemaCreationSql =
+   public static readonly IReadOnlyList<string> SchemaCreationStatements =
+   [
       $"""
-
-       CREATE TABLE IF NOT EXISTS {Document.TableName} 
+       CREATE TABLE IF NOT EXISTS {Document.TableName}
        (
            {Document.Id}          VARCHAR(500)                NOT NULL,
            {Document.ValueTypeId} INT                         NOT NULL,
@@ -16,8 +16,7 @@ partial class PgSqlDocumentDbSqlLayer
            {Document.Value}       TEXT                        NOT NULL,
 
            PRIMARY KEY ({Document.Id}, {Document.ValueTypeId})
-       );
-
-
-       """;
+       )
+       """
+   ];
 }

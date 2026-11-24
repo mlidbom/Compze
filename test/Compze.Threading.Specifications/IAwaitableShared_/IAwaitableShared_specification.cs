@@ -113,7 +113,7 @@ public class IAwaitableShared_specification : UniversalTestBase
          var shared = _factory.Create(new SharedTestValue(), LockTimeout.Seconds(30));
          var insideLock = IThreadGate.NewClosed(WaitTimeout.Seconds(30), "insideLock");
 
-         _runner.Run(() => accessMethodUnderTest(shared, insideLock));
+         _runner.Start(() => accessMethodUnderTest(shared, insideLock));
          insideLock.AwaitQueueLengthEqualTo(1);
 
          AssertAllAccessMethodsFailsWhileGateIsClosedAllSucceedAfterOpeningGate(shared, insideLock);
@@ -151,7 +151,7 @@ public class IAwaitableShared_specification : UniversalTestBase
          var shared = _factory.Create(new SharedTestValue(), LockTimeout.Seconds(30), WaitTimeout.Seconds(30));
          var readCompleted = IThreadGate.NewOpen(WaitTimeout.Seconds(10), "readCompleted");
 
-         _runner.Run(() =>
+         _runner.Start(() =>
          {
             shared.ReadWhen(v => v.Items.Count > 0, v => v.Items[0]).Must().Be(99);
             readCompleted.AwaitPassThrough();
@@ -184,7 +184,7 @@ public class IAwaitableShared_specification : UniversalTestBase
          var shared = _factory.Create(new SharedTestValue(), LockTimeout.Seconds(30), WaitTimeout.Seconds(30));
          var readCompleted = IThreadGate.NewOpen(WaitTimeout.Seconds(10), "readCompleted");
 
-         _runner.Run(() =>
+         _runner.Start(() =>
          {
             shared.TryReadWhen(v => v.Items.Count > 0, v => v.Items[0], out var value).Must().BeTrue();
             value.Must().Be(99);
@@ -217,7 +217,7 @@ public class IAwaitableShared_specification : UniversalTestBase
          var shared = _factory.Create(new SharedTestValue(), LockTimeout.Seconds(30), WaitTimeout.Seconds(30));
          var updateCompleted = IThreadGate.NewOpen(WaitTimeout.Seconds(10), "updateCompleted");
 
-         _runner.Run(() =>
+         _runner.Start(() =>
          {
             shared.UpdateWhen(v => v.Items.Count > 0, v => v.Items[0]);
             updateCompleted.AwaitPassThrough();
@@ -260,7 +260,7 @@ public class IAwaitableShared_specification : UniversalTestBase
          var shared = _factory.Create(new SharedTestValue(), LockTimeout.Seconds(30), WaitTimeout.Seconds(30));
          var tryCompleted = IThreadGate.NewOpen(WaitTimeout.Seconds(10), "tryCompleted");
 
-         _runner.Run(() =>
+         _runner.Start(() =>
          {
             shared.TryUpdateWhen(v => v.Items.Count > 0, v => v.Items.Add(99)).Must().BeTrue();
             tryCompleted.AwaitPassThrough();
@@ -293,7 +293,7 @@ public class IAwaitableShared_specification : UniversalTestBase
          var shared = _factory.Create(new SharedTestValue(), LockTimeout.Seconds(30), WaitTimeout.Seconds(30));
          var tryCompleted = IThreadGate.NewOpen(WaitTimeout.Seconds(10), "tryCompleted");
 
-         _runner.Run(() =>
+         _runner.Start(() =>
          {
             shared.TryUpdateWhen(v => v.Items.Count > 0, v => v.Items[0], out var value).Must().BeTrue();
             value.Must().Be(99);
@@ -327,7 +327,7 @@ public class IAwaitableShared_specification : UniversalTestBase
          var shared = _factory.Create(new SharedTestValue(), LockTimeout.Seconds(30), WaitTimeout.Seconds(30));
          var awaitCompleted = IThreadGate.NewOpen(WaitTimeout.Seconds(10), "awaitCompleted");
 
-         _runner.Run(() =>
+         _runner.Start(() =>
          {
             shared.Await(v => v.Items.Count > 0);
             awaitCompleted.AwaitPassThrough();

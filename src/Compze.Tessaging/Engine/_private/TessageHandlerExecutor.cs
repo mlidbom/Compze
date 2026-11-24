@@ -33,25 +33,25 @@ class TessageHandlerExecutor
    ///<summary>Executes every participation handler whose subscription matches <paramref name="wrappedTevent"/>, within<br/>
    /// <paramref name="unitOfWork"/> — the publisher's own unit of work for a local publish, the inbox processing's own for an<br/>
    /// exactly-once arrival.</summary>
-   public async Task ExecuteTeventHandlers(IPublisherTevent<ITevent> wrappedTevent, IUnitOfWorkResolver unitOfWork)
+   public async Task ExecuteTeventHandlersAsync(IPublisherTevent<ITevent> wrappedTevent, IUnitOfWorkResolver unitOfWork)
    {
       foreach(var handler in _roster.GetTeventHandlers(wrappedTevent.GetType()))
          await handler(wrappedTevent, unitOfWork).caf();
    }
 
-   ///<summary>Executes the roster's full tevent response — see <see cref="ExecuteTeventHandlers"/> — as its own unit of work:<br/>
+   ///<summary>Executes the roster's full tevent response — see <see cref="ExecuteTeventHandlersAsync"/> — as its own unit of work:<br/>
    /// the best-effort arrival form, where no caller context exists to join.</summary>
    public async Task ExecuteTeventHandlersInOwnUnitOfWorkAsync(IPublisherTevent<ITevent> wrappedTevent) =>
-      await _scopeFactory.ExecuteUnitOfWorkAsync(async unitOfWork => await ExecuteTeventHandlers(wrappedTevent, unitOfWork).caf()).caf();
+      await _scopeFactory.ExecuteUnitOfWorkAsync(async unitOfWork => await ExecuteTeventHandlersAsync(wrappedTevent, unitOfWork).caf()).caf();
 
    ///<summary>Executes the single handler for <paramref name="tommand"/> — a tommand whose type declares no result — within<br/>
    /// <paramref name="unitOfWork"/>: the caller's session for a strictly-local send, the inbox processing's own unit of work for<br/>
    /// an exactly-once arrival.</summary>
-   public Task ExecuteTommandHandler(ITommand tommand, IUnitOfWorkResolver unitOfWork) =>
+   public Task ExecuteTommandHandlerAsync(ITommand tommand, IUnitOfWorkResolver unitOfWork) =>
       _roster.GetVoidTommandHandler(tommand.GetType())(tommand, unitOfWork);
 
    ///<summary>Executes the single handler for <paramref name="tommand"/>, whose result answers the caller, within <paramref name="unitOfWork"/>.</summary>
-   public async Task<TResult> ExecuteTommandHandler<TResult>(ITommand<TResult> tommand, IUnitOfWorkResolver unitOfWork) =>
+   public async Task<TResult> ExecuteTommandHandlerAsync<TResult>(ITommand<TResult> tommand, IUnitOfWorkResolver unitOfWork) =>
       (TResult)await _roster.GetTommandHandlerWithResult(tommand.GetType())(tommand, unitOfWork).caf();
 
    ///<summary>Executes the single handler for <paramref name="tommand"/> — a tommand whose type declares no result — as its own<br/>
@@ -75,7 +75,7 @@ class TessageHandlerExecutor
    ///<summary>Executes the single handler for <paramref name="tuery"/> within <paramref name="scope"/> — the caller's session:<br/>
    /// a tuery changes nothing, so its execution needs a scope, not a unit of work, and reads join whatever consistency the<br/>
    /// caller's context has.</summary>
-   public async Task<TResult> ExecuteTueryHandler<TResult>(ITuery<TResult> tuery, IScopeResolver scope) =>
+   public async Task<TResult> ExecuteTueryHandlerAsync<TResult>(ITuery<TResult> tuery, IScopeResolver scope) =>
       (TResult)await _roster.GetTueryHandler(tuery.GetType())(tuery, scope).caf();
 
    ///<summary>Executes the single handler for <paramref name="tuery"/> in a fresh transactionless scope of its own: the<br/>

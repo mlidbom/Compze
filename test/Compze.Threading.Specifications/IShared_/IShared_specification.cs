@@ -56,7 +56,7 @@ public class IShared_specification : UniversalTestBase
          var shared = _factory.Create(new object(), timeout: LockTimeout.Seconds(30));
          var insideLockGate = IThreadGate.NewClosed(WaitTimeout.Seconds(30), "insideLock");
 
-         _runner.Run(
+         _runner.Start(
             () => shared.Locked(_ => insideLockGate.AwaitPassThrough()),
             () => shared.Locked(_ => insideLockGate.AwaitPassThrough()));
 
@@ -72,10 +72,10 @@ public class IShared_specification : UniversalTestBase
          var firstThreadInsideLock = IThreadGate.NewClosed(WaitTimeout.Seconds(30), "firstThreadInsideLock");
          var secondThreadInsideLock = IThreadGate.NewOpen(WaitTimeout.Seconds(30), "secondThreadInsideLock");
 
-         _runner.Run(() => shared.Locked(_ => firstThreadInsideLock.AwaitPassThrough()));
+         _runner.Start(() => shared.Locked(_ => firstThreadInsideLock.AwaitPassThrough()));
          firstThreadInsideLock.AwaitQueueLengthEqualTo(1);
 
-         _runner.Run(() => shared.Locked(_ => secondThreadInsideLock.AwaitPassThrough()));
+         _runner.Start(() => shared.Locked(_ => secondThreadInsideLock.AwaitPassThrough()));
          secondThreadInsideLock.TryAwaitPassedThroughCountEqualTo(1, WaitTimeout.Milliseconds(50)).Must().BeFalse();
 
          firstThreadInsideLock.Open();

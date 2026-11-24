@@ -68,7 +68,7 @@ sealed class MemoryImageStateStoreSession : ITaggregateStoreSession
       }
 
       HoldUpdateLock(id); //Held also when the store holds no such taggregate, so no other unit of work adds one before this one completes.
-      var committed = _store.CommittedInstanceOf(id);
+      var committed = _store.Committed.InstanceOf(id);
       if(committed == null)
       {
          taggregate = null;
@@ -87,7 +87,7 @@ sealed class MemoryImageStateStoreSession : ITaggregateStoreSession
       State.Assert(taggregate.Version > 0, () => $"{taggregate.GetType().Name} has published no tevent, so it has no id: there is nothing to add.");
       State.Assert(!_heldTaggregates.ContainsKey(taggregate.Id), () => $"Taggregate {taggregate.Id} is already in this unit of work.");
       HoldUpdateLock(taggregate.Id);
-      State.Assert(_store.CommittedInstanceOf(taggregate.Id) == null, () => $"The memory image state store already holds a taggregate {taggregate.Id}.");
+      State.Assert(_store.Committed.InstanceOf(taggregate.Id) == null, () => $"The memory image state store already holds a taggregate {taggregate.Id}.");
       var tevents = TakeTheUncommittedTeventsOf(taggregate);
       State.Assert(IsFromItsCreationOn(tevents),
                    () => $"{taggregate.GetType().Name} {taggregate.Id} doesn't have the tevents it published from its creation on, so adding it would dispatch none of them: an earlier add took them, as in a unit of work that then rolled back. Create it again.");
@@ -126,11 +126,14 @@ sealed class MemoryImageStateStoreSession : ITaggregateStoreSession
       _unitOfWork.Dispatch(tevent);
    }
 
-   ///<summary>Takes the lock of the taggregate <paramref name="id"/> unless this unit of work holds it already, as it does after trying to<br/>
-   /// get for update a taggregate the store doesn't hold: a lock can't be taken twice, even by its holder.</summary>
+   ///<summary>Takes the lock of the taggregate <paramref name="id"/>, in memory, then in the storage, unless this unit of work holds it<br/>
+   /// already, as it does after trying to get for update a taggregate the store doesn't hold: a lock can't be taken twice, even by<br/>
+   /// its holder. Taking it in the storage brings the committed taggregate up to date with what other memory images committed.</summary>
    void HoldUpdateLock(TaggregateId id)
    {
-      if(!_heldUpdateLocks.ContainsKey(id)) _heldUpdateLocks.Add(id, _store.UpdateLocks.Take(id));
+      if(_heldUpdateLocks.ContainsKey(id)) return;
+      _heldUpdateLocks.Add(id, _store.UpdateLocks.Take(id));
+      _store.LockInTheStorageForUpdate(id);
    }
 
    static TTaggregate AsRequested<TTaggregate>(ITaggregate taggregate) where TTaggregate : class, ITaggregate
@@ -157,22 +160,15 @@ sealed class MemoryImageStateStoreSession : ITaggregateStoreSession
          new(held.Taggregate.GetType(), held.Taggregate.Id, _store.DeclaredClassOf(held.Taggregate.GetType()).TakeSnapshot(held.Taggregate));
    }
 
+   ///<remarks>Called once the transaction has committed: every database in it has committed, as the transaction's decision, before<br/>
+   /// any participant is told the outcome. So the copies become the committed instances only once the storage holds them.</remarks>
    public void Commit()
    {
-      _preparedWrite._assert().NotNull().Commit();
-      foreach(var held in _heldTaggregates.Values.Where(it => it.IsChanged))
-      {
-         if(held.IsDeleted)
-         {
-            _store.Remove(held.Taggregate.Id);
-         } else
-         {
-            held.Taggregate.Commit(_ => {}); //Its tevents were dispatched from its tevent stream: this only forgets them.
-            _store.MakeCommitted(held.Taggregate);
-         }
-      }
-
-      _preparedIndexChanges.ForEach(it => it.Apply());
+      var write = _preparedWrite._assert().NotNull();
+      write.Commit();
+      var changed = _heldTaggregates.Values.Where(it => it is { IsChanged: true, WasAddedAndDeleted: false }).ToList();
+      foreach(var held in changed.Where(it => !it.IsDeleted)) held.Taggregate.Commit(_ => {}); //Its tevents were dispatched from its tevent stream: this only forgets them.
+      _store.Committed.InstallACommit([..changed.Select(it => (it.Taggregate.Id, NewState: it.IsDeleted ? null : it.Taggregate))], write.CommittedAs, _preparedIndexChanges);
    }
 
    public void Rollback() => _preparedWrite?.Discard(); //The copies and the new taggregates are simply never committed.
@@ -212,5 +208,8 @@ sealed class MemoryImageStateStoreSession : ITaggregateStoreSession
       ///<summary>Whether committing this unit of work changes the store's taggregate. A copy that published nothing changes nothing,<br/>
       /// and the committed instance stays.</summary>
       internal bool IsChanged => IsNew || _hasPublishedAny;
+
+      ///<summary>Whether this unit of work both added the taggregate and deleted it, so that it was never stored, and its commit stores nothing of it.</summary>
+      internal bool WasAddedAndDeleted => IsNew && IsDeleted;
    }
 }

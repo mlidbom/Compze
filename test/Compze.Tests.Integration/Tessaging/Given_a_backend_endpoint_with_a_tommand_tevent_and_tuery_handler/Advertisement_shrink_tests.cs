@@ -28,7 +28,7 @@ public class Advertisement_shrink_tests : EndpointHostTestBase
       //Bound at send to the remembered Remote endpoint - the control proving recovery delivery runs when it returns.
       await BackendEndPoint.ServiceLocator.Resolve<IIndependentTommandSender>().SendAsync(new MyExactlyOnceTommandHandledByTheRemoteEndpoint());
 
-      await Host.DisposeAsyncWithoutWaitingForEndpointsToBeAtRest(); //Both tessages are undelivered: awaiting rest would wait for Remote's return.
+      await Host.DisposeWithoutWaitingForEndpointsToBeAtRestAsync(); //Both tessages are undelivered: awaiting rest would wait for Remote's return.
       await StartHostWithTheRemoteEndpointReturningHavingRenouncedItsTeventSubscriptionsAsync();
 
       //The kept tommand delivers...
@@ -49,7 +49,7 @@ public class Advertisement_shrink_tests : EndpointHostTestBase
       //Published while Remote is down: its kept taggregate subscription must still deliver on its return - the control proving recovery delivery runs.
       await Navigator.PostAsync(MyCreateTaggregateTommand.Create());
 
-      await Host.DisposeAsyncWithoutWaitingForEndpointsToBeAtRest(); //Both tessages are undelivered: awaiting rest would wait for Remote's return.
+      await Host.DisposeWithoutWaitingForEndpointsToBeAtRestAsync(); //Both tessages are undelivered: awaiting rest would wait for Remote's return.
       await StartHostWithTheRemoteEndpointReturningNoLongerHandlingItsTommandAsync();
 
       //The kept subscription's tevent delivers...

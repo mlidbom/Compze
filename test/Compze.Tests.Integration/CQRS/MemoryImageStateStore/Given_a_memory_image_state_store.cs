@@ -58,7 +58,7 @@ public class Given_a_memory_image_state_store : UniversalTestBase
 
    StoredVocab CommittedVocab(TaggregateId id) => Reader.Get<StoredVocab>(id);
 
-   void WaitForTheObservers() => Container.RootResolver.Resolve<ILocalTessagingEngine>().AwaitNoTessagesInFlightAsync().GetAwaiter().GetResult();
+   async Task WaitForTheObserversAsync() => await Container.RootResolver.Resolve<ILocalTessagingEngine>().AwaitNoTessagesInFlightAsync();
 
    ///<summary>Runs <paramref name="read"/> on a thread of its own, with no ambient transaction flowing to it. Not a task: waiting<br/>
    /// for a task that hasn't started may run it inline, on the waiting thread, inside the transaction.</summary>
@@ -80,8 +80,9 @@ public class Given_a_memory_image_state_store : UniversalTestBase
    {
       bool _addHasReturned;
 
-      public after_a_unit_of_work_adds_a_new_vocab()
+      protected override async Task InitializeAsyncInternal()
       {
+         await base.InitializeAsyncInternal();
          Compose(participation: handle => handle.ForTevent((IStoredVocabCreated it) => ParticipationLog.Enqueue($"created {it.Question}, add had returned: {_addHasReturned}")),
                  observation: observe => observe.ForTevent((IStoredVocabCreated it) => ObservationLog.Enqueue($"created {it.Question}")));
 
@@ -90,7 +91,7 @@ public class Given_a_memory_image_state_store : UniversalTestBase
             taggregates.Add(StoredVocab.Create(VocabId, "taberu"));
             _addHasReturned = true;
          });
-         WaitForTheObservers();
+         await WaitForTheObserversAsync();
       }
 
       [PCT] public void the_reader_gets_the_vocab() => CommittedVocab(VocabId).Question.Must().Be("taberu");
@@ -172,8 +173,9 @@ public class Given_a_memory_image_state_store : UniversalTestBase
 
    public class after_a_unit_of_work_that_changed_a_vocab_throws_before_it_completes : Given_a_memory_image_state_store
    {
-      public after_a_unit_of_work_that_changed_a_vocab_throws_before_it_completes()
+      protected override async Task InitializeAsyncInternal()
       {
+         await base.InitializeAsyncInternal();
          Compose(participation: handle => handle.ForTevent((IStoredVocabMeaningChanged it) => ParticipationLog.Enqueue(it.Meaning)),
                  observation: observe => observe.ForTevent((IStoredVocabMeaningChanged it) => ObservationLog.Enqueue(it.Meaning)));
          InUnitOfWork(taggregates => taggregates.Add(StoredVocab.Create(VocabId, "taberu")));
@@ -184,7 +186,7 @@ public class Given_a_memory_image_state_store : UniversalTestBase
                     throw new InvalidOperationException("The unit of work fails.");
                  }))
            .Must().Throw<InvalidOperationException>();
-         WaitForTheObservers();
+         await WaitForTheObserversAsync();
       }
 
       [PCT] public void the_reader_gets_the_meaning_committed_before() => CommittedVocab(VocabId).Meaning.Must().Be("");
@@ -196,8 +198,9 @@ public class Given_a_memory_image_state_store : UniversalTestBase
    {
       readonly TaggregateId _followingVocabId = new(Guid.NewGuid());
 
-      public after_a_participation_handler_changes_another_vocab()
+      protected override async Task InitializeAsyncInternal()
       {
+         await base.InitializeAsyncInternal();
          Compose(participation: handle => handle.ForTevent((IStoredVocabMeaningChanged it, ITaggregateStoreUpdater taggregates) =>
                  {
                     if(it.TaggregateId == VocabId) taggregates.GetForUpdate<StoredVocab>(_followingVocabId).ChangeMeaning($"follows: {it.Meaning}");
@@ -210,7 +213,7 @@ public class Given_a_memory_image_state_store : UniversalTestBase
          });
 
          InUnitOfWork(taggregates => taggregates.GetForUpdate<StoredVocab>(VocabId).ChangeMeaning("to eat"));
-         WaitForTheObservers();
+         await WaitForTheObserversAsync();
       }
 
       [PCT] public void the_other_vocab_is_changed() => CommittedVocab(_followingVocabId).Meaning.Must().Be("follows: to eat");
@@ -219,8 +222,9 @@ public class Given_a_memory_image_state_store : UniversalTestBase
 
    public class after_a_participation_handler_changes_the_vocab_whose_tevent_it_handles : Given_a_memory_image_state_store
    {
-      public after_a_participation_handler_changes_the_vocab_whose_tevent_it_handles()
+      protected override async Task InitializeAsyncInternal()
       {
+         await base.InitializeAsyncInternal();
          Compose(participation: handle => handle
                                          .ForTevent((IStoredVocabMeaningChanged it, ITaggregateStoreUpdater taggregates) =>
                                           {
@@ -231,7 +235,7 @@ public class Given_a_memory_image_state_store : UniversalTestBase
          InUnitOfWork(taggregates => taggregates.Add(StoredVocab.Create(VocabId, "taberu")));
 
          InUnitOfWork(taggregates => taggregates.GetForUpdate<StoredVocab>(VocabId).ChangeMeaning("  to eat  "));
-         WaitForTheObservers();
+         await WaitForTheObserversAsync();
       }
 
       [PCT] public void the_vocab_has_the_handlers_meaning() => CommittedVocab(VocabId).Meaning.Must().Be("to eat");
@@ -456,10 +460,11 @@ public class Given_a_memory_image_state_store : UniversalTestBase
    public class when_two_units_of_work_on_two_threads_change_one_vocab : Given_a_memory_image_state_store
    {
       readonly ManualResetEventSlim _theFirstUnitOfWorkHasTheVocab = new();
-      readonly string _meaningTheSecondUnitOfWorkGot;
+      string _meaningTheSecondUnitOfWorkGot = "";
 
-      public when_two_units_of_work_on_two_threads_change_one_vocab()
+      protected override async Task InitializeAsyncInternal()
       {
+         await base.InitializeAsyncInternal();
          Compose();
          InUnitOfWork(taggregates => taggregates.Add(StoredVocab.Create(VocabId, "taberu")));
 
@@ -480,7 +485,7 @@ public class Given_a_memory_image_state_store : UniversalTestBase
             vocab.ChangeMeaning($"{vocab.Meaning}, second");
          });
          _meaningTheSecondUnitOfWorkGot = meaningTheSecondGot;
-         first.Wait();
+         await first;
       }
 
       [PCT] public void the_second_waited_for_the_first_to_commit() => _meaningTheSecondUnitOfWorkGot.Must().Be("first");

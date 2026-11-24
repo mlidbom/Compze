@@ -39,7 +39,7 @@ public class ContentionCount_specification : UniversalTestBase
 
          var blockingLock = criticalSection.TakeUpdateLock();
 
-         _runner.Run(() => { using(criticalSection.TakeUpdateLock()) {} });
+         _runner.Start(() => { using(criticalSection.TakeUpdateLock()) {} });
 
          SpinWait.SpinUntil(() => criticalSection.ContentionCount >= 1, 5.Seconds()).Must().BeTrue();
 
@@ -67,7 +67,7 @@ public class ContentionCount_specification : UniversalTestBase
          var blockingLock = monitor.TakeUpdateLock();
 
          using var runner = TestingTaskRunner.WithTimeout(30.Seconds());
-         runner.Run(() => sharedB.Update(_ => {}));
+         runner.Start(() => sharedB.Update(_ => {}));
 
          SpinWait.SpinUntil(() => monitor.ContentionCount >= 1, 5.Seconds()).Must().BeTrue();
 

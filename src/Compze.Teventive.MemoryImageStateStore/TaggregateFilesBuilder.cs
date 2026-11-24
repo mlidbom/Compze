@@ -45,7 +45,9 @@ public sealed class TaggregateFilesBuilder
    /// <see cref="MemoryImageStateStoreBuilder.StoredInJsonFiles(DirectoryInfo,System.Text.Json.JsonSerializerOptions,Action{TaggregateFilesBuilder})"/>.</summary>
    ///<remarks>The files then commit when the unit of work commits, which is after the database has committed, whichever the database: each<br/>
    /// of Compze's connections commits as its transaction's decision. A failure committing them stops the process<br/>
-   /// (<see cref="Environment.FailFast(string)"/>), since the transaction can no longer roll back by then.</remarks>
+   /// (<see cref="Environment.FailFast(string)"/>), since the transaction can no longer roll back by then.<br/>
+   /// A database commit whose outcome is unknown, as when the connection breaks while it commits, leaves the transaction in doubt, and the<br/>
+   /// files don't commit, though the database may have: the files then lose the change, as in a crash between the two commits.</remarks>
    public TaggregateFilesBuilder AcceptingNonAtomicCommitsWithADatabase()
    {
       State.Assert(!IsAcceptingNonAtomicCommitsWithADatabase, () => "That the files accept commits that aren't atomic with a database's is declared twice.");

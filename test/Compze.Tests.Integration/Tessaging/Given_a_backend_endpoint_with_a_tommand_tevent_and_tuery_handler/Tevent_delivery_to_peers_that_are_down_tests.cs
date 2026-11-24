@@ -25,7 +25,7 @@ public class Tevent_delivery_to_peers_that_are_down_tests : EndpointHostTestBase
       //Publishes IMyTaggregateTevent - which Remote subscribes to - exactly-once, while Remote is down.
       await Navigator.PostAsync(MyCreateTaggregateTommand.Create());
 
-      await Host.DisposeAsyncWithoutWaitingForEndpointsToBeAtRest(); //The tevent is undelivered: awaiting rest would wait for Remote's return.
+      await Host.DisposeWithoutWaitingForEndpointsToBeAtRestAsync(); //The tevent is undelivered: awaiting rest would wait for Remote's return.
       await StartHostAsync();
 
       await MyRemoteTaggregateTeventHandlerThreadGate.AwaitPassedThroughCountEqualToAsync(1, WaitTimeout.Seconds(15));

@@ -1,4 +1,6 @@
-namespace Compze.Threading.Interprocess._private;
+using Compze.Threading.Interprocess._private;
+
+namespace Compze.Threading.Interprocess._internal;
 
 /// <summary>
 /// A cross-process signaling mechanism backed by an <see cref="InterprocessChangeCounter"/>.

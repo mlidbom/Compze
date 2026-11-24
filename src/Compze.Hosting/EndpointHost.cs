@@ -75,11 +75,17 @@ public class EndpointHost : IEndpointHost
       State.Assert(!_isStarted, Endpoints.None(endpoint => endpoint.IsRunning));
       this.Log().Info($"Starting with {Endpoints.Count} endpoint(s)");
 
-      await Task.WhenAll(Endpoints.Select(endpointToStart => endpointToStart.StartAsync())).WithAggregateExceptions().caf();
+      await Task.WhenAll(Endpoints.Select(endpointToStart => endpointToStart.StartAsync())).WithAggregateExceptionsAsync().caf();
       _isStarted = true;
    }
 
-   public void Start() => StartAsync().WaitUnwrappingException();
+   public void Start()
+   {
+      //todo:urgent: a synchronous wait on asynchronous work, through WaitUnwrappingException, which VSTHRD002 can't see: it
+      //   holds this thread, and stalls while the thread pool is busy. See
+      //   dev_docs/TODO/synchronous-paths-that-need-a-free-thread-pool-thread.md (Magnus, 2026-11-24).
+      StartAsync().WaitUnwrappingException();
+   }
 
    bool _disposed;
 
@@ -91,9 +97,9 @@ public class EndpointHost : IEndpointHost
          this.Log().Info("Disposing");
          _isStarted = false;
          //Each endpoint's disposal stops it - retract, stop sending, stop listening, drain - before tearing down its container.
-         await Task.WhenAll(Endpoints.Select(endpoint => endpoint.DisposeAsync().AsTask())).WithAggregateExceptions().caf();
+         await Task.WhenAll(Endpoints.Select(endpoint => endpoint.DisposeAsync().AsTask())).WithAggregateExceptionsAsync().caf();
       }
    }
 
-   public async ValueTask DisposeAsync() => await DisposeAsync(true).WithAggregateExceptions().caf();
+   public async ValueTask DisposeAsync() => await DisposeAsync(true).WithAggregateExceptionsAsync().caf();
 }

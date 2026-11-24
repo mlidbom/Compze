@@ -44,7 +44,7 @@ public class While_a_transaction_that_has_read_a_document_is_open : DocumentDbTe
    ///<summary>Starts deleting the document in a unit of work of its own, on a thread of its own, outside the transaction the specification<br/>
    /// has open. Runs <paramref name="beforeCommitting"/> once the deletion is made, before the unit of work commits.</summary>
    Task DeleteTheDocumentInAnotherUnitOfWork(TestingTaskRunner runner, Action? beforeCommitting = null) =>
-      runner.Run(() => TransactionScopeCe.SuppressAmbient(() => Container.ExecuteUnitOfWork(unitOfWork =>
+      runner.RunAsync(() => TransactionScopeCe.SuppressAmbient(() => Container.ExecuteUnitOfWork(unitOfWork =>
       {
          unitOfWork.DocumentDbUpdater().Delete(_document);
          beforeCommitting?.Invoke();

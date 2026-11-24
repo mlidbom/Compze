@@ -42,7 +42,9 @@ class SqliteEndpointProcessLockHold : ITessagingSqlLayer.IEndpointProcessLockHol
       _acquisitionResult.SetResult(mutexLock != null);
       if(mutexLock != null)
       {
+#pragma warning disable VSTHRD002 // On the holder's own thread, which took the mutex and must release it: completed by the release, it needs no thread-pool thread.
          _releaseRequested.Task.GetAwaiter().GetResult();
+#pragma warning restore VSTHRD002
          mutexLock.Dispose();
       }
 

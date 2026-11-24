@@ -27,6 +27,10 @@
   </Folder>
   <Folder Name="/Compze.Teventive/MemoryImageStateStore/">
     <Project Path="src/Compze.Teventive.MemoryImageStateStore/Compze.Teventive.MemoryImageStateStore.csproj" />
+    <Project Path="src/Compze.Teventive.MemoryImageStateStore.MySql/Compze.Teventive.MemoryImageStateStore.MySql.csproj" />
+    <Project Path="src/Compze.Teventive.MemoryImageStateStore.PostgreSql/Compze.Teventive.MemoryImageStateStore.PostgreSql.csproj" />
+    <Project Path="src/Compze.Teventive.MemoryImageStateStore.MicrosoftSql/Compze.Teventive.MemoryImageStateStore.MicrosoftSql.csproj" />
+    <Project Path="src/Compze.Teventive.MemoryImageStateStore.Sqlite/Compze.Teventive.MemoryImageStateStore.Sqlite.csproj" />
     <Project Path="src/Compze.Teventive.MemoryImageStateStore.MemoryPack/Compze.Teventive.MemoryImageStateStore.MemoryPack.csproj" />
   </Folder>
   <Folder Name="/Compze.Teventive/TeventStore/">

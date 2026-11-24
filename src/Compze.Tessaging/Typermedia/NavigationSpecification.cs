@@ -18,7 +18,13 @@ public abstract class NavigationSpecification
    public static NavigationSpecification<TResult> Get<TResult>(IRemotableTuery<TResult> tuery) => NavigationSpecification<TResult>.Get(tuery);
    internal static NavigationSpecification<TResult> Post<TResult>(IAtMostOnceTypermediaTommand<TResult> typermediaTommand) => NavigationSpecification<TResult>.Post(typermediaTommand);
 
-   public void NavigateOn(IRemoteTypermediaNavigator busSession) => NavigateOnAsync(busSession).WaitUnwrappingException();
+   public void NavigateOn(IRemoteTypermediaNavigator busSession)
+   {
+      //todo:urgent: a synchronous wait on asynchronous work, through WaitUnwrappingException, which VSTHRD002 can't see: it
+      //   holds this thread, and stalls while the thread pool is busy. See
+      //   dev_docs/TODO/synchronous-paths-that-need-a-free-thread-pool-thread.md (Magnus, 2026-11-24).
+      NavigateOnAsync(busSession).WaitUnwrappingException();
+   }
    protected abstract Task NavigateOnAsync(IRemoteTypermediaNavigator busSession);
 
    class VoidTommand(IAtMostOnceTypermediaTommand tommand) : NavigationSpecification
@@ -31,7 +37,13 @@ public abstract class NavigationSpecification
 
 public abstract class NavigationSpecification<TResult>
 {
-   public TResult NavigateOn(IRemoteTypermediaNavigator busSession) => NavigateOnAsync(busSession).ResultUnwrappingException();
+   public TResult NavigateOn(IRemoteTypermediaNavigator busSession)
+   {
+      //todo:urgent: a synchronous wait on asynchronous work, through ResultUnwrappingException, which VSTHRD002 can't see: it
+      //   holds this thread, and stalls while the thread pool is busy. See
+      //   dev_docs/TODO/synchronous-paths-that-need-a-free-thread-pool-thread.md (Magnus, 2026-11-24).
+      return NavigateOnAsync(busSession).ResultUnwrappingException();
+   }
    internal abstract Task<TResult> NavigateOnAsync(IRemoteTypermediaNavigator busSession);
 
    public NavigationSpecification<TNext> Select<TNext>(Func<TResult, TNext> select) => new NavigationSpecification<TNext>.SelectTuery<TResult>(this, select);

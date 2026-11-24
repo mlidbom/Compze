@@ -65,7 +65,7 @@ public class Given_a_best_effort_endpoint_serving_typermedia_to_a_remote_client 
    protected override async Task InitializeAsyncInternal()
    {
       await _host.StartAsync().caf();
-      _client = await TypermediaTestClient.ConnectTo(_endpoint.Address!, registrar => registrar.RequireIntegrationTestTypeMappings()).caf();
+      _client = await TypermediaTestClient.ConnectToAsync(_endpoint.Address!, registrar => registrar.RequireIntegrationTestTypeMappings()).caf();
    }
 
    protected override async Task DisposeAsyncInternal()

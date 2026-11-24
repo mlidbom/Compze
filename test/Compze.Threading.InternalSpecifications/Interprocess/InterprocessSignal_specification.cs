@@ -10,6 +10,7 @@ using Compze.Underscore;
 using Compze.xUnitBDD;
 using Xunit;
 using static Compze.Must.MustActions;
+using Compze.Threading.Interprocess._internal;
 using Compze.Threading.Interprocess._private;
 
 // ReSharper disable InconsistentNaming
@@ -61,7 +62,7 @@ public class InterprocessSignal_specification : UniversalTestBase
          var afterAwaitingGate = IThreadGate.NewOpen(WaitTimeout.Seconds(5));
          var localBaseline = _baseline;
 
-         _runner.Run(() =>
+         _runner.Start(() =>
          {
             beforeAwaitingGate.AwaitPassThrough();
             // ReSharper disable once AccessToDisposedClosure

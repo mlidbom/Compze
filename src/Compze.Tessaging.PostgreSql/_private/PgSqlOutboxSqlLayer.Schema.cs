@@ -9,9 +9,9 @@ partial class PgSqlOutboxSqlLayer
 {
    const string PgSqlGuidType = "UUID";
 
-   public static string SchemaCreationSql(EndpointTableSet tables) =>
+   public static IReadOnlyList<string> SchemaCreationStatements(EndpointTableSet tables) =>
+   [
       $"""
-
        CREATE TABLE IF NOT EXISTS {tables.OutboxTessages}
        (
          {Tessage.GeneratedId}       bigint GENERATED ALWAYS AS IDENTITY NOT NULL,
@@ -22,9 +22,9 @@ partial class PgSqlOutboxSqlLayer
          PRIMARY KEY ({Tessage.GeneratedId}),
 
          CONSTRAINT IX_{tables.OutboxTessages}_Unique_{Tessage.TessageId} UNIQUE ( {Tessage.TessageId} )
-       );
-
-
+       )
+       """,
+      $"""
        CREATE TABLE  IF NOT EXISTS {tables.OutboxTessageDispatching}
        (
         {Dispatch.TessageId}                    {PgSqlGuidType} NOT NULL,
@@ -42,17 +42,18 @@ partial class PgSqlOutboxSqlLayer
 
          -- One position in a pair's delivery stream is one tessage: the loud backstop for the counter-assigned sequence.
          CONSTRAINT IX_{tables.Prefix}_OutboxStreamPosition UNIQUE ( {Dispatch.EndpointId}, {Dispatch.DeliveryStreamSequenceNumber} )
-       );
-
-       -- One row per receiver peer: the last sequence number assigned in that pair's delivery stream. The row's lock,
-       -- taken by the save transaction's increment, serializes the pair's commits - sequence order is commit order.
+       )
+       """,
+      //One row per receiver peer: the last sequence number assigned in that pair's delivery stream. The row's lock, taken by the save
+      //transaction's increment, serializes the pair's commits - sequence order is commit order.
+      $"""
        CREATE TABLE IF NOT EXISTS {tables.OutboxDeliveryStreamCounters}
        (
         {Counter.EndpointId}                 {PgSqlGuidType} NOT NULL,
         {Counter.LastAssignedSequenceNumber} bigint          NOT NULL,
 
         PRIMARY KEY ( {Counter.EndpointId} )
-       );
-
-       """;
+       )
+       """
+   ];
 }

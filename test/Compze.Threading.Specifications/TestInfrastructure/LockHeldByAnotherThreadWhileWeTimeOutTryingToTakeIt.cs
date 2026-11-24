@@ -27,7 +27,7 @@ sealed class LockHeldByAnotherThreadWhileWeTimeOutTryingToTakeIt : IDisposable
       if(stackTraceFetchTimeout.HasValue) lockDiagnostics.SetTimeToWaitForStackTrace(stackTraceFetchTimeout.Value);
 
       using var theLockIsHeld = new ManualResetEvent(false);
-      _holder = TaskCE.Run(() =>
+      _holder = TaskCE.RunOnDedicatedThreadAsync(() =>
       {
          var heldLock = takeLock();
          theLockIsHeld.Set();
@@ -38,9 +38,11 @@ sealed class LockHeldByAnotherThreadWhileWeTimeOutTryingToTakeIt : IDisposable
 
       //The lock is genuinely held and is not released until we say so, so this acquisition MUST time out. No race: the
       //timeout fires against a lock that is provably unavailable for its entire duration, whatever the timer resolution.
-      TheAcquisitionTimeoutException = Invoking(() => TaskCE.Run(takeLock).Wait())
+#pragma warning disable VSTHRD002 // The lock under specification is thread-affine: this thread waits for another thread's attempt, which is what this specifies.
+      TheAcquisitionTimeoutException = Invoking(() => TaskCE.RunAsync(takeLock).Wait())
                                       .Must().Throw<AggregateException>()
                                       .Which.InnerExceptions.Single();
+#pragma warning restore VSTHRD002
    }
 
    ///<summary>Releases the held lock and waits for the holder to finish disposing it. The disposal, running inside
@@ -49,7 +51,9 @@ sealed class LockHeldByAnotherThreadWhileWeTimeOutTryingToTakeIt : IDisposable
    internal void ReleaseTheHeldLock()
    {
       _releaseTheHeldLock.Set();
+#pragma warning disable VSTHRD002 // The holder, released, disposes the lock and ends; this waits for that, synchronously as the scenario runs.
       _holder.Wait();
+#pragma warning restore VSTHRD002
    }
 
    ///<summary>The held lock is disposed from inside this named method so the method's name is on the call stack the timeout
@@ -59,7 +63,9 @@ sealed class LockHeldByAnotherThreadWhileWeTimeOutTryingToTakeIt : IDisposable
    public void Dispose()
    {
       _releaseTheHeldLock.Set();
+#pragma warning disable VSTHRD002 // The holder, released, disposes the lock and ends; this waits for that, synchronously as the scenario runs.
       _holder.Wait();
+#pragma warning restore VSTHRD002
       _releaseTheHeldLock.Dispose();
    }
 }

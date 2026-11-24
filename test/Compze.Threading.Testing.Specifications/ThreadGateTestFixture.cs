@@ -39,7 +39,7 @@ class ThreadGateTestFixture : IDisposable
                        .ToList();
 
       _tasksPassingGate = _entrantTevents.Select(
-                                           entrantTevent => TaskCE.Run(
+                                           entrantTevent => TaskCE.RunAsync(
                                               () =>
                                               {
                                                  entrantTevent.HasStarted.Set();
@@ -64,6 +64,8 @@ class ThreadGateTestFixture : IDisposable
    public void Dispose()
    {
       Gate.Open();
+#pragma warning disable VSTHRD002 // The gate is open, so the entrants finish: the fixture waits for them in its synchronous Dispose.
       Task.WaitAll(_tasksPassingGate);
+#pragma warning restore VSTHRD002
    }
 }

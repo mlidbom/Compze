@@ -34,7 +34,13 @@ public class TestingTimeSourceAdapter
 
       public Unit Run(Action action) => Run(action.ToFunc());
 
-      public TResult Run<TResult>(Func<TResult> action) => RunAsync(action.AsAsync()).ResultUnwrappingException();
+      public TResult Run<TResult>(Func<TResult> action)
+      {
+         //todo:urgent: a synchronous wait on asynchronous work, through ResultUnwrappingException, which VSTHRD002 can't see: it
+         //   holds this thread, and stalls while the thread pool is busy. See
+         //   dev_docs/TODO/synchronous-paths-that-need-a-free-thread-pool-thread.md (Magnus, 2026-11-24).
+         return RunAsync(action.ToCompletedTaskFunc()).ResultUnwrappingException();
+      }
 
       public async Task<Unit> RunAsync(Func<Task> action) => await RunAsync(action.ToAsyncFunc()).caf();
 

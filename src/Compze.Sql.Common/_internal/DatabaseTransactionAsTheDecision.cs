@@ -11,14 +11,15 @@ namespace Compze.Sql.Common._internal;
 /// MySqlConnector's own enlistment does, commits after the participants told before it, which have then acted on a commit that<br/>
 /// hadn't happened. And when that commit fails, the failure throws out of the transaction's notifications: the participants after<br/>
 /// it are never told, the transaction never completes, and what waits for its completion, such as the connection pool's connection<br/>
-/// for the transaction and a unit of work's locks, waits for ever. SQL Server's and PostgreSQL's connections commit as the decision<br/>
-/// by themselves.</remarks>
+/// for the transaction and a unit of work's locks, waits for ever. Npgsql's own enlistment commits as the decision only while it is<br/>
+/// the transaction's one volatile participant, and otherwise prepares a two-phase commit, which a server refuses by default. SQL<br/>
+/// Server's connection commits as the decision by itself, through SqlClient's own enlistment.</remarks>
 ///<remarks>It takes part as the transaction's durable participant. .NET asks that to commit in a single phase, as the decision, once<br/>
 /// every volatile participant has prepared, however many there are, and tells each of them the outcome after. A transaction has one<br/>
 /// durable participant: a second, such as another database's connection, makes it distributed, which .NET refuses unless distributed<br/>
-/// transactions are allowed. A distributed transaction commits in two phases, and asks this transaction to prepare, which it refuses:<br/>
-/// see <see cref="Prepare"/>.<br/>
-/// Disposing it ends it: a database transaction that hasn't committed rolls back as it is disposed, in both of the providers Compze<br/>
+/// transactions are allowed: see <see cref="DurableResourceAlreadyInTheTransactionException"/>. A distributed transaction commits in<br/>
+/// two phases, and asks this transaction to prepare, which it refuses: see <see cref="Prepare"/>.<br/>
+/// Disposing it ends it: a database transaction that hasn't committed rolls back as it is disposed, in each of the providers Compze<br/>
 /// uses this for.</remarks>
 abstract class DatabaseTransactionAsTheDecision : ISinglePhaseNotification, IDisposable
 {
@@ -48,12 +49,18 @@ abstract class DatabaseTransactionAsTheDecision : ISinglePhaseNotification, IDis
    internal void Includes(DbCommand command) => command.Transaction = _databaseTransaction;
 
    ///<summary>Has this database transaction take part in <see cref="AmbientTransaction"/> as its decision, or, if the ambient transaction<br/>
-   /// refuses it, ends it, and throws what refused it.</summary>
+   /// refuses it, ends it, and throws what refused it: a <see cref="DurableResourceAlreadyInTheTransactionException"/> when the ambient<br/>
+   /// transaction holds a durable resource already.</summary>
    protected void TakePartInTheAmbientTransaction()
    {
       try
       {
          AmbientTransaction.EnlistDurable(ResourceManagerIdentifier, this, EnlistmentOptions.None);
+      }
+      catch(NotSupportedException refusal) //.NET's refusal to make the transaction distributed, which a second durable resource requires.
+      {
+         Dispose();
+         throw new DurableResourceAlreadyInTheTransactionException(_connectionDescription, refusal);
       }
       catch
       {
@@ -61,6 +68,19 @@ abstract class DatabaseTransactionAsTheDecision : ISinglePhaseNotification, IDis
          throw;
       }
    }
+
+   ///<summary>The isolation level a database transaction begins at to take part in <paramref name="ambientTransaction"/>: the ambient<br/>
+   /// transaction's own.</summary>
+   protected static System.Data.IsolationLevel IsolationLevelOf(Transaction ambientTransaction) =>
+      ambientTransaction.IsolationLevel switch
+      {
+         IsolationLevel.ReadCommitted   => System.Data.IsolationLevel.ReadCommitted,
+         IsolationLevel.ReadUncommitted => System.Data.IsolationLevel.ReadUncommitted,
+         IsolationLevel.RepeatableRead  => System.Data.IsolationLevel.RepeatableRead,
+         IsolationLevel.Serializable    => System.Data.IsolationLevel.Serializable,
+         IsolationLevel.Snapshot        => System.Data.IsolationLevel.Snapshot,
+         _                              => throw new NotSupportedException($"A database transaction can't take part in a transaction at the isolation level {ambientTransaction.IsolationLevel}.")
+      };
 
    ///<summary>Whether the database certainly didn't commit, after its commit threw <paramref name="commitFailure"/>: an error the database<br/>
    /// answered the commit with, as opposed to a connection that broke before the answer came, which leaves unknown whether it committed.</summary>

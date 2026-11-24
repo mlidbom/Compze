@@ -14,7 +14,7 @@ namespace Compze.Tessaging._private.Transport;
    public string Detail { get; init; } = "";
    public string Instance { get; init; } = "";
 
-   public static async Task<ProblemDetails> FromResponse(HttpResponseMessage response)
+   public static async Task<ProblemDetails> FromResponseAsync(HttpResponseMessage response)
    {
       try
       {

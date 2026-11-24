@@ -15,7 +15,7 @@ namespace Compze.Internals.SystemCE.ThreadingCE.Async;
 /// <see cref="Task{TShared}"/> that produces it. The synchronous <see cref="Locked{TResult}"/> and asynchronous<br/>
 /// <see cref="LockedAsync{TResult}"/> share the one lock, so sync and async operations on the shared object serialize against each<br/>
 /// other too.</remarks>
-public interface IAsyncShared<out TShared> : IDisposable
+public interface IAsyncShared<out TShared>
 {
    ///<summary>Awaits the shared object, acquires the lock, passes the object to <paramref name="func"/>, awaits and returns its result, then releases the lock.</summary>
    Task<TResult> LockedAsync<TResult>(Func<TShared, Task<TResult>> func);
@@ -47,8 +47,10 @@ public interface IAsyncShared
       }
 
       public TResult Locked<TResult>(Func<TShared, TResult> func) =>
+         //todo:urgent: a synchronous wait on the shared object's task, while the asynchronous path still opens it: it holds the
+         //   calling thread, and stalls while the thread pool is busy. See dev_docs/TODO/synchronous-paths-that-need-a-free-thread-pool-thread.md (Magnus, 2026-11-24).
+#pragma warning disable VSTHRD002 // The synchronous access: the shared object's task is complete, except while the asynchronous path still opens it.
          _serializedAccess.Locked(() => func(_shared.GetAwaiter().GetResult()));
-
-      public void Dispose() => _serializedAccess.Dispose();
+#pragma warning restore VSTHRD002
    }
 }

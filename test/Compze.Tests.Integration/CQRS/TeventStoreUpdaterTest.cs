@@ -373,7 +373,7 @@ public class TeventStoreUpdaterTest : UniversalTestBase
       var withinTransactionAfterReadGate = IThreadGate.NewClosed(WaitTimeout.Seconds(30));
       await using var runner = new TestingTaskRunner(30.Seconds());
 
-      runner.Run(ReadUserHistory, ReadUserHistory);
+      runner.Start(ReadUserHistory, ReadUserHistory);
       (await withinTransactionAfterReadGate.TryAwaitQueueLengthEqualToAsync(2)).Must().BeTrue();
       withinTransactionAfterReadGate.Open();
 
@@ -503,7 +503,7 @@ public class TeventStoreUpdaterTest : UniversalTestBase
       var changeEmailSection = IGatedCodeSection.NewClosed(WaitTimeout.Seconds(30), "changeEmailSection");
 
       const int threads = 2;
-      var tasks = 1.Through(threads).Select(_ => TaskCE.RunOnDedicatedThread(UpdateEmail)).ToArray();
+      var tasks = 1.Through(threads).Select(_ => TaskCE.RunOnDedicatedThreadAsync(UpdateEmail)).ToArray();
 
       await getHistorySection.LetOneThreadPassAsync();
       await changeEmailSection.LetOneThreadEnterAndReachExitAsync();
@@ -548,7 +548,7 @@ public class TeventStoreUpdaterTest : UniversalTestBase
       var firstWasCompletingWhenTheSecondGotItsAnswer = false;
       var secondFoundTheUser = false;
 
-      var first = TaskCE.RunOnDedicatedThread(() => UseInTransactionalScope(session =>
+      var first = TaskCE.RunOnDedicatedThreadAsync(() => UseInTransactionalScope(session =>
       {
          session.TryGetForUpdate(userId, out User? _).Must().BeFalse();
          firstHasLookedForTheUser.AwaitPassThrough();
@@ -558,7 +558,7 @@ public class TeventStoreUpdaterTest : UniversalTestBase
       }));
       await firstHasLookedForTheUser.AwaitPassedThroughCountEqualToAsync(1);
 
-      var second = TaskCE.RunOnDedicatedThread(() => UseInTransactionalScope(session =>
+      var second = TaskCE.RunOnDedicatedThreadAsync(() => UseInTransactionalScope(session =>
       {
          secondFoundTheUser = session.TryGetForUpdate(userId, out User? _);
          firstWasCompletingWhenTheSecondGotItsAnswer = Volatile.Read(ref firstIsCompleting);
@@ -588,7 +588,7 @@ public class TeventStoreUpdaterTest : UniversalTestBase
 
       const int threads = 2;
 
-      var tasks = 1.Through(threads).Select(_ => TaskCE.RunOnDedicatedThread(UpdateEmail)).ToArray();
+      var tasks = 1.Through(threads).Select(_ => TaskCE.RunOnDedicatedThreadAsync(UpdateEmail)).ToArray();
 
       changeEmailSection.EntranceGate.Open();
       await changeEmailSection.EntranceGate.AwaitPassedThroughCountEqualToAsync(2);

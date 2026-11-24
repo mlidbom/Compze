@@ -167,7 +167,7 @@ public abstract partial class EndpointHostTestBase : UniversalTestBase
       //assertions, instant binds within the deliberately short handler-availability patience - so the mutual first contact is
       //awaited explicitly instead of racing the reconciliation.
       await Host.AwaitEndpointsHaveMetEachOtherAsync();
-      Client = await TypermediaTestClient.ConnectTo(BackendEndPoint.Address!, registrar => registrar.RequireCommonTestTypeMappings());
+      Client = await TypermediaTestClient.ConnectToAsync(BackendEndPoint.Address!, registrar => registrar.RequireCommonTestTypeMappings());
    }
 
    protected void CloseGates() => AllGates.ForEach(gate => gate.Close());

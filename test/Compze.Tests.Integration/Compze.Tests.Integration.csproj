@@ -105,6 +105,34 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_Teventive_MemoryImageStateStore_MemoryPack)' != 'true'">
     <ProjectReference Include="..\..\src\Compze.Teventive.MemoryImageStateStore.MemoryPack\Compze.Teventive.MemoryImageStateStore.MemoryPack.csproj" />
   </ItemGroup>
+  <!-- Compze.Teventive.MemoryImageStateStore.MicrosoftSql — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Teventive_MemoryImageStateStore_MicrosoftSql)' == 'true'">
+    <PackageReference Include="Compze.Teventive.MemoryImageStateStore.MicrosoftSql" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Teventive_MemoryImageStateStore_MicrosoftSql)' != 'true'">
+    <ProjectReference Include="..\..\src\Compze.Teventive.MemoryImageStateStore.MicrosoftSql\Compze.Teventive.MemoryImageStateStore.MicrosoftSql.csproj" />
+  </ItemGroup>
+  <!-- Compze.Teventive.MemoryImageStateStore.MySql — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Teventive_MemoryImageStateStore_MySql)' == 'true'">
+    <PackageReference Include="Compze.Teventive.MemoryImageStateStore.MySql" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Teventive_MemoryImageStateStore_MySql)' != 'true'">
+    <ProjectReference Include="..\..\src\Compze.Teventive.MemoryImageStateStore.MySql\Compze.Teventive.MemoryImageStateStore.MySql.csproj" />
+  </ItemGroup>
+  <!-- Compze.Teventive.MemoryImageStateStore.PostgreSql — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Teventive_MemoryImageStateStore_PostgreSql)' == 'true'">
+    <PackageReference Include="Compze.Teventive.MemoryImageStateStore.PostgreSql" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Teventive_MemoryImageStateStore_PostgreSql)' != 'true'">
+    <ProjectReference Include="..\..\src\Compze.Teventive.MemoryImageStateStore.PostgreSql\Compze.Teventive.MemoryImageStateStore.PostgreSql.csproj" />
+  </ItemGroup>
+  <!-- Compze.Teventive.MemoryImageStateStore.Sqlite — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Teventive_MemoryImageStateStore_Sqlite)' == 'true'">
+    <PackageReference Include="Compze.Teventive.MemoryImageStateStore.Sqlite" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Teventive_MemoryImageStateStore_Sqlite)' != 'true'">
+    <ProjectReference Include="..\..\src\Compze.Teventive.MemoryImageStateStore.Sqlite\Compze.Teventive.MemoryImageStateStore.Sqlite.csproj" />
+  </ItemGroup>
   <!-- Compze.Teventive.TeventStore.Abstractions — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Teventive_TeventStore_Abstractions)' == 'true'">
     <PackageReference Include="Compze.Teventive.TeventStore.Abstractions" Version="*-*" />

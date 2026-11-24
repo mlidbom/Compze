@@ -32,25 +32,25 @@ class TransportRequestController : Controller
    TransportRequestController(TransportRequestHandlerMap handlers) => _handlers = handlers;
 
    [HttpPost(HttpConstants.Routes.Tessaging.Tevent)]
-   public Task<IActionResult> ExactlyOnceTevent() => DispatchAsync(TransportRequestKind.ExactlyOnceTevent);
+   public Task<IActionResult> ExactlyOnceTeventAsync() => DispatchAsync(TransportRequestKind.ExactlyOnceTevent);
 
    [HttpPost(HttpConstants.Routes.Tessaging.Tommand)]
-   public Task<IActionResult> ExactlyOnceTommand() => DispatchAsync(TransportRequestKind.ExactlyOnceTommand);
+   public Task<IActionResult> ExactlyOnceTommandAsync() => DispatchAsync(TransportRequestKind.ExactlyOnceTommand);
 
    [HttpPost(HttpConstants.Routes.Tessaging.BestEffortTevent)]
-   public Task<IActionResult> BestEffortTevent() => DispatchAsync(TransportRequestKind.BestEffortTevent);
+   public Task<IActionResult> BestEffortTeventAsync() => DispatchAsync(TransportRequestKind.BestEffortTevent);
 
    [HttpPost(HttpConstants.Routes.Typermedia.Tuery)]
-   public Task<IActionResult> TypermediaTuery() => DispatchAsync(TransportRequestKind.TypermediaTuery);
+   public Task<IActionResult> TypermediaTueryAsync() => DispatchAsync(TransportRequestKind.TypermediaTuery);
 
    [HttpPost(HttpConstants.Routes.Typermedia.TommandWithResult)]
-   public Task<IActionResult> TypermediaTommandWithResult() => DispatchAsync(TransportRequestKind.TypermediaTommandWithResult);
+   public Task<IActionResult> TypermediaTommandWithResultAsync() => DispatchAsync(TransportRequestKind.TypermediaTommandWithResult);
 
    [HttpPost(HttpConstants.Routes.Typermedia.TommandNoResult)]
-   public Task<IActionResult> TypermediaVoidTommand() => DispatchAsync(TransportRequestKind.TypermediaVoidTommand);
+   public Task<IActionResult> TypermediaVoidTommandAsync() => DispatchAsync(TransportRequestKind.TypermediaVoidTommand);
 
    [HttpPost(HttpConstants.Routes.EndpointInformation.Query)]
-   public Task<IActionResult> EndpointDiscoveryQuery() => DispatchAsync(TransportRequestKind.EndpointDiscoveryQuery);
+   public Task<IActionResult> EndpointDiscoveryQueryAsync() => DispatchAsync(TransportRequestKind.EndpointDiscoveryQuery);
 
    async Task<IActionResult> DispatchAsync(TransportRequestKind kind)
    {
@@ -58,7 +58,7 @@ class TransportRequestController : Controller
 
       try
       {
-         var responsePayload = await RunOutsideRequestContext(() => _handlers.HandleAsync(request)).caf();
+         var responsePayload = await RunOutsideRequestContextAsync(() => _handlers.HandleAsync(request)).caf();
          return Ok(responsePayload);
       }
       catch(Exception exception)
@@ -92,7 +92,7 @@ class TransportRequestController : Controller
 
    ///<summary>Handlers run outside the MVC request's execution context, so no ambient request state flows into them — the same<br/>
    /// clean environment the named-pipe transport server gives the very same handlers.</summary>
-   static Task<string> RunOutsideRequestContext(Func<Task<string>> handleRequest)
+   static Task<string> RunOutsideRequestContextAsync(Func<Task<string>> handleRequest)
    {
       using(ExecutionContext.SuppressFlow())
          return Task.Run(handleRequest);

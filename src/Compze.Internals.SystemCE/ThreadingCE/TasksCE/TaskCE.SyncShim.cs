@@ -14,7 +14,9 @@ public static partial class TaskCE
    {
       try
       {
+#pragma warning disable VSTHRD002 // The bridge itself: each caller waits synchronously, and has its todo:urgent where it calls.
          return task.Result;
+#pragma warning restore VSTHRD002
       }
       catch(AggregateException exception)
       {
@@ -40,7 +42,9 @@ public static partial class TaskCE
    {
       try
       {
+#pragma warning disable VSTHRD002 // The bridge itself: each caller waits synchronously, and has its todo:urgent where it calls.
          task.Wait();
+#pragma warning restore VSTHRD002
          return;
       }
       catch(AggregateException exception)

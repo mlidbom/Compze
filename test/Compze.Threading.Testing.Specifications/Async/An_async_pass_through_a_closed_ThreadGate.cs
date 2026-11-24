@@ -75,7 +75,7 @@ public class An_async_pass_through_a_closed_ThreadGate : UniversalTestBase
    {
       readonly Task _synchronousPass;
 
-      public and_a_synchronous_pass_on_another_thread() => _synchronousPass = TaskCE.RunOnDedicatedThread(() => _gate.AwaitPassThrough());
+      public and_a_synchronous_pass_on_another_thread() => _synchronousPass = TaskCE.RunOnDedicatedThreadAsync(() => _gate.AwaitPassThrough());
 
       protected override async Task InitializeAsyncInternal()
       {

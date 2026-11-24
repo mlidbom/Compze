@@ -38,7 +38,7 @@ public class When_logging_at_a_level_that_is_not_enabled
       [XF] public void no_log_call_is_recorded() => _backend.Captured.Must().BeEmpty();
    }
 
-   public class via_an_interpolated_string_handler_while_logging_is_globally_suppressed : When_logging_at_a_level_that_is_not_enabled
+   public class via_an_interpolated_string_handler_while_logging_is_globally_suppressed : When_logging_at_a_level_that_is_not_enabled, IAsyncLifetime
    {
       int _expensiveExpressionEvaluationCount;
       int ExpensiveExpression() { _expensiveExpressionEvaluationCount++; return 42; }
@@ -46,12 +46,14 @@ public class When_logging_at_a_level_that_is_not_enabled
       readonly CapturingLogBackend _backend = CapturingLogBackend.Install();
       readonly ILogger _logger = CompzeLogger.For<When_logging_at_a_level_that_is_not_enabled>().WithLogLevel(LogLevel.Debug);
 
-      public via_an_interpolated_string_handler_while_logging_is_globally_suppressed()
-         => CompzeLogger.SuppressLoggingWhileRunningAsync(() =>
+      public async ValueTask InitializeAsync()
+         => await CompzeLogger.SuppressLoggingWhileRunningAsync(() =>
          {
             _logger.Info($"value is {ExpensiveExpression()}");
             return Task.CompletedTask;
-         }).GetAwaiter().GetResult();
+         });
+
+      public ValueTask DisposeAsync() => ValueTask.CompletedTask;
 
       [XF] public void no_log_call_is_recorded() => _backend.Captured.Must().BeEmpty();
       [XF] public void expressions_inside_the_holes_are_never_evaluated() => _expensiveExpressionEvaluationCount.Must().Be(0);

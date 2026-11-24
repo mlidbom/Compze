@@ -45,12 +45,10 @@ partial class Inbox
                $"Shutdown drain: the inbox did not finish processing every received tessage within {patience} (waiting to execute: {implementation.WaitingCount}, executing: {implementation.ExecutingCount}). Proceeding with teardown - a handler is likely hung."));
          }
 
-         internal Task<object?> EnqueueTessageTask(TransportTessage.InComing tessage) => _implementation.Update(implementation =>
+         internal void EnqueueTessageTask(TransportTessage.InComing tessage) => _implementation.Update(implementation =>
          {
             this.Log().Debug($"Enqueueing {tessage.TessageTypeEnum} tessage {tessage.TessageId}");
-            var inflightTessage = new HandlerExecutionTask(tessage, this, _taskRunner, _tessageStorage, _scopeFactory, _executor);
-            implementation.EnqueueTessageTask(inflightTessage);
-            return inflightTessage.Task;
+            implementation.EnqueueTessageTask(new HandlerExecutionTask(tessage, this, _taskRunner, _tessageStorage, _scopeFactory, _executor));
          });
 
          void Succeeded(HandlerExecutionTask queuedTessageInformation) => _implementation.Update(implementation => implementation.Succeeded(queuedTessageInformation));

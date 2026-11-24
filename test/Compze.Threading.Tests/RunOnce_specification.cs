@@ -30,7 +30,7 @@ public static class RunOnce_specification
          executionCount.Must().Be(1);
       }
 
-      [XF] public void Concurrent_caller_waits_for_first_call_to_complete()
+      [XF] public async Task Concurrent_caller_waits_for_first_call_to_complete()
       {
          var runOnce = new RunOnce();
          using var actionStarted = new ManualResetEventSlim(false);
@@ -56,13 +56,13 @@ public static class RunOnce_specification
          });
 
          allowActionToComplete.Set();
-         firstCall.Wait();
-         secondCall.Wait();
+         await firstCall;
+         await secondCall;
 
          events.ToArray().Must().SequenceEqual(["first_completed", "second_returned"]);
       }
 
-      [XF] public void Concurrent_caller_receives_exception_from_first_call()
+      [XF] public async Task Concurrent_caller_receives_exception_from_first_call()
       {
          var runOnce = new RunOnce();
          using var actionStarted = new ManualResetEventSlim(false);
@@ -86,8 +86,8 @@ public static class RunOnce_specification
             ex.InnerExceptions[0].Message.Must().Contain("Schema creation failed");
          });
 
-         firstCall.Wait();
-         secondCall.Wait();
+         await firstCall;
+         await secondCall;
       }
    }
 

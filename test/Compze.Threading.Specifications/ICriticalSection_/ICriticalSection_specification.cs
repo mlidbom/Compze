@@ -71,7 +71,7 @@ public class ICriticalSection_specification : UniversalTestBase
          var criticalSection = _factory.Create(LockTimeout.Seconds(30));
          var insideLockGate = IThreadGate.NewClosed(WaitTimeout.Seconds(30), "insideLock");
 
-         _runner.Run(
+         _runner.Start(
             () => criticalSection.Locked(insideLockGate.AwaitPassThrough),
             () => criticalSection.Locked(insideLockGate.AwaitPassThrough));
 
@@ -95,7 +95,9 @@ public class ICriticalSection_specification : UniversalTestBase
          try { criticalSection.Locked<int>(() => throw new InvalidOperationException()); }
          catch(InvalidOperationException) {}
 
-         TaskCE.Run(() => criticalSection.Locked(() => {})).Wait();
+#pragma warning disable VSTHRD002 // The lock under specification is thread-affine: this thread waits for another thread's attempt, which is what this specifies.
+         TaskCE.RunAsync(() => criticalSection.Locked(() => {})).Wait();
+#pragma warning restore VSTHRD002
       }
 
       [ICriticalSectionMatrix] public void owning_thread_can_reenter_and_lock_is_only_released_when_outermost_lock_is_disposed()
@@ -105,11 +107,15 @@ public class ICriticalSection_specification : UniversalTestBase
          {
             using(criticalSection.TakeLock()) {}
 
-            Invoking(() => TaskCE.Run(() => criticalSection.TakeLock(timeout: LockTimeout.Seconds(.1))).Wait())
+#pragma warning disable VSTHRD002 // The lock under specification is thread-affine: this thread waits for another thread's attempt, which is what this specifies.
+            Invoking(() => TaskCE.RunAsync(() => criticalSection.TakeLock(timeout: LockTimeout.Seconds(.1))).Wait())
               .Must().Throw<Exception>();
+#pragma warning restore VSTHRD002
          }
 
-         TaskCE.Run(() => criticalSection.TakeLock(timeout: LockTimeout.Milliseconds(0))).Wait();
+#pragma warning disable VSTHRD002 // The lock under specification is thread-affine: this thread waits for another thread's attempt, which is what this specifies.
+         TaskCE.RunAsync(() => criticalSection.TakeLock(timeout: LockTimeout.Milliseconds(0))).Wait();
+#pragma warning restore VSTHRD002
       }
    }
 
@@ -140,7 +146,7 @@ public class ICriticalSection_specification : UniversalTestBase
 
          var blockingLock = criticalSection.TakeLock();
 
-         _runner.Run(() =>
+         _runner.Start(() =>
          {
             using(criticalSection.TakeLock()) {}
          });

@@ -114,11 +114,11 @@ public class InterprocessObjectTests : UniversalTestBase
       var shared2 = CreateAndDeleteFileWhenTestCompletes(name);
       // ReSharper disable AccessToDisposedClosure
       var tasks = Task.WhenAll(
-         TaskCE.RunOnDedicatedThread(() => shared1.Update(_ => { updateGate.AwaitPassThrough(); })),
-         TaskCE.RunOnDedicatedThread(() => conflictingUpdateSectionSameInstance.Execute(() => shared1.Update(_ => {}))),
-         TaskCE.RunOnDedicatedThread(() => conflictingGetCopySectionSameInstance.Execute(() => shared1.Read(_ => {}))),
-         TaskCE.RunOnDedicatedThread(() => conflictingUpdateSectionOtherInstance.Execute(() => shared2.Update(_ => {}))),
-         TaskCE.RunOnDedicatedThread(() => conflictingGetCopySectionOtherInstance.Execute(() => shared2.Read(_ => {}))));
+         TaskCE.RunOnDedicatedThreadAsync(() => shared1.Update(_ => { updateGate.AwaitPassThrough(); })),
+         TaskCE.RunOnDedicatedThreadAsync(() => conflictingUpdateSectionSameInstance.Execute(() => shared1.Update(_ => {}))),
+         TaskCE.RunOnDedicatedThreadAsync(() => conflictingGetCopySectionSameInstance.Execute(() => shared1.Read(_ => {}))),
+         TaskCE.RunOnDedicatedThreadAsync(() => conflictingUpdateSectionOtherInstance.Execute(() => shared2.Update(_ => {}))),
+         TaskCE.RunOnDedicatedThreadAsync(() => conflictingGetCopySectionOtherInstance.Execute(() => shared2.Read(_ => {}))));
 
       await updateGate.AwaitQueueLengthEqualToAsync(1);
       foreach(var section in conflictingSections)

@@ -53,7 +53,7 @@ partial class TessagingConnection
          //Attaching from inside the loop instead made the queue start accepting only once a freshly spawned BelowNormal thread
          //got scheduled, and a not-queued-for peer's tevents published in that window were dropped with the connection live.
          _peerQueue.AttachDrainingStream();
-         _sendLoop = _connection._taskRunner.RunOnNamedThread($"BestEffortDelivery-{_connection.EndpointInformation.Id.Value:N}", SendLoop, ThreadPriority.BelowNormal);
+         _sendLoop = _connection._taskRunner.RunOnNamedThreadAsync($"BestEffortDelivery-{_connection.EndpointInformation.Id.Value:N}", SendLoop, ThreadPriority.BelowNormal);
       }
 
       ///<summary>This connection stops being the peer's delivery path — called as delivery stops, so the queue stops accepting<br/>
@@ -98,7 +98,9 @@ partial class TessagingConnection
 
                try
                {
+#pragma warning disable VSTHRD002 // On the delivery stream's own named thread (RunOnNamedThreadAsync): the wait holds no thread-pool thread.
                   _connection._transportMessagePoster.PostAsync(pending, _connection.RemoteAddress, cancellationToken: _connection._cancellationSource.Token).GetAwaiter().GetResult();
+#pragma warning restore VSTHRD002
                   this.Log().Debug($"Delivered best-effort tessage {pending.TessageId} to endpoint {_connection.EndpointInformation.Id}");
                }
 #pragma warning disable CA1031 // Background thread, and the failure policies below ARE the best-effort tier's handling of every delivery failure.
@@ -153,7 +155,9 @@ partial class TessagingConnection
 
             try
             {
+#pragma warning disable VSTHRD002 // On the delivery stream's own named thread (RunOnNamedThreadAsync): the wait holds no thread-pool thread.
                _connection._endpointDiscoveryQueryTransport.GetAsync(new EndpointInformationQuery(), _connection.RemoteAddress, _connection._cancellationSource.Token).GetAwaiter().GetResult();
+#pragma warning restore VSTHRD002
                this.Log().Info($"Endpoint {_connection.EndpointInformation.Id} answered the probe; best-effort delivery resumes with the queued remainder.");
                return;
             }

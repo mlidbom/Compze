@@ -28,8 +28,8 @@ A **closed** gate blocks threads. You control exactly when and how many pass.
 var gate = IThreadGate.NewClosed(WaitTimeout.Seconds(5), "barrier");
 
 // Threads block at `AwaitPassThrough`
-runner.Run(() => { gate.AwaitPassThrough(); DoWork(); });
-runner.Run(() => { gate.AwaitPassThrough(); DoWork(); });
+runner.Start(() => { gate.AwaitPassThrough(); DoWork(); });
+runner.Start(() => { gate.AwaitPassThrough(); DoWork(); });
 
 // Wait until both threads are queued
 gate.AwaitQueueLengthEqualTo(2);
@@ -52,7 +52,7 @@ An **open** gate lets threads through immediately but still records every pass-t
 var beforeWork = IThreadGate.NewOpen(WaitTimeout.Seconds(5), "beforeWork");
 var afterWork  = IThreadGate.NewOpen(WaitTimeout.Seconds(5), "afterWork");
 
-runner.Run(() =>
+runner.Start(() =>
 {
    beforeWork.AwaitPassThrough();
    DoSomethingThatMightBlock();
@@ -165,7 +165,7 @@ Pairs an entrance gate and an exit gate around a block of code. Lets you control
 var section = IGatedCodeSection.NewClosed(WaitTimeout.Seconds(5), "mySection");
 
 // Threads enter the section by calling Enter()
-runner.Run(() => section.Execute(() => DoWork()));
+runner.Start(() => section.Execute(() => DoWork()));
 ```
 
 Since both gates start closed, the thread blocks at the entrance. You then control the flow:
@@ -205,7 +205,7 @@ Or open both gates for transparent instrumentation:
 ```csharp
 var section = IGatedCodeSection.NewOpen(WaitTimeout.Seconds(5), "observe");
 
-runner.Run(() => section.Execute(() => DoWork()));
+runner.Start(() => section.Execute(() => DoWork()));
 
 // Wait for the thread to enter, then exit
 section.EntranceGate.AwaitPassedThroughCountEqualTo(1);
@@ -223,15 +223,18 @@ it awaits.
 ```csharp
 using var runner = TestingTaskRunner.WithTimeout(10.Seconds());
 
-runner.Run(() => DoWork());
-runner.Run(
+runner.Start(() => DoWork());
+runner.Start(
    () => DoFirstThing(),
    () => DoSecondThing()
 );
-runner.Run(async () => await DoSomethingAsync());
+runner.Start(async () => await DoSomethingAsync());
 
-// On Dispose: waits for all tasks to complete within timeout,
-// throws AggregateException if any task failed or timed out
+// RunAsync returns the actor's task, for a test that awaits that actor itself.
+await runner.RunAsync(() => DoWork()).WaitAsync(5.Seconds());
+
+// On Dispose: waits for every actor to complete within the timeout,
+// rethrows the exception of the first that failed, or throws a TimeoutException
 ```
 
 ## Putting It All Together
@@ -245,7 +248,7 @@ A realistic example testing that a blocking method does not return until explici
    var beforeAwaitingGate = IThreadGate.NewOpen(WaitTimeout.Seconds(5));
    var afterAwaitingGate  = IThreadGate.NewOpen(WaitTimeout.Seconds(5));
 
-   _runner.Run(() =>
+   _runner.Start(() =>
    {
       beforeAwaitingGate.AwaitPassThrough();     // instrumentation: "I'm about to block"
       signal.TryAwait(TimeSpan.FromSeconds(2));  // the blocking call under test

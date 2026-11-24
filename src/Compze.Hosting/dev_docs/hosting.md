@@ -298,7 +298,7 @@ from clones of one root container, so they share the test database pool and seri
 waits until no tessages are in flight — transport deliveries and queued tevent observations alike, since the
 engines' observation dispatch reports to the tracker — and rethrows background exceptions no assertion
 observed: a test cannot pass while silently dropping in-flight work or a throwing observer's failure
-(`DisposeAsyncWithoutWaitingForEndpointsToBeAtRest` opts out, for tests that deliberately leave work
+(`DisposeWithoutWaitingForEndpointsToBeAtRestAsync` opts out, for tests that deliberately leave work
 scheduled). A specification whose very next act rides the host's endpoints having discovered each other —
 tevent fan-out membership, peer-memory assertions — awaits `AwaitEndpointsHaveMetEachOtherAsync()` after
 starting, instead of racing the reconciliation.

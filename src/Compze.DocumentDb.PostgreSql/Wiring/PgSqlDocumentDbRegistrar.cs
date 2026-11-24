@@ -13,7 +13,7 @@ public static class PgSqlDocumentDbRegistrar
 {
    public static IComponentRegistrar PgSqlDocumentDbSqlLayer(this IComponentRegistrar registrar) =>
       registrar.PgSqlTypeIdInterner()
-               .PgSqlSchemaContribution(Layer.SchemaCreationSql)
+               .PgSqlSchemaContribution(Layer.SchemaCreationStatements)
                .Register(
          Singleton.For<IDocumentDbSqlLayer>()
                   .CreatedBy((IPgSqlConnectionPool connectionProvider, PgSqlSqlLayerSchemaManager schemaManager, ITypeIdInterner typeIdInterner) => new Layer(connectionProvider, schemaManager, typeIdInterner)));

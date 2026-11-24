@@ -39,7 +39,11 @@ public sealed class MicrosoftContainer : DependencyInjectionContainer, IRootReso
       var scope = _serviceProvider.CreateAsyncScope();
       var scopeResolver = scope.ServiceProvider.GetRequiredService<ScopeResolver>();
 
+      //todo:urgent: blocks on DisposeAsync. Decided 2026-11-14: a synchronous Dispose throws here instead, as
+      //   dev_docs/TODO/container-disposal-of-async-only-components.md says (Magnus, 2026-11-24).
+#pragma warning disable VSTHRD002 // A synchronous Dispose of a component that is only asynchronously disposable.
       return new Scope(scopeResolver, () => scope.DisposeAsync().AsTask().GetAwaiter().GetResult());
+#pragma warning restore VSTHRD002
    }
 
    IServiceProvider IMicrosoftContainerInternals.ServiceProvider => _serviceProvider;
@@ -49,7 +53,11 @@ public sealed class MicrosoftContainer : DependencyInjectionContainer, IRootReso
       if(!_isDisposed)
       {
          _isDisposed = true;
+         //todo:urgent: blocks on DisposeAsync. Decided 2026-11-14: a synchronous Dispose throws here instead, as
+         //   dev_docs/TODO/container-disposal-of-async-only-components.md says (Magnus, 2026-11-24).
+#pragma warning disable VSTHRD002 // A synchronous Dispose of a component that is only asynchronously disposable.
          _serviceProvider.DisposeAsync().AsTask().GetAwaiter().GetResult();
+#pragma warning restore VSTHRD002
       }
    }
 

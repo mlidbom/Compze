@@ -50,12 +50,14 @@ public static class MustActions
     /// <summary>Begins an assertion chain over an async <paramref name="func"/>, e.g. <c>.Must().ThrowAsync&lt;TException&gt;()</c>.</summary>
     public static IAssertionContext<Func<Task>> Must<T>([InstantHandle] this Func<Task<T>> func, [CallerArgumentExpression(nameof(func))] string expression = null!) => InvokingAsync(func, expression).Must();
 
+#pragma warning disable VSTHRD200 // Async names the action it captures, an async one, as Invoking names a synchronous one: the spec it returns is not awaited (Magnus, 2026-11-24).
     /// <summary>Captures the async <paramref name="action"/> so it can be asserted to throw.</summary>
     public static AsyncActionSpec InvokingAsync([InstantHandle] Func<Task> action, [CallerArgumentExpression(nameof(action))] string expression = null!) => new(action, expression);
 
    /// <summary>Captures the async invocation of <paramref name="action"/> on <paramref name="subject"/> so it can be asserted to throw.</summary>
    public static AsyncActionSpec InvokingAsync<T>(this T subject, [InstantHandle] Func<T, Task> action, [CallerArgumentExpression(nameof(action))] string expression = null!)
       => InvokingAsync(() => action(subject), expression);
+#pragma warning restore VSTHRD200
 
    /// <summary>Asserts that invoking the captured action throws <typeparamref name="TException"/>, returning the caught exception for further assertions.</summary>
    public static CaughtException<TException> Throw<TException>(this IAssertionContext<Action> context)

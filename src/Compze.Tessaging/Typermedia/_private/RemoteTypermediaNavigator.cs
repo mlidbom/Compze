@@ -23,7 +23,13 @@ static class RemoteTypermediaNavigatorRegistrar
 
    readonly ITypermediaRouting _typermediaRouting = typermediaRouting;
 
-   public void Post(IAtMostOnceTypermediaTommand tommand) => PostAsync(tommand).WaitUnwrappingException();
+   public void Post(IAtMostOnceTypermediaTommand tommand)
+   {
+      //todo:urgent: a synchronous wait on asynchronous work, through WaitUnwrappingException, which VSTHRD002 can't see: it
+      //   holds this thread, and stalls while the thread pool is busy. See
+      //   dev_docs/TODO/synchronous-paths-that-need-a-free-thread-pool-thread.md (Magnus, 2026-11-24).
+      PostAsync(tommand).WaitUnwrappingException();
+   }
 
    public Task PostAsync(IAtMostOnceTypermediaTommand tommand)
    {
@@ -31,7 +37,13 @@ static class RemoteTypermediaNavigatorRegistrar
       return _typermediaRouting.PostAsync(tommand);
    }
 
-   public TResult Post<TResult>(IAtMostOnceTypermediaTommand<TResult> typermediaTommand) => PostAsync(typermediaTommand).ResultUnwrappingException();
+   public TResult Post<TResult>(IAtMostOnceTypermediaTommand<TResult> typermediaTommand)
+   {
+      //todo:urgent: a synchronous wait on asynchronous work, through ResultUnwrappingException, which VSTHRD002 can't see: it
+      //   holds this thread, and stalls while the thread pool is busy. See
+      //   dev_docs/TODO/synchronous-paths-that-need-a-free-thread-pool-thread.md (Magnus, 2026-11-24).
+      return PostAsync(typermediaTommand).ResultUnwrappingException();
+   }
 
    public Task<TResult> PostAsync<TResult>(IAtMostOnceTypermediaTommand<TResult> typermediaTommand)
    {
@@ -45,10 +57,16 @@ static class RemoteTypermediaNavigatorRegistrar
       if(tuery is ICreateMyOwnResultTuery<TResult> selfCreating)
          return await Task.FromResult(selfCreating.CreateResult()).caf();
 
-      return await GetAsyncAfterFastPathOptimization(tuery).caf();
+      return await GetAfterFastPathOptimizationAsync(tuery).caf();
    }
 
-   async Task<TResult> GetAsyncAfterFastPathOptimization<TResult>(IRemotableTuery<TResult> tuery) => await _typermediaRouting.GetAsync(tuery).caf();
+   async Task<TResult> GetAfterFastPathOptimizationAsync<TResult>(IRemotableTuery<TResult> tuery) => await _typermediaRouting.GetAsync(tuery).caf();
 
-   TResult IRemoteTypermediaNavigator.Get<TResult>(IRemotableTuery<TResult> tuery) => GetAsync(tuery).ResultUnwrappingException();
+   TResult IRemoteTypermediaNavigator.Get<TResult>(IRemotableTuery<TResult> tuery)
+   {
+      //todo:urgent: a synchronous wait on asynchronous work, through ResultUnwrappingException, which VSTHRD002 can't see: it
+      //   holds this thread, and stalls while the thread pool is busy. See
+      //   dev_docs/TODO/synchronous-paths-that-need-a-free-thread-pool-thread.md (Magnus, 2026-11-24).
+      return GetAsync(tuery).ResultUnwrappingException();
+   }
 }

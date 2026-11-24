@@ -64,7 +64,7 @@ partial class Inbox
       internal void Start()
       {
          this.Log().Info("Starting");
-         _awaitDispatchableTessageLoop = _taskRunner.RunOnNamedThread(
+         _awaitDispatchableTessageLoop = _taskRunner.RunOnNamedThreadAsync(
             nameof(AwaitDispatchableTessageThreadLoop),
             AwaitDispatchableTessageThreadLoop,
             ThreadPriority.AboveNormal);
@@ -87,6 +87,12 @@ partial class Inbox
 
       ///<summary>The backstop for a container disposed synchronously: the inbox's own disposal has stopped the loop already, so<br/>
       /// this waits only in a composition that disposes the engine without the inbox.</summary>
-      public void Dispose() => DisposeAsync().AsTask().WaitUnwrappingException();
+      public void Dispose()
+      {
+         //todo:urgent: a synchronous wait on asynchronous work, through WaitUnwrappingException, which VSTHRD002 can't see: it
+         //   holds this thread, and stalls while the thread pool is busy. See
+         //   dev_docs/TODO/synchronous-paths-that-need-a-free-thread-pool-thread.md (Magnus, 2026-11-24).
+         DisposeAsync().AsTask().WaitUnwrappingException();
+      }
    }
 }

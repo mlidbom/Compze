@@ -34,7 +34,7 @@ class HttpEndpointTransportClient : IEndpointTransportClient
       var response = await httpClient.PostAsync(requestUri, content, cancellationToken).caf();
       if(response.IsSuccessStatusCode) return await response.Content.ReadAsStringAsync(cancellationToken).caf();
 
-      var problemDetails = await ProblemDetails.FromResponse(response).caf();
+      var problemDetails = await ProblemDetails.FromResponseAsync(response).caf();
 
       throw new TessageDispatchingFailedException($"""
                                                    Uri:        {requestUri}

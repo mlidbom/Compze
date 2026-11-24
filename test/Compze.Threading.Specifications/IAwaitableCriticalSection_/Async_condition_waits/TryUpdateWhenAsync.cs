@@ -83,7 +83,7 @@ public class TryUpdateWhenAsync : AsyncConditionWaitSpecification
 
       public when_a_synchronous_wait_waits_for_what_its_action_does()
       {
-         _synchronousWait = TaskCE.Run(() => CriticalSection.TryAwait(() =>
+         _synchronousWait = TaskCE.RunAsync(() => CriticalSection.TryAwait(() =>
                                                                       {
                                                                          _theSynchronousWaitHasEvaluatedItsCondition.Set();
                                                                          return _actionRan;

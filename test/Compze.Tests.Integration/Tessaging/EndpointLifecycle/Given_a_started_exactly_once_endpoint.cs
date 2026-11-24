@@ -125,7 +125,9 @@ public class Given_a_started_exactly_once_endpoint : UniversalTestBase
             _recorder = _endpoint.ServiceLocator.Resolve<DisposalThreadRecorder>();
             _disposingThreadId = await Task.Run(() =>
             {
+#pragma warning disable VSTHRD002 // Disposing synchronously, to record the thread the endpoint disposes on, is what this specifies.
                _endpoint.DisposeAsync().AsTask().GetAwaiter().GetResult();
+#pragma warning restore VSTHRD002
                return Environment.CurrentManagedThreadId;
             });
          }

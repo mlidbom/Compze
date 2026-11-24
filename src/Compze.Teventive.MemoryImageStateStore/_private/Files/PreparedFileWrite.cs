@@ -1,3 +1,4 @@
+using Compze.Teventive.MemoryImageStateStore._internal;
 using Compze.Contracts;
 using Compze.Teventive.MemoryImageStateStore._private.Storage;
 using Compze.Threading.ResourceAccess;
@@ -54,6 +55,9 @@ sealed class PreparedFileWrite : IPreparedWrite
    }
 
    bool WritesNothing => _saved.Count == 0 && _deleted.Count == 0;
+
+   ///<summary>Null: files don't number their commits.</summary>
+   public CommitNumber? CommittedAs => null;
 
    ///<summary>Has the write commit as its transaction's decision, <see cref="CommitAsTheTransactionsDecision"/>, called by the files'<br/>
    /// durable participant, instead of when the unit of work commits.</summary>

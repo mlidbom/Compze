@@ -225,5 +225,9 @@ partial class MySqlInboxSqlLayer(IMySqlConnectionPool connectionFactory, MySqlSq
                    .ExecuteNonQueryAsync().caf()).caf();
    }
 
-   public async Task InitAsync() => await _schemaManager.EnsureSchemaInitializedAsync().caf();
+   public Task InitAsync()
+   {
+      _schemaManager.EnsureSchemaInitialized();
+      return Task.CompletedTask;
+   }
 }

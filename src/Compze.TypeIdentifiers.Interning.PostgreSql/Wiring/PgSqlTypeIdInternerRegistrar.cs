@@ -13,7 +13,7 @@ public static class PgSqlTypeIdInternerRegistrar
       if(registrar.IsRegistered<ITypeIdInterner>())
          return registrar;
 
-      return registrar.PgSqlSchemaContribution(PgSqlTypeIdInternerPersistence.SchemaCreationSql)
+      return registrar.PgSqlSchemaContribution(PgSqlTypeIdInternerPersistence.SchemaCreationStatements)
                       .Register(
          Singleton.For<ITypeIdInternerPersistence>()
                   .CreatedBy((IPgSqlConnectionPool connectionPool, PgSqlSqlLayerSchemaManager schemaManager) => new PgSqlTypeIdInternerPersistence(connectionPool, schemaManager)),
