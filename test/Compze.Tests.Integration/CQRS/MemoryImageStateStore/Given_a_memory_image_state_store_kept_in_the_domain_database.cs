@@ -276,13 +276,14 @@ public class Given_a_memory_image_state_store_kept_in_the_domain_database : Univ
       const int CardsEachMemoryImageAdds = 20;
       readonly TaggregateId _deckId = new(Guid.NewGuid());
 
-      public after_two_memory_images_each_add_cards_to_one_deck_from_many_threads_at_once_and_each_adds_a_sentence()
+      protected override async Task InitializeAsyncInternal()
       {
+         await base.InitializeAsyncInternal();
          InUnitOfWorkOf(TheFirst, taggregates => taggregates.Add(StoredDeck.Create(_deckId)));
          IDependencyInjectionContainer[] memoryImages = [TheFirst, TheSecond];
          var addingTheCards = memoryImages.SelectMany(memoryImage => Enumerable.Range(0, CardsEachMemoryImageAdds).Select(card => Task.Run(() => AddACard(memoryImage, $"card {card}"))))
                                           .ToArray();
-         Task.WaitAll(addingTheCards);
+         await Task.WhenAll(addingTheCards);
          foreach(var memoryImage in memoryImages) HaveAUnitOfWorkOfItChangeTheStore(memoryImage);
       }
 
@@ -295,9 +296,13 @@ public class Given_a_memory_image_state_store_kept_in_the_domain_database : Univ
 
       public class and_a_third_memory_image_starts : after_two_memory_images_each_add_cards_to_one_deck_from_many_threads_at_once_and_each_adds_a_sentence
       {
-         readonly IDependencyInjectionContainer _theThird;
+         IDependencyInjectionContainer _theThird = null!;
 
-         public and_a_third_memory_image_starts() => _theThird = StartAMemoryImage();
+         protected override async Task InitializeAsyncInternal()
+         {
+            await base.InitializeAsyncInternal();
+            _theThird = StartAMemoryImage();
+         }
 
          [PCT] public void it_has_every_card() => ReaderOf(_theThird).Get<StoredDeck>(_deckId).Cards.InCreationOrder.Count.Must().Be(2 * CardsEachMemoryImageAdds);
       }

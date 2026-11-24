@@ -74,7 +74,7 @@ public class Given_a_memory_image_state_store_whose_files_hold_a_vocab_and_a_sen
 
    IReadOnlyList<TaggregateId> IdsFiledUnder(string question) => [.._container.RootResolver.Resolve<ITaggregateIndex<StoredVocab, string>>().Lookup(question).Select(it => it.Id)];
 
-   void WaitForTheObservers() => _container.RootResolver.Resolve<ILocalTessagingEngine>().AwaitNoTessagesInFlightAsync().GetAwaiter().GetResult();
+   async Task WaitForTheObserversAsync() => await _container.RootResolver.Resolve<ILocalTessagingEngine>().AwaitNoTessagesInFlightAsync();
 
    string VocabFolder => Path.Combine(_folder.FullName, "vocab");
 
@@ -116,10 +116,11 @@ public class Given_a_memory_image_state_store_whose_files_hold_a_vocab_and_a_sen
 
    public class when_the_store_is_first_used : Given_a_memory_image_state_store_whose_files_hold_a_vocab_and_a_sentence
    {
-      public when_the_store_is_first_used()
+      protected override async Task InitializeAsyncInternal()
       {
+         await base.InitializeAsyncInternal();
          _ = CommittedVocab;
-         WaitForTheObservers();
+         await WaitForTheObserversAsync();
       }
 
       [PCT] public void the_reader_gets_the_stored_vocab() => new { CommittedVocab.Question, CommittedVocab.Meaning }.Must().DeepEqual(new { Question = "taberu", Meaning = "to eat" });
@@ -131,7 +132,11 @@ public class Given_a_memory_image_state_store_whose_files_hold_a_vocab_and_a_sen
       {
          readonly TaggregateId _writtenAfterTheFirstUse = new(Guid.NewGuid());
 
-         public and_another_program_then_writes_another_vocabs_file() => WriteTheVocabsFile(_writtenAfterTheFirstUse, "nomu", "to drink");
+         protected override async Task InitializeAsyncInternal()
+         {
+            await base.InitializeAsyncInternal();
+            WriteTheVocabsFile(_writtenAfterTheFirstUse, "nomu", "to drink");
+         }
 
          [PCT] public void the_store_loaded_at_its_first_use_alone_so_the_reader_doesnt_find_the_vocab_before_a_reload() => Reader.TryGet(_writtenAfterTheFirstUse, out StoredVocab? _).Must().BeFalse();
       }
@@ -266,17 +271,18 @@ public class Given_a_memory_image_state_store_whose_files_hold_a_vocab_and_a_sen
    public class after_another_program_changes_the_vocabs_file_and_writes_another_and_the_store_reloads : Given_a_memory_image_state_store_whose_files_hold_a_vocab_and_a_sentence
    {
       readonly TaggregateId _addedVocabId = new(Guid.NewGuid());
-      readonly ITaggregateReference<StoredVocab> _referenceHeldThroughout;
-      readonly ChangesFoundInStorage _reloaded;
+      ITaggregateReference<StoredVocab> _referenceHeldThroughout = null!;
+      ChangesFoundInStorage _reloaded = null!;
 
-      public after_another_program_changes_the_vocabs_file_and_writes_another_and_the_store_reloads()
+      protected override async Task InitializeAsyncInternal()
       {
+         await base.InitializeAsyncInternal();
          _referenceHeldThroughout = Reader.Reference<StoredVocab>(VocabId);
          _ = _referenceHeldThroughout.Current;
          WriteTheVocabsFile(VocabId, "kuu", "to eat, rudely");
          WriteTheVocabsFile(_addedVocabId, "nomu", "to drink");
          _reloaded = MemoryImageStateStore.LoadFromStorage();
-         WaitForTheObservers();
+         await WaitForTheObserversAsync();
       }
 
       [PCT] public void the_reload_reports_the_vocab_as_changed() => _reloaded.Changed.Must().SequenceEqual([VocabId]);
@@ -349,14 +355,15 @@ public class Given_a_memory_image_state_store_whose_files_hold_a_vocab_and_a_sen
 
    public class after_another_program_writes_the_vocabs_file_otherwise_and_the_store_writes_every_taggregate_anew : Given_a_memory_image_state_store_whose_files_hold_a_vocab_and_a_sentence
    {
-      readonly int _versionBefore;
+      int _versionBefore;
 
-      public after_another_program_writes_the_vocabs_file_otherwise_and_the_store_writes_every_taggregate_anew()
+      protected override async Task InitializeAsyncInternal()
       {
+         await base.InitializeAsyncInternal();
          _versionBefore = CommittedVocab.Version;
          WriteTheVocabsFileOtherwise(VocabId, "taberu", "to eat");
          MemoryImageStateStore.WriteAllToStorage();
-         WaitForTheObservers();
+         await WaitForTheObserversAsync();
       }
 
       [PCT] public void the_vocabs_file_holds_exactly_what_the_consumers_options_make_of_its_snapshot() =>
@@ -372,9 +379,13 @@ public class Given_a_memory_image_state_store_whose_files_hold_a_vocab_and_a_sen
 
       public class and_the_store_then_reloads : after_another_program_writes_the_vocabs_file_otherwise_and_the_store_writes_every_taggregate_anew
       {
-         readonly ChangesFoundInStorage _reloaded;
+         ChangesFoundInStorage _reloaded = null!;
 
-         public and_the_store_then_reloads() => _reloaded = MemoryImageStateStore.LoadFromStorage();
+         protected override async Task InitializeAsyncInternal()
+         {
+            await base.InitializeAsyncInternal();
+            _reloaded = MemoryImageStateStore.LoadFromStorage();
+         }
 
          [PCT] public void the_reload_reports_nothing_changed() => _reloaded.Changed.Must().BeEmpty();
          [PCT] public void the_reload_reports_nothing_added_or_removed() => _reloaded.Added.Concat(_reloaded.Removed).Must().BeEmpty();
@@ -387,8 +398,9 @@ public class Given_a_memory_image_state_store_whose_files_hold_a_vocab_and_a_sen
       volatile bool _theWriteHasReturned;
       bool _theWriteHadReturnedWhenTheUnitOfWorkFinishedChangingTheVocab;
 
-      public when_the_store_writes_every_taggregate_anew_while_a_unit_of_work_on_another_thread_changes_the_vocab()
+      protected override async Task InitializeAsyncInternal()
       {
+         await base.InitializeAsyncInternal();
          //The unit of work records, as the last thing it does before it commits, whether the write has returned: a write that
          //waits for it can't have. Whether its task has completed when the write returns can't tell: the write may return between
          //the unit of work leaving the store and its task being marked completed.
@@ -403,7 +415,7 @@ public class Given_a_memory_image_state_store_whose_files_hold_a_vocab_and_a_sen
          _theUnitOfWorkHasTheVocab.Wait();
          MemoryImageStateStore.WriteAllToStorage();
          _theWriteHasReturned = true;
-         unitOfWork.Wait();
+         await unitOfWork;
       }
 
       [PCT] public void the_write_waited_for_the_unit_of_work_to_complete() => _theWriteHadReturnedWhenTheUnitOfWorkFinishedChangingTheVocab.Must().BeFalse();
@@ -439,10 +451,11 @@ public class Given_a_memory_image_state_store_whose_files_hold_a_vocab_and_a_sen
    public class when_the_store_reloads_while_a_unit_of_work_on_another_thread_changes_the_vocab : Given_a_memory_image_state_store_whose_files_hold_a_vocab_and_a_sentence
    {
       readonly ManualResetEventSlim _theUnitOfWorkHasTheVocab = new();
-      readonly ChangesFoundInStorage _reloaded;
+      ChangesFoundInStorage _reloaded = null!;
 
-      public when_the_store_reloads_while_a_unit_of_work_on_another_thread_changes_the_vocab()
+      protected override async Task InitializeAsyncInternal()
       {
+         await base.InitializeAsyncInternal();
          var unitOfWork = Task.Run(() => InUnitOfWork(taggregates =>
          {
             var vocab = taggregates.GetForUpdate<StoredVocab>(VocabId);
@@ -452,7 +465,7 @@ public class Given_a_memory_image_state_store_whose_files_hold_a_vocab_and_a_sen
          }));
          _theUnitOfWorkHasTheVocab.Wait();
          _reloaded = MemoryImageStateStore.LoadFromStorage();
-         unitOfWork.Wait();
+         await unitOfWork;
       }
 
       [PCT] public void the_reload_waited_for_the_unit_of_work_so_it_reports_no_change() => _reloaded.Changed.Must().BeEmpty();
@@ -475,8 +488,9 @@ public class Given_a_memory_image_state_store_whose_files_hold_a_vocab_and_a_sen
 
    public class when_a_unit_of_work_on_another_thread_begins_while_the_change_before_a_reload_runs : Given_a_memory_image_state_store_whose_files_hold_a_vocab_and_a_sentence
    {
-      public when_a_unit_of_work_on_another_thread_begins_while_the_change_before_a_reload_runs()
+      protected override async Task InitializeAsyncInternal()
       {
+         await base.InitializeAsyncInternal();
          _ = CommittedVocab;
          Task? unitOfWork = null;
          MemoryImageStateStore.LoadFromStorage(() =>
@@ -485,7 +499,7 @@ public class Given_a_memory_image_state_store_whose_files_hold_a_vocab_and_a_sen
             unitOfWork = Task.Run(() => InUnitOfWork(taggregates => taggregates.GetForUpdate<StoredVocab>(VocabId).ChangeMeaning("to dine")));
             Thread.Sleep(200); //Gives the unit of work time to begin, so that it would write the vocab committed before over the change, did it not wait.
          });
-         unitOfWork!.Wait();
+         await unitOfWork!;
       }
 
       [PCT] public void the_unit_of_work_changed_the_vocab_as_reloaded_so_its_file_keeps_the_change() =>
