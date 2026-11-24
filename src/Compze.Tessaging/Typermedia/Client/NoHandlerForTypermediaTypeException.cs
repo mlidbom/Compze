@@ -15,6 +15,9 @@ public class NoHandlerForTypermediaTypeException : Exception
 
    internal static NoHandlerForTypermediaTypeException BecausePatienceIsExhausted(Type tessageType, TimeSpan patience, IReadOnlyList<EndpointId> rememberedHandlerIds) => new(
       $"No connected endpoint advertises a handler for the typermedia type {tessageType.GetFullNameCompilable()}, and none appeared within the endpoint's handler-availability patience (waited {patience.TotalSeconds:0.###}s). "
+      //bug: An endpoint's remote navigator never finds the endpoint's own handlers, so navigating a type that only this endpoint
+      //   serves ends here, and the message calls it almost certainly a deployment or configuration error. If an endpoint isn't
+      //   meant to navigate its own API, this message should say so; if it is, the navigator should find its handlers. (website-and-docs, 2026-11-24)
       + (rememberedHandlerIds.Count == 0
             ? "Nothing this endpoint has ever met serves the type: almost certainly a deployment or configuration error — the endpoint serving it is not deployed, does not announce to this endpoint's registry, or does not advertise the type."
             : $"Remembered peers whose last-known advertisement serves it: {string.Join(", ", rememberedHandlerIds)} — the handler peer is known and currently down, and did not return in time."));
