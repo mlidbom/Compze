@@ -1,22 +1,5 @@
 {
   "$schema": "https://raw.githubusercontent.com/dotnet/docfx/main/schemas/docfx.schema.json",
-  "metadata": [
-    {
-      "src": [
-        {
-          "src": "../..",
-          "files": [
-            "Compze.*/Compze.*.csproj"
-          ],
-          "exclude": [
-            "**/nCrunchTemp_*.csproj"
-          ]
-        }
-      ],
-      "dest": "api",
-      "namespaceLayout": "nested"
-    }
-  ],
   "build": {
     "content": [
       {

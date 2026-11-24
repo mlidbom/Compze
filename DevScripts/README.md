@@ -31,7 +31,7 @@ Then reload: `. $PROFILE`
   - `-FullGitReset` - Full git reset before building (implies `-Clean`)
   - `-WhatIf` - Preview what would be deleted by git clean (with `-FullGitReset`)
 
-- **C-Build-Website** - Builds the website (`src/Websites/Website`) with DocFX, as `npm run build-site-only` does but without Node.js, and fails, listing them, when DocFX reports any warning: a link, a code include or a table of contents entry that leads nowhere. For checking a docs change in one step. Silent on success; the site is in `src/Websites/Website/_site`. It doesn't compile the pages' example code: `C-Build` does, in the Website project
+- **C-Build-Website** - Builds the website (`src/Websites/Website`) with DocFX, as `npm run build` does but without Node.js, and fails, listing them, when DocFX reports any warning: a link, a code include or a table of contents entry that leads nowhere. For checking a docs change in one step. Silent on success; the site is in `src/Websites/Website/_site`. It doesn't compile the pages' example code: `C-Build` does, in the Website project
 
 - **C-Test** - Runs Compze tests with proper configuration (builds by default)
   - `-NoBuild` - Skip building, just run tests

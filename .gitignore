@@ -38,7 +38,6 @@ nCrunchTemp*
 /src/NCrunchDuplicateByDimensions
 /src/TestUsingPluggableComponentCombinations
 
-/src/Websites/Website/api/
 /src/Websites/Website/node_modules/
 /src/Websites/Website/package-lock.json
 /src/Websites/Website/**/*.css.map

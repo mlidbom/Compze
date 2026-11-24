@@ -61,7 +61,7 @@ The Website project carries flex references (see the FlexRef documentation) to t
 
 DocFX only processes content located under the folder containing `docfx.json`. `src/Websites/Website/Ensure-CoLocatedDocsJunctions.ps1` therefore creates one git-ignored directory junction per documented project — `Compze\Teventive` → `..\..\Compze.Teventive`, and so on. It runs automatically before every docfx build (npm pre-hooks in `package.json` and `buildAndPublish.ps1`) and is safe to run by hand after giving a new project a `_docs` folder.
 
-`docfx.json` (and `docfx-site-only.json`) pull the co-located docs in through the junctions — and ONLY `_docs`; `dev_docs` never enters the content set:
+`docfx.json` pulls the co-located docs in through the junctions — and ONLY `_docs`; `dev_docs` never enters the content set:
 
 ```json
 {
@@ -166,5 +166,5 @@ To verify the setup works:
 dotnet build Compze.AllProjects.slnx
 
 # The website builds and every DocFX include and link resolves: fails, listing them, on any warning:
-C-Build-Website           # the DevScripts command; or, in src/Websites/Website: npm run build-site-only
+C-Build-Website           # the DevScripts command; or, in src/Websites/Website: npm run build
 ```

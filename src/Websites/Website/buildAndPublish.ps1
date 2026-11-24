@@ -1,10 +1,18 @@
 Push-Location $PSScriptRoot #knowing which folder we are in is good :)
 
-& "$PSScriptRoot\Ensure-CoLocatedDocsJunctions.ps1"
-
 dotnet tool update -g docfx
 
 $buildFolder = "$PSScriptRoot\_site"
+
+# robocopy /MIR below makes gh-pages a mirror of _site, so whatever an earlier build left in _site would be published too.
+if(Test-Path $buildFolder) { Remove-Item -Recurse -Force $buildFolder }
+
+# The same build C-Build-Website makes for checking a change, which fails on any DocFX warning: a broken link or code
+# include is never published.
+Import-Module "$PSScriptRoot\..\..\..\DevScripts\Compze.psm1" -DisableNameChecking
+C-Build-Website
+if($LASTEXITCODE -ne 0) { Pop-Location; throw "The website didn't build cleanly, so nothing was published." }
+
 $ghPagesCheckoutFolder = "$PSScriptRoot/../../Compze-gh-pages"
 
 if(!(Test-Path $ghPagesCheckoutFolder))
@@ -26,12 +34,6 @@ git clean -fd
 git pull
 
 Pop-Location
-Get-Location
-
-# robocopy /MIR below makes gh-pages a mirror of _site, so whatever an earlier build left in _site would be published too.
-if(Test-Path $buildFolder) { Remove-Item -Recurse -Force $buildFolder }
-
-docfx.exe
 
 robocopy.exe /MIR /NFL /NDL "$buildFolder" "$ghPagesCheckoutFolder" /XD ".git" "node_modules" /XF ".gitignore" "CNAME"
 

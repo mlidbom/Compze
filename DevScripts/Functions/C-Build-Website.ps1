@@ -7,9 +7,9 @@ function C-Build-Website {
     .DESCRIPTION
     For checking a change to the documentation in one step.
 
-    Builds the site in src/Websites/Website as `npm run build-site-only` does, without needing Node.js: it refreshes the
+    Builds the site in src/Websites/Website as `npm run build` does, without needing Node.js: it refreshes the
     junctions that bring the co-located _docs folders into DocFX's content (Ensure-CoLocatedDocsJunctions.ps1), then
-    runs `docfx build docfx-site-only.json`, which writes the site to src/Websites/Website/_site.
+    runs `docfx build docfx.json`, which writes the site to src/Websites/Website/_site.
     src/Documentation-CoLocation.README.md describes how the site is put together.
 
     A DocFX warning is a broken page: a link or a code include that leads nowhere, or a table of contents entry for a
@@ -40,7 +40,7 @@ function C-Build-Website {
 
     Push-Location $websiteFolder
     try {
-        $docfxOutput = @(docfx build docfx-site-only.json 2>&1 | ForEach-Object { "$_" })
+        $docfxOutput = @(docfx build docfx.json 2>&1 | ForEach-Object { "$_" })
         $docfxExitCode = $LASTEXITCODE
     } finally {
         Pop-Location
