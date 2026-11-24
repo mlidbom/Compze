@@ -21,19 +21,21 @@ sealed class PreparedTableWrite : VolatileTransactionParticipant, IPreparedWrite
    readonly IMemoryImageStateStoreSqlLayer _sqlLayer;
    readonly IReadOnlyList<TaggregateRowToSave> _saved;
    readonly IReadOnlyList<TaggregateId> _deleted;
+   readonly Action _onceCommitted;
 
-   PreparedTableWrite(IMemoryImageStateStoreSqlLayer sqlLayer, IReadOnlyList<TaggregateRowToSave> saved, IReadOnlyList<TaggregateId> deleted) : base(EnlistmentOptions.EnlistDuringPrepareRequired)
+   PreparedTableWrite(IMemoryImageStateStoreSqlLayer sqlLayer, IReadOnlyList<TaggregateRowToSave> saved, IReadOnlyList<TaggregateId> deleted, Action onceCommitted) : base(EnlistmentOptions.EnlistDuringPrepareRequired)
    {
       _sqlLayer = sqlLayer;
       _saved = saved;
       _deleted = deleted;
+      _onceCommitted = onceCommitted;
    }
 
    ///<summary>A write of <paramref name="saved"/> and <paramref name="deleted"/>, taking part in the ambient transaction, which is<br/>
-   /// preparing, unless it writes nothing.</summary>
-   internal static PreparedTableWrite TakingPartInTheAmbientTransaction(IMemoryImageStateStoreSqlLayer sqlLayer, IReadOnlyList<TaggregateRowToSave> saved, IReadOnlyList<TaggregateId> deleted)
+   /// preparing, unless it writes nothing. <paramref name="onceCommitted"/> runs once it has committed.</summary>
+   internal static PreparedTableWrite TakingPartInTheAmbientTransaction(IMemoryImageStateStoreSqlLayer sqlLayer, IReadOnlyList<TaggregateRowToSave> saved, IReadOnlyList<TaggregateId> deleted, Action onceCommitted)
    {
-      var write = new PreparedTableWrite(sqlLayer, saved, deleted);
+      var write = new PreparedTableWrite(sqlLayer, saved, deleted, onceCommitted);
       if(!write.WritesNothing) write.EnsureEnlistedInAnyAmbientTransaction();
       return write;
    }
@@ -54,7 +56,12 @@ sealed class PreparedTableWrite : VolatileTransactionParticipant, IPreparedWrite
    protected override void OnRollback() {}
 
    ///<summary>The unit of work commits: the database has committed the rows, as the transaction's decision, before it.</summary>
-   public void Commit() => State.Assert(WritesNothing || CommittedAs != null, () => "A write to a memory image state store's tables committed without taking a commit number.");
+   public void Commit()
+   {
+      if(WritesNothing) return;
+      State.Assert(CommittedAs != null, () => "A write to a memory image state store's tables committed without taking a commit number.");
+      _onceCommitted();
+   }
 
    ///<summary>The unit of work rolls back, and the database with it.</summary>
    public void Discard() {}

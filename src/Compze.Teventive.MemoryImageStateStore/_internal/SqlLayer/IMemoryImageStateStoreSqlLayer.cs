@@ -9,6 +9,10 @@ namespace Compze.Teventive.MemoryImageStateStore._internal.SqlLayer;
 /// what runs inside one runs on the transaction's connection. The layer itself suppresses nothing.</remarks>
 interface IMemoryImageStateStoreSqlLayer
 {
+   ///<summary>What tells this database from every other: the connection string Compze's connections to it open with. Memory images on<br/>
+   /// one machine that name the database the same share its commit signal.</summary>
+   string DatabaseIdentity { get; }
+
    ///<summary>The last commit number, then every row of the classes named <paramref name="classNames"/>, deleted ones included.</summary>
    ///<remarks>The counter is read first, in a statement of its own: every commit up to its value was committed before the rows are<br/>
    /// read, so the rows hold every one of them, whatever isolation the database reads at.</remarks>

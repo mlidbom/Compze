@@ -12,7 +12,7 @@ namespace Compze.Teventive.MemoryImageStateStore._private.Storage;
 ///<remarks>A storage that several memory images share, such as a database's tables, numbers its commits (<see cref="CommitNumber"/>):<br/>
 /// <see cref="LockForUpdate"/> and <see cref="CommittedAfter"/> give what the other memory images committed. A storage that no<br/>
 /// other memory image shares, such as files, gives nothing from them.</remarks>
-interface ITaggregateStorage
+interface ITaggregateStorage : IDisposable
 {
    ///<summary>Every taggregate stored, read when the store is first used, and at each reload.</summary>
    LoadedTaggregates LoadAll();

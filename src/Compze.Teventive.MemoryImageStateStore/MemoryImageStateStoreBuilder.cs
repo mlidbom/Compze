@@ -235,6 +235,8 @@ public sealed class MemoryImageStateStoreBuilder
    internal TaggregateMemoryImageStateStore Build(TaggregateUnitsOfWork unitsOfWork, IRootResolver resolver)
    {
       var classes = _taggregateClasses.Values.Select(declare => declare(resolver)).ToList();
-      return new(unitsOfWork, classes, _indexes, _storage?.Invoke(resolver, classes) ?? new NoStorage());
+      var storage = _storage?.Invoke(resolver, classes) ?? NoStorage.Instance;
+      var catchingUpOn = storage is TaggregateTableStorage tables && _rows is { IsCatchingUpAsOtherMemoryImagesOnThisMachineCommit: true } ? tables.CommitSignal : null;
+      return new(unitsOfWork, classes, _indexes, storage, catchingUpOn);
    }
 }

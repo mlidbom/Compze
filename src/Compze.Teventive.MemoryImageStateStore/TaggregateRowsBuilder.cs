@@ -31,4 +31,24 @@ public sealed class TaggregateRowsBuilder
    }
 
    internal IReadOnlyDictionary<Type, string> NamesByClass => _namesByClass;
+
+   ///<summary>Has the memory image catch up with what other memory images on this machine commit to the tables within about 50<br/>
+   /// milliseconds of their commits, while nothing else makes it catch up, and tell <see cref="IMemoryImageStateStore.ChangesCommittedElsewhere"/><br/>
+   /// what it found. Without it, a memory image catches up at each unit of work's first get for update or add, and reads outside a unit<br/>
+   /// of work read what it last caught up with.</summary>
+   ///<remarks>Every memory image of a store kept in tables raises an interprocess signal, named from the database, once a commit of its<br/>
+   /// own has committed; one declared to catch up waits for it on a task of its own, polling a memory read, which wakes the processor at<br/>
+   /// most every 50 milliseconds, and queries the database only when the signal moved. It reaches the memory images of this machine's<br/>
+   /// user that name the database by the same connection string: memory images on other machines are caught up with only by units of<br/>
+   /// work. A catch-up that fails is logged, and tried again at the next signal.<br/>
+   /// review-naming: CatchingUpAsOtherMemoryImagesOnThisMachineCommit (state-store-in-tables, 2026-11-24).</remarks>
+   public TaggregateRowsBuilder CatchingUpAsOtherMemoryImagesOnThisMachineCommit()
+   {
+      State.Assert(!IsCatchingUpAsOtherMemoryImagesOnThisMachineCommit, () => "That the memory image catches up as other memory images on this machine commit is declared twice.");
+      IsCatchingUpAsOtherMemoryImagesOnThisMachineCommit = true;
+      return this;
+   }
+
+   ///<summary>Whether <see cref="CatchingUpAsOtherMemoryImagesOnThisMachineCommit"/> is declared.</summary>
+   internal bool IsCatchingUpAsOtherMemoryImagesOnThisMachineCommit { get; private set; }
 }

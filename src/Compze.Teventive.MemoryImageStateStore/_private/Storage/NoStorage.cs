@@ -7,6 +7,11 @@ namespace Compze.Teventive.MemoryImageStateStore._private.Storage;
 ///<summary>The storage of a memory image state store that keeps its taggregates in memory only: it loads nothing, and a write does nothing.</summary>
 sealed class NoStorage : ITaggregateStorage, IPreparedWrite
 {
+   ///<summary>The one instance: it holds nothing.</summary>
+   internal static readonly NoStorage Instance = new();
+
+   NoStorage() {}
+
    public LoadedTaggregates LoadAll() => new([], holdingEveryCommitThrough: null);
    public IPreparedWrite Prepare(IReadOnlyList<TaggregateSnapshot> toSave, IReadOnlyList<TaggregateId> toDelete) => this;
 
@@ -25,4 +30,5 @@ sealed class NoStorage : ITaggregateStorage, IPreparedWrite
    public void Commit() {}
    public void Discard() {}
    public CommitNumber? CommittedAs => null;
+   public void Dispose() {}
 }

@@ -185,6 +185,9 @@ sealed class TaggregateFileStorage : ITaggregateStorage
       }
    }
 
+   ///<summary>Holds nothing that needs releasing.</summary>
+   public void Dispose() {}
+
    sealed class LoadedFile(ListedFile file, TaggregateSnapshot snapshot)
    {
       internal ListedFile File { get; } = file;

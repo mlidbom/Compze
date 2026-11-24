@@ -25,7 +25,11 @@ sealed class TaggregateTableStorage : ITaggregateStorage
       _sqlLayer = sqlLayer;
       _options = options;
       _classNames = classNames;
+      CommitSignal = new CommitSignal(sqlLayer.DatabaseIdentity);
    }
+
+   ///<summary>The database's commit signal, raised once each commit of this memory image to the tables has committed.</summary>
+   internal CommitSignal CommitSignal { get; }
 
    ///<summary>Every live row of the declared classes, read outside any transaction, with the last commit number, read before them.</summary>
    public LoadedTaggregates LoadAll()
@@ -49,21 +53,23 @@ sealed class TaggregateTableStorage : ITaggregateStorage
    ///<summary>Serializes each of <paramref name="toSave"/>, which can fail here, and has the write take part in the unit of work's<br/>
    /// transaction, to take its commit's number and write its rows at the very end of the transaction's prepare.</summary>
    public IPreparedWrite Prepare(IReadOnlyList<TaggregateSnapshot> toSave, IReadOnlyList<TaggregateId> toDelete) =>
-      PreparedTableWrite.TakingPartInTheAmbientTransaction(_sqlLayer, [..toSave.Select(RowToSave)], toDelete);
+      PreparedTableWrite.TakingPartInTheAmbientTransaction(_sqlLayer, [..toSave.Select(RowToSave)], toDelete, onceCommitted: CommitSignal.Raise);
 
    ///<summary>In a transaction of its own: takes the commit counter first, so that no other memory image commits meanwhile, hands<br/>
    /// <paramref name="everythingOnceCaughtUpWith"/> what the other memory images committed after <paramref name="lastSeen"/>, then<br/>
    /// writes every taggregate it returns, as one commit.</summary>
    public CommitNumber? WriteAll(CommitNumber lastSeen, Func<IReadOnlyList<StoredTaggregate>, IReadOnlyList<TaggregateSnapshot>> everythingOnceCaughtUpWith)
    {
-      return TransactionScopeCe.Execute(() =>
+      var committedAs = TransactionScopeCe.Execute(() =>
       {
-         var committedAs = _sqlLayer.TakeTheNextCommitNumber();
+         var takenNumber = _sqlLayer.TakeTheNextCommitNumber();
          var committedMeanwhile = _sqlLayer.ReadCommittedAfter(lastSeen, _classNames.Names);
          var everything = everythingOnceCaughtUpWith([..committedMeanwhile.Rows.Select(Stored)]);
-         _sqlLayer.Write(committedAs, [..everything.Select(RowToSave)], deleted: []);
-         return committedAs;
+         _sqlLayer.Write(takenNumber, [..everything.Select(RowToSave)], deleted: []);
+         return takenNumber;
       }, TransactionScopeOption.RequiresNew);
+      CommitSignal.Raise();
+      return committedAs;
    }
 
    TaggregateRowToSave RowToSave(TaggregateSnapshot snapshot) =>
@@ -90,6 +96,8 @@ sealed class TaggregateTableStorage : ITaggregateStorage
          throw new InvalidOperationException($"The memory image state store can't load the row of taggregate {row.Id}, a {taggregateClass.Class.Name} by its class name \"{row.ClassName}\", written by {row.CommittedAs}: {exception.Message}", exception);
       }
    }
+
+   public void Dispose() => CommitSignal.Dispose();
 
    static TResult OutsideAnyTransaction<TResult>(Func<TResult> read) => TransactionScopeCe.Execute(read, TransactionScopeOption.Suppress);
 }

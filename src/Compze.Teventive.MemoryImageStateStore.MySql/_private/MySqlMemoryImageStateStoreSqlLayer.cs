@@ -23,6 +23,8 @@ partial class MySqlMemoryImageStateStoreSqlLayer : IMemoryImageStateStoreSqlLaye
       _schemaManager = schemaManager;
    }
 
+   public string DatabaseIdentity => _connectionPool.ConnectionString;
+
    public TaggregateRows ReadAll(IReadOnlyList<string> classNames) => ReadRows(classNames, committedAfter: null);
 
    public TaggregateRows ReadCommittedAfter(CommitNumber lastSeen, IReadOnlyList<string> classNames) => ReadRows(classNames, committedAfter: lastSeen);
