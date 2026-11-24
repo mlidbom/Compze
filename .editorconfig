@@ -66,4 +66,5 @@ dotnet_diagnostic.CA1810.severity = none # CA1810 Initialize reference type stat
 
 #Theoretically, maybe, valid, but not worth the effort.
 dotnet_diagnostic.CA2201.severity = none # Maybe, In principle one should create a new specific Exception every place where one throws one. But unless there is reason to believe that catching that specific exception is meaningful.....
+dotnet_diagnostic.VSTHRD003.severity = none # Avoid awaiting foreign tasks: it guards against deadlocks with Visual Studio's JoinableTaskFactory main-thread scheduler, which Compze doesn't use. Awaiting the task of a TaskCompletionSource or a gate is how Compze's async code waits (Magnus, 2026-11-24).
 
