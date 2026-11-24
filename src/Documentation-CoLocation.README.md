@@ -19,7 +19,7 @@ src/Compze.Tessaging/
 ├── _docs/                          ← Public documentation (published on the website)
 │   ├── introduction.md             ← Documentation markdown
 │   ├── toc.yml                     ← DocFX table of contents for this folder
-│   └── TessageHandling.cs          ← Example code for the docs (compiled ONLY into the Website project)
+│   └── in-one-process.cs           ← Example code for the docs (compiled ONLY into the Website project)
 └── dev_docs/                       ← Internal development documentation (never published)
     └── tevent-delivery-model.md
 ```
