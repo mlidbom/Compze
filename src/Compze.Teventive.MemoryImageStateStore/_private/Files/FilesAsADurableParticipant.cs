@@ -9,9 +9,10 @@ namespace Compze.Teventive.MemoryImageStateStore._private.Files;
 /// single phase, as the transaction's decision, before the unit of work and any volatile participant commit. It is how the store keeps<br/>
 /// its files out of a transaction that also writes a database, which it can't commit as one with them.</summary>
 ///<remarks>A transaction has at most one durable participant unless it becomes distributed, which .NET refuses by default, so a SQL<br/>
-/// Server connection, also durable, is refused by .NET itself. Database connections that enlist as volatile participants, as<br/>
-/// PostgreSQL's, MySQL's and Compze's SQLite connections do, are refused by <see cref="DurableResourcesOfTransactions"/> when they are<br/>
-/// Compze's.<br/>
+/// Server connection, also durable, is refused by .NET itself, as are Compze's MySQL and SQLite connections, which take part as durable<br/>
+/// participants too. A database connection that enlists as a volatile participant, as PostgreSQL's does, is refused by<br/>
+/// <see cref="DurableResourcesOfTransactions"/> when it is Compze's. <see cref="DurableResourcesOfTransactions"/> refuses each of Compze's<br/>
+/// connections first, with a message naming both.<br/>
 /// The files never commit as part of a distributed transaction: they refuse a transaction that is distributed when they join it, and<br/>
 /// vote to roll back if one asks them to prepare, its two-phase commit. There is no recovery: the journal finishes or discards an<br/>
 /// interrupted commit at the next start, and nothing is reenlisted.</remarks>

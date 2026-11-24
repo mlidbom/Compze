@@ -11,6 +11,13 @@
     </PackageReference>
     <PackageReference Include="xunit.v3.mtp-off" Version="4.0.3" />
   </ItemGroup>
+  <!-- Compze.Must — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Must)' == 'true'">
+    <PackageReference Include="Compze.Must" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Must)' != 'true'">
+    <ProjectReference Include="..\..\src\Compze.Must\Compze.Must.csproj" />
+  </ItemGroup>
   <!-- Compze.xUnitBDD — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_xUnitBDD)' == 'true'">
     <PackageReference Include="Compze.xUnitBDD" Version="*-*" />

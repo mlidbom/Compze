@@ -1,19 +1,13 @@
 using System.Data;
 using Compze.DependencyInjection;
-using Compze.DependencyInjection.Abstractions;
 using Compze.Hosting.Testing;
-using Compze.Hosting.Testing.Wiring;
 using Compze.Internals.SystemCE.TransactionsCE;
 using Compze.Internals.Testing;
 using Compze.Must;
 using Compze.Sql.MicrosoftSql._internal;
-using Compze.Sql.MicrosoftSql.Wiring;
 using Compze.Sql.MySql._internal;
-using Compze.Sql.MySql.Wiring;
 using Compze.Sql.PostgreSql._internal;
-using Compze.Sql.PostgreSql.Wiring;
 using Compze.Sql.Sqlite._internal;
-using Compze.Sql.Sqlite.Wiring;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
 using Compze.xUnitMatrix;
@@ -69,9 +63,9 @@ public class Inside_a_transaction_Compze_opens_on_a_connection_from_the_sql_laye
    /// the words the other servers use.</summary>
    const string PgSqlTheTransactionsIsolationLevel = "SELECT UPPER(current_setting('transaction_isolation'))";
 
-   readonly IDependencyInjectionContainer _container = ContainerWithTheCurrentTestsDomainDatabase();
+   readonly DomainDatabaseOnTheCurrentSqlLayer _database = DomainDatabaseOnTheCurrentSqlLayer.Named(DomainDatabaseName);
 
-   protected override async Task DisposeAsyncInternal() => await _container.DisposeAsync();
+   protected override async Task DisposeAsyncInternal() => await _database.DisposeAsync();
 
    [PCT, Skip<SqlLayer>([SqlLayer.Sqlite, SqlLayer.SqliteMemory], SqliteHasNoReadCommitted)]
    public void the_server_reports_that_it_runs_the_transaction_at_read_committed() =>
@@ -88,32 +82,17 @@ public class Inside_a_transaction_Compze_opens_on_a_connection_from_the_sql_laye
    string? TheIsolationLevelTheServerReportsForTheTransaction() =>
       TransactionScopeCe.Execute(() => (string?)(TestEnv.SqlLayer switch
       {
-         SqlLayer.MsSql => _container.Resolve<IMsSqlConnectionPool>().ExecuteScalar(MsSqlTheSessionsIsolationLevel),
-         SqlLayer.MySql => _container.Resolve<IMySqlConnectionPool>().ExecuteScalar(MySqlTheActiveTransactionsIsolationLevel),
-         SqlLayer.PgSql => _container.Resolve<IPgSqlConnectionPool>().ExecuteScalar(PgSqlTheTransactionsIsolationLevel),
+         SqlLayer.MsSql => _database.Container.Resolve<IMsSqlConnectionPool>().ExecuteScalar(MsSqlTheSessionsIsolationLevel),
+         SqlLayer.MySql => _database.Container.Resolve<IMySqlConnectionPool>().ExecuteScalar(MySqlTheActiveTransactionsIsolationLevel),
+         SqlLayer.PgSql => _database.Container.Resolve<IPgSqlConnectionPool>().ExecuteScalar(PgSqlTheTransactionsIsolationLevel),
          _ => throw new ArgumentOutOfRangeException(nameof(SqlLayer), TestEnv.SqlLayer, SqliteHasNoReadCommitted)
       }));
 
    ///<summary>The isolation level Microsoft.Data.Sqlite reports for the transaction Compze's SQLite connection began: the connection<br/>
    /// hands the transaction to every command it creates.</summary>
    IsolationLevel? TheIsolationLevelOfTheSqliteTransaction() =>
-      TransactionScopeCe.Execute(() => _container.Resolve<ISqliteConnectionPool>().UseCommand(command => command.Transaction?.IsolationLevel));
+      TransactionScopeCe.Execute(() => _database.Container.Resolve<ISqliteConnectionPool>().UseCommand(command => command.Transaction?.IsolationLevel));
 
    long? TheSqliteConnectionsReadUncommittedPragma() =>
-      TransactionScopeCe.Execute(() => (long?)_container.Resolve<ISqliteConnectionPool>().ExecuteScalar("PRAGMA read_uncommitted"));
-
-   static IDependencyInjectionContainer ContainerWithTheCurrentTestsDomainDatabase()
-   {
-      var builder = TestEnv.DIContainer.CreateTestingContainerBuilder();
-      _ = TestEnv.SqlLayer switch
-      {
-         SqlLayer.MsSql        => builder.Registrar.MsSqlDomainDatabase(DomainDatabaseName),
-         SqlLayer.MySql        => builder.Registrar.MySqlDomainDatabase(DomainDatabaseName),
-         SqlLayer.PgSql        => builder.Registrar.PgSqlDomainDatabase(DomainDatabaseName),
-         SqlLayer.Sqlite       => builder.Registrar.SqliteDomainDatabase(DomainDatabaseName),
-         SqlLayer.SqliteMemory => builder.Registrar.SqliteMemoryDomainDatabase(DomainDatabaseName),
-         _                     => throw new ArgumentOutOfRangeException(nameof(SqlLayer), TestEnv.SqlLayer, null)
-      };
-      return builder.Build();
-   }
+      TransactionScopeCe.Execute(() => (long?)_database.Container.Resolve<ISqliteConnectionPool>().ExecuteScalar("PRAGMA read_uncommitted"));
 }

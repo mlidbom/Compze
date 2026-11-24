@@ -5,172 +5,119 @@ function C-Ensure-CsprojfilesExcludeCsFilesFromProjectsInSubfoldersAndDocsFolder
     Ensures .csproj files exclude .cs files from projects in subfolders and properly handle _docs folders
 
     .DESCRIPTION
-    Finds all .csproj files that have other .csproj files in subdirectories and ensures complete exclusions
-    are in place (Compile, EmbeddedResource, None, Content). Also detects _docs folders and ensures they are
-    properly configured to exclude .cs files from compilation while keeping them visible in Solution Explorer.
-    All exclusions are consolidated into well-documented ItemGroups.
+    For each project under src/ and test/, maintains the two sections of its .csproj that this command writes, each a
+    comment saying so followed by an ItemGroup:
+    - a project with other projects in its subfolders removes their files from its own (Compile, EmbeddedResource,
+      None, Content);
+    - a project with _docs folders compiles none of their .cs files, while keeping them visible in Solution Explorer.
 
-    It rewrites only the ItemGroups it generates, which carry its marker comment, and leaves every other ItemGroup of a
-    project file alone, hand-written exclusions included. The rewritten sections stay where they were in the file; a
-    project file that has none gets them before </Project>. It looks for _docs folders in the project's own sources only:
-    never in build output (bin, obj, a DocFX site's _site), in node_modules, in a nested project's folder, or through a
-    junction or symbolic link.
+    A section is rewritten where it stands, added before </Project> when it is new, and removed when nothing calls for
+    it any more. Nothing else in a .csproj is touched, and a file whose sections are already right is not written.
+
+    Which projects and _docs folders there are is what git sees: the files it tracks, and the new ones it doesn't
+    ignore. Build output, such as the website's _site, and folders that link to others, such as its Compze junctions,
+    are ignored, so their copies of _docs folders and projects count for nothing.
     #>
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseApprovedVerbs', '')]
     param()
 
-    $srcPath = Join-Path $script:CompzeRoot "src"
-    $foldersThatHoldNoSources = @('bin', 'obj', '_site', 'node_modules')
-    $subdirectoriesSectionPattern = '(?s)[ \t]*<!-- Exclude subdirectories that have their own \.csproj files[^>]*?automatically maintained by DevScripts[^>]*?-->\s*<ItemGroup>.*?</ItemGroup>[ \t]*(\r?\n)?'
-    $docsSectionPattern = '(?s)[ \t]*<!-- Exclude _docs files from compilation[^>]*?automatically maintained by DevScripts[^>]*?-->\s*<ItemGroup>.*?</ItemGroup>[ \t]*(\r?\n)?'
+    $maintainedBy = 'This section is automatically maintained by DevScripts\C-Ensure-CsprojfilesExcludeCsFilesFromProjectsInSubfoldersAndDocsFolders.ps1'
+    $docsSectionPattern = '(?s)\r?\n[ \t]*<!-- Exclude _docs files from compilation but keep them visible\.[^>]*?-->\s*<ItemGroup>.*?</ItemGroup>'
+    $subdirectoriesSectionPattern = '(?s)\r?\n[ \t]*<!-- Exclude subdirectories that have their own \.csproj files[^>]*?-->\s*<ItemGroup>.*?</ItemGroup>'
 
-    function Get-DocsFoldersOfProject {
-        param(
-            [string]$projectDir
-        )
-
-        $docsFolders = @()
-        $foldersToSearch = [System.Collections.Generic.Queue[System.IO.DirectoryInfo]]::new()
-        $foldersToSearch.Enqueue([System.IO.DirectoryInfo]::new($projectDir))
-        while ($foldersToSearch.Count -gt 0) {
-            $folder = $foldersToSearch.Dequeue()
-            foreach ($subfolder in $folder.GetDirectories()) {
-                $isLinkOrJunction = $subfolder.Attributes.HasFlag([System.IO.FileAttributes]::ReparsePoint)
-                $holdsNoSources = $foldersThatHoldNoSources -contains $subfolder.Name
-                $isNestedProject = @($subfolder.GetFiles('*.csproj')).Count -gt 0
-                if ($isLinkOrJunction -or $holdsNoSources -or $isNestedProject) { continue }
-
-                if ($subfolder.Name -eq '_docs') {
-                    $docsFolders += $subfolder.FullName.Substring($projectDir.Length).TrimStart('\', '/')
-                } else {
-                    $foldersToSearch.Enqueue($subfolder)
-                }
-            }
-        }
-        return $docsFolders | Sort-Object
+    function Get-SourceFiles {
+        # The repository-relative paths, with forward slashes, of the files under src/ and test/ that git tracks and
+        # still exist, and of the new ones it doesn't ignore.
+        $listed = git -C $script:CompzeRoot ls-files --cached --others --exclude-standard -- src test
+        if ($LASTEXITCODE -ne 0) { throw "git ls-files failed in $($script:CompzeRoot)" }
+        $deleted = [System.Collections.Generic.HashSet[string]]::new([string[]]@(git -C $script:CompzeRoot ls-files --deleted -- src test))
+        return @($listed | Where-Object { -not $deleted.Contains($_) } | Select-Object -Unique)
     }
 
-    function Build-ExclusionItemGroup {
-        param(
-            [string[]]$patterns
-        )
+    function Build-DocsSection {
+        param([string[]]$docsFolders)
 
-        $exclusionLines = @()
-        foreach ($pattern in $patterns | Sort-Object) {
-            $exclusionLines += "    <Compile Remove=`"$pattern`" />"
-            $exclusionLines += "    <EmbeddedResource Remove=`"$pattern`" />"
-            $exclusionLines += "    <None Remove=`"$pattern`" />"
-            $exclusionLines += "    <Content Remove=`"$pattern`" />"
+        $lines = foreach ($folder in $docsFolders | Sort-Object) {
+            "    <Compile Remove=`"$folder\**\*.cs`" />"
+            "    <None Include=`"$folder\**\*.cs`" />"
         }
 
-        $comment = @"
-  <!-- Exclude subdirectories that have their own .csproj files to prevent compilation errors.
-       This section is automatically maintained by DevScripts\C-Ensure-CsprojfilesExcludeCsFilesFromProjectsInSubfoldersAndDocsFolders.ps1 -->
-"@
-
-        $itemGroup = @"
-$comment
-  <ItemGroup>
-$($exclusionLines -join "`r`n")
-  </ItemGroup>
-"@
-
-        return $itemGroup
-    }
-
-    function Build-DocsItemGroup {
-        param(
-            [string[]]$docsFolders
-        )
-
-        if ($docsFolders.Count -eq 0) {
-            return ""
-        }
-
-        $docsLines = @()
-        foreach ($folder in $docsFolders | Sort-Object) {
-            $docsLines += "    <Compile Remove=`"$folder\**\*.cs`" />"
-            $docsLines += "    <None Include=`"$folder\**\*.cs`" />"
-        }
-
-        $comment = @"
+        return @"
   <!-- Exclude _docs files from compilation but keep them visible.
-       This section is automatically maintained by DevScripts\C-Ensure-CsprojfilesExcludeCsFilesFromProjectsInSubfoldersAndDocsFolders.ps1 -->
-"@
-
-        $itemGroup = @"
-$comment
+       $maintainedBy -->
   <ItemGroup>
-$($docsLines -join "`r`n")
+$($lines -join "`r`n")
   </ItemGroup>
 "@
-
-        return $itemGroup
     }
 
-    # Find all .csproj files in src/ and test/
-    $allCsprojFiles = @()
-    $allCsprojFiles += Get-ProjectFilesInPath -Path $srcPath
-    $testPath = Join-Path $script:CompzeRoot "test"
-    if (Test-Path $testPath) {
-        $allCsprojFiles += Get-ProjectFilesInPath -Path $testPath
+    function Build-SubdirectoriesSection {
+        param([string[]]$subdirectories)
+
+        $lines = foreach ($subdirectory in $subdirectories | Sort-Object) {
+            foreach ($itemType in 'Compile', 'EmbeddedResource', 'None', 'Content') {
+                "    <$itemType Remove=`"$subdirectory\**`" />"
+            }
+        }
+
+        return @"
+  <!-- Exclude subdirectories that have their own .csproj files to prevent compilation errors.
+       $maintainedBy -->
+  <ItemGroup>
+$($lines -join "`r`n")
+  </ItemGroup>
+"@
     }
 
-    foreach ($csprojFile in $allCsprojFiles) {
-        $projectDir = $csprojFile.Directory.FullName
+    function Set-MaintainedSection {
+        # The content with the section that the pattern finds replaced by the new one where it stands, the new one added
+        # before </Project> if there was none, or the section removed if the new one is empty. Duplicates are removed.
+        param([string]$content, [string]$sectionPattern, [string]$section)
 
-        # Find all .csproj files in subdirectories (not siblings)
-        $childProjects = Get-ProjectFilesInPath -Path $projectDir |
-            Where-Object {
-                $_.FullName -ne $csprojFile.FullName -and
-                $_.Directory.FullName -ne $projectDir
-            }
-
-        $docsFolders = @(Get-DocsFoldersOfProject -projectDir $projectDir)
-
-        $originalContent = Get-Content $csprojFile.FullName -Raw
-
-        $generatedSections = @([regex]::Matches($originalContent, $docsSectionPattern)) + @([regex]::Matches($originalContent, $subdirectoriesSectionPattern))
-
-        # Skip if: no child projects AND no docs folders AND no generated sections to clean up
-        if ($childProjects.Count -eq 0 -and $docsFolders.Count -eq 0 -and $generatedSections.Count -eq 0) {
-            continue
+        $found = [regex]::Matches($content, $sectionPattern)
+        if ($found.Count -eq 0) {
+            if (-not $section) { return $content }
+            return $content -replace '\s*</Project>\s*$', "`r`n$section`r`n</Project>"
         }
 
-        # Build the new ItemGroups based on what currently exists
-        $itemGroups = @()
-
-        if ($docsFolders.Count -gt 0) {
-            $itemGroups += Build-DocsItemGroup -docsFolders $docsFolders
+        for ($index = $found.Count - 1; $index -ge 0; $index--) {
+            $match = $found[$index]
+            $replacement = if ($index -eq 0 -and $section) { "`r`n$section" } else { '' }
+            $content = $content.Remove($match.Index, $match.Length).Insert($match.Index, $replacement)
         }
+        return $content
+    }
 
-        if ($childProjects.Count -gt 0) {
-            $subdirsToExclude = $childProjects | ForEach-Object {
-                $childProjDir = $_.Directory.FullName
-                $relativePath = $childProjDir.Substring($projectDir.Length).TrimStart('\', '/')
-                $relativePath
-            } | Select-Object -Unique | Sort-Object
+    $sourceFiles = Get-SourceFiles
+    $projectFiles = @($sourceFiles | Where-Object { $_ -like '*.csproj' })
 
-            $patterns = $subdirsToExclude | ForEach-Object { "$_\**" }
-            $itemGroups += Build-ExclusionItemGroup -patterns $patterns
-        }
+    foreach ($projectFile in $projectFiles) {
+        $projectDirectory = Split-Path $projectFile -Parent
+        $prefix = "$($projectDirectory -replace '\\', '/')/"
 
-        $newSections = if ($itemGroups.Count -gt 0) { ($itemGroups -join "`r`n") + "`r`n" } else { "" }
+        $childProjectDirectories = @($projectFiles |
+            Where-Object { $_.StartsWith($prefix) -and $_ -ne $projectFile } |
+            ForEach-Object { (Split-Path $_.Substring($prefix.Length) -Parent) -replace '/', '\' } |
+            Where-Object { $_ } |
+            Select-Object -Unique)
 
-        if ($generatedSections.Count -gt 0) {
-            # The new sections take the place of the first generated section; the others are removed.
-            $firstSectionIndex = ($generatedSections | Measure-Object -Property Index -Minimum).Minimum
-            $content = $originalContent
-            foreach ($section in $generatedSections | Sort-Object Index -Descending) {
-                $content = $content.Remove($section.Index, $section.Length)
-            }
-            $content = $content.Insert($firstSectionIndex, $newSections)
-        } else {
-            $content = $originalContent -replace '\s*</Project>', "`r`n$($newSections.TrimEnd())`r`n</Project>"
-        }
+        $docsFolders = @($sourceFiles |
+            Where-Object { $_.StartsWith($prefix) } |
+            ForEach-Object { $_.Substring($prefix.Length) -replace '/', '\' } |
+            Where-Object { $file = $_; -not ($childProjectDirectories | Where-Object { $file.StartsWith("$_\") }) } |
+            ForEach-Object { if ($_ -match '^(.*?(?:^|\\)_docs)\\') { $Matches[1] } } |
+            Select-Object -Unique)
 
-        if ($content -ne $originalContent) {
-            Set-Content -Path $csprojFile.FullName -Value $content -NoNewline
+        $docsSection = if ($docsFolders.Count -gt 0) { Build-DocsSection -docsFolders $docsFolders } else { '' }
+        $subdirectoriesSection = if ($childProjectDirectories.Count -gt 0) { Build-SubdirectoriesSection -subdirectories $childProjectDirectories } else { '' }
+
+        $projectPath = Join-Path $script:CompzeRoot $projectFile
+        $content = Get-Content $projectPath -Raw
+        $updated = Set-MaintainedSection -content $content -sectionPattern $docsSectionPattern -section $docsSection
+        $updated = Set-MaintainedSection -content $updated -sectionPattern $subdirectoriesSectionPattern -section $subdirectoriesSection
+
+        if ($updated -cne $content) {
+            Set-Content -Path $projectPath -Value $updated -NoNewline
         }
     }
 }

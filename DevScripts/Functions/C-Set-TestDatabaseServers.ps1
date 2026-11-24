@@ -14,7 +14,9 @@ function C-Set-TestDatabaseServers {
 
     With -Computer, all three name that machine, with the development credentials CI uses as well: sa for SQL Server,
     postgres and root, each with the password Development!1. A name is resolved to its IPv4 address, which is what the
-    other machine's PostgreSQL lets in. Each server's port is tried first, and nothing is changed unless all three answer.
+    other machine's PostgreSQL lets in. Each server's port is tried first, then a login with each connection string, and
+    nothing is changed unless all three let this machine in. The logins are made by LogInToTestDatabaseServers.cs, beside
+    this command, which dotnet run builds the first time.
 
     With -ThisMachine, the three variables are removed, so the DbPool falls back to the servers on this machine.
 
@@ -64,7 +66,10 @@ function C-Set-TestDatabaseServers {
         'Show' {
             foreach ($server in $servers) {
                 $connectionString = [Environment]::GetEnvironmentVariable($server.Variable, 'User')
-                Write-Host ("{0}: {1}" -f $server.Variable, ($connectionString ?? '(not set: this machine)'))
+                $shown = if ($null -eq $connectionString) { '(not set: this machine)' }
+                         elseif ($connectionString -eq '') { '(empty: this machine)' }
+                         else { $connectionString }
+                Write-Host ("{0}: {1}" -f $server.Variable, $shown)
             }
         }
         'ThisMachine' {
@@ -78,6 +83,11 @@ function C-Set-TestDatabaseServers {
             $unreachable = $servers | Where-Object { -not (Test-TcpPortAnswers -Address $address -Port $_.Port) } | ForEach-Object { $_.Port }
             if ($unreachable) {
                 throw "$Computer ($address) doesn't answer on port(s) $($unreachable -join ', '). Nothing was changed."
+            }
+            $connectionStrings = $servers | ForEach-Object { & $_.ConnectionStringFor $address }
+            $refusals = dotnet run --file (Join-Path $PSScriptRoot 'Internals/LogInToTestDatabaseServers.cs') -- @connectionStrings
+            if ($LASTEXITCODE -ne 0) {
+                throw "$Computer ($address) doesn't let this machine log in. Nothing was changed.`n$($refusals -join "`n")"
             }
             foreach ($server in $servers) {
                 $connectionString = & $server.ConnectionStringFor $address
