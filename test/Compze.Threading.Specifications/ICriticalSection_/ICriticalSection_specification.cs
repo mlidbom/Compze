@@ -71,7 +71,7 @@ public class ICriticalSection_specification : UniversalTestBase
          var criticalSection = _factory.Create(LockTimeout.Seconds(30));
          var insideLockGate = IThreadGate.NewClosed(WaitTimeout.Seconds(30), "insideLock");
 
-         _runner.Run(
+         _runner.Start(
             () => criticalSection.Locked(insideLockGate.AwaitPassThrough),
             () => criticalSection.Locked(insideLockGate.AwaitPassThrough));
 
@@ -140,7 +140,7 @@ public class ICriticalSection_specification : UniversalTestBase
 
          var blockingLock = criticalSection.TakeLock();
 
-         _runner.Run(() =>
+         _runner.Start(() =>
          {
             using(criticalSection.TakeLock()) {}
          });

@@ -31,7 +31,7 @@ public class IAwaitableCriticalSection_specification : UniversalTestBase
       var criticalSection = _factory.Create(LockTimeout.Seconds(30));
       var insideLock = IThreadGate.NewClosed(WaitTimeout.Seconds(30), "insideLock");
 
-      _runner.Run(
+      _runner.Start(
          () =>
          {
             using(criticalSection.TakeUpdateLock()) insideLock.AwaitPassThrough();
@@ -137,7 +137,7 @@ public class IAwaitableCriticalSection_specification : UniversalTestBase
          var actionExecuted = false;
          var updateWhenReturned = IThreadGate.NewOpen(WaitTimeout.Seconds(10), "updateWhenReturned");
 
-         _runner.Run(() =>
+         _runner.Start(() =>
          {
             //A statement-block lambda so overload resolution picks the Action-taking UpdateWhen under specification - the expression form would bind to the Func overload.
             criticalSection.UpdateWhen(() => conditionMet, () => { actionExecuted = true; });
@@ -166,7 +166,7 @@ public class IAwaitableCriticalSection_specification : UniversalTestBase
          var conditionMet = false;
          var lockAcquired = IThreadGate.NewOpen(WaitTimeout.Seconds(10), "afterLockAcquired");
 
-         _runner.Run(() =>
+         _runner.Start(() =>
          {
             using(criticalSection.TakeUpdateLockWhen(() => conditionMet))
             {
@@ -190,7 +190,7 @@ public class IAwaitableCriticalSection_specification : UniversalTestBase
          var conditionMet = false;
          var innerLockAcquired = IThreadGate.NewOpen(WaitTimeout.Seconds(10), "innerLockAcquired");
 
-         _runner.Run(() =>
+         _runner.Start(() =>
          {
             using(criticalSection.TakeUpdateLock())
             {
@@ -218,7 +218,7 @@ public class IAwaitableCriticalSection_specification : UniversalTestBase
          var innerLockDisposed = IThreadGate.NewClosed(WaitTimeout.Seconds(10), "innerLockDisposed");
          var outerLockStillExclusive = IThreadGate.NewClosed(WaitTimeout.Seconds(10), "outerLockStillExclusive");
 
-         _runner.Run(() =>
+         _runner.Start(() =>
          {
             using(criticalSection.TakeUpdateLock())
             {
@@ -292,7 +292,7 @@ public class IAwaitableCriticalSection_specification : UniversalTestBase
          var conditionMet = false;
          var awaitCompleted = IThreadGate.NewOpen(WaitTimeout.Seconds(5), "awaitCompleted");
 
-         _runner.Run(() =>
+         _runner.Start(() =>
          {
             criticalSection.TryAwait(() => conditionMet).Must().BeTrue();
             awaitCompleted.AwaitPassThrough();
@@ -325,7 +325,7 @@ public class IAwaitableCriticalSection_specification : UniversalTestBase
          var conditionMet = false;
          var readCompleted = IThreadGate.NewOpen(WaitTimeout.Seconds(5), "readCompleted");
 
-         _runner.Run(() =>
+         _runner.Start(() =>
          {
             criticalSection.TryReadWhen(() => conditionMet, () => 99, out var value).Must().BeTrue();
             value.Must().Be(99);
@@ -360,7 +360,7 @@ public class IAwaitableCriticalSection_specification : UniversalTestBase
          var conditionMet = false;
          var updateCompleted = IThreadGate.NewOpen(WaitTimeout.Seconds(5), "updateCompleted");
 
-         _runner.Run(() =>
+         _runner.Start(() =>
          {
             criticalSection.TryUpdateWhen(() => conditionMet, () => 99, out var value).Must().BeTrue();
             value.Must().Be(99);
@@ -387,7 +387,7 @@ public class IAwaitableCriticalSection_specification : UniversalTestBase
          var conditionMet = false;
          var waitCompleted = IThreadGate.NewOpen(WaitTimeout.Seconds(5), "waitCompleted");
 
-         _runner.Run(() =>
+         _runner.Start(() =>
          {
             criticalSection.TryAwait(() => conditionMet).Must().BeTrue();
             waitCompleted.AwaitPassThrough();

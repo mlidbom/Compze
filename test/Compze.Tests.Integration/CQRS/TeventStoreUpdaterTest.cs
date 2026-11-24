@@ -373,7 +373,7 @@ public class TeventStoreUpdaterTest : UniversalTestBase
       var withinTransactionAfterReadGate = IThreadGate.NewClosed(WaitTimeout.Seconds(30));
       await using var runner = new TestingTaskRunner(30.Seconds());
 
-      runner.Run(ReadUserHistory, ReadUserHistory);
+      runner.Start(ReadUserHistory, ReadUserHistory);
       (await withinTransactionAfterReadGate.TryAwaitQueueLengthEqualToAsync(2)).Must().BeTrue();
       withinTransactionAfterReadGate.Open();
 

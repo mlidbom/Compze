@@ -46,8 +46,8 @@ public static class MutableTeventDispatcher_used_from_several_threads_specificat
       {
          var startingLine = IThreadGate.NewClosed(WaitTimeout.Seconds(10));
          using var taskRunner = TestingTaskRunner.WithTimeout(TimeSpan.FromSeconds(30));
-         taskRunner.Run([..0.Through(NumberOfDispatchingThreads - 1).Select(DispatchATeventOfEveryTypeToEveryDispatcherStartingWithTheTypeAt)]);
-         taskRunner.Run([..Enumerable.Repeat<Action>(RegisterAndDisposeASubscriberOnEveryDispatcher, numberOfSubscribingThreads)]);
+         taskRunner.Start([..0.Through(NumberOfDispatchingThreads - 1).Select(DispatchATeventOfEveryTypeToEveryDispatcherStartingWithTheTypeAt)]);
+         taskRunner.Start([..Enumerable.Repeat<Action>(RegisterAndDisposeASubscriberOnEveryDispatcher, numberOfSubscribingThreads)]);
          startingLine.AwaitQueueLengthEqualTo(NumberOfDispatchingThreads + numberOfSubscribingThreads);
          startingLine.Open();
 
@@ -108,15 +108,17 @@ public static class MutableTeventDispatcher_used_from_several_threads_specificat
          public when_one_thread_is_inside_that_handler_and_another_dispatches_and_registers_and_disposes_a_subscriber()
          {
             using var taskRunner = TestingTaskRunner.WithTimeout(TimeSpan.FromSeconds(10));
-            taskRunner.Run(() => _dispatcher.Dispatch(new Created()));
+            taskRunner.Start(() => _dispatcher.Dispatch(new Created()));
             _insideTheHandler.AwaitQueueLengthEqualTo(1);
 
-            var theOtherThread = taskRunner.Run(() =>
+            var theOtherThreadFinished = IThreadGate.NewOpen(WaitTimeout.Seconds(5), "theOtherThreadFinished");
+            taskRunner.Start(() =>
             {
                _dispatcher.Dispatch(new EmailChanged());
                _dispatcher.Register().For<IAccountTevent.IEmailChanged>(_ => {}).Dispose();
+               theOtherThreadFinished.AwaitPassThrough();
             });
-            _theOtherThreadFinishedWhileTheFirstWasInsideTheHandler = theOtherThread.Wait(TimeSpan.FromSeconds(5));
+            _theOtherThreadFinishedWhileTheFirstWasInsideTheHandler = theOtherThreadFinished.TryAwaitPassedThroughCountEqualTo(1);
 
             _insideTheHandler.Open();
          }

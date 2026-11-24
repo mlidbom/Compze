@@ -61,7 +61,7 @@ public class InterprocessSignal_specification : UniversalTestBase
          var afterAwaitingGate = IThreadGate.NewOpen(WaitTimeout.Seconds(5));
          var localBaseline = _baseline;
 
-         _runner.Run(() =>
+         _runner.Start(() =>
          {
             beforeAwaitingGate.AwaitPassThrough();
             // ReSharper disable once AccessToDisposedClosure

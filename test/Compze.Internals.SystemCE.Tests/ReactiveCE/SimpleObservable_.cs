@@ -76,7 +76,7 @@ public class SimpleObservable_
          _observable.Subscribe(_ => subscriberGate.AwaitPassThrough());
 
          using var taskRunner = TestingTaskRunner.WithTimeout(TimeSpan.FromSeconds(10));
-         taskRunner.Run(() => _observable.OnNext("notification"));
+         taskRunner.Start(() => _observable.OnNext("notification"));
          subscriberGate.AwaitQueueLengthEqualTo(1);
 
          _observable.Subscribe(_ => {}).Dispose();

@@ -95,7 +95,7 @@ public class DoubleCheckedLocking_specification : UniversalTestBase
 
          var runner = TestingTaskRunner.WithTimeout(10.Seconds());
 
-         runner.Run(
+         runner.Start(
             () =>
             {
                waitingToStart.AwaitPassThrough();
@@ -210,7 +210,7 @@ public class DoubleCheckedLocking_specification : UniversalTestBase
 
          var runner = TestingTaskRunner.WithTimeout(10.Seconds());
 
-         runner.Run(
+         runner.Start(
             () =>
             {
                waitingToStart.AwaitPassThrough();

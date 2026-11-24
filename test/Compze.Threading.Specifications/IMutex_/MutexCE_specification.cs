@@ -129,20 +129,21 @@ public class MutexCE_specification : UniversalTestBase
          lockHandle.Dispose();
       }
 
-      [XF] public void invokes_callback_when_mutex_is_abandoned_while_waiting_for_it()
+      [XF] public async Task invokes_callback_when_mutex_is_abandoned_while_waiting_for_it()
       {
          var callbackInvoked = false;
          using var mutex = IMutex.Global(UniqueToThisProcess("MutexCE_specification.onAbandoned.invoked_while_waiting"), onAbandonedMutex: () => callbackInvoked = true);
 
          var triggerAbandonment = mutex.HoldLockUntilAbandoned();
 
-         using var runner = TestingTaskRunner.WithTimeout(30.Seconds());
-         var waitingTask = runner.Run(() => mutex.TakeLock().Dispose());
+         await using(var runner = TestingTaskRunner.WithTimeout(30.Seconds()))
+         {
+            runner.Start(() => mutex.TakeLock().Dispose());
 
-         SpinWait.SpinUntil(() => mutex.ContentionCount > 0, 10.Seconds());
+            SpinWait.SpinUntil(() => mutex.ContentionCount > 0, 10.Seconds());
 
-         triggerAbandonment();
-         waitingTask.Wait(10.Seconds());
+            triggerAbandonment();
+         }
 
          callbackInvoked.Must().BeTrue();
       }
@@ -158,21 +159,22 @@ public class MutexCE_specification : UniversalTestBase
          lockHandle!.Dispose();
       }
 
-      [XF] public void returns_null_immediately_while_another_instance_holds_the_mutex_and_a_lock_once_it_is_released()
+      [XF] public async Task returns_null_immediately_while_another_instance_holds_the_mutex_and_a_lock_once_it_is_released()
       {
          var name = UniqueToThisProcess("MutexCE_specification.TryTakeLock.held");
          using var holdingMutex = IMutex.Global(name);
          using var tryingMutex = IMutex.Global(name);
 
          var insideLock = IThreadGate.NewClosed(WaitTimeout.Seconds(30), "insideLock");
-         using var runner = TestingTaskRunner.WithTimeout(30.Seconds());
-         var holdingTask = runner.Run(() => holdingMutex.Locked(insideLock.AwaitPassThrough));
+         await using(var runner = TestingTaskRunner.WithTimeout(30.Seconds()))
+         {
+            runner.Start(() => holdingMutex.Locked(insideLock.AwaitPassThrough));
 
-         insideLock.TryAwaitQueueLengthEqualTo(1).Must().BeTrue();
-         tryingMutex.TryTakeLock(LockTimeout.Zero).Must().BeNull();
+            (await insideLock.TryAwaitQueueLengthEqualToAsync(1)).Must().BeTrue();
+            tryingMutex.TryTakeLock(LockTimeout.Zero).Must().BeNull();
 
-         insideLock.Open();
-         holdingTask.Wait(10.Seconds());
+            insideLock.Open();
+         }
 
          var lockHandle = tryingMutex.TryTakeLock(LockTimeout.Zero);
          lockHandle.Must().NotBeNull();
@@ -207,7 +209,7 @@ public class MutexCE_specification : UniversalTestBase
          var insideMutex = IThreadGate.NewClosed(WaitTimeout.Seconds(30), "insideMutex");
 
          using var runner = TestingTaskRunner.WithTimeout(30.Seconds());
-         runner.Run(
+         runner.Start(
             () => mutex1.Locked(insideMutex.AwaitPassThrough),
             () => mutex2.Locked(insideMutex.AwaitPassThrough));
 
@@ -233,7 +235,7 @@ public class MutexCE_specification : UniversalTestBase
          var insideMutex = IThreadGate.NewClosed(WaitTimeout.Seconds(30), "insideMutex");
 
          using var runner = TestingTaskRunner.WithTimeout(30.Seconds());
-         runner.Run(
+         runner.Start(
             () => mutex1.Locked(insideMutex.AwaitPassThrough),
             () => mutex2.Locked(insideMutex.AwaitPassThrough));
 

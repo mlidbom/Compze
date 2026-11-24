@@ -15,7 +15,7 @@ public class TestingTaskRunner_ : UniversalTestBase
    {
       bool _ranOnAThreadPoolThread = true;
 
-      public running_an_action() => _runner.Run(() => { _ranOnAThreadPoolThread = Thread.CurrentThread.IsThreadPoolThread; });
+      public running_an_action() => _runner.Start(() => { _ranOnAThreadPoolThread = Thread.CurrentThread.IsThreadPoolThread; });
 
       protected override async Task InitializeAsyncInternal()
       {
@@ -30,7 +30,7 @@ public class TestingTaskRunner_ : UniversalTestBase
    {
       bool _ranToItsEnd;
 
-      public running_an_async_function() => _runner.Run(async () =>
+      public running_an_async_function() => _runner.Start(async () =>
       {
          await Task.Yield();
          _ranToItsEnd = true;
@@ -47,7 +47,7 @@ public class TestingTaskRunner_ : UniversalTestBase
 
    public class running_an_async_function_that_throws_after_awaiting : TestingTaskRunner_
    {
-      public running_an_async_function_that_throws_after_awaiting() => _runner.Run(async () =>
+      public running_an_async_function_that_throws_after_awaiting() => _runner.Start(async () =>
       {
          await Task.Yield();
          throw new IntentionalSpecificationException();
