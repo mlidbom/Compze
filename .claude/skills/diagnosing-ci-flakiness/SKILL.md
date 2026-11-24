@@ -60,3 +60,11 @@ rather than theorise further:
 The 2026-11-12 case: an endpoint's router parked a pool thread in its registry wait for the endpoint's whole life,
 and the PostgreSQL sql layers prepared statements synchronously from async code; on a 4-processor runner the
 pool's 4–5 threads were all parked and a recording hung in a synchronous socket read for over 10 seconds.
+
+**A synchronous socket read that the server never answers, with the server idle, is a send that never left.**
+Npgsql 9 sends the second and later statements of a *synchronous* command, and flushes the whole command, from the
+thread pool, while the calling thread waits in `recv`. With the pool starved, `pg_stat_activity` shows as many idle
+backends in wait event `ClientRead` as the client has threads in `NpgsqlReadBuffer.Ensure`: each side waits for the
+other. The 2026-11-24 case: the memory image state store's two-statement reads stalled 1.6–30 s under forty units of
+work from `Task.Run`, on a 32-core machine, until each statement became a command of its own. `psql` from
+`C:\Program Files\PostgreSQL\18\bin` reads `pg_stat_activity` on any of the test servers during a stall.
