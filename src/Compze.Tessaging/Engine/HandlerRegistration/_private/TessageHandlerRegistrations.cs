@@ -2,10 +2,8 @@ using Compze.Tessaging.Engine._private;
 using Compze.Tessaging.Validation._internal;
 using Compze.Contracts;
 using Compze.DependencyInjection.Abstractions;
-using Compze.Internals.SystemCE.CollectionsCE.GenericCE;
 using Compze.Internals.SystemCE.ReflectionCE;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
-using Compze.Tessaging.TessageBus;
 using Compze.Tessaging.TessageTypes;
 using Compze.Threading;
 using Compze.TypeIdentifiers;
@@ -24,8 +22,7 @@ sealed class TessageHandlerRegistrations
    readonly bool _isTheEngineOfAnEndpoint;
    bool _rosterIsBuilt;
 
-   //Tevent subscriptions are keyed by the wrapper routing key their subscribed type translates to - see AddTeventHandler.
-   readonly Dictionary<Type, List<Func<ITevent, IUnitOfWorkResolver, Task>>> _teventHandlers = new();
+   readonly List<TeventHandlerRegistration> _teventHandlers = [];
    readonly List<TeventObserverRegistration> _teventObservers = [];
    readonly Dictionary<Type, Func<ITommand, IUnitOfWorkResolver, Task>> _voidTommandHandlers = new();
    readonly Dictionary<Type, TessageHandlerRoster.TommandHandlerWithResult> _tommandHandlersWithResults = new();
@@ -37,21 +34,13 @@ sealed class TessageHandlerRegistrations
    /// an engine given identity and a wire, which receives tevents from other endpoints.</summary>
    internal TessageHandlerRegistrations(bool isTheEngineOfAnEndpoint) => _isTheEngineOfAnEndpoint = isTheEngineOfAnEndpoint;
 
-   ///<summary>Registers a participation handler for tevents compatible with <typeparamref name="TTevent"/>. The one registration<br/>
-   /// translation of the routing model: routing operates exclusively on wrapper types, so a subscription to an inner tevent type<br/>
-   /// is keyed under the wrapper type matching every wrapping of it (<see cref="PublisherTevent.WrapperTypeMatchingAllWrappingsOf"/>)<br/>
-   /// and unwrapped at delivery, while a subscription to a wrapper type is keyed as it stands and receives the wrapper —<br/>
-   /// publisher-conscious subscription.</summary>
+   ///<summary>Registers a participation handler for tevents compatible with <typeparamref name="TTevent"/>: see<br/>
+   /// <see cref="TeventHandlerRegistration"/>. A tevent runs its handlers in the order they were registered, whatever types they<br/>
+   /// subscribe to.</summary>
    internal void AddTeventHandler<TTevent>(Func<TTevent, IUnitOfWorkResolver, Task> handler) where TTevent : ITevent => _monitor.Locked(() =>
    {
       AssertRosterIsNotYetBuilt();
-      TessageInspector.AssertValidForSubscription<TTevent>();
-
-      Func<ITevent, IUnitOfWorkResolver, Task> deliver = typeof(TTevent).Is<IPublisherTevent<ITevent>>()
-                                                            ? (wrappedTevent, unitOfWork) => handler((TTevent)wrappedTevent, unitOfWork)
-                                                            : (wrappedTevent, unitOfWork) => handler((TTevent)((IPublisherTevent<ITevent>)wrappedTevent).Tevent, unitOfWork);
-
-      _teventHandlers.GetOrAdd(PublisherTevent.WrapperTypeMatchingAllWrappingsOf(typeof(TTevent)), () => []).Add(deliver);
+      _teventHandlers.Add(TeventHandlerRegistration.For(handler));
       _subscribedTeventTypes.Add(typeof(TTevent));
    });
 
@@ -121,7 +110,7 @@ sealed class TessageHandlerRegistrations
    internal TessageHandlerRoster BuildRoster(ITypeMap typeMap) => _monitor.Locked(() =>
    {
       _rosterIsBuilt = true;
-      return new TessageHandlerRoster(teventHandlers: _teventHandlers.ToDictionary(it => it.Key, IReadOnlyList<Func<ITevent, IUnitOfWorkResolver, Task>> (it) => [..it.Value]),
+      return new TessageHandlerRoster(teventHandlers: [.._teventHandlers],
                                       teventObservers: [.._teventObservers],
                                       isTheEngineOfAnEndpoint: _isTheEngineOfAnEndpoint,
                                       teventTypesSubscribedForDynamicObservers: [.._teventTypesSubscribedForDynamicObservers],

@@ -14,6 +14,8 @@ namespace Compze.Tessaging.TessageBus;
 /// <see cref="LocalTessagingEngineBuilder.RegisterTessageBusHandlers"/> callback and existing only inside it: the callback's end<br/>
 /// is the registration's end, so nothing can hold a registrar and mutate the engine later — using one after its callback<br/>
 /// explodes.</summary>
+///<remarks>A tevent runs the handlers that match it one after another, in the order they were registered, whatever types they<br/>
+/// subscribe to: a handler may depend on what the handlers registered before it did.</remarks>
 ///<remarks>Synchrony follows the type: exactly-once kinds are async end to end — an exactly-once handler transactionally<br/>
 /// modifies a database by construction, so tommand handlers here have no synchronous form at all, and a subscription demanding<br/>
 /// exactly-once tevent delivery explodes when handed a synchronous handler. Convenience overloads that resolve extra lambda<br/>

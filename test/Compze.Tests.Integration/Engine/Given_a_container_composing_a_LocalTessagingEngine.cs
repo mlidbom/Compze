@@ -92,6 +92,25 @@ public partial class Given_a_container_composing_a_LocalTessagingEngine : Univer
       [PCT] public void the_subscriber_to_an_unrelated_tevent_interface_receives_nothing() => _receivedBySubscriberToAnUnrelatedTeventInterface.Must().BeEmpty();
    }
 
+   public class after_publishing_a_tevent_that_handlers_of_its_type_its_base_type_and_that_base_types_wrapper_were_registered_for_in_alternation : Given_a_container_composing_a_LocalTessagingEngine
+   {
+      readonly List<string> _handlersInTheOrderTheyRan = [];
+
+      public after_publishing_a_tevent_that_handlers_of_its_type_its_base_type_and_that_base_types_wrapper_were_registered_for_in_alternation()
+      {
+         ComposeContainerWithEngine(engine => engine.RegisterTessageBusHandlers(handle => handle
+            .ForTevent((IMyGreetingRequestedTevent _) => _handlersInTheOrderTheyRan.Add("first, for the base type"))
+            .ForTevent((IMySpecialGreetingRequestedTevent _) => _handlersInTheOrderTheyRan.Add("second, for the tevent's type"))
+            .ForTevent((IPublisherTevent<IMyGreetingRequestedTevent> _) => _handlersInTheOrderTheyRan.Add("third, for the base type's wrapper"))
+            .ForTevent((IMyGreetingRequestedTevent _) => _handlersInTheOrderTheyRan.Add("fourth, for the base type again"))));
+
+         Container.ScopeFactory.ExecuteUnitOfWork(unitOfWork => unitOfWork.Resolve<IUnitOfWorkTeventPublisher>().Publish(new MySpecialGreetingRequestedTevent()));
+      }
+
+      [PCT] public void every_handler_runs_in_the_order_it_was_registered() =>
+         _handlersInTheOrderTheyRan.Must().SequenceEqual(["first, for the base type", "second, for the tevent's type", "third, for the base type's wrapper", "fourth, for the base type again"]);
+   }
+
    public class after_publishing_a_wrapped_taggregate_tevent_through_the_unit_of_work_tevent_publisher : Given_a_container_composing_a_LocalTessagingEngine
    {
       readonly List<ITaggregateTevent> _receivedBySubscriberToTheInnerTeventType = [];

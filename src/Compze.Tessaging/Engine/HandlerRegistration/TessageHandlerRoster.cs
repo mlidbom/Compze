@@ -21,7 +21,7 @@ namespace Compze.Tessaging.Engine.HandlerRegistration;
 /// canonical type-ids, computed once.</remarks>
 public class TessageHandlerRoster
 {
-   readonly IReadOnlyDictionary<Type, IReadOnlyList<Func<ITevent, IUnitOfWorkResolver, Task>>> _teventHandlers;
+   readonly IReadOnlyList<TeventHandlerRegistration> _teventHandlers;
    readonly IReadOnlyDictionary<Type, Func<ITommand, IUnitOfWorkResolver, Task>> _voidTommandHandlers;
    readonly IReadOnlyDictionary<Type, TommandHandlerWithResult> _tommandHandlersWithResults;
    readonly IReadOnlyDictionary<Type, Func<ITuery, IScopeResolver, Task<object>>> _tueryHandlers;
@@ -31,7 +31,7 @@ public class TessageHandlerRoster
    readonly Lazy<ISet<TypeId>> _handledRemoteTessageBusTypeIds;
    readonly Lazy<ISet<TypeId>> _handledRemoteTypermediaTypeIds;
 
-   internal TessageHandlerRoster(IReadOnlyDictionary<Type, IReadOnlyList<Func<ITevent, IUnitOfWorkResolver, Task>>> teventHandlers,
+   internal TessageHandlerRoster(IReadOnlyList<TeventHandlerRegistration> teventHandlers,
                                  IReadOnlyList<TeventObserverRegistration> teventObservers,
                                  bool isTheEngineOfAnEndpoint,
                                  IReadOnlyList<Type> teventTypesSubscribedForDynamicObservers,
@@ -56,16 +56,14 @@ public class TessageHandlerRoster
       _handledRemoteTypermediaTypeIds = new Lazy<ISet<TypeId>>(ComputeHandledRemoteTypermediaTypeIds);
    }
 
-   ///<summary>The participation tevent handlers whose subscriptions match <paramref name="wrapperTeventType"/>. Every dispatch<br/>
-   /// site invokes them inside a unit of work — the publisher's own for a local publish, the inbox processing's own for an<br/>
-   /// exactly-once arrival, the direct dispatch's own for a best-effort arrival.</summary>
-   ///<remarks>review: the handlers come grouped by subscribed type, each type's in registration order, the types in the order each was first<br/>
-   /// registered: registering for IUserTevent, then IUserRegistered, then IUserTevent again delivers an IUserImported to the first, the third, then<br/>
-   /// the second. Teventive's introduction.md promises delivery "in the order that the handlers were registered". Which should change, this or the<br/>
-   /// page? Found by reading, not run (Claude, 2026-11-20).</remarks>
+   ///<summary>The participation tevent handlers whose subscriptions match <paramref name="wrapperTeventType"/>, in the order they were<br/>
+   /// registered, whatever types they subscribe to. Every dispatch site invokes them one after another, in that order, inside a unit<br/>
+   /// of work — the publisher's own for a local publish, the inbox processing's own for an exactly-once arrival, the direct<br/>
+   /// dispatch's own for a best-effort arrival.</summary>
+   ///<remarks>The order is a guarantee: a handler may depend on what the handlers registered before it did (Magnus, 2026-11-24).</remarks>
    //performance: Use static caching trick.
    public IReadOnlyList<Func<ITevent, IUnitOfWorkResolver, Task>> GetTeventHandlers(Type wrapperTeventType) =>
-      [.._teventHandlers.Where(it => it.Key.IsAssignableFrom(wrapperTeventType)).SelectMany(it => it.Value)];
+      [.._teventHandlers.Where(it => it.MatchesTeventsWrappedAs(wrapperTeventType)).Select(it => it.Handle)];
 
    ///<summary>Every composed tevent observer with its subscribed wrapper type — observation, the deliberately<br/>
    /// transaction-ignoring watch surface. The engine's <see cref="TeventObservationDispatcher"/> builds its per-observer FIFO<br/>
