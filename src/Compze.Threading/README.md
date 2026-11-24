@@ -226,7 +226,9 @@ A value that its factory creates the first time it is read, like `Lazy<T>` in it
 - **A factory that throws runs again on the next read,** instead of its exception being cached for good.
 - **A deadlock between factories throws** a `TimeoutException` after `LockTimeout.Default`, instead of hanging.
 - **A factory that reads the value it is creating throws** an `InvalidOperationException`, as `Lazy<T>` does.
+- **A null value is a value:** a factory that creates null runs once, as for any other value, and `IsInitialized` tells a value created null from one not yet created.
 - **An instance is one 32-byte object,** cheap enough to create by the million: it allocates no lock, but locks on itself, and only while the value is being created. So don't lock on an instance from outside: that code would share its lock.
+- **It lets go of its factory once the value is created,** so the factory, and whatever it captured, can be collected.
 
 ```csharp
 public class Settings

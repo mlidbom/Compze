@@ -3,8 +3,9 @@
 **The rule set aside:** "Always use the locking primitives in Compze.Threading. IMonitor, IAwaitableMonitor, IMutex etc.
 NEVER raw lock, Monitor, Mutex etc."
 
-**Where:** `DoubleCheckedLockingOnAnExistingObject` in Compze.Threading (`_private`), which is what
-`LazyCE<TValue>` uses. Nowhere else.
+**Where:** `LazyCE<TValue>` in Compze.Threading, in `CreateUnlessAnotherThreadAlreadyHas`. Nowhere else. (Until
+2026-11-24 it was in a helper, `DoubleCheckedLockingOnAnExistingObject`, which `LazyCE` called; making a null value
+possible gave `LazyCE` a way of its own to tell a created value, and the helper went into it.)
 
 **What it does instead:** double-checked locking that locks, with `Monitor.TryEnter` and `LockTimeout.Default`, on an
 object the caller already has: a `LazyCE` locks on itself. The lock is taken only while the value is still being
@@ -15,6 +16,9 @@ candidate word, millions in a run. An `IMonitor` per instance cost ten allocatio
 instance and reading it once took 55 ns. Locking on the instance itself costs 32 bytes, one allocation, and 14 ns
 (BenchmarkDotNet, .NET 10, x64, 2026-11-12). Allocating a lock object on first read instead
 (`LazyInitializer.EnsureInitialized` with a `syncLock`) costs 64 bytes and 22 ns, and still uses a raw `Monitor`.
+Since `LazyCE` lets go of its factory once the value is created (2026-11-24), it is still 32 bytes: creating an
+instance and reading it once took 17.5 ns against 17.2 before, and a later read 0.26 ns against 0.23, both within the
+measurement's noise (`Compze.Tests.Benchmarks`, BenchmarkDotNet in process, .NET 11, x64).
 
 **What is lost, and how much of it is kept:**
 

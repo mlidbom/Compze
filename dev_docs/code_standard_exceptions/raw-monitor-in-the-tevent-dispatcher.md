@@ -33,8 +33,8 @@ dispatcher also allocated an `IMonitor`, ten allocations of its own.
 - `CA2002`, "Do not lock on objects with weak identity", is suppressed where the lock is taken: `Subscriptions` is private
   to the dispatcher, so no code outside it can reach an instance to lock on it.
 
-The same raw-`Monitor`-with-timeout pattern is in Compze.Threading's `DoubleCheckedLockingOnAnExistingObject`, for
-`LazyCE` (see `raw-monitor-in-lazy-initialization.md`). If a third place needs it, it becomes a public primitive of
+The same raw-`Monitor`-with-timeout pattern is in Compze.Threading's `LazyCE` (see
+`raw-monitor-in-lazy-initialization.md`). If a third place needs it, it becomes a public primitive of
 Compze.Threading: a lock on an object the caller already has, allocating nothing.
 
 **Approved by:** Magnus, 2026-11-13, as the way for an ultra-hot path such as this to depart from the locking primitives.

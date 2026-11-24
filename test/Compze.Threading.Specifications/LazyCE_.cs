@@ -1,5 +1,7 @@
 using Compze.Contracts;
+using System.Runtime.CompilerServices;
 using Compze.Must;
+using Compze.Tests.Infrastructure.Diagnostics;
 using Compze.Threading.Testing;
 using Compze.xUnitBDD;
 using static Compze.Must.MustActions;
@@ -25,6 +27,15 @@ public class LazyCE_
       [XF] public void ValueIfInitialized_returns_null() => _lazy.ValueIfInitialized().Must().BeNull();
 
       [XF] public void the_factory_has_not_run() => _factoryRuns.Must().Be(0);
+
+      [XF] public void IsInitialized_is_false() => _lazy.IsInitialized.Must().BeFalse();
+   }
+
+   public class Creating_an_instance : LazyCE_
+   {
+      static readonly Func<object> CreateAnObject = () => new object();
+
+      [XF] public void allocates_32_bytes() => ManagedAllocation.BytesAllocatedBy(() => new LazyCE<object>(CreateAnObject)).Must().Be(32L);
    }
 
    public class When_the_value_is_read_twice : LazyCE_
@@ -45,6 +56,61 @@ public class LazyCE_
       [XF] public void the_factory_runs_once() => _factoryRuns.Must().Be(1);
 
       [XF] public void ValueIfInitialized_returns_that_instance() => _lazy.ValueIfInitialized().Must().NotBeNull().ReferenceEqual(_firstRead);
+
+      [XF] public void IsInitialized_is_true() => _lazy.IsInitialized.Must().BeTrue();
+   }
+
+   public class When_the_factory_returns_null_and_the_value_is_read_twice : LazyCE_
+   {
+      readonly LazyCE<object?> _lazy;
+      readonly object? _firstRead;
+      readonly object? _secondRead;
+
+      public When_the_factory_returns_null_and_the_value_is_read_twice()
+      {
+         _lazy = new LazyCE<object?>(() =>
+         {
+            Interlocked.Increment(ref _factoryRuns);
+            return null;
+         });
+         _firstRead = _lazy.Value;
+         _secondRead = _lazy.Value;
+      }
+
+      [XF] public void both_reads_return_null() => new { _firstRead, _secondRead }.Must().Satisfy(it => it._firstRead is null && it._secondRead is null);
+
+      [XF] public void the_factory_runs_once() => _factoryRuns.Must().Be(1);
+
+      [XF] public void IsInitialized_is_true() => _lazy.IsInitialized.Must().BeTrue();
+   }
+
+   public class Once_the_value_is_created : LazyCE_
+   {
+      readonly LazyCE<string> _lazy;
+      readonly WeakReference _whatTheFactoryCaptured;
+
+      public Once_the_value_is_created()
+      {
+         _lazy = CreateAnInstanceWhoseFactoryCapturesAnObject(out _whatTheFactoryCaptured);
+         _ = _lazy.Value;
+         GC.Collect();
+         GC.WaitForPendingFinalizers();
+         GC.Collect();
+      }
+
+      ///<summary>Not inlined, so that no local of the constructor's can keep the captured object alive.</summary>
+      [MethodImpl(MethodImplOptions.NoInlining)]
+      static LazyCE<string> CreateAnInstanceWhoseFactoryCapturesAnObject(out WeakReference whatTheFactoryCaptures)
+      {
+         var captured = new object();
+         whatTheFactoryCaptures = new WeakReference(captured);
+         return new LazyCE<string>(() => captured.GetType().Name);
+      }
+
+      [XF] public void the_instance_has_let_go_of_its_factory_so_what_the_factory_captured_has_been_collected() =>
+         _whatTheFactoryCaptured.IsAlive.Must().BeFalse();
+
+      [XF] public void the_instance_still_returns_its_value() => _lazy.Value.Must().Be(nameof(Object));
    }
 
    public class When_the_factory_throws_on_the_first_read : LazyCE_
@@ -63,6 +129,8 @@ public class LazyCE_
       [XF] public void the_read_throws_the_factorys_exception() => _exceptionFromTheFirstRead.Message.Must().Be("The first run fails.");
 
       [XF] public void ValueIfInitialized_returns_null() => _lazy.ValueIfInitialized().Must().BeNull();
+
+      [XF] public void IsInitialized_is_false() => _lazy.IsInitialized.Must().BeFalse();
 
       public class and_the_value_is_read_again : When_the_factory_throws_on_the_first_read
       {
