@@ -6,7 +6,12 @@ using Compze.Internals.SystemCE._private;
 
 namespace Compze.Internals.SystemCE.ThreadingCE.Async;
 
-public interface IAsyncLockCE : IDisposable
+///<summary>A lock that may be held across awaits, which synchronous and asynchronous code take alike. It is re-entrant per async<br/>
+/// flow, so a nested use on the same flow doesn't deadlock, while independent flows take turns. Taking it times out after its<br/>
+/// <see cref="LockTimeout"/>.</summary>
+///<remarks>It isn't disposable: nothing it holds needs disposing, and disposing a lock that is held, or waited for, would break<br/>
+/// its holder's release of it and its waiters.</remarks>
+public interface IAsyncLockCE
 {
    static IAsyncLockCE WithDefaultTimeout() => new AsyncLockCE(LockTimeout.Default);
    static IAsyncLockCE New(LockTimeout timeout) => new AsyncLockCE(timeout);
@@ -19,7 +24,9 @@ public interface IAsyncLockCE : IDisposable
    void SetTimeToWaitForStackTrace(WaitTimeout timeToWaitForStackTrace);
 
 
+#pragma warning disable CA1001 // The semaphore holds nothing to dispose: SemaphoreSlim allocates only its AvailableWaitHandle, which this never asks for. See IAsyncLockCE's remarks.
    public class AsyncLockCE : IAsyncLockCE
+#pragma warning restore CA1001
    {
       readonly SemaphoreSlim _semaphore = new(1, 1);
       readonly AsyncLocal<int> _lockEntranceCount = new();
@@ -112,7 +119,5 @@ public interface IAsyncLockCE : IDisposable
             }
          }
       }
-
-      public void Dispose() => _semaphore.Dispose();
    }
 }
