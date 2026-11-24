@@ -25,6 +25,8 @@
   <ItemGroup>
     <Compile Remove="_docs\**\*.cs" />
     <None Include="_docs\**\*.cs" />
+    <Compile Remove="Typermedia\_docs\**\*.cs" />
+    <None Include="Typermedia\_docs\**\*.cs" />
   </ItemGroup>
   <!-- Compze.Abstractions — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Abstractions)' == 'true'">
