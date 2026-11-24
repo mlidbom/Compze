@@ -38,6 +38,13 @@ C-Test -Combinations 'MsSql:Microsoft:Newtonsoft:AspNetCore' -Filter "FullyQuali
 were, also when the run fails or is interrupted. Use it rather than editing the file, which needs a rebuild, and whose
 copies a restored file doesn't overwrite.
 
+## Benchmarks: what code costs in nanoseconds and bytes
+
+`test/Compze.Tests.Benchmarks` holds BenchmarkDotNet benchmarks, for comparing two versions of code too fast for a
+stopwatch: `dotnet run -c Release --project test/Compze.Tests.Benchmarks -- --filter *LazyCE*`. Add a benchmark class
+there rather than a throwaway project. A size that must not grow is specified as well, with
+`ManagedAllocation.BytesAllocatedBy` from Compze.Tests.Infrastructure.
+
 ## Test configuration
 
 - Config file: `src/TestUsingPluggableComponentCombinations` (auto-created from `.defaults` on first build). The build
