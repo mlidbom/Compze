@@ -19,7 +19,9 @@ public static class EqualityAssertions
    /// </summary>
    /// <remarks>
    /// Whatever nullability the value is declared with, it is accepted: a <see langword="null"/> value simply fails, unless <paramref name="expected"/> is <see langword="null"/> too.<br/>
-   /// The returned context keeps the value's declared nullability.
+   /// The returned context keeps the value's declared nullability.<br/>
+   /// A tuple is compared with CompareTo only when each of its items can be compared: a tuple implements <see cref="System.IComparable"/> whatever its items,<br/>
+   /// and its CompareTo throws for an item that implements none.
    /// </remarks>
    public static IAssertionContext<TValue> Be<TValue, TExpected>(this IAssertionContext<TValue> context, TExpected expected, [CallerArgumentExpression(nameof(expected))] string expectedExpression = null!) =>
       context.Actual is string && expected is string expectedString
@@ -77,18 +79,17 @@ public static class EqualityAssertions
       context.RunAssertion(it => (it as IStructuralEquatable)?.Equals(expected, StructuralComparisons.StructuralEqualityComparer) ?? true, failureMessage: _ => "it.Equals(expected, StructuralEqualityComparer) should have returned true", messageOverride: BuildFailureMessage);
       context.RunAssertion(it => (expected as IStructuralEquatable)?.Equals(it, StructuralComparisons.StructuralEqualityComparer) ?? true, failureMessage: _ => "expected.Equals(it, StructuralEqualityComparer) should have returned true", messageOverride: BuildFailureMessage);
 
-      //bug: Be on two equal ValueTuples whose elements can't be compared, such as Avalonia's (PixelPoint, Size), throws ArgumentException
-      //   "At least one object must implement IComparable" instead of passing. ValueTuple implements IComparable<T>, IComparable and
-      //   IStructuralComparable whatever its elements, and its CompareTo throws when an element can't be compared. Skip a comparison
-      //   that can't answer, so equal values pass. Found 2026-11-24 by the Claude tooling's session cloyd-tray-icon, passed on by Magnus.
-      context.RunAssertion(it => (it as IComparable<TValue>)?.CompareTo(expected).Equals(0) ?? true, failureMessage: _ => "it.CompareTo(expected) (IComparable<T>) should have returned 0", messageOverride: BuildFailureMessage);
-      context.RunAssertion(it => (expected as IComparable<TValue>)?.CompareTo(it).Equals(0) ?? true, failureMessage: _ => "expected.CompareTo(it) (IComparable<T>) should have returned 0", messageOverride: BuildFailureMessage);
+      if(ItsCompareToCanAnswer(context.Actual) && ItsCompareToCanAnswer(expected))
+      {
+         context.RunAssertion(it => (it as IComparable<TValue>)?.CompareTo(expected).Equals(0) ?? true, failureMessage: _ => "it.CompareTo(expected) (IComparable<T>) should have returned 0", messageOverride: BuildFailureMessage);
+         context.RunAssertion(it => (expected as IComparable<TValue>)?.CompareTo(it).Equals(0) ?? true, failureMessage: _ => "expected.CompareTo(it) (IComparable<T>) should have returned 0", messageOverride: BuildFailureMessage);
 
-      context.RunAssertion(it => (it as IComparable)?.CompareTo(expected).Equals(0) ?? true, failureMessage: _ => "it.CompareTo(expected) (IComparable) should have returned 0", messageOverride: BuildFailureMessage);
-      context.RunAssertion(it => (expected as IComparable)?.CompareTo(it).Equals(0) ?? true, failureMessage: _ => "expected.CompareTo(it) (IComparable) should have returned 0", messageOverride: BuildFailureMessage);
+         context.RunAssertion(it => (it as IComparable)?.CompareTo(expected).Equals(0) ?? true, failureMessage: _ => "it.CompareTo(expected) (IComparable) should have returned 0", messageOverride: BuildFailureMessage);
+         context.RunAssertion(it => (expected as IComparable)?.CompareTo(it).Equals(0) ?? true, failureMessage: _ => "expected.CompareTo(it) (IComparable) should have returned 0", messageOverride: BuildFailureMessage);
 
-      context.RunAssertion(it => (it as IStructuralComparable)?.CompareTo(expected, StructuralComparisons.StructuralComparer).Equals(0) ?? true, failureMessage: _ => "it.CompareTo(expected, StructuralComparer) should have returned 0", messageOverride: BuildFailureMessage);
-      context.RunAssertion(it => (expected as IStructuralComparable)?.CompareTo(it, StructuralComparisons.StructuralComparer).Equals(0) ?? true, failureMessage: _ => "expected.CompareTo(it, StructuralComparer) should have returned 0", messageOverride: BuildFailureMessage);
+         context.RunAssertion(it => (it as IStructuralComparable)?.CompareTo(expected, StructuralComparisons.StructuralComparer).Equals(0) ?? true, failureMessage: _ => "it.CompareTo(expected, StructuralComparer) should have returned 0", messageOverride: BuildFailureMessage);
+         context.RunAssertion(it => (expected as IStructuralComparable)?.CompareTo(it, StructuralComparisons.StructuralComparer).Equals(0) ?? true, failureMessage: _ => "expected.CompareTo(it, StructuralComparer) should have returned 0", messageOverride: BuildFailureMessage);
+      }
 
       context.RunAssertion(it => !it.DeclaredType().Operators.LessThan?.Invoke(it, expected) ?? true, failureMessage: _ => "it < expected should have returned false", messageOverride: BuildFailureMessage);
       context.RunAssertion(it => !it.DeclaredType().Operators.LessThan?.Invoke(expected, it) ?? true, failureMessage: _ => "expected < it should have returned false", messageOverride: BuildFailureMessage);
@@ -142,10 +143,19 @@ public static class EqualityAssertions
             info.FailureMessage != null
                ? $""""
 
-                  with the message: {info.FailureMessage?.Invoke(context.Actual)}""" 
+                  with the message: {info.FailureMessage?.Invoke(context.Actual)}"""
                   """"
                : "";
       }
+
+      // A ValueTuple or a Tuple implements IComparable whatever its items, and compares item by item with Comparer.Default, which throws
+      // an ArgumentException for an item that implements no IComparable. So a tuple's CompareTo answers only when every item, through
+      // nested tuples, is null or implements IComparable. Any other value's CompareTo is checked wherever it implements one.
+      static bool ItsCompareToCanAnswer(object? value) => value is not ITuple tuple || EveryItemCanBeCompared(tuple);
+
+      static bool EveryItemCanBeCompared(ITuple tuple) => Enumerable.Range(0, tuple.Length).All(index => CanBeComparedAsAnItem(tuple[index]));
+
+      static bool CanBeComparedAsAnItem(object? item) => item is ITuple tuple ? EveryItemCanBeCompared(tuple) : item is null or IComparable;
    }
 
    /// <summary>Asserts that the value is not equal to <paramref name="unexpected"/> by any supported comparison mechanism.</summary>
