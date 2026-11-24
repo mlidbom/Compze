@@ -13,7 +13,6 @@ public static class MsSqlMemoryImageStateStoreRegistrar
    ///<summary>Registers, for a memory image state store composed with <see cref="MemoryImageStateStoreBuilder.StoredInTheDomainDatabase"/>, the SQL of its<br/>
    /// tables in the SQL Server domain database this container declares, with <c>MsSqlDomainDatabase(...)</c>, and contributes the<br/>
    /// tables to the database's schema.</summary>
-   ///<remarks>review-naming: MsSqlMemoryImageStateStoreSqlLayer, after MsSqlDocumentDbSqlLayer and MsSqlTeventStoreSqlLayer (state-store-in-tables, 2026-11-24).</remarks>
    public static IComponentRegistrar MsSqlMemoryImageStateStoreSqlLayer(this IComponentRegistrar registrar) =>
       registrar.MsSqlSchemaContribution(Layer.SchemaCreationSql)
                .Register(Singleton.For<IMemoryImageStateStoreSqlLayer>()

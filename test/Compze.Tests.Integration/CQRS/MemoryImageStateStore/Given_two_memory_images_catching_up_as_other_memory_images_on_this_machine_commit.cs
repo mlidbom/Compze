@@ -23,7 +23,7 @@ namespace Compze.Tests.Integration.CQRS.MemoryImageStateStore;
 
 ///<summary>Two memory images of a store keeping vocabs in the tables of a domain database of the current test's persistence layer, each<br/>
 /// declared to catch up as other memory images on this machine commit, each a container of its own on the database. Both have read a<br/>
-/// vocab the first added, and what the first's <see cref="IMemoryImageStateStore.ChangesCommittedElsewhere"/> tells is collected.</summary>
+/// vocab the first added, and what the first's <see cref="IMemoryImageStateStore.ChangesCommittedByOtherMemoryImages"/> tells is collected.</summary>
 public class Given_two_memory_images_catching_up_as_other_memory_images_on_this_machine_commit : UniversalTestBase
 {
    static readonly JsonSerializerOptions Options = new() { Converters = { new TaggregateIdAsAGuid() } };
@@ -38,7 +38,7 @@ public class Given_two_memory_images_catching_up_as_other_memory_images_on_this_
    {
       _theFirst = BuildTheFirstMemoryImage();
       _theSecond = _theFirst.CloneAndBuild();
-      _theFirst.RootResolver.Resolve<IMemoryImageStateStore>().ChangesCommittedElsewhere.Subscribe(changes => _toldTheFirst.Update(it => it.Add(changes)));
+      _theFirst.RootResolver.Resolve<IMemoryImageStateStore>().ChangesCommittedByOtherMemoryImages.Subscribe(changes => _toldTheFirst.Update(it => it.Add(changes)));
       InUnitOfWorkOf(_theFirst, taggregates => taggregates.Add(StoredVocab.Create(VocabId, "taberu")));
       ReaderOf(_theSecond).Get<StoredVocab>(VocabId);
    }
@@ -59,13 +59,13 @@ public class Given_two_memory_images_catching_up_as_other_memory_images_on_this_
 
    static ITaggregateStoreReader ReaderOf(IDependencyInjectionContainer memoryImage) => memoryImage.RootResolver.Resolve<ITaggregateStoreReader>();
 
-   ///<summary>The ids of every taggregate the first has been told changed elsewhere, once it has been told of <paramref name="id"/>,<br/>
+   ///<summary>The ids of every taggregate the first has been told other memory images changed, once it has been told of <paramref name="id"/>,<br/>
    /// or what it has been told when it hasn't within the time catching up could take: then a dump of the process, taken while the<br/>
    /// first still hasn't caught up, shows what its catching up waits for.</summary>
    IReadOnlyList<TaggregateId> IdsTheFirstIsToldChangedOnceToldOf(TaggregateId id)
    {
       if(!_toldTheFirst.TryAwait(it => it.Any(changes => changes.Changed.Contains(id)), timeout: LongerThanCatchingUpCouldTake))
-         TestProcessDump.Write($"the first memory image wasn't told within {LongerThanCatchingUpCouldTake} that {id} changed elsewhere");
+         TestProcessDump.Write($"the first memory image wasn't told within {LongerThanCatchingUpCouldTake} that another memory image changed {id}");
       return _toldTheFirst.Read(it => it.SelectMany(changes => changes.Changed).ToList());
    }
 

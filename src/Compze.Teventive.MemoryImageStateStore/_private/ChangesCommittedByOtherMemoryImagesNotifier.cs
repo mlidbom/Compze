@@ -4,16 +4,16 @@ using Compze.Internals.SystemCE.ReactiveCE;
 
 namespace Compze.Teventive.MemoryImageStateStore._private;
 
-///<summary>Tells the subscribers of <see cref="IMemoryImageStateStore.ChangesCommittedElsewhere"/> what the store found that other memory<br/>
+///<summary>Tells the subscribers of <see cref="IMemoryImageStateStore.ChangesCommittedByOtherMemoryImages"/> what the store found that other memory<br/>
 /// images committed: in the order found, one batch at a time, on a task of its own, so that no subscriber runs on the thread that found<br/>
 /// them, such as a unit of work's, and a slow subscriber holds up no one but the batches after it.</summary>
-sealed class ChangesCommittedElsewhereNotifier : IObservable<ChangesFoundInStorage>
+sealed class ChangesCommittedByOtherMemoryImagesNotifier : IObservable<ChangesFoundInStorage>
 {
    readonly SimpleObservable<ChangesFoundInStorage> _subscribers = new();
    readonly Channel<ChangesFoundInStorage> _found = Channel.CreateUnbounded<ChangesFoundInStorage>(new UnboundedChannelOptions { SingleReader = true });
    readonly Task _telling;
 
-   internal ChangesCommittedElsewhereNotifier() => _telling = Task.Run(TellTheSubscribersAsync);
+   internal ChangesCommittedByOtherMemoryImagesNotifier() => _telling = Task.Run(TellTheSubscribersAsync);
 
    ///<summary>Queues <paramref name="changes"/> for the subscribers, unless nothing changed.</summary>
    internal void Tell(ChangesFoundInStorage changes)
@@ -35,7 +35,7 @@ sealed class ChangesCommittedElsewhereNotifier : IObservable<ChangesFoundInStora
          catch(Exception exception)
 #pragma warning restore CA1031
          {
-            this.Log().Error(exception, "A subscriber of a memory image state store's ChangesCommittedElsewhere threw.");
+            this.Log().Error(exception, "A subscriber of a memory image state store's ChangesCommittedByOtherMemoryImages threw.");
          }
       }
    }

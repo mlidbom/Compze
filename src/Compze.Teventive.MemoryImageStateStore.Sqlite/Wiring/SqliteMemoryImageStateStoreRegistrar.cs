@@ -13,7 +13,6 @@ public static class SqliteMemoryImageStateStoreRegistrar
    ///<summary>Registers, for a memory image state store composed with <see cref="MemoryImageStateStoreBuilder.StoredInTheDomainDatabase"/>, the SQL of its<br/>
    /// tables in the SQLite domain database this container declares, such as with <c>SqliteDomainDatabase(...)</c>, and contributes<br/>
    /// the tables to the database's schema.</summary>
-   ///<remarks>review-naming: SqliteMemoryImageStateStoreSqlLayer, after SqliteDocumentDbSqlLayer and SqliteTeventStoreSqlLayer (state-store-in-tables, 2026-11-24).</remarks>
    public static IComponentRegistrar SqliteMemoryImageStateStoreSqlLayer(this IComponentRegistrar registrar) =>
       registrar.SqliteSchemaContribution(Layer.SchemaCreationSql)
                .Register(Singleton.For<IMemoryImageStateStoreSqlLayer>()

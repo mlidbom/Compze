@@ -30,7 +30,7 @@ sealed class TaggregateMemoryImageStateStore : ITaggregateStore, IMemoryImageSta
    //Read and written under _loadingMonitor.
    CommitNumber _lastCommitNumberSeen = CommitNumber.BeforeTheFirstCommit;
 
-   readonly ChangesCommittedElsewhereNotifier _changesCommittedElsewhere = new();
+   readonly ChangesCommittedByOtherMemoryImagesNotifier _changesCommittedByOtherMemoryImages = new();
    readonly CancellationTokenSource _stopping = new();
    readonly Task _catchingUpAsOthersCommit;
    int _disposed;
@@ -50,7 +50,7 @@ sealed class TaggregateMemoryImageStateStore : ITaggregateStore, IMemoryImageSta
       _catchingUpAsOthersCommit = catchingUpOn is {} signal ? Task.Run(() => KeepCatchingUpAsOthersCommitAsync(signal, _stopping.Token)) : Task.CompletedTask;
    }
 
-   public IObservable<ChangesFoundInStorage> ChangesCommittedElsewhere => _changesCommittedElsewhere;
+   public IObservable<ChangesFoundInStorage> ChangesCommittedByOtherMemoryImages => _changesCommittedByOtherMemoryImages;
 
    ///<summary>Catches up whenever <paramref name="signal"/> is raised, once the store has loaded, until <paramref name="stopping"/>.</summary>
    async Task KeepCatchingUpAsOthersCommitAsync(CommitSignal signal, CancellationToken stopping)
@@ -82,13 +82,13 @@ sealed class TaggregateMemoryImageStateStore : ITaggregateStore, IMemoryImageSta
       }
    }
 
-   ///<summary>Stops catching up, tells the subscribers of <see cref="ChangesCommittedElsewhere"/> what is queued, and releases the storage.</summary>
+   ///<summary>Stops catching up, tells the subscribers of <see cref="ChangesCommittedByOtherMemoryImages"/> what is queued, and releases the storage.</summary>
    public void Dispose()
    {
       if(Interlocked.Exchange(ref _disposed, 1) == 1) return;
       _stopping.Cancel();
       _catchingUpAsOthersCommit.Wait();
-      _changesCommittedElsewhere.Stop();
+      _changesCommittedByOtherMemoryImages.Stop();
       Storage.Dispose();
       _stopping.Dispose();
    }
@@ -193,7 +193,7 @@ sealed class TaggregateMemoryImageStateStore : ITaggregateStore, IMemoryImageSta
          if(!_hasLoaded) LoadEverything();
          var committedAs = Storage.WriteAll(_lastCommitNumberSeen, committedMeanwhile =>
          {
-            _changesCommittedElsewhere.Tell(InstallFound(committedMeanwhile));
+            _changesCommittedByOtherMemoryImages.Tell(InstallFound(committedMeanwhile));
             return [..Committed.Instances.Select(it => SnapshotOf(it.Value))];
          });
          if(committedAs is not {} number) return;
@@ -232,7 +232,7 @@ sealed class TaggregateMemoryImageStateStore : ITaggregateStore, IMemoryImageSta
    /// memory, and installs the taggregate as stored if another memory image has committed it after the commit held.</summary>
    internal void LockInTheStorageForUpdate(TaggregateId id)
    {
-      if(Storage.LockForUpdate(id, Committed.CommitNumberOf(id)) is {} stored) _changesCommittedElsewhere.Tell(InstallFound([stored]));
+      if(Storage.LockForUpdate(id, Committed.CommitNumberOf(id)) is {} stored) _changesCommittedByOtherMemoryImages.Tell(InstallFound([stored]));
    }
 
    ///<summary>Installs what the commits after the last one this memory image has seen stored, from other memory images: except the<br/>
@@ -244,7 +244,7 @@ sealed class TaggregateMemoryImageStateStore : ITaggregateStore, IMemoryImageSta
    {
       var committed = Storage.CommittedAfter(_lastCommitNumberSeen);
       var held = committed.Taggregates.Where(it => UpdateLocks.IsHeldOrWaitedFor(it.Id)).ToList();
-      _changesCommittedElsewhere.Tell(InstallFound([..committed.Taggregates.Except(held)]));
+      _changesCommittedByOtherMemoryImages.Tell(InstallFound([..committed.Taggregates.Except(held)]));
       _lastCommitNumberSeen = held.Count == 0
                                  ? committed.HoldingEveryCommitThrough
                                  : new CommitNumber(Math.Min(committed.HoldingEveryCommitThrough.Value, held.Min(it => it.CommittedAs.Value) - 1));

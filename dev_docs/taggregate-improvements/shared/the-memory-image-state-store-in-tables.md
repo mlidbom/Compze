@@ -2,8 +2,9 @@
 
 **Status: designed and built by state-store-in-tables, 2026-11-24, on Magnus's go (passed on by compze-for-the-tooling),
 on the branch `memory-image-state-store-in-tables`: increments 2 to 4 below, rebased onto main once increment 1, which
-Magnus moved to a fix of its own, landed there (8095f168a).** The names are proposals awaiting
-Magnus's pass, each marked `review-naming:` at the code. The brief's design, by compze-for-the-tooling, is the starting
+Magnus moved to a fix of its own, landed there (8095f168a).** Magnus approved the public names,
+2026-11-24, with one rename: `ChangesCommittedElsewhere` became `ChangesCommittedByOtherMemoryImages`, since "elsewhere"
+doesn't say where. The brief's design, by compze-for-the-tooling, is the starting
 point; what this changed in it is in [What changed from the brief](#what-changed-from-the-brief), and what building it
 added in [As built](#as-built). The store as a whole is [the-taggregate-store.md](the-taggregate-store.md); this is its
 storage in tables.
@@ -40,7 +41,7 @@ registrar.MemoryImageStateStore(store => store
                                                                        .ClassNamed<KanjiNote>("kanji")));
 
 //Told of what other memory images committed, as this one catches up with them:
-container.RootResolver.Resolve<IMemoryImageStateStore>().ChangesCommittedElsewhere.Subscribe(changes => ...);
+container.RootResolver.Resolve<IMemoryImageStateStore>().ChangesCommittedByOtherMemoryImages.Subscribe(changes => ...);
 ```
 
 - **`MemoryImageStateStoreBuilder.StoredInTheDomainDatabase(JsonSerializerOptions, Action<TaggregateRowsBuilder>)`,**
@@ -56,7 +57,7 @@ container.RootResolver.Resolve<IMemoryImageStateStore>().ChangesCommittedElsewhe
 - **`TaggregateRowsBuilder.CatchingUpAsOtherMemoryImagesOnThisMachineCommit()`:** catching up within about 50 ms of another
   memory image's commit on the same machine, while nothing else makes this one catch up: see
   [Catching up](#catching-up-with-the-other-memory-images).
-- **`IMemoryImageStateStore.ChangesCommittedElsewhere`, an `IObservable<ChangesFoundInStorage>`:** what catching up found,
+- **`IMemoryImageStateStore.ChangesCommittedByOtherMemoryImages`, an `IObservable<ChangesFoundInStorage>`:** what catching up found,
   as the existing `ChangesFoundInStorage` reports it: the ids added, changed and removed. Told in the order found, off the
   thread that found them, one batch at a time. The hub pushes them to Cloyd. Not tevents: another memory image's
   tevents were dispatched in its own process.
@@ -143,7 +144,7 @@ wait for the database: they read what the memory image last caught up with.
   commit installs. Catching up checks the lock and installs under one lock in memory, which commits, gets for update and
   loads also install under.
 - **Installing re-files the indexes,** from the committed instance's keys to the new one's, as a commit does.
-- **What it found is reported** through `ChangesCommittedElsewhere`, and so is what a get for update took from a row.
+- **What it found is reported** through `ChangesCommittedByOtherMemoryImages`, and so is what a get for update took from a row.
 - **A row that can't be read or restored fails the catch-up, naming the row,** as a file that can't be read fails a load.
   Caught up while idle, the failure is logged, and tried again at the next signal.
 - **Catching up while idle, on the same machine, is woken by an interprocess signal, and runs only when the consumer
@@ -163,7 +164,7 @@ wait for the database: they read what the memory image last caught up with.
     lock in the database, stay what makes the store correct.
   - **Declared, and not on by default,** by Compze's rule that an API spends nothing on what most callers don't need: even
     a memory read wakes the processor every 50 ms, and a consumer with one memory image gets nothing from it. Set aside:
-    waiting only while something subscribes to `ChangesCommittedElsewhere`, which would tie how fresh reads are to whether
+    waiting only while something subscribes to `ChangesCommittedByOtherMemoryImages`, which would tie how fresh reads are to whether
     anything subscribes, unseen; and querying the database at an interval, which costs a round trip each time and answers
     no faster than its interval.
   - **Memory images on other machines** would need the database queried at an interval, a declaration of its own: designed
@@ -272,7 +273,7 @@ Each builds clean, passes the full suite, and is pushed and watched on CI.
    lock for update and catching up: no change in behaviour with the files.
 3. **The tables:** the store's SQL layer seam, the four SQL layers and packages, `StoredInTheDomainDatabase`, and the
    specifications, two memory images on one database included.
-4. **Catching up while idle, woken by the interprocess signal, and `ChangesCommittedElsewhere`.**
+4. **Catching up while idle, woken by the interprocess signal, and `ChangesCommittedByOtherMemoryImages`.**
 5. **The documentation:** the store's public docs, this document as built, the changelogs.
 
 ## As built

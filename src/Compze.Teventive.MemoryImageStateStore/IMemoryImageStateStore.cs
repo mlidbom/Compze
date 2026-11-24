@@ -65,9 +65,8 @@ public interface IMemoryImageStateStore
    /// added, changed and removed, for code that keeps something of its own up to date with the store, such as a view.</summary>
    ///<remarks>Told in the order found, one batch at a time, on a task of the store's own, never on the thread that found them, such<br/>
    /// as a unit of work's. A subscriber that throws is logged, and told the next batch. Nothing is told for a store kept in files, which<br/>
-   /// no other memory image shares, nor of what <see cref="LoadFromStorage"/> finds, which it returns.<br/>
-   /// review-naming: ChangesCommittedElsewhere (state-store-in-tables, 2026-11-24).</remarks>
-   IObservable<ChangesFoundInStorage> ChangesCommittedElsewhere { get; }
+   /// no other memory image shares, nor of what <see cref="LoadFromStorage"/> finds, which it returns.</remarks>
+   IObservable<ChangesFoundInStorage> ChangesCommittedByOtherMemoryImages { get; }
 }
 
 ///<summary>How what the store's storage, such as its files, held differed from what the memory image state store held, as <see cref="IMemoryImageStateStore.LoadFromStorage"/> found it.</summary>

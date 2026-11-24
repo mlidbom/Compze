@@ -187,7 +187,6 @@ public sealed class MemoryImageStateStoreBuilder
    ///<remarks>Each memory image holds every taggregate. Commits that write the store's rows take their numbers from a counter in the<br/>
    /// database, whose lock they hold until they commit, so they commit one at a time while they write their rows. On SQLite, every<br/>
    /// transaction that writes the database runs alone, across processes too, as everything Compze does on SQLite does.</remarks>
-   ///<remarks>review-naming: StoredInTheDomainDatabase, beside StoredInJsonFiles (state-store-in-tables, 2026-11-24).</remarks>
    public MemoryImageStateStoreBuilder StoredInTheDomainDatabase(JsonSerializerOptions options, Action<TaggregateRowsBuilder> declare)
    {
       var rows = new TaggregateRowsBuilder();
