@@ -99,6 +99,10 @@ for every endpoint of a deployment:
 
 [!code-csharp[](endpoints.cs#environment)]
 
+> [!NOTE]
+> In an ASP.NET Core project, whose implicit usings include `Microsoft.AspNetCore.Builder`, the name `EndpointBuilder` is
+> ambiguous. `using EndpointBuilder = Compze.Tessaging.Endpoints.EndpointBuilder;` resolves it.
+
 The same declaration builds in any environment, so production and tests host the same endpoint, in different
 environments.
 
