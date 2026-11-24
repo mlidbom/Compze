@@ -84,19 +84,20 @@ partial class PgSqlTeventStoreSqlLayer
 
    ///<summary>Sets the effective version of each tevent in <paramref name="versions"/>, in one statement: see <see cref="InsertSingleTaggregateTevents"/> for why one.</summary>
    public void UpdateEffectiveVersions(IReadOnlyList<VersionSpecification> versions) =>
-      _connectionManager.UseCommand(
-         command => command.SetCommandText(
-                               $"""
+      _connectionManager.UseCommand(command =>
+      {
+         command.SetCommandText($"""
 
-                                UPDATE {Tevent.TableName}
-                                        SET {Tevent.EffectiveVersion} = version.{Tevent.EffectiveVersion}
-                                        FROM unnest(@{Tevent.TeventId}, @{Tevent.EffectiveVersion}) AS version({Tevent.TeventId}, {Tevent.EffectiveVersion})
-                                        WHERE {Tevent.TableName}.{Tevent.TeventId} = version.{Tevent.TeventId};
+                                 UPDATE {Tevent.TableName}
+                                         SET {Tevent.EffectiveVersion} = version.{Tevent.EffectiveVersion}
+                                         FROM unnest(@{Tevent.TeventId}, @{Tevent.EffectiveVersion}) AS version({Tevent.TeventId}, {Tevent.EffectiveVersion})
+                                         WHERE {Tevent.TableName}.{Tevent.TeventId} = version.{Tevent.TeventId};
 
-                                """)
-                           .AddParameter(Tevent.TeventId, NpgsqlDbType.Array | NpgsqlDbType.Uuid, versions.Select(version => version.TeventId.Value).ToArray())
-                           .AddParameter(Tevent.EffectiveVersion, NpgsqlDbType.Array | NpgsqlDbType.Integer, versions.Select(version => version.EffectiveVersion).ToArray())
-                           .ExecuteNonQuery());
+                                 """);
+         command.Parameters.AddWithValue(Tevent.TeventId, versions.Select(version => version.TeventId.Value).ToArray()); //A Guid array, which Npgsql sends as uuid[].
+         command.Parameters.AddWithValue(Tevent.EffectiveVersion, versions.Select(version => version.EffectiveVersion).ToArray()); //An int array, which Npgsql sends as integer[].
+         command.ExecuteNonQuery();
+      });
 
    public TeventNeighborhood LoadTeventNeighborHood(TessageId teventId)
    {
