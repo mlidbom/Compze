@@ -30,10 +30,12 @@ public class When_timing_a_whole_method_with_an_ILevelLogger
       [XF] public void the_label_is_the_method_name() => _backend.Captured[0].TemplateValues![1].Must().Be("Render");
    }
 
-   public class with_the_asynchronous_form : When_timing_a_whole_method_with_an_ILevelLogger
+   public class with_the_asynchronous_form : When_timing_a_whole_method_with_an_ILevelLogger, IAsyncLifetime
    {
-      readonly int _result;
-      public with_the_asynchronous_form() => _result = Load().GetAwaiter().GetResult();
+      int _result;
+      public async ValueTask InitializeAsync() => _result = await Load();
+      public ValueTask DisposeAsync() => ValueTask.CompletedTask;
+
       Task<int> Load() => _logger.Debug().MethodExecutionTimeAsync(async () => { await Task.Yield(); return 7; });
 
       [XF] public void the_methods_result_is_returned() => _result.Must().Be(7);

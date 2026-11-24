@@ -42,9 +42,11 @@ public class When_logging_within_an_activity
       [XF] public void the_warning_is_tagged_with_the_activity_even_though_the_activity_runs_at_a_lower_level() => _backend.Captured[1].ActivityName.Must().NotBeNull().Be("overlay show");
    }
 
-   public class within_which_work_is_awaited : When_logging_within_an_activity
+   public class within_which_work_is_awaited : When_logging_within_an_activity, IAsyncLifetime
    {
-      public within_which_work_is_awaited() => LogAfterAnAwait().GetAwaiter().GetResult();
+      public async ValueTask InitializeAsync() => await LogAfterAnAwait();
+      public ValueTask DisposeAsync() => ValueTask.CompletedTask;
+
       async Task LogAfterAnAwait()
       {
          using(_logger.StartActivity("overlay show"))

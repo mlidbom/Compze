@@ -31,7 +31,12 @@ public class Given_a_tevent_store_that_more_units_of_work_than_the_thread_pool_h
                                                              declareTeventStoreTaggregates: store => store.Taggregate<User>());
       ThreadPool.GetMinThreads(out var threadsThePoolStartsWith, out _);
       _userIds = [..Enumerable.Range(0, Math.Max(4 * threadsThePoolStartsWith, 128)).Select(_ => new TaggregateId())];
-      Task.WaitAll(_userIds.Select(userId => Task.Run(() => AddAUser(userId))));
+   }
+
+   protected override async Task InitializeAsyncInternal()
+   {
+      await base.InitializeAsyncInternal();
+      await Task.WhenAll(_userIds.Select(userId => Task.Run(() => AddAUser(userId))));
    }
 
    protected override async Task DisposeAsyncInternal() => await _container.DisposeAsync().AsTask();

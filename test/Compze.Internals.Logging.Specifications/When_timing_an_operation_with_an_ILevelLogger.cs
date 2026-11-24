@@ -51,10 +51,12 @@ public class When_timing_an_operation_with_an_ILevelLogger
       [XF] public void the_fault_type_is_captured() => _backend.Captured[1].TemplateValues![3].Must().Be("InvalidOperationException");
    }
 
-   public class that_is_asynchronous : When_timing_an_operation_with_an_ILevelLogger
+   public class that_is_asynchronous : When_timing_an_operation_with_an_ILevelLogger, IAsyncLifetime
    {
-      readonly int _result;
-      public that_is_asynchronous() => _result = AwaitTimedOperation().GetAwaiter().GetResult();
+      int _result;
+      public async ValueTask InitializeAsync() => _result = await AwaitTimedOperation();
+      public ValueTask DisposeAsync() => ValueTask.CompletedTask;
+
       async Task<int> AwaitTimedOperation() => await _logger.Debug().ExecutionTimeAsync(async () => { await Task.Yield(); return 7; });
 
       [XF] public void the_operations_result_is_returned() => _result.Must().Be(7);
@@ -72,10 +74,12 @@ public class When_timing_an_operation_with_an_ILevelLogger
       [XF] public void the_second_line_reports_the_elapsed_time() => _backend.Captured[1].MessageTemplate.Must().Be("{spanPath} {label} took {elapsedMs:F1}ms");
    }
 
-   public class that_is_asynchronous_and_returns_nothing : When_timing_an_operation_with_an_ILevelLogger
+   public class that_is_asynchronous_and_returns_nothing : When_timing_an_operation_with_an_ILevelLogger, IAsyncLifetime
    {
       int _operationRunCount;
-      public that_is_asynchronous_and_returns_nothing() => AwaitTimedOperation().GetAwaiter().GetResult();
+      public async ValueTask InitializeAsync() => await AwaitTimedOperation();
+      public ValueTask DisposeAsync() => ValueTask.CompletedTask;
+
       async Task AwaitTimedOperation() => await _logger.Debug().ExecutionTimeAsync(async () => { await Task.Yield(); _operationRunCount++; });
 
       [XF] public void the_operation_runs_exactly_once() => _operationRunCount.Must().Be(1);
