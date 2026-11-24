@@ -32,6 +32,8 @@ function C-Run-TestRun {
     - ExitCode: The exit code from dotnet test
     - ElapsedSeconds: Time taken to run tests (rounded to 1 decimal)
     - FailedTests: Array of failed test objects with FullName and DisplayName properties
+    - AbortedRuns: Number of test assembly runs that aborted, which report no failed test
+    - AssembliesWithNoTestHost: File names of the test assemblies that aborted because no test host could be found for them
     
     .EXAMPLE
     $result = C-Run-TestRun -SolutionPath "C:\Dev\Compze\Compze.AllProjects.slnx"
@@ -81,9 +83,9 @@ function C-Run-TestRun {
     $executed = 0
     
     # urgent: When a test assembly's host crashes, a stack overflow for instance, its summary line can still read "Passed!",
-    #   with fewer tests in it than the assembly has. C-Test fails the run on dotnet test's exit code, but the counts summed
-    #   here, and the lines a reader sees, look like a pass. Detect an aborted or crashed test host, name the assembly in the
-    #   failure, and report it as failed (Magnus, 2026-11-16).
+    #   with fewer tests in it than the assembly has. C-Test fails the run on dotnet test's exit code, and counts the runs that
+    #   printed "Test Run Aborted", naming the assembly when its test host couldn't be found. Name a crashed host's assembly in
+    #   the failure too (Magnus, 2026-11-16).
     # A TRX file's path is read literally: VSTest names a file whose name is taken with a suffix such as "[1]", which a wildcard
     # path would read as a character class.
     if (Test-Path -LiteralPath $resultsDirectory) {
@@ -101,6 +103,10 @@ function C-Run-TestRun {
         Remove-Item -LiteralPath $resultsDirectory -Recurse -Force
     }
 
+    # An aborted test assembly run reports no failed test: its host couldn't start, or crashed.
+    $abortedRuns = @($testOutput | Where-Object { "$_" -match '^Test Run Aborted' }).Count
+    $assembliesWithNoTestHost = @($testOutput | ForEach-Object { if ("$_" -match "^Could not find testhost for test source '(.+)'\.") { [System.IO.Path]::GetFileName($Matches[1]) } })
+
     # Extract failed test information
     $failedTests = @()
     if ($failed -gt 0) {
@@ -117,5 +123,7 @@ function C-Run-TestRun {
         ExitCode = $exitCode
         ElapsedSeconds = [math]::Round($stopwatch.Elapsed.TotalSeconds, 1)
         FailedTests = $failedTests
+        AbortedRuns = $abortedRuns
+        AssembliesWithNoTestHost = $assembliesWithNoTestHost
     }
 }

@@ -198,7 +198,7 @@ function C-Test {
         if ($Filter -and ($iterationResults | Measure-Object -Property Executed -Sum).Sum -eq 0) {
             Write-CommandFailure -Command $PSCmdlet -Message "The filter $Filter matched no test."
         } elseif ($failedRuns.Count -gt 0) {
-            Write-CommandFailure -Command $PSCmdlet -Message "$($failedRuns.Count) of $Iterations test run(s) failed, with $totalFailedTests failed test(s)."
+            Write-CommandFailure -Command $PSCmdlet -Message "$($failedRuns.Count) of $Iterations test run(s) failed, with $totalFailedTests failed test(s)$(Get-AbortedTestRunsDescription -TestRunResults $iterationResults)."
         } else {
             $global:LASTEXITCODE = 0
         }
