@@ -49,6 +49,10 @@ namespace Compze.Tessaging.Endpoints;
 /// registered, through <c>Registrar.RequireMappedTypesFromAssemblyContaining&lt;T&gt;()</c>, and the endpoint's container
 /// composes one <see cref="ITypeMap"/> from every such declaration.
 ///</summary>
+///<remarks>review-naming: ASP.NET Core has a <c>Microsoft.AspNetCore.Builder.EndpointBuilder</c>, which a web project's implicit usings<br/>
+/// import, so in such a project this name is ambiguous and the code doesn't compile until it adds a using alias. The Website<br/>
+/// project hit it, and the public docs' examples carry the alias. A name of its own, such as TessagingEndpointBuilder, would<br/>
+/// avoid it. (website-and-docs, 2026-11-24)</remarks>
 public abstract class EndpointBuilder
 {
    readonly IContainerBuilder _containerBuilder;
@@ -258,6 +262,8 @@ public abstract class EndpointBuilder
 
    private protected virtual void AssertTheFoundationIsDeclared()
    {
+      //bug: The message tells the reader to call endpointBuilder.AspNetCoreEndpointTransport(), which doesn't exist: the ASP.NET Core
+      //   transport is declared with endpointBuilder.TransportProtocol(registrar => registrar.AspNetCoreEndpointTransport()). (website-and-docs, 2026-11-24)
       State.Assert(_registerTransportProtocol is not null,
                    () => "The endpoint declares no transport protocol. Declare it in the environment — e.g. endpointBuilder.NamedPipeEndpointTransport() or endpointBuilder.AspNetCoreEndpointTransport().");
       State.Assert(_registerSerializer is not null || (Registrar.IsRegistered<ITessagingSerializer>() && Registrar.IsRegistered<ITypermediaSerializer>()),

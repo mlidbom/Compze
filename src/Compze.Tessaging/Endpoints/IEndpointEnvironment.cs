@@ -23,5 +23,8 @@ public interface IEndpointEnvironment
    ///<summary>Binds an exactly-once endpoint to the actual domain database it joins in this environment — the engine and<br/>
    /// connection string behind the endpoint's durable vertical. Called only when building the exactly-once tier: the<br/>
    /// best-effort tier persists nothing.</summary>
+   ///<remarks>refactor: An environment that hosts only best-effort endpoints must implement this anyway, with a body that is never<br/>
+   /// called. The exactly-once tier's part, in an interface of its own that only environments hosting exactly-once endpoints<br/>
+   /// implement, would make the requirement visible in the types. (website-and-docs, 2026-11-24)</remarks>
    void ConfigureDomainDatabase(ExactlyOnceEndpointBuilder endpointBuilder);
 }

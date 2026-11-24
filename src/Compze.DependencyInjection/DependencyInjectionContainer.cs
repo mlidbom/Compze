@@ -42,6 +42,9 @@ public abstract class DependencyInjectionContainer : IDependencyInjectionContain
    /// <summary>The concrete container's own component-set resolution — see <see cref="ResolveSet"/> for the exclusivity guard around it.</summary>
    protected abstract IEnumerable<object> ResolveSetCore(Type serviceType);
 
+   //refactor: RootResolver and ScopeFactory are explicit interface implementations, and the container builders' Build() returns
+   //   the concrete container (MicrosoftContainerBuilder.Build() returns MicrosoftContainer), so container.RootResolver doesn't
+   //   compile on what Build() returns: a consumer has to type the builder or the container as its interface. (website-and-docs, 2026-11-24)
 #pragma warning disable CA1033 // Concrete subclasses always implement IRootResolver and IScopeFactory themselves; these explicit-interface impls just downcast and there is nothing for subclasses to override.
    IRootResolver IDependencyInjectionContainer.RootResolver => (IRootResolver)this;
    IScopeFactory IDependencyInjectionContainer.ScopeFactory => (IScopeFactory)this;
