@@ -2,7 +2,8 @@
 
 **Status: designed and built by state-store-in-tables, 2026-11-24, on Magnus's go (passed on by compze-for-the-tooling),
 on the branch `memory-image-state-store-in-tables`: increments 2 to 4 below, rebased onto main once increment 1, which
-Magnus moved to a fix of its own, landed there (8095f168a).** Magnus approved the public names,
+Magnus moved to a fix of its own, landed there (8095f168a). Merged to main 2026-11-24 (f1d3af771), with
+[the MySQL catch-up flake](#open-the-mysql-catch-up-flake) open.** Magnus approved the public names,
 2026-11-24, with one rename: `ChangesCommittedElsewhere` became `ChangesCommittedByOtherMemoryImages`, since "elsewhere"
 doesn't say where. The brief's design, by compze-for-the-tooling, is the starting
 point; what this changed in it is in [What changed from the brief](#what-changed-from-the-brief), and what building it
@@ -309,6 +310,20 @@ What building it settled that the design above doesn't say:
   memory images catching up as others commit; all `[PCT]`, passing on SQLite in memory and on disk, SQL Server,
   PostgreSQL and MySQL. Among them: forty units of work in two memory images adding cards to one deck from many threads at
   once, which lose none.
+
+## Open: the MySQL catch-up flake
+
+Merged to main with it open, on Magnus's go (2026-11-24, passed on by compze-for-the-tooling).
+
+- **What was seen:** in 3 of the branch's 8 MySQL CI jobs before main's connection pool fixes (0c941e289 to dfc0a2e9d),
+  `Given_two_memory_images_catching_up_as_other_memory_images_on_this_machine_commit` timed out: the first memory image
+  wasn't told, within the specification's patience, that the other had changed a taggregate.
+- **Since:** none in 80 runs of the flake hunt on MySQL with every DI container (run 45450417975, at CI's load), nor in
+  the 3 CI runs since main's fixes were merged. The cause is unproven: the fixes may have removed it, as they removed the
+  PostgreSQL stalls whose fingerprint it shared, or made it rarer.
+- **If it comes back:** the specification writes a dump of the test process when it isn't told in time
+  (`TestProcessDump.Write`, 3e39e4c8e), and the job log has it. Read it as the `diagnosing-ci-flakiness` skill says,
+  looking first at where the catch-up's thread and the commit signal's wait are.
 
 ## Not in this work
 
