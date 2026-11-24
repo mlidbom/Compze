@@ -139,6 +139,10 @@ partial class DbConnectionPool<TConnection, TCommand> : IDbConnectionPool<TConne
             constructor: () =>
             {
                DurableResourcesOfTransactions.TakesPart(Transaction.Current!, DurableResource.ThatCanShareItsTransaction($"a database connection, {typeof(TConnection).Name}"));
+               //bug: an asynchronous open that fails, such as a server that doesn't answer, or a MySQL transaction the ambient transaction
+               //   refuses, is kept as the transaction's connection: each later use in the transaction rethrows its exception, and so does
+               //   disposing it when the transaction completes, inside the transaction's TransactionCompleted event, where it may keep the
+               //   handlers after it from running. Forget a connection that failed to open, and dispose only one that opened.
                var sharedConnection = IAsyncShared.New(openConnection());
                Transaction.Current!.OnCompleted(action: () => _transactionConnections.Locked(transactionConnectionsAfterTransaction =>
                {

@@ -1,9 +1,10 @@
 using System.Transactions;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Sql.Common._internal;
+using Compze.Sql.MySql._internal;
 using MySqlConnector;
 
-namespace Compze.Sql.MySql._internal;
+namespace Compze.Sql.MySql._private;
 
 ///<summary>The transaction a MySQL connection begins in its database to take part in an ambient transaction, as that transaction's<br/>
 /// decision (<see cref="DatabaseTransactionAsTheDecision"/>), at the ambient transaction's isolation level.</summary>

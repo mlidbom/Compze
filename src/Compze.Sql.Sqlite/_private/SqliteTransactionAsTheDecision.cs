@@ -4,7 +4,7 @@ using Microsoft.Data.Sqlite;
 using SQLitePCL;
 using IsolationLevel = System.Data.IsolationLevel;
 
-namespace Compze.Sql.Sqlite._internal;
+namespace Compze.Sql.Sqlite._private;
 
 ///<summary>The transaction a SQLite connection begins in its database to take part in an ambient transaction, as that transaction's<br/>
 /// decision (<see cref="DatabaseTransactionAsTheDecision"/>), and the database's write gate, which it holds from before it begins until<br/>

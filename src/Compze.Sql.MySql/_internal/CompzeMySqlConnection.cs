@@ -2,6 +2,7 @@ using System.Transactions;
 using Compze.Contracts;
 using Compze.Sql.Common._internal.Abstractions;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
+using Compze.Sql.MySql._private;
 using MySqlConnector;
 
 namespace Compze.Sql.MySql._internal;
