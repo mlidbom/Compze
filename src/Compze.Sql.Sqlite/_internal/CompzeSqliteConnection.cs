@@ -49,6 +49,12 @@ interface ICompzeSqliteConnection : IPoolableConnection, ICompzeDbConnection<Sql
             // still run concurrently.
             onEnlist: () =>
             {
+               //urgent: this waits for the write gate with no timeout, and nothing records who holds it. A transaction that hangs, in one
+               //   endpoint of a process, blocks every other transaction on the same database in that process forever, and nothing says which
+               //   one holds it: across processes SQLite's own busy_timeout gives up after 5 s, inside one process nothing does. Give it a
+               //   timeout whose exception names the holder: its transaction, its thread, where and when it took the gate. The gate is held
+               //   for a whole transaction and released on whatever thread completes it, so it needs the Compze.Threading lock owned by a
+               //   transaction that TaggregateUpdateLocks' todo asks for (Magnus, 2026-11-24).
                _writeGate.Wait();
                try
                {
