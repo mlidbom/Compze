@@ -36,6 +36,8 @@ interface IMemoryImageStateStoreSqlLayer
    void Write(CommitNumber committedAs, IReadOnlyList<TaggregateRowToSave> saved, IReadOnlyList<TaggregateId> deleted);
 
    ///<summary>The names of the tables and their columns, the same in every database.</summary>
+   ///<remarks>review-naming: MemoryImageStateStoreTaggregate, MemoryImageStateStoreCommitCounter, ClassName, Snapshot and CommitNumber, and MySQL's<br/>
+   /// MemoryImageStateStoreTaggregateLock (state-store-in-tables, 2026-11-24).</remarks>
    static class TableSchemaStrings
    {
       internal const string TaggregateTable = "MemoryImageStateStoreTaggregate";
