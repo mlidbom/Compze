@@ -43,8 +43,8 @@ public sealed class TaggregateFilesBuilder
    /// their commits loses the files' change, or, in an endpoint with exactly-once delivery, delivers a tevent about a change that was<br/>
    /// lost, or counts a tessage as handled while its change was lost. Without it such a unit of work is refused: see<br/>
    /// <see cref="MemoryImageStateStoreBuilder.StoredInJsonFiles(DirectoryInfo,System.Text.Json.JsonSerializerOptions,Action{TaggregateFilesBuilder})"/>.</summary>
-   ///<remarks>The files then take part in each transaction as a volatile participant: they commit after a SQL Server connection, and in<br/>
-   /// the order they joined with the others, and a failure committing them stops the process<br/>
+   ///<remarks>The files then commit when the unit of work commits, which is after the database has committed, whichever the database: each<br/>
+   /// of Compze's connections commits as its transaction's decision. A failure committing them stops the process<br/>
    /// (<see cref="Environment.FailFast(string)"/>), since the transaction can no longer roll back by then.</remarks>
    public TaggregateFilesBuilder AcceptingNonAtomicCommitsWithADatabase()
    {

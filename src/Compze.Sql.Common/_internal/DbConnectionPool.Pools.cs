@@ -19,8 +19,9 @@ namespace Compze.Sql.Common._internal;
 /// <see cref="UseConnection{TResult}"/> on the same flow does not deadlock while independent flows serialize.</summary>
 ///<remarks>One connection per transaction is the only correct model, so there is no per-backend variation — every backend uses<br/>
 /// this pool. Two connections in one transaction is a distributed transaction — a separate database session each — which every<br/>
-/// supported provider refuses without a coordinator (MySQL and Npgsql outright; SqlClient unless implicit distributed<br/>
-/// transactions are enabled), and a coordinator (MSDTC) is Windows-only and defeats the cross-platform goal.</remarks>
+/// supported database refuses without a coordinator (SQL Server's, MySQL's and SQLite's connections are each a transaction's durable<br/>
+/// participant, of which .NET allows one unless implicit distributed transactions are enabled; Npgsql can't prepare a commit unless<br/>
+/// the server allows prepared transactions), and a coordinator (MSDTC) is Windows-only and defeats the cross-platform goal.</remarks>
 partial class DbConnectionPool<TConnection, TCommand> : IDbConnectionPool<TConnection, TCommand>
    where TConnection : IPoolableConnection, ICompzeDbConnection<TCommand>
    where TCommand : DbCommand
@@ -83,15 +84,23 @@ partial class DbConnectionPool<TConnection, TCommand> : IDbConnectionPool<TConne
    {
       using var escalationForbidden = TransactionCE.NoTransactionEscalationScope($"Opening {typeof(TConnection)}");
       var connection = _createConnection(_connectionString);
-
-      //This is here so that we can reassure ourselves, via a profiler, time and time again that it is actually the
-      //first opening of a connection that takes very long and thus trying our own pooling will not help.
-      if(RunOnce.IsFirstCall())
+      try
       {
-         connection.Open(); //Currently 120 passing tests total of 60 seconds runtime, average per test 500ms.
-      } else
+         //This is here so that we can reassure ourselves, via a profiler, time and time again that it is actually the
+         //first opening of a connection that takes very long and thus trying our own pooling will not help.
+         if(RunOnce.IsFirstCall())
+         {
+            connection.Open(); //Currently 120 passing tests total of 60 seconds runtime, average per test 500ms.
+         } else
+         {
+            connection.Open();
+         }
+      }
+      catch
       {
-         connection.Open();
+         //Opening can fail after the database connection opened, such as when the ambient transaction refuses the connection's transaction.
+         connection.Dispose();
+         throw;
       }
 
       return connection;
@@ -101,15 +110,23 @@ partial class DbConnectionPool<TConnection, TCommand> : IDbConnectionPool<TConne
    {
       using var escalationForbidden = TransactionCE.NoTransactionEscalationScope($"Opening {typeof(TConnection)}");
       var connection = _createConnection(_connectionString);
-
-      //This is here so that we can reassure ourselves, via a profiler, time and time again that it is actually the
-      //first opening of a connection that takes very long and thus trying our own pooling will not help.
-      if(RunOnce.IsFirstCall())
+      try
       {
-         await connection.OpenAsync().caf(); //Currently 120 passing tests total of 60 seconds runtime, average per test 500ms.
-      } else
+         //This is here so that we can reassure ourselves, via a profiler, time and time again that it is actually the
+         //first opening of a connection that takes very long and thus trying our own pooling will not help.
+         if(RunOnce.IsFirstCall())
+         {
+            await connection.OpenAsync().caf(); //Currently 120 passing tests total of 60 seconds runtime, average per test 500ms.
+         } else
+         {
+            await connection.OpenAsync().caf();
+         }
+      }
+      catch
       {
-         await connection.OpenAsync().caf();
+         //Opening can fail after the database connection opened, such as when the ambient transaction refuses the connection's transaction.
+         await connection.DisposeAsync().caf();
+         throw;
       }
 
       return connection;

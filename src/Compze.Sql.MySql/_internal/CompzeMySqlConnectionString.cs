@@ -12,11 +12,10 @@ static class CompzeMySqlConnectionString
    internal static string From(string configuredConnectionString) =>
       new MySqlConnectionStringBuilder(configuredConnectionString)
       {
-         //Compze never uses distributed transactions: TransactionCE.NoTransactionEscalationScope asserts against escalation.
-         //MySqlConnector's default, true, makes every ambient transaction an XA transaction, which costs an XA PREPARE before
-         //each commit, and a process dying between the prepare and the commit leaves a prepared transaction on the server,
-         //holding its locks until it is resolved by hand. False makes it a plain local transaction, committed at Commit, at the
-         //isolation level the transaction asks for: the XA path ignores that and runs at the server's default.
-         UseXaTransactions = false
+         //Compze's connection takes part in an ambient transaction itself, as the transaction's decision: see MySqlTransactionAsTheDecision.
+         //MySqlConnector's own enlistment commits only when it is told the outcome, after the participants told before it, and, by default,
+         //as an XA transaction, whose prepared state a process dying before the commit leaves on the server, holding its locks until it is
+         //resolved by hand.
+         AutoEnlist = false
       }.ConnectionString;
 }

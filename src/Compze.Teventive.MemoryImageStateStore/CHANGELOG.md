@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## 0.1.0-alpha
 
+- **Documentation: files that accept non-atomic commits with a database commit after the database, whichever the database,** as `AcceptingNonAtomicCommitsWithADatabase()` now says. Before Compze.Sql.Sqlite 0.5.1-alpha and Compze.Sql.MySql 0.6.1-alpha, they committed before a SQLite or MySQL connection.
 - **The memory image state store, a memory image of taggregates: every taggregate held in memory for the container's life, rebuilt at its start from a snapshot of each, which its storage keeps.** It keeps taggregates as their state, not their history. Composed with `MemoryImageStateStore(...)`, which declares the taggregate classes it keeps, each with a factory for empty instances, its indexes, and its storage.
   - Each unit of work gets a private copy of each taggregate it gets for update, and holds the taggregate's lock until it completes.
   - The tevents the copies publish are dispatched synchronously as each publish cascade ends, once the taggregate's invariants hold, so participation handlers run inside the unit of work's transaction, and a handler's failure comes out of the domain call.
