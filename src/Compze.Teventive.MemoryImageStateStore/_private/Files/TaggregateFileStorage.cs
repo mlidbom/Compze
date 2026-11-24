@@ -43,7 +43,7 @@ sealed class TaggregateFileStorage : ITaggregateStorage
 
    ///<summary>Finishes any commit a crash interrupted, then loads every file of every class: from the load cache where it holds the<br/>
    /// file unchanged, by reading the file otherwise.</summary>
-   public IReadOnlyList<TaggregateSnapshot> LoadAll()
+   public LoadedTaggregates LoadAll()
    {
       //bug: this takes every journal and temporary file in the store's own folder for a crash's leftovers, so the store assumes it is
       //   the only process using its folder, and nothing guards that or says so. A second process loading the same folder, such as the
@@ -56,8 +56,15 @@ sealed class TaggregateFileStorage : ITaggregateStorage
       CommitJournal.FinishInterruptedCommits(_files, _jsonFiles.Folder, _jsonFiles.OwnFolder);
       var loaded = _jsonFiles.Classes.SelectMany(LoadTheFilesOf).ToList();
       _storedFiles.Locked(it => it.ReplaceWith(loaded.Select(load => (load.Taggregate!.Id.Value, load.File))));
-      return [..loaded.Select(it => it.Snapshot)];
+      return new LoadedTaggregates([..loaded.Select(it => it.Snapshot)], holdingEveryCommitThrough: null);
    }
+
+   ///<summary>No other memory image shares the files: a second process on the same folder isn't supported. So there is no lock to<br/>
+   /// take, and nothing newer to find.</summary>
+   public StoredTaggregate? LockForUpdate(TaggregateId id, CommitNumber? heldAs) => null;
+
+   ///<summary>Nothing, as for <see cref="LockForUpdate"/>.</summary>
+   public TaggregatesCommittedAfter CommittedAfter(CommitNumber lastSeen) => TaggregatesCommittedAfter.None(lastSeen);
 
    ///<summary>Whether <paramref name="loaded"/> holds the state <paramref name="heldSnapshot"/> holds, as this storage writes state: if<br/>
    /// the text its file holds is what the store would write for <paramref name="heldSnapshot"/>, or else if <paramref name="loaded"/>'s<br/>

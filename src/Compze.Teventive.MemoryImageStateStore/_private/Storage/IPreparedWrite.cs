@@ -8,4 +8,7 @@ interface IPreparedWrite
 
    ///<summary>Abandons the write. Called when the unit of work rolls back.</summary>
    void Discard();
+
+   ///<summary>Once committed, the number the write committed as, for a storage that numbers its commits; else null.</summary>
+   CommitNumber? CommittedAs { get; }
 }
