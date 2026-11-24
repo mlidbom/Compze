@@ -79,7 +79,7 @@ interface IAnimalTevent<out T> : ITaggregateTevent<T> where T : IAnimalTevent;
 
 interface IAnimalTevent : ITaggregateTevent
 {
-#pragma warning disable CA1715 // Nested event interface follows semantic events naming convention (compze.net/paradigms/semantic-events/event-naming.html)
+#pragma warning disable CA1715 // Nested event interface follows semantic events naming convention (compze.net/Compze/Teventive/Taggregates/_docs/tevent-naming.html)
    interface Born : IAnimalTevent, ITaggregateCreatedTevent;
 #pragma warning restore CA1715
 }
