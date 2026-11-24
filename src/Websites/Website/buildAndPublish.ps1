@@ -19,7 +19,7 @@ if(!(Test-Path $ghPagesCheckoutFolder))
 $ghPagesCheckoutFolder = (Get-Item $ghPagesCheckoutFolder).FullName
 Push-Location $ghPagesCheckoutFolder
 git config core.autocrlf true
-git config --global core.safecrlf false
+git config core.safecrlf false
 
 git checkout -f 
 git clean -fd
@@ -27,6 +27,9 @@ git pull
 
 Pop-Location
 Get-Location
+
+# robocopy /MIR below makes gh-pages a mirror of _site, so whatever an earlier build left in _site would be published too.
+if(Test-Path $buildFolder) { Remove-Item -Recurse -Force $buildFolder }
 
 docfx.exe
 
