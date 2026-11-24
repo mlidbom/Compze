@@ -108,7 +108,7 @@ sealed class NamedPipeTransportServer : IAsyncDisposable
       //Tracked so StopAsync can wait for in-flight serves to unwind; the continuation removes it whether it completed before
       //or after this add, so the set never leaks a finished serve nor grows without bound under sustained load.
       _monitor.Locked(() => _connectionsBeingServed.Add(serving));
-      serving.ContinueWithCE(_ => _monitor.Locked(() => _connectionsBeingServed.Remove(serving)));
+      _ = serving.ContinueWithCE(_ => _monitor.Locked(() => _connectionsBeingServed.Remove(serving)));
    }
 
    async Task ServeConnectionThenDisposeAsync(NamedPipeServerStream stream)

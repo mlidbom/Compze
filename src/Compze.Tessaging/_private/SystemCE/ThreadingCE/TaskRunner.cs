@@ -66,7 +66,7 @@ static class TaskRunnerRegistrar
          });
 
          _inProgressTasks.Update(it => it.Add(task));
-         task.ContinueWithCE(_ => _inProgressTasks.Update(it => it.Remove(task))); //While surprising to me, completedTask and task are NOT the same object.
+         _ = task.ContinueWithCE(_ => _inProgressTasks.Update(it => it.Remove(task))); //While surprising to me, completedTask and task are NOT the same object.
       }
 
       public Task RunOnNamedThread(string threadName, ThreadStart threadLoop, ThreadPriority priority = ThreadPriority.Normal)
