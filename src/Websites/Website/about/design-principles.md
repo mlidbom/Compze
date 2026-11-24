@@ -1,3 +1,6 @@
+---
+title: Design principles
+---
 
 ## Design Principles
 

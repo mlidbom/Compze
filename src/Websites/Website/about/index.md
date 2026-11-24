@@ -1,3 +1,6 @@
+---
+title: About
+---
 = About
 :page-permalink: /about/
 :page-toc:
