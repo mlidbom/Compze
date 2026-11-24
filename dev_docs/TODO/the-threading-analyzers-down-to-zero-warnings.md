@@ -21,6 +21,14 @@ of 2026-11-24, and the starvation of 2026-11-12.
   specify. A public name that deliberately breaks it, such as Compze.Must's `InvokingAsync`, gets a same-line
   suppression with its reason; an override of a framework's method, which can't be renamed, too.
 
+- **Every synchronous wait VSTHRD002 flags gets a same-line suppression with its reason, and a `todo:urgent` unless
+  it is surely safe** (Magnus: "Suppress with reason AND urgent todo comments unless you are sure this is truly safe
+  code.").
+- **The synchronous waits through `TaskCE.WaitUnwrappingException` and `ResultUnwrappingException`, which VSTHRD002
+  can't see, get a `todo:urgent` at each call** (Magnus: "Add urgent todos at the call site"). The two methods stay:
+  they are not `GetAwaiter().GetResult()`, which throws only the first exception of a task that failed with several,
+  where they rethrow the `AggregateException` with all of them.
+
 ## Done
 
 - **VSTHRD110, an awaitable result not observed:** none left. The inbox's handler executions returned a task no one
@@ -34,25 +42,21 @@ of 2026-11-24, and the starvation of 2026-11-12.
 - **VSTHRD002 in specifications that could await:** the logging, Must, RunOnce, thread-pool tevent store and memory
   image state store specifications await, in `IAsyncLifetime` or `InitializeAsyncInternal` (185a3a0fb, 79f60e94e).
 
-## What remains, 2026-11-24 (79f60e94e): 37 synchronous waits (VSTHRD002), and main's CA2213
+- **Every synchronous wait marked, as decided:** VSTHRD002 at none.
+  - **Suppressed only, as surely safe, 21:** the six delivery-stream waits in the send loops, on each stream's named
+    thread; `SqliteEndpointProcessLockHold`'s own thread; `ThreadPoolCE`, which holds pool threads on purpose; the two
+    bridge methods themselves, whose callers have the todos; and the 11 specifications whose subject is a synchronous
+    wait, where nothing needs the waiting thread. `LockHeldByAnotherThreadWhileWeTimeOutTryingToTakeIt`'s holder now
+    runs on a thread of its own, not a pool thread it blocked for the whole scenario.
+  - **Suppressed with a `todo:urgent`, 16:** `ExactlyOnceDeliveryStream.LoadUndeliveredTessages`, which `Start()` calls
+    on the thread that starts delivery, not the stream's own; publishing tevents synchronously, 2;
+    `LocalTypermediaNavigatorSession`, 3; `IAsyncShared.Locked`; the DI containers' synchronous disposals, 4; the memory
+    image state store's `Dispose`, 2; the AccountManagement sample's startup and shutdown, 3.
+  - **A `todo:urgent` at each of the 14 calls of the two bridge methods.** Expression-bodied members among them got block
+    bodies, so that the todo is at the wait, not in a doc comment that ships to consumers.
 
-A non-incremental build counts them: an incremental one repeats only the warnings of the projects it rebuilds.
+## What remains
 
-- **On threads of their own, on purpose, 9:** the tessaging delivery streams, 7, on named threads
-  (`RunOnNamedThreadAsync`), so they hold no pool thread; `SqliteEndpointProcessLockHold`, whose thread took the mutex
-  and must release it; `ThreadPoolCE` in Compze.Internals.Testing, which holds pool threads on purpose.
-- **A synchronous API over asynchronous work, 14:** publishing tevents synchronously, 2 (`TaggregateUnitOfWork`,
-  `UnitOfWorkTeventPublisher`); `LocalTypermediaNavigatorSession`, 3; `IAsyncShared.Locked`; `TaskCE`'s
-  `WaitUnwrappingException` and `ResultUnwrappingException`, 2; the DI containers' synchronous disposals, 4
-  (`container-disposal-of-async-only-components.md`); the memory image state store's `Dispose`, 2. These are what
-  `synchronous-paths-that-need-a-free-thread-pool-thread.md` is for.
-- **Hidden from VSTHRD002, 14 more:** the callers of `WaitUnwrappingException` and `ResultUnwrappingException`, such as
-  `EndpointHost.Start`, `NavigationSpecification.NavigateOn`, `RemoteTypermediaNavigator.Post` and `Get`, and
-  `TeventObservationDispatcher.Dispose`. The analyzer sees only `.Wait()`, `.Result` and `GetAwaiter().GetResult()`,
-  and has no setting for other blocking methods. `GetAwaiter().GetResult()` rethrows a single exception as they do.
-- **Specifications whose subject is a synchronous wait, 11:** the locks' owning thread holds the lock while another
-  thread's attempt is waited for, 8 (`ICriticalSection`, `IAwaitableCriticalSection`,
-  `LockHeldByAnotherThreadWhileWeTimeOutTryingToTakeIt`); `AsyncLockCE`'s synchronous reentry; the endpoint disposed
-  synchronously to record the thread it disposes on; `ThreadGateTestFixture`, whose entrants block at the gate.
-- **The AccountManagement sample's startup, 3:** under its `todo:urgent` on restructuring how it creates, starts and
-  connects its endpoints.
+Main's CA2213 in `DbConnectionPool.TransactionSpecificConnection`, reported to commit-as-the-decision. The `todo:urgent`
+comments are the inventory of `synchronous-paths-that-need-a-free-thread-pool-thread.md`: a grep for `VSTHRD002` and
+for `UnwrappingException()` lists every synchronous wait on a task in Compze's code.

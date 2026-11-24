@@ -52,8 +52,11 @@ possibly the strange errors, which the commit doesn't describe.
 
 ## The task
 
-1. **A code policy in Compze.Tests.CodePolicies** that lists every synchronous wait on a task in library code. Each is
-   fixed, or allowed with its reason, at the code and in the policy. A new one fails the policy until it is decided.
+1. **Done by the threading analyzers instead of a code policy** (`the-threading-analyzers-down-to-zero-warnings.md`):
+   VSTHRD002 warns of every new synchronous wait on a task, and each existing one carries a same-line suppression with
+   its reason, and a `todo:urgent` unless it is surely safe. The waits through `TaskCE.WaitUnwrappingException` and
+   `ResultUnwrappingException`, which the analyzer can't see, have a `todo:urgent` at each call; a new call of them is
+   not flagged.
 2. **Starved-pool specifications for each synchronous surface:** the memory image state store, the tevent store, schema
    creation, the typermedia navigator, publishing. Each runs the synchronous call on a thread of its own while every pool
    thread is held, and requires it to finish in time. This catches the library-internal kind too. A helper in
