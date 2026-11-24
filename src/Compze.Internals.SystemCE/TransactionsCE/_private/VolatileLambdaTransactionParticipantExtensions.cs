@@ -17,7 +17,10 @@ static class VolatileLambdaTransactionParticipantExtensions
          var participant = participants.GetOrAdd(@this.TransactionInformation.LocalIdentifier,
                                                  () =>
                                                  {
+                                                    //At phase 0, so that a prepare task that fails, such as FailOnPrepare's, fails the transaction before any database
+                                                    //connection is asked to prepare: Compze's connections commit as the transaction's decision, and refuse a two-phase commit.
                                                     var createdParticipant = new VolatileLambdaTransactionParticipant(
+                                                       enlistmentOptions: EnlistmentOptions.EnlistDuringPrepareRequired,
                                                        onCommit: () => Participants.Locked(parts => parts.Remove(@this.TransactionInformation.LocalIdentifier)),
                                                        onRollback: () => Participants.Locked(parts => parts.Remove(@this.TransactionInformation.LocalIdentifier)));
                                                     createdParticipant.EnsureEnlistedInAnyAmbientTransaction();
