@@ -50,6 +50,8 @@ container.RootResolver.Resolve<IMemoryImageStateStore>().ChangesCommittedElsewhe
   and `MySqlMemoryImageStateStoreSqlLayer()`, in four new packages, `Compze.Teventive.MemoryImageStateStore.Sqlite`,
   `.MicrosoftSql`, `.PostgreSql` and `.MySql`, following `Compze.DocumentDb.Sqlite` and its siblings: each contributes its
   schema and registers the store's SQL layer, internal, on the domain database's connection pool.
+- **`TaggregateRowsBuilder.CatchingUpWhileIdleEvery(TimeSpan interval)`:** catching up with the other memory images while
+  nothing else makes this one catch up: see [Catching up](#catching-up-with-the-other-memory-images).
 - **`IMemoryImageStateStore.ChangesCommittedElsewhere`, an `IObservable<ChangesFoundInStorage>`:** what catching up found,
   as the existing `ChangesFoundInStorage` reports it: the ids added, changed and removed. Told in the order found, off the
   thread that found them, one batch at a time. The hub pushes them to Cloyd. Not tevents: another memory image's
@@ -122,8 +124,8 @@ saw misses nothing.
 ## Catching up with the other memory images
 
 **A memory image catches up by reading the rows above the last commit number it saw:** when a unit of work first gets a
-taggregate for update or adds one, and about once a second when nothing else has made it catch up. Reads outside a unit
-of work never wait for the database: they read what the memory image last caught up with.
+taggregate for update or adds one, and, where the consumer declares it, while idle. Reads outside a unit of work never
+wait for the database: they read what the memory image last caught up with.
 
 - **It reads the counter first, then the rows above the last number seen,** outside the unit of work's transaction, on a
   connection of its own. Every commit up to the counter's value was committed before the rows were read, so the counter's
@@ -140,7 +142,13 @@ of work never wait for the database: they read what the memory image last caught
 - **What it found is reported** through `ChangesCommittedElsewhere`, and so is what a get for update took from a row.
 - **A row that can't be read or restored fails the catch-up, naming the row,** as a file that can't be read fails a load.
   Caught up while idle, the failure is logged, and tried again a second later.
-- **The idle catch-up** is a task of the store's own, stopped when the container disposes the store.
+- **The idle catch-up runs only when the consumer declares it,** `rows => rows.CatchingUpWhileIdleEvery(TimeSpan.FromSeconds(1))`,
+  as a task of the store's own, stopped when the container disposes the store. By Compze's rule that an API spends
+  nothing on what most callers don't need: a consumer with one memory image would get nothing from a round trip every
+  second, forever. Considered and set aside: catching up while idle only while something subscribes to
+  `ChangesCommittedElsewhere`, which would tie how fresh reads are to whether anything subscribes, unseen. Without the
+  declaration, a memory image catches up at each unit of work's first change of the store, and when a get for update
+  finds a newer row.
 
 ## Memory follows only a committed transaction
 
