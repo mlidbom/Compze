@@ -112,6 +112,8 @@ abstract class DatabaseTransactionAsTheDecision : ISinglePhaseNotification, IDis
    public void Commit(Enlistment enlistment) =>
       throw new UnreachableException($"{_connectionDescription} was told to commit the second phase of a two-phase commit, and it votes to roll back every one.");
 
+   ///<summary>The ambient transaction aborted before it asked for its decision, such as when a participant voted to roll back as it<br/>
+   /// prepared, or its scope ended without completing it: the database transaction rolls back.</summary>
    public void Rollback(Enlistment enlistment)
    {
       Dispose();

@@ -7,7 +7,8 @@ using Compze.Contracts;
 namespace Compze.Sql.Sqlite.Wiring._internal;
 
 ///<summary>Registers the connection pool of an <em>auxiliary sqlite database</em>: a database of its consumer's own, beside the<br/>
-/// domain database, with its own file and thus its own per-database write gate (see <see cref="ICompzeSqliteConnection"/>).<br/>
+/// domain database, with its own file and thus its own per-database write gate<br/>
+/// (see <see cref="Compze.Sql.Sqlite._private.SqliteWriteGate"/>).<br/>
 /// A consumer declares one by defining a pool type of its own — a marker interface extending <see cref="ISqliteConnectionPool"/>,<br/>
 /// since the container resolves by service type and cannot hold two registrations of the same type — and registering it here<br/>
 /// with the factory that constructs it.</summary>
