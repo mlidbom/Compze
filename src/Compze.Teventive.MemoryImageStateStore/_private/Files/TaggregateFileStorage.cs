@@ -45,12 +45,14 @@ sealed class TaggregateFileStorage : ITaggregateStorage
    /// file unchanged, by reading the file otherwise.</summary>
    public IReadOnlyList<TaggregateSnapshot> LoadAll()
    {
-      //review: this takes every journal and temporary file in the store's own folder for a crash's leftovers, so the store assumes it is
+      //bug: this takes every journal and temporary file in the store's own folder for a crash's leftovers, so the store assumes it is
       //   the only process using its folder, and nothing guards that or says so. A second process loading the same folder, such as the
-      //   successor of a process that hands over to it, carries out the first one's journal while it commits, or deletes the temporary
-      //   files of a commit it is preparing, whose rename then fails after its journal is written, stopping it with FailFast. And each
-      //   process writes over the other's files unseen. Take an interprocess lock on the folder for the store's life, and say so in
-      //   StoredInJsonFiles' documentation? Found by reading, for the Claude tooling's hub (Claude, 2026-11-24).
+      //   successor of a process that hands over to it, deletes the temporary files of a commit the first is preparing. That commit then
+      //   writes its journal, and CommitJournal.CarryOut skips each temporary file that no longer exists: the commit silently writes
+      //   nothing, while the first process's memory, and its StoredFiles, hold the new state. Only when the two carry out the same journal
+      //   at once does one of them fail a rename after its journal is written, and stop with FailFast. And each process writes over the
+      //   other's files unseen. Proposed: a lock file held for the store's life, so that a second process's first load fails, naming the
+      //   holder. Found by reading, for the Claude tooling's hub (Claude, 2026-11-24).
       CommitJournal.FinishInterruptedCommits(_files, _jsonFiles.Folder, _jsonFiles.OwnFolder);
       var loaded = _jsonFiles.Classes.SelectMany(LoadTheFilesOf).ToList();
       _storedFiles.Locked(it => it.ReplaceWith(loaded.Select(load => (load.Taggregate!.Id.Value, load.File))));
