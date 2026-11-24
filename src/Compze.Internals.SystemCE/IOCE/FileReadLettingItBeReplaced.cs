@@ -11,9 +11,10 @@ namespace Compze.Internals.SystemCE.IOCE;
 /// letting others only read it: while one of them reads it, Windows refuses to replace or delete the file, with "Access to
 /// the path is denied". These let others write it and delete it meanwhile, which replacing it takes.
 /// </remarks>
-/// <remarks>review-naming: the type <c>FileReadLettingItBeReplaced</c>.</remarks>
 public static class FileReadLettingItBeReplaced
 {
+   //review-naming: the type FileReadLettingItBeReplaced.
+
    /// <summary>What a reader of the file lets others do with it meanwhile: write it, and replace or delete it.</summary>
    const FileShare WhatOthersMayDoMeanwhile = FileShare.ReadWrite | FileShare.Delete;
 

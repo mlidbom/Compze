@@ -6,12 +6,13 @@ namespace Compze.Teventive.MemoryImageStateStore._private;
 ///<summary>The lock of each taggregate that a unit of work is changing, which makes a second unit of work that gets it for update<br/>
 /// wait for the first to complete. Only the locks held or waited for are kept, not one for each taggregate of the store.</summary>
 ///<remarks>A lock is held from a unit of work's first get for update until its transaction completes, possibly on another thread,<br/>
-/// so it is a <see cref="SemaphoreSlim"/>, the tool the locking standard gives that job.<br/>
-/// todo: (Magnus, 2026-11-17) replace it with a Compze.Threading lock owned by a transaction, whose timeout names the transaction<br/>
-/// holding it and where it took the lock, as the other Compze.Threading locks' timeouts do. An effort of its own after the spike;<br/>
-/// until then the 30-second wait and its TimeoutException naming the taggregate stay as they are.</remarks>
+/// so it is a <see cref="SemaphoreSlim"/>, the tool the locking standard gives that job.</remarks>
 sealed class TaggregateUpdateLocks
 {
+   //todo: (Magnus, 2026-11-17) replace the SemaphoreSlim with a Compze.Threading lock owned by a transaction, whose timeout
+   //   names the transaction holding it and where it took the lock, as the other Compze.Threading locks' timeouts do. An effort
+   //   of its own after the spike; until then the 30-second wait and its TimeoutException naming the taggregate stay as they are.
+
    static readonly TimeSpan Timeout = TimeSpan.FromSeconds(30);
 
    readonly IThreadShared<Dictionary<TaggregateId, UpdateLock>> _locksHeldOrWaitedFor = IThreadShared.New(new Dictionary<TaggregateId, UpdateLock>());

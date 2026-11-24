@@ -56,8 +56,10 @@ public static partial class TaskCE
 #pragma warning restore CA2008 // Do not create tasks without passing a TaskScheduler
 
    ///<summary>Task.ContinueWith may run the continuation synchronously on the calling thread, causing all kinds of subtle and hard to debug problems. This simply guarantees that that does not happen.</summary>
-   ///<remarks>review-naming: ContinueWithAsync, was ContinueWithCE: VSTHRD200 asks a method that returns a task to end in Async, and<br/>
-   /// "with, asynchronously" is what it guarantees of the continuation (state-store-in-tables, 2026-11-24).</remarks>
-   public static Task ContinueWithAsync(this Task @this, Action<Task> continuation) =>
-      @this.ContinueWith(continuation, CancellationToken.None, TaskContinuationOptions.RunContinuationsAsynchronously, TaskScheduler.Default);
+   public static Task ContinueWithAsync(this Task @this, Action<Task> continuation)
+   {
+      //review-naming: ContinueWithAsync, was ContinueWithCE: VSTHRD200 asks a method that returns a task to end in Async, and
+      //   "with, asynchronously" is what it guarantees of the continuation (state-store-in-tables, 2026-11-24).
+      return @this.ContinueWith(continuation, CancellationToken.None, TaskContinuationOptions.RunContinuationsAsynchronously, TaskScheduler.Default);
+   }
 }

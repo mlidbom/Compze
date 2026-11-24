@@ -39,11 +39,14 @@ public sealed class TypeMapBuilder
 
    /// <summary>Declares that the types of the assembly containing <typeparamref name="T"/> are mapped to the GUIDs that
    /// assembly declares — see <see cref="MapTypesFromAssembly"/>.</summary>
-   /// <remarks>refactor: <typeparamref name="T"/> decides the assembly silently. When <typeparamref name="T"/> moves to another<br/>
-   /// assembly, this declares that one instead, still compiles, and the original assembly's types fail as unmapped only at<br/>
-   /// run time ("Missing type mappings for: ..."). Found when the tessaging types left Compze.Abstractions (2026-07-19). A<br/>
-   /// declaration that can't drift to another assembly would make such a move fail at compile time or at startup.</remarks>
-   public TypeMapBuilder MapTypesFromAssemblyContaining<T>() => MapTypesFromAssembly(typeof(T).Assembly);
+   public TypeMapBuilder MapTypesFromAssemblyContaining<T>()
+   {
+      //refactor: T decides the assembly silently. When T moves to another
+      //   assembly, this declares that one instead, still compiles, and the original assembly's types fail as unmapped only at
+      //   run time ("Missing type mappings for: ..."). Found when the tessaging types left Compze.Abstractions (2026-07-19). A
+      //   declaration that can't drift to another assembly would make such a move fail at compile time or at startup.
+      return MapTypesFromAssembly(typeof(T).Assembly);
+   }
 
    /// <summary>
    /// Declares that <paramref name="assembly"/>'s types are mapped to the GUIDs it declares. The assembly must carry an

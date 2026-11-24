@@ -153,14 +153,17 @@ partial class PgSqlDocumentDbSqlLayer(IPgSqlConnectionPool connectionPool, PgSql
       new(_typeIdInterner.GetTypeId(row.InternedTypeId), row.SerializedDocument);
 
    ///<summary>The lock clause of a read for update.</summary>
-   ///<remarks>urgent: it is empty, so <see cref="Compze.DocumentDb.IDocumentDbUpdater.GetForUpdate{TValue}"/> on PostgreSQL locks nothing: two units of<br/>
-   /// work can get one document for update at once, and the later commit overwrites the earlier one's change. It was copied from<br/>
-   /// SQL Server's layer, whose hint goes after the table name; PostgreSQL locks with <c>FOR UPDATE</c> at the end of the statement. Make the<br/>
-   /// read for update end with it, specify under [PCT] that a second unit of work waits for the first, and turn<br/>
-   /// IDocumentDbUpdater.GetForUpdate's "if supported by implementing class" into a promise every layer keeps. Found by the<br/>
-   /// isolation-level specification's agent; marked urgent by Magnus, 2026-11-18.</remarks>
    // ReSharper disable once UnusedParameter.Local
-   static string UseUpdateLock(bool _) => "";// useUpdateLock ? "With(UPDLOCK, ROWLOCK)" : "";
+   static string UseUpdateLock(bool _)
+   {
+      //urgent: the lock clause is empty, so IDocumentDbUpdater.GetForUpdate on PostgreSQL locks nothing: two units of
+      //   work can get one document for update at once, and the later commit overwrites the earlier one's change. It was copied from
+      //   SQL Server's layer, whose hint goes after the table name; PostgreSQL locks with FOR UPDATE at the end of the statement. Make the
+      //   read for update end with it, specify under [PCT] that a second unit of work waits for the first, and turn
+      //   IDocumentDbUpdater.GetForUpdate's "if supported by implementing class" into a promise every layer keeps. Found by the
+      //   isolation-level specification's agent; marked urgent by Magnus, 2026-11-18.
+      return "";// useUpdateLock ? "With(UPDLOCK, ROWLOCK)" : "";
+   }
 
    void EnsureInitialized() => _schemaManager.EnsureSchemaInitialized();
 }

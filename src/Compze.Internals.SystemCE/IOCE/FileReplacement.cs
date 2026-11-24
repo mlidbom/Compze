@@ -22,9 +22,10 @@ namespace Compze.Internals.SystemCE.IOCE;
 /// with <see cref="FileReadLettingItBeReplaced"/>.<br/>
 /// On other operating systems a rename has these semantics already, and this is <see cref="File.Move(string, string, bool)"/>.
 /// </remarks>
-/// <remarks>review-naming: the type <c>FileReplacement</c>.</remarks>
 public static class FileReplacement
 {
+   //review-naming: the type FileReplacement.
+
    /// <summary>
    /// Puts <paramref name="by"/>, a file written beside <paramref name="file"/> and closed, in the place of
    /// <paramref name="file"/>, whether there is one there or not.

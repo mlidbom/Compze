@@ -50,11 +50,13 @@ sealed class TaggregateIndex<TTaggregate, TKey> : ITaggregateIndex<TTaggregate, 
 
    ///<summary>Read your own writes: what the unit of work holds is filed as its copies now are, not as they were committed.<br/>
    /// A method of its own, since its lambdas' closure would otherwise be allocated on every lookup, overlay or not.</summary>
-   ///<remarks>performance: Recomputes the keys of every copy the unit of work holds at each lookup, so a lookup costs in proportion<br/>
-   /// to the copies held: 54 to 58 µs with 1,000. Keep each copy's keys, recomputed only when it publishes (the-taggregate-store.md).</remarks>
-   ITaggregateReference<TTaggregate>[] AsTheUnitOfWorkLeftThem(ITaggregateReference<TTaggregate>[] committed, TKey key, MemoryImageStateStoreSession session) =>
-      [..committed.Where(it => !session.Holds(it.Id)),
-       ..session.HeldInstancesOf<TTaggregate>().Where(it => _keysOf(it).Contains(key)).Select(it => _store.Reference<TTaggregate>(it.Id))];
+   ITaggregateReference<TTaggregate>[] AsTheUnitOfWorkLeftThem(ITaggregateReference<TTaggregate>[] committed, TKey key, MemoryImageStateStoreSession session)
+   {
+      //performance: Recomputes the keys of every copy the unit of work holds at each lookup, so a lookup costs in proportion
+      //   to the copies held: 54 to 58 µs with 1,000. Keep each copy's keys, recomputed only when it publishes (the-taggregate-store.md).
+      return [..committed.Where(it => !session.Holds(it.Id)),
+          ..session.HeldInstancesOf<TTaggregate>().Where(it => _keysOf(it).Contains(key)).Select(it => _store.Reference<TTaggregate>(it.Id))];
+   }
 
    public void FileExactly(IEnumerable<ITaggregate> committedTaggregates)
    {

@@ -36,26 +36,29 @@ class MySqlSqlLayerSchemaManager
    /// a call waiting for another's creation then blocks on a signal that the creating thread gives, and neither needs a free thread-pool<br/>
    /// thread. Blocking on an asynchronous creation instead needed one for each of its continuations, while many units of work at once<br/>
    /// could hold every pool thread, each blocked waiting for the creation.</remarks>
-   ///<remarks>todo: (Magnus, 2026-11-24) Restore asynchronous creation for the asynchronous callers, the Tessaging SQL layers, whose<br/>
-   /// <c>InitAsync</c> now blocks its thread on this once. A synchronous caller must still never block on a creation that runs<br/>
-   /// asynchronously: it would need a free thread-pool thread for each of the creation's continuations, the starvation described<br/>
-   /// above. That needs a run-once in Compze.Threading that serves both kinds of caller, which neither <see cref="RunOnce"/> nor<br/>
-   /// <see cref="RunOnceAsync"/> does.</remarks>
-   public void EnsureSchemaInitialized() => _runOnce.RunIfFirstCall(() => TransactionScopeCe.SuppressAmbient(() =>
-      _connectionPool.UseConnection(connection =>
-      {
-         //GET_LOCK returns 1 on success, 0 on timeout, NULL on error - anything but 1 must fail loud, or the batch
-         //would run unserialized. DATABASE() scopes the lock to the connection's current database (see the prefix's remark).
-         var lockResult = connection.ExecuteScalar($"SELECT GET_LOCK(CONCAT('{SchemaCreationLockNamePrefix}:', DATABASE()), 60)");
-         if(Convert.ToInt64(lockResult ?? 0L, CultureInfo.InvariantCulture) != 1)
-            throw new InvalidOperationException($"Failed to acquire the schema-creation lock ('{SchemaCreationLockNamePrefix}:<database>') within 60 seconds.");
-         try
+   public void EnsureSchemaInitialized()
+   {
+      //todo: (Magnus, 2026-11-24) Restore asynchronous creation for the asynchronous callers, the Tessaging SQL layers, whose
+      //   InitAsync now blocks its thread on this once. A synchronous caller must still never block on a creation that runs
+      //   asynchronously: it would need a free thread-pool thread for each of the creation's continuations, the starvation described
+      //   above. That needs a run-once in Compze.Threading that serves both kinds of caller, which neither RunOnce nor
+      //   RunOnceAsync does.
+      _runOnce.RunIfFirstCall(() => TransactionScopeCe.SuppressAmbient(() =>
+         _connectionPool.UseConnection(connection =>
          {
-            connection.ExecuteNonQuery(_schemaCreationSql);
-         }
-         finally
-         {
-            connection.ExecuteNonQuery($"SELECT RELEASE_LOCK(CONCAT('{SchemaCreationLockNamePrefix}:', DATABASE()))");
-         }
-      })));
+            //GET_LOCK returns 1 on success, 0 on timeout, NULL on error - anything but 1 must fail loud, or the batch
+            //would run unserialized. DATABASE() scopes the lock to the connection's current database (see the prefix's remark).
+            var lockResult = connection.ExecuteScalar($"SELECT GET_LOCK(CONCAT('{SchemaCreationLockNamePrefix}:', DATABASE()), 60)");
+            if(Convert.ToInt64(lockResult ?? 0L, CultureInfo.InvariantCulture) != 1)
+               throw new InvalidOperationException($"Failed to acquire the schema-creation lock ('{SchemaCreationLockNamePrefix}:<database>') within 60 seconds.");
+            try
+            {
+               connection.ExecuteNonQuery(_schemaCreationSql);
+            }
+            finally
+            {
+               connection.ExecuteNonQuery($"SELECT RELEASE_LOCK(CONCAT('{SchemaCreationLockNamePrefix}:', DATABASE()))");
+            }
+         })));
+   }
 }

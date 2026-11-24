@@ -21,8 +21,7 @@ public class MutexCE_specification : UniversalTestBase
 {
    ///<summary>The mutex name for a specification that takes the lock, made unique to this test process. Global names are<br/>
    /// machine-wide and Local ones are shared by the whole logon session, so with a fixed name the same specification running<br/>
-   /// in another checkout at the same moment would contend for the same mutex.<br/>
-   /// review-naming: UniqueToThisProcess is my choice (compze-performance-rep, 2026-11-18).</summary>
+   /// in another checkout at the same moment would contend for the same mutex.</summary>
    static string UniqueToThisProcess(string name) => $"{name}.P{Environment.ProcessId}";
 
    public class Global : MutexCE_specification

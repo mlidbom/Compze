@@ -8,10 +8,12 @@ namespace Compze.DbPool._private;
 
 ///<summary>Which of the <see cref="DbPool"/>'s databases are reserved, and by whom,<br/>
 /// kept in an <see cref="IInterprocessObject{T}"/> that every process on this machine shares.</summary>
-///<remarks>todo: (Magnus, 2026-11-17) Replaced by a pool service that every machine shares: machines that use the same
-/// database servers reset each other's databases today. See src/Compze.DbPool/dev_docs/TODO/a-pool-service-shared-across-machines.md.</remarks>
 class DbPoolMachineWideState
 {
+   //todo: (Magnus, 2026-11-17) This class is to be replaced by a pool service that every machine shares: machines that use
+   //   the same database servers reset each other's databases today. See
+   //   src/Compze.DbPool/dev_docs/TODO/a-pool-service-shared-across-machines.md.
+
    static readonly Lazy<DirectoryCE> DataDirectory = new(() => DirectoryCE.StandardDirectories
                                                                           .LocalApplicationData
                                                                           .GetOrCreateDirectory("Compze")

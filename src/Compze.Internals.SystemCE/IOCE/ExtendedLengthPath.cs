@@ -13,10 +13,11 @@ namespace Compze.Internals.SystemCE.IOCE;
 /// the prefix themselves, so a file they wrote at such a path is there, and code that calls Windows directly fails to find
 /// it.
 /// </remarks>
-/// <remarks>review-naming: the type <c>ExtendedLengthPath</c>.</remarks>
 [SupportedOSPlatform("windows")]
 public static class ExtendedLengthPath
 {
+   //review-naming: the type ExtendedLengthPath.
+
    /// <summary>
    /// <paramref name="path"/> as an extended-length path: made full first, a relative one against the process's current
    /// directory, as Windows takes a relative path it is given. One that is already an extended-length or device path is
