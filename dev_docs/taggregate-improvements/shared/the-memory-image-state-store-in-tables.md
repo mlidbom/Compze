@@ -50,8 +50,9 @@ container.RootResolver.Resolve<IMemoryImageStateStore>().ChangesCommittedElsewhe
   and `MySqlMemoryImageStateStoreSqlLayer()`, in four new packages, `Compze.Teventive.MemoryImageStateStore.Sqlite`,
   `.MicrosoftSql`, `.PostgreSql` and `.MySql`, following `Compze.DocumentDb.Sqlite` and its siblings: each contributes its
   schema and registers the store's SQL layer, internal, on the domain database's connection pool.
-- **`TaggregateRowsBuilder.CatchingUpWhileIdleEvery(TimeSpan interval)`:** catching up with the other memory images while
-  nothing else makes this one catch up: see [Catching up](#catching-up-with-the-other-memory-images).
+- **`TaggregateRowsBuilder.CatchingUpAsOtherMemoryImagesOnThisMachineCommit()`:** catching up within about 50 ms of another
+  memory image's commit on the same machine, while nothing else makes this one catch up: see
+  [Catching up](#catching-up-with-the-other-memory-images).
 - **`IMemoryImageStateStore.ChangesCommittedElsewhere`, an `IObservable<ChangesFoundInStorage>`:** what catching up found,
   as the existing `ChangesFoundInStorage` reports it: the ids added, changed and removed. Told in the order found, off the
   thread that found them, one batch at a time. The hub pushes them to Cloyd. Not tevents: another memory image's
@@ -141,14 +142,31 @@ wait for the database: they read what the memory image last caught up with.
 - **Installing re-files the indexes,** from the committed instance's keys to the new one's, as a commit does.
 - **What it found is reported** through `ChangesCommittedElsewhere`, and so is what a get for update took from a row.
 - **A row that can't be read or restored fails the catch-up, naming the row,** as a file that can't be read fails a load.
-  Caught up while idle, the failure is logged, and tried again a second later.
-- **The idle catch-up runs only when the consumer declares it,** `rows => rows.CatchingUpWhileIdleEvery(TimeSpan.FromSeconds(1))`,
-  as a task of the store's own, stopped when the container disposes the store. By Compze's rule that an API spends
-  nothing on what most callers don't need: a consumer with one memory image would get nothing from a round trip every
-  second, forever. Considered and set aside: catching up while idle only while something subscribes to
-  `ChangesCommittedElsewhere`, which would tie how fresh reads are to whether anything subscribes, unseen. Without the
-  declaration, a memory image catches up at each unit of work's first change of the store, and when a get for update
-  finds a newer row.
+  Caught up while idle, the failure is logged, and tried again at the next signal.
+- **Catching up while idle, on the same machine, is woken by an interprocess signal, and runs only when the consumer
+  declares it:** `rows => rows.CatchingUpAsOtherMemoryImagesOnThisMachineCommit()`. Asked by Magnus (2026-11-24): whether an
+  interprocess object could give near-instant updates to memory images on the same machine. It can:
+  - **Every memory image of a store kept in tables raises the database's signal** once its commit has committed and is
+    installed: Compze.Threading.Interprocess's `InterprocessSignal`, a counter in a memory-mapped file, raised by an
+    interlocked increment. Raised whether or not anything waits for it, since a memory image can't know whether one in
+    another process does.
+  - **A memory image that declares it waits for the signal,** polling a memory read on the signal's polling policy, which
+    backs off to at most 50 ms, and catches up when the signal moved: within about 50 ms of the commit, and with no
+    database round trip while nothing commits. A task of the store's own, stopped when the container disposes the store.
+  - **The signal is named from the database's identity,** a hash of the connection string the domain database's pool
+    opens with. Two spellings of one database get two signals; their memory images then catch up at their next unit of
+    work, as without the declaration.
+  - **It is a hint, never what correctness rests on:** catching up at a unit of work's first change, and the taggregate's
+    lock in the database, stay what makes the store correct.
+  - **Declared, and not on by default,** by Compze's rule that an API spends nothing on what most callers don't need: even
+    a memory read wakes the processor every 50 ms, and a consumer with one memory image gets nothing from it. Set aside:
+    waiting only while something subscribes to `ChangesCommittedElsewhere`, which would tie how fresh reads are to whether
+    anything subscribes, unseen; and querying the database at an interval, which costs a round trip each time and answers
+    no faster than its interval.
+  - **Memory images on other machines** would need the database queried at an interval, a declaration of its own: designed
+    here, not built, until a consumer has memory images on several machines (YAGNI).
+  - Without the declaration, a memory image catches up at each unit of work's first change of the store, and when a get
+    for update finds a newer row.
 
 ## Memory follows only a committed transaction
 
@@ -241,12 +259,16 @@ begins the transaction at the isolation level of the ambient transaction, and co
 
 Each builds clean, passes the full suite, and is pushed and watched on CI.
 
-1. **Compze's SQLite and MySQL connections commit as the transaction's decision;** `FailOnPrepare` at phase 0.
+1. **Compze's SQLite and MySQL connections commit as the transaction's decision;** `FailOnPrepare` at phase 0. **Moved out
+   of this work by Magnus, 2026-11-24:** a bug every user of those databases has today, so it is fixed on its own and
+   published as a patch, by the session commit-as-the-decision, from this design and state-store-in-tables' draft
+   (branch `commit-as-the-decision-draft`). This branch rebases onto main once the fix lands: the store's guarantee that
+   memory follows only a committed transaction rests on it.
 2. **The store's core holds each taggregate's commit number** and installs under one lock, the storage seam gains the
    lock for update and catching up: no change in behaviour with the files.
 3. **The tables:** the store's SQL layer seam, the four SQL layers and packages, `StoredInTheDomainDatabase`, and the
    specifications, two memory images on one database included.
-4. **Catching up while idle, and `ChangesCommittedElsewhere`.**
+4. **Catching up while idle, woken by the interprocess signal, and `ChangesCommittedElsewhere`.**
 5. **The documentation:** the store's public docs, this document as built, the changelogs.
 
 ## Not in this work
