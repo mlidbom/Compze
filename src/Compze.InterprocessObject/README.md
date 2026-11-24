@@ -7,7 +7,7 @@ Create an object shared between processes in a single line of code. Fully atomic
 - **`IInterprocessObject<T>`** — Read, update, and condition-wait on shared state across processes
 - **Atomic operations** — Cross-process mutex ensures safe read-modify-write
 - **Corruption recovery** — Automatically recovers from partially written state
-- **Pluggable serialization** — Bring your own serializer, or use the MemoryPack plugin
+- **Pluggable serialization** — JSON with `IInterprocessObjectSerializer.Json<T>()`, MemoryPack with the MemoryPack plugin, or a serializer of your own
 
 ## Related packages
 
