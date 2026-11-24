@@ -138,5 +138,9 @@ partial class MySqlEndpointCatalogSqlLayer(IMySqlConnectionPool connectionFactor
             return entries;
          }).caf();
 
-   public async Task InitAsync() => await _schemaManager.EnsureSchemaInitializedAsync().caf();
+   public Task InitAsync()
+   {
+      _schemaManager.EnsureSchemaInitialized();
+      return Task.CompletedTask;
+   }
 }

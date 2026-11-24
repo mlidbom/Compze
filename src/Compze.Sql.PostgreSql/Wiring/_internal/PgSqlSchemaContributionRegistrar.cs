@@ -8,25 +8,25 @@ static class PgSqlSchemaContributionRegistrar
 {
    extension(IComponentRegistrar @this)
    {
-      ///<summary>Contributes <paramref name="schemaCreationSql"/> — one feature backend's <see cref="_private.PgSqlSchemaContribution"/> —<br/>
+      ///<summary>Contributes <paramref name="schemaCreationStatements"/> — one feature backend's <see cref="_private.PgSqlSchemaContribution"/> —<br/>
       /// to the schema of the database behind the endpoint's <see cref="IPgSqlConnectionPool"/>, and on the first contribution registers the<br/>
-      /// <see cref="PgSqlSqlLayerSchemaManager"/> that creates every contributed schema in a single batch before the database's first use.<br/>
+      /// <see cref="PgSqlSqlLayerSchemaManager"/> that creates every contributed schema before the database's first use.<br/>
       /// Called by each PostgreSQL feature backend's registration — never by a composing layer, which stays ignorant of schemas entirely.</summary>
-      internal IComponentRegistrar PgSqlSchemaContribution(string schemaCreationSql)
+      internal IComponentRegistrar PgSqlSchemaContribution(IReadOnlyList<string> schemaCreationStatements)
       {
          @this.Register(Singleton.ForSet<_private.PgSqlSchemaContribution>()
-                                 .CreatedBy(() => new _private.PgSqlSchemaContribution(schemaCreationSql)));
+                                 .CreatedBy(() => new _private.PgSqlSchemaContribution(schemaCreationStatements)));
 
          return @this.SchemaManagerOnTheFirstContribution();
       }
 
-      ///<summary>The overload for schema-creation sql that only exists once the container can say what the tables are named —<br/>
-      /// e.g. Tessaging's per-endpoint prefixed table-set: <paramref name="schemaCreationSql"/> is invoked at resolution time<br/>
+      ///<summary>The overload for schema-creation statements that only exist once the container can say what the tables are named —<br/>
+      /// e.g. Tessaging's per-endpoint prefixed table-set: <paramref name="schemaCreationStatements"/> is invoked at resolution time<br/>
       /// with the container's <typeparamref name="TTableNames"/>.</summary>
-      internal IComponentRegistrar PgSqlSchemaContribution<TTableNames>(Func<TTableNames, string> schemaCreationSql) where TTableNames : class
+      internal IComponentRegistrar PgSqlSchemaContribution<TTableNames>(Func<TTableNames, IReadOnlyList<string>> schemaCreationStatements) where TTableNames : class
       {
          @this.Register(Singleton.ForSet<_private.PgSqlSchemaContribution>()
-                                 .CreatedBy((TTableNames tableNames) => new _private.PgSqlSchemaContribution(schemaCreationSql(tableNames))));
+                                 .CreatedBy((TTableNames tableNames) => new _private.PgSqlSchemaContribution(schemaCreationStatements(tableNames))));
 
          return @this.SchemaManagerOnTheFirstContribution();
       }
@@ -38,7 +38,7 @@ static class PgSqlSchemaContributionRegistrar
             @this.Register(Singleton.For<PgSqlSqlLayerSchemaManager>()
                                     .DelegateToParentServiceLocatorWhenCloning()
                                     .CreatedBy((IPgSqlConnectionPool connectionPool, IComponentSet<_private.PgSqlSchemaContribution> contributions)
-                                                  => new PgSqlSqlLayerSchemaManager(connectionPool, [..contributions.Select(it => it.SchemaCreationSql)])));
+                                                  => new PgSqlSqlLayerSchemaManager(connectionPool, [..contributions.SelectMany(it => it.SchemaCreationStatements)])));
          }
 
          return @this;

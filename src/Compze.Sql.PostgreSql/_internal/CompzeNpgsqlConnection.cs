@@ -1,5 +1,6 @@
 using Compze.Sql.Common._internal.Abstractions;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
+using Compze.Sql.PostgreSql._private;
 using Npgsql;
 
 namespace Compze.Sql.PostgreSql._internal;
@@ -11,17 +12,54 @@ interface ICompzeNpgsqlConnection : IPoolableConnection, ICompzeDbConnection<Npg
    //Verify Windows-only distributed transactions work on .NET 7.0 � Issue #4581 � npgsql/npgsql � GitHub https://github.com/npgsql/npgsql/issues/4581
    public static ICompzeNpgsqlConnection Create(string connString) => new CompzeNpgsqlConnection(connString);
 
-   public sealed class CompzeNpgsqlConnection(string connectionString) : ICompzeNpgsqlConnection
+   ///<summary>Compze's connection to a PostgreSQL database: an <see cref="NpgsqlConnection"/> that passes the <see cref="NpgsqlPoolGate"/> of<br/>
+   /// its pool as it opens, and gives its place back as it is disposed.</summary>
+   public sealed class CompzeNpgsqlConnection : ICompzeNpgsqlConnection
    {
-      NpgsqlConnection Connection { get; } = new(connectionString);
+      readonly NpgsqlConnection _connection;
+      readonly NpgsqlPoolGate _poolGate;
+      bool _holdsAPlaceInThePool;
 
-      public void Open() => Connection.Open();
-      public async Task OpenAsync() => await Connection.OpenAsync().caf();
+      internal CompzeNpgsqlConnection(string connectionString)
+      {
+         _connection = new NpgsqlConnection(connectionString);
+         _poolGate = NpgsqlPoolGate.OfThePoolFor(connectionString);
+      }
 
-      public NpgsqlCommand CreateCommand() => Connection.CreateCommand();
+      public void Open()
+      {
+         _poolGate.Take();
+         _holdsAPlaceInThePool = true;
+         _connection.Open();
+      }
 
-      public void Dispose() => Connection.Dispose();
+      public async Task OpenAsync()
+      {
+         await _poolGate.TakeAsync().caf();
+         _holdsAPlaceInThePool = true;
+         await _connection.OpenAsync().caf();
+      }
 
-      public ValueTask DisposeAsync() => Connection.DisposeAsync();
+      public NpgsqlCommand CreateCommand() => _connection.CreateCommand();
+
+      public void Dispose()
+      {
+         _connection.Dispose();
+         GiveBackItsPlaceInThePool();
+      }
+
+      public async ValueTask DisposeAsync()
+      {
+         await _connection.DisposeAsync().caf();
+         GiveBackItsPlaceInThePool();
+      }
+
+      ///<summary>Gives back its place in the pool, if it holds one: once its connection, disposed, is back in Npgsql's pool.</summary>
+      void GiveBackItsPlaceInThePool()
+      {
+         if(!_holdsAPlaceInThePool) return;
+         _holdsAPlaceInThePool = false;
+         _poolGate.Release();
+      }
    }
 }

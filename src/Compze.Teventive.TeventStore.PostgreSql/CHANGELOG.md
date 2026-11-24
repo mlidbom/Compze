@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## 0.4.0-alpha
 
+- **Saving a taggregate's tevents no longer waits for a free thread-pool thread.** Each tevent was inserted by one synchronous command of two statements, an INSERT and an UPDATE, and Npgsql 9 sends the second and later statements of a synchronous command, and flushes the command, from the thread pool, while the calling thread waits for the answer. With every pool thread busy, as under many units of work at once, the database received nothing until the pool added a thread, and each save waited for it. Each statement is now a command of its own, and a tevent migration sets the tevents' effective versions in one statement, rather than one per tevent in one command.
 - **Internal support for Compze.Teventive.TeventStore's deleted taggregates; nothing public changes:** the store reads the type of each taggregate's last tevent, to tell the histories that end with an `ITaggregateDeletedTevent`. An application that upgrades Compze.Teventive.TeventStore to 0.7.0-alpha must upgrade this package too: the earlier version fails against it at runtime.
 - **Requires newer minor versions of other Compze packages:** Compze.Teventive.TeventStore.Abstractions 0.7.0-alpha (was 0.6.0-alpha). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
 

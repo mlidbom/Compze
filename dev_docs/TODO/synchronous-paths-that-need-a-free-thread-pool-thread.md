@@ -23,12 +23,14 @@ There are two kinds, and they need different defences:
 
 ## What there is, 2026-11-24
 
-Synchronous waits on a task in library code, outside tests:
+Fixed on main the same day by commit-as-the-decision (0c941e289 to dfc0a2e9d): the four schema managers'
+`EnsureSchemaInitialized()`, which blocked on the asynchronous form and is synchronous now; the PostgreSQL tevent store's
+two-statement insert; every PostgreSQL schema script, now a list of statements, each a command of its own; a deadlock
+in `DbConnectionPool`, which opened a transaction's connection under the pool-wide lock; and Npgsql's own pool, whose
+synchronous waiter needs a pool thread to be woken, which Compze's PostgreSQL connections no longer wait in.
 
-- **The four schema managers' `EnsureSchemaInitialized()`** (Compze.Sql.MicrosoftSql, .MySql, .PostgreSql, .Sqlite):
-  `EnsureSchemaInitializedAsync().Wait()`, at each container's first use of every synchronous SQL layer. Marked `bug:`.
-- **The PostgreSQL tevent store's `InsertSingleTaggregateTevents`:** a synchronous INSERT and UPDATE in one command, the
-  library-internal kind. Marked `bug:`.
+Synchronous waits on a task in library code, outside tests, that remain:
+
 - **Publishing tevents synchronously:** `TaggregateUnitOfWork.Dispatch` for exactly-once tevents, "the one deliberate
   bridge", and `UnitOfWorkTeventPublisher`.
 - **`LocalTypermediaNavigatorSession`:** three, synchronous tommands and tueries over asynchronous handlers.
@@ -56,6 +58,4 @@ possibly the strange errors, which the commit doesn't describe.
    creation, the typermedia navigator, publishing. Each runs the synchronous call on a thread of its own while every pool
    thread is held, and requires it to finish in time. This catches the library-internal kind too. A helper in
    Compze.Tests.Infrastructure that holds the pool belongs with the first.
-3. **The fixes, in order:** the schema managers, which every synchronous SQL layer goes through; the PostgreSQL tevent
-   store's insert, one statement per command as the memory image state store does it; then what the policy and the
-   specifications find.
+3. **The fixes** of what the policy and the specifications find.

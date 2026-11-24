@@ -127,11 +127,12 @@ tracking exists or is planned; a considered AsyncLocal design was dropped in its
 - **Completion callbacks** are `TransactionCompleted`-based (`TransactionCE.OnCommittedSuccessfully` /
   `OnCompleted`) — the outbox's send-on-commit and the transaction-affinity connection cleanup already work
   this way, and `IUnitOfWorkResolver`'s hooks surface the same callbacks on the unit of work's own handle.
-- **`VolatileTransactionParticipant` stays.** Two participants genuinely need full
-  `IEnlistmentNotification` semantics and no callback API can replace them: the SQLite connection, which *is*
-  a resource manager (`OnEnlist` takes the write gate and begins the real DB transaction), and DocumentDb's
-  flush-on-prepare, which issues new writes during prepare (`EnlistDuringPrepareRequired`) and votes the
-  whole transaction down on failure.
+- **Enlistment notifications stay where they are needed.** Some participants genuinely need full
+  `IEnlistmentNotification` semantics and no callback API can replace them. DocumentDb's flush-on-prepare, a
+  `VolatileTransactionParticipant`, issues new writes during prepare (`EnlistDuringPrepareRequired`) and votes
+  the whole transaction down on failure. Compze's SQLite and MySQL connections *are* resource managers: each
+  begins the real DB transaction and takes part as the transaction's durable participant, committing it as
+  the transaction's decision (`DatabaseTransactionAsTheDecision`); SQLite's also takes the write gate.
 - The transport edge's `ExecutionContext.SuppressFlow` (TransportRequestController) is protective: it
   guarantees a remote-arriving handler never inherits its sender's ambient transaction, even for
   same-process loopback.

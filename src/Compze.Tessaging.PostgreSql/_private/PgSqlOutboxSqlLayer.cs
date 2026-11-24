@@ -223,5 +223,9 @@ partial class PgSqlOutboxSqlLayer(IPgSqlConnectionPool connectionFactory, PgSqlS
    static string TessageIdParameterList(int tessageIdCount) =>
       string.Join(", ", Enumerable.Range(0, tessageIdCount).Select(index => $"@{DispatchingTable.TessageId}_{index}"));
 
-   public async Task InitAsync() => await _schemaManager.EnsureSchemaInitializedAsync().caf();
+   public Task InitAsync()
+   {
+      _schemaManager.EnsureSchemaInitialized();
+      return Task.CompletedTask;
+   }
 }

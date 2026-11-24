@@ -14,7 +14,7 @@ public static class PgSqlMemoryImageStateStoreRegistrar
    /// tables in the PostgreSQL domain database this container declares, with <c>PgSqlDomainDatabase(...)</c>, and contributes the<br/>
    /// tables to the database's schema.</summary>
    public static IComponentRegistrar PgSqlMemoryImageStateStoreSqlLayer(this IComponentRegistrar registrar) =>
-      registrar.PgSqlSchemaContribution(Layer.SchemaCreationSql)
+      registrar.PgSqlSchemaContribution(Layer.SchemaCreationStatements)
                .Register(Singleton.For<IMemoryImageStateStoreSqlLayer>()
                                   .CreatedBy((IPgSqlConnectionPool connectionPool, PgSqlSqlLayerSchemaManager schemaManager) => new Layer(connectionPool, schemaManager)));
 }

@@ -1,4 +1,3 @@
-using System.Collections.Concurrent;
 using System.Transactions;
 using Compze.Sql.Common._internal.Abstractions;
 using Compze.Contracts;
@@ -14,30 +13,22 @@ interface ICompzeSqliteConnection : IPoolableConnection, ICompzeDbConnection<Sql
 
    public sealed class CompzeSqliteConnection : ICompzeSqliteConnection
    {
-      // Wait this long for a contended lock before giving up, instead of failing the instant the lock is unavailable.
-      // Turns transient writer contention into a short wait that almost always resolves. Has no effect on shared-cache
-      // in-memory table locks (SQLite does not invoke the busy handler for those); the connection pool retries those.
+      ///<summary>How long SQLite waits for a contended lock before giving up, instead of failing the instant the lock is unavailable.<br/>
+      /// Turns transient writer contention into a short wait that almost always resolves.</summary>
+      ///<remarks>Has no effect on shared-cache in-memory table locks: SQLite does not invoke the busy handler for those. The connection<br/>
+      /// pool retries those.</remarks>
       const int BusyTimeoutMilliseconds = 5000;
-
-      // SQLite permits one writer per database. We serialise whole write transactions in-process, per database,
-      // behind this gate so two threads never contend for the database's write lock at the engine level. That
-      // contention is what produced the residual deadlock (a writer holding the write lock while a second writer,
-      // mid-mint, waited for it). One gate per database (keyed by connection string), for the process lifetime —
-      // the same lifetime as the connection pools, which are likewise cached per connection string.
-      static readonly ConcurrentDictionary<string, SemaphoreSlim> WriteGatesByDatabase = new();
 
       SqliteConnection Connection { get; }
       SqliteTransactionAsTheDecision? _transaction;
-#pragma warning disable CA2213 // Shared, per-database, process-lifetime semaphore owned by the static registry above — never disposed by an individual connection.
-      readonly SemaphoreSlim _writeGate;
-#pragma warning restore CA2213
+      readonly SqliteWriteGate _writeGate;
       readonly bool _isFileDatabase;
 
       internal CompzeSqliteConnection(string connectionString)
       {
          Connection = new SqliteConnection(connectionString);
          _isFileDatabase = new SqliteConnectionStringBuilder(connectionString).Mode != SqliteOpenMode.Memory;
-         _writeGate = WriteGatesByDatabase.GetOrAdd(connectionString, _ => new SemaphoreSlim(1, 1));
+         _writeGate = SqliteWriteGate.OfTheDatabase(connectionString);
       }
 
       ///<summary>Begins this connection's transaction, taking part in the ambient transaction as its decision, if there is an ambient<br/>
@@ -47,20 +38,16 @@ interface ICompzeSqliteConnection : IPoolableConnection, ICompzeDbConnection<Sql
       {
          var ambientTransaction = Transaction.Current;
          if(ambientTransaction == null) return;
-         if(_transaction != null)
-         {
-            Contract.State.Assert(_transaction.AmbientTransaction.Equals(ambientTransaction),
-                                  () => $"A SQLite connection taking part in transaction {_transaction.AmbientTransaction.TransactionInformation.LocalIdentifier} was used in another one, {ambientTransaction.TransactionInformation.LocalIdentifier}.");
-            return;
-         }
 
-         _transaction = SqliteTransactionAsTheDecision.Begin(Connection, _writeGate, ambientTransaction);
+         _transaction ??= SqliteTransactionAsTheDecision.Begin(Connection, _writeGate, ambientTransaction);
+         Contract.State.Assert(_transaction.AmbientTransaction.Equals(ambientTransaction),
+                               () => $"A SQLite connection taking part in transaction {_transaction.AmbientTransaction.TransactionInformation.LocalIdentifier} was used in another one, {ambientTransaction.TransactionInformation.LocalIdentifier}.");
       }
 
-      // Taking part in the ambient transaction is deliberately NOT done here. The connection pool opens the connection while holding its
-      // per-transaction monitor, and taking part acquires the write gate (above) — taking the gate under that
-      // monitor would invert against threads that hold the gate and then need the monitor. CreateCommand takes part
-      // instead (idempotently), and it runs after the pool has released the monitor.
+      ///<remarks>Taking part in the ambient transaction is deliberately not done here. The connection pool opens the connection while<br/>
+      /// holding its per-transaction monitor, and taking part takes the <see cref="SqliteWriteGate"/>: taking the gate under that monitor<br/>
+      /// would invert against threads that hold the gate and then need the monitor. <see cref="CreateCommand"/> takes part instead,<br/>
+      /// idempotently, and it runs after the pool has released the monitor.</remarks>
       public void Open()
       {
          Contract.State.NotDisposed(_disposed, this);
@@ -75,7 +62,7 @@ interface ICompzeSqliteConnection : IPoolableConnection, ICompzeDbConnection<Sql
          await ConfigureConnectionAsync().caf();
       }
 
-      // Run before enlisting in any transaction: journal_mode cannot be changed inside a transaction.
+      ///<remarks>Runs before the connection takes part in any transaction: journal_mode cannot be changed inside a transaction.</remarks>
       void ConfigureConnection()
       {
          using var command = Connection.CreateCommand();
@@ -91,11 +78,11 @@ interface ICompzeSqliteConnection : IPoolableConnection, ICompzeDbConnection<Sql
          await command.ExecuteNonQueryAsync().caf();
       }
 
-      // WAL lets readers run concurrently with the single writer, so a read-then-write transaction never deadlocks a
-      // committing writer the way the default rollback journal does. synchronous=NORMAL is the safe companion to WAL:
-      // it stops fsync-ing on every commit (only checkpoints fsync), which under concurrent load is what otherwise
-      // makes a writer hold the single write lock across a slow disk flush and starve everyone else waiting for it.
-      // Both are unavailable/irrelevant for in-memory databases, which rely on the connection pool's transient-lock retry.
+      ///<remarks>WAL lets readers run concurrently with the single writer, so a read-then-write transaction never deadlocks a committing<br/>
+      /// writer the way the default rollback journal does. synchronous=NORMAL is the safe companion to WAL: it stops fsync-ing on every<br/>
+      /// commit (only checkpoints fsync), which under concurrent load is what otherwise makes a writer hold the single write lock across<br/>
+      /// a slow disk flush and starve everyone else waiting for it. Both are unavailable/irrelevant for in-memory databases, which rely on<br/>
+      /// the connection pool's transient-lock retry.</remarks>
       string ConfigurationPragmas =>
          _isFileDatabase
             ? $"PRAGMA busy_timeout={BusyTimeoutMilliseconds}; PRAGMA journal_mode=WAL; PRAGMA synchronous=NORMAL;"
@@ -118,7 +105,7 @@ interface ICompzeSqliteConnection : IPoolableConnection, ICompzeDbConnection<Sql
          if(!_disposed)
          {
             _disposed = true;
-            Contract.State.Assert(_transaction is not { HasEnded: false }, () => "A SQLite connection was disposed while its transaction hadn't committed or rolled back.");
+            AssertTheTransactionHasEnded();
             _transaction?.Dispose();
             Connection.Dispose();
          }
@@ -129,10 +116,13 @@ interface ICompzeSqliteConnection : IPoolableConnection, ICompzeDbConnection<Sql
          if(!_disposed)
          {
             _disposed = true;
-            Contract.State.Assert(_transaction is not { HasEnded: false }, () => "A SQLite connection was disposed while its transaction hadn't committed or rolled back.");
+            AssertTheTransactionHasEnded();
             _transaction?.Dispose();
             await Connection.DisposeAsync().caf();
          }
       }
+
+      void AssertTheTransactionHasEnded() =>
+         Contract.State.Assert(_transaction is not { HasEnded: false }, () => "A SQLite connection was disposed while its transaction hadn't committed or rolled back.");
    }
 }

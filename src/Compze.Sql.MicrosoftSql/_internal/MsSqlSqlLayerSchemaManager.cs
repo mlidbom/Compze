@@ -1,4 +1,3 @@
-using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Internals.SystemCE.TransactionsCE;
 using Compze.Threading;
 using Compze.Sql.MicrosoftSql._private;
@@ -27,7 +26,7 @@ class MsSqlSqlLayerSchemaManager
 
    readonly IMsSqlConnectionPool _connectionPool;
    readonly string _schemaCreationSql;
-   readonly RunOnceAsync _runOnce = new();
+   readonly RunOnce _runOnce = new();
 
    public MsSqlSqlLayerSchemaManager(IMsSqlConnectionPool connectionPool, IReadOnlyList<string> schemaCreationScripts)
    {
@@ -35,24 +34,22 @@ class MsSqlSqlLayerSchemaManager
       _schemaCreationSql = string.Join($"{Environment.NewLine}{Environment.NewLine}", schemaCreationScripts);
    }
 
-   public async Task EnsureSchemaInitializedAsync() => await _runOnce.RunIfFirstCallAsync(async () =>
-      await TransactionScopeCe.SuppressAmbientAsync(async () =>
-         await _connectionPool.UseConnectionAsync(async connection =>
+   ///<summary>Creates the schema if this is the first call, or waits until the first call has, blocking the calling thread either way.</summary>
+   ///<remarks>Synchronous for every caller, the asynchronous SQL layers' too, which wait for it only once, as the database is first used:<br/>
+   /// a call waiting for another's creation then blocks on a signal that the creating thread gives, and neither needs a free thread-pool<br/>
+   /// thread. Blocking on an asynchronous creation instead needed one for each of its continuations, while many units of work at once<br/>
+   /// could hold every pool thread, each blocked waiting for the creation.</remarks>
+   public void EnsureSchemaInitialized() => _runOnce.RunIfFirstCall(() => TransactionScopeCe.SuppressAmbient(() =>
+      _connectionPool.UseConnection(connection =>
+      {
+         connection.ExecuteNonQuery(AcquireSchemaCreationLockSql);
+         try
          {
-            await connection.ExecuteNonQueryAsync(AcquireSchemaCreationLockSql).caf();
-            try
-            {
-               return await connection.ExecuteNonQueryAsync(_schemaCreationSql).caf();
-            }
-            finally
-            {
-               await connection.ExecuteNonQueryAsync(ReleaseSchemaCreationLockSql).caf();
-            }
-         }).caf()).caf()).caf();
-
-   ///<summary>The synchronous form of <see cref="EnsureSchemaInitializedAsync"/>, for synchronous SQL layers.</summary>
-   ///<remarks>bug: it blocks the calling thread on the asynchronous form, whose continuations need thread-pool threads: at the first call,<br/>
-   /// with every pool thread busy, as under many units of work at once, it waits until one comes free. Found 2026-11-24, by the memory<br/>
-   /// image state store's specification of two memory images adding cards to one deck from many threads at once.</remarks>
-   public void EnsureSchemaInitialized() => EnsureSchemaInitializedAsync().Wait();
+            connection.ExecuteNonQuery(_schemaCreationSql);
+         }
+         finally
+         {
+            connection.ExecuteNonQuery(ReleaseSchemaCreationLockSql);
+         }
+      })));
 }

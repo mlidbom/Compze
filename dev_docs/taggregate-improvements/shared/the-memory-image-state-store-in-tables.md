@@ -298,8 +298,9 @@ What building it settled that the design above doesn't say:
   pool thread blocked, as under forty units of work queued on one deck from `Task.Run`, the server received nothing: the
   catch-up's read and the lock's read waited 1.6 to 30 seconds, and units of work timed out. Found 2026-11-24 with
   timings, `dotnet-stack` and `pg_stat_activity`, which showed the server idle, in `ClientRead`, while the client waited
-  in `recv`. The tevent store's PostgreSQL insert, and the four schema managers' synchronous `EnsureSchemaInitialized`,
-  have the same dependence on a free pool thread: marked `bug:` at the code.
+  in `recv`. The tevent store's PostgreSQL insert, the PostgreSQL schema scripts, and the four schema managers' synchronous
+  `EnsureSchemaInitialized` had the same dependence on a free pool thread, fixed on main the same day (0c941e289 to
+  dfc0a2e9d). What remains of the kind is `dev_docs/TODO/synchronous-paths-that-need-a-free-thread-pool-thread.md`.
 - **The commit signal's file** is in the user's temporary folder, `Compze/memory-image-state-store-commit-signals`, named
   by a SHA-256 of the connection string Compze's connections to the database open with: the processes of one user on one
   machine share it. `InterprocessSignal` moved from `_private` to `_internal` in Compze.Threading.Interprocess for it.

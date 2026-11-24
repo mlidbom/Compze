@@ -67,6 +67,17 @@ A release goes in this order:
      on that too, or the gate stops the release.
    - It publishes to an external service, so it runs only on Magnus's explicit go-ahead: see below.
 
+## Keep main releasable: a change other packages must follow is released with them as it lands
+
+A change that makes other packages need new versions too, such as a type moved from one package to another, is put to
+Magnus for release, with those packages, as soon as it is on main. Create Releases publishes main's head and refuses to
+leave a changed package behind, so until then every release from main must take them all, a patch of one unrelated
+package too. Releasing a patch from a branch cut at the release tags would avoid that, but needs machinery, and main's
+head would no longer be what consumers get.
+
+Decided 2026-11-24, on Magnus's leave to judge it ("Go with your best judgement"), after a patch of Compze.Sql.Sqlite and
+Compze.Sql.MySql had to wait for about fifteen packages that the unreleased move of `LazyCE` to Compze.Threading pulled in.
+
 ## Who carries it out: you, on one go-ahead per release
 
 Magnus usually wants the agent that prepared a release to carry it through, not hand him steps 2–5 (Magnus,

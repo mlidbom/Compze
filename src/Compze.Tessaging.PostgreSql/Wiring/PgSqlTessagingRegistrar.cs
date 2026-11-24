@@ -13,10 +13,10 @@ public static class PgSqlTessagingRegistrar
 {
    public static IComponentRegistrar PgSqlTessagingSqlLayer(this IComponentRegistrar registrar) =>
       registrar.PgSqlTypeIdInterner()
-               .PgSqlSchemaContribution((EndpointTableSet tables) => PgSqlInboxSqlLayer.SchemaCreationSql(tables))
-               .PgSqlSchemaContribution((EndpointTableSet tables) => PgSqlOutboxSqlLayer.SchemaCreationSql(tables))
-               .PgSqlSchemaContribution((EndpointTableSet tables) => PgSqlPeerRegistrySqlLayer.SchemaCreationSql(tables))
-               .PgSqlSchemaContribution(PgSqlEndpointCatalogSqlLayer.SchemaCreationSql)
+               .PgSqlSchemaContribution((EndpointTableSet tables) => PgSqlInboxSqlLayer.SchemaCreationStatements(tables))
+               .PgSqlSchemaContribution((EndpointTableSet tables) => PgSqlOutboxSqlLayer.SchemaCreationStatements(tables))
+               .PgSqlSchemaContribution((EndpointTableSet tables) => PgSqlPeerRegistrySqlLayer.SchemaCreationStatements(tables))
+               .PgSqlSchemaContribution(PgSqlEndpointCatalogSqlLayer.SchemaCreationStatements)
                .Register(
          Singleton.For<ITessagingSqlLayer.IEndpointCatalogSqlLayer>()
                   .CreatedBy((IPgSqlConnectionPool endpointSqlConnection, PgSqlSqlLayerSchemaManager schemaManager) => new PgSqlEndpointCatalogSqlLayer(endpointSqlConnection, schemaManager)),
