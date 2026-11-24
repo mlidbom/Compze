@@ -27,6 +27,7 @@
           "_site/**",
           "node_modules/**",
           "Compze/**",
+          "index/**",
           "README.md"
         ]
       },
@@ -44,7 +45,8 @@
       {
         "files": [
           "images/**",
-          "favicon.ico"
+          "favicon.ico",
+          ".nojekyll"
         ]
       }
     ],
