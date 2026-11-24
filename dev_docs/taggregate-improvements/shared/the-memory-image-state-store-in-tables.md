@@ -1,9 +1,12 @@
 # The memory image state store kept in a database's tables
 
-**Status: designed by state-store-in-tables, 2026-11-24, on Magnus's go (passed on by compze-for-the-tooling), not yet
-built.** The brief's design, by compze-for-the-tooling, is the starting point; what this changed in it is in
-[What changed from the brief](#what-changed-from-the-brief). The store as a whole is
-[the-taggregate-store.md](the-taggregate-store.md); this is its storage in tables.
+**Status: designed and built by state-store-in-tables, 2026-11-24, on Magnus's go (passed on by compze-for-the-tooling),
+on the branch `memory-image-state-store-in-tables`: increments 2 to 4 below.** The guarantee that memory follows only a
+committed transaction waits for increment 1, which Magnus moved to a fix of its own. The names are proposals awaiting
+Magnus's pass, each marked `review-naming:` at the code. The brief's design, by compze-for-the-tooling, is the starting
+point; what this changed in it is in [What changed from the brief](#what-changed-from-the-brief), and what building it
+added in [As built](#as-built). The store as a whole is [the-taggregate-store.md](the-taggregate-store.md); this is its
+storage in tables.
 
 **Magnus, 2026-11-24:** "We support all from scratch and as always we test using the matrix test attributes. Should
 SQLite turn out to be unacceptable for this use, which would hardly surprise me it is not designed for parallelism, we
@@ -270,6 +273,32 @@ Each builds clean, passes the full suite, and is pushed and watched on CI.
    specifications, two memory images on one database included.
 4. **Catching up while idle, woken by the interprocess signal, and `ChangesCommittedElsewhere`.**
 5. **The documentation:** the store's public docs, this document as built, the changelogs.
+
+## As built
+
+What building it settled that the design above doesn't say:
+
+- **The storage seam** (`_private/Storage/ITaggregateStorage`) gained `LockForUpdate`, `CommittedAfter`, a `WriteAll` that
+  hands the store what others committed before it takes every snapshot, and `IDisposable`. The files and `NoStorage`
+  give nothing from the first two. The committed taggregates, their commit numbers and the indexes moved into a class of
+  their own, `CommittedTaggregates`, which installs everything under one lock.
+- **A unit of work's catch-up runs inside the gate that keeps units of work and loads apart,** so a unit of work that
+  begins during `LoadFromStorage` waits there, as before; the gate is left again if the catch-up throws.
+- **What catching up finds of a taggregate a local unit of work holds, or waits for,** is left for that unit of work, and
+  the last commit number seen stays just below it, so that the next catch-up reads it again should the unit of work
+  never get the lock.
+- **The SQL layer seam** (`_internal/SqlLayer/IMemoryImageStateStoreSqlLayer`), with `CommitNumber` in `_internal`: the
+  four layers in the four packages, each with its schema contribution. A row's snapshot is read only when its commit
+  number isn't the one held. SQL Server's application lock waits at most 30 seconds, then fails naming the taggregate;
+  PostgreSQL's and MySQL's locks wait as their databases' locks do, until the transaction's timeout or a deadlock.
+- **The commit signal's file** is in the user's temporary folder, `Compze/memory-image-state-store-commit-signals`, named
+  by a SHA-256 of the connection string Compze's connections to the database open with: the processes of one user on one
+  machine share it. `InterprocessSignal` moved from `_private` to `_internal` in Compze.Threading.Interprocess for it.
+- **The specifications** (`test/Compze.Tests.Integration/CQRS/MemoryImageStateStore`): a store kept in the domain
+  database, two memory images on one database as clones of one container, which share its pooled database, and two
+  memory images catching up as others commit; all `[PCT]`, passing on SQLite in memory and on disk, SQL Server,
+  PostgreSQL and MySQL. Among them: forty units of work in two memory images adding cards to one deck from many threads at
+  once, which lose none.
 
 ## Not in this work
 
