@@ -110,6 +110,7 @@
    </Folder>
    <Folder Name="/_Tests/">
       <Project Path="test/Compze.Tests.CodePolicies/Compze.Tests.CodePolicies.csproj" />
+      <Project Path="test/Compze.Tests.Benchmarks/Compze.Tests.Benchmarks.csproj" />
       <Project Path="test/Compze.Tests.Common/Compze.Tests.Common.csproj" />
       <Project Path="test/Compze.Tests.Infrastructure/Compze.Tests.Infrastructure.csproj" />
       <Project Path="test/Compze.Tests.Integration/Compze.Tests.Integration.csproj" />

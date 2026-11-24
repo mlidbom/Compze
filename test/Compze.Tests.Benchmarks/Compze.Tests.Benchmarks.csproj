@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <Nullable>enable</Nullable>
+    <OutputType>Exe</OutputType>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="BenchmarkDotNet" Version="0.15.8" />
+  </ItemGroup>
+  <!-- Compze.Threading — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Threading)' == 'true'">
+    <PackageReference Include="Compze.Threading" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Threading)' != 'true'">
+    <ProjectReference Include="..\..\src\Compze.Threading\Compze.Threading.csproj" />
+  </ItemGroup>
+</Project>

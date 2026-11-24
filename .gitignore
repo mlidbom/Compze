@@ -61,3 +61,4 @@ repomix*.xml
 # The shared Claude config: a git worktree of the machine's one clone of it, ~/.claude/.claude-shared, which the
 # SessionStart hook makes and keeps up to date
 /.claude-shared
+BenchmarkDotNet.Artifacts
