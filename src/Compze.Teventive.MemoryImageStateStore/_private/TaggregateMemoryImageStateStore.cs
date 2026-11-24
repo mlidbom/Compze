@@ -1,3 +1,4 @@
+using Compze.Teventive.MemoryImageStateStore._internal;
 using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
 using Compze.Abstractions;
@@ -137,7 +138,14 @@ sealed class TaggregateMemoryImageStateStore : ITaggregateStore, IMemoryImageSta
       _gate.WhileNoUnitOfWorkIsOpen(() => _loadingMonitor.Locked(() =>
       {
          if(!_hasLoaded) LoadEverything();
-         Storage.WriteAll([..Committed.Instances.Select(it => SnapshotOf(it.Value))]);
+         var committedAs = Storage.WriteAll(_lastCommitNumberSeen, committedMeanwhile =>
+         {
+            InstallFound(committedMeanwhile);
+            return [..Committed.Instances.Select(it => SnapshotOf(it.Value))];
+         });
+         if(committedAs is not {} number) return;
+         Committed.RecordEveryTaggregateAsCommittedBy(number);
+         _lastCommitNumberSeen = number;
       }));
    }
 

@@ -1,3 +1,4 @@
+using Compze.Teventive.MemoryImageStateStore._internal;
 namespace Compze.Teventive.MemoryImageStateStore._private.Storage;
 
 ///<summary>A write that <see cref="ITaggregateStorage.Prepare"/> has prepared, waiting for its unit of work to complete.</summary>

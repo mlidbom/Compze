@@ -1,3 +1,4 @@
+using Compze.Teventive.MemoryImageStateStore._internal;
 using Compze.Abstractions;
 
 namespace Compze.Teventive.MemoryImageStateStore._private.Storage;
@@ -36,7 +37,10 @@ interface ITaggregateStorage
    /// the taggregates whose ids are <paramref name="toDelete"/>, so that committing the write can't fail.</summary>
    IPreparedWrite Prepare(IReadOnlyList<TaggregateSnapshot> toSave, IReadOnlyList<TaggregateId> toDelete);
 
-   ///<summary>Writes <paramref name="everything"/>, a snapshot of every taggregate the store holds, anew, as one commit, outside any<br/>
-   /// transaction: <see cref="IMemoryImageStateStore.WriteAllToStorage"/>.</summary>
-   void WriteAll(IReadOnlyList<TaggregateSnapshot> everything);
+   ///<summary>Writes every taggregate the store holds anew, as one commit, outside any unit of work:<br/>
+   /// <see cref="IMemoryImageStateStore.WriteAllToStorage"/>. <paramref name="everythingOnceCaughtUpWith"/> is handed what the other<br/>
+   /// memory images committed after <paramref name="lastSeen"/>, at a moment when none can commit until this write has, and gives a<br/>
+   /// snapshot of every taggregate the store then holds.</summary>
+   ///<returns>The number the write committed as, for a storage that numbers its commits; else null.</returns>
+   CommitNumber? WriteAll(CommitNumber lastSeen, Func<IReadOnlyList<StoredTaggregate>, IReadOnlyList<TaggregateSnapshot>> everythingOnceCaughtUpWith);
 }

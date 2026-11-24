@@ -129,13 +129,15 @@ sealed class TaggregateFileStorage : ITaggregateStorage
       return write;
    }
 
-   ///<summary>Writes every file of <paramref name="everything"/> under a temporary name, then commits them as one, through the journal,<br/>
-   /// with no transaction: a failure before the journal is written writes nothing, and comes out of this call.</summary>
-   public void WriteAll(IReadOnlyList<TaggregateSnapshot> everything)
+   ///<summary>Writes the file of every taggregate <paramref name="everythingOnceCaughtUpWith"/> gives under a temporary name, then commits<br/>
+   /// them as one, through the journal, with no transaction: a failure before the journal is written writes nothing, and comes out of<br/>
+   /// this call. No other memory image shares the files, so there is nothing to catch up with.</summary>
+   public CommitNumber? WriteAll(CommitNumber lastSeen, Func<IReadOnlyList<StoredTaggregate>, IReadOnlyList<TaggregateSnapshot>> everythingOnceCaughtUpWith)
    {
       var write = new PreparedFileWrite(_files, _jsonFiles.Folder, _jsonFiles.OwnFolder, _storedFiles);
-      Write(write, everything, toDelete: []);
+      Write(write, everythingOnceCaughtUpWith([]), toDelete: []);
       write.CommitOutsideATransaction();
+      return null;
    }
 
    ///<summary>Prepares <paramref name="write"/>: writes the file of each of <paramref name="toSave"/> under a temporary name, and notes<br/>

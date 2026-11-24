@@ -1,3 +1,4 @@
+using Compze.Teventive.MemoryImageStateStore._internal;
 using Compze.Abstractions;
 
 namespace Compze.Teventive.MemoryImageStateStore._private.Storage;

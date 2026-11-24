@@ -1,3 +1,4 @@
+using Compze.Teventive.MemoryImageStateStore._internal;
 using System.Diagnostics;
 using Compze.Abstractions;
 
@@ -13,7 +14,8 @@ sealed class NoStorage : ITaggregateStorage, IPreparedWrite
    public bool HoldTheSameState(TaggregateSnapshot loaded, object heldSnapshot) => throw new UnreachableException("A memory image state store with no storage is never reloaded.");
 
    ///<summary>Never asked: the store refuses to write everything anew when it has no storage.</summary>
-   public void WriteAll(IReadOnlyList<TaggregateSnapshot> everything) => throw new UnreachableException("A memory image state store with no storage never writes everything anew.");
+   public CommitNumber? WriteAll(CommitNumber lastSeen, Func<IReadOnlyList<StoredTaggregate>, IReadOnlyList<TaggregateSnapshot>> everythingOnceCaughtUpWith) =>
+      throw new UnreachableException("A memory image state store with no storage never writes everything anew.");
 
    ///<summary>No other memory image shares it, so there is no lock to take, and nothing newer to find.</summary>
    public StoredTaggregate? LockForUpdate(TaggregateId id, CommitNumber? heldAs) => null;

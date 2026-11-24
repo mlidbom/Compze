@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <Nullable>enable</Nullable>
+    <Version>0.1.0-alpha</Version>
+    <Description>The MySQL tables of Compze's memory image state store: MySqlMemoryImageStateStoreSqlLayer(), for a memory image state store kept in the tables of a MySQL domain database, which several memory images, in other processes or other containers, share.</Description>
+    <PackageTags>compze;teventive;taggregates;memory-image;mysql</PackageTags>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="MySqlConnector" Version="2.6.1" />
+  </ItemGroup>
+  <!-- Compze.Sql.MySql — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Sql_MySql)' == 'true'">
+    <PackageReference Include="Compze.Sql.MySql" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Sql_MySql)' != 'true'">
+    <ProjectReference Include="..\Compze.Sql.MySql\Compze.Sql.MySql.csproj" />
+  </ItemGroup>
+  <!-- Compze.Teventive.MemoryImageStateStore — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Teventive_MemoryImageStateStore)' == 'true'">
+    <PackageReference Include="Compze.Teventive.MemoryImageStateStore" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Teventive_MemoryImageStateStore)' != 'true'">
+    <ProjectReference Include="..\Compze.Teventive.MemoryImageStateStore\Compze.Teventive.MemoryImageStateStore.csproj" />
+  </ItemGroup>
+</Project>

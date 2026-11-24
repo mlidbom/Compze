@@ -1,3 +1,4 @@
+using Compze.Teventive.MemoryImageStateStore._internal;
 using Compze.Contracts;
 using Compze.Teventive.MemoryImageStateStore._private.Storage;
 using Compze.Threading.ResourceAccess;

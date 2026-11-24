@@ -1,3 +1,4 @@
+using Compze.Teventive.MemoryImageStateStore._internal;
 namespace Compze.Teventive.MemoryImageStateStore._private.Storage;
 
 ///<summary>What a storage that several memory images share holds of the commits after a number a memory image had seen: each<br/>

@@ -1,4 +1,4 @@
-namespace Compze.Teventive.MemoryImageStateStore._private.Storage;
+namespace Compze.Teventive.MemoryImageStateStore._internal;
 
 ///<summary>The number of a commit to a storage that several memory images share and that numbers its commits in the order they<br/>
 /// commit, as a memory image state store's tables do. Each taggregate's stored state carries the number of the commit that last<br/>

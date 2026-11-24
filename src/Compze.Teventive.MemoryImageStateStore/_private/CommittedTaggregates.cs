@@ -1,3 +1,4 @@
+using Compze.Teventive.MemoryImageStateStore._internal;
 using System.Collections.Concurrent;
 using Compze.Abstractions;
 using Compze.Teventive._internal;
@@ -72,6 +73,13 @@ sealed class CommittedTaggregates
          foreach(var it in newer) Install(it.Stored.Id, it.Restored, it.Stored.CommittedAs);
          foreach(var indexChange in indexChanges) indexChange.Apply();
          return changes;
+      });
+
+   ///<summary>Records that the commit <paramref name="committedAs"/> stored every committed taggregate anew, in the state held.</summary>
+   internal void RecordEveryTaggregateAsCommittedBy(CommitNumber committedAs) =>
+      _installingMonitor.Locked(() =>
+      {
+         foreach(var id in _instances.Keys) _commitNumbers[id] = committedAs;
       });
 
    void Install(TaggregateId id, ITaggregate? newState, CommitNumber? committedAs)

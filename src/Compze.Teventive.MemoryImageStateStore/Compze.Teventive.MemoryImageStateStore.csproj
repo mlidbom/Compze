@@ -6,6 +6,10 @@
   </PropertyGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="Compze.Teventive.MemoryImageStateStore.MemoryPack" />
+    <InternalsVisibleTo Include="Compze.Teventive.MemoryImageStateStore.MicrosoftSql" />
+    <InternalsVisibleTo Include="Compze.Teventive.MemoryImageStateStore.MySql" />
+    <InternalsVisibleTo Include="Compze.Teventive.MemoryImageStateStore.PostgreSql" />
+    <InternalsVisibleTo Include="Compze.Teventive.MemoryImageStateStore.Sqlite" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="JetBrains.Annotations.Sources" Version="2025.2.4" PrivateAssets="all" />

@@ -1,3 +1,4 @@
+using Compze.Teventive.MemoryImageStateStore._internal;
 namespace Compze.Teventive.MemoryImageStateStore._private.Storage;
 
 ///<summary>Every taggregate a storage holds, as <see cref="ITaggregateStorage.LoadAll"/> loads it.</summary>
