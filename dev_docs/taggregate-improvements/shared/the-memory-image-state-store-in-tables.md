@@ -1,8 +1,8 @@
 # The memory image state store kept in a database's tables
 
 **Status: designed and built by state-store-in-tables, 2026-11-24, on Magnus's go (passed on by compze-for-the-tooling),
-on the branch `memory-image-state-store-in-tables`: increments 2 to 4 below.** The guarantee that memory follows only a
-committed transaction waits for increment 1, which Magnus moved to a fix of its own. The names are proposals awaiting
+on the branch `memory-image-state-store-in-tables`: increments 2 to 4 below, rebased onto main once increment 1, which
+Magnus moved to a fix of its own, landed there (8095f168a).** The names are proposals awaiting
 Magnus's pass, each marked `review-naming:` at the code. The brief's design, by compze-for-the-tooling, is the starting
 point; what this changed in it is in [What changed from the brief](#what-changed-from-the-brief), and what building it
 added in [As built](#as-built). The store as a whole is [the-taggregate-store.md](the-taggregate-store.md); this is its
@@ -189,9 +189,10 @@ What .NET's transactions do, verified on .NET 11 with Compze's participants:
 
 **So Compze's SQLite and MySQL connections become participants that commit as the transaction's decision,** in a single
 phase, as SQL Server's and PostgreSQL's do. A commit that fails aborts the transaction, or leaves it in doubt when the
-connection broke during the commit; in both, the store installs nothing. Asked to prepare for a two-phase commit, which
-only a participant from outside Compze would bring about, they refuse it, and the transaction rolls back: neither database
-can prepare a commit. For MySQL that takes the connection's enlistment from MySqlConnector (`AutoEnlist=false`): Compze
+connection broke during the commit; in both, the store installs nothing. As built on main (8095f168a), they enlist as
+the transaction's durable participant, which .NET asks to commit in a single phase after every volatile participant has
+prepared, however many there are; a second durable participant makes the transaction distributed, which .NET refuses by
+default. For MySQL that takes the connection's enlistment from MySqlConnector (`AutoEnlist=false`): Compze
 begins the transaction at the isolation level of the ambient transaction, and commits it.
 
 - **Memory installs in the second phase, as today,** so `OnCommittedSuccessfully` and the tevents' observers, which run at
@@ -202,8 +203,6 @@ begins the transaction at the isolation level of the ambient transaction, and co
   decision. With the database as the decision, Compze's connections never commit after it.
 - **The files, `AcceptingNonAtomicCommitsWithADatabase()`,** then commit after the database on every database, not only
   SQL Server.
-- **The test helper `FailOnPrepare`** fails at phase 0, so that it fails a transaction before any connection is asked to
-  prepare.
 
 ## Loading, and writing everything anew
 
@@ -265,8 +264,10 @@ Each builds clean, passes the full suite, and is pushed and watched on CI.
 1. **Compze's SQLite and MySQL connections commit as the transaction's decision;** `FailOnPrepare` at phase 0. **Moved out
    of this work by Magnus, 2026-11-24:** a bug every user of those databases has today, so it is fixed on its own and
    published as a patch, by the session commit-as-the-decision, from this design and state-store-in-tables' draft
-   (branch `commit-as-the-decision-draft`). This branch rebases onto main once the fix lands: the store's guarantee that
-   memory follows only a committed transaction rests on it.
+   (branch `commit-as-the-decision-draft`). **Landed on main, 8095f168a:** the shared participant enlists as the
+   transaction's durable participant, so it commits in a single phase after every volatile participant has prepared,
+   however many there are, and `FailOnPrepare` stays at phase 1. The store's guarantee that memory follows only a
+   committed transaction rests on it.
 2. **The store's core holds each taggregate's commit number** and installs under one lock, the storage seam gains the
    lock for update and catching up: no change in behaviour with the files.
 3. **The tables:** the store's SQL layer seam, the four SQL layers and packages, `StoredInTheDomainDatabase`, and the
