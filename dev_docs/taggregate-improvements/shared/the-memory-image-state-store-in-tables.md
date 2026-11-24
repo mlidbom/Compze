@@ -292,6 +292,13 @@ What building it settled that the design above doesn't say:
   four layers in the four packages, each with its schema contribution. A row's snapshot is read only when its commit
   number isn't the one held. SQL Server's application lock waits at most 30 seconds, then fails naming the taggregate;
   PostgreSQL's and MySQL's locks wait as their databases' locks do, until the transaction's timeout or a deadlock.
+- **In PostgreSQL each command holds one statement.** Npgsql 9 sends the second and later statements of a synchronous
+  command, and flushes the whole command, from the thread pool, while the calling thread waits for the answer. With every
+  pool thread blocked, as under forty units of work queued on one deck from `Task.Run`, the server received nothing: the
+  catch-up's read and the lock's read waited 1.6 to 30 seconds, and units of work timed out. Found 2026-11-24 with
+  timings, `dotnet-stack` and `pg_stat_activity`, which showed the server idle, in `ClientRead`, while the client waited
+  in `recv`. The tevent store's PostgreSQL insert, and the four schema managers' synchronous `EnsureSchemaInitialized`,
+  have the same dependence on a free pool thread: marked `bug:` at the code.
 - **The commit signal's file** is in the user's temporary folder, `Compze/memory-image-state-store-commit-signals`, named
   by a SHA-256 of the connection string Compze's connections to the database open with: the processes of one user on one
   machine share it. `InterprocessSignal` moved from `_private` to `_internal` in Compze.Threading.Interprocess for it.

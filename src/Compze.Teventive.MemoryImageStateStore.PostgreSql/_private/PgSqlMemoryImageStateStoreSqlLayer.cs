@@ -9,6 +9,11 @@ namespace Compze.Teventive.MemoryImageStateStore.PostgreSql._private;
 
 ///<summary>A memory image state store's tables in PostgreSQL. A taggregate's lock is a transaction-level advisory lock on its id: in the<br/>
 /// two-key form, with the store's own first key, so that it shares no lock with the tevent store's, which take the one-key form.</summary>
+///<remarks>Each command holds one statement. Npgsql 9 sends the second and later statements of a synchronous command from the thread<br/>
+/// pool, and flushes the whole command only then, while the calling thread waits for the answer: with every pool thread busy, as<br/>
+/// under many units of work waiting for one taggregate, the server receives nothing until a pool thread comes free, and the lock or<br/>
+/// the read waits for seconds, as long as the units of work's own 30-second timeouts. Found by the specification of two memory images<br/>
+/// adding cards to one deck from many threads at once (2026-11-24).</remarks>
 partial class PgSqlMemoryImageStateStoreSqlLayer : IMemoryImageStateStoreSqlLayer
 {
    ///<summary>The first key of every taggregate's advisory lock: "MISS", for memory image state store.</summary>
@@ -29,25 +34,27 @@ partial class PgSqlMemoryImageStateStoreSqlLayer : IMemoryImageStateStoreSqlLaye
 
    public TaggregateRows ReadCommittedAfter(CommitNumber lastSeen, IReadOnlyList<string> classNames) => ReadRows(classNames, committedAfter: lastSeen);
 
+   ///<summary>Reads the last commit number first, then the rows, on one connection.</summary>
    TaggregateRows ReadRows(IReadOnlyList<string> classNames, CommitNumber? committedAfter)
    {
       _schemaManager.EnsureSchemaInitialized();
-      return _connectionPool.UseCommand(command =>
+      return _connectionPool.UseConnection(connection =>
       {
-         command.SetCommandText($"""
-                                 SELECT {Schema.LastCommitNumber} FROM {Schema.CommitCounterTable} WHERE {Schema.Id} = {Schema.TheCounterRow};
-                                 SELECT {Schema.Id}, {Schema.ClassName}, {Schema.Snapshot}, {Schema.CommitNumber} FROM {Schema.TaggregateTable}
-                                 WHERE {Schema.ClassName} = ANY(@ClassNames){(committedAfter == null ? "" : $" AND {Schema.CommitNumber} > @{Schema.CommitNumber}")};
-                                 """)
-                .Parameters.AddWithValue("ClassNames", classNames.ToArray()); //A string array, which Npgsql sends as text[].
-         if(committedAfter is {} lastSeen) command.AddParameter(Schema.CommitNumber, lastSeen.Value);
-         using var reader = command.ExecuteReader();
-         reader.Read();
-         var holdingEveryCommitThrough = new CommitNumber(reader.GetInt64(0));
-         reader.NextResult();
-         var rows = new List<TaggregateRow>();
-         while(reader.Read()) rows.Add(new TaggregateRow(new TaggregateId(reader.GetGuid(0)), reader.GetString(1), reader.IsDBNull(2) ? null : reader.GetString(2), new CommitNumber(reader.GetInt64(3))));
-         return new TaggregateRows(holdingEveryCommitThrough, rows);
+         var holdingEveryCommitThrough = new CommitNumber((long)connection.UseCommand(command => command.SetCommandText($"SELECT {Schema.LastCommitNumber} FROM {Schema.CommitCounterTable} WHERE {Schema.Id} = {Schema.TheCounterRow};")
+                                                                                                         .ExecuteScalar()!));
+         return new TaggregateRows(holdingEveryCommitThrough, connection.UseCommand(command =>
+         {
+            command.SetCommandText($"""
+                                    SELECT {Schema.Id}, {Schema.ClassName}, {Schema.Snapshot}, {Schema.CommitNumber} FROM {Schema.TaggregateTable}
+                                    WHERE {Schema.ClassName} = ANY(@ClassNames){(committedAfter == null ? "" : $" AND {Schema.CommitNumber} > @{Schema.CommitNumber}")};
+                                    """)
+                   .Parameters.AddWithValue("ClassNames", classNames.ToArray()); //A string array, which Npgsql sends as text[].
+            if(committedAfter is {} lastSeen) command.AddParameter(Schema.CommitNumber, lastSeen.Value);
+            using var reader = command.ExecuteReader();
+            var rows = new List<TaggregateRow>();
+            while(reader.Read()) rows.Add(new TaggregateRow(new TaggregateId(reader.GetGuid(0)), reader.GetString(1), reader.IsDBNull(2) ? null : reader.GetString(2), new CommitNumber(reader.GetInt64(3))));
+            return rows;
+         }));
       });
    }
 
@@ -55,19 +62,22 @@ partial class PgSqlMemoryImageStateStoreSqlLayer : IMemoryImageStateStoreSqlLaye
    public TaggregateRow? LockAndReadUnlessHeldAs(TaggregateId id, CommitNumber? heldAs)
    {
       _schemaManager.EnsureSchemaInitialized();
-      return _connectionPool.UseCommand(command =>
+      return _connectionPool.UseConnection(connection =>
       {
-         command.SetCommandText($"""
-                                 SELECT pg_advisory_xact_lock({TheStoresAdvisoryLockKey}, @LockKey);
-                                 SELECT {Schema.ClassName}, {Schema.Snapshot}, {Schema.CommitNumber} FROM {Schema.TaggregateTable}
-                                 WHERE {Schema.Id} = @{Schema.Id} AND {Schema.CommitNumber} <> @HeldAs;
-                                 """)
-                .AddParameter("LockKey", BitConverter.ToInt32(id.Value.ToByteArray(), startIndex: 0))
-                .AddParameter(Schema.Id, id.Value)
-                .AddParameter("HeldAs", heldAs?.Value ?? -1);
-         using var reader = command.ExecuteReader();
-         reader.NextResult();
-         return reader.Read() ? new TaggregateRow(id, reader.GetString(0), reader.IsDBNull(1) ? null : reader.GetString(1), new CommitNumber(reader.GetInt64(2))) : null;
+         connection.UseCommand(command => command.SetCommandText($"SELECT pg_advisory_xact_lock({TheStoresAdvisoryLockKey}, @LockKey);")
+                                                 .AddParameter("LockKey", BitConverter.ToInt32(id.Value.ToByteArray(), startIndex: 0))
+                                                 .ExecuteNonQuery());
+         return connection.UseCommand(command =>
+         {
+            command.SetCommandText($"""
+                                    SELECT {Schema.ClassName}, {Schema.Snapshot}, {Schema.CommitNumber} FROM {Schema.TaggregateTable}
+                                    WHERE {Schema.Id} = @{Schema.Id} AND {Schema.CommitNumber} <> @HeldAs;
+                                    """)
+                   .AddParameter(Schema.Id, id.Value)
+                   .AddParameter("HeldAs", heldAs?.Value ?? -1);
+            using var reader = command.ExecuteReader();
+            return reader.Read() ? new TaggregateRow(id, reader.GetString(0), reader.IsDBNull(1) ? null : reader.GetString(1), new CommitNumber(reader.GetInt64(2))) : null;
+         });
       });
    }
 
