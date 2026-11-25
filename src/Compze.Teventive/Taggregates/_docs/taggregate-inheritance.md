@@ -1,48 +1,39 @@
 ﻿# Taggregate Inheritance
-So far we have addressed the inheritance hierarchy of tevents within a single taggregate. Now let's look at what happens when we inherit one taggregate from another. Let's go with a trivial and classic example to make the point with as little distraction as possible. Animals.
+A taggregate class can inherit another, as any class can. Here `Cat` and `Dog` inherit `Animal`, and the tevents of `Animal` are theirs too: a cat's birth and a dog's birth are both an `IAnimalTevent.IBorn`.
 
 [!code-csharp[](taggregate-inheritance.cs#noises1)]
 
-#### The problem
-Now imagine you're a dog person, you only care about when dogs are born. How would you listen to just the dog born tevents?
-
-Uh oh! You can't. There is only one `IBorn` and it is shared by all the animals. Much of the point of inheritance is to reuse functionality, so we can't very well require every inheriting class to reimplement birth using a different interface. That would defeat the point. 
-
->[!WARNING]
->If you're thinking of using some sort of factory method pattern for generating the subclass tevents and adding inheriting interfaces for dogs. Don't. We tried it. And it turns out that you will have to mirror and duplicate the entire semantic hierarchy of the base class tevent interfaces for each inheriting class. It turns into an absolutely horrifying mess of duplication where the slightest misstep breaks things. We gave up entirely on inheriting taggregates when we had found no better way than that. Please, don't even try it.
-
-#### The solution
-Thankfully we eventually realized that there is an elegant simple solution built right into C#. This should be familiar: 
-[!code-csharp[](taggregate-inheritance.cs#enumerable-type-compatibility)]
-
-Do you see it? Generic covariance! `IEnumerable<string>` is assignable to `IEnumerable<object>` and assignability is how we route tevents. Eureka!
-
-Rather than try to twist english into a language capable of expressing what I'm talking about, which I'm finding unmanageable, I'll use C#.
+## Telling the publisher apart
+A subscriber that cares only about dogs' births can't tell them apart by the birth tevent: there is one `IBorn`, which every animal publishes. So every taggregate publishes each tevent inside a *wrapper tevent* of its class: a generic interface that says which class of taggregate published the tevent, and whose type argument is the tevent itself.
 
 [!code-csharp[](taggregate-inheritance.cs#noises1wrapped)]
-So the wrapping interfaces, which take a type parameter, tell us only which class published the tevent. A `Cat` or a `Dog` instance (`Animal` is abstract). The inner tevent is the real tevent that contains all the specifics of what happened.
 
-So actually, what a `Dog` publishes is never just `IDogTevent`, it is always `IDogTevent<IAnimalTevent>`, correspondingly a Cat publishes `ICatTevent<IAnimalTevent>` and the problem has been solved. Now you can listen to just the tevents from dogs by doing this:
+A dog's birth is published as an `IDogTevent<IAnimalTevent.IBorn>`, and a cat's as an `ICatTevent<IAnimalTevent.IBorn>`. Both wrappers inherit `IAnimalTevent<T>`, and their type parameter is covariant, `out T`, so each is also an `IAnimalTevent<IAnimalTevent.IBorn>`, just as an `IEnumerable<string>` is an `IEnumerable<object>`:
+
+[!code-csharp[](taggregate-inheritance.cs#enumerable-type-compatibility)]
+
+Since tevents are routed by type compatibility, each subscriber receives exactly what its type asks for. The births of dogs only:
 
 [!code-csharp[](taggregate-inheritance.cs#doglistener)]
 
-Do this if you only care about cats:
+Of cats only:
+
 [!code-csharp[](taggregate-inheritance.cs#catlistener)]
 
-This if you don't care what type of animal it was:
+Of every animal, whichever kind published it:
 
 [!code-csharp[](taggregate-inheritance.cs#animallistener)]
 
-And this if you care about all animals, but need to handle different animals differently:
+Of every animal, handling each kind differently:
 
 [!code-csharp[](taggregate-inheritance.cs#wrappedanimallistener)]
 
-#### The taggregates
+## The taggregates
 Each kind of animal publishes its tevents in a wrapper of its own. The tevent classes mirror the interfaces: a class for each tevent, and a generic class for each wrapper.
 
 [!code-csharp[](taggregate-inheritance.cs#tevent-classes)]
 
-`Animal` is a taggregate like any other. The five type arguments of its base class are its own class, its root tevent interface and the class implementing it, and its wrapper interface and the class implementing that. It declares its tevent routing once, for the class: here the applier that records when an animal was born.
+`Animal` is a taggregate like any other, written as on the [Taggregates](taggregates.md) page. Its tevent routing has the applier that records when an animal was born.
 
 [!code-csharp[](taggregate-inheritance.cs#animal)]
 

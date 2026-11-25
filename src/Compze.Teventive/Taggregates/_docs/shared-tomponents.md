@@ -1,28 +1,26 @@
-# Reusable tevent based components and entities
-A component or entity that belongs to one taggregate has its tevent interfaces nested within the taggregate's root tevent interface, as on the [tevent naming](tevent-naming.md) page. This page is about the other kind: a component or entity written once, and used in many different taggregates without duplicating its code. We would consider any approach to modeling that did not support this without breaking a sweat to be badly limited.
+# Shared tomponents
+A [tomponent](tomponents.md) belongs to one taggregate: its tevents are nested in that taggregate's tevent hierarchy. A *shared tomponent* is written once, and used in many different taggregates without duplicating its code. It publishes tevents and applies them to its own state, as a tomponent does, but is tied to no particular taggregate. The taggregate that holds it, or the tomponent of a taggregate that does, is its **owner**, and the owner's class declares a **slot** for each shared tomponent it holds.
 
-Since it is a shared, reusable component:
-* It cannot publish taggregate tevents, that must be up to the taggregate.
-* We must be able to subscribe to the published tevents by type, meaning that the tevent ultimately published by the taggregate must declaratively, statically, contain the type of the tevent from the component.
-* One taggregate may hold several of the same component, so the taggregate, and its subscribers, must be able to tell them apart.
+Because it belongs to no particular taggregate:
+* **Its tevents are its own,** rooted in an interface that belongs to no taggregate. The owner publishes them as its own tevents, by wrapping them.
+* **Subscribers still subscribe by type.** The tevent the owner publishes contains, in its type, the type of the shared tomponent's tevent.
+* **An owner can hold several of the same shared tomponent.** Each is in a slot of its own, and the tevent the owner publishes says which.
 
-Thankfully the solution to [inheriting taggregates](taggregate-inheritance.md) has taken us most of the way to a solution for this problem too. We will just need to wrap one more time, generic covariance to the rescue once more.
-
-Compze calls such a component a **shared tomponent**: a teventive component, which publishes tevents and applies them to its own state, that is tied to no particular taggregate. The taggregate that holds it, or the component of a taggregate that does, is its **owner**. And the owner's class declares a **slot** for each shared tomponent it holds.
+Each of these is done with a wrapper tevent, the mechanism of [taggregate inheritance](taggregate-inheritance.md), applied once more.
 
 Let's build one: a price, which products and bundles of products both have. A product has two of them, a list price and a sale price.
 
 ## The shared tomponent's own tevents
 A shared tomponent's tevents are rooted in a tevent interface of its own, which implements nothing but `ITevent`. They carry no taggregate id and say nothing of which taggregate they happen in. Only the owner knows that.
 
-[!code-csharp[](reusable-components.cs#IPriceTevent)]
+[!code-csharp[](shared-tomponents-and-tentities.cs#IPriceTevent)]
 
 Something must implement the interfaces. The classes mirror them:
 
-[!code-csharp[](reusable-components.cs#PriceTevent)]
+[!code-csharp[](shared-tomponents-and-tentities.cs#PriceTevent)]
 
 ## The shared tomponent
-[!code-csharp[](reusable-components.cs#Price)]
+[!code-csharp[](shared-tomponents-and-tentities.cs#Price)]
 
 * It derives from `SharedTomponent<IPriceTevent>`, typed on its own tevent root.
 * Its state changes only in its tevent appliers, just as a taggregate's does. `ChangeTo` doesn't set `Amount`: it publishes a tevent, and the applier of that tevent sets `Amount`, when the tevent is published and again whenever the taggregate's history is replayed.
@@ -33,24 +31,24 @@ Something must implement the interfaces. The classes mirror them:
 ## The owner's tevents adopt the shared tomponent's
 The product's tevents are those of any taggregate: a root tevent interface, and a wrapper interface for it, as on the [taggregate inheritance](taggregate-inheritance.md) page. We'll come to `IRepriced` in a moment.
 
-[!code-csharp[](reusable-components.cs#IProductTevent)]
+[!code-csharp[](shared-tomponents-and-tentities.cs#IProductTevent)]
 
-[!code-csharp[](reusable-components.cs#ProductTevent)]
+[!code-csharp[](shared-tomponents-and-tentities.cs#ProductTevent)]
 
 Now the new part. For each slot, the owner declares an **adopting wrapper tevent**: a tevent of the owner that wraps a tevent of the shared tomponent.
 
-[!code-csharp[](reusable-components.cs#IProductPriceTevents)]
+[!code-csharp[](shared-tomponents-and-tentities.cs#IProductPriceTevents)]
 
 Read `IProductListPriceTevent<out T>` like this: it is a product tevent, here one that means the product was repriced, and it is an `IPublisherTevent<T>`, the [covariant wrapper](definition.md) of a price tevent. So it says three things at once: what happened, which is `T`; which taggregate it happened in, a product; and in which member of the product, the list price. The two slots wrap the very same price tevents: only their adopting wrapper tevents tell them apart.
 
 Each adopting wrapper tevent has a class implementing it:
 
-[!code-csharp[](reusable-components.cs#ProductPriceTevents)]
+[!code-csharp[](shared-tomponents-and-tentities.cs#ProductPriceTevents)]
 
 When the list price changes, the product publishes an `IProductTevent<IProductListPriceTevent<IPriceTevent.IChanged>>`. That is the price's tevent, adopted by the list price slot, and then wrapped, as every tevent a product publishes is, in the wrapper that says which class of product published it. Two wrappings, each covariant.
 
 ## The slot the owner's class declares
-[!code-csharp[](reusable-components.cs#ProductSlots)]
+[!code-csharp[](shared-tomponents-and-tentities.cs#ProductSlots)]
 
 A `SharedTomponentSlot` holds what is the same for every product:
 * The class implementing the slot's adopting wrapper tevent, as an open generic type. The slot closes it over each tevent's own type, so the published tevent carries the full type of what happened.
@@ -62,12 +60,12 @@ The slots are static: declared once, shared by every product, and costing a prod
 
 The product constructs each price with its slot in this product: `Slots.ListPrice.In(this)`.
 
-[!code-csharp[](reusable-components.cs#ProductConstructor)]
+[!code-csharp[](shared-tomponents-and-tentities.cs#ProductConstructor)]
 
 An owner can also be a component of a taggregate. A slot in a component is declared, constructed with, and routed exactly as in a taggregate.
 
 ## Routing tevents back to the shared tomponent
-[!code-csharp[](reusable-components.cs#ProductRouting)]
+[!code-csharp[](shared-tomponents-and-tentities.cs#ProductRouting)]
 
 Every teventive class, whether a taggregate, a component or a shared tomponent, declares its **tevent routing** once: which tevent applier each tevent reaches. `DeclareAppliers` declares it, and the class keeps it in a static field and returns it from its override of the protected `TeventAppliers` property. Every instance of the class shares it.
 
@@ -78,7 +76,7 @@ Every teventive class, whether a taggregate, a component or a shared tomponent, 
 
 So when the list price changes,
 
-[!code-csharp[](reusable-components.cs#ChangeTheListPrice)]
+[!code-csharp[](shared-tomponents-and-tentities.cs#ChangeTheListPrice)]
 
 the list price slot wraps the change in a `ProductListPriceTevent<>`, the product publishes that as its own tevent, the product's routing routes it through the list price slot back to the list price, and the list price's applier sets its `Amount`. The sale price never sees it.
 
@@ -90,52 +88,23 @@ The mistakes that are easy to make are loud:
 ## Subscribing to a shared tomponent's tevents
 To follow the list price of every product, subscribe to the whole published tevent:
 
-[!code-csharp[](reusable-components.cs#SubscribeToTheListPrice)]
+[!code-csharp[](shared-tomponents-and-tentities.cs#SubscribeToTheListPrice)]
 
 The handler gets the published tevent as it stands: `changed.Tevent` is the adopting wrapper tevent, a product tevent carrying the product's id, and `changed.Tevent.Tevent` is the price's own tevent.
 
 The adopting wrapper tevent is a tevent of the owner, so it can say what the change means to the owner. Both price slots' adopting wrapper tevents are `IProductTevent.IRepriced`, so this subscriber hears of every change to either price, and of nothing else:
 
-[!code-csharp[](reusable-components.cs#SubscribeToRepricing)]
+[!code-csharp[](shared-tomponents-and-tentities.cs#SubscribeToRepricing)]
 
 In the same way, a subscriber to `IProductTevent` gets every adopting wrapper tevent along with the product's other tevents.
 
 And since every adopting wrapper tevent is an `IPublisherTevent<>`, a subscriber can follow a shared tomponent's tevents in every slot of every owner without knowing any of them. This one hears of every price change, in products and bundles alike:
 
-[!code-csharp[](reusable-components.cs#SubscribeToEveryPrice)]
+[!code-csharp[](shared-tomponents-and-tentities.cs#SubscribeToEveryPrice)]
 
 >[!WARNING]
 > A subscription sees one level of wrapping. A subscription to a type that is no wrapper is matched against what the published wrapper wraps, and a subscription to a wrapper type is matched against the published wrapper itself. A shared tomponent's tevent is wrapped twice, so:
 > * A subscriber to `IPriceTevent.IChanged` receives nothing: what the product's wrapper wraps is the adopting wrapper tevent, not the change.
 > * A subscriber to `IProductListPriceTevent<IPriceTevent.IChanged>` receives nothing either: it is a wrapper type, and the published wrapper is the product's. Wrap it once more, and it receives the list price's changes: `IPublisherTevent<IProductListPriceTevent<IPriceTevent.IChanged>>`.
 
-## Reusable entities: shared tentities
-A **shared tentity** is to an entity what a shared tomponent is to a component: a teventive entity, with an id of its own, written once, which any taggregate can keep a collection of. Reviews are an example. Every tevent of a review carries, as ordinary domain data, the id of the review it belongs to: its `EntityId`.
-
-[!code-csharp[](reusable-components.cs#IReviewTevent)]
-
-[!code-csharp[](reusable-components.cs#ReviewTevent)]
-
-[!code-csharp[](reusable-components.cs#Review)]
-
-`ReviewId` is a small value type of the example's own, around a `Guid`.
-
-* A review derives from `SharedTentity<Review, ReviewId, IReviewTevent, IReviewTevent.IWritten>`: its own class, its id, its tevent root, and the tevent that creates one.
-* Its routing starts with an applier of the base class's, which gives a new review the `EntityId` of its created tevent as its `Id`. The review's own applier of `IWritten` comes after it.
-* A review publishes tevents that carry its own `Id`, and `Publish` asserts that they do.
-* The owner keeps its reviews in a `SharedTentityCollection`, which is itself a shared tomponent: it takes one slot, and every review in it publishes through that slot's adopting wrapper tevent. The collection creates a review when a created tevent arrives, and routes every other tevent to the review whose id it carries. A review is added by publishing its created tevent, with `AddByPublishing`, which returns the new review.
-
-## Start to finish: a second owner
-A bundle of products has a price too, and reviews. Here is all of it:
-
-[!code-csharp[](reusable-components.cs#Bundle)]
-
-The price and the review are written once, each:
-1. Its tevent interfaces, rooted in an interface of its own that implements `ITevent`, or `ISharedTentityTevent<TId>` for a shared tentity, and the classes implementing them.
-2. Its class, deriving from `SharedTomponent<>` or `SharedTentity<,,,>`, with its tevent routing.
-
-Each owner then writes, for each shared tomponent it holds:
-1. An adopting wrapper tevent: an interface that is a tevent of the owner and an `IPublisherTevent<T>` of the shared tomponent's tevents, and a class implementing it.
-2. A slot, in its nested `Slots` class, holding that class and how to get the shared tomponent from an owner.
-3. The slot, entered in its tevent routing: `.SharedTomponent(Slots.Price)`.
-4. The shared tomponent, constructed with the slot in this owner: `new Price(Slots.Price.In(this))`.
+A shared tomponent's counterpart with an id of its own, of which an owner can hold any number, is a [shared tentity](shared-tentities.md).

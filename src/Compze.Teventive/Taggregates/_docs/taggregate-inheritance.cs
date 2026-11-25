@@ -17,9 +17,6 @@ interface IAnimalTevent : ITaggregateTevent
 {
    interface IBorn : IAnimalTevent, ITaggregateCreatedTevent;
 }
-
-interface ICatTevent : IAnimalTevent;
-interface IDogTevent : IAnimalTevent;
 #endregion
 #region noises1wrapped
 interface IAnimalTevent<out T> : ITaggregateTevent<T> where T : IAnimalTevent;

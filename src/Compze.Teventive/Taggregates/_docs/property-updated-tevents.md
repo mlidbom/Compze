@@ -29,6 +29,5 @@ When we design tevents like that, a listener like this ...
 
 Likewise, listeners that care about when users are registered will listen to `IUserRegistered` and receive the same benefits. No matter how many new ways of registering users we add, no matter how many new subtypes of `IUserRegistered` are added. That code will always be called and does not need to change.
 
-#### A better perspective?
-Rather than saying that some listeners care only about data, and not semantics, it may be better to say that they care about different aspects of semantics, of the meaning of the tevent. That `IUserRegistered` changes the `Email` property of a `User` is part of the semantics of the tevent and to be properly designed that means that the tevent must implement another tevent that declares this meaning. Without that, the declaration of `IUserRegistered` is semantically incomplete and that is why we run into trouble.
-
+#### A tevent declares all it means
+A listener that cares only about data cares about one part of what a tevent means. That registering a user sets the user's `Email` is part of what `IUserRegistered` means, so `IUserRegistered` declares it, by implementing `IUserEmailPropertyUpdated`. A tevent that leaves part of its meaning undeclared is what made the listeners above so hard to keep right.

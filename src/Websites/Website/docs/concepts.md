@@ -64,13 +64,27 @@ state. *Teventive programming* models a domain this way, in tevents whose types 
 
 ### Taggregate
 An aggregate that is teventive: its state changes only by applying the tevents it publishes, and every tevent it
-publishes carries its id. See [Introduction to tevents](~/Compze/Teventive/Taggregates/_docs/introduction.md) and
-[Taggregate inheritance](~/Compze/Teventive/Taggregates/_docs/taggregate-inheritance.md).
+publishes carries its id. See [Taggregates](~/Compze/Teventive/Taggregates/_docs/taggregates.md), and
+[Taggregate inheritance](~/Compze/Teventive/Taggregates/_docs/taggregate-inheritance.md) for taggregates that inherit
+each other.
 
-### Tentity and tomponent
-An entity and a component of a taggregate, teventive like it. Their tevents are part of the taggregate's tevent
-hierarchy, and reach subscribers as the taggregate's. A *shared tomponent*, or *shared tentity*, is written once and
-used in many different taggregates: see [Reusable components and entities](~/Compze/Teventive/Taggregates/_docs/reusable-components.md).
+### Tomponent
+A component of one taggregate, with state of its own, teventive like the taggregate. Its tevents are part of the
+taggregate's tevent hierarchy, carry the taggregate's id, and reach subscribers as the taggregate's.
+See [Tomponents](~/Compze/Teventive/Taggregates/_docs/tomponents.md).
+
+### Tentity
+An entity of one taggregate: a part with an id of its own, of which the taggregate can hold any number, teventive like
+the taggregate. Its tevents are the taggregate's, as a tomponent's are, and also carry its own id.
+See [Tentities](~/Compze/Teventive/Taggregates/_docs/tentities.md).
+
+### Shared tomponent
+A tomponent written once, and used in many different taggregates without duplicating its code.
+See [Shared tomponents](~/Compze/Teventive/Taggregates/_docs/shared-tomponents.md).
+
+### Shared tentity
+A tentity written once, and kept in a collection by many different taggregates.
+See [Shared tentities](~/Compze/Teventive/Taggregates/_docs/shared-tentities.md).
 
 ### Taggregate store
 Where taggregates are kept. A *tevent store* keeps every tevent a taggregate has published, and rebuilds the taggregate
