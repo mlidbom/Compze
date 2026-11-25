@@ -1,9 +1,11 @@
+- name: Concepts
+  href: docs/concepts.md
+- name: Teventive
+  href: Compze/Teventive/Taggregates/_docs/
 - name: Tessaging
   href: Compze/Tessaging/_docs/
 - name: Typermedia
   href: Compze/Tessaging/Typermedia/_docs/
-- name: Teventive
-  href: Compze/Teventive/Taggregates/_docs/
 #- name: Hypermedia APIs
 #  href: paradigms/hypermedia-apis/
 - name: News
