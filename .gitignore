@@ -40,8 +40,6 @@ nCrunchTemp*
 
 /src/Websites/Website/node_modules/
 /src/Websites/Website/package-lock.json
-/src/Websites/Website/**/*.css.map
-/src/Websites/Website/**/*.css
 /src/Websites/Website/_site/
 
 repomix*.xml
