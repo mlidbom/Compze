@@ -37,6 +37,23 @@ public class LinesWrittenAfterAPoint_ : InAFolderOfItsOwn
 
          [XF] public void it_is_not_part_of_the_first_line() => LinesWrittenAfterAPoint.FromStartOf(_file).Must().SequenceEqual(["first", "second"]);
       }
+
+      public class When_lines_are_appended_while_the_lines_are_enumerated : FromStartOf
+      {
+         readonly List<string> _read = [];
+
+         public When_lines_are_appended_while_the_lines_are_enumerated()
+         {
+            Write("first\nsecond\n");
+            using var lines = LinesWrittenAfterAPoint.FromStartOf(_file).GetEnumerator();
+            lines.MoveNext();
+            _read.Add(lines.Current);
+            Append("appended\n");
+            while(lines.MoveNext()) _read.Add(lines.Current);
+         }
+
+         [XF] public void the_appended_lines_are_left_out() => _read.Must().SequenceEqual(["first", "second"]);
+      }
    }
 
    public class When_the_lines_are_read_from_the_start_of_a_file_whose_last_line_is_still_being_written : LinesWrittenAfterAPoint_

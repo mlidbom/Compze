@@ -48,7 +48,7 @@ public class LinesFromTheEnd_ : InAFolderOfItsOwn
    public class Given_files_of_several_megabytes_of_three_byte_characters : LinesFromTheEnd_
    {
       static readonly List<string> LinesOfThreeByteCharacters =
-         1.Through(12_000).Select(number => string.Concat(Enumerable.Repeat("日本語", 30 + number % 37))).ToList();
+         [.. 1.Through(12_000).Select(number => string.Concat(Enumerable.Repeat("日本語", 30 + number % 37)))];
 
       readonly List<(long Bytes, List<string> Written, List<string> Read)> _files = [];
 
@@ -68,6 +68,33 @@ public class LinesFromTheEnd_ : InAFolderOfItsOwn
       [XF] public void every_line_of_each_is_read_whole_last_first() =>
          _files.Select(it => new { LinesRead = it.Read.Count, LinesReadWrong = it.Read.Zip(Enumerable.Reverse(it.Written)).Count(pair => pair.First != pair.Second) })
                .Must().SequenceEqual(_files.Select(it => new { LinesRead = it.Written.Count, LinesReadWrong = 0 }));
+   }
+
+   /// <summary>
+   /// The file is read a chunk of four megabytes at a time from the end. A line of four megabytes, less some bytes, after the
+   /// lines puts the start of the last chunk at each byte of the lines in turn: inside a three-byte character, between a
+   /// CR and its LF, and at each end of an empty line.
+   /// </summary>
+   public class Given_files_whose_last_chunk_starts_at_each_byte_of_lines_holding_empty_lines_CRLF_and_three_byte_characters : LinesFromTheEnd_
+   {
+      const string LinesTheChunksStartIn = "first\n\n\r\n日本語\r\n\nlast\n";
+      const int BytesInAChunk = 4 * 1024 * 1024;
+      static readonly List<string> LinesOfThemLastFirst = ["last", "", "日本語", "", "", "first"];
+
+      readonly List<int> _chunkStartsThatALineWasReadWrongWith = [];
+
+      public Given_files_whose_last_chunk_starts_at_each_byte_of_lines_holding_empty_lines_CRLF_and_three_byte_characters()
+      {
+         var bytesOfTheLines = Encoding.UTF8.GetByteCount(LinesTheChunksStartIn);
+         foreach(var chunkStart in 0.Through(bytesOfTheLines))
+         {
+            var lastLine = new string('x', BytesInAChunk - (bytesOfTheLines - chunkStart) - 1);
+            Write(LinesTheChunksStartIn + lastLine + "\n");
+            if(!Lines.SequenceEqual([lastLine, .. LinesOfThemLastFirst])) _chunkStartsThatALineWasReadWrongWith.Add(chunkStart);
+         }
+      }
+
+      [XF] public void every_line_of_each_is_read_whole_last_first() => _chunkStartsThatALineWasReadWrongWith.Must().BeEmpty();
    }
 
    public class Given_a_line_longer_than_four_megabytes : LinesFromTheEnd_
