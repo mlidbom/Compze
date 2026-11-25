@@ -20,6 +20,6 @@ static class TaskCE
       }
 
       /// <summary>The <see cref="Task{TResult}.Result"/> of a task that has one, once it has completed: null for a task that has none.</summary>
-      object? WhatItCompletedWith => @this.GetType().GetProperty(nameof(Task<object>.Result))?.GetValue(@this);
+      object? WhatItCompletedWith => @this.GetType().GetProperty(nameof(Task<>.Result))?.GetValue(@this);
    }
 }
