@@ -3,10 +3,17 @@
     <Nullable>enable</Nullable>
     <IsTestProject>false</IsTestProject>
     <Version>0.7.0-beta</Version>
-    <Description>BDD-style specification testing for xUnit v3. Provides [XF] (ExclusiveFact) attribute that prevents inherited tests from running in child classes, enabling nested class hierarchies that read like executable specifications without test explosion.</Description>
+    <Description>BDD-style specification testing for xUnit v3. Provides [XF] (ExclusiveFact) attribute that prevents inherited tests from running in child classes, enabling nested class hierarchies that read like executable specifications without test explosion. And ISharesOneScenario, which builds a class's scenario once for all of its facts, and ends it as the class finishes.</Description>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="xunit.v3.extensibility.core" Version="[4.0.3, 5.0.0)" />
+  </ItemGroup>
+  <!-- Compze.Contracts — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Contracts)' == 'true'">
+    <PackageReference Include="Compze.Contracts" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Contracts)' != 'true'">
+    <ProjectReference Include="..\Compze.Contracts\Compze.Contracts.csproj" />
   </ItemGroup>
   <!-- Compze.xUnit — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_xUnit)' == 'true'">
