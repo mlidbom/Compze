@@ -13,7 +13,7 @@ using static System.Console;
 // ReSharper disable UnusedType.Global
 
 // ReSharper disable once CheckNamespace
-namespace Website.paradigms.semantic_tevents.ReusableComponents;
+namespace Website.Teventive.Taggregates.ReusableComponents;
 
 #region IPriceTevent
 interface IPriceTevent : ITevent

@@ -15,7 +15,7 @@ using static System.Console;
 // ReSharper disable UnusedType.Local
 // ReSharper disable PartialTypeWithSinglePart
 
-namespace Website.paradigms.semantic_tevents
+namespace Website.Teventive.Taggregates
 {
    namespace NoCollision3
    {

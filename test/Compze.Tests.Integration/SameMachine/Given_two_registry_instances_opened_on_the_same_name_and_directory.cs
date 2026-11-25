@@ -53,6 +53,17 @@ public class Given_two_registry_instances_opened_on_the_same_name_and_directory 
          [XF] public void no_address_is_listed() => _registryInTheReadingRole.ServerEndpointAddresses.Must().BeEmpty();
       }
 
+      public class and_then_the_endpoint_is_retracted_on_behalf_of_a_process_that_announced_it_before_this_one : after_the_announcing_instance_announces_an_endpoint_address
+      {
+         //A process with our id but started a minute earlier: another process, as the one an endpoint is handed over from is.
+         static readonly ProcessIdentity PreviousProcess = new(Environment.ProcessId, ProcessIdentity.OfCurrentProcess.StartTime - TimeSpan.FromMinutes(1));
+
+         public and_then_the_endpoint_is_retracted_on_behalf_of_a_process_that_announced_it_before_this_one() =>
+            _registryInTheAnnouncingRole.RetractEndpointAddress(_endpointId, PreviousProcess);
+
+         [XF] public void the_address_this_process_announced_is_still_listed() => _registryInTheReadingRole.ServerEndpointAddresses.Must().Contain(_address);
+      }
+
       public class and_then_announces_a_new_address_for_the_same_endpoint : after_the_announcing_instance_announces_an_endpoint_address
       {
          readonly EndpointAddress _replacementAddress = new(new Uri("compze.pipe://localhost/Compze.registry-spec-replacement"));

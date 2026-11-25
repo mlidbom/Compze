@@ -28,12 +28,15 @@ public class RememberedPeer
    {
       Id = id;
       HandledTessageTypes = handledTessageTypes;
-      //bug: GetId throws when this endpoint can't map one of the peer's advertised types, so this endpoint never connects to that
-      //   peer: each reconciliation pass fails the same way, and the only sign is a warning in the log. Sends to the peer then wait
-      //   out the handler-availability patience and fail with NoHandlerForTessageTypeException, whose message blames the deployment.
-      //   So every endpoint must map every type of every peer it converses with, even types it never sends or subscribes to.
-      //   Skipping the advertised types this endpoint can't map would fix it, since it can never send them; at the least, the
-      //   failure should name the unmappable type. (website-and-docs, 2026-11-24)
+      //bug: GetId throws when this endpoint can't map one of the peer's advertised types, so this endpoint never remembers that
+      //   peer: each reconciliation pass fails the same way, and the only sign is a warning in the log. RememberedPeers.SubscriberIdsFor
+      //   then leaves the peer out, so the tevents this endpoint publishes that the peer subscribes to get no outbox row and never
+      //   reach it, with no exception anywhere. Sends to the peer wait out the handler-availability patience and fail with
+      //   NoHandlerForTessageTypeException, whose message blames the deployment. So every endpoint must map every type of every peer
+      //   it converses with, even types it never sends or publishes. Skipping what it can't map is not a fix: a tevent subscription is
+      //   matched by assignability, so a skipped one could be a supertype of a tevent this endpoint publishes, and that tevent would
+      //   silently not be delivered. The fix must guarantee an exception wherever routing could be wrong (Magnus, 2026-11-24); the
+      //   designs are put to him. (website-and-docs and compze-agent-rep, 2026-11-24)
       var advertisedTypes = handledTessageTypes.Select(typeIdString => typeMap.GetId(typeIdString).Type).ToList();
       _teventSubscriptions = [..advertisedTypes.Where(advertisedType => advertisedType.Is<ITevent>())];
       _handledSingleHandlerTypes = [..advertisedTypes.Where(advertisedType => !advertisedType.Is<ITevent>())];

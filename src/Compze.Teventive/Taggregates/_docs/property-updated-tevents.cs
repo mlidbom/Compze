@@ -7,7 +7,7 @@ using static System.Console;
 // ReSharper disable UnusedType.Global
 // ReSharper disable UnusedMember.Global
 
-namespace Website.paradigms.semantic_tevents
+namespace Website.Teventive.Taggregates
 {
    namespace NoCollision
    {

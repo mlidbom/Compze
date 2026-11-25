@@ -2,7 +2,7 @@
 title: Introduction to tevents
 ---
 ### So what does all of that mean in practice?
-Let's dive right in to some code illustrating semantic tevents.
+Let's dive right in to some code illustrating tevents.
 
 This is the root of the tevent inheritance hierarchy. By some level of indirection, every tevent implements it:
 [!code-csharp[](introduction.cs#ITevent)]
@@ -21,7 +21,7 @@ And of course things can happen related to users:
 
 [!code-csharp[](introduction.cs#UserTevents1)]
 
-Now stop and look carefully at how the tevents so far implement each other. This is the core concept of semantic tevents. That the relationship in meaning between tevents can be modeled using .Net type compatibility, and that we can use the same mechanism to listen to exactly the tevents we need. Most of this information is declared by implementing various interfaces.
+Now stop and look carefully at how the tevents so far implement each other. This is the core concept of tevents. That the relationship in meaning between tevents can be modeled using .Net type compatibility, and that we can use the same mechanism to listen to exactly the tevents we need. Most of this information is declared by implementing various interfaces.
 
 Let's examine a simple example of what this means in practice. Here's how you might subscribe to these tevents:
 [!code-csharp[](introduction.cs#UserTeventRegistration)]

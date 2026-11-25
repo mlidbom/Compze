@@ -4,7 +4,7 @@ using static System.Console;
 
 #pragma warning disable // Documentation example code: deliberately illustrative fragments (empty marker interfaces, never-instantiated examples), not production code.
 
-namespace Website.paradigms.semantic_tevents
+namespace Website.Teventive.Taggregates
 {
    #region IUserTevent
    interface IUserTevent : ITaggregateTevent;
