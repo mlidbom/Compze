@@ -3,7 +3,7 @@ title: Tevent naming
 ---
 #### How to name tevents
 
-On the last page we were starting to run into some slightly unwieldy tevent names. Like `IUserEmailPropertyUpdatedTevent`. Now that it still reasonably readable and mostly unambiguous. That will not hold true as things get more complicated though if we keep naming tevents like that.
+On the last page we were starting to run into some slightly unwieldy tevent names. Like `IUserEmailPropertyUpdated`. Now that is still reasonably readable and mostly unambiguous. That will not hold true as things get more complicated though if we keep naming tevents like that.
 
 Take this slightly more complicated tevent name for instance: `IUserProfileNamePropertyUpdatedTevent`. Is this a tevent published by a `UserProfile` taggregate? Or is it a tevent published by a `Profile` component within a `User` taggregate? Or is it a `PropertyUpdatedTevent` from the `ProfileName` component of the `User` taggregate? Imagine trying to untangle such questions when you have four or more levels of nested composition in your taggregate.... 
 

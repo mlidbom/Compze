@@ -23,7 +23,7 @@ And of course things can happen related to users:
 
 Now stop and look carefully at how the tevents so far implement each other. This is the core concept of tevents. That the relationship in meaning between tevents can be modeled using .Net type compatibility, and that we can use the same mechanism to listen to exactly the tevents we need. Most of this information is declared by implementing various interfaces.
 
-Let's examine a simple example of what this means in practice. Here's how you might subscribe to these tevents:
+Let's examine a simple example of what this means in practice. Here's how you might subscribe to these tevents, in the handler declarations of [Tessaging](~/Compze/Tessaging/_docs/in-one-process.md):
 [!code-csharp[](introduction.cs#UserTeventRegistration)]
 
 Now let's see if your intuition is on target here. When an `IUserImported` tevent is published, What will be the output?

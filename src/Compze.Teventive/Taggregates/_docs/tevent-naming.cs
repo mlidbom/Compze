@@ -28,17 +28,17 @@ namespace Website.Teventive.Taggregates
             TessageBusHandlerRegistrar registrar = null!;
 
             #region Unhelpful
-            registrar.ForTevent<IName>(nameTevent => { WriteLine("Uhmm... What is happening here?"); return Task.CompletedTask; });
+            registrar.ForTevent<IName>(nameTevent => WriteLine("Uhmm... What is happening here?"));
             #endregion
 
             #region helpful
             registrar
-              .ForTevent<UserTevent.Profile.PropertyUpdated.IName>(clarity => { WriteLine($"Ahh: {clarity.Name}"); return Task.CompletedTask; });
+              .ForTevent<UserTevent.Profile.PropertyUpdated.IName>(clarity => WriteLine($"Ahh: {clarity.Name}"));
             #endregion
 
             #region helpful2
             registrar
-              .ForTevent<IUserTevent.IProfile.IPropertyUpdated.IName>(clarity => { WriteLine($"Ahh: {clarity.Name}"); return Task.CompletedTask; });
+              .ForTevent<IUserTevent.IProfile.IPropertyUpdated.IName>(clarity => WriteLine($"Ahh: {clarity.Name}"));
             #endregion
          }
       }

@@ -1,4 +1,6 @@
+using Compze.Abstractions;
 using Compze.Tessaging.TessageBus;
+using Compze.Tessaging.TessageTypes;
 using Compze.Teventive.Taggregates.Tevents;
 using static System.Console;
 
@@ -12,16 +14,20 @@ namespace Website.Teventive.Taggregates
 
    namespace Introduction
    {
+      //Copies of Compze's own declarations, without their documentation comments, for the page to show: keep them the same as
+      //   Compze.Tessaging.TessageTypes.ITevent, Compze.Teventive.Taggregates.Tevents.ITaggregateTevent and ITaggregateCreatedTevent.
       namespace HideThisStuff
       {
          #region ITevent
-         public interface ITevent;
+         public interface ITevent : ITessage;
          #endregion
 
          #region ITaggregateTevent
          public interface ITaggregateTevent : ITevent
          {
-            Guid TaggregateId { get; }
+            int TaggregateVersion { get; }
+            TaggregateId TaggregateId { get; }
+            DateTime UtcTimeStamp { get; }
          }
          #endregion
 
@@ -46,7 +52,7 @@ namespace Website.Teventive.Taggregates
             registrar
               .ForTevent<IUserTevent>(userTevent => WriteLine($"User: {userTevent.TaggregateId} something happened"))
               .ForTevent<IUserRegistered>(userRegistered => WriteLine($"User: {userRegistered.TaggregateId} registered"))
-              .ForTevent<IUserImported>(userImported => { WriteLine($"User: {userImported.TaggregateId} imported"); return Task.CompletedTask; });
+              .ForTevent<IUserImported>(userImported => WriteLine($"User: {userImported.TaggregateId} imported"));
             #endregion
          }
       }

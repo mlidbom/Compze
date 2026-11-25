@@ -52,7 +52,7 @@ namespace Website.Teventive.Taggregates
 
             #region EmailPropertyUpdatedListener
             registrar
-              .ForTevent<IUserEmailPropertyUpdated>(emailUpdated => { WriteLine($"User: {emailUpdated.TaggregateId} Email: {emailUpdated.Email}"); return Task.CompletedTask; });
+              .ForTevent<IUserEmailPropertyUpdated>(emailUpdated => WriteLine($"User: {emailUpdated.TaggregateId} Email: {emailUpdated.Email}"));
             #endregion
          }
       }

@@ -13,7 +13,7 @@ In .Net tevents are always interfaces, because to encode meaning in detail multi
 Every tevent implements `ITevent`
 
 #### Are routed by type compatibility
-The type of a tevent is the means through which tevents are routed to subscribers. Every single type-compatible registered handler method, local or remote, will be called when a tevent is published.
+The type of a tevent is the means through which tevents are routed to subscribers. Every single type-compatible registered handler method will be called when a tevent is published: in the publishing process, and, for a tevent whose type makes it remotable, in every other endpoint that subscribes to it (see [Tessaging's delivery guarantees](~/Compze/Tessaging/_docs/delivery-guarantees.md)).
 
 To illustrate: Given that the method `void HandleTevent(ISomeTevent tevent)` is registered as a tevent handler, then every single tevent that can be assigned to a variable of type `ISomeTevent` will be delivered to `HandleTevent`
 
