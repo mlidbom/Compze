@@ -28,9 +28,6 @@ namespace Compze.xUnitBDD;
 /// </remarks>
 public interface ISharesOneScenario : IClassFixture<ScenarioOfTheClass>
 {
-   //review-naming: ISharesOneScenario and its Once, so that a class reads class When_a_user_registers : ISharesOneScenario,
-   //   and its constructor _result = ISharesOneScenario.Once(() => ...).
-
    /// <summary>
    /// The part of the scenario that <paramref name="built"/> builds: built as the class's first fact is set up, and the same<br/>
    /// part for each fact after it. Called in the constructors of a class that implements <see cref="ISharesOneScenario"/>.

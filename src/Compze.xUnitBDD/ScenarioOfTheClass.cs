@@ -17,7 +17,6 @@ namespace Compze.xUnitBDD;
 /// </remarks>
 public sealed class ScenarioOfTheClass : IAsyncDisposable
 {
-   //review-naming: ScenarioOfTheClass, which a consumer meets only as what ISharesOneScenario is a class fixture of.
    readonly ConcurrentDictionary<PlaceInTheCode, Lazy<object?>> _partsByWhereTheyAreBuilt = new();
    readonly DisposalTracker _partsDisposedAsItEnds = new();
 
