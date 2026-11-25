@@ -38,7 +38,9 @@ public interface ISharesOneScenario : IClassFixture<ScenarioOfTheClass>
    /// its callers, such as a base class's for its derived classes, passes on its own caller's file and line.<br/>
    /// A part that throws as it is built is not built again: each fact that asks for it fails with its exception.<br/>
    /// When the class's facts run in parallel, one of them builds the part, and the others wait for it.<br/>
-   /// A part that is disposable is disposed as the scenario ends: see <see cref="ScenarioOfTheClass"/>.
+   /// A part that is disposable is disposed as the scenario ends: see <see cref="ScenarioOfTheClass"/>. A part that is a task,<br/>
+   /// such as one an async lambda builds, is awaited by the facts that look at it: as the scenario ends, what it completed<br/>
+   /// with is disposed, if that is disposable, once it has completed.
    /// </remarks>
    static TPart Once<TPart>(Func<TPart> built, [CallerFilePath] string file = "", [CallerLineNumber] int line = 0)
    {

@@ -13,7 +13,8 @@ namespace Compze.xUnitBDD;
 /// </summary>
 /// <remarks>
 /// xUnit makes one for each such class, as the class's fixture, as the class starts, and disposes it as the class finishes,<br/>
-/// however many of its facts ran: then each part that is disposable is disposed, the last built first.
+/// however many of its facts ran: then each part that is disposable is disposed, the last built first. For a part that is<br/>
+/// a task, what it completes with is disposed, once it has.
 /// </remarks>
 public sealed class ScenarioOfTheClass : IAsyncDisposable
 {
@@ -45,7 +46,8 @@ public sealed class ScenarioOfTheClass : IAsyncDisposable
    object? Built<TPart>(Func<TPart> built)
    {
       var part = built();
-      _partsDisposedAsItEnds.Add(part);
+      if(part is Task builtAsynchronously) _partsDisposedAsItEnds.AddAsyncAction(builtAsynchronously.DisposeWhatItCompletesWithAsync);
+      else _partsDisposedAsItEnds.Add(part);
       return part;
    }
 }

@@ -142,6 +142,7 @@ public class When_a_user_registers_with_valid_data : ISharesOneScenario
 - **Each call of `ISharesOneScenario.Once` builds a part of the scenario** as the class's first fact is set up, and the facts after it get the same part. A part is kept by the call's place in the code, so each call builds a part of its own.
 - **Implementing `ISharesOneScenario` promises that the facts change nothing in the scenario:** a fact that changed it would change it for the facts that run after it.
 - **The scenario ends as xUnit finishes the class,** however many of its facts ran, as when a filter picks only some: each part that is disposable, or only asynchronously disposable, is disposed, the last built first.
+- **A part can be built asynchronously:** `ISharesOneScenario.Once(() => StartTheServerAsync())` is a task that each fact awaits. As the scenario ends, what the task completed with is disposed, once it has completed.
 - **A part that throws as it is built fails every fact of the class with its exception,** and isn't built again.
 - **Each class has a scenario of its own.** A nested class that derives from one builds the parts its base class builds again, for its own facts, and then its own.
 - **Facts that run in parallel** (xUnit's `ParallelMode.All`) wait for the part one of them builds.
