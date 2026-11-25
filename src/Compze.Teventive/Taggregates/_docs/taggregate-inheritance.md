@@ -42,7 +42,7 @@ Each kind of animal publishes its tevents in a wrapper of its own. The tevent cl
 
 [!code-csharp[](taggregate-inheritance.cs#tevent-classes)]
 
-`Animal` is a taggregate like any other. The five type arguments of its base class are its own class, its root tevent interface and the class implementing it, and its wrapper interface and the class implementing that. It declares its tevent routing once, for the class: here the applier that records when an animal was born.
+`Animal` is a taggregate like any other, written as on the [Taggregates](taggregates.md) page. Its tevent routing has the applier that records when an animal was born.
 
 [!code-csharp[](taggregate-inheritance.cs#animal)]
 

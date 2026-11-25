@@ -6,8 +6,16 @@
   href: property-updated-tevents.md
 - name: Tevent naming
   href: tevent-naming.md
+- name: Taggregates
+  href: taggregates.md
+- name: Tomponents
+  href: tomponents.md
+- name: Tentities
+  href: tentities.md
 - name: Taggregate inheritance
   href: taggregate-inheritance.md
-- name: Reusable components and entities
-  href: reusable-components.md
+- name: Shared tomponents
+  href: shared-tomponents.md
+- name: Shared tentities
+  href: shared-tentities.md
   
