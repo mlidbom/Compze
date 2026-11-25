@@ -4,9 +4,13 @@ All notable changes to Compze.InterprocessObject will be documented in this file
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
-## 0.9.0-alpha
+## 0.10.0-alpha
 
 - **A System.Text.Json serializer comes with the package: `IInterprocessObjectSerializer.Json<T>(options)`,** for an object that needs no attributes or source generator, as MemoryPack's serializer does, and whose file a human can read. It keeps the object as UTF-8 JSON with the options given, or System.Text.Json's defaults. It adds no dependency: System.Text.Json is part of .NET.
+- **Requires newer minor versions of other Compze packages:** Compze.Internals.SystemCE 0.10.0-internal (was 0.8.0-internal), Compze.Threading 0.13.0-alpha (was 0.12.0-alpha). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
+
+## 0.9.0-alpha
+
 - **Targets .NET 11 (`net11.0`) instead of .NET 10, and is compiled with runtime async:** the runtime, instead of state machines the compiler generates, suspends and resumes its async methods, so live stack traces show the real call chain. An application that uses this version must target .NET 11.
 - **Requires newer minor versions of other Compze packages:** Compze.Internals.SystemCE 0.8.0-internal (was 0.7.0-internal), Compze.Threading 0.12.0-alpha (was 0.11.0-alpha), Compze.Threading.Interprocess 0.7.0-alpha (was 0.6.0-alpha). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
 

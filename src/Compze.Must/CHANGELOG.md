@@ -4,9 +4,13 @@ All notable changes to Compze.Must will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
-## 0.9.1-alpha
+## 0.9.2-alpha
 
 - **Fixed: `Be` threw on two equal tuples holding an item that can't be compared.** A `ValueTuple` or a `Tuple` implements `IComparable` whatever its items, and its `CompareTo` throws an `ArgumentException`, "At least one object must implement IComparable", for an item that implements none, such as a class with value equality alone. `Be` now compares a tuple with `CompareTo` only when each of its items can be compared, and by its equality alone otherwise. Equal tuples holding the same instances passed before, which hid the bug until a tuple held an equal but distinct instance, such as one read back from a file.
+- **Requires newer minor versions of other Compze packages:** Compze.Internals.SystemCE 0.10.0-internal (was 0.9.0-internal), Compze.Threading 0.13.0-alpha (was 0.12.0-alpha). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
+
+## 0.9.1-alpha
+
 - **The documentation says what to use for a check that no assertion makes:** `Satisfy`, which takes any predicate, and whose failure shows the predicate and the value. `Must()`, `IAssertionContext<T>`, each assertion class and the readme now say so.
 - **Requires newer minor versions of other Compze packages:** Compze.Internals.SystemCE 0.9.0-internal (was 0.8.0-internal). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
 

@@ -4,9 +4,13 @@ All notable changes to Compze.Teventive will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
-## 0.7.0-alpha
+## 0.7.1-alpha
 
 - **Built against `LazyCE` in Compze.Threading, where it moved from Compze.Internals.SystemCE:** the released version looks for it in Compze.Internals.SystemCE, and would fail beside the new one with a `TypeLoadException`. Nothing else changed.
+- **Requires newer minor versions of other Compze packages:** Compze.Internals.SystemCE 0.10.0-internal (was 0.9.0-internal), Compze.Threading 0.13.0-alpha (was 0.12.0-alpha). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
+
+## 0.7.0-alpha
+
 - **Changed without a signature changing, so no compiler error points at it:**
   - **A taggregate's tevents are no longer delivered to other processes unless their hierarchy says so.** `ITaggregateTevent` no longer extends `IExactlyOnceTevent`, so a hierarchy whose root interface declares no delivery guarantee of its own is published and handled within the process only. Nothing fails where it is published: another endpoint that handled or observed its tevents simply receives none. A hierarchy whose tevents other processes need declares its guarantee on its root interface, such as `IExactlyOnceTevent`. Below, under `ITaggregateTevent`.
   - **A taggregate store's updater needs a unit of work that `ExecuteUnitOfWork` began,** and **a publish that fails rolls its unit of work back, even when the code that published catches the exception.** Both are new for a tevent store's taggregates: see Compze.Teventive.TeventStore's changelog.

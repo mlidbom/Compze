@@ -4,11 +4,15 @@ All notable changes to Compze.Sql.MicrosoftSql will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
-## 0.5.0-alpha
+## 0.6.0-alpha
 
 - **Internal: what Compze.Teventive.MemoryImageStateStore.MicrosoftSql needs to keep a memory image state store in SQL Server tables.**
 - **A transaction that holds a durable resource already, such as another database's connection or a resource manager of your own, refuses Compze's SQL Server connection with a message that says so,** and names the connection, the rule and what to do: keep each database, and each other durable resource, in transactions of its own. Before, it was .NET's "Implicit distributed transactions have not been enabled", which names neither. When your resource takes part second instead, the refusal is .NET's own, from your call: the `MsSqlDomainDatabase` documentation now says so.
 - **Creating the schema at a database's first use no longer waits for a free thread-pool thread.** A synchronous SQL layer, such as the tevent store's, blocked its thread on the asynchronous creation, whose continuations each needed a free thread-pool thread, while many units of work at once could hold every one, each blocked waiting for the creation. The creation is now synchronous for every caller, the asynchronous SQL layers' too, which block their thread for it once, at the database's first use.
+- **Requires newer minor versions of other Compze packages:** Compze.Sql.Common 0.6.0-alpha (was 0.4.0-alpha). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
+
+## 0.5.0-alpha
+
 - **Targets .NET 11 (`net11.0`) instead of .NET 10, and is compiled with runtime async:** the runtime, instead of state machines the compiler generates, suspends and resumes its async methods, so live stack traces show the real call chain. An application that uses this version must target .NET 11.
 - **Requires newer minor versions of other Compze packages:** Compze.Abstractions 0.4.0-alpha (was 0.3.0-alpha), Compze.Sql.Common 0.4.0-alpha (was 0.3.0-alpha). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
 

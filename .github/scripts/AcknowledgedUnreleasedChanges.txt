@@ -12,15 +12,14 @@
 # lines. .github/scripts/lib/UnreleasedChanges.ps1 reads the file.
 
 Compze.Contracts aa4c3394e946f54d8e96128296dfc5d699a1e1f5 LangVersion moved to src/Directory.Build.props, with the same value: latest.
-Compze.DbPool aa4c3394e946f54d8e96128296dfc5d699a1e1f5 Comments only.
-Compze.DocumentDb.MySql aa4c3394e946f54d8e96128296dfc5d699a1e1f5 Comments only.
-Compze.DocumentDb.PostgreSql aa4c3394e946f54d8e96128296dfc5d699a1e1f5 Comments only.
-Compze.Hosting a499c03ef91252113ffe73467e0c34434cde6093 Review comments only.
-Compze.InterprocessObject a499c03ef91252113ffe73467e0c34434cde6093 Review comments only.
-Compze.Sql.MicrosoftSql aa4c3394e946f54d8e96128296dfc5d699a1e1f5 An InternalsVisibleTo for the test project Compze.Sql.InternalSpecifications, and duplicate InternalsVisibleTo grants removed.
-Compze.Sql.PostgreSql aa4c3394e946f54d8e96128296dfc5d699a1e1f5 An InternalsVisibleTo for the test project Compze.Sql.InternalSpecifications, and duplicate InternalsVisibleTo grants removed.
-Compze.Sql.Sqlite aa4c3394e946f54d8e96128296dfc5d699a1e1f5 An InternalsVisibleTo for the test project Compze.Sql.InternalSpecifications, and duplicate InternalsVisibleTo grants removed.
-Compze.Tessaging a499c03ef91252113ffe73467e0c34434cde6093 Review comments only.
-Compze.TypeIdentifiers aa4c3394e946f54d8e96128296dfc5d699a1e1f5 Comments only.
+Compze.DbPool b9d4cb2b9d3ef94376c1ba6e08eb68c4191fc119 Comments, #pragma lines, block bodies for expression-bodied members, and the internal transport controller's action names: nothing a consumer sees.
+Compze.DependencyInjection b9d4cb2b9d3ef94376c1ba6e08eb68c4191fc119 Comments, #pragma lines, block bodies for expression-bodied members, and the internal transport controller's action names: nothing a consumer sees.
+Compze.DependencyInjection.DryIoc b9d4cb2b9d3ef94376c1ba6e08eb68c4191fc119 Comments, #pragma lines, block bodies for expression-bodied members, and the internal transport controller's action names: nothing a consumer sees.
+Compze.DependencyInjection.LightInject b9d4cb2b9d3ef94376c1ba6e08eb68c4191fc119 Comments, #pragma lines, block bodies for expression-bodied members, and the internal transport controller's action names: nothing a consumer sees.
+Compze.DependencyInjection.Microsoft b9d4cb2b9d3ef94376c1ba6e08eb68c4191fc119 Comments, #pragma lines, block bodies for expression-bodied members, and the internal transport controller's action names: nothing a consumer sees.
+Compze.DocumentDb.MySql b9d4cb2b9d3ef94376c1ba6e08eb68c4191fc119 Comments, #pragma lines, block bodies for expression-bodied members, and the internal transport controller's action names: nothing a consumer sees.
+Compze.Tessaging.Abstractions b9d4cb2b9d3ef94376c1ba6e08eb68c4191fc119 Comments, #pragma lines, block bodies for expression-bodied members, and the internal transport controller's action names: nothing a consumer sees.
+Compze.Tessaging.Transport.AspNetCore b9d4cb2b9d3ef94376c1ba6e08eb68c4191fc119 Comments, #pragma lines, block bodies for expression-bodied members, and the internal transport controller's action names: nothing a consumer sees.
+Compze.TypeIdentifiers b9d4cb2b9d3ef94376c1ba6e08eb68c4191fc119 Comments, #pragma lines, block bodies for expression-bodied members, and the internal transport controller's action names: nothing a consumer sees.
 Compze.Underscore aa4c3394e946f54d8e96128296dfc5d699a1e1f5 LangVersion moved to src/Directory.Build.props, with the same value: latest. And NoWarn CS1591 dropped, which changes only the build's warnings.
 Compze.Unit aa4c3394e946f54d8e96128296dfc5d699a1e1f5 LangVersion moved to src/Directory.Build.props, with the same value: latest.

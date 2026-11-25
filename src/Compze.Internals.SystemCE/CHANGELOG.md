@@ -4,7 +4,7 @@ All notable changes to Compze.Internals.SystemCE will be documented in this file
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
-## 0.9.0-internal
+## 0.10.0-internal
 
 - **Breaking: renamed for Microsoft.VisualStudio.Threading.Analyzers' VSTHRD200,** which asks a method that returns a task to end in Async, and one that doesn't not to: `TaskCE.Run` is `TaskCE.RunAsync`, `TaskCE.RunOnDedicatedThread` is `TaskCE.RunOnDedicatedThreadAsync`, `ContinueWithCE` is `ContinueWithAsync`, `WithAggregateExceptions` is `WithAggregateExceptionsAsync`, and `SyncOrAsyncCE.AsAsync`, which returns a function, is `ToCompletedTaskFunc`.
 - **Breaking: `IAsyncLockCE` and `IAsyncShared<TShared>` are no longer `IDisposable`,** as nothing they hold needs disposing: their `SemaphoreSlim` allocates only a wait handle that they never ask for. Disposing one that was held, or waited for, broke its holder's release of it and its waiters, so code that owns one no longer disposes it. Code that did drops its `using` or `Dispose()`.
@@ -15,8 +15,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
   - `LinesFromTheEnd` gives the complete lines of a file appended to a line at a time, such as a log, from the last one backwards, reading the file a chunk at a time from its end.
   - `LinesWrittenAfterAPoint` reads the complete lines written after a point in such a file, as UTF-8 bytes in a buffer of its own, and says where the next reading starts; reading on later reads the lines appended since.
   - `ExtendedLengthPath.Of(path)` gives a path as Windows' own file functions take it at any length, `\\?\` and the full path, for code that calls them directly. Windows only.
-
   For both line readers a line ends in LF or CRLF, and a byte order mark at the start of the file isn't part of its first line.
+- **Requires newer minor versions of other Compze packages:** Compze.Threading 0.13.0-alpha (was 0.12.0-alpha). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
+
+## 0.9.0-internal
+
 - **Internal support for keeping a memory image state store's files and a database connection out of one transaction; nothing public changes:** a record of the durable resources taking part in each transaction, through which a resource that can't share its transaction with another refuses it. The new versions of Compze.Sql.Common and Compze.Teventive.MemoryImageStateStore require this one.
 
 ## 0.8.0-internal
