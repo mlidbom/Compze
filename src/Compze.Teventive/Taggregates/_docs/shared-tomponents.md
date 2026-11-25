@@ -1,14 +1,12 @@
 # Shared tomponents
-A [tomponent](tomponents.md) belongs to one taggregate: its tevents are nested in that taggregate's tevent hierarchy. A *shared tomponent* is written once, and used in many different taggregates without duplicating its code. We would consider any approach to modeling that did not support this without breaking a sweat to be badly limited.
+A [tomponent](tomponents.md) belongs to one taggregate: its tevents are nested in that taggregate's tevent hierarchy. A *shared tomponent* is written once, and used in many different taggregates without duplicating its code. It publishes tevents and applies them to its own state, as a tomponent does, but is tied to no particular taggregate. The taggregate that holds it, or the tomponent of a taggregate that does, is its **owner**, and the owner's class declares a **slot** for each shared tomponent it holds.
 
-Since a shared tomponent is used by many taggregates:
-* It cannot publish taggregate tevents, that must be up to the taggregate.
-* We must be able to subscribe to the published tevents by type, meaning that the tevent ultimately published by the taggregate must declaratively, statically, contain the type of the tevent from the component.
-* One taggregate may hold several of the same component, so the taggregate, and its subscribers, must be able to tell them apart.
+Because it belongs to no particular taggregate:
+* **Its tevents are its own,** rooted in an interface that belongs to no taggregate. The owner publishes them as its own tevents, by wrapping them.
+* **Subscribers still subscribe by type.** The tevent the owner publishes contains, in its type, the type of the shared tomponent's tevent.
+* **An owner can hold several of the same shared tomponent.** Each is in a slot of its own, and the tevent the owner publishes says which.
 
-Thankfully the solution to [inheriting taggregates](taggregate-inheritance.md) has taken us most of the way to a solution for this problem too. We will just need to wrap one more time, generic covariance to the rescue once more.
-
-A shared tomponent publishes tevents and applies them to its own state, as a tomponent does, but is tied to no particular taggregate. The taggregate that holds it, or the tomponent of a taggregate that does, is its **owner**. And the owner's class declares a **slot** for each shared tomponent it holds.
+Each of these is done with a wrapper tevent, the mechanism of [taggregate inheritance](taggregate-inheritance.md), applied once more.
 
 Let's build one: a price, which products and bundles of products both have. A product has two of them, a list price and a sale price.
 

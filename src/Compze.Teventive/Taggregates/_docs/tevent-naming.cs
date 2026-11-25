@@ -28,7 +28,7 @@ namespace Website.Teventive.Taggregates
             TessageBusHandlerRegistrar registrar = null!;
 
             #region Unhelpful
-            registrar.ForTevent<IName>(nameTevent => WriteLine("Uhmm... What is happening here?"));
+            registrar.ForTevent<IName>(updated => WriteLine($"The name of something is now {updated}"));
             #endregion
 
             #region helpful
@@ -38,7 +38,7 @@ namespace Website.Teventive.Taggregates
 
             #region helpful2
             registrar
-              .ForTevent<IUserTevent.IProfile.IPropertyUpdated.IName>(clarity => WriteLine($"Ahh: {clarity.Name}"));
+              .ForTevent<IUserTevent.IProfile.IPropertyUpdated.IName>(updated => WriteLine($"The profile's name is now {updated.Name}"));
             #endregion
          }
       }
