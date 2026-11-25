@@ -20,6 +20,14 @@ There are two kinds, and they need different defences:
   `GetAwaiter().GetResult()`. Visible in our code, and easy to write without noticing.
 - **Inside a library's synchronous API,** as Npgsql's above. Invisible in our code: only running it under a starved pool
   shows it.
+  - **And inside .NET's own sockets, on Linux** (found 2026-11-25): a synchronous read or write of a socket that has
+    gone non-blocking, as a database connection's does once anything used it asynchronously, completes only when a
+    thread-pool thread handles the socket's event. So on Linux every synchronous database call, through Npgsql or
+    MySqlConnector alike, waits for a free pool thread to receive its answer. The memory image state store's deck
+    specification showed it: forty synchronous units of work blocked their pool threads waiting for one deck, and the
+    one holding it waited 7–30 s for a reply that had arrived (flake hunts 45522833144 and 45526777514). Windows'
+    synchronous socket reads block for real, so it never shows there. A synchronous API over a database therefore stays
+    safe only while the process doesn't block its pool threads: no fix inside Compze's synchronous paths can remove it.
 
 ## What there is, 2026-11-24
 

@@ -321,6 +321,11 @@ Merged to main with it open, on Magnus's go (2026-11-24, passed on by compze-for
 - **Since:** none in 80 runs of the flake hunt on MySQL with every DI container (run 45450417975, at CI's load), nor in
   the 3 CI runs since main's fixes were merged. The cause is unproven: the fixes may have removed it, as they removed the
   PostgreSQL stalls whose fingerprint it shared, or made it rarer.
+- **A likely cause, not verified** (2026-11-25): the same starvation as the PostgreSQL stall the deck specification
+  caused (`dev_docs/TODO/synchronous-paths-that-need-a-free-thread-pool-thread.md`). The deck specification ran its forty
+  units of work on pool threads in the same test process until it moved them to threads of their own. The catch-up
+  reads the database synchronously, and on Linux a synchronous socket read waits for a free pool thread to receive the
+  answer, MySqlConnector's as Npgsql's.
 - **If it comes back:** the specification writes a dump of the test process when it isn't told in time
   (`TestProcessDump.Write`, 3e39e4c8e), and the job log has it. Read it as the `diagnosing-ci-flakiness` skill says,
   looking first at where the catch-up's thread and the commit signal's wait are.

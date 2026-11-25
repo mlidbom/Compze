@@ -68,3 +68,19 @@ backends in wait event `ClientRead` as the client has threads in `NpgsqlReadBuff
 other. The 2026-11-24 case: the memory image state store's two-statement reads stalled 1.6–30 s under forty units of
 work from `Task.Run`, on a 32-core machine, until each statement became a command of its own. `psql` from
 `C:\Program Files\PostgreSQL\18\bin` reads `pg_stat_activity` on any of the test servers during a stall.
+
+**On Linux, a synchronous socket read waits for a thread-pool thread too, even when the server has answered.** .NET
+emulates a synchronous operation on a socket that has gone non-blocking: the epoll thread hands the socket's event to
+the thread pool, and only a pool thread wakes the reader. The fingerprint, in a dump: the reader in
+`SocketAsyncContext.PerformSyncOperation`, on a `ManualResetEventSlim`, while the `SocketAsyncEngine.EventLoop` thread
+sits idle in `WaitForSocketEvents`; and the database logs the statement as done at once (PostgreSQL: the lock taken
+with no wait logged). Windows' synchronous socket reads block for real, so it never reproduces there. The 2026-11-25
+case: the memory image state store's deck specification ran forty synchronous units of work through `Task.Run`, all
+but one blocked their pool threads waiting for the deck, and the one holding it waited 7–30 s for a reply that had
+arrived; endpoint tests beside it timed out in the same starvation. Blocking actors of a test belong on threads of
+their own (`TaskCE.RunOnDedicatedThreadAsync`, `TestingTaskRunner`).
+
+**A dump taken on a timer comes late when the pool is starved:** a timer's callback runs on the pool, so it fires once
+the pool frees up, after the stall. `WaitAsyncDumpingTheProcessOnTimeout` has a thread of its own write the dump at the
+deadline since 2026-11-25; a test that dumps another way needs the same. Taking a dump freezes the process for
+seconds, so other tests of the run may fail beside the one that dumped.
