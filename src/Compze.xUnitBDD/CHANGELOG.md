@@ -4,10 +4,13 @@ All notable changes to Compze.xUnitBDD will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
-## 0.7.0-beta
+## 0.8.0-beta
 
 - **An `[XF]` declared on an abstract class fails, instead of silently never running:** an `[XF]` runs only in the class that declares it, and xUnit never runs an abstract class, so such a fact ran in no class at all, and nothing said so. Now each class derived from the abstract class lists the fact as a test that fails, saying to make it a `[Fact]`, which runs in every derived class.
   - **What a consumer could notice:** facts that never ran now fail, once in each derived class, until each is made a `[Fact]` or moved to a class that isn't abstract.
+
+## 0.7.0-beta
+
 - **Targets .NET 11 (`net11.0`) instead of .NET 10, and is compiled with runtime async:** the runtime, instead of state machines the compiler generates, suspends and resumes its async methods, so live stack traces show the real call chain. An application that uses this version must target .NET 11.
 - **Requires newer minor versions of other Compze packages:** Compze.xUnit 0.3.0-alpha (was 0.2.0-alpha). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
 

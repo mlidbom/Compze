@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Nullable>enable</Nullable>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <Version>0.9.0-alpha</Version>
+    <Version>0.10.0-alpha</Version>
     <Description>Create an object shared between processes in a single line of code. Fully atomic modifications, await conditions becoming true, automatic corruption recovery, pluggable serialization.</Description>
   </PropertyGroup>
   <!-- Compze.Contracts — flex reference -->
