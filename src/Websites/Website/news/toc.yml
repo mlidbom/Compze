@@ -1,4 +1,6 @@
 items:
+- name: 2026-11-25 Tessaging and Typermedia documentation
+  href: 2026-11-25-tessaging-and-typermedia-docs.md
 - name: 2024-12-11 Aggregate inheritance
   href: 2024-12-11-inheriting-aggregates.md
 - name: 2024-12-10 Three semantic events pages
