@@ -1,3 +1,4 @@
+using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using System.Collections.Concurrent;
 using System.Text.Json;
 using System.Transactions;
@@ -404,7 +405,7 @@ public class Given_a_memory_image_state_store_whose_files_hold_a_vocab_and_a_sen
          //The unit of work records, as the last thing it does before it commits, whether the write has returned: a write that
          //waits for it can't have. Whether its task has completed when the write returns can't tell: the write may return between
          //the unit of work leaving the store and its task being marked completed.
-         var unitOfWork = Task.Run(() => InUnitOfWork(taggregates =>
+         var unitOfWork = TaskCE.RunOnDedicatedThreadAsync(() => InUnitOfWork(taggregates =>
          {
             var vocab = taggregates.GetForUpdate<StoredVocab>(VocabId);
             _theUnitOfWorkHasTheVocab.Set();
@@ -456,7 +457,7 @@ public class Given_a_memory_image_state_store_whose_files_hold_a_vocab_and_a_sen
       protected override async Task InitializeAsyncInternal()
       {
          await base.InitializeAsyncInternal();
-         var unitOfWork = Task.Run(() => InUnitOfWork(taggregates =>
+         var unitOfWork = TaskCE.RunOnDedicatedThreadAsync(() => InUnitOfWork(taggregates =>
          {
             var vocab = taggregates.GetForUpdate<StoredVocab>(VocabId);
             _theUnitOfWorkHasTheVocab.Set();
@@ -496,7 +497,7 @@ public class Given_a_memory_image_state_store_whose_files_hold_a_vocab_and_a_sen
          MemoryImageStateStore.LoadFromStorage(() =>
          {
             WriteTheVocabsFile(VocabId, "kuu", "to eat, rudely");
-            unitOfWork = Task.Run(() => InUnitOfWork(taggregates => taggregates.GetForUpdate<StoredVocab>(VocabId).ChangeMeaning("to dine")));
+            unitOfWork = TaskCE.RunOnDedicatedThreadAsync(() => InUnitOfWork(taggregates => taggregates.GetForUpdate<StoredVocab>(VocabId).ChangeMeaning("to dine")));
             Thread.Sleep(200); //Gives the unit of work time to begin, so that it would write the vocab committed before over the change, did it not wait.
          });
          await unitOfWork!;

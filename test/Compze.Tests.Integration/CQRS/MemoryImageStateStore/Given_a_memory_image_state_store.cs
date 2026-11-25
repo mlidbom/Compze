@@ -1,3 +1,4 @@
+using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Globalization;
@@ -468,7 +469,7 @@ public class Given_a_memory_image_state_store : UniversalTestBase
          Compose();
          InUnitOfWork(taggregates => taggregates.Add(StoredVocab.Create(VocabId, "taberu")));
 
-         var first = Task.Run(() => InUnitOfWork(taggregates =>
+         var first = TaskCE.RunOnDedicatedThreadAsync(() => InUnitOfWork(taggregates =>
          {
             var vocab = taggregates.GetForUpdate<StoredVocab>(VocabId);
             _theFirstUnitOfWorkHasTheVocab.Set();
