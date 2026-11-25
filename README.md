@@ -10,7 +10,7 @@ Leveraging .NET type compatibility enables an event modeling paradigm which:
   - The event definitions declaritively describe your domain in great detail. Spending 30 minutes reading the event interfaces of a teventive domain may well tell you more about that domain than spending a week reading through the implementation code of a classically implemented domain, where such design aspects can only be found in the implementation details. 
 - **Eliminates all need for manual event routing and type checking**
 - **Dramatically reduces the number of event subscriptions needed**
-- **Enables modeling inheritance and composition** of event-based [aggregates](https://compze.net/docs/prerequisite-terms.html#aggregate) with elegant precision
+- **Enables modeling inheritance and composition** of event-based [aggregates](https://compze.net/docs/concepts.html#aggregate) with elegant precision
 - **[Unifies fine-grained and coarse-grained events](https://compze.net/Compze/Teventive/Taggregates/_docs/property-updated-tevents.html)** - no more choosing between property-updated style events and domain events
 - **Enables subscribing to precisely the event you need**, while being guaranteed that when new events are added, inheriting the current event, you will receive those too without needing to change anything in your subscriber code
 
@@ -65,7 +65,7 @@ Now you can:
 - Listen to **registration events** via `IUserRegistered` - listeners never need to change
 - Add new ways to update email without touching existing code
 
-**Learn more:** [Semantic Events Documentation](https://compze.net/Compze/Teventive/Taggregates/_docs/definition.html)
+**Learn more:** [Tevents](https://compze.net/Compze/Teventive/Taggregates/_docs/definition.html), and [Concepts](https://compze.net/docs/concepts.html) for Compze's terms
 
 ### 🌐 Typermedia APIs
 
@@ -127,7 +127,7 @@ Once you've used APIs like this, how would you feel about an API that gives you 
 ## Fledgling Documentation
 
 - **[Project Site](http://compze.net/)**
-- **[Semantic Events](https://compze.net/Compze/Teventive/Taggregates/_docs/definition.html)**
+- **[Tevents](https://compze.net/Compze/Teventive/Taggregates/_docs/definition.html)**
 - **[Development Setup](DEVELOPMENT.md)**
 
 ---
