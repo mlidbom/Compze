@@ -8,8 +8,8 @@ That is actually how we build most APIs today. Why?
 Typermedia expands on hypermedia thinking by leveraging the .NET type system to create APIs which: 
 
 * Can be fully explored using a navigator, browsed much like a website, by
-  * Getting links: tueries
-  * Posting forms: tommands
+  * Getting links: [tueries](~/docs/concepts.md#tuery), queries routed by their type
+  * Posting forms: [tommands](~/docs/concepts.md#tommand), commands routed by their type
   * All with full type safety and autocomplete in your IDE
 * Can be in-process, or remote
 * Routes tueries and tommands by their .NET types giving 
