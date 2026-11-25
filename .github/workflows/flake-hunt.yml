@@ -32,9 +32,9 @@ jobs:
       matrix:
         runner: [1, 2, 3, 4, 5, 6, 7, 8]
         persistence: [PgSql]
-        di: [every DI container]
+        di: [LightInject]
         serializer: [Newtonsoft]
-        transport: [NamedPipes]
+        transport: [AspNetCore]
 
     name: "Hunt ${{ matrix.runner }} (${{ matrix.persistence }}:${{ matrix.di }}:${{ matrix.serializer }}:${{ matrix.transport }})"
 
@@ -52,8 +52,8 @@ jobs:
           --health-retries 5
 
     env:
-      HUNTED_TEST_PROJECT: test/Compze.Tests.Integration/Compze.Tests.Integration.csproj
-      RUNS_PER_RUNNER: "10"
+      HUNTED_TEST_PROJECT: test/Compze.Tessaging.InternalSpecifications/Compze.Tessaging.InternalSpecifications.csproj
+      RUNS_PER_RUNNER: "20"
       RUNTIME_ASYNC: "true"
       COMPOSABLE_MACHINE_SLOWNESS: "5.0"
       COMPOSABLE_PERFORMANCE_TESTS_STRESS_TEST_ONLY: "true"
@@ -75,9 +75,7 @@ jobs:
 
       - name: Configure the hunted combination
         run: |
-          for di in Microsoft Autofac DryIoc LightInject; do
-            echo "${{ matrix.persistence }}:$di:${{ matrix.serializer }}:${{ matrix.transport }}"
-          done > src/TestUsingPluggableComponentCombinations
+          echo "${{ matrix.persistence }}:${{ matrix.di }}:${{ matrix.serializer }}:${{ matrix.transport }}" > src/TestUsingPluggableComponentCombinations
           echo "COMPZE_TEST_DIAGNOSTICS_DIRECTORY=$GITHUB_WORKSPACE/TestResults/diagnostics" >> "$GITHUB_ENV"
 
       - name: Build the hunted test project
