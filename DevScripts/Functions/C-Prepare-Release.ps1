@@ -40,6 +40,10 @@ function C-Prepare-Release {
     .PARAMETER Patch
     Bump the patch version instead of the minor version: for releases whose changes no consumer meets.
 
+    .PARAMETER PatchPackageId
+    Bump the patch version of these packages, and the minor version of the others it prepares: for a release that mixes
+    the two. Each must be one it prepares in this run; it refuses otherwise, changing nothing.
+
     .PARAMETER Acknowledge
     Packages whose changes since their release, up to HEAD, ship nothing a consumer sees, such as comments only, or build
     settings that produce the same result: records them in .github/scripts/AcknowledgedUnreleasedChanges.txt, with -Reason,
@@ -56,12 +60,16 @@ function C-Prepare-Release {
 
     .EXAMPLE
     C-Prepare-Release -PackageId Compze.Tessaging -Patch
+
+    .EXAMPLE
+    C-Prepare-Release -PatchPackageId Compze.Must, Compze.Hosting
     #>
     [CmdletBinding()]
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseApprovedVerbs', '')]
     param(
         [string[]]$PackageId,
         [switch]$Patch,
+        [string[]]$PatchPackageId,
         [string[]]$Acknowledge,
         [string]$Reason
     )
@@ -221,11 +229,14 @@ function C-Prepare-Release {
         return
     }
 
+    $notPrepared = @($PatchPackageId | Where-Object { @($toPrepare | ForEach-Object { $_.Package.PackageId }) -notcontains $_ })
+    if ($notPrepared.Count -gt 0) { throw "C-Prepare-Release refuses, and prepared nothing: -PatchPackageId names packages it doesn't prepare in this run: $($notPrepared -join ', ')." }
+
     $unacknowledgedUnreleasedChanges = @(GetUnacknowledgedUnreleasedChanges -PackagesBeingPrepared @($toPrepare | ForEach-Object { $_.Package.PackageId }))
     if ($unacknowledgedUnreleasedChanges.Count -gt 0) { throw "C-Prepare-Release refuses, and prepared nothing: $(FormatUnreleasedChangesRefusal $unacknowledgedUnreleasedChanges)" }
 
     $prepared = @(foreach ($preparation in $toPrepare) {
-        $newVersion = Get-BumpedVersion $preparation.Package.Version -Patch:$Patch
+        $newVersion = Get-BumpedVersion $preparation.Package.Version -Patch:($Patch -or $PatchPackageId -contains $preparation.Package.PackageId)
         Set-ProjectVersion $preparation.Package $newVersion
         Split-ReleasedChangelogSection $preparation.Package $newVersion $preparation.GainedLines
         [PSCustomObject]@{ PackageId = $preparation.Package.PackageId; From = $preparation.Package.Version; To = $newVersion }

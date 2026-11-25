@@ -44,7 +44,8 @@ A release goes in this order:
      names each package and its changed files.
 
    `C-Prepare-Release` prepares every package whose changelog gained entries since its release:
-   - it bumps the versions, minor by default, patch with `-Patch`, and only the packages named with `-PackageId`;
+   - it bumps the versions, minor by default, patch with `-Patch`, and only the packages named with `-PackageId`; in a
+     release that mixes the two, `-PatchPackageId` names those that get a patch bump;
    - it splits each changelog's top section into the new version's section and the released one, restored from its tag;
    - it adds the line stating the Compze dependencies whose minimum version the release raises across a minor version,
      which a consumer's upgrade brings along (`.github/scripts/lib/DependencyFloors.ps1` says why).
