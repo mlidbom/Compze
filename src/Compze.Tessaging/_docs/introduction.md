@@ -3,7 +3,9 @@
 Tessaging is Compze's messaging. Code that has something done, or that tells the rest of the system what happened, sends
 a message, and the handlers that should receive it do, without the sender and the handlers knowing about each other.
 What sets Tessaging apart is that a message's .NET type is its whole contract: Compze calls such a type-routed message a
-*tessage*.
+*tessage*. A tessage is one of three kinds, the type-routed forms of the usual three: a *tevent* says that something
+happened, a *tommand* tells its one handler to do something, and a *tuery* asks its one handler a question.
+[Concepts](~/docs/concepts.md) defines these and Compze's other terms.
 
 - **No routing configuration.** There are no topic names, queue names or routing keys. A tessage goes to the handlers of
   its type, and a subscriber to `IAccountTevent` receives every tevent whose type implements `IAccountTevent`, including

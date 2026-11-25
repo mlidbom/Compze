@@ -6,7 +6,7 @@ that?
 
 Compze extends hypermedia into Typermedia which:
 
-- **Routes tueries and tommands by their .NET types**, giving:
+- **Routes [tueries](~/docs/concepts.md#tuery) and [tommands](~/docs/concepts.md#tommand) by their .NET types**, giving:
     - Zero configuration routing
     - A simple, already well-known programming model
 - **Can be fully explored**, browsed much like a website, by:

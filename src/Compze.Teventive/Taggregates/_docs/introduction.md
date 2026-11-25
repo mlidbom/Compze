@@ -7,7 +7,7 @@ Let's dive right in to some code illustrating tevents.
 This is the root of the tevent inheritance hierarchy. By some level of indirection, every tevent implements it:
 [!code-csharp[](introduction.cs#ITevent)]
 
-Every tevent published by a taggregate will implement this interface:
+A [taggregate](~/docs/concepts.md#taggregate) is an aggregate whose state changes only by applying the tevents it publishes. Every tevent published by a taggregate will implement this interface, which carries the taggregate's id:
 [!code-csharp[](introduction.cs#ITaggregateTevent)]
 
 Every tevent that means a taggregate was created will implement this interface.

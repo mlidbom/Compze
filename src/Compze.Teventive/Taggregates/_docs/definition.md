@@ -3,6 +3,10 @@
 
 # Tevents
 
+A tevent is an event, a message saying that something happened, that Compze routes by its .NET type: a type-routed event. Its type is its whole contract. The type declares what the tevent means, in as much detail as the domain needs, and decides which subscribers receive it. Tevents are what [teventive programming](~/docs/concepts.md#teventive) models a domain in, and [Tessaging](~/Compze/Tessaging/_docs/introduction.md) delivers them.
+
+What sets a tevent apart from an event as most systems have them:
+
 #### Declare their meaning through their type
 Tevents use the type system of the language in which they are implemented to declare their meaning, in as much detail and as unambiguously as possible. All the semantics of the event should be part of the declaration of the event type.
 
@@ -18,7 +22,7 @@ The type of a tevent is the means through which tevents are routed to subscriber
 To illustrate: Given that the method `void HandleTevent(ISomeTevent tevent)` is registered as a tevent handler, then every single tevent that can be assigned to a variable of type `ISomeTevent` will be delivered to `HandleTevent`
 
 ##### This type compatibility includes support for generic covariance
-Interface inheritance is not enough to model realistic domains effectively. To support inheritance of tevent based taggregates, and reusable tevent based components, tevents leverage generic covariance. The covariant wrapper interface is `IPublisherTevent<out TTevent>`: a wrapper whose own type identifies the tevent's publisher while its type parameter carries the wrapped tevent's full type.
+Interface inheritance is not enough to model realistic domains effectively. To support inheritance of [taggregates](~/docs/concepts.md#taggregate), and reusable tevent based components, tevents leverage generic covariance. The covariant wrapper interface is `IPublisherTevent<out TTevent>`: a wrapper whose own type identifies the tevent's publisher while its type parameter carries the wrapped tevent's full type.
 
 For example: this handler: `void HandleTevent(IPublisherTevent<ITevent> tevent)` would be called whenever any type of `IPublisherTevent<T>` was published. `IPublisherTevent<IUserTevent>`, `IPublisherTevent<IAnimalTevent>` and so on.
 
