@@ -3,16 +3,17 @@ using Compze.Tessaging.TessageTypes;
 
 namespace Compze.Tessaging.Typermedia;
 
-///<remarks>refactor: <see cref="Get{TResult}"/> is public but Post is internal, so a navigation that starts at a tommand starts from<br/>
-/// the <c>tommand.Post()</c> extension instead: the two starts are found in different places. (website-and-docs, 2026-11-24)</remarks>
-///<remarks>refactor: This non-generic specification, which ends in a post that returns nothing, can be navigated only<br/>
-/// synchronously: <see cref="NavigateOnAsync"/> is protected, and the navigator's <c>NavigateAsync</c> extension takes<br/>
-/// only <see cref="NavigationSpecification{TResult}"/>. (website-and-docs, 2026-11-24)</remarks>
-///<remarks>review: Specifications navigate only <see cref="IRemoteTypermediaNavigator"/>: there is no in-process way to compose<br/>
-/// navigations, and each tuery or tommand type is either strictly local or remotable, so moving an API out of its process<br/>
-/// changes its types. Is one API meant to be servable both in-process and remotely? (website-and-docs, 2026-11-24)</remarks>
 public abstract class NavigationSpecification
 {
+   //refactor: Get is public but Post is internal, so a navigation that starts at a tommand starts from
+   //   the tommand.Post() extension instead: the two starts are found in different places. (website-and-docs, 2026-11-24)
+   //refactor: This non-generic specification, which ends in a post that returns nothing, can be navigated only
+   //   synchronously: NavigateOnAsync is protected, and the navigator's NavigateAsync extension takes
+   //   only NavigationSpecification. (website-and-docs, 2026-11-24)
+   //review: Specifications navigate only IRemoteTypermediaNavigator: there is no in-process way to compose
+   //   navigations, and each tuery or tommand type is either strictly local or remotable, so moving an API out of its process
+   //   changes its types. Is one API meant to be servable both in-process and remotely? (website-and-docs, 2026-11-24)
+
    internal static NavigationSpecification Post(IAtMostOnceTypermediaTommand tommand) => new VoidTommand(tommand);
 
    public static NavigationSpecification<TResult> Get<TResult>(IRemotableTuery<TResult> tuery) => NavigationSpecification<TResult>.Get(tuery);

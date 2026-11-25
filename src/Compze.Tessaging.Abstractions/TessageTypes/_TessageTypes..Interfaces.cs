@@ -73,10 +73,10 @@ public interface ITessageWithIdentity : ITessage
 ///<summary>A tessage that is handled at least once. Guaranteed by infrastructure through retries.</summary>
 public interface IAtLeastOnceTessage : ITessageWithIdentity, IRemotableTessage;
 
+//bug: Nothing deduplicates at-most-once typermedia tommands, whatever the summary says. Posting the same tommand twice
+//   executes it twice, and TypermediaHandlerExecutor runs a throwing handler again, up to five times, each in a new
+//   unit of work, so its effects outside the transaction repeat. (website-and-docs, 2026-11-24)
 ///<summary>A tessage that is handled no more than once. Guaranteed by infrastructure through deduplication, and transactions.</summary>
-///<remarks>bug: Nothing deduplicates at-most-once typermedia tommands, whatever the summary says. Posting the same tommand twice<br/>
-/// executes it twice, and <c>TypermediaHandlerExecutor</c> runs a throwing handler again, up to five times, each in a new<br/>
-/// unit of work, so its effects outside the transaction repeat. (website-and-docs, 2026-11-24)</remarks>
 public interface IAtMostOnceTessage : ITessageWithIdentity, IRemotableTessage, IMustBeHandledTransactionally;
 
 //todo:review: should the version without a type parameter remain?

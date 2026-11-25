@@ -15,14 +15,16 @@ public static class AspNetCoreEndpointTransportRegistrar
    /// client (<see cref="IEndpointTransportClient"/>), the endpoint-discovery query transport that runs on it, and the endpoint's<br/>
    /// one transport server (<see cref="IEndpointTransportServer"/>) serving every remotable capability's contributed request<br/>
    /// handlers.</summary>
-   ///<remarks>refactor: The named-pipe transport is declared with an extension of <see cref="Compze.Tessaging.Endpoints.EndpointBuilder"/>,<br/>
-   /// <c>endpointBuilder.NamedPipeEndpointTransport()</c>, while this one is only an extension of the registrar, so an environment<br/>
-   /// has to write <c>endpointBuilder.TransportProtocol(registrar =&gt; registrar.AspNetCoreEndpointTransport())</c>, which nothing<br/>
-   /// points to. An EndpointBuilder extension like the named-pipe one would make the two transports declare alike. (website-and-docs, 2026-11-24)</remarks>
    public static IComponentRegistrar AspNetCoreEndpointTransport(this IComponentRegistrar registrar)
-      => registrar.HttpEndpointTransportClientIfNotRegistered()
-                  .EndpointInformationQueryTransportIfNotRegistered()
-                  .AspNetCoreEndpointTransportServerIfNotRegistered();
+   {
+      //refactor: The named-pipe transport is declared with an extension of Endpoints.EndpointBuilder,
+      //   endpointBuilder.NamedPipeEndpointTransport(), while this one is only an extension of the registrar, so an environment
+      //   has to write endpointBuilder.TransportProtocol(registrar => registrar.AspNetCoreEndpointTransport()), which nothing
+      //   points to. An EndpointBuilder extension like the named-pipe one would make the two transports declare alike. (website-and-docs, 2026-11-24)
+      return registrar.HttpEndpointTransportClientIfNotRegistered()
+                      .EndpointInformationQueryTransportIfNotRegistered()
+                      .AspNetCoreEndpointTransportServerIfNotRegistered();
+   }
 
    ///<summary>Declares the client side of the HTTP endpoint transport alone — the transport-client strategy a pure client's<br/>
    /// composition declares (<see cref="TypermediaClientBuilder.ConfigureTransport"/>): a pure client speaks to endpoints, it never serves.</summary>

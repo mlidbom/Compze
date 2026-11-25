@@ -10,13 +10,14 @@ namespace Compze.Tessaging.Typermedia.Client;
 /// bounded, for the ambiguity to resolve — a rolling replacement resolves it the moment the retiring endpoint retracts. An<br/>
 /// external client application's router throws it immediately instead: the client's connections change only by its own<br/>
 /// explicit connects, so there is nothing to wait for.</summary>
-///<remarks>review: This exception is public, while its TessageBus counterpart,<br/>
-/// <see cref="Compze.Tessaging.TessageBus._private.TessageHandling.Dispatching.MultipleHandlersForTessageTypeException"/>, is<br/>
-/// internal on purpose: a configuration bug isn't recoverable. Decide whether a caller can recover from this one (a rolling<br/>
-/// replacement may resolve the ambiguity, so a retry may succeed), and either make it internal too or say here why the two<br/>
-/// differ. (website-and-docs, 2026-11-24)</remarks>
 public class MultipleHandlersForTypermediaTypeException : Exception
 {
+   //review: This exception is public, while its TessageBus counterpart,
+   //   Dispatching.MultipleHandlersForTessageTypeException, is
+   //   internal on purpose: a configuration bug isn't recoverable. Decide whether a caller can recover from this one (a rolling
+   //   replacement may resolve the ambiguity, so a retry may succeed), and either make it internal too or say here why the two
+   //   differ. (website-and-docs, 2026-11-24)
+
    MultipleHandlersForTypermediaTypeException(string message) : base(message) {}
 
    internal static MultipleHandlersForTypermediaTypeException BecausePatienceIsExhausted(Type tessageType, TimeSpan patience, IReadOnlyList<EndpointId> handlerEndpointIds) => new(

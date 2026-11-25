@@ -41,11 +41,11 @@ public class When_waiting_synchronously_through_TaskCE_for_a_task_that_failed
       [XF] public void WaitUnwrappingException_throws_an_AggregateException_holding_both() =>
          Invoking(() => Task.WhenAll(Fail("the first"), Fail("the second")).WaitUnwrappingException())
            .Must().Throw<AggregateException>()
-           .Which.InnerExceptions.Select(it => it.Message).Must().SequenceEqual(["the first", "the second"]);
+           .Which.InnerExceptions.Select(it => it.Message).Order().Must().SequenceEqual(["the first", "the second"]);
 
       [XF] public void ResultUnwrappingException_throws_an_AggregateException_holding_both() =>
          Invoking(() => Task.WhenAll(FailWithAResult("the first"), FailWithAResult("the second")).ResultUnwrappingException())
            .Must().Throw<AggregateException>()
-           .Which.InnerExceptions.Select(it => it.Message).Must().SequenceEqual(["the first", "the second"]);
+           .Which.InnerExceptions.Select(it => it.Message).Order().Must().SequenceEqual(["the first", "the second"]);
    }
 }

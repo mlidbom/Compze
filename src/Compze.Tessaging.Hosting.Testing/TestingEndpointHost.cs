@@ -76,12 +76,12 @@ public class TestingEndpointHost : EndpointHost
    }
 
    ///<summary>Creates a testing host with its own root container, set up with the current test's DI container technology, serializers and database pool.</summary>
-   ///<remarks>refactor: This is public, in a published package, but builds on Compze's own test setup: TestEnv from<br/>
-   /// Compze.Internals.Testing, with its DI container choice and the pooled test databases. So a consumer's test project<br/>
-   /// likely can't use it as it is. Either give consumers a Create that takes what they need, or keep the package's public<br/>
-   /// surface to what works outside Compze. (website-and-docs, 2026-11-24)</remarks>
    public static TestingEndpointHost Create()
    {
+      //refactor: This is public, in a published package, but builds on Compze's own test setup: TestEnv from
+      //   Compze.Internals.Testing, with its DI container choice and the pooled test databases. So a consumer's test project
+      //   likely can't use it as it is. Either give consumers a Create that takes what they need, or keep the package's public
+      //   surface to what works outside Compze. (website-and-docs, 2026-11-24)
       var rootContainer = TestEnv.DIContainer.CreateTestingContainerBuilder()
                                  ._mutate(it => it.Registrar.CurrentTestsDbPoolIfNotCloneContainer())
                                  .Build();

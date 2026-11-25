@@ -49,12 +49,13 @@ namespace Compze.Tessaging.Endpoints;
 /// registered, through <c>Registrar.RequireMappedTypesFromAssemblyContaining&lt;T&gt;()</c>, and the endpoint's container
 /// composes one <see cref="ITypeMap"/> from every such declaration.
 ///</summary>
-///<remarks>review-naming: ASP.NET Core has a <c>Microsoft.AspNetCore.Builder.EndpointBuilder</c>, which a web project's implicit usings<br/>
-/// import, so in such a project this name is ambiguous and the code doesn't compile until it adds a using alias. The Website<br/>
-/// project hit it, and the public docs' examples carry the alias. A name of its own, such as TessagingEndpointBuilder, would<br/>
-/// avoid it. (website-and-docs, 2026-11-24)</remarks>
 public abstract class EndpointBuilder
 {
+   //review-naming: ASP.NET Core has a Microsoft.AspNetCore.Builder.EndpointBuilder, which a web project's implicit usings
+   //   import, so in such a project this name is ambiguous and the code doesn't compile until it adds a using alias. The Website
+   //   project hit it, and the public docs' examples carry the alias. A name of its own, such as TessagingEndpointBuilder, would
+   //   avoid it. (website-and-docs, 2026-11-24)
+
    readonly IContainerBuilder _containerBuilder;
    readonly LocalTessagingEngineBuilder _engine = new(isTheEngineOfAnEndpoint: true);
 
