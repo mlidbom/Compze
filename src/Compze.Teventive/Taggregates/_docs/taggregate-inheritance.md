@@ -1,8 +1,5 @@
-﻿>[!NOTE]
-> Here we are entering less well charted waters. We are confident about the design we present here. However, full, support for routing tevents like this, and for building taggregates in this way, is still a work in progress.
-
-# Taggregate Inheritance
-So far we have adressed the inheritance hierarchy of tevents within a single taggregate. Now let's look at what happens when we inherit one taggregate from another. Let's go with a trivial and classic example to make the point with as little distraction as possible. Animals.
+﻿# Taggregate Inheritance
+So far we have addressed the inheritance hierarchy of tevents within a single taggregate. Now let's look at what happens when we inherit one taggregate from another. Let's go with a trivial and classic example to make the point with as little distraction as possible. Animals.
 
 [!code-csharp[](taggregate-inheritance.cs#noises1)]
 
@@ -18,12 +15,12 @@ Uh oh! You can't. There is only one `IBorn` and it is shared by all the animals.
 Thankfully we eventually realized that there is an elegant simple solution built right into C#. This should be familiar: 
 [!code-csharp[](taggregate-inheritance.cs#enumerable-type-compatibility)]
 
-Do you see it? Generic covariance! `IEnumarable<string>` is assignable to `IEnumerable<object>` and assignability is how we route tevents. Eureka! Well it turns out it works. (But requires a lot of major refactorings within Compze which are still ongoing.)
+Do you see it? Generic covariance! `IEnumerable<string>` is assignable to `IEnumerable<object>` and assignability is how we route tevents. Eureka!
 
 Rather than try to twist english into a language capable of expressing what I'm talking about, which I'm finding unmanageable, I'll use C#.
 
 [!code-csharp[](taggregate-inheritance.cs#noises1wrapped)]
-So the wrapping interfaces, which take a type parameter, tell us only which class published the tevent. A `Cat` or a `Dog` instance (assuming `Animal` is abstract). The inner tevent is the real tevent that contains all the specifics of what happened.
+So the wrapping interfaces, which take a type parameter, tell us only which class published the tevent. A `Cat` or a `Dog` instance (`Animal` is abstract). The inner tevent is the real tevent that contains all the specifics of what happened.
 
 So actually, what a `Dog` publishes is never just `IDogTevent`, it is always `IDogTevent<IAnimalTevent>`, correspondingly a Cat publishes `ICatTevent<IAnimalTevent>` and the problem has been solved. Now you can listen to just the tevents from dogs by doing this:
 
@@ -36,7 +33,21 @@ This if you don't care what type of animal it was:
 
 [!code-csharp[](taggregate-inheritance.cs#animallistener)]
 
-And this if you care about all animals, but need handle different animals differently:
+And this if you care about all animals, but need to handle different animals differently:
 
 [!code-csharp[](taggregate-inheritance.cs#wrappedanimallistener)]
 
+#### The taggregates
+Each kind of animal publishes its tevents in a wrapper of its own. The tevent classes mirror the interfaces: a class for each tevent, and a generic class for each wrapper.
+
+[!code-csharp[](taggregate-inheritance.cs#tevent-classes)]
+
+`Animal` is a taggregate like any other. The five type arguments of its base class are its own class, its root tevent interface and the class implementing it, and its wrapper interface and the class implementing that. It declares its tevent routing once, for the class: here the applier that records when an animal was born.
+
+[!code-csharp[](taggregate-inheritance.cs#animal)]
+
+`Cat` and `Dog` each extend `Animal`'s routing, so `Animal`'s applier applies their births too, and each names its own wrapper class. That is all it takes for a cat's birth to be published as an `ICatTevent<IAnimalTevent.IBorn>`, and a dog's as an `IDogTevent<IAnimalTevent.IBorn>`:
+
+[!code-csharp[](taggregate-inheritance.cs#cat-and-dog)]
+
+A kind of animal with tevents of its own declares their appliers in the lambda it hands `Extend`. `Animal`'s appliers apply each tevent first.
