@@ -1,8 +1,7 @@
-# Reusable tevent based components and entities
-
 >[!NOTE]
 > Taggregate specific nested components and entities are fully supported already. We've already [shown examples](tevent-naming.md) of how tevents for them look. You just nest component/entity tevent interfaces within your root tevent interface. Simple. What we are discussing on this page is how to create tevent based components and entities that can be used in multiple different tevent based taggregates without code duplication. That is another ballgame.
 
+# Reusable tevent based components and entities
 So as in the note above, the question is how we go about it when there is some sort of component or entity that we want to be able to reuse in multiple different taggregates without code duplication. We would consider any approach to modeling that did not support this without breaking a sweat to be badly limited.
 
 Since it is a shared, reusable component:
