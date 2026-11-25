@@ -1,7 +1,8 @@
-﻿>[!NOTE]
+﻿# Taggregate Inheritance
+
+>[!NOTE]
 > Here we are entering less well charted waters. We are confident about the design we present here. However, full, support for routing tevents like this, and for building taggregates in this way, is still a work in progress.
 
-# Taggregate Inheritance
 So far we have adressed the inheritance hierarchy of tevents within a single taggregate. Now let's look at what happens when we inherit one taggregate from another. Let's go with a trivial and classic example to make the point with as little distraction as possible. Animals.
 
 [!code-csharp[](taggregate-inheritance.cs#noises1)]

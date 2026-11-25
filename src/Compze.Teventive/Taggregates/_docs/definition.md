@@ -1,7 +1,7 @@
-﻿>[!NOTE]
->You are absolutely not expected to understand all the how's and why's of this definition the first time you read it. Think of it as combination cheat sheet and teaser.
+﻿# Tevents
 
-# Tevents
+>[!NOTE]
+>You are absolutely not expected to understand all the how's and why's of this definition the first time you read it. Think of it as combination cheat sheet and teaser.
 
 #### Declare their meaning through their type
 Tevents use the type system of the language in which they are implemented to declare their meaning, in as much detail and as unambiguously as possible. All the semantics of the event should be part of the declaration of the event type.
