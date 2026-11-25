@@ -52,7 +52,7 @@ public sealed class ScenarioOfTheClass : IAsyncDisposable
       Contract.State.Assert(scenario is not null,
                             () => $"{TestContext.Current.TestClass?.TestClassName ?? "Code that runs in no class of tests"} calls {nameof(ISharesOneScenario)}.{nameof(ISharesOneScenario.Once)}, " +
                                   $"so it must implement {nameof(ISharesOneScenario)}: only the facts of such a class share a scenario, which xUnit ends as the class finishes.");
-      return scenario!;
+      return scenario;
    }
 
    /// <summary>The part that <paramref name="built"/> builds at <paramref name="line"/> of <paramref name="file"/>: built by the first call, and the same for each call after it.</summary>

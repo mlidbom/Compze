@@ -38,6 +38,6 @@ public class When_xUnit_runs_the_facts_of_a_class_that_shares_one_scenario_in_pa
                   .Must().SequenceEqual([AFactIsBeingSetUp, AFactIsBeingSetUp, AFactIsBeingSetUp, "the part built", "the part disposed"]);
 
    [XF] public async Task all_three_facts_look_at_that_part() =>
-      (await _run).Recorded.Where(it => it.StartsWith(AFactLookedAt, StringComparison.Ordinal))
-                  .Must().Satisfy(it => it.Count() == 3 && it.Distinct().Count() == 1);
+      (await _run).Recorded.Where(it => it.StartsWith(AFactLookedAt, StringComparison.Ordinal)).ToList()
+                  .Must().Satisfy(it => it.Count == 3 && it.Distinct().Count() == 1);
 }

@@ -13,17 +13,9 @@ public class When_xUnit_runs_a_class_that_shares_one_scenario : ISharesOneScenar
    internal sealed class AClassThatSharesOneScenario : ISharesOneScenario
 #pragma warning restore CA1812, xUnit1000
    {
-      readonly PartOfAScenario _first;
-      readonly PartOfAScenarioDisposedAsynchronously _second;
-      readonly PartOfAScenario _third;
-      readonly PartOfAScenario _fourth;
-
-      public AClassThatSharesOneScenario()
-      {
-         _first = ISharesOneScenario.Once(() => new PartOfAScenario("first"));
-         _second = ISharesOneScenario.Once(() => new PartOfAScenarioDisposedAsynchronously("second"));
-         (_third, _fourth) = (ISharesOneScenario.Once(() => new PartOfAScenario("third")), ISharesOneScenario.Once(() => new PartOfAScenario("fourth")));
-      }
+      readonly PartOfAScenario _first = ISharesOneScenario.Once(() => new PartOfAScenario("first"));
+      readonly PartOfAScenarioDisposedAsynchronously _second = ISharesOneScenario.Once(() => new PartOfAScenarioDisposedAsynchronously("second"));
+      readonly PartOfAScenario _third = ISharesOneScenario.Once(() => new PartOfAScenario("third")), _fourth = ISharesOneScenario.Once(() => new PartOfAScenario("fourth"));
 
       [XF] public void a_fact() => LookAtTheParts();
       [XF] public void another_fact() => LookAtTheParts();
@@ -33,7 +25,7 @@ public class When_xUnit_runs_a_class_that_shares_one_scenario : ISharesOneScenar
    }
 
    [XF] public async Task its_two_facts_and_the_two_data_rows_of_its_theory_pass() =>
-      (await _run).Summary.Must().Satisfy(it => it.Total == 4 && it.Failed == 0);
+      (await _run).Summary.Must().Satisfy(it => it is { Total: 4, Failed: 0 });
 
    [XF] public async Task each_part_is_built_once_for_all_its_facts() =>
       (await _run).Recorded.Where(it => it.EndsWith(" built", StringComparison.Ordinal))

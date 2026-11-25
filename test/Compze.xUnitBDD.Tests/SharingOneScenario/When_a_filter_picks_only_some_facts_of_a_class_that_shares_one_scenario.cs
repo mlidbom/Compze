@@ -23,5 +23,5 @@ public class When_a_filter_picks_only_some_facts_of_a_class_that_shares_one_scen
       (await _run).Summary.Total.Must().Be(1);
 
    [XF] public async Task the_scenario_ends_as_the_class_finishes_all_the_same() =>
-      (await _run).Recorded.Must().Satisfy(it => it.Count == 3 && it[^1] == "the part disposed");
+      (await _run).Recorded.Must().Satisfy(it => it is ["the part built", _, "the part disposed"]);
 }

@@ -19,19 +19,20 @@ public class When_xUnit_runs_a_class_derived_from_one_that_shares_one_scenario :
    {
       readonly PartOfAScenario _itsOwnPart;
 
-      public AClassDerivedFromOneThatSharesOneScenario() => _itsOwnPart = ISharesOneScenario.Once(() => new PartOfAScenario("its own part"));
+      public AClassDerivedFromOneThatSharesOneScenario() =>
+         _itsOwnPart = ISharesOneScenario.Once(() => new PartOfAScenario("its own part", builtOn: PartTheBaseClassBuilds));
 
-      [XF] public void a_fact() => XunitRunOfAClass.Record($"{AFactLookedAt} {PartTheBaseClassBuilds} and {_itsOwnPart}");
-      [XF] public void another_fact() => XunitRunOfAClass.Record($"{AFactLookedAt} {PartTheBaseClassBuilds} and {_itsOwnPart}");
+      [XF] public void a_fact() => XunitRunOfAClass.Record($"{AFactLookedAt} {_itsOwnPart}");
+      [XF] public void another_fact() => XunitRunOfAClass.Record($"{AFactLookedAt} {_itsOwnPart}");
    }
 
-   [XF] public async Task it_builds_the_part_its_base_class_builds_and_then_its_own_once_each_for_a_scenario_of_its_own() =>
+   [XF] public async Task it_builds_the_part_its_base_class_builds_and_then_its_own_on_top_of_it_once_each_for_a_scenario_of_its_own() =>
       (await _run).Recorded.Where(it => it.EndsWith(" built", StringComparison.Ordinal))
                   .Must().SequenceEqual(["the base class's part built", "its own part built"]);
 
    [XF] public async Task each_of_its_facts_looks_at_the_same_parts() =>
-      (await _run).Recorded.Where(it => it.StartsWith(AFactLookedAt, StringComparison.Ordinal))
-                  .Must().Satisfy(it => it.Count() == 2 && it.Distinct().Count() == 1);
+      (await _run).Recorded.Where(it => it.StartsWith(AFactLookedAt, StringComparison.Ordinal)).ToList()
+                  .Must().Satisfy(it => it.Count == 2 && it.Distinct().Count() == 1);
 
    [XF] public async Task its_scenario_ends_as_it_finishes_its_own_part_first() =>
       (await _run).Recorded.Where(it => it.EndsWith(" disposed", StringComparison.Ordinal))
