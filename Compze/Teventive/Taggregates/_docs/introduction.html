@@ -44,7 +44,7 @@
       <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
         <div class="container-xxl flex-nowrap">
           <a class="navbar-brand" href="../../../../index.html">
-            <img id="logo" class="svg" src="../../../../logo.svg" alt="Compze">
+            <img id="logo" class="svg" src="../../../../logo.jpg" alt="Compze">
             Compze
           </a>
           <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
@@ -87,7 +87,7 @@
         <article data-uid="">
 
 <h3 id="so-what-does-all-of-that-mean-in-practice">So what does all of that mean in practice?</h3>
-<p>Let's dive right in to some code illustrating semantic tevents.</p>
+<p>Let's dive right in to some code illustrating tevents.</p>
 <p>This is the root of the tevent inheritance hierarchy. By some level of indirection, every tevent implements it:</p>
 <pre><code class="lang-csharp">public interface ITevent;
 </code></pre>
@@ -108,7 +108,7 @@
 interface IUserRegistered : IUserCreated;
 interface IUserImported : IUserRegistered;
 </code></pre>
-<p>Now stop and look carefully at how the tevents so far implement each other. This is the core concept of semantic tevents. That the relationship in meaning between tevents can be modeled using .Net type compatibility, and that we can use the same mechanism to listen to exactly the tevents we need. Most of this information is declared by implementing various interfaces.</p>
+<p>Now stop and look carefully at how the tevents so far implement each other. This is the core concept of tevents. That the relationship in meaning between tevents can be modeled using .Net type compatibility, and that we can use the same mechanism to listen to exactly the tevents we need. Most of this information is declared by implementing various interfaces.</p>
 <p>Let's examine a simple example of what this means in practice. Here's how you might subscribe to these tevents:</p>
 <pre><code class="lang-csharp">registrar
   .ForTevent&lt;IUserTevent&gt;(userTevent =&gt; WriteLine($&quot;User: {userTevent.TaggregateId} something happened&quot;))

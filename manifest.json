@@ -344,6 +344,16 @@
       "version": ""
     },
     {
+      "type": "Resource",
+      "source_relative_path": "logo.jpg",
+      "output": {
+        "resource": {
+          "relative_path": "logo.jpg"
+        }
+      },
+      "version": ""
+    },
+    {
       "type": "Conceptual",
       "source_relative_path": "news/2024-12-09-new-site.md",
       "output": {
@@ -379,6 +389,16 @@
       "output": {
         ".html": {
           "relative_path": "news/2024-12-11-inheriting-aggregates.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "news/2026-11-25-tessaging-and-typermedia-docs.md",
+      "output": {
+        ".html": {
+          "relative_path": "news/2026-11-25-tessaging-and-typermedia-docs.html"
         }
       },
       "version": ""
