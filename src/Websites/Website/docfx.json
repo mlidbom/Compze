@@ -29,6 +29,7 @@
         "files": [
           "images/**",
           "favicon.ico",
+          "logo.jpg",
           ".nojekyll"
         ]
       }
@@ -43,6 +44,7 @@
       "_appName": "Compze",
       "_appTitle": "Compze",
       "_appFaviconPath": "favicon.ico",
+      "_appLogoPath": "logo.jpg",
       "_enableSearch": true,
       "pdf": false
     }
