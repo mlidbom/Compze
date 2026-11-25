@@ -7,6 +7,7 @@ using Compze.Hosting.Testing;
 using Compze.Hosting.Testing.Wiring;
 using Compze.Internals.Testing;
 using Compze.Internals.SystemCE.TransactionsCE.Testing;
+using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Must;
 using Compze.Tessaging.Engine.Wiring;
 using Compze.Teventive.MemoryImageStateStore;
@@ -282,9 +283,12 @@ public class Given_a_memory_image_state_store_kept_in_the_domain_database : Univ
          await base.InitializeAsyncInternal();
          InUnitOfWorkOf(TheFirst, taggregates => taggregates.Add(StoredDeck.Create(_deckId)));
          IDependencyInjectionContainer[] memoryImages = [TheFirst, TheSecond];
-         var addingTheCards = memoryImages.SelectMany(memoryImage => Enumerable.Range(0, CardsEachMemoryImageAdds).Select(card => Task.Run(() => AddACard(memoryImage, $"card {card}"))))
+         //Each unit of work on a thread of its own, as a test's blocking actors are: forty of them blocked on thread-pool threads
+         //starved the pool, and on Linux a synchronous socket read completes only once a pool thread handles the socket's event, so
+         //the unit of work holding the deck waited for its database's answer as long as the pool took to grow (2026-11-25).
+         var addingTheCards = memoryImages.SelectMany(memoryImage => Enumerable.Range(0, CardsEachMemoryImageAdds).Select(card => TaskCE.RunOnDedicatedThreadAsync(() => AddACard(memoryImage, $"card {card}"))))
                                           .ToArray();
-         //Locally they take a second or two. Far longer means a unit of work holding the deck's lock is stalled: the dump shows on what.
+         //They take a second or two. Far longer means a unit of work holding the deck's lock is stalled: the dump shows on what.
          await Task.WhenAll(addingTheCards).WaitAsyncDumpingTheProcessOnTimeout(TimeSpan.FromSeconds(10), $"the {addingTheCards.Length} units of work adding cards to one deck");
          foreach(var memoryImage in memoryImages) HaveAUnitOfWorkOfItChangeTheStore(memoryImage);
       }
