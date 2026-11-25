@@ -7,7 +7,7 @@ using static System.Console;
 // ReSharper disable RedundantAssignment
 
 // ReSharper disable once CheckNamespace
-namespace Website.paradigms.semantic_tevents.InheritingTaggregates;
+namespace Website.Teventive.Taggregates.InheritingTaggregates;
 
 #region noises1
 interface IAnimalTevent : ITaggregateTevent

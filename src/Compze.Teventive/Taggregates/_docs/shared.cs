@@ -1,5 +1,5 @@
 // ReSharper disable ClassNeverInstantiated.Global
-namespace Website.paradigms.semantic_tevents;
+namespace Website.Teventive.Taggregates;
 
 #pragma warning disable CA1812
 
