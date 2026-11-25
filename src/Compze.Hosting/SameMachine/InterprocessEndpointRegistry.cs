@@ -71,13 +71,16 @@ public class InterprocessEndpointRegistry : IEndpointRegistryAndAnnouncer, IDisp
          state.Entries.Add(new RegistryState.Entry(endpointId.Value, address.Uri.AbsoluteUri, announcingProcess));
       });
 
-   ///<summary>Retracts the endpoint's announced address — what an endpoint does when it stops listening.</summary>
-   ///<remarks>review: this removes every entry of <paramref name="endpointId"/>, whichever process announced it. When a process that runs an endpoint<br/>
-   /// starts its successor, which announces under the same id before the old one stops, as the Claude tooling's hub does at each republish, the old<br/>
-   /// process's stop removes the successor's announcement, and nothing announces it again. The exactly-once tier's process lock rules the overlap out;<br/>
-   /// the best-effort tier has no lock. Remove only this process's own entry? (Claude, 2026-11-20, found by reading.)</remarks>
-   public void RetractEndpointAddress(EndpointId endpointId) =>
-      _sharedState.Update(state => state.Entries.RemoveAll(entry => entry.EndpointId == endpointId.Value));
+   ///<summary>Retracts the endpoint's address that this process announced — what an endpoint does when it stops listening.</summary>
+   ///<remarks>An address another process announced for the endpoint stays: see the overload taking the announcing process.</remarks>
+   public void RetractEndpointAddress(EndpointId endpointId) => RetractEndpointAddress(endpointId, ProcessIdentity.OfCurrentProcess);
+
+   ///<summary>Retracts the endpoint's address that <paramref name="announcingProcess"/> announced, leaving one that another process announced.</summary>
+   ///<remarks>A process that hands its endpoint over to a successor starts the successor, which announces the endpoint under the same id,<br/>
+   /// replacing the old process's address, and then stops, retracting the endpoint. That retraction must leave the successor's address, or<br/>
+   /// nothing would list the endpoint until the successor announced again.</remarks>
+   public void RetractEndpointAddress(EndpointId endpointId, ProcessIdentity announcingProcess) =>
+      _sharedState.Update(state => state.Entries.RemoveAll(entry => entry.EndpointId == endpointId.Value && entry.AnnouncingProcess == announcingProcess));
 
    ///<summary>Deletes the backing file from disk, destroying the registry for every process sharing it.</summary>
    public void Delete() => _sharedState.Delete();

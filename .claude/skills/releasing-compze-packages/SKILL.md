@@ -59,7 +59,8 @@ A release goes in this order:
    - It must run before Create Releases: it publishes only versions without a release tag, and Create Releases tags them.
    - It changes only this machine, so the go-ahead for the release covers it.
 4. **Wait for a CI run that covers that commit to pass:** `gh run watch <run id>`, the id from
-   `gh run list --workflow ci.yml --commit <sha>`. If that run skipped its test jobs, watch the run its summary names.
+   `gh run list --workflow ci.yml --commit <sha>`, with the full sha: an abbreviated one lists nothing, as if no run
+   existed. If that run skipped its test jobs, watch the run its summary names.
    Run the gate yourself to check, as the workflow will:
    `& .github/scripts/Assert-CiPassedForCommit.ps1 -Repository mlidbom/Compze -CommitSha <sha>`.
 5. **Then run Create Releases,** by hand: `gh workflow run publish-nuget.yml --ref main`.
