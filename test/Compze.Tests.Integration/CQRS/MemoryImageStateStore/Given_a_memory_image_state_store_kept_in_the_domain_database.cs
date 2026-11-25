@@ -12,6 +12,7 @@ using Compze.Tessaging.Engine.Wiring;
 using Compze.Teventive.MemoryImageStateStore;
 using Compze.Teventive.TaggregateStores;
 using Compze.Tests.Infrastructure;
+using Compze.Tests.Infrastructure.Diagnostics;
 using Compze.Tests.Infrastructure.XUnit;
 using static Compze.Must.MustActions;
 
@@ -283,7 +284,8 @@ public class Given_a_memory_image_state_store_kept_in_the_domain_database : Univ
          IDependencyInjectionContainer[] memoryImages = [TheFirst, TheSecond];
          var addingTheCards = memoryImages.SelectMany(memoryImage => Enumerable.Range(0, CardsEachMemoryImageAdds).Select(card => Task.Run(() => AddACard(memoryImage, $"card {card}"))))
                                           .ToArray();
-         await Task.WhenAll(addingTheCards);
+         //Locally they take a second or two. Far longer means a unit of work holding the deck's lock is stalled: the dump shows on what.
+         await Task.WhenAll(addingTheCards).WaitAsyncDumpingTheProcessOnTimeout(TimeSpan.FromSeconds(10), $"the {addingTheCards.Length} units of work adding cards to one deck");
          foreach(var memoryImage in memoryImages) HaveAUnitOfWorkOfItChangeTheStore(memoryImage);
       }
 
