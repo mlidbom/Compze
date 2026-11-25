@@ -1,5 +1,6 @@
 using System.Runtime.CompilerServices;
 using Compze.Contracts;
+using Compze.xUnitBDD._private;
 using Xunit;
 
 namespace Compze.xUnitBDD;
@@ -45,6 +46,6 @@ public interface ISharesOneScenario : IClassFixture<ScenarioOfTheClass>
    static TPart Once<TPart>(Func<TPart> built, [CallerFilePath] string file = "", [CallerLineNumber] int line = 0)
    {
       Contract.Argument.NotNull(built);
-      return ScenarioOfTheClass.OfTheClassThatRunsNow().Part(file, line, built);
+      return ScenarioOfTheClass.OfTheClassThatRunsNow().Part(new PlaceInTheCode(file, line, built.Method), built);
    }
 }

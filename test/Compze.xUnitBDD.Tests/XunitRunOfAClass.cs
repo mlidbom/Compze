@@ -44,7 +44,7 @@ sealed class XunitRunOfAClass
    public static async Task<XunitRunOfAClass> Of(Type testClass, ParallelMode parallelMode = ParallelMode.None, IReadOnlyCollection<string>? factsAFilterPicked = null)
    {
       var xunitTestClass = XunitDiscovery.TestClassOf(testClass);
-      var testCases = (await XunitDiscovery.TestCases(xunitTestClass)).Where(it => factsAFilterPicked?.Contains(it.TestMethod.Method.Name) ?? true).ToList();
+      var testCases = (await XunitDiscovery.TestCases(xunitTestClass)).Where(PickedByTheFilter).ToList();
 
       var recorded = new ConcurrentQueue<string>();
       RecordOfTheRunNow.Value = recorded;
@@ -64,6 +64,8 @@ sealed class XunitRunOfAClass
                                                             collectionFixtures);
 
       return new XunitRunOfAClass(summary, [.. reported.Messages], [.. recorded]);
+
+      bool PickedByTheFilter(IXunitTestCase testCase) => factsAFilterPicked?.Contains(testCase.TestMethod.Method.Name) ?? true;
    }
 
    /// <summary>Records <paramref name="happening"/> in the run that runs the calling code, as it happens.</summary>
