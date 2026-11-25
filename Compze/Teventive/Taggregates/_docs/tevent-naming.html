@@ -85,14 +85,9 @@
         </div>
 
         <article data-uid="">
+<h1 id="tevent-naming">Tevent naming</h1>
 
-<h4 id="how-to-name-tevents">How to name tevents</h4>
-<p>On the last page we were starting to run into some slightly unwieldy tevent names. Like <code>IUserEmailPropertyUpdatedTevent</code>. Now that it still reasonably readable and mostly unambiguous. That will not hold true as things get more complicated though if we keep naming tevents like that.</p>
-<p>Take this slightly more complicated tevent name for instance: <code>IUserProfileNamePropertyUpdatedTevent</code>. Is this a tevent published by a <code>UserProfile</code> taggregate? Or is it a tevent published by a <code>Profile</code> component within a <code>User</code> taggregate? Or is it a <code>PropertyUpdatedTevent</code> from the <code>ProfileName</code> component of the <code>User</code> taggregate? Imagine trying to untangle such questions when you have four or more levels of nested composition in your taggregate....</p>
-<p>We've tried a number of different ways of dealing with tevent naming. One is using namespaces, which sounds like it should work. <code>User.Tevents.ProfileComponent.PropertyUpdatedTevents.IName</code>. Not too bad, right? Except when searching for types, or after your IDE helpfully simplifies references for you, you end up looking at just <code>IName</code>, which is unhelpful...</p>
-<pre><code class="lang-csharp">registrar.ForTevent&lt;IName&gt;(nameTevent =&gt; { WriteLine(&quot;Uhmm... What is happening here?&quot;); return Task.CompletedTask; });
-</code></pre>
-<p>The best structure we've found to deal with tevent naming is this:</p>
+<p>Name tevents by nesting their interfaces: each level is a tevent interface nested in the one above it, and inheriting it.</p>
 <pre><code class="lang-csharp">interface IUserTevent : ITaggregateTevent
 {
    internal interface IProfile : IUserTevent
@@ -107,16 +102,14 @@
    }
 }
 </code></pre>
-<p>Nice and structured with each level of nesting inheriting from the previous level.</p>
-<p>Giving us:</p>
+<p>A subscriber then names exactly the tevent it means, however deep it is:</p>
 <pre><code class="lang-csharp">registrar
-  .ForTevent&lt;IUserTevent.IProfile.IPropertyUpdated.IName&gt;(clarity =&gt; { WriteLine($&quot;Ahh: {clarity.Name}&quot;); return Task.CompletedTask; });
+  .ForTevent&lt;IUserTevent.IProfile.IPropertyUpdated.IName&gt;(updated =&gt; WriteLine($&quot;The profile's name is now {updated.Name}&quot;));
 </code></pre>
-<p>Readable and unambiguous. Not bad.</p>
-<div class="NOTE">
-<h5>Note</h5>
-<p>We do not repeat <code>Tevent</code> for every level of nesting. And should you dislike the repeated <code>I</code> we do not condemn doing this: <code>IUserTevent.Profile.PropertyUpdated.Name</code> 😉</p>
-</div>
+<p>The name says where the tevent belongs: <code>IUserTevent.IProfile.IPropertyUpdated.IName</code> is the name of a user's profile, updated. A flat name such as <code>IUserProfileNamePropertyUpdatedTevent</code> doesn't say it: it could as well be a tevent of a <code>UserProfile</code> taggregate. Nor do namespaces: wherever the IDE shortens a type to its own name, a tevent in <code>User.Tevents.Profile.PropertyUpdated</code> reads as just <code>IName</code>:</p>
+<pre><code class="lang-csharp">registrar.ForTevent&lt;IName&gt;(updated =&gt; WriteLine($&quot;The name of something is now {updated}&quot;));
+</code></pre>
+<p>Only the root interface ends in <code>Tevent</code>; the levels below it don't repeat it. They may drop the <code>I</code> as well: <code>IUserTevent.Profile.PropertyUpdated.Name</code>.</p>
 
 </article>
 

@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Shared tentities | Compze </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Shared tentities | Compze ">
+      
+      
+      <link rel="icon" href="../../../../favicon.ico">
+      <link rel="stylesheet" href="../../../../public/docfx.min.css">
+      <link rel="stylesheet" href="../../../../public/main.css">
+      <meta name="docfx:navrel" content="../../../../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../../../../">
+      
+      
+      
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../../../../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../../../../index.html">
+            <img id="logo" class="svg" src="../../../../logo.jpg" alt="Compze">
+            Compze
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="">
+<h1 id="shared-tentities">Shared tentities</h1>
+
+<p>A <a href="tentities.html">tentity</a> belongs to one taggregate. A <em>shared tentity</em> is to a tentity what a <a href="shared-tomponents.html">shared tomponent</a> is to a tomponent: written once, with an id of its own, and kept in a collection by any number of different taggregates. It builds on shared tomponents, so read that page first: this one continues its example of products and their prices.</p>
+<p>Reviews are an example. Every tevent of a review carries, as ordinary domain data, the id of the review it belongs to: its <code>EntityId</code>.</p>
+<pre><code class="lang-csharp">interface IReviewTevent : ISharedTentityTevent&lt;ReviewId&gt;
+{
+   interface IWritten : IReviewTevent
+   {
+      int Stars { get; }
+   }
+
+   interface IAnswered : IReviewTevent
+   {
+      string Answer { get; }
+   }
+}
+</code></pre><pre><code class="lang-csharp">abstract class ReviewTevent(ReviewId entityId) : IReviewTevent
+{
+   public ReviewId EntityId { get; } = entityId;
+
+   internal class Written(ReviewId entityId, int stars) : ReviewTevent(entityId), IReviewTevent.IWritten
+   {
+      public int Stars { get; } = stars;
+   }
+
+   internal class Answered(ReviewId entityId, string answer) : ReviewTevent(entityId), IReviewTevent.IAnswered
+   {
+      public string Answer { get; } = answer;
+   }
+}
+</code></pre><pre><code class="lang-csharp">class Review : SharedTentity&lt;Review, ReviewId, IReviewTevent, IReviewTevent.IWritten&gt;
+{
+   static readonly TeventRouting&lt;Review, IReviewTevent&gt; Appliers = DeclareAppliers(it =&gt; it
+     .For&lt;IReviewTevent.IWritten&gt;(static (review, written) =&gt; review.Stars = written.Stars)
+     .For&lt;IReviewTevent.IAnswered&gt;(static (review, answered) =&gt; review.Answer = answered.Answer));
+
+   protected override TeventRouting TeventAppliers =&gt; Appliers;
+
+   public Review(SharedTentityCollection&lt;Review, ReviewId, IReviewTevent, IReviewTevent.IWritten&gt; reviews) : base(reviews) {}
+
+   public int Stars { get; private set; }
+   public string? Answer { get; private set; }
+
+   public void AnswerWith(string answer) =&gt; Publish(new ReviewTevent.Answered(Id, answer));
+}
+</code></pre>
+<p><code>ReviewId</code> is a small value type of the example's own, around a <code>Guid</code>.</p>
+<ul>
+<li>A review derives from <code>SharedTentity&lt;Review, ReviewId, IReviewTevent, IReviewTevent.IWritten&gt;</code>: its own class, its id, its tevent root, and the tevent that creates one.</li>
+<li>Its routing starts with an applier of the base class's, which gives a new review the <code>EntityId</code> of its created tevent as its <code>Id</code>. The review's own applier of <code>IWritten</code> comes after it.</li>
+<li>A review publishes tevents that carry its own <code>Id</code>, and <code>Publish</code> asserts that they do.</li>
+<li>The owner keeps its reviews in a <code>SharedTentityCollection</code>, which is itself a shared tomponent: it takes one slot, and every review in it publishes through that slot's adopting wrapper tevent. The collection creates a review when a created tevent arrives, and routes every other tevent to the review whose id it carries. A review is added by publishing its created tevent, with <code>AddByPublishing</code>, which returns the new review.</li>
+</ul>
+<h2 id="start-to-finish-a-second-owner">Start to finish: a second owner</h2>
+<p>A bundle of products has a price too, and reviews. Here is all of it:</p>
+<pre><code class="lang-csharp">interface IBundleTevent : ITaggregateTevent
+{
+   interface ICreated : IBundleTevent, ITaggregateCreatedTevent
+   {
+      string Name { get; }
+   }
+}
+
+interface IBundleTevent&lt;out T&gt; : ITaggregateTevent&lt;T&gt; where T : IBundleTevent;
+
+interface IBundlePriceTevent&lt;out T&gt; : IBundleTevent, IPublisherTevent&lt;T&gt; where T : IPriceTevent;
+interface IBundleReviewsTevent&lt;out T&gt; : IBundleTevent, IPublisherTevent&lt;T&gt; where T : IReviewTevent;
+
+abstract class BundleTevent : TaggregateTevent, IBundleTevent
+{
+   protected BundleTevent() {}
+   BundleTevent(TaggregateId taggregateId) : base(taggregateId) {}
+
+   internal class Created(TaggregateId taggregateId, string name) : BundleTevent(taggregateId), IBundleTevent.ICreated
+   {
+      public string Name { get; } = name;
+   }
+}
+
+class BundleTevent&lt;T&gt;(T tevent) : TaggregateTevent&lt;T&gt;(tevent), IBundleTevent&lt;T&gt; where T : IBundleTevent;
+
+class BundlePriceTevent&lt;T&gt;(T tevent) : BundleTevent, IBundlePriceTevent&lt;T&gt; where T : IPriceTevent
+{
+   public T Tevent { get; } = tevent;
+}
+
+class BundleReviewsTevent&lt;T&gt;(T tevent) : BundleTevent, IBundleReviewsTevent&lt;T&gt; where T : IReviewTevent
+{
+   public T Tevent { get; } = tevent;
+}
+
+class Bundle : Taggregate&lt;Bundle, IBundleTevent, BundleTevent, IBundleTevent&lt;IBundleTevent&gt;, BundleTevent&lt;BundleTevent&gt;&gt;
+{
+   static class Slots
+   {
+      internal static readonly SharedTomponentSlot&lt;Bundle, IBundleTevent, BundleTevent, IPriceTevent, IBundlePriceTevent&lt;IPriceTevent&gt;&gt; Price =
+         new(typeof(BundlePriceTevent&lt;&gt;), static bundle =&gt; bundle.Price);
+
+      internal static readonly SharedTomponentSlot&lt;Bundle, IBundleTevent, BundleTevent, IReviewTevent, IBundleReviewsTevent&lt;IReviewTevent&gt;&gt; Reviews =
+         new(typeof(BundleReviewsTevent&lt;&gt;), static bundle =&gt; bundle.Reviews);
+   }
+
+   static readonly TeventRouting&lt;Bundle, IBundleTevent&gt; Appliers = DeclareAppliers(it =&gt; it
+     .For&lt;IBundleTevent.ICreated&gt;(static (bundle, created) =&gt; bundle.Name = created.Name)
+     .SharedTomponent(Slots.Price)
+     .SharedTomponent(Slots.Reviews));
+
+   protected override TeventRouting TeventAppliers =&gt; Appliers;
+
+   Bundle()
+   {
+      Price = new Price(Slots.Price.In(this));
+      Reviews = new SharedTentityCollection&lt;Review, ReviewId, IReviewTevent, IReviewTevent.IWritten&gt;(Slots.Reviews.In(this));
+   }
+
+   public string Name { get; private set; } = &quot;&quot;;
+   public Price Price { get; }
+   public SharedTentityCollection&lt;Review, ReviewId, IReviewTevent, IReviewTevent.IWritten&gt; Reviews { get; }
+
+   public static Bundle Create(string name)
+   {
+      var bundle = new Bundle();
+      bundle.Publish(new BundleTevent.Created(new TaggregateId(), name));
+      return bundle;
+   }
+
+   public Review AddReview(int stars) =&gt; Reviews.AddByPublishing(new ReviewTevent.Written(ReviewId.New(), stars));
+}
+</code></pre>
+<p>The price and the review are written once, each:</p>
+<ol>
+<li>Its tevent interfaces, rooted in an interface of its own that implements <code>ITevent</code>, or <code>ISharedTentityTevent&lt;TId&gt;</code> for a shared tentity, and the classes implementing them.</li>
+<li>Its class, deriving from <code>SharedTomponent&lt;&gt;</code> or <code>SharedTentity&lt;,,,&gt;</code>, with its tevent routing.</li>
+</ol>
+<p>Each owner then writes, for each shared tomponent it holds:</p>
+<ol>
+<li>An adopting wrapper tevent: an interface that is a tevent of the owner and an <code>IPublisherTevent&lt;T&gt;</code> of the shared tomponent's tevents, and a class implementing it.</li>
+<li>A slot, in its nested <code>Slots</code> class, holding that class and how to get the shared tomponent from an owner.</li>
+<li>The slot, entered in its tevent routing: <code>.SharedTomponent(Slots.Price)</code>.</li>
+<li>The shared tomponent, constructed with the slot in this owner: <code>new Price(Slots.Price.In(this))</code>.</li>
+</ol>
+
+</article>
+
+        <div class="contribution d-print-none">
+        </div>
+
+        <div class="next-article d-print-none border-top" id="nextArticle"></div>
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

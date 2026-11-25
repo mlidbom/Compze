@@ -89,12 +89,14 @@
 <h3 id="so-what-does-all-of-that-mean-in-practice">So what does all of that mean in practice?</h3>
 <p>Let's dive right in to some code illustrating tevents.</p>
 <p>This is the root of the tevent inheritance hierarchy. By some level of indirection, every tevent implements it:</p>
-<pre><code class="lang-csharp">public interface ITevent;
+<pre><code class="lang-csharp">public interface ITevent : ITessage;
 </code></pre>
-<p>Every tevent published by a taggregate will implement this interface:</p>
+<p>A <a href="../../../../docs/concepts.html#taggregate">taggregate</a> is an aggregate whose state changes only by applying the tevents it publishes. Every tevent published by a taggregate will implement this interface, which carries the taggregate's id:</p>
 <pre><code class="lang-csharp">public interface ITaggregateTevent : ITevent
 {
-   Guid TaggregateId { get; }
+   int TaggregateVersion { get; }
+   TaggregateId TaggregateId { get; }
+   DateTime UtcTimeStamp { get; }
 }
 </code></pre>
 <p>Every tevent that means a taggregate was created will implement this interface.</p>
@@ -109,11 +111,11 @@ interface IUserRegistered : IUserCreated;
 interface IUserImported : IUserRegistered;
 </code></pre>
 <p>Now stop and look carefully at how the tevents so far implement each other. This is the core concept of tevents. That the relationship in meaning between tevents can be modeled using .Net type compatibility, and that we can use the same mechanism to listen to exactly the tevents we need. Most of this information is declared by implementing various interfaces.</p>
-<p>Let's examine a simple example of what this means in practice. Here's how you might subscribe to these tevents:</p>
+<p>Let's examine a simple example of what this means in practice. Here's how you might subscribe to these tevents, in the handler declarations of <a href="../../../Tessaging/_docs/in-one-process.html">Tessaging</a>:</p>
 <pre><code class="lang-csharp">registrar
   .ForTevent&lt;IUserTevent&gt;(userTevent =&gt; WriteLine($&quot;User: {userTevent.TaggregateId} something happened&quot;))
   .ForTevent&lt;IUserRegistered&gt;(userRegistered =&gt; WriteLine($&quot;User: {userRegistered.TaggregateId} registered&quot;))
-  .ForTevent&lt;IUserImported&gt;(userImported =&gt; { WriteLine($&quot;User: {userImported.TaggregateId} imported&quot;); return Task.CompletedTask; });
+  .ForTevent&lt;IUserImported&gt;(userImported =&gt; WriteLine($&quot;User: {userImported.TaggregateId} imported&quot;));
 </code></pre>
 <p>Now let's see if your intuition is on target here. When an <code>IUserImported</code> tevent is published, What will be the output?
 The correct answer is:</p>

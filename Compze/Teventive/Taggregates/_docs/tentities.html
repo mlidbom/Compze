@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Tentities | Compze </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Tentities | Compze ">
+      
+      
+      <link rel="icon" href="../../../../favicon.ico">
+      <link rel="stylesheet" href="../../../../public/docfx.min.css">
+      <link rel="stylesheet" href="../../../../public/main.css">
+      <meta name="docfx:navrel" content="../../../../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../../../../">
+      
+      
+      
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../../../../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../../../../index.html">
+            <img id="logo" class="svg" src="../../../../logo.jpg" alt="Compze">
+            Compze
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="">
+<h1 id="tentities">Tentities</h1>
+
+<p>A tentity is an <a href="../../../../docs/concepts.html#entity">entity</a> of a <a href="taggregates.html">taggregate</a>: a part of it with an identity
+of its own, of which the taggregate can hold any number, and which is teventive like the taggregate. It changes its
+state only by applying the tevents it publishes, and those tevents are the taggregate's, as a <a href="tomponents.html">tomponent</a>'s
+are. What a tentity adds is its id: each of its tevents carries it, so that the taggregate knows which of its tentities
+the tevent is for.</p>
+<p>A tentity belongs to one taggregate. One written once, to be used in many different taggregates, is a
+<a href="shared-tentities.html">shared tentity</a>.</p>
+<p>This page gives the <code>User</code> of <a href="taggregates.html">Taggregates</a> addresses: as many as it likes, each of which can move, and
+be removed.</p>
+<h2 id="its-tevents">Its tevents</h2>
+<p>A tentity's tevents are rooted in an interface nested in the taggregate's root tevent interface, as a tomponent's are,
+which declares the tentity's id: <code>IUserTevent.IAddress</code> declares <code>AddressId</code>.</p>
+<pre><code class="lang-csharp">interface IUserTevent : ITaggregateTevent
+{
+   interface IPropertyUpdated : IUserTevent
+   {
+      interface IEmail : IPropertyUpdated
+      {
+         string Email { get; }
+      }
+   }
+
+   interface IRegistered : IUserTevent, ITaggregateCreatedTevent, IPropertyUpdated.IEmail;
+
+   interface IAddress : IUserTevent
+   {
+      Guid AddressId { get; }
+
+      interface IPropertyUpdated : IAddress
+      {
+         interface IStreet : IPropertyUpdated
+         {
+            string Street { get; }
+         }
+      }
+
+      interface IAdded : IAddress, IPropertyUpdated.IStreet;
+      interface IMoved : IAddress, IPropertyUpdated.IStreet;
+      interface IRemoved : IAddress;
+   }
+}
+
+interface IUserTevent&lt;out T&gt; : ITaggregateTevent&lt;T&gt; where T : IUserTevent;
+</code></pre>
+<p>The tevents that matter most are those that begin and end a tentity: <code>IAdded</code>, which creates an address, and
+<code>IRemoved</code>, which removes it.</p>
+<p>The tevent classes mirror the interfaces. The class of the tentity's root tevent also has an <em>id getter-setter</em>, a small
+class that tells Compze how to read and set the address id of an address tevent:</p>
+<pre><code class="lang-csharp">abstract class UserTevent : TaggregateTevent, IUserTevent
+{
+   protected UserTevent() {}
+   UserTevent(TaggregateId userId) : base(userId) {}
+
+   internal class Registered(TaggregateId userId, string email) : UserTevent(userId), IUserTevent.IRegistered
+   {
+      public string Email { get; } = email;
+   }
+
+   internal abstract class Address : UserTevent, IUserTevent.IAddress
+   {
+      public Guid AddressId { get; private set; }
+
+      public class IdGetterSetter : IGetSetTaggregateEntityTeventEntityId&lt;Guid, Address, IUserTevent.IAddress&gt;
+      {
+         public void SetEntityId(Address tevent, Guid id) =&gt; tevent.AddressId = id;
+         public Guid GetId(IUserTevent.IAddress tevent) =&gt; tevent.AddressId;
+      }
+
+      internal class Added : Address, IUserTevent.IAddress.IAdded
+      {
+         public Added(Guid addressId, string street)
+         {
+            AddressId = addressId;
+            Street = street;
+         }
+
+         public string Street { get; }
+      }
+
+      internal class Moved(string street) : Address, IUserTevent.IAddress.IMoved
+      {
+         public string Street { get; } = street;
+      }
+
+      internal class Removed : Address, IUserTevent.IAddress.IRemoved;
+   }
+}
+
+class UserTevent&lt;T&gt;(T tevent) : TaggregateTevent&lt;T&gt;(tevent), IUserTevent&lt;T&gt; where T : IUserTevent;
+</code></pre>
+<p>Only <code>Added</code> is given the address's id. Every other address tevent gets it from the address that publishes it, through
+the id getter-setter.</p>
+<h2 id="the-tentity">The tentity</h2>
+<pre><code class="lang-csharp">class Address : User.RemovableEntity&lt;Address,
+                                     Guid,
+                                     IUserTevent.IAddress,
+                                     UserTevent.Address,
+                                     IUserTevent.IAddress.IAdded,
+                                     IUserTevent.IAddress.IRemoved,
+                                     UserTevent.Address.IdGetterSetter&gt;
+{
+   static readonly TeventRouting&lt;Address, IUserTevent.IAddress&gt; Appliers = DeclareAppliers(it =&gt; it
+     .For&lt;IUserTevent.IAddress.IPropertyUpdated.IStreet&gt;(static (address, updated) =&gt; address.Street = updated.Street));
+
+   protected override TeventRouting TeventAppliers =&gt; Appliers;
+
+   public Address(User user) : base(user) {}
+
+   public string Street { get; private set; } = &quot;&quot;;
+
+   public void MoveTo(string street) =&gt; Publish(new UserTevent.Address.Moved(street));
+   public void Remove() =&gt; Publish(new UserTevent.Address.Removed());
+}
+</code></pre>
+<ul>
+<li><strong>It derives from <code>User.RemovableEntity&lt;...&gt;</code>,</strong> a base class every taggregate class has. Its type arguments are the
+tentity's own class, the type of its id, its root tevent interface and the class implementing it, the tevents that
+create and remove it, and its id getter-setter. A tentity that is never removed derives from <code>User.Entity&lt;...&gt;</code>
+instead, which takes no removed tevent.</li>
+<li><strong>Its constructor takes the user it belongs to.</strong> Compze constructs it, when its created tevent is applied.</li>
+<li><strong>Its <code>Id</code> is the id its created tevent carries.</strong></li>
+<li><strong>It declares its tevent routing once, for the class,</strong> as a taggregate does.</li>
+<li><strong>It publishes through the user,</strong> as a tomponent does: <code>MoveTo</code> publishes an address tevent, which carries the
+address's id and the user's.</li>
+</ul>
+<h2 id="the-taggregate-that-holds-them">The taggregate that holds them</h2>
+<pre><code class="lang-csharp">class User : Taggregate&lt;User, IUserTevent, UserTevent, IUserTevent&lt;IUserTevent&gt;, UserTevent&lt;UserTevent&gt;&gt;
+{
+   static readonly TeventRouting&lt;User, IUserTevent&gt; Appliers = DeclareAppliers(it =&gt; it
+     .For&lt;IUserTevent.IPropertyUpdated.IEmail&gt;(static (user, updated) =&gt; user.Email = updated.Email)
+     .Entities(static user =&gt; user._addresses));
+
+   protected override TeventRouting TeventAppliers =&gt; Appliers;
+
+   readonly Address.ICollectionManager _addresses;
+
+   User() =&gt; _addresses = Address.CreateSelfManagingCollection(this);
+
+   public string Email { get; private set; } = &quot;&quot;;
+   public IReadOnlyEntityCollection&lt;Address, Guid&gt; Addresses =&gt; _addresses.Entities;
+
+   public Address AddAddress(string street) =&gt; _addresses.AddByPublishing(new UserTevent.Address.Added(Guid.NewGuid(), street));
+
+   public static User Register(string email)
+   {
+      var user = new User();
+      user.Publish(new UserTevent.Registered(new TaggregateId(), email));
+      return user;
+   }
+}
+</code></pre>
+<p>The user keeps its addresses in a collection that manages itself: <code>CreateSelfManagingCollection</code> makes it, and the
+user routes the address tevents to it with <code>Entities</code>. The collection creates an address when an <code>IAdded</code> arrives,
+routes every other address tevent to the address whose id it carries, and removes an address when its <code>IRemoved</code>
+arrives. <code>Entities</code> is the collection as the user's code reads it: in creation order, or by id.</p>
+<p><code>AddByPublishing</code> publishes a created tevent, and returns the tentity it created.</p>
+<h2 id="using-it">Using it</h2>
+<pre><code class="lang-csharp">var user = User.Register(&quot;ada@example.com&quot;);
+var home = user.AddAddress(&quot;12 Marylebone Road&quot;);
+home.MoveTo(&quot;1 St James's Square&quot;);
+//home.Street is now &quot;1 St James's Square&quot;, and user.Addresses[home.Id] is home.
+home.Remove();
+//user.Addresses is empty again.
+</code></pre>
+</article>
+
+        <div class="contribution d-print-none">
+        </div>
+
+        <div class="next-article d-print-none border-top" id="nextArticle"></div>
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

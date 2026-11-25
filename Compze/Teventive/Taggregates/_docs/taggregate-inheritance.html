@@ -85,61 +85,107 @@
         </div>
 
         <article data-uid="">
-
-<div class="NOTE">
-<h5>Note</h5>
-<p>Here we are entering less well charted waters. We are confident about the design we present here. However, full, support for routing tevents like this, and for building taggregates in this way, is still a work in progress.</p>
-</div>
 <h1 id="taggregate-inheritance">Taggregate Inheritance</h1>
-<p>So far we have adressed the inheritance hierarchy of tevents within a single taggregate. Now let's look at what happens when we inherit one taggregate from another. Let's go with a trivial and classic example to make the point with as little distraction as possible. Animals.</p>
+
+<p>A taggregate class can inherit another, as any class can. Here <code>Cat</code> and <code>Dog</code> inherit <code>Animal</code>, and the tevents of <code>Animal</code> are theirs too: a cat's birth and a dog's birth are both an <code>IAnimalTevent.IBorn</code>.</p>
 <pre><code class="lang-csharp">interface IAnimalTevent : ITaggregateTevent
 {
    interface IBorn : IAnimalTevent, ITaggregateCreatedTevent;
 }
-
-interface ICatTevent : IAnimalTevent;
-interface IDogTevent : IAnimalTevent;
-</code></pre><h4 id="the-problem">The problem</h4>
-<p>Now imagine you're a dog person, you only care about when dogs are born. How would you listen to just the dog born tevents?</p>
-<p>Uh oh! You can't. There is only one <code>IBorn</code> and it is shared by all the animals. Much of the point of inheritance is to reuse functionality, so we can't very well require every inheriting class to reimplement birth using a different interface. That would defeat the point.</p>
-<div class="WARNING">
-<h5>Warning</h5>
-<p>If you're thinking of using some sort of factory method pattern for generating the subclass tevents and adding inheriting interfaces for dogs. Don't. We tried it. And it turns out that you will have to mirror and duplicate the entire semantic hierarchy of the base class tevent interfaces for each inheriting class. It turns into an absolutely horrifying mess of duplication where the slightest misstep breaks things. We gave up entirely on inheriting taggregates when we had found no better way than that. Please, don't even try it.</p>
-</div>
-<h4 id="the-solution">The solution</h4>
-<p>Thankfully we eventually realized that there is an elegant simple solution built right into C#. This should be familiar:</p>
-<pre><code class="lang-csharp">IEnumerable&lt;object&gt; objects = [new(), new()];
-IEnumerable&lt;string&gt; strings = [&quot;1&quot;, &quot;2&quot;];
-objects = strings;
-</code></pre>
-<p>Do you see it? Generic covariance! <code>IEnumarable&lt;string&gt;</code> is assignable to <code>IEnumerable&lt;object&gt;</code> and assignability is how we route tevents. Eureka! Well it turns out it works. (But requires a lot of major refactorings within Compze which are still ongoing.)</p>
-<p>Rather than try to twist english into a language capable of expressing what I'm talking about, which I'm finding unmanageable, I'll use C#.</p>
+</code></pre><h2 id="telling-the-publisher-apart">Telling the publisher apart</h2>
+<p>A subscriber that cares only about dogs' births can't tell them apart by the birth tevent: there is one <code>IBorn</code>, which every animal publishes. So every taggregate publishes each tevent inside a <em>wrapper tevent</em> of its class: a generic interface that says which class of taggregate published the tevent, and whose type argument is the tevent itself.</p>
 <pre><code class="lang-csharp">interface IAnimalTevent&lt;out T&gt; : ITaggregateTevent&lt;T&gt; where T : IAnimalTevent;
 interface ICatTevent&lt;out T&gt; : IAnimalTevent&lt;T&gt; where T : IAnimalTevent;
 interface IDogTevent&lt;out T&gt; : IAnimalTevent&lt;T&gt; where T : IAnimalTevent;
 </code></pre>
-<p>So the wrapping interfaces, which take a type parameter, tell us only which class published the tevent. A <code>Cat</code> or a <code>Dog</code> instance (assuming <code>Animal</code> is abstract). The inner tevent is the real tevent that contains all the specifics of what happened.</p>
-<p>So actually, what a <code>Dog</code> publishes is never just <code>IDogTevent</code>, it is always <code>IDogTevent&lt;IAnimalTevent&gt;</code>, correspondingly a Cat publishes <code>ICatTevent&lt;IAnimalTevent&gt;</code> and the problem has been solved. Now you can listen to just the tevents from dogs by doing this:</p>
-<pre><code class="lang-csharp">registrar
-  .ForTevent&lt;IDogTevent&lt;IAnimalTevent.IBorn&gt;&gt;(born =&gt; { WriteLine($&quot;Dog Id:{born.Tevent.TaggregateId} was born!&quot;); return Task.CompletedTask; });
+<p>A dog's birth is published as an <code>IDogTevent&lt;IAnimalTevent.IBorn&gt;</code>, and a cat's as an <code>ICatTevent&lt;IAnimalTevent.IBorn&gt;</code>. Both wrappers inherit <code>IAnimalTevent&lt;T&gt;</code>, and their type parameter is covariant, <code>out T</code>, so each is also an <code>IAnimalTevent&lt;IAnimalTevent.IBorn&gt;</code>, just as an <code>IEnumerable&lt;string&gt;</code> is an <code>IEnumerable&lt;object&gt;</code>:</p>
+<pre><code class="lang-csharp">IEnumerable&lt;object&gt; objects = [new(), new()];
+IEnumerable&lt;string&gt; strings = [&quot;1&quot;, &quot;2&quot;];
+objects = strings;
 </code></pre>
-<p>Do this if you only care about cats:</p>
+<p>Since tevents are routed by type compatibility, each subscriber receives exactly what its type asks for. The births of dogs only:</p>
 <pre><code class="lang-csharp">registrar
-  .ForTevent&lt;ICatTevent&lt;IAnimalTevent.IBorn&gt;&gt;(born =&gt; { WriteLine($&quot;Cat Id:{born.Tevent.TaggregateId} was born!&quot;); return Task.CompletedTask; });
+  .ForTevent&lt;IDogTevent&lt;IAnimalTevent.IBorn&gt;&gt;(born =&gt; WriteLine($&quot;Dog Id:{born.Tevent.TaggregateId} was born!&quot;));
 </code></pre>
-<p>This if you don't care what type of animal it was:</p>
+<p>Of cats only:</p>
 <pre><code class="lang-csharp">registrar
-  .ForTevent&lt;IAnimalTevent.IBorn&gt;(born =&gt; { WriteLine($&quot;Animal Id:{born.TaggregateId} was born!&quot;); return Task.CompletedTask; });
+  .ForTevent&lt;ICatTevent&lt;IAnimalTevent.IBorn&gt;&gt;(born =&gt; WriteLine($&quot;Cat Id:{born.Tevent.TaggregateId} was born!&quot;));
 </code></pre>
-<p>And this if you care about all animals, but need handle different animals differently:</p>
+<p>Of every animal, whichever kind published it:</p>
 <pre><code class="lang-csharp">registrar
-  .ForTevent&lt;IAnimalTevent&lt;IAnimalTevent.IBorn&gt;&gt;(
-      born =&gt;
-      {
-         WriteLine($&quot;{born.GetType().Name.Replace(&quot;Tevent&quot;, &quot;&quot;)} Id: {born.Tevent.TaggregateId}, was born!&quot;);
-         return Task.CompletedTask;
-      });
+  .ForTevent&lt;IAnimalTevent.IBorn&gt;(born =&gt; WriteLine($&quot;Animal Id:{born.TaggregateId} was born!&quot;));
 </code></pre>
+<p>Of every animal, handling each kind differently:</p>
+<pre><code class="lang-csharp">registrar
+  .ForTevent&lt;IAnimalTevent&lt;IAnimalTevent.IBorn&gt;&gt;(born =&gt; WriteLine(born switch
+   {
+      ICatTevent&lt;IAnimalTevent.IBorn&gt; =&gt; $&quot;A cat was born: {born.Tevent.TaggregateId}&quot;,
+      IDogTevent&lt;IAnimalTevent.IBorn&gt; =&gt; $&quot;A dog was born: {born.Tevent.TaggregateId}&quot;,
+      _                               =&gt; $&quot;Another animal was born: {born.Tevent.TaggregateId}&quot;
+   }));
+</code></pre><h2 id="the-taggregates">The taggregates</h2>
+<p>Each kind of animal publishes its tevents in a wrapper of its own. The tevent classes mirror the interfaces: a class for each tevent, and a generic class for each wrapper.</p>
+<pre><code class="lang-csharp">abstract class AnimalTevent : TaggregateTevent, IAnimalTevent
+{
+   protected AnimalTevent() {}
+   AnimalTevent(TaggregateId taggregateId) : base(taggregateId) {}
+
+   internal class Born(TaggregateId taggregateId) : AnimalTevent(taggregateId), IAnimalTevent.IBorn;
+}
+
+class AnimalTevent&lt;T&gt;(T tevent) : TaggregateTevent&lt;T&gt;(tevent), IAnimalTevent&lt;T&gt; where T : IAnimalTevent;
+class CatTevent&lt;T&gt;(T tevent) : AnimalTevent&lt;T&gt;(tevent), ICatTevent&lt;T&gt; where T : IAnimalTevent;
+class DogTevent&lt;T&gt;(T tevent) : AnimalTevent&lt;T&gt;(tevent), IDogTevent&lt;T&gt; where T : IAnimalTevent;
+</code></pre>
+<p><code>Animal</code> is a taggregate like any other, written as on the <a href="taggregates.html">Taggregates</a> page. Its tevent routing has the applier that records when an animal was born.</p>
+<pre><code class="lang-csharp">abstract class Animal :
+   Taggregate&lt;Animal, IAnimalTevent, AnimalTevent, IAnimalTevent&lt;IAnimalTevent&gt;, AnimalTevent&lt;AnimalTevent&gt;&gt;
+{
+   protected static readonly TeventRouting&lt;Animal, IAnimalTevent&gt; AnimalAppliers = DeclareAppliers(it =&gt; it
+     .For&lt;IAnimalTevent.IBorn&gt;(static (animal, born) =&gt; animal.TimeOfBirth = born.UtcTimeStamp));
+
+   public DateTime TimeOfBirth { get; private set; }
+
+   protected void PublishBirth() =&gt; Publish(new AnimalTevent.Born(new TaggregateId()));
+}
+</code></pre>
+<p><code>Cat</code> and <code>Dog</code> each extend <code>Animal</code>'s routing, so <code>Animal</code>'s applier applies their births too, and each names its own wrapper class. That is all it takes for a cat's birth to be published as an <code>ICatTevent&lt;IAnimalTevent.IBorn&gt;</code>, and a dog's as an <code>IDogTevent&lt;IAnimalTevent.IBorn&gt;</code>:</p>
+<pre><code class="lang-csharp">class Cat : Animal
+{
+   static readonly TeventRouting&lt;Cat, IAnimalTevent&gt; CatAppliers = AnimalAppliers.Extend&lt;Cat&gt;(_ =&gt; {});
+   protected override TeventRouting TeventAppliers =&gt; CatAppliers;
+
+   protected override Type WrapperTeventImplementation =&gt; typeof(CatTevent&lt;&gt;);
+
+   Cat() {}
+
+   public static Cat RegisterBirth()
+   {
+      var cat = new Cat();
+      cat.PublishBirth();
+      return cat;
+   }
+}
+
+class Dog : Animal
+{
+   static readonly TeventRouting&lt;Dog, IAnimalTevent&gt; DogAppliers = AnimalAppliers.Extend&lt;Dog&gt;(_ =&gt; {});
+   protected override TeventRouting TeventAppliers =&gt; DogAppliers;
+
+   protected override Type WrapperTeventImplementation =&gt; typeof(DogTevent&lt;&gt;);
+
+   Dog() {}
+
+   public static Dog RegisterBirth()
+   {
+      var dog = new Dog();
+      dog.PublishBirth();
+      return dog;
+   }
+}
+</code></pre>
+<p>A kind of animal with tevents of its own declares their appliers in the lambda it hands <code>Extend</code>. <code>Animal</code>'s appliers apply each tevent first.</p>
+
 </article>
 
         <div class="contribution d-print-none">

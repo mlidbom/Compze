@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Concepts | Compze </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Concepts | Compze ">
+      
+      
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="../toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.jpg" alt="Compze">
+            Compze
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+
+      <div class="content">
+        <div class="actionbar">
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="">
+<h1 id="concepts">Concepts</h1>
+
+<p>Compze's libraries share a small vocabulary. Most of its words are familiar ones with a T in front: a <em>tevent</em> is an
+event, a <em>taggregate</em> an aggregate. This page defines each of them, in the order they build on each other, and links to
+where each is explained in depth.</p>
+<h2 id="what-compze-builds-on">What Compze builds on</h2>
+<p>These terms are not Compze's own. Most come from <a href="https://www.goodreads.com/en/book/show/179133.Domain_Driven_Design">Domain Driven Design</a>,
+which <a href="https://martinfowler.com/bliki/DomainDrivenDesign.html">Martin Fowler summarizes</a> as well as anyone can.</p>
+<h3 id="entity">Entity</h3>
+<p>An object defined by its identity, which stays the same while its attributes change: a user is the same user after
+changing their email.</p>
+<h3 id="aggregate">Aggregate</h3>
+<p>A cluster of domain objects that is changed as one unit, only through its root, which keeps the cluster's rules true.
+A user, with their profile and their addresses, can be one. See <a href="https://martinfowler.com/bliki/DDD_Aggregate.html">Fowler's description</a>.</p>
+<h3 id="event-command-and-query">Event, command and query</h3>
+<p>Three kinds of message. An <em>event</em> says that something happened. A <em>command</em> asks for something to be done. A <em>query</em>
+asks for information, and changes nothing.</p>
+<h3 id="routing">Routing</h3>
+<p>How a message reaches the code that handles it. Most messaging libraries route by names configured beside the
+message: a topic, a queue, a routing key.</p>
+<h2 id="type-routed-messages">Type-routed messages</h2>
+<h3 id="tessage">Tessage</h3>
+<p>A message routed by its .NET type. The type is the tessage's whole contract: there are no topic names, queue names or
+routing keys to configure, and its type also declares whether it may leave its process, and what its delivery
+guarantees. A tessage reaches the handlers whose type it is compatible with, by .NET's own rules of type compatibility.</p>
+<p>There are three kinds of tessage, the three kinds of message above: tevents, tommands and tueries.
+<a href="../Compze/Tessaging/_docs/introduction.html">Tessaging</a> sends and delivers them, and
+<a href="../Compze/Tessaging/_docs/tessage-types.html">Tessage types</a> shows how each is declared.</p>
+<h3 id="tevent">Tevent</h3>
+<p>A tessage that says something happened: a type-routed event. It reaches every handler subscribed to a type it is
+compatible with: none, one or many.</p>
+<p>Tevents are declared as interfaces that inherit each other, each adding meaning to the ones it inherits. So the
+subscribers to <code>IUserRegistered</code> also receive an <code>IUserImported</code>, declared as <code>IUserImported : IUserRegistered</code>,
+including the kinds of registration added after they were written. <a href="../Compze/Teventive/Taggregates/_docs/definition.html">Tevents</a>
+defines them in full.</p>
+<h3 id="tommand">Tommand</h3>
+<p>A tessage that tells its one handler to do something: a type-routed command. Its sender either doesn't wait for it to
+be handled, the TessageBus's exactly-once tommands, or waits, and may get a result, Typermedia's tommands.
+See <a href="../Compze/Tessaging/_docs/tessage-types.html#tommands-exactly-one-handler">Tessage types</a>.</p>
+<h3 id="tuery">Tuery</h3>
+<p>A tessage that asks its one handler a question, and changes nothing: a type-routed query. Its type declares the type
+of its answer: a tuery that answers with an account is an <code>ITuery&lt;AccountResource&gt;</code>.
+See <a href="../Compze/Tessaging/Typermedia/_docs/declaring-an-api.html">Declaring a typermedia API</a>.</p>
+<h2 id="teventive-domain-models">Teventive domain models</h2>
+<h3 id="teventive">Teventive</h3>
+<p>Changing state only by applying tevents. A teventive class doesn't set its state directly: it publishes a tevent that
+says what happened, and the tevent's applier changes the state. Applying the same tevents again rebuilds the same
+state. <em>Teventive programming</em> models a domain this way, in tevents whose types say what they mean.</p>
+<h3 id="taggregate">Taggregate</h3>
+<p>An aggregate that is teventive: its state changes only by applying the tevents it publishes, and every tevent it
+publishes carries its id. See <a href="../Compze/Teventive/Taggregates/_docs/taggregates.html">Taggregates</a>, and
+<a href="../Compze/Teventive/Taggregates/_docs/taggregate-inheritance.html">Taggregate inheritance</a> for taggregates that inherit
+each other.</p>
+<h3 id="tomponent">Tomponent</h3>
+<p>A component of one taggregate, with state of its own, teventive like the taggregate. Its tevents are part of the
+taggregate's tevent hierarchy, carry the taggregate's id, and reach subscribers as the taggregate's.
+See <a href="../Compze/Teventive/Taggregates/_docs/tomponents.html">Tomponents</a>.</p>
+<h3 id="tentity">Tentity</h3>
+<p>An entity of one taggregate: a part with an id of its own, of which the taggregate can hold any number, teventive like
+the taggregate. Its tevents are the taggregate's, as a tomponent's are, and also carry its own id.
+See <a href="../Compze/Teventive/Taggregates/_docs/tentities.html">Tentities</a>.</p>
+<h3 id="shared-tomponent">Shared tomponent</h3>
+<p>A tomponent written once, and used in many different taggregates without duplicating its code.
+See <a href="../Compze/Teventive/Taggregates/_docs/shared-tomponents.html">Shared tomponents</a>.</p>
+<h3 id="shared-tentity">Shared tentity</h3>
+<p>A tentity written once, and kept in a collection by many different taggregates.
+See <a href="../Compze/Teventive/Taggregates/_docs/shared-tentities.html">Shared tentities</a>.</p>
+<h3 id="taggregate-store">Taggregate store</h3>
+<p>Where taggregates are kept. A <em>tevent store</em> keeps every tevent a taggregate has published, and rebuilds the taggregate
+by applying them again. A <em>memory image state store</em> keeps the taggregates' state.</p>
+<h2 id="compzes-libraries">Compze's libraries</h2>
+<h3 id="teventive-1">Teventive</h3>
+<p>Teventive programming: tevents, taggregates, and the stores that keep them. Start with
+<a href="../Compze/Teventive/Taggregates/_docs/definition.html">Tevents</a>.</p>
+<h3 id="tessaging">Tessaging</h3>
+<p>Compze's messaging: it sends and delivers tessages, within one process and between endpoints. Its two communication
+styles are the <em>TessageBus</em>, which publishes tevents and sends tommands without waiting for them to be handled, and
+Typermedia. Start with <a href="../Compze/Tessaging/_docs/introduction.html">Tessaging</a>.</p>
+<h3 id="endpoint">Endpoint</h3>
+<p>What lets tessages cross between the parts of a system that don't share a container: handlers of its own, a transport
+through which the other endpoints reach it, and an identity that stays the same across processes and restarts.
+See <a href="../Compze/Tessaging/_docs/endpoints.html">Endpoints</a>.</p>
+<h3 id="typermedia">Typermedia</h3>
+<p>APIs that are browsed much like a website. A typermedia API's tueries are its links, its tommands are its forms, and
+the resources they return carry the links and forms that lead on. Start with
+<a href="../Compze/Tessaging/Typermedia/_docs/introduction.html">Typermedia APIs</a>.</p>
+
+</article>
+
+        <div class="contribution d-print-none">
+        </div>
+
+        <div class="next-article d-print-none border-top" id="nextArticle"></div>
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

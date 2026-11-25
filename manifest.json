@@ -199,10 +199,20 @@
     },
     {
       "type": "Conceptual",
-      "source_relative_path": "Compze/Teventive/Taggregates/_docs/reusable-components.md",
+      "source_relative_path": "Compze/Teventive/Taggregates/_docs/shared-tentities.md",
       "output": {
         ".html": {
-          "relative_path": "Compze/Teventive/Taggregates/_docs/reusable-components.html"
+          "relative_path": "Compze/Teventive/Taggregates/_docs/shared-tentities.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "Compze/Teventive/Taggregates/_docs/shared-tomponents.md",
+      "output": {
+        ".html": {
+          "relative_path": "Compze/Teventive/Taggregates/_docs/shared-tomponents.html"
         }
       },
       "version": ""
@@ -213,6 +223,26 @@
       "output": {
         ".html": {
           "relative_path": "Compze/Teventive/Taggregates/_docs/taggregate-inheritance.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "Compze/Teventive/Taggregates/_docs/taggregates.md",
+      "output": {
+        ".html": {
+          "relative_path": "Compze/Teventive/Taggregates/_docs/taggregates.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "Compze/Teventive/Taggregates/_docs/tentities.md",
+      "output": {
+        ".html": {
+          "relative_path": "Compze/Teventive/Taggregates/_docs/tentities.html"
         }
       },
       "version": ""
@@ -236,6 +266,16 @@
         },
         ".json": {
           "relative_path": "Compze/Teventive/Taggregates/_docs/toc.json"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "Compze/Teventive/Taggregates/_docs/tomponents.md",
+      "output": {
+        ".html": {
+          "relative_path": "Compze/Teventive/Taggregates/_docs/tomponents.html"
         }
       },
       "version": ""
@@ -302,23 +342,10 @@
     },
     {
       "type": "Conceptual",
-      "source_relative_path": "docs/prerequisite-terms.md",
+      "source_relative_path": "docs/concepts.md",
       "output": {
         ".html": {
-          "relative_path": "docs/prerequisite-terms.html"
-        }
-      },
-      "version": ""
-    },
-    {
-      "type": "Toc",
-      "source_relative_path": "docs/toc.yml",
-      "output": {
-        ".html": {
-          "relative_path": "docs/toc.html"
-        },
-        ".json": {
-          "relative_path": "docs/toc.json"
+          "relative_path": "docs/concepts.html"
         }
       },
       "version": ""

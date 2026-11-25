@@ -91,6 +91,8 @@
 <p>You are absolutely not expected to understand all the how's and why's of this definition the first time you read it. Think of it as combination cheat sheet and teaser.</p>
 </div>
 <h1 id="tevents">Tevents</h1>
+<p>A tevent is an event, a message saying that something happened, that Compze routes by its .NET type: a type-routed event. Its type is its whole contract. The type declares what the tevent means, in as much detail as the domain needs, and decides which subscribers receive it. Tevents are what <a href="../../../../docs/concepts.html#teventive">teventive programming</a> models a domain in, and <a href="../../../Tessaging/_docs/introduction.html">Tessaging</a> delivers them.</p>
+<p>What sets a tevent apart from an event as most systems have them:</p>
 <h4 id="declare-their-meaning-through-their-type">Declare their meaning through their type</h4>
 <p>Tevents use the type system of the language in which they are implemented to declare their meaning, in as much detail and as unambiguously as possible. All the semantics of the event should be part of the declaration of the event type.</p>
 <h4 id="are-always-interfaces">Are always interfaces</h4>
@@ -98,10 +100,10 @@
 <h4 id="implements-itevent">Implements <code>ITevent</code></h4>
 <p>Every tevent implements <code>ITevent</code></p>
 <h4 id="are-routed-by-type-compatibility">Are routed by type compatibility</h4>
-<p>The type of a tevent is the means through which tevents are routed to subscribers. Every single type-compatible registered handler method, local or remote, will be called when a tevent is published.</p>
+<p>The type of a tevent is the means through which tevents are routed to subscribers. Every single type-compatible registered handler method will be called when a tevent is published: in the publishing process, and, for a tevent whose type makes it remotable, in every other endpoint that subscribes to it (see <a href="../../../Tessaging/_docs/delivery-guarantees.html">Tessaging's delivery guarantees</a>).</p>
 <p>To illustrate: Given that the method <code>void HandleTevent(ISomeTevent tevent)</code> is registered as a tevent handler, then every single tevent that can be assigned to a variable of type <code>ISomeTevent</code> will be delivered to <code>HandleTevent</code></p>
 <h5 id="this-type-compatibility-includes-support-for-generic-covariance">This type compatibility includes support for generic covariance</h5>
-<p>Interface inheritance is not enough to model realistic domains effectively. To support inheritance of tevent based taggregates, and reusable tevent based components, tevents leverage generic covariance. The covariant wrapper interface is <code>IPublisherTevent&lt;out TTevent&gt;</code>: a wrapper whose own type identifies the tevent's publisher while its type parameter carries the wrapped tevent's full type.</p>
+<p>Interface inheritance is not enough to model realistic domains effectively. To support inheritance of <a href="../../../../docs/concepts.html#taggregate">taggregates</a>, and reusable tevent based components, tevents leverage generic covariance. The covariant wrapper interface is <code>IPublisherTevent&lt;out TTevent&gt;</code>: a wrapper whose own type identifies the tevent's publisher while its type parameter carries the wrapped tevent's full type.</p>
 <p>For example: this handler: <code>void HandleTevent(IPublisherTevent&lt;ITevent&gt; tevent)</code> would be called whenever any type of <code>IPublisherTevent&lt;T&gt;</code> was published. <code>IPublisherTevent&lt;IUserTevent&gt;</code>, <code>IPublisherTevent&lt;IAnimalTevent&gt;</code> and so on.</p>
 <p>Likewise, given a publisher-specific wrapper interface <code>IAnimalTevent&lt;out T&gt; : IPublisherTevent&lt;T&gt;;</code> when any <code>IAnimalTevent&lt;T&gt;</code> was published, the above handler would also be called.</p>
 

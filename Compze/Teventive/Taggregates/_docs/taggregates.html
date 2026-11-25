@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Taggregates | Compze </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Taggregates | Compze ">
+      
+      
+      <link rel="icon" href="../../../../favicon.ico">
+      <link rel="stylesheet" href="../../../../public/docfx.min.css">
+      <link rel="stylesheet" href="../../../../public/main.css">
+      <meta name="docfx:navrel" content="../../../../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../../../../">
+      
+      
+      
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../../../../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../../../../index.html">
+            <img id="logo" class="svg" src="../../../../logo.jpg" alt="Compze">
+            Compze
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="">
+<h1 id="taggregates">Taggregates</h1>
+
+<p>A taggregate is an <a href="../../../../docs/concepts.html#aggregate">aggregate</a> whose state changes only by applying the tevents it
+publishes. It never sets its own state directly: it publishes a tevent that says what happened, and that tevent's
+<em>applier</em> changes the state. Every tevent it publishes carries its id.</p>
+<p>This page writes one: a <code>User</code>, which publishes user tevents like those of the previous pages.</p>
+<h2 id="its-tevents">Its tevents</h2>
+<p>A taggregate's tevents are rooted in an interface of its own, which inherits <code>ITaggregateTevent</code>, the interface every
+taggregate's tevents implement. They are nested as on the <a href="tevent-naming.html">tevent naming</a> page:</p>
+<pre><code class="lang-csharp">interface IUserTevent : ITaggregateTevent
+{
+   interface IPropertyUpdated : IUserTevent
+   {
+      interface IEmail : IPropertyUpdated
+      {
+         string Email { get; }
+      }
+   }
+
+   interface IRegistered : IUserTevent, ITaggregateCreatedTevent, IPropertyUpdated.IEmail;
+   interface IChangedEmail : IUserTevent, IPropertyUpdated.IEmail;
+}
+</code></pre>
+<p><code>IRegistered</code> is also an <code>ITaggregateCreatedTevent</code>: the tevent that creates a user, and gives it its id. Both
+<code>IRegistered</code> and <code>IChangedEmail</code> are <code>IPropertyUpdated.IEmail</code>, as on the <a href="property-updated-tevents.html">property updated tevents</a>
+page.</p>
+<h2 id="its-wrapper-tevent">Its wrapper tevent</h2>
+<p>A taggregate publishes each of its tevents inside a <em>wrapper tevent</em>, which says which class of taggregate published
+it. Every taggregate declares the interface of its wrapper; <a href="taggregate-inheritance.html">taggregate inheritance</a> shows
+what it makes possible.</p>
+<pre><code class="lang-csharp">interface IUserTevent&lt;out T&gt; : ITaggregateTevent&lt;T&gt; where T : IUserTevent;
+</code></pre><h2 id="the-tevent-classes">The tevent classes</h2>
+<p>Something must implement the interfaces. The classes mirror them: a class for each tevent, deriving from
+<code>TaggregateTevent</code>, and a generic class for the wrapper.</p>
+<pre><code class="lang-csharp">abstract class UserTevent : TaggregateTevent, IUserTevent
+{
+   protected UserTevent() {}
+   UserTevent(TaggregateId userId) : base(userId) {}
+
+   internal class Registered(TaggregateId userId, string email) : UserTevent(userId), IUserTevent.IRegistered
+   {
+      public string Email { get; } = email;
+   }
+
+   internal class ChangedEmail(string email) : UserTevent, IUserTevent.IChangedEmail
+   {
+      public string Email { get; } = email;
+   }
+}
+
+class UserTevent&lt;T&gt;(T tevent) : TaggregateTevent&lt;T&gt;(tevent), IUserTevent&lt;T&gt; where T : IUserTevent;
+</code></pre>
+<p>Only the tevent that creates a user is given its id. Every other tevent gets it from the user that publishes it.</p>
+<h2 id="the-taggregate">The taggregate</h2>
+<pre><code class="lang-csharp">class User : Taggregate&lt;User, IUserTevent, UserTevent, IUserTevent&lt;IUserTevent&gt;, UserTevent&lt;UserTevent&gt;&gt;
+{
+   static readonly TeventRouting&lt;User, IUserTevent&gt; Appliers = DeclareAppliers(it =&gt; it
+     .For&lt;IUserTevent.IPropertyUpdated.IEmail&gt;(static (user, updated) =&gt; user.Email = updated.Email));
+
+   protected override TeventRouting TeventAppliers =&gt; Appliers;
+
+   User() {}
+
+   public string Email { get; private set; } = &quot;&quot;;
+
+   public static User Register(string email)
+   {
+      var user = new User();
+      user.Publish(new UserTevent.Registered(new TaggregateId(), email));
+      return user;
+   }
+
+   public void ChangeEmail(string email) =&gt; Publish(new UserTevent.ChangedEmail(email));
+}
+</code></pre>
+<ul>
+<li><strong>It derives from <code>Taggregate&lt;...&gt;</code>.</strong> The five type arguments are the taggregate's own class, its root tevent
+interface and the class implementing it, and its wrapper tevent interface and the class implementing that.</li>
+<li><strong>It declares its tevent routing once, for the class,</strong> with <code>DeclareAppliers</code>, keeps it in a static field, and
+returns it from its override of the protected <code>TeventAppliers</code> property. Every user shares it.</li>
+<li><strong><code>For&lt;T&gt;</code> routes every tevent assignable to <code>T</code> to an applier.</strong> Here registering and changing the email both reach
+the applier of <code>IPropertyUpdated.IEmail</code>. The applier is a <code>static</code> lambda that gets the user as its first parameter,
+since the routing is shared and holds no state of its own.</li>
+<li><strong>Its state changes only in its appliers.</strong> <code>ChangeEmail</code> doesn't set <code>Email</code>: it publishes a tevent, and the applier
+sets it.</li>
+<li><strong>No public setters, and no public fields,</strong> in the taggregate or in its tevents. Compze refuses such a class the
+first time it is used: a taggregate whose state can change other than by its tevents no longer matches them.</li>
+<li><strong>A tevent that reaches no applier is an error.</strong> A taggregate's routing can let some go with <code>IgnoreUnhandled</code>.</li>
+</ul>
+<h2 id="using-it">Using it</h2>
+<pre><code class="lang-csharp">var user = User.Register(&quot;ada@example.com&quot;);
+user.ChangeEmail(&quot;ada.lovelace@example.com&quot;);
+//user.Email is now &quot;ada.lovelace@example.com&quot;, and user.Version is 2.
+</code></pre>
+<p>Publishing a tevent applies it at once. The user's <code>Version</code> counts its changes: 1 when it is created, and one more for
+each tevent it publishes.</p>
+<h2 id="where-its-tevents-go">Where its tevents go</h2>
+<p>Taggregates are kept by a <a href="../../../../docs/concepts.html#taggregate-store">taggregate store</a>. A taggregate that a store keeps
+publishes its tevents to the handlers of <a href="../../../Tessaging/_docs/in-one-process.html">Tessaging</a> right after each
+publish, inside the unit of work that changes it, as the user tevents on the <a href="introduction.html">introduction</a> page are
+handled.</p>
+<p>A taggregate can hold parts of its own: <a href="tomponents.html">tomponents</a>, and <a href="tentities.html">tentities</a>.</p>
+
+</article>
+
+        <div class="contribution d-print-none">
+        </div>
+
+        <div class="next-article d-print-none border-top" id="nextArticle"></div>
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
