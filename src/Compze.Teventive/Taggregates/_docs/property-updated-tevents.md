@@ -18,7 +18,7 @@ The reason the above code is terrible idea, is that some tevent listeners care o
 Classically the above problem has lead to projects being forced to choose between using fine-grained property-updated events and coarse-grained semantically meaningful domain events. The problem is that both choices are maintainability disasters. If you go with property-updated style events you lose virtually all ability to understand the semantics of what happened, as a single user interaction is exploded into a number of individual data atoms :grimacing: If you go with coarse-grained events, we run head first into the issues described in the previous paragraph. You cannot win as long as you accept the choice. 
 
 #### Unifying Fine-grained and Coarse-grained events
-With semantic tevents you don't need to choose. If you do this: 
+With tevents you don't need to choose. If you do this: 
 
 [!code-csharp[](property-updated-tevents.cs#IUserEmailTeventsWorking)]
 
