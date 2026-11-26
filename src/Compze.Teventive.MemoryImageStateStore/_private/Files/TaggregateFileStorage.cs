@@ -21,7 +21,7 @@ sealed class TaggregateFileStorage : ITaggregateStorage
    const string LoadCacheExtension = ".load-cache";
 
    readonly TaggregateJsonFiles _jsonFiles;
-   readonly JsonSerializerOptions _options;
+   readonly SnapshotJson _snapshotJson;
    readonly IReadOnlyDictionary<Type, SnapshotableTaggregateClass> _classes;
    readonly ITaggregateFilesLoadCache? _loadCache;
    readonly IFileSystem _files;
@@ -36,8 +36,8 @@ sealed class TaggregateFileStorage : ITaggregateStorage
       _jsonFiles = jsonFiles;
       _files = files;
       _isAcceptingNonAtomicCommitsWithADatabase = isAcceptingNonAtomicCommitsWithADatabase;
-      _options = options;
       _classes = classes.ToDictionary(it => it.Class);
+      _snapshotJson = new SnapshotJson(options, _classes.Values);
       _loadCache = loadCache;
    }
 
@@ -66,18 +66,9 @@ sealed class TaggregateFileStorage : ITaggregateStorage
    ///<summary>Nothing, as for <see cref="LockForUpdate"/>.</summary>
    public TaggregatesCommittedAfter CommittedAfter(CommitNumber lastSeen) => TaggregatesCommittedAfter.None(lastSeen);
 
-   ///<summary>Whether <paramref name="loaded"/> holds the state <paramref name="heldSnapshot"/> holds, as this storage writes state: if<br/>
-   /// the text its file holds is what the store would write for <paramref name="heldSnapshot"/>, or else if <paramref name="loaded"/>'s<br/>
-   /// snapshot serializes to that text too, the file holding the same state written otherwise, such as indented differently.</summary>
-   public bool HoldTheSameState(TaggregateSnapshot loaded, object heldSnapshot)
-   {
-      var held = Serialized(loaded.TaggregateClass, heldSnapshot);
-      return loaded.TextReadFrom == held || Serialized(loaded.TaggregateClass, loaded.Snapshot) == held;
-   }
-
-   ///<summary>What <see cref="_options"/> make of <paramref name="snapshot"/>, a snapshot of a <paramref name="taggregateClass"/>: what<br/>
-   /// the taggregate's file holds.</summary>
-   string Serialized(Type taggregateClass, object snapshot) => JsonSerializer.Serialize(snapshot, _classes[taggregateClass].SnapshotType, _options);
+   ///<summary>Whether <paramref name="loaded"/> holds the state <paramref name="heldSnapshot"/> holds, as the files hold state: see<br/>
+   /// <see cref="SnapshotJson.HoldTheSameState"/>.</summary>
+   public bool HoldTheSameState(TaggregateSnapshot loaded, object heldSnapshot) => _snapshotJson.HoldTheSameState(loaded, heldSnapshot);
 
    IReadOnlyList<LoadedFile> LoadTheFilesOf(FilesOfAClass files)
    {
@@ -146,7 +137,7 @@ sealed class TaggregateFileStorage : ITaggregateStorage
    {
       try
       {
-         foreach(var saved in toSave) write.Save(saved.Id.Value, _jsonFiles.Of(saved.TaggregateClass).FileOf(saved.Id), Serialized(saved.TaggregateClass, saved.Snapshot));
+         foreach(var saved in toSave) write.Save(saved.Id.Value, _jsonFiles.Of(saved.TaggregateClass).FileOf(saved.Id), _snapshotJson.Of(saved.TaggregateClass, saved.Snapshot));
          foreach(var deleted in toDelete) write.Delete(deleted.Value);
       }
       catch
@@ -167,7 +158,7 @@ sealed class TaggregateFileStorage : ITaggregateStorage
       {
          var text = cachedSnapshot == null ? _files.ReadAllText(file.FullPath) : null;
          var snapshot = cachedSnapshot
-                     ?? JsonSerializer.Deserialize(text!, taggregateClass.SnapshotType, _options)
+                     ?? _snapshotJson.SnapshotIn(text!, taggregateClass)
                      ?? throw new JsonException("The file holds null.");
          var taggregate = taggregateClass.Restore(snapshot);
          var (isAsLastReadOrWritten, theStoreHeldIt) = _storedFiles.Locked(it => (it.IsAsLastReadOrWritten(taggregate.Id.Value, file), it.Holds(taggregate.Id.Value)));

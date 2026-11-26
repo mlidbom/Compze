@@ -17,13 +17,13 @@ namespace Compze.Teventive.MemoryImageStateStore._private.Tables;
 sealed class TaggregateTableStorage : ITaggregateStorage
 {
    readonly IMemoryImageStateStoreSqlLayer _sqlLayer;
-   readonly JsonSerializerOptions _options;
+   readonly SnapshotJson _snapshotJson;
    readonly TaggregateClassNames _classNames;
 
-   internal TaggregateTableStorage(IMemoryImageStateStoreSqlLayer sqlLayer, JsonSerializerOptions options, TaggregateClassNames classNames)
+   internal TaggregateTableStorage(IMemoryImageStateStoreSqlLayer sqlLayer, SnapshotJson snapshotJson, TaggregateClassNames classNames)
    {
       _sqlLayer = sqlLayer;
-      _options = options;
+      _snapshotJson = snapshotJson;
       _classNames = classNames;
       CommitSignal = new CommitSignal(sqlLayer.DatabaseIdentity);
    }
@@ -73,7 +73,7 @@ sealed class TaggregateTableStorage : ITaggregateStorage
    }
 
    TaggregateRowToSave RowToSave(TaggregateSnapshot snapshot) =>
-      new(snapshot.Id, _classNames.NameOf(snapshot.TaggregateClass), JsonSerializer.Serialize(snapshot.Snapshot, _classNames.ClassOf(snapshot.TaggregateClass).SnapshotType, _options));
+      new(snapshot.Id, _classNames.NameOf(snapshot.TaggregateClass), _snapshotJson.Of(snapshot.TaggregateClass, snapshot.Snapshot));
 
    StoredTaggregate Stored(TaggregateRow row) =>
       row.Snapshot == null ? StoredTaggregate.Deleted(row.Id, row.CommittedAs) : StoredTaggregate.WithState(SnapshotIn(row), row.CommittedAs);
@@ -84,7 +84,7 @@ sealed class TaggregateTableStorage : ITaggregateStorage
       var taggregateClass = _classNames.ClassNamed(row.ClassName);
       try
       {
-         var snapshot = JsonSerializer.Deserialize(row.Snapshot!, taggregateClass.SnapshotType, _options) ?? throw new JsonException("The row holds null.");
+         var snapshot = _snapshotJson.SnapshotIn(row.Snapshot!, taggregateClass) ?? throw new JsonException("The row holds null.");
          return new TaggregateSnapshot(taggregateClass.Class, row.Id, snapshot)
                 {
                    RestoredTaggregate = taggregateClass.Restore(row.Id, snapshot),

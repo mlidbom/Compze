@@ -192,7 +192,7 @@ public sealed class MemoryImageStateStoreBuilder
       var rows = new TaggregateRowsBuilder();
       declare(rows);
       _rows = rows;
-      return DeclareStorage((resolver, classes) => new TaggregateTableStorage(resolver.Resolve<IMemoryImageStateStoreSqlLayer>(), options, new TaggregateClassNames(rows.NamesByClass, classes)));
+      return DeclareStorage((resolver, classes) => new TaggregateTableStorage(resolver.Resolve<IMemoryImageStateStoreSqlLayer>(), new SnapshotJson(options, classes), new TaggregateClassNames(rows.NamesByClass, classes)));
    }
 
    MemoryImageStateStoreBuilder DeclareStorage(Func<IRootResolver, IReadOnlyList<SnapshotableTaggregateClass>, ITaggregateStorage> storage)

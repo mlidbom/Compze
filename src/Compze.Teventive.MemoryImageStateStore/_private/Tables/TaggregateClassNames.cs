@@ -10,14 +10,13 @@ sealed class TaggregateClassNames
 {
    readonly IReadOnlyDictionary<Type, string> _nameByClass;
    readonly IReadOnlyDictionary<string, SnapshotableTaggregateClass> _classByName;
-   readonly IReadOnlyDictionary<Type, SnapshotableTaggregateClass> _classByType;
 
    ///<summary>The names <paramref name="nameByClass"/> declares for <paramref name="classes"/>, which the store keeps.</summary>
    internal TaggregateClassNames(IReadOnlyDictionary<Type, string> nameByClass, IEnumerable<SnapshotableTaggregateClass> classes)
    {
       _nameByClass = nameByClass;
-      _classByType = classes.ToDictionary(it => it.Class);
-      _classByName = _nameByClass.ToDictionary(it => it.Value, it => _classByType[it.Key]);
+      var classByType = classes.ToDictionary(it => it.Class);
+      _classByName = _nameByClass.ToDictionary(it => it.Value, it => classByType[it.Key]);
    }
 
    ///<summary>Every declared name.</summary>
@@ -26,8 +25,6 @@ sealed class TaggregateClassNames
    internal bool Declares(string name) => _classByName.ContainsKey(name);
 
    internal string NameOf(Type taggregateClass) => _nameByClass[taggregateClass];
-
-   internal SnapshotableTaggregateClass ClassOf(Type taggregateClass) => _classByType[taggregateClass];
 
    internal SnapshotableTaggregateClass ClassNamed(string name)
    {
