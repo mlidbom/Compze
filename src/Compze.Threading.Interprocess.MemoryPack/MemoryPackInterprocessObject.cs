@@ -1,4 +1,3 @@
-using Compze.Threading;
 using Compze.Threading.Interprocess.MemoryPack._private;
 using Compze.Threading.Interprocess.ResourceAccess;
 

@@ -1,7 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
 using Compze.Internals.SystemCE.IOCE;
-using Compze.Threading;
-using Compze.Threading.Interprocess;
 using Compze.Threading.Interprocess.ResourceAccess._private;
 
 namespace Compze.Threading.Interprocess.ResourceAccess;

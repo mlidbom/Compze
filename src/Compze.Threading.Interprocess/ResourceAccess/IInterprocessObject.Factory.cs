@@ -1,6 +1,3 @@
-using Compze.Threading;
-using Compze.Threading.Interprocess;
-
 namespace Compze.Threading.Interprocess.ResourceAccess;
 
 ///<summary>Factory for creating <see cref="IInterprocessObject{T}"/> instances — strongly-typed objects shared across processes via memory-mapped files.</summary>
