@@ -177,7 +177,7 @@ partial class PgSqlTeventStoreSqlLayer(PgSqlTeventStoreConnectionManager connect
                                                                                       """)
                                                                      .PrepareStatement()
                                                                      .ExecuteReaderAndSelect(reader => (TaggregateId: new TaggregateId(reader.GetGuid(0)), TeventTypeId: reader.GetInt32(1))));
-      return raw.Select(it => new TaggregateTeventTypeRow(it.TaggregateId, _typeIdInterner.GetTypeId(it.TeventTypeId))).ToList();
+      return [..raw.Select(it => new TaggregateTeventTypeRow(it.TaggregateId, _typeIdInterner.GetTypeId(it.TeventTypeId)))];
    }
 
    public IReadOnlyList<TaggregateTeventTypeRow> ListTheLastTeventOfEachTaggregate()
@@ -195,6 +195,6 @@ partial class PgSqlTeventStoreSqlLayer(PgSqlTeventStoreConnectionManager connect
                                                                                       """)
                                                                      .PrepareStatement()
                                                                      .ExecuteReaderAndSelect(reader => (TaggregateId: new TaggregateId(reader.GetGuid(0)), TeventTypeId: reader.GetInt32(1))));
-      return raw.Select(it => new TaggregateTeventTypeRow(it.TaggregateId, _typeIdInterner.GetTypeId(it.TeventTypeId))).ToList();
+      return [..raw.Select(it => new TaggregateTeventTypeRow(it.TaggregateId, _typeIdInterner.GetTypeId(it.TeventTypeId)))];
    }
 }

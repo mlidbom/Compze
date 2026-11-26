@@ -133,7 +133,7 @@ partial class SqliteTeventStoreSqlLayer(SqliteTeventStoreConnectionManager conne
                                                                                       ORDER BY {Tevent.ReadOrderIntegerPart} ASC, {Tevent.ReadOrderFractionPart} ASC
                                                                                       """)
                                                                      .ExecuteReaderAndSelect(reader => (TaggregateId: new TaggregateId(reader.GetGuidFromString(0)), TeventTypeId: reader.GetInt32(1))));
-      return raw.Select(it => new TaggregateTeventTypeRow(it.TaggregateId, _typeIdInterner.GetTypeId(it.TeventTypeId))).ToList();
+      return [..raw.Select(it => new TaggregateTeventTypeRow(it.TaggregateId, _typeIdInterner.GetTypeId(it.TeventTypeId)))];
    }
 
    public IReadOnlyList<TaggregateTeventTypeRow> ListTheLastTeventOfEachTaggregate()
@@ -150,7 +150,7 @@ partial class SqliteTeventStoreSqlLayer(SqliteTeventStoreConnectionManager conne
                                                                                              AND lastVersions.LastVersion = lastRow.{Tevent.EffectiveVersion}
                                                                                       """)
                                                                      .ExecuteReaderAndSelect(reader => (TaggregateId: new TaggregateId(reader.GetGuidFromString(0)), TeventTypeId: reader.GetInt32(1))));
-      return raw.Select(it => new TaggregateTeventTypeRow(it.TaggregateId, _typeIdInterner.GetTypeId(it.TeventTypeId))).ToList();
+      return [..raw.Select(it => new TaggregateTeventTypeRow(it.TaggregateId, _typeIdInterner.GetTypeId(it.TeventTypeId)))];
    }
 }
 
