@@ -40,8 +40,9 @@ function Add-ProjectReference {
         return # Already exists
     }
     
-    # Find or create ItemGroup for ProjectReferences
-    $itemGroup = $xml.SelectSingleNode("//ItemGroup[ProjectReference]")
+    # Find or create an unconditional ItemGroup for ProjectReferences: a conditional one is another project's FlexRef
+    # pair, whose condition would then hide this reference too
+    $itemGroup = $xml.SelectSingleNode("//ItemGroup[not(@Condition) and ProjectReference]")
     
     if (-not $itemGroup) {
         # Create a new ItemGroup

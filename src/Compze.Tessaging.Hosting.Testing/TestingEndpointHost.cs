@@ -172,6 +172,11 @@ public class TestingEndpointHost : EndpointHost
       {
          //After the endpoints are disposed: their retracting phase writes to the registry.
          _endpointRegistry.Dispose();
+         //bug: this delete failed once, in a full local run on Windows (2026-11-26, AccountManagement's
+         //   Login_with_the_correct_email_and_password_succeeds): "The process cannot access the file 'EndpointRegistry.mmf' because it is being
+         //   used by another process", just after the registry was disposed. Who held it is unknown: perhaps a virus scanner opening a file just
+         //   written, which CommitJournal.RetriedWhileAnotherProgramHoldsTheFile tries again for. Try again the same way, and name who uses the
+         //   file when giving up, as ProcessSemaphoreSpecification.DeleteTheSemaphoresDirectoryAsync does, so the next failure says who.
          _endpointRegistryDirectory.Delete(recursive: true);
       }
       catch(Exception e)

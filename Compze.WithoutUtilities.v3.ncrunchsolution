@@ -28,8 +28,6 @@
       <Value>UsePackageReference_Compze_Internals_Logging_Serilog = true</Value>
       <Value>UsePackageReference_Compze_Internals_SystemCE = true</Value>
       <Value>UsePackageReference_Compze_Internals_Testing = true</Value>
-      <Value>UsePackageReference_Compze_InterprocessObject = true</Value>
-      <Value>UsePackageReference_Compze_InterprocessObject_MemoryPack = true</Value>
       <Value>UsePackageReference_Compze_Must = true</Value>
       <Value>UsePackageReference_Compze_Tessaging_Abstractions = true</Value>
       <Value>UsePackageReference_Compze_Tessaging_MicrosoftSql = true</Value>
@@ -44,6 +42,7 @@
       <Value>UsePackageReference_Compze_Teventive_TeventStore_Typermedia = true</Value>
       <Value>UsePackageReference_Compze_Threading = true</Value>
       <Value>UsePackageReference_Compze_Threading_Interprocess = true</Value>
+      <Value>UsePackageReference_Compze_Threading_Interprocess_MemoryPack = true</Value>
       <Value>UsePackageReference_Compze_Threading_Testing = true</Value>
       <Value>UsePackageReference_Compze_TypeIdentifiers = true</Value>
       <Value>UsePackageReference_Compze_TypeIdentifiers_DependencyInjection = true</Value>

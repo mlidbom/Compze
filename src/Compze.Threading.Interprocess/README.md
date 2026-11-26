@@ -57,11 +57,54 @@ of a deadlock. A `Take` that gives up says what the lock is held for, by which p
 `TryTake(purpose, WaitTimeout.Zero)` answers at once. The lock is a file in the directory, which its holder keeps open,
 and a wait tries it every 50 milliseconds: it isn't fair, nor reentrant.
 
+### `IProcessSemaphore` — a counting semaphore between processes that a dead holder can't leave held
+
+Of its units, such as sandboxes that may run at once, each is held by one holder at a time, whichever process it is in.
+A take of several units takes them all or none, and takes are served in the order they came, so a take of many units
+isn't starved by takes of few. Each unit is held as an `IProcessLock` is, so the operating system releases the units of
+a holder whose process dies, and a take whose process dies waiting gives up its place. Windows' named `Semaphore` has
+no holders: units a dead process held are gone until it is made anew.
+
+```csharp
+var sandboxes = IProcessSemaphore.New("sandboxes", units: 16, directory);
+using(await sandboxes.TakeAsync(3, "running the scenario's three sandboxes", WaitTimeout.Minutes(20)))
+{
+    // At most 16 sandboxes run at once, whichever processes on the machine run them.
+}
+```
+
+A `Take` that gives up says who holds the units and who waits ahead: how many units, what for, which process, and
+since when. `DescribeHoldersAndWaiters()` says the same while a take waits, which giving up and taking again would lose
+its place in the order.
+
 ### `IProcessShared<T>` / `IAwaitableProcessShared<T>`
 
 Pair a shared object with a cross-process mutex to coordinate access to an external resource — a file, a port,
-a database — across processes. (For genuine cross-process shared *state*, see
-[Compze.InterprocessObject](../Compze.InterprocessObject/), which builds on this package.)
+a database — across processes. Each process has its own object: for an object the processes really share, see
+`IInterprocessObject<T>` below.
+
+### `IInterprocessObject<T>` — an object shared between processes, in a single line of code
+
+An `IAwaitableProcessShared<T>` whose object every process shares: kept in a memory-mapped file, so a change one
+process makes is visible to all the others at once, and the object survives the processes and reboots.
+
+- **Atomic updates:** every read and update holds the object's cross-process mutex, so a read-modify-write is safe.
+- **Waits for conditions:** the same condition waits as `IAwaitableMutex`, with the object loaded for each evaluation
+  of the condition and saved after an update.
+- **Recovery from corruption:** `CorruptionAction` says whether an object that can't be read is replaced with its
+  default or left as it is for you to look at. Either way the access that found it throws, saying what happened.
+- **Pluggable serialization:** JSON with `IInterprocessObjectSerializer.Json<T>()`, MemoryPack with the
+  [Compze.Threading.Interprocess.MemoryPack](https://www.nuget.org/packages/Compze.Threading.Interprocess.MemoryPack) plugin,
+  or a serializer of your own.
+
+```csharp
+using var visits = IInterprocessObject.NewGlobal("visits", IInterprocessObjectSerializer.Json<Visits>(), () => new Visits(),
+                                                 CorruptionAction.ReplaceContentWithDefaultAndThrow, maxBytes: 4 * 1024, directory);
+visits.Update(it => it.Count++);
+```
+
+It came here from Compze.InterprocessObject, which is retired: its types are in the namespace
+`Compze.Threading.Interprocess.ResourceAccess` now.
 
 ### `ISignalPollingPolicy` — the latency-versus-power knob
 

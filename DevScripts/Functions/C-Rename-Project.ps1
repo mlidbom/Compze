@@ -11,6 +11,7 @@ function C-Rename-Project {
     - Renames any associated .ncrunchproject files
     - Updates every path pointing at the project file, in all .csproj files and in all solution files (.slnx and .sln)
     - Updates InternalsVisibleTo elements naming the project's assembly
+    - Renames the package half of every FlexRef pair referencing it: its comment, property and PackageReference
     - Runs C-FlexRef-Sync, so that the FlexRef properties, conditions and package references follow the new name
 
     The script will search for and update ALL solution files found in the solution
@@ -115,13 +116,26 @@ function C-Rename-Project {
     $oldAssemblyName = '(<InternalsVisibleTo\s+Include=")' + [regex]::Escape($Old) + '(")'
     $newAssemblyName = '${1}' + $New + '${2}'
 
+    # The package half of each FlexRef pair names the project rather than pointing at it too: the pair's comment, the
+    # UsePackageReference_<Project> property its conditions test, and its PackageReference. Renamed here, each pair stays
+    # whole for C-FlexRef-Sync below, which would otherwise leave the old package half behind, guarded by a property
+    # nothing sets any more, beside a new pair.
+    $oldFlexRefProperty = 'UsePackageReference_' + [regex]::Escape($Old.Replace('.', '_')) + '\)'
+    $newFlexRefProperty = 'UsePackageReference_' + $New.Replace('.', '_') + ')'
+    $oldPackageReference = '(<PackageReference\s+Include=")' + [regex]::Escape($Old) + '(")'
+    $newPackageReference = '${1}' + $New + '${2}'
+    $oldFlexRefComment = '(<!--\s+)' + [regex]::Escape($Old) + '(\s+\S+\s+flex reference\s+-->)'
+    $newFlexRefComment = '${1}' + $New + '${2}'
+
     $filesThatCanReferenceTheProject = @(Get-AllProjectFiles -SolutionPath $SolutionPath) +
                                        @(Get-ChildItem -Path $solutionDir -Filter "*.slnx" -Recurse) +
                                        @(Get-ChildItem -Path $solutionDir -Filter "*.sln" -Recurse)
 
     foreach ($file in $filesThatCanReferenceTheProject) {
         $content = Get-Content $file.FullName -Raw
-        $updatedContent = $content -replace $oldProjectPath, $newProjectPath -replace $oldAssemblyName, $newAssemblyName
+        $updatedContent = $content -replace $oldProjectPath, $newProjectPath -replace $oldAssemblyName, $newAssemblyName `
+                                   -replace $oldFlexRefProperty, $newFlexRefProperty -replace $oldPackageReference, $newPackageReference `
+                                   -replace $oldFlexRefComment, $newFlexRefComment
 
         if ($updatedContent -ne $content) {
             Set-Content -Path $file.FullName -Value $updatedContent -NoNewline -Encoding UTF8

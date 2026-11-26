@@ -2,7 +2,7 @@ using System.Text;
 using Compze.Tessaging.Endpoints;
 using Compze.Tessaging.Endpoints.Discovery;
 using Compze.Internals.SystemCE.DiagnosticsCE;
-using Compze.InterprocessObject;
+using Compze.Threading.Interprocess.ResourceAccess;
 using Compze.Threading;
 
 namespace Compze.Hosting.SameMachine;
