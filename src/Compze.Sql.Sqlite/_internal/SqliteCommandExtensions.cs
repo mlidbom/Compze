@@ -7,4 +7,7 @@ static class SqliteCommandExtensions
 {
    public static IReadOnlyList<T> ExecuteReaderAndSelect<T>(this SqliteCommand @this, Func<SqliteDataReader, T> select) =>
       DbCommandCE.ExecuteReaderAndSelect(@this, select);
+
+   public static Task<IReadOnlyList<T>> ExecuteReaderAndSelectAsync<T>(this SqliteCommand @this, Func<SqliteDataReader, T> select) =>
+      DbCommandCE.ExecuteReaderAndSelectAsync(@this, select);
 }

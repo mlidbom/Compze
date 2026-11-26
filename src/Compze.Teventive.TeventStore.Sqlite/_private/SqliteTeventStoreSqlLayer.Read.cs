@@ -1,4 +1,5 @@
 using Compze.Abstractions;
+using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Sql.Common._internal;
 using Compze.Tessaging;
 using Compze.Teventive.TeventStore.Abstractions._internal.SqlLayer.Abstractions;
@@ -58,23 +59,33 @@ partial class SqliteTeventStoreSqlLayer(SqliteTeventStoreConnectionManager conne
    TeventDataRow ToDataRow((int TeventTypeId, string Json, TessageId TeventId, int Version, TaggregateId TaggregateId, DateTime UtcTimeStamp, TaggregateTeventStorageInformation Storage) raw) =>
       new(_typeIdInterner.GetTypeId(raw.TeventTypeId), raw.Json, raw.TeventId, raw.Version, raw.TaggregateId, raw.UtcTimeStamp, raw.Storage);
 
+   ///<remarks>The write lock is the database's write gate, which any command inside a transaction takes: no statement here takes it.</remarks>
    public IReadOnlyList<TeventDataRow> GetTaggregateHistory(TaggregateId taggregateId, bool takeWriteLock, int startAfterInsertedVersion = 0)
    {
       var raw = _connectionManager.UseCommand(suppressTransactionWarning: !takeWriteLock,
-                                          command => command.SetCommandText($"""
-
-                                                                             {CreateSelectClause()}
-                                                                             WHERE {Tevent.TaggregateId} = @{Tevent.TaggregateId}
-                                                                                 AND {Tevent.InsertedVersion} > @CachedVersion
-                                                                                 AND {Tevent.EffectiveVersion} > 0
-                                                                             ORDER BY {Tevent.ReadOrderIntegerPart} ASC, {Tevent.ReadOrderFractionPart} ASC
-                                                                             """)
-                                                            .AddMediumTextParameter(Tevent.TaggregateId, taggregateId.ToString())
-                                                            .AddParameter("CachedVersion", startAfterInsertedVersion)
-                                                            .ExecuteReaderAndSelect(ReadRawDataRow)
-                                                            .ToList());
-      return raw.Select(ToDataRow).ToList();
+                                              command => TheHistoryCommand(command, taggregateId, startAfterInsertedVersion).ExecuteReaderAndSelect(ReadRawDataRow));
+      return [..raw.Select(ToDataRow)];
    }
+
+   ///<remarks>Its command waits for the database's write gate holding no thread, as it takes part in the transaction.</remarks>
+   public async Task<IReadOnlyList<TeventDataRow>> GetTaggregateHistoryForUpdateAsync(TaggregateId taggregateId, int startAfterInsertedVersion)
+   {
+      var raw = await _connectionManager.UseCommandAsync(suppressTransactionWarning: false,
+                                                         command => TheHistoryCommand(command, taggregateId, startAfterInsertedVersion).ExecuteReaderAndSelectAsync(ReadRawDataRow)).caf();
+      return [..raw.Select(ToDataRow)];
+   }
+
+   static SqliteCommand TheHistoryCommand(SqliteCommand command, TaggregateId taggregateId, int startAfterInsertedVersion) =>
+      command.SetCommandText($"""
+
+                             {CreateSelectClause()}
+                             WHERE {Tevent.TaggregateId} = @{Tevent.TaggregateId}
+                                 AND {Tevent.InsertedVersion} > @CachedVersion
+                                 AND {Tevent.EffectiveVersion} > 0
+                             ORDER BY {Tevent.ReadOrderIntegerPart} ASC, {Tevent.ReadOrderFractionPart} ASC
+                             """)
+             .AddMediumTextParameter(Tevent.TaggregateId, taggregateId.ToString())
+             .AddParameter("CachedVersion", startAfterInsertedVersion);
 
    public IEnumerable<TeventDataRow> StreamTevents(int batchSize)
    {

@@ -8,6 +8,9 @@ interface ITeventStoreSqlLayer
    void SetupSchemaIfDatabaseUnInitialized();
 
    IReadOnlyList<TeventDataRow> GetTaggregateHistory(TaggregateId taggregateId, bool takeWriteLock, int startAfterInsertedVersion = 0);
+
+   ///<summary>As <see cref="GetTaggregateHistory"/> taking the write lock, waiting for the lock, and reading, holding no thread.</summary>
+   Task<IReadOnlyList<TeventDataRow>> GetTaggregateHistoryForUpdateAsync(TaggregateId taggregateId, int startAfterInsertedVersion);
    IEnumerable<TeventDataRow> StreamTevents(int batchSize);
    IReadOnlyList<TaggregateTeventTypeRow> ListTaggregateIdsInCreationOrder();
 

@@ -40,9 +40,26 @@ interface ICompzeSqliteConnection : IPoolableConnection, ICompzeDbConnection<Sql
          if(ambientTransaction == null) return;
 
          _transaction ??= SqliteTransactionAsTheDecision.Begin(Connection, _writeGate, ambientTransaction);
-         Contract.State.Assert(_transaction.AmbientTransaction.Equals(ambientTransaction),
-                               () => $"A SQLite connection taking part in transaction {_transaction.AmbientTransaction.TransactionInformation.LocalIdentifier} was used in another one, {ambientTransaction.TransactionInformation.LocalIdentifier}.");
+         AssertTakesPartIn(ambientTransaction);
       }
+
+      ///<summary>As <see cref="TakePartInAnyAmbientTransaction"/>, holding no thread while another transaction holds the write gate.</summary>
+      async Task TakePartInAnyAmbientTransactionAsync()
+      {
+         var ambientTransaction = Transaction.Current;
+         if(ambientTransaction == null) return;
+
+         if(_transaction == null)
+         {
+            await _writeGate.TakeAsync().caf();
+            _transaction = SqliteTransactionAsTheDecision.BeginWithTheGateTaken(Connection, _writeGate, ambientTransaction);
+         }
+         AssertTakesPartIn(ambientTransaction);
+      }
+
+      void AssertTakesPartIn(Transaction ambientTransaction) =>
+         Contract.State.Assert(_transaction!.AmbientTransaction.Equals(ambientTransaction),
+                               () => $"A SQLite connection taking part in transaction {_transaction.AmbientTransaction.TransactionInformation.LocalIdentifier} was used in another one, {ambientTransaction.TransactionInformation.LocalIdentifier}.");
 
       ///<remarks>Taking part in the ambient transaction is deliberately not done here. The connection pool opens the connection while<br/>
       /// holding its per-transaction monitor, and taking part takes the <see cref="SqliteWriteGate"/>: taking the gate under that monitor<br/>
@@ -93,7 +110,18 @@ interface ICompzeSqliteConnection : IPoolableConnection, ICompzeDbConnection<Sql
       {
          Contract.State.NotDisposed(_disposed, this);
          TakePartInAnyAmbientTransaction();
+         return CreateCommandInAnyTransaction();
+      }
 
+      public async Task<SqliteCommand> CreateCommandAsync()
+      {
+         Contract.State.NotDisposed(_disposed, this);
+         await TakePartInAnyAmbientTransactionAsync().caf();
+         return CreateCommandInAnyTransaction();
+      }
+
+      SqliteCommand CreateCommandInAnyTransaction()
+      {
          var command = Connection.CreateCommand();
          _transaction?.Includes(command);
          return command;

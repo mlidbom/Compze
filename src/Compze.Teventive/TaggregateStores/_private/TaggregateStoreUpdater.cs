@@ -34,7 +34,10 @@ sealed class TaggregateStoreUpdater : ITaggregateStoreUpdater
       SessionKeeping(typeof(TTaggregate)).TryGetForUpdate(id, out taggregate);
 
    public async Task<TTaggregate> GetForUpdateAsync<TTaggregate>(TaggregateId id) where TTaggregate : class, ITaggregate =>
-      await SessionKeeping(typeof(TTaggregate)).TryGetForUpdateAsync<TTaggregate>(id).caf() ?? throw new TaggregateNotFoundException(id);
+      await TryGetForUpdateAsync<TTaggregate>(id).caf() ?? throw new TaggregateNotFoundException(id);
+
+   public Task<TTaggregate?> TryGetForUpdateAsync<TTaggregate>(TaggregateId id) where TTaggregate : class, ITaggregate =>
+      SessionKeeping(typeof(TTaggregate)).TryGetForUpdateAsync<TTaggregate>(id);
 
    public void Add(ITaggregate taggregate) => SessionKeeping(taggregate.GetType()).Add(taggregate);
 

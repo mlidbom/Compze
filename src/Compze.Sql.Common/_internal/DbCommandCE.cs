@@ -75,6 +75,34 @@ static class DbCommandCE
       return result;
    }
 
+   ///<summary>As <see cref="ExecuteReaderAndSelect{T,TCommand,TReader}"/>, executing the command and reading its rows asynchronously.</summary>
+   public static async Task<IReadOnlyList<T>> ExecuteReaderAndSelectAsync<T, TCommand, TReader>(this TCommand @this, Func<TReader, T> select)
+      where TCommand : DbCommand
+      where TReader : DbDataReader
+   {
+      var reader = (TReader)await @this.ExecuteReaderAsync().caf();
+      await using var _ = reader.caf();
+      return await reader.SelectEachRowAsync(select).caf();
+   }
+
+   ///<summary>As <see cref="ExecuteReaderAndSelectAsync{T,TCommand,TReader}"/>, preparing the statement on the server first, asynchronously:<br/>
+   /// see <see cref="ExecutePreparedNonQueryAsync{TCommand}"/>.</summary>
+   public static async Task<IReadOnlyList<T>> ExecutePreparedReaderAndSelectAsync<T, TCommand, TReader>(this TCommand @this, Func<TReader, T> select)
+      where TCommand : DbCommand
+      where TReader : DbDataReader
+   {
+      var reader = (TReader)await @this.ExecutePreparedReaderAsync().caf();
+      await using var _ = reader.caf();
+      return await reader.SelectEachRowAsync(select).caf();
+   }
+
+   static async Task<IReadOnlyList<T>> SelectEachRowAsync<T, TReader>(this TReader reader, Func<TReader, T> select) where TReader : DbDataReader
+   {
+      var result = new List<T>();
+      while(await reader.ReadAsync().caf()) result.Add(select(reader));
+      return result;
+   }
+
    static readonly IReadOnlyList<string> ParameterPrefixes = ["@", ":"];
 
    // ReSharper disable once UnusedMember.Global : Only used when debugging,but very useful then

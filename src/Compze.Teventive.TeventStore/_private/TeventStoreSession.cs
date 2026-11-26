@@ -3,6 +3,7 @@ using Compze.Abstractions;
 using Compze.Contracts;
 using Compze.Internals.SystemCE.LinqCE;
 using Compze.Internals.SystemCE.ReactiveCE;
+using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Teventive._internal;
 using Compze.Teventive.TaggregateStores._internal;
 using Compze.Teventive.Taggregates.Tevents;
@@ -47,19 +48,28 @@ sealed class TeventStoreSession : ITaggregateStoreSession
       }
 
       //Read with the database's update lock, which the transaction holds until it completes.
-      taggregate = _store.InstanceFrom<TTaggregate>(_store.TeventStore.GetTaggregateHistoryForUpdate(id));
-      if(taggregate == null) return false;
+      taggregate = HoldTheInstanceFrom<TTaggregate>(id, _store.TeventStore.GetTaggregateHistoryForUpdate(id));
+      return taggregate != null;
+   }
+
+   public async Task<TTaggregate?> TryGetForUpdateAsync<TTaggregate>(TaggregateId id) where TTaggregate : class, ITaggregate
+   {
+      if(TryGetHeld(id, out var held)) return held == null ? null : TaggregateTeventStore.AsRequested<TTaggregate>(held);
+
+      //Read with the database's update lock, as in TryGetForUpdate, waiting for it holding no thread.
+      return HoldTheInstanceFrom<TTaggregate>(id, await _store.TeventStore.GetTaggregateHistoryForUpdateAsync(id).caf());
+   }
+
+   ///<summary>The taggregate <paramref name="id"/> built from <paramref name="history"/>, which this unit of work now holds, or null if the<br/>
+   /// history is empty.</summary>
+   TTaggregate? HoldTheInstanceFrom<TTaggregate>(TaggregateId id, IReadOnlyList<ITaggregateTevent<ITaggregateTeventWithIdentity>> history) where TTaggregate : class, ITaggregate
+   {
+      var taggregate = _store.InstanceFrom<TTaggregate>(history);
+      if(taggregate == null) return null;
 
       _heldTaggregates.Add(id, taggregate);
       FollowTheTeventStreamOf(taggregate);
-      return true;
-   }
-
-   public Task<TTaggregate?> TryGetForUpdateAsync<TTaggregate>(TaggregateId id) where TTaggregate : class, ITaggregate
-   {
-      //wip: spike (dev_docs/async-local-navigators.md): the database's update lock is waited for synchronously, inside the read
-      //   of the history. An asynchronous read, GetTaggregateHistoryForUpdateAsync on ITeventStore, would wait holding no thread.
-      return Task.FromResult(TryGetForUpdate(id, out TTaggregate? taggregate) ? taggregate : null);
+      return taggregate;
    }
 
    public void Add(ITaggregate taggregate)

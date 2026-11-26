@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 
 namespace Compze.Sql.Sqlite._private;
 
@@ -33,6 +34,13 @@ sealed class SqliteWriteGate
       //   transaction and released on whatever thread completes it, so it needs the Compze.Threading lock owned by a transaction that
       //   TaggregateUpdateLocks' todo asks for (Magnus, 2026-11-24).
       _semaphore.Wait();
+   }
+
+   ///<summary>As <see cref="Take"/>, holding no thread while another transaction holds the gate.</summary>
+   internal async Task TakeAsync()
+   {
+      //urgent: as Take's: no timeout, and nothing records who holds the gate.
+      await _semaphore.WaitAsync().caf();
    }
 
    internal void Release() => _semaphore.Release();

@@ -30,6 +30,13 @@ sealed class SqliteTransactionAsTheDecision : DatabaseTransactionAsTheDecision
    internal static SqliteTransactionAsTheDecision Begin(SqliteConnection connection, SqliteWriteGate writeGate, Transaction ambientTransaction)
    {
       writeGate.Take();
+      return BeginWithTheGateTaken(connection, writeGate, ambientTransaction);
+   }
+
+   ///<summary>As <see cref="Begin"/>, once the caller has taken <paramref name="writeGate"/>, such as with <see cref="SqliteWriteGate.TakeAsync"/>:<br/>
+   /// the transaction releases the gate as it ends, or now, if it fails to begin.</summary>
+   internal static SqliteTransactionAsTheDecision BeginWithTheGateTaken(SqliteConnection connection, SqliteWriteGate writeGate, Transaction ambientTransaction)
+   {
       SqliteTransaction databaseTransaction;
       try
       {

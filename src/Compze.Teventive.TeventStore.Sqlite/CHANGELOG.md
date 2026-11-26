@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## 0.4.0-alpha
 
+- **Reads a taggregate's history for update asynchronously,** for Compze.Teventive.TeventStore's part of `ITaggregateStoreUpdater.GetForUpdateAsync`: the database's write gate is waited for holding no thread. Requires the Compze.Teventive.TeventStore.Abstractions released with it, and the Compze.Sql.Sqlite.
 - **Internal support for Compze.Teventive.TeventStore's deleted taggregates; nothing public changes:** the store reads the type of each taggregate's last tevent, to tell the histories that end with an `ITaggregateDeletedTevent`. An application that upgrades Compze.Teventive.TeventStore to 0.7.0-alpha must upgrade this package too: the earlier version fails against it at runtime.
 - **Requires newer minor versions of other Compze packages:** Compze.Teventive.TeventStore.Abstractions 0.7.0-alpha (was 0.6.0-alpha). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
 

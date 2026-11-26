@@ -20,10 +20,10 @@ using static Compze.Must.MustActions;
 
 namespace Compze.Tests.Integration.CQRS.TaggregateStores;
 
-///<summary>A tevent store keeping users and <see cref="TestTaggregate"/>s, and a memory image state store keeping vocab and sentences, in one<br/>
-/// container: one updater, one reader and one bulk reader serve both. Each store keeps a second class, for asking for a taggregate as<br/>
-/// another class its store keeps.</summary>
-public class Given_a_tevent_store_and_a_memory_image_state_store : UniversalTestBase
+///<summary>A tevent store keeping users and <see cref="TestTaggregate"/>s, and a memory image state store keeping vocab, sentences and decks,<br/>
+/// in one container: one updater, one reader and one bulk reader serve both. Each store keeps a second class, for asking for a taggregate<br/>
+/// as another class its store keeps. Getting for update asynchronously is in the GettingForUpdateAsynchronously partial.</summary>
+public partial class Given_a_tevent_store_and_a_memory_image_state_store : UniversalTestBase
 {
    readonly IDependencyInjectionContainer _container;
    readonly TaggregateId _userId = TaggregateId.New();
@@ -31,7 +31,7 @@ public class Given_a_tevent_store_and_a_memory_image_state_store : UniversalTest
 
    protected Given_a_tevent_store_and_a_memory_image_state_store() =>
       _container = TestEnv.DIContainer.SetupTestingContainer(registrar => registrar.RequireIntegrationTestTypeMappings(),
-                                                             configureContainer: register => register.MemoryImageStateStore(store => store.Taggregate(() => new StoredVocab()).Taggregate(() => new StoredSentence())),
+                                                             configureContainer: register => register.MemoryImageStateStore(store => store.Taggregate(() => new StoredVocab()).Taggregate(() => new StoredSentence()).Taggregate(StoredDeck.Empty)),
                                                              declareTeventStoreTaggregates: store => store.Taggregate<User>().Taggregate<TestTaggregate>());
 
    protected override async Task DisposeAsyncInternal() => await _container.DisposeAsync().AsTask();
@@ -59,7 +59,7 @@ public class Given_a_tevent_store_and_a_memory_image_state_store : UniversalTest
    && message.Contains(heldClass.FullName!, StringComparison.Ordinal)
    && message.Contains(requestedClass.FullName!, StringComparison.Ordinal);
 
-   public class after_one_unit_of_work_adds_a_user_and_a_vocab : Given_a_tevent_store_and_a_memory_image_state_store
+   public partial class after_one_unit_of_work_adds_a_user_and_a_vocab : Given_a_tevent_store_and_a_memory_image_state_store
    {
       public after_one_unit_of_work_adds_a_user_and_a_vocab() => InUnitOfWork(AddAUserAndAVocab);
 

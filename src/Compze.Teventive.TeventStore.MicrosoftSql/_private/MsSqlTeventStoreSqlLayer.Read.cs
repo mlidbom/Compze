@@ -1,6 +1,7 @@
 using System.Data;
 using System.Data.SqlTypes;
 using Compze.Abstractions;
+using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Sql.Common._internal;
 using Compze.Tessaging;
 using Compze.Teventive.TeventStore.Abstractions._internal.SqlLayer.Abstractions;
@@ -72,20 +73,28 @@ partial class MsSqlTeventStoreSqlLayer(MsSqlTeventStoreConnectionManager connect
    public IReadOnlyList<TeventDataRow> GetTaggregateHistory(TaggregateId taggregateId, bool takeWriteLock, int startAfterInsertedVersion = 0)
    {
       var raw = _connectionManager.UseCommand(suppressTransactionWarning: !takeWriteLock,
-                                    command => command.SetCommandText($"""
-
-                                                                       {CreateSelectClause(takeWriteLock)}
-                                                                       WHERE {Tevent.TaggregateId} = @{Tevent.TaggregateId}
-                                                                           AND {Tevent.InsertedVersion} > @CachedVersion
-                                                                           AND {Tevent.EffectiveVersion} > 0
-                                                                       ORDER BY {Tevent.ReadOrder} ASC
-                                                                       """)
-                                                      .AddParameter(Tevent.TaggregateId, taggregateId.Value)
-                                                      .AddParameter("CachedVersion", startAfterInsertedVersion)
-                                                      .ExecuteReaderAndSelect(ReadRawDataRow)
-                                                      .ToList());
-      return raw.Select(ToDataRow).ToList();
+                                              command => TheHistoryCommand(command, taggregateId, takeWriteLock, startAfterInsertedVersion).ExecuteReaderAndSelect(ReadRawDataRow));
+      return [..raw.Select(ToDataRow)];
    }
+
+   public async Task<IReadOnlyList<TeventDataRow>> GetTaggregateHistoryForUpdateAsync(TaggregateId taggregateId, int startAfterInsertedVersion)
+   {
+      var raw = await _connectionManager.UseCommandAsync(suppressTransactionWarning: false,
+                                                         command => TheHistoryCommand(command, taggregateId, takeWriteLock: true, startAfterInsertedVersion).ExecuteReaderAndSelectAsync(ReadRawDataRow)).caf();
+      return [..raw.Select(ToDataRow)];
+   }
+
+   static SqlCommand TheHistoryCommand(SqlCommand command, TaggregateId taggregateId, bool takeWriteLock, int startAfterInsertedVersion) =>
+      command.SetCommandText($"""
+
+                             {CreateSelectClause(takeWriteLock)}
+                             WHERE {Tevent.TaggregateId} = @{Tevent.TaggregateId}
+                                 AND {Tevent.InsertedVersion} > @CachedVersion
+                                 AND {Tevent.EffectiveVersion} > 0
+                             ORDER BY {Tevent.ReadOrder} ASC
+                             """)
+             .AddParameter(Tevent.TaggregateId, taggregateId.Value)
+             .AddParameter("CachedVersion", startAfterInsertedVersion);
 
    public IEnumerable<TeventDataRow> StreamTevents(int batchSize)
    {

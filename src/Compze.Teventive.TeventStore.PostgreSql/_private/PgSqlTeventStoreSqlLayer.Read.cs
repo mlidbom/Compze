@@ -1,5 +1,7 @@
 using System.Transactions;
 using Compze.Abstractions;
+using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
+using Compze.Internals.SystemCE.TransactionsCE;
 using Compze.Sql.Common._internal;
 using Compze.Tessaging;
 using Compze.Teventive.TeventStore.Abstractions._internal.SqlLayer.Abstractions;
@@ -68,33 +70,20 @@ partial class PgSqlTeventStoreSqlLayer(PgSqlTeventStoreConnectionManager connect
       IReadOnlyList<TeventDataRow> GetHistory()
       {
          var raw = _connectionManager.UseCommand(suppressTransactionWarning: true,
-                                       command => command.SetCommandText($"""
-
-
-                                                                          {CreateSelectClause()}
-                                                                          WHERE {Tevent.TaggregateId} = @{Tevent.TaggregateId}
-                                                                              AND {Tevent.InsertedVersion} >= @CachedVersion
-                                                                              AND {Tevent.EffectiveVersion} > 0
-                                                                          ORDER BY {Tevent.ReadOrder} ASC;
-
-                                                                          """)
-                                                         .AddParameter(Tevent.TaggregateId, taggregateId.Value)
-                                                         .AddParameter("CachedVersion", startAfterInsertedVersion)
-                                                         .PrepareStatement()
-                                                         .ExecuteReaderAndSelect(ReadRawDataRow)
-                                                         .SkipWhile(it => it.Storage.InsertedVersion <= startAfterInsertedVersion)
-                                                         .ToList());
-         return raw.Select(ToDataRow).ToList();
+                                                 command => TheHistoryCommand(command, taggregateId, startAfterInsertedVersion).PrepareStatement().ExecuteReaderAndSelect(ReadRawDataRow));
+         return TheRowsAfter(startAfterInsertedVersion, raw);
       }
 
       if(takeWriteLock)
       {
-         _connectionManager.UseCommand(command => command.SetCommandText($"SELECT pg_advisory_xact_lock(hashtext(cast(@{Tevent.TaggregateId} as text)));")
-                                                         .AddParameter(Tevent.TaggregateId, taggregateId.Value)
-                                                         .PrepareStatement()
-                                                         .ExecuteNonQuery());
+         _connectionManager.UseCommand(command => TheTaggregatesLockCommand(command, taggregateId).PrepareStatement().ExecuteNonQuery());
 
          //Advisory lock serializes access. Since tevents are append-only, the lock is sufficient. Suppressing the current transaction keeps PostgreSql from incorrectly detecting a collision and failing our transactions.
+         //bug: the read outside the transaction opens a second connection while the transaction's holds the taggregate's advisory
+         //   lock. With as many units of work waiting for one taggregate's lock as the pool has connections, each holding one, the
+         //   holder gets none, and the pool deadlocks until the waiters time out, after 15 s by default. Found 2026-11-26 by
+         //   Given_a_tevent_store_and_a_memory_image_state_store's eight units of work at once, which stay below the pool's size for
+         //   it. MySQL's tevent store deadlocks the same way, through a second connection not yet located.
          using var ignore = new TransactionScope(TransactionScopeOption.Suppress);
          return GetHistory();
       } else
@@ -102,6 +91,41 @@ partial class PgSqlTeventStoreSqlLayer(PgSqlTeventStoreConnectionManager connect
          return GetHistory();
       }
    }
+
+   public async Task<IReadOnlyList<TeventDataRow>> GetTaggregateHistoryForUpdateAsync(TaggregateId taggregateId, int startAfterInsertedVersion)
+   {
+      await _connectionManager.UseCommandAsync(suppressTransactionWarning: false, command => TheTaggregatesLockCommand(command, taggregateId).ExecutePreparedNonQueryAsync()).caf();
+
+      //As in GetTaggregateHistory: the advisory lock serializes access, and the read runs outside the transaction.
+      //bug: as GetTaggregateHistory's: a second connection for the read, which deadlocks the pool when it is full.
+      return await TransactionScopeCe.SuppressAmbientAsync(async () =>
+      {
+         var raw = await _connectionManager.UseCommandAsync(suppressTransactionWarning: true,
+                                                            command => TheHistoryCommand(command, taggregateId, startAfterInsertedVersion).ExecutePreparedReaderAndSelectAsync(ReadRawDataRow)).caf();
+         return TheRowsAfter(startAfterInsertedVersion, raw);
+      }).caf();
+   }
+
+   static NpgsqlCommand TheTaggregatesLockCommand(NpgsqlCommand command, TaggregateId taggregateId) =>
+      command.SetCommandText($"SELECT pg_advisory_xact_lock(hashtext(cast(@{Tevent.TaggregateId} as text)));")
+             .AddParameter(Tevent.TaggregateId, taggregateId.Value);
+
+   static NpgsqlCommand TheHistoryCommand(NpgsqlCommand command, TaggregateId taggregateId, int startAfterInsertedVersion) =>
+      command.SetCommandText($"""
+
+
+                             {CreateSelectClause()}
+                             WHERE {Tevent.TaggregateId} = @{Tevent.TaggregateId}
+                                 AND {Tevent.InsertedVersion} >= @CachedVersion
+                                 AND {Tevent.EffectiveVersion} > 0
+                             ORDER BY {Tevent.ReadOrder} ASC;
+
+                             """)
+             .AddParameter(Tevent.TaggregateId, taggregateId.Value)
+             .AddParameter("CachedVersion", startAfterInsertedVersion);
+
+   IReadOnlyList<TeventDataRow> TheRowsAfter(int startAfterInsertedVersion, IEnumerable<(int TeventTypeId, string Json, TessageId TeventId, int Version, TaggregateId TaggregateId, DateTime UtcTimeStamp, TaggregateTeventStorageInformation Storage)> raw) =>
+      [..raw.SkipWhile(it => it.Storage.InsertedVersion <= startAfterInsertedVersion).Select(ToDataRow)];
 
    public IEnumerable<TeventDataRow> StreamTevents(int batchSize)
    {

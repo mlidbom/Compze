@@ -4,6 +4,7 @@ using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Internals.Logging;
 using Compze.Internals.SystemCE.LinqCE;
+using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tessaging.TessageBus;
 using Compze.Tessaging.TessageTypes;
 using Compze.Teventive.Taggregates.Tevents;
@@ -57,14 +58,34 @@ namespace Compze.Teventive.TeventStore;
 
    public IReadOnlyList<ITaggregateTevent<ITaggregateTeventWithIdentity>> GetTaggregateHistory(TaggregateId id) => GetTaggregateHistoryInternal(id, takeWriteLock: false);
 
+   ///<summary>As <see cref="GetTaggregateHistoryForUpdate"/>, waiting for the taggregate's lock in the database, and reading, holding no thread.</summary>
+   internal async Task<IReadOnlyList<ITaggregateTevent<ITaggregateTeventWithIdentity>>> GetTaggregateHistoryForUpdateAsync(TaggregateId id)
+   {
+      _sqlLayer.SetupSchemaIfDatabaseUnInitialized();
+      while(true)
+      {
+         var cachedTaggregateHistory = _cache.Get(id);
+         var newHistoryFromSqlLayer = await GetTaggregateTeventsForUpdateFromSqlLayerAsync(id, cachedTaggregateHistory.MaxSeenInsertedVersion).caf();
+         if(TheHistoryOf(id, cachedTaggregateHistory, newHistoryFromSqlLayer) is {} history) return history;
+      }
+   }
+
    IReadOnlyList<ITaggregateTevent<ITaggregateTeventWithIdentity>> GetTaggregateHistoryInternal(TaggregateId taggregateId, bool takeWriteLock)
    {
       _sqlLayer.SetupSchemaIfDatabaseUnInitialized();
+      while(true)
+      {
+         var cachedTaggregateHistory = _cache.Get(taggregateId);
+         var newHistoryFromSqlLayer = GetTaggregateTeventsFromSqlLayer(taggregateId, takeWriteLock, cachedTaggregateHistory.MaxSeenInsertedVersion);
+         if(TheHistoryOf(taggregateId, cachedTaggregateHistory, newHistoryFromSqlLayer) is {} history) return history;
+      }
+   }
 
-      var cachedTaggregateHistory = _cache.Get(taggregateId);
-
-      var newHistoryFromSqlLayer = GetTaggregateTeventsFromSqlLayer(taggregateId, takeWriteLock, cachedTaggregateHistory.MaxSeenInsertedVersion);
-
+   ///<summary>The history of the taggregate <paramref name="taggregateId"/>: what the cache held, <paramref name="cachedTaggregateHistory"/>,<br/>
+   /// and what the SQL layer has newer, <paramref name="newHistoryFromSqlLayer"/>, migrated and cached. Null when migrations were persisted<br/>
+   /// while the cache held the history: the cache no longer holds it, and the whole history is to be read again.</summary>
+   IReadOnlyList<ITaggregateTevent<ITaggregateTeventWithIdentity>>? TheHistoryOf(TaggregateId taggregateId, TeventCache.Entry cachedTaggregateHistory, TaggregateTeventWithRefactoringInformation[] newHistoryFromSqlLayer)
+   {
       if(newHistoryFromSqlLayer.Length == 0)
       {
          return cachedTaggregateHistory.WrappedTevents;
@@ -78,8 +99,7 @@ namespace Compze.Teventive.TeventStore;
       if(migrationsHaveBeenPersistedWhileWeHeldTeventsInCache)
       {
          _cache.Remove(taggregateId);
-         // ReSharper disable once TailRecursiveCall clarity over micro optimizations any day.
-         return GetTaggregateHistoryInternal(taggregateId, takeWriteLock);
+         return null;
       }
 
       var newTeventsFromSqlLayer = newHistoryFromSqlLayer.Select(it => it.WrappedTevent).ToArray();
@@ -122,6 +142,12 @@ namespace Compze.Teventive.TeventStore;
                                            takeWriteLock: takeWriteLock)
                      .Select(it => new TaggregateTeventWithRefactoringInformation(HydrateTevent(it), it.StorageInformation))
       ];
+
+   async Task<TaggregateTeventWithRefactoringInformation[]> GetTaggregateTeventsForUpdateFromSqlLayerAsync(TaggregateId taggregateId, int startAfterInsertedVersion) =>
+   [
+      .. (await _sqlLayer.GetTaggregateHistoryForUpdateAsync(taggregateId, startAfterInsertedVersion).caf())
+        .Select(it => new TaggregateTeventWithRefactoringInformation(HydrateTevent(it), it.StorageInformation))
+   ];
 
    static bool IsRefactoringTevent(TaggregateTeventWithRefactoringInformation tevent) => tevent.StorageInformation.RefactoringInformation != null;
 
