@@ -7,6 +7,11 @@ namespace Compze.Threading.Interprocess;
 public partial interface IMutex : ICriticalSection, IDisposable
 {
    ///<summary>Returns an <see cref="IMutex"/> that synchronizes across all processes and user login sessions on the machine.</summary>
+   ///<remarks>
+   /// Every user's processes can take it, on Unix as on Windows. .NET warns that on Unix a mutex shared by processes of users who<br/>
+   /// don't trust each other, such as root and a regular user, can be used to escalate privileges: share one only between users<br/>
+   /// who trust each other.
+   ///</remarks>
    public static IMutex Global(string name, LockTimeout? lockTimeout = null, Action? onAbandonedMutex = null) =>
       new MutexCE(name, global:true, lockTimeout, onAbandonedMutex);
 

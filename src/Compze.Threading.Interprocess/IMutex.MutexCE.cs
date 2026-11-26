@@ -46,6 +46,10 @@ public partial interface IMutex
          if(IsGlobal && RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
          {
             _mutex = WindowsGlobalMutex(name: Name);
+         } else if(IsGlobal)
+         {
+            //.NET scopes a named mutex on Unix to its user unless told otherwise, since .NET 11 and 8.0.32, 9.0.21 and 10.0.13.
+            _mutex = new(initiallyOwned: false, name: Name, options: EveryUserAndSession);
          } else
          {
             _mutex = new(initiallyOwned: false, name: Name);
@@ -101,6 +105,9 @@ public partial interface IMutex
          if(acquired) _nestingDepth.Value++;
          return acquired ? _lockDisposer : null;
       }
+
+      ///<summary>The scope of a global mutex outside Windows: shared by the processes of every user, in every session.</summary>
+      static readonly NamedWaitHandleOptions EveryUserAndSession = new() { CurrentUserOnly = false, CurrentSessionOnly = false };
 
       ///<summary>Creates a mutex configured with certain access rules required on windows to prevent exceptions when used across login sessions.</summary>
       [SupportedOSPlatform("windows")]

@@ -58,6 +58,32 @@ public class MutexCE_specification : UniversalTestBase
          using var mutex = IMutex.Global("MutexCE_specification.Global.LockTimeout_custom", LockTimeout.Seconds(7));
          mutex.LockTimeout.Must().Be(LockTimeout.Seconds(7));
       }
+
+      ///<summary>
+      /// A .NET named mutex opened for every user and session is the one every user's processes share. Since .NET 11 a named mutex<br/>
+      /// on Unix is scoped to its user unless told otherwise, and a mutex scoped so is another mutex than one of the same name for<br/>
+      /// every user.
+      ///</summary>
+      [XF] public void its_lock_keeps_a_dotNET_named_mutex_of_its_name_for_every_user_and_session_from_being_taken()
+      {
+         using var mutex = IMutex.Global(UniqueToThisProcess("MutexCE_specification.Global.every_user"));
+         using var heldLock = mutex.TakeLock();
+         using var mutexForEveryUser = new Mutex(initiallyOwned: false, mutex.Name, new NamedWaitHandleOptions { CurrentUserOnly = false, CurrentSessionOnly = false });
+         CanBeTakenOnAnotherThread(mutexForEveryUser).Must().BeFalse();
+      }
+
+      static bool CanBeTakenOnAnotherThread(Mutex mutex)
+      {
+         var taken = false;
+         var thread = new Thread(() =>
+         {
+            taken = mutex.WaitOne(TimeSpan.Zero);
+            if(taken) mutex.ReleaseMutex();
+         });
+         thread.Start();
+         thread.Join();
+         return taken;
+      }
    }
 
    public class LocalNamed : MutexCE_specification
