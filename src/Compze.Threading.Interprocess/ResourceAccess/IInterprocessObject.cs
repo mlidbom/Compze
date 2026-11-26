@@ -5,6 +5,9 @@ namespace Compze.Threading.Interprocess.ResourceAccess;
 ///</summary>
 public interface IInterprocessObject<out T> : IAwaitableProcessShared<T> where T : class
 {
+   //review-naming: Compze.Threading.Interprocess.ResourceAccess, the namespace IInterprocessObject and its serializers came to from
+   //   Compze.InterprocessObject: beside IAwaitableProcessShared<T>, which it extends, as Compze.Threading.ResourceAccess holds IShared<T>.
+
    ///<summary>Deletes the backing file from disk, destroying the shared state.</summary>
    void Delete();
 }
