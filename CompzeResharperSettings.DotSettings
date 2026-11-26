@@ -1084,51 +1084,22 @@ public void $SetupTask$()&#xD;
 	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=EBC436AD2C5BD64BB0A3CEAAFD5D526D/ReplacePattern/@EntryValue">System.Diagnostics.Contracts.Contract.Requires($parameter$ != null);</s:String>
 	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=EBC436AD2C5BD64BB0A3CEAAFD5D526D/SearchPattern/@EntryValue">if ($parameter$ == null) throw new ArgumentNullException($expression$);</s:String>
 	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=EBC436AD2C5BD64BB0A3CEAAFD5D526D/Severity/@EntryValue">WARNING</s:String>
-	<s:Boolean x:Key="/Default/PatternsAndTemplates/Todo/TodoPatterns/=10E33A02F76B9E4C96791BF941539598/@KeyIndexDefined">True</s:Boolean>
-	
-	<s:Boolean x:Key="/Default/PatternsAndTemplates/Todo/TodoPatterns/=10E33A02F76B9E4C96791BF941539598/MatchComments/@EntryValue">True</s:Boolean>
-	<s:String x:Key="/Default/PatternsAndTemplates/Todo/TodoPatterns/=10E33A02F76B9E4C96791BF941539598/Name/@EntryValue">ReviewRebuttal</s:String>
-	<s:String x:Key="/Default/PatternsAndTemplates/Todo/TodoPatterns/=10E33A02F76B9E4C96791BF941539598/Pattern/@EntryValue">(?&lt;=\W|^)(?&lt;TAG&gt;REVIEW:REBUTTAL:)(.*)</s:String>
-	<s:String x:Key="/Default/PatternsAndTemplates/Todo/TodoPatterns/=10E33A02F76B9E4C96791BF941539598/TodoIconStyle/@EntryValue">Warning</s:String>
-	<s:Boolean x:Key="/Default/PatternsAndTemplates/Todo/TodoPatterns/=4386F01B791C56499C7EA059B55FFB54/CaseSensitive/@EntryValue">False</s:Boolean>
-	
-	<s:String x:Key="/Default/PatternsAndTemplates/Todo/TodoPatterns/=4386F01B791C56499C7EA059B55FFB54/TodoIconStyle/@EntryValue">Error</s:String>
-	<s:Boolean x:Key="/Default/PatternsAndTemplates/Todo/TodoPatterns/=62F99A36FDDF9F4980DA1DFBAC7D84F2/@KeyIndexDefined">True</s:Boolean>
-	
-	<s:Boolean x:Key="/Default/PatternsAndTemplates/Todo/TodoPatterns/=62F99A36FDDF9F4980DA1DFBAC7D84F2/MatchComments/@EntryValue">True</s:Boolean>
-	<s:String x:Key="/Default/PatternsAndTemplates/Todo/TodoPatterns/=62F99A36FDDF9F4980DA1DFBAC7D84F2/Name/@EntryValue">Urgent</s:String>
-	<s:String x:Key="/Default/PatternsAndTemplates/Todo/TodoPatterns/=62F99A36FDDF9F4980DA1DFBAC7D84F2/Pattern/@EntryValue">(?&lt;=\W|^)(?&lt;TAG&gt;URGENT:)(.*)</s:String>
-	<s:String x:Key="/Default/PatternsAndTemplates/Todo/TodoPatterns/=62F99A36FDDF9F4980DA1DFBAC7D84F2/TodoIconStyle/@EntryValue">Error</s:String>
-	<s:String x:Key="/Default/PatternsAndTemplates/Todo/TodoPatterns/=961894CCC510410ABE2B99132B253C80/TodoIconStyle/@EntryValue">Question</s:String>
 	
 	
 	
 	
 	
-	<s:Boolean x:Key="/Default/PatternsAndTemplates/Todo/TodoPatterns/=AC50C31DB9FDE8428AF0165C9D063114/@KeyIndexDefined">True</s:Boolean>
-	
-	<s:Boolean x:Key="/Default/PatternsAndTemplates/Todo/TodoPatterns/=AC50C31DB9FDE8428AF0165C9D063114/MatchComments/@EntryValue">True</s:Boolean>
-	<s:String x:Key="/Default/PatternsAndTemplates/Todo/TodoPatterns/=AC50C31DB9FDE8428AF0165C9D063114/Name/@EntryValue">Refactor</s:String>
-	<s:String x:Key="/Default/PatternsAndTemplates/Todo/TodoPatterns/=AC50C31DB9FDE8428AF0165C9D063114/Pattern/@EntryValue">(?&lt;=\W|^)(?&lt;TAG&gt;REFACTOR:)(\W|$)(.*)</s:String>
-	<s:String x:Key="/Default/PatternsAndTemplates/Todo/TodoPatterns/=AC50C31DB9FDE8428AF0165C9D063114/TodoIconStyle/@EntryValue">Warning</s:String>
-	<s:Boolean x:Key="/Default/PatternsAndTemplates/Todo/TodoPatterns/=AD80C359C2647644A1D107C00E4FFF62/@KeyIndexDefined">True</s:Boolean>
-	
-	<s:Boolean x:Key="/Default/PatternsAndTemplates/Todo/TodoPatterns/=AD80C359C2647644A1D107C00E4FFF62/MatchComments/@EntryValue">True</s:Boolean>
-	<s:String x:Key="/Default/PatternsAndTemplates/Todo/TodoPatterns/=AD80C359C2647644A1D107C00E4FFF62/Name/@EntryValue">Review</s:String>
-	<s:String x:Key="/Default/PatternsAndTemplates/Todo/TodoPatterns/=AD80C359C2647644A1D107C00E4FFF62/Pattern/@EntryValue">(?&lt;=\W|^)(?&lt;TAG&gt;REVIEW:)(.*)</s:String>
-	<s:String x:Key="/Default/PatternsAndTemplates/Todo/TodoPatterns/=AD80C359C2647644A1D107C00E4FFF62/TodoIconStyle/@EntryValue">Warning</s:String>
 	
 	
 	
 	
 	
-	<s:String x:Key="/Default/PatternsAndTemplates/Todo/TodoPatterns/=C420C0F0CD979447B73CE8EC0A728DD1/Name/@EntryValue">ReviewRebuttal1</s:String>
-	<s:Boolean x:Key="/Default/PatternsAndTemplates/Todo/TodoPatterns/=C6C102DE86E322439B5BFFAC439381E3/@KeyIndexDefined">True</s:Boolean>
 	
-	<s:Boolean x:Key="/Default/PatternsAndTemplates/Todo/TodoPatterns/=C6C102DE86E322439B5BFFAC439381E3/MatchComments/@EntryValue">True</s:Boolean>
-	<s:String x:Key="/Default/PatternsAndTemplates/Todo/TodoPatterns/=C6C102DE86E322439B5BFFAC439381E3/Name/@EntryValue">Performance</s:String>
-	<s:String x:Key="/Default/PatternsAndTemplates/Todo/TodoPatterns/=C6C102DE86E322439B5BFFAC439381E3/Pattern/@EntryValue">(?&lt;=\W|^)(?&lt;TAG&gt;PERFORMANCE:)(.*)</s:String>
-	<s:String x:Key="/Default/PatternsAndTemplates/Todo/TodoPatterns/=C6C102DE86E322439B5BFFAC439381E3/TodoIconStyle/@EntryValue">Info</s:String>
+	
+	
+	
+	
+	
 	
 	<s:Boolean x:Key="/Default/ReSpeller/UserDictionaries/=en_005Fus/@KeyIndexDefined">True</s:Boolean>
 	<s:Boolean x:Key="/Default/ReSpeller/UserDictionaries/=en_005Fus/Words/=Async/@EntryIndexedValue">True</s:Boolean>
