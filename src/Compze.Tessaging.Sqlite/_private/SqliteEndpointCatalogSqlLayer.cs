@@ -38,23 +38,23 @@ partial class SqliteEndpointCatalogSqlLayer(ISqliteConnectionPool connectionFact
                    .AddDateTime2Parameter(Catalog.CreatedUtc, utcNow)
                    .ExecuteNonQueryAsync().caf()).caf();
 
-   //Sqlite has no server sessions to scope a lock to, so the lock is an OS mutex keyed on the database's identity instead
-   //(see SqliteEndpointProcessLockHold). A live holder cannot lose an OS mutex, so onLockLostWhileHeld can never fire.
+   //Sqlite has no server sessions to scope a lock to, so the lock is a process lock file beside the database instead
+   //(see SqliteEndpointProcessLockHold). A live holder cannot lose a file it holds open, so onLockLostWhileHeld can never fire.
    public async Task<ITessagingSqlLayer.IEndpointProcessLockHold?> TryTakeProcessLockAsync(string endpointName, string lockHolderDescription, Action<Exception> onLockLostWhileHeld)
    {
-      var hold = await SqliteEndpointProcessLockHold.TryTakeAsync(_connectionFactory.ConnectionString, endpointName).caf();
+      var hold = SqliteEndpointProcessLockHold.TryTake(_connectionFactory.ConnectionString, endpointName);
       if(hold == null) return null;
 
       try
       {
-         //Stamped once the mutex is held, before the hold is handed back: the live lock and its recorded holder become one
-         //fact for any process that later reads the row after being refused this lock. Unlike the server engines, the mutex
+         //Stamped once the lock is held, before the hold is handed back: the live lock and its recorded holder become one
+         //fact for any process that later reads the row after being refused this lock. Unlike the server engines, the lock
          //is not a database session, so the stamp cannot ride the lock's own connection - it is the next thing done while
          //holding it.
          await RecordLockHolderAsync(endpointName, lockHolderDescription).caf();
          return hold;
       }
-      catch //Resource cleanup, not handling: a stamp that fails must not leave the mutex held with no hold to release it.
+      catch //Resource cleanup, not handling: a stamp that fails must not leave the lock held with no hold to release it.
       {
          await hold.DisposeAsync().caf();
          throw;

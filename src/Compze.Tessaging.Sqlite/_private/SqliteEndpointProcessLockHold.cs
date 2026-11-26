@@ -1,4 +1,3 @@
-using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tessaging._internal.SqlLayer;
 using Compze.Threading;
 using Compze.Threading.Interprocess;
@@ -6,72 +5,47 @@ using Microsoft.Data.Sqlite;
 
 namespace Compze.Tessaging.Sqlite._private;
 
-///<summary>The sqlite engine's endpoint process lock: an OS-level machine-wide mutex standing in for the database-session<br/>
-/// locks the server engines use (see <see cref="ITessagingSqlLayer.IEndpointCatalogSqlLayer.TryTakeProcessLockAsync"/>) —<br/>
-/// sqlite has no server sessions to scope a lock to, but a sqlite database is machine-local by nature, so a machine-wide<br/>
-/// OS lock covers every process that could open it. The OS releases a dead process's mutex (abandonment), giving the<br/>
-/// same crash-release the server engines get from their sessions dying.</summary>
-///<remarks>An OS mutex is thread-affine: only the thread that acquired it may release it. The hold therefore runs a<br/>
-/// dedicated parked thread that acquires, waits for the release request, and releases — disposal signals it and awaits<br/>
-/// its exit.</remarks>
-class SqliteEndpointProcessLockHold : ITessagingSqlLayer.IEndpointProcessLockHold
+///<summary>The sqlite engine's held endpoint process lock: an <see cref="IProcessLock"/>, standing in for the database-session locks the server<br/>
+/// engines use (see <see cref="ITessagingSqlLayer.IEndpointCatalogSqlLayer.TryTakeProcessLockAsync"/>). Sqlite has no server sessions to scope a<br/>
+/// lock to, so the lock is a file beside the database file, which every process that can open the database can reach, and the operating system<br/>
+/// releases a dead process's lock, as the servers release a dead session's locks.</summary>
+///<remarks>An in-memory database exists only in its own process, so its lock is in Compze's folder in the temp directory, named for the process too:<br/>
+/// identical connection strings in different processes name different databases, which must never contend. So is the lock of a <c>file:</c> URI<br/>
+/// data source, which isn't a path whose directory can be found, named for the URI as it is spelled.</remarks>
+sealed class SqliteEndpointProcessLockHold : ITessagingSqlLayer.IEndpointProcessLockHold
 {
-   readonly IMutex _mutex;
-   readonly TaskCompletionSource<bool> _acquisitionResult = new(TaskCreationOptions.RunContinuationsAsynchronously);
-   readonly TaskCompletionSource _releaseRequested = new(TaskCreationOptions.RunContinuationsAsynchronously);
-   readonly TaskCompletionSource _holderThreadExited = new(TaskCreationOptions.RunContinuationsAsynchronously);
+   readonly IProcessLockHold _hold;
 
-   internal static async Task<SqliteEndpointProcessLockHold?> TryTakeAsync(string connectionString, string endpointName)
+   SqliteEndpointProcessLockHold(IProcessLockHold hold) => _hold = hold;
+
+   ///<summary>Takes the process lock of the endpoint <paramref name="endpointName"/> in the database <paramref name="connectionString"/> names, if no<br/>
+   /// other holder holds it: null if one does.</summary>
+   internal static SqliteEndpointProcessLockHold? TryTake(string connectionString, string endpointName) =>
+      ProcessLockOf(connectionString, endpointName).TryTake($"running the endpoint {endpointName}", WaitTimeout.Zero) is {} hold
+         ? new SqliteEndpointProcessLockHold(hold)
+         : null;
+
+   public ValueTask DisposeAsync()
    {
-      var hold = new SqliteEndpointProcessLockHold(connectionString, endpointName);
-      if(await hold._acquisitionResult.Task.caf()) return hold;
-
-      await hold.DisposeAsync().caf();
-      return null;
+      _hold.Dispose();
+      return ValueTask.CompletedTask;
    }
 
-   SqliteEndpointProcessLockHold(string connectionString, string endpointName)
-   {
-      _mutex = IMutex.Global(MutexName(connectionString, endpointName));
-      new Thread(HoldUntilReleaseRequested) { IsBackground = true, Name = $"EndpointProcessLockHolder:{endpointName}" }.Start();
-   }
-
-   void HoldUntilReleaseRequested()
-   {
-      var mutexLock = _mutex.TryTakeLock(LockTimeout.Zero);
-      _acquisitionResult.SetResult(mutexLock != null);
-      if(mutexLock != null)
-      {
-#pragma warning disable VSTHRD002 // On the holder's own thread, which took the mutex and must release it: completed by the release, it needs no thread-pool thread.
-         _releaseRequested.Task.GetAwaiter().GetResult();
-#pragma warning restore VSTHRD002
-         mutexLock.Dispose();
-      }
-
-      _holderThreadExited.SetResult();
-   }
-
-   public async ValueTask DisposeAsync()
-   {
-      _releaseRequested.TrySetResult();
-      await _holderThreadExited.Task.caf();
-      _mutex.Dispose();
-   }
-
-   static string MutexName(string connectionString, string endpointName)
+   static IProcessLock ProcessLockOf(string connectionString, string endpointName)
    {
       var builder = new SqliteConnectionStringBuilder(connectionString);
-      //A Mode=Memory database exists only within its own process, so the process id joins the identity: identical
-      //connection strings in different processes name different databases and must never contend.
-      var databaseIdentity = IsInMemory(builder)
-                                ? $"{builder.DataSource}|process:{Environment.ProcessId}"
-                                : BestEffortCanonicalPath(builder.DataSource);
-      return ProcessLockKeys.Name(databaseIdentity, endpointName);
+      if(IsInMemory(builder))
+         return IProcessLock.New(ProcessLockKeys.Name($"{builder.DataSource}|process:{Environment.ProcessId}", endpointName), LockDirectoryForDataSourcesWithNoDirectory());
+
+      if(builder.DataSource.StartsWith("file:", StringComparison.Ordinal))
+         return IProcessLock.New(ProcessLockKeys.Name(builder.DataSource, endpointName), LockDirectoryForDataSourcesWithNoDirectory());
+
+      //The full path, so that different spellings of the same file's path, relative and absolute, are one database with one lock.
+      var databaseFile = new FileInfo(Path.GetFullPath(builder.DataSource));
+      return IProcessLock.New(ProcessLockKeys.Name(databaseFile.FullName, endpointName), databaseFile.Directory!);
 
       static bool IsInMemory(SqliteConnectionStringBuilder builder) => builder.Mode == SqliteOpenMode.Memory || builder.DataSource == ":memory:";
-
-      //Different spellings of the same file path (relative vs absolute) must contend as one database; file: URIs are
-      //left as spelled - they are not paths GetFullPath understands.
-      static string BestEffortCanonicalPath(string dataSource) => dataSource.StartsWith("file:", StringComparison.Ordinal) ? dataSource : Path.GetFullPath(dataSource);
    }
+
+   static DirectoryInfo LockDirectoryForDataSourcesWithNoDirectory() => Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), "Compze", "EndpointProcessLocks"));
 }

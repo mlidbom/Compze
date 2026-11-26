@@ -96,10 +96,10 @@ live holder's lease went stale and a claimant legitimately split the endpoint ac
   session, so a crashed process's lock is released when the server notices its connection die — the
   endpoint's next process claims it with **no waiting and no manual cleanup** — and no pause, however
   long, can lose a live holder's lock: there is no timeout for load, a debugger, or a machine sleep to
-  overrun. SQLite has no server sessions, so there the lock is an OS-level machine-wide mutex keyed on the
-  database's identity (`SqliteEndpointProcessLockHold`) — a sqlite database is machine-local by nature, so
-  a machine-wide OS lock covers every process that could open it, and the OS releases a dead process's
-  mutex the same way the servers release a dead session's locks.
+  overrun. SQLite has no server sessions, so there the lock is an `IProcessLock`
+  (`SqliteEndpointProcessLockHold`): a file beside the database file, held open, which every process that can
+  open the database reaches, and which the OS closes when its process dies, the same way the servers release a
+  dead session's locks. An in-memory database's lock is in the temp directory, named for its process too.
 - **A claimant finding the lock held is refused immediately and loudly**
   (`EndpointAlreadyRunningInAnotherProcessException`, naming the holding process): the lock being held is
   itself proof of a live holder, so there is nothing to wait out.

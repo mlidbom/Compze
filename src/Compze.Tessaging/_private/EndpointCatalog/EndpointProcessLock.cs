@@ -69,7 +69,7 @@ class EndpointProcessLock
       var hold = _hold;
       _hold = null;
 
-      //Releasing is only ending the lock's session (or mutex): the recorded holder is deliberately left as it was, to be
+      //Releasing is only ending the lock's session (or closing sqlite's lock file): the recorded holder is deliberately left as it was, to be
       //overwritten by the next process's claim. A reader only reads the holder after being refused the lock - so it reads
       //it while the lock is held, never beside this freed one - which is why there is nothing to clear here.
       await hold.DisposeAsync().caf();
