@@ -7,7 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 ## 0.8.0-alpha
 
 - **The tevent store's SQL layer reads a taggregate's history for update asynchronously too:** a member of the internal interface that the SQL layer packages implement. Compze.Teventive.TeventStore.MicrosoftSql, .MySql, .PostgreSql and .Sqlite of the versions released with this one implement it, and those released before fail to load beside this version: upgrade them with it.
-- **Requires newer minor versions of other Compze packages:** Compze.Abstractions 0.5.0-alpha (was 0.4.0-alpha), Compze.Internals.SystemCE 0.12.0-internal (was 0.9.0-internal), Compze.Teventive 0.9.0-alpha (was 0.7.0-alpha). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
+- **Requires newer minor versions of other Compze packages:** Compze.Abstractions 0.5.0-alpha (was 0.4.0-alpha), Compze.Internals.SystemCE 0.12.1-internal (was 0.9.0-internal), Compze.Teventive 0.9.0-alpha (was 0.7.0-alpha). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
 
 ## 0.7.0-alpha
 

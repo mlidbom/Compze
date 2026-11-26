@@ -4,9 +4,13 @@ All notable changes to Compze.Internals.SystemCE will be documented in this file
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
-## 0.12.0-internal
+## 0.12.1-internal
 
 - **`IAsyncLockCE` let work started while it was held enter it later, while another flow held it.** Such work, a task say, inherits the holder's flow, and the lock counted a flow's entrances in it, so the work found itself counted in and entered without waiting, even after the hold had ended. A lock meant to keep two flows apart let them in at once. The work may still enter while the hold lasts, and the lock stays held until it leaves too; once the hold has ended, it takes its turn as any other flow does.
+- **Requires newer minor versions of other Compze packages:** Compze.Threading 0.14.0-alpha (was 0.13.0-alpha). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
+
+## 0.12.0-internal
+
 - **Breaking: `FileReadLettingItBeReplaced`, `LinesFromTheEnd` and `LinesWrittenAfterAPoint` are removed from `Compze.Internals.SystemCE.IOCE`,** as readers for needs too unusual for Compze: their one user, the tooling they came from, keeps them itself. A reader that lets a file be replaced while it reads opens it as `new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete)`. `FileReplacement` and `IdsOfTheProcessesUsingAFile` stay.
 
 ## 0.11.0-internal

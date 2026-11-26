@@ -7,7 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 ## 0.8.0-alpha
 
 - **Its part of `ITaggregateStoreUpdater.GetForUpdateAsync` and `TryGetForUpdateAsync`, of Compze.Teventive: it waits for the taggregate's lock in its database, and reads the taggregate's history, holding no thread.** With SQLite, the lock is the database's write gate, which a transaction now takes asynchronously as its first command is created asynchronously.
-- **Requires newer minor versions of other Compze packages:** Compze.Internals.SystemCE 0.12.0-internal (was 0.9.0-internal), Compze.Tessaging 0.13.0-alpha (was 0.10.0-alpha), Compze.Teventive 0.9.0-alpha (was 0.7.0-alpha), Compze.Teventive.TeventStore.Abstractions 0.8.0-alpha (was 0.7.0-alpha), Compze.Threading 0.14.0-alpha (was 0.12.0-alpha). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
+- **Requires newer minor versions of other Compze packages:** Compze.Internals.SystemCE 0.12.1-internal (was 0.9.0-internal), Compze.Tessaging 0.13.0-alpha (was 0.10.0-alpha), Compze.Teventive 0.9.0-alpha (was 0.7.0-alpha), Compze.Teventive.TeventStore.Abstractions 0.8.0-alpha (was 0.7.0-alpha), Compze.Threading 0.14.0-alpha (was 0.12.0-alpha). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
 
 ## 0.7.0-alpha
 
