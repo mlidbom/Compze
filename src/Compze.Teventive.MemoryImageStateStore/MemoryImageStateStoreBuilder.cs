@@ -13,6 +13,7 @@ using Compze.Teventive.MemoryImageStateStore.Testing;
 using Compze.Teventive.TaggregateStores._internal;
 using Compze.Teventive.Taggregates;
 using Compze.Teventive.Taggregates._internal;
+using Compze.Threading;
 using static Compze.Contracts.Contract;
 
 namespace Compze.Teventive.MemoryImageStateStore;
@@ -31,6 +32,9 @@ public sealed class MemoryImageStateStoreBuilder
    Func<IRootResolver, IReadOnlyList<SnapshotableTaggregateClass>, ITaggregateStorage>? _storage;
    TaggregateFilesBuilder? _files;
    TaggregateRowsBuilder? _rows;
+   WaitTimeout? _waitForAnotherMemoryImageToReleaseTheStorage;
+
+   WaitTimeout WaitForAnotherMemoryImageToReleaseTheStorage => _waitForAnotherMemoryImageToReleaseTheStorage ?? WaitTimeout.Zero;
 
    internal MemoryImageStateStoreBuilder(IComponentRegistrar registrar) => _registrar = registrar;
 
@@ -125,7 +129,12 @@ public sealed class MemoryImageStateStoreBuilder
    /// folder for each class, which <paramref name="declare"/> declares, holding exactly what <paramref name="options"/> make of the<br/>
    /// taggregate's snapshot. A unit of work's files are written all or none. The container then resolves <see cref="ITaggregateJsonFiles"/>,<br/>
    /// which gives the path of each taggregate's file, and the taggregate each file is the file of.</summary>
-   ///<remarks>The store keeps its own files, its journals and temporary files, in <c>.state-store</c> under <paramref name="folder"/>.<br/>
+   ///<remarks><b>One memory image at a time uses the files,</b> whichever process on the machine it is in: the store's first load takes the<br/>
+   /// lock of its files, a file in its own folder, and holds it until the container is disposed, and the operating system releases it<br/>
+   /// when the process dies. A second memory image, in another process or another container of the same process, is refused at its first<br/>
+   /// load with a <see cref="TimeoutException"/> that names the folder and the holder: what for, which process, on which machine, since<br/>
+   /// when. Unless it is declared to wait for the holder to release the files, with <see cref="WaitingForAnotherMemoryImageToReleaseTheStorage"/>.</remarks>
+   ///<remarks>The store keeps its own files, its lock, its journals and temporary files, in <c>.state-store</c> under <paramref name="folder"/>.<br/>
    /// A consumer whose files are in version control ignores that folder.<br/>
    /// <b>A unit of work that writes the files can't also hold a database connection,</b> by default. The files and a database commit<br/>
    /// one after the other, and a crash between their commits would lose the files' change, or, in an endpoint with exactly-once<br/>
@@ -165,7 +174,8 @@ public sealed class MemoryImageStateStoreBuilder
                                                                       classes,
                                                                       files.LoadCache,
                                                                       files.IsOnAFileSystemInMemory ? resolver.Resolve<FileSystemInMemory>() : FilesOnDisk.Instance,
-                                                                      files.IsAcceptingNonAtomicCommitsWithADatabase));
+                                                                      files.IsAcceptingNonAtomicCommitsWithADatabase,
+                                                                      WaitForAnotherMemoryImageToReleaseTheStorage));
       _registrar.Register(Singleton.For<ITaggregateJsonFiles, TaggregateJsonFiles>()
                                    .ResolvingFromTheRoot(servicesTheFolderIsFoundWith)
                                    .CreatedBy((IRootResolver resolver) => new TaggregateJsonFiles(folderWith(resolver), files.Declarations)));
@@ -179,16 +189,40 @@ public sealed class MemoryImageStateStoreBuilder
    /// taggregate holds the name <paramref name="declare"/> declares for its class, and exactly what <paramref name="options"/> make of<br/>
    /// its snapshot. A unit of work commits as one database transaction, which also holds whatever else the unit of work writes to the<br/>
    /// domain database, such as an exactly-once endpoint's inbox and outbox.</summary>
-   ///<remarks><b>One memory image at a time uses the tables.</b> It is built to be fast for one process: what it holds in memory is what the<br/>
-   /// tables hold, since nothing else writes them, so it reads them only as it loads, and every read reads memory, with no round trip to<br/>
-   /// the database. A unit of work's rows are written in its transaction as the transaction prepares, so they commit, or roll back, with<br/>
-   /// it; on SQLite, every transaction that writes the database runs alone, across processes too, as everything Compze does on SQLite does.</remarks>
+   ///<remarks><b>One memory image at a time uses the tables,</b> whichever process, on whichever machine, it is in: the store is built to be<br/>
+   /// fast for one process. Its first load takes a process lock of the domain database, the kind an exactly-once endpoint holds, and holds<br/>
+   /// it until the container is disposed: the database releases it when the holder's process dies. A second memory image is refused at its<br/>
+   /// first load with a <see cref="TimeoutException"/> that names the holder: what for, which process, on which machine, since when. Unless<br/>
+   /// it is declared to wait for the holder to release the tables, with <see cref="WaitingForAnotherMemoryImageToReleaseTheStorage"/>.<br/>
+   /// One lock for the database, whichever classes a store keeps: two stores can't share a database, even with classes of their own.</remarks>
+   ///<remarks>What the store holds in memory is what the tables hold, since nothing else writes them, so it reads them only as it loads, and<br/>
+   /// every read reads memory, with no round trip to the database. A unit of work's rows are written in its transaction as the transaction<br/>
+   /// prepares, so they commit, or roll back, with it; on SQLite, every transaction that writes the database runs alone, across processes<br/>
+   /// too, as everything Compze does on SQLite does. Should the database session holding the lock die, as when the database becomes<br/>
+   /// unreachable, another memory image may take the tables: the store logs it, and fails every unit of work that changes it from then on.</remarks>
    public MemoryImageStateStoreBuilder StoredInTheDomainDatabase(JsonSerializerOptions options, Action<TaggregateRowsBuilder> declare)
    {
       var rows = new TaggregateRowsBuilder();
       declare(rows);
       _rows = rows;
-      return DeclareStorage((resolver, classes) => new TaggregateTableStorage(resolver.Resolve<IMemoryImageStateStoreSqlLayer>(), new SnapshotJson(options, classes), new TaggregateClassNames(rows.NamesByClass, classes)));
+      return DeclareStorage((resolver, classes) => new TaggregateTableStorage(resolver.Resolve<IMemoryImageStateStoreSqlLayer>(), new SnapshotJson(options, classes), new TaggregateClassNames(rows.NamesByClass, classes), WaitForAnotherMemoryImageToReleaseTheStorage));
+   }
+
+   ///<summary>Has the store's first load wait at most <paramref name="atMost"/> for another memory image to release the storage, its files or<br/>
+   /// its tables, instead of failing at once: for a hand-over, as when a process starts its successor and the successor takes over the store<br/>
+   /// once the process has disposed its container. If the other memory image still holds the storage when the wait has passed, the load<br/>
+   /// fails with a <see cref="TimeoutException"/> that names the holder.</summary>
+   ///<remarks>Compze doesn't tell the holder that another memory image waits for the storage: the consumer's own hand-over does that. The wait<br/>
+   /// tries to take the storage's lock again and again, a few times a second, so it isn't fair: whoever tries first after a release takes it.<br/>
+   /// The first load waits on whichever thread uses the store first, or calls <see cref="IMemoryImageStateStore.LoadFromStorage"/>. Every other<br/>
+   /// use meanwhile waits for that load, as for any first load: for at most Compze.Threading's <see cref="LockTimeout.Default"/>, so a longer<br/>
+   /// wait for the storage fails them. Calling <see cref="IMemoryImageStateStore.LoadFromStorage"/> at the application's start keeps them out of it.</remarks>
+   public MemoryImageStateStoreBuilder WaitingForAnotherMemoryImageToReleaseTheStorage(WaitTimeout atMost)
+   {
+      //review-naming: WaitingForAnotherMemoryImageToReleaseTheStorage, and its parameter atMost.
+      State.Assert(_waitForAnotherMemoryImageToReleaseTheStorage == null, () => "How long the store waits for another memory image to release the storage is declared twice.");
+      _waitForAnotherMemoryImageToReleaseTheStorage = atMost;
+      return this;
    }
 
    MemoryImageStateStoreBuilder DeclareStorage(Func<IRootResolver, IReadOnlyList<SnapshotableTaggregateClass>, ITaggregateStorage> storage)

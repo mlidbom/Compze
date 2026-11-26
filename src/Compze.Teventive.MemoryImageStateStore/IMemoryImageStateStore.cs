@@ -11,6 +11,11 @@ namespace Compze.Teventive.MemoryImageStateStore;
 ///<remarks>The store loads every taggregate at its first use, on whatever thread that is, and inside that use's transaction, if any.<br/>
 /// <see cref="LoadFromStorage"/> called at the application's start is how a consumer chooses when, and on which thread: see<br/>
 /// <see cref="MemoryImageStateStoreRegistrar.MemoryImageStateStore"/>.</remarks>
+///<remarks>One memory image at a time uses a store's storage. The first load takes the storage's lock, and the store holds it until the<br/>
+/// container disposes it: a second memory image's first load, in another process or another container, fails with a<br/>
+/// <see cref="TimeoutException"/> naming the holder, unless it is declared to wait<br/>
+/// (<see cref="MemoryImageStateStoreBuilder.WaitingForAnotherMemoryImageToReleaseTheStorage"/>). A first load that fails takes nothing,<br/>
+/// and the next use tries again.</remarks>
 public interface IMemoryImageStateStore
 {
    ///<summary>Loads every taggregate from the storage, and replaces the committed taggregates with what it loaded: the store's first<br/>

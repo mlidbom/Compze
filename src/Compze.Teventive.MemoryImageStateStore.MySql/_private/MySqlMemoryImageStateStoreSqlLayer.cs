@@ -1,7 +1,9 @@
 using Compze.Abstractions;
 using Compze.Sql.Common._internal;
+using Compze.Sql.Common._internal.ProcessLocks;
 using Compze.Sql.MySql._internal;
 using Compze.Teventive.MemoryImageStateStore._internal.SqlLayer;
+using Compze.Threading;
 using MySqlConnector;
 using Schema = Compze.Teventive.MemoryImageStateStore._internal.SqlLayer.IMemoryImageStateStoreSqlLayer.TableSchemaStrings;
 
@@ -12,12 +14,19 @@ partial class MySqlMemoryImageStateStoreSqlLayer : IMemoryImageStateStoreSqlLaye
 {
    readonly IMySqlConnectionPool _connectionPool;
    readonly MySqlSqlLayerSchemaManager _schemaManager;
+   readonly IDatabaseProcessLocks _processLocks;
 
-   internal MySqlMemoryImageStateStoreSqlLayer(IMySqlConnectionPool connectionPool, MySqlSqlLayerSchemaManager schemaManager)
+   internal MySqlMemoryImageStateStoreSqlLayer(IMySqlConnectionPool connectionPool, MySqlSqlLayerSchemaManager schemaManager, IDatabaseProcessLocks processLocks)
    {
       _connectionPool = connectionPool;
       _schemaManager = schemaManager;
+      _processLocks = processLocks;
    }
+
+   public IDisposable? TryTakeProcessLock(string lockName, string purpose, WaitTimeout waitTimeout, Action<Exception> onLostWhileHeld) =>
+      _processLocks.TryTake(lockName, purpose, waitTimeout, onLostWhileHeld);
+
+   public string? ProcessLockHolder(string lockName) => _processLocks.HolderOf(lockName);
 
    public IReadOnlyList<TaggregateRow> ReadAll(IReadOnlyList<string> classNames)
    {

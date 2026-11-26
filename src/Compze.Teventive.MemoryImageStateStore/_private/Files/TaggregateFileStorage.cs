@@ -5,6 +5,7 @@ using Compze.Contracts;
 using Compze.Teventive.MemoryImageStateStore._internal;
 using Compze.Teventive.MemoryImageStateStore._private.Storage;
 using Compze.Teventive.Taggregates._internal;
+using Compze.Threading;
 using Compze.Threading.ResourceAccess;
 
 namespace Compze.Teventive.MemoryImageStateStore._private.Files;
@@ -16,6 +17,9 @@ namespace Compze.Teventive.MemoryImageStateStore._private.Files;
 /// Where each file is, is <see cref="TaggregateJsonFiles"/>. The store's own files, the journals, the temporary files and the caches<br/>
 /// of a <see cref="ITaggregateFilesLoadCache"/>, are in <see cref="TaggregateJsonFiles.OwnFolderName"/> under the store's folder, on<br/>
 /// the same volume as the taggregates' files, so renaming a temporary file moves no data.</remarks>
+///<remarks>One memory image at a time uses a store's files: the first load takes the store's lock in its own folder<br/>
+/// (<see cref="IFileSystem.TryTakeTheStoresLock"/>), and the storage holds it until disposed. So no other process's store, nor another<br/>
+/// container's in this process, finishes a commit as a crash's, nor writes over the files, while this one uses them.</remarks>
 sealed class TaggregateFileStorage : ITaggregateStorage
 {
    const string LoadCacheExtension = ".load-cache";
@@ -26,33 +30,36 @@ sealed class TaggregateFileStorage : ITaggregateStorage
    readonly ITaggregateFilesLoadCache? _loadCache;
    readonly IFileSystem _files;
    readonly bool _isAcceptingNonAtomicCommitsWithADatabase;
+   readonly WaitTimeout _waitForTheFiles;
    readonly IThreadShared<StoredFiles> _storedFiles = IThreadShared.New(new StoredFiles());
+
+   //Taken by the first load, under the store's loading monitor.
+   IDisposable? _theStoresLock;
 
    ///<summary>The storage of <paramref name="classes"/> in files laid out as <paramref name="jsonFiles"/> says, on <paramref name="files"/>:<br/>
    /// the disk, or a file system in memory for specifications. <paramref name="isAcceptingNonAtomicCommitsWithADatabase"/>: as<br/>
-   /// <see cref="TaggregateFilesBuilder.AcceptingNonAtomicCommitsWithADatabase"/> declares.</summary>
-   internal TaggregateFileStorage(TaggregateJsonFiles jsonFiles, JsonSerializerOptions options, IEnumerable<SnapshotableTaggregateClass> classes, ITaggregateFilesLoadCache? loadCache, IFileSystem files, bool isAcceptingNonAtomicCommitsWithADatabase)
+   /// <see cref="TaggregateFilesBuilder.AcceptingNonAtomicCommitsWithADatabase"/> declares. The first load waits at most<br/>
+   /// <paramref name="waitForTheFiles"/> for another memory image to release them.</summary>
+   internal TaggregateFileStorage(TaggregateJsonFiles jsonFiles, JsonSerializerOptions options, IEnumerable<SnapshotableTaggregateClass> classes, ITaggregateFilesLoadCache? loadCache, IFileSystem files, bool isAcceptingNonAtomicCommitsWithADatabase, WaitTimeout waitForTheFiles)
    {
       _jsonFiles = jsonFiles;
       _files = files;
       _isAcceptingNonAtomicCommitsWithADatabase = isAcceptingNonAtomicCommitsWithADatabase;
+      _waitForTheFiles = waitForTheFiles;
       _classes = classes.ToDictionary(it => it.Class);
       _snapshotJson = new SnapshotJson(options, _classes.Values);
       _loadCache = loadCache;
    }
 
-   ///<summary>Finishes any commit a crash interrupted, then loads every file of every class: from the load cache where it holds the<br/>
-   /// file unchanged, by reading the file otherwise.</summary>
+   ///<summary>Takes the store's lock, at the first load, then finishes any commit a crash interrupted, and loads every file of every class:<br/>
+   /// from the load cache where it holds the file unchanged, by reading the file otherwise.</summary>
+   ///<remarks>The lock comes first: it is what makes every journal and temporary file in the store's own folder a crash's leftovers, since no<br/>
+   /// other memory image can be preparing or carrying out a commit there.</remarks>
    public IReadOnlyList<TaggregateSnapshot> LoadAll()
    {
-      //bug: this takes every journal and temporary file in the store's own folder for a crash's leftovers, so the store assumes it is
-      //   the only process using its folder, and nothing guards that or says so. A second process loading the same folder, such as the
-      //   successor of a process that hands over to it, deletes the temporary files of a commit the first is preparing. That commit then
-      //   writes its journal, and CommitJournal.CarryOut skips each temporary file that no longer exists: the commit silently writes
-      //   nothing, while the first process's memory, and its StoredFiles, hold the new state. Only when the two carry out the same journal
-      //   at once does one of them fail a rename after its journal is written, and stop with FailFast. And each process writes over the
-      //   other's files unseen. Proposed: a lock file held for the store's life, so that a second process's first load fails, naming the
-      //   holder. Found by reading, for the Claude tooling's hub (Claude, 2026-11-24).
+      var whereItIsKept = _jsonFiles.Folder;
+      _theStoresLock ??= _files.TryTakeTheStoresLock(_jsonFiles.OwnFolder, StorageHeldByAnotherMemoryImage.PurposeOfTheLock(whereItIsKept), _waitForTheFiles)
+                      ?? throw StorageHeldByAnotherMemoryImage.Refusal(whereItIsKept, _files.HolderOfTheStoresLock(_jsonFiles.OwnFolder), _waitForTheFiles);
       CommitJournal.FinishInterruptedCommits(_files, _jsonFiles.Folder, _jsonFiles.OwnFolder);
       var loaded = _jsonFiles.Classes.SelectMany(LoadTheFilesOf).ToList();
       _storedFiles.Locked(it => it.ReplaceWith(loaded.Select(load => (load.Taggregate!.Id.Value, load.File))));
@@ -167,8 +174,8 @@ sealed class TaggregateFileStorage : ITaggregateStorage
       }
    }
 
-   ///<summary>Holds nothing that needs releasing.</summary>
-   public void Dispose() {}
+   ///<summary>Releases the store's lock, for the next memory image to take.</summary>
+   public void Dispose() => _theStoresLock?.Dispose();
 
    sealed class LoadedFile(ListedFile file, TaggregateSnapshot snapshot)
    {

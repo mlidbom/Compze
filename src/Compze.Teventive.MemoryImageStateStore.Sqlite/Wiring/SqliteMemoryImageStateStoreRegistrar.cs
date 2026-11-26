@@ -1,5 +1,6 @@
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
+using Compze.Sql.Common._internal.ProcessLocks;
 using Compze.Sql.Sqlite._internal;
 using Compze.Sql.Sqlite.Wiring._internal;
 using Compze.Teventive.MemoryImageStateStore._internal.SqlLayer;
@@ -14,7 +15,8 @@ public static class SqliteMemoryImageStateStoreRegistrar
    /// tables in the SQLite domain database this container declares, such as with <c>SqliteDomainDatabase(...)</c>, and contributes<br/>
    /// the tables to the database's schema.</summary>
    public static IComponentRegistrar SqliteMemoryImageStateStoreSqlLayer(this IComponentRegistrar registrar) =>
-      registrar.SqliteSchemaContribution(Layer.SchemaCreationSql)
+      registrar.SqliteDatabaseProcessLocks()
+               .SqliteSchemaContribution(Layer.SchemaCreationSql)
                .Register(Singleton.For<IMemoryImageStateStoreSqlLayer>()
-                                  .CreatedBy((ISqliteConnectionPool connectionPool, SqliteSqlLayerSchemaManager schemaManager) => new Layer(connectionPool, schemaManager)));
+                                  .CreatedBy((ISqliteConnectionPool connectionPool, SqliteSqlLayerSchemaManager schemaManager, IDatabaseProcessLocks processLocks) => new Layer(connectionPool, schemaManager, processLocks)));
 }

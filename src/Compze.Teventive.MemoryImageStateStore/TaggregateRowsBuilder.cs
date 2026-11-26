@@ -16,7 +16,7 @@ public sealed class TaggregateRowsBuilder
    /// <see cref="TaggregateFilesBuilder.FolderOf{TTaggregate}"/> names a class's folder: a name of the consumer's own, not the class's<br/>
    /// .NET name, so that the class can be renamed or moved and its rows still be read. Each class the store keeps is named, and no two<br/>
    /// share a name.</summary>
-   ///<remarks>A store reads only the rows of the names it declares, so stores that keep different classes can share a database.</remarks>
+   ///<remarks>A store reads only the rows of the names it declares: the rows of a class it no longer keeps are left as they are.</remarks>
    public TaggregateRowsBuilder ClassNamed<TTaggregate>(string name) where TTaggregate : class, ITaggregate
    {
       Argument.Assert(!string.IsNullOrWhiteSpace(name) && name.Length <= IMemoryImageStateStoreSqlLayer.TableSchemaStrings.ClassNameLength,

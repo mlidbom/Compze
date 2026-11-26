@@ -1,7 +1,9 @@
 using Compze.Abstractions;
 using Compze.Sql.Common._internal;
+using Compze.Sql.Common._internal.ProcessLocks;
 using Compze.Sql.Sqlite._internal;
 using Compze.Teventive.MemoryImageStateStore._internal.SqlLayer;
+using Compze.Threading;
 using Microsoft.Data.Sqlite;
 using Schema = Compze.Teventive.MemoryImageStateStore._internal.SqlLayer.IMemoryImageStateStoreSqlLayer.TableSchemaStrings;
 
@@ -12,12 +14,19 @@ partial class SqliteMemoryImageStateStoreSqlLayer : IMemoryImageStateStoreSqlLay
 {
    readonly ISqliteConnectionPool _connectionPool;
    readonly SqliteSqlLayerSchemaManager _schemaManager;
+   readonly IDatabaseProcessLocks _processLocks;
 
-   internal SqliteMemoryImageStateStoreSqlLayer(ISqliteConnectionPool connectionPool, SqliteSqlLayerSchemaManager schemaManager)
+   internal SqliteMemoryImageStateStoreSqlLayer(ISqliteConnectionPool connectionPool, SqliteSqlLayerSchemaManager schemaManager, IDatabaseProcessLocks processLocks)
    {
       _connectionPool = connectionPool;
       _schemaManager = schemaManager;
+      _processLocks = processLocks;
    }
+
+   public IDisposable? TryTakeProcessLock(string lockName, string purpose, WaitTimeout waitTimeout, Action<Exception> onLostWhileHeld) =>
+      _processLocks.TryTake(lockName, purpose, waitTimeout, onLostWhileHeld);
+
+   public string? ProcessLockHolder(string lockName) => _processLocks.HolderOf(lockName);
 
    public IReadOnlyList<TaggregateRow> ReadAll(IReadOnlyList<string> classNames)
    {

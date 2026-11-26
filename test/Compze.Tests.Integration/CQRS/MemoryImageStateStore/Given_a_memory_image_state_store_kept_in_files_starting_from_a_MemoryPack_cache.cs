@@ -35,7 +35,12 @@ public class Given_a_memory_image_state_store_kept_in_files_starting_from_a_Memo
 
    string StoresOwnFolder => Path.Combine(_folder.FullName, ".state-store");
 
-   IReadOnlyList<string> FilesInTheStoresOwnFolder => Directory.Exists(StoresOwnFolder) ? [..new DirectoryInfo(StoresOwnFolder).EnumerateFiles().Select(it => it.Name)] : [];
+   ///<summary>Every file in the store's own folder but its lock's.</summary>
+   IReadOnlyList<string> FilesInTheStoresOwnFolder => Directory.Exists(StoresOwnFolder) ? [..new DirectoryInfo(StoresOwnFolder).EnumerateFiles().Select(it => it.Name).Where(it => !IsOfTheStoresLock(it))] : [];
+
+   ///<summary>Whether <paramref name="fileName"/> names a file of the store's lock, which its own folder holds while a store has loaded: the lock<br/>
+   /// file, and on Unix the file beside it in which its holder records itself.</summary>
+   static bool IsOfTheStoresLock(string fileName) => fileName.StartsWith("memory-image-state-store.lock", StringComparison.Ordinal);
 
    ///<summary>The store last started.</summary>
    IDependencyInjectionContainer Store => _store!;
@@ -44,9 +49,16 @@ public class Given_a_memory_image_state_store_kept_in_files_starting_from_a_Memo
 
    IReadOnlyList<Guid> IdsOfAllVocabs => [..Store.RootResolver.Resolve<ITaggregateStoreBulkReader>().ReferencesToAll<CachedVocab>().Select(it => it.Id.Value).Order()];
 
-   ///<summary>Starts a store on the folder, and has it load the files, as its first use does.</summary>
+   ///<summary>Disposes the store started last, if any, as a process does as it ends, and starts another on the folder, as the next process<br/>
+   /// does, and has it load the files, as its first use does: one memory image at a time uses a store's files.</summary>
    void StartAStore()
    {
+      if(_store != null)
+      {
+         _store.Dispose();
+         _containers.Remove(_store);
+      }
+
       var builder = TestEnv.DIContainer.CreateTestingContainerBuilder();
       builder.Registrar.MemoryImageStateStore(store =>
       {
