@@ -24,4 +24,20 @@ public interface ILocalTypermediaNavigatorSession
    ///<summary>Synchronously executes the local handler for <paramref name="tommand"/> within the caller's unit of work — see<br/>
    /// <see cref="Execute{TResult}(IStrictlyLocalTommand{TResult})"/>.</summary>
    void Execute(IStrictlyLocalTommand tommand);
+
+   ///<summary>Executes the local handler for <paramref name="tuery"/> in the caller's scope, as<br/>
+   /// <see cref="Execute{TTuery,TResult}"/> does, holding no thread while the handler awaits.</summary>
+   ///<remarks>What the handler does synchronously runs on the calling thread, as it would through <see cref="Execute{TTuery,TResult}"/>:<br/>
+   /// getting a taggregate from a taggregate store, for one, is synchronous.</remarks>
+   Task<TResult> ExecuteAsync<TTuery, TResult>(IStrictlyLocalTuery<TTuery, TResult> tuery) where TTuery : IStrictlyLocalTuery<TTuery, TResult>;
+
+   ///<summary>Executes the local handler for <paramref name="tommand"/> within the caller's unit of work, as<br/>
+   /// <see cref="Execute{TResult}(IStrictlyLocalTommand{TResult})"/> does, holding no thread while the handler awaits. The<br/>
+   /// caller's ambient transaction flows across the handler's awaits.</summary>
+   ///<remarks>What the handler does synchronously runs on the calling thread: see <see cref="ExecuteAsync{TTuery,TResult}"/>.</remarks>
+   Task<TResult> ExecuteAsync<TResult>(IStrictlyLocalTommand<TResult> tommand);
+
+   ///<summary>Executes the local handler for <paramref name="tommand"/> within the caller's unit of work — see<br/>
+   /// <see cref="ExecuteAsync{TResult}(IStrictlyLocalTommand{TResult})"/>.</summary>
+   Task ExecuteAsync(IStrictlyLocalTommand tommand);
 }

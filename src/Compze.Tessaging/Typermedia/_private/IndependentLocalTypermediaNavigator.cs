@@ -2,6 +2,7 @@ using System.Transactions;
 using Compze.Contracts;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
+using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tessaging.TessageTypes;
 using JetBrains.Annotations;
 
@@ -44,6 +45,24 @@ static class IndependentLocalTypermediaNavigatorRegistrar
    {
       AssertNoAmbientTransaction();
       _scopeFactory.ExecuteUnitOfWork(unitOfWork => unitOfWork.Resolve<ILocalTypermediaNavigatorSession>().Execute(tommand));
+   }
+
+   public async Task<TResult> ExecuteAsync<TTuery, TResult>(IStrictlyLocalTuery<TTuery, TResult> tuery) where TTuery : IStrictlyLocalTuery<TTuery, TResult>
+   {
+      AssertNoAmbientTransaction();
+      return await _scopeFactory.ExecuteInIsolatedScopeAsync(async scope => await scope.Resolve<ILocalTypermediaNavigatorSession>().ExecuteAsync(tuery).caf()).caf();
+   }
+
+   public async Task<TResult> ExecuteAsync<TResult>(IStrictlyLocalTommand<TResult> tommand)
+   {
+      AssertNoAmbientTransaction();
+      return await _scopeFactory.ExecuteUnitOfWorkAsync(async unitOfWork => await unitOfWork.Resolve<ILocalTypermediaNavigatorSession>().ExecuteAsync(tommand).caf()).caf();
+   }
+
+   public async Task ExecuteAsync(IStrictlyLocalTommand tommand)
+   {
+      AssertNoAmbientTransaction();
+      await _scopeFactory.ExecuteUnitOfWorkAsync(async unitOfWork => await unitOfWork.Resolve<ILocalTypermediaNavigatorSession>().ExecuteAsync(tommand).caf()).caf();
    }
 
    static void AssertNoAmbientTransaction() =>
