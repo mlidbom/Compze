@@ -15,14 +15,17 @@ and design rules no inspection covers.
 ## Contracts & null handling
 
 - **Nullable reference types enabled** in all projects.
-- Use Compze.Contracts:
-  - `Assert.Argument.NotNull(value)` — `ArgumentException`
-  - `Assert.State.Is(condition)` — `InvalidOperationException`
-  - `Assert.Result.NotNull(result)` — `InvalidResultException`
-  - `Assert.Invariant.Is(condition)` — `InvariantViolatedException`
-- Prefer `Assert.*` or `._assert` over manual if clauses and throwing.
-- Prefer `using static Compze.Contracts.Assert;` to call `Argument.NotNull()`, `State.Is()` etc. without the `Assert.` prefix.
-- Use `.NotNull()` extension for quick null-dereferencing.
+- Use Compze.Contracts' asserters, `Contract.Argument`, `Contract.State` and `Contract.Invariant`:
+  - `Argument.Assert(condition)` and `Argument.NotNull(value)`: an `ArgumentAssertionFailedException`, which is an
+    `ArgumentException`, or an `ArgumentNullException` for a null.
+  - `State.Assert(condition)`, `State.NotNull(value)` and `State.NotDisposed(...)`: a `StateAssertionFailedException`,
+    which is an `InvalidOperationException`.
+  - `Invariant.Assert(condition)`: an `InvariantAssertionFailedException`.
+  - `Assert` takes a message as `() => "…"` where the condition's source text, which it reports, isn't message enough.
+- A project's `.GlobalUsings.cs` usually has `global using static Compze.Contracts.Contract;`, so that `Argument` and
+  `State` need no `Contract.` prefix; the assertion methods are extension methods, which need `using Compze.Contracts;`.
+- In an expression, `value._assert().NotNull()` asserts a value and returns it as not null.
+- Prefer these over manual if clauses and throwing.
 
 ## Extension methods
 
