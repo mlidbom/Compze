@@ -14,12 +14,15 @@ static class ProbeSqlClientConcurrency
    static int _subscribed;
 
    static readonly System.Runtime.CompilerServices.ConditionalWeakTable<SqlConnection, object> SerialOfConnection = new();
+   static readonly System.Runtime.CompilerServices.ConditionalWeakTable<SqlCommand, object> ReturnedCommands = new();
    static long _lastSerial;
    internal static long SerialOf(SqlConnection connection) => (long)SerialOfConnection.GetValue(connection, _ => Interlocked.Increment(ref _lastSerial));
 
    sealed class Operation(string kind, SqlConnection? connection, string? commandText, SqlCommand? command = null)
    {
       public readonly string Kind = kind;
+      public readonly SqlCommand? Command = command;
+      public bool HasReturned => Command != null && ReturnedCommands.TryGetValue(Command, out _);
       public readonly long ConnectionObject = connection == null ? 0 : SerialOf(connection);
       public readonly string Transaction = System.Transactions.Transaction.Current?.TransactionInformation.LocalIdentifier ?? "none";
       public readonly string Parameters = command == null ? "" : string.Join(", ", command.Parameters.Cast<SqlParameter>().Take(6).Select(it => $"{it.ParameterName}={(it.Value is string text && text.Length > 40 ? text[..40] : it.Value)}"));
@@ -50,6 +53,7 @@ static class ProbeSqlClientConcurrency
       if(Interlocked.Exchange(ref _subscribed, 1) == 0)
       {
          DiagnosticListener.AllListeners.Subscribe(new AllListenersObserver());
+         Compze.Sql.Common._internal.Abstractions.ICompzeDbConnection<SqlCommand>.ProbeCommandReturned = command => ReturnedCommands.AddOrUpdate(command, true);
          Compze.Sql.Common._internal.DbConnectionPool<ICompzeMsSqlConnection, SqlCommand>.ProbeOperationsReturned =
             connection => OperationsReturned(((ICompzeMsSqlConnection.CompzeMsSqlConnection)connection).Connection);
       }
@@ -111,7 +115,7 @@ static class ProbeSqlClientConcurrency
          if(otherId == operationId) continue;
          //A reader's rows are read on the thread and connection that executed it: that nesting is the normal case.
          if(other.Thread == operation.Thread && other.ConnectionObject == operation.ConnectionObject) continue;
-         ProbeLog.Write(ReportText($"two operations at once on physical connection {id}", operation, other));
+         if(!other.HasReturned) ProbeLog.Write(ReportText($"two operations at once on physical connection {id}", operation, other));
       }
    }
 
@@ -126,7 +130,7 @@ static class ProbeSqlClientConcurrency
       if(physicalConnection is not {} id || id == Guid.Empty) return;
       if(!InFlightByPhysicalConnection.TryGetValue(id, out var inFlight)) return;
       var closing = new Operation("Close", connection, null);
-      foreach(var other in inFlight.Values) ProbeLog.Write(ReportText($"closing physical connection {id} while an operation on it is in progress", closing, other));
+      foreach(var other in inFlight.Values.Where(it => !it.HasReturned)) ProbeLog.Write(ReportText($"closing physical connection {id} while an operation on it is in progress", closing, other));
    }
 
    static string HookStatusOf(Operation other) =>

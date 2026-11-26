@@ -7,6 +7,9 @@ interface ICompzeDbConnection<out TCommand>
 {
    TCommand CreateCommand();
 
+   ///<summary>PROBE: told when the code that ran a command has returned from it.</summary>
+   internal static Action<TCommand>? ProbeCommandReturned;
+
    void UseCommand(Action<TCommand> action)
    {
       using var command = CreateCommand();
@@ -16,7 +19,14 @@ interface ICompzeDbConnection<out TCommand>
    TResult UseCommand<TResult>(Func<TCommand, TResult> action)
    {
       using var command = CreateCommand();
-      return action(command);
+      try
+      {
+         return action(command);
+      }
+      finally
+      {
+         ProbeCommandReturned?.Invoke(command);
+      }
    }
 
    async Task<TResult> UseCommandAsync<TResult>(Func<TCommand, Task<TResult>> action)
@@ -24,7 +34,14 @@ interface ICompzeDbConnection<out TCommand>
       var command = CreateCommand();
       //makes sure DisposeAsync is called without capturing sync context. We can't do it inline because then command would be ConfiguredAsyncDisposable, not TCommand
       await using var _ = command.caf();
-      return await action(command).caf();
+      try
+      {
+         return await action(command).caf();
+      }
+      finally
+      {
+         ProbeCommandReturned?.Invoke(command);
+      }
    }
 
    int ExecuteNonQuery(string commandText) => UseCommand(command => command.ExecuteNonQuery(commandText));
