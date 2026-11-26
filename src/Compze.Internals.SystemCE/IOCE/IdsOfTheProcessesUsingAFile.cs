@@ -84,6 +84,8 @@ public static class IdsOfTheProcessesUsingAFile
          var buffer = Marshal.AllocHGlobal(length);
          try
          {
+            //hack: FileProcessIdsUsingFileInformation is reserved for system use, by Windows' documentation: see
+            //   windows-process-ids-using-a-file in dev_docs/hacks-and-fragile-ways.md.
             var status = NativeMethods.NtQueryInformationFile(file, out _, buffer, length, FileProcessIdsUsingFileInformation);
             if(status == InfoLengthMismatch) continue;
             if(status != 0) throw new IOException($"Windows didn't tell which processes use {path}: NTSTATUS 0x{status:X8}.");
