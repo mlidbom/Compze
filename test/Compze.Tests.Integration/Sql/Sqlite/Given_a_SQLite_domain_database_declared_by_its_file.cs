@@ -25,7 +25,7 @@ namespace Compze.Tests.Integration.Sql.Sqlite;
 /// an application is.</summary>
 public class Given_a_SQLite_domain_database_declared_by_its_file : UniversalTestBase
 {
-   static readonly JsonSerializerOptions Options = new() { Converters = { new TaggregateIdAsAGuid() } };
+   static readonly JsonSerializerOptions Options = new();
    readonly DirectoryInfo _folder = Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), "compze-sqlite-domain-database-file", Guid.NewGuid().ToString("N")));
    readonly List<IDependencyInjectionContainer> _containers = [];
 
