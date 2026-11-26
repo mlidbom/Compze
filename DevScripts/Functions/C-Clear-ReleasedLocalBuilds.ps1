@@ -2,7 +2,7 @@
 function C-Clear-ReleasedLocalBuilds {
     <#
     .SYNOPSIS
-    Removes every local build of a Compze package version nuget.org has released, from the pending-release feed and from the NuGet global packages folder
+    Puts nuget.org's build in the place of every local build of a Compze package version nuget.org has released, in the NuGet global packages folder, and removes the version from the pending-release feed
 
     .DESCRIPTION
     A local build is a package packed on this machine rather than by the release workflow: a version published to the
@@ -14,8 +14,9 @@ function C-Clear-ReleasedLocalBuilds {
     (2026-07-25).
 
     For each released version this:
-    - removes the local build from the global packages folder (an entry whose .nupkg.metadata names a local folder as
-      its source), so the next restore downloads nuget.org's;
+    - puts nuget.org's build in the place of the local build in the global packages folder (an entry whose
+      .nupkg.metadata names a local folder as its source). It never just deletes the local build: a build between its
+      restore and its compile would find its files gone (Switch-ReleasedLocalBuildToNuGetOrgs says how);
     - removes the version from the pending-release feed, so no restore can extract the local build again;
     - warns when the feed's build came from a commit whose src/<PackageId> differs from that of nuget.org's build:
       then what ran on this machine was not what shipped. (Older releases record no commit; then it says it cannot tell.)
@@ -45,31 +46,41 @@ function C-Clear-ReleasedLocalBuilds {
     if ($feedPackages.Count -eq 0 -and $otherLocalBuilds.Count -eq 0) { return }
 
     $restorableOnNuGetOrg = Get-NuGetOrgRestorableVersions -PackageId @(@($feedPackages) + @($otherLocalBuilds) | ForEach-Object { $_.PackageId })
+    $released = @(@($feedPackages) + @($otherLocalBuilds) | Where-Object { $restorableOnNuGetOrg[$_.PackageId] -contains $_.Version.ToLowerInvariant() })
+    $toSwitch = @($released | Where-Object { Test-IsLocalBuildInGlobalPackages -GlobalPackagesDirectory $globalPackagesDirectory -PackageId $_.PackageId -Version $_.Version })
 
-    foreach ($package in $feedPackages) {
-        $packageVersion = "$($package.PackageId) $($package.Version)"
-        if ($restorableOnNuGetOrg[$package.PackageId] -notcontains $package.Version.ToLowerInvariant()) {
-            Write-Host ("$packageVersion is in the pending-release feed (built from $($package.RepositoryCommit.Substring(0, 9))) and not yet on nuget.org: " +
-                        "this machine restores the local build, and a commit referencing it fails CI elsewhere until nuget.org has it.")
-            continue
+    # Beside the global packages folder, so that a restored version's folder is renamed into it on the same volume.
+    $staging = Join-Path (Split-Path $globalPackagesDirectory -Parent) ".compze-nuget-org-builds-$([guid]::NewGuid().ToString('N'))"
+    try {
+        $nuGetOrgBuilds = if ($toSwitch.Count -gt 0) { Restore-NuGetOrgBuilds -Packages $toSwitch -Directory $staging } else { @{} }
+
+        foreach ($package in $feedPackages) {
+            $packageVersion = "$($package.PackageId) $($package.Version)"
+            if ($restorableOnNuGetOrg[$package.PackageId] -notcontains $package.Version.ToLowerInvariant()) {
+                Write-Host ("$packageVersion is in the pending-release feed (built from $($package.RepositoryCommit.Substring(0, 9))) and not yet on nuget.org: " +
+                            "this machine restores the local build, and a commit referencing it fails CI elsewhere until nuget.org has it.")
+                continue
+            }
+
+            $releasedFrom = (Read-NuGetOrgPackageManifest -PackageId $package.PackageId -Version $package.Version).RepositoryCommit
+            if (-not $releasedFrom) {
+                Write-Warning "$packageVersion on nuget.org records no build commit, so whether the local build run on this machine matched it cannot be checked."
+            } elseif (Test-PackageSourceChangedBetweenCommits -PackageId $package.PackageId -FromCommit $package.RepositoryCommit -ToCommit $releasedFrom) {
+                Write-Warning ("$packageVersion as run on this machine was built from $($package.RepositoryCommit.Substring(0, 9)), but nuget.org's from $($releasedFrom.Substring(0, 9)), " +
+                               "and src/$($package.PackageId) differs between them: what was tested here against the local build is not what shipped.")
+            }
+            if (-not (Switch-ReleasedLocalBuildToNuGetOrgs -GlobalPackagesDirectory $globalPackagesDirectory -PackageId $package.PackageId -Version $package.Version -NuGetOrgBuilds $nuGetOrgBuilds)) { continue }
+            Remove-Item -LiteralPath $package.NupkgPath
+            Write-Host "$packageVersion is on nuget.org: removed it from the pending-release feed, and the NuGet global packages folder holds nuget.org's build of it now."
         }
 
-        $releasedFrom = (Read-NuGetOrgPackageManifest -PackageId $package.PackageId -Version $package.Version).RepositoryCommit
-        if (-not $releasedFrom) {
-            Write-Warning "$packageVersion on nuget.org records no build commit, so whether the local build run on this machine matched it cannot be checked."
-        } elseif (Test-PackageSourceChangedBetweenCommits -PackageId $package.PackageId -FromCommit $package.RepositoryCommit -ToCommit $releasedFrom) {
-            Write-Warning ("$packageVersion as run on this machine was built from $($package.RepositoryCommit.Substring(0, 9)), but nuget.org's from $($releasedFrom.Substring(0, 9)), " +
-                           "and src/$($package.PackageId) differs between them: what was tested here against the local build is not what shipped.")
+        foreach ($localBuild in $otherLocalBuilds) {
+            if ($restorableOnNuGetOrg[$localBuild.PackageId] -notcontains $localBuild.Version.ToLowerInvariant()) { continue }
+            if (-not (Switch-ReleasedLocalBuildToNuGetOrgs -GlobalPackagesDirectory $globalPackagesDirectory -PackageId $localBuild.PackageId -Version $localBuild.Version -NuGetOrgBuilds $nuGetOrgBuilds)) { continue }
+            Write-Host ("$($localBuild.PackageId) $($localBuild.Version) is on nuget.org, but the NuGet global packages folder held a local build of it (extracted from $($localBuild.Source)): " +
+                        "put nuget.org's build in its place.")
         }
-        if (-not (Remove-ReleasedLocalBuildFromGlobalPackages -GlobalPackagesDirectory $globalPackagesDirectory -PackageId $package.PackageId -Version $package.Version)) { continue }
-        Remove-Item -LiteralPath $package.NupkgPath
-        Write-Host "$packageVersion is on nuget.org: removed its local build from the pending-release feed and the NuGet global packages folder, so the next restore downloads nuget.org's."
-    }
-
-    foreach ($localBuild in $otherLocalBuilds) {
-        if ($restorableOnNuGetOrg[$localBuild.PackageId] -notcontains $localBuild.Version.ToLowerInvariant()) { continue }
-        if (-not (Remove-ReleasedLocalBuildFromGlobalPackages -GlobalPackagesDirectory $globalPackagesDirectory -PackageId $localBuild.PackageId -Version $localBuild.Version)) { continue }
-        Write-Host ("$($localBuild.PackageId) $($localBuild.Version) is on nuget.org, but the NuGet global packages folder held a local build of it (extracted from $($localBuild.Source)): " +
-                    "removed it, so the next restore downloads nuget.org's.")
+    } finally {
+        if (Test-Path -LiteralPath $staging) { Remove-Item -LiteralPath $staging -Recurse -Force }
     }
 }
