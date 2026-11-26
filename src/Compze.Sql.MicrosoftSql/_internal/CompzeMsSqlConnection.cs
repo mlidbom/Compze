@@ -15,7 +15,7 @@ interface ICompzeMsSqlConnection : IPoolableConnection, ICompzeDbConnection<SqlC
    {
       const string Description = "a SQL Server connection";
 
-      SqlConnection Connection { get; }
+      internal SqlConnection Connection { get; }
 
       internal CompzeMsSqlConnection(string connectionString)
       {
