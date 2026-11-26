@@ -4,10 +4,13 @@ All notable changes to Compze.Threading will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
-## 0.13.0-alpha
+## 0.14.0-alpha
 
 - **A condition wait's `WaitTimeout` is timed by `Stopwatch`, not by the system clock,** in `IAwaitableMonitor`'s synchronous and async waits alike: setting the clock, or its adjusting itself, no longer shortens or lengthens a wait.
 - **`WaitTimeout.Zero`:** a wait timeout of no time at all, for a wait that answers at once instead of waiting, as `LockTimeout.Zero` is for taking a lock. Compze.Threading.Interprocess's `IProcessLock.TryTake(purpose, WaitTimeout.Zero)` uses it.
+
+## 0.13.0-alpha
+
 - **`LazyCE<TValue>` moves here from Compze.Internals.SystemCE,** in the namespace `Compze.Threading`, so that applications can use it from a package meant to be referenced: a value its factory creates the first time it is read, which improves on `Lazy<T>` where `Lazy<T>` gets in the way. A factory that throws runs again on the next read instead of its exception being cached for good, a deadlock between factories throws after `LockTimeout.Default` instead of hanging, and an instance is one 32-byte object. It moves as it was, and then changes as the next entry says: see Compze.Internals.SystemCE's changelog, up to 0.5.0-internal, for its earlier history. The README has a section on it.
 - **`LazyCE<TValue>` can hold a null value, and lets go of its factory once the value is created.** `TValue` may be a nullable reference type (`where TValue : class?`), and a factory that creates null runs once, as for any other value: before, a null value meant no value yet, so such a factory ran again on every read. The new `IsInitialized` tells a value created null from one not yet created, which `ValueIfInitialized()` can't. An instance is still one 32-byte object: it holds its factory until the value is created and no longer, and that is how it knows the value is created, so from then on the factory, and whatever it captured, can be collected. Creating an instance and reading its value takes as long as before, about 17 ns, and a later read under a nanosecond. A null factory throws an `ArgumentException` when the instance is created, instead of a `NullReferenceException` at the first read.
 

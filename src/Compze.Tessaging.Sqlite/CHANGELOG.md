@@ -4,9 +4,13 @@ All notable changes to Compze.Tessaging.Sqlite will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
-## 0.4.1-alpha
+## 0.5.0-alpha
 
 - **An endpoint's process lock is a file beside the database file, held open, instead of a system mutex,** Compze.Threading.Interprocess's `IProcessLock`. Every process that can open the database reaches it, whichever user it runs as, where the mutex was per machine; the operating system still releases it when its process dies. An in-memory database's lock is in `Compze/EndpointProcessLocks` in the temp directory, as is a `file:` URI data source's. Holding it no longer parks a thread for each endpoint: only the thread that took a mutex could release it.
+- **Requires newer minor versions of other Compze packages:** Compze.Threading.Interprocess 0.8.0-alpha (was 0.7.1-alpha). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
+
+## 0.4.1-alpha
+
 - **Starting an endpoint creates the database's tables synchronously, blocking the starting thread once, at the database's first use,** as Compze.Sql.Sqlite's schema creation is now synchronous for every caller: see its changelog for why. Nothing public changes.
 - **Requires newer minor versions of other Compze packages:** Compze.Sql.Sqlite 0.6.0-alpha (was 0.5.0-alpha), Compze.Tessaging 0.11.0-alpha (was 0.9.0-alpha). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
 
