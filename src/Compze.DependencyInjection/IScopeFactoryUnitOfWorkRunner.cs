@@ -15,6 +15,9 @@ public static class IScopeFactoryUnitOfWorkRunner
       ///<summary>Runs <paramref name="function"/> as its own unit of work: one fresh <see cref="IScope"/> paired with one<br/>
       /// transaction, begun and completed together, so the work either commits as a whole or rolls back as a whole.<br/>
       /// An ambient transaction, when the caller has one, is joined rather than replaced.</summary>
+      ///<remarks>On Linux, a synchronous call to a server database, such as PostgreSQL or MySQL, waits for a free thread-pool thread to<br/>
+      /// receive its answer. So synchronous units of work on pool threads that block, waiting for one another, can stall one another's<br/>
+      /// database calls for seconds, on Linux only. There, run such work with <see cref="ExecuteUnitOfWorkAsync{TResult}"/>.</remarks>
       public TResult ExecuteUnitOfWork<TResult>([InstantHandle]Func<IUnitOfWorkResolver, TResult> function)
       {
          using var scope = @this.BeginScope();
