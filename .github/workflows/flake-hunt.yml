@@ -32,8 +32,8 @@ jobs:
       fail-fast: false
       matrix:
         runner: [1, 2, 3, 4, 5, 6, 7, 8]
-        persistence: [PgSql]
-        di: [LightInject]
+        persistence: [MsSql]
+        di: [every]
         serializer: [Newtonsoft]
         transport: [AspNetCore]
 
@@ -65,8 +65,8 @@ jobs:
           --health-retries 10
 
     env:
-      HUNTED_TEST_PROJECT: test/Compze.Tessaging.InternalSpecifications/Compze.Tessaging.InternalSpecifications.csproj
-      RUNS_PER_RUNNER: "20"
+      HUNTED_TEST_PROJECT: samples/AccountManagement/test/AccountManagement.Tests.PerformanceInternals/AccountManagement.Tests.PerformanceInternals.csproj
+      RUNS_PER_RUNNER: "40"
       RUNTIME_ASYNC: "true"
       COMPOSABLE_MACHINE_SLOWNESS: "5.0"
       COMPOSABLE_PERFORMANCE_TESTS_STRESS_TEST_ONLY: "true"
