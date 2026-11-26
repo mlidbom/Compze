@@ -11,31 +11,9 @@ sealed class WindowsProcessLockFile : ProcessLockFile
    /// out: <c>ERROR_SHARING_VIOLATION</c>.</summary>
    const int SharingViolation = unchecked((int)0x80070020);
 
-   internal WindowsProcessLockFile(string lockFilePath) : base(lockFilePath) {}
+   internal WindowsProcessLockFile(string name, DirectoryInfo directory) : base(name, directory) {}
 
-   internal override IProcessLockHold? TryHold(string holderDescription)
-   {
-      var lockFile = TryOpenAsItsHolder();
-      try
-      {
-         if(lockFile == null) return null;
-
-         lockFile.SetLength(0);
-         lockFile.Write(Encoding.UTF8.GetBytes(holderDescription));
-         lockFile.Flush();
-         var hold = new ProcessLockFileHold(lockFile);
-         lockFile = null; //The hold has it now: what follows must not close it.
-         return hold;
-      }
-      finally
-      {
-         //Unless the hold has it: a description that couldn't be written must not leave the lock held with no hold to release it.
-         lockFile?.Dispose();
-      }
-   }
-
-   ///<summary>Opens the file for writing, sharing it only for reading: or returns null if another holder has it open so.</summary>
-   FileStream? TryOpenAsItsHolder()
+   protected override FileStream? TryOpenAsItsHolder()
    {
       try
       {
@@ -47,10 +25,16 @@ sealed class WindowsProcessLockFile : ProcessLockFile
       }
    }
 
-   ///<remarks>Shares the file for writing as it reads it: its holder has it open for writing.</remarks>
-   internal override string? HolderDescription()
+   protected override void WriteTheHolderDescription(FileStream lockFile, string holderDescription)
    {
-      using var reader = new StreamReader(new FileStream(LockFilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite));
+      lockFile.SetLength(0);
+      lockFile.Write(Encoding.UTF8.GetBytes(holderDescription));
+      lockFile.Flush();
+   }
+
+   internal override string? LastHoldersDescription()
+   {
+      using var reader = new StreamReader(new FileStream(LockFilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)); //Sharing it for writing, as its holder has it open for writing.
       return reader.ReadToEnd() is { Length: > 0 } holderDescription ? holderDescription : null;
    }
 }

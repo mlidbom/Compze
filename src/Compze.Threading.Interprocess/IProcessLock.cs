@@ -7,7 +7,7 @@ namespace Compze.Threading.Interprocess;
 /// When the holder's process dies, the operating system releases the lock, so a process that crashed or was killed never leaves it held.<br/>
 /// Waiting to take it is limited by a <see cref="WaitTimeout"/>, not a <see cref="LockTimeout"/>: a holder may rightly hold it for minutes, so a<br/>
 /// long wait is no sign of a deadlock. Whoever gives up waiting is told what the lock is held for, by which process, and since when.</remarks>
-///<remarks>The lock is a file in the directory, named after the lock, which a holder keeps open in a way that keeps every other holder out. A wait<br/>
+///<remarks>The lock is a file in the directory, <c>{name}.lock</c>, which a holder keeps open in a way that keeps every other holder out. A wait<br/>
 /// tries to open it every 50 milliseconds, so the lock isn't fair: whoever tries first after a release takes it. Nor is it reentrant: a second<br/>
 /// take waits for the first hold like any other, even in the same process, on the same thread.<br/>
 /// On Windows a holder shares the file for reading, so that a virus scanner or an indexer reading it keeps no holder out, and writes in it what it<br/>
@@ -20,7 +20,6 @@ namespace Compze.Threading.Interprocess;
 public partial interface IProcessLock
 {
    //review-naming: IProcessLock, after Tessaging's "endpoint process lock". Not a "gate": IThreadGate means a test tool there.
-   //review-naming: IProcessLockHold, for what taking the lock returns and disposing releases.
    //review-naming: IProcessLock.New, the factory, as IMonitor.New is named.
    //review-naming: purpose, the parameter of the four takes that says what the lock is to be held for.
    //review-naming: TryTake, Take, TryTakeAsync and TakeAsync, the four takes, as the brief named them.

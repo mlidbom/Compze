@@ -12,7 +12,6 @@ namespace Compze.Threading.Specifications.IProcessLock_;
 public class When_dotnets_file_locking_is_turned_off : ProcessLockSpecification
 {
    const string OnlyUnixLocksFilesWithFlock = "Only on Unix does .NET lock files with flock, which can be turned off.";
-   const string TheScenarioPassed = "Total: 1, Errors: 0, Failed: 0, Skipped: 0, Not Run: 0";
 
    public static bool OnUnix => !OperatingSystem.IsWindows();
 
@@ -27,5 +26,5 @@ public class When_dotnets_file_locking_is_turned_off : ProcessLockSpecification
                                                      [ProcessLockScenariosForAChildProcess.LockNameVariable] = LockName,
                                                      [ProcessLockScenariosForAChildProcess.LockDirectoryVariable] = LockDirectory.FullName
                                                   }))
-     .Must().Contain(TheScenarioPassed);
+     .Must().Contain(ExplicitTestInAChildProcess.SummaryOfOnePassingTest);
 }

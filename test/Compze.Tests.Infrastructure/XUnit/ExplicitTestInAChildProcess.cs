@@ -9,6 +9,9 @@ namespace Compze.Tests.Infrastructure.XUnit;
 /// can't take the whole run down with it.</remarks>
 public sealed class ExplicitTestInAChildProcess : IAsyncDisposable
 {
+   ///<summary>The summary the xUnit runner ends its output with when the one test it ran passed.</summary>
+   public const string SummaryOfOnePassingTest = "Total: 1, Errors: 0, Failed: 0, Skipped: 0, Not Run: 0";
+
    readonly Process _process;
    readonly Task<string> _standardOutput;
    readonly Task<string> _standardError;
@@ -66,6 +69,13 @@ public sealed class ExplicitTestInAChildProcess : IAsyncDisposable
       }
 
       return $"{await Output()}{Environment.NewLine}Exit code: {_process.ExitCode}";
+   }
+
+   ///<summary>Kills the process, and returns everything it wrote.</summary>
+   public async Task<string> KillAndReadTheOutputAsync()
+   {
+      await KillAsync();
+      return await Output();
    }
 
    ///<summary>Kills the process, and returns once it has exited: by then the operating system has closed what it held open.</summary>

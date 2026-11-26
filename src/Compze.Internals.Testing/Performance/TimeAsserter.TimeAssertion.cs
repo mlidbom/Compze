@@ -15,6 +15,7 @@ public static partial class TimeAsserter
       readonly TimeSpan? _maxTotal;
       readonly string _description;
       readonly uint _maxTries;
+      int _tries;
 
       TimeAssertion(int iterations, TimeSpan? maxAverage, TimeSpan? maxTotal, string description, uint maxTries)
       {
@@ -30,16 +31,6 @@ public static partial class TimeAsserter
       internal static TimeAssertion Start(int iterations, TimeSpan? maxAverage, TimeSpan? maxTotal, string description, uint maxTries)
       {
          Contract.Argument.Assert(maxTries > 0);
-         if(TestEnv.Performance.StressTestOnly)
-         {
-            maxAverage = null;
-            maxTotal = null;
-         }
-         else
-         {
-            maxAverage = TestEnv.Performance.AdjustForMachineSlowness(maxAverage);
-            maxTotal = TestEnv.Performance.AdjustForMachineSlowness(maxTotal);
-         }
          TestEnv.Performance.LogPerformanceTestConfiguration();
 
          Log.Info($"""
@@ -47,22 +38,24 @@ public static partial class TimeAsserter
                   ############################## "{description}" {iterations:### ### ###} {iterations.Pluralize("iteration")} starting
                   """);
 
-         return new TimeAssertion(iterations, maxAverage, maxTotal, description, Math.Min(MaxTriesLimit, maxTries));
+         return new TimeAssertion(iterations, LimitOnThisMachine(maxAverage), LimitOnThisMachine(maxTotal), description, Math.Min(MaxTriesLimit, maxTries));
+
+         static TimeSpan? LimitOnThisMachine(TimeSpan? limit) => TestEnv.Performance.StressTestOnly ? null : TestEnv.Performance.AdjustForMachineSlowness(limit);
       }
 
-      ///<summary>True if the timings of try number <paramref name="tries"/>, <paramref name="executionSummary"/>, keep within the limits, which it then<br/>
-      /// logs; false if they don't, and another try is due. Throws if they don't on the last try.</summary>
-      internal bool Passed(StopwatchCE.TimedExecutionSummary executionSummary, int tries)
+      ///<summary>True if the timings of the scenario's next try, <paramref name="executionSummary"/>, keep within the limits, which it then logs: false<br/>
+      /// if they don't, and another try is due. Throws if they don't on the last try.</summary>
+      internal bool KeptWithinTheLimits(StopwatchCE.TimedExecutionSummary executionSummary)
       {
-         var failureTessage = GetFailureTessage(executionSummary);
-         if(failureTessage.Length > 0)
+         _tries++;
+         if(HowTheTimingsExceededTheLimits(executionSummary) is {} howTheyExceededThem)
          {
-            if(tries >= _maxTries)
-               throw new TimeOutException($"""
-                                           {_description}:
-                                           {failureTessage.Indent()}
-                                           """);
-            Log.Warning($"Try: {tries} {failureTessage}");
+            if(_tries >= _maxTries)
+               throw new TimingsExceededTheLimitsException($"""
+                                                            {_description}:
+                                                            {howTheyExceededThem.Indent()}
+                                                            """);
+            Log.Warning($"Try: {_tries} {howTheyExceededThem}");
             return false;
          }
 
@@ -74,27 +67,25 @@ public static partial class TimeAsserter
          return true;
       }
 
-      ///<summary>How long to wait before the next try, after try number <paramref name="tries"/> failed: exponentially longer, starting with 10 milliseconds,<br/>
-      /// up to half a second.</summary>
-      internal TimeSpan PauseAfterFailedTry(int tries)
+      ///<summary>How long to wait before the next try, after a try that exceeded the limits: exponentially longer each time, starting with 10<br/>
+      /// milliseconds, up to half a second.</summary>
+      internal TimeSpan PauseBeforeTheNextTry()
       {
-         var waitTime = Math.Min(Math.Pow(2, tries), 50) * 10.Milliseconds();
-         Log.Warning($"Waiting {waitTime.FormatReadable()} before try {tries + 1}");
-         return waitTime;
+         var pause = Math.Min(Math.Pow(2, _tries), 50) * 10.Milliseconds();
+         Log.Warning($"Waiting {pause.FormatReadable()} before try {_tries + 1}");
+         return pause;
       }
 
-      string GetFailureTessage(StopwatchCE.TimedExecutionSummary executionSummary)
+      ///<summary>Null if <paramref name="executionSummary"/> keeps within the limits.</summary>
+      string? HowTheTimingsExceededTheLimits(StopwatchCE.TimedExecutionSummary executionSummary)
       {
-         var failureTessage = "";
          if(_maxTotal.HasValue && executionSummary.Total > _maxTotal.Value)
-         {
-            failureTessage = $"Total:{executionSummary.Total.FormatReadable()} {Percent(executionSummary.Total, _maxTotal.Value)} of maxTotal: {_maxTotal.FormatReadable()}";
-         } else if(_maxAverage.HasValue && executionSummary.Average > _maxAverage.Value)
-         {
-            failureTessage = $" {Percent(executionSummary.Average, _maxAverage.Value)} of maxAverage: {_maxAverage.FormatReadable()}";
-         }
+            return $"Total:{executionSummary.Total.FormatReadable()} {Percent(executionSummary.Total, _maxTotal.Value)} of maxTotal: {_maxTotal.FormatReadable()}";
 
-         return failureTessage;
+         if(_maxAverage.HasValue && executionSummary.Average > _maxAverage.Value)
+            return $" {Percent(executionSummary.Average, _maxAverage.Value)} of maxAverage: {_maxAverage.FormatReadable()}";
+
+         return null;
       }
 
       void PrintSummary(StopwatchCE.TimedExecutionSummary executionSummary)
@@ -131,6 +122,6 @@ public static partial class TimeAsserter
 
       static string Percent(TimeSpan percent, TimeSpan of) => $"{(int)(percent.TotalMilliseconds / of.TotalMilliseconds * 100)}%";
 
-      class TimeOutException(string message) : Exception(message);
+      class TimingsExceededTheLimitsException(string message) : Exception(message);
    }
 }

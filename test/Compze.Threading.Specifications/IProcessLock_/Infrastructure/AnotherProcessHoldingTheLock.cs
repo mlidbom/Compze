@@ -47,7 +47,7 @@ sealed class AnotherProcessHoldingTheLock : IAsyncDisposable
       while(!File.Exists(holdingFile))
       {
          if(_process.HasExited) throw new InvalidOperationException($"The process that was to hold the lock exited:{Environment.NewLine}{await _process.OutputOnceItExitsAsync(patience)}");
-         if(DateTime.UtcNow > waitEndsAt) throw new TimeoutException($"The process that was to hold the lock didn't take it within {patience}:{Environment.NewLine}{await _process.OutputOnceItExitsAsync(TimeSpan.Zero)}");
+         if(DateTime.UtcNow > waitEndsAt) throw new TimeoutException($"The process that was to hold the lock didn't take it within {patience}:{Environment.NewLine}{await _process.KillAndReadTheOutputAsync()}");
          await Task.Delay(20);
       }
    }

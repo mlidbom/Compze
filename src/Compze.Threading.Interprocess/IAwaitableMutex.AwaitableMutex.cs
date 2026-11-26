@@ -192,6 +192,8 @@ public partial interface IAwaitableMutex
       ///<summary>Clamps each chunk of a wait for the signal to the remaining wait time, so a finite wait timeout is honored precisely instead of overshooting by up to a whole <see cref="AbandonedMutexCheckInterval"/>.</summary>
       static TimeSpan NextAwaitChunkTimeout(WaitTimeout effectiveWaitTimeout, DateTime waitStartedAt)
       {
+         //refactor: ProcessLockWait.PauseBeforeTheNextTry computes the same, a WaitTimeout's time left since a wait began, cut to an interval, as
+         //   HasExpired here and IAwaitableMonitor's async condition waits do in part: see the comment there.
          if(effectiveWaitTimeout.IsInfinite) return AbandonedMutexCheckInterval;
          TimeSpan remainingWaitTime = effectiveWaitTimeout.TimeRemaining(waitStartedAt);
          return remainingWaitTime < AbandonedMutexCheckInterval ? remainingWaitTime : AbandonedMutexCheckInterval;

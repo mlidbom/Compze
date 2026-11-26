@@ -56,6 +56,8 @@ public partial interface IAwaitableMonitor
             await nextUpdate.WaitAsync(TimeRemaining(), cancellationToken).ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing);
          }
 
+         //refactor: the same as Compze.Threading.Interprocess's ProcessLockWait and AwaitableMutex.HasExpired compute: a WaitTimeout's time left
+         //   since a wait began. One internal type for a wait that has begun would serve all three: see the comment in ProcessLockWait.
          bool HasExpired() => !effectiveWaitTimeout.IsInfinite && effectiveWaitTimeout.IsExpired(waitStartedAt);
          TimeSpan TimeRemaining() => effectiveWaitTimeout.IsInfinite ? Timeout.InfiniteTimeSpan : effectiveWaitTimeout.TimeRemaining(waitStartedAt);
       }

@@ -13,14 +13,14 @@ namespace Compze.Threading.Specifications.IProcessLock_;
 
 ///<summary>Another holder in this process: an <see cref="IProcessLock"/> of the same name in the same directory, as another process would make it.<br/>
 /// What only another process can do, die holding the lock, is in <see cref="When_another_process_holds_the_lock"/>.</summary>
-public class While_another_holder_holds_the_lock : ProcessLockSpecification
+public class When_another_holder_in_this_process_holds_the_lock : ProcessLockSpecification
 {
    const string TheHoldersPurpose = "a specification of what those who wait for the lock are told";
 
    readonly IProcessLock _theHoldersLock;
    readonly IProcessLockHold _theHoldersHold;
 
-   public While_another_holder_holds_the_lock()
+   public When_another_holder_in_this_process_holds_the_lock()
    {
       _theHoldersLock = AnotherInstanceOfTheLock();
       _theHoldersHold = Holding(_theHoldersLock.Take(TheHoldersPurpose, WaitTimeout.Zero))!;
@@ -30,7 +30,7 @@ public class While_another_holder_holds_the_lock : ProcessLockSpecification
    [XF] public async Task TryTakeAsync_with_a_WaitTimeout_of_zero_returns_null() => Holding(await Lock.TryTakeAsync(Purpose, WaitTimeout.Zero)).Must().BeNull();
    [XF] public void TryTake_on_the_instance_that_holds_it_returns_null() => Holding(_theHoldersLock.TryTake(Purpose, WaitTimeout.Zero)).Must().BeNull();
 
-   public class and_TryTake_waits_200_milliseconds : While_another_holder_holds_the_lock
+   public class and_TryTake_waits_200_milliseconds : When_another_holder_in_this_process_holds_the_lock
    {
       readonly IProcessLockHold? _hold;
       readonly TimeSpan _waited;
@@ -46,7 +46,7 @@ public class While_another_holder_holds_the_lock : ProcessLockSpecification
       [XF] public void it_returns_once_the_200_milliseconds_have_passed() => _waited.Must().BeGreaterThanOrEqualTo(TimeSpan.FromMilliseconds(200));
    }
 
-   public class and_TryTakeAsync_waits_200_milliseconds : While_another_holder_holds_the_lock
+   public class and_TryTakeAsync_waits_200_milliseconds : When_another_holder_in_this_process_holds_the_lock
    {
       IProcessLockHold? _hold;
       TimeSpan _waited;
@@ -63,7 +63,7 @@ public class While_another_holder_holds_the_lock : ProcessLockSpecification
       [XF] public void it_returns_once_the_200_milliseconds_have_passed() => _waited.Must().BeGreaterThanOrEqualTo(TimeSpan.FromMilliseconds(200));
    }
 
-   public class and_Take_gives_up : While_another_holder_holds_the_lock
+   public class and_Take_gives_up : When_another_holder_in_this_process_holds_the_lock
    {
       const string TheTakersPurpose = "a specification of what a Take that gives up says";
       readonly TimeoutException _exception;
@@ -76,14 +76,14 @@ public class While_another_holder_holds_the_lock : ProcessLockSpecification
       [XF] public void its_message_says_what_the_take_was_for() => _exception.Message.Must().Contain(TheTakersPurpose);
    }
 
-   public class and_TakeAsync_gives_up : While_another_holder_holds_the_lock
+   public class and_TakeAsync_gives_up : When_another_holder_in_this_process_holds_the_lock
    {
       [XF] public async Task it_throws_a_TimeoutException_saying_what_the_lock_is_held_for() =>
          (await InvokingAsync(async () => Holding(await Lock.TakeAsync(Purpose, WaitTimeout.Milliseconds(100)))).Must().ThrowAsync<TimeoutException>())
         .Which.Message.Must().Contain(TheHoldersPurpose);
    }
 
-   public class and_the_hold_is_disposed_on_another_thread : While_another_holder_holds_the_lock
+   public class and_the_hold_is_disposed_on_another_thread : When_another_holder_in_this_process_holds_the_lock
    {
       public and_the_hold_is_disposed_on_another_thread()
       {
@@ -95,7 +95,7 @@ public class While_another_holder_holds_the_lock : ProcessLockSpecification
       [XF] public void the_lock_can_be_taken() => Holding(Lock.TryTake(Purpose, WaitTimeout.Zero)).Must().NotBeNull();
    }
 
-   public class and_the_hold_is_disposed_while_TryTakeAsync_waits : While_another_holder_holds_the_lock
+   public class and_the_hold_is_disposed_while_TryTakeAsync_waits : When_another_holder_in_this_process_holds_the_lock
    {
       readonly Task<IProcessLockHold?> _wait;
 
@@ -109,7 +109,7 @@ public class While_another_holder_holds_the_lock : ProcessLockSpecification
       [XF] public async Task the_wait_returns_a_hold() => Holding(await _wait.WaitAsync(Patience)).Must().NotBeNull();
    }
 
-   public class and_the_hold_is_disposed_while_TryTake_waits_on_another_thread : While_another_holder_holds_the_lock
+   public class and_the_hold_is_disposed_while_TryTake_waits_on_another_thread : When_another_holder_in_this_process_holds_the_lock
    {
       readonly Task<IProcessLockHold?> _wait;
 
@@ -123,7 +123,7 @@ public class While_another_holder_holds_the_lock : ProcessLockSpecification
       [XF] public async Task the_wait_returns_a_hold() => Holding(await _wait.WaitAsync(Patience)).Must().NotBeNull();
    }
 
-   public class and_a_TryTakeAsync_that_waits_is_cancelled : While_another_holder_holds_the_lock
+   public class and_a_TryTakeAsync_that_waits_is_cancelled : When_another_holder_in_this_process_holds_the_lock
    {
       readonly CancellationTokenSource _cancellation = new();
       readonly Task<IProcessLockHold?> _wait;
@@ -144,7 +144,7 @@ public class While_another_holder_holds_the_lock : ProcessLockSpecification
          await InvokingAsync(async () => Holding(await _wait.WaitAsync(Patience))).Must().ThrowAsync<OperationCanceledException>();
    }
 
-   public class and_a_TryTake_that_waits_on_another_thread_is_cancelled : While_another_holder_holds_the_lock
+   public class and_a_TryTake_that_waits_on_another_thread_is_cancelled : When_another_holder_in_this_process_holds_the_lock
    {
       readonly CancellationTokenSource _cancellation = new();
       readonly Task<IProcessLockHold?> _wait;
@@ -168,7 +168,7 @@ public class While_another_holder_holds_the_lock : ProcessLockSpecification
 
    ///<remarks>Not in parallel with other specifications, whose threads would count as the waits'.</remarks>
    [Collection(nameof(NonParallelCollection))]
-   public class and_far_more_TryTakeAsyncs_wait_than_the_thread_pool_has_threads : While_another_holder_holds_the_lock
+   public class and_far_more_TryTakeAsyncs_wait_than_the_thread_pool_has_threads : When_another_holder_in_this_process_holds_the_lock
    {
       const int NumberOfWaits = 200;
       readonly CancellationTokenSource _endOfTheWaits = new();
@@ -179,7 +179,7 @@ public class While_another_holder_holds_the_lock : ProcessLockSpecification
       public and_far_more_TryTakeAsyncs_wait_than_the_thread_pool_has_threads()
       {
          _processThreadsBeforeTheWaits = ProcessThreadCount();
-         _waits = Enumerable.Range(0, NumberOfWaits).Select(_ => Lock.TryTakeAsync(Purpose, WaitTimeout.Infinite, _endOfTheWaits.Token)).ToList();
+         _waits = [..Enumerable.Range(0, NumberOfWaits).Select(_ => Lock.TryTakeAsync(Purpose, WaitTimeout.Infinite, _endOfTheWaits.Token))];
          Thread.Sleep(500);
          _processThreadsWhileTheyWait = ProcessThreadCount();
       }
@@ -192,8 +192,11 @@ public class While_another_holder_holds_the_lock : ProcessLockSpecification
          await base.DisposeAsyncInternal();
       }
 
+      ///<remarks>Half the waits, not a tenth as for the monitor's waits, which do nothing until an update wakes them. These try to take the lock<br/>
+      /// every 50 milliseconds on a thread-pool thread, all at once since they began together, and the pool adds threads for those bursts: 30 in<br/>
+      /// this specification alone, measured 2026-11-26, and up to 48 beside the rest of the assembly. A thread held by each wait would add 200.</remarks>
       [XF] public void the_waits_do_not_hold_a_thread_each() =>
-         (_processThreadsWhileTheyWait - _processThreadsBeforeTheWaits).Must().BeLessThan(NumberOfWaits / 10);
+         (_processThreadsWhileTheyWait - _processThreadsBeforeTheWaits).Must().BeLessThan(NumberOfWaits / 2);
 
       static int ProcessThreadCount()
       {
