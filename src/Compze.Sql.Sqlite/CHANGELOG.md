@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 ## 0.8.0-alpha
 
 - **A transaction whose first command is created asynchronously waits for the database's write gate holding no thread,** where it held its thread until the transaction before it completed.
+- **A component used after its container has been disposed throws an `ObjectDisposedException` where it would use the SQLite database,** as disposing the container disposes Compze's connection pool for it. The pool went on serving, and Microsoft.Data.Sqlite kept each connection it opened then in a pool of its own, which held the database's file for the rest of the process.
 - **Requires newer minor versions of other Compze packages:** Compze.Sql.Common 0.7.0-alpha (was 0.6.1-alpha), Compze.Threading.Interprocess 0.11.0-alpha (was 0.10.0-alpha). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
 
 ## 0.7.1-alpha

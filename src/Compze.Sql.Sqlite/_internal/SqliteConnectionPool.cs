@@ -2,6 +2,7 @@ using System.Diagnostics;
 using System.Transactions;
 using Compze.Sql.Common._internal;
 using Compze.Sql.Common._internal.Abstractions;
+using Compze.Contracts;
 using Compze.Threading;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Microsoft.Data.Sqlite;
@@ -20,10 +21,13 @@ interface ISqliteConnectionPool : IDbConnectionPool<ICompzeSqliteConnection, Sql
 
    ///<summary>The pool of a SQLite database, reached through the connection string it reads at its first use. Disposing it closes<br/>
    /// the connections Microsoft.Data.Sqlite keeps open for the database, so that the process no longer holds its file.</summary>
+   ///<remarks>Once disposed, it refuses each use with an <see cref="ObjectDisposedException"/>: a connection opened after the<br/>
+   /// disposal would go back to Microsoft.Data.Sqlite's pool as it closed, holding the database's file for the rest of the process.</remarks>
    public class SqliteConnectionPool : ISqliteConnectionPool, IDisposable
    {
       readonly LazyCE<IDbConnectionPool<ICompzeSqliteConnection, SqliteCommand>> _pool;
       readonly LazyCE<string> _connectionString;
+      bool _disposed;
 
       internal SqliteConnectionPool(Func<string> getConnectionString)
       {
@@ -34,21 +38,39 @@ interface ISqliteConnectionPool : IDbConnectionPool<ICompzeSqliteConnection, Sql
                ICompzeSqliteConnection.Create));
       }
 
-      public string ConnectionString => _connectionString.Value;
+      public string ConnectionString
+      {
+         get
+         {
+            Contract.State.NotDisposed(_disposed, this);
+            return _connectionString.Value;
+         }
+      }
 
       ///<summary>Microsoft.Data.Sqlite keeps each connection that is closed open in a pool of its own, for the next to open the same<br/>
       /// database, so it holds the database's file until that pool is cleared. Clearing it closes those connections now, and has<br/>
       /// those still in use closed as they are closed, rather than kept.</summary>
       public void Dispose()
       {
+         _disposed = true;
          if(_pool.ValueIfInitialized() == null) return;
-         using var connection = new SqliteConnection(ConnectionString);
+         using var connection = new SqliteConnection(_connectionString.Value);
          SqliteConnection.ClearPool(connection);
       }
 
       public override string ToString() => _pool.ValueIfInitialized()?.ToString() ?? "Not initialized";
-      public TResult UseConnection<TResult>(Func<ICompzeSqliteConnection, TResult> func) => AutocommitTransientLockRetry.Execute(() => _pool.Value.UseConnection(func));
-      public async Task<TResult> UseConnectionAsync<TResult>(Func<ICompzeSqliteConnection, Task<TResult>> func) => await AutocommitTransientLockRetry.ExecuteAsync(() => _pool.Value.UseConnectionAsync(func)).caf();
+
+      public TResult UseConnection<TResult>(Func<ICompzeSqliteConnection, TResult> func)
+      {
+         Contract.State.NotDisposed(_disposed, this);
+         return AutocommitTransientLockRetry.Execute(() => _pool.Value.UseConnection(func));
+      }
+
+      public async Task<TResult> UseConnectionAsync<TResult>(Func<ICompzeSqliteConnection, Task<TResult>> func)
+      {
+         Contract.State.NotDisposed(_disposed, this);
+         return await AutocommitTransientLockRetry.ExecuteAsync(() => _pool.Value.UseConnectionAsync(func)).caf();
+      }
    }
 
    // SQLite serializes writers. For file databases the busy handler usually absorbs contention by waiting out the
