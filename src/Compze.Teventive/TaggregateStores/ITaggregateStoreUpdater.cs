@@ -45,6 +45,13 @@ public interface ITaggregateStoreUpdater : ITaggregateStoreReader
    /// completes.</summary>
    bool TryGetForUpdate<TTaggregate>(TaggregateId id, [NotNullWhen(true)] out TTaggregate? taggregate) where TTaggregate : class, ITaggregate;
 
+   ///<summary>As <see cref="GetForUpdate{TTaggregate}"/>, holding no thread while another unit of work holds the taggregate: for a<br/>
+   /// unit of work that awaits while it holds taggregates, such as an asynchronous handler's, whose waiting for one another would<br/>
+   /// otherwise hold a thread each.</summary>
+   ///<remarks>What else getting the taggregate does is the store's, and may be synchronous: reading the taggregate from a database,<br/>
+   /// as the tevent store does, or taking its lock in the database, as the memory image state store kept in one does.</remarks>
+   Task<TTaggregate> GetForUpdateAsync<TTaggregate>(TaggregateId id) where TTaggregate : class, ITaggregate;
+
    ///<summary>Adds <paramref name="taggregate"/>, new and not yet in any store, to the store that keeps its class when this unit<br/>
    /// of work commits. The tevents it has published are dispatched now, in the order published.</summary>
    ///<remarks>Throws for an instance whose tevents an earlier add has taken, as in a unit of work that then rolled back: those tevents<br/>

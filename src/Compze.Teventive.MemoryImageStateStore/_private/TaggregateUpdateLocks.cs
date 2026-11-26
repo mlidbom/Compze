@@ -1,4 +1,5 @@
 using Compze.Abstractions;
+using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Threading.ResourceAccess;
 
 namespace Compze.Teventive.MemoryImageStateStore._private;
@@ -20,20 +21,31 @@ sealed class TaggregateUpdateLocks
    ///<summary>Takes the lock of the taggregate <paramref name="id"/>, waiting while another unit of work holds it.</summary>
    internal UpdateLock Take(TaggregateId id)
    {
-      var updateLock = _locksHeldOrWaitedFor.Locked(locks =>
-      {
-         if(!locks.TryGetValue(id, out var existing)) locks[id] = existing = new UpdateLock(this, id);
-         existing.Users++;
-         return existing;
-      });
-
-      if(!updateLock.Semaphore.Wait(Timeout))
-      {
-         Leave(updateLock);
-         throw new TimeoutException($"Waited {Timeout} for another unit of work to finish changing taggregate {id}.");
-      }
-
+      var updateLock = Use(id);
+      if(!updateLock.Semaphore.Wait(Timeout)) LeaveAndThrowTheTimeout(updateLock);
       return updateLock;
+   }
+
+   ///<summary>As <see cref="Take"/>, holding no thread while another unit of work holds the lock.</summary>
+   internal async Task<UpdateLock> TakeAsync(TaggregateId id)
+   {
+      var updateLock = Use(id);
+      if(!await updateLock.Semaphore.WaitAsync(Timeout).caf()) LeaveAndThrowTheTimeout(updateLock);
+      return updateLock;
+   }
+
+   ///<summary>The lock of the taggregate <paramref name="id"/>, counting the caller among its users, who holds it or waits for it.</summary>
+   UpdateLock Use(TaggregateId id) => _locksHeldOrWaitedFor.Locked(locks =>
+   {
+      if(!locks.TryGetValue(id, out var existing)) locks[id] = existing = new UpdateLock(this, id);
+      existing.Users++;
+      return existing;
+   });
+
+   void LeaveAndThrowTheTimeout(UpdateLock updateLock)
+   {
+      Leave(updateLock);
+      throw new TimeoutException($"Waited {Timeout} for another unit of work to finish changing taggregate {updateLock.Id}.");
    }
 
    ///<summary>Whether a unit of work holds, or waits for, the lock of the taggregate <paramref name="id"/>.</summary>

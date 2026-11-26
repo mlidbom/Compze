@@ -55,6 +55,13 @@ sealed class TeventStoreSession : ITaggregateStoreSession
       return true;
    }
 
+   public Task<TTaggregate?> TryGetForUpdateAsync<TTaggregate>(TaggregateId id) where TTaggregate : class, ITaggregate
+   {
+      //wip: spike (dev_docs/async-local-navigators.md): the database's update lock is waited for synchronously, inside the read
+      //   of the history. An asynchronous read, GetTaggregateHistoryForUpdateAsync on ITeventStore, would wait holding no thread.
+      return Task.FromResult(TryGetForUpdate(id, out TTaggregate? taggregate) ? taggregate : null);
+   }
+
    public void Add(ITaggregate taggregate)
    {
       var tevents = TakeTheUncommittedTeventsOf(taggregate);

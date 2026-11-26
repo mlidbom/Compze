@@ -1,5 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using Compze.Abstractions;
+using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Teventive.TaggregateStores._internal;
 
 namespace Compze.Teventive.TaggregateStores._private;
@@ -31,6 +32,9 @@ sealed class TaggregateStoreUpdater : ITaggregateStoreUpdater
 
    public bool TryGetForUpdate<TTaggregate>(TaggregateId id, [NotNullWhen(true)] out TTaggregate? taggregate) where TTaggregate : class, ITaggregate =>
       SessionKeeping(typeof(TTaggregate)).TryGetForUpdate(id, out taggregate);
+
+   public async Task<TTaggregate> GetForUpdateAsync<TTaggregate>(TaggregateId id) where TTaggregate : class, ITaggregate =>
+      await SessionKeeping(typeof(TTaggregate)).TryGetForUpdateAsync<TTaggregate>(id).caf() ?? throw new TaggregateNotFoundException(id);
 
    public void Add(ITaggregate taggregate) => SessionKeeping(taggregate.GetType()).Add(taggregate);
 

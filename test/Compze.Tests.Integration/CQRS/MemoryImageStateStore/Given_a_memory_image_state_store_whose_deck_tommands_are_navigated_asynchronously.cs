@@ -47,7 +47,15 @@ public class Given_a_memory_image_state_store_whose_deck_tommands_are_navigated_
       builder.Registrar.LocalTessagingEngine(engine => engine.RegisterTypermediaHandlers(handle => handle
          .ForTommand(async (AddACardToTheDeckAfterAnAwait tommand, ITaggregateStoreUpdater taggregates) =>
           {
+#pragma warning disable CA1849, VSTHRD103 // What this tommand's contexts specify: the synchronous get for update in an asynchronous handler that the analyzers warn of.
              var deck = taggregates.GetForUpdate<StoredDeck>(tommand.DeckId);
+#pragma warning restore CA1849, VSTHRD103
+             await Task.Delay(HandlersAwait);
+             deck.AddCard(tommand.Text);
+          })
+         .ForTommand(async (AddACardToTheDeckGotForUpdateAsynchronouslyAfterAnAwait tommand, ITaggregateStoreUpdater taggregates) =>
+          {
+             var deck = await taggregates.GetForUpdateAsync<StoredDeck>(tommand.DeckId);
              await Task.Delay(HandlersAwait);
              deck.AddCard(tommand.Text);
           })
@@ -100,6 +108,19 @@ public class Given_a_memory_image_state_store_whose_deck_tommands_are_navigated_
       [PCT(Skip = "Spike: fails, timing out on the deck's update lock, and starves the thread pool meanwhile. Run it on its own.")] public void the_deck_has_every_card() => CardsOfTheDeck.Must().Be(FourForEachProcessor);
    }
 
+   ///<summary>Each navigation but the one holding the deck waits for the deck's update lock holding no thread, through<br/>
+   /// <see cref="ITaggregateStoreUpdater.GetForUpdateAsync{TTaggregate}"/>, so the one holding the deck finds a thread to resume on.</summary>
+   public class after_four_tommands_for_each_processor_whose_handlers_get_the_deck_for_update_asynchronously_and_await_while_they_hold_it_add_a_card_at_once : Given_a_memory_image_state_store_whose_deck_tommands_are_navigated_asynchronously
+   {
+      protected override async Task InitializeAsyncInternal()
+      {
+         await base.InitializeAsyncInternal();
+         await NavigateAtOnce(FourForEachProcessor, text => new AddACardToTheDeckGotForUpdateAsynchronouslyAfterAnAwait(DeckId, text));
+      }
+
+      [PCT] public void the_deck_has_every_card() => CardsOfTheDeck.Must().Be(FourForEachProcessor);
+   }
+
    public class after_four_tommands_for_each_processor_whose_handlers_do_not_await_add_a_card_at_once : Given_a_memory_image_state_store_whose_deck_tommands_are_navigated_asynchronously
    {
       protected override async Task InitializeAsyncInternal()
@@ -115,6 +136,20 @@ public class Given_a_memory_image_state_store_whose_deck_tommands_are_navigated_
    protected class AddACardToTheDeck : StrictlyLocal.Tommands.StrictlyLocalTommand
    {
       internal AddACardToTheDeck(TaggregateId deckId, string text)
+      {
+         DeckId = deckId;
+         Text = text;
+      }
+
+      internal TaggregateId DeckId { get; }
+      internal string Text { get; }
+   }
+
+   ///<summary>Adds a card to the deck <see cref="DeckId"/>, after its handler has got the deck for update through<br/>
+   /// <see cref="ITaggregateStoreUpdater.GetForUpdateAsync{TTaggregate}"/> and awaited.</summary>
+   protected class AddACardToTheDeckGotForUpdateAsynchronouslyAfterAnAwait : StrictlyLocal.Tommands.StrictlyLocalTommand
+   {
+      internal AddACardToTheDeckGotForUpdateAsynchronouslyAfterAnAwait(TaggregateId deckId, string text)
       {
          DeckId = deckId;
          Text = text;

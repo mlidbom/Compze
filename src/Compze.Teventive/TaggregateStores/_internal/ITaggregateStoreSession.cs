@@ -13,6 +13,10 @@ interface ITaggregateStoreSession
    ///<summary>As <see cref="ITaggregateStoreUpdater.TryGetForUpdate{TTaggregate}"/>, for the taggregates of this store.</summary>
    bool TryGetForUpdate<TTaggregate>(TaggregateId id, [NotNullWhen(true)] out TTaggregate? taggregate) where TTaggregate : class, ITaggregate;
 
+   ///<summary>As <see cref="TryGetForUpdate{TTaggregate}"/>, holding no thread while another unit of work holds the taggregate, and<br/>
+   /// null where it returns false. See <see cref="ITaggregateStoreUpdater.GetForUpdateAsync{TTaggregate}"/>.</summary>
+   Task<TTaggregate?> TryGetForUpdateAsync<TTaggregate>(TaggregateId id) where TTaggregate : class, ITaggregate;
+
    ///<summary>As <see cref="ITaggregateStoreUpdater.Add"/>, for a taggregate of a class this store keeps.</summary>
    void Add(ITaggregate taggregate);
 
