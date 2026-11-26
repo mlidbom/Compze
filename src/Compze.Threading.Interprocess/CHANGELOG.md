@@ -4,9 +4,12 @@ All notable changes to Compze.Threading.Interprocess will be documented in this 
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
-## 0.10.0-alpha
+## 0.11.0-alpha
 
 - **`IProcessSemaphore` and `IProcessSemaphoreHold` are gone.** The semaphore came in 0.9.0-alpha for the one program that used it, whose first real load found a flaw within the day: a take waited behind takes that were only finishing. Compze.Threading.Interprocess holds only synchronization primitives that are well thought out, stable and tested for every consumer, so that program now has a semaphore of its own, built on `IProcessLock` and `IInterprocessObject<T>`. To upgrade, build what you need on those two, as it did, or keep to 0.9.0-alpha or 0.10.0-alpha.
+
+## 0.10.0-alpha
+
 - **`IProcessLock.LastHoldersDescription()` says who holds the lock,** for whoever is refused it and says so in words of its own: what the holder that took it last wrote of itself, what for, which process, on which machine and since when, in the words a `Take` that gives up says it in. Null if no holder has written it yet.
 - **Internal: the interprocess signal is Compze.Threading.Interprocess's own again,** now that Compze.Teventive.MemoryImageStateStore no longer tells other memory images of its commits.
 
