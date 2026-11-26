@@ -57,26 +57,6 @@ of a deadlock. A `Take` that gives up says what the lock is held for, by which p
 `TryTake(purpose, WaitTimeout.Zero)` answers at once. The lock is a file in the directory, which its holder keeps open,
 and a wait tries it every 50 milliseconds: it isn't fair, nor reentrant.
 
-### `IProcessSemaphore` — a counting semaphore between processes that a dead holder can't leave held
-
-Of its units, such as sandboxes that may run at once, each is held by one holder at a time, whichever process it is in.
-A take of several units takes them all or none, and takes are served in the order they came, so a take of many units
-isn't starved by takes of few. Each unit is held as an `IProcessLock` is, so the operating system releases the units of
-a holder whose process dies, and a take whose process dies waiting gives up its place. Windows' named `Semaphore` has
-no holders: units a dead process held are gone until it is made anew.
-
-```csharp
-var sandboxes = IProcessSemaphore.New("sandboxes", units: 16, directory);
-using(await sandboxes.TakeAsync(3, "running the scenario's three sandboxes", WaitTimeout.Minutes(20)))
-{
-    // At most 16 sandboxes run at once, whichever processes on the machine run them.
-}
-```
-
-A `Take` that gives up says who holds the units and who waits ahead: how many units, what for, which process, and
-since when. `DescribeHoldersAndWaiters()` says the same while a take waits, which giving up and taking again would lose
-its place in the order.
-
 ### `IProcessShared<T>` / `IAwaitableProcessShared<T>`
 
 Pair a shared object with a cross-process mutex to coordinate access to an external resource — a file, a port,

@@ -176,7 +176,7 @@ public class TestingEndpointHost : EndpointHost
          //   Login_with_the_correct_email_and_password_succeeds): "The process cannot access the file 'EndpointRegistry.mmf' because it is being
          //   used by another process", just after the registry was disposed. Who held it is unknown: perhaps a virus scanner opening a file just
          //   written, which CommitJournal.RetriedWhileAnotherProgramHoldsTheFile tries again for. Try again the same way, and name who uses the
-         //   file when giving up, as ProcessSemaphoreSpecification.DeleteTheSemaphoresDirectoryAsync does, so the next failure says who.
+         //   file when giving up, as IdsOfTheProcessesUsingAFile in Compze.Internals.SystemCE tells it, so the next failure says who.
          _endpointRegistryDirectory.Delete(recursive: true);
       }
       catch(Exception e)

@@ -33,14 +33,6 @@ abstract class ProcessLockFile
       }
    }
 
-   ///<summary>True if a holder has the file open now. It looks by opening the file as a holder would, and closes it at once, writing nothing: a<br/>
-   /// holder that tries to open it in that moment finds it held.</summary>
-   internal bool IsHeld()
-   {
-      using var lockFile = TryOpenAsItsHolder();
-      return lockFile == null;
-   }
-
    ///<summary>What the last holder wrote of what it holds the lock for: null if no holder has written it yet.</summary>
    internal abstract string? LastHoldersDescription();
 
