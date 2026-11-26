@@ -17,7 +17,11 @@ interface ICompzeMsSqlConnection : IPoolableConnection, ICompzeDbConnection<SqlC
 
       SqlConnection Connection { get; }
 
-      internal CompzeMsSqlConnection(string connectionString) => Connection = new SqlConnection(connectionString);
+      internal CompzeMsSqlConnection(string connectionString)
+      {
+         ProbeSqlClientConcurrency.EnsureSubscribed();
+         Connection = new SqlConnection(connectionString);
+      }
 
       public void Open()
       {
