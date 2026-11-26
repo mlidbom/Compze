@@ -11,6 +11,8 @@ namespace Compze.Internals.SystemCE.ThreadingCE.Async;
 /// <see cref="LockTimeout"/>.</summary>
 ///<remarks>It isn't disposable: nothing it holds needs disposing, and disposing a lock that is held, or waited for, would break<br/>
 /// its holder's release of it and its waiters.</remarks>
+///<remarks>Work started while the lock is held, such as a task, inherits the holder's flow. It may enter while the hold lasts,<br/>
+/// and the lock stays held until it leaves too. Once the hold has ended, that work is an independent flow, and takes its turn.</remarks>
 public interface IAsyncLockCE
 {
    static IAsyncLockCE WithDefaultTimeout() => new AsyncLockCE(LockTimeout.Default);
@@ -29,7 +31,9 @@ public interface IAsyncLockCE
 #pragma warning restore CA1001
    {
       readonly SemaphoreSlim _semaphore = new(1, 1);
-      readonly AsyncLocal<int> _lockEntranceCount = new();
+      ///<summary>The hold this flow took, or inherited from the flow it was started on. A flow carries the hold rather than a<br/>
+      /// count of entrances: work started while the lock was held inherits it, and once the hold has ended it lets no one in.</summary>
+      readonly AsyncLocal<Hold?> _holdOfThisFlow = new();
       readonly LockTimeout _timeout;
       readonly Lock _timeoutLock = new();
 
@@ -50,16 +54,19 @@ public interface IAsyncLockCE
 
       public async Task<TReturn> LockedAsync<TReturn>(Func<Task<TReturn>> lockedAction)
       {
-         if(_lockEntranceCount.Value == 0)
+         var hold = _holdOfThisFlow.Value;
+         if(hold?.TryEnterAgain() != true)
          {
             if(!await _semaphore.WaitAsync(_timeout).caf())
             {
                throw RegisterTimeoutException();
             }
+
+            hold = new Hold();
+            _holdOfThisFlow.Value = hold; //An async method's changes to its flow don't reach its caller's.
          }
 
-         _lockEntranceCount.Value += 1;
-         await using var exit = new AsyncDisposable(Exit).ConfigureAwait(false);//Analyzer does not understand caf() here for some reason and emits a warning.
+         await using var exit = new AsyncDisposable(() => Exit(hold)).ConfigureAwait(false);//Analyzer does not understand caf() here for some reason and emits a warning.
          return await lockedAction().caf();
       }
 
@@ -67,27 +74,60 @@ public interface IAsyncLockCE
 
       public TReturn Locked<TReturn>(Func<TReturn> lockedAction)
       {
-         if(_lockEntranceCount.Value == 0)
+         var holdBefore = _holdOfThisFlow.Value;
+         var hold = holdBefore;
+         if(hold?.TryEnterAgain() != true)
          {
             if(!_semaphore.Wait(_timeout))
             {
                throw RegisterTimeoutException();
             }
+
+            hold = new Hold();
+            _holdOfThisFlow.Value = hold;
          }
 
-         _lockEntranceCount.Value += 1;
-         using var exit = new Disposable(Exit);
-         return lockedAction();
+         try
+         {
+            return lockedAction();
+         }
+         finally
+         {
+            Exit(hold);
+            _holdOfThisFlow.Value = holdBefore; //A synchronous method changes its caller's flow: this leaves it as it was.
+         }
       }
 
-      void Exit()
+      void Exit(Hold hold)
       {
-         _lockEntranceCount.Value -= 1;
-         if(_lockEntranceCount.Value == 0)
+         if(hold.Leave())
          {
             UpdateAnyRegisteredTimeoutExceptions();
             _semaphore.Release();
          }
+      }
+
+      ///<summary>One holding of the lock, from the flow that took it until the last of the flows that entered it again has left.</summary>
+      sealed class Hold
+      {
+         int _entrances = 1;
+
+         ///<summary>Enters the hold again, unless it has ended. An ended hold stays ended.</summary>
+         internal bool TryEnterAgain()
+         {
+            var entrances = Volatile.Read(ref _entrances);
+            while(entrances > 0)
+            {
+               var found = Interlocked.CompareExchange(ref _entrances, entrances + 1, entrances);
+               if(found == entrances) return true;
+               entrances = found;
+            }
+
+            return false;
+         }
+
+         ///<summary>Leaves the hold, returning whether that ended it.</summary>
+         internal bool Leave() => Interlocked.Decrement(ref _entrances) == 0;
       }
 
       Exception RegisterTimeoutException()

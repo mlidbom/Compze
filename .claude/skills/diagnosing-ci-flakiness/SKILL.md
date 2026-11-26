@@ -84,3 +84,29 @@ their own (`TaskCE.RunOnDedicatedThreadAsync`, `TestingTaskRunner`).
 the pool frees up, after the stall. `WaitAsyncDumpingTheProcessOnTimeout` has a thread of its own write the dump at the
 deadline since 2026-11-25; a test that dumps another way needs the same. Taking a dump freezes the process for
 seconds, so other tests of the run may fail beside the one that dumped.
+
+**On SQL Server, a reader that throws from `TrySetMetaData` read two responses.** SqlClient reads on past a response's
+final DONE token when more bytes are already in its buffer, so an error followed by another result set in one
+`ExecuteReader` means two requests reached the server on one session before the reader read: two users of one physical
+connection. The 2026-11-26 case, CI run 45886748771: "Incorrect syntax near '쑀'" for a single-statement SELECT on a
+fresh connection of its own, seen once in a few hundred SQL Server jobs. 320 runs of its project in a flake hunt didn't
+repeat it, and its cause wasn't found. Hunting it found and fixed two real defects: `AsyncLockCE` let work started under
+a hold enter after the hold had ended, and the sql layer's pool put a transaction's connection back in SqlClient's pool
+before SqlClient's own completion handler had run, which then doomed the connection in the next transaction that took
+it: "The requested operation cannot be completed because the connection has been broken".
+
+What that hunt left for the next one:
+
+- **The flake-hunt workflow runs on SQL Server** (persistence `MsSql`), and with `di: every` on the four DI containers in
+  one process, as each CI test job does.
+- **A probe for two users of one SQL Server physical connection,** on the branch `flake-hunt/mssql-garbage-probe-perf`:
+  it listens to SqlClient's diagnostic events and reports two commands in progress at once on one `ClientConnectionId`,
+  and a close while one is, with both commands' SQL, parameters, transactions and stacks. Two traps it hit: SqlClient
+  completes an async command's task before it writes the command's After event, and under runtime async the awaiting
+  code may run its next command on another thread meanwhile, so a command ends when Compze's code returns from it; and
+  `RuntimeHelpers.GetHashCode` collides among the tens of thousands of SqlConnections a test process makes, so it
+  identifies them by a serial number in a `ConditionalWeakTable`. The endpoint catalog's lock session, a connection of
+  its own outside the pool, still gives the first trap's false positive.
+- **SqlClient's diagnostic events also start work at an exact moment inside SqlClient,** for a deterministic
+  specification of a race: `WhenSqlClientHasClosedTheConnectionThatRan` in Compze.Sql.InternalSpecifications runs an
+  action once a connection is back in SqlClient's pool, before its close returns.

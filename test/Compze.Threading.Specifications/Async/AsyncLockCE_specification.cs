@@ -374,4 +374,49 @@ public class AsyncLockCE_specification : UniversalTestBase
       [MethodImpl(MethodImplOptions.NoInlining)]
       static void HoldLockInMethodSoItWillBeInTheCapturedCallStack(IAsyncLockCE asyncLock, IThreadGate gate) => asyncLock.Locked(gate.AwaitPassThrough);
    }
+
+   ///<summary>Work started while the lock is held inherits the holder's async flow. While the holder holds the lock, the work
+   /// may re-enter it, but once the holder has released it the work is an independent flow, and takes its turn.</summary>
+   public class When_work_started_while_the_lock_was_held_takes_the_lock_after_the_holder_released_it : AsyncLockCE_specification
+   {
+      readonly IAsyncLockCE _asyncLock = IAsyncLockCE.WithDefaultTimeout();
+      readonly IThreadGate _theLateWorkMayTakeTheLock = IThreadGate.NewClosed(WaitTimeout.Seconds(30), "theLateWorkMayTakeTheLock");
+      readonly IThreadGate _theLateWorkTookTheLock = IThreadGate.NewOpen(WaitTimeout.Seconds(30), "theLateWorkTookTheLock");
+
+      [XF] public async Task started_inside_Locked_it_waits_while_another_flow_holds_the_lock()
+      {
+         var lateWork = _asyncLock.Locked(StartTheLateWork);
+         await TheLateWorkWaitsWhileAnotherFlowHoldsTheLock(lateWork);
+      }
+
+      [XF] public async Task started_inside_LockedAsync_it_waits_while_another_flow_holds_the_lock()
+      {
+         var lateWork = await _asyncLock.LockedAsync(async () =>
+         {
+            await Task.Yield();
+            return StartTheLateWork();
+         });
+         await TheLateWorkWaitsWhileAnotherFlowHoldsTheLock(lateWork);
+      }
+
+      Task StartTheLateWork() => TaskCE.RunOnDedicatedThreadAsync(() =>
+      {
+         _theLateWorkMayTakeTheLock.AwaitPassThrough();
+         _asyncLock.Locked(_theLateWorkTookTheLock.AwaitPassThrough);
+      });
+
+      async Task TheLateWorkWaitsWhileAnotherFlowHoldsTheLock(Task lateWork)
+      {
+         var theOtherHolderReleases = IThreadGate.NewClosed(WaitTimeout.Seconds(30), "theOtherHolderReleases");
+         var otherHolder = TaskCE.RunOnDedicatedThreadAsync(() => _asyncLock.Locked(theOtherHolderReleases.AwaitPassThrough));
+         await theOtherHolderReleases.AwaitQueueLengthEqualToAsync(1);
+
+         _theLateWorkMayTakeTheLock.Open();
+         (await _theLateWorkTookTheLock.TryAwaitPassedThroughCountEqualToAsync(1, WaitTimeout.Milliseconds(200))).Must().BeFalse();
+
+         theOtherHolderReleases.Open();
+         (await _theLateWorkTookTheLock.TryAwaitPassedThroughCountEqualToAsync(1, WaitTimeout.Seconds(5))).Must().BeTrue();
+         await Task.WhenAll(otherHolder, lateWork);
+      }
+   }
 }
