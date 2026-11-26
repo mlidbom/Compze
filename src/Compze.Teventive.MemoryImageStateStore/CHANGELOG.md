@@ -4,7 +4,7 @@ All notable changes to Compze.Teventive.MemoryImageStateStore will be documented
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
-## 0.2.1-alpha
+## 0.3.0-alpha
 
 - **A store's first load takes its storage's lock, and holds it until the container disposes the store: a second memory image is refused,** in another process, in another container of the same process, and, for a store kept in tables, on another machine. Its first load fails with a `TimeoutException` saying another memory image uses the storage, what that one holds it for, which process it is, on which machine, and since when, and how to declare a wait. A first load that fails takes nothing, and the next use tries again.
   - **For files, the lock is `memory-image-state-store.lock` in the store's own folder, `.state-store`,** Compze.Threading.Interprocess's `IProcessLock`, which the operating system releases when its holder's process dies; on Unix the holder records itself in `memory-image-state-store.holder` beside it. So a second process no longer finishes another's commit as a crash's leftovers, nor writes over its files unseen.
@@ -14,6 +14,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
   - **`LoadFromStorage()` on a store kept in tables reports a taggregate changed when the state its row holds isn't the state the store held,** compared as for files, by what the store's serializer and the consumer's options write, where it compared commit numbers. A reload costs one or two serializations for each taggregate the store held.
   - **`WriteAllToStorage()` on a store kept in tables is one transaction that writes every row,** with no counter to take first.
   - **A deleted taggregate's row is deleted,** where it was kept with no snapshot for other memory images to find the deletion.
+- **Requires newer minor versions of other Compze packages:** Compze.Abstractions 0.5.0-alpha (was 0.4.1-alpha), Compze.Tessaging.Abstractions 0.7.0-alpha (was 0.6.0-alpha), Compze.Teventive 0.8.0-alpha (was 0.7.1-alpha), Compze.Threading.Interprocess 0.10.0-alpha (was 0.8.0-alpha). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
+
+## 0.2.1-alpha
+
 - **Internal: the wait for another memory image's commit is one wait on Compze.Threading.Interprocess's signal,** instead of a loop of one-minute waits. Nothing a consumer sees changes.
 - **Requires newer minor versions of other Compze packages:** Compze.Internals.SystemCE 0.12.0-internal (was 0.10.0-internal), Compze.Threading 0.14.0-alpha (was 0.13.0-alpha), Compze.Threading.Interprocess 0.8.0-alpha (was 0.7.1-alpha). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
 

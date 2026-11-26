@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <Nullable>enable</Nullable>
-    <Version>0.6.0-alpha</Version>
+    <Version>0.6.1-alpha</Version>
     <!-- TODO:docs: Remove once all public API members have XML documentation comments -->
     <NoWarn>CS1591</NoWarn>
     <Description>PostgreSQL support for the Compze framework: declares the PgSql domain database that Compze endpoints join. Also carries the PostgreSQL plumbing the Compze.*.PostgreSql feature backends share.</Description>

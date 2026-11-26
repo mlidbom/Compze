@@ -4,10 +4,14 @@ All notable changes to Compze.Sql.MySql will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
-## 0.7.0-alpha
+## 0.7.1-alpha
 
 - **Documentation: on Linux, a synchronous call to the database waits for a free thread-pool thread to receive its answer,** since .NET completes a synchronous read of a socket that anything has used asynchronously on a pool thread. So a process whose pool threads block, such as on synchronous units of work waiting for one another's locks, can stall its own database calls for seconds, on Linux only. `MySqlDomainDatabase`'s remarks now say so.
 - **A domain database's process locks: what Compze takes where data in the database must be used by one process at a time,** such as an exactly-once endpoint's tables. Each is a session-scoped lock of the server's own on a connection of its own, released when its holder releases it, or the server ends its holder's session. Their holders record themselves in the domain database's new `DatabaseProcessLockHolder` table, created at the database's first use when a feature that takes such a lock is registered: what each holds its lock for, which process, on which machine, and since when, for the message that refuses another.
+- **Requires newer minor versions of other Compze packages:** Compze.Abstractions 0.5.0-alpha (was 0.4.1-alpha). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
+
+## 0.7.0-alpha
+
 - **Internal: what Compze.Teventive.MemoryImageStateStore.MySql needs to keep a memory image state store in MySQL tables.**
 - **A transaction that holds a durable resource already, such as another database's connection or a resource manager of your own, refuses Compze's MySQL connection with a message that says so,** and names the connection, the rule and what to do: keep each database, and each other durable resource, in transactions of its own. Before, it was .NET's "Implicit distributed transactions have not been enabled", which names neither. When your resource takes part second instead, the refusal is .NET's own, from your call: the `MySqlDomainDatabase` documentation now says so.
 - **Creating the schema at a database's first use no longer waits for a free thread-pool thread.** A synchronous SQL layer, such as the tevent store's, blocked its thread on the asynchronous creation, whose continuations each needed a free thread-pool thread, while many units of work at once could hold every one, each blocked waiting for the creation. The creation is now synchronous for every caller, the asynchronous SQL layers' too, which block their thread for it once, at the database's first use.

@@ -4,9 +4,13 @@ All notable changes to Compze.Tessaging.PostgreSql will be documented in this fi
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
-## 0.4.1-alpha
+## 0.4.2-alpha
 
 - **The endpoint catalog no longer has a `LockHolderDescription` column:** the holder of an endpoint's process lock records itself in the domain database's `DatabaseProcessLockHolder` table, as every holder of the domain database's process locks does. An existing database keeps the column, which nothing writes any more.
+- **Requires newer minor versions of other Compze packages:** Compze.Tessaging 0.12.1-alpha (was 0.11.0-alpha). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
+
+## 0.4.1-alpha
+
 - **Starting an endpoint creates the database's tables synchronously, blocking the starting thread once, at the database's first use,** as Compze.Sql.PostgreSql's schema creation is now synchronous for every caller: see its changelog for why. Its tables are created by one statement per command. Nothing public changes.
 - **Requires newer minor versions of other Compze packages:** Compze.Sql.PostgreSql 0.6.0-alpha (was 0.5.0-alpha), Compze.Tessaging 0.11.0-alpha (was 0.9.0-alpha). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
 

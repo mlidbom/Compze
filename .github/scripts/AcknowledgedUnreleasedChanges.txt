@@ -17,8 +17,6 @@ Compze.DependencyInjection.DryIoc b9d4cb2b9d3ef94376c1ba6e08eb68c4191fc119 Comme
 Compze.DependencyInjection.LightInject b9d4cb2b9d3ef94376c1ba6e08eb68c4191fc119 Comments, #pragma lines, block bodies for expression-bodied members, and the internal transport controller's action names: nothing a consumer sees.
 Compze.DependencyInjection.Microsoft b9d4cb2b9d3ef94376c1ba6e08eb68c4191fc119 Comments, #pragma lines, block bodies for expression-bodied members, and the internal transport controller's action names: nothing a consumer sees.
 Compze.DocumentDb.MySql b9d4cb2b9d3ef94376c1ba6e08eb68c4191fc119 Comments, #pragma lines, block bodies for expression-bodied members, and the internal transport controller's action names: nothing a consumer sees.
-Compze.Sql.MySql 0671b35b46924fb011c6acc112ba4b66888b78dd Comments and doc comments only: the remarks on synchronous database calls on Linux, which ship with each package's next release
-Compze.Sql.PostgreSql 0671b35b46924fb011c6acc112ba4b66888b78dd Comments and doc comments only: the remarks on synchronous database calls on Linux, which ship with each package's next release
 Compze.Tessaging.Hosting.Testing 89dfcf59bc94fb2b2cd162db40ed2420a3832571 A bug: comment at TestingEndpointHost's delete of its registry directory.
 Compze.Tessaging.Transport.AspNetCore b9d4cb2b9d3ef94376c1ba6e08eb68c4191fc119 Comments, #pragma lines, block bodies for expression-bodied members, and the internal transport controller's action names: nothing a consumer sees.
 Compze.TypeIdentifiers b9d4cb2b9d3ef94376c1ba6e08eb68c4191fc119 Comments, #pragma lines, block bodies for expression-bodied members, and the internal transport controller's action names: nothing a consumer sees.
