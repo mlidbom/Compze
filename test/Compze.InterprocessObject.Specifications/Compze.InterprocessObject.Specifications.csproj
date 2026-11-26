@@ -12,13 +12,6 @@
     <PackageReference Include="xunit.v3.mtp-off" Version="4.0.3" />
     <PackageReference Include="JetBrains.Annotations.Sources" Version="2025.2.4" PrivateAssets="all" />
   </ItemGroup>
-  <!-- Compze.InterprocessObject — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_InterprocessObject)' == 'true'">
-    <PackageReference Include="Compze.InterprocessObject" Version="*-*" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_InterprocessObject)' != 'true'">
-    <ProjectReference Include="..\..\src\Compze.InterprocessObject\Compze.InterprocessObject.csproj" />
-  </ItemGroup>
   <!-- Compze.Must — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Must)' == 'true'">
     <PackageReference Include="Compze.Must" Version="*-*" />
@@ -32,6 +25,13 @@
   </ItemGroup>
   <ItemGroup Condition="'$(UsePackageReference_Compze_Tests_Infrastructure)' != 'true'">
     <ProjectReference Include="..\Compze.Tests.Infrastructure\Compze.Tests.Infrastructure.csproj" />
+  </ItemGroup>
+  <!-- Compze.Threading.Interprocess — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Threading_Interprocess)' == 'true'">
+    <PackageReference Include="Compze.Threading.Interprocess" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Threading_Interprocess)' != 'true'">
+    <ProjectReference Include="..\..\src\Compze.Threading.Interprocess\Compze.Threading.Interprocess.csproj" />
   </ItemGroup>
   <!-- Compze.Threading.Testing — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Threading_Testing)' == 'true'">

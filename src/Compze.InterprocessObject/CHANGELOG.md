@@ -4,6 +4,10 @@ All notable changes to Compze.InterprocessObject will be documented in this file
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## Retired after 0.10.0-alpha
+
+- **Compze.InterprocessObject is retired: its types are in Compze.Threading.Interprocess, in the namespace `Compze.Threading.Interprocess.ResourceAccess`,** from the version after Compze.Threading.Interprocess 0.8.0-alpha. `IInterprocessObject<T>` extends `IAwaitableProcessShared<T>`, which is in that package, so they belong together. `IInterprocessObject`, `IInterprocessObjectSerializer<T>`, `IInterprocessObjectSerializer` and `CorruptionAction` moved unchanged but for their namespace, which was `Compze.InterprocessObject`. To upgrade, replace a reference to this package with one to Compze.Threading.Interprocess, and `using Compze.InterprocessObject;` with `using Compze.Threading.Interprocess.ResourceAccess;`. Its MemoryPack plugin, Compze.InterprocessObject.MemoryPack, is Compze.Threading.Interprocess.MemoryPack. There are no versions of this package after 0.10.0-alpha.
+
 ## 0.10.0-alpha
 
 - **A System.Text.Json serializer comes with the package: `IInterprocessObjectSerializer.Json<T>(options)`,** for an object that needs no attributes or source generator, as MemoryPack's serializer does, and whose file a human can read. It keeps the object as UTF-8 JSON with the options given, or System.Text.Json's defaults. It adds no dependency: System.Text.Json is part of .NET.

@@ -1,6 +1,7 @@
 using Compze.Internals.Testing.Performance;
 using Compze.InterprocessObject.Specifications.TestInfrastructure;
 using Compze.Tests.Infrastructure;
+using Compze.Threading.Interprocess.ResourceAccess;
 using Compze.xUnitBDD;
 
 namespace Compze.InterprocessObject.Specifications;

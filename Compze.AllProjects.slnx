@@ -85,7 +85,6 @@
   </Folder>
   <Folder Name="/Utilities/Compze.InterprocessObject/">
     <Project Path="src/Compze.InterprocessObject.MemoryPack/Compze.InterprocessObject.MemoryPack.csproj" />
-    <Project Path="src/Compze.InterprocessObject/Compze.InterprocessObject.csproj" />
   </Folder>
   <Folder Name="/Utilities/Compze.InterprocessObject/Specifications/">
     <Project Path="test/Compze.InterprocessObject.Specifications/Compze.InterprocessObject.Specifications.csproj" />

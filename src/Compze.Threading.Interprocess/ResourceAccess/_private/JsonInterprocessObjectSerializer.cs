@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace Compze.InterprocessObject._private;
+namespace Compze.Threading.Interprocess.ResourceAccess._private;
 
 ///<summary>An <see cref="IInterprocessObjectSerializer{T}"/> that keeps the object as UTF-8 JSON, with System.Text.Json's <see cref="JsonSerializer"/>.</summary>
 sealed class JsonInterprocessObjectSerializer<T> : IInterprocessObjectSerializer<T> where T : class

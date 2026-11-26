@@ -4,6 +4,7 @@ using Compze.Must;
 
 using Compze.Tests.Infrastructure;
 using Compze.Threading;
+using Compze.Threading.Interprocess.ResourceAccess;
 using Compze.Threading.Testing;
 using Compze.xUnitBDD;
 

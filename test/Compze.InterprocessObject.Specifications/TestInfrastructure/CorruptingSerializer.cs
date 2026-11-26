@@ -1,3 +1,5 @@
+using Compze.Threading.Interprocess.ResourceAccess;
+
 namespace Compze.InterprocessObject.Specifications.TestInfrastructure;
 
 class CorruptingSerializer : IInterprocessObjectSerializer<SharedObject>

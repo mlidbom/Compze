@@ -1,9 +1,9 @@
 using System.Text.Json;
-using Compze.InterprocessObject._private;
+using Compze.Threading.Interprocess.ResourceAccess._private;
 
-namespace Compze.InterprocessObject;
+namespace Compze.Threading.Interprocess.ResourceAccess;
 
-///<summary>Factory for the <see cref="IInterprocessObjectSerializer{T}"/>s that come with Compze.InterprocessObject.</summary>
+///<summary>Factory for the <see cref="IInterprocessObjectSerializer{T}"/>s that come with Compze.Threading.Interprocess.</summary>
 public interface IInterprocessObjectSerializer
 {
    ///<summary>

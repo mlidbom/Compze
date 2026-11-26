@@ -2,7 +2,7 @@ using System.IO.MemoryMappedFiles;
 using Compze.Contracts;
 using Compze.Internals.SystemCE.IOCE;
 
-namespace Compze.InterprocessObject._private;
+namespace Compze.Threading.Interprocess.ResourceAccess._private;
 
 class MemoryMappedBinaryFile : IBinaryFile
 {

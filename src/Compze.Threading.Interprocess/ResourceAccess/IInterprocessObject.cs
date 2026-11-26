@@ -1,6 +1,4 @@
-using Compze.Threading.Interprocess.ResourceAccess;
-
-namespace Compze.InterprocessObject;
+namespace Compze.Threading.Interprocess.ResourceAccess;
 
 ///<summary>A strongly-typed object shared across processes. Changes made by one process are immediately visible to all others.
 ///<para>The object is persisted to disk and survives process restarts and reboots. All reads and updates are atomic and protected by a cross-process mutex.</para>

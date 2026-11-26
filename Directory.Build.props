@@ -59,8 +59,6 @@
     <UsePackageReference_Compze_Internals_SystemCE Condition="'$(UsePackageReference_Compze_Internals_SystemCE)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Internals.SystemCE.csproj|'))">true</UsePackageReference_Compze_Internals_SystemCE>
     <!-- Compze.Internals.Testing -->
     <UsePackageReference_Compze_Internals_Testing Condition="'$(UsePackageReference_Compze_Internals_Testing)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Internals.Testing.csproj|'))">true</UsePackageReference_Compze_Internals_Testing>
-    <!-- Compze.InterprocessObject -->
-    <UsePackageReference_Compze_InterprocessObject Condition="'$(UsePackageReference_Compze_InterprocessObject)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.InterprocessObject.csproj|'))">true</UsePackageReference_Compze_InterprocessObject>
     <!-- Compze.InterprocessObject.MemoryPack -->
     <UsePackageReference_Compze_InterprocessObject_MemoryPack Condition="'$(UsePackageReference_Compze_InterprocessObject_MemoryPack)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.InterprocessObject.MemoryPack.csproj|'))">true</UsePackageReference_Compze_InterprocessObject_MemoryPack>
     <!-- Compze.Must -->

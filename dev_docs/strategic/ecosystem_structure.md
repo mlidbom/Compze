@@ -32,7 +32,7 @@ These are the lowest-level building blocks. Each is a promotable concept in its 
 - `src/Compze.Internals.SystemCE`
 - **Dependencies**: Contracts, Functional
 - **Status**: Published as NuGet package (internal).
-- **Done since**: `MachineWideSharedObject` moved out and grew into its own sub-product — `IInterprocessObject` in `src/Compze.InterprocessObject`.
+- **Done since**: `MachineWideSharedObject` moved out and grew into its own sub-product — `IInterprocessObject` in `src/Compze.InterprocessObject`, and since 2026-11-26 in `src/Compze.Threading.Interprocess`.
 
 ---
 
@@ -40,9 +40,9 @@ These are the lowest-level building blocks. Each is a promotable concept in its 
 > Thread safety made easy and reliable.
 
 - `src/Compze.Threading` — core threading primitives (MutexCE, IMonitor, ResourceAccess, etc.)
-- `src/Compze.Threading.Interprocess` — the cross-process implementations (IAwaitableMutex, InterprocessSignal, InterprocessChangeCounter)
+- `src/Compze.Threading.Interprocess` — the cross-process implementations (IAwaitableMutex, InterprocessSignal, InterprocessChangeCounter, IProcessLock, IInterprocessObject)
 - `src/Compze.Threading.Testing` — testing utilities for threading code
-- **Done since**: the interprocess-object candidate shipped as its own sub-product — `src/Compze.InterprocessObject` (+ `Compze.InterprocessObject.MemoryPack`).
+- **Done since**: the interprocess-object candidate shipped as its own sub-product, `src/Compze.InterprocessObject` (+ `Compze.InterprocessObject.MemoryPack`), and on 2026-11-26 moved into `src/Compze.Threading.Interprocess`, beside the `IAwaitableProcessShared<T>` it extends (+ `Compze.Threading.Interprocess.MemoryPack`).
 - **Dependencies**: Contracts, Functional, SystemCE
 - **Test projects**: dedicated projects exist — `test/Compze.Threading.Specifications`, `test/Compze.Threading.Tests`, `test/Compze.Threading.InternalSpecifications`, `test/Compze.Threading.Testing.Specifications`.
 

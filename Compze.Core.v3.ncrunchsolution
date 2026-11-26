@@ -20,7 +20,6 @@
       <Value>UsePackageReference_Compze_DependencyInjection_Microsoft_Extensions_Hosting = true</Value>
       <Value>UsePackageReference_Compze_Internals_Logging = true</Value>
       <Value>UsePackageReference_Compze_Internals_Logging_Serilog = true</Value>
-      <Value>UsePackageReference_Compze_InterprocessObject = true</Value>
       <Value>UsePackageReference_Compze_InterprocessObject_MemoryPack = true</Value>
       <Value>UsePackageReference_Compze_Must = true</Value>
       <Value>UsePackageReference_Compze_Threading = true</Value>

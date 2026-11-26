@@ -153,7 +153,7 @@ compze-rep found most of these by reading. Five of them, from the missing deadli
   the peers' `EndpointId`s at the publisher's composition.
 - **No Native AOT:** [its own document](native-aot.md).
 - **The registry's mutex is named by the registry name alone,** not its directory. The mutex belongs to the
-  interprocess object: a `review:` comment in `src/Compze.InterprocessObject/IInterprocessObject.Implementation.cs`,
+  interprocess object: a `review:` comment in `src/Compze.Threading.Interprocess/ResourceAccess/IInterprocessObject.Implementation.cs`,
   commit a4f9204c0.
 - **The roster delivers a tevent's handlers grouped by subscribed type,** not in registration order: a `review:`
   comment on `TessageHandlerRoster.GetTeventHandlers`, commit 0c812bcff.

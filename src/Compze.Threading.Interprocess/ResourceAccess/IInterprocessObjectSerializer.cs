@@ -1,4 +1,4 @@
-namespace Compze.InterprocessObject;
+namespace Compze.Threading.Interprocess.ResourceAccess;
 
 ///<summary>Serializes and deserializes instances of <typeparamref name="T"/> to and from byte arrays for interprocess storage.</summary>
 public interface IInterprocessObjectSerializer<T> where T : class

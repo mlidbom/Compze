@@ -60,8 +60,31 @@ and a wait tries it every 50 milliseconds: it isn't fair, nor reentrant.
 ### `IProcessShared<T>` / `IAwaitableProcessShared<T>`
 
 Pair a shared object with a cross-process mutex to coordinate access to an external resource — a file, a port,
-a database — across processes. (For genuine cross-process shared *state*, see
-[Compze.InterprocessObject](../Compze.InterprocessObject/), which builds on this package.)
+a database — across processes. Each process has its own object: for an object the processes really share, see
+`IInterprocessObject<T>` below.
+
+### `IInterprocessObject<T>` — an object shared between processes, in a single line of code
+
+An `IAwaitableProcessShared<T>` whose object every process shares: kept in a memory-mapped file, so a change one
+process makes is visible to all the others at once, and the object survives the processes and reboots.
+
+- **Atomic updates:** every read and update holds the object's cross-process mutex, so a read-modify-write is safe.
+- **Waits for conditions:** the same condition waits as `IAwaitableMutex`, with the object loaded for each evaluation
+  of the condition and saved after an update.
+- **Recovery from corruption:** `CorruptionAction` says whether an object that can't be read is replaced with its
+  default or left as it is for you to look at. Either way the access that found it throws, saying what happened.
+- **Pluggable serialization:** JSON with `IInterprocessObjectSerializer.Json<T>()`, MemoryPack with the
+  [Compze.InterprocessObject.MemoryPack](https://www.nuget.org/packages/Compze.InterprocessObject.MemoryPack) plugin,
+  or a serializer of your own.
+
+```csharp
+using var visits = IInterprocessObject.NewGlobal("visits", IInterprocessObjectSerializer.Json<Visits>(), () => new Visits(),
+                                                 CorruptionAction.ReplaceContentWithDefaultAndThrow, maxBytes: 4 * 1024, directory);
+visits.Update(it => it.Count++);
+```
+
+It came here from Compze.InterprocessObject, which is retired: its types are in the namespace
+`Compze.Threading.Interprocess.ResourceAccess` now.
 
 ### `ISignalPollingPolicy` — the latency-versus-power knob
 

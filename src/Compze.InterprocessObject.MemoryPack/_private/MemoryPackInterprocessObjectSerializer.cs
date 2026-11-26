@@ -1,4 +1,5 @@
 using Compze.Contracts;
+using Compze.Threading.Interprocess.ResourceAccess;
 using MemoryPack;
 
 namespace Compze.InterprocessObject.MemoryPack._private;

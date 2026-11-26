@@ -7,7 +7,7 @@ namespace Compze.Threading.Interprocess.ResourceAccess;
 ///<para><b>NOTE:</b> The shared object is NOT shared across processes — each process holds its own instance in its own memory space.
 /// The mutex coordinates <em>timing</em> so only one process enters the critical section at a time.
 /// This is useful for protecting access to an external resource (file, port, database) rather than for sharing data between processes.
-/// For genuine cross-process shared state, use <c>Compze.InterprocessObject</c> instead.</para>
+/// For genuine cross-process shared state, use <see cref="IInterprocessObject{T}"/> instead.</para>
 ///</summary>
 public interface IAwaitableProcessShared
 {

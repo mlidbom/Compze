@@ -1,4 +1,4 @@
-namespace Compze.InterprocessObject;
+namespace Compze.Threading.Interprocess.ResourceAccess;
 
 ///<summary>Controls behavior when deserialization of the stored object fails.</summary>
 public enum CorruptionAction

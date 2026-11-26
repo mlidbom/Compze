@@ -2,6 +2,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using Compze.Must;
 using Compze.Tests.Infrastructure;
+using Compze.Threading.Interprocess.ResourceAccess;
 using Compze.xUnitBDD;
 
 namespace Compze.InterprocessObject.Specifications;

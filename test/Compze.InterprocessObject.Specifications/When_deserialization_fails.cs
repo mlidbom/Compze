@@ -2,6 +2,7 @@ using Compze.InterprocessObject.Specifications.TestInfrastructure;
 using Compze.Must;
 
 using Compze.Tests.Infrastructure;
+using Compze.Threading.Interprocess.ResourceAccess;
 using Compze.xUnitBDD;
 
 #pragma warning disable CA1711 // BDD spec context class names mirror the enum value being tested (e.g. `and_CorruptionAction_is_ThrowException`); the 'Exception' suffix is incidental, not a type-naming choice.
