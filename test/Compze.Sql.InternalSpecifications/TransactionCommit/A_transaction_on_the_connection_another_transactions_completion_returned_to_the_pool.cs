@@ -55,14 +55,8 @@ public class A_transaction_on_the_connection_another_transactions_completion_ret
       {
          _firstTransactionsSession = TransactionScopeCe.Execute(() => _database.ExecuteScalar($"SELECT @@SPID {TheFirstTransactionsCommand}"));
          theFirstTransactionHasCompleted.Open();
-         try
-         {
-            await secondTransaction;
-         }
-         catch(Exception failure)
-         {
-            _secondTransactionsFailure = failure;
-         }
+         await secondTransaction.ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing);
+         _secondTransactionsFailure = secondTransaction.Exception;
       }
    }
 
