@@ -13,13 +13,13 @@
 
 Compze.Contracts aa4c3394e946f54d8e96128296dfc5d699a1e1f5 LangVersion moved to src/Directory.Build.props, with the same value: latest.
 Compze.DbPool b9d4cb2b9d3ef94376c1ba6e08eb68c4191fc119 Comments, #pragma lines, block bodies for expression-bodied members, and the internal transport controller's action names: nothing a consumer sees.
-Compze.DependencyInjection b9d4cb2b9d3ef94376c1ba6e08eb68c4191fc119 Comments, #pragma lines, block bodies for expression-bodied members, and the internal transport controller's action names: nothing a consumer sees.
+Compze.DependencyInjection 0671b35b46924fb011c6acc112ba4b66888b78dd Comments, #pragma lines and block bodies for expression-bodied members, as acknowledged before, and the remarks on synchronous database calls on Linux, which ship with its next release: nothing a consumer runs differently.
 Compze.DependencyInjection.DryIoc b9d4cb2b9d3ef94376c1ba6e08eb68c4191fc119 Comments, #pragma lines, block bodies for expression-bodied members, and the internal transport controller's action names: nothing a consumer sees.
 Compze.DependencyInjection.LightInject b9d4cb2b9d3ef94376c1ba6e08eb68c4191fc119 Comments, #pragma lines, block bodies for expression-bodied members, and the internal transport controller's action names: nothing a consumer sees.
 Compze.DependencyInjection.Microsoft b9d4cb2b9d3ef94376c1ba6e08eb68c4191fc119 Comments, #pragma lines, block bodies for expression-bodied members, and the internal transport controller's action names: nothing a consumer sees.
 Compze.DocumentDb.MySql b9d4cb2b9d3ef94376c1ba6e08eb68c4191fc119 Comments, #pragma lines, block bodies for expression-bodied members, and the internal transport controller's action names: nothing a consumer sees.
-Compze.Tessaging cf005efa2ec75dcaf36317412396717fa0f8d220 Comments only: two comments and an internal type's doc comment no longer call SQLite's endpoint process lock a mutex.
-Compze.Tessaging.Abstractions b9d4cb2b9d3ef94376c1ba6e08eb68c4191fc119 Comments, #pragma lines, block bodies for expression-bodied members, and the internal transport controller's action names: nothing a consumer sees.
+Compze.Sql.MySql 0671b35b46924fb011c6acc112ba4b66888b78dd Comments and doc comments only: the remarks on synchronous database calls on Linux, which ship with each package's next release
+Compze.Sql.PostgreSql 0671b35b46924fb011c6acc112ba4b66888b78dd Comments and doc comments only: the remarks on synchronous database calls on Linux, which ship with each package's next release
 Compze.Tessaging.Transport.AspNetCore b9d4cb2b9d3ef94376c1ba6e08eb68c4191fc119 Comments, #pragma lines, block bodies for expression-bodied members, and the internal transport controller's action names: nothing a consumer sees.
 Compze.TypeIdentifiers b9d4cb2b9d3ef94376c1ba6e08eb68c4191fc119 Comments, #pragma lines, block bodies for expression-bodied members, and the internal transport controller's action names: nothing a consumer sees.
 Compze.Underscore aa4c3394e946f54d8e96128296dfc5d699a1e1f5 LangVersion moved to src/Directory.Build.props, with the same value: latest. And NoWarn CS1591 dropped, which changes only the build's warnings.

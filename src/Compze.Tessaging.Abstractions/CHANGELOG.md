@@ -4,9 +4,13 @@ All notable changes to Compze.Tessaging.Abstractions will be documented in this 
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
-## 0.6.0-alpha
+## 0.7.0-alpha
 
 - **`TessageId` loses its parameterless constructor, which made a new version 7 id: `TessageId.New()` makes one now.** System.Text.Json, finding the constructor, read every `TessageId` back as a new one, with nothing failing. It now writes and reads a `TessageId` as its `Guid` string, with the `EntityIdJsonConverter` of Compze.Abstractions, which `TessageId` carries. Its constructor's parameter is named `value`, where it was `id`.
+- **Requires newer minor versions of other Compze packages:** Compze.Abstractions 0.5.0-alpha (was 0.4.0-alpha), Compze.Internals.SystemCE 0.12.0-internal (was 0.8.0-internal), Compze.Threading 0.14.0-alpha (was 0.12.0-alpha). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
+
+## 0.6.0-alpha
+
 - **Targets .NET 11 (`net11.0`) instead of .NET 10, and is compiled with runtime async:** the runtime, instead of state machines the compiler generates, suspends and resumes its async methods, so live stack traces show the real call chain. An application that uses this version must target .NET 11.
 - **Requires newer minor versions of other Compze packages:** Compze.Abstractions 0.4.0-alpha (was 0.3.0-alpha), Compze.Internals.SystemCE 0.8.0-internal (was 0.4.0-internal), Compze.Threading 0.12.0-alpha (was 0.9.0-alpha), Compze.TypeIdentifiers 0.3.0-alpha (was 0.2.0-alpha). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
 
