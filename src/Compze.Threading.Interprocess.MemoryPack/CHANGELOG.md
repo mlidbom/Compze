@@ -4,9 +4,12 @@ All notable changes to Compze.Threading.Interprocess.MemoryPack will be document
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## 0.7.0-alpha
+
+- **The package follows `IInterprocessObject<T>` into Compze.Threading.Interprocess: `Compze.InterprocessObject.MemoryPack` is `Compze.Threading.Interprocess.MemoryPack`,** and depends on Compze.Threading.Interprocess instead of the retired Compze.InterprocessObject. `MemoryPackInterprocessObject` is unchanged but for its namespace, which was `Compze.InterprocessObject.MemoryPack`. To upgrade, replace a reference to Compze.InterprocessObject.MemoryPack with one to this package, and `using Compze.InterprocessObject.MemoryPack;` with `using Compze.Threading.Interprocess.MemoryPack;`. Its earlier versions, up to 0.6.0-alpha, were published as [Compze.InterprocessObject.MemoryPack](https://www.nuget.org/packages/Compze.InterprocessObject.MemoryPack/).
+
 ## 0.6.0-alpha
 
-- **The package follows `IInterprocessObject<T>` into Compze.Threading.Interprocess: `Compze.InterprocessObject.MemoryPack` is `Compze.Threading.Interprocess.MemoryPack`,** and depends on Compze.Threading.Interprocess instead of the retired Compze.InterprocessObject. `MemoryPackInterprocessObject` is unchanged but for its namespace, which was `Compze.InterprocessObject.MemoryPack`. To upgrade, replace a reference to Compze.InterprocessObject.MemoryPack with one to this package, and `using Compze.InterprocessObject.MemoryPack;` with `using Compze.Threading.Interprocess.MemoryPack;`. Previously published as [Compze.InterprocessObject.MemoryPack](https://www.nuget.org/packages/Compze.InterprocessObject.MemoryPack/) 0.6.0-alpha.
 - **Targets .NET 11 (`net11.0`) instead of .NET 10, and is compiled with runtime async:** the runtime, instead of state machines the compiler generates, suspends and resumes its async methods, so live stack traces show the real call chain. An application that uses this version must target .NET 11.
 - **Requires newer minor versions of other Compze packages:** Compze.InterprocessObject 0.9.0-alpha (was 0.7.1-alpha). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
 
