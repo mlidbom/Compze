@@ -1,16 +1,18 @@
+using Compze.Internals.SystemCE;
+using Compze.Internals.SystemCE.LinqCE;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
-using Compze.InterprocessObject.Specifications.TestInfrastructure;
+using Compze.Threading.Specifications.IInterprocessObject_.TestInfrastructure;
 using Compze.Must;
 
 using Compze.Tests.Infrastructure;
-using Compze.Threading;
 using Compze.Threading.Interprocess.ResourceAccess;
 using Compze.Threading.Testing;
+using Compze.Underscore;
 using Compze.xUnitBDD;
 
 // ReSharper disable ImplicitlyCapturedClosure
 
-namespace Compze.InterprocessObject.Specifications;
+namespace Compze.Threading.Specifications.IInterprocessObject_;
 
 // NOTE: Most of the testing comes from the test matrices for <see cref="IAwaitableCriticalSection"/> in Compze.Threading.Specifications
 public class InterprocessObjectTests : UniversalTestBase

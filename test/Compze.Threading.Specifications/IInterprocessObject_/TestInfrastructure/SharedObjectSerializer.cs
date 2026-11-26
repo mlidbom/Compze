@@ -2,7 +2,7 @@ using Compze.Contracts;
 using Compze.Threading.Interprocess.ResourceAccess;
 using MemoryPack;
 
-namespace Compze.InterprocessObject.Specifications.TestInfrastructure;
+namespace Compze.Threading.Specifications.IInterprocessObject_.TestInfrastructure;
 
 class SharedObjectSerializer : IInterprocessObjectSerializer<SharedObject>
 {

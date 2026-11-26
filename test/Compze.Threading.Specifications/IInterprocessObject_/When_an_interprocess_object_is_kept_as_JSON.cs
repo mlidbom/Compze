@@ -3,9 +3,10 @@ using System.Text.Json.Serialization;
 using Compze.Must;
 using Compze.Tests.Infrastructure;
 using Compze.Threading.Interprocess.ResourceAccess;
+using Compze.Underscore;
 using Compze.xUnitBDD;
 
-namespace Compze.InterprocessObject.Specifications;
+namespace Compze.Threading.Specifications.IInterprocessObject_;
 
 public class When_an_interprocess_object_is_kept_as_JSON : UniversalTestBase
 {

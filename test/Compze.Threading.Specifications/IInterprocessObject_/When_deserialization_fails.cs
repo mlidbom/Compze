@@ -1,13 +1,14 @@
-using Compze.InterprocessObject.Specifications.TestInfrastructure;
+using Compze.Threading.Specifications.IInterprocessObject_.TestInfrastructure;
 using Compze.Must;
 
 using Compze.Tests.Infrastructure;
 using Compze.Threading.Interprocess.ResourceAccess;
+using Compze.Underscore;
 using Compze.xUnitBDD;
 
 #pragma warning disable CA1711 // BDD spec context class names mirror the enum value being tested (e.g. `and_CorruptionAction_is_ThrowException`); the 'Exception' suffix is incidental, not a type-naming choice.
 
-namespace Compze.InterprocessObject.Specifications;
+namespace Compze.Threading.Specifications.IInterprocessObject_;
 
 public class When_deserialization_fails : UniversalTestBase
 {

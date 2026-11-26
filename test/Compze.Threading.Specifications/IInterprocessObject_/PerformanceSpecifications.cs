@@ -1,10 +1,12 @@
+using Compze.Internals.SystemCE;
 using Compze.Internals.Testing.Performance;
-using Compze.InterprocessObject.Specifications.TestInfrastructure;
+using Compze.Threading.Specifications.IInterprocessObject_.TestInfrastructure;
 using Compze.Tests.Infrastructure;
 using Compze.Threading.Interprocess.ResourceAccess;
+using Compze.Underscore;
 using Compze.xUnitBDD;
 
-namespace Compze.InterprocessObject.Specifications;
+namespace Compze.Threading.Specifications.IInterprocessObject_;
 
 public class PerformanceSpecifications : UniversalTestBase
 {

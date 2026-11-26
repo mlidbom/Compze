@@ -83,9 +83,6 @@
     <Project Path="src/Compze.DbPool.PostgreSql/Compze.DbPool.PostgreSql.csproj" />
     <Project Path="src/Compze.DbPool.Sqlite/Compze.DbPool.Sqlite.csproj" />
   </Folder>
-  <Folder Name="/Utilities/Compze.InterprocessObject/Specifications/">
-    <Project Path="test/Compze.InterprocessObject.Specifications/Compze.InterprocessObject.Specifications.csproj" />
-  </Folder>
   <Folder Name="/Utilities/Compze.Must/">
     <Project Path="src/Compze.Must/Compze.Must.csproj" />
   </Folder>

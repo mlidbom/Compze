@@ -1,7 +1,7 @@
 using JetBrains.Annotations;
 using MemoryPack;
 
-namespace Compze.InterprocessObject.Specifications.TestInfrastructure;
+namespace Compze.Threading.Specifications.IInterprocessObject_.TestInfrastructure;
 
 [MemoryPackable]
 [UsedImplicitly] public partial class SharedObject
