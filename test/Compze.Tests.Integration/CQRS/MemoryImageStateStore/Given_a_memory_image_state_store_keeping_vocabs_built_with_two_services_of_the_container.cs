@@ -22,7 +22,7 @@ namespace Compze.Tests.Integration.CQRS.MemoryImageStateStore;
 /// factory takes two singleton services: the store builds every vocab it restores through the container.</summary>
 public class Given_a_memory_image_state_store_keeping_vocabs_built_with_two_services_of_the_container : UniversalTestBase
 {
-   static readonly JsonSerializerOptions Options = new() { Converters = { new TaggregateIdAsAGuid() } };
+   static readonly JsonSerializerOptions Options = new();
    readonly DirectoryInfo _folder = new(Path.Combine(Path.GetTempPath(), "compze-state-store-with-dependencies", Guid.NewGuid().ToString("N")));
    readonly IDependencyInjectionContainer _container;
 

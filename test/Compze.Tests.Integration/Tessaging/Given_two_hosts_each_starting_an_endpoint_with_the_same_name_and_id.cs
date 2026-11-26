@@ -70,7 +70,8 @@ public class Given_two_hosts_each_starting_an_endpoint_with_the_same_name_and_id
       (lockRefusal is EndpointAlreadyRunningInAnotherProcessException).Must().BeTrue();
       lockRefusal.Message.Must().Contain(ContestedEndpointDeclaration.Name)
                  .Contain("already running in another process")
-                 .Contain("held by process");
+                 .Contain($"held for running the endpoint {ContestedEndpointDeclaration.Name}, by process {Environment.ProcessId}")
+                 .Contain($"on {Environment.MachineName}, since");
 
       _runningEndpoint.IsRunning.Must().BeTrue();
 

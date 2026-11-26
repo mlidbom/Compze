@@ -76,7 +76,7 @@ class BestEffortTeventDeliveryLeg : IBestEffortTeventDeliveryLeg
       //One envelope identity per publish, shared by every subscriber's delivery: it carries no dedup meaning on this leg
       //(nothing is ever re-sent) and exists so in-flight tracking sees one tessage fanning out to many endpoints.
       //Serialized here, at publish: a tevent that cannot be serialized fails the publish inside the caller's transaction.
-      var envelopeId = new TessageId();
+      var envelopeId = TessageId.New();
       var transportTessage = TransportTessage.OutGoing.Create(wrappedTevent, envelopeId, _typeMap, _serializer);
       this.Log().Debug($"Publishing best-effort tevent {envelopeId} ({wrappedTevent.GetType().Name}) to {subscriberIds.Count} subscriber peer(s)");
 

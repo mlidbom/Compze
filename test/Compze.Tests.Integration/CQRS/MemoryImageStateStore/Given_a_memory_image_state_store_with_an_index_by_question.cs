@@ -65,8 +65,8 @@ public class Given_a_memory_image_state_store_with_an_index_by_question : Univer
 
    public class after_three_units_of_work_each_add_a_vocab_with_the_same_question : Given_a_memory_image_state_store_with_an_index_by_question
    {
-      readonly TaggregateId[] _firstThree = [new(), new(), new()];
-      readonly TaggregateId _fourth = new();
+      readonly TaggregateId[] _firstThree = [TaggregateId.New(), TaggregateId.New(), TaggregateId.New()];
+      readonly TaggregateId _fourth = TaggregateId.New();
 
       public after_three_units_of_work_each_add_a_vocab_with_the_same_question()
       {

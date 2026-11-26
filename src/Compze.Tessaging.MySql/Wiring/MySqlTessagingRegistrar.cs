@@ -1,5 +1,6 @@
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
+using Compze.Sql.Common._internal.ProcessLocks;
 using Compze.Sql.MySql._internal;
 using Compze.Tessaging._internal.SqlLayer;
 using Compze.TypeIdentifiers.Interning;
@@ -13,13 +14,14 @@ public static class MySqlTessagingRegistrar
 {
    public static IComponentRegistrar MySqlTessagingSqlLayer(this IComponentRegistrar registrar) =>
       registrar.MySqlTypeIdInterner()
+               .MySqlDatabaseProcessLocks()
                .MySqlSchemaContribution((EndpointTableSet tables) => MySqlInboxSqlLayer.SchemaCreationSql(tables))
                .MySqlSchemaContribution((EndpointTableSet tables) => MySqlOutboxSqlLayer.SchemaCreationSql(tables))
                .MySqlSchemaContribution((EndpointTableSet tables) => MySqlPeerRegistrySqlLayer.SchemaCreationSql(tables))
                .MySqlSchemaContribution(MySqlEndpointCatalogSqlLayer.SchemaCreationSql)
                .Register(
          Singleton.For<ITessagingSqlLayer.IEndpointCatalogSqlLayer>()
-                  .CreatedBy((IMySqlConnectionPool endpointSqlConnection, MySqlSqlLayerSchemaManager schemaManager) => new MySqlEndpointCatalogSqlLayer(endpointSqlConnection, schemaManager)),
+                  .CreatedBy((IMySqlConnectionPool endpointSqlConnection, MySqlSqlLayerSchemaManager schemaManager, IDatabaseProcessLocks processLocks) => new MySqlEndpointCatalogSqlLayer(endpointSqlConnection, schemaManager, processLocks)),
          Singleton.For<ITessagingSqlLayer.IOutboxSqlLayer>()
                   .CreatedBy((IMySqlConnectionPool endpointSqlConnection, MySqlSqlLayerSchemaManager schemaManager, ITypeIdInterner typeIdInterner, EndpointTableSet tables) => new MySqlOutboxSqlLayer(endpointSqlConnection, schemaManager, typeIdInterner, tables)),
          Singleton.For<ITessagingSqlLayer.IInboxSqlLayer>()

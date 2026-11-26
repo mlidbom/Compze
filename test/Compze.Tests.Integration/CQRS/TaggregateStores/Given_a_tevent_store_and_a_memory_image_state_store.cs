@@ -26,7 +26,7 @@ namespace Compze.Tests.Integration.CQRS.TaggregateStores;
 public class Given_a_tevent_store_and_a_memory_image_state_store : UniversalTestBase
 {
    readonly IDependencyInjectionContainer _container;
-   readonly TaggregateId _userId = new();
+   readonly TaggregateId _userId = TaggregateId.New();
    readonly TaggregateId _vocabId = new(Guid.NewGuid());
 
    protected Given_a_tevent_store_and_a_memory_image_state_store() =>
@@ -104,7 +104,7 @@ public class Given_a_tevent_store_and_a_memory_image_state_store : UniversalTest
 
       public class and_a_second_unit_of_work_registers_another_user_deletes_the_first_and_asks_for_every_user : after_one_unit_of_work_adds_a_user_and_a_vocab
       {
-         readonly TaggregateId _otherUserId = new();
+         readonly TaggregateId _otherUserId = TaggregateId.New();
          IReadOnlyList<TaggregateId> _everyUserInsideTheUnitOfWork = [];
 
          public and_a_second_unit_of_work_registers_another_user_deletes_the_first_and_asks_for_every_user() =>
@@ -261,7 +261,7 @@ public class Given_a_tevent_store_and_a_memory_image_state_store : UniversalTest
 
    public class after_three_units_of_work_each_register_a_user : Given_a_tevent_store_and_a_memory_image_state_store
    {
-      readonly TaggregateId[] _userIds = [new(), new(), new()];
+      readonly TaggregateId[] _userIds = [TaggregateId.New(), TaggregateId.New(), TaggregateId.New()];
 
       public after_three_units_of_work_each_register_a_user()
       {

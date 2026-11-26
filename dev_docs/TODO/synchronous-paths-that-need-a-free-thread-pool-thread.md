@@ -48,6 +48,16 @@ Synchronous waits on a task in library code, outside tests, that remain:
   It waits only when the asynchronous path opened the transaction's connection and it is still opening.
 - **The DI containers' synchronous disposals:** covered by `container-disposal-of-async-only-components.md`.
 
+And a synchronous wait for a taggregate (found 2026-11-26 by the helper async-local-navigators, measured on SQLite in
+memory, on Windows): **a unit of work that awaits while it holds a memory image state store taggregate, with others
+waiting for that taggregate, starves the pool.** The waiters block pool threads in `TaggregateUpdateLocks.Take`
+(`SemaphoreSlim.Wait`), and the holder gets no pool thread to resume on. 128 at once failed 4 runs of 4 with 30 s
+timeouts. `ILocalTypermediaNavigatorSession.Execute` has it, and so do remote typermedia tommand handlers. A
+`GetForUpdateAsync` over `SemaphoreSlim.WaitAsync` fixed it in a spike: the same 128 finished in 1.4–3.7 s, with the
+pool steady at 33 threads. The tevent store has the same hazard through the database's row lock, taken in a synchronous
+read: reasoned from the code, not run. The findings and spikes are in `dev_docs/async-local-navigators.md` on branch
+`async-local-navigators`, and building the fix is put to Magnus.
+
 ## Not `SyncOrAsync`
 
 Compze once had `SyncOrAsync` (2020, first named `AsyncMode`): a flag passed down the database call chain, so that one

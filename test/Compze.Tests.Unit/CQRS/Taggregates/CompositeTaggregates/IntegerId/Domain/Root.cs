@@ -24,7 +24,7 @@ class Root : Taggregate<Root, IRootTevent, RootTevent, IRootTevent<IRootTevent>,
       Component = new Component(this);
       _entities = RemovableEntity.CreateSelfManagingCollection(this);
 
-      Publish(new RootTevent.Created(new TaggregateId(), name));
+      Publish(new RootTevent.Created(TaggregateId.New(), name));
    }
 
    public IReadOnlyEntityCollection<RemovableEntity, int> Entities => _entities.Entities;

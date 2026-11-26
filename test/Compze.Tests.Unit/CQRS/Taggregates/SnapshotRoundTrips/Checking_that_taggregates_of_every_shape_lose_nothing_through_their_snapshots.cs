@@ -19,14 +19,14 @@ public static class Checking_that_taggregates_of_every_shape_lose_nothing_throug
 {
    public class a_composite_taggregate_with_state_in_its_component_its_nested_component_and_entities_at_every_level
    {
-      readonly CompositeTaggregate _taggregate = WithStateInEveryPart(new CompositeTaggregate("the root", new TaggregateId()));
+      readonly CompositeTaggregate _taggregate = WithStateInEveryPart(new CompositeTaggregate("the root", TaggregateId.New()));
 
       [XF] public void loses_nothing() => SnapshotRoundTrip.DifferencesBetweenItAndItsCopy(_taggregate, CompositeTaggregate.Empty).Must().BeEmpty();
    }
 
    public class a_composite_taggregate_whose_restore_leaves_out_its_entities
    {
-      readonly CompositeTaggregate _taggregate = WithStateInEveryPart(CompositeTaggregate.CreateWhoseRestoreLeavesOutItsEntities("the root", new TaggregateId()));
+      readonly CompositeTaggregate _taggregate = WithStateInEveryPart(CompositeTaggregate.CreateWhoseRestoreLeavesOutItsEntities("the root", TaggregateId.New()));
 
       [XF] public void the_differences_name_the_entity_collection_and_how_many_entities_each_holds() =>
          SnapshotRoundTrip.DifferencesBetweenItAndItsCopy(_taggregate, CompositeTaggregate.EmptyWhoseRestoreLeavesOutItsEntities)
@@ -59,7 +59,7 @@ public static class Checking_that_taggregates_of_every_shape_lose_nothing_throug
    public static class adding_a_restored_entity
    {
       [XF] public static void to_a_taggregate_created_by_publishing_throws() =>
-         Invoking(() => new CompositeTaggregate("the root", new TaggregateId()).AddARestoredEntityOutsideARestore()).Must().Throw<StateAssertionFailedException>();
+         Invoking(() => new CompositeTaggregate("the root", TaggregateId.New()).AddARestoredEntityOutsideARestore()).Must().Throw<StateAssertionFailedException>();
 
       [XF] public static void to_a_shared_tentity_collection_of_a_taggregate_created_by_publishing_throws() =>
          Invoking(() => ProjectTaggregate.Create().Checklist.AddWhileRestoring(ChecklistItemId.New())).Must().Throw<StateAssertionFailedException>();

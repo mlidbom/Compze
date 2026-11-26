@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <Nullable>enable</Nullable>
-    <Version>0.2.1-alpha</Version>
+    <Version>0.3.0-alpha</Version>
     <Description>A memory image of taggregates: every taggregate held in memory for the container's life, rebuilt at its start from a snapshot of each, which JSON files, or a database's tables, keep. A taggregate store that keeps taggregates as their state, not their history.</Description>
   </PropertyGroup>
   <ItemGroup>

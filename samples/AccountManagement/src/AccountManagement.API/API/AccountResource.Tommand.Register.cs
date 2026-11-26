@@ -18,7 +18,7 @@ public partial class AccountResource
          public static Register Create() => new()
                                             {
                                                AccountId = new AccountId(),
-                                               Id = new TessageId()
+                                               Id = TessageId.New()
                                             };
 
          //Note the use of a custom validation attributes.
@@ -37,7 +37,7 @@ public partial class AccountResource
 
          internal Register WithValues(AccountId accountId, string email, string password) => new()
                                                                                              {
-                                                                                                Id = new TessageId(),
+                                                                                                Id = TessageId.New(),
                                                                                                 AccountId = accountId,
                                                                                                 Email = email,
                                                                                                 Password = password

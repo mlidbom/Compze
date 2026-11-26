@@ -57,3 +57,7 @@ Compze.Internals.Transport                          -> Compze.Tessaging
 Compze.Internals.Transport.AspNet                   -> Compze.Tessaging.Transport.AspNetCore
 Compze.Tessaging.Hosting.AspNetCore                 -> Compze.Tessaging.Transport.AspNetCore
 Compze.Typermedia.Hosting.AspNetCore                -> Compze.Tessaging.Transport.AspNetCore
+
+# ── IInterprocessObject extends IAwaitableProcessShared, so it moved into Compze.Threading.Interprocess (2026-11-26) ──
+Compze.InterprocessObject                           -> Compze.Threading.Interprocess
+Compze.InterprocessObject.MemoryPack                -> Compze.Threading.Interprocess.MemoryPack

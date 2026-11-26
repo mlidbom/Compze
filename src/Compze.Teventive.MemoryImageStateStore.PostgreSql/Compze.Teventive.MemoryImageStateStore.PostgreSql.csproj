@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <Nullable>enable</Nullable>
-    <Version>0.1.0-alpha</Version>
-    <Description>The PostgreSQL tables of Compze's memory image state store: PgSqlMemoryImageStateStoreSqlLayer(), for a memory image state store kept in the tables of a PostgreSQL domain database, which several memory images, in other processes or other containers, share.</Description>
+    <Version>0.2.0-alpha</Version>
+    <Description>The PostgreSQL tables of Compze's memory image state store: PgSqlMemoryImageStateStoreSqlLayer(), for a memory image state store kept in the tables of a PostgreSQL domain database, which one memory image at a time uses.</Description>
     <PackageTags>compze;teventive;taggregates;memory-image;postgresql</PackageTags>
   </PropertyGroup>
   <ItemGroup>

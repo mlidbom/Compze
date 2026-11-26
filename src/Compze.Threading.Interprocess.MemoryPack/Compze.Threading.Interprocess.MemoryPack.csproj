@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <Nullable>enable</Nullable>
+    <Version>0.7.0-alpha</Version>
+    <Description>MemoryPack serialization for the IInterprocessObject of Compze.Threading.Interprocess: an object shared between processes, kept in MemoryPack's fast and compact binary format, created in a single line of code. Was Compze.InterprocessObject.MemoryPack.</Description>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="MemoryPack" Version="1.21.4" />
+  </ItemGroup>
+  <!-- Compze.Contracts — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Contracts)' == 'true'">
+    <PackageReference Include="Compze.Contracts" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Contracts)' != 'true'">
+    <ProjectReference Include="..\Compze.Contracts\Compze.Contracts.csproj" />
+  </ItemGroup>
+  <!-- Compze.Threading.Interprocess — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Threading_Interprocess)' == 'true'">
+    <PackageReference Include="Compze.Threading.Interprocess" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Threading_Interprocess)' != 'true'">
+    <ProjectReference Include="..\Compze.Threading.Interprocess\Compze.Threading.Interprocess.csproj" />
+  </ItemGroup>
+</Project>

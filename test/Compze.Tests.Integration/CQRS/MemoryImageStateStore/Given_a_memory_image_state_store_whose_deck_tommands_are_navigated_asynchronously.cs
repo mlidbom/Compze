@@ -27,7 +27,7 @@ namespace Compze.Tests.Integration.CQRS.MemoryImageStateStore;
 /// and goes on, and commits, on whichever thread the await resumes on. The other's handler adds the card without awaiting.</summary>
 public class Given_a_memory_image_state_store_whose_deck_tommands_are_navigated_asynchronously : UniversalTestBase
 {
-   static readonly JsonSerializerOptions Options = new() { Converters = { new TaggregateIdAsAGuid() } };
+   static readonly JsonSerializerOptions Options = new();
    const string DomainDatabase = "memory-image-state-store-navigated-asynchronously";
    static readonly TimeSpan HandlersAwait = TimeSpan.FromMilliseconds(10);
 

@@ -2,6 +2,7 @@ using Compze.Abstractions.Configuration;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
 using Compze.Sql.Sqlite._internal;
+using Microsoft.Data.Sqlite;
 
 namespace Compze.Sql.Sqlite.Wiring._internal;
 
@@ -24,6 +25,12 @@ static class SqliteConnectionPoolRegistrar
 
       return registrar;
    }
+
+   ///<summary>Registers the pool of the database in <paramref name="databaseFile"/>, in a testing container too.</summary>
+   public static IComponentRegistrar SqliteConnectionPool(this IComponentRegistrar registrar, FileInfo databaseFile) =>
+      registrar.Register(
+         Singleton.For<ISqliteConnectionPool>()
+                  .CreatedBy(() => ISqliteConnectionPool.CreateInstance(new SqliteConnectionStringBuilder { DataSource = databaseFile.FullName }.ConnectionString)));
 
    // ReSharper disable once UnusedMethodReturnValue.Local
    static IComponentRegistrar SqliteProductionConnectionPool(this IComponentRegistrar registrar, string connectionStringName)

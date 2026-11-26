@@ -16,6 +16,11 @@ public static class MySqlDomainDatabaseRegistrar
    /// "Implicit distributed transactions have not been enabled".<br/>
    /// With distributed transactions enabled, the connection refuses to prepare a two-phase commit, and the transaction rolls back.<br/>
    /// Keep each database, and each other durable resource, in transactions of its own.</remarks>
+   ///<remarks>On Linux, a synchronous call to the database waits for a free thread-pool thread to receive its answer: once anything has<br/>
+   /// used a connection asynchronously, as Compze's asynchronous paths do, .NET completes a synchronous read of its socket on a pool<br/>
+   /// thread. So a process whose pool threads block, such as on synchronous units of work waiting for one another's locks, can stall<br/>
+   /// its own database calls for seconds, on Linux only: Windows blocks such a read for real. There, run such work asynchronously, as<br/>
+   /// with <c>ExecuteUnitOfWorkAsync</c>.</remarks>
    public static IComponentRegistrar MySqlDomainDatabase(this IComponentRegistrar registrar, string connectionStringName) =>
       registrar.MySqlConnectionPool(connectionStringName);
 }

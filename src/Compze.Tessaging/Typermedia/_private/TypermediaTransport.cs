@@ -55,7 +55,7 @@ class TypermediaTransport : ITypermediaTransport
    async Task<string> SendAsync(TransportRequestKind kind, ITypermediaTessage tessage, EndpointAddress address)
    {
       var request = new TransportRequest(kind,
-                                         (tessage as IAtMostOnceTessage)?.Id ?? new TessageId(),
+                                         (tessage as IAtMostOnceTessage)?.Id ?? TessageId.New(),
                                          _typeMap.GetId(tessage.GetType()).CanonicalString,
                                          _serializer.SerializeTessage(tessage));
       return await _transportClient.SendAsync(request, address).caf();

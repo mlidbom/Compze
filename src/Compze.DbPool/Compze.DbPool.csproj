@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <Nullable>enable</Nullable>
-    <Version>0.3.0-alpha</Version>
+    <Version>0.3.1-alpha</Version>
     <!-- TODO:docs: Remove once all public API members have XML documentation comments -->
     <NoWarn>CS1591</NoWarn>
     <Description>Empty databases on demand for integration testing etc. Supports SQL Server, MySql, PostgreSQL and SQLite</Description>
@@ -38,19 +38,19 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_SystemCE)' != 'true'">
     <ProjectReference Include="..\Compze.Internals.SystemCE\Compze.Internals.SystemCE.csproj" />
   </ItemGroup>
-  <!-- Compze.InterprocessObject — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_InterprocessObject)' == 'true'">
-    <PackageReference Include="Compze.InterprocessObject" Version="*-*" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_InterprocessObject)' != 'true'">
-    <ProjectReference Include="..\Compze.InterprocessObject\Compze.InterprocessObject.csproj" />
-  </ItemGroup>
   <!-- Compze.Threading — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Threading)' == 'true'">
     <PackageReference Include="Compze.Threading" Version="*-*" />
   </ItemGroup>
   <ItemGroup Condition="'$(UsePackageReference_Compze_Threading)' != 'true'">
     <ProjectReference Include="..\Compze.Threading\Compze.Threading.csproj" />
+  </ItemGroup>
+  <!-- Compze.Threading.Interprocess — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Threading_Interprocess)' == 'true'">
+    <PackageReference Include="Compze.Threading.Interprocess" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Threading_Interprocess)' != 'true'">
+    <ProjectReference Include="..\Compze.Threading.Interprocess\Compze.Threading.Interprocess.csproj" />
   </ItemGroup>
   <!-- Compze.Underscore — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Underscore)' == 'true'">

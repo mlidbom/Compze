@@ -1,5 +1,5 @@
 using Compze.Contracts;
-using Compze.InterprocessObject;
+using Compze.Threading.Interprocess.ResourceAccess;
 using MemoryPack;
 
 namespace Compze.DbPool._private.MachineWideState;

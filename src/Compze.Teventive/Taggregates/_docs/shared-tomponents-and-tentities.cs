@@ -134,7 +134,7 @@ class Product : Taggregate<Product, IProductTevent, ProductTevent, IProductTeven
    public static Product Create(string name)
    {
       var product = new Product();
-      product.Publish(new ProductTevent.Created(new TaggregateId(), name));
+      product.Publish(new ProductTevent.Created(TaggregateId.New(), name));
       return product;
    }
 }
@@ -300,7 +300,7 @@ class Bundle : Taggregate<Bundle, IBundleTevent, BundleTevent, IBundleTevent<IBu
    public static Bundle Create(string name)
    {
       var bundle = new Bundle();
-      bundle.Publish(new BundleTevent.Created(new TaggregateId(), name));
+      bundle.Publish(new BundleTevent.Created(TaggregateId.New(), name));
       return bundle;
    }
 

@@ -23,7 +23,7 @@ class AnimalTaggregate : Taggregate<AnimalTaggregate, IAnimalTevent, AnimalTeven
 
    DateTime TimeOfBirth { get; set; }
 
-   protected void RegisterBirthProtected() => Publish(new AnimalTevent.Born(new TaggregateId()));
+   protected void RegisterBirthProtected() => Publish(new AnimalTevent.Born(TaggregateId.New()));
 
    protected AnimalSnapshot TakeAnimalSnapshot() => new(Id, TimeOfBirth);
 

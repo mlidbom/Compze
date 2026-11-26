@@ -18,25 +18,33 @@ interface ISqliteConnectionPool : IDbConnectionPool<ICompzeSqliteConnection, Sql
    /// keys its machine-local lock on it).</summary>
    string ConnectionString { get; }
 
-   public class SqliteConnectionPool : ISqliteConnectionPool
+   ///<summary>The pool of a SQLite database, reached through the connection string it reads at its first use. Disposing it closes<br/>
+   /// the connections Microsoft.Data.Sqlite keeps open for the database, so that the process no longer holds its file.</summary>
+   public class SqliteConnectionPool : ISqliteConnectionPool, IDisposable
    {
       readonly LazyCE<IDbConnectionPool<ICompzeSqliteConnection, SqliteCommand>> _pool;
-      readonly Func<string> _getConnectionString;
+      readonly LazyCE<string> _connectionString;
 
       internal SqliteConnectionPool(Func<string> getConnectionString)
       {
-         _getConnectionString = getConnectionString;
+         _connectionString = new LazyCE<string>(getConnectionString);
          _pool = new LazyCE<IDbConnectionPool<ICompzeSqliteConnection, SqliteCommand>>(
-            () =>
-            {
-               var connectionString = getConnectionString();
-               return DbConnectionPool<ICompzeSqliteConnection, SqliteCommand>.ForConnectionString(
-                  connectionString,
-                  ICompzeSqliteConnection.Create);
-            });
+            () => DbConnectionPool<ICompzeSqliteConnection, SqliteCommand>.ForConnectionString(
+               _connectionString.Value,
+               ICompzeSqliteConnection.Create));
       }
 
-      public string ConnectionString => _getConnectionString();
+      public string ConnectionString => _connectionString.Value;
+
+      ///<summary>Microsoft.Data.Sqlite keeps each connection that is closed open in a pool of its own, for the next to open the same<br/>
+      /// database, so it holds the database's file until that pool is cleared. Clearing it closes those connections now, and has<br/>
+      /// those still in use closed as they are closed, rather than kept.</summary>
+      public void Dispose()
+      {
+         if(_pool.ValueIfInitialized() == null) return;
+         using var connection = new SqliteConnection(ConnectionString);
+         SqliteConnection.ClearPool(connection);
+      }
 
       public override string ToString() => _pool.ValueIfInitialized()?.ToString() ?? "Not initialized";
       public TResult UseConnection<TResult>(Func<ICompzeSqliteConnection, TResult> func) => AutocommitTransientLockRetry.Execute(() => _pool.Value.UseConnection(func));

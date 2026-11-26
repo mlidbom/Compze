@@ -27,6 +27,10 @@ public class FileReplacement_ : InAFolderOfItsOwn
    static string ThisProcessNamedAsUsing(string path)
    {
       using var thisProcess = Process.GetCurrentProcess();
+      //bug: this is the whole list Windows gives, so the specifications that expect it fail whenever another process on the machine also
+      //   counts as using the file. Seen 2026-11-26: "Windows counts as using it: ClaudeTooling.Specifications (PID 159688),
+      //   Compze.Internals.SystemCE.Tests (PID 88968)", while another session's tests ran; it passed when run again. The specifications
+      //   should expect this process among those named, not alone (one-memory-image-per-storage, 2026-11-26).
       return $"{path}: Windows counts as using it: {thisProcess.ProcessName} (PID {thisProcess.Id})";
    }
 

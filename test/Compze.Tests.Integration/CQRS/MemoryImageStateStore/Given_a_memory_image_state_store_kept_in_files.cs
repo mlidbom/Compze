@@ -25,8 +25,8 @@ namespace Compze.Tests.Integration.CQRS.MemoryImageStateStore;
 /// container of its own on the same folder, as each start of an application is.</summary>
 public class Given_a_memory_image_state_store_kept_in_files : UniversalTestBase
 {
-   static readonly JsonSerializerOptions Options = new() { WriteIndented = true, Converters = { new TaggregateIdAsAGuid() } };
-   static readonly JsonSerializerOptions OptionsOfAnotherProgram = new() { WriteIndented = false, Converters = { new TaggregateIdAsAGuid() } };
+   static readonly JsonSerializerOptions Options = new() { WriteIndented = true };
+   static readonly JsonSerializerOptions OptionsOfAnotherProgram = new() { WriteIndented = false };
    readonly List<IDependencyInjectionContainer> _containers = [];
    readonly DirectoryInfo _folder = new(Path.Combine(Path.GetTempPath(), "compze-state-store-in-files", Guid.NewGuid().ToString("N")));
    bool _folderGivenByAService;
@@ -46,8 +46,16 @@ public class Given_a_memory_image_state_store_kept_in_files : UniversalTestBase
 
    ITaggregateStoreReader Reader => Store.RootResolver.Resolve<ITaggregateStoreReader>();
 
+   ///<summary>Disposes the store started last, if any, as a process does as it ends, and starts another on the folder, as the next process<br/>
+   /// does: one memory image at a time uses a store's files.</summary>
    IDependencyInjectionContainer StartAStore()
    {
+      if(_store != null)
+      {
+         _store.Dispose();
+         _containers.Remove(_store);
+      }
+
       var builder = TestEnv.DIContainer.CreateTestingContainerBuilder();
       builder.Registrar.Register(Singleton.For<TheStoresFolder>().CreatedBy(() => new TheStoresFolder(_folder)));
       builder.Registrar.MemoryImageStateStore(store =>
@@ -74,7 +82,18 @@ public class Given_a_memory_image_state_store_kept_in_files : UniversalTestBase
    ///<summary>Every file under the vocab folder, at any depth, as paths relative to it.</summary>
    IReadOnlyList<string> VocabFiles => VocabFolder.Exists ? [..Directory.EnumerateFiles(VocabFolder.FullName, "*", SearchOption.AllDirectories).Select(it => Path.GetRelativePath(VocabFolder.FullName, it))] : [];
 
-   IReadOnlyList<string> FilesInTheStoresOwnFolder => Directory.Exists(StoresOwnFolder) ? [..new DirectoryInfo(StoresOwnFolder).EnumerateFiles().Select(it => it.Name)] : [];
+   ///<summary>Every file in the store's own folder but its lock's.</summary>
+   IReadOnlyList<string> FilesInTheStoresOwnFolder => Directory.Exists(StoresOwnFolder) ? [..new DirectoryInfo(StoresOwnFolder).EnumerateFiles().Select(it => it.Name).Where(it => !IsOfTheStoresLock(it))] : [];
+
+   ///<summary>Whether <paramref name="fileName"/> names a file of the store's lock, which its own folder holds while a store has loaded: the lock<br/>
+   /// file, and on Unix the file beside it in which its holder records itself.</summary>
+   static bool IsOfTheStoresLock(string fileName) => fileName is "memory-image-state-store.lock" or "memory-image-state-store.holder";
+
+   ///<summary>Whether the specifications run on Unix, where another program can replace the store's own folder while the store holds the lock<br/>
+   /// in it: Windows refuses to delete a file that is open, as the lock is.</summary>
+   public static bool OnUnix => !OperatingSystem.IsWindows();
+
+   const string OnlyUnixLetsAProgramReplaceTheFolderOfAHeldLock = "Only on Unix can a program replace the store's own folder while the store holds the lock in it.";
 
    static string SerializedVocab(TaggregateId id, string question, string meaning) => JsonSerializer.Serialize(new StoredVocabSnapshot(id, question, meaning), Options);
 
@@ -101,6 +120,8 @@ public class Given_a_memory_image_state_store_kept_in_files : UniversalTestBase
          public and_another_store_is_started_on_the_folder() => StartAStore();
 
          [PCT] public void it_has_the_vocab_with_its_question() => Reader.Get<StoredVocab>(VocabId).Question.Must().Be("taberu");
+
+         [PCT] public void it_has_the_vocab_with_the_id_its_snapshot_holds() => Reader.Get<StoredVocab>(VocabId).Id.Must().Be(VocabId);
       }
 
       ///<summary>The store started on an empty folder, so the vocab folder didn't exist when it first loaded.</summary>
@@ -179,25 +200,30 @@ public class Given_a_memory_image_state_store_kept_in_files : UniversalTestBase
          [PCT] public void the_stores_own_folder_holds_no_temporary_file() => FilesInTheStoresOwnFolder.Must().BeEmpty();
       }
 
-      ///<summary>A file stands where the store's own folder goes, as it can on a consumer's disk, so the store can't write the<br/>
-      /// temporary file of a change when the unit of work prepares.</summary>
-      public class and_a_file_is_where_the_stores_own_folder_goes_so_a_unit_of_work_changing_it_fails_to_prepare_its_write : after_a_unit_of_work_adds_a_vocab
+      ///<summary>Another program puts a file where the store's own folder is, as it can on a consumer's disk, so the store can't write the<br/>
+      /// temporary file of a change when the unit of work prepares. Only on Unix: on Windows, the lock the store holds in the folder keeps<br/>
+      /// any program from deleting it. On Windows nothing is set up, and every specification is skipped.</summary>
+      public class and_another_program_puts_a_file_where_the_stores_own_folder_is_so_a_unit_of_work_changing_it_fails_to_prepare_its_write : after_a_unit_of_work_adds_a_vocab
       {
-         readonly Exception _exception;
+         readonly Exception? _exception;
 
-         public and_a_file_is_where_the_stores_own_folder_goes_so_a_unit_of_work_changing_it_fails_to_prepare_its_write()
+         public and_another_program_puts_a_file_where_the_stores_own_folder_is_so_a_unit_of_work_changing_it_fails_to_prepare_its_write()
          {
-            if(Directory.Exists(StoresOwnFolder)) Directory.Delete(StoresOwnFolder, recursive: true);
+            if(!OnUnix) return;
+            Directory.Delete(StoresOwnFolder, recursive: true);
             File.WriteAllText(StoresOwnFolder, "");
             _exception = Invoking(() => InUnitOfWork(taggregates => taggregates.GetForUpdate<StoredVocab>(VocabId).ChangeMeaning("to eat")))
                         .Must().Throw<TransactionAbortedException>().Which;
          }
 
-         [PCT] public void the_unit_of_work_rolls_back_with_the_disks_exception() => _exception.InnerException.Must().BeAssignableTo<IOException>();
+         [PCT(Skip = OnlyUnixLetsAProgramReplaceTheFolderOfAHeldLock, SkipType = typeof(Given_a_memory_image_state_store_kept_in_files), SkipUnless = nameof(OnUnix))]
+         public void the_unit_of_work_rolls_back_with_the_disks_exception() => _exception!.InnerException.Must().BeAssignableTo<IOException>();
 
-         [PCT] public void the_reader_gets_the_meaning_committed_before() => Reader.Get<StoredVocab>(VocabId).Meaning.Must().Be("");
+         [PCT(Skip = OnlyUnixLetsAProgramReplaceTheFolderOfAHeldLock, SkipType = typeof(Given_a_memory_image_state_store_kept_in_files), SkipUnless = nameof(OnUnix))]
+         public void the_reader_gets_the_meaning_committed_before() => Reader.Get<StoredVocab>(VocabId).Meaning.Must().Be("");
 
-         [PCT] public void the_file_still_holds_the_meaning_committed_before() => File.ReadAllText(VocabFileByDefault).Must().Be(SerializedVocab(VocabId, "taberu", ""));
+         [PCT(Skip = OnlyUnixLetsAProgramReplaceTheFolderOfAHeldLock, SkipType = typeof(Given_a_memory_image_state_store_kept_in_files), SkipUnless = nameof(OnUnix))]
+         public void the_file_still_holds_the_meaning_committed_before() => File.ReadAllText(VocabFileByDefault).Must().Be(SerializedVocab(VocabId, "taberu", ""));
       }
 
       ///<summary>The files are a transaction's one durable participant, so a transaction that has another, as a SQL Server connection<br/>
@@ -224,26 +250,34 @@ public class Given_a_memory_image_state_store_kept_in_files : UniversalTestBase
       }
 
       ///<summary>Another program puts a file where the store's own folder is, after the unit of work's write has prepared and before its<br/>
-      /// commit, so the commit can't write its journal: the commit hasn't happened, and the unit of work can still roll back.</summary>
+      /// commit, so the commit can't write its journal: the commit hasn't happened, and the unit of work can still roll back. Only on Unix,<br/>
+      /// as above: on Windows nothing is set up, and every specification is skipped.</summary>
       public class and_a_unit_of_work_changing_it_fails_to_write_its_journal : after_a_unit_of_work_adds_a_vocab
       {
-         readonly Exception _exception;
+         readonly Exception? _exception;
 
-         public and_a_unit_of_work_changing_it_fails_to_write_its_journal() =>
+         public and_a_unit_of_work_changing_it_fails_to_write_its_journal()
+         {
+            if(!OnUnix) return;
             _exception = Invoking(() => InUnitOfWork(taggregates =>
                          {
                             taggregates.GetForUpdate<StoredVocab>(VocabId).ChangeMeaning("to eat");
                             Transaction.Current!.EnlistVolatile(new ParticipantThatPutsAFileWhereAFolderIs(StoresOwnFolder), EnlistmentOptions.None);
                          }))
                         .Must().Throw<TransactionAbortedException>().Which;
+         }
 
-         [PCT] public void the_unit_of_work_rolls_back_with_the_disks_exception() => _exception.InnerException.Must().BeAssignableTo<IOException>();
+         [PCT(Skip = OnlyUnixLetsAProgramReplaceTheFolderOfAHeldLock, SkipType = typeof(Given_a_memory_image_state_store_kept_in_files), SkipUnless = nameof(OnUnix))]
+         public void the_unit_of_work_rolls_back_with_the_disks_exception() => _exception!.InnerException.Must().BeAssignableTo<IOException>();
 
-         [PCT] public void the_reader_gets_the_meaning_committed_before() => Reader.Get<StoredVocab>(VocabId).Meaning.Must().Be("");
+         [PCT(Skip = OnlyUnixLetsAProgramReplaceTheFolderOfAHeldLock, SkipType = typeof(Given_a_memory_image_state_store_kept_in_files), SkipUnless = nameof(OnUnix))]
+         public void the_reader_gets_the_meaning_committed_before() => Reader.Get<StoredVocab>(VocabId).Meaning.Must().Be("");
 
-         [PCT] public void the_file_still_holds_the_meaning_committed_before() => File.ReadAllText(VocabFileByDefault).Must().Be(SerializedVocab(VocabId, "taberu", ""));
+         [PCT(Skip = OnlyUnixLetsAProgramReplaceTheFolderOfAHeldLock, SkipType = typeof(Given_a_memory_image_state_store_kept_in_files), SkipUnless = nameof(OnUnix))]
+         public void the_file_still_holds_the_meaning_committed_before() => File.ReadAllText(VocabFileByDefault).Must().Be(SerializedVocab(VocabId, "taberu", ""));
 
-         [PCT] public void once_the_file_is_gone_a_unit_of_work_changing_it_commits()
+         [PCT(Skip = OnlyUnixLetsAProgramReplaceTheFolderOfAHeldLock, SkipType = typeof(Given_a_memory_image_state_store_kept_in_files), SkipUnless = nameof(OnUnix))]
+         public void once_the_file_is_gone_a_unit_of_work_changing_it_commits()
          {
             File.Delete(StoresOwnFolder);
             InUnitOfWork(taggregates => taggregates.GetForUpdate<StoredVocab>(VocabId).ChangeMeaning("to drink"));
@@ -263,6 +297,21 @@ public class Given_a_memory_image_state_store_kept_in_files : UniversalTestBase
          [PCT] public void the_vocab_is_in_its_file_under_the_folder_the_service_gives() =>
             VocabFiles.Must().SequenceEqual([Path.GetRelativePath(VocabFolder.FullName, VocabFileByDefault)]);
       }
+   }
+
+   ///<summary>A file stands where the store's own folder goes, as it can on a consumer's disk, before any store has started on the folder.</summary>
+   public class when_a_file_stands_where_the_stores_own_folder_goes : Given_a_memory_image_state_store_kept_in_files
+   {
+      readonly IOException _exception;
+
+      public when_a_file_stands_where_the_stores_own_folder_goes()
+      {
+         _folder.Create();
+         File.WriteAllText(StoresOwnFolder, "");
+         _exception = Invoking(() => Reader.TryGet(VocabId, out StoredVocab? _)).Must().Throw<IOException>().Which;
+      }
+
+      [PCT] public void the_first_use_of_a_store_started_on_the_folder_fails_with_the_disks_exception_naming_the_own_folder() => _exception.Message.Must().Contain(StoresOwnFolder);
    }
 
    public class when_a_crash_left_a_journal_and_the_temporary_file_it_renames : Given_a_memory_image_state_store_kept_in_files

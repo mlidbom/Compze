@@ -1,4 +1,3 @@
-using Compze.Teventive.MemoryImageStateStore._internal;
 using System.Diagnostics;
 using Compze.Abstractions;
 
@@ -12,23 +11,17 @@ sealed class NoStorage : ITaggregateStorage, IPreparedWrite
 
    NoStorage() {}
 
-   public LoadedTaggregates LoadAll() => new([], holdingEveryCommitThrough: null);
+   public IReadOnlyList<TaggregateSnapshot> LoadAll() => [];
    public IPreparedWrite Prepare(IReadOnlyList<TaggregateSnapshot> toSave, IReadOnlyList<TaggregateId> toDelete) => this;
 
    ///<summary>Never asked: the store refuses a reload when it has no storage.</summary>
    public bool HoldTheSameState(TaggregateSnapshot loaded, object heldSnapshot) => throw new UnreachableException("A memory image state store with no storage is never reloaded.");
 
    ///<summary>Never asked: the store refuses to write everything anew when it has no storage.</summary>
-   public CommitNumber? WriteAll(CommitNumber lastSeen, Func<IReadOnlyList<StoredTaggregate>, IReadOnlyList<TaggregateSnapshot>> everythingOnceCaughtUpWith) =>
+   public void WriteAll(IReadOnlyList<TaggregateSnapshot> everything) =>
       throw new UnreachableException("A memory image state store with no storage never writes everything anew.");
-
-   ///<summary>No other memory image shares it, so there is no lock to take, and nothing newer to find.</summary>
-   public StoredTaggregate? LockForUpdate(TaggregateId id, CommitNumber? heldAs) => null;
-
-   public TaggregatesCommittedAfter CommittedAfter(CommitNumber lastSeen) => TaggregatesCommittedAfter.None(lastSeen);
 
    public void Commit() {}
    public void Discard() {}
-   public CommitNumber? CommittedAs => null;
    public void Dispose() {}
 }

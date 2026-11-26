@@ -1,5 +1,6 @@
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
+using Compze.Sql.Common._internal.ProcessLocks;
 using Compze.Sql.MicrosoftSql._internal;
 using Compze.Sql.MicrosoftSql.Wiring._internal;
 using Compze.Teventive.MemoryImageStateStore._internal.SqlLayer;
@@ -14,7 +15,8 @@ public static class MsSqlMemoryImageStateStoreRegistrar
    /// tables in the SQL Server domain database this container declares, with <c>MsSqlDomainDatabase(...)</c>, and contributes the<br/>
    /// tables to the database's schema.</summary>
    public static IComponentRegistrar MsSqlMemoryImageStateStoreSqlLayer(this IComponentRegistrar registrar) =>
-      registrar.MsSqlSchemaContribution(Layer.SchemaCreationSql)
+      registrar.MsSqlDatabaseProcessLocks()
+               .MsSqlSchemaContribution(Layer.SchemaCreationSql)
                .Register(Singleton.For<IMemoryImageStateStoreSqlLayer>()
-                                  .CreatedBy((IMsSqlConnectionPool connectionPool, MsSqlSqlLayerSchemaManager schemaManager) => new Layer(connectionPool, schemaManager)));
+                                  .CreatedBy((IMsSqlConnectionPool connectionPool, MsSqlSqlLayerSchemaManager schemaManager, IDatabaseProcessLocks processLocks) => new Layer(connectionPool, schemaManager, processLocks)));
 }

@@ -104,7 +104,7 @@ public interface IAccountClosed : IExactlyOnceTevent
 
 public class AccountClosed(Guid accountId) : IAccountClosed
 {
-   public TessageId Id { get; private set; } = new(); //What the receiving endpoint deduplicates on.
+   public TessageId Id { get; private set; } = TessageId.New(); //What the receiving endpoint deduplicates on.
    public Guid AccountId { get; private set; } = accountId;
 }
 #endregion

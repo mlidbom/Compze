@@ -88,7 +88,7 @@ class Vocab : Taggregate<Vocab, IVocabTevent, VocabTevent, IVocabTevent<IVocabTe
    public static Vocab Create(string question)
    {
       var vocab = new Vocab();
-      vocab.Publish(new VocabTevent.Created(new TaggregateId(), question));
+      vocab.Publish(new VocabTevent.Created(TaggregateId.New(), question));
       return vocab;
    }
 

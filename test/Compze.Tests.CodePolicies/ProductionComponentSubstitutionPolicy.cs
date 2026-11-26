@@ -62,7 +62,7 @@ public static partial class ProductionComponentSubstitutionPolicy
       typeof(DependencyInjection.Abstractions.IComponentSet<>),       // a set of components registered together
       typeof(Internals.Logging.ILogBackend),                          // the logging backend log statements are written to
       typeof(Internals.SystemCE.IStaticInstancePropertySingleton<>),  // a type reached through a static Instance property
-      typeof(InterprocessObject.IInterprocessObjectSerializer<>)      // how an interprocess object crosses the process boundary
+      typeof(Threading.Interprocess.ResourceAccess.IInterprocessObjectSerializer<>) // how an interprocess object crosses the process boundary
    ];
 
    static IEnumerable<string> SubstitutedComponentsOf(Type testType, Dictionary<Type, Type> abstractionsCompzeImplements)

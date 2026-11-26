@@ -138,23 +138,19 @@ sealed class MemoryImageStateStoreSession : ITaggregateStoreSession
       _unitOfWork.Dispatch(tevent);
    }
 
-   ///<summary>Takes the lock of the taggregate <paramref name="id"/>, in memory, then in the storage, unless this unit of work holds it<br/>
-   /// already, as it does after trying to get for update a taggregate the store doesn't hold: a lock can't be taken twice, even by<br/>
-   /// its holder. Taking it in the storage brings the committed taggregate up to date with what other memory images committed.</summary>
+   ///<summary>Takes the lock of the taggregate <paramref name="id"/>, unless this unit of work holds it already, as it does after trying<br/>
+   /// to get for update a taggregate the store doesn't hold: a lock can't be taken twice, even by its holder.</summary>
    void HoldUpdateLock(TaggregateId id)
    {
       if(_heldUpdateLocks.ContainsKey(id)) return;
       _heldUpdateLocks.Add(id, _store.UpdateLocks.Take(id));
-      _store.LockInTheStorageForUpdate(id);
    }
 
-   ///<summary>As <see cref="HoldUpdateLock"/>, holding no thread while another unit of work holds the lock in memory. Taking it in the<br/>
-   /// storage is synchronous still.</summary>
+   ///<summary>As <see cref="HoldUpdateLock"/>, holding no thread while another unit of work holds the lock.</summary>
    async Task HoldUpdateLockAsync(TaggregateId id)
    {
       if(_heldUpdateLocks.ContainsKey(id)) return;
       _heldUpdateLocks.Add(id, await _store.UpdateLocks.TakeAsync(id).caf());
-      _store.LockInTheStorageForUpdate(id);
    }
 
    static TTaggregate AsRequested<TTaggregate>(ITaggregate taggregate) where TTaggregate : class, ITaggregate
@@ -189,7 +185,7 @@ sealed class MemoryImageStateStoreSession : ITaggregateStoreSession
       write.Commit();
       var changed = _heldTaggregates.Values.Where(it => it is { IsChanged: true, WasAddedAndDeleted: false }).ToList();
       foreach(var held in changed.Where(it => !it.IsDeleted)) held.Taggregate.Commit(_ => {}); //Its tevents were dispatched from its tevent stream: this only forgets them.
-      _store.Committed.InstallACommit([..changed.Select(it => (it.Taggregate.Id, NewState: it.IsDeleted ? null : it.Taggregate))], write.CommittedAs, _preparedIndexChanges);
+      _store.Committed.InstallACommit([..changed.Select(it => (it.Taggregate.Id, NewState: it.IsDeleted ? null : it.Taggregate))], _preparedIndexChanges);
    }
 
    public void Rollback() => _preparedWrite?.Discard(); //The copies and the new taggregates are simply never committed.

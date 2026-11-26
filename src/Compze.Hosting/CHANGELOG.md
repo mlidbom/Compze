@@ -4,6 +4,11 @@ All notable changes to Compze.Hosting will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## 0.5.1-alpha
+
+- **Depends on Compze.Threading.Interprocess instead of Compze.InterprocessObject, which is retired:** `IInterprocessObject<T>`, which it keeps its `InterprocessEndpointRegistry`'s state in, moved to Compze.Threading.Interprocess. Nothing public changes.
+- **Requires newer minor versions of other Compze packages:** Compze.Abstractions 0.5.0-alpha (was 0.4.1-alpha), Compze.Internals.SystemCE 0.12.0-internal (was 0.10.0-internal), Compze.Tessaging 0.12.0-alpha (was 0.11.0-alpha), Compze.Threading 0.14.0-alpha (was 0.13.0-alpha). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
+
 ## 0.5.0-alpha
 
 - **Built against `LazyCE` in Compze.Threading, where it moved from Compze.Internals.SystemCE, and against SystemCE's `WithAggregateExceptionsAsync`, which was `WithAggregateExceptions`:** the released version uses both where they were, and would fail beside the new packages with a `TypeLoadException` or a `MissingMethodException`.

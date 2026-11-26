@@ -2,12 +2,11 @@
   <PropertyGroup>
     <Nullable>enable</Nullable>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <Version>0.8.0-alpha</Version>
-    <Description>Cross-process synchronization for Compze.Threading. A system-mutex-backed IAwaitableMutex that offers the full Monitor.Wait condition-wait model across process boundaries, plus IProcessShared/IAwaitableProcessShared, the file-based InterprocessSignal, and IProcessLock, a lock between processes that any thread can release and the operating system releases when its holder dies. Extracted from Compze.Threading 0.7.0-alpha.</Description>
+    <Version>0.10.0-alpha</Version>
+    <Description>Cross-process synchronization for Compze.Threading. A system-mutex-backed IAwaitableMutex that offers the full Monitor.Wait condition-wait model across process boundaries, plus IProcessShared/IAwaitableProcessShared, the file-based InterprocessSignal, IProcessLock, a lock between processes that any thread can release and the operating system releases when its holder dies, IProcessSemaphore, a counting semaphore between processes that serves takes in the order they came and that a dead holder can't leave held, and IInterprocessObject, an object shared between processes, created in a single line of code, with atomic updates, waits for conditions to become true, recovery from corruption and pluggable serialization. Extracted from Compze.Threading 0.7.0-alpha; IInterprocessObject moved here from the retired Compze.InterprocessObject.</Description>
   </PropertyGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="Compze.Threading.InternalSpecifications" />
-    <InternalsVisibleTo Include="Compze.Teventive.MemoryImageStateStore" />
   </ItemGroup>
   <!-- Compze.Contracts — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Contracts)' == 'true'">
@@ -15,6 +14,13 @@
   </ItemGroup>
   <ItemGroup Condition="'$(UsePackageReference_Compze_Contracts)' != 'true'">
     <ProjectReference Include="..\Compze.Contracts\Compze.Contracts.csproj" />
+  </ItemGroup>
+  <!-- Compze.Internals.SystemCE — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_SystemCE)' == 'true'">
+    <PackageReference Include="Compze.Internals.SystemCE" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_SystemCE)' != 'true'">
+    <ProjectReference Include="..\Compze.Internals.SystemCE\Compze.Internals.SystemCE.csproj" />
   </ItemGroup>
   <!-- Compze.Threading — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Threading)' == 'true'">

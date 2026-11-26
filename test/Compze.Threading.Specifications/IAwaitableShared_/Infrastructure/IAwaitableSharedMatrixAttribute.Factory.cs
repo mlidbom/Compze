@@ -1,7 +1,6 @@
 using Compze.Internals.SystemCE.LinqCE;
-using Compze.InterprocessObject;
-using Compze.InterprocessObject.MemoryPack;
 using Compze.Threading.Interprocess.ResourceAccess;
+using Compze.Threading.Interprocess.MemoryPack;
 using Compze.Threading.ResourceAccess;
 using Compze.Threading.Specifications.TestInfrastructure;
 using Compze.Underscore;

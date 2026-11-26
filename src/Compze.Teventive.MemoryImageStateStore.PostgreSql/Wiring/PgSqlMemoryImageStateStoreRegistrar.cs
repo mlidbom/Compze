@@ -1,5 +1,6 @@
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
+using Compze.Sql.Common._internal.ProcessLocks;
 using Compze.Sql.PostgreSql._internal;
 using Compze.Sql.PostgreSql.Wiring._internal;
 using Compze.Teventive.MemoryImageStateStore._internal.SqlLayer;
@@ -14,7 +15,8 @@ public static class PgSqlMemoryImageStateStoreRegistrar
    /// tables in the PostgreSQL domain database this container declares, with <c>PgSqlDomainDatabase(...)</c>, and contributes the<br/>
    /// tables to the database's schema.</summary>
    public static IComponentRegistrar PgSqlMemoryImageStateStoreSqlLayer(this IComponentRegistrar registrar) =>
-      registrar.PgSqlSchemaContribution(Layer.SchemaCreationStatements)
+      registrar.PgSqlDatabaseProcessLocks()
+               .PgSqlSchemaContribution(Layer.SchemaCreationStatements)
                .Register(Singleton.For<IMemoryImageStateStoreSqlLayer>()
-                                  .CreatedBy((IPgSqlConnectionPool connectionPool, PgSqlSqlLayerSchemaManager schemaManager) => new Layer(connectionPool, schemaManager)));
+                                  .CreatedBy((IPgSqlConnectionPool connectionPool, PgSqlSqlLayerSchemaManager schemaManager, IDatabaseProcessLocks processLocks) => new Layer(connectionPool, schemaManager, processLocks)));
 }

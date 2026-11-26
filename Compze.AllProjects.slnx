@@ -83,13 +83,6 @@
     <Project Path="src/Compze.DbPool.PostgreSql/Compze.DbPool.PostgreSql.csproj" />
     <Project Path="src/Compze.DbPool.Sqlite/Compze.DbPool.Sqlite.csproj" />
   </Folder>
-  <Folder Name="/Utilities/Compze.InterprocessObject/">
-    <Project Path="src/Compze.InterprocessObject.MemoryPack/Compze.InterprocessObject.MemoryPack.csproj" />
-    <Project Path="src/Compze.InterprocessObject/Compze.InterprocessObject.csproj" />
-  </Folder>
-  <Folder Name="/Utilities/Compze.InterprocessObject/Specifications/">
-    <Project Path="test/Compze.InterprocessObject.Specifications/Compze.InterprocessObject.Specifications.csproj" />
-  </Folder>
   <Folder Name="/Utilities/Compze.Must/">
     <Project Path="src/Compze.Must/Compze.Must.csproj" />
   </Folder>
@@ -100,6 +93,7 @@
     <Project Path="src/Compze.Threading.Testing/Compze.Threading.Testing.csproj" />
     <Project Path="src/Compze.Threading/Compze.Threading.csproj" />
     <Project Path="src/Compze.Threading.Interprocess/Compze.Threading.Interprocess.csproj" />
+    <Project Path="src/Compze.Threading.Interprocess.MemoryPack/Compze.Threading.Interprocess.MemoryPack.csproj" />
   </Folder>
   <Folder Name="/Utilities/Compze.Threading/Specifications/">
     <Project Path="test/Compze.Threading.InternalSpecifications/Compze.Threading.InternalSpecifications.csproj" />

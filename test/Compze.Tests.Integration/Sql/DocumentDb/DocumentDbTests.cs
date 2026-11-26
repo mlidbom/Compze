@@ -84,13 +84,13 @@ public class DocumentDbTests : DocumentDbTestsBase
     [PCT]
     public void GettingANonExistentDocumentThrowsNoSuchDocumentException()
     {
-        UseInScope(reader => Invoking(() => reader.Get<User>(new EntityId())).Must().Throw<NoSuchDocumentException>());
+        UseInScope(reader => Invoking(() => reader.Get<User>(EntityId.New())).Must().Throw<NoSuchDocumentException>());
     }
 
     [PCT]
     public void DocumentsOfDifferentTypesWithTheSameIdAreDistinctDocuments()
     {
-        var sharedId = new EntityId();
+        var sharedId = EntityId.New();
         var user = new User(sharedId.Value);
         var dog = new Dog { Id = sharedId };
 
@@ -431,11 +431,11 @@ public class DocumentDbTests : DocumentDbTestsBase
     {
         UseInTransactionalScope((_, updater) =>
         {
-            var lassie = new Dog { Id = new EntityId() };
+            var lassie = new Dog { Id = EntityId.New() };
             updater.Save(lassie);
         });
 
-        var buster = new Dog { Id = new EntityId() };
+        var buster = new Dog { Id = EntityId.New() };
         UseInTransactionalScope((_, updater) => Invoking(() => updater.Delete(buster)).Must().Throw<NoSuchDocumentException>());
     }
 
@@ -556,8 +556,8 @@ public class DocumentDbTests : DocumentDbTestsBase
         {
             updater.Save(new User());
             updater.Save(new User());
-            updater.Save(new Dog { Id = new EntityId() });
-            updater.Save(new Dog { Id = new EntityId() });
+            updater.Save(new Dog { Id = EntityId.New() });
+            updater.Save(new Dog { Id = EntityId.New() });
         });
 
         using var scope = Container.BeginScope();

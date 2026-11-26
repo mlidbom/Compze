@@ -1,4 +1,5 @@
 using Compze.Abstractions;
+using Compze.Threading;
 
 namespace Compze.Teventive.MemoryImageStateStore._internal.SqlLayer;
 
@@ -9,31 +10,22 @@ namespace Compze.Teventive.MemoryImageStateStore._internal.SqlLayer;
 /// what runs inside one runs on the transaction's connection. The layer itself suppresses nothing.</remarks>
 interface IMemoryImageStateStoreSqlLayer
 {
-   ///<summary>What tells this database from every other: the connection string Compze's connections to it open with. Memory images on<br/>
-   /// one machine that name the database the same share its commit signal.</summary>
-   string DatabaseIdentity { get; }
+   ///<summary>Every row of the classes named <paramref name="classNames"/>.</summary>
+   IReadOnlyList<TaggregateRow> ReadAll(IReadOnlyList<string> classNames);
 
-   ///<summary>The last commit number, then every row of the classes named <paramref name="classNames"/>, deleted ones included.</summary>
-   ///<remarks>The counter is read first, in a statement of its own: every commit up to its value was committed before the rows are<br/>
-   /// read, so the rows hold every one of them, whatever isolation the database reads at.</remarks>
-   TaggregateRows ReadAll(IReadOnlyList<string> classNames);
+   ///<summary>Inside the ambient transaction: writes the row of each of <paramref name="saved"/>, adding it for a new taggregate, and deletes<br/>
+   /// the row of each of <paramref name="deleted"/>.</summary>
+   void Write(IReadOnlyList<TaggregateRowToSave> saved, IReadOnlyList<TaggregateId> deleted);
 
-   ///<summary>The last commit number, then the rows of the classes named <paramref name="classNames"/> that commits after<br/>
-   /// <paramref name="lastSeen"/> wrote: as <see cref="ReadAll"/>, for the commits after a number.</summary>
-   TaggregateRows ReadCommittedAfter(CommitNumber lastSeen, IReadOnlyList<string> classNames);
+   ///<summary>Takes the domain database's process lock named <paramref name="lockName"/> for <paramref name="purpose"/>, waiting at most<br/>
+   /// <paramref name="waitTimeout"/> for another holder to release it, and returns the hold, whose disposal releases it: or null if another<br/>
+   /// holder still holds it. <paramref name="onLostWhileHeld"/> reports the lock lost without being released, as when the database session<br/>
+   /// holding it dies. The database package's process lock, which an exactly-once endpoint takes too, under another name.</summary>
+   IDisposable? TryTakeProcessLock(string lockName, string purpose, WaitTimeout waitTimeout, Action<Exception> onLostWhileHeld);
 
-   ///<summary>Inside the ambient transaction: takes the taggregate <paramref name="id"/>'s lock, held until the transaction completes,<br/>
-   /// then reads its row unless the commit <paramref name="heldAs"/> wrote it: null when it has no row, or that commit wrote it.</summary>
-   TaggregateRow? LockAndReadUnlessHeldAs(TaggregateId id, CommitNumber? heldAs);
-
-   ///<summary>Inside the ambient transaction, at its very end: takes the next commit number from the commit counter, whose lock the<br/>
-   /// transaction holds until it completes, so that commits commit in the order of their numbers.</summary>
-   CommitNumber TakeTheNextCommitNumber();
-
-   ///<summary>Inside the ambient transaction, once it has taken <paramref name="committedAs"/>: writes the row of each of<br/>
-   /// <paramref name="saved"/>, adding it for a new taggregate, and marks the row of each of <paramref name="deleted"/> deleted.<br/>
-   /// Every row written holds <paramref name="committedAs"/>.</summary>
-   void Write(CommitNumber committedAs, IReadOnlyList<TaggregateRowToSave> saved, IReadOnlyList<TaggregateId> deleted);
+   ///<summary>Who holds the process lock named <paramref name="lockName"/>, as it recorded itself: what for, which process, on which machine,<br/>
+   /// and since when; null when it took the lock this instant and hasn't recorded itself yet. Read when a take is refused.</summary>
+   string? ProcessLockHolder(string lockName);
 
    ///<summary>The names of the tables and their columns, the same in every database.</summary>
    static class TableSchemaStrings
@@ -42,13 +34,6 @@ interface IMemoryImageStateStoreSqlLayer
       internal const string Id = nameof(Id);
       internal const string ClassName = nameof(ClassName);
       internal const string Snapshot = nameof(Snapshot);
-      internal const string CommitNumber = nameof(CommitNumber);
-
-      internal const string CommitCounterTable = "MemoryImageStateStoreCommitCounter";
-      internal const string LastCommitNumber = nameof(LastCommitNumber);
-
-      ///<summary>The id of the commit counter's one row.</summary>
-      internal const int TheCounterRow = 1;
 
       ///<summary>The longest class name, as the tables' column holds it.</summary>
       internal const int ClassNameLength = 400;

@@ -25,7 +25,7 @@ namespace Compze.Tests.Integration.CQRS.MemoryImageStateStore;
 /// What the store wrote is specified on both. How the paths are read is the same on either, and is specified on a file system in memory.</summary>
 public abstract class Given_a_memory_image_state_store_stored_in_json_files_after_a_unit_of_work_adds_a_vocab_and_a_sentence : UniversalTestBase
 {
-   static readonly JsonSerializerOptions Options = new() { WriteIndented = true, Converters = { new TaggregateIdAsAGuid() } };
+   static readonly JsonSerializerOptions Options = new() { WriteIndented = true };
    readonly DirectoryInfo _folder = new(Path.Combine(Path.GetTempPath(), "compze-memory-image-state-store-json-files", Guid.NewGuid().ToString("N")));
    readonly IComponentRegistrar _registrar;
    readonly IDependencyInjectionContainer _container;
@@ -186,7 +186,7 @@ public abstract class Given_a_memory_image_state_store_stored_in_json_files_afte
       [PCT] public void TaggregateWhoseFileIs_a_relative_path_throws() => Invoking(() => JsonFiles.TaggregateWhoseFileIs(FileInTheLayout("vocab", VocabId))).Must().Throw<Exception>();
 
       [PCT] public void PathOf_a_class_the_store_does_not_keep_throws_naming_the_class() =>
-         Invoking(() => JsonFiles.PathOf<StoredDeck>(new TaggregateId())).Must().Throw<Exception>().Which.Message.Must().Contain(typeof(StoredDeck).FullName!);
+         Invoking(() => JsonFiles.PathOf<StoredDeck>(TaggregateId.New())).Must().Throw<Exception>().Which.Message.Must().Contain(typeof(StoredDeck).FullName!);
 
       [PCT] public void PathOf_a_taggregate_passed_as_an_ITaggregate_of_a_class_the_store_does_not_keep_throws_naming_the_class() =>
          Invoking(() => JsonFiles.PathOf(ADeckAsATaggregate)).Must().Throw<Exception>().Which.Message.Must().Contain(typeof(StoredDeck).FullName!);

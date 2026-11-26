@@ -30,6 +30,10 @@ public class When_another_holder_in_this_process_holds_the_lock : ProcessLockSpe
    [XF] public async Task TryTakeAsync_with_a_WaitTimeout_of_zero_returns_null() => Holding(await Lock.TryTakeAsync(Purpose, WaitTimeout.Zero)).Must().BeNull();
    [XF] public void TryTake_on_the_instance_that_holds_it_returns_null() => Holding(_theHoldersLock.TryTake(Purpose, WaitTimeout.Zero)).Must().BeNull();
 
+   [XF] public void LastHoldersDescription_says_what_the_holder_holds_it_for_which_process_it_is_on_which_machine_and_since_when() =>
+      Lock.LastHoldersDescription().Must().StartWith($"for {TheHoldersPurpose}, by process {Environment.ProcessId} (")
+          .Contain($") on {Environment.MachineName}, since ");
+
    public class and_TryTake_waits_200_milliseconds : When_another_holder_in_this_process_holds_the_lock
    {
       readonly IProcessLockHold? _hold;

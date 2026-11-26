@@ -16,7 +16,7 @@ namespace Compze.Tests.Integration.CQRS.MemoryImageStateStore;
 ///<summary>What composing a memory image state store kept in the domain database's tables refuses, before anything runs.</summary>
 public class When_a_memory_image_state_store_is_composed_to_be_kept_in_the_domain_database : UniversalTestBase
 {
-   static readonly JsonSerializerOptions Options = new() { Converters = { new TaggregateIdAsAGuid() } };
+   static readonly JsonSerializerOptions Options = new();
 
    static Exception TheFailureComposing(Action<MemoryImageStateStoreBuilder> declare) =>
       Invoking(() => TestEnv.DIContainer.CreateTestingContainerBuilder().Registrar.MemoryImageStateStore(declare)).Must().Throw<Exception>().Which;

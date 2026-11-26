@@ -620,9 +620,10 @@ registrar.MemoryImageStateStore(store => store
 ### Kept in a database's tables
 
 `StoredInTheDomainDatabase(options, rows => rows.ClassNamed<VocabNote>("vocab"))` keeps the store in tables of the domain
-database, which several memory images share: a row for each taggregate, its lock taken in the database at a get for
-update, commits numbered in the order they commit, and each memory image catching up with the others by number. Designed
-and built 2026-11-24: [the-memory-image-state-store-in-tables.md](the-memory-image-state-store-in-tables.md).
+database: a row for each taggregate. Designed and built 2026-11-24 for several memory images sharing the tables; since
+2026-11-26 one memory image at a time uses them, holding a process lock of the database, as one memory image at a time
+uses a store's files, holding a lock in its folder:
+[the-memory-image-state-store-in-tables.md](the-memory-image-state-store-in-tables.md).
 
 ### Storage: an internal seam
 

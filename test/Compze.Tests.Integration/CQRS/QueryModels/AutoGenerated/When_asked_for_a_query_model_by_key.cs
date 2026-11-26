@@ -40,13 +40,13 @@ public class When_asked_for_a_query_model_by_key : UniversalTestBase
    [PCT] public void TryGet_returns_false_when_no_taggregate_history_backs_the_key()
    {
       using var scope = _container.BeginScope();
-      scope.Resolve<IQueryModelReader>().TryGet<MyAccountQueryModel>(new EntityId(), out _).Must().BeFalse();
+      scope.Resolve<IQueryModelReader>().TryGet<MyAccountQueryModel>(EntityId.New(), out _).Must().BeFalse();
    }
 
    [PCT] public void TryGet_returns_true_and_the_generated_model_once_the_account_taggregate_is_registered()
    {
       using var scope = _container.BeginScope();
-      var registered = _container.ExecuteUnitOfWork(unitOfWork => MyAccount.Register(unitOfWork.TaggregateStoreUpdater(), new TaggregateId(), "email", "password"));
+      var registered = _container.ExecuteUnitOfWork(unitOfWork => MyAccount.Register(unitOfWork.TaggregateStoreUpdater(), TaggregateId.New(), "email", "password"));
 
       scope.Resolve<IQueryModelReader>().TryGet<MyAccountQueryModel>(registered.Id, out var model).Must().BeTrue();
       model!.Email.Must().Be("email");
@@ -55,7 +55,7 @@ public class When_asked_for_a_query_model_by_key : UniversalTestBase
    [PCT] public void TryGetVersion_returns_false_when_no_taggregate_history_backs_the_key()
    {
       using var scope = _container.BeginScope();
-      scope.Resolve<IVersioningQueryModelReader>().TryGetVersion<MyAccountQueryModel>(new EntityId(), 1, out _).Must().BeFalse();
+      scope.Resolve<IVersioningQueryModelReader>().TryGetVersion<MyAccountQueryModel>(EntityId.New(), 1, out _).Must().BeFalse();
    }
 
    [PCT] public void TryGetVersion_returns_the_model_as_of_the_requested_taggregate_version()
@@ -63,7 +63,7 @@ public class When_asked_for_a_query_model_by_key : UniversalTestBase
       MyAccount registered;
       {
          using var registerScope = _container.BeginScope();
-         registered = _container.ExecuteUnitOfWork(unitOfWork => MyAccount.Register(unitOfWork.TaggregateStoreUpdater(), new TaggregateId(), "originalEmail", "password"));
+         registered = _container.ExecuteUnitOfWork(unitOfWork => MyAccount.Register(unitOfWork.TaggregateStoreUpdater(), TaggregateId.New(), "originalEmail", "password"));
       }
 
       {

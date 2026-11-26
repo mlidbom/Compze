@@ -1,5 +1,5 @@
 using Compze.DbPool._private.MachineWideState;
-using Compze.InterprocessObject;
+using Compze.Threading.Interprocess.ResourceAccess;
 using Compze.Internals.SystemCE;
 using Compze.Internals.SystemCE.IOCE;
 using Compze.Threading;

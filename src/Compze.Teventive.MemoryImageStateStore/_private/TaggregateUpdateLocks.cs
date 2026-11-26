@@ -48,9 +48,6 @@ sealed class TaggregateUpdateLocks
       throw new TimeoutException($"Waited {Timeout} for another unit of work to finish changing taggregate {updateLock.Id}.");
    }
 
-   ///<summary>Whether a unit of work holds, or waits for, the lock of the taggregate <paramref name="id"/>.</summary>
-   internal bool IsHeldOrWaitedFor(TaggregateId id) => _locksHeldOrWaitedFor.Locked(locks => locks.ContainsKey(id));
-
    void Leave(UpdateLock updateLock) => _locksHeldOrWaitedFor.Locked(locks =>
    {
       if(--updateLock.Users > 0) return;

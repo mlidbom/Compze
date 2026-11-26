@@ -16,7 +16,7 @@ public class Entity<TEntity> : Entity<TEntity, Guid>, IEntity where TEntity : En
    protected Entity(EntityId id) : base(id) {}
 
    /// <summary>Creates a new instance with an automatically generated Id</summary>
-   protected Entity() : base(new EntityId()) {}
+   protected Entity() : base(EntityId.New()) {}
 
    EntityId<Guid> IEntity<Guid>.Id => Id;
 

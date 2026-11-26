@@ -11,6 +11,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="xunit.v3.mtp-off" Version="4.0.3" />
+    <PackageReference Include="JetBrains.Annotations.Sources" Version="2025.2.4" PrivateAssets="all" />
   </ItemGroup>
   <!-- Compze.Internals.SystemCE — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_SystemCE)' == 'true'">
@@ -18,20 +19,6 @@
   </ItemGroup>
   <ItemGroup Condition="'$(UsePackageReference_Compze_Internals_SystemCE)' != 'true'">
     <ProjectReference Include="..\..\src\Compze.Internals.SystemCE\Compze.Internals.SystemCE.csproj" />
-  </ItemGroup>
-  <!-- Compze.InterprocessObject — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_InterprocessObject)' == 'true'">
-    <PackageReference Include="Compze.InterprocessObject" Version="*-*" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_InterprocessObject)' != 'true'">
-    <ProjectReference Include="..\..\src\Compze.InterprocessObject\Compze.InterprocessObject.csproj" />
-  </ItemGroup>
-  <!-- Compze.InterprocessObject.MemoryPack — flex reference -->
-  <ItemGroup Condition="'$(UsePackageReference_Compze_InterprocessObject_MemoryPack)' == 'true'">
-    <PackageReference Include="Compze.InterprocessObject.MemoryPack" Version="*-*" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(UsePackageReference_Compze_InterprocessObject_MemoryPack)' != 'true'">
-    <ProjectReference Include="..\..\src\Compze.InterprocessObject.MemoryPack\Compze.InterprocessObject.MemoryPack.csproj" />
   </ItemGroup>
   <!-- Compze.Must — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Must)' == 'true'">
@@ -60,6 +47,13 @@
   </ItemGroup>
   <ItemGroup Condition="'$(UsePackageReference_Compze_Threading_Interprocess)' != 'true'">
     <ProjectReference Include="..\..\src\Compze.Threading.Interprocess\Compze.Threading.Interprocess.csproj" />
+  </ItemGroup>
+  <!-- Compze.Threading.Interprocess.MemoryPack — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Threading_Interprocess_MemoryPack)' == 'true'">
+    <PackageReference Include="Compze.Threading.Interprocess.MemoryPack" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Threading_Interprocess_MemoryPack)' != 'true'">
+    <ProjectReference Include="..\..\src\Compze.Threading.Interprocess.MemoryPack\Compze.Threading.Interprocess.MemoryPack.csproj" />
   </ItemGroup>
   <!-- Compze.Threading.Testing — flex reference -->
   <ItemGroup Condition="'$(UsePackageReference_Compze_Threading_Testing)' == 'true'">

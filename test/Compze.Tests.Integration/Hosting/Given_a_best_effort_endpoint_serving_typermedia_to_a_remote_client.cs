@@ -116,7 +116,7 @@ public class Given_a_best_effort_endpoint_serving_typermedia_to_a_remote_client 
       public static RegisterUserTypermediaTommand Create(string name) => new()
                                                                          {
                                                                             Name = name,
-                                                                            Id = new TessageId()
+                                                                            Id = TessageId.New()
                                                                          };
 
       public string Name { get; private init; } = "";

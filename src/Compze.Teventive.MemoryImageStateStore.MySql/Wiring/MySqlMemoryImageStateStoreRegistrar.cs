@@ -1,5 +1,6 @@
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
+using Compze.Sql.Common._internal.ProcessLocks;
 using Compze.Sql.MySql._internal;
 using Compze.Sql.MySql.Wiring._internal;
 using Compze.Teventive.MemoryImageStateStore._internal.SqlLayer;
@@ -14,7 +15,8 @@ public static class MySqlMemoryImageStateStoreRegistrar
    /// tables in the MySQL domain database this container declares, with <c>MySqlDomainDatabase(...)</c>, and contributes the<br/>
    /// tables to the database's schema.</summary>
    public static IComponentRegistrar MySqlMemoryImageStateStoreSqlLayer(this IComponentRegistrar registrar) =>
-      registrar.MySqlSchemaContribution(Layer.SchemaCreationSql)
+      registrar.MySqlDatabaseProcessLocks()
+               .MySqlSchemaContribution(Layer.SchemaCreationSql)
                .Register(Singleton.For<IMemoryImageStateStoreSqlLayer>()
-                                  .CreatedBy((IMySqlConnectionPool connectionPool, MySqlSqlLayerSchemaManager schemaManager) => new Layer(connectionPool, schemaManager)));
+                                  .CreatedBy((IMySqlConnectionPool connectionPool, MySqlSqlLayerSchemaManager schemaManager, IDatabaseProcessLocks processLocks) => new Layer(connectionPool, schemaManager, processLocks)));
 }
