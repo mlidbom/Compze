@@ -4,9 +4,12 @@ All notable changes to Compze.Threading.Interprocess will be documented in this 
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
-## 0.7.1-alpha
+## 0.7.2-alpha
 
 - **`IMutex.Global` is shared by every user's processes on Unix again, as its documentation says.** Since .NET 11, and 8.0.32, 9.0.21 and 10.0.13, .NET scopes a named mutex on Unix to its user unless told otherwise, so processes of different users each had a mutex of their own. Every process that shares a global mutex on Unix must use this version or a later one: an earlier one's mutex is its user's own. Its documentation now repeats .NET's warning that on Unix such a mutex should be shared only between users who trust each other.
+
+## 0.7.1-alpha
+
 - **Internal: the interprocess signal Compze.Teventive.MemoryImageStateStore needs to tell the memory images on a machine that another has committed.**
 - **Requires newer minor versions of other Compze packages:** Compze.Threading 0.13.0-alpha (was 0.12.0-alpha). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
 
