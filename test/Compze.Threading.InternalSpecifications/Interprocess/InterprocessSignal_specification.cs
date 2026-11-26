@@ -10,6 +10,7 @@ using Compze.Underscore;
 using Compze.xUnitBDD;
 using Xunit;
 using static Compze.Must.MustActions;
+using Compze.Threading._internal;
 using Compze.Threading.Interprocess._internal;
 using Compze.Threading.Interprocess._private;
 
@@ -131,14 +132,16 @@ public class InterprocessSignal_specification : UniversalTestBase
          (stopwatch.Elapsed < TimeSpan.FromSeconds(5)).Must().BeTrue("Cancellation must wake the waiter instead of waiting out the 10 second poll interval");
       }
 
-      [XF] public void elapsed_time_is_measured_from_waitStartedAt_so_backoff_spans_chunked_TryAwait_calls()
+      [XF] public void elapsed_time_is_measured_from_the_start_of_the_whole_wait_so_backoff_spans_its_TryAwait_steps()
       {
          var recordingPolicy = new ElapsedWaitTimeRecordingPolicy();
          using var signal = new InterprocessSignal(Guid.NewGuid().ToString(), TestDirectory, recordingPolicy);
          var baseline = signal.Snapshot();
+         var wholeWait = StartedWait.Begin(WaitTimeout.Infinite);
+         Thread.Sleep(200);
 
-         signal.TryAwait(TimeSpan.FromMilliseconds(20), ref baseline, waitStartedAt: DateTime.UtcNow - TimeSpan.FromMinutes(10)).Must().BeFalse();
-         (recordingPolicy.LargestElapsedWaitTimeSeen >= TimeSpan.FromMinutes(10)).Must().BeTrue("The policy must see the logical wait's full elapsed time, not the time since this TryAwait call");
+         signal.TryAwait(TimeSpan.FromMilliseconds(20), ref baseline, wholeWait).Must().BeFalse();
+         recordingPolicy.LargestElapsedWaitTimeSeen.Must().BeGreaterThanOrEqualTo(TimeSpan.FromMilliseconds(200));
       }
 
       class FixedPollIntervalPolicy : ISignalPollingPolicy

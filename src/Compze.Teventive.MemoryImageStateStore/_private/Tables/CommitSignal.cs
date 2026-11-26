@@ -34,11 +34,8 @@ sealed class CommitSignal : IDisposable
 
    ///<summary>Waits until the signal is raised after it had been raised <paramref name="raisedSoFar"/> times, or<br/>
    /// <paramref name="cancellation"/> is cancelled.</summary>
-   internal async Task AwaitARaiseAfterAsync(long raisedSoFar, CancellationToken cancellation)
-   {
-      var waitStartedAt = DateTime.UtcNow;
-      while(!await _signal.TryAwaitChangeFromAsync(raisedSoFar, TimeSpan.FromMinutes(1), waitStartedAt, cancellation).caf()) cancellation.ThrowIfCancellationRequested();
-   }
+   internal async Task AwaitARaiseAfterAsync(long raisedSoFar, CancellationToken cancellation) =>
+      await _signal.AwaitChangeFromAsync(raisedSoFar, cancellation).caf();
 
    public void Dispose() => _signal.Dispose();
 }

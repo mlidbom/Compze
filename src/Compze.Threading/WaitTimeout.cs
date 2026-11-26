@@ -1,5 +1,3 @@
-using Compze.Contracts;
-
 // ReSharper disable UnusedMember.Global
 // ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable MemberCanBeInternal
@@ -38,14 +36,6 @@ public readonly struct WaitTimeout(TimeSpan value) : IEquatable<WaitTimeout>
 
    ///<summary>True if this timeout represents an infinite wait.</summary>
    public bool IsInfinite => Value == Timeout.InfiniteTimeSpan;
-
-   internal bool IsExpired(DateTime waitStarted) =>
-      Argument.Assert(this != Infinite)
-              .__(DateTime.UtcNow - waitStarted >= Value);
-
-   internal WaitTimeout TimeRemaining(DateTime waitStarted) =>
-      Argument.Assert(this != Infinite)
-              .__(new WaitTimeout(TimeSpan.FromTicks(Math.Max(0, (Value - (DateTime.UtcNow - waitStarted)).Ticks))));
 
    ///<inheritdoc/>
    public bool Equals(WaitTimeout other) => Value.Equals(other.Value);

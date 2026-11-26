@@ -1,3 +1,4 @@
+using Compze.Threading._internal;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using Compze.Threading.Exceptions;
@@ -74,7 +75,7 @@ public partial interface IAwaitableMonitor
       {
          var effectiveWaitTimeout = waitTimeout ?? WaitTimeout;
 
-         var waitStartedAt = DateTime.UtcNow;
+         var wait = StartedWait.Begin(effectiveWaitTimeout);
 
          TakeLock(heldLock, lockTimeout, cancellationToken);
          // When the token is cancelled, PulseAll wakes any thread blocked in Monitor.Wait so it can observe the cancellation.
@@ -95,13 +96,13 @@ public partial interface IAwaitableMonitor
                while(!condition())
                {
                   cancellationToken.ThrowIfCancellationRequested();
-                  if(effectiveWaitTimeout.IsExpired(waitStartedAt))
+                  if(wait.HasExpired)
                   {
                      heldLock.Dispose();
                      return null;
                   }
 
-                  _monitor.ReleaseLockAndReacquireItOnPulseOrTimeout(effectiveWaitTimeout.TimeRemaining(waitStartedAt));
+                  _monitor.ReleaseLockAndReacquireItOnPulseOrTimeout(wait.TimeRemaining);
                }
             }
          }

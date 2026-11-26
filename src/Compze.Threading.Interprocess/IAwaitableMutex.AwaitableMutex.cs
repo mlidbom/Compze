@@ -1,5 +1,6 @@
 using Compze.Contracts;
 using Compze.Threading.Exceptions;
+using Compze.Threading._internal;
 using Compze.Threading.Interprocess._internal;
 using Compze.Threading.Interprocess._private;
 
@@ -11,7 +12,7 @@ public partial interface IAwaitableMutex
    private class AwaitableMutex : IAwaitableMutex, ILockInternals
 #pragma warning restore CS0618 // Type or member is obsolete
    {
-      ///<summary>Bounds each <see cref="InterprocessSignal.TryAwait(TimeSpan, ref long, DateTime, CancellationToken)"/> chunk while awaiting a condition:
+      ///<summary>Bounds each <see cref="InterprocessSignal.TryAwait(TimeSpan, ref long, StartedWait, CancellationToken)"/> chunk while awaiting a condition:
       /// whenever a chunk times out without a signal, the waiter probes the mutex to detect abandonment.<br/>
       /// The interval is thus both the worst-case abandoned-mutex detection latency and a once-per-interval wakeup floor on the
       /// power cost of a long wait — keep it long; abandonment is a rare crash scenario.</summary>
@@ -70,7 +71,7 @@ public partial interface IAwaitableMutex
          var effectiveWaitTimeout = waitTimeout ?? WaitTimeout;
          var effectiveLockTimeout = lockTimeout ?? LockTimeout;
 
-         var waitStartedAt = DateTime.UtcNow;
+         var wait = StartedWait.Begin(effectiveWaitTimeout);
 
          // Take the lock (reentrant if caller already holds it)
          var mutexLock = _mutex.TakeLock(cancellationToken, effectiveLockTimeout);
@@ -80,7 +81,7 @@ public partial interface IAwaitableMutex
             {
                cancellationToken.ThrowIfCancellationRequested();
 
-               if(HasExpired(effectiveWaitTimeout, waitStartedAt))
+               if(wait.HasExpired)
                {
                   // Timeout, with the condition just evaluated false: release our lock level, keeping the caller's, and return null
                   mutexLock.Dispose();
@@ -96,10 +97,10 @@ public partial interface IAwaitableMutex
 
                try
                {
-                  while(!_signal.TryAwait(NextAwaitChunkTimeout(effectiveWaitTimeout, waitStartedAt), ref baseline, waitStartedAt, cancellationToken))
+                  while(!_signal.TryAwait(wait.TimeRemainingButNoMoreThan(AbandonedMutexCheckInterval), ref baseline, wait, cancellationToken))
                   {
                      // On expiry, go back to evaluating the condition once more before giving up, as the monitor's waits do: a wait that times out has seen its condition false.
-                     if(HasExpired(effectiveWaitTimeout, waitStartedAt)) break;
+                     if(wait.HasExpired) break;
 
                      // Probe the mutex to detect abandoned-mutex scenarios (triggers AbandonedMutexException → callback raises signal)
                      _mutex.TryTakeLock(LockTimeout.Zero, cancellationToken)?.Dispose();
@@ -143,7 +144,7 @@ public partial interface IAwaitableMutex
 
          var effectiveWaitTimeout = waitTimeout ?? WaitTimeout;
          var effectiveLockTimeout = lockTimeout ?? LockTimeout;
-         var waitStartedAt = DateTime.UtcNow;
+         var wait = StartedWait.Begin(effectiveWaitTimeout);
 
          while(true)
          {
@@ -160,7 +161,7 @@ public partial interface IAwaitableMutex
                }
 
                cancellationToken.ThrowIfCancellationRequested();
-               if(HasExpired(effectiveWaitTimeout, waitStartedAt)) return false;
+               if(wait.HasExpired) return false;
                // Snapshot the signal baseline while holding the lock — any signal raised after this point will be visible to the wait.
                signalBaseline = _signal.Snapshot();
             }
@@ -170,33 +171,21 @@ public partial interface IAwaitableMutex
                mutexLock.Dispose();
             }
 
-            await AwaitTheSignalProbingForAnAbandonedMutexAsync(signalBaseline, effectiveWaitTimeout, waitStartedAt, cancellationToken).ConfigureAwait(false);
+            await AwaitTheSignalProbingForAnAbandonedMutexAsync(signalBaseline, wait, cancellationToken).ConfigureAwait(false);
          }
       }
 
       ///<summary>Awaits the signal changing from <paramref name="signalBaseline"/>, or the wait's expiry, whichever comes first, probing the mutex for abandonment<br/>
       /// whenever an <see cref="AbandonedMutexCheckInterval"/> passes without a signal. Either way the caller evaluates its condition once more next.</summary>
-      async Task AwaitTheSignalProbingForAnAbandonedMutexAsync(long signalBaseline, WaitTimeout effectiveWaitTimeout, DateTime waitStartedAt, CancellationToken cancellationToken)
+      async Task AwaitTheSignalProbingForAnAbandonedMutexAsync(long signalBaseline, StartedWait wait, CancellationToken cancellationToken)
       {
-         while(!await _signal.TryAwaitChangeFromAsync(signalBaseline, NextAwaitChunkTimeout(effectiveWaitTimeout, waitStartedAt), waitStartedAt, cancellationToken).ConfigureAwait(false))
+         while(!await _signal.TryAwaitChangeFromAsync(signalBaseline, wait.TimeRemainingButNoMoreThan(AbandonedMutexCheckInterval), wait, cancellationToken).ConfigureAwait(false))
          {
-            if(HasExpired(effectiveWaitTimeout, waitStartedAt)) return;
+            if(wait.HasExpired) return;
 
             // Probe the mutex to detect abandoned-mutex scenarios (triggers AbandonedMutexException → callback raises signal)
             _mutex.TryTakeLock(LockTimeout.Zero, cancellationToken)?.Dispose();
          }
-      }
-
-      static bool HasExpired(WaitTimeout effectiveWaitTimeout, DateTime waitStartedAt) => !effectiveWaitTimeout.IsInfinite && effectiveWaitTimeout.IsExpired(waitStartedAt);
-
-      ///<summary>Clamps each chunk of a wait for the signal to the remaining wait time, so a finite wait timeout is honored precisely instead of overshooting by up to a whole <see cref="AbandonedMutexCheckInterval"/>.</summary>
-      static TimeSpan NextAwaitChunkTimeout(WaitTimeout effectiveWaitTimeout, DateTime waitStartedAt)
-      {
-         //refactor: ProcessLockWait.PauseBeforeTheNextTry computes the same, a WaitTimeout's time left since a wait began, cut to an interval, as
-         //   HasExpired here and IAwaitableMonitor's async condition waits do in part: see the comment there.
-         if(effectiveWaitTimeout.IsInfinite) return AbandonedMutexCheckInterval;
-         TimeSpan remainingWaitTime = effectiveWaitTimeout.TimeRemaining(waitStartedAt);
-         return remainingWaitTime < AbandonedMutexCheckInterval ? remainingWaitTime : AbandonedMutexCheckInterval;
       }
 
       public void SetTimeToWaitForStackTrace(WaitTimeout timeToWaitForStackTrace) =>

@@ -1,4 +1,4 @@
-using System.Diagnostics;
+using Compze.Threading._internal;
 
 namespace Compze.Threading.Interprocess._private.ProcessLocks;
 
@@ -9,13 +9,12 @@ sealed class ProcessLockWait
    /// growing as the wait grows, which would hand the lock to whoever began waiting last.</summary>
    static readonly TimeSpan TimeBetweenTries = TimeSpan.FromMilliseconds(50);
 
-   readonly WaitTimeout _waitTimeout;
+   readonly StartedWait _wait;
    readonly CancellationToken _cancellationToken;
-   readonly long _beganAt = Stopwatch.GetTimestamp();
 
    ProcessLockWait(WaitTimeout waitTimeout, CancellationToken cancellationToken)
    {
-      _waitTimeout = waitTimeout;
+      _wait = StartedWait.Begin(waitTimeout);
       _cancellationToken = cancellationToken;
    }
 
@@ -51,16 +50,5 @@ sealed class ProcessLockWait
 
    ///<summary><see cref="TimeBetweenTries"/>, but never past the end of the wait, so that a wait that ends has tried once more at its end. Null once<br/>
    /// the wait has ended.</summary>
-   TimeSpan? PauseBeforeTheNextTry()
-   {
-      //refactor: IAwaitableMutex.AwaitableMutex.NextAwaitChunkTimeout and HasExpired, and IAwaitableMonitor's async condition waits, compute the
-      //   same: a WaitTimeout's time left since a wait began, cut to a poll interval. They pass the WaitTimeout and a DateTime start around
-      //   instead, through WaitTimeout.IsExpired and WaitTimeout.TimeRemaining. One internal type in Compze.Threading for a wait that has begun,
-      //   timed by Stopwatch as this is, would serve them all, and this would keep only its TimeBetweenTries.
-      if(_waitTimeout.IsInfinite) return TimeBetweenTries;
-
-      var timeLeft = _waitTimeout.Value - Stopwatch.GetElapsedTime(_beganAt);
-      if(timeLeft <= TimeSpan.Zero) return null;
-      return timeLeft < TimeBetweenTries ? timeLeft : TimeBetweenTries;
-   }
+   TimeSpan? PauseBeforeTheNextTry() => _wait.HasExpired ? null : _wait.TimeRemainingButNoMoreThan(TimeBetweenTries);
 }

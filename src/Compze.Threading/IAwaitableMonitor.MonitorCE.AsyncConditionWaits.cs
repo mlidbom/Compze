@@ -1,3 +1,4 @@
+using Compze.Threading._internal;
 using Compze.Contracts;
 
 namespace Compze.Threading;
@@ -25,7 +26,7 @@ public partial interface IAwaitableMonitor
          State.Assert(!_monitor.IsHeldByTheCurrentThread, () => "A thread holding this monitor can't start an async condition wait on it: the wait could not release the lock while it waits, as a synchronous wait does, because it may resume on another thread.");
 
          var effectiveWaitTimeout = waitTimeout ?? WaitTimeout;
-         var waitStartedAt = DateTime.UtcNow;
+         var wait = StartedWait.Begin(effectiveWaitTimeout);
 
          while(true)
          {
@@ -42,7 +43,7 @@ public partial interface IAwaitableMonitor
                }
 
                cancellationToken.ThrowIfCancellationRequested();
-               if(HasExpired()) return false;
+               if(wait.HasExpired) return false;
                nextUpdate = NextUpdateAsync();
             }
             finally
@@ -53,13 +54,8 @@ public partial interface IAwaitableMonitor
 
             //Suppressed so that timing out or being cancelled while awaiting the next update both lead back to evaluating the condition,
             //which the synchronous wait also evaluates once more before it gives up or throws.
-            await nextUpdate.WaitAsync(TimeRemaining(), cancellationToken).ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing);
+            await nextUpdate.WaitAsync(wait.TimeRemaining, cancellationToken).ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing);
          }
-
-         //refactor: the same as Compze.Threading.Interprocess's ProcessLockWait and AwaitableMutex.HasExpired compute: a WaitTimeout's time left
-         //   since a wait began. One internal type for a wait that has begun would serve all three: see the comment in ProcessLockWait.
-         bool HasExpired() => !effectiveWaitTimeout.IsInfinite && effectiveWaitTimeout.IsExpired(waitStartedAt);
-         TimeSpan TimeRemaining() => effectiveWaitTimeout.IsInfinite ? Timeout.InfiniteTimeSpan : effectiveWaitTimeout.TimeRemaining(waitStartedAt);
       }
 
       ///<summary>The task the next update-lock release completes. Called while holding the lock, so no update can come between an evaluation of<br/>
