@@ -40,6 +40,15 @@ public class WaitTimeout_specification : UniversalTestBase
          WaitTimeout.Default.Must().Be(WaitTimeout.Infinite);
    }
 
+   public class Zero_ : WaitTimeout_specification
+   {
+      [XF] public void has_a_zero_TimeSpan_value() =>
+         WaitTimeout.Zero.Value.Must().Be(TimeSpan.Zero);
+
+      [XF] public void IsInfinite_is_false() =>
+         WaitTimeout.Zero.IsInfinite.Must().BeFalse();
+   }
+
    public class IsInfinite_ : WaitTimeout_specification
    {
       [XF] public void returns_false_for_finite_timeout() =>

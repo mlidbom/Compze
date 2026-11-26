@@ -28,6 +28,9 @@ public readonly struct WaitTimeout(TimeSpan value) : IEquatable<WaitTimeout>
    ///<summary>A <see cref="WaitTimeout"/> that never expires.</summary>
    public static readonly WaitTimeout Infinite = new(Timeout.InfiniteTimeSpan);
 
+   ///<summary>A <see cref="WaitTimeout"/> of no time at all: a wait given it doesn't wait, but answers at once.</summary>
+   public static readonly WaitTimeout Zero = new(TimeSpan.Zero);
+
    /// <summary>The default wait timeout: <see cref="Infinite"/>. Unlike with locks, nothing says that a wait has to complete within any particular time span in general:<br/>
    /// a worker waiting for work may rightly wait for hours. So by default a wait for a condition that no thread makes true waits forever:<br/>
    /// the deadlock diagnosis that <see cref="LockTimeout"/> gives covers taking a lock, not a condition.</summary>
