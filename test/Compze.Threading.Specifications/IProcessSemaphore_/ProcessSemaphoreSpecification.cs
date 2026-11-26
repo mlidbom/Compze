@@ -1,3 +1,6 @@
+using System.Diagnostics;
+using System.Runtime.Versioning;
+using Compze.Internals.SystemCE.IOCE;
 using Compze.Tests.Infrastructure;
 using Compze.Threading.Interprocess;
 
@@ -73,7 +76,47 @@ public abstract class ProcessSemaphoreSpecification : UniversalTestBase
       }
 
       _holds.ForEach(it => it.Dispose());
-      SemaphoreDirectory.Delete(recursive: true);
+      await DeleteTheSemaphoresDirectoryAsync();
       await base.DisposeAsyncInternal();
    }
+
+   ///<summary>Deletes <see cref="SemaphoreDirectory"/>, trying again for about two seconds while a file in it is in use: on Windows a virus scanner<br/>
+   /// or an indexer can open a file just written, as a holder writes in a unit's lock file. Fails, naming the processes that use each file, if one<br/>
+   /// is still in use then: a take or a hold that left it open.</summary>
+   async Task DeleteTheSemaphoresDirectoryAsync()
+   {
+      for(var attempt = 1;; attempt++)
+      {
+         try
+         {
+            SemaphoreDirectory.Delete(recursive: true);
+            return;
+         }
+         catch(IOException exception) when(exception.HResult == SharingViolation && OperatingSystem.IsWindows())
+         {
+            if(attempt == AttemptsAtTheDirectory) throw new IOException($"{exception.Message} The processes using the files in {SemaphoreDirectory.FullName}: {ProcessesUsingTheFilesOfTheSemaphore()}", exception);
+            await Task.Delay(TimeSpan.FromMilliseconds(100));
+         }
+      }
+   }
+
+   [SupportedOSPlatform("windows")]
+   string ProcessesUsingTheFilesOfTheSemaphore() =>
+      string.Join("; ", SemaphoreDirectory.GetFiles().Select(file => $"{file.Name}: {string.Join(", ", IdsOfTheProcessesUsingAFile.Of(file.FullName).Select(DescribeProcess))}"));
+
+   static string DescribeProcess(int processId)
+   {
+      try
+      {
+         using var process = Process.GetProcessById(processId);
+         return $"{processId} ({process.ProcessName})";
+      }
+      catch(ArgumentException) //It has exited since it was found using the file.
+      {
+         return $"{processId} (exited)";
+      }
+   }
+
+   const int AttemptsAtTheDirectory = 20;
+   const int SharingViolation = unchecked((int)0x80070020);
 }
