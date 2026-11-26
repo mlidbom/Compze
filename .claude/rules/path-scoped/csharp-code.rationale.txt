@@ -1,0 +1,10 @@
+# Why tagged comments are never in a doc comment in Compze
+
+Doc comments are published: the compiler writes every member's into the package's documentation file, internal ones
+too, and DocFX puts the public ones on the website. Found 2026-11-25 when a `todo:urgent` for a public member's
+synchronous wait would have gone into its doc comment, and with it into consumers' IntelliSense; 18 tagged comments sat
+in doc comments in Compze then. Magnus: "We do NOT want our todo comments in published docs EVER."
+
+The catalog's rules held this from 2026-11-25. Magnus decided on 2026-11-26 that it is Compze's rule, as Compze's doc
+comments are published, not one for every repository, and it moved here: the catalog still puts a comment about a whole
+member or type in its doc comment, where hovering any use of it shows it.

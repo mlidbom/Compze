@@ -84,3 +84,15 @@ TReturn Read<TReturn>(Func<TReturn> func, TimeSpan? timeout = null)
 - Partial classes split across files using `ClassName.Aspect.cs` naming.
 - Underscore-prefix filenames (`_MessageTypes..Interfaces.cs`) for grouped/supporting types.
 - `_docs/` subdirectories for co-located documentation.
+
+## Tagged comments never in a doc comment
+
+The catalog's rules on [tagged todo comments](../01-universal-shared/code-standards/062-tagged-todo-comments.md) and on
+[when to break the rules](../01-universal-shared/code-standards/020-when-to-break-the-rules.md) put a comment about a
+whole member or type in its doc comment. Not in Compze:
+
+- **Never in a doc comment.** Doc comments are published, in a package's documentation file and on the website, and
+  tagged comments are for us alone. Magnus, 2026-11-25: "We do NOT want our todo comments in published docs EVER."
+- When what a tagged comment concerns is the whole member or type, such as a type to be replaced, it goes first in that
+  member's or type's body; an expression-bodied member gets a block body for it. A `rationale:violation-approved:`
+  comment for an exception that is the whole member or type goes there too.
