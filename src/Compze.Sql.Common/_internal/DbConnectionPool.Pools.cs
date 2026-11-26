@@ -131,8 +131,8 @@ partial class DbConnectionPool<TConnection, TCommand> : IDbConnectionPool<TConne
       return connection;
    }
 
-   ///<summary>The connection of <paramref name="transaction"/>, which the pool registers for it on its first use, and removes and<br/>
-   /// disposes as it completes.</summary>
+   ///<summary>The connection of <paramref name="transaction"/>, which the pool registers for it on its first use, and removes as it<br/>
+   /// completes. The connection disposes itself as the transaction completes: see <see cref="TransactionSpecificConnection"/>.</summary>
    TransactionSpecificConnection ConnectionOf(Transaction transaction)
    {
       var transactionLocalIdentifier = transaction.TransactionInformation.LocalIdentifier;
@@ -141,16 +141,14 @@ partial class DbConnectionPool<TConnection, TCommand> : IDbConnectionPool<TConne
                                                 constructor: () =>
                                                 {
                                                    DurableResourcesOfTransactions.TakesPart(transaction, DurableResource.ThatCanShareItsTransaction($"a database connection, {typeof(TConnection).Name}"));
-                                                   transaction.OnCompleted(action: () => DisposeTheConnectionOfTheCompletedTransaction(transactionLocalIdentifier));
+                                                   transaction.OnCompleted(action: () => ForgetTheConnectionOfTheCompletedTransaction(transactionLocalIdentifier));
                                                    return new TransactionSpecificConnection(this, transaction);
                                                 }));
    }
 
-   ///<summary>Removes the connection of the transaction that <paramref name="transactionLocalIdentifier"/> identifies, which has completed,<br/>
-   /// and disposes it once the pool's lock is released.</summary>
-   void DisposeTheConnectionOfTheCompletedTransaction(string transactionLocalIdentifier) =>
-      _transactionConnections.Locked(transactionConnections => transactionConnections.Remove(transactionLocalIdentifier, out var completed) ? completed : null)
-                            ?.Dispose();
+   ///<summary>Removes the connection of the transaction that <paramref name="transactionLocalIdentifier"/> identifies, which has completed.</summary>
+   void ForgetTheConnectionOfTheCompletedTransaction(string transactionLocalIdentifier) =>
+      _transactionConnections.Locked(transactionConnections => transactionConnections.Remove(transactionLocalIdentifier));
 
    public override string ToString() => _connectionString;
 }

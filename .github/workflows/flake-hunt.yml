@@ -66,7 +66,7 @@ jobs:
 
     env:
       HUNTED_TEST_PROJECT: test/Compze.Tests.Integration/Compze.Tests.Integration.csproj
-      RUNS_PER_RUNNER: "4"
+      RUNS_PER_RUNNER: "8"
       RUNTIME_ASYNC: "true"
       COMPOSABLE_MACHINE_SLOWNESS: "5.0"
       COMPOSABLE_PERFORMANCE_TESTS_STRESS_TEST_ONLY: "true"
