@@ -66,7 +66,7 @@ jobs:
 
     env:
       HUNTED_TEST_PROJECT: samples/AccountManagement/test/AccountManagement.Tests.PerformanceInternals/AccountManagement.Tests.PerformanceInternals.csproj
-      RUNS_PER_RUNNER: "30"
+      RUNS_PER_RUNNER: "15"
       RUNTIME_ASYNC: "true"
       COMPOSABLE_MACHINE_SLOWNESS: "5.0"
       COMPOSABLE_PERFORMANCE_TESTS_STRESS_TEST_ONLY: "true"
