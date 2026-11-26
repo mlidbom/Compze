@@ -129,6 +129,7 @@ jobs:
           done
           echo "$failures of $RUNS_PER_RUNNER runs failed."
           probe_log="$COMPZE_TEST_DIAGNOSTICS_DIRECTORY/probe.log"
+          echo "Probe armed in $(cat "$COMPZE_TEST_DIAGNOSTICS_DIRECTORY/probe-armed.log" 2>/dev/null | wc -l) test processes."
           if [ -f "$probe_log" ]; then
             echo "::error::A probe fired"
             cat "$probe_log"

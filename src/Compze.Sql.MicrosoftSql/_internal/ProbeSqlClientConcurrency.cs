@@ -21,6 +21,13 @@ static class ProbeSqlClientConcurrency
       public readonly int Thread = Environment.CurrentManagedThreadId;
       public readonly string Stack = Environment.StackTrace;
       public readonly long Started = Stopwatch.GetTimestamp();
+      //SqlClient completes an async command's task before it writes the command's After event, and the awaiting code may run
+      //inline on that completion, closing the connection or starting its next command before the event. What overlaps an async
+      //operation is judged when its After event comes: an overlap that started on the thread the event comes on, or any overlap
+      //once its connection was closed on that thread, came after the command had finished.
+      public bool IsAsync => Kind.EndsWith("Async", StringComparison.Ordinal);
+      public readonly ConcurrentQueue<(int Thread, string Report)> Suspicions = new();
+      public volatile int ClosedOnThread = -1;
 
       public override string ToString() => $"""
                                              {Kind} on SqlConnection object {ConnectionObject}, thread {Thread}, {Stopwatch.GetElapsedTime(Started).TotalMilliseconds:F1} ms ago
@@ -62,14 +69,19 @@ static class ProbeSqlClientConcurrency
          if(otherId == operationId) continue;
          //A reader's rows are read on the thread and connection that executed it: that nesting is the normal case.
          if(other.Thread == operation.Thread && other.ConnectionObject == operation.ConnectionObject) continue;
-         Report($"two operations at once on physical connection {id}", operation, other);
+         Suspect(other, ReportText($"two operations at once on physical connection {id}", operation, other));
       }
    }
 
    static void After(Guid operationId)
    {
-      if(PhysicalConnectionOfOperation.TryRemove(operationId, out var id) && InFlightByPhysicalConnection.TryGetValue(id, out var inFlight))
-         inFlight.TryRemove(operationId, out _);
+      if(!PhysicalConnectionOfOperation.TryRemove(operationId, out var id) || !InFlightByPhysicalConnection.TryGetValue(id, out var inFlight)) return;
+      if(!inFlight.TryRemove(operationId, out var operation)) return;
+      var afterThread = Environment.CurrentManagedThreadId;
+      if(operation.ClosedOnThread == afterThread) return;
+      foreach(var (thread, report) in operation.Suspicions)
+         if(thread != afterThread)
+            ProbeLog.Write($"{report}{Environment.NewLine}==== The async operation's After event came on thread {afterThread}");
    }
 
    static void CloseBefore(Guid? physicalConnection, SqlConnection? connection)
@@ -77,17 +89,26 @@ static class ProbeSqlClientConcurrency
       if(physicalConnection is not {} id || id == Guid.Empty) return;
       if(!InFlightByPhysicalConnection.TryGetValue(id, out var inFlight)) return;
       var closing = new Operation("Close", connection, null);
-      foreach(var other in inFlight.Values) Report($"closing physical connection {id} while an operation on it is in progress", closing, other);
+      foreach(var other in inFlight.Values)
+      {
+         if(other.IsAsync && other.ConnectionObject == closing.ConnectionObject) other.ClosedOnThread = closing.Thread;
+         Suspect(other, ReportText($"closing physical connection {id} while an operation on it is in progress", closing, other));
+      }
    }
 
-   static void Report(string what, Operation @this, Operation other) =>
-      ProbeLog.Write($"""
-                      PROBE SqlClient: {what}
-                      ==== This one:
-                      {@this}
-                      ==== The other, in progress:
-                      {other}
-                      """);
+   static void Suspect(Operation other, string report)
+   {
+      if(other.IsAsync) other.Suspicions.Enqueue((Environment.CurrentManagedThreadId, report));
+      else ProbeLog.Write(report);
+   }
+
+   static string ReportText(string what, Operation @this, Operation other) => $"""
+                                                                              PROBE SqlClient: {what}
+                                                                              ==== This one:
+                                                                              {@this}
+                                                                              ==== The other, in progress:
+                                                                              {other}
+                                                                              """;
 
    sealed class AllListenersObserver : IObserver<DiagnosticListener>
    {
@@ -106,7 +127,7 @@ static class ProbeSqlClientConcurrency
 
       public void OnNext(KeyValuePair<string, object?> value)
       {
-         if(Interlocked.Exchange(ref _armed, 1) == 0) Console.Error.WriteLine($"PROBE SqlClient armed: the first event is {value.Key}, {value.Value?.GetType().Name}");
+         if(Interlocked.Exchange(ref _armed, 1) == 0) WriteArmed($"PROBE SqlClient armed in pid {Environment.ProcessId}: the first event is {value.Key}, {value.Value?.GetType().Name}");
          switch(value.Value)
          {
             case SqlClientCommandBefore before:
@@ -126,5 +147,14 @@ static class ProbeSqlClientConcurrency
 
       public void OnCompleted() {}
       public void OnError(Exception error) {}
+
+      static void WriteArmed(string message)
+      {
+         Console.Error.WriteLine(message);
+         var directory = Environment.GetEnvironmentVariable("COMPZE_TEST_DIAGNOSTICS_DIRECTORY");
+         if(string.IsNullOrEmpty(directory)) return;
+         Directory.CreateDirectory(directory);
+         File.AppendAllText(Path.Combine(directory, "probe-armed.log"), message + Environment.NewLine);
+      }
    }
 }
