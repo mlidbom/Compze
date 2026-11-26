@@ -4,10 +4,13 @@ All notable changes to Compze.Sql.Sqlite will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
-## 0.6.0-alpha
+## 0.7.0-alpha
 
 - **`SqliteDomainDatabase(databaseFile)` declares the domain database by its file,** a `FileInfo`, with no configuration to give a connection string's name its connection string: SQLite's usual case, an application whose database is in a file it knows. SQLite creates the file at the database's first use, in a folder that must exist. In a testing container the file is used as it is, rather than a database of the test database pool.
 - **Disposing a container no longer leaves its SQLite database file open.** Microsoft.Data.Sqlite keeps the connections Compze closes open in a pool of its own, which held the file until the process ended, so on Windows the file couldn't be deleted or replaced. Disposing Compze's connection pool, as disposing the container does, now clears Microsoft.Data.Sqlite's pool for the database.
+
+## 0.6.0-alpha
+
 - **Internal: what Compze.Teventive.MemoryImageStateStore.Sqlite needs to keep a memory image state store in SQLite tables.**
 - **A transaction that holds a durable resource already, such as another database's connection or a resource manager of your own, refuses Compze's SQLite connection with a message that says so,** and names the connection, the rule and what to do: keep each database, and each other durable resource, in transactions of its own. Before, it was .NET's "Implicit distributed transactions have not been enabled", which names neither. When your resource takes part second instead, the refusal is .NET's own, from your call: the `SqliteDomainDatabase` and `SqliteMemoryDomainDatabase` documentation now says so.
 - **Creating the schema at a database's first use no longer waits for a free thread-pool thread.** A synchronous SQL layer, such as the tevent store's, blocked its thread on the asynchronous creation, whose continuations each needed a free thread-pool thread, while many units of work at once could hold every one, each blocked waiting for the creation. The creation is now synchronous for every caller, the asynchronous SQL layers' too, which block their thread for it once, at the database's first use.
