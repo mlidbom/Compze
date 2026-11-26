@@ -4,9 +4,13 @@ All notable changes to Compze.Teventive.TeventStore will be documented in this f
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
-## 0.7.0-alpha
+## 0.8.0-alpha
 
 - **Its part of `ITaggregateStoreUpdater.GetForUpdateAsync` and `TryGetForUpdateAsync`, of Compze.Teventive: it waits for the taggregate's lock in its database, and reads the taggregate's history, holding no thread.** With SQLite, the lock is the database's write gate, which a transaction now takes asynchronously as its first command is created asynchronously.
+- **Requires newer minor versions of other Compze packages:** Compze.Internals.SystemCE 0.12.0-internal (was 0.9.0-internal), Compze.Tessaging 0.13.0-alpha (was 0.10.0-alpha), Compze.Teventive 0.9.0-alpha (was 0.7.0-alpha), Compze.Teventive.TeventStore.Abstractions 0.8.0-alpha (was 0.7.0-alpha), Compze.Threading 0.14.0-alpha (was 0.12.0-alpha). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
+
+## 0.7.0-alpha
+
 - **Changed without a signature changing, so no compiler error points at it:**
   - **It keeps only the taggregate classes declared for it,** where it's composed: `TeventStore(connectionName)` compiles as before, and a taggregate of a class not declared, as with `store => store.Taggregate<User>()`, fails at its first use, naming the stores and the classes they keep.
   - **Its taggregates are changed only in a unit of work that `ExecuteUnitOfWork` began:** getting one for update, or adding one, in a transaction that a `TransactionScope` of the caller's own began throws, an `ExecuteUnitOfWork` inside such a transaction included. A unit of work's taggregates are held for the whole transaction, not for one scope: two scopes in one transaction get the same instance of a taggregate.

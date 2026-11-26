@@ -4,9 +4,12 @@ All notable changes to Compze.Sql.Common will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
-## 0.6.1-alpha
+## 0.7.0-alpha
 
 - **For Compze's SQL packages: commands created, executed and read asynchronously throughout,** where a command was created synchronously on the asynchronous path. A connection whose command creation waits, as SQLite's does for its write gate, waits holding no thread.
+
+## 0.6.1-alpha
+
 - **Internal: a database's process locks,** each held by one process at a time on whichever machine, which Compze.Tessaging's exactly-once endpoints and Compze.Teventive.MemoryImageStateStore's tables take: see Compze.Sql.MicrosoftSql and its siblings for what a consumer sees in the database.
 - **Requires newer minor versions of other Compze packages:** Compze.Internals.SystemCE 0.12.0-internal (was 0.10.0-internal), Compze.Threading 0.14.0-alpha (was 0.13.0-alpha). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
 

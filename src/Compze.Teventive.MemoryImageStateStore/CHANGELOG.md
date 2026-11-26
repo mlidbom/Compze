@@ -4,9 +4,13 @@ All notable changes to Compze.Teventive.MemoryImageStateStore will be documented
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
-## 0.3.0-alpha
+## 0.4.0-alpha
 
 - **Its part of `ITaggregateStoreUpdater.GetForUpdateAsync` and `TryGetForUpdateAsync`, of Compze.Teventive: it waits for its lock of the taggregate holding no thread.**
+- **Requires newer minor versions of other Compze packages:** Compze.Teventive 0.9.0-alpha (was 0.8.0-alpha), Compze.Threading.Interprocess 0.11.0-alpha (was 0.10.0-alpha). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
+
+## 0.3.0-alpha
+
 - **A store's first load takes its storage's lock, and holds it until the container disposes the store: a second memory image is refused,** in another process, in another container of the same process, and, for a store kept in tables, on another machine. Its first load fails with a `TimeoutException` saying another memory image uses the storage, what that one holds it for, which process it is, on which machine, and since when, and how to declare a wait. A first load that fails takes nothing, and the next use tries again.
   - **For files, the lock is `memory-image-state-store.lock` in the store's own folder, `.state-store`,** Compze.Threading.Interprocess's `IProcessLock`, which the operating system releases when its holder's process dies; on Unix the holder records itself in `memory-image-state-store.holder` beside it. So a second process no longer finishes another's commit as a crash's leftovers, nor writes over its files unseen.
   - **For tables, the lock is a process lock of the domain database,** the kind an exactly-once endpoint holds, one for the database whichever classes a store keeps: two stores can no longer use one database, even with classes of their own. The database releases it when its holder's process dies. Should the database session holding it die under a live holder, as when the database becomes unreachable, the store logs it, and fails every unit of work that changes it from then on, and `WriteAllToStorage()`.

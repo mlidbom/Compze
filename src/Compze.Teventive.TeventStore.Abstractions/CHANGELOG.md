@@ -4,9 +4,13 @@ All notable changes to Compze.Teventive.TeventStore.Abstractions will be documen
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
-## 0.7.0-alpha
+## 0.8.0-alpha
 
 - **The tevent store's SQL layer reads a taggregate's history for update asynchronously too:** a member of the internal interface that the SQL layer packages implement. Compze.Teventive.TeventStore.MicrosoftSql, .MySql, .PostgreSql and .Sqlite of the versions released with this one implement it, and those released before fail to load beside this version: upgrade them with it.
+- **Requires newer minor versions of other Compze packages:** Compze.Abstractions 0.5.0-alpha (was 0.4.0-alpha), Compze.Internals.SystemCE 0.12.0-internal (was 0.9.0-internal), Compze.Teventive 0.9.0-alpha (was 0.7.0-alpha). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
+
+## 0.7.0-alpha
+
 - **`ITeventStoreUpdater` is gone: Compze.Teventive's `ITaggregateStoreUpdater` replaces it,** one updater for every taggregate store of a container. `Get` is `GetForUpdate`, `TryGet` is `TryGetForUpdate`, `Save` is `Add`, without a type parameter, and `Delete(id)` is gone: a taggregate is deleted by publishing an `ITaggregateDeletedTevent`, and the tevent store keeps its history. It isn't `IDisposable`: the unit of work's scope owns it.
 - **`ITeventStoreReader.GetReadonlyCopy` is gone: Compze.Teventive's `ITaggregateStoreReader.Get` replaces it,** the one reader of every store's taggregates. Outside a unit of work, a taggregate of the tevent store comes back built from its history, read only: publishing on it throws. So does publishing on what `GetReadonlyCopyOfVersion` returns. `ITeventStoreReader` keeps only what the tevent store adds, `GetHistory` and `GetReadonlyCopyOfVersion`, which are as they were: code that also reads taggregates takes an `ITaggregateStoreReader` beside it.
 - **A tevent store keeps only taggregates whose tevents have identity:** `ITeventStoreReader.GetReadonlyCopyOfVersion` constrains its taggregate to `ITaggregate<ITaggregateTeventWithIdentity>`, as does the declaration of the classes a tevent store keeps, so a taggregate whose tevents have none doesn't compile against them. Histories, migrations and the stream mutators are typed `ITaggregateTevent<ITaggregateTeventWithIdentity>`.

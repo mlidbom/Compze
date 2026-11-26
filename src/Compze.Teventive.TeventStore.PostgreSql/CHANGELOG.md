@@ -4,9 +4,13 @@ All notable changes to Compze.Teventive.TeventStore.PostgreSql will be documente
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
-## 0.4.1-alpha
+## 0.5.0-alpha
 
 - **Reads a taggregate's history for update asynchronously,** for Compze.Teventive.TeventStore's part of `ITaggregateStoreUpdater.GetForUpdateAsync`: `pg_advisory_xact_lock` waits for the taggregate's lock holding no thread. Requires the Compze.Teventive.TeventStore.Abstractions released with it.
+- **Requires newer minor versions of other Compze packages:** Compze.Sql.PostgreSql 0.7.0-alpha (was 0.6.0-alpha), Compze.Teventive.TeventStore.Abstractions 0.8.0-alpha (was 0.7.0-alpha). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
+
+## 0.4.1-alpha
+
 - **Saving a taggregate's tevents no longer waits for a free thread-pool thread.** Each tevent was inserted by one synchronous command of two statements, an INSERT and an UPDATE, and Npgsql 9 sends the second and later statements of a synchronous command, and flushes the command, from the thread pool, while the calling thread waits for the answer. With every pool thread busy, as under many units of work at once, the database received nothing until the pool added a thread, and each save waited for it. Each statement is now a command of its own, and a tevent migration sets the tevents' effective versions in one statement, rather than one per tevent in one command.
 - **Requires newer minor versions of other Compze packages:** Compze.Sql.PostgreSql 0.6.0-alpha (was 0.5.0-alpha). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
 

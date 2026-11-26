@@ -4,9 +4,13 @@ All notable changes to Compze.Sql.Sqlite will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
-## 0.7.1-alpha
+## 0.8.0-alpha
 
 - **A transaction whose first command is created asynchronously waits for the database's write gate holding no thread,** where it held its thread until the transaction before it completed.
+- **Requires newer minor versions of other Compze packages:** Compze.Sql.Common 0.7.0-alpha (was 0.6.1-alpha), Compze.Threading.Interprocess 0.11.0-alpha (was 0.10.0-alpha). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
+
+## 0.7.1-alpha
+
 - **A domain database's process locks: what Compze takes where data in the database must be used by one process at a time,** such as an exactly-once endpoint's tables. SQLite has no sessions to scope a lock to, so each is Compze.Threading.Interprocess's `IProcessLock`, a file beside the database file named `CompzeDatabaseProcessLock_<hash>.lock`, which the operating system releases when its holder's process dies; an in-memory database's, and a `file:` URI data source's, are in `Compze/DatabaseProcessLocks` in the temp directory. Each holder records itself in its lock's file, as every `IProcessLock` does: what it holds the lock for, which process, on which machine, and since when, for the message that refuses another.
 - **Requires newer minor versions of other Compze packages:** Compze.Abstractions 0.5.0-alpha (was 0.4.1-alpha). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
 
