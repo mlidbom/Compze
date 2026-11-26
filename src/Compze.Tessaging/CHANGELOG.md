@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## 0.12.1-alpha
 
+- **`ExecuteAsync` beside each `Execute`, on `IIndependentLocalTypermediaNavigator` and `ILocalTypermediaNavigatorSession`,** for callers that are asynchronous themselves, such as an ASP.NET Core route or an asynchronous handler. Its semantics are `Execute`'s: the independent navigator's tommand is a unit of work of its own, committed before the task completes, and the session's executes within the caller's unit of work, whose transaction flows across the handler's awaits. While the handler awaits, it holds no thread, where `Execute` holds the caller's thread until the handler has finished. What the handler does synchronously, and a tommand's commit, still run on the thread they are on. With it there, the analyzers CA1849 and VSTHRD103 flag a call of `Execute` in asynchronous code. A class of a consumer's own that implements either interface must implement the three new methods.
 - **An endpoint refused because another process runs it names what the holder holds its process lock for, which process, on which machine, and since when:** `EndpointAlreadyRunningInAnotherProcessException`'s message says "held for running the endpoint Orders, by process 4242 (Orders.Host) on SERVER7, since 2026-11-26 10:15:00 +01:00", where it said "held by process 4242 on SERVER7". The process lock is one of the domain database's process locks, from Compze.Sql.MicrosoftSql and its siblings.
 
 ## 0.12.0-alpha

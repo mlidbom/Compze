@@ -3,6 +3,7 @@ using Compze.Abstractions;
 using Compze.Contracts;
 using Compze.Internals.SystemCE.LinqCE;
 using Compze.Internals.SystemCE.ReactiveCE;
+using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Teventive._internal;
 using Compze.Teventive.MemoryImageStateStore._private.Storage;
 using Compze.Teventive.TaggregateStores._internal;
@@ -68,17 +69,28 @@ sealed class MemoryImageStateStoreSession : ITaggregateStoreSession
       }
 
       HoldUpdateLock(id); //Held also when the store holds no such taggregate, so no other unit of work adds one before this one completes.
+      taggregate = HoldACopyOfTheCommitted<TTaggregate>(id);
+      return taggregate != null;
+   }
+
+   public async Task<TTaggregate?> TryGetForUpdateAsync<TTaggregate>(TaggregateId id) where TTaggregate : class, ITaggregate
+   {
+      if(_heldTaggregates.TryGetValue(id, out var held)) return held.IsDeleted ? null : AsRequested<TTaggregate>(held.Taggregate);
+
+      await HoldUpdateLockAsync(id).caf(); //Held also when the store holds no such taggregate, as in TryGetForUpdate.
+      return HoldACopyOfTheCommitted<TTaggregate>(id);
+   }
+
+   ///<summary>A copy of the committed taggregate <paramref name="id"/>, which this unit of work now holds, or null if the store holds no<br/>
+   /// such taggregate. This unit of work holds its update lock already.</summary>
+   TTaggregate? HoldACopyOfTheCommitted<TTaggregate>(TaggregateId id) where TTaggregate : class, ITaggregate
+   {
       var committed = _store.Committed.InstanceOf(id);
-      if(committed == null)
-      {
-         taggregate = null;
-         return false;
-      }
+      if(committed == null) return null;
 
       var copy = _store.DeclaredClassOf(committed.GetType()).CopyOf(committed);
       Hold(new HeldTaggregate(copy, isNew: false));
-      taggregate = AsRequested<TTaggregate>(copy);
-      return true;
+      return AsRequested<TTaggregate>(copy);
    }
 
    public void Add(ITaggregate taggregate)
@@ -132,6 +144,13 @@ sealed class MemoryImageStateStoreSession : ITaggregateStoreSession
    {
       if(_heldUpdateLocks.ContainsKey(id)) return;
       _heldUpdateLocks.Add(id, _store.UpdateLocks.Take(id));
+   }
+
+   ///<summary>As <see cref="HoldUpdateLock"/>, holding no thread while another unit of work holds the lock.</summary>
+   async Task HoldUpdateLockAsync(TaggregateId id)
+   {
+      if(_heldUpdateLocks.ContainsKey(id)) return;
+      _heldUpdateLocks.Add(id, await _store.UpdateLocks.TakeAsync(id).caf());
    }
 
    static TTaggregate AsRequested<TTaggregate>(ITaggregate taggregate) where TTaggregate : class, ITaggregate

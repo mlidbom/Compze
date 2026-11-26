@@ -1,4 +1,5 @@
 using System.Transactions;
+using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Sql.MicrosoftSql._internal;
 using JetBrains.Annotations;
 using Microsoft.Data.SqlClient;
@@ -27,6 +28,12 @@ class MsSqlTeventStoreConnectionManager(IMsSqlConnectionPool sqlConnectionPool)
    {
       AssertTransactionPolicy(suppressTransactionWarning);
       return _connectionPool.UseCommand(action);
+   }
+
+   public async Task<TResult> UseCommandAsync<TResult>(bool suppressTransactionWarning, [InstantHandle] Func<SqlCommand, Task<TResult>> action)
+   {
+      AssertTransactionPolicy(suppressTransactionWarning);
+      return await _connectionPool.UseCommandAsync(action).caf();
    }
 
    // ReSharper disable once ParameterOnlyUsedForPreconditionCheck.Local

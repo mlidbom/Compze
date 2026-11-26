@@ -1,4 +1,5 @@
 using Compze.Abstractions;
+using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Sql.Common._internal;
 using Compze.Tessaging;
 using Compze.Teventive.TeventStore.Abstractions._internal.SqlLayer.Abstractions;
@@ -27,9 +28,15 @@ partial class MySqlTeventStoreSqlLayer(MySqlTeventStoreConnectionManager connect
    /// a unit of work that finds no taggregate to get for update keeps another from adding it until it completes, as SQL Server's<br/>
    /// application lock and PostgreSQL's advisory lock on the id do. The table keeps a row for every taggregate ever got for update.</summary>
    void TakeTheTaggregatesLock(TaggregateId taggregateId) =>
-      _connectionManager.UseCommand(command => command.SetCommandText($"INSERT INTO {TaggregateLockTableName} ({Tevent.TaggregateId}) VALUES (@{Tevent.TaggregateId}) ON DUPLICATE KEY UPDATE {Tevent.TaggregateId} = {Tevent.TaggregateId};")
-                                                      .AddParameter(Tevent.TaggregateId, taggregateId.Value)
-                                                      .ExecuteNonQuery());
+      _connectionManager.UseCommand(command => TheTaggregatesLockCommand(command, taggregateId).ExecuteNonQuery());
+
+   ///<summary>As <see cref="TakeTheTaggregatesLock"/>, waiting for the lock holding no thread.</summary>
+   async Task TakeTheTaggregatesLockAsync(TaggregateId taggregateId) =>
+      await _connectionManager.UseCommandAsync(suppressTransactionWarning: false, command => TheTaggregatesLockCommand(command, taggregateId).ExecuteNonQueryAsync()).caf();
+
+   static MySqlCommand TheTaggregatesLockCommand(MySqlCommand command, TaggregateId taggregateId) =>
+      command.SetCommandText($"INSERT INTO {TaggregateLockTableName} ({Tevent.TaggregateId}) VALUES (@{Tevent.TaggregateId}) ON DUPLICATE KEY UPDATE {Tevent.TaggregateId} = {Tevent.TaggregateId};")
+             .AddParameter(Tevent.TaggregateId, taggregateId.Value);
    // ReSharper disable once UnusedParameter.Local
    static string InternalSelect(int? top = null)
    {
@@ -80,22 +87,34 @@ partial class MySqlTeventStoreSqlLayer(MySqlTeventStoreConnectionManager connect
       if(takeWriteLock) TakeTheTaggregatesLock(taggregateId);
 
       var raw = _connectionManager.UseCommand(suppressTransactionWarning: !takeWriteLock,
-                                    command => command.SetCommandText($"""
-
-                                                                       {CreateSelectClause()}
-                                                                       WHERE {Tevent.TaggregateId} = @{Tevent.TaggregateId}
-                                                                           AND {Tevent.InsertedVersion} >= @CachedVersion
-                                                                           AND {Tevent.EffectiveVersion} > 0
-                                                                       ORDER BY {Tevent.ReadOrder} ASC
-                                                                       {CreateLockHint(takeWriteLock)}
-                                                                       """)
-                                                      .AddParameter(Tevent.TaggregateId, taggregateId.Value)
-                                                      .AddParameter("CachedVersion", startAfterInsertedVersion)
-                                                      .ExecuteReaderAndSelect(ReadRawDataRow)
-                                                      .SkipWhile(row => row.Storage.InsertedVersion <= startAfterInsertedVersion)
-                                                      .ToList());
-      return raw.Select(ToDataRow).ToList();
+                                              command => TheHistoryCommand(command, taggregateId, takeWriteLock, startAfterInsertedVersion).ExecuteReaderAndSelect(ReadRawDataRow));
+      return TheRowsAfter(startAfterInsertedVersion, raw);
    }
+
+   public async Task<IReadOnlyList<TeventDataRow>> GetTaggregateHistoryForUpdateAsync(TaggregateId taggregateId, int startAfterInsertedVersion)
+   {
+      await TakeTheTaggregatesLockAsync(taggregateId).caf();
+
+      var raw = await _connectionManager.UseCommandAsync(suppressTransactionWarning: false,
+                                                         command => TheHistoryCommand(command, taggregateId, takeWriteLock: true, startAfterInsertedVersion).ExecuteReaderAndSelectAsync(ReadRawDataRow)).caf();
+      return TheRowsAfter(startAfterInsertedVersion, raw);
+   }
+
+   static MySqlCommand TheHistoryCommand(MySqlCommand command, TaggregateId taggregateId, bool takeWriteLock, int startAfterInsertedVersion) =>
+      command.SetCommandText($"""
+
+                             {CreateSelectClause()}
+                             WHERE {Tevent.TaggregateId} = @{Tevent.TaggregateId}
+                                 AND {Tevent.InsertedVersion} >= @CachedVersion
+                                 AND {Tevent.EffectiveVersion} > 0
+                             ORDER BY {Tevent.ReadOrder} ASC
+                             {CreateLockHint(takeWriteLock)}
+                             """)
+             .AddParameter(Tevent.TaggregateId, taggregateId.Value)
+             .AddParameter("CachedVersion", startAfterInsertedVersion);
+
+   IReadOnlyList<TeventDataRow> TheRowsAfter(int startAfterInsertedVersion, IEnumerable<(int TeventTypeId, string Json, TessageId TeventId, int Version, TaggregateId TaggregateId, DateTime UtcTimeStamp, TaggregateTeventStorageInformation Storage)> raw) =>
+      [..raw.SkipWhile(row => row.Storage.InsertedVersion <= startAfterInsertedVersion).Select(ToDataRow)];
 
    public IEnumerable<TeventDataRow> StreamTevents(int batchSize)
    {
@@ -145,7 +164,7 @@ partial class MySqlTeventStoreSqlLayer(MySqlTeventStoreConnectionManager connect
                                                                                       ORDER BY {Tevent.ReadOrder} ASC
                                                                                       """)
                                                                      .ExecuteReaderAndSelect(reader => (TaggregateId: new TaggregateId(reader.GetGuid(0)), TeventTypeId: reader.GetInt32(1))));
-      return raw.Select(it => new TaggregateTeventTypeRow(it.TaggregateId, _typeIdInterner.GetTypeId(it.TeventTypeId))).ToList();
+      return [..raw.Select(it => new TaggregateTeventTypeRow(it.TaggregateId, _typeIdInterner.GetTypeId(it.TeventTypeId)))];
    }
 
    public IReadOnlyList<TaggregateTeventTypeRow> ListTheLastTeventOfEachTaggregate()
@@ -162,6 +181,6 @@ partial class MySqlTeventStoreSqlLayer(MySqlTeventStoreConnectionManager connect
                                                                                              AND lastVersions.LastVersion = lastRow.{Tevent.EffectiveVersion}
                                                                                       """)
                                                                      .ExecuteReaderAndSelect(reader => (TaggregateId: new TaggregateId(reader.GetGuid(0)), TeventTypeId: reader.GetInt32(1))));
-      return raw.Select(it => new TaggregateTeventTypeRow(it.TaggregateId, _typeIdInterner.GetTypeId(it.TeventTypeId))).ToList();
+      return [..raw.Select(it => new TaggregateTeventTypeRow(it.TaggregateId, _typeIdInterner.GetTypeId(it.TeventTypeId)))];
    }
 }

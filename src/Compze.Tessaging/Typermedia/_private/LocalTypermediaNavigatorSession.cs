@@ -2,6 +2,7 @@ using Compze.Tessaging.Validation._internal;
 using Compze.DependencyInjection;
 using Compze.Internals.SystemCE.UsageGuards;
 using Compze.DependencyInjection.Abstractions;
+using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tessaging.Engine._private;
 using Compze.Tessaging.TessageTypes;
 
@@ -57,6 +58,30 @@ class LocalTypermediaNavigatorSession : ILocalTypermediaNavigatorSession
 #pragma warning disable VSTHRD002 // The navigator session's synchronous API, over the executor's asynchronous handlers.
       return _executor.ExecuteTueryHandlerAsync(tuery, _scopeResolver).GetAwaiter().GetResult();
 #pragma warning restore VSTHRD002
+   }
+
+   public async Task<TResult> ExecuteAsync<TResult>(IStrictlyLocalTommand<TResult> tommand)
+   {
+      CommonAssertion(tommand);
+      return await _executor.ExecuteTommandHandlerAsync(tommand, UnitOfWorkResolver.From(_scopeResolver)).caf();
+   }
+
+   public async Task ExecuteAsync(IStrictlyLocalTommand tommand)
+   {
+      CommonAssertion(tommand);
+      await _executor.ExecuteTommandHandlerAsync(tommand, UnitOfWorkResolver.From(_scopeResolver)).caf();
+   }
+
+   public async Task<TResult> ExecuteAsync<TTuery, TResult>(IStrictlyLocalTuery<TTuery, TResult> tuery) where TTuery : IStrictlyLocalTuery<TTuery, TResult>
+   {
+      CommonAssertion(tuery);
+
+      // ReSharper disable once SuspiciousTypeConversion.Global
+      //Todo: Test and stop disabling ReSharper warning
+      if(tuery is ICreateMyOwnResultTuery<TResult> selfCreating)
+         return selfCreating.CreateResult();
+
+      return await _executor.ExecuteTueryHandlerAsync(tuery, _scopeResolver).caf();
    }
 
    void CommonAssertion(ITessage tessage)

@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## 0.6.1-alpha
 
+- **For Compze's SQL packages: a command's rows read asynchronously, prepared or not.**
 - **Documentation: on Linux, a synchronous call to the database waits for a free thread-pool thread to receive its answer,** since .NET completes a synchronous read of a socket that anything has used asynchronously on a pool thread. So a process whose pool threads block, such as on synchronous units of work waiting for one another's locks, can stall its own database calls for seconds, on Linux only. `PgSqlDomainDatabase`'s remarks now say so.
 - **A domain database's process locks: what Compze takes where data in the database must be used by one process at a time,** such as an exactly-once endpoint's tables. Each is a session-scoped lock of the server's own on a connection of its own, released when its holder releases it, or the server ends its holder's session. Their holders record themselves in the domain database's new `DatabaseProcessLockHolder` table, created at the database's first use when a feature that takes such a lock is registered: what each holds its lock for, which process, on which machine, and since when, for the message that refuses another.
 - **Requires newer minor versions of other Compze packages:** Compze.Abstractions 0.5.0-alpha (was 0.4.1-alpha). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.

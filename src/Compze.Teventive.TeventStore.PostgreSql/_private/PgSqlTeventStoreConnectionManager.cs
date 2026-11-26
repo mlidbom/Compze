@@ -1,4 +1,5 @@
 using System.Transactions;
+using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Sql.PostgreSql._internal;
 using JetBrains.Annotations;
 using Npgsql;
@@ -28,6 +29,12 @@ class PgSqlTeventStoreConnectionManager(IPgSqlConnectionPool sqlConnectionPool)
    {
       AssertTransactionPolicy(suppressTransactionWarning);
       return _connectionPool.UseCommand(action);
+   }
+
+   public async Task<TResult> UseCommandAsync<TResult>(bool suppressTransactionWarning, [InstantHandle] Func<NpgsqlCommand, Task<TResult>> action)
+   {
+      AssertTransactionPolicy(suppressTransactionWarning);
+      return await _connectionPool.UseCommandAsync(action).caf();
    }
 
    // ReSharper disable once ParameterOnlyUsedForPreconditionCheck.Local

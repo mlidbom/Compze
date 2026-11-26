@@ -1,4 +1,5 @@
 using System.Transactions;
+using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Sql.MySql._internal;
 using JetBrains.Annotations;
 using MySqlConnector;
@@ -27,6 +28,12 @@ class MySqlTeventStoreConnectionManager(IMySqlConnectionPool sqlConnectionPool)
    {
       AssertTransactionPolicy(suppressTransactionWarning);
       return _connectionPool.UseCommand(action);
+   }
+
+   public async Task<TResult> UseCommandAsync<TResult>(bool suppressTransactionWarning, [InstantHandle] Func<MySqlCommand, Task<TResult>> action)
+   {
+      AssertTransactionPolicy(suppressTransactionWarning);
+      return await _connectionPool.UseCommandAsync(action).caf();
    }
 
    // ReSharper disable once ParameterOnlyUsedForPreconditionCheck.Local

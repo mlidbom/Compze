@@ -3,6 +3,7 @@ using Compze.DocumentDb;
 using Compze.Abstractions;
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
+using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tessaging.TessageBus;
 using Compze.Teventive;
 using Compze.Teventive.TeventStore.QueryModels.SelfGeneratingQueryModels;
@@ -36,19 +37,17 @@ static class AccountStatistics
       internal static Guid StaticId = Guid.Parse("93498554-5C2E-4D6A-862D-2DA7BCCAC747");
    }
 
-   //Account tevents are exactly-once kinds, and exactly-once kinds are async end to end - so the handler is declared async; its work is synchronous today, so it completes its task synchronously.
+   //Account tevents are exactly-once kinds, and exactly-once kinds are async end to end - so the handler is declared async, and navigates asynchronously within its unit of work.
    internal static void MaintainStatisticsWhenRelevantTeventsAreReceived(IExactlyOnceTeventHandlerRegistrar registrar) => registrar.ForTevent(
-      (IAccountTevent tevent, ILocalTypermediaNavigatorSession navigator, StatisticsSingletonInitializer initializer) =>
+      async (IAccountTevent tevent, ILocalTypermediaNavigatorSession navigator, StatisticsSingletonInitializer initializer) =>
       {
-         initializer.EnsureInitialized(navigator);
+         await initializer.EnsureInitializedAsync(navigator).caf();
 
          if(new SingletonStatisticsQueryModel().HandlesTevent(tevent))
          {
-            navigator.Execute(new DocumentDbApi().Tueries.GetForUpdate<SingletonStatisticsQueryModel>(SingletonStatisticsQueryModel.StaticId))
-                     .ApplyTevent(tevent);
+            (await navigator.ExecuteAsync(new DocumentDbApi().Tueries.GetForUpdate<SingletonStatisticsQueryModel>(SingletonStatisticsQueryModel.StaticId)).caf())
+              .ApplyTevent(tevent);
          }
-
-         return Task.CompletedTask;
       });
 
    internal static void RegisterComponents(IComponentRegistrar registrar) =>
@@ -62,11 +61,11 @@ static class AccountStatistics
       /// no in-memory initialized-flag, deliberately — such a flag set inside a transaction outlives its rollback, and a<br/>
       /// failed first handling attempt would then skip initialization on every retry. The tevent handlers this serves never<br/>
       /// run in parallel with each other, so the check-then-save cannot race itself.</summary>
-      public void EnsureInitialized(ILocalTypermediaNavigatorSession navigator)
+      public async Task EnsureInitializedAsync(ILocalTypermediaNavigatorSession navigator)
       {
-         if(navigator.Execute(_documentDbApi.Tueries.TryGet<SingletonStatisticsQueryModel>(SingletonStatisticsQueryModel.StaticId)) is null)
+         if(await navigator.ExecuteAsync(_documentDbApi.Tueries.TryGet<SingletonStatisticsQueryModel>(SingletonStatisticsQueryModel.StaticId)).caf() is null)
          {
-            navigator.Execute(_documentDbApi.Tommands.Save(new SingletonStatisticsQueryModel()));
+            await navigator.ExecuteAsync(_documentDbApi.Tommands.Save(new SingletonStatisticsQueryModel())).caf();
          }
       }
    }
