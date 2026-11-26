@@ -13,10 +13,16 @@ static class ProbeSqlClientConcurrency
 {
    static int _subscribed;
 
-   sealed class Operation(string kind, SqlConnection? connection, string? commandText)
+   static readonly System.Runtime.CompilerServices.ConditionalWeakTable<SqlConnection, object> SerialOfConnection = new();
+   static long _lastSerial;
+   internal static long SerialOf(SqlConnection connection) => (long)SerialOfConnection.GetValue(connection, _ => Interlocked.Increment(ref _lastSerial));
+
+   sealed class Operation(string kind, SqlConnection? connection, string? commandText, SqlCommand? command = null)
    {
       public readonly string Kind = kind;
-      public readonly int ConnectionObject = connection == null ? 0 : System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(connection);
+      public readonly long ConnectionObject = connection == null ? 0 : SerialOf(connection);
+      public readonly string Transaction = System.Transactions.Transaction.Current?.TransactionInformation.LocalIdentifier ?? "none";
+      public readonly string Parameters = command == null ? "" : string.Join(", ", command.Parameters.Cast<SqlParameter>().Take(6).Select(it => $"{it.ParameterName}={(it.Value is string text && text.Length > 40 ? text[..40] : it.Value)}"));
       public readonly string CommandText = commandText == null ? "" : commandText.Length > 400 ? commandText[..400] : commandText;
       public readonly int Thread = Environment.CurrentManagedThreadId;
       public readonly string Stack = Environment.StackTrace;
@@ -28,6 +34,8 @@ static class ProbeSqlClientConcurrency
 
       public override string ToString() => $"""
                                              {Kind} on SqlConnection object {ConnectionObject}, thread {Thread}, {Stopwatch.GetElapsedTime(Started).TotalMilliseconds:F1} ms ago
+                                             Transaction: {Transaction}
+                                             Parameters: {Parameters}
                                              SQL: {CommandText}
                                              Stack:
                                              {Stack}
@@ -49,11 +57,11 @@ static class ProbeSqlClientConcurrency
 
    ///<summary>Compze's code that used <paramref name="connection"/> has returned, so every async command it awaited there has<br/>
    /// completed, whenever SqlClient writes their After events: they are done, and what overlapped them came after.</summary>
-   static readonly ConcurrentDictionary<int, (long Last, int Calls, int Removed)> HookCallsByConnectionObject = new();
+   static readonly ConcurrentDictionary<long, (long Last, int Calls, int Removed)> HookCallsByConnectionObject = new();
 
    static void OperationsReturned(SqlConnection connection)
    {
-      var connectionObject = System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(connection);
+      var connectionObject = SerialOf(connection);
       var removed = 0;
       try
       {
@@ -65,7 +73,7 @@ static class ProbeSqlClientConcurrency
       }
    }
 
-   static void RemoveTheAsyncOperationsOf(int connectionObject, ref int removed)
+   static void RemoveTheAsyncOperationsOf(long connectionObject, ref int removed)
    {
       foreach(var (operationId, physicalConnection) in PhysicalConnectionOfOperation)
       {
@@ -83,7 +91,7 @@ static class ProbeSqlClientConcurrency
    internal static IDisposable Track(SqlCommand command, string kind)
    {
       var operationId = Guid.NewGuid();
-      Before(operationId, command.Connection?.ClientConnectionId, new Operation(kind, command.Connection, command.CommandText));
+      Before(operationId, command.Connection?.ClientConnectionId, new Operation(kind, command.Connection, command.CommandText, command));
       return new Ender(operationId);
    }
 
@@ -156,7 +164,7 @@ static class ProbeSqlClientConcurrency
          switch(value.Value)
          {
             case SqlClientCommandBefore before:
-               Before(before.OperationId, before.ConnectionId, new Operation(before.Operation, before.Command.Connection, before.Command.CommandText));
+               Before(before.OperationId, before.ConnectionId, new Operation(before.Operation, before.Command.Connection, before.Command.CommandText, before.Command));
                break;
             case SqlClientCommandAfter after:
                After(after.OperationId);
