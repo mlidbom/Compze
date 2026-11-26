@@ -4,12 +4,16 @@ All notable changes to Compze.Threading.Interprocess will be documented in this 
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
-## 0.7.1-alpha
+## 0.7.2-alpha
 
 - **`IAwaitableMutex`'s condition waits time their `WaitTimeout` by `Stopwatch`, not by the system clock,** as `IAwaitableMonitor`'s are in Compze.Threading: setting the clock no longer shortens or lengthens a wait, nor the polling schedule between its signals.
 - **`IProcessLock`: a lock between processes that belongs to its holder, not to a thread.** `IProcessLock.New(name, directory)` makes it, and every process that makes one of the same name in the same directory has the same lock. `TryTake`, `Take`, `TryTakeAsync` and `TakeAsync` take it for a purpose, waiting at most a `WaitTimeout`, and return an `IProcessLockHold`, which any thread may dispose to release it. So async code can hold it across awaits, and an xUnit fixture can take it as it is created and release it as it is disposed, which a lock on an `IMutex` can't do: only the thread that took a mutex may release it. The operating system releases the lock when its holder's process dies, so a process that crashed or was killed never leaves it held. A `Take` that gives up throws a `TimeoutException` saying what the lock is held for, by which process, and since when. The async takes hold no thread while they wait.
   - **The lock is a file in the directory,** which its holder keeps open: on Windows shared for reading, so that a virus scanner or an indexer reading it keeps no holder out; on Linux and macOS locked with `flock`, and there taking it checks that the file keeps a second holder out, and throws if it doesn't, as when .NET's file locking is turned off. Nothing may delete the file while it can be held.
   - **A wait tries every 50 milliseconds,** so the lock isn't fair: whoever tries first after a release takes it. Nor is it reentrant: a second take waits for the first hold, even on the same thread.
+- **`IMutex.Global` is shared by every user's processes on Unix again, as its documentation says.** Since .NET 11, and 8.0.32, 9.0.21 and 10.0.13, .NET scopes a named mutex on Unix to its user unless told otherwise, so processes of different users each had a mutex of their own. Every process that shares a global mutex on Unix must use this version or a later one: an earlier one's mutex is its user's own. Its documentation now repeats .NET's warning that on Unix such a mutex should be shared only between users who trust each other.
+
+## 0.7.1-alpha
+
 - **Internal: the interprocess signal Compze.Teventive.MemoryImageStateStore needs to tell the memory images on a machine that another has committed.**
 - **Requires newer minor versions of other Compze packages:** Compze.Threading 0.13.0-alpha (was 0.12.0-alpha). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
 

@@ -4,12 +4,19 @@ All notable changes to Compze.Internals.SystemCE will be documented in this file
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
-## 0.10.0-internal
+## 0.12.0-internal
+
+- **Breaking: `FileReadLettingItBeReplaced`, `LinesFromTheEnd` and `LinesWrittenAfterAPoint` are removed from `Compze.Internals.SystemCE.IOCE`,** as readers for needs too unusual for Compze: their one user, the tooling they came from, keeps them itself. A reader that lets a file be replaced while it reads opens it as `new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete)`. `FileReplacement` and `IdsOfTheProcessesUsingAFile` stay.
+
+## 0.11.0-internal
 
 - **`FileReplacement.PutInPlaceUnlessThereIsOne(file, by)` writes a file once,** such as a claim that the first of several writers makes: it puts a file in place as `Replace` does, unless there is a file there, and returns false then, leaving both files as they are. Of several writers that put their files in the place at once, one finds none. Outside Windows, `File.Move` without overwriting can't promise that: it looks for a file and then renames, so two writers may both find none. Here the file is linked in place, which fails when there is one.
 - **When Windows refuses a file because another process has it open, `FileReplacement`'s failure names who uses each file involved,** each process by its program's name and its id, such as `Windows counts as using it: MsMpEng (PID 4711)`.
 - **`FileReplacement.Replace`'s documentation named the wrong exception:** a reader of the file that doesn't let it be deleted makes it throw an `IOException`, for Windows' sharing violation, not an `UnauthorizedAccessException`.
 - **`IdsOfTheProcessesUsingAFile.Of(path)` gives the ids of the processes Windows counts as using a file or folder:** those that have it open, as a folder their current directory included, or mapped into their memory, as a program's file is. Windows only.
+
+## 0.10.0-internal
+
 - **Breaking: renamed for Microsoft.VisualStudio.Threading.Analyzers' VSTHRD200,** which asks a method that returns a task to end in Async, and one that doesn't not to: `TaskCE.Run` is `TaskCE.RunAsync`, `TaskCE.RunOnDedicatedThread` is `TaskCE.RunOnDedicatedThreadAsync`, `ContinueWithCE` is `ContinueWithAsync`, `WithAggregateExceptions` is `WithAggregateExceptionsAsync`, and `SyncOrAsyncCE.AsAsync`, which returns a function, is `ToCompletedTaskFunc`.
 - **Breaking: `IAsyncLockCE` and `IAsyncShared<TShared>` are no longer `IDisposable`,** as nothing they hold needs disposing: their `SemaphoreSlim` allocates only a wait handle that they never ask for. Disposing one that was held, or waited for, broke its holder's release of it and its waiters, so code that owns one no longer disposes it. Code that did drops its `using` or `Dispose()`.
 - **Breaking: `LazyCE<TValue>` moves to Compze.Threading,** in the namespace `Compze.Threading`, unchanged, so that applications can use it from a package meant to be referenced. Code that used it from here adds `using Compze.Threading;`. Compze.Threading is already a dependency of this package.

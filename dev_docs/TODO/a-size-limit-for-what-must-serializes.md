@@ -25,6 +25,12 @@ Where to set the limit, and how the message says it stopped, are ours to decide.
 what it has written and throws, as it does for the depth, once the count passes a limit well above
 `LongestTextShownInFull`, so that a text written to a file can still be long.
 
+## Ships with Be on two NaNs
+
+Magnus's go on 2026-11-26: `Be` passes on two `double.NaN`s, or two `float.NaN`s, "release it with the next Must release".
+It is built on branch `must-be-on-two-nans`, kept off main until then, since Create Releases releases every package changed
+on main: merge it into main with this change, and release the two together.
+
 ## Once it's released
 
 Tell tooling-with-magnus, so that the tooling can take the new Compze.Must.

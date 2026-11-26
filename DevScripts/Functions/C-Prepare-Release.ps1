@@ -69,7 +69,7 @@ function C-Prepare-Release {
     param(
         [string[]]$PackageId,
         [switch]$Patch,
-        [string[]]$PatchPackageId,
+        [string[]]$PatchPackageId = @(),
         [string[]]$Acknowledge,
         [string]$Reason
     )
