@@ -28,6 +28,38 @@ public class When_calling_Must_Be : UniversalTestBase
       [XF] public void it_does_not_throw() => _actual.Must().Be(_expected);
    }
 
+   public class with_two_double_NaNs : When_calling_Must_Be
+   {
+      readonly double _actual = double.NaN;
+      readonly double _expected = double.NaN;
+
+      [XF] public void it_does_not_throw() => _actual.Must().Be(_expected);
+   }
+
+   public class with_two_float_NaNs : When_calling_Must_Be
+   {
+      readonly float _actual = float.NaN;
+      readonly float _expected = float.NaN;
+
+      [XF] public void it_does_not_throw() => _actual.Must().Be(_expected);
+   }
+
+   public class with_a_double_NaN_and_a_double_zero : When_calling_Must_Be
+   {
+      readonly double _actual = double.NaN;
+      readonly double _expected = 0;
+
+      [XF] public void it_throws_AssertionFailedException() => Invoking(() => _actual.Must().Be(_expected)).Must().Throw<AssertionFailedException>();
+   }
+
+   public class with_a_double_NaN_and_a_float_NaN : When_calling_Must_Be
+   {
+      readonly double _actual = double.NaN;
+      readonly float _expected = float.NaN;
+
+      [XF] public void it_throws_AssertionFailedException() => Invoking(() => _actual.Must().Be(_expected)).Must().Throw<AssertionFailedException>();
+   }
+
    public class with_two_different_integers : When_calling_Must_Be
    {
       readonly int _actual = 42;

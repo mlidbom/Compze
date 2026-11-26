@@ -15,7 +15,8 @@ public static class EqualityAssertions
 {
    /// <summary>
    /// Asserts that the value equals <paramref name="expected"/> consistently across <see cref="object.Equals(object)"/>, <see cref="System.IEquatable{T}"/>, equality and comparison operators, <see cref="System.IComparable"/>, structural equality, and <see cref="object.GetHashCode"/>.<br/>
-   /// Two strings are compared ordinally instead, and a failure shows a diff of their text.
+   /// Two strings are compared ordinally instead, and a failure shows a diff of their text.<br/>
+   /// Two <see cref="double.NaN"/>s, or two <see cref="float.NaN"/>s, are equal, as <see cref="object.Equals(object)"/> and <see cref="System.IComparable"/> find them, though the operators don't.
    /// </summary>
    /// <remarks>
    /// Whatever nullability the value is declared with, it is accepted: a <see langword="null"/> value simply fails, unless <paramref name="expected"/> is <see langword="null"/> too.<br/>
@@ -62,6 +63,9 @@ public static class EqualityAssertions
    static IAssertionContext<TValue> Be_transitively_equal_to_according_to_every_supported_comparison_method_and_hashcode_internal<TValue>(this IAssertionContext<TValue> context, TValue expected, [CallerArgumentExpression(nameof(expected))] string expectedExpression = null!)
    {
       if(expected is null && context.Actual is null)
+         return context;
+
+      if(AreTwoNaNsOfOneType(context.Actual, expected))
          return context;
 
       context.RunAssertion(it => Equals(it, expected), messageOverride: BuildFailureMessage);
@@ -157,6 +161,13 @@ public static class EqualityAssertions
 
       static bool CanBeComparedAsAnItem(object? item) => item is ITuple tuple ? EveryItemCanBeCompared(tuple) : item is null or IComparable;
    }
+
+   /// <summary>Whether <paramref name="actual"/> and <paramref name="expected"/> are two <see cref="double.NaN"/>s or two <see cref="float.NaN"/>s,<br/>
+   /// which <see cref="double.Equals(double)"/> and <see cref="double.CompareTo(double)"/> find equal, as <see cref="Be{TValue,TExpected}"/> does:<br/>
+   /// the operators find them unequal, as IEEE 754 has them, so <see cref="Be{TValue,TExpected}"/> leaves the operators out for them.</summary>
+   static bool AreTwoNaNsOfOneType(object? actual, object? expected) =>
+      actual is double actualDouble && double.IsNaN(actualDouble) && expected is double expectedDouble && double.IsNaN(expectedDouble)
+      || actual is float actualFloat && float.IsNaN(actualFloat) && expected is float expectedFloat && float.IsNaN(expectedFloat);
 
    /// <summary>Asserts that the value is not equal to <paramref name="unexpected"/> by any supported comparison mechanism.</summary>
    public static IAssertionContext<TValue> NotBe<TValue, TUnExpected>(this IAssertionContext<TValue> context, TUnExpected unexpected, [CallerArgumentExpression(nameof(unexpected))] string unexpectedExpression = null!) =>

@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## 0.9.2-alpha
 
+- **`Be` passes on two `double.NaN`s, or two `float.NaN`s,** as `Equals` and `CompareTo` find them equal. It failed on them, as their `==` operator says no, as IEEE 754 has it: so a value computed as NaN couldn't be specified with `Be`. A NaN and a number, or a `double.NaN` and a `float.NaN`, still fail.
 - **Fixed: `Be` threw on two equal tuples holding an item that can't be compared.** A `ValueTuple` or a `Tuple` implements `IComparable` whatever its items, and its `CompareTo` throws an `ArgumentException`, "At least one object must implement IComparable", for an item that implements none, such as a class with value equality alone. `Be` now compares a tuple with `CompareTo` only when each of its items can be compared, and by its equality alone otherwise. Equal tuples holding the same instances passed before, which hid the bug until a tuple held an equal but distinct instance, such as one read back from a file.
 - **Requires newer minor versions of other Compze packages:** Compze.Internals.SystemCE 0.10.0-internal (was 0.9.0-internal), Compze.Threading 0.13.0-alpha (was 0.12.0-alpha). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
 
