@@ -1,17 +1,16 @@
-using Compze.Teventive.MemoryImageStateStore._internal;
-using System.Diagnostics;
 using System.Text.Json;
 using System.Transactions;
 using Compze.Abstractions;
+using Compze.Contracts;
 using Compze.Internals.SystemCE.TransactionsCE;
 using Compze.Teventive.MemoryImageStateStore._internal.SqlLayer;
 using Compze.Teventive.MemoryImageStateStore._private.Storage;
 
 namespace Compze.Teventive.MemoryImageStateStore._private.Tables;
 
-///<summary>Compze's storage of a memory image state store in tables of the domain database, which several memory images share: a row for<br/>
-/// each taggregate, holding its class's declared name, its snapshot as the consumer's JSON options write it, and the number of the<br/>
-/// commit that last wrote it. See the tables' design, the-memory-image-state-store-in-tables.md in Compze's dev_docs.</summary>
+///<summary>Compze's storage of a memory image state store in tables of the domain database: a row for each taggregate, holding its class's<br/>
+/// declared name and its snapshot as the consumer's JSON options write it. See the tables' design,<br/>
+/// the-memory-image-state-store-in-tables.md in Compze's dev_docs.</summary>
 ///<remarks>Composed with <see cref="MemoryImageStateStoreBuilder.StoredInTheDomainDatabase"/>. The SQL is the domain database's<br/>
 /// <see cref="IMemoryImageStateStoreSqlLayer"/>, which a package of its own registers, such as Compze.Teventive.MemoryImageStateStore.Sqlite's.</remarks>
 sealed class TaggregateTableStorage : ITaggregateStorage
@@ -25,58 +24,40 @@ sealed class TaggregateTableStorage : ITaggregateStorage
       _sqlLayer = sqlLayer;
       _snapshotJson = snapshotJson;
       _classNames = classNames;
-      CommitSignal = new CommitSignal(sqlLayer.DatabaseIdentity);
    }
 
-   ///<summary>The database's commit signal, raised once each commit of this memory image to the tables has committed.</summary>
-   internal CommitSignal CommitSignal { get; }
+   ///<summary>Every row of the declared classes, read outside any transaction. Each snapshot keeps the text it was read from, for a reload to<br/>
+   /// compare with what the store would write for the taggregate it held.</summary>
+   public IReadOnlyList<TaggregateSnapshot> LoadAll() =>
+      [..TransactionScopeCe.Execute(() => _sqlLayer.ReadAll(_classNames.Names), TransactionScopeOption.Suppress).Select(SnapshotIn)];
 
-   ///<summary>Every live row of the declared classes, read outside any transaction, with the last commit number, read before them.</summary>
-   public LoadedTaggregates LoadAll()
+   ///<summary>Whether <paramref name="loaded"/> holds the state <paramref name="heldSnapshot"/> holds, as the rows hold state: see<br/>
+   /// <see cref="SnapshotJson.HoldTheSameState"/>.</summary>
+   public bool HoldTheSameState(TaggregateSnapshot loaded, object heldSnapshot) => _snapshotJson.HoldTheSameState(loaded, heldSnapshot);
+
+   ///<summary>Serializes each of <paramref name="toSave"/>, then writes the rows in the unit of work's transaction, which is preparing: they<br/>
+   /// commit, or roll back, with it, as the database's commit is the transaction's decision. So nothing is left to do when the unit of work<br/>
+   /// completes.</summary>
+   ///<remarks>Safe without a lock in the database: the unit of work holds each taggregate's lock in memory, and the memory image holding the<br/>
+   /// tables' lock is the only one that writes them, so no other transaction writes the same rows meanwhile.</remarks>
+   public IPreparedWrite Prepare(IReadOnlyList<TaggregateSnapshot> toSave, IReadOnlyList<TaggregateId> toDelete)
    {
-      var read = OutsideAnyTransaction(() => _sqlLayer.ReadAll(_classNames.Names));
-      return new LoadedTaggregates([..read.Rows.Where(it => it.Snapshot != null).Select(SnapshotIn)], read.HoldingEveryCommitThrough);
+      if(toSave.Count == 0 && toDelete.Count == 0) return WrittenInTheTransaction.Instance;
+      var rows = toSave.Select(RowToSave).ToList();
+      Transaction.Current._assert().NotNull();
+      _sqlLayer.Write(rows, toDelete);
+      return WrittenInTheTransaction.Instance;
    }
 
-   ///<summary>Never asked: a reload compares taggregates kept in tables by their commit numbers.</summary>
-   public bool HoldTheSameState(TaggregateSnapshot loaded, object heldSnapshot) => throw new UnreachableException("A reload compares the taggregates of a memory image state store kept in tables by their commit numbers.");
-
-   public StoredTaggregate? LockForUpdate(TaggregateId id, CommitNumber? heldAs) =>
-      _sqlLayer.LockAndReadUnlessHeldAs(id, heldAs) is {} row && _classNames.Declares(row.ClassName) ? Stored(row) : null;
-
-   public TaggregatesCommittedAfter CommittedAfter(CommitNumber lastSeen)
+   ///<summary>Writes every row anew, in a transaction of its own.</summary>
+   public void WriteAll(IReadOnlyList<TaggregateSnapshot> everything)
    {
-      var read = OutsideAnyTransaction(() => _sqlLayer.ReadCommittedAfter(lastSeen, _classNames.Names));
-      return new TaggregatesCommittedAfter([..read.Rows.Select(Stored)], read.HoldingEveryCommitThrough);
-   }
-
-   ///<summary>Serializes each of <paramref name="toSave"/>, which can fail here, and has the write take part in the unit of work's<br/>
-   /// transaction, to take its commit's number and write its rows at the very end of the transaction's prepare.</summary>
-   public IPreparedWrite Prepare(IReadOnlyList<TaggregateSnapshot> toSave, IReadOnlyList<TaggregateId> toDelete) =>
-      PreparedTableWrite.TakingPartInTheAmbientTransaction(_sqlLayer, [..toSave.Select(RowToSave)], toDelete, onceCommitted: CommitSignal.Raise);
-
-   ///<summary>In a transaction of its own: takes the commit counter first, so that no other memory image commits meanwhile, hands<br/>
-   /// <paramref name="everythingOnceCaughtUpWith"/> what the other memory images committed after <paramref name="lastSeen"/>, then<br/>
-   /// writes every taggregate it returns, as one commit.</summary>
-   public CommitNumber? WriteAll(CommitNumber lastSeen, Func<IReadOnlyList<StoredTaggregate>, IReadOnlyList<TaggregateSnapshot>> everythingOnceCaughtUpWith)
-   {
-      var committedAs = TransactionScopeCe.Execute(() =>
-      {
-         var takenNumber = _sqlLayer.TakeTheNextCommitNumber();
-         var committedMeanwhile = _sqlLayer.ReadCommittedAfter(lastSeen, _classNames.Names);
-         var everything = everythingOnceCaughtUpWith([..committedMeanwhile.Rows.Select(Stored)]);
-         _sqlLayer.Write(takenNumber, [..everything.Select(RowToSave)], deleted: []);
-         return takenNumber;
-      }, TransactionScopeOption.RequiresNew);
-      CommitSignal.Raise();
-      return committedAs;
+      var rows = everything.Select(RowToSave).ToList();
+      TransactionScopeCe.Execute(() => _sqlLayer.Write(rows, deleted: []), TransactionScopeOption.RequiresNew);
    }
 
    TaggregateRowToSave RowToSave(TaggregateSnapshot snapshot) =>
       new(snapshot.Id, _classNames.NameOf(snapshot.TaggregateClass), _snapshotJson.Of(snapshot.TaggregateClass, snapshot.Snapshot));
-
-   StoredTaggregate Stored(TaggregateRow row) =>
-      row.Snapshot == null ? StoredTaggregate.Deleted(row.Id, row.CommittedAs) : StoredTaggregate.WithState(SnapshotIn(row), row.CommittedAs);
 
    ///<summary>The snapshot <paramref name="row"/> holds, and the taggregate restored from it: whatever fails is rethrown naming the row.</summary>
    TaggregateSnapshot SnapshotIn(TaggregateRow row)
@@ -84,20 +65,27 @@ sealed class TaggregateTableStorage : ITaggregateStorage
       var taggregateClass = _classNames.ClassNamed(row.ClassName);
       try
       {
-         var snapshot = _snapshotJson.SnapshotIn(row.Snapshot!, taggregateClass) ?? throw new JsonException("The row holds null.");
+         var snapshot = _snapshotJson.SnapshotIn(row.Snapshot, taggregateClass) ?? throw new JsonException("The row holds null.");
          return new TaggregateSnapshot(taggregateClass.Class, row.Id, snapshot)
                 {
                    RestoredTaggregate = taggregateClass.Restore(row.Id, snapshot),
-                   CommittedAs = row.CommittedAs
+                   TextReadFrom = row.Snapshot
                 };
       }
       catch(Exception exception)
       {
-         throw new InvalidOperationException($"The memory image state store can't load the row of taggregate {row.Id}, a {taggregateClass.Class.Name} by its class name \"{row.ClassName}\", written by {row.CommittedAs}: {exception.Message}", exception);
+         throw new InvalidOperationException($"The memory image state store can't load the row of taggregate {row.Id}, a {taggregateClass.Class.Name} by its class name \"{row.ClassName}\": {exception.Message}", exception);
       }
    }
 
-   public void Dispose() => CommitSignal.Dispose();
+   public void Dispose() {}
 
-   static TResult OutsideAnyTransaction<TResult>(Func<TResult> read) => TransactionScopeCe.Execute(read, TransactionScopeOption.Suppress);
+   ///<summary>A write made in the unit of work's transaction already, which commits or rolls back with it: nothing is left to do.</summary>
+   sealed class WrittenInTheTransaction : IPreparedWrite
+   {
+      internal static readonly WrittenInTheTransaction Instance = new();
+
+      public void Commit() {}
+      public void Discard() {}
+   }
 }

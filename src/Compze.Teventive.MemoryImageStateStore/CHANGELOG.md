@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## 0.2.1-alpha
 
+- **One memory image at a time uses a store's tables, as one uses a store's files: what served several memory images is gone.** The store is built to be fast for one process (Magnus, 2026-11-26). `rows.CatchingUpAsOtherMemoryImagesOnThisMachineCommit()` and `IMemoryImageStateStore.ChangesCommittedByOtherMemoryImages` are removed. A get for update or an add no longer takes the taggregate's lock in the database, nor reads its row; a unit of work no longer catches up with what others committed; and commits are no longer numbered from a counter in the database, so commits that write the store no longer commit one at a time. A unit of work's rows are written in its transaction as it prepares, and every read reads memory.
+  - **`LoadFromStorage()` on a store kept in tables reports a taggregate changed when the state its row holds isn't the state the store held,** compared as for files, by what the store's serializer and the consumer's options write, where it compared commit numbers. A reload costs one or two serializations for each taggregate the store held.
+  - **`WriteAllToStorage()` on a store kept in tables is one transaction that writes every row,** with no counter to take first.
+  - **A deleted taggregate's row is deleted,** where it was kept with no snapshot for other memory images to find the deletion.
 - **Internal: the wait for another memory image's commit is one wait on Compze.Threading.Interprocess's signal,** instead of a loop of one-minute waits. Nothing a consumer sees changes.
 - **Requires newer minor versions of other Compze packages:** Compze.Internals.SystemCE 0.12.0-internal (was 0.10.0-internal), Compze.Threading 0.14.0-alpha (was 0.13.0-alpha), Compze.Threading.Interprocess 0.8.0-alpha (was 0.7.1-alpha). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
 

@@ -1,7 +1,6 @@
 using Compze.Threading._internal;
-using Compze.Threading.Interprocess._private;
 
-namespace Compze.Threading.Interprocess._internal;
+namespace Compze.Threading.Interprocess._private;
 
 /// <summary>
 /// A cross-process signaling mechanism backed by an <see cref="InterprocessChangeCounter"/>.
@@ -77,11 +76,6 @@ class InterprocessSignal : IDisposable
 
       return true;
    }
-
-   ///<summary>Awaits the counter changing from <paramref name="baseline"/>, however long that takes, holding no thread between polls. Throws an<br/>
-   /// <see cref="OperationCanceledException"/> if <paramref name="cancellationToken"/> is cancelled first.</summary>
-   public async Task AwaitChangeFromAsync(long baseline, CancellationToken cancellationToken) =>
-      await TryAwaitChangeFromAsync(baseline, Timeout.InfiniteTimeSpan, StartedWait.Begin(WaitTimeout.Infinite), cancellationToken).ConfigureAwait(false);
 
    ///<summary>How long to pause before polling the counter again: what the <see cref="ISignalPollingPolicy"/> asks for, given how long the whole<br/>
    /// <paramref name="wait"/> has waited, but never past the end of <paramref name="step"/>. Null once <paramref name="step"/> has expired.</summary>

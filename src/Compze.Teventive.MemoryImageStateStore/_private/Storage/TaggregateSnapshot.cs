@@ -1,4 +1,3 @@
-using Compze.Teventive.MemoryImageStateStore._internal;
 using Compze.Abstractions;
 
 namespace Compze.Teventive.MemoryImageStateStore._private.Storage;
@@ -24,9 +23,6 @@ sealed class TaggregateSnapshot
    ///<summary>The snapshot, of the type the taggregate's class takes and restores from.</summary>
    public object Snapshot { get; }
 
-   ///<summary>For a storage that numbers its commits, the number of the commit that last wrote the taggregate; else null.</summary>
-   internal CommitNumber? CommittedAs { get; init; }
-
    ///<summary>The taggregate restored from this snapshot, where Compze's own storage restored it to learn its id, so that a load<br/>
    /// restores each taggregate once.</summary>
    internal ITaggregate? RestoredTaggregate { get; init; }
@@ -35,7 +31,7 @@ sealed class TaggregateSnapshot
    /// the taggregate: such as a file that no other program has changed since. A reload compares such a snapshot with nothing.</summary>
    internal bool IsUnchangedSinceTheStoreLastReadOrWroteIt { get; init; }
 
-   ///<summary>The text the storage read this snapshot from, as it loads it, where it read it from a file that may hold another state<br/>
-   /// than the store held: what a reload compares first, with what the storage would write for the taggregate the store held.</summary>
+   ///<summary>The text the storage read this snapshot from, as it loads it, where it may hold another state than the store held, such as<br/>
+   /// a changed file: what a reload compares first, with what the storage would write for the taggregate the store held.</summary>
    internal string? TextReadFrom { get; init; }
 }

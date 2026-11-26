@@ -179,14 +179,10 @@ public sealed class MemoryImageStateStoreBuilder
    /// taggregate holds the name <paramref name="declare"/> declares for its class, and exactly what <paramref name="options"/> make of<br/>
    /// its snapshot. A unit of work commits as one database transaction, which also holds whatever else the unit of work writes to the<br/>
    /// domain database, such as an exactly-once endpoint's inbox and outbox.</summary>
-   ///<remarks><b>Several memory images may share the tables:</b> other processes, and other containers of the same process, such as two<br/>
-   /// exactly-once endpoints, each with a memory image of its own. Getting a taggregate for update, or adding one, takes the<br/>
-   /// taggregate's lock in the database as well as in memory, and takes its state from its row if another memory image has committed<br/>
-   /// it since. And a memory image catches up with what the others committed at each unit of work's first get for update or add.<br/>
-   /// Reads outside a unit of work read what the memory image last caught up with, with no round trip to the database.</remarks>
-   ///<remarks>Each memory image holds every taggregate. Commits that write the store's rows take their numbers from a counter in the<br/>
-   /// database, whose lock they hold until they commit, so they commit one at a time while they write their rows. On SQLite, every<br/>
-   /// transaction that writes the database runs alone, across processes too, as everything Compze does on SQLite does.</remarks>
+   ///<remarks><b>One memory image at a time uses the tables.</b> It is built to be fast for one process: what it holds in memory is what the<br/>
+   /// tables hold, since nothing else writes them, so it reads them only as it loads, and every read reads memory, with no round trip to<br/>
+   /// the database. A unit of work's rows are written in its transaction as the transaction prepares, so they commit, or roll back, with<br/>
+   /// it; on SQLite, every transaction that writes the database runs alone, across processes too, as everything Compze does on SQLite does.</remarks>
    public MemoryImageStateStoreBuilder StoredInTheDomainDatabase(JsonSerializerOptions options, Action<TaggregateRowsBuilder> declare)
    {
       var rows = new TaggregateRowsBuilder();
@@ -235,7 +231,6 @@ public sealed class MemoryImageStateStoreBuilder
    {
       var classes = _taggregateClasses.Values.Select(declare => declare(resolver)).ToList();
       var storage = _storage?.Invoke(resolver, classes) ?? NoStorage.Instance;
-      var catchingUpOn = storage is TaggregateTableStorage tables && _rows is { IsCatchingUpAsOtherMemoryImagesOnThisMachineCommit: true } ? tables.CommitSignal : null;
-      return new(unitsOfWork, classes, _indexes, storage, catchingUpOn);
+      return new(unitsOfWork, classes, _indexes, storage);
    }
 }
