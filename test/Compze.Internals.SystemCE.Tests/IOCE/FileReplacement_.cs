@@ -51,7 +51,7 @@ public class FileReplacement_ : InAFolderOfItsOwn
       public When_a_reader_has_the_file_open_letting_it_be_replaced()
       {
          File.WriteAllText(_file, "old");
-         _reader = FileReadLettingItBeReplaced.Open(_file);
+         _reader = new FileStream(_file, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete);
          WriteTheReplacementAndReplaceTheFile();
       }
 

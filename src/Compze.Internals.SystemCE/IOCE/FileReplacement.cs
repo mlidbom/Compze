@@ -21,8 +21,8 @@ namespace Compze.Internals.SystemCE.IOCE;
 /// <remarks>
 /// On Windows this renames with POSIX semantics instead, as Windows has done since Windows 10's version 1709 on NTFS: the
 /// old file's name is taken from it at once, and a reader that has it open, letting it be deleted, reads it on until it
-/// closes it. A reader that doesn't let it be deleted still refuses the rename, as it refuses a deletion: such readers read
-/// with <see cref="FileReadLettingItBeReplaced"/>. When Windows refuses a file because another has it open, the failure
+/// closes it. A reader that doesn't let it be deleted still refuses the rename, as it refuses a deletion: such readers open
+/// the file sharing <see cref="FileShare.Delete"/>. When Windows refuses a file because another has it open, the failure
 /// says who Windows counts as using each file involved, as <see cref="IdsOfTheProcessesUsingAFile"/> tells it.<br/>
 /// On other operating systems a rename has these semantics already: <see cref="Replace"/> is
 /// <see cref="File.Move(string, string, bool)"/>, and <see cref="PutInPlaceUnlessThereIsOne"/> links the file in place,
