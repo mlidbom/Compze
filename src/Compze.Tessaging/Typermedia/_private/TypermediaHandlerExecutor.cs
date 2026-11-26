@@ -10,13 +10,18 @@ namespace Compze.Tessaging.Typermedia._private;
 
 ///<summary>The typermedia transport server's execution site: executes an arriving remote tuery or typermedia tommand through the<br/>
 /// engine's one executor (<see cref="TessageHandlerExecutor"/>), adding the arrival-side retry a remote tommand gets — a<br/>
-/// transient handling failure is retried here, at the receiver, invisibly to the caller. A missing handler is never retried:<br/>
+/// tommand handler that throws is run again here, at the receiver, invisibly to the caller. A missing handler is never retried:<br/>
 /// <see cref="NoHandlerException"/> is a programming error, not a transient failure.</summary>
 class TypermediaHandlerExecutor
 {
    readonly TessageHandlerExecutor _executor;
+   readonly IScopeFactory _scopeFactory;
 
-   TypermediaHandlerExecutor(TessageHandlerExecutor executor) => _executor = executor;
+   TypermediaHandlerExecutor(TessageHandlerExecutor executor, IScopeFactory scopeFactory)
+   {
+      _executor = executor;
+      _scopeFactory = scopeFactory;
+   }
 
    public async Task<object> ExecuteTueryAsync(ITessage tuery)
    {
@@ -27,39 +32,47 @@ class TypermediaHandlerExecutor
    public async Task<object> ExecuteTommandWithResultAsync(ITessage tommand)
    {
       this.Log().Debug($"Executing tommand with result {tommand.GetType().Name}");
-      return await ExecuteWithRetryAsync(async () => await _executor.ExecuteTommandHandlerWithResultInOwnUnitOfWorkAsync((IAtMostOnceTypermediaTommand)tommand).caf()).caf();
+      return await ExecuteInOwnUnitOfWorkRetryingTheHandlerAsync(async unitOfWork => await _executor.ExecuteTommandHandlerWithResultAsync((IAtMostOnceTypermediaTommand)tommand, unitOfWork).caf()).caf();
    }
 
    public async Task ExecuteVoidTommandAsync(IAtMostOnceTypermediaTommand tommand)
    {
       this.Log().Debug($"Executing void tommand {tommand.GetType().Name}");
-      await ExecuteWithRetryAsync<object?>(async () =>
+      await ExecuteInOwnUnitOfWorkRetryingTheHandlerAsync<object?>(async unitOfWork =>
       {
-         await _executor.ExecuteVoidTommandHandlerInOwnUnitOfWorkAsync(tommand).caf();
+         await _executor.ExecuteTommandHandlerAsync(tommand, unitOfWork).caf();
          return null;
       }).caf();
    }
 
    const int MaxAttempts = 5;
 
-#pragma warning disable CA1031 // Catch-all is intentional — retry any exception, matching DefaultRetryPolicy behavior
-   async Task<TResult> ExecuteWithRetryAsync<TResult>(Func<Task<TResult>> action)
+   ///<summary>Runs <paramref name="handler"/> as its own unit of work, and when it throws, runs it again in a new one, up to<br/>
+   /// <see cref="MaxAttempts"/> times in all.</summary>
+   ///<remarks>A failure after the handler has returned is never retried: it comes from the unit of work's commit, or after it,<br/>
+   /// and a commit that the database made can still fail at the caller, such as when the connection drops before the<br/>
+   /// acknowledgment arrives. Running the handler again then would commit its effects a second time, and a tommand's<br/>
+   /// transactional effects commit at most once for each post.</remarks>
+#pragma warning disable CA1031 // Catch-all is intentional — retry any exception the handler throws, matching DefaultRetryPolicy behavior
+   async Task<TResult> ExecuteInOwnUnitOfWorkRetryingTheHandlerAsync<TResult>(Func<IUnitOfWorkResolver, Task<TResult>> handler)
    {
       var remainingAttempts = MaxAttempts;
       while(true)
       {
+         var handlerReturned = false;
          try
          {
-            return await action().caf();
+            return await _scopeFactory.ExecuteUnitOfWorkAsync(async unitOfWork =>
+            {
+               var result = await handler(unitOfWork).caf();
+               handlerReturned = true;
+               return result;
+            }).caf();
          }
-         //bug: This retry also follows a failed commit. A commit that the database made, but whose acknowledgment was lost, such as
-         //   to a connection dropped mid-commit or a TransactionInDoubtException, throws here, and the handler runs again in a new
-         //   transaction, which commits its effects a second time: at most once breaks. The inbox is safe from this by the claim it
-         //   takes in the handling transaction; a typermedia tommand has none. (Claude, 2026-11-26)
          //Todo:review: Should we have some sort of retryable exception test here perhaps? And/or a backoff delay? Rather than hammering away instantly regardless of the error?
-         catch(Exception ex) when(ex is not NoHandlerException && --remainingAttempts > 0) //A missing handler is a programming error, not a transient failure to retry.
+         catch(Exception exception) when(!handlerReturned && exception is not NoHandlerException && --remainingAttempts > 0) //A missing handler is a programming error, not a transient failure to retry.
          {
-            this.Log().Warning(ex, "Command execution failed. Retrying.");
+            this.Log().Warning(exception, "Tommand handler failed. Retrying.");
          }
       }
    }
@@ -68,5 +81,5 @@ class TypermediaHandlerExecutor
    public static void RegisterWith(IComponentRegistrar registrar) =>
       registrar.Register(
          Singleton.For<TypermediaHandlerExecutor>()
-                  .CreatedBy((TessageHandlerExecutor executor) => new TypermediaHandlerExecutor(executor)));
+                  .CreatedBy((TessageHandlerExecutor executor, IScopeFactory scopeFactory) => new TypermediaHandlerExecutor(executor, scopeFactory)));
 }

@@ -13,9 +13,10 @@ namespace Compze.Tessaging.Engine._private;
 /// unrepresentable; a tommand's is its single handler in a unit of work; a tuery's is its single handler in a scope. Every<br/>
 /// arrival path calls this one executor — the application-facing interfaces, an endpoint's inbox, an endpoint's transport server — and therefore<br/>
 /// there is exactly one policy for a missing handler: the <see cref="NoHandlerException"/> the roster's lookups raise.</summary>
-///<remarks>Each kind comes in two forms mirroring the unit-of-work model's UnitOfWork/Independent axis: one executing within the<br/>
-/// context the caller already has (the resolver parameter says which), and one running the response in a context of its own<br/>
-/// (<c>InOwnUnitOfWork</c>/<c>InIsolatedScope</c>). Every form is async end to end — handlers are async-capable from birth,<br/>
+///<remarks>Each kind executes within the context the caller already has (the resolver parameter says which). Tevents and tueries<br/>
+/// also come in a form running the response in a context of its own (<c>InOwnUnitOfWork</c>/<c>InIsolatedScope</c>), mirroring<br/>
+/// the unit-of-work model's UnitOfWork/Independent axis; a remote tommand's own unit of work is opened by<br/>
+/// <see cref="Typermedia._private.TypermediaHandlerExecutor"/>, whose retry must know whether the handler returned. Every form is async end to end — handlers are async-capable from birth,<br/>
 /// and the own-context forms run the async unit-of-work envelope, whose ambient transaction flows across the handlers'<br/>
 /// awaits. Tevent observation is not executed here: it is the deliberately transaction-ignoring watch surface, dispatched<br/>
 /// off-thread by the engine's <see cref="TeventObservationDispatcher"/>.</remarks>
@@ -52,25 +53,12 @@ class TessageHandlerExecutor
 
    ///<summary>Executes the single handler for <paramref name="tommand"/>, whose result answers the caller, within <paramref name="unitOfWork"/>.</summary>
    public async Task<TResult> ExecuteTommandHandlerAsync<TResult>(ITommand<TResult> tommand, IUnitOfWorkResolver unitOfWork) =>
-      (TResult)await _roster.GetTommandHandlerWithResult(tommand.GetType())(tommand, unitOfWork).caf();
+      (TResult)await ExecuteTommandHandlerWithResultAsync(tommand, unitOfWork).caf();
 
-   ///<summary>Executes the single handler for <paramref name="tommand"/> — a tommand whose type declares no result — as its own<br/>
-   /// unit of work: the remote-arrival form. The handler is resolved before the unit of work opens: a missing handler is a<br/>
-   /// programming error surfacing as <see cref="NoHandlerException"/>, never work worth beginning a transaction for.</summary>
-   public async Task ExecuteVoidTommandHandlerInOwnUnitOfWorkAsync(ITommand tommand)
-   {
-      var handler = _roster.GetVoidTommandHandler(tommand.GetType());
-      await _scopeFactory.ExecuteUnitOfWorkAsync(async unitOfWork => await handler(tommand, unitOfWork).caf()).caf();
-   }
-
-   ///<summary>Executes the single handler for <paramref name="tommand"/>, whose result answers the caller, as its own unit of<br/>
-   /// work — see <see cref="ExecuteVoidTommandHandlerInOwnUnitOfWorkAsync"/>. Untyped because it serves the wire: the transport<br/>
-   /// serializes whatever the handler returns.</summary>
-   public async Task<object> ExecuteTommandHandlerWithResultInOwnUnitOfWorkAsync(ITommand tommand)
-   {
-      var handler = _roster.GetTommandHandlerWithResult(tommand.GetType());
-      return await _scopeFactory.ExecuteUnitOfWorkAsync(async unitOfWork => await handler(tommand, unitOfWork).caf()).caf();
-   }
+   ///<summary>Executes the single handler for <paramref name="tommand"/>, whose result answers the caller, within <paramref name="unitOfWork"/>.<br/>
+   /// Untyped because it serves the wire: the transport serializes whatever the handler returns.</summary>
+   public Task<object> ExecuteTommandHandlerWithResultAsync(ITommand tommand, IUnitOfWorkResolver unitOfWork) =>
+      _roster.GetTommandHandlerWithResult(tommand.GetType())(tommand, unitOfWork);
 
    ///<summary>Executes the single handler for <paramref name="tuery"/> within <paramref name="scope"/> — the caller's session:<br/>
    /// a tuery changes nothing, so its execution needs a scope, not a unit of work, and reads join whatever consistency the<br/>
@@ -79,7 +67,7 @@ class TessageHandlerExecutor
       (TResult)await _roster.GetTueryHandler(tuery.GetType())(tuery, scope).caf();
 
    ///<summary>Executes the single handler for <paramref name="tuery"/> in a fresh transactionless scope of its own: the<br/>
-   /// remote-arrival form. Untyped because it serves the wire — see <see cref="ExecuteTommandHandlerWithResultInOwnUnitOfWorkAsync"/>.</summary>
+   /// remote-arrival form. Untyped because it serves the wire — see <see cref="ExecuteTommandHandlerWithResultAsync"/>.</summary>
    public async Task<object> ExecuteTueryHandlerInIsolatedScopeAsync(ITuery tuery)
    {
       var handler = _roster.GetTueryHandler(tuery.GetType());

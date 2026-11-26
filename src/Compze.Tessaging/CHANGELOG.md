@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## 0.12.1-alpha
 
+- **An at-most-once typermedia tommand whose unit of work fails after its handler returned is no longer run again.** Its handler is still run again when it throws, up to five times in all. A failure after it returned comes from the commit, or after it, and a commit the database made can still fail at the receiver, such as when the connection drops before the acknowledgment: running the handler again then committed its effects a second time. Now such a post fails, and the caller can't tell whether the tommand's effects committed.
 - **An endpoint refused because another process runs it names what the holder holds its process lock for, which process, on which machine, and since when:** `EndpointAlreadyRunningInAnotherProcessException`'s message says "held for running the endpoint Orders, by process 4242 (Orders.Host) on SERVER7, since 2026-11-26 10:15:00 +01:00", where it said "held by process 4242 on SERVER7". The process lock is one of the domain database's process locks, from Compze.Sql.MicrosoftSql and its siblings.
 
 ## 0.12.0-alpha

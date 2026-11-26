@@ -60,6 +60,8 @@ more steps. A specification whose last step posts a tommand that returns nothing
   `TessageDispatchingFailedException`, whose message holds the handler's exception, as text: its type doesn't cross.
 - **A tommand's transactional effects commit at most once for each post.** A tommand handler that throws is run again at
   once, in a new unit of work, up to five times in all. Its effects outside the transaction happen again with each try,
-  such as an email sent. A tuery handler that throws is not run again.
+  such as an email sent. A failure once the handler has returned, such as a commit that fails, is not retried: the
+  commit may have gone through, so the navigation fails, and the caller can't tell whether the tommand's effects
+  committed. A tuery handler that throws is not run again.
 - **Nothing deduplicates posts.** Posting the same tommand twice executes it twice. The navigator never posts again by
   itself, so when a post fails on its way, the caller can't tell whether the tommand was executed.
