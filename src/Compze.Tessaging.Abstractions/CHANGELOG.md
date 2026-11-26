@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## 0.7.0-alpha
 
+- **`IAtMostOnceTessage` and `IExactlyOnceTessage` say what they guarantee: that the handler's transactional effects commit at most once, or exactly once.** They said the tessage was handled at most once, or exactly once, and `IAtMostOnceTessage` that deduplication guaranteed it, which is true of exactly-once tessages alone. A handler that throws is run again, in a new transaction, so what it does outside its transaction can happen more than once.
 - **`TessageId` loses its parameterless constructor, which made a new version 7 id: `TessageId.New()` makes one now.** System.Text.Json, finding the constructor, read every `TessageId` back as a new one, with nothing failing. It now writes and reads a `TessageId` as its `Guid` string, with the `EntityIdJsonConverter` of Compze.Abstractions, which `TessageId` carries. Its constructor's parameter is named `value`, where it was `id`.
 - **Requires newer minor versions of other Compze packages:** Compze.Abstractions 0.5.0-alpha (was 0.4.0-alpha), Compze.Internals.SystemCE 0.12.0-internal (was 0.8.0-internal), Compze.Threading 0.14.0-alpha (was 0.12.0-alpha). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
 

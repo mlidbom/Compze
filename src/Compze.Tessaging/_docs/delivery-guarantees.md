@@ -11,7 +11,7 @@ Each way gives up one thing the one above it has:
 | | What it is | Gives up |
 |---|---|---|
 | **Participation** | Handlers in the publishing endpoint run within the publisher's transaction, before the publish returns. A failing handler fails the publish. | |
-| **Exactly-once** | The tevent is stored in the publisher's transaction, and each subscribing endpoint handles it exactly once, in a transaction of its own. | Taking part in the publisher's transaction. |
+| **Exactly-once** | The tevent is stored in the publisher's transaction, and each subscribing endpoint handles it in a transaction of its own, which commits exactly once. | Taking part in the publisher's transaction. |
 | **Best-effort** | The tevent is sent to the subscribing endpoints, which handle it in a transaction of their own. Nothing is stored, deduplicated or retried. | The certainty that it arrives. |
 | **Observation** | [Observers](observing-tevents.md) watch committed tevents, outside every transaction. | Transactions. |
 

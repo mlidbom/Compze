@@ -57,8 +57,9 @@ choose none of it:
 
 ## Tommands: exactly one handler
 
-A tommand tells its one handler to do something. The tommand of the TessageBus is the exactly-once tommand: it is
-delivered to its handler exactly once, wherever the handler is, and the sender doesn't wait for it to be handled. The
+A tommand tells its one handler to do something. The tommand of the TessageBus is the exactly-once tommand: its
+handler's transactional effects commit exactly once, wherever the handler is, and the sender doesn't wait for it to be
+handled. The
 `Remotable.ExactlyOnce.Tommand` base class gives a tommand the `Id` its deduplication needs:
 
 [!code-csharp[](tessage-types.cs#tommand)]

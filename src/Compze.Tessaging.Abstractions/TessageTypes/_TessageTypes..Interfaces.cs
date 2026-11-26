@@ -73,17 +73,20 @@ public interface ITessageWithIdentity : ITessage
 ///<summary>A tessage that is handled at least once. Guaranteed by infrastructure through retries.</summary>
 public interface IAtLeastOnceTessage : ITessageWithIdentity, IRemotableTessage;
 
-//bug: Nothing deduplicates at-most-once typermedia tommands, whatever the summary says. Posting the same tommand twice
-//   executes it twice, and TypermediaHandlerExecutor runs a throwing handler again, up to five times, each in a new
-//   unit of work, so its effects outside the transaction repeat. (website-and-docs, 2026-11-24)
-///<summary>A tessage that is handled no more than once. Guaranteed by infrastructure through deduplication, and transactions.</summary>
+///<summary>A tessage whose handler's transactional effects commit no more than once each time it is sent.<br/>
+/// A handler that throws may be run again, in a new transaction, so what it does outside its transaction can happen more than once.</summary>
+///<remarks>Guaranteed by transactions, and by nothing handling the tessage again once its handling has committed:<br/>
+/// an <see cref="IExactlyOnceTessage"/> is deduplicated by its <see cref="ITessageWithIdentity.Id"/>, and an<br/>
+/// <see cref="IAtMostOnceTypermediaTommand"/> is never sent again.</remarks>
 public interface IAtMostOnceTessage : ITessageWithIdentity, IRemotableTessage, IMustBeHandledTransactionally;
 
 //todo:review: should the version without a type parameter remain?
 public interface IAtMostOnceTypermediaTommand : IAtMostOnceTessage, IRemotableTommand, ITypermediaTessage;
 public interface IAtMostOnceTypermediaTommand<out TResult> : IAtMostOnceTypermediaTommand, IRemotableTommand<TResult>;
 
-///<summary>A tessage that is handled exactly once. Guaranteed by infrastructure through deduplication, retries, and transactions.</summary>
+///<summary>A tessage whose handler's transactional effects commit exactly once. Guaranteed by infrastructure through deduplication,<br/>
+/// retries, and transactions. A handler that throws is run again, in a new transaction, so what it does outside its transaction<br/>
+/// can happen more than once.</summary>
 public interface IExactlyOnceTessage : IMustBeSentAndHandledTransactionally, IAtMostOnceTessage, IAtLeastOnceTessage;
 
 public interface IExactlyOnceTevent : IRemotableTevent, IExactlyOnceTessage;

@@ -143,9 +143,11 @@ compze-rep found most of these by reading. Five of them, from the missing deadli
 - **No cancellation,** locally or across the wire.
 - **A request holds one of the 8 pooled connections to its peer for its handler's whole run,** so long requests block
   the peer. tessaging-in-tooling: fix it in Compze by multiplexing, not by reshaping the callers around it.
-- **A remote typermedia tommand whose handler throws is retried up to 5 times,** and nothing deduplicates by
-  `TessageId`: a `review:` comment in `TypermediaHandlerExecutor`, commit 00d42ee93. This is the most dangerous gap for
-  the tooling, whose handlers nearly all act outside any transaction.
+- **A remote typermedia tommand whose handler throws is run again, up to 5 times in all.** Not a gap: no Compze
+  guarantee covers what a handler does outside its transaction, for any tessage that is retried, and Magnus judges such
+  a guarantee effectively impossible (2026-11-26). Each post's transactional effects commit at most once. The tooling,
+  whose handlers nearly all act outside any transaction, can't rely on a handler running only once: it should be
+  unusual, and is not impossible.
 - **No "not done" outcome** when the hub hands over to its successor.
 - **Retracting an endpoint removes a successor's announcement under the same id:** a `review:` comment on
   `InterprocessEndpointRegistry.RetractEndpointAddress`, commit 1913b8935.

@@ -22,8 +22,10 @@ decided. Magnus: no significant work on Tessaging for Cloyd begins now; this rec
   for a request that was never sent; a raw `IOException`, meaning the caller can't know whether it ran. The two
   dispatch failures are told apart only by their message text. When one process hands its endpoint over to a
   successor, nothing says "stopping, not executed, send it again".
-- **No deduplication, and the receiver retries.** Nothing deduplicates a typermedia tommand by its `TessageId`, and
-  `TypermediaHandlerExecutor` runs a handler that threw up to 5 times: see the `review:` comment there.
+- **The receiver retries, and that is no gap.** `TypermediaHandlerExecutor` runs a handler that threw up to 5 times,
+  each in a new transaction, as the inbox does for exactly-once tessages. No Compze guarantee covers what a handler does
+  outside its transaction (Magnus, 2026-11-26). Nothing deduplicates a typermedia tommand by its `TessageId`, and
+  nothing needs to: nothing sends a post again by itself, so each post's transactional effects commit at most once.
 
 ## Options that came up (none chosen)
 
