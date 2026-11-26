@@ -48,10 +48,20 @@ partial class DbConnectionPool<TConnection, TCommand> : IDbConnectionPool<TConne
          ? await ConnectionOf(transaction).LockedAsync(func).caf()
          : await UseOwnFreshConnectionAsync(func).caf();
 
+   ///<summary>PROBE: told when the operations a caller ran on a connection have all returned, before the connection is let go.</summary>
+   internal static Action<object>? ProbeOperationsReturned;
+
    TResult UseOwnFreshConnection<TResult>(Func<TConnection, TResult> func)
    {
       using var connection = OpenConnection();
-      return func(connection);
+      try
+      {
+         return func(connection);
+      }
+      finally
+      {
+         ProbeOperationsReturned?.Invoke(connection);
+      }
    }
 
    async Task<TResult> UseOwnFreshConnectionAsync<TResult>(Func<TConnection, Task<TResult>> func)
@@ -59,7 +69,14 @@ partial class DbConnectionPool<TConnection, TCommand> : IDbConnectionPool<TConne
       var connection = await OpenConnectionAsync().caf();
       //makes sure DisposeAsync is called without capturing sync context. We can't do it inline because then connection would be ConfiguredAsyncDisposable, not TConnection
       await using var _ = connection.caf();
-      return await func(connection).caf();
+      try
+      {
+         return await func(connection).caf();
+      }
+      finally
+      {
+         ProbeOperationsReturned?.Invoke(connection);
+      }
    }
 
    TConnection OpenConnection()

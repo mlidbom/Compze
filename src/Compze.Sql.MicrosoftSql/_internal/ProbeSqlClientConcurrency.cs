@@ -21,13 +21,10 @@ static class ProbeSqlClientConcurrency
       public readonly int Thread = Environment.CurrentManagedThreadId;
       public readonly string Stack = Environment.StackTrace;
       public readonly long Started = Stopwatch.GetTimestamp();
-      //SqlClient completes an async command's task before it writes the command's After event, and the awaiting code may run
-      //inline on that completion, closing the connection or starting its next command before the event. What overlaps an async
-      //operation is judged when its After event comes: an overlap that started on the thread the event comes on, or any overlap
-      //once its connection was closed on that thread, came after the command had finished.
+      //SqlClient completes an async command's task before it writes the command's After event, and the awaiting code may close
+      //the connection or start its next command before the event. So an async operation also ends when the Compze code that
+      //awaited it returns: see OperationsReturned.
       public bool IsAsync => Kind.EndsWith("Async", StringComparison.Ordinal);
-      public readonly ConcurrentQueue<(int Thread, string Report)> Suspicions = new();
-      public volatile int ClosedOnThread = -1;
 
       public override string ToString() => $"""
                                              {Kind} on SqlConnection object {ConnectionObject}, thread {Thread}, {Stopwatch.GetElapsedTime(Started).TotalMilliseconds:F1} ms ago
@@ -42,7 +39,28 @@ static class ProbeSqlClientConcurrency
 
    internal static void EnsureSubscribed()
    {
-      if(Interlocked.Exchange(ref _subscribed, 1) == 0) DiagnosticListener.AllListeners.Subscribe(new AllListenersObserver());
+      if(Interlocked.Exchange(ref _subscribed, 1) == 0)
+      {
+         DiagnosticListener.AllListeners.Subscribe(new AllListenersObserver());
+         Compze.Sql.Common._internal.DbConnectionPool<ICompzeMsSqlConnection, SqlCommand>.ProbeOperationsReturned =
+            connection => OperationsReturned(((ICompzeMsSqlConnection.CompzeMsSqlConnection)connection).Connection);
+      }
+   }
+
+   ///<summary>Compze's code that used <paramref name="connection"/> has returned, so every async command it awaited there has<br/>
+   /// completed, whenever SqlClient writes their After events: they are done, and what overlapped them came after.</summary>
+   static void OperationsReturned(SqlConnection connection)
+   {
+      var connectionObject = System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(connection);
+      foreach(var (operationId, physicalConnection) in PhysicalConnectionOfOperation)
+      {
+         if(!InFlightByPhysicalConnection.TryGetValue(physicalConnection, out var inFlight)) continue;
+         if(inFlight.TryGetValue(operationId, out var operation) && operation.IsAsync && operation.ConnectionObject == connectionObject)
+         {
+            inFlight.TryRemove(operationId, out _);
+            PhysicalConnectionOfOperation.TryRemove(operationId, out _);
+         }
+      }
    }
 
    ///<summary>A span of Compze's own around reading a reader's rows, which SqlClient's events don't cover.</summary>
@@ -69,19 +87,14 @@ static class ProbeSqlClientConcurrency
          if(otherId == operationId) continue;
          //A reader's rows are read on the thread and connection that executed it: that nesting is the normal case.
          if(other.Thread == operation.Thread && other.ConnectionObject == operation.ConnectionObject) continue;
-         Suspect(other, ReportText($"two operations at once on physical connection {id}", operation, other));
+         ProbeLog.Write(ReportText($"two operations at once on physical connection {id}", operation, other));
       }
    }
 
    static void After(Guid operationId)
    {
       if(!PhysicalConnectionOfOperation.TryRemove(operationId, out var id) || !InFlightByPhysicalConnection.TryGetValue(id, out var inFlight)) return;
-      if(!inFlight.TryRemove(operationId, out var operation)) return;
-      var afterThread = Environment.CurrentManagedThreadId;
-      if(operation.ClosedOnThread == afterThread) return;
-      foreach(var (thread, report) in operation.Suspicions)
-         if(thread != afterThread)
-            ProbeLog.Write($"{report}{Environment.NewLine}==== The async operation's After event came on thread {afterThread}");
+      inFlight.TryRemove(operationId, out _);
    }
 
    static void CloseBefore(Guid? physicalConnection, SqlConnection? connection)
@@ -89,17 +102,7 @@ static class ProbeSqlClientConcurrency
       if(physicalConnection is not {} id || id == Guid.Empty) return;
       if(!InFlightByPhysicalConnection.TryGetValue(id, out var inFlight)) return;
       var closing = new Operation("Close", connection, null);
-      foreach(var other in inFlight.Values)
-      {
-         if(other.IsAsync && other.ConnectionObject == closing.ConnectionObject) other.ClosedOnThread = closing.Thread;
-         Suspect(other, ReportText($"closing physical connection {id} while an operation on it is in progress", closing, other));
-      }
-   }
-
-   static void Suspect(Operation other, string report)
-   {
-      if(other.IsAsync) other.Suspicions.Enqueue((Environment.CurrentManagedThreadId, report));
-      else ProbeLog.Write(report);
+      foreach(var other in inFlight.Values) ProbeLog.Write(ReportText($"closing physical connection {id} while an operation on it is in progress", closing, other));
    }
 
    static string ReportText(string what, Operation @this, Operation other) => $"""

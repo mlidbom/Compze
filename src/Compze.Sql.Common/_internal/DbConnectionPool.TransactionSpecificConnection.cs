@@ -45,6 +45,7 @@ partial class DbConnectionPool<TConnection, TCommand>
             }
             finally
             {
+               if(_connection != null) ProbeOperationsReturned?.Invoke(_connection);
                Interlocked.Decrement(ref _probeOperationsInProgress);
             }
          });
@@ -60,6 +61,7 @@ partial class DbConnectionPool<TConnection, TCommand>
             }
             finally
             {
+               if(_connection != null) ProbeOperationsReturned?.Invoke(_connection);
                Interlocked.Decrement(ref _probeOperationsInProgress);
             }
          }).caf();
