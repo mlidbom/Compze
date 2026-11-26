@@ -37,6 +37,26 @@ using(mutex.TakeUpdateLockWhen(() => ResourceIsReady()))
 The async condition waits — `TryAwaitAsync`, `ReadWhenAsync`, `UpdateWhenAsync`, `TryUpdateWhenAsync` — work across processes
 too, and hold no thread while they wait: between polls of the signal (see `ISignalPollingPolicy` below) nothing waits but a timer.
 
+### `IProcessLock` — a lock between processes that any thread can release
+
+A lock on an `IMutex` can only be released by the thread that took it, so async code can't hold it across an await,
+nor can an xUnit fixture take it as it is created and release it as it is disposed. An `IProcessLock` belongs to its
+holder instead: disposing the `IProcessLockHold` that taking it returns releases it, from whichever thread. The
+operating system releases it when the holder's process dies, so a crashed or killed process never leaves it held.
+
+```csharp
+var sandboxTurn = IProcessLock.New("sandbox-turn", directory);
+using(await sandboxTurn.TakeAsync("running the sandbox specifications", WaitTimeout.Minutes(20)))
+{
+    // Every other process taking "sandbox-turn" in this directory waits until the hold is disposed.
+}
+```
+
+The wait is a `WaitTimeout`, not a `LockTimeout`: a holder may rightly hold it for minutes, so a long wait is no sign
+of a deadlock. A `Take` that gives up says what the lock is held for, by which process, and since when;
+`TryTake(purpose, WaitTimeout.Zero)` answers at once. The lock is a file in the directory, which its holder keeps open,
+and a wait tries it every 50 milliseconds: it isn't fair, nor reentrant.
+
 ### `IProcessShared<T>` / `IAwaitableProcessShared<T>`
 
 Pair a shared object with a cross-process mutex to coordinate access to an external resource — a file, a port,
