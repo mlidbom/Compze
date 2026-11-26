@@ -3,11 +3,12 @@ using Compze.Internals.Logging;
 using Compze.Internals.SystemCE;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using JetBrains.Annotations;
+using Compze.Threading;
 using Compze.Threading.Interprocess;
 
 namespace Compze.Internals.Testing.Performance;
 
-public static class TimeAsserter
+public static partial class TimeAsserter
 {
    const int MaxTriesLimit = 40;
    const int MaxTriesDefault = 10;
@@ -57,7 +58,12 @@ public static class TimeAsserter
                                                                             [InstantHandle] Func<Task>? tearDownAsync = null) =>
       await InternalExecuteAsync(() => StopwatchCE.TimeExecutionAsync(action, iterations), iterations, maxAverage, maxTotal, description, setup, tearDown, maxTries, tearDownAsync).caf();
 
-   static readonly IMutex Mutex = IMutex.Global("Compze.TimeAsserter.PerformanceTestLock");
+   ///<summary>Performance tests take turns, across every process on the machine: timings measured beside another performance test would measure<br/>
+   /// the two of them.</summary>
+   static readonly IProcessLock PerformanceTestTurn = IProcessLock.New("Compze.TimeAsserter.PerformanceTestLock", Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), "Compze")));
+
+   ///<summary>How long a performance test waits for its turn: others may be queued ahead of it, each trying up to <see cref="MaxTriesLimit"/> times.</summary>
+   static readonly WaitTimeout HowLongToWaitForTheTurn = WaitTimeout.Minutes(5);
 
    static TReturnValue InternalExecute<TReturnValue>([InstantHandle] Func<TReturnValue> runScenario,
                                                      int iterations,
@@ -66,8 +72,28 @@ public static class TimeAsserter
                                                      string description,
                                                      [InstantHandle] Action? setup,
                                                      [InstantHandle] Action? tearDown,
-                                                     uint maxTries) where TReturnValue : StopwatchCE.TimedExecutionSummary =>
-      Mutex.Locked(() => RunScenarioWithRetries(runScenario, iterations, maxAverage, maxTotal, description, setup, tearDown, maxTries));
+                                                     uint maxTries) where TReturnValue : StopwatchCE.TimedExecutionSummary
+   {
+      using(PerformanceTestTurn.Take(TurnPurpose(description), HowLongToWaitForTheTurn))
+      {
+         var assertion = TimeAssertion.Start(iterations, maxAverage, maxTotal, description, maxTries);
+         for(var tries = 1;; tries++)
+         {
+            setup?.Invoke();
+            try
+            {
+               var executionSummary = runScenario();
+               if(assertion.Passed(executionSummary, tries)) return executionSummary;
+            }
+            finally
+            {
+               tearDown?.Invoke();
+            }
+
+            Thread.Sleep(assertion.PauseAfterFailedTry(tries));
+         }
+      }
+   }
 
    static async Task<TReturnValue> InternalExecuteAsync<TReturnValue>([InstantHandle] Func<Task<TReturnValue>> runScenario,
                                                                       int iterations,
@@ -77,138 +103,29 @@ public static class TimeAsserter
                                                                       [InstantHandle] Action? setup,
                                                                       [InstantHandle] Action? tearDown,
                                                                       uint maxTries,
-                                                                      [InstantHandle] Func<Task>? tearDownAsync) where TReturnValue : StopwatchCE.TimedExecutionSummary =>
-      //todo:urgent: a synchronous wait on asynchronous work, through ResultUnwrappingException, which VSTHRD002 can't see: it
-      //   holds this thread, and stalls while the thread pool is busy. See
-      //   dev_docs/TODO/synchronous-paths-that-need-a-free-thread-pool-thread.md (Magnus, 2026-11-24).
-      await Task.Run(() => Mutex.Locked(() => RunScenarioWithRetries(() => runScenario().ResultUnwrappingException(), iterations, maxAverage, maxTotal, description, setup, () =>
-      {
-         if(tearDownAsync != null)
-         {
-            //todo:urgent: a synchronous wait on asynchronous work, through WaitUnwrappingException, which VSTHRD002 can't see: it
-            //   holds this thread, and stalls while the thread pool is busy. See
-            //   dev_docs/TODO/synchronous-paths-that-need-a-free-thread-pool-thread.md (Magnus, 2026-11-24).
-            tearDownAsync().WaitUnwrappingException();
-         }
-         else
-         {
-            tearDown?.Invoke();
-         }
-      }, maxTries))).caf();
-
-   static TReturnValue RunScenarioWithRetries<TReturnValue>([InstantHandle] Func<TReturnValue> runScenario,
-                                                            int iterations,
-                                                            TimeSpan? maxAverage,
-                                                            TimeSpan? maxTotal,
-                                                            string description,
-                                                            [InstantHandle] Action? setup,
-                                                            [InstantHandle] Action? tearDown,
-                                                            uint maxTries) where TReturnValue : StopwatchCE.TimedExecutionSummary
+                                                                      [InstantHandle] Func<Task>? tearDownAsync) where TReturnValue : StopwatchCE.TimedExecutionSummary
    {
-      Contract.Argument.Assert(maxTries > 0);
-      if(TestEnv.Performance.StressTestOnly)
+      using(await PerformanceTestTurn.TakeAsync(TurnPurpose(description), HowLongToWaitForTheTurn).caf())
       {
-         maxAverage = null;
-         maxTotal = null;
-      }
-      else
-      {
-         maxAverage = TestEnv.Performance.AdjustForMachineSlowness(maxAverage);
-         maxTotal = TestEnv.Performance.AdjustForMachineSlowness(maxTotal);
-      }
-      TestEnv.Performance.LogPerformanceTestConfiguration();
-      maxTries = Math.Min(MaxTriesLimit, maxTries);
-
-      Log.Info($"""
-               
-               ############################## "{description}" {iterations:### ### ###} {iterations.Pluralize("iteration")} starting
-               """);
-
-      for(var tries = 1; tries <= maxTries; tries++)
-      {
-         setup?.Invoke();
-
-         try
+         var assertion = TimeAssertion.Start(iterations, maxAverage, maxTotal, description, maxTries);
+         for(var tries = 1;; tries++)
          {
-            var executionSummary = runScenario();
-
-            var failureTessage = GetFailureTessage(executionSummary, maxAverage, maxTotal);
-            if(failureTessage.Length > 0)
+            setup?.Invoke();
+            try
             {
-               if(tries >= maxTries)
-                  throw new TimeOutException($"""
-                                              {description}:
-                                              {failureTessage.Indent()}
-                                              """);
-               var waitTime = Math.Min(Math.Pow(2, tries), 50) * 10.Milliseconds(); //Back off on retries exponentially starting with 10ms, but only up to a maximum wait time of .5 seconds between retries.
-               Log.Warning($"Try: {tries} {failureTessage}, waiting {waitTime.FormatReadable()} before next attempt");
-               Thread.Sleep(waitTime);
-               continue;
+               var executionSummary = await runScenario().caf();
+               if(assertion.Passed(executionSummary, tries)) return executionSummary;
+            }
+            finally
+            {
+               if(tearDownAsync != null) await tearDownAsync().caf();
+               else tearDown?.Invoke();
             }
 
-            PrintSummary(executionSummary, iterations, maxAverage, maxTotal);
-            Log.Info("""
-                     ############################## DONE
-
-                     """);
-            return executionSummary;
-         }
-         finally
-         {
-            tearDown?.Invoke();
+            await Task.Delay(assertion.PauseAfterFailedTry(tries)).caf();
          }
       }
-
-      throw new Exception("Unreachable");
    }
 
-   static string GetFailureTessage(StopwatchCE.TimedExecutionSummary executionSummary, TimeSpan? maxAverage, TimeSpan? maxTotal)
-   {
-      var failureTessage = "";
-      if(maxTotal.HasValue && executionSummary.Total > maxTotal.Value)
-      {
-         failureTessage = $"Total:{executionSummary.Total.FormatReadable()} {Percent(executionSummary.Total, maxTotal.Value)} of {nameof(maxTotal)}: {maxTotal.FormatReadable()}";
-      } else if(maxAverage.HasValue && executionSummary.Average > maxAverage.Value)
-      {
-         failureTessage = $" {Percent(executionSummary.Average, maxAverage.Value)} of {nameof(maxAverage)}: {maxAverage.FormatReadable()}";
-      }
-
-      return failureTessage;
-   }
-
-   static void PrintSummary(StopwatchCE.TimedExecutionSummary executionSummary, int iterations, TimeSpan? maxAverage, TimeSpan? maxTotal)
-   {
-      var maxAverageReport = maxAverage == null
-                                ? ""
-                                : $" {Percent(executionSummary.Average, maxAverage.Value)} of {nameof(maxAverage)}: {maxAverage.FormatReadable()}";
-
-      var maxTotalReport = maxTotal == null
-                              ? ""
-                              : $" {Percent(executionSummary.Total, maxTotal.Value)} of {nameof(maxTotal)}: {maxTotal.FormatReadable()}";
-
-      Log.Info(iterations > 1
-                  ? $"""
-
-                        Total:   {executionSummary.Total.FormatReadable()} {maxTotalReport}
-                        Average: {executionSummary.Average.FormatReadable()} {maxAverageReport}
-                     """
-                  : $"Total:   {executionSummary.Total.FormatReadable()} {maxTotalReport} ");
-
-      if(executionSummary is StopwatchCE.TimedThreadedExecutionSummary threadedSummary)
-      {
-         Log.Info($"""
-                    
-                   Individual execution times    
-                       Average: {threadedSummary.IndividualExecutionTimes.Average().FormatReadable()}
-                       Min:     {threadedSummary.IndividualExecutionTimes.Min().FormatReadable()}
-                       Max:     {threadedSummary.IndividualExecutionTimes.Max().FormatReadable()}
-                       Sum:     {threadedSummary.IndividualExecutionTimes.Sum().FormatReadable()}
-
-                   """);
-      }
-   }
-
-   static string Percent(TimeSpan percent, TimeSpan of) => $"{(int)(percent.TotalMilliseconds / of.TotalMilliseconds * 100)}%";
-
-   class TimeOutException(string message) : Exception(message);
+   static string TurnPurpose(string description) => $"the performance test \"{description}\"";
 }
