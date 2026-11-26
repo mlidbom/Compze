@@ -1,8 +1,8 @@
 # Typermedia in one process
 
 An API needn't cross processes. Strictly-local tueries and tommands are executed in the process that declares their
-handlers, synchronously, on the caller's thread: nothing is serialized and no endpoint is needed. The LocalTessagingEngine
-of [Tessaging in one process](~/Compze/Tessaging/_docs/in-one-process.md) executes them.
+handlers, starting on the caller's thread: nothing is serialized and no endpoint is needed. The LocalTessagingEngine of
+[Tessaging in one process](~/Compze/Tessaging/_docs/in-one-process.md) executes them.
 
 ## Strictly-local tueries and tommands
 
@@ -48,6 +48,19 @@ written:
 [!code-csharp[](in-one-process.cs#executing_in_a_unit_of_work)]
 
 A handler's exception reaches the caller as it was thrown, and the handler isn't run again.
+
+## Executing asynchronously
+
+Each navigator has `ExecuteAsync` beside each `Execute`, with the same semantics, for callers that are asynchronous
+themselves, such as an ASP.NET Core route or an asynchronous handler. A tommand's unit of work commits before the task
+completes, and the caller's transaction flows across the handler's awaits:
+
+[!code-csharp[](in-one-process.cs#executing_asynchronously)]
+
+While a handler awaits, `ExecuteAsync` holds no thread, where `Execute` holds the caller's thread until the handler has
+finished. What the handler does synchronously runs on the thread it is on either way, and so does a tommand's commit:
+System.Transactions commits synchronously. A handler that completes without awaiting holds its thread for its whole run
+through either.
 
 ## Local or remote is the type's
 

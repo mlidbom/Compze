@@ -69,6 +69,18 @@ static class InOneProcessExample
       });
       #endregion
 
+      #region executing_asynchronously
+      settings = await navigator.ExecuteAsync(new AccountSettingsLink());
+      await navigator.ExecuteAsync(settings.ChangeDisplayName("Ada"));
+
+      await container.ScopeFactory.ExecuteUnitOfWorkAsync(async unitOfWork =>
+      {
+         var session = unitOfWork.Resolve<ILocalTypermediaNavigatorSession>();
+         var current = await session.ExecuteAsync(new AccountSettingsLink());
+         await session.ExecuteAsync(current.ChangeDisplayName("Ada Lovelace"));
+      });
+      #endregion
+
       Console.WriteLine($"{navigator.Execute(new AccountSettingsLink()).DisplayName}, newsletter: {settings.ReceivesNewsletter}");
       await container.RootResolver.Resolve<ILocalTessagingEngine>().StopAsync();
    }
