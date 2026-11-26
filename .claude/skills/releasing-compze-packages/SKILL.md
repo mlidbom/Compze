@@ -39,6 +39,9 @@ A release goes in this order:
      `C-Prepare-Release -Acknowledge <PackageId>, ... -Reason '<why>'`. That records it in
      `.github/scripts/AcknowledgedUnreleasedChanges.txt`, to commit with the release, and it lasts until the package is
      next released.
+   - **That call goes on to prepare the release,** as if `-Acknowledge` weren't there: without `-PackageId`, it prepares
+     every package whose changelog gained entries, those left waiting on purpose too. In a release of some packages,
+     give the same call `-PackageId` for them.
    - **Otherwise `C-Prepare-Release` refuses,** changing nothing, as `C-SimulateRelease` and Create Releases do: a package
      the release leaves at its released version must not have unacknowledged changes since its release tag. The refusal
      names each package and its changed files.
