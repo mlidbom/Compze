@@ -1,13 +1,10 @@
 using Compze.Contracts;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
-using Compze.Internals.SystemCE.TransactionsCE;
-using Compze.Sql.Common._internal;
 using Compze.Sql.Common._internal.ProcessLocks;
 using Compze.Sql.Sqlite._internal;
 using Compze.Threading;
 using Compze.Threading.Interprocess;
 using Microsoft.Data.Sqlite;
-using Holders = Compze.Sql.Common._internal.ProcessLocks.DatabaseProcessLockHolderSchemaStrings;
 
 namespace Compze.Sql.Sqlite._private;
 
@@ -17,88 +14,30 @@ namespace Compze.Sql.Sqlite._private;
 ///<remarks>An in-memory database exists only in its own process, so its locks are in <see cref="LockDirectoryForDataSourcesWithNoDirectory"/>, named<br/>
 /// for the process too: identical connection strings in different processes name different databases, which must never contend. So are the<br/>
 /// locks of a <c>file:</c> URI data source, which isn't a path whose directory can be found, named for the URI as it is spelled.</remarks>
-///<remarks>A live holder can't lose a file it holds open, so <c>onLostWhileHeld</c> is never called. Since the lock isn't a database session, the<br/>
-/// holder record can't be written on it: it is the next thing written once the lock is held, before the hold is handed out.</remarks>
+///<remarks>The holder records itself in the lock's own file, as every <see cref="IProcessLock"/> does, rather than in a table: a write to the<br/>
+/// database would wait for SQLite's write lock, which a unit of work that takes a lock, as a memory image state store's first use may, could<br/>
+/// hold on the same database already. A live holder can't lose a file it holds open, so <c>onLostWhileHeld</c> is never called.</remarks>
 sealed class SqliteDatabaseProcessLocks : IDatabaseProcessLocks
 {
-   internal const string SchemaCreationSql =
-      $"""
-
-       CREATE TABLE IF NOT EXISTS {Holders.TableName}
-       (
-           {Holders.LockName} TEXT NOT NULL,
-           {Holders.Holder}   TEXT NOT NULL,
-
-           PRIMARY KEY ( {Holders.LockName} )
-       );
-
-       """;
-
    readonly ISqliteConnectionPool _connectionPool;
-   readonly SqliteSqlLayerSchemaManager _schemaManager;
 
-   internal SqliteDatabaseProcessLocks(ISqliteConnectionPool connectionPool, SqliteSqlLayerSchemaManager schemaManager)
-   {
-      _connectionPool = connectionPool;
-      _schemaManager = schemaManager;
-   }
+   internal SqliteDatabaseProcessLocks(ISqliteConnectionPool connectionPool) => _connectionPool = connectionPool;
 
    public IDatabaseProcessLockHold? TryTake(string lockName, string purpose, WaitTimeout waitTimeout, Action<Exception> onLostWhileHeld)
    {
       DatabaseProcessLockHolder.AssertIsALockName(lockName);
-      var holder = DatabaseProcessLockHolder.ThisProcessTakingItFor(purpose);
-      _schemaManager.EnsureSchemaInitialized();
-      if(ProcessLockNamed(lockName).TryTake(purpose, waitTimeout) is not {} hold) return null;
-      try
-      {
-         TransactionScopeCe.SuppressAmbient(() => _connectionPool.UseCommand(command => RecordTheHolder(command, lockName, holder).ExecuteNonQuery()));
-         return new Hold(hold);
-      }
-      catch //Releasing what we took, not handling: a record that fails must not leave the lock held with no hold to release it.
-      {
-         hold.Dispose();
-         throw;
-      }
+      return ProcessLockNamed(lockName).TryTake(purpose, waitTimeout) is {} hold ? new Hold(hold) : null;
    }
 
    public async Task<IDatabaseProcessLockHold?> TryTakeAsync(string lockName, string purpose, WaitTimeout waitTimeout, Action<Exception> onLostWhileHeld)
    {
       DatabaseProcessLockHolder.AssertIsALockName(lockName);
-      var holder = DatabaseProcessLockHolder.ThisProcessTakingItFor(purpose);
-      _schemaManager.EnsureSchemaInitialized();
-      if(await ProcessLockNamed(lockName).TryTakeAsync(purpose, waitTimeout).caf() is not {} hold) return null;
-      try
-      {
-         await TransactionScopeCe.SuppressAmbientAsync(async () => await _connectionPool.UseCommandAsync(async command => await RecordTheHolder(command, lockName, holder).ExecuteNonQueryAsync().caf()).caf()).caf();
-         return new Hold(hold);
-      }
-      catch //Releasing what we took, not handling: a record that fails must not leave the lock held with no hold to release it.
-      {
-         hold.Dispose();
-         throw;
-      }
+      return await ProcessLockNamed(lockName).TryTakeAsync(purpose, waitTimeout).caf() is {} hold ? new Hold(hold) : null;
    }
 
-   public string? HolderOf(string lockName)
-   {
-      _schemaManager.EnsureSchemaInitialized();
-      return TransactionScopeCe.Execute(() => _connectionPool.UseCommand(command => ReadTheHolder(command, lockName).ExecuteScalar() as string), System.Transactions.TransactionScopeOption.Suppress);
-   }
+   public string? HolderOf(string lockName) => ProcessLockNamed(lockName).LastHoldersDescription();
 
-   public async Task<string?> HolderOfAsync(string lockName)
-   {
-      _schemaManager.EnsureSchemaInitialized();
-      return await TransactionScopeCe.SuppressAmbientAsync(async () => await _connectionPool.UseCommandAsync(async command => await ReadTheHolder(command, lockName).ExecuteScalarAsync().caf() as string).caf()).caf();
-   }
-
-   static SqliteCommand RecordTheHolder(SqliteCommand command, string lockName, string holder) =>
-      command.SetCommandText($"INSERT OR REPLACE INTO {Holders.TableName} ({Holders.LockName}, {Holders.Holder}) VALUES (@{Holders.LockName}, @{Holders.Holder})")
-             .AddMediumTextParameter(Holders.LockName, lockName)
-             .AddMediumTextParameter(Holders.Holder, holder);
-
-   static SqliteCommand ReadTheHolder(SqliteCommand command, string lockName) =>
-      command.SetCommandText($"SELECT {Holders.Holder} FROM {Holders.TableName} WHERE {Holders.LockName} = @{Holders.LockName}")
-             .AddMediumTextParameter(Holders.LockName, lockName);
+   public Task<string?> HolderOfAsync(string lockName) => Task.FromResult(HolderOf(lockName));
 
    IProcessLock ProcessLockNamed(string lockName)
    {
