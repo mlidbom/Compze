@@ -49,9 +49,24 @@ static class ProbeSqlClientConcurrency
 
    ///<summary>Compze's code that used <paramref name="connection"/> has returned, so every async command it awaited there has<br/>
    /// completed, whenever SqlClient writes their After events: they are done, and what overlapped them came after.</summary>
+   static readonly ConcurrentDictionary<int, (long Last, int Calls, int Removed)> HookCallsByConnectionObject = new();
+
    static void OperationsReturned(SqlConnection connection)
    {
       var connectionObject = System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(connection);
+      var removed = 0;
+      try
+      {
+         RemoveTheAsyncOperationsOf(connectionObject, ref removed);
+      }
+      finally
+      {
+         HookCallsByConnectionObject.AddOrUpdate(connectionObject, (Stopwatch.GetTimestamp(), 1, removed), (_, it) => (Stopwatch.GetTimestamp(), it.Calls + 1, it.Removed + removed));
+      }
+   }
+
+   static void RemoveTheAsyncOperationsOf(int connectionObject, ref int removed)
+   {
       foreach(var (operationId, physicalConnection) in PhysicalConnectionOfOperation)
       {
          if(!InFlightByPhysicalConnection.TryGetValue(physicalConnection, out var inFlight)) continue;
@@ -59,6 +74,7 @@ static class ProbeSqlClientConcurrency
          {
             inFlight.TryRemove(operationId, out _);
             PhysicalConnectionOfOperation.TryRemove(operationId, out _);
+            removed++;
          }
       }
    }
@@ -105,12 +121,18 @@ static class ProbeSqlClientConcurrency
       foreach(var other in inFlight.Values) ProbeLog.Write(ReportText($"closing physical connection {id} while an operation on it is in progress", closing, other));
    }
 
+   static string HookStatusOf(Operation other) =>
+      HookCallsByConnectionObject.TryGetValue(other.ConnectionObject, out var hook)
+         ? $"{hook.Calls} call(s) for its SqlConnection, {hook.Removed} removal(s), the last {Stopwatch.GetElapsedTime(hook.Last).TotalMilliseconds:F1} ms ago, {(hook.Last > other.Started ? "after" : "before")} the other began"
+         : "never called for its SqlConnection";
+
    static string ReportText(string what, Operation @this, Operation other) => $"""
                                                                               PROBE SqlClient: {what}
                                                                               ==== This one:
                                                                               {@this}
                                                                               ==== The other, in progress:
                                                                               {other}
+                                                                              ==== Hook: {HookStatusOf(other)}
                                                                               """;
 
    sealed class AllListenersObserver : IObserver<DiagnosticListener>
