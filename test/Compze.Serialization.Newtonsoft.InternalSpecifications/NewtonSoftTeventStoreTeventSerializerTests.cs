@@ -18,7 +18,7 @@ public class NewtonSoftTeventStoreTeventSerializerTests : SerializerTest
       var teventWithAllValuesSet = new TestTevent(
          test1: "Test1",
          test2: "Test2",
-         taggregateId: new TaggregateId(),
+         taggregateId: TaggregateId.New(),
          taggregateVersion: 2,
          utcTimeStamp: DateTime.UtcNow + 1.Minutes());
 

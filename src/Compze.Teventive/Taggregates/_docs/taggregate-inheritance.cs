@@ -47,7 +47,7 @@ abstract class Animal :
 
    public DateTime TimeOfBirth { get; private set; }
 
-   protected void PublishBirth() => Publish(new AnimalTevent.Born(new TaggregateId()));
+   protected void PublishBirth() => Publish(new AnimalTevent.Born(TaggregateId.New()));
 }
 #endregion
 

@@ -39,7 +39,7 @@ public interface IAccountRegistered : IExactlyOnceTevent
 
 public class AccountRegistered(Guid accountId, string email) : IAccountRegistered
 {
-   public TessageId Id { get; private set; } = new();
+   public TessageId Id { get; private set; } = TessageId.New();
    public Guid AccountId { get; private set; } = accountId;
    public string Email { get; private set; } = email;
 }

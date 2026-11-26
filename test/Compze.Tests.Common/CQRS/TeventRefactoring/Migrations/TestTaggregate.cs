@@ -78,7 +78,7 @@ namespace Compze.Tests.Common.CQRS.TeventRefactoring.Migrations
       public static TestTaggregate FromTevents(TaggregateId? id, IEnumerable<Type> tevents)
       {
          var types = tevents.ToList();
-         var created = (TestTaggregateTevent)Activator.CreateInstance(types.First(), id ?? new TaggregateId())._assert().NotNull();
+         var created = (TestTaggregateTevent)Activator.CreateInstance(types.First(), id ?? TaggregateId.New())._assert().NotNull();
          return new TestTaggregate([created, ..types.Skip(1).ToTevents()]);
       }
 

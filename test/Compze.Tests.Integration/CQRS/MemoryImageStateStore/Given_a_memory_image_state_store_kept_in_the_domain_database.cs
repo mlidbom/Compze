@@ -24,10 +24,11 @@ namespace Compze.Tests.Integration.CQRS.MemoryImageStateStore;
 
 ///<summary>A memory image state store keeping vocabs, sentences and decks in the tables of a domain database of the current test's<br/>
 /// persistence layer, with an index of the vocabs by question. Each memory image is a container of its own on the same database, as<br/>
-/// each process, or each endpoint of a process, that shares the database is.</summary>
+/// each process, or each endpoint of a process, that shares the database is. The snapshots are written with <see cref="JsonSerializerOptions"/><br/>
+/// that have no converter of their own, as the <see cref="TaggregateId"/>s they hold need none.</summary>
 public class Given_a_memory_image_state_store_kept_in_the_domain_database : UniversalTestBase
 {
-   static readonly JsonSerializerOptions Options = new() { Converters = { new TaggregateIdAsAGuid() } };
+   static readonly JsonSerializerOptions Options = new();
    const string DomainDatabase = "memory-image-state-store-in-tables";
    readonly List<IDependencyInjectionContainer> _memoryImages = [];
 
@@ -95,6 +96,9 @@ public class Given_a_memory_image_state_store_kept_in_the_domain_database : Univ
 
       [PCT] public void another_memory_image_started_on_the_database_has_the_vocab_with_its_question() =>
          ReaderOf(TheSecond).Get<StoredVocab>(VocabId).Question.Must().Be("taberu");
+
+      [PCT] public void another_memory_image_started_on_the_database_has_the_vocab_with_the_id_its_snapshot_holds() =>
+         ReaderOf(TheSecond).Get<StoredVocab>(VocabId).Id.Must().Be(VocabId);
 
       public class and_the_memory_image_loads_from_its_tables_again : after_a_unit_of_work_adds_a_vocab
       {

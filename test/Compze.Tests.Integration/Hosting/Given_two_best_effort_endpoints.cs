@@ -228,7 +228,7 @@ public class Given_two_best_effort_endpoints : UniversalTestBase
 
    protected internal class TeventDeclaringTheExactlyOnceContract : ITeventDeclaringTheExactlyOnceContract
    {
-      public TessageId Id { get; } = new();
+      public TessageId Id { get; } = TessageId.New();
    }
 
    protected internal class TommandDeclaringTheExactlyOnceContract : Remotable.ExactlyOnce.Tommand;

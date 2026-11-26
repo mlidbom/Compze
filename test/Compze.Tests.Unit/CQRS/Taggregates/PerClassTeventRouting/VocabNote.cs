@@ -155,7 +155,7 @@ class Note : Taggregate<Note, INoteTevent, NoteTevent, INoteTevent<INoteTevent>,
 
    public void Archive() => Publish(new NoteTevent.Archived());
 
-   protected void PublishCreated() => Publish(new NoteTevent.Created(new TaggregateId()));
+   protected void PublishCreated() => Publish(new NoteTevent.Created(TaggregateId.New()));
 }
 
 ///<summary>A subclass with a component of its own, as JAStudio's VocabNote is.</summary>

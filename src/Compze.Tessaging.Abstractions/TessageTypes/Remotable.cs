@@ -14,7 +14,7 @@ public static class Remotable
       //Todo:review: How can we prevent UI's from just defaulting to using a constructor that creates a new guid?
       public class AtMostOnceTypermediaTommand : IAtMostOnceTypermediaTommand
       {
-         public TessageId Id { get; protected set; } = new();
+         public TessageId Id { get; protected set; } = TessageId.New();
       }
 
       public class AtMostOnceTypermediaTommand<TResult> : AtMostOnceTypermediaTommand, IAtMostOnceTypermediaTommand<TResult>

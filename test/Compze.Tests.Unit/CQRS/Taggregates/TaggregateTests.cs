@@ -24,7 +24,7 @@ public class TaggregateTests : UniversalTestBase
       var user = new User();
       user.Version.Must().Be(0);
 
-      user.Register("email", "password", new TaggregateId());
+      user.Register("email", "password", TaggregateId.New());
       user.Version.Must().Be(1);
 
       user.ChangeEmail("NewEmail");
@@ -41,7 +41,7 @@ public class TaggregateTests : UniversalTestBase
       ITaggregate userAsteventStored = user;
       user.Version.Must().Be(0);
 
-      user.Register("email", "password", new TaggregateId());
+      user.Register("email", "password", TaggregateId.New());
       userAsteventStored.Commit(_ => {});
       userAsteventStored.Commit(tevents => tevents.Must().BeEmpty());
 
@@ -98,7 +98,7 @@ public class TaggregateTests : UniversalTestBase
 
    interface ITriggeringTevent : ITaggregateCreatedTevent;
 
-   class TriggeringTevent() : TaggregateTevent(new TaggregateId()), ITriggeringTevent;
+   class TriggeringTevent() : TaggregateTevent(TaggregateId.New()), ITriggeringTevent;
 
    interface ITriggeredTevent : ITaggregateTevent;
    class TriggeredTevent : TaggregateTevent, ITriggeredTevent;

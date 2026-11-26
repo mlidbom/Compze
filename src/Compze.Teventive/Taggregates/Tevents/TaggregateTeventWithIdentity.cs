@@ -12,7 +12,7 @@ public abstract class TaggregateTeventWithIdentity : TaggregateTevent, IMutableT
    protected TaggregateTeventWithIdentity(TaggregateId taggregateId) : base(taggregateId) {}
 
    ///<summary>Identifies this tevent: made when the tevent is created, and restored when a tevent store reads it back.</summary>
-   public TessageId Id { get; private set; } = new();
+   public TessageId Id { get; private set; } = TessageId.New();
 
    void IMutableTaggregateTeventWithIdentity.SetTessageIdInternal(TessageId tessageId) => Id = tessageId;
 }

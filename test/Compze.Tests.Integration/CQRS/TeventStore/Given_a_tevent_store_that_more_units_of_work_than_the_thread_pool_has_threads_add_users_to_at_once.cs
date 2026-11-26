@@ -30,7 +30,7 @@ public class Given_a_tevent_store_that_more_units_of_work_than_the_thread_pool_h
       _container = TestEnv.DIContainer.SetupTestingContainer(registrar => registrar.RequireIntegrationTestTypeMappings(),
                                                              declareTeventStoreTaggregates: store => store.Taggregate<User>());
       ThreadPool.GetMinThreads(out var threadsThePoolStartsWith, out _);
-      _userIds = [..Enumerable.Range(0, Math.Max(4 * threadsThePoolStartsWith, 128)).Select(_ => new TaggregateId())];
+      _userIds = [..Enumerable.Range(0, Math.Max(4 * threadsThePoolStartsWith, 128)).Select(_ => TaggregateId.New())];
    }
 
    protected override async Task InitializeAsyncInternal()

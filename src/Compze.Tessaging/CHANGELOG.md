@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## 0.11.0-alpha
 
+- **`EndpointId` loses its parameterless constructor, which made a new random id: `EndpointId.New()` makes one now.** System.Text.Json writes and reads an `EndpointId` as its `Guid` string, with the `EntityIdJsonConverter` of Compze.Abstractions, which `EndpointId` carries. Its constructor's parameter is named `value`, where it was `id`. Endpoint discovery's wire format is unchanged.
+- **Built against `TessageId.New()` of Compze.Tessaging.Abstractions, which replaces `TessageId`'s parameterless constructor:** the released version calls the constructor, which the new Compze.Tessaging.Abstractions no longer has, and would fail beside it with a `MissingMethodException`.
 - **`TessageDispatchingFailedException`'s message says "Remote exception:" before the remote handler's exception,** where it said "Remote exception tessage:".
 - **A tevent runs its handlers in the order they were registered, whatever types they subscribe to, and that order is now a guarantee:** a handler may depend on what the handlers registered before it did. The engine grouped the handlers by the type they subscribe to, so registering a handler for `IUserTevent`, then one for `IUserRegistered`, then another for `IUserTevent`, ran the third before the second, where Compze.Teventive's introduction promised the order of registration.
 - **Requires newer minor versions of other Compze packages:** Compze.Internals.SystemCE 0.10.0-internal (was 0.9.0-internal), Compze.Threading 0.13.0-alpha (was 0.12.0-alpha). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.

@@ -30,7 +30,7 @@ public class GreeterRegistered
 public class RegisterGreeterTommand : Remotable.AtMostOnce.AtMostOnceTypermediaTommand<GreeterRegistered>
 {
    RegisterGreeterTommand() {}
-   public static RegisterGreeterTommand Create(string name) => new() { Id = new TessageId(), Name = name };
+   public static RegisterGreeterTommand Create(string name) => new() { Id = TessageId.New(), Name = name };
 
    // ReSharper disable once MemberCanBeInternal — Serialized via Newtonsoft
    public string Name { get; set; } = "";
@@ -66,7 +66,7 @@ public class AddTuery : Remotable.NonTransactional.Tueries.Tuery<NumberResource>
 public class RememberNumberTommand : Remotable.AtMostOnce.AtMostOnceTypermediaTommand<NumberResource>
 {
    RememberNumberTommand() {}
-   public static RememberNumberTommand Create(int number) => new() { Id = new TessageId(), Number = number };
+   public static RememberNumberTommand Create(int number) => new() { Id = TessageId.New(), Number = number };
 
    public int Number { get; set; }
 }

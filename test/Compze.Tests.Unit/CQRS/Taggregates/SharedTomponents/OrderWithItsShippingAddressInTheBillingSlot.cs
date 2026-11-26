@@ -38,7 +38,7 @@ class OrderWithItsShippingAddressInTheBillingSlot : Taggregate<OrderWithItsShipp
    public static OrderWithItsShippingAddressInTheBillingSlot Create()
    {
       var order = new OrderWithItsShippingAddressInTheBillingSlot();
-      order.Publish(new OrderTevent.Created(new TaggregateId()));
+      order.Publish(new OrderTevent.Created(TaggregateId.New()));
       return order;
    }
 

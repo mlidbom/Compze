@@ -24,7 +24,7 @@ public class MyTommandResult;
 public class MyAtMostOnceTypermediaTommandWithResult : Remotable.AtMostOnce.AtMostOnceTypermediaTommand<MyTommandResult>
 {
    MyAtMostOnceTypermediaTommandWithResult() {}
-   public static MyAtMostOnceTypermediaTommandWithResult Create() => new() { Id = new TessageId() };
+   public static MyAtMostOnceTypermediaTommandWithResult Create() => new() { Id = TessageId.New() };
 }
 
 public class MyTueryResult;
@@ -74,7 +74,7 @@ public class MyCreateTaggregateTommand : Remotable.AtMostOnce.AtMostOnceTypermed
 
    MyCreateTaggregateTommand(TaggregateId taggregateId) => TaggregateId = taggregateId;
 
-   public static MyCreateTaggregateTommand Create() => new(new TaggregateId());
+   public static MyCreateTaggregateTommand Create() => new(TaggregateId.New());
 
    // ReSharper disable once MemberCanBeInternal — Serialized via Newtonsoft
    public TaggregateId TaggregateId { get; set; }

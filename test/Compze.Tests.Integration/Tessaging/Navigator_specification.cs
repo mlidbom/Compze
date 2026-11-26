@@ -110,7 +110,7 @@ public class Navigator_specification : UniversalTestBase
       public static RegisterUserTypermediaTommand Create(string name) => new()
                                                                {
                                                                   Name = name,
-                                                                  Id = new TessageId()
+                                                                  Id = TessageId.New()
                                                                };
 
       public string Name { get; private init; } = "";

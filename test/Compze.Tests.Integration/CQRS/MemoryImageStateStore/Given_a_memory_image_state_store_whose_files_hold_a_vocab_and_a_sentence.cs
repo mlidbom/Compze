@@ -31,8 +31,8 @@ namespace Compze.Tests.Integration.CQRS.MemoryImageStateStore;
 /// own, which a reload doesn't need.</summary>
 public class Given_a_memory_image_state_store_whose_files_hold_a_vocab_and_a_sentence : UniversalTestBase
 {
-   static readonly JsonSerializerOptions Options = new() { WriteIndented = true, Converters = { new TaggregateIdAsAGuid() } };
-   static readonly JsonSerializerOptions OptionsOfAnotherProgram = new() { WriteIndented = false, Converters = { new TaggregateIdAsAGuid() } };
+   static readonly JsonSerializerOptions Options = new() { WriteIndented = true };
+   static readonly JsonSerializerOptions OptionsOfAnotherProgram = new() { WriteIndented = false };
    readonly DirectoryInfo _folder = new(Path.Combine(Path.GetTempPath(), "compze-state-store-files-in-memory", Guid.NewGuid().ToString("N")));
    readonly IDependencyInjectionContainer _container;
    TaggregateId VocabId { get; } = new(Guid.NewGuid());
@@ -145,7 +145,7 @@ public class Given_a_memory_image_state_store_whose_files_hold_a_vocab_and_a_sen
 
    public class when_the_files_also_hold_five_vocabs_with_one_question_and_the_store_is_first_used : Given_a_memory_image_state_store_whose_files_hold_a_vocab_and_a_sentence
    {
-      readonly TaggregateId[] _ids = [new(), new(), new(), new(), new()];
+      readonly TaggregateId[] _ids = [TaggregateId.New(), TaggregateId.New(), TaggregateId.New(), TaggregateId.New(), TaggregateId.New()];
 
       public when_the_files_also_hold_five_vocabs_with_one_question_and_the_store_is_first_used()
       {

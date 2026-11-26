@@ -65,7 +65,7 @@ class User : Taggregate<User, IUserTevent, UserTevent, IUserTevent<IUserTevent>,
    public static User Register(string email)
    {
       var user = new User();
-      user.Publish(new UserTevent.Registered(new TaggregateId(), email));
+      user.Publish(new UserTevent.Registered(TaggregateId.New(), email));
       return user;
    }
 

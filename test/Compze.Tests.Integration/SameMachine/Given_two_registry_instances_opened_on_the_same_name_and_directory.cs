@@ -16,7 +16,7 @@ public class Given_two_registry_instances_opened_on_the_same_name_and_directory 
    readonly InterprocessEndpointRegistry _registryInTheAnnouncingRole;
    readonly InterprocessEndpointRegistry _registryInTheReadingRole;
    readonly string _registryName = Guid.NewGuid().ToString();
-   readonly EndpointId _endpointId = new();
+   readonly EndpointId _endpointId = EndpointId.New();
    readonly EndpointAddress _address = new(new Uri("compze.pipe://localhost/Compze.registry-spec"));
 
    public Given_two_registry_instances_opened_on_the_same_name_and_directory()
@@ -85,7 +85,7 @@ public class Given_two_registry_instances_opened_on_the_same_name_and_directory 
 
       public class and_a_live_address_is_announced_afterwards : after_an_address_is_announced_whose_announcing_process_is_no_longer_running
       {
-         readonly EndpointId _liveEndpointId = new();
+         readonly EndpointId _liveEndpointId = EndpointId.New();
          readonly EndpointAddress _liveAddress = new(new Uri("compze.pipe://localhost/Compze.registry-spec-live"));
 
          public and_a_live_address_is_announced_afterwards() =>

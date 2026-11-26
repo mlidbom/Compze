@@ -27,9 +27,9 @@ namespace Compze.Tests.Integration.CQRS.TaggregateStores;
 /// them.</summary>
 public class Given_a_tevent_store_and_a_memory_image_state_store_kept_in_files : UniversalTestBase
 {
-   static readonly JsonSerializerOptions Options = new() { Converters = { new TaggregateIdAsAGuid() } };
+   static readonly JsonSerializerOptions Options = new();
    readonly DirectoryInfo _folder = new(Path.Combine(Path.GetTempPath(), "compze-tevent-store-and-state-store-in-files", Guid.NewGuid().ToString("N")));
-   readonly TaggregateId _userId = new();
+   readonly TaggregateId _userId = TaggregateId.New();
    readonly TaggregateId _vocabId = new(Guid.NewGuid());
    bool _filesAreAcceptingNonAtomicCommitsWithADatabase;
    IDependencyInjectionContainer? _container;

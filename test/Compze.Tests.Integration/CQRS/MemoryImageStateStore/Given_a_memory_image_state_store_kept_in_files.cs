@@ -25,8 +25,8 @@ namespace Compze.Tests.Integration.CQRS.MemoryImageStateStore;
 /// container of its own on the same folder, as each start of an application is.</summary>
 public class Given_a_memory_image_state_store_kept_in_files : UniversalTestBase
 {
-   static readonly JsonSerializerOptions Options = new() { WriteIndented = true, Converters = { new TaggregateIdAsAGuid() } };
-   static readonly JsonSerializerOptions OptionsOfAnotherProgram = new() { WriteIndented = false, Converters = { new TaggregateIdAsAGuid() } };
+   static readonly JsonSerializerOptions Options = new() { WriteIndented = true };
+   static readonly JsonSerializerOptions OptionsOfAnotherProgram = new() { WriteIndented = false };
    readonly List<IDependencyInjectionContainer> _containers = [];
    readonly DirectoryInfo _folder = new(Path.Combine(Path.GetTempPath(), "compze-state-store-in-files", Guid.NewGuid().ToString("N")));
    bool _folderGivenByAService;
@@ -101,6 +101,8 @@ public class Given_a_memory_image_state_store_kept_in_files : UniversalTestBase
          public and_another_store_is_started_on_the_folder() => StartAStore();
 
          [PCT] public void it_has_the_vocab_with_its_question() => Reader.Get<StoredVocab>(VocabId).Question.Must().Be("taberu");
+
+         [PCT] public void it_has_the_vocab_with_the_id_its_snapshot_holds() => Reader.Get<StoredVocab>(VocabId).Id.Must().Be(VocabId);
       }
 
       ///<summary>The store started on an empty folder, so the vocab folder didn't exist when it first loaded.</summary>

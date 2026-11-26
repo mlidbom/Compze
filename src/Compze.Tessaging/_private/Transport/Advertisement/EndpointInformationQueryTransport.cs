@@ -23,7 +23,7 @@ class EndpointInformationQueryTransport : IEndpointInformationQueryTransport
    public async Task<TResult> GetAsync<TResult>(ITuery<TResult> query, EndpointAddress address, CancellationToken cancellationToken = default)
    {
       var request = new TransportRequest(TransportRequestKind.EndpointDiscoveryQuery,
-                                         new TessageId(),
+                                         TessageId.New(),
                                          _typeMap.GetId(query.GetType()).CanonicalString,
                                          EndpointInformationQuerySerializer.SerializeQuery(query));
 

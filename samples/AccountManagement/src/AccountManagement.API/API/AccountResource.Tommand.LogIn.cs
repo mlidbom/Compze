@@ -13,7 +13,7 @@ public partial class AccountResource
    {
       public partial class LogIn : Remotable.AtMostOnce.AtMostOnceTypermediaTommand<LogIn.LoginAttemptResult>
       {
-         public static LogIn Create() => new() {Id = new TessageId()};
+         public static LogIn Create() => new() {Id = TessageId.New()};
 
          [Required] [Email] public string Email { get; init; } = string.Empty;
          [Required] public string Password { get; init; } = string.Empty;

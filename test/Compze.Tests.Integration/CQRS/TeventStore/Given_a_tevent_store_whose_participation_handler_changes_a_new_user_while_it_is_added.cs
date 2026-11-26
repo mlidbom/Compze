@@ -22,7 +22,7 @@ namespace Compze.Tests.Integration.CQRS.TeventStore;
 public class Given_a_tevent_store_whose_participation_handler_changes_a_new_user_while_it_is_added : UniversalTestBase
 {
    readonly IDependencyInjectionContainer _container;
-   readonly TaggregateId _userId = new();
+   readonly TaggregateId _userId = TaggregateId.New();
    readonly List<string> _receivedByTheHandlers = [];
    readonly User _userAdded = new();
    User? _userTheHandlerGot;
