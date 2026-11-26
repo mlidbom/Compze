@@ -5,7 +5,8 @@
 #
 # To hunt a flake: create a branch named flake-hunt/<what is hunted>, set the hunt below - the combination in the matrix, the
 # test project and the number of runs in the env block - and push. Every push of the branch is one hunt. ci.yml ignores
-# flake-hunt/** branches, so a hunt does not also queue the full matrix ahead of its own runners.
+# flake-hunt/** branches, so a hunt does not also queue the full matrix ahead of its own runners. The persistence may be
+# PgSql or MsSql, whose servers run in service containers, or a SQLite one; di may be one container or "every".
 #
 # RUNTIME_ASYNC in the env block says how the hunted code is compiled. "true", as everything is compiled since .NET 11, has
 # the runtime suspend and resume async methods. "false" has the compiler generate state machines instead, which is what
@@ -50,6 +51,18 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
+      mssql:
+        image: ${{ matrix.persistence == 'MsSql' && 'mcr.microsoft.com/mssql/server:2022-latest' || '' }}
+        env:
+          ACCEPT_EULA: "Y"
+          MSSQL_SA_PASSWORD: "Development!1"
+        ports:
+          - 1433:1433
+        options: >-
+          --health-cmd "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'Development!1' -C -Q 'SELECT 1' || /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P 'Development!1' -Q 'SELECT 1'"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
 
     env:
       HUNTED_TEST_PROJECT: test/Compze.Tessaging.InternalSpecifications/Compze.Tessaging.InternalSpecifications.csproj
@@ -57,6 +70,7 @@ jobs:
       RUNTIME_ASYNC: "true"
       COMPOSABLE_MACHINE_SLOWNESS: "5.0"
       COMPOSABLE_PERFORMANCE_TESTS_STRESS_TEST_ONLY: "true"
+      COMPOSABLE_MSSQL_DATABASE_POOL_MASTER_CONNECTIONSTRING: ${{ matrix.persistence == 'MsSql' && 'Data Source=localhost;Initial Catalog=master;User Id=sa;Password=Development!1;TrustServerCertificate=True;' || '' }}
       DOTNET_CLI_TELEMETRY_OPTOUT: "1"
       DOTNET_NOLOGO: "true"
 
@@ -73,9 +87,13 @@ jobs:
         with:
           container-id: ${{ job.services.postgres.id }}
 
+      # di "every" tests the four DI containers in one test process, as each CI test job does.
       - name: Configure the hunted combination
         run: |
-          echo "${{ matrix.persistence }}:${{ matrix.di }}:${{ matrix.serializer }}:${{ matrix.transport }}" > src/TestUsingPluggableComponentCombinations
+          if [ "${{ matrix.di }}" = "every" ]; then containers="Microsoft Autofac DryIoc LightInject"; else containers="${{ matrix.di }}"; fi
+          for container in $containers; do
+            echo "${{ matrix.persistence }}:$container:${{ matrix.serializer }}:${{ matrix.transport }}"
+          done > src/TestUsingPluggableComponentCombinations
           echo "COMPZE_TEST_DIAGNOSTICS_DIRECTORY=$GITHUB_WORKSPACE/TestResults/diagnostics" >> "$GITHUB_ENV"
 
       - name: Build the hunted test project
