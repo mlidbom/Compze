@@ -1,4 +1,3 @@
-using Compze.Teventive.MemoryImageStateStore._internal;
 using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
 using Compze.Abstractions;
@@ -8,9 +7,6 @@ using Compze.Teventive.TaggregateStores._internal;
 using Compze.Teventive.Taggregates._internal;
 using Compze.Teventive.MemoryImageStateStore._private.Storage;
 using Compze.Threading;
-using Compze.Teventive.MemoryImageStateStore._private.Tables;
-using Compze.Internals.Logging;
-using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using static Compze.Contracts.Contract;
 
 namespace Compze.Teventive.MemoryImageStateStore._private;
@@ -23,23 +19,14 @@ sealed class TaggregateMemoryImageStateStore : ITaggregateStore, IMemoryImageSta
    readonly TaggregateUnitsOfWork _unitsOfWork;
    readonly IReadOnlyDictionary<Type, SnapshotableTaggregateClass> _declaredClasses;
    readonly ConcurrentDictionary<TaggregateId, object> _references = new();
-   readonly IMonitor _loadingMonitor = IMonitor.New(); //Taken by a load and by catching up, so that neither installs what it read over what the other did.
+   readonly IMonitor _loadingMonitor = IMonitor.New(); //Taken by every load, and by writing everything anew, so that none installs what it read over what another did.
    readonly UnitsOfWorkAndReloadsGate _gate = new();
    volatile bool _hasLoaded;
-
-   //Read and written under _loadingMonitor.
-   CommitNumber _lastCommitNumberSeen = CommitNumber.BeforeTheFirstCommit;
-
-   readonly ChangesCommittedByOtherMemoryImagesNotifier _changesCommittedByOtherMemoryImages = new();
-   readonly CancellationTokenSource _stopping = new();
-   readonly Task _catchingUpAsOthersCommit;
-   int _disposed;
 
    internal TaggregateMemoryImageStateStore(TaggregateUnitsOfWork unitsOfWork,
                                  IEnumerable<SnapshotableTaggregateClass> declaredClasses,
                                  IEnumerable<Func<TaggregateMemoryImageStateStore, ITaggregateIndexMaintenance>> indexes,
-                                 ITaggregateStorage storage,
-                                 CommitSignal? catchingUpOn)
+                                 ITaggregateStorage storage)
    {
       _unitsOfWork = unitsOfWork;
       _declaredClasses = declaredClasses.ToDictionary(it => it.Class);
@@ -47,55 +34,10 @@ sealed class TaggregateMemoryImageStateStore : ITaggregateStore, IMemoryImageSta
       Storage = storage;
       Indexes = [..indexes.Select(createIndex => createIndex(this))];
       Committed = new CommittedTaggregates(Indexes);
-      _catchingUpAsOthersCommit = catchingUpOn is {} signal ? Task.Run(() => KeepCatchingUpAsOthersCommitAsync(signal, _stopping.Token)) : Task.CompletedTask;
    }
 
-   public IObservable<ChangesFoundInStorage> ChangesCommittedByOtherMemoryImages => _changesCommittedByOtherMemoryImages;
-
-   ///<summary>Catches up whenever <paramref name="signal"/> is raised, once the store has loaded, until <paramref name="stopping"/>.</summary>
-   async Task KeepCatchingUpAsOthersCommitAsync(CommitSignal signal, CancellationToken stopping)
-   {
-      try
-      {
-         while(true)
-         {
-            var raisedSoFar = signal.RaisedSoFar();
-            CatchUpWhileIdle();
-            await signal.AwaitARaiseAfterAsync(raisedSoFar, stopping).caf();
-         }
-      }
-      catch(OperationCanceledException) when(stopping.IsCancellationRequested) {}
-   }
-
-   void CatchUpWhileIdle()
-   {
-      if(!_hasLoaded) return;
-      try
-      {
-         CatchUp();
-      }
-#pragma warning disable CA1031 //The idle catch-up's own task surfaces a failed catch-up in the log, and tries again at the next signal: a unit of work's catch-up throws the same failure to its caller.
-      catch(Exception exception)
-#pragma warning restore CA1031
-      {
-         this.Log().Error(exception, "A memory image state store failed to catch up with what other memory images on this machine committed. It tries again at their next commit.");
-      }
-   }
-
-   ///<summary>Stops catching up, tells the subscribers of <see cref="ChangesCommittedByOtherMemoryImages"/> what is queued, and releases the storage.</summary>
-   public void Dispose()
-   {
-      if(Interlocked.Exchange(ref _disposed, 1) == 1) return;
-      _stopping.Cancel();
-      //todo:urgent: blocks until a thread-pool task ends, so the disposal stalls while the pool is busy. The store
-      //   becomes IAsyncDisposable with dev_docs/TODO/container-disposal-of-async-only-components.md (Magnus, 2026-11-24).
-#pragma warning disable VSTHRD002 // The store's synchronous Dispose waits for its background task to end.
-      _catchingUpAsOthersCommit.Wait();
-#pragma warning restore VSTHRD002
-      _changesCommittedByOtherMemoryImages.Stop();
-      Storage.Dispose();
-      _stopping.Dispose();
-   }
+   ///<summary>Releases the storage, and with it the storage's lock, for the next memory image to take.</summary>
+   public void Dispose() => Storage.Dispose();
 
    public string Name => "the memory image state store";
 
@@ -136,22 +78,11 @@ sealed class TaggregateMemoryImageStateStore : ITaggregateStore, IMemoryImageSta
       _references.GetOrAdd(id, static (theId, store) => new TaggregateReference<TTaggregate>(store, theId), this) as ITaggregateReference<TTaggregate>
    ?? new TaggregateReference<TTaggregate>(this, id);
 
-   ///<remarks>Catches up first, so that what the unit of work reads, and decides from, is what the other memory images had committed<br/>
-   /// when it began changing the store. Inside the gate, so that a unit of work that begins during a load waits for it there.</remarks>
+   ///<remarks>Enters the gate, so that a unit of work that begins during a load waits for it there.</remarks>
    public ITaggregateStoreSession NewSession(TaggregateUnitOfWork unitOfWork)
    {
       EnsureLoaded();
       _gate.EnterUnitOfWork();
-      try
-      {
-         CatchUp();
-      }
-      catch
-      {
-         _gate.LeaveUnitOfWork(); //No session holds the gate yet to leave it when the unit of work completes.
-         throw;
-      }
-
       return new MemoryImageStateStoreSession(this, unitOfWork, leaveTheGate: _gate.LeaveUnitOfWork);
    }
 
@@ -167,8 +98,8 @@ sealed class TaggregateMemoryImageStateStore : ITaggregateStore, IMemoryImageSta
          {
             var before = _hasLoaded ? Committed.Instances : new Dictionary<TaggregateId, ITaggregate>();
             var stored = Storage.LoadAll();
-            var changed = stored.Snapshots.Where(it => before.TryGetValue(it.Id, out var held) && HoldsAnotherState(it, held)).Select(it => it.Id).ToList();
-            var loadedIds = stored.Snapshots.Select(it => it.Id).ToHashSet();
+            var changed = stored.Where(it => before.TryGetValue(it.Id, out var held) && HoldsAnotherState(it, held)).Select(it => it.Id).ToList();
+            var loadedIds = stored.Select(it => it.Id).ToHashSet();
             Install(stored);
             return new ChangesFoundInStorage(added: [..loadedIds.Where(id => !before.ContainsKey(id))],
                                            changed: changed,
@@ -178,14 +109,11 @@ sealed class TaggregateMemoryImageStateStore : ITaggregateStore, IMemoryImageSta
    }
 
    ///<summary>Whether <paramref name="loaded"/> holds another state than <paramref name="held"/>, the instance the store held of the<br/>
-   /// taggregate: another class, another commit, where the storage numbers its commits, or else another state as the storage writes<br/>
-   /// state. A snapshot of <paramref name="held"/> is taken only when the storage doesn't know the state unchanged since the store last<br/>
-   /// read or wrote it.</summary>
+   /// taggregate: another class, or another state as the storage writes state. A snapshot of <paramref name="held"/> is taken only when<br/>
+   /// the storage doesn't know the state unchanged since the store last read or wrote it.</summary>
    bool HoldsAnotherState(TaggregateSnapshot loaded, ITaggregate held) =>
       loaded.TaggregateClass != held.GetType()
-   || (loaded.CommittedAs is {} committedAs
-          ? committedAs != Committed.CommitNumberOf(loaded.Id)
-          : !loaded.IsUnchangedSinceTheStoreLastReadOrWroteIt && !Storage.HoldTheSameState(loaded, DeclaredClassOf(held.GetType()).TakeSnapshot(held)));
+   || (!loaded.IsUnchangedSinceTheStoreLastReadOrWroteIt && !Storage.HoldTheSameState(loaded, DeclaredClassOf(held.GetType()).TakeSnapshot(held)));
 
    public void WriteAllToStorage()
    {
@@ -195,14 +123,7 @@ sealed class TaggregateMemoryImageStateStore : ITaggregateStore, IMemoryImageSta
       _gate.WhileNoUnitOfWorkIsOpen(() => _loadingMonitor.Locked(() =>
       {
          if(!_hasLoaded) LoadEverything();
-         var committedAs = Storage.WriteAll(_lastCommitNumberSeen, committedMeanwhile =>
-         {
-            _changesCommittedByOtherMemoryImages.Tell(InstallFound(committedMeanwhile));
-            return [..Committed.Instances.Select(it => SnapshotOf(it.Value))];
-         });
-         if(committedAs is not {} number) return;
-         Committed.RecordEveryTaggregateAsCommittedBy(number);
-         _lastCommitNumberSeen = number;
+         Storage.WriteAll([..Committed.Instances.Select(it => SnapshotOf(it.Value))]);
       }));
    }
 
@@ -232,35 +153,6 @@ sealed class TaggregateMemoryImageStateStore : ITaggregateStore, IMemoryImageSta
       return _declaredClasses[taggregateClass];
    }
 
-   ///<summary>Takes the taggregate <paramref name="id"/>'s lock in the storage, once a unit of work of this store holds its lock in<br/>
-   /// memory, and installs the taggregate as stored if another memory image has committed it after the commit held.</summary>
-   internal void LockInTheStorageForUpdate(TaggregateId id)
-   {
-      if(Storage.LockForUpdate(id, Committed.CommitNumberOf(id)) is {} stored) _changesCommittedByOtherMemoryImages.Tell(InstallFound([stored]));
-   }
-
-   ///<summary>Installs what the commits after the last one this memory image has seen stored, from other memory images: except the<br/>
-   /// taggregates a unit of work of this memory image holds, or waits for, the lock of. While it holds the lock, no other memory<br/>
-   /// image can commit the taggregate, so a newer state of it is the unit of work's own commit, which that commit installs. The<br/>
-   /// last commit number seen stays below such a taggregate's, so that the next catch-up reads it again, should the unit of work<br/>
-   /// never get it.</summary>
-   void CatchUp() => _loadingMonitor.Locked(() =>
-   {
-      var committed = Storage.CommittedAfter(_lastCommitNumberSeen);
-      var held = committed.Taggregates.Where(it => UpdateLocks.IsHeldOrWaitedFor(it.Id)).ToList();
-      _changesCommittedByOtherMemoryImages.Tell(InstallFound([..committed.Taggregates.Except(held)]));
-      _lastCommitNumberSeen = held.Count == 0
-                                 ? committed.HoldingEveryCommitThrough
-                                 : new CommitNumber(Math.Min(committed.HoldingEveryCommitThrough.Value, held.Min(it => it.CommittedAs.Value) - 1));
-   });
-
-   ///<summary>Restores each of <paramref name="found"/> that isn't deleted, and installs each that is newer than what is held.</summary>
-   ///<returns>How what readers see changed.</returns>
-   ChangesFoundInStorage InstallFound(IReadOnlyList<StoredTaggregate> found) =>
-      found.Count == 0
-         ? new ChangesFoundInStorage(added: [], changed: [], removed: [])
-         : Committed.InstallFound([..found.Select(it => (Stored: it, Restored: it.Snapshot is {} snapshot ? RestoredFrom(snapshot) : null))]);
-
    ITaggregate RestoredFrom(TaggregateSnapshot snapshot) => snapshot.RestoredTaggregate ?? DeclaredClassOf(snapshot.TaggregateClass).Restore(snapshot.Id, snapshot.Snapshot);
 
    ///<summary>Fills the store from its storage, once, at its first use.</summary>
@@ -278,10 +170,9 @@ sealed class TaggregateMemoryImageStateStore : ITaggregateStore, IMemoryImageSta
 
    ///<summary>Replaces the committed taggregates, and what the indexes file, with the taggregates of <paramref name="stored"/>, what<br/>
    /// the storage has just loaded. Called under <see cref="_loadingMonitor"/>.</summary>
-   void Install(LoadedTaggregates stored)
+   void Install(IReadOnlyList<TaggregateSnapshot> stored)
    {
-      Committed.ReplaceWith([..stored.Snapshots.Select(it => (RestoredFrom(it), it.CommittedAs))]);
-      if(stored.HoldingEveryCommitThrough is {} holdingEveryCommitThrough) _lastCommitNumberSeen = holdingEveryCommitThrough;
+      Committed.ReplaceWith([..stored.Select(RestoredFrom)]);
       _hasLoaded = true;
    }
 }

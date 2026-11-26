@@ -37,4 +37,11 @@
   <ItemGroup Condition="'$(UsePackageReference_Compze_Sql_Common)' != 'true'">
     <ProjectReference Include="..\Compze.Sql.Common\Compze.Sql.Common.csproj" />
   </ItemGroup>
+  <!-- Compze.Threading.Interprocess — flex reference -->
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Threading_Interprocess)' == 'true'">
+    <PackageReference Include="Compze.Threading.Interprocess" Version="*-*" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsePackageReference_Compze_Threading_Interprocess)' != 'true'">
+    <ProjectReference Include="..\Compze.Threading.Interprocess\Compze.Threading.Interprocess.csproj" />
+  </ItemGroup>
 </Project>

@@ -1,6 +1,6 @@
 # Compze.Teventive.MemoryImageStateStore.PostgreSql
 
-The PostgreSQL tables of [Compze](https://github.com/mlidbom/Compze)'s memory image state store: for a store kept in a PostgreSQL domain database's tables, which several memory images, in other processes or other containers, share.
+The PostgreSQL tables of [Compze](https://github.com/mlidbom/Compze)'s memory image state store: for a store kept in a PostgreSQL domain database's tables, which one memory image at a time uses, holding a process lock of the database while it does.
 
 ## What is Compze?
 

@@ -15,7 +15,6 @@ partial class PgSqlEndpointCatalogSqlLayer
          {Catalog.EndpointName}          TEXT            NOT NULL,
          {Catalog.EndpointId}            {PgSqlGuidType} NOT NULL,
          {Catalog.CreatedUtc}            timestamptz     NOT NULL,
-         {Catalog.LockHolderDescription} TEXT            NULL,
 
          PRIMARY KEY ( {Catalog.EndpointName} ),
 

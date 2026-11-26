@@ -3,15 +3,18 @@ using Compze.Sql.Common._internal;
 using Compze.Sql.Sqlite._internal;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 using Compze.Tessaging._internal.SqlLayer;
+using Compze.Sql.Common._internal.ProcessLocks;
+using Compze.Threading;
 using Microsoft.Data.Sqlite;
 using Catalog = Compze.Tessaging._internal.SqlLayer.ITessagingSqlLayer.EndpointCatalogDatabaseSchemaStrings;
 
 namespace Compze.Tessaging.Sqlite._private;
 
-partial class SqliteEndpointCatalogSqlLayer(ISqliteConnectionPool connectionFactory, SqliteSqlLayerSchemaManager schemaManager) : ITessagingSqlLayer.IEndpointCatalogSqlLayer
+partial class SqliteEndpointCatalogSqlLayer(ISqliteConnectionPool connectionFactory, SqliteSqlLayerSchemaManager schemaManager, IDatabaseProcessLocks processLocks) : ITessagingSqlLayer.IEndpointCatalogSqlLayer
 {
    readonly ISqliteConnectionPool _connectionFactory = connectionFactory;
    readonly SqliteSqlLayerSchemaManager _schemaManager = schemaManager;
+   readonly IDatabaseProcessLocks _processLocks = processLocks;
 
    public async Task<ITessagingSqlLayer.EndpointCatalogEntry?> GetEntryByNameAsync(string endpointName) =>
       (await EntriesAsync($"WHERE {Catalog.EndpointName} = @filter", command => command.AddMediumTextParameter("filter", endpointName)).caf()).SingleOrDefault();
@@ -38,43 +41,10 @@ partial class SqliteEndpointCatalogSqlLayer(ISqliteConnectionPool connectionFact
                    .AddDateTime2Parameter(Catalog.CreatedUtc, utcNow)
                    .ExecuteNonQueryAsync().caf()).caf();
 
-   //Sqlite has no server sessions to scope a lock to, so the lock is a process lock file beside the database instead
-   //(see SqliteEndpointProcessLockHold). A live holder cannot lose a file it holds open, so onLockLostWhileHeld can never fire.
-   public async Task<ITessagingSqlLayer.IEndpointProcessLockHold?> TryTakeProcessLockAsync(string endpointName, string lockHolderDescription, Action<Exception> onLockLostWhileHeld)
-   {
-      var hold = SqliteEndpointProcessLockHold.TryTake(_connectionFactory.ConnectionString, endpointName);
-      if(hold == null) return null;
+   public async Task<IAsyncDisposable?> TryTakeProcessLockAsync(string lockName, string purpose, Action<Exception> onLockLostWhileHeld) =>
+      await _processLocks.TryTakeAsync(lockName, purpose, WaitTimeout.Zero, onLockLostWhileHeld).caf();
 
-      try
-      {
-         //Stamped once the lock is held, before the hold is handed back: the live lock and its recorded holder become one
-         //fact for any process that later reads the row after being refused this lock. Unlike the server engines, the lock
-         //is not a database session, so the stamp cannot ride the lock's own connection - it is the next thing done while
-         //holding it.
-         await RecordLockHolderAsync(endpointName, lockHolderDescription).caf();
-         return hold;
-      }
-      catch //Resource cleanup, not handling: a stamp that fails must not leave the lock held with no hold to release it.
-      {
-         await hold.DisposeAsync().caf();
-         throw;
-      }
-   }
-
-   async Task RecordLockHolderAsync(string endpointName, string lockHolderDescription) =>
-      await _connectionFactory.UseCommandAsync(
-         async command => await command
-                   .SetCommandText(
-                       $"""
-
-                        UPDATE {Catalog.TableName}
-                            SET {Catalog.LockHolderDescription} = @{Catalog.LockHolderDescription}
-                        WHERE {Catalog.EndpointName} = @{Catalog.EndpointName}
-
-                        """)
-                   .AddMediumTextParameter(Catalog.EndpointName, endpointName)
-                   .AddMediumTextParameter(Catalog.LockHolderDescription, lockHolderDescription)
-                   .ExecuteNonQueryAsync().caf()).caf();
+   public async Task<string?> ProcessLockHolderAsync(string lockName) => await _processLocks.HolderOfAsync(lockName).caf();
 
    async Task<IReadOnlyList<ITessagingSqlLayer.EndpointCatalogEntry>> EntriesAsync(string filterClause, Action<SqliteCommand> addFilterParameter) =>
       await _connectionFactory.UseCommandAsync(
@@ -85,7 +55,7 @@ partial class SqliteEndpointCatalogSqlLayer(ISqliteConnectionPool connectionFact
             command.SetCommandText(
                $"""
 
-                SELECT {Catalog.EndpointName}, {Catalog.EndpointId}, {Catalog.LockHolderDescription}
+                SELECT {Catalog.EndpointName}, {Catalog.EndpointId}
                 FROM {Catalog.TableName} {filterClause}
 
                 """);
@@ -97,8 +67,7 @@ partial class SqliteEndpointCatalogSqlLayer(ISqliteConnectionPool connectionFact
             {
                entries.Add(new ITessagingSqlLayer.EndpointCatalogEntry(
                               endpointName: reader.GetString(0),
-                              endpointId: new EndpointId(reader.GetGuidFromString(1)),
-                              lockHolderDescription: await reader.IsDBNullAsync(2).caf() ? null : reader.GetString(2)));
+                              endpointId: new EndpointId(reader.GetGuidFromString(1))));
             }
 
             return entries;

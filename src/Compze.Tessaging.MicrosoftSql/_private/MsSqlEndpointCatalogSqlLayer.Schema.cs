@@ -15,7 +15,6 @@ partial class MsSqlEndpointCatalogSqlLayer
                {Catalog.EndpointName}          nvarchar(64)     NOT NULL,
                {Catalog.EndpointId}            uniqueidentifier NOT NULL,
                {Catalog.CreatedUtc}            datetime2        NOT NULL,
-               {Catalog.LockHolderDescription} nvarchar(500)    NULL,
 
                CONSTRAINT PK_{Catalog.TableName} PRIMARY KEY CLUSTERED ( {Catalog.EndpointName} ),
 

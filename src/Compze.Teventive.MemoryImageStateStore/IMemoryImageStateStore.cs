@@ -11,6 +11,11 @@ namespace Compze.Teventive.MemoryImageStateStore;
 ///<remarks>The store loads every taggregate at its first use, on whatever thread that is, and inside that use's transaction, if any.<br/>
 /// <see cref="LoadFromStorage"/> called at the application's start is how a consumer chooses when, and on which thread: see<br/>
 /// <see cref="MemoryImageStateStoreRegistrar.MemoryImageStateStore"/>.</remarks>
+///<remarks>One memory image at a time uses a store's storage. The first load takes the storage's lock, and the store holds it until the<br/>
+/// container disposes it: a second memory image's first load, in another process or another container, fails with a<br/>
+/// <see cref="TimeoutException"/> naming the holder, unless it is declared to wait<br/>
+/// (<see cref="MemoryImageStateStoreBuilder.WaitingForAnotherMemoryImageToReleaseTheStorage"/>). A first load that fails takes nothing,<br/>
+/// and the next use tries again.</remarks>
 public interface IMemoryImageStateStore
 {
    ///<summary>Loads every taggregate from the storage, and replaces the committed taggregates with what it loaded: the store's first<br/>
@@ -27,8 +32,10 @@ public interface IMemoryImageStateStore
    /// A unit of work that begins during a load again waits at most 30 seconds for it to end, then throws, so a load again that takes<br/>
    /// longer fails the units of work that wait for it. During the store's first load, a unit of work waits as every use of the store<br/>
    /// waits for that load: for at most Compze.Threading's <see cref="LockTimeout.Default"/>.</remarks>
-   ///<remarks>In a store kept in tables, a taggregate counts as changed when its row was written by another commit than the one the<br/>
-   /// store holds it as. A store kept in tables reads the rows outside any transaction, while other memory images go on committing.</remarks>
+   ///<remarks>In a store kept in tables, a taggregate counts as changed when the state its row holds isn't the state the store held, as the<br/>
+   /// store's serializer and the consumer's options write state, so snapshot types need no equality: the row's text is compared with what<br/>
+   /// the store would write for the taggregate it held, and where the text differs, the snapshot loaded from it is serialized too. So a<br/>
+   /// reload costs one or two serializations for each taggregate the store held. It reads the rows outside any transaction.</remarks>
    ///<remarks>In a store kept in files, a taggregate counts as changed when the state its file holds now isn't the state the store held, as the store's<br/>
    /// serializer and the consumer's options write state, so snapshot types need no equality. A file unchanged since the store last read<br/>
    /// or wrote it, by its length and last write time, holds what the store holds, and is compared with nothing. A changed file is<br/>
@@ -46,8 +53,7 @@ public interface IMemoryImageStateStore
    ///<summary>Writes every taggregate's file anew, as the store's serializer and the consumer's options write its snapshot now, whether<br/>
    /// it changed or not: after a change to the snapshot types or to the serializer's options, so that the files don't stay a mix of the<br/>
    /// old form and the new until each taggregate next changes.</summary>
-   ///<remarks>In a store kept in tables: one database transaction, which first takes the commit counter, so that no other memory image<br/>
-   /// commits meanwhile, catches up with what the others committed, then writes every row. A failure rolls it all back.</remarks>
+   ///<remarks>In a store kept in tables: one database transaction, which writes every row. A failure rolls it all back.</remarks>
    ///<remarks>In a store kept in files: one commit, through the journal, as a unit of work's: every file is written under a temporary name, then the journal,<br/>
    /// then the renames. A failure before the journal is written, such as a snapshot that can't be serialized, writes nothing, and comes<br/>
    /// out of this call. A failure after it stops the process (<see cref="Environment.FailFast(string)"/>), as a commit's does: the next<br/>
@@ -58,15 +64,6 @@ public interface IMemoryImageStateStore
    /// then changed, so the next start reads every file, and writes a load cache anew.<br/>
    /// Throws for a store composed with no storage, and inside a unit of work that has changed the store's taggregates.</remarks>
    void WriteAllToStorage();
-
-   ///<summary>What this memory image found that other memory images committed to the storage they share, such as the tables of<br/>
-   /// <see cref="MemoryImageStateStoreBuilder.StoredInTheDomainDatabase"/>: as it catches up with them, and as a get for update takes a<br/>
-   /// taggregate's state from its row. Not their tevents, which were dispatched in their own memory images: which taggregates were<br/>
-   /// added, changed and removed, for code that keeps something of its own up to date with the store, such as a view.</summary>
-   ///<remarks>Told in the order found, one batch at a time, on a task of the store's own, never on the thread that found them, such<br/>
-   /// as a unit of work's. A subscriber that throws is logged, and told the next batch. Nothing is told for a store kept in files, which<br/>
-   /// no other memory image shares, nor of what <see cref="LoadFromStorage"/> finds, which it returns.</remarks>
-   IObservable<ChangesFoundInStorage> ChangesCommittedByOtherMemoryImages { get; }
 }
 
 ///<summary>How what the store's storage, such as its files, held differed from what the memory image state store held, as <see cref="IMemoryImageStateStore.LoadFromStorage"/> found it.</summary>
@@ -88,7 +85,4 @@ public sealed class ChangesFoundInStorage
 
    ///<summary>The taggregates the store held that the storage no longer did, in no particular order.</summary>
    public IReadOnlyCollection<TaggregateId> Removed { get; }
-
-   ///<summary>Whether nothing was added, changed or removed.</summary>
-   internal bool IsEmpty => Added.Count == 0 && Changed.Count == 0 && Removed.Count == 0;
 }

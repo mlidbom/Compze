@@ -1,12 +1,18 @@
 using Compze.Teventive.MemoryImageStateStore._internal;
+using Compze.Threading;
+using Compze.Threading.Interprocess;
 
 namespace Compze.Teventive.MemoryImageStateStore._private.Files;
 
 ///<summary>The disk, as the file system of a memory image state store kept in files: each operation is the <see cref="File"/> or<br/>
 /// <see cref="Directory"/> method of the same name.</summary>
+///<remarks>The store's lock is an <see cref="IProcessLock"/> in its own folder, <c>memory-image-state-store.lock</c>, which the operating system<br/>
+/// releases when its holder's process dies: a second process's store, or a second container's in one process, is refused it.</remarks>
 sealed class FilesOnDisk : IFileSystem
 {
    internal static readonly FilesOnDisk Instance = new();
+
+   const string TheStoresLockName = "memory-image-state-store";
 
    FilesOnDisk() {}
 
@@ -40,4 +46,10 @@ sealed class FilesOnDisk : IFileSystem
    {
       if(File.Exists(file)) File.Delete(file); //File.Delete throws when the file's folder is gone, which counts as no such file here.
    }
+
+   public IDisposable? TryTakeTheStoresLock(string ownFolder, string purpose, WaitTimeout waitTimeout) => TheStoresLock(ownFolder).TryTake(purpose, waitTimeout);
+
+   public string? HolderOfTheStoresLock(string ownFolder) => TheStoresLock(ownFolder).LastHoldersDescription();
+
+   static IProcessLock TheStoresLock(string ownFolder) => IProcessLock.New(TheStoresLockName, Directory.CreateDirectory(ownFolder));
 }

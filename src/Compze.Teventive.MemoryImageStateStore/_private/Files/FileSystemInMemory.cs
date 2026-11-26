@@ -1,6 +1,8 @@
+using System.Diagnostics;
 using System.Text;
 using Compze.Teventive.MemoryImageStateStore._internal;
 using Compze.Teventive.MemoryImageStateStore.Testing;
+using Compze.Threading;
 using Compze.Threading.ResourceAccess;
 
 namespace Compze.Teventive.MemoryImageStateStore._private.Files;
@@ -8,7 +10,8 @@ namespace Compze.Teventive.MemoryImageStateStore._private.Files;
 ///<summary>A file system in memory, for specifications: a memory image state store composed with<br/>
 /// <see cref="TaggregateFilesBuilderTestingCE.OnAFileSystemInMemory"/> writes and reads its files here instead of on the disk, one such<br/>
 /// file system for each container. It is also the <see cref="IFileSystemInMemory"/> through which a specification reads and changes them.</summary>
-///<remarks>A folder exists only as the paths of the files in it. Paths are compared as full paths, ignoring case, as on Windows.<br/>
+///<remarks>No other memory image can reach the files, so the store's lock is always free.<br/>
+/// A folder exists only as the paths of the files in it. Paths are compared as full paths, ignoring case, as on Windows.<br/>
 /// Each write gives the file a last write time later than any given before, so that two writes within one tick of the system's<br/>
 /// clock still differ, as the store needs to tell a changed file, at a reload and from a cache of its start.</remarks>
 sealed class FileSystemInMemory : IFileSystem, IFileSystemInMemory
@@ -61,6 +64,11 @@ sealed class FileSystemInMemory : IFileSystem, IFileSystemInMemory
 
    public void Delete(string file) => _files.Locked(it => it.ByPath.Remove(Full(file)));
 
+   public IDisposable? TryTakeTheStoresLock(string ownFolder, string purpose, WaitTimeout waitTimeout) => NoLockToRelease.Instance;
+
+   ///<summary>Never asked: the store's lock is always free.</summary>
+   public string? HolderOfTheStoresLock(string ownFolder) => throw new UnreachableException("The lock of a store whose files are on a file system in memory is always free.");
+
    static string Full(string path) => Path.GetFullPath(path);
 
    static bool IsIn(string file, string folder, bool includingSubfolders)
@@ -92,5 +100,12 @@ sealed class FileSystemInMemory : IFileSystem, IFileSystemInMemory
    {
       internal byte[] Content { get; } = content;
       internal DateTime LastWriteTimeUtc { get; } = lastWriteTimeUtc;
+   }
+
+   ///<summary>The hold of a lock that nothing else can take.</summary>
+   sealed class NoLockToRelease : IDisposable
+   {
+      internal static readonly NoLockToRelease Instance = new();
+      public void Dispose() {}
    }
 }

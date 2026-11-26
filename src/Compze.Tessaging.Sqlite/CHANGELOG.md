@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## 0.5.0-alpha
 
+- **An endpoint's process lock is one of the domain database's process locks,** from Compze.Sql.Sqlite: a file beside the database file named `CompzeDatabaseProcessLock_<hash>.lock`, where it was `CompzeEndpointProcessLock_<hash>.lock`, and for an in-memory database or a `file:` URI data source in `Compze/DatabaseProcessLocks` in the temp directory, where it was `Compze/EndpointProcessLocks`. So a process of this version and one of an earlier version don't keep each other from running the same endpoint. Its holder records itself in the lock's file, and the endpoint catalog no longer has a `LockHolderDescription` column: an existing database keeps the column, which nothing writes any more.
+- **No longer depends on Compze.Threading.Interprocess,** which Compze.Sql.Sqlite now does.
 - **An endpoint's process lock is a file beside the database file, held open, instead of a system mutex,** Compze.Threading.Interprocess's `IProcessLock`. Every process that can open the database reaches it, whichever user it runs as, where the mutex was per machine; the operating system still releases it when its process dies. An in-memory database's lock is in `Compze/EndpointProcessLocks` in the temp directory, as is a `file:` URI data source's. Holding it no longer parks a thread for each endpoint: only the thread that took a mutex could release it.
 - **Requires newer minor versions of other Compze packages:** Compze.Threading.Interprocess 0.8.0-alpha (was 0.7.1-alpha). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
 

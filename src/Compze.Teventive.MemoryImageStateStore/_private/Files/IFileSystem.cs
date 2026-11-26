@@ -1,4 +1,5 @@
 using Compze.Teventive.MemoryImageStateStore._internal;
+using Compze.Threading;
 
 namespace Compze.Teventive.MemoryImageStateStore._private.Files;
 
@@ -38,4 +39,14 @@ interface IFileSystem
 
    ///<summary>Deletes <paramref name="file"/>, and does nothing if there is no such file.</summary>
    void Delete(string file);
+
+   ///<summary>Takes the lock of the store whose own folder is <paramref name="ownFolder"/>, creating the folder if need be, for<br/>
+   /// <paramref name="purpose"/>: the lock of its files, which one memory image at a time holds, whichever process on the machine it is in.<br/>
+   /// Waits at most <paramref name="waitTimeout"/> for another holder to release it, and returns the hold, whose disposal releases it: or<br/>
+   /// null if another holder still holds it.</summary>
+   IDisposable? TryTakeTheStoresLock(string ownFolder, string purpose, WaitTimeout waitTimeout);
+
+   ///<summary>Who holds the lock of the store whose own folder is <paramref name="ownFolder"/>, as it recorded itself: what for, which<br/>
+   /// process, on which machine, and since when. Read when <see cref="TryTakeTheStoresLock"/> is refused.</summary>
+   string? HolderOfTheStoresLock(string ownFolder);
 }

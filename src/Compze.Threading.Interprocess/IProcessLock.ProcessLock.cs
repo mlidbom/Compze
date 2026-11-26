@@ -49,6 +49,8 @@ public partial interface IProcessLock
       public async Task<IProcessLockHold> TakeAsync(string purpose, WaitTimeout waitTimeout, CancellationToken cancellationToken = default) =>
          await TryTakeAsync(purpose, waitTimeout, cancellationToken).ConfigureAwait(false) ?? throw GaveUpWaiting(purpose, waitTimeout);
 
+      public string? LastHoldersDescription() => _lockFile.LastHoldersDescription();
+
       TimeoutException GaveUpWaiting(string purpose, WaitTimeout waitTimeout) =>
          new($"Gave up after {waitTimeout} waiting to take the process lock {_lockFile.LockFilePath} for {purpose}. It is held {_lockFile.LastHoldersDescription() ?? "by a holder that hasn't yet written what for"}.");
    }

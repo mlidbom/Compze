@@ -14,7 +14,6 @@ partial class SqliteEndpointCatalogSqlLayer
            {Catalog.EndpointName}          TEXT    NOT NULL,
            {Catalog.EndpointId}            TEXT    NOT NULL UNIQUE,
            {Catalog.CreatedUtc}            INTEGER NOT NULL,
-           {Catalog.LockHolderDescription} TEXT    NULL,
 
            PRIMARY KEY ( {Catalog.EndpointName} )
        );

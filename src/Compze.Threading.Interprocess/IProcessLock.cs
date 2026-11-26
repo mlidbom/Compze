@@ -23,6 +23,7 @@ public partial interface IProcessLock
    //review-naming: IProcessLock.New, the factory, as IMonitor.New is named.
    //review-naming: purpose, the parameter of the four takes that says what the lock is to be held for.
    //review-naming: TryTake, Take, TryTakeAsync and TakeAsync, the four takes, as the brief named them.
+   //review-naming: LastHoldersDescription, for what the holder that took the lock last wrote of itself.
 
    ///<summary>The lock named <paramref name="name"/> in <paramref name="directory"/>, which must exist: every process that takes the lock of that<br/>
    /// name in that directory takes the same lock. Who can take it is who can write files there: in a directory of a user's own, it is a lock<br/>
@@ -43,4 +44,12 @@ public partial interface IProcessLock
 
    ///<summary>As <see cref="Take"/>, holding no thread while it waits.</summary>
    Task<IProcessLockHold> TakeAsync(string purpose, WaitTimeout waitTimeout, CancellationToken cancellationToken = default);
+
+   ///<summary>What the holder that took the lock last wrote of itself as it took it: what it holds the lock for, which process it is, on which<br/>
+   /// machine, and since when, such as <c>for running the hub, by process 4242 (Hub) on WORKSTATION, since 2026-11-26 10:15:00 +01:00</c>, the<br/>
+   /// words a <see cref="Take"/> that gives up says it in. Null if no holder has written it yet, as when one took the lock this instant.<br/>
+   /// For whoever is refused the lock, to say who holds it in words of its own.</summary>
+   ///<remarks>A holder's release leaves what it wrote, so beside a free lock this describes the holder that released it last: read it when<br/>
+   /// a take is refused, which means the lock is held.</remarks>
+   string? LastHoldersDescription();
 }

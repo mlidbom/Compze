@@ -1,5 +1,6 @@
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
+using Compze.Sql.Common._internal.ProcessLocks;
 using Compze.Sql.PostgreSql._internal;
 using Compze.Tessaging._internal.SqlLayer;
 using Compze.TypeIdentifiers.Interning;
@@ -13,13 +14,14 @@ public static class PgSqlTessagingRegistrar
 {
    public static IComponentRegistrar PgSqlTessagingSqlLayer(this IComponentRegistrar registrar) =>
       registrar.PgSqlTypeIdInterner()
+               .PgSqlDatabaseProcessLocks()
                .PgSqlSchemaContribution((EndpointTableSet tables) => PgSqlInboxSqlLayer.SchemaCreationStatements(tables))
                .PgSqlSchemaContribution((EndpointTableSet tables) => PgSqlOutboxSqlLayer.SchemaCreationStatements(tables))
                .PgSqlSchemaContribution((EndpointTableSet tables) => PgSqlPeerRegistrySqlLayer.SchemaCreationStatements(tables))
                .PgSqlSchemaContribution(PgSqlEndpointCatalogSqlLayer.SchemaCreationStatements)
                .Register(
          Singleton.For<ITessagingSqlLayer.IEndpointCatalogSqlLayer>()
-                  .CreatedBy((IPgSqlConnectionPool endpointSqlConnection, PgSqlSqlLayerSchemaManager schemaManager) => new PgSqlEndpointCatalogSqlLayer(endpointSqlConnection, schemaManager)),
+                  .CreatedBy((IPgSqlConnectionPool endpointSqlConnection, PgSqlSqlLayerSchemaManager schemaManager, IDatabaseProcessLocks processLocks) => new PgSqlEndpointCatalogSqlLayer(endpointSqlConnection, schemaManager, processLocks)),
          Singleton.For<ITessagingSqlLayer.IOutboxSqlLayer>()
                   .CreatedBy((IPgSqlConnectionPool endpointSqlConnection, PgSqlSqlLayerSchemaManager schemaManager, ITypeIdInterner typeIdInterner, EndpointTableSet tables) => new PgSqlOutboxSqlLayer(endpointSqlConnection, schemaManager, typeIdInterner, tables)),
          Singleton.For<ITessagingSqlLayer.IInboxSqlLayer>()
