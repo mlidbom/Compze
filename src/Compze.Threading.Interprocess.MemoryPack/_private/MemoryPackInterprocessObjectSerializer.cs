@@ -2,7 +2,7 @@ using Compze.Contracts;
 using Compze.Threading.Interprocess.ResourceAccess;
 using MemoryPack;
 
-namespace Compze.InterprocessObject.MemoryPack._private;
+namespace Compze.Threading.Interprocess.MemoryPack._private;
 
 ///<summary>An <see cref="IInterprocessObjectSerializer{T}"/> that uses MemoryPack for fast binary serialization.</summary>
 class MemoryPackInterprocessObjectSerializer<T> : IInterprocessObjectSerializer<T> where T : class

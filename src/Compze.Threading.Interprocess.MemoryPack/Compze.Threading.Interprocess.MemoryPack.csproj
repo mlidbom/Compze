@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Nullable>enable</Nullable>
     <Version>0.6.0-alpha</Version>
-    <Description>MemoryPack support for Compze.InterprocessObject. Create an object shared between processes in a single line of code.</Description>
+    <Description>MemoryPack serialization for the IInterprocessObject of Compze.Threading.Interprocess: an object shared between processes, kept in MemoryPack's fast and compact binary format, created in a single line of code. Was Compze.InterprocessObject.MemoryPack.</Description>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="MemoryPack" Version="1.21.4" />

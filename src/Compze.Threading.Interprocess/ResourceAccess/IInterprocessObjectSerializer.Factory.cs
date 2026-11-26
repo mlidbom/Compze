@@ -12,7 +12,7 @@ public interface IInterprocessObjectSerializer
    /// and whose file a human can read.
    ///</summary>
    ///<remarks>
-   /// JSON is larger and slower to write and read than MemoryPack's binary form, which Compze.InterprocessObject.MemoryPack
+   /// JSON is larger and slower to write and read than MemoryPack's binary form, which Compze.Threading.Interprocess.MemoryPack
    /// offers. Every reader and writer of an object must use the same options.
    ///</remarks>
    static IInterprocessObjectSerializer<T> Json<T>(JsonSerializerOptions? options = null) where T : class => new JsonInterprocessObjectSerializer<T>(options);

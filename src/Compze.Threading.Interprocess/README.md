@@ -74,7 +74,7 @@ process makes is visible to all the others at once, and the object survives the 
 - **Recovery from corruption:** `CorruptionAction` says whether an object that can't be read is replaced with its
   default or left as it is for you to look at. Either way the access that found it throws, saying what happened.
 - **Pluggable serialization:** JSON with `IInterprocessObjectSerializer.Json<T>()`, MemoryPack with the
-  [Compze.InterprocessObject.MemoryPack](https://www.nuget.org/packages/Compze.InterprocessObject.MemoryPack) plugin,
+  [Compze.Threading.Interprocess.MemoryPack](https://www.nuget.org/packages/Compze.Threading.Interprocess.MemoryPack) plugin,
   or a serializer of your own.
 
 ```csharp

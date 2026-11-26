@@ -1,8 +1,8 @@
 using Compze.Threading;
-using Compze.InterprocessObject.MemoryPack._private;
+using Compze.Threading.Interprocess.MemoryPack._private;
 using Compze.Threading.Interprocess.ResourceAccess;
 
-namespace Compze.InterprocessObject.MemoryPack;
+namespace Compze.Threading.Interprocess.MemoryPack;
 
 ///<summary>Convenience factory methods for creating <see cref="IInterprocessObject{T}"/> instances using MemoryPack serialization.</summary>
 public static class MemoryPackInterprocessObject

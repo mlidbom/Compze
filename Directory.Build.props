@@ -59,8 +59,6 @@
     <UsePackageReference_Compze_Internals_SystemCE Condition="'$(UsePackageReference_Compze_Internals_SystemCE)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Internals.SystemCE.csproj|'))">true</UsePackageReference_Compze_Internals_SystemCE>
     <!-- Compze.Internals.Testing -->
     <UsePackageReference_Compze_Internals_Testing Condition="'$(UsePackageReference_Compze_Internals_Testing)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Internals.Testing.csproj|'))">true</UsePackageReference_Compze_Internals_Testing>
-    <!-- Compze.InterprocessObject.MemoryPack -->
-    <UsePackageReference_Compze_InterprocessObject_MemoryPack Condition="'$(UsePackageReference_Compze_InterprocessObject_MemoryPack)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.InterprocessObject.MemoryPack.csproj|'))">true</UsePackageReference_Compze_InterprocessObject_MemoryPack>
     <!-- Compze.Must -->
     <UsePackageReference_Compze_Must Condition="'$(UsePackageReference_Compze_Must)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Must.csproj|'))">true</UsePackageReference_Compze_Must>
     <!-- Compze.Serialization.Newtonsoft -->
@@ -125,6 +123,8 @@
     <UsePackageReference_Compze_Threading Condition="'$(UsePackageReference_Compze_Threading)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Threading.csproj|'))">true</UsePackageReference_Compze_Threading>
     <!-- Compze.Threading.Interprocess -->
     <UsePackageReference_Compze_Threading_Interprocess Condition="'$(UsePackageReference_Compze_Threading_Interprocess)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Threading.Interprocess.csproj|'))">true</UsePackageReference_Compze_Threading_Interprocess>
+    <!-- Compze.Threading.Interprocess.MemoryPack -->
+    <UsePackageReference_Compze_Threading_Interprocess_MemoryPack Condition="'$(UsePackageReference_Compze_Threading_Interprocess_MemoryPack)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Threading.Interprocess.MemoryPack.csproj|'))">true</UsePackageReference_Compze_Threading_Interprocess_MemoryPack>
     <!-- Compze.Threading.Testing -->
     <UsePackageReference_Compze_Threading_Testing Condition="'$(UsePackageReference_Compze_Threading_Testing)' != 'true' And '$(_FlexRef_SolutionProjects)' != '' And !$(_FlexRef_SolutionProjects.Contains('|Compze.Threading.Testing.csproj|'))">true</UsePackageReference_Compze_Threading_Testing>
     <!-- Compze.TypeIdentifiers -->
