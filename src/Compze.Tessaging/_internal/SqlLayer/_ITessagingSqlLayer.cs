@@ -156,14 +156,14 @@ interface ITessagingSqlLayer
    }
 
    ///<summary>The endpoint catalog's persistence: the one shared, unprefixed table every domain database carries — each<br/>
-   /// endpoint's name, <see cref="EndpointId"/>, creation time, and — while one is running — a description of the process<br/>
-   /// holding its process lock. It is what enforces name uniqueness and, through <see cref="TryTakeProcessLockAsync"/>, the<br/>
-   /// one-process-per-endpoint rule, and what tells administration which endpoints inhabit the database.</summary>
-   ///<remarks>The process lock is exclusivity a live holder holds — a database session for the server engines, an OS lock for<br/>
-   /// the machine-local ones — never a time-bounded lease: no pause, however long, can lose it, and a dead process's lock is<br/>
-   /// released by the infrastructure, so a restart after a crash claims the endpoint immediately. The recorded<br/>
-   /// <see cref="EndpointCatalogEntry.LockHolderDescription"/> is advisory bookkeeping for error messages and administration;<br/>
-   /// the lock itself is the enforcement.</remarks>
+   /// endpoint's name, <see cref="EndpointId"/> and creation time — and the endpoint's process lock. It is what enforces name uniqueness<br/>
+   /// and, through <see cref="TryTakeProcessLockAsync"/>, the one-process-per-endpoint rule, and what tells administration which endpoints<br/>
+   /// inhabit the database.</summary>
+   ///<remarks>The process lock is one of the domain database's process locks, which the database package of each engine provides:<br/>
+   /// exclusivity a live holder holds — a database session for the server engines, an OS lock for SQLite — never a time-bounded<br/>
+   /// lease, so no pause, however long, can lose it, and a dead process's lock is released by the infrastructure, so a restart after a<br/>
+   /// crash claims the endpoint immediately. Taking it records its holder in the database, which<br/>
+   /// <see cref="ProcessLockHolderAsync"/> reads for the loud startup refusal; the lock itself is the enforcement.</remarks>
    public interface IEndpointCatalogSqlLayer
    {
       Task<EndpointCatalogEntry?> GetEntryByNameAsync(string endpointName);
@@ -173,19 +173,18 @@ interface ITessagingSqlLayer
       /// exists, including one a racing process created this instant.</summary>
       Task<bool> TryInsertEntryAsync(string endpointName, EndpointId endpointId, DateTime utcNow);
 
-      ///<summary>Takes the endpoint's process lock iff no other live process holds it, stamping<br/>
-      /// <paramref name="lockHolderDescription"/> as the holder in the same act. Null when another live process holds it — the<br/>
+      ///<summary>Takes the domain database's process lock named <paramref name="lockName"/> for <paramref name="purpose"/> iff no other<br/>
+      /// live process holds it, recording this process as its holder in the same act. Null when another live process holds it — the<br/>
       /// claim is refused immediately: the holder holding proves it alive, so there is nothing to wait for. Disposing the<br/>
       /// returned hold releases the lock for the endpoint's next process; the holding process dying releases it too, through<br/>
       /// the infrastructure. <paramref name="onLockLostWhileHeld"/> reports the one way the lock can be lost without being<br/>
       /// released: the holding database session dying under a live holder — the domain database unreachable from this process.</summary>
-      ///<remarks>The holder description is advisory bookkeeping the loud startup refusal reads; the lock itself is the<br/>
-      /// enforcement. It is stamped as part of taking the lock rather than in a later call so that a live lock and its recorded<br/>
-      /// holder are one fact: a claim refused by a live holder reads that holder's identity, never a blank left by a window<br/>
-      /// between taking the lock and recording who took it. It is deliberately never cleared on release — the next holder's<br/>
-      /// claim overwrites it, and a stale description lingering beside a freed lock is never read, because the description is<br/>
-      /// read only when a claim is refused, which means the lock is held.</remarks>
-      Task<IEndpointProcessLockHold?> TryTakeProcessLockAsync(string endpointName, string lockHolderDescription, Action<Exception> onLockLostWhileHeld);
+      Task<IAsyncDisposable?> TryTakeProcessLockAsync(string lockName, string purpose, Action<Exception> onLockLostWhileHeld);
+
+      ///<summary>Who last recorded itself as the holder of the process lock named <paramref name="lockName"/>, as it took it: what for, which<br/>
+      /// process, on which machine, and since when. Read when a claim is refused, which means the lock is held, so it names the live<br/>
+      /// holder; null when that holder took the lock this instant and hasn't recorded itself yet.</summary>
+      Task<string?> ProcessLockHolderAsync(string lockName);
 
       Task InitAsync();
 
@@ -194,22 +193,11 @@ interface ITessagingSqlLayer
       //src/Compze.Tessaging/dev_docs/WIP/peer-administration.md - and awaits its first consumer.
    }
 
-   ///<summary>The endpoint's held process lock (see <see cref="IEndpointCatalogSqlLayer.TryTakeProcessLockAsync"/>):<br/>
-   /// disposal releases the lock for the endpoint's next process.</summary>
-   public interface IEndpointProcessLockHold : IAsyncDisposable;
-
-   ///<summary>One endpoint's row in the domain database's endpoint catalog: its identity and — advisory bookkeeping — who<br/>
-   /// recorded itself as holding its process lock (see <see cref="IEndpointCatalogSqlLayer"/>).</summary>
-   public class EndpointCatalogEntry(string endpointName, EndpointId endpointId, string? lockHolderDescription)
+   ///<summary>One endpoint's row in the domain database's endpoint catalog: its name and identity (see <see cref="IEndpointCatalogSqlLayer"/>).</summary>
+   public class EndpointCatalogEntry(string endpointName, EndpointId endpointId)
    {
       public string EndpointName { get; } = endpointName;
       internal EndpointId EndpointId { get; } = endpointId;
-
-      ///<summary>Human-readable description of the process that took the endpoint's process lock, stamped as the lock was<br/>
-      /// taken (<see cref="IEndpointCatalogSqlLayer.TryTakeProcessLockAsync"/>). It is never cleared on release, so beside a<br/>
-      /// freed lock it names the last holder rather than nobody; that is harmless because it is read only when a claim is<br/>
-      /// refused, which means the lock is held and this names its live holder. The lock, not this bookkeeping, decides.</summary>
-      internal string? LockHolderDescription { get; } = lockHolderDescription;
    }
 
    public static class EndpointCatalogDatabaseSchemaStrings
@@ -221,7 +209,6 @@ interface ITessagingSqlLayer
       public const string EndpointName = nameof(EndpointName);
       public const string EndpointId = nameof(EndpointId);
       public const string CreatedUtc = nameof(CreatedUtc);
-      public const string LockHolderDescription = nameof(LockHolderDescription);
    }
 
    public static class InboxTessageDatabaseSchemaStrings

@@ -68,7 +68,7 @@ with no declaration; on the heavier backends the interner table simply lives in 
 
 One shared table per domain database — `EndpointCatalog` — is Tessaging's only shared table: domain-level
 data *about* endpoints, inherently shared. Columns: `EndpointName` (primary key), `EndpointId` (unique),
-`CreatedUtc`, and — advisory bookkeeping — the recorded lock holder (`LockHolderDescription`).
+and `CreatedUtc`.
 Its SQL surface is `ITessagingSqlLayer.IEndpointCatalogSqlLayer`, implemented per backend. It enforces:
 
 - **Name uniqueness**: a name only ever belongs to one endpoint. A second endpoint claiming an occupied
@@ -84,7 +84,10 @@ The catalog also tells administration which endpoints inhabit the database
 
 An endpoint runs in exactly one process at a time, enforced by a **process lock** — exclusivity a live
 holder holds, never a time-bounded lease (`EndpointProcessLock`,
-`Compze.Tessaging._private.EndpointCatalog`). A heartbeat lease was the previous design and was abandoned
+`Compze.Tessaging._private.EndpointCatalog`). It is one of the domain database's process locks
+(`IDatabaseProcessLocks`, in `Compze.Sql.Common._internal.ProcessLocks`), named for the endpoint, which each engine's
+database package, such as Compze.Sql.MicrosoftSql, provides: the memory image state store takes another of them for its
+tables. A heartbeat lease was the previous design and was abandoned
 on principle: no timeout can distinguish a paused-but-alive holder from a dead one, so under enough load a
 live holder's lease went stale and a claimant legitimately split the endpoint across two processes.
 
@@ -97,17 +100,18 @@ live holder's lease went stale and a claimant legitimately split the endpoint ac
   endpoint's next process claims it with **no waiting and no manual cleanup** — and no pause, however
   long, can lose a live holder's lock: there is no timeout for load, a debugger, or a machine sleep to
   overrun. SQLite has no server sessions, so there the lock is an `IProcessLock`
-  (`SqliteEndpointProcessLockHold`): a file beside the database file, held open, which every process that can
+  (`SqliteDatabaseProcessLocks`): a file beside the database file, held open, which every process that can
   open the database reaches, and which the OS closes when its process dies, the same way the servers release a
   dead session's locks. An in-memory database's lock is in the temp directory, named for its process too.
 - **A claimant finding the lock held is refused immediately and loudly**
   (`EndpointAlreadyRunningInAnotherProcessException`, naming the holding process): the lock being held is
   itself proof of a live holder, so there is nothing to wait out.
-- **The held session is kept alive by a periodic ping** (`ProcessLockSession`), defeating infrastructure
+- **The held session is kept alive by a periodic ping** (`DatabaseProcessLockSession`), defeating infrastructure
   that reaps idle database sessions. The ping failing means the domain database is unreachable from the
   holding process — the one way a live holder can lose the lock — and is reported loud through the
   background-exception machinery (`EndpointProcessLockSessionLostException`).
-- **The catalog row records the holder's description** — advisory bookkeeping for the refusal message and
+- **Taking the lock records its holder** in the database's `DatabaseProcessLockHolder` table: what it holds the lock
+  for, which process, on which machine, and since when. Advisory bookkeeping for the refusal message and
   administration; the lock itself is the enforcement, so a crashed process's lingering record blocks
   nothing.
 - **Released at disposal**, after the observation drain — once nothing in the process writes to the domain

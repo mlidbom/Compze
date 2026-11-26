@@ -1,5 +1,6 @@
 using Compze.DependencyInjection;
 using Compze.DependencyInjection.Abstractions;
+using Compze.Sql.Common._internal.ProcessLocks;
 using Compze.Sql.Sqlite;
 using Compze.Sql.Sqlite._internal;
 using Compze.Sql.Sqlite.Wiring;
@@ -38,13 +39,14 @@ public static class SqliteTessagingRegistrar
    /// registry its own write gate, which is what lets an advertisement recording commit while a domain transaction is open —<br/>
    /// see <see cref="ISqlitePeerRegistryConnectionPool"/>.</summary>
    public static IComponentRegistrar SqliteTessagingSqlLayer(this IComponentRegistrar registrar, SqliteDomainDatabase domainDatabase) =>
-      registrar.SqliteSchemaContribution((EndpointTableSet tables) => SqliteInboxSqlLayer.SchemaCreationSql(tables))
+      registrar.SqliteDatabaseProcessLocks()
+               .SqliteSchemaContribution((EndpointTableSet tables) => SqliteInboxSqlLayer.SchemaCreationSql(tables))
                .SqliteSchemaContribution((EndpointTableSet tables) => SqliteOutboxSqlLayer.SchemaCreationSql(tables))
                .SqliteSchemaContribution(SqliteEndpointCatalogSqlLayer.SchemaCreationSql)
                .SqliteAuxiliaryDatabaseConnectionPool<ISqlitePeerRegistryConnectionPool>($"{domainDatabase.ConnectionStringName}.PeerRegistry", getConnectionString => new ISqlitePeerRegistryConnectionPool.Pool(getConnectionString))
                .Register(
          Singleton.For<ITessagingSqlLayer.IEndpointCatalogSqlLayer>()
-                  .CreatedBy((ISqliteConnectionPool endpointSqlConnection, SqliteSqlLayerSchemaManager schemaManager) => new SqliteEndpointCatalogSqlLayer(endpointSqlConnection, schemaManager)),
+                  .CreatedBy((ISqliteConnectionPool endpointSqlConnection, SqliteSqlLayerSchemaManager schemaManager, IDatabaseProcessLocks processLocks) => new SqliteEndpointCatalogSqlLayer(endpointSqlConnection, schemaManager, processLocks)),
          Singleton.For<ITessagingSqlLayer.IOutboxSqlLayer>()
                   .CreatedBy((ISqliteConnectionPool endpointSqlConnection, SqliteSqlLayerSchemaManager schemaManager, ITypeIdInterner typeIdInterner, EndpointTableSet tables) => new SqliteOutboxSqlLayer(endpointSqlConnection, schemaManager, typeIdInterner, tables)),
          Singleton.For<ITessagingSqlLayer.IInboxSqlLayer>()

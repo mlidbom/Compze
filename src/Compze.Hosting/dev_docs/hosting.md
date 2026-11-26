@@ -195,13 +195,14 @@ endpoints join one domain database (the whole story:
   build, never sanitized silently.
 - **The domain-level tables are deliberately unprefixed** — the type-id interner, the tevent store, the
   document db, and the endpoint catalog are the domain's data, shared by every endpoint that joins.
-- **One shared table per domain database: the endpoint catalog** — each endpoint's name, `EndpointId`,
-  creation time, and the recorded lock holder. It enforces name uniqueness (a name only ever belongs to one
+- **One shared table per domain database: the endpoint catalog** — each endpoint's name, `EndpointId`
+  and creation time. It enforces name uniqueness (a name only ever belongs to one
   endpoint; an id never silently re-keys itself under a new name — renaming means decommissioning the old
   storage) and the one-process-per-endpoint rule, and it tells administration which endpoints inhabit the
   database.
 - **The process lock** is exclusivity a live holder holds — a session-scoped database lock on a dedicated
-  held connection (an OS-level machine-wide mutex on SQLite, which has no server sessions) — claimed as the
+  held connection (an `IProcessLock` file beside the database on SQLite, which has no server sessions), one of the
+  domain database's process locks, whose holder records itself as it takes it — claimed as the
   first act of starting to listen, never a time-bounded lease. A crashed process's lock is released by the
   infrastructure (its database session dies with it), so the endpoint's next process claims it immediately —
   crash recovery needs no waiting and no manual cleanup — while a claimant finding the lock held has proof

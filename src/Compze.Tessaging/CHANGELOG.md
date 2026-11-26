@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## 0.11.0-alpha
 
+- **An endpoint refused because another process runs it names what the holder holds its process lock for, which process, on which machine, and since when:** `EndpointAlreadyRunningInAnotherProcessException`'s message says "held for running the endpoint Orders, by process 4242 (Orders.Host) on SERVER7, since 2026-11-26 10:15:00 +01:00", where it said "held by process 4242 on SERVER7". The process lock is one of the domain database's process locks, from Compze.Sql.MicrosoftSql and its siblings.
 - **`TessageDispatchingFailedException`'s message says "Remote exception:" before the remote handler's exception,** where it said "Remote exception tessage:".
 - **A tevent runs its handlers in the order they were registered, whatever types they subscribe to, and that order is now a guarantee:** a handler may depend on what the handlers registered before it did. The engine grouped the handlers by the type they subscribe to, so registering a handler for `IUserTevent`, then one for `IUserRegistered`, then another for `IUserTevent`, ran the third before the second, where Compze.Teventive's introduction promised the order of registration.
 - **Requires newer minor versions of other Compze packages:** Compze.Internals.SystemCE 0.10.0-internal (was 0.9.0-internal), Compze.Threading 0.13.0-alpha (was 0.12.0-alpha). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.

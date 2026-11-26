@@ -6,6 +6,7 @@ using Compze.Must;
 using Compze.Tessaging.Endpoints.ExactlyOnce;
 using Compze.Tessaging.Hosting.Testing;
 using Compze.Tessaging._internal.SqlLayer;
+using Compze.Tessaging._private.EndpointCatalog;
 using Compze.Tests.Infrastructure;
 using Compze.Tests.Infrastructure.XUnit;
 
@@ -46,7 +47,7 @@ public class Given_a_domain_database_remembering_a_crashed_processes_catalog_ent
       await catalog.InitAsync();
       (await catalog.TryInsertEntryAsync(RebornEndpointDeclaration.Name, RebornEndpointDeclaration.Id, utcNow: UtcTimeSource.UtcNow - TimeSpan.FromHours(1))).Must().BeTrue();
 
-      var crashedPredecessorHold = await catalog.TryTakeProcessLockAsync(RebornEndpointDeclaration.Name, "process 4242 on CrashedHost", _ => {});
+      var crashedPredecessorHold = await catalog.TryTakeProcessLockAsync(EndpointProcessLock.LockNameOf(RebornEndpointDeclaration.Name), "running the endpoint as the crashed predecessor", _ => {});
       crashedPredecessorHold.Must().NotBeNull();
       await crashedPredecessorHold!.DisposeAsync();
    }

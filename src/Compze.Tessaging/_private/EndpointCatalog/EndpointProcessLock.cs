@@ -22,12 +22,12 @@ static class EndpointProcessLockRegistrar
                                             => new EndpointProcessLock(catalog, endpoint, backgroundExceptionReporter)));
 }
 
-///<summary>The endpoint's process lock: the enforcement of "an endpoint runs in exactly one process at a time", held in the<br/>
-/// domain database's endpoint catalog. Acquiring registers the endpoint in the catalog (asserting loud that its name and<br/>
+///<summary>The endpoint's process lock: the enforcement of "an endpoint runs in exactly one process at a time", a process lock of the<br/>
+/// domain database named for the endpoint. Acquiring registers the endpoint in the catalog (asserting loud that its name and<br/>
 /// <see cref="EndpointId"/> are consistent with what the catalog remembers) and takes the lock; releasing frees it for the<br/>
 /// endpoint's next process.</summary>
-///<remarks>The lock is exclusivity a live holder holds — a database session for the server engines, an OS lock for the<br/>
-/// machine-local ones — never a time-bounded lease: no pause, however long, can lose it. So a claim finding the lock held<br/>
+///<remarks>The lock is exclusivity a live holder holds — a database session for the server engines, an OS lock for SQLite —<br/>
+/// never a time-bounded lease: no pause, however long, can lose it. So a claim finding the lock held<br/>
 /// has proof of a live holder and is refused immediately and loudly<br/>
 /// (<see cref="EndpointAlreadyRunningInAnotherProcessException"/>), naming the holder — while a crashed process's lock is<br/>
 /// released by the infrastructure, so the endpoint's next process claims it with no waiting and no manual cleanup.<br/>
@@ -39,7 +39,7 @@ class EndpointProcessLock
    readonly EndpointConfiguration _endpoint;
    readonly IBackgroundExceptionReporter _backgroundExceptionReporter;
 
-   ITessagingSqlLayer.IEndpointProcessLockHold? _hold;
+   IAsyncDisposable? _hold;
 
    internal EndpointProcessLock(ITessagingSqlLayer.IEndpointCatalogSqlLayer catalog,
                                 EndpointConfiguration endpoint,
@@ -50,16 +50,19 @@ class EndpointProcessLock
       _backgroundExceptionReporter = backgroundExceptionReporter;
    }
 
-   static string LockHolderDescription => $"process {Environment.ProcessId} on {Environment.MachineName}";
+   ///<summary>The name of the process lock in the domain database of the endpoint named <paramref name="endpointName"/>.</summary>
+   internal static string LockNameOf(string endpointName) => $"Compze.Tessaging.Endpoint:{endpointName}";
+
+   string LockName => LockNameOf(_endpoint.Name);
 
    public async Task AcquireAsync() =>
       await TransactionScopeCe.ExecuteAsync(async () =>
       {
          await _catalog.InitAsync().caf();
          await RegisterTheEndpointInTheCatalogAsync().caf();
-         //Taking the lock stamps the holder in the same act, so a live lock and its recorded holder are one fact: a process
+         //Taking the lock records its holder in the same act, so a live lock and its recorded holder are one fact: a process
          //refused here reads this holder's identity, never a blank left by a gap between taking the lock and recording it.
-         _hold = await _catalog.TryTakeProcessLockAsync(_endpoint.Name, LockHolderDescription, ReportTheLockLostWhileHeld).caf();
+         _hold = await _catalog.TryTakeProcessLockAsync(LockName, $"running the endpoint {_endpoint.Name}", ReportTheLockLostWhileHeld).caf();
          if(_hold == null) await ThrowRefusedBecauseALiveProcessHoldsTheLockAsync().caf();
       }, TransactionScopeOption.Suppress).caf();
 
@@ -69,7 +72,7 @@ class EndpointProcessLock
       var hold = _hold;
       _hold = null;
 
-      //Releasing is only ending the lock's session (or closing sqlite's lock file): the recorded holder is deliberately left as it was, to be
+      //Releasing is only ending the lock's session (or releasing sqlite's lock file): the recorded holder is deliberately left as it was, to be
       //overwritten by the next process's claim. A reader only reads the holder after being refused the lock - so it reads
       //it while the lock is held, never beside this freed one - which is why there is nothing to clear here.
       await hold.DisposeAsync().caf();
@@ -99,11 +102,11 @@ class EndpointProcessLock
 
    async Task ThrowRefusedBecauseALiveProcessHoldsTheLockAsync()
    {
-      var entry = await _catalog.GetEntryByNameAsync(_endpoint.Name).caf();
-      //The holder is stamped in the same act as taking the lock, so a live holder reads back non-null - a null here is the one
-      //remaining sliver: another process took the lock this instant and has not finished stamping itself yet. Named as that.
+      var holder = await _catalog.ProcessLockHolderAsync(LockName).caf();
+      //The holder is recorded in the same act as taking the lock, so a live holder reads back non-null - a null here is the one
+      //remaining sliver: another process took the lock this instant and has not finished recording itself yet. Named as that.
       throw new EndpointAlreadyRunningInAnotherProcessException(
-         $"Endpoint '{_endpoint.Name}' ({_endpoint.Id}) is already running in another process: its process lock is held by {entry?.LockHolderDescription ?? "a process that took the lock this instant and is still recording itself"}. "
+         $"Endpoint '{_endpoint.Name}' ({_endpoint.Id}) is already running in another process: its process lock is held {holder ?? "by a process that took the lock this instant and is still recording itself"}. "
        + "The lock is held by a live process - a dead one's lock is released by the infrastructure - so there is nothing to wait out. "
        + "An endpoint runs in exactly one process at a time; two processes claiming it is a misconfiguration, typically a double deployment.");
    }
