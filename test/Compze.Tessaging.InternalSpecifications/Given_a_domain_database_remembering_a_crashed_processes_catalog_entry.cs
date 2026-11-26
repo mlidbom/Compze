@@ -15,9 +15,9 @@ using Compze.Tests.Infrastructure.XUnit;
 
 namespace Compze.Tessaging.InternalSpecifications;
 
-///<summary>A crashed process never cleans up its catalog bookkeeping: its process lock is released by the infrastructure —<br/>
-/// the database session or OS lock dies with the process — but its catalog entry, recorded lock-holder description<br/>
-/// included, lingers. The endpoint's next process must not fail loud on that corpse: the lock, not the bookkeeping,<br/>
+///<summary>A crashed process never cleans up its bookkeeping: its process lock is released by the infrastructure —<br/>
+/// the database session or OS lock dies with the process — but its catalog entry, and its record as the lock's holder,<br/>
+/// linger. The endpoint's next process must not fail loud on that corpse: the lock, not the bookkeeping,<br/>
 /// decides — a free lock is claimed immediately, with no waiting and no manual cleanup.</summary>
 public class Given_a_domain_database_remembering_a_crashed_processes_catalog_entry : UniversalTestBase
 {
@@ -38,9 +38,9 @@ public class Given_a_domain_database_remembering_a_crashed_processes_catalog_ent
       protected override void RegisterComponents(IComponentRegistrar registrar) => registrar.RequireTessagingInternalSpecificationTypeMappings();
    }
 
-   //The crash is scripted through the catalog sql layer: a predecessor took the process lock - which stamps its holder into
-   //the entry - and then vanished. Disposing its hold reproduces exactly what a killed process leaves behind: the lock
-   //released by the infrastructure, but its catalog entry and recorded lock-holder description still in place.
+   //The crash is scripted through the catalog sql layer: a predecessor took the process lock - which records its holder -
+   //and then vanished. Disposing its hold reproduces exactly what a killed process leaves behind: the lock released by
+   //the infrastructure, but its catalog entry and its record as the lock's holder still in place.
    protected override async Task InitializeAsyncInternal()
    {
       var catalog = _rebornEndpoint.ServiceLocator.Resolve<ITessagingSqlLayer.IEndpointCatalogSqlLayer>();

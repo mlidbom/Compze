@@ -40,7 +40,7 @@ public class Given_a_memory_image_state_store_kept_in_files_starting_from_a_Memo
 
    ///<summary>Whether <paramref name="fileName"/> names a file of the store's lock, which its own folder holds while a store has loaded: the lock<br/>
    /// file, and on Unix the file beside it in which its holder records itself.</summary>
-   static bool IsOfTheStoresLock(string fileName) => fileName.StartsWith("memory-image-state-store.lock", StringComparison.Ordinal);
+   static bool IsOfTheStoresLock(string fileName) => fileName is "memory-image-state-store.lock" or "memory-image-state-store.holder";
 
    ///<summary>The store last started.</summary>
    IDependencyInjectionContainer Store => _store!;

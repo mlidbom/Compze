@@ -87,7 +87,7 @@ public class Given_a_memory_image_state_store_kept_in_files : UniversalTestBase
 
    ///<summary>Whether <paramref name="fileName"/> names a file of the store's lock, which its own folder holds while a store has loaded: the lock<br/>
    /// file, and on Unix the file beside it in which its holder records itself.</summary>
-   static bool IsOfTheStoresLock(string fileName) => fileName.StartsWith("memory-image-state-store.lock", StringComparison.Ordinal);
+   static bool IsOfTheStoresLock(string fileName) => fileName is "memory-image-state-store.lock" or "memory-image-state-store.holder";
 
    ///<summary>Whether the specifications run on Unix, where another program can replace the store's own folder while the store holds the lock<br/>
    /// in it: Windows refuses to delete a file that is open, as the lock is.</summary>
