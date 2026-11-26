@@ -260,7 +260,7 @@ public class TeventMigrationTest : TeventMigrationTestBase
          var container = CreateContainerForTeventStoreType(() => migrations);
          toDispose.Add(container);
 
-         var id = new TaggregateId();
+         var id = TaggregateId.New();
 
          UtcTimeSource.Test.FrozenAtUtcNow().Run(() =>
          {
@@ -331,7 +331,7 @@ public class TeventMigrationTest : TeventMigrationTestBase
          var container = CreateContainerForTeventStoreType(() => migrations);
          toDispose.Add(container);
 
-         var id = new TaggregateId();
+         var id = TaggregateId.New();
 
          UtcTimeSource.Test.FrozenAtUtcNow().Run(() =>
          {
@@ -408,7 +408,7 @@ public class TeventMigrationTest : TeventMigrationTestBase
          var container = CreateContainerForTeventStoreType(() => migrations);
          toDispose.Add(container);
 
-         var id = new TaggregateId();
+         var id = TaggregateId.New();
 
          UtcTimeSource.Test.FrozenAtUtcNow().Run(() =>
          {
@@ -458,7 +458,7 @@ public class TeventMigrationTest : TeventMigrationTestBase
          toDispose.Add(container);
          UtcTimeSource.Test.FrozenAtUtc("2001-01-01 12:00").Run(() =>
          {
-            var id = new TaggregateId();
+            var id = TaggregateId.New();
             var initialTaggregate = TestTaggregate.FromTevents(id, EnumerableCE.OfTypes<Ec1, E1>());
             var expectedHistoryAfterFirstMigration = TestTaggregate.FromTevents(id, EnumerableCE.OfTypes<Ec1, E2, E1>()).History;
             var expectedHistoryAfterSecondMigration = TestTaggregate.FromTevents(id, EnumerableCE.OfTypes<Ec1, E2, E3, E1>()).History;
@@ -503,7 +503,7 @@ public class TeventMigrationTest : TeventMigrationTestBase
          toDispose.Add(container);
          UtcTimeSource.Test.FrozenAtUtc("2001-01-01 12:00").Run(() =>
          {
-            var id = new TaggregateId();
+            var id = TaggregateId.New();
             var initialTaggregate = TestTaggregate.FromTevents(id, EnumerableCE.OfTypes<Ec1, E1>());
             var expectedHistoryAfterFirstMigration = TestTaggregate.FromTevents(id, EnumerableCE.OfTypes<Ec1, E1, E2>()).History;
             var expectedHistoryAfterSecondMigration = TestTaggregate.FromTevents(id, EnumerableCE.OfTypes<Ec1, E1, E3, E2>()).History;
@@ -557,7 +557,7 @@ public class TeventMigrationTest : TeventMigrationTestBase
       var otherProcessContainer = container.CloneAndBuild();
       await using var processContainer = otherProcessContainer;
 
-      var id = new TaggregateId();
+      var id = TaggregateId.New();
 
       //Published with the time frozen, so that their time stamps have the microsecond precision that every supported database keeps.
       var taggregate = UtcTimeSource.Test.FrozenAtUtcNow().Run(() => TestTaggregate.FromTevents(

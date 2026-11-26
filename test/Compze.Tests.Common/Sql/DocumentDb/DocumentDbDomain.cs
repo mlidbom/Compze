@@ -6,7 +6,7 @@ namespace Compze.Tests.Common.Sql.DocumentDb;
 
 public class Dog : IEntity
 {
-   public EntityId Id { get; set; } = new();
+   public EntityId Id { get; set; } = EntityId.New();
    public string Name { get; [UsedImplicitly] set; } = "John Doe Doggy";
 }
 

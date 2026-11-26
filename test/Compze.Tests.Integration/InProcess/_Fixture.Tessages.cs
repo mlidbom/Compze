@@ -54,6 +54,6 @@ class MyStrictlyLocalRegisterGreeterReturningTotalCountTommand : StrictlyLocal.T
 class MyTaggregateTevent : ITaggregateTevent
 {
    public int TaggregateVersion => 1;
-   public TaggregateId TaggregateId { get; } = new();
+   public TaggregateId TaggregateId { get; } = TaggregateId.New();
    public DateTime UtcTimeStamp { get; } = DateTime.UtcNow;
 }

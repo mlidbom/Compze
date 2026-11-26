@@ -22,7 +22,7 @@ namespace Compze.Tests.Integration.CQRS.MemoryImageStateStore;
 /// must never come to: vocabs in "vocab", sentences in "sentences", each in the default layout.</summary>
 public class Given_a_memory_image_state_store_whose_files_are_on_a_file_system_in_memory : UniversalTestBase
 {
-   static readonly JsonSerializerOptions Options = new() { WriteIndented = true, Converters = { new TaggregateIdAsAGuid() } };
+   static readonly JsonSerializerOptions Options = new() { WriteIndented = true };
    readonly DirectoryInfo _folder = new(Path.Combine(Path.GetTempPath(), "compze-state-store-files-in-memory", Guid.NewGuid().ToString("N")));
    readonly IDependencyInjectionContainer _store;
 

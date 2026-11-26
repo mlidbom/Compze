@@ -119,11 +119,11 @@ public class Experiment_with_unifying_tevents_and_tommands_test : UniversalTestB
    {
       public class RegisterUserTypermediaTommand : Remotable.AtMostOnce.AtMostOnceTypermediaTommand<RegisterUserResult>
       {
-         public TaggregateId UserId { get; private set; } = new();
+         public TaggregateId UserId { get; private set; } = TaggregateId.New();
 
          RegisterUserTypermediaTommand() {}
 
-         internal static RegisterUserTypermediaTommand Create() => new() { Id = new TessageId() };
+         internal static RegisterUserTypermediaTommand Create() => new() { Id = TessageId.New() };
       }
    }
 

@@ -43,6 +43,6 @@ public class Given_a_pure_client_connected_to_no_endpoint : UniversalTestBase
    class SomeTommand : Remotable.AtMostOnce.AtMostOnceTypermediaTommand
    {
       SomeTommand() {}
-      public static SomeTommand Create() => new() { Id = new TessageId() };
+      public static SomeTommand Create() => new() { Id = TessageId.New() };
    }
 }

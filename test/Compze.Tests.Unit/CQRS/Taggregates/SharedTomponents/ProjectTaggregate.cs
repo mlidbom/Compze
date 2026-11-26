@@ -74,7 +74,7 @@ class ProjectTaggregate : Taggregate<ProjectTaggregate, IProjectTevent, ProjectT
    internal static ProjectTaggregate CreateWhoseRestoreLeavesOutItsChecklist()
    {
       var project = new ProjectTaggregate(restoreLeavesOutTheChecklist: true);
-      project.Publish(new ProjectTevent.Created(new TaggregateId()));
+      project.Publish(new ProjectTevent.Created(TaggregateId.New()));
       return project;
    }
 
@@ -94,7 +94,7 @@ class ProjectTaggregate : Taggregate<ProjectTaggregate, IProjectTevent, ProjectT
    public static ProjectTaggregate Create()
    {
       var project = new ProjectTaggregate();
-      project.Publish(new ProjectTevent.Created(new TaggregateId()));
+      project.Publish(new ProjectTevent.Created(TaggregateId.New()));
       return project;
    }
 

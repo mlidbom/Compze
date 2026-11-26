@@ -5,7 +5,7 @@ using Compze.Abstractions;
 
 namespace Compze.Tests.Integration.CQRS.MemoryImageStateStore;
 
-///<summary>Serializes a <see cref="TaggregateId"/> as the GUID it wraps, as <see cref="TaggregateIdAsAGuid"/> does, and records each id it<br/>
+///<summary>Serializes a <see cref="TaggregateId"/> as the GUID it wraps, as <see cref="EntityIdJsonConverter"/> does, and records each id it<br/>
 /// writes, so that a specification sees whose snapshots the store serializes. Told to, it refuses to write one id, as a snapshot that<br/>
 /// can't be serialized.</summary>
 sealed class WatchedTaggregateIdConverter : JsonConverter<TaggregateId>

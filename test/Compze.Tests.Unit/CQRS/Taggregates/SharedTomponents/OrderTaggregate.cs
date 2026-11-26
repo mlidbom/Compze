@@ -77,7 +77,7 @@ class OrderTaggregate : Taggregate<OrderTaggregate, IOrderTevent, OrderTevent, I
    public static OrderTaggregate Create()
    {
       var order = new OrderTaggregate();
-      order.Publish(new OrderTevent.Created(new TaggregateId()));
+      order.Publish(new OrderTevent.Created(TaggregateId.New()));
       return order;
    }
 

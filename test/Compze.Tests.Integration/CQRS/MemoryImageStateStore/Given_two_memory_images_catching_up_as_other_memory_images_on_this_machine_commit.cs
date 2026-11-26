@@ -26,7 +26,7 @@ namespace Compze.Tests.Integration.CQRS.MemoryImageStateStore;
 /// vocab the first added, and what the first's <see cref="IMemoryImageStateStore.ChangesCommittedByOtherMemoryImages"/> tells is collected.</summary>
 public class Given_two_memory_images_catching_up_as_other_memory_images_on_this_machine_commit : UniversalTestBase
 {
-   static readonly JsonSerializerOptions Options = new() { Converters = { new TaggregateIdAsAGuid() } };
+   static readonly JsonSerializerOptions Options = new();
    static readonly WaitTimeout LongerThanCatchingUpCouldTake = WaitTimeout.Seconds(10);
    readonly IDependencyInjectionContainer _theFirst;
    readonly IDependencyInjectionContainer _theSecond;

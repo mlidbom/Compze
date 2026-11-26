@@ -61,15 +61,11 @@ namespace Compze.Serialization.Newtonsoft.InternalSpecifications
          roundTripped.Must().DeepEqual(original);
       }
 
-      internal class PersonId(Guid id) : TentityId(id)
-      {
-         public PersonId() : this(Guid.NewGuid()) {}
-      }
+      ///<summary>An id type of a consumer's own, shaped as Compze's own are: no constructor that generates an id, and the one constructor's<br/>
+      /// parameter named as the <see cref="Abstractions.Infrastructure.ValueWrapper{TValue}.Value"/> it sets.</summary>
+      internal class PersonId(Guid value) : TentityId(value);
 
-      internal class UserId(Guid id) : PersonId(id)
-      {
-         public UserId() : this(Guid.NewGuid()){}
-      }
+      internal class UserId(Guid value) : PersonId(value);
 
       internal class User(UserId id) : Person(id)
       {
@@ -79,7 +75,7 @@ namespace Compze.Serialization.Newtonsoft.InternalSpecifications
       internal class Person(PersonId id)
       {
          [Obsolete("for serializer")]
-         public Person():this(new PersonId()) {}
+         public Person():this(new PersonId(Guid.NewGuid())) {}
 
          public virtual PersonId Id { get; private set; } = id;
       }

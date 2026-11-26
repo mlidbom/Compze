@@ -118,7 +118,7 @@ public class TeventStoreTests : UniversalTestBase
       var teventStore = scope.TeventStore();
 
       var user = new User();
-      user.Register("email@email.se", "password", new TaggregateId());
+      user.Register("email@email.se", "password", TaggregateId.New());
 
       using(new TransactionScope())
       {
@@ -140,7 +140,7 @@ public class TeventStoreTests : UniversalTestBase
          using var scope = container.BeginScope();
          var teventStore = scope.Resolver.TeventStore();
 
-         user.Register("email@email.se", "password", new TaggregateId());
+         user.Register("email@email.se", "password", TaggregateId.New());
 
          TransactionScopeCe.Execute(() =>
          {

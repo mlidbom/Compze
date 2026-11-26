@@ -18,7 +18,7 @@ static class EndpointInformationQuerySerializer
 {
    static readonly JsonSerializerOptions WireFormat = new()
    {
-      Converters = { new EndpointIdJsonConverter(), new EndpointAddressJsonConverter() }
+      Converters = { new EndpointAddressJsonConverter() }
    };
 
    public static string SerializeQuery(ITessage query) => JsonSerializer.Serialize(query, query.GetType(), WireFormat);
@@ -26,12 +26,6 @@ static class EndpointInformationQuerySerializer
 
    public static string SerializeResult(object result) => JsonSerializer.Serialize(result, result.GetType(), WireFormat);
    public static TResult DeserializeResult<TResult>(string json) => JsonSerializer.Deserialize<TResult>(json, WireFormat)!;
-
-   class EndpointIdJsonConverter : JsonConverter<EndpointId>
-   {
-      public override EndpointId Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) => new(reader.GetGuid());
-      public override void Write(Utf8JsonWriter writer, EndpointId value, JsonSerializerOptions options) => writer.WriteStringValue(value.Value);
-   }
 
    class EndpointAddressJsonConverter : JsonConverter<EndpointAddress>
    {

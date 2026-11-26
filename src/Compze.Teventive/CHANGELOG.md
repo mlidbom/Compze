@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## 0.7.1-alpha
 
+- **Built against `TessageId.New()` of Compze.Tessaging.Abstractions, which replaces `TessageId`'s parameterless constructor:** the released version calls the constructor, which the new Compze.Tessaging.Abstractions no longer has, and would fail beside it with a `MissingMethodException`. Nothing else changed.
 - **Built against `LazyCE` in Compze.Threading, where it moved from Compze.Internals.SystemCE:** the released version looks for it in Compze.Internals.SystemCE, and would fail beside the new one with a `TypeLoadException`. Nothing else changed.
 - **Requires newer minor versions of other Compze packages:** Compze.Internals.SystemCE 0.10.0-internal (was 0.9.0-internal), Compze.Threading 0.13.0-alpha (was 0.12.0-alpha). Upgrading to this version upgrades each package listed here too, so their changelogs apply to this upgrade as well.
 

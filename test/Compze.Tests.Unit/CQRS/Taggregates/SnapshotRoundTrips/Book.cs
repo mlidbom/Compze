@@ -52,7 +52,7 @@ class Book : Taggregate<Book, IBookTevent, BookTevent, IBookTevent<IBookTevent>,
    public static Book Create(BookServices services, string title, string author)
    {
       var book = new Book(services);
-      book.Publish(new BookTevent.Created(new TaggregateId(), title, author));
+      book.Publish(new BookTevent.Created(TaggregateId.New(), title, author));
       return book;
    }
 

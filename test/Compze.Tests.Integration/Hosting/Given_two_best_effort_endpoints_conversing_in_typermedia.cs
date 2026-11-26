@@ -120,7 +120,7 @@ public class Given_two_best_effort_endpoints_conversing_in_typermedia : Universa
       public static RegisterGreetingTypermediaTommand Create(string greeting) => new()
                                                                                  {
                                                                                     Greeting = greeting,
-                                                                                    Id = new TessageId()
+                                                                                    Id = TessageId.New()
                                                                                  };
 
       public string Greeting { get; private init; } = "";
@@ -138,7 +138,7 @@ public class Given_two_best_effort_endpoints_conversing_in_typermedia : Universa
       public static RegisterGreetingWithAResolvedFlourishTommand Create(string greeting) => new()
                                                                                             {
                                                                                                Greeting = greeting,
-                                                                                               Id = new TessageId()
+                                                                                               Id = TessageId.New()
                                                                                             };
 
       public string Greeting { get; private init; } = "";
@@ -151,7 +151,7 @@ public class Given_two_best_effort_endpoints_conversing_in_typermedia : Universa
       public static RegisterGreetingThroughTheCoreAsyncVerbTommand Create(string greeting) => new()
                                                                                               {
                                                                                                  Greeting = greeting,
-                                                                                                 Id = new TessageId()
+                                                                                                 Id = TessageId.New()
                                                                                               };
 
       public string Greeting { get; private init; } = "";

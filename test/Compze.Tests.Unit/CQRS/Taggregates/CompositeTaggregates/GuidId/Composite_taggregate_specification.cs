@@ -27,7 +27,7 @@ public static partial class Composite_taggregate_specification
 
       public After_constructing_root_taggregate_with_name_root_and_slaving_a_tuery_model_to_the_taggregates_tevents()
       {
-         _taggregateId = new TaggregateId();
+         _taggregateId = TaggregateId.New();
          _taggregate = new CompositeTaggregate("root", _taggregateId);
          _queryModel = new RootQueryModel();
          ITaggregate<ICompositeTaggregateTevent> taggregate = _taggregate;
