@@ -1,3 +1,5 @@
+using System.Transactions;
+using Compze.Internals.SystemCE._private;
 using Compze.Internals.SystemCE.ThreadingCE.Async;
 using Compze.Internals.SystemCE.ThreadingCE.TasksCE;
 
@@ -22,17 +24,102 @@ partial class DbConnectionPool<TConnection, TCommand>
       readonly IAsyncLockCE _serializedAccess = IAsyncLockCE.WithDefaultTimeout();
       TConnection? _connection;
 
-      internal TransactionSpecificConnection(DbConnectionPool<TConnection, TCommand> pool) => _pool = pool;
+      //PROBE: operations using the connection now, and where the last one entered.
+      int _probeOperationsInProgress;
+      volatile string? _probeLastEntry;
+
+      internal TransactionSpecificConnection(DbConnectionPool<TConnection, TCommand> pool, Transaction transaction)
+      {
+         _pool = pool;
+         transaction.EnlistVolatile(new ProbeCommitChecker(this), EnlistmentOptions.None);
+      }
 
       ///<summary>Takes the lock, opens the connection if none has opened, and passes it to <paramref name="func"/>.</summary>
       internal TResult Locked<TResult>(Func<TConnection, TResult> func) =>
-         _serializedAccess.Locked(() => func(_connection ??= _pool.OpenConnection()));
+         _serializedAccess.Locked(() =>
+         {
+            ProbeEnter();
+            try
+            {
+               return func(_connection ??= _pool.OpenConnection());
+            }
+            finally
+            {
+               Interlocked.Decrement(ref _probeOperationsInProgress);
+            }
+         });
 
       ///<summary>Awaits the lock, opens the connection if none has opened, and passes it to <paramref name="func"/>.</summary>
       internal async Task<TResult> LockedAsync<TResult>(Func<TConnection, Task<TResult>> func) =>
-         await _serializedAccess.LockedAsync(async () => await func(_connection ??= await _pool.OpenConnectionAsync().caf()).caf()).caf();
+         await _serializedAccess.LockedAsync(async () =>
+         {
+            ProbeEnter();
+            try
+            {
+               return await func(_connection ??= await _pool.OpenConnectionAsync().caf()).caf();
+            }
+            finally
+            {
+               Interlocked.Decrement(ref _probeOperationsInProgress);
+            }
+         }).caf();
+
+      void ProbeEnter()
+      {
+         var inProgress = Interlocked.Increment(ref _probeOperationsInProgress);
+         var previousEntry = _probeLastEntry;
+         _probeLastEntry = Environment.StackTrace;
+         if(inProgress > 1)
+            ProbeLog.Write($"""
+                            PROBE TransactionSpecificConnection: {inProgress} operations use the transaction's connection at once (a nested use on one flow, or two flows).
+                            ==== The previous entry:
+                            {previousEntry}
+                            ==== This entry:
+                            {_probeLastEntry}
+                            """);
+      }
+
+      string? ProbeInUse() => Volatile.Read(ref _probeOperationsInProgress) == 0 ? null : $"{_probeOperationsInProgress} operation(s) in progress, the last entered at:{Environment.NewLine}{_probeLastEntry}";
 
       ///<summary>Disposes the connection, if one opened, once the operations using it have released the lock.</summary>
-      public void Dispose() => _serializedAccess.Locked(() => _connection?.Dispose());
+      public void Dispose() => _serializedAccess.Locked(() =>
+      {
+         if(ProbeInUse() is {} inUse)
+         {
+            var message = $"""
+                           PROBE TransactionSpecificConnection: disposing the transaction's connection while {inUse}
+                           ==== Disposing at:
+                           {Environment.StackTrace}
+                           """;
+            ProbeLog.Write(message);
+            throw new InvalidOperationException(message);
+         }
+
+         _connection?.Dispose();
+      });
+
+      sealed class ProbeCommitChecker(TransactionSpecificConnection connection) : IEnlistmentNotification
+      {
+         public void Prepare(PreparingEnlistment preparingEnlistment)
+         {
+            if(connection.ProbeInUse() is {} inUse)
+            {
+               var message = $"""
+                              PROBE TransactionSpecificConnection: the transaction prepares to commit while {inUse}
+                              ==== Preparing at:
+                              {Environment.StackTrace}
+                              """;
+               ProbeLog.Write(message);
+               preparingEnlistment.ForceRollback(new InvalidOperationException(message));
+               return;
+            }
+
+            preparingEnlistment.Prepared();
+         }
+
+         public void Commit(Enlistment enlistment) => enlistment.Done();
+         public void Rollback(Enlistment enlistment) => enlistment.Done();
+         public void InDoubt(Enlistment enlistment) => enlistment.Done();
+      }
    }
 }

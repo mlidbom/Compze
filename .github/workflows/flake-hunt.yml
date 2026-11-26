@@ -66,7 +66,7 @@ jobs:
 
     env:
       HUNTED_TEST_PROJECT: samples/AccountManagement/test/AccountManagement.Tests.PerformanceInternals/AccountManagement.Tests.PerformanceInternals.csproj
-      RUNS_PER_RUNNER: "40"
+      RUNS_PER_RUNNER: "25"
       RUNTIME_ASYNC: "true"
       COMPOSABLE_MACHINE_SLOWNESS: "5.0"
       COMPOSABLE_PERFORMANCE_TESTS_STRESS_TEST_ONLY: "true"
@@ -128,6 +128,12 @@ jobs:
             fi
           done
           echo "$failures of $RUNS_PER_RUNNER runs failed."
+          probe_log="$COMPZE_TEST_DIAGNOSTICS_DIRECTORY/probe.log"
+          if [ -f "$probe_log" ]; then
+            echo "::error::A probe fired"
+            cat "$probe_log"
+            failures=$((failures + 1))
+          fi
           [ "$failures" -eq 0 ]
 
       - name: Analyze dumps

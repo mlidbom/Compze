@@ -125,7 +125,7 @@ partial class DbConnectionPool<TConnection, TCommand> : IDbConnectionPool<TConne
                                                 {
                                                    DurableResourcesOfTransactions.TakesPart(transaction, DurableResource.ThatCanShareItsTransaction($"a database connection, {typeof(TConnection).Name}"));
                                                    transaction.OnCompleted(action: () => DisposeTheConnectionOfTheCompletedTransaction(transactionLocalIdentifier));
-                                                   return new TransactionSpecificConnection(this);
+                                                   return new TransactionSpecificConnection(this, transaction);
                                                 }));
    }
 

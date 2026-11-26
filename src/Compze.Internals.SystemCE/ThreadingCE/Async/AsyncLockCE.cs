@@ -30,6 +30,32 @@ public interface IAsyncLockCE
    {
       readonly SemaphoreSlim _semaphore = new(1, 1);
       readonly AsyncLocal<int> _lockEntranceCount = new();
+      //PROBE: which hold this flow re-enters on, and the hold that has the semaphore now.
+      readonly AsyncLocal<ProbeHold?> _probeHoldOfThisFlow = new();
+      volatile ProbeHold? _probeCurrentHold;
+      sealed class ProbeHold(string acquiredAt) { public readonly string AcquiredAt = acquiredAt; }
+
+      void ProbeAcquired()
+      {
+         var hold = new ProbeHold(Environment.StackTrace);
+         _probeCurrentHold = hold;
+         _probeHoldOfThisFlow.Value = hold;
+      }
+
+      void ProbeReEntering()
+      {
+         var hold = _probeHoldOfThisFlow.Value;
+         if(ReferenceEquals(hold, _probeCurrentHold)) return;
+         var message = $"""
+                        PROBE AsyncLockCE: a flow re-enters on a hold that has ended, while {(_probeCurrentHold == null ? "no one" : "another flow")} holds the lock.
+                        ==== The ended hold was acquired at:
+                        {hold?.AcquiredAt ?? "(no hold recorded)"}
+                        ==== The re-entry is at:
+                        {Environment.StackTrace}
+                        """;
+         Compze.Internals.SystemCE._private.ProbeLog.Write(message);
+         throw new InvalidOperationException(message);
+      }
       readonly LockTimeout _timeout;
       readonly Lock _timeoutLock = new();
 
@@ -56,7 +82,8 @@ public interface IAsyncLockCE
             {
                throw RegisterTimeoutException();
             }
-         }
+            ProbeAcquired();
+         } else ProbeReEntering();
 
          _lockEntranceCount.Value += 1;
          await using var exit = new AsyncDisposable(Exit).ConfigureAwait(false);//Analyzer does not understand caf() here for some reason and emits a warning.
@@ -73,7 +100,8 @@ public interface IAsyncLockCE
             {
                throw RegisterTimeoutException();
             }
-         }
+            ProbeAcquired();
+         } else ProbeReEntering();
 
          _lockEntranceCount.Value += 1;
          using var exit = new Disposable(Exit);
@@ -86,6 +114,7 @@ public interface IAsyncLockCE
          if(_lockEntranceCount.Value == 0)
          {
             UpdateAnyRegisteredTimeoutExceptions();
+            _probeCurrentHold = null;
             _semaphore.Release();
          }
       }
