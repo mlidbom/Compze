@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## 0.6.0-alpha
 
+- **A transaction's connection goes back to the database provider's pool only once the provider is done with the completed transaction on it.** The pool disposed the connection in a completion handler it subscribed before the connection opened, so the handler ran before the provider's own, which the provider subscribes as the connection takes part in the transaction. The connection was back in the provider's pool while the provider still handled the completed transaction on it. The connection now subscribes its disposal once it has opened. See Compze.Sql.MicrosoftSql's changelog for what a consumer saw.
 - **Internal: what the memory image state store kept in database tables needs from Compze's SQL layers,** for the packages Compze.Teventive.MemoryImageStateStore.Sqlite, .MicrosoftSql, .PostgreSql and .MySql.
 - **A transaction that aborts while one of its operations uses its connection, as when the connection's own transaction can't take part in it, no longer hides why behind an `ObjectDisposedException`.** The transaction's completion disposed the connection's lock under the operation, which then failed releasing it, throwing that instead of what aborted the transaction.
 - **Internal: what Compze's SQL layers need to say that a transaction holds a durable resource already,** with a message naming the connection and the rule. See their changelogs for what a consumer sees.
