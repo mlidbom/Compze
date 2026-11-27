@@ -10,6 +10,9 @@ A design, 2026-11-27, with Magnus's decisions at its end being put to him one at
   exactly-once handler: it now chooses between at-least-once tommands and none.
 - **Change 5 and decision 6 are dropped,** after Magnus's question on topic 2: an endpoint that converses with no other
   was an unmeasured optimization.
+- **Change 5 and decision 6 are on hold:** Magnus asked on topic 2 whether an endpoint that converses with no other
+  differs enough from one that simply has no peers to be worth building, then came to doubt his own conclusion, and
+  holds the decision (2026-11-27).
 - **Decision 5** is settled by compze-agent-rep's judgment, which Magnus can overrule on his topic 73:
   `StopAsync(CancellationToken)`, keeping today's drain.
 - **Increment 1 is built** (cancellation, and the stop that lets go), in three steps, with one change to the design
