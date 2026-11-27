@@ -21,15 +21,19 @@ function C-Get-CompzeUpgradeReport {
       that has a newer version: the other Compze packages the
       upgrade brings along, calling out a patch that brings a minor version, the references to raise with it, and the
       changelog sections in between as released, read at the release tags of this Compze checkout, so it fetches the
-      latest tags first.
+      latest tags first. A Compze package requires an exact version of each Compze package whose internals it uses, so it
+      brings that one along at exactly its version, and the report names any the solution has newer versions of: NuGet
+      warns about such a pairing (NU1608), or refuses it (NU1107).
     - For each such upgrade, also the Compze packages of the solution it leaves behind: those that depend on a package it
       raises, the upgraded one or one it brings along, and stay at a version built against an older version of it. For
       each, whether it may use that package's internals (an InternalsVisibleTo grant in that package's project); whether
       a Compze release checked it beside the new version, as the post-release binding check checks the newest version of
       every Compze package against the newest of every other; and the version of it that the release of the upgrade's
       version had, to upgrade it to as well. One that may use internals and no release checked is marked UNCHECKED, ON
-      INTERNALS: that is what fails at run time. Read at the commit the upgrade's package records as its build, or, for
-      an older release that records none, at its release tag.
+      INTERNALS: that is what fails at run time. One whose version requires an exact version of what the upgrade raises,
+      as Compze's packages released since they require exact versions do, says itself that it uses those internals: it is
+      marked REQUIRES EXACT VERSIONS, and NuGet warns about it or refuses it. Read at the commit the upgrade's package
+      records as its build, or, for an older release that records none, at its release tag.
 
     What an upgrade breaks in the solution's code is not in the report: upgrade, and the build names it, once every
     project builds against the version it runs with, which transitive pinning makes sure of.
@@ -314,17 +318,24 @@ function C-Get-CompzeUpgradeReport {
         $otherGraphs = @($graphs | Where-Object { $raisedGraphs -notcontains $_ })
         $upgradedAlong = @()
         $addedAlong = @()
+        $exactVersionsNewerInTheSolution = @()
         foreach ($dependencyId in $manifest.CompzeDependencyFloors.Keys) {
             $floor = $manifest.CompzeDependencyFloors[$dependencyId]
+            $isExactVersion = $manifest.CompzeExactVersionDependencies.Contains($dependencyId)
             $olderVersions = @(SortVersions @($raisedGraphs | Where-Object { $_.Packages.ContainsKey($dependencyId) -and [semver]$_.Packages[$dependencyId].Version -lt [semver]$floor } | ForEach-Object { $_.Packages[$dependencyId].Version }))
             if ($olderVersions.Count -gt 0) {
                 $upgradedAlong += [PSCustomObject]@{
                     PackageId                      = $dependencyId
                     FromVersion                    = $olderVersions[0]
                     Floor                          = $floor
+                    IsExactVersion                 = $isExactVersion
                     RaisedGraphsReferencingItOlder = @($raisedGraphs | Where-Object { $_.DirectPackageReferences.ContainsKey($dependencyId) -and [semver]$_.Packages[$dependencyId].Version -lt [semver]$floor })
                     OtherGraphsReferencingItOlder  = @($otherGraphs | Where-Object { $_.DirectPackageReferences.ContainsKey($dependencyId) -and [semver]$_.Packages[$dependencyId].Version -lt [semver]$floor })
                 }
+            }
+            $newerVersions = @(SortVersions @($raisedGraphs | Where-Object { $isExactVersion -and $_.Packages.ContainsKey($dependencyId) -and [semver]$_.Packages[$dependencyId].Version -gt [semver]$floor } | ForEach-Object { $_.Packages[$dependencyId].Version }))
+            if ($newerVersions.Count -gt 0) {
+                $exactVersionsNewerInTheSolution += [PSCustomObject]@{ PackageId = $dependencyId; Version = $floor; VersionsInTheSolution = $newerVersions }
             }
             if (@($raisedGraphs | Where-Object { -not $_.Packages.ContainsKey($dependencyId) }).Count -gt 0) {
                 $addedAlong += [PSCustomObject]@{ PackageId = $dependencyId; Floor = $floor }
@@ -344,8 +355,16 @@ function C-Get-CompzeUpgradeReport {
             "Brings along newer versions of these Compze packages, which it requires, into the projects that reference it directly or through project references:"
             foreach ($dependency in $upgradedAlong) {
                 $crossing = if (TestCrossesAMinorVersion $dependency.FromVersion $dependency.Floor) { "across a minor version" } else { "a patch" }
-                "  $($dependency.PackageId) $($dependency.FromVersion) -> $($dependency.Floor) or newer: $crossing."
+                $range = if ($dependency.IsExactVersion) { "exactly, since it uses its internals" } else { "or newer" }
+                "  $($dependency.PackageId) $($dependency.FromVersion) -> $($dependency.Floor) ${range}: $crossing."
                 "    $(DescribeWhatToRaise $dependency $packageId)"
+            }
+        }
+        if ($exactVersionsNewerInTheSolution.Count -gt 0) {
+            ""
+            "Requires exact versions of these Compze packages, whose internals it uses, which the solution has newer versions of. NuGet warns about the pairing (NU1608), or refuses it (NU1107) where a project doesn't reference the package directly, and it breaks at run time:"
+            foreach ($dependency in $exactVersionsNewerInTheSolution) {
+                "  $($dependency.PackageId) $($dependency.Version) exactly, where the solution has $(FormatVersions $dependency.PackageId $dependency.VersionsInTheSolution). Wait for a release of $packageId built against it."
             }
         }
         if ($addedAlong.Count -gt 0) {
@@ -385,7 +404,7 @@ function C-Get-CompzeUpgradeReport {
                 if ($raisedDependencies.Count -eq 0) { continue }
                 $key = "$packageId $($package.Version)"
                 if (-not $leftBehind.Contains($key)) {
-                    $leftBehind[$key] = [PSCustomObject]@{ PackageId = $packageId; Version = $package.Version; RaisedDependencies = [ordered]@{} }
+                    $leftBehind[$key] = [PSCustomObject]@{ PackageId = $packageId; Version = $package.Version; ExactVersionDependencies = $package.ExactVersionDependencies; RaisedDependencies = [ordered]@{} }
                 }
                 foreach ($dependencyId in $raisedDependencies) {
                     $leftBehind[$key].RaisedDependencies[$dependencyId] = [PSCustomObject]@{ PackageId = $dependencyId; BuiltAgainst = $package.Dependencies[$dependencyId]; RaisedTo = $raisedVersions[$dependencyId] }
@@ -414,9 +433,17 @@ function C-Get-CompzeUpgradeReport {
         $checked = @()
         foreach ($package in $LeftBehind) {
             $raisedDependencies = @($package.RaisedDependencies.Values)
+            $atTheRelease = ReadProjectAtRevision $package.PackageId $buildCommit
+            # A version released since Compze's packages require exact versions of the packages whose internals they use
+            # says so itself: no need to infer it from the grants.
+            $requiredExactly = @($raisedDependencies | Where-Object { $package.ExactVersionDependencies -contains $_.PackageId } | ForEach-Object { "$($_.PackageId) $($_.BuiltAgainst)" })
+            if ($requiredExactly.Count -gt 0) {
+                "  REQUIRES EXACT VERSIONS: $(DescribeBuiltAgainst $package). It requires exactly $(JoinWithAnd $requiredExactly), whose internals it uses. With the upgrade, NuGet warns about it (NU1608), or refuses it (NU1107) where a project doesn't reference them directly, and it breaks at run time."
+                "    $(DescribeVersionThatPairs $package $atTheRelease $theRelease $releaseCheckedThePackagesAgainstEachOther)"
+                continue
+            }
             $grantingItsInternals = @($raisedDependencies | Where-Object { (ReadRaisedProjectAtItsBuild $_.PackageId $buildCommit).InternalsVisibleTo -contains $package.PackageId } | ForEach-Object { $_.PackageId })
             $internals = if ($grantingItsInternals.Count -gt 0) { "may use the internals of $(JoinWithAnd $grantingItsInternals) (InternalsVisibleTo)" } else { $null }
-            $atTheRelease = ReadProjectAtRevision $package.PackageId $buildCommit
             $releaseHadThisVersion = $atTheRelease -and [semver]$atTheRelease.Version -eq [semver]$package.Version
             # Checked by the release, when it had this version; or by every release since the post-release binding check,
             # which matters for a release from before it.

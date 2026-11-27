@@ -4,7 +4,7 @@ using Compze.Abstractions;
 namespace Compze.Teventive.MemoryImageStateStore._private.Storage;
 
 ///<summary>The storage of a memory image state store that keeps its taggregates in memory only: it loads nothing, and a write does nothing.</summary>
-sealed class NoStorage : ITaggregateStorage, IPreparedWrite
+sealed class NoStorage : ITaggregateStorage
 {
    ///<summary>The one instance: it holds nothing.</summary>
    internal static readonly NoStorage Instance = new();
@@ -12,7 +12,7 @@ sealed class NoStorage : ITaggregateStorage, IPreparedWrite
    NoStorage() {}
 
    public IReadOnlyList<TaggregateSnapshot> LoadAll() => [];
-   public IPreparedWrite Prepare(IReadOnlyList<TaggregateSnapshot> toSave, IReadOnlyList<TaggregateId> toDelete) => this;
+   public IPreparedWrite Prepare(IReadOnlyList<TaggregateSnapshot> toSave, IReadOnlyList<TaggregateId> toDelete) => NothingToWrite.Instance;
 
    ///<summary>Never asked: the store refuses a reload when it has no storage.</summary>
    public bool HoldTheSameState(TaggregateSnapshot loaded, object heldSnapshot) => throw new UnreachableException("A memory image state store with no storage is never reloaded.");
@@ -21,7 +21,5 @@ sealed class NoStorage : ITaggregateStorage, IPreparedWrite
    public void WriteAll(IReadOnlyList<TaggregateSnapshot> everything) =>
       throw new UnreachableException("A memory image state store with no storage never writes everything anew.");
 
-   public void Commit() {}
-   public void Discard() {}
    public void Dispose() {}
 }

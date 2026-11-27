@@ -12,7 +12,6 @@
     <InternalsVisibleTo Include="Compze.Teventive.TeventStore.Sqlite" />
     <InternalsVisibleTo Include="Compze.TypeIdentifiers.Interning.Sqlite" />
     <InternalsVisibleTo Include="Compze.Hosting.Testing" />
-    <InternalsVisibleTo Include="Compze.Tessaging.Hosting.Testing" />
     <InternalsVisibleTo Include="Compze.Sql.InternalSpecifications" />
     <InternalsVisibleTo Include="Compze.Teventive.MemoryImageStateStore.Sqlite" />
   </ItemGroup>

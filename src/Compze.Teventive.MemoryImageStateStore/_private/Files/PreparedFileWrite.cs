@@ -13,24 +13,27 @@ namespace Compze.Teventive.MemoryImageStateStore._private.Files;
 /// work commits: <see cref="CommitAsTheTransactionsDecision"/>. Where the consumer has allowed the files in transactions that also<br/>
 /// write a database (<see cref="TaggregateFilesBuilder.AcceptingNonAtomicCommitsWithADatabase"/>), it commits when the unit of work<br/>
 /// commits: <see cref="Commit"/>. A write of every taggregate anew (<see cref="IMemoryImageStateStore.WriteAllToStorage"/>) commits outside<br/>
-/// any transaction: <see cref="CommitOutsideATransaction"/>.</remarks>
+/// any transaction: <see cref="CommitOutsideATransaction"/>. Either way, the write is under way until <see cref="Complete"/>, and the store's<br/>
+/// lock is held until then.</remarks>
 sealed class PreparedFileWrite : IPreparedWrite
 {
    readonly IFileSystem _files;
    readonly string _storesFolder;
    readonly string _ownFolder;
    readonly IThreadShared<StoredFiles> _storedFiles;
+   readonly StorageLock.WriteUnderWay _underWay;
    readonly List<SavedFile> _saved = [];
    readonly List<(Guid Id, string File)> _deleted = [];
    bool _commitsAsTheTransactionsDecision;
    bool _hasCommitted;
 
-   internal PreparedFileWrite(IFileSystem files, string storesFolder, string ownFolder, IThreadShared<StoredFiles> storedFiles)
+   internal PreparedFileWrite(IFileSystem files, string storesFolder, string ownFolder, IThreadShared<StoredFiles> storedFiles, StorageLock.WriteUnderWay underWay)
    {
       _files = files;
       _storesFolder = storesFolder;
       _ownFolder = ownFolder;
       _storedFiles = storedFiles;
+      _underWay = underWay;
    }
 
    ///<summary>Writes <paramref name="content"/> under a temporary name, to become <paramref name="file"/>, the file of the taggregate<br/>
@@ -149,6 +152,9 @@ sealed class PreparedFileWrite : IPreparedWrite
    {
       foreach(var saved in _saved) _files.Delete(saved.TemporaryFile);
    }
+
+   ///<summary>The write has committed, or been discarded, or its unit of work's outcome is in doubt: it writes no file any more.</summary>
+   public void Complete() => _underWay.End();
 
    ///<summary>A taggregate's file, written under a temporary name until the commit renames it.</summary>
    sealed class SavedFile(Guid id, string temporaryFile, string file)

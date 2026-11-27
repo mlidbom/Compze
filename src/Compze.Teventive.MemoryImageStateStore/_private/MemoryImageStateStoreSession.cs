@@ -62,6 +62,7 @@ sealed class MemoryImageStateStoreSession : ITaggregateStoreSession
 
    public bool TryGetForUpdate<TTaggregate>(TaggregateId id, [NotNullWhen(true)] out TTaggregate? taggregate) where TTaggregate : class, ITaggregate
    {
+      _store.AssertNotDisposed();
       if(_heldTaggregates.TryGetValue(id, out var held))
       {
          taggregate = held.IsDeleted ? null : AsRequested<TTaggregate>(held.Taggregate);
@@ -75,6 +76,7 @@ sealed class MemoryImageStateStoreSession : ITaggregateStoreSession
 
    public async Task<TTaggregate?> TryGetForUpdateAsync<TTaggregate>(TaggregateId id) where TTaggregate : class, ITaggregate
    {
+      _store.AssertNotDisposed();
       if(_heldTaggregates.TryGetValue(id, out var held)) return held.IsDeleted ? null : AsRequested<TTaggregate>(held.Taggregate);
 
       await HoldUpdateLockAsync(id).caf(); //Held also when the store holds no such taggregate, as in TryGetForUpdate.
@@ -95,6 +97,7 @@ sealed class MemoryImageStateStoreSession : ITaggregateStoreSession
 
    public void Add(ITaggregate taggregate)
    {
+      _store.AssertNotDisposed();
       _store.DeclaredClassOf(taggregate.GetType());
       State.Assert(taggregate.Version > 0, () => $"{taggregate.GetType().Name} has published no tevent, so it has no id: there is nothing to add.");
       State.Assert(!_heldTaggregates.ContainsKey(taggregate.Id), () => $"Taggregate {taggregate.Id} is already in this unit of work.");
@@ -192,6 +195,7 @@ sealed class MemoryImageStateStoreSession : ITaggregateStoreSession
 
    public void Complete()
    {
+      _preparedWrite?.Complete();
       _teventStreamSubscriptions.ForEach(it => it.Dispose());
       _heldUpdateLocks.Values.ForEach(it => it.Release());
       _heldUpdateLocks.Clear();

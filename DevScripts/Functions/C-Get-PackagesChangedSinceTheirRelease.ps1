@@ -17,16 +17,20 @@ function C-Get-PackagesChangedSinceTheirRelease {
     that changed without either needs a changelog entry, and a version bump through C-Prepare-Release. Whether the
     entries cover the changes is for a reader of the diff to judge: git diff <ReleaseTag> HEAD -- src/<PackageId>.
 
+    For each it also names the packages its release releases as well: those that use its internals, which require its exact
+    version (.github/scripts/lib/ExactVersionDependencies.ps1), and those that use theirs, and so on. C-Prepare-Release
+    prepares them, so this shows what a release of the package costs before it is prepared.
+
     .PARAMETER PackageId
     Limits the list to these packages.
 
     .OUTPUTS
     One object per package: PackageId, ReleaseTag (null when never released), Version, IsBumped, ChangelogChanged,
-    ChangedSince (the release tag, or the commit the package's changes are acknowledged up to) and ChangedFiles, the paths
-    relative to the repository root.
+    ChangedSince (the release tag, or the commit the package's changes are acknowledged up to), ChangedFiles, the paths
+    relative to the repository root, and ReleasedWithIt, the packages its release releases as well.
 
     .EXAMPLE
-    C-Get-PackagesChangedSinceTheirRelease | Format-Table PackageId, ReleaseTag, Version, IsBumped, ChangelogChanged, @{ n = 'Files'; e = { $_.ChangedFiles.Count } }
+    C-Get-PackagesChangedSinceTheirRelease | Format-Table PackageId, ReleaseTag, Version, IsBumped, ChangelogChanged, @{ n = 'Files'; e = { $_.ChangedFiles.Count } }, @{ n = 'ReleasedWithIt'; e = { $_.ReleasedWithIt.Count } }
 
     .EXAMPLE
     (C-Get-PackagesChangedSinceTheirRelease -PackageId Compze.Sql.Common).ChangedFiles
@@ -40,9 +44,12 @@ function C-Get-PackagesChangedSinceTheirRelease {
     $ErrorActionPreference = 'Stop'
 
     . (Join-Path $script:CompzeRoot ".github/scripts/lib/UnreleasedChanges.ps1")
+    . (Join-Path $script:CompzeRoot ".github/scripts/lib/ExactVersionDependencies.ps1")
     $acknowledgements = ReadUnreleasedChangeAcknowledgements
+    $publishablePackages = @(GetPublishablePackagesUnderSrc)
+    $packagesWhoseInternalsEachUses = ReadPackagesWhoseInternalsEachPackageUses @($publishablePackages | ForEach-Object { $_.PackageId })
 
-    foreach ($package in GetPublishablePackagesUnderSrc) {
+    foreach ($package in $publishablePackages) {
         if ($PackageId -and $PackageId -notcontains $package.PackageId) { continue }
 
         $releaseTag = @(git -C $script:CompzeRoot tag --list "$($package.PackageId)/v*" --merged HEAD --sort=-creatordate) | Select-Object -First 1
@@ -64,6 +71,7 @@ function C-Get-PackagesChangedSinceTheirRelease {
             ChangelogChanged = $changelogChanged
             ChangedSince     = $changedSince
             ChangedFiles     = $shippedFiles
+            ReleasedWithIt   = @(GetPackagesThatUseTheInternalsOf @($package.PackageId) $packagesWhoseInternalsEachUses)
         }
     }
 }

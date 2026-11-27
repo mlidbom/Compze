@@ -24,8 +24,9 @@ function Read-SolutionRestoreGraphs {
       - CentralPackageVersions: package id to the version Directory.Packages.props names.
       - DirectPackageReferences: package id to the lowest version its reference allows.
       - DirectDependencies: the names of the packages and projects it references directly.
-      - Packages: package id to an object with Version (the version resolved) and Dependencies (package or project
-        name to the lowest version allowed).
+      - Packages: package id to an object with Version (the version resolved), Dependencies (package or project
+        name to the lowest version allowed) and ExactVersionDependencies (the names of the packages it requires one
+        exact version of, [x.y.z], as a Compze package does of each Compze package whose internals it uses).
       - Projects: the projects it references, directly or not: project name to an object with Dependencies.
     - ProjectsWithoutRestoreOutput: the solution's projects with no obj/project.assets.json, which no graph describes.
     #>
@@ -70,7 +71,9 @@ function ConvertFromRestoreAssets($Assets, [string]$AssetsPath) {
             $name, $version = $libraryKey -split '/', 2
             $library = $target[$libraryKey]
             $dependencies = ConvertFromDependencyRanges $library['dependencies']
-            if ($library.type -eq 'package') { $packages[$name] = [PSCustomObject]@{ Version = $version; Dependencies = $dependencies } }
+            if ($library.type -eq 'package') {
+                $packages[$name] = [PSCustomObject]@{ Version = $version; Dependencies = $dependencies; ExactVersionDependencies = @(GetExactVersionDependencyNames $library['dependencies']) }
+            }
             elseif ($library.type -eq 'project') { $projects[$name] = [PSCustomObject]@{ Dependencies = $dependencies } }
         }
 
@@ -105,6 +108,11 @@ function ConvertFromDependencyRanges($DependencyRanges) {
         foreach ($name in @($DependencyRanges.Keys)) { $lowestVersions[$name] = GetLowestVersionAllowed $DependencyRanges[$name] }
     }
     return $lowestVersions
+}
+
+function GetExactVersionDependencyNames($DependencyRanges) {
+    # The names whose range is one exact version, "[0.6.0-alpha]"; none for a library that depends on nothing.
+    if ($DependencyRanges) { @($DependencyRanges.Keys | Where-Object { $DependencyRanges[$_] -match '^\[\s*[^,\s\[\]]+\s*\]$' }) }
 }
 
 function GetLowestVersionAllowed([string]$VersionRange) {

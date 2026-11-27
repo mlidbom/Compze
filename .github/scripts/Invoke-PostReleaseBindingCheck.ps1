@@ -25,6 +25,7 @@ $scriptDir = $PSScriptRoot
 . "$scriptDir/lib/Changelogs.ps1"
 . "$scriptDir/lib/PackageManifests.ps1"
 . "$scriptDir/lib/DependencyFloors.ps1"
+. "$scriptDir/lib/ExactVersionDependencies.ps1"
 . "$scriptDir/lib/ReleaseDetails.ps1"
 . "$scriptDir/lib/ReleaseSelection.ps1"
 . "$scriptDir/lib/NuGetOrgVersions.ps1"

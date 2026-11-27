@@ -24,7 +24,9 @@ function C-Publish-ToPendingReleaseFeed {
     - So is a set the release would refuse because it leaves behind a package whose shipped files changed since its
       release, unacknowledged (.github/scripts/lib/UnreleasedChanges.ps1): the release would never publish that set.
     - A version already in the feed is republished only when its package's source (src/<PackageId>) changed since it was
-      published, and only with -Replace. Without it, bump the version instead.
+      published, or the source of a package whose internals it uses, which it was built against: it requires that
+      package's exact version (.github/scripts/lib/ExactVersionDependencies.ps1). And only with -Replace. Without it,
+      bump the version instead.
 
     The output names each version published; reference exactly those versions from the consumer. A consumer commit
     referencing one fails CI until nuget.org has it, so push it afterwards. Once nuget.org has a version,
@@ -32,8 +34,9 @@ function C-Publish-ToPendingReleaseFeed {
     every Claude session on this machine.
 
     .PARAMETER Replace
-    Replace a version already in the feed whose package source has changed since: the feed gets the new build, and the
-    old one is removed from the NuGet global packages folder so every restore on this machine extracts the new one.
+    Replace a version already in the feed whose package source, or the source of a package whose internals it uses, has
+    changed since: the feed gets the new build, and the old one is removed from the NuGet global packages folder so every
+    restore on this machine extracts the new one.
 
     .EXAMPLE
     C-Publish-ToPendingReleaseFeed
@@ -109,23 +112,27 @@ function C-Publish-ToPendingReleaseFeed {
         $publications = @(foreach ($package in $packagesToRelease) {
             $nupkgFileName = "$($package.PackageName).$($package.Version).nupkg"
             $publishedNupkg = Join-Path $feedDirectory $nupkgFileName
+            $packedNupkg = Join-Path $nupkgsDirectory $nupkgFileName
             $publishedFrom = if (Test-Path -LiteralPath $publishedNupkg) { (Read-PackageManifest -NupkgPath $publishedNupkg).RepositoryCommit } else { $null }
             $isNew = -not $publishedFrom
-            $isChanged = (-not $isNew) -and (Test-PackageSourceChangedBetweenCommits -PackageId $package.PackageName -FromCommit $publishedFrom -ToCommit $headCommit)
+            # A package that uses another's internals was built against that package's source too.
+            $sourcesBuiltFrom = @($package.PackageName) + @((Read-PackageManifest -NupkgPath $packedNupkg).CompzeExactVersionDependencies.Keys)
+            $changedSources = @(if (-not $isNew) { $sourcesBuiltFrom | Where-Object { Test-PackageSourceChangedBetweenCommits -PackageId $_ -FromCommit $publishedFrom -ToCommit $headCommit } })
             [PSCustomObject]@{
                 Package        = $package
-                PackedNupkg    = Join-Path $nupkgsDirectory $nupkgFileName
+                PackedNupkg    = $packedNupkg
                 PublishedNupkg = $publishedNupkg
                 PublishedFrom  = $publishedFrom
                 IsNew          = $isNew
-                IsChanged      = $isChanged
+                IsChanged      = $changedSources.Count -gt 0
+                ChangedSources = $changedSources
             }
         })
 
         $refused = @($publications | Where-Object { $_.IsChanged -and -not $Replace })
         if ($refused.Count -gt 0) {
             throw ("C-Publish-ToPendingReleaseFeed: a version published here must be the code that ships, and " +
-                   "$(($refused | ForEach-Object { "src/$($_.Package.PackageName) changed since commit $($_.PublishedFrom.Substring(0, 9)) published $($_.Package.PackageName) $($_.Package.Version) here" }) -join '; '). " +
+                   "$(($refused | ForEach-Object { "$(($_.ChangedSources | ForEach-Object { "src/$_" }) -join ' and ') changed since commit $($_.PublishedFrom.Substring(0, 9)) published $($_.Package.PackageName) $($_.Package.Version) here" }) -join '; '). " +
                    "Bump the version, or rerun with -Replace to replace the published build on this machine. Nothing was published.")
         }
 

@@ -16,4 +16,39 @@
   <PropertyGroup Condition="'$(CompzeRuntimeAsync)' != 'false' And '$(TargetFrameworkIdentifier)' == '.NETCoreApp'">
     <Features>$(Features);runtime-async=on</Features>
   </PropertyGroup>
+  <!-- Exact versions of the Compze packages whose internals a package uses. Internals carry no compatibility promise, so a
+       package that uses another's internals requires the exact version it was built against, [x.y.z], and NuGet warns
+       (NU1608) or refuses (NU1107) a pairing that no commit built. Its other dependencies keep their minimum versions.
+       A package uses the internals of a project it references directly that grants it InternalsVisibleTo: the code policy
+       LibraryInternalsVisibleToPolicy keeps every grant between libraries on a direct reference. The release refuses a set
+       of packages whose exact versions differ from what the grants say (.github/scripts/lib/ExactVersionDependencies.ps1),
+       so that this target can't fail silently.
+       How: pack asks each referenced project for its version through NuGet's _GetProjectReferenceVersions target, and its
+       pack task parses each item's ProjectVersion metadata as a version range. This target, after that one, puts each
+       version of a project that grants this package InternalsVisibleTo in brackets. Neither the target, the item nor the
+       range parsing is documented NuGet behavior: see dev_docs/WIP/exact-versions-on-internals.md. It runs only in pack. -->
+  <Target Name="CompzeRequireExactVersionsOfTheDependenciesWhoseInternalsThisPackageUses"
+          AfterTargets="_GetProjectReferenceVersions"
+          Condition="'@(_ProjectReferencesWithVersions)' != ''">
+    <MSBuild Projects="@(_ProjectReferencesWithVersions)" Targets="CompzeInternalsVisibleToGrantees">
+      <Output TaskParameter="TargetOutputs" ItemName="_CompzeReferencedProjectGrantees" />
+    </MSBuild>
+    <ItemGroup>
+      <_CompzeReferencedProjectsNotGrantingThisPackage Include="@(_CompzeReferencedProjectGrantees)"
+                                                       Condition="!$([System.String]::Copy('%(Grantees)').Contains(';$(AssemblyName);'))" />
+      <_CompzeReferencedProjectsGrantingThisPackage Include="@(_ProjectReferencesWithVersions)"
+                                                    Exclude="@(_CompzeReferencedProjectsNotGrantingThisPackage)" />
+      <_ProjectReferencesWithVersions Remove="@(_CompzeReferencedProjectsGrantingThisPackage)" />
+      <_ProjectReferencesWithVersions Include="@(_CompzeReferencedProjectsGrantingThisPackage)"
+                                      ProjectVersion="[%(_CompzeReferencedProjectsGrantingThisPackage.ProjectVersion)]" />
+    </ItemGroup>
+  </Target>
+  <!-- The assemblies this project grants InternalsVisibleTo, as ;-separated names in the Grantees metadata of one item, the
+       project itself: for CompzeRequireExactVersionsOfTheDependenciesWhoseInternalsThisPackageUses, which a packed project
+       runs on each project it references. -->
+  <Target Name="CompzeInternalsVisibleToGrantees" Returns="@(_CompzeInternalsVisibleToGrantees)">
+    <ItemGroup>
+      <_CompzeInternalsVisibleToGrantees Include="$(MSBuildProjectFullPath)" Grantees=";@(InternalsVisibleTo);" />
+    </ItemGroup>
+  </Target>
 </Project>
