@@ -46,7 +46,8 @@ interface IPeerRegistry
    /// when no handler is live this list is where the receiver comes from; and waiting sends and readiness compute their<br/>
    /// known-but-down vs never-seen availability and failure wording from it, for every single-handler kind. The endpoint<br/>
    /// itself never asks: a peer is another endpoint, and an in-roster tessage is served in-boundary — an in-roster tommand<br/>
-   /// executes inline in the sender's execution and never reaches the outbox's receiver binding at all.</summary>
+   /// executes inline in the sender's execution, or in its own inbox when its handler is deferred, and never reaches the<br/>
+   /// outbox's receiver binding at all.</summary>
    IReadOnlyList<EndpointId> HandlerIdsFor(Type tessageType);
 
    ///<summary>Initializes the registry's backing store, if any, and loads the remembered peers into memory. Runs in the<br/>

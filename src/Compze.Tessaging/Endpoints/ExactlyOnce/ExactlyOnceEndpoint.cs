@@ -20,8 +20,8 @@ namespace Compze.Tessaging.Endpoints.ExactlyOnce;
 /// Built from an <see cref="ExactlyOnceEndpointDeclaration{TIdentity}"/>
 /// (<see cref="IExactlyOnceEndpointDeclaration.Build"/>). Which machinery carries a given tessage is decided by the tessage's type and the
 /// consistency law: a send whose handler is in the roster executes inline, in the sender's execution — exactly-once by
-/// construction, no delivery machinery involved — and a send whose handler lives elsewhere crosses the boundary through the
-/// durable vertical.
+/// construction, no delivery machinery involved — unless the handler is deferred, when the endpoint's own inbox handles it
+/// once the sender has committed, and a send whose handler lives elsewhere crosses the boundary through the durable vertical.
 ///</summary>
 public class ExactlyOnceEndpoint : Endpoint
 {
