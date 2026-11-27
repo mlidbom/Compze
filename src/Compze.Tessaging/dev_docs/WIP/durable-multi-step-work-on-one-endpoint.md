@@ -475,11 +475,14 @@ predecessor's release (below).
    - **(a) `StopAsync(CancellationToken)`:** the drain as today, ended at once by the token. Recommended: the .NET
      convention, and each caller chooses.
    - **(b) The stop always cancels running handlers,** without a drain.
-6. **How an endpoint that converses with no other is declared:**
+6. **How an endpoint that converses with no other is declared** (on hold with change 5; Magnus leans to (b), topic 4):
    - **(a) By the endpoint,** `ConverseWithNoOtherEndpoint()` in its declaration, the environment's transport and
-     discovery left unused. Recommended: it is what the endpoint is.
+     discovery left unused.
    - **(b) By the environment leaving out the transport:** absent means no wire, as an absent discovery registry means no
-     discovery today.
+     discovery today. Today an endpoint without a transport fails at its build, and its listening, announcing and sending
+     phases assume a transport server: all three would take the absence. An endpoint wanting no wire in a process whose
+     other endpoints have one gets an environment of its own, through `IEndpointHost.RegisterEndpoint(declaration,
+     environment)`. Recommended: it is only an absence, and needs no new abstraction.
 
 The names marked `review-naming:` above are chosen, not decisions: `ForTommandInATransactionOfItsOwn`,
 `IAtLeastOnceTommand` with its registrar, `HandlingOrder` with `AsAdmitted` and `None`, and `ConverseWithNoOtherEndpoint`.
